@@ -1,57 +1,69 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:42773 "EHLO mga14.intel.com"
+Received: from mga04.intel.com ([192.55.52.120]:3070 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756253AbdIRSCz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 18 Sep 2017 14:02:55 -0400
-Date: Mon, 18 Sep 2017 21:02:50 +0300
+        id S1751164AbdIOVrS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 15 Sep 2017 17:47:18 -0400
+Date: Fri, 15 Sep 2017 14:47:13 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: James.Bottomley@HansenPartnership.com
-Cc: linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: about context gap
-Message-ID: <20170918180250.6db5ti4gpinqr5jz@linux.intel.com>
-References: <20170916153540.w5lpsqz3cwpd3enx@linux.intel.com>
+To: Joe Perches <joe@perches.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>, tpmdd-devel@lists.sourceforge.net,
+        linux-ima-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [tpmdd-devel] New ML for TPM and IMA
+Message-ID: <20170915214713.qzg4pujpxzmy27bk@linux.intel.com>
+References: <20170915171825.5zjit5vsrvxgmvrb@linux.intel.com>
+ <1505496336.27581.7.camel@perches.com>
+ <20170915173632.6qfvtkj6yqzclsb2@linux.intel.com>
+ <1505497214.27581.9.camel@perches.com>
+ <114299C3-C931-4E10-A78B-C441F7A5723F@gmx.de>
+ <20170915175715.nl3m5vcrelykopx3@linux.intel.com>
+ <1505498511.27581.11.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170916153540.w5lpsqz3cwpd3enx@linux.intel.com>
+In-Reply-To: <1505498511.27581.11.camel@perches.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sat, Sep 16, 2017 at 08:36:29AM -0700, Jarkko Sakkinen wrote:
-> Hi
+On Fri, Sep 15, 2017 at 11:01:51AM -0700, Joe Perches wrote:
+> On Fri, 2017-09-15 at 10:57 -0700, Jarkko Sakkinen wrote:
+> > On Fri, Sep 15, 2017 at 10:47:06AM -0700, Peter Huewe wrote:
+> > > Am 15. September 2017 10:40:14 GMT-07:00 schrieb Joe Perches <joe@perches.com>:
+> > > > As the individual maintainers are different for the two sections,
+> > > > I think you need both entries.
+> > > 
+> > > Try to get a hold of ashley and ask whether she is actively maintaining.
+> > > 
+> > > While updating Maintainers I vote for removing Marcel Selhorst for tpm.
+> > > 
+> > > You can keep me for now :)
+> > > Peter
+> > 
+> > During the last bit less than couple of years I've been maintaining
+> > TPM and a bit less than four years I've been contributing I've never
+> > heard anything of Ashley.
+> > 
+> > What is the expiration time?
 > 
-> While sitting at the airport I started to think a bit about the context
-> gap issue.
+> There is no fixed time at all.
+> Generally when the email bounces or when the maintainer resigns.
+> (involuntarily or not...)
 > 
-> I think first thing that would make sense would be to have a 64-bit
-> shadow count for every TPM space i.e.
+> It seems a couple years since Ashley signed anything and five years
+> since Marcel Selhorst signed anything.
 > 
-> atomic_long_t tpm2_ctx_cnt;
-> 
-> struct tpm2_space {
-> 	/* ... */
-> 	u64 ctx_cnt;
-> };
-> 
-> For every create and load of a session you will read the global count
-> and increase it. This way we have get a well defined order.
-> 
-> With this organization we could for example put tpm spaces to a
-> red-black tree and refresh the oldest tpm space (just first thought
-> that came to mind).
-> 
-> PS. While doing LPC and LSS slides I found error from the TPM 2.0
-> commands specification. TPM2_ContextSave can never emit
-> TPM2_RC_CONTEXT_GAP albeit the specification says so.
-> 
-> /Jarkko
+> It's polite to add a CREDITS entry when removing inactive maintainers.
 
-Other than context gap it would probably make sense to estimate TPM
-capacity in order to make implementation more intelligent. We could
-measure memory capacity of a TPM in the driver initialization by filling
-it with fixed size dummy objects.
+The file ends:
 
-TPM2_GetCapability gives stuff that cannot be really trusted as spec
-compliant TPM HW could just return always '1' for max.
+"
+# Don't add your name here, unless you really _are_ after Marc
+# alphabetically. Leonard used to be very proud of being the 
+# last entry, and he'll get positively pissed if he can't even
+# be second-to-last.  (and this file really _is_ supposed to be
+# in alphabetic order)
+"
+
+So where do I should add?-)
 
 /Jarkko
