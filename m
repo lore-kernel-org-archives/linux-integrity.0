@@ -1,60 +1,47 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:40112 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751184AbdIOR52 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 15 Sep 2017 13:57:28 -0400
-Date: Fri, 15 Sep 2017 10:57:15 -0700
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Peter Huewe <peterhuewe@gmx.de>
-Cc: tpmdd-devel@lists.sourceforge.net, Joe Perches <joe@perches.com>,
+Received: from smtprelay0094.hostedemail.com ([216.40.44.94]:48612 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751621AbdIOVzQ (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 15 Sep 2017 17:55:16 -0400
+Message-ID: <1505512512.27581.18.camel@perches.com>
+Subject: Re: [tpmdd-devel] New ML for TPM and IMA
+From: Joe Perches <joe@perches.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>, tpmdd-devel@lists.sourceforge.net,
         linux-ima-devel@lists.sourceforge.net,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [tpmdd-devel] New ML for TPM and IMA
-Message-ID: <20170915175715.nl3m5vcrelykopx3@linux.intel.com>
+Date: Fri, 15 Sep 2017 14:55:12 -0700
+In-Reply-To: <20170915214713.qzg4pujpxzmy27bk@linux.intel.com>
 References: <20170915171825.5zjit5vsrvxgmvrb@linux.intel.com>
- <1505496336.27581.7.camel@perches.com>
- <20170915173632.6qfvtkj6yqzclsb2@linux.intel.com>
- <1505497214.27581.9.camel@perches.com>
- <114299C3-C931-4E10-A78B-C441F7A5723F@gmx.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <114299C3-C931-4E10-A78B-C441F7A5723F@gmx.de>
+         <1505496336.27581.7.camel@perches.com>
+         <20170915173632.6qfvtkj6yqzclsb2@linux.intel.com>
+         <1505497214.27581.9.camel@perches.com>
+         <114299C3-C931-4E10-A78B-C441F7A5723F@gmx.de>
+         <20170915175715.nl3m5vcrelykopx3@linux.intel.com>
+         <1505498511.27581.11.camel@perches.com>
+         <20170915214713.qzg4pujpxzmy27bk@linux.intel.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Sep 15, 2017 at 10:47:06AM -0700, Peter Huewe wrote:
+On Fri, 2017-09-15 at 14:47 -0700, Jarkko Sakkinen wrote:
+> On Fri, Sep 15, 2017 at 11:01:51AM -0700, Joe Perches wrote:
+[]
+> > It's polite to add a CREDITS entry when removing inactive maintainers.
 > 
+> The file ends:
 > 
-> Am 15. September 2017 10:40:14 GMT-07:00 schrieb Joe Perches <joe@perches.com>:
-> >On Fri, 2017-09-15 at 10:36 -0700, Jarkko Sakkinen wrote:
-> >> On Fri, Sep 15, 2017 at 10:25:36AM -0700, Joe Perches wrote:
-> >> > On Fri, 2017-09-15 at 10:18 -0700, Jarkko Sakkinen wrote:
-> >[]
-> >> > > We decided to create a new mailing list
-> >linux-integrit@vger.kernel.org
-> >> > > to cover both TPM and IMA since they tend to have cross
-> >dependencies.
-> >[]
-> >> > And is there to be an update to the MAINTAINERS file entries?
-> >[]
-> >> Yes, I'll get onto it. BTW, do we need two entries for TPM in the
-> >> MAINTAINERS file or can I merge those?
-> >
-> >As the individual maintainers are different for the two sections,
-> >I think you need both entries.
+> "
+> # Don't add your name here, unless you really _are_ after Marc
+> # alphabetically. Leonard used to be very proud of being the 
+> # last entry, and he'll get positively pissed if he can't even
+> # be second-to-last.  (and this file really _is_ supposed to be
+> # in alphabetic order)
+> "
 > 
-> Try to get a hold of ashley and ask whether she is actively maintaining.
-> 
-> While updating Maintainers I vote for removing Marcel Selhorst for tpm.
-> 
-> You can keep me for now :)
-> Peter
+> So where do I should add?-)
 
-During the last bit less than couple of years I've been maintaining
-TPM and a bit less than four years I've been contributing I've never
-heard anything of Ashley.
-
-What is the expiration time?
-
-/JArkko
+http://www.varley.net/Pages/Manhattan.htm
