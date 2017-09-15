@@ -1,69 +1,86 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:3070 "EHLO mga04.intel.com"
+Received: from mga07.intel.com ([134.134.136.100]:22985 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751164AbdIOVrS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 15 Sep 2017 17:47:18 -0400
-Date: Fri, 15 Sep 2017 14:47:13 -0700
+        id S1751617AbdIOWjV (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 15 Sep 2017 18:39:21 -0400
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Joe Perches <joe@perches.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, tpmdd-devel@lists.sourceforge.net,
-        linux-ima-devel@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [tpmdd-devel] New ML for TPM and IMA
-Message-ID: <20170915214713.qzg4pujpxzmy27bk@linux.intel.com>
-References: <20170915171825.5zjit5vsrvxgmvrb@linux.intel.com>
- <1505496336.27581.7.camel@perches.com>
- <20170915173632.6qfvtkj6yqzclsb2@linux.intel.com>
- <1505497214.27581.9.camel@perches.com>
- <114299C3-C931-4E10-A78B-C441F7A5723F@gmx.de>
- <20170915175715.nl3m5vcrelykopx3@linux.intel.com>
- <1505498511.27581.11.camel@perches.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1505498511.27581.11.camel@perches.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org, tpmdd@selhorst.net,
+        ashleydlai@gmail.com, zohar@linux.vnet.ibm.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Borislav Petkov <bp@suse.de>,
+        =?UTF-8?q?H=C3=A5vard=20Skinnemoen?= <hskinnemoen@gmail.com>,
+        Martin Kepplinger <martink@posteo.de>,
+        Pavel Machek <pavel@ucw.cz>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Gertjan van Wingerde <gwingerde@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] MAINTAINERS: update TPM driver infrastructure changes
+Date: Fri, 15 Sep 2017 15:38:01 -0700
+Message-Id: <20170915223811.21368-1-jarkko.sakkinen@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Sep 15, 2017 at 11:01:51AM -0700, Joe Perches wrote:
-> On Fri, 2017-09-15 at 10:57 -0700, Jarkko Sakkinen wrote:
-> > On Fri, Sep 15, 2017 at 10:47:06AM -0700, Peter Huewe wrote:
-> > > Am 15. September 2017 10:40:14 GMT-07:00 schrieb Joe Perches <joe@perches.com>:
-> > > > As the individual maintainers are different for the two sections,
-> > > > I think you need both entries.
-> > > 
-> > > Try to get a hold of ashley and ask whether she is actively maintaining.
-> > > 
-> > > While updating Maintainers I vote for removing Marcel Selhorst for tpm.
-> > > 
-> > > You can keep me for now :)
-> > > Peter
-> > 
-> > During the last bit less than couple of years I've been maintaining
-> > TPM and a bit less than four years I've been contributing I've never
-> > heard anything of Ashley.
-> > 
-> > What is the expiration time?
-> 
-> There is no fixed time at all.
-> Generally when the email bounces or when the maintainer resigns.
-> (involuntarily or not...)
-> 
-> It seems a couple years since Ashley signed anything and five years
-> since Marcel Selhorst signed anything.
-> 
-> It's polite to add a CREDITS entry when removing inactive maintainers.
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ CREDITS     |  7 +++++++
+ MAINTAINERS | 13 ++-----------
+ 2 files changed, 9 insertions(+), 11 deletions(-)
 
-The file ends:
-
-"
-# Don't add your name here, unless you really _are_ after Marc
-# alphabetically. Leonard used to be very proud of being the 
-# last entry, and he'll get positively pissed if he can't even
-# be second-to-last.  (and this file really _is_ supposed to be
-# in alphabetic order)
-"
-
-So where do I should add?-)
-
-/Jarkko
+diff --git a/CREDITS b/CREDITS
+index 5d09c26d69cd..dcd761885ea8 100644
+--- a/CREDITS
++++ b/CREDITS
+@@ -4130,6 +4130,13 @@ D: MD driver
+ D: EISA/sysfs subsystem
+ S: France
+ 
++N: Marcel Selhorst
++E: tpmdd@selhorst.net
++D: TPM driver
++
++N: Ashley Lai
++E: ashleydlai@gmail.com
++D: IBM VTPM driver
+ 
+ # Don't add your name here, unless you really _are_ after Marc
+ # alphabetically. Leonard used to be very proud of being the 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index dfca9a4f1112..00f0610c3ec9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13291,23 +13291,14 @@ F:	drivers/platform/x86/toshiba-wmi.c
+ 
+ TPM DEVICE DRIVER
+ M:	Peter Huewe <peterhuewe@gmx.de>
+-M:	Marcel Selhorst <tpmdd@selhorst.net>
+ M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+ R:	Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+-W:	http://tpmdd.sourceforge.net
+-L:	tpmdd-devel@lists.sourceforge.net (moderated for non-subscribers)
+-Q:	https://patchwork.kernel.org/project/tpmdd-devel/list/
++L:	linux-integrity@vger.kernel.org
++Q:	https://patchwork.kernel.org/project/linux-integrity/list/
+ T:	git git://git.infradead.org/users/jjs/linux-tpmdd.git
+ S:	Maintained
+ F:	drivers/char/tpm/
+ 
+-TPM IBM_VTPM DEVICE DRIVER
+-M:	Ashley Lai <ashleydlai@gmail.com>
+-W:	http://tpmdd.sourceforge.net
+-L:	tpmdd-devel@lists.sourceforge.net (moderated for non-subscribers)
+-S:	Maintained
+-F:	drivers/char/tpm/tpm_ibmvtpm*
+-
+ TRACING
+ M:	Steven Rostedt <rostedt@goodmis.org>
+ M:	Ingo Molnar <mingo@redhat.com>
+-- 
+2.14.1
