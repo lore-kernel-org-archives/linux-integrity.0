@@ -1,47 +1,44 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from smtprelay0094.hostedemail.com ([216.40.44.94]:48612 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751621AbdIOVzQ (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 15 Sep 2017 17:55:16 -0400
-Message-ID: <1505512512.27581.18.camel@perches.com>
-Subject: Re: [tpmdd-devel] New ML for TPM and IMA
-From: Joe Perches <joe@perches.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, tpmdd-devel@lists.sourceforge.net,
-        linux-ima-devel@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 15 Sep 2017 14:55:12 -0700
-In-Reply-To: <20170915214713.qzg4pujpxzmy27bk@linux.intel.com>
-References: <20170915171825.5zjit5vsrvxgmvrb@linux.intel.com>
-         <1505496336.27581.7.camel@perches.com>
-         <20170915173632.6qfvtkj6yqzclsb2@linux.intel.com>
-         <1505497214.27581.9.camel@perches.com>
-         <114299C3-C931-4E10-A78B-C441F7A5723F@gmx.de>
-         <20170915175715.nl3m5vcrelykopx3@linux.intel.com>
-         <1505498511.27581.11.camel@perches.com>
-         <20170915214713.qzg4pujpxzmy27bk@linux.intel.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Mime-Version: 1.0
+Received: from mga04.intel.com ([192.55.52.120]:29156 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751223AbdIPPge (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 16 Sep 2017 11:36:34 -0400
+Date: Sat, 16 Sep 2017 08:36:29 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: James.Bottomley@HansenPartnership.com
+Cc: linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: about context gap
+Message-ID: <20170916153540.w5lpsqz3cwpd3enx@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 2017-09-15 at 14:47 -0700, Jarkko Sakkinen wrote:
-> On Fri, Sep 15, 2017 at 11:01:51AM -0700, Joe Perches wrote:
-[]
-> > It's polite to add a CREDITS entry when removing inactive maintainers.
-> 
-> The file ends:
-> 
-> "
-> # Don't add your name here, unless you really _are_ after Marc
-> # alphabetically. Leonard used to be very proud of being the 
-> # last entry, and he'll get positively pissed if he can't even
-> # be second-to-last.  (and this file really _is_ supposed to be
-> # in alphabetic order)
-> "
-> 
-> So where do I should add?-)
+Hi
 
-http://www.varley.net/Pages/Manhattan.htm
+While sitting at the airport I started to think a bit about the context
+gap issue.
+
+I think first thing that would make sense would be to have a 64-bit
+shadow count for every TPM space i.e.
+
+atomic_long_t tpm2_ctx_cnt;
+
+struct tpm2_space {
+	/* ... */
+	u64 ctx_cnt;
+};
+
+For every create and load of a session you will read the global count
+and increase it. This way we have get a well defined order.
+
+With this organization we could for example put tpm spaces to a
+red-black tree and refresh the oldest tpm space (just first thought
+that came to mind).
+
+PS. While doing LPC and LSS slides I found error from the TPM 2.0
+commands specification. TPM2_ContextSave can never emit
+TPM2_RC_CONTEXT_GAP albeit the specification says so.
+
+/Jarkko
