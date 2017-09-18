@@ -1,101 +1,57 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wr0-f201.google.com ([209.85.128.201]:49461 "EHLO
-        mail-wr0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751666AbdITIN6 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 20 Sep 2017 04:13:58 -0400
-Received: by mail-wr0-f201.google.com with SMTP id g29so182696wrg.8
-        for <linux-integrity@vger.kernel.org>; Wed, 20 Sep 2017 01:13:57 -0700 (PDT)
+Received: from mga14.intel.com ([192.55.52.115]:42773 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756253AbdIRSCz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 18 Sep 2017 14:02:55 -0400
+Date: Mon, 18 Sep 2017 21:02:50 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: James.Bottomley@HansenPartnership.com
+Cc: linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: about context gap
+Message-ID: <20170918180250.6db5ti4gpinqr5jz@linux.intel.com>
+References: <20170916153540.w5lpsqz3cwpd3enx@linux.intel.com>
 MIME-Version: 1.0
-Date: Wed, 20 Sep 2017 10:13:35 +0200
-Message-Id: <20170920081340.7413-1-tweek@google.com>
-Subject: [PATCH v3 0/5] Call GetEventLog before ExitBootServices
-From: Thiebaud Weksteen <tweek@google.com>
-To: linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net
-Cc: ard.biesheuvel@linaro.org, matt@codeblueprint.co.uk,
-        linux-kernel@vger.kernel.org, mjg59@google.com, peterhuewe@gmx.de,
-        jarkko.sakkinen@linux.intel.com, jgunthorpe@obsidianresearch.com,
-        tpmdd@selhorst.net, Thiebaud Weksteen <tweek@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170916153540.w5lpsqz3cwpd3enx@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-With TPM 1.2, the ACPI table ("TCPA") has two fields to recover the Event
-Log Area (LAML and LASA). These logs are useful to understand and rebuild
-the final values of PCRs.
+On Sat, Sep 16, 2017 at 08:36:29AM -0700, Jarkko Sakkinen wrote:
+> Hi
+> 
+> While sitting at the airport I started to think a bit about the context
+> gap issue.
+> 
+> I think first thing that would make sense would be to have a 64-bit
+> shadow count for every TPM space i.e.
+> 
+> atomic_long_t tpm2_ctx_cnt;
+> 
+> struct tpm2_space {
+> 	/* ... */
+> 	u64 ctx_cnt;
+> };
+> 
+> For every create and load of a session you will read the global count
+> and increase it. This way we have get a well defined order.
+> 
+> With this organization we could for example put tpm spaces to a
+> red-black tree and refresh the oldest tpm space (just first thought
+> that came to mind).
+> 
+> PS. While doing LPC and LSS slides I found error from the TPM 2.0
+> commands specification. TPM2_ContextSave can never emit
+> TPM2_RC_CONTEXT_GAP albeit the specification says so.
+> 
+> /Jarkko
 
-With TPM 2.0, the ACPI table ("TPM2") does not contain these fields
-anymore. The recommended method is now to call the GetEventLog EFI
-protocol before ExitBootServices.
+Other than context gap it would probably make sense to estimate TPM
+capacity in order to make implementation more intelligent. We could
+measure memory capacity of a TPM in the driver initialization by filling
+it with fixed size dummy objects.
 
-Implement this method within the EFI stub and create a copy of the logs
-for the TPM device using a Linux-specific EFI configuration table
-(LINUX_EFI_TPM_EVENT_LOG). This will create
-/sys/kernel/security/tpm0/binary_bios_measurements for TPM 2.0 devices
-(similarly to the current behaviour for TPM 1.2 devices).
+TPM2_GetCapability gives stuff that cannot be really trusted as spec
+compliant TPM HW could just return always '1' for max.
 
-Two formats for the log entries exist: TPM 1.2 (SHA1) and TPM 2.0 (Crypto
-Agile). This patch set only retrieves the first type of logs. The second
-type will be implemented in a subsequent patch set.
-
-According to the specifications[1], once GetEventLog has been called,
-future events shall be stored in a separate EFI configuration table
-(EFI_TCG2_FINAL_EVENTS_TABLE). Events stored in this table are not
-processed in this patch set as they are stored in the Crypto Agile format.
-These could eventually be merged with the new table for a unified view
-of the logs from userspace.
-
-[1] TCG EFI Protocol Specification, Revision 00.13, March 30, 2016
-    https://trustedcomputinggroup.org/wp-content/uploads/EFI-Protocol-Specification-rev13-160330final.pdf
-
--------------------------------------------------------------------------------
-
-Patchset Changelog:
-
-Version 3:
-- Move event log providers (acpi and of) to tpm_eventlog_*.c
-- Move efi changes from PATCH 3 to PATCH 2
-- Change return value of tpm_read_log_acpi and tpm_read_log_of
-- Change iounmap to memunmap calls
-- Use log_tbl as variable name for consistency
-- Fix kbuild failures
-
-Version 2:
-- Move tpm_eventlog.h to top include directory, add commit for this.
-- Use EFI_LOADER_DATA to store the configuration table
-- Whitespace and new lines fixes
-
-Thiebaud Weksteen (5):
-  tpm: move tpm_eventlog.h outside of drivers folder
-  tpm: rename event log provider files
-  tpm: add event log format version
-  efi: call get_event_log before ExitBootServices
-  tpm: parse TPM event logs based on EFI table
-
- arch/x86/boot/compressed/eboot.c                   |  1 +
- drivers/char/tpm/Makefile                          |  5 +-
- drivers/char/tpm/tpm-chip.c                        |  3 +-
- drivers/char/tpm/tpm-interface.c                   |  2 +-
- drivers/char/tpm/tpm.h                             | 35 ++++++++--
- drivers/char/tpm/tpm1_eventlog.c                   | 13 +++-
- drivers/char/tpm/tpm2_eventlog.c                   |  2 +-
- .../char/tpm/{tpm_acpi.c => tpm_eventlog_acpi.c}   |  4 +-
- drivers/char/tpm/tpm_eventlog_efi.c                | 66 ++++++++++++++++++
- drivers/char/tpm/{tpm_of.c => tpm_eventlog_of.c}   |  6 +-
- drivers/firmware/efi/Makefile                      |  2 +-
- drivers/firmware/efi/efi.c                         |  4 ++
- drivers/firmware/efi/libstub/Makefile              |  3 +-
- drivers/firmware/efi/libstub/tpm.c                 | 81 ++++++++++++++++++++++
- drivers/firmware/efi/tpm.c                         | 40 +++++++++++
- include/linux/efi.h                                | 46 ++++++++++++
- {drivers/char/tpm => include/linux}/tpm_eventlog.h | 35 +++-------
- 17 files changed, 304 insertions(+), 44 deletions(-)
- rename drivers/char/tpm/{tpm_acpi.c => tpm_eventlog_acpi.c} (97%)
- create mode 100644 drivers/char/tpm/tpm_eventlog_efi.c
- rename drivers/char/tpm/{tpm_of.c => tpm_eventlog_of.c} (93%)
- create mode 100644 drivers/firmware/efi/tpm.c
- rename {drivers/char/tpm => include/linux}/tpm_eventlog.h (77%)
-
--- 
-2.14.1.821.g8fa685d3b7-goog
+/Jarkko
