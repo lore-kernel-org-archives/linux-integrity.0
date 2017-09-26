@@ -1,52 +1,77 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:3111 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933883AbdIZLpq (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Sep 2017 07:45:46 -0400
-Date: Tue, 26 Sep 2017 14:45:38 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Thiebaud Weksteen <tweek@google.com>
-Cc: linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net, ard.biesheuvel@linaro.org,
-        matt@codeblueprint.co.uk, linux-kernel@vger.kernel.org,
-        mjg59@google.com, peterhuewe@gmx.de,
-        jgunthorpe@obsidianresearch.com, tpmdd@selhorst.net
-Subject: Re: [PATCH v3 4/5] efi: call get_event_log before ExitBootServices
-Message-ID: <20170926114538.r5hsyc5osodpaals@linux.intel.com>
+Received: from mail-wr0-f175.google.com ([209.85.128.175]:45725 "EHLO
+        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935062AbdIZLRa (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 26 Sep 2017 07:17:30 -0400
+Received: by mail-wr0-f175.google.com with SMTP id m18so12816749wrm.2
+        for <linux-integrity@vger.kernel.org>; Tue, 26 Sep 2017 04:17:30 -0700 (PDT)
+Subject: Re: [tpmdd-devel] [PATCH v3 0/5] Call GetEventLog before
+ ExitBootServices
+To: Thiebaud Weksteen <tweek@google.com>, linux-efi@vger.kernel.org,
+        linux-integrity@vger.kernel.org, tpmdd-devel@lists.sourceforge.net
+Cc: ard.biesheuvel@linaro.org, matt@codeblueprint.co.uk,
+        linux-kernel@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
+        jgunthorpe@obsidianresearch.com, mjg59@google.com
 References: <20170920081340.7413-1-tweek@google.com>
- <20170920081340.7413-5-tweek@google.com>
+From: Javier Martinez Canillas <javierm@redhat.com>
+Message-ID: <ef8f75aa-4e63-edef-f0d3-4793b0bc6b27@redhat.com>
+Date: Tue, 26 Sep 2017 13:17:27 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170920081340.7413-5-tweek@google.com>
+In-Reply-To: <20170920081340.7413-1-tweek@google.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Sep 20, 2017 at 10:13:39AM +0200, Thiebaud Weksteen wrote:
-> With TPM 2.0 specification, the event logs may only be accessible by
-> calling an EFI Boot Service. Modify the EFI stub to copy the log area to
-> a new Linux-specific EFI configuration table so it remains accessible
-> once booted.
+On 09/20/2017 10:13 AM, Thiebaud Weksteen via tpmdd-devel wrote:
+> With TPM 1.2, the ACPI table ("TCPA") has two fields to recover the Event
+> Log Area (LAML and LASA). These logs are useful to understand and rebuild
+> the final values of PCRs.
 > 
-> When calling this service, it is possible to specify the expected format
-> of the logs: TPM 1.2 (SHA1) or TPM 2.0 ("Crypto Agile"). For now, only the
-> first format is retrieved.
+> With TPM 2.0, the ACPI table ("TPM2") does not contain these fields
+> anymore. The recommended method is now to call the GetEventLog EFI
+> protocol before ExitBootServices.
 > 
-> Signed-off-by: Thiebaud Weksteen <tweek@google.com>
+> Implement this method within the EFI stub and create a copy of the logs
+> for the TPM device using a Linux-specific EFI configuration table
+> (LINUX_EFI_TPM_EVENT_LOG). This will create
+> /sys/kernel/security/tpm0/binary_bios_measurements for TPM 2.0 devices
+> (similarly to the current behaviour for TPM 1.2 devices).
+> 
+> Two formats for the log entries exist: TPM 1.2 (SHA1) and TPM 2.0 (Crypto
+> Agile). This patch set only retrieves the first type of logs. The second
+> type will be implemented in a subsequent patch set.
+> 
+> According to the specifications[1], once GetEventLog has been called,
+> future events shall be stored in a separate EFI configuration table
+> (EFI_TCG2_FINAL_EVENTS_TABLE). Events stored in this table are not
+> processed in this patch set as they are stored in the Crypto Agile format.
+> These could eventually be merged with the new table for a unified view
+> of the logs from userspace.
+> 
+> [1] TCG EFI Protocol Specification, Revision 00.13, March 30, 2016
+>     https://trustedcomputinggroup.org/wp-content/uploads/EFI-Protocol-Specification-rev13-160330final.pdf
+> 
+> -------------------------------------------------------------------------------
+> 
+> Patchset Changelog:
+> 
+> Version 3:
+> - Move event log providers (acpi and of) to tpm_eventlog_*.c
+> - Move efi changes from PATCH 3 to PATCH 2
+> - Change return value of tpm_read_log_acpi and tpm_read_log_of
+> - Change iounmap to memunmap calls
+> - Use log_tbl as variable name for consistency
+> - Fix kbuild failures
+> 
 
-Does not apply:
+Thanks for addressing the things I pointed out. For the whole patch-set:
 
-Applying: tpm: move tpm_eventlog.h outside of drivers folder
-Applying: tpm: rename event log provider files
-Applying: tpm: add event log format version
-Applying: efi: call get_event_log before ExitBootServices
-error: sha1 information is lacking or useless (drivers/firmware/efi/efi.c).
-error: could not build fake ancestor
-Patch failed at 0004 efi: call get_event_log before ExitBootServices
-The copy of the patch that failed is found in: .git/rebase-apply/patch
-When you have resolved this problem, run "git am --continue".
-If you prefer to skip this patch, run "git am --skip" instead.
-To restore the original branch and stop patching, run "git am --abort".
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+Tested-by: Javier Martinez Canillas <javierm@redhat.com>
 
-Just rebased my tree to the latest security-next.
-
-/Jarkko
+Best regards,
+-- 
+Javier Martinez Canillas
+Software Engineer - Desktop Hardware Enablement
+Red Hat
