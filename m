@@ -1,27 +1,81 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-bl2nam02on0109.outbound.protection.outlook.com ([104.47.38.109]:2880
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935846AbdIZUWg (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Sep 2017 16:22:36 -0400
-From: Jork Loeser <Jork.Loeser@microsoft.com>
-To: "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Subject: TPM 2.0 CRB driver & locality
-Date: Tue, 26 Sep 2017 20:22:33 +0000
-Message-ID: <CY4PR21MB0631F0BEBFEC2B222AC69320F17B0@CY4PR21MB0631.namprd21.prod.outlook.com>
-Content-Type: text/plain; charset="us-ascii"
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60198 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S968158AbdIZTKg (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 26 Sep 2017 15:10:36 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v8QJA5pD028847
+        for <linux-integrity@vger.kernel.org>; Tue, 26 Sep 2017 15:10:36 -0400
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2d7u8hcxgd-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 26 Sep 2017 15:10:36 -0400
+Received: from localhost
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <kgold@linux.vnet.ibm.com>;
+        Tue, 26 Sep 2017 13:10:35 -0600
+Subject: Re: about context gap
+Cc: linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20170916153540.w5lpsqz3cwpd3enx@linux.intel.com>
+From: Ken Goldman <kgold@linux.vnet.ibm.com>
+Date: Tue, 26 Sep 2017 15:10:32 -0400
 MIME-Version: 1.0
+In-Reply-To: <20170916153540.w5lpsqz3cwpd3enx@linux.intel.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Message-Id: <f3d04c67-5470-e167-d186-755a56edf059@linux.vnet.ibm.com>
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hello,
+On 9/16/2017 11:36 AM, Jarkko Sakkinen wrote:
+> Hi
+> 
+> While sitting at the airport I started to think a bit about the context
+> gap issue.
+> 
+> I think first thing that would make sense would be to have a 64-bit
+> shadow count for every TPM space i.e.
+> 
+> atomic_long_t tpm2_ctx_cnt;
+> 
+> struct tpm2_space {
+> 	/* ... */
+> 	u64 ctx_cnt;
+> };
+> 
+> For every create and load of a session you will read the global count
+> and increase it. This way we have get a well defined order.
+> 
+> With this organization we could for example put tpm spaces to a
+> red-black tree and refresh the oldest tpm space (just first thought
+> that came to mind).
 
-We are running Linux under Hyper-V with its emulated vTPM (you might call it synthetic TPM). While the TPM itself adheres to the spec, it does not support localities. Consequently, the I/O block does not include the locality portion, and the control register offset is hence different in the TPM2.0 ACPI table from what the driver expects. This leads to below warning: 
+I think the algorithm is as follows:
 
-root@ubuntu:~# dmesg | grep tpm
-[    7.849077] tpm_crb VTPM0101:00: [Firmware Bug]: Bad ACPI memory layout
+1 - Each saved context has a sequence number.  It can either be 
+extracted once and saved in a table or extracted from the context blob 
+when needed.
 
-I wonder if a warning message of the form "Memory layout does not comply to PC-client-spec. Disabling locality support." might be more descriptive, perhaps with an additional comment in the source code.
+2 - When a startauthsession or contextload returns the 
+TPM_RC_CONTEXT_GAP error
 
-What do you think?
-Jork
+2A - find the lowest context blob sequence number
+2B - contextload it
+2C - contextsave it
+
+This is just for sessions, not objects.
+
+~~
+
+A fundamental design question is whether the application can call 
+contextsave for sessions, or whether the command is reserved for the 
+resource manager.
+
+I personally think it adds a lot of complication - the session blob has 
+to be sort of virtualized.  The use case - one application saving a 
+session, then handing it over to another application that loads it - 
+doesn't seem worth the complexity.
+
+It should be discussed up front, because it affects the code.
