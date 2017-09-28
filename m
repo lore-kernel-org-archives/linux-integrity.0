@@ -1,46 +1,134 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([65.50.211.133]:54358 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753116AbdI1NyS (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42844 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753200AbdI1MmS (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 28 Sep 2017 09:54:18 -0400
-Date: Thu, 28 Sep 2017 06:54:16 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Thu, 28 Sep 2017 08:42:18 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v8SCeTCs031031
+        for <linux-integrity@vger.kernel.org>; Thu, 28 Sep 2017 08:42:18 -0400
+Received: from e23smtp06.au.ibm.com (e23smtp06.au.ibm.com [202.81.31.148])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2d918yr7q2-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 28 Sep 2017 08:42:17 -0400
+Received: from localhost
+        by e23smtp06.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Thu, 28 Sep 2017 22:42:15 +1000
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: linux-security-module@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [RFC PATCH 1/3] fs: define new read_iter rwf flag
-Message-ID: <20170928135416.GA30859@bombadil.infradead.org>
+        Jan Kara <jack@suse.cz>, "Theodore Ts'o" <tytso@mit.edu>
+Subject: [RFC PATCH 3/3] fs: detect that the i_rwsem has already been taken exclusively
+Date: Thu, 28 Sep 2017 08:39:33 -0400
+In-Reply-To: <1506602373-4799-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1506602373-4799-1-git-send-email-zohar@linux.vnet.ibm.com>
- <1506602373-4799-2-git-send-email-zohar@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1506602373-4799-2-git-send-email-zohar@linux.vnet.ibm.com>
+Message-Id: <1506602373-4799-4-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Sep 28, 2017 at 08:39:31AM -0400, Mimi Zohar wrote:
-> Writing extended attributes requires exclusively taking the i_rwsem
-> lock.  To synchronize the file hash calculation and writing the file
-> hash as security.ima xattr, IMA-appraisal takes the i_rwsem lock
-> exclusively before calculating the file hash.  (Once the file hash
-> is calculated, the result is cached.  Taking the lock exclusively
-> prevents calculating the file hash multiple times.)
-> 
-> Some filesystems have recently replaced their filesystem dependent
-> lock with the global i_rwsem to read a file.  As a result, when IMA
-> attempts to calculate the file hash, reading the file attempts to
-> take the i_rwsem again.
-> 
-> To resolve this problem, this patch defines a new read_iter flag
-> named "rwf" to indicate that the i_rwsem has already been taken
-> exclusively.  Subsequent patches will set or test the "rwf" flag.
+Don't attempt to take the i_rwsem, if it has already been taken
+exclusively.
 
-I don't like adding a bool parameter everywhere.  Why not add a flag
-to the kiocb ki_flags?
+Signed-off-by:  Mimi Zohar <zohar@linux.vnet.ibm.com>
+---
+ fs/ext2/file.c    |  6 ++++--
+ fs/ext4/file.c    |  8 +++++---
+ fs/xfs/xfs_file.c | 10 ++++++----
+ 3 files changed, 15 insertions(+), 9 deletions(-)
 
-#define IOCB_RWSEM_HELD		(1 << 8)
+diff --git a/fs/ext2/file.c b/fs/ext2/file.c
+index 839095f66d8d..d174b2880929 100644
+--- a/fs/ext2/file.c
++++ b/fs/ext2/file.c
+@@ -38,9 +38,11 @@ static ssize_t ext2_dax_read_iter(struct kiocb *iocb, struct iov_iter *to,
+ 	if (!iov_iter_count(to))
+ 		return 0; /* skip atime */
+ 
+-	inode_lock_shared(inode);
++	if (!rwf)
++		inode_lock_shared(inode);
+ 	ret = dax_iomap_rw(iocb, to, &ext2_iomap_ops);
+-	inode_unlock_shared(inode);
++	if (!rwf)
++		inode_unlock_shared(inode);
+ 
+ 	file_accessed(iocb->ki_filp);
+ 	return ret;
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index 10789666725e..7d7c0e380add 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -38,7 +38,7 @@ static ssize_t ext4_dax_read_iter(struct kiocb *iocb, struct iov_iter *to,
+ 	struct inode *inode = file_inode(iocb->ki_filp);
+ 	ssize_t ret;
+ 
+-	if (!inode_trylock_shared(inode)) {
++	if (!rwf && !inode_trylock_shared(inode)) {
+ 		if (iocb->ki_flags & IOCB_NOWAIT)
+ 			return -EAGAIN;
+ 		inode_lock_shared(inode);
+@@ -48,12 +48,14 @@ static ssize_t ext4_dax_read_iter(struct kiocb *iocb, struct iov_iter *to,
+ 	 * change anymore
+ 	 */
+ 	if (!IS_DAX(inode)) {
+-		inode_unlock_shared(inode);
++		if (!rwf)
++			inode_unlock_shared(inode);
+ 		/* Fallback to buffered IO in case we cannot support DAX */
+ 		return generic_file_read_iter(iocb, to, rwf);
+ 	}
+ 	ret = dax_iomap_rw(iocb, to, &ext4_iomap_ops);
+-	inode_unlock_shared(inode);
++	if (!rwf)
++		inode_unlock_shared(inode);
+ 
+ 	file_accessed(iocb->ki_filp);
+ 	return ret;
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index cf1ce8961601..0cffca97ed68 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -239,7 +239,7 @@ xfs_file_dax_read(
+ 	if (!count)
+ 		return 0; /* skip atime */
+ 
+-	if (!xfs_ilock_nowait(ip, XFS_IOLOCK_SHARED)) {
++	if (!rwf && !xfs_ilock_nowait(ip, XFS_IOLOCK_SHARED)) {
+ 		if (iocb->ki_flags & IOCB_NOWAIT)
+ 			return -EAGAIN;
+ 		xfs_ilock(ip, XFS_IOLOCK_SHARED);
+@@ -247,7 +247,8 @@ xfs_file_dax_read(
+ 	ret = dax_iomap_rw(iocb, to, &xfs_iomap_ops);
+ 	xfs_iunlock(ip, XFS_IOLOCK_SHARED);
+ 
+-	file_accessed(iocb->ki_filp);
++	if (!rwf)
++		file_accessed(iocb->ki_filp);
+ 	return ret;
+ }
+ 
+@@ -262,13 +263,14 @@ xfs_file_buffered_aio_read(
+ 
+ 	trace_xfs_file_buffered_read(ip, iov_iter_count(to), iocb->ki_pos);
+ 
+-	if (!xfs_ilock_nowait(ip, XFS_IOLOCK_SHARED)) {
++	if (!rwf && !xfs_ilock_nowait(ip, XFS_IOLOCK_SHARED)) {
+ 		if (iocb->ki_flags & IOCB_NOWAIT)
+ 			return -EAGAIN;
+ 		xfs_ilock(ip, XFS_IOLOCK_SHARED);
+ 	}
+ 	ret = generic_file_read_iter(iocb, to, rwf);
+-	xfs_iunlock(ip, XFS_IOLOCK_SHARED);
++	if (!rwf)
++		xfs_iunlock(ip, XFS_IOLOCK_SHARED);
+ 
+ 	return ret;
+ }
+-- 
+2.7.4
