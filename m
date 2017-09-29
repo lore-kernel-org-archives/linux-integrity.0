@@ -1,69 +1,32 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:35638 "EHLO mga01.intel.com"
+Received: from mga14.intel.com ([192.55.52.115]:25541 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751828AbdI2RQY (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 29 Sep 2017 13:16:24 -0400
-Date: Fri, 29 Sep 2017 20:16:17 +0300
+        id S1751975AbdI2Q7j (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 29 Sep 2017 12:59:39 -0400
+Date: Fri, 29 Sep 2017 19:59:33 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Thiebaud Weksteen <tweek@google.com>
-Cc: linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        linux-kernel@vger.kernel.org, Matthew Garrett <mjg59@google.com>,
-        peterhuewe@gmx.de,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        tpmdd@selhorst.net
-Subject: Re: [PATCH v3 4/5] efi: call get_event_log before ExitBootServices
-Message-ID: <20170929171617.yq4dvn66czvnebns@linux.intel.com>
-References: <20170920081340.7413-1-tweek@google.com>
- <20170920081340.7413-5-tweek@google.com>
- <20170926114538.r5hsyc5osodpaals@linux.intel.com>
- <CA+zpnLcYWcO8Gf6b8rAHgcLkAndC0uyPH+Kxa01giVsochP3Ug@mail.gmail.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>, peterhuewe@gmx.de
+Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: update TPM driver infrastructure changes
+Message-ID: <20170929165933.vjvzyb6e7c6xd6r7@linux.intel.com>
+References: <20170915223811.21368-1-jarkko.sakkinen@linux.intel.com>
+ <1506442580.3677.97.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CA+zpnLcYWcO8Gf6b8rAHgcLkAndC0uyPH+Kxa01giVsochP3Ug@mail.gmail.com>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1506442580.3677.97.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Sep 26, 2017 at 02:49:31PM +0200, Thiebaud Weksteen wrote:
-> On Tue, Sep 26, 2017 at 1:45 PM, Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> > On Wed, Sep 20, 2017 at 10:13:39AM +0200, Thiebaud Weksteen wrote:
-> >> With TPM 2.0 specification, the event logs may only be accessible by
-> >> calling an EFI Boot Service. Modify the EFI stub to copy the log area to
-> >> a new Linux-specific EFI configuration table so it remains accessible
-> >> once booted.
-> >>
-> >> When calling this service, it is possible to specify the expected format
-> >> of the logs: TPM 1.2 (SHA1) or TPM 2.0 ("Crypto Agile"). For now, only the
-> >> first format is retrieved.
-> >>
-> >> Signed-off-by: Thiebaud Weksteen <tweek@google.com>
-> >
-> > Does not apply:
-> >
-> > Applying: tpm: move tpm_eventlog.h outside of drivers folder
-> > Applying: tpm: rename event log provider files
-> > Applying: tpm: add event log format version
-> > Applying: efi: call get_event_log before ExitBootServices
-> > error: sha1 information is lacking or useless (drivers/firmware/efi/efi.c).
-> > error: could not build fake ancestor
-> > Patch failed at 0004 efi: call get_event_log before ExitBootServices
-> > The copy of the patch that failed is found in: .git/rebase-apply/patch
-> > When you have resolved this problem, run "git am --continue".
-> > If you prefer to skip this patch, run "git am --skip" instead.
-> > To restore the original branch and stop patching, run "git am --abort".
-> >
-> > Just rebased my tree to the latest security-next.
+On Tue, Sep 26, 2017 at 12:16:20PM -0400, Mimi Zohar wrote:
+> Hi Jarkko,
 > 
-> It applies fine on security/next-general which is more up-to-date.
-> (security/next does not include
-> ccc829ba3624beb9a703fc995d016b836d9eead8 on which this patch set is
-> based)
+> > +Q:	https://patchwork.kernel.org/project/linux-integrity/list/
+> 
+> Is there a way of viewing not just the posted patches, but the
+> discussion as well?  Do we need to set up an archive as well?
+> 
+> Mimi
 
-Thanks, my bad, I though that I had it updated.
-
-I'll update my tree and retry.
+Peter, did you setup archiving?
 
 /Jarkko
