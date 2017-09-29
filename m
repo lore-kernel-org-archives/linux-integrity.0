@@ -1,60 +1,36 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from out03.mta.xmission.com ([166.70.13.233]:36234 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751264AbdJABdw (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 30 Sep 2017 21:33:52 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dave Chinner <david@fromorbit.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, "Theodore Ts'o" <tytso@mit.edu>
-References: <1506602373-4799-1-git-send-email-zohar@linux.vnet.ibm.com>
-        <1506602373-4799-4-git-send-email-zohar@linux.vnet.ibm.com>
-        <20170928220215.GC15067@dastard>
-        <CA+55aFy-kDL5jQb0q2gHkcmhAwMatEf8YPx8Gh=yGp_VMoVxQA@mail.gmail.com>
-        <1506643967.5691.46.camel@linux.vnet.ibm.com>
-        <CA+55aFxqpTbC=sZXrbJ0x1OD-UA1NkejuR_s5LCazp+7yzvi3Q@mail.gmail.com>
-        <1506649980.5691.100.camel@linux.vnet.ibm.com>
-        <CA+55aFzZXBBn+HgLD_4C6DgpSiOMAP2WzuGPWRUkEXZJuz+QBQ@mail.gmail.com>
-Date: Sat, 30 Sep 2017 20:33:36 -0500
-In-Reply-To: <CA+55aFzZXBBn+HgLD_4C6DgpSiOMAP2WzuGPWRUkEXZJuz+QBQ@mail.gmail.com>
-        (Linus Torvalds's message of "Thu, 28 Sep 2017 20:26:15 -0700")
-Message-ID: <87mv5blki7.fsf@xmission.com>
+Received: from mga02.intel.com ([134.134.136.20]:28123 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752485AbdI2UXe (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 29 Sep 2017 16:23:34 -0400
+Date: Fri, 29 Sep 2017 23:23:13 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Peter.Huewe@infineon.com
+Cc: zohar@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, peterhuewe@gmx.de
+Subject: Re: [PATCH] MAINTAINERS: update TPM driver infrastructure changes
+Message-ID: <20170929202313.6g46pv7j3sp7z73q@linux.intel.com>
+References: <20170915223811.21368-1-jarkko.sakkinen@linux.intel.com>
+ <1506442580.3677.97.camel@linux.vnet.ibm.com>
+ <31979c8601c5472f9ba413375e034b34@infineon.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Subject: Re: [RFC PATCH 3/3] fs: detect that the i_rwsem has already been taken exclusively
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <31979c8601c5472f9ba413375e034b34@infineon.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+On Fri, Sep 29, 2017 at 08:29:09AM +0000, Peter.Huewe@infineon.com wrote:
+> >> +Q:  https://patchwork.kernel.org/project/linux-integrity/list/
+> > Is there a way of viewing not just the posted patches, but the discussion as well?  Do we need to set up an archive as well?
+> Spinics is archiving us at
+> https://www.spinics.net/lists/linux-integrity/
+> 
+> It would be good to add this to the vger page + documented on the wiki, which should be added to MAINTAINERS.
+> http://kernsec.org/wiki/index.php/Linux_Kernel_Integrity as wiki page
+> 
+> 
+> Peter
 
-> On Thu, Sep 28, 2017 at 6:53 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
->>
->> The locking issue isn't with validating the file hash, but with the
->> setxattr, chmod, chown syscalls.  Each of these syscalls takes the
->> i_rwsem exclusively before IMA (or EVM) is called.
->
-> Read my email again.
->
->> In setxattr, chmod, chown syscalls, IMA (and EVM) are called after the
->> i_rwsem is already taken.  So the locking would be:
->>
->> lock: i_rwsem
->> lock: iint->mutex
->
-> No.
->
-> Two locks. One inner, one outer. Only the actual ones that calculates
-> the hash would take the outer one. Read my email.
+Can you submit a follow-up patch that adds this information?
 
-That would require a task_work or another kind of work callback so that
-the writes of the xattr are not synchronous with the vfs callback
-correct?
-
-Eric
+/Jarkko
