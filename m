@@ -1,114 +1,93 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41534 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752572AbdI2Tpn (ORCPT
+Received: from mail-it0-f49.google.com ([209.85.214.49]:46058 "EHLO
+        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751972AbdI2TR2 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 29 Sep 2017 15:45:43 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v8TJhw7a159853
-        for <linux-integrity@vger.kernel.org>; Fri, 29 Sep 2017 15:45:42 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2d9rpdupw7-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 29 Sep 2017 15:45:42 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <pau@linux.vnet.ibm.com>;
-        Fri, 29 Sep 2017 15:45:41 -0400
+        Fri, 29 Sep 2017 15:17:28 -0400
+Received: by mail-it0-f49.google.com with SMTP id x15so962369itb.0
+        for <linux-integrity@vger.kernel.org>; Fri, 29 Sep 2017 12:17:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Date: Fri, 29 Sep 2017 15:49:44 -0400
-From: pau <pau@linux.vnet.ibm.com>
-To: Peter Huewe <PeterHuewe@gmx.de>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org
-Subject: Re: Aw: Re:  Re:  tpm_tis_spi gets initialized long after IMA
-In-Reply-To: <trinity-14f61785-1f5f-4f45-9b7e-5cd197936a6d-1506710663754@3c-app-gmx-bs57>
-References: <trinity-d76a5983-fa13-4ac4-8e48-d94d22a80e86-1506633490200@3c-app-gmx-bs75>
- <trinity-e306a773-6b97-4508-8894-89da4b67f01f-1506634575541@3c-app-gmx-bs75>
- <1506647389.5691.76.camel@linux.vnet.ibm.com>
- <trinity-868e9e34-679a-4aff-97a3-9edf65a2fcda-1506673263842@3c-app-gmx-bs15>
- <1506685208.5691.109.camel@linux.vnet.ibm.com>
- <trinity-14f61785-1f5f-4f45-9b7e-5cd197936a6d-1506710663754@3c-app-gmx-bs57>
-Message-Id: <44c1e36d3113badfe4b76fcdafbb6df7@linux.vnet.ibm.com>
+In-Reply-To: <1506711726.5691.141.camel@linux.vnet.ibm.com>
+References: <20170927221653.11219-1-mjg59@google.com> <1506629560.5691.33.camel@linux.vnet.ibm.com>
+ <CACdnJuuveRvCx57ZnYmRWbiwh3XU7AbxZD2W-Gq_dh_h_6L9Mg@mail.gmail.com>
+ <1506646397.5691.64.camel@linux.vnet.ibm.com> <CACdnJuueNfLdDnCsmotGhLC58cJXXh35FeZzipJ_ZshScPM=qA@mail.gmail.com>
+ <1506711726.5691.141.camel@linux.vnet.ibm.com>
+From: Matthew Garrett <mjg59@google.com>
+Date: Fri, 29 Sep 2017 12:17:27 -0700
+Message-ID: <CACdnJuvYNnePfz4H-D=DGMHbrbmZ52JWFoLqX120ALV=o4wwcw@mail.gmail.com>
+Subject: Re: RFC: Make it practical to ship EVM signatures
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org,
+        Mikhail Kurinnoi <viewizard@viewizard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 2017-09-29 14:44, Peter Huewe wrote:
-> Hi Mimi, Hi Nayna,
-> 
-> 
->> The patch replaces the call to builtin_platform_driver(), with a call
->> to core_initcall().
-> 
->> https://github.com/raspberrypi/linux/blob/rpi-4.8.y/drivers/clk/bcm/cl
->> k-bcm2835.c
-> 
->> static int __init __bcm2835_clk_driver_init(void)
->> {
->> return platform_driver_register(&bcm2835_clk_driver);
->> }
->> core_initcall(__bcm2835_clk_driver_init);
-> 
-> Ah it is already in the rpi sources - however I *am* using these, but
-> it does not work?
-> Any ideas or pointers highly appreciated.
-> 
+On Fri, Sep 29, 2017 at 12:02 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> On Fri, 2017-09-29 at 11:09 -0700, Matthew Garrett wrote:
+>> On Thu, Sep 28, 2017 at 5:53 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+>> > Without the inode included in the HMAC calculation, the same file
+>> > could exist as a different file name on the same file system.  No need
+>> > for the two files to be on different file systems.
+>>
+>> But if I create a hardlink to an existing file then I get the same
+>> file with the same inode number and two different names on the same
+>> filesystem, and so security.evm would still match?
+>
+> True, with a hard link that would be the case, but by the same file, I
+> meant a copy of the original file, not a hard link to the file.
 
-Peter,
+The difference doesn't seem that great, really? If I can copy a file
+while retaining ownership, I can create a hardlink.
 
-     I made TPM work on my RPI 3 Model B running a version of rpi-4.8.y.
+>> > Assuming you're using a trusted key (TPM based key) to encrypt/decrypt
+>> > the EVM key (trusted key), then such an attack would require root
+>> > privileges with the ability to read kernel memory.  The EVM key is
+>> > never exposed to userspace in the clear.
+>>
+>> That's a case that we need to be worried about. Trusted boot means we
+>> can ensure that a system boots an updated kernel, but if the attacker
+>> has been able to drop a modified sshd with a valid hmac onto the
+>> system then we have fewer guarantees about the integrity. We could
+>> continue using signatures for security.ima to avoid that, but then we
+>> lose the performance benefits of the hmac and also don't have the same
+>> level of guarantees around the other security metadata.
+>
+> I think you mean "secure boot", not "trusted boot", in this case.
 
-     From the dmesg you provided in the previous email, there could be
-     several possible reasons why the kernel is not detecting the
-     TPM-SPI chip :
+No, trusted - secure boot wouldn't reliably tell us which version of a
+kernel had booted, trusted boot will.
 
-     1. The SPI bus is not enabled on the Pi. You can use the 
-raspi-config
-        command with sudo.
+> The original understanding was that IMA/EVM would enforce integrity
+> and not enforce mandatory access control (MAC).  The LSMs (eg.
+> SELinux) would be responsible for MAC.  Separation of duties.
 
-           sudo raspi-config
-            then select Advanced Options,
-            then select SPI.
+The kernel's security track record isn't sufficient to be able to
+assert that any kernel secrets can be kept secret, so we're left
+wanting integrity guarantees without relying on that.
 
-        
-https://www.raspberrypi.org/documentation/configuration/raspi-config.md
+> With that understanding, if the LSM allows a file to be "dropped" onto
+>  the file system of a running system, IMA/EVM will hash and hmac the
+> permitted file.
+>
+> I don't understand where you're going with this train of thought.  If
+> you're trying to make a case for EVM to run with only security.evm
+> signatures, then you wouldn't refer to the HMAC benefits.  If you're
+> trying to make a case for EVM signatures, with the inode they're not
+> portable, without the inode, they are susceptible to a cut and paste
+> attack.
 
-     2. A node for the TPM chip is not properly added to the device tree.
+I'm arguing that (for our case at least) the only way we can use IMA
+is to rely on using a digital signature - we can either have that
+digital signature be in security.ima, or we can have it in
+security.evm. Since we need that signature in any case, we derive no
+benefit from having security.evm be an hmac - our two reasonable
+choices are:
 
-     3. A node is added to the device tree source, but it is not compiled 
-into
-        binary from.
+1) security.ima as a digital signature, security.evm as an hmac
+2) security.ima as a hash, security.evm as a digital signature
 
-     4. The node is compiled, but you did not tell the kernel to use it 
-during boot.
-
-         The binary overlay files (.dtbo) are placed under 
-/boot/overlays.
-         To activate the TPM overlay, place the line
-
-             dtoverlay=tpm_tis_spi
-
-         in /boot/config.txt.
-
-         But first make sure there is this file 
-/boot/overlays/tpm_tis_spi.dtbo
-
-
-     Regarding device tree (points 2. and 3.), it is more involved and I 
-did not have
-     time now to give a detailed answer. But as a starter, besides the 
-dmesg msgs in
-     your previous email, did dmesg give any other message on TPM ?
-
-     Also, it is possible that TPM initialization was delayed but 
-eventually completed
-     at a later time during boot (although not in time for IMA). After 
-the completion
-     of the boot process, is there a /dev/tpm0 char special file (or 
-/dev/tpm*) ?
-
-
-  Pau-Chen
+I'm not really clear on what attacks are prevented by using the inode
+number. If I'm able to preserve all the other security metadata when
+copying a file, I can just create a hardlink to the original instead
+and have the same outcome.
