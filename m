@@ -1,45 +1,50 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.15.18]:50095 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750967AbdI2IVI (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 29 Sep 2017 04:21:08 -0400
+Received: from mail-it0-f48.google.com ([209.85.214.48]:48909 "EHLO
+        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751436AbdI2D0R (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 28 Sep 2017 23:26:17 -0400
 MIME-Version: 1.0
-Message-ID: <trinity-868e9e34-679a-4aff-97a3-9edf65a2fcda-1506673263842@3c-app-gmx-bs15>
-From: "Peter Huewe" <PeterHuewe@gmx.de>
-To: "Mimi Zohar" <zohar@linux.vnet.ibm.com>
-Cc: "Nayna Jain" <nayna@linux.vnet.ibm.com>, pau@linux.vnet.ibm.com,
-        linux-integrity@vger.kernel.org
-Subject: Aw: Re:  tpm_tis_spi gets initialized long after IMA
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 29 Sep 2017 10:21:03 +0200
-In-Reply-To: <1506647389.5691.76.camel@linux.vnet.ibm.com>
-References: <trinity-d76a5983-fa13-4ac4-8e48-d94d22a80e86-1506633490200@3c-app-gmx-bs75>
- <trinity-e306a773-6b97-4508-8894-89da4b67f01f-1506634575541@3c-app-gmx-bs75>
- <1506647389.5691.76.camel@linux.vnet.ibm.com>
+In-Reply-To: <1506649980.5691.100.camel@linux.vnet.ibm.com>
+References: <1506602373-4799-1-git-send-email-zohar@linux.vnet.ibm.com>
+ <1506602373-4799-4-git-send-email-zohar@linux.vnet.ibm.com>
+ <20170928220215.GC15067@dastard> <CA+55aFy-kDL5jQb0q2gHkcmhAwMatEf8YPx8Gh=yGp_VMoVxQA@mail.gmail.com>
+ <1506643967.5691.46.camel@linux.vnet.ibm.com> <CA+55aFxqpTbC=sZXrbJ0x1OD-UA1NkejuR_s5LCazp+7yzvi3Q@mail.gmail.com>
+ <1506649980.5691.100.camel@linux.vnet.ibm.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 28 Sep 2017 20:26:15 -0700
+Message-ID: <CA+55aFzZXBBn+HgLD_4C6DgpSiOMAP2WzuGPWRUkEXZJuz+QBQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/3] fs: detect that the i_rwsem has already been
+ taken exclusively
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Dave Chinner <david@fromorbit.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, "Theodore Ts'o" <tytso@mit.edu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Mimi,
+On Thu, Sep 28, 2017 at 6:53 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+>
+> The locking issue isn't with validating the file hash, but with the
+> setxattr, chmod, chown syscalls.  Each of these syscalls takes the
+> i_rwsem exclusively before IMA (or EVM) is called.
 
-On Thu, 2017-09-28 at 23:36 +0200, Peter Huewe wrote:
->> Okay,
->> first error - CONFIG_SPI_BCM2835 has to be compiled in.
->> That explains the 2.5 sec.
+Read my email again.
 
-> Last December we were able to initialize the TPM before IMA.   It
-> required commit 29c7854 - "Register the clocks early during the boot
-> process, so that special/critical clocks can get enabled early
-> on in the boot process avoiding the risk of disabling a clock,
-> pll_divider or pll when a claiming driver fails to install
-> propperly - maybe it needs to defer."
+> In setxattr, chmod, chown syscalls, IMA (and EVM) are called after the
+> i_rwsem is already taken.  So the locking would be:
+>
+> lock: i_rwsem
+> lock: iint->mutex
 
-> We built a custom kernel with both commit 29c7854 and building in
-> BCM2835_SPI (thanks Nayna).
+No.
 
-To which tree is the commit id related to?
-i.e. where can I find the patch?
+Two locks. One inner, one outer. Only the actual ones that calculates
+the hash would take the outer one. Read my email.
 
-Searching for it I found only some rejected versions of the patch.
-
-Thanks,
-Peter
+           Linus
