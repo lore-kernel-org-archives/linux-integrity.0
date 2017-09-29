@@ -1,42 +1,53 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.17.20]:49810 "EHLO mout.gmx.net"
+Received: from mout.gmx.net ([212.227.17.22]:53623 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752351AbdI2So1 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 29 Sep 2017 14:44:27 -0400
+        id S1752448AbdI2Sbi (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 29 Sep 2017 14:31:38 -0400
 MIME-Version: 1.0
-Message-ID: <trinity-14f61785-1f5f-4f45-9b7e-5cd197936a6d-1506710663754@3c-app-gmx-bs57>
+Message-ID: <trinity-091f53ec-a37e-46a1-9650-1a5d2022f2bb-1506709890307@3c-app-gmx-bs57>
 From: "Peter Huewe" <PeterHuewe@gmx.de>
-To: "Mimi Zohar" <zohar@linux.vnet.ibm.com>
-Cc: "Nayna Jain" <nayna@linux.vnet.ibm.com>, pau@linux.vnet.ibm.com,
-        linux-integrity@vger.kernel.org
-Subject: Aw: Re:  Re:  tpm_tis_spi gets initialized long after IMA
+To: "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
+Cc: "Mimi Zohar" <zohar@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+Subject: Aw: Re: [PATCH] MAINTAINERS: update TPM driver infrastructure
+ changes
 Content-Type: text/plain; charset=UTF-8
-Date: Fri, 29 Sep 2017 20:44:23 +0200
-In-Reply-To: <1506685208.5691.109.camel@linux.vnet.ibm.com>
-References: <trinity-d76a5983-fa13-4ac4-8e48-d94d22a80e86-1506633490200@3c-app-gmx-bs75>
- <trinity-e306a773-6b97-4508-8894-89da4b67f01f-1506634575541@3c-app-gmx-bs75>
- <1506647389.5691.76.camel@linux.vnet.ibm.com>
- <trinity-868e9e34-679a-4aff-97a3-9edf65a2fcda-1506673263842@3c-app-gmx-bs15>
- <1506685208.5691.109.camel@linux.vnet.ibm.com>
+Date: Fri, 29 Sep 2017 20:31:30 +0200
+In-Reply-To: <20170929165933.vjvzyb6e7c6xd6r7@linux.intel.com>
+References: <20170915223811.21368-1-jarkko.sakkinen@linux.intel.com>
+ <1506442580.3677.97.camel@linux.vnet.ibm.com>
+ <20170929165933.vjvzyb6e7c6xd6r7@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Mimi, Hi Nayna,
+
+ 
+ 
+
+Gesendet: Freitag, 29. September 2017 um 18:59 Uhr
+Von: "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
+An: "Mimi Zohar" <zohar@linux.vnet.ibm.com>, peterhuewe@gmx.de
+Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+Betreff: Re: [PATCH] MAINTAINERS: update TPM driver infrastructure changes
+On Tue, Sep 26, 2017 at 12:16:20PM -0400, Mimi Zohar wrote:
+> Hi Jarkko,
+>
+> > +Q: https://patchwork.kernel.org/project/linux-integrity/list/
+>
+> Is there a way of viewing not just the posted patches, but the
+> discussion as well?  Do we need to set up an archive as well?
+>
+> Mimi
+
+> Peter, did you setup archiving?
+Jarkko, did you read my other email?
+
+/Peter
 
 
-> The patch replaces the call to builtin_platform_driver(), with a call
-> to core_initcall().
+p.s.: 
+Spinics is archiving us at
+https://www.spinics.net/lists/linux-integrity/[https://www.spinics.net/lists/linux-integrity/]
 
-> https://github.com/raspberrypi/linux/blob/rpi-4.8.y/drivers/clk/bcm/cl
-> k-bcm2835.c
-
-> static int __init __bcm2835_clk_driver_init(void)
-> {
-> return platform_driver_register(&bcm2835_clk_driver);
-> }
-> core_initcall(__bcm2835_clk_driver_init);
-
-Ah it is already in the rpi sources - however I *am* using these, but it does not work?
-Any ideas or pointers highly appreciated.
-
-Peter
+It would be good to add this to the vger page + documented on the wiki, which should be added to MAINTAINERS.
+http://kernsec.org/wiki/index.php/Linux_Kernel_Integrity[http://kernsec.org/wiki/index.php/Linux_Kernel_Integrity] as wiki page
