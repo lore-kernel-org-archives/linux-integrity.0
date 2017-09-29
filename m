@@ -1,94 +1,114 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38468 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41534 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752155AbdI2UDJ (ORCPT
+        by vger.kernel.org with ESMTP id S1752572AbdI2Tpn (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 29 Sep 2017 16:03:09 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v8TJx5WD040615
-        for <linux-integrity@vger.kernel.org>; Fri, 29 Sep 2017 16:03:09 -0400
-Received: from e23smtp06.au.ibm.com (e23smtp06.au.ibm.com [202.81.31.148])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2d9sqaghv8-1
+        Fri, 29 Sep 2017 15:45:43 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v8TJhw7a159853
+        for <linux-integrity@vger.kernel.org>; Fri, 29 Sep 2017 15:45:42 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2d9rpdupw7-1
         (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 29 Sep 2017 16:03:09 -0400
+        for <linux-integrity@vger.kernel.org>; Fri, 29 Sep 2017 15:45:42 -0400
 Received: from localhost
-        by e23smtp06.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Sat, 30 Sep 2017 06:03:05 +1000
-Received: from d23av02.au.ibm.com (d23av02.au.ibm.com [9.190.235.138])
-        by d23relay10.au.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id v8TK1mKa52756480
-        for <linux-integrity@vger.kernel.org>; Sat, 30 Sep 2017 06:01:48 +1000
-Received: from d23av02.au.ibm.com (localhost [127.0.0.1])
-        by d23av02.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id v8TK1dAo014919
-        for <linux-integrity@vger.kernel.org>; Sat, 30 Sep 2017 06:01:39 +1000
-Subject: Re: RFC: Make it practical to ship EVM signatures
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Matthew Garrett <mjg59@google.com>
-Cc: linux-integrity@vger.kernel.org,
-        Mikhail Kurinnoi <viewizard@viewizard.com>
-Date: Fri, 29 Sep 2017 16:01:44 -0400
-In-Reply-To: <CACdnJuvYNnePfz4H-D=DGMHbrbmZ52JWFoLqX120ALV=o4wwcw@mail.gmail.com>
-References: <20170927221653.11219-1-mjg59@google.com>
-         <1506629560.5691.33.camel@linux.vnet.ibm.com>
-         <CACdnJuuveRvCx57ZnYmRWbiwh3XU7AbxZD2W-Gq_dh_h_6L9Mg@mail.gmail.com>
-         <1506646397.5691.64.camel@linux.vnet.ibm.com>
-         <CACdnJuueNfLdDnCsmotGhLC58cJXXh35FeZzipJ_ZshScPM=qA@mail.gmail.com>
-         <1506711726.5691.141.camel@linux.vnet.ibm.com>
-         <CACdnJuvYNnePfz4H-D=DGMHbrbmZ52JWFoLqX120ALV=o4wwcw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1506715304.5691.151.camel@linux.vnet.ibm.com>
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <pau@linux.vnet.ibm.com>;
+        Fri, 29 Sep 2017 15:45:41 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Fri, 29 Sep 2017 15:49:44 -0400
+From: pau <pau@linux.vnet.ibm.com>
+To: Peter Huewe <PeterHuewe@gmx.de>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org
+Subject: Re: Aw: Re:  Re:  tpm_tis_spi gets initialized long after IMA
+In-Reply-To: <trinity-14f61785-1f5f-4f45-9b7e-5cd197936a6d-1506710663754@3c-app-gmx-bs57>
+References: <trinity-d76a5983-fa13-4ac4-8e48-d94d22a80e86-1506633490200@3c-app-gmx-bs75>
+ <trinity-e306a773-6b97-4508-8894-89da4b67f01f-1506634575541@3c-app-gmx-bs75>
+ <1506647389.5691.76.camel@linux.vnet.ibm.com>
+ <trinity-868e9e34-679a-4aff-97a3-9edf65a2fcda-1506673263842@3c-app-gmx-bs15>
+ <1506685208.5691.109.camel@linux.vnet.ibm.com>
+ <trinity-14f61785-1f5f-4f45-9b7e-5cd197936a6d-1506710663754@3c-app-gmx-bs57>
+Message-Id: <44c1e36d3113badfe4b76fcdafbb6df7@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 2017-09-29 at 12:17 -0700, Matthew Garrett wrote:
-
-> > The original understanding was that IMA/EVM would enforce integrity
-> > and not enforce mandatory access control (MAC).  The LSMs (eg.
-> > SELinux) would be responsible for MAC.  Separation of duties.
+On 2017-09-29 14:44, Peter Huewe wrote:
+> Hi Mimi, Hi Nayna,
 > 
-> The kernel's security track record isn't sufficient to be able to
-> assert that any kernel secrets can be kept secret, so we're left
-> wanting integrity guarantees without relying on that.
 > 
-> > With that understanding, if the LSM allows a file to be "dropped" onto
-> >  the file system of a running system, IMA/EVM will hash and hmac the
-> > permitted file.
-> >
-> > I don't understand where you're going with this train of thought.  If
-> > you're trying to make a case for EVM to run with only security.evm
-> > signatures, then you wouldn't refer to the HMAC benefits.  If you're
-> > trying to make a case for EVM signatures, with the inode they're not
-> > portable, without the inode, they are susceptible to a cut and paste
-> > attack.
+>> The patch replaces the call to builtin_platform_driver(), with a call
+>> to core_initcall().
 > 
-> I'm arguing that (for our case at least) the only way we can use IMA
-> is to rely on using a digital signature - we can either have that
-> digital signature be in security.ima, or we can have it in
-> security.evm. Since we need that signature in any case, we derive no
-> benefit from having security.evm be an hmac - our two reasonable
-> choices are:
+>> https://github.com/raspberrypi/linux/blob/rpi-4.8.y/drivers/clk/bcm/cl
+>> k-bcm2835.c
 > 
-> 1) security.ima as a digital signature, security.evm as an hmac
-> 2) security.ima as a hash, security.evm as a digital signature
+>> static int __init __bcm2835_clk_driver_init(void)
+>> {
+>> return platform_driver_register(&bcm2835_clk_driver);
+>> }
+>> core_initcall(__bcm2835_clk_driver_init);
+> 
+> Ah it is already in the rpi sources - however I *am* using these, but
+> it does not work?
+> Any ideas or pointers highly appreciated.
+> 
 
-There's a major difference between security.ima containing a file hash
-vs a signature.  A signature, assuming the file_check hook is in
-policy, prevents the file from being modified, making the file
-"immutable".
+Peter,
 
-> I'm not really clear on what attacks are prevented by using the inode
-> number. If I'm able to preserve all the other security metadata when
-> copying a file, I can just create a hardlink to the original instead
-> and have the same outcome.
+     I made TPM work on my RPI 3 Model B running a version of rpi-4.8.y.
 
-The issue is the ability of having different security metadata, not
-the same security metadata. (I need to refresh my memory as to hard
-links, and whether they can have different security metadata.)
+     From the dmesg you provided in the previous email, there could be
+     several possible reasons why the kernel is not detecting the
+     TPM-SPI chip :
 
-Originally the UUID was not included in the HMAC calculation.  Perhaps
-the patch description of commit 74de668 "evm: add file system uuid to
-EVM hmac" will help clarify the reasoning for including the inode and
-uuid in the hmac calculation.
+     1. The SPI bus is not enabled on the Pi. You can use the 
+raspi-config
+        command with sudo.
 
-Mimi
+           sudo raspi-config
+            then select Advanced Options,
+            then select SPI.
+
+        
+https://www.raspberrypi.org/documentation/configuration/raspi-config.md
+
+     2. A node for the TPM chip is not properly added to the device tree.
+
+     3. A node is added to the device tree source, but it is not compiled 
+into
+        binary from.
+
+     4. The node is compiled, but you did not tell the kernel to use it 
+during boot.
+
+         The binary overlay files (.dtbo) are placed under 
+/boot/overlays.
+         To activate the TPM overlay, place the line
+
+             dtoverlay=tpm_tis_spi
+
+         in /boot/config.txt.
+
+         But first make sure there is this file 
+/boot/overlays/tpm_tis_spi.dtbo
+
+
+     Regarding device tree (points 2. and 3.), it is more involved and I 
+did not have
+     time now to give a detailed answer. But as a starter, besides the 
+dmesg msgs in
+     your previous email, did dmesg give any other message on TPM ?
+
+     Also, it is possible that TPM initialization was delayed but 
+eventually completed
+     at a later time during boot (although not in time for IMA). After 
+the completion
+     of the boot process, is there a /dev/tpm0 char special file (or 
+/dev/tpm*) ?
+
+
+  Pau-Chen
