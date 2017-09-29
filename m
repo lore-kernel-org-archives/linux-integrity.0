@@ -1,57 +1,67 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.15.19]:59383 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752534AbdI2UOL (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 29 Sep 2017 16:14:11 -0400
+Received: from mail-it0-f42.google.com ([209.85.214.42]:46461 "EHLO
+        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752113AbdI2UJ3 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 29 Sep 2017 16:09:29 -0400
+Received: by mail-it0-f42.google.com with SMTP id d192so1107189itd.1
+        for <linux-integrity@vger.kernel.org>; Fri, 29 Sep 2017 13:09:29 -0700 (PDT)
 MIME-Version: 1.0
-Message-ID: <trinity-3e6c2430-417d-4eef-b067-e30d68592b4d-1506716047790@3c-app-gmx-bs69>
-From: "Peter Huewe" <PeterHuewe@gmx.de>
-To: pau <pau@linux.vnet.ibm.com>
-Cc: "Mimi Zohar" <zohar@linux.vnet.ibm.com>,
-        "Nayna Jain" <nayna@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org
-Subject: Aw: Re:  Re:  Re:  tpm_tis_spi gets initialized long after IMA
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 29 Sep 2017 22:14:07 +0200
-In-Reply-To: <44c1e36d3113badfe4b76fcdafbb6df7@linux.vnet.ibm.com>
-References: <trinity-d76a5983-fa13-4ac4-8e48-d94d22a80e86-1506633490200@3c-app-gmx-bs75>
- <trinity-e306a773-6b97-4508-8894-89da4b67f01f-1506634575541@3c-app-gmx-bs75>
- <1506647389.5691.76.camel@linux.vnet.ibm.com>
- <trinity-868e9e34-679a-4aff-97a3-9edf65a2fcda-1506673263842@3c-app-gmx-bs15>
- <1506685208.5691.109.camel@linux.vnet.ibm.com>
- <trinity-14f61785-1f5f-4f45-9b7e-5cd197936a6d-1506710663754@3c-app-gmx-bs57>
- <44c1e36d3113badfe4b76fcdafbb6df7@linux.vnet.ibm.com>
+In-Reply-To: <1506715304.5691.151.camel@linux.vnet.ibm.com>
+References: <20170927221653.11219-1-mjg59@google.com> <1506629560.5691.33.camel@linux.vnet.ibm.com>
+ <CACdnJuuveRvCx57ZnYmRWbiwh3XU7AbxZD2W-Gq_dh_h_6L9Mg@mail.gmail.com>
+ <1506646397.5691.64.camel@linux.vnet.ibm.com> <CACdnJuueNfLdDnCsmotGhLC58cJXXh35FeZzipJ_ZshScPM=qA@mail.gmail.com>
+ <1506711726.5691.141.camel@linux.vnet.ibm.com> <CACdnJuvYNnePfz4H-D=DGMHbrbmZ52JWFoLqX120ALV=o4wwcw@mail.gmail.com>
+ <1506715304.5691.151.camel@linux.vnet.ibm.com>
+From: Matthew Garrett <mjg59@google.com>
+Date: Fri, 29 Sep 2017 13:09:27 -0700
+Message-ID: <CACdnJutXT6yU70R07m7Nd=7d6RbZr0Nti_r54Z7CffiK2r17zA@mail.gmail.com>
+Subject: Re: RFC: Make it practical to ship EVM signatures
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org,
+        Mikhail Kurinnoi <viewizard@viewizard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi pau,
- 
-thanks for your answer,
-SPI is enabled in DT and compiled in
-TPM is enabled in DT via overlay and compiled in.
-I have a working /dev/tpm0
- 
-However, the problem lays elsewhere - I added some debug prints to figure out what is going on:
-It looks like this
- 
- 
-[    0.027898] RPIFirmware: Calling rpi_firmware_get
-[    0.027929] bcm2835-clk 3f101000.cprman: Probing FW
-[    0.027949] bcm2835-clk 3f101000.cprman: FW not ready, defering probe                                                                                     
-[    0.028385] bcm2835-mbox 3f00b880.mailbox: mailbox enabled
-[    0.028847] uart-pl011 3f201000.serial: could not find pctldev for node /soc/gpio@7e200000/uart0_pins, deferring probe
-[    0.061353] bcm2835-dma 3f007000.dma: DMA legacy API manager at bb80f000, dmachans=0x1
-[    0.062828] SCSI subsystem initialized
-[    0.062950] usbcore: registered new interface driver usbfs
-[    0.063001] usbcore: registered new interface driver hub
-[    0.063084] usbcore: registered new device driver usb
-[    0.063362] raspberrypi-firmware soc:firmware: Calling rpi_firmware_probe
- 
-So the bcm2835-clk calls rpi_firmware_get, which returns with NULL since the pdev has not been set yet,
-as the rpi_firmware_probe gets called only later :/
- 
-That defers the probing of the bcm2835-clk, so it it not available for the bcm2835-spi which also gets defered, consequently making the tpm not available until ima is done :/
- 
-Peter
+On Fri, Sep 29, 2017 at 1:01 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> On Fri, 2017-09-29 at 12:17 -0700, Matthew Garrett wrote:
+>> I'm arguing that (for our case at least) the only way we can use IMA
+>> is to rely on using a digital signature - we can either have that
+>> digital signature be in security.ima, or we can have it in
+>> security.evm. Since we need that signature in any case, we derive no
+>> benefit from having security.evm be an hmac - our two reasonable
+>> choices are:
+>>
+>> 1) security.ima as a digital signature, security.evm as an hmac
+>> 2) security.ima as a hash, security.evm as a digital signature
+>
+> There's a major difference between security.ima containing a file hash
+> vs a signature.  A signature, assuming the file_check hook is in
+> policy, prevents the file from being modified, making the file
+> "immutable".
 
- 
+But the same is effectively true if security.evm is a digital
+signature and there's no symmetric key? For what we want to do (ensure
+that executables that are allowed to run with elevated privileges
+haven't been tampered with), that's completely ok.
+
+>> I'm not really clear on what attacks are prevented by using the inode
+>> number. If I'm able to preserve all the other security metadata when
+>> copying a file, I can just create a hardlink to the original instead
+>> and have the same outcome.
+>
+> The issue is the ability of having different security metadata, not
+> the same security metadata. (I need to refresh my memory as to hard
+> links, and whether they can have different security metadata.)
+
+If the security metadata is different then copying another
+security.evm will fail, surely?
+
+> Originally the UUID was not included in the HMAC calculation.  Perhaps
+> the patch description of commit 74de668 "evm: add file system uuid to
+> EVM hmac" will help clarify the reasoning for including the inode and
+> uuid in the hmac calculation.
+
+Not really - if you're not crossing a filesystem boundary then you're
+still able to just create a hardlink.
