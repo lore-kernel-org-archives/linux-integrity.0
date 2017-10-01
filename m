@@ -1,60 +1,126 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from blatinox.fr ([51.254.120.209]:41268 "EHLO vps202351.ovh.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750943AbdJBAwr (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 1 Oct 2017 20:52:47 -0400
-Date: Sun, 1 Oct 2017 20:52:20 -0400
-From: =?UTF-8?B?SsOpcsOpbXk=?= Lefaure <jeremy.lefaure@lse.epita.fr>
-To: "Tobin C. Harding" <me@tobin.cc>
-Cc: alsa-devel@alsa-project.org, nouveau@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, dm-devel@redhat.com,
-        brcm80211-dev-list@cypress.com, devel@driverdev.osuosl.org,
-        linux-scsi@vger.kernel.org, linux-rdma@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        linux-acpi@vger.kernel.org, linux-video@atrey.karlin.mff.cuni.cz,
-        intel-wired-lan@lists.osuosl.org, linux-media@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, ecryptfs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-raid@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net,
-        intel-gvt-dev@lists.freedesktop.org, devel@acpica.org,
-        brcm80211-dev-list.pdl@broadcom.com, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH 00/18] use ARRAY_SIZE macro
-Message-ID: <20171001205220.10b78086@blatinox-laptop.localdomain>
-In-Reply-To: <20171001220131.GA11812@eros>
-References: <20171001193101.8898-1-jeremy.lefaure@lse.epita.fr>
-        <20171001220131.GA11812@eros>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51836 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751075AbdJAXyu (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 1 Oct 2017 19:54:50 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v91Nrhsq014102
+        for <linux-integrity@vger.kernel.org>; Sun, 1 Oct 2017 19:54:50 -0400
+Received: from e23smtp01.au.ibm.com (e23smtp01.au.ibm.com [202.81.31.143])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2db4rur85q-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Sun, 01 Oct 2017 19:54:50 -0400
+Received: from localhost
+        by e23smtp01.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Mon, 2 Oct 2017 09:54:47 +1000
+Subject: Re: [RFC PATCH 3/3] fs: detect that the i_rwsem has already been
+ taken exclusively
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Dave Chinner <david@fromorbit.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org
+Date: Sun, 01 Oct 2017 19:54:39 -0400
+In-Reply-To: <CA+55aFwD=+5trJbmuc2SL-DYcdmt2p4gq1uPBp8mznj1JYSVTg@mail.gmail.com>
+References: <1506602373-4799-1-git-send-email-zohar@linux.vnet.ibm.com>
+         <1506602373-4799-4-git-send-email-zohar@linux.vnet.ibm.com>
+         <20170928220215.GC15067@dastard>
+         <CA+55aFy-kDL5jQb0q2gHkcmhAwMatEf8YPx8Gh=yGp_VMoVxQA@mail.gmail.com>
+         <1506643967.5691.46.camel@linux.vnet.ibm.com>
+         <CA+55aFxqpTbC=sZXrbJ0x1OD-UA1NkejuR_s5LCazp+7yzvi3Q@mail.gmail.com>
+         <1506649980.5691.100.camel@linux.vnet.ibm.com>
+         <CA+55aFzZXBBn+HgLD_4C6DgpSiOMAP2WzuGPWRUkEXZJuz+QBQ@mail.gmail.com>
+         <87mv5blki7.fsf@xmission.com>
+         <CA+55aFx726wT4VprN-sHm6s8Q_PV_VjhTBC4goEbMcerYU1Tig@mail.gmail.com>
+         <87shf2jzfr.fsf@xmission.com>
+         <CA+55aFwD=+5trJbmuc2SL-DYcdmt2p4gq1uPBp8mznj1JYSVTg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1506902079.5691.256.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2 Oct 2017 09:01:31 +1100
-"Tobin C. Harding" <me@tobin.cc> wrote:
-
-> > In order to reduce the size of the To: and Cc: lines, each patch of the
-> > series is sent only to the maintainers and lists concerned by the patch.
-> > This cover letter is sent to every list concerned by this series.  
+On Sun, 2017-10-01 at 15:20 -0700, Linus Torvalds wrote:
+> On Sun, Oct 1, 2017 at 3:06 PM, Eric W. Biederman <ebiederm@xmission.com> wrote:
+> >
+> > Unless I misread something it was being pointed out there are some vfs
+> > operations today on which ima writes an ima xattr as a side effect.  And
+> > those operations hold the i_sem.  So perhaps I am misunderstanding
+> > things or writing the ima xattr needs to happen at some point.  Which
+> > implies something like queued work.
 > 
-> Why don't you just send individual patches for each subsystem? I'm not a maintainer but I don't see
-> how any one person is going to be able to apply this whole series, it is making it hard for
-> maintainers if they have to pick patches out from among the series (if indeed any will bother
-> doing that).
-Yeah, maybe it would have been better to send individual patches.
+> So the issue is indeed the inode semaphore, as it is used by IMA. But
+> all these IMA patches to work around the issue are just horribly ugly.
+> One adds a VFS-layer filesystem method that most filesystems end up
+> not really needing (it's the same as the regular read), and other
+> filesystems end up then having hacks with ("oh, I don't need to take
+> this lock because it was already taken by the caller").
+> 
+> The second patch attempt avoided the need for a new filesystem method,
+> but added a flag in an annoying place (for the same basic logic). The
+> advantage is that now most filesystems don't actually need to care any
+> more (and the filesystems that used to care now check that flag).
+> 
+> There was discussion about moving the flag to a mode convenient spot,
+> which would have made it a lot less intrusive.
+> 
+> But the basic issue is that almost always when you see lock
+> inversions, the problem can just be fixed by doing the locking
+> differently instead.
 
->From my point of view it's a series because the patches are related (I
-did a git format-patch from my local branch). But for the maintainers
-point of view, they are individual patches.
+This is what I've been missing.  Thank you for taking the time to
+understand the problem and explain how!
 
-As each patch in this series is standalone, the maintainers can pick
-the patches they want and apply them individually. So yeah, maybe I
-should have sent individual patches. But I also wanted to tie all
-patches together as it's the same change.
+> And that's what I was/am pushing for.
 
-Anyway, I can tell to each maintainer that they can apply the patches
-they're concerned about and next time I may send individual patches.
+> There really are two totally different issues:
+> 
+>  - the integrity _measurement_.
+> 
+>    This one wants to be serialized, so that you don't have multiple
+> concurrent measurements, and the serialization fundamentally has to be
+> around all the IO, so this lock pretty much has to be outside the
+> i_sem.
+> 
+>  - the integrity invalidation on certain operations.
+> 
+>    This one fundamentally had to be inside the i_sem, since some of
+> the operations that cause this end up already holding the i_sem at a
+> VFS layer.
+> 
+> so you had these two different requirements (inside _and_ outside),
+> and the IMA approach was basically to avoid the problem by making
+> i_sem *the* lock, and then making the IO routines aware of it already
+> being held. That does solve the inside/outside issue.
+> 
+> But the simpler way to fix it is to simply use two locks that nest
+> inside each other, with i_sem nesting in the middle.  That just avoids
+> the problem entirely, and doesn't require anybody to ever care about
+> i_sem semantic changes, because i_sem semantics simply didn't change
+> at all.
+> 
+> So that's the approach I'm pushing. I admittedly haven't actually
+> looked at the IMA details, but from a high-level standpoint you can
+> basically describe it (as above) without having to care too much about
+> exactly what IMA even wants.
+> 
+> The two-lock approach does require that the operations that invalidate
+> the integrity measurements always only invalidate it, and don't try to
+> re-compute it. But I suspect that would be entirely insane anyway
+> (imagine a world where "setxattr" would have to read the whole file
+> contents in order to revalidate the integrity measurement - even if
+> there is nobody who even *cares*).
 
-Thank you for your answer,
-Jeremy
+Right, the setxattr, chmod, chown syscalls just resets the cached
+flags, which indicate whether the file needs to be re-measured, re-
+validated, or re-audited.  The file hash is not re-calculated at this
+point.  That happens on the next access (in policy).
+
+Mimi
