@@ -1,64 +1,67 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from out02.mta.xmission.com ([166.70.13.232]:59682 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750981AbdJAWGf (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 1 Oct 2017 18:06:35 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dave Chinner <david@fromorbit.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Theodore Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org
-References: <1506602373-4799-1-git-send-email-zohar@linux.vnet.ibm.com>
-        <1506602373-4799-4-git-send-email-zohar@linux.vnet.ibm.com>
-        <20170928220215.GC15067@dastard>
-        <CA+55aFy-kDL5jQb0q2gHkcmhAwMatEf8YPx8Gh=yGp_VMoVxQA@mail.gmail.com>
-        <1506643967.5691.46.camel@linux.vnet.ibm.com>
-        <CA+55aFxqpTbC=sZXrbJ0x1OD-UA1NkejuR_s5LCazp+7yzvi3Q@mail.gmail.com>
-        <1506649980.5691.100.camel@linux.vnet.ibm.com>
-        <CA+55aFzZXBBn+HgLD_4C6DgpSiOMAP2WzuGPWRUkEXZJuz+QBQ@mail.gmail.com>
-        <87mv5blki7.fsf@xmission.com>
-        <CA+55aFx726wT4VprN-sHm6s8Q_PV_VjhTBC4goEbMcerYU1Tig@mail.gmail.com>
-Date: Sun, 01 Oct 2017 17:06:16 -0500
-In-Reply-To: <CA+55aFx726wT4VprN-sHm6s8Q_PV_VjhTBC4goEbMcerYU1Tig@mail.gmail.com>
-        (Linus Torvalds's message of "Sat, 30 Sep 2017 18:56:59 -0700")
-Message-ID: <87shf2jzfr.fsf@xmission.com>
+Received: from blatinox.fr ([51.254.120.209]:33869 "EHLO vps202351.ovh.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751801AbdJATlO (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 1 Oct 2017 15:41:14 -0400
+From: =?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?=
+        <jeremy.lefaure@lse.epita.fr>
+To: Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+Cc: =?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?=
+        <jeremy.lefaure@lse.epita.fr>, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 13/18] tpm: use ARRAY_SIZE
+Date: Sun,  1 Oct 2017 15:30:51 -0400
+Message-Id: <20171001193101.8898-14-jeremy.lefaure@lse.epita.fr>
+In-Reply-To: <20171001193101.8898-1-jeremy.lefaure@lse.epita.fr>
+References: <20171001193101.8898-1-jeremy.lefaure@lse.epita.fr>
 MIME-Version: 1.0
-Content-Type: text/plain
-Subject: Re: [RFC PATCH 3/3] fs: detect that the i_rwsem has already been taken exclusively
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+Using the ARRAY_SIZE macro improves the readability of the code.
 
-> On Sep 30, 2017 18:33, "Eric W. Biederman" <ebiederm@xmission.com> wrote:.
->
->  That would require a task_work or another kind of work callback so that
->  the writes of the xattr are not synchronous with the vfs callback
->  correct?
->
-> No, why?
->
-> You should just invalidate the IMA on xattr write or other operations that make the measurement invalid. You only need the inner
-> lock.
->
-> Why are you guys making up all these things just to make it complicated?
+Found with Coccinelle with the following semantic patch:
+@r depends on (org || report)@
+type T;
+T[] E;
+position p;
+@@
+(
+ (sizeof(E)@p /sizeof(*E))
+|
+ (sizeof(E)@p /sizeof(E[...]))
+|
+ (sizeof(E)@p /sizeof(T))
+)
 
-I am not trying to make things complicated I am just trying to
-understand the conversation.
+Signed-off-by: Jeremy Lefaure <jeremy.lefaure@lse.epita.fr>
+---
+ drivers/char/tpm/tpm_tis.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Unless I misread something it was being pointed out there are some vfs
-operations today on which ima writes an ima xattr as a side effect.  And
-those operations hold the i_sem.  So perhaps I am misunderstanding
-things or writing the ima xattr needs to happen at some point.  Which
-implies something like queued work.
-
-But perhaps I a misunderstanding the conversation and ima.  I frequenly
-misunderstand ima.
-
-Eric
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index ebd0e75a3e4d..e2d1055fb814 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -30,6 +30,7 @@
+ #include <linux/freezer.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
++#include <linux/kernel.h>
+ #include "tpm.h"
+ #include "tpm_tis_core.h"
+ 
+@@ -365,7 +366,7 @@ static struct pnp_driver tis_pnp_driver = {
+ 	},
+ };
+ 
+-#define TIS_HID_USR_IDX sizeof(tpm_pnp_tbl)/sizeof(struct pnp_device_id) -2
++#define TIS_HID_USR_IDX (ARRAY_SIZE(tpm_pnp_tbl) - 2)
+ module_param_string(hid, tpm_pnp_tbl[TIS_HID_USR_IDX].id,
+ 		    sizeof(tpm_pnp_tbl[TIS_HID_USR_IDX].id), 0444);
+ MODULE_PARM_DESC(hid, "Set additional specific HID for this driver to probe");
+-- 
+2.14.1
