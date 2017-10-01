@@ -1,101 +1,57 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:57149 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751090AbdJAWUG (ORCPT
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:58255 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750981AbdJAWBg (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 1 Oct 2017 18:20:06 -0400
+        Sun, 1 Oct 2017 18:01:36 -0400
+Date: Mon, 2 Oct 2017 09:01:31 +1100
+From: "Tobin C. Harding" <me@tobin.cc>
+To: =?iso-8859-1?B?Suly6W15?= Lefaure <jeremy.lefaure@lse.epita.fr>
+Cc: alsa-devel@alsa-project.org, nouveau@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, dm-devel@redhat.com,
+        brcm80211-dev-list@cypress.com, devel@driverdev.osuosl.org,
+        linux-scsi@vger.kernel.org, linux-rdma@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        linux-acpi@vger.kernel.org, linux-video@atrey.karlin.mff.cuni.cz,
+        intel-wired-lan@lists.osuosl.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, ecryptfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-raid@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net,
+        intel-gvt-dev@lists.freedesktop.org, devel@acpica.org,
+        brcm80211-dev-list.pdl@broadcom.com, netdev@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH 00/18] use ARRAY_SIZE macro
+Message-ID: <20171001220131.GA11812@eros>
+References: <20171001193101.8898-1-jeremy.lefaure@lse.epita.fr>
 MIME-Version: 1.0
-In-Reply-To: <87shf2jzfr.fsf@xmission.com>
-References: <1506602373-4799-1-git-send-email-zohar@linux.vnet.ibm.com>
- <1506602373-4799-4-git-send-email-zohar@linux.vnet.ibm.com>
- <20170928220215.GC15067@dastard> <CA+55aFy-kDL5jQb0q2gHkcmhAwMatEf8YPx8Gh=yGp_VMoVxQA@mail.gmail.com>
- <1506643967.5691.46.camel@linux.vnet.ibm.com> <CA+55aFxqpTbC=sZXrbJ0x1OD-UA1NkejuR_s5LCazp+7yzvi3Q@mail.gmail.com>
- <1506649980.5691.100.camel@linux.vnet.ibm.com> <CA+55aFzZXBBn+HgLD_4C6DgpSiOMAP2WzuGPWRUkEXZJuz+QBQ@mail.gmail.com>
- <87mv5blki7.fsf@xmission.com> <CA+55aFx726wT4VprN-sHm6s8Q_PV_VjhTBC4goEbMcerYU1Tig@mail.gmail.com>
- <87shf2jzfr.fsf@xmission.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 1 Oct 2017 15:20:04 -0700
-Message-ID: <CA+55aFwD=+5trJbmuc2SL-DYcdmt2p4gq1uPBp8mznj1JYSVTg@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/3] fs: detect that the i_rwsem has already been
- taken exclusively
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Dave Chinner <david@fromorbit.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Theodore Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20171001193101.8898-1-jeremy.lefaure@lse.epita.fr>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sun, Oct 1, 2017 at 3:06 PM, Eric W. Biederman <ebiederm@xmission.com> wrote:
->
-> Unless I misread something it was being pointed out there are some vfs
-> operations today on which ima writes an ima xattr as a side effect.  And
-> those operations hold the i_sem.  So perhaps I am misunderstanding
-> things or writing the ima xattr needs to happen at some point.  Which
-> implies something like queued work.
+On Sun, Oct 01, 2017 at 03:30:38PM -0400, Jeremy Lefaure wrote:
+> Hi everyone,
+> Using ARRAY_SIZE improves the code readability. I used coccinelle (I
+> made a change to the array_size.cocci file [1]) to find several places
+> where ARRAY_SIZE could be used instead of other macros or sizeof
+> division.
+> 
+> I tried to divide the changes into a patch per subsystem (excepted for
+> staging). If one of the patch should be split into several patches, let
+> me know.
+> 
+> In order to reduce the size of the To: and Cc: lines, each patch of the
+> series is sent only to the maintainers and lists concerned by the patch.
+> This cover letter is sent to every list concerned by this series.
 
-So the issue is indeed the inode semaphore, as it is used by IMA. But
-all these IMA patches to work around the issue are just horribly ugly.
-One adds a VFS-layer filesystem method that most filesystems end up
-not really needing (it's the same as the regular read), and other
-filesystems end up then having hacks with ("oh, I don't need to take
-this lock because it was already taken by the caller").
+Why don't you just send individual patches for each subsystem? I'm not a maintainer but I don't see
+how any one person is going to be able to apply this whole series, it is making it hard for
+maintainers if they have to pick patches out from among the series (if indeed any will bother
+doing that).
 
-The second patch attempt avoided the need for a new filesystem method,
-but added a flag in an annoying place (for the same basic logic). The
-advantage is that now most filesystems don't actually need to care any
-more (and the filesystems that used to care now check that flag).
+I get that this will be more work for you but AFAIK we are optimizing for maintainers.
 
-There was discussion about moving the flag to a mode convenient spot,
-which would have made it a lot less intrusive.
-
-But the basic issue is that almost always when you see lock
-inversions, the problem can just be fixed by doing the locking
-differently instead.
-
-And that's what I was/am pushing for.
-
-There really are two totally different issues:
-
- - the integrity _measurement_.
-
-   This one wants to be serialized, so that you don't have multiple
-concurrent measurements, and the serialization fundamentally has to be
-around all the IO, so this lock pretty much has to be outside the
-i_sem.
-
- - the integrity invalidation on certain operations.
-
-   This one fundamentally had to be inside the i_sem, since some of
-the operations that cause this end up already holding the i_sem at a
-VFS layer.
-
-so you had these two different requirements (inside _and_ outside),
-and the IMA approach was basically to avoid the problem by making
-i_sem *the* lock, and then making the IO routines aware of it already
-being held. That does solve the inside/outside issue.
-
-But the simpler way to fix it is to simply use two locks that nest
-inside each other, with i_sem nesting in the middle.  That just avoids
-the problem entirely, and doesn't require anybody to ever care about
-i_sem semantic changes, because i_sem semantics simply didn't change
-at all.
-
-So that's the approach I'm pushing. I admittedly haven't actually
-looked at the IMA details, but from a high-level standpoint you can
-basically describe it (as above) without having to care too much about
-exactly what IMA even wants.
-
-The two-lock approach does require that the operations that invalidate
-the integrity measurements always only invalidate it, and don't try to
-re-compute it. But I suspect that would be entirely insane anyway
-(imagine a world where "setxattr" would have to read the whole file
-contents in order to revalidate the integrity measurement - even if
-there is nobody who even *cares*).
-
-           Linus
+Good luck,
+Tobin.
