@@ -1,72 +1,54 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from blatinox.fr ([51.254.120.209]:33833 "EHLO vps202351.ovh.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751672AbdJATlP (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 1 Oct 2017 15:41:15 -0400
-From: =?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?=
-        <jeremy.lefaure@lse.epita.fr>
-Cc: alsa-devel@alsa-project.org, amd-gfx@lists.freedesktop.org,
-        brcm80211-dev-list@cypress.com,
-        brcm80211-dev-list.pdl@broadcom.com, devel@acpica.org,
-        devel@driverdev.osuosl.org, dm-devel@redhat.com,
-        dri-devel@lists.freedesktop.org, ecryptfs@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org,
-        intel-gvt-dev@lists.freedesktop.org,
-        intel-wired-lan@lists.osuosl.org,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        linux-acpi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-video@atrey.karlin.mff.cuni.cz,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        nouveau@lists.freedesktop.org,
-        openipmi-developer@lists.sourceforge.net
-Subject: [PATCH 00/18] use ARRAY_SIZE macro
-Date: Sun,  1 Oct 2017 15:30:38 -0400
-Message-Id: <20171001193101.8898-1-jeremy.lefaure@lse.epita.fr>
+Received: from mail-io0-f196.google.com ([209.85.223.196]:37643 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750929AbdJASlu (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 1 Oct 2017 14:41:50 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-To: unlisted-recipients:; (no To-header on input)
+In-Reply-To: <1506859691.5691.211.camel@linux.vnet.ibm.com>
+References: <1506602373-4799-1-git-send-email-zohar@linux.vnet.ibm.com>
+ <1506602373-4799-4-git-send-email-zohar@linux.vnet.ibm.com>
+ <20170928220215.GC15067@dastard> <CA+55aFy-kDL5jQb0q2gHkcmhAwMatEf8YPx8Gh=yGp_VMoVxQA@mail.gmail.com>
+ <1506643967.5691.46.camel@linux.vnet.ibm.com> <CA+55aFxqpTbC=sZXrbJ0x1OD-UA1NkejuR_s5LCazp+7yzvi3Q@mail.gmail.com>
+ <1506649980.5691.100.camel@linux.vnet.ibm.com> <CA+55aFzZXBBn+HgLD_4C6DgpSiOMAP2WzuGPWRUkEXZJuz+QBQ@mail.gmail.com>
+ <87mv5blki7.fsf@xmission.com> <CA+55aFx726wT4VprN-sHm6s8Q_PV_VjhTBC4goEbMcerYU1Tig@mail.gmail.com>
+ <1506859691.5691.211.camel@linux.vnet.ibm.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 1 Oct 2017 11:41:48 -0700
+Message-ID: <CA+55aFwG65-1DZGLkxWzXiPHECjVvY+WHa0ihRq6MbJ4yrX-Sg@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/3] fs: detect that the i_rwsem has already been
+ taken exclusively
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+        Dave Chinner <david@fromorbit.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi everyone,
-Using ARRAY_SIZE improves the code readability. I used coccinelle (I
-made a change to the array_size.cocci file [1]) to find several places
-where ARRAY_SIZE could be used instead of other macros or sizeof
-division.
+On Sun, Oct 1, 2017 at 5:08 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+>
+> Right, re-introducing the iint->mutex and a new i_generation field in
+> the iint struct with a separate set of locks should work.  It will be
+> reset if the file metadata changes (eg. setxattr, chown, chmod).
 
-I tried to divide the changes into a patch per subsystem (excepted for
-staging). If one of the patch should be split into several patches, let
-me know.
+Note that the "inner lock" could possibly be omitted if the
+invalidation can be just a single atomic instruction.
 
-In order to reduce the size of the To: and Cc: lines, each patch of the
-series is sent only to the maintainers and lists concerned by the patch.
-This cover letter is sent to every list concerned by this series.
+So particularly if invalidation could be just an atomic_inc() on the
+generation count, there might not need to be any inner lock at all.
 
-This series is based on linux-next next-20170929. Each patch has been
-tested by building the relevant files with W=1.
+You'd have to serialize the actual measurement with the "read
+generation count", but that should be as simple as just doing a
+smp_rmb() between the "read generation count" and "do measurement on
+file contents".
 
-This series contains the following patches:
-[PATCH 01/18] sound: use ARRAY_SIZE
-[PATCH 02/18] tracing/filter: use ARRAY_SIZE
-[PATCH 03/18] media: use ARRAY_SIZE
-[PATCH 04/18] IB/mlx5: Use ARRAY_SIZE
-[PATCH 05/18] net: use ARRAY_SIZE
-[PATCH 06/18] drm: use ARRAY_SIZE
-[PATCH 07/18] scsi: bfa: use ARRAY_SIZE
-[PATCH 08/18] ecryptfs: use ARRAY_SIZE
-[PATCH 09/18] nfsd: use ARRAY_SIZE
-[PATCH 10/18] orangefs: use ARRAY_SIZE
-[PATCH 11/18] dm space map metadata: use ARRAY_SIZE
-[PATCH 12/18] x86: use ARRAY_SIZE
-[PATCH 13/18] tpm: use ARRAY_SIZE
-[PATCH 14/18] ipmi: use ARRAY_SIZE
-[PATCH 15/18] acpi: use ARRAY_SIZE
-[PATCH 16/18] media: staging: atomisp: use ARRAY_SIZE
-[PATCH 17/18] staging: rtl8723bs: use ARRAY_SIZE
-[PATCH 18/18] staging: rtlwifi: use ARRAY_SIZE
+Of course, if you do something more complex in invalidation, you may
+end up needing a real lock.
 
-
-[1]: https://lkml.org/lkml/2017/9/13/689
+                 Linus
