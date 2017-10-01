@@ -1,105 +1,70 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from lhrrgout.huawei.com ([194.213.3.17]:37016 "EHLO
-        lhrrgout.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750715AbdJBI4B (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50028 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751013AbdJAMIY (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 2 Oct 2017 04:56:01 -0400
-Subject: Re: RFC: Make it practical to ship EVM signatures
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Matthew Garrett <mjg59@google.com>
-CC: <linux-integrity@vger.kernel.org>,
-        Mikhail Kurinnoi <viewizard@viewizard.com>
-References: <20170927221653.11219-1-mjg59@google.com>
- <1506629560.5691.33.camel@linux.vnet.ibm.com>
- <CACdnJuuveRvCx57ZnYmRWbiwh3XU7AbxZD2W-Gq_dh_h_6L9Mg@mail.gmail.com>
- <1506646397.5691.64.camel@linux.vnet.ibm.com>
-From: Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <61b5b92e-3fcc-5805-7358-34d74a036035@huawei.com>
-Date: Mon, 2 Oct 2017 10:55:38 +0200
-MIME-Version: 1.0
-In-Reply-To: <1506646397.5691.64.camel@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+        Sun, 1 Oct 2017 08:08:24 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v91C7DaB059216
+        for <linux-integrity@vger.kernel.org>; Sun, 1 Oct 2017 08:08:24 -0400
+Received: from e23smtp03.au.ibm.com (e23smtp03.au.ibm.com [202.81.31.145])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2daehdd5nh-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Sun, 01 Oct 2017 08:08:23 -0400
+Received: from localhost
+        by e23smtp03.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Sun, 1 Oct 2017 22:08:21 +1000
+Subject: Re: [RFC PATCH 3/3] fs: detect that the i_rwsem has already been
+ taken exclusively
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Dave Chinner <david@fromorbit.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org
+Date: Sun, 01 Oct 2017 08:08:11 -0400
+In-Reply-To: <CA+55aFx726wT4VprN-sHm6s8Q_PV_VjhTBC4goEbMcerYU1Tig@mail.gmail.com>
+References: <1506602373-4799-1-git-send-email-zohar@linux.vnet.ibm.com>
+         <1506602373-4799-4-git-send-email-zohar@linux.vnet.ibm.com>
+         <20170928220215.GC15067@dastard>
+         <CA+55aFy-kDL5jQb0q2gHkcmhAwMatEf8YPx8Gh=yGp_VMoVxQA@mail.gmail.com>
+         <1506643967.5691.46.camel@linux.vnet.ibm.com>
+         <CA+55aFxqpTbC=sZXrbJ0x1OD-UA1NkejuR_s5LCazp+7yzvi3Q@mail.gmail.com>
+         <1506649980.5691.100.camel@linux.vnet.ibm.com>
+         <CA+55aFzZXBBn+HgLD_4C6DgpSiOMAP2WzuGPWRUkEXZJuz+QBQ@mail.gmail.com>
+         <87mv5blki7.fsf@xmission.com>
+         <CA+55aFx726wT4VprN-sHm6s8Q_PV_VjhTBC4goEbMcerYU1Tig@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1506859691.5691.211.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 9/29/2017 2:53 AM, Mimi Zohar wrote:
-> On Thu, 2017-09-28 at 14:13 -0700, Matthew Garrett wrote:
->> On Thu, Sep 28, 2017 at 1:12 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
->>> Earlier this year there were discussions on defining a portable EVM
->>> signature, that could be included in software packages.
->>>
->>> The reason for including as much metadata as possible in the HMAC is
->>> to limit cut & paste attacks.  For this reason, the portable data is
->>> only used in transmission, not on disk.
->>
->> The concern is that two identical copies of a file may exist, but with
->> different security contexts, and that not protecting the inode would
->> allow an attacker to copy the security metadata from one file onto the
->> other? This presumably only has meaning if they're on separate
->> filesystems, since otherwise the attacker could just delete one file
->> and hardlink the other to the former's location? I think that for our
->> purposes this isn't a big deal.
+On Sat, 2017-09-30 at 18:56 -0700, Linus Torvalds wrote:
+> On Sep 30, 2017 18:33, "Eric W. Biederman" <ebiederm@xmission.com> wrote:.
 > 
-> Without the inode included in the HMAC calculation, the same file
-> could exist as a different file name on the same file system.  No need
-> for the two files to be on different file systems.
 > 
->>> A new EVM type is defined that does not convert the EVM signature to
->>> an HMAC.
->>>
->>> Mikhail's patches:
->>> https://sourceforge.net/p/linux-ima/mailman/linux-ima-user/thread/2017
->>> 0113072602.4ffaa30a@totoro/
->>
->> That looks broadly like what we want, but I think there's some
->> advantage in maintaining the flexibility of choosing which information
->> is embedded. One additional option would be to allow userland to place
->> a restriction on which options *must* be present, ie local policy
->> could refuse to allow any signatures that didn't include a specific
->> set of metadata.
+> That would require a task_work or another kind of work callback so that
+> the writes of the xattr are not synchronous with the vfs callback
+> correct?
 > 
-> This introduces a new level of complexity, which I'm not sure is warranted.
 > 
->> One of the reasons we're interested in allowing the use of signatures
->> rather than HMACs is to avoid the case where a machine being
->> compromised would allow an attacker to obtain the symmetric key and
->> drop new appropriately HMACed binaries on the system that would
->> persist even if the kernel was updated to fix the vulnerability.
+> No, why?
+> 
+> You should just invalidate the IMA on xattr write or other operations that
+> make the measurement invalid. You only need the inner lock.
 
-With a predictable system state, you would be able to prevent misuse
-of the symmetric key. For example, suppose that the state is about
-to change (with a digest list, IMA extends PCR 10 with the digest
-of unknown files). Then, countermeasures can be implemented to avoid
-using the symmetric key before the system is compromised.
+Right, re-introducing the iint->mutex and a new i_generation field in
+the iint struct with a separate set of locks should work.  It will be
+reset if the file metadata changes (eg. setxattr, chown, chmod).
 
-The remaining issue is when vulnerabilities are discovered in known
-software. In this case, the symmetric key should be revoked and
-replaced with a new one. Files protected with the old key must
-be checked and protected with the new key.
+(We need i_generation for namespacing IMA as well.)
 
-I agree on the fact that HMACs can be avoided for immutable files
-but, for mutable files, HMACs could be very useful. Suppose that
-a valid HMAC can be applied to a file only when the symmetric key
-is available (system is in the expected state) and when the file
-is written only by the TCB. Then, you can exclude those files from
-measurement (unless the HMAC is invalid) and avoid unknown digests
-(the system state remains predictable).
+thanks,
 
-
-> Assuming you're using a trusted key (TPM based key) to encrypt/decrypt
-> the EVM key (trusted key), then such an attack would require root
-> privileges with the ability to read kernel memory.  The EVM key is
-> never exposed to userspace in the clear.
-
-A malicious admin can launch a new kernel with kexec and dump the key.
-
-The symmetric key can be protected against malicious administrators
-if it is generated by the TPM (sensitiveDataOrigin bit must be set)
-and is released only after verifying the sealing policy (kexec is
-disabled, only good software can be executed, ...).
-
-Roberto
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
+Mimi
