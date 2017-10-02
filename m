@@ -1,24 +1,23 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from ipmailnode02.adl6.internode.on.net ([150.101.137.148]:5303 "EHLO
-        ipmailnode02.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751027AbdJBEhX (ORCPT
+Received: from ipmailnode02.adl6.internode.on.net ([150.101.137.148]:19758
+        "EHLO ipmailnode02.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750969AbdJBDyY (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 2 Oct 2017 00:37:23 -0400
-Date: Mon, 2 Oct 2017 15:35:54 +1100
+        Sun, 1 Oct 2017 23:54:24 -0400
+Date: Mon, 2 Oct 2017 14:54:19 +1100
 From: Dave Chinner <david@fromorbit.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
         LSM List <linux-security-module@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Christoph Hellwig <hch@infradead.org>,
         Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>
+        linux-integrity@vger.kernel.org
 Subject: Re: [RFC PATCH 3/3] fs: detect that the i_rwsem has already been
  taken exclusively
-Message-ID: <20171002043554.GI15067@dastard>
+Message-ID: <20171002035419.GH15067@dastard>
 References: <1506643967.5691.46.camel@linux.vnet.ibm.com>
  <CA+55aFxqpTbC=sZXrbJ0x1OD-UA1NkejuR_s5LCazp+7yzvi3Q@mail.gmail.com>
  <1506649980.5691.100.camel@linux.vnet.ibm.com>
@@ -28,130 +27,40 @@ References: <1506643967.5691.46.camel@linux.vnet.ibm.com>
  <1506859691.5691.211.camel@linux.vnet.ibm.com>
  <CA+55aFwG65-1DZGLkxWzXiPHECjVvY+WHa0ihRq6MbJ4yrX-Sg@mail.gmail.com>
  <20171001223402.GG15067@dastard>
- <1506901362.5691.247.camel@linux.vnet.ibm.com>
+ <CA+55aFwV=mO4NjJ2nqOsme7Pg_Lno7hPO6o+ahf-qSpunm9scA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1506901362.5691.247.camel@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CA+55aFwV=mO4NjJ2nqOsme7Pg_Lno7hPO6o+ahf-qSpunm9scA@mail.gmail.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sun, Oct 01, 2017 at 07:42:42PM -0400, Mimi Zohar wrote:
-> On Mon, 2017-10-02 at 09:34 +1100, Dave Chinner wrote:
-> > On Sun, Oct 01, 2017 at 11:41:48AM -0700, Linus Torvalds wrote:
-> > > On Sun, Oct 1, 2017 at 5:08 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> > > >
-> > > > Right, re-introducing the iint->mutex and a new i_generation field in
-> > > > the iint struct with a separate set of locks should work.  It will be
-> > > > reset if the file metadata changes (eg. setxattr, chown, chmod).
-> > > 
-> > > Note that the "inner lock" could possibly be omitted if the
-> > > invalidation can be just a single atomic instruction.
-> > > 
-> > > So particularly if invalidation could be just an atomic_inc() on the
-> > > generation count, there might not need to be any inner lock at all.
-> > > 
-> > > You'd have to serialize the actual measurement with the "read
-> > > generation count", but that should be as simple as just doing a
-> > > smp_rmb() between the "read generation count" and "do measurement on
-> > > file contents".
-> > 
+On Sun, Oct 01, 2017 at 04:15:07PM -0700, Linus Torvalds wrote:
+> On Sun, Oct 1, 2017 at 3:34 PM, Dave Chinner <david@fromorbit.com> wrote:
+> >
 > > We already have a change counter on the inode, which is modified on
 > > any data or metadata write (i_version) under filesystem locks.  The
 > > i_version counter has well defined semantics - it's required by
 > > NFSv4 to increment on any metadata or data change - so we should be
-> > able to rely on it's behaviour to implement IMA as well. Filesystems
-> > that support i_version are marked with [SB|MS]_I_VERSION in the
-> > superblock (IS_I_VERSION(inode)) so it should be easy to tell if IMA
-> > can be supported on a specific filesystem (btrfs, ext4, fuse and xfs
-> > ATM).
+> > able to rely on it's behaviour to implement IMA as well.
 > 
-> Recently I received a patch to replace i_version with mtime/atime.
-
-mtime is not guaranteed to change on data writes - the resolution of
-the filesystem timestamps may mean mtime only changes once a second
-regardless of the number of writes performed to that file. That's
-why NFS can't use it as a change attribute, and hence we have
-i_version....
-
->  Now, even more recently, I received a patch that claims that
-> i_version is just a performance improvement.
-
-Did you ask them to explain/quantify the performance improvement? 
-
-e.g. Using i_version on XFS slows down performance on small
-writes by 2-3% because i_version because all data writes log a
-version change rather than only logging a change when mtime updates.
-We take that penalty because NFS requires specific change attribute
-behaviour, otherwise we wouldn't have implemented it at all in
-XFS...
-
->  For file systems that
-> don't support i_version, assume that the file has changed.
+> I actually think i_version has exactly the wrong semantics.
 > 
-> For file systems that don't support i_version, instead of assuming
-> that the file has changed, we can at least use i_generation.
+> Afaik, it doesn't actually version the file _data_ at all, it only
+> versions "inode itself changed".
 
-I'm not sure what you mean here - the struct inode already has a
-i_generation variable. It's a lifecycle indicator used to
-discriminate between alloc/free cycles on the same inode number.
-i.e. It only changes at inode allocation time, not whenever the data
-in the inode changes...
+No, the NFSv4 change attribute must change if either data or
+metadata on the inode is changed, and be consistent and persistent
+across server crashes. For data updates, they piggy back on mtime
+updates ....
 
-> With Linus' suggested changes, I think this will work nicely.
-> 
-> > The IMA code should be able to sample that at measurement time and
-> > either fail or be retried if i_version changes during measurement.
-> > We can then simply make the IMA xattr write conditional on the
-> > i_version value being unchanged from the sample the IMA code passes
-> > into the filesystem once the filesystem holds all the locks it needs
-> > to write the xattr...
-> 
-> > I note that IMA already grabs the i_version in
-> > ima_collect_measurement(), so this shouldn't be too hard to do.
-> > Perhaps we don't need any new locks or counterst all, maybe just
-> > the ability to feed a version cookie to the set_xattr method?
-> 
-> The security.ima xattr is normally written out in
-> ima_check_last_writer(), not in ima_collect_measurement().
+> But I might have missed something obvious. The updates are hidden in
+> some odd places sometimes.
 
-Which, if IIUC, does this to measure and update the xattr:
+... which are in file_update_time().
 
-ima_check_last_writer
-  -> ima_update_xattr
-    -> ima_collect_measurement
-    -> ima_fix_xattr
-
->  ima_collect_measurement() calculates the file hash for storing in the
-> measurement list (IMA-measurement), verifying the hash/signature (IMA-
-> appraisal) already stored in the xattr, and auditing (IMA-audit).
-
-Yup, and it samples the i_version before it calculates the hash and
-stores it in the iint, which then gets passed to ima_fix_xattr().
-Looks like all that is needed is to pass the i_version back to the
-filesystem through the xattr call....
-
-IOWs, sample the i_version early while we hold the inode lock and
-check the writer count, then if it is the last writer drop the inode
-lock and call ima_update_xattr(). The sampled i_version then tells
-us if the file has changed before we write the updated xattr...
-
-> The only time that ima_collect_measurement() writes the file xattr is
-> in "fix" mode.  Writing the xattr will need to be deferred until after
-> the iint->mutex is released.
-
-ima_collect_measurement() doesn't write an xattr at all - it just
-reads the file data and calculates the hash.
-
-> There should be no open writers in ima_check_last_writer(), so the
-> file shouldn't be changing.
-
-If that code is not holding the inode i_rwsem across
-ima_update_xattr(), then the writer check is racy as hell.  We're
-trying to get rid of the need for this code to hold the inode lock
-to stabilise the writer count for the entire operation, and it looks
-to me like everything is there to use the i_version to ensure the
-the IMA code doesn't need to hold the inode lock across
-ima_collect_measurement() and ima_fix_xattr()...
+Hence every data write or write page fault will call
+file_update_time() and trigger an i_version increment, even if the
+mtime doesn't change.
 
 Cheers,
 
