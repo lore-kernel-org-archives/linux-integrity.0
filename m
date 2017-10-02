@@ -1,120 +1,228 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from lhrrgout.huawei.com ([194.213.3.17]:37057 "EHLO
-        lhrrgout.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751856AbdJBOxk (ORCPT
+Received: from mail-qk0-f172.google.com ([209.85.220.172]:47302 "EHLO
+        mail-qk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751036AbdJBMnn (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 2 Oct 2017 10:53:40 -0400
-Subject: Re: RFC: Make it practical to ship EVM signatures
+        Mon, 2 Oct 2017 08:43:43 -0400
+Received: by mail-qk0-f172.google.com with SMTP id m189so936545qke.4
+        for <linux-integrity@vger.kernel.org>; Mon, 02 Oct 2017 05:43:43 -0700 (PDT)
+Message-ID: <1506948220.1719.11.camel@redhat.com>
+Subject: Re: [RFC PATCH 3/3] fs: detect that the i_rwsem has already been
+ taken exclusively
+From: Jeff Layton <jlayton@redhat.com>
 To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Matthew Garrett <mjg59@google.com>
-CC: <linux-integrity@vger.kernel.org>,
-        Mikhail Kurinnoi <viewizard@viewizard.com>
-References: <20170927221653.11219-1-mjg59@google.com>
- <1506629560.5691.33.camel@linux.vnet.ibm.com>
- <CACdnJuuveRvCx57ZnYmRWbiwh3XU7AbxZD2W-Gq_dh_h_6L9Mg@mail.gmail.com>
- <1506646397.5691.64.camel@linux.vnet.ibm.com>
- <CACdnJuueNfLdDnCsmotGhLC58cJXXh35FeZzipJ_ZshScPM=qA@mail.gmail.com>
- <1506711726.5691.141.camel@linux.vnet.ibm.com>
-From: Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <05dd27bc-753e-c2c0-88ce-8654f04ad3d5@huawei.com>
-Date: Mon, 2 Oct 2017 16:53:26 +0200
-MIME-Version: 1.0
-In-Reply-To: <1506711726.5691.141.camel@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+        Dave Chinner <david@fromorbit.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Date: Mon, 02 Oct 2017 08:43:40 -0400
+In-Reply-To: <1506946195.5691.268.camel@linux.vnet.ibm.com>
+References: <1506643967.5691.46.camel@linux.vnet.ibm.com>
+         <CA+55aFxqpTbC=sZXrbJ0x1OD-UA1NkejuR_s5LCazp+7yzvi3Q@mail.gmail.com>
+         <1506649980.5691.100.camel@linux.vnet.ibm.com>
+         <CA+55aFzZXBBn+HgLD_4C6DgpSiOMAP2WzuGPWRUkEXZJuz+QBQ@mail.gmail.com>
+         <87mv5blki7.fsf@xmission.com>
+         <CA+55aFx726wT4VprN-sHm6s8Q_PV_VjhTBC4goEbMcerYU1Tig@mail.gmail.com>
+         <1506859691.5691.211.camel@linux.vnet.ibm.com>
+         <CA+55aFwG65-1DZGLkxWzXiPHECjVvY+WHa0ihRq6MbJ4yrX-Sg@mail.gmail.com>
+         <20171001223402.GG15067@dastard>
+         <1506901362.5691.247.camel@linux.vnet.ibm.com>
+         <20171002043554.GI15067@dastard>
+         <1506946195.5691.268.camel@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 9/29/2017 9:02 PM, Mimi Zohar wrote:
-> On Fri, 2017-09-29 at 11:09 -0700, Matthew Garrett wrote:
->> On Thu, Sep 28, 2017 at 5:53 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
->>> Without the inode included in the HMAC calculation, the same file
->>> could exist as a different file name on the same file system.  No need
->>> for the two files to be on different file systems.
->>
->> But if I create a hardlink to an existing file then I get the same
->> file with the same inode number and two different names on the same
->> filesystem, and so security.evm would still match?
+On Mon, 2017-10-02 at 08:09 -0400, Mimi Zohar wrote:
+> On Mon, 2017-10-02 at 15:35 +1100, Dave Chinner wrote:
+> > On Sun, Oct 01, 2017 at 07:42:42PM -0400, Mimi Zohar wrote:
+> > > On Mon, 2017-10-02 at 09:34 +1100, Dave Chinner wrote:
+> > > > On Sun, Oct 01, 2017 at 11:41:48AM -0700, Linus Torvalds wrote:
+> > > > > On Sun, Oct 1, 2017 at 5:08 AM, Mimi Zohar <zohar@linux.vnet.
+> > > > > ibm.com> wrote:
+> > > > > > 
+> > > > > > Right, re-introducing the iint->mutex and a new
+> > > > > > i_generation field in
+> > > > > > the iint struct with a separate set of locks should
+> > > > > > work.  It will be
+> > > > > > reset if the file metadata changes (eg. setxattr, chown,
+> > > > > > chmod).
+> > > > > 
+> > > > > Note that the "inner lock" could possibly be omitted if the
+> > > > > invalidation can be just a single atomic instruction.
+> > > > > 
+> > > > > So particularly if invalidation could be just an atomic_inc()
+> > > > > on the
+> > > > > generation count, there might not need to be any inner lock
+> > > > > at all.
+> > > > > 
+> > > > > You'd have to serialize the actual measurement with the "read
+> > > > > generation count", but that should be as simple as just doing
+> > > > > a
+> > > > > smp_rmb() between the "read generation count" and "do
+> > > > > measurement on
+> > > > > file contents".
+> > > > 
+> > > > We already have a change counter on the inode, which is
+> > > > modified on
+> > > > any data or metadata write (i_version) under filesystem
+> > > > locks.  The
+> > > > i_version counter has well defined semantics - it's required by
+> > > > NFSv4 to increment on any metadata or data change - so we
+> > > > should be
+> > > > able to rely on it's behaviour to implement IMA as well.
+> > > > Filesystems
+> > > > that support i_version are marked with [SB|MS]_I_VERSION in the
+> > > > superblock (IS_I_VERSION(inode)) so it should be easy to tell
+> > > > if IMA
+> > > > can be supported on a specific filesystem (btrfs, ext4, fuse
+> > > > and xfs
+> > > > ATM).
+> > > 
+> > > Recently I received a patch to replace i_version with
+> > > mtime/atime.
+> > 
+
+I assume you're talking here about the patch I sent a few months ago.
+
+I specifically do _not_ want to replace i_version with the mtime/atime.
+The point there was to stop trying to use i_version on filesystems that
+don't properly implement it (which is most of them).
+
+The next best approximation on those filesystems is the mtime. It's not
+perfect, but it's better than nothing (which is what you have now on
+filesystems that never increment i_version on writes). IOW, it just
+added a fallback for when you can't count on the i_version changing.
+
+(BTW: atime is worthless here -- who cares if the thing was accessed?
+IIUC, we only care if something changed.)
+
+Ideally, all filesystems would implement i_version properly. In
+practice, that's a tall order as that may require on-disk changes for
+some of them. That's not always possible where cross-OS compatibility
+is necessary (e.g. FAT or NTFS).
+
+> > mtime is not guaranteed to change on data writes - the resolution
+> > of
+> > the filesystem timestamps may mean mtime only changes once a second
+> > regardless of the number of writes performed to that file. That's
+> > why NFS can't use it as a change attribute, and hence we have
+> > i_version....
+> > 
+> > >  Now, even more recently, I received a patch that claims that
+> > > i_version is just a performance improvement.
+> > 
+> > Did you ask them to explain/quantify the performance improvement?
 > 
-> True, with a hard link that would be the case, but by the same file, I
-> meant a copy of the original file, not a hard link to the file.
+> Using i_version is a performance improvement as opposed to always
+> calculating the file hash and writing the xattr.  The patch is
+> intended for filesystems that don't support i_version (eg. ubifs).
+>  
+> > e.g. Using i_version on XFS slows down performance on small
+> > writes by 2-3% because i_version because all data writes log a
+> > version change rather than only logging a change when mtime
+> > updates.
+> > We take that penalty because NFS requires specific change attribute
+> > behaviour, otherwise we wouldn't have implemented it at all in
+> > XFS...
+> > 
+> > >  For file systems that
+> > > don't support i_version, assume that the file has changed.
+> > > 
+> > > For file systems that don't support i_version, instead of
+> > > assuming
+> > > that the file has changed, we can at least use i_generation.
+> > 
+> > I'm not sure what you mean here - the struct inode already has a
+> > i_generation variable. It's a lifecycle indicator used to
+> > discriminate between alloc/free cycles on the same inode number.
+> > i.e. It only changes at inode allocation time, not whenever the
+> > data
+> > in the inode changes...
 > 
->>>> One of the reasons we're interested in allowing the use of signatures
->>>> rather than HMACs is to avoid the case where a machine being
->>>> compromised would allow an attacker to obtain the symmetric key and
->>>> drop new appropriately HMACed binaries on the system that would
->>>> persist even if the kernel was updated to fix the vulnerability.
->>>
->>> Assuming you're using a trusted key (TPM based key) to encrypt/decrypt
->>> the EVM key (trusted key), then such an attack would require root
->>> privileges with the ability to read kernel memory.  The EVM key is
->>> never exposed to userspace in the clear.
->>
->> That's a case that we need to be worried about. Trusted boot means we
->> can ensure that a system boots an updated kernel, but if the attacker
->> has been able to drop a modified sshd with a valid hmac onto the
->> system then we have fewer guarantees about the integrity. We could
->> continue using signatures for security.ima to avoid that, but then we
->> lose the performance benefits of the hmac and also don't have the same
->> level of guarantees around the other security metadata.
+> Sigh, my error.
 > 
-> I think you mean "secure boot", not "trusted boot", in this case.
+> > 
+> > > With Linus' suggested changes, I think this will work nicely.
+> > > 
+> > > > The IMA code should be able to sample that at measurement time
+> > > > and
+> > > > either fail or be retried if i_version changes during
+> > > > measurement.
+> > > > We can then simply make the IMA xattr write conditional on the
+> > > > i_version value being unchanged from the sample the IMA code
+> > > > passes
+> > > > into the filesystem once the filesystem holds all the locks it
+> > > > needs
+> > > > to write the xattr...
+> > > > I note that IMA already grabs the i_version in
+> > > > ima_collect_measurement(), so this shouldn't be too hard to do.
+> > > > Perhaps we don't need any new locks or counterst all, maybe
+> > > > just
+> > > > the ability to feed a version cookie to the set_xattr method?
+> > > 
+> > > The security.ima xattr is normally written out in
+> > > ima_check_last_writer(), not in ima_collect_measurement().
+> > 
+> > Which, if IIUC, does this to measure and update the xattr:
+> > 
+> > ima_check_last_writer
+> >   -> ima_update_xattr
+> >     -> ima_collect_measurement
+> >     -> ima_fix_xattr
+> > 
+> > >  ima_collect_measurement() calculates the file hash for storing
+> > > in the
+> > > measurement list (IMA-measurement), verifying the hash/signature
+> > > (IMA-
+> > > appraisal) already stored in the xattr, and auditing (IMA-audit).
+> > 
+> > Yup, and it samples the i_version before it calculates the hash and
+> > stores it in the iint, which then gets passed to ima_fix_xattr().
+> > Looks like all that is needed is to pass the i_version back to the
+> > filesystem through the xattr call....
+> > 
+> > IOWs, sample the i_version early while we hold the inode lock and
+> > check the writer count, then if it is the last writer drop the
+> > inode
+> > lock and call ima_update_xattr(). The sampled i_version then tells
+> > us if the file has changed before we write the updated xattr...
+> > 
+> > > The only time that ima_collect_measurement() writes the file
+> > > xattr is
+> > > in "fix" mode.  Writing the xattr will need to be deferred until
+> > > after
+> > > the iint->mutex is released.
+> > 
+> > ima_collect_measurement() doesn't write an xattr at all - it just
+> > reads the file data and calculates the hash.
 > 
-> The original understanding was that IMA/EVM would enforce integrity
-> and not enforce mandatory access control (MAC).  The LSMs (eg.
-> SELinux) would be responsible for MAC.  Separation of duties.
-
-To enforce integrity at runtime, IMA must be able to capture all
-integrity relevant operations and allow the TCB to read only high
-integrity files (Biba model). But, if it is left to LSMs to decide
-if a file can be written or not, then IMA alone cannot determine
-which files should be appraised or not. It could happen that IMA does
-not appraise files which have an impact on the integrity of the TCB.
-
-For example, with the current appraisal policy, IMA appraises files
-owned by root but does not consider permissions assigned to others.
-What it could happen is that, if a file owned by root is writable
-by others (which is possible with DAC), a process outside the TCB
-reads a file not owned by root (not appraised), becomes compromised,
-and writes to a file owned by root (appraised), which is read by
-a process in the TCB. The integrity of the TCB becomes low.
-
-The problem is that, with an IMA policy based on LSM labels or DAC
-permissions applied to files, IMA relies on the fact that LSMs
-or DAC would preserve the integrity of the files belonging to
-the TCB, while the policy might not be designed to meet this goal.
-
-To avoid this issue, IMA could instead enforce integrity depending
-on process credentials (similarly to measurement). An HMAC is added
-to a file, or updated, only if the initial state is known (the file
-is signed, or it belongs to a digest list), and if it is written
-only by processes in the TCB. Writes by processes outside the TCB
-are denied.
-
-Files with valid HMACs could be excluded from measurement.
-If enforcement is not enabled, IMA should not update the HMAC if
-a file is written by a process outside the TCB, and should create
-a new measurement entry if a process in the TCB accesses it.
-
-Roberto
-
-
-> With that understanding, if the LSM allows a file to be "dropped" onto
->   the file system of a running system, IMA/EVM will hash and hmac the
-> permitted file.
+> There's another call to ima_fix_xattr() from
+> ima_appraise_measurement(). 
 > 
-> I don't understand where you're going with this train of thought.  If
-> you're trying to make a case for EVM to run with only security.evm
-> signatures, then you wouldn't refer to the HMAC benefits.  If you're
-> trying to make a case for EVM signatures, with the inode they're not
-> portable, without the inode, they are susceptible to a cut and paste
-> attack.
+> > > There should be no open writers in ima_check_last_writer(), so
+> > > the
+> > > file shouldn't be changing.
+> > 
+> > If that code is not holding the inode i_rwsem across
+> > ima_update_xattr(), then the writer check is racy as hell.  We're
+> > trying to get rid of the need for this code to hold the inode lock
+> > to stabilise the writer count for the entire operation, and it
+> > looks
+> > to me like everything is there to use the i_version to ensure the
+> > the IMA code doesn't need to hold the inode lock across
+> > ima_collect_measurement() and ima_fix_xattr()...
 > 
-> Mickhail's proposed patches resolves this by having a portable EVM
-> signature that is never written to disk, but converted to an HMAC.
+> Ok
 > 
 > Mimi
 > 
-
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
+Jeff Layton <jlayton@redhat.com>
