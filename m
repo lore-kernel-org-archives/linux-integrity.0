@@ -1,66 +1,45 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from fieldses.org ([173.255.197.46]:52398 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751132AbdJBTWZ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 2 Oct 2017 15:22:25 -0400
-Date: Mon, 2 Oct 2017 15:22:24 -0400
-To: Greg KH <greg@kroah.com>
-Cc: =?utf-8?B?SsOpcsOpbXk=?= Lefaure <jeremy.lefaure@lse.epita.fr>,
-        "Tobin C. Harding" <me@tobin.cc>, alsa-devel@alsa-project.org,
-        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        dm-devel@redhat.com, brcm80211-dev-list@cypress.com,
-        devel@driverdev.osuosl.org, linux-scsi@vger.kernel.org,
-        linux-rdma@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        linux-acpi@vger.kernel.org, linux-video@atrey.karlin.mff.cuni.cz,
-        intel-wired-lan@lists.osuosl.org, linux-media@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, ecryptfs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-raid@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net,
-        intel-gvt-dev@lists.freedesktop.org, devel@acpica.org,
-        brcm80211-dev-list.pdl@broadcom.com, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH 00/18] use ARRAY_SIZE macro
-Message-ID: <20171002192224.GD1903@fieldses.org>
-References: <20171001193101.8898-1-jeremy.lefaure@lse.epita.fr>
- <20171001220131.GA11812@eros>
- <20171001205220.10b78086@blatinox-laptop.localdomain>
- <20171002053554.GA28743@kroah.com>
+Received: from mail-io0-f171.google.com ([209.85.223.171]:47724 "EHLO
+        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751065AbdJBRJl (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 2 Oct 2017 13:09:41 -0400
+Received: by mail-io0-f171.google.com with SMTP id m201so11842iom.4
+        for <linux-integrity@vger.kernel.org>; Mon, 02 Oct 2017 10:09:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20171002053554.GA28743@kroah.com>
-From: bfields@fieldses.org (J. Bruce Fields)
+In-Reply-To: <1506825397.5691.186.camel@linux.vnet.ibm.com>
+References: <20170927221653.11219-1-mjg59@google.com> <1506629560.5691.33.camel@linux.vnet.ibm.com>
+ <CACdnJuuveRvCx57ZnYmRWbiwh3XU7AbxZD2W-Gq_dh_h_6L9Mg@mail.gmail.com>
+ <1506646397.5691.64.camel@linux.vnet.ibm.com> <CACdnJuueNfLdDnCsmotGhLC58cJXXh35FeZzipJ_ZshScPM=qA@mail.gmail.com>
+ <1506711726.5691.141.camel@linux.vnet.ibm.com> <CACdnJuvYNnePfz4H-D=DGMHbrbmZ52JWFoLqX120ALV=o4wwcw@mail.gmail.com>
+ <1506715304.5691.151.camel@linux.vnet.ibm.com> <CACdnJutXT6yU70R07m7Nd=7d6RbZr0Nti_r54Z7CffiK2r17zA@mail.gmail.com>
+ <1506825397.5691.186.camel@linux.vnet.ibm.com>
+From: Matthew Garrett <mjg59@google.com>
+Date: Mon, 2 Oct 2017 10:09:39 -0700
+Message-ID: <CACdnJuv11cjDHac6M+iofB7yA=on2N5ZiqXz8onZZPtGFgo7yA@mail.gmail.com>
+Subject: Re: RFC: Make it practical to ship EVM signatures
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org,
+        Mikhail Kurinnoi <viewizard@viewizard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Oct 02, 2017 at 07:35:54AM +0200, Greg KH wrote:
-> On Sun, Oct 01, 2017 at 08:52:20PM -0400, Jeremy Lefaure wrote:
-> > On Mon, 2 Oct 2017 09:01:31 +1100
-> > "Tobin C. Harding" <me@tobin.cc> wrote:
-> > 
-> > > > In order to reduce the size of the To: and Cc: lines, each patch of the
-> > > > series is sent only to the maintainers and lists concerned by the patch.
-> > > > This cover letter is sent to every list concerned by this series.  
-> > > 
-> > > Why don't you just send individual patches for each subsystem? I'm not a maintainer but I don't see
-> > > how any one person is going to be able to apply this whole series, it is making it hard for
-> > > maintainers if they have to pick patches out from among the series (if indeed any will bother
-> > > doing that).
-> > Yeah, maybe it would have been better to send individual patches.
-> > 
-> > From my point of view it's a series because the patches are related (I
-> > did a git format-patch from my local branch). But for the maintainers
-> > point of view, they are individual patches.
-> 
-> And the maintainers view is what matters here, if you wish to get your
-> patches reviewed and accepted...
+On Sat, Sep 30, 2017 at 7:36 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> On Fri, 2017-09-29 at 13:09 -0700, Matthew Garrett wrote:
+>> If the security metadata is different then copying another
+>> security.evm will fail, surely?
+>
+> A copy of the file could exist with a valid hmac on the system with
+> different security xattrs.  Without the inode/uuid, the xattrs could
+> be cut & pasted.
 
-Mainly I'd just like to know which you're asking for.  Do you want me to
-apply this, or to ACK it so someone else can?  If it's sent as a series
-I tend to assume the latter.
+So we have /usr/bin/a and /usr/bin/b, which are identical but have
+different security contexts. Outside some unusual cases, if I have the
+ability to modify /usr/bin/b's security.evm, I can delete /usr/bin/b.
+I can then also just do:
 
-But in this case I'm assuming it's the former, so I'll pick up the nfsd
-one....
+ln -f /usr/bin/a /usr/bin/b
 
---b.
+and /usr/bin/b now has the same security context as /usr/bin/a,
+including security.evm.
