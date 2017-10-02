@@ -1,51 +1,59 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-it0-f47.google.com ([209.85.214.47]:45901 "EHLO
-        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752155AbdI2SJd (ORCPT
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:37367 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750890AbdJBFfr (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 29 Sep 2017 14:09:33 -0400
-Received: by mail-it0-f47.google.com with SMTP id x15so742913itb.0
-        for <linux-integrity@vger.kernel.org>; Fri, 29 Sep 2017 11:09:32 -0700 (PDT)
+        Mon, 2 Oct 2017 01:35:47 -0400
+Date: Mon, 2 Oct 2017 07:35:54 +0200
+From: Greg KH <greg@kroah.com>
+To: =?iso-8859-1?B?Suly6W15?= Lefaure <jeremy.lefaure@lse.epita.fr>
+Cc: "Tobin C. Harding" <me@tobin.cc>, alsa-devel@alsa-project.org,
+        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        dm-devel@redhat.com, brcm80211-dev-list@cypress.com,
+        devel@driverdev.osuosl.org, linux-scsi@vger.kernel.org,
+        linux-rdma@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        linux-acpi@vger.kernel.org, linux-video@atrey.karlin.mff.cuni.cz,
+        intel-wired-lan@lists.osuosl.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, ecryptfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-raid@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net,
+        intel-gvt-dev@lists.freedesktop.org, devel@acpica.org,
+        brcm80211-dev-list.pdl@broadcom.com, netdev@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH 00/18] use ARRAY_SIZE macro
+Message-ID: <20171002053554.GA28743@kroah.com>
+References: <20171001193101.8898-1-jeremy.lefaure@lse.epita.fr>
+ <20171001220131.GA11812@eros>
+ <20171001205220.10b78086@blatinox-laptop.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <1506646397.5691.64.camel@linux.vnet.ibm.com>
-References: <20170927221653.11219-1-mjg59@google.com> <1506629560.5691.33.camel@linux.vnet.ibm.com>
- <CACdnJuuveRvCx57ZnYmRWbiwh3XU7AbxZD2W-Gq_dh_h_6L9Mg@mail.gmail.com> <1506646397.5691.64.camel@linux.vnet.ibm.com>
-From: Matthew Garrett <mjg59@google.com>
-Date: Fri, 29 Sep 2017 11:09:30 -0700
-Message-ID: <CACdnJuueNfLdDnCsmotGhLC58cJXXh35FeZzipJ_ZshScPM=qA@mail.gmail.com>
-Subject: Re: RFC: Make it practical to ship EVM signatures
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org,
-        Mikhail Kurinnoi <viewizard@viewizard.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20171001205220.10b78086@blatinox-laptop.localdomain>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Sep 28, 2017 at 5:53 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> Without the inode included in the HMAC calculation, the same file
-> could exist as a different file name on the same file system.  No need
-> for the two files to be on different file systems.
+On Sun, Oct 01, 2017 at 08:52:20PM -0400, Jeremy Lefaure wrote:
+> On Mon, 2 Oct 2017 09:01:31 +1100
+> "Tobin C. Harding" <me@tobin.cc> wrote:
+> 
+> > > In order to reduce the size of the To: and Cc: lines, each patch of the
+> > > series is sent only to the maintainers and lists concerned by the patch.
+> > > This cover letter is sent to every list concerned by this series.  
+> > 
+> > Why don't you just send individual patches for each subsystem? I'm not a maintainer but I don't see
+> > how any one person is going to be able to apply this whole series, it is making it hard for
+> > maintainers if they have to pick patches out from among the series (if indeed any will bother
+> > doing that).
+> Yeah, maybe it would have been better to send individual patches.
+> 
+> From my point of view it's a series because the patches are related (I
+> did a git format-patch from my local branch). But for the maintainers
+> point of view, they are individual patches.
 
-But if I create a hardlink to an existing file then I get the same
-file with the same inode number and two different names on the same
-filesystem, and so security.evm would still match?
+And the maintainers view is what matters here, if you wish to get your
+patches reviewed and accepted...
 
+thanks,
 
->> One of the reasons we're interested in allowing the use of signatures
->> rather than HMACs is to avoid the case where a machine being
->> compromised would allow an attacker to obtain the symmetric key and
->> drop new appropriately HMACed binaries on the system that would
->> persist even if the kernel was updated to fix the vulnerability.
->
-> Assuming you're using a trusted key (TPM based key) to encrypt/decrypt
-> the EVM key (trusted key), then such an attack would require root
-> privileges with the ability to read kernel memory.  The EVM key is
-> never exposed to userspace in the clear.
-
-That's a case that we need to be worried about. Trusted boot means we
-can ensure that a system boots an updated kernel, but if the attacker
-has been able to drop a modified sshd with a valid hmac onto the
-system then we have fewer guarantees about the integrity. We could
-continue using signatures for security.ima to avoid that, but then we
-lose the performance benefits of the hmac and also don't have the same
-level of guarantees around the other security metadata.
+greg k-h
