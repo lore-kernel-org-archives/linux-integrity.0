@@ -1,39 +1,44 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io0-f181.google.com ([209.85.223.181]:56191 "EHLO
-        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750957AbdJBRCv (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 2 Oct 2017 13:02:51 -0400
-Received: by mail-io0-f181.google.com with SMTP id z187so5289773ioz.12
-        for <linux-integrity@vger.kernel.org>; Mon, 02 Oct 2017 10:02:51 -0700 (PDT)
+Received: from osg.samsung.com ([64.30.133.232]:55533 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751082AbdJBQsd (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 2 Oct 2017 12:48:33 -0400
+Date: Mon, 2 Oct 2017 13:37:34 -0300
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+To: =?UTF-8?B?SsOpcsOpbXk=?= Lefaure <jeremy.lefaure@lse.epita.fr>
+Cc: "Tobin C. Harding" <me@tobin.cc>, alsa-devel@alsa-project.org,
+        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        dm-devel@redhat.com, brcm80211-dev-list@cypress.com,
+        devel@driverdev.osuosl.org, linux-scsi@vger.kernel.org,
+        linux-rdma@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        linux-acpi@vger.kernel.org, linux-video@atrey.karlin.mff.cuni.cz,
+        intel-wired-lan@lists.osuosl.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, ecryptfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-raid@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net,
+        intel-gvt-dev@lists.freedesktop.org, devel@acpica.org,
+        brcm80211-dev-list.pdl@broadcom.com, netdev@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH 00/18] use ARRAY_SIZE macro
+Message-ID: <20171002133734.6ac10ded@recife.lan>
+In-Reply-To: <20171001205220.10b78086@blatinox-laptop.localdomain>
+References: <20171001193101.8898-1-jeremy.lefaure@lse.epita.fr>
+        <20171001220131.GA11812@eros>
+        <20171001205220.10b78086@blatinox-laptop.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <1506823682.5691.173.camel@linux.vnet.ibm.com>
-References: <20170927221653.11219-1-mjg59@google.com> <20170927221653.11219-2-mjg59@google.com>
- <1506823682.5691.173.camel@linux.vnet.ibm.com>
-From: Matthew Garrett <mjg59@google.com>
-Date: Mon, 2 Oct 2017 10:02:50 -0700
-Message-ID: <CACdnJuvzMKWNRSZy2LZUBv+qiPPDkm2ftNZ7RcdqbHXFP49bFg@mail.gmail.com>
-Subject: Re: [PATCH 1/6] IMA: Allow EVM validation on appraisal even without a
- symmetric key
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sat, Sep 30, 2017 at 7:08 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> On Wed, 2017-09-27 at 15:16 -0700, Matthew Garrett wrote:
->> A reasonable configuration is to use IMA to appraise a subset of files
->> (based on user, security label or other features supported by IMA) but
->> to also want to use EVM to validate not only the state of the IMA hash
->> but also additional metadata on the file. Right now this is only
->> possible if a symmetric key has been loaded, which may not be desirable
->> in all cases (eg, one where EVM digital signatures are shipped to end
->> systems rather than EVM HMACs being generated locally).
->
-> Commit 26ddabfe96bb "evm: enable EVM when X509 certificate is loaded"
-> already allows EVM to be enabled without loading a symmetric key.
+Em Sun, 1 Oct 2017 20:52:20 -0400
+Jeremy Lefaure <jeremy.lefaure@lse.epita.fr> escreveu:
 
-This only seems to be set if CONFIG_EVM_LOAD_X509 is set. Should there
-be some sort of callback to set this if a key is loaded onto the evm
-keyring at runtime?
+> Anyway, I can tell to each maintainer that they can apply the patches
+> they're concerned about and next time I may send individual patches.
+
+In the case of media, we'll handle it as if they were individual ones.
+
+Thanks,
+Mauro
