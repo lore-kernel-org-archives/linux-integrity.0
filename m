@@ -1,70 +1,55 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from g2t1383g.austin.hpe.com ([15.233.16.89]:6075 "EHLO
-        g2t1383g.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750830AbdJCQJE (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 3 Oct 2017 12:09:04 -0400
-Received: from g2t2352.austin.hpe.com (g2t2352.austin.hpe.com [15.233.44.25])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by g2t1383g.austin.hpe.com (Postfix) with ESMTPS id 6DA4B2709
-        for <linux-integrity@vger.kernel.org>; Tue,  3 Oct 2017 16:09:04 +0000 (UTC)
-Received: from G4W9121.americas.hpqcorp.net (g4w9121.houston.hp.com [16.210.21.16])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by g2t2352.austin.hpe.com (Postfix) with ESMTPS id D01BE63
-        for <linux-integrity@vger.kernel.org>; Tue,  3 Oct 2017 16:09:03 +0000 (UTC)
-From: "Magalhaes, Guilherme (Brazil R&D-CL)" <guilherme.magalhaes@hpe.com>
-To: "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Subject: IMA measurement performance degradation
-Date: Tue, 3 Oct 2017 16:08:41 +0000
-Message-ID: <TU4PR84MB03022FBD0B5B5EF9E7294B99FF720@TU4PR84MB0302.NAMPRD84.PROD.OUTLOOK.COM>
-References: <TU4PR84MB0302696A2C214711B9C5DCC4FF7D0@TU4PR84MB0302.NAMPRD84.PROD.OUTLOOK.COM>
- <TU4PR84MB0302C3D9C184EDB8B722EE68FF7D0@TU4PR84MB0302.NAMPRD84.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset="us-ascii"
+Received: from blatinox.fr ([51.254.120.209]:41844 "EHLO vps202351.ovh.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751421AbdJCBis (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 2 Oct 2017 21:38:48 -0400
+Date: Mon, 2 Oct 2017 21:33:12 -0400
+From: =?UTF-8?B?SsOpcsOpbXk=?= Lefaure <jeremy.lefaure@lse.epita.fr>
+To: bfields@fieldses.org (J. Bruce Fields)
+Cc: Greg KH <greg@kroah.com>, "Tobin C. Harding" <me@tobin.cc>,
+        alsa-devel@alsa-project.org, nouveau@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, dm-devel@redhat.com,
+        brcm80211-dev-list@cypress.com, devel@driverdev.osuosl.org,
+        linux-scsi@vger.kernel.org, linux-rdma@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        linux-acpi@vger.kernel.org, linux-video@atrey.karlin.mff.cuni.cz,
+        intel-wired-lan@lists.osuosl.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, ecryptfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-raid@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net,
+        intel-gvt-dev@lists.freedesktop.org, devel@acpica.org,
+        brcm80211-dev-list.pdl@broadcom.com, netdev@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        jlayton@redhat.com
+Subject: Re: [PATCH 00/18] use ARRAY_SIZE macro
+Message-ID: <20171002213312.3f904290@blatinox-laptop.localdomain>
+In-Reply-To: <20171002192224.GD1903@fieldses.org>
+References: <20171001193101.8898-1-jeremy.lefaure@lse.epita.fr>
+        <20171001220131.GA11812@eros>
+        <20171001205220.10b78086@blatinox-laptop.localdomain>
+        <20171002053554.GA28743@kroah.com>
+        <20171002192224.GD1903@fieldses.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Mimi.
+On Mon, 2 Oct 2017 15:22:24 -0400
+bfields@fieldses.org (J. Bruce Fields) wrote:
 
-We are measuring IMA performance analyse vTPM performance/scalability, once 
-vTPM is going to be used when IMA measurements and log are namespaced. With 
-the analysis, we identified one possible improvement in IMA.
+> Mainly I'd just like to know which you're asking for.  Do you want me to
+> apply this, or to ACK it so someone else can?  If it's sent as a series
+> I tend to assume the latter.
+> 
+> But in this case I'm assuming it's the former, so I'll pick up the nfsd
+> one....
+Could you to apply the NFSD patch ("nfsd: use ARRAY_SIZE") with the
+Reviewed-by: Jeff Layton <jlayton@redhat.com>) tag please ?
 
-The problem is a performance degradation caused by the IMA measurement hash 
-table (ima_htable). The analysis executes many file accesses (measurements) with 
-different types of workloads and configurations. I will restrict the experiment 
-configuration to the ones important to this problem. Scenario #1 is with files 
-outside the IMA policy and scenario #2 is with files in the IMA policy. On the 
-scenario #2, we disabled the TPM chip (enabling us to see other bottlenecks 
-besides the TPM chip). 
+This patch is an individual patch and it should not have been sent in a
+series (sorry about that).
 
-See the chart at:
-https://drive.google.com/file/d/0ByxwRmmxIzLYcEdEMV9xZFlUYlE/view?usp=sharing. 
-The X axis is the number of process running the workload and the Y axis is the total 
-number of file create/read (measurements) performed. The red line is scenario #1 
-and the green line is scenario #2.
-
-The green line makes clear there is a performance degradation in the IMA 
-measurement path whereas file measurements are performed. We then spot in the 
-source code that IMA manages along with the IMA log a hash table where entries 
-are references to the IMA log entries structured in a linked list inside each bucket. 
-We profiled this hash table and realized each bucket list increases in time to 
-thousands of entries. On each new file measurement, before a new entry is 
-added to the IMA log, the new entry is looked up in the hash table by traversing 
-sequentially a certain bucket list. This linked list then considerably slows down the 
-measurement process and also explain the performance degradation. We 
-removed this hash table entirely to run the experiments and IMA measurement 
-performed at the same pace when files are not in the policy. The TPM chip is still 
-the biggest bottleneck, but this hash table bottleneck will impact performance 
-when vTPMs are supported in IMA (more details to be provided).
-
-What this hash table is needed for? I believe it is used just to avoid duplicated 
-entries in the IMA log. On this case, the IMA_MEASURED flag should be sufficient. 
-Is the hash table required as a safety net for the inode/iint cache evictions 
-controlled automatically by the kernel, since that flag is part of the iint cache? 
-If this hash table is really needed, could it be replaced with a red black tree?
-
---
-Guilherme
+Thank you,
+Jeremy
