@@ -1,61 +1,93 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:44204 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751047AbdJDH1K (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 4 Oct 2017 03:27:10 -0400
-Date: Wed, 4 Oct 2017 10:27:08 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Peter Huewe <PeterHuewe@gmx.de>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-Subject: Re: Re: [PATCH] MAINTAINERS: update TPM driver infrastructure changes
-Message-ID: <20171004072708.fivflglchj7injgb@linux.intel.com>
-References: <20170915223811.21368-1-jarkko.sakkinen@linux.intel.com>
- <1506442580.3677.97.camel@linux.vnet.ibm.com>
- <20170929165933.vjvzyb6e7c6xd6r7@linux.intel.com>
- <trinity-091f53ec-a37e-46a1-9650-1a5d2022f2bb-1506709890307@3c-app-gmx-bs57>
+Received: from g2t2352.austin.hpe.com ([15.233.44.25]:55968 "EHLO
+        g2t2352.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751393AbdJCU54 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 3 Oct 2017 16:57:56 -0400
+Received: from G2W6310.americas.hpqcorp.net (g2w6310.austin.hp.com [16.197.64.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by g2t2352.austin.hpe.com (Postfix) with ESMTPS id 6ABA6D4
+        for <linux-integrity@vger.kernel.org>; Tue,  3 Oct 2017 20:57:55 +0000 (UTC)
+From: "Magalhaes, Guilherme (Brazil R&D-CL)" <guilherme.magalhaes@hpe.com>
+To: "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Subject: RE: [PATCH] tpm: adjust command response sleep time for vTPM
+Date: Tue, 3 Oct 2017 20:57:53 +0000
+Message-ID: <TU4PR84MB03024132AA87A1D337E431E8FF720@TU4PR84MB0302.NAMPRD84.PROD.OUTLOOK.COM>
+References: <20171003204640.62236-1-guilherme.magalhaes@hpe.com>
+In-Reply-To: <20171003204640.62236-1-guilherme.magalhaes@hpe.com>
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <trinity-091f53ec-a37e-46a1-9650-1a5d2022f2bb-1506709890307@3c-app-gmx-bs57>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Sep 29, 2017 at 08:31:30PM +0200, Peter Huewe wrote:
-> 
->  
->  
-> 
-> Gesendet: Freitag, 29. September 2017 um 18:59 Uhr
-> Von: "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
-> An: "Mimi Zohar" <zohar@linux.vnet.ibm.com>, peterhuewe@gmx.de
-> Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-> Betreff: Re: [PATCH] MAINTAINERS: update TPM driver infrastructure changes
-> On Tue, Sep 26, 2017 at 12:16:20PM -0400, Mimi Zohar wrote:
-> > Hi Jarkko,
-> >
-> > > +Q: https://patchwork.kernel.org/project/linux-integrity/list/
-> >
-> > Is there a way of viewing not just the posted patches, but the
-> > discussion as well?  Do we need to set up an archive as well?
-> >
-> > Mimi
-> 
-> > Peter, did you setup archiving?
-> Jarkko, did you read my other email?
-> 
-> /Peter
-> 
-> 
-> p.s.: 
-> Spinics is archiving us at
-> https://www.spinics.net/lists/linux-integrity/[https://www.spinics.net/lists/linux-integrity/]
-> 
-> It would be good to add this to the vger page + documented on the wiki, which should be added to MAINTAINERS.
-> http://kernsec.org/wiki/index.php/Linux_Kernel_Integrity[http://kernsec.org/wiki/index.php/Linux_Kernel_Integrity] as wiki page
+Additionally, see the chart at:
+https://drive.google.com/file/d/0ByxwRmmxIzLYUm5WMm5BRmlkZWc/view?usp=sharing
 
-Can you send a follow-up patch to update MAINTAINERS?
+The X axis represents the number of processes executing new file access 
+(measurements) and Y axis represents the total number of extends performed. 
+The red line represents the workload using vTPM without any adjustment in 
+the response polling sleep time. The purple line is with vTPM now with the
+polling sleep time adjustment.
 
-The first one is already applied so it does not make sense to
-revise it and it doesn't contain any errors.
+The IMA hash table, which causes performance degradation as indicated in 
+my previous email, was removed from IMA to run these experiments as well.
 
-/Jarkko
+--
+Guilherme
+
+> -----Original Message-----
+> From: Magalhaes, Guilherme (Brazil R&D-CL)
+> Sent: terca-feira, 3 de outubro de 2017 17:47
+> To: linux-integrity@vger.kernel.org
+> Cc: Magalhaes, Guilherme (Brazil R&D-CL) <guilherme.magalhaes@hpe.com>
+> Subject: [PATCH] tpm: adjust command response sleep time for vTPM
+> 
+> Once vTPM is actually a software, it is able to respond the commands much
+> quicker than physical TPMs. What we propose is to adjust the response
+> polling time to a usec value when the chip is detected as a vTPM.
+> With this change, the kernel TPM interface identifies whether the chip is
+> vTPM and on this case sets the polling sleep time to an optimized value.
+> 
+> The performance result was 12x improvement when comparing PCR extends
+> using vTPM with the current sleep time and with the adjusted sleep time.
+> ---
+>  drivers/char/tpm/tpm-interface.c | 6 +++++-
+>  drivers/char/tpm/tpm.h           | 2 ++
+>  2 files changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-
+> interface.c
+> index 1d6729be4cd6..d213a3d4b305 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -455,7 +455,11 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct
+> tpm_space *space,
+>  			goto out;
+>  		}
+> 
+> -		tpm_msleep(TPM_TIMEOUT);
+> +		if (chip->flags & TPM_CHIP_FLAG_VIRTUAL)
+> +			usleep_range(TPM_TIMEOUT_VTPM_US,
+> TPM_TIMEOUT_VTPM_RANGE_US);
+> +		else
+> +			tpm_msleep(TPM_TIMEOUT);
+> +
+>  		rmb();
+>  	} while (time_before(jiffies, stop));
+> 
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 2d5466a72e40..02d2dd761543 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -50,6 +50,8 @@ enum tpm_const {
+> 
+>  enum tpm_timeout {
+>  	TPM_TIMEOUT = 5,	/* msecs */
+> +	TPM_TIMEOUT_VTPM_US = 1,	/* usecs */
+> +	TPM_TIMEOUT_VTPM_RANGE_US = 5,	/* usecs */
+>  	TPM_TIMEOUT_RETRY = 100, /* msecs */
+>  	TPM_TIMEOUT_RANGE_US = 300	/* usecs */
+>  };
+> --
+> 2.11.0
