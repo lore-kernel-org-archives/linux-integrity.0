@@ -1,63 +1,70 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from g2t2353.austin.hpe.com ([15.233.44.26]:56651 "EHLO
-        g2t2353.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750841AbdJCUsK (ORCPT
+Received: from g2t1383g.austin.hpe.com ([15.233.16.89]:6075 "EHLO
+        g2t1383g.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750830AbdJCQJE (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 3 Oct 2017 16:48:10 -0400
-Received: from g2t2360.austin.hpecorp.net (g2t2360.austin.hpecorp.net [16.196.225.135])
-        by g2t2353.austin.hpe.com (Postfix) with ESMTP id 2983C8C
-        for <linux-integrity@vger.kernel.org>; Tue,  3 Oct 2017 20:48:10 +0000 (UTC)
-From: Guilherme Magalhaes <guilherme.magalhaes@hpe.com>
-To: linux-integrity@vger.kernel.org
-Cc: Guilherme Magalhaes <guilherme.magalhaes@hpe.com>
-Subject: [PATCH] tpm: adjust command response sleep time for vTPM
-Date: Tue,  3 Oct 2017 17:46:40 -0300
-Message-Id: <20171003204640.62236-1-guilherme.magalhaes@hpe.com>
+        Tue, 3 Oct 2017 12:09:04 -0400
+Received: from g2t2352.austin.hpe.com (g2t2352.austin.hpe.com [15.233.44.25])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by g2t1383g.austin.hpe.com (Postfix) with ESMTPS id 6DA4B2709
+        for <linux-integrity@vger.kernel.org>; Tue,  3 Oct 2017 16:09:04 +0000 (UTC)
+Received: from G4W9121.americas.hpqcorp.net (g4w9121.houston.hp.com [16.210.21.16])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by g2t2352.austin.hpe.com (Postfix) with ESMTPS id D01BE63
+        for <linux-integrity@vger.kernel.org>; Tue,  3 Oct 2017 16:09:03 +0000 (UTC)
+From: "Magalhaes, Guilherme (Brazil R&D-CL)" <guilherme.magalhaes@hpe.com>
+To: "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Subject: IMA measurement performance degradation
+Date: Tue, 3 Oct 2017 16:08:41 +0000
+Message-ID: <TU4PR84MB03022FBD0B5B5EF9E7294B99FF720@TU4PR84MB0302.NAMPRD84.PROD.OUTLOOK.COM>
+References: <TU4PR84MB0302696A2C214711B9C5DCC4FF7D0@TU4PR84MB0302.NAMPRD84.PROD.OUTLOOK.COM>
+ <TU4PR84MB0302C3D9C184EDB8B722EE68FF7D0@TU4PR84MB0302.NAMPRD84.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Once vTPM is actually a software, it is able to respond the commands much
-quicker than physical TPMs. What we propose is to adjust the response
-polling time to a usec value when the chip is detected as a vTPM.
-With this change, the kernel TPM interface identifies whether the chip is
-vTPM and on this case sets the polling sleep time to an optimized value.
+Hi Mimi.
 
-The performance result was 12x improvement when comparing PCR extends
-using vTPM with the current sleep time and with the adjusted sleep time.
----
- drivers/char/tpm/tpm-interface.c | 6 +++++-
- drivers/char/tpm/tpm.h           | 2 ++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+We are measuring IMA performance analyse vTPM performance/scalability, once 
+vTPM is going to be used when IMA measurements and log are namespaced. With 
+the analysis, we identified one possible improvement in IMA.
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 1d6729be4cd6..d213a3d4b305 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -455,7 +455,11 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 			goto out;
- 		}
- 
--		tpm_msleep(TPM_TIMEOUT);
-+		if (chip->flags & TPM_CHIP_FLAG_VIRTUAL)
-+			usleep_range(TPM_TIMEOUT_VTPM_US, TPM_TIMEOUT_VTPM_RANGE_US);
-+		else
-+			tpm_msleep(TPM_TIMEOUT);
-+
- 		rmb();
- 	} while (time_before(jiffies, stop));
- 
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 2d5466a72e40..02d2dd761543 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -50,6 +50,8 @@ enum tpm_const {
- 
- enum tpm_timeout {
- 	TPM_TIMEOUT = 5,	/* msecs */
-+	TPM_TIMEOUT_VTPM_US = 1,	/* usecs */
-+	TPM_TIMEOUT_VTPM_RANGE_US = 5,	/* usecs */
- 	TPM_TIMEOUT_RETRY = 100, /* msecs */
- 	TPM_TIMEOUT_RANGE_US = 300	/* usecs */
- };
--- 
-2.11.0
+The problem is a performance degradation caused by the IMA measurement hash 
+table (ima_htable). The analysis executes many file accesses (measurements) with 
+different types of workloads and configurations. I will restrict the experiment 
+configuration to the ones important to this problem. Scenario #1 is with files 
+outside the IMA policy and scenario #2 is with files in the IMA policy. On the 
+scenario #2, we disabled the TPM chip (enabling us to see other bottlenecks 
+besides the TPM chip). 
+
+See the chart at:
+https://drive.google.com/file/d/0ByxwRmmxIzLYcEdEMV9xZFlUYlE/view?usp=sharing. 
+The X axis is the number of process running the workload and the Y axis is the total 
+number of file create/read (measurements) performed. The red line is scenario #1 
+and the green line is scenario #2.
+
+The green line makes clear there is a performance degradation in the IMA 
+measurement path whereas file measurements are performed. We then spot in the 
+source code that IMA manages along with the IMA log a hash table where entries 
+are references to the IMA log entries structured in a linked list inside each bucket. 
+We profiled this hash table and realized each bucket list increases in time to 
+thousands of entries. On each new file measurement, before a new entry is 
+added to the IMA log, the new entry is looked up in the hash table by traversing 
+sequentially a certain bucket list. This linked list then considerably slows down the 
+measurement process and also explain the performance degradation. We 
+removed this hash table entirely to run the experiments and IMA measurement 
+performed at the same pace when files are not in the policy. The TPM chip is still 
+the biggest bottleneck, but this hash table bottleneck will impact performance 
+when vTPMs are supported in IMA (more details to be provided).
+
+What this hash table is needed for? I believe it is used just to avoid duplicated 
+entries in the IMA log. On this case, the IMA_MEASURED flag should be sufficient. 
+Is the hash table required as a safety net for the inode/iint cache evictions 
+controlled automatically by the kernel, since that flag is part of the iint cache? 
+If this hash table is really needed, could it be replaced with a red black tree?
+
+--
+Guilherme
