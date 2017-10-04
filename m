@@ -1,274 +1,71 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52186 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751327AbdJDK3s (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 4 Oct 2017 06:29:48 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v94ATCPU090179
-        for <linux-integrity@vger.kernel.org>; Wed, 4 Oct 2017 06:29:47 -0400
-Received: from e23smtp02.au.ibm.com (e23smtp02.au.ibm.com [202.81.31.144])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2dcu059cxw-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 04 Oct 2017 06:29:47 -0400
-Received: from localhost
-        by e23smtp02.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Wed, 4 Oct 2017 20:29:45 +1000
-From: Nayna Jain <nayna@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: zohar@linux.vnet.ibm.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
-        jarkko.sakkinen@linux.intel.com, tpmdd@selhorst.net,
-        jgunthorpe@obsidianresearch.com, patrickc@us.ibm.com,
-        Nayna Jain <nayna@linux.vnet.ibm.com>
-Subject: [PATCH v3 1/5] tpm: move wait_for_tpm_stat() to respective driver files
-Date: Wed,  4 Oct 2017 06:29:20 -0400
-In-Reply-To: <20171004102924.12355-1-nayna@linux.vnet.ibm.com>
-References: <20171004102924.12355-1-nayna@linux.vnet.ibm.com>
-Message-Id: <20171004102924.12355-2-nayna@linux.vnet.ibm.com>
+Received: from mout.gmx.net ([212.227.15.15]:59371 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750945AbdJDHdY (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 4 Oct 2017 03:33:24 -0400
+Date: Wed, 04 Oct 2017 09:33:10 +0200
+In-Reply-To: <20171004072708.fivflglchj7injgb@linux.intel.com>
+References: <20170915223811.21368-1-jarkko.sakkinen@linux.intel.com> <1506442580.3677.97.camel@linux.vnet.ibm.com> <20170929165933.vjvzyb6e7c6xd6r7@linux.intel.com> <trinity-091f53ec-a37e-46a1-9650-1a5d2022f2bb-1506709890307@3c-app-gmx-bs57> <20171004072708.fivflglchj7injgb@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: Re: [PATCH] MAINTAINERS: update TPM driver infrastructure changes
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+From: Peter Huewe <peterhuewe@gmx.de>
+Message-ID: <5D09586D-E722-4D43-86B1-E77472AF533D@gmx.de>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-The function wait_for_tpm_stat() is currently defined in
-tpm-interface file. It is a hardware specific function used
-only by tpm_tis and xen-tpmfront, so it is removed from
-tpm-interface.c and defined in respective driver files.
+Will do.
+Peter
 
-Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
----
- drivers/char/tpm/tpm-interface.c | 60 ----------------------------------------
- drivers/char/tpm/tpm.h           |  2 --
- drivers/char/tpm/tpm_tis_core.c  | 60 ++++++++++++++++++++++++++++++++++++++++
- drivers/char/tpm/xen-tpmfront.c  | 60 ++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 120 insertions(+), 62 deletions(-)
+Am 4. Oktober 2017 09:27:08 MESZ schrieb Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>:
+>On Fri, Sep 29, 2017 at 08:31:30PM +0200, Peter Huewe wrote:
+>> 
+>>  
+>>  
+>> 
+>> Gesendet: Freitag, 29. September 2017 um 18:59 Uhr
+>> Von: "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
+>> An: "Mimi Zohar" <zohar@linux.vnet.ibm.com>, peterhuewe@gmx.de
+>> Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+>> Betreff: Re: [PATCH] MAINTAINERS: update TPM driver infrastructure
+>changes
+>> On Tue, Sep 26, 2017 at 12:16:20PM -0400, Mimi Zohar wrote:
+>> > Hi Jarkko,
+>> >
+>> > > +Q: https://patchwork.kernel.org/project/linux-integrity/list/
+>> >
+>> > Is there a way of viewing not just the posted patches, but the
+>> > discussion as well?  Do we need to set up an archive as well?
+>> >
+>> > Mimi
+>> 
+>> > Peter, did you setup archiving?
+>> Jarkko, did you read my other email?
+>> 
+>> /Peter
+>> 
+>> 
+>> p.s.: 
+>> Spinics is archiving us at
+>>
+>https://www.spinics.net/lists/linux-integrity/[https://www.spinics.net/lists/linux-integrity/]
+>> 
+>> It would be good to add this to the vger page + documented on the
+>wiki, which should be added to MAINTAINERS.
+>>
+>http://kernsec.org/wiki/index.php/Linux_Kernel_Integrity[http://kernsec.org/wiki/index.php/Linux_Kernel_Integrity]
+>as wiki page
+>
+>Can you send a follow-up patch to update MAINTAINERS?
+>
+>The first one is already applied so it does not make sense to
+>revise it and it doesn't contain any errors.
+>
+>/Jarkko
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 1d6729be4cd6..313f7618d569 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -1035,66 +1035,6 @@ int tpm_send(u32 chip_num, void *cmd, size_t buflen)
- }
- EXPORT_SYMBOL_GPL(tpm_send);
- 
--static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
--					bool check_cancel, bool *canceled)
--{
--	u8 status = chip->ops->status(chip);
--
--	*canceled = false;
--	if ((status & mask) == mask)
--		return true;
--	if (check_cancel && chip->ops->req_canceled(chip, status)) {
--		*canceled = true;
--		return true;
--	}
--	return false;
--}
--
--int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long timeout,
--		      wait_queue_head_t *queue, bool check_cancel)
--{
--	unsigned long stop;
--	long rc;
--	u8 status;
--	bool canceled = false;
--
--	/* check current status */
--	status = chip->ops->status(chip);
--	if ((status & mask) == mask)
--		return 0;
--
--	stop = jiffies + timeout;
--
--	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
--again:
--		timeout = stop - jiffies;
--		if ((long)timeout <= 0)
--			return -ETIME;
--		rc = wait_event_interruptible_timeout(*queue,
--			wait_for_tpm_stat_cond(chip, mask, check_cancel,
--					       &canceled),
--			timeout);
--		if (rc > 0) {
--			if (canceled)
--				return -ECANCELED;
--			return 0;
--		}
--		if (rc == -ERESTARTSYS && freezing(current)) {
--			clear_thread_flag(TIF_SIGPENDING);
--			goto again;
--		}
--	} else {
--		do {
--			tpm_msleep(TPM_TIMEOUT);
--			status = chip->ops->status(chip);
--			if ((status & mask) == mask)
--				return 0;
--		} while (time_before(jiffies, stop));
--	}
--	return -ETIME;
--}
--EXPORT_SYMBOL_GPL(wait_for_tpm_stat);
--
- #define TPM_ORD_SAVESTATE 152
- #define SAVESTATE_RESULT_SIZE 10
- 
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 2d5466a72e40..4fc83ac7abeb 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -525,8 +525,6 @@ int tpm_do_selftest(struct tpm_chip *chip);
- unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
- int tpm_pm_suspend(struct device *dev);
- int tpm_pm_resume(struct device *dev);
--int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long timeout,
--		      wait_queue_head_t *queue, bool check_cancel);
- 
- static inline void tpm_msleep(unsigned int delay_msec)
- {
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 63bc6c3b949e..b33126a35694 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -31,6 +31,66 @@
- #include "tpm.h"
- #include "tpm_tis_core.h"
- 
-+static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
-+					bool check_cancel, bool *canceled)
-+{
-+	u8 status = chip->ops->status(chip);
-+
-+	*canceled = false;
-+	if ((status & mask) == mask)
-+		return true;
-+	if (check_cancel && chip->ops->req_canceled(chip, status)) {
-+		*canceled = true;
-+		return true;
-+	}
-+	return false;
-+}
-+
-+static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
-+		unsigned long timeout, wait_queue_head_t *queue,
-+		bool check_cancel)
-+{
-+	unsigned long stop;
-+	long rc;
-+	u8 status;
-+	bool canceled = false;
-+
-+	/* check current status */
-+	status = chip->ops->status(chip);
-+	if ((status & mask) == mask)
-+		return 0;
-+
-+	stop = jiffies + timeout;
-+
-+	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
-+again:
-+		timeout = stop - jiffies;
-+		if ((long)timeout <= 0)
-+			return -ETIME;
-+		rc = wait_event_interruptible_timeout(*queue,
-+			wait_for_tpm_stat_cond(chip, mask, check_cancel,
-+					       &canceled),
-+			timeout);
-+		if (rc > 0) {
-+			if (canceled)
-+				return -ECANCELED;
-+			return 0;
-+		}
-+		if (rc == -ERESTARTSYS && freezing(current)) {
-+			clear_thread_flag(TIF_SIGPENDING);
-+			goto again;
-+		}
-+	} else {
-+		do {
-+			tpm_msleep(TPM_TIMEOUT);
-+			status = chip->ops->status(chip);
-+			if ((status & mask) == mask)
-+				return 0;
-+		} while (time_before(jiffies, stop));
-+	}
-+	return -ETIME;
-+}
-+
- /* Before we attempt to access the TPM we must see that the valid bit is set.
-  * The specification says that this bit is 0 at reset and remains 0 until the
-  * 'TPM has gone through its self test and initialization and has established
-diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
-index 656e8af95d52..d20a0a9ded27 100644
---- a/drivers/char/tpm/xen-tpmfront.c
-+++ b/drivers/char/tpm/xen-tpmfront.c
-@@ -39,6 +39,66 @@ enum status_bits {
- 	VTPM_STATUS_CANCELED = 0x8,
- };
- 
-+static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
-+					bool check_cancel, bool *canceled)
-+{
-+	u8 status = chip->ops->status(chip);
-+
-+	*canceled = false;
-+	if ((status & mask) == mask)
-+		return true;
-+	if (check_cancel && chip->ops->req_canceled(chip, status)) {
-+		*canceled = true;
-+		return true;
-+	}
-+	return false;
-+}
-+
-+static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
-+		unsigned long timeout, wait_queue_head_t *queue,
-+		bool check_cancel)
-+{
-+	unsigned long stop;
-+	long rc;
-+	u8 status;
-+	bool canceled = false;
-+
-+	/* check current status */
-+	status = chip->ops->status(chip);
-+	if ((status & mask) == mask)
-+		return 0;
-+
-+	stop = jiffies + timeout;
-+
-+	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
-+again:
-+		timeout = stop - jiffies;
-+		if ((long)timeout <= 0)
-+			return -ETIME;
-+		rc = wait_event_interruptible_timeout(*queue,
-+			wait_for_tpm_stat_cond(chip, mask, check_cancel,
-+					       &canceled),
-+			timeout);
-+		if (rc > 0) {
-+			if (canceled)
-+				return -ECANCELED;
-+			return 0;
-+		}
-+		if (rc == -ERESTARTSYS && freezing(current)) {
-+			clear_thread_flag(TIF_SIGPENDING);
-+			goto again;
-+		}
-+	} else {
-+		do {
-+			tpm_msleep(TPM_TIMEOUT);
-+			status = chip->ops->status(chip);
-+			if ((status & mask) == mask)
-+				return 0;
-+		} while (time_before(jiffies, stop));
-+	}
-+	return -ETIME;
-+}
-+
- static u8 vtpm_status(struct tpm_chip *chip)
- {
- 	struct tpm_private *priv = dev_get_drvdata(&chip->dev);
 -- 
-2.13.3
+Sent from my mobile
