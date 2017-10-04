@@ -1,90 +1,60 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:49508 "EHLO mga11.intel.com"
+Received: from mga06.intel.com ([134.134.136.31]:22577 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751495AbdJDKvQ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 4 Oct 2017 06:51:16 -0400
-Date: Wed, 4 Oct 2017 13:51:13 +0300
+        id S1751114AbdJDKpP (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 4 Oct 2017 06:45:15 -0400
+Date: Wed, 4 Oct 2017 13:45:14 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Thiebaud Weksteen <tweek@google.com>
-Cc: linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        linux-kernel@vger.kernel.org, Matthew Garrett <mjg59@google.com>,
-        peterhuewe@gmx.de,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        tpmdd@selhorst.net
-Subject: Re: [PATCH v3 4/5] efi: call get_event_log before ExitBootServices
-Message-ID: <20171004105113.mcho3rlytaxfruyf@linux.intel.com>
-References: <20170920081340.7413-1-tweek@google.com>
- <20170920081340.7413-5-tweek@google.com>
- <20170926114538.r5hsyc5osodpaals@linux.intel.com>
- <CA+zpnLcYWcO8Gf6b8rAHgcLkAndC0uyPH+Kxa01giVsochP3Ug@mail.gmail.com>
- <20170929171617.yq4dvn66czvnebns@linux.intel.com>
+To: Roberto Sassu <roberto.sassu@huawei.com>
+Cc: tpmdd-devel@lists.sourceforge.net,
+        linux-ima-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] tpm: move PCR read code to static function
+ tpm2_pcr_read_common()
+Message-ID: <20171004104514.udehflbyjaebxd3j@linux.intel.com>
+References: <20170925111950.21511-1-roberto.sassu@huawei.com>
+ <20170925111950.21511-2-roberto.sassu@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170929171617.yq4dvn66czvnebns@linux.intel.com>
+In-Reply-To: <20170925111950.21511-2-roberto.sassu@huawei.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Sep 29, 2017 at 08:16:17PM +0300, Jarkko Sakkinen wrote:
-> On Tue, Sep 26, 2017 at 02:49:31PM +0200, Thiebaud Weksteen wrote:
-> > On Tue, Sep 26, 2017 at 1:45 PM, Jarkko Sakkinen
-> > <jarkko.sakkinen@linux.intel.com> wrote:
-> > > On Wed, Sep 20, 2017 at 10:13:39AM +0200, Thiebaud Weksteen wrote:
-> > >> With TPM 2.0 specification, the event logs may only be accessible by
-> > >> calling an EFI Boot Service. Modify the EFI stub to copy the log area to
-> > >> a new Linux-specific EFI configuration table so it remains accessible
-> > >> once booted.
-> > >>
-> > >> When calling this service, it is possible to specify the expected format
-> > >> of the logs: TPM 1.2 (SHA1) or TPM 2.0 ("Crypto Agile"). For now, only the
-> > >> first format is retrieved.
-> > >>
-> > >> Signed-off-by: Thiebaud Weksteen <tweek@google.com>
-> > >
-> > > Does not apply:
-> > >
-> > > Applying: tpm: move tpm_eventlog.h outside of drivers folder
-> > > Applying: tpm: rename event log provider files
-> > > Applying: tpm: add event log format version
-> > > Applying: efi: call get_event_log before ExitBootServices
-> > > error: sha1 information is lacking or useless (drivers/firmware/efi/efi.c).
-> > > error: could not build fake ancestor
-> > > Patch failed at 0004 efi: call get_event_log before ExitBootServices
-> > > The copy of the patch that failed is found in: .git/rebase-apply/patch
-> > > When you have resolved this problem, run "git am --continue".
-> > > If you prefer to skip this patch, run "git am --skip" instead.
-> > > To restore the original branch and stop patching, run "git am --abort".
-> > >
-> > > Just rebased my tree to the latest security-next.
-> > 
-> > It applies fine on security/next-general which is more up-to-date.
-> > (security/next does not include
-> > ccc829ba3624beb9a703fc995d016b836d9eead8 on which this patch set is
-> > based)
+On Mon, Sep 25, 2017 at 01:19:48PM +0200, Roberto Sassu wrote:
+> tpm2_pcr_read() copies the digest stored in a PCR to a buffer provided by
+> the caller. However, it does not return the digest size, included in the
+> output from the TPM. Retrieving it would be useful when a TPM algorithm
+> is not known by the crypto subsystem, which the TPM driver currently
+> depends upon.
+
+Remove this paragraph. It is just generic nonsense.
+
+> Most of tpm2_pcr_read() code is moved to the static function
+> tpm2_pcr_read_common(), which writes the output of the PCR read to the
+> tpm_buf structure passed as input.
 > 
-> Thanks, my bad, I though that I had it updated.
-> 
-> I'll update my tree and retry.
-> 
-> /Jarkko
+> tpm2_pcr_read_common() will be called by tpm2_pcr_read(), and by the new
+> function tpm2_init_active_bank_info(), which will store the identifier
+> and the digest size of TPM algorithms in the tpm_chip structure.
 
-My master is up to date with security/next.
+1. Export tpm_buf to arch/x86/include/linux/tpm.h
+2. Repeal and replace tpm2_pcr_read().
 
-Still get the same result:
+I would just pass one tpm_buf (i.e. no u8* res_buf) that is used both
+for input and output.
 
-$ git am -3 ~/Downloads/v3-4-5-efi-call-get_event_log-before-ExitBootServices.patch
-Applying: efi: call get_event_log before ExitBootServices
-error: sha1 information is lacking or useless (drivers/firmware/efi/efi.c).
-error: could not build fake ancestor
-Patch failed at 0001 efi: call get_event_log before ExitBootServices
-The copy of the patch that failed is found in: .git/rebase-apply/patch
-When you have resolved this problem, run "git am --continue".
-If you prefer to skip this patch, run "git am --skip" instead.
-To restore the original branch and stop patching, run "git am --abort".
+Speaking about tpm2_inti_active_bank_info(), which is a *nonexistent*
+function is questionable. For me a sufficient commit message would be
+something like:
 
-Maybe you have some other trees fetched in your local GIT so that it
-finds the ancestors? Anyway, cannot test this at this point.
+"
+tpm: refine tpm2_pcr_read() access to all PCR banks
+
+Refine tpm2_pcr_read() interface and implementation in order to enable
+access to all PCR banks for other kernel subsystems such as IMA.
+"
+
+That describes all there is in this commit.
 
 /Jarkko
