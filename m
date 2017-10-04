@@ -1,72 +1,81 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:52625 "EHLO mga06.intel.com"
+Received: from mga09.intel.com ([134.134.136.24]:32481 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751699AbdJDMOu (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 4 Oct 2017 08:14:50 -0400
-Date: Wed, 4 Oct 2017 15:14:49 +0300
+        id S1751449AbdJDLWa (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 4 Oct 2017 07:22:30 -0400
+Date: Wed, 4 Oct 2017 14:22:29 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: =?iso-8859-1?B?Suly6W15?= Lefaure <jeremy.lefaure@lse.epita.fr>
-Cc: Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 13/18] tpm: use ARRAY_SIZE
-Message-ID: <20171004121449.kywykfgyxtkmu2ar@linux.intel.com>
-References: <20171001193101.8898-1-jeremy.lefaure@lse.epita.fr>
- <20171001193101.8898-14-jeremy.lefaure@lse.epita.fr>
+To: Roberto Sassu <roberto.sassu@huawei.com>
+Cc: tpmdd-devel@lists.sourceforge.net,
+        linux-ima-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] tpm: add the crypto algorithm identifier to
+ active_bank_info
+Message-ID: <20171004112229.7aafz6yttewq4pbb@linux.intel.com>
+References: <20170925111950.21511-1-roberto.sassu@huawei.com>
+ <20170925111950.21511-4-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20171001193101.8898-14-jeremy.lefaure@lse.epita.fr>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170925111950.21511-4-roberto.sassu@huawei.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sun, Oct 01, 2017 at 03:30:51PM -0400, Jeremy Lefaure wrote:
-> Using the ARRAY_SIZE macro improves the readability of the code.
+On Mon, Sep 25, 2017 at 01:19:50PM +0200, Roberto Sassu wrote:
+> In preparation for the patch introducing a function to pass supported TPM
+> algorithms and digest sizes to TPM users, the crypto algorithm identifier
+> is added to the active_bank_info structure.
 > 
-> Found with Coccinelle with the following semantic patch:
-> @r depends on (org || report)@
-> type T;
-> T[] E;
-> position p;
-> @@
-> (
->  (sizeof(E)@p /sizeof(*E))
-> |
->  (sizeof(E)@p /sizeof(E[...]))
-> |
->  (sizeof(E)@p /sizeof(T))
-> )
+> All members of active_bank_info are necessary: TPM algorithm identifiers
+> will be used to create an event log (they are included in the Crypto Agile
+> format defined by TCG); crypto identifiers will be used to calculate
+> digests using the crypto subsystem; digest sizes will be used to truncate
+> digests calculated with different algorithms.
 > 
-> Signed-off-by: Jeremy Lefaure <jeremy.lefaure@lse.epita.fr>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+This should be in the patch set where it makes sense. Please remove it
+from the next version.
 
 /Jarkko
 
 > ---
->  drivers/char/tpm/tpm_tis.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  drivers/char/tpm/tpm2-cmd.c | 2 ++
+>  include/linux/tpm.h         | 1 +
+>  2 files changed, 3 insertions(+)
 > 
-> diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-> index ebd0e75a3e4d..e2d1055fb814 100644
-> --- a/drivers/char/tpm/tpm_tis.c
-> +++ b/drivers/char/tpm/tpm_tis.c
-> @@ -30,6 +30,7 @@
->  #include <linux/freezer.h>
->  #include <linux/of.h>
->  #include <linux/of_device.h>
-> +#include <linux/kernel.h>
->  #include "tpm.h"
->  #include "tpm_tis_core.h"
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index b1356be..8c58f6e 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -946,6 +946,7 @@ static int tpm2_init_active_bank_info(struct tpm_chip *chip, u16 alg_id,
+>  	int rc, i;
 >  
-> @@ -365,7 +366,7 @@ static struct pnp_driver tis_pnp_driver = {
->  	},
+>  	active_bank->alg_id = alg_id;
+> +	active_bank->crypto_id = HASH_ALGO__LAST;
+>  
+>  	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
+>  		enum hash_algo crypto_algo = tpm2_hash_map[i].crypto_id;
+> @@ -954,6 +955,7 @@ static int tpm2_init_active_bank_info(struct tpm_chip *chip, u16 alg_id,
+>  			continue;
+>  
+>  		active_bank->digest_size = hash_digest_size[crypto_algo];
+> +		active_bank->crypto_id = crypto_algo;
+>  		return 0;
+>  	}
+>  
+> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+> index 3ecce21..fc927f3 100644
+> --- a/include/linux/tpm.h
+> +++ b/include/linux/tpm.h
+> @@ -54,6 +54,7 @@ struct tpm_class_ops {
+>  
+>  struct active_bank_info {
+>  	u16 alg_id;
+> +	u16 crypto_id;
+>  	u16 digest_size;
 >  };
 >  
-> -#define TIS_HID_USR_IDX sizeof(tpm_pnp_tbl)/sizeof(struct pnp_device_id) -2
-> +#define TIS_HID_USR_IDX (ARRAY_SIZE(tpm_pnp_tbl) - 2)
->  module_param_string(hid, tpm_pnp_tbl[TIS_HID_USR_IDX].id,
->  		    sizeof(tpm_pnp_tbl[TIS_HID_USR_IDX].id), 0444);
->  MODULE_PARM_DESC(hid, "Set additional specific HID for this driver to probe");
 > -- 
-> 2.14.1
+> 2.9.3
 > 
