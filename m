@@ -1,95 +1,56 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from lhrrgout.huawei.com ([194.213.3.17]:37362 "EHLO
-        lhrrgout.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750948AbdJGK4x (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 7 Oct 2017 06:56:53 -0400
-From: Roberto Sassu <roberto.sassu@huawei.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-CC: <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ken Goldman <kgold@linux.vnet.ibm.com>
-Subject: Digest list extension for IMA
-Message-ID: <a557c9ac-a06e-8bb5-fce7-ddf2663d5b9d@huawei.com>
-Date: Sat, 7 Oct 2017 12:56:44 +0200
+Received: from fieldses.org ([173.255.197.46]:58368 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751286AbdJER5P (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 5 Oct 2017 13:57:15 -0400
+Date: Thu, 5 Oct 2017 13:57:15 -0400
+From: "J. Bruce Fields" <bfields@fieldses.org>
+To: =?utf-8?B?SsOpcsOpbXk=?= Lefaure <jeremy.lefaure@lse.epita.fr>
+Cc: Greg KH <greg@kroah.com>, "Tobin C. Harding" <me@tobin.cc>,
+        alsa-devel@alsa-project.org, nouveau@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, dm-devel@redhat.com,
+        brcm80211-dev-list@cypress.com, devel@driverdev.osuosl.org,
+        linux-scsi@vger.kernel.org, linux-rdma@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        linux-acpi@vger.kernel.org, linux-video@atrey.karlin.mff.cuni.cz,
+        intel-wired-lan@lists.osuosl.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, ecryptfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-raid@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net,
+        intel-gvt-dev@lists.freedesktop.org, devel@acpica.org,
+        brcm80211-dev-list.pdl@broadcom.com, netdev@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        jlayton@redhat.com
+Subject: Re: [PATCH 00/18] use ARRAY_SIZE macro
+Message-ID: <20171005175715.GA19093@fieldses.org>
+References: <20171001193101.8898-1-jeremy.lefaure@lse.epita.fr>
+ <20171001220131.GA11812@eros>
+ <20171001205220.10b78086@blatinox-laptop.localdomain>
+ <20171002053554.GA28743@kroah.com>
+ <20171002192224.GD1903@fieldses.org>
+ <20171002213312.3f904290@blatinox-laptop.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20171002213312.3f904290@blatinox-laptop.localdomain>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Mimi
+On Mon, Oct 02, 2017 at 09:33:12PM -0400, Jeremy Lefaure wrote:
+> On Mon, 2 Oct 2017 15:22:24 -0400
+> bfields@fieldses.org (J. Bruce Fields) wrote:
+> 
+> > Mainly I'd just like to know which you're asking for.  Do you want me to
+> > apply this, or to ACK it so someone else can?  If it's sent as a series
+> > I tend to assume the latter.
+> > 
+> > But in this case I'm assuming it's the former, so I'll pick up the nfsd
+> > one....
+> Could you to apply the NFSD patch ("nfsd: use ARRAY_SIZE") with the
+> Reviewed-by: Jeff Layton <jlayton@redhat.com>) tag please ?
+> 
+> This patch is an individual patch and it should not have been sent in a
+> series (sorry about that).
 
-since the next merge window is approaching, I would like to ask
-you which steps should be done to have the digest list extension
-accepted in the mainline kernel.
-
-Regarding the concerns expressed in the mailing lists:
-
-TPM performance issues should be fixed in the TPM driver
-
-Both improvements can be useful especially, as it was shown at LSS,
-there will be around 50000 PCR extends which introduce some overhead
-(I applied the ignore burstcount patches and the boot time decreased
-from 1 minute and 30 seconds to 24 seconds, which is a great improvement
-but maybe not enough, considering that the system I used performed
-1500 PCR extends). The digest list extension does not only reduce
-the number of PCR extends, but also the size of the measurement list.
-In a scenario where many systems are attested, sending and analyzing
-small integrity reports could be an advantage.
-
-
-Loss of information reported to verifiers
-
-The temporal sequence and which files are actually accessed is not
-reported anymore to verifiers. On the other hand, the advantage
-would be to have a predictable system state, which could be useful
-to enforce sealing policies, for example. This issue could be mitigated
-by letting users specify which subset of files can be accessed, among
-those signed by software vendors. Files accessed by the IMA TCB (root
-processes) are a very small subset of what is shipped by a Linux
-distribution. There will be two checks for the integrity verification:
-files accessed are provided by the software vendors; files accessed are
-in the subset specified by the user. Finally, to be sure that a subset
-of files was actually accessed, IMA could report only one additional
-event, when the last file of the subset is accessed.
-
-
-The kernel should not parse arbitrary file formats
-
-The digest list extension uses the same mechanism used to load
-a policy. The loaded digest lists are measured, and their digest
-is reported to verifiers. It will be possible, as it happens
-for the policy, to allow IMA to load only signed digest lists.
-
-
-The measurement list will have a different meaning
-
-With the digest list extension, the measurement list will contain
-a measurement for digest lists and unknown measurements. To avoid
-this issue, I suggest to record the measurement of digest list
-with a different template name.
-
-
-The digest list extension does not alter the current behavior of IMA,
-if no digest lists are loaded into the kernel. I think it would be
-worthwhile to merge this functionality into IMA, to have these benefits:
-small measurement lists; better performance, take advantage of
-information already available today (digest list, included in RPM
-headers are signed by vendors), and predictable system state.
-
-I understand the concern of reporting less information to verifiers,
-especially in the scenario where IMA is expected to report the
-current state of the system. A reasonable usage, in my opinion,
-would be for measuring the TCB, which is small and does not change
-too often. Remaining events could be reported (by using a different
-PCR, so that PCR 10 remains predictable) regardless of the fact that
-the file digest is in a loaded digest list.
-
-Any comment and suggestion will be very appreciated!
-
-Roberto
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
+Applying for 4.15, thanks.--b.
