@@ -1,56 +1,95 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50418 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750859AbdJHE2c (ORCPT
+Received: from lhrrgout.huawei.com ([194.213.3.17]:37362 "EHLO
+        lhrrgout.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750948AbdJGK4x (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 8 Oct 2017 00:28:32 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v984Nd90020484
-        for <linux-integrity@vger.kernel.org>; Sun, 8 Oct 2017 00:28:31 -0400
-Received: from e06smtp11.uk.ibm.com (e06smtp11.uk.ibm.com [195.75.94.107])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2devrrj2a5-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Sun, 08 Oct 2017 00:28:31 -0400
-Received: from localhost
-        by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Sun, 8 Oct 2017 05:28:29 +0100
-Subject: [PATCH] vfs: fix mounting a filesystem with i_version
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: David Howells <dhowells@redhat.com>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Date: Sun, 08 Oct 2017 00:28:21 -0400
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1507436901.5841.4.camel@linux.vnet.ibm.com>
+        Sat, 7 Oct 2017 06:56:53 -0400
+From: Roberto Sassu <roberto.sassu@huawei.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+CC: <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Ken Goldman <kgold@linux.vnet.ibm.com>
+Subject: Digest list extension for IMA
+Message-ID: <a557c9ac-a06e-8bb5-fce7-ddf2663d5b9d@huawei.com>
+Date: Sat, 7 Oct 2017 12:56:44 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-The mount i_version flag is not enabled in the new sb_flags.  This patch
-adds the missing SB_I_VERSION flag.
+Hi Mimi
 
-Fixes: e462ec5 "VFS: Differentiate mount flags (MS_*) from internal
-       superblock flags"
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
----
- fs/namespace.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+since the next merge window is approaching, I would like to ask
+you which steps should be done to have the digest list extension
+accepted in the mainline kernel.
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 3b601f115b6c..d18deb4c410b 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2825,7 +2825,8 @@ long do_mount(const char *dev_name, const char __user *dir_name,
- 			    SB_MANDLOCK |
- 			    SB_DIRSYNC |
- 			    SB_SILENT |
--			    SB_POSIXACL);
-+			    SB_POSIXACL |
-+			    SB_I_VERSION);
- 
- 	if (flags & MS_REMOUNT)
- 		retval = do_remount(&path, flags, sb_flags, mnt_flags,
+Regarding the concerns expressed in the mailing lists:
+
+TPM performance issues should be fixed in the TPM driver
+
+Both improvements can be useful especially, as it was shown at LSS,
+there will be around 50000 PCR extends which introduce some overhead
+(I applied the ignore burstcount patches and the boot time decreased
+from 1 minute and 30 seconds to 24 seconds, which is a great improvement
+but maybe not enough, considering that the system I used performed
+1500 PCR extends). The digest list extension does not only reduce
+the number of PCR extends, but also the size of the measurement list.
+In a scenario where many systems are attested, sending and analyzing
+small integrity reports could be an advantage.
+
+
+Loss of information reported to verifiers
+
+The temporal sequence and which files are actually accessed is not
+reported anymore to verifiers. On the other hand, the advantage
+would be to have a predictable system state, which could be useful
+to enforce sealing policies, for example. This issue could be mitigated
+by letting users specify which subset of files can be accessed, among
+those signed by software vendors. Files accessed by the IMA TCB (root
+processes) are a very small subset of what is shipped by a Linux
+distribution. There will be two checks for the integrity verification:
+files accessed are provided by the software vendors; files accessed are
+in the subset specified by the user. Finally, to be sure that a subset
+of files was actually accessed, IMA could report only one additional
+event, when the last file of the subset is accessed.
+
+
+The kernel should not parse arbitrary file formats
+
+The digest list extension uses the same mechanism used to load
+a policy. The loaded digest lists are measured, and their digest
+is reported to verifiers. It will be possible, as it happens
+for the policy, to allow IMA to load only signed digest lists.
+
+
+The measurement list will have a different meaning
+
+With the digest list extension, the measurement list will contain
+a measurement for digest lists and unknown measurements. To avoid
+this issue, I suggest to record the measurement of digest list
+with a different template name.
+
+
+The digest list extension does not alter the current behavior of IMA,
+if no digest lists are loaded into the kernel. I think it would be
+worthwhile to merge this functionality into IMA, to have these benefits:
+small measurement lists; better performance, take advantage of
+information already available today (digest list, included in RPM
+headers are signed by vendors), and predictable system state.
+
+I understand the concern of reporting less information to verifiers,
+especially in the scenario where IMA is expected to report the
+current state of the system. A reasonable usage, in my opinion,
+would be for measuring the TCB, which is small and does not change
+too often. Remaining events could be reported (by using a different
+PCR, so that PCR 10 remains predictable) regardless of the fact that
+the file digest is in a loaded digest list.
+
+Any comment and suggestion will be very appreciated!
+
+Roberto
+
 -- 
-2.7.4
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
