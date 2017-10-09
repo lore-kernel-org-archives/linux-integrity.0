@@ -1,34 +1,33 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59172 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754894AbdJIVlD (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44078 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755212AbdJISkx (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 9 Oct 2017 17:41:03 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v99LeMVB054813
-        for <linux-integrity@vger.kernel.org>; Mon, 9 Oct 2017 17:41:03 -0400
-Received: from e06smtp13.uk.ibm.com (e06smtp13.uk.ibm.com [195.75.94.109])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2dgabpnw8g-1
+        Mon, 9 Oct 2017 14:40:53 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v99Iefu6006094
+        for <linux-integrity@vger.kernel.org>; Mon, 9 Oct 2017 14:40:52 -0400
+Received: from e06smtp11.uk.ibm.com (e06smtp11.uk.ibm.com [195.75.94.107])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2dg9s8gjsx-1
         (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 09 Oct 2017 17:41:03 -0400
+        for <linux-integrity@vger.kernel.org>; Mon, 09 Oct 2017 14:40:52 -0400
 Received: from localhost
-        by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Mon, 9 Oct 2017 22:41:01 +0100
-Received: from d23av01.au.ibm.com (d23av01.au.ibm.com [9.190.234.96])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id v99LevBM13172894
-        for <linux-integrity@vger.kernel.org>; Mon, 9 Oct 2017 21:40:58 GMT
-Received: from d23av01.au.ibm.com (localhost [127.0.0.1])
-        by d23av01.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id v99Lev5e024248
-        for <linux-integrity@vger.kernel.org>; Tue, 10 Oct 2017 08:40:58 +1100
+        Mon, 9 Oct 2017 19:40:50 +0100
+Received: from d23av06.au.ibm.com (d23av06.au.ibm.com [9.190.235.151])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id v99IejNR25493730
+        for <linux-integrity@vger.kernel.org>; Mon, 9 Oct 2017 18:40:46 GMT
+Received: from d23av06.au.ibm.com (localhost [127.0.0.1])
+        by d23av06.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id v99Iei3v008073
+        for <linux-integrity@vger.kernel.org>; Tue, 10 Oct 2017 05:40:44 +1100
 Subject: Re: RFC: Make it practical to ship EVM signatures
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Mikhail Kurinnoi <viewizard@viewizard.com>
-Cc: Matthew Garrett <mjg59@google.com>,
-        linux-integrity@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Date: Mon, 09 Oct 2017 17:40:53 -0400
-In-Reply-To: <20171010003326.6409ae23@totoro>
+To: Matthew Garrett <mjg59@google.com>
+Cc: linux-integrity@vger.kernel.org,
+        Mikhail Kurinnoi <viewizard@viewizard.com>
+Date: Mon, 09 Oct 2017 14:40:41 -0400
+In-Reply-To: <CACdnJuvOW0Pc42Nuh4QVy4xdYsaUa=H9i=YZW+XB+bg-YnDCUQ@mail.gmail.com>
 References: <20170927221653.11219-1-mjg59@google.com>
          <1506629560.5691.33.camel@linux.vnet.ibm.com>
          <CACdnJuuveRvCx57ZnYmRWbiwh3XU7AbxZD2W-Gq_dh_h_6L9Mg@mail.gmail.com>
@@ -42,76 +41,35 @@ References: <20170927221653.11219-1-mjg59@google.com>
          <CACdnJuv8QSkVNWf7FY2-jakiO2sd8gh1oRTji4w3fvic54kfmA@mail.gmail.com>
          <1507572900.3748.21.camel@linux.vnet.ibm.com>
          <CACdnJuvOW0Pc42Nuh4QVy4xdYsaUa=H9i=YZW+XB+bg-YnDCUQ@mail.gmail.com>
-         <1507574441.3748.40.camel@linux.vnet.ibm.com>
-         <20171009232314.545de76a@totoro>
-         <1507583449.3748.46.camel@linux.vnet.ibm.com>
-         <20171010003326.6409ae23@totoro>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1507585253.3748.57.camel@linux.vnet.ibm.com>
+Message-Id: <1507574441.3748.40.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-[Cc'ing Dmitry Kasatkin]
+On Mon, 2017-10-09 at 11:18 -0700, Matthew Garrett wrote:
+> On Mon, Oct 9, 2017 at 11:15 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> > On Mon, 2017-10-09 at 10:59 -0700, Matthew Garrett wrote:
+> >> Ok, that makes sense. But for cases where we do have security.ima, the
+> >> inode doesn't seem to provide additional security but does make
+> >> deployment more difficult. Does supporting this use case seem
+> >> reasonable?
+> >
+> > Yes!
+> 
+> Excellent. This means defining a new signature type - the two options
+> seem to be Mikhail's portable format, or the approach I took of having
+> the signature define which metadata is included. Do you have a
+> preference?
 
-On Tue, 2017-10-10 at 00:33 +0300, Mikhail Kurinnoi wrote:
-> ? Mon, 09 Oct 2017 17:10:49 -0400
-> Mimi Zohar <zohar@linux.vnet.ibm.com> ?????:
-> 
-> > On Mon, 2017-10-09 at 23:23 +0300, Mikhail Kurinnoi wrote:
-> > > ? Mon, 09 Oct 2017 14:40:41 -0400
-> > > Mimi Zohar <zohar@linux.vnet.ibm.com> ?????:
-> > >   
-> > > > On Mon, 2017-10-09 at 11:18 -0700, Matthew Garrett wrote:  
-> > > > > On Mon, Oct 9, 2017 at 11:15 AM, Mimi Zohar
-> > > > > <zohar@linux.vnet.ibm.com> wrote:    
-> > > > > > On Mon, 2017-10-09 at 10:59 -0700, Matthew Garrett wrote:    
-> > > > > >> Ok, that makes sense. But for cases where we do have
-> > > > > >> security.ima, the inode doesn't seem to provide additional
-> > > > > >> security but does make deployment more difficult. Does
-> > > > > >> supporting this use case seem reasonable?    
-> > > > > >
-> > > > > > Yes!    
-> > > > > 
-> > > > > Excellent. This means defining a new signature type - the two
-> > > > > options seem to be Mikhail's portable format, or the approach I
-> > > > > took of having the signature define which metadata is included.
-> > > > > Do you have a preference?    
-> > > > 
-> > > > We now understand that as long as the EVM signature includes
-> > > > security.ima, it is safe not to include the i_ino/uuid.  This new
-> > > > format can be written to disk.  
-> > > 
-> > > But, isn't this mean we could have this scenario of offline
-> > > manipulations:
-> > > 1) store old file with xattrs;
-> > > 2) wait;
-> > > 3) replace new file with fixed exploits on old one.
-> > > 
-> > > Since we don't have directory tree protection yet and we don't use
-> > > i_ino, someone could reuse old files more easy during offline
-> > > manipulations. Right?  
-> > 
-> > As long as the new EVM signature format requires the existence of a
-> > security.ima xattr, I don't see how.  The new EVM signature format
-> > would not be replaced with an HMAC.
-> 
-> 
-> I understood the idea.
-> 
-> Looks like portable EVM format support proposed by Matthew, could be
-> easy realized. Probably, will be good idea add only this one, test it,
-> and later add immutable EVM format and portable EVM format that
-> converted into HMAC (that I proposed in patch set)?
-> 
-> If no one ask for portable EVM format that converted into HMAC, do we
-> really need push all in one bunch?
+We now understand that as long as the EVM signature includes
+security.ima, it is safe not to include the i_ino/uuid.  This new
+format can be written to disk.
 
-It looks like Dmitry already defined a new "immutable" EVM  signature
-format in ima-evm-utils and posted the corresponding patch to linux-
-ima-devel a long time ago.
+Based on the previous discussions, Mikhail's patches never write the
+portable EVM signature format to disk, but verify the signature,
+before calculating and writing the HMAC.  Based on our current
+understanding that isn't required.  The new EVM signature can be
+written out.
 
-The new "immutable" EVM signature doesn't include the i_ino or
-generation.
-
-Mimi
+Let's keep the change as simple as possible.
