@@ -1,273 +1,126 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:31456 "EHLO mga09.intel.com"
+Received: from mga04.intel.com ([192.55.52.120]:24643 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932075AbdJJO5R (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 10 Oct 2017 10:57:17 -0400
-Date: Tue, 10 Oct 2017 17:57:13 +0300
+        id S932196AbdJJOOY (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 10 Oct 2017 10:14:24 -0400
+Date: Tue, 10 Oct 2017 17:14:19 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Nayna Jain <nayna@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
-        tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com,
-        patrickc@us.ibm.com
-Subject: Re: [PATCH v3 1/5] tpm: move wait_for_tpm_stat() to respective
- driver files
-Message-ID: <20171010145713.i2zbuzo4iicyyeo3@linux.intel.com>
-References: <20171004102924.12355-1-nayna@linux.vnet.ibm.com>
- <20171004102924.12355-2-nayna@linux.vnet.ibm.com>
+To: Thiebaud Weksteen <tweek@google.com>, jmorris@namei.org
+Cc: linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        linux-kernel@vger.kernel.org, Matthew Garrett <mjg59@google.com>,
+        peterhuewe@gmx.de,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        tpmdd@selhorst.net
+Subject: Re: [PATCH v3 4/5] efi: call get_event_log before ExitBootServices
+Message-ID: <20171010141419.e4uv4fkmcmpc7sdc@linux.intel.com>
+References: <20170920081340.7413-1-tweek@google.com>
+ <20170920081340.7413-5-tweek@google.com>
+ <20170926114538.r5hsyc5osodpaals@linux.intel.com>
+ <CA+zpnLcYWcO8Gf6b8rAHgcLkAndC0uyPH+Kxa01giVsochP3Ug@mail.gmail.com>
+ <20170929171617.yq4dvn66czvnebns@linux.intel.com>
+ <20171004105113.mcho3rlytaxfruyf@linux.intel.com>
+ <CA+zpnLdg4km1vMUUZaYfRg6M68+nSdC+vASULmH-aKu4vYyy4Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171004102924.12355-2-nayna@linux.vnet.ibm.com>
+In-Reply-To: <CA+zpnLdg4km1vMUUZaYfRg6M68+nSdC+vASULmH-aKu4vYyy4Q@mail.gmail.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Oct 04, 2017 at 06:29:20AM -0400, Nayna Jain wrote:
-> The function wait_for_tpm_stat() is currently defined in
-> tpm-interface file. It is a hardware specific function used
-> only by tpm_tis and xen-tpmfront, so it is removed from
-> tpm-interface.c and defined in respective driver files.
+On Wed, Oct 04, 2017 at 01:12:27PM +0200, Thiebaud Weksteen wrote:
+> On Wed, Oct 4, 2017 at 12:51 PM, Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> > On Fri, Sep 29, 2017 at 08:16:17PM +0300, Jarkko Sakkinen wrote:
+> >> On Tue, Sep 26, 2017 at 02:49:31PM +0200, Thiebaud Weksteen wrote:
+> >> > On Tue, Sep 26, 2017 at 1:45 PM, Jarkko Sakkinen
+> >> > <jarkko.sakkinen@linux.intel.com> wrote:
+> >> > > On Wed, Sep 20, 2017 at 10:13:39AM +0200, Thiebaud Weksteen wrote:
+> >> > >> With TPM 2.0 specification, the event logs may only be accessible by
+> >> > >> calling an EFI Boot Service. Modify the EFI stub to copy the log area to
+> >> > >> a new Linux-specific EFI configuration table so it remains accessible
+> >> > >> once booted.
+> >> > >>
+> >> > >> When calling this service, it is possible to specify the expected format
+> >> > >> of the logs: TPM 1.2 (SHA1) or TPM 2.0 ("Crypto Agile"). For now, only the
+> >> > >> first format is retrieved.
+> >> > >>
+> >> > >> Signed-off-by: Thiebaud Weksteen <tweek@google.com>
+> >> > >
+> >> > > Does not apply:
+> >> > >
+> >> > > Applying: tpm: move tpm_eventlog.h outside of drivers folder
+> >> > > Applying: tpm: rename event log provider files
+> >> > > Applying: tpm: add event log format version
+> >> > > Applying: efi: call get_event_log before ExitBootServices
+> >> > > error: sha1 information is lacking or useless (drivers/firmware/efi/efi.c).
+> >> > > error: could not build fake ancestor
+> >> > > Patch failed at 0004 efi: call get_event_log before ExitBootServices
+> >> > > The copy of the patch that failed is found in: .git/rebase-apply/patch
+> >> > > When you have resolved this problem, run "git am --continue".
+> >> > > If you prefer to skip this patch, run "git am --skip" instead.
+> >> > > To restore the original branch and stop patching, run "git am --abort".
+> >> > >
+> >> > > Just rebased my tree to the latest security-next.
+> >> >
+> >> > It applies fine on security/next-general which is more up-to-date.
+> >> > (security/next does not include
+> >> > ccc829ba3624beb9a703fc995d016b836d9eead8 on which this patch set is
+> >> > based)
+> >>
+> >> Thanks, my bad, I though that I had it updated.
+> >>
+> >> I'll update my tree and retry.
+> >>
+> >> /Jarkko
+> >
+> > My master is up to date with security/next.
+> >
+> > Still get the same result:
+> >
+> > $ git am -3 ~/Downloads/v3-4-5-efi-call-get_event_log-before-ExitBootServices.patch
+> > Applying: efi: call get_event_log before ExitBootServices
+> > error: sha1 information is lacking or useless (drivers/firmware/efi/efi.c).
+> > error: could not build fake ancestor
+> > Patch failed at 0001 efi: call get_event_log before ExitBootServices
+> > The copy of the patch that failed is found in: .git/rebase-apply/patch
+> > When you have resolved this problem, run "git am --continue".
+> > If you prefer to skip this patch, run "git am --skip" instead.
+> > To restore the original branch and stop patching, run "git am --abort".
+> >
+> > Maybe you have some other trees fetched in your local GIT so that it
+> > finds the ancestors? Anyway, cannot test this at this point.
+> >
+> > /Jarkko
 > 
-> Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+> The security/next branch still does not contain the commit I mentioned
+> (ccc829ba3624beb9a703fc995d016b836d9eead8), which is already part of
+> torvalds/master now.
+> 
+>  $ git branch -a --contains ccc829ba3624beb9a703fc995d016b836d9eead8
+>   efi_tpm2_eventlog
+>   master
+>   remotes/linux-next/akpm
+>   remotes/linux-next/akpm-base
+>   remotes/linux-next/master
+>   remotes/linux-next/stable
+>   remotes/security/fixes-v4.14-rc3
+>   remotes/security/fixes-v4.14-rc4
+>   remotes/security/next-general
+>   remotes/security/next-testing
+>   remotes/torvalds/master
+> 
+> Is there any reason why you are trying to merge on that specific
+> branch and not next-general or next-testing? Would you know the
+> purpose of all these next-* branches?
+> 
+> Thanks,
+> Thiebaud
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+The way I've agreed with James Morris to have my tree is to be rooted to
+security trees next branch.
+
+James, what actions should we take?
 
 /Jarkko
-
-> ---
->  drivers/char/tpm/tpm-interface.c | 60 ----------------------------------------
->  drivers/char/tpm/tpm.h           |  2 --
->  drivers/char/tpm/tpm_tis_core.c  | 60 ++++++++++++++++++++++++++++++++++++++++
->  drivers/char/tpm/xen-tpmfront.c  | 60 ++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 120 insertions(+), 62 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 1d6729be4cd6..313f7618d569 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -1035,66 +1035,6 @@ int tpm_send(u32 chip_num, void *cmd, size_t buflen)
->  }
->  EXPORT_SYMBOL_GPL(tpm_send);
->  
-> -static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
-> -					bool check_cancel, bool *canceled)
-> -{
-> -	u8 status = chip->ops->status(chip);
-> -
-> -	*canceled = false;
-> -	if ((status & mask) == mask)
-> -		return true;
-> -	if (check_cancel && chip->ops->req_canceled(chip, status)) {
-> -		*canceled = true;
-> -		return true;
-> -	}
-> -	return false;
-> -}
-> -
-> -int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long timeout,
-> -		      wait_queue_head_t *queue, bool check_cancel)
-> -{
-> -	unsigned long stop;
-> -	long rc;
-> -	u8 status;
-> -	bool canceled = false;
-> -
-> -	/* check current status */
-> -	status = chip->ops->status(chip);
-> -	if ((status & mask) == mask)
-> -		return 0;
-> -
-> -	stop = jiffies + timeout;
-> -
-> -	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
-> -again:
-> -		timeout = stop - jiffies;
-> -		if ((long)timeout <= 0)
-> -			return -ETIME;
-> -		rc = wait_event_interruptible_timeout(*queue,
-> -			wait_for_tpm_stat_cond(chip, mask, check_cancel,
-> -					       &canceled),
-> -			timeout);
-> -		if (rc > 0) {
-> -			if (canceled)
-> -				return -ECANCELED;
-> -			return 0;
-> -		}
-> -		if (rc == -ERESTARTSYS && freezing(current)) {
-> -			clear_thread_flag(TIF_SIGPENDING);
-> -			goto again;
-> -		}
-> -	} else {
-> -		do {
-> -			tpm_msleep(TPM_TIMEOUT);
-> -			status = chip->ops->status(chip);
-> -			if ((status & mask) == mask)
-> -				return 0;
-> -		} while (time_before(jiffies, stop));
-> -	}
-> -	return -ETIME;
-> -}
-> -EXPORT_SYMBOL_GPL(wait_for_tpm_stat);
-> -
->  #define TPM_ORD_SAVESTATE 152
->  #define SAVESTATE_RESULT_SIZE 10
->  
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index 2d5466a72e40..4fc83ac7abeb 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -525,8 +525,6 @@ int tpm_do_selftest(struct tpm_chip *chip);
->  unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
->  int tpm_pm_suspend(struct device *dev);
->  int tpm_pm_resume(struct device *dev);
-> -int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long timeout,
-> -		      wait_queue_head_t *queue, bool check_cancel);
->  
->  static inline void tpm_msleep(unsigned int delay_msec)
->  {
-> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-> index 63bc6c3b949e..b33126a35694 100644
-> --- a/drivers/char/tpm/tpm_tis_core.c
-> +++ b/drivers/char/tpm/tpm_tis_core.c
-> @@ -31,6 +31,66 @@
->  #include "tpm.h"
->  #include "tpm_tis_core.h"
->  
-> +static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
-> +					bool check_cancel, bool *canceled)
-> +{
-> +	u8 status = chip->ops->status(chip);
-> +
-> +	*canceled = false;
-> +	if ((status & mask) == mask)
-> +		return true;
-> +	if (check_cancel && chip->ops->req_canceled(chip, status)) {
-> +		*canceled = true;
-> +		return true;
-> +	}
-> +	return false;
-> +}
-> +
-> +static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
-> +		unsigned long timeout, wait_queue_head_t *queue,
-> +		bool check_cancel)
-> +{
-> +	unsigned long stop;
-> +	long rc;
-> +	u8 status;
-> +	bool canceled = false;
-> +
-> +	/* check current status */
-> +	status = chip->ops->status(chip);
-> +	if ((status & mask) == mask)
-> +		return 0;
-> +
-> +	stop = jiffies + timeout;
-> +
-> +	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
-> +again:
-> +		timeout = stop - jiffies;
-> +		if ((long)timeout <= 0)
-> +			return -ETIME;
-> +		rc = wait_event_interruptible_timeout(*queue,
-> +			wait_for_tpm_stat_cond(chip, mask, check_cancel,
-> +					       &canceled),
-> +			timeout);
-> +		if (rc > 0) {
-> +			if (canceled)
-> +				return -ECANCELED;
-> +			return 0;
-> +		}
-> +		if (rc == -ERESTARTSYS && freezing(current)) {
-> +			clear_thread_flag(TIF_SIGPENDING);
-> +			goto again;
-> +		}
-> +	} else {
-> +		do {
-> +			tpm_msleep(TPM_TIMEOUT);
-> +			status = chip->ops->status(chip);
-> +			if ((status & mask) == mask)
-> +				return 0;
-> +		} while (time_before(jiffies, stop));
-> +	}
-> +	return -ETIME;
-> +}
-> +
->  /* Before we attempt to access the TPM we must see that the valid bit is set.
->   * The specification says that this bit is 0 at reset and remains 0 until the
->   * 'TPM has gone through its self test and initialization and has established
-> diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
-> index 656e8af95d52..d20a0a9ded27 100644
-> --- a/drivers/char/tpm/xen-tpmfront.c
-> +++ b/drivers/char/tpm/xen-tpmfront.c
-> @@ -39,6 +39,66 @@ enum status_bits {
->  	VTPM_STATUS_CANCELED = 0x8,
->  };
->  
-> +static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
-> +					bool check_cancel, bool *canceled)
-> +{
-> +	u8 status = chip->ops->status(chip);
-> +
-> +	*canceled = false;
-> +	if ((status & mask) == mask)
-> +		return true;
-> +	if (check_cancel && chip->ops->req_canceled(chip, status)) {
-> +		*canceled = true;
-> +		return true;
-> +	}
-> +	return false;
-> +}
-> +
-> +static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
-> +		unsigned long timeout, wait_queue_head_t *queue,
-> +		bool check_cancel)
-> +{
-> +	unsigned long stop;
-> +	long rc;
-> +	u8 status;
-> +	bool canceled = false;
-> +
-> +	/* check current status */
-> +	status = chip->ops->status(chip);
-> +	if ((status & mask) == mask)
-> +		return 0;
-> +
-> +	stop = jiffies + timeout;
-> +
-> +	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
-> +again:
-> +		timeout = stop - jiffies;
-> +		if ((long)timeout <= 0)
-> +			return -ETIME;
-> +		rc = wait_event_interruptible_timeout(*queue,
-> +			wait_for_tpm_stat_cond(chip, mask, check_cancel,
-> +					       &canceled),
-> +			timeout);
-> +		if (rc > 0) {
-> +			if (canceled)
-> +				return -ECANCELED;
-> +			return 0;
-> +		}
-> +		if (rc == -ERESTARTSYS && freezing(current)) {
-> +			clear_thread_flag(TIF_SIGPENDING);
-> +			goto again;
-> +		}
-> +	} else {
-> +		do {
-> +			tpm_msleep(TPM_TIMEOUT);
-> +			status = chip->ops->status(chip);
-> +			if ((status & mask) == mask)
-> +				return 0;
-> +		} while (time_before(jiffies, stop));
-> +	}
-> +	return -ETIME;
-> +}
-> +
->  static u8 vtpm_status(struct tpm_chip *chip)
->  {
->  	struct tpm_private *priv = dev_get_drvdata(&chip->dev);
-> -- 
-> 2.13.3
-> 
