@@ -1,82 +1,68 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56482 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751948AbdJKM2N (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 11 Oct 2017 08:28:13 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9BCNtIi107254
-        for <linux-integrity@vger.kernel.org>; Wed, 11 Oct 2017 08:28:12 -0400
-Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2dhhqe72ww-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 11 Oct 2017 08:28:12 -0400
-Received: from localhost
-        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Wed, 11 Oct 2017 13:28:10 +0100
-Subject: Re: [PATCH] vfs: fix mounting a filesystem with i_version
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: David Howells <dhowells@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        James Morris <jmorris@namei.org>
-Date: Wed, 11 Oct 2017 08:28:01 -0400
-In-Reply-To: <alpine.LRH.2.21.1710090924410.3670@namei.org>
-References: <1507436901.5841.4.camel@linux.vnet.ibm.com>
-         <alpine.LRH.2.21.1710090924410.3670@namei.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1507724881.3428.19.camel@linux.vnet.ibm.com>
+Received: from mga09.intel.com ([134.134.136.24]:8828 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752007AbdJKLxW (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 11 Oct 2017 07:53:22 -0400
+Date: Wed, 11 Oct 2017 14:53:18 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: James Morris <jmorris@namei.org>
+Cc: Thiebaud Weksteen <tweek@google.com>, linux-efi@vger.kernel.org,
+        linux-integrity@vger.kernel.org, tpmdd-devel@lists.sourceforge.net,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        linux-kernel@vger.kernel.org, Matthew Garrett <mjg59@google.com>,
+        peterhuewe@gmx.de,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        tpmdd@selhorst.net
+Subject: Re: [PATCH v3 4/5] efi: call get_event_log before ExitBootServices
+Message-ID: <20171011115318.i342rzq3akqbrovv@linux.intel.com>
+References: <20170920081340.7413-1-tweek@google.com>
+ <20170920081340.7413-5-tweek@google.com>
+ <20170926114538.r5hsyc5osodpaals@linux.intel.com>
+ <CA+zpnLcYWcO8Gf6b8rAHgcLkAndC0uyPH+Kxa01giVsochP3Ug@mail.gmail.com>
+ <20170929171617.yq4dvn66czvnebns@linux.intel.com>
+ <20171004105113.mcho3rlytaxfruyf@linux.intel.com>
+ <CA+zpnLdg4km1vMUUZaYfRg6M68+nSdC+vASULmH-aKu4vYyy4Q@mail.gmail.com>
+ <20171010141419.e4uv4fkmcmpc7sdc@linux.intel.com>
+ <alpine.LRH.2.21.1710111250260.22885@namei.org>
+ <20171011115254.2n4zs77ixyl2mdgm@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171011115254.2n4zs77ixyl2mdgm@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Al,
-
-This patch fixes a regression.  Without it, you can't mount a file
-system with i_version.  This obviously affects IMA.  Could you pick up
-this patch and forward it to Linus please?
-
-Commit dd924ea17c0c "vfs: fix mounting a filesystem with i_version"
-can be found in my git repo.
-
-thanks,
-
-Mimi
-
-
-On Mon, 2017-10-09 at 09:24 +1100, James Morris wrote:
-> cc: Al Viro.
-> 
-> 
-> On Sun, 8 Oct 2017, Mimi Zohar wrote:
-> 
-> > The mount i_version flag is not enabled in the new sb_flags.  This patch
-> > adds the missing SB_I_VERSION flag.
+On Wed, Oct 11, 2017 at 02:52:54PM +0300, Jarkko Sakkinen wrote:
+> On Wed, Oct 11, 2017 at 12:54:26PM +1100, James Morris wrote:
+> > On Tue, 10 Oct 2017, Jarkko Sakkinen wrote:
 > > 
-> > Fixes: e462ec5 "VFS: Differentiate mount flags (MS_*) from internal
-> >        superblock flags"
-> > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> > ---
-> >  fs/namespace.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > The way I've agreed with James Morris to have my tree is to be rooted to
+> > > security trees next branch.
+> > > 
+> > > James, what actions should we take?
 > > 
-> > diff --git a/fs/namespace.c b/fs/namespace.c
-> > index 3b601f115b6c..d18deb4c410b 100644
-> > --- a/fs/namespace.c
-> > +++ b/fs/namespace.c
-> > @@ -2825,7 +2825,8 @@ long do_mount(const char *dev_name, const char __user *dir_name,
-> >  			    SB_MANDLOCK |
-> >  			    SB_DIRSYNC |
-> >  			    SB_SILENT |
-> > -			    SB_POSIXACL);
-> > +			    SB_POSIXACL |
-> > +			    SB_I_VERSION);
-> >  
-> >  	if (flags & MS_REMOUNT)
-> >  		retval = do_remount(&path, flags, sb_flags, mnt_flags,
+> > This process has changed recently -- I posted to lsm but forgot to post to 
+> > linux-integrity.
 > > 
+> > http://kernsec.org/pipermail/linux-security-module-archive/2017-September/003356.html
+> > 
+> > Summary: please track the next-general branch in my tree for your 
+> > development, it replaces 'next'.
+> > 
+> > 
+> > - James
+> > -- 
+> > James Morris
+> > <jmorris@namei.org>
 > 
+> Ah I'm subscribed to that list but lately been busy getting a huge patch
+> set to platform-driver-x86 [1] for review, which has prioritized out
+> reading much else than linux-integrity.
+> 
+> Thank you. I'll retry the patches tomorrow.
+> 
+> /Jarkko
+
+[1] http://www.spinics.net/lists/platform-driver-x86/msg13260.html
+
+/Jarkko
