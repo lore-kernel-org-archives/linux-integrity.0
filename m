@@ -1,77 +1,64 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:6145 "EHLO mga14.intel.com"
+Received: from mga11.intel.com ([192.55.52.93]:32753 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756065AbdJLLix (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 12 Oct 2017 07:38:53 -0400
-Date: Thu, 12 Oct 2017 14:38:44 +0300
+        id S1756431AbdJLLTu (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 12 Oct 2017 07:19:50 -0400
+Date: Thu, 12 Oct 2017 14:19:43 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: James Morris <jmorris@namei.org>
-Cc: Thiebaud Weksteen <tweek@google.com>, linux-efi@vger.kernel.org,
-        linux-integrity@vger.kernel.org, tpmdd-devel@lists.sourceforge.net,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        linux-kernel@vger.kernel.org, Matthew Garrett <mjg59@google.com>,
-        peterhuewe@gmx.de,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        tpmdd@selhorst.net
-Subject: Re: [PATCH v3 4/5] efi: call get_event_log before ExitBootServices
-Message-ID: <20171012113844.ptfynppgx3tkwe7g@linux.intel.com>
-References: <20170920081340.7413-5-tweek@google.com>
- <20170926114538.r5hsyc5osodpaals@linux.intel.com>
- <CA+zpnLcYWcO8Gf6b8rAHgcLkAndC0uyPH+Kxa01giVsochP3Ug@mail.gmail.com>
- <20170929171617.yq4dvn66czvnebns@linux.intel.com>
- <20171004105113.mcho3rlytaxfruyf@linux.intel.com>
- <CA+zpnLdg4km1vMUUZaYfRg6M68+nSdC+vASULmH-aKu4vYyy4Q@mail.gmail.com>
- <20171010141419.e4uv4fkmcmpc7sdc@linux.intel.com>
- <alpine.LRH.2.21.1710111250260.22885@namei.org>
- <20171011115254.2n4zs77ixyl2mdgm@linux.intel.com>
- <20171011115318.i342rzq3akqbrovv@linux.intel.com>
+To: Nayna Jain <nayna@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
+        tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com,
+        patrickc@us.ibm.com
+Subject: Re: [PATCH v3 5/5] tpm: use tpm_msleep() value as max delay
+Message-ID: <20171012111943.vy43q2mkiqmrbuvc@linux.intel.com>
+References: <20171004102924.12355-1-nayna@linux.vnet.ibm.com>
+ <20171004102924.12355-6-nayna@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171011115318.i342rzq3akqbrovv@linux.intel.com>
+In-Reply-To: <20171004102924.12355-6-nayna@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Oct 11, 2017 at 02:53:18PM +0300, Jarkko Sakkinen wrote:
-> On Wed, Oct 11, 2017 at 02:52:54PM +0300, Jarkko Sakkinen wrote:
-> > On Wed, Oct 11, 2017 at 12:54:26PM +1100, James Morris wrote:
-> > > On Tue, 10 Oct 2017, Jarkko Sakkinen wrote:
-> > > 
-> > > > The way I've agreed with James Morris to have my tree is to be rooted to
-> > > > security trees next branch.
-> > > > 
-> > > > James, what actions should we take?
-> > > 
-> > > This process has changed recently -- I posted to lsm but forgot to post to 
-> > > linux-integrity.
-> > > 
-> > > http://kernsec.org/pipermail/linux-security-module-archive/2017-September/003356.html
-> > > 
-> > > Summary: please track the next-general branch in my tree for your 
-> > > development, it replaces 'next'.
-> > > 
-> > > 
-> > > - James
-> > > -- 
-> > > James Morris
-> > > <jmorris@namei.org>
-> > 
-> > Ah I'm subscribed to that list but lately been busy getting a huge patch
-> > set to platform-driver-x86 [1] for review, which has prioritized out
-> > reading much else than linux-integrity.
-> > 
-> > Thank you. I'll retry the patches tomorrow.
-> > 
-> > /Jarkko
+On Wed, Oct 04, 2017 at 06:29:24AM -0400, Nayna Jain wrote:
+> Currently, tpm_msleep() uses delay_msec as the minimum value in
+> usleep_range. However, that is the maximum time we want to wait.
+> The function is modified to use the delay_msec as the maximum
+> value, not the minimum value.
 > 
-> [1] http://www.spinics.net/lists/platform-driver-x86/msg13260.html
+> After this change, performance on a TPM 1.2 with an 8 byte
+> burstcount for 1000 extends improved from ~9sec to ~8sec.
 > 
-> /Jarkko
+> Fixes: 3b9af007869("tpm: replace msleep() with usleep_range() in TPM 1.2/
+> 2.0 generic drivers")
+> 
+> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+> Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> ---
+>  drivers/char/tpm/tpm.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 4fc83ac7abeb..644de70de2cc 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -528,8 +528,8 @@ int tpm_pm_resume(struct device *dev);
+>  
+>  static inline void tpm_msleep(unsigned int delay_msec)
+>  {
+> -	usleep_range(delay_msec * 1000,
+> -		     (delay_msec * 1000) + TPM_TIMEOUT_RANGE_US);
+> +	usleep_range((delay_msec * 1000) - TPM_TIMEOUT_RANGE_US,
+> +		     delay_msec * 1000);
+>  };
+>  
+>  struct tpm_chip *tpm_chip_find_get(int chip_num);
+> -- 
+> 2.13.3
+> 
 
-Now all Thiebaud's patches have been applied to the master of
-
-  git://git.infradead.org/users/jjs/linux-tpmdd.git
-
-Testing is still pending.
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
 /Jarkko
