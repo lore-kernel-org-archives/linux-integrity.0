@@ -1,57 +1,92 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-it0-f49.google.com ([209.85.214.49]:47332 "EHLO
-        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752339AbdJLPDj (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 12 Oct 2017 11:03:39 -0400
-Received: by mail-it0-f49.google.com with SMTP id p138so7635838itp.2
-        for <linux-integrity@vger.kernel.org>; Thu, 12 Oct 2017 08:03:39 -0700 (PDT)
+Received: from mx1.redhat.com ([209.132.183.28]:56728 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750716AbdJLNzY (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 12 Oct 2017 09:55:24 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 20BC147A
+        for <linux-integrity@vger.kernel.org>; Thu, 12 Oct 2017 13:55:24 +0000 (UTC)
+Date: Thu, 12 Oct 2017 10:55:20 -0400
+From: "Bruno E. O. Meneguele" <brdeoliv@redhat.com>
+To: linux-integrity@vger.kernel.org
+Cc: lwang@redhat.com
+Subject: IMA appraisal against xz-compressed modules
+Message-ID: <20171012145520.GC2495@glitch>
 MIME-Version: 1.0
-In-Reply-To: <20171012113844.ptfynppgx3tkwe7g@linux.intel.com>
-References: <20170920081340.7413-5-tweek@google.com> <20170926114538.r5hsyc5osodpaals@linux.intel.com>
- <CA+zpnLcYWcO8Gf6b8rAHgcLkAndC0uyPH+Kxa01giVsochP3Ug@mail.gmail.com>
- <20170929171617.yq4dvn66czvnebns@linux.intel.com> <20171004105113.mcho3rlytaxfruyf@linux.intel.com>
- <CA+zpnLdg4km1vMUUZaYfRg6M68+nSdC+vASULmH-aKu4vYyy4Q@mail.gmail.com>
- <20171010141419.e4uv4fkmcmpc7sdc@linux.intel.com> <alpine.LRH.2.21.1710111250260.22885@namei.org>
- <20171011115254.2n4zs77ixyl2mdgm@linux.intel.com> <20171011115318.i342rzq3akqbrovv@linux.intel.com>
- <20171012113844.ptfynppgx3tkwe7g@linux.intel.com>
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Date: Thu, 12 Oct 2017 17:03:38 +0200
-Message-ID: <CABxcv=neJZjA407pbmNesNbGY9k3VRbhawut6ewofw_UB5U1_w@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] efi: call get_event_log before ExitBootServices
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: James Morris <jmorris@namei.org>,
-        Thiebaud Weksteen <tweek@google.com>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Matthew Garrett <mjg59@google.com>, peterhuewe@gmx.de,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        tpmdd@selhorst.net
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="p2kqVDKq5asng8Dg"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Oct 12, 2017 at 1:38 PM, Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
+Hi, 
 
-[snip]
+recently, while playing around with IMA modules check support, I notice
+that when the kernel was compiled/installed with XZ-compressed modules
+the IMA kernel infra returns -EACCESS on modules initialization. Let me
+detail a bit more:
 
->
-> Now all Thiebaud's patches have been applied to the master of
->
->   git://git.infradead.org/users/jjs/linux-tpmdd.git
->
-> Testing is still pending.
->
+I created the policy file (/etc/ima/ima-policy) with
 
-I provided my reviewed and tested by tags for the patches but I
-noticed that weren't picked. Probably my fault though since I answered
-to the cover letter instead of the individual patches.
+measure func=MODULE_CHECK uid=0
+(... and more, policy file is attached)
 
-> /Jarkko
+then rebooted the kernel (that was built with XZ-compressed modules) and
+a bunch of modules didn't load, e.g.:
 
-Best regards,
-Javier
+without ima-policy:
+# lsmod | wc -l
+32
+
+with it:
+# lsmod | wc -l
+14
+
+these 14 modules were all loaded during initram booting phase, but if I
+rmmod some of them and try to modprobe (strace output):
+
+init_module(0x55b9bcc9bba0, 17763, "") = -1 EACCES (Permission denied)
+
+The point is that there is no violation, because the error occurs right
+after kmod calls init_module() and the call follows to ima_read_file()
+(kernel tree: security/integrity/ima/ima_main.c) which returns -EACCES,
+since there is no 'file' structure available (init_module uses memory
+region only and not file descriptor).
+
+I notice this behavior using Fedora 26 (using SELinux as sec framework)
+and up-to-date kernel, the question is: should IMA kernel mechanism
+support memory regions integrity measurements, maybe following the steps
+that MODULE_SIGNATURE takes (that check for module signature through its
+mmap region), allowing compressed modules to be loaded? Or kernels built
+with XZ/GZ-compressed modules was never meant to be supported? Is it a
+bug or a possible enhancement?
+
+Well, thank you guys in advance.
+
+/etc/ima/ima-policy:
+
+# PROC_SUPER_MAGIC
+dont_measure fsmagic=0x9fa0
+# SYSFS_MAGIC
+dont_measure fsmagic=0x62656572
+# DEBUGFS_MAGIC
+dont_measure fsmagic=0x64626720
+# TMPFS_MAGIC
+dont_measure fsmagic=0x01021994
+# RAMFS_MAGIC
+dont_measure fsmagic=0x858458f6
+# SECURITYFS_MAGIC
+dont_measure fsmagic=0x73636673
+# MEASUREMENTS
+measure func=BPRM_CHECK
+measure func=FILE_MMAP mask=MAY_EXEC
+measure func=MODULE_CHECK uid=0
+
+-- 
+bmeneg 
+PGP Key: http://bmeneg.com/pubkey.txt
+
+
+    [ Part 2, Application/PGP-SIGNATURE (Name: "signature.asc") 499 bytes. ]
+    [ Unable to print this part. ]
