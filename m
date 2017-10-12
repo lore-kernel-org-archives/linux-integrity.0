@@ -1,9 +1,9 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:32753 "EHLO mga11.intel.com"
+Received: from mga05.intel.com ([192.55.52.43]:58779 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756431AbdJLLTu (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 12 Oct 2017 07:19:50 -0400
-Date: Thu, 12 Oct 2017 14:19:43 +0300
+        id S1755880AbdJLLSl (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 12 Oct 2017 07:18:41 -0400
+Date: Thu, 12 Oct 2017 14:18:35 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: Nayna Jain <nayna@linux.vnet.ibm.com>
 Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
@@ -11,54 +11,51 @@ Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
         linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
         tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com,
         patrickc@us.ibm.com
-Subject: Re: [PATCH v3 5/5] tpm: use tpm_msleep() value as max delay
-Message-ID: <20171012111943.vy43q2mkiqmrbuvc@linux.intel.com>
+Subject: Re: [PATCH v3 4/5] tpm: reduce tpm_msleep() time in get_burstcount()
+Message-ID: <20171012111835.g7uulven4whnpf5d@linux.intel.com>
 References: <20171004102924.12355-1-nayna@linux.vnet.ibm.com>
- <20171004102924.12355-6-nayna@linux.vnet.ibm.com>
+ <20171004102924.12355-5-nayna@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171004102924.12355-6-nayna@linux.vnet.ibm.com>
+In-Reply-To: <20171004102924.12355-5-nayna@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Oct 04, 2017 at 06:29:24AM -0400, Nayna Jain wrote:
-> Currently, tpm_msleep() uses delay_msec as the minimum value in
-> usleep_range. However, that is the maximum time we want to wait.
-> The function is modified to use the delay_msec as the maximum
-> value, not the minimum value.
+On Wed, Oct 04, 2017 at 06:29:23AM -0400, Nayna Jain wrote:
+> Currently, get_burstcount() function sleeps for 5msec in a loop
+> before retrying for next query to burstcount. However, if it takes
+> lesser time for TPM to return, this 5msec delay is longer
+> than necessary.
+> 
+> This patch replaces the tpm_msleep time from 5msec to 1msec.
 > 
 > After this change, performance on a TPM 1.2 with an 8 byte
-> burstcount for 1000 extends improved from ~9sec to ~8sec.
-> 
-> Fixes: 3b9af007869("tpm: replace msleep() with usleep_range() in TPM 1.2/
-> 2.0 generic drivers")
+> burstcount for 1000 extends improved from ~10sec to ~9sec.
 > 
 > Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
 > Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 > ---
->  drivers/char/tpm/tpm.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/char/tpm/tpm_tis_core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index 4fc83ac7abeb..644de70de2cc 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -528,8 +528,8 @@ int tpm_pm_resume(struct device *dev);
->  
->  static inline void tpm_msleep(unsigned int delay_msec)
->  {
-> -	usleep_range(delay_msec * 1000,
-> -		     (delay_msec * 1000) + TPM_TIMEOUT_RANGE_US);
-> +	usleep_range((delay_msec * 1000) - TPM_TIMEOUT_RANGE_US,
-> +		     delay_msec * 1000);
->  };
->  
->  struct tpm_chip *tpm_chip_find_get(int chip_num);
+> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+> index 224842e06105..826a0b9c9201 100644
+> --- a/drivers/char/tpm/tpm_tis_core.c
+> +++ b/drivers/char/tpm/tpm_tis_core.c
+> @@ -226,7 +226,7 @@ static int get_burstcount(struct tpm_chip *chip)
+>  		burstcnt = (value >> 8) & 0xFFFF;
+>  		if (burstcnt)
+>  			return burstcnt;
+> -		tpm_msleep(TPM_TIMEOUT);
+> +		tpm_msleep(TPM_POLL_SLEEP);
+>  	} while (time_before(jiffies, stop));
+>  	return -EBUSY;
+>  }
 > -- 
 > 2.13.3
 > 
 
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Would it make sense to squash this to 3/5 and merge the commit
+messages?
 
 /Jarkko
