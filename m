@@ -1,60 +1,66 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-oi0-f74.google.com ([209.85.218.74]:54111 "EHLO
-        mail-oi0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751081AbdJMWJh (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 13 Oct 2017 18:09:37 -0400
-Received: by mail-oi0-f74.google.com with SMTP id q4so6982552oic.12
-        for <linux-integrity@vger.kernel.org>; Fri, 13 Oct 2017 15:09:37 -0700 (PDT)
+Received: from mga03.intel.com ([134.134.136.65]:37982 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751882AbdJMTrz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 13 Oct 2017 15:47:55 -0400
+Date: Fri, 13 Oct 2017 22:47:46 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: James Morris <jmorris@namei.org>,
+        Thiebaud Weksteen <tweek@google.com>,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Matthew Garrett <mjg59@google.com>, peterhuewe@gmx.de,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        tpmdd@selhorst.net
+Subject: Re: [PATCH v3 4/5] efi: call get_event_log before ExitBootServices
+Message-ID: <20171013194746.ulomwhd6czoeks5m@linux.intel.com>
+References: <CA+zpnLcYWcO8Gf6b8rAHgcLkAndC0uyPH+Kxa01giVsochP3Ug@mail.gmail.com>
+ <20170929171617.yq4dvn66czvnebns@linux.intel.com>
+ <20171004105113.mcho3rlytaxfruyf@linux.intel.com>
+ <CA+zpnLdg4km1vMUUZaYfRg6M68+nSdC+vASULmH-aKu4vYyy4Q@mail.gmail.com>
+ <20171010141419.e4uv4fkmcmpc7sdc@linux.intel.com>
+ <alpine.LRH.2.21.1710111250260.22885@namei.org>
+ <20171011115254.2n4zs77ixyl2mdgm@linux.intel.com>
+ <20171011115318.i342rzq3akqbrovv@linux.intel.com>
+ <20171012113844.ptfynppgx3tkwe7g@linux.intel.com>
+ <CABxcv=neJZjA407pbmNesNbGY9k3VRbhawut6ewofw_UB5U1_w@mail.gmail.com>
 MIME-Version: 1.0
-Date: Fri, 13 Oct 2017 15:09:25 -0700
-Message-Id: <20171013220925.6420-1-mjg59@google.com>
-Subject: [PATCH] EVM: Include security.apparmor in EVM measurements
-From: Matthew Garrett <mjg59@google.com>
-To: linux-integrity@vger.kernel.org
-Cc: zohar@linux.vnet.ibm.com, john.johansen@canonical.com,
-        Matthew Garrett <mjg59@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CABxcv=neJZjA407pbmNesNbGY9k3VRbhawut6ewofw_UB5U1_w@mail.gmail.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Apparmor will be gaining support for security.apparmor labels, and it
-would be helpful to include these in EVM validation now so appropriate
-signatures can be generated even before full support is merged.
+On Thu, Oct 12, 2017 at 05:03:38PM +0200, Javier Martinez Canillas wrote:
+> On Thu, Oct 12, 2017 at 1:38 PM, Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> 
+> [snip]
+> 
+> >
+> > Now all Thiebaud's patches have been applied to the master of
+> >
+> >   git://git.infradead.org/users/jjs/linux-tpmdd.git
+> >
+> > Testing is still pending.
+> >
+> 
+> I provided my reviewed and tested by tags for the patches but I
+> noticed that weren't picked. Probably my fault though since I answered
+> to the cover letter instead of the individual patches.
+> 
+> > /Jarkko
+> 
+> Best regards,
+> Javier
 
-Signed-off-by: Matthew Garrett <mjg59@google.com>
----
- include/uapi/linux/xattr.h        | 3 +++
- security/integrity/evm/evm_main.c | 3 +++
- 2 files changed, 6 insertions(+)
+I will add it. The master branch is bleeding edge where tags might be
+sometimes (*not* usually) missing. The next branch is the one that goes
+to linux-next.
 
-diff --git a/include/uapi/linux/xattr.h b/include/uapi/linux/xattr.h
-index 1590c49cae57..e630b9cd70cb 100644
---- a/include/uapi/linux/xattr.h
-+++ b/include/uapi/linux/xattr.h
-@@ -65,6 +65,9 @@
- #define XATTR_NAME_SMACKTRANSMUTE XATTR_SECURITY_PREFIX XATTR_SMACK_TRANSMUTE
- #define XATTR_NAME_SMACKMMAP XATTR_SECURITY_PREFIX XATTR_SMACK_MMAP
- 
-+#define XATTR_APPARMOR_SUFFIX "apparmor"
-+#define XATTR_NAME_APPARMOR XATTR_SECURITY_PREFIX XATTR_APPARMOR_SUFFIX
-+
- #define XATTR_CAPS_SUFFIX "capability"
- #define XATTR_NAME_CAPS XATTR_SECURITY_PREFIX XATTR_CAPS_SUFFIX
- 
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 40bf3a20605d..78a5b1fddfc7 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -49,6 +49,9 @@ char *evm_config_xattrnames[] = {
- 	XATTR_NAME_SMACKMMAP,
- #endif
- #endif
-+#ifdef CONFIG_SECURITY_APPARMOR
-+	XATTR_NAME_APPARMOR,
-+#endif
- #ifdef CONFIG_IMA_APPRAISE
- 	XATTR_NAME_IMA,
- #endif
--- 
-2.15.0.rc0.271.g36b669edcc-goog
+I'll check all tags from patchwork before moving any of these to next.
+
+/Jarkko
