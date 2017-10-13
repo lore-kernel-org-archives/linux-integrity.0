@@ -1,159 +1,62 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:49174 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750970AbdJNINT (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 14 Oct 2017 04:13:19 -0400
-Date: Sat, 14 Oct 2017 01:13:18 -0700
-From: Jerry Snitselaar <jsnitsel@redhat.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Laurent Bigonville <bigon@debian.org>,
-        Alexander.Steffen@infineon.com, tpmdd-devel@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org
-Subject: Re: [tpmdd-devel] tpm device not showing up in /dev anymore
-Message-ID: <20171014081318.busge2fhteusfjwx@rhwork>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-References: <f9526f55-df96-64fc-a4d6-877ce04e7156@debian.org>
- <dcad0104c46d4d5f88e642862bdb42c2@MUCSE603.infineon.com>
- <47c4300b-8701-79a6-1c58-3a5853f4c5e3@debian.org>
- <595efb25-8d87-f39d-037f-9c9a98462339@debian.org>
- <857106e4bb864bb8a68b1381fffc8f50@MUCSE603.infineon.com>
- <20170831164015.3ajgwydgxtippwoz@rhwork>
- <0d9be244-ace0-030d-6ff9-c4e94c63b7e9@debian.org>
- <20170906040555.fqedhmo5277sd6fq@linux.intel.com>
+Received: from youngberry.canonical.com ([91.189.89.112]:60631 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753261AbdJMXgS (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 13 Oct 2017 19:36:18 -0400
+Subject: Re: [PATCH] EVM: Include security.apparmor in EVM measurements
+To: Matthew Garrett <mjg59@google.com>, linux-integrity@vger.kernel.org
+Cc: zohar@linux.vnet.ibm.com
+References: <20171013220925.6420-1-mjg59@google.com>
+From: John Johansen <john.johansen@canonical.com>
+Message-ID: <eaabb1e3-4cfe-653b-a1a8-8dabd5f24e06@canonical.com>
+Date: Fri, 13 Oct 2017 16:36:13 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-In-Reply-To: <20170906040555.fqedhmo5277sd6fq@linux.intel.com>
+In-Reply-To: <20171013220925.6420-1-mjg59@google.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed Sep 06 17, Jarkko Sakkinen wrote:
->On Fri, Sep 01, 2017 at 02:10:18PM +0200, Laurent Bigonville wrote:
->> Le 31/08/17 a 18:40, Jerry Snitselaar a ecrit :
->> > On Thu Aug 31 17, Alexander.Steffen@infineon.com wrote:
->> > > > Le 29/08/17 a 18:35, Laurent Bigonville a ecrit :
->> > > > > Le 29/08/17 a 18:00, Alexander.Steffen@infineon.com a ecrit :
->> > > > >>> An idea how to troubleshoot this?
->> > > > >> Can you run git bisect on the changes between 4.11 and 4.12, so that
->> > > > >> we find the offending commit? It is probably sufficient to limit the
->> > > > >> search to commits that touch something in drivers/char/tpm.
->> > > > >
->> > > > > I'll try and keep you posted.
->> > > >
->> > > > OK I've been able to bisect the problem and the bad commit is:
->> > > >
->> > > > e6aef069b6e97790cb127d5eeb86ae9ff0b7b0e3 is the first bad commit
->> > > > commit e6aef069b6e97790cb127d5eeb86ae9ff0b7b0e3
->> > > > Author: Jerry Snitselaar <jsnitsel@redhat.com>
->> > > > Date:   Mon Mar 27 08:46:04 2017 -0700
->> > > >
->> > > >      tpm_tis: convert to using locality callbacks
->> > > >
->> > > >      This patch converts tpm_tis to use of the new tpm class ops
->> > > >      request_locality, and relinquish_locality.
->> > > >
->> > > >      With the move to using the callbacks, release_locality is
->> > > > changed so
->> > > >      that we now release the locality even if there is no
->> > > > request pending.
->> > > >
->> > > >      This required some changes to the tpm_tis_core_init code path to
->> > > >      make sure locality is requested when needed:
->> > > >
->> > > >        - tpm2_probe code path will end up calling
->> > > > request/release through
->> > > >          callbacks, so request_locality prior to tpm2_probe not needed.
->> > > >
->> > > >        - probe_itpm makes calls to tpm_tis_send_data which no
->> > > > longer calls
->> > > >          request_locality, so add request_locality prior to
->> > > > tpm_tis_send_data
->> > > >          calls. Also drop release_locality call in middleof
->> > > > probe_itpm, and
->> > > >          keep locality until release_locality called at end of
->> > > > probe_itpm.
->> > > >
->> > > >      Cc: Peter Huewe <peterhuewe@gmx.de>
->> > > >      Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->> > > >      Cc: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
->> > > >      Cc: Marcel Selhorst <tpmdd@selhorst.net>
->> > > >      Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
->> > > >      Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->> > > >      Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->> > > >      Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->> > > >
->> > > > :040000 040000 70234365da69959d47076ebb40c8d17f520c3e44
->> > > > 72f21b446e45ea1003de75902b0553deb99157fd M    drivers
->> > > >
->> > >
->> > > I've looked again at the code in question, but could not find
->> > > anything that is obviously wrong there. Locality is now
->> > > requested/released at slightly different points in the process than
->> > > before, but that's it. It does not seem to cause problems with the
->> > > majority of TPMs, since you are the first to report any, so maybe it
->> > > is a quirk that only affects this device.
->> > >
->> > > Perhaps Jerry can help, since this is his change?
->> > >
->> > > Alexander
->> >
->> > Getting some caffeine in me, and starting to take a look. Adding
->> > Jarkko as well since this might involve the general locality changes.
->> >
->> > Laurent, if I send you a patch with some debugging code added, would
->> > you be able to run it on that system? I wasn't running into issues
->> > on the system I had with a 1.2 device, but I no longer have access
->> > to it. I'll see if I can find one in our labs and reproduce it there.
->>
->> Yes I should be able to do that
->
->Any findings?
->
->/Jarkko
+On 10/13/2017 03:09 PM, Matthew Garrett wrote:
+> Apparmor will be gaining support for security.apparmor labels, and it
+> would be helpful to include these in EVM validation now so appropriate
+> signatures can be generated even before full support is merged.
+> 
+> Signed-off-by: Matthew Garrett <mjg59@google.com>
+Acked-by: John Johansen <John.johansen@canonical.com>
 
-Okay, finally getting back to this. Looking at the code it isn't clear to me
-why the change is causing this. So while I stare at this some more Laurent
-could you reproduce it with this patch so I can see what the status and
-access registers look like? Does anyone else on here happen to have a Sinosun
-tpm device? The systems I have access to with TPM1.2 devices don't have this
-issue.
 
---8<--
-
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index fdde971bc810..7d60a7e4b50a 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -258,6 +258,7 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
- 	int rc, status, burstcnt;
- 	size_t count = 0;
- 	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
-+	u8 access;
- 
- 	status = tpm_tis_status(chip);
- 	if ((status & TPM_STS_COMMAND_READY) == 0) {
-@@ -292,6 +293,11 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
- 		}
- 		status = tpm_tis_status(chip);
- 		if (!itpm && (status & TPM_STS_DATA_EXPECT) == 0) {
-+			rc = tpm_tis_read8(priv, TPM_ACCESS(priv->locality), &access);
-+			if (rc < 0)
-+				dev_info(&chip->dev, "TPM_STS_DATA_EXPECT == 0: read failure TPM_ACCESS(%d)\n", priv->locality);
-+			else
-+				dev_info(&chip->dev, "TPM_STS_DATA_EXPECT == 0: locality: %d status: %x access: %x\n", priv->locality, status, access);
- 			rc = -EIO;
- 			goto out_err;
- 		}
-@@ -309,6 +315,11 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
- 	}
- 	status = tpm_tis_status(chip);
- 	if (!itpm && (status & TPM_STS_DATA_EXPECT) != 0) {
-+		rc = tpm_tis_read8(priv, TPM_ACCESS(priv->locality), &access);
-+		if (rc < 0)
-+			dev_info(&chip->dev, "TPM_STS_DATA_EXPECT != 0: read failure TPM_ACCESS(%d)\n", priv->locality);
-+		else
-+			dev_info(&chip->dev, "TPM_STS_DATA_EXPECT != 0: locality: %d status: %x access: %x\n", priv->locality, status, access);
- 		rc = -EIO;
- 		goto out_err;
- 	}
--- 
-2.15.0.rc0
+> ---
+>  include/uapi/linux/xattr.h        | 3 +++
+>  security/integrity/evm/evm_main.c | 3 +++
+>  2 files changed, 6 insertions(+)
+> 
+> diff --git a/include/uapi/linux/xattr.h b/include/uapi/linux/xattr.h
+> index 1590c49cae57..e630b9cd70cb 100644
+> --- a/include/uapi/linux/xattr.h
+> +++ b/include/uapi/linux/xattr.h
+> @@ -65,6 +65,9 @@
+>  #define XATTR_NAME_SMACKTRANSMUTE XATTR_SECURITY_PREFIX XATTR_SMACK_TRANSMUTE
+>  #define XATTR_NAME_SMACKMMAP XATTR_SECURITY_PREFIX XATTR_SMACK_MMAP
+>  
+> +#define XATTR_APPARMOR_SUFFIX "apparmor"
+> +#define XATTR_NAME_APPARMOR XATTR_SECURITY_PREFIX XATTR_APPARMOR_SUFFIX
+> +
+>  #define XATTR_CAPS_SUFFIX "capability"
+>  #define XATTR_NAME_CAPS XATTR_SECURITY_PREFIX XATTR_CAPS_SUFFIX
+>  
+> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+> index 40bf3a20605d..78a5b1fddfc7 100644
+> --- a/security/integrity/evm/evm_main.c
+> +++ b/security/integrity/evm/evm_main.c
+> @@ -49,6 +49,9 @@ char *evm_config_xattrnames[] = {
+>  	XATTR_NAME_SMACKMMAP,
+>  #endif
+>  #endif
+> +#ifdef CONFIG_SECURITY_APPARMOR
+> +	XATTR_NAME_APPARMOR,
+> +#endif
+>  #ifdef CONFIG_IMA_APPRAISE
+>  	XATTR_NAME_IMA,
+>  #endif
+> 
