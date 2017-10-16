@@ -1,72 +1,56 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:41819 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751501AbdJPL2l (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 16 Oct 2017 07:28:41 -0400
-Date: Mon, 16 Oct 2017 14:28:33 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Thiebaud Weksteen <tweek@google.com>
-Cc: linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        linux-kernel@vger.kernel.org, Matthew Garrett <mjg59@google.com>,
-        peterhuewe@gmx.de,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        tpmdd@selhorst.net
-Subject: Re: [PATCH v3 4/5] efi: call get_event_log before ExitBootServices
-Message-ID: <20171016112833.txbg2sm5tjocp6qh@linux.intel.com>
-References: <20170920081340.7413-1-tweek@google.com>
- <20170920081340.7413-5-tweek@google.com>
- <20170926114538.r5hsyc5osodpaals@linux.intel.com>
- <CA+zpnLcYWcO8Gf6b8rAHgcLkAndC0uyPH+Kxa01giVsochP3Ug@mail.gmail.com>
- <20170929171617.yq4dvn66czvnebns@linux.intel.com>
- <20171004105113.mcho3rlytaxfruyf@linux.intel.com>
- <CA+zpnLdg4km1vMUUZaYfRg6M68+nSdC+vASULmH-aKu4vYyy4Q@mail.gmail.com>
- <20171010141419.e4uv4fkmcmpc7sdc@linux.intel.com>
- <alpine.LRH.2.21.1710111250260.22885@namei.org>
- <20171011115254.2n4zs77ixyl2mdgm@linux.intel.com>
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8049 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751681AbdJPCyM (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 15 Oct 2017 22:54:12 -0400
+To: <linux-integrity@vger.kernel.org>
+CC: <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From: Boshi Wang <wangboshi@huawei.com>
+Subject: [PATCH] keys, trusted: fix missing support for TPM 2.0 in
+ trusted_update()
+Message-ID: <683216c3-d61a-1b24-c38c-b3f4348ce876@huawei.com>
+Date: Mon, 16 Oct 2017 10:53:13 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171011115254.2n4zs77ixyl2mdgm@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Oct 11, 2017 at 02:52:54PM +0300, Jarkko Sakkinen wrote:
-> On Wed, Oct 11, 2017 at 12:54:26PM +1100, James Morris wrote:
-> > On Tue, 10 Oct 2017, Jarkko Sakkinen wrote:
-> > 
-> > > The way I've agreed with James Morris to have my tree is to be rooted to
-> > > security trees next branch.
-> > > 
-> > > James, what actions should we take?
-> > 
-> > This process has changed recently -- I posted to lsm but forgot to post to 
-> > linux-integrity.
-> > 
-> > http://kernsec.org/pipermail/linux-security-module-archive/2017-September/003356.html
-> > 
-> > Summary: please track the next-general branch in my tree for your 
-> > development, it replaces 'next'.
-> > 
-> > 
-> > - James
-> > -- 
-> > James Morris
-> > <jmorris@namei.org>
-> 
-> Ah I'm subscribed to that list but lately been busy getting a huge patch
-> set to platform-driver-x86 [1] for review, which has prioritized out
-> reading much else than linux-integrity.
-> 
-> Thank you. I'll retry the patches tomorrow.
-> 
-> /Jarkko
+Call tpm_seal_trusted() in trusted_update() for TPM 2.0 chips.
 
-Cannot observer binary_bios_measuremens file.
+Signed-off-by: Boshi Wang <wangboshi@huawei.com>
+---
+  security/keys/trusted.c | 10 +++++++++-
+  1 file changed, 9 insertions(+), 1 deletion(-)
 
-What kind of hardware was used to develop/test this?
+diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+index ddfaebf..563fe5f 100644
+--- a/security/keys/trusted.c
++++ b/security/keys/trusted.c
+@@ -1065,6 +1065,11 @@ static int trusted_update(struct key *key, struct key_preparsed_payload *prep)
+      size_t datalen = prep->datalen;
+      char *datablob;
+      int ret = 0;
++    int tpm2;
++
++    tpm2 = tpm_is_tpm2(TPM_ANY_NUM);
++    if (tpm2 < 0)
++        return tpm2;
 
-I tried it with Kabylake and PTT (firmware TPM).
+      if (test_bit(KEY_FLAG_NEGATIVE, &key->flags))
+          return -ENOKEY;
+@@ -1110,7 +1115,10 @@ static int trusted_update(struct key *key, struct key_preparsed_payload *prep)
+      dump_payload(p);
+      dump_payload(new_p);
 
-/Jarkko
+-    ret = key_seal(new_p, new_o);
++    if (tpm2)
++        ret = tpm_seal_trusted(TPM_ANY_NUM, new_p, new_o);
++    else
++        ret = key_seal(new_p, new_o);
+      if (ret < 0) {
+          pr_info("trusted_key: key_seal failed (%d)\n", ret);
+          kzfree(new_p);
+-- 
+2.10.1
