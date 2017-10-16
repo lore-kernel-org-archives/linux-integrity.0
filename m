@@ -1,30 +1,40 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-it0-f41.google.com ([209.85.214.41]:51748 "EHLO
-        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754742AbdJPSNV (ORCPT
+Received: from mail-it0-f48.google.com ([209.85.214.48]:53600 "EHLO
+        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752992AbdJPR6E (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 16 Oct 2017 14:13:21 -0400
-Received: by mail-it0-f41.google.com with SMTP id o135so2216098itb.0
-        for <linux-integrity@vger.kernel.org>; Mon, 16 Oct 2017 11:13:21 -0700 (PDT)
+        Mon, 16 Oct 2017 13:58:04 -0400
+Received: by mail-it0-f48.google.com with SMTP id n195so2147242itg.2
+        for <linux-integrity@vger.kernel.org>; Mon, 16 Oct 2017 10:58:04 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1508076505.3426.139.camel@linux.vnet.ibm.com>
-References: <20171011191218.5274-1-mjg59@google.com> <20171011191218.5274-2-mjg59@google.com>
- <1508076505.3426.139.camel@linux.vnet.ibm.com>
+In-Reply-To: <1508077661.3426.143.camel@linux.vnet.ibm.com>
+References: <20171011191014.4426-1-mjg59@google.com> <1508077661.3426.143.camel@linux.vnet.ibm.com>
 From: Matthew Garrett <mjg59@google.com>
-Date: Mon, 16 Oct 2017 11:13:20 -0700
-Message-ID: <CACdnJutj6rgy6hd1yMDO85ihUoCakRQDTG570Qk=_M-hrzURWA@mail.gmail.com>
-Subject: Re: [PATCH V3 2/2] Add a bprm_interpreted security hook and call into
- IMA from it
+Date: Mon, 16 Oct 2017 10:58:03 -0700
+Message-ID: <CACdnJutVsX3-U8P=uWPqi+XQ6zUx8Ys9W78C62K+rnfmaZb1=g@mail.gmail.com>
+Subject: Re: [PATCH V2] EVM: Allow userspace to signal an RSA key has been loaded
 To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>,
-        james.l.morris@oracle.com, keescook@chromium.org, oleg@redhat.com
+Cc: linux-integrity <linux-integrity@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sun, Oct 15, 2017 at 7:08 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> Even with this additional patch, there are still potentially missing measurements/appraisals as search_binary_handler is exported.  The original search_binary_handler is called twice, once for the original file and again for the interpreter.  With these patches, the security hooks are deferred, requiring calls in the specific binary handler.
+On Sun, Oct 15, 2017 at 7:27 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> On Wed, 2017-10-11 at 12:10 -0700, Matthew Garrett wrote:
+>> EVM will only perform validation once a key has been loaded. This key
+>> may either be a symmetric trusted key (for HMAC validation and creation)
+>> or the public half of an asymmetric key (for digital signature
+>> validation). The /sys/kernel/security/evm interface allows userland to
+>> signal that a symmetric key has been loaded, but does not allow userland
+>> to signal that an asymmetric public key has been loaded.
+>>
+>> This patch extends the interface to permit userspace to pass a bitmask
+>> of loaded key types. It also allows userspace to block loading of an
+>> asymmetric key in order to avoid a compromised system from being able to
+>> load an additional key type later.
 >
-> For your usecase scenario this might be enough, but for the general case the security_bprm_check hooks would still be needed.
+> I assume you mean "block loading of a symmetric key".  Other than this
+> and a trailing blank line, the patch looks good.  If you don't have
+> objections, I'll fix these two things.
 
-Mm. Yeah. Ok let me try tackling this in a different way.
+Sorry, yes. That works for me - thank you!
