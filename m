@@ -1,74 +1,30 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:28356 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752944AbdJPSbu (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 16 Oct 2017 14:31:50 -0400
-Date: Mon, 16 Oct 2017 21:31:39 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Kenneth Goldman <kgold@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Peter =?iso-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 0/4] char-TPM: Adjustments for ten function
- implementations
-Message-ID: <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
-References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
+Received: from mail-it0-f41.google.com ([209.85.214.41]:51748 "EHLO
+        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754742AbdJPSNV (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 16 Oct 2017 14:13:21 -0400
+Received: by mail-it0-f41.google.com with SMTP id o135so2216098itb.0
+        for <linux-integrity@vger.kernel.org>; Mon, 16 Oct 2017 11:13:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
+In-Reply-To: <1508076505.3426.139.camel@linux.vnet.ibm.com>
+References: <20171011191218.5274-1-mjg59@google.com> <20171011191218.5274-2-mjg59@google.com>
+ <1508076505.3426.139.camel@linux.vnet.ibm.com>
+From: Matthew Garrett <mjg59@google.com>
+Date: Mon, 16 Oct 2017 11:13:20 -0700
+Message-ID: <CACdnJutj6rgy6hd1yMDO85ihUoCakRQDTG570Qk=_M-hrzURWA@mail.gmail.com>
+Subject: Re: [PATCH V3 2/2] Add a bprm_interpreted security hook and call into
+ IMA from it
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
+        james.l.morris@oracle.com, keescook@chromium.org, oleg@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Oct 16, 2017 at 07:30:13PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 16 Oct 2017 19:12:34 +0200
-> 
-> A few update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (4):
->   Delete an error message for a failed memory allocation
->     in tpm_ascii_bios_measurements_show()
->   Delete an error message for a failed memory allocation in tpm_ibmvtpm_probe()
->   Improve a size determination in nine functions
->   Less checks in tpm_ibmvtpm_probe() after error detection
-> 
->  drivers/char/tpm/st33zp24/i2c.c      |  3 +--
->  drivers/char/tpm/st33zp24/spi.c      |  3 +--
->  drivers/char/tpm/st33zp24/st33zp24.c |  3 +--
->  drivers/char/tpm/tpm1_eventlog.c     |  5 +----
->  drivers/char/tpm/tpm_crb.c           |  2 +-
->  drivers/char/tpm/tpm_i2c_atmel.c     |  2 +-
->  drivers/char/tpm/tpm_i2c_nuvoton.c   |  2 +-
->  drivers/char/tpm/tpm_ibmvtpm.c       | 23 +++++++++--------------
->  drivers/char/tpm/tpm_tis.c           |  2 +-
->  drivers/char/tpm/tpm_tis_spi.c       |  3 +--
->  10 files changed, 18 insertions(+), 30 deletions(-)
-> 
-> -- 
-> 2.14.2
-> 
+On Sun, Oct 15, 2017 at 7:08 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> Even with this additional patch, there are still potentially missing measurements/appraisals as search_binary_handler is exported.  The original search_binary_handler is called twice, once for the original file and again for the interpreter.  With these patches, the security hooks are deferred, requiring calls in the specific binary handler.
+>
+> For your usecase scenario this might be enough, but for the general case the security_bprm_check hooks would still be needed.
 
-For some sparse errors I fixed a while ago I got review feedback that
-one should explain what is wrong what the fix does and not tell tool
-reported. And it really does make sense to me.
-
-Describing the tool that was used to find the issues fits to the cover
-letter but not to the commits themselves.
-
-I think I recently accepted a small fix with a "tool generated commit
-message" but I don't want to take it as a practice It was a minor
-mistake from my side to accept such patch.
-
-/Jarkko
+Mm. Yeah. Ok let me try tackling this in a different way.
