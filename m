@@ -1,40 +1,100 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-it0-f48.google.com ([209.85.214.48]:53600 "EHLO
-        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752992AbdJPR6E (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 16 Oct 2017 13:58:04 -0400
-Received: by mail-it0-f48.google.com with SMTP id n195so2147242itg.2
-        for <linux-integrity@vger.kernel.org>; Mon, 16 Oct 2017 10:58:04 -0700 (PDT)
+Received: from mout.web.de ([212.227.17.12]:64704 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754274AbdJPRfQ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 16 Oct 2017 13:35:16 -0400
+Subject: [PATCH 4/4] char/tpm: Less checks in tpm_ibmvtpm_probe() after error
+ detection
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Kenneth Goldman <kgold@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
+Message-ID: <09a2c3a1-1b10-507d-a866-258b570f6da1@users.sourceforge.net>
+Date: Mon, 16 Oct 2017 19:34:56 +0200
 MIME-Version: 1.0
-In-Reply-To: <1508077661.3426.143.camel@linux.vnet.ibm.com>
-References: <20171011191014.4426-1-mjg59@google.com> <1508077661.3426.143.camel@linux.vnet.ibm.com>
-From: Matthew Garrett <mjg59@google.com>
-Date: Mon, 16 Oct 2017 10:58:03 -0700
-Message-ID: <CACdnJutVsX3-U8P=uWPqi+XQ6zUx8Ys9W78C62K+rnfmaZb1=g@mail.gmail.com>
-Subject: Re: [PATCH V2] EVM: Allow userspace to signal an RSA key has been loaded
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sun, Oct 15, 2017 at 7:27 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> On Wed, 2017-10-11 at 12:10 -0700, Matthew Garrett wrote:
->> EVM will only perform validation once a key has been loaded. This key
->> may either be a symmetric trusted key (for HMAC validation and creation)
->> or the public half of an asymmetric key (for digital signature
->> validation). The /sys/kernel/security/evm interface allows userland to
->> signal that a symmetric key has been loaded, but does not allow userland
->> to signal that an asymmetric public key has been loaded.
->>
->> This patch extends the interface to permit userspace to pass a bitmask
->> of loaded key types. It also allows userspace to block loading of an
->> asymmetric key in order to avoid a compromised system from being able to
->> load an additional key type later.
->
-> I assume you mean "block loading of a symmetric key".  Other than this
-> and a trailing blank line, the patch looks good.  If you don't have
-> objections, I'll fix these two things.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Oct 2017 19:00:34 +0200
 
-Sorry, yes. That works for me - thank you!
+Two pointer checks could be repeated by the tpm_ibmvtpm_probe() function
+during error handling even if the relevant properties can be determined
+for the involved variables before by source code analysis.
+
+* Return directly after a call of the function "kzalloc" failed
+  at the beginning.
+
+* Adjust jump targets so that extra checks can be omitted at the end.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/char/tpm/tpm_ibmvtpm.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
+index a4b462a77b99..b8dda7546f64 100644
+--- a/drivers/char/tpm/tpm_ibmvtpm.c
++++ b/drivers/char/tpm/tpm_ibmvtpm.c
+@@ -610,7 +610,7 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
+ 
+ 	ibmvtpm = kzalloc(sizeof(*ibmvtpm), GFP_KERNEL);
+ 	if (!ibmvtpm)
+-		goto cleanup;
++		return -ENOMEM;
+ 
+ 	ibmvtpm->dev = dev;
+ 	ibmvtpm->vdev = vio_dev;
+@@ -619,7 +619,7 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
+ 	crq_q->crq_addr = (struct ibmvtpm_crq *)get_zeroed_page(GFP_KERNEL);
+ 	if (!crq_q->crq_addr) {
+ 		dev_err(dev, "Unable to allocate memory for crq_addr\n");
+-		goto cleanup;
++		goto free_tpm;
+ 	}
+ 
+ 	crq_q->num_entry = CRQ_RES_BUF_SIZE / sizeof(*crq_q->crq_addr);
+@@ -629,7 +629,7 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
+ 
+ 	if (dma_mapping_error(dev, ibmvtpm->crq_dma_handle)) {
+ 		dev_err(dev, "dma mapping failed\n");
+-		goto cleanup;
++		goto free_page;
+ 	}
+ 
+ 	rc = plpar_hcall_norets(H_REG_CRQ, vio_dev->unit_address,
+@@ -683,13 +683,10 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
+ reg_crq_cleanup:
+ 	dma_unmap_single(dev, ibmvtpm->crq_dma_handle, CRQ_RES_BUF_SIZE,
+ 			 DMA_BIDIRECTIONAL);
+-cleanup:
+-	if (ibmvtpm) {
+-		if (crq_q->crq_addr)
+-			free_page((unsigned long)crq_q->crq_addr);
+-		kfree(ibmvtpm);
+-	}
+-
++free_page:
++	free_page((unsigned long)crq_q->crq_addr);
++free_tpm:
++	kfree(ibmvtpm);
+ 	return rc;
+ }
+ 
+-- 
+2.14.2
