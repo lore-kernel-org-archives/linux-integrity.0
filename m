@@ -1,68 +1,71 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:51006 "EHLO mga03.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:60950 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752346AbdJPLrF (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 16 Oct 2017 07:47:05 -0400
-Date: Mon, 16 Oct 2017 14:47:02 +0300
+        id S1751398AbdJPLeG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 16 Oct 2017 07:34:06 -0400
+Date: Mon, 16 Oct 2017 14:34:00 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Boshi Wang <wangboshi@huawei.com>
-Cc: linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] keys, trusted: fix missing support for TPM 2.0 in
- trusted_update()
-Message-ID: <20171016114702.axfsnfxdrleofibu@linux.intel.com>
-References: <683216c3-d61a-1b24-c38c-b3f4348ce876@huawei.com>
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: James Morris <jmorris@namei.org>,
+        Thiebaud Weksteen <tweek@google.com>,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Matthew Garrett <mjg59@google.com>, peterhuewe@gmx.de,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        tpmdd@selhorst.net
+Subject: Re: [PATCH v3 4/5] efi: call get_event_log before ExitBootServices
+Message-ID: <20171016113400.y3lbutd5dtbp76ld@linux.intel.com>
+References: <20170929171617.yq4dvn66czvnebns@linux.intel.com>
+ <20171004105113.mcho3rlytaxfruyf@linux.intel.com>
+ <CA+zpnLdg4km1vMUUZaYfRg6M68+nSdC+vASULmH-aKu4vYyy4Q@mail.gmail.com>
+ <20171010141419.e4uv4fkmcmpc7sdc@linux.intel.com>
+ <alpine.LRH.2.21.1710111250260.22885@namei.org>
+ <20171011115254.2n4zs77ixyl2mdgm@linux.intel.com>
+ <20171011115318.i342rzq3akqbrovv@linux.intel.com>
+ <20171012113844.ptfynppgx3tkwe7g@linux.intel.com>
+ <CABxcv=neJZjA407pbmNesNbGY9k3VRbhawut6ewofw_UB5U1_w@mail.gmail.com>
+ <20171013194746.ulomwhd6czoeks5m@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <683216c3-d61a-1b24-c38c-b3f4348ce876@huawei.com>
+In-Reply-To: <20171013194746.ulomwhd6czoeks5m@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Oct 16, 2017 at 10:53:13AM +0800, Boshi Wang wrote:
-> Call tpm_seal_trusted() in trusted_update() for TPM 2.0 chips.
+On Fri, Oct 13, 2017 at 10:47:46PM +0300, Jarkko Sakkinen wrote:
+> On Thu, Oct 12, 2017 at 05:03:38PM +0200, Javier Martinez Canillas wrote:
+> > On Thu, Oct 12, 2017 at 1:38 PM, Jarkko Sakkinen
+> > <jarkko.sakkinen@linux.intel.com> wrote:
+> > 
+> > [snip]
+> > 
+> > >
+> > > Now all Thiebaud's patches have been applied to the master of
+> > >
+> > >   git://git.infradead.org/users/jjs/linux-tpmdd.git
+> > >
+> > > Testing is still pending.
+> > >
+> > 
+> > I provided my reviewed and tested by tags for the patches but I
+> > noticed that weren't picked. Probably my fault though since I answered
+> > to the cover letter instead of the individual patches.
+> > 
+> > > /Jarkko
+> > 
+> > Best regards,
+> > Javier
 > 
-> Signed-off-by: Boshi Wang <wangboshi@huawei.com>
-> ---
->  security/keys/trusted.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
+> I will add it. The master branch is bleeding edge where tags might be
+> sometimes (*not* usually) missing. The next branch is the one that goes
+> to linux-next.
 > 
-> diff --git a/security/keys/trusted.c b/security/keys/trusted.c
-> index ddfaebf..563fe5f 100644
-> --- a/security/keys/trusted.c
-> +++ b/security/keys/trusted.c
-> @@ -1065,6 +1065,11 @@ static int trusted_update(struct key *key, struct key_preparsed_payload *prep)
->      size_t datalen = prep->datalen;
->      char *datablob;
->      int ret = 0;
-> +    int tpm2;
-> +
-> +    tpm2 = tpm_is_tpm2(TPM_ANY_NUM);
-> +    if (tpm2 < 0)
-> +        return tpm2;
+> I'll check all tags from patchwork before moving any of these to next.
 > 
->      if (test_bit(KEY_FLAG_NEGATIVE, &key->flags))
->          return -ENOKEY;
-> @@ -1110,7 +1115,10 @@ static int trusted_update(struct key *key, struct key_preparsed_payload *prep)
->      dump_payload(p);
->      dump_payload(new_p);
-> 
-> -    ret = key_seal(new_p, new_o);
-> +    if (tpm2)
-> +        ret = tpm_seal_trusted(TPM_ANY_NUM, new_p, new_o);
-> +    else
-> +        ret = key_seal(new_p, new_o);
->      if (ret < 0) {
->          pr_info("trusted_key: key_seal failed (%d)\n", ret);
->          kzfree(new_p);
-> -- 
-> 2.10.1
-> 
-> 
-> 
+> /Jarkko
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-
-The sealing code for TPM 1.2 should be moved to driver/char/tpm (has
-been in my backlog for couple of years now).
+Updated.
 
 /Jarkko
