@@ -1,10 +1,10 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mout.web.de ([217.72.192.78]:53217 "EHLO mout.web.de"
+Received: from mout.web.de ([217.72.192.78]:62522 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753392AbdJPRdR (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 16 Oct 2017 13:33:17 -0400
-Subject: [PATCH 2/4] char/tpm: Delete an error message for a failed memory
- allocation in tpm_ibmvtpm_probe()
+        id S1752529AbdJPRcU (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 16 Oct 2017 13:32:20 -0400
+Subject: [PATCH 1/4] char/tpm: Delete an error message for a failed memory
+ allocation in tpm_ascii_bios_measurements_show()
 From: SF Markus Elfring <elfring@users.sourceforge.net>
 To: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -22,8 +22,8 @@ To: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
 Cc: LKML <linux-kernel@vger.kernel.org>,
         kernel-janitors@vger.kernel.org
 References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
-Message-ID: <2ed7178a-347e-7e56-4edd-977687aaad66@users.sourceforge.net>
-Date: Mon, 16 Oct 2017 19:32:59 +0200
+Message-ID: <caf93a65-469a-04f0-2e7b-5c03b43585e0@users.sourceforge.net>
+Date: Mon, 16 Oct 2017 19:31:49 +0200
 MIME-Version: 1.0
 In-Reply-To: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
 Content-Type: text/plain; charset=utf-8
@@ -31,7 +31,7 @@ Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Oct 2017 18:08:23 +0200
+Date: Mon, 16 Oct 2017 17:43:55 +0200
 
 Omit an extra message for a memory allocation failure in this function.
 
@@ -39,24 +39,25 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/char/tpm/tpm_ibmvtpm.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/char/tpm/tpm1_eventlog.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-index 25f6e2665385..b18148ef2612 100644
---- a/drivers/char/tpm/tpm_ibmvtpm.c
-+++ b/drivers/char/tpm/tpm_ibmvtpm.c
-@@ -609,10 +609,8 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
- 		return PTR_ERR(chip);
+diff --git a/drivers/char/tpm/tpm1_eventlog.c b/drivers/char/tpm/tpm1_eventlog.c
+index 9a8605e500b5..9749469cb823 100644
+--- a/drivers/char/tpm/tpm1_eventlog.c
++++ b/drivers/char/tpm/tpm1_eventlog.c
+@@ -280,11 +280,8 @@ static int tpm_ascii_bios_measurements_show(struct seq_file *m, void *v)
+ 	    (unsigned char *)(v + sizeof(struct tcpa_event));
  
- 	ibmvtpm = kzalloc(sizeof(struct ibmvtpm_dev), GFP_KERNEL);
--	if (!ibmvtpm) {
--		dev_err(dev, "kzalloc for ibmvtpm failed\n");
-+	if (!ibmvtpm)
- 		goto cleanup;
+ 	eventname = kmalloc(MAX_TEXT_EVENT, GFP_KERNEL);
+-	if (!eventname) {
+-		printk(KERN_ERR "%s: ERROR - No Memory for event name\n ",
+-		       __func__);
++	if (!eventname)
+ 		return -EFAULT;
 -	}
  
- 	ibmvtpm->dev = dev;
- 	ibmvtpm->vdev = vio_dev;
+ 	/* 1st: PCR */
+ 	seq_printf(m, "%2d ", do_endian_conversion(event->pcr_index));
 -- 
 2.14.2
