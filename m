@@ -1,56 +1,80 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mout.web.de ([217.72.192.78]:65061 "EHLO mout.web.de"
+Received: from mga04.intel.com ([192.55.52.120]:54413 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753710AbdJPRbG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 16 Oct 2017 13:31:06 -0400
-To: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        id S1751398AbdJPLtw (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 16 Oct 2017 07:49:52 -0400
+Date: Mon, 16 Oct 2017 14:49:46 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Thiebaud Weksteen <tweek@google.com>
+Cc: linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        linux-kernel@vger.kernel.org, Matthew Garrett <mjg59@google.com>,
+        peterhuewe@gmx.de,
         Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Kenneth Goldman <kgold@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 0/4] char-TPM: Adjustments for ten function implementations
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Message-ID: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
-Date: Mon, 16 Oct 2017 19:30:13 +0200
+        tpmdd@selhorst.net
+Subject: Re: [PATCH v3 4/5] efi: call get_event_log before ExitBootServices
+Message-ID: <20171016114946.phj3n6vyjdbpj2sj@linux.intel.com>
+References: <20170920081340.7413-5-tweek@google.com>
+ <20170926114538.r5hsyc5osodpaals@linux.intel.com>
+ <CA+zpnLcYWcO8Gf6b8rAHgcLkAndC0uyPH+Kxa01giVsochP3Ug@mail.gmail.com>
+ <20170929171617.yq4dvn66czvnebns@linux.intel.com>
+ <20171004105113.mcho3rlytaxfruyf@linux.intel.com>
+ <CA+zpnLdg4km1vMUUZaYfRg6M68+nSdC+vASULmH-aKu4vYyy4Q@mail.gmail.com>
+ <20171010141419.e4uv4fkmcmpc7sdc@linux.intel.com>
+ <alpine.LRH.2.21.1710111250260.22885@namei.org>
+ <20171011115254.2n4zs77ixyl2mdgm@linux.intel.com>
+ <20171016112833.txbg2sm5tjocp6qh@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171016112833.txbg2sm5tjocp6qh@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Oct 2017 19:12:34 +0200
+On Mon, Oct 16, 2017 at 02:28:33PM +0300, Jarkko Sakkinen wrote:
+> On Wed, Oct 11, 2017 at 02:52:54PM +0300, Jarkko Sakkinen wrote:
+> > On Wed, Oct 11, 2017 at 12:54:26PM +1100, James Morris wrote:
+> > > On Tue, 10 Oct 2017, Jarkko Sakkinen wrote:
+> > > 
+> > > > The way I've agreed with James Morris to have my tree is to be rooted to
+> > > > security trees next branch.
+> > > > 
+> > > > James, what actions should we take?
+> > > 
+> > > This process has changed recently -- I posted to lsm but forgot to post to 
+> > > linux-integrity.
+> > > 
+> > > http://kernsec.org/pipermail/linux-security-module-archive/2017-September/003356.html
+> > > 
+> > > Summary: please track the next-general branch in my tree for your 
+> > > development, it replaces 'next'.
+> > > 
+> > > 
+> > > - James
+> > > -- 
+> > > James Morris
+> > > <jmorris@namei.org>
+> > 
+> > Ah I'm subscribed to that list but lately been busy getting a huge patch
+> > set to platform-driver-x86 [1] for review, which has prioritized out
+> > reading much else than linux-integrity.
+> > 
+> > Thank you. I'll retry the patches tomorrow.
+> > 
+> > /Jarkko
+> 
+> Cannot observer binary_bios_measuremens file.
+> 
+> What kind of hardware was used to develop/test this?
+> 
+> I tried it with Kabylake and PTT (firmware TPM).
+> 
+> /Jarkko
 
-A few update suggestions were taken into account
-from static source code analysis.
+My guess would be wrong event log format.
 
-Markus Elfring (4):
-  Delete an error message for a failed memory allocation
-    in tpm_ascii_bios_measurements_show()
-  Delete an error message for a failed memory allocation in tpm_ibmvtpm_probe()
-  Improve a size determination in nine functions
-  Less checks in tpm_ibmvtpm_probe() after error detection
+At minimum this patch set should add a klog (info level) message to tell
+that unsupported event log format is being used.
 
- drivers/char/tpm/st33zp24/i2c.c      |  3 +--
- drivers/char/tpm/st33zp24/spi.c      |  3 +--
- drivers/char/tpm/st33zp24/st33zp24.c |  3 +--
- drivers/char/tpm/tpm1_eventlog.c     |  5 +----
- drivers/char/tpm/tpm_crb.c           |  2 +-
- drivers/char/tpm/tpm_i2c_atmel.c     |  2 +-
- drivers/char/tpm/tpm_i2c_nuvoton.c   |  2 +-
- drivers/char/tpm/tpm_ibmvtpm.c       | 23 +++++++++--------------
- drivers/char/tpm/tpm_tis.c           |  2 +-
- drivers/char/tpm/tpm_tis_spi.c       |  3 +--
- 10 files changed, 18 insertions(+), 30 deletions(-)
-
--- 
-2.14.2
+/Jarkko
