@@ -1,66 +1,77 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from smtprelay0093.hostedemail.com ([216.40.44.93]:47329 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S964882AbdJQWng (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47994 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1756482AbdJQW0a (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 17 Oct 2017 18:43:36 -0400
-Message-ID: <1508280210.6530.32.camel@perches.com>
-Subject: Re: [PATCH 0/4] char-TPM: Adjustments for ten function
- implementations
-From: Joe Perches <joe@perches.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        SF Markus Elfring <elfring@users.sourceforge.net>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Kenneth Goldman <kgold@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Peter =?ISO-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Date: Tue, 17 Oct 2017 15:43:30 -0700
-In-Reply-To: <1508255833.3129.33.camel@HansenPartnership.com>
-References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
-         <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
-         <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com>
-         <20171017085124.pkrjzghcf5wmcydc@mwanda>
-         <f9b35a67-bd7f-b140-bdc1-cb4886a6b1ea@users.sourceforge.net>
-         <1508255833.3129.33.camel@HansenPartnership.com>
-Content-Type: text/plain; charset="ISO-8859-1"
+        Tue, 17 Oct 2017 18:26:30 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9HMOsLw022144
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 18:26:30 -0400
+Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2dnsgfan8b-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 18:26:29 -0400
+Received: from localhost
+        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Tue, 17 Oct 2017 23:26:27 +0100
+Received: from d23av05.au.ibm.com (d23av05.au.ibm.com [9.190.234.119])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id v9HMQNG327590704
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 22:26:24 GMT
+Received: from d23av05.au.ibm.com (localhost [127.0.0.1])
+        by d23av05.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id v9HMQMmZ010862
+        for <linux-integrity@vger.kernel.org>; Wed, 18 Oct 2017 09:26:22 +1100
+Subject: Re: [Linux-ima-devel] Centos7 execute 'su -c "keyctl pipe
+ 820080884"' show keyctl_read_alloc: Permission denied
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: er_tou <er_tou@163.com>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>
+Date: Tue, 17 Oct 2017 18:26:19 -0400
+In-Reply-To: <639bd982.139dd.15f0072080e.Coremail.er_tou@163.com>
+References: <639bd982.139dd.15f0072080e.Coremail.er_tou@163.com>
+Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
+Message-Id: <1508279179.4513.67.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, 2017-10-17 at 08:57 -0700, James Bottomley wrote:
-> On Tue, 2017-10-17 at 11:25 +0200, SF Markus Elfring wrote:
-> > > 
-> > > Fixes is only for bug fixes.  These don't fix any bugs.
-> > 
-> > How do you distinguish these in questionable source code
-> > from other error categories or software weaknesses?
+On Mon, 2017-10-09 at 17:23 +0800, er_tou wrote:
 > 
-> A style change is one that doesn't change the effect of the execution.
->  These don't actually even change the assembly, so there's programmatic
-> proof they're not fixing anything.
+> hello,
+>     I encountered a problem, execute the following command to show the error.
+> $ su -c 'mkdir -p /etc/keys'
+> # To create and save the kernel master key (user type):
+> $ su -c 'modprobe trusted encrypted'
+> $ su -c 'keyctl add user kmk-user "`dd if=/dev/urandom bs=1 count=32 2>/dev/null`" @u'
+> $ su -c 'keyctl pipe `keyctl search @u user kmk-user` > /etc/keys/kmk-user.blob'
+> show "keyctl_read_alloc: Permission denied".
+> 
+> 
+> Problem location is 'keyctl pipe'.
+> [root@localhost ima_key_sign]# cat /proc/keys
+> 029fddf9 I------     1 perm 1f030000     0     0 asymmetri CentOS Linux kernel signing key: d48863a7c16fcc274123e6298f74f057af19fc54: X509.RSA af19fc54 []
+> 034d0e68 I--Q---     1 perm 1f3f0000  1000 65534 keyring   _uid.1000: empty
+> 0a1ab8e3 I--Q---     1 perm 3f010000     0     0 user      kmk-user: 10
+> 
+> 
+> This keyring "kmk-user" don't have read permission.
+> Anyone have the question ? 
+> I hope get help? Thank, Thank, Thank
 
-The printk removals do change the objects.
+Sorry, I'm not seeing this problem.  Have you tried running the
+commands as real root (eg. "su -"), not "su -c"?
 
-The value of that type of change is only for
-resource limited systems.
+Mimi 
 
-printk type changes should generally not be
-considered fixes.
-
-> Bug means potentially user visible fault.  In any bug fix commit you
-> should document the fault and its effects on users so those backporting
-> can decide if they care or not.
-
-Markus' changelogs leave much to be desired.
+> 
+> ----------------------------------------------------------------------------------------
+>  but, below command can execute.
+> $ mkdir -p /etc/keys
+> # To create and save the kernel master key (user type):
+> $ modprobe trusted encrypted
+> $ keyctl add user kmk-user "`dd if=/dev/urandom bs=1 count=32 2>/dev/null`" @u
+> $ keyctl pipe `keyctl search @u user kmk-user` > /etc/keys/kmk-user.blob
+> 
+> 
+> Thanks,Looking forward to your reply!
+> 
