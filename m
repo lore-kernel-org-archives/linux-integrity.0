@@ -1,77 +1,78 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47994 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33446 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1756482AbdJQW0a (ORCPT
+        by vger.kernel.org with ESMTP id S935002AbdJQV6n (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 17 Oct 2017 18:26:30 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9HMOsLw022144
-        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 18:26:30 -0400
-Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2dnsgfan8b-1
+        Tue, 17 Oct 2017 17:58:43 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9HLs9XW020607
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 17:58:42 -0400
+Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2dnsxu0nxq-1
         (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 18:26:29 -0400
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 17:58:42 -0400
 Received: from localhost
-        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Tue, 17 Oct 2017 23:26:27 +0100
-Received: from d23av05.au.ibm.com (d23av05.au.ibm.com [9.190.234.119])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id v9HMQNG327590704
-        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 22:26:24 GMT
-Received: from d23av05.au.ibm.com (localhost [127.0.0.1])
-        by d23av05.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id v9HMQMmZ010862
-        for <linux-integrity@vger.kernel.org>; Wed, 18 Oct 2017 09:26:22 +1100
-Subject: Re: [Linux-ima-devel] Centos7 execute 'su -c "keyctl pipe
- 820080884"' show keyctl_read_alloc: Permission denied
+        Tue, 17 Oct 2017 22:58:41 +0100
+Received: from d23av06.au.ibm.com (d23av06.au.ibm.com [9.190.235.151])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id v9HLwbJV25100460
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 21:58:38 GMT
+Received: from d23av06.au.ibm.com (localhost [127.0.0.1])
+        by d23av06.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id v9HLwa3f003037
+        for <linux-integrity@vger.kernel.org>; Wed, 18 Oct 2017 08:58:36 +1100
+Subject: Re: [Linux-ima-devel] [PATCH] ima: fix ineffective default hash
+ algorithm due to invalid hash algorithm boot argument
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: er_tou <er_tou@163.com>
+To: Boshi Wang <wangboshi@huawei.com>
 Cc: linux-integrity <linux-integrity@vger.kernel.org>
-Date: Tue, 17 Oct 2017 18:26:19 -0400
-In-Reply-To: <639bd982.139dd.15f0072080e.Coremail.er_tou@163.com>
-References: <639bd982.139dd.15f0072080e.Coremail.er_tou@163.com>
+Date: Tue, 17 Oct 2017 17:58:33 -0400
+In-Reply-To: <3aaaf65f-d3b0-f770-f074-11e8f9796685@huawei.com>
+References: <3aaaf65f-d3b0-f770-f074-11e8f9796685@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1508279179.4513.67.camel@linux.vnet.ibm.com>
+Message-Id: <1508277513.4513.63.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2017-10-09 at 17:23 +0800, er_tou wrote:
-> 
-> hello,
->     I encountered a problem, execute the following command to show the error.
-> $ su -c 'mkdir -p /etc/keys'
-> # To create and save the kernel master key (user type):
-> $ su -c 'modprobe trusted encrypted'
-> $ su -c 'keyctl add user kmk-user "`dd if=/dev/urandom bs=1 count=32 2>/dev/null`" @u'
-> $ su -c 'keyctl pipe `keyctl search @u user kmk-user` > /etc/keys/kmk-user.blob'
-> show "keyctl_read_alloc: Permission denied".
-> 
-> 
-> Problem location is 'keyctl pipe'.
-> [root@localhost ima_key_sign]# cat /proc/keys
-> 029fddf9 I------     1 perm 1f030000     0     0 asymmetri CentOS Linux kernel signing key: d48863a7c16fcc274123e6298f74f057af19fc54: X509.RSA af19fc54 []
-> 034d0e68 I--Q---     1 perm 1f3f0000  1000 65534 keyring   _uid.1000: empty
-> 0a1ab8e3 I--Q---     1 perm 3f010000     0     0 user      kmk-user: 10
-> 
-> 
-> This keyring "kmk-user" don't have read permission.
-> Anyone have the question ? 
-> I hope get help? Thank, Thank, Thank
+Hi Boshi,
 
-Sorry, I'm not seeing this problem.  Have you tried running the
-commands as real root (eg. "su -"), not "su -c"?
+On Wed, 2017-10-11 at 15:46 +0800, Boshi Wang wrote:
+> The hash_setup function always sets hash_setup_done variable. If an
+> invalid hash algorithm is passed, the default hash algorithm specified
+> by CONFIG_IMA_DEFAULT_HASH could not be used.
+> 
+> Signed-off-by: Wang Boshi <wangboshi@huawei.com>
 
-Mimi 
+This patch does not apply properly.  To see the problem, save the
+patch as an mbox file and then apply it using git am <filename.mbox>.
 
+Mimi
+
+> ---
 > 
-> ----------------------------------------------------------------------------------------
->  but, below command can execute.
-> $ mkdir -p /etc/keys
-> # To create and save the kernel master key (user type):
-> $ modprobe trusted encrypted
-> $ keyctl add user kmk-user "`dd if=/dev/urandom bs=1 count=32 2>/dev/null`" @u
-> $ keyctl pipe `keyctl search @u user kmk-user` > /etc/keys/kmk-user.blob
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 2aebb79..ab70a39 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -51,6 +51,8 @@ static int __init hash_setup(char *str)
+>               ima_hash_algo = HASH_ALGO_SHA1;
+>           else if (strncmp(str, "md5", 3) == 0)
+>               ima_hash_algo = HASH_ALGO_MD5;
+> +        else
+> +            return 1;
+>           goto out;
+>       }
+> 
+> @@ -60,6 +62,8 @@ static int __init hash_setup(char *str)
+>               break;
+>           }
+>       }
+> +    if (i == HASH_ALGO__LAST)
+> +        return 1;
+>   out:
+>       hash_setup_done = 1;
+>       return 1;
 > 
 > 
-> Thanks,Looking forward to your reply!
 > 
