@@ -1,18 +1,17 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.3]:53593 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.15.14]:62252 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753165AbdJQSle (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 17 Oct 2017 14:41:34 -0400
-Subject: Re: char/tpm: Improve a size determination in nine functions
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        id S1753081AbdJQQcx (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 17 Oct 2017 12:32:53 -0400
+Subject: Re: [PATCH 0/4] char-TPM: Adjustments for ten function
+ implementations
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
         linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+Cc: Dan Carpenter <dan.carpenter@oracle.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
         Jerry Snitselaar <jsnitsel@redhat.com>,
         Kenneth Goldman <kgold@linux.vnet.ibm.com>,
@@ -20,54 +19,51 @@ Cc: Julia Lawall <julia.lawall@lip6.fr>,
         Nayna Jain <nayna@linux.vnet.ibm.com>,
         Paul Mackerras <paulus@samba.org>,
         =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
 References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
- <83a166af-aecc-649d-dfe3-a72245345209@users.sourceforge.net>
- <1508238182.16112.475.camel@linux.intel.com>
- <c8d37c0407a949c1abb35cfd79c17f58@infineon.com>
- <1508244757.4234.60.camel@linux.vnet.ibm.com>
- <alpine.DEB.2.20.1710171456360.5035@hadrien>
- <1508253453.4234.81.camel@linux.vnet.ibm.com>
+ <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
+ <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com>
+ <20171017085124.pkrjzghcf5wmcydc@mwanda>
+ <f9b35a67-bd7f-b140-bdc1-cb4886a6b1ea@users.sourceforge.net>
+ <1508255833.3129.33.camel@HansenPartnership.com>
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Message-ID: <9689f036-ba9f-d23b-cf89-c289bc308771@users.sourceforge.net>
-Date: Tue, 17 Oct 2017 20:41:04 +0200
+Message-ID: <5cf54c5a-778f-3f00-8772-547785c22009@users.sourceforge.net>
+Date: Tue, 17 Oct 2017 18:32:16 +0200
 MIME-Version: 1.0
-In-Reply-To: <1508253453.4234.81.camel@linux.vnet.ibm.com>
+In-Reply-To: <1508255833.3129.33.camel@HansenPartnership.com>
 Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
->> 	p = kmalloc(sizeof(*p), ...);
+>>> Fixes is only for bug fixes.  These don't fix any bugs.
 >>
->> The alternative form where struct name is spelled out hurts readability and
->> introduces an opportunity for a bug when the pointer variable type is changed
->> but the corresponding sizeof that is passed to a memory allocator is not.
+>> How do you distinguish these in questionable source code
+>> from other error categories or software weaknesses?
 > 
-> True, thanks for the reminder.
+> A style change is one that doesn't change the effect of the execution.
 
-Will it trigger further software development considerations (besides my contributions)?
-
-
-> Is this common in new code?
-
-Do you start an official survey here?
+This can occasionally be fine, can't it?
 
 
-> Is there a script/ or some other automated way of catching this usage
+>  These don't actually even change the assembly,
 
-Yes. - I am using an approach for the semantic patch language.   ;-)
+How did you check it?
 
-
-> before patches are upstreamed?
-
-I imagine that a corresponding source code analysis variant could be applied
-in more cases if sufficient acceptance could be achieved.
+I would expect that there are useful run time effects to consider
+for three proposed update steps (in this patch series).
 
 
-> Just as you're doing here, the patch description should reference this
-> in the patch description.
+> so there's programmatic proof they're not fixing anything.
 
-Do you find my wording "This issue was detected by using the Coccinelle software." insufficient?
+I find that the software refactoring "Improve a size determination in nine functions"
+should fit to this observation (while the source code can become a bit better).
+
+
+> Bug means potentially user visible fault.
+
+Thanks for your constructive feedback.
 
 Regards,
 Markus
