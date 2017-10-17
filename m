@@ -1,66 +1,50 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44635 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754763AbdJQM0u (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 17 Oct 2017 08:26:50 -0400
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Dan Carpenter <dan.carpenter@oracle.com>,
-        Julia Lawall <julia.lawall@lip6.fr>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        SF Markus Elfring <elfring@users.sourceforge.net>,
-        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Kenneth Goldman <kgold@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Peter =?utf-8?Q?H=C3=BCwe?= <PeterHuewe@gmx.de>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 0/4] char-TPM: Adjustments for ten function implementations
-In-Reply-To: <20171017094434.csarc5fw5d32u64w@mwanda>
-References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net> <20171016183139.otyh3m5c5yurtmow@linux.intel.com> <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com> <20171017085124.pkrjzghcf5wmcydc@mwanda> <alpine.DEB.2.20.1710171055100.5035@hadrien> <20171017094434.csarc5fw5d32u64w@mwanda>
-Date: Tue, 17 Oct 2017 23:26:47 +1100
-Message-ID: <87tvyyhse0.fsf@concordia.ellerman.id.au>
+Received: from smtp2.infineon.com ([217.10.52.18]:21662 "EHLO
+        smtp2.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932959AbdJQL7v (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 17 Oct 2017 07:59:51 -0400
+From: <Alexander.Steffen@infineon.com>
+To: <andriy.shevchenko@linux.intel.com>,
+        <elfring@users.sourceforge.net>, <linux-integrity@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <benh@kernel.crashing.org>,
+        <clabbe.montjoie@gmail.com>, <jarkko.sakkinen@linux.intel.com>,
+        <jgunthorpe@obsidianresearch.com>, <jsnitsel@redhat.com>,
+        <kgold@linux.vnet.ibm.com>, <mpe@ellerman.id.au>,
+        <nayna@linux.vnet.ibm.com>, <paulus@samba.org>,
+        <PeterHuewe@gmx.de>, <stefanb@linux.vnet.ibm.com>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH 3/4] char/tpm: Improve a size determination in nine
+ functions
+Date: Tue, 17 Oct 2017 11:50:05 +0000
+Message-ID: <c8d37c0407a949c1abb35cfd79c17f58@infineon.com>
+References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
+         <83a166af-aecc-649d-dfe3-a72245345209@users.sourceforge.net>
+ <1508238182.16112.475.camel@linux.intel.com>
+In-Reply-To: <1508238182.16112.475.camel@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+> > Replace the specification of data structures by pointer dereferences
+> > as the parameter for the operator "sizeof" to make the corresponding
+> > size
+> > determination a bit safer according to the Linux coding style
+> > convention.
+> 
+> 
+> This patch does one style in favor of the other.
 
-> On Tue, Oct 17, 2017 at 10:56:42AM +0200, Julia Lawall wrote:
->> 
->> 
->> On Tue, 17 Oct 2017, Dan Carpenter wrote:
->> 
->> > On Mon, Oct 16, 2017 at 09:35:12PM +0300, Jarkko Sakkinen wrote:
->> > >
->> > > A minor complaint: all commits are missing "Fixes:" tag.
->> > >
->> >
->> > Fixes is only for bug fixes.  These don't fix any bugs.
->> 
->> 0-day seems to put Fixes for everything.  Should they be removed when the
->> old code is undesirable but doesn't actually cause a crash, eg out of date
->> API.
->
-> Yeah, I feel like Fixes tags don't belong for API updates and cleanups.
+I actually prefer that style, so I'd welcome this change :)
 
-I try to use the criteria of "if someone had backported commit A, would
-they also want commit B" (where B Fixes: A).
+> At the end it's Jarkko's call, though I would NAK this as I think some
+> one already told this to you for some other similar patch(es).
+> 
+> 
+> I even would suggest to stop doing this noisy stuff, which keeps people
+> busy for nothing.
 
-So it's a bit broader than just "A had a *bug*" and this is the fix.
+Cleaning up old code is also worth something, even if does not change one bit in the assembly output in the end...
 
-That's obviously still a bit of a slippery slope, but somewhat helpful I
-think. eg, pretty much no one is interested in backporting spelling
-fixes, so those aren't Fixes.
-
-And generally people aren't interested in backporting commits like these
-ones that just update coding style.
-
-cheers
+Alexander
