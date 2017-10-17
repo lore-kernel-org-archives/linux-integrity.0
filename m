@@ -1,68 +1,69 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58488 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934849AbdJQUdG (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 17 Oct 2017 16:33:06 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9HKTUb0118334
-        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 16:33:06 -0400
-Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2dnr59t1bq-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 16:33:05 -0400
-Received: from localhost
-        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Tue, 17 Oct 2017 21:33:04 +0100
-From: Nayna Jain <nayna@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: zohar@linux.vnet.ibm.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
-        jarkko.sakkinen@linux.intel.com, tpmdd@selhorst.net,
-        jgunthorpe@obsidianresearch.com, patrickc@us.ibm.com,
-        Nayna Jain <nayna@linux.vnet.ibm.com>
-Subject: [PATCH v4 4/4] tpm: use tpm_msleep() value as max delay
-Date: Tue, 17 Oct 2017 16:32:32 -0400
-In-Reply-To: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
-References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
-Message-Id: <20171017203232.2262-5-nayna@linux.vnet.ibm.com>
+Received: from mout.web.de ([212.227.15.3]:56683 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1760314AbdJQUYk (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 17 Oct 2017 16:24:40 -0400
+Subject: Re: char/tpm: Improve a size determination in nine functions
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Kenneth Goldman <kgold@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
+ <83a166af-aecc-649d-dfe3-a72245345209@users.sourceforge.net>
+ <1508238182.16112.475.camel@linux.intel.com>
+ <c8d37c0407a949c1abb35cfd79c17f58@infineon.com>
+ <1508244757.4234.60.camel@linux.vnet.ibm.com>
+ <alpine.DEB.2.20.1710171456360.5035@hadrien>
+ <1508253453.4234.81.camel@linux.vnet.ibm.com>
+ <9689f036-ba9f-d23b-cf89-c289bc308771@users.sourceforge.net>
+ <1508269017.16112.492.camel@linux.intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Message-ID: <24454301-011a-bd60-ffce-5c14b1c76f48@users.sourceforge.net>
+Date: Tue, 17 Oct 2017 22:24:10 +0200
+MIME-Version: 1.0
+In-Reply-To: <1508269017.16112.492.camel@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Currently, tpm_msleep() uses delay_msec as the minimum value in
-usleep_range. However, that is the maximum time we want to wait.
-The function is modified to use the delay_msec as the maximum
-value, not the minimum value.
+>> I imagine that a corresponding source code analysis variant could be applied
+>> in more cases if sufficient acceptance could be achieved.
+> 
+> So, then instead of still keeping people busy with this noise you better
+> start doing something like CI integration with that for *new* code?
 
-After this change, performance on a TPM 1.2 with an 8 byte
-burstcount for 1000 extends improved from ~9sec to ~8sec.
+There are various software development challenges to consider.
 
-Fixes: 3b9af007869("tpm: replace msleep() with usleep_range() in TPM 1.2/
-2.0 generic drivers")
 
-Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- drivers/char/tpm/tpm.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> I'm pretty sure you may also exercise your achievements on
+> drivers/staging where it would be honored.
 
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 4fc83ac7abeb..644de70de2cc 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -528,8 +528,8 @@ int tpm_pm_resume(struct device *dev);
- 
- static inline void tpm_msleep(unsigned int delay_msec)
- {
--	usleep_range(delay_msec * 1000,
--		     (delay_msec * 1000) + TPM_TIMEOUT_RANGE_US);
-+	usleep_range((delay_msec * 1000) - TPM_TIMEOUT_RANGE_US,
-+		     delay_msec * 1000);
- };
- 
- struct tpm_chip *tpm_chip_find_get(int chip_num);
--- 
-2.13.3
+I am waiting for several improvements also for software components
+in this area for a while. Would you like to take another look
+at these change possibilities?
+
+
+> Have you talked to Fengguang (0-day LKP)?
+
+Not directly for this topic so far.
+
+
+> Have you talked to Arnd (I think he is related to kernel-ci)?
+
+I am curious on how he will respond to remaining open issues.
+
+Regards,
+Markus
