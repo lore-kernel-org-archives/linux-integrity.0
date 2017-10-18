@@ -1,84 +1,86 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:35949 "EHLO mga09.intel.com"
+Received: from mout.web.de ([212.227.17.12]:51125 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751352AbdJRPYz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 18 Oct 2017 11:24:55 -0400
-Date: Wed, 18 Oct 2017 18:24:47 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Nayna Jain <nayna@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
-        tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com,
-        patrickc@us.ibm.com
-Subject: Re: [PATCH v4 3/4] tpm: reduce tpm polling delay in tpm_tis_core
-Message-ID: <20171018152447.b6scwbbmulrfzymw@linux.intel.com>
-References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
- <20171017203232.2262-4-nayna@linux.vnet.ibm.com>
+        id S1750751AbdJRPWs (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 18 Oct 2017 11:22:48 -0400
+Subject: Re: char/tpm: Improve a size determination in nine functions
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Kenneth Goldman <kgold@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
+ <83a166af-aecc-649d-dfe3-a72245345209@users.sourceforge.net>
+ <1508238182.16112.475.camel@linux.intel.com>
+ <c8d37c0407a949c1abb35cfd79c17f58@infineon.com>
+ <1508244757.4234.60.camel@linux.vnet.ibm.com>
+ <alpine.DEB.2.20.1710171456360.5035@hadrien>
+ <1508253453.4234.81.camel@linux.vnet.ibm.com>
+ <9689f036-ba9f-d23b-cf89-c289bc308771@users.sourceforge.net>
+ <20171018145735.lpzwakatsty7emlw@linux.intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Message-ID: <351cf78a-14f6-c6e7-2902-048e7dc57a14@users.sourceforge.net>
+Date: Wed, 18 Oct 2017 17:22:19 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171017203232.2262-4-nayna@linux.vnet.ibm.com>
+In-Reply-To: <20171018145735.lpzwakatsty7emlw@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Oct 17, 2017 at 04:32:31PM -0400, Nayna Jain wrote:
-> The existing wait_for_tpm_stat() polls for the chip status after
-> 5msec sleep. As per TCG ddwg input, it is expected that tpm might
-> return status in few usec. So, reducing the delay in polling to
-> 1msec.
-> Similarly, get_burstcount() function sleeps for 5msec before
-> retrying for next query to burstcount in a loop. If it takes
-> lesser time for TPM to return, this 5msec delay is longer than
-> necessary.
+>> Do you find my wording "This issue was detected by using the
+>> Coccinelle software." insufficient?
 > 
-> After this change, performance on a TPM 1.2 with an 8 byte
-> burstcount for 1000 extends improved from ~14sec to ~9sec.
-> 
-> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+> This is fine for cover letter, not for the commits.
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+I guess that there are more opinions available by other contributors
+for this aspect.
 
-/Jarkko
 
-> ---
->  drivers/char/tpm/tpm_tis_core.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-> index 993328ae988c..8b55fdaa67f2 100644
-> --- a/drivers/char/tpm/tpm_tis_core.c
-> +++ b/drivers/char/tpm/tpm_tis_core.c
-> @@ -31,6 +31,12 @@
->  #include "tpm.h"
->  #include "tpm_tis_core.h"
->  
-> +/* This is a polling delay to check for status and burstcount.
-> + * As per ddwg input, expectation is that status check and burstcount
-> + * check should return within few usecs.
-> + */
-> +#define TPM_POLL_SLEEP	1  /* msec */
-> +
->  static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
->  					bool check_cancel, bool *canceled)
->  {
-> @@ -82,7 +88,7 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
->  		}
->  	} else {
->  		do {
-> -			tpm_msleep(TPM_TIMEOUT);
-> +			tpm_msleep(TPM_POLL_SLEEP);
->  			status = chip->ops->status(chip);
->  			if ((status & mask) == mask)
->  				return 0;
-> @@ -224,7 +230,7 @@ static int get_burstcount(struct tpm_chip *chip)
->  		burstcnt = (value >> 8) & 0xFFFF;
->  		if (burstcnt)
->  			return burstcnt;
-> -		tpm_msleep(TPM_TIMEOUT);
-> +		tpm_msleep(TPM_POLL_SLEEP);
->  	} while (time_before(jiffies, stop));
->  	return -EBUSY;
->  }
-> -- 
-> 2.13.3
-> 
+> After your analysis software finds an issue you should manually analyze
+> what is wrong
+
+This view is generally fine.
+
+
+> and document that to the commit message.
+
+I tried it in a single paragraph so far (besides the reference
+for the tool).
+
+
+> This applies to sparse, coccinelle or any other tool.
+
+I find that further possibilities can be considered.
+
+
+> Tool-based commit messages are bad for commit history
+
+I disagree to this view.
+
+
+> where as clean description gives idea what was done
+> (if you have to maintain a GIT tree).
+
+How do you think about to offer any wording for an alternative
+which you would find better?
+
+
+> In my opinion tool is doing all the work but the part
+> that you should do is absent.
+
+Really?
+
+Regards,
+Markus
