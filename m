@@ -1,36 +1,26 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-it0-f43.google.com ([209.85.214.43]:51055 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933132AbdJQXMk (ORCPT
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8525 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756886AbdJRDg6 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 17 Oct 2017 19:12:40 -0400
-Received: by mail-it0-f43.google.com with SMTP id 72so4512295itl.5
-        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 16:12:40 -0700 (PDT)
+        Tue, 17 Oct 2017 23:36:58 -0400
+Subject: Re: [Linux-ima-devel] [PATCH] ima: fix ineffective default hash
+ algorithm due to invalid hash algorithm boot argument
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+CC: linux-integrity <linux-integrity@vger.kernel.org>
+References: <3aaaf65f-d3b0-f770-f074-11e8f9796685@huawei.com>
+ <1508277513.4513.63.camel@linux.vnet.ibm.com>
+From: Boshi Wang <wangboshi@huawei.com>
+Message-ID: <dd38b9cb-dad9-5c91-d039-dd13862a1aa4@huawei.com>
+Date: Wed, 18 Oct 2017 11:36:41 +0800
 MIME-Version: 1.0
-From: Matthew Garrett <mjg59@google.com>
-Date: Tue, 17 Oct 2017 16:12:38 -0700
-Message-ID: <CACdnJutQ1NBxfAO1NBJqrrF0en9hc_C=Jy8XxNb5pEiBVwAa0g@mail.gmail.com>
-Subject: Writing out EVM protected xattrs while EVM is active
-To: linux-integrity <linux-integrity@vger.kernel.org>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1508277513.4513.63.camel@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-I'm interested in extending our use of IMA digital signatures to EVM
-in order to protect security.capability (and, in the near future,
-security.apparmor). However, right now this doesn't seem to quite work
-in terms of allowing updates to a running system. We've discussed the
-EVM siganture format's use of inode numbers and I think I've got that
-sorted (I'll send a patch once I've got a last couple of things
-working).
 
-However, I'm a little confused by how EVM should be working here. Once
-EVM is initialised, all EVM attributes will be protected, making it
-impossible to write new values to any xattrs covered by EVM unless
-IMA_NEW_FILE is set. But as far as I can tell, IMA_NEW_FILE will only
-be set if there's an IMA action that covers the file in question. This
-means it's possible to write out security.evm and friends on newly
-created files that would be appraised, but not on any other files. Am
-I missing something?
+On 2017/10/18 5:58, Mimi Zohar wrote:
+> This patch does not apply properly.  To see the problem, save the
+> patch as an mbox file and then apply it using git am <filename.mbox>.
+I'm sorry. That's my fault. The corrected patch has committed. And thank you.
