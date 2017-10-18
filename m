@@ -1,33 +1,28 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from smtp-out6.electric.net ([192.162.217.192]:58457 "EHLO
-        smtp-out6.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753275AbdJRNUk (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 18 Oct 2017 09:20:40 -0400
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'SF Markus Elfring' <elfring@users.sourceforge.net>,
-        Joe Perches <joe@perches.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-CC: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "Stefan Berger" <stefanb@linux.vnet.ibm.com>,
+Received: from mout.web.de ([212.227.17.11]:56342 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932333AbdJRMIg (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 18 Oct 2017 08:08:36 -0400
+Subject: Re: Adjusting further size determinations?
+To: Joe Perches <joe@perches.com>, linux-integrity@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>,
         Alexander Steffen <Alexander.Steffen@infineon.com>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Kenneth Goldman <kgold@linux.vnet.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        =?utf-8?B?UGV0ZXIgSMO8d2U=?= <PeterHuewe@gmx.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: RE: Adjusting further size determinations?
-Date: Wed, 18 Oct 2017 12:58:43 +0000
-Message-ID: <063D6719AE5E284EB5DD2968C1650D6DD009ACE3@AcuExch.aculab.com>
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Kenneth Goldman <kgold@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
  <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
  <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com>
@@ -42,33 +37,21 @@ References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
  <1508322510.6806.3.camel@perches.com>
  <ab5730c4-fb69-4791-a2a6-c726493d4564@users.sourceforge.net>
  <1508327383.6806.7.camel@perches.com>
- <0fc1f522-8772-d859-a9b0-cb3b6931c862@users.sourceforge.net>
-In-Reply-To: <0fc1f522-8772-d859-a9b0-cb3b6931c862@users.sourceforge.net>
-Content-Type: text/plain; charset="utf-8"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Message-ID: <0fc1f522-8772-d859-a9b0-cb3b6931c862@users.sourceforge.net>
+Date: Wed, 18 Oct 2017 14:07:49 +0200
 MIME-Version: 1.0
+In-Reply-To: <1508327383.6806.7.camel@perches.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-From: SF Markus Elfring
-> >>>> Unpleasant consequences are possible in both cases.
-> >> How much do you care to reduce the failure probability further?
-> >
-> > Zero.
+>>>> Unpleasant consequences are possible in both cases.
+>> How much do you care to reduce the failure probability further?
 > 
-> I am interested to improve the software situation a bit more here.
+> Zero.
 
-There are probably better places to spend your time!
+I am interested to improve the software situation a bit more here.
 
-If you want 'security' for kmalloc() then:
-
-#define KMALLOC_TYPE(flags) (type *)kmalloc(sizeof (type), flags)
-#define KMALLOC(ptr, flags) *(ptr) = KMALLOC_TYPE(typeof *(ptr), flags)
-
-and change:
-	ptr = kmalloc(sizeof *ptr, flags);
-to:
-	KMALLOC(&ptr, flags);
-
-But it is all churn for churn's sake.
-
-	David
+Regards,
+Markus
