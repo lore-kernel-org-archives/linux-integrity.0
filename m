@@ -1,20 +1,20 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34582 "EHLO
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39702 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1761861AbdJRAzJ (ORCPT
+        by vger.kernel.org with ESMTP id S1761936AbdJRAzZ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 17 Oct 2017 20:55:09 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9I0rWg2102742
-        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 20:55:09 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2dnswk6g86-1
+        Tue, 17 Oct 2017 20:55:25 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9I0ra18142316
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 20:55:24 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2dnsskeqpb-1
         (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 20:55:09 -0400
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 20:55:24 -0400
 Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <bauerman@linux.vnet.ibm.com>;
-        Tue, 17 Oct 2017 20:55:07 -0400
+        Tue, 17 Oct 2017 20:55:23 -0400
 From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
@@ -32,86 +32,254 @@ Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         "David S. Miller" <davem@davemloft.net>,
         "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
         Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-Subject: [PATCH v5 14/18] integrity: Introduce integrity_keyring_from_id
-Date: Tue, 17 Oct 2017 22:53:27 -0200
+Subject: [PATCH v5 17/18] ima: Implement support for module-style appended signatures
+Date: Tue, 17 Oct 2017 22:53:30 -0200
 In-Reply-To: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
 References: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
-Message-Id: <20171018005331.2688-15-bauerman@linux.vnet.ibm.com>
+Message-Id: <20171018005331.2688-18-bauerman@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-IMA will need to obtain the keyring used to verify file signatures so that
-it can verify the module-style signature appended to files.
+This patch actually implements the appraise_type=modsig option, allowing
+IMA to read and verify modsig signatures
 
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 ---
- security/integrity/digsig.c    | 28 +++++++++++++++++++---------
- security/integrity/integrity.h |  1 +
- 2 files changed, 20 insertions(+), 9 deletions(-)
+ security/integrity/ima/ima.h          |  17 +++--
+ security/integrity/ima/ima_appraise.c | 119 ++++++++++++++++++++++++++++++++--
+ security/integrity/ima/ima_main.c     |   7 +-
+ 3 files changed, 128 insertions(+), 15 deletions(-)
 
-diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-index 6f9e4ce568cd..935f1b3258e7 100644
---- a/security/integrity/digsig.c
-+++ b/security/integrity/digsig.c
-@@ -48,11 +48,10 @@ static bool init_keyring __initdata;
- #define restrict_link_to_ima restrict_link_by_builtin_trusted
- #endif
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index eb58af06566f..b082138461b3 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -157,7 +157,8 @@ void ima_init_template_list(void);
  
--int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
--			    const char *digest, int digestlen)
-+struct key *integrity_keyring_from_id(const unsigned int id)
+ static inline bool is_ima_sig(const struct evm_ima_xattr_data *xattr_value)
  {
--	if (id >= INTEGRITY_KEYRING_MAX || siglen < 2)
--		return -EINVAL;
-+	if (id >= INTEGRITY_KEYRING_MAX)
-+		return ERR_PTR(-EINVAL);
+-	return xattr_value && xattr_value->type == EVM_IMA_XATTR_DIGSIG;
++	return xattr_value && (xattr_value->type == EVM_IMA_XATTR_DIGSIG ||
++			       xattr_value->type == IMA_MODSIG);
+ }
  
- 	if (!keyring[id]) {
- 		keyring[id] =
-@@ -61,18 +60,29 @@ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
- 			int err = PTR_ERR(keyring[id]);
- 			pr_err("no %s keyring: %d\n", keyring_name[id], err);
- 			keyring[id] = NULL;
--			return err;
-+			return ERR_PTR(err);
- 		}
- 	}
+ /*
+@@ -243,9 +244,10 @@ int ima_policy_show(struct seq_file *m, void *v);
+ #ifdef CONFIG_IMA_APPRAISE
+ int ima_appraise_measurement(enum ima_hooks func,
+ 			     struct integrity_iint_cache *iint,
+-			     struct file *file, const unsigned char *filename,
+-			     struct evm_ima_xattr_data *xattr_value,
+-			     int xattr_len, int opened);
++			     struct file *file, const void *buf, loff_t size,
++			     const unsigned char *filename,
++			     struct evm_ima_xattr_data **xattr_value,
++			     int *xattr_len, int opened);
+ int ima_must_appraise(struct inode *inode, int mask, enum ima_hooks func);
+ void ima_update_xattr(struct integrity_iint_cache *iint, struct file *file);
+ enum integrity_status ima_get_cache_status(struct integrity_iint_cache *iint,
+@@ -270,10 +272,11 @@ void ima_free_xattr_data(struct evm_ima_xattr_data *hdr);
+ #else
+ static inline int ima_appraise_measurement(enum ima_hooks func,
+ 					   struct integrity_iint_cache *iint,
+-					   struct file *file,
++					   struct file *file, const void *buf,
++					   loff_t size,
+ 					   const unsigned char *filename,
+-					   struct evm_ima_xattr_data *xattr_value,
+-					   int xattr_len, int opened)
++					   struct evm_ima_xattr_data **xattr_value,
++					   int *xattr_len, int opened)
+ {
+ 	return INTEGRITY_UNKNOWN;
+ }
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 58e147049e98..108690741c1a 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -190,6 +190,45 @@ int ima_read_xattr(struct dentry *dentry,
+ 	return ret;
+ }
  
-+	return keyring[id];
++static int appraise_modsig(struct integrity_iint_cache *iint,
++			   struct evm_ima_xattr_data *xattr_value,
++			   int xattr_len)
++{
++	enum hash_algo algo;
++	const void *digest;
++	void *buf;
++	int rc, len;
++	u8 dig_len;
++
++	rc = ima_modsig_verify(INTEGRITY_KEYRING_IMA, xattr_value);
++	if (rc)
++		return rc;
++
++	/*
++	 * The signature is good. Now let's put the sig hash
++	 * into the iint cache so that it gets stored in the
++	 * measurement list.
++	 */
++
++	rc = ima_get_modsig_hash(xattr_value, &algo, &digest, &dig_len);
++	if (rc)
++		return rc;
++
++	len = sizeof(iint->ima_hash) + dig_len;
++	buf = krealloc(iint->ima_hash, len, GFP_NOFS);
++	if (!buf)
++		return -ENOMEM;
++
++	iint->ima_hash = buf;
++	iint->flags |= IMA_DIGSIG;
++	iint->ima_hash->algo = algo;
++	iint->ima_hash->length = dig_len;
++
++	memcpy(iint->ima_hash->digest, digest, dig_len);
++
++	return 0;
 +}
 +
-+int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
-+			    const char *digest, int digestlen)
-+{
-+	struct key *keyring = integrity_keyring_from_id(id);
+ /*
+  * ima_appraise_measurement - appraise file measurement
+  *
+@@ -200,18 +239,28 @@ int ima_read_xattr(struct dentry *dentry,
+  */
+ int ima_appraise_measurement(enum ima_hooks func,
+ 			     struct integrity_iint_cache *iint,
+-			     struct file *file, const unsigned char *filename,
+-			     struct evm_ima_xattr_data *xattr_value,
+-			     int xattr_len, int opened)
++			     struct file *file, const void *buf, loff_t size,
++			     const unsigned char *filename,
++			     struct evm_ima_xattr_data **xattr_value_,
++			     int *xattr_len_, int opened)
+ {
+ 	static const char op[] = "appraise_data";
+ 	const char *cause = "unknown";
+ 	struct dentry *dentry = file_dentry(file);
+ 	struct inode *inode = d_backing_inode(dentry);
+ 	enum integrity_status status = INTEGRITY_UNKNOWN;
+-	int rc = xattr_len, hash_start = 0;
++	struct evm_ima_xattr_data *xattr_value = *xattr_value_;
++	int xattr_len = *xattr_len_, rc = xattr_len, hash_start = 0;
++	bool appraising_modsig = false;
 +
-+	if (IS_ERR(keyring) || siglen < 2)
-+		return PTR_ERR(keyring);
-+
- 	switch (sig[1]) {
- 	case 1:
- 		/* v1 API expect signature without xattr type */
--		return digsig_verify(keyring[id], sig + 1, siglen - 1,
--				     digest, digestlen);
-+		return digsig_verify(keyring, sig + 1, siglen - 1, digest,
-+				     digestlen);
- 	case 2:
--		return asymmetric_verify(keyring[id], sig, siglen,
--					 digest, digestlen);
-+		return asymmetric_verify(keyring, sig, siglen, digest,
-+					 digestlen);
++	if (iint->flags & IMA_MODSIG_ALLOWED &&
++	    !ima_read_modsig(func, buf, size, &xattr_value, &xattr_len)) {
++		appraising_modsig = true;
++		rc = xattr_len;
++	}
+ 
+-	if (!(inode->i_opflags & IOP_XATTR))
++	/* If not appraising a modsig, we need an xattr. */
++	if (!appraising_modsig && !(inode->i_opflags & IOP_XATTR))
+ 		return INTEGRITY_UNKNOWN;
+ 
+ 	if (rc <= 0) {
+@@ -235,6 +284,9 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 	case INTEGRITY_UNKNOWN:
+ 		break;
+ 	case INTEGRITY_NOXATTRS:	/* No EVM protected xattrs. */
++		/* It's fine not to have xattrs when using a modsig. */
++		if (appraising_modsig)
++			break;
+ 	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
+ 		cause = "missing-HMAC";
+ 		goto out;
+@@ -242,6 +294,8 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 		cause = "invalid-HMAC";
+ 		goto out;
  	}
++
++ retry:
+ 	switch (xattr_value->type) {
+ 	case IMA_XATTR_DIGEST_NG:
+ 		/* first byte contains algorithm id */
+@@ -285,6 +339,61 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 			status = INTEGRITY_PASS;
+ 		}
+ 		break;
++	case IMA_MODSIG:
++		/*
++		 * To avoid being tricked into an infinite loop, we don't allow
++		 * a modsig stored in the xattr.
++		 */
++		if (!appraising_modsig) {
++			status = INTEGRITY_UNKNOWN;
++			cause = "unknown-ima-data";
++			break;
++		}
++
++		rc = appraise_modsig(iint, xattr_value, xattr_len);
++		if (!rc) {
++			kfree(*xattr_value_);
++			*xattr_value_ = xattr_value;
++			*xattr_len_ = xattr_len;
++
++			status = INTEGRITY_PASS;
++			break;
++		}
++
++		ima_free_xattr_data(xattr_value);
++
++		/*
++		 * The appended signature failed verification. If there's a
++		 * signature in the extended attribute, let's fall back to it.
++		 */
++		if (inode->i_opflags & IOP_XATTR && *xattr_len_ != 0 &&
++		    *xattr_len_ != -ENODATA) {
++			const char *modsig_cause = rc == -EOPNOTSUPP ?
++				"unknown" : "invalid-signature";
++
++			/* First, log that the modsig verification failed. */
++			integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
++					    filename, op, modsig_cause, rc, 0);
++
++			xattr_len = rc = *xattr_len_;
++			xattr_value = *xattr_value_;
++			appraising_modsig = false;
++
++			if (rc > 0)
++				/* Process xattr contents. */
++				goto retry;
++
++			/* Unexpected error reading xattr. */
++			status = INTEGRITY_UNKNOWN;
++		} else {
++			if (rc == -EOPNOTSUPP)
++				status = INTEGRITY_UNKNOWN;
++			else {
++				cause = "invalid-signature";
++				status = INTEGRITY_FAIL;
++			}
++		}
++		break;
+ 	default:
+ 		status = INTEGRITY_UNKNOWN;
+ 		cause = "unknown-ima-data";
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 8e96450e27f5..6a2d960fbd92 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -243,8 +243,9 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+ 		pathname = ima_d_path(&file->f_path, &pathbuf, filename);
  
- 	return -EOPNOTSUPP;
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index dd7ac4bfc89a..657ce4558984 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -132,6 +132,7 @@ int integrity_kernel_read(struct file *file, loff_t offset,
- 
- #ifdef CONFIG_INTEGRITY_SIGNATURE
- 
-+struct key *integrity_keyring_from_id(const unsigned int id);
- int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
- 			    const char *digest, int digestlen);
- 
+ 	if (rc == 0 && (action & IMA_APPRAISE_SUBMASK))
+-		rc = ima_appraise_measurement(func, iint, file, pathname,
+-					      xattr_value, xattr_len, opened);
++		rc = ima_appraise_measurement(func, iint, file, buf, size,
++					      pathname, &xattr_value,
++					      &xattr_len, opened);
+ 	if (action & IMA_MEASURE)
+ 		ima_store_measurement(iint, file, pathname,
+ 				      xattr_value, xattr_len, pcr);
+@@ -255,7 +256,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+ 	if ((mask & MAY_WRITE) && (iint->flags & IMA_DIGSIG) &&
+ 	     !(iint->flags & IMA_NEW_FILE))
+ 		rc = -EACCES;
+-	kfree(xattr_value);
++	ima_free_xattr_data(xattr_value);
+ out_free:
+ 	if (pathbuf)
+ 		__putname(pathbuf);
