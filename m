@@ -1,20 +1,20 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38542 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39380 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1761745AbdJRAyu (ORCPT
+        by vger.kernel.org with ESMTP id S1761830AbdJRAzF (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 17 Oct 2017 20:54:50 -0400
+        Tue, 17 Oct 2017 20:55:05 -0400
 Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9I0rUDN029274
-        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 20:54:49 -0400
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2dnr5a2d0k-1
+        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9I0rUUX029292
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 20:55:05 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2dnr5a2d83-1
         (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 20:54:49 -0400
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 20:55:04 -0400
 Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <bauerman@linux.vnet.ibm.com>;
-        Tue, 17 Oct 2017 20:54:48 -0400
+        Tue, 17 Oct 2017 20:55:04 -0400
 From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
@@ -32,49 +32,178 @@ Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         "David S. Miller" <davem@davemloft.net>,
         "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
         Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-Subject: [PATCH v5 10/18] ima: Store measurement after appraisal
-Date: Tue, 17 Oct 2017 22:53:23 -0200
+Subject: [PATCH v5 13/18] PKCS#7: Introduce pkcs7_get_message_sig and verify_pkcs7_message_sig
+Date: Tue, 17 Oct 2017 22:53:26 -0200
 In-Reply-To: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
 References: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
-Message-Id: <20171018005331.2688-11-bauerman@linux.vnet.ibm.com>
+Message-Id: <20171018005331.2688-14-bauerman@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-When module-style signatures appended at the end of files are supported for
-IMA appraisal, the code will fallback to the xattr signature if the
-appended one fails to verify.
+IMA will need to access the digest used in the signature so that it can
+verify files containing module-style appended signatures. For this purpose,
+add function pkcs7_get_message_sig.
 
-The problem is that we don't know whether we need to fallback to the xattr
-signature until the appraise step, and by then the measure step was already
-completed and would need to be done again in case the template includes the
-signature.
+It will also need to verify an already parsed PKCS#7 message. For this
+purpose, add function verify_pkcs7_message_signature which takes a struct
+pkcs7_message for verification instead of the raw bytes that
+verify_pkcs7_signature takes.
 
-To avoid this problem, do the appraisal first so that the correct signature
-is stored by the template in the measure step.
-
-Suggested-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 ---
- security/integrity/ima/ima_main.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ certs/system_keyring.c                | 60 +++++++++++++++++++++++++----------
+ crypto/asymmetric_keys/pkcs7_parser.c | 12 +++++++
+ include/crypto/pkcs7.h                |  2 ++
+ include/linux/verification.h          | 10 ++++++
+ 4 files changed, 68 insertions(+), 16 deletions(-)
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 747a4fd9e2de..8e96450e27f5 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -242,12 +242,12 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
- 	if (!pathbuf)	/* ima_rdwr_violation possibly pre-fetched */
- 		pathname = ima_d_path(&file->f_path, &pathbuf, filename);
+diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+index 6251d1b27f0c..6a8684959780 100644
+--- a/certs/system_keyring.c
++++ b/certs/system_keyring.c
+@@ -190,33 +190,26 @@ late_initcall(load_system_certificate_list);
+ #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
  
--	if (action & IMA_MEASURE)
--		ima_store_measurement(iint, file, pathname,
--				      xattr_value, xattr_len, pcr);
- 	if (rc == 0 && (action & IMA_APPRAISE_SUBMASK))
- 		rc = ima_appraise_measurement(func, iint, file, pathname,
- 					      xattr_value, xattr_len, opened);
-+	if (action & IMA_MEASURE)
-+		ima_store_measurement(iint, file, pathname,
-+				      xattr_value, xattr_len, pcr);
- 	if (action & IMA_AUDIT)
- 		ima_audit_measurement(iint, pathname);
+ /**
+- * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
++ * verify_pkcs7_message_sig - Verify a PKCS#7-based signature on system data.
+  * @data: The data to be verified (NULL if expecting internal data).
+  * @len: Size of @data.
+- * @raw_pkcs7: The PKCS#7 message that is the signature.
+- * @pkcs7_len: The size of @raw_pkcs7.
++ * @pkcs7: The PKCS#7 message that is the signature.
+  * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
+  *					(void *)1UL for all trusted keys).
+  * @usage: The use to which the key is being put.
+  * @view_content: Callback to gain access to content.
+  * @ctx: Context for callback.
+  */
+-int verify_pkcs7_signature(const void *data, size_t len,
+-			   const void *raw_pkcs7, size_t pkcs7_len,
+-			   struct key *trusted_keys,
+-			   enum key_being_used_for usage,
+-			   int (*view_content)(void *ctx,
+-					       const void *data, size_t len,
+-					       size_t asn1hdrlen),
+-			   void *ctx)
++int verify_pkcs7_message_sig(const void *data, size_t len,
++			     struct pkcs7_message *pkcs7,
++			     struct key *trusted_keys,
++			     enum key_being_used_for usage,
++			     int (*view_content)(void *ctx, const void *data,
++						 size_t len, size_t asn1hdrlen),
++			     void *ctx)
+ {
+-	struct pkcs7_message *pkcs7;
+ 	int ret;
  
+-	pkcs7 = pkcs7_parse_message(raw_pkcs7, pkcs7_len);
+-	if (IS_ERR(pkcs7))
+-		return PTR_ERR(pkcs7);
+-
+ 	/* The data should be detached - so we need to supply it. */
+ 	if (data && pkcs7_supply_detached_data(pkcs7, data, len) < 0) {
+ 		pr_err("PKCS#7 signature with non-detached data\n");
+@@ -258,6 +251,41 @@ int verify_pkcs7_signature(const void *data, size_t len,
+ 	}
+ 
+ error:
++	pr_devel("<==%s() = %d\n", __func__, ret);
++	return ret;
++}
++
++/**
++ * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
++ * @data: The data to be verified (NULL if expecting internal data).
++ * @len: Size of @data.
++ * @raw_pkcs7: The PKCS#7 message that is the signature.
++ * @pkcs7_len: The size of @raw_pkcs7.
++ * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
++ *					(void *)1UL for all trusted keys).
++ * @usage: The use to which the key is being put.
++ * @view_content: Callback to gain access to content.
++ * @ctx: Context for callback.
++ */
++int verify_pkcs7_signature(const void *data, size_t len,
++			   const void *raw_pkcs7, size_t pkcs7_len,
++			   struct key *trusted_keys,
++			   enum key_being_used_for usage,
++			   int (*view_content)(void *ctx,
++					       const void *data, size_t len,
++					       size_t asn1hdrlen),
++			   void *ctx)
++{
++	struct pkcs7_message *pkcs7;
++	int ret;
++
++	pkcs7 = pkcs7_parse_message(raw_pkcs7, pkcs7_len);
++	if (IS_ERR(pkcs7))
++		return PTR_ERR(pkcs7);
++
++	ret = verify_pkcs7_message_sig(data, len, pkcs7, trusted_keys, usage,
++				       view_content, ctx);
++
+ 	pkcs7_free_message(pkcs7);
+ 	pr_devel("<==%s() = %d\n", __func__, ret);
+ 	return ret;
+diff --git a/crypto/asymmetric_keys/pkcs7_parser.c b/crypto/asymmetric_keys/pkcs7_parser.c
+index af4cd8649117..e41beda297a8 100644
+--- a/crypto/asymmetric_keys/pkcs7_parser.c
++++ b/crypto/asymmetric_keys/pkcs7_parser.c
+@@ -673,3 +673,15 @@ int pkcs7_note_signed_info(void *context, size_t hdrlen,
+ 		return -ENOMEM;
+ 	return 0;
+ }
++
++/**
++ * pkcs7_get_message_sig - get signature in @pkcs7
++ *
++ * This function doesn't meaningfully support messages with more than one
++ * signature. It will always return the first signature.
++ */
++const struct public_key_signature *pkcs7_get_message_sig(
++					const struct pkcs7_message *pkcs7)
++{
++	return pkcs7->signed_infos ? pkcs7->signed_infos->sig : NULL;
++}
+diff --git a/include/crypto/pkcs7.h b/include/crypto/pkcs7.h
+index 583f199400a3..6f51d0cb6d12 100644
+--- a/include/crypto/pkcs7.h
++++ b/include/crypto/pkcs7.h
+@@ -28,6 +28,8 @@ extern void pkcs7_free_message(struct pkcs7_message *pkcs7);
+ extern int pkcs7_get_content_data(const struct pkcs7_message *pkcs7,
+ 				  const void **_data, size_t *_datalen,
+ 				  size_t *_headerlen);
++extern const struct public_key_signature *pkcs7_get_message_sig(
++					const struct pkcs7_message *pkcs7);
+ 
+ /*
+  * pkcs7_trust.c
+diff --git a/include/linux/verification.h b/include/linux/verification.h
+index a10549a6c7cd..f04dac2728ec 100644
+--- a/include/linux/verification.h
++++ b/include/linux/verification.h
+@@ -29,6 +29,7 @@ extern const char *const key_being_used_for[NR__KEY_BEING_USED_FOR];
+ #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
+ 
+ struct key;
++struct pkcs7_message;
+ 
+ extern int verify_pkcs7_signature(const void *data, size_t len,
+ 				  const void *raw_pkcs7, size_t pkcs7_len,
+@@ -38,6 +39,15 @@ extern int verify_pkcs7_signature(const void *data, size_t len,
+ 						      const void *data, size_t len,
+ 						      size_t asn1hdrlen),
+ 				  void *ctx);
++extern int verify_pkcs7_message_sig(const void *data, size_t len,
++				    struct pkcs7_message *pkcs7,
++				    struct key *trusted_keys,
++				    enum key_being_used_for usage,
++				    int (*view_content)(void *ctx,
++							const void *data,
++							size_t len,
++							size_t asn1hdrlen),
++				    void *ctx);
+ 
+ #ifdef CONFIG_SIGNED_PE_FILE_VERIFICATION
+ extern int verify_pefile_signature(const void *pebuf, unsigned pelen,
