@@ -1,14 +1,12 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:34355 "EHLO mga06.intel.com"
+Received: from mga07.intel.com ([134.134.136.100]:63457 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752599AbdJRPKU (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 18 Oct 2017 11:10:20 -0400
-Date: Wed, 18 Oct 2017 18:10:10 +0300
+        id S1750748AbdJRPEs (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 18 Oct 2017 11:04:48 -0400
+Date: Wed, 18 Oct 2017 18:04:36 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Corentin Labbe <clabbe.montjoie@gmail.com>,
@@ -24,37 +22,40 @@ Cc: SF Markus Elfring <elfring@users.sourceforge.net>,
         kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH 0/4] char-TPM: Adjustments for ten function
  implementations
-Message-ID: <20171018151010.r4ojcpzs5l7rpt6r@linux.intel.com>
+Message-ID: <20171018150436.j2uhzxsu4ebjoz3c@linux.intel.com>
 References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
  <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
  <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com>
- <20171017085124.pkrjzghcf5wmcydc@mwanda>
- <f9b35a67-bd7f-b140-bdc1-cb4886a6b1ea@users.sourceforge.net>
- <1508255833.3129.33.camel@HansenPartnership.com>
+ <2e5e24b4-ea4d-e43b-22b2-e6b65e7203d2@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1508255833.3129.33.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <2e5e24b4-ea4d-e43b-22b2-e6b65e7203d2@users.sourceforge.net>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Oct 17, 2017 at 08:57:13AM -0700, James Bottomley wrote:
-> On Tue, 2017-10-17 at 11:25 +0200, SF Markus Elfring wrote:
-> > > 
-> > > Fixes is only for bug fixes.  These don't fix any bugs.
-> > 
-> > How do you distinguish these in questionable source code
-> > from other error categories or software weaknesses?
+On Mon, Oct 16, 2017 at 10:44:18PM +0200, SF Markus Elfring wrote:
+> > A minor complaint: all commits are missing "Fixes:" tag.
 > 
-> A style change is one that doesn't change the effect of the execution.
->  These don't actually even change the assembly, so there's programmatic
-> proof they're not fixing anything.
-> 
-> Bug means potentially user visible fault.  In any bug fix commit you
-> should document the fault and its effects on users so those backporting
-> can decide if they care or not.
-> 
-> James
+> * Do you require it to be added to the commit messages?
 
-OK, I'll adjust my definition of a bug :-)
+I don't require it. It's part of the development process:
+
+https://www.kernel.org/doc/html/v4.12/process/submitting-patches.html
+
+> * Would you like to get a finer patch granularity then?
+
+I don't understand what you are asking.
+
+> * Do you find any more information missing?
+> 
+> Regards,
+> Markus
+
+I think I already answered to this in my earlier responses (commit
+messages).
+
+I probably won't take "sizeof(*foo)" type of change even if it
+is a recommended style if that is the only useful thing that the
+commit does.
 
 /Jarkko
