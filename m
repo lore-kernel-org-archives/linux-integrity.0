@@ -1,26 +1,50 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8525 "EHLO
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8526 "EHLO
         szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756886AbdJRDg6 (ORCPT
+        with ESMTP id S1756892AbdJRDg7 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 17 Oct 2017 23:36:58 -0400
-Subject: Re: [Linux-ima-devel] [PATCH] ima: fix ineffective default hash
- algorithm due to invalid hash algorithm boot argument
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-CC: linux-integrity <linux-integrity@vger.kernel.org>
-References: <3aaaf65f-d3b0-f770-f074-11e8f9796685@huawei.com>
- <1508277513.4513.63.camel@linux.vnet.ibm.com>
+        Tue, 17 Oct 2017 23:36:59 -0400
 From: Boshi Wang <wangboshi@huawei.com>
-Message-ID: <dd38b9cb-dad9-5c91-d039-dd13862a1aa4@huawei.com>
-Date: Wed, 18 Oct 2017 11:36:41 +0800
+To: <linux-integrity@vger.kernel.org>
+CC: <zohar@linux.vnet.ibm.com>
+Subject: [PATCH] ima: fix ineffective default hash algorithm due to invalid hash algorithm boot argument
+Date: Wed, 18 Oct 2017 11:38:01 +0800
+Message-ID: <20171018033801.220383-1-wangboshi@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <1508277513.4513.63.camel@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
+The hash_setup function always sets hash_setup_done variable. If an
+invalid hash algorithm is passed, the default hash algorithm specified
+by CONFIG_IMA_DEFAULT_HASH could not be used.
 
-On 2017/10/18 5:58, Mimi Zohar wrote:
-> This patch does not apply properly.  To see the problem, save the
-> patch as an mbox file and then apply it using git am <filename.mbox>.
-I'm sorry. That's my fault. The corrected patch has committed. And thank you.
+Signed-off-by: Boshi Wang <wangboshi@huawei.com>
+---
+ security/integrity/ima/ima_main.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 2aebb79..ab70a39 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -51,6 +51,8 @@ static int __init hash_setup(char *str)
+ 			ima_hash_algo = HASH_ALGO_SHA1;
+ 		else if (strncmp(str, "md5", 3) == 0)
+ 			ima_hash_algo = HASH_ALGO_MD5;
++		else
++			return 1;
+ 		goto out;
+ 	}
+ 
+@@ -60,6 +62,8 @@ static int __init hash_setup(char *str)
+ 			break;
+ 		}
+ 	}
++	if (i == HASH_ALGO__LAST)
++		return 1;
+ out:
+ 	hash_setup_done = 1;
+ 	return 1;
+-- 
+2.10.1
