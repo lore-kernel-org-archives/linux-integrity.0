@@ -1,74 +1,115 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mout.web.de ([217.72.192.78]:49445 "EHLO mout.web.de"
+Received: from mga05.intel.com ([192.55.52.43]:59812 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750914AbdJRPnn (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 18 Oct 2017 11:43:43 -0400
-Subject: Re: char-TPM: Adjustments for ten function implementations
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Kenneth Goldman <kgold@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
- <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
- <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com>
- <2e5e24b4-ea4d-e43b-22b2-e6b65e7203d2@users.sourceforge.net>
- <20171018150436.j2uhzxsu4ebjoz3c@linux.intel.com>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Message-ID: <d429115f-a54f-4307-0ee1-31058041b721@users.sourceforge.net>
-Date: Wed, 18 Oct 2017 17:43:17 +0200
+        id S1751595AbdJRPZa (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 18 Oct 2017 11:25:30 -0400
+Date: Wed, 18 Oct 2017 18:25:26 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Nayna Jain <nayna@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
+        tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com,
+        patrickc@us.ibm.com
+Subject: Re: [PATCH v4 2/4] tpm: ignore burstcount to improve tpm_tis send()
+ performance
+Message-ID: <20171018152526.kxd6qv3ep7o4rtio@linux.intel.com>
+References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
+ <20171017203232.2262-3-nayna@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20171018150436.j2uhzxsu4ebjoz3c@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171017203232.2262-3-nayna@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
->>> A minor complaint: all commits are missing "Fixes:" tag.
->>
->> * Do you require it to be added to the commit messages?
+On Tue, Oct 17, 2017 at 04:32:30PM -0400, Nayna Jain wrote:
+> The TPM burstcount status indicates the number of bytes that can
+> be sent to the TPM without causing bus wait states.  Effectively,
+> it is the number of empty bytes in the command FIFO.
 > 
-> I don't require it. It's part of the development process:
+> This patch optimizes the tpm_tis_send_data() function by checking
+> the burstcount only once. And if the burstcount is valid, it writes
+> all the bytes at once, permitting wait state.
 > 
-> https://www.kernel.org/doc/html/v4.12/process/submitting-patches.html
-
-Yes. - But other contributors pointed the detail out again
-that not every change is qualified for using this tag.
-
-
->> * Would you like to get a finer patch granularity then?
+> After this change, performance on a TPM 1.2 with an 8 byte
+> burstcount for 1000 extends improved from ~41sec to ~14sec.
 > 
-> I don't understand what you are asking.
+> Suggested-by: Ken Goldman <kgold@linux.vnet.ibm.com> in
+> conjunction with the TPM Device Driver work group.
+> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+> Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 
-If you would insist on the addition of this tag to all my commits
-for the discussed patch series, I imagine that I would need to split
-the update step "Improve a size determination in nine functions"
-into smaller parts.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
+/Jarkko
 
->> * Do you find any more information missing?
+> ---
+>  drivers/char/tpm/tpm_tis_core.c | 42 +++++++++++++++--------------------------
+>  1 file changed, 15 insertions(+), 27 deletions(-)
 > 
-> I think I already answered to this in my earlier responses
-> (commit messages).
-
-Partly.
-
-
-> I probably won't take "sizeof(*foo)" type of change even if it
-> is a recommended style if that is the only useful thing that the
-> commit does.
-
-How much do you care for the section "14) Allocating memory"
-in the document "coding-style.rst" then?
-
-Regards,
-Markus
+> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+> index b33126a35694..993328ae988c 100644
+> --- a/drivers/char/tpm/tpm_tis_core.c
+> +++ b/drivers/char/tpm/tpm_tis_core.c
+> @@ -316,7 +316,6 @@ static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
+>  {
+>  	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+>  	int rc, status, burstcnt;
+> -	size_t count = 0;
+>  	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
+>  
+>  	status = tpm_tis_status(chip);
+> @@ -330,35 +329,24 @@ static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
+>  		}
+>  	}
+>  
+> -	while (count < len - 1) {
+> -		burstcnt = get_burstcount(chip);
+> -		if (burstcnt < 0) {
+> -			dev_err(&chip->dev, "Unable to read burstcount\n");
+> -			rc = burstcnt;
+> -			goto out_err;
+> -		}
+> -		burstcnt = min_t(int, burstcnt, len - count - 1);
+> -		rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
+> -					 burstcnt, buf + count);
+> -		if (rc < 0)
+> -			goto out_err;
+> -
+> -		count += burstcnt;
+> -
+> -		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
+> -					&priv->int_queue, false) < 0) {
+> -			rc = -ETIME;
+> -			goto out_err;
+> -		}
+> -		status = tpm_tis_status(chip);
+> -		if (!itpm && (status & TPM_STS_DATA_EXPECT) == 0) {
+> -			rc = -EIO;
+> -			goto out_err;
+> -		}
+> +	/*
+> +	 * Get the initial burstcount to ensure TPM is ready to
+> +	 * accept data.
+> +	 */
+> +	burstcnt = get_burstcount(chip);
+> +	if (burstcnt < 0) {
+> +		dev_err(&chip->dev, "Unable to read burstcount\n");
+> +		rc = burstcnt;
+> +		goto out_err;
+>  	}
+>  
+> +	rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
+> +			len - 1, buf);
+> +	if (rc < 0)
+> +		goto out_err;
+> +
+>  	/* write last byte */
+> -	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[count]);
+> +	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[len-1]);
+>  	if (rc < 0)
+>  		goto out_err;
+>  
+> -- 
+> 2.13.3
+> 
