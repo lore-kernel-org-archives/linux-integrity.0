@@ -1,116 +1,83 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56302 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934820AbdJQUc5 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 17 Oct 2017 16:32:57 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9HKVIUY078638
-        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 16:32:57 -0400
-Received: from e06smtp11.uk.ibm.com (e06smtp11.uk.ibm.com [195.75.94.107])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2dnmaan914-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 16:32:56 -0400
-Received: from localhost
-        by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Tue, 17 Oct 2017 21:32:54 +0100
-From: Nayna Jain <nayna@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: zohar@linux.vnet.ibm.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
-        jarkko.sakkinen@linux.intel.com, tpmdd@selhorst.net,
-        jgunthorpe@obsidianresearch.com, patrickc@us.ibm.com,
-        Nayna Jain <nayna@linux.vnet.ibm.com>
-Subject: [PATCH v4 2/4] tpm: ignore burstcount to improve tpm_tis send() performance
-Date: Tue, 17 Oct 2017 16:32:30 -0400
-In-Reply-To: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
-References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
-Message-Id: <20171017203232.2262-3-nayna@linux.vnet.ibm.com>
+Received: from ozlabs.org ([103.22.144.67]:47685 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933296AbdJRDTC (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 17 Oct 2017 23:19:02 -0400
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        SF Markus Elfring <elfring@users.sourceforge.net>,
+        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Kenneth Goldman <kgold@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Peter =?utf-8?Q?H=C3=BCwe?= <PeterHuewe@gmx.de>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 0/4] char-TPM: Adjustments for ten function implementations
+In-Reply-To: <1508241146.4234.16.camel@linux.vnet.ibm.com>
+References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net> <20171016183139.otyh3m5c5yurtmow@linux.intel.com> <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com> <20171017085124.pkrjzghcf5wmcydc@mwanda> <alpine.DEB.2.20.1710171055100.5035@hadrien> <20171017094434.csarc5fw5d32u64w@mwanda> <alpine.DEB.2.20.1710171211210.5035@hadrien> <1508241146.4234.16.camel@linux.vnet.ibm.com>
+Date: Wed, 18 Oct 2017 14:18:57 +1100
+Message-ID: <87lgk9i1ni.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-The TPM burstcount status indicates the number of bytes that can
-be sent to the TPM without causing bus wait states.  Effectively,
-it is the number of empty bytes in the command FIFO.
+Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+> On Tue, 2017-10-17 at 12:11 +0200, Julia Lawall wrote:
+>> On Tue, 17 Oct 2017, Dan Carpenter wrote:
+>> > On Tue, Oct 17, 2017 at 10:56:42AM +0200, Julia Lawall wrote:
+>> > > On Tue, 17 Oct 2017, Dan Carpenter wrote:
+>> > > > On Mon, Oct 16, 2017 at 09:35:12PM +0300, Jarkko Sakkinen wrote:
+>> > > > >
+>> > > > > A minor complaint: all commits are missing "Fixes:" tag.
+>> > > > >
+>> > > >
+>> > > > Fixes is only for bug fixes.  These don't fix any bugs.
+>> > >
+>> > > 0-day seems to put Fixes for everything.  Should they be removed when the
+>> > > old code is undesirable but doesn't actually cause a crash, eg out of date
+>> > > API.
+>> >
+>> > Yeah, I feel like Fixes tags don't belong for API updates and cleanups.
+>> 
+>> OK, I will remove them from the patches that go through me where they
+>> don't seem appropriate.
+>
+> The "Fixes" tag is an indication that the patch should be backported.
 
-This patch optimizes the tpm_tis_send_data() function by checking
-the burstcount only once. And if the burstcount is valid, it writes
-all the bytes at once, permitting wait state.
+No it's not that strong. It's an indication that the patch fixes another
+commit, which may or may not mean it should be backported depending on
+the preferences of the backporter. If it *does* need backporting then
+the Fixes tag helps identify where it should go.
 
-After this change, performance on a TPM 1.2 with an 8 byte
-burstcount for 1000 extends improved from ~41sec to ~14sec.
+The doco is actually pretty well worded IMO:
 
-Suggested-by: Ken Goldman <kgold@linux.vnet.ibm.com> in
-conjunction with the TPM Device Driver work group.
-Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
----
- drivers/char/tpm/tpm_tis_core.c | 42 +++++++++++++++--------------------------
- 1 file changed, 15 insertions(+), 27 deletions(-)
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst#n183
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index b33126a35694..993328ae988c 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -316,7 +316,6 @@ static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
- {
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 	int rc, status, burstcnt;
--	size_t count = 0;
- 	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
- 
- 	status = tpm_tis_status(chip);
-@@ -330,35 +329,24 @@ static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
- 		}
- 	}
- 
--	while (count < len - 1) {
--		burstcnt = get_burstcount(chip);
--		if (burstcnt < 0) {
--			dev_err(&chip->dev, "Unable to read burstcount\n");
--			rc = burstcnt;
--			goto out_err;
--		}
--		burstcnt = min_t(int, burstcnt, len - count - 1);
--		rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
--					 burstcnt, buf + count);
--		if (rc < 0)
--			goto out_err;
--
--		count += burstcnt;
--
--		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
--					&priv->int_queue, false) < 0) {
--			rc = -ETIME;
--			goto out_err;
--		}
--		status = tpm_tis_status(chip);
--		if (!itpm && (status & TPM_STS_DATA_EXPECT) == 0) {
--			rc = -EIO;
--			goto out_err;
--		}
-+	/*
-+	 * Get the initial burstcount to ensure TPM is ready to
-+	 * accept data.
-+	 */
-+	burstcnt = get_burstcount(chip);
-+	if (burstcnt < 0) {
-+		dev_err(&chip->dev, "Unable to read burstcount\n");
-+		rc = burstcnt;
-+		goto out_err;
- 	}
- 
-+	rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
-+			len - 1, buf);
-+	if (rc < 0)
-+		goto out_err;
-+
- 	/* write last byte */
--	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[count]);
-+	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[len-1]);
- 	if (rc < 0)
- 		goto out_err;
- 
--- 
-2.13.3
+  If your patch fixes a bug in a specific commit, e.g. you found an issue using
+  ``git bisect``, please use the 'Fixes:' tag with the first 12 characters of
+  the SHA-1 ID, and the one line summary.
+
+and:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst#n602
+
+  A Fixes: tag indicates that the patch fixes an issue in a previous commit. It
+  is used to make it easy to determine where a bug originated, which can help
+  review a bug fix. This tag also assists the stable kernel team in determining
+  which stable kernel versions should receive your fix. This is the preferred
+  method for indicating a bug fixed by the patch. See :ref:`describe_changes`
+  for more details.
+
+
+cheers
