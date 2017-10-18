@@ -1,72 +1,57 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mout.web.de ([217.72.192.78]:51407 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750807AbdJRSML (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 18 Oct 2017 14:12:11 -0400
-Subject: =?UTF-8?Q?Re:_char/tpm:_Delete_an_error_message_for_a_failed_memory?=
- =?UTF-8?B?IGFsbG9jYXRpb24gaW4gdHBtX+KApigp?=
-To: Jerry Snitselaar <jsnitsel@redhat.com>,
-        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <1508244757.4234.60.camel@linux.vnet.ibm.com>
- <alpine.DEB.2.20.1710171456360.5035@hadrien>
- <1508253453.4234.81.camel@linux.vnet.ibm.com>
- <9689f036-ba9f-d23b-cf89-c289bc308771@users.sourceforge.net>
- <20171018145735.lpzwakatsty7emlw@linux.intel.com>
- <351cf78a-14f6-c6e7-2902-048e7dc57a14@users.sourceforge.net>
- <20171018155946.e7ga7jyex6eia252@linux.intel.com>
- <55d76224-3019-6614-70ce-ba260bbcd54f@users.sourceforge.net>
- <20171018171858.3lcfr2kcp53fngwv@linux.intel.com>
- <e9638486-7e59-1c5a-87ae-ca0f1fbbd021@users.sourceforge.net>
- <20171018175412.mlj2yvyjmvmfdxzd@rhwork>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        Kenneth Goldman <kgold@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Message-ID: <61fa394e-05d1-5081-f8bb-3e7dcbd6ccf9@users.sourceforge.net>
-Date: Wed, 18 Oct 2017 20:11:28 +0200
+Received: from mail-io0-f182.google.com ([209.85.223.182]:45201 "EHLO
+        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750926AbdJRSI6 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 18 Oct 2017 14:08:58 -0400
+Received: by mail-io0-f182.google.com with SMTP id i38so7183299iod.2
+        for <linux-integrity@vger.kernel.org>; Wed, 18 Oct 2017 11:08:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20171018175412.mlj2yvyjmvmfdxzd@rhwork>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1508349118.4510.14.camel@linux.vnet.ibm.com>
+References: <CACdnJutQ1NBxfAO1NBJqrrF0en9hc_C=Jy8XxNb5pEiBVwAa0g@mail.gmail.com>
+ <1508291395.4513.95.camel@linux.vnet.ibm.com> <CACdnJuvYoKRdtF7+BZK4yp8JmC_pfaXyZhhwHzPC739OR6mhOg@mail.gmail.com>
+ <1508292499.4513.99.camel@linux.vnet.ibm.com> <CACdnJuscweoJFresHzoQ_va9-eokz12VMz_T2kpJb-iJeSbGzg@mail.gmail.com>
+ <1508295225.4513.123.camel@linux.vnet.ibm.com> <CACdnJuspob9PMrZHQb9Bff1tpa9D6RVBit931FkHLNE-GC35yg@mail.gmail.com>
+ <1508349118.4510.14.camel@linux.vnet.ibm.com>
+From: Matthew Garrett <mjg59@google.com>
+Date: Wed, 18 Oct 2017 11:08:57 -0700
+Message-ID: <CACdnJutON0tX5NV_Di1PEOFHN5Hf-E-shQ=Fzv6CSYkkBk-i=Q@mail.gmail.com>
+Subject: Re: Writing out EVM protected xattrs while EVM is active
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
->> Why did you not reply directly with this request for the update steps
->> with the subject "Delete an error message for a failed memory allocation
->> in tpm_...()"?
+On Wed, Oct 18, 2017 at 10:51 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+>> Ok. I'm not sure this is easily fixable to handle my use-case without
+>> breaking assumptions made in yours, so I'm wondering if a different
+>> approach would be better here. For us, there's no problem with
+>> updating any of the EVM-protected xattrs at runtime as long as doing
+>> so invalidates the iint cache entry (hmm, does setting an xattr bump
+>> the iversion? If so, we already get this behaviour). How would you
+>> feel about a runtime controllable flag that enabled this, possibly
+>> tied into the /sys/kernel/security/evm write? We'd end up with:
 >>
->> https://patchwork.kernel.org/patch/10009405/
->> https://patchwork.kernel.org/patch/10009415/
+>> 1: Enable HMAC
+>> 2: Enable RSA
+>> 4: Permit extended attribute writes
 >>
->> I find that there can be difficulty to show an appropriate information
->> source for the reasonable explanation of this change pattern.
->>
-> 
-> Shouldn't this information source for the explanation be the submitter?
+>> Existing behaviour would be preserved since 1 would lock down the
+>> interface, and we could reject cases where 1 and 4 are set
+>> simultaneously.
+>
+> Here's an alternative, though admittedly one that is more difficult to
+> implement and dependent on having a portable EVM signature type.
+>
+> Define the equivalent of listxattr that allows writing multiple
+> xattrs.  Change option 4 above to "Permit writing a group of extended
+> attributes, including an EVM signature, when none currently exist."
 
-I offered a bit of information. I agree that it could become better eventually.
-
-
-> I'd hope they understand what it is they are submitting.
-
-I do this to some degree.   ;-)
-
-But I would appreciate if I could refer to a single Linux document
-for this change pattern around questionable error messages.
-Would a corresponding link for an accepted explanation in the documentation
-be nice in this case?
-
-Regards,
-Markus
+This would require adding a new syscall (including glibc support), and
+I think that's probably a hard sell for a single usecase. Looking at
+the code a bit more, are you sure about this? I thought IMA_NEW_FILE
+would only be cleared once the last writer closes the fd, so it ought
+to be possible to do multiple fsetxattr()s with the same file
+descriptor until the last writer closes it?
