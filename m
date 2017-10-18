@@ -1,105 +1,64 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:39949 "EHLO mga01.intel.com"
+Received: from mga03.intel.com ([134.134.136.65]:18211 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750730AbdJRPLe (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 18 Oct 2017 11:11:34 -0400
-Date: Wed, 18 Oct 2017 18:11:28 +0300
+        id S1752439AbdJRPIF (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 18 Oct 2017 11:08:05 -0400
+Date: Wed, 18 Oct 2017 18:07:54 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Thiebaud Weksteen <tweek@google.com>
-Cc: linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        linux-kernel@vger.kernel.org, Matthew Garrett <mjg59@google.com>,
-        peterhuewe@gmx.de,
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>,
+        SF Markus Elfring <elfring@users.sourceforge.net>,
+        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
         Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        tpmdd@selhorst.net
-Subject: Re: [PATCH v3 4/5] efi: call get_event_log before ExitBootServices
-Message-ID: <20171018151128.reuteqhzleztchvr@linux.intel.com>
-References: <CA+zpnLcYWcO8Gf6b8rAHgcLkAndC0uyPH+Kxa01giVsochP3Ug@mail.gmail.com>
- <20170929171617.yq4dvn66czvnebns@linux.intel.com>
- <20171004105113.mcho3rlytaxfruyf@linux.intel.com>
- <CA+zpnLdg4km1vMUUZaYfRg6M68+nSdC+vASULmH-aKu4vYyy4Q@mail.gmail.com>
- <20171010141419.e4uv4fkmcmpc7sdc@linux.intel.com>
- <alpine.LRH.2.21.1710111250260.22885@namei.org>
- <20171011115254.2n4zs77ixyl2mdgm@linux.intel.com>
- <20171016112833.txbg2sm5tjocp6qh@linux.intel.com>
- <20171016114946.phj3n6vyjdbpj2sj@linux.intel.com>
- <CA+zpnLc038dv-WAE7fdD8i6DpGV3zCLEieg-KPTAvaW7yt-tLA@mail.gmail.com>
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Kenneth Goldman <kgold@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Peter =?iso-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 0/4] char-TPM: Adjustments for ten function
+ implementations
+Message-ID: <20171018150754.irqyypvbfh5vt4kv@linux.intel.com>
+References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
+ <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
+ <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com>
+ <20171017085124.pkrjzghcf5wmcydc@mwanda>
+ <alpine.DEB.2.20.1710171055100.5035@hadrien>
+ <20171017094434.csarc5fw5d32u64w@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CA+zpnLc038dv-WAE7fdD8i6DpGV3zCLEieg-KPTAvaW7yt-tLA@mail.gmail.com>
+In-Reply-To: <20171017094434.csarc5fw5d32u64w@mwanda>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Oct 17, 2017 at 10:00:15AM +0200, Thiebaud Weksteen wrote:
-> On Mon, Oct 16, 2017 at 1:49 PM, Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> > On Mon, Oct 16, 2017 at 02:28:33PM +0300, Jarkko Sakkinen wrote:
-> >> On Wed, Oct 11, 2017 at 02:52:54PM +0300, Jarkko Sakkinen wrote:
-> >> > On Wed, Oct 11, 2017 at 12:54:26PM +1100, James Morris wrote:
-> >> > > On Tue, 10 Oct 2017, Jarkko Sakkinen wrote:
-> >> > >
-> >> > > > The way I've agreed with James Morris to have my tree is to be rooted to
-> >> > > > security trees next branch.
-> >> > > >
-> >> > > > James, what actions should we take?
-> >> > >
-> >> > > This process has changed recently -- I posted to lsm but forgot to post to
-> >> > > linux-integrity.
-> >> > >
-> >> > > http://kernsec.org/pipermail/linux-security-module-archive/2017-September/003356.html
-> >> > >
-> >> > > Summary: please track the next-general branch in my tree for your
-> >> > > development, it replaces 'next'.
-> >> > >
-> >> > >
-> >> > > - James
-> >> > > --
-> >> > > James Morris
-> >> > > <jmorris@namei.org>
-> >> >
-> >> > Ah I'm subscribed to that list but lately been busy getting a huge patch
-> >> > set to platform-driver-x86 [1] for review, which has prioritized out
-> >> > reading much else than linux-integrity.
-> >> >
-> >> > Thank you. I'll retry the patches tomorrow.
-> >> >
-> >> > /Jarkko
-> >>
-> >> Cannot observer binary_bios_measuremens file.
-> >>
-> >> What kind of hardware was used to develop/test this?
-> >>
-> >> I tried it with Kabylake and PTT (firmware TPM).
-> >>
-> >> /Jarkko
-> >
-> > My guess would be wrong event log format.
-> >
-> > At minimum this patch set should add a klog (info level) message to tell
-> > that unsupported event log format is being used.
-> >
-> > /Jarkko
+On Tue, Oct 17, 2017 at 12:44:34PM +0300, Dan Carpenter wrote:
+> On Tue, Oct 17, 2017 at 10:56:42AM +0200, Julia Lawall wrote:
+> > 
+> > 
+> > On Tue, 17 Oct 2017, Dan Carpenter wrote:
+> > 
+> > > On Mon, Oct 16, 2017 at 09:35:12PM +0300, Jarkko Sakkinen wrote:
+> > > >
+> > > > A minor complaint: all commits are missing "Fixes:" tag.
+> > > >
+> > >
+> > > Fixes is only for bug fixes.  These don't fix any bugs.
+> > 
+> > 0-day seems to put Fixes for everything.  Should they be removed when the
+> > old code is undesirable but doesn't actually cause a crash, eg out of date
+> > API.
 > 
-> This patch was mainly developed and tested on Kabylake with PTT as well.
+> Yeah, I feel like Fixes tags don't belong for API updates and cleanups.
 > 
-> It could be a few things. Are you booting with the EFI stub? Is the
-> TPM enabled within the BIOS? Does tpm_tis get loaded? Does it produce
-> any log?
-> If the logs are recovered (but not parsed), you should already see an
-> entry in the logs like:
-> 
-> efi:  SMBIOS=0x7fed6000  ACPI=0x7ff00000  TPMEventLog=0x.....
-> 
-> Can you see the TPMEventLog part?
-> 
-> The issue with extra logging is that the log recovery happens within
-> the EFI stub phase where limited logging is available (which I think
-> has been limited to error and fatal message only).
-> For now, it cannot be a version mismatch as the stub will only request
-> the version 1.2 format.
+> regards,
+> dan carpenter
 
-Thank you for the great tips. I'll retry tomorrow.
+So breaking a rule documented in the style guide is not a bug? :-)
 
 /Jarkko
