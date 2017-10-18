@@ -1,39 +1,43 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io0-f176.google.com ([209.85.223.176]:48141 "EHLO
-        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751038AbdJRVBE (ORCPT
+Received: from mail-io0-f172.google.com ([209.85.223.172]:49921 "EHLO
+        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751038AbdJRU7z (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 18 Oct 2017 17:01:04 -0400
-Received: by mail-io0-f176.google.com with SMTP id j17so7703632iod.5
-        for <linux-integrity@vger.kernel.org>; Wed, 18 Oct 2017 14:01:03 -0700 (PDT)
+        Wed, 18 Oct 2017 16:59:55 -0400
+Received: by mail-io0-f172.google.com with SMTP id n137so7715296iod.6
+        for <linux-integrity@vger.kernel.org>; Wed, 18 Oct 2017 13:59:55 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <f438abf6-de2a-847d-40fa-0b139135b97f@schaufler-ca.com>
-References: <20171016203709.11199-1-mjg59@google.com> <f438abf6-de2a-847d-40fa-0b139135b97f@schaufler-ca.com>
+In-Reply-To: <1508267223.4513.23.camel@linux.vnet.ibm.com>
+References: <20171016203709.11199-1-mjg59@google.com> <20171016203709.11199-2-mjg59@google.com>
+ <1508267223.4513.23.camel@linux.vnet.ibm.com>
 From: Matthew Garrett <mjg59@google.com>
-Date: Wed, 18 Oct 2017 14:01:02 -0700
-Message-ID: <CACdnJuvjcYNVvLGkxcHzkZ719-rfN8yCvkzO0kdg1xiYKVAT9A@mail.gmail.com>
-Subject: Re: [PATCH 1/2] security: Add a cred_getsecid hook
-To: Casey Schaufler <casey@schaufler-ca.com>
+Date: Wed, 18 Oct 2017 13:59:53 -0700
+Message-ID: <CACdnJutiK+NyD1gAT-muf74zjt7H8gqm3-xqWJYrDCQm8TPz0g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] IMA: Support using new creds in appraisal policy
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Cc: Paul Moore <paul@paul-moore.com>,
         Stephen Smalley <sds@tycho.nsa.gov>,
         Eric Paris <eparis@parisplace.org>, selinux@tycho.nsa.gov,
+        Casey Schaufler <casey@schaufler-ca.com>,
         linux-security-module@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         linux-integrity <linux-integrity@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Oct 16, 2017 at 2:58 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 10/16/2017 1:37 PM, Matthew Garrett wrote:
->> For IMA purposes, we want to be able to obtain the prepared secid in the
->> bprm structure before the credentials are committed. Add a cred_getsecid
->> hook that makes this possible.
+On Tue, Oct 17, 2017 at 12:07 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> On Mon, 2017-10-16 at 13:37 -0700, Matthew Garrett wrote:
+>>               case LSM_SUBJ_TYPE:
+>> -                     security_task_getsecid(tsk, &sid);
+>> +                     security_cred_getsecid(cred, &sid);
+>>                       rc = security_filter_rule_match(sid,
+>>                                                       rule->lsm[i].type,
+>>                                                       Audit_equal,
 >
-> Why do you want the secid? What are you planning to do with it?
+> By replacing the call from security_task_getsec() to
+> security_cred_getsecid(), I assume you're expecting different results.
+>  Will this change break existing IMA policies?
 
-See the following patch - IMA policy allows the admin to restrict
-appraisal to executables running in specific security contexts.
-However, right now the check at application execution time ends up
-using the current task creds before the new creds are committed.
+No, for BPRM_CHECK they'll use the same creds that were previously
+checked. CREDS_CHECK will behave differently to BPRM_CHECK.
