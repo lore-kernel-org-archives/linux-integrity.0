@@ -1,20 +1,20 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40938 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1761619AbdJRAya (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36060 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1758718AbdJRAyS (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 17 Oct 2017 20:54:30 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9I0rUW8137445
-        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 20:54:30 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2dnppg6snb-1
+        Tue, 17 Oct 2017 20:54:18 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9I0rTqv115128
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 20:54:18 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2dnsxu62vy-1
         (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 20:54:29 -0400
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 20:54:18 -0400
 Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <bauerman@linux.vnet.ibm.com>;
-        Tue, 17 Oct 2017 20:54:28 -0400
+        Tue, 17 Oct 2017 20:54:17 -0400
 From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
@@ -32,109 +32,109 @@ Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         "David S. Miller" <davem@davemloft.net>,
         "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
         Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-Subject: [PATCH v5 06/18] ima: Improvements in ima_appraise_measurement
-Date: Tue, 17 Oct 2017 22:53:19 -0200
+Subject: [PATCH v5 04/18] evm, ima: Remove more superfluous parentheses
+Date: Tue, 17 Oct 2017 22:53:17 -0200
 In-Reply-To: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
 References: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
-Message-Id: <20171018005331.2688-7-bauerman@linux.vnet.ibm.com>
+Message-Id: <20171018005331.2688-5-bauerman@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Replace nested ifs in the EVM xattr verification logic with a switch
-statement, making the code easier to understand.
+This patch removes unnecessary parentheses from all EVM and IMA files
+not yet cleaned up by the previous patches.
 
-Also, add comments to the if statements in the out section.
+It is separate from the previous one so that it can be easily dropped if
+the churn and conflict potential is deemed not worth it.
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Confirmed that the patch is correct by comparing the object files from
+before and after the patch. They are identical.
+
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 ---
- security/integrity/ima/ima.h          |  5 +++++
- security/integrity/ima/ima_appraise.c | 33 ++++++++++++++++++++-------------
- 2 files changed, 25 insertions(+), 13 deletions(-)
+ security/integrity/evm/evm_posix_acl.c | 8 ++++----
+ security/integrity/ima/ima_fs.c        | 6 +++---
+ security/integrity/ima/ima_queue.c     | 6 +++---
+ 3 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index d52b487ad259..4e61d3189b72 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -155,6 +155,11 @@ unsigned long ima_get_binary_runtime_size(void);
- int ima_init_template(void);
- void ima_init_template_list(void);
- 
-+static inline bool is_ima_sig(const struct evm_ima_xattr_data *xattr_value)
-+{
-+	return xattr_value && xattr_value->type == EVM_IMA_XATTR_DIGSIG;
-+}
-+
- /*
-  * used to protect h_table and sha_table
-  */
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 58c6a60c7e83..2c069f47eeec 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -204,7 +204,7 @@ int ima_appraise_measurement(enum ima_hooks func,
- 			     int xattr_len, int opened)
+diff --git a/security/integrity/evm/evm_posix_acl.c b/security/integrity/evm/evm_posix_acl.c
+index 46408b9e62e8..0a32798cfc96 100644
+--- a/security/integrity/evm/evm_posix_acl.c
++++ b/security/integrity/evm/evm_posix_acl.c
+@@ -17,11 +17,11 @@ int posix_xattr_acl(const char *xattr)
  {
- 	static const char op[] = "appraise_data";
--	char *cause = "unknown";
-+	const char *cause = "unknown";
- 	struct dentry *dentry = file_dentry(file);
- 	struct inode *inode = d_backing_inode(dentry);
- 	enum integrity_status status = INTEGRITY_UNKNOWN;
-@@ -229,11 +229,16 @@ int ima_appraise_measurement(enum ima_hooks func,
- 	}
+ 	int xattr_len = strlen(xattr);
  
- 	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
--	if (status != INTEGRITY_PASS && status != INTEGRITY_UNKNOWN) {
--		if (status == INTEGRITY_NOLABEL || status == INTEGRITY_NOXATTRS)
--			cause = "missing-HMAC";
--		else if (status == INTEGRITY_FAIL)
--			cause = "invalid-HMAC";
-+	switch (status) {
-+	case INTEGRITY_PASS:
-+	case INTEGRITY_UNKNOWN:
-+		break;
-+	case INTEGRITY_NOXATTRS:	/* No EVM protected xattrs. */
-+	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
-+		cause = "missing-HMAC";
-+		goto out;
-+	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
-+		cause = "invalid-HMAC";
- 		goto out;
- 	}
- 	switch (xattr_value->type) {
-@@ -287,17 +292,19 @@ int ima_appraise_measurement(enum ima_hooks func,
+-	if ((strlen(XATTR_NAME_POSIX_ACL_ACCESS) == xattr_len)
+-	     && (strncmp(XATTR_NAME_POSIX_ACL_ACCESS, xattr, xattr_len) == 0))
++	if (strlen(XATTR_NAME_POSIX_ACL_ACCESS) == xattr_len
++	    && strncmp(XATTR_NAME_POSIX_ACL_ACCESS, xattr, xattr_len) == 0)
+ 		return 1;
+-	if ((strlen(XATTR_NAME_POSIX_ACL_DEFAULT) == xattr_len)
+-	     && (strncmp(XATTR_NAME_POSIX_ACL_DEFAULT, xattr, xattr_len) == 0))
++	if (strlen(XATTR_NAME_POSIX_ACL_DEFAULT) == xattr_len
++	    && strncmp(XATTR_NAME_POSIX_ACL_DEFAULT, xattr, xattr_len) == 0)
+ 		return 1;
+ 	return 0;
+ }
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index 4d50b982b453..552f79fc4291 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -105,7 +105,7 @@ static void *ima_measurements_next(struct seq_file *m, void *v, loff_t *pos)
+ 	rcu_read_unlock();
+ 	(*pos)++;
  
- out:
- 	if (status != INTEGRITY_PASS) {
-+		/* Fix mode, but don't replace file signatures. */
- 		if ((ima_appraise & IMA_APPRAISE_FIX) &&
--		    (!xattr_value ||
--		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
-+		    !is_ima_sig(xattr_value)) {
- 			if (!ima_fix_xattr(dentry, iint))
- 				status = INTEGRITY_PASS;
--		} else if (inode->i_size == 0 &&
--			   (iint->flags & IMA_NEW_FILE) &&
--			   xattr_value &&
--			   xattr_value->type == EVM_IMA_XATTR_DIGSIG) {
-+		}
-+
-+		/* Permit new files with file signatures, but without data. */
-+		if (inode->i_size == 0 && (iint->flags & IMA_NEW_FILE) &&
-+		    is_ima_sig(xattr_value)) {
- 			status = INTEGRITY_PASS;
+-	return (&qe->later == &ima_measurements) ? NULL : qe;
++	return &qe->later == &ima_measurements ? NULL : qe;
+ }
+ 
+ static void ima_measurements_stop(struct seq_file *m, void *v)
+@@ -141,7 +141,7 @@ int ima_measurements_show(struct seq_file *m, void *v)
+ 	if (e == NULL)
+ 		return -1;
+ 
+-	template_name = (e->template_desc->name[0] != '\0') ?
++	template_name = e->template_desc->name[0] != '\0' ?
+ 	    e->template_desc->name : e->template_desc->fmt;
+ 
+ 	/*
+@@ -228,7 +228,7 @@ static int ima_ascii_measurements_show(struct seq_file *m, void *v)
+ 	if (e == NULL)
+ 		return -1;
+ 
+-	template_name = (e->template_desc->name[0] != '\0') ?
++	template_name = e->template_desc->name[0] != '\0' ?
+ 	    e->template_desc->name : e->template_desc->fmt;
+ 
+ 	/* 1st: PCR used (config option) */
+diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+index a02a86d51102..2ef7d33ba1fc 100644
+--- a/security/integrity/ima/ima_queue.c
++++ b/security/integrity/ima/ima_queue.c
+@@ -60,7 +60,7 @@ static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
+ 	rcu_read_lock();
+ 	hlist_for_each_entry_rcu(qe, &ima_htable.queue[key], hnext) {
+ 		rc = memcmp(qe->entry->digest, digest_value, TPM_DIGEST_SIZE);
+-		if ((rc == 0) && (qe->entry->pcr == pcr)) {
++		if (rc == 0 && qe->entry->pcr == pcr) {
+ 			ret = qe;
+ 			break;
  		}
-+
- 		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
- 				    op, cause, rc, 0);
- 	} else {
-@@ -404,7 +411,7 @@ int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
- 		if (!xattr_value_len || xvalue->type >= IMA_XATTR_LAST)
- 			return -EINVAL;
- 		ima_reset_appraise_flags(d_backing_inode(dentry),
--			xvalue->type == EVM_IMA_XATTR_DIGSIG);
-+					 is_ima_sig(xvalue));
- 		result = 0;
+@@ -119,7 +119,7 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
+ 		int size;
+ 
+ 		size = get_binary_runtime_size(entry);
+-		binary_runtime_size = (binary_runtime_size < ULONG_MAX - size) ?
++		binary_runtime_size = binary_runtime_size < ULONG_MAX - size ?
+ 		     binary_runtime_size + size : ULONG_MAX;
  	}
- 	return result;
+ 	return 0;
+@@ -132,7 +132,7 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
+  */
+ unsigned long ima_get_binary_runtime_size(void)
+ {
+-	if (binary_runtime_size >= (ULONG_MAX - sizeof(struct ima_kexec_hdr)))
++	if (binary_runtime_size >= ULONG_MAX - sizeof(struct ima_kexec_hdr))
+ 		return ULONG_MAX;
+ 	else
+ 		return binary_runtime_size + sizeof(struct ima_kexec_hdr);
