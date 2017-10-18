@@ -1,79 +1,36 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:45987 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751110AbdJRS1v (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 18 Oct 2017 14:27:51 -0400
-Date: Wed, 18 Oct 2017 20:27:45 +0200
-From: Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
-To: Joe Perches <joe@perches.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>,
-        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kernel-janitors@vger.kernel.org,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.comg>,
-        Paul Mackerras <paulus@samba.org>,
-        Peter =?UTF-8?B?SMO8d2U=?= <PeterHuewe@gmx.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Kenneth Goldman <kgold@linux.vnet.ibm.com>
-Subject: Re: char-TPM: Adjustments for ten function implementations
-Message-ID: <20171018202745.383724bc@kitsune.suse.cz>
-In-Reply-To: <1508318326.6806.1.camel@perches.com>
-References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
-        <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
-        <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com>
-        <20171017085124.pkrjzghcf5wmcydc@mwanda>
-        <f9b35a67-bd7f-b140-bdc1-cb4886a6b1ea@users.sourceforge.net>
-        <1508255833.3129.33.camel@HansenPartnership.com>
-        <1508280210.6530.32.camel@perches.com>
-        <bf7fc26c-bdc9-c752-72c7-f44c22f4a328@users.sourceforge.net>
-        <1508318326.6806.1.camel@perches.com>
+Received: from mail-it0-f53.google.com ([209.85.214.53]:54809 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750800AbdJRSXJ (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 18 Oct 2017 14:23:09 -0400
+Received: by mail-it0-f53.google.com with SMTP id 72so7024225itk.3
+        for <linux-integrity@vger.kernel.org>; Wed, 18 Oct 2017 11:23:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <1508350783.4510.22.camel@linux.vnet.ibm.com>
+References: <CACdnJutQ1NBxfAO1NBJqrrF0en9hc_C=Jy8XxNb5pEiBVwAa0g@mail.gmail.com>
+ <1508291395.4513.95.camel@linux.vnet.ibm.com> <CACdnJuvYoKRdtF7+BZK4yp8JmC_pfaXyZhhwHzPC739OR6mhOg@mail.gmail.com>
+ <1508292499.4513.99.camel@linux.vnet.ibm.com> <CACdnJuscweoJFresHzoQ_va9-eokz12VMz_T2kpJb-iJeSbGzg@mail.gmail.com>
+ <1508295225.4513.123.camel@linux.vnet.ibm.com> <CACdnJuspob9PMrZHQb9Bff1tpa9D6RVBit931FkHLNE-GC35yg@mail.gmail.com>
+ <1508349118.4510.14.camel@linux.vnet.ibm.com> <CACdnJutON0tX5NV_Di1PEOFHN5Hf-E-shQ=Fzv6CSYkkBk-i=Q@mail.gmail.com>
+ <1508350783.4510.22.camel@linux.vnet.ibm.com>
+From: Matthew Garrett <mjg59@google.com>
+Date: Wed, 18 Oct 2017 11:23:08 -0700
+Message-ID: <CACdnJuu-F0Rft2TdyA+qa3PGT_jceiDVy_z_nA3QRvAdrGcsjw@mail.gmail.com>
+Subject: Re: Writing out EVM protected xattrs while EVM is active
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, 18 Oct 2017 02:18:46 -0700
-Joe Perches <joe@perches.com> wrote:
+On Wed, Oct 18, 2017 at 11:19 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> The IMA_NEW_FILE check is applicable only when there are no security
+> xattrs (INTEGRITY_NOXATTRS), which would not be the case after writing
+> the first security xattr.  The return result in that case is
+> INTEGRITY_NOLABEL, meaning no security.evm.
 
-> On Wed, 2017-10-18 at 11:00 +0200, SF Markus Elfring wrote:
-> > > The printk removals do change the objects.
-> > > 
-> > > The value of that type of change is only for resource limited
-> > > systems.  
-> > 
-> > I imagine that such small code adjustments are also useful for
-> > other systems.  
-> 
-> Your imagination and mine differ.
-> Where do you _think_ it matters?
-> 
-> For instance, nothing about
-> 
-> 	sizeof(type)
-> vs
-> 	sizeof(*ptr)
-> 
-> makes it easier for a human to read the code.
-> 
-
-However, it makes it less error-prone to modify the code.
-
-If you do ptr = malloc(sizeof(*ptr)) and later you change the type of
-the pointer the code is still correct whereas ptr = malloc(sizeof(some
-type) no longer is.
-
-That is the reason the source analysis tool warns about this usage and
-you do not really need any more explanation for *this* change.
-
-The others are not so clear.
-
-Thanks
-
-Michal
+Ah, of course. Ok, how about going with my proposal with an intention
+to relax the restriction around it and HMAC support once we have a
+mechanism for setting multiple xattrs at once?
