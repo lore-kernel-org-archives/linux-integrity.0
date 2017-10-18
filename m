@@ -1,17 +1,16 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:33396 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751224AbdJRQJv (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 18 Oct 2017 12:09:51 -0400
-Message-ID: <1508342988.3958.5.camel@HansenPartnership.com>
-Subject: Re: [PATCH 0/4] char-TPM: Adjustments for ten function
- implementations
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+Received: from mga01.intel.com ([192.55.52.88]:9561 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750955AbdJRQAB (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 18 Oct 2017 12:00:01 -0400
+Date: Wed, 18 Oct 2017 18:59:46 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Corentin Labbe <clabbe.montjoie@gmail.com>,
@@ -21,64 +20,74 @@ Cc: SF Markus Elfring <elfring@users.sourceforge.net>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Nayna Jain <nayna@linux.vnet.ibm.com>,
         Paul Mackerras <paulus@samba.org>,
-        Peter =?ISO-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Date: Wed, 18 Oct 2017 09:09:48 -0700
-In-Reply-To: <20171018151010.r4ojcpzs5l7rpt6r@linux.intel.com>
+        Peter =?iso-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Subject: Re: char/tpm: Improve a size determination in nine functions
+Message-ID: <20171018155946.e7ga7jyex6eia252@linux.intel.com>
 References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
-         <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
-         <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com>
-         <20171017085124.pkrjzghcf5wmcydc@mwanda>
-         <f9b35a67-bd7f-b140-bdc1-cb4886a6b1ea@users.sourceforge.net>
-         <1508255833.3129.33.camel@HansenPartnership.com>
-         <20171018151010.r4ojcpzs5l7rpt6r@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+ <83a166af-aecc-649d-dfe3-a72245345209@users.sourceforge.net>
+ <1508238182.16112.475.camel@linux.intel.com>
+ <c8d37c0407a949c1abb35cfd79c17f58@infineon.com>
+ <1508244757.4234.60.camel@linux.vnet.ibm.com>
+ <alpine.DEB.2.20.1710171456360.5035@hadrien>
+ <1508253453.4234.81.camel@linux.vnet.ibm.com>
+ <9689f036-ba9f-d23b-cf89-c289bc308771@users.sourceforge.net>
+ <20171018145735.lpzwakatsty7emlw@linux.intel.com>
+ <351cf78a-14f6-c6e7-2902-048e7dc57a14@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <351cf78a-14f6-c6e7-2902-048e7dc57a14@users.sourceforge.net>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, 2017-10-18 at 18:10 +0300, Jarkko Sakkinen wrote:
-> On Tue, Oct 17, 2017 at 08:57:13AM -0700, James Bottomley wrote:
+On Wed, Oct 18, 2017 at 05:22:19PM +0200, SF Markus Elfring wrote:
+> >> Do you find my wording "This issue was detected by using the
+> >> Coccinelle software." insufficient?
 > > 
-> > On Tue, 2017-10-17 at 11:25 +0200, SF Markus Elfring wrote:
-> > > 
-> > > > 
-> > > > 
-> > > > Fixes is only for bug fixes.  These don't fix any bugs.
-> > > 
-> > > How do you distinguish these in questionable source code
-> > > from other error categories or software weaknesses?
-> > 
-> > A style change is one that doesn't change the effect of the
-> > execution.
-> >  These don't actually even change the assembly, so there's
-> > programmatic
-> > proof they're not fixing anything.
-> > 
-> > Bug means potentially user visible fault.  In any bug fix commit
-> > you
-> > should document the fault and its effects on users so those
-> > backporting
-> > can decide if they care or not.
-> > 
-> > James
+> > This is fine for cover letter, not for the commits.
 > 
-> OK, I'll adjust my definition of a bug :-)
+> I guess that there are more opinions available by other contributors
+> for this aspect.
+> 
+> 
+> > After your analysis software finds an issue you should manually analyze
+> > what is wrong
+> 
+> This view is generally fine.
+> 
+> 
+> > and document that to the commit message.
+> 
+> I tried it in a single paragraph so far (besides the reference
+> for the tool).
+> 
+> 
+> > This applies to sparse, coccinelle or any other tool.
+> 
+> I find that further possibilities can be considered.
+> 
+> 
+> > Tool-based commit messages are bad for commit history
+> 
+> I disagree to this view.
+> 
+> 
+> > where as clean description gives idea what was done
+> > (if you have to maintain a GIT tree).
+> 
+> How do you think about to offer any wording for an alternative
+> which you would find better?
+> 
+> 
+> > In my opinion tool is doing all the work but the part
+> > that you should do is absent.
+> 
+> Really?
+> 
+> Regards,
+> Markus
 
-Subsystems are free to define bugs in any reasonable way.  However,
-there are two things to note here:
+Commit message should just describe in plain text what you are doing
+and why.
 
-   1. The style guide is just that, a guide; it's not hard and fast rules.
-       That means that violations aren't bugs in the usual sense.
-       However, new code should mostly follow it and if it doesn't, there
-      should be a good reason to go against the guide which should be
-      explained in the change log.
-   2. The coding style evolves, so older drivers usually don't conform.
-       Classifying coding style issues as bugs leads to tons of patches
-      "fixing" older drivers, some of which actually end up breaking the
-      drivers in subtle ways which take ages to be found (at least that's
-      what we've seen in SCSI).
-
-James
+/Jarkko
