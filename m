@@ -1,93 +1,78 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:46386 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751069AbdJRRyN (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 18 Oct 2017 13:54:13 -0400
-Date: Wed, 18 Oct 2017 10:54:12 -0700
-From: Jerry Snitselaar <jsnitsel@redhat.com>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        Kenneth Goldman <kgold@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Peter =?iso-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: Re: char/tpm: Improve a size determination in nine functions
-Message-ID: <20171018175412.mlj2yvyjmvmfdxzd@rhwork>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-References: <1508244757.4234.60.camel@linux.vnet.ibm.com>
- <alpine.DEB.2.20.1710171456360.5035@hadrien>
- <1508253453.4234.81.camel@linux.vnet.ibm.com>
- <9689f036-ba9f-d23b-cf89-c289bc308771@users.sourceforge.net>
- <20171018145735.lpzwakatsty7emlw@linux.intel.com>
- <351cf78a-14f6-c6e7-2902-048e7dc57a14@users.sourceforge.net>
- <20171018155946.e7ga7jyex6eia252@linux.intel.com>
- <55d76224-3019-6614-70ce-ba260bbcd54f@users.sourceforge.net>
- <20171018171858.3lcfr2kcp53fngwv@linux.intel.com>
- <e9638486-7e59-1c5a-87ae-ca0f1fbbd021@users.sourceforge.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-In-Reply-To: <e9638486-7e59-1c5a-87ae-ca0f1fbbd021@users.sourceforge.net>
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47346 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750724AbdJRRwH (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 18 Oct 2017 13:52:07 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9IHoesP143647
+        for <linux-integrity@vger.kernel.org>; Wed, 18 Oct 2017 13:52:07 -0400
+Received: from e06smtp11.uk.ibm.com (e06smtp11.uk.ibm.com [195.75.94.107])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2dp6x912av-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 18 Oct 2017 13:52:06 -0400
+Received: from localhost
+        by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Wed, 18 Oct 2017 18:52:04 +0100
+Received: from d23av01.au.ibm.com (d23av01.au.ibm.com [9.190.234.96])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id v9IHq1KI24510480
+        for <linux-integrity@vger.kernel.org>; Wed, 18 Oct 2017 17:52:03 GMT
+Received: from d23av01.au.ibm.com (localhost [127.0.0.1])
+        by d23av01.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id v9IHq2tq032528
+        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 04:52:02 +1100
+Subject: Re: Writing out EVM protected xattrs while EVM is active
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Matthew Garrett <mjg59@google.com>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Date: Wed, 18 Oct 2017 13:51:58 -0400
+In-Reply-To: <CACdnJuspob9PMrZHQb9Bff1tpa9D6RVBit931FkHLNE-GC35yg@mail.gmail.com>
+References: <CACdnJutQ1NBxfAO1NBJqrrF0en9hc_C=Jy8XxNb5pEiBVwAa0g@mail.gmail.com>
+         <1508291395.4513.95.camel@linux.vnet.ibm.com>
+         <CACdnJuvYoKRdtF7+BZK4yp8JmC_pfaXyZhhwHzPC739OR6mhOg@mail.gmail.com>
+         <1508292499.4513.99.camel@linux.vnet.ibm.com>
+         <CACdnJuscweoJFresHzoQ_va9-eokz12VMz_T2kpJb-iJeSbGzg@mail.gmail.com>
+         <1508295225.4513.123.camel@linux.vnet.ibm.com>
+         <CACdnJuspob9PMrZHQb9Bff1tpa9D6RVBit931FkHLNE-GC35yg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1508349118.4510.14.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed Oct 18 17, SF Markus Elfring wrote:
->> For 1/4 and 2/4: explain why the message can be omitted.
->
->Why did you not reply directly with this request for the update steps
->with the subject "Delete an error message for a failed memory allocation
->in tpm_...()"?
->
->https://patchwork.kernel.org/patch/10009405/
->https://patchwork.kernel.org/patch/10009415/
->
->I find that there can be difficulty to show an appropriate information
->source for the reasonable explanation of this change pattern.
->
+> >> I may be misdiagnosing this, but as far as I can tell IMA_NEW_FILE is
+> >> only set in ima_appraise_measurement() if action is set to something,
+> >> and if ima_match_rules() doesn't match then this will never be the
+> >> case?
+> >
+> > True, but having IMA_NEW_FILE set would only help with writing the
+> > first xattr, not subsequent ones.
+> 
+> Ok. I'm not sure this is easily fixable to handle my use-case without
+> breaking assumptions made in yours, so I'm wondering if a different
+> approach would be better here. For us, there's no problem with
+> updating any of the EVM-protected xattrs at runtime as long as doing
+> so invalidates the iint cache entry (hmm, does setting an xattr bump
+> the iversion? If so, we already get this behaviour). How would you
+> feel about a runtime controllable flag that enabled this, possibly
+> tied into the /sys/kernel/security/evm write? We'd end up with:
+> 
+> 1: Enable HMAC
+> 2: Enable RSA
+> 4: Permit extended attribute writes
+> 
+> Existing behaviour would be preserved since 1 would lock down the
+> interface, and we could reject cases where 1 and 4 are set
+> simultaneously.
 
-Shouldn't this information source for the explanation be the
-submitter? I'd hope they understand what it is they are submitting.
+Here's an alternative, though admittedly one that is more difficult to
+implement and dependent on having a portable EVM signature type.
 
->
->> Remove sentence about Coccinelle.
->
->I got the impression that there is a bit of value in such
->a kind of attribution.
->
->
->> That's all.
->
->I assume that there might be also some communication challenges involved.
->
->
->> 3/4: definitive NAK, too much noise compared to value.
->
->I tried to reduce deviations from the Linux coding style again.
->You do not like such an attempt for this software area so far.
->
->
->> 4/4: this a good commit message.
->
->Why did you not reply directly with this feedback for the update step
->"[PATCH 4/4] char/tpm: Less checks in tpm_ibmvtpm_probe() after error detection"?
->
->https://patchwork.kernel.org/patch/10009429/
->https://lkml.kernel.org/r/<09a2c3a1-1b10-507d-a866-258b570f6da1@users.sourceforge.net>
->
->
->> Requires a Tested-by before can be accepted, which I'm not able to give.
->
->I am curious on how this detail will evolve.
->
->Regards,
->Markus
+Define the equivalent of listxattr that allows writing multiple
+xattrs.  Change option 4 above to "Permit writing a group of extended
+attributes, including an EVM signature, when none currently exist."
+
+Then option 1 and 4 won't need to be mutually exclusive.
+
+Mimi
