@@ -1,93 +1,87 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:9561 "EHLO mga01.intel.com"
+Received: from mga05.intel.com ([192.55.52.43]:15509 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750955AbdJRQAB (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 18 Oct 2017 12:00:01 -0400
-Date: Wed, 18 Oct 2017 18:59:46 +0300
+        id S1750955AbdJRP5x (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 18 Oct 2017 11:57:53 -0400
+Date: Wed, 18 Oct 2017 18:57:49 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Kenneth Goldman <kgold@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Peter =?iso-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: Re: char/tpm: Improve a size determination in nine functions
-Message-ID: <20171018155946.e7ga7jyex6eia252@linux.intel.com>
-References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
- <83a166af-aecc-649d-dfe3-a72245345209@users.sourceforge.net>
- <1508238182.16112.475.camel@linux.intel.com>
- <c8d37c0407a949c1abb35cfd79c17f58@infineon.com>
- <1508244757.4234.60.camel@linux.vnet.ibm.com>
- <alpine.DEB.2.20.1710171456360.5035@hadrien>
- <1508253453.4234.81.camel@linux.vnet.ibm.com>
- <9689f036-ba9f-d23b-cf89-c289bc308771@users.sourceforge.net>
- <20171018145735.lpzwakatsty7emlw@linux.intel.com>
- <351cf78a-14f6-c6e7-2902-048e7dc57a14@users.sourceforge.net>
+To: jmorris@namei.org
+Cc: linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Subject: [GIT PULL] tpmdd updates for Linux 4.15
+Message-ID: <20171018155749.q5sl6chmsr2cwu7n@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <351cf78a-14f6-c6e7-2902-048e7dc57a14@users.sourceforge.net>
+Content-Type: text/plain; charset=iso-8859-1
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Oct 18, 2017 at 05:22:19PM +0200, SF Markus Elfring wrote:
-> >> Do you find my wording "This issue was detected by using the
-> >> Coccinelle software." insufficient?
-> > 
-> > This is fine for cover letter, not for the commits.
-> 
-> I guess that there are more opinions available by other contributors
-> for this aspect.
-> 
-> 
-> > After your analysis software finds an issue you should manually analyze
-> > what is wrong
-> 
-> This view is generally fine.
-> 
-> 
-> > and document that to the commit message.
-> 
-> I tried it in a single paragraph so far (besides the reference
-> for the tool).
-> 
-> 
-> > This applies to sparse, coccinelle or any other tool.
-> 
-> I find that further possibilities can be considered.
-> 
-> 
-> > Tool-based commit messages are bad for commit history
-> 
-> I disagree to this view.
-> 
-> 
-> > where as clean description gives idea what was done
-> > (if you have to maintain a GIT tree).
-> 
-> How do you think about to offer any wording for an alternative
-> which you would find better?
-> 
-> 
-> > In my opinion tool is doing all the work but the part
-> > that you should do is absent.
-> 
-> Really?
-> 
-> Regards,
-> Markus
+Hi
 
-Commit message should just describe in plain text what you are doing
-and why.
+Contains mostly minor fixes.
+
+Selected more essential changes:
+
+* Essential clean up for tpm_crb so that ARM64 and x86 versions do not
+  distract each other as much as before.
+* /dev/tpm0 rejects now too short writes (shorter buffer than specified in
+  the command header.
+* Use DMA-safe buffer in tpm_tis_spi.
 
 /Jarkko
+
+The following changes since commit 25eabb13c7d67ae32298015c5e28d00f604f412c:
+
+  Merge tag 'v4.14-rc2' into next-general (2017-09-24 22:41:55 -0700)
+
+are available in the git repository at:
+
+  git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20171018
+
+for you to fetch changes up to 33957a104c86985f087b08a363590a948c9ff08c:
+
+  tpm, tpm_tis: use ARRAY_SIZE() to define TPM_HID_USR_IDX (2017-10-18 18:28:49 +0300)
+
+----------------------------------------------------------------
+tpmdd updates for Linux 4.15
+
+----------------------------------------------------------------
+Alexander Steffen (5):
+      tpm_tis_spi: Use DMA-safe memory for SPI transfers
+      tpm: Trigger only missing TPM 2.0 self tests
+      tpm: Use dynamic delay to wait for TPM 2.0 self test result
+      tpm: React correctly to RC_TESTING from TPM 2.0 self tests
+      tpm-dev-common: Reject too short writes
+
+Arnd Bergmann (1):
+      tpm: constify transmit data pointers
+
+Colin Ian King (1):
+      tpm_tis: make array cmd_getticks static const to shrink object code size
+
+Jarkko Sakkinen (4):
+      tpm: migrate pubek_show to struct tpm_buf
+      tpm: fix type of a local variable in tpm2_get_cc_attrs_tbl()
+      tpm: fix type of a local variable in tpm2_map_command()
+      tpm: fix type of a local variables in tpm_tis_spi.c
+
+Jiandi An (1):
+      tpm/tpm_crb: Use start method value from ACPI table directly
+
+Jeremy Lefaure (1):
+      tpm, tpm_tis: use ARRAY_SIZE() to define TPM_HID_USR_IDX
+
+Ruben Roy (1):
+      tpm: fix duplicate inline declaration specifier
+
+ drivers/char/tpm/tpm-dev-common.c |  6 +++
+ drivers/char/tpm/tpm-sysfs.c      | 87 +++++++++++++++++++++------------------
+ drivers/char/tpm/tpm.h            | 15 +------
+ drivers/char/tpm/tpm2-cmd.c       | 73 ++++++++++----------------------
+ drivers/char/tpm/tpm2-space.c     |  4 +-
+ drivers/char/tpm/tpm_crb.c        | 59 +++++++++++++-------------
+ drivers/char/tpm/tpm_tis.c        |  5 ++-
+ drivers/char/tpm/tpm_tis_core.c   |  6 +--
+ drivers/char/tpm/tpm_tis_core.h   |  4 +-
+ drivers/char/tpm/tpm_tis_spi.c    | 73 +++++++++++++++++++-------------
+ 10 files changed, 161 insertions(+), 171 deletions(-)
