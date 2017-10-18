@@ -1,49 +1,72 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:46188 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750800AbdJRSS4 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 18 Oct 2017 14:18:56 -0400
-Received: by mail-it0-f67.google.com with SMTP id f187so7393410itb.1
-        for <linux-integrity@vger.kernel.org>; Wed, 18 Oct 2017 11:18:56 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <CACE9dm_vpTi705PJxGZkeNWUyHALZzVc2x=RUw_p=DZCPZfoXw@mail.gmail.com>
-References: <CACdnJutQ1NBxfAO1NBJqrrF0en9hc_C=Jy8XxNb5pEiBVwAa0g@mail.gmail.com>
- <1508291395.4513.95.camel@linux.vnet.ibm.com> <CACdnJuvYoKRdtF7+BZK4yp8JmC_pfaXyZhhwHzPC739OR6mhOg@mail.gmail.com>
- <1508292499.4513.99.camel@linux.vnet.ibm.com> <CACdnJuscweoJFresHzoQ_va9-eokz12VMz_T2kpJb-iJeSbGzg@mail.gmail.com>
- <1508295225.4513.123.camel@linux.vnet.ibm.com> <CACdnJuspob9PMrZHQb9Bff1tpa9D6RVBit931FkHLNE-GC35yg@mail.gmail.com>
- <1508349118.4510.14.camel@linux.vnet.ibm.com> <CACE9dm_vpTi705PJxGZkeNWUyHALZzVc2x=RUw_p=DZCPZfoXw@mail.gmail.com>
-From: Matthew Garrett <mjg59@google.com>
-Date: Wed, 18 Oct 2017 11:18:55 -0700
-Message-ID: <CACdnJuto5CS=k98Tr65jWHPRPnXbVgPb317WxE3_wYuEHV_qgQ@mail.gmail.com>
-Subject: Re: Writing out EVM protected xattrs while EVM is active
-To: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Received: from mout.web.de ([217.72.192.78]:51407 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750807AbdJRSML (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 18 Oct 2017 14:12:11 -0400
+Subject: =?UTF-8?Q?Re:_char/tpm:_Delete_an_error_message_for_a_failed_memory?=
+ =?UTF-8?B?IGFsbG9jYXRpb24gaW4gdHBtX+KApigp?=
+To: Jerry Snitselaar <jsnitsel@redhat.com>,
+        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <1508244757.4234.60.camel@linux.vnet.ibm.com>
+ <alpine.DEB.2.20.1710171456360.5035@hadrien>
+ <1508253453.4234.81.camel@linux.vnet.ibm.com>
+ <9689f036-ba9f-d23b-cf89-c289bc308771@users.sourceforge.net>
+ <20171018145735.lpzwakatsty7emlw@linux.intel.com>
+ <351cf78a-14f6-c6e7-2902-048e7dc57a14@users.sourceforge.net>
+ <20171018155946.e7ga7jyex6eia252@linux.intel.com>
+ <55d76224-3019-6614-70ce-ba260bbcd54f@users.sourceforge.net>
+ <20171018171858.3lcfr2kcp53fngwv@linux.intel.com>
+ <e9638486-7e59-1c5a-87ae-ca0f1fbbd021@users.sourceforge.net>
+ <20171018175412.mlj2yvyjmvmfdxzd@rhwork>
 Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        Kenneth Goldman <kgold@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Message-ID: <61fa394e-05d1-5081-f8bb-3e7dcbd6ccf9@users.sourceforge.net>
+Date: Wed, 18 Oct 2017 20:11:28 +0200
+MIME-Version: 1.0
+In-Reply-To: <20171018175412.mlj2yvyjmvmfdxzd@rhwork>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Oct 18, 2017 at 11:16 AM, Dmitry Kasatkin
-<dmitry.kasatkin@gmail.com> wrote:
-> Hi,
->
-> I have not read thread in detail so sorry if I will repeat something.
->
-> EVM support signatures.
-> https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git/tree/security/integrity/evm/evm_main.c?h=next#n166
->
-> They can be mutable or immutable if I not is marked immutables
-> Mutable signature will be replaced on the first verification.
->
-> And ima-evm-utils has support to generate evm signatures
->
-> https://sourceforge.net/p/linux-ima/ima-evm-utils/ci/master/tree/src/evmctl.c#l1549
->
-> Also there is concept of EVM signatures not bound to inode unique data like
-> ino and generation
+>> Why did you not reply directly with this request for the update steps
+>> with the subject "Delete an error message for a failed memory allocation
+>> in tpm_...()"?
+>>
+>> https://patchwork.kernel.org/patch/10009405/
+>> https://patchwork.kernel.org/patch/10009415/
+>>
+>> I find that there can be difficulty to show an appropriate information
+>> source for the reasonable explanation of this change pattern.
+>>
+> 
+> Shouldn't this information source for the explanation be the submitter?
 
-That's fine - the problem is how to write these out. If EVM is enabled
-there's no way to write security.evm on a new file unless the iint
-entry has an IMA_NEW_FILE flag, and this will only be set if there's
-an IMA policy that covers that file.
+I offered a bit of information. I agree that it could become better eventually.
+
+
+> I'd hope they understand what it is they are submitting.
+
+I do this to some degree.   ;-)
+
+But I would appreciate if I could refer to a single Linux document
+for this change pattern around questionable error messages.
+Would a corresponding link for an accepted explanation in the documentation
+be nice in this case?
+
+Regards,
+Markus
