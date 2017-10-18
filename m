@@ -1,20 +1,20 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34794 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1761976AbdJRAz3 (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38956 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1761896AbdJRAzP (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 17 Oct 2017 20:55:29 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9I0rV87170077
-        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 20:55:29 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2dnrw28t44-1
+        Tue, 17 Oct 2017 20:55:15 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9I0s2F8142948
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 20:55:15 -0400
+Received: from e19.ny.us.ibm.com (e19.ny.us.ibm.com [129.33.205.209])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2dnsskeqgp-1
         (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 20:55:29 -0400
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 20:55:15 -0400
 Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e19.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <bauerman@linux.vnet.ibm.com>;
-        Tue, 17 Oct 2017 20:55:27 -0400
+        Tue, 17 Oct 2017 20:55:13 -0400
 From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
@@ -32,223 +32,213 @@ Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         "David S. Miller" <davem@davemloft.net>,
         "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
         Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-Subject: [PATCH v5 18/18] ima: Write modsig to the measurement list
-Date: Tue, 17 Oct 2017 22:53:31 -0200
+Subject: [PATCH v5 15/18] ima: Add modsig appraise_type option for module-style appended signatures
+Date: Tue, 17 Oct 2017 22:53:28 -0200
 In-Reply-To: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
 References: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
-Message-Id: <20171018005331.2688-19-bauerman@linux.vnet.ibm.com>
+Message-Id: <20171018005331.2688-16-bauerman@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Add modsig support for templates which require the contents of the file
-signature to be included in the measurement list.
+This patch introduces the modsig keyword to the IMA policy syntax to
+specify that a given hook should expect the file to have the IMA signature
+appended to it. Here is how it can be used in a rule:
+
+appraise func=KEXEC_KERNEL_CHECK appraise_type=modsig|imasig
+
+With this rule, IMA will accept either an appended signature or a signature
+stored in the extended attribute. In that case, it will first check whether
+there is an appended signature, and if not it will read it from the
+extended attribute.
+
+For now, the rule above will behave exactly the same as if
+appraise_type=imasig was specified because the actual modsig implementation
+will be introduced in a separate patch.
 
 Suggested-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 ---
- security/integrity/ima/ima.h              |  8 ++++++++
- security/integrity/ima/ima_api.c          |  8 +++++++-
- security/integrity/ima/ima_main.c         | 30 +++++++++++++++++++++++++++++-
- security/integrity/ima/ima_modsig.c       | 20 +++++++++++++++++++-
- security/integrity/ima/ima_template.c     | 12 ++++++++++++
- security/integrity/ima/ima_template_lib.c | 17 +++++++++++++++--
- 6 files changed, 90 insertions(+), 5 deletions(-)
+ Documentation/ABI/testing/ima_policy |  6 +++++-
+ security/integrity/ima/Kconfig       | 10 +++++++++
+ security/integrity/ima/Makefile      |  1 +
+ security/integrity/ima/ima.h         | 11 ++++++++++
+ security/integrity/ima/ima_modsig.c  | 39 ++++++++++++++++++++++++++++++++++++
+ security/integrity/ima/ima_policy.c  | 12 +++++++++--
+ security/integrity/integrity.h       |  3 ++-
+ 7 files changed, 78 insertions(+), 4 deletions(-)
 
+diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
+index e76432b9954d..ced1e1835a30 100644
+--- a/Documentation/ABI/testing/ima_policy
++++ b/Documentation/ABI/testing/ima_policy
+@@ -36,7 +36,7 @@ Description:
+ 			euid:= decimal value
+ 			fowner:= decimal value
+ 		lsm:  	are LSM specific
+-		option:	appraise_type:= [imasig]
++		option:	appraise_type:= [imasig] [modsig|imasig]
+ 			pcr:= decimal value
+ 
+ 		default policy:
+@@ -102,3 +102,7 @@ Description:
+ 
+ 			measure func=KEXEC_KERNEL_CHECK pcr=4
+ 			measure func=KEXEC_INITRAMFS_CHECK pcr=5
++
++		Example of appraise rule allowing modsig appended signatures:
++
++			appraise func=KEXEC_KERNEL_CHECK appraise_type=modsig|imasig
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index 35ef69312811..40c6618d00e6 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -163,6 +163,16 @@ config IMA_APPRAISE_BOOTPARAM
+ 	  This option enables the different "ima_appraise=" modes
+ 	  (eg. fix, log) from the boot command line.
+ 
++config IMA_APPRAISE_MODSIG
++	bool "Support module-style signatures for appraisal"
++	depends on IMA_APPRAISE
++	default n
++	help
++	   Adds support for signatures appended to files. The format of the
++	   appended signature is the same used for signed kernel modules.
++	   The modsig keyword can be used in the IMA policy to allow a hook
++	   to accept such signatures.
++
+ config IMA_TRUSTED_KEYRING
+ 	bool "Require all keys on the .ima keyring be signed (deprecated)"
+ 	depends on IMA_APPRAISE && SYSTEM_TRUSTED_KEYRING
+diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
+index 29f198bde02b..c72026acecc3 100644
+--- a/security/integrity/ima/Makefile
++++ b/security/integrity/ima/Makefile
+@@ -8,5 +8,6 @@ obj-$(CONFIG_IMA) += ima.o
+ ima-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
+ 	 ima_policy.o ima_template.o ima_template_lib.o
+ ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
++ima-$(CONFIG_IMA_APPRAISE_MODSIG) += ima_modsig.o
+ ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
+ obj-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
 diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index b082138461b3..68f471666151 100644
+index c9ba4362760b..156ba218e0b6 100644
 --- a/security/integrity/ima/ima.h
 +++ b/security/integrity/ima/ima.h
-@@ -148,6 +148,7 @@ int ima_init_crypto(void);
- void ima_putc(struct seq_file *m, void *data, int datalen);
- void ima_print_digest(struct seq_file *m, u8 *digest, u32 size);
- struct ima_template_desc *ima_template_desc_current(void);
-+bool ima_current_template_has_sig(void);
- int ima_restore_measurement_entry(struct ima_template_entry *entry);
- int ima_restore_measurement_list(loff_t bufsize, void *buf);
- int ima_measurements_show(struct seq_file *m, void *v);
-@@ -264,6 +265,7 @@ int ima_read_modsig(enum ima_hooks func, const void *buf, loff_t buf_len,
- 		    int *xattr_len);
- int ima_get_modsig_hash(struct evm_ima_xattr_data *hdr, enum hash_algo *algo,
- 			void const **hash, u8 *len);
-+int ima_modsig_serialize_data(struct evm_ima_xattr_data **data, int *data_len);
- int ima_modsig_verify(const unsigned int keyring_id,
- 		      struct evm_ima_xattr_data *hdr);
- void ima_free_xattr_data(struct evm_ima_xattr_data *hdr);
-@@ -334,6 +336,12 @@ static inline int ima_get_modsig_hash(struct evm_ima_xattr_data *hdr,
- 	return -ENOTSUPP;
- }
+@@ -255,6 +255,10 @@ enum hash_algo ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value,
+ int ima_read_xattr(struct dentry *dentry,
+ 		   struct evm_ima_xattr_data **xattr_value);
  
-+static inline int ima_modsig_serialize_data(struct evm_ima_xattr_data **data,
-+					    int *data_len)
++#ifdef CONFIG_IMA_APPRAISE_MODSIG
++bool ima_hook_supports_modsig(enum ima_hooks func);
++#endif
++
+ #else
+ static inline int ima_appraise_measurement(enum ima_hooks func,
+ 					   struct integrity_iint_cache *iint,
+@@ -298,6 +302,13 @@ static inline int ima_read_xattr(struct dentry *dentry,
+ 
+ #endif /* CONFIG_IMA_APPRAISE */
+ 
++#ifndef CONFIG_IMA_APPRAISE_MODSIG
++static inline bool ima_hook_supports_modsig(enum ima_hooks func)
 +{
-+	return -ENOTSUPP;
-+}
-+
- static inline int ima_modsig_verify(const unsigned int keyring_id,
- 				    struct evm_ima_xattr_data *hdr)
- {
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index c6d346e9f708..59a5b044b48b 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -284,7 +284,13 @@ void ima_store_measurement(struct integrity_iint_cache *iint,
- 					    xattr_len, NULL};
- 	int violation = 0;
- 
--	if (iint->measured_pcrs & (0x1 << pcr))
-+	/*
-+	 * We still need to store the measurement in the case of MODSIG because
-+	 * we only have its contents to put in the list at the time of
-+	 * appraisal. See comment in process_measurement for more details.
-+	 */
-+	if ((iint->measured_pcrs & (0x1 << pcr)) &&
-+	    (!xattr_value || xattr_value->type != IMA_MODSIG))
- 		return;
- 
- 	result = ima_alloc_init_template(&event_data, &entry);
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 6a2d960fbd92..0d3390de7432 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -246,7 +246,35 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
- 		rc = ima_appraise_measurement(func, iint, file, buf, size,
- 					      pathname, &xattr_value,
- 					      &xattr_len, opened);
--	if (action & IMA_MEASURE)
-+
-+	/*
-+	 * MODSIG has one corner case we need to deal with here:
-+	 *
-+	 * Suppose the policy has one measure rule for one hook and an appraise
-+	 * rule for a different hook. Suppose also that the template requires
-+	 * the signature to be stored in the measurement list.
-+	 *
-+	 * If a file containing a MODSIG is measured by the first hook before
-+	 * being appraised by the second one, the corresponding entry in the
-+	 * measurement list will not contain the MODSIG because we only fetch it
-+	 * for IMA_APPRAISAL. We don't fetch it earlier because if the file has
-+	 * both a DIGSIG and a MODSIG it's not possible to know which one will
-+	 * be valid without actually doing the appraisal.
-+	 *
-+	 * Therefore, after appraisal of a MODSIG signature we need to store the
-+	 * measurement again if the current template requires storing the
-+	 * signature.
-+	 *
-+	 * With the opposite ordering (the appraise rule triggering before the
-+	 * measurement rule) there is the same problem but it's not possible to
-+	 * do anything about it because at the time we are appraising the
-+	 * signature it's impossible to know whether a measurement will ever
-+	 * need to be stored for this file.
-+	 */
-+	if ((action & IMA_MEASURE) || ((iint->flags & IMA_MEASURE) &&
-+				       xattr_value &&
-+				       xattr_value->type == IMA_MODSIG &&
-+				       ima_current_template_has_sig()))
- 		ima_store_measurement(iint, file, pathname,
- 				      xattr_value, xattr_len, pcr);
- 	if (action & IMA_AUDIT)
-diff --git a/security/integrity/ima/ima_modsig.c b/security/integrity/ima/ima_modsig.c
-index 2786aa97060e..82c3e2693982 100644
---- a/security/integrity/ima/ima_modsig.c
-+++ b/security/integrity/ima/ima_modsig.c
-@@ -27,6 +27,10 @@ struct modsig_hdr {
- 	const void *data;	/* Pointer to data covered by pkcs7_msg. */
- 	size_t data_len;
- 	struct pkcs7_message *pkcs7_msg;
-+	int raw_pkcs7_len;
-+
-+	/* This will be in the measurement list if required by the template. */
-+	struct evm_ima_xattr_data raw_pkcs7;
- };
- 
- /**
-@@ -86,7 +90,7 @@ int ima_read_modsig(enum ima_hooks func, const void *buf, loff_t buf_len,
- 	sig_len = be32_to_cpu(sig->sig_len);
- 	buf_len -= sig_len + sizeof(*sig);
- 
--	hdr = kmalloc(sizeof(*hdr), GFP_KERNEL);
-+	hdr = kmalloc(sizeof(*hdr) + sig_len, GFP_KERNEL);
- 	if (!hdr)
- 		return -ENOMEM;
- 
-@@ -97,6 +101,10 @@ int ima_read_modsig(enum ima_hooks func, const void *buf, loff_t buf_len,
- 		return rc;
- 	}
- 
-+	memcpy(hdr->raw_pkcs7.data, buf + buf_len, sig_len);
-+	hdr->raw_pkcs7_len = sig_len + 1;
-+	hdr->raw_pkcs7.type = IMA_MODSIG;
-+
- 	hdr->type = IMA_MODSIG;
- 	hdr->data = buf;
- 	hdr->data_len = buf_len;
-@@ -129,6 +137,16 @@ int ima_get_modsig_hash(struct evm_ima_xattr_data *hdr, enum hash_algo *algo,
- 	return 0;
- }
- 
-+int ima_modsig_serialize_data(struct evm_ima_xattr_data **data, int *data_len)
-+{
-+	struct modsig_hdr *modsig = (struct modsig_hdr *) *data;
-+
-+	*data = &modsig->raw_pkcs7;
-+	*data_len = modsig->raw_pkcs7_len;
-+
-+	return 0;
-+}
-+
- int ima_modsig_verify(const unsigned int keyring_id,
- 		      struct evm_ima_xattr_data *hdr)
- {
-diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
-index 3cc1d2763fd2..a5bad6996334 100644
---- a/security/integrity/ima/ima_template.c
-+++ b/security/integrity/ima/ima_template.c
-@@ -228,6 +228,18 @@ struct ima_template_desc *ima_template_desc_current(void)
- 	return ima_template;
- }
- 
-+bool ima_current_template_has_sig(void)
-+{
-+	struct ima_template_desc *template = ima_template_desc_current();
-+	int i;
-+
-+	for (i = 0; i < template->num_fields; i++)
-+		if (!strcmp(template->fields[i]->field_id, "sig"))
-+			return true;
-+
 +	return false;
 +}
++#endif
 +
- int __init ima_init_template(void)
- {
- 	struct ima_template_desc *template = ima_template_desc_current();
-diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-index e8ec783b6a8d..d0e85def0ae9 100644
---- a/security/integrity/ima/ima_template_lib.c
-+++ b/security/integrity/ima/ima_template_lib.c
-@@ -379,10 +379,23 @@ int ima_eventsig_init(struct ima_event_data *event_data,
- 		      struct ima_field_data *field_data)
- {
- 	struct evm_ima_xattr_data *xattr_value = event_data->xattr_value;
-+	int xattr_len = event_data->xattr_len;
+ /* LSM based policy rules require audit */
+ #ifdef CONFIG_IMA_LSM_RULES
  
--	if (!xattr_value || xattr_value->type != EVM_IMA_XATTR_DIGSIG)
-+	if (!is_ima_sig(xattr_value))
- 		return 0;
- 
--	return ima_write_template_field_data(xattr_value, event_data->xattr_len,
-+	/*
-+	 * The xattr_value for IMA_MODSIG is a runtime structure containing
-+	 * pointers. Get its raw data instead.
-+	 */
-+	if (xattr_value->type == IMA_MODSIG) {
-+		int rc;
+diff --git a/security/integrity/ima/ima_modsig.c b/security/integrity/ima/ima_modsig.c
+new file mode 100644
+index 000000000000..452ce6048a7e
+--- /dev/null
++++ b/security/integrity/ima/ima_modsig.c
+@@ -0,0 +1,39 @@
++/*
++ * IMA support for appraising module-style appended signatures.
++ *
++ * Copyright (C) 2017  IBM Corporation
++ *
++ * Author:
++ * Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation (version 2 of the License).
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
-+		rc = ima_modsig_serialize_data(&xattr_value, &xattr_len);
-+		if (rc)
-+			return rc;
++#include "ima.h"
++
++/**
++ * ima_hook_supports_modsig - can the policy allow modsig for this hook?
++ *
++ * modsig is only supported by hooks using ima_post_read_file, because only they
++ * preload the contents of the file in a buffer. FILE_CHECK does that in some
++ * cases, but not when reached from vfs_open. POLICY_CHECK can support it, but
++ * it's not useful in practice because it's a text file so deny.
++ */
++bool ima_hook_supports_modsig(enum ima_hooks func)
++{
++	switch (func) {
++	case FIRMWARE_CHECK:
++	case KEXEC_KERNEL_CHECK:
++	case KEXEC_INITRAMFS_CHECK:
++		return true;
++	default:
++		return false;
 +	}
-+
-+	return ima_write_template_field_data(xattr_value, xattr_len,
- 					     DATA_FMT_HEX, field_data);
- }
++}
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 7355d4ab7bf4..c5f98c54e59d 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -854,6 +854,10 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 			ima_log_string(ab, "appraise_type", args[0].from);
+ 			if (strcmp(args[0].from, "imasig") == 0)
+ 				entry->flags |= IMA_DIGSIG_REQUIRED;
++			else if (ima_hook_supports_modsig(entry->func) &&
++				 strcmp(args[0].from, "modsig|imasig") == 0)
++				entry->flags |= IMA_DIGSIG_REQUIRED
++						| IMA_MODSIG_ALLOWED;
+ 			else
+ 				result = -EINVAL;
+ 			break;
+@@ -1139,8 +1143,12 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 			}
+ 		}
+ 	}
+-	if (entry->flags & IMA_DIGSIG_REQUIRED)
+-		seq_puts(m, "appraise_type=imasig ");
++	if (entry->flags & IMA_DIGSIG_REQUIRED) {
++		if (entry->flags & IMA_MODSIG_ALLOWED)
++			seq_puts(m, "appraise_type=modsig|imasig ");
++		else
++			seq_puts(m, "appraise_type=imasig ");
++	}
+ 	if (entry->flags & IMA_PERMIT_DIRECTIO)
+ 		seq_puts(m, "permit_directio ");
+ 	rcu_read_unlock();
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index 657ce4558984..da709558ec8b 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -28,11 +28,12 @@
+ 
+ /* iint cache flags */
+ #define IMA_ACTION_FLAGS	0xff000000
+-#define IMA_ACTION_RULE_FLAGS	0x06000000
++#define IMA_ACTION_RULE_FLAGS	0x16000000
+ #define IMA_DIGSIG		0x01000000
+ #define IMA_DIGSIG_REQUIRED	0x02000000
+ #define IMA_PERMIT_DIRECTIO	0x04000000
+ #define IMA_NEW_FILE		0x08000000
++#define IMA_MODSIG_ALLOWED	0x10000000
+ 
+ #define IMA_DO_MASK		(IMA_MEASURE | IMA_APPRAISE | IMA_AUDIT | \
+ 				 IMA_APPRAISE_SUBMASK)
