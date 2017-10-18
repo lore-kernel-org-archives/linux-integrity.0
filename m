@@ -1,16 +1,14 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:50557 "EHLO mga06.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:42011 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750926AbdJRRTG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 18 Oct 2017 13:19:06 -0400
-Date: Wed, 18 Oct 2017 20:18:58 +0300
+        id S1750807AbdJRRNV (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 18 Oct 2017 13:13:21 -0400
+Date: Wed, 18 Oct 2017 20:13:09 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: SF Markus Elfring <elfring@users.sourceforge.net>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Corentin Labbe <clabbe.montjoie@gmail.com>,
@@ -21,47 +19,71 @@ Cc: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         Nayna Jain <nayna@linux.vnet.ibm.com>,
         Paul Mackerras <paulus@samba.org>,
         Peter =?iso-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: Re: char/tpm: Improve a size determination in nine functions
-Message-ID: <20171018171858.3lcfr2kcp53fngwv@linux.intel.com>
-References: <1508238182.16112.475.camel@linux.intel.com>
- <c8d37c0407a949c1abb35cfd79c17f58@infineon.com>
- <1508244757.4234.60.camel@linux.vnet.ibm.com>
- <alpine.DEB.2.20.1710171456360.5035@hadrien>
- <1508253453.4234.81.camel@linux.vnet.ibm.com>
- <9689f036-ba9f-d23b-cf89-c289bc308771@users.sourceforge.net>
- <20171018145735.lpzwakatsty7emlw@linux.intel.com>
- <351cf78a-14f6-c6e7-2902-048e7dc57a14@users.sourceforge.net>
- <20171018155946.e7ga7jyex6eia252@linux.intel.com>
- <55d76224-3019-6614-70ce-ba260bbcd54f@users.sourceforge.net>
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 0/4] char-TPM: Adjustments for ten function
+ implementations
+Message-ID: <20171018171309.f7idf76ccvofpnpk@linux.intel.com>
+References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
+ <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
+ <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com>
+ <20171017085124.pkrjzghcf5wmcydc@mwanda>
+ <f9b35a67-bd7f-b140-bdc1-cb4886a6b1ea@users.sourceforge.net>
+ <1508255833.3129.33.camel@HansenPartnership.com>
+ <20171018151010.r4ojcpzs5l7rpt6r@linux.intel.com>
+ <1508342988.3958.5.camel@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <55d76224-3019-6614-70ce-ba260bbcd54f@users.sourceforge.net>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1508342988.3958.5.camel@HansenPartnership.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Oct 18, 2017 at 06:43:10PM +0200, SF Markus Elfring wrote:
-> > Commit message should just describe in plain text what you are doing
+On Wed, Oct 18, 2017 at 09:09:48AM -0700, James Bottomley wrote:
+> On Wed, 2017-10-18 at 18:10 +0300, Jarkko Sakkinen wrote:
+> > On Tue, Oct 17, 2017 at 08:57:13AM -0700, James Bottomley wrote:
+> > > 
+> > > On Tue, 2017-10-17 at 11:25 +0200, SF Markus Elfring wrote:
+> > > > 
+> > > > > 
+> > > > > 
+> > > > > Fixes is only for bug fixes.  These don't fix any bugs.
+> > > > 
+> > > > How do you distinguish these in questionable source code
+> > > > from other error categories or software weaknesses?
+> > > 
+> > > A style change is one that doesn't change the effect of the
+> > > execution.
+> > >  These don't actually even change the assembly, so there's
+> > > programmatic
+> > > proof they're not fixing anything.
+> > > 
+> > > Bug means potentially user visible fault.  In any bug fix commit
+> > > you
+> > > should document the fault and its effects on users so those
+> > > backporting
+> > > can decide if they care or not.
+> > > 
+> > > James
+> > 
+> > OK, I'll adjust my definition of a bug :-)
 > 
-> Did other contributors find the wording "Replace ..."
+> Subsystems are free to define bugs in any reasonable way.  However,
+> there are two things to note here:
 > 
+>    1. The style guide is just that, a guide; it's not hard and fast rules.
+>        That means that violations aren't bugs in the usual sense.
+>        However, new code should mostly follow it and if it doesn't, there
+>       should be a good reason to go against the guide which should be
+>       explained in the change log.
+>    2. The coding style evolves, so older drivers usually don't conform.
+>        Classifying coding style issues as bugs leads to tons of patches
+>       "fixing" older drivers, some of which actually end up breaking the
+>       drivers in subtle ways which take ages to be found (at least that's
+>       what we've seen in SCSI).
 > 
-> > and why.
-> 
-> and "... a bit safer according to the Linux coding style convention."
-> sufficient often enough already?
-> 
-> Which description would you find more appropriate for this change pattern?
-> 
-> Regards,
-> Markus
+> James
 
-For 1/4 and 2/4: explain why the message can be omitted. Remove sentence
-about Coccinelle. That's all.
-3/4: definitive NAK, too much noise compared to value.
-4/4: this a good commit message. Requires a Tested-by before can be
-accepted, which I'm not able to give.
-
-Hope this helps.
+Makes sense. Thanks for verbose explanation.
 
 /Jarkko
