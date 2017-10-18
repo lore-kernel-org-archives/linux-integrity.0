@@ -1,82 +1,120 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:47219 "EHLO
-        mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750839AbdJRTsw (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 18 Oct 2017 15:48:52 -0400
-Received: by mail-oi0-f48.google.com with SMTP id h200so10898694oib.4
-        for <linux-integrity@vger.kernel.org>; Wed, 18 Oct 2017 12:48:51 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <CACE9dm-4SaL0sn_gnHy8Uj2pwVA2ztD1YcEj9Zy7TNEmx1Tb8Q@mail.gmail.com>
-References: <20170927221653.11219-1-mjg59@google.com> <1506629560.5691.33.camel@linux.vnet.ibm.com>
- <CACdnJuuveRvCx57ZnYmRWbiwh3XU7AbxZD2W-Gq_dh_h_6L9Mg@mail.gmail.com>
- <1506646397.5691.64.camel@linux.vnet.ibm.com> <CACdnJuueNfLdDnCsmotGhLC58cJXXh35FeZzipJ_ZshScPM=qA@mail.gmail.com>
- <1506711726.5691.141.camel@linux.vnet.ibm.com> <CACdnJuvYNnePfz4H-D=DGMHbrbmZ52JWFoLqX120ALV=o4wwcw@mail.gmail.com>
- <1506715304.5691.151.camel@linux.vnet.ibm.com> <CACdnJutXT6yU70R07m7Nd=7d6RbZr0Nti_r54Z7CffiK2r17zA@mail.gmail.com>
- <1507571511.3748.9.camel@linux.vnet.ibm.com> <CACdnJuv8QSkVNWf7FY2-jakiO2sd8gh1oRTji4w3fvic54kfmA@mail.gmail.com>
- <1507572900.3748.21.camel@linux.vnet.ibm.com> <CACdnJuvOW0Pc42Nuh4QVy4xdYsaUa=H9i=YZW+XB+bg-YnDCUQ@mail.gmail.com>
- <1507574441.3748.40.camel@linux.vnet.ibm.com> <20171009232314.545de76a@totoro>
- <1507583449.3748.46.camel@linux.vnet.ibm.com> <20171010003326.6409ae23@totoro>
- <1507585253.3748.57.camel@linux.vnet.ibm.com> <20171010021052.47d42db6@totoro>
- <1507662460.3420.18.camel@linux.vnet.ibm.com> <CACE9dm-4SaL0sn_gnHy8Uj2pwVA2ztD1YcEj9Zy7TNEmx1Tb8Q@mail.gmail.com>
-From: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Date: Wed, 18 Oct 2017 22:48:50 +0300
-Message-ID: <CACE9dm_Ja8Y8vSCpbaZUnanZJ9msTm1x4dki2+F4g8040OokWw@mail.gmail.com>
-Subject: Re: RFC: Make it practical to ship EVM signatures
+Received: from mx1.redhat.com ([209.132.183.28]:45090 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750877AbdJRTtj (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 18 Oct 2017 15:49:39 -0400
+Date: Wed, 18 Oct 2017 17:49:36 -0200
+From: "Bruno E. O. Meneguele" <brdeoliv@redhat.com>
 To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Mikhail Kurinnoi <viewizard@viewizard.com>,
-        Matthew Garrett <mjg59@google.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc: linux-integrity@vger.kernel.org, lwang@redhat.com
+Subject: Re: IMA appraisal against xz-compressed modules
+Message-ID: <20171018194936.GA10984@glitch>
+References: <20171012145520.GC2495@glitch>
+ <1508037063.3426.79.camel@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="YiEDa0DAkWCtVeE4"
+In-Reply-To: <1508037063.3426.79.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Can you please point me to the patchset email?
+On 14-10, Mimi Zohar wrote:
+> On Thu, 2017-10-12 at 10:55 -0400, Bruno E. O. Meneguele wrote:
+> > Hi, 
+> > 
+> > recently, while playing around with IMA modules check support, I notice
+> > that when the kernel was compiled/installed with XZ-compressed modules
+> > the IMA kernel infra returns -EACCESS on modules initialization. Let me
+> > detail a bit more:
+> > 
+> > I created the policy file (/etc/ima/ima-policy) with
+> > 
+> > measure func=MODULE_CHECK uid=0
+> > (... and more, policy file is attached)
+> > 
+> > then rebooted the kernel (that was built with XZ-compressed modules) and
+> > a bunch of modules didn't load, e.g.:
+> > 
+> > without ima-policy:
+> > # lsmod | wc -l
+> > 32
+> > 
+> > with it:
+> > # lsmod | wc -l
+> > 14
+> > 
+> > these 14 modules were all loaded during initram booting phase, but if I
+> > rmmod some of them and try to modprobe (strace output):
+> > 
+> > init_module(0x55b9bcc9bba0, 17763, "") = -1 EACCES (Permission denied)
+> > 
+> > The point is that there is no violation, because the error occurs right
+> > after kmod calls init_module() and the call follows to ima_read_file()
+> > (kernel tree: security/integrity/ima/ima_main.c) which returns -EACCES,
+> > since there is no 'file' structure available (init_module uses memory
+> > region only and not file descriptor).
+> 
+> IMA hashes/signatures are stored as xattrs, which requires a file
+> descriptor.  IMA only supports the new kernel module syscall, which
+> provides the file descriptor.
+> 
 
-Thanks,
-Dmitry
+Patches from Thiago Bauerman
+(http://www.spinics.net/lists/linux-integrity/msg00243.html) could help
+to solve this, don't they?
 
+> > I notice this behavior using Fedora 26 (using SELinux as sec framework)
+> > and up-to-date kernel, the question is: should IMA kernel mechanism
+> > support memory regions integrity measurements, maybe following the steps
+> > that MODULE_SIGNATURE takes (that check for module signature through its
+> > mmap region), allowing compressed modules to be loaded? Or kernels built
+> > with XZ/GZ-compressed modules was never meant to be supported? Is it a
+> > bug or a possible enhancement?
+> 
+> If the IMA policy requires kernel modules to be signed, an appended
+> signature is permitted as long as the kernel is configured with
+> CONFIG_MODULE_SIG_FORCE enabled.
+> 
 
-On Fri, Oct 13, 2017 at 2:09 AM, Dmitry Kasatkin
-<dmitry.kasatkin@gmail.com> wrote:
-> Hi all,
->
-> [switched to plain text]
->
-> I will check Mikhail's patches.
-> Give me a moment.
->
-> Thanks,
-> Dmitry
->
->
-> On Tue, Oct 10, 2017 at 10:07 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
->> On Tue, 2017-10-10 at 02:10 +0300, Mikhail Kurinnoi wrote:
->>> For now, we don't have ready for upstream "immutable" EVM signature
->>> format support patch. Both, Dmitry's and my, patches need more work
->>> in order to prevent file's data changes (in case of IMA hash) and
->>> metadata changes for files signed by "immutable" EVM xattr (same idea
->>> as we already have for IMA digsig, that prevent file's data change).
->>
->> After looking at your patches again, I think we should combine the
->> "immutable" and "portable" concepts so that the new "portable"
->> signature type is written out and considered "immutable".
->>
->> Dmitry's patch does prevent the file from changing, but that code is
->> in IMA, but should be in EVM.  I agree we can defer preventing the
->> file from changing.
->>
->> Mimi
->>
->
->
->
-> --
-> Thanks,
-> Dmitry
+Right, but it's also possible to note that CONFIG_MODULE_SIG_FORCE is
+handled on kernel/module.c and has a kernel cmdline param,
+module.sig_enforce, that is read in case CONFIG_MODULE_SIG_FORCE is not
+set. Wouldn't be better ima_read_file depend on this cmdline param
+instead directly on the CONFIG? That way kernels compiled without
+CONFIG_MODULE_SIG_FORCE set as default would have the option to enable
+the kernel param and use their normal policy (MODULE_CHECK).
 
+What do you think?
 
+> Mimi
+> 
+> > Well, thank you guys in advance.
+> > 
+> > /etc/ima/ima-policy:
+> > 
+> > # PROC_SUPER_MAGIC
+> > dont_measure fsmagic=0x9fa0
+> > # SYSFS_MAGIC
+> > dont_measure fsmagic=0x62656572
+> > # DEBUGFS_MAGIC
+> > dont_measure fsmagic=0x64626720
+> > # TMPFS_MAGIC
+> > dont_measure fsmagic=0x01021994
+> > # RAMFS_MAGIC
+> > dont_measure fsmagic=0x858458f6
+> > # SECURITYFS_MAGIC
+> > dont_measure fsmagic=0x73636673
+> > # MEASUREMENTS
+> > measure func=BPRM_CHECK
+> > measure func=FILE_MMAP mask=MAY_EXEC
+> > measure func=MODULE_CHECK uid=0
+> > 
+> 
 
 -- 
-Thanks,
-Dmitry
+bmeneg 
+PGP Key: http://bmeneg.com/pubkey.txt
+
+
+    [ Part 2, Application/PGP-SIGNATURE (Name: "signature.asc") 499 bytes. ]
+    [ Unable to print this part. ]
