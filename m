@@ -1,54 +1,93 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.12]:52657 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757790AbdJRJBE (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 18 Oct 2017 05:01:04 -0400
-Subject: Re: char-TPM: Adjustments for ten function implementations
-To: Joe Perches <joe@perches.com>, linux-integrity@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Kenneth Goldman <kgold@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
- <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
- <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com>
- <20171017085124.pkrjzghcf5wmcydc@mwanda>
- <f9b35a67-bd7f-b140-bdc1-cb4886a6b1ea@users.sourceforge.net>
- <1508255833.3129.33.camel@HansenPartnership.com>
- <1508280210.6530.32.camel@perches.com>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Message-ID: <bf7fc26c-bdc9-c752-72c7-f44c22f4a328@users.sourceforge.net>
-Date: Wed, 18 Oct 2017 11:00:14 +0200
-MIME-Version: 1.0
-In-Reply-To: <1508280210.6530.32.camel@perches.com>
-Content-Type: text/plain; charset=utf-8
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56000 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1761753AbdJRAyz (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 17 Oct 2017 20:54:55 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9I0rV8g131971
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 20:54:54 -0400
+Received: from e18.ny.us.ibm.com (e18.ny.us.ibm.com [129.33.205.208])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2dntfh4y84-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 20:54:54 -0400
+Received: from localhost
+        by e18.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <bauerman@linux.vnet.ibm.com>;
+        Tue, 17 Oct 2017 20:54:54 -0400
+From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <james.l.morris@oracle.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jessica Yu <jeyu@redhat.com>,
+        Rusty Russell <rusty@rustcorp.com.au>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+Subject: [PATCH v5 11/18] ima: Export func_tokens
+Date: Tue, 17 Oct 2017 22:53:24 -0200
+In-Reply-To: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
+References: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
+Message-Id: <20171018005331.2688-12-bauerman@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-> The printk removals do change the objects.
-> 
-> The value of that type of change is only for resource limited systems.
+ima_read_modsig will need it so that it can show an error message.
 
-I imagine that such small code adjustments are also useful for other systems.
+Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+---
+ security/integrity/ima/ima.h        |  2 ++
+ security/integrity/ima/ima_policy.c | 12 ++++++------
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
-
-> Markus' changelogs leave much to be desired.
-
-Would you like to help more to improve the provided information
-for the shown change patterns?
-
-Regards,
-Markus
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 4e61d3189b72..c9ba4362760b 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -195,6 +195,8 @@ enum ima_hooks {
+ 	__ima_hooks(__ima_hook_enumify)
+ };
+ 
++extern const char *const func_tokens[];
++
+ /* LIM API function definitions */
+ int ima_get_action(struct inode *inode, int mask,
+ 		   enum ima_hooks func, int *pcr);
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index efd8e1c60c10..7355d4ab7bf4 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -959,6 +959,12 @@ void ima_delete_rules(void)
+ 	}
+ }
+ 
++#define __ima_hook_stringify(str)	(#str),
++
++const char *const func_tokens[] = {
++	__ima_hooks(__ima_hook_stringify)
++};
++
+ #ifdef	CONFIG_IMA_READ_POLICY
+ enum {
+ 	mask_exec = 0, mask_write, mask_read, mask_append
+@@ -971,12 +977,6 @@ static const char *const mask_tokens[] = {
+ 	"MAY_APPEND"
+ };
+ 
+-#define __ima_hook_stringify(str)	(#str),
+-
+-static const char *const func_tokens[] = {
+-	__ima_hooks(__ima_hook_stringify)
+-};
+-
+ void *ima_policy_start(struct seq_file *m, loff_t *pos)
+ {
+ 	loff_t l = *pos;
