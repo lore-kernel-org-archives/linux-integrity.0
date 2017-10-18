@@ -1,83 +1,80 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47685 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933296AbdJRDTC (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 17 Oct 2017 23:19:02 -0400
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        SF Markus Elfring <elfring@users.sourceforge.net>,
-        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Kenneth Goldman <kgold@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Peter =?utf-8?Q?H=C3=BCwe?= <PeterHuewe@gmx.de>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 0/4] char-TPM: Adjustments for ten function implementations
-In-Reply-To: <1508241146.4234.16.camel@linux.vnet.ibm.com>
-References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net> <20171016183139.otyh3m5c5yurtmow@linux.intel.com> <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com> <20171017085124.pkrjzghcf5wmcydc@mwanda> <alpine.DEB.2.20.1710171055100.5035@hadrien> <20171017094434.csarc5fw5d32u64w@mwanda> <alpine.DEB.2.20.1710171211210.5035@hadrien> <1508241146.4234.16.camel@linux.vnet.ibm.com>
-Date: Wed, 18 Oct 2017 14:18:57 +1100
-Message-ID: <87lgk9i1ni.fsf@concordia.ellerman.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42470 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750985AbdJRCx4 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 17 Oct 2017 22:53:56 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9I2rsGB103631
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 22:53:56 -0400
+Received: from e06smtp13.uk.ibm.com (e06smtp13.uk.ibm.com [195.75.94.109])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2dnsskjt5u-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 22:53:55 -0400
+Received: from localhost
+        by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Wed, 18 Oct 2017 03:53:53 +0100
+Received: from d23av04.au.ibm.com (d23av04.au.ibm.com [9.190.235.139])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id v9I2rnZV27131904
+        for <linux-integrity@vger.kernel.org>; Wed, 18 Oct 2017 02:53:50 GMT
+Received: from d23av04.au.ibm.com (localhost [127.0.0.1])
+        by d23av04.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id v9I2rrmk004647
+        for <linux-integrity@vger.kernel.org>; Wed, 18 Oct 2017 13:53:53 +1100
+Subject: Re: Writing out EVM protected xattrs while EVM is active
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Matthew Garrett <mjg59@google.com>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Date: Tue, 17 Oct 2017 22:53:45 -0400
+In-Reply-To: <CACdnJuscweoJFresHzoQ_va9-eokz12VMz_T2kpJb-iJeSbGzg@mail.gmail.com>
+References: <CACdnJutQ1NBxfAO1NBJqrrF0en9hc_C=Jy8XxNb5pEiBVwAa0g@mail.gmail.com>
+         <1508291395.4513.95.camel@linux.vnet.ibm.com>
+         <CACdnJuvYoKRdtF7+BZK4yp8JmC_pfaXyZhhwHzPC739OR6mhOg@mail.gmail.com>
+         <1508292499.4513.99.camel@linux.vnet.ibm.com>
+         <CACdnJuscweoJFresHzoQ_va9-eokz12VMz_T2kpJb-iJeSbGzg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1508295225.4513.123.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
-> On Tue, 2017-10-17 at 12:11 +0200, Julia Lawall wrote:
->> On Tue, 17 Oct 2017, Dan Carpenter wrote:
->> > On Tue, Oct 17, 2017 at 10:56:42AM +0200, Julia Lawall wrote:
->> > > On Tue, 17 Oct 2017, Dan Carpenter wrote:
->> > > > On Mon, Oct 16, 2017 at 09:35:12PM +0300, Jarkko Sakkinen wrote:
->> > > > >
->> > > > > A minor complaint: all commits are missing "Fixes:" tag.
->> > > > >
->> > > >
->> > > > Fixes is only for bug fixes.  These don't fix any bugs.
->> > >
->> > > 0-day seems to put Fixes for everything.  Should they be removed when the
->> > > old code is undesirable but doesn't actually cause a crash, eg out of date
->> > > API.
->> >
->> > Yeah, I feel like Fixes tags don't belong for API updates and cleanups.
->> 
->> OK, I will remove them from the patches that go through me where they
->> don't seem appropriate.
->
-> The "Fixes" tag is an indication that the patch should be backported.
+On Tue, 2017-10-17 at 19:13 -0700, Matthew Garrett wrote:
+> On Tue, Oct 17, 2017 at 7:08 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> > On Tue, 2017-10-17 at 19:02 -0700, Matthew Garrett wrote:
+> >
+> >> Is this accurate? If there's no IMA policy that covers the file in
+> >> question (eg, appraise is limited to a specific security context or
+> >> owner), will IMA_NEW ever be set? It looks like that codepath will
+> >> only be entered if there's a rule that matches. The EVM xattr
+> >> protections appear to be called regardless, which means that there's
+> >> then no way to write out attributes on them at runtime.
+> >
+> > Updating/writing security.evm is triggered by writing or updating ANY
+> > file metadata included in the HMAC calculation.  There is no
+> > requirement for security.ima to exist.
+> 
+> In this case there's no symmetric key loaded, so security.evm won't be
+> updated. Here's what's happening:
+> 
+> 1) Configure an IMA policy that only appraises a subset of files
+> 2) Create a new file that does not match the appraisal rule.
+> IMA_NEW_FILE isn't set because no rule matched.
+> 3) Attempt to write security.ima, security.capability and security.evm
+> on the new file. EVM blocks this because IMA_NEW_FILE isn't set. 
 
-No it's not that strong. It's an indication that the patch fixes another
-commit, which may or may not mean it should be backported depending on
-the preferences of the backporter. If it *does* need backporting then
-the Fixes tag helps identify where it should go.
+Are you writing these xattrs before or after you closed the file?
+ Once the file is closed, even if the IMA_NEW_FILE flag had been set,
+it would be removed.
 
-The doco is actually pretty well worded IMO:
+This normally works because the file would have been hashed and
+written out as security.ima, causing security.evm to be written out as
+well.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst#n183
+> I may be misdiagnosing this, but as far as I can tell IMA_NEW_FILE is
+> only set in ima_appraise_measurement() if action is set to something,
+> and if ima_match_rules() doesn't match then this will never be the
+> case?
 
-  If your patch fixes a bug in a specific commit, e.g. you found an issue using
-  ``git bisect``, please use the 'Fixes:' tag with the first 12 characters of
-  the SHA-1 ID, and the one line summary.
-
-and:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst#n602
-
-  A Fixes: tag indicates that the patch fixes an issue in a previous commit. It
-  is used to make it easy to determine where a bug originated, which can help
-  review a bug fix. This tag also assists the stable kernel team in determining
-  which stable kernel versions should receive your fix. This is the preferred
-  method for indicating a bug fixed by the patch. See :ref:`describe_changes`
-  for more details.
-
-
-cheers
+True, but having IMA_NEW_FILE set would only help with writing the
+first xattr, not subsequent ones.
