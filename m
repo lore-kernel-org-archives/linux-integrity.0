@@ -1,20 +1,20 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33802 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34354 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1761790AbdJRAzA (ORCPT
+        by vger.kernel.org with ESMTP id S1753529AbdJRAx7 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 17 Oct 2017 20:55:00 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9I0rVHv170109
-        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 20:54:59 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2dnrw28snd-1
+        Tue, 17 Oct 2017 20:53:59 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9I0rVes115407
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 20:53:59 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2dnsxu62gn-1
         (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 20:54:59 -0400
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Oct 2017 20:53:59 -0400
 Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <bauerman@linux.vnet.ibm.com>;
-        Tue, 17 Oct 2017 20:54:58 -0400
+        Tue, 17 Oct 2017 20:53:58 -0400
 From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
@@ -32,255 +32,200 @@ Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         "David S. Miller" <davem@davemloft.net>,
         "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
         Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-Subject: [PATCH v5 12/18] MODSIGN: Export module signature definitions
-Date: Tue, 17 Oct 2017 22:53:25 -0200
-In-Reply-To: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
-References: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
-Message-Id: <20171018005331.2688-13-bauerman@linux.vnet.ibm.com>
+Subject: [PATCH v5 00/18] Appended signatures support for IMA appraisal
+Date: Tue, 17 Oct 2017 22:53:13 -0200
+Message-Id: <20171018005331.2688-1-bauerman@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-IMA will use the module_signature format for append signatures, so export
-the relevant definitions and factor out the code which verifies that the
-appended signature trailer is valid.
+Hello,
 
-Also, create a CONFIG_MODULE_SIG_FORMAT option so that IMA can select it
-and be able to use validate_module_signature without having to depend on
-CONFIG_MODULE_SIG.
+The main highlight in this version is that it fixes a bug where the modsig
+wasn't being included in the measurement list if the appraised file was
+already measured by another rule. The fix is in the last patch.
 
-Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
----
- include/linux/module.h           |  3 --
- include/linux/module_signature.h | 47 +++++++++++++++++++++++++
- init/Kconfig                     |  6 +++-
- kernel/Makefile                  |  2 +-
- kernel/module.c                  |  1 +
- kernel/module_signing.c          | 74 +++++++++++++++++-----------------------
- 6 files changed, 85 insertions(+), 48 deletions(-)
+Another change is that the last patch in the v4 series ("ima: Support
+module-style appended signatures for appraisal") has been broken up into
+smaller patches. I may have overdone it...
 
-diff --git a/include/linux/module.h b/include/linux/module.h
-index fe5aa3736707..108874af9838 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -23,9 +23,6 @@
- #include <linux/percpu.h>
- #include <asm/module.h>
- 
--/* In stripped ARM and x86-64 modules, ~ is surprisingly rare. */
--#define MODULE_SIG_STRING "~Module signature appended~\n"
--
- /* Not Yet Implemented */
- #define MODULE_SUPPORTED_DEVICE(name)
- 
-diff --git a/include/linux/module_signature.h b/include/linux/module_signature.h
-new file mode 100644
-index 000000000000..e80728e5b86c
---- /dev/null
-+++ b/include/linux/module_signature.h
-@@ -0,0 +1,47 @@
-+/* Module signature handling.
-+ *
-+ * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public Licence
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the Licence, or (at your option) any later version.
-+ */
-+
-+#ifndef _LINUX_MODULE_SIGNATURE_H
-+#define _LINUX_MODULE_SIGNATURE_H
-+
-+/* In stripped ARM and x86-64 modules, ~ is surprisingly rare. */
-+#define MODULE_SIG_STRING "~Module signature appended~\n"
-+
-+enum pkey_id_type {
-+	PKEY_ID_PGP,		/* OpenPGP generated key ID */
-+	PKEY_ID_X509,		/* X.509 arbitrary subjectKeyIdentifier */
-+	PKEY_ID_PKCS7,		/* Signature in PKCS#7 message */
-+};
-+
-+/*
-+ * Module signature information block.
-+ *
-+ * The constituents of the signature section are, in order:
-+ *
-+ *	- Signer's name
-+ *	- Key identifier
-+ *	- Signature data
-+ *	- Information block
-+ */
-+struct module_signature {
-+	u8	algo;		/* Public-key crypto algorithm [0] */
-+	u8	hash;		/* Digest algorithm [0] */
-+	u8	id_type;	/* Key identifier type [PKEY_ID_PKCS7] */
-+	u8	signer_len;	/* Length of signer's name [0] */
-+	u8	key_id_len;	/* Length of key identifier [0] */
-+	u8	__pad[3];
-+	__be32	sig_len;	/* Length of signature data */
-+};
-+
-+int validate_module_sig(const struct module_signature *ms, size_t file_len);
-+int mod_verify_sig(const void *mod, unsigned long *_modlen);
-+
-+#endif /* _LINUX_MODULE_SIGNATURE_H */
-diff --git a/init/Kconfig b/init/Kconfig
-index 78cb2461012e..230e9f3aedaf 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1748,7 +1748,7 @@ config MODULE_SRCVERSION_ALL
- config MODULE_SIG
- 	bool "Module signature verification"
- 	depends on MODULES
--	select SYSTEM_DATA_VERIFICATION
-+	select MODULE_SIG_FORMAT
- 	help
- 	  Check modules for valid signatures upon load: the signature
- 	  is simply appended to the module. For more information see
-@@ -1763,6 +1763,10 @@ config MODULE_SIG
- 	  debuginfo strip done by some packagers (such as rpmbuild) and
- 	  inclusion into an initramfs that wants the module size reduced.
- 
-+config MODULE_SIG_FORMAT
-+	def_bool n
-+	select SYSTEM_DATA_VERIFICATION
-+
- config MODULE_SIG_FORCE
- 	bool "Require modules to be validly signed"
- 	depends on MODULE_SIG
-diff --git a/kernel/Makefile b/kernel/Makefile
-index ed470aac53da..20fd6d76232e 100644
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@ -57,7 +57,7 @@ obj-y += up.o
- endif
- obj-$(CONFIG_UID16) += uid16.o
- obj-$(CONFIG_MODULES) += module.o
--obj-$(CONFIG_MODULE_SIG) += module_signing.o
-+obj-$(CONFIG_MODULE_SIG_FORMAT) += module_signing.o
- obj-$(CONFIG_KALLSYMS) += kallsyms.o
- obj-$(CONFIG_BSD_PROCESS_ACCT) += acct.o
- obj-$(CONFIG_CRASH_CORE) += crash_core.o
-diff --git a/kernel/module.c b/kernel/module.c
-index de66ec825992..a259e9df570d 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -19,6 +19,7 @@
- #include <linux/export.h>
- #include <linux/extable.h>
- #include <linux/moduleloader.h>
-+#include <linux/module_signature.h>
- #include <linux/trace_events.h>
- #include <linux/init.h>
- #include <linux/kallsyms.h>
-diff --git a/kernel/module_signing.c b/kernel/module_signing.c
-index 937c844bee4a..204c60d4cc9f 100644
---- a/kernel/module_signing.c
-+++ b/kernel/module_signing.c
-@@ -11,36 +11,38 @@
- 
- #include <linux/kernel.h>
- #include <linux/errno.h>
-+#include <linux/module_signature.h>
- #include <linux/string.h>
- #include <linux/verification.h>
- #include <crypto/public_key.h>
- #include "module-internal.h"
- 
--enum pkey_id_type {
--	PKEY_ID_PGP,		/* OpenPGP generated key ID */
--	PKEY_ID_X509,		/* X.509 arbitrary subjectKeyIdentifier */
--	PKEY_ID_PKCS7,		/* Signature in PKCS#7 message */
--};
--
--/*
-- * Module signature information block.
-- *
-- * The constituents of the signature section are, in order:
-+/**
-+ * validate_module_sig - validate that the given signature is sane
-  *
-- *	- Signer's name
-- *	- Key identifier
-- *	- Signature data
-- *	- Information block
-+ * @ms:		Signature to validate.
-+ * @file_len:	Size of the file to which @ms is appended.
-  */
--struct module_signature {
--	u8	algo;		/* Public-key crypto algorithm [0] */
--	u8	hash;		/* Digest algorithm [0] */
--	u8	id_type;	/* Key identifier type [PKEY_ID_PKCS7] */
--	u8	signer_len;	/* Length of signer's name [0] */
--	u8	key_id_len;	/* Length of key identifier [0] */
--	u8	__pad[3];
--	__be32	sig_len;	/* Length of signature data */
--};
-+int validate_module_sig(const struct module_signature *ms, size_t file_len)
-+{
-+	if (be32_to_cpu(ms->sig_len) >= file_len - sizeof(*ms))
-+		return -EBADMSG;
-+	else if (ms->id_type != PKEY_ID_PKCS7) {
-+		pr_err("Module is not signed with expected PKCS#7 message\n");
-+		return -ENOPKG;
-+	} else if (ms->algo != 0 ||
-+		   ms->hash != 0 ||
-+		   ms->signer_len != 0 ||
-+		   ms->key_id_len != 0 ||
-+		   ms->__pad[0] != 0 ||
-+		   ms->__pad[1] != 0 ||
-+		   ms->__pad[2] != 0) {
-+		pr_err("PKCS#7 signature info has unexpected non-zero params\n");
-+		return -EBADMSG;
-+	}
-+
-+	return 0;
-+}
- 
- /*
-  * Verify the signature on a module.
-@@ -49,6 +51,7 @@ int mod_verify_sig(const void *mod, unsigned long *_modlen)
- {
- 	struct module_signature ms;
- 	size_t modlen = *_modlen, sig_len;
-+	int ret;
- 
- 	pr_devel("==>%s(,%zu)\n", __func__, modlen);
- 
-@@ -56,30 +59,15 @@ int mod_verify_sig(const void *mod, unsigned long *_modlen)
- 		return -EBADMSG;
- 
- 	memcpy(&ms, mod + (modlen - sizeof(ms)), sizeof(ms));
--	modlen -= sizeof(ms);
-+
-+	ret = validate_module_sig(&ms, modlen);
-+	if (ret)
-+		return ret;
- 
- 	sig_len = be32_to_cpu(ms.sig_len);
--	if (sig_len >= modlen)
--		return -EBADMSG;
--	modlen -= sig_len;
-+	modlen -= sig_len + sizeof(ms);
- 	*_modlen = modlen;
- 
--	if (ms.id_type != PKEY_ID_PKCS7) {
--		pr_err("Module is not signed with expected PKCS#7 message\n");
--		return -ENOPKG;
--	}
--
--	if (ms.algo != 0 ||
--	    ms.hash != 0 ||
--	    ms.signer_len != 0 ||
--	    ms.key_id_len != 0 ||
--	    ms.__pad[0] != 0 ||
--	    ms.__pad[1] != 0 ||
--	    ms.__pad[2] != 0) {
--		pr_err("PKCS#7 signature info has unexpected non-zero params\n");
--		return -EBADMSG;
--	}
--
- 	return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
- 				      NULL, VERIFYING_MODULE_SIGNATURE,
- 				      NULL, NULL);
+Finally, I have added some patches removing superfluous parentheses from
+expressions. IMO these patches make it easier (and more pleasant) to read
+the code, and thus easier to understand it. Since I'm not sure how welcome
+the changes are, I split them in 3 "levels" in increasing potential for
+conflict with patches from other people (they can be squashed together when
+applied):
+
+1. patch 2 contains the bare minimum, changing only lines that are also
+   touched by other patches in the series;
+
+2. patch 3 cleans up all the files that are touched by this patch series;
+
+3. patch 4 cleans up all other EVM and IMA files that weren't already fixed
+   by the previous patches.
+
+If unwanted, patches 3 and 4 can be simply skipped without affecting the
+rest of the patches. I have already rebased them from v4.13-rc2 to
+v4.14-rc3 and now to linux-integrity/next with very few easy to resolve
+conflicts, so I think they are worth keeping.
+
+These patches apply on top of today's linux-integrity/next.
+
+Original cover letter:
+
+On the OpenPOWER platform, secure boot and trusted boot are being
+implemented using IMA for taking measurements and verifying signatures.
+Since the kernel image on Power servers is an ELF binary, kernels are
+signed using the scripts/sign-file tool and thus use the same signature
+format as signed kernel modules.
+
+This patch series adds support in IMA for verifying those signatures.
+It adds flexibility to OpenPOWER secure boot, because it allows it to boot
+kernels with the signature appended to them as well as kernels where the
+signature is stored in the IMA extended attribute.
+
+Since modsig is only supported on some specific hooks which don't get
+called often (cf. ima_hook_supports_modsig), it's possible to always check
+for the presence of an appended modsig before looking for the xattr sig. In
+that case, the policy doesn't need to be changed to support the modsig
+keyword. Is that preferable than requiring the policy to explicitly allow a
+modsig like this code does?
+
+I tested these patches with EVM and I believe they don't break it and
+things work as expected, but I'm not really familiar with EVM and its use
+cases so this should be taken with a grain of salt.
+
+I also verified that the code correctly recalculates the file hash if the
+modsig verification fails and the file also has an xattr signature which
+uses a different hash algorithm.
+
+Changes since v4:
+- Patch "ima: Remove redundant conditional operator"
+  - New patch.
+
+- Patch "ima: Remove some superfluous parentheses"
+  - New patch.
+
+- Patch "evm, ima: Remove superfluous parentheses"
+  - New patch.
+
+- Patch "evm, ima: Remove more superfluous parentheses"
+  - New patch.
+
+- Patch "ima: Simplify ima_eventsig_init"
+  - New patch.
+
+- Patch "ima: Improvements in ima_appraise_measurement"
+  - New patch.
+
+- Patch "ima: Don't pass xattr value to EVM xattr verification."
+  - New patch.
+
+- Patch "ima: Export func_tokens"
+  - Split from patch "ima: Support module-style appended signatures for
+    appraisal".
+
+- Patch "ima: Add modsig appraise_type option for module-style appended
+         signatures"
+  - Split from patch "ima: Support module-style appended signatures for
+    appraisal".
+  - Mention modsig option in Documentation/ABI/testing/ima_policy
+    (suggested by Mimi Zohar).
+
+- Patch "ima: Add functions to read and verify a modsig signature"
+  - Split from patch "ima: Support module-style appended signatures for
+    appraisal".
+
+- Patch "ima: Implement support for module-style appended signatures"
+  - Split from patch "ima: Support module-style appended signatures for
+    appraisal".
+  - In ima_appraise_measurement, change the logic of dealing with xattr
+    errors in case the modsig verification fails. With this,
+    process_xattr_error isn't needed anymore.
+
+- Patch "ima: Write modsig to the measurement list"
+  - Split from patch "ima: Support module-style appended signatures for
+    appraisal".
+  - Added ima_current_template_has_sig function.
+  - Removed hdr parameter from ima_modsig_serialize_data.
+  - In ima_store_measurement, continue processing even if the given PCR
+    is already measured if it's for a modsig.
+  - In process_measurement, add exception to store measurement even if
+    IMA_MEASURE is not set when appraising a modsig (suggested by
+    Mimi Zohar).
+  - Call is_ima_sig in ima_eventsig_init.
+
+Changes since v3:
+- Patch "integrity: Introduce struct evm_hmac_xattr"
+  - Renamed new struct to evm_xattr.
+  - Define struct evm_xattr using struct evm_ima_xattr_data, and moved it
+    from evm.h to integrity.h (suggested by Mimi Zohar).
+- Patch "PKCS#7: Introduce verify_pkcs7_message_sig"
+  - Also introduce pkcs7_get_message_sig.
+- Patch "ima: Support appended signatures for appraisal"
+  - Moved check for buffer presence and size from ima_appraise_measurement
+    to ima_read_modsig (suggested by Mimi Zohar).
+  - Factored out handling of ima_read_xattr return value into
+    process_xattr_error in ima_appraise_measurement so that it can be used
+    if the modsig verification fails.
+  - Pass NULL xattr_value to evm_verifyxattr even in the case of xattr
+    signature in ima_appraise_measurement (suggested by Mimi Zohar).
+  - Use switch statement provided by Mimi Zohar to check result of
+    evm_verifyxattr.
+  - If the modsig verification succeeds, copy the hash calculated during
+    the verification to the iint cache (suggested by Mimi Zohar).
+  - Substitute recursion in ima_appraise_measurement by a goto statement
+    back to the main switch statement (suggested by Mimi Zohar).
+
+Thiago Jung Bauermann (18):
+  ima: Remove redundant conditional operator
+  ima: Remove some superfluous parentheses
+  evm, ima: Remove superfluous parentheses
+  evm, ima: Remove more superfluous parentheses
+  ima: Simplify ima_eventsig_init
+  ima: Improvements in ima_appraise_measurement
+  integrity: Introduce struct evm_xattr
+  integrity: Select CONFIG_KEYS instead of depending on it
+  ima: Don't pass xattr value to EVM xattr verification.
+  ima: Store measurement after appraisal
+  ima: Export func_tokens
+  MODSIGN: Export module signature definitions
+  PKCS#7: Introduce pkcs7_get_message_sig and verify_pkcs7_message_sig
+  integrity: Introduce integrity_keyring_from_id
+  ima: Add modsig appraise_type option for module-style appended
+    signatures
+  ima: Add functions to read and verify a modsig signature
+  ima: Implement support for module-style appended signatures
+  ima: Write modsig to the measurement list
+
+ Documentation/ABI/testing/ima_policy      |   6 +-
+ certs/system_keyring.c                    |  60 +++++++---
+ crypto/asymmetric_keys/pkcs7_parser.c     |  12 ++
+ include/crypto/pkcs7.h                    |   2 +
+ include/linux/module.h                    |   3 -
+ include/linux/module_signature.h          |  47 ++++++++
+ include/linux/verification.h              |  10 ++
+ init/Kconfig                              |   6 +-
+ kernel/Makefile                           |   2 +-
+ kernel/module.c                           |   1 +
+ kernel/module_signing.c                   |  74 ++++++-------
+ security/integrity/Kconfig                |   2 +-
+ security/integrity/digsig.c               |  28 +++--
+ security/integrity/evm/evm_crypto.c       |   6 +-
+ security/integrity/evm/evm_main.c         |  23 ++--
+ security/integrity/evm/evm_posix_acl.c    |   8 +-
+ security/integrity/ima/Kconfig            |  13 +++
+ security/integrity/ima/Makefile           |   1 +
+ security/integrity/ima/ima.h              |  75 ++++++++++++-
+ security/integrity/ima/ima_api.c          |  10 +-
+ security/integrity/ima/ima_appraise.c     | 166 +++++++++++++++++++++++-----
+ security/integrity/ima/ima_fs.c           |   6 +-
+ security/integrity/ima/ima_main.c         |  50 +++++++--
+ security/integrity/ima/ima_modsig.c       | 176 ++++++++++++++++++++++++++++++
+ security/integrity/ima/ima_policy.c       |  65 ++++++-----
+ security/integrity/ima/ima_queue.c        |   6 +-
+ security/integrity/ima/ima_template.c     |  37 ++++---
+ security/integrity/ima/ima_template_lib.c |  30 +++--
+ security/integrity/integrity.h            |  10 +-
+ 29 files changed, 739 insertions(+), 196 deletions(-)
+ create mode 100644 include/linux/module_signature.h
+ create mode 100644 security/integrity/ima/ima_modsig.c
