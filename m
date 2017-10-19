@@ -1,85 +1,135 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46634 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752892AbdJSPHN (ORCPT
+Received: from aserp1040.oracle.com ([141.146.126.69]:19535 "EHLO
+        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754080AbdJSPAA (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 19 Oct 2017 11:07:13 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9JF7AX3052326
-        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 11:07:13 -0400
-Received: from e06smtp13.uk.ibm.com (e06smtp13.uk.ibm.com [195.75.94.109])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2dpvu3ffuj-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 11:07:10 -0400
-Received: from localhost
-        by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Thu, 19 Oct 2017 16:05:24 +0100
-Received: from d23av04.au.ibm.com (d23av04.au.ibm.com [9.190.235.139])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id v9JF5JLQ28770454
-        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 15:05:21 GMT
-Received: from d23av04.au.ibm.com (localhost [127.0.0.1])
-        by d23av04.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id v9JF5Odo025623
-        for <linux-integrity@vger.kernel.org>; Fri, 20 Oct 2017 02:05:24 +1100
-Subject: Re: [PATCH] ima: fix ineffective default hash algorithm due to
- invalid hash algorithm boot argument
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Boshi Wang <wangboshi@huawei.com>, linux-integrity@vger.kernel.org
-Date: Thu, 19 Oct 2017 11:05:16 -0400
-In-Reply-To: <20171018033801.220383-1-wangboshi@huawei.com>
-References: <20171018033801.220383-1-wangboshi@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1508425516.3268.18.camel@linux.vnet.ibm.com>
+        Thu, 19 Oct 2017 11:00:00 -0400
+Date: Thu, 19 Oct 2017 17:59:36 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+Cc: SF Markus Elfring <elfring@users.sourceforge.net>,
+        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] char/tpm: Less checks in tpm_ibmvtpm_probe() after
+ error detection
+Message-ID: <20171019145936.4tygxazuuawzs3pa@mwanda>
+References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
+ <09a2c3a1-1b10-507d-a866-258b570f6da1@users.sourceforge.net>
+ <20171019135632.4af42743@kitsune.suse.cz>
+ <20171019133646.gu7qv2tywfk4tcxj@mwanda>
+ <20171019161637.7eaba6e4@kitsune.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20171019161637.7eaba6e4@kitsune.suse.cz>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, 2017-10-18 at 11:38 +0800, Boshi Wang wrote:
-> The hash_setup function always sets hash_setup_done variable. If an
-> invalid hash algorithm is passed, the default hash algorithm specified
-> by CONFIG_IMA_DEFAULT_HASH could not be used.
-
-The Subject line of this email is too long and needs to be clearer.
- Please refer to Documentation/process/submitting-patches.rst section
-14 "The canonical patch format".  I would recommend shortening it to
-something like "ima: fix hash algorithm initialization".
-
-The patch description should start out with a concise explanation of
-the current status, followed by the problem description and end with
-the solution.  For example,
-
-The hash_setup function always sets the hash_setup_done flag, even
-when the hash algorithm is invalid.  This prevents the default hash
-algorithm defined as CONFIG_IMA_DEFAULT_HASH from being used.
-
-This patch sets hash_setup_done flag only for valid hash algorithms.
-
-Mimi
-
-> Signed-off-by: Boshi Wang <wangboshi@huawei.com>
-> ---
->  security/integrity/ima/ima_main.c | 4 ++++
->  1 file changed, 4 insertions(+)
+On Thu, Oct 19, 2017 at 04:16:37PM +0200, Michal Suchanek wrote:
+> On Thu, 19 Oct 2017 16:36:46 +0300
+> Dan Carpenter <dan.carpenter@oracle.com> wrote:
 > 
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 2aebb79..ab70a39 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -51,6 +51,8 @@ static int __init hash_setup(char *str)
->  			ima_hash_algo = HASH_ALGO_SHA1;
->  		else if (strncmp(str, "md5", 3) == 0)
->  			ima_hash_algo = HASH_ALGO_MD5;
-> +		else
-> +			return 1;
->  		goto out;
->  	}
+> > On Thu, Oct 19, 2017 at 01:56:32PM +0200, Michal Suchanek wrote:
+> > > 
+> > > I think a single cleanup section is better than many labels that
+> > > just avoid a single null check.
+> > >  
+> > 
+> > I am not a big advocate of churn, but one err style error handling is
+> > really bug prone.
+> > 
+> > I'm dealing with static analysis so most of the bugs I see are error
+> > handling bugs.  
 > 
-> @@ -60,6 +62,8 @@ static int __init hash_setup(char *str)
->  			break;
->  		}
->  	}
-> +	if (i == HASH_ALGO__LAST)
-> +		return 1;
->  out:
->  	hash_setup_done = 1;
->  	return 1;
+> But it looks like you do not deal much with actual code development
+> because then you would know that some of the changes proposed by the
+> static analysis lead to errors later when the code dynamically changes.
+> 
+
+This is silly...  Anyway, my record is there in git.  I mostly send
+bugfixes, and not cleanups.  In terms of patches that are merged, I
+probably have introduced one or two runtime bugs per year over the past
+decade.
+
+> > That's because error handling is hard to test but easy
+> > for static analysis.  One err style error handling is the worst
+> > because you get things like:
+> > 
+> > fail:
+> > 	kfree(foo->bar);
+> > 	kfree(foo);
+> > 
+> > Oops, foo->bar is a NULL dereference.  And generally, it's a bad thing
+> > to free things that haven't been allocated so, for example, I see
+> > refcounting bugs in error handling paths as well where we decrement
+> > something that wasn't incremented.  Freeing everything is more
+> > complicated than just freeing one specific thing the way standard
+> > kernel error handling works.
+> 
+> It depends on the function in question. If it only allocates memory
+> which is not reference-counted and kfree() checks for the null in most
+> cases it is easier to do just one big cleanup.
+> 
+
+No.  Just always do it standard way.  If there is only one error
+condition just free it directly:
+
+	if (invalid) {
+		free(foo);
+		return -EINVAL;
+	}
+
+But once you add a second error condition then use gotos.  There is no
+reason to deviate from the standard.
+
+> If it is more complex more labels are preferable.
+> 
+> > 
+> > > As long as you can tell easily which resources were already
+> > > allocated and need to be freed it is saner to keep only one cleanup
+> > > section. 
+> > 
+> > Sure, if the function is simple and short then the error handling is
+> > normally simple and short.  This is true for any style of error
+> > handling.
+> > 
+> > > If the code doing the allocation is changed in the future the single
+> > > cleanup can stay whereas multiple labels have to be rewritten
+> > > again.  
+> > 
+> > No, they don't unless you choose bad label names.  
+> 
+> You obviously miss the fact that resource allocation is not always
+> added at the end of the function.
+> 
+
+No, in my example, the new allocation was added to the *start* not the
+end.  It doesn't matter though, standard error handling works the same
+either way.
+
+> You may need to reorder the code and hence the order of allocation or
+> add allocation at the start. Both of these cases break multiple labels
+> and special cases but work with one big cleanup just fine.
+
+No, You don't need to re-order the labels or change them.  The label
+name says what is freed.  The order is the reverse order from how they
+were allocated.  It's very simple.  You just have to keep track of the
+most recently allocated thing:
+
+	foo = alloc();
+	if (!foo)
+		return -ENOMEM;
+
+	bar = alloc();
+	if (!bar)
+		goto free_foo;
+
+	baz = alloc();
+	if (!baz)
+		goto free_bar;
+
+You can tell this code doesn't leak just from looking at the label
+names.
+
+regards,
+dan carpenter
