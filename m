@@ -1,57 +1,46 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:50823 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753574AbdJSRJy (ORCPT
+Received: from mail-it0-f43.google.com ([209.85.214.43]:46319 "EHLO
+        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753298AbdJSRI3 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 19 Oct 2017 13:09:54 -0400
-Received: by mail-it0-f68.google.com with SMTP id 72so11019363itl.5
-        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 10:09:54 -0700 (PDT)
+        Thu, 19 Oct 2017 13:08:29 -0400
+Received: by mail-it0-f43.google.com with SMTP id f187so11042666itb.1
+        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 10:08:29 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1508417552.4510.131.camel@linux.vnet.ibm.com>
-References: <20171018180111.13021-1-mjg59@google.com> <1508417552.4510.131.camel@linux.vnet.ibm.com>
+In-Reply-To: <CACE9dm8P=Y9D1j2JM+9Rj_ZLmRst2ayXiC6CtaweaWmWqpCUrA@mail.gmail.com>
+References: <20170927221653.11219-1-mjg59@google.com> <1506629560.5691.33.camel@linux.vnet.ibm.com>
+ <CACdnJuuveRvCx57ZnYmRWbiwh3XU7AbxZD2W-Gq_dh_h_6L9Mg@mail.gmail.com>
+ <1506646397.5691.64.camel@linux.vnet.ibm.com> <CACdnJuueNfLdDnCsmotGhLC58cJXXh35FeZzipJ_ZshScPM=qA@mail.gmail.com>
+ <1506711726.5691.141.camel@linux.vnet.ibm.com> <CACdnJuvYNnePfz4H-D=DGMHbrbmZ52JWFoLqX120ALV=o4wwcw@mail.gmail.com>
+ <1506715304.5691.151.camel@linux.vnet.ibm.com> <CACdnJutXT6yU70R07m7Nd=7d6RbZr0Nti_r54Z7CffiK2r17zA@mail.gmail.com>
+ <1507571511.3748.9.camel@linux.vnet.ibm.com> <CACdnJuv8QSkVNWf7FY2-jakiO2sd8gh1oRTji4w3fvic54kfmA@mail.gmail.com>
+ <1507572900.3748.21.camel@linux.vnet.ibm.com> <CACdnJuvOW0Pc42Nuh4QVy4xdYsaUa=H9i=YZW+XB+bg-YnDCUQ@mail.gmail.com>
+ <1507574441.3748.40.camel@linux.vnet.ibm.com> <20171009232314.545de76a@totoro>
+ <1507583449.3748.46.camel@linux.vnet.ibm.com> <20171010003326.6409ae23@totoro>
+ <1507585253.3748.57.camel@linux.vnet.ibm.com> <20171010021052.47d42db6@totoro>
+ <1507662460.3420.18.camel@linux.vnet.ibm.com> <CACE9dm-4SaL0sn_gnHy8Uj2pwVA2ztD1YcEj9Zy7TNEmx1Tb8Q@mail.gmail.com>
+ <CACE9dm_Ja8Y8vSCpbaZUnanZJ9msTm1x4dki2+F4g8040OokWw@mail.gmail.com>
+ <1508358623.4510.35.camel@linux.vnet.ibm.com> <CACE9dm92snkpP4vM_Jq0M10F9mHOFu5Zce8GB_HesmNDG9h=Rw@mail.gmail.com>
+ <1508360841.4510.64.camel@linux.vnet.ibm.com> <CACE9dm8P=Y9D1j2JM+9Rj_ZLmRst2ayXiC6CtaweaWmWqpCUrA@mail.gmail.com>
 From: Matthew Garrett <mjg59@google.com>
-Date: Thu, 19 Oct 2017 10:09:53 -0700
-Message-ID: <CACdnJuuaLJ0g0-o567YsEU8pxs4c1xMZLU2viU6FFG6_t9uh3Q@mail.gmail.com>
-Subject: Re: [PATCH] EVM: Add support for portable signature format
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
-        Mikhail Kurinnoi <viewizard@viewizard.com>
+Date: Thu, 19 Oct 2017 10:08:27 -0700
+Message-ID: <CACdnJutRL1hLF1+e5=m8+4eCVYXwLc08DZrwYypZKh1U-pchQQ@mail.gmail.com>
+Subject: Re: RFC: Make it practical to ship EVM signatures
+To: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Mikhail Kurinnoi <viewizard@viewizard.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Oct 19, 2017 at 5:52 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> On Wed, 2017-10-18 at 11:01 -0700, Matthew Garrett wrote:
->> The EVM signature includes the inode number and (optionally) the
->> filesystem UUID, making it impractical to ship EVM signatures in
->> packages. This patch adds a new portable format intended to allow
->> distributions to include EVM signatures. It is identical to the existing
->> format but hardcodes the inode and generation numbers to 0 and does not
->> include the filesystem UUID even if the kernel is configured to do so.
->
-> The existing IMA signature format is already portable and immutable.
->  The new portable and immutable signature type is only needed for EVM.
->  I don't see a need to refer to it as EVM_IMA_XATTR_PORTABLE_DIGSIG.
+On Thu, Oct 19, 2017 at 3:14 AM, Dmitry Kasatkin
+<dmitry.kasatkin@gmail.com> wrote:
+> But how security.ima will protect against cut and paste attack?
+> Attacker can take any other file together with metadata and it will be
+> valid one.
 
-Ok, I can change the name.
-
->> Admins should note that creating portable signatures that do not include
->> the security.ima xattr would allow these signatures to be applied to any
->> file with the same owners and security labels, which would allow
->> subversion of EVM's security guarantees. The kernel does not attempt to
->> enforce this.
->
-> As much as possible IMA and EVM should work independently of each
-> other.  But in this case, I think we need to blur the lines a bit.
->
-> Currently, before writing a new security.evm value, the existing
-> security.evm value is verified.  To do this it has to read the
-> security xattrs to calculate the hash/hmac.  How hard would it really
-> be to verify that a security.ima xattr exists, before writing this new
-> EVM signature?  How hard would it be to make sure that security.ima is
-> included in the calculation on verification?
-
-I don't think it would be especially hard to ensure that security.ima
-is present if the portable digsig format is used, but as you say it
-would blur the lines a little.
+Unless the hashing algorithm is broken, the two files will need to be
+identical in order for security.ima to match. And if the two files are
+identical then an attacker can simply delete one and create a hardlink
+to the other, which will have the same inode.
