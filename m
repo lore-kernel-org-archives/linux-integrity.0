@@ -1,72 +1,66 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.12]:61416 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753212AbdJSUpj (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 19 Oct 2017 16:45:39 -0400
-Subject: Re: char/tpm: Less checks in tpm_ibmvtpm_probe() after error
- detection
-To: Dan Carpenter <dan.carpenter@oracle.com>,
-        =?UTF-8?Q?Michal_Such=c3=a1nek?= <msuchanek@suse.de>,
-        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Kenneth Goldman <kgold@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
- <09a2c3a1-1b10-507d-a866-258b570f6da1@users.sourceforge.net>
- <20171019135632.4af42743@kitsune.suse.cz>
- <20171019133646.gu7qv2tywfk4tcxj@mwanda>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Message-ID: <c1b3b269-46eb-7102-a281-c8f105abdf7e@users.sourceforge.net>
-Date: Thu, 19 Oct 2017 22:44:48 +0200
-MIME-Version: 1.0
-In-Reply-To: <20171019133646.gu7qv2tywfk4tcxj@mwanda>
-Content-Type: text/plain; charset=utf-8
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35716 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752022AbdJSUNz (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 19 Oct 2017 16:13:55 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9JKAYZP127125
+        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 16:13:55 -0400
+Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2dq28j1qp3-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 16:13:54 -0400
+Received: from localhost
+        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Thu, 19 Oct 2017 21:13:53 +0100
+Received: from d23av01.au.ibm.com (d23av01.au.ibm.com [9.190.234.96])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id v9JKDoWj28180506
+        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 20:13:52 GMT
+Received: from d23av01.au.ibm.com (localhost [127.0.0.1])
+        by d23av01.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id v9JKDpTG009328
+        for <linux-integrity@vger.kernel.org>; Fri, 20 Oct 2017 07:13:51 +1100
+Subject: Re: IMA appraisal against xz-compressed modules
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: "Bruno E. O. Meneguele" <brdeoliv@redhat.com>
+Cc: linux-integrity@vger.kernel.org, lwang@redhat.com
+Date: Thu, 19 Oct 2017 16:13:47 -0400
+In-Reply-To: <20171019193101.GA2583@glitch>
+References: <20171012145520.GC2495@glitch>
+         <1508037063.3426.79.camel@linux.vnet.ibm.com>
+         <20171018194936.GA10984@glitch>
+         <1508422840.3268.7.camel@linux.vnet.ibm.com> <20171019193101.GA2583@glitch>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1508444027.3268.53.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
->> If the code doing the allocation is changed in the future the single
->> cleanup can stay whereas multiple labels have to be rewritten again.
+On Thu, 2017-10-19 at 17:31 -0200, Bruno E. O. Meneguele wrote:
+> On 19-10, Mimi Zohar wrote:
+ 
+> > > Right, but it's also possible to note that CONFIG_MODULE_SIG_FORCE is
+> > > handled on kernel/module.c and has a kernel cmdline param,
+> > > module.sig_enforce, that is read in case CONFIG_MODULE_SIG_FORCE is not
+> > > set. Wouldn't be better ima_read_file depend on this cmdline param
+> > > instead directly on the CONFIG? That way kernels compiled without
+> > > CONFIG_MODULE_SIG_FORCE set as default would have the option to enable
+> > > the kernel param and use their normal policy (MODULE_CHECK).
+> > > 
+> > > What do you think?
+> > 
+> > I wasn't aware of the module_param.  Thank you for pointing it out.
+> >  "sig_enforce" is currently defined as static.  Should it be defined
+> > as __initdata?
+> > 
 > 
-> No, they don't unless you choose bad label names.  Perhaps numbered
-> labels?  We don't get a lot of those in the kernel any more.  Label
-> name should be based on what the label does.  Often I see bad label
-> names like generic labels:
+> Well, at first I thought it could stay as it is and just create a
+> "getter" function, like "is_module_sig_enforced()", and use it on
+> ima_main.c through module.h, since this code would be called to every
+> module loaded in runtime.
 > 
-> 	foo = kmalloc();
-> 	if (!foo)
-> 		goto out;
-> 
-> What is out going to do?  Another common anti-pattern is come-from
-> labels:
-> 
-> 	foo = kmalloc();
-> 	if (!foo)
-> 		goto kmalloc_failed;
-> 
-> Obviously, we can see from the if statement that the alloc failed and
-> you *just* know the next line is going to be is going to be:
-> 
-> 	if (invalid)
-> 		goto kmalloc_failed;
-> 
-> Which is wrong because kmalloc didn't fail...  But if the label name is
-> based on what it does then, when you add or a remove an allocation, you
-> just have to edit the one thing.
+> If it's ok to you I can try to write a patch against integrity-next and
+> see how it behaves.
 
-Would you be interested in an update on a topic like "Source code review
-around jump label usage"?
-https://lkml.org/lkml/2015/12/11/378
-
-Regards,
-Markus
+Thanks!
