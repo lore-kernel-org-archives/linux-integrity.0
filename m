@@ -1,79 +1,60 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:54595 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752845AbdJSMEJ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 19 Oct 2017 08:04:09 -0400
-Date: Thu, 19 Oct 2017 14:04:06 +0200
-From: Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Kenneth Goldman <kgold@linux.vnet.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Peter =?UTF-8?B?SMO8d2U=?= <PeterHuewe@gmx.de>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: Re: char/tpm: Improve a size determination in nine functions
-Message-ID: <20171019140406.046d2714@kitsune.suse.cz>
-In-Reply-To: <1508349793.16112.507.camel@linux.intel.com>
-References: <1508238182.16112.475.camel@linux.intel.com>
-        <c8d37c0407a949c1abb35cfd79c17f58@infineon.com>
-        <1508244757.4234.60.camel@linux.vnet.ibm.com>
-        <alpine.DEB.2.20.1710171456360.5035@hadrien>
-        <1508253453.4234.81.camel@linux.vnet.ibm.com>
-        <9689f036-ba9f-d23b-cf89-c289bc308771@users.sourceforge.net>
-        <20171018145735.lpzwakatsty7emlw@linux.intel.com>
-        <351cf78a-14f6-c6e7-2902-048e7dc57a14@users.sourceforge.net>
-        <20171018155946.e7ga7jyex6eia252@linux.intel.com>
-        <55d76224-3019-6614-70ce-ba260bbcd54f@users.sourceforge.net>
-        <20171018171858.3lcfr2kcp53fngwv@linux.intel.com>
-        <e9638486-7e59-1c5a-87ae-ca0f1fbbd021@users.sourceforge.net>
-        <1508349793.16112.507.camel@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50432 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751680AbdJSMAN (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 19 Oct 2017 08:00:13 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9JBxirG037727
+        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 08:00:12 -0400
+Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2dpu631smy-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 08:00:12 -0400
+Received: from localhost
+        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Thu, 19 Oct 2017 13:00:10 +0100
+Received: from d23av04.au.ibm.com (d23av04.au.ibm.com [9.190.235.139])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id v9JC06aG21692474
+        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 12:00:08 GMT
+Received: from d23av04.au.ibm.com (localhost [127.0.0.1])
+        by d23av04.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id v9JC0ABP000863
+        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 23:00:11 +1100
+Subject: Re: [PATCH] EVM: Add support for portable signature format
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
+        Matthew Garrett <mjg59@google.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Cc: Mikhail Kurinnoi <viewizard@viewizard.com>
+Date: Thu, 19 Oct 2017 08:00:02 -0400
+In-Reply-To: <C2D7A727C393B644B70DF4B4DCFB60B921C43F0A@FRAEML521-MBX.china.huawei.com>
+References: <20171018180111.13021-1-mjg59@google.com>
+         <C2D7A727C393B644B70DF4B4DCFB60B921C43F0A@FRAEML521-MBX.china.huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1508414402.4510.117.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, 18 Oct 2017 21:03:13 +0300
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-
-> On Wed, 2017-10-18 at 19:48 +0200, SF Markus Elfring wrote:
-> > > For 1/4 and 2/4: explain why the message can be omitted.  
+On Thu, 2017-10-19 at 11:02 +0000, Dmitry Kasatkin wrote:
+> BTW.
 > 
-> > > That's all.  
-> > 
-> > I assume that there might be also some communication challenges
-> > involved.
-> > 
-> >   
-> > > 3/4: definitive NAK, too much noise compared to value.  
-> > 
-> > I tried to reduce deviations from the Linux coding style again.
-> > You do not like such an attempt for this software area so far.  
-> 
-> The problem here in a time line or what comes first. Definitely, you
-> are trying to fix the code which _is_ upstream vs. the code which
-> _might be_ upstream (exception is drivers/staging).
-> 
-> Why didn't you listen to what people are telling you?
-> 
-> Why are you spending too much time on little sense crap instead of
-> doing real fixes?
-> 
+> Just to refresh my mind. What would be the correct order for setting
+> this signature from package?
+> On any attr/xattr change, EVM will set HMAC.
 
-People are free to spend their time on what they like.
+The system is running without an EVM symmetric key, just an asymmetric
+key.
 
-Even if no commit of this series lands in mainline it has been useful
-to clarify what is preferred style and what is useful fix.
+> What is the value of setting signature after that unless there is a
+> policy to require signature (immutable)?
 
-Thanks
+> In my original patchset portable was also immutable and also
+> included policy support to require EVM signatures.
 
-Michal
+In Matthew's usecase scenario, only immutable and portable signatures
+exist.  The EVM verification for unsigned files will be
+INTEGRITY_UNKNOWN.
+
+Mimi
