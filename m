@@ -1,172 +1,140 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-yw0-f201.google.com ([209.85.161.201]:43322 "EHLO
-        mail-yw0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751112AbdJSXOi (ORCPT
+Received: from mail-oi0-f74.google.com ([209.85.218.74]:41551 "EHLO
+        mail-oi0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752656AbdJSW5y (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 19 Oct 2017 19:14:38 -0400
-Received: by mail-yw0-f201.google.com with SMTP id w5so7875351ywg.2
-        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 16:14:38 -0700 (PDT)
+        Thu, 19 Oct 2017 18:57:54 -0400
+Received: by mail-oi0-f74.google.com with SMTP id l5so9470531oib.0
+        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 15:57:53 -0700 (PDT)
 MIME-Version: 1.0
-Date: Thu, 19 Oct 2017 16:14:32 -0700
-Message-Id: <20171019231433.11723-1-mjg59@google.com>
-Subject: [PATCH 1/2] security: Add a cred_getsecid hook
+Date: Thu, 19 Oct 2017 15:57:39 -0700
+Message-Id: <20171019225739.4196-1-mjg59@google.com>
+Subject: [PATCH] EVM: Allow userland to permit modification of EVM-protected xattrs
 From: Matthew Garrett <mjg59@google.com>
 To: linux-integrity@vger.kernel.org
-Cc: Matthew Garrett <mjg59@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, selinux@tycho.nsa.gov,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: zohar@linux.vnet.ibm.com, Matthew Garrett <mjg59@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-For IMA purposes, we want to be able to obtain the prepared secid in the
-bprm structure before the credentials are committed. Add a cred_getsecid
-hook that makes this possible.
+When EVM is enabled it forbids modification of extended attributes that
+are protected by EVM unless there is already a valid EVM signature. If
+any modification is made, the kernel will then generate a new EVM HMAC.
+However, this does not map well on use cases which use only asymmetric
+EVM signatures, as in this scenario the kernel is unable to generate new
+signatures.
+
+This patch extends the /sys/kernel/security/evm interface to allow
+userland to request that modification of these xattrs be permitted. This
+is only permitted if there is no symmetric key loaded. In this
+configuration, modifying the extended attributes will increase the
+i_version on the file in question, invalidating any existing validation
+state. This allows packaging systems to write out new files, set the
+relevant extended attributes and then move them into place.
 
 Signed-off-by: Matthew Garrett <mjg59@google.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Stephen Smalley <sds@tycho.nsa.gov>
-Cc: Eric Paris <eparis@parisplace.org>
-Cc: selinux@tycho.nsa.gov
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module@vger.kernel.org
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: linux-integrity@vger.kernel.org
 ---
- V2: incorporate Casey's requested change
+ Documentation/ABI/testing/evm      | 33 +++++++++++++++++++++++----------
+ security/integrity/evm/evm.h       |  4 +++-
+ security/integrity/evm/evm_main.c  |  5 +++++
+ security/integrity/evm/evm_secfs.c |  4 ++++
+ 4 files changed, 35 insertions(+), 11 deletions(-)
 
- include/linux/lsm_hooks.h  |  6 ++++++
- include/linux/security.h   |  1 +
- security/security.c        |  7 +++++++
- security/selinux/hooks.c   |  8 ++++++++
- security/smack/smack_lsm.c | 15 +++++++++++++++
- 5 files changed, 37 insertions(+)
-
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index c9258124e417..c28c6f8b65dc 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -554,6 +554,10 @@
-  *	@new points to the new credentials.
-  *	@old points to the original credentials.
-  *	Transfer data from original creds to new creds
-+ * @cred_getsecid:
-+ *	Retrieve the security identifier of the cred structure @c
-+ *	@c contains the credentials, secid will be placed into @secid.
-+ *	In case of failure, @secid will be set to zero.
-  * @kernel_act_as:
-  *	Set the credentials for a kernel service to act as (subjective context).
-  *	@new points to the credentials to be modified.
-@@ -1507,6 +1511,7 @@ union security_list_options {
- 	int (*cred_prepare)(struct cred *new, const struct cred *old,
- 				gfp_t gfp);
- 	void (*cred_transfer)(struct cred *new, const struct cred *old);
-+	void (*cred_getsecid)(const struct cred *c, u32 *secid);
- 	int (*kernel_act_as)(struct cred *new, u32 secid);
- 	int (*kernel_create_files_as)(struct cred *new, struct inode *inode);
- 	int (*kernel_module_request)(char *kmod_name);
-@@ -1779,6 +1784,7 @@ struct security_hook_heads {
- 	struct list_head cred_free;
- 	struct list_head cred_prepare;
- 	struct list_head cred_transfer;
-+	struct list_head cred_getsecid;
- 	struct list_head kernel_act_as;
- 	struct list_head kernel_create_files_as;
- 	struct list_head kernel_read_file;
-diff --git a/include/linux/security.h b/include/linux/security.h
-index ce6265960d6c..14848fef8f62 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -324,6 +324,7 @@ int security_cred_alloc_blank(struct cred *cred, gfp_t gfp);
- void security_cred_free(struct cred *cred);
- int security_prepare_creds(struct cred *new, const struct cred *old, gfp_t gfp);
- void security_transfer_creds(struct cred *new, const struct cred *old);
-+void security_cred_getsecid(const struct cred *c, u32 *secid);
- int security_kernel_act_as(struct cred *new, u32 secid);
- int security_kernel_create_files_as(struct cred *new, struct inode *inode);
- int security_kernel_module_request(char *kmod_name);
-diff --git a/security/security.c b/security/security.c
-index 4bf0f571b4ef..02d217597400 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1004,6 +1004,13 @@ void security_transfer_creds(struct cred *new, const struct cred *old)
- 	call_void_hook(cred_transfer, new, old);
- }
+diff --git a/Documentation/ABI/testing/evm b/Documentation/ABI/testing/evm
+index d2782afb0d96..3de362fd1278 100644
+--- a/Documentation/ABI/testing/evm
++++ b/Documentation/ABI/testing/evm
+@@ -14,20 +14,33 @@ Description:
+ 		generated either locally or remotely using an
+ 		asymmetric key. These keys are loaded onto root's
+ 		keyring using keyctl, and EVM is then enabled by
+-		echoing a value to <securityfs>/evm:
++		echoing a value to <securityfs>/evm made up of the
++		following bits:
  
-+void security_cred_getsecid(const struct cred *c, u32 *secid)
-+{
-+	*secid = 0;
-+	call_void_hook(cred_getsecid, c, secid);
-+}
-+EXPORT_SYMBOL(security_cred_getsecid);
-+
- int security_kernel_act_as(struct cred *new, u32 secid)
- {
- 	return call_int_hook(kernel_act_as, 0, new, secid);
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index f5d304736852..1d11679674a6 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3836,6 +3836,13 @@ static void selinux_cred_transfer(struct cred *new, const struct cred *old)
- 	*tsec = *old_tsec;
- }
+-		1: enable HMAC validation and creation
+-		2: enable digital signature validation
+-		3: enable HMAC and digital signature validation and HMAC
+-		   creation
++		Bit	  Effect
++		0	  Enable HMAC validation and creation
++		1	  Enable digital signature validation
++		2	  Permit modification of EVM-protected xattrs at
++			  runtime. Not supported if HMAC validation and
++			  creation is enabled.
++		31	  Disable further runtime modification of EVM policy
  
-+static void selinux_cred_getsecid(const struct cred *c, u32 *secid)
-+{
-+	rcu_read_lock();
-+	*secid = cred_sid(c);
-+	rcu_read_unlock();
-+}
-+
- /*
-  * set the security data for a kernel service
-  * - all the creation contexts are set to unlabelled
-@@ -6338,6 +6345,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(cred_free, selinux_cred_free),
- 	LSM_HOOK_INIT(cred_prepare, selinux_cred_prepare),
- 	LSM_HOOK_INIT(cred_transfer, selinux_cred_transfer),
-+	LSM_HOOK_INIT(cred_getsecid, selinux_cred_getsecid),
- 	LSM_HOOK_INIT(kernel_act_as, selinux_kernel_act_as),
- 	LSM_HOOK_INIT(kernel_create_files_as, selinux_kernel_create_files_as),
- 	LSM_HOOK_INIT(kernel_module_request, selinux_kernel_module_request),
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 286171a16ed2..ed1bbf201e2f 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -2049,6 +2049,20 @@ static void smack_cred_transfer(struct cred *new, const struct cred *old)
- 	/* cbs copy rule list */
- }
+-		Further writes will be blocked if HMAC support is enabled or
+-		if bit 32 is set:
++		For example:
  
-+/**
-+ * smack_cred_getsecid - get the secid corresponding to a creds structure
-+ * @c: the object creds
-+ * @secid: where to put the result
-+ *
-+ * Sets the secid to contain a u32 version of the smack label.
-+ */
-+static void smack_cred_getsecid(const struct cred *c, u32 *secid)
-+{
-+	rcu_read_lock();
-+	*secid = smk_of_task(c->security);
-+	rcu_read_unlock();
-+}
+-		echo 0x80000002 ><securityfs>/evm
++		echo 1 ><securityfs>/evm
+ 
+-		will enable digital signature validation and block
+-		further writes to <securityfs>/evm.
++		will enable HMAC validation and creation
 +
- /**
-  * smack_kernel_act_as - Set the subjective context in a set of credentials
-  * @new: points to the set of credentials to be modified.
-@@ -4651,6 +4665,7 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(cred_free, smack_cred_free),
- 	LSM_HOOK_INIT(cred_prepare, smack_cred_prepare),
- 	LSM_HOOK_INIT(cred_transfer, smack_cred_transfer),
-+	LSM_HOOK_INIT(cred_getsecid, smack_cred_getsecid),
- 	LSM_HOOK_INIT(kernel_act_as, smack_kernel_act_as),
- 	LSM_HOOK_INIT(kernel_create_files_as, smack_kernel_create_files_as),
- 	LSM_HOOK_INIT(task_setpgid, smack_task_setpgid),
++		echo 0x80000003 ><securityfs>/evm
++
++		will enable HMAC and digital signature validation and
++		HMAC creation and disable all further modification of policy.
++
++		echo 0x80000006 ><securityfs>/evm
++
++		will enable digital signature validation, permit
++		modification of EVM-protected extended attributes and
++		disable all further modification of policy
+ 
+ 		Until this is done, EVM can not create or validate the
+ 		'security.evm' xattr, but returns INTEGRITY_UNKNOWN.
+diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
+index 946efffcc389..81ec6c74b178 100644
+--- a/security/integrity/evm/evm.h
++++ b/security/integrity/evm/evm.h
+@@ -23,9 +23,11 @@
+ 
+ #define EVM_INIT_HMAC	0x0001
+ #define EVM_INIT_X509	0x0002
++#define EVM_PERMIT_XATTR_WRITES	0x0004
+ #define EVM_SETUP       0x80000000 /* userland has signaled key load */
+ 
+-#define EVM_INIT_MASK (EVM_INIT_HMAC | EVM_INIT_X509 | EVM_SETUP)
++#define EVM_INIT_MASK (EVM_INIT_HMAC | EVM_INIT_X509 | EVM_SETUP | \
++		       EVM_PERMIT_XATTR_WRITES)
+ 
+ extern int evm_initialized;
+ extern char *evm_hmac;
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index f29ac3384b2a..1d895226af29 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -303,6 +303,11 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
+ 			return 0;
+ 		goto out;
+ 	}
++
++	/* Policy permits modification of the protected xattrs */
++	if (evm_initialized & EVM_PERMIT_XATTR_WRITES)
++		return 0;
++
+ 	evm_status = evm_verify_current_integrity(dentry);
+ 	if (evm_status == INTEGRITY_NOXATTRS) {
+ 		struct integrity_iint_cache *iint;
+diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
+index 319cf16d6603..0ce5134d3de5 100644
+--- a/security/integrity/evm/evm_secfs.c
++++ b/security/integrity/evm/evm_secfs.c
+@@ -81,6 +81,10 @@ static ssize_t evm_write_key(struct file *file, const char __user *buf,
+ 			return ret;
+ 		/* Forbid further writes after the symmetric key is loaded */
+ 		i |= EVM_SETUP;
++		/* Don't allow protected xattr modification if a
++		 * symmetric key is loaded
++		 */
++		i &= ~(EVM_PERMIT_XATTR_WRITES);
+ 	}
+ 
+ 	evm_initialized |= i;
 -- 
 2.15.0.rc0.271.g36b669edcc-goog
