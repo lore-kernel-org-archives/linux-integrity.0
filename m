@@ -1,20 +1,40 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from smtp2.infineon.com ([217.10.52.18]:44906 "EHLO
-        smtp2.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752742AbdJSRbI (ORCPT
+Received: from mail-it0-f53.google.com ([209.85.214.53]:51880 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754187AbdJSRL0 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 19 Oct 2017 13:31:08 -0400
-From: <Alexander.Steffen@infineon.com>
-To: <tpm2@lists.01.org>, <linux-integrity@vger.kernel.org>,
-        <tpmdd-devel@lists.sourceforge.net>
-Subject: TPM meetup in Prague?
-Date: Thu, 19 Oct 2017 17:31:06 +0000
-Message-ID: <0068162d9f5e40b0b38390e93ecac8f7@infineon.com>
-Content-Type: text/plain; charset="us-ascii"
+        Thu, 19 Oct 2017 13:11:26 -0400
+Received: by mail-it0-f53.google.com with SMTP id o135so10567549itb.0
+        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 10:11:26 -0700 (PDT)
 MIME-Version: 1.0
+In-Reply-To: <C2D7A727C393B644B70DF4B4DCFB60B921C44F66@FRAEML521-MBX.china.huawei.com>
+References: <20171018180111.13021-1-mjg59@google.com> <C2D7A727C393B644B70DF4B4DCFB60B921C43F0A@FRAEML521-MBX.china.huawei.com>
+ <1508414402.4510.117.camel@linux.vnet.ibm.com> <C2D7A727C393B644B70DF4B4DCFB60B921C44F66@FRAEML521-MBX.china.huawei.com>
+From: Matthew Garrett <mjg59@google.com>
+Date: Thu, 19 Oct 2017 10:11:24 -0700
+Message-ID: <CACdnJuseJzWgG-3KiTbOGzghJWmMYxffrXcg6MtT3vyj1En4EQ@mail.gmail.com>
+Subject: Re: [PATCH] EVM: Add support for portable signature format
+To: Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        Mikhail Kurinnoi <viewizard@viewizard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-I have noticed that a TPM focused session appeared on the agenda for the Open Source Summit Europe in Prague next week (https://kernsec.org/wiki/index.php/Linux_Kernel_Summit_2017,_Security_Session). I am going to be there. Does anybody else attend who is interested in TPM development and wants to meet?
+On Thu, Oct 19, 2017 at 8:11 AM, Dmitry Kasatkin
+<dmitry.kasatkin@huawei.com> wrote:
+> Hi,
+>
+> 1. I do not get the idea...
+>
+>> ship EVM signatures in packages
+>
+> System up and running EVM without hmac?
 
-Alexander
+Correct.
+
+> How it creates new files without hmac?
+
+New files won't have EVM signatures. Appraisal will only be performed
+on executables that are running in a privileged security context.
