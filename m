@@ -1,123 +1,55 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:53777 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753146AbdJSL4f (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 19 Oct 2017 07:56:35 -0400
-Date: Thu, 19 Oct 2017 13:56:32 +0200
-From: Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Kenneth Goldman <kgold@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Peter =?UTF-8?B?SMO8d2U=?= <PeterHuewe@gmx.de>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] char/tpm: Less checks in tpm_ibmvtpm_probe() after
- error detection
-Message-ID: <20171019135632.4af42743@kitsune.suse.cz>
-In-Reply-To: <09a2c3a1-1b10-507d-a866-258b570f6da1@users.sourceforge.net>
-References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
-        <09a2c3a1-1b10-507d-a866-258b570f6da1@users.sourceforge.net>
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:52638 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752967AbdJSLzz (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 19 Oct 2017 07:55:55 -0400
+Received: by mail-lf0-f66.google.com with SMTP id b190so9268361lfg.9
+        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 04:55:55 -0700 (PDT)
+Date: Thu, 19 Oct 2017 14:55:52 +0300
+From: Mikhail Kurinnoi <viewizard@viewizard.com>
+To: Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
+Cc: Matthew Garrett <mjg59@google.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>
+Subject: Re: [PATCH] EVM: Add support for portable signature format
+Message-ID: <20171019145552.36f309e6@totoro>
+In-Reply-To: <C2D7A727C393B644B70DF4B4DCFB60B921C43F0A@FRAEML521-MBX.china.huawei.com>
+References: <20171018180111.13021-1-mjg59@google.com>
+        <C2D7A727C393B644B70DF4B4DCFB60B921C43F0A@FRAEML521-MBX.china.huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hello,
+? Thu, 19 Oct 2017 11:02:51 +0000
+Dmitry Kasatkin <dmitry.kasatkin@huawei.com> ?????:
 
-
-On Mon, 16 Oct 2017 19:34:56 +0200
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
-
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 16 Oct 2017 19:00:34 +0200
+> BTW.
 > 
-> Two pointer checks could be repeated by the tpm_ibmvtpm_probe()
-> function during error handling even if the relevant properties can be
-> determined for the involved variables before by source code analysis.
-> 
-> * Return directly after a call of the function "kzalloc" failed
->   at the beginning.
-> 
-> * Adjust jump targets so that extra checks can be omitted at the end.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/char/tpm/tpm_ibmvtpm.c | 17 +++++++----------
->  1 file changed, 7 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c
-> b/drivers/char/tpm/tpm_ibmvtpm.c index a4b462a77b99..b8dda7546f64
-> 100644 --- a/drivers/char/tpm/tpm_ibmvtpm.c
-> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
-> @@ -610,7 +610,7 @@ static int tpm_ibmvtpm_probe(struct vio_dev
-> *vio_dev, 
->  	ibmvtpm = kzalloc(sizeof(*ibmvtpm), GFP_KERNEL);
->  	if (!ibmvtpm)
-> -		goto cleanup;
-> +		return -ENOMEM;
+> Just to refresh my mind. What would be the correct order for setting
+> this signature from package? On any attr/xattr change, EVM will set
+> HMAC.
 
-Just no.
+from tar's code:
+- uid/git/mode/data/etc...
+- all xattrs
+- caps
+- selinux
+- EVM xattr
 
-I have seen many fixes that do inverse of this after a piece of code
-allocating some more resources was added before code that returns
-straight away because it is the first allocation in a function.
+EVM xattr should be restored the last one, when all xattrs/metadata
+already restored, but... as soon, as first protected xattr will be
+restored from package, EVM HMAC will be generated.
 
->  
->  	ibmvtpm->dev = dev;
->  	ibmvtpm->vdev = vio_dev;
-> @@ -619,7 +619,7 @@ static int tpm_ibmvtpm_probe(struct vio_dev
-> *vio_dev, crq_q->crq_addr = (struct ibmvtpm_crq
-> *)get_zeroed_page(GFP_KERNEL); if (!crq_q->crq_addr) {
->  		dev_err(dev, "Unable to allocate memory for
-> crq_addr\n");
-> -		goto cleanup;
-> +		goto free_tpm;
->  	}
->  
->  	crq_q->num_entry = CRQ_RES_BUF_SIZE /
-> sizeof(*crq_q->crq_addr); @@ -629,7 +629,7 @@ static int
-> tpm_ibmvtpm_probe(struct vio_dev *vio_dev, 
->  	if (dma_mapping_error(dev, ibmvtpm->crq_dma_handle)) {
->  		dev_err(dev, "dma mapping failed\n");
-> -		goto cleanup;
-> +		goto free_page;
->  	}
->  
->  	rc = plpar_hcall_norets(H_REG_CRQ, vio_dev->unit_address,
-> @@ -683,13 +683,10 @@ static int tpm_ibmvtpm_probe(struct vio_dev
-> *vio_dev, reg_crq_cleanup:
->  	dma_unmap_single(dev, ibmvtpm->crq_dma_handle,
-> CRQ_RES_BUF_SIZE, DMA_BIDIRECTIONAL);
-> -cleanup:
-> -	if (ibmvtpm) {
-> -		if (crq_q->crq_addr)
-> -			free_page((unsigned long)crq_q->crq_addr);
-> -		kfree(ibmvtpm);
-> -	}
-> -
 
-I think a single cleanup section is better than many labels that just
-avoid a single null check.
+> What is the value of setting signature after that unless there is a
+> policy to require signature (immutable)? In my original patchset
+> portable was also immutable and also included policy support to
+> require EVM signatures.
 
-As long as you can tell easily which resources were already allocated
-and need to be freed it is saner to keep only one cleanup section.
 
-If the code doing the allocation is changed in the future the single
-cleanup can stay whereas multiple labels have to be rewritten again.
 
-Also just changing this just for the sake of code style does not seem
-worth it whatever style you prefer.
-
-Thanks
-
-Michal
+-- 
+Best regards,
+Mikhail Kurinnoi
