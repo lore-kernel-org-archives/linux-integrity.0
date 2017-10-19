@@ -1,135 +1,72 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:19535 "EHLO
-        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754080AbdJSPAA (ORCPT
+Received: from userp1040.oracle.com ([156.151.31.81]:47941 "EHLO
+        userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753752AbdJSO1f (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 19 Oct 2017 11:00:00 -0400
-Date: Thu, 19 Oct 2017 17:59:36 +0300
+        Thu, 19 Oct 2017 10:27:35 -0400
+Date: Thu, 19 Oct 2017 17:26:26 +0300
 From: Dan Carpenter <dan.carpenter@oracle.com>
 To: Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
 Cc: SF Markus Elfring <elfring@users.sourceforge.net>,
         linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Kenneth Goldman <kgold@linux.vnet.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Peter =?iso-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Subject: Re: [PATCH 4/4] char/tpm: Less checks in tpm_ibmvtpm_probe() after
  error detection
-Message-ID: <20171019145936.4tygxazuuawzs3pa@mwanda>
+Message-ID: <20171019142626.gwckkdbz7hsigakx@mwanda>
 References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
  <09a2c3a1-1b10-507d-a866-258b570f6da1@users.sourceforge.net>
  <20171019135632.4af42743@kitsune.suse.cz>
- <20171019133646.gu7qv2tywfk4tcxj@mwanda>
- <20171019161637.7eaba6e4@kitsune.suse.cz>
+ <9327cc83-448e-8404-af00-73f6409e269e@users.sourceforge.net>
+ <20171019144655.7d06111c@kitsune.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20171019161637.7eaba6e4@kitsune.suse.cz>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171019144655.7d06111c@kitsune.suse.cz>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Oct 19, 2017 at 04:16:37PM +0200, Michal Suchanek wrote:
-> On Thu, 19 Oct 2017 16:36:46 +0300
-> Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> > On Thu, Oct 19, 2017 at 01:56:32PM +0200, Michal Suchanek wrote:
-> > > 
-> > > I think a single cleanup section is better than many labels that
-> > > just avoid a single null check.
-> > >  
-> > 
-> > I am not a big advocate of churn, but one err style error handling is
-> > really bug prone.
-> > 
-> > I'm dealing with static analysis so most of the bugs I see are error
-> > handling bugs.  
-> 
-> But it looks like you do not deal much with actual code development
-> because then you would know that some of the changes proposed by the
-> static analysis lead to errors later when the code dynamically changes.
-> 
+tpm_ibmvtpm_probe() is an example of poor names.  It has the generic
+ones like "cleanup" which don't say *what* is cleaned and the come-from
+ones like "init_irq_cleanup" which don't say anything useful at all:
 
-This is silly...  Anyway, my record is there in git.  I mostly send
-bugfixes, and not cleanups.  In terms of patches that are merged, I
-probably have introduced one or two runtime bugs per year over the past
-decade.
+   647          rc = request_irq(vio_dev->irq, ibmvtpm_interrupt, 0,
+   648                           tpm_ibmvtpm_driver_name, ibmvtpm);
+   649          if (rc) {
+   650                  dev_err(dev, "Error %d register irq 0x%x\n", rc, vio_dev->irq);
+   651                  goto init_irq_cleanup;
+   652          }
+   653  
+   654          rc = vio_enable_interrupts(vio_dev);
+   655          if (rc) {
+   656                  dev_err(dev, "Error %d enabling interrupts\n", rc);
+   657                  goto init_irq_cleanup;
+   658          }
 
-> > That's because error handling is hard to test but easy
-> > for static analysis.  One err style error handling is the worst
-> > because you get things like:
-> > 
-> > fail:
-> > 	kfree(foo->bar);
-> > 	kfree(foo);
-> > 
-> > Oops, foo->bar is a NULL dereference.  And generally, it's a bad thing
-> > to free things that haven't been allocated so, for example, I see
-> > refcounting bugs in error handling paths as well where we decrement
-> > something that wasn't incremented.  Freeing everything is more
-> > complicated than just freeing one specific thing the way standard
-> > kernel error handling works.
-> 
-> It depends on the function in question. If it only allocates memory
-> which is not reference-counted and kfree() checks for the null in most
-> cases it is easier to do just one big cleanup.
-> 
+Sadly, we never do call free_irq().
 
-No.  Just always do it standard way.  If there is only one error
-condition just free it directly:
+> It can do it automatically, in most cases better, and automatically
+> adapt it to code changes.
 
-	if (invalid) {
-		free(foo);
-		return -EINVAL;
-	}
+I've heard this before that if you only have one label that does
+everything then it's "automatic" and "future proof".  It's not true.
+The best error handling is methodical error handling:
 
-But once you add a second error condition then use gotos.  There is no
-reason to deviate from the standard.
-
-> If it is more complex more labels are preferable.
-> 
-> > 
-> > > As long as you can tell easily which resources were already
-> > > allocated and need to be freed it is saner to keep only one cleanup
-> > > section. 
-> > 
-> > Sure, if the function is simple and short then the error handling is
-> > normally simple and short.  This is true for any style of error
-> > handling.
-> > 
-> > > If the code doing the allocation is changed in the future the single
-> > > cleanup can stay whereas multiple labels have to be rewritten
-> > > again.  
-> > 
-> > No, they don't unless you choose bad label names.  
-> 
-> You obviously miss the fact that resource allocation is not always
-> added at the end of the function.
-> 
-
-No, in my example, the new allocation was added to the *start* not the
-end.  It doesn't matter though, standard error handling works the same
-either way.
-
-> You may need to reorder the code and hence the order of allocation or
-> add allocation at the start. Both of these cases break multiple labels
-> and special cases but work with one big cleanup just fine.
-
-No, You don't need to re-order the labels or change them.  The label
-name says what is freed.  The order is the reverse order from how they
-were allocated.  It's very simple.  You just have to keep track of the
-most recently allocated thing:
-
-	foo = alloc();
-	if (!foo)
-		return -ENOMEM;
-
-	bar = alloc();
-	if (!bar)
-		goto free_foo;
-
-	baz = alloc();
-	if (!baz)
-		goto free_bar;
-
-You can tell this code doesn't leak just from looking at the label
-names.
+1) In the reverse order from how things were allocated
+2) That mirrors the allocations exactly
+3) That frees one thing at a time
+4) With a proper, useful, readable label name which says what the goto
+   does
+5) That doesn't free anything which hasn't been allocated
 
 regards,
 dan carpenter
