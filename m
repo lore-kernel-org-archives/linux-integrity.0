@@ -1,49 +1,72 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:43132 "EHLO
-        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752563AbdJSLA0 (ORCPT
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:53989 "EHLO
+        mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751570AbdJSKg6 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 19 Oct 2017 07:00:26 -0400
-Received: by mail-oi0-f47.google.com with SMTP id c77so13807063oig.0
-        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 04:00:26 -0700 (PDT)
+        Thu, 19 Oct 2017 06:36:58 -0400
+Received: by mail-oi0-f52.google.com with SMTP id h6so13720426oia.10
+        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 03:36:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CACdnJutQ1NBxfAO1NBJqrrF0en9hc_C=Jy8XxNb5pEiBVwAa0g@mail.gmail.com>
-References: <CACdnJutQ1NBxfAO1NBJqrrF0en9hc_C=Jy8XxNb5pEiBVwAa0g@mail.gmail.com>
+In-Reply-To: <1508360841.4510.64.camel@linux.vnet.ibm.com>
+References: <20170927221653.11219-1-mjg59@google.com> <1506629560.5691.33.camel@linux.vnet.ibm.com>
+ <CACdnJuuveRvCx57ZnYmRWbiwh3XU7AbxZD2W-Gq_dh_h_6L9Mg@mail.gmail.com>
+ <1506646397.5691.64.camel@linux.vnet.ibm.com> <CACdnJuueNfLdDnCsmotGhLC58cJXXh35FeZzipJ_ZshScPM=qA@mail.gmail.com>
+ <1506711726.5691.141.camel@linux.vnet.ibm.com> <CACdnJuvYNnePfz4H-D=DGMHbrbmZ52JWFoLqX120ALV=o4wwcw@mail.gmail.com>
+ <1506715304.5691.151.camel@linux.vnet.ibm.com> <CACdnJutXT6yU70R07m7Nd=7d6RbZr0Nti_r54Z7CffiK2r17zA@mail.gmail.com>
+ <1507571511.3748.9.camel@linux.vnet.ibm.com> <CACdnJuv8QSkVNWf7FY2-jakiO2sd8gh1oRTji4w3fvic54kfmA@mail.gmail.com>
+ <1507572900.3748.21.camel@linux.vnet.ibm.com> <CACdnJuvOW0Pc42Nuh4QVy4xdYsaUa=H9i=YZW+XB+bg-YnDCUQ@mail.gmail.com>
+ <1507574441.3748.40.camel@linux.vnet.ibm.com> <20171009232314.545de76a@totoro>
+ <1507583449.3748.46.camel@linux.vnet.ibm.com> <20171010003326.6409ae23@totoro>
+ <1507585253.3748.57.camel@linux.vnet.ibm.com> <20171010021052.47d42db6@totoro>
+ <1507662460.3420.18.camel@linux.vnet.ibm.com> <CACE9dm-4SaL0sn_gnHy8Uj2pwVA2ztD1YcEj9Zy7TNEmx1Tb8Q@mail.gmail.com>
+ <CACE9dm_Ja8Y8vSCpbaZUnanZJ9msTm1x4dki2+F4g8040OokWw@mail.gmail.com>
+ <1508358623.4510.35.camel@linux.vnet.ibm.com> <CACE9dm92snkpP4vM_Jq0M10F9mHOFu5Zce8GB_HesmNDG9h=Rw@mail.gmail.com>
+ <1508360841.4510.64.camel@linux.vnet.ibm.com>
 From: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Date: Thu, 19 Oct 2017 14:00:25 +0300
-Message-ID: <CACE9dm_ijBqhyQOPmWYXq+uzJ2Cxi1J92QDuqketrF6HKfH8BA@mail.gmail.com>
-Subject: Re: Writing out EVM protected xattrs while EVM is active
-To: Matthew Garrett <mjg59@google.com>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>
+Date: Thu, 19 Oct 2017 13:36:57 +0300
+Message-ID: <CACE9dm_FrANMHMYr+21TB183A2FzBQPtEhhua4dHCKPCUuQDXA@mail.gmail.com>
+Subject: Re: RFC: Make it practical to ship EVM signatures
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Mikhail Kurinnoi <viewizard@viewizard.com>,
+        Matthew Garrett <mjg59@google.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Oct 18, 2017 at 2:12 AM, Matthew Garrett <mjg59@google.com> wrote:
-> I'm interested in extending our use of IMA digital signatures to EVM
-> in order to protect security.capability (and, in the near future,
-> security.apparmor). However, right now this doesn't seem to quite work
-> in terms of allowing updates to a running system. We've discussed the
-> EVM siganture format's use of inode numbers and I think I've got that
-> sorted (I'll send a patch once I've got a last couple of things
-> working).
+On Thu, Oct 19, 2017 at 12:07 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> Hi Dmitry,
 >
-> However, I'm a little confused by how EVM should be working here. Once
-> EVM is initialised, all EVM attributes will be protected, making it
-> impossible to write new values to any xattrs covered by EVM unless
-> IMA_NEW_FILE is set.
+> On Wed, 2017-10-18 at 23:37 +0300, Dmitry Kasatkin wrote:
+>> May be Mikhail could share GIT url to look somewhere.
+>> To see latest bits.
+>
+> Please bottom post in the future.
+>
+> Summary:
+> Mikhail's patches were posted earlier this year.  His patches defined
+> a portable EVM signature, which was never written out to disk, but
+> after being verified, was written out as an HMAC.  This was based on
+> my understanding that the i_ino/uuid is required to prevent a cut &
+> paste attack.
+>
+> In the recent discussions, Matthew wanted to know why the i_ino/uuid
+> is required.  After going around and around discussing it, it turns
+> out including security.ima is equivalent to including the i_ino/uuid.
+>  The i_ino/uuid is only necessary to prevent a cut and paste attack,
+> when security.ima is not included in the security.evm hmac/signature.
+>
+> We're at the point of making the portable EVM signature immutable. By
+> immutable, we mean that it isn't re-written as an HMAC.  It is based
+> on your ima-evm-utils support.
 
+Do you mean to have unconditionally immutable?
 
-Sorry, why it is not possible to set xattrs?
-system can change xattrs and hmac will be recalculated...
-
-
-> But as far as I can tell, IMA_NEW_FILE will only
-> be set if there's an IMA action that covers the file in question. This
-> means it's possible to write out security.evm and friends on newly
-> created files that would be appraised, but not on any other files. Am
-> I missing something?
+>
+> Mikhail, Matthew, did I leave anything out?
+>
+> Mimi
+>
 
 
 
