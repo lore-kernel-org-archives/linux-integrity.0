@@ -1,277 +1,116 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:29552 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754080AbdJSOVs (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 19 Oct 2017 10:21:48 -0400
-Date: Thu, 19 Oct 2017 17:21:41 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Nayna Jain <nayna@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
-        tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com,
-        patrickc@us.ibm.com
-Subject: Re: [PATCH v4 1/4] tpm: move wait_for_tpm_stat() to respective
- driver files
-Message-ID: <20171019142141.jtzilibffx4fsgmw@linux.intel.com>
-References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
- <20171017203232.2262-2-nayna@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171017203232.2262-2-nayna@linux.vnet.ibm.com>
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52512 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753241AbdJSOUv (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 19 Oct 2017 10:20:51 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9JEJfGO099942
+        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 10:20:50 -0400
+Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2dpu42b5sq-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 10:20:50 -0400
+Received: from localhost
+        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Thu, 19 Oct 2017 15:20:48 +0100
+Received: from d23av03.au.ibm.com (d23av03.au.ibm.com [9.190.234.97])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id v9JEKiuD21954694
+        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 14:20:45 GMT
+Received: from d23av03.au.ibm.com (localhost [127.0.0.1])
+        by d23av03.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id v9JEKbDA015163
+        for <linux-integrity@vger.kernel.org>; Fri, 20 Oct 2017 01:20:37 +1100
+Subject: Re: IMA appraisal against xz-compressed modules
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: "Bruno E. O. Meneguele" <brdeoliv@redhat.com>
+Cc: linux-integrity@vger.kernel.org, lwang@redhat.com
+Date: Thu, 19 Oct 2017 10:20:40 -0400
+In-Reply-To: <20171018194936.GA10984@glitch>
+References: <20171012145520.GC2495@glitch>
+         <1508037063.3426.79.camel@linux.vnet.ibm.com>
+         <20171018194936.GA10984@glitch>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1508422840.3268.7.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Oct 17, 2017 at 04:32:29PM -0400, Nayna Jain wrote:
-> The function wait_for_tpm_stat() is currently defined in
-> tpm-interface file. It is a hardware specific function used
-> only by tpm_tis and xen-tpmfront, so it is removed from
-> tpm-interface.c and defined in respective driver files.
+On Wed, 2017-10-18 at 17:49 -0200, Bruno E. O. Meneguele wrote:
+> On 14-10, Mimi Zohar wrote:
+> > On Thu, 2017-10-12 at 10:55 -0400, Bruno E. O. Meneguele wrote:
+> > > Hi, 
+> > > 
+> > > recently, while playing around with IMA modules check support, I notice
+> > > that when the kernel was compiled/installed with XZ-compressed modules
+> > > the IMA kernel infra returns -EACCESS on modules initialization. Let me
+> > > detail a bit more:
+> > > 
+> > > I created the policy file (/etc/ima/ima-policy) with
+> > > 
+> > > measure func=MODULE_CHECK uid=0
+> > > (... and more, policy file is attached)
+> > > 
+> > > then rebooted the kernel (that was built with XZ-compressed modules) and
+> > > a bunch of modules didn't load, e.g.:
+> > > 
+> > > without ima-policy:
+> > > # lsmod | wc -l
+> > > 32
+> > > 
+> > > with it:
+> > > # lsmod | wc -l
+> > > 14
+> > > 
+> > > these 14 modules were all loaded during initram booting phase, but if I
+> > > rmmod some of them and try to modprobe (strace output):
+> > > 
+> > > init_module(0x55b9bcc9bba0, 17763, "") = -1 EACCES (Permission denied)
+> > > 
+> > > The point is that there is no violation, because the error occurs right
+> > > after kmod calls init_module() and the call follows to ima_read_file()
+> > > (kernel tree: security/integrity/ima/ima_main.c) which returns -EACCES,
+> > > since there is no 'file' structure available (init_module uses memory
+> > > region only and not file descriptor).
+> > 
+> > IMA hashes/signatures are stored as xattrs, which requires a file
+> > descriptor.  IMA only supports the new kernel module syscall, which
+> > provides the file descriptor.
+> > 
 > 
-> Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  drivers/char/tpm/tpm-interface.c | 60 ----------------------------------------
->  drivers/char/tpm/tpm.h           |  2 --
->  drivers/char/tpm/tpm_tis_core.c  | 60 ++++++++++++++++++++++++++++++++++++++++
->  drivers/char/tpm/xen-tpmfront.c  | 60 ++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 120 insertions(+), 62 deletions(-)
+> Patches from Thiago Bauerman
+> (http://www.spinics.net/lists/linux-integrity/msg00243.html) could help
+> to solve this, don't they?
+
+True.  Initially we're introducing appended signature support for
+kernel images.  Afterwards, perhaps we'll be able to use it to close
+other appraisal gaps (e.g bpf).
+
+> > > I notice this behavior using Fedora 26 (using SELinux as sec framework)
+> > > and up-to-date kernel, the question is: should IMA kernel mechanism
+> > > support memory regions integrity measurements, maybe following the steps
+> > > that MODULE_SIGNATURE takes (that check for module signature through its
+> > > mmap region), allowing compressed modules to be loaded? Or kernels built
+> > > with XZ/GZ-compressed modules was never meant to be supported? Is it a
+> > > bug or a possible enhancement?
+> > 
+> > If the IMA policy requires kernel modules to be signed, an appended
+> > signature is permitted as long as the kernel is configured with
+> > CONFIG_MODULE_SIG_FORCE enabled.
+> > 
 > 
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 1d6729be4cd6..313f7618d569 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -1035,66 +1035,6 @@ int tpm_send(u32 chip_num, void *cmd, size_t buflen)
->  }
->  EXPORT_SYMBOL_GPL(tpm_send);
->  
-> -static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
-> -					bool check_cancel, bool *canceled)
-> -{
-> -	u8 status = chip->ops->status(chip);
-> -
-> -	*canceled = false;
-> -	if ((status & mask) == mask)
-> -		return true;
-> -	if (check_cancel && chip->ops->req_canceled(chip, status)) {
-> -		*canceled = true;
-> -		return true;
-> -	}
-> -	return false;
-> -}
-> -
-> -int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long timeout,
-> -		      wait_queue_head_t *queue, bool check_cancel)
-> -{
-> -	unsigned long stop;
-> -	long rc;
-> -	u8 status;
-> -	bool canceled = false;
-> -
-> -	/* check current status */
-> -	status = chip->ops->status(chip);
-> -	if ((status & mask) == mask)
-> -		return 0;
-> -
-> -	stop = jiffies + timeout;
-> -
-> -	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
-> -again:
-> -		timeout = stop - jiffies;
-> -		if ((long)timeout <= 0)
-> -			return -ETIME;
-> -		rc = wait_event_interruptible_timeout(*queue,
-> -			wait_for_tpm_stat_cond(chip, mask, check_cancel,
-> -					       &canceled),
-> -			timeout);
-> -		if (rc > 0) {
-> -			if (canceled)
-> -				return -ECANCELED;
-> -			return 0;
-> -		}
-> -		if (rc == -ERESTARTSYS && freezing(current)) {
-> -			clear_thread_flag(TIF_SIGPENDING);
-> -			goto again;
-> -		}
-> -	} else {
-> -		do {
-> -			tpm_msleep(TPM_TIMEOUT);
-> -			status = chip->ops->status(chip);
-> -			if ((status & mask) == mask)
-> -				return 0;
-> -		} while (time_before(jiffies, stop));
-> -	}
-> -	return -ETIME;
-> -}
-> -EXPORT_SYMBOL_GPL(wait_for_tpm_stat);
-> -
->  #define TPM_ORD_SAVESTATE 152
->  #define SAVESTATE_RESULT_SIZE 10
->  
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index 2d5466a72e40..4fc83ac7abeb 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -525,8 +525,6 @@ int tpm_do_selftest(struct tpm_chip *chip);
->  unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
->  int tpm_pm_suspend(struct device *dev);
->  int tpm_pm_resume(struct device *dev);
-> -int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long timeout,
-> -		      wait_queue_head_t *queue, bool check_cancel);
->  
->  static inline void tpm_msleep(unsigned int delay_msec)
->  {
-> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-> index 63bc6c3b949e..b33126a35694 100644
-> --- a/drivers/char/tpm/tpm_tis_core.c
-> +++ b/drivers/char/tpm/tpm_tis_core.c
-> @@ -31,6 +31,66 @@
->  #include "tpm.h"
->  #include "tpm_tis_core.h"
->  
-> +static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
-> +					bool check_cancel, bool *canceled)
-> +{
-> +	u8 status = chip->ops->status(chip);
-> +
-> +	*canceled = false;
-> +	if ((status & mask) == mask)
-> +		return true;
-> +	if (check_cancel && chip->ops->req_canceled(chip, status)) {
-> +		*canceled = true;
-> +		return true;
-> +	}
-> +	return false;
-> +}
-> +
-> +static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
-> +		unsigned long timeout, wait_queue_head_t *queue,
-> +		bool check_cancel)
-> +{
-> +	unsigned long stop;
-> +	long rc;
-> +	u8 status;
-> +	bool canceled = false;
-> +
-> +	/* check current status */
-> +	status = chip->ops->status(chip);
-> +	if ((status & mask) == mask)
-> +		return 0;
-> +
-> +	stop = jiffies + timeout;
-> +
-> +	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
-> +again:
-> +		timeout = stop - jiffies;
-> +		if ((long)timeout <= 0)
-> +			return -ETIME;
-> +		rc = wait_event_interruptible_timeout(*queue,
-> +			wait_for_tpm_stat_cond(chip, mask, check_cancel,
-> +					       &canceled),
-> +			timeout);
-> +		if (rc > 0) {
-> +			if (canceled)
-> +				return -ECANCELED;
-> +			return 0;
-> +		}
-> +		if (rc == -ERESTARTSYS && freezing(current)) {
-> +			clear_thread_flag(TIF_SIGPENDING);
-> +			goto again;
-> +		}
-> +	} else {
-> +		do {
-> +			tpm_msleep(TPM_TIMEOUT);
-> +			status = chip->ops->status(chip);
-> +			if ((status & mask) == mask)
-> +				return 0;
-> +		} while (time_before(jiffies, stop));
-> +	}
-> +	return -ETIME;
-> +}
-> +
->  /* Before we attempt to access the TPM we must see that the valid bit is set.
->   * The specification says that this bit is 0 at reset and remains 0 until the
->   * 'TPM has gone through its self test and initialization and has established
-> diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
-> index 656e8af95d52..d20a0a9ded27 100644
-> --- a/drivers/char/tpm/xen-tpmfront.c
-> +++ b/drivers/char/tpm/xen-tpmfront.c
-> @@ -39,6 +39,66 @@ enum status_bits {
->  	VTPM_STATUS_CANCELED = 0x8,
->  };
->  
-> +static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
-> +					bool check_cancel, bool *canceled)
-> +{
-> +	u8 status = chip->ops->status(chip);
-> +
-> +	*canceled = false;
-> +	if ((status & mask) == mask)
-> +		return true;
-> +	if (check_cancel && chip->ops->req_canceled(chip, status)) {
-> +		*canceled = true;
-> +		return true;
-> +	}
-> +	return false;
-> +}
-> +
-> +static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
-> +		unsigned long timeout, wait_queue_head_t *queue,
-> +		bool check_cancel)
-> +{
-> +	unsigned long stop;
-> +	long rc;
-> +	u8 status;
-> +	bool canceled = false;
-> +
-> +	/* check current status */
-> +	status = chip->ops->status(chip);
-> +	if ((status & mask) == mask)
-> +		return 0;
-> +
-> +	stop = jiffies + timeout;
-> +
-> +	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
-> +again:
-> +		timeout = stop - jiffies;
-> +		if ((long)timeout <= 0)
-> +			return -ETIME;
-> +		rc = wait_event_interruptible_timeout(*queue,
-> +			wait_for_tpm_stat_cond(chip, mask, check_cancel,
-> +					       &canceled),
-> +			timeout);
-> +		if (rc > 0) {
-> +			if (canceled)
-> +				return -ECANCELED;
-> +			return 0;
-> +		}
-> +		if (rc == -ERESTARTSYS && freezing(current)) {
-> +			clear_thread_flag(TIF_SIGPENDING);
-> +			goto again;
-> +		}
-> +	} else {
-> +		do {
-> +			tpm_msleep(TPM_TIMEOUT);
-> +			status = chip->ops->status(chip);
-> +			if ((status & mask) == mask)
-> +				return 0;
-> +		} while (time_before(jiffies, stop));
-> +	}
-> +	return -ETIME;
-> +}
-> +
->  static u8 vtpm_status(struct tpm_chip *chip)
->  {
->  	struct tpm_private *priv = dev_get_drvdata(&chip->dev);
-> -- 
-> 2.13.3
+> Right, but it's also possible to note that CONFIG_MODULE_SIG_FORCE is
+> handled on kernel/module.c and has a kernel cmdline param,
+> module.sig_enforce, that is read in case CONFIG_MODULE_SIG_FORCE is not
+> set. Wouldn't be better ima_read_file depend on this cmdline param
+> instead directly on the CONFIG? That way kernels compiled without
+> CONFIG_MODULE_SIG_FORCE set as default would have the option to enable
+> the kernel param and use their normal policy (MODULE_CHECK).
 > 
+> What do you think?
 
-This commit caused a compiler warning because freezer.h was not included
-to xen-tpmfront.c. I manually fixed it.
+I wasn't aware of the module_param.  Thank you for pointing it out.
+ "sig_enforce" is currently defined as static.  Should it be defined
+as __initdata?
 
-Reviewed-by: Jarkko Sakkinen <jarkkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen <jarkkko.sakkinen@linux.intel.com>
-
-/Jarkko
+Mimi
