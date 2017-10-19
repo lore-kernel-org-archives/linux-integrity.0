@@ -1,127 +1,108 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:46902 "EHLO
-        userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751360AbdJSNiK (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52220 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751812AbdJSNQ3 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 19 Oct 2017 09:38:10 -0400
-Date: Thu, 19 Oct 2017 16:36:46 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>,
+        Thu, 19 Oct 2017 09:16:29 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9JDG0HL114419
+        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 09:16:29 -0400
+Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2dpv5fawsw-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 19 Oct 2017 09:16:29 -0400
+Received: from localhost
+        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Thu, 19 Oct 2017 14:16:26 +0100
+Subject: Re: [PATCH 0/4] char-TPM: Adjustments for ten function
+ implementations
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        SF Markus Elfring <elfring@users.sourceforge.net>,
         linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
         Jerry Snitselaar <jsnitsel@redhat.com>,
         Kenneth Goldman <kgold@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
         Nayna Jain <nayna@linux.vnet.ibm.com>,
         Paul Mackerras <paulus@samba.org>,
-        Peter =?iso-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>,
+        Peter =?ISO-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>,
         Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] char/tpm: Less checks in tpm_ibmvtpm_probe() after
- error detection
-Message-ID: <20171019133646.gu7qv2tywfk4tcxj@mwanda>
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Date: Thu, 19 Oct 2017 09:16:11 -0400
+In-Reply-To: <87lgk9i1ni.fsf@concordia.ellerman.id.au>
 References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
- <09a2c3a1-1b10-507d-a866-258b570f6da1@users.sourceforge.net>
- <20171019135632.4af42743@kitsune.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20171019135632.4af42743@kitsune.suse.cz>
+         <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
+         <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com>
+         <20171017085124.pkrjzghcf5wmcydc@mwanda>
+         <alpine.DEB.2.20.1710171055100.5035@hadrien>
+         <20171017094434.csarc5fw5d32u64w@mwanda>
+         <alpine.DEB.2.20.1710171211210.5035@hadrien>
+         <1508241146.4234.16.camel@linux.vnet.ibm.com>
+         <87lgk9i1ni.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1508418971.4510.134.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Oct 19, 2017 at 01:56:32PM +0200, Michal Suchanek wrote:
+On Wed, 2017-10-18 at 14:18 +1100, Michael Ellerman wrote:
+> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+> > On Tue, 2017-10-17 at 12:11 +0200, Julia Lawall wrote:
+> >> On Tue, 17 Oct 2017, Dan Carpenter wrote:
+> >> > On Tue, Oct 17, 2017 at 10:56:42AM +0200, Julia Lawall wrote:
+> >> > > On Tue, 17 Oct 2017, Dan Carpenter wrote:
+> >> > > > On Mon, Oct 16, 2017 at 09:35:12PM +0300, Jarkko Sakkinen wrote:
+> >> > > > >
+> >> > > > > A minor complaint: all commits are missing "Fixes:" tag.
+> >> > > > >
+> >> > > >
+> >> > > > Fixes is only for bug fixes.  These don't fix any bugs.
+> >> > >
+> >> > > 0-day seems to put Fixes for everything.  Should they be removed when the
+> >> > > old code is undesirable but doesn't actually cause a crash, eg out of date
+> >> > > API.
+> >> >
+> >> > Yeah, I feel like Fixes tags don't belong for API updates and cleanups.
+> >> 
+> >> OK, I will remove them from the patches that go through me where they
+> >> don't seem appropriate.
+> >
+> > The "Fixes" tag is an indication that the patch should be backported.
 > 
-> I think a single cleanup section is better than many labels that just
-> avoid a single null check.
->
+> No it's not that strong. It's an indication that the patch fixes another
+> commit, which may or may not mean it should be backported depending on
+> the preferences of the backporter. If it *does* need backporting then
+> the Fixes tag helps identify where it should go.
 
-I am not a big advocate of churn, but one err style error handling is
-really bug prone.
+Thank you for setting the record straight.
 
-I'm dealing with static analysis so most of the bugs I see are error
-handling bugs.  That's because error handling is hard to test but easy
-for static analysis.  One err style error handling is the worst because
-you get things like:
-
-fail:
-	kfree(foo->bar);
-	kfree(foo);
-
-Oops, foo->bar is a NULL dereference.  And generally, it's a bad thing
-to free things that haven't been allocated so, for example, I see
-refcounting bugs in error handling paths as well where we decrement
-something that wasn't incremented.  Freeing everything is more
-complicated than just freeing one specific thing the way standard kernel
-error handling works.
-
-> As long as you can tell easily which resources were already allocated
-> and need to be freed it is saner to keep only one cleanup section.
+> The doco is actually pretty well worded IMO:
 > 
-
-Sure, if the function is simple and short then the error handling is
-normally simple and short.  This is true for any style of error
-handling.
-
-> If the code doing the allocation is changed in the future the single
-> cleanup can stay whereas multiple labels have to be rewritten again.
-
-No, they don't unless you choose bad label names.  Perhaps numbered
-labels?  We don't get a lot of those in the kernel any more.  Label
-name should be based on what the label does.  Often I see bad label
-names like generic labels:
-
-	foo = kmalloc();
-	if (!foo)
-		goto out;
-
-What is out going to do?  Another common anti-pattern is come-from
-labels:
-
-	foo = kmalloc();
-	if (!foo)
-		goto kmalloc_failed;
-
-Obviously, we can see from the if statement that the alloc failed and
-you *just* know the next line is going to be is going to be:
-
-	if (invalid)
-		goto kmalloc_failed;
-
-Which is wrong because kmalloc didn't fail...  But if the label name is
-based on what it does then, when you add or a remove an allocation, you
-just have to edit the one thing.  It's very simple:
-
-+	foo = new_alloc();
-+	if (!foo)
-+		return -ENOMEM;
-+
- 	bar = old_alloc();
--	if (!bar)
--		return -ENOMEM;
-+	if (!bar) {
-+		ret -ENOMEM;
-+		goto free_foo;
-
-[ snip ]
-
- free_whatever:
- 	free(whatever);
-+free_foo:
-+	free(foo);
-
- return ret;
-
+>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst#n183
 > 
-> Also just changing this just for the sake of code style does not seem
-> worth it whatever style you prefer.
-
-True.
-
-regards,
-dan carpenter
+>   If your patch fixes a bug in a specific commit, e.g. you found an issue using
+>   ``git bisect``, please use the 'Fixes:' tag with the first 12 characters of
+>   the SHA-1 ID, and the one line summary.
+> 
+> and:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst#n602
+> 
+>   A Fixes: tag indicates that the patch fixes an issue in a previous commit. It
+>   is used to make it easy to determine where a bug originated, which can help
+>   review a bug fix. This tag also assists the stable kernel team in determining
+>   which stable kernel versions should receive your fix. This is the preferred
+>   method for indicating a bug fixed by the patch. See :ref:`describe_changes`
+>   for more details.
+> 
+> 
+> cheers
+> 
