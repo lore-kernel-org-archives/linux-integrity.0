@@ -1,100 +1,54 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:37606 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752172AbdJTKX7 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 20 Oct 2017 06:23:59 -0400
-Date: Fri, 20 Oct 2017 13:23:51 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Alexander.Steffen@infineon.com
-Cc: andriy.shevchenko@linux.intel.com, elfring@users.sourceforge.net,
-        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        benh@kernel.crashing.org, clabbe.montjoie@gmail.com,
-        jgunthorpe@obsidianresearch.com, jsnitsel@redhat.com,
-        kgold@linux.vnet.ibm.com, mpe@ellerman.id.au,
-        nayna@linux.vnet.ibm.com, paulus@samba.org, PeterHuewe@gmx.de,
-        stefanb@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 3/4] char/tpm: Improve a size determination in nine
- functions
-Message-ID: <20171020102351.bfz7s2ihwce7q2iz@linux.intel.com>
-References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
- <83a166af-aecc-649d-dfe3-a72245345209@users.sourceforge.net>
- <1508238182.16112.475.camel@linux.intel.com>
- <c8d37c0407a949c1abb35cfd79c17f58@infineon.com>
- <20171018144811.klfmzikibuux77pf@linux.intel.com>
- <8afa2fb8d8704aff804cd8da15e931da@infineon.com>
- <20171020090139.l4igyucqxqmgrq7l@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171020090139.l4igyucqxqmgrq7l@linux.intel.com>
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49562 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752172AbdJTKKc (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 20 Oct 2017 06:10:32 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9KA9Zmm000736
+        for <linux-integrity@vger.kernel.org>; Fri, 20 Oct 2017 06:10:31 -0400
+Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2dqdha4tum-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 20 Oct 2017 06:10:31 -0400
+Received: from localhost
+        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Fri, 20 Oct 2017 11:10:29 +0100
+Received: from d23av01.au.ibm.com (d23av01.au.ibm.com [9.190.234.96])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id v9KAAOOn28180570
+        for <linux-integrity@vger.kernel.org>; Fri, 20 Oct 2017 10:10:26 GMT
+Received: from d23av01.au.ibm.com (localhost [127.0.0.1])
+        by d23av01.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id v9KAAPit030503
+        for <linux-integrity@vger.kernel.org>; Fri, 20 Oct 2017 21:10:25 +1100
+Subject: Re: [PATCH] EVM: Allow userland to permit modification of
+ EVM-protected xattrs
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Matthew Garrett <mjg59@google.com>, linux-integrity@vger.kernel.org
+Date: Fri, 20 Oct 2017 06:10:21 -0400
+In-Reply-To: <20171019225739.4196-1-mjg59@google.com>
+References: <20171019225739.4196-1-mjg59@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1508494221.3268.70.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Oct 20, 2017 at 12:01:39PM +0300, Jarkko Sakkinen wrote:
-> On Thu, Oct 19, 2017 at 04:58:23PM +0000, Alexander.Steffen@infineon.com wrote:
-> > > On Tue, Oct 17, 2017 at 11:50:05AM +0000, Alexander.Steffen@infineon.com
-> > > wrote:
-> > > > > > Replace the specification of data structures by pointer dereferences
-> > > > > > as the parameter for the operator "sizeof" to make the corresponding
-> > > > > > size
-> > > > > > determination a bit safer according to the Linux coding style
-> > > > > > convention.
-> > > > >
-> > > > >
-> > > > > This patch does one style in favor of the other.
-> > > >
-> > > > I actually prefer that style, so I'd welcome this change :)
-> > > >
-> > > > > At the end it's Jarkko's call, though I would NAK this as I think some
-> > > > > one already told this to you for some other similar patch(es).
-> > > > >
-> > > > >
-> > > > > I even would suggest to stop doing this noisy stuff, which keeps people
-> > > > > busy for nothing.
-> > > >
-> > > > Cleaning up old code is also worth something, even if does not change
-> > > > one bit in the assembly output in the end...
-> > > >
-> > > > Alexander
-> > > 
-> > > Quite insignificant clean up it is that does more harm that gives any
-> > > benefit as any new change adds debt to backporting.
-> > > 
-> > > Anyway, this has been a useful patch set for me in the sense that I have
-> > > clearer picture now on discarding/accepting commits.
-> > 
-> > Indeed. I have now a better understanding for why some code looks as
-> > ugly as it does.
-> > 
-> > > One line minor
-> > > clean up will be from now on automatic NAK unless it causes a compiler
-> > > warning or some other visible side-effect.
-> > 
-> > Not a nice policy, but at least a policy. I have deleted the tasks
-> > that I had still planned for other cleanup activities.
-> > 
-> > Alexander
-> 
-> 1/4 and 2/4 are sensible clean ups as long as the commit message is
-> refined.
-> 
-> Moving more functions to use tpm_buf instead of nasty tpm_cmd_t are
-> also welcome changes.
-> 
-> Documenting functions (exported mainly) is also welcome. Or refining
-> documentation.
-> 
-> It's really case by case. The important thing in small clean ups is
-> a clearly written commit message that explains rationale.
-> 
-> /Jarkko
 
-It's easy to say in retroperpective that code is "ugly". I would use
-strong consideration before using that adjective for mainline code.
-Rarely when you do something new first the form will be polished.
+> diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
+> index 319cf16d6603..0ce5134d3de5 100644
+> --- a/security/integrity/evm/evm_secfs.c
+> +++ b/security/integrity/evm/evm_secfs.c
+> @@ -81,6 +81,10 @@ static ssize_t evm_write_key(struct file *file, const char __user *buf,
+>  			return ret;
+>  		/* Forbid further writes after the symmetric key is loaded */
+>  		i |= EVM_SETUP;
+> +		/* Don't allow protected xattr modification if a
+> +		 * symmetric key is loaded
+> +		 */
+> +		i &= ~(EVM_PERMIT_XATTR_WRITES);
+>  	}
+> 
+>  	evm_initialized |= i;
 
-I was too steep with the policy above. It's not exactly like that in the
-strict sense. It's always case by case like for any commit. However, it
-is good to remember that "ugliness" does not cause regressions.
-
-/Jarkko
+Is "|= i" now correct?
