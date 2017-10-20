@@ -1,46 +1,83 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:39595 "EHLO
-        userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751927AbdJTIAk (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 20 Oct 2017 04:00:40 -0400
-Subject: Re: TPM meetup in Prague?
-To: James Morris <james.l.morris@oracle.com>,
-        Alexander.Steffen@infineon.com, linux_lkml_grp@oracle.com
-Cc: tpm2@lists.01.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net
-References: <0068162d9f5e40b0b38390e93ecac8f7@infineon.com>
- <alpine.LFD.2.20.1710201107110.11171@t440.gateway.2wire.net>
-From: Enrico Perla <enrico.perla@oracle.com>
-Message-ID: <014beb97-935e-c16a-2edc-09b49fd2f13f@oracle.com>
-Date: Fri, 20 Oct 2017 10:00:18 +0200
+Received: from mga03.intel.com ([134.134.136.65]:64960 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751017AbdJTG4T (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 20 Oct 2017 02:56:19 -0400
+Date: Fri, 20 Oct 2017 09:56:14 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Guilherme Magalhaes <guilherme.magalhaes@hpe.com>
+Cc: linux-integrity@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Ken Goldman <kgold@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>
+Subject: Re: [PATCH] tpm: adjust command response sleep time for vTPM
+Message-ID: <20171020065614.4rvmyj3hkwrhabhq@linux.intel.com>
+References: <20171003204640.62236-1-guilherme.magalhaes@hpe.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.LFD.2.20.1710201107110.11171@t440.gateway.2wire.net>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171003204640.62236-1-guilherme.magalhaes@hpe.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 10/20/17 2:09 AM, James Morris wrote:
-> On Thu, 19 Oct 2017, Alexander.Steffen@infineon.com wrote:
+On Tue, Oct 03, 2017 at 05:46:40PM -0300, Guilherme Magalhaes wrote:
+> Once vTPM is actually a software, it is able to respond the commands much
+> quicker than physical TPMs. What we propose is to adjust the response
+> polling time to a usec value when the chip is detected as a vTPM.
+> With this change, the kernel TPM interface identifies whether the chip is
+> vTPM and on this case sets the polling sleep time to an optimized value.
 > 
->> I have noticed that a TPM focused session appeared on the agenda for the Open Source Summit Europe in Prague next week (https://kernsec.org/wiki/index.php/Linux_Kernel_Summit_2017,_Security_Session). I am going to be there. Does anybody else attend who is interested in TPM development and wants to meet?
->>
+> The performance result was 12x improvement when comparing PCR extends
+> using vTPM with the current sleep time and with the adjusted sleep time.
+> ---
+>  drivers/char/tpm/tpm-interface.c | 6 +++++-
+>  drivers/char/tpm/tpm.h           | 2 ++
+>  2 files changed, 7 insertions(+), 1 deletion(-)
 > 
-> Note that there will be a security topic as part of the kernel summit tech 
-> track, open to all OSS Europe attendees.  Jarkko is scheduled to give an 
-> update on TPM there.
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 1d6729be4cd6..d213a3d4b305 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -455,7 +455,11 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>  			goto out;
+>  		}
+>  
+> -		tpm_msleep(TPM_TIMEOUT);
+> +		if (chip->flags & TPM_CHIP_FLAG_VIRTUAL)
+> +			usleep_range(TPM_TIMEOUT_VTPM_US, TPM_TIMEOUT_VTPM_RANGE_US);
+> +		else
+> +			tpm_msleep(TPM_TIMEOUT);
+> +
+>  		rmb();
+>  	} while (time_before(jiffies, stop));
+>  
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 2d5466a72e40..02d2dd761543 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -50,6 +50,8 @@ enum tpm_const {
+>  
+>  enum tpm_timeout {
+>  	TPM_TIMEOUT = 5,	/* msecs */
+> +	TPM_TIMEOUT_VTPM_US = 1,	/* usecs */
+> +	TPM_TIMEOUT_VTPM_RANGE_US = 5,	/* usecs */
+>  	TPM_TIMEOUT_RETRY = 100, /* msecs */
+>  	TPM_TIMEOUT_RANGE_US = 300	/* usecs */
+>  };
+> -- 
+> 2.11.0
 > 
-> See 
-> http://kernsec.org/wiki/index.php/Linux_Kernel_Summit_2017,_Security_Session
-> 
-> There's also a room available for unconference topics.
 
-What is the current state of the art, on linux, for remote attestation?
-(Perhaps a good question for the talk :))
+You should add me to to-field and CC this also to
 
+linux-kernel@vger.kernel.org
+linux-security-module@vger.kernel.org
 
-      -  Enrico
+http://kernsec.org/wiki/index.php?title=Linux_Kernel_Integrity
 
-> 
-> 
-> 
+I managed to miss this patch and cannot accept it at this point because
+at minimum linux-kernel should be in the CC-list.
+
+I'm thinking what bad could happen if we shortened the timeout for
+hardware TPMs.
+
+/Jarkko
