@@ -1,94 +1,121 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:54664 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751439AbdJTP26 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 20 Oct 2017 11:28:58 -0400
-Received: from relay1.suse.de (charybdis-ext.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 4AA4FABBC
-        for <linux-integrity@vger.kernel.org>; Fri, 20 Oct 2017 15:28:57 +0000 (UTC)
-Date: Fri, 20 Oct 2017 17:28:53 +0200
-From: Matthias Gerstner <mgerstner@suse.de>
-To: linux-integrity@vger.kernel.org
-Subject: Behaviour regarding scripts when enforcing digital signatures
-Message-ID: <20171020152853.v3vzemp2t54ljgwg@f195.suse.de>
+Received: from smtp11.infineon.com ([217.10.52.105]:60146 "EHLO
+        smtp11.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751637AbdJTOm5 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 20 Oct 2017 10:42:57 -0400
+From: <Alexander.Steffen@infineon.com>
+To: <nayna@linux.vnet.ibm.com>, <linux-integrity@vger.kernel.org>
+CC: <zohar@linux.vnet.ibm.com>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <peterhuewe@gmx.de>,
+        <jarkko.sakkinen@linux.intel.com>, <tpmdd@selhorst.net>,
+        <jgunthorpe@obsidianresearch.com>, <patrickc@us.ibm.com>
+Subject: RE: [PATCH v4 2/4] tpm: ignore burstcount to improve tpm_tis send()
+ performance
+Date: Fri, 20 Oct 2017 14:42:54 +0000
+Message-ID: <5ef60315f2254b3b8bcc217a572280e5@infineon.com>
+References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
+ <20171017203232.2262-3-nayna@linux.vnet.ibm.com>
+In-Reply-To: <20171017203232.2262-3-nayna@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="Windows-1252"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="4qo7emyuyy6pjpbt"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi,
+> The TPM burstcount status indicates the number of bytes that can
+> be sent to the TPM without causing bus wait states.  Effectively,
+> it is the number of empty bytes in the command FIFO.
+> 
+> This patch optimizes the tpm_tis_send_data() function by checking
+> the burstcount only once. And if the burstcount is valid, it writes
+> all the bytes at once, permitting wait state.
+> 
+> After this change, performance on a TPM 1.2 with an 8 byte
+> burstcount for 1000 extends improved from ~41sec to ~14sec.
+> 
+> Suggested-by: Ken Goldman <kgold@linux.vnet.ibm.com> in
+> conjunction with the TPM Device Driver work group.
+> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+> Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> ---
+>  drivers/char/tpm/tpm_tis_core.c | 42 +++++++++++++++----------------------
+> ----
+>  1 file changed, 15 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_tis_core.c
+> b/drivers/char/tpm/tpm_tis_core.c
+> index b33126a35694..993328ae988c 100644
+> --- a/drivers/char/tpm/tpm_tis_core.c
+> +++ b/drivers/char/tpm/tpm_tis_core.c
+> @@ -316,7 +316,6 @@ static int tpm_tis_send_data(struct tpm_chip *chip,
+> u8 *buf, size_t len)
+>  {
+>  	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+>  	int rc, status, burstcnt;
+> -	size_t count = 0;
+>  	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
+> 
+>  	status = tpm_tis_status(chip);
+> @@ -330,35 +329,24 @@ static int tpm_tis_send_data(struct tpm_chip *chip,
+> u8 *buf, size_t len)
+>  		}
+>  	}
+> 
+> -	while (count < len - 1) {
+> -		burstcnt = get_burstcount(chip);
+> -		if (burstcnt < 0) {
+> -			dev_err(&chip->dev, "Unable to read burstcount\n");
+> -			rc = burstcnt;
+> -			goto out_err;
+> -		}
+> -		burstcnt = min_t(int, burstcnt, len - count - 1);
+> -		rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv-
+> >locality),
+> -					 burstcnt, buf + count);
+> -		if (rc < 0)
+> -			goto out_err;
+> -
+> -		count += burstcnt;
+> -
+> -		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip-
+> >timeout_c,
+> -					&priv->int_queue, false) < 0) {
+> -			rc = -ETIME;
+> -			goto out_err;
+> -		}
+> -		status = tpm_tis_status(chip);
+> -		if (!itpm && (status & TPM_STS_DATA_EXPECT) == 0) {
+> -			rc = -EIO;
+> -			goto out_err;
+> -		}
+> +	/*
+> +	 * Get the initial burstcount to ensure TPM is ready to
+> +	 * accept data.
+> +	 */
+> +	burstcnt = get_burstcount(chip);
+> +	if (burstcnt < 0) {
+> +		dev_err(&chip->dev, "Unable to read burstcount\n");
+> +		rc = burstcnt;
+> +		goto out_err;
+>  	}
+> 
+> +	rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
+> +			len - 1, buf);
+> +	if (rc < 0)
+> +		goto out_err;
+> +
+>  	/* write last byte */
+> -	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality),
+> buf[count]);
+> +	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[len-
+> 1]);
+>  	if (rc < 0)
+>  		goto out_err;
+> 
+> --
+> 2.13.3
 
-I'm currently experimenting with enforcing digital signatures for all
-root owned files and all files executed by root.
+This seems to fail reliably with my SPI TPM 2.0. I get EIO when trying to send large amounts of data, e.g. with TPM2_Hash, and subsequent tests seem to take an unusual amount of time. More analysis probably has to wait until November, since I am going to be in Prague next week.
 
-To achieve this I've created appropriate digital signatures in the
-security.ima attribute for all relevant files and loaded a policy like
-this:
-
-    [default dont_appraise/dont_measure lines]
-    appraise func=BPRM_CHECK fowner=0 appraise_type=imasig
-    appraise func=FILE_MMAP fowner=0 mask=MAY_EXEC appraise_type=imasig
-    appraise func=MODULE_CHECK appraise_type=imasig
-    appraise func=FIRMWARE_CHECK appraise_type=imasig
-
-This works fine so far and any files without a correct signature cannot
-be executed any more.
-
-There is one issue with scripts, however. In practice scripts can
-always be executed even if they don't have digital signatures when they
-are passed explicitly to the interpreter like:
-
-    /bin/bash /root/my_unsigned_script.sh
-
-However, when executed implicitly via the shebang line, the execution
-will be prevented:
-
-    $ /root/my_unsigned_script.sh
-    -bash: /root/my_unsigned_script.sh: Permission denied
-
-I can see that preventing execution of unsigned scripts is difficult to
-achieve. However I'd like to make it possible to run scripts the usual
-way at least, without having to sign them or passing them to the
-interpeter explicitly. This way system administrators can write and
-handle custom scripts the way they are used to.
-
-As far as I see it, allowing this is not possible at the moment given
-the currently available policy grammar. Can you confirm this?
-
-Would it be possible to add this as a feature? I think the
-func=BPRM_CHECK could support an additional limiting condition.
-Something like:
-
-    appraise func=BPRM_CHECK fowner=0 appraise_type=imasig permit_scripts
-
-The code on the kernel side looks not like it would easily allow this,
-though. In search_binary_handler() the call to security_bprm_check() is
-made before we know which binfmt handler applies and whether we're
-dealing with a script. Maybe somebody does have additional thoughts on
-this anyways.
-
-Another question on a related topic: Is it possible to enforce a minimum
-key length and digest algorithm for signatures?
-
-I will be happy for any input!
-
-Regards
-
-Matthias
-
--- 
-Matthias Gerstner <matthias.gerstner@suse.de>
-Dipl.-Wirtsch.-Inf. (FH), Security Engineer
-https://www.suse.com/security
-Telefon: +49 911 740 53 290
-GPG Key ID: 0x14C405C971923553
-
-SUSE Linux GmbH
-GF: Felix Imendorffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nuernberg)
-
-
-    [ Part 2, "Digital signature"  Application/PGP-SIGNATURE (Name: ]
-    [ "signature.asc") 836 bytes. ]
-    [ Unable to print this part. ]
+Alexander
