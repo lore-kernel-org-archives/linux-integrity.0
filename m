@@ -1,88 +1,297 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:58520 "EHLO mga02.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:45173 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752357AbdJTJBr (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 20 Oct 2017 05:01:47 -0400
-Date: Fri, 20 Oct 2017 12:01:39 +0300
+        id S1752268AbdJTI4v (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 20 Oct 2017 04:56:51 -0400
+Date: Fri, 20 Oct 2017 11:56:45 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: Alexander.Steffen@infineon.com
-Cc: andriy.shevchenko@linux.intel.com, elfring@users.sourceforge.net,
-        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        benh@kernel.crashing.org, clabbe.montjoie@gmail.com,
-        jgunthorpe@obsidianresearch.com, jsnitsel@redhat.com,
-        kgold@linux.vnet.ibm.com, mpe@ellerman.id.au,
-        nayna@linux.vnet.ibm.com, paulus@samba.org, PeterHuewe@gmx.de,
-        stefanb@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 3/4] char/tpm: Improve a size determination in nine
- functions
-Message-ID: <20171020090139.l4igyucqxqmgrq7l@linux.intel.com>
-References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
- <83a166af-aecc-649d-dfe3-a72245345209@users.sourceforge.net>
- <1508238182.16112.475.camel@linux.intel.com>
- <c8d37c0407a949c1abb35cfd79c17f58@infineon.com>
- <20171018144811.klfmzikibuux77pf@linux.intel.com>
- <8afa2fb8d8704aff804cd8da15e931da@infineon.com>
+Cc: nayna@linux.vnet.ibm.com, linux-integrity@vger.kernel.org,
+        zohar@linux.vnet.ibm.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
+        tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com,
+        patrickc@us.ibm.com
+Subject: Re: [PATCH v4 1/4] tpm: move wait_for_tpm_stat() to respective
+ driver files
+Message-ID: <20171020085645.q43e62d2vmspatm2@linux.intel.com>
+References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
+ <20171017203232.2262-2-nayna@linux.vnet.ibm.com>
+ <20171019142141.jtzilibffx4fsgmw@linux.intel.com>
+ <d2a4fca3aee340dcb5de88a69814bd90@infineon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <8afa2fb8d8704aff804cd8da15e931da@infineon.com>
+In-Reply-To: <d2a4fca3aee340dcb5de88a69814bd90@infineon.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Oct 19, 2017 at 04:58:23PM +0000, Alexander.Steffen@infineon.com wrote:
-> > On Tue, Oct 17, 2017 at 11:50:05AM +0000, Alexander.Steffen@infineon.com
-> > wrote:
-> > > > > Replace the specification of data structures by pointer dereferences
-> > > > > as the parameter for the operator "sizeof" to make the corresponding
-> > > > > size
-> > > > > determination a bit safer according to the Linux coding style
-> > > > > convention.
-> > > >
-> > > >
-> > > > This patch does one style in favor of the other.
+On Thu, Oct 19, 2017 at 05:00:29PM +0000, Alexander.Steffen@infineon.com wrote:
+> > On Tue, Oct 17, 2017 at 04:32:29PM -0400, Nayna Jain wrote:
+> > > The function wait_for_tpm_stat() is currently defined in
+> > > tpm-interface file. It is a hardware specific function used
+> > > only by tpm_tis and xen-tpmfront, so it is removed from
+> > > tpm-interface.c and defined in respective driver files.
 > > >
-> > > I actually prefer that style, so I'd welcome this change :)
+> > > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+> > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > ---
+> > >  drivers/char/tpm/tpm-interface.c | 60 ----------------------------------------
+> > >  drivers/char/tpm/tpm.h           |  2 --
+> > >  drivers/char/tpm/tpm_tis_core.c  | 60
+> > ++++++++++++++++++++++++++++++++++++++++
+> > >  drivers/char/tpm/xen-tpmfront.c  | 60
+> > ++++++++++++++++++++++++++++++++++++++++
+> > >  4 files changed, 120 insertions(+), 62 deletions(-)
 > > >
-> > > > At the end it's Jarkko's call, though I would NAK this as I think some
-> > > > one already told this to you for some other similar patch(es).
-> > > >
-> > > >
-> > > > I even would suggest to stop doing this noisy stuff, which keeps people
-> > > > busy for nothing.
+> > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-
+> > interface.c
+> > > index 1d6729be4cd6..313f7618d569 100644
+> > > --- a/drivers/char/tpm/tpm-interface.c
+> > > +++ b/drivers/char/tpm/tpm-interface.c
+> > > @@ -1035,66 +1035,6 @@ int tpm_send(u32 chip_num, void *cmd, size_t
+> > buflen)
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(tpm_send);
 > > >
-> > > Cleaning up old code is also worth something, even if does not change
-> > > one bit in the assembly output in the end...
+> > > -static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+> > > -					bool check_cancel, bool *canceled)
+> > > -{
+> > > -	u8 status = chip->ops->status(chip);
+> > > -
+> > > -	*canceled = false;
+> > > -	if ((status & mask) == mask)
+> > > -		return true;
+> > > -	if (check_cancel && chip->ops->req_canceled(chip, status)) {
+> > > -		*canceled = true;
+> > > -		return true;
+> > > -	}
+> > > -	return false;
+> > > -}
+> > > -
+> > > -int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long
+> > timeout,
+> > > -		      wait_queue_head_t *queue, bool check_cancel)
+> > > -{
+> > > -	unsigned long stop;
+> > > -	long rc;
+> > > -	u8 status;
+> > > -	bool canceled = false;
+> > > -
+> > > -	/* check current status */
+> > > -	status = chip->ops->status(chip);
+> > > -	if ((status & mask) == mask)
+> > > -		return 0;
+> > > -
+> > > -	stop = jiffies + timeout;
+> > > -
+> > > -	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
+> > > -again:
+> > > -		timeout = stop - jiffies;
+> > > -		if ((long)timeout <= 0)
+> > > -			return -ETIME;
+> > > -		rc = wait_event_interruptible_timeout(*queue,
+> > > -			wait_for_tpm_stat_cond(chip, mask, check_cancel,
+> > > -					       &canceled),
+> > > -			timeout);
+> > > -		if (rc > 0) {
+> > > -			if (canceled)
+> > > -				return -ECANCELED;
+> > > -			return 0;
+> > > -		}
+> > > -		if (rc == -ERESTARTSYS && freezing(current)) {
+> > > -			clear_thread_flag(TIF_SIGPENDING);
+> > > -			goto again;
+> > > -		}
+> > > -	} else {
+> > > -		do {
+> > > -			tpm_msleep(TPM_TIMEOUT);
+> > > -			status = chip->ops->status(chip);
+> > > -			if ((status & mask) == mask)
+> > > -				return 0;
+> > > -		} while (time_before(jiffies, stop));
+> > > -	}
+> > > -	return -ETIME;
+> > > -}
+> > > -EXPORT_SYMBOL_GPL(wait_for_tpm_stat);
+> > > -
+> > >  #define TPM_ORD_SAVESTATE 152
+> > >  #define SAVESTATE_RESULT_SIZE 10
 > > >
-> > > Alexander
+> > > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> > > index 2d5466a72e40..4fc83ac7abeb 100644
+> > > --- a/drivers/char/tpm/tpm.h
+> > > +++ b/drivers/char/tpm/tpm.h
+> > > @@ -525,8 +525,6 @@ int tpm_do_selftest(struct tpm_chip *chip);
+> > >  unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32
+> > ordinal);
+> > >  int tpm_pm_suspend(struct device *dev);
+> > >  int tpm_pm_resume(struct device *dev);
+> > > -int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long
+> > timeout,
+> > > -		      wait_queue_head_t *queue, bool check_cancel);
+> > >
+> > >  static inline void tpm_msleep(unsigned int delay_msec)
+> > >  {
+> > > diff --git a/drivers/char/tpm/tpm_tis_core.c
+> > b/drivers/char/tpm/tpm_tis_core.c
+> > > index 63bc6c3b949e..b33126a35694 100644
+> > > --- a/drivers/char/tpm/tpm_tis_core.c
+> > > +++ b/drivers/char/tpm/tpm_tis_core.c
+> > > @@ -31,6 +31,66 @@
+> > >  #include "tpm.h"
+> > >  #include "tpm_tis_core.h"
+> > >
+> > > +static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+> > > +					bool check_cancel, bool *canceled)
+> > > +{
+> > > +	u8 status = chip->ops->status(chip);
+> > > +
+> > > +	*canceled = false;
+> > > +	if ((status & mask) == mask)
+> > > +		return true;
+> > > +	if (check_cancel && chip->ops->req_canceled(chip, status)) {
+> > > +		*canceled = true;
+> > > +		return true;
+> > > +	}
+> > > +	return false;
+> > > +}
+> > > +
+> > > +static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+> > > +		unsigned long timeout, wait_queue_head_t *queue,
+> > > +		bool check_cancel)
+> > > +{
+> > > +	unsigned long stop;
+> > > +	long rc;
+> > > +	u8 status;
+> > > +	bool canceled = false;
+> > > +
+> > > +	/* check current status */
+> > > +	status = chip->ops->status(chip);
+> > > +	if ((status & mask) == mask)
+> > > +		return 0;
+> > > +
+> > > +	stop = jiffies + timeout;
+> > > +
+> > > +	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
+> > > +again:
+> > > +		timeout = stop - jiffies;
+> > > +		if ((long)timeout <= 0)
+> > > +			return -ETIME;
+> > > +		rc = wait_event_interruptible_timeout(*queue,
+> > > +			wait_for_tpm_stat_cond(chip, mask, check_cancel,
+> > > +					       &canceled),
+> > > +			timeout);
+> > > +		if (rc > 0) {
+> > > +			if (canceled)
+> > > +				return -ECANCELED;
+> > > +			return 0;
+> > > +		}
+> > > +		if (rc == -ERESTARTSYS && freezing(current)) {
+> > > +			clear_thread_flag(TIF_SIGPENDING);
+> > > +			goto again;
+> > > +		}
+> > > +	} else {
+> > > +		do {
+> > > +			tpm_msleep(TPM_TIMEOUT);
+> > > +			status = chip->ops->status(chip);
+> > > +			if ((status & mask) == mask)
+> > > +				return 0;
+> > > +		} while (time_before(jiffies, stop));
+> > > +	}
+> > > +	return -ETIME;
+> > > +}
+> > > +
+> > >  /* Before we attempt to access the TPM we must see that the valid bit is
+> > set.
+> > >   * The specification says that this bit is 0 at reset and remains 0 until the
+> > >   * 'TPM has gone through its self test and initialization and has established
+> > > diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-
+> > tpmfront.c
+> > > index 656e8af95d52..d20a0a9ded27 100644
+> > > --- a/drivers/char/tpm/xen-tpmfront.c
+> > > +++ b/drivers/char/tpm/xen-tpmfront.c
+> > > @@ -39,6 +39,66 @@ enum status_bits {
+> > >  	VTPM_STATUS_CANCELED = 0x8,
+> > >  };
+> > >
+> > > +static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+> > > +					bool check_cancel, bool *canceled)
+> > > +{
+> > > +	u8 status = chip->ops->status(chip);
+> > > +
+> > > +	*canceled = false;
+> > > +	if ((status & mask) == mask)
+> > > +		return true;
+> > > +	if (check_cancel && chip->ops->req_canceled(chip, status)) {
+> > > +		*canceled = true;
+> > > +		return true;
+> > > +	}
+> > > +	return false;
+> > > +}
+> > > +
+> > > +static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+> > > +		unsigned long timeout, wait_queue_head_t *queue,
+> > > +		bool check_cancel)
+> > > +{
+> > > +	unsigned long stop;
+> > > +	long rc;
+> > > +	u8 status;
+> > > +	bool canceled = false;
+> > > +
+> > > +	/* check current status */
+> > > +	status = chip->ops->status(chip);
+> > > +	if ((status & mask) == mask)
+> > > +		return 0;
+> > > +
+> > > +	stop = jiffies + timeout;
+> > > +
+> > > +	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
+> > > +again:
+> > > +		timeout = stop - jiffies;
+> > > +		if ((long)timeout <= 0)
+> > > +			return -ETIME;
+> > > +		rc = wait_event_interruptible_timeout(*queue,
+> > > +			wait_for_tpm_stat_cond(chip, mask, check_cancel,
+> > > +					       &canceled),
+> > > +			timeout);
+> > > +		if (rc > 0) {
+> > > +			if (canceled)
+> > > +				return -ECANCELED;
+> > > +			return 0;
+> > > +		}
+> > > +		if (rc == -ERESTARTSYS && freezing(current)) {
+> > > +			clear_thread_flag(TIF_SIGPENDING);
+> > > +			goto again;
+> > > +		}
+> > > +	} else {
+> > > +		do {
+> > > +			tpm_msleep(TPM_TIMEOUT);
+> > > +			status = chip->ops->status(chip);
+> > > +			if ((status & mask) == mask)
+> > > +				return 0;
+> > > +		} while (time_before(jiffies, stop));
+> > > +	}
+> > > +	return -ETIME;
+> > > +}
+> > > +
+> > >  static u8 vtpm_status(struct tpm_chip *chip)
+> > >  {
+> > >  	struct tpm_private *priv = dev_get_drvdata(&chip->dev);
+> > > --
+> > > 2.13.3
+> > >
 > > 
-> > Quite insignificant clean up it is that does more harm that gives any
-> > benefit as any new change adds debt to backporting.
-> > 
-> > Anyway, this has been a useful patch set for me in the sense that I have
-> > clearer picture now on discarding/accepting commits.
+> > This commit caused a compiler warning because freezer.h was not included
+> > to xen-tpmfront.c. I manually fixed it.
 > 
-> Indeed. I have now a better understanding for why some code looks as
-> ugly as it does.
-> 
-> > One line minor
-> > clean up will be from now on automatic NAK unless it causes a compiler
-> > warning or some other visible side-effect.
-> 
-> Not a nice policy, but at least a policy. I have deleted the tasks
-> that I had still planned for other cleanup activities.
-> 
+> Yep, and checkpatch.pl still complains about some stuff (mostly
+> whitespace) in both patch 1/4 and 2/4. When fixed patches are
+> available, I can run them again through my automation.
 > Alexander
 
-1/4 and 2/4 are sensible clean ups as long as the commit message is
-refined.
+I'll fix these manually (weird, I run sparse and checkpatch, must have
+done some mistake).
 
-Moving more functions to use tpm_buf instead of nasty tpm_cmd_t are
-also welcome changes.
-
-Documenting functions (exported mainly) is also welcome. Or refining
-documentation.
-
-It's really case by case. The important thing in small clean ups is
-a clearly written commit message that explains rationale.
+Thank you!
 
 /Jarkko
