@@ -1,297 +1,58 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:45173 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752268AbdJTI4v (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 20 Oct 2017 04:56:51 -0400
-Date: Fri, 20 Oct 2017 11:56:45 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Alexander.Steffen@infineon.com
-Cc: nayna@linux.vnet.ibm.com, linux-integrity@vger.kernel.org,
-        zohar@linux.vnet.ibm.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
-        tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com,
-        patrickc@us.ibm.com
-Subject: Re: [PATCH v4 1/4] tpm: move wait_for_tpm_stat() to respective
- driver files
-Message-ID: <20171020085645.q43e62d2vmspatm2@linux.intel.com>
-References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
- <20171017203232.2262-2-nayna@linux.vnet.ibm.com>
- <20171019142141.jtzilibffx4fsgmw@linux.intel.com>
- <d2a4fca3aee340dcb5de88a69814bd90@infineon.com>
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8958 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751927AbdJTIBZ (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 20 Oct 2017 04:01:25 -0400
+From: Boshi Wang <wangboshi@huawei.com>
+To: <zohar@linux.vnet.ibm.com>, <dmitry.kasatkin@gmail.com>,
+        <james.l.morris@oracle.com>, <serge@hallyn.com>
+CC: <linux-ima-devel@lists.sourceforge.net>,
+        <linux-ima-user@lists.sourceforge.net>,
+        <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>
+Subject: [PATCH] ima: fix hash algorithm initialization
+Date: Fri, 20 Oct 2017 16:01:03 +0800
+Message-ID: <20171020080105.178467-1-wangboshi@huawei.com>
+In-Reply-To: <3aaaf65f-d3b0-f770-f074-11e8f9796685@huawei.com>
+References: <3aaaf65f-d3b0-f770-f074-11e8f9796685@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <d2a4fca3aee340dcb5de88a69814bd90@infineon.com>
+Content-Type: text/plain
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Oct 19, 2017 at 05:00:29PM +0000, Alexander.Steffen@infineon.com wrote:
-> > On Tue, Oct 17, 2017 at 04:32:29PM -0400, Nayna Jain wrote:
-> > > The function wait_for_tpm_stat() is currently defined in
-> > > tpm-interface file. It is a hardware specific function used
-> > > only by tpm_tis and xen-tpmfront, so it is removed from
-> > > tpm-interface.c and defined in respective driver files.
-> > >
-> > > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-> > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > ---
-> > >  drivers/char/tpm/tpm-interface.c | 60 ----------------------------------------
-> > >  drivers/char/tpm/tpm.h           |  2 --
-> > >  drivers/char/tpm/tpm_tis_core.c  | 60
-> > ++++++++++++++++++++++++++++++++++++++++
-> > >  drivers/char/tpm/xen-tpmfront.c  | 60
-> > ++++++++++++++++++++++++++++++++++++++++
-> > >  4 files changed, 120 insertions(+), 62 deletions(-)
-> > >
-> > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-
-> > interface.c
-> > > index 1d6729be4cd6..313f7618d569 100644
-> > > --- a/drivers/char/tpm/tpm-interface.c
-> > > +++ b/drivers/char/tpm/tpm-interface.c
-> > > @@ -1035,66 +1035,6 @@ int tpm_send(u32 chip_num, void *cmd, size_t
-> > buflen)
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(tpm_send);
-> > >
-> > > -static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
-> > > -					bool check_cancel, bool *canceled)
-> > > -{
-> > > -	u8 status = chip->ops->status(chip);
-> > > -
-> > > -	*canceled = false;
-> > > -	if ((status & mask) == mask)
-> > > -		return true;
-> > > -	if (check_cancel && chip->ops->req_canceled(chip, status)) {
-> > > -		*canceled = true;
-> > > -		return true;
-> > > -	}
-> > > -	return false;
-> > > -}
-> > > -
-> > > -int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long
-> > timeout,
-> > > -		      wait_queue_head_t *queue, bool check_cancel)
-> > > -{
-> > > -	unsigned long stop;
-> > > -	long rc;
-> > > -	u8 status;
-> > > -	bool canceled = false;
-> > > -
-> > > -	/* check current status */
-> > > -	status = chip->ops->status(chip);
-> > > -	if ((status & mask) == mask)
-> > > -		return 0;
-> > > -
-> > > -	stop = jiffies + timeout;
-> > > -
-> > > -	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
-> > > -again:
-> > > -		timeout = stop - jiffies;
-> > > -		if ((long)timeout <= 0)
-> > > -			return -ETIME;
-> > > -		rc = wait_event_interruptible_timeout(*queue,
-> > > -			wait_for_tpm_stat_cond(chip, mask, check_cancel,
-> > > -					       &canceled),
-> > > -			timeout);
-> > > -		if (rc > 0) {
-> > > -			if (canceled)
-> > > -				return -ECANCELED;
-> > > -			return 0;
-> > > -		}
-> > > -		if (rc == -ERESTARTSYS && freezing(current)) {
-> > > -			clear_thread_flag(TIF_SIGPENDING);
-> > > -			goto again;
-> > > -		}
-> > > -	} else {
-> > > -		do {
-> > > -			tpm_msleep(TPM_TIMEOUT);
-> > > -			status = chip->ops->status(chip);
-> > > -			if ((status & mask) == mask)
-> > > -				return 0;
-> > > -		} while (time_before(jiffies, stop));
-> > > -	}
-> > > -	return -ETIME;
-> > > -}
-> > > -EXPORT_SYMBOL_GPL(wait_for_tpm_stat);
-> > > -
-> > >  #define TPM_ORD_SAVESTATE 152
-> > >  #define SAVESTATE_RESULT_SIZE 10
-> > >
-> > > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> > > index 2d5466a72e40..4fc83ac7abeb 100644
-> > > --- a/drivers/char/tpm/tpm.h
-> > > +++ b/drivers/char/tpm/tpm.h
-> > > @@ -525,8 +525,6 @@ int tpm_do_selftest(struct tpm_chip *chip);
-> > >  unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32
-> > ordinal);
-> > >  int tpm_pm_suspend(struct device *dev);
-> > >  int tpm_pm_resume(struct device *dev);
-> > > -int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long
-> > timeout,
-> > > -		      wait_queue_head_t *queue, bool check_cancel);
-> > >
-> > >  static inline void tpm_msleep(unsigned int delay_msec)
-> > >  {
-> > > diff --git a/drivers/char/tpm/tpm_tis_core.c
-> > b/drivers/char/tpm/tpm_tis_core.c
-> > > index 63bc6c3b949e..b33126a35694 100644
-> > > --- a/drivers/char/tpm/tpm_tis_core.c
-> > > +++ b/drivers/char/tpm/tpm_tis_core.c
-> > > @@ -31,6 +31,66 @@
-> > >  #include "tpm.h"
-> > >  #include "tpm_tis_core.h"
-> > >
-> > > +static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
-> > > +					bool check_cancel, bool *canceled)
-> > > +{
-> > > +	u8 status = chip->ops->status(chip);
-> > > +
-> > > +	*canceled = false;
-> > > +	if ((status & mask) == mask)
-> > > +		return true;
-> > > +	if (check_cancel && chip->ops->req_canceled(chip, status)) {
-> > > +		*canceled = true;
-> > > +		return true;
-> > > +	}
-> > > +	return false;
-> > > +}
-> > > +
-> > > +static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
-> > > +		unsigned long timeout, wait_queue_head_t *queue,
-> > > +		bool check_cancel)
-> > > +{
-> > > +	unsigned long stop;
-> > > +	long rc;
-> > > +	u8 status;
-> > > +	bool canceled = false;
-> > > +
-> > > +	/* check current status */
-> > > +	status = chip->ops->status(chip);
-> > > +	if ((status & mask) == mask)
-> > > +		return 0;
-> > > +
-> > > +	stop = jiffies + timeout;
-> > > +
-> > > +	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
-> > > +again:
-> > > +		timeout = stop - jiffies;
-> > > +		if ((long)timeout <= 0)
-> > > +			return -ETIME;
-> > > +		rc = wait_event_interruptible_timeout(*queue,
-> > > +			wait_for_tpm_stat_cond(chip, mask, check_cancel,
-> > > +					       &canceled),
-> > > +			timeout);
-> > > +		if (rc > 0) {
-> > > +			if (canceled)
-> > > +				return -ECANCELED;
-> > > +			return 0;
-> > > +		}
-> > > +		if (rc == -ERESTARTSYS && freezing(current)) {
-> > > +			clear_thread_flag(TIF_SIGPENDING);
-> > > +			goto again;
-> > > +		}
-> > > +	} else {
-> > > +		do {
-> > > +			tpm_msleep(TPM_TIMEOUT);
-> > > +			status = chip->ops->status(chip);
-> > > +			if ((status & mask) == mask)
-> > > +				return 0;
-> > > +		} while (time_before(jiffies, stop));
-> > > +	}
-> > > +	return -ETIME;
-> > > +}
-> > > +
-> > >  /* Before we attempt to access the TPM we must see that the valid bit is
-> > set.
-> > >   * The specification says that this bit is 0 at reset and remains 0 until the
-> > >   * 'TPM has gone through its self test and initialization and has established
-> > > diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-
-> > tpmfront.c
-> > > index 656e8af95d52..d20a0a9ded27 100644
-> > > --- a/drivers/char/tpm/xen-tpmfront.c
-> > > +++ b/drivers/char/tpm/xen-tpmfront.c
-> > > @@ -39,6 +39,66 @@ enum status_bits {
-> > >  	VTPM_STATUS_CANCELED = 0x8,
-> > >  };
-> > >
-> > > +static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
-> > > +					bool check_cancel, bool *canceled)
-> > > +{
-> > > +	u8 status = chip->ops->status(chip);
-> > > +
-> > > +	*canceled = false;
-> > > +	if ((status & mask) == mask)
-> > > +		return true;
-> > > +	if (check_cancel && chip->ops->req_canceled(chip, status)) {
-> > > +		*canceled = true;
-> > > +		return true;
-> > > +	}
-> > > +	return false;
-> > > +}
-> > > +
-> > > +static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
-> > > +		unsigned long timeout, wait_queue_head_t *queue,
-> > > +		bool check_cancel)
-> > > +{
-> > > +	unsigned long stop;
-> > > +	long rc;
-> > > +	u8 status;
-> > > +	bool canceled = false;
-> > > +
-> > > +	/* check current status */
-> > > +	status = chip->ops->status(chip);
-> > > +	if ((status & mask) == mask)
-> > > +		return 0;
-> > > +
-> > > +	stop = jiffies + timeout;
-> > > +
-> > > +	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
-> > > +again:
-> > > +		timeout = stop - jiffies;
-> > > +		if ((long)timeout <= 0)
-> > > +			return -ETIME;
-> > > +		rc = wait_event_interruptible_timeout(*queue,
-> > > +			wait_for_tpm_stat_cond(chip, mask, check_cancel,
-> > > +					       &canceled),
-> > > +			timeout);
-> > > +		if (rc > 0) {
-> > > +			if (canceled)
-> > > +				return -ECANCELED;
-> > > +			return 0;
-> > > +		}
-> > > +		if (rc == -ERESTARTSYS && freezing(current)) {
-> > > +			clear_thread_flag(TIF_SIGPENDING);
-> > > +			goto again;
-> > > +		}
-> > > +	} else {
-> > > +		do {
-> > > +			tpm_msleep(TPM_TIMEOUT);
-> > > +			status = chip->ops->status(chip);
-> > > +			if ((status & mask) == mask)
-> > > +				return 0;
-> > > +		} while (time_before(jiffies, stop));
-> > > +	}
-> > > +	return -ETIME;
-> > > +}
-> > > +
-> > >  static u8 vtpm_status(struct tpm_chip *chip)
-> > >  {
-> > >  	struct tpm_private *priv = dev_get_drvdata(&chip->dev);
-> > > --
-> > > 2.13.3
-> > >
-> > 
-> > This commit caused a compiler warning because freezer.h was not included
-> > to xen-tpmfront.c. I manually fixed it.
-> 
-> Yep, and checkpatch.pl still complains about some stuff (mostly
-> whitespace) in both patch 1/4 and 2/4. When fixed patches are
-> available, I can run them again through my automation.
-> Alexander
+The hash_setup function always sets the hash_setup_done flag, even
+when the hash algorithm is invalid.  This prevents the default hash
+algorithm defined as CONFIG_IMA_DEFAULT_HASH from being used.
 
-I'll fix these manually (weird, I run sparse and checkpatch, must have
-done some mistake).
+This patch sets hash_setup_done flag only for valid hash algorithms.
 
-Thank you!
+Signed-off-by: Boshi Wang <wangboshi@huawei.com>
+---
+ security/integrity/ima/ima_main.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-/Jarkko
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 2aebb79..ab70a39 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -51,6 +51,8 @@ static int __init hash_setup(char *str)
+ 			ima_hash_algo = HASH_ALGO_SHA1;
+ 		else if (strncmp(str, "md5", 3) == 0)
+ 			ima_hash_algo = HASH_ALGO_MD5;
++		else
++			return 1;
+ 		goto out;
+ 	}
+ 
+@@ -60,6 +62,8 @@ static int __init hash_setup(char *str)
+ 			break;
+ 		}
+ 	}
++	if (i == HASH_ALGO__LAST)
++		return 1;
+ out:
+ 	hash_setup_done = 1;
+ 	return 1;
+-- 
+2.10.1
