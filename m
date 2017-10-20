@@ -1,58 +1,46 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8958 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751927AbdJTIBZ (ORCPT
+Received: from userp1040.oracle.com ([156.151.31.81]:39595 "EHLO
+        userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751927AbdJTIAk (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 20 Oct 2017 04:01:25 -0400
-From: Boshi Wang <wangboshi@huawei.com>
-To: <zohar@linux.vnet.ibm.com>, <dmitry.kasatkin@gmail.com>,
-        <james.l.morris@oracle.com>, <serge@hallyn.com>
-CC: <linux-ima-devel@lists.sourceforge.net>,
-        <linux-ima-user@lists.sourceforge.net>,
-        <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>
-Subject: [PATCH] ima: fix hash algorithm initialization
-Date: Fri, 20 Oct 2017 16:01:03 +0800
-Message-ID: <20171020080105.178467-1-wangboshi@huawei.com>
-In-Reply-To: <3aaaf65f-d3b0-f770-f074-11e8f9796685@huawei.com>
-References: <3aaaf65f-d3b0-f770-f074-11e8f9796685@huawei.com>
+        Fri, 20 Oct 2017 04:00:40 -0400
+Subject: Re: TPM meetup in Prague?
+To: James Morris <james.l.morris@oracle.com>,
+        Alexander.Steffen@infineon.com, linux_lkml_grp@oracle.com
+Cc: tpm2@lists.01.org, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net
+References: <0068162d9f5e40b0b38390e93ecac8f7@infineon.com>
+ <alpine.LFD.2.20.1710201107110.11171@t440.gateway.2wire.net>
+From: Enrico Perla <enrico.perla@oracle.com>
+Message-ID: <014beb97-935e-c16a-2edc-09b49fd2f13f@oracle.com>
+Date: Fri, 20 Oct 2017 10:00:18 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <alpine.LFD.2.20.1710201107110.11171@t440.gateway.2wire.net>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-The hash_setup function always sets the hash_setup_done flag, even
-when the hash algorithm is invalid.  This prevents the default hash
-algorithm defined as CONFIG_IMA_DEFAULT_HASH from being used.
+On 10/20/17 2:09 AM, James Morris wrote:
+> On Thu, 19 Oct 2017, Alexander.Steffen@infineon.com wrote:
+> 
+>> I have noticed that a TPM focused session appeared on the agenda for the Open Source Summit Europe in Prague next week (https://kernsec.org/wiki/index.php/Linux_Kernel_Summit_2017,_Security_Session). I am going to be there. Does anybody else attend who is interested in TPM development and wants to meet?
+>>
+> 
+> Note that there will be a security topic as part of the kernel summit tech 
+> track, open to all OSS Europe attendees.  Jarkko is scheduled to give an 
+> update on TPM there.
+> 
+> See 
+> http://kernsec.org/wiki/index.php/Linux_Kernel_Summit_2017,_Security_Session
+> 
+> There's also a room available for unconference topics.
 
-This patch sets hash_setup_done flag only for valid hash algorithms.
+What is the current state of the art, on linux, for remote attestation?
+(Perhaps a good question for the talk :))
 
-Signed-off-by: Boshi Wang <wangboshi@huawei.com>
----
- security/integrity/ima/ima_main.c | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 2aebb79..ab70a39 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -51,6 +51,8 @@ static int __init hash_setup(char *str)
- 			ima_hash_algo = HASH_ALGO_SHA1;
- 		else if (strncmp(str, "md5", 3) == 0)
- 			ima_hash_algo = HASH_ALGO_MD5;
-+		else
-+			return 1;
- 		goto out;
- 	}
- 
-@@ -60,6 +62,8 @@ static int __init hash_setup(char *str)
- 			break;
- 		}
- 	}
-+	if (i == HASH_ALGO__LAST)
-+		return 1;
- out:
- 	hash_setup_done = 1;
- 	return 1;
--- 
-2.10.1
+      -  Enrico
+
+> 
+> 
+> 
