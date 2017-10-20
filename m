@@ -1,66 +1,70 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:41496 "EHLO mx1.redhat.com"
+Received: from mx1.redhat.com ([209.132.183.28]:34074 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751028AbdJTTgu (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 20 Oct 2017 15:36:50 -0400
-Date: Fri, 20 Oct 2017 17:36:48 -0200
+        id S1752788AbdJTTTY (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 20 Oct 2017 15:19:24 -0400
 From: "Bruno E. O. Meneguele" <brdeoliv@redhat.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org, lwang@redhat.com
-Subject: Re: IMA appraisal against xz-compressed modules
-Message-ID: <20171020193648.GA10759@glitch.routerbox>
-References: <20171012145520.GC2495@glitch>
- <1508037063.3426.79.camel@linux.vnet.ibm.com>
- <20171018194936.GA10984@glitch>
- <1508422840.3268.7.camel@linux.vnet.ibm.com>
- <20171019193101.GA2583@glitch>
- <1508444027.3268.53.camel@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6c2NcOVqGQ03X4Wi"
-In-Reply-To: <1508444027.3268.53.camel@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, serge@hallyn.com,
+        james.l.morris@oracle.com, dmitry.kasatkin@gmail.com,
+        zohar@linux.vnet.ibm.com, rusty@rustcorp.com.au, jeyu@kernel.org
+Subject: [PATCH 1/2] module: export module signature enforcement status
+Date: Fri, 20 Oct 2017 17:19:15 -0200
+Message-Id: <5aea5786954da170e171fc9ddd1f591c0e36afc7.1508524595.git.brdeoliv@redhat.com>
+In-Reply-To: <cover.1508524595.git.brdeoliv@redhat.com>
+References: <cover.1508524595.git.brdeoliv@redhat.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 19-10, Mimi Zohar wrote:
-> On Thu, 2017-10-19 at 17:31 -0200, Bruno E. O. Meneguele wrote:
-> > On 19-10, Mimi Zohar wrote:
->  
-> > > > Right, but it's also possible to note that CONFIG_MODULE_SIG_FORCE is
-> > > > handled on kernel/module.c and has a kernel cmdline param,
-> > > > module.sig_enforce, that is read in case CONFIG_MODULE_SIG_FORCE is not
-> > > > set. Wouldn't be better ima_read_file depend on this cmdline param
-> > > > instead directly on the CONFIG? That way kernels compiled without
-> > > > CONFIG_MODULE_SIG_FORCE set as default would have the option to enable
-> > > > the kernel param and use their normal policy (MODULE_CHECK).
-> > > > 
-> > > > What do you think?
-> > > 
-> > > I wasn't aware of the module_param.  Thank you for pointing it out.
-> > >  "sig_enforce" is currently defined as static.  Should it be defined
-> > > as __initdata?
-> > > 
-> > 
-> > Well, at first I thought it could stay as it is and just create a
-> > "getter" function, like "is_module_sig_enforced()", and use it on
-> > ima_main.c through module.h, since this code would be called to every
-> > module loaded in runtime.
-> > 
-> > If it's ok to you I can try to write a patch against integrity-next and
-> > see how it behaves.
-> 
-> Thanks!
-> 
+A static variable sig_enforce is used as status var to indicate the real
+value of CONFIG_MODULE_SIG_FORCE, once this one is set the var will hold
+true, but if the CONFIG is not set the status var will hold whatever
+value is present in the module.sig_enforce kernel cmdline param: true
+when =1 and false when =0 or not present.
 
-Patchset posted: http://www.spinics.net/lists/linux-integrity/msg00398.html
-Any feedback is welcome :).
+Considering this cmdline param take place over the CONFIG value when
+it's not set, other places in the kernel could missbehave since they
+would have only the CONFIG_MODULE_SIG_FORCE value to rely on. Exporting
+this status var allows the kernel to rely in the effective value of
+module signature enforcement, being it from CONFIG value or cmdline
+param.
 
-Thanks Mimi.
+Signed-off-by: Bruno E. O. Meneguele <brdeoliv@redhat.com>
+---
+ include/linux/module.h | 2 ++
+ kernel/module.c        | 8 ++++++++
+ 2 files changed, 10 insertions(+)
 
+diff --git a/include/linux/module.h b/include/linux/module.h
+index fe5aa3736707..ddfe17e3a85c 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -806,4 +806,6 @@ static inline bool module_sig_ok(struct module *module)
+ }
+ #endif	/* CONFIG_MODULE_SIG */
+ 
++bool is_module_sig_enforced(void);
++
+ #endif /* _LINUX_MODULE_H */
+diff --git a/kernel/module.c b/kernel/module.c
+index de66ec825992..b93c7ff44066 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -278,6 +278,14 @@ static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
+ module_param(sig_enforce, bool_enable_only, 0644);
+ #endif /* !CONFIG_MODULE_SIG_FORCE */
+ 
++/* Export sig_enforce kernel cmdline parameter to allow other subsystems rely
++ * on that instead of directly to CONFIG_MODULE_SIG_FORCE config. */
++bool is_module_sig_enforced(void)
++{
++	return sig_enforce;
++}
++EXPORT_SYMBOL(is_module_sig_enforced);
++
+ /* Block module loading/unloading? */
+ int modules_disabled = 0;
+ core_param(nomodule, modules_disabled, bint, 0);
 -- 
-bmeneg 
-PGP Key: http://bmeneg.com/pubkey.txt
-
-
-    [ Part 2, Application/PGP-SIGNATURE (Name: "signature.asc") 499 bytes. ]
-    [ Unable to print this part. ]
+2.13.6
