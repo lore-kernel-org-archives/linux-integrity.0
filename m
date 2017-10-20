@@ -1,121 +1,114 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from smtp11.infineon.com ([217.10.52.105]:60146 "EHLO
-        smtp11.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751637AbdJTOm5 (ORCPT
+Received: from smtp2.infineon.com ([217.10.52.18]:54359 "EHLO
+        smtp2.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752922AbdJTMDX (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 20 Oct 2017 10:42:57 -0400
+        Fri, 20 Oct 2017 08:03:23 -0400
 From: <Alexander.Steffen@infineon.com>
-To: <nayna@linux.vnet.ibm.com>, <linux-integrity@vger.kernel.org>
-CC: <zohar@linux.vnet.ibm.com>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <peterhuewe@gmx.de>,
-        <jarkko.sakkinen@linux.intel.com>, <tpmdd@selhorst.net>,
-        <jgunthorpe@obsidianresearch.com>, <patrickc@us.ibm.com>
-Subject: RE: [PATCH v4 2/4] tpm: ignore burstcount to improve tpm_tis send()
- performance
-Date: Fri, 20 Oct 2017 14:42:54 +0000
-Message-ID: <5ef60315f2254b3b8bcc217a572280e5@infineon.com>
-References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
- <20171017203232.2262-3-nayna@linux.vnet.ibm.com>
-In-Reply-To: <20171017203232.2262-3-nayna@linux.vnet.ibm.com>
+To: <jarkko.sakkinen@linux.intel.com>
+CC: <andriy.shevchenko@linux.intel.com>,
+        <elfring@users.sourceforge.net>, <linux-integrity@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <benh@kernel.crashing.org>,
+        <clabbe.montjoie@gmail.com>, <jgunthorpe@obsidianresearch.com>,
+        <jsnitsel@redhat.com>, <kgold@linux.vnet.ibm.com>,
+        <mpe@ellerman.id.au>, <nayna@linux.vnet.ibm.com>,
+        <paulus@samba.org>, <PeterHuewe@gmx.de>,
+        <stefanb@linux.vnet.ibm.com>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH 3/4] char/tpm: Improve a size determination in nine
+ functions
+Date: Fri, 20 Oct 2017 12:03:20 +0000
+Message-ID: <ad6ff01976fb4945bc218c43c44f9272@infineon.com>
+References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
+ <83a166af-aecc-649d-dfe3-a72245345209@users.sourceforge.net>
+ <1508238182.16112.475.camel@linux.intel.com>
+ <c8d37c0407a949c1abb35cfd79c17f58@infineon.com>
+ <20171018144811.klfmzikibuux77pf@linux.intel.com>
+ <8afa2fb8d8704aff804cd8da15e931da@infineon.com>
+ <20171020090139.l4igyucqxqmgrq7l@linux.intel.com>
+ <20171020102351.bfz7s2ihwce7q2iz@linux.intel.com>
+In-Reply-To: <20171020102351.bfz7s2ihwce7q2iz@linux.intel.com>
 Content-Type: text/plain; charset="Windows-1252"
 MIME-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-> The TPM burstcount status indicates the number of bytes that can
-> be sent to the TPM without causing bus wait states.  Effectively,
-> it is the number of empty bytes in the command FIFO.
+> On Fri, Oct 20, 2017 at 12:01:39PM +0300, Jarkko Sakkinen wrote:
+> > On Thu, Oct 19, 2017 at 04:58:23PM +0000,
+> Alexander.Steffen@infineon.com wrote:
+> > > > On Tue, Oct 17, 2017 at 11:50:05AM +0000,
+> Alexander.Steffen@infineon.com
+> > > > wrote:
+> > > > > > > Replace the specification of data structures by pointer
+> dereferences
+> > > > > > > as the parameter for the operator "sizeof" to make the
+> corresponding
+> > > > > > > size
+> > > > > > > determination a bit safer according to the Linux coding style
+> > > > > > > convention.
+> > > > > >
+> > > > > >
+> > > > > > This patch does one style in favor of the other.
+> > > > >
+> > > > > I actually prefer that style, so I'd welcome this change :)
+> > > > >
+> > > > > > At the end it's Jarkko's call, though I would NAK this as I think some
+> > > > > > one already told this to you for some other similar patch(es).
+> > > > > >
+> > > > > >
+> > > > > > I even would suggest to stop doing this noisy stuff, which keeps
+> people
+> > > > > > busy for nothing.
+> > > > >
+> > > > > Cleaning up old code is also worth something, even if does not change
+> > > > > one bit in the assembly output in the end...
+> > > > >
+> > > > > Alexander
+> > > >
+> > > > Quite insignificant clean up it is that does more harm that gives any
+> > > > benefit as any new change adds debt to backporting.
+> > > >
+> > > > Anyway, this has been a useful patch set for me in the sense that I have
+> > > > clearer picture now on discarding/accepting commits.
+> > >
+> > > Indeed. I have now a better understanding for why some code looks as
+> > > ugly as it does.
+> > >
+> > > > One line minor
+> > > > clean up will be from now on automatic NAK unless it causes a compiler
+> > > > warning or some other visible side-effect.
+> > >
+> > > Not a nice policy, but at least a policy. I have deleted the tasks
+> > > that I had still planned for other cleanup activities.
+> > >
+> > > Alexander
+> >
+> > 1/4 and 2/4 are sensible clean ups as long as the commit message is
+> > refined.
+> >
+> > Moving more functions to use tpm_buf instead of nasty tpm_cmd_t are
+> > also welcome changes.
+> >
+> > Documenting functions (exported mainly) is also welcome. Or refining
+> > documentation.
+> >
+> > It's really case by case. The important thing in small clean ups is
+> > a clearly written commit message that explains rationale.
+> >
+> > /Jarkko
 > 
-> This patch optimizes the tpm_tis_send_data() function by checking
-> the burstcount only once. And if the burstcount is valid, it writes
-> all the bytes at once, permitting wait state.
-> 
-> After this change, performance on a TPM 1.2 with an 8 byte
-> burstcount for 1000 extends improved from ~41sec to ~14sec.
-> 
-> Suggested-by: Ken Goldman <kgold@linux.vnet.ibm.com> in
-> conjunction with the TPM Device Driver work group.
-> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-> Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> ---
->  drivers/char/tpm/tpm_tis_core.c | 42 +++++++++++++++----------------------
-> ----
->  1 file changed, 15 insertions(+), 27 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_tis_core.c
-> b/drivers/char/tpm/tpm_tis_core.c
-> index b33126a35694..993328ae988c 100644
-> --- a/drivers/char/tpm/tpm_tis_core.c
-> +++ b/drivers/char/tpm/tpm_tis_core.c
-> @@ -316,7 +316,6 @@ static int tpm_tis_send_data(struct tpm_chip *chip,
-> u8 *buf, size_t len)
->  {
->  	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
->  	int rc, status, burstcnt;
-> -	size_t count = 0;
->  	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
-> 
->  	status = tpm_tis_status(chip);
-> @@ -330,35 +329,24 @@ static int tpm_tis_send_data(struct tpm_chip *chip,
-> u8 *buf, size_t len)
->  		}
->  	}
-> 
-> -	while (count < len - 1) {
-> -		burstcnt = get_burstcount(chip);
-> -		if (burstcnt < 0) {
-> -			dev_err(&chip->dev, "Unable to read burstcount\n");
-> -			rc = burstcnt;
-> -			goto out_err;
-> -		}
-> -		burstcnt = min_t(int, burstcnt, len - count - 1);
-> -		rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv-
-> >locality),
-> -					 burstcnt, buf + count);
-> -		if (rc < 0)
-> -			goto out_err;
-> -
-> -		count += burstcnt;
-> -
-> -		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip-
-> >timeout_c,
-> -					&priv->int_queue, false) < 0) {
-> -			rc = -ETIME;
-> -			goto out_err;
-> -		}
-> -		status = tpm_tis_status(chip);
-> -		if (!itpm && (status & TPM_STS_DATA_EXPECT) == 0) {
-> -			rc = -EIO;
-> -			goto out_err;
-> -		}
-> +	/*
-> +	 * Get the initial burstcount to ensure TPM is ready to
-> +	 * accept data.
-> +	 */
-> +	burstcnt = get_burstcount(chip);
-> +	if (burstcnt < 0) {
-> +		dev_err(&chip->dev, "Unable to read burstcount\n");
-> +		rc = burstcnt;
-> +		goto out_err;
->  	}
-> 
-> +	rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
-> +			len - 1, buf);
-> +	if (rc < 0)
-> +		goto out_err;
-> +
->  	/* write last byte */
-> -	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality),
-> buf[count]);
-> +	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[len-
-> 1]);
->  	if (rc < 0)
->  		goto out_err;
-> 
-> --
-> 2.13.3
+> It's easy to say in retroperpective that code is "ugly". I would use
+> strong consideration before using that adjective for mainline code.
+> Rarely when you do something new first the form will be polished.
 
-This seems to fail reliably with my SPI TPM 2.0. I get EIO when trying to send large amounts of data, e.g. with TPM2_Hash, and subsequent tests seem to take an unusual amount of time. More analysis probably has to wait until November, since I am going to be in Prague next week.
+(Let's not argue over words, not being a native speaker, I'll probably not choose the perfect expression all the time.)
+
+My assumption is that in many cases the code was not like that from the beginning. Over time, new functionality got added, interfaces expanded, etc. But when the goal tends to be to keep the changes minimal, then it is only natural for everyone to be focused on their small parts of the code, and not clean up the surrounding areas (or better integrate with them).
+
+> I was too steep with the policy above. It's not exactly like that in the
+> strict sense. It's always case by case like for any commit. However, it
+> is good to remember that "ugliness" does not cause regressions.
+
+Not by itself, no. But it causes cognitive strain while working with the code, and that might lead to bugs.
 
 Alexander
