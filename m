@@ -1,131 +1,52 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:22882 "EHLO mga14.intel.com"
+Received: from mout.web.de ([212.227.17.11]:51163 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751113AbdJWC5a (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 22 Oct 2017 22:57:30 -0400
-Date: Mon, 23 Oct 2017 05:57:23 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Alexander.Steffen@infineon.com
-Cc: nayna@linux.vnet.ibm.com, linux-integrity@vger.kernel.org,
-        zohar@linux.vnet.ibm.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
-        tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com,
-        patrickc@us.ibm.com
-Subject: Re: [PATCH v4 2/4] tpm: ignore burstcount to improve tpm_tis send()
- performance
-Message-ID: <20171023025723.zdmp5iwupssnqlzx@linux.intel.com>
-References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
- <20171017203232.2262-3-nayna@linux.vnet.ibm.com>
- <5ef60315f2254b3b8bcc217a572280e5@infineon.com>
+        id S1751589AbdJVLa4 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 22 Oct 2017 07:30:56 -0400
+Subject: [PATCH 2/2] xen-tpmfront: Combine two condition checks into one
+ statement in vtpm_send()
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-integrity@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+References: <cf592c7d-8fbc-833b-fa1a-ff9e91c3734c@users.sourceforge.net>
+Message-ID: <f1d76752-d5b4-649d-b11d-63348d439505@users.sourceforge.net>
+Date: Sun, 22 Oct 2017 13:30:46 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5ef60315f2254b3b8bcc217a572280e5@infineon.com>
+In-Reply-To: <cf592c7d-8fbc-833b-fa1a-ff9e91c3734c@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Oct 20, 2017 at 02:42:54PM +0000, Alexander.Steffen@infineon.com wrote:
-> > The TPM burstcount status indicates the number of bytes that can
-> > be sent to the TPM without causing bus wait states.  Effectively,
-> > it is the number of empty bytes in the command FIFO.
-> > 
-> > This patch optimizes the tpm_tis_send_data() function by checking
-> > the burstcount only once. And if the burstcount is valid, it writes
-> > all the bytes at once, permitting wait state.
-> > 
-> > After this change, performance on a TPM 1.2 with an 8 byte
-> > burstcount for 1000 extends improved from ~41sec to ~14sec.
-> > 
-> > Suggested-by: Ken Goldman <kgold@linux.vnet.ibm.com> in
-> > conjunction with the TPM Device Driver work group.
-> > Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-> > Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> > ---
-> >  drivers/char/tpm/tpm_tis_core.c | 42 +++++++++++++++----------------------
-> > ----
-> >  1 file changed, 15 insertions(+), 27 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm_tis_core.c
-> > b/drivers/char/tpm/tpm_tis_core.c
-> > index b33126a35694..993328ae988c 100644
-> > --- a/drivers/char/tpm/tpm_tis_core.c
-> > +++ b/drivers/char/tpm/tpm_tis_core.c
-> > @@ -316,7 +316,6 @@ static int tpm_tis_send_data(struct tpm_chip *chip,
-> > u8 *buf, size_t len)
-> >  {
-> >  	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
-> >  	int rc, status, burstcnt;
-> > -	size_t count = 0;
-> >  	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
-> > 
-> >  	status = tpm_tis_status(chip);
-> > @@ -330,35 +329,24 @@ static int tpm_tis_send_data(struct tpm_chip *chip,
-> > u8 *buf, size_t len)
-> >  		}
-> >  	}
-> > 
-> > -	while (count < len - 1) {
-> > -		burstcnt = get_burstcount(chip);
-> > -		if (burstcnt < 0) {
-> > -			dev_err(&chip->dev, "Unable to read burstcount\n");
-> > -			rc = burstcnt;
-> > -			goto out_err;
-> > -		}
-> > -		burstcnt = min_t(int, burstcnt, len - count - 1);
-> > -		rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv-
-> > >locality),
-> > -					 burstcnt, buf + count);
-> > -		if (rc < 0)
-> > -			goto out_err;
-> > -
-> > -		count += burstcnt;
-> > -
-> > -		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip-
-> > >timeout_c,
-> > -					&priv->int_queue, false) < 0) {
-> > -			rc = -ETIME;
-> > -			goto out_err;
-> > -		}
-> > -		status = tpm_tis_status(chip);
-> > -		if (!itpm && (status & TPM_STS_DATA_EXPECT) == 0) {
-> > -			rc = -EIO;
-> > -			goto out_err;
-> > -		}
-> > +	/*
-> > +	 * Get the initial burstcount to ensure TPM is ready to
-> > +	 * accept data.
-> > +	 */
-> > +	burstcnt = get_burstcount(chip);
-> > +	if (burstcnt < 0) {
-> > +		dev_err(&chip->dev, "Unable to read burstcount\n");
-> > +		rc = burstcnt;
-> > +		goto out_err;
-> >  	}
-> > 
-> > +	rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
-> > +			len - 1, buf);
-> > +	if (rc < 0)
-> > +		goto out_err;
-> > +
-> >  	/* write last byte */
-> > -	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality),
-> > buf[count]);
-> > +	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[len-
-> > 1]);
-> >  	if (rc < 0)
-> >  		goto out_err;
-> > 
-> > --
-> > 2.13.3
-> 
-> This seems to fail reliably with my SPI TPM 2.0. I get EIO when trying
-> to send large amounts of data, e.g. with TPM2_Hash, and subsequent
-> tests seem to take an unusual amount of time. More analysis probably
-> has to wait until November, since I am going to be in Prague next
-> week.
-> 
-> Alexander
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Oct 2017 13:15:16 +0200
 
-For the time being I'll drop this patch from the next branch and keep it
-in the master branch.
+A return was performed with the same error code after two condition checks.
+Thus use a single statement instead.
 
-/Jarkko
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/char/tpm/xen-tpmfront.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
+index 873a5631937a..0d02743e7a87 100644
+--- a/drivers/char/tpm/xen-tpmfront.c
++++ b/drivers/char/tpm/xen-tpmfront.c
+@@ -82,10 +82,7 @@ static int vtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+ 	u32 ordinal;
+ 	unsigned long duration;
+ 
+-	if (offset > PAGE_SIZE)
+-		return -EINVAL;
+-
+-	if (offset + count > PAGE_SIZE)
++	if (offset > PAGE_SIZE || offset + count > PAGE_SIZE)
+ 		return -EINVAL;
+ 
+ 	/* Wait for completion of any existing command or cancellation */
+-- 
+2.14.2
