@@ -1,104 +1,116 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:32880 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751277AbdJWQYi (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 23 Oct 2017 12:24:38 -0400
-Date: Mon, 23 Oct 2017 14:24:36 -0200
-From: "Bruno E. O. Meneguele" <brdeoliv@redhat.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, serge@hallyn.com,
-        james.l.morris@oracle.com, dmitry.kasatkin@gmail.com,
-        rusty@rustcorp.com.au, jeyu@kernel.org
-Subject: Re: [PATCH 1/2] module: export module signature enforcement status
-Message-ID: <20171023162436.GB2454@glitch>
-References: <cover.1508524595.git.brdeoliv@redhat.com>
- <5aea5786954da170e171fc9ddd1f591c0e36afc7.1508524595.git.brdeoliv@redhat.com>
- <1508763415.3639.91.camel@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="1UWUbFP1cBYEclgG"
-In-Reply-To: <1508763415.3639.91.camel@linux.vnet.ibm.com>
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:32902 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932335AbdJWP7x (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 23 Oct 2017 11:59:53 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9NFxif2034532
+        for <linux-integrity@vger.kernel.org>; Mon, 23 Oct 2017 11:59:53 -0400
+Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2dsjmjjush-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 23 Oct 2017 11:59:52 -0400
+Received: from localhost
+        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Mon, 23 Oct 2017 16:59:50 +0100
+Subject: [RFC PATCH] ima: require secure_boot rules in lockdown mode
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: linux-integrity <linux-integrity@vger.kernel.org>
+Cc: Matthew Garrett <mjg59@google.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Date: Mon, 23 Oct 2017 11:59:47 -0400
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1508774387.3639.128.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 23-10, Mimi Zohar wrote:
-> On Fri, 2017-10-20 at 17:19 -0200, Bruno E. O. Meneguele wrote:
-> > A static variable sig_enforce is used as status var to indicate the real
-> > value of CONFIG_MODULE_SIG_FORCE, once this one is set the var will hold
-> > true, but if the CONFIG is not set the status var will hold whatever
-> > value is present in the module.sig_enforce kernel cmdline param: true
-> > when =1 and false when =0 or not present.
-> > 
-> > Considering this cmdline param take place over the CONFIG value when
-> > it's not set, other places in the kernel could missbehave since they
-> 
-> ^misbehave
-> 
+Require the "secure_boot" rules, whether or not it is specified
+on the boot command line, for both the builtin and custom policies
+in secure boot lockdown mode.
 
-right.
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+---
+ security/integrity/ima/ima_policy.c | 46 +++++++++++++++++++++++++++----------
+ 1 file changed, 34 insertions(+), 12 deletions(-)
 
-> > would have only the CONFIG_MODULE_SIG_FORCE value to rely on. Exporting
-> > this status var allows the kernel to rely in the effective value of
-> > module signature enforcement, being it from CONFIG value or cmdline
-> > param.
-> 
-> Thanks!  There's a minor checkpatch warning below.
-> 
-> > Signed-off-by: Bruno E. O. Meneguele <brdeoliv@redhat.com>
-> > ---
-> >  include/linux/module.h | 2 ++
-> >  kernel/module.c        | 8 ++++++++
-> >  2 files changed, 10 insertions(+)
-> > 
-> > diff --git a/include/linux/module.h b/include/linux/module.h
-> > index fe5aa3736707..ddfe17e3a85c 100644
-> > --- a/include/linux/module.h
-> > +++ b/include/linux/module.h
-> > @@ -806,4 +806,6 @@ static inline bool module_sig_ok(struct module *module)
-> >  }
-> >  #endif	/* CONFIG_MODULE_SIG */
-> > 
-> > +bool is_module_sig_enforced(void);
-> > +
-> >  #endif /* _LINUX_MODULE_H */
-> > diff --git a/kernel/module.c b/kernel/module.c
-> > index de66ec825992..b93c7ff44066 100644
-> > --- a/kernel/module.c
-> > +++ b/kernel/module.c
-> > @@ -278,6 +278,14 @@ static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
-> >  module_param(sig_enforce, bool_enable_only, 0644);
-> >  #endif /* !CONFIG_MODULE_SIG_FORCE */
-> > 
-> > +/* Export sig_enforce kernel cmdline parameter to allow other subsystems rely
-> > + * on that instead of directly to CONFIG_MODULE_SIG_FORCE config. */
-> 
-> Checkpatch complains.  Please use the normal format:
-> /*
->  *
->  */
-> 
-
-Oh, sure, sorry for that! I'll resend a v2 of the patchset in a minute.
-
-Thanks.
-
-> > +bool is_module_sig_enforced(void)
-> > +{
-> > +	return sig_enforce;
-> > +}
-> > +EXPORT_SYMBOL(is_module_sig_enforced);
-> > +
-> >  /* Block module loading/unloading? */
-> >  int modules_disabled = 0;
-> >  core_param(nomodule, modules_disabled, bint, 0);
-> 
-
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 95209a5f8595..81a7496171d0 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -196,9 +196,9 @@ static int __init policy_setup(char *str)
+ 		if ((strcmp(p, "tcb") == 0) && !ima_policy)
+ 			ima_policy = DEFAULT_TCB;
+ 		else if (strcmp(p, "appraise_tcb") == 0)
+-			ima_use_appraise_tcb = 1;
++			ima_use_appraise_tcb = TRUE;
+ 		else if (strcmp(p, "secure_boot") == 0)
+-			ima_use_secure_boot = 1;
++			ima_use_secure_boot = TRUE;
+ 	}
+ 
+ 	return 1;
+@@ -427,14 +427,21 @@ void ima_update_policy_flag(void)
+  */
+ void __init ima_init_policy(void)
+ {
+-	int i, measure_entries, appraise_entries, secure_boot_entries;
++	int i;
++	int measure_entries = 0;
++	int appraise_entries = 0;
++	int secure_boot_entries = 0;
++	bool kernel_locked_down = kernel_is_locked_down();
+ 
+ 	/* if !ima_policy set entries = 0 so we load NO default rules */
+-	measure_entries = ima_policy ? ARRAY_SIZE(dont_measure_rules) : 0;
+-	appraise_entries = ima_use_appraise_tcb ?
+-			 ARRAY_SIZE(default_appraise_rules) : 0;
+-	secure_boot_entries = ima_use_secure_boot ?
+-			ARRAY_SIZE(secure_boot_rules) : 0;
++	if (ima_policy)
++		measure_entries = ARRAY_SIZE(dont_measure_rules);
++
++	if (ima_use_appraise_tcb)
++		appraise_entries = ARRAY_SIZE(default_appraise_rules);
++
++	if (ima_use_secure_boot || kernel_locked_down)
++		secure_boot_entries = ARRAY_SIZE(secure_boot_rules);
+ 
+ 	for (i = 0; i < measure_entries; i++)
+ 		list_add_tail(&dont_measure_rules[i].list, &ima_default_rules);
+@@ -455,11 +462,26 @@ void __init ima_init_policy(void)
+ 
+ 	/*
+ 	 * Insert the appraise rules requiring file signatures, prior to
+-	 * any other appraise rules.
++	 * any other appraise rules.  In secure boot lock-down mode, also
++	 * require these appraise rules for custom policies.
+ 	 */
+-	for (i = 0; i < secure_boot_entries; i++)
+-		list_add_tail(&secure_boot_rules[i].list,
+-			      &ima_default_rules);
++	for (i = 0; i < secure_boot_entries; i++) {
++		struct ima_rule_entry *entry;
++
++		/* Include for builtin policies */
++		list_add_tail(&secure_boot_rules[i].list, &ima_default_rules);
++
++		/* Include for custom policies */
++		if (kernel_locked_down) {
++			entry = kzalloc(sizeof(*entry), GFP_KERNEL);
++			if (entry) {
++				memcpy(entry, &secure_boot_rules[i],
++				       sizeof(*entry));
++				INIT_LIST_HEAD(&entry->list);
++				list_add_tail(&entry->list, &ima_policy_rules);
++			}
++		}
++	}
+ 
+ 	for (i = 0; i < appraise_entries; i++) {
+ 		list_add_tail(&default_appraise_rules[i].list,
 -- 
-bmeneg 
-PGP Key: http://bmeneg.com/pubkey.txt
-
-
-    [ Part 2, Application/PGP-SIGNATURE (Name: "signature.asc") 499 bytes. ]
-    [ Unable to print this part. ]
+2.7.4
