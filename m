@@ -1,381 +1,204 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from lhrrgout.huawei.com ([194.213.3.17]:38482 "EHLO
-        lhrrgout.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932356AbdJXKHx (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:46728 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751116AbdJWXUq (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 24 Oct 2017 06:07:53 -0400
-Subject: Re: [RFC][PATCH 1/2] ima: preserve the integrity of appraised files
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        <linux-integrity@vger.kernel.org>
-CC: Matthew Garrett <mjg59@google.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "James Morris" <jmorris@namei.org>,
-        David Safford <david.safford@gmail.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-References: <20171020154138.23635-1-roberto.sassu@huawei.com>
- <20171020154138.23635-2-roberto.sassu@huawei.com>
- <1508759202.3639.87.camel@linux.vnet.ibm.com>
- <f81dcce1-491d-d977-54ed-32f8c03c80db@huawei.com>
- <1508790646.3639.203.camel@linux.vnet.ibm.com>
-From: Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <88b2dab7-a4e0-d1fa-f2f7-0a2545eb8e1a@huawei.com>
-Date: Tue, 24 Oct 2017 12:07:45 +0200
+        Mon, 23 Oct 2017 19:20:46 -0400
+Received: by mail-lf0-f65.google.com with SMTP id g70so21936338lfl.3
+        for <linux-integrity@vger.kernel.org>; Mon, 23 Oct 2017 16:20:46 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1508790646.3639.203.camel@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20171016203709.11199-1-mjg59@google.com>
+References: <20171016203709.11199-1-mjg59@google.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 23 Oct 2017 19:20:44 -0400
+Message-ID: <CAHC9VhSsnPO+FBaUWOyAF=SxoNzy+nJZeGuWc-u9SrVR0VJOyA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] security: Add a cred_getsecid hook
+To: Matthew Garrett <mjg59@google.com>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, selinux@tycho.nsa.gov,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 10/23/2017 10:30 PM, Mimi Zohar wrote:
-> On Mon, 2017-10-23 at 15:41 +0200, Roberto Sassu wrote:
->> On 10/23/2017 1:46 PM, Mimi Zohar wrote:
->>> On Fri, 2017-10-20 at 17:41 +0200, Roberto Sassu wrote:
->>>> The existing 'ima_appraise_tcb' policy aims at protecting the integrity
->>>> of files owned by root against offline attacks, while LSMs should decide
->>>> if those files can be modified, and new files can be created. However,
->>>> LSMs cannot take this decision independently, if IMA appraises only
->>>> a subset of files that a process is allowed to access. A process can
->>>> become compromised due to reading files not appraised by IMA.
->>>>
->>>> To avoid this issue, the IMA policy should contain as criteria process
->>>> credentials rather than files attributes. Then, when a process matches
->>>> those criteria, files will be always appraised by IMA, regardless of
->>>> file attributes.
->>>>
->>>> The IMA policy with process credentials will define which process belongs
->>>> to the TCB and which not. With this information, IMA would be be able
->>>> to preserve the integrity of appraised files, without an LSM, for example
->>>> by denying writes by processes outside the TCB (Biba strict policy).
->>>>
->>>> This patch adds support for enforcing the Biba strict policy. More
->>>> policies will be introduced later. Enforcement will be enabled by
->>>> adding 'ima_integrity_policy=biba-strict' to the kernel command line.
->>>
->>> Way, way back, before the any of the integrity code was upstreamed,
->>> the original integrity design had LSMs calling exported integrity
->>> functions to verify file integrity (eg. evm_verifyxattr).  A decision
->>> was made, at the time, to have a clear delineation between Mandatory
->>> Access Control (MAC) and integrity.  There have been recent
->>> discussions about LSMs blurring this line and calling
->>> evm_verifyxattr() directly.
->>
->> If IMA/EVM were used to check the integrity of every file (content +
->> labels) before any other LSMs makes security decisions, I would agree
->> with you that there are two distinct layers: IMA/EVM at the bottom,
->> that protect the system against offline attacks (the association
->> between file content and LSM labels); LSMs at the top, protect it
->> against runtime attacks (i.e. preserve the integrity of the TCB).
->>
->> If instead IMA appraises a subset of the system, e.g. when the default
->> appraisal policy (called appraise_tcb) is selected, then LSMs alone
->> cannot guarantee anymore the runtime integrity of the system if subjects
->> in the LSMs TCB are allowed to read files not verified by IMA (read up
->> violation in the Biba strict model, because the integrity of files not
->> verified by IMA is low).
->>
->> Then, in order to preserve the runtime integrity of the system, IMA must
->> complement LSMs and prevent the non-appraised portion of the system
->> from interacting with the appraised portion.
-> 
-> Instead of adding MAC to IMA, reverse it.  Have the LSMs call the
-> integrity subsystem to verify a file's integrity before granting
-> permissions.
+On Mon, Oct 16, 2017 at 4:37 PM, Matthew Garrett <mjg59@google.com> wrote:
+> For IMA purposes, we want to be able to obtain the prepared secid in the
+> bprm structure before the credentials are committed. Add a cred_getsecid
+> hook that makes this possible.
+>
+> Signed-off-by: Matthew Garrett <mjg59@google.com>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Stephen Smalley <sds@tycho.nsa.gov>
+> Cc: Eric Paris <eparis@parisplace.org>
+> Cc: selinux@tycho.nsa.gov
+> Cc: Casey Schaufler <casey@schaufler-ca.com>
+> Cc: linux-security-module@vger.kernel.org
+> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+> Cc: linux-integrity@vger.kernel.org
+> ---
+>  include/linux/lsm_hooks.h  |  6 ++++++
+>  include/linux/security.h   |  1 +
+>  security/security.c        |  7 +++++++
+>  security/selinux/hooks.c   |  8 ++++++++
+>  security/smack/smack.h     | 10 ++++++++++
+>  security/smack/smack_lsm.c | 14 ++++++++++++++
+>  6 files changed, 46 insertions(+)
 
-If not all files are appraised, but only those that belong to the TCB,
-LSMs should take responsibility of denying access to a file with missing
-or invalid HMAC. Suppose that an LSM is enforcing the Biba strict policy
-and a process outside the TCB is accessing that file. From the LSM point
-of view this operation should be allowed, because it does not violate
-Biba rules. If IMA appraisal denies access, it is acting as a MAC.
+No argument from me on the SELinux/LSM bits:
+
+Acked-by: Paul Moore <paul@paul-moore.com>
+
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index ce02f76a6188..48a929fd47e6 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -556,6 +556,10 @@
+>   *     @new points to the new credentials.
+>   *     @old points to the original credentials.
+>   *     Transfer data from original creds to new creds
+> + * @cred_getsecid:
+> + *     Retrieve the security identifier of the cred structure @c
+> + *     @p contains the credentials, secid will be placed into @secid.
+> + *     In case of failure, @secid will be set to zero.
+>   * @kernel_act_as:
+>   *     Set the credentials for a kernel service to act as (subjective context).
+>   *     @new points to the credentials to be modified.
+> @@ -1510,6 +1514,7 @@ union security_list_options {
+>         int (*cred_prepare)(struct cred *new, const struct cred *old,
+>                                 gfp_t gfp);
+>         void (*cred_transfer)(struct cred *new, const struct cred *old);
+> +       void (*cred_getsecid)(const struct cred *c, u32 *secid);
+>         int (*kernel_act_as)(struct cred *new, u32 secid);
+>         int (*kernel_create_files_as)(struct cred *new, struct inode *inode);
+>         int (*kernel_module_request)(char *kmod_name);
+> @@ -1783,6 +1788,7 @@ struct security_hook_heads {
+>         struct list_head cred_free;
+>         struct list_head cred_prepare;
+>         struct list_head cred_transfer;
+> +       struct list_head cred_getsecid;
+>         struct list_head kernel_act_as;
+>         struct list_head kernel_create_files_as;
+>         struct list_head kernel_read_file;
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 458e24bea2d4..8d969958c25e 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -324,6 +324,7 @@ int security_cred_alloc_blank(struct cred *cred, gfp_t gfp);
+>  void security_cred_free(struct cred *cred);
+>  int security_prepare_creds(struct cred *new, const struct cred *old, gfp_t gfp);
+>  void security_transfer_creds(struct cred *new, const struct cred *old);
+> +void security_cred_getsecid(const struct cred *c, u32 *secid);
+>  int security_kernel_act_as(struct cred *new, u32 secid);
+>  int security_kernel_create_files_as(struct cred *new, struct inode *inode);
+>  int security_kernel_module_request(char *kmod_name);
+> diff --git a/security/security.c b/security/security.c
+> index 55b5997e4b72..0f5784880c94 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1009,6 +1009,13 @@ void security_transfer_creds(struct cred *new, const struct cred *old)
+>         call_void_hook(cred_transfer, new, old);
+>  }
+>
+> +void security_cred_getsecid(const struct cred *c, u32 *secid)
+> +{
+> +       *secid = 0;
+> +       call_void_hook(cred_getsecid, c, secid);
+> +}
+> +EXPORT_SYMBOL(security_cred_getsecid);
+> +
+>  int security_kernel_act_as(struct cred *new, u32 secid)
+>  {
+>         return call_int_hook(kernel_act_as, 0, new, secid);
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 33fd061305c4..e0828e9130c7 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -3829,6 +3829,13 @@ static void selinux_cred_transfer(struct cred *new, const struct cred *old)
+>         *tsec = *old_tsec;
+>  }
+>
+> +static void selinux_cred_getsecid(const struct cred *c, u32 *secid)
+> +{
+> +       rcu_read_lock();
+> +       *secid = cred_sid(c);
+> +       rcu_read_unlock();
+> +}
+> +
+>  /*
+>   * set the security data for a kernel service
+>   * - all the creation contexts are set to unlabelled
+> @@ -6332,6 +6339,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+>         LSM_HOOK_INIT(cred_free, selinux_cred_free),
+>         LSM_HOOK_INIT(cred_prepare, selinux_cred_prepare),
+>         LSM_HOOK_INIT(cred_transfer, selinux_cred_transfer),
+> +       LSM_HOOK_INIT(cred_getsecid, selinux_cred_getsecid),
+>         LSM_HOOK_INIT(kernel_act_as, selinux_kernel_act_as),
+>         LSM_HOOK_INIT(kernel_create_files_as, selinux_kernel_create_files_as),
+>         LSM_HOOK_INIT(kernel_module_request, selinux_kernel_module_request),
+> diff --git a/security/smack/smack.h b/security/smack/smack.h
+> index 6a71fc7831ab..5af7b7e709bc 100644
+> --- a/security/smack/smack.h
+> +++ b/security/smack/smack.h
+> @@ -391,6 +391,16 @@ static inline struct smack_known *smk_of_task_struct(const struct task_struct *t
+>         return skp;
+>  }
+>
+> +static inline struct smack_known *smk_of_cred(const struct cred *c)
+> +{
+> +       struct smack_known *skp;
+> +
+> +       rcu_read_lock();
+> +       skp = smk_of_task(c->security);
+> +       rcu_read_unlock();
+> +       return skp;
+> +}
+> +
+>  /*
+>   * Present a pointer to the forked smack label entry in an task blob.
+>   */
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 463af86812c7..f1710cf76f7f 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -2080,6 +2080,19 @@ static void smack_cred_transfer(struct cred *new, const struct cred *old)
+>         /* cbs copy rule list */
+>  }
+>
+> +/**
+> + * smack_cred_getsecid - get the secid corresponding to a creds structure
+> + * @c: the object creds
+> + * @secid: where to put the result
+> + *
+> + * Sets the secid to contain a u32 version of the smack label.
+> + */
+> +static void smack_cred_getsecid(const struct cred *c, u32 *secid)
+> +{
+> +       struct smack_known *skp = smk_of_cred(c);
+> +       *secid = skp->smk_secid;
+> +}
+> +
+>  /**
+>   * smack_kernel_act_as - Set the subjective context in a set of credentials
+>   * @new: points to the set of credentials to be modified.
+> @@ -4684,6 +4697,7 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+>         LSM_HOOK_INIT(cred_free, smack_cred_free),
+>         LSM_HOOK_INIT(cred_prepare, smack_cred_prepare),
+>         LSM_HOOK_INIT(cred_transfer, smack_cred_transfer),
+> +       LSM_HOOK_INIT(cred_getsecid, smack_cred_getsecid),
+>         LSM_HOOK_INIT(kernel_act_as, smack_kernel_act_as),
+>         LSM_HOOK_INIT(kernel_create_files_as, smack_kernel_create_files_as),
+>         LSM_HOOK_INIT(task_setpgid, smack_task_setpgid),
+> --
+> 2.15.0.rc0.271.g36b669edcc-goog
+>
 
 
->> For example, the recent work by Matthew Garrett (IMA: Support using new
->> creds in appraisal policy) goes in this direction. With the policy:
->>
->> appraise euid=0 func=CREDS_CHECK
->>
->> IMA enforces the Biba strict policy (read up) because it prevents bad
->> code, loaded through execve(), from being executed by the TCB (root
->> processes).
->>
->> As I mentioned in the patch set description, it could be possible to
->> enforce a more generic policy, which includes also FILE_CHECK and
->> MMAP_CHECK.
->>
->> With digital signatures, the enforcement of the write down rule is
->> guaranteed because signed files are immutable. This patch set adds
->> support for enforcing the write down rule on mutable files.
->>
->> Roberto
->>
->>
->>> Never was there any thought or discussion of adding MAC to the
->>> integrity subsystem.  A Biba implementation doesn't belong in IMA, but
->>> should be defined as a separate LSM.  (Years ago we implemented a low-
->>> water mark LSM named SLIM, based on LOMAC.)
->>>
->>> Mimi
->>>
->>>> To enforce this policy, it is necessary to upload to IMA a new policy
->>>> which defines the subjects part of the TCB. For example, the rule
->>>> 'appraise fowner=0' could be replaced with two rules: 'appraise uid=0'
->>>> and 'appraise euid=0'.
->>>>
->>>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->>>> ---
->>>>    Documentation/admin-guide/kernel-parameters.txt |  4 ++
->>>>    security/integrity/ima/ima.h                    | 23 ++++++++++
->>>>    security/integrity/ima/ima_appraise.c           | 61 +++++++++++++++++++++++++
->>>>    security/integrity/ima/ima_main.c               | 25 ++++++----
->>>>    4 files changed, 104 insertions(+), 9 deletions(-)
->>>>
->>>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->>>> index 05496622b4ef..37810c6a3b28 100644
->>>> --- a/Documentation/admin-guide/kernel-parameters.txt
->>>> +++ b/Documentation/admin-guide/kernel-parameters.txt
->>>> @@ -1532,6 +1532,10 @@
->>>>    	                [IMA] Define a custom template format.
->>>>    			Format: { "field1|...|fieldN" }
->>>>
->>>> +	ima_integrity_policy=
->>>> +			[IMA] Select an integrity policy to enforce.
-> 
-> The boot command line "ima_policy=" already adds support for loading
-> different builtin policies.  The different policies can be
-> concatenated together (eg. ima_policy="tcb | appraise_tcb |
-> secure_boot").  There's no need for a new mechanism for loading
-> builtin policies.
-
-These parameters have different meanings: ima_policy= defines the TCB,
-ima_integrity_policy= defines which policy is enforced on the TCB.
-
-Roberto
-
-
->>>> +			Policies: { "biba-strict" }
->>>> +
->>>>    	ima.ahash_minsize= [IMA] Minimum file size for asynchronous hash usage
->>>>    			Format: <min_file_size>
->>>>    			Set the minimal file size for using asynchronous hash.
->>>> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
->>>> index d52b487ad259..377e1d8c2afb 100644
->>>> --- a/security/integrity/ima/ima.h
->>>> +++ b/security/integrity/ima/ima.h
->>>> @@ -36,6 +36,8 @@ enum ima_show_type { IMA_SHOW_BINARY, IMA_SHOW_BINARY_NO_FIELD_LEN,
->>>>    		     IMA_SHOW_BINARY_OLD_STRING_FMT, IMA_SHOW_ASCII };
->>>>    enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
->>>>
->>>> +enum integrity_policies { BIBA_STRICT = 1, INTEGRITY_POLICY__LAST };
->>>> +
->>>>    /* digest size for IMA, fits SHA1 or MD5 */
->>>>    #define IMA_DIGEST_SIZE		SHA1_DIGEST_SIZE
->>>>    #define IMA_EVENT_NAME_LEN_MAX	255
->>>> @@ -57,6 +59,7 @@ extern int ima_initialized;
->>>>    extern int ima_used_chip;
->>>>    extern int ima_hash_algo;
->>>>    extern int ima_appraise;
->>>> +extern int ima_integrity_policy;
->>>>
->>>>    /* IMA event related data */
->>>>    struct ima_event_data {
->>>> @@ -247,6 +250,11 @@ enum hash_algo ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value,
->>>>    				 int xattr_len);
->>>>    int ima_read_xattr(struct dentry *dentry,
->>>>    		   struct evm_ima_xattr_data **xattr_value);
->>>> +bool ima_inode_is_appraised(struct dentry *dentry, struct inode *inode);
->>>> +bool ima_appraise_biba_check(struct file *file,
->>>> +			     struct integrity_iint_cache *iint,
->>>> +			     int must_appraise, char **pathbuf,
->>>> +			     const char **pathname, char *namebuf);
->>>>
->>>>    #else
->>>>    static inline int ima_appraise_measurement(enum ima_hooks func,
->>>> @@ -289,6 +297,21 @@ static inline int ima_read_xattr(struct dentry *dentry,
->>>>    	return 0;
->>>>    }
->>>>
->>>> +static inline bool ima_inode_is_appraised(struct dentry *dentry,
->>>> +					  struct inode *inode);
->>>> +{
->>>> +	return false;
->>>> +}
->>>> +
->>>> +static inline bool ima_appraise_biba_check(struct file *file,
->>>> +					   struct integrity_iint_cache *iint,
->>>> +					   int must_appraise, char **pathbuf,
->>>> +					   const char **pathname,
->>>> +					   char *namebuf)
->>>> +{
->>>> +	return false;
->>>> +}
->>>> +
->>>>    #endif /* CONFIG_IMA_APPRAISE */
->>>>
->>>>    /* LSM based policy rules require audit */
->>>> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
->>>> index 809ba70fbbbf..c24824ef64c4 100644
->>>> --- a/security/integrity/ima/ima_appraise.c
->>>> +++ b/security/integrity/ima/ima_appraise.c
->>>> @@ -18,6 +18,10 @@
->>>>
->>>>    #include "ima.h"
->>>>
->>>> +static char *ima_integrity_policies_str[INTEGRITY_POLICY__LAST] = {
->>>> +	[BIBA_STRICT] = "biba-strict",
->>>> +};
->>>> +
->>>>    static int __init default_appraise_setup(char *str)
->>>>    {
->>>>    #ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
->>>> @@ -33,6 +37,15 @@ static int __init default_appraise_setup(char *str)
->>>>
->>>>    __setup("ima_appraise=", default_appraise_setup);
->>>>
->>>> +static int __init integrity_policy_setup(char *str)
->>>> +{
->>>> +	if (strcmp(str, ima_integrity_policies_str[BIBA_STRICT]) == 0)
->>>> +		ima_integrity_policy = BIBA_STRICT;
->>>> +
->>>> +	return 1;
->>>> +}
->>>> +__setup("ima_integrity_policy=", integrity_policy_setup);
->>>> +
->>>>    /*
->>>>     * is_ima_appraise_enabled - return appraise status
->>>>     *
->>>> @@ -189,6 +202,54 @@ int ima_read_xattr(struct dentry *dentry,
->>>>    	return ret;
->>>>    }
->>>>
->>>> +bool ima_inode_is_appraised(struct dentry *dentry, struct inode *inode)
->>>> +{
->>>> +	ssize_t len;
->>>> +
->>>> +	len =  __vfs_getxattr(dentry, inode, XATTR_NAME_IMA, NULL, 0);
->>>> +
->>>> +	return (len > 0 && len >= sizeof(struct evm_ima_xattr_data));
->>>> +}
->>>> +
->>>> +/*
->>>> + * ima_appraise_biba_check - detect violations of a Biba policy
->>>> + *
->>>> + * The appraisal policy identifies which subjects belong to the TCB. Files
->>>> + * with a valid digital signature or HMAC are also part of the TCB. This
->>>> + * function detects attempts to write appraised files by subjects outside
->>>> + * the TCB. The Biba strict policy denies this operation.
->>>> + *
->>>> + * Return: true if current operation violates a Biba policy, false otherwise
->>>> + */
->>>> +bool ima_appraise_biba_check(struct file *file,
->>>> +			     struct integrity_iint_cache *iint,
->>>> +			     int must_appraise, char **pathbuf,
->>>> +			     const char **pathname, char *namebuf)
->>>> +{
->>>> +	struct inode *inode = file_inode(file);
->>>> +	fmode_t mode = file->f_mode;
->>>> +	char *cause = "write_down";
->>>> +
->>>> +	/* check write up, ima_appraise_measurement() checks read down */
->>>> +	if (!must_appraise && (mode & FMODE_WRITE)) {
->>>> +		if (IS_IMA(inode)) {
->>>> +			if (!iint)
->>>> +				iint = integrity_iint_find(inode);
->>>> +			if (iint->flags & IMA_APPRAISE)
->>>> +				goto out_violation;
->>>> +		} else if (ima_inode_is_appraised(file_dentry(file), inode)) {
->>>> +			goto out_violation;
->>>> +		}
->>>> +	}
->>>> +	return false;
->>>> +out_violation:
->>>> +	*pathname = ima_d_path(&file->f_path, pathbuf, namebuf);
->>>> +	integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, *pathname,
->>>> +			    ima_integrity_policies_str[ima_integrity_policy],
->>>> +			    cause, 0, 0);
->>>> +	return true;
->>>> +}
->>>> +
->>>>    /*
->>>>     * ima_appraise_measurement - appraise file measurement
->>>>     *
->>>> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
->>>> index bb7e36e90c79..6e85ea8e2373 100644
->>>> --- a/security/integrity/ima/ima_main.c
->>>> +++ b/security/integrity/ima/ima_main.c
->>>> @@ -31,6 +31,7 @@ int ima_initialized;
->>>>
->>>>    #ifdef CONFIG_IMA_APPRAISE
->>>>    int ima_appraise = IMA_APPRAISE_ENFORCE;
->>>> +int ima_integrity_policy;
->>>>    #else
->>>>    int ima_appraise;
->>>>    #endif
->>>> @@ -103,7 +104,8 @@ static void ima_rdwr_violation_check(struct file *file,
->>>>    	if (!send_tomtou && !send_writers)
->>>>    		return;
->>>>
->>>> -	*pathname = ima_d_path(&file->f_path, pathbuf, filename);
->>>> +	if (!*pathname)
->>>> +		*pathname = ima_d_path(&file->f_path, pathbuf, filename);
->>>>
->>>>    	if (send_tomtou)
->>>>    		ima_add_violation(file, *pathname, iint,
->>>> @@ -168,7 +170,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
->>>>    	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
->>>>    	struct evm_ima_xattr_data *xattr_value = NULL;
->>>>    	int xattr_len = 0;
->>>> -	bool violation_check;
->>>> +	bool violation_check, policy_violation = false;
->>>>    	enum hash_algo hash_algo;
->>>>
->>>>    	if (!ima_policy_flag || !S_ISREG(inode->i_mode))
->>>> @@ -181,7 +183,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
->>>>    	action = ima_get_action(inode, mask, func, &pcr);
->>>>    	violation_check = ((func == FILE_CHECK || func == MMAP_CHECK) &&
->>>>    			   (ima_policy_flag & IMA_MEASURE));
->>>> -	if (!action && !violation_check)
->>>> +	if (!action && !violation_check && !ima_integrity_policy)
->>>>    		return 0;
->>>>
->>>>    	must_appraise = action & IMA_APPRAISE;
->>>> @@ -198,13 +200,16 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
->>>>    			goto out;
->>>>    	}
->>>>
->>>> -	if (violation_check) {
->>>> +	if (ima_integrity_policy)
->>>> +		policy_violation = ima_appraise_biba_check(file, iint,
->>>> +						must_appraise, &pathbuf,
->>>> +						&pathname, filename);
->>>> +	if (violation_check)
->>>>    		ima_rdwr_violation_check(file, iint, action & IMA_MEASURE,
->>>>    					 &pathbuf, &pathname);
->>>> -		if (!action) {
->>>> -			rc = 0;
->>>> -			goto out_free;
->>>> -		}
->>>> +	if (!action) {
->>>> +		rc = 0;
->>>> +		goto out_free;
->>>>    	}
->>>>
->>>>    	/* Determine if already appraised/measured based on bitmask
->>>> @@ -260,7 +265,9 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
->>>>    		__putname(pathbuf);
->>>>    out:
->>>>    	inode_unlock(inode);
->>>> -	if ((rc && must_appraise) && (ima_appraise & IMA_APPRAISE_ENFORCE))
->>>> +	if (((rc && must_appraise) ||
->>>> +	    (ima_integrity_policy && policy_violation)) &&
->>>> +	    (ima_appraise & IMA_APPRAISE_ENFORCE))
->>>>    		return -EACCES;
->>>>    	return 0;
->>>>    }
->>>
->>
-> 
 
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
+paul moore
+www.paul-moore.com
