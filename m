@@ -1,52 +1,43 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.14]:65392 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.15.4]:63724 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932191AbdJWN5u (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 23 Oct 2017 09:57:50 -0400
-Subject: Re: [PATCH 1/2] xen-tpmfront: Use common error handling code in
- vtpm_send()
+        id S932191AbdJWNvT (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 23 Oct 2017 09:51:19 -0400
+Subject: Re: [PATCH] tpm_tis_core: Use common error handling code in
+ tpm_tis_send_data()
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         linux-integrity@vger.kernel.org
 Cc: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
         =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>,
         LKML <linux-kernel@vger.kernel.org>,
         kernel-janitors@vger.kernel.org
-References: <cf592c7d-8fbc-833b-fa1a-ff9e91c3734c@users.sourceforge.net>
- <9cfcbfd0-75c3-4de5-f735-0ace23d2abcb@users.sourceforge.net>
- <20171023134257.txnpbg5c5z7uaquf@linux.intel.com>
+References: <fb0a6fbb-db2f-ce3f-f1c2-02f934accc4e@users.sourceforge.net>
+ <20171023134202.d6td6vvhd7pfv5ue@linux.intel.com>
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Message-ID: <f68ee5b6-2da1-e3c8-4d0d-f13a0563385e@users.sourceforge.net>
-Date: Mon, 23 Oct 2017 15:57:30 +0200
+Message-ID: <455e93f6-c419-8318-6129-80e99fc8552f@users.sourceforge.net>
+Date: Mon, 23 Oct 2017 15:51:09 +0200
 MIME-Version: 1.0
-In-Reply-To: <20171023134257.txnpbg5c5z7uaquf@linux.intel.com>
+In-Reply-To: <20171023134202.d6td6vvhd7pfv5ue@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
->> @@ -108,11 +106,14 @@ static int vtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
->>  	if (wait_for_tpm_stat(chip, VTPM_STATUS_IDLE, duration,
->>  			&priv->read_queue, true) < 0) {
->>  		/* got a signal or timeout, try to cancel */
->> -		vtpm_cancel(chip);
->> -		return -ETIME;
->> +		goto cancel_vtpm;
->>  	}
+>> @@ -315,6 +311,8 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
 >>  
->>  	return count;
->> +
->> +cancel_vtpm:
->> +	vtpm_cancel(chip);
->> +	return -ETIME;
->>  }
+>>  	return 0;
 >>  
->>  static int vtpm_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+>> +report_timeout:
+>> +	rc = -ETIME;
+>>  out_err:
+>>  	tpm_tis_ready(chip);
+>>  	return rc;
 >> -- 
 >> 2.14.2
 >>
 > 
-> NAK
+> NAK. wait_for_tpm_stat() should give that error code.
 
-Do you need any more facts to show the influence of the proposed small code reduction?
+This is a pity that you reject another bit of code reduction.
 
 Regards,
 Markus
