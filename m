@@ -1,50 +1,64 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:10384 "EHLO mga14.intel.com"
+Received: from quartz.orcorp.ca ([184.70.90.242]:34277 "EHLO quartz.orcorp.ca"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751494AbdJXWVw (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 24 Oct 2017 18:21:52 -0400
-Date: Wed, 25 Oct 2017 00:21:48 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: linux-integrity@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Proposal: rename tpm1_eventlog.c and tpm2_eventlog.c
-Message-ID: <20171024222148.gwnkj5vqsyj43qer@linux.intel.com>
+        id S1751277AbdJXVfC (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 24 Oct 2017 17:35:02 -0400
+Date: Tue, 24 Oct 2017 15:34:49 -0600
+From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
+        <linux-crypto@vger.kernel.org>,
+        James Morris <james.l.morris@oracle.com>,
+        Matt Mackall <mpm@selenic.com>,
+        David Safford <safford@us.ibm.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH] tpm: Move Linux RNG connection to hwrng
+Message-ID: <20171024213449.GA21662@obsidianresearch.com>
+References: <20171024184235.GC1806@obsidianresearch.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171024184235.GC1806@obsidianresearch.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-I noticed when making slides for KS that the naming for event log stuff
-that the naming is so broken that it is hard to understand the code.
-Here it really would make sense to have a patch set just to clean up the
-cruft.
+On Tue, Oct 24, 2017 at 12:42:35PM -0600, Jason Gunthorpe wrote:
 
-Random examples of more senseful naming:
+> This is compile tested only.
 
-* tpm2_bios_measurements_start() should be rather something like
-  tpm_eventlog_seq_agile_start().
-* tpm_bios_measurements_start() should be rather something like
-  tpm_eventlog_seq_sha1_start().
+0day says the kconfig has a problem when randomized, here is the fix I
+will roll into a v2 in a few days:
 
-Corresponding structs would be tpm_eventlog_agile_seq_ops and
-tpm_eventlog_sha1_seq_ops.
-
-Finally, I would place the file operations, being so complicated, in
-separate files:
-
-* tpm_eventlog_seq_sha1.c
-* tpm_eventlog_seq_eventlog.c
-
-And move all the management code that is right now illogically located
-in tpm1_eventlog.c to tpm_eventlog.c that would be the entry point for
-the event log.
-
-The code is laid out so badly right now that I have really hard time
-understanding it if I haven't looked at it within last couple of weeks.
-It's really a trainwreck at the moment. We must clean up it up fast.
-
-Getting this done will help me to review patches to this area faster
-so it would be a benefit for everyone. The current structure makes every
-event log patch a pain to review.
-
-/Jarkko
+diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+index a95725fa77789e..ca89da3e4b2ae9 100644
+--- a/drivers/char/tpm/Kconfig
++++ b/drivers/char/tpm/Kconfig
+@@ -27,16 +27,13 @@ menuconfig TCG_TPM
+ if TCG_TPM
+ 
+ config HW_RANDOM_TPM
+-       tristate "TPM HW Random Number Generator support"
+-       depends on TCG_TPM && HW_RANDOM
+-       default HW_RANDOM
++       bool "TPM HW Random Number Generator support"
++       depends on TCG_TPM && HW_RANDOM && !(TCG_TPM=y && HW_RANDOM=m)
++       default y
+        ---help---
+          This driver provides kernel-side support for the Random Number
+          Generator in the Trusted Platform Module
+ 
+-         To compile this driver as a module, choose M here: the
+-         module will be called tpm-rng.
+-
+          If unsure, say Y.
+ 
+ config TCG_TIS_CORE
