@@ -1,64 +1,54 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from quartz.orcorp.ca ([184.70.90.242]:34277 "EHLO quartz.orcorp.ca"
+Received: from quartz.orcorp.ca ([184.70.90.242]:42985 "EHLO quartz.orcorp.ca"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751277AbdJXVfC (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 24 Oct 2017 17:35:02 -0400
-Date: Tue, 24 Oct 2017 15:34:49 -0600
+        id S1750908AbdJXSwX (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 24 Oct 2017 14:52:23 -0400
+Date: Tue, 24 Oct 2017 12:52:08 -0600
 From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
+Cc: linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Marcel Selhorst <tpmdd@selhorst.net>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <james.l.morris@oracle.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
         "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
         <linux-crypto@vger.kernel.org>,
-        James Morris <james.l.morris@oracle.com>,
-        Matt Mackall <mpm@selenic.com>,
-        David Safford <safford@us.ibm.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH] tpm: Move Linux RNG connection to hwrng
-Message-ID: <20171024213449.GA21662@obsidianresearch.com>
-References: <20171024184235.GC1806@obsidianresearch.com>
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>
+Subject: Re: [PATCH] tpm: remove chip_num parameter from in-kernel API
+Message-ID: <20171024185208.GD1806@obsidianresearch.com>
+References: <20171023123817.18559-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171024184235.GC1806@obsidianresearch.com>
+In-Reply-To: <20171023123817.18559-1-jarkko.sakkinen@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Oct 24, 2017 at 12:42:35PM -0600, Jason Gunthorpe wrote:
+On Mon, Oct 23, 2017 at 02:38:14PM +0200, Jarkko Sakkinen wrote:
+> The reasoning is simple and obvious. Since every call site passes the
+> value TPM_ANY_NUM (0xFFFF) the parameter does not have right to exist.
+> Refined the documentation of the corresponding functions.
 
-> This is compile tested only.
+I like this patch, but how about a slightly different take, make this
+change instead:
 
-0day says the kconfig has a problem when randomized, here is the fix I
-will roll into a v2 in a few days:
+-struct tpm_chip *tpm_chip_find_get(int chip_num)
++struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip);
 
-diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
-index a95725fa77789e..ca89da3e4b2ae9 100644
---- a/drivers/char/tpm/Kconfig
-+++ b/drivers/char/tpm/Kconfig
-@@ -27,16 +27,13 @@ menuconfig TCG_TPM
- if TCG_TPM
- 
- config HW_RANDOM_TPM
--       tristate "TPM HW Random Number Generator support"
--       depends on TCG_TPM && HW_RANDOM
--       default HW_RANDOM
-+       bool "TPM HW Random Number Generator support"
-+       depends on TCG_TPM && HW_RANDOM && !(TCG_TPM=y && HW_RANDOM=m)
-+       default y
-        ---help---
-          This driver provides kernel-side support for the Random Number
-          Generator in the Trusted Platform Module
- 
--         To compile this driver as a module, choose M here: the
--         module will be called tpm-rng.
--
-          If unsure, say Y.
- 
- config TCG_TIS_CORE
+Where chip == NULL means the default TPM.
+
+And then at all call sites swap TPM_ANY_NUM to NULL and instead of
+flowing an 'int chip_num' to tpm_chip_find_get, flow the 'struct
+tpm_chip *' directly.
+
+This gets us much closer to the desired API with about the same amount
+of churn as this patch has.
+
+Jason
