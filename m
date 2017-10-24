@@ -1,207 +1,303 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:28921 "EHLO mga09.intel.com"
+Received: from mga05.intel.com ([192.55.52.43]:48337 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932258AbdJXNva (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 24 Oct 2017 09:51:30 -0400
-Date: Tue, 24 Oct 2017 15:51:23 +0200
+        id S1752039AbdJXNqH (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 24 Oct 2017 09:46:07 -0400
+Date: Tue, 24 Oct 2017 15:45:56 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Cc: Laurent Bigonville <bigon@debian.org>,
-        Alexander.Steffen@infineon.com, tpmdd-devel@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org
-Subject: Re: [tpmdd-devel] tpm device not showing up in /dev anymore
-Message-ID: <20171024135123.uqail7olnespun4k@linux.intel.com>
-References: <47c4300b-8701-79a6-1c58-3a5853f4c5e3@debian.org>
- <595efb25-8d87-f39d-037f-9c9a98462339@debian.org>
- <857106e4bb864bb8a68b1381fffc8f50@MUCSE603.infineon.com>
- <20170831164015.3ajgwydgxtippwoz@rhwork>
- <0d9be244-ace0-030d-6ff9-c4e94c63b7e9@debian.org>
- <20170906040555.fqedhmo5277sd6fq@linux.intel.com>
- <20171014081318.busge2fhteusfjwx@rhwork>
- <b63b765d-2477-d9fe-9d80-c2ea7e582bce@debian.org>
- <20171023132346.jbqgokwv3ah2oqjo@linux.intel.com>
- <20171023134515.56siz3m6lhrhnovv@rhwork>
+To: Nayna Jain <nayna@linux.vnet.ibm.com>
+Cc: Alexander.Steffen@infineon.com, linux-integrity@vger.kernel.org,
+        zohar@linux.vnet.ibm.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
+        tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com,
+        patrickc@us.ibm.com
+Subject: Re: [PATCH v4 1/4] tpm: move wait_for_tpm_stat() to respective
+ driver files
+Message-ID: <20171024134556.2gjh7nd3nfmaf4ct@linux.intel.com>
+References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
+ <20171017203232.2262-2-nayna@linux.vnet.ibm.com>
+ <20171019142141.jtzilibffx4fsgmw@linux.intel.com>
+ <d2a4fca3aee340dcb5de88a69814bd90@infineon.com>
+ <20171020085645.q43e62d2vmspatm2@linux.intel.com>
+ <67d5b797-17b6-6247-1f0d-c62c09967f87@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20171023134515.56siz3m6lhrhnovv@rhwork>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <67d5b797-17b6-6247-1f0d-c62c09967f87@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Oct 23, 2017 at 06:45:15AM -0700, Jerry Snitselaar wrote:
-> On Mon Oct 23 17, Jarkko Sakkinen wrote:
-> > On Sat, Oct 21, 2017 at 10:53:55AM +0200, Laurent Bigonville wrote:
-> > > Le 14/10/17 a 10:13, Jerry Snitselaar a ecrit :
-> > > > On Wed Sep 06 17, Jarkko Sakkinen wrote:
-> > > > > On Fri, Sep 01, 2017 at 02:10:18PM +0200, Laurent Bigonville wrote:
-> > > > > > Le 31/08/17 a 18:40, Jerry Snitselaar a ecrit :
-> > > > > > > On Thu Aug 31 17, Alexander.Steffen@infineon.com wrote:
-> > > > > > > > > Le 29/08/17 a 18:35, Laurent Bigonville a ecrit :
-> > > > > > > > > > Le 29/08/17 a 18:00, Alexander.Steffen@infineon.com a ecrit :
-> > > > > > > > > >>> An idea how to troubleshoot this?
-> > > > > > > > > >> Can you run git bisect on the changes between 4.11 and
-> > > > > > 4.12, so that
-> > > > > > > > > >> we find the offending commit? It is probably sufficient
-> > > > > > to limit the
-> > > > > > > > > >> search to commits that touch something in drivers/char/tpm.
-> > > > > > > > > >
-> > > > > > > > > > I'll try and keep you posted.
-> > > > > > > > >
-> > > > > > > > > OK I've been able to bisect the problem and the bad commit is:
-> > > > > > > > >
-> > > > > > > > > e6aef069b6e97790cb127d5eeb86ae9ff0b7b0e3 is the first bad commit
-> > > > > > > > > commit e6aef069b6e97790cb127d5eeb86ae9ff0b7b0e3
-> > > > > > > > > Author: Jerry Snitselaar <jsnitsel@redhat.com>
-> > > > > > > > > Date:   Mon Mar 27 08:46:04 2017 -0700
-> > > > > > > > >
-> > > > > > > > >      tpm_tis: convert to using locality callbacks
-> > > > > > > > >
-> > > > > > > > >      This patch converts tpm_tis to use of the new tpm class ops
-> > > > > > > > >      request_locality, and relinquish_locality.
-> > > > > > > > >
-> > > > > > > > >      With the move to using the callbacks, release_locality is
-> > > > > > > > > changed so
-> > > > > > > > >      that we now release the locality even if there is no
-> > > > > > > > > request pending.
-> > > > > > > > >
-> > > > > > > > >      This required some changes to the tpm_tis_core_init
-> > > > > > code path to
-> > > > > > > > >      make sure locality is requested when needed:
-> > > > > > > > >
-> > > > > > > > >        - tpm2_probe code path will end up calling
-> > > > > > > > > request/release through
-> > > > > > > > >          callbacks, so request_locality prior to
-> > > > > > tpm2_probe not needed.
-> > > > > > > > >
-> > > > > > > > >        - probe_itpm makes calls to tpm_tis_send_data which no
-> > > > > > > > > longer calls
-> > > > > > > > >          request_locality, so add request_locality prior to
-> > > > > > > > > tpm_tis_send_data
-> > > > > > > > >          calls. Also drop release_locality call in middleof
-> > > > > > > > > probe_itpm, and
-> > > > > > > > >          keep locality until release_locality called at end of
-> > > > > > > > > probe_itpm.
-> > > > > > > > >
-> > > > > > > > >      Cc: Peter Huewe <peterhuewe@gmx.de>
-> > > > > > > > >      Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > > > > > > >      Cc: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-> > > > > > > > >      Cc: Marcel Selhorst <tpmdd@selhorst.net>
-> > > > > > > > >      Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> > > > > > > > >      Reviewed-by: Jarkko Sakkinen
-> > > > > > <jarkko.sakkinen@linux.intel.com>
-> > > > > > > > >      Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > > > > > > >      Signed-off-by: Jarkko Sakkinen
-> > > > > > <jarkko.sakkinen@linux.intel.com>
-> > > > > > > > >
-> > > > > > > > > :040000 040000 70234365da69959d47076ebb40c8d17f520c3e44
-> > > > > > > > > 72f21b446e45ea1003de75902b0553deb99157fd M drivers
-> > > > > > > > >
-> > > > > > > >
-> > > > > > > > I've looked again at the code in question, but could not find
-> > > > > > > > anything that is obviously wrong there. Locality is now
-> > > > > > > > requested/released at slightly different points in the process than
-> > > > > > > > before, but that's it. It does not seem to cause problems with the
-> > > > > > > > majority of TPMs, since you are the first to report any, so
-> > > > > > maybe it
-> > > > > > > > is a quirk that only affects this device.
-> > > > > > > >
-> > > > > > > > Perhaps Jerry can help, since this is his change?
-> > > > > > > >
-> > > > > > > > Alexander
-> > > > > > >
-> > > > > > > Getting some caffeine in me, and starting to take a look. Adding
-> > > > > > > Jarkko as well since this might involve the general locality changes.
-> > > > > > >
-> > > > > > > Laurent, if I send you a patch with some debugging code added, would
-> > > > > > > you be able to run it on that system? I wasn't running into issues
-> > > > > > > on the system I had with a 1.2 device, but I no longer have access
-> > > > > > > to it. I'll see if I can find one in our labs and reproduce it there.
-> > > > > >
-> > > > > > Yes I should be able to do that
-> > > > >
-> > > > > Any findings?
-> > > > >
-> > > > > /Jarkko
-> > > >
-> > > > Okay, finally getting back to this. Looking at the code it isn't clear
-> > > > to me
-> > > > why the change is causing this. So while I stare at this some more
-> > > > Laurent
-> > > > could you reproduce it with this patch so I can see what the status and
-> > > > access registers look like? Does anyone else on here happen to have a
-> > > > Sinosun
-> > > > tpm device? The systems I have access to with TPM1.2 devices don't have
-> > > > this
-> > > > issue.
-> > > >
-> > > > --8<--
-> > > >
-> > > > diff --git a/drivers/char/tpm/tpm_tis_core.c
-> > > > b/drivers/char/tpm/tpm_tis_core.c
-> > > > index fdde971bc810..7d60a7e4b50a 100644
-> > > > --- a/drivers/char/tpm/tpm_tis_core.c
-> > > > +++ b/drivers/char/tpm/tpm_tis_core.c
-> > > > @@ -258,6 +258,7 @@ static int tpm_tis_send_data(struct tpm_chip *chip,
-> > > > const u8 *buf, size_t len)
-> > > >     int rc, status, burstcnt;
-> > > >     size_t count = 0;
-> > > >     bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
-> > > > +    u8 access;
-> > > >
-> > > >     status = tpm_tis_status(chip);
-> > > >     if ((status & TPM_STS_COMMAND_READY) == 0) {
-> > > > @@ -292,6 +293,11 @@ static int tpm_tis_send_data(struct tpm_chip *chip,
-> > > > const u8 *buf, size_t len)
-> > > >         }
-> > > >         status = tpm_tis_status(chip);
-> > > >         if (!itpm && (status & TPM_STS_DATA_EXPECT) == 0) {
-> > > > +            rc = tpm_tis_read8(priv, TPM_ACCESS(priv->locality),
-> > > > &access);
-> > > > +            if (rc < 0)
-> > > > +                dev_info(&chip->dev, "TPM_STS_DATA_EXPECT == 0: read
-> > > > failure TPM_ACCESS(%d)\n", priv->locality);
-> > > > +            else
-> > > > +                dev_info(&chip->dev, "TPM_STS_DATA_EXPECT == 0:
-> > > > locality: %d status: %x access: %x\n", priv->locality, status, access);
-> > > >             rc = -EIO;
-> > > >             goto out_err;
-> > > >         }
-> > > > @@ -309,6 +315,11 @@ static int tpm_tis_send_data(struct tpm_chip *chip,
-> > > > const u8 *buf, size_t len)
-> > > >     }
-> > > >     status = tpm_tis_status(chip);
-> > > >     if (!itpm && (status & TPM_STS_DATA_EXPECT) != 0) {
-> > > > +        rc = tpm_tis_read8(priv, TPM_ACCESS(priv->locality), &access);
-> > > > +        if (rc < 0)
-> > > > +            dev_info(&chip->dev, "TPM_STS_DATA_EXPECT != 0: read
-> > > > failure TPM_ACCESS(%d)\n", priv->locality);
-> > > > +        else
-> > > > +            dev_info(&chip->dev, "TPM_STS_DATA_EXPECT != 0: locality:
-> > > > %d status: %x access: %x\n", priv->locality, status, access);
-> > > >         rc = -EIO;
-> > > >         goto out_err;
-> > > >     }
-> > > 
-> > > Please find here the dmesg output of the patched kernel
-> > 
-> > At least 0xff is corrupted value in senseful way. CPU fills the read
-> > with ones for example for unaligned bus read. See table 19 in PC client
-> > spec. This can happen when you do unaligned read for example.
-> > 
-> > Maybe TPM is unreachable i.e. powered off. Bit busy with stuff ATM but
-> > would probably make sense to compare that 0x81 to table 18 in the same
-> > spec.
-> > 
-> > /Jarkko
+On Mon, Oct 23, 2017 at 07:02:18PM +0530, Nayna Jain wrote:
 > 
-> 0x81 is saying the access register status is valid, and the locality
-> is not active. That first bit means A Dynamic OS has not been previously
-> established on the platform. Normally we would see 0xa1, which would
-> mean valid register status, and the locality is active.
+> 
+> On 10/20/2017 02:26 PM, Jarkko Sakkinen wrote:
+> > On Thu, Oct 19, 2017 at 05:00:29PM +0000, Alexander.Steffen@infineon.com wrote:
+> > > > On Tue, Oct 17, 2017 at 04:32:29PM -0400, Nayna Jain wrote:
+> > > > > The function wait_for_tpm_stat() is currently defined in
+> > > > > tpm-interface file. It is a hardware specific function used
+> > > > > only by tpm_tis and xen-tpmfront, so it is removed from
+> > > > > tpm-interface.c and defined in respective driver files.
+> > > > > 
+> > > > > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > > > Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+> > > > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > > > ---
+> > > > >   drivers/char/tpm/tpm-interface.c | 60 ----------------------------------------
+> > > > >   drivers/char/tpm/tpm.h           |  2 --
+> > > > >   drivers/char/tpm/tpm_tis_core.c  | 60
+> > > > ++++++++++++++++++++++++++++++++++++++++
+> > > > >   drivers/char/tpm/xen-tpmfront.c  | 60
+> > > > ++++++++++++++++++++++++++++++++++++++++
+> > > > >   4 files changed, 120 insertions(+), 62 deletions(-)
+> > > > > 
+> > > > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-
+> > > > interface.c
+> > > > > index 1d6729be4cd6..313f7618d569 100644
+> > > > > --- a/drivers/char/tpm/tpm-interface.c
+> > > > > +++ b/drivers/char/tpm/tpm-interface.c
+> > > > > @@ -1035,66 +1035,6 @@ int tpm_send(u32 chip_num, void *cmd, size_t
+> > > > buflen)
+> > > > >   }
+> > > > >   EXPORT_SYMBOL_GPL(tpm_send);
+> > > > > 
+> > > > > -static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+> > > > > -					bool check_cancel, bool *canceled)
+> > > > > -{
+> > > > > -	u8 status = chip->ops->status(chip);
+> > > > > -
+> > > > > -	*canceled = false;
+> > > > > -	if ((status & mask) == mask)
+> > > > > -		return true;
+> > > > > -	if (check_cancel && chip->ops->req_canceled(chip, status)) {
+> > > > > -		*canceled = true;
+> > > > > -		return true;
+> > > > > -	}
+> > > > > -	return false;
+> > > > > -}
+> > > > > -
+> > > > > -int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long
+> > > > timeout,
+> > > > > -		      wait_queue_head_t *queue, bool check_cancel)
+> > > > > -{
+> > > > > -	unsigned long stop;
+> > > > > -	long rc;
+> > > > > -	u8 status;
+> > > > > -	bool canceled = false;
+> > > > > -
+> > > > > -	/* check current status */
+> > > > > -	status = chip->ops->status(chip);
+> > > > > -	if ((status & mask) == mask)
+> > > > > -		return 0;
+> > > > > -
+> > > > > -	stop = jiffies + timeout;
+> > > > > -
+> > > > > -	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
+> > > > > -again:
+> > > > > -		timeout = stop - jiffies;
+> > > > > -		if ((long)timeout <= 0)
+> > > > > -			return -ETIME;
+> > > > > -		rc = wait_event_interruptible_timeout(*queue,
+> > > > > -			wait_for_tpm_stat_cond(chip, mask, check_cancel,
+> > > > > -					       &canceled),
+> > > > > -			timeout);
+> > > > > -		if (rc > 0) {
+> > > > > -			if (canceled)
+> > > > > -				return -ECANCELED;
+> > > > > -			return 0;
+> > > > > -		}
+> > > > > -		if (rc == -ERESTARTSYS && freezing(current)) {
+> > > > > -			clear_thread_flag(TIF_SIGPENDING);
+> > > > > -			goto again;
+> > > > > -		}
+> > > > > -	} else {
+> > > > > -		do {
+> > > > > -			tpm_msleep(TPM_TIMEOUT);
+> > > > > -			status = chip->ops->status(chip);
+> > > > > -			if ((status & mask) == mask)
+> > > > > -				return 0;
+> > > > > -		} while (time_before(jiffies, stop));
+> > > > > -	}
+> > > > > -	return -ETIME;
+> > > > > -}
+> > > > > -EXPORT_SYMBOL_GPL(wait_for_tpm_stat);
+> > > > > -
+> > > > >   #define TPM_ORD_SAVESTATE 152
+> > > > >   #define SAVESTATE_RESULT_SIZE 10
+> > > > > 
+> > > > > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> > > > > index 2d5466a72e40..4fc83ac7abeb 100644
+> > > > > --- a/drivers/char/tpm/tpm.h
+> > > > > +++ b/drivers/char/tpm/tpm.h
+> > > > > @@ -525,8 +525,6 @@ int tpm_do_selftest(struct tpm_chip *chip);
+> > > > >   unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32
+> > > > ordinal);
+> > > > >   int tpm_pm_suspend(struct device *dev);
+> > > > >   int tpm_pm_resume(struct device *dev);
+> > > > > -int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long
+> > > > timeout,
+> > > > > -		      wait_queue_head_t *queue, bool check_cancel);
+> > > > > 
+> > > > >   static inline void tpm_msleep(unsigned int delay_msec)
+> > > > >   {
+> > > > > diff --git a/drivers/char/tpm/tpm_tis_core.c
+> > > > b/drivers/char/tpm/tpm_tis_core.c
+> > > > > index 63bc6c3b949e..b33126a35694 100644
+> > > > > --- a/drivers/char/tpm/tpm_tis_core.c
+> > > > > +++ b/drivers/char/tpm/tpm_tis_core.c
+> > > > > @@ -31,6 +31,66 @@
+> > > > >   #include "tpm.h"
+> > > > >   #include "tpm_tis_core.h"
+> > > > > 
+> > > > > +static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+> > > > > +					bool check_cancel, bool *canceled)
+> > > > > +{
+> > > > > +	u8 status = chip->ops->status(chip);
+> > > > > +
+> > > > > +	*canceled = false;
+> > > > > +	if ((status & mask) == mask)
+> > > > > +		return true;
+> > > > > +	if (check_cancel && chip->ops->req_canceled(chip, status)) {
+> > > > > +		*canceled = true;
+> > > > > +		return true;
+> > > > > +	}
+> > > > > +	return false;
+> > > > > +}
+> > > > > +
+> > > > > +static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+> > > > > +		unsigned long timeout, wait_queue_head_t *queue,
+> > > > > +		bool check_cancel)
+> > > > > +{
+> > > > > +	unsigned long stop;
+> > > > > +	long rc;
+> > > > > +	u8 status;
+> > > > > +	bool canceled = false;
+> > > > > +
+> > > > > +	/* check current status */
+> > > > > +	status = chip->ops->status(chip);
+> > > > > +	if ((status & mask) == mask)
+> > > > > +		return 0;
+> > > > > +
+> > > > > +	stop = jiffies + timeout;
+> > > > > +
+> > > > > +	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
+> > > > > +again:
+> > > > > +		timeout = stop - jiffies;
+> > > > > +		if ((long)timeout <= 0)
+> > > > > +			return -ETIME;
+> > > > > +		rc = wait_event_interruptible_timeout(*queue,
+> > > > > +			wait_for_tpm_stat_cond(chip, mask, check_cancel,
+> > > > > +					       &canceled),
+> > > > > +			timeout);
+> > > > > +		if (rc > 0) {
+> > > > > +			if (canceled)
+> > > > > +				return -ECANCELED;
+> > > > > +			return 0;
+> > > > > +		}
+> > > > > +		if (rc == -ERESTARTSYS && freezing(current)) {
+> > > > > +			clear_thread_flag(TIF_SIGPENDING);
+> > > > > +			goto again;
+> > > > > +		}
+> > > > > +	} else {
+> > > > > +		do {
+> > > > > +			tpm_msleep(TPM_TIMEOUT);
+> > > > > +			status = chip->ops->status(chip);
+> > > > > +			if ((status & mask) == mask)
+> > > > > +				return 0;
+> > > > > +		} while (time_before(jiffies, stop));
+> > > > > +	}
+> > > > > +	return -ETIME;
+> > > > > +}
+> > > > > +
+> > > > >   /* Before we attempt to access the TPM we must see that the valid bit is
+> > > > set.
+> > > > >    * The specification says that this bit is 0 at reset and remains 0 until the
+> > > > >    * 'TPM has gone through its self test and initialization and has established
+> > > > > diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-
+> > > > tpmfront.c
+> > > > > index 656e8af95d52..d20a0a9ded27 100644
+> > > > > --- a/drivers/char/tpm/xen-tpmfront.c
+> > > > > +++ b/drivers/char/tpm/xen-tpmfront.c
+> > > > > @@ -39,6 +39,66 @@ enum status_bits {
+> > > > >   	VTPM_STATUS_CANCELED = 0x8,
+> > > > >   };
+> > > > > 
+> > > > > +static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+> > > > > +					bool check_cancel, bool *canceled)
+> > > > > +{
+> > > > > +	u8 status = chip->ops->status(chip);
+> > > > > +
+> > > > > +	*canceled = false;
+> > > > > +	if ((status & mask) == mask)
+> > > > > +		return true;
+> > > > > +	if (check_cancel && chip->ops->req_canceled(chip, status)) {
+> > > > > +		*canceled = true;
+> > > > > +		return true;
+> > > > > +	}
+> > > > > +	return false;
+> > > > > +}
+> > > > > +
+> > > > > +static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+> > > > > +		unsigned long timeout, wait_queue_head_t *queue,
+> > > > > +		bool check_cancel)
+> > > > > +{
+> > > > > +	unsigned long stop;
+> > > > > +	long rc;
+> > > > > +	u8 status;
+> > > > > +	bool canceled = false;
+> > > > > +
+> > > > > +	/* check current status */
+> > > > > +	status = chip->ops->status(chip);
+> > > > > +	if ((status & mask) == mask)
+> > > > > +		return 0;
+> > > > > +
+> > > > > +	stop = jiffies + timeout;
+> > > > > +
+> > > > > +	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
+> > > > > +again:
+> > > > > +		timeout = stop - jiffies;
+> > > > > +		if ((long)timeout <= 0)
+> > > > > +			return -ETIME;
+> > > > > +		rc = wait_event_interruptible_timeout(*queue,
+> > > > > +			wait_for_tpm_stat_cond(chip, mask, check_cancel,
+> > > > > +					       &canceled),
+> > > > > +			timeout);
+> > > > > +		if (rc > 0) {
+> > > > > +			if (canceled)
+> > > > > +				return -ECANCELED;
+> > > > > +			return 0;
+> > > > > +		}
+> > > > > +		if (rc == -ERESTARTSYS && freezing(current)) {
+> > > > > +			clear_thread_flag(TIF_SIGPENDING);
+> > > > > +			goto again;
+> > > > > +		}
+> > > > > +	} else {
+> > > > > +		do {
+> > > > > +			tpm_msleep(TPM_TIMEOUT);
+> > > > > +			status = chip->ops->status(chip);
+> > > > > +			if ((status & mask) == mask)
+> > > > > +				return 0;
+> > > > > +		} while (time_before(jiffies, stop));
+> > > > > +	}
+> > > > > +	return -ETIME;
+> > > > > +}
+> > > > > +
+> > > > >   static u8 vtpm_status(struct tpm_chip *chip)
+> > > > >   {
+> > > > >   	struct tpm_private *priv = dev_get_drvdata(&chip->dev);
+> > > > > --
+> > > > > 2.13.3
+> > > > > 
+> > > > This commit caused a compiler warning because freezer.h was not included
+> > > > to xen-tpmfront.c. I manually fixed it.
+> > > Yep, and checkpatch.pl still complains about some stuff (mostly
+> > > whitespace) in both patch 1/4 and 2/4. When fixed patches are
+> > > available, I can run them again through my automation.
+> > > Alexander
+> 
+> Sorry for delay in response.. I was on vacation for last few days.
+> Thanks for informing. I am wondering these didn't show up when I ran
+> checkpatch.pl.
 
-I think the important thing to note here is that STS has bits set that
-should never be set. So we can conclude that TPM might be either
-
-1. Powered off
-2. In some transition state?
+I also did run checkpatch.pl. Haven't had time to recheck yet but I will
+do that since there's always chance for human error.
 
 /Jarkko
