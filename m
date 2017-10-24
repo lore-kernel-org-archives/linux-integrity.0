@@ -1,71 +1,57 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from quartz.orcorp.ca ([184.70.90.242]:33314 "EHLO quartz.orcorp.ca"
+Received: from mx1.redhat.com ([209.132.183.28]:55724 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751316AbdJXRiI (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 24 Oct 2017 13:38:08 -0400
-Date: Tue, 24 Oct 2017 11:37:57 -0600
-From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "open list:INTEGRITY MEASUREMENT ARCHITECTURE IMA"
-        <linux-ima-user@lists.sourceforge.net>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        "moderated list:TPM DEVICE DRIVER"
-        <tpmdd-devel@lists.sourceforge.net>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
-        <linux-crypto@vger.kernel.org>,
-        James Morris <james.l.morris@oracle.com>,
-        Matt Mackall <mpm@selenic.com>,
-        "open list:INTEGRITY MEASUREMENT ARCHITECTURE IMA"
-        <linux-ima-devel@lists.sourceforge.net>,
-        David Safford <safford@us.ibm.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [tpmdd-devel] [PATCH] tpm: remove chip_num parameter from
- in-kernel API
-Message-ID: <20171024173757.GA1806@obsidianresearch.com>
-References: <20171023123817.18559-1-jarkko.sakkinen@linux.intel.com>
- <cbcb78c6-fa36-32d3-891e-96544875d97c@linux.vnet.ibm.com>
- <20171023163139.GA17394@obsidianresearch.com>
- <20171024154440.3jeupmus43jcgbbz@linux.intel.com>
- <CANc+2y4TbkfPT3d_sBd0MbE7ZJ4F7Sfsfvdv9V6=63=tRpWn4A@mail.gmail.com>
- <20171024155526.GA32250@obsidianresearch.com>
- <CANc+2y6-P9MvjbL18h02SPwNMPyk4_cPFfL6LKHDXiKSHfv00A@mail.gmail.com>
- <20171024161118.GA348@obsidianresearch.com>
- <CAKdAkRT9sLux6S1qdd=j0nbXSBdnYGG_hvjny=ic0YJLVNnxzA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAKdAkRT9sLux6S1qdd=j0nbXSBdnYGG_hvjny=ic0YJLVNnxzA@mail.gmail.com>
+        id S1751536AbdJXRhR (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 24 Oct 2017 13:37:17 -0400
+From: "Bruno E. O. Meneguele" <brdeoliv@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, serge@hallyn.com,
+        james.l.morris@oracle.com, dmitry.kasatkin@gmail.com,
+        zohar@linux.vnet.ibm.com, rusty@rustcorp.com.au, jeyu@kernel.org
+Subject: [PATCH v3 2/2] ima: check signature enforcement against cmdline param instead of CONFIG
+Date: Tue, 24 Oct 2017 15:37:01 -0200
+Message-Id: <b1bab0d1184f11c06ba0484883c22bc046ffb5a6.1508865786.git.brdeoliv@redhat.com>
+In-Reply-To: <cover.1508865786.git.brdeoliv@redhat.com>
+References: <cover.1508865786.git.brdeoliv@redhat.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Oct 24, 2017 at 10:02:00AM -0700, Dmitry Torokhov wrote:
-> tpm-rng is abomination that should be kicked out as soon as possible.
-> It wrecks havoc with the power management (TPM chip drivers may go
-> into suspend state, but tpm_rng does not do any power management and
-> happily forwards requests to suspended hardware) and may be available
-> when there is no TPM at all yet (the drivers have not been probed yet,
-> or have gotten a deferral, etc).
+When the user requests MODULE_CHECK policy and its kernel is compiled
+with CONFIG_MODULE_SIG_FORCE not set, all modules would not load, just
+those loaded in initram time. One option the user would have would be
+set a kernel cmdline param (module.sig_enforce) to true, but the IMA
+module check code doesn't rely on this value, it checks just
+CONFIG_MODULE_SIG_FORCE.
 
-Makes sense
+This patch solves this problem checking for the exported value of
+module.sig_enforce cmdline param intead of CONFIG_MODULE_SIG_FORCE,
+which holds the effective value (CONFIG || param).
 
-> TPM core should register HWRNGs when chips are ready.
+Signed-off-by: Bruno E. O. Meneguele <brdeoliv@redhat.com>
+---
+ security/integrity/ima/ima_main.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-The main thing I've wanted from the TPM RNG is
-'add_early_randomness'..
-
-We can certainly provide a TPM interface to hwrng, it seems
-reasonable.
-
-Excep that we already have a user api in /dev/tpm to access the
-tpm RNG, is the duplication a problem?
-
-Jason
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index e4ab8ef8016e..d11a7fcc5c8b 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -356,12 +356,12 @@ void ima_post_path_mknod(struct dentry *dentry)
+  */
+ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+ {
++	bool sig_enforce = is_module_sig_enforced();
++
+ 	if (!file && read_id == READING_MODULE) {
+-#ifndef CONFIG_MODULE_SIG_FORCE
+-		if ((ima_appraise & IMA_APPRAISE_MODULES) &&
++		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES) &&
+ 		    (ima_appraise & IMA_APPRAISE_ENFORCE))
+ 			return -EACCES;	/* INTEGRITY_UNKNOWN */
+-#endif
+ 		return 0;	/* We rely on module signature checking */
+ 	}
+ 	return 0;
+-- 
+2.13.6
