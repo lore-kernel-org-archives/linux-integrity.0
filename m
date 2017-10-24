@@ -1,61 +1,50 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:9230 "EHLO mga04.intel.com"
+Received: from mga14.intel.com ([192.55.52.115]:10384 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751576AbdJXW1r (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 24 Oct 2017 18:27:47 -0400
-Date: Wed, 25 Oct 2017 00:27:41 +0200
+        id S1751494AbdJXWVw (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 24 Oct 2017 18:21:52 -0400
+Date: Wed, 25 Oct 2017 00:21:48 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-Cc: linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Marcel Selhorst <tpmdd@selhorst.net>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <james.l.morris@oracle.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
-        <linux-crypto@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>
-Subject: Re: [PATCH] tpm: remove chip_num parameter from in-kernel API
-Message-ID: <20171024222741.lqvgpdaosjazpvfd@linux.intel.com>
-References: <20171023123817.18559-1-jarkko.sakkinen@linux.intel.com>
- <20171024185208.GD1806@obsidianresearch.com>
+To: linux-integrity@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Proposal: rename tpm1_eventlog.c and tpm2_eventlog.c
+Message-ID: <20171024222148.gwnkj5vqsyj43qer@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171024185208.GD1806@obsidianresearch.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Oct 24, 2017 at 12:52:08PM -0600, Jason Gunthorpe wrote:
-> On Mon, Oct 23, 2017 at 02:38:14PM +0200, Jarkko Sakkinen wrote:
-> > The reasoning is simple and obvious. Since every call site passes the
-> > value TPM_ANY_NUM (0xFFFF) the parameter does not have right to exist.
-> > Refined the documentation of the corresponding functions.
-> 
-> I like this patch, but how about a slightly different take, make this
-> change instead:
-> 
-> -struct tpm_chip *tpm_chip_find_get(int chip_num)
-> +struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip);
-> 
-> Where chip == NULL means the default TPM.
-> 
-> And then at all call sites swap TPM_ANY_NUM to NULL and instead of
-> flowing an 'int chip_num' to tpm_chip_find_get, flow the 'struct
-> tpm_chip *' directly.
-> 
-> This gets us much closer to the desired API with about the same amount
-> of churn as this patch has.
-> 
-> Jason
+I noticed when making slides for KS that the naming for event log stuff
+that the naming is so broken that it is hard to understand the code.
+Here it really would make sense to have a patch set just to clean up the
+cruft.
 
-I can do that. I will rework this as a patch set that includes this
-proposal. Gives us more clean position to continue. Thank you.
+Random examples of more senseful naming:
+
+* tpm2_bios_measurements_start() should be rather something like
+  tpm_eventlog_seq_agile_start().
+* tpm_bios_measurements_start() should be rather something like
+  tpm_eventlog_seq_sha1_start().
+
+Corresponding structs would be tpm_eventlog_agile_seq_ops and
+tpm_eventlog_sha1_seq_ops.
+
+Finally, I would place the file operations, being so complicated, in
+separate files:
+
+* tpm_eventlog_seq_sha1.c
+* tpm_eventlog_seq_eventlog.c
+
+And move all the management code that is right now illogically located
+in tpm1_eventlog.c to tpm_eventlog.c that would be the entry point for
+the event log.
+
+The code is laid out so badly right now that I have really hard time
+understanding it if I haven't looked at it within last couple of weeks.
+It's really a trainwreck at the moment. We must clean up it up fast.
+
+Getting this done will help me to review patches to this area faster
+so it would be a benefit for everyone. The current structure makes every
+event log patch a pain to review.
 
 /Jarkko
