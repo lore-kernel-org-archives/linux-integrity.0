@@ -1,60 +1,59 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga05.intel.com ([192.55.52.43]:43148 "EHLO mga05.intel.com"
+Received: from mga14.intel.com ([192.55.52.115]:53331 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751630AbdJXOGQ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 24 Oct 2017 10:06:16 -0400
-Date: Tue, 24 Oct 2017 16:04:15 +0200
+        id S1750897AbdJXN43 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 24 Oct 2017 09:56:29 -0400
+Date: Tue, 24 Oct 2017 15:56:22 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
 Cc: linux-integrity@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "open list:INTEGRITY MEASUREMENT ARCHITECTURE IMA"
-        <linux-ima-user@lists.sourceforge.net>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
         Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        linux-security-module@vger.kernel.org,
-        "moderated list:TPM DEVICE DRIVER"
-        <tpmdd-devel@lists.sourceforge.net>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
-        <linux-crypto@vger.kernel.org>,
-        James Morris <james.l.morris@oracle.com>,
-        Matt Mackall <mpm@selenic.com>,
-        "open list:INTEGRITY MEASUREMENT ARCHITECTURE IMA"
-        <linux-ima-devel@lists.sourceforge.net>,
-        David Safford <safford@us.ibm.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [tpmdd-devel] [PATCH] tpm: remove chip_num parameter from
- in-kernel API
-Message-ID: <20171024140415.wx6oyqpktbebjt25@linux.intel.com>
-References: <20171023123817.18559-1-jarkko.sakkinen@linux.intel.com>
- <cbcb78c6-fa36-32d3-891e-96544875d97c@linux.vnet.ibm.com>
+        Peter =?iso-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] xen-tpmfront: Use common error handling code in
+ vtpm_send()
+Message-ID: <20171024135622.uswu3apuj23njbna@linux.intel.com>
+References: <cf592c7d-8fbc-833b-fa1a-ff9e91c3734c@users.sourceforge.net>
+ <9cfcbfd0-75c3-4de5-f735-0ace23d2abcb@users.sourceforge.net>
+ <20171023134257.txnpbg5c5z7uaquf@linux.intel.com>
+ <f68ee5b6-2da1-e3c8-4d0d-f13a0563385e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cbcb78c6-fa36-32d3-891e-96544875d97c@linux.vnet.ibm.com>
+In-Reply-To: <f68ee5b6-2da1-e3c8-4d0d-f13a0563385e@users.sourceforge.net>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Oct 23, 2017 at 10:07:31AM -0400, Stefan Berger wrote:
-> I think every kernel internal TPM driver API should be called with the
-> tpm_chip as a parameter. This is in foresight of namespacing of IMA where we
-> want to provide the flexibility of passing a dedicated vTPM to each
-> namespace and IMA would use the chip as a parameter to all of these
-> functions to talk to the right tpm_vtpm_proxy instance. From that
-> perspective this patch goes into the wrong direction.
+On Mon, Oct 23, 2017 at 03:57:30PM +0200, SF Markus Elfring wrote:
+> >> @@ -108,11 +106,14 @@ static int vtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+> >>  	if (wait_for_tpm_stat(chip, VTPM_STATUS_IDLE, duration,
+> >>  			&priv->read_queue, true) < 0) {
+> >>  		/* got a signal or timeout, try to cancel */
+> >> -		vtpm_cancel(chip);
+> >> -		return -ETIME;
+> >> +		goto cancel_vtpm;
+> >>  	}
+> >>  
+> >>  	return count;
+> >> +
+> >> +cancel_vtpm:
+> >> +	vtpm_cancel(chip);
+> >> +	return -ETIME;
+> >>  }
+> >>  
+> >>  static int vtpm_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+> >> -- 
+> >> 2.14.2
+> >>
+> > 
+> > NAK
 > 
->    Stefan
+> Do you need any more facts to show the influence of the proposed small code reduction?
+> 
+> Regards,
+> Markus
 
-The goal of this patch is to kernel code that never gets executed. It
-removes a load of completely dead code. It is the only thing that this
-commit does. Why do you think this is "going into wrong direction" if it
-only removes dead code and refines the documentation up to date?
-
-After the dead code has been removed it makes sense to propose a better
-mechanism. Maybe the one that you are speaking about. But you need to
-remove the cruft first.
+Already explained when I reviewed another patch dealing with
+-ETIME.
 
 /Jarkko
