@@ -1,9 +1,9 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:57780 "EHLO mga09.intel.com"
+Received: from mga11.intel.com ([192.55.52.93]:59552 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751811AbdJXNzU (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 24 Oct 2017 09:55:20 -0400
-Date: Tue, 24 Oct 2017 15:55:11 +0200
+        id S1750813AbdJXNxP (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 24 Oct 2017 09:53:15 -0400
+Date: Tue, 24 Oct 2017 15:52:49 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: SF Markus Elfring <elfring@users.sourceforge.net>
 Cc: linux-integrity@vger.kernel.org,
@@ -11,40 +11,60 @@ Cc: linux-integrity@vger.kernel.org,
         Peter =?iso-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>,
         LKML <linux-kernel@vger.kernel.org>,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] tpm_tis_core: Use common error handling code in
- tpm_tis_send_data()
-Message-ID: <20171024135511.773njwnmodnewtwo@linux.intel.com>
-References: <fb0a6fbb-db2f-ce3f-f1c2-02f934accc4e@users.sourceforge.net>
- <20171023134202.d6td6vvhd7pfv5ue@linux.intel.com>
- <455e93f6-c419-8318-6129-80e99fc8552f@users.sourceforge.net>
+Subject: Re: [PATCH 2/2] xen-tpmfront: Combine two condition checks into one
+ statement in vtpm_send()
+Message-ID: <20171024135249.jfyiipxejwv7sxsl@linux.intel.com>
+References: <cf592c7d-8fbc-833b-fa1a-ff9e91c3734c@users.sourceforge.net>
+ <f1d76752-d5b4-649d-b11d-63348d439505@users.sourceforge.net>
+ <20171023134401.n5mx6f6gjfhxtnxu@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <455e93f6-c419-8318-6129-80e99fc8552f@users.sourceforge.net>
+In-Reply-To: <20171023134401.n5mx6f6gjfhxtnxu@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Oct 23, 2017 at 03:51:09PM +0200, SF Markus Elfring wrote:
-> >> @@ -315,6 +311,8 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
-> >>  
-> >>  	return 0;
-> >>  
-> >> +report_timeout:
-> >> +	rc = -ETIME;
-> >>  out_err:
-> >>  	tpm_tis_ready(chip);
-> >>  	return rc;
-> >> -- 
-> >> 2.14.2
-> >>
+On Mon, Oct 23, 2017 at 03:44:01PM +0200, Jarkko Sakkinen wrote:
+> On Sun, Oct 22, 2017 at 01:30:46PM +0200, SF Markus Elfring wrote:
+> > From: Markus Elfring <elfring@users.sourceforge.net>
+> > Date: Sun, 22 Oct 2017 13:15:16 +0200
 > > 
-> > NAK. wait_for_tpm_stat() should give that error code.
+> > A return was performed with the same error code after two condition checks.
+> > Thus use a single statement instead.
+> > 
+> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> > ---
+> >  drivers/char/tpm/xen-tpmfront.c | 5 +----
+> >  1 file changed, 1 insertion(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
+> > index 873a5631937a..0d02743e7a87 100644
+> > --- a/drivers/char/tpm/xen-tpmfront.c
+> > +++ b/drivers/char/tpm/xen-tpmfront.c
+> > @@ -82,10 +82,7 @@ static int vtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+> >  	u32 ordinal;
+> >  	unsigned long duration;
+> >  
+> > -	if (offset > PAGE_SIZE)
+> > -		return -EINVAL;
+> > -
+> > -	if (offset + count > PAGE_SIZE)
+> > +	if (offset > PAGE_SIZE || offset + count > PAGE_SIZE)
+> >  		return -EINVAL;
+> >  
+> >  	/* Wait for completion of any existing command or cancellation */
+> > -- 
+> > 2.14.2
+> > 
 > 
-> This is a pity that you reject another bit of code reduction.
+> This is fine.
 > 
-> Regards,
-> Markus
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> 
+> /Jarkko
 
-It is a pity that you continue doing this constant patch trolling.
-That is what it is.
+Anyway I NAK it because it is really a change of insignificant value.
+Just adds cruft to the kernel release.
 
-/Jarkko.
+I would be fine if someone did this as part of something significant.
+
+/Jarkko
