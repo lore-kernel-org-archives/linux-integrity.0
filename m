@@ -1,24 +1,12 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:51330 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751316AbdJXRod (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 24 Oct 2017 13:44:33 -0400
-MIME-Version: 1.0
-In-Reply-To: <20171024173757.GA1806@obsidianresearch.com>
-References: <20171023123817.18559-1-jarkko.sakkinen@linux.intel.com>
- <cbcb78c6-fa36-32d3-891e-96544875d97c@linux.vnet.ibm.com> <20171023163139.GA17394@obsidianresearch.com>
- <20171024154440.3jeupmus43jcgbbz@linux.intel.com> <CANc+2y4TbkfPT3d_sBd0MbE7ZJ4F7Sfsfvdv9V6=63=tRpWn4A@mail.gmail.com>
- <20171024155526.GA32250@obsidianresearch.com> <CANc+2y6-P9MvjbL18h02SPwNMPyk4_cPFfL6LKHDXiKSHfv00A@mail.gmail.com>
- <20171024161118.GA348@obsidianresearch.com> <CAKdAkRT9sLux6S1qdd=j0nbXSBdnYGG_hvjny=ic0YJLVNnxzA@mail.gmail.com>
- <20171024173757.GA1806@obsidianresearch.com>
-From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Date: Tue, 24 Oct 2017 23:14:32 +0530
-Message-ID: <CANc+2y7iBYu0BUgk11z8O-r5sK_pxzAx10iP8SxZ=tDb7vLR3A@mail.gmail.com>
-Subject: Re: [tpmdd-devel] [PATCH] tpm: remove chip_num parameter from
- in-kernel API
-To: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+Received: from quartz.orcorp.ca ([184.70.90.242]:33314 "EHLO quartz.orcorp.ca"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751316AbdJXRiI (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 24 Oct 2017 13:38:08 -0400
+Date: Tue, 24 Oct 2017 11:37:57 -0600
+From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Stefan Berger <stefanb@linux.vnet.ibm.com>,
         linux-integrity@vger.kernel.org,
@@ -41,35 +29,43 @@ Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         David Safford <safford@us.ibm.com>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
         "Serge E. Hallyn" <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [tpmdd-devel] [PATCH] tpm: remove chip_num parameter from
+ in-kernel API
+Message-ID: <20171024173757.GA1806@obsidianresearch.com>
+References: <20171023123817.18559-1-jarkko.sakkinen@linux.intel.com>
+ <cbcb78c6-fa36-32d3-891e-96544875d97c@linux.vnet.ibm.com>
+ <20171023163139.GA17394@obsidianresearch.com>
+ <20171024154440.3jeupmus43jcgbbz@linux.intel.com>
+ <CANc+2y4TbkfPT3d_sBd0MbE7ZJ4F7Sfsfvdv9V6=63=tRpWn4A@mail.gmail.com>
+ <20171024155526.GA32250@obsidianresearch.com>
+ <CANc+2y6-P9MvjbL18h02SPwNMPyk4_cPFfL6LKHDXiKSHfv00A@mail.gmail.com>
+ <20171024161118.GA348@obsidianresearch.com>
+ <CAKdAkRT9sLux6S1qdd=j0nbXSBdnYGG_hvjny=ic0YJLVNnxzA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAKdAkRT9sLux6S1qdd=j0nbXSBdnYGG_hvjny=ic0YJLVNnxzA@mail.gmail.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 24 October 2017 at 23:07, Jason Gunthorpe
-<jgunthorpe@obsidianresearch.com> wrote:
-> On Tue, Oct 24, 2017 at 10:02:00AM -0700, Dmitry Torokhov wrote:
->> tpm-rng is abomination that should be kicked out as soon as possible.
->> It wrecks havoc with the power management (TPM chip drivers may go
->> into suspend state, but tpm_rng does not do any power management and
->> happily forwards requests to suspended hardware) and may be available
->> when there is no TPM at all yet (the drivers have not been probed yet,
->> or have gotten a deferral, etc).
->
-> Makes sense
->
->> TPM core should register HWRNGs when chips are ready.
->
-> The main thing I've wanted from the TPM RNG is
-> 'add_early_randomness'..
->
-> We can certainly provide a TPM interface to hwrng, it seems
-> reasonable.
->
-> Excep that we already have a user api in /dev/tpm to access the
-> tpm RNG, is the duplication a problem?
+On Tue, Oct 24, 2017 at 10:02:00AM -0700, Dmitry Torokhov wrote:
+> tpm-rng is abomination that should be kicked out as soon as possible.
+> It wrecks havoc with the power management (TPM chip drivers may go
+> into suspend state, but tpm_rng does not do any power management and
+> happily forwards requests to suspended hardware) and may be available
+> when there is no TPM at all yet (the drivers have not been probed yet,
+> or have gotten a deferral, etc).
 
-I tried to do that via the rfc we discussed previously. It may not be
-the right way but I wanted to start the discussion via the rfc.
+Makes sense
 
-Thanks,
-PrasannaKumar
+> TPM core should register HWRNGs when chips are ready.
+
+The main thing I've wanted from the TPM RNG is
+'add_early_randomness'..
+
+We can certainly provide a TPM interface to hwrng, it seems
+reasonable.
+
+Excep that we already have a user api in /dev/tpm to access the
+tpm RNG, is the duplication a problem?
+
+Jason
