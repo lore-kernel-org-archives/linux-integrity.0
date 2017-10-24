@@ -1,11 +1,21 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from quartz.orcorp.ca ([184.70.90.242]:52637 "EHLO quartz.orcorp.ca"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751317AbdJXQL0 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 24 Oct 2017 12:11:26 -0400
-Date: Tue, 24 Oct 2017 10:11:18 -0600
-From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-To: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Received: from mail-io0-f195.google.com ([209.85.223.195]:43909 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751336AbdJXQHf (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 24 Oct 2017 12:07:35 -0400
+MIME-Version: 1.0
+In-Reply-To: <20171024155526.GA32250@obsidianresearch.com>
+References: <20171023123817.18559-1-jarkko.sakkinen@linux.intel.com>
+ <cbcb78c6-fa36-32d3-891e-96544875d97c@linux.vnet.ibm.com> <20171023163139.GA17394@obsidianresearch.com>
+ <20171024154440.3jeupmus43jcgbbz@linux.intel.com> <CANc+2y4TbkfPT3d_sBd0MbE7ZJ4F7Sfsfvdv9V6=63=tRpWn4A@mail.gmail.com>
+ <20171024155526.GA32250@obsidianresearch.com>
+From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Date: Tue, 24 Oct 2017 21:37:33 +0530
+Message-ID: <CANc+2y6-P9MvjbL18h02SPwNMPyk4_cPFfL6LKHDXiKSHfv00A@mail.gmail.com>
+Subject: Re: [tpmdd-devel] [PATCH] tpm: remove chip_num parameter from
+ in-kernel API
+To: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
 Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Stefan Berger <stefanb@linux.vnet.ibm.com>,
         linux-integrity@vger.kernel.org,
@@ -28,45 +38,27 @@ Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         David Safford <safford@us.ibm.com>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
         "Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [tpmdd-devel] [PATCH] tpm: remove chip_num parameter from
- in-kernel API
-Message-ID: <20171024161118.GA348@obsidianresearch.com>
-References: <20171023123817.18559-1-jarkko.sakkinen@linux.intel.com>
- <cbcb78c6-fa36-32d3-891e-96544875d97c@linux.vnet.ibm.com>
- <20171023163139.GA17394@obsidianresearch.com>
- <20171024154440.3jeupmus43jcgbbz@linux.intel.com>
- <CANc+2y4TbkfPT3d_sBd0MbE7ZJ4F7Sfsfvdv9V6=63=tRpWn4A@mail.gmail.com>
- <20171024155526.GA32250@obsidianresearch.com>
- <CANc+2y6-P9MvjbL18h02SPwNMPyk4_cPFfL6LKHDXiKSHfv00A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CANc+2y6-P9MvjbL18h02SPwNMPyk4_cPFfL6LKHDXiKSHfv00A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Oct 24, 2017 at 09:37:33PM +0530, PrasannaKumar Muralidharan wrote:
-> Hi Jason,
-> 
-> On 24 October 2017 at 21:25, Jason Gunthorpe
-> <jgunthorpe@obsidianresearch.com> wrote:
-> > On Tue, Oct 24, 2017 at 09:21:15PM +0530, PrasannaKumar Muralidharan wrote:
-> >
-> >> Please check the RFC [1]. It does use chip id. The rfc has issues and
-> >> has to be fixed but still there could be users of the API.
-> >>
-> >> 1. https://www.spinics.net/lists/linux-crypto/msg28282.html
-> >
-> > That patch isn't safe at all. You need to store a kref to th chip in
-> > the hwrng, not parse a string.
-> 
-> The drivers/char/hw_random/tpm-rng.c module does not store the chip
-> reference so I guess the usage is safe.
+Hi Jason,
 
-It is using the default TPM, it is always safe to use the default tpm.
+On 24 October 2017 at 21:25, Jason Gunthorpe
+<jgunthorpe@obsidianresearch.com> wrote:
+> On Tue, Oct 24, 2017 at 09:21:15PM +0530, PrasannaKumar Muralidharan wrote:
+>
+>> Please check the RFC [1]. It does use chip id. The rfc has issues and
+>> has to be fixed but still there could be users of the API.
+>>
+>> 1. https://www.spinics.net/lists/linux-crypto/msg28282.html
+>
+> That patch isn't safe at all. You need to store a kref to th chip in
+> the hwrng, not parse a string.
 
-> The RFC is just a sample use case of the API.
+The drivers/char/hw_random/tpm-rng.c module does not store the chip
+reference so I guess the usage is safe. The RFC is just a sample use
+case of the API.
 
-Well, a wrong example not to be emulated, and I think, further shows
-how Jarkko's direction is the right one.
-
-Jason
+Regards,
+PrasannaKumar
