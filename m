@@ -1,62 +1,103 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:36672 "EHLO mga04.intel.com"
+Received: from mx1.redhat.com ([209.132.183.28]:44216 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932162AbdJYSxw (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 25 Oct 2017 14:53:52 -0400
-Date: Wed, 25 Oct 2017 20:53:49 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Matthew Garrett <mjg59@google.com>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>,
-        Kari Hiitola <kari@varaani.com>, linux-kernel@vger.kernel.org,
+        id S932240AbdJYSIu (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 25 Oct 2017 14:08:50 -0400
+Date: Wed, 25 Oct 2017 16:08:48 -0200
+From: "Bruno E. O. Meneguele" <brdeoliv@redhat.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Alexander Steffen <Alexander.Steffen@infineon.com>
-Subject: Re: Fixing CVE-2017-15361
-Message-ID: <20171025185349.ocptudim3g35j6im@linux.intel.com>
-References: <20171025134438.vgh6tzkups2tujps@linux.intel.com>
- <CACdnJus6=3XJEVsQEVY-sxqcUm2At4fKi5Ya+w0Hf==yq7ubKQ@mail.gmail.com>
+        linux-integrity@vger.kernel.org, serge@hallyn.com,
+        james.l.morris@oracle.com, dmitry.kasatkin@gmail.com,
+        rusty@rustcorp.com.au, jeyu@kernel.org
+Subject: Re: [PATCH v3 2/2] ima: check signature enforcement against cmdline
+ param instead of CONFIG
+Message-ID: <20171025180848.GD26762@glitch>
+References: <cover.1508865786.git.brdeoliv@redhat.com>
+ <b1bab0d1184f11c06ba0484883c22bc046ffb5a6.1508865786.git.brdeoliv@redhat.com>
+ <1508885697.3164.5.camel@linux.vnet.ibm.com>
+ <20171025150544.GC26762@glitch>
+ <1508951897.7367.16.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CACdnJus6=3XJEVsQEVY-sxqcUm2At4fKi5Ya+w0Hf==yq7ubKQ@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gDGSpKKIBgtShtf+"
+In-Reply-To: <1508951897.7367.16.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Oct 25, 2017 at 07:17:17AM -0700, Matthew Garrett wrote:
-> On Wed, Oct 25, 2017 at 6:44 AM, Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> > I'm implementing a fix for CVE-2017-15361 that simply blacklists
-> > vulnerable FW versions. I think this is the only responsible action from
-> > my side that I can do.
+On 25-10, Mimi Zohar wrote:
+> On Wed, 2017-10-25 at 13:05 -0200, Bruno E. O. Meneguele wrote:
+> > On 24-10, Mimi Zohar wrote:
+> > > On Tue, 2017-10-24 at 15:37 -0200, Bruno E. O. Meneguele wrote:
+> > > > When the user requests MODULE_CHECK policy and its kernel is compiled
+> > > > with CONFIG_MODULE_SIG_FORCE not set, all modules would not load, just
+> > > > those loaded in initram time. One option the user would have would be
+> > > > set a kernel cmdline param (module.sig_enforce) to true, but the IMA
+> > > > module check code doesn't rely on this value, it checks just
+> > > > CONFIG_MODULE_SIG_FORCE.
+> > > > 
+> > > > This patch solves this problem checking for the exported value of
+> > > > module.sig_enforce cmdline param intead of CONFIG_MODULE_SIG_FORCE,
+> > > > which holds the effective value (CONFIG || param).
+> > > > 
+> > > > Signed-off-by: Bruno E. O. Meneguele <brdeoliv@redhat.com>
+> > > > ---
+> > > >  security/integrity/ima/ima_main.c | 6 +++---
+> > > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > > > 
+> > > > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> > > > index e4ab8ef8016e..d11a7fcc5c8b 100644
+> > > > --- a/security/integrity/ima/ima_main.c
+> > > > +++ b/security/integrity/ima/ima_main.c
+> > > > @@ -356,12 +356,12 @@ void ima_post_path_mknod(struct dentry *dentry)
+> > > >   */
+> > > >  int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+> > > >  {
+> > > > +	bool sig_enforce = is_module_sig_enforced();
+> > > > +
+> > > >  	if (!file && read_id == READING_MODULE) {
+> > > 
+> > > The only reason for getting here is that you're using the old module
+> > > load syscall.  Is there a reason for not using the new one, which
+> > > passes the file descriptor?
 > 
-> I'm not sure this is ideal - do Infineon have any Linux tooling for
-> performing firmware updates, and if so will that continue working if
-> the device is blacklisted? It's also a poor user experience to have
-> systems using TPM-backed disk encryption keys suddenly rendered
-> unbootable, and making it as easy as possible for people to do an
-> upgrade and then re-seal secrets with new keys feels like the correct
-> approach.
+> > Basicaly because the way kmod handles compressed (gz/xz) modules. The
+> > way it's today would require major changes in the code or some kind of
+> > memfd_create() + xattrs reassignement in order to finit_module() be used
+> > correctly.
+> > 
+> > Considering it would take some time to be accepted or even to figure out
+> > the correct way to tackle it, the current IMA module check code works
+> > aside kernel module signature validation, which is fine for now for me,
+> > but has the problem that this patch tries to solve in the
+> > CONFIG_MODULE_SIG_FORCE check (ignoring module.sig_enforce cmdline
+> > param).
+> 
+> Thank you for the reasoning.  BTW, these patches are now queued.
+> 
+> 
 
-I talked today with Alexander Steffen in the KS unconference and we
-concluded that this would be a terrible idea.
+You're welcome. Thank you for the feedback.
 
-Alexander stated the following things about FW updates (Alexander,
-please correct me if I state something incorrectly or if you have
-something to add):
+> > > > -#ifndef CONFIG_MODULE_SIG_FORCE
+> > > > -		if ((ima_appraise & IMA_APPRAISE_MODULES) &&
+> > > > +		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES) &&
+> > > >  		    (ima_appraise & IMA_APPRAISE_ENFORCE))
+> > > >  			return -EACCES;	/* INTEGRITY_UNKNOWN */
+> > > > -#endif
+> > > >  		return 0;	/* We rely on module signature checking */
+> > > >  	}
+> > > >  	return 0;
+> > > 
+> > > 
+> > 
+> 
 
-* FW update can be constructed either in a way that the keys in the
-  NVRAM are not cleared or in a way that they are cleared.
-* FW update cannot be directly applied to the TPM but must come as
-  part of the firmware update from the vendor.
+-- 
+bmeneg 
+PGP Key: http://bmeneg.com/pubkey.txt
 
-I proposed the following as an alternative:
 
-* Print a message to the klog (which log level would be appropriate?).
-* Possibly sleep for few seconds. Is this a good idea?
-
-While writing this email yet another alternative popped into my mind:
-what if we allow only in-kernel use but disallow the use of /dev/tpm0?
-You could still use trusted keys.
-
-Here are all the ideas that I have and I am open for better
-alternatives.
-
-/Jarkko
+    [ Part 2, Application/PGP-SIGNATURE (Name: "signature.asc") 499 bytes. ]
+    [ Unable to print this part. ]
