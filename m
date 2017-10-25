@@ -1,76 +1,56 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:64971 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751787AbdJYNSx (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 25 Oct 2017 09:18:53 -0400
-Date: Wed, 25 Oct 2017 15:18:48 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Thiebaud Weksteen <tweek@google.com>
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: Proposal: rename tpm1_eventlog.c and tpm2_eventlog.c
-Message-ID: <20171025131848.3il7j5rw7nt7e2l6@linux.intel.com>
-References: <20171024222148.gwnkj5vqsyj43qer@linux.intel.com>
- <CA+zpnLft_o-c2cRxtUEoAPbYiiLzmLqAPYwrkFDdVoyk5t6Zfw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CA+zpnLft_o-c2cRxtUEoAPbYiiLzmLqAPYwrkFDdVoyk5t6Zfw@mail.gmail.com>
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53370 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751772AbdJYL4t (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 25 Oct 2017 07:56:49 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9PBu8K5069748
+        for <linux-integrity@vger.kernel.org>; Wed, 25 Oct 2017 07:56:48 -0400
+Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2dtshvhycf-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 25 Oct 2017 07:56:48 -0400
+Received: from localhost
+        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Wed, 25 Oct 2017 12:56:45 +0100
+Subject: Re: [PATCH V3] EVM: Add support for portable signature format
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Matthew Garrett <mjg59@google.com>, linux-integrity@vger.kernel.org
+Cc: Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
+        Mikhail Kurinnoi <viewizard@viewizard.com>
+Date: Wed, 25 Oct 2017 07:56:40 -0400
+In-Reply-To: <20171025095413.25794-1-mjg59@google.com>
+References: <20171025095413.25794-1-mjg59@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1508932600.7367.13.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Oct 25, 2017 at 10:43:10AM +0200, Thiebaud Weksteen wrote:
-> On Wed, Oct 25, 2017 at 12:21 AM, Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> > I noticed when making slides for KS that the naming for event log stuff
-> > that the naming is so broken that it is hard to understand the code.
-> > Here it really would make sense to have a patch set just to clean up the
-> > cruft.
+On Wed, 2017-10-25 at 02:54 -0700, Matthew Garrett wrote:
+> The EVM signature includes the inode number and (optionally) the
+> filesystem UUID, making it impractical to ship EVM signatures in
+> packages. This patch adds a new portable format intended to allow
+> distributions to include EVM signatures. It is identical to the existing
+> format but hardcodes the inode and generation numbers to 0 and does not
+> include the filesystem UUID even if the kernel is configured to do so.
 > 
-> Agreed and happy to help.
-
-That would be great! Thank you.
-
-> > Random examples of more senseful naming:
-> >
-> > * tpm2_bios_measurements_start() should be rather something like
-> >   tpm_eventlog_seq_agile_start().
-> > * tpm_bios_measurements_start() should be rather something like
-> >   tpm_eventlog_seq_sha1_start().
-> >
-> > Corresponding structs would be tpm_eventlog_agile_seq_ops and
-> > tpm_eventlog_sha1_seq_ops.
-> >
-> > Finally, I would place the file operations, being so complicated, in
-> > separate files:
-> >
-> > * tpm_eventlog_seq_sha1.c
-> > * tpm_eventlog_seq_eventlog.c
+> Removing the inode means that the metadata and signature from one file
+> could be copied to another file without invalidating it. This is avoided
+> by ensuring that an IMA xattr is present during EVM validation.
 > 
-> I assume you meant tpm_eventlog_seq_agile.c ?
-
-Yes.
-
-> >
-> > And move all the management code that is right now illogically located
-> > in tpm1_eventlog.c to tpm_eventlog.c that would be the entry point for
-> > the event log.
-> >
-> > The code is laid out so badly right now that I have really hard time
-> > understanding it if I haven't looked at it within last couple of weeks.
-> > It's really a trainwreck at the moment. We must clean up it up fast.
-> >
-> > Getting this done will help me to review patches to this area faster
-> > so it would be a benefit for everyone. The current structure makes every
-> > event log patch a pain to review.
+> Based on earlier work by Dmitry Kasatkin and Mikhail Kurinnoi.
 > 
-> Since this may conflict with the last patch set I sent, are you happy
-> for me to base this new set on tpmdd/master?
+> Signed-off-by: Matthew Garrett <mjg59@google.com>
+> Cc: Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
+> Cc: Mikhail Kurinnoi <viewizard@viewizard.com>
+> ---
+> V3: include feedback from Mimi.
 
-What about this: you do an updated version of your patch set that
-includes these clean ups?
+Some checks are still missing to prevent the portable/immutable
+signature from being replaced with an HMAC (eg. setattr, removexattr,
+etc).
 
-PS. Sorry for slowness with your patches. I've just had a lot of stuff
-going on lately. They are 2nd in my priority queue right after
-CVE-2017-15361.
-
-/Jarkko
+Mimi
