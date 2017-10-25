@@ -1,96 +1,119 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:49547 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750823AbdJYPFr (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 25 Oct 2017 11:05:47 -0400
-Date: Wed, 25 Oct 2017 13:05:44 -0200
-From: "Bruno E. O. Meneguele" <brdeoliv@redhat.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, serge@hallyn.com,
-        james.l.morris@oracle.com, dmitry.kasatkin@gmail.com,
-        rusty@rustcorp.com.au, jeyu@kernel.org
-Subject: Re: [PATCH v3 2/2] ima: check signature enforcement against cmdline
- param instead of CONFIG
-Message-ID: <20171025150544.GC26762@glitch>
-References: <cover.1508865786.git.brdeoliv@redhat.com>
- <b1bab0d1184f11c06ba0484883c22bc046ffb5a6.1508865786.git.brdeoliv@redhat.com>
- <1508885697.3164.5.camel@linux.vnet.ibm.com>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:45908 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750765AbdJYOvS (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 25 Oct 2017 10:51:18 -0400
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="RYJh/3oyKhIjGcML"
-In-Reply-To: <1508885697.3164.5.camel@linux.vnet.ibm.com>
+In-Reply-To: <20171024182235.d7b3oajc5zcjs57v@linux.intel.com>
+References: <20171023123817.18559-1-jarkko.sakkinen@linux.intel.com>
+ <cbcb78c6-fa36-32d3-891e-96544875d97c@linux.vnet.ibm.com> <20171023163139.GA17394@obsidianresearch.com>
+ <20171024154440.3jeupmus43jcgbbz@linux.intel.com> <CANc+2y4TbkfPT3d_sBd0MbE7ZJ4F7Sfsfvdv9V6=63=tRpWn4A@mail.gmail.com>
+ <20171024162359.tf5xulhlhokmuxh5@linux.intel.com> <CANc+2y4vtr+kbhC_7Rv=rHA2LgEVBHLFEu+DYYK1UmpU63PCgQ@mail.gmail.com>
+ <20171024182235.d7b3oajc5zcjs57v@linux.intel.com>
+From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Date: Wed, 25 Oct 2017 20:21:16 +0530
+Message-ID: <CANc+2y4BtQGqtC8RJL1Srrz_kWwhyveV3HBpfO1kikFj+0mHaA@mail.gmail.com>
+Subject: Re: [tpmdd-devel] [PATCH] tpm: remove chip_num parameter from
+ in-kernel API
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "open list:INTEGRITY MEASUREMENT ARCHITECTURE IMA"
+        <linux-ima-user@lists.sourceforge.net>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        "moderated list:TPM DEVICE DRIVER"
+        <tpmdd-devel@lists.sourceforge.net>,
+        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
+        <linux-crypto@vger.kernel.org>,
+        James Morris <james.l.morris@oracle.com>,
+        Matt Mackall <mpm@selenic.com>,
+        "open list:INTEGRITY MEASUREMENT ARCHITECTURE IMA"
+        <linux-ima-devel@lists.sourceforge.net>,
+        David Safford <safford@us.ibm.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 24-10, Mimi Zohar wrote:
-> On Tue, 2017-10-24 at 15:37 -0200, Bruno E. O. Meneguele wrote:
-> > When the user requests MODULE_CHECK policy and its kernel is compiled
-> > with CONFIG_MODULE_SIG_FORCE not set, all modules would not load, just
-> > those loaded in initram time. One option the user would have would be
-> > set a kernel cmdline param (module.sig_enforce) to true, but the IMA
-> > module check code doesn't rely on this value, it checks just
-> > CONFIG_MODULE_SIG_FORCE.
-> > 
-> > This patch solves this problem checking for the exported value of
-> > module.sig_enforce cmdline param intead of CONFIG_MODULE_SIG_FORCE,
-> > which holds the effective value (CONFIG || param).
-> > 
-> > Signed-off-by: Bruno E. O. Meneguele <brdeoliv@redhat.com>
-> > ---
-> >  security/integrity/ima/ima_main.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> > index e4ab8ef8016e..d11a7fcc5c8b 100644
-> > --- a/security/integrity/ima/ima_main.c
-> > +++ b/security/integrity/ima/ima_main.c
-> > @@ -356,12 +356,12 @@ void ima_post_path_mknod(struct dentry *dentry)
-> >   */
-> >  int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
-> >  {
-> > +	bool sig_enforce = is_module_sig_enforced();
-> > +
-> >  	if (!file && read_id == READING_MODULE) {
-> 
-> The only reason for getting here is that you're using the old module
-> load syscall.  Is there a reason for not using the new one, which
-> passes the file descriptor?
-> 
-> thanks,
-> 
-> Mimi
-> 
+Hi Jarkko,
 
-Basicaly because the way kmod handles compressed (gz/xz) modules. The
-way it's today would require major changes in the code or some kind of
-memfd_create() + xattrs reassignement in order to finit_module() be used
-correctly.
+On 24 October 2017 at 23:52, Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+> On Tue, Oct 24, 2017 at 10:05:20PM +0530, PrasannaKumar Muralidharan wrote:
+>> > 1. Every user in the kernel is using TPM_ANY_NUM, which means there are
+>> >    no other users.
+>>
+>> Completely agree that there is no in kernel users yet.
+>
+> And should never be. It's a bogus parameter that makes no sense.
 
-Considering it would take some time to be accepted or even to figure out
-the correct way to tackle it, the current IMA module check code works
-aside kernel module signature validation, which is fine for now for me,
-but has the problem that this patch tries to solve in the
-CONFIG_MODULE_SIG_FORCE check (ignoring module.sig_enforce cmdline
-param).
+I understood that after seeing latest patch that uses struct tpm_chip.
+Sorry for the noise.
 
-> > -#ifndef CONFIG_MODULE_SIG_FORCE
-> > -		if ((ima_appraise & IMA_APPRAISE_MODULES) &&
-> > +		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES) &&
-> >  		    (ima_appraise & IMA_APPRAISE_ENFORCE))
-> >  			return -EACCES;	/* INTEGRITY_UNKNOWN */
-> > -#endif
-> >  		return 0;	/* We rely on module signature checking */
-> >  	}
-> >  	return 0;
-> 
-> 
+>> > 2. Moving struct tpm_rng to the TPM client is architecturally
+>> >    uacceptable.
+>>
+>> As there was no response to the patch there is no way to know whether
+>> it is acceptable or not.
+>
+> I like the idea of removing the tpm rng driver as discussed in other
+> emails in this thread.
 
--- 
-bmeneg 
-PGP Key: http://bmeneg.com/pubkey.txt
+Thank you.
 
+>> > 3. Using zero deos not give you any better guarantees on anything than
+>> >    just using TPM_ANY_NUM.
+>>
+>> Chip id is used, not zero.
+>
+> Sorry I misread the patch first time. Anyway it's not any kind of ID to
+> be trusted.
 
-    [ Part 2, Application/PGP-SIGNATURE (Name: "signature.asc") 499 bytes. ]
-    [ Unable to print this part. ]
+Okay.
+
+>> > Why this patch is not CC'd to linux-integrity? It modifies the TPM
+>> > driver. And in the worst way.
+>>
+>> TPM list is moderated and the moderator has not approved it yet.
+>> get_maintainer script did not say about linux-integrity mailing list.
+>>
+>> It could be doing things in worst way but it is not known until some
+>> one says. If no one tells it is the case I don't think it is possible
+>> to fix. Which is what happened.
+>
+> Understood. We've moved to linux-integrity@vger.kernel.org. MAINTAINERS
+> update is in the queue for the next kernel release.
+
+Sorry I never knew this.
+
+>> > Implementing the ideas that Jason explained is the senseful way to
+>> > get stable access. modules.dep makes sure that the modules are loaded
+>> > in the correct order.
+>>
+>> If that is sensible then it is the way to go.
+>>
+>> There must be a reason to believe what is sensible and what is not.
+>> Looks like this RFC has helped in judging that.
+>>
+>> Regards,
+>> PrasannaKumar
+>
+> Would you be interested to work on patch set that would remove the
+> existing tpm rng driver and make the TPM driver the customer? It's not
+> that far away from the work you've been doing already.
+>
+> /Jarkko
+
+I am late to the party. Jason has sent a patch doing that by the time
+I read this email.
+
+Thanks and regards,
+PrasannaKumar
