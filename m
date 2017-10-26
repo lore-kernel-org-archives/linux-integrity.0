@@ -1,45 +1,175 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:56348 "EHLO
-        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751027AbdJZJDd (ORCPT
+Received: from mail-oi0-f73.google.com ([209.85.218.73]:45828 "EHLO
+        mail-oi0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751712AbdJZIk7 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 26 Oct 2017 05:03:33 -0400
-Received: by mail-lf0-f41.google.com with SMTP id 90so2879777lfs.13
-        for <linux-integrity@vger.kernel.org>; Thu, 26 Oct 2017 02:03:32 -0700 (PDT)
-Date: Thu, 26 Oct 2017 12:03:30 +0300
-From: Mikhail Kurinnoi <viewizard@viewizard.com>
-To: Matthew Garrett <mjg59@google.com>
-Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
-Subject: Re: [RFC] EVM: Add support for portable signature format
-Message-ID: <20171026120330.5360e427@totoro>
-In-Reply-To: <20171026083144.16247-1-mjg59@google.com>
-References: <20171026083144.16247-1-mjg59@google.com>
+        Thu, 26 Oct 2017 04:40:59 -0400
+Received: by mail-oi0-f73.google.com with SMTP id c77so2770727oig.4
+        for <linux-integrity@vger.kernel.org>; Thu, 26 Oct 2017 01:40:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Date: Thu, 26 Oct 2017 01:40:54 -0700
+Message-Id: <20171026084055.25482-1-mjg59@google.com>
+Subject: [PATCH V3 1/2] security: Add a cred_getsecid hook
+From: Matthew Garrett <mjg59@google.com>
+To: linux-integrity@vger.kernel.org
+Cc: zohar@linux.vnet.ibm.com, Matthew Garrett <mjg59@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, selinux@tycho.nsa.gov,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-? Thu, 26 Oct 2017 01:31:44 -0700
-Matthew Garrett <mjg59@google.com> ?????:
+For IMA purposes, we want to be able to obtain the prepared secid in the
+bprm structure before the credentials are committed. Add a cred_getsecid
+hook that makes this possible.
 
-> @@ -317,7 +319,7 @@ void ima_update_xattr(struct integrity_iint_cache
-> *iint, struct file *file) int rc = 0;
->  
->  	/* do not collect and update hash for digital signatures */
-> -	if (iint->flags & IMA_DIGSIG)
-> +	if (iint->flags & IMA_DIGSIG || iint->flags &
-> EVM_IMMUTABLE_DIGSIG) return;
->  
+Signed-off-by: Matthew Garrett <mjg59@google.com>
+Acked-by: Paul Moore <paul@paul-moore.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: Eric Paris <eparis@parisplace.org>
+Cc: selinux@tycho.nsa.gov
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module@vger.kernel.org
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: linux-integrity@vger.kernel.org
+---
+ V3: Fix smack_cred_getsecid()
 
-Isn't this mean, we already changed files data, and we just don't allow
-IMA xattr update? This file will not pass integrity verification
-next time.
+ include/linux/lsm_hooks.h  |  6 ++++++
+ include/linux/security.h   |  1 +
+ security/security.c        |  7 +++++++
+ security/selinux/hooks.c   |  8 ++++++++
+ security/smack/smack_lsm.c | 18 ++++++++++++++++++
+ 5 files changed, 40 insertions(+)
 
-I thought, the idea was prevent data changes, and in this way prevent
-IMA xattr update.
-
-
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index c9258124e417..c28c6f8b65dc 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -554,6 +554,10 @@
+  *	@new points to the new credentials.
+  *	@old points to the original credentials.
+  *	Transfer data from original creds to new creds
++ * @cred_getsecid:
++ *	Retrieve the security identifier of the cred structure @c
++ *	@c contains the credentials, secid will be placed into @secid.
++ *	In case of failure, @secid will be set to zero.
+  * @kernel_act_as:
+  *	Set the credentials for a kernel service to act as (subjective context).
+  *	@new points to the credentials to be modified.
+@@ -1507,6 +1511,7 @@ union security_list_options {
+ 	int (*cred_prepare)(struct cred *new, const struct cred *old,
+ 				gfp_t gfp);
+ 	void (*cred_transfer)(struct cred *new, const struct cred *old);
++	void (*cred_getsecid)(const struct cred *c, u32 *secid);
+ 	int (*kernel_act_as)(struct cred *new, u32 secid);
+ 	int (*kernel_create_files_as)(struct cred *new, struct inode *inode);
+ 	int (*kernel_module_request)(char *kmod_name);
+@@ -1779,6 +1784,7 @@ struct security_hook_heads {
+ 	struct list_head cred_free;
+ 	struct list_head cred_prepare;
+ 	struct list_head cred_transfer;
++	struct list_head cred_getsecid;
+ 	struct list_head kernel_act_as;
+ 	struct list_head kernel_create_files_as;
+ 	struct list_head kernel_read_file;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index ce6265960d6c..14848fef8f62 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -324,6 +324,7 @@ int security_cred_alloc_blank(struct cred *cred, gfp_t gfp);
+ void security_cred_free(struct cred *cred);
+ int security_prepare_creds(struct cred *new, const struct cred *old, gfp_t gfp);
+ void security_transfer_creds(struct cred *new, const struct cred *old);
++void security_cred_getsecid(const struct cred *c, u32 *secid);
+ int security_kernel_act_as(struct cred *new, u32 secid);
+ int security_kernel_create_files_as(struct cred *new, struct inode *inode);
+ int security_kernel_module_request(char *kmod_name);
+diff --git a/security/security.c b/security/security.c
+index 4bf0f571b4ef..02d217597400 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1004,6 +1004,13 @@ void security_transfer_creds(struct cred *new, const struct cred *old)
+ 	call_void_hook(cred_transfer, new, old);
+ }
+ 
++void security_cred_getsecid(const struct cred *c, u32 *secid)
++{
++	*secid = 0;
++	call_void_hook(cred_getsecid, c, secid);
++}
++EXPORT_SYMBOL(security_cred_getsecid);
++
+ int security_kernel_act_as(struct cred *new, u32 secid)
+ {
+ 	return call_int_hook(kernel_act_as, 0, new, secid);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index f5d304736852..1d11679674a6 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -3836,6 +3836,13 @@ static void selinux_cred_transfer(struct cred *new, const struct cred *old)
+ 	*tsec = *old_tsec;
+ }
+ 
++static void selinux_cred_getsecid(const struct cred *c, u32 *secid)
++{
++	rcu_read_lock();
++	*secid = cred_sid(c);
++	rcu_read_unlock();
++}
++
+ /*
+  * set the security data for a kernel service
+  * - all the creation contexts are set to unlabelled
+@@ -6338,6 +6345,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(cred_free, selinux_cred_free),
+ 	LSM_HOOK_INIT(cred_prepare, selinux_cred_prepare),
+ 	LSM_HOOK_INIT(cred_transfer, selinux_cred_transfer),
++	LSM_HOOK_INIT(cred_getsecid, selinux_cred_getsecid),
+ 	LSM_HOOK_INIT(kernel_act_as, selinux_kernel_act_as),
+ 	LSM_HOOK_INIT(kernel_create_files_as, selinux_kernel_create_files_as),
+ 	LSM_HOOK_INIT(kernel_module_request, selinux_kernel_module_request),
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 286171a16ed2..37c35aaa6955 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -2049,6 +2049,23 @@ static void smack_cred_transfer(struct cred *new, const struct cred *old)
+ 	/* cbs copy rule list */
+ }
+ 
++/**
++ * smack_cred_getsecid - get the secid corresponding to a creds structure
++ * @c: the object creds
++ * @secid: where to put the result
++ *
++ * Sets the secid to contain a u32 version of the smack label.
++ */
++static void smack_cred_getsecid(const struct cred *c, u32 *secid)
++{
++	struct smack_known *skp;
++
++	rcu_read_lock();
++	skp = smk_of_task(c->security);
++	*secid = skp->smk_secid;
++	rcu_read_unlock();
++}
++
+ /**
+  * smack_kernel_act_as - Set the subjective context in a set of credentials
+  * @new: points to the set of credentials to be modified.
+@@ -4651,6 +4668,7 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(cred_free, smack_cred_free),
+ 	LSM_HOOK_INIT(cred_prepare, smack_cred_prepare),
+ 	LSM_HOOK_INIT(cred_transfer, smack_cred_transfer),
++	LSM_HOOK_INIT(cred_getsecid, smack_cred_getsecid),
+ 	LSM_HOOK_INIT(kernel_act_as, smack_kernel_act_as),
+ 	LSM_HOOK_INIT(kernel_create_files_as, smack_kernel_create_files_as),
+ 	LSM_HOOK_INIT(task_setpgid, smack_task_setpgid),
 -- 
-Best regards,
-Mikhail Kurinnoi
+2.15.0.rc2.357.g7e34df9404-goog
