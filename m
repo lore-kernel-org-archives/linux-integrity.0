@@ -1,43 +1,57 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga05.intel.com ([192.55.52.43]:1930 "EHLO mga05.intel.com"
+Received: from mga04.intel.com ([192.55.52.120]:52742 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932273AbdJZOOf (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 26 Oct 2017 10:14:35 -0400
-Date: Thu, 26 Oct 2017 16:14:29 +0200
+        id S932234AbdJZOGJ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 26 Oct 2017 10:06:09 -0400
+Date: Thu, 26 Oct 2017 16:06:02 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Thiebaud Weksteen <tweek@google.com>
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: Proposal: rename tpm1_eventlog.c and tpm2_eventlog.c
-Message-ID: <20171026141429.nnmc2ks4m2bm6yhx@linux.intel.com>
-References: <20171024222148.gwnkj5vqsyj43qer@linux.intel.com>
- <CA+zpnLft_o-c2cRxtUEoAPbYiiLzmLqAPYwrkFDdVoyk5t6Zfw@mail.gmail.com>
- <20171025131848.3il7j5rw7nt7e2l6@linux.intel.com>
+To: Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+Cc: Peter Huewe <peterhuewe@gmx.de>,
+        Matthew Garrett <mjg59@google.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Kari Hiitola <kari@varaani.com>, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Alexander Steffen <Alexander.Steffen@infineon.com>
+Subject: Re: Fixing CVE-2017-15361
+Message-ID: <20171026140602.syifqbrgysvq7ciy@linux.intel.com>
+References: <20171025134438.vgh6tzkups2tujps@linux.intel.com>
+ <CACdnJus6=3XJEVsQEVY-sxqcUm2At4fKi5Ya+w0Hf==yq7ubKQ@mail.gmail.com>
+ <20171025185349.ocptudim3g35j6im@linux.intel.com>
+ <F1DA2BF7-4A3D-4934-9C45-4DAC4FD33659@gmx.de>
+ <20171026111632.g6a3bkhe4nxorfbm@linux.intel.com>
+ <20171026145902.2e7dbb06@kitsune.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171025131848.3il7j5rw7nt7e2l6@linux.intel.com>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20171026145902.2e7dbb06@kitsune.suse.cz>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Oct 25, 2017 at 03:18:48PM +0200, Jarkko Sakkinen wrote:
-> > Since this may conflict with the last patch set I sent, are you happy
-> > for me to base this new set on tpmdd/master?
+On Thu, Oct 26, 2017 at 02:59:02PM +0200, Michal Suchanek wrote:
+> It does not really matter. People ignore the messages unless looking
+> for something specific as you already noticed. Warn seems adequate
+> because the cipher is weaker than expected but not known to
+> be compromised. People who care can look up the message. People who
+> don't care will ignore it even if it's crit.
+
+Is it worth of trouble to do any driver changes then (open question to
+everyone)? I'm not sure it is worth of trouble to add cruft to the
+driver code for a warning that will likely be ignored anyway.
+
+> > you can have special commands and talk to the TPM to do the upgrade
+> > even if it is part of the platform and not connected to a standard
+> > bus.
 > 
-> What about this: you do an updated version of your patch set that
-> includes these clean ups?
+> Unless the upgrade command is disabled to not disrupt the platform, of
+> course.
+
+Sure. This misconception partly came from live discussions at Prague. Of
+course it you can have vendor specific commands to achieve this.
+
+Maybe the original statement came from the fact that on most consumer
+devices this is disabled?
+
+> Thanks
 > 
-> PS. Sorry for slowness with your patches. I've just had a lot of stuff
-> going on lately. They are 2nd in my priority queue right after
-> CVE-2017-15361.
-
-This is an awful idea as your patch is in great shape and we want to
-land that feature ASAP. Lets land your patches first and then plan how
-to do the clean up.
-
-I have some other suggestions for the clean up work that require even
-more work. Mainly: I think it would make sense to have an eventlog
-subdirectory for the eventlog as it's growing so complex.
-
-What do you think?
+> Michal
 
 /Jarkko
