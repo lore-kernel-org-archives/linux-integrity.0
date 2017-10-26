@@ -1,96 +1,66 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:52861 "EHLO mga09.intel.com"
+Received: from mga09.intel.com ([134.134.136.24]:58306 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932197AbdJZLQu (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 26 Oct 2017 07:16:50 -0400
-Date: Thu, 26 Oct 2017 13:16:32 +0200
+        id S932141AbdJZLBU (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 26 Oct 2017 07:01:20 -0400
+Date: Thu, 26 Oct 2017 13:01:15 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Peter Huewe <peterhuewe@gmx.de>
-Cc: Matthew Garrett <mjg59@google.com>,
+To: Matthew Garrett <mjg59@google.com>,
         linux-integrity <linux-integrity@vger.kernel.org>,
         Kari Hiitola <kari@varaani.com>, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Alexander Steffen <Alexander.Steffen@infineon.com>
 Subject: Re: Fixing CVE-2017-15361
-Message-ID: <20171026111632.g6a3bkhe4nxorfbm@linux.intel.com>
+Message-ID: <20171026110115.lyubl22zikwlulhi@linux.intel.com>
 References: <20171025134438.vgh6tzkups2tujps@linux.intel.com>
  <CACdnJus6=3XJEVsQEVY-sxqcUm2At4fKi5Ya+w0Hf==yq7ubKQ@mail.gmail.com>
  <20171025185349.ocptudim3g35j6im@linux.intel.com>
- <F1DA2BF7-4A3D-4934-9C45-4DAC4FD33659@gmx.de>
+ <20171025202221.gkgch7rjjqoblzpf@rhwork>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <F1DA2BF7-4A3D-4934-9C45-4DAC4FD33659@gmx.de>
+In-Reply-To: <20171025202221.gkgch7rjjqoblzpf@rhwork>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Oct 26, 2017 at 12:26:10AM +0200, Peter Huewe wrote:
-> 
-> 
-> Am 25. Oktober 2017 20:53:49 MESZ schrieb Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>:
-> >On Wed, Oct 25, 2017 at 07:17:17AM -0700, Matthew Garrett wrote:
-> >> On Wed, Oct 25, 2017 at 6:44 AM, Jarkko Sakkinen
-> >> <jarkko.sakkinen@linux.intel.com> wrote:
-> >> > I'm implementing a fix for CVE-2017-15361 that simply blacklists
-> >> > vulnerable FW versions. I think this is the only responsible action
-> >from
-> >> > my side that I can do.
-> >> 
-> >> I'm not sure this is ideal - do Infineon have any Linux tooling for
-> >> performing firmware updates, and if so will that continue working if
-> >> the device is blacklisted? It's also a poor user experience to have
-> >> systems using TPM-backed disk encryption keys suddenly rendered
-> >> unbootable, and making it as easy as possible for people to do an
-> >> upgrade and then re-seal secrets with new keys feels like the correct
-> >> approach.
-> >
-> >I talked today with Alexander Steffen in the KS unconference and we
-> >concluded that this would be a terrible idea.
-> >
-> >Alexander stated the following things about FW updates (Alexander,
-> >please correct me if I state something incorrectly or if you have
-> >something to add):
-> >
-> >* FW update can be constructed either in a way that the keys in the
+On Wed, Oct 25, 2017 at 01:22:21PM -0700, Jerry Snitselaar wrote:
+> On Wed Oct 25 17, Jarkko Sakkinen wrote:
+> > On Wed, Oct 25, 2017 at 07:17:17AM -0700, Matthew Garrett wrote:
+> > > On Wed, Oct 25, 2017 at 6:44 AM, Jarkko Sakkinen
+> > > <jarkko.sakkinen@linux.intel.com> wrote:
+> > > > I'm implementing a fix for CVE-2017-15361 that simply blacklists
+> > > > vulnerable FW versions. I think this is the only responsible action from
+> > > > my side that I can do.
+> > > 
+> > > I'm not sure this is ideal - do Infineon have any Linux tooling for
+> > > performing firmware updates, and if so will that continue working if
+> > > the device is blacklisted? It's also a poor user experience to have
+> > > systems using TPM-backed disk encryption keys suddenly rendered
+> > > unbootable, and making it as easy as possible for people to do an
+> > > upgrade and then re-seal secrets with new keys feels like the correct
+> > > approach.
+> > 
+> > I talked today with Alexander Steffen in the KS unconference and we
+> > concluded that this would be a terrible idea.
+> > 
+> > Alexander stated the following things about FW updates (Alexander,
+> > please correct me if I state something incorrectly or if you have
+> > something to add):
+> > 
+> > * FW update can be constructed either in a way that the keys in the
 > >  NVRAM are not cleared or in a way that they are cleared.
-> >* FW update cannot be directly applied to the TPM but must come as
+> > * FW update cannot be directly applied to the TPM but must come as
 > >  part of the firmware update from the vendor.
-> >
-> >I proposed the following as an alternative:
-> >
-> >* Print a message to the klog (which log level would be appropriate?).
-> Info?
-> Maybe warn, definitely not err
+> 
+> If that is the case, can the two of you get Intel to update the fw
+> for the tpm in the nuc5i5myhe (slb9665) :) ? It has needed an update for a while, due
+> to issues with context management. My understanding (quite likely I misunderstood)
+> from a recent discussion with Peter was that it was possible to update the fw.
 
-Since the driver does not fail usually warn would make sense but since
-here even allowing to continue to use such TPM is questionable I would
-use error here.
+I don't know but I can at least forward the complains to the mother ship
+:-)
 
-People anyway ignore klog too easily so using warn would be a mistake in
-my opinion. It's like saying that nothing serious is happening here,
-move along.
-
-Do you think so?
-
-> >* Possibly sleep for few seconds. Is this a good idea?
-> Helps how?
-
-Obviously to get it noticed that the system integrity is broken.
-
-> >While writing this email yet another alternative popped into my mind:
-> >what if we allow only in-kernel use but disallow the use of /dev/tpm0?
-> >You could still use trusted keys.
-> >
-> No, same terrible idea since you block the upgrade path.
-> Upgrade tools work from userspace via the kernel driver. 
-> So /dev/tpm0 is necessary.
-
-Right! How stupid of me (my previous response to Jerry) :-) Of course you
-can have special commands and talk to the TPM to do the upgrade even if
-it is part of the platform and not connected to a standard bus.
-
-I got understanding in the yesterdays unconfernce discussion that it
-should be part of the firmware upgrade.
-
-How do you do the upgrade through /dev/tpm0?
+It is fairly intuitive why dTPM cannot be updated without full firmware
+update. It's part of the proprietary HW platform, not something
+connected through PCI, USB or any standard bus.
 
 /Jarkko
