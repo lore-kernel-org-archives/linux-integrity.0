@@ -1,41 +1,45 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:25103 "EHLO
-        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751009AbdJZJFT (ORCPT
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:56348 "EHLO
+        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751027AbdJZJDd (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 26 Oct 2017 05:05:19 -0400
-Date: Thu, 26 Oct 2017 11:04:59 +0200 (CEST)
-From: James Morris <james.l.morris@oracle.com>
+        Thu, 26 Oct 2017 05:03:33 -0400
+Received: by mail-lf0-f41.google.com with SMTP id 90so2879777lfs.13
+        for <linux-integrity@vger.kernel.org>; Thu, 26 Oct 2017 02:03:32 -0700 (PDT)
+Date: Thu, 26 Oct 2017 12:03:30 +0300
+From: Mikhail Kurinnoi <viewizard@viewizard.com>
 To: Matthew Garrett <mjg59@google.com>
-cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, selinux@tycho.nsa.gov,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Subject: Re: [PATCH V3 1/2] security: Add a cred_getsecid hook
-In-Reply-To: <20171026084055.25482-1-mjg59@google.com>
-Message-ID: <alpine.LFD.2.20.1710261104330.14992@localhost>
-References: <20171026084055.25482-1-mjg59@google.com>
+Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
+Subject: Re: [RFC] EVM: Add support for portable signature format
+Message-ID: <20171026120330.5360e427@totoro>
+In-Reply-To: <20171026083144.16247-1-mjg59@google.com>
+References: <20171026083144.16247-1-mjg59@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, 26 Oct 2017, Matthew Garrett wrote:
+? Thu, 26 Oct 2017 01:31:44 -0700
+Matthew Garrett <mjg59@google.com> ?????:
 
-> For IMA purposes, we want to be able to obtain the prepared secid in the
-> bprm structure before the credentials are committed. Add a cred_getsecid
-> hook that makes this possible.
-> 
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
-> Acked-by: Paul Moore <paul@paul-moore.com>
+> @@ -317,7 +319,7 @@ void ima_update_xattr(struct integrity_iint_cache
+> *iint, struct file *file) int rc = 0;
+>  
+>  	/* do not collect and update hash for digital signatures */
+> -	if (iint->flags & IMA_DIGSIG)
+> +	if (iint->flags & IMA_DIGSIG || iint->flags &
+> EVM_IMMUTABLE_DIGSIG) return;
+>  
 
+Isn't this mean, we already changed files data, and we just don't allow
+IMA xattr update? This file will not pass integrity verification
+next time.
 
-Acked-by: James Morris <james.l.morris@oracle.com>
+I thought, the idea was prevent data changes, and in this way prevent
+IMA xattr update.
 
 
 -- 
-James Morris
-<james.l.morris@oracle.com>
+Best regards,
+Mikhail Kurinnoi
