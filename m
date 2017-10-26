@@ -1,67 +1,113 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:58730 "EHLO mga07.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:51435 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932334AbdJZS66 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 26 Oct 2017 14:58:58 -0400
-Date: Thu, 26 Oct 2017 20:58:53 +0200
+        id S932127AbdJZRIh (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 26 Oct 2017 13:08:37 -0400
+Date: Thu, 26 Oct 2017 19:08:30 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Thiebaud Weksteen <tweek@google.com>
-Cc: linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        linux-kernel@vger.kernel.org, Matthew Garrett <mjg59@google.com>,
-        peterhuewe@gmx.de,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        tpmdd@selhorst.net
-Subject: Re: [PATCH v3 4/5] efi: call get_event_log before ExitBootServices
-Message-ID: <20171026185853.bfh7jidixrxb6ozj@linux.intel.com>
-References: <CA+zpnLcYWcO8Gf6b8rAHgcLkAndC0uyPH+Kxa01giVsochP3Ug@mail.gmail.com>
- <20170929171617.yq4dvn66czvnebns@linux.intel.com>
- <20171004105113.mcho3rlytaxfruyf@linux.intel.com>
- <CA+zpnLdg4km1vMUUZaYfRg6M68+nSdC+vASULmH-aKu4vYyy4Q@mail.gmail.com>
- <20171010141419.e4uv4fkmcmpc7sdc@linux.intel.com>
- <alpine.LRH.2.21.1710111250260.22885@namei.org>
- <20171011115254.2n4zs77ixyl2mdgm@linux.intel.com>
- <20171016112833.txbg2sm5tjocp6qh@linux.intel.com>
- <20171016114946.phj3n6vyjdbpj2sj@linux.intel.com>
- <CA+zpnLc038dv-WAE7fdD8i6DpGV3zCLEieg-KPTAvaW7yt-tLA@mail.gmail.com>
+To: Alexander.Steffen@infineon.com
+Cc: peterhuewe@gmx.de, mjg59@google.com,
+        linux-integrity@vger.kernel.org, kari@varaani.com,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: Fixing CVE-2017-15361
+Message-ID: <20171026170830.e2vy4wgayncq7shv@linux.intel.com>
+References: <20171025134438.vgh6tzkups2tujps@linux.intel.com>
+ <CACdnJus6=3XJEVsQEVY-sxqcUm2At4fKi5Ya+w0Hf==yq7ubKQ@mail.gmail.com>
+ <20171025185349.ocptudim3g35j6im@linux.intel.com>
+ <F1DA2BF7-4A3D-4934-9C45-4DAC4FD33659@gmx.de>
+ <20171026111632.g6a3bkhe4nxorfbm@linux.intel.com>
+ <9a87c2cbfac4474a93ecd83f42852a4c@infineon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CA+zpnLc038dv-WAE7fdD8i6DpGV3zCLEieg-KPTAvaW7yt-tLA@mail.gmail.com>
+In-Reply-To: <9a87c2cbfac4474a93ecd83f42852a4c@infineon.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Oct 17, 2017 at 10:00:15AM +0200, Thiebaud Weksteen wrote:
-> This patch was mainly developed and tested on Kabylake with PTT as well.
+On Thu, Oct 26, 2017 at 03:46:26PM +0000, Alexander.Steffen@infineon.com wrote:
+> > On Thu, Oct 26, 2017 at 12:26:10AM +0200, Peter Huewe wrote:
+> > >
+> > >
+> > > Am 25. Oktober 2017 20:53:49 MESZ schrieb Jarkko Sakkinen
+> > <jarkko.sakkinen@linux.intel.com>:
+> > > >On Wed, Oct 25, 2017 at 07:17:17AM -0700, Matthew Garrett wrote:
+> > > >> On Wed, Oct 25, 2017 at 6:44 AM, Jarkko Sakkinen
+> > > >> <jarkko.sakkinen@linux.intel.com> wrote:
+> > > >> > I'm implementing a fix for CVE-2017-15361 that simply blacklists
+> > > >> > vulnerable FW versions. I think this is the only responsible action
+> > > >from
+> > > >> > my side that I can do.
+> > > >>
+> > > >> I'm not sure this is ideal - do Infineon have any Linux tooling for
+> > > >> performing firmware updates, and if so will that continue working if
+> > > >> the device is blacklisted? It's also a poor user experience to have
+> > > >> systems using TPM-backed disk encryption keys suddenly rendered
+> > > >> unbootable, and making it as easy as possible for people to do an
+> > > >> upgrade and then re-seal secrets with new keys feels like the correct
+> > > >> approach.
+> > > >
+> > > >I talked today with Alexander Steffen in the KS unconference and we
+> > > >concluded that this would be a terrible idea.
+> > > >
+> > > >Alexander stated the following things about FW updates (Alexander,
+> > > >please correct me if I state something incorrectly or if you have
+> > > >something to add):
+> > > >
+> > > >* FW update can be constructed either in a way that the keys in the
+> > > >  NVRAM are not cleared or in a way that they are cleared.
+> > > >* FW update cannot be directly applied to the TPM but must come as
+> > > >  part of the firmware update from the vendor.
+> > > >
+> > > >I proposed the following as an alternative:
+> > > >
+> > > >* Print a message to the klog (which log level would be appropriate?).
+> > > Info?
+> > > Maybe warn, definitely not err
+> > 
+> > Since the driver does not fail usually warn would make sense but since
+> > here even allowing to continue to use such TPM is questionable I would
+> > use error here.
+> > 
+> > People anyway ignore klog too easily so using warn would be a mistake in
+> > my opinion. It's like saying that nothing serious is happening here,
+> > move along.
+> > 
+> > Do you think so?
+> > 
+> > > >* Possibly sleep for few seconds. Is this a good idea?
+> > > Helps how?
+> > 
+> > Obviously to get it noticed that the system integrity is broken.
+> > 
+> > > >While writing this email yet another alternative popped into my mind:
+> > > >what if we allow only in-kernel use but disallow the use of /dev/tpm0?
+> > > >You could still use trusted keys.
+> > > >
+> > > No, same terrible idea since you block the upgrade path.
+> > > Upgrade tools work from userspace via the kernel driver.
+> > > So /dev/tpm0 is necessary.
+> > 
+> > Right! How stupid of me (my previous response to Jerry) :-) Of course you
+> > can have special commands and talk to the TPM to do the upgrade even if
+> > it is part of the platform and not connected to a standard bus.
+> > 
+> > I got understanding in the yesterdays unconfernce discussion that it
+> > should be part of the firmware upgrade.
 > 
-> It could be a few things. Are you booting with the EFI stub? Is the
-> TPM enabled within the BIOS? Does tpm_tis get loaded? Does it produce
-> any log?
-
-Nope, and it should not get loaded anyway as I'm using PTT. With PTT you
-use tpm_crb. TPM is working just fine.
-
-> If the logs are recovered (but not parsed), you should already see an
-> entry in the logs like:
+> Yes, but it really depends on the way the vendor chooses to do the
+> upgrade. UEFI Capsules would be one standard way that does not involve
+> the Linux driver. But maybe you are on some embedded ARM platform
+> without UEFI, then you can also run the upgrade through /dev/tpm0, so
+> that you do not need to invent another way to talk to the TPM.
 > 
-> efi:  SMBIOS=0x7fed6000  ACPI=0x7ff00000  TPMEventLog=0x.....
-> 
-> Can you see the TPMEventLog part?
+> This second option does have the drawback of the Linux driver not
+> being aware of the upgrade happening. It does not know that while the
+> TPM is in the upgrade mode no other commands can be executed. Neither
+> does it know that after the upgrade the system needs to be rebooted
+> before the TPM can be used again (so that for example the PCRs have
+> the correct values again). I want to look into those issues in the
+> future.
 
-I can check this when I'm back in Finland. Still in Prague. Tried to
-test this with my work laptop (XPS13 with dTPM) now but the USB stick I
-have with seems to be broken :-(
-
-This is anyway almost guaranteed to go to 4.16  and I don't want to push
-this to 4.15 so there is no rush right now (already sent my PR).
-
-> The issue with extra logging is that the log recovery happens within
-> the EFI stub phase where limited logging is available (which I think
-> has been limited to error and fatal message only).
-> For now, it cannot be a version mismatch as the stub will only request
-> the version 1.2 format.
-
-Right, I see.
+This dilates me even more to the standpoint that user space is better
+place for sorting out this issue.
 
 /Jarkko
