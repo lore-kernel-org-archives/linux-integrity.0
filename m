@@ -1,76 +1,50 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from smtp2.infineon.com ([217.10.52.18]:5242 "EHLO
-        smtp2.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932291AbdJZPm3 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 26 Oct 2017 11:42:29 -0400
-From: <Alexander.Steffen@infineon.com>
-To: <jarkko.sakkinen@linux.intel.com>, <mjg59@google.com>
-CC: <linux-integrity@vger.kernel.org>, <kari@varaani.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>
-Subject: RE: Fixing CVE-2017-15361
-Date: Thu, 26 Oct 2017 15:42:27 +0000
-Message-ID: <ffd461a6d2604a0eafca18638a8a17a9@infineon.com>
+Received: from mx2.suse.de ([195.135.220.15]:50209 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932246AbdJZO5u (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 26 Oct 2017 10:57:50 -0400
+Date: Thu, 26 Oct 2017 16:57:48 +0200
+From: Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>,
+        Matthew Garrett <mjg59@google.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Kari Hiitola <kari@varaani.com>, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Alexander Steffen <Alexander.Steffen@infineon.com>
+Subject: Re: Fixing CVE-2017-15361
+Message-ID: <20171026165748.265e6dcf@kitsune.suse.cz>
+In-Reply-To: <20171026140602.syifqbrgysvq7ciy@linux.intel.com>
 References: <20171025134438.vgh6tzkups2tujps@linux.intel.com>
- <CACdnJus6=3XJEVsQEVY-sxqcUm2At4fKi5Ya+w0Hf==yq7ubKQ@mail.gmail.com>
- <20171025185349.ocptudim3g35j6im@linux.intel.com>
-In-Reply-To: <20171025185349.ocptudim3g35j6im@linux.intel.com>
-Content-Type: text/plain; charset="Windows-1252"
+        <CACdnJus6=3XJEVsQEVY-sxqcUm2At4fKi5Ya+w0Hf==yq7ubKQ@mail.gmail.com>
+        <20171025185349.ocptudim3g35j6im@linux.intel.com>
+        <F1DA2BF7-4A3D-4934-9C45-4DAC4FD33659@gmx.de>
+        <20171026111632.g6a3bkhe4nxorfbm@linux.intel.com>
+        <20171026145902.2e7dbb06@kitsune.suse.cz>
+        <20171026140602.syifqbrgysvq7ciy@linux.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-> On Wed, Oct 25, 2017 at 07:17:17AM -0700, Matthew Garrett wrote:
-> > On Wed, Oct 25, 2017 at 6:44 AM, Jarkko Sakkinen
-> > <jarkko.sakkinen@linux.intel.com> wrote:
-> > > I'm implementing a fix for CVE-2017-15361 that simply blacklists
-> > > vulnerable FW versions. I think this is the only responsible action from
-> > > my side that I can do.
-> >
-> > I'm not sure this is ideal - do Infineon have any Linux tooling for
-> > performing firmware updates, and if so will that continue working if
-> > the device is blacklisted? It's also a poor user experience to have
-> > systems using TPM-backed disk encryption keys suddenly rendered
-> > unbootable, and making it as easy as possible for people to do an
-> > upgrade and then re-seal secrets with new keys feels like the correct
-> > approach.
+On Thu, 26 Oct 2017 16:06:02 +0200
+Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
+
+> On Thu, Oct 26, 2017 at 02:59:02PM +0200, Michal Suchanek wrote:
+> > It does not really matter. People ignore the messages unless looking
+> > for something specific as you already noticed. Warn seems adequate
+> > because the cipher is weaker than expected but not known to
+> > be compromised. People who care can look up the message. People who
+> > don't care will ignore it even if it's crit.  
 > 
-> I talked today with Alexander Steffen in the KS unconference and we
-> concluded that this would be a terrible idea.
+> Is it worth of trouble to do any driver changes then (open question to
+> everyone)? I'm not sure it is worth of trouble to add cruft to the
+> driver code for a warning that will likely be ignored anyway.
 
-Right. Thinking more about this issue, I'd say the ideal way to handle it would be in the applications using the TPM. Not all functionalities of the TPM are affected, so only the applications can know whether their use cases are still safe and it are the applications that need to migrate to a safe solution should this be necessary. (Of course, this puts the burden on each individual application instead of having one central place to decide what is safe and what isn't, but I do not see any way around that.)
+If the kernel can reliably detect the affected TPMs it saves the
+user the work of figuring out where the firmware revision is accessible
+on the running machine and what firmware revisions are affected.
 
-As far as I know, the kernel itself is not using any of the affected functionalities, so there is no need for an immediate mitigation within the kernel. But I'd like to hear about how similar issues were handled in the past. I can think of multiple severe security issues, for example in BIOS implementations, but I cannot recall ever hearing about the kernel refusing to boot on such machines or even do so much as print a warning about that vulnerability.
+Thanks
 
-> Alexander stated the following things about FW updates (Alexander,
-> please correct me if I state something incorrectly or if you have
-> something to add):
-> 
-> * FW update can be constructed either in a way that the keys in the
->   NVRAM are not cleared or in a way that they are cleared.
-
-Correct. But as far as I know, the updates that were already published for this issue do not delete any of the keys. And I do not think that this would be a good idea. After all, the applications still might need access to their key to decrypt their data and reencrypt it with a safe key after applying the update.
-
-> * FW update cannot be directly applied to the TPM but must come as
->   part of the firmware update from the vendor.
-
-Yes, starting the upgrade process is guarded by platformAuth/platformPolicy (in the case of TPM2), so the platform vendor needs to be involved. And you want them to be involved, since they need to make sure that their system still works with the updated TPM. I'm not sure whether platform vendors do that for TPMs, but for wireless cards whitelisting in the BIOS is common, and you do not want your machine refusing to boot just because the BIOS does not recognize your TPM's firmware version anymore (as a simple example).
-
-> I proposed the following as an alternative:
-> 
-> * Print a message to the klog (which log level would be appropriate?).
-> * Possibly sleep for few seconds. Is this a good idea?
-
-I'd be okay with that, but ideally we'd have some kind of agreement/history of how to handle similar security issues in hardware components in general. Implementing a special case just for this TPM vulnerability does not seem like the right thing to do, especially when the kernel itself is not affected (and thus the whole machine might not be affected for the way that it is used). We do not want to confuse users or make them expect similar warnings in the future, when we might have no intention of providing them.
-
-> While writing this email yet another alternative popped into my mind:
-> what if we allow only in-kernel use but disallow the use of /dev/tpm0?
-> You could still use trusted keys.
-> 
-> Here are all the ideas that I have and I am open for better
-> alternatives.
-> 
-> /Jarkko
-
-Alexander
+Michal
