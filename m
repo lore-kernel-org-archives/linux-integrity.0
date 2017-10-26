@@ -1,104 +1,70 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45258 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932326AbdJZTXA (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 26 Oct 2017 15:23:00 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9QJMrwr104173
-        for <linux-integrity@vger.kernel.org>; Thu, 26 Oct 2017 15:23:00 -0400
-Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2dujhr9awq-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 26 Oct 2017 15:22:59 -0400
-Received: from localhost
-        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Thu, 26 Oct 2017 20:22:57 +0100
-Subject: Re: [RFC] EVM: Add support for portable signature format
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Mikhail Kurinnoi <viewizard@viewizard.com>,
-        Matthew Garrett <mjg59@google.com>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
-Date: Thu, 26 Oct 2017 15:22:53 -0400
-In-Reply-To: <20171026124616.2f2ef1d2@totoro>
-References: <20171026083144.16247-1-mjg59@google.com>
-         <20171026120330.5360e427@totoro>
-         <CACdnJuvQUGXJb664ZVJk6Z_YDYomgRSwX_C3vk4DRk5EVj02Gg@mail.gmail.com>
-         <20171026124616.2f2ef1d2@totoro>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1509045773.5886.93.camel@linux.vnet.ibm.com>
+Received: from mga06.intel.com ([134.134.136.31]:34455 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932328AbdJZTHb (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 26 Oct 2017 15:07:31 -0400
+Date: Thu, 26 Oct 2017 21:07:28 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Alexander.Steffen@infineon.com
+Cc: mjg59@google.com, linux-integrity@vger.kernel.org,
+        kari@varaani.com, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: Fixing CVE-2017-15361
+Message-ID: <20171026190728.mxqvrglutxuqnnua@linux.intel.com>
+References: <20171025134438.vgh6tzkups2tujps@linux.intel.com>
+ <CACdnJus6=3XJEVsQEVY-sxqcUm2At4fKi5Ya+w0Hf==yq7ubKQ@mail.gmail.com>
+ <20171025185349.ocptudim3g35j6im@linux.intel.com>
+ <6d23d2e2efbb4b7ba11c7d430d7c816e@infineon.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <6d23d2e2efbb4b7ba11c7d430d7c816e@infineon.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, 2017-10-26 at 12:46 +0300, Mikhail Kurinnoi wrote:
-> ? Thu, 26 Oct 2017 02:08:25 -0700
-> Matthew Garrett <mjg59@google.com> ?????:
-> 
-> > On Thu, Oct 26, 2017 at 2:03 AM, Mikhail Kurinnoi
-> > <viewizard@viewizard.com> wrote:
-> > > ? Thu, 26 Oct 2017 01:31:44 -0700
-> > > Matthew Garrett <mjg59@google.com> ?????:
-> > >  
-> > >> @@ -317,7 +319,7 @@ void ima_update_xattr(struct
-> > >> integrity_iint_cache *iint, struct file *file) int rc = 0;
-> > >>
-> > >>       /* do not collect and update hash for digital signatures */
-> > >> -     if (iint->flags & IMA_DIGSIG)
-> > >> +     if (iint->flags & IMA_DIGSIG || iint->flags &
-> > >> EVM_IMMUTABLE_DIGSIG) return;
-> > >>  
+On Thu, Oct 26, 2017 at 03:51:27PM +0000, Alexander.Steffen@infineon.com wrote:
+> > > On Wed, Oct 25, 2017 at 07:17:17AM -0700, Matthew Garrett wrote:
+> > > > On Wed, Oct 25, 2017 at 6:44 AM, Jarkko Sakkinen
+> > > > <jarkko.sakkinen@linux.intel.com> wrote:
+> > > > > I'm implementing a fix for CVE-2017-15361 that simply blacklists
+> > > > > vulnerable FW versions. I think this is the only responsible action from
+> > > > > my side that I can do.
+> > > >
+> > > > I'm not sure this is ideal - do Infineon have any Linux tooling for
+> > > > performing firmware updates, and if so will that continue working if
+> > > > the device is blacklisted? It's also a poor user experience to have
+> > > > systems using TPM-backed disk encryption keys suddenly rendered
+> > > > unbootable, and making it as easy as possible for people to do an
+> > > > upgrade and then re-seal secrets with new keys feels like the correct
+> > > > approach.
 > > >
-> > > Isn't this mean, we already changed files data, and we just don't
-> > > allow IMA xattr update? This file will not pass integrity
-> > > verification next time.  
+> > > I talked today with Alexander Steffen in the KS unconference and we
+> > > concluded that this would be a terrible idea.
 > > 
-> > That's fine - policy may not care. It's easier to sign all files and
-> > then leave enforcement up to the local policy than it is to determine
-> > in advance which files will need protection.
-
-You're both correct.  Signing the file data will prevent security.ima
-from changing, assuming the file is in policy and there is a
-FILE_CHECK rule.  We're requiring the signed file-metadata include
-security.ima, but it currently doesn't require it to contain a file
-signature.  Only having a single file signature, was one of Matthew's
-requirements.
-
-IMA accessing the EVM flags crosses the boundary between EVM/IMA. Just
-as the LSMs protect their own xattr label, EVM should protect
-security.evm, preventing it from changing.  There's no need for the
-test here in IMA.
-
-An additional patch could prevent IMA from allowing files with the
-portable/immutable signatures from changing, just as it currently
-prevents signed file data from changing.  Refer to the
-IMA_XATTR_DIGEST case statement in ima_appraise_measurement().  It
-should be based on the result returned from evm_verifyxattr(), as
-Mikhail suggested.
-
-> > > I thought, the idea was prevent data changes, and in this way
-> > > prevent IMA xattr update.  
+> > Right. Thinking more about this issue, I'd say the ideal way to handle it would
+> > be in the applications using the TPM. Not all functionalities of the TPM are
+> > affected, so only the applications can know whether their use cases are still
+> > safe and it are the applications that need to migrate to a safe solution should
+> > this be necessary. (Of course, this puts the burden on each individual
+> > application instead of having one central place to decide what is safe and
+> > what isn't, but I do not see any way around that.)
 > > 
-> > No, the goal is to be able to detect when files have been modified and
-> > (optionally) restrict access as a result. Otherwise the packaging
-> > system has to be able to identify all files that may be legitimately
-> > modified, which is something that may differ depending on the client.
-> > It's much easier to permit the data modification and have the local
-> > policy block reading or execution if it's actually a sensitive file.
+> > As far as I know, the kernel itself is not using any of the affected
+> > functionalities, so there is no need for an immediate mitigation within the
+> > kernel.
 > 
-> Hmm...
-> http://www.spinics.net/lists/linux-integrity/msg00151.html
+> This does not seem to be entirely true. The code in
+> security/keys/trusted.c might be affected under some circumstances,
+> but I am not familiar enough with that code to say for sure. As far as
+> I can tell, it does not create any RSA keys directly, but it might
+> reference them as parent keys, so that vulnerable keys are used to
+> protect the secrets. 
 > 
-> probably, we should decide first, what exactly immutable EVM mean.
-> It's hard to propose something or test patch if we still have
-> misunderstanding in concept of immutable EVM.
+> If that is the case, can we detect that issue and migrate the secrets
+> to a safe configuration? Do we (as the kernel) want to do that? How
+> much do we want/have to involve the user in the process?
 
-Agreed.  I think EVM should prevent any changes to the file metadata
-that would cause the portable/immutable EVM signature to be invalid.
- For example, the change in evm_inode_setattr() permits the file
-metadata to change.  The same is true for removing files or writing
-security xattrs.
+I've implemented the TPM 2.0 trusted keys code and some parts have faded
+away bit (I still run tests with that code for every kernel release) but
+AFAIK you can give a non-primary key as parent.
 
-Mimi
+/Jarkko
