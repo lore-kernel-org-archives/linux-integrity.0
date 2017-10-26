@@ -1,373 +1,319 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-qt0-f201.google.com ([209.85.216.201]:50294 "EHLO
-        mail-qt0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751863AbdJZIlC (ORCPT
+Received: from mail-oi0-f73.google.com ([209.85.218.73]:41921 "EHLO
+        mail-oi0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932267AbdJZIbu (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 26 Oct 2017 04:41:02 -0400
-Received: by mail-qt0-f201.google.com with SMTP id z50so1856256qtj.9
-        for <linux-integrity@vger.kernel.org>; Thu, 26 Oct 2017 01:41:02 -0700 (PDT)
+        Thu, 26 Oct 2017 04:31:50 -0400
+Received: by mail-oi0-f73.google.com with SMTP id l5so2752333oib.0
+        for <linux-integrity@vger.kernel.org>; Thu, 26 Oct 2017 01:31:49 -0700 (PDT)
 MIME-Version: 1.0
-Date: Thu, 26 Oct 2017 01:40:55 -0700
-In-Reply-To: <20171026084055.25482-1-mjg59@google.com>
-Message-Id: <20171026084055.25482-2-mjg59@google.com>
-References: <20171026084055.25482-1-mjg59@google.com>
-Subject: [PATCH V3 2/2] IMA: Support using new creds in appraisal policy
+Date: Thu, 26 Oct 2017 01:31:44 -0700
+Message-Id: <20171026083144.16247-1-mjg59@google.com>
+Subject: [RFC] EVM: Add support for portable signature format
 From: Matthew Garrett <mjg59@google.com>
 To: linux-integrity@vger.kernel.org
 Cc: zohar@linux.vnet.ibm.com, Matthew Garrett <mjg59@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, selinux@tycho.nsa.gov,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
+        Mikhail Kurinnoi <viewizard@viewizard.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-The existing BPRM_CHECK functionality in IMA validates against the
-credentials of the existing process, not any new credentials that the
-child process may transition to. Add an additional CREDS_CHECK target
-and refactor IMA to pass the appropriate creds structure. In
-ima_bprm_check(), check with both the existing process credentials and
-the credentials that will be committed when the new process is started.
-This will not change behaviour unless the system policy is extended to
-include CREDS_CHECK targets - BPRM_CHECK will continue to check the same
-credentials that it did previously.
+Ok I /think/ I have everything covered here. I'm away from my workstation
+this week so can't test this beyond building it right now, but thought I
+should send it out so people can check my reasoning.
 
-Signed-off-by: Matthew Garrett <mjg59@google.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Stephen Smalley <sds@tycho.nsa.gov>
-Cc: Eric Paris <eparis@parisplace.org>
-Cc: selinux@tycho.nsa.gov
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module@vger.kernel.org
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: linux-integrity@vger.kernel.org
+The EVM signature includes the inode number and (optionally) the
+filesystem UUID, making it impractical to ship EVM signatures in
+packages. This patch adds a new portable format intended to allow
+distributions to include EVM signatures. It is identical to the existing
+format but hardcodes the inode and generation numbers to 0 and does not
+include the filesystem UUID even if the kernel is configured to do so.
+
+Removing the inode means that the metadata and signature from one file
+could be copied to another file without invalidating it. This is avoided
+by ensuring that an IMA xattr is present during EVM validation.
+
+Portable signatures are intended to be immutable - ie, they will never
+be transformed into HMACs. This is achieved via the following changes:
+
+1) An update is not triggered on initial xattr write
+2) evm_verifyxattr returns INTEGRITY_PASS_IMMUTABLE for valid portable
+digital signatures and sets the EVM_IMMUTABLE_DIGSIG flag
+3) ima_appraise_measurement() is updated to treat
+INTEGRITY_PASS_IMMUTABLE as valid, allowing IMA appraisal to pass
+4) ima_update_xattr() does not update the IMA xattr if
+EVM_IMMUTABLE_DIGSIG is set
+5) any other codepath that calls evm_update_evmxattr() treats
+INTEGRITY_PASS_IMMUTABLE as a failure, and prevents the write that would
+trigger an HMAC writeout
+
+The only path that will still result in an update will be if IMA is in
+"fix" mode while a valid HMAC key is loaded.
+
+Based on earlier work by Dmitry Kasatkin and Mikhail Kurinnoi.
+
+Cc: Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
+Cc: Mikhail Kurinnoi <viewizard@viewizard.com>
 ---
- V3: Update description to make it clear that this doesn't alter the behaviour
- of existing policies
+ include/linux/integrity.h             |  1 +
+ security/integrity/evm/evm.h          |  2 +-
+ security/integrity/evm/evm_crypto.c   | 37 ++++++++++++++++++++++++++---------
+ security/integrity/evm/evm_main.c     | 23 ++++++++++++++--------
+ security/integrity/ima/ima_appraise.c |  6 ++++--
+ security/integrity/integrity.h        |  2 ++
+ 6 files changed, 51 insertions(+), 20 deletions(-)
 
- Documentation/ABI/testing/ima_policy  |  2 +-
- security/integrity/iint.c             |  1 +
- security/integrity/ima/ima.h          |  7 ++++---
- security/integrity/ima/ima_api.c      |  8 +++++---
- security/integrity/ima/ima_appraise.c | 10 +++++++++-
- security/integrity/ima/ima_main.c     | 26 +++++++++++++++++---------
- security/integrity/ima/ima_policy.c   | 19 ++++++++++++-------
- security/integrity/integrity.h        |  9 +++++++--
- 8 files changed, 56 insertions(+), 26 deletions(-)
-
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index e76432b9954d..5dc9eed035fb 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -25,7 +25,7 @@ Description:
- 				 [obj_user=] [obj_role=] [obj_type=]]
- 			option:	[[appraise_type=]] [permit_directio]
+diff --git a/include/linux/integrity.h b/include/linux/integrity.h
+index c2d6082a1a4c..858d3f4a2241 100644
+--- a/include/linux/integrity.h
++++ b/include/linux/integrity.h
+@@ -14,6 +14,7 @@
  
--		base: 	func:= [BPRM_CHECK][MMAP_CHECK][FILE_CHECK][MODULE_CHECK]
-+		base: 	func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
- 				[FIRMWARE_CHECK]
- 				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
- 			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index 6fc888ca468e..ad30094a58b4 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -78,6 +78,7 @@ static void iint_free(struct integrity_iint_cache *iint)
- 	iint->ima_mmap_status = INTEGRITY_UNKNOWN;
- 	iint->ima_bprm_status = INTEGRITY_UNKNOWN;
- 	iint->ima_read_status = INTEGRITY_UNKNOWN;
-+	iint->ima_creds_status = INTEGRITY_UNKNOWN;
- 	iint->evm_status = INTEGRITY_UNKNOWN;
- 	iint->measured_pcrs = 0;
- 	kmem_cache_free(iint_cache, iint);
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index d52b487ad259..0703a96072b5 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -177,6 +177,7 @@ static inline unsigned long ima_hash_key(u8 *digest)
- 	hook(FILE_CHECK)		\
- 	hook(MMAP_CHECK)		\
- 	hook(BPRM_CHECK)		\
-+	hook(CREDS_CHECK)		\
- 	hook(POST_SETATTR)		\
- 	hook(MODULE_CHECK)		\
- 	hook(FIRMWARE_CHECK)		\
-@@ -191,7 +192,7 @@ enum ima_hooks {
- };
- 
- /* LIM API function definitions */
--int ima_get_action(struct inode *inode, int mask,
-+int ima_get_action(struct inode *inode, const struct cred *cred, int mask,
- 		   enum ima_hooks func, int *pcr);
- int ima_must_measure(struct inode *inode, int mask, enum ima_hooks func);
- int ima_collect_measurement(struct integrity_iint_cache *iint,
-@@ -212,8 +213,8 @@ void ima_free_template_entry(struct ima_template_entry *entry);
- const char *ima_d_path(const struct path *path, char **pathbuf, char *filename);
- 
- /* IMA policy related functions */
--int ima_match_policy(struct inode *inode, enum ima_hooks func, int mask,
--		     int flags, int *pcr);
-+int ima_match_policy(struct inode *inode, const struct cred *cred,
-+		     enum ima_hooks func, int mask, int flags, int *pcr);
- void ima_init_policy(void);
- void ima_update_policy(void);
- void ima_update_policy_flag(void);
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index c2edba8de35e..ff33b7e65a07 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -157,6 +157,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
- /**
-  * ima_get_action - appraise & measure decision based on policy.
-  * @inode: pointer to inode to measure
-+ * @cred: pointer to credentials structure to validate
-  * @mask: contains the permission mask (MAY_READ, MAY_WRITE, MAY_EXEC,
-  *        MAY_APPEND)
-  * @func: caller identifier
-@@ -165,20 +166,21 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
-  * The policy is defined in terms of keypairs:
-  *		subj=, obj=, type=, func=, mask=, fsmagic=
-  *	subj,obj, and type: are LSM specific.
-- *	func: FILE_CHECK | BPRM_CHECK | MMAP_CHECK | MODULE_CHECK
-+ *	func: FILE_CHECK | BPRM_CHECK | CREDS_CHECK | MMAP_CHECK | MODULE_CHECK
-  *	mask: contains the permission mask
-  *	fsmagic: hex value
-  *
-  * Returns IMA_MEASURE, IMA_APPRAISE mask.
-  *
+ enum integrity_status {
+ 	INTEGRITY_PASS = 0,
++	INTEGRITY_PASS_IMMUTABLE,
+ 	INTEGRITY_FAIL,
+ 	INTEGRITY_NOLABEL,
+ 	INTEGRITY_NOXATTRS,
+diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
+index f5f12727771a..2ff02459fcfd 100644
+--- a/security/integrity/evm/evm.h
++++ b/security/integrity/evm/evm.h
+@@ -48,7 +48,7 @@ int evm_calc_hmac(struct dentry *dentry, const char *req_xattr_name,
+ 		  size_t req_xattr_value_len, char *digest);
+ int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
+ 		  const char *req_xattr_value,
+-		  size_t req_xattr_value_len, char *digest);
++		  size_t req_xattr_value_len, char type, char *digest);
+ int evm_init_hmac(struct inode *inode, const struct xattr *xattr,
+ 		  char *hmac_val);
+ int evm_init_secfs(void);
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index 1d32cd20009a..8855722529d4 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -138,7 +138,7 @@ static struct shash_desc *init_desc(char type)
+  * protection.)
   */
--int ima_get_action(struct inode *inode, int mask, enum ima_hooks func, int *pcr)
-+int ima_get_action(struct inode *inode, const struct cred *cred, int mask,
-+		   enum ima_hooks func, int *pcr)
+ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
+-			  char *digest)
++			  char type, char *digest)
  {
- 	int flags = IMA_MEASURE | IMA_AUDIT | IMA_APPRAISE;
+ 	struct h_misc {
+ 		unsigned long ino;
+@@ -149,8 +149,13 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
+ 	} hmac_misc;
  
- 	flags &= ima_policy_flag;
+ 	memset(&hmac_misc, 0, sizeof(hmac_misc));
+-	hmac_misc.ino = inode->i_ino;
+-	hmac_misc.generation = inode->i_generation;
++	/* Don't include the inode or generation number in portable
++	 * signatures
++	 */
++	if (type != EVM_XATTR_PORTABLE_DIGSIG) {
++		hmac_misc.ino = inode->i_ino;
++		hmac_misc.generation = inode->i_generation;
++	}
+ 	/* The hmac uid and gid must be encoded in the initial user
+ 	 * namespace (not the filesystems user namespace) as encoding
+ 	 * them in the filesystems user namespace allows an attack
+@@ -163,7 +168,8 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
+ 	hmac_misc.gid = from_kgid(&init_user_ns, inode->i_gid);
+ 	hmac_misc.mode = inode->i_mode;
+ 	crypto_shash_update(desc, (const u8 *)&hmac_misc, sizeof(hmac_misc));
+-	if (evm_hmac_attrs & EVM_ATTR_FSUUID)
++	if ((evm_hmac_attrs & EVM_ATTR_FSUUID) &&
++	    type != EVM_XATTR_PORTABLE_DIGSIG)
+ 		crypto_shash_update(desc, &inode->i_sb->s_uuid.b[0],
+ 				    sizeof(inode->i_sb->s_uuid));
+ 	crypto_shash_final(desc, digest);
+@@ -189,6 +195,7 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ 	char *xattr_value = NULL;
+ 	int error;
+ 	int size;
++	bool ima_present = false;
  
--	return ima_match_policy(inode, func, mask, flags, pcr);
-+	return ima_match_policy(inode, cred, func, mask, flags, pcr);
+ 	if (!(inode->i_opflags & IOP_XATTR))
+ 		return -EOPNOTSUPP;
+@@ -199,11 +206,18 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ 
+ 	error = -ENODATA;
+ 	for (xattrname = evm_config_xattrnames; *xattrname != NULL; xattrname++) {
++		bool is_ima = false;
++
++		if (strcmp(*xattrname, XATTR_NAME_IMA) == 0)
++			is_ima = true;
++
+ 		if ((req_xattr_name && req_xattr_value)
+ 		    && !strcmp(*xattrname, req_xattr_name)) {
+ 			error = 0;
+ 			crypto_shash_update(desc, (const u8 *)req_xattr_value,
+ 					     req_xattr_value_len);
++			if (is_ima)
++				ima_present = true;
+ 			continue;
+ 		}
+ 		size = vfs_getxattr_alloc(dentry, *xattrname,
+@@ -218,9 +232,14 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ 		error = 0;
+ 		xattr_size = size;
+ 		crypto_shash_update(desc, (const u8 *)xattr_value, xattr_size);
++		if (is_ima)
++			ima_present = true;
+ 	}
+-	hmac_add_misc(desc, inode, digest);
++	hmac_add_misc(desc, inode, type, digest);
+ 
++	/* Portable EVM signatures must include an IMA hash */
++	if (type == EVM_XATTR_PORTABLE_DIGSIG && !ima_present)
++		return -EPERM;
+ out:
+ 	kfree(xattr_value);
+ 	kfree(desc);
+@@ -232,15 +251,15 @@ int evm_calc_hmac(struct dentry *dentry, const char *req_xattr_name,
+ 		  char *digest)
+ {
+ 	return evm_calc_hmac_or_hash(dentry, req_xattr_name, req_xattr_value,
+-				req_xattr_value_len, EVM_XATTR_HMAC, digest);
++			       req_xattr_value_len, EVM_XATTR_HMAC, digest);
+ }
+ 
+ int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
+ 		  const char *req_xattr_value, size_t req_xattr_value_len,
+-		  char *digest)
++		  char type, char *digest)
+ {
+ 	return evm_calc_hmac_or_hash(dentry, req_xattr_name, req_xattr_value,
+-				req_xattr_value_len, IMA_XATTR_DIGEST, digest);
++				     req_xattr_value_len, type, digest);
  }
  
  /*
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 809ba70fbbbf..137b8d1708c6 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -53,7 +53,8 @@ int ima_must_appraise(struct inode *inode, int mask, enum ima_hooks func)
- 	if (!ima_appraise)
- 		return 0;
- 
--	return ima_match_policy(inode, func, mask, IMA_APPRAISE, NULL);
-+	return ima_match_policy(inode, current_cred(), func, mask,
-+				IMA_APPRAISE, NULL);
- }
- 
- static int ima_fix_xattr(struct dentry *dentry,
-@@ -86,6 +87,8 @@ enum integrity_status ima_get_cache_status(struct integrity_iint_cache *iint,
- 		return iint->ima_mmap_status;
- 	case BPRM_CHECK:
- 		return iint->ima_bprm_status;
-+	case CREDS_CHECK:
-+		return iint->ima_creds_status;
- 	case FILE_CHECK:
- 	case POST_SETATTR:
- 		return iint->ima_file_status;
-@@ -106,6 +109,8 @@ static void ima_set_cache_status(struct integrity_iint_cache *iint,
- 	case BPRM_CHECK:
- 		iint->ima_bprm_status = status;
- 		break;
-+	case CREDS_CHECK:
-+		iint->ima_creds_status = status;
- 	case FILE_CHECK:
- 	case POST_SETATTR:
- 		iint->ima_file_status = status;
-@@ -127,6 +132,9 @@ static void ima_cache_flags(struct integrity_iint_cache *iint,
- 	case BPRM_CHECK:
- 		iint->flags |= (IMA_BPRM_APPRAISED | IMA_APPRAISED);
- 		break;
-+	case CREDS_CHECK:
-+		iint->flags |= (IMA_CREDS_APPRAISED | IMA_APPRAISED);
-+		break;
- 	case FILE_CHECK:
- 	case POST_SETATTR:
- 		iint->flags |= (IMA_FILE_APPRAISED | IMA_APPRAISED);
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 2aebb7984437..f41aa427792b 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -155,8 +155,9 @@ void ima_file_free(struct file *file)
- 	ima_check_last_writer(iint, inode, file);
- }
- 
--static int process_measurement(struct file *file, char *buf, loff_t size,
--			       int mask, enum ima_hooks func, int opened)
-+static int process_measurement(struct file *file, const struct cred *cred,
-+			       char *buf, loff_t size, int mask,
-+			       enum ima_hooks func, int opened)
- {
- 	struct inode *inode = file_inode(file);
- 	struct integrity_iint_cache *iint = NULL;
-@@ -178,7 +179,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
- 	 * bitmask based on the appraise/audit/measurement policy.
- 	 * Included is the appraise submask.
- 	 */
--	action = ima_get_action(inode, mask, func, &pcr);
-+	action = ima_get_action(inode, cred, mask, func, &pcr);
- 	violation_check = ((func == FILE_CHECK || func == MMAP_CHECK) &&
- 			   (ima_policy_flag & IMA_MEASURE));
- 	if (!action && !violation_check)
-@@ -282,8 +283,8 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
- int ima_file_mmap(struct file *file, unsigned long prot)
- {
- 	if (file && (prot & PROT_EXEC))
--		return process_measurement(file, NULL, 0, MAY_EXEC,
--					   MMAP_CHECK, 0);
-+		return process_measurement(file, current_cred(), NULL, 0,
-+					   MAY_EXEC, MMAP_CHECK, 0);
- 	return 0;
- }
- 
-@@ -302,8 +303,14 @@ int ima_file_mmap(struct file *file, unsigned long prot)
-  */
- int ima_bprm_check(struct linux_binprm *bprm)
- {
--	return process_measurement(bprm->file, NULL, 0, MAY_EXEC,
--				   BPRM_CHECK, 0);
-+	int ret;
-+
-+	ret = process_measurement(bprm->file, current_cred(), NULL, 0,
-+				  MAY_EXEC, BPRM_CHECK, 0);
-+	if (ret)
-+		return ret;
-+	return process_measurement(bprm->file, bprm->cred, NULL, 0,
-+				   MAY_EXEC, CREDS_CHECK, 0);
- }
- 
- /**
-@@ -318,7 +325,7 @@ int ima_bprm_check(struct linux_binprm *bprm)
-  */
- int ima_file_check(struct file *file, int mask, int opened)
- {
--	return process_measurement(file, NULL, 0,
-+	return process_measurement(file, current_cred(), NULL, 0,
- 				   mask & (MAY_READ | MAY_WRITE | MAY_EXEC |
- 					   MAY_APPEND), FILE_CHECK, opened);
- }
-@@ -413,7 +420,8 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+@@ -280,7 +299,7 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
  	}
  
- 	func = read_idmap[read_id] ?: FILE_CHECK;
--	return process_measurement(file, buf, size, MAY_READ, func, 0);
-+	return process_measurement(file, current_cred(), buf, size, MAY_READ,
-+				   func, 0);
+ 	crypto_shash_update(desc, lsm_xattr->value, lsm_xattr->value_len);
+-	hmac_add_misc(desc, inode, hmac_val);
++	hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
+ 	kfree(desc);
+ 	return 0;
  }
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 063d38aef64e..7ab633eab576 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -120,7 +120,8 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+ 	enum integrity_status evm_status = INTEGRITY_PASS;
+ 	int rc, xattr_len;
  
- static int __init init_ima(void)
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 95209a5f8595..c9d5735711eb 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -247,10 +247,9 @@ static void ima_lsm_update_rules(void)
-  * Returns true on rule match, false on failure.
-  */
- static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
--			    enum ima_hooks func, int mask)
-+			    const struct cred *cred, enum ima_hooks func,
-+			    int mask)
- {
--	struct task_struct *tsk = current;
--	const struct cred *cred = current_cred();
- 	int i;
+-	if (iint && iint->evm_status == INTEGRITY_PASS)
++	if (iint && (iint->evm_status == INTEGRITY_PASS ||
++		     iint->evm_status == INTEGRITY_PASS_IMMUTABLE))
+ 		return iint->evm_status;
  
- 	if ((rule->flags & IMA_FUNC) &&
-@@ -305,7 +304,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- 		case LSM_SUBJ_USER:
- 		case LSM_SUBJ_ROLE:
- 		case LSM_SUBJ_TYPE:
--			security_task_getsecid(tsk, &sid);
-+			security_cred_getsecid(cred, &sid);
- 			rc = security_filter_rule_match(sid,
- 							rule->lsm[i].type,
- 							Audit_equal,
-@@ -339,6 +338,8 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
- 		return IMA_MMAP_APPRAISE;
- 	case BPRM_CHECK:
- 		return IMA_BPRM_APPRAISE;
-+	case CREDS_CHECK:
-+		return IMA_CREDS_APPRAISE;
- 	case FILE_CHECK:
- 	case POST_SETATTR:
- 		return IMA_FILE_APPRAISE;
-@@ -351,6 +352,8 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
- /**
-  * ima_match_policy - decision based on LSM and other conditions
-  * @inode: pointer to an inode for which the policy decision is being made
-+ * @cred: pointer to a credentials structure for which the policy decision is
-+ *        being made
-  * @func: IMA hook identifier
-  * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC)
-  * @pcr: set the pcr to extend
-@@ -362,8 +365,8 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
-  * list when walking it.  Reads are many orders of magnitude more numerous
-  * than writes so ima_match_policy() is classical RCU candidate.
-  */
--int ima_match_policy(struct inode *inode, enum ima_hooks func, int mask,
--		     int flags, int *pcr)
-+int ima_match_policy(struct inode *inode, const struct cred *cred,
-+		     enum ima_hooks func, int mask, int flags, int *pcr)
- {
- 	struct ima_rule_entry *entry;
- 	int action = 0, actmask = flags | (flags << 1);
-@@ -374,7 +377,7 @@ int ima_match_policy(struct inode *inode, enum ima_hooks func, int mask,
- 		if (!(entry->action & actmask))
- 			continue;
+ 	/* if status is not PASS, try to check again - against -ENOMEM */
+@@ -161,22 +162,25 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+ 			rc = -EINVAL;
+ 		break;
+ 	case EVM_IMA_XATTR_DIGSIG:
++	case EVM_XATTR_PORTABLE_DIGSIG:
+ 		rc = evm_calc_hash(dentry, xattr_name, xattr_value,
+-				xattr_value_len, calc.digest);
++				   xattr_value_len, xattr_data->type,
++				   calc.digest);
+ 		if (rc)
+ 			break;
+ 		rc = integrity_digsig_verify(INTEGRITY_KEYRING_EVM,
+ 					(const char *)xattr_data, xattr_len,
+ 					calc.digest, sizeof(calc.digest));
+ 		if (!rc) {
+-			/* Replace RSA with HMAC if not mounted readonly and
+-			 * not immutable
+-			 */
+-			if (!IS_RDONLY(d_backing_inode(dentry)) &&
+-			    !IS_IMMUTABLE(d_backing_inode(dentry)))
++			if (xattr_data->type == EVM_XATTR_PORTABLE_DIGSIG) {
++				iint->flags |= EVM_IMMUTABLE_DIGSIG;
++				evm_status = INTEGRITY_PASS_IMMUTABLE;
++			} else if (!IS_RDONLY(d_backing_inode(dentry)) &&
++				   !IS_IMMUTABLE(d_backing_inode(dentry))) {
+ 				evm_update_evmxattr(dentry, xattr_name,
+ 						    xattr_value,
+ 						    xattr_value_len);
++			}
+ 		}
+ 		break;
+ 	default:
+@@ -292,6 +296,7 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
+ 			return 0;
+ 		evm_status = evm_verify_current_integrity(dentry);
+ 		if ((evm_status == INTEGRITY_PASS) ||
++		    (evm_status == INTEGRITY_PASS_IMMUTABLE) ||
+ 		    (evm_status == INTEGRITY_NOXATTRS))
+ 			return 0;
+ 		goto out;
+@@ -345,7 +350,8 @@ int evm_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+ 	if (strcmp(xattr_name, XATTR_NAME_EVM) == 0) {
+ 		if (!xattr_value_len)
+ 			return -EINVAL;
+-		if (xattr_data->type != EVM_IMA_XATTR_DIGSIG)
++		if (xattr_data->type != EVM_IMA_XATTR_DIGSIG &&
++		    xattr_data->type != EVM_XATTR_PORTABLE_DIGSIG)
+ 			return -EPERM;
+ 	}
+ 	return evm_protect_xattr(dentry, xattr_name, xattr_value,
+@@ -432,6 +438,7 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
+ 		return 0;
+ 	evm_status = evm_verify_current_integrity(dentry);
+ 	if ((evm_status == INTEGRITY_PASS) ||
++	    (evm_status == INTEGRITY_PASS_IMMUTABLE) ||
+ 	    (evm_status == INTEGRITY_NOXATTRS))
+ 		return 0;
+ 	integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 809ba70fbbbf..6e277c5c7829 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -229,7 +229,9 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 	}
  
--		if (!ima_match_rules(entry, inode, func, mask))
-+		if (!ima_match_rules(entry, inode, cred, func, mask))
- 			continue;
+ 	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
+-	if ((status != INTEGRITY_PASS) && (status != INTEGRITY_UNKNOWN)) {
++	if ((status != INTEGRITY_PASS) &&
++	    (status != INTEGRITY_PASS_IMMUTABLE) &&
++	    (status != INTEGRITY_UNKNOWN)) {
+ 		if ((status == INTEGRITY_NOLABEL)
+ 		    || (status == INTEGRITY_NOXATTRS))
+ 			cause = "missing-HMAC";
+@@ -317,7 +319,7 @@ void ima_update_xattr(struct integrity_iint_cache *iint, struct file *file)
+ 	int rc = 0;
  
- 		action |= entry->flags & IMA_ACTION_FLAGS;
-@@ -691,6 +694,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 				entry->func = MMAP_CHECK;
- 			else if (strcmp(args[0].from, "BPRM_CHECK") == 0)
- 				entry->func = BPRM_CHECK;
-+			else if (strcmp(args[0].from, "CREDS_CHECK") == 0)
-+				entry->func = CREDS_CHECK;
- 			else if (strcmp(args[0].from, "KEXEC_KERNEL_CHECK") ==
- 				 0)
- 				entry->func = KEXEC_KERNEL_CHECK;
+ 	/* do not collect and update hash for digital signatures */
+-	if (iint->flags & IMA_DIGSIG)
++	if (iint->flags & IMA_DIGSIG || iint->flags & EVM_IMMUTABLE_DIGSIG)
+ 		return;
+ 
+ 	rc = ima_collect_measurement(iint, file, NULL, 0, ima_hash_algo);
 diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index a53e7e4ab06c..45ba0e4501d6 100644
+index a53e7e4ab06c..cbc7de33fac7 100644
 --- a/security/integrity/integrity.h
 +++ b/security/integrity/integrity.h
-@@ -48,10 +48,14 @@
- #define IMA_BPRM_APPRAISED	0x00002000
- #define IMA_READ_APPRAISE	0x00004000
- #define IMA_READ_APPRAISED	0x00008000
-+#define IMA_CREDS_APPRAISE	0x00010000
-+#define IMA_CREDS_APPRAISED	0x00020000
- #define IMA_APPRAISE_SUBMASK	(IMA_FILE_APPRAISE | IMA_MMAP_APPRAISE | \
--				 IMA_BPRM_APPRAISE | IMA_READ_APPRAISE)
-+				 IMA_BPRM_APPRAISE | IMA_READ_APPRAISE | \
-+				 IMA_CREDS_APPRAISE)
- #define IMA_APPRAISED_SUBMASK	(IMA_FILE_APPRAISED | IMA_MMAP_APPRAISED | \
--				 IMA_BPRM_APPRAISED | IMA_READ_APPRAISED)
-+				 IMA_BPRM_APPRAISED | IMA_READ_APPRAISED | \
-+				 IMA_CREDS_APPRAISED)
+@@ -33,6 +33,7 @@
+ #define IMA_DIGSIG_REQUIRED	0x02000000
+ #define IMA_PERMIT_DIRECTIO	0x04000000
+ #define IMA_NEW_FILE		0x08000000
++#define EVM_IMMUTABLE_DIGSIG	0x10000000
  
- enum evm_ima_xattr_type {
- 	IMA_XATTR_DIGEST = 0x01,
-@@ -108,6 +112,7 @@ struct integrity_iint_cache {
- 	enum integrity_status ima_mmap_status:4;
- 	enum integrity_status ima_bprm_status:4;
- 	enum integrity_status ima_read_status:4;
-+	enum integrity_status ima_creds_status:4;
- 	enum integrity_status evm_status:4;
- 	struct ima_digest_data *ima_hash;
+ #define IMA_DO_MASK		(IMA_MEASURE | IMA_APPRAISE | IMA_AUDIT | \
+ 				 IMA_APPRAISE_SUBMASK)
+@@ -58,6 +59,7 @@ enum evm_ima_xattr_type {
+ 	EVM_XATTR_HMAC,
+ 	EVM_IMA_XATTR_DIGSIG,
+ 	IMA_XATTR_DIGEST_NG,
++	EVM_XATTR_PORTABLE_DIGSIG,
+ 	IMA_XATTR_LAST
  };
+ 
 -- 
 2.15.0.rc2.357.g7e34df9404-goog
