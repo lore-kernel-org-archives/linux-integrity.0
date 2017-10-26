@@ -1,66 +1,71 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:11667 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932141AbdJZKyj (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 26 Oct 2017 06:54:39 -0400
-Date: Thu, 26 Oct 2017 12:54:30 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-Cc: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Marcel Selhorst <tpmdd@selhorst.net>,
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:43100 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752007AbdJZJqU (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 26 Oct 2017 05:46:20 -0400
+Received: by mail-lf0-f66.google.com with SMTP id a16so3048985lfk.0
+        for <linux-integrity@vger.kernel.org>; Thu, 26 Oct 2017 02:46:19 -0700 (PDT)
+Date: Thu, 26 Oct 2017 12:46:16 +0300
+From: Mikhail Kurinnoi <viewizard@viewizard.com>
+To: Matthew Garrett <mjg59@google.com>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <james.l.morris@oracle.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        David Safford <safford@us.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
-        <linux-crypto@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:TPM DEVICE DRIVER"
-        <tpmdd-devel@lists.sourceforge.net>,
-        "open list:INTEGRITY MEASUREMENT ARCHITECTURE (IMA)"
-        <linux-ima-devel@lists.sourceforge.net>,
-        "open list:INTEGRITY MEASUREMENT ARCHITECTURE (IMA)"
-        <linux-ima-user@lists.sourceforge.net>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>
-Subject: Re: [PATCH v2] tpm: use struct tpm_chip for tpm_chip_find_get()
-Message-ID: <20171026105430.t6khk6cekk3cyfrs@linux.intel.com>
-References: <20171025115508.5682-1-jarkko.sakkinen@linux.intel.com>
- <CANc+2y46q85+G1=9cXKW0R8FpGBqCuzkLnJzvSYFQ1S=ztKGew@mail.gmail.com>
- <20171025193452.d4qa4dhacfgqejk7@linux.intel.com>
- <20171025194633.GB998@obsidianresearch.com>
- <20171025200746.svsraubdotjyzt2i@linux.intel.com>
- <20171025201744.GB2815@obsidianresearch.com>
+        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
+Subject: Re: [RFC] EVM: Add support for portable signature format
+Message-ID: <20171026124616.2f2ef1d2@totoro>
+In-Reply-To: <CACdnJuvQUGXJb664ZVJk6Z_YDYomgRSwX_C3vk4DRk5EVj02Gg@mail.gmail.com>
+References: <20171026083144.16247-1-mjg59@google.com>
+        <20171026120330.5360e427@totoro>
+        <CACdnJuvQUGXJb664ZVJk6Z_YDYomgRSwX_C3vk4DRk5EVj02Gg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171025201744.GB2815@obsidianresearch.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Oct 25, 2017 at 02:17:44PM -0600, Jason Gunthorpe wrote:
-> On Wed, Oct 25, 2017 at 10:07:46PM +0200, Jarkko Sakkinen wrote:
-> 
-> > The id has a nice feature that it is unique for one boot cycle you can
-> > even try to get a chip that has been deleted. It has the most stable
-> > properties in the long run.
-> 
-> It isn't unique, we can re-use ids them via idr_alloc(). We should
-> never use index inside the kernel.
-> 
-> > Address is a reusable identifier in one boot cycle.
-> 
-> It is invalid to pass in a chip for which the caller does not hold a
-> kref, so address is the safest argument.
-> 
-> Jason
+? Thu, 26 Oct 2017 02:08:25 -0700
+Matthew Garrett <mjg59@google.com> ?????:
 
-I'll buy this too (sending update today).
+> On Thu, Oct 26, 2017 at 2:03 AM, Mikhail Kurinnoi
+> <viewizard@viewizard.com> wrote:
+> > ? Thu, 26 Oct 2017 01:31:44 -0700
+> > Matthew Garrett <mjg59@google.com> ?????:
+> >  
+> >> @@ -317,7 +319,7 @@ void ima_update_xattr(struct
+> >> integrity_iint_cache *iint, struct file *file) int rc = 0;
+> >>
+> >>       /* do not collect and update hash for digital signatures */
+> >> -     if (iint->flags & IMA_DIGSIG)
+> >> +     if (iint->flags & IMA_DIGSIG || iint->flags &
+> >> EVM_IMMUTABLE_DIGSIG) return;
+> >>  
+> >
+> > Isn't this mean, we already changed files data, and we just don't
+> > allow IMA xattr update? This file will not pass integrity
+> > verification next time.  
+> 
+> That's fine - policy may not care. It's easier to sign all files and
+> then leave enforcement up to the local policy than it is to determine
+> in advance which files will need protection.
+> 
+> > I thought, the idea was prevent data changes, and in this way
+> > prevent IMA xattr update.  
+> 
+> No, the goal is to be able to detect when files have been modified and
+> (optionally) restrict access as a result. Otherwise the packaging
+> system has to be able to identify all files that may be legitimately
+> modified, which is something that may differ depending on the client.
+> It's much easier to permit the data modification and have the local
+> policy block reading or execution if it's actually a sensitive file.
 
-/Jarkko
+Hmm...
+http://www.spinics.net/lists/linux-integrity/msg00151.html
+
+probably, we should decide first, what exactly immutable EVM mean.
+It's hard to propose something or test patch if we still have
+misunderstanding in concept of immutable EVM.
+
+
+-- 
+Best regards,
+Mikhail Kurinnoi
