@@ -1,17 +1,17 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from lhrrgout.huawei.com ([194.213.3.17]:38706 "EHLO
+Received: from lhrrgout.huawei.com ([194.213.3.17]:38705 "EHLO
         lhrrgout.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752458AbdJ0Klh (ORCPT
+        with ESMTP id S1752016AbdJ0K1t (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 27 Oct 2017 06:41:37 -0400
+        Fri, 27 Oct 2017 06:27:49 -0400
 From: Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
 To: Matthew Garrett <mjg59@google.com>,
         "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
 CC: "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
         Mikhail Kurinnoi <viewizard@viewizard.com>
 Subject: RE: [RFC] EVM: Add support for portable signature format
-Date: Fri, 27 Oct 2017 10:41:25 +0000
-Message-ID: <C2D7A727C393B644B70DF4B4DCFB60B921C471AC@FRAEML521-MBX.china.huawei.com>
+Date: Fri, 27 Oct 2017 10:27:30 +0000
+Message-ID: <C2D7A727C393B644B70DF4B4DCFB60B921C4718F@FRAEML521-MBX.china.huawei.com>
 References: <20171026083144.16247-1-mjg59@google.com>
 In-Reply-To: <20171026083144.16247-1-mjg59@google.com>
 Content-Type: text/plain; charset="utf-8"
@@ -298,12 +298,6 @@ List-ID: <linux-integrity.vger.kernel.org>
 > +		    xattr_data->type != EVM_XATTR_PORTABLE_DIGSIG)
 >  			return -EPERM;
 >  	}
-
-Also I have an impression that evm_protect_xattr will allow to set security.ima for example,
-And it will cause to try to re-calculate hmac over immutable signature...
-
-
-
 >  	return evm_protect_xattr(dentry, xattr_name, xattr_value, @@ -
 > 432,6 +438,7 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr
 > *attr)
@@ -313,6 +307,12 @@ And it will cause to try to re-calculate hmac over immutable signature...
 > +	    (evm_status == INTEGRITY_PASS_IMMUTABLE) ||
 >  	    (evm_status == INTEGRITY_NOXATTRS))
 >  		return 0;
+
+Something is wrong here?
+When integrity verification pass, this code WILL ALLOW to change attribute.
+But it is not possible... next time integrity verification will fail?
+Or I miss something?
+
 >  	integrity_audit_msg(AUDIT_INTEGRITY_METADATA,
 > d_backing_inode(dentry), diff --git a/security/integrity/ima/ima_appraise.c
 > b/security/integrity/ima/ima_appraise.c
