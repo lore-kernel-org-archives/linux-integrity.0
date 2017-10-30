@@ -1,49 +1,48 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from uhil19pa10.eemsg.mail.mil ([214.24.21.83]:7419 "EHLO
-        uhil19pa10.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932482AbdJ3RNx (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 30 Oct 2017 13:13:53 -0400
-Message-ID: <1509383027.10174.5.camel@tycho.nsa.gov>
-Subject: Re: [PATCH V3 1/2] security: Add a cred_getsecid hook
-From: Stephen Smalley <sds@tycho.nsa.gov>
-To: Matthew Garrett <mjg59@google.com>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+Received: from mx1.redhat.com ([209.132.183.28]:48232 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932252AbdJ3RFk (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 30 Oct 2017 13:05:40 -0400
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <1509382827.3583.143.camel@linux.vnet.ibm.com>
+References: <1509382827.3583.143.camel@linux.vnet.ibm.com> <1508774387.3639.128.camel@linux.vnet.ibm.com> <750.1509378910@warthog.procyon.org.uk>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: dhowells@redhat.com,
         linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov,
-        David Howells <dhowells@redhat.com>
-Date: Mon, 30 Oct 2017 13:03:47 -0400
-In-Reply-To: <CACdnJuu8fvVoD+G50dWtauUUa3H1tUAbBgzusc_CKNBugrVmwQ@mail.gmail.com>
-References: <20171026084055.25482-1-mjg59@google.com>
-         <1509027658.25604.4.camel@tycho.nsa.gov>
-         <CACdnJuu8fvVoD+G50dWtauUUa3H1tUAbBgzusc_CKNBugrVmwQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+        Matthew Garrett <mjg59@google.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Subject: Re: [RFC PATCH] ima: require secure_boot rules in lockdown mode
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Date: Mon, 30 Oct 2017 17:05:38 +0000
+Message-ID: <3691.1509383138@warthog.procyon.org.uk>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2017-10-30 at 10:57 +0000, Matthew Garrett via Selinux wrote:
-> On Thu, Oct 26, 2017 at 3:20 PM, Stephen Smalley <sds@tycho.nsa.gov>
-> wrote:
-> > On Thu, 2017-10-26 at 01:40 -0700, Matthew Garrett via Selinux
-> > wrote:
-> > > +static void selinux_cred_getsecid(const struct cred *c, u32
-> > > *secid)
-> > > +{
-> > > +     rcu_read_lock();
-> > > +     *secid = cred_sid(c);
-> > > +     rcu_read_unlock();
-> > 
-> > Is rcu_read_lock() necessary here? Seems like we use cred_sid() in
-> > many
-> > places without it.
-> 
-> Ah, I thought it was based on task_sid(), but I guess that's actually
-> protecting the __task_cred()?
+Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
 
-It appears to me that in all other cases, we are either dealing with
-the current cred, or something in the call chain of cred_sid() is
-holding a reference to the cred, or something in the call chain of
-cred_sid() has called rcu_read_lock() already.  I might have missed
-something though, and I don't know how safe it is to assume that all
-future callers will do this.  cc'd David for his thoughts.
+> > Did you mean "true" rather than "TRUE"?
+> 
+> Yes, of course.  Commit 9f4b6a254d7a "ima: Fix bool
+> initialization/comparison" already addresses it.  Please remove it
+> from this patch.
+
+Is that with James?  I don't seem to have a copy, and I don't want to cause a
+patch collision.
+
+> > I guess also that oopsing is okay if the allocation fails.  We've run out of
+> > memory during early boot, after all.
+> 
+> If the memory allocation fails, the "secure_boot" policy will not be
+> enabled for custom policies, but how is that "oopsing".
+
+Sorry - I overlooked the fact that the variable is not used if it's not zero.
+
+> If it fails, there needs to be some indication of the failure, which there
+> currently isn't.  Perhaps also prevent loading a custom policy.
+
+Does it need to panic (probably fine as a small memory alloc failed)?  If it
+doesn't set this policy what's the effect on things using
+is_ima_appraise_enabled() - assuming we get that far?
+
+David
