@@ -1,48 +1,72 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:48232 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932252AbdJ3RFk (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 30 Oct 2017 13:05:40 -0400
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <1509382827.3583.143.camel@linux.vnet.ibm.com>
-References: <1509382827.3583.143.camel@linux.vnet.ibm.com> <1508774387.3639.128.camel@linux.vnet.ibm.com> <750.1509378910@warthog.procyon.org.uk>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: dhowells@redhat.com,
-        linux-integrity <linux-integrity@vger.kernel.org>,
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60158 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932348AbdJ3RAe (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 30 Oct 2017 13:00:34 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v9UGxSqr028521
+        for <linux-integrity@vger.kernel.org>; Mon, 30 Oct 2017 13:00:33 -0400
+Received: from e06smtp11.uk.ibm.com (e06smtp11.uk.ibm.com [195.75.94.107])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2dx6n5vv7k-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 30 Oct 2017 13:00:32 -0400
+Received: from localhost
+        by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Mon, 30 Oct 2017 17:00:31 -0000
+Subject: Re: [RFC PATCH] ima: require secure_boot rules in lockdown mode
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: David Howells <dhowells@redhat.com>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
         Matthew Garrett <mjg59@google.com>,
         linux-security-module <linux-security-module@vger.kernel.org>
-Subject: Re: [RFC PATCH] ima: require secure_boot rules in lockdown mode
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Date: Mon, 30 Oct 2017 17:05:38 +0000
-Message-ID: <3691.1509383138@warthog.procyon.org.uk>
+Date: Mon, 30 Oct 2017 13:00:27 -0400
+In-Reply-To: <750.1509378910@warthog.procyon.org.uk>
+References: <1508774387.3639.128.camel@linux.vnet.ibm.com>
+         <750.1509378910@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1509382827.3583.143.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-
-> > Did you mean "true" rather than "TRUE"?
+On Mon, 2017-10-30 at 15:55 +0000, David Howells wrote:
+> I've added this into my series as the third patch, but:
 > 
-> Yes, of course.  Commit 9f4b6a254d7a "ima: Fix bool
-> initialization/comparison" already addresses it.  Please remove it
-> from this patch.
-
-Is that with James?  I don't seem to have a copy, and I don't want to cause a
-patch collision.
-
-> > I guess also that oopsing is okay if the allocation fails.  We've run out of
-> > memory during early boot, after all.
+> Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
 > 
-> If the memory allocation fails, the "secure_boot" policy will not be
-> enabled for custom policies, but how is that "oopsing".
+> > +			ima_use_appraise_tcb = TRUE;
+> 
+> Did you mean "true" rather than "TRUE"?
 
-Sorry - I overlooked the fact that the variable is not used if it's not zero.
+Yes, of course.  Commit 9f4b6a254d7a "ima: Fix bool
+initialization/comparison" already addresses it.  Please remove it
+from this patch.
 
-> If it fails, there needs to be some indication of the failure, which there
-> currently isn't.  Perhaps also prevent loading a custom policy.
+> 
+> > +			entry = kzalloc(sizeof(*entry), GFP_KERNEL);
+> > +			if (entry) {
+> > +				memcpy(entry, &secure_boot_rules[i],
+> > +				       sizeof(*entry));
+> 
+> kmemdup()?
 
-Does it need to panic (probably fine as a small memory alloc failed)?  If it
-doesn't set this policy what's the effect on things using
-is_ima_appraise_enabled() - assuming we get that far?
+Probably
 
-David
+> 
+> I guess also that oopsing is okay if the allocation fails.  We've run out of
+> memory during early boot, after all.
+
+If the memory allocation fails, the "secure_boot" policy will not be
+enabled for custom policies, but how is that "oopsing".  If it fails,
+there needs to be some indication of the failure, which there
+currently isn't.  Perhaps also prevent loading a custom policy.
+
+> 
+> > +				INIT_LIST_HEAD(&entry->list);
+> > +				list_add_tail(&entry->list, &ima_policy_rules);
+> 
+> Isn't the init redundant, given the following line?
+
+ok
