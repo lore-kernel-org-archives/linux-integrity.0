@@ -1,36 +1,60 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:41786 "EHLO
-        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751615AbdJaDZi (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 30 Oct 2017 23:25:38 -0400
-Date: Tue, 31 Oct 2017 14:25:26 +1100 (AEDT)
-From: James Morris <james.l.morris@oracle.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-cc: David Howells <dhowells@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Matthew Garrett <mjg59@google.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Subject: Re: [RFC PATCH] ima: require secure_boot rules in lockdown mode
-In-Reply-To: <1509385178.3583.159.camel@linux.vnet.ibm.com>
-Message-ID: <alpine.LFD.2.20.1710311424310.22021@localhost>
-References: <1509382827.3583.143.camel@linux.vnet.ibm.com>         <1508774387.3639.128.camel@linux.vnet.ibm.com>         <750.1509378910@warthog.procyon.org.uk>         <3691.1509383138@warthog.procyon.org.uk>
- <1509385178.3583.159.camel@linux.vnet.ibm.com>
+Received: from mout.gmx.net ([212.227.17.21]:64599 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753673AbdJaAdh (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 30 Oct 2017 20:33:37 -0400
+From: Peter Huewe <peterhuewe@gmx.de>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: <zohar@linux.vnet.ibm.com>, <linux-kernel@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>, <peterhuewe@gmx.de>
+Subject: Re: [PATCH] MAINTAINERS: update TPM driver infrastructure changes
+Date: Tue, 31 Oct 2017 01:41:42 +0100
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-984484137-1509420330=:22021"
+Message-ID: <5ac2c392-3ec2-4656-a185-6c9c554b8b2e@gmx.de>
+In-Reply-To: <20170929202313.6g46pv7j3sp7z73q@linux.intel.com>
+References: <20170915223811.21368-1-jarkko.sakkinen@linux.intel.com>
+ <1506442580.3677.97.camel@linux.vnet.ibm.com>
+ <31979c8601c5472f9ba413375e034b34@infineon.com>
+ <20170929202313.6g46pv7j3sp7z73q@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 30 Oct 2017, Mimi Zohar wrote:
+Hi,
 
-> James is staging the subsystem patches independently of each other, in
-> case of a similar problem, so that they can be pulled separately.
->  There's a new "next-general" branch.
+Am Freitag, 29. September 2017 22:23:13 CEST schrieb Jarkko Sakkinen:
+> On Fri, Sep 29, 2017 at 08:29:09AM +0000, Peter.Huewe@infineon.com wrote:
+>>> ...
+>> Spinics is archiving us at
+>> https://www.spinics.net/lists/linux-integrity/
+>> 
+>> It would be good to add this to the vger page + documented on 
+>> the wiki, which should be added to MAINTAINERS.
+>> http://kernsec.org/wiki/index.php/Linux_Kernel_Integrity as wiki page
+>> 
+>> 
+>> Peter ...
+>
+> Can you submit a follow-up patch that adds this information?
 
-If you send me a pull request, I'm combining branches into next-testing, 
-too, which is pulled into -next.
+I added the information to the kernsec wiki at
+http://kernsec.org/wiki/index.php/Linux_Kernel_Integrity
 
+However, since your MAINTAINERS patch is neither upstream, nor in any of 
+your
+branches (next / master) I cannot send an update.
 
--- 
-James Morris
-<james.l.morris@oracle.com>
+About the wiki - I added quite a few other links, especially about tpm 2.0.
+If anyone wants to have any information added, please let me know.
+
+I definitely would like to extend the wiki usage.
+So if you have any documents, e.g. 
+- about how the patch flow is/should be,
+- how stuff gets tested
+- subsystem specific rules
+- subsystem architecuture
+
+but also links to interesting pages/projects PLEASE let me know.
+
+Thanks,
+Peter
