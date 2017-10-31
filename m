@@ -1,39 +1,49 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io0-f179.google.com ([209.85.223.179]:44804 "EHLO
-        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751646AbdKARyj (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:44375 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932356AbdJaUX7 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 1 Nov 2017 13:54:39 -0400
-Received: by mail-io0-f179.google.com with SMTP id m16so7920821iod.1
-        for <linux-integrity@vger.kernel.org>; Wed, 01 Nov 2017 10:54:39 -0700 (PDT)
+        Tue, 31 Oct 2017 16:23:59 -0400
+Received: by mail-io0-f196.google.com with SMTP id m16so1627534iod.1
+        for <linux-integrity@vger.kernel.org>; Tue, 31 Oct 2017 13:23:59 -0700 (PDT)
+Date: Tue, 31 Oct 2017 14:23:57 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Subject: [PATCH] tpm: Update MAINTAINERS for Jason Gunthorpe
+Message-ID: <20171031202357.GA1030@ziepe.ca>
 MIME-Version: 1.0
-In-Reply-To: <CACdnJuuHsOfpXE55U2x_aN92DTAJHj6LvykC-3dmE+ep4JU_Pw@mail.gmail.com>
-References: <20171026083144.16247-1-mjg59@google.com> <C2D7A727C393B644B70DF4B4DCFB60B921C471AC@FRAEML521-MBX.china.huawei.com>
- <1509367096.3583.70.camel@linux.vnet.ibm.com> <CACdnJuvTEAs8tg2LoktmMRUzAMrfY5qTOeawTWCkvqit4A4huw@mail.gmail.com>
- <1509377504.3583.97.camel@linux.vnet.ibm.com> <CACdnJuuHsOfpXE55U2x_aN92DTAJHj6LvykC-3dmE+ep4JU_Pw@mail.gmail.com>
-From: Matthew Garrett <mjg59@google.com>
-Date: Wed, 1 Nov 2017 10:54:38 -0700
-Message-ID: <CACdnJuuDpVSoGHcqjU-=z0nY_e7paQ0u4efD-1DBeTbADbB4iA@mail.gmail.com>
-Subject: Re: [RFC] EVM: Add support for portable signature format
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        Mikhail Kurinnoi <viewizard@viewizard.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="PEIAKu/WMn1b1Hv9"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Ok, thinking about this some more, I think I'm conflating two
-independent things here. Whether the extended attributes and file
-contents are modifiable is a matter of policy rather than something
-that should be tied to the signature format, so I think the approach
-that makes sense is to make the portable signatures immutable (as
-previously discussed) and then allow userland to define a policy that
-permits modification of the protected metadata. I'll split this up and
-retest.
+My email address for open source work is moving to this new permanent
+personal address.
 
-On Mon, Oct 30, 2017 at 8:36 AM, Matthew Garrett <mjg59@google.com> wrote:
-> On Mon, Oct 30, 2017 at 3:31 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
->> Oh, I missed that.
->
-> No problem, I've confused myself enough with this!
+Signed-off-by: Jason Gunthorpe <jgunthorpe@ziepe.ca>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6671f375f7fcdd..b79eb071475ffc 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13588,7 +13588,7 @@ TPM DEVICE DRIVER
+ M:	Peter Huewe <peterhuewe@gmx.de>
+ M:	Marcel Selhorst <tpmdd@selhorst.net>
+ M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+-R:	Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
++R:	Jason Gunthorpe <jgg@ziepe.ca>
+ W:	http://tpmdd.sourceforge.net
+ L:	tpmdd-devel@lists.sourceforge.net (moderated for non-subscribers)
+ Q:	https://patchwork.kernel.org/project/tpmdd-devel/list/
+-- 
+2.7.4
+
+
+
+    [ Part 2, Application/PGP-SIGNATURE (Name: "signature.asc") 836 bytes. ]
+    [ Unable to print this part. ]
