@@ -1,93 +1,63 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47792 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1756160AbdKCQyQ (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 3 Nov 2017 12:54:16 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vA3GsAEh008365
-        for <linux-integrity@vger.kernel.org>; Fri, 3 Nov 2017 12:54:16 -0400
-Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2e0r6tykeg-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 03 Nov 2017 12:54:15 -0400
-Received: from localhost
-        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Fri, 3 Nov 2017 16:54:13 -0000
-Subject: Re: [PATCH] evm: allow metadata changes for inode without xattr
- support
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Mikhail Kurinnoi <viewizard@viewizard.com>,
+Received: from mout.gmx.net ([212.227.15.19]:61428 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753361AbdKCQGH (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 3 Nov 2017 12:06:07 -0400
+Date: Fri, 03 Nov 2017 17:05:49 +0100
+In-Reply-To: <20171103142841.2nphkjojzamrdezm@linux.intel.com>
+References: <20171031202357.GA1030@ziepe.ca> <20171103142841.2nphkjojzamrdezm@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH] tpm: Update MAINTAINERS for Jason Gunthorpe
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+CC: linux-security-module@vger.kernel.org,
         linux-integrity@vger.kernel.org
-Date: Fri, 03 Nov 2017 12:54:08 -0400
-In-Reply-To: <20171103102652.0618859d@totoro>
-References: <20171103102652.0618859d@totoro>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1509728048.3416.80.camel@linux.vnet.ibm.com>
+From: Peter Huewe <peterhuewe@gmx.de>
+Message-ID: <0812DDC3-187D-4F29-BFB5-9A4F509CA376@gmx.de>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 2017-11-03 at 10:26 +0300, Mikhail Kurinnoi wrote:
-> This patch provide changes in order to allow metadata changes for
-> inode without xattr support.
-> 
-> 
-> Signed-off-by: Mikhail Kurinnoi <viewizard@viewizard.com>
-> 
->  security/integrity/evm/evm_main.c | 21 ++++++++++++---------
->  1 file changed, 12 insertions(+), 9 deletions(-)
-> 
-> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-> index 9826c02e2db8..51151c43433d 100644
-> --- a/security/integrity/evm/evm_main.c
-> +++ b/security/integrity/evm/evm_main.c
-> @@ -294,8 +294,7 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
->  		if (!posix_xattr_acl(xattr_name))
->  			return 0;
->  		evm_status = evm_verify_current_integrity(dentry);
-> -		if ((evm_status == INTEGRITY_PASS) ||
-> -		    (evm_status == INTEGRITY_NOXATTRS))
-> +		if (evm_status == INTEGRITY_NOXATTRS)
->  			return 0;
->  		goto out;
->  	}
-> @@ -319,12 +318,15 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
->  				    -EPERM, 0);
->  	}
->  out:
-> -	if (evm_status != INTEGRITY_PASS)
-> -		integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
-> -				    dentry->d_name.name, "appraise_metadata",
-> -				    integrity_status_msg[evm_status],
-> -				    -EPERM, 0);
-> -	return evm_status == INTEGRITY_PASS ? 0 : -EPERM;
-> +	if ((evm_status == INTEGRITY_PASS) ||
-> +	    (evm_status == INTEGRITY_UNKNOWN))
-> +		return 0;
-> +
-> +	integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
-> +			    dentry->d_name.name, "appraise_metadata",
-> +			    integrity_status_msg[evm_status],
-> +			    -EPERM, 0);
-> +	return -EPERM;
->  }
-> 
->  /**
-> @@ -435,7 +437,8 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
->  		return 0;
->  	evm_status = evm_verify_current_integrity(dentry);
->  	if ((evm_status == INTEGRITY_PASS) ||
-> -	    (evm_status == INTEGRITY_NOXATTRS))
-> +	    (evm_status == INTEGRITY_NOXATTRS) ||
-> +	    (evm_status == INTEGRITY_UNKNOWN))
->  		return 0;
->  	integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
->  			    dentry->d_name.name, "appraise_metadata",
-> 
 
-Since this change is limited to setattr, perhaps it would be simpler
-to test the i_opflags directly, without modifying evm_protect_xattr().
 
-Mimi
+Am 3. November 2017 15:28:41 MEZ schrieb Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>:
+>On Tue, Oct 31, 2017 at 02:23:57PM -0600, Jason Gunthorpe wrote:
+>> My email address for open source work is moving to this new permanent
+>> personal address.
+>> 
+>> Signed-off-by: Jason Gunthorpe <jgunthorpe@ziepe.ca>
+>> ---
+>>  MAINTAINERS | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> 
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 6671f375f7fcdd..b79eb071475ffc 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -13588,7 +13588,7 @@ TPM DEVICE DRIVER
+>>  M:	Peter Huewe <peterhuewe@gmx.de>
+>>  M:	Marcel Selhorst <tpmdd@selhorst.net>
+>>  M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>> -R:	Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+>> +R:	Jason Gunthorpe <jgg@ziepe.ca>
+>>  W:	http://tpmdd.sourceforge.net
+>>  L:	tpmdd-devel@lists.sourceforge.net (moderated for non-subscribers)
+>>  Q:	https://patchwork.kernel.org/project/tpmdd-devel/list/
+>> -- 
+>> 2.7.4
+>> 
+>
+>Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>
+>Should these updates go to my tree? I posted previous update to
+>linux-kernel@vger.kernel.org.
+Which equals /dev/null for most cases.
+
+Why shouldn'tit go through your tree?
+It's a maintainers update for your subsystem - and you did it in the past when modifying the urls.
+
+>/Jarkko
+
+-- 
+Sent from my mobile
