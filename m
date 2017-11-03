@@ -1,284 +1,273 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:56725 "EHLO mga03.intel.com"
+Received: from mga07.intel.com ([134.134.136.100]:5448 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750725AbdKELFQ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 5 Nov 2017 06:05:16 -0500
-Date: Sun, 5 Nov 2017 13:05:06 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:INTEGRITY MEASUREMENT ARCHITECTURE (IMA)"
-        <linux-security-module@vger.kernel.org>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
-        <linux-crypto@vger.kernel.org>,
-        James Morris <james.l.morris@oracle.com>,
-        Matt Mackall <mpm@selenic.com>,
-        David Safford <safford@us.ibm.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH v2] tpm: Move Linux RNG connection to hwrng
-Message-ID: <20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
-References: <20171031200503.GC18578@ziepe.ca>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171031200503.GC18578@ziepe.ca>
+        id S1752472AbdKCXaK (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 3 Nov 2017 19:30:10 -0400
+From: Azhar Shaikh <azhar.shaikh@intel.com>
+To: jarkko.sakkinen@intel.com, linux-integrity@vger.kernel.org
+Cc: azhar.shaikh@intel.com
+Subject: [PATCH RFC] tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()
+Date: Fri,  3 Nov 2017 16:30:09 -0700
+Message-Id: <1509751809-148601-1-git-send-email-azhar.shaikh@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Oct 31, 2017 at 02:05:03PM -0600, Jason Gunthorpe wrote:
-> The tpm-rng.c approach is completely inconsistent with how the kernel
-> handles hotplug. Instead manage a hwrng device for each TPM. This will
-> cause the kernel to read entropy from the TPM when it is plugged in,
-> and allow access to the TPM rng via /dev/hwrng.
-> 
-> Signed-off-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-> Signed-off-by: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-> ---
->  drivers/char/hw_random/Kconfig   | 13 -----------
->  drivers/char/hw_random/Makefile  |  1 -
->  drivers/char/hw_random/tpm-rng.c | 50 ----------------------------------------
->  drivers/char/tpm/Kconfig         | 11 +++++++++
->  drivers/char/tpm/tpm-chip.c      | 41 ++++++++++++++++++++++++++++----
->  drivers/char/tpm/tpm.h           |  4 ++++
->  6 files changed, 52 insertions(+), 68 deletions(-)
->  delete mode 100644 drivers/char/hw_random/tpm-rng.c
-> 
-> v2 applies against Jarkko's patch
-> "tpm: use struct tpm_chip for tpm_chip_find_get()"
-> 
-> diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-> index 95a031e9eced07..a20fed182cbcce 100644
-> --- a/drivers/char/hw_random/Kconfig
-> +++ b/drivers/char/hw_random/Kconfig
-> @@ -306,19 +306,6 @@ config HW_RANDOM_POWERNV
->  
->  	  If unsure, say Y.
->  
-> -config HW_RANDOM_TPM
-> -	tristate "TPM HW Random Number Generator support"
-> -	depends on TCG_TPM
-> -	default HW_RANDOM
-> -	---help---
-> -	  This driver provides kernel-side support for the Random Number
-> -	  Generator in the Trusted Platform Module
-> -
-> -	  To compile this driver as a module, choose M here: the
-> -	  module will be called tpm-rng.
-> -
-> -	  If unsure, say Y.
-> -
->  config HW_RANDOM_HISI
->  	tristate "Hisilicon Random Number Generator support"
->  	depends on HW_RANDOM && ARCH_HISI
-> diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
-> index 39a67defac67cb..91cb8e8213e7c1 100644
-> --- a/drivers/char/hw_random/Makefile
-> +++ b/drivers/char/hw_random/Makefile
-> @@ -26,7 +26,6 @@ obj-$(CONFIG_HW_RANDOM_NOMADIK) += nomadik-rng.o
->  obj-$(CONFIG_HW_RANDOM_PSERIES) += pseries-rng.o
->  obj-$(CONFIG_HW_RANDOM_POWERNV) += powernv-rng.o
->  obj-$(CONFIG_HW_RANDOM_HISI)	+= hisi-rng.o
-> -obj-$(CONFIG_HW_RANDOM_TPM) += tpm-rng.o
->  obj-$(CONFIG_HW_RANDOM_BCM2835) += bcm2835-rng.o
->  obj-$(CONFIG_HW_RANDOM_IPROC_RNG200) += iproc-rng200.o
->  obj-$(CONFIG_HW_RANDOM_MSM) += msm-rng.o
-> diff --git a/drivers/char/hw_random/tpm-rng.c b/drivers/char/hw_random/tpm-rng.c
-> deleted file mode 100644
-> index c5e363825af008..00000000000000
-> --- a/drivers/char/hw_random/tpm-rng.c
-> +++ /dev/null
-> @@ -1,50 +0,0 @@
-> -/*
-> - * Copyright (C) 2012 Kent Yoder IBM Corporation
-> - *
-> - * HWRNG interfaces to pull RNG data from a TPM
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program; if not, write to the Free Software
-> - * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-> - */
-> -
-> -#include <linux/module.h>
-> -#include <linux/hw_random.h>
-> -#include <linux/tpm.h>
-> -
-> -#define MODULE_NAME "tpm-rng"
-> -
-> -static int tpm_rng_read(struct hwrng *rng, void *data, size_t max, bool wait)
-> -{
-> -	return tpm_get_random(NULL, data, max);
-> -}
-> -
-> -static struct hwrng tpm_rng = {
-> -	.name = MODULE_NAME,
-> -	.read = tpm_rng_read,
-> -};
-> -
-> -static int __init rng_init(void)
-> -{
-> -	return hwrng_register(&tpm_rng);
-> -}
-> -module_init(rng_init);
-> -
-> -static void __exit rng_exit(void)
-> -{
-> -	hwrng_unregister(&tpm_rng);
-> -}
-> -module_exit(rng_exit);
-> -
-> -MODULE_LICENSE("GPL v2");
-> -MODULE_AUTHOR("Kent Yoder <key@linux.vnet.ibm.com>");
-> -MODULE_DESCRIPTION("RNG driver for TPM devices");
-> diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
-> index a30352202f1fdc..18c81cbe4704ca 100644
-> --- a/drivers/char/tpm/Kconfig
-> +++ b/drivers/char/tpm/Kconfig
-> @@ -26,6 +26,17 @@ menuconfig TCG_TPM
->  
->  if TCG_TPM
->  
-> +config HW_RANDOM_TPM
-> +	bool "TPM HW Random Number Generator support"
-> +	depends on TCG_TPM && HW_RANDOM && !(TCG_TPM=y && HW_RANDOM=m)
-> +	default y
-> +	---help---
-> +	  This setting exposes the TPM's Random Number Generator as a hwrng
-> +	  device. This allows the kernel to collect randomness from the TPM at
-> +	  boot, and provides the TPM randomines in /dev/hwrng.
-> +
-> +	  If unsure, say Y.
-> +
->  config TCG_TIS_CORE
->  	tristate
->  	---help---
-> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-> index 6faf4c3fa6dbbd..797ab962291333 100644
-> --- a/drivers/char/tpm/tpm-chip.c
-> +++ b/drivers/char/tpm/tpm-chip.c
-> @@ -26,6 +26,7 @@
->  #include <linux/spinlock.h>
->  #include <linux/freezer.h>
->  #include <linux/major.h>
-> +#include <linux/hw_random.h>
->  #include "tpm.h"
->  #include "tpm_eventlog.h"
->  
-> @@ -391,6 +392,26 @@ static int tpm_add_legacy_sysfs(struct tpm_chip *chip)
->  
->  	return 0;
->  }
-> +
-> +static int tpm_hwrng_read(struct hwrng *rng, void *data, size_t max, bool wait)
-> +{
-> +	struct tpm_chip *chip = container_of(rng, struct tpm_chip, hwrng);
-> +
-> +	return tpm_get_random(chip, data, max);
-> +}
-> +
-> +static int tpm_add_hwrng(struct tpm_chip *chip)
-> +{
-> +	if (!IS_ENABLED(CONFIG_HW_RANDOM_TPM))
-> +		return 0;
-> +
-> +	snprintf(chip->hwrng_name, sizeof(chip->hwrng_name),
-> +		 "tpm-rng-%d", chip->dev_num);
-> +	chip->hwrng.name = chip->hwrng_name;
-> +	chip->hwrng.read = tpm_hwrng_read;
-> +	return hwrng_register(&chip->hwrng);
-> +}
-> +
->  /*
->   * tpm_chip_register() - create a character device for the TPM chip
->   * @chip: TPM chip to use.
-> @@ -423,11 +444,13 @@ int tpm_chip_register(struct tpm_chip *chip)
->  
->  	tpm_add_ppi(chip);
->  
-> +	rc = tpm_add_hwrng(chip);
-> +	if (rc)
-> +		goto out_ppi;
-> +
->  	rc = tpm_add_char_device(chip);
-> -	if (rc) {
-> -		tpm_bios_log_teardown(chip);
-> -		return rc;
-> -	}
-> +	if (rc)
-> +		goto out_hwrng;
->  
->  	rc = tpm_add_legacy_sysfs(chip);
->  	if (rc) {
-> @@ -436,6 +459,14 @@ int tpm_chip_register(struct tpm_chip *chip)
->  	}
->  
->  	return 0;
-> +
-> +out_hwrng:
-> +	if (IS_ENABLED(CONFIG_HW_RANDOM_TPM))
-> +		hwrng_unregister(&chip->hwrng);
-> +out_ppi:
-> +	tpm_bios_log_teardown(chip);
-> +
-> +	return rc;
->  }
->  EXPORT_SYMBOL_GPL(tpm_chip_register);
->  
-> @@ -455,6 +486,8 @@ EXPORT_SYMBOL_GPL(tpm_chip_register);
->  void tpm_chip_unregister(struct tpm_chip *chip)
->  {
->  	tpm_del_legacy_sysfs(chip);
-> +	if (IS_ENABLED(CONFIG_HW_RANDOM_TPM))
-> +		hwrng_unregister(&chip->hwrng);
->  	tpm_bios_log_teardown(chip);
->  	if (chip->flags & TPM_CHIP_FLAG_TPM2)
->  		cdev_device_del(&chip->cdevs, &chip->devs);
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index 7424511241031a..efe8ad0d137f74 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -26,6 +26,7 @@
->  #include <linux/module.h>
->  #include <linux/delay.h>
->  #include <linux/fs.h>
-> +#include <linux/hw_random.h>
->  #include <linux/mutex.h>
->  #include <linux/sched.h>
->  #include <linux/platform_device.h>
-> @@ -210,6 +211,9 @@ struct tpm_chip {
->  	int dev_num;		/* /dev/tpm# */
->  	unsigned long is_open;	/* only one allowed */
->  
-> +	char hwrng_name[64];
-> +	struct hwrng hwrng;
-> +
->  	struct mutex tpm_mutex;	/* tpm is processing */
->  
->  	unsigned long timeout_a; /* jiffies */
-> -- 
-> 2.7.4
-> 
+Commit 5e572cab92f0bb5 ("tpm: Enable CLKRUN protocol for Braswell
+systems") disabled CLKRUN protocol during TPM transactions and re-enabled
+once the transaction is completed. But there were still some corner cases
+observed where, reading of TPM header failed for savestate command
+while going to suspend, which resulted in suspend failure.
+To fix this issue keep the CLKRUN protocol disabled for the entire
+duration of a single TPM command and not disabling and re-enabling
+again for every TPM transaction.
 
-I asked to create a series for a reason. Now this doesn't apply because I
-don't have an ancestor in my git history.
+Fixes: 5e572cab92f0bb5 ("tpm: Enable CLKRUN protocol for Braswell systems")
 
-Please resend as series together with my patch. I can apply neither yet
-because they have zero tested-by's.
+Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
+---
+ drivers/char/tpm/tpm-interface.c |  4 ++++
+ drivers/char/tpm/tpm_tis.c       | 39 +++++++++++++++++----------------------
+ drivers/char/tpm/tpm_tis_core.c  | 27 +++++++++++++++++++++++++++
+ drivers/char/tpm/tpm_tis_core.h  | 13 +++++++++++++
+ include/linux/tpm.h              |  1 +
+ 5 files changed, 62 insertions(+), 22 deletions(-)
 
-/Jarkko
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 1d6729be4cd6..5a1f48f41e0d 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -413,6 +413,8 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	if (chip->dev.parent)
+ 		pm_runtime_get_sync(chip->dev.parent);
+ 
++	chip->ops->clk_toggle(chip, true);
++
+ 	/* Store the decision as chip->locality will be changed. */
+ 	need_locality = chip->locality == -1;
+ 
+@@ -489,6 +491,8 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 		chip->locality = -1;
+ 	}
+ out_no_locality:
++	chip->ops->clk_toggle(chip, false);
++
+ 	if (chip->dev.parent)
+ 		pm_runtime_put_sync(chip->dev.parent);
+ 
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index e2d1055fb814..c7b1deaa1b75 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -148,12 +148,13 @@ static inline bool is_bsw(void)
+ 
+ /**
+  * tpm_platform_begin_xfer() - clear LPC CLKRUN_EN i.e. clocks will be running
++ * @data:	struct tpm_tis_data instance
+  */
+-static void tpm_platform_begin_xfer(void)
++void tpm_platform_begin_xfer(struct tpm_tis_data *data)
+ {
+ 	u32 clkrun_val;
+ 
+-	if (!is_bsw())
++	if (!is_bsw() || (data->flags & TPM_TIS_CLK_ENABLE))
+ 		return;
+ 
+ 	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
+@@ -172,12 +173,13 @@ static void tpm_platform_begin_xfer(void)
+ 
+ /**
+  * tpm_platform_end_xfer() - set LPC CLKRUN_EN i.e. clocks can be turned off
++ * @data:	struct tpm_tis_data instance
+  */
+-static void tpm_platform_end_xfer(void)
++void tpm_platform_end_xfer(struct tpm_tis_data *data)
+ {
+ 	u32 clkrun_val;
+ 
+-	if (!is_bsw())
++	if (!is_bsw() || (data->flags & TPM_TIS_CLK_ENABLE))
+ 		return;
+ 
+ 	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
+@@ -193,19 +195,12 @@ static void tpm_platform_end_xfer(void)
+ 	outb(0xCC, 0x80);
+ 
+ }
++
+ #else
+ static inline bool is_bsw(void)
+ {
+ 	return false;
+ }
+-
+-static void tpm_platform_begin_xfer(void)
+-{
+-}
+-
+-static void tpm_platform_end_xfer(void)
+-{
+-}
+ #endif
+ 
+ static int tpm_tcg_read_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
+@@ -213,12 +208,12 @@ static int tpm_tcg_read_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
+ {
+ 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 
+-	tpm_platform_begin_xfer();
++	tpm_platform_begin_xfer(data);
+ 
+ 	while (len--)
+ 		*result++ = ioread8(phy->iobase + addr);
+ 
+-	tpm_platform_end_xfer();
++	tpm_platform_end_xfer(data);
+ 
+ 	return 0;
+ }
+@@ -228,12 +223,12 @@ static int tpm_tcg_write_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
+ {
+ 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 
+-	tpm_platform_begin_xfer();
++	tpm_platform_begin_xfer(data);
+ 
+ 	while (len--)
+ 		iowrite8(*value++, phy->iobase + addr);
+ 
+-	tpm_platform_end_xfer();
++	tpm_platform_end_xfer(data);
+ 
+ 	return 0;
+ }
+@@ -242,11 +237,11 @@ static int tpm_tcg_read16(struct tpm_tis_data *data, u32 addr, u16 *result)
+ {
+ 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 
+-	tpm_platform_begin_xfer();
++	tpm_platform_begin_xfer(data);
+ 
+ 	*result = ioread16(phy->iobase + addr);
+ 
+-	tpm_platform_end_xfer();
++	tpm_platform_end_xfer(data);
+ 
+ 	return 0;
+ }
+@@ -255,11 +250,11 @@ static int tpm_tcg_read32(struct tpm_tis_data *data, u32 addr, u32 *result)
+ {
+ 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 
+-	tpm_platform_begin_xfer();
++	tpm_platform_begin_xfer(data);
+ 
+ 	*result = ioread32(phy->iobase + addr);
+ 
+-	tpm_platform_end_xfer();
++	tpm_platform_end_xfer(data);
+ 
+ 	return 0;
+ }
+@@ -268,11 +263,11 @@ static int tpm_tcg_write32(struct tpm_tis_data *data, u32 addr, u32 value)
+ {
+ 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 
+-	tpm_platform_begin_xfer();
++	tpm_platform_begin_xfer(data);
+ 
+ 	iowrite32(value, phy->iobase + addr);
+ 
+-	tpm_platform_end_xfer();
++	tpm_platform_end_xfer(data);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index fdde971bc810..b1e48673e672 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -661,6 +661,32 @@ void tpm_tis_remove(struct tpm_chip *chip)
+ }
+ EXPORT_SYMBOL_GPL(tpm_tis_remove);
+ 
++#ifdef CONFIG_X86
++/**
++ * tpm_tis_clkrun_toggle() - Keep clkrun protocol disabled for entire duration
++ *                           of a single TPM command
++ * @chip:	TPM chip to use
++ * @value:	1 - Disable CLKRUN protocol, so that clocks are free running
++ *		0 - Enable CLKRUN protocol
++ */
++static void tpm_tis_clkrun_toggle(struct tpm_chip *chip, bool value)
++{
++	struct tpm_tis_data *data = dev_get_drvdata(&chip->dev);
++
++	if (value) {
++		tpm_platform_begin_xfer(data);
++		data->flags |= TPM_TIS_CLK_ENABLE;
++	} else {
++		data->flags &= ~TPM_TIS_CLK_ENABLE;
++		tpm_platform_end_xfer(data);
++	}
++}
++#else
++static void tpm_tis_clkrun_toggle(struct tpm_chip *chip, bool value)
++{
++}
++#endif
++
+ static const struct tpm_class_ops tpm_tis = {
+ 	.flags = TPM_OPS_AUTO_STARTUP,
+ 	.status = tpm_tis_status,
+@@ -673,6 +699,7 @@ void tpm_tis_remove(struct tpm_chip *chip)
+ 	.req_canceled = tpm_tis_req_canceled,
+ 	.request_locality = request_locality,
+ 	.relinquish_locality = release_locality,
++	.clk_toggle = tpm_tis_clkrun_toggle,
+ };
+ 
+ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
+index 6bbac319ff3b..71bdf03039f4 100644
+--- a/drivers/char/tpm/tpm_tis_core.h
++++ b/drivers/char/tpm/tpm_tis_core.h
+@@ -81,6 +81,7 @@ enum tis_defaults {
+ 
+ enum tpm_tis_flags {
+ 	TPM_TIS_ITPM_WORKAROUND		= BIT(0),
++	TPM_TIS_CLK_ENABLE		= BIT(1),
+ };
+ 
+ struct tpm_tis_data {
+@@ -153,4 +154,16 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+ int tpm_tis_resume(struct device *dev);
+ #endif
+ 
++#ifdef CONFIG_X86
++void tpm_platform_begin_xfer(struct tpm_tis_data *data);
++void tpm_platform_end_xfer(struct tpm_tis_data *data);
++#else
++void tpm_platform_begin_xfer(struct tpm_tis_data *data)
++{
++}
++void tpm_platform_end_xfer(struct tpm_tis_data *data)
++{
++}
++#endif
++
+ #endif
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 5a090f5ab335..10753ec56d0a 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -50,6 +50,7 @@ struct tpm_class_ops {
+ 				unsigned long *timeout_cap);
+ 	int (*request_locality)(struct tpm_chip *chip, int loc);
+ 	void (*relinquish_locality)(struct tpm_chip *chip, int loc);
++	void (*clk_toggle)(struct tpm_chip *chip, bool value);
+ };
+ 
+ #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
+-- 
+1.9.1
