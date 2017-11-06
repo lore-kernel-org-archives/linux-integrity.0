@@ -1,87 +1,57 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:54898 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752322AbdKFRHo (ORCPT
+Received: from mail-io0-f174.google.com ([209.85.223.174]:50537 "EHLO
+        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751073AbdKFC1G (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 6 Nov 2017 12:07:44 -0500
-Received: by mail-io0-f195.google.com with SMTP id e89so16372027ioi.11
-        for <linux-integrity@vger.kernel.org>; Mon, 06 Nov 2017 09:07:43 -0800 (PST)
-Date: Mon, 6 Nov 2017 10:07:41 -0700
+        Sun, 5 Nov 2017 21:27:06 -0500
+Received: by mail-io0-f174.google.com with SMTP id 97so14132539iok.7
+        for <linux-integrity@vger.kernel.org>; Sun, 05 Nov 2017 18:27:06 -0800 (PST)
+Date: Sun, 5 Nov 2017 19:27:04 -0700
 From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Azhar Shaikh <azhar.shaikh@intel.com>
-Cc: jarkko.sakkinen@intel.com, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH RFC] tpm: Keep CLKRUN enabled throughout the duration of
- transmit_cmd()
-Message-ID: <20171106170741.GH26011@ziepe.ca>
-References: <1509751809-148601-1-git-send-email-azhar.shaikh@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:INTEGRITY MEASUREMENT ARCHITECTURE (IMA)"
+        <linux-security-module@vger.kernel.org>,
+        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
+        <linux-crypto@vger.kernel.org>,
+        James Morris <james.l.morris@oracle.com>,
+        Matt Mackall <mpm@selenic.com>,
+        David Safford <safford@us.ibm.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH v2] tpm: Move Linux RNG connection to hwrng
+Message-ID: <20171106022704.GD26011@ziepe.ca>
+References: <20171031200503.GC18578@ziepe.ca>
+ <20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1509751809-148601-1-git-send-email-azhar.shaikh@intel.com>
+In-Reply-To: <20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Nov 03, 2017 at 04:30:09PM -0700, Azhar Shaikh wrote:
-> @@ -413,6 +413,8 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
->  	if (chip->dev.parent)
->  		pm_runtime_get_sync(chip->dev.parent);
->  
-> +	chip->ops->clk_toggle(chip, true);
+On Sun, Nov 05, 2017 at 01:05:06PM +0200, Jarkko Sakkinen wrote:
 
-You added this new op to the general code, but only updated two
-drivers, surely this makes all the other tis drivers oops as
-clk_toggle will be NULL?
+> I asked to create a series for a reason. Now this doesn't apply because I
+> don't have an ancestor in my git history.
 
-Suggest checking for NULL before calling.
-  
-> +#ifdef CONFIG_X86
+It would be unusual for me to put your patch into a series unless I am
+also adopting it. eg what happens if there are more comments on it?
 
-This is a good place to use IS_ENABLED instead of ifdef:
+Also, I wasn't sure what branch your patch was against since my tree
+didn't have history for it either..
 
-> +/**
-> + * tpm_tis_clkrun_toggle() - Keep clkrun protocol disabled for entire duration
-> + *                           of a single TPM command
-> + * @chip:	TPM chip to use
-> + * @value:	1 - Disable CLKRUN protocol, so that clocks are free running
-> + *		0 - Enable CLKRUN protocol
-> + */
-> +static void tpm_tis_clkrun_toggle(struct tpm_chip *chip, bool value)
-> +{
-> +	struct tpm_tis_data *data = dev_get_drvdata(&chip->dev);
+Sometimes the maintainer has to sort stuff like this out... :)
 
-   if (!IS_ENABLED(CONFIG_X86))
-         return;
+> Please resend as series together with my patch. I can apply neither yet
+> because they have zero tested-by's.
 
-> +
-> +	if (value) {
-> +		tpm_platform_begin_xfer(data);
-> +		data->flags |= TPM_TIS_CLK_ENABLE;
-> +	} else {
-> +		data->flags &= ~TPM_TIS_CLK_ENABLE;
-> +		tpm_platform_end_xfer(data);
-> +	}
-> +}
-> +#else
-> +static void tpm_tis_clkrun_toggle(struct tpm_chip *chip, bool value)
-> +{
-> +}
-> +#endif
-
-> +#ifdef CONFIG_X86
-> +void tpm_platform_begin_xfer(struct tpm_tis_data *data);
-> +void tpm_platform_end_xfer(struct tpm_tis_data *data);
-> +#else
-> +void tpm_platform_begin_xfer(struct tpm_tis_data *data)
-> +{
-> +}
-> +void tpm_platform_end_xfer(struct tpm_tis_data *data)
-> +{
-> +}
-
-These empty stubs need inlines
-
-Why are you using a mixture of callbacks and linked functions to solve
-this problem?
-
-Can't you do everything with callbacks?
+Hopefully PrasannaKumar can test both patches.
 
 Jason
