@@ -1,67 +1,74 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:46031 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754297AbdKGDUq (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 6 Nov 2017 22:20:46 -0500
-MIME-Version: 1.0
-In-Reply-To: <20171106022704.GD26011@ziepe.ca>
-References: <20171031200503.GC18578@ziepe.ca> <20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
- <20171106022704.GD26011@ziepe.ca>
-From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Date: Tue, 7 Nov 2017 08:50:44 +0530
-Message-ID: <CANc+2y6dx_2zOzFA5aFs7RpEV8aNqxpDghmx+q_+XyendYJoew@mail.gmail.com>
-Subject: Re: [PATCH v2] tpm: Move Linux RNG connection to hwrng
+Received: from mga03.intel.com ([134.134.136.65]:19027 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754171AbdKFXbe (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 6 Nov 2017 18:31:34 -0500
+From: "Shaikh, Azhar" <azhar.shaikh@intel.com>
 To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:INTEGRITY MEASUREMENT ARCHITECTURE (IMA)"
-        <linux-security-module@vger.kernel.org>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
-        <linux-crypto@vger.kernel.org>,
-        James Morris <james.l.morris@oracle.com>,
-        Matt Mackall <mpm@selenic.com>,
-        David Safford <safford@us.ibm.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+CC: "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Subject: RE: [PATCH RFC] tpm: Keep CLKRUN enabled throughout the duration of
+ transmit_cmd()
+Date: Mon, 6 Nov 2017 23:31:32 +0000
+Message-ID: <5FFFAD06ADE1CA4381B3F0F7C6AF582896ADF9@ORSMSX109.amr.corp.intel.com>
+References: <1509751809-148601-1-git-send-email-azhar.shaikh@intel.com>
+ <20171106170741.GH26011@ziepe.ca>
+ <5FFFAD06ADE1CA4381B3F0F7C6AF582896ADAB@ORSMSX109.amr.corp.intel.com>
+ <20171106223932.GA21466@ziepe.ca>
+In-Reply-To: <20171106223932.GA21466@ziepe.ca>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Jason,
 
-On 6 November 2017 at 07:57, Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> On Sun, Nov 05, 2017 at 01:05:06PM +0200, Jarkko Sakkinen wrote:
->
->> I asked to create a series for a reason. Now this doesn't apply because I
->> don't have an ancestor in my git history.
->
-> It would be unusual for me to put your patch into a series unless I am
-> also adopting it. eg what happens if there are more comments on it?
->
-> Also, I wasn't sure what branch your patch was against since my tree
-> didn't have history for it either..
->
-> Sometimes the maintainer has to sort stuff like this out... :)
->
->> Please resend as series together with my patch. I can apply neither yet
->> because they have zero tested-by's.
->
-> Hopefully PrasannaKumar can test both patches.
 
-I am assuming you are talking about the following patches - using
-struct tpm_chip instead of chip number and this patch.
+>-----Original Message-----
+>From: Jason Gunthorpe [mailto:jgg@ziepe.ca]
+>Sent: Monday, November 6, 2017 2:40 PM
+>To: Shaikh, Azhar <azhar.shaikh@intel.com>
+>Cc: Sakkinen, Jarkko <jarkko.sakkinen@intel.com>; linux-
+>integrity@vger.kernel.org
+>Subject: Re: [PATCH RFC] tpm: Keep CLKRUN enabled throughout the duration
+>of transmit_cmd()
+>
+>On Mon, Nov 06, 2017 at 10:11:39PM +0000, Shaikh, Azhar wrote:
+>
+>> >Why are you using a mixture of callbacks and linked functions to
+>> >solve this problem?
+>> >
+>> >Can't you do everything with callbacks?
+>> >
+>>
+>> I have set the flag TPM_TIS_CLK_ENABLE in the callback. But then in
+>> tpm_platform_begin_xfer() I want it to run once to disable clkrun and
+>> then return for all other instances, till the the flag is cleared.  If
+>> I just set the flag in tpm_tis_clkrun_toggle(), then for any TPM
+>> transaction after that the clkrun will not be disabled with current
+>> implementation. Hence calling it once before setting the flag so that
+>> it is kept enabled for the next transaction.
+>
+>I mean, why do we have global functions called tpm_platform_begin_xfer at
+>all, everything should be in a callback, not some mixture.
+>
+>The static function sort of made sense when it was only ever called by the tis
+>driver, but now that you are hoisting things up a layer it is not okay anymore,
+>you need to add new driver callbacks instead.
+>
 
-I won't be able to test if struct tpm_chip usage as I don't have
-multiple tpm hw in one machine. In case of tpm rng changes I can test
-only the lifecycle of tpm rng device. Is that enough? I feel my test
-will be limited. Please provide your thoughts on this.
+Ok, will not call tpm_platform_begin_xfer() from the callback function and make it back static again to keep it within tis driver only.
 
-Regards,
-PrasannaKumar
+>> +++ b/drivers/char/tpm/tpm_tis.c
+>> @@ -140,6 +140,7 @@ static int check_acpi_tpm2(struct device *dev)
+>>  #define LPC_CLKRUN_EN                   (1 << 2)
+>>
+>>  static void __iomem *ilb_base_addr;
+>> +static bool run_once;
+>
+>No global statics. The ilb_base_addr global is really ugly you should move it to
+>struct tpm_tis_tcg_phy
+>
+
+Ok, I will do this as a separate patch.
+
+>Jason
