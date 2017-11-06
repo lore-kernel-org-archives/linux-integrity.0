@@ -1,92 +1,157 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38218 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751687AbdKFWgN (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 6 Nov 2017 17:36:13 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vA6Ma7xi170416
-        for <linux-integrity@vger.kernel.org>; Mon, 6 Nov 2017 17:36:12 -0500
-Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2e2wvh7s59-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 06 Nov 2017 17:36:08 -0500
-Received: from localhost
-        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Mon, 6 Nov 2017 22:34:41 -0000
-Subject: Re: IMA skips some file measurements
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: "Magalhaes, Guilherme (Brazil R&D-CL)" <guilherme.magalhaes@hpe.com>,
+Received: from mga05.intel.com ([192.55.52.43]:44489 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751344AbdKFWLl (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 6 Nov 2017 17:11:41 -0500
+From: "Shaikh, Azhar" <azhar.shaikh@intel.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+CC: "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>,
         "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Date: Mon, 06 Nov 2017 17:34:37 -0500
-In-Reply-To: <TU4PR84MB03028A1CDA4AD6F77368F730FF500@TU4PR84MB0302.NAMPRD84.PROD.OUTLOOK.COM>
-References: <TU4PR84MB03023D92432F2AA6E9348873FF500@TU4PR84MB0302.NAMPRD84.PROD.OUTLOOK.COM>
-         <1510000742.3320.5.camel@linux.vnet.ibm.com>
-         <TU4PR84MB03028A1CDA4AD6F77368F730FF500@TU4PR84MB0302.NAMPRD84.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1510007677.3320.43.camel@linux.vnet.ibm.com>
+Subject: RE: [PATCH RFC] tpm: Keep CLKRUN enabled throughout the duration of
+ transmit_cmd()
+Date: Mon, 6 Nov 2017 22:11:39 +0000
+Message-ID: <5FFFAD06ADE1CA4381B3F0F7C6AF582896ADAB@ORSMSX109.amr.corp.intel.com>
+References: <1509751809-148601-1-git-send-email-azhar.shaikh@intel.com>
+ <20171106170741.GH26011@ziepe.ca>
+In-Reply-To: <20171106170741.GH26011@ziepe.ca>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2017-11-06 at 21:26 +0000, Magalhaes, Guilherme (Brazil R&D-
-CL) wrote:
-> 
-> > -----Original Message-----
-> > From: Mimi Zohar [mailto:zohar@linux.vnet.ibm.com]
-> > Sent: segunda-feira, 6 de novembro de 2017 18:39
-> > To: Magalhaes, Guilherme (Brazil R&D-CL)
-> > <guilherme.magalhaes@hpe.com>; linux-integrity@vger.kernel.org
-> > Subject: Re: IMA skips some file measurements
-> > 
-> > On Mon, 2017-11-06 at 19:22 +0000, Magalhaes, Guilherme (Brazil R&D-
-> > CL) wrote:
-> > > We are trying to understand why some file measurements are skipped
-> > > by IMA. In some circumstances, it seems that this could lead to an
-> > > incorrect assessment of the integrity of the host. Consider the
-> > > following, example in which we begin with a vulnerable bash binary
-> > > (e.g. Shellshock) and patch it.
-> > >
-> > > 1. Load vulnerable bash (measured by IMA)
-> > > 2. Patch the bash file
-> > > 3. Load good bash (measured by IMA)
-> > > 4. Change back to vulnerable bash
-> > > 5. Load vulnerable bash (not measured by IMA)
-> > >
-> > > After step 5, the IMA logs appear to tell you that the system is using a
-> > > good binary, but a vulnerable binary is installed and being used.
-> > >
-> > > We identified that 'ima_htable.queue' prevented the measurement at
-> > > step 5 since the same vulnerable bash was loaded on step 1 and 5 and
-> > > then its respective hash was already present in 'ima_htable.queue'.
-> > >
-> > > So in this scenario the last/current file state is not identified using the
-> > > IMA log. Is it not important to identify through the IMA log whether or
-> > > not the last known file state is good?
-> > >
-> > > Does anybody know why 'ima_htable.queue' is preventing already
-> > > logged file hashes from being re-measured?
-> > 
-> > Yes, we're trying to limit the number of measurements.  This is a last
-> > check before adding something already measured to the measurement list
-> > and extending the TPM.
-> > 
-> > For example, a file is removed from dcache, causing the iint to be
-> > deleted as well.  The next access would cause the entry to be re-added
-> > to the measurement list and extend the TPM for no good reason.
-> A side effect for this mechanism is that IMA skips measuring a changed file
-> in case the file is changed to a state already measured before, as 
-> demonstrated by the example I enumerated above. Then, it could lead to an 
-> incorrect integrity assessment considering the last file state/hash may not be 
-> in the IMA log.
-> 
-> So I assume it is a side effect and not working by design. Please, clarify.
 
-The purpose is to prevent duplicate measurements.  So it is clearly
-working as designed.  I also don't think the design is flawed.  All
-files included in the policy were measured and added to the
-measurement list.  If you really want a subsequent measurement with
-the same file hash, include the (real) i_ino in the template data.
 
-Mimi
+>-----Original Message-----
+>From: Jason Gunthorpe [mailto:jgg@ziepe.ca]
+>Sent: Monday, November 6, 2017 9:08 AM
+>To: Shaikh, Azhar <azhar.shaikh@intel.com>
+>Cc: Sakkinen, Jarkko <jarkko.sakkinen@intel.com>; linux-
+>integrity@vger.kernel.org
+>Subject: Re: [PATCH RFC] tpm: Keep CLKRUN enabled throughout the duration
+>of transmit_cmd()
+>
+>On Fri, Nov 03, 2017 at 04:30:09PM -0700, Azhar Shaikh wrote:
+>> @@ -413,6 +413,8 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct
+>tpm_space *space,
+>>  	if (chip->dev.parent)
+>>  		pm_runtime_get_sync(chip->dev.parent);
+>>
+>> +	chip->ops->clk_toggle(chip, true);
+>
+>You added this new op to the general code, but only updated two drivers,
+>surely this makes all the other tis drivers oops as clk_toggle will be NULL?
+>
+>Suggest checking for NULL before calling.
+>
+
+Sure, will add the NULL check.
+
+>> +#ifdef CONFIG_X86
+>
+>This is a good place to use IS_ENABLED instead of ifdef:
+>
+>> +/**
+>> + * tpm_tis_clkrun_toggle() - Keep clkrun protocol disabled for entire
+>duration
+>> + *                           of a single TPM command
+>> + * @chip:	TPM chip to use
+>> + * @value:	1 - Disable CLKRUN protocol, so that clocks are free running
+>> + *		0 - Enable CLKRUN protocol
+>> + */
+>> +static void tpm_tis_clkrun_toggle(struct tpm_chip *chip, bool value)
+>> +{
+>> +	struct tpm_tis_data *data = dev_get_drvdata(&chip->dev);
+>
+>   if (!IS_ENABLED(CONFIG_X86))
+>         return;
+>
+
+Will add this check and remove the #ifdef
+
+>> +
+>> +	if (value) {
+>> +		tpm_platform_begin_xfer(data);
+>> +		data->flags |= TPM_TIS_CLK_ENABLE;
+>> +	} else {
+>> +		data->flags &= ~TPM_TIS_CLK_ENABLE;
+>> +		tpm_platform_end_xfer(data);
+>> +	}
+>> +}
+>> +#else
+>> +static void tpm_tis_clkrun_toggle(struct tpm_chip *chip, bool value)
+>> +{ } #endif
+>
+>> +#ifdef CONFIG_X86
+>> +void tpm_platform_begin_xfer(struct tpm_tis_data *data); void
+>> +tpm_platform_end_xfer(struct tpm_tis_data *data); #else void
+>> +tpm_platform_begin_xfer(struct tpm_tis_data *data) { } void
+>> +tpm_platform_end_xfer(struct tpm_tis_data *data) { }
+>
+>These empty stubs need inlines
+>
+
+Sure, will add inline.
+
+>Why are you using a mixture of callbacks and linked functions to solve this
+>problem?
+>
+>Can't you do everything with callbacks?
+>
+
+I have set the flag TPM_TIS_CLK_ENABLE in the callback. But then in tpm_platform_begin_xfer() I want it to run once to disable clkrun and then return for all other instances, till the the flag is cleared.
+If I just set the flag in tpm_tis_clkrun_toggle(), then for any TPM transaction after that the clkrun will not be disabled with current implementation. Hence calling it once before setting the flag so that it is kept enabled for the next transaction.
+
+OR
+
+I can update the callback as below:
+
++static void tpm_tis_clkrun_toggle(struct tpm_chip *chip, bool value)
++{
++	struct tpm_tis_data *data = dev_get_drvdata(&chip->dev);
++
++	if (!IS_ENABLED(CONFIG_X86))
++		return;
++
++	if (value)
++		data->flags |= TPM_TIS_CLK_ENABLE;
++	else
++		data->flags &= ~TPM_TIS_CLK_ENABLE;
++}
+
+
+And in tpm_platform_begin_xfer() maintain a flag which will track, that it is called at least once before returning, after the TPM_TIS_CLK_ENABLE is set. But I am not sure if this is a good approach. Could you please suggest the correct approach here.
+Below is a rough/test patch how this could be implemented.
+
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -140,6 +140,7 @@ static int check_acpi_tpm2(struct device *dev)
+ #define LPC_CLKRUN_EN                   (1 << 2)
+
+ static void __iomem *ilb_base_addr;
++static bool run_once;
+
+ static inline bool is_bsw(void)
+ {
+@@ -154,7 +155,7 @@ void tpm_platform_begin_xfer(struct tpm_tis_data *data)
+ {
+        u32 clkrun_val;
+
+-       if (!is_bsw() || (data->flags & TPM_TIS_CLK_ENABLE))
++       if (!is_bsw() || ((data->flags & TPM_TIS_CLK_ENABLE) && run_once))
+                return;
+
+        clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
+@@ -169,6 +170,11 @@ void tpm_platform_begin_xfer(struct tpm_tis_data *data)
+         */
+        outb(0xCC, 0x80);
+
++       if (!(data->flags & TPM_TIS_CLK_ENABLE))
++               run_once = false;
++       else
++               run_once = true;
++
+ }
+>Jason
+
+Regards,
+Azhar Shaikh
