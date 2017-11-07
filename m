@@ -1,309 +1,347 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-oi0-f74.google.com ([209.85.218.74]:42493 "EHLO
-        mail-oi0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932771AbdKGPSj (ORCPT
+Received: from mail-qk0-f201.google.com ([209.85.220.201]:53840 "EHLO
+        mail-qk0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751844AbdKGPR4 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 7 Nov 2017 10:18:39 -0500
-Received: by mail-oi0-f74.google.com with SMTP id f66so13225571oib.1
-        for <linux-integrity@vger.kernel.org>; Tue, 07 Nov 2017 07:18:39 -0800 (PST)
+        Tue, 7 Nov 2017 10:17:56 -0500
+Received: by mail-qk0-f201.google.com with SMTP id z12so9760815qkb.12
+        for <linux-integrity@vger.kernel.org>; Tue, 07 Nov 2017 07:17:55 -0800 (PST)
 MIME-Version: 1.0
-Date: Tue,  7 Nov 2017 07:18:35 -0800
-Message-Id: <20171107151835.25730-1-mjg59@google.com>
-Subject: [PATCH V4] EVM: Allow userland to permit modification of
- EVM-protected metadata
+Date: Tue,  7 Nov 2017 07:17:42 -0800
+Message-Id: <20171107151742.25122-1-mjg59@google.com>
+Subject: [PATCH V6] EVM: Add support for portable signature format
 From: Matthew Garrett <mjg59@google.com>
 To: linux-integrity@vger.kernel.org
-Cc: zohar@linux.vnet.ibm.com, Matthew Garrett <mjg59@google.com>
+Cc: zohar@linux.vnet.ibm.com, Matthew Garrett <mjg59@google.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
+        Mikhail Kurinnoi <viewizard@viewizard.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-When EVM is enabled it forbids modification of metadata are protected by
-EVM unless there is already a valid EVM signature. If any modification
-is made, the kernel will then generate a new EVM HMAC. However, this
-does not map well on use cases which use only asymmetric EVM signatures,
-as in this scenario the kernel is unable to generate new signatures.
+The EVM signature includes the inode number and (optionally) the
+filesystem UUID, making it impractical to ship EVM signatures in
+packages. This patch adds a new portable format intended to allow
+distributions to include EVM signatures. It is identical to the existing
+format but hardcodes the inode and generation numbers to 0 and does not
+include the filesystem UUID even if the kernel is configured to do so.
 
-This patch extends the /sys/kernel/security/evm interface to allow
-userland to request that modification of these xattrs be permitted. This
-is only permitted if no keys have already been loaded. In this
-configuration, modifying the metadata will invalidate the EVM appraisal
-on the file in question. This allows packaging systems to write out new
-files, set the relevant extended attributes and then move them into
-place.
+Removing the inode means that the metadata and signature from one file
+could be copied to another file without invalidating it. This is avoided
+by ensuring that an IMA xattr is present during EVM validation.
 
-There's also some refactoring of the use of evm_initialized in order to
-avoid heading down codepaths that assume there's a key available.
+Portable signatures are intended to be immutable - ie, they will never
+be transformed into HMACs.
+
+Based on earlier work by Dmitry Kasatkin and Mikhail Kurinnoi.
 
 Signed-off-by: Matthew Garrett <mjg59@google.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
+Cc: Mikhail Kurinnoi <viewizard@viewizard.com>
 ---
 
-Minor updates based on Mimi's feedback, no functional changes.
+Sigh. Get rid of an unused variable declaration.
 
- Documentation/ABI/testing/evm      | 51 +++++++++++++++++++++++++-------------
- security/integrity/evm/evm.h       |  7 ++++--
- security/integrity/evm/evm_main.c  | 38 ++++++++++++++++++++++------
- security/integrity/evm/evm_secfs.c | 20 ++++++++++++---
- 4 files changed, 87 insertions(+), 29 deletions(-)
+ include/linux/integrity.h             |  1 +
+ security/integrity/evm/evm.h          |  2 +-
+ security/integrity/evm/evm_crypto.c   | 75 ++++++++++++++++++++++++++++++-----
+ security/integrity/evm/evm_main.c     | 27 ++++++++-----
+ security/integrity/ima/ima_appraise.c |  4 +-
+ security/integrity/integrity.h        |  2 +
+ 6 files changed, 91 insertions(+), 20 deletions(-)
 
-diff --git a/Documentation/ABI/testing/evm b/Documentation/ABI/testing/evm
-index d2782afb0d96..b0f54fe8d0c6 100644
---- a/Documentation/ABI/testing/evm
-+++ b/Documentation/ABI/testing/evm
-@@ -14,28 +14,45 @@ Description:
- 		generated either locally or remotely using an
- 		asymmetric key. These keys are loaded onto root's
- 		keyring using keyctl, and EVM is then enabled by
--		echoing a value to <securityfs>/evm:
-+		echoing a value to <securityfs>/evm made up of the
-+		following bits:
+diff --git a/include/linux/integrity.h b/include/linux/integrity.h
+index c2d6082a1a4c..858d3f4a2241 100644
+--- a/include/linux/integrity.h
++++ b/include/linux/integrity.h
+@@ -14,6 +14,7 @@
  
--		1: enable HMAC validation and creation
--		2: enable digital signature validation
--		3: enable HMAC and digital signature validation and HMAC
--		   creation
-+		Bit	  Effect
-+		0	  Enable HMAC validation and creation
-+		1	  Enable digital signature validation
-+		2	  Permit modification of EVM-protected metadata at
-+			  runtime. Not supported if HMAC validation and
-+			  creation is enabled.
-+		31	  Disable further runtime modification of EVM policy
- 
--		Further writes will be blocked if HMAC support is enabled or
--		if bit 32 is set:
-+		For example:
- 
--		echo 0x80000002 ><securityfs>/evm
-+		echo 1 ><securityfs>/evm
- 
--		will enable digital signature validation and block
--		further writes to <securityfs>/evm.
-+		will enable HMAC validation and creation
- 
--		Until this is done, EVM can not create or validate the
--		'security.evm' xattr, but returns INTEGRITY_UNKNOWN.
--		Loading keys and signaling EVM should be done as early
--		as possible.  Normally this is done in the initramfs,
--		which has already been measured as part of the trusted
--		boot.  For more information on creating and loading
--		existing trusted/encrypted keys, refer to:
-+		echo 0x80000003 ><securityfs>/evm
-+
-+		will enable HMAC and digital signature validation and
-+		HMAC creation and disable all further modification of policy.
-+
-+		echo 0x80000006 ><securityfs>/evm
-+
-+		will enable digital signature validation, permit
-+		modification of EVM-protected metadata and
-+		disable all further modification of policy
-+
-+		Note that once a key has been loaded, it will no longer be
-+		possible to enable metadata modification.
-+
-+		Until key loading has been signaled EVM can not create
-+		or validate the 'security.evm' xattr, but returns
-+		INTEGRITY_UNKNOWN.  Loading keys and signaling EVM
-+		should be done as early as possible.  Normally this is
-+		done in the initramfs, which has already been measured
-+		as part of the trusted boot.  For more information on
-+		creating and loading existing trusted/encrypted keys,
-+		refer to:
- 		Documentation/keys-trusted-encrypted.txt. Both dracut
- 		(via 97masterkey and 98integrity) and systemd (via
- 		core/ima-setup) have support for loading keys at boot
+ enum integrity_status {
+ 	INTEGRITY_PASS = 0,
++	INTEGRITY_PASS_IMMUTABLE,
+ 	INTEGRITY_FAIL,
+ 	INTEGRITY_NOLABEL,
+ 	INTEGRITY_NOXATTRS,
 diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
-index 946efffcc389..04825393facb 100644
+index f5f12727771a..2ff02459fcfd 100644
 --- a/security/integrity/evm/evm.h
 +++ b/security/integrity/evm/evm.h
-@@ -23,9 +23,12 @@
+@@ -48,7 +48,7 @@ int evm_calc_hmac(struct dentry *dentry, const char *req_xattr_name,
+ 		  size_t req_xattr_value_len, char *digest);
+ int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
+ 		  const char *req_xattr_value,
+-		  size_t req_xattr_value_len, char *digest);
++		  size_t req_xattr_value_len, char type, char *digest);
+ int evm_init_hmac(struct inode *inode, const struct xattr *xattr,
+ 		  char *hmac_val);
+ int evm_init_secfs(void);
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index 1d32cd20009a..e526f0f5aaaf 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -138,7 +138,7 @@ static struct shash_desc *init_desc(char type)
+  * protection.)
+  */
+ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
+-			  char *digest)
++			  char type, char *digest)
+ {
+ 	struct h_misc {
+ 		unsigned long ino;
+@@ -149,8 +149,13 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
+ 	} hmac_misc;
  
- #define EVM_INIT_HMAC	0x0001
- #define EVM_INIT_X509	0x0002
--#define EVM_SETUP       0x80000000 /* userland has signaled key load */
-+#define EVM_ALLOW_METADATA_WRITES	0x0004
-+#define EVM_SETUP_COMPLETE 0x80000000 /* userland has signaled key load */
+ 	memset(&hmac_misc, 0, sizeof(hmac_misc));
+-	hmac_misc.ino = inode->i_ino;
+-	hmac_misc.generation = inode->i_generation;
++	/* Don't include the inode or generation number in portable
++	 * signatures
++	 */
++	if (type != EVM_XATTR_PORTABLE_DIGSIG) {
++		hmac_misc.ino = inode->i_ino;
++		hmac_misc.generation = inode->i_generation;
++	}
+ 	/* The hmac uid and gid must be encoded in the initial user
+ 	 * namespace (not the filesystems user namespace) as encoding
+ 	 * them in the filesystems user namespace allows an attack
+@@ -163,7 +168,8 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
+ 	hmac_misc.gid = from_kgid(&init_user_ns, inode->i_gid);
+ 	hmac_misc.mode = inode->i_mode;
+ 	crypto_shash_update(desc, (const u8 *)&hmac_misc, sizeof(hmac_misc));
+-	if (evm_hmac_attrs & EVM_ATTR_FSUUID)
++	if ((evm_hmac_attrs & EVM_ATTR_FSUUID) &&
++	    type != EVM_XATTR_PORTABLE_DIGSIG)
+ 		crypto_shash_update(desc, &inode->i_sb->s_uuid.b[0],
+ 				    sizeof(inode->i_sb->s_uuid));
+ 	crypto_shash_final(desc, digest);
+@@ -189,6 +195,7 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ 	char *xattr_value = NULL;
+ 	int error;
+ 	int size;
++	bool ima_present = false;
  
--#define EVM_INIT_MASK (EVM_INIT_HMAC | EVM_INIT_X509 | EVM_SETUP)
-+#define EVM_KEY_MASK (EVM_INIT_HMAC | EVM_INIT_X509)
-+#define EVM_INIT_MASK (EVM_INIT_HMAC | EVM_INIT_X509 | EVM_SETUP_COMPLETE | \
-+		       EVM_ALLOW_METADATA_WRITES)
+ 	if (!(inode->i_opflags & IOP_XATTR))
+ 		return -EOPNOTSUPP;
+@@ -199,11 +206,18 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
  
- extern int evm_initialized;
- extern char *evm_hmac;
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 485f235234ab..938b3c2d0dd4 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -73,6 +73,11 @@ static void __init evm_init_config(void)
- 	pr_info("HMAC attrs: 0x%x\n", evm_hmac_attrs);
+ 	error = -ENODATA;
+ 	for (xattrname = evm_config_xattrnames; *xattrname != NULL; xattrname++) {
++		bool is_ima = false;
++
++		if (strcmp(*xattrname, XATTR_NAME_IMA) == 0)
++			is_ima = true;
++
+ 		if ((req_xattr_name && req_xattr_value)
+ 		    && !strcmp(*xattrname, req_xattr_name)) {
+ 			error = 0;
+ 			crypto_shash_update(desc, (const u8 *)req_xattr_value,
+ 					     req_xattr_value_len);
++			if (is_ima)
++				ima_present = true;
+ 			continue;
+ 		}
+ 		size = vfs_getxattr_alloc(dentry, *xattrname,
+@@ -218,9 +232,14 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ 		error = 0;
+ 		xattr_size = size;
+ 		crypto_shash_update(desc, (const u8 *)xattr_value, xattr_size);
++		if (is_ima)
++			ima_present = true;
+ 	}
+-	hmac_add_misc(desc, inode, digest);
++	hmac_add_misc(desc, inode, type, digest);
+ 
++	/* Portable EVM signatures must include an IMA hash */
++	if (type == EVM_XATTR_PORTABLE_DIGSIG && !ima_present)
++		return -EPERM;
+ out:
+ 	kfree(xattr_value);
+ 	kfree(desc);
+@@ -232,17 +251,45 @@ int evm_calc_hmac(struct dentry *dentry, const char *req_xattr_name,
+ 		  char *digest)
+ {
+ 	return evm_calc_hmac_or_hash(dentry, req_xattr_name, req_xattr_value,
+-				req_xattr_value_len, EVM_XATTR_HMAC, digest);
++			       req_xattr_value_len, EVM_XATTR_HMAC, digest);
  }
  
-+static bool evm_key_loaded(void)
-+{
-+	return (bool)(evm_initialized & EVM_KEY_MASK);
+ int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
+ 		  const char *req_xattr_value, size_t req_xattr_value_len,
+-		  char *digest)
++		  char type, char *digest)
+ {
+ 	return evm_calc_hmac_or_hash(dentry, req_xattr_name, req_xattr_value,
+-				req_xattr_value_len, IMA_XATTR_DIGEST, digest);
++				     req_xattr_value_len, type, digest);
 +}
 +
- static int evm_find_protected_xattrs(struct dentry *dentry)
- {
- 	struct inode *inode = d_backing_inode(dentry);
-@@ -243,7 +248,7 @@ enum integrity_status evm_verifyxattr(struct dentry *dentry,
- 				      void *xattr_value, size_t xattr_value_len,
- 				      struct integrity_iint_cache *iint)
- {
--	if (!evm_initialized || !evm_protected_xattr(xattr_name))
-+	if (!evm_key_loaded() || !evm_protected_xattr(xattr_name))
- 		return INTEGRITY_UNKNOWN;
- 
- 	if (!iint) {
-@@ -267,7 +272,7 @@ static enum integrity_status evm_verify_current_integrity(struct dentry *dentry)
- {
- 	struct inode *inode = d_backing_inode(dentry);
- 
--	if (!evm_initialized || !S_ISREG(inode->i_mode) || evm_fixmode)
-+	if (!evm_key_loaded() || !S_ISREG(inode->i_mode) || evm_fixmode)
- 		return 0;
- 	return evm_verify_hmac(dentry, NULL, NULL, 0, NULL);
++static int evm_is_immutable(struct dentry *dentry, struct inode *inode)
++{
++	const struct evm_ima_xattr_data *xattr_data = NULL;
++	struct integrity_iint_cache *iint;
++	int rc = 0;
++
++	iint = integrity_iint_find(inode);
++	if (iint && (iint->flags & EVM_IMMUTABLE_DIGSIG))
++		return 1;
++
++	/* Do this the hard way */
++	rc = vfs_getxattr_alloc(dentry, XATTR_NAME_EVM, (char **)&xattr_data, 0,
++				GFP_NOFS);
++	if (rc <= 0) {
++		if (rc == -ENODATA)
++			return 0;
++		return rc;
++	}
++	if (xattr_data->type == EVM_XATTR_PORTABLE_DIGSIG)
++		rc = 1;
++	else
++		rc = 0;
++
++	kfree(xattr_data);
++	return rc;
  }
-@@ -301,6 +306,7 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
- 			return 0;
- 		goto out;
- 	}
-+
- 	evm_status = evm_verify_current_integrity(dentry);
- 	if (evm_status == INTEGRITY_NOXATTRS) {
- 		struct integrity_iint_cache *iint;
-@@ -347,6 +353,12 @@ int evm_inode_setxattr(struct dentry *dentry, const char *xattr_name,
- {
- 	const struct evm_ima_xattr_data *xattr_data = xattr_value;
  
-+	/* Policy permits modification of the protected xattrs even though
-+	 * there's no HMAC key loaded
-+	 */
-+	if (evm_initialized & EVM_ALLOW_METADATA_WRITES)
-+		return 0;
 +
+ /*
+  * Calculate the hmac and update security.evm xattr
+  *
+@@ -255,6 +302,16 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
+ 	struct evm_ima_xattr_data xattr_data;
+ 	int rc = 0;
+ 
++	/*
++	 * Don't permit any transformation of the EVM xattr if the signature
++	 * is of an immutable type
++	 */
++	rc = evm_is_immutable(dentry, inode);
++	if (rc < 0)
++		return rc;
++	if (rc)
++		return -EPERM;
++
+ 	rc = evm_calc_hmac(dentry, xattr_name, xattr_value,
+ 			   xattr_value_len, xattr_data.digest);
+ 	if (rc == 0) {
+@@ -280,7 +337,7 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
+ 	}
+ 
+ 	crypto_shash_update(desc, lsm_xattr->value, lsm_xattr->value_len);
+-	hmac_add_misc(desc, inode, hmac_val);
++	hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
+ 	kfree(desc);
+ 	return 0;
+ }
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 063d38aef64e..485f235234ab 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -120,7 +120,8 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+ 	enum integrity_status evm_status = INTEGRITY_PASS;
+ 	int rc, xattr_len;
+ 
+-	if (iint && iint->evm_status == INTEGRITY_PASS)
++	if (iint && (iint->evm_status == INTEGRITY_PASS ||
++		     iint->evm_status == INTEGRITY_PASS_IMMUTABLE))
+ 		return iint->evm_status;
+ 
+ 	/* if status is not PASS, try to check again - against -ENOMEM */
+@@ -161,22 +162,26 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+ 			rc = -EINVAL;
+ 		break;
+ 	case EVM_IMA_XATTR_DIGSIG:
++	case EVM_XATTR_PORTABLE_DIGSIG:
+ 		rc = evm_calc_hash(dentry, xattr_name, xattr_value,
+-				xattr_value_len, calc.digest);
++				   xattr_value_len, xattr_data->type,
++				   calc.digest);
+ 		if (rc)
+ 			break;
+ 		rc = integrity_digsig_verify(INTEGRITY_KEYRING_EVM,
+ 					(const char *)xattr_data, xattr_len,
+ 					calc.digest, sizeof(calc.digest));
+ 		if (!rc) {
+-			/* Replace RSA with HMAC if not mounted readonly and
+-			 * not immutable
+-			 */
+-			if (!IS_RDONLY(d_backing_inode(dentry)) &&
+-			    !IS_IMMUTABLE(d_backing_inode(dentry)))
++			if (xattr_data->type == EVM_XATTR_PORTABLE_DIGSIG) {
++				if (iint)
++					iint->flags |= EVM_IMMUTABLE_DIGSIG;
++				evm_status = INTEGRITY_PASS_IMMUTABLE;
++			} else if (!IS_RDONLY(d_backing_inode(dentry)) &&
++				   !IS_IMMUTABLE(d_backing_inode(dentry))) {
+ 				evm_update_evmxattr(dentry, xattr_name,
+ 						    xattr_value,
+ 						    xattr_value_len);
++			}
+ 		}
+ 		break;
+ 	default:
+@@ -277,7 +282,7 @@ static enum integrity_status evm_verify_current_integrity(struct dentry *dentry)
+  * affect security.evm.  An interesting side affect of writing posix xattr
+  * acls is their modifying of the i_mode, which is included in security.evm.
+  * For posix xattr acls only, permit security.evm, even if it currently
+- * doesn't exist, to be updated.
++ * doesn't exist, to be updated unless the EVM signature is immutable.
+  */
+ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
+ 			     const void *xattr_value, size_t xattr_value_len)
+@@ -345,7 +350,8 @@ int evm_inode_setxattr(struct dentry *dentry, const char *xattr_name,
  	if (strcmp(xattr_name, XATTR_NAME_EVM) == 0) {
  		if (!xattr_value_len)
  			return -EINVAL;
-@@ -368,6 +380,12 @@ int evm_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+-		if (xattr_data->type != EVM_IMA_XATTR_DIGSIG)
++		if (xattr_data->type != EVM_IMA_XATTR_DIGSIG &&
++		    xattr_data->type != EVM_XATTR_PORTABLE_DIGSIG)
+ 			return -EPERM;
+ 	}
+ 	return evm_protect_xattr(dentry, xattr_name, xattr_value,
+@@ -422,6 +428,9 @@ void evm_inode_post_removexattr(struct dentry *dentry, const char *xattr_name)
+ /**
+  * evm_inode_setattr - prevent updating an invalid EVM extended attribute
+  * @dentry: pointer to the affected dentry
++ *
++ * Permit update of file attributes when files have a valid EVM signature,
++ * except in the case of them having an immutable portable signature.
   */
- int evm_inode_removexattr(struct dentry *dentry, const char *xattr_name)
+ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
  {
-+	/* Policy permits modification of the protected xattrs even though
-+	 * there's no HMAC key loaded
-+	 */
-+	if (evm_initialized & EVM_ALLOW_METADATA_WRITES)
-+		return 0;
-+
- 	return evm_protect_xattr(dentry, xattr_name, NULL, 0);
- }
- 
-@@ -396,8 +414,8 @@ static void evm_reset_status(struct inode *inode)
- void evm_inode_post_setxattr(struct dentry *dentry, const char *xattr_name,
- 			     const void *xattr_value, size_t xattr_value_len)
- {
--	if (!evm_initialized || (!evm_protected_xattr(xattr_name)
--				 && !posix_xattr_acl(xattr_name)))
-+	if (!evm_key_loaded() || (!evm_protected_xattr(xattr_name)
-+				  && !posix_xattr_acl(xattr_name)))
- 		return;
- 
- 	evm_reset_status(dentry->d_inode);
-@@ -417,7 +435,7 @@ void evm_inode_post_setxattr(struct dentry *dentry, const char *xattr_name,
-  */
- void evm_inode_post_removexattr(struct dentry *dentry, const char *xattr_name)
- {
--	if (!evm_initialized || !evm_protected_xattr(xattr_name))
-+	if (!evm_key_loaded() || !evm_protected_xattr(xattr_name))
- 		return;
- 
- 	evm_reset_status(dentry->d_inode);
-@@ -437,6 +455,12 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
- 	unsigned int ia_valid = attr->ia_valid;
- 	enum integrity_status evm_status;
- 
-+	/* Policy permits modification of the protected attrs even though
-+	 * there's no HMAC key loaded
-+	 */
-+	if (evm_initialized & EVM_ALLOW_METADATA_WRITES)
-+		return 0;
-+
- 	if (!(ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID)))
- 		return 0;
- 	evm_status = evm_verify_current_integrity(dentry);
-@@ -462,7 +486,7 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
-  */
- void evm_inode_post_setattr(struct dentry *dentry, int ia_valid)
- {
--	if (!evm_initialized)
-+	if (!evm_key_loaded())
- 		return;
- 
- 	if (ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID))
-@@ -479,7 +503,7 @@ int evm_inode_init_security(struct inode *inode,
- 	struct evm_ima_xattr_data *xattr_data;
- 	int rc;
- 
--	if (!evm_initialized || !evm_protected_xattr(lsm_xattr->name))
-+	if (!evm_key_loaded() || !evm_protected_xattr(lsm_xattr->name))
- 		return 0;
- 
- 	xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
-diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
-index 319cf16d6603..feba03bbedae 100644
---- a/security/integrity/evm/evm_secfs.c
-+++ b/security/integrity/evm/evm_secfs.c
-@@ -40,7 +40,7 @@ static ssize_t evm_read_key(struct file *filp, char __user *buf,
- 	if (*ppos != 0)
- 		return 0;
- 
--	sprintf(temp, "%d", (evm_initialized & ~EVM_SETUP));
-+	sprintf(temp, "%d", (evm_initialized & ~EVM_SETUP_COMPLETE));
- 	rc = simple_read_from_buffer(buf, count, ppos, temp, strlen(temp));
- 
- 	return rc;
-@@ -63,7 +63,7 @@ static ssize_t evm_write_key(struct file *file, const char __user *buf,
- {
- 	int i, ret;
- 
--	if (!capable(CAP_SYS_ADMIN) || (evm_initialized & EVM_SETUP))
-+	if (!capable(CAP_SYS_ADMIN) || (evm_initialized & EVM_SETUP_COMPLETE))
- 		return -EPERM;
- 
- 	ret = kstrtoint_from_user(buf, count, 0, &i);
-@@ -75,16 +75,30 @@ static ssize_t evm_write_key(struct file *file, const char __user *buf,
- 	if (!i || (i & ~EVM_INIT_MASK) != 0)
- 		return -EINVAL;
- 
-+	/* Don't allow a request to freshly enable metadata writes if
-+	 * keys are loaded.
-+	 */
-+	if ((i & EVM_ALLOW_METADATA_WRITES) &&
-+	    ((evm_initialized & EVM_KEY_MASK) != 0) &&
-+	    !(evm_initialized & EVM_ALLOW_METADATA_WRITES))
-+		return -EPERM;
-+
- 	if (i & EVM_INIT_HMAC) {
- 		ret = evm_init_key();
- 		if (ret != 0)
- 			return ret;
- 		/* Forbid further writes after the symmetric key is loaded */
--		i |= EVM_SETUP;
-+		i |= EVM_SETUP_COMPLETE;
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 809ba70fbbbf..8336c70dc6bc 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -229,7 +229,9 @@ int ima_appraise_measurement(enum ima_hooks func,
  	}
  
- 	evm_initialized |= i;
+ 	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
+-	if ((status != INTEGRITY_PASS) && (status != INTEGRITY_UNKNOWN)) {
++	if ((status != INTEGRITY_PASS) &&
++	    (status != INTEGRITY_PASS_IMMUTABLE) &&
++	    (status != INTEGRITY_UNKNOWN)) {
+ 		if ((status == INTEGRITY_NOLABEL)
+ 		    || (status == INTEGRITY_NOXATTRS))
+ 			cause = "missing-HMAC";
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index a53e7e4ab06c..cbc7de33fac7 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -33,6 +33,7 @@
+ #define IMA_DIGSIG_REQUIRED	0x02000000
+ #define IMA_PERMIT_DIRECTIO	0x04000000
+ #define IMA_NEW_FILE		0x08000000
++#define EVM_IMMUTABLE_DIGSIG	0x10000000
  
-+	/* Don't allow protected metadata modification if a symmetric key
-+	 * is loaded
-+	 */
-+	if (evm_initialized & EVM_INIT_HMAC)
-+		evm_initialized &= ~(EVM_ALLOW_METADATA_WRITES);
-+
- 	return count;
- }
+ #define IMA_DO_MASK		(IMA_MEASURE | IMA_APPRAISE | IMA_AUDIT | \
+ 				 IMA_APPRAISE_SUBMASK)
+@@ -58,6 +59,7 @@ enum evm_ima_xattr_type {
+ 	EVM_XATTR_HMAC,
+ 	EVM_IMA_XATTR_DIGSIG,
+ 	IMA_XATTR_DIGEST_NG,
++	EVM_XATTR_PORTABLE_DIGSIG,
+ 	IMA_XATTR_LAST
+ };
  
 -- 
 2.15.0.403.gc27cc4dac6-goog
