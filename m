@@ -1,18 +1,18 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from lhrrgout.huawei.com ([194.213.3.17]:39778 "EHLO
+Received: from lhrrgout.huawei.com ([194.213.3.17]:39779 "EHLO
         lhrrgout.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751749AbdKGKml (ORCPT
+        with ESMTP id S1750770AbdKGKnR (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 7 Nov 2017 05:42:41 -0500
+        Tue, 7 Nov 2017 05:43:17 -0500
 From: Roberto Sassu <roberto.sassu@huawei.com>
 To: <linux-integrity@vger.kernel.org>
 CC: <linux-security-module@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v2 07/15] ima: add parser of compact digest list
-Date: Tue, 7 Nov 2017 11:37:02 +0100
-Message-ID: <20171107103710.10883-8-roberto.sassu@huawei.com>
+Subject: [PATCH v2 08/15] ima: add parser of RPM package headers
+Date: Tue, 7 Nov 2017 11:37:03 +0100
+Message-ID: <20171107103710.10883-9-roberto.sassu@huawei.com>
 In-Reply-To: <20171107103710.10883-1-roberto.sassu@huawei.com>
 References: <20171107103710.10883-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
@@ -20,104 +20,158 @@ Content-Type: text/plain
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-This patch introduces the parser for the compact digest list.
-Its format is:
+This patch introduces a parser of RPM package headers. It extracts the
+digests from the RPMTAG_FILEDIGESTS header section and converts them to
+binary data before adding them to the hash table.
 
-entry_id[2] count[4] data_len[4]
-data[data_len]
-entry_id[2] count[4] data_len[4]
-data[data_len]
-...
+The advantage of this data type is that verifiers can determine who
+produced that data, as headers are signed by Linux distribution vendors.
+RPM header signatures can be provided as digest list metadata.
 
-entry_id, count and data_len are in little endian.
-
-This format is suitable to store a large number of digests, as there is no
-metadata provided for each. Digests (which have all the same size) are
-concatenated together and placed after the header.
-
-COMPACT_DIGEST (0) and COMPACT_DIGEST_MUTABLE (1) entry IDs are supported.
-
-If the entry ID is COMPACT_DIGEST and appraisal is in enforcing mode, file
-updates are denied. If the entry ID is COMPACT_DIGEST_MUTABLE, file updates
-are permitted.
+The parser also checks the RPMTAG_FILEMODES section. If the file is not
+executable, the setuid/setgid/sticky bits are not set and has write
+permission, the digest is marked as mutable (file updates are permitted if
+appraisal is in enforcing mode).
 
 Changelog
 
 v1:
-- Renamed COMPACT_LIST_ID_DIGEST to COMPACT_DIGEST
+- Moved parser of file digests outside the first loop
 - Added support for immutable/mutable files
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- security/integrity/ima/ima_digest_list.c | 66 ++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+ security/integrity/ima/ima_digest_list.c | 110 ++++++++++++++++++++++++++++++-
+ 1 file changed, 109 insertions(+), 1 deletion(-)
 
 diff --git a/security/integrity/ima/ima_digest_list.c b/security/integrity/ima/ima_digest_list.c
-index 28172424e5a2..6ad00ba32c94 100644
+index 6ad00ba32c94..664a4994efbb 100644
 --- a/security/integrity/ima/ima_digest_list.c
 +++ b/security/integrity/ima/ima_digest_list.c
-@@ -23,6 +23,69 @@ enum digest_metadata_fields {DATA_ALGO, DATA_DIGEST, DATA_SIGNATURE,
+@@ -19,11 +19,14 @@
+ #include "ima.h"
+ #include "ima_template_lib.h"
+ 
++#define RPMTAG_FILEDIGESTS 1035
++#define RPMTAG_FILEMODES 1030
++
+ enum digest_metadata_fields {DATA_ALGO, DATA_DIGEST, DATA_SIGNATURE,
  			     DATA_FILE_PATH, DATA_REF_ID, DATA_TYPE,
  			     DATA__LAST};
  
-+enum digest_data_types {DATA_TYPE_COMPACT_LIST};
-+
-+enum compact_list_entry_ids {COMPACT_DIGEST, COMPACT_DIGEST_MUTABLE};
-+
-+struct compact_list_hdr {
-+	u16 entry_id;
-+	u32 count;
-+	u32 datalen;
+-enum digest_data_types {DATA_TYPE_COMPACT_LIST};
++enum digest_data_types {DATA_TYPE_COMPACT_LIST, DATA_TYPE_RPM};
+ 
+ enum compact_list_entry_ids {COMPACT_DIGEST, COMPACT_DIGEST_MUTABLE};
+ 
+@@ -33,6 +36,20 @@ struct compact_list_hdr {
+ 	u32 datalen;
+ } __packed;
+ 
++struct rpm_hdr {
++	u32 magic;
++	u32 reserved;
++	u32 tags;
++	u32 datasize;
 +} __packed;
 +
-+static int ima_parse_compact_list(loff_t size, void *buf)
++struct rpm_entryinfo {
++	int32_t tag;
++	u32 type;
++	int32_t offset;
++	u32 count;
++} __packed;
++
+ static int ima_parse_compact_list(loff_t size, void *buf)
+ {
+ 	void *bufp = buf, *bufendp = buf + size;
+@@ -86,6 +103,94 @@ static int ima_parse_compact_list(loff_t size, void *buf)
+ 	return 0;
+ }
+ 
++static int ima_parse_rpm(loff_t size, void *buf)
 +{
 +	void *bufp = buf, *bufendp = buf + size;
++	struct rpm_hdr *hdr = bufp;
++	u32 tags = be32_to_cpu(hdr->tags);
++	struct rpm_entryinfo *entry;
++	void *datap = bufp + sizeof(*hdr) + tags * sizeof(struct rpm_entryinfo);
++	void *digests = NULL, *modes = NULL;
++	u32 digests_count, modes_count;
 +	int digest_len = hash_digest_size[ima_hash_algo];
-+	struct compact_list_hdr *hdr;
-+	u8 is_mutable = 0;
++	u8 digest[digest_len];
 +	int ret, i;
 +
-+	while (bufp < bufendp) {
-+		if (bufp + sizeof(*hdr) > bufendp) {
-+			pr_err("compact list, missing header\n");
-+			return -EINVAL;
++	const unsigned char rpm_header_magic[8] = {
++		0x8e, 0xad, 0xe8, 0x01, 0x00, 0x00, 0x00, 0x00
++	};
++
++	if (size < sizeof(*hdr)) {
++		pr_err("Missing RPM header\n");
++		return -EINVAL;
++	}
++
++	if (memcmp(bufp, rpm_header_magic, sizeof(rpm_header_magic))) {
++		pr_err("Invalid RPM header\n");
++		return -EINVAL;
++	}
++
++	bufp += sizeof(*hdr);
++
++	for (i = 0; i < tags && (bufp + sizeof(*entry)) <= bufendp;
++	     i++, bufp += sizeof(*entry)) {
++		entry = bufp;
++
++		if (be32_to_cpu(entry->tag) == RPMTAG_FILEDIGESTS) {
++			digests = datap + be32_to_cpu(entry->offset);
++			digests_count = be32_to_cpu(entry->count);
 +		}
-+
-+		hdr = bufp;
-+
-+		if (ima_canonical_fmt) {
-+			hdr->entry_id = le16_to_cpu(hdr->entry_id);
-+			hdr->count = le32_to_cpu(hdr->count);
-+			hdr->datalen = le32_to_cpu(hdr->datalen);
++		if (be32_to_cpu(entry->tag) == RPMTAG_FILEMODES) {
++			modes = datap + be32_to_cpu(entry->offset);
++			modes_count = be32_to_cpu(entry->count);
 +		}
-+
-+		switch (hdr->entry_id) {
-+		case COMPACT_DIGEST_MUTABLE:
-+			is_mutable = 1;
-+		case COMPACT_DIGEST:
++		if (digests && modes)
 +			break;
-+		default:
-+			pr_err("compact list, invalid data type\n");
++	}
++
++	if (digests == NULL)
++		return 0;
++
++	for (i = 0; i < digests_count && digests < bufendp; i++) {
++		u8 is_mutable = 0;
++		u16 mode;
++
++		if (strlen(digests) == 0) {
++			digests++;
++			continue;
++		}
++
++		if (modes) {
++			if (modes + (i + 1) * sizeof(mode) > bufendp) {
++				pr_err("RPM header read at invalid offset\n");
++				return -EINVAL;
++			}
++
++			mode = be16_to_cpu(*(u16 *)(modes + i * sizeof(mode)));
++			if (!(mode & (S_IXUGO | S_ISUID | S_ISGID | S_ISVTX)) &&
++			    (mode & S_IWUGO))
++				is_mutable = 1;
++		}
++
++		if (digests + digest_len * 2 + 1 > bufendp) {
++			pr_err("RPM header read at invalid offset\n");
 +			return -EINVAL;
 +		}
 +
-+		bufp += sizeof(*hdr);
-+
-+		for (i = 0; i < hdr->count &&
-+		     bufp + digest_len <= bufendp; i++) {
-+			ret = ima_add_digest_data_entry(bufp, is_mutable);
-+			if (ret < 0 && ret != -EEXIST)
-+				return ret;
-+
-+			bufp += digest_len;
-+		}
-+
-+		if (i != hdr->count ||
-+		    bufp != (void *)hdr + sizeof(*hdr) + hdr->datalen) {
-+			pr_err("compact list, invalid data\n");
++		ret = hex2bin(digest, digests, digest_len);
++		if (ret < 0)
 +			return -EINVAL;
-+		}
++
++		ret = ima_add_digest_data_entry(digest, is_mutable);
++		if (ret < 0 && ret != -EEXIST)
++			return ret;
++
++		digests += digest_len * 2 + 1;
 +	}
 +
 +	return 0;
@@ -126,12 +180,12 @@ index 28172424e5a2..6ad00ba32c94 100644
  static int ima_parse_digest_list_data(struct ima_field_data *data)
  {
  	void *digest_list;
-@@ -47,6 +110,9 @@ static int ima_parse_digest_list_data(struct ima_field_data *data)
- 	}
- 
- 	switch (data_type) {
-+	case DATA_TYPE_COMPACT_LIST:
-+		ret = ima_parse_compact_list(digest_list_size, digest_list);
+@@ -113,6 +218,9 @@ static int ima_parse_digest_list_data(struct ima_field_data *data)
+ 	case DATA_TYPE_COMPACT_LIST:
+ 		ret = ima_parse_compact_list(digest_list_size, digest_list);
+ 		break;
++	case DATA_TYPE_RPM:
++		ret = ima_parse_rpm(digest_list_size, digest_list);
 +		break;
  	default:
  		pr_err("Parser for data type %d not implemented\n", data_type);
