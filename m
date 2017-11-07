@@ -1,18 +1,18 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from lhrrgout.huawei.com ([194.213.3.17]:39772 "EHLO
+Received: from lhrrgout.huawei.com ([194.213.3.17]:39776 "EHLO
         lhrrgout.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757038AbdKGKjd (ORCPT
+        with ESMTP id S1752785AbdKGKlk (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 7 Nov 2017 05:39:33 -0500
+        Tue, 7 Nov 2017 05:41:40 -0500
 From: Roberto Sassu <roberto.sassu@huawei.com>
 To: <linux-integrity@vger.kernel.org>
 CC: <linux-security-module@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v2 01/15] ima: generalize ima_read_policy()
-Date: Tue, 7 Nov 2017 11:36:56 +0100
-Message-ID: <20171107103710.10883-2-roberto.sassu@huawei.com>
+Subject: [PATCH v2 05/15] ima: add functions to manage digest lists
+Date: Tue, 7 Nov 2017 11:37:00 +0100
+Message-ID: <20171107103710.10883-6-roberto.sassu@huawei.com>
 In-Reply-To: <20171107103710.10883-1-roberto.sassu@huawei.com>
 References: <20171107103710.10883-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
@@ -20,64 +20,117 @@ Content-Type: text/plain
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Rename ima_read_policy() to ima_read_file(), and add file_id as new
-parameter. If file_id is equal to READING_POLICY, ima_read_file() behavior
-remains unchanged. ima_read_file() will be used to read digest list
-metadata.
+This patch first introduces a new structure called ima_digest, which
+contains a digest parsed from a digest list. It has been preferred to
+ima_queue_entry, as the existing structure includes an additional member
+(a list head), which is not necessary for digest lookup. It also introduces
+the is_mutable field, which indicates if a file with a given digest can be
+updated or not.
+
+Finally, this patch introduces functions to lookup and add a digest to the
+new ima_digests_htable hash table.
+
+Changelog
+
+v1:
+- added support for immutable/mutable files
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- security/integrity/ima/ima_fs.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ security/integrity/ima/ima.h       |  9 ++++++++
+ security/integrity/ima/ima_queue.c | 42 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 51 insertions(+)
 
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index fa540c0469da..27de4558303e 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -272,7 +272,7 @@ static const struct file_operations ima_ascii_measurements_ops = {
- 	.release = seq_release,
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index d52b487ad259..1f6591a57fea 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -107,6 +107,12 @@ struct ima_queue_entry {
+ };
+ extern struct list_head ima_measurements;	/* list of all measurements */
+ 
++struct ima_digest {
++	struct hlist_node hnext;
++	u8 is_mutable;
++	u8 digest[0];
++};
++
+ /* Some details preceding the binary serialized measurement list */
+ struct ima_kexec_hdr {
+ 	u16 version;
+@@ -150,6 +156,8 @@ void ima_print_digest(struct seq_file *m, u8 *digest, u32 size);
+ struct ima_template_desc *ima_template_desc_current(void);
+ int ima_restore_measurement_entry(struct ima_template_entry *entry);
+ int ima_restore_measurement_list(loff_t bufsize, void *buf);
++struct ima_digest *ima_lookup_loaded_digest(u8 *digest);
++int ima_add_digest_data_entry(u8 *digest, u8 is_mutable);
+ int ima_measurements_show(struct seq_file *m, void *v);
+ unsigned long ima_get_binary_runtime_size(void);
+ int ima_init_template(void);
+@@ -166,6 +174,7 @@ struct ima_h_table {
+ 	struct hlist_head queue[IMA_MEASURE_HTABLE_SIZE];
+ };
+ extern struct ima_h_table ima_htable;
++extern struct ima_h_table ima_digests_htable;
+ 
+ static inline unsigned long ima_hash_key(u8 *digest)
+ {
+diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+index a02a86d51102..96c91c413430 100644
+--- a/security/integrity/ima/ima_queue.c
++++ b/security/integrity/ima/ima_queue.c
+@@ -42,6 +42,11 @@ struct ima_h_table ima_htable = {
+ 	.queue[0 ... IMA_MEASURE_HTABLE_SIZE - 1] = HLIST_HEAD_INIT
  };
  
--static ssize_t ima_read_policy(char *path)
-+static ssize_t ima_read_file(char *path, enum kernel_read_file_id file_id)
- {
- 	void *data;
- 	char *datap;
-@@ -285,16 +285,22 @@ static ssize_t ima_read_policy(char *path)
- 	datap = path;
- 	strsep(&datap, "\n");
- 
--	rc = kernel_read_file_from_path(path, &data, &size, 0, READING_POLICY);
-+	rc = kernel_read_file_from_path(path, &data, &size, 0, file_id);
- 	if (rc < 0) {
- 		pr_err("Unable to open file: %s (%d)", path, rc);
- 		return rc;
- 	}
- 
- 	datap = data;
--	while (size > 0 && (p = strsep(&datap, "\n"))) {
--		pr_debug("rule: %s\n", p);
--		rc = ima_parse_add_rule(p);
-+	while (size > 0) {
-+		if (file_id == READING_POLICY) {
-+			p = strsep(&datap, "\n");
-+			if (p == NULL)
-+				break;
++struct ima_h_table ima_digests_htable = {
++	.len = ATOMIC_LONG_INIT(0),
++	.queue[0 ... IMA_MEASURE_HTABLE_SIZE - 1] = HLIST_HEAD_INIT
++};
 +
-+			pr_debug("rule: %s\n", p);
-+			rc = ima_parse_add_rule(p);
-+		}
- 		if (rc < 0)
- 			break;
- 		size -= rc;
-@@ -334,7 +340,7 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
- 		goto out_free;
- 
- 	if (data[0] == '/') {
--		result = ima_read_policy(data);
-+		result = ima_read_file(data, READING_POLICY);
- 	} else if (ima_appraise & IMA_APPRAISE_POLICY) {
- 		pr_err("IMA: signed policy file (specified as an absolute pathname) required\n");
- 		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL, NULL,
+ /* mutex protects atomicity of extending measurement list
+  * and extending the TPM PCR aggregate. Since tpm_extend can take
+  * long (and the tpm driver uses a mutex), we can't use the spinlock.
+@@ -212,3 +217,40 @@ int ima_restore_measurement_entry(struct ima_template_entry *entry)
+ 	mutex_unlock(&ima_extend_list_mutex);
+ 	return result;
+ }
++
++struct ima_digest *ima_lookup_loaded_digest(u8 *digest)
++{
++	struct ima_digest *d = NULL;
++	int digest_len = hash_digest_size[ima_hash_algo];
++	unsigned int key = ima_hash_key(digest);
++
++	rcu_read_lock();
++	hlist_for_each_entry_rcu(d, &ima_digests_htable.queue[key], hnext) {
++		if (memcmp(d->digest, digest, digest_len) == 0)
++			break;
++	}
++	rcu_read_unlock();
++	return d;
++}
++
++int ima_add_digest_data_entry(u8 *digest, u8 is_mutable)
++{
++	struct ima_digest *d = ima_lookup_loaded_digest(digest);
++	int digest_len = hash_digest_size[ima_hash_algo];
++	unsigned int key = ima_hash_key(digest);
++
++	if (d) {
++		d->is_mutable = is_mutable;
++		return -EEXIST;
++	}
++
++	d = kmalloc(sizeof(*d) + digest_len, GFP_KERNEL);
++	if (d == NULL)
++		return -ENOMEM;
++
++	d->is_mutable = is_mutable;
++	memcpy(d->digest, digest, digest_len);
++	hlist_add_head_rcu(&d->hnext, &ima_digests_htable.queue[key]);
++	atomic_long_inc(&ima_digests_htable.len);
++	return 0;
++}
 -- 
 2.11.0
