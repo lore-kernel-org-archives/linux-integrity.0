@@ -1,55 +1,309 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-it0-f53.google.com ([209.85.214.53]:46197 "EHLO
-        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753273AbdKGQEG (ORCPT
+Received: from mail-oi0-f74.google.com ([209.85.218.74]:42493 "EHLO
+        mail-oi0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932771AbdKGPSj (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 7 Nov 2017 11:04:06 -0500
-Received: by mail-it0-f53.google.com with SMTP id f187so3035849itb.1
-        for <linux-integrity@vger.kernel.org>; Tue, 07 Nov 2017 08:04:06 -0800 (PST)
-Date: Tue, 7 Nov 2017 09:04:04 -0700
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:INTEGRITY MEASUREMENT ARCHITECTURE (IMA)"
-        <linux-security-module@vger.kernel.org>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
-        <linux-crypto@vger.kernel.org>,
-        James Morris <james.l.morris@oracle.com>,
-        Matt Mackall <mpm@selenic.com>,
-        David Safford <safford@us.ibm.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH v2] tpm: Move Linux RNG connection to hwrng
-Message-ID: <20171107160404.GG21466@ziepe.ca>
-References: <20171031200503.GC18578@ziepe.ca>
- <20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
- <20171106022704.GD26011@ziepe.ca>
- <CANc+2y6dx_2zOzFA5aFs7RpEV8aNqxpDghmx+q_+XyendYJoew@mail.gmail.com>
+        Tue, 7 Nov 2017 10:18:39 -0500
+Received: by mail-oi0-f74.google.com with SMTP id f66so13225571oib.1
+        for <linux-integrity@vger.kernel.org>; Tue, 07 Nov 2017 07:18:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CANc+2y6dx_2zOzFA5aFs7RpEV8aNqxpDghmx+q_+XyendYJoew@mail.gmail.com>
+Date: Tue,  7 Nov 2017 07:18:35 -0800
+Message-Id: <20171107151835.25730-1-mjg59@google.com>
+Subject: [PATCH V4] EVM: Allow userland to permit modification of
+ EVM-protected metadata
+From: Matthew Garrett <mjg59@google.com>
+To: linux-integrity@vger.kernel.org
+Cc: zohar@linux.vnet.ibm.com, Matthew Garrett <mjg59@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Nov 07, 2017 at 08:50:44AM +0530, PrasannaKumar Muralidharan wrote:
+When EVM is enabled it forbids modification of metadata are protected by
+EVM unless there is already a valid EVM signature. If any modification
+is made, the kernel will then generate a new EVM HMAC. However, this
+does not map well on use cases which use only asymmetric EVM signatures,
+as in this scenario the kernel is unable to generate new signatures.
 
-> I am assuming you are talking about the following patches - using
-> struct tpm_chip instead of chip number and this patch.
+This patch extends the /sys/kernel/security/evm interface to allow
+userland to request that modification of these xattrs be permitted. This
+is only permitted if no keys have already been loaded. In this
+configuration, modifying the metadata will invalidate the EVM appraisal
+on the file in question. This allows packaging systems to write out new
+files, set the relevant extended attributes and then move them into
+place.
 
-yes
+There's also some refactoring of the use of evm_initialized in order to
+avoid heading down codepaths that assume there's a key available.
 
-> I won't be able to test if struct tpm_chip usage as I don't have
-> multiple tpm hw in one machine. In case of tpm rng changes I can test
-> only the lifecycle of tpm rng device. Is that enough? I feel my test
-> will be limited. Please provide your thoughts on this.
+Signed-off-by: Matthew Garrett <mjg59@google.com>
+---
 
-That is certainly better than no testing.
+Minor updates based on Mimi's feedback, no functional changes.
 
-Jason
+ Documentation/ABI/testing/evm      | 51 +++++++++++++++++++++++++-------------
+ security/integrity/evm/evm.h       |  7 ++++--
+ security/integrity/evm/evm_main.c  | 38 ++++++++++++++++++++++------
+ security/integrity/evm/evm_secfs.c | 20 ++++++++++++---
+ 4 files changed, 87 insertions(+), 29 deletions(-)
+
+diff --git a/Documentation/ABI/testing/evm b/Documentation/ABI/testing/evm
+index d2782afb0d96..b0f54fe8d0c6 100644
+--- a/Documentation/ABI/testing/evm
++++ b/Documentation/ABI/testing/evm
+@@ -14,28 +14,45 @@ Description:
+ 		generated either locally or remotely using an
+ 		asymmetric key. These keys are loaded onto root's
+ 		keyring using keyctl, and EVM is then enabled by
+-		echoing a value to <securityfs>/evm:
++		echoing a value to <securityfs>/evm made up of the
++		following bits:
+ 
+-		1: enable HMAC validation and creation
+-		2: enable digital signature validation
+-		3: enable HMAC and digital signature validation and HMAC
+-		   creation
++		Bit	  Effect
++		0	  Enable HMAC validation and creation
++		1	  Enable digital signature validation
++		2	  Permit modification of EVM-protected metadata at
++			  runtime. Not supported if HMAC validation and
++			  creation is enabled.
++		31	  Disable further runtime modification of EVM policy
+ 
+-		Further writes will be blocked if HMAC support is enabled or
+-		if bit 32 is set:
++		For example:
+ 
+-		echo 0x80000002 ><securityfs>/evm
++		echo 1 ><securityfs>/evm
+ 
+-		will enable digital signature validation and block
+-		further writes to <securityfs>/evm.
++		will enable HMAC validation and creation
+ 
+-		Until this is done, EVM can not create or validate the
+-		'security.evm' xattr, but returns INTEGRITY_UNKNOWN.
+-		Loading keys and signaling EVM should be done as early
+-		as possible.  Normally this is done in the initramfs,
+-		which has already been measured as part of the trusted
+-		boot.  For more information on creating and loading
+-		existing trusted/encrypted keys, refer to:
++		echo 0x80000003 ><securityfs>/evm
++
++		will enable HMAC and digital signature validation and
++		HMAC creation and disable all further modification of policy.
++
++		echo 0x80000006 ><securityfs>/evm
++
++		will enable digital signature validation, permit
++		modification of EVM-protected metadata and
++		disable all further modification of policy
++
++		Note that once a key has been loaded, it will no longer be
++		possible to enable metadata modification.
++
++		Until key loading has been signaled EVM can not create
++		or validate the 'security.evm' xattr, but returns
++		INTEGRITY_UNKNOWN.  Loading keys and signaling EVM
++		should be done as early as possible.  Normally this is
++		done in the initramfs, which has already been measured
++		as part of the trusted boot.  For more information on
++		creating and loading existing trusted/encrypted keys,
++		refer to:
+ 		Documentation/keys-trusted-encrypted.txt. Both dracut
+ 		(via 97masterkey and 98integrity) and systemd (via
+ 		core/ima-setup) have support for loading keys at boot
+diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
+index 946efffcc389..04825393facb 100644
+--- a/security/integrity/evm/evm.h
++++ b/security/integrity/evm/evm.h
+@@ -23,9 +23,12 @@
+ 
+ #define EVM_INIT_HMAC	0x0001
+ #define EVM_INIT_X509	0x0002
+-#define EVM_SETUP       0x80000000 /* userland has signaled key load */
++#define EVM_ALLOW_METADATA_WRITES	0x0004
++#define EVM_SETUP_COMPLETE 0x80000000 /* userland has signaled key load */
+ 
+-#define EVM_INIT_MASK (EVM_INIT_HMAC | EVM_INIT_X509 | EVM_SETUP)
++#define EVM_KEY_MASK (EVM_INIT_HMAC | EVM_INIT_X509)
++#define EVM_INIT_MASK (EVM_INIT_HMAC | EVM_INIT_X509 | EVM_SETUP_COMPLETE | \
++		       EVM_ALLOW_METADATA_WRITES)
+ 
+ extern int evm_initialized;
+ extern char *evm_hmac;
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 485f235234ab..938b3c2d0dd4 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -73,6 +73,11 @@ static void __init evm_init_config(void)
+ 	pr_info("HMAC attrs: 0x%x\n", evm_hmac_attrs);
+ }
+ 
++static bool evm_key_loaded(void)
++{
++	return (bool)(evm_initialized & EVM_KEY_MASK);
++}
++
+ static int evm_find_protected_xattrs(struct dentry *dentry)
+ {
+ 	struct inode *inode = d_backing_inode(dentry);
+@@ -243,7 +248,7 @@ enum integrity_status evm_verifyxattr(struct dentry *dentry,
+ 				      void *xattr_value, size_t xattr_value_len,
+ 				      struct integrity_iint_cache *iint)
+ {
+-	if (!evm_initialized || !evm_protected_xattr(xattr_name))
++	if (!evm_key_loaded() || !evm_protected_xattr(xattr_name))
+ 		return INTEGRITY_UNKNOWN;
+ 
+ 	if (!iint) {
+@@ -267,7 +272,7 @@ static enum integrity_status evm_verify_current_integrity(struct dentry *dentry)
+ {
+ 	struct inode *inode = d_backing_inode(dentry);
+ 
+-	if (!evm_initialized || !S_ISREG(inode->i_mode) || evm_fixmode)
++	if (!evm_key_loaded() || !S_ISREG(inode->i_mode) || evm_fixmode)
+ 		return 0;
+ 	return evm_verify_hmac(dentry, NULL, NULL, 0, NULL);
+ }
+@@ -301,6 +306,7 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
+ 			return 0;
+ 		goto out;
+ 	}
++
+ 	evm_status = evm_verify_current_integrity(dentry);
+ 	if (evm_status == INTEGRITY_NOXATTRS) {
+ 		struct integrity_iint_cache *iint;
+@@ -347,6 +353,12 @@ int evm_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+ {
+ 	const struct evm_ima_xattr_data *xattr_data = xattr_value;
+ 
++	/* Policy permits modification of the protected xattrs even though
++	 * there's no HMAC key loaded
++	 */
++	if (evm_initialized & EVM_ALLOW_METADATA_WRITES)
++		return 0;
++
+ 	if (strcmp(xattr_name, XATTR_NAME_EVM) == 0) {
+ 		if (!xattr_value_len)
+ 			return -EINVAL;
+@@ -368,6 +380,12 @@ int evm_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+  */
+ int evm_inode_removexattr(struct dentry *dentry, const char *xattr_name)
+ {
++	/* Policy permits modification of the protected xattrs even though
++	 * there's no HMAC key loaded
++	 */
++	if (evm_initialized & EVM_ALLOW_METADATA_WRITES)
++		return 0;
++
+ 	return evm_protect_xattr(dentry, xattr_name, NULL, 0);
+ }
+ 
+@@ -396,8 +414,8 @@ static void evm_reset_status(struct inode *inode)
+ void evm_inode_post_setxattr(struct dentry *dentry, const char *xattr_name,
+ 			     const void *xattr_value, size_t xattr_value_len)
+ {
+-	if (!evm_initialized || (!evm_protected_xattr(xattr_name)
+-				 && !posix_xattr_acl(xattr_name)))
++	if (!evm_key_loaded() || (!evm_protected_xattr(xattr_name)
++				  && !posix_xattr_acl(xattr_name)))
+ 		return;
+ 
+ 	evm_reset_status(dentry->d_inode);
+@@ -417,7 +435,7 @@ void evm_inode_post_setxattr(struct dentry *dentry, const char *xattr_name,
+  */
+ void evm_inode_post_removexattr(struct dentry *dentry, const char *xattr_name)
+ {
+-	if (!evm_initialized || !evm_protected_xattr(xattr_name))
++	if (!evm_key_loaded() || !evm_protected_xattr(xattr_name))
+ 		return;
+ 
+ 	evm_reset_status(dentry->d_inode);
+@@ -437,6 +455,12 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
+ 	unsigned int ia_valid = attr->ia_valid;
+ 	enum integrity_status evm_status;
+ 
++	/* Policy permits modification of the protected attrs even though
++	 * there's no HMAC key loaded
++	 */
++	if (evm_initialized & EVM_ALLOW_METADATA_WRITES)
++		return 0;
++
+ 	if (!(ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID)))
+ 		return 0;
+ 	evm_status = evm_verify_current_integrity(dentry);
+@@ -462,7 +486,7 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
+  */
+ void evm_inode_post_setattr(struct dentry *dentry, int ia_valid)
+ {
+-	if (!evm_initialized)
++	if (!evm_key_loaded())
+ 		return;
+ 
+ 	if (ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID))
+@@ -479,7 +503,7 @@ int evm_inode_init_security(struct inode *inode,
+ 	struct evm_ima_xattr_data *xattr_data;
+ 	int rc;
+ 
+-	if (!evm_initialized || !evm_protected_xattr(lsm_xattr->name))
++	if (!evm_key_loaded() || !evm_protected_xattr(lsm_xattr->name))
+ 		return 0;
+ 
+ 	xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
+diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
+index 319cf16d6603..feba03bbedae 100644
+--- a/security/integrity/evm/evm_secfs.c
++++ b/security/integrity/evm/evm_secfs.c
+@@ -40,7 +40,7 @@ static ssize_t evm_read_key(struct file *filp, char __user *buf,
+ 	if (*ppos != 0)
+ 		return 0;
+ 
+-	sprintf(temp, "%d", (evm_initialized & ~EVM_SETUP));
++	sprintf(temp, "%d", (evm_initialized & ~EVM_SETUP_COMPLETE));
+ 	rc = simple_read_from_buffer(buf, count, ppos, temp, strlen(temp));
+ 
+ 	return rc;
+@@ -63,7 +63,7 @@ static ssize_t evm_write_key(struct file *file, const char __user *buf,
+ {
+ 	int i, ret;
+ 
+-	if (!capable(CAP_SYS_ADMIN) || (evm_initialized & EVM_SETUP))
++	if (!capable(CAP_SYS_ADMIN) || (evm_initialized & EVM_SETUP_COMPLETE))
+ 		return -EPERM;
+ 
+ 	ret = kstrtoint_from_user(buf, count, 0, &i);
+@@ -75,16 +75,30 @@ static ssize_t evm_write_key(struct file *file, const char __user *buf,
+ 	if (!i || (i & ~EVM_INIT_MASK) != 0)
+ 		return -EINVAL;
+ 
++	/* Don't allow a request to freshly enable metadata writes if
++	 * keys are loaded.
++	 */
++	if ((i & EVM_ALLOW_METADATA_WRITES) &&
++	    ((evm_initialized & EVM_KEY_MASK) != 0) &&
++	    !(evm_initialized & EVM_ALLOW_METADATA_WRITES))
++		return -EPERM;
++
+ 	if (i & EVM_INIT_HMAC) {
+ 		ret = evm_init_key();
+ 		if (ret != 0)
+ 			return ret;
+ 		/* Forbid further writes after the symmetric key is loaded */
+-		i |= EVM_SETUP;
++		i |= EVM_SETUP_COMPLETE;
+ 	}
+ 
+ 	evm_initialized |= i;
+ 
++	/* Don't allow protected metadata modification if a symmetric key
++	 * is loaded
++	 */
++	if (evm_initialized & EVM_INIT_HMAC)
++		evm_initialized &= ~(EVM_ALLOW_METADATA_WRITES);
++
+ 	return count;
+ }
+ 
+-- 
+2.15.0.403.gc27cc4dac6-goog
