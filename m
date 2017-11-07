@@ -1,18 +1,18 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from lhrrgout.huawei.com ([194.213.3.17]:39781 "EHLO
+Received: from lhrrgout.huawei.com ([194.213.3.17]:39785 "EHLO
         lhrrgout.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752130AbdKGKoW (ORCPT
+        with ESMTP id S1752862AbdKGKqv (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 7 Nov 2017 05:44:22 -0500
+        Tue, 7 Nov 2017 05:46:51 -0500
 From: Roberto Sassu <roberto.sassu@huawei.com>
 To: <linux-integrity@vger.kernel.org>
 CC: <linux-security-module@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v2 10/15] ima: disable digest lookup if digest lists are not checked
-Date: Tue, 7 Nov 2017 11:37:05 +0100
-Message-ID: <20171107103710.10883-11-roberto.sassu@huawei.com>
+Subject: [PATCH v2 14/15] ima: add support for appraisal with digest lists
+Date: Tue, 7 Nov 2017 11:37:09 +0100
+Message-ID: <20171107103710.10883-15-roberto.sassu@huawei.com>
 In-Reply-To: <20171107103710.10883-1-roberto.sassu@huawei.com>
 References: <20171107103710.10883-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
@@ -20,166 +20,193 @@ Content-Type: text/plain
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-This patch introduces two new hooks DIGEST_LIST_METADATA_CHECK and
-DIGEST_LIST_CHECK, which are called respectively when parsing digest list
-metadata and digest lists.
+Appraisal verification consists on comparing the calculated digest of an
+accessed file with the value of the security.ima extended attribute. With
+digest lists, appraisal verification succeeds if the calculated digest is
+included in a list. Since the digital signature of each digest list is
+verified, it is not possible to allow access of unauthorized files.
 
-It also checks that rules for these two hooks are always specified in the
-current policy. Without them, digest lists could be uploaded to IMA without
-adding a new entry to the measurement list, without verifying the
-signature, or without auditing the operation. Digest lookup is disabled for
-each missing policy action (measure, appraise, audit).
+For mutable files, IMA writes the current digest to security.ima so that
+next file accesses are allowed even if the files have been modified. For
+immutable files, IMA writes security.ima only if also additional extended
+attributes should be protected by EVM. Otherwise, security.ima would be
+redundant, as digest lists provide reference values.
 
-Digest lookup is also disabled if CONFIG_IMA_DIGEST_LIST is not defined.
-
-Changelog
-
-v1:
-- clear IMA_MEASURE action flag only if it was in the policy
-- check if at least one action is allowed before searching the file digest
-- retrieve ima_digest structure
-- set IMA action flags in ima_disable_digest_lookup
-- added DIGEST_LIST_METADATA_CHECK hook
-- update MEASURE/APPRAISE policies
+When IMA writes security.ima, EVM calculates the HMAC based on the current
+value of protected extended attributes. Without file signatures, initial
+extended attribute values will not checked until digest lists include them.
+When extended attribute values are available, IMA will check them as the
+same as the digest, and will not write security.ima for immutable files if
+values are provided for all extended attributes protected by EVM.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- security/integrity/ima/ima.h        |  2 ++
- security/integrity/ima/ima_main.c   | 38 +++++++++++++++++++++++++++++++++++--
- security/integrity/ima/ima_policy.c | 16 ++++++++++++++++
- 3 files changed, 54 insertions(+), 2 deletions(-)
+ security/integrity/ima/ima.h          |  6 +++--
+ security/integrity/ima/ima_appraise.c | 47 +++++++++++++++++++++++++++++++----
+ security/integrity/ima/ima_main.c     |  6 +++--
+ security/integrity/integrity.h        |  2 ++
+ 4 files changed, 52 insertions(+), 9 deletions(-)
 
 diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 1f43284788eb..4b3b1ca5c09a 100644
+index ddd0e1e7e99b..5f8e0740a33e 100644
 --- a/security/integrity/ima/ima.h
 +++ b/security/integrity/ima/ima.h
-@@ -204,6 +204,8 @@ static inline unsigned long ima_hash_key(u8 *digest)
- 	hook(KEXEC_KERNEL_CHECK)	\
- 	hook(KEXEC_INITRAMFS_CHECK)	\
- 	hook(POLICY_CHECK)		\
-+	hook(DIGEST_LIST_METADATA_CHECK)		\
-+	hook(DIGEST_LIST_CHECK)		\
- 	hook(MAX_CHECK)
- #define __ima_hook_enumify(ENUM)	ENUM,
+@@ -261,7 +261,8 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 			     struct integrity_iint_cache *iint,
+ 			     struct file *file, const unsigned char *filename,
+ 			     struct evm_ima_xattr_data *xattr_value,
+-			     int xattr_len, int opened);
++			     int xattr_len, int opened,
++			     struct ima_digest *found_digest);
+ int ima_must_appraise(struct inode *inode, int mask, enum ima_hooks func);
+ void ima_update_xattr(struct integrity_iint_cache *iint, struct file *file);
+ enum integrity_status ima_get_cache_status(struct integrity_iint_cache *iint,
+@@ -277,7 +278,8 @@ static inline int ima_appraise_measurement(enum ima_hooks func,
+ 					   struct file *file,
+ 					   const unsigned char *filename,
+ 					   struct evm_ima_xattr_data *xattr_value,
+-					   int xattr_len, int opened)
++					   int xattr_len, int opened,
++					   struct ima_digest *found_digest)
+ {
+ 	return INTEGRITY_UNKNOWN;
+ }
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 1b2236e637ff..fd03a0278fba 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -201,17 +201,27 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 			     struct integrity_iint_cache *iint,
+ 			     struct file *file, const unsigned char *filename,
+ 			     struct evm_ima_xattr_data *xattr_value,
+-			     int xattr_len, int opened)
++			     int xattr_len, int opened,
++			     struct ima_digest *found_digest)
+ {
+ 	static const char op[] = "appraise_data";
+ 	char *cause = "unknown";
+ 	struct dentry *dentry = file_dentry(file);
+ 	struct inode *inode = d_backing_inode(dentry);
+ 	enum integrity_status status = INTEGRITY_UNKNOWN;
+-	int rc = xattr_len, hash_start = 0;
++	struct evm_ima_xattr_data digest_list_value;
++	char *list_metadata = XATTR_NAME_IMA;
++	int rc = xattr_len, hash_start = 0, cache_flags_disabled = 0;
  
+ 	if (!(inode->i_opflags & IOP_XATTR))
+-		return INTEGRITY_UNKNOWN;
++		return found_digest ? INTEGRITY_PASS : INTEGRITY_UNKNOWN;
++
++	if (found_digest && (!rc || rc == -ENODATA)) {
++		digest_list_value.type = found_digest->is_mutable ?
++			IMA_DIGEST_LIST_MUTABLE : IMA_DIGEST_LIST_IMMUTABLE;
++		xattr_value = &digest_list_value;
++		rc = sizeof(*xattr_value);
++	}
+ 
+ 	if (rc <= 0) {
+ 		if (rc && rc != -ENODATA)
+@@ -228,6 +238,9 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 		goto out;
+ 	}
+ 
++	if (xattr_value == &digest_list_value)
++		goto no_evm_check;
++
+ 	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
+ 	if ((status != INTEGRITY_PASS) && (status != INTEGRITY_UNKNOWN)) {
+ 		if ((status == INTEGRITY_NOLABEL)
+@@ -237,13 +250,17 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 			cause = "invalid-HMAC";
+ 		goto out;
+ 	}
++
++no_evm_check:
+ 	switch (xattr_value->type) {
+ 	case IMA_XATTR_DIGEST_NG:
+ 		/* first byte contains algorithm id */
+ 		hash_start = 1;
+ 		/* fall through */
+ 	case IMA_XATTR_DIGEST:
+-		if (iint->flags & IMA_DIGSIG_REQUIRED) {
++		if (found_digest && !found_digest->is_mutable)
++			iint->flags |= IMA_DIGSIG;
++		else if (iint->flags & IMA_DIGSIG_REQUIRED) {
+ 			cause = "IMA-signature-required";
+ 			status = INTEGRITY_FAIL;
+ 			break;
+@@ -280,6 +297,25 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 			status = INTEGRITY_PASS;
+ 		}
+ 		break;
++	case IMA_DIGEST_LIST_MUTABLE:
++		if (iint->flags & IMA_DIGSIG_REQUIRED) {
++			cause = "IMA-signature-required";
++			status = INTEGRITY_FAIL;
++			break;
++		}
++		if (ima_fix_xattr(dentry, iint) == -EROFS)
++			cache_flags_disabled = 1;
++
++		status = INTEGRITY_PASS;
++		break;
++	case IMA_DIGEST_LIST_IMMUTABLE:
++		iint->flags |= IMA_DIGSIG;
++		if (!evm_set_includes_protected_xattrs(&list_metadata, 1))
++			if (ima_fix_xattr(dentry, iint) == -EROFS)
++				cache_flags_disabled = 1;
++
++		status = INTEGRITY_PASS;
++		break;
+ 	default:
+ 		status = INTEGRITY_UNKNOWN;
+ 		cause = "unknown-ima-data";
+@@ -302,7 +338,8 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
+ 				    op, cause, rc, 0);
+ 	} else {
+-		ima_cache_flags(iint, func);
++		if (!cache_flags_disabled)
++			ima_cache_flags(iint, func);
+ 	}
+ 	ima_set_cache_status(iint, func, status);
+ 	return status;
 diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 766fe2e77419..840362734f91 100644
+index d58199c8435c..a6cd414b46e3 100644
 --- a/security/integrity/ima/ima_main.c
 +++ b/security/integrity/ima/ima_main.c
-@@ -29,6 +29,12 @@
+@@ -270,7 +270,8 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+ 			action &= ~action_done;
+ 			iint->flags |= (action_done << 1);
  
- int ima_initialized;
+-			if (!(digest_lookup & IMA_APPRAISE))
++			if (!(digest_lookup & IMA_APPRAISE) ||
++			    opened & FILE_CREATED)
+ 				found_digest = NULL;
+ 			if (digest_lookup & IMA_MEASURE)
+ 				iint->measured_pcrs |= (0x1 << pcr);
+@@ -282,7 +283,8 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
  
-+#ifdef CONFIG_IMA_DIGEST_LIST
-+static int ima_disable_digest_lookup;
-+#else
-+static int ima_disable_digest_lookup = IMA_DO_MASK & ~IMA_APPRAISE_SUBMASK;
-+#endif
-+
- #ifdef CONFIG_IMA_APPRAISE
- int ima_appraise = IMA_APPRAISE_ENFORCE;
- #else
-@@ -168,12 +174,20 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
- 	char *pathbuf = NULL;
- 	char filename[NAME_MAX];
- 	const char *pathname = NULL;
--	int rc = -ENOMEM, action, must_appraise;
-+	int rc = -ENOMEM, action, action_done, must_appraise, digest_lookup;
- 	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
-+	struct ima_digest *found_digest = NULL;
- 	struct evm_ima_xattr_data *xattr_value = NULL;
- 	int xattr_len = 0;
- 	bool violation_check;
- 	enum hash_algo hash_algo;
-+	int disable_mask = (func == DIGEST_LIST_CHECK) ?
-+			   IMA_DO_MASK & ~IMA_APPRAISE_SUBMASK :
-+			   IMA_DO_MASK & ~(IMA_APPRAISE | IMA_APPRAISE_SUBMASK);
-+
-+	if ((func == DIGEST_LIST_METADATA_CHECK || func == DIGEST_LIST_CHECK) &&
-+	    !ima_policy_flag)
-+		ima_disable_digest_lookup = disable_mask;
- 
- 	if (!ima_policy_flag || !S_ISREG(inode->i_mode))
- 		return 0;
-@@ -185,6 +199,9 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
- 	action = ima_get_action(inode, mask, func, &pcr);
- 	violation_check = ((func == FILE_CHECK || func == MMAP_CHECK) &&
- 			   (ima_policy_flag & IMA_MEASURE));
-+	if (func == DIGEST_LIST_METADATA_CHECK || func == DIGEST_LIST_CHECK)
-+		ima_disable_digest_lookup |= (~action & disable_mask);
-+
- 	if (!action && !violation_check)
- 		return 0;
- 
-@@ -242,6 +259,21 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
- 	if (rc != 0 && rc != -EBADF && rc != -EINVAL)
- 		goto out_digsig;
- 
-+	digest_lookup = action & ~ima_disable_digest_lookup;
-+	if (digest_lookup) {
-+		found_digest = ima_lookup_loaded_digest(iint->ima_hash->digest);
-+		if (found_digest) {
-+			action_done = digest_lookup & (IMA_MEASURE | IMA_AUDIT);
-+			action &= ~action_done;
-+			iint->flags |= (action_done << 1);
-+
-+			if (!(digest_lookup & IMA_APPRAISE))
-+				found_digest = NULL;
-+			if (digest_lookup & IMA_MEASURE)
-+				iint->measured_pcrs |= (0x1 << pcr);
-+		}
-+	}
-+
- 	if (!pathbuf)	/* ima_rdwr_violation possibly pre-fetched */
- 		pathname = ima_d_path(&file->f_path, &pathbuf, filename);
- 
-@@ -378,7 +410,9 @@ static int read_idmap[READING_MAX_ID] = {
- 	[READING_MODULE] = MODULE_CHECK,
- 	[READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
- 	[READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
--	[READING_POLICY] = POLICY_CHECK
-+	[READING_POLICY] = POLICY_CHECK,
-+	[READING_DIGEST_LIST_METADATA] = DIGEST_LIST_METADATA_CHECK,
-+	[READING_DIGEST_LIST] = DIGEST_LIST_CHECK
+ 	if (rc == 0 && (action & IMA_APPRAISE_SUBMASK))
+ 		rc = ima_appraise_measurement(func, iint, file, pathname,
+-					      xattr_value, xattr_len, opened);
++					      xattr_value, xattr_len, opened,
++					      found_digest);
+ 	if (action & IMA_MEASURE)
+ 		ima_store_measurement(iint, file, pathname,
+ 				      xattr_value, xattr_len, pcr);
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index b46461a5f43f..f6b3c15dc57f 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -59,6 +59,8 @@ enum evm_ima_xattr_type {
+ 	EVM_XATTR_HMAC,
+ 	EVM_IMA_XATTR_DIGSIG,
+ 	IMA_XATTR_DIGEST_NG,
++	IMA_DIGEST_LIST_MUTABLE,
++	IMA_DIGEST_LIST_IMMUTABLE,
+ 	IMA_XATTR_LAST
  };
  
- /**
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index ee4613fa5840..2767f7901f94 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -127,9 +127,20 @@ static struct ima_rule_entry default_measurement_rules[] __ro_after_init = {
- 	{.action = MEASURE, .func = MODULE_CHECK, .flags = IMA_FUNC},
- 	{.action = MEASURE, .func = FIRMWARE_CHECK, .flags = IMA_FUNC},
- 	{.action = MEASURE, .func = POLICY_CHECK, .flags = IMA_FUNC},
-+#ifdef CONFIG_IMA_DIGEST_LIST
-+	{.action = MEASURE, .func = DIGEST_LIST_METADATA_CHECK,
-+	 .flags = IMA_FUNC},
-+	{.action = MEASURE, .func = DIGEST_LIST_CHECK, .flags = IMA_FUNC},
-+#endif
- };
- 
- static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
-+#ifdef CONFIG_IMA_DIGEST_LIST
-+	{.action = APPRAISE, .func = DIGEST_LIST_METADATA_CHECK,
-+	 .flags = IMA_FUNC},
-+	{.action = APPRAISE, .func = DIGEST_LIST_CHECK,
-+	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
-+#endif
- 	{.action = DONT_APPRAISE, .fsmagic = PROC_SUPER_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_APPRAISE, .fsmagic = SYSFS_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_APPRAISE, .fsmagic = DEBUGFS_MAGIC, .flags = IMA_FSMAGIC},
-@@ -699,6 +710,11 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 				entry->func = KEXEC_INITRAMFS_CHECK;
- 			else if (strcmp(args[0].from, "POLICY_CHECK") == 0)
- 				entry->func = POLICY_CHECK;
-+			else if (strcmp(args[0].from, "DIGEST_LIST_CHECK") == 0)
-+				entry->func = DIGEST_LIST_CHECK;
-+			else if (strcmp(args[0].from,
-+				 "DIGEST_LIST_METADATA_CHECK") == 0)
-+				entry->func = DIGEST_LIST_METADATA_CHECK;
- 			else
- 				result = -EINVAL;
- 			if (!result)
 -- 
 2.11.0
