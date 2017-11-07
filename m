@@ -1,85 +1,60 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:26878 "EHLO mga03.intel.com"
+Received: from mga14.intel.com ([192.55.52.115]:24804 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754121AbdKHGgo (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 8 Nov 2017 01:36:44 -0500
-Date: Wed, 8 Nov 2017 08:36:40 +0200
+        id S932721AbdKGTYz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 7 Nov 2017 14:24:55 -0500
+Date: Tue, 7 Nov 2017 21:24:39 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Peter Huewe <peterhuewe@gmx.de>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Subject: Re: [PATCH] tpm: Update MAINTAINERS for Jason Gunthorpe
-Message-ID: <20171108063640.kxwag6fzguetpjnf@linux.intel.com>
-References: <20171031202357.GA1030@ziepe.ca>
- <20171103142841.2nphkjojzamrdezm@linux.intel.com>
- <0812DDC3-187D-4F29-BFB5-9A4F509CA376@gmx.de>
- <20171107150356.uln3lks64zt5oxjv@linux.intel.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:INTEGRITY MEASUREMENT ARCHITECTURE (IMA)"
+        <linux-security-module@vger.kernel.org>,
+        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
+        <linux-crypto@vger.kernel.org>,
+        James Morris <james.l.morris@oracle.com>,
+        Matt Mackall <mpm@selenic.com>,
+        David Safford <safford@us.ibm.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH v2] tpm: Move Linux RNG connection to hwrng
+Message-ID: <20171107192439.hybunyigjjgpexqy@linux.intel.com>
+References: <20171031200503.GC18578@ziepe.ca>
+ <20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
+ <20171106022704.GD26011@ziepe.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171107150356.uln3lks64zt5oxjv@linux.intel.com>
+In-Reply-To: <20171106022704.GD26011@ziepe.ca>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Nov 07, 2017 at 05:03:56PM +0200, Jarkko Sakkinen wrote:
-> On Fri, Nov 03, 2017 at 05:05:49PM +0100, Peter Huewe wrote:
-> > 
-> > 
-> > Am 3. November 2017 15:28:41 MEZ schrieb Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>:
-> > >On Tue, Oct 31, 2017 at 02:23:57PM -0600, Jason Gunthorpe wrote:
-> > >> My email address for open source work is moving to this new permanent
-> > >> personal address.
-> > >> 
-> > >> Signed-off-by: Jason Gunthorpe <jgunthorpe@ziepe.ca>
-> > >> ---
-> > >>  MAINTAINERS | 2 +-
-> > >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >> 
-> > >> diff --git a/MAINTAINERS b/MAINTAINERS
-> > >> index 6671f375f7fcdd..b79eb071475ffc 100644
-> > >> --- a/MAINTAINERS
-> > >> +++ b/MAINTAINERS
-> > >> @@ -13588,7 +13588,7 @@ TPM DEVICE DRIVER
-> > >>  M:	Peter Huewe <peterhuewe@gmx.de>
-> > >>  M:	Marcel Selhorst <tpmdd@selhorst.net>
-> > >>  M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > >> -R:	Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-> > >> +R:	Jason Gunthorpe <jgg@ziepe.ca>
-> > >>  W:	http://tpmdd.sourceforge.net
-> > >>  L:	tpmdd-devel@lists.sourceforge.net (moderated for non-subscribers)
-> > >>  Q:	https://patchwork.kernel.org/project/tpmdd-devel/list/
-> > >> -- 
-> > >> 2.7.4
-> > >> 
-> > >
-> > >Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > >
-> > >Should these updates go to my tree? I posted previous update to
-> > >linux-kernel@vger.kernel.org.
-> > Which equals /dev/null for most cases.
-> > 
-> > Why shouldn'tit go through your tree?
-> > It's a maintainers update for your subsystem - and you did it in the past when modifying the urls.
-> > 
-> > >/Jarkko
-> > 
-> > -- 
-> > Sent from my mobile
+On Sun, Nov 05, 2017 at 07:27:04PM -0700, Jason Gunthorpe wrote:
+> On Sun, Nov 05, 2017 at 01:05:06PM +0200, Jarkko Sakkinen wrote:
 > 
-> I applied two patches to my tree.
+> > I asked to create a series for a reason. Now this doesn't apply because I
+> > don't have an ancestor in my git history.
 > 
-> /Jarkko
+> It would be unusual for me to put your patch into a series unless I am
+> also adopting it. eg what happens if there are more comments on it?
+> 
+> Also, I wasn't sure what branch your patch was against since my tree
+> didn't have history for it either..
+> 
+> Sometimes the maintainer has to sort stuff like this out... :)
+> 
+> > Please resend as series together with my patch. I can apply neither yet
+> > because they have zero tested-by's.
+> 
+> Hopefully PrasannaKumar can test both patches.
+> 
+> Jason
 
-NAK
-
-linux-kernel@vger.kernel.org is missing *completely*. It should be at
-minimum in the CC field.
-
-My previous update did not go through my tree. I misread your original
-response to say that I should put also URL update to my tree. I did.
-It resulted a merge conflict.
-
-Updating that file goes out of my territory other than acking the
-updates. Now that linux-kernel is missing this completely unacceptable.
+Fair enough. I'll look at it.
 
 /Jarkko
