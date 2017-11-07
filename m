@@ -1,15 +1,15 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-qk0-f201.google.com ([209.85.220.201]:53840 "EHLO
-        mail-qk0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751844AbdKGPR4 (ORCPT
+Received: from mail-ot0-f202.google.com ([74.125.82.202]:62873 "EHLO
+        mail-ot0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933909AbdKGPLy (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 7 Nov 2017 10:17:56 -0500
-Received: by mail-qk0-f201.google.com with SMTP id z12so9760815qkb.12
-        for <linux-integrity@vger.kernel.org>; Tue, 07 Nov 2017 07:17:55 -0800 (PST)
+        Tue, 7 Nov 2017 10:11:54 -0500
+Received: by mail-ot0-f202.google.com with SMTP id k10so1240856otb.21
+        for <linux-integrity@vger.kernel.org>; Tue, 07 Nov 2017 07:11:54 -0800 (PST)
 MIME-Version: 1.0
-Date: Tue,  7 Nov 2017 07:17:42 -0800
-Message-Id: <20171107151742.25122-1-mjg59@google.com>
-Subject: [PATCH V6] EVM: Add support for portable signature format
+Date: Tue,  7 Nov 2017 07:11:49 -0800
+Message-Id: <20171107151149.18026-1-mjg59@google.com>
+Subject: [PATCH V5] EVM: Add support for portable signature format
 From: Matthew Garrett <mjg59@google.com>
 To: linux-integrity@vger.kernel.org
 Cc: zohar@linux.vnet.ibm.com, Matthew Garrett <mjg59@google.com>,
@@ -40,15 +40,15 @@ Cc: Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
 Cc: Mikhail Kurinnoi <viewizard@viewizard.com>
 ---
 
-Sigh. Get rid of an unused variable declaration.
+Updated with Mimi's feedback.
 
  include/linux/integrity.h             |  1 +
  security/integrity/evm/evm.h          |  2 +-
- security/integrity/evm/evm_crypto.c   | 75 ++++++++++++++++++++++++++++++-----
+ security/integrity/evm/evm_crypto.c   | 76 ++++++++++++++++++++++++++++++-----
  security/integrity/evm/evm_main.c     | 27 ++++++++-----
  security/integrity/ima/ima_appraise.c |  4 +-
  security/integrity/integrity.h        |  2 +
- 6 files changed, 91 insertions(+), 20 deletions(-)
+ 6 files changed, 92 insertions(+), 20 deletions(-)
 
 diff --git a/include/linux/integrity.h b/include/linux/integrity.h
 index c2d6082a1a4c..858d3f4a2241 100644
@@ -76,7 +76,7 @@ index f5f12727771a..2ff02459fcfd 100644
  		  char *hmac_val);
  int evm_init_secfs(void);
 diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index 1d32cd20009a..e526f0f5aaaf 100644
+index 1d32cd20009a..5beec4d81e3e 100644
 --- a/security/integrity/evm/evm_crypto.c
 +++ b/security/integrity/evm/evm_crypto.c
 @@ -138,7 +138,7 @@ static struct shash_desc *init_desc(char type)
@@ -206,8 +206,11 @@ index 1d32cd20009a..e526f0f5aaaf 100644
  /*
   * Calculate the hmac and update security.evm xattr
   *
-@@ -255,6 +302,16 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
+@@ -253,8 +300,19 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
+ {
+ 	struct inode *inode = d_backing_inode(dentry);
  	struct evm_ima_xattr_data xattr_data;
++	struct integrity_iint_cache *iint;
  	int rc = 0;
  
 +	/*
@@ -223,7 +226,7 @@ index 1d32cd20009a..e526f0f5aaaf 100644
  	rc = evm_calc_hmac(dentry, xattr_name, xattr_value,
  			   xattr_value_len, xattr_data.digest);
  	if (rc == 0) {
-@@ -280,7 +337,7 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
+@@ -280,7 +338,7 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
  	}
  
  	crypto_shash_update(desc, lsm_xattr->value, lsm_xattr->value_len);
