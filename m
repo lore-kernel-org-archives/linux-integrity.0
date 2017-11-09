@@ -1,65 +1,77 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io0-f169.google.com ([209.85.223.169]:47559 "EHLO
-        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752686AbdKIQqY (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:45081 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753351AbdKIQ3t (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 9 Nov 2017 11:46:24 -0500
-Received: by mail-io0-f169.google.com with SMTP id h70so10504378ioi.4
-        for <linux-integrity@vger.kernel.org>; Thu, 09 Nov 2017 08:46:23 -0800 (PST)
+        Thu, 9 Nov 2017 11:29:49 -0500
+Received: by mail-io0-f195.google.com with SMTP id i38so10452011iod.2
+        for <linux-integrity@vger.kernel.org>; Thu, 09 Nov 2017 08:29:49 -0800 (PST)
+Date: Thu, 9 Nov 2017 09:29:47 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:INTEGRITY MEASUREMENT ARCHITECTURE (IMA)"
+        <linux-security-module@vger.kernel.org>,
+        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
+        <linux-crypto@vger.kernel.org>,
+        James Morris <james.l.morris@oracle.com>,
+        Matt Mackall <mpm@selenic.com>,
+        David Safford <safford@us.ibm.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH v2] tpm: Move Linux RNG connection to hwrng
+Message-ID: <20171109162947.GJ7063@ziepe.ca>
+References: <20171031200503.GC18578@ziepe.ca>
+ <20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
+ <20171106022704.GD26011@ziepe.ca>
+ <CANc+2y6dx_2zOzFA5aFs7RpEV8aNqxpDghmx+q_+XyendYJoew@mail.gmail.com>
+ <20171107160404.GG21466@ziepe.ca>
+ <CANc+2y4GFaAryTN0vdBqWi=tqGdc6AMZ5fLnyFg-Jsrv4g-p5g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <738f2f11-02fe-a06a-b7f7-2059951b9f99@huawei.com>
-References: <20171107103710.10883-1-roberto.sassu@huawei.com>
- <CACdnJutBFhCpudkbE0uKx1Ja=p8NUrmTMnA+9F4Y7+a7ioE8jA@mail.gmail.com>
- <899b68a6-fefe-a6db-d624-ea83f597caf1@huawei.com> <CACdnJut-FzG=6DW-Pisx+_Ot5+=62_MabP1SU_RR2d9n-RJvyw@mail.gmail.com>
- <e879759b-d866-e3e3-b070-3025baf3454d@huawei.com> <CACdnJut0-4k97m0TM-Zd4jLPTraBe6_JoE-eznFYKwbPEmNS0Q@mail.gmail.com>
- <210975fe-527c-df2f-5a8a-9aca31e9246a@huawei.com> <CACdnJusj5aHHEJ2zY6UonK-XG_=P4Z09EPMZVKoXYUMZoUdHQQ@mail.gmail.com>
- <738f2f11-02fe-a06a-b7f7-2059951b9f99@huawei.com>
-From: Matthew Garrett <mjg59@google.com>
-Date: Thu, 9 Nov 2017 11:46:22 -0500
-Message-ID: <CACdnJuvLze4+Qx5xRoaHTkkD5vAzq7hGpm8VWM8WTL15UoWBqg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/15] ima: digest list feature
-To: Roberto Sassu <roberto.sassu@huawei.com>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CANc+2y4GFaAryTN0vdBqWi=tqGdc6AMZ5fLnyFg-Jsrv4g-p5g@mail.gmail.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Nov 9, 2017 at 11:13 AM, Roberto Sassu <roberto.sassu@huawei.com> wrote:
-> On 11/9/2017 3:47 PM, Matthew Garrett wrote:
->> There's no need to have a policy that measures those files, because
->> they're part of the already-measured initramfs. Just set the IMA
->> policy after you've loaded the digest list.
->
->
-> The default IMA policy measures files accessed from the initial ram
-> disk. It is easier to verify individual files, rather than the whole
-> image.
+On Thu, Nov 09, 2017 at 09:49:33PM +0530, PrasannaKumar Muralidharan wrote:
+> Hi Jason,
+> 
+> On 7 November 2017 at 21:34, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> > On Tue, Nov 07, 2017 at 08:50:44AM +0530, PrasannaKumar Muralidharan wrote:
+> >
+> >> I am assuming you are talking about the following patches - using
+> >> struct tpm_chip instead of chip number and this patch.
+> >
+> > yes
+> >
+> >> I won't be able to test if struct tpm_chip usage as I don't have
+> >> multiple tpm hw in one machine. In case of tpm rng changes I can test
+> >> only the lifecycle of tpm rng device. Is that enough? I feel my test
+> >> will be limited. Please provide your thoughts on this.
+> >
+> > That is certainly better than no testing.
+> 
+> The struct tpm_chip patch partially applied on linux next. I had to
+> manually change the code. In qemu tpm rng device did not show up on
+> loading tpm module. My laptop has tpm hw but Linux next did not work
+> properly in that. All my console were getting spammed with some USB
+> log message and I could not do anything. X did not start either. I
+> could not debug the issue as the logs were printing infinitely. Will
+> get little more time this weekend. Will do a proper test and provide
+> you the result.
 
-That's a matter of implementation. You're not forced to use the default policy.
+Test against 4.15-rc, here are the two patches
 
->> This seems very over-complicated, and it's unclear why the kernel
->> needs to open the file itself. You *know* that all of userland is
->
->
-> You can have a look at ima_fs.c. If appraisal is in enforcing mode,
-> direct upload of a policy is not permitted. The kernel reads the policy,
-> calculates the digest, and verifies the signature.
+https://github.com/jgunthorpe/linux/tree/tpm
 
-Is there an expectation that you'll load additional digest lists at runtime?
+Pull from here and merge the latest rc and you will probably have a
+bootable system.
 
->> trustworthy at this point even in the absence of signatures. It seem >
->> reasonable to provide a interface that allows userland to pass a
->> digest list to the kernel, in the same way that userland can pass an
->> IMA policy to the kernel. You can then restrict access to that
->> interface via an LSM.
->
->
-> Then digest lists cannot be used alone, without an LSM. Also, verifiers
-> have to check the LSM policy to ensure that only the parser was able to
-> upload the digest lists.
-
-Only if you want to add additional digest lists at runtime, but yes,
-you really want to be verifying the LSM policy in any case.
+Jason
