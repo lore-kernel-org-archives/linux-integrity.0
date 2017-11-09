@@ -1,15 +1,16 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:50098 "EHLO mx1.redhat.com"
+Received: from mx1.redhat.com ([209.132.183.28]:54234 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755229AbdKJA2U (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 9 Nov 2017 19:28:20 -0500
-Date: Thu, 9 Nov 2017 17:28:20 -0700
+        id S1754502AbdKIXuG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 9 Nov 2017 18:50:06 -0500
+Date: Thu, 9 Nov 2017 16:50:05 -0700
 From: Jerry Snitselaar <jsnitsel@redhat.com>
 To: Laurent Bigonville <bigon@debian.org>
 Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Alexander.Steffen@infineon.com, linux-integrity@vger.kernel.org
+        Alexander.Steffen@infineon.com, tpmdd-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org
 Subject: Re: [tpmdd-devel] tpm device not showing up in /dev anymore
-Message-ID: <20171110002820.wtfvb3tv5fcjqecu@localhost.localdomain>
+Message-ID: <20171109235005.pmklfw6zkjirahfa@localhost.localdomain>
 Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
 References: <20170906040555.fqedhmo5277sd6fq@linux.intel.com>
  <20171014081318.busge2fhteusfjwx@rhwork>
@@ -254,10 +255,26 @@ On Thu Nov 09 17, Laurent Bigonville wrote:
 >
 >Under 4.12 I still have the same errors as mentioned originally
 
-Hi Laurent,
 
-Would it be possible for you to run ftrace from boot with the following kernel parameters:
+Still thinking about how to attack this. I don't think extending the timeout
+would change anything because it is reading the register, and thinking the
+status is valid because it reads 0xff. So it would still have that problem,
+right?
 
-ftrace=function_graph ftrace_filter=tpm*
+Maybe a sanity check could be added to wait_for_tpm_stat() to
+first check that it didn't read 0xff before checking for the value it
+is looking for. Would that make sense Jarkko?
 
-and then send me the results of 'cat /sys/kernel/debug/tracing/trace' ?
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 1d6729be4cd6..8b77fa2003ce 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -1087,7 +1087,7 @@ int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long timeout,
+                do {
+                        tpm_msleep(TPM_TIMEOUT);
+                        status = chip->ops->status(chip);
+-                       if ((status & mask) == mask)
++                       if ((status != 0xff) && (status & mask) == mask)
+                                return 0;
+                } while (time_before(jiffies, stop));
+        }
