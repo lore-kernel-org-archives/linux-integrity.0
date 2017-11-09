@@ -1,39 +1,88 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:35992 "EHLO
-        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751618AbdKITSG (ORCPT
+Received: from lhrrgout.huawei.com ([194.213.3.17]:39901 "EHLO
+        lhrrgout.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751577AbdKIRXz (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 9 Nov 2017 14:18:06 -0500
-Date: Fri, 10 Nov 2017 06:17:49 +1100 (AEDT)
-From: James Morris <james.l.morris@oracle.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Howells <dhowells@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Matthew Garrett <mjg59@google.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Subject: Re: [RFC PATCH] ima: require secure_boot rules in lockdown mode
-In-Reply-To: <1510235213.4484.165.camel@linux.vnet.ibm.com>
-Message-ID: <alpine.LFD.2.20.1711100617360.5638@localhost>
-References: <1509382827.3583.143.camel@linux.vnet.ibm.com>  <1508774387.3639.128.camel@linux.vnet.ibm.com>  <750.1509378910@warthog.procyon.org.uk>  <3691.1509383138@warthog.procyon.org.uk>  <1509385178.3583.159.camel@linux.vnet.ibm.com>
- <alpine.LFD.2.20.1710311424310.22021@localhost>  <1510173982.4484.30.camel@linux.vnet.ibm.com>  <20171109075334.1809f4cc@canb.auug.org.au>  <1510175047.4484.35.camel@linux.vnet.ibm.com>  <20171109102635.7691281d@canb.auug.org.au>  <1510196818.4484.120.camel@linux.vnet.ibm.com>
-  <alpine.LFD.2.20.1711100020240.514@localhost> <1510235213.4484.165.camel@linux.vnet.ibm.com>
+        Thu, 9 Nov 2017 12:23:55 -0500
+Subject: Re: [PATCH v2 00/15] ima: digest list feature
+To: Matthew Garrett <mjg59@google.com>
+CC: linux-integrity <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20171107103710.10883-1-roberto.sassu@huawei.com>
+ <CACdnJutBFhCpudkbE0uKx1Ja=p8NUrmTMnA+9F4Y7+a7ioE8jA@mail.gmail.com>
+ <899b68a6-fefe-a6db-d624-ea83f597caf1@huawei.com>
+ <CACdnJut-FzG=6DW-Pisx+_Ot5+=62_MabP1SU_RR2d9n-RJvyw@mail.gmail.com>
+ <e879759b-d866-e3e3-b070-3025baf3454d@huawei.com>
+ <CACdnJut0-4k97m0TM-Zd4jLPTraBe6_JoE-eznFYKwbPEmNS0Q@mail.gmail.com>
+ <210975fe-527c-df2f-5a8a-9aca31e9246a@huawei.com>
+ <CACdnJusj5aHHEJ2zY6UonK-XG_=P4Z09EPMZVKoXYUMZoUdHQQ@mail.gmail.com>
+ <738f2f11-02fe-a06a-b7f7-2059951b9f99@huawei.com>
+ <CACdnJuvLze4+Qx5xRoaHTkkD5vAzq7hGpm8VWM8WTL15UoWBqg@mail.gmail.com>
+From: Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <7bded7a0-fe92-17ba-ff48-c421060d1ccc@huawei.com>
+Date: Thu, 9 Nov 2017 18:23:45 +0100
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-663896429-1510255074=:5638"
+In-Reply-To: <CACdnJuvLze4+Qx5xRoaHTkkD5vAzq7hGpm8VWM8WTL15UoWBqg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, 9 Nov 2017, Mimi Zohar wrote:
+On 11/9/2017 5:46 PM, Matthew Garrett wrote:
+> On Thu, Nov 9, 2017 at 11:13 AM, Roberto Sassu <roberto.sassu@huawei.com> wrote:
+>> On 11/9/2017 3:47 PM, Matthew Garrett wrote:
+>>> There's no need to have a policy that measures those files, because
+>>> they're part of the already-measured initramfs. Just set the IMA
+>>> policy after you've loaded the digest list.
+>>
+>>
+>> The default IMA policy measures files accessed from the initial ram
+>> disk. It is easier to verify individual files, rather than the whole
+>> image.
+> 
+> That's a matter of implementation. You're not forced to use the default policy.
+> 
+>>> This seems very over-complicated, and it's unclear why the kernel
+>>> needs to open the file itself. You *know* that all of userland is
+>>
+>>
+>> You can have a look at ima_fs.c. If appraisal is in enforcing mode,
+>> direct upload of a policy is not permitted. The kernel reads the policy,
+>> calculates the digest, and verifies the signature.
+> 
+> Is there an expectation that you'll load additional digest lists at runtime?
 
-> Thank you for the clarification (and patience).  There are a lot of
-> interactions between the integrity subsystem and the other security
-> subsystems, especially the TPM.  Assuming it is acceptable, as you
-> said, I'd really prefer continuing to have the integrity subsystem
-> merged via the security tree.
+Yes, before new packages are installed.
 
-That's fine, whatever works for you.
 
+>>> trustworthy at this point even in the absence of signatures. It seem >
+>>> reasonable to provide a interface that allows userland to pass a
+>>> digest list to the kernel, in the same way that userland can pass an
+>>> IMA policy to the kernel. You can then restrict access to that
+>>> interface via an LSM.
+>>
+>>
+>> Then digest lists cannot be used alone, without an LSM. Also, verifiers
+>> have to check the LSM policy to ensure that only the parser was able to
+>> upload the digest lists.
+> 
+> Only if you want to add additional digest lists at runtime, but yes,
+> you really want to be verifying the LSM policy in any case.
+
+If the trustworthiness of the initial ram disk can be guaranteed with
+low effort, for example if the image is distributed by the vendor, it
+would be easier to guarantee that digest lists were uploaded by the
+parser.
+
+But, likely, the initial ram disk is generated by the local system.
+Relying on the assumption that the vendor distributes the initial ram
+disk would limit, in my opinion, the applicability of the digest list
+feature. Relying on the enforcement by an LSM would make the integrity
+evaluation much more complex.
+
+Roberto
 
 -- 
-James Morris
-<james.l.morris@oracle.com>
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
