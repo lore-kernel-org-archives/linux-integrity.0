@@ -1,128 +1,106 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from lhrrgout.huawei.com ([194.213.3.17]:39899 "EHLO
-        lhrrgout.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750909AbdKIQNM (ORCPT
+Received: from mail-it0-f53.google.com ([209.85.214.53]:50263 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755136AbdKIOrs (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 9 Nov 2017 11:13:12 -0500
-Subject: Re: [PATCH v2 00/15] ima: digest list feature
-To: Matthew Garrett <mjg59@google.com>
-CC: linux-integrity <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+        Thu, 9 Nov 2017 09:47:48 -0500
+Received: by mail-it0-f53.google.com with SMTP id 72so11539382itl.5
+        for <linux-integrity@vger.kernel.org>; Thu, 09 Nov 2017 06:47:48 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <210975fe-527c-df2f-5a8a-9aca31e9246a@huawei.com>
 References: <20171107103710.10883-1-roberto.sassu@huawei.com>
  <CACdnJutBFhCpudkbE0uKx1Ja=p8NUrmTMnA+9F4Y7+a7ioE8jA@mail.gmail.com>
- <899b68a6-fefe-a6db-d624-ea83f597caf1@huawei.com>
- <CACdnJut-FzG=6DW-Pisx+_Ot5+=62_MabP1SU_RR2d9n-RJvyw@mail.gmail.com>
- <e879759b-d866-e3e3-b070-3025baf3454d@huawei.com>
- <CACdnJut0-4k97m0TM-Zd4jLPTraBe6_JoE-eznFYKwbPEmNS0Q@mail.gmail.com>
+ <899b68a6-fefe-a6db-d624-ea83f597caf1@huawei.com> <CACdnJut-FzG=6DW-Pisx+_Ot5+=62_MabP1SU_RR2d9n-RJvyw@mail.gmail.com>
+ <e879759b-d866-e3e3-b070-3025baf3454d@huawei.com> <CACdnJut0-4k97m0TM-Zd4jLPTraBe6_JoE-eznFYKwbPEmNS0Q@mail.gmail.com>
  <210975fe-527c-df2f-5a8a-9aca31e9246a@huawei.com>
- <CACdnJusj5aHHEJ2zY6UonK-XG_=P4Z09EPMZVKoXYUMZoUdHQQ@mail.gmail.com>
-From: Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <738f2f11-02fe-a06a-b7f7-2059951b9f99@huawei.com>
-Date: Thu, 9 Nov 2017 17:13:01 +0100
-MIME-Version: 1.0
-In-Reply-To: <CACdnJusj5aHHEJ2zY6UonK-XG_=P4Z09EPMZVKoXYUMZoUdHQQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+From: Matthew Garrett <mjg59@google.com>
+Date: Thu, 9 Nov 2017 09:47:46 -0500
+Message-ID: <CACdnJusj5aHHEJ2zY6UonK-XG_=P4Z09EPMZVKoXYUMZoUdHQQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/15] ima: digest list feature
+To: Roberto Sassu <roberto.sassu@huawei.com>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 11/9/2017 3:47 PM, Matthew Garrett wrote:
-> On Thu, Nov 9, 2017 at 4:51 AM, Roberto Sassu <roberto.sassu@huawei.com> wrote:
->> On 11/8/2017 4:48 PM, Matthew Garrett wrote:
->>> The code doing the parsing is in the initramfs, which has already been
->>> measured at boot time. You can guarantee that it's being done by
->>> trusted code.
->>
->>
->> The parser can be executed in the initial ram disk, but everything
->> accessed before the parser is executed will be measured/appraised
->> without digest lists. To do signature-based remote attestation, where
->> the verification consists on checking the signature of digests of
->> measured files, it would be necessary to sign systemd, libraries,
->> everything accessed before the parser, and the parser. If RPM headers
->> are parsed by the kernel, measurement/appraisal will be done directly
->> with digest lists.
-> 
-> There's no need to have a policy that measures those files, because
-> they're part of the already-measured initramfs. Just set the IMA
-> policy after you've loaded the digest list.
+On Thu, Nov 9, 2017 at 4:51 AM, Roberto Sassu <roberto.sassu@huawei.com> wrote:
+> On 11/8/2017 4:48 PM, Matthew Garrett wrote:
+>> The code doing the parsing is in the initramfs, which has already been
+>> measured at boot time. You can guarantee that it's being done by
+>> trusted code.
+>
+>
+> The parser can be executed in the initial ram disk, but everything
+> accessed before the parser is executed will be measured/appraised
+> without digest lists. To do signature-based remote attestation, where
+> the verification consists on checking the signature of digests of
+> measured files, it would be necessary to sign systemd, libraries,
+> everything accessed before the parser, and the parser. If RPM headers
+> are parsed by the kernel, measurement/appraisal will be done directly
+> with digest lists.
 
-The default IMA policy measures files accessed from the initial ram
-disk. It is easier to verify individual files, rather than the whole
-image.
+There's no need to have a policy that measures those files, because
+they're part of the already-measured initramfs. Just set the IMA
+policy after you've loaded the digest list.
 
+>>> The main problem is that the digest list measurement, performed when the
+>>> parser accesses the file containing the RPM header, might not reflect
+>>> what IMA uses for digest lookup.
+>>
+>>
+>> Why not?
+>
+>
+> I assumed you wanted to measure digest lists only at the time they are
+> read by the parser, and not when they are read by IMA. If instead digest
+> lists are verified again after conversion, the new workflow should be:
+>
+> 1) the kernel parses digest list metadata before systemd is executed
+> 2) the kernel verifies the signature of digest lists (RPM headers) and
+>    add the digest of digest lists to the hash table, so that appraisal
+>    succeeds
+> 3) systemd (with file signature) is executed
+> 4) the parser (with file signature) is executed
+> 5) the parser reads and converts the digest lists to the generic format,
+>    and writes them to a tmpfs filesystem
+> 6) the parser generates a new digest list metadata file with the path of
+>    converted digest lists and sends the path of the new metadata to IMA
+> 7) IMA reads the generic digest lists
+>
+> The measurement list should look like:
+>
+> 10 <digest> ima-sig <digest> boot_aggregate
+> 10 <digest> ima-sig <digest> /etc/ima/digest_lists/metadata
+> 10 <digest> ima-sig <digest> /usr/lib/systemd/systemd <signature>
+> ...
+> 10 <digest> ima-sig <digest> <parser> <signature>
+> 10 <digest> ima-sig <digest> /tmp/metadata
+>
+>
+> If parsing of RPM headers is done by the kernel, the measurement list
+> will look like:
+>
+> 10 <digest> ima-ng <digest> boot_aggregate
+> 10 <digest> ima-ng <digest> /etc/ima/digest_lists/metadata
+>
+>
+> A built-in policy should enable appraisal of tmpfs. If not, patch 11/15
+> disables digest lookup for appraisal. Since generic digest lists will
+> have a security.ima extended attribute (they are mutable files),
+> appraisal verification will succeed.
+>
+> With this solution, digital signatures cannot be required, because
+> generic digest lists will have a HMAC. For appraisal, it becomes
+> necessary to ensure that only digest lists written by the parser can be
+> processed by IMA.
 
->>>> The main problem is that the digest list measurement, performed when the
->>>> parser accesses the file containing the RPM header, might not reflect
->>>> what IMA uses for digest lookup.
->>>
->>>
->>> Why not?
->>
->>
->> I assumed you wanted to measure digest lists only at the time they are
->> read by the parser, and not when they are read by IMA. If instead digest
->> lists are verified again after conversion, the new workflow should be:
->>
->> 1) the kernel parses digest list metadata before systemd is executed
->> 2) the kernel verifies the signature of digest lists (RPM headers) and
->>     add the digest of digest lists to the hash table, so that appraisal
->>     succeeds
->> 3) systemd (with file signature) is executed
->> 4) the parser (with file signature) is executed
->> 5) the parser reads and converts the digest lists to the generic format,
->>     and writes them to a tmpfs filesystem
->> 6) the parser generates a new digest list metadata file with the path of
->>     converted digest lists and sends the path of the new metadata to IMA
->> 7) IMA reads the generic digest lists
->>
->> The measurement list should look like:
->>
->> 10 <digest> ima-sig <digest> boot_aggregate
->> 10 <digest> ima-sig <digest> /etc/ima/digest_lists/metadata
->> 10 <digest> ima-sig <digest> /usr/lib/systemd/systemd <signature>
->> ...
->> 10 <digest> ima-sig <digest> <parser> <signature>
->> 10 <digest> ima-sig <digest> /tmp/metadata
->>
->>
->> If parsing of RPM headers is done by the kernel, the measurement list
->> will look like:
->>
->> 10 <digest> ima-ng <digest> boot_aggregate
->> 10 <digest> ima-ng <digest> /etc/ima/digest_lists/metadata
->>
->>
->> A built-in policy should enable appraisal of tmpfs. If not, patch 11/15
->> disables digest lookup for appraisal. Since generic digest lists will
->> have a security.ima extended attribute (they are mutable files),
->> appraisal verification will succeed.
->>
->> With this solution, digital signatures cannot be required, because
->> generic digest lists will have a HMAC. For appraisal, it becomes
->> necessary to ensure that only digest lists written by the parser can be
->> processed by IMA.
-> 
-> This seems very over-complicated, and it's unclear why the kernel
-> needs to open the file itself. You *know* that all of userland is
-
-You can have a look at ima_fs.c. If appraisal is in enforcing mode,
-direct upload of a policy is not permitted. The kernel reads the policy,
-calculates the digest, and verifies the signature.
-
-
-> trustworthy at this point even in the absence of signatures. It seem > reasonable to provide a interface that allows userland to pass a
-> digest list to the kernel, in the same way that userland can pass an
-> IMA policy to the kernel. You can then restrict access to that
-> interface via an LSM.
-
-Then digest lists cannot be used alone, without an LSM. Also, verifiers
-have to check the LSM policy to ensure that only the parser was able to
-upload the digest lists.
-
-Roberto
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
+This seems very over-complicated, and it's unclear why the kernel
+needs to open the file itself. You *know* that all of userland is
+trustworthy at this point even in the absence of signatures. It seems
+reasonable to provide a interface that allows userland to pass a
+digest list to the kernel, in the same way that userland can pass an
+IMA policy to the kernel. You can then restrict access to that
+interface via an LSM.
