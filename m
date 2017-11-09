@@ -1,205 +1,120 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:44295 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753451AbdKIL12 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 9 Nov 2017 06:27:28 -0500
-Received: from relay1.suse.de (charybdis-ext.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 13DAFAC9B
-        for <linux-integrity@vger.kernel.org>; Thu,  9 Nov 2017 11:27:27 +0000 (UTC)
-Date: Thu, 9 Nov 2017 12:27:22 +0100
-From: Matthias Gerstner <mgerstner@suse.de>
-To: linux-integrity@vger.kernel.org
-Subject: btrfs UUID all zero (was: [Linux-ima-user] [PATCH] evmctl: use
- /proc/self/mountinfo instead of /dev/block/<major>:<minor>])
-Message-ID: <20171109112722.4na4niefjj3uwon4@f195.suse.de>
+Received: from lhrrgout.huawei.com ([194.213.3.17]:39883 "EHLO
+        lhrrgout.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752539AbdKIJvh (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 9 Nov 2017 04:51:37 -0500
+Subject: Re: [PATCH v2 00/15] ima: digest list feature
+To: Matthew Garrett <mjg59@google.com>
+CC: linux-integrity <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20171107103710.10883-1-roberto.sassu@huawei.com>
+ <CACdnJutBFhCpudkbE0uKx1Ja=p8NUrmTMnA+9F4Y7+a7ioE8jA@mail.gmail.com>
+ <899b68a6-fefe-a6db-d624-ea83f597caf1@huawei.com>
+ <CACdnJut-FzG=6DW-Pisx+_Ot5+=62_MabP1SU_RR2d9n-RJvyw@mail.gmail.com>
+ <e879759b-d866-e3e3-b070-3025baf3454d@huawei.com>
+ <CACdnJut0-4k97m0TM-Zd4jLPTraBe6_JoE-eznFYKwbPEmNS0Q@mail.gmail.com>
+From: Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <210975fe-527c-df2f-5a8a-9aca31e9246a@huawei.com>
+Date: Thu, 9 Nov 2017 10:51:15 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="j52aewghdaiv2yzz"
+In-Reply-To: <CACdnJut0-4k97m0TM-Zd4jLPTraBe6_JoE-eznFYKwbPEmNS0Q@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hello,
+On 11/8/2017 4:48 PM, Matthew Garrett wrote:
+> On Wed, Nov 8, 2017 at 7:00 AM, Roberto Sassu <roberto.sassu@huawei.com> wrote:
+>> On 11/7/2017 7:06 PM, Matthew Garrett wrote:
+>>> But we're still left in a state where the kernel has to end up
+>>> supporting a number of very niche formats, and userland agility is
+>>> tied to the kernel. I think it makes significantly more sense to push
+>>> the problem out to userland.
+>>
+>>
+>> At least for appraisal, digest lists must be parsed by the kernel. If
+>> the parser is moved to userspace, I don't know if we are able to provide
+>> the same guarantee, that the correct set of digests has been uploaded to
+>> IMA. A new measurement can be added, when IMA receives the digests, but
+>> a verifier has to verify the signature of the original file, perform
+>> format conversion, calculate the digest and compare it with that in the
+>> new IMA measurement. If digest lists are parsed directly by the kernel,
+>> then the signature can be verified directly.
+> 
+> The code doing the parsing is in the initramfs, which has already been
+> measured at boot time. You can guarantee that it's being done by
+> trusted code.
 
-referring to my own patch suggestion I've sent to the former
-linux-ima-user list I have a question regarding IMA and btrfs uuid
-calculation.
+The parser can be executed in the initial ram disk, but everything
+accessed before the parser is executed will be measured/appraised
+without digest lists. To do signature-based remote attestation, where
+the verification consists on checking the signature of digests of
+measured files, it would be necessary to sign systemd, libraries,
+everything accessed before the parser, and the parser. If RPM headers
+are parsed by the kernel, measurement/appraisal will be done directly
+with digest lists.
 
-My patch below does fix the error message 'evmctl' gives for files
-located on btrfs. But the resulting EVM digest / HMAC is not agreed upon
-by the kernel side code. btrfs complicates things by having UUIDs for
-subvolumes, too. After looking a bit deeper into this I found out that
-in kernel function hmac_add_misc() the inode->i_sb->s_uuid is all zero
-for btrfs file systems.
 
-I was able to get things to work by passing
+>>> Isn't failing to upload the expected digest list just a DoS? We
+>>> already expect to load keys from initramfs, so it seems fine to parse
+>>> stuff there - what's the problem with extracting information from
+>>> RPMs, translating them to the generic format and pushing that into the
+>>> kernel?
+>>
+>>
+>> The main problem is that the digest list measurement, performed when the
+>> parser accesses the file containing the RPM header, might not reflect
+>> what IMA uses for digest lookup.
+> 
+> Why not?
 
-     -u00000000-0000-0000-0000-000000000000
+I assumed you wanted to measure digest lists only at the time they are
+read by the parser, and not when they are read by IMA. If instead digest
+lists are verified again after conversion, the new workflow should be:
 
-to 'evmctl'. I tested this on kernel version 4.4 and 4.12.
+1) the kernel parses digest list metadata before systemd is executed
+2) the kernel verifies the signature of digest lists (RPM headers) and
+    add the digest of digest lists to the hash table, so that appraisal
+    succeeds
+3) systemd (with file signature) is executed
+4) the parser (with file signature) is executed
+5) the parser reads and converts the digest lists to the generic format,
+    and writes them to a tmpfs filesystem
+6) the parser generates a new digest list metadata file with the path of
+    converted digest lists and sends the path of the new metadata to IMA
+7) IMA reads the generic digest lists
 
-My question is if anyone knows whether this zero UUID is a known
-limitation produced by btrfs. If so then the correct patch to evmctl
-would be to implicitly use all zero UUIDs for files located on btrfs
-file systems.
+The measurement list should look like:
 
-Regards
+10 <digest> ima-sig <digest> boot_aggregate
+10 <digest> ima-sig <digest> /etc/ima/digest_lists/metadata
+10 <digest> ima-sig <digest> /usr/lib/systemd/systemd <signature>
+...
+10 <digest> ima-sig <digest> <parser> <signature>
+10 <digest> ima-sig <digest> /tmp/metadata
 
-Matthias
+
+If parsing of RPM headers is done by the kernel, the measurement list
+will look like:
+
+10 <digest> ima-ng <digest> boot_aggregate
+10 <digest> ima-ng <digest> /etc/ima/digest_lists/metadata
+
+
+A built-in policy should enable appraisal of tmpfs. If not, patch 11/15
+disables digest lookup for appraisal. Since generic digest lists will
+have a security.ima extended attribute (they are mutable files),
+appraisal verification will succeed.
+
+With this solution, digital signatures cannot be required, because
+generic digest lists will have a HMAC. For appraisal, it becomes
+necessary to ensure that only digest lists written by the parser can be
+processed by IMA.
+
+Roberto
 
 -- 
-Matthias Gerstner <matthias.gerstner@suse.de>
-Dipl.-Wirtsch.-Inf. (FH), Security Engineer
-https://www.suse.com/security
-Telefon: +49 911 740 53 290
-GPG Key ID: 0x14C405C971923553
-
-SUSE Linux GmbH
-GF: Felix Imendorffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nuernberg)
-
------ Forwarded message from Matthias Gerstner <mgerstner@suse.de> -----
-
-Date: Thu, 31 Aug 2017 17:29:36 +0200
-From: Matthias Gerstner <mgerstner@suse.de>
-To: linux-ima-user@lists.sourceforge.net
-Subject: [Linux-ima-user] [PATCH] evmctl: use /proc/self/mountinfo instead of /dev/block/<major>:<minor>
-User-Agent: NeoMutt/20170421 (1.8.2)
-
-Some file systems like btrfs and overlayfs don't report usable st_dev
-values during stat(). The result is that a command like this:
-
-    evmctl sign --rsa --imasig -k ~/ima/ima_private.pem /some/file
-
-fails with
-
-    Failed to read UUID. Root access might require.
-    errno: No data available (61)
-
-Parsing /proc/self/mountinfo seems to be the usual way to get around
-this limitation.
----
- src/evmctl.c | 85 +++++++++++++++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 75 insertions(+), 10 deletions(-)
-
-diff --git a/src/evmctl.c b/src/evmctl.c
-index c54efbb..3baa965 100644
---- a/src/evmctl.c
-+++ b/src/evmctl.c
-@@ -276,25 +276,90 @@ static int pack_uuid(const char *uuid_str, char *uuid)
- 	return 0;
- }
- 
-+#define MAJ_MIN_COL 3
-+#define MOUNT_SOURCE_COL 10
-+
-+static int get_blk_dev(dev_t dev, char *path, size_t size)
-+{
-+	/*
-+	 * Looking in /dev/block/<major>:<minor> does not suffice for some
-+	 * special file systems like btrfs or overlayfs, because their st_dev
-+	 * values do not correspond to any named block device.
-+	 *
-+	 * Instead parse /proc/self/mountinfo for the correct source device.
-+	 */
-+	int ret = -1;
-+	unsigned int maj = major(dev);
-+	unsigned int min = minor(dev);
-+	char line[LINE_MAX];
-+	char maj_min_val[LINE_MAX];
-+	size_t print_res = 0;
-+	FILE *mountinfo = fopen("/proc/self/mountinfo", "r");
-+
-+	if (!mountinfo)
-+		return -1;
-+
-+	// comparison string for the column parsing below
-+	print_res = snprintf(maj_min_val, LINE_MAX, "%u:%u", maj, min);
-+
-+	if (print_res >= LINE_MAX)
-+	{
-+		// buffer to small
-+		ret = -2;
-+		goto out;
-+	}
-+
-+	while (fgets(line, LINE_MAX, mountinfo) != NULL)
-+	{
-+		size_t column = 0;
-+		char *token, *tmp_line = line;
-+
-+		while ( (token = strtok(tmp_line, " ")) )
-+		{
-+			if (tmp_line)
-+				tmp_line = NULL;
-+			column++;
-+
-+			if (column == MAJ_MIN_COL)
-+			{
-+				if (strcmp(token, maj_min_val) != 0)
-+					// not the device we're looking for
-+					break;
-+			}
-+			else if (column == MOUNT_SOURCE_COL)
-+			{
-+				print_res = snprintf(path, size, "%s", token);
-+				log_debug("dev: %u:%u -> %s\n", maj, min, token);
-+				ret = print_res < size ? 0 : -2;
-+				goto out;
-+			}
-+		}
-+	}
-+
-+	// not found or read/parse error
-+	ret = -3;
-+out:
-+	if (mountinfo)
-+		fclose(mountinfo);
-+
-+	return ret;
-+}
-+
- static int get_uuid(struct stat *st, char *uuid)
- {
--	uint32_t dev;
--	unsigned minor, major;
--	char path[PATH_MAX], _uuid[37];
-+	char blkdev[PATH_MAX], cmdline[PATH_MAX], _uuid[37];
- 	FILE *fp;
- 	size_t len;
- 
- 	if (uuid_str)
- 		return pack_uuid(uuid_str, uuid);
- 
--	dev = st->st_dev;
--	major = (dev & 0xfff00) >> 8;
--	minor = (dev & 0xff) | ((dev >> 12) & 0xfff00);
-+	if (get_blk_dev(st->st_dev, blkdev, PATH_MAX) != 0)
-+		goto err;
- 
--	log_debug("dev: %u:%u\n", major, minor);
--	sprintf(path, "blkid -s UUID -o value /dev/block/%u:%u", major, minor);
-+	snprintf(cmdline, PATH_MAX, "blkid -s UUID -o value %s", blkdev);
- 
--	fp = popen(path, "r");
-+	fp = popen(cmdline, "r");
- 	if (!fp)
- 		goto err;
- 
-@@ -305,7 +370,7 @@ static int get_uuid(struct stat *st, char *uuid)
- 
- 	return pack_uuid(_uuid, uuid);
- err:
--	log_err("Failed to read UUID. Root access might require.\n");
-+	log_err("Failed to read UUID. Root access might be required.\n");
- 	return -1;
- }
- 
--- 
-2.13.5
-
------ End forwarded message -----
-
-
-    [ Part 2, "Digital signature"  Application/PGP-SIGNATURE (Name: ]
-    [ "signature.asc") 836 bytes. ]
-    [ Unable to print this part. ]
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
