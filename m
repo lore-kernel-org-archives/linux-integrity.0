@@ -1,15 +1,16 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:42474 "EHLO mx1.redhat.com"
+Received: from mx1.redhat.com ([209.132.183.28]:45996 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750829AbdKJHHj (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 10 Nov 2017 02:07:39 -0500
-Date: Fri, 10 Nov 2017 00:07:38 -0700
+        id S1755550AbdKJCTv (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 9 Nov 2017 21:19:51 -0500
+Date: Thu, 9 Nov 2017 19:19:51 -0700
 From: Jerry Snitselaar <jsnitsel@redhat.com>
 To: Laurent Bigonville <bigon@debian.org>
 Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Alexander.Steffen@infineon.com, linux-integrity@vger.kernel.org
+        Alexander.Steffen@infineon.com, tpmdd-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org
 Subject: Re: [tpmdd-devel] tpm device not showing up in /dev anymore
-Message-ID: <20171110070738.ki5xie4z7yql77fk@localhost.localdomain>
+Message-ID: <20171110021951.lihgyqvcq6ewbhhy@localhost.localdomain>
 Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
 References: <20171014081318.busge2fhteusfjwx@rhwork>
  <b63b765d-2477-d9fe-9d80-c2ea7e582bce@debian.org>
@@ -20,10 +21,10 @@ References: <20171014081318.busge2fhteusfjwx@rhwork>
  <20171024160725.r6kj452jdzpkbb6o@linux.intel.com>
  <8f4df9a9-c8cd-832f-4c3f-5305fabab7a8@debian.org>
  <0a6e4771-f871-b3ca-b5b0-26dbd9efa8b1@debian.org>
- <20171110002820.wtfvb3tv5fcjqecu@localhost.localdomain>
+ <20171109235005.pmklfw6zkjirahfa@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1; format=flowed
-In-Reply-To: <20171110002820.wtfvb3tv5fcjqecu@localhost.localdomain>
+In-Reply-To: <20171109235005.pmklfw6zkjirahfa@localhost.localdomain>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
@@ -255,13 +256,36 @@ On Thu Nov 09 17, Jerry Snitselaar wrote:
 >>
 >>Under 4.12 I still have the same errors as mentioned originally
 >
->Hi Laurent,
 >
->Would it be possible for you to run ftrace from boot with the following kernel parameters:
+>Still thinking about how to attack this. I don't think extending the timeout
+>would change anything because it is reading the register, and thinking the
+>status is valid because it reads 0xff. So it would still have that problem,
+>right?
 >
->ftrace=function_graph ftrace_filter=tpm*
+>Maybe a sanity check could be added to wait_for_tpm_stat() to
+>first check that it didn't read 0xff before checking for the value it
+>is looking for. Would that make sense Jarkko?
+>
+>diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+>index 1d6729be4cd6..8b77fa2003ce 100644
+>--- a/drivers/char/tpm/tpm-interface.c
+>+++ b/drivers/char/tpm/tpm-interface.c
+>@@ -1087,7 +1087,7 @@ int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long timeout,
+>               do {
+>                       tpm_msleep(TPM_TIMEOUT);
+>                       status = chip->ops->status(chip);
+>-                       if ((status & mask) == mask)
+>+                       if ((status != 0xff) && (status & mask) == mask)
+>                               return 0;
+>               } while (time_before(jiffies, stop));
+>       }
 >
 
-actually 'ftrace=function_graph ftrace_filter=tpm*,*locality,wait_for_tpm_stat' would be better
+Actually I'm reading through the tpm profile spec again, and 6.1 FIFO
+Interface Locality Usage per Register has a table that I think
+explains what is going on.
 
->and then send me the results of 'cat /sys/kernel/debug/tracing/trace' ?
+Since the access register is showing 0x81, which means access register
+bits are valid and the locality is not active. Table 39 in 6.1 says in
+the case where active locality is not set, or set for another
+locality, TPM_STS_x register reads return FFh.
