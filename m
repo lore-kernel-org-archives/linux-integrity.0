@@ -1,10 +1,10 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.3]:63517 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.15.14]:53565 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750799AbdKJUam (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 10 Nov 2017 15:30:42 -0500
-Subject: [PATCH 2/2] KEYS: trusted: Use common error handling code in
- tpm_unseal()
+        id S1753648AbdKJU3g (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 10 Nov 2017 15:29:36 -0500
+Subject: [PATCH 1/2] KEYS: trusted: Use common error handling code in
+ trusted_update()
 From: SF Markus Elfring <elfring@users.sourceforge.net>
 To: keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
@@ -15,8 +15,8 @@ To: keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
 Cc: LKML <linux-kernel@vger.kernel.org>,
         kernel-janitors@vger.kernel.org
 References: <479805df-edaf-1e9a-57be-d7c4f38e9d31@users.sourceforge.net>
-Message-ID: <3470e9c8-f7d8-247c-9e69-5301f71c3982@users.sourceforge.net>
-Date: Fri, 10 Nov 2017 21:30:25 +0100
+Message-ID: <658d88c1-b29b-cf8c-2ce0-8a2755ec9f33@users.sourceforge.net>
+Date: Fri, 10 Nov 2017 21:29:16 +0100
 MIME-Version: 1.0
 In-Reply-To: <479805df-edaf-1e9a-57be-d7c4f38e9d31@users.sourceforge.net>
 Content-Type: text/plain; charset=utf-8
@@ -24,55 +24,94 @@ Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 10 Nov 2017 21:15:53 +0100
+Date: Fri, 10 Nov 2017 20:50:15 +0100
 
-* Add a jump target so that a specific error message is stored only once
-  at the end of this function implementation.
-
-* Replace two calls of the macro "pr_info" by goto statements.
-
-* Adjust two condition checks.
+Adjust jump targets so that a bit of exception handling can be better
+reused at the end of this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- security/keys/trusted.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ security/keys/trusted.c | 44 ++++++++++++++++++++------------------------
+ 1 file changed, 20 insertions(+), 24 deletions(-)
 
 diff --git a/security/keys/trusted.c b/security/keys/trusted.c
-index fd06d0c5323b..a295eaae40ba 100644
+index bd85315cbfeb..fd06d0c5323b 100644
 --- a/security/keys/trusted.c
 +++ b/security/keys/trusted.c
-@@ -591,15 +591,12 @@ static int tpm_unseal(struct tpm_buf *tb,
- 
- 	/* sessions for unsealing key and data */
- 	ret = oiap(tb, &authhandle1, enonce1);
--	if (ret < 0) {
--		pr_info("trusted_key: oiap failed (%d)\n", ret);
--		return ret;
+@@ -1078,30 +1078,18 @@ static int trusted_update(struct key *key, struct key_preparsed_payload *prep)
+ 	if (!datablob)
+ 		return -ENOMEM;
+ 	new_o = trusted_options_alloc();
+-	if (!new_o) {
+-		ret = -ENOMEM;
+-		goto out;
 -	}
-+	if (ret)
-+		goto report_failure;
++	if (!new_o)
++		goto e_nomem;
 +
- 	ret = oiap(tb, &authhandle2, enonce2);
--	if (ret < 0) {
--		pr_info("trusted_key: oiap failed (%d)\n", ret);
--		return ret;
+ 	new_p = trusted_payload_alloc(key);
+-	if (!new_p) {
+-		ret = -ENOMEM;
+-		goto out;
 -	}
-+	if (ret)
-+		goto report_failure;
++	if (!new_p)
++		goto e_nomem;
  
- 	ordinal = htonl(TPM_ORD_UNSEAL);
- 	keyhndl = htonl(SRKHANDLE);
-@@ -654,6 +651,10 @@ static int tpm_unseal(struct tpm_buf *tb,
+ 	memcpy(datablob, prep->data, datalen);
+ 	datablob[datalen] = '\0';
+ 	ret = datablob_parse(datablob, new_p, new_o);
+-	if (ret != Opt_update) {
+-		ret = -EINVAL;
+-		kzfree(new_p);
+-		goto out;
+-	}
+-
+-	if (!new_o->keyhandle) {
+-		ret = -EINVAL;
+-		kzfree(new_p);
+-		goto out;
+-	}
++	if (ret != Opt_update || !new_o->keyhandle)
++		goto e_inval;
+ 
+ 	/* copy old key values, and reseal with new pcrs */
+ 	new_p->migratable = p->migratable;
+@@ -1113,23 +1101,31 @@ static int trusted_update(struct key *key, struct key_preparsed_payload *prep)
+ 	ret = key_seal(new_p, new_o);
+ 	if (ret < 0) {
+ 		pr_info("trusted_key: key_seal failed (%d)\n", ret);
+-		kzfree(new_p);
+-		goto out;
++		goto free_payload;
  	}
- 	memcpy(data, tb->data + TPM_DATA_OFFSET + sizeof(uint32_t), *datalen);
- 	return 0;
+ 	if (new_o->pcrlock) {
+ 		ret = pcrlock(new_o->pcrlock);
+ 		if (ret < 0) {
+ 			pr_info("trusted_key: pcrlock failed (%d)\n", ret);
+-			kzfree(new_p);
+-			goto out;
++			goto free_payload;
+ 		}
+ 	}
+ 	rcu_assign_keypointer(key, new_p);
+ 	call_rcu(&p->rcu, trusted_rcu_free);
+-out:
++free_data:
+ 	kzfree(datablob);
+ 	kzfree(new_o);
+ 	return ret;
 +
-+report_failure:
-+	pr_info("trusted_key: oiap failed (%d)\n", ret);
-+	return ret;
++e_nomem:
++	ret = -ENOMEM;
++	goto free_data;
++
++e_inval:
++	ret = -EINVAL;
++free_payload:
++	kzfree(new_p);
++	goto free_data;
  }
  
  /*
