@@ -1,98 +1,85 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:32819 "EHLO
-        userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750761AbdKLWFV (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33011 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750798AbdKLF1c (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 12 Nov 2017 17:05:21 -0500
-Date: Mon, 13 Nov 2017 09:05:13 +1100 (AEDT)
-From: James Morris <james.l.morris@oracle.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Subject: [GIT PULL] Security subsystem: integrity updates for v4.15
-Message-ID: <alpine.LFD.2.20.1711130901380.28856@localhost>
+        Sun, 12 Nov 2017 00:27:32 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20171109162947.GJ7063@ziepe.ca>
+References: <20171031200503.GC18578@ziepe.ca> <20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
+ <20171106022704.GD26011@ziepe.ca> <CANc+2y6dx_2zOzFA5aFs7RpEV8aNqxpDghmx+q_+XyendYJoew@mail.gmail.com>
+ <20171107160404.GG21466@ziepe.ca> <CANc+2y4GFaAryTN0vdBqWi=tqGdc6AMZ5fLnyFg-Jsrv4g-p5g@mail.gmail.com>
+ <20171109162947.GJ7063@ziepe.ca>
+From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Date: Sun, 12 Nov 2017 10:57:30 +0530
+Message-ID: <CANc+2y6_bbX6nAnxamy9e0g1d6YrFk0HJQMzn-bEK=xhN9wNAA@mail.gmail.com>
+Subject: Re: [PATCH v2] tpm: Move Linux RNG connection to hwrng
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:INTEGRITY MEASUREMENT ARCHITECTURE (IMA)"
+        <linux-security-module@vger.kernel.org>,
+        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
+        <linux-crypto@vger.kernel.org>,
+        James Morris <james.l.morris@oracle.com>,
+        Matt Mackall <mpm@selenic.com>,
+        David Safford <safford@us.ibm.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Linus,
+Hi Jason,
 
-Please pull these fixes for the Integrity subsystem.
+On 9 November 2017 at 21:59, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> On Thu, Nov 09, 2017 at 09:49:33PM +0530, PrasannaKumar Muralidharan wrote:
+>> Hi Jason,
+>>
+>> On 7 November 2017 at 21:34, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>> > On Tue, Nov 07, 2017 at 08:50:44AM +0530, PrasannaKumar Muralidharan wrote:
+>> >
+>> >> I am assuming you are talking about the following patches - using
+>> >> struct tpm_chip instead of chip number and this patch.
+>> >
+>> > yes
+>> >
+>> >> I won't be able to test if struct tpm_chip usage as I don't have
+>> >> multiple tpm hw in one machine. In case of tpm rng changes I can test
+>> >> only the lifecycle of tpm rng device. Is that enough? I feel my test
+>> >> will be limited. Please provide your thoughts on this.
+>> >
+>> > That is certainly better than no testing.
+>>
+>> The struct tpm_chip patch partially applied on linux next. I had to
+>> manually change the code. In qemu tpm rng device did not show up on
+>> loading tpm module. My laptop has tpm hw but Linux next did not work
+>> properly in that. All my console were getting spammed with some USB
+>> log message and I could not do anything. X did not start either. I
+>> could not debug the issue as the logs were printing infinitely. Will
+>> get little more time this weekend. Will do a proper test and provide
+>> you the result.
+>
+> Test against 4.15-rc, here are the two patches
+>
+> https://github.com/jgunthorpe/linux/tree/tpm
+>
+> Pull from here and merge the latest rc and you will probably have a
+> bootable system.
+>
+> Jason
 
-(From Mimi)
+Applied this patch on v4.14-rc4. Able to get data from tpm rng
+(/dev/hwrng with tpm as the chosen rng). This patch works fine. Its
+just a basic test though.
 
-"There is a mixture of bug fixes, code cleanup, preparatory code for new 
-functionality and new functionality.
+Tested-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
 
-Commit 26ddabfe96bb "evm: enable EVM when X509 certificate is loaded" 
-enabled EVM without loading a symmetric key, but was limited to defining 
-the x509 certificate pathname at build.  Included in this set of patches 
-is the ability of enabling EVM, without loading the EVM symmetric key, 
-from userspace.  New is the ability to prevent the loading of an EVM 
-symmetric key."
-
----
-
-The following changes since commit 34d8751fd4ffa34e85ee7e85d34168b3f3f62b42:
-
-  MAINTAINERS: update the IMA, EVM, trusted-keys, encrypted-keys entries (2017-11-06 02:21:44 +1100)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-integrity
-
-for you to fetch changes up to e5729f86a2987c9404f9b2fb494b9a6fc4412baf:
-
-  ima: Remove redundant conditional operator (2017-11-08 15:16:36 -0500)
-
-----------------------------------------------------------------
-Boshi Wang (1):
-      ima: fix hash algorithm initialization
-
-Bruno E. O. Meneguele (2):
-      module: export module signature enforcement status
-      ima: check signature enforcement against cmdline param instead of CONFIG
-
-Christoph Hellwig (1):
-      integrity: use kernel_read_file_from_path() to read x509 certs
-
-Matthew Garrett (3):
-      EVM: Include security.apparmor in EVM measurements
-      EVM: Allow userspace to signal an RSA key has been loaded
-      EVM: Only complain about a missing HMAC key once
-
-Mimi Zohar (4):
-      vfs: fix mounting a filesystem with i_version
-      ima: don't remove the securityfs policy file
-      ima: always measure and audit files in policy
-      ima: call ima_file_free() prior to calling fasync
-
-Thiago Jung Bauermann (1):
-      ima: Remove redundant conditional operator
-
-Thomas Meyer (1):
-      ima: Fix bool initialization/comparison
-
- Documentation/ABI/testing/evm         | 47 ++++++++++++++++--------
- fs/file_table.c                       |  2 +-
- fs/namespace.c                        |  3 +-
- include/linux/fs.h                    |  1 +
- include/linux/module.h                |  7 ++++
- include/uapi/linux/xattr.h            |  3 ++
- kernel/module.c                       | 10 ++++++
- security/integrity/digsig.c           | 14 +++++---
- security/integrity/evm/evm.h          |  3 ++
- security/integrity/evm/evm_crypto.c   |  2 +-
- security/integrity/evm/evm_main.c     |  3 ++
- security/integrity/evm/evm_secfs.c    | 29 ++++++++-------
- security/integrity/iint.c             | 49 -------------------------
- security/integrity/ima/ima_api.c      | 67 ++++++++++++++++++++++-------------
- security/integrity/ima/ima_appraise.c |  4 +--
- security/integrity/ima/ima_crypto.c   | 10 ++++++
- security/integrity/ima/ima_fs.c       |  6 ++--
- security/integrity/ima/ima_main.c     | 23 +++++++-----
- security/integrity/ima/ima_policy.c   |  6 ++--
- security/integrity/integrity.h        |  2 --
- 20 files changed, 165 insertions(+), 126 deletions(-)
+Regards,
+PrasannaKumar
