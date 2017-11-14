@@ -1,52 +1,57 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:55130 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753595AbdKNUSe (ORCPT
+Received: from mail-it0-f54.google.com ([209.85.214.54]:52373 "EHLO
+        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753115AbdKNTmb (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 14 Nov 2017 15:18:34 -0500
+        Tue, 14 Nov 2017 14:42:31 -0500
+Received: by mail-it0-f54.google.com with SMTP id n134so11369720itg.1
+        for <linux-integrity@vger.kernel.org>; Tue, 14 Nov 2017 11:42:30 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1510680986-29391-1-git-send-email-geert@linux-m68k.org>
-References: <1510680986-29391-1-git-send-email-geert@linux-m68k.org>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 14 Nov 2017 21:18:33 +0100
-Message-ID: <CAK8P3a3FvHSVZhraEVUBkgz8FJCWn6+zwPD__G5tQ8naPrc6wQ@mail.gmail.com>
-Subject: Re: [PATCH] [RFC] time: Make sure jiffies_to_msecs() preserves
- non-zero time periods
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org
+In-Reply-To: <1509383027.10174.5.camel@tycho.nsa.gov>
+References: <20171026084055.25482-1-mjg59@google.com> <1509027658.25604.4.camel@tycho.nsa.gov>
+ <CACdnJuu8fvVoD+G50dWtauUUa3H1tUAbBgzusc_CKNBugrVmwQ@mail.gmail.com> <1509383027.10174.5.camel@tycho.nsa.gov>
+From: Matthew Garrett <mjg59@google.com>
+Date: Tue, 14 Nov 2017 11:42:29 -0800
+Message-ID: <CACdnJuvymPL4hiz2ZhdAxknVhGdnS9_XCkrk7mR_CDWXwgW5gg@mail.gmail.com>
+Subject: Re: [PATCH V3 1/2] security: Add a cred_getsecid hook
+To: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov,
+        David Howells <dhowells@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Nov 14, 2017 at 6:36 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> For the common cases where 1000 is a multiple of HZ, or HZ is a multiple
-> of 1000, jiffies_to_msecs() never returns zero when passed a non-zero
-> time period.
+On Mon, Oct 30, 2017 at 10:03 AM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> On Mon, 2017-10-30 at 10:57 +0000, Matthew Garrett via Selinux wrote:
+>> On Thu, Oct 26, 2017 at 3:20 PM, Stephen Smalley <sds@tycho.nsa.gov>
+>> wrote:
+>> > On Thu, 2017-10-26 at 01:40 -0700, Matthew Garrett via Selinux
+>> > wrote:
+>> > > +static void selinux_cred_getsecid(const struct cred *c, u32
+>> > > *secid)
+>> > > +{
+>> > > +     rcu_read_lock();
+>> > > +     *secid = cred_sid(c);
+>> > > +     rcu_read_unlock();
+>> >
+>> > Is rcu_read_lock() necessary here? Seems like we use cred_sid() in
+>> > many
+>> > places without it.
+>>
+>> Ah, I thought it was based on task_sid(), but I guess that's actually
+>> protecting the __task_cred()?
 >
-> However, if HZ > 1000 and not an integer multiple of 1000 (e.g. 2001),
-> jiffies_to_msecs() may return zero for small non-zero time periods.
-> This may break code that relies on receiving back a non-zero value, e.g.
-> drivers/char/tpm/tpm2-cmd.c:tpm2_do_selftest().
+> It appears to me that in all other cases, we are either dealing with
+> the current cred, or something in the call chain of cred_sid() is
+> holding a reference to the cred, or something in the call chain of
+> cred_sid() has called rcu_read_lock() already.  I might have missed
+> something though, and I don't know how safe it is to assume that all
+> future callers will do this.  cc'd David for his thoughts.
 
-For reference, there are exactly three platforms that allow HZ to be larger
-than 1000, and they specifically use HZ=1024: alpha, itanium and
-mips/decstation.
+Hi David,
 
-> With the fix above, this becomes a false positive.
-> Nevertheless, it may be a good idea to preinitialize rc anyway, but I
-> have no idea what's the correct value (else I would have sent a patch
-> to do so ;-).
+Any opinion on this?
 
-I think changing the while() loop into do{}while() would be appropriate here.
-
-      Arnd
+Thanks!
