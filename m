@@ -1,74 +1,68 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:53267 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753132AbdKNViz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 14 Nov 2017 16:38:55 -0500
-Date: Tue, 14 Nov 2017 23:38:50 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Azhar Shaikh <azhar.shaikh@intel.com>
-Cc: linux-integrity@vger.kernel.org, jarkko.sakkinen@intel.com
-Subject: Re: [PATCH RFC v2 0/2] Fix corner cases with disabling CLKRUN in
- tpm_tis
-Message-ID: <20171114213850.iwm4no3rerjefxht@linux.intel.com>
-References: <1510090328-153106-1-git-send-email-azhar.shaikh@intel.com>
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:56461 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752151AbdKNUYF (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 14 Nov 2017 15:24:05 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1510090328-153106-1-git-send-email-azhar.shaikh@intel.com>
+In-Reply-To: <CAK8P3a3FvHSVZhraEVUBkgz8FJCWn6+zwPD__G5tQ8naPrc6wQ@mail.gmail.com>
+References: <1510680986-29391-1-git-send-email-geert@linux-m68k.org> <CAK8P3a3FvHSVZhraEVUBkgz8FJCWn6+zwPD__G5tQ8naPrc6wQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 14 Nov 2017 21:24:03 +0100
+Message-ID: <CAMuHMdV-S-tULe7JqUMKy-FJCTwyS5JPMetHLN01B68kE8=Tqg@mail.gmail.com>
+Subject: Re: [PATCH] [RFC] time: Make sure jiffies_to_msecs() preserves
+ non-zero time periods
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Nov 07, 2017 at 01:32:06PM -0800, Azhar Shaikh wrote:
-> Changes from v1:
-> - Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
->   - Add NULL checks before calling clk_toggle callback
->   - Use IS_ENABLED instead of ifdef in tpm_tis_clkrun_toggle()
->   - Do not call tpm_platform_begin_xfer() and tpm_platform_end_xfer()
->     from tpm_tis_clkrun_toggle(). Make them static again.
-> 
-> - Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
->   - This is a new patch in this series as per suggestion from Jason.
->   - Is the current implementation ok or I should move the code in tpm_tis_pnp_remove()
->     and tpm_tis_plat_remove() inside tpm_tis_remove(). That way all the unmapping
->     can be done in one place, instead of 3 different places now. Also the unmapping
->     in tpm_tis_init() can be moved to tpm_tis_remove(), since in case of error
->     tpm_tis_core_init() calls tpm_tis_remove(). Kindly suggest.
-> 
-> 
-> Azhar Shaikh (2):
->   tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()
->   tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy
-> 
->  drivers/char/tpm/tpm-interface.c |   6 +++
->  drivers/char/tpm/tpm_tis.c       | 102 ++++++++++++++++++++++++---------------
->  drivers/char/tpm/tpm_tis_core.c  |  21 ++++++++
->  drivers/char/tpm/tpm_tis_core.h  |   1 +
->  include/linux/tpm.h              |   1 +
->  5 files changed, 93 insertions(+), 38 deletions(-)
-> 
-> -- 
-> 1.9.1
-> 
+Hi Arnd,
 
-Please include my email (@linux.intel.com) to the TO-field for all TPM
-patches (and the cover letter).
+On Tue, Nov 14, 2017 at 9:18 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Tue, Nov 14, 2017 at 6:36 PM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> For the common cases where 1000 is a multiple of HZ, or HZ is a multiple
+>> of 1000, jiffies_to_msecs() never returns zero when passed a non-zero
+>> time period.
+>>
+>> However, if HZ > 1000 and not an integer multiple of 1000 (e.g. 2001),
+>> jiffies_to_msecs() may return zero for small non-zero time periods.
+>> This may break code that relies on receiving back a non-zero value, e.g.
+>> drivers/char/tpm/tpm2-cmd.c:tpm2_do_selftest().
+>
+> For reference, there are exactly three platforms that allow HZ to be larger
+> than 1000, and they specifically use HZ=1024: alpha, itanium and
+> mips/decstation.
 
-I will eventually catch these as I go through the ML but sometimes there
-is more latency to do that when I have a busy period. In a less busy
-period there is of course less latency.
+jiffies_to_msecs(1) = zero if HZ=1024.
 
-As this is a shared list with IMA and EVM I have to check every message
-whether it is a TPM patch. Thus, in a shared list including maintainers
-is even more important. You can find maintainers for every subsystem
-from MAINTAINERS file in the root of the Linux GIT tree.
+>> With the fix above, this becomes a false positive.
+>> Nevertheless, it may be a good idea to preinitialize rc anyway, but I
+>> have no idea what's the correct value (else I would have sent a patch
+>> to do so ;-).
+>
+> I think changing the while() loop into do{}while() would be appropriate here.
 
-Right now I have a very busy period as I'm upstream the SGX driver. That
-is why it took a week to even spot this (just did).
+Sounds reasonable.
 
-I'll try to find time this week to properly review your changes but
-cannot promise it will be tomorrow because, well, I just saw the patch
-set.
+Gr{oetje,eeting}s,
 
-With a quick oversight I do not see anything that would shock me but I
-still have to look into it with time and care.
+                        Geert
 
-/Jarkko
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
