@@ -1,61 +1,54 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:13305 "EHLO mga02.intel.com"
+Received: from mga05.intel.com ([192.55.52.43]:22525 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755768AbdKNOeb (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 14 Nov 2017 09:34:31 -0500
-Date: Tue, 14 Nov 2017 16:34:21 +0200
+        id S1754612AbdKNO1K (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 14 Nov 2017 09:27:10 -0500
+Date: Tue, 14 Nov 2017 16:27:06 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:INTEGRITY MEASUREMENT ARCHITECTURE (IMA)"
-        <linux-security-module@vger.kernel.org>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
-        <linux-crypto@vger.kernel.org>,
-        James Morris <james.l.morris@oracle.com>,
-        Matt Mackall <mpm@selenic.com>,
-        David Safford <safford@us.ibm.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH v2] tpm: Move Linux RNG connection to hwrng
-Message-ID: <20171114143421.3jxn6fzvgp2xmyk6@linux.intel.com>
-References: <20171031200503.GC18578@ziepe.ca>
- <20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
- <20171106022704.GD26011@ziepe.ca>
- <CANc+2y6dx_2zOzFA5aFs7RpEV8aNqxpDghmx+q_+XyendYJoew@mail.gmail.com>
- <20171107160404.GG21466@ziepe.ca>
+Cc: Peter Huewe <peterhuewe@gmx.de>,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Subject: Re: [PATCH] tpm: Update MAINTAINERS for Jason Gunthorpe
+Message-ID: <20171114142706.nqin45kx7rhbbkfb@linux.intel.com>
+References: <20171031202357.GA1030@ziepe.ca>
+ <20171103142841.2nphkjojzamrdezm@linux.intel.com>
+ <0812DDC3-187D-4F29-BFB5-9A4F509CA376@gmx.de>
+ <20171107150356.uln3lks64zt5oxjv@linux.intel.com>
+ <20171108063640.kxwag6fzguetpjnf@linux.intel.com>
+ <E803B459-CB11-4E23-B3BC-4DEF2A0C40B6@gmx.de>
+ <20171108222434.GF7063@ziepe.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171107160404.GG21466@ziepe.ca>
+In-Reply-To: <20171108222434.GF7063@ziepe.ca>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Nov 07, 2017 at 09:04:04AM -0700, Jason Gunthorpe wrote:
-> On Tue, Nov 07, 2017 at 08:50:44AM +0530, PrasannaKumar Muralidharan wrote:
+On Wed, Nov 08, 2017 at 03:24:34PM -0700, Jason Gunthorpe wrote:
+> On Wed, Nov 08, 2017 at 10:27:37AM +0100, Peter Huewe wrote:
 > 
-> > I am assuming you are talking about the following patches - using
-> > struct tpm_chip instead of chip number and this patch.
+> > >Updating that file goes out of my territory other than acking the
+> > >updates. 
 > 
-> yes
+> > Imho not really, since there is no MAINTAINERS maintainer.  If you
+> > feel uncomfortable with adding the changes to MAINTAINERS via your
+> > tree, please ask James to pull them up - just as Mimi did for her
+> > linux-integrity update.
 > 
-> > I won't be able to test if struct tpm_chip usage as I don't have
-> > multiple tpm hw in one machine. In case of tpm rng changes I can test
-> > only the lifecycle of tpm rng device. Is that enough? I feel my test
-> > will be limited. Please provide your thoughts on this.
+> Agreed, if you are submitting pull requests then the MAINTAINERS
+> update for TPM related things should go into your pull request. That
+> is appropriate..
 > 
-> That is certainly better than no testing.
+> It isn't necessary for everything to be cc'd everywhere, ultimately it
+> is your responsibility as the TPM maintainer to accept/reject this
+> change.
+> 
+> If it was a larger change, like adding/removing a maintainer then a
+> large audiance would be appropriate, but this is just changing
+> spelling and the patch was PGP signed ..
 > 
 > Jason
 
-WFM too.
-
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Agreed. I'll apply this after my previous change is available.
 
 /Jarkko
