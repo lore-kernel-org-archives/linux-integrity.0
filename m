@@ -1,63 +1,30 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44960 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932626AbdKOMiT (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 15 Nov 2017 07:38:19 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vAFCcCPq120650
-        for <linux-integrity@vger.kernel.org>; Wed, 15 Nov 2017 07:38:19 -0500
-Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2e8m6c4bv1-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 15 Nov 2017 07:38:11 -0500
-Received: from localhost
-        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Wed, 15 Nov 2017 12:37:25 -0000
-Subject: Re: [GIT PULL] Security subsystem: integrity updates for v4.15
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: James Morris <james.l.morris@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Date: Wed, 15 Nov 2017 07:37:20 -0500
-In-Reply-To: <alpine.LFD.2.20.1711130901380.28856@localhost>
-References: <alpine.LFD.2.20.1711130901380.28856@localhost>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1510749440.3711.285.camel@linux.vnet.ibm.com>
+Received: from mga06.intel.com ([134.134.136.31]:10721 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754291AbdKOINm (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 15 Nov 2017 03:13:42 -0500
+Date: Wed, 15 Nov 2017 10:13:38 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@intel.com>
+To: "Shaikh, Azhar" <azhar.shaikh@intel.com>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Subject: Re: [PATCH RFC v2 0/2] Fix corner cases with disabling CLKRUN in
+ tpm_tis
+Message-ID: <20171115081337.u4rdthezckakcvqt@intel.com>
+References: <1510090328-153106-1-git-send-email-azhar.shaikh@intel.com>
+ <20171114213850.iwm4no3rerjefxht@linux.intel.com>
+ <5FFFAD06ADE1CA4381B3F0F7C6AF582896D77D@ORSMSX109.amr.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5FFFAD06ADE1CA4381B3F0F7C6AF582896D77D@ORSMSX109.amr.corp.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2017-11-13 at 09:05 +1100, James Morris wrote:
-> Hi Linus,
-> 
-> Please pull these fixes for the Integrity subsystem.
-> 
-> (From Mimi)
-> 
-> "There is a mixture of bug fixes, code cleanup, preparatory code for new 
-> functionality and new functionality.
-> 
-> Commit 26ddabfe96bb "evm: enable EVM when X509 certificate is loaded" 
-> enabled EVM without loading a symmetric key, but was limited to defining 
-> the x509 certificate pathname at build.  Included in this set of patches 
-> is the ability of enabling EVM, without loading the EVM symmetric key, 
-> from userspace.  New is the ability to prevent the loading of an EVM 
-> symmetric key."
+On Tue, Nov 14, 2017 at 11:59:45PM +0200, Shaikh, Azhar wrote:
+> Sorry about this. Going forward will include @linux.intel.com and
+> other TPM maintainers to the TO-field.
 
-James, thank you for keeping the integrity patches separate, as
-requested, and sending the extra pull request.  This is extra work for
-you, but I really appreciate it.  The pull request seems to have gone
-smoothly.
+NP, didn't really affect me :-) But if you want less latency to your
+review, you should do this.
 
-So much of the integrity subsystem is dependent on the other security
-subsystems (eg. keys, TPM, LSM hooks).  Having a common security
-testing branch is really helpful.  It makes collaboration that much
-easier.
-
-Thanks!
-
-Mimi
+/Jarkko
