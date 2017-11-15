@@ -1,46 +1,63 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from lhrrgout.huawei.com ([194.213.3.17]:44157 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932305AbdKONlT (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 15 Nov 2017 08:41:19 -0500
-From: Roberto Sassu <roberto.sassu@huawei.com>
-To: <linux-integrity@vger.kernel.org>
-CC: <linux-security-module@vger.kernel.org>,
-        <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [USER SPACE][RFC][PATCH 0/5] ima: digest-list-tools package
-Date: Wed, 15 Nov 2017 14:39:21 +0100
-Message-ID: <20171115133926.20108-1-roberto.sassu@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44960 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932626AbdKOMiT (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 15 Nov 2017 07:38:19 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vAFCcCPq120650
+        for <linux-integrity@vger.kernel.org>; Wed, 15 Nov 2017 07:38:19 -0500
+Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2e8m6c4bv1-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 15 Nov 2017 07:38:11 -0500
+Received: from localhost
+        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Wed, 15 Nov 2017 12:37:25 -0000
+Subject: Re: [GIT PULL] Security subsystem: integrity updates for v4.15
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: James Morris <james.l.morris@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Date: Wed, 15 Nov 2017 07:37:20 -0500
+In-Reply-To: <alpine.LFD.2.20.1711130901380.28856@localhost>
+References: <alpine.LFD.2.20.1711130901380.28856@localhost>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1510749440.3711.285.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Recently, I published a patch set with title 'ima: digest list feature',
-which allows users to upload to IMA a set of digests, that will be used as
-reference values for measurement, appraisal and audit.
+On Mon, 2017-11-13 at 09:05 +1100, James Morris wrote:
+> Hi Linus,
+> 
+> Please pull these fixes for the Integrity subsystem.
+> 
+> (From Mimi)
+> 
+> "There is a mixture of bug fixes, code cleanup, preparatory code for new 
+> functionality and new functionality.
+> 
+> Commit 26ddabfe96bb "evm: enable EVM when X509 certificate is loaded" 
+> enabled EVM without loading a symmetric key, but was limited to defining 
+> the x509 certificate pathname at build.  Included in this set of patches 
+> is the ability of enabling EVM, without loading the EVM symmetric key, 
+> from userspace.  New is the ability to prevent the loading of an EVM 
+> symmetric key."
 
-Although this patch set does not contain kernel patches, I would like to
-publish it in the kernel mailing lists, so that people can have a better
-understanding on how the digest list feature works, and can try it. The
-kernel patches can be applied on top of the mainline kernel
-(commit 37cb8e1f8) and https://patchwork.kernel.org/patch/10013259/.
+James, thank you for keeping the integrity patches separate, as
+requested, and sending the extra pull request.  This is extra work for
+you, but I really appreciate it.  The pull request seems to have gone
+smoothly.
 
-I would also like to ask if it is fine to take code from the kernel without
-including the original file. I tried to reuse as much code as possible, to
-avoid two different implementations for kernel space and user space.
+So much of the integrity subsystem is dependent on the other security
+subsystems (eg. keys, TPM, LSM hooks).  Having a common security
+testing branch is really helpful.  It makes collaboration that much
+easier.
 
-Thanks
+Thanks!
 
-Roberto
-
-
-Roberto Sassu (5):
-  digest-list-tools: headers
-  digest-list-tools: library
-  digest-list-tools: tools
-  digest-list-tools: documentation
-  digest-list-tools: package
-
--- 
-2.11.0
+Mimi
