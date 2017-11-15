@@ -1,37 +1,204 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:20836 "EHLO
-        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932182AbdKPACq (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 15 Nov 2017 19:02:46 -0500
-Date: Thu, 16 Nov 2017 11:02:30 +1100 (AEDT)
-From: James Morris <james.l.morris@oracle.com>
-To: Patrick Ohly <patrick.ohly@intel.com>
-cc: Matthew Garrett <mjg59@google.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Subject: Re: IMA appraisal master plan? (was: Re: [PATCH V6] EVM: Add support
- for portable signature format)
-In-Reply-To: <1510770065.5979.21.camel@intel.com>
-Message-ID: <alpine.LFD.2.20.1711161101360.27132@localhost>
-References: <20171107151742.25122-1-mjg59@google.com>         <1510766803.5979.17.camel@intel.com>         <CACdnJusRutc4j7z+w6pZ0tooeAPcq=Vky_evF=X61AK_ivAEqg@mail.gmail.com> <1510770065.5979.21.camel@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Received: from mga05.intel.com ([192.55.52.43]:22460 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933165AbdKOWHY (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 15 Nov 2017 17:07:24 -0500
+From: Azhar Shaikh <azhar.shaikh@intel.com>
+To: jarkko.sakkinen@linux.intel.com, jgunthorpe@obsidianresearch.com,
+        peterhuewe@gmx.de, linux-integrity@vger.kernel.org
+Cc: azhar.shaikh@intel.com
+Subject: [PATCH RFC v3 2/2] tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy
+Date: Wed, 15 Nov 2017 14:07:12 -0800
+Message-Id: <1510783632-55866-3-git-send-email-azhar.shaikh@intel.com>
+In-Reply-To: <1510783632-55866-1-git-send-email-azhar.shaikh@intel.com>
+References: <1510783632-55866-1-git-send-email-azhar.shaikh@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, 15 Nov 2017, Patrick Ohly wrote:
+Move the static variable ilb_base_addr to tpm_tis_tcg_phy.
 
-> I have some experience with SMACK, but not with Apparmor. At least with
-> SMACK the problem is that the LSM depends on integrity protection of
-> the xattrs, but the integrity protection itself depends on the LSM, so
-> there's a cycle. An attacker can much too easily make offline changes
-> which then defeat whatever IMA policy the system might be using.
+Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
+---
+ drivers/char/tpm/tpm_tis.c | 67 ++++++++++++++++++++++++++--------------------
+ 1 file changed, 38 insertions(+), 29 deletions(-)
 
-Isn't this what EVM is supposed to mitigate?
-
-Can you explain the offline attack in this scenario?
-
-
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index 76a7b64195c8..d87b37c5404b 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -46,6 +46,7 @@ struct tpm_info {
+ struct tpm_tis_tcg_phy {
+ 	struct tpm_tis_data priv;
+ 	void __iomem *iobase;
++	void __iomem *ilb_base_addr;
+ 	bool begin_xfer_done;
+ };
+ 
+@@ -134,19 +135,22 @@ static int check_acpi_tpm2(struct device *dev)
+ }
+ #endif
+ 
++static inline bool is_bsw(void)
++{
+ #ifdef CONFIG_X86
++	return ((boot_cpu_data.x86_model == INTEL_FAM6_ATOM_AIRMONT) ? 1 : 0);
++#else
++	return false;
++#endif
++}
++
+ #define INTEL_LEGACY_BLK_BASE_ADDR      0xFED08000
+ #define ILB_REMAP_SIZE			0x100
++
++#ifdef CONFIG_X86
+ #define LPC_CNTRL_REG_OFFSET            0x84
+ #define LPC_CLKRUN_EN                   (1 << 2)
+ 
+-static void __iomem *ilb_base_addr;
+-
+-static inline bool is_bsw(void)
+-{
+-	return ((boot_cpu_data.x86_model == INTEL_FAM6_ATOM_AIRMONT) ? 1 : 0);
+-}
+-
+ /**
+  * tpm_platform_begin_xfer() - clear LPC CLKRUN_EN i.e. clocks will be running
+  * @data:	struct tpm_tis_data instance
+@@ -160,11 +164,11 @@ static void tpm_platform_begin_xfer(struct tpm_tis_data *data)
+ 					phy->begin_xfer_done))
+ 		return;
+ 
+-	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
++	clkrun_val = ioread32(phy->ilb_base_addr + LPC_CNTRL_REG_OFFSET);
+ 
+ 	/* Disable LPC CLKRUN# */
+ 	clkrun_val &= ~LPC_CLKRUN_EN;
+-	iowrite32(clkrun_val, ilb_base_addr + LPC_CNTRL_REG_OFFSET);
++	iowrite32(clkrun_val, phy->ilb_base_addr + LPC_CNTRL_REG_OFFSET);
+ 
+ 	/*
+ 	 * Write any random value on port 0x80 which is on LPC, to make
+@@ -185,15 +189,16 @@ static void tpm_platform_begin_xfer(struct tpm_tis_data *data)
+ static void tpm_platform_end_xfer(struct tpm_tis_data *data)
+ {
+ 	u32 clkrun_val;
++	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 
+ 	if (!is_bsw() || (data->flags & TPM_TIS_CLK_ENABLE))
+ 		return;
+ 
+-	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
++	clkrun_val = ioread32(phy->ilb_base_addr + LPC_CNTRL_REG_OFFSET);
+ 
+ 	/* Enable LPC CLKRUN# */
+ 	clkrun_val |= LPC_CLKRUN_EN;
+-	iowrite32(clkrun_val, ilb_base_addr + LPC_CNTRL_REG_OFFSET);
++	iowrite32(clkrun_val, phy->ilb_base_addr + LPC_CNTRL_REG_OFFSET);
+ 
+ 	/*
+ 	 * Write any random value on port 0x80 which is on LPC, to make
+@@ -204,10 +209,6 @@ static void tpm_platform_end_xfer(struct tpm_tis_data *data)
+ }
+ 
+ #else
+-static inline bool is_bsw(void)
+-{
+-	return false;
+-}
+ static void tpm_platform_begin_xfer(struct tpm_tis_data *data)
+ {
+ }
+@@ -311,14 +312,25 @@ static int tpm_tis_init(struct device *dev, struct tpm_info *tpm_info)
+ 	if (IS_ERR(phy->iobase))
+ 		return PTR_ERR(phy->iobase);
+ 
++	if (is_bsw()) {
++		phy->ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
++					ILB_REMAP_SIZE);
++		if (!phy->ilb_base_addr)
++			return -ENOMEM;
++	}
++
+ 	if (interrupts)
+ 		irq = tpm_info->irq;
+ 
+ 	if (itpm || is_itpm(ACPI_COMPANION(dev)))
+ 		phy->priv.flags |= TPM_TIS_ITPM_WORKAROUND;
+ 
+-	return tpm_tis_core_init(dev, &phy->priv, irq, &tpm_tcg,
++	rc = tpm_tis_core_init(dev, &phy->priv, irq, &tpm_tcg,
+ 				 ACPI_HANDLE(dev));
++	if (rc && is_bsw())
++		iounmap(phy->ilb_base_addr);
++
++	return rc;
+ }
+ 
+ static SIMPLE_DEV_PM_OPS(tpm_tis_pm, tpm_pm_suspend, tpm_tis_resume);
+@@ -359,9 +371,14 @@ static int tpm_tis_pnp_init(struct pnp_dev *pnp_dev,
+ static void tpm_tis_pnp_remove(struct pnp_dev *dev)
+ {
+ 	struct tpm_chip *chip = pnp_get_drvdata(dev);
++	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
++	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(priv);
+ 
+ 	tpm_chip_unregister(chip);
+ 	tpm_tis_remove(chip);
++
++	if (is_bsw())
++		iounmap(phy->ilb_base_addr);
+ }
+ 
+ static struct pnp_driver tis_pnp_driver = {
+@@ -408,10 +425,15 @@ static int tpm_tis_plat_probe(struct platform_device *pdev)
+ static int tpm_tis_plat_remove(struct platform_device *pdev)
+ {
+ 	struct tpm_chip *chip = dev_get_drvdata(&pdev->dev);
++	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
++	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(priv);
+ 
+ 	tpm_chip_unregister(chip);
+ 	tpm_tis_remove(chip);
+ 
++	if (is_bsw())
++		iounmap(phy->ilb_base_addr);
++
+ 	return 0;
+ }
+ 
+@@ -469,11 +491,6 @@ static int __init init_tis(void)
+ 	if (rc)
+ 		goto err_force;
+ 
+-#ifdef CONFIG_X86
+-	if (is_bsw())
+-		ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
+-					ILB_REMAP_SIZE);
+-#endif
+ 	rc = platform_driver_register(&tis_drv);
+ 	if (rc)
+ 		goto err_platform;
+@@ -492,10 +509,6 @@ static int __init init_tis(void)
+ err_platform:
+ 	if (force_pdev)
+ 		platform_device_unregister(force_pdev);
+-#ifdef CONFIG_X86
+-	if (is_bsw())
+-		iounmap(ilb_base_addr);
+-#endif
+ err_force:
+ 	return rc;
+ }
+@@ -505,10 +518,6 @@ static void __exit cleanup_tis(void)
+ 	pnp_unregister_driver(&tis_pnp_driver);
+ 	platform_driver_unregister(&tis_drv);
+ 
+-#ifdef CONFIG_X86
+-	if (is_bsw())
+-		iounmap(ilb_base_addr);
+-#endif
+ 	if (force_pdev)
+ 		platform_device_unregister(force_pdev);
+ }
 -- 
-James Morris
-<james.l.morris@oracle.com>
+1.9.1
