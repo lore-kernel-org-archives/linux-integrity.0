@@ -1,190 +1,70 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-qt0-f201.google.com ([209.85.216.201]:61614 "EHLO
-        mail-qt0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750946AbdKOVFf (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 15 Nov 2017 16:05:35 -0500
-Received: by mail-qt0-f201.google.com with SMTP id 31so21809300qtz.20
-        for <linux-integrity@vger.kernel.org>; Wed, 15 Nov 2017 13:05:34 -0800 (PST)
+Received: from mga02.intel.com ([134.134.136.20]:41683 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1758928AbdKOT5e (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 15 Nov 2017 14:57:34 -0500
+From: "Shaikh, Azhar" <azhar.shaikh@intel.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+CC: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Subject: RE: [PATCH RFC v2 2/2] tpm_tis: Move ilb_base_addr to
+ tpm_tis_tcg_phy
+Date: Wed, 15 Nov 2017 19:57:31 +0000
+Message-ID: <5FFFAD06ADE1CA4381B3F0F7C6AF582896DB32@ORSMSX109.amr.corp.intel.com>
+References: <1510090328-153106-1-git-send-email-azhar.shaikh@intel.com>
+ <1510090328-153106-3-git-send-email-azhar.shaikh@intel.com>
+ <20171114232812.GB25894@ziepe.ca>
+ <20171115081408.7jzoyxbycuw7y3w6@intel.com>
+ <5FFFAD06ADE1CA4381B3F0F7C6AF582896DAEB@ORSMSX109.amr.corp.intel.com>
+ <20171115193957.GT25894@ziepe.ca>
+In-Reply-To: <20171115193957.GT25894@ziepe.ca>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Date: Wed, 15 Nov 2017 13:05:27 -0800
-Message-Id: <20171115210527.11488-1-mjg59@google.com>
-Subject: [USER] [PATCH] Add support for portable EVM format
-From: Matthew Garrett <mjg59@google.com>
-To: linux-integrity@vger.kernel.org
-Cc: zohar@linux.vnet.ibm.com, Matthew Garrett <mjg59@google.com>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Add a --portable argument that generates EVM signatures without using
-the inode number and generation or fs UUID.
 
-Signed-off-by: Matthew Garrett <mjg59@google.com>
----
- README       |  6 ++++--
- src/evmctl.c | 35 +++++++++++++++++++++++++----------
- src/imaevm.h |  1 +
- 3 files changed, 30 insertions(+), 12 deletions(-)
 
-diff --git a/README b/README
-index b1dfafa..da828cf 100644
---- a/README
-+++ b/README
-@@ -26,7 +26,7 @@ COMMANDS
-  --version
-  help <command>
-  import [--rsa] pubkey keyring
-- sign [-r] [--imahash | --imasig ] [--key key] [--pass password] file
-+ sign [-r] [--imahash | --imasig ] [--portable] [--key key] [--pass password] file
-  verify file
-  ima_sign [--sigfile] [--key key] [--pass password] file
-  ima_verify file
-@@ -46,6 +46,7 @@ OPTIONS
-   -f, --sigfile      store IMA signature in .sig file instead of xattr
-       --rsa          use RSA key type and signing scheme v1
-   -k, --key          path to signing key (default: /etc/keys/{privkey,pubkey}_evm.pem)
-+  -o, --portable     generate portable EVM signatures
-   -p, --pass         password for encrypted signing key
-   -r, --recursive    recurse into directories (sign)
-   -t, --type         file types to fix 'fdsxm' (f: file, d: directory, s: block/char/symlink)
-@@ -95,7 +96,8 @@ Kernel configuration option CONFIG_EVM_ATTR_FSUUID controls whether to include
- filesystem UUID into HMAC and enabled by default. Therefore evmctl also includes
- fsuuid by default. Providing '--uuid' option without parameter allows to disable
- usage of fs uuid. Providing '--uuid=UUID' option with parameter allows to use
--custom UUID.
-+custom UUID. Providing the '--portable' option will disable usage of the fs uuid
-+and also the inode number and generation.
- 
- Kernel configuration option CONFIG_EVM_EXTRA_SMACK_XATTRS controls whether to
- include additional SMACK extended attributes into HMAC. They are following:
-diff --git a/src/evmctl.c b/src/evmctl.c
-index 3eb3771..f02da39 100644
---- a/src/evmctl.c
-+++ b/src/evmctl.c
-@@ -119,6 +119,7 @@ static int recursive;
- static int msize;
- static dev_t fs_dev;
- static bool evm_immutable;
-+static bool evm_portable;
- 
- #define HMAC_FLAG_NO_UUID	0x0001
- #define HMAC_FLAG_CAPS_SET	0x0002
-@@ -422,8 +423,10 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
- 		struct h_misc *hmac = (struct h_misc *)&hmac_misc;
- 
- 		hmac_size = sizeof(*hmac);
--		hmac->ino = st.st_ino;
--		hmac->generation = generation;
-+		if (!evm_portable) {
-+			hmac->ino = st.st_ino;
-+			hmac->generation = generation;
-+		}
- 		hmac->uid = st.st_uid;
- 		hmac->gid = st.st_gid;
- 		hmac->mode = st.st_mode;
-@@ -431,8 +434,10 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
- 		struct h_misc_64 *hmac = (struct h_misc_64 *)&hmac_misc;
- 
- 		hmac_size = sizeof(*hmac);
--		hmac->ino = st.st_ino;
--		hmac->generation = generation;
-+		if (!evm_portable) {
-+			hmac->ino = st.st_ino;
-+			hmac->generation = generation;
-+		}
- 		hmac->uid = st.st_uid;
- 		hmac->gid = st.st_gid;
- 		hmac->mode = st.st_mode;
-@@ -440,8 +445,10 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
- 		struct h_misc_32 *hmac = (struct h_misc_32 *)&hmac_misc;
- 
- 		hmac_size = sizeof(*hmac);
--		hmac->ino = st.st_ino;
--		hmac->generation = generation;
-+		if (!evm_portable) {
-+			hmac->ino = st.st_ino;
-+			hmac->generation = generation;
-+		}
- 		hmac->uid = st.st_uid;
- 		hmac->gid = st.st_gid;
- 		hmac->mode = st.st_mode;
-@@ -456,7 +463,8 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
- 		return 1;
- 	}
- 
--	if (!evm_immutable && !(hmac_flags & HMAC_FLAG_NO_UUID)) {
-+	if (!evm_immutable && !evm_portable &&
-+	    !(hmac_flags & HMAC_FLAG_NO_UUID)) {
- 		err = get_uuid(&st, uuid);
- 		if (err)
- 			return -1;
-@@ -493,7 +501,10 @@ static int sign_evm(const char *file, const char *key)
- 
- 	/* add header */
- 	len++;
--	sig[0] = EVM_IMA_XATTR_DIGSIG;
-+	if (evm_portable)
-+		sig[0] = EVM_XATTR_PORTABLE_DIGSIG;
-+	else
-+		sig[0] = EVM_IMA_XATTR_DIGSIG;
- 
- 	if (evm_immutable)
- 		sig[1] = 3; /* immutable signature version */
-@@ -888,7 +899,6 @@ static int cmd_import(struct command *cmd)
- 		calc_keyid_v1(keyid, name, pub, len);
- 	}
- 
--	printf("Keyid is %x\n", *((uint32_t *)keyid));
- 	log_info("Importing public key %s from file %s into keyring %d\n", name, inkey, id);
- 
- 	id = add_key(params.x509 ? "asymmetric" : "user", params.x509 ? NULL : name, pub, len, id);
-@@ -1523,6 +1533,7 @@ static void usage(void)
- 		"  -f, --sigfile      store IMA signature in .sig file instead of xattr\n"
- 		"      --rsa          use RSA key type and signing scheme v1\n"
- 		"  -k, --key          path to signing key (default: /etc/keys/{privkey,pubkey}_evm.pem)\n"
-+		"  -o, --portable     generate portable EVM signatures\n"
- 		"  -p, --pass         password for encrypted signing key\n"
- 		"  -r, --recursive    recurse into directories (sign)\n"
- 		"  -t, --type         file types to fix 'fdsxm' (f: file, d: directory, s: block/char/symlink)\n"
-@@ -1580,6 +1591,7 @@ static struct option opts[] = {
- 	{"recursive", 0, 0, 'r'},
- 	{"m32", 0, 0, '3'},
- 	{"m64", 0, 0, '6'},
-+	{"portable", 0, 0, 'o'},
- 	{"smack", 0, 0, 128},
- 	{"version", 0, 0, 129},
- 	{"inode", 1, 0, 130},
-@@ -1636,7 +1648,7 @@ int main(int argc, char *argv[])
- 	g_argc = argc;
- 
- 	while (1) {
--		c = getopt_long(argc, argv, "hvnsda:p::fu::k:t:riz", opts, &lind);
-+		c = getopt_long(argc, argv, "hvnsda:op::fu::k:t:riz", opts, &lind);
- 		if (c == -1)
- 			break;
- 
-@@ -1685,6 +1697,9 @@ int main(int argc, char *argv[])
- 		case 'i':
- 			evm_immutable = true;
- 			break;
-+		case 'o':
-+			evm_portable = true;
-+			break;
- 		case 't':
- 			search_type = optarg;
- 			break;
-diff --git a/src/imaevm.h b/src/imaevm.h
-index 711596c..e397743 100644
---- a/src/imaevm.h
-+++ b/src/imaevm.h
-@@ -82,6 +82,7 @@ enum evm_ima_xattr_type {
- 	EVM_XATTR_HMAC,
- 	EVM_IMA_XATTR_DIGSIG,
- 	IMA_XATTR_DIGEST_NG,
-+	EVM_XATTR_PORTABLE_DIGSIG,
- };
- 
- struct h_misc {
--- 
-2.15.0.448.gf294e3d99a-goog
+>-----Original Message-----
+>From: Jason Gunthorpe [mailto:jgg@ziepe.ca]
+>Sent: Wednesday, November 15, 2017 11:40 AM
+>To: Shaikh, Azhar <azhar.shaikh@intel.com>
+>Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>; linux-
+>integrity@vger.kernel.org
+>Subject: Re: [PATCH RFC v2 2/2] tpm_tis: Move ilb_base_addr to
+>tpm_tis_tcg_phy
+>
+>On Wed, Nov 15, 2017 at 07:36:47PM +0000, Shaikh, Azhar wrote:
+>
+>> If I implement is_bsw() as below and move it(is_bsw()) outside the #ifdef
+>CONFIG_X86, I will still get compilation errors for non-x86 platforms, since
+>INTEL_FAM6_ATOM_AIRMONT will be undefined.
+>>
+>> bool is_bsw(void)
+>> {
+>>     if (!IS_ENABLED(CONFIG_X86))
+>>         return false;
+>> return ((boot_cpu_data.x86_model == INTEL_FAM6_ATOM_AIRMONT) ? 1
+>: 0);
+>> }
+>>
+>> I think I will have to keep is_bsw() implementation unchanged?
+>
+>No, still move the #ifdef to is_bsw, just like this instead:
+>
+>bool is_bsw(void)
+>{
+>#ifdef CONFIG_X86
+>     return ((boot_cpu_data.x86_model == INTEL_FAM6_ATOM_AIRMONT) ? 1
+>     : 0);
+>#else
+>     return false;
+>#endif
+>}
+>
+
+
+Ok, sure.
+Should have thought myself about this... :(
+
+>Jason
