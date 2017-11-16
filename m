@@ -1,43 +1,40 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35588 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965505AbdKPRLe (ORCPT
+Received: from smtprelay0125.hostedemail.com ([216.40.44.125]:37192 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1759056AbdKPP1i (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 16 Nov 2017 12:11:34 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vAGH9BnQ143051
-        for <linux-integrity@vger.kernel.org>; Thu, 16 Nov 2017 12:11:34 -0500
-Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2e9d6h5q1b-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 16 Nov 2017 12:11:33 -0500
-Received: from localhost
-        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Thu, 16 Nov 2017 17:11:20 -0000
-Subject: Re: [PATCH 0/4] treewide: Fix line continuation formats
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Joe Perches <joe@perches.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>, linux-pm@vger.kernel.org,
+        Thu, 16 Nov 2017 10:27:38 -0500
+From: Joe Perches <joe@perches.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>, linux-pm@vger.kernel.org,
         linux-integrity@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Date: Thu, 16 Nov 2017 12:11:13 -0500
-In-Reply-To: <cover.1510845910.git.joe@perches.com>
-References: <cover.1510845910.git.joe@perches.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1510852273.3711.448.camel@linux.vnet.ibm.com>
+Subject: [PATCH 0/4] treewide: Fix line continuation formats
+Date: Thu, 16 Nov 2017 07:27:25 -0800
+Message-Id: <cover.1510845910.git.joe@perches.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, 2017-11-16 at 07:27 -0800, Joe Perches wrote:
-> Avoid using line continations in formats as that causes unexpected
-> output.
+Avoid using line continations in formats as that causes unexpected
+output.
 
-Is having lines greater than 80 characters the preferred method?
- Could you add quotes before the backlash and before the first word on
-the next line instead?
+Joe Perches (4):
+  rk3399_dmc: Fix line continuation format
+  drm: amd: Fix line continuation formats
+  [media] dibx000_common: Fix line continuation format
+  ima: Fix line continuation format
 
-Mimi
+ drivers/devfreq/rk3399_dmc.c                       |  4 ++--
+ drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c   | 11 ++++-----
+ .../amd/powerplay/hwmgr/process_pptables_v1_0.c    |  6 ++---
+ drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c | 27 ++++++++--------------
+ drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c   |  6 ++---
+ .../gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c  |  9 +++-----
+ .../gpu/drm/amd/powerplay/smumgr/vega10_smumgr.c   |  6 ++---
+ drivers/media/dvb-frontends/dibx000_common.c       |  8 +++----
+ security/integrity/ima/ima_template.c              | 11 ++++-----
+ 9 files changed, 33 insertions(+), 55 deletions(-)
+
+-- 
+2.15.0
