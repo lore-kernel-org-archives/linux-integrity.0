@@ -1,9 +1,9 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:35263 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932671AbdKPVk5 (ORCPT
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:44916 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751840AbdKPVZG (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 16 Nov 2017 16:40:57 -0500
+        Thu, 16 Nov 2017 16:25:06 -0500
 From: Guenter Roeck <linux@roeck-us.net>
 To: Peter Huewe <peterhuewe@gmx.de>
 Cc: Andrey Pronin <apronin@chromium.org>,
@@ -11,9 +11,9 @@ Cc: Andrey Pronin <apronin@chromium.org>,
         Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH v2] tpm: Add explicit chip->ops locking for sysfs attributes.
-Date: Thu, 16 Nov 2017 13:40:54 -0800
-Message-Id: <1510868454-31912-1-git-send-email-linux@roeck-us.net>
+Subject: [PATCH] tpm: Add explicit chip->ops locking for sysfs attributes.
+Date: Thu, 16 Nov 2017 13:25:01 -0800
+Message-Id: <1510867501-9498-1-git-send-email-linux@roeck-us.net>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
@@ -22,11 +22,9 @@ This lets us support those attributes on tpm2 devices.
 
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 ---
-v2: It makes sense to actually compile the code.
-
  drivers/char/tpm/tpm-chip.c  |   4 --
- drivers/char/tpm/tpm-sysfs.c | 127 ++++++++++++++++++++++++++++++++-----------
- 2 files changed, 94 insertions(+), 37 deletions(-)
+ drivers/char/tpm/tpm-sysfs.c | 125 ++++++++++++++++++++++++++++++++-----------
+ 2 files changed, 93 insertions(+), 36 deletions(-)
 
 diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
 index 0eca20c5a80c..f0593ec1c11b 100644
@@ -44,7 +42,7 @@ index 0eca20c5a80c..f0593ec1c11b 100644
  static int tpm_class_shutdown(struct device *dev)
  {
 diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
-index 83a77a445538..13405bdde725 100644
+index 83a77a445538..292d5bbf79a8 100644
 --- a/drivers/char/tpm/tpm-sysfs.c
 +++ b/drivers/char/tpm/tpm-sysfs.c
 @@ -47,18 +47,22 @@ static ssize_t pubek_show(struct device *dev, struct device_attribute *attr,
@@ -95,9 +93,8 @@ index 83a77a445538..13405bdde725 100644
  	rc = tpm_getcap(chip, TPM_CAP_PROP_PCR, &cap,
  			"attempting to determine the number of PCRS",
  			sizeof(cap.num_pcrs));
--	if (rc)
+ 	if (rc)
 -		return 0;
-+	if (rc) {
 +		rc = 0;
 +		goto put_ops;
 +	}
