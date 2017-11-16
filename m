@@ -1,40 +1,66 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from smtprelay0125.hostedemail.com ([216.40.44.125]:37192 "EHLO
+Received: from smtprelay0017.hostedemail.com ([216.40.44.17]:37234 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1759056AbdKPP1i (ORCPT
+        by vger.kernel.org with ESMTP id S965199AbdKPP1u (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 16 Nov 2017 10:27:38 -0500
+        Thu, 16 Nov 2017 10:27:50 -0500
 From: Joe Perches <joe@perches.com>
-To: Chanwoo Choi <cw00.choi@samsung.com>, linux-pm@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH 0/4] treewide: Fix line continuation formats
-Date: Thu, 16 Nov 2017 07:27:25 -0800
-Message-Id: <cover.1510845910.git.joe@perches.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: James Morris <james.l.morris@oracle.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 4/4] ima: Fix line continuation format
+Date: Thu, 16 Nov 2017 07:27:29 -0800
+Message-Id: <ea357947f2cbac6cd7ace62c92831d0d6d403ea8.1510845910.git.joe@perches.com>
+In-Reply-To: <cover.1510845910.git.joe@perches.com>
+References: <cover.1510845910.git.joe@perches.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Avoid using line continations in formats as that causes unexpected
-output.
+Line continuations with excess spacing causes unexpected output.
 
-Joe Perches (4):
-  rk3399_dmc: Fix line continuation format
-  drm: amd: Fix line continuation formats
-  [media] dibx000_common: Fix line continuation format
-  ima: Fix line continuation format
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ security/integrity/ima/ima_template.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
- drivers/devfreq/rk3399_dmc.c                       |  4 ++--
- drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c   | 11 ++++-----
- .../amd/powerplay/hwmgr/process_pptables_v1_0.c    |  6 ++---
- drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c | 27 ++++++++--------------
- drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c   |  6 ++---
- .../gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c  |  9 +++-----
- .../gpu/drm/amd/powerplay/smumgr/vega10_smumgr.c   |  6 ++---
- drivers/media/dvb-frontends/dibx000_common.c       |  8 +++----
- security/integrity/ima/ima_template.c              | 11 ++++-----
- 9 files changed, 33 insertions(+), 55 deletions(-)
-
+diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+index 7412d0291ab9..30db39b23804 100644
+--- a/security/integrity/ima/ima_template.c
++++ b/security/integrity/ima/ima_template.c
+@@ -377,8 +377,7 @@ int ima_restore_measurement_list(loff_t size, void *buf)
+ 			break;
+ 
+ 		if (hdr[HDR_TEMPLATE_NAME].len >= MAX_TEMPLATE_NAME_LEN) {
+-			pr_err("attempting to restore a template name \
+-				that is too long\n");
++			pr_err("attempting to restore a template name that is too long\n");
+ 			ret = -EINVAL;
+ 			break;
+ 		}
+@@ -389,8 +388,8 @@ int ima_restore_measurement_list(loff_t size, void *buf)
+ 		template_name[hdr[HDR_TEMPLATE_NAME].len] = 0;
+ 
+ 		if (strcmp(template_name, "ima") == 0) {
+-			pr_err("attempting to restore an unsupported \
+-				template \"%s\" failed\n", template_name);
++			pr_err("attempting to restore an unsupported template \"%s\" failed\n",
++			       template_name);
+ 			ret = -EINVAL;
+ 			break;
+ 		}
+@@ -410,8 +409,8 @@ int ima_restore_measurement_list(loff_t size, void *buf)
+ 						&(template_desc->fields),
+ 						&(template_desc->num_fields));
+ 		if (ret < 0) {
+-			pr_err("attempting to restore the template fmt \"%s\" \
+-				failed\n", template_desc->fmt);
++			pr_err("attempting to restore the template fmt \"%s\" failed\n",
++			       template_desc->fmt);
+ 			ret = -EINVAL;
+ 			break;
+ 		}
 -- 
 2.15.0
