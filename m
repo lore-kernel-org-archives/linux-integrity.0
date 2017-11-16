@@ -1,29 +1,29 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:32836 "EHLO
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37974 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934875AbdKPNNq (ORCPT
+        by vger.kernel.org with ESMTP id S934876AbdKPNGp (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 16 Nov 2017 08:13:46 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vAGDCMeU107144
-        for <linux-integrity@vger.kernel.org>; Thu, 16 Nov 2017 08:13:45 -0500
-Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2e97eb46e3-1
+        Thu, 16 Nov 2017 08:06:45 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vAGD6jqU130366
+        for <linux-integrity@vger.kernel.org>; Thu, 16 Nov 2017 08:06:45 -0500
+Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2e997j697q-1
         (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 16 Nov 2017 08:13:45 -0500
+        for <linux-integrity@vger.kernel.org>; Thu, 16 Nov 2017 08:06:44 -0500
 Received: from localhost
-        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Thu, 16 Nov 2017 13:13:42 -0000
+        Thu, 16 Nov 2017 13:06:41 -0000
 Subject: Re: IMA appraisal master plan?
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Patrick Ohly <patrick.ohly@intel.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
+To: Roberto Sassu <roberto.sassu@huawei.com>,
         Matthew Garrett <mjg59@google.com>,
         James Morris <james.l.morris@oracle.com>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>
-Date: Thu, 16 Nov 2017 08:13:38 -0500
-In-Reply-To: <1510827621.5979.27.camel@intel.com>
+Cc: Patrick Ohly <patrick.ohly@intel.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Date: Thu, 16 Nov 2017 08:06:35 -0500
+In-Reply-To: <8bbaea89-336c-d14b-2ed8-44cd0a0d3ed1@huawei.com>
 References: <20171107151742.25122-1-mjg59@google.com>
          <1510766803.5979.17.camel@intel.com>
          <CACdnJusRutc4j7z+w6pZ0tooeAPcq=Vky_evF=X61AK_ivAEqg@mail.gmail.com>
@@ -32,43 +32,39 @@ References: <20171107151742.25122-1-mjg59@google.com>
          <CACdnJuv=YDngm5HqJT9sfM01AVoZUaf8_uu-ygo+h8nNjtsDeA@mail.gmail.com>
          <1510798382.3711.389.camel@linux.vnet.ibm.com>
          <8bbaea89-336c-d14b-2ed8-44cd0a0d3ed1@huawei.com>
-         <1510827621.5979.27.camel@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1510838018.3711.426.camel@linux.vnet.ibm.com>
+Message-Id: <1510837595.3711.420.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, 2017-11-16 at 11:20 +0100, Patrick Ohly wrote:
-> On Thu, 2017-11-16 at 10:23 +0100, Roberto Sassu wrote:
-
-> > Me and Matthew are considering policies based on subject criteria
-> > rather than object criteria. The integrity of a process can be
-> > guaranteed because everything that process reads or executes will be
-> > appraised.
+On Thu, 2017-11-16 at 10:23 +0100, Roberto Sassu wrote:
+> On 11/16/2017 3:13 AM, Mimi Zohar wrote:
+> > On Wed, 2017-11-15 at 16:05 -0800, Matthew Garrett wrote:
+> >> On Wed, Nov 15, 2017 at 4:02 PM, James Morris <james.l.morris@oracle.com> wrote:
+> >>> On Wed, 15 Nov 2017, Patrick Ohly wrote:
+> >>>
+> >>>> I have some experience with SMACK, but not with Apparmor. At least with
+> >>>> SMACK the problem is that the LSM depends on integrity protection of
+> >>>> the xattrs, but the integrity protection itself depends on the LSM, so
+> >>>> there's a cycle. An attacker can much too easily make offline changes
+> >>>> which then defeat whatever IMA policy the system might be using.
+> >>>
+> >>> Isn't this what EVM is supposed to mitigate?
 > 
-> Even then you still have the problem that the integrity of the process
-> may also depend on the presence (or absence) of files. My favorite
-> example for that is systemd: suppose that the integrity of the system
-> depends on starting a certain service via systemd. It's trivial for an
-> attacker to remove the corresponding unit file when the system is
-> offline.
-> 
-> Adding a custom service written by an attacker gets prevented, but an
-> attacker can still install unit files prepared by the vendor. For
-> example, suppose a device is not supposed to have an ssh daemon, but
-> there is a package for OpenSSH properly signed by the vendor. Then an
-> attacker can take those files and add them to the device while offline.
->  It could get even worse (telnet? A debugging service?), so a vendor
-> has to be very careful about what is getting signed.
-> 
-> Another attack vector that also remains open is replacing files with
-> other files from the vendor. Suppose there's a binary that does some
-> check and signals the result to the calling process with its exit code.
-> An attacker can control the result of the check by replacing the binary
-> with /bin/true or /bin/false, depending on what result is desired.
+> With the default appraisal policy, it can't. IMA determines if a file
+> must be appraised depending on metadata whose integrity has not been
+> verified yet. A root process is able to load appraised files with
+> i_uid = 0 and files with missing/invalid HMAC and i_uid != 0, at the
+> same time.
 
-Right, both of these examples can be detected by protecting the
-directory information.
+The LSMs are responsible for protecting their own labels.  They have
+the opportunity to verify and deny access to files based on LSM
+labels, BEFORE IMA-appraisal is called to verify the file's integrity.
 
-Mimi  
+Look at security/security.c and see that IMA is called AFTER the
+LSMs.  The same is true for the other IMA hooks, that are not co-
+located with LSM hooks.  For example, the security_file_open hook is
+called before the ima_file_check() hook.
+
+Mimi
