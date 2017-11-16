@@ -1,143 +1,125 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from smtp2.infineon.com ([217.10.52.18]:53113 "EHLO
-        smtp2.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751310AbdKPOey (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 16 Nov 2017 09:34:54 -0500
-From: <Alexander.Steffen@infineon.com>
-To: <nayna@linux.vnet.ibm.com>, <linux-integrity@vger.kernel.org>
-CC: <zohar@linux.vnet.ibm.com>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <peterhuewe@gmx.de>,
-        <jarkko.sakkinen@linux.intel.com>, <tpmdd@selhorst.net>,
-        <patrickc@us.ibm.com>
-Subject: RE: [PATCH v4 2/4] tpm: ignore burstcount to improve tpm_tis send()
- performance
-Date: Thu, 16 Nov 2017 14:34:51 +0000
-Message-ID: <6f0bd36decb94820a211e5c9795cfec2@infineon.com>
-References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
- <20171017203232.2262-3-nayna@linux.vnet.ibm.com>
- <5ef60315f2254b3b8bcc217a572280e5@infineon.com>
- <e98e85a5-fec1-93fb-8daf-d997d5995993@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="Windows-1252"
+Received: from lhrrgout.huawei.com ([194.213.3.17]:44570 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934145AbdKPOS0 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 16 Nov 2017 09:18:26 -0500
+Subject: Re: IMA appraisal master plan?
+To: Patrick Ohly <patrick.ohly@intel.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Matthew Garrett <mjg59@google.com>,
+        James Morris <james.l.morris@oracle.com>
+CC: linux-integrity <linux-integrity@vger.kernel.org>
+References: <20171107151742.25122-1-mjg59@google.com>
+ <1510766803.5979.17.camel@intel.com>
+ <CACdnJusRutc4j7z+w6pZ0tooeAPcq=Vky_evF=X61AK_ivAEqg@mail.gmail.com>
+ <1510770065.5979.21.camel@intel.com>
+ <alpine.LFD.2.20.1711161101360.27132@localhost>
+ <CACdnJuv=YDngm5HqJT9sfM01AVoZUaf8_uu-ygo+h8nNjtsDeA@mail.gmail.com>
+ <1510798382.3711.389.camel@linux.vnet.ibm.com>
+ <8bbaea89-336c-d14b-2ed8-44cd0a0d3ed1@huawei.com>
+ <1510827621.5979.27.camel@intel.com>
+From: Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <2edf5385-4819-4677-2691-585354c60e56@huawei.com>
+Date: Thu, 16 Nov 2017 15:18:21 +0100
 MIME-Version: 1.0
+In-Reply-To: <1510827621.5979.27.camel@intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-> > On 10/20/2017 08:12 PM, Alexander.Steffen@infineon.com wrote:
-> > >> The TPM burstcount status indicates the number of bytes that can
-> > >> be sent to the TPM without causing bus wait states.  Effectively,
-> > >> it is the number of empty bytes in the command FIFO.
-> > >>
-> > >> This patch optimizes the tpm_tis_send_data() function by checking
-> > >> the burstcount only once. And if the burstcount is valid, it writes
-> > >> all the bytes at once, permitting wait state.
-> > >>
-> > >> After this change, performance on a TPM 1.2 with an 8 byte
-> > >> burstcount for 1000 extends improved from ~41sec to ~14sec.
-> > >>
-> > >> Suggested-by: Ken Goldman<kgold@linux.vnet.ibm.com>  in
-> > >> conjunction with the TPM Device Driver work group.
-> > >> Signed-off-by: Nayna Jain<nayna@linux.vnet.ibm.com>
-> > >> Acked-by: Mimi Zohar<zohar@linux.vnet.ibm.com>
-> > >> ---
-> > >>   drivers/char/tpm/tpm_tis_core.c | 42 +++++++++++++++----------------
-> --
-> > ----
-> > >> ----
-> > >>   1 file changed, 15 insertions(+), 27 deletions(-)
-> > >>
-> > >> diff --git a/drivers/char/tpm/tpm_tis_core.c
-> > >> b/drivers/char/tpm/tpm_tis_core.c
-> > >> index b33126a35694..993328ae988c 100644
-> > >> --- a/drivers/char/tpm/tpm_tis_core.c
-> > >> +++ b/drivers/char/tpm/tpm_tis_core.c
-> > >> @@ -316,7 +316,6 @@ static int tpm_tis_send_data(struct tpm_chip
-> > *chip,
-> > >> u8 *buf, size_t len)
-> > >>   {
-> > >>   	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
-> > >>   	int rc, status, burstcnt;
-> > >> -	size_t count = 0;
-> > >>   	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
-> > >>
-> > >>   	status = tpm_tis_status(chip);
-> > >> @@ -330,35 +329,24 @@ static int tpm_tis_send_data(struct tpm_chip
-> > *chip,
-> > >> u8 *buf, size_t len)
-> > >>   		}
-> > >>   	}
-> > >>
-> > >> -	while (count < len - 1) {
-> > >> -		burstcnt = get_burstcount(chip);
-> > >> -		if (burstcnt < 0) {
-> > >> -			dev_err(&chip->dev, "Unable to read burstcount\n");
-> > >> -			rc = burstcnt;
-> > >> -			goto out_err;
-> > >> -		}
-> > >> -		burstcnt = min_t(int, burstcnt, len - count - 1);
-> > >> -		rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv-
-> > >>> locality),
-> > >> -					 burstcnt, buf + count);
-> > >> -		if (rc < 0)
-> > >> -			goto out_err;
-> > >> -
-> > >> -		count += burstcnt;
-> > >> -
-> > >> -		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip-
-> > >>> timeout_c,
-> > >> -					&priv->int_queue, false) < 0) {
-> > >> -			rc = -ETIME;
-> > >> -			goto out_err;
-> > >> -		}
-> > >> -		status = tpm_tis_status(chip);
-> > >> -		if (!itpm && (status & TPM_STS_DATA_EXPECT) == 0) {
-> > >> -			rc = -EIO;
-> > >> -			goto out_err;
-> > >> -		}
-> > >> +	/*
-> > >> +	 * Get the initial burstcount to ensure TPM is ready to
-> > >> +	 * accept data.
-> > >> +	 */
-> > >> +	burstcnt = get_burstcount(chip);
-> > >> +	if (burstcnt < 0) {
-> > >> +		dev_err(&chip->dev, "Unable to read burstcount\n");
-> > >> +		rc = burstcnt;
-> > >> +		goto out_err;
-> > >>   	}
-> > >>
-> > >> +	rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
-> > >> +			len - 1, buf);
-> > >> +	if (rc < 0)
-> > >> +		goto out_err;
-> > >> +
-> > >>   	/* write last byte */
-> > >> -	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality),
-> > >> buf[count]);
-> > >> +	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[len-
-> > >> 1]);
-> > >>   	if (rc < 0)
-> > >>   		goto out_err;
-> > >>
-> > >> --
-> > >> 2.13.3
-> > > This seems to fail reliably with my SPI TPM 2.0. I get EIO when trying to
-> > send large amounts of data, e.g. with TPM2_Hash, and subsequent tests
-> > seem to take an unusual amount of time. More analysis probably has to
-> wait
-> > until November, since I am going to be in Prague next week.
-> >
-> > Thanks Alex for testing these.. Did you get the chance to do any further
-> > analysis ?
+On 11/16/2017 11:20 AM, Patrick Ohly wrote:
+> On Thu, 2017-11-16 at 10:23 +0100, Roberto Sassu wrote:
+>> On 11/16/2017 3:13 AM, Mimi Zohar wrote:
+>>> On Wed, 2017-11-15 at 16:05 -0800, Matthew Garrett wrote:
+>>>> On Wed, Nov 15, 2017 at 4:02 PM, James Morris <james.l.morris@ora
+>>>> cle.com> wrote:
+>>>>> On Wed, 15 Nov 2017, Patrick Ohly wrote:
+>>>>>
+>>>>>> I have some experience with SMACK, but not with Apparmor. At
+>>>>>> least with
+>>>>>> SMACK the problem is that the LSM depends on integrity
+>>>>>> protection of
+>>>>>> the xattrs, but the integrity protection itself depends on
+>>>>>> the LSM, so
+>>>>>> there's a cycle. An attacker can much too easily make offline
+>>>>>> changes
+>>>>>> which then defeat whatever IMA policy the system might be
+>>>>>> using.
+>>>>>
+>>>>> Isn't this what EVM is supposed to mitigate?
+>>
+>> With the default appraisal policy, it can't. IMA determines if a file
+>> must be appraised depending on metadata whose integrity has not been
+>> verified yet. A root process is able to load appraised files with
+>> i_uid = 0 and files with missing/invalid HMAC and i_uid != 0, at the
+>> same time.
 > 
-> I am working on that now. Ken's suggestion seems reasonable, so I am going
-> to test whether correctly waiting for the flags to change fixes the problem. If
-> it does, I'll send the patches.
+> Exactly. Therefore a policy that says "appraise only files owned by
+> root" or "with a certain SMACK label" is vulnerable to offline attacks.
+> 
+>> Me and Matthew are considering policies based on subject criteria
+>> rather than object criteria. The integrity of a process can be
+>> guaranteed because everything that process reads or executes will be
+>> appraised.
+> 
+> Even then you still have the problem that the integrity of the process
+> may also depend on the presence (or absence) of files. My favorite
+> example for that is systemd: suppose that the integrity of the system
+> depends on starting a certain service via systemd. It's trivial for an
+> attacker to remove the corresponding unit file when the system is
+> offline.
 
-Sorry for the delay, I had to take care of some device tree changes in v4.14 that broke my ARM test machines.
+If the system state (PCR 10 value) is predictable, the TPM could be used
+to enforce a sealing policy which requires that the PCR is extended with
+the digest of desired files. If systemd does not access those files,
+unsealed data won't be available.
 
-I've implemented some patches that fix the issue that Ken pointed out and rebased your patch 2/4 ("ignore burstcount") on top. While doing this I noticed that your original patch does not, as the commit message says, write all the bytes at once, but still unnecessarily splits all commands into at least two transfers (as did the original code). I've fixed this as well in my patches, so that all bytes are indeed sent in a single call, without special handling for the last byte. This should speed up things further, especially for small commands and drivers like tpm_tis_spi, where writing a single byte translates into additional SPI transfers.
+Currently, defining a policy on PCR 10 is not possible because the order
+in which files are measured is not deterministic.
 
-Unfortunately, even with those changes the problem persists. But I've got more detailed logs now and will try to understand and hopefully fix the issue. I'll follow up with more details and/or patches once I know more.
+With digest lists, the PCR is extended when unknown files are accessed,
+but no distinction is made between files modified during an offline
+attack and files which have been modified only by the TCB. In the second
+case, the measurement can be avoided because the TCB will not be
+compromised by those files, if they were not initially corrupted.
 
-Alexander
+With the dynamic data work, the PCR is not extended when the Biba strict
+policy is enforced on appraised files (no writes by processes outside
+the TCB) and the appraisal status is INTEGRITY_PASS.
+
+At the moment, digest lists do not provide information about which files
+have been actually accessed. To support your requirement, it would be
+necessary to further extend IMA to create a new measurement entry when a
+given set of files has been accessed. The benefit of using digest lists
+would be that the system state remains predictable, because the PCR
+will be extended only with the digest of digest lists and the digest of
+the new measurement created when all files in the given set have been
+accessed.
+
+
+> Adding a custom service written by an attacker gets prevented, but an
+> attacker can still install unit files prepared by the vendor. For
+> example, suppose a device is not supposed to have an ssh daemon, but
+> there is a package for OpenSSH properly signed by the vendor. Then an
+> attacker can take those files and add them to the device while offline.
+>   It could get even worse (telnet? A debugging service?), so a vendor
+> has to be very careful about what is getting signed.
+
+With digest lists, you would be able to limit what it can be accessed by
+the TCB.
+
+
+> Another attack vector that also remains open is replacing files with
+> other files from the vendor. Suppose there's a binary that does some
+> check and signals the result to the calling process with its exit code.
+> An attacker can control the result of the check by replacing the binary
+> with /bin/true or /bin/false, depending on what result is desired.
+
+This issue could be addressed with an LSM, by defining with a policy
+which files can be executed by the calling process.
+
+Roberto
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
