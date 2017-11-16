@@ -1,66 +1,143 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from smtprelay0017.hostedemail.com ([216.40.44.17]:37234 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965199AbdKPP1u (ORCPT
+Received: from smtp2.infineon.com ([217.10.52.18]:53113 "EHLO
+        smtp2.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751310AbdKPOey (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 16 Nov 2017 10:27:50 -0500
-From: Joe Perches <joe@perches.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: James Morris <james.l.morris@oracle.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] ima: Fix line continuation format
-Date: Thu, 16 Nov 2017 07:27:29 -0800
-Message-Id: <ea357947f2cbac6cd7ace62c92831d0d6d403ea8.1510845910.git.joe@perches.com>
-In-Reply-To: <cover.1510845910.git.joe@perches.com>
-References: <cover.1510845910.git.joe@perches.com>
+        Thu, 16 Nov 2017 09:34:54 -0500
+From: <Alexander.Steffen@infineon.com>
+To: <nayna@linux.vnet.ibm.com>, <linux-integrity@vger.kernel.org>
+CC: <zohar@linux.vnet.ibm.com>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <peterhuewe@gmx.de>,
+        <jarkko.sakkinen@linux.intel.com>, <tpmdd@selhorst.net>,
+        <patrickc@us.ibm.com>
+Subject: RE: [PATCH v4 2/4] tpm: ignore burstcount to improve tpm_tis send()
+ performance
+Date: Thu, 16 Nov 2017 14:34:51 +0000
+Message-ID: <6f0bd36decb94820a211e5c9795cfec2@infineon.com>
+References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
+ <20171017203232.2262-3-nayna@linux.vnet.ibm.com>
+ <5ef60315f2254b3b8bcc217a572280e5@infineon.com>
+ <e98e85a5-fec1-93fb-8daf-d997d5995993@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="Windows-1252"
+MIME-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Line continuations with excess spacing causes unexpected output.
+> > On 10/20/2017 08:12 PM, Alexander.Steffen@infineon.com wrote:
+> > >> The TPM burstcount status indicates the number of bytes that can
+> > >> be sent to the TPM without causing bus wait states.  Effectively,
+> > >> it is the number of empty bytes in the command FIFO.
+> > >>
+> > >> This patch optimizes the tpm_tis_send_data() function by checking
+> > >> the burstcount only once. And if the burstcount is valid, it writes
+> > >> all the bytes at once, permitting wait state.
+> > >>
+> > >> After this change, performance on a TPM 1.2 with an 8 byte
+> > >> burstcount for 1000 extends improved from ~41sec to ~14sec.
+> > >>
+> > >> Suggested-by: Ken Goldman<kgold@linux.vnet.ibm.com>  in
+> > >> conjunction with the TPM Device Driver work group.
+> > >> Signed-off-by: Nayna Jain<nayna@linux.vnet.ibm.com>
+> > >> Acked-by: Mimi Zohar<zohar@linux.vnet.ibm.com>
+> > >> ---
+> > >>   drivers/char/tpm/tpm_tis_core.c | 42 +++++++++++++++----------------
+> --
+> > ----
+> > >> ----
+> > >>   1 file changed, 15 insertions(+), 27 deletions(-)
+> > >>
+> > >> diff --git a/drivers/char/tpm/tpm_tis_core.c
+> > >> b/drivers/char/tpm/tpm_tis_core.c
+> > >> index b33126a35694..993328ae988c 100644
+> > >> --- a/drivers/char/tpm/tpm_tis_core.c
+> > >> +++ b/drivers/char/tpm/tpm_tis_core.c
+> > >> @@ -316,7 +316,6 @@ static int tpm_tis_send_data(struct tpm_chip
+> > *chip,
+> > >> u8 *buf, size_t len)
+> > >>   {
+> > >>   	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+> > >>   	int rc, status, burstcnt;
+> > >> -	size_t count = 0;
+> > >>   	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
+> > >>
+> > >>   	status = tpm_tis_status(chip);
+> > >> @@ -330,35 +329,24 @@ static int tpm_tis_send_data(struct tpm_chip
+> > *chip,
+> > >> u8 *buf, size_t len)
+> > >>   		}
+> > >>   	}
+> > >>
+> > >> -	while (count < len - 1) {
+> > >> -		burstcnt = get_burstcount(chip);
+> > >> -		if (burstcnt < 0) {
+> > >> -			dev_err(&chip->dev, "Unable to read burstcount\n");
+> > >> -			rc = burstcnt;
+> > >> -			goto out_err;
+> > >> -		}
+> > >> -		burstcnt = min_t(int, burstcnt, len - count - 1);
+> > >> -		rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv-
+> > >>> locality),
+> > >> -					 burstcnt, buf + count);
+> > >> -		if (rc < 0)
+> > >> -			goto out_err;
+> > >> -
+> > >> -		count += burstcnt;
+> > >> -
+> > >> -		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip-
+> > >>> timeout_c,
+> > >> -					&priv->int_queue, false) < 0) {
+> > >> -			rc = -ETIME;
+> > >> -			goto out_err;
+> > >> -		}
+> > >> -		status = tpm_tis_status(chip);
+> > >> -		if (!itpm && (status & TPM_STS_DATA_EXPECT) == 0) {
+> > >> -			rc = -EIO;
+> > >> -			goto out_err;
+> > >> -		}
+> > >> +	/*
+> > >> +	 * Get the initial burstcount to ensure TPM is ready to
+> > >> +	 * accept data.
+> > >> +	 */
+> > >> +	burstcnt = get_burstcount(chip);
+> > >> +	if (burstcnt < 0) {
+> > >> +		dev_err(&chip->dev, "Unable to read burstcount\n");
+> > >> +		rc = burstcnt;
+> > >> +		goto out_err;
+> > >>   	}
+> > >>
+> > >> +	rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
+> > >> +			len - 1, buf);
+> > >> +	if (rc < 0)
+> > >> +		goto out_err;
+> > >> +
+> > >>   	/* write last byte */
+> > >> -	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality),
+> > >> buf[count]);
+> > >> +	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[len-
+> > >> 1]);
+> > >>   	if (rc < 0)
+> > >>   		goto out_err;
+> > >>
+> > >> --
+> > >> 2.13.3
+> > > This seems to fail reliably with my SPI TPM 2.0. I get EIO when trying to
+> > send large amounts of data, e.g. with TPM2_Hash, and subsequent tests
+> > seem to take an unusual amount of time. More analysis probably has to
+> wait
+> > until November, since I am going to be in Prague next week.
+> >
+> > Thanks Alex for testing these.. Did you get the chance to do any further
+> > analysis ?
+> 
+> I am working on that now. Ken's suggestion seems reasonable, so I am going
+> to test whether correctly waiting for the flags to change fixes the problem. If
+> it does, I'll send the patches.
 
-Signed-off-by: Joe Perches <joe@perches.com>
----
- security/integrity/ima/ima_template.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+Sorry for the delay, I had to take care of some device tree changes in v4.14 that broke my ARM test machines.
 
-diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
-index 7412d0291ab9..30db39b23804 100644
---- a/security/integrity/ima/ima_template.c
-+++ b/security/integrity/ima/ima_template.c
-@@ -377,8 +377,7 @@ int ima_restore_measurement_list(loff_t size, void *buf)
- 			break;
- 
- 		if (hdr[HDR_TEMPLATE_NAME].len >= MAX_TEMPLATE_NAME_LEN) {
--			pr_err("attempting to restore a template name \
--				that is too long\n");
-+			pr_err("attempting to restore a template name that is too long\n");
- 			ret = -EINVAL;
- 			break;
- 		}
-@@ -389,8 +388,8 @@ int ima_restore_measurement_list(loff_t size, void *buf)
- 		template_name[hdr[HDR_TEMPLATE_NAME].len] = 0;
- 
- 		if (strcmp(template_name, "ima") == 0) {
--			pr_err("attempting to restore an unsupported \
--				template \"%s\" failed\n", template_name);
-+			pr_err("attempting to restore an unsupported template \"%s\" failed\n",
-+			       template_name);
- 			ret = -EINVAL;
- 			break;
- 		}
-@@ -410,8 +409,8 @@ int ima_restore_measurement_list(loff_t size, void *buf)
- 						&(template_desc->fields),
- 						&(template_desc->num_fields));
- 		if (ret < 0) {
--			pr_err("attempting to restore the template fmt \"%s\" \
--				failed\n", template_desc->fmt);
-+			pr_err("attempting to restore the template fmt \"%s\" failed\n",
-+			       template_desc->fmt);
- 			ret = -EINVAL;
- 			break;
- 		}
--- 
-2.15.0
+I've implemented some patches that fix the issue that Ken pointed out and rebased your patch 2/4 ("ignore burstcount") on top. While doing this I noticed that your original patch does not, as the commit message says, write all the bytes at once, but still unnecessarily splits all commands into at least two transfers (as did the original code). I've fixed this as well in my patches, so that all bytes are indeed sent in a single call, without special handling for the last byte. This should speed up things further, especially for small commands and drivers like tpm_tis_spi, where writing a single byte translates into additional SPI transfers.
+
+Unfortunately, even with those changes the problem persists. But I've got more detailed logs now and will try to understand and hopefully fix the issue. I'll follow up with more details and/or patches once I know more.
+
+Alexander
