@@ -1,75 +1,60 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:41237 "EHLO
-        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751285AbdKQR4M (ORCPT
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:33739 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751590AbdKQQ5s (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 17 Nov 2017 12:56:12 -0500
-Received: by mail-wm0-f51.google.com with SMTP id b189so8082379wmd.0
-        for <linux-integrity@vger.kernel.org>; Fri, 17 Nov 2017 09:56:12 -0800 (PST)
-Subject: Re: [RFC PATCH] tpm: don't return -EINVAL if TPM command validation
- fails
-To: Jason Gunthorpe <jgg@ziepe.ca>
+        Fri, 17 Nov 2017 11:57:48 -0500
+Received: by mail-wr0-f196.google.com with SMTP id 4so2670556wrt.0
+        for <linux-integrity@vger.kernel.org>; Fri, 17 Nov 2017 08:57:47 -0800 (PST)
+Date: Fri, 17 Nov 2017 09:57:42 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Javier Martinez Canillas <javierm@redhat.com>
 Cc: linux-kernel@vger.kernel.org,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Peter Huewe <peterhuewe@gmx.de>,
         Philip Tricca <philip.b.tricca@intel.com>,
         linux-integrity@vger.kernel.org,
         William Roberts <william.c.roberts@intel.com>
+Subject: Re: [RFC PATCH] tpm: don't return -EINVAL if TPM command validation
+ fails
+Message-ID: <20171117165742.GH4276@ziepe.ca>
 References: <20171117100724.19257-1-javierm@redhat.com>
- <20171117165742.GH4276@ziepe.ca>
-From: Javier Martinez Canillas <javierm@redhat.com>
-Message-ID: <0e88aaa8-7d17-9cf7-c208-e31604a0e764@redhat.com>
-Date: Fri, 17 Nov 2017 18:56:09 +0100
 MIME-Version: 1.0
-In-Reply-To: <20171117165742.GH4276@ziepe.ca>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171117100724.19257-1-javierm@redhat.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hello Jason,
-
-Thanks a lot for your feedback.
-
-On 11/17/2017 05:57 PM, Jason Gunthorpe wrote:
-> On Fri, Nov 17, 2017 at 11:07:24AM +0100, Javier Martinez Canillas wrote:
->  
->> This patch is an RFC because I'm not sure if this is the correct way to fix this
->> issue. I'm not that familiar with the TPM driver so may had missed some details.
->>
->> And example of user-space getting confused by the TPM chardev returning -EINVAL
->> when sending a not supported TPM command can be seen in this tpm2-tools issue:
->>
->> https://github.com/intel/tpm2-tools/issues/621
-> 
-> I think this is a user space bug, unfortunately.
->
-
-No worries, as mentioned I posted this RFC mostly to raise awareness of the
-issue and to get feedback on how it could be properly solved.
+On Fri, Nov 17, 2017 at 11:07:24AM +0100, Javier Martinez Canillas wrote:
  
-> We talked about this when the spaces code was first written and it
-> seemed the best was to just return EINVAL to indicate that the kernel
-> could not accept the request.
+> This patch is an RFC because I'm not sure if this is the correct way to fix this
+> issue. I'm not that familiar with the TPM driver so may had missed some details.
 > 
-> This result is semantically different from the TPM could not execute
-> or complete the request.
->
+> And example of user-space getting confused by the TPM chardev returning -EINVAL
+> when sending a not supported TPM command can be seen in this tpm2-tools issue:
+> 
+> https://github.com/intel/tpm2-tools/issues/621
 
-Yes, the problem with that is user-space not having enough information about
-what went wrong. Right now the TCTI layer just reports TSS2_BASE_RC_IO_ERROR
-in this case and can't be blamed.
+I think this is a user space bug, unfortunately.
 
-Maybe Philip can comment how this could be handled in user-space since he has
-a much better understanding of the TCTI and SAPI layers.
+We talked about this when the spaces code was first written and it
+seemed the best was to just return EINVAL to indicate that the kernel
+could not accept the request.
 
-> Regarding your specific issue, can you make the command you want to
-> use validate? Would that make sense?
->
+This result is semantically different from the TPM could not execute
+or complete the request.
 
-Sorry, I'm not sure to understand what you meant. Could you please elaborate?
- 
-Best regards,
--- 
-Javier Martinez Canillas
-Software Engineer - Desktop Hardware Enablement
-Red Hat
+Regarding your specific issue, can you make the command you want to
+use validate? Would that make sense?
+
+> +	/*
+> +	 * If command validation fails, sent it to the TPM anyways so it can
+> +	 * report a proper error to user-space. Just don't do any TPM space
+> +	 * management in this case.
+> +	 */
+> +	cmd_validated = tpm_validate_command(chip, space, buf, bufsiz);
+
+And sending a command that failed to validate to the TPM cannot be
+done, as it violates our security model
+
+Jason
