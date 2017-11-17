@@ -1,68 +1,75 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:36395 "EHLO mga03.intel.com"
+Received: from mga11.intel.com ([192.55.52.93]:30377 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934046AbdKQN3A (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 17 Nov 2017 08:29:00 -0500
-Date: Fri, 17 Nov 2017 15:28:53 +0200
+        id S933291AbdKQNQ0 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 17 Nov 2017 08:16:26 -0500
+Date: Fri, 17 Nov 2017 15:16:20 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:INTEGRITY MEASUREMENT ARCHITECTURE (IMA)"
-        <linux-security-module@vger.kernel.org>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
-        <linux-crypto@vger.kernel.org>,
-        James Morris <james.l.morris@oracle.com>,
-        Matt Mackall <mpm@selenic.com>,
-        David Safford <safford@us.ibm.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH v2] tpm: Move Linux RNG connection to hwrng
-Message-ID: <20171117132853.cmr3wmsc3biedv7p@linux.intel.com>
-References: <20171031200503.GC18578@ziepe.ca>
- <20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
- <20171106022704.GD26011@ziepe.ca>
- <CANc+2y6dx_2zOzFA5aFs7RpEV8aNqxpDghmx+q_+XyendYJoew@mail.gmail.com>
- <20171107160404.GG21466@ziepe.ca>
- <20171114143421.3jxn6fzvgp2xmyk6@linux.intel.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Jerry Snitselaar <jsnitsel@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Laurent Bigonville <bigon@debian.org>,
+        Alexander.Steffen@infineon.com, linux-integrity@vger.kernel.org
+Subject: Re: [tpmdd-devel] tpm device not showing up in /dev anymore
+Message-ID: <20171117131620.het4yxavz6lco6ow@linux.intel.com>
+References: <20171110002820.wtfvb3tv5fcjqecu@localhost.localdomain>
+ <20171110070738.ki5xie4z7yql77fk@localhost.localdomain>
+ <9245ef7d-dd34-fa5f-6fd9-bfb9582f910e@debian.org>
+ <20171110205300.eyfkoyabobv7llgb@localhost.localdomain>
+ <20171111154516.GI17451@ziepe.ca>
+ <20171111191257.owuqtgzie3ostsab@cantor>
+ <20171111194647.GA6918@ziepe.ca>
+ <20171111203132.hkejjs6cdrrzq3y3@cantor>
+ <20171114145953.m3a343qvgln2z4er@linux.intel.com>
+ <1510672631.4078.7.camel@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171114143421.3jxn6fzvgp2xmyk6@linux.intel.com>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1510672631.4078.7.camel@HansenPartnership.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Nov 14, 2017 at 04:34:21PM +0200, Jarkko Sakkinen wrote:
-> On Tue, Nov 07, 2017 at 09:04:04AM -0700, Jason Gunthorpe wrote:
-> > On Tue, Nov 07, 2017 at 08:50:44AM +0530, PrasannaKumar Muralidharan wrote:
+On Tue, Nov 14, 2017 at 07:17:11AM -0800, James Bottomley wrote:
+> On Tue, 2017-11-14 at 16:59 +0200, Jarkko Sakkinen wrote:
+> > On Sat, Nov 11, 2017 at 01:31:32PM -0700, Jerry Snitselaar wrote:
+> > > 
+> > > On Sat Nov 11 17, Jason Gunthorpe wrote:
+> > > > 
+> > > > On Sat, Nov 11, 2017 at 12:12:57PM -0700, Jerry Snitselaar wrote:
+> > > > 
+> > > > > 
+> > > > > Before the release_locality code would only actually release
+> > > > > the locality if the request use bit was set. So after it
+> > > > > grabbed the locality during probe it probably never released
+> > > > > it. The idea with the new code was to release it when it was no
+> > > > > longer needed so another requester would be able to take the
+> > > > > tpm without having to wait for it to be released.
+> > > > 
+> > > > If I recall, this was so that system level things outside linux
+> > > > could access the TPM properly??
+> > > > 
+> > > 
+> > > Yes, that is what drove this initially. I believe Jarkko was also
+> > > thinking of the possibility in the future where something like a vm
+> > > could request a locality as well, but that is just a hazy
+> > > recollection of emails from back then.
 > > 
-> > > I am assuming you are talking about the following patches - using
-> > > struct tpm_chip instead of chip number and this patch.
-> > 
-> > yes
-> > 
-> > > I won't be able to test if struct tpm_chip usage as I don't have
-> > > multiple tpm hw in one machine. In case of tpm rng changes I can test
-> > > only the lifecycle of tpm rng device. Is that enough? I feel my test
-> > > will be limited. Please provide your thoughts on this.
-> > 
-> > That is certainly better than no testing.
-> > 
-> > Jason
+> > This was something I recall discussing in LPC 2016 in the hallway at
+> > least :-) A tidbit but it could make sense to tie it to VMM, not VM.
 > 
-> WFM too.
+> I think we should be extremely wary of different localities before we
+> have a cast iron definition of what they mean.  All the TPM PC spec
+> says is that locality 4 is reserved for firmware (meaning the kernel
+> should have no access) and it implies there's a privilege hierarchy,
+> making 4 the most privileged and 0 the least but leaves all the
+> definition to the OS.  Since we only have four other localities to play
+> with, we need a global definition of what they mean in Linux (and who
+> protects them) otherwise we'll get conflicting uses.  What does Windows
+> use them for?
 > 
-> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> 
-> /Jarkko
+> James
 
-I applied these commits. Please check that everything is correct as
-I had to do manual work with the 2nd commit.
+No idea. If I had to guess, they use only one locality for OS as this
+what PTT/fTPM had when it didn't have localities. At least their
+implementation works with only one locality.
 
 /Jarkko
