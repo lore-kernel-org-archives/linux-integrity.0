@@ -1,96 +1,129 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37328 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932236AbdKQMVf (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 17 Nov 2017 07:21:35 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vAHCLJKD134812
-        for <linux-integrity@vger.kernel.org>; Fri, 17 Nov 2017 07:21:34 -0500
-Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2e9tr65b2d-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 17 Nov 2017 07:21:34 -0500
-Received: from localhost
-        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Fri, 17 Nov 2017 12:21:31 -0000
-Subject: Re: [PATCH v2 00/15] ima: digest list feature
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Roberto Sassu <roberto.sassu@huawei.com>,
-        Kees Cook <keescook@chromium.org>
-Cc: linux-integrity@vger.kernel.org,
+Received: from lhrrgout.huawei.com ([194.213.3.17]:44584 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932122AbdKQMUY (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 17 Nov 2017 07:20:24 -0500
+From: Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: IMA appraisal master plan?
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Matthew Garrett <mjg59@google.com>,
+        James Morris <james.l.morris@oracle.com>
+CC: Patrick Ohly <patrick.ohly@intel.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
         linux-security-module <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        silviu.vlasceanu@huawei.com
-Date: Fri, 17 Nov 2017 07:21:26 -0500
-In-Reply-To: <ddad05d7-1e74-e7b4-d59c-f2e217aa92b5@huawei.com>
-References: <20171107103710.10883-1-roberto.sassu@huawei.com>
-         <1510061855.3425.113.camel@linux.vnet.ibm.com>
-         <aec4e72a-7f74-43e7-c226-f51077e7c619@huawei.com>
-         <CAGXu5jKjXqn-1j881vYc1F0POPhPJOPZB1w=W_zfgdXTsiyX6A@mail.gmail.com>
-         <ddad05d7-1e74-e7b4-d59c-f2e217aa92b5@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1510921286.5920.41.camel@linux.vnet.ibm.com>
+        Silviu Vlasceanu <silviu.vlasceanu@huawei.com>
+References: <20171107151742.25122-1-mjg59@google.com>
+ <1510766803.5979.17.camel@intel.com>
+ <CACdnJusRutc4j7z+w6pZ0tooeAPcq=Vky_evF=X61AK_ivAEqg@mail.gmail.com>
+ <1510770065.5979.21.camel@intel.com>
+ <alpine.LFD.2.20.1711161101360.27132@localhost>
+ <CACdnJuv=YDngm5HqJT9sfM01AVoZUaf8_uu-ygo+h8nNjtsDeA@mail.gmail.com>
+ <1510798382.3711.389.camel@linux.vnet.ibm.com>
+ <8bbaea89-336c-d14b-2ed8-44cd0a0d3ed1@huawei.com>
+ <1510837595.3711.420.camel@linux.vnet.ibm.com>
+Message-ID: <a88aff89-1e75-9019-4394-640f5fb318da@huawei.com>
+Date: Fri, 17 Nov 2017 13:20:12 +0100
+MIME-Version: 1.0
+In-Reply-To: <1510837595.3711.420.camel@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 2017-11-17 at 09:55 +0100, Roberto Sassu wrote:
-> On 11/17/2017 2:08 AM, Kees Cook wrote:
-> > On Tue, Nov 7, 2017 at 8:45 AM, Roberto Sassu <roberto.sassu@huawei.com> wrote:
-> >> On 11/7/2017 2:37 PM, Mimi Zohar wrote:
-> >>> Normally, the protection of kernel memory is out of scope for IMA.
-> >>> This patch set introduces an in kernel white list, which would be a
-> >>> prime target for attackers looking for ways of by-passing IMA-
-> >>> measurement, IMA-appraisal and IMA-audit.  Others might disagree, but
-> >>> from my perspective, this risk is too high.
-> > 
-> > BTW, which part of the series does the whitelist? I'd agree generally,
-> > though: we don't want to make things writable if they're normally
-> > read-only.
+On 11/16/2017 2:06 PM, Mimi Zohar wrote:
+> On Thu, 2017-11-16 at 10:23 +0100, Roberto Sassu wrote:
+>> On 11/16/2017 3:13 AM, Mimi Zohar wrote:
+>>> On Wed, 2017-11-15 at 16:05 -0800, Matthew Garrett wrote:
+>>>> On Wed, Nov 15, 2017 at 4:02 PM, James Morris <james.l.morris@oracle.com> wrote:
+>>>>> On Wed, 15 Nov 2017, Patrick Ohly wrote:
+>>>>>
+>>>>>> I have some experience with SMACK, but not with Apparmor. At least with
+>>>>>> SMACK the problem is that the LSM depends on integrity protection of
+>>>>>> the xattrs, but the integrity protection itself depends on the LSM, so
+>>>>>> there's a cycle. An attacker can much too easily make offline changes
+>>>>>> which then defeat whatever IMA policy the system might be using.
+>>>>>
+>>>>> Isn't this what EVM is supposed to mitigate?
+>>
+>> With the default appraisal policy, it can't. IMA determines if a file
+>> must be appraised depending on metadata whose integrity has not been
+>> verified yet. A root process is able to load appraised files with
+>> i_uid = 0 and files with missing/invalid HMAC and i_uid != 0, at the
+>> same time.
+> 
+> The LSMs are responsible for protecting their own labels.  Theyhave
+> the opportunity to verify and deny access to files based on LSM
+> labels, BEFORE IMA-appraisal is called to verify the file's integrity.
 
-The white list is a proposed new feature.
+Adding in CC the linux-security-module mailing list.
 
-> Patch 5/15 introduces the hash table ima_digests_htable and the
-> functions to add/search file digests
-> 
-> Patches 6-7-8/15 add file digests to ima_digests_htable
-> 
-> Patch 10/15 searches file digests in ima_digests_htable
-> 
-> 
-> Original files containing digest lists are discarded after being parsed.
-> 
-> 
-> >> It would be much easier for an attacker to just set ima_policy_flag to
-> >> zero.
-> > 
-> > That's a fair point. I wonder if ima_policy_flag could be marked
-> > __ro_after_init? Most of the writes are from __init sections, but I
-> > haven't looked closely at when ima_update_policy() gets called.
-> 
-> Unfortunately not. New policies can be loaded by writing to a file in
-> the securityfs filesystem. They could enable different actions
-> (measurement/appraisal/audit).
+LSMs are responsible to enforce a security policy at run-time, while
+IMA/EVM protect data and metadata against offline attacks. However, if
+IMA/EVM protect only part of the system, the security policy might not
+be enforced as expected. I give an example.
 
-The ima_policy_flag is an optimization indicating which actions -
-MEASURE, APPRAISE, AUDIT - the policy contains.  The IMA policy,
-itself, can be replaced with a signed custom policy just once.  This
-is normally done in the initramfs, after the LSM policies have been
-loaded, in order to define policy rules in terms of LSM labels.  Once
-the new policy is loaded, the ima_policy_flag is set.
+Suppose that a security policy preserves the integrity of a database by
+allowing only one application to modify it. Suppose also, that the
+security policy allows that application to modify files which are not
+appraised by IMA. Only the database is appraised.
 
-A Kconfig option allows additional signed rules to be added to the IMA
-policy.  After adding these new rules, additional actions can be added
-to the policy flag, but not cleared.
+Then, the integrity of the database cannot be guaranteed anymore. When
+the system is offline, the database label is swapped with one that is
+not included in the IMA policy. When the system is online again, LSMs
+would allow the application to access the database, but its integrity
+is no longer verified. From the users perspective, the application is
+working correctly, while unauthorized modifications could have be done
+on the database.
 
-The system admin/owner knows, prior to loading the custom policy,
-which actions will be defined.  Instead of waiting for the policy to
-be written, the ima_policy_flag could be set at init.  (We could
-extend the existing "ima_policy=" boot command line option.)  If not
-the ima_policy_flag, itself, then a shadow of the ima_policy_flag,
-which is OR'ed with the ima_policy_flag.
+In my opinion, protecting the integrity of a TCB against offline and
+online attacks with LSMs and IMA/EVM, can be achieved in two ways:
 
-Mimi
+- all objects accessed by LSM TCB subjects are a subset of IMA TCB
+   objects, and LSM prevents accesses to LSM TCB objects by processes
+   outside LSM TCB
+
+- all objects accessed by IMA TCB subjects are protected by IMA, IMA
+   prevents accesses to IMA TCB objects by processes outside IMA TCB, and
+   LSM TCB subjects are a subset of IMA TCB subjects
+
+As you can see, in both cases there is a dependency between the LSM
+policy and the IMA policy. In the first case, the dependency is on
+objects and LSM is enforcing integrity. In the second case, the
+dependency is on subjects, IMA is enforcing integrity and LSM could
+enforce a more strict integrity policy or a policy with different goals.
+
+I prefer the second option because:
+
+1) it easier to write a policy in term of subjects rather than objects
+
+2) LSM does not necessarily enforce an integrity policy; LSM could
+    enforce a policy for isolation and containment, while IMA could
+    enforce an integrity policy
+
+3) an integrity policy can be enforced without LSM, and both LSM and IMA
+    can enforce their own integrity policy
+
+4) the effort necessary to enforce an integrity policy with IMA is very
+    low: if files with valid signature/HMAC are in the IMA TCB and the
+    IMA policy identifies TCB subjects, the required modification would
+    be to simply deny access to appraised files if the subject does not
+    match policy criteria
+
+The first version of the patch set which adds support for the
+enforcement of the Biba strict policy can be found at the URL:
+
+https://www.spinics.net/lists/linux-integrity/msg00392.html
+
+Roberto
+
+
+> Look at security/security.c and see that IMA is called AFTER the
+> LSMs.  The same is true for the other IMA hooks, that are not co-
+> located with LSM hooks.  For example, the security_file_open hook is
+> called before the ima_file_check() hook.
+> 
+> Mimi
+> 
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
