@@ -1,75 +1,154 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:28558 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933314AbdKQN6F (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 17 Nov 2017 08:58:05 -0500
-Date: Fri, 17 Nov 2017 15:57:58 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:INTEGRITY MEASUREMENT ARCHITECTURE (IMA)"
-        <linux-security-module@vger.kernel.org>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
-        <linux-crypto@vger.kernel.org>,
-        James Morris <james.l.morris@oracle.com>,
-        Matt Mackall <mpm@selenic.com>,
-        David Safford <safford@us.ibm.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH v2] tpm: Move Linux RNG connection to hwrng
-Message-ID: <20171117135758.wvx3w5phndvfmfsh@linux.intel.com>
-References: <20171031200503.GC18578@ziepe.ca>
- <20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
- <20171106022704.GD26011@ziepe.ca>
- <CANc+2y6dx_2zOzFA5aFs7RpEV8aNqxpDghmx+q_+XyendYJoew@mail.gmail.com>
- <20171107160404.GG21466@ziepe.ca>
- <20171114143421.3jxn6fzvgp2xmyk6@linux.intel.com>
- <20171117132853.cmr3wmsc3biedv7p@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171117132853.cmr3wmsc3biedv7p@linux.intel.com>
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34650 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933594AbdKQNm7 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 17 Nov 2017 08:42:59 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vAHDe6No016866
+        for <linux-integrity@vger.kernel.org>; Fri, 17 Nov 2017 08:42:59 -0500
+Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2e9xuhdswv-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 17 Nov 2017 08:42:58 -0500
+Received: from localhost
+        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Fri, 17 Nov 2017 13:42:56 -0000
+Subject: Re: IMA appraisal master plan?
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Roberto Sassu <roberto.sassu@huawei.com>,
+        Matthew Garrett <mjg59@google.com>,
+        James Morris <james.l.morris@oracle.com>
+Cc: Patrick Ohly <patrick.ohly@intel.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Silviu Vlasceanu <silviu.vlasceanu@huawei.com>
+Date: Fri, 17 Nov 2017 08:42:50 -0500
+In-Reply-To: <a88aff89-1e75-9019-4394-640f5fb318da@huawei.com>
+References: <20171107151742.25122-1-mjg59@google.com>
+         <1510766803.5979.17.camel@intel.com>
+         <CACdnJusRutc4j7z+w6pZ0tooeAPcq=Vky_evF=X61AK_ivAEqg@mail.gmail.com>
+         <1510770065.5979.21.camel@intel.com>
+         <alpine.LFD.2.20.1711161101360.27132@localhost>
+         <CACdnJuv=YDngm5HqJT9sfM01AVoZUaf8_uu-ygo+h8nNjtsDeA@mail.gmail.com>
+         <1510798382.3711.389.camel@linux.vnet.ibm.com>
+         <8bbaea89-336c-d14b-2ed8-44cd0a0d3ed1@huawei.com>
+         <1510837595.3711.420.camel@linux.vnet.ibm.com>
+         <a88aff89-1e75-9019-4394-640f5fb318da@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1510926170.5920.80.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Nov 17, 2017 at 03:28:53PM +0200, Jarkko Sakkinen wrote:
-> On Tue, Nov 14, 2017 at 04:34:21PM +0200, Jarkko Sakkinen wrote:
-> > On Tue, Nov 07, 2017 at 09:04:04AM -0700, Jason Gunthorpe wrote:
-> > > On Tue, Nov 07, 2017 at 08:50:44AM +0530, PrasannaKumar Muralidharan wrote:
-> > > 
-> > > > I am assuming you are talking about the following patches - using
-> > > > struct tpm_chip instead of chip number and this patch.
-> > > 
-> > > yes
-> > > 
-> > > > I won't be able to test if struct tpm_chip usage as I don't have
-> > > > multiple tpm hw in one machine. In case of tpm rng changes I can test
-> > > > only the lifecycle of tpm rng device. Is that enough? I feel my test
-> > > > will be limited. Please provide your thoughts on this.
-> > > 
-> > > That is certainly better than no testing.
-> > > 
-> > > Jason
+On Fri, 2017-11-17 at 13:20 +0100, Roberto Sassu wrote:
+> On 11/16/2017 2:06 PM, Mimi Zohar wrote:
+> > On Thu, 2017-11-16 at 10:23 +0100, Roberto Sassu wrote:
+> >> On 11/16/2017 3:13 AM, Mimi Zohar wrote:
+> >>> On Wed, 2017-11-15 at 16:05 -0800, Matthew Garrett wrote:
+> >>>> On Wed, Nov 15, 2017 at 4:02 PM, James Morris <james.l.morris@oracle.com> wrote:
+> >>>>> On Wed, 15 Nov 2017, Patrick Ohly wrote:
+> >>>>>
+> >>>>>> I have some experience with SMACK, but not with Apparmor. At least with
+> >>>>>> SMACK the problem is that the LSM depends on integrity protection of
+> >>>>>> the xattrs, but the integrity protection itself depends on the LSM, so
+> >>>>>> there's a cycle. An attacker can much too easily make offline changes
+> >>>>>> which then defeat whatever IMA policy the system might be using.
+> >>>>>
+> >>>>> Isn't this what EVM is supposed to mitigate?
+> >>
+> >> With the default appraisal policy, it can't. IMA determines if a file
+> >> must be appraised depending on metadata whose integrity has not been
+> >> verified yet. A root process is able to load appraised files with
+> >> i_uid = 0 and files with missing/invalid HMAC and i_uid != 0, at the
+> >> same time.
 > > 
-> > WFM too.
-> > 
-> > Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > 
-> > /Jarkko
+> > The LSMs are responsible for protecting their own labels.  Theyhave
+> > the opportunity to verify and deny access to files based on LSM
+> > labels, BEFORE IMA-appraisal is called to verify the file's integrity.
 > 
-> I applied these commits. Please check that everything is correct as
-> I had to do manual work with the 2nd commit.
+> Adding in CC the linux-security-module mailing list.
+
+We need to first clarify, for those reading this thread, that are not
+fully aware of the context of this discussion, that the discussion is
+not relevant to the "lockdown" patch set.
+
+Kernel modules, the kexec image, IMA policy and firmware call the pre
+and post LSM kernel_read_file hooks.  For these LSM hooks, IMA policy
+rules are not written in terms of LSM labels or any other file
+metadata.  File signatures will always be appraised.
+
+> LSMs are responsible to enforce a security policy at run-time, while
+> IMA/EVM protect data and metadata against offline attacks. However, if
+> IMA/EVM protect only part of the system, the security policy might not
+> be enforced as expected. I give an example.
 > 
-> /Jarkko
+> Suppose that a security policy preserves the integrity of a database by
+> allowing only one application to modify it. Suppose also, that the
+> security policy allows that application to modify files which are not
+> appraised by IMA. Only the database is appraised.
 
-At least signed-off-by from PrassanaKumar is missing from the 2nd
-commit. I'll add it.
+This use case scenario is really strange.  The IMA policy should be
+verifying the integrity of the application that is allowed to modify
+the database, not the database.
 
-/Jarkko
+>From my limited knowledge of databases, databases tend to manage data
+caching themselves at the application level (eg. Direct IO), and avoid
+file buffer caching.  Having IMA calculate the file hash, would negate
+the performance benefits of doing their own data caching.
+
+> Then, the integrity of the database cannot be guaranteed anymore. When
+> the system is offline, the database label is swapped with one that is
+> not included in the IMA policy. When the system is online again, LSMs
+> would allow the application to access the database, but its integrity
+> is no longer verified. From the users perspective, the application is
+> working correctly, while unauthorized modifications could have be done
+> on the database.
+> 
+> In my opinion, protecting the integrity of a TCB against offline and
+> online attacks with LSMs and IMA/EVM, can be achieved in two ways:
+
+I really doubt that anyone's definition of TCB would include
+databases.
+
+> 
+> - all objects accessed by LSM TCB subjects are a subset of IMA TCB
+>    objects, and LSM prevents accesses to LSM TCB objects by processes
+>    outside LSM TCB
+> 
+> - all objects accessed by IMA TCB subjects are protected by IMA, IMA
+>    prevents accesses to IMA TCB objects by processes outside IMA TCB, and
+>    LSM TCB subjects are a subset of IMA TCB subjects
+> 
+> As you can see, in both cases there is a dependency between the LSM
+> policy and the IMA policy. In the first case, the dependency is on
+> objects and LSM is enforcing integrity. In the second case, the
+> dependency is on subjects, IMA is enforcing integrity and LSM could
+> enforce a more strict integrity policy or a policy with different goals.
+> 
+> I prefer the second option because:
+> 
+> 1) it easier to write a policy in term of subjects rather than objects
+> 
+> 2) LSM does not necessarily enforce an integrity policy; LSM could
+>     enforce a policy for isolation and containment, while IMA could
+>     enforce an integrity policy
+> 
+> 3) an integrity policy can be enforced without LSM, and both LSM and IMA
+>     can enforce their own integrity policy
+> 
+> 4) the effort necessary to enforce an integrity policy with IMA is very
+>     low: if files with valid signature/HMAC are in the IMA TCB and the
+>     IMA policy identifies TCB subjects, the required modification would
+>     be to simply deny access to appraised files if the subject does not
+>     match policy criteria
+> 
+> The first version of the patch set which adds support for the
+> enforcement of the Biba strict policy can be found at the URL:
+> 
+> https://www.spinics.net/lists/linux-integrity/msg00392.html
+
+I'd be interested in hearing what other people think.
+
+Mimi
