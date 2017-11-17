@@ -1,75 +1,96 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:30377 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933291AbdKQNQ0 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 17 Nov 2017 08:16:26 -0500
-Date: Fri, 17 Nov 2017 15:16:20 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Jerry Snitselaar <jsnitsel@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Laurent Bigonville <bigon@debian.org>,
-        Alexander.Steffen@infineon.com, linux-integrity@vger.kernel.org
-Subject: Re: [tpmdd-devel] tpm device not showing up in /dev anymore
-Message-ID: <20171117131620.het4yxavz6lco6ow@linux.intel.com>
-References: <20171110002820.wtfvb3tv5fcjqecu@localhost.localdomain>
- <20171110070738.ki5xie4z7yql77fk@localhost.localdomain>
- <9245ef7d-dd34-fa5f-6fd9-bfb9582f910e@debian.org>
- <20171110205300.eyfkoyabobv7llgb@localhost.localdomain>
- <20171111154516.GI17451@ziepe.ca>
- <20171111191257.owuqtgzie3ostsab@cantor>
- <20171111194647.GA6918@ziepe.ca>
- <20171111203132.hkejjs6cdrrzq3y3@cantor>
- <20171114145953.m3a343qvgln2z4er@linux.intel.com>
- <1510672631.4078.7.camel@HansenPartnership.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1510672631.4078.7.camel@HansenPartnership.com>
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37328 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932236AbdKQMVf (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 17 Nov 2017 07:21:35 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vAHCLJKD134812
+        for <linux-integrity@vger.kernel.org>; Fri, 17 Nov 2017 07:21:34 -0500
+Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2e9tr65b2d-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 17 Nov 2017 07:21:34 -0500
+Received: from localhost
+        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Fri, 17 Nov 2017 12:21:31 -0000
+Subject: Re: [PATCH v2 00/15] ima: digest list feature
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Roberto Sassu <roberto.sassu@huawei.com>,
+        Kees Cook <keescook@chromium.org>
+Cc: linux-integrity@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        silviu.vlasceanu@huawei.com
+Date: Fri, 17 Nov 2017 07:21:26 -0500
+In-Reply-To: <ddad05d7-1e74-e7b4-d59c-f2e217aa92b5@huawei.com>
+References: <20171107103710.10883-1-roberto.sassu@huawei.com>
+         <1510061855.3425.113.camel@linux.vnet.ibm.com>
+         <aec4e72a-7f74-43e7-c226-f51077e7c619@huawei.com>
+         <CAGXu5jKjXqn-1j881vYc1F0POPhPJOPZB1w=W_zfgdXTsiyX6A@mail.gmail.com>
+         <ddad05d7-1e74-e7b4-d59c-f2e217aa92b5@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1510921286.5920.41.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Nov 14, 2017 at 07:17:11AM -0800, James Bottomley wrote:
-> On Tue, 2017-11-14 at 16:59 +0200, Jarkko Sakkinen wrote:
-> > On Sat, Nov 11, 2017 at 01:31:32PM -0700, Jerry Snitselaar wrote:
-> > > 
-> > > On Sat Nov 11 17, Jason Gunthorpe wrote:
-> > > > 
-> > > > On Sat, Nov 11, 2017 at 12:12:57PM -0700, Jerry Snitselaar wrote:
-> > > > 
-> > > > > 
-> > > > > Before the release_locality code would only actually release
-> > > > > the locality if the request use bit was set. So after it
-> > > > > grabbed the locality during probe it probably never released
-> > > > > it. The idea with the new code was to release it when it was no
-> > > > > longer needed so another requester would be able to take the
-> > > > > tpm without having to wait for it to be released.
-> > > > 
-> > > > If I recall, this was so that system level things outside linux
-> > > > could access the TPM properly??
-> > > > 
-> > > 
-> > > Yes, that is what drove this initially. I believe Jarkko was also
-> > > thinking of the possibility in the future where something like a vm
-> > > could request a locality as well, but that is just a hazy
-> > > recollection of emails from back then.
+On Fri, 2017-11-17 at 09:55 +0100, Roberto Sassu wrote:
+> On 11/17/2017 2:08 AM, Kees Cook wrote:
+> > On Tue, Nov 7, 2017 at 8:45 AM, Roberto Sassu <roberto.sassu@huawei.com> wrote:
+> >> On 11/7/2017 2:37 PM, Mimi Zohar wrote:
+> >>> Normally, the protection of kernel memory is out of scope for IMA.
+> >>> This patch set introduces an in kernel white list, which would be a
+> >>> prime target for attackers looking for ways of by-passing IMA-
+> >>> measurement, IMA-appraisal and IMA-audit.  Others might disagree, but
+> >>> from my perspective, this risk is too high.
 > > 
-> > This was something I recall discussing in LPC 2016 in the hallway at
-> > least :-) A tidbit but it could make sense to tie it to VMM, not VM.
-> 
-> I think we should be extremely wary of different localities before we
-> have a cast iron definition of what they mean.  All the TPM PC spec
-> says is that locality 4 is reserved for firmware (meaning the kernel
-> should have no access) and it implies there's a privilege hierarchy,
-> making 4 the most privileged and 0 the least but leaves all the
-> definition to the OS.  Since we only have four other localities to play
-> with, we need a global definition of what they mean in Linux (and who
-> protects them) otherwise we'll get conflicting uses.  What does Windows
-> use them for?
-> 
-> James
+> > BTW, which part of the series does the whitelist? I'd agree generally,
+> > though: we don't want to make things writable if they're normally
+> > read-only.
 
-No idea. If I had to guess, they use only one locality for OS as this
-what PTT/fTPM had when it didn't have localities. At least their
-implementation works with only one locality.
+The white list is a proposed new feature.
 
-/Jarkko
+> Patch 5/15 introduces the hash table ima_digests_htable and the
+> functions to add/search file digests
+> 
+> Patches 6-7-8/15 add file digests to ima_digests_htable
+> 
+> Patch 10/15 searches file digests in ima_digests_htable
+> 
+> 
+> Original files containing digest lists are discarded after being parsed.
+> 
+> 
+> >> It would be much easier for an attacker to just set ima_policy_flag to
+> >> zero.
+> > 
+> > That's a fair point. I wonder if ima_policy_flag could be marked
+> > __ro_after_init? Most of the writes are from __init sections, but I
+> > haven't looked closely at when ima_update_policy() gets called.
+> 
+> Unfortunately not. New policies can be loaded by writing to a file in
+> the securityfs filesystem. They could enable different actions
+> (measurement/appraisal/audit).
+
+The ima_policy_flag is an optimization indicating which actions -
+MEASURE, APPRAISE, AUDIT - the policy contains.  The IMA policy,
+itself, can be replaced with a signed custom policy just once.  This
+is normally done in the initramfs, after the LSM policies have been
+loaded, in order to define policy rules in terms of LSM labels.  Once
+the new policy is loaded, the ima_policy_flag is set.
+
+A Kconfig option allows additional signed rules to be added to the IMA
+policy.  After adding these new rules, additional actions can be added
+to the policy flag, but not cleared.
+
+The system admin/owner knows, prior to loading the custom policy,
+which actions will be defined.  Instead of waiting for the policy to
+be written, the ima_policy_flag could be set at init.  (We could
+extend the existing "ima_policy=" boot command line option.)  If not
+the ima_policy_flag, itself, then a shadow of the ima_policy_flag,
+which is OR'ed with the ima_policy_flag.
+
+Mimi
