@@ -1,129 +1,110 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from lhrrgout.huawei.com ([194.213.3.17]:44584 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932122AbdKQMUY (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 17 Nov 2017 07:20:24 -0500
-From: Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: IMA appraisal master plan?
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Matthew Garrett <mjg59@google.com>,
-        James Morris <james.l.morris@oracle.com>
-CC: Patrick Ohly <patrick.ohly@intel.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Silviu Vlasceanu <silviu.vlasceanu@huawei.com>
-References: <20171107151742.25122-1-mjg59@google.com>
- <1510766803.5979.17.camel@intel.com>
- <CACdnJusRutc4j7z+w6pZ0tooeAPcq=Vky_evF=X61AK_ivAEqg@mail.gmail.com>
- <1510770065.5979.21.camel@intel.com>
- <alpine.LFD.2.20.1711161101360.27132@localhost>
- <CACdnJuv=YDngm5HqJT9sfM01AVoZUaf8_uu-ygo+h8nNjtsDeA@mail.gmail.com>
- <1510798382.3711.389.camel@linux.vnet.ibm.com>
- <8bbaea89-336c-d14b-2ed8-44cd0a0d3ed1@huawei.com>
- <1510837595.3711.420.camel@linux.vnet.ibm.com>
-Message-ID: <a88aff89-1e75-9019-4394-640f5fb318da@huawei.com>
-Date: Fri, 17 Nov 2017 13:20:12 +0100
-MIME-Version: 1.0
-In-Reply-To: <1510837595.3711.420.camel@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:43040 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752696AbdKQKHd (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 17 Nov 2017 05:07:33 -0500
+Received: by mail-wm0-f66.google.com with SMTP id x63so5322017wmf.2
+        for <linux-integrity@vger.kernel.org>; Fri, 17 Nov 2017 02:07:32 -0800 (PST)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javierm@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Philip Tricca <philip.b.tricca@intel.com>,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        linux-integrity@vger.kernel.org,
+        William Roberts <william.c.roberts@intel.com>
+Subject: [RFC PATCH] tpm: don't return -EINVAL if TPM command validation fails
+Date: Fri, 17 Nov 2017 11:07:24 +0100
+Message-Id: <20171117100724.19257-1-javierm@redhat.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 11/16/2017 2:06 PM, Mimi Zohar wrote:
-> On Thu, 2017-11-16 at 10:23 +0100, Roberto Sassu wrote:
->> On 11/16/2017 3:13 AM, Mimi Zohar wrote:
->>> On Wed, 2017-11-15 at 16:05 -0800, Matthew Garrett wrote:
->>>> On Wed, Nov 15, 2017 at 4:02 PM, James Morris <james.l.morris@oracle.com> wrote:
->>>>> On Wed, 15 Nov 2017, Patrick Ohly wrote:
->>>>>
->>>>>> I have some experience with SMACK, but not with Apparmor. At least with
->>>>>> SMACK the problem is that the LSM depends on integrity protection of
->>>>>> the xattrs, but the integrity protection itself depends on the LSM, so
->>>>>> there's a cycle. An attacker can much too easily make offline changes
->>>>>> which then defeat whatever IMA policy the system might be using.
->>>>>
->>>>> Isn't this what EVM is supposed to mitigate?
->>
->> With the default appraisal policy, it can't. IMA determines if a file
->> must be appraised depending on metadata whose integrity has not been
->> verified yet. A root process is able to load appraised files with
->> i_uid = 0 and files with missing/invalid HMAC and i_uid != 0, at the
->> same time.
-> 
-> The LSMs are responsible for protecting their own labels.  Theyhave
-> the opportunity to verify and deny access to files based on LSM
-> labels, BEFORE IMA-appraisal is called to verify the file's integrity.
+According to the TPM Library Specification, a TPM device must do a command
+header validation before processing and return a TPM_RC_COMMAND_CODE code
+if the command is not implemented and the TPM_RC_COMMAND_SIZE code if the
+command buffer size is not correct.
 
-Adding in CC the linux-security-module mailing list.
+So user-space will expect to handle these response codes as errors, but if
+the in-kernel resource manager is used (/dev/tpmrm?) then an -EINVAL errno
+code is returned instead if the command isn't implemented or the buffer
+size isn't correct. This confuses user-space since doesn't expect that.
 
-LSMs are responsible to enforce a security policy at run-time, while
-IMA/EVM protect data and metadata against offline attacks. However, if
-IMA/EVM protect only part of the system, the security policy might not
-be enforced as expected. I give an example.
+This is also not consistent with the behavior when not using TPM spaces
+and accessing the TPM directly (/dev/tpm?), in this case the command is
+is sent to the TPM anyways and user-space can get an error from the TPM.
 
-Suppose that a security policy preserves the integrity of a database by
-allowing only one application to modify it. Suppose also, that the
-security policy allows that application to modify files which are not
-appraised by IMA. Only the database is appraised.
+Instead of returning an -EINVAL errno code when the tpm_validate_command()
+function fails, allow the command to be sent to the TPM but just don't do
+any TPM space management. That way the TPM can report back a proper error
+and the behavior be consistent when using either /dev/tpm? or /dev/tpmrm?.
 
-Then, the integrity of the database cannot be guaranteed anymore. When
-the system is offline, the database label is swapped with one that is
-not included in the IMA policy. When the system is online again, LSMs
-would allow the application to access the database, but its integrity
-is no longer verified. From the users perspective, the application is
-working correctly, while unauthorized modifications could have be done
-on the database.
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
 
-In my opinion, protecting the integrity of a TCB against offline and
-online attacks with LSMs and IMA/EVM, can be achieved in two ways:
+---
 
-- all objects accessed by LSM TCB subjects are a subset of IMA TCB
-   objects, and LSM prevents accesses to LSM TCB objects by processes
-   outside LSM TCB
+Hello,
 
-- all objects accessed by IMA TCB subjects are protected by IMA, IMA
-   prevents accesses to IMA TCB objects by processes outside IMA TCB, and
-   LSM TCB subjects are a subset of IMA TCB subjects
+This patch is an RFC because I'm not sure if this is the correct way to fix this
+issue. I'm not that familiar with the TPM driver so may had missed some details.
 
-As you can see, in both cases there is a dependency between the LSM
-policy and the IMA policy. In the first case, the dependency is on
-objects and LSM is enforcing integrity. In the second case, the
-dependency is on subjects, IMA is enforcing integrity and LSM could
-enforce a more strict integrity policy or a policy with different goals.
+And example of user-space getting confused by the TPM chardev returning -EINVAL
+when sending a not supported TPM command can be seen in this tpm2-tools issue:
 
-I prefer the second option because:
+https://github.com/intel/tpm2-tools/issues/621
 
-1) it easier to write a policy in term of subjects rather than objects
+Best regards,
+Javier
 
-2) LSM does not necessarily enforce an integrity policy; LSM could
-    enforce a policy for isolation and containment, while IMA could
-    enforce an integrity policy
+ drivers/char/tpm/tpm-interface.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-3) an integrity policy can be enforced without LSM, and both LSM and IMA
-    can enforce their own integrity policy
-
-4) the effort necessary to enforce an integrity policy with IMA is very
-    low: if files with valid signature/HMAC are in the IMA TCB and the
-    IMA policy identifies TCB subjects, the required modification would
-    be to simply deny access to appraised files if the subject does not
-    match policy criteria
-
-The first version of the patch set which adds support for the
-enforcement of the Biba strict policy can be found at the URL:
-
-https://www.spinics.net/lists/linux-integrity/msg00392.html
-
-Roberto
-
-
-> Look at security/security.c and see that IMA is called AFTER the
-> LSMs.  The same is true for the other IMA hooks, that are not co-
-> located with LSM hooks.  For example, the security_file_open hook is
-> called before the ima_file_check() hook.
-> 
-> Mimi
-> 
-
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 1d6729be4cd6..86527e9a27cc 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -390,9 +390,14 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	u32 count, ordinal;
+ 	unsigned long stop;
+ 	bool need_locality;
++	bool cmd_validated;
+ 
+-	if (!tpm_validate_command(chip, space, buf, bufsiz))
+-		return -EINVAL;
++	/*
++	 * If command validation fails, sent it to the TPM anyways so it can
++	 * report a proper error to user-space. Just don't do any TPM space
++	 * management in this case.
++	 */
++	cmd_validated = tpm_validate_command(chip, space, buf, bufsiz);
+ 
+ 	if (bufsiz > TPM_BUFSIZE)
+ 		bufsiz = TPM_BUFSIZE;
+@@ -424,9 +429,11 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 		chip->locality = rc;
+ 	}
+ 
+-	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+-	if (rc)
+-		goto out;
++	if (cmd_validated) {
++		rc = tpm2_prepare_space(chip, space, ordinal, buf);
++		if (rc)
++			goto out;
++	}
+ 
+ 	rc = chip->ops->send(chip, (u8 *) buf, count);
+ 	if (rc < 0) {
+@@ -481,7 +488,8 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 		goto out;
+ 	}
+ 
+-	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
++	if (cmd_validated)
++		rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+ 
+ out:
+ 	if (need_locality && chip->ops->relinquish_locality) {
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
+2.14.3
