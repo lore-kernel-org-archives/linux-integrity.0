@@ -1,81 +1,89 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:33856 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751350AbdKTP60 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 20 Nov 2017 10:58:26 -0500
-From: "Shaikh, Azhar" <azhar.shaikh@intel.com>
-To: "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-        "jgunthorpe@obsidianresearch.com" <jgunthorpe@obsidianresearch.com>,
-        "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Subject: RE: [PATCH RFC v3 0/2] Fix corner cases with disabling CLKRUN in
- tpm_tis
-Date: Mon, 20 Nov 2017 15:58:23 +0000
-Message-ID: <5FFFAD06ADE1CA4381B3F0F7C6AF582896E867@ORSMSX109.amr.corp.intel.com>
-References: <1510783632-55866-1-git-send-email-azhar.shaikh@intel.com>
-In-Reply-To: <1510783632-55866-1-git-send-email-azhar.shaikh@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58018 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751181AbdKTO7o (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 20 Nov 2017 09:59:44 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vAKEwmfw081293
+        for <linux-integrity@vger.kernel.org>; Mon, 20 Nov 2017 09:59:44 -0500
+Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ebx32n8mu-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 20 Nov 2017 09:59:43 -0500
+Received: from localhost
+        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Mon, 20 Nov 2017 14:59:41 -0000
+Subject: Re: IMA appraisal master plan?
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Patrick Ohly <patrick.ohly@intel.com>,
+        James Morris <james.l.morris@oracle.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Cc: Matthew Garrett <mjg59@google.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Silviu Vlasceanu <silviu.vlasceanu@huawei.com>
+Date: Mon, 20 Nov 2017 09:59:36 -0500
+In-Reply-To: <1511173252.5979.45.camel@intel.com>
+References: <20171107151742.25122-1-mjg59@google.com>
+         <1510766803.5979.17.camel@intel.com>
+         <CACdnJusRutc4j7z+w6pZ0tooeAPcq=Vky_evF=X61AK_ivAEqg@mail.gmail.com>
+         <1510770065.5979.21.camel@intel.com>
+         <alpine.LFD.2.20.1711161101360.27132@localhost>
+         <CACdnJuv=YDngm5HqJT9sfM01AVoZUaf8_uu-ygo+h8nNjtsDeA@mail.gmail.com>
+         <1510798382.3711.389.camel@linux.vnet.ibm.com>
+         <8bbaea89-336c-d14b-2ed8-44cd0a0d3ed1@huawei.com>
+         <1510837595.3711.420.camel@linux.vnet.ibm.com>
+         <a88aff89-1e75-9019-4394-640f5fb318da@huawei.com>
+         <alpine.LFD.2.20.1711200746120.25470@localhost>
+         <1511173252.5979.45.camel@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1511189976.4729.110.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Jarkko, Jason,
+On Mon, 2017-11-20 at 11:20 +0100, Patrick Ohly wrote:
+> On Mon, 2017-11-20 at 07:47 +1100, James Morris wrote:
+> > On Fri, 17 Nov 2017, Roberto Sassu wrote:
+> > 
+> > > LSMs are responsible to enforce a security policy at run-time,
+> > > while IMA/EVM protect data and metadata against offline attacks.
+> > 
+> > In my view, IMA can also protect against making an online attack 
+> > persistent across boots, and that would be the most compelling use of
+> > it for many general purpose applications.
+> 
+> I do not quite buy that interpretation. If the online attack succeeds
+> in bypassing the run-time checks, for example with a full root exploit,
+> then he has pretty much the same capabilities to make persistent file
+> changes as during an offline attack.
 
-Could you please provide your review comments on this patchset.
+In the face of a full root exploit, there is not much that one can do,
+"other" than to detect it.  This is why remote attestation is so
+important.
 
-Thank you!
+> When allowing local hashing, it's actually worse: during an offline
+> attack, the attacker might not have access to the TPM and thus cannot
+> easily update the EVM HMAC. During an online attack, the kernel will
+> happily update that and the IMA hash for the attacker, resulting in a
+> file that passes appraisal after a reboot.
 
-Regards,
-Azhar Shaikh
+The assumption is that most files in the TCB are not changing and are
+signed.  Custom policies should require file signatures for these
+files.
 
->-----Original Message-----
->From: Shaikh, Azhar
->Sent: Wednesday, November 15, 2017 2:07 PM
->To: jarkko.sakkinen@linux.intel.com; jgunthorpe@obsidianresearch.com;
->peterhuewe@gmx.de; linux-integrity@vger.kernel.org
->Cc: Shaikh, Azhar <azhar.shaikh@intel.com>
->Subject: [PATCH RFC v3 0/2] Fix corner cases with disabling CLKRUN in tpm_tis
->
->Changes from v1:
->- Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of
->transmit_cmd()"
->  - Add NULL checks before calling clk_toggle callback
->  - Use IS_ENABLED instead of ifdef in tpm_tis_clkrun_toggle()
->  - Do not call tpm_platform_begin_xfer() and tpm_platform_end_xfer()
->    from tpm_tis_clkrun_toggle(). Make them static again.
->
->- Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
->  - This is a new patch in this series as per suggestion from Jason.
->  - Is the current implementation ok or I should move the code in
->tpm_tis_pnp_remove()
->    and tpm_tis_plat_remove() inside tpm_tis_remove(). That way all the
->unmapping
->    can be done in one place, instead of 3 different places now. Also the
->unmapping
->    in tpm_tis_init() can be moved to tpm_tis_remove(), since in case of error
->    tpm_tis_core_init() calls tpm_tis_remove(). Kindly suggest.
->
->Changes from v2:
->- Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of
->transmit_cmd()"
->  - No changes
->
->- Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
->  - Updated is_bsw() function to have the #ifdef CONFIG_X86 check within the
->function
->    itself. Also removed the #ifdef CONFIG_X86 from all other places around
->is_bsw()
->
->Azhar Shaikh (2):
->  tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()
->  tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy
->
-> drivers/char/tpm/tpm-interface.c |   6 +++
-> drivers/char/tpm/tpm_tis.c       | 111 ++++++++++++++++++++++-----------------
-> drivers/char/tpm/tpm_tis_core.c  |  21 ++++++++
-> drivers/char/tpm/tpm_tis_core.h  |   1 +
-> include/linux/tpm.h              |   1 +
-> 5 files changed, 93 insertions(+), 47 deletions(-)
->
->--
->1.9.1
+Assuming that the private keys that are used to sign these files, as
+well as the private key used for signing other keys added to the IMA
+keyring, are stored off line, new files can not be signed.
+
+The number of mutable files in the TCB should be very limited,
+probably < 20 files.  Their usage can be constrained by MAC.
+
+That said, IMA/IMA-appraisal is work in progress.  There are still
+measurement/appraisal gaps that need to be closed.  One such example
+are files read by interpreters and interpreted files.  There have been
+some initial proposals in this area.
+
+Mimi
