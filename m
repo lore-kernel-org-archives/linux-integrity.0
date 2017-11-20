@@ -1,55 +1,56 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:37092 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751863AbdKTSCO (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 20 Nov 2017 13:02:14 -0500
-Received: by mail-wr0-f194.google.com with SMTP id k61so8883843wrc.4
-        for <linux-integrity@vger.kernel.org>; Mon, 20 Nov 2017 10:02:13 -0800 (PST)
-Date: Mon, 20 Nov 2017 11:02:04 -0700
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Roberts, William C" <william.c.roberts@intel.com>
-Cc: Javier Martinez Canillas <javierm@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        "Tricca, Philip B" <philip.b.tricca@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Subject: Re: [RFC PATCH] tpm: don't return -EINVAL if TPM command validation
- fails
-Message-ID: <20171120180204.GA29075@ziepe.ca>
-References: <20171117175834.GK4276@ziepe.ca>
- <7f4e7c86-ef04-ea41-892f-1183a1d44a7b@redhat.com>
- <20171117181734.GM4276@ziepe.ca>
- <53b319e3-d46c-dfc7-7024-88a448be7d72@redhat.com>
- <476DC76E7D1DF2438D32BFADF679FC563F4BEC48@ORSMSX115.amr.corp.intel.com>
- <20171117235526.GX4276@ziepe.ca>
- <f77f3fa3-94ed-40fe-228b-b24dd5539754@redhat.com>
- <20171119152721.GY4276@ziepe.ca>
- <36e9ad69-225b-ca2b-7047-d188a50b1438@redhat.com>
- <476DC76E7D1DF2438D32BFADF679FC563F4BF41F@ORSMSX115.amr.corp.intel.com>
+Received: from h2.hallyn.com ([78.46.35.8]:54090 "EHLO h2.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751781AbdKTQwI (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 20 Nov 2017 11:52:08 -0500
+Date: Mon, 20 Nov 2017 10:52:06 -0600
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v2 06/15] ima: add parser of digest lists metadata
+Message-ID: <20171120165206.GA14752@mail.hallyn.com>
+References: <20171107103710.10883-1-roberto.sassu@huawei.com>
+ <20171107103710.10883-7-roberto.sassu@huawei.com>
+ <20171118042030.GA13456@mail.hallyn.com>
+ <1511047410.5920.111.camel@linux.vnet.ibm.com>
+ <175600e1-c472-69fc-2b4d-4255d8e827b5@huawei.com>
+ <1511186020.4729.66.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <476DC76E7D1DF2438D32BFADF679FC563F4BF41F@ORSMSX115.amr.corp.intel.com>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1511186020.4729.66.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Nov 20, 2017 at 04:14:41PM +0000, Roberts, William C wrote:
+Quoting Mimi Zohar (zohar@linux.vnet.ibm.com):
+> On Mon, 2017-11-20 at 10:40 +0100, Roberto Sassu wrote:
+> > On 11/19/2017 12:23 AM, Mimi Zohar wrote:
+> > > Hi Serge,
+> > > 
+> > > On Fri, 2017-11-17 at 22:20 -0600, Serge E. Hallyn wrote:
+> > >> On Tue, Nov 07, 2017 at 11:37:01AM +0100, Roberto Sassu wrote:
+> > >>> from a predefined position (/etc/ima/digest_lists/metadata), when rootfs
+> > >>> becomes available. Digest lists must be loaded before IMA appraisal is in
+> > >>> enforcing mode.
+> > >>
+> > >> I'm sure there's a good reason for it, but this seems weird to me.
+> > >> Why read it from a file on disk instead of accepting it through say
+> > >> a securityfile write?
+> > 
+> > There are two reasons.
+> > 
+> > Digest lists must be loaded before any file is accessed, otherwise IMA
+> > will deny the operation if appraisal is in enforcing mode. With digest
+> > lists it is possible to appraise files in the initial ram disk without
+> > including extended attributes (the default policy excludes those files).
+> 
+> There are a number of people interested in extending CPIO to support
+> extended attributes, not just for IMA-appraisal. (Years ago I started
+> but unfortunately haven't had time to finish it.)  Isn't the right
+> solution to add extended attribute support to CPIO?
 
-> That's policy, and shouldn't be hardcoded in the kernel. Let the DAC
-> permission model And LSMs sort that out.
-
-Of course this is what was done, there are two cdevs, one with full
-access to the TPM and one that runs through the RM.
-
-The distro/admin gets to choose how to set the up, as is typical.
-
-One of the use models for the RM cdev was to support unpriv access to
-that cdev, if the admin chooses to grant access to the /dev/ node.
-
-That work isn't quite complete, as it was envisioned to include kind of
-user space controlled command filter/restriction.
-
-Safe unpriv access is explicitly not a design goal of /dev/tpmX.
-
-Jason
+(For the record) Yes, yes it is. 
