@@ -1,64 +1,60 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:14845 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751299AbdKTXpk (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 20 Nov 2017 18:45:40 -0500
-Date: Tue, 21 Nov 2017 01:45:36 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Peter Huewe <peterhuewe@gmx.de>,
-        Andrey Pronin <apronin@chromium.org>,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm: Add explicit chip->ops locking for sysfs attributes.
-Message-ID: <20171120234536.inncp6ey37ofkd74@linux.intel.com>
-References: <1510867501-9498-1-git-send-email-linux@roeck-us.net>
- <20171120221323.252ki4nmmrymnty6@linux.intel.com>
- <20171120224523.GA26294@roeck-us.net>
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:45133 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751176AbdKTX0I (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 20 Nov 2017 18:26:08 -0500
+Received: by mail-wm0-f51.google.com with SMTP id 9so21879823wme.4
+        for <linux-integrity@vger.kernel.org>; Mon, 20 Nov 2017 15:26:08 -0800 (PST)
+Date: Mon, 20 Nov 2017 16:26:04 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Shaikh, Azhar" <azhar.shaikh@intel.com>
+Cc: "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
+        "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Subject: Re: [PATCH RFC v3 1/2] tpm: Keep CLKRUN enabled throughout the
+ duration of transmit_cmd()
+Message-ID: <20171120232604.GS29075@ziepe.ca>
+References: <1510783632-55866-1-git-send-email-azhar.shaikh@intel.com>
+ <1510783632-55866-2-git-send-email-azhar.shaikh@intel.com>
+ <20171120183441.GC29075@ziepe.ca>
+ <5FFFAD06ADE1CA4381B3F0F7C6AF582896E937@ORSMSX109.amr.corp.intel.com>
+ <20171120192117.GJ29075@ziepe.ca>
+ <5FFFAD06ADE1CA4381B3F0F7C6AF582896E9A7@ORSMSX109.amr.corp.intel.com>
+ <20171120193829.GM29075@ziepe.ca>
+ <5FFFAD06ADE1CA4381B3F0F7C6AF582896EA2E@ORSMSX109.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171120224523.GA26294@roeck-us.net>
+In-Reply-To: <5FFFAD06ADE1CA4381B3F0F7C6AF582896EA2E@ORSMSX109.amr.corp.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Nov 20, 2017 at 02:45:23PM -0800, Guenter Roeck wrote:
-> On Tue, Nov 21, 2017 at 12:13:23AM +0200, Jarkko Sakkinen wrote:
-> > On Thu, Nov 16, 2017 at 01:25:01PM -0800, Guenter Roeck wrote:
-> > > Add explicit chip->ops locking for all sysfs attributes.
-> > > This lets us support those attributes on tpm2 devices.
-> > > 
-> > > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> > > ---
-> > >  drivers/char/tpm/tpm-chip.c  |   4 --
-> > >  drivers/char/tpm/tpm-sysfs.c | 125 ++++++++++++++++++++++++++++++++-----------
-> > >  2 files changed, 93 insertions(+), 36 deletions(-)
-> > 
-> > I think the patch looks ok (with a quick skim) as code change. We need
-> > it. It should have been already done. Thanks for doing this.
-> > 
-> > I don't digest the commit message.
-> > 
-> > You should just to explain why this change needs to be done in order to
-> > support sysfs attributes with TPM 2.0 devices and not speculate how it
-> > will be used in future commits.
-> > 
-> 
-> How about the following ?
-> 
-> "tpm: Enable sysfs support for TPM2 devices
-> 
-> Access to chip->ops on TPM2 devices requires an explicit lock,
-> since the pointer is set to NULL in tpm_class_shutdown().
-> Implement that lock for sysfs access functions and enable sysfs
-> support for TPM2 devices."
-> 
-> Thanks,
-> Guenter
+On Mon, Nov 20, 2017 at 09:19:37PM +0000, Shaikh, Azhar wrote:
 
-I can go with that. No need to send a new commit just for this :-)
+> -> tpm_tis_core_init()
 
-I'll do some testing and give my final thoughts about the code
-change and if everything is good I can change the commit message.
-If not, submit the next version with that commit message.
+Yes, and IIRC, this covers tpm_tis_update_timeouts() too?
 
-/Jarkko
+> -> tpm_tis_plat_remove()
+
+This should be in tpm_tis_remove and a little rework would be needed
+here
+
+> -> tpm_tis_reenable_interrupts()
+> -> tpm_transmit_cmd() [ Already implemented in this patch ]
+
+Yes
+
+> >You could add a debug to ensure that read/write is never without clk_enable
+> >being held.
+> 
+> Sorry, but I didn't get this, adding a debug part.
+
+Just check a flag in the read/write functions to see if clkrun is on
+and WARN if not
+
+Not sure if this is going to be overall better than what you have or
+not.. But considering the nature of the bug it seems safer to have a
+wider range when CLKRUN is working?
+
+Jason
