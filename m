@@ -1,84 +1,124 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wr0-f176.google.com ([209.85.128.176]:39425 "EHLO
-        mail-wr0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751452AbdKTQPW (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 20 Nov 2017 11:15:22 -0500
-Received: by mail-wr0-f176.google.com with SMTP id 11so5212680wrb.6
-        for <linux-integrity@vger.kernel.org>; Mon, 20 Nov 2017 08:15:21 -0800 (PST)
-Message-ID: <1511194519.5979.48.camel@intel.com>
-Subject: Re: IMA appraisal master plan?
-From: Patrick Ohly <patrick.ohly@intel.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        James Morris <james.l.morris@oracle.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Cc: Matthew Garrett <mjg59@google.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Silviu Vlasceanu <silviu.vlasceanu@huawei.com>
-Date: Mon, 20 Nov 2017 17:15:19 +0100
-In-Reply-To: <1511189976.4729.110.camel@linux.vnet.ibm.com>
-References: <20171107151742.25122-1-mjg59@google.com>
-         <1510766803.5979.17.camel@intel.com>
-         <CACdnJusRutc4j7z+w6pZ0tooeAPcq=Vky_evF=X61AK_ivAEqg@mail.gmail.com>
-         <1510770065.5979.21.camel@intel.com>
-         <alpine.LFD.2.20.1711161101360.27132@localhost>
-         <CACdnJuv=YDngm5HqJT9sfM01AVoZUaf8_uu-ygo+h8nNjtsDeA@mail.gmail.com>
-         <1510798382.3711.389.camel@linux.vnet.ibm.com>
-         <8bbaea89-336c-d14b-2ed8-44cd0a0d3ed1@huawei.com>
-         <1510837595.3711.420.camel@linux.vnet.ibm.com>
-         <a88aff89-1e75-9019-4394-640f5fb318da@huawei.com>
-         <alpine.LFD.2.20.1711200746120.25470@localhost>
-         <1511173252.5979.45.camel@intel.com>
-         <1511189976.4729.110.camel@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mga03.intel.com ([134.134.136.65]:1867 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751390AbdKTQOp (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 20 Nov 2017 11:14:45 -0500
+From: "Roberts, William C" <william.c.roberts@intel.com>
+To: Javier Martinez Canillas <javierm@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        "Tricca, Philip B" <philip.b.tricca@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Subject: RE: [RFC PATCH] tpm: don't return -EINVAL if TPM command validation
+ fails
+Date: Mon, 20 Nov 2017 16:14:41 +0000
+Message-ID: <476DC76E7D1DF2438D32BFADF679FC563F4BF41F@ORSMSX115.amr.corp.intel.com>
+References: <20171117100724.19257-1-javierm@redhat.com>
+ <20171117165742.GH4276@ziepe.ca>
+ <0e88aaa8-7d17-9cf7-c208-e31604a0e764@redhat.com>
+ <20171117175834.GK4276@ziepe.ca>
+ <7f4e7c86-ef04-ea41-892f-1183a1d44a7b@redhat.com>
+ <20171117181734.GM4276@ziepe.ca>
+ <53b319e3-d46c-dfc7-7024-88a448be7d72@redhat.com>
+ <476DC76E7D1DF2438D32BFADF679FC563F4BEC48@ORSMSX115.amr.corp.intel.com>
+ <20171117235526.GX4276@ziepe.ca>
+ <f77f3fa3-94ed-40fe-228b-b24dd5539754@redhat.com>
+ <20171119152721.GY4276@ziepe.ca>
+ <36e9ad69-225b-ca2b-7047-d188a50b1438@redhat.com>
+In-Reply-To: <36e9ad69-225b-ca2b-7047-d188a50b1438@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2017-11-20 at 09:59 -0500, Mimi Zohar wrote:
-> > When allowing local hashing, it's actually worse: during an offline
-> > attack, the attacker might not have access to the TPM and thus
-> > cannot
-> > easily update the EVM HMAC. During an online attack, the kernel
-> > will
-> > happily update that and the IMA hash for the attacker, resulting in
-> > a
-> > file that passes appraisal after a reboot.
+
+
+> -----Original Message-----
+> From: Javier Martinez Canillas [mailto:javierm@redhat.com]
+> Sent: Monday, November 20, 2017 1:26 AM
+> To: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Roberts, William C <william.c.roberts@intel.com>; linux-
+> kernel@vger.kernel.org; Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>;
+> Peter Huewe <peterhuewe@gmx.de>; Tricca, Philip B
+> <philip.b.tricca@intel.com>; linux-integrity@vger.kernel.org
+> Subject: Re: [RFC PATCH] tpm: don't return -EINVAL if TPM command validation
+> fails
 > 
-> The assumption is that most files in the TCB are not changing and are
-> signed.  Custom policies should require file signatures for these
-> files.
+> On 11/19/2017 04:27 PM, Jason Gunthorpe wrote:
+> > On Sat, Nov 18, 2017 at 01:53:49AM +0100, Javier Martinez Canillas wrote:
+> >
+> >> What I fail to understand is why that's not a problem when the TPM
+> >> spaces infrastructure isn't used, tpm_validate_command() function
+> >> just returns true if space is NULL. So when sending command to
+> >> /dev/tpm0 directly, a rogue user-space program can send any arbitrary data to
+> the TPM.
+> >
+> > tpm spaces was designed to allow unprivileged user space access to
+
+Shouldn't it depend on the mode of the device file?
+
 > 
-> Assuming that the private keys that are used to sign these files, as
-> well as the private key used for signing other keys added to the IMA
-> keyring, are stored off line, new files can not be signed.
+> Ah, I didn't know about that design decision. This isn't documented anywhere
+> AFAICT, it would be nice to add some notes to Documentation/security/tpm/ so
+> people are aware of this.
 > 
-> The number of mutable files in the TCB should be very limited,
-> probably < 20 files.  Their usage can be constrained by MAC.
+> > the TPM so it has additional protection designed to keep the TPM
+> > secure.
 
-I'm not sure what exactly "constrained by MAC" implies, but I suspect
-that these mutable files will be as important for the integrity of the
-TCB as everything else (<insert my systemd configuration file example
-again here>). Compromised is compromised, an installation cannot be
-"half compromised". So once the policy allows mutable files, a run-time 
-exploit that bypasses the MAC can compromise the TCB permanently.
+The TPM manages its own security over objects, can you give me an example of where
+this matters? I see below you mention a bug in parsing the data sent by the tpm.
+If I want to allow untrusted access through the kernel RM one should allow it. It should be based
+on file system permissions, not arbitrary checks in the driver. Also, the more code you write
+the more the argument that the parsing error could be in the Linux kernel. Maybe they
+just want to use the TPM driver to gain access to kernel mode and not the TPM.
 
-> That said, IMA/IMA-appraisal is work in progress.  There are still
-> measurement/appraisal gaps that need to be closed.  One such example
-> are files read by interpreters and interpreted files.  There have
-> been some initial proposals in this area.
+> >
+> > Allowing unprivileged user space to send send garbage to the TPM seems
+> > like a good way to trigger a TPM bug in parsing.
+> >
+> 
+> Well, I don't think that unprivileged user-space should have any access to the
+> TPM. Since a rogue user-space can abuse the TPM anyway even when using a
+> well constructed command (which is the only validation that's done IIUC).
+> 
+> In other words, only trusted software should have access to the TPM device.
 
-That's what brings us back to my initial question: are the current set
-of patches enough to make appraisal useful? Matthew seems to be
-optimistic that the answer is yes and I certainly don't want to
-discourage him especially as he's doing some actual work while I
-couldn't do that, but I remain a bit more skeptical.
+That's policy, and shouldn't be hardcoded in the kernel. Let the DAC permission model
+And LSMs sort that out.
 
--- 
-Best Regards, Patrick Ohly
+> 
+> I thought the TPM spaces was about exposing a virtualized TPM that didn't have
+> the limitation of only allowing to store a small set of transient objects (so user-
+> space didn't have to deal with the handles flushing and context save/load), rather
+> than relaxing the access control to the TPM.
+> 
+> > When spaces are not used /dev/tpm0 is root only and has full
+> > unrestricted access.
 
-The content of this message is my personal opinion only and although
-I am an employee of Intel, the statements I make here in no way
-represent Intel's position on the issue, nor am I authorized to speak
-on behalf of Intel on this matter.
+Wouldn't this be based on the changeable mode of /dev/tpm0?
+
+> >
+> 
+> The Linux motto is that it should provide mechanisms and not policy, so I wonder
+> if is up to user-space to decide who should access the devices.
+> 
+> For example on my Fedora machine, the /dev/tpm* char devices are owned by
+> the "tss" user and group. That's because the tpm2-abrmd package installs an
+> udev rule to change the permissions, since the resource manager is run as the
+> unprivileged tss user.
+> 
+> The /dev/tpmrm* on the other hand are owned by root. So on this distro at least,
+> is the opposite of what you described.
+> 
+> Having said that, I'm happy to implement the synthesized response when the
+> command is not supported, if that's the correct way to resolve this.
+> 
+> > Jason
+> >
+> 
+> Best regards,
+> --
+> Javier Martinez Canillas
+> Software Engineer - Desktop Hardware Enablement Red Hat
