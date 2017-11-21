@@ -1,69 +1,55 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:7634 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751684AbdKUMaJ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 21 Nov 2017 07:30:09 -0500
-Date: Tue, 21 Nov 2017 14:30:06 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Philip Tricca <philip.b.tricca@intel.com>,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        linux-integrity@vger.kernel.org,
-        William Roberts <william.c.roberts@intel.com>
-Subject: Re: [RFC PATCH] tpm: don't return -EINVAL if TPM command validation
- fails
-Message-ID: <20171121123006.esr7yxs5lvorlfjf@linux.intel.com>
-References: <20171117100724.19257-1-javierm@redhat.com>
- <20171120231512.6wpqgcggfta3am7m@linux.intel.com>
- <7c148cf0-2403-55cf-1633-ff326d5c6f7b@redhat.com>
+Received: from userp1040.oracle.com ([156.151.31.81]:50212 "EHLO
+        userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751381AbdKUKGZ (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 21 Nov 2017 05:06:25 -0500
+Date: Tue, 21 Nov 2017 21:05:19 +1100 (AEDT)
+From: James Morris <james.l.morris@oracle.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+cc: Patrick Ohly <patrick.ohly@intel.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Matthew Garrett <mjg59@google.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Silviu Vlasceanu <silviu.vlasceanu@huawei.com>
+Subject: Re: IMA appraisal master plan?
+In-Reply-To: <1511189976.4729.110.camel@linux.vnet.ibm.com>
+Message-ID: <alpine.LFD.2.20.1711212102370.6690@localhost>
+References: <20171107151742.25122-1-mjg59@google.com>  <1510766803.5979.17.camel@intel.com>  <CACdnJusRutc4j7z+w6pZ0tooeAPcq=Vky_evF=X61AK_ivAEqg@mail.gmail.com>  <1510770065.5979.21.camel@intel.com>  <alpine.LFD.2.20.1711161101360.27132@localhost>
+ <CACdnJuv=YDngm5HqJT9sfM01AVoZUaf8_uu-ygo+h8nNjtsDeA@mail.gmail.com>  <1510798382.3711.389.camel@linux.vnet.ibm.com>  <8bbaea89-336c-d14b-2ed8-44cd0a0d3ed1@huawei.com>  <1510837595.3711.420.camel@linux.vnet.ibm.com>  <a88aff89-1e75-9019-4394-640f5fb318da@huawei.com>
+  <alpine.LFD.2.20.1711200746120.25470@localhost>  <1511173252.5979.45.camel@intel.com> <1511189976.4729.110.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <7c148cf0-2403-55cf-1633-ff326d5c6f7b@redhat.com>
+Content-Type: multipart/mixed; BOUNDARY="8323328-711517665-1511258723=:6690"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Nov 21, 2017 at 10:07:34AM +0100, Javier Martinez Canillas wrote:
-> As mentioned, I think this should be documented. I guess most people
-> would see the in-kernel resource manager as a virtualized TPM, since
-> the "TSS TAB and Resource Manager Specification" [0] explains the RM
-> making an analogy with a virtual memory manager: 
+On Mon, 20 Nov 2017, Mimi Zohar wrote:
+
+> On Mon, 2017-11-20 at 11:20 +0100, Patrick Ohly wrote:
+> > On Mon, 2017-11-20 at 07:47 +1100, James Morris wrote:
+> > > On Fri, 17 Nov 2017, Roberto Sassu wrote:
+> > > 
+> > > > LSMs are responsible to enforce a security policy at run-time,
+> > > > while IMA/EVM protect data and metadata against offline attacks.
+> > > 
+> > > In my view, IMA can also protect against making an online attack 
+> > > persistent across boots, and that would be the most compelling use of
+> > > it for many general purpose applications.
+> > 
+> > I do not quite buy that interpretation. If the online attack succeeds
+> > in bypassing the run-time checks, for example with a full root exploit,
+> > then he has pretty much the same capabilities to make persistent file
+> > changes as during an offline attack.
 > 
-> "The Resource Manager (RM) manages the TPM context in a manner similar
-> to a virtual memory manager. It swaps objects, sessions, and sequences
-> in and out of the limited TPM memory as needed."
+> In the face of a full root exploit, there is not much that one can do,
+> "other" than to detect it.  This is why remote attestation is so
+> important.
 
-A process in virtual memory has a different environment than code
-running on bare metal without page table, doesn't it?
+Right, although the consensus seems to be that RA is essential rather than 
+simply important.
 
-> And even your latest LPC presentation mention that the handles in the
-> in-kernel resource manager are virtualized [1].
-> 
-> And I disagree that it does not matter, since the same spec says:
-> 
-> "This layer is mostly transparent to the upper layers of the TSS and is
-> not required."
-> 
-> But returning -EINVAL instead of a proper TPM command response with a
-> TPM_RC_COMMAND_CODE code makes it not transparent to the upper layer.
 
-*mostly*
-
-> If the TPM spaces infrastructure is not compliant with the spec, then I
-> think that should also be documented.
-
-TPM specification is not a formal specification AFAIK.
-
-> > matters less than breaking the sandbox.
-> >
-> 
-> Yes, sorry for that. It wasn't clear to me that there was a sandbox and my
-> lack of familiarity with the code was the reason why I posted as a RFC in
-> the first place.
-> 
-> Do you agree with Jason's suggestion to send a synthesized TPM command in
-> the that the command isn't supported?
-
-Nope.
-
-/Jarkko
+-- 
+James Morris
+<james.l.morris@oracle.com>
