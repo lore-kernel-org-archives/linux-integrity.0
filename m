@@ -1,166 +1,93 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from smtp2.infineon.com ([217.10.52.18]:38122 "EHLO
-        smtp2.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751216AbdKVGwG (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 22 Nov 2017 01:52:06 -0500
-From: <Alexander.Steffen@infineon.com>
-To: <nayna@linux.vnet.ibm.com>, <linux-integrity@vger.kernel.org>
-CC: <zohar@linux.vnet.ibm.com>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <peterhuewe@gmx.de>,
-        <jarkko.sakkinen@linux.intel.com>, <tpmdd@selhorst.net>,
-        <patrickc@us.ibm.com>
-Subject: RE: [PATCH v4 2/4] tpm: ignore burstcount to improve tpm_tis send()
- performance
-Date: Wed, 22 Nov 2017 06:52:03 +0000
-Message-ID: <3ff12c6536de4379aa61cb09ebc9d105@infineon.com>
-References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
- <20171017203232.2262-3-nayna@linux.vnet.ibm.com>
- <5ef60315f2254b3b8bcc217a572280e5@infineon.com>
- <e98e85a5-fec1-93fb-8daf-d997d5995993@linux.vnet.ibm.com>  
-Content-Type: text/plain; charset="Windows-1252"
+Received: from mga05.intel.com ([192.55.52.43]:17724 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751067AbdKUU3J (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 21 Nov 2017 15:29:09 -0500
+From: "Roberts, William C" <william.c.roberts@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "Javier Martinez Canillas" <javierm@redhat.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        "Tricca, Philip B" <philip.b.tricca@intel.com>,
+        "Jason Gunthorpe" <jgunthorpe@obsidianresearch.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Subject: RE: [RFC PATCH] tpm: don't return -EINVAL if TPM command validation
+ fails
+Date: Tue, 21 Nov 2017 20:29:07 +0000
+Message-ID: <476DC76E7D1DF2438D32BFADF679FC563F4BFC0B@ORSMSX115.amr.corp.intel.com>
+References: <20171117100724.19257-1-javierm@redhat.com>
+ <20171120231512.6wpqgcggfta3am7m@linux.intel.com>
+ <7c148cf0-2403-55cf-1633-ff326d5c6f7b@redhat.com>
+ <20171121123006.esr7yxs5lvorlfjf@linux.intel.com>
+In-Reply-To: <20171121123006.esr7yxs5lvorlfjf@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-> > > On 10/20/2017 08:12 PM, Alexander.Steffen@infineon.com wrote:
-> > > >> The TPM burstcount status indicates the number of bytes that can
-> > > >> be sent to the TPM without causing bus wait states.  Effectively,
-> > > >> it is the number of empty bytes in the command FIFO.
-> > > >>
-> > > >> This patch optimizes the tpm_tis_send_data() function by checking
-> > > >> the burstcount only once. And if the burstcount is valid, it writes
-> > > >> all the bytes at once, permitting wait state.
-> > > >>
-> > > >> After this change, performance on a TPM 1.2 with an 8 byte
-> > > >> burstcount for 1000 extends improved from ~41sec to ~14sec.
-> > > >>
-> > > >> Suggested-by: Ken Goldman<kgold@linux.vnet.ibm.com>  in
-> > > >> conjunction with the TPM Device Driver work group.
-> > > >> Signed-off-by: Nayna Jain<nayna@linux.vnet.ibm.com>
-> > > >> Acked-by: Mimi Zohar<zohar@linux.vnet.ibm.com>
-> > > >> ---
-> > > >>   drivers/char/tpm/tpm_tis_core.c | 42 +++++++++++++++--------------
-> --
-> > --
-> > > ----
-> > > >> ----
-> > > >>   1 file changed, 15 insertions(+), 27 deletions(-)
-> > > >>
-> > > >> diff --git a/drivers/char/tpm/tpm_tis_core.c
-> > > >> b/drivers/char/tpm/tpm_tis_core.c
-> > > >> index b33126a35694..993328ae988c 100644
-> > > >> --- a/drivers/char/tpm/tpm_tis_core.c
-> > > >> +++ b/drivers/char/tpm/tpm_tis_core.c
-> > > >> @@ -316,7 +316,6 @@ static int tpm_tis_send_data(struct tpm_chip
-> > > *chip,
-> > > >> u8 *buf, size_t len)
-> > > >>   {
-> > > >>   	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
-> > > >>   	int rc, status, burstcnt;
-> > > >> -	size_t count = 0;
-> > > >>   	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
-> > > >>
-> > > >>   	status = tpm_tis_status(chip);
-> > > >> @@ -330,35 +329,24 @@ static int tpm_tis_send_data(struct
-> tpm_chip
-> > > *chip,
-> > > >> u8 *buf, size_t len)
-> > > >>   		}
-> > > >>   	}
-> > > >>
-> > > >> -	while (count < len - 1) {
-> > > >> -		burstcnt = get_burstcount(chip);
-> > > >> -		if (burstcnt < 0) {
-> > > >> -			dev_err(&chip->dev, "Unable to read
-> burstcount\n");
-> > > >> -			rc = burstcnt;
-> > > >> -			goto out_err;
-> > > >> -		}
-> > > >> -		burstcnt = min_t(int, burstcnt, len - count - 1);
-> > > >> -		rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv-
-> > > >>> locality),
-> > > >> -					 burstcnt, buf + count);
-> > > >> -		if (rc < 0)
-> > > >> -			goto out_err;
-> > > >> -
-> > > >> -		count += burstcnt;
-> > > >> -
-> > > >> -		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip-
-> > > >>> timeout_c,
-> > > >> -					&priv->int_queue, false) < 0) {
-> > > >> -			rc = -ETIME;
-> > > >> -			goto out_err;
-> > > >> -		}
-> > > >> -		status = tpm_tis_status(chip);
-> > > >> -		if (!itpm && (status & TPM_STS_DATA_EXPECT) == 0)
-> {
-> > > >> -			rc = -EIO;
-> > > >> -			goto out_err;
-> > > >> -		}
-> > > >> +	/*
-> > > >> +	 * Get the initial burstcount to ensure TPM is ready to
-> > > >> +	 * accept data.
-> > > >> +	 */
-> > > >> +	burstcnt = get_burstcount(chip);
-> > > >> +	if (burstcnt < 0) {
-> > > >> +		dev_err(&chip->dev, "Unable to read burstcount\n");
-> > > >> +		rc = burstcnt;
-> > > >> +		goto out_err;
-> > > >>   	}
-> > > >>
-> > > >> +	rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv-
-> >locality),
-> > > >> +			len - 1, buf);
-> > > >> +	if (rc < 0)
-> > > >> +		goto out_err;
-> > > >> +
-> > > >>   	/* write last byte */
-> > > >> -	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality),
-> > > >> buf[count]);
-> > > >> +	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality),
-> buf[len-
-> > > >> 1]);
-> > > >>   	if (rc < 0)
-> > > >>   		goto out_err;
-> > > >>
-> > > >> --
-> > > >> 2.13.3
-> > > > This seems to fail reliably with my SPI TPM 2.0. I get EIO when trying to
-> > > send large amounts of data, e.g. with TPM2_Hash, and subsequent tests
-> > > seem to take an unusual amount of time. More analysis probably has to
-> > wait
-> > > until November, since I am going to be in Prague next week.
-> > >
-> > > Thanks Alex for testing these.. Did you get the chance to do any further
-> > > analysis ?
+
+
+> -----Original Message-----
+> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
+> Sent: Tuesday, November 21, 2017 4:30 AM
+> To: Javier Martinez Canillas <javierm@redhat.com>
+> Cc: linux-kernel@vger.kernel.org; Peter Huewe <peterhuewe@gmx.de>; Tricca,
+> Philip B <philip.b.tricca@intel.com>; Jason Gunthorpe
+> <jgunthorpe@obsidianresearch.com>; linux-integrity@vger.kernel.org; Roberts,
+> William C <william.c.roberts@intel.com>
+> Subject: Re: [RFC PATCH] tpm: don't return -EINVAL if TPM command validation
+> fails
+> 
+> On Tue, Nov 21, 2017 at 10:07:34AM +0100, Javier Martinez Canillas wrote:
+> > As mentioned, I think this should be documented. I guess most people
+> > would see the in-kernel resource manager as a virtualized TPM, since
+> > the "TSS TAB and Resource Manager Specification" [0] explains the RM
+> > making an analogy with a virtual memory manager:
 > >
-> > I am working on that now. Ken's suggestion seems reasonable, so I am
-> going
-> > to test whether correctly waiting for the flags to change fixes the problem.
-> If
-> > it does, I'll send the patches.
+> > "The Resource Manager (RM) manages the TPM context in a manner similar
+> > to a virtual memory manager. It swaps objects, sessions, and sequences
+> > in and out of the limited TPM memory as needed."
 > 
-> Sorry for the delay, I had to take care of some device tree changes in v4.14
-> that broke my ARM test machines.
+> A process in virtual memory has a different environment than code running on
+> bare metal without page table, doesn't it?
 > 
-> I've implemented some patches that fix the issue that Ken pointed out and
-> rebased your patch 2/4 ("ignore burstcount") on top. While doing this I
-> noticed that your original patch does not, as the commit message says, write
-> all the bytes at once, but still unnecessarily splits all commands into at least
-> two transfers (as did the original code). I've fixed this as well in my patches,
-> so that all bytes are indeed sent in a single call, without special handling for
-> the last byte. This should speed up things further, especially for small
-> commands and drivers like tpm_tis_spi, where writing a single byte
-> translates into additional SPI transfers.
+> > And even your latest LPC presentation mention that the handles in the
+> > in-kernel resource manager are virtualized [1].
+> >
+> > And I disagree that it does not matter, since the same spec says:
+> >
+> > "This layer is mostly transparent to the upper layers of the TSS and
+> > is not required."
+> >
+> > But returning -EINVAL instead of a proper TPM command response with a
+> > TPM_RC_COMMAND_CODE code makes it not transparent to the upper layer.
 > 
-> Unfortunately, even with those changes the problem persists. But I've got
-> more detailed logs now and will try to understand and hopefully fix the issue.
-> I'll follow up with more details and/or patches once I know more.
+> *mostly*
+> 
+> > If the TPM spaces infrastructure is not compliant with the spec, then
+> > I think that should also be documented.
+> 
+> TPM specification is not a formal specification AFAIK.
 
-Okay, so the problem seems to be that at some point the TPM starts inserting wait states for the FIFO access. The driver tries to handle this, but fails since even the 50 retries that are currently used do not seem to be enough. Adding small (millisecond) delays between the attempts did not help so far.
+The published parts are, granted many things are changing.
 
-Is there any limit in the specification for how many wait states the TPM may generate or for how long it may do so? I could not find anything, but we need to use something there to prevent a faulty TPM from blocking the kernel forever.
+> 
+> > > matters less than breaking the sandbox.
+> > >
+> >
+> > Yes, sorry for that. It wasn't clear to me that there was a sandbox
+> > and my lack of familiarity with the code was the reason why I posted
+> > as a RFC in the first place.
+> >
+> > Do you agree with Jason's suggestion to send a synthesized TPM command
+> > in the that the command isn't supported?
+> 
+> Nope.
 
-Alexander
+We should update the elf loader to make sure that ELF files don't contain
+Incorrect instructions. We shouldn't have this type of policy in the driver
+considering that the tpm is designed to handle it. Obviously you disagree,
+just understand you're wrong :-P
+
+> 
+> /Jarkko
