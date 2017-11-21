@@ -1,88 +1,50 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from lhrrgout.huawei.com ([194.213.3.17]:47938 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751198AbdKUJeJ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 21 Nov 2017 04:34:09 -0500
-Subject: Re: IMA appraisal master plan?
-To: Patrick Ohly <patrick.ohly@intel.com>,
-        James Morris <james.l.morris@oracle.com>
-CC: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Matthew Garrett <mjg59@google.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Silviu Vlasceanu <silviu.vlasceanu@huawei.com>
-References: <20171107151742.25122-1-mjg59@google.com>
- <1510766803.5979.17.camel@intel.com>
- <CACdnJusRutc4j7z+w6pZ0tooeAPcq=Vky_evF=X61AK_ivAEqg@mail.gmail.com>
- <1510770065.5979.21.camel@intel.com>
- <alpine.LFD.2.20.1711161101360.27132@localhost>
- <CACdnJuv=YDngm5HqJT9sfM01AVoZUaf8_uu-ygo+h8nNjtsDeA@mail.gmail.com>
- <1510798382.3711.389.camel@linux.vnet.ibm.com>
- <8bbaea89-336c-d14b-2ed8-44cd0a0d3ed1@huawei.com>
- <1510837595.3711.420.camel@linux.vnet.ibm.com>
- <a88aff89-1e75-9019-4394-640f5fb318da@huawei.com>
- <alpine.LFD.2.20.1711200746120.25470@localhost>
- <1511173252.5979.45.camel@intel.com>
-From: Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <fd3f5cd3-a6a8-a540-f634-4ac489a171e8@huawei.com>
-Date: Tue, 21 Nov 2017 10:33:42 +0100
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:45780 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751357AbdKUJ1b (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 21 Nov 2017 04:27:31 -0500
+Received: by mail-wm0-f68.google.com with SMTP id 9so1801664wme.4
+        for <linux-integrity@vger.kernel.org>; Tue, 21 Nov 2017 01:27:30 -0800 (PST)
+Subject: Re: [RFC PATCH] tpm: don't return -EINVAL if TPM command validation
+ fails
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Philip Tricca <philip.b.tricca@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-integrity@vger.kernel.org,
+        William Roberts <william.c.roberts@intel.com>
+References: <20171117100724.19257-1-javierm@redhat.com>
+ <20171120231512.6wpqgcggfta3am7m@linux.intel.com>
+ <7c148cf0-2403-55cf-1633-ff326d5c6f7b@redhat.com>
+Message-ID: <43dcb260-a85c-fd71-fcc0-5d2526d72520@redhat.com>
+Date: Tue, 21 Nov 2017 10:27:28 +0100
 MIME-Version: 1.0
-In-Reply-To: <1511173252.5979.45.camel@intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <7c148cf0-2403-55cf-1633-ff326d5c6f7b@redhat.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 11/20/2017 11:20 AM, Patrick Ohly wrote:
-> On Mon, 2017-11-20 at 07:47 +1100, James Morris wrote:
->> On Fri, 17 Nov 2017, Roberto Sassu wrote:
+On 11/21/2017 10:07 AM, Javier Martinez Canillas wrote:
+> On 11/21/2017 12:15 AM, Jarkko Sakkinen wrote:
+> 
+>> matters less than breaking the sandbox.
 >>
->>> LSMs are responsible to enforce a security policy at run-time,
->>> while IMA/EVM protect data and metadata against offline attacks.
->>
->> In my view, IMA can also protect against making an online attack
->> persistent across boots, and that would be the most compelling use of
->> it for many general purpose applications.
-
-It would be possible, if IMA knows when the system is in the expected
-state. For example, if the system is in the expected state after digest
-lists have been loaded, IMA could erase the EVM key, sealed to that
-state, when a file with unknown digest is measured. The system won't be
-able to produce valid HMACs, and files modified after the attack can be
-identified at the next boot, due to the invalid HMAC. Also accessing
-files with invalid HMAC will cause the EVM key to be zeroed.
-
-Since IMA would erase the EVM key when a new measurement entry is
-created, digests of mutable files with valid HMAC should not be added to
-the measurement list (the initial digest must be provided with a digest
-list, or files must be signed). This requires that the integrity of
-mutable files is guaranteed by LSMs or by IMA, with the patch set 'ima:
-preserve integrity of dynamic data'.
-
-
-> I do not quite buy that interpretation. If the online attack succeeds
-> in bypassing the run-time checks, for example with a full root exploit,
-> then he has pretty much the same capabilities to make persistent file
-> changes as during an offline attack.
-
-If the full root exploit modifies the current system state, persistent
-changes can be detected, as I explained above. The effectiveness of the
-solution depends on which checks are done by the system. For example, in
-addition to checking if the digest of measured files is in a digest
-list, IMA could check that a specific application is running (e.g.
-antivirus) and that the firewall has been started before network
-services. More checks increase the likelihood that the full root exploit
-causes a system state change.
-
-Roberto
-
-
-> When allowing local hashing, it's actually worse: during an offline
-> attack, the attacker might not have access to the TPM and thus cannot
-> easily update the EVM HMAC. During an online attack, the kernel will
-> happily update that and the IMA hash for the attacker, resulting in a
-> file that passes appraisal after a reboot.
+> 
+> Yes, sorry for that. It wasn't clear to me that there was a sandbox and my
+> lack of familiarity with the code was the reason why I posted as a RFC in
+> the first place.
+> 
+> Do you agree with Jason's suggestion to send a synthesized TPM command in
+> the that the command isn't supported?
 > 
 
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
+Sorry, this should had been: send a synthesized TPM response in the case that
+the command isn't supported.
+
+Best regards,
+--
+Javier Martinez Canillas
+Software Engineer - Desktop Hardware Enablement
+Red Hat
