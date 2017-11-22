@@ -1,97 +1,50 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49220 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753107AbdKWOsq (ORCPT
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:41883 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751260AbdKVUNJ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 23 Nov 2017 09:48:46 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vANEiVwI120916
-        for <linux-integrity@vger.kernel.org>; Thu, 23 Nov 2017 09:48:46 -0500
-Received: from e37.co.us.ibm.com (e37.co.us.ibm.com [32.97.110.158])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2edyhw2fne-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 23 Nov 2017 09:48:45 -0500
-Received: from localhost
-        by e37.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Thu, 23 Nov 2017 07:48:44 -0700
-Date: Thu, 23 Nov 2017 20:17:42 +0530
-From: Nayna Jain <nayna@linux.vnet.ibm.com>
-To: Alexander.Steffen@infineon.com
-Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
-        jarkko.sakkinen@linux.intel.com, tpmdd@selhorst.net,
-        patrickc@us.ibm.com
-Subject: Re: [PATCH v4 2/4] tpm: ignore burstcount to improve tpm_tis send()
- performance
-References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
- <20171017203232.2262-3-nayna@linux.vnet.ibm.com>
- <5ef60315f2254b3b8bcc217a572280e5@infineon.com>
- <e98e85a5-fec1-93fb-8daf-d997d5995993@linux.vnet.ibm.com>
- <3ff12c6536de4379aa61cb09ebc9d105@infineon.com>
+        Wed, 22 Nov 2017 15:13:09 -0500
+Received: by mail-wr0-f194.google.com with SMTP id z14so15650316wrb.8
+        for <linux-integrity@vger.kernel.org>; Wed, 22 Nov 2017 12:13:08 -0800 (PST)
+Date: Wed, 22 Nov 2017 13:13:03 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: flihp <flihp@twobit.us>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        "Tricca, Philip B" <philip.b.tricca@intel.com>,
+        linux-integrity@vger.kernel.org,
+        "Roberts, William C" <william.c.roberts@intel.com>
+Subject: Re: FW: [RFC PATCH] tpm: don't return -EINVAL if TPM command
+ validation fails
+Message-ID: <20171122201303.GT18272@ziepe.ca>
+References: <20171117100724.19257-1-javierm@redhat.com>
+ <20171120231512.6wpqgcggfta3am7m@linux.intel.com>
+ <7c148cf0-2403-55cf-1633-ff326d5c6f7b@redhat.com>
+ <20171121123006.esr7yxs5lvorlfjf@linux.intel.com>
+ <ebb69b95-96e3-b1cd-a7d0-6792e411e6d4@redhat.com>
+ <DB638850A6A2434A93ECADDA0BC838905F09D5D9@ORSMSX103.amr.corp.intel.com>
+ <602091d7-1b16-4694-57b2-8031acce8cbc@twobit.us>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <3ff12c6536de4379aa61cb09ebc9d105@infineon.com>
-Message-Id: <20171123144742.GC8862@swastik>
+In-Reply-To: <602091d7-1b16-4694-57b2-8031acce8cbc@twobit.us>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Nov 22, 2017 at 06:52:03AM +0000, Alexander.Steffen@infineon.com wrote:
-> > > > > This seems to fail reliably with my SPI TPM 2.0. I get EIO when trying to
-> > > > send large amounts of data, e.g. with TPM2_Hash, and subsequent tests
-> > > > seem to take an unusual amount of time. More analysis probably has to
-> > > wait
-> > > > until November, since I am going to be in Prague next week.
-> > > >
-> > > > Thanks Alex for testing these.. Did you get the chance to do any further
-> > > > analysis ?
-> > >
-> > > I am working on that now. Ken's suggestion seems reasonable, so I am
-> > going
-> > > to test whether correctly waiting for the flags to change fixes the problem.
-> > If
-> > > it does, I'll send the patches.
-> > 
-> > Sorry for the delay, I had to take care of some device tree changes in v4.14
-> > that broke my ARM test machines.
-> > 
-> > I've implemented some patches that fix the issue that Ken pointed out and
-> > rebased your patch 2/4 ("ignore burstcount") on top. While doing this I
-> > noticed that your original patch does not, as the commit message says, write
-> > all the bytes at once, but still unnecessarily splits all commands into at least
-> > two transfers (as did the original code). I've fixed this as well in my patches,
-> > so that all bytes are indeed sent in a single call, without special handling for
-> > the last byte. This should speed up things further, especially for small
-> > commands and drivers like tpm_tis_spi, where writing a single byte
-> > translates into additional SPI transfers.
+On Wed, Nov 22, 2017 at 09:16:25AM -0800, flihp wrote:
 
-Thanks Alex, for digging into.
+> We can work around quirks in the kernel RM in user space if we must
+> (short term?) but I'm hesitant to do so in this case. Would feel better
+> about a short term work-around knowing it's only going to be short term.
 
-Yeah, you are right, the first version of this patch sent all the bytes together, but after hearing ddwg inputs,
-i.e. "The last byte was introduced for error checking purposes (history).", I reverted back to original to be safe.
+Pedantically, the kernel is not implementing a RM as per some spec, it
+is using the TPM features to create isolation.
 
-It seems that the last byte was sent from the beginning (27084ef [PATCH] tpm: driver for next generation TPM chips,),
-does anyone remember the reason ?
+Both sides can be argued. In this case, I think the patch to add a TPM
+response buffer in this one case is reasonable, and does not look so
+complicated that it is dangerous in the kernel.
 
-> > 
-> > Unfortunately, even with those changes the problem persists. But I've got
-> > more detailed logs now and will try to understand and hopefully fix the issue.
-> > I'll follow up with more details and/or patches once I know more.
-> 
-> Okay, so the problem seems to be that at some point the TPM starts inserting wait states for the FIFO access. The driver tries to handle this, but fails since even the 50 retries that are currently used do not seem to be enough. Adding small (millisecond) delays between the attempts did not help so far.
-> 
-> Is there any limit in the specification for how many wait states the TPM may generate or for how long it may do so? I could not find anything, but we need to use something there to prevent a faulty TPM from blocking the kernel forever.
-> 
+However the kernel will continue to return errnos in various cases,
+and a userspace that cannot handle them is kinda broken :)
 
-I have been thinking on this, so was wondering:
-
-1. As you said the problem started while sending large amounts of data for TPM2_Hash, how large is "large" ? I mean did it work for some specific large values before failing.
-2. Are these wait states limited to SPI, or does it happen on LPC as well?
-
-Thanks & Regards,
-   - Nayna
-
-
-> Alexander
-> 
+Jason
