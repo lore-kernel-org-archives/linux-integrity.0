@@ -1,76 +1,93 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wr0-f175.google.com ([209.85.128.175]:45337 "EHLO
-        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752018AbdKZXXW (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:43611 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752018AbdKZXTv (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 26 Nov 2017 18:23:22 -0500
-Received: by mail-wr0-f175.google.com with SMTP id a63so24744303wrc.12
-        for <linux-integrity@vger.kernel.org>; Sun, 26 Nov 2017 15:23:22 -0800 (PST)
-Subject: Re: FW: [RFC PATCH] tpm: don't return -EINVAL if TPM command
- validation fails
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        flihp <flihp@twobit.us>
-Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Sun, 26 Nov 2017 18:19:51 -0500
+Received: by mail-wm0-f68.google.com with SMTP id x63so30758429wmf.2
+        for <linux-integrity@vger.kernel.org>; Sun, 26 Nov 2017 15:19:51 -0800 (PST)
+Subject: Re: [RFC PATCH] tpm: don't return -EINVAL if TPM command validation
+ fails
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: "Roberts, William C" <william.c.roberts@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
         "Tricca, Philip B" <philip.b.tricca@intel.com>,
         Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        linux-integrity@vger.kernel.org,
-        "Roberts, William C" <william.c.roberts@intel.com>
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
 References: <20171117100724.19257-1-javierm@redhat.com>
  <20171120231512.6wpqgcggfta3am7m@linux.intel.com>
  <7c148cf0-2403-55cf-1633-ff326d5c6f7b@redhat.com>
  <20171121123006.esr7yxs5lvorlfjf@linux.intel.com>
- <ebb69b95-96e3-b1cd-a7d0-6792e411e6d4@redhat.com>
- <DB638850A6A2434A93ECADDA0BC838905F09D5D9@ORSMSX103.amr.corp.intel.com>
- <602091d7-1b16-4694-57b2-8031acce8cbc@twobit.us>
- <20171126141853.mqpyqpawygrm26x4@linux.intel.com>
+ <476DC76E7D1DF2438D32BFADF679FC563F4BFC0B@ORSMSX115.amr.corp.intel.com>
+ <600d6778-f155-ea51-64dc-e0041c6943d3@redhat.com>
+ <20171126141220.kv6efqoxkqjq3273@linux.intel.com>
 From: Javier Martinez Canillas <javierm@redhat.com>
-Message-ID: <94a91afd-5a6c-c909-fde9-73dd52af5435@redhat.com>
-Date: Mon, 27 Nov 2017 00:23:19 +0100
+Message-ID: <69c3ab92-6ad5-d6af-6214-318f24e21b66@redhat.com>
+Date: Mon, 27 Nov 2017 00:19:48 +0100
 MIME-Version: 1.0
-In-Reply-To: <20171126141853.mqpyqpawygrm26x4@linux.intel.com>
+In-Reply-To: <20171126141220.kv6efqoxkqjq3273@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 11/26/2017 03:18 PM, Jarkko Sakkinen wrote:
-> On Wed, Nov 22, 2017 at 09:16:25AM -0800, flihp wrote:
->> The intent of this "mostly transparent" stuff is to convey that the RM
->> should be as transparent as possible while acknowledging that there are
->> some cases where it's not / can't be. I can't say why the original
->> author phrased it in this somewhat ambiguous way but I wouldn't call
->> this a fair interpretation. It's definitely one way to read it though.
+On 11/26/2017 03:12 PM, Jarkko Sakkinen wrote:
+> On Wed, Nov 22, 2017 at 10:26:24AM +0100, Javier Martinez Canillas wrote:
+>> On 11/21/2017 09:29 PM, Roberts, William C wrote:
 >>
->> The case in question is the RM performing a function on behalf of the
->> TPM: command code validation. This is a perfectly valid thing to do in
->> the RM though the RM should aim to behave as the TPM would if the RM
->> takes any action (sending a TPM response buffer with the appropriate
->> response code).
+>> [snip]
 >>
->> An additional detail is described in section 3.1 "Error Codes". There is
->> a mechanism to encode information about which layer in the stack
->> produced the response buffer. When the TPM gets a command with a command
->> code it doesn't support then this field will be '0' since '0' identifies
->> the TPM. If the RM is taking over this function it should set the field
->> to indicate as much.
+>>>>>
+>>>>> Do you agree with Jason's suggestion to send a synthesized TPM command
+>>>>> in the that the command isn't supported?
+>>>>
+>>>> Nope.
+>>>
+>>> We should update the elf loader to make sure that ELF files don't contain
+>>> Incorrect instructions. We shouldn't have this type of policy in the driver
+>>> considering that the tpm is designed to handle it. Obviously you disagree,
+>>> just understand you're wrong :-P
+>>>
+>>
+>> I think the sandbox is correct and makes sense to only send well constructed
+>> commands to the TPM. So my RFC patch breaking the sandbox is clearly wrong.
+>>
+>> I still do believe that both interfaces (/dev/tpm and /dev/tpmrm) should be
+>> consistent if possible though. In other words, I don't see the value of not
+>> behaving as expected by the spec if this doesn't have security implications
+>> as is the case with the approach suggested by Jason. And the implementation
+>> for sending the synthesized response is also trivial.
+>>
+>> The other option that's fixing this in user-space will be a workaround, since
+>> it would either be to check for TPM_RC_SUCCESS instead of TPM_RC_COMMAND_CODE
+>> or make the SAPI library infer that a -EINVAL error means that a command isn't
+>> supported and return a TPM_RC_COMMAND_CODE to the caller.
+>>
+>> For completeness, I'll share my patch implementing what Jason suggested, even
+>> when is quite likely that Jarkko won't like it since he has a strong opinion
+>> on this:
 > 
-> Thanks for explaining this. I guess we could take this direction. I think
-> by utilizing the field that you mentioned we could consider this. And it
-> would be hard to imagine this change to cause anything serious (if
-> anything at all) with backwards compatbility.
-> 
-> Javier, does you current version use this field? If not can you resend
-> an update?
+> I apologize for long delay. I have this enormous upstreaming project on
+> my shoulders [1], which will temporarily cause more delay for TPM but
+> things will settle once it is pulled to the mainline.
 >
 
-My current version wasn't setting the error level bits. I'll send a new
-version that does this.
+Please don't worry. My rule of thumb when posting patches to LKML is to wait at
+least 2 weeks before asking for the patch to the maintainer. So your answer was
+much faster than I expected :)
 
-I'll also drop the RFC prefix and propose it as a formal patch since it
-seems we are getting closer to an agreement and also add James as cc.
+Also if we decide that this should be fixed at the kernel-space, then it doesn't
+block any tpm2-{tss,tools} release.
  
+> I'll go through the patch within next few days.
+>
+
+Thanks a lot for your help.
+
+> [1] https://lkml.org/lkml/2017/11/25/123
+> 
 > /Jarkko
 > 
-
 Best regards,
 -- 
 Javier Martinez Canillas
