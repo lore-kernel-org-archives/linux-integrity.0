@@ -1,176 +1,78 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:37464 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752090AbdKZXaQ (ORCPT
+Received: from mail-wr0-f175.google.com ([209.85.128.175]:45337 "EHLO
+        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752018AbdKZXXW (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 26 Nov 2017 18:30:16 -0500
-Received: by mail-wr0-f195.google.com with SMTP id k61so24782271wrc.4
-        for <linux-integrity@vger.kernel.org>; Sun, 26 Nov 2017 15:30:16 -0800 (PST)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Philip Tricca <philip.b.tricca@intel.com>,
+        Sun, 26 Nov 2017 18:23:22 -0500
+Received: by mail-wr0-f175.google.com with SMTP id a63so24744303wrc.12
+        for <linux-integrity@vger.kernel.org>; Sun, 26 Nov 2017 15:23:22 -0800 (PST)
+Subject: Re: FW: [RFC PATCH] tpm: don't return -EINVAL if TPM command
+ validation fails
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        flihp <flihp@twobit.us>
+Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        "Tricca, Philip B" <philip.b.tricca@intel.com>,
         Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
         linux-integrity@vger.kernel.org,
-        William Roberts <william.c.roberts@intel.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: [PATCH] tpm: return a TPM_RC_COMMAND_CODE response if a command isn't implemented
-Date: Mon, 27 Nov 2017 00:30:12 +0100
-Message-Id: <20171126233012.24528-1-javierm@redhat.com>
+        "Roberts, William C" <william.c.roberts@intel.com>
+References: <20171117100724.19257-1-javierm@redhat.com>
+ <20171120231512.6wpqgcggfta3am7m@linux.intel.com>
+ <7c148cf0-2403-55cf-1633-ff326d5c6f7b@redhat.com>
+ <20171121123006.esr7yxs5lvorlfjf@linux.intel.com>
+ <ebb69b95-96e3-b1cd-a7d0-6792e411e6d4@redhat.com>
+ <DB638850A6A2434A93ECADDA0BC838905F09D5D9@ORSMSX103.amr.corp.intel.com>
+ <602091d7-1b16-4694-57b2-8031acce8cbc@twobit.us>
+ <20171126141853.mqpyqpawygrm26x4@linux.intel.com>
+From: Javier Martinez Canillas <javierm@redhat.com>
+Message-ID: <94a91afd-5a6c-c909-fde9-73dd52af5435@redhat.com>
+Date: Mon, 27 Nov 2017 00:23:19 +0100
+MIME-Version: 1.0
+In-Reply-To: <20171126141853.mqpyqpawygrm26x4@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-According to the TPM Library Specification, a TPM device must do a command
-header validation before processing and return a TPM_RC_COMMAND_CODE code
-if the command is not implemented.
+On 11/26/2017 03:18 PM, Jarkko Sakkinen wrote:
+> On Wed, Nov 22, 2017 at 09:16:25AM -0800, flihp wrote:
+>> The intent of this "mostly transparent" stuff is to convey that the RM
+>> should be as transparent as possible while acknowledging that there are
+>> some cases where it's not / can't be. I can't say why the original
+>> author phrased it in this somewhat ambiguous way but I wouldn't call
+>> this a fair interpretation. It's definitely one way to read it though.
+>>
+>> The case in question is the RM performing a function on behalf of the
+>> TPM: command code validation. This is a perfectly valid thing to do in
+>> the RM though the RM should aim to behave as the TPM would if the RM
+>> takes any action (sending a TPM response buffer with the appropriate
+>> response code).
+>>
+>> An additional detail is described in section 3.1 "Error Codes". There is
+>> a mechanism to encode information about which layer in the stack
+>> produced the response buffer. When the TPM gets a command with a command
+>> code it doesn't support then this field will be '0' since '0' identifies
+>> the TPM. If the RM is taking over this function it should set the field
+>> to indicate as much.
+> 
+> Thanks for explaining this. I guess we could take this direction. I think
+> by utilizing the field that you mentioned we could consider this. And it
+> would be hard to imagine this change to cause anything serious (if
+> anything at all) with backwards compatbility.
+> 
+> Javier, does you current version use this field? If not can you resend
+> an update?
+>
 
-So user-space will expect to handle that response as an error. But if the
-in-kernel resource manager is used (/dev/tpmrm?), an -EINVAL errno code is
-returned instead if the command isn't implemented. This confuses userspace
-since it doesn't expect that error value.
+My current version wasn't setting the error level bits. I'll send a new
+version that does this.
 
-This also isn't consistent with the behavior when not using TPM spaces and
-accessing the TPM directly (/dev/tpm?). In this case, the command is sent
-to the TPM even when not implemented and the TPM responds with an error.
-
-Instead of returning an -EINVAL errno code when the tpm_validate_command()
-function fails, synthesize a TPM command response so user-space can get a
-TPM_RC_COMMAND_CODE as expected when a chip doesn't implement the command.
-
-The TPM only sets 12 of the 32 bits in the TPM_RC response, so the TSS and
-TAB specifications define that higher layers in the stack should use some
-of the unused 20 bits to specify from which level of the stack the error
-is coming from.
-
-Since the TPM_RC_COMMAND_CODE response code is sent by the kernel resource
-manager, set the error level to the TAB/RM layer so user-space is aware of
-this.
-
-Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-
----
-
-Changes since RFCv2:
-- Set the error level to the TAB/RM layer so user-space is aware that the error
-  is not coming from the TPM (suggested by Philip Tricca and Jarkko Sakkinen).
-
-Changes since RFCv1:
-- Don't pass not validated commands to the TPM, instead return a synthesized
-  response with the correct TPM return code (suggested by Jason Gunthorpe).
-
-And example of user-space getting confused by the TPM chardev returning -EINVAL
-when sending a not supported TPM command can be seen in this tpm2-tools issue:
-
-https://github.com/intel/tpm2-tools/issues/621
+I'll also drop the RFC prefix and propose it as a formal patch since it
+seems we are getting closer to an agreement and also add James as cc.
+ 
+> /Jarkko
+> 
 
 Best regards,
-Javier
-
- drivers/char/tpm/tpm-interface.c | 28 ++++++++++++++++++++--------
- drivers/char/tpm/tpm.h           |  8 ++++++++
- 2 files changed, 28 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index ebe0a1d36d8c..9391811c5f83 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -328,7 +328,7 @@ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip,
- }
- EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
- 
--static bool tpm_validate_command(struct tpm_chip *chip,
-+static int tpm_validate_command(struct tpm_chip *chip,
- 				 struct tpm_space *space,
- 				 const u8 *cmd,
- 				 size_t len)
-@@ -340,10 +340,10 @@ static bool tpm_validate_command(struct tpm_chip *chip,
- 	unsigned int nr_handles;
- 
- 	if (len < TPM_HEADER_SIZE)
--		return false;
-+		return -EINVAL;
- 
- 	if (!space)
--		return true;
-+		return 0;
- 
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2 && chip->nr_commands) {
- 		cc = be32_to_cpu(header->ordinal);
-@@ -352,7 +352,7 @@ static bool tpm_validate_command(struct tpm_chip *chip,
- 		if (i < 0) {
- 			dev_dbg(&chip->dev, "0x%04X is an invalid command\n",
- 				cc);
--			return false;
-+			return -EOPNOTSUPP;
- 		}
- 
- 		attrs = chip->cc_attrs_tbl[i];
-@@ -362,11 +362,11 @@ static bool tpm_validate_command(struct tpm_chip *chip,
- 			goto err_len;
- 	}
- 
--	return true;
-+	return 0;
- err_len:
- 	dev_dbg(&chip->dev,
- 		"%s: insufficient command length %zu", __func__, len);
--	return false;
-+	return -EINVAL;
- }
- 
- /**
-@@ -391,8 +391,20 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 	unsigned long stop;
- 	bool need_locality;
- 
--	if (!tpm_validate_command(chip, space, buf, bufsiz))
--		return -EINVAL;
-+	rc = tpm_validate_command(chip, space, buf, bufsiz);
-+	if (rc == -EINVAL)
-+		return rc;
-+	/*
-+	 * If the command is not implemented by the TPM, synthesize a
-+	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
-+	 */
-+	if (rc == -EOPNOTSUPP) {
-+		header->length = cpu_to_be32(sizeof(*header));
-+		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
-+		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
-+						  TPM2_RESMGRTPM_ERROR_LEVEL);
-+		return bufsiz;
-+	}
- 
- 	if (bufsiz > TPM_BUFSIZE)
- 		bufsiz = TPM_BUFSIZE;
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index c1866cc02e30..b3f9108d3d1f 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -94,12 +94,20 @@ enum tpm2_structures {
- 	TPM2_ST_SESSIONS	= 0x8002,
- };
- 
-+/* Indicates from what level of the software stack the error comes from */
-+#define TPM2_RC_LEVEL_SHIFT	16
-+
-+#define TPM2_RESMGRTPM_ERROR_LEVEL (11 << TPM2_RC_LEVEL_SHIFT)
-+#define TPM2_RESMGR_ERROR_LEVEL    (12 << TPM2_RC_LEVEL_SHIFT)
-+#define TPM2_DRIVER_ERROR_LEVEL    (13 << TPM2_RC_LEVEL_SHIFT)
-+
- enum tpm2_return_codes {
- 	TPM2_RC_SUCCESS		= 0x0000,
- 	TPM2_RC_HASH		= 0x0083, /* RC_FMT1 */
- 	TPM2_RC_HANDLE		= 0x008B,
- 	TPM2_RC_INITIALIZE	= 0x0100, /* RC_VER1 */
- 	TPM2_RC_DISABLED	= 0x0120,
-+	TPM2_RC_COMMAND_CODE    = 0x0143,
- 	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
- 	TPM2_RC_REFERENCE_H0	= 0x0910,
- };
 -- 
-2.14.3
+Javier Martinez Canillas
+Software Engineer - Desktop Hardware Enablement
+Red Hat
