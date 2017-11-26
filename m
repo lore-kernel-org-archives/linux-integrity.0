@@ -1,42 +1,43 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:45018 "EHLO mga06.intel.com"
+Received: from mga09.intel.com ([134.134.136.24]:16878 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752209AbdKZPWX (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 26 Nov 2017 10:22:23 -0500
-Date: Sun, 26 Nov 2017 17:22:18 +0200
+        id S1752070AbdKZOVN (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 26 Nov 2017 09:21:13 -0500
+Date: Sun, 26 Nov 2017 16:21:09 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Nayna Jain <nayna@linux.vnet.ibm.com>
-Cc: Alexander.Steffen@infineon.com, linux-integrity@vger.kernel.org,
-        zohar@linux.vnet.ibm.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
-        tpmdd@selhorst.net, patrickc@us.ibm.com
-Subject: Re: [PATCH v4 2/4] tpm: ignore burstcount to improve tpm_tis send()
- performance
-Message-ID: <20171126152218.c5fsr7uhs3ipwwha@linux.intel.com>
-References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
- <20171017203232.2262-3-nayna@linux.vnet.ibm.com>
- <5ef60315f2254b3b8bcc217a572280e5@infineon.com>
- <e98e85a5-fec1-93fb-8daf-d997d5995993@linux.vnet.ibm.com>
- <3ff12c6536de4379aa61cb09ebc9d105@infineon.com>
- <20171123144742.GC8862@swastik>
+To: Javier Martinez Canillas <javierm@redhat.com>
+Cc: flihp <flihp@twobit.us>, linux-kernel@vger.kernel.org,
+        Peter Huewe <peterhuewe@gmx.de>,
+        "Tricca, Philip B" <philip.b.tricca@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-integrity@vger.kernel.org,
+        "Roberts, William C" <william.c.roberts@intel.com>
+Subject: Re: FW: [RFC PATCH] tpm: don't return -EINVAL if TPM command
+ validation fails
+Message-ID: <20171126142109.rs434iod4gwekrbo@linux.intel.com>
+References: <20171117100724.19257-1-javierm@redhat.com>
+ <20171120231512.6wpqgcggfta3am7m@linux.intel.com>
+ <7c148cf0-2403-55cf-1633-ff326d5c6f7b@redhat.com>
+ <20171121123006.esr7yxs5lvorlfjf@linux.intel.com>
+ <ebb69b95-96e3-b1cd-a7d0-6792e411e6d4@redhat.com>
+ <DB638850A6A2434A93ECADDA0BC838905F09D5D9@ORSMSX103.amr.corp.intel.com>
+ <602091d7-1b16-4694-57b2-8031acce8cbc@twobit.us>
+ <a6305620-ac5c-5ead-7dd6-ed4e48e75e78@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171123144742.GC8862@swastik>
+In-Reply-To: <a6305620-ac5c-5ead-7dd6-ed4e48e75e78@redhat.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Nov 23, 2017 at 08:17:42PM +0530, Nayna Jain wrote:
-> Yeah, you are right, the first version of this patch sent all the
-> bytes together, but after hearing ddwg inputs, i.e. "The last byte was
-> introduced for error checking purposes (history).", I reverted back to
-> original to be safe.
+On Wed, Nov 22, 2017 at 08:25:29PM +0100, Javier Martinez Canillas wrote:
+> That was my interpretation as well and what I was arguing about. I'm glad to
+> know that you also think the same.
 
-What does that mean ie error checking purposes?
+It could be that this rationale has been your earlier emails but
+I just haven't recognized it :-) I think I'm starting to buy this.
 
-> It seems that the last byte was sent from the beginning (27084ef
-> [PATCH] tpm: driver for next generation TPM chips,), does anyone
-> remember the reason ?
-
-Sent from the beginning?
+I don't have any fixed standing points anything basically. It is
+just better to be really resistant with anything that is related
+to user-kernel interaction until you really get it...
 
 /Jarkko
