@@ -1,58 +1,76 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:36273 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752353AbdK0QC6 (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53924 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752213AbdK0NWh (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 27 Nov 2017 11:02:58 -0500
-Date: Mon, 27 Nov 2017 08:02:55 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Peter Huewe <peterhuewe@gmx.de>,
-        Andrey Pronin <apronin@chromium.org>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm: Add explicit chip->ops locking for sysfs attributes.
-Message-ID: <20171127160255.GA16884@roeck-us.net>
-References: <1510867501-9498-1-git-send-email-linux@roeck-us.net>
- <20171120221323.252ki4nmmrymnty6@linux.intel.com>
- <20171120224523.GA26294@roeck-us.net>
- <20171120231728.GR29075@ziepe.ca>
- <20171120234947.zd5bekvqg5z5rp3i@linux.intel.com>
- <20171121182858.GA4895@roeck-us.net>
- <20171121185856.GG18272@ziepe.ca>
- <20171126135641.szdrrh2szzfowgew@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171126135641.szdrrh2szzfowgew@linux.intel.com>
+        Mon, 27 Nov 2017 08:22:37 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vARDK1he034464
+        for <linux-integrity@vger.kernel.org>; Mon, 27 Nov 2017 08:22:37 -0500
+Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2eghrmnu0r-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 27 Nov 2017 08:22:37 -0500
+Received: from localhost
+        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Mon, 27 Nov 2017 13:22:33 -0000
+Subject: Re: [PATCH v4 2/4] tpm: ignore burstcount to improve tpm_tis send()
+ performance
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Leendert van Doorn <leendert@paramecium.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>
+Cc: "Alexander.Steffen@infineon.com" <Alexander.Steffen@infineon.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
+        "tpmdd@selhorst.net" <tpmdd@selhorst.net>,
+        "patrickc@us.ibm.com" <patrickc@us.ibm.com>,
+        "Safford, David (GE Global Research, US)" <david.safford@ge.com>
+Date: Mon, 27 Nov 2017 08:22:28 -0500
+In-Reply-To: <694703AB-68E1-4026-937C-61DBBE08DB4B@paramecium.org>
+References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
+         <20171017203232.2262-3-nayna@linux.vnet.ibm.com>
+         <5ef60315f2254b3b8bcc217a572280e5@infineon.com>
+         <e98e85a5-fec1-93fb-8daf-d997d5995993@linux.vnet.ibm.com>
+         <3ff12c6536de4379aa61cb09ebc9d105@infineon.com>
+         <20171123144742.GC8862@swastik>
+         <20171126152218.c5fsr7uhs3ipwwha@linux.intel.com>
+         <1511714261.4361.13.camel@linux.vnet.ibm.com>
+         <694703AB-68E1-4026-937C-61DBBE08DB4B@paramecium.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1511788948.4361.39.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sun, Nov 26, 2017 at 03:56:41PM +0200, Jarkko Sakkinen wrote:
-> On Tue, Nov 21, 2017 at 11:58:56AM -0700, Jason Gunthorpe wrote:
-> > On Tue, Nov 21, 2017 at 10:28:58AM -0800, Guenter Roeck wrote:
-> > 
-> > > I'll split the patch into two parts, and only add (hopefully)
-> > > non-controversial tpm2 attributes for now (which I think is durations
-> > > and timeouts). Or, in other words, I'll split the attributes into
-> > > two groups - one generic and one for tpm1.
-> > 
-> > Ok. Please look at new attributes you wish to add for tpm2 and see if
-> > they meet the modern sysfs sensibility of one value per file, etc.
-> > 
-> > Jason
+Hi, Leendert!
+
+On Mon, 2017-11-27 at 07:08 +0000, Leendert van Doorn wrote:
+> Hmm, this is almost 20 years old code (
 > 
-> In general: if something can be retrieved through /dev/tpm0, there is no
-> any sane reason to have a sysfs attribute for such.
-> 
+> I think the original code did a burst write and didn't check for
+> error conditions until the very last byte write. I seem to remember
+> that there was some text in the original standard to that effect
+> (this may have gone back as far as IBM's ESS spec).
 
-If I understand correctly, /dev/tpmX can be used to send any TPM command
-to the chip. Given that, I translate your statement to mean that no sysfs
-attribute will be accepted which sends a TPM command to the chip. This in
-turn means that there is no neded to protect sysfs attributes with a lock
-since any sysfs attribute requiring that lock will be rejected.
+I really appreciate your responding with your recollections.
 
-Thanks for the clarification. Please consider this patch abandoned.
-It might be worthwhile mentioning that restriction in the code though -
-the comment stating that TPM2 sysfs accesses are disabled due to lack
-of locking is obvioulsy incorrect.
+> The current code does check for error conditions after each write
+> byte(s) so I don't think there is any reason for this anymore.
+> Changing the while condition to count < len and setting burstcnt =
+> min_t(int, burstcnt, len - count) and remove the
+> tpm_tis_write8/wait_for_tpm_stat/tpm_tis_status clauses after the
+> while loop should be sufficient.
 
-Guenter
+The context for my question was about removing the while loop and
+sending all of the data at once, relying on the bus wait states.
+ Before making the change, I wanted to make sure there wasn't anything
+special about the last byte.
+
+thanks,
+
+Mimi
