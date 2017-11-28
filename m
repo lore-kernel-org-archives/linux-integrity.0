@@ -1,66 +1,67 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35914 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751497AbdK1VOr (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 28 Nov 2017 16:14:47 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vASLDsUo027419
-        for <linux-integrity@vger.kernel.org>; Tue, 28 Nov 2017 16:14:46 -0500
-Received: from e06smtp13.uk.ibm.com (e06smtp13.uk.ibm.com [195.75.94.109])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ehfchrdw9-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 28 Nov 2017 16:14:46 -0500
-Received: from localhost
-        by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Tue, 28 Nov 2017 21:14:44 -0000
-Subject: Re: [PATCH V3 2/2] IMA: Support using new creds in appraisal policy
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Matthew Garrett <mjg59@google.com>, linux-integrity@vger.kernel.org
-Cc: Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, selinux@tycho.nsa.gov,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Date: Tue, 28 Nov 2017 15:48:55 -0500
-In-Reply-To: <20171026084055.25482-2-mjg59@google.com>
-References: <20171026084055.25482-1-mjg59@google.com>
-         <20171026084055.25482-2-mjg59@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1511902135.3473.5.camel@linux.vnet.ibm.com>
+Received: from mga09.intel.com ([134.134.136.24]:17458 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753262AbdK1UYl (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 28 Nov 2017 15:24:41 -0500
+Date: Tue, 28 Nov 2017 22:24:42 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Peter Huewe <peterhuewe@gmx.de>,
+        Andrey Pronin <apronin@chromium.org>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: Add explicit chip->ops locking for sysfs attributes.
+Message-ID: <20171128202442.wrbegoqub46lwntm@linux.intel.com>
+References: <1510867501-9498-1-git-send-email-linux@roeck-us.net>
+ <20171120221323.252ki4nmmrymnty6@linux.intel.com>
+ <20171120224523.GA26294@roeck-us.net>
+ <20171120231728.GR29075@ziepe.ca>
+ <20171120234947.zd5bekvqg5z5rp3i@linux.intel.com>
+ <20171121182858.GA4895@roeck-us.net>
+ <20171121185856.GG18272@ziepe.ca>
+ <20171126135641.szdrrh2szzfowgew@linux.intel.com>
+ <20171127160255.GA16884@roeck-us.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171127160255.GA16884@roeck-us.net>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Matthew,
+On Mon, Nov 27, 2017 at 08:02:55AM -0800, Guenter Roeck wrote:
+> On Sun, Nov 26, 2017 at 03:56:41PM +0200, Jarkko Sakkinen wrote:
+> > On Tue, Nov 21, 2017 at 11:58:56AM -0700, Jason Gunthorpe wrote:
+> > > On Tue, Nov 21, 2017 at 10:28:58AM -0800, Guenter Roeck wrote:
+> > > 
+> > > > I'll split the patch into two parts, and only add (hopefully)
+> > > > non-controversial tpm2 attributes for now (which I think is durations
+> > > > and timeouts). Or, in other words, I'll split the attributes into
+> > > > two groups - one generic and one for tpm1.
+> > > 
+> > > Ok. Please look at new attributes you wish to add for tpm2 and see if
+> > > they meet the modern sysfs sensibility of one value per file, etc.
+> > > 
+> > > Jason
+> > 
+> > In general: if something can be retrieved through /dev/tpm0, there is no
+> > any sane reason to have a sysfs attribute for such.
+> > 
+> 
+> If I understand correctly, /dev/tpmX can be used to send any TPM command
+> to the chip. Given that, I translate your statement to mean that no sysfs
+> attribute will be accepted which sends a TPM command to the chip. This in
+> turn means that there is no neded to protect sysfs attributes with a lock
+> since any sysfs attribute requiring that lock will be rejected.
+> 
+> Thanks for the clarification. Please consider this patch abandoned.
+> It might be worthwhile mentioning that restriction in the code though -
+> the comment stating that TPM2 sysfs accesses are disabled due to lack
+> of locking is obvioulsy incorrect.
 
-On Thu, 2017-10-26 at 01:40 -0700, Matthew Garrett wrote:
-> The existing BPRM_CHECK functionality in IMA validates against the
-> credentials of the existing process, not any new credentials that the
-> child process may transition to. Add an additional CREDS_CHECK target
-> and refactor IMA to pass the appropriate creds structure. In
-> ima_bprm_check(), check with both the existing process credentials and
-> the credentials that will be committed when the new process is started.
-> This will not change behaviour unless the system policy is extended to
-> include CREDS_CHECK targets - BPRM_CHECK will continue to check the same
-> credentials that it did previously.
+Your statement about comment is correct. I guess we should rename the
+file as tpm1_sysfs.c or tpm_legacy_sysfs.c.
 
-< snip >
+It is not to say that new sysfs attributes would never make sense (like
+in PPI case).
 
-> @@ -305,7 +304,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
->  		case LSM_SUBJ_USER:
->  		case LSM_SUBJ_ROLE:
->  		case LSM_SUBJ_TYPE:
-> -			security_task_getsecid(tsk, &sid);
-> +			security_cred_getsecid(cred, &sid);
->  			rc = security_filter_rule_match(sid,
->  							rule->lsm[i].type,
->  							Audit_equal,
+> Guenter
 
-Based on the patch description, I wouldn't expect to see any changes
-here, unless this is wrong to begin with.  In which case, it should be
-a separate patch.
-
-Mimi
+/Jarkko
