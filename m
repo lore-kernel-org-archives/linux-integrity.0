@@ -1,178 +1,75 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:46898 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752272AbdK2LIw (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57388 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752232AbdK1WdU (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 29 Nov 2017 06:08:52 -0500
-Received: by mail-wm0-f66.google.com with SMTP id r78so5381754wme.5
-        for <linux-integrity@vger.kernel.org>; Wed, 29 Nov 2017 03:08:52 -0800 (PST)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Philip Tricca <philip.b.tricca@intel.com>,
-        linux-integrity@vger.kernel.org,
-        William Roberts <william.c.roberts@intel.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: [PATCH v2] tpm: return a TPM_RC_COMMAND_CODE response if a command isn't implemented
-Date: Wed, 29 Nov 2017 12:08:46 +0100
-Message-Id: <20171129110846.31892-1-javierm@redhat.com>
+        Tue, 28 Nov 2017 17:33:20 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vASMX6We116159
+        for <linux-integrity@vger.kernel.org>; Tue, 28 Nov 2017 17:33:19 -0500
+Received: from e06smtp11.uk.ibm.com (e06smtp11.uk.ibm.com [195.75.94.107])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ehcughwfk-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 28 Nov 2017 17:33:19 -0500
+Received: from localhost
+        by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Tue, 28 Nov 2017 22:33:17 -0000
+Subject: Re: [PATCH V3 2/2] IMA: Support using new creds in appraisal policy
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Matthew Garrett <mjg59@google.com>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, selinux@tycho.nsa.gov,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Date: Tue, 28 Nov 2017 17:33:10 -0500
+In-Reply-To: <CACdnJuvN6NxHLG=hS4iDRHBGWWdzFeUMfkF3ETRjXCbwiXpgnQ@mail.gmail.com>
+References: <20171026084055.25482-1-mjg59@google.com>
+         <20171026084055.25482-2-mjg59@google.com>
+         <1511902135.3473.5.camel@linux.vnet.ibm.com>
+         <CACdnJus2Wha_CjL-8g2BdY=evfNjFqHwKQorsxhUQa8Na_0kCg@mail.gmail.com>
+         <1511904917.3473.15.camel@linux.vnet.ibm.com>
+         <CACdnJuvN6NxHLG=hS4iDRHBGWWdzFeUMfkF3ETRjXCbwiXpgnQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1511908390.3473.30.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-According to the TPM Library Specification, a TPM device must do a command
-header validation before processing and return a TPM_RC_COMMAND_CODE code
-if the command is not implemented.
+On Tue, 2017-11-28 at 13:37 -0800, Matthew Garrett wrote:
+> On Tue, Nov 28, 2017 at 1:35 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> > On Tue, 2017-11-28 at 13:22 -0800, Matthew Garrett wrote:
+> >> We need to check against the appropriate credentials structure, and
+> >> since we're doing this before commit_creds() has been called we can't
+> >> just do it against the one in the task structure.  For BPRM_CHECK
+> >> that'll be current_cred(), which means there's no change in
+> >> functionality, whereas for CREDS_CHECK it'll be the new credentials
+> >> structure.
+> >
+> > The existing code calls security_task_getsecid() with "current" not
+> > "current_cred".  Will replacing security_task_getsecid() with
+> > security_cred_getsecid() return the same info for the original
+> > BRPM_CHECK?
+> 
+> security_task_getsecid(current) will give the same results as
+> security_cred_getsecid(current_creds())
 
-So user-space will expect to handle that response as an error. But if the
-in-kernel resource manager is used (/dev/tpmrm?), an -EINVAL errno code is
-returned instead if the command isn't implemented. This confuses userspace
-since it doesn't expect that error value.
+Unwinding security_task_getsecid(current) looks like it is using
+real_cred, while current_cred() is using cred.
 
-This also isn't consistent with the behavior when not using TPM spaces and
-accessing the TPM directly (/dev/tpm?). In this case, the command is sent
-to the TPM even when not implemented and the TPM responds with an error.
+selinux_task_getsecid() -> task_sid() -> cred_sid(__task_cred())
 
-Instead of returning an -EINVAL errno code when the tpm_validate_command()
-function fails, synthesize a TPM command response so user-space can get a
-TPM_RC_COMMAND_CODE as expected when a chip doesn't implement the command.
+#define __task_cred(task)       \
+        rcu_dereference((task)->real_cred)
 
-The TPM only sets 12 of the 32 bits in the TPM_RC response, so the TSS and
-TAB specifications define that higher layers in the stack should use some
-of the unused 20 bits to specify from which level of the stack the error
-is coming from.
+selinux_task_getsecid() -> cred_sid()
 
-Since the TPM_RC_COMMAND_CODE response code is sent by the kernel resource
-manager, set the error level to the TAB/RM layer so user-space is aware of
-this.
+#define current_cred() \
+        rcu_dereference_protected(current->cred, 1)
 
-Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Is the change intentional?
 
----
-
-Changes since v1:
-- Remove the unused macros for the driver and resmgr RC layers (suggested by
-  Philip Tricca).
-- Use naming conventions from the latest version of the TSS spec (suggested
-  by Philip Tricca).
-
-Changes since RFCv2:
-- Set the error level to the TAB/RM layer so user-space is aware that the error
-  is not coming from the TPM (suggested by Philip Tricca and Jarkko Sakkinen).
-
-Changes since RFCv1:
-- Don't pass not validated commands to the TPM, instead return a synthesized
-  response with the correct TPM return code (suggested by Jason Gunthorpe).
-
-And example of user-space getting confused by the TPM chardev returning -EINVAL
-when sending a not supported TPM command can be seen in this tpm2-tools issue:
-
-https://github.com/intel/tpm2-tools/issues/621
-
-Best regards,
-Javier
-
- drivers/char/tpm/tpm-interface.c | 28 ++++++++++++++++++++--------
- drivers/char/tpm/tpm.h           |  5 +++++
- 2 files changed, 25 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 1d6729be4cd6..ac83ad149ec7 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -328,7 +328,7 @@ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip,
- }
- EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
- 
--static bool tpm_validate_command(struct tpm_chip *chip,
-+static int tpm_validate_command(struct tpm_chip *chip,
- 				 struct tpm_space *space,
- 				 const u8 *cmd,
- 				 size_t len)
-@@ -340,10 +340,10 @@ static bool tpm_validate_command(struct tpm_chip *chip,
- 	unsigned int nr_handles;
- 
- 	if (len < TPM_HEADER_SIZE)
--		return false;
-+		return -EINVAL;
- 
- 	if (!space)
--		return true;
-+		return 0;
- 
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2 && chip->nr_commands) {
- 		cc = be32_to_cpu(header->ordinal);
-@@ -352,7 +352,7 @@ static bool tpm_validate_command(struct tpm_chip *chip,
- 		if (i < 0) {
- 			dev_dbg(&chip->dev, "0x%04X is an invalid command\n",
- 				cc);
--			return false;
-+			return -EOPNOTSUPP;
- 		}
- 
- 		attrs = chip->cc_attrs_tbl[i];
-@@ -362,11 +362,11 @@ static bool tpm_validate_command(struct tpm_chip *chip,
- 			goto err_len;
- 	}
- 
--	return true;
-+	return 0;
- err_len:
- 	dev_dbg(&chip->dev,
- 		"%s: insufficient command length %zu", __func__, len);
--	return false;
-+	return -EINVAL;
- }
- 
- /**
-@@ -391,8 +391,20 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 	unsigned long stop;
- 	bool need_locality;
- 
--	if (!tpm_validate_command(chip, space, buf, bufsiz))
--		return -EINVAL;
-+	rc = tpm_validate_command(chip, space, buf, bufsiz);
-+	if (rc == -EINVAL)
-+		return rc;
-+	/*
-+	 * If the command is not implemented by the TPM, synthesize a
-+	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
-+	 */
-+	if (rc == -EOPNOTSUPP) {
-+		header->length = cpu_to_be32(sizeof(*header));
-+		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
-+		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
-+						  TPM2_RESMGRTPM_RC_LAYER);
-+		return bufsiz;
-+	}
- 
- 	if (bufsiz > TPM_BUFSIZE)
- 		bufsiz = TPM_BUFSIZE;
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 2d5466a72e40..55833b7fcc1a 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -93,12 +93,17 @@ enum tpm2_structures {
- 	TPM2_ST_SESSIONS	= 0x8002,
- };
- 
-+/* Indicates from what level of the software stack the error comes from */
-+#define TPM2_RC_LAYER_SHIFT	16
-+#define TPM2_RESMGRTPM_RC_LAYER (11 << TPM2_RC_LAYER_SHIFT)
-+
- enum tpm2_return_codes {
- 	TPM2_RC_SUCCESS		= 0x0000,
- 	TPM2_RC_HASH		= 0x0083, /* RC_FMT1 */
- 	TPM2_RC_HANDLE		= 0x008B,
- 	TPM2_RC_INITIALIZE	= 0x0100, /* RC_VER1 */
- 	TPM2_RC_DISABLED	= 0x0120,
-+	TPM2_RC_COMMAND_CODE    = 0x0143,
- 	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
- 	TPM2_RC_REFERENCE_H0	= 0x0910,
- };
--- 
-2.14.3
+Mimi
