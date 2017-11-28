@@ -1,67 +1,57 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:17458 "EHLO mga09.intel.com"
+Received: from mga07.intel.com ([134.134.136.100]:30952 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753262AbdK1UYl (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 28 Nov 2017 15:24:41 -0500
-Date: Tue, 28 Nov 2017 22:24:42 +0200
+        id S1752495AbdK1UTF (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 28 Nov 2017 15:19:05 -0500
+Date: Tue, 28 Nov 2017 22:19:03 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Peter Huewe <peterhuewe@gmx.de>,
-        Andrey Pronin <apronin@chromium.org>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm: Add explicit chip->ops locking for sysfs attributes.
-Message-ID: <20171128202442.wrbegoqub46lwntm@linux.intel.com>
-References: <1510867501-9498-1-git-send-email-linux@roeck-us.net>
- <20171120221323.252ki4nmmrymnty6@linux.intel.com>
- <20171120224523.GA26294@roeck-us.net>
- <20171120231728.GR29075@ziepe.ca>
- <20171120234947.zd5bekvqg5z5rp3i@linux.intel.com>
- <20171121182858.GA4895@roeck-us.net>
- <20171121185856.GG18272@ziepe.ca>
- <20171126135641.szdrrh2szzfowgew@linux.intel.com>
- <20171127160255.GA16884@roeck-us.net>
+To: Leendert van Doorn <leendert@paramecium.org>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        "Alexander.Steffen@infineon.com" <Alexander.Steffen@infineon.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
+        "tpmdd@selhorst.net" <tpmdd@selhorst.net>,
+        "patrickc@us.ibm.com" <patrickc@us.ibm.com>,
+        "Safford, David (GE Global Research, US)" <david.safford@ge.com>
+Subject: Re: [PATCH v4 2/4] tpm: ignore burstcount to improve tpm_tis send()
+ performance
+Message-ID: <20171128201903.ndd4j3xw3ubfaa4y@linux.intel.com>
+References: <20171017203232.2262-1-nayna@linux.vnet.ibm.com>
+ <20171017203232.2262-3-nayna@linux.vnet.ibm.com>
+ <5ef60315f2254b3b8bcc217a572280e5@infineon.com>
+ <e98e85a5-fec1-93fb-8daf-d997d5995993@linux.vnet.ibm.com>
+ <3ff12c6536de4379aa61cb09ebc9d105@infineon.com>
+ <20171123144742.GC8862@swastik>
+ <20171126152218.c5fsr7uhs3ipwwha@linux.intel.com>
+ <1511714261.4361.13.camel@linux.vnet.ibm.com>
+ <694703AB-68E1-4026-937C-61DBBE08DB4B@paramecium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171127160255.GA16884@roeck-us.net>
+In-Reply-To: <694703AB-68E1-4026-937C-61DBBE08DB4B@paramecium.org>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Nov 27, 2017 at 08:02:55AM -0800, Guenter Roeck wrote:
-> On Sun, Nov 26, 2017 at 03:56:41PM +0200, Jarkko Sakkinen wrote:
-> > On Tue, Nov 21, 2017 at 11:58:56AM -0700, Jason Gunthorpe wrote:
-> > > On Tue, Nov 21, 2017 at 10:28:58AM -0800, Guenter Roeck wrote:
-> > > 
-> > > > I'll split the patch into two parts, and only add (hopefully)
-> > > > non-controversial tpm2 attributes for now (which I think is durations
-> > > > and timeouts). Or, in other words, I'll split the attributes into
-> > > > two groups - one generic and one for tpm1.
-> > > 
-> > > Ok. Please look at new attributes you wish to add for tpm2 and see if
-> > > they meet the modern sysfs sensibility of one value per file, etc.
-> > > 
-> > > Jason
-> > 
-> > In general: if something can be retrieved through /dev/tpm0, there is no
-> > any sane reason to have a sysfs attribute for such.
-> > 
+On Mon, Nov 27, 2017 at 07:08:51AM +0000, Leendert van Doorn wrote:
+> Hmm, this is almost 20 years old code (
 > 
-> If I understand correctly, /dev/tpmX can be used to send any TPM command
-> to the chip. Given that, I translate your statement to mean that no sysfs
-> attribute will be accepted which sends a TPM command to the chip. This in
-> turn means that there is no neded to protect sysfs attributes with a lock
-> since any sysfs attribute requiring that lock will be rejected.
+> I think the original code did a burst write and didn't check for error
+> conditions until the very last byte write. I seem to remember that
+> there was some text in the original standard to that effect (this may
+> have gone back as far as IBM's ESS spec).
 > 
-> Thanks for the clarification. Please consider this patch abandoned.
-> It might be worthwhile mentioning that restriction in the code though -
-> the comment stating that TPM2 sysfs accesses are disabled due to lack
-> of locking is obvioulsy incorrect.
+> The current code does check for error conditions after each write
+> byte(s) so I don't think there is any reason for this anymore.
+> Changing the while condition to count < len and setting burstcnt =
+> min_t(int, burstcnt, len - count) and remove the
+> tpm_tis_write8/wait_for_tpm_stat/tpm_tis_status clauses after the
+> while loop should be sufficient.
 
-Your statement about comment is correct. I guess we should rename the
-file as tpm1_sysfs.c or tpm_legacy_sysfs.c.
+Thank you for sharing this!
 
-It is not to say that new sysfs attributes would never make sense (like
-in PPI case).
-
-> Guenter
+> 	Leendert
 
 /Jarkko
