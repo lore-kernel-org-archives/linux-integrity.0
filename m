@@ -1,16 +1,16 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from lhrrgout.huawei.com ([194.213.3.17]:61897 "EHLO huawei.com"
+Received: from lhrrgout.huawei.com ([194.213.3.17]:61893 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752303AbdK3LAE (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 30 Nov 2017 06:00:04 -0500
+        id S1752303AbdK3K5w (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 30 Nov 2017 05:57:52 -0500
 From: Roberto Sassu <roberto.sassu@huawei.com>
 To: <linux-integrity@vger.kernel.org>
 CC: <linux-security-module@vger.kernel.org>,
         <silviu.vlasceanu@huawei.com>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RFC][PATCH v2 5/9] ima: measure/appraise/audit inherited file descriptors
-Date: Thu, 30 Nov 2017 11:56:06 +0100
-Message-ID: <20171130105610.15761-6-roberto.sassu@huawei.com>
+Subject: [RFC][PATCH v2 1/9] ima: pass filename to ima_rdwr_violation_check()
+Date: Thu, 30 Nov 2017 11:56:02 +0100
+Message-ID: <20171130105610.15761-2-roberto.sassu@huawei.com>
 In-Reply-To: <20171130105610.15761-1-roberto.sassu@huawei.com>
 References: <20171130105610.15761-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
@@ -18,107 +18,55 @@ Content-Type: text/plain
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-IMA measures accessed files when the open() system call is executed. File
-descriptors inherited during fork() can be used by another application, if
-the child process invoked execve(). If credentials changed, it is possible
-that opened files need to be measured/appraised/audited.
+ima_rdwr_violation_check() retrieves the full path of a measured file by
+calling ima_d_path(). If process_measurement() calls this function, it
+reuses the pointer and passes it to the functions to measure/appraise/audit
+an accessed file.
 
-This patch introduces the function flush_unauthorized_files(), which
-calls process_measurement() for each inherited file descriptors, and passes
-to that function the new credentials of the process. If the appraisal
-status is not valid, IMA prevents the process from using the inherited file
-descriptor.
+After commit bc15ed663e7e ("ima: fix ima_d_path() possible race with
+rename"), ima_d_path() first tries to retrieve the full path by calling
+d_absolute_path() and, if there is an error, copies the dentry name to the
+buffer passed as argument.
 
+However, ima_rdwr_violation_check() passes to ima_d_path() the pointer of a
+local variable. process_measurement() might be reusing the pointer to an
+area in the stack which may have been already overwritten after
+ima_rdwr_violation_check() returned.
+
+Correct this issue by passing to ima_rdwr_violation_check() the pointer of
+a buffer declared in process_measurement().
+
+Fixes: bc15ed663e7e ("ima: fix ima_d_path() possible race with rename")
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- security/integrity/ima/ima_main.c | 61 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 59 insertions(+), 2 deletions(-)
+ security/integrity/ima/ima_main.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index fb144177a783..a12f8a148e5e 100644
+index 294b2fe69334..5a7321bc325c 100644
 --- a/security/integrity/ima/ima_main.c
 +++ b/security/integrity/ima/ima_main.c
-@@ -24,6 +24,7 @@
- #include <linux/slab.h>
- #include <linux/xattr.h>
- #include <linux/ima.h>
-+#include <linux/fdtable.h>
+@@ -84,10 +84,10 @@ static void ima_rdwr_violation_check(struct file *file,
+ 				     struct integrity_iint_cache *iint,
+ 				     int must_measure,
+ 				     char **pathbuf,
+-				     const char **pathname)
++				     const char **pathname,
++				     char *filename)
+ {
+ 	struct inode *inode = file_inode(file);
+-	char filename[NAME_MAX];
+ 	fmode_t mode = file->f_mode;
+ 	bool send_tomtou = false, send_writers = false;
  
- #include "ima.h"
+@@ -205,7 +205,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
  
-@@ -279,6 +280,57 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 	return 0;
- }
- 
-+static int match_file(const void *p, struct file *file, unsigned int fd)
-+{
-+	*((struct file **) p) = file;
-+	return fd + 1;
-+}
-+
-+static int file_mode_to_mask(struct file *file)
-+{
-+	int mask = 0;
-+
-+	if (file->f_mode & FMODE_READ)
-+		mask |= MAY_READ;
-+	if (file->f_mode & FMODE_WRITE)
-+		mask |= MAY_WRITE;
-+	if (file->f_mode & FMODE_EXEC)
-+		mask |= MAY_EXEC;
-+
-+	return mask;
-+}
-+
-+/* derived from security/selinux/hooks.c */
-+static inline void flush_unauthorized_files(const struct cred *cred,
-+					    struct files_struct *files)
-+{
-+	struct file *devnull = NULL;
-+	struct file *file;
-+	int result, mask;
-+
-+	unsigned int n;
-+
-+	/* Revalidate access to inherited open files. */
-+	n = iterate_fd(files, 0, match_file, &file);
-+	if (!n) /* none found? */
-+		return;
-+
-+	devnull = dentry_open(&ima_null, O_RDWR, cred);
-+	if (IS_ERR(devnull))
-+		devnull = NULL;
-+	/* replace all the matching ones with this */
-+	do {
-+		mask = file_mode_to_mask(file);
-+		result = process_measurement(file, cred, NULL, 0,
-+				   mask & (MAY_READ | MAY_WRITE | MAY_EXEC |
-+				   MAY_APPEND), FILE_CHECK, 0);
-+		if (result < 0)
-+			replace_fd(n - 1, devnull, 0);
-+	} while ((n = iterate_fd(files, n, match_file, &file)) != 0);
-+	if (devnull)
-+		fput(devnull);
-+}
-+
- /**
-  * ima_file_mmap - based on policy, collect/store measurement.
-  * @file: pointer to the file to be measured (May be NULL)
-@@ -319,8 +371,13 @@ int ima_bprm_check(struct linux_binprm *bprm)
- 				  MAY_EXEC, BPRM_CHECK, 0);
- 	if (ret)
- 		return ret;
--	return process_measurement(bprm->file, bprm->cred, NULL, 0,
--				   MAY_EXEC, CREDS_CHECK, 0);
-+	ret = process_measurement(bprm->file, bprm->cred, NULL, 0,
-+				  MAY_EXEC, CREDS_CHECK, 0);
-+	if (ret)
-+		return ret;
-+
-+	flush_unauthorized_files(bprm->cred, current->files);
-+	return 0;
- }
- 
- /**
+ 	if (violation_check) {
+ 		ima_rdwr_violation_check(file, iint, action & IMA_MEASURE,
+-					 &pathbuf, &pathname);
++					 &pathbuf, &pathname, filename);
+ 		if (!action) {
+ 			rc = 0;
+ 			goto out_free;
 -- 
 2.11.0
