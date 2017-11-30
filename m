@@ -1,54 +1,77 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:37643 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750929AbdJASlu (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 1 Oct 2017 14:41:50 -0400
+Received: from lhrrgout.huawei.com ([194.213.3.17]:61901 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751177AbdK3LCM (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 30 Nov 2017 06:02:12 -0500
+From: Roberto Sassu <roberto.sassu@huawei.com>
+To: <linux-integrity@vger.kernel.org>
+CC: <linux-security-module@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [RFC][PATCH v2 9/9] ima: don't measure files with valid appraisal status
+Date: Thu, 30 Nov 2017 11:56:10 +0100
+Message-ID: <20171130105610.15761-10-roberto.sassu@huawei.com>
+In-Reply-To: <20171130105610.15761-1-roberto.sassu@huawei.com>
+References: <20171130105610.15761-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <1506859691.5691.211.camel@linux.vnet.ibm.com>
-References: <1506602373-4799-1-git-send-email-zohar@linux.vnet.ibm.com>
- <1506602373-4799-4-git-send-email-zohar@linux.vnet.ibm.com>
- <20170928220215.GC15067@dastard> <CA+55aFy-kDL5jQb0q2gHkcmhAwMatEf8YPx8Gh=yGp_VMoVxQA@mail.gmail.com>
- <1506643967.5691.46.camel@linux.vnet.ibm.com> <CA+55aFxqpTbC=sZXrbJ0x1OD-UA1NkejuR_s5LCazp+7yzvi3Q@mail.gmail.com>
- <1506649980.5691.100.camel@linux.vnet.ibm.com> <CA+55aFzZXBBn+HgLD_4C6DgpSiOMAP2WzuGPWRUkEXZJuz+QBQ@mail.gmail.com>
- <87mv5blki7.fsf@xmission.com> <CA+55aFx726wT4VprN-sHm6s8Q_PV_VjhTBC4goEbMcerYU1Tig@mail.gmail.com>
- <1506859691.5691.211.camel@linux.vnet.ibm.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 1 Oct 2017 11:41:48 -0700
-Message-ID: <CA+55aFwG65-1DZGLkxWzXiPHECjVvY+WHa0ihRq6MbJ4yrX-Sg@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/3] fs: detect that the i_rwsem has already been
- taken exclusively
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-        Dave Chinner <david@fromorbit.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Theodore Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sun, Oct 1, 2017 at 5:08 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
->
-> Right, re-introducing the iint->mutex and a new i_generation field in
-> the iint struct with a separate set of locks should work.  It will be
-> reset if the file metadata changes (eg. setxattr, chown, chmod).
+If an integrity model is selected, access to mutable files is restricted to
+TCB processes or mutable files are demoted. Then, files with a valid
+appraisal status can be excluded from measurement because they won't
+compromise the TCB. Remote verifiers would only require that the file
+didn't contain malformed data at first access (which can be guaranteed for
+example with a digital signature).
 
-Note that the "inner lock" could possibly be omitted if the
-invalidation can be just a single atomic instruction.
+Changelog
 
-So particularly if invalidation could be just an atomic_inc() on the
-generation count, there might not need to be any inner lock at all.
+v1
+- don't clear IMA_MEASURE for files with digital signature
+- clear IMA_MEASURE for any integrity model
+- don't measure mutable files also if ima_appraise == IMA_APPRAISE_LOG
 
-You'd have to serialize the actual measurement with the "read
-generation count", but that should be as simple as just doing a
-smp_rmb() between the "read generation count" and "do measurement on
-file contents".
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/ima/ima_main.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-Of course, if you do something more complex in invalidation, you may
-end up needing a real lock.
-
-                 Linus
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 0f746b8bd965..6f1e23682c90 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -221,6 +221,12 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 		/* access will be denied */
+ 		if (model_violation)
+ 			action &= ~IMA_APPRAISE;
++
++		/* do not measure mutable files, if they are appraised */
++		if (ima_appraise & (IMA_APPRAISE_ENFORCE | IMA_APPRAISE_LOG) &&
++		    iint && (iint->flags & IMA_APPRAISED) &&
++		    !(iint->flags & IMA_DIGSIG))
++			action &= ~IMA_MEASURE;
+ 	}
+ 
+ 	if (violation_check)
+@@ -265,9 +271,17 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 	if (!pathbuf)	/* ima_rdwr_violation possibly pre-fetched */
+ 		pathname = ima_d_path(&file->f_path, &pathbuf, filename);
+ 
+-	if (rc == 0 && (action & IMA_APPRAISE_SUBMASK))
++	if (rc == 0 && (action & IMA_APPRAISE_SUBMASK)) {
+ 		rc = ima_appraise_measurement(func, iint, file, pathname,
+ 					      xattr_value, xattr_len, opened);
++		/* do not measure mutable files, if rc == INTEGRITY_PASS */
++		if (!rc && ima_integrity_model &&
++		    ima_appraise & (IMA_APPRAISE_ENFORCE | IMA_APPRAISE_LOG) &&
++		    !(iint->flags & IMA_DIGSIG)) {
++			iint->flags &= ~IMA_MEASURE;
++			action &= ~IMA_MEASURE;
++		}
++	}
+ 	if (action & IMA_MEASURE)
+ 		ima_store_measurement(iint, file, pathname,
+ 				      xattr_value, xattr_len, pcr);
+-- 
+2.11.0
