@@ -1,398 +1,184 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from lhrrgout.huawei.com ([194.213.3.17]:61892 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751328AbdK3K5S (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 30 Nov 2017 05:57:18 -0500
-From: Roberto Sassu <roberto.sassu@huawei.com>
-To: <linux-integrity@vger.kernel.org>
-CC: <linux-security-module@vger.kernel.org>,
-        <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RFC][PATCH v2 0/9] ima: integrity models for appraised files
-Date: Thu, 30 Nov 2017 11:56:01 +0100
-Message-ID: <20171130105610.15761-1-roberto.sassu@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:47077 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750783AbdK3HjL (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 30 Nov 2017 02:39:11 -0500
+Received: by mail-wm0-f68.google.com with SMTP id r78so11089188wme.5
+        for <linux-integrity@vger.kernel.org>; Wed, 29 Nov 2017 23:39:11 -0800 (PST)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javierm@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Philip Tricca <philip.b.tricca@intel.com>,
+        linux-integrity@vger.kernel.org,
+        William Roberts <william.c.roberts@intel.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: [PATCH v3] tpm: return a TPM_RC_COMMAND_CODE response if command is not implemented
+Date: Thu, 30 Nov 2017 08:39:07 +0100
+Message-Id: <20171130073907.20708-1-javierm@redhat.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-=======
-CONTENT
-=======
-
-PATCH 1/9, PATCH 2/9: bug fix
-PATCH 3/9: optimization
-PATCH 4/9, PATCH 5/9: check inherited file descriptors
-PATCH 6/9, PATCH 7/9: enforce integrity policies
-PATCH 8/9: new policy action
-PATCH 9/9: exclude mutable files from measurement
-
-
-=============
-PREREQUISITES
-=============
-
-ima: Store measurement after appraisal
-https://patchwork.kernel.org/patch/10013259/
-
-security: Add a cred_getsecid hook
-https://patchwork.kernel.org/patch/10028005/
-
-IMA: Support using new creds in appraisal policy
-https://patchwork.kernel.org/patch/10028013/
-
-
-====
-GOAL
-====
-
-Protect the integrity of appraised files by enforcing the constraints of an
-integrity model on top of existing LSMs. Use the appraisal status as a
-criteria to determine if a file measurement should be added to the
-measurement list.
-
-
-==========
-MOTIVATION
-==========
-
-Proposed changes are simple.
-
-People will immediately benefit from this solution, as IMA is enabled on
-most Linux distributions. Integrating a separate LSM would take more time.
-
-Without existing LSMs, the separate LSM must assign its own labels. IMA can
-work as a standalone solution.
-
-The existing IMA behavior is not modified. Users can enable the new
-behavior by specifying the desired integrity model in the kernel command
-line.
-
-
-Comment: TE should be used instead of Biba
-
-Biba constraints can be checked also on TE, as shown in [1]. Information
-flow analysis can be done with SELinux tools (e.g. setools).
-
-Comment: dm-verity/dm-crypt should be used instead of IMA/EVM
-
-These solutions protect an entire partition, while IMA/EVM can protect only
-relevant files.
-
-Comment: local appraisal does not replace remote attestation
-
-Local appraisal does not replace remote attestation, but is part of a
-solution to avoid unknown digests in the measurement list.
-
-Comment: integrity model enforcement should be done in a separate LSM
-
-This is discussed in REQ#3. Since IMA checks the read up constraint (when
-it appraises files) and demotes TCB objects (removes security.ima), it
-could also check the write down constraint.
-
-
-=======
-PROBLEM
-=======
-
-IMA measures files depending on criteria specified in the policy for
-subjects and objects. The measurement list is sent to remote verifiers,
-which determine if the system can be trusted to perform the desired tasks.
-
-Measured files can be classified in three categories: executable code and
-structured data can be verified by comparing reported digests with
-reference values; unstructured data require mandatory access control
-because remote verifiers cannot determine the impact of reading files with
-unknown digests.
-
-PRIMA (Policy-Reduced Integrity Measurement Architecture) [2] protects the
-integrity of unstructured data by enforcing a SELinux policy, modified in
-order to satisfy the constraints of the CW-Lite integrity model.
-
-
-CW-Lite Integrity Requirements
-==============================
-
-REQ#1) Trusted Subjects: trusted subjects must be trusted by remote
-                         verifiers;
-
-REQ#2) Trusted Code/Data: the digest of code and unstructured data must be
-                          found in a database of reference values;
-
-REQ#3) Information Flows: all information flows to a trusted subject must
-                          come from another trusted subject;
-
-REQ#4) Initial Verification: the initial state of unstructured data must be
-                             verified;
-
-REQ#5) Filtering Interfaces: remote verifiers must be able to check that an
-                             application is able to discard or filter
-                             possibly malformed data read through the
-                             declared interfaces;
-
-REQ#6) Filtering Subjects: the permissions to read low-integrity data
-                           through filtering interfaces must be granted
-                           only to filtering subjects.
-
-
-========
-SOLUTION
-========
-
-REQ#1 - Trusted Subjects
-========================
-
-Remote verifiers can retrieve the set of trusted subjects from the IMA
-policy.
-
-
-REQ#2 - Trusted Code/Data
-=========================
-
-IMA can report the measurement of executable code and structured data.
-
-IMA policy example (for each trusted subject):
-
-measure func=CRED_CHECK subj_type=TCB_subject
-measure func=MMAP_CHECK subj_type=TCB_subject mask=MAY_EXEC
-measure func=FILE_CHECK subj_type=TCB_subject mask=^MAY_READ
-
-However, with the third rule, both structured data and unstructured data
-are measured. If appraisal is used, IMA could distinguish the data type
-from security.ima (structured data has a digital signature, unstructured
-data has an HMAC).
-
-
-REQ#3 - Information Flows
-=========================
-
-Previous Work
-
-Checking Biba constraints can be done also on TE, if trusted subjects are
-represented with a type. The domain transition graph can be used as a
-source for TCB candidates. The TCB is integrity-protected if the policy
-does not allow TCB candidates to read objects that can be written by other
-subjects. Information flows from non-TCB subjects to TCB subjects violate
-Biba constraints.
-
-Conflicts can be resolved by removing subjects and objects from the TCB (if
-a functionality is not offered by the system), or adding new ones. Another
-strategy is to assume, under the Clark-Wilson integrity model, that a
-subject does not become compromised even if it reads low-integrity objects.
-In this case, the subject must read those objects through a filtering
-interface.
-
-Current Proposal
-
-Since security policies for general purpose systems have to support
-different configurations, they often contain more permissions than those
-required for a specific use case. Instead of adapting the policy,
-integrity constraints can be enforced by an additional LSM depending on
-labels assigned by existing LSMs. This would also reduce the likelihood
-that constraints are violated, as constraints would be checked on actual
-interactions.
-
-New Integrity LSM - Stacking with existing LSMs
------------------------------------------------
-
-1) existing LSMs
-2) New Integrity LSM
-3) IMA
-
-
-New Integrity LSM Policy - Biba Strict
---------------------------------------
-
-neverallow TCB_subject non-TCB_object read
-neverallow non-TCB_subject TCB_object write
-
-This implies that the following filtered rules are allowed by SELinux + new
-Integrity LSM:
-
-allow TCB_subject non-TCB_object write
-allow TCB_subject TCB_object write
-allow TCB_subject TCB_object read
-
-allow non-TCB_subject non-TCB_object write
-allow non-TCB_subject non-TCB_object read
-allow non-TCB_subject TCB_object read
-
-Objects that belong to the TCB should be determined in advance. The minimum
-set of TCB objects required by TCB subjects can be found by running the
-applications and logging actual interactions. However, some interactions
-could be missing as they might happen only if certain conditions are true.
-
-
-IMA Policy - additional rules
------------------------------
-
-appraise obj_type=TCB_object
-dont_measure obj_type=TCB_object valid_hmac (unstructured data)
-
-The first rule protects the integrity of unstructured data against offline
-attacks. The second rule (automatically applied if an integrity model is
-selected) prevents IMA from adding unknown digests of unstructured data to
-the measurement list if the HMAC is valid.
-
-Appraisal denies access if the appraisal status is invalid. However,
-the Biba integrity models would allow write-only operations by TCB subjects
-on files with invalid appraisal status. The new policy action
-'try_appraise' has been introduced to grant access regardless of the
-appraisal status. security.ima is updated only if the appraisal status is
-valid and there are no concurrent writes by non-TCB subjects. With
-'try_appraise', the IMA policy should be:
-
-appraise obj_type=TCB_object mask=^MAY_EXEC
-appraise obj_type=TCB_object mask=^MAY_READ
-try_appraise obj_type=TCB_object mask=^MAY_WRITE (update HMAC if valid)
-dont_measure obj_type=TCB_object valid_hmac (unstructured data)
-
-
-New Integrity LSM Policy - Low Watermark for Objects
-----------------------------------------------------
-
-neverallow TCB_subject non-TCB_object read
-demote non-TCB_subject TCB_object write
-
-It is not necessary to determine exactly which TCB objects are accessed by
-TCB subjects. All can be included, and those that are written by non-TCB
-subjects will be simply demoted.
-
-The new Integrity LSM should keep track of which TCB objects have been
-demoted, so that the next time they are accessed by TCB subjects, access is
-denied. The list of demoted TCB objects must be stored persistently, and
-obtained at the next reboot. IMA would still continue to appraise demoted
-TCB objects and exclude them from measurement.
-
-Alternatively, demoting TCB objects can be implemented by IMA. The new
-Integrity LSM can request that IMA removes the HMAC for each demoted
-object. The new Integrity LSM would not maintain the list of demoted
-objects and access will be denied by IMA (missing HMAC).
-
-
-New Integrity LSM Policy - Low Watermark for Objects - Demote only
-------------------------------------------------------------------
-
-demote non-TCB_subject TCB_object write
-
-The read constraint on TCB subjects is removed. Instead of denying access,
-IMA reports the violations by measuring files with missing/invalid HMAC
-(which is removed for demoted TCB objects). Additionally, IMA should erase
-the EVM key, as it could be misused after the system becomes compromised
-due to reading non-TCB objects.
-
-If IMA only demotes TCB objects, the new Integrity LSM is not necessary. It
-would be also easier to enforce the write down constraint directly in IMA,
-because the list of trusted subjects is specified in the IMA policy
-(REQ#2). It would be sufficient to deny access to appraised files if they
-are being written by a non-TCB subject.
-
-To enforce integrity constraints in IMA, appraisal rules should contain
-criteria for TCB subjects, so that appraisal verification is used to
-check the read up constraint. The write down constraint is checked if an
-integrity model is specified in the kernel command line.
-
-Without the new Integrity LSM, the complete IMA policy should be:
-
-appraise subj_type=TCB_subject mask=^MAY_EXEC (check read up)
-appraise subj_type=TCB_subject mask=^MAY_READ (check read up)
-try_appraise subj_type=TCB_subject mask=^MAY_WRITE (update HMAC if valid)
-
-dont_measure obj_type=TCB_object valid_hmac (unstructured data)
-measure func=CRED_CHECK subj_type=TCB_subject
-measure func=MMAP_CHECK subj_type=TCB_subject mask=MAY_EXEC
-measure func=FILE_CHECK subj_type=TCB_subject mask=^MAY_READ
-
-The kernel command line should contain:
-
-ima_integrity_model=biba-strict (or low-watermark-obj)
-
-
-REQ#4 - Initial Verification
-============================
-
-Previous work
-
-PRIMA authors proposed to verify the initial state of unstructured data at
-every boot and to report to remote verifiers the measurement of the
-verification tool and the verification result. This solution seems
-impractical, as it requires having knowledge of the data format of verified
-files.
-
-Current proposal
-
-IMA/EVM protect the integrity of appraised files against offline attacks.
-If the EVM key can be used only when the system satisfies REQ#1, REQ#2 and
-REQ#3, then the integrity status is preserved across boots. It would seem
-to a remote verifier that the system never rebooted.
-
-Then, remote verifiers only have to check that the initial state of
-unstructured data was good at the first access. A system might prove that
-the EVM key can be unsealed only if that system accepts files signed with a
-specific key.
-
-
-REQ#5 - Filtering Interfaces
-============================
-
-Previous work
-
-PRIMA requires that SELinux is modified to grant additional permissions to
-processes with filtering interfaces. Those processes would be allowed to
-read low-integrity data, even if the additional permissions violate Biba
-constraints.
-
-Current proposal
-
-If integrity constraints are enforced by the new Integrity LSM or IMA, it
-would be possible to specify which constraints should be relaxed without
-modifying the SELinux policy.
-
-
-REQ#6 - Filtering Subjects
-==========================
-
-Previous work
-
-Applications should request that SELinux enables the permissions to read
-low-integrity data.
-
-Current proposal
-
-The new Integrity LSM or IMA could expose an interface which would allow
-applications to specify when constraints should be relaxed.
-
-
-==========
-REFERENCES
-==========
-
-[1] Analyzing Integrity Protection in the SELinux Example Policy
-    by Trent Jaeger, Reiner Sailer, and Xiaolan Zhang
-[2] PRIMA: Policy-Reduced Integrity Measurement Architecture
-    by Trent Jaeger, Reiner Sailer, and Umesh Shankar
-
-Roberto Sassu (9):
-  ima: pass filename to ima_rdwr_violation_check()
-  ima: preserve flags in ima_inode_post_setattr() if file must be
-    appraised
-  ima: preserve iint flags if security.ima update is successful
-  ima: introduce ima_mk_null_file()
-  ima: measure/appraise/audit inherited file descriptors
-  ima: enforce the Biba strict policy on appraised files
-  ima: enforce the Biba low watermark for objects policy on appraised
-    files
-  ima: introduce policy action try_appraise
-  ima: don't measure files with valid appraisal status
-
- Documentation/admin-guide/kernel-parameters.txt |   4 +
- security/integrity/ima/ima.h                    |  24 +++-
- security/integrity/ima/ima_appraise.c           | 142 ++++++++++++++++++++++--
- security/integrity/ima/ima_fs.c                 |  57 ++++++++++
- security/integrity/ima/ima_main.c               | 125 ++++++++++++++++++---
- security/integrity/ima/ima_policy.c             |  16 ++-
- security/integrity/integrity.h                  |   1 +
- 7 files changed, 338 insertions(+), 31 deletions(-)
-
+According to the TPM Library Specification, a TPM device must do a command
+header validation before processing and return a TPM_RC_COMMAND_CODE code
+if the command is not implemented.
+
+So user-space will expect to handle that response as an error. But if the
+in-kernel resource manager is used (/dev/tpmrm?), an -EINVAL errno code is
+returned instead if the command isn't implemented. This confuses userspace
+since it doesn't expect that error value.
+
+This also isn't consistent with the behavior when not using TPM spaces and
+accessing the TPM directly (/dev/tpm?). In this case, the command is sent
+to the TPM even when not implemented and the TPM responds with an error.
+
+Instead of returning an -EINVAL errno code when the tpm_validate_command()
+function fails, synthesize a TPM command response so user-space can get a
+TPM_RC_COMMAND_CODE as expected when a chip doesn't implement the command.
+
+The TPM only sets 12 of the 32 bits in the TPM_RC response, so the TSS and
+TAB specifications define that higher layers in the stack should use some
+of the unused 20 bits to specify from which level of the stack the error
+is coming from.
+
+Since the TPM_RC_COMMAND_CODE response code is sent by the kernel resource
+manager, set the error level to the TAB/RM layer so user-space is aware of
+this.
+
+Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Reviewed-by: Philip Tricca <philip.b.tricca@intel.com>
+
+---
+
+Changes since v2:
+- Use TSS2 as prefix instead of TPM2 to match the spec (suggested by Jarkko
+  Sakkinen).
+- Add Philip's Reviewed-by tag as he asked and I missed in previous version.
+
+Changes since v1:
+- Remove the unused macros for the driver and resmgr RC layers (suggested by
+  Philip Tricca).
+- Use naming conventions from the latest version of the TSS spec (suggested
+  by Philip Tricca).
+
+Changes since RFCv2:
+- Set the error level to the TAB/RM layer so user-space is aware that the error
+  is not coming from the TPM (suggested by Philip Tricca and Jarkko Sakkinen).
+
+Changes since RFCv1:
+- Don't pass not validated commands to the TPM, instead return a synthesized
+  response with the correct TPM return code (suggested by Jason Gunthorpe).
+
+And example of user-space getting confused by the TPM chardev returning -EINVAL
+when sending a not supported TPM command can be seen in this tpm2-tools issue:
+
+https://github.com/intel/tpm2-tools/issues/621
+
+Best regards,
+Javier
+
+ drivers/char/tpm/tpm-interface.c | 28 ++++++++++++++++++++--------
+ drivers/char/tpm/tpm.h           |  5 +++++
+ 2 files changed, 25 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 1d6729be4cd6..c5da6d3f7058 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -328,7 +328,7 @@ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip,
+ }
+ EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
+ 
+-static bool tpm_validate_command(struct tpm_chip *chip,
++static int tpm_validate_command(struct tpm_chip *chip,
+ 				 struct tpm_space *space,
+ 				 const u8 *cmd,
+ 				 size_t len)
+@@ -340,10 +340,10 @@ static bool tpm_validate_command(struct tpm_chip *chip,
+ 	unsigned int nr_handles;
+ 
+ 	if (len < TPM_HEADER_SIZE)
+-		return false;
++		return -EINVAL;
+ 
+ 	if (!space)
+-		return true;
++		return 0;
+ 
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2 && chip->nr_commands) {
+ 		cc = be32_to_cpu(header->ordinal);
+@@ -352,7 +352,7 @@ static bool tpm_validate_command(struct tpm_chip *chip,
+ 		if (i < 0) {
+ 			dev_dbg(&chip->dev, "0x%04X is an invalid command\n",
+ 				cc);
+-			return false;
++			return -EOPNOTSUPP;
+ 		}
+ 
+ 		attrs = chip->cc_attrs_tbl[i];
+@@ -362,11 +362,11 @@ static bool tpm_validate_command(struct tpm_chip *chip,
+ 			goto err_len;
+ 	}
+ 
+-	return true;
++	return 0;
+ err_len:
+ 	dev_dbg(&chip->dev,
+ 		"%s: insufficient command length %zu", __func__, len);
+-	return false;
++	return -EINVAL;
+ }
+ 
+ /**
+@@ -391,8 +391,20 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	unsigned long stop;
+ 	bool need_locality;
+ 
+-	if (!tpm_validate_command(chip, space, buf, bufsiz))
+-		return -EINVAL;
++	rc = tpm_validate_command(chip, space, buf, bufsiz);
++	if (rc == -EINVAL)
++		return rc;
++	/*
++	 * If the command is not implemented by the TPM, synthesize a
++	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
++	 */
++	if (rc == -EOPNOTSUPP) {
++		header->length = cpu_to_be32(sizeof(*header));
++		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
++		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
++						  TSS2_RESMGR_TPM_RC_LAYER);
++		return bufsiz;
++	}
+ 
+ 	if (bufsiz > TPM_BUFSIZE)
+ 		bufsiz = TPM_BUFSIZE;
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 2d5466a72e40..0b5b499f726a 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -93,12 +93,17 @@ enum tpm2_structures {
+ 	TPM2_ST_SESSIONS	= 0x8002,
+ };
+ 
++/* Indicates from what layer of the software stack the error comes from */
++#define TSS2_RC_LAYER_SHIFT	 16
++#define TSS2_RESMGR_TPM_RC_LAYER (11 << TSS2_RC_LAYER_SHIFT)
++
+ enum tpm2_return_codes {
+ 	TPM2_RC_SUCCESS		= 0x0000,
+ 	TPM2_RC_HASH		= 0x0083, /* RC_FMT1 */
+ 	TPM2_RC_HANDLE		= 0x008B,
+ 	TPM2_RC_INITIALIZE	= 0x0100, /* RC_VER1 */
+ 	TPM2_RC_DISABLED	= 0x0120,
++	TPM2_RC_COMMAND_CODE    = 0x0143,
+ 	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
+ 	TPM2_RC_REFERENCE_H0	= 0x0910,
+ };
 -- 
-2.11.0
+2.14.3
