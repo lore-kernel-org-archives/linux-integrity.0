@@ -1,57 +1,102 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34138 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754078AbdLDO3I (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 4 Dec 2017 09:29:08 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vB4EOXHj076606
-        for <linux-integrity@vger.kernel.org>; Mon, 4 Dec 2017 09:29:07 -0500
-Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2en756v0xy-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 04 Dec 2017 09:29:07 -0500
-Received: from localhost
-        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Mon, 4 Dec 2017 14:29:05 -0000
-Subject: [PATCH] evm: fix portable patch
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Matthew Garrett <mjg59@google.com>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>
-Date: Mon, 04 Dec 2017 09:29:02 -0500
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1512397742.3977.43.camel@linux.vnet.ibm.com>
+Received: from lhrrgout.huawei.com ([194.213.3.17]:64681 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753758AbdLDNmd (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 4 Dec 2017 08:42:33 -0500
+Subject: Re: [PATCHv5 1/1] ima: re-introduce own integrity cache lock
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <hch@infradead.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
+References: <fe908aedea9e8a03789bfaace514b5b10f20b301.1512153609.git.dmitry.kasatkin@huawei.com>
+ <1512389173.3977.26.camel@linux.vnet.ibm.com>
+From: Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <37b6f8d7-69a8-8900-e7b6-a614b64f91dd@huawei.com>
+Date: Mon, 4 Dec 2017 14:42:12 +0100
+MIME-Version: 1.0
+In-Reply-To: <1512389173.3977.26.camel@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Matthew,
+On 12/4/2017 1:06 PM, Mimi Zohar wrote:
+> Hi Dmitry,
+> 
+> On Fri, 2017-12-01 at 20:40 +0200, Dmitry Kasatkin wrote:
+>> The original design was discussed 3+ years ago, but was never completed/upstreamed.
+>> Based on the recent discussions with Linus
+>> https://patchwork.kernel.org/patch/9975919, I've rebased this patch.
+>>
+>> Before IMA appraisal was introduced, IMA was using own integrity cache
+>> lock along with i_mutex. process_measurement and ima_file_free took
+>> the iint->mutex first and then the i_mutex, while setxattr, chmod and
+>> chown took the locks in reverse order. To resolve the potential deadlock,
+>> i_mutex was moved to protect entire IMA functionality and the redundant
+>> iint->mutex was eliminated.
+>>
+>> Solution was based on the assumption that filesystem code does not take
+>> i_mutex further. But when file is opened with O_DIRECT flag, direct-io
+>> implementation takes i_mutex and produces deadlock. Furthermore, certain
+>> other filesystem operations, such as llseek, also take i_mutex.
+>>
+>> More recently some filesystems have replaced their filesystem specific
+>> lock with the global i_rwsem to read a file.  As a result, when IMA
+>> attempts to calculate the file hash, reading the file attempts to take
+>> the i_rwsem again.
+>>
+>> To resolve O_DIRECT related deadlock problem, this patch re-introduces
+>> iint->mutex. But to eliminate the original chmod() related deadlock
+>> problem, this patch eliminates the requirement for chmod hooks to take
+>> the iint->mutex by introducing additional atomic iint->attr_flags to
+>> indicate calling of the hooks. The allowed locking order is to take
+>> the iint->mutex first and then the i_rwsem.
+>>
+>> Original flags were cleared in chmod(), setxattr() or removwxattr() hooks
+>> and tested when file was closed or opened again. New atomic flags are set
+>> or cleared in those hooks and tested to clear iint->flags on close or on open.
+>>
+>> Atomic flags are following:
+>> * IMA_CHANGE_ATTR - indicates that chATTR() was called (chmod, chown, chgrp)
+>>    and file attributes have changed. On file open, it causes IMA to clear
+>>    iint->flags to re-evaluate policy and perform IMA functions again.
+>> * IMA_CHANGE_XATTR - indicates that setxattr or removexattr was called and
+>>    extended attributes have changed. On file open, it causes IMA to clear
+>>    iint->flags IMA_DONE_MASK to re-appraise.
+>> * IMA_UPDATE_XATTR - indicates that security.ima needs to be updated.
+>>    It is cleared if file policy changes and no update is needed.
+>> * IMA_DIGSIG - indicates that file security.ima has signature and file
+>>    security.ima must not update to file has on file close.
+> 
+> Nice!  I've been testing with this patch and all seems good.  Before
+> queueing this patch to be upstreamed, I'd appreciate if others tested
+> using it as well.  It applies cleanly to the next-queued branch.
 
-During some testing/review, I noticed that the "pass_immutable" needs
-to be added the list of strings.  I've squashed this change with your
-patch.
+If the inode lock is released before the IMA_MEASURE flag is set, the
+ToMToU violation will not be detected when a writer accesses the same
+inode. This issue was fixed with commit f7a859ff7395c.
 
-I've pushed this change out to #next-queued.
+Roberto
 
-Mimi
 
----
- security/integrity/evm/evm_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> A subsequent patch will remove the O_DIRECT check in
+> ima_calc_file_hash().
+> 
+> Fixes: Commit 6552321831dc "xfs: remove i_iolock and use i_rwsem in
+> the VFS inode instead"
+> 
+> thanks,
+> 
+> Mimi
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 4f11430b5415..a8d502827270 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -31,7 +31,7 @@
- int evm_initialized;
- 
- static char *integrity_status_msg[] = {
--	"pass", "fail", "no_label", "no_xattrs", "unknown"
-+	"pass", "pass_immutable", "fail", "no_label", "no_xattrs", "unknown"
- };
- char *evm_hmac = "hmac(sha1)";
- char *evm_hash = "sha1";
 -- 
-2.7.4
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
