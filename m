@@ -1,68 +1,84 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49930 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752658AbdLDTSc (ORCPT
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:43305 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752600AbdLDSDg (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 4 Dec 2017 14:18:32 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vB4JElRi144797
-        for <linux-integrity@vger.kernel.org>; Mon, 4 Dec 2017 14:18:32 -0500
-Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2enbw0s9kq-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 04 Dec 2017 14:18:31 -0500
-Received: from localhost
-        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Mon, 4 Dec 2017 19:18:30 -0000
-Subject: Re: IMA-EVM-Utils OpenSSL1.1 interface update
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: "Bruno E. O. Meneguele" <brdeoliv@redhat.com>,
+        Mon, 4 Dec 2017 13:03:36 -0500
+Received: by mail-wr0-f193.google.com with SMTP id z34so18300809wrz.10
+        for <linux-integrity@vger.kernel.org>; Mon, 04 Dec 2017 10:03:35 -0800 (PST)
+Date: Mon, 4 Dec 2017 11:03:24 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Javier Martinez Canillas <javierm@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Peter Huewe <peterhuewe@gmx.de>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: dmitry.kasatkin@gmail.com, linux-integrity@vger.kernel.org
-Date: Mon, 04 Dec 2017 14:18:26 -0500
-In-Reply-To: <20171204171435.GA6190@glitch>
-References: <20171201181522.GB3056@glitch>
-         <1512392157.3977.36.camel@linux.vnet.ibm.com>
-         <20171204171435.GA6190@glitch>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1512415106.3977.53.camel@linux.vnet.ibm.com>
+Subject: Re: [PATCH] tpm: remove type and name fields from the I2C Infineon
+ OF table entries
+Message-ID: <20171204180324.GB18059@ziepe.ca>
+References: <20171204173916.4874-1-javierm@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171204173916.4874-1-javierm@redhat.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2017-12-04 at 15:14 -0200, Bruno E. O. Meneguele wrote:
-> On 04-12, Mimi Zohar wrote:
-> > On Fri, 2017-12-01 at 16:15 -0200, Bruno E. O. Meneguele wrote:
-> > > Hi folks,
-> > > 
-> > > I don't really know what are your best interest in update ima-evm-utils
-> > > 1.0 package to support OpenSSL 1.1 new interface considering lots of
-> > > distros are chaging to it as the default one. Some are maintaining
-> > > compatibility packages to OpenSSL 1.0, but usually it remains available
-> > > in the official repos for something like 1 or 2 releases and then
-> > > removed completely.
-> > > 
-> > > Actually I have a simple/small port of it to OpenSSL 1.1 that I plan to
-> > > maintain for Fedora's Rawhide (next release, f28) package. Do you guys
-> > > have interest on it? I could post it as a patch.
-> > > 
-> > > Thanks!
-> > 
-> > Yes, I'd really appreciate it.  We need to release the new EVM
-> > portable signature support as well.
-> > 
+On Mon, Dec 04, 2017 at 06:39:16PM +0100, Javier Martinez Canillas wrote:
+> The commit 21dc02eab989 ("tpm/tpm_i2c_infineon.c: Add OF attributes type
+> and name to the of_device_id table entries") added type and name fields
+> to the OF device ID table entries for the I2C Infineon TPM driver.
 > 
-> Perfect! should I post with some different subject prefix or something
-> like that to let things clear that is a patch for the userspace app?
+> The only justification for the change in the commit message is that it's
+> probably a good idea to have these fields populated in the OF entries.
+> 
+> But I don't think that's true. In fact, I believe that's not correct to
+> add these fields for the following reasons:
+> 
+>  * The struct of_device_id .type field matches the device_type property
+>    in the Device Tree nodes. The ePAPR document says that new use of the
+>    property is deprecated and should only be included in cpu and memory
+>    nodes for compatibility with the IEEE 1275-derived Device Trees.
+>    Also, mainline Device Tree source files don't include this property
+>    in the TPM nodes defined.
+> 
+>  * The struct of_device_id .name field matches the Device Tree node name
+>    but the ePAPR document says that the node name should be generic and
+>    reflect the function of the device, not it's programming model. So in
+>    the case of TPM chips, it should just be "tpm" but the name fields are
+>    set in the OF table entries to the actual device model (i.e: slb9645tt).
+> 
+> Now, from a practical point of view this means that the OF module aliases
+> for the supported devices include the name and type of the device entries:
+> 
+> $ modinfo drivers/char/tpm/tpm_i2c_infineon.ko | grep alias
+> alias:          of:Nslb9645ttTtpm*Cinfineon,slb9645ttC*
+> alias:          of:Nslb9645ttTtpm*Cinfineon,slb9645tt
+> alias:          of:Nslb9635ttTtpm*Cinfineon,slb9635ttC*
+> alias:          of:Nslb9635ttTtpm*Cinfineon,slb9635tt
+> alias:          of:Ntpm_i2c_infineonTtpm*Cinfineon,tpm_i2c_infineonC*
+> alias:          of:Ntpm_i2c_infineonTtpm*Cinfineon,tpm_i2c_infineon
+> 
+> But since the device_type isn't set in the tpm DT nodes and the node name
+> is a generic one, the reported MODALIAS when a device is registered via OF
+> won't match the driver's module aliases:
+> 
+> $ cat /sys/class/tpm/tpm0/device/modalias
+> of:NtpmT<NULL>Cinfineon,slb9645tt
+> 
+> So remove these fields from the OF entries to allow the module aliases to
+> match the MODALIAS reported by the kernel when the device is registered:
+> 
+> $ modinfo drivers/char/tpm/tpm_i2c_infineon.ko | grep alias
+> alias:          of:N*T*Cinfineon,slb9645ttC*
+> alias:          of:N*T*Cinfineon,slb9645tt
+> alias:          of:N*T*Cinfineon,slb9635ttC*
+> alias:          of:N*T*Cinfineon,slb9635tt
+> alias:          of:N*T*Cinfineon,tpm_i2c_infineonC*
+> alias:          of:N*T*Cinfineon,tpm_i2c_infineon
+> 
+> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
 
-In general, now that we have a shared mailing list with TPM, the
-subject line should be prefixed with the kernel subystem (eg. "ima:",
-"evm:", "tpm:").
+I concur
 
-Similarly we could do the equivalent for userspace applications (eg.
-"ima-evm-utils:").
+Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
 
-Jarkko, is that ok?
-
-Mimi
+Jason
