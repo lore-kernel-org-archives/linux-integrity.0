@@ -1,35 +1,52 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:53142 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752134AbdLGBLJ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 6 Dec 2017 20:11:09 -0500
-Date: Thu, 7 Dec 2017 03:11:05 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: "Bruno E. O. Meneguele" <brdeoliv@redhat.com>,
-        dmitry.kasatkin@gmail.com, linux-integrity@vger.kernel.org
-Subject: Re: IMA-EVM-Utils OpenSSL1.1 interface update
-Message-ID: <20171207011105.bfqhvjanl3arhqqn@linux.intel.com>
-References: <20171201181522.GB3056@glitch>
- <1512392157.3977.36.camel@linux.vnet.ibm.com>
- <20171204171435.GA6190@glitch>
- <1512415106.3977.53.camel@linux.vnet.ibm.com>
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:43663 "EHLO
+        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752183AbdLFQk6 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 6 Dec 2017 11:40:58 -0500
+Received: by mail-wm0-f50.google.com with SMTP id n138so8303382wmg.2
+        for <linux-integrity@vger.kernel.org>; Wed, 06 Dec 2017 08:40:57 -0800 (PST)
+Date: Wed, 6 Dec 2017 09:40:53 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [Regression 4.15-rc2] New messages `tpm tpm0: A TPM error (2314)
+ occurred continue selftest`
+Message-ID: <20171206164053.GA29584@ziepe.ca>
+References: <a45f96a3-6948-4ef9-4631-29631329e833@molgen.mpg.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1512415106.3977.53.camel@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <a45f96a3-6948-4ef9-4631-29631329e833@molgen.mpg.de>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Dec 04, 2017 at 02:18:26PM -0500, Mimi Zohar wrote:
-> In general, now that we have a shared mailing list with TPM, the
-> subject line should be prefixed with the kernel subystem (eg. "ima:",
-> "evm:", "tpm:").
-> 
-> Similarly we could do the equivalent for userspace applications (eg.
-> "ima-evm-utils:").
-> 
-> Jarkko, is that ok?
+On Wed, Dec 06, 2017 at 01:34:35PM +0100, Paul Menzel wrote:
 
-It is fine for me.
+> Dez 06 13:22:24 Ixpees kernel: tpm tpm0: A TPM error (2314) occurred
+> continue selftest
+> Dez 06 13:22:24 Ixpees kernel: tpm tpm0: TPM self test failed
+> 
+> Any idea what to do about those? If these are intentional, it'd be great to
+> give some hint to the user, what effect this has.
 
-/Jarkko
+The TPM driver shouldn't load if self test fails, and we don't expect
+self test to ever fail.
+
+So..
+1) The TPM is busted? Assuming not since you probably used an
+   earlier kernel?
+2) The CRB driver is no longer executing command properly?
+   My guess would be
+     f5357413dbaa ("tpm/tpm_crb: Use start method value from ACPI table directly")
+   Borked it.
+
+   Maybe this TPM needed one of the workarounds and the
+   restructuring broke it, or maybe it was working 'accidently' and
+   got broke.
+3) For some reason the core code is not handling commands correctly?
+   Don't see any patches on that topic though.
+
+Unless someone else has an idea, we may have to ask you to do a
+bisection on this bug?
+
+Jason
