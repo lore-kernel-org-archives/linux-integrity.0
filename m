@@ -1,52 +1,48 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:43663 "EHLO
-        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752183AbdLFQk6 (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46872 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751463AbdLFMrr (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 6 Dec 2017 11:40:58 -0500
-Received: by mail-wm0-f50.google.com with SMTP id n138so8303382wmg.2
-        for <linux-integrity@vger.kernel.org>; Wed, 06 Dec 2017 08:40:57 -0800 (PST)
-Date: Wed, 6 Dec 2017 09:40:53 -0700
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [Regression 4.15-rc2] New messages `tpm tpm0: A TPM error (2314)
- occurred continue selftest`
-Message-ID: <20171206164053.GA29584@ziepe.ca>
-References: <a45f96a3-6948-4ef9-4631-29631329e833@molgen.mpg.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <a45f96a3-6948-4ef9-4631-29631329e833@molgen.mpg.de>
+        Wed, 6 Dec 2017 07:47:47 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vB6ClPue092818
+        for <linux-integrity@vger.kernel.org>; Wed, 6 Dec 2017 07:47:47 -0500
+Received: from e06smtp11.uk.ibm.com (e06smtp11.uk.ibm.com [195.75.94.107])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2epfj0n4xn-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 06 Dec 2017 07:47:46 -0500
+Received: from localhost
+        by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Wed, 6 Dec 2017 12:47:44 -0000
+Subject: ima:  temporary "next-queued-testing" branch
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: linux-integrity <linux-integrity@vger.kernel.org>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        "Bruno E. O. Meneguele" <brdeoliv@redhat.com>,
+        Joe Perches <joe@perches.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        James Morris <jmorris@namei.org>
+Date: Wed, 06 Dec 2017 07:47:38 -0500
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1512564458.4698.33.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Dec 06, 2017 at 01:34:35PM +0100, Paul Menzel wrote:
+Hi -
 
-> Dez 06 13:22:24 Ixpees kernel: tpm tpm0: A TPM error (2314) occurred
-> continue selftest
-> Dez 06 13:22:24 Ixpees kernel: tpm tpm0: TPM self test failed
-> 
-> Any idea what to do about those? If these are intentional, it'd be great to
-> give some hint to the user, what effect this has.
+Before upstreaming "ima: re-introduce own integrity cache lock", I've
+pushed the following patches to the next-queued-testing branch for
+testing.  We'll resync with the linux-security tree based on -rc3,
+hopefully next week.
 
-The TPM driver shouldn't load if self test fails, and we don't expect
-self test to ever fail.
+d79d361c25d7 ima: re-introduce own integrity cache lock
+4e94bcf160f2 ima: support new "hash" and "dont_hash" policy actions
+bd1fa1e14733 ima: Fix line continuation format
+cf46932b9a02 ima: pass filename to ima_rdwr_violation_check()
+4aad0b3845e4 ima: log message to module appraisal error
 
-So..
-1) The TPM is busted? Assuming not since you probably used an
-   earlier kernel?
-2) The CRB driver is no longer executing command properly?
-   My guess would be
-     f5357413dbaa ("tpm/tpm_crb: Use start method value from ACPI table directly")
-   Borked it.
+thanks,
 
-   Maybe this TPM needed one of the workarounds and the
-   restructuring broke it, or maybe it was working 'accidently' and
-   got broke.
-3) For some reason the core code is not handling commands correctly?
-   Don't see any patches on that topic though.
-
-Unless someone else has an idea, we may have to ask you to do a
-bisection on this bug?
-
-Jason
+Mimi
