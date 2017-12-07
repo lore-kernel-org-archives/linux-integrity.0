@@ -1,93 +1,252 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:50087 "EHLO mga03.intel.com"
+Received: from mx1.redhat.com ([209.132.183.28]:60726 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753543AbdLHKvc (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 8 Dec 2017 05:51:32 -0500
-Date: Fri, 8 Dec 2017 12:51:26 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Azhar Shaikh <azhar.shaikh@intel.com>
-Cc: jgunthorpe@obsidianresearch.com, peterhuewe@gmx.de,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net
-Subject: Re: [PATCH v6 0/2] Fix corner cases with disabling CLKRUN in tpm_tis
-Message-ID: <20171208105126.i4cfdn2kih7ddwbw@linux.intel.com>
-References: <1512610690-59953-1-git-send-email-azhar.shaikh@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1512610690-59953-1-git-send-email-azhar.shaikh@intel.com>
+        id S1752716AbdLGTFK (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 7 Dec 2017 14:05:10 -0500
+From: "Bruno E. O. Meneguele" <brdeoliv@redhat.com>
+To: dmitry.kasatkin@gmail.com, zohar@linux.vnet.ibm.com,
+        jarkko.sakkinen@linux.intel.com
+Cc: linux-integrity@vger.kernel.org
+Subject: [PATCH] ima-evm-utils: migrate to the new openssl 1.1 api
+Date: Thu,  7 Dec 2017 17:05:08 -0200
+Message-Id: <20171207190508.28292-1-brdeoliv@redhat.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Dec 06, 2017 at 05:38:08PM -0800, Azhar Shaikh wrote:
-> Changes from v1:
-> - Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
->   - Add NULL checks before calling clk_toggle callback
->   - Use IS_ENABLED instead of ifdef in tpm_tis_clkrun_toggle()
->   - Do not call tpm_platform_begin_xfer() and tpm_platform_end_xfer()
->     from tpm_tis_clkrun_toggle(). Make them static again.
-> 
-> - Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
->   - This is a new patch in this series as per suggestion from Jason.
->   - Is the current implementation ok or I should move the code in tpm_tis_pnp_remove()
->     and tpm_tis_plat_remove() inside tpm_tis_remove(). That way all the unmapping
->     can be done in one place, instead of 3 different places now. Also the unmapping
->     in tpm_tis_init() can be moved to tpm_tis_remove(), since in case of error
->     tpm_tis_core_init() calls tpm_tis_remove(). Kindly suggest.
-> 
-> Changes from v2:
-> - Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
->   - No changes
-> 
-> - Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
->   - Updated is_bsw() function to have the #ifdef CONFIG_X86 check within the function
->     itself. Also removed the #ifdef CONFIG_X86 from all other places around is_bsw()
-> 
-> Changes from v3:
-> - Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
->   - Change function name from clk_toggle to clk_enable
->   - Update the commit message.
-> 
-> - Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
->   - No changes
-> 
-> Changes from v4:
-> - The numbering of patches is now interchanged.
-> 
-> - Patch 1: "tpm_tis: Move ilb_base_addr to tpm_tis_data"
->   - Had to move ilb_base_addr to tpm_tis_data, from tpm_tis_tcg_phy.
->     Since the ioremapping of ilb_base_addr had to be done before any TPM access,
->     hence moved the variable to tpm_tis_data.
->   - Also move the ioremapping of ilb_base_addr from tpm_tis_init() to
->     tpm_tis_core_init() i.e. before any TPM access is done.
->   - Rename marco LPC_CNTRL_REG_OFFSET to LPC_CNTRL_OFFSET
->   - Update the commit message.
-> 
-> - Patch 2: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
->   - Remove the functions tpm_platform_begin_xfer() and tpm_platform_end_xfer()
->   - Move the code from these functions to tpm_tis_clkrun_enable().
-> 
-> Changes from v5:
-> - Patch 1: "tpm_tis: Move ilb_base_addr to tpm_tis_data"
->   - No changes
-> 
-> - Patch 2: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
->   - Update the commit message.
-> 
-> Azhar Shaikh (2):
->   tpm_tis: Move ilb_base_addr to tpm_tis_data
->   tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()
-> 
->  drivers/char/tpm/tpm-interface.c |   6 ++
->  drivers/char/tpm/tpm_tis.c       | 121 ++++++---------------------------------
->  drivers/char/tpm/tpm_tis_core.c  | 111 +++++++++++++++++++++++++++++++++--
->  drivers/char/tpm/tpm_tis_core.h  |  17 ++++++
->  include/linux/tpm.h              |   1 +
->  5 files changed, 147 insertions(+), 109 deletions(-)
-> 
-> -- 
-> 1.9.1
+This patch adds and changes the points needed to support the new OpenSSL
+1.1 API, considering the older one, OpenSSL 1.0.z, will be dropped by
+the major distros in following releases.
 
-Applied.
+Signed-off-by: Bruno E. O. Meneguele <brdeoliv@redhat.com>
+---
+ src/evmctl.c    | 39 +++++++++++++++++++++++++--------------
+ src/libimaevm.c | 38 +++++++++++++++++++++++---------------
+ 2 files changed, 48 insertions(+), 29 deletions(-)
 
-/Jarkko
+diff --git a/src/evmctl.c b/src/evmctl.c
+index c54efbb..7d9be32 100644
+--- a/src/evmctl.c
++++ b/src/evmctl.c
+@@ -314,7 +314,7 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
+ 	struct stat st;
+ 	int err;
+ 	uint32_t generation = 0;
+-	EVP_MD_CTX ctx;
++	EVP_MD_CTX *ctx;
+ 	unsigned int mdlen;
+ 	char **xattrname;
+ 	char xattr_value[1024];
+@@ -366,9 +366,14 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
+ 		return -1;
+ 	}
+ 
+-	err = EVP_DigestInit(&ctx, EVP_sha1());
++	ctx = EVP_MD_CTX_new();
++	if (!ctx) {
++		log_err("EVP_MD_CTX_new() failed\n");
++		return 1;
++	}
++	err = EVP_DigestInit_ex(ctx, EVP_sha1(), NULL);
+ 	if (!err) {
+-		log_err("EVP_DigestInit() failed\n");
++		log_err("EVP_DigestInit_ex() failed\n");
+ 		return 1;
+ 	}
+ 
+@@ -398,7 +403,7 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
+ 		/*log_debug("name: %s, value: %s, size: %d\n", *xattrname, xattr_value, err);*/
+ 		log_info("name: %s, size: %d\n", *xattrname, err);
+ 		log_debug_dump(xattr_value, err);
+-		err = EVP_DigestUpdate(&ctx, xattr_value, err);
++		err = EVP_DigestUpdate(ctx, xattr_value, err);
+ 		if (!err) {
+ 			log_err("EVP_DigestUpdate() failed\n");
+ 			return 1;
+@@ -446,7 +451,7 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
+ 	log_debug("hmac_misc (%d): ", hmac_size);
+ 	log_debug_dump(&hmac_misc, hmac_size);
+ 
+-	err = EVP_DigestUpdate(&ctx, &hmac_misc, hmac_size);
++	err = EVP_DigestUpdate(ctx, &hmac_misc, hmac_size);
+ 	if (!err) {
+ 		log_err("EVP_DigestUpdate() failed\n");
+ 		return 1;
+@@ -457,18 +462,19 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
+ 		if (err)
+ 			return -1;
+ 
+-		err = EVP_DigestUpdate(&ctx, (const unsigned char *)uuid, sizeof(uuid));
++		err = EVP_DigestUpdate(ctx, (const unsigned char *)uuid, sizeof(uuid));
+ 		if (!err) {
+ 			log_err("EVP_DigestUpdate() failed\n");
+ 			return 1;
+ 		}
+ 	}
+ 
+-	err = EVP_DigestFinal(&ctx, hash, &mdlen);
++	err = EVP_DigestFinal_ex(ctx, hash, &mdlen);
+ 	if (!err) {
+ 		log_err("EVP_DigestFinal() failed\n");
+ 		return 1;
+ 	}
++	EVP_MD_CTX_free(ctx);
+ 
+ 	return mdlen;
+ }
+@@ -908,7 +914,7 @@ static int calc_evm_hmac(const char *file, const char *keyfile, unsigned char *h
+ 	struct stat st;
+ 	int err = -1;
+ 	uint32_t generation = 0;
+-	HMAC_CTX ctx;
++	HMAC_CTX *ctx;
+ 	unsigned int mdlen;
+ 	char **xattrname;
+ 	unsigned char xattr_value[1024];
+@@ -965,10 +971,15 @@ static int calc_evm_hmac(const char *file, const char *keyfile, unsigned char *h
+ 		goto out;
+ 	}
+ 
+-	err = !HMAC_Init(&ctx, evmkey, sizeof(evmkey), EVP_sha1());
++	ctx = HMAC_CTX_new();
++	if (!ctx) {
++		log_err("HMAC_MD_CTX_new() failed\n");
++		goto out;
++	}
++	err = !HMAC_Init_ex(ctx, evmkey, sizeof(evmkey), EVP_sha1(), NULL);
+ 	if (err) {
+ 		log_err("HMAC_Init() failed\n");
+-		goto out;
++		goto out_ctx_cleanup;
+ 	}
+ 
+ 	for (xattrname = evm_config_xattrnames; *xattrname != NULL; xattrname++) {
+@@ -984,7 +995,7 @@ static int calc_evm_hmac(const char *file, const char *keyfile, unsigned char *h
+ 		/*log_debug("name: %s, value: %s, size: %d\n", *xattrname, xattr_value, err);*/
+ 		log_info("name: %s, size: %d\n", *xattrname, err);
+ 		log_debug_dump(xattr_value, err);
+-		err = !HMAC_Update(&ctx, xattr_value, err);
++		err = !HMAC_Update(ctx, xattr_value, err);
+ 		if (err) {
+ 			log_err("HMAC_Update() failed\n");
+ 			goto out_ctx_cleanup;
+@@ -1025,16 +1036,16 @@ static int calc_evm_hmac(const char *file, const char *keyfile, unsigned char *h
+ 	log_debug("hmac_misc (%d): ", hmac_size);
+ 	log_debug_dump(&hmac_misc, hmac_size);
+ 
+-	err = !HMAC_Update(&ctx, (const unsigned char *)&hmac_misc, hmac_size);
++	err = !HMAC_Update(ctx, (const unsigned char *)&hmac_misc, hmac_size);
+ 	if (err) {
+ 		log_err("HMAC_Update() failed\n");
+ 		goto out_ctx_cleanup;
+ 	}
+-	err = !HMAC_Final(&ctx, hash, &mdlen);
++	err = !HMAC_Final(ctx, hash, &mdlen);
+ 	if (err)
+ 		log_err("HMAC_Final() failed\n");
+ out_ctx_cleanup:
+-	HMAC_CTX_cleanup(&ctx);
++	HMAC_CTX_free(ctx);
+ out:
+ 	free(key);
+ 	return err ?: mdlen;
+diff --git a/src/libimaevm.c b/src/libimaevm.c
+index eedffb4..f6339e5 100644
+--- a/src/libimaevm.c
++++ b/src/libimaevm.c
+@@ -271,7 +271,7 @@ int ima_calc_hash(const char *file, uint8_t *hash)
+ {
+ 	const EVP_MD *md;
+ 	struct stat st;
+-	EVP_MD_CTX ctx;
++	EVP_MD_CTX *ctx;
+ 	unsigned int mdlen;
+ 	int err;
+ 
+@@ -288,25 +288,30 @@ int ima_calc_hash(const char *file, uint8_t *hash)
+ 		return 1;
+ 	}
+ 
+-	err = EVP_DigestInit(&ctx, md);
++	ctx = EVP_MD_CTX_new();
++	if (!ctx) {
++		log_err("EVP_MD_CTX_new() failed\n");
++		return 1;
++	}
++	err = EVP_DigestInit_ex(ctx, md, NULL);
+ 	if (!err) {
+-		log_err("EVP_DigestInit() failed\n");
++		log_err("EVP_DigestInit_ex() failed\n");
+ 		return 1;
+ 	}
+ 
+ 	switch (st.st_mode & S_IFMT) {
+ 	case S_IFREG:
+-		err = add_file_hash(file, &ctx);
++		err = add_file_hash(file, ctx);
+ 		break;
+ 	case S_IFDIR:
+-		err = add_dir_hash(file, &ctx);
++		err = add_dir_hash(file, ctx);
+ 		break;
+ 	case S_IFLNK:
+-		err = add_link_hash(file, &ctx);
++		err = add_link_hash(file, ctx);
+ 		break;
+ 	case S_IFIFO: case S_IFSOCK:
+ 	case S_IFCHR: case S_IFBLK:
+-		err = add_dev_hash(&st, &ctx);
++		err = add_dev_hash(&st, ctx);
+ 		break;
+ 	default:
+ 		log_errno("Unsupported file type");
+@@ -316,11 +321,12 @@ int ima_calc_hash(const char *file, uint8_t *hash)
+ 	if (err)
+ 		return err;
+ 
+-	err = EVP_DigestFinal(&ctx, hash, &mdlen);
++	err = EVP_DigestFinal_ex(ctx, hash, &mdlen);
+ 	if (!err) {
+-		log_err("EVP_DigestFinal() failed\n");
++		log_err("EVP_DigestFinal_ex() failed\n");
+ 		return 1;
+ 	}
++	EVP_MD_CTX_free(ctx);
+ 
+ 	return mdlen;
+ }
+@@ -549,6 +555,7 @@ int key2bin(RSA *key, unsigned char *pub)
+ {
+ 	int len, b, offset = 0;
+ 	struct pubkey_hdr *pkh = (struct pubkey_hdr *)pub;
++	const BIGNUM *n, *e;
+ 
+ 	/* add key header */
+ 	pkh->version = 1;
+@@ -558,18 +565,19 @@ int key2bin(RSA *key, unsigned char *pub)
+ 
+ 	offset += sizeof(*pkh);
+ 
+-	len = BN_num_bytes(key->n);
+-	b = BN_num_bits(key->n);
++	RSA_get0_key(key, &n, &e, NULL);
++	len = BN_num_bytes(n);
++	b = BN_num_bits(n);
+ 	pub[offset++] = b >> 8;
+ 	pub[offset++] = b & 0xff;
+-	BN_bn2bin(key->n, &pub[offset]);
++	BN_bn2bin(n, &pub[offset]);
+ 	offset += len;
+ 
+-	len = BN_num_bytes(key->e);
+-	b = BN_num_bits(key->e);
++	len = BN_num_bytes(e);
++	b = BN_num_bits(e);
+ 	pub[offset++] = b >> 8;
+ 	pub[offset++] = b & 0xff;
+-	BN_bn2bin(key->e, &pub[offset]);
++	BN_bn2bin(e, &pub[offset]);
+ 	offset += len;
+ 
+ 	return offset;
+-- 
+2.14.3
