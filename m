@@ -1,214 +1,101 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:42957 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752035AbdLGR5W (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 7 Dec 2017 12:57:22 -0500
-From: "Roberts, William C" <william.c.roberts@intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "Javier Martinez Canillas" <javierm@redhat.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "Tricca, Philip B" <philip.b.tricca@intel.com>,
-        "Jason Gunthorpe" <jgunthorpe@obsidianresearch.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "James Bottomley" <James.Bottomley@HansenPartnership.com>
-Subject: RE: [PATCH] tpm: return a TPM_RC_COMMAND_CODE response if a command
- isn't implemented
-Date: Thu, 7 Dec 2017 17:56:17 +0000
-Message-ID: <476DC76E7D1DF2438D32BFADF679FC563FE68F8B@ORSMSX101.amr.corp.intel.com>
-References: <20171126233012.24528-1-javierm@redhat.com>
- <20171207013216.vdyaxcanpmaecx6p@linux.intel.com>
-In-Reply-To: <20171207013216.vdyaxcanpmaecx6p@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+Received: from smtp11.infineon.com ([217.10.52.105]:20007 "EHLO
+        smtp11.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754650AbdLGP4K (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 7 Dec 2017 10:56:10 -0500
+From: <Alexander.Steffen@infineon.com>
+To: <pmenzel@molgen.mpg.de>, <linux-integrity@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>
+Subject: RE: [Regression 4.15-rc2] New messages `tpm tpm0: A TPM error (2314)
+ occurred continue selftest`
+Date: Thu, 7 Dec 2017 15:56:07 +0000
+Message-ID: <32b0e6c1292f4818825e9e0e9bff4d39@infineon.com>
+References: <a45f96a3-6948-4ef9-4631-29631329e833@molgen.mpg.de>
+In-Reply-To: <a45f96a3-6948-4ef9-4631-29631329e833@molgen.mpg.de>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-
-
-> -----Original Message-----
-> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
-> Sent: Wednesday, December 6, 2017 5:32 PM
-> To: Javier Martinez Canillas <javierm@redhat.com>
-> Cc: linux-kernel@vger.kernel.org; Peter Huewe <peterhuewe@gmx.de>; Jerry
-> Snitselaar <jsnitsel@redhat.com>; Jason Gunthorpe <jgg@ziepe.ca>; Tricca,
-> Philip B <philip.b.tricca@intel.com>; Jason Gunthorpe
-> <jgunthorpe@obsidianresearch.com>; linux-integrity@vger.kernel.org; Roberts,
-> William C <william.c.roberts@intel.com>; James Bottomley
-> <James.Bottomley@HansenPartnership.com>
-> Subject: Re: [PATCH] tpm: return a TPM_RC_COMMAND_CODE response if a
-> command isn't implemented
+> Dear Linux folks,
 > 
-> On Mon, Nov 27, 2017 at 12:30:12AM +0100, Javier Martinez Canillas wrote:
-> > According to the TPM Library Specification, a TPM device must do a
-> > command header validation before processing and return a
-> > TPM_RC_COMMAND_CODE code if the command is not implemented.
-> >
-> > So user-space will expect to handle that response as an error. But if
-> > the in-kernel resource manager is used (/dev/tpmrm?), an -EINVAL errno
-> > code is returned instead if the command isn't implemented. This
-> > confuses userspace since it doesn't expect that error value.
-> >
-> > This also isn't consistent with the behavior when not using TPM spaces
-> > and accessing the TPM directly (/dev/tpm?). In this case, the command
-> > is sent to the TPM even when not implemented and the TPM responds with an
-> error.
-> >
-> > Instead of returning an -EINVAL errno code when the
-> > tpm_validate_command() function fails, synthesize a TPM command
-> > response so user-space can get a TPM_RC_COMMAND_CODE as expected
-> when a chip doesn't implement the command.
-> >
-> > The TPM only sets 12 of the 32 bits in the TPM_RC response, so the TSS
-> > and TAB specifications define that higher layers in the stack should
-> > use some of the unused 20 bits to specify from which level of the
-> > stack the error is coming from.
-> >
-> > Since the TPM_RC_COMMAND_CODE response code is sent by the kernel
-> > resource manager, set the error level to the TAB/RM layer so
-> > user-space is aware of this.
-> >
-> > Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
-> > Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-> >
-> > ---
-> >
-> > Changes since RFCv2:
-> > - Set the error level to the TAB/RM layer so user-space is aware that the error
-> >   is not coming from the TPM (suggested by Philip Tricca and Jarkko Sakkinen).
-> >
-> > Changes since RFCv1:
-> > - Don't pass not validated commands to the TPM, instead return a synthesized
-> >   response with the correct TPM return code (suggested by Jason Gunthorpe).
-> >
-> > And example of user-space getting confused by the TPM chardev
-> > returning -EINVAL when sending a not supported TPM command can be seen in
-> this tpm2-tools issue:
-> >
-> > https://github.com/intel/tpm2-tools/issues/621
-> >
-> > Best regards,
-> > Javier
-> >
-> >  drivers/char/tpm/tpm-interface.c | 28 ++++++++++++++++++++--------
-> >  drivers/char/tpm/tpm.h           |  8 ++++++++
-> >  2 files changed, 28 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/char/tpm/tpm-interface.c
-> > b/drivers/char/tpm/tpm-interface.c
-> > index ebe0a1d36d8c..9391811c5f83 100644
-> > --- a/drivers/char/tpm/tpm-interface.c
-> > +++ b/drivers/char/tpm/tpm-interface.c
-> > @@ -328,7 +328,7 @@ unsigned long tpm_calc_ordinal_duration(struct
-> > tpm_chip *chip,  }  EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
-> >
-> > -static bool tpm_validate_command(struct tpm_chip *chip,
-> > +static int tpm_validate_command(struct tpm_chip *chip,
-> >  				 struct tpm_space *space,
-> >  				 const u8 *cmd,
-> >  				 size_t len)
-> > @@ -340,10 +340,10 @@ static bool tpm_validate_command(struct tpm_chip
-> *chip,
-> >  	unsigned int nr_handles;
-> >
-> >  	if (len < TPM_HEADER_SIZE)
-> > -		return false;
-> > +		return -EINVAL;
-> >
-> >  	if (!space)
-> > -		return true;
-> > +		return 0;
-> >
-> >  	if (chip->flags & TPM_CHIP_FLAG_TPM2 && chip->nr_commands) {
-> >  		cc = be32_to_cpu(header->ordinal);
-> > @@ -352,7 +352,7 @@ static bool tpm_validate_command(struct tpm_chip
-> *chip,
-> >  		if (i < 0) {
-> >  			dev_dbg(&chip->dev, "0x%04X is an invalid command\n",
-> >  				cc);
-> > -			return false;
-> > +			return -EOPNOTSUPP;
-> >  		}
-> >
-> >  		attrs = chip->cc_attrs_tbl[i];
-> > @@ -362,11 +362,11 @@ static bool tpm_validate_command(struct tpm_chip
-> *chip,
-> >  			goto err_len;
-> >  	}
-> >
-> > -	return true;
-> > +	return 0;
-> >  err_len:
-> >  	dev_dbg(&chip->dev,
-> >  		"%s: insufficient command length %zu", __func__, len);
-> > -	return false;
-> > +	return -EINVAL;
-> >  }
-> >
-> >  /**
-> > @@ -391,8 +391,20 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct
-> tpm_space *space,
-> >  	unsigned long stop;
-> >  	bool need_locality;
-> >
-> > -	if (!tpm_validate_command(chip, space, buf, bufsiz))
-> > -		return -EINVAL;
-> > +	rc = tpm_validate_command(chip, space, buf, bufsiz);
-> > +	if (rc == -EINVAL)
-> > +		return rc;
-> > +	/*
-> > +	 * If the command is not implemented by the TPM, synthesize a
-> > +	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
-> > +	 */
-> > +	if (rc == -EOPNOTSUPP) {
-> > +		header->length = cpu_to_be32(sizeof(*header));
-> > +		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
-> > +		header->return_code =
-> cpu_to_be32(TPM2_RC_COMMAND_CODE |
-> > +
-> TPM2_RESMGRTPM_ERROR_LEVEL);
-> > +		return bufsiz;
-> > +	}
-> >
-> >  	if (bufsiz > TPM_BUFSIZE)
-> >  		bufsiz = TPM_BUFSIZE;
-> > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h index
-> > c1866cc02e30..b3f9108d3d1f 100644
-> > --- a/drivers/char/tpm/tpm.h
-> > +++ b/drivers/char/tpm/tpm.h
-> > @@ -94,12 +94,20 @@ enum tpm2_structures {
-> >  	TPM2_ST_SESSIONS	= 0x8002,
-> >  };
-> >
-> > +/* Indicates from what level of the software stack the error comes from */
-> > +#define TPM2_RC_LEVEL_SHIFT	16
-> > +
-> > +#define TPM2_RESMGRTPM_ERROR_LEVEL (11 << TPM2_RC_LEVEL_SHIFT)
-> > +#define TPM2_RESMGR_ERROR_LEVEL    (12 << TPM2_RC_LEVEL_SHIFT)
-> > +#define TPM2_DRIVER_ERROR_LEVEL    (13 << TPM2_RC_LEVEL_SHIFT)
-> > +
-> >  enum tpm2_return_codes {
-> >  	TPM2_RC_SUCCESS		= 0x0000,
-> >  	TPM2_RC_HASH		= 0x0083, /* RC_FMT1 */
-> >  	TPM2_RC_HANDLE		= 0x008B,
-> >  	TPM2_RC_INITIALIZE	= 0x0100, /* RC_VER1 */
-> >  	TPM2_RC_DISABLED	= 0x0120,
-> > +	TPM2_RC_COMMAND_CODE    = 0x0143,
-> >  	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
-> >  	TPM2_RC_REFERENCE_H0	= 0x0910,
-> >  };
-> > --
-> > 2.14.3
-> >
 > 
-> Please use next time --subject-prefix="PATCH v3".
+> With Linux 4.15-rc2 built by the Ubuntu Kernel Team, the error messages
+> below are shown by the Linux kernel. These are new.
 > 
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ```
+> Dez 06 13:22:24 Ixpees kernel: microcode: microcode updated early to
+> revision 0x62, date = 2017-04-27
+> Dez 06 13:22:24 Ixpees kernel: Linux version 4.15.0-041500rc2-generic
+> (kernel@gloin) (gcc version 7.2.0 (Ubuntu 7.2.0-8ubuntu3)) #201712031230
+> SMP Sun Dec 3 17:32:03 UTC 2017
+> Dez 06 13:22:24 Ixpees kernel: Command line:
+> BOOT_IMAGE=/vmlinuz-4.15.0-041500rc2-generic
+> root=/dev/mapper/ubuntu--vg-root ro quiet splash vt.handoff=7
+> Dez 06 13:22:24 Ixpees kernel: KERNEL supported cpus:
+> Dez 06 13:22:24 Ixpees kernel:   Intel GenuineIntel
+> Dez 06 13:22:24 Ixpees kernel:   AMD AuthenticAMD
+> Dez 06 13:22:24 Ixpees kernel:   Centaur CentaurHauls
+> Dez 06 13:22:24 Ixpees kernel: x86/fpu: Supporting XSAVE feature 0x001:
+> 'x87 floating point registers'
+> Dez 06 13:22:24 Ixpees kernel: x86/fpu: Supporting XSAVE feature 0x002:
+> 'SSE registers'
+> [...]
+> Dez 06 13:22:24 Ixpees kernel: tpm_tis MSFT0101:00: 2.0 TPM (device-id
+> 0xFE, rev-id 4)
+> Dez 06 13:22:24 Ixpees kernel: tpm tpm0: A TPM error (2314) occurred
+> continue selftest
+> Dez 06 13:22:24 Ixpees kernel: tpm tpm0: A TPM error (2314) occurred
+> continue selftest
+> Dez 06 13:22:24 Ixpees kernel: tpm tpm0: A TPM error (2314) occurred
+> continue selftest
+> Dez 06 13:22:24 Ixpees kernel: tpm tpm0: A TPM error (2314) occurred
+> continue selftest
+> Dez 06 13:22:24 Ixpees kernel: tpm tpm0: A TPM error (2314) occurred
+> continue selftest
+> Dez 06 13:22:24 Ixpees kernel: tpm tpm0: A TPM error (2314) occurred
+> continue selftest
+> Dez 06 13:22:24 Ixpees kernel: tpm tpm0: A TPM error (2314) occurred
+> continue selftest
+> Dez 06 13:22:24 Ixpees kernel: tpm tpm0: TPM self test failed
+> ```
+> 
+> Any idea what to do about those?
 
-LGTM
-Reviewed-by: William Roberts <william.c.roberts@intel.com>
+The list of "A TPM error (2314) occurred continue selftest" is caused by my commit 125a2210541079e8e7c69e629ad06cabed788f8c ("tpm: React correctly to RC_TESTING from TPM 2.0 self tests"). 2314 is TPM_RC_TESTING, so the TPM tells us that self-tests are still running in the background. This problem was not visible in previous versions, since it (incorrectly) ignored TPM_RC_TESTING.
 
-> 
-> /Jarkko
+The final error "TPM self test failed" is then the driver giving up after too many TPM_RC_TESTING responses have been received.
+
+What confuses me a bit is that according to your log all of that happens within the same second. The driver uses tpm2_calc_ordinal_duration for TPM2_CC_SELF_TEST which maps to TPM_LONG and finally to TPM2_DURATION_LONG = 2000ms = 2s. So you should see those retries for at least two seconds. But since it does not give the TPM enough time to execute the tests, you see it failing in the end.
+
+Could you try to find out how much time exactly (in milliseconds) it takes from the first "A TPM error" to the final "TPM self test failed" message? Is it possible that tpm_msleep delays for significantly less time in this case?
+
+Also, while looking at the code I've noticed that the retry loop is not written in the best possible way and should actually try one more time. Could you make the following change to tpm2_do_selftest in drivers/char/tpm/tpm2-cmd.c and see whether that helps? 
+
+---
+        duration = jiffies_to_msecs(
+                tpm2_calc_ordinal_duration(chip, TPM2_CC_SELF_TEST));
+ 
+-       while (duration > 0) {
++       while (1) {
+                cmd.header.in = tpm2_selftest_header;
+                cmd.params.selftest_in.full_test = 0;
+ 
+                rc = tpm_transmit_cmd(chip, NULL, &cmd,
+TPM2_SELF_TEST_IN_SIZE,
+                                      0, 0, "continue selftest");
+ 
+-               if (rc != TPM2_RC_TESTING)
++               if (rc != TPM2_RC_TESTING || duration <= 0)
+                        break;
+ 
+                tpm_msleep(delay_msec);
+---
+
+> If these are intentional, it'd be great
+> to give some hint to the user, what effect this has.
+
+I agree that those error messages in their current form are not that helpful for the users. But they are part of the general driver architecture, and are also caused by other parts of the code (e.g. when using a TPM 1.2 that is deactivated or when the platform did not send a startup command). We should find a way to hide (or at least mark) those kind of expected errors.
+
+Alexander
