@@ -1,43 +1,63 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:38646 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750911AbdLHUSk (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38452 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752136AbdLHUL0 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 8 Dec 2017 15:18:40 -0500
-Received: by mail-wm0-f46.google.com with SMTP id 64so4923588wme.3
-        for <linux-integrity@vger.kernel.org>; Fri, 08 Dec 2017 12:18:39 -0800 (PST)
-Date: Fri, 8 Dec 2017 13:18:35 -0700
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Ken Goldman <kgold@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org
+        Fri, 8 Dec 2017 15:11:26 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vB8K9QeW131244
+        for <linux-integrity@vger.kernel.org>; Fri, 8 Dec 2017 15:11:26 -0500
+Received: from e38.co.us.ibm.com (e38.co.us.ibm.com [32.97.110.159])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2er1cd0q3x-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 08 Dec 2017 15:11:25 -0500
+Received: from localhost
+        by e38.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <kgold@linux.vnet.ibm.com>;
+        Fri, 8 Dec 2017 13:11:24 -0700
 Subject: Re: [RFC PATCH] tpm: don't return -EINVAL if TPM command validation
  fails
-Message-ID: <20171208201835.GA10362@ziepe.ca>
+To: Javier Martinez Canillas <javierm@redhat.com>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
 References: <20171117100724.19257-1-javierm@redhat.com>
- <20171117165742.GH4276@ziepe.ca>
- <0e88aaa8-7d17-9cf7-c208-e31604a0e764@redhat.com>
- <20171117175834.GK4276@ziepe.ca>
- <7f4e7c86-ef04-ea41-892f-1183a1d44a7b@redhat.com>
- <20171117181734.GM4276@ziepe.ca>
- <44ff3d81-809c-b8ea-ae27-42725ee0a9fc@linux.vnet.ibm.com>
+ <20171120231512.6wpqgcggfta3am7m@linux.intel.com>
+ <7c148cf0-2403-55cf-1633-ff326d5c6f7b@redhat.com>
+ <20171121123006.esr7yxs5lvorlfjf@linux.intel.com>
+ <476DC76E7D1DF2438D32BFADF679FC563F4BFC0B@ORSMSX115.amr.corp.intel.com>
+ <600d6778-f155-ea51-64dc-e0041c6943d3@redhat.com>
+From: Ken Goldman <kgold@linux.vnet.ibm.com>
+Date: Fri, 8 Dec 2017 15:11:22 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <44ff3d81-809c-b8ea-ae27-42725ee0a9fc@linux.vnet.ibm.com>
+In-Reply-To: <600d6778-f155-ea51-64dc-e0041c6943d3@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Message-Id: <67662fe4-38f4-7b28-2806-3dbe94870f74@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Dec 08, 2017 at 03:03:34PM -0500, Ken Goldman wrote:
-> Do you really want to build in an every expanding list of commands that the
-> kernel has to screen for?  I don't think so.
+On 11/22/2017 4:26 AM, Javier Martinez Canillas wrote:
+> 
+> I still do believe that both interfaces (/dev/tpm and /dev/tpmrm) should be
+> consistent if possible though. 
 
-We have to, it is required for securing unpriv access.
+Agreed.  TPM code is hard enough to debug without inconsistencies 
+between tpm, tpmrm, and the simulator.
 
-> Remember that there are new commands, optional commands, and vendor
-> proprietary commands.  What's the rationale for only looking at the command
-> code and not rest of the parameters?
+> In other words, I don't see the value of not
+> behaving as expected by the spec if this doesn't have security implications
+> as is the case with the approach suggested by Jason. And the implementation
+> for sending the synthesized response is also trivial.
+> 
+> The other option that's fixing this in user-space will be a workaround, since
+> it would either be to check for TPM_RC_SUCCESS instead of TPM_RC_COMMAND_CODE
+> or make the SAPI library infer that a -EINVAL error means that a command isn't
+> supported and return a TPM_RC_COMMAND_CODE to the caller.
 
-The TPM arch already split the commands in a way where you don't need
-to look at params in most cases. I think we might, or should, look at
-params in some of the 'get cap' cases ?
+Remember also that SAPI is just one TSS design.  There are currently 
+three others.  And SAPI is targeted more as a building block than an end 
+user library.
 
-Jason
+Every TSS implementation would have to do this mapping.  How would they 
+even know to do it if they didn't notice this thread?  It wouldn't be 
+documented anywhere other than deep in kernel code.
