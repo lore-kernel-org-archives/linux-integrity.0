@@ -1,65 +1,63 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50700 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750980AbdLHUEk (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34684 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752217AbdLHT61 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 8 Dec 2017 15:04:40 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vB8K4beL109328
-        for <linux-integrity@vger.kernel.org>; Fri, 8 Dec 2017 15:04:40 -0500
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2er1cd0cym-1
+        Fri, 8 Dec 2017 14:58:27 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vB8JucRl109293
+        for <linux-integrity@vger.kernel.org>; Fri, 8 Dec 2017 14:58:26 -0500
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2eqyqg6pc5-1
         (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 08 Dec 2017 15:04:34 -0500
+        for <linux-integrity@vger.kernel.org>; Fri, 08 Dec 2017 14:58:26 -0500
 Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <kgold@linux.vnet.ibm.com>;
-        Fri, 8 Dec 2017 13:03:34 -0700
+        Fri, 8 Dec 2017 12:58:18 -0700
 Subject: Re: [RFC PATCH] tpm: don't return -EINVAL if TPM command validation
  fails
 To: Jason Gunthorpe <jgg@ziepe.ca>
 Cc: linux-integrity@vger.kernel.org
 References: <20171117100724.19257-1-javierm@redhat.com>
  <20171117165742.GH4276@ziepe.ca>
- <0e88aaa8-7d17-9cf7-c208-e31604a0e764@redhat.com>
- <20171117175834.GK4276@ziepe.ca>
- <7f4e7c86-ef04-ea41-892f-1183a1d44a7b@redhat.com>
- <20171117181734.GM4276@ziepe.ca>
 From: Ken Goldman <kgold@linux.vnet.ibm.com>
-Date: Fri, 8 Dec 2017 15:03:34 -0500
+Date: Fri, 8 Dec 2017 14:58:19 -0500
 MIME-Version: 1.0
-In-Reply-To: <20171117181734.GM4276@ziepe.ca>
+In-Reply-To: <20171117165742.GH4276@ziepe.ca>
 Content-Type: text/plain; charset=windows-1252; format=flowed
-Message-Id: <44ff3d81-809c-b8ea-ae27-42725ee0a9fc@linux.vnet.ibm.com>
+Message-Id: <0afdb1e8-c5e0-0ce6-ff7f-27f9c6ada211@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 11/17/2017 1:17 PM, Jason Gunthorpe wrote:
-> On Fri, Nov 17, 2017 at 07:10:09PM +0100, Javier Martinez Canillas wrote:
+On 11/17/2017 11:57 AM, Jason Gunthorpe wrote:
+> On Fri, Nov 17, 2017 at 11:07:24AM +0100, Javier Martinez Canillas wrote:
 > 
->> Right, that's what I understood indeed but wanted to be sure. The problem with
->> that approach is that would not scale.
+>> This patch is an RFC because I'm not sure if this is the correct way to fix this
+>> issue. I'm not that familiar with the TPM driver so may had missed some details.
 >>
->> Since this particular TPM2 doesn't have support for the TPM2_EncryptDecrypt2
->> command, but some chips may not support others commands.
+>> And example of user-space getting confused by the TPM chardev returning -EINVAL
+>> when sending a not supported TPM command can be seen in this tpm2-tools issue:
+>>
+>> https://github.com/intel/tpm2-tools/issues/621
 > 
-> No, tpm_validate is not supposed to be sensitive to what commands the
-> TPM supports. It is only supposed to check if the command passed is
-> fully understood by the kernel and is properly formed.
+> I think this is a user space bug, unfortunately.
 > 
-> This is to prevent rouge user space from sending garbage or privileged
-> commands to the TPM.
+> We talked about this when the spaces code was first written and it
+> seemed the best was to just return EINVAL to indicate that the kernel
+> could not accept the request.
 > 
-> If it is refusing TPM2_EncryptDecrypt2, and that command is safe to
-> use in the spaces system, then tpm_validate must learn how to handle
-> it, or userspace can never use it.
+> This result is semantically different from the TPM could not execute
+> or complete the request.
 
-Do you really want to build in an every expanding list of commands that 
-the kernel has to screen for?  I don't think so.
+I think there is a difference between:
 
-Remember that there are new commands, optional commands, and vendor 
-proprietary commands.  What's the rationale for only looking at the 
-command code and not rest of the parameters?
+- The kernel could __not__ accept the request, and
+- The kernel could accept the request, but there's code in the kernel to 
+reject it.
 
-To me, the simplest solution, and the easiest for the application 
-developer to debug, is to pass through any command possible.
+My preference is for the kernel to send the command when possible, and 
+let the TPM decide whether it can be executed.
+
+Otherwise, the kernel device driver has to be updated every time the TPM 
+implements something new that the kernel previously thought was an error.
