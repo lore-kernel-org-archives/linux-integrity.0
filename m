@@ -1,78 +1,68 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60580 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752597AbdLHWEc (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33935 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753065AbdLHVe7 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 8 Dec 2017 17:04:32 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vB8M4K0m121779
-        for <linux-integrity@vger.kernel.org>; Fri, 8 Dec 2017 17:04:31 -0500
-Received: from e38.co.us.ibm.com (e38.co.us.ibm.com [32.97.110.159])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2er35j88ht-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 08 Dec 2017 17:04:29 -0500
-Received: from localhost
-        by e38.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <kgold@linux.vnet.ibm.com>;
-        Fri, 8 Dec 2017 14:59:26 -0700
-Subject: Re: [PATCH v2 00/15] ima: digest list feature
-To: Roberto Sassu <roberto.sassu@huawei.com>,
-        linux-integrity@vger.kernel.org
-References: <20171107103710.10883-1-roberto.sassu@huawei.com>
- <5060980f-2b70-6b77-89f2-5ef66ff4cace@linux.vnet.ibm.com>
- <bca7c2af-def4-17cd-7b91-c1122877d3d4@huawei.com>
-From: Ken Goldman <kgold@linux.vnet.ibm.com>
-Date: Fri, 8 Dec 2017 16:59:26 -0500
+        Fri, 8 Dec 2017 16:34:59 -0500
+Received: by mail-wm0-f68.google.com with SMTP id y82so5932389wmg.1
+        for <linux-integrity@vger.kernel.org>; Fri, 08 Dec 2017 13:34:59 -0800 (PST)
+Subject: Re: [RFC PATCH] tpm: don't return -EINVAL if TPM command validation
+ fails
+To: Ken Goldman <kgold@linux.vnet.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+References: <20171117100724.19257-1-javierm@redhat.com>
+ <20171120231512.6wpqgcggfta3am7m@linux.intel.com>
+ <7c148cf0-2403-55cf-1633-ff326d5c6f7b@redhat.com>
+ <20171121123006.esr7yxs5lvorlfjf@linux.intel.com>
+ <476DC76E7D1DF2438D32BFADF679FC563F4BFC0B@ORSMSX115.amr.corp.intel.com>
+ <20171126140646.hhjtyy26h5ebyd5a@linux.intel.com>
+ <ec5d6e67-885b-a518-1c37-93eb3d49684e@linux.vnet.ibm.com>
+From: Javier Martinez Canillas <javierm@redhat.com>
+Message-ID: <425a45d4-7d44-333e-0d7f-21a931c9d81d@redhat.com>
+Date: Fri, 8 Dec 2017 22:34:56 +0100
 MIME-Version: 1.0
-In-Reply-To: <bca7c2af-def4-17cd-7b91-c1122877d3d4@huawei.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Message-Id: <0813ba81-d06d-318d-4947-28ba7ad38e0e@linux.vnet.ibm.com>
+In-Reply-To: <ec5d6e67-885b-a518-1c37-93eb3d49684e@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=windows-1252
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 12/6/2017 4:13 AM, Roberto Sassu wrote:
+Hello Ken,
 
-> I think this is not suitable for scenarios where unknown Requestors are
-> attested.
-
-Could you explain.  The relying party can either accept the unknown 
-requester or reject it.  What's the issue?
-
-> 
-> https://trustedcomputinggroup.org/wp-content/uploads/IWG_Architecture_v1_0_r1.pdf 
-> (Section 4)
-> 
-> 
->> - if it's the first quote after a reboot, send the entire log, else
->> - if PCRs haven't changed, don't send anything, else
->> - send a delta since the last attestation.
+On 12/08/2017 09:20 PM, Ken Goldman wrote:
+> On 11/26/2017 9:06 AM, Jarkko Sakkinen wrote:
 >>
->> Even without this obvious optimization, the transmit time is 
->> negligible compared to the quote signature generation time.
-> Having large measurement lists introduces additional issues:
+>> I think -EINVAL is better than synthetizing commands that are not really
+>> from the TPM. And we would break backwards compatability by doing this.
+>>
+>> As I said in an earlier response I would rather compare resource
+>> manager to virtual memory than virtual machine.
 > 
-> 1) overhead to generate/parse the TCG Integrity Report
->     (Requestor/Verifier)
+> Agreed that synthesizing a response is not trivial.  (It's not that hard 
+> either - a 6 byte hard coded header and a 4 byte big endian integer.)
+>
 
-1 - When I profiled my code, the TPM quote signing was nearly all the 
-time.  For the first quote, verifying the IMA signatures at the relying 
-party was also measurable.
+At the end it was rather trivial. I posted that patch and got merged today:
 
-Everything else - parsing at the requester and relying party, transmit 
-time, even reconstructing the PCRs from the event log, was insignificant.
+http://git.infradead.org/users/jjs/linux-tpmdd.git/commitdiff/40ee8cc47c95de22a34c10561f2c00e3c665a29f?hp=7b4edc34bc7542068fa530c0d38babdac95a5e46
+ 
+> But what would be wrong with sending an unknown command to the TPM and 
+> letting it handle the response?
+> 
+>
 
-General principle:  Whenever there's an asymmetric key operation, it's 
-likely that nothing else affects performance.
+I agree with you. As I said in this thread, I don't understand the security
+implications that Jason says. The patch in $SUBJECT just avoids all the TPM
+spaces code paths and sends the command that user-space passed to the kernel
+to the real TPM2 hardware as it would do when writing to /dev/tpm? directly.
 
-> 2) storage requirement (Verifier)
-> 3) overhead to build the complete Integrity Report from base + delta if
->     the verification tool is not stateful (Verifier)
+The kernel should provide mechanism and not policy in my opinion, so it should
+be up to user-space to decide what programs are allowed to access the chardevs
+or not. In any case, I'm also OK with the solution that was suggested and was
+merged.
 
-2 - I assume that the verifier will have a disk.  With our logs running 
-1-10 mbytes, a generic 2017 disk can handle 100,000's of requesters.
-
-3 - All implementations I know of use some database for the verifier. 
-It already has to hold public keys, error reports, etc.  Adding one more 
-integer - the number of events in the last report - isn't hard.
-
-I have open source sample code that does all this already.
+Best regards,
+-- 
+Javier Martinez Canillas
+Software Engineer - Desktop Hardware Enablement
+Red Hat
