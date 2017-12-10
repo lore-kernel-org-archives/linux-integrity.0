@@ -1,47 +1,33 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:44730 "EHLO
-        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752217AbdLKC7g (ORCPT
+Received: from aserp2130.oracle.com ([141.146.126.79]:33475 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751137AbdLJWMq (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 10 Dec 2017 21:59:36 -0500
-Received: by mail-wm0-f50.google.com with SMTP id t8so11814181wmc.3
-        for <linux-integrity@vger.kernel.org>; Sun, 10 Dec 2017 18:59:35 -0800 (PST)
+        Sun, 10 Dec 2017 17:12:46 -0500
+Date: Mon, 11 Dec 2017 09:07:33 +1100 (AEDT)
+From: James Morris <james.l.morris@oracle.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+cc: linux-integrity <linux-integrity@vger.kernel.org>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Subject: Re: [PATCH] ima: define a new policy option named "force"
+In-Reply-To: <1512756740.3846.3.camel@linux.vnet.ibm.com>
+Message-ID: <alpine.LFD.2.20.1712110907080.19397@localhost>
+References: <1512756740.3846.3.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <CAO6P2QTnCaGJXrDKy4jWnqRJzcb1YCSfvbQ+PrR-4h5_UJC0vw@mail.gmail.com>
-References: <CAO6P2QT3n0WphLHP-e2cyLFMcp_i4PXv3Atezpksdtn4nfVmPA@mail.gmail.com>
- <1512915528.3846.29.camel@linux.vnet.ibm.com> <CAO6P2QQfeay18Fg13YGfE-EysiVT6UerSPJvoKdqmTSeLiMD8A@mail.gmail.com>
- <1512921715.3846.33.camel@linux.vnet.ibm.com> <CAO6P2QTnCaGJXrDKy4jWnqRJzcb1YCSfvbQ+PrR-4h5_UJC0vw@mail.gmail.com>
-From: "Paul R. Tagliamonte" <paultag@gmail.com>
-Date: Sun, 10 Dec 2017 21:59:14 -0500
-Message-ID: <CAO6P2QTFRnSor10C01QvDoD9-uVoszKbN49u12owzMcvRvA-6g@mail.gmail.com>
-Subject: Re: IMA keyctl problems
-To: linux-integrity@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Since I'm still stuck on this, I rebuilt the Debian kernel, patching
-security/integrity/didsig.c round-about line 55 on Linux 4.12.2 to
-add:
+On Fri, 8 Dec 2017, Mimi Zohar wrote:
 
-```
-pr_err("XXX: type=%s name=%s\n", key_type_keyring, keyring_name[id]);
-```
+> There are times instead of relying on previously cached status
+> information we want to force the file to be re-measured, re-appraised,
+> and re-audited.
 
-I see logs that look like:
-
-```
-integrity: XXX: type=_ima name=(null)
-integrity: no _ima keyring: -126
-```
-
-That strikes me as weird. Seems like request_key would have wanted a
-type of "keyring" or something, and a description of "_ima", not a
-type of "_ima" and no description.
-
-Does this rustle up any thoughts from anyone?
-  Paul
-
+Can you give an example of when this would be needed?
 
 -- 
-:wq
+James Morris
+<james.l.morris@oracle.com>
