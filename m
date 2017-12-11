@@ -1,131 +1,75 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48156 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752470AbdLKRcd (ORCPT
+Received: from smtp11.infineon.com ([217.10.52.105]:4156 "EHLO
+        smtp11.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752456AbdLKQJB (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Dec 2017 12:32:33 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vBBHVkLC063257
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Dec 2017 12:32:32 -0500
-Received: from e06smtp11.uk.ibm.com (e06smtp11.uk.ibm.com [195.75.94.107])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2esw0p5mme-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Dec 2017 12:32:32 -0500
-Received: from localhost
-        by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Mon, 11 Dec 2017 17:22:19 -0000
-Subject: Re: IMA keyctl problems
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: "Paul R. Tagliamonte" <paultag@gmail.com>
-Cc: linux-integrity@vger.kernel.org
-Date: Mon, 11 Dec 2017 12:22:14 -0500
-In-Reply-To: <CAO6P2QQe_gX3MYz-YwQF2=YCk1-Bna+Phg8Rz_-yp5rKtG1SzA@mail.gmail.com>
-References: <CAO6P2QT3n0WphLHP-e2cyLFMcp_i4PXv3Atezpksdtn4nfVmPA@mail.gmail.com>
-         <1512915528.3846.29.camel@linux.vnet.ibm.com>
-         <CAO6P2QQfeay18Fg13YGfE-EysiVT6UerSPJvoKdqmTSeLiMD8A@mail.gmail.com>
-         <1512921715.3846.33.camel@linux.vnet.ibm.com>
-         <CAO6P2QTnCaGJXrDKy4jWnqRJzcb1YCSfvbQ+PrR-4h5_UJC0vw@mail.gmail.com>
-         <CAO6P2QTFRnSor10C01QvDoD9-uVoszKbN49u12owzMcvRvA-6g@mail.gmail.com>
-         <CAO6P2QTRfOYMiB1HEbaYghsH+2bw1tyHrGsMt6G8jbQKHQKETA@mail.gmail.com>
-         <1513000117.3846.122.camel@linux.vnet.ibm.com>
-         <CAO6P2QQ2J--2hyz-L78uAOcDZQ3VKzbtiYO7oSFxD7Z0Yo+V9Q@mail.gmail.com>
-         <1513007322.3846.146.camel@linux.vnet.ibm.com>
-         <CAO6P2QQe_gX3MYz-YwQF2=YCk1-Bna+Phg8Rz_-yp5rKtG1SzA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1513012934.3846.197.camel@linux.vnet.ibm.com>
+        Mon, 11 Dec 2017 11:09:01 -0500
+From: <Alexander.Steffen@infineon.com>
+To: <pmenzel@molgen.mpg.de>, <jgg@ziepe.ca>
+CC: <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: RE: [Regression 4.15-rc2] New messages `tpm tpm0: A TPM error (2314)
+ occurred continue selftest`
+Date: Mon, 11 Dec 2017 16:08:59 +0000
+Message-ID: <c700bf23fcf44221bc179a7b0e6df5c9@infineon.com>
+References: <a45f96a3-6948-4ef9-4631-29631329e833@molgen.mpg.de>
+ <32b0e6c1292f4818825e9e0e9bff4d39@infineon.com>
+ <20171207183743.GB16884@ziepe.ca>
+ <37b47bbcce5d4cf1b1fad32576e501d4@infineon.com>
+ <20171208155641.GA2883@ziepe.ca>
+ <c544a476-5ea9-df81-ea8b-01fa578738f0@molgen.mpg.de>
+ <20171208161814.GB2883@ziepe.ca>
+ <d70c683a-9ac2-e731-d6fd-173ac35c5b1b@molgen.mpg.de>
+In-Reply-To: <d70c683a-9ac2-e731-d6fd-173ac35c5b1b@molgen.mpg.de>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2017-12-11 at 11:01 -0500, Paul R. Tagliamonte wrote:
-> > Great!  And if you replaced the "uid=0" with "fowner=0" the appraisal
-> > would succeed whether or not you're running as root.
+> Dear Jason,
 > 
-> I was looking to appraise any binaries that a single user is running,
-> not anything any user runs that's owned by root.
 > 
-> > Different files can be signed with different keys, but all keys should
-> > be loaded onto the same _ima keyring.  (This will change once IMA is
-> > namespaced.)
+> On 12/08/17 17:18, Jason Gunthorpe wrote:
+> > On Fri, Dec 08, 2017 at 05:07:39PM +0100, Paul Menzel wrote:
+> >
+> >> I have no access to the system right now, but want to point out, that the
+> >> log was created by `journactl -k`, so I do not know if that messes with the
+> >> time stamps. I checked the output of `dmesg` but didn't see the TPM
+> error
+> >> messages in the output - only `tpm_tis MSFT0101:00: 2.0 TPM (device-id
+> 0xFE,
+> >> rev-id 4)`. Do I need to pass a different error message to `dmesg`?
+> >
+> > It is a good question, I don't know.. If your kernel isn't setup to
+> > timestamp messages then the journalstamp will certainly be garbage.
+> >
+> > No idea why you wouldn't see the messages in dmesg, if they are not in
+> > dmesg they couldn't get into the journal
 > 
-> Yes. Good copy on that.
+> It looks like I was running an older Linux kernel version, when running
+> `dmesg`. Sorry for the noise. Here are the messages with the Linux
+> kernel time stamps, showing that the delays work correctly.
 > 
-> My question was about how to ensure the _ima keyring is present in all
-> user's keyrings, if the IMA module is searching the user executing the
-> program's keyring. See the terminal output in my last mail.
+> ```
+> $ uname -a
+> Linux Ixpees 4.15.0-041500rc2-generic #201712031230 SMP Sun Dec 3
+> 17:32:03 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+> $ sudo dmesg | grep TPM
+> [    0.000000] ACPI: TPM2 0x000000006F332168 000034 (v03        Tpm2Tabl
+> 00000001 AMI  00000000)
+> [    1.114355] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 4)
+> [    1.125250] tpm tpm0: A TPM error (2314) occurred continue selftest
+> [    1.156645] tpm tpm0: A TPM error (2314) occurred continue selftest
+> [    1.208053] tpm tpm0: A TPM error (2314) occurred continue selftest
+> [    1.299640] tpm tpm0: A TPM error (2314) occurred continue selftest
+> [    1.471223] tpm tpm0: A TPM error (2314) occurred continue selftest
+> [    1.802819] tpm tpm0: A TPM error (2314) occurred continue selftest
+> [    2.454320] tpm tpm0: A TPM error (2314) occurred continue selftest
+> [    3.734808] tpm tpm0: TPM self test failed
+> [    3.759675] ima: No TPM chip found, activating TPM-bypass! (rc=-19)
+> ```
 
-It shouldn't need to search multiple keyrings as all keys should be on
-the one and only IMA keyring.
+Thanks for the fixed log. So your TPM seems to be rather slow with executing the selftests. Could try to apply the patch that I've just sent you? It ensures that your TPM gets more time to execute all the tests, up to the limit set in the PTP.
 
-> Once again, the kernel is throwing errors if I try to appraise
-> binaries that uid 1000 is running unless the _ima keyring is linked to
-> uid 1000's @u keyring. Is this expected behavior, and if so, where can
-> I read more about this?
+(I would have sent that patch also to linux-kernel@vger.kernel.org, since it was included in the discussion, but for some strange reason my mail system declared that to be an "Invalid address"...)
 
-This is definitely not expected behavior.
-
-> > The policy defines which files should be appraised.  If you want to
-> > verify files owned by uid 1000, the policy would include an appraise
-> > rule fowner=1000.
-> 
-> I want to appraise anything run by user 1000, regardless of file
-> owner. I can only seem to do this if uid 1000's @u has a _ima keyring
-> under it, and **not** if uid 0's @u has an _ima keyring under it. Is
-> this expected behavior?
-
-The builtin measurement policy measures all files executed (eg.
-measure func=BPRM_CHECK).  A similar rule could be defined to appraise
-everything executed (eg. audit func=BPRM_CHECK), but the builtin
-policy can't do that since it would require knowing and signing all
-executables, including scripts, on the file system.  For this reason,
-we've defined the builtin appraise TCB policy to appraise only files
-owned by root.
-
-> > Normally one starts with something that is known to work, before
-> > attempting/complaining something different doesn't work.
-> 
-> Cheers, thanks for that.
-> 
-> I'd like to point out that at no point have I complained, even about
-> things fully deserving of it, such as the lack of documentation or
-> opaque errors.
-
-Agreed, the wiki and documentation definitely need to be updated.
- It's on my "todo" list.  I'm hoping to work my way through it, when
-things quiet down.
-
-> I've been courteous and tried to provide helpful
-> information and context proactively. To be honest, I'm a bit
-> disappointed and frustrated at this side-comment.
-
-Basically you're asking me to replicate your environment to figure out
-why your environment isn't working, before you've tried the "normal"
-method of creating a keyring/loading keys (eg. dracut/systemd) and
-booting the system with a builtin policy.
-
-> I understand you must be frustrated, and I appreciate you replied on a
-> weekend and it's not your job to provide support, but as a newcomer, I
-> am just as frustrated with this interaction.
-
->From my perspective, I need to understand if you're reporting a
-regression or a new usecase scenario.
-
-> A bit of empathy would be nice.
-
-You definitely have my empathy!  Until files come signed, enabling
-IMA-appraisal is difficult.
-
-For now, create the keyring and load the keys in the initramfs, as you
-described.  Boot with the builtin policies by adding the
-ima_policy="tcb|appraise_tcb" on the boot commnad line.
-
-Only afterwards, replace the builtin "appraise_tcb" policy with a
-custom policy, which appraises all executables not just those owned by
-root.
-
-Instead of "appraise func=BPRM_CHECK fowner=0 appraise_type=imasig"
-the appraise rule would be "appraise func=BPRM_CHECK
-appraise_type=imasig".
-
-Mimi
+Alexander
