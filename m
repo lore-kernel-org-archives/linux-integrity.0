@@ -1,59 +1,77 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35282 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751871AbdLKNNJ (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Dec 2017 08:13:09 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vBBDBxdL023277
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Dec 2017 08:13:08 -0500
-Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2est05a873-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Dec 2017 08:13:08 -0500
-Received: from localhost
-        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Mon, 11 Dec 2017 13:13:04 -0000
-Subject: Re: [PATCH] ima: define a new policy option named "force"
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: James Morris <james.l.morris@oracle.com>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Date: Mon, 11 Dec 2017 08:12:58 -0500
-In-Reply-To: <alpine.LFD.2.20.1712110907080.19397@localhost>
-References: <1512756740.3846.3.camel@linux.vnet.ibm.com>
-         <alpine.LFD.2.20.1712110907080.19397@localhost>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1512997978.3846.104.camel@linux.vnet.ibm.com>
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:42950 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752439AbdLKMyy (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 11 Dec 2017 07:54:54 -0500
+Subject: Re: [Regression 4.15-rc2] New messages `tpm tpm0: A TPM error (2314)
+ occurred continue selftest`
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexander.Steffen@infineon.com, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <a45f96a3-6948-4ef9-4631-29631329e833@molgen.mpg.de>
+ <32b0e6c1292f4818825e9e0e9bff4d39@infineon.com>
+ <20171207183743.GB16884@ziepe.ca>
+ <37b47bbcce5d4cf1b1fad32576e501d4@infineon.com>
+ <20171208155641.GA2883@ziepe.ca>
+ <c544a476-5ea9-df81-ea8b-01fa578738f0@molgen.mpg.de>
+ <20171208161814.GB2883@ziepe.ca>
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+Message-ID: <d70c683a-9ac2-e731-d6fd-173ac35c5b1b@molgen.mpg.de>
+Date: Mon, 11 Dec 2017 13:54:51 +0100
+MIME-Version: 1.0
+In-Reply-To: <20171208161814.GB2883@ziepe.ca>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms000904080301020200010907"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2017-12-11 at 09:07 +1100, James Morris wrote:
-> On Fri, 8 Dec 2017, Mimi Zohar wrote:
+Dear Jason,
+
+
+On 12/08/17 17:18, Jason Gunthorpe wrote:
+> On Fri, Dec 08, 2017 at 05:07:39PM +0100, Paul Menzel wrote:
 > 
-> > There are times instead of relying on previously cached status
-> > information we want to force the file to be re-measured, re-appraised,
-> > and re-audited.
+>> I have no access to the system right now, but want to point out, that the
+>> log was created by `journactl -k`, so I do not know if that messes with the
+>> time stamps. I checked the output of `dmesg` but didn't see the TPM error
+>> messages in the output - only `tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE,
+>> rev-id 4)`. Do I need to pass a different error message to `dmesg`?
 > 
-> Can you give an example of when this would be needed?
+> It is a good question, I don't know.. If your kernel isn't setup to
+> timestamp messages then the journalstamp will certainly be garbage.
+> 
+> No idea why you wouldn't see the messages in dmesg, if they are not in
+> dmesg they couldn't get into the journal
 
-Up to Sascha Hauer's patch "ima: Use i_version only when filesystem
-supports it", which is queued to be upstreamed, the cached flags are
-reset only if the i_version changed, causing the file to be re-
-evaluated.  After that patch, the cached flags are also reset if
-i_version is not enabled. 
+It looks like I was running an older Linux kernel version, when running 
+`dmesg`. Sorry for the noise. Here are the messages with the Linux 
+kernel time stamps, showing that the delays work correctly.
 
-That leaves the case where i_version is enabled for the filesystem,
-but the local kernel is not responsible for updating it.  This patch
-is mainly for filesystems, where we can't trust the filesystem
-properly increments i_version.
+```
+$ uname -a
+Linux Ixpees 4.15.0-041500rc2-generic #201712031230 SMP Sun Dec 3 
+17:32:03 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+$ sudo dmesg | grep TPM
+[    0.000000] ACPI: TPM2 0x000000006F332168 000034 (v03        Tpm2Tabl 
+00000001 AMI  00000000)
+[    1.114355] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 4)
+[    1.125250] tpm tpm0: A TPM error (2314) occurred continue selftest
+[    1.156645] tpm tpm0: A TPM error (2314) occurred continue selftest
+[    1.208053] tpm tpm0: A TPM error (2314) occurred continue selftest
+[    1.299640] tpm tpm0: A TPM error (2314) occurred continue selftest
+[    1.471223] tpm tpm0: A TPM error (2314) occurred continue selftest
+[    1.802819] tpm tpm0: A TPM error (2314) occurred continue selftest
+[    2.454320] tpm tpm0: A TPM error (2314) occurred continue selftest
+[    3.734808] tpm tpm0: TPM self test failed
+[    3.759675] ima: No TPM chip found, activating TPM-bypass! (rc=-19)
+```
 
-Eric/Seth, with Sasha's patch is this patch still needed for fuse
-filesystems?
 
-Mimi
+Kind regards,
+
+Paul
+
+
+
+    [ Part 2, "S/MIME Cryptographic Signature" ]
+    [ Application/PKCS7-SIGNATURE (Name: "smime.p7s") 5.3 KB. ]
+    [ Unable to print this part. ]
