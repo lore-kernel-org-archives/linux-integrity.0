@@ -1,77 +1,82 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:42950 "EHLO mx1.molgen.mpg.de"
+Received: from lhrrgout.huawei.com ([194.213.3.17]:9381 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752439AbdLKMyy (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Dec 2017 07:54:54 -0500
-Subject: Re: [Regression 4.15-rc2] New messages `tpm tpm0: A TPM error (2314)
- occurred continue selftest`
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Alexander.Steffen@infineon.com, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <a45f96a3-6948-4ef9-4631-29631329e833@molgen.mpg.de>
- <32b0e6c1292f4818825e9e0e9bff4d39@infineon.com>
- <20171207183743.GB16884@ziepe.ca>
- <37b47bbcce5d4cf1b1fad32576e501d4@infineon.com>
- <20171208155641.GA2883@ziepe.ca>
- <c544a476-5ea9-df81-ea8b-01fa578738f0@molgen.mpg.de>
- <20171208161814.GB2883@ziepe.ca>
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-Message-ID: <d70c683a-9ac2-e731-d6fd-173ac35c5b1b@molgen.mpg.de>
-Date: Mon, 11 Dec 2017 13:54:51 +0100
+        id S1751274AbdLKI1B (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 11 Dec 2017 03:27:01 -0500
+Subject: Re: [PATCH v2 00/15] ima: digest list feature
+To: Ken Goldman <kgold@linux.vnet.ibm.com>,
+        <linux-integrity@vger.kernel.org>
+References: <20171107103710.10883-1-roberto.sassu@huawei.com>
+ <5060980f-2b70-6b77-89f2-5ef66ff4cace@linux.vnet.ibm.com>
+ <bca7c2af-def4-17cd-7b91-c1122877d3d4@huawei.com>
+ <0813ba81-d06d-318d-4947-28ba7ad38e0e@linux.vnet.ibm.com>
+From: Roberto Sassu <roberto.sassu@huawei.com>
+CC: Silviu Vlasceanu <silviu.vlasceanu@huawei.com>
+Message-ID: <3a7b696d-5fb2-a97d-d4f1-65e0f8df9515@huawei.com>
+Date: Mon, 11 Dec 2017 09:26:40 +0100
 MIME-Version: 1.0
-In-Reply-To: <20171208161814.GB2883@ziepe.ca>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms000904080301020200010907"
+In-Reply-To: <0813ba81-d06d-318d-4947-28ba7ad38e0e@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Dear Jason,
-
-
-On 12/08/17 17:18, Jason Gunthorpe wrote:
-> On Fri, Dec 08, 2017 at 05:07:39PM +0100, Paul Menzel wrote:
+On 12/8/2017 10:59 PM, Ken Goldman wrote:
+> On 12/6/2017 4:13 AM, Roberto Sassu wrote:
 > 
->> I have no access to the system right now, but want to point out, that the
->> log was created by `journactl -k`, so I do not know if that messes with the
->> time stamps. I checked the output of `dmesg` but didn't see the TPM error
->> messages in the output - only `tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE,
->> rev-id 4)`. Do I need to pass a different error message to `dmesg`?
+>> I think this is not suitable for scenarios where unknown Requestors are
+>> attested.
 > 
-> It is a good question, I don't know.. If your kernel isn't setup to
-> timestamp messages then the journalstamp will certainly be garbage.
+> Could you explain.  The relying party can either accept the unknown 
+> requester or reject it.  What's the issue?
+
+I meant that when a Verifier attests unknown Requestors, likely delta
+reports cannot be used. The Verifier would have to store the base report
+also for Requestors that are attested only once.
+
+
+>> https://trustedcomputinggroup.org/wp-content/uploads/IWG_Architecture_v1_0_r1.pdf 
+>> (Section 4)
+>>
+>>
+>>> - if it's the first quote after a reboot, send the entire log, else
+>>> - if PCRs haven't changed, don't send anything, else
+>>> - send a delta since the last attestation.
+>>>
+>>> Even without this obvious optimization, the transmit time is 
+>>> negligible compared to the quote signature generation time.
+>> Having large measurement lists introduces additional issues:
+>>
+>> 1) overhead to generate/parse the TCG Integrity Report
+>>     (Requestor/Verifier)
 > 
-> No idea why you wouldn't see the messages in dmesg, if they are not in
-> dmesg they couldn't get into the journal
+> 1 - When I profiled my code, the TPM quote signing was nearly all the 
+> time.  For the first quote, verifying the IMA signatures at the relying 
+> party was also measurable.
+> 
+> Everything else - parsing at the requester and relying party, transmit 
+> time, even reconstructing the PCRs from the event log, was insignificant.
+> 
+> General principle:  Whenever there's an asymmetric key operation, it's 
+> likely that nothing else affects performance.
+> 
+>> 2) storage requirement (Verifier)
+>> 3) overhead to build the complete Integrity Report from base + delta if
+>>     the verification tool is not stateful (Verifier)
+> 
+> 2 - I assume that the verifier will have a disk.  With our logs running 
+> 1-10 mbytes, a generic 2017 disk can handle 100,000's of requesters.
+> 
+> 3 - All implementations I know of use some database for the verifier. It 
+> already has to hold public keys, error reports, etc.  Adding one more 
+> integer - the number of events in the last report - isn't hard.
+> 
+> I have open source sample code that does all this already.
 
-It looks like I was running an older Linux kernel version, when running 
-`dmesg`. Sorry for the noise. Here are the messages with the Linux 
-kernel time stamps, showing that the delays work correctly.
+With OpenAttestation 1.7 (which supports IMA), I noticed some delays.
+But, as you said, performance can be improved.
 
-```
-$ uname -a
-Linux Ixpees 4.15.0-041500rc2-generic #201712031230 SMP Sun Dec 3 
-17:32:03 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
-$ sudo dmesg | grep TPM
-[    0.000000] ACPI: TPM2 0x000000006F332168 000034 (v03        Tpm2Tabl 
-00000001 AMI  00000000)
-[    1.114355] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 4)
-[    1.125250] tpm tpm0: A TPM error (2314) occurred continue selftest
-[    1.156645] tpm tpm0: A TPM error (2314) occurred continue selftest
-[    1.208053] tpm tpm0: A TPM error (2314) occurred continue selftest
-[    1.299640] tpm tpm0: A TPM error (2314) occurred continue selftest
-[    1.471223] tpm tpm0: A TPM error (2314) occurred continue selftest
-[    1.802819] tpm tpm0: A TPM error (2314) occurred continue selftest
-[    2.454320] tpm tpm0: A TPM error (2314) occurred continue selftest
-[    3.734808] tpm tpm0: TPM self test failed
-[    3.759675] ima: No TPM chip found, activating TPM-bypass! (rc=-19)
-```
+Roberto
 
-
-Kind regards,
-
-Paul
-
-
-
-    [ Part 2, "S/MIME Cryptographic Signature" ]
-    [ Application/PKCS7-SIGNATURE (Name: "smime.p7s") 5.3 KB. ]
-    [ Unable to print this part. ]
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
