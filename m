@@ -1,57 +1,41 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42712 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751289AbdLKWCM (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42398 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752435AbdLKVzk (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Dec 2017 17:02:12 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vBBM1VmU026187
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Dec 2017 17:02:12 -0500
+        Mon, 11 Dec 2017 16:55:40 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vBBLp1CP083368
+        for <linux-integrity@vger.kernel.org>; Mon, 11 Dec 2017 16:55:39 -0500
 Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2eswubcv1u-1
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2esyjk0abp-1
         (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Dec 2017 17:02:11 -0500
+        for <linux-integrity@vger.kernel.org>; Mon, 11 Dec 2017 16:55:39 -0500
 Received: from localhost
         by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Mon, 11 Dec 2017 22:02:09 -0000
-Subject: Re: ima:  temporary "next-queued-testing" branch  (UPDATE)
+        Mon, 11 Dec 2017 21:55:37 -0000
+Subject: Re: Security subsystem tree merge to v4.15-rc3
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: linux-integrity <linux-integrity@vger.kernel.org>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Date: Mon, 11 Dec 2017 17:02:06 -0500
-In-Reply-To: <1512564458.4698.33.camel@linux.vnet.ibm.com>
-References: <1512564458.4698.33.camel@linux.vnet.ibm.com>
+To: James Morris <james.l.morris@oracle.com>,
+        linux-security-module@vger.kernel.org
+Cc: linux-integrity <linux-integrity@vger.kernel.org>
+Date: Mon, 11 Dec 2017 16:55:33 -0500
+In-Reply-To: <alpine.LFD.2.20.1712111702560.20676@localhost>
+References: <alpine.LFD.2.20.1712111702560.20676@localhost>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1513029726.3530.29.camel@linux.vnet.ibm.com>
+Message-Id: <1513029333.3530.24.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, 2017-12-06 at 07:47 -0500, Mimi Zohar wrote:
-> Hi -
+On Mon, 2017-12-11 at 17:05 +1100, James Morris wrote:
+> For developers working against the security subsystem tree,
 > 
-> Before upstreaming "ima: re-introduce own integrity cache lock", I've
-> pushed the following patches to the next-queued-testing branch for
-> testing.  We'll resync with the linux-security tree based on -rc3,
-> hopefully next week.
+> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
 > 
-> d79d361c25d7 ima: re-introduce own integrity cache lock
-> 4e94bcf160f2 ima: support new "hash" and "dont_hash" policy actions
-> bd1fa1e14733 ima: Fix line continuation format
-> cf46932b9a02 ima: pass filename to ima_rdwr_violation_check()
-> 4aad0b3845e4 ima: log message to module appraisal error
+> this is now merged to Linus' v4.15-rc3.
 
-We're now sync'ed with the security tree next-general branch.  There
-are a few differences, nothing major, between the "next-queued-
-testing" branch and the "next-integrity" branch.
-
-For those posting IMA/EVM patches, please base them on the   
-git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-branch.
-
-Sorry for any inconveniences this might have caused.
-
-thanks,
+Thanks, James!
 
 Mimi
