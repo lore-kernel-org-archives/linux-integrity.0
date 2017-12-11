@@ -1,52 +1,53 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.133]:62385 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750725AbdLKTht (ORCPT
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:44588 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750707AbdLKRlb (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Dec 2017 14:37:49 -0500
-To: linux-integrity@vger.kernel.org, azhar.shaikh@intel.com,
-        jarkko.sakkinen@linux.intel.com
-Cc: linux-kernel@vger.kernel.org, james.l.morris@oracle.com
-From: James Ettle <james@ettle.org.uk>
-Subject: [BISECTED] tpm CLKRUN breaks PS/2 keyboard and touchpad on Braswell
- system
-Message-ID: <57d96314-cc9c-0656-186e-4eb77a132b70@ettle.org.uk>
-Date: Mon, 11 Dec 2017 19:37:29 +0000
+        Mon, 11 Dec 2017 12:41:31 -0500
+Received: by mail-wm0-f45.google.com with SMTP id t8so15997929wmc.3
+        for <linux-integrity@vger.kernel.org>; Mon, 11 Dec 2017 09:41:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1513012934.3846.197.camel@linux.vnet.ibm.com>
+References: <CAO6P2QT3n0WphLHP-e2cyLFMcp_i4PXv3Atezpksdtn4nfVmPA@mail.gmail.com>
+ <1512915528.3846.29.camel@linux.vnet.ibm.com> <CAO6P2QQfeay18Fg13YGfE-EysiVT6UerSPJvoKdqmTSeLiMD8A@mail.gmail.com>
+ <1512921715.3846.33.camel@linux.vnet.ibm.com> <CAO6P2QTnCaGJXrDKy4jWnqRJzcb1YCSfvbQ+PrR-4h5_UJC0vw@mail.gmail.com>
+ <CAO6P2QTFRnSor10C01QvDoD9-uVoszKbN49u12owzMcvRvA-6g@mail.gmail.com>
+ <CAO6P2QTRfOYMiB1HEbaYghsH+2bw1tyHrGsMt6G8jbQKHQKETA@mail.gmail.com>
+ <1513000117.3846.122.camel@linux.vnet.ibm.com> <CAO6P2QQ2J--2hyz-L78uAOcDZQ3VKzbtiYO7oSFxD7Z0Yo+V9Q@mail.gmail.com>
+ <1513007322.3846.146.camel@linux.vnet.ibm.com> <CAO6P2QQe_gX3MYz-YwQF2=YCk1-Bna+Phg8Rz_-yp5rKtG1SzA@mail.gmail.com>
+ <1513012934.3846.197.camel@linux.vnet.ibm.com>
+From: "Paul R. Tagliamonte" <paultag@gmail.com>
+Date: Mon, 11 Dec 2017 12:41:09 -0500
+Message-ID: <CAO6P2QQSe0Mn4FmE6hqKDNu=j_1xAE7Ay+G4UAZjuA0sitpqgw@mail.gmail.com>
+Subject: Re: IMA keyctl problems
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hello,
+> Instead of "appraise func=BPRM_CHECK fowner=0 appraise_type=imasig"
+> the appraise rule would be "appraise func=BPRM_CHECK
+> appraise_type=imasig".
 
-[First: Apologies if cross-posting from Kernel.org BZ is bad form; my distro BZ advised I post this to your mailing list as well.]
+Spot on, thank you!
 
-Situation: enabling TPM on a Clevo W510LU with an Intel N3160 CPU breaks PS/2 keyboard and mouse. They just don't respond until after a suspend/resume cycle, and after that they later stop after a while.
+I didn't have a func=* which was causing this entire mess. I changed
+the rule from:
 
-I have confirmed this by blacklisting tpm modules. I noticed this first with kernel 4.13, and have bisected it down to:
+`appraise appraise_type=imasig uid=1000` to:
+`appraise appraise_type=imasig func=BPRM_CHECK uid=1000`
 
-5e572cab92f0bb56ca1e6e5ee4d807663a7ccbad is the first bad commit
-commit 5e572cab92f0bb56ca1e6e5ee4d807663a7ccbad
-Author: Azhar Shaikh <azhar.shaikh@intel.com>
-Date:   Sun Jun 18 19:17:59 2017 -0700
+All behaves exactly as expected. I now have this VM booting and doing
+so with enforced IMA signatures. Neato, thanks!
 
-    tpm: Enable CLKRUN protocol for Braswell systems
-    
-    To overcome a hardware limitation on Intel Braswell systems,
-    disable CLKRUN protocol during TPM transactions and re-enable
-    once the transaction is completed.
-    
-    Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
-    Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-    Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-    Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-    Signed-off-by: James Morris <james.l.morris@oracle.com>
+Weird so much came out as what looked like a keyctl issue. Apologies
+for focusing on that and not posting the policy file, It's not clear
+exactly why this policy rule bug surfaced like that, but I think I'm
+off with a baseline now.
 
-:040000 040000 5437c91886cb62c497255f2c60dbedd7268ab50d 1863a1738ded35a817aad52f9f2b451bd43623d7 M	drivers
+Thanks a ton for the help!
+  Paul
 
-Currently in Kernel.org bugzilla 197287.
-
-Please let me know if you need any further info.
-
-Many thanks,
-James.
+-- 
+:wq
