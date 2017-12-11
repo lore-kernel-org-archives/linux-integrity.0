@@ -1,75 +1,80 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from smtp11.infineon.com ([217.10.52.105]:4156 "EHLO
-        smtp11.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752456AbdLKQJB (ORCPT
+Received: from smtp2.infineon.com ([217.10.52.18]:12789 "EHLO
+        smtp2.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751584AbdLKQFa (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Dec 2017 11:09:01 -0500
-From: <Alexander.Steffen@infineon.com>
-To: <pmenzel@molgen.mpg.de>, <jgg@ziepe.ca>
-CC: <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: RE: [Regression 4.15-rc2] New messages `tpm tpm0: A TPM error (2314)
- occurred continue selftest`
-Date: Mon, 11 Dec 2017 16:08:59 +0000
-Message-ID: <c700bf23fcf44221bc179a7b0e6df5c9@infineon.com>
-References: <a45f96a3-6948-4ef9-4631-29631329e833@molgen.mpg.de>
- <32b0e6c1292f4818825e9e0e9bff4d39@infineon.com>
- <20171207183743.GB16884@ziepe.ca>
- <37b47bbcce5d4cf1b1fad32576e501d4@infineon.com>
- <20171208155641.GA2883@ziepe.ca>
- <c544a476-5ea9-df81-ea8b-01fa578738f0@molgen.mpg.de>
- <20171208161814.GB2883@ziepe.ca>
- <d70c683a-9ac2-e731-d6fd-173ac35c5b1b@molgen.mpg.de>
-In-Reply-To: <d70c683a-9ac2-e731-d6fd-173ac35c5b1b@molgen.mpg.de>
-Content-Type: text/plain; charset="utf-8"
+        Mon, 11 Dec 2017 11:05:30 -0500
+From: Alexander Steffen <Alexander.Steffen@infineon.com>
+To: <pmenzel@molgen.mpg.de>, <jgg@ziepe.ca>,
+        <jarkko.sakkinen@linux.intel.com>,
+        <linux-integrity@vger.kernel.org>
+CC: Alexander Steffen <Alexander.Steffen@infineon.com>
+Subject: [PATCH] tpm2-cmd: allow more attempts for selftest execution
+Date: Mon, 11 Dec 2017 17:05:25 +0100
+Message-ID: <20171211160525.10576-1-Alexander.Steffen@infineon.com>
 MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-> Dear Jason,
-> 
-> 
-> On 12/08/17 17:18, Jason Gunthorpe wrote:
-> > On Fri, Dec 08, 2017 at 05:07:39PM +0100, Paul Menzel wrote:
-> >
-> >> I have no access to the system right now, but want to point out, that the
-> >> log was created by `journactl -k`, so I do not know if that messes with the
-> >> time stamps. I checked the output of `dmesg` but didn't see the TPM
-> error
-> >> messages in the output - only `tpm_tis MSFT0101:00: 2.0 TPM (device-id
-> 0xFE,
-> >> rev-id 4)`. Do I need to pass a different error message to `dmesg`?
-> >
-> > It is a good question, I don't know.. If your kernel isn't setup to
-> > timestamp messages then the journalstamp will certainly be garbage.
-> >
-> > No idea why you wouldn't see the messages in dmesg, if they are not in
-> > dmesg they couldn't get into the journal
-> 
-> It looks like I was running an older Linux kernel version, when running
-> `dmesg`. Sorry for the noise. Here are the messages with the Linux
-> kernel time stamps, showing that the delays work correctly.
-> 
-> ```
-> $ uname -a
-> Linux Ixpees 4.15.0-041500rc2-generic #201712031230 SMP Sun Dec 3
-> 17:32:03 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
-> $ sudo dmesg | grep TPM
-> [    0.000000] ACPI: TPM2 0x000000006F332168 000034 (v03        Tpm2Tabl
-> 00000001 AMI  00000000)
-> [    1.114355] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 4)
-> [    1.125250] tpm tpm0: A TPM error (2314) occurred continue selftest
-> [    1.156645] tpm tpm0: A TPM error (2314) occurred continue selftest
-> [    1.208053] tpm tpm0: A TPM error (2314) occurred continue selftest
-> [    1.299640] tpm tpm0: A TPM error (2314) occurred continue selftest
-> [    1.471223] tpm tpm0: A TPM error (2314) occurred continue selftest
-> [    1.802819] tpm tpm0: A TPM error (2314) occurred continue selftest
-> [    2.454320] tpm tpm0: A TPM error (2314) occurred continue selftest
-> [    3.734808] tpm tpm0: TPM self test failed
-> [    3.759675] ima: No TPM chip found, activating TPM-bypass! (rc=-19)
-> ```
+Previously, if the last attempt to execute the selftest command failed with
+RC_TESTING, there was still a call to tpm_msleep, even though no further
+attempt would be made. This causes an unnecessary delay, therefore ensure
+that if the last attempt fails the function is left immediately.
 
-Thanks for the fixed log. So your TPM seems to be rather slow with executing the selftests. Could try to apply the patch that I've just sent you? It ensures that your TPM gets more time to execute all the tests, up to the limit set in the PTP.
+Also, instead of ensuring that the cumulated runtime of all attempts is
+larger than the command duration for TPM2_SelfTest, ensure that there is at
+least one attempt for which the delay is larger than the expected command
+duration. This allows slow TPMs to execute all their tests in the
+background, without slowing down faster TPMs that have finished their tests
+earlier. If tests are still not finished even with this long delay, then
+something is broken and the TPM is not used.
 
-(I would have sent that patch also to linux-kernel@vger.kernel.org, since it was included in the discussion, but for some strange reason my mail system declared that to be an "Invalid address"...)
+Fixes: 125a22105410 ("tpm: React correctly to RC_TESTING from TPM 2.0 self
+tests")
 
-Alexander
+Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
+---
+ drivers/char/tpm/tpm2-cmd.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index f40d206..c17e753 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -849,28 +849,26 @@ static const struct tpm_input_header tpm2_selftest_header = {
+ static int tpm2_do_selftest(struct tpm_chip *chip)
+ {
+ 	int rc;
+-	unsigned int delay_msec = 20;
++	unsigned int delay_msec = 10;
+ 	long duration;
+ 	struct tpm2_cmd cmd;
+ 
+ 	duration = jiffies_to_msecs(
+ 		tpm2_calc_ordinal_duration(chip, TPM2_CC_SELF_TEST));
+ 
+-	while (duration > 0) {
++	while (1) {
+ 		cmd.header.in = tpm2_selftest_header;
+ 		cmd.params.selftest_in.full_test = 0;
+ 
+ 		rc = tpm_transmit_cmd(chip, NULL, &cmd, TPM2_SELF_TEST_IN_SIZE,
+ 				      0, 0, "continue selftest");
+ 
+-		if (rc != TPM2_RC_TESTING)
++		if (rc != TPM2_RC_TESTING || delay_msec >= duration)
+ 			break;
+ 
+-		tpm_msleep(delay_msec);
+-		duration -= delay_msec;
+-
+-		/* wait longer the next round */
++		/* wait longer than before */
+ 		delay_msec *= 2;
++		tpm_msleep(delay_msec);
+ 	}
+ 
+ 	return rc;
+-- 
+2.7.4
