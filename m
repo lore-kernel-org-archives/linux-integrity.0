@@ -1,41 +1,52 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42398 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752435AbdLKVzk (ORCPT
+Received: from mout.kundenserver.de ([212.227.126.133]:62385 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750725AbdLKTht (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Dec 2017 16:55:40 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vBBLp1CP083368
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Dec 2017 16:55:39 -0500
-Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2esyjk0abp-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Dec 2017 16:55:39 -0500
-Received: from localhost
-        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Mon, 11 Dec 2017 21:55:37 -0000
-Subject: Re: Security subsystem tree merge to v4.15-rc3
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: James Morris <james.l.morris@oracle.com>,
-        linux-security-module@vger.kernel.org
-Cc: linux-integrity <linux-integrity@vger.kernel.org>
-Date: Mon, 11 Dec 2017 16:55:33 -0500
-In-Reply-To: <alpine.LFD.2.20.1712111702560.20676@localhost>
-References: <alpine.LFD.2.20.1712111702560.20676@localhost>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1513029333.3530.24.camel@linux.vnet.ibm.com>
+        Mon, 11 Dec 2017 14:37:49 -0500
+To: linux-integrity@vger.kernel.org, azhar.shaikh@intel.com,
+        jarkko.sakkinen@linux.intel.com
+Cc: linux-kernel@vger.kernel.org, james.l.morris@oracle.com
+From: James Ettle <james@ettle.org.uk>
+Subject: [BISECTED] tpm CLKRUN breaks PS/2 keyboard and touchpad on Braswell
+ system
+Message-ID: <57d96314-cc9c-0656-186e-4eb77a132b70@ettle.org.uk>
+Date: Mon, 11 Dec 2017 19:37:29 +0000
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2017-12-11 at 17:05 +1100, James Morris wrote:
-> For developers working against the security subsystem tree,
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
-> 
-> this is now merged to Linus' v4.15-rc3.
+Hello,
 
-Thanks, James!
+[First: Apologies if cross-posting from Kernel.org BZ is bad form; my distro BZ advised I post this to your mailing list as well.]
 
-Mimi
+Situation: enabling TPM on a Clevo W510LU with an Intel N3160 CPU breaks PS/2 keyboard and mouse. They just don't respond until after a suspend/resume cycle, and after that they later stop after a while.
+
+I have confirmed this by blacklisting tpm modules. I noticed this first with kernel 4.13, and have bisected it down to:
+
+5e572cab92f0bb56ca1e6e5ee4d807663a7ccbad is the first bad commit
+commit 5e572cab92f0bb56ca1e6e5ee4d807663a7ccbad
+Author: Azhar Shaikh <azhar.shaikh@intel.com>
+Date:   Sun Jun 18 19:17:59 2017 -0700
+
+    tpm: Enable CLKRUN protocol for Braswell systems
+    
+    To overcome a hardware limitation on Intel Braswell systems,
+    disable CLKRUN protocol during TPM transactions and re-enable
+    once the transaction is completed.
+    
+    Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
+    Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+    Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+    Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+    Signed-off-by: James Morris <james.l.morris@oracle.com>
+
+:040000 040000 5437c91886cb62c497255f2c60dbedd7268ab50d 1863a1738ded35a817aad52f9f2b451bd43623d7 M	drivers
+
+Currently in Kernel.org bugzilla 197287.
+
+Please let me know if you need any further info.
+
+Many thanks,
+James.
