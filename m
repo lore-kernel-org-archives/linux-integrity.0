@@ -1,62 +1,107 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:32877 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751459AbdLNLVa (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 14 Dec 2017 06:21:30 -0500
-Date: Thu, 14 Dec 2017 13:21:24 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: James Ettle <james@ettle.org.uk>
-Cc: linux-integrity@vger.kernel.org, azhar.shaikh@intel.com,
-        linux-kernel@vger.kernel.org, james.l.morris@oracle.com
-Subject: Re: [BISECTED] tpm CLKRUN breaks PS/2 keyboard and touchpad on
- Braswell system
-Message-ID: <20171214112124.7t2oxch2gadyfqsr@linux.intel.com>
-References: <57d96314-cc9c-0656-186e-4eb77a132b70@ettle.org.uk>
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:34227 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750844AbdLNKd5 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 14 Dec 2017 05:33:57 -0500
+Subject: Re: [Regression 4.15-rc2] New messages `tpm tpm0: A TPM error (2314)
+ occurred continue selftest`
+To: Alexander Steffen <alexander.steffen@infineon.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mario Limonciello <mario.limonciello@dell.com>
+References: <a45f96a3-6948-4ef9-4631-29631329e833@molgen.mpg.de>
+ <32b0e6c1292f4818825e9e0e9bff4d39@infineon.com>
+ <20171207183743.GB16884@ziepe.ca>
+ <37b47bbcce5d4cf1b1fad32576e501d4@infineon.com>
+ <20171208155641.GA2883@ziepe.ca>
+ <c544a476-5ea9-df81-ea8b-01fa578738f0@molgen.mpg.de>
+ <20171208161814.GB2883@ziepe.ca>
+ <d70c683a-9ac2-e731-d6fd-173ac35c5b1b@molgen.mpg.de>
+ <c700bf23fcf44221bc179a7b0e6df5c9@infineon.com>
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+Message-ID: <3159adc4-4236-c963-a118-500a61f21338@molgen.mpg.de>
+Date: Thu, 14 Dec 2017 11:33:54 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <57d96314-cc9c-0656-186e-4eb77a132b70@ettle.org.uk>
+In-Reply-To: <c700bf23fcf44221bc179a7b0e6df5c9@infineon.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms090302070009090506030307"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Dec 11, 2017 at 07:37:29PM +0000, James Ettle wrote:
-> Hello,
+[Mario from Dell added to CC list.]
+
+Dear Alexander,
+
+
+On 12/11/17 17:08, Alexander.Steffen@infineon.com wrote:
+
+>> On 12/08/17 17:18, Jason Gunthorpe wrote:
+>>> On Fri, Dec 08, 2017 at 05:07:39PM +0100, Paul Menzel wrote:
+>>>
+>>>> I have no access to the system right now, but want to point out, that the
+>>>> log was created by `journactl -k`, so I do not know if that messes with the
+>>>> time stamps. I checked the output of `dmesg` but didn't see the TPM error
+>>>> messages in the output - only `tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE,
+>>>> rev-id 4)`. Do I need to pass a different error message to `dmesg`?
+>>>
+>>> It is a good question, I don't know.. If your kernel isn't setup to
+>>> timestamp messages then the journalstamp will certainly be garbage.
+>>>
+>>> No idea why you wouldn't see the messages in dmesg, if they are not in
+>>> dmesg they couldn't get into the journal
+>>
+>> It looks like I was running an older Linux kernel version, when running
+>> `dmesg`. Sorry for the noise. Here are the messages with the Linux
+>> kernel time stamps, showing that the delays work correctly.
+>>
+>> ```
+>> $ uname -a
+>> Linux Ixpees 4.15.0-041500rc2-generic #201712031230 SMP Sun Dec 3
+>> 17:32:03 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+>> $ sudo dmesg | grep TPM
+>> [    0.000000] ACPI: TPM2 0x000000006F332168 000034 (v03        Tpm2Tabl
+>> 00000001 AMI  00000000)
+>> [    1.114355] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 4)
+>> [    1.125250] tpm tpm0: A TPM error (2314) occurred continue selftest
+>> [    1.156645] tpm tpm0: A TPM error (2314) occurred continue selftest
+>> [    1.208053] tpm tpm0: A TPM error (2314) occurred continue selftest
+>> [    1.299640] tpm tpm0: A TPM error (2314) occurred continue selftest
+>> [    1.471223] tpm tpm0: A TPM error (2314) occurred continue selftest
+>> [    1.802819] tpm tpm0: A TPM error (2314) occurred continue selftest
+>> [    2.454320] tpm tpm0: A TPM error (2314) occurred continue selftest
+>> [    3.734808] tpm tpm0: TPM self test failed
+>> [    3.759675] ima: No TPM chip found, activating TPM-bypass! (rc=-19)
+>> ```
 > 
-> [First: Apologies if cross-posting from Kernel.org BZ is bad form; my
-> distro BZ advised I post this to your mailing list as well.]
-> 
-> Situation: enabling TPM on a Clevo W510LU with an Intel N3160 CPU
-> breaks PS/2 keyboard and mouse. They just don't respond until after a
-> suspend/resume cycle, and after that they later stop after a while.
-> 
-> I have confirmed this by blacklisting tpm modules. I noticed this
-> first with kernel 4.13, and have bisected it down to:
+> Thanks for the fixed log. So your TPM seems to be rather slow with executing the selftests. Could try to apply the patch that I've just sent you? It ensures that your TPM gets more time to execute all the tests, up to the limit set in the PTP.
 
-In my GIT tree there is now:
+Thank you for your patch. Judging from the time stamps, it seems it 
+works, but the TPM still fails.
 
-commit db3248e8a036c39141c8f7e9f1cf5c5ae6815f76 (HEAD -> next, origin/next, origin/master, master)
-Author: Azhar Shaikh <azhar.shaikh@intel.com>
-Date:   Wed Dec 6 17:38:10 2017 -0800
+```
+$ dmesg | grep tpm
+[    1.100958] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 4)
+[    1.111768] tpm tpm0: A TPM error (2314) occurred continue selftest
+[    1.143020] tpm tpm0: A TPM error (2314) occurred continue selftest
+[    1.194251] tpm tpm0: A TPM error (2314) occurred continue selftest
+[    1.285509] tpm tpm0: A TPM error (2314) occurred continue selftest
+[    1.457103] tpm tpm0: A TPM error (2314) occurred continue selftest
+[    1.788709] tpm tpm0: A TPM error (2314) occurred continue selftest
+[    2.440216] tpm tpm0: A TPM error (2314) occurred continue selftest
+[    3.731704] tpm tpm0: A TPM error (2314) occurred continue selftest
+[    6.303216] tpm tpm0: A TPM error (2314) occurred continue selftest
+[    6.303242] tpm tpm0: TPM self test failed
+```
 
-    tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()
-    
-    Commit 5e572cab92f0bb5 ("tpm: Enable CLKRUN protocol for Braswell
-    systems") disabled CLKRUN protocol during TPM transactions and re-enabled
-    once the transaction is completed. But there were still some corner cases
-    observed where, reading of TPM header failed for savestate command
-    while going to suspend, which resulted in suspend failure.
-    To fix this issue keep the CLKRUN protocol disabled for the entire
-    duration of a single TPM command and not disabling and re-enabling
-    again for every TPM transaction. For the other TPM accesses outside
-    TPM command flow, add a higher level of disabling and re-enabling
-    the CLKRUN protocol, instead of doing for every TPM transaction.
-    
-    Fixes: 5e572cab92f0bb5 ("tpm: Enable CLKRUN protocol for Braswell systems")
-    
-    Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
-    Reviewed-by: Jarkko Sakkinen  <jarkko.sakkinen@linux.intel.com>
-    Tested-by: Jarkko Sakkinen  <jarkko.sakkinen@linux.intel.com>
-    Signed-off-by: Jarkko Sakkinen  <jarkko.sakkinen@linux.intel.com>
+To be clear, this issue is not reproducible during every start. (But 
+that was the same before.)
 
-Can you try this?
 
-/Jarkko
+Kind regards,
+
+Paul
+
+
+
+    [ Part 2, "S/MIME Cryptographic Signature" ]
+    [ Application/PKCS7-SIGNATURE (Name: "smime.p7s") 5.3 KB. ]
+    [ Unable to print this part. ]
