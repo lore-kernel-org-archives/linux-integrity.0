@@ -1,59 +1,26 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39898 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753940AbdLNTJB (ORCPT
+Received: from smtp11.infineon.com ([217.10.52.105]:53745 "EHLO
+        smtp11.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753195AbdLNQXa (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 14 Dec 2017 14:09:01 -0500
-Received: by mail-wm0-f65.google.com with SMTP id i11so13369506wmf.4
-        for <linux-integrity@vger.kernel.org>; Thu, 14 Dec 2017 11:09:01 -0800 (PST)
-Subject: Re: [BISECTED] tpm CLKRUN breaks PS/2 keyboard and touchpad on
- Braswell system
-To: James Ettle <james@ettle.org.uk>, linux-integrity@vger.kernel.org,
-        azhar.shaikh@intel.com, jarkko.sakkinen@linux.intel.com
-Cc: linux-kernel@vger.kernel.org, james.l.morris@oracle.com,
-        Jason Gunthorpe <jgg@ziepe.ca>
-References: <57d96314-cc9c-0656-186e-4eb77a132b70@ettle.org.uk>
- <34b361bf-cce7-a1ac-f8a3-76ef22f5b6b0@redhat.com>
- <5fb5de24-5a4c-4c01-1f72-49fc5844516c@ettle.org.uk>
-From: Javier Martinez Canillas <javierm@redhat.com>
-Message-ID: <011b4d29-9d93-4b7a-90dd-0c25cf184c3e@redhat.com>
-Date: Thu, 14 Dec 2017 20:08:58 +0100
+        Thu, 14 Dec 2017 11:23:30 -0500
+From: <Alexander.Steffen@infineon.com>
+To: <jarkko.sakkinen@linux.intel.com>
+CC: <shuahkh@osg.samsung.com>, <linux-integrity@vger.kernel.org>
+Subject: TPM tests within kselftest?
+Date: Thu, 14 Dec 2017 16:23:29 +0000
+Message-ID: <0d71b9ee00a14b689896cac1dcbb6a12@infineon.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-In-Reply-To: <5fb5de24-5a4c-4c01-1f72-49fc5844516c@ettle.org.uk>
-Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hello James,
+Hi Jarkko,
 
-On 12/12/2017 10:17 PM, James Ettle wrote:
-> OK, I built a kernel 4.14.5 from vanilla kernel.org sources using the Fedora .config (couldn't get the Fedora package to build).
-> 
-> I see no difference with both [0, 1] patches applied and the tpm modules loaded -- no keyboard or touchpad.
-> 
-> [Note: I'm not *consciously* using the TPM for anything, but /dev/tpm0 is present and have never initialised it. I don't know if anything in Fedora uses it by default if present.]
->
+during the Kernel Summit in Prague I talked with Shuah Khan about kselftest and the possibility to integrate TPM tests into that framework. What would you think about your tests (https://github.com/jsakkine-intel/tpm2-scripts) living there?
 
-On a default Fedora install the TPM isn't used, but the CLKRUN_EN toggling
-happens for all I/O operations with the TPM and the driver does access the
-TPM on its probe function.
+This way, those tests would get more visibility/popularity with other developers, and thus hopefully more contributors that can use that framework as a starting point. It also allows us to have a common test set, that all TPM developers can easily use for their work. And the tests being integrated into the kernel repository would avoid issues like I had just now, where your new test for invalid command codes failed when I tried to run it on an older kernel that did not have that functionality implemented.
 
-So even if you don't use it, the driver will mess with the CLKRUN signal.
+Currently, most tests within kselftest are not implemented in Python, but Shuah did not sound strictly opposed to that idea. In fact, some Python-based tests already have made it into the tree (https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/testing/selftests/tc-testing), though they do not seem to be called by kselftest by default.
 
-Jarkko and Azhar,
-
-I wonder what's the solution for this. I understand the quirk is needed for
-some systems, but on the other hand breaks functionality for other devices.
-
-I think that at the very least this should be disabled by default and have a
-Kconfig option or module parameter to enable if needed. Since as James said,
-it causes regressions even for people that are not using the TPM device.
-
-Although probably reverting the offending commits is the right thing to do
-until a proper solution is proposed.
-
-Best regards,
--- 
-Javier Martinez Canillas
-Software Engineer - Desktop Hardware Enablement
-Red Hat
+Alexander
