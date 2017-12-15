@@ -1,17 +1,15 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:40937 "EHLO mx1.molgen.mpg.de"
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:56856 "EHLO mx1.molgen.mpg.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932168AbdLOPiL (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 15 Dec 2017 10:38:11 -0500
+        id S932262AbdLOP0m (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 15 Dec 2017 10:26:42 -0500
 Subject: Re: [Regression 4.15-rc2] New messages `tpm tpm0: A TPM error (2314)
  occurred continue selftest`
-To: Mario Limonciello <mario.limonciello@dell.com>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
+To: Alexander Steffen <Alexander.Steffen@infineon.com>,
+        Mario Limonciello <mario.limonciello@dell.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
 Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Len Brown <len.brown@intel.com>,
-        Thorsten Leemhuis <linux@leemhuis.info>
+        rafael.j.wysocki@intel.com, len.brown@intel.com
 References: <a45f96a3-6948-4ef9-4631-29631329e833@molgen.mpg.de>
  <32b0e6c1292f4818825e9e0e9bff4d39@infineon.com>
  <20171207183743.GB16884@ziepe.ca>
@@ -27,96 +25,110 @@ References: <a45f96a3-6948-4ef9-4631-29631329e833@molgen.mpg.de>
  <cdbfa6c972684ed28a92b5105be71071@infineon.com>
  <5efeaf9e50e54b999efa91c39f311bd9@ausx13mpc120.AMER.DELL.COM>
  <127aefc5-44e1-7382-2548-5cd4774275b0@molgen.mpg.de>
- <39ff773039e04506affc4a8522bde99f@ausx13mpc120.AMER.DELL.COM>
- <6344e116-763f-98d5-5174-7395d761de45@molgen.mpg.de>
- <5bb6d2bc874f4227b7341c88373cf01f@ausx13mpc120.AMER.DELL.COM>
+ <a494a7397207458a9e7063ac0aa28195@infineon.com>
 From: Paul Menzel <pmenzel@molgen.mpg.de>
-Message-ID: <6076476b-ee73-d7f4-481b-3bc98e1127c5@molgen.mpg.de>
-Date: Fri, 15 Dec 2017 16:38:09 +0100
+Message-ID: <b1162c76-2629-e041-9bc6-54678b999e6b@molgen.mpg.de>
+Date: Fri, 15 Dec 2017 16:26:40 +0100
 MIME-Version: 1.0
-In-Reply-To: <5bb6d2bc874f4227b7341c88373cf01f@ausx13mpc120.AMER.DELL.COM>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms030908010307060503020408"
+In-Reply-To: <a494a7397207458a9e7063ac0aa28195@infineon.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms020304070509070503020104"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Dear Mario,
+Dear Alexander,
 
 
-On 12/15/17 16:24, Mario.Limonciello@dell.com wrote:
->> -----Original Message-----
->> From: Paul Menzel [mailto:pmenzel@molgen.mpg.de]
->> Sent: Friday, December 15, 2017 9:11 AM
->> To: Limonciello, Mario <Mario_Limonciello@Dell.com>; Alexander Steffen
->> <Alexander.Steffen@infineon.com>; Jason Gunthorpe <jgg@ziepe.ca>
->> Cc: linux-integrity@vger.kernel.org; linux-kernel@vger.kernel.org;
->> rafael.j.wysocki@intel.com; len.brown@intel.com
->> Subject: Re: [Regression 4.15-rc2] New messages `tpm tpm0: A TPM error (2314)
->> occurred continue selftest`
->>
->> Dear Mario,
->>
->>
->> On 12/15/17 15:39, Mario.Limonciello@dell.com wrote:
->>>> -----Original Message-----
->>>> From: Paul Menzel [mailto:pmenzel@molgen.mpg.de]
->>>> Sent: Friday, December 15, 2017 5:54 AM
->>>> To: Limonciello, Mario <Mario_Limonciello@Dell.com>; Alexander Steffen
->>>> <Alexander.Steffen@infineon.com>; Jason Gunthorpe <jgg@ziepe.ca>
->>>> Cc: linux-integrity@vger.kernel.org; linux-kernel@vger.kernel.org; Rafael J.
->>>> Wysocki <rafael.j.wysocki@intel.com>; Len Brown <len.brown@intel.com>
->>>> Subject: Re: [Regression 4.15-rc2] New messages `tpm tpm0: A TPM error (2314)
->>>> occurred continue selftest`
+On 12/15/17 15:54, Alexander.Steffen@infineon.com wrote:
 
 [...]
 
->>>> Mario, thank you for your quick reaction.
->>>>
->>>> [...]
->>>>
->>>> 1.  Can you reproduce this issue too?
->>>
->>> I haven't seen this, but if this is a regression I also have not run anything
->>> later than 4.15-rc1 right now.
+>> the added line breaks to the quoted parts really mess up the citation.
+>> Can we please try to use MUAs avoiding that, or fixing that manually?
+> 
+> Sorry, I'm not sure whether my company has a way for me to avoid using Outlook ;-) But if there are any configuration changes to make it behave better, I will gladly apply them. Do you know of any documentation on this? All I found so far either is already applied or was outdated.
+
+No idea, lines in quotes should probably not be touch and wrapped. At 
+least not without adding the right quoting level on the next line.
+
+> I'll remove some of the less relevant quoted parts, so that this is less of an issue.
+> 
+>>>>>>> To be clear, this issue is not reproducible during every start. (But
+>>>>>>> that was the same before.)
 >>
->> Well as far as I understood it, it's not a regression, and there is now
->> just better error reporting. Did you ever get the TPM to work?
-> 
-> I don't personally use a TPM with Linux on the XPS 9360, but TPM was
-> tested by our partners when the XPS 9360 was enabled for Ubuntu.
-
-It'd be great to know how it was tested, as currently it doesn't work 
-here. I included the output in my reply to Alexander just now.
-
->>>> 2.  How do I find out, what TPM firmware version is installed?
->>>
->>> fwupd will tell you.  Documentation (and code) here:
->>> https://github.com/hughsie/fwupd/tree/master/plugins/dell
+>> I think I found out how to reproduce the issue. Cold start the system
+>> without the power supply connected.
 >>
->> Unfortuntately it's not listed with fwupd 0.7.0-0ubuntu4.3 in Ubuntu
->> 16.04.3 LTS installed by Dell.
+>>>>>> Thanks for testing. Now you are in the unlucky situation that your TPM was
+>>>>>> probably always broken, but old kernels did not detect that and used it anyway.
+>>
+>> Just to clarify, I do not know if the TPM could ever be used. I believe
+>> the module loaded but the user space tools (tpm2_version or so) always
+>> returned an error in my tests.
 > 
-> If you're unwilling to upgrade to a newer userspace, you can write
-> a simple application that can use the new dell-smbios from 4.15 interface to look this up.
+> Interesting. So maybe it is not a bug in your TPM's firmware, but really a single defective TPM? Can you try to figure that out? That is, when using an older kernel in the cold start scenario, can you execute any useful commands on your TPM successfully?
 
-Is the newer userspace officially supported by Dell. Because I really 
-like to avoid the time-waste with the Dell support again, if I do not 
-use their installed OS. Sometimes the Dell support even claims the 
-installed Ubuntu flavor does not get any support by Dell.
+```
+$ uname -a
+Linux Ixpees 4.10.0-42-generic #46~16.04.1-Ubuntu SMP Mon Dec 4 15:57:59 
+UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+$ more /proc/version
+Linux version 4.10.0-42-generic (buildd@lgw01-amd64-007) (gcc version 
+5.4.0 20160609 (Ubuntu 5.4.0-6ubuntu1~16
+.04.5) ) #46~16.04.1-Ubuntu SMP Mon Dec 4 15:57:59 UTC 2017
+$ dmesg | grep tpm
+[    0.999122] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 4)
+$ sudo tpm_version
+Tspi_Context_Connect failed: 0x00003011 - layer=tsp, code=0011 (17), 
+Communication failure
+$ tpm_version --version
+tpm_version version: 1.3.8
+```
 
-> Most of the work is already done (see
-> https://github.com/torvalds/linux/blob/master/tools/wmi/dell-smbios-example.c#L179)
+>>>>> Something that Paul can consider is to upgrade the TPM firmware if it's not
+>>>>> already upgraded.  Since the launch of XPS 9360 there was at least one TPM
+>>>>> firmware update issued.  It has been posted to LVFS and can be upgraded using
+>>>>> fwupd/fwupdate.
+>>>>> Note: If your TPM is currently owned you will need to go into BIOS setup to
+>>>>> clear it first before upgrading.
+>>>>
+>>>> I'm not familiar with the specific TPM in your model, but according to the
+>>>> log it is a TPM 2.0, which does not really carry over the owner concept of
+>>>> a TPM 1.2. Is clearing it still necessary for an upgrade then?
+>>>
+>>> Yes it's required for the TPM model/vendor that is used in the XPS model that
+>>> Paul has.  If you try to run the upgrade without clearing it the firmware will
+>>> reject the upgrade.
+>>
+>> Mario, thank you for your quick reaction.
+>>
+>> [...]
+>>
+>> 1.  Can you reproduce this issue too?
+>> 2.  How do I find out, what TPM firmware version is installed?
 > 
-> You'll just need to add some parsing around the output (see fwupd code) to
-> tell the version.  If you do this, please feel free to submit it platform-x86, it may be useful
-> for someone else in this sample application too.
+> If you get the driver loaded, you can ask the TPM (TPM2_GetCapability for TPM_PT_FIRMWARE_VERSION_1 and TPM_PT_FIRMWARE_VERSION_2):
 > 
-> Given you don't have a newer fwupd on your system you won't be able to "easily" flash
-> the newer TPM firmware.
+> python3 -c 'f=open("/dev/tpm0", "r+b", buffering=0); f.write(b"\x80\x01\x00\x00\x00\x16\x00\x00\x01z\x00\x00\x00\x06\x00\x00\x01\x0b\x00\x00\x00\x02"); print(f.readall())'
 
-I assume you don't make these decisions, but please relay to your 
-superiors that working functionality in the recommended/shipped OS is 
-really what customers expect buying a device with GNU/Linux support. In 
-my opinion, Dell and Canonical really need to step up there.
+```
+$ sudo python3
+Python 3.5.2 (default, Nov 23 2017, 16:37:01)
+[GCC 5.4.0 20160609] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+ >>> f=open("/dev/tpm0", "r+b", buffering=0)
+ >>> 
+f.write(b"\x80\x01\x00\x00\x00\x16\x00\x00\x01z\x00\x00\x00\x06\x00\x00\x01\x0b\x00\x00\x00\x02")
+22
+ >>> print(f.readall())
+b'\x80\x01\x00\x00\x00#\x00\x00\x00\x00\x01\x00\x00\x00\x06\x00\x00\x00\x02\x00\x00\x01\x0b\x00\x01\x00\x03\x00\x00\x01\x0c\x00\x00\x00\x01'
+```
+
+>> 3.  Updating to the firmware 2.4.2 from December 17th, 2017 didn't fix
+>> the issue.
+> 
+> You've got a firmware from the future? ;-)
+
+Uups, right. It's from December 12th, 2017. ;-)
 
 
 Kind regards,
