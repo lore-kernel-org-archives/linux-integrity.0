@@ -1,86 +1,50 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:37194 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755899AbdLOVNc (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 15 Dec 2017 16:13:32 -0500
-Message-ID: <1513372409.20336.30.camel@kernel.org>
-Subject: Re: [RFC PATCH 2/4] ima: define new ima_sb_post_new_mount hook
-From: Jeff Layton <jlayton@kernel.org>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Date: Fri, 15 Dec 2017 16:13:29 -0500
-In-Reply-To: <1512659378.1350.17.camel@redhat.com>
-References: <1502904620-20075-1-git-send-email-zohar@linux.vnet.ibm.com>
-         <1502904620-20075-3-git-send-email-zohar@linux.vnet.ibm.com>
-         <1512649584.1350.14.camel@redhat.com>
-         <1512657359.3527.49.camel@linux.vnet.ibm.com>
-         <1512658216.1350.16.camel@redhat.com>
-         <1512659320.3527.53.camel@linux.vnet.ibm.com>
-         <1512659378.1350.17.camel@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:45835 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755534AbdLORib (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 15 Dec 2017 12:38:31 -0500
+Received: by mail-wm0-f65.google.com with SMTP id 9so18891606wme.4
+        for <linux-integrity@vger.kernel.org>; Fri, 15 Dec 2017 09:38:30 -0800 (PST)
+Date: Fri, 15 Dec 2017 10:38:26 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Javier Martinez Canillas <javierm@redhat.com>,
+        James Ettle <james@ettle.org.uk>,
+        linux-integrity@vger.kernel.org, azhar.shaikh@intel.com,
+        linux-kernel@vger.kernel.org, james.l.morris@oracle.com
+Subject: Re: [BISECTED] tpm CLKRUN breaks PS/2 keyboard and touchpad on
+ Braswell system
+Message-ID: <20171215173826.GD12434@ziepe.ca>
+References: <57d96314-cc9c-0656-186e-4eb77a132b70@ettle.org.uk>
+ <34b361bf-cce7-a1ac-f8a3-76ef22f5b6b0@redhat.com>
+ <5fb5de24-5a4c-4c01-1f72-49fc5844516c@ettle.org.uk>
+ <011b4d29-9d93-4b7a-90dd-0c25cf184c3e@redhat.com>
+ <20171214191052.GA20833@ziepe.ca>
+ <20171215145630.ftsnj4azqqhzqwsh@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171215145630.ftsnj4azqqhzqwsh@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, 2017-12-07 at 10:09 -0500, Jeff Layton wrote:
-> On Thu, 2017-12-07 at 10:08 -0500, Mimi Zohar wrote:
-> > On Thu, 2017-12-07 at 09:50 -0500, Jeff Layton wrote:
-> > > On Thu, 2017-12-07 at 09:35 -0500, Mimi Zohar wrote:
-> > > > Hi Jeff,
-> > > > 
-> > > > [The IMA/EVM and the TPM mailing lists have been combined as a single
-> > > > linux-integrity mailing list.]
-> > > > 
-> > > > On Thu, 2017-12-07 at 07:26 -0500, Jeff Layton wrote:
-> > > > > Sorry for the late review. I just started dusting off my i_version
-> > > > > rework, and noticed that IMA still has unaddressed problems here.
-> > > > 
-> > > > <snip>
-> > > > 
-> > > > > Personally, I'm not a huge fan of this scheme. It seems quite invasive,
-> > > > > and doesn't really seem to address the stated problem well.
-> > > > 
-> > > > A cleaned up version of this patch set was meant to follow the
-> > > > introduction of a new integrity_read method, but that patch set was
-> > > > rejected.  At this point, I have no intentions of upstreaming a
-> > > > cleaned up version this patch set either.
-> > > > 
-> > > > > The warning itself seems ok, but I don't really see what's wrong with
-> > > > > performing remeasurement when the mtime changes on filesystems that
-> > > > > don't have SB_I_VERSION set. Surely that's better than limiting it to an
-> > > > > initial measurement?
-> > > > > 
-> > > > > Maybe I just don't understand what you're really trying to achieve here.
-> > > > 
-> > > > Based on discussions with Sascha Hauer, he convinced me the i_version
-> > > > test is basically just a performance improvement and posted a patch
-> > > > that checks the filesystem for i_version support, before relying on it
-> > > > -  https://www.spinics.net/lists/linux-integrity/msg00033.html.
-> > > > 
-> > > > Mimi
-> > > > 
-> > > 
-> > > Thanks for the link. That patch looks good to me. Any idea when and if
-> > > it will be merged?
+On Fri, Dec 15, 2017 at 04:56:30PM +0200, Jarkko Sakkinen wrote:
+> On Thu, Dec 14, 2017 at 12:10:52PM -0700, Jason Gunthorpe wrote:
+> > On Thu, Dec 14, 2017 at 08:08:58PM +0100, Javier Martinez Canillas wrote:
 > > 
-> > Is that an Ack?  Barring any testing issues, I'll upstream it with
-> > yours in the next open window.
+> > > Although probably reverting the offending commits is the right thing to do
+> > > until a proper solution is proposed.
 > > 
-> > Mimi
+> > Yes, if a fix is not forthcoming soon Jarkko should revert.
 > > 
 > 
-> Sure, you can add:
-> 
-> Reviewed-by: Jeff Layton <jlayton@redhat.com>
+> I think I should drop the current patch going to 4.16 and revert the old
+> patch. Do we agree on this?
 
-BTW, could you get this into linux-next sometime soon? I have a series
-of patches to overhaul i_version handling that I want to go in soon and
-there could be merge conflicts.
+I think the entire is_bsw thing needs to go, clearly manipulating
+CLKRUN directly was not fully thought out?
 
-Thanks,
--- 
-Jeff Layton <jlayton@kernel.org>
+Hopefully Intel will come up with a fix patch to preserve PS/2
+functionality and it won't come to a revert..
+
+Jason
