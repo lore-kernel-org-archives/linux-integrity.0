@@ -1,51 +1,107 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:64467 "EHLO mga06.intel.com"
+Received: from mail.kernel.org ([198.145.29.99]:55872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757093AbdLPRBX (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 16 Dec 2017 12:01:23 -0500
-Message-ID: <1513443676.29063.0.camel@linux.intel.com>
-Subject: Re: [BISECTED] tpm CLKRUN breaks PS/2 keyboard and touchpad on
- Braswell system
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Javier Martinez Canillas <javierm@redhat.com>,
-        James Ettle <james@ettle.org.uk>,
-        linux-integrity@vger.kernel.org, azhar.shaikh@intel.com,
-        linux-kernel@vger.kernel.org, james.l.morris@oracle.com
-Date: Sat, 16 Dec 2017 19:01:16 +0200
-In-Reply-To: <20171215173826.GD12434@ziepe.ca>
-References: <57d96314-cc9c-0656-186e-4eb77a132b70@ettle.org.uk>
-         <34b361bf-cce7-a1ac-f8a3-76ef22f5b6b0@redhat.com>
-         <5fb5de24-5a4c-4c01-1f72-49fc5844516c@ettle.org.uk>
-         <011b4d29-9d93-4b7a-90dd-0c25cf184c3e@redhat.com>
-         <20171214191052.GA20833@ziepe.ca>
-         <20171215145630.ftsnj4azqqhzqwsh@linux.intel.com>
-         <20171215173826.GD12434@ziepe.ca>
+        id S1756368AbdLPQkY (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 16 Dec 2017 11:40:24 -0500
+Message-ID: <1513442419.3428.13.camel@kernel.org>
+Subject: Re: [PATCH v2 05/19] afs: convert to new i_version API
+From: Jeff Layton <jlayton@kernel.org>
+To: Jeffrey Altman <jaltman@auristor.com>,
+        linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-nfs@vger.kernel.org, bfields@fieldses.org, neilb@suse.de,
+        jack@suse.de, linux-ext4@vger.kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, linux-xfs@vger.kernel.org,
+        darrick.wong@oracle.com, david@fromorbit.com,
+        linux-btrfs@vger.kernel.org, clm@fb.com, jbacik@fb.com,
+        dsterba@suse.com, linux-integrity@vger.kernel.org,
+        zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
+        linux-afs@lists.infradead.org, dhowells@redhat.com
+Date: Sat, 16 Dec 2017 11:40:19 -0500
+In-Reply-To: <82157aa3-ec0b-25e6-517b-704a3f81ec61@auristor.com>
+References: <20171216134656.15561-1-jlayton@kernel.org>
+         <20171216134656.15561-6-jlayton@kernel.org>
+         <1513432186.3428.6.camel@kernel.org>
+         <82157aa3-ec0b-25e6-517b-704a3f81ec61@auristor.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 2017-12-15 at 10:38 -0700, Jason Gunthorpe wrote:
-> On Fri, Dec 15, 2017 at 04:56:30PM +0200, Jarkko Sakkinen wrote:
-> > On Thu, Dec 14, 2017 at 12:10:52PM -0700, Jason Gunthorpe wrote:
-> > > On Thu, Dec 14, 2017 at 08:08:58PM +0100, Javier Martinez Canillas wrote:
-> > > 
-> > > > Although probably reverting the offending commits is the right thing to do
-> > > > until a proper solution is proposed.
-> > > 
-> > > Yes, if a fix is not forthcoming soon Jarkko should revert.
-> > > 
-> > 
-> > I think I should drop the current patch going to 4.16 and revert the old
-> > patch. Do we agree on this?
+On Sat, 2017-12-16 at 11:18 -0500, Jeffrey Altman wrote:
+> Hi Jeff,
 > 
-> I think the entire is_bsw thing needs to go, clearly manipulating
-> CLKRUN directly was not fully thought out?
+> A few thoughts on AFS usage below which might impact a future revision
+> of the API.  I hope they are useful.
 > 
-> Hopefully Intel will come up with a fix patch to preserve PS/2
-> functionality and it won't come to a revert..
+> On 12/16/2017 8:49 AM, Jeff Layton wrote:
+> > On Sat, 2017-12-16 at 08:46 -0500, Jeff Layton wrote:
+> > > From: Jeff Layton <jlayton@redhat.com>
+> > > 
+> > > For AFS, it's generally treated as an opaque value, so we use the
+> > > *_raw variants of the API here.
+> > > 
+> > > Note that AFS has quite a different definition for this counter. AFS
+> > > only increments it on changes to the data, not for the metadata. We'll
+> > > need to reconcile that somehow if we ever want to present this to
+> > > userspace via statx.
+> > > 
+> 
+> From the patch series notes:
+> 
+> "The inode->i_version field is supposed to be a value that changes
+> whenever there is any data or metadata change to the inode. Some
+> filesystems use it internally to detect directory changes during
+> readdir. knfsd will use it if the filesystem has MS_I_VERSION set. IMA
+> will also use it to optimize away some remeasurement if it's available.
+> NFS and AFS just use it to store an opaque change attribute from the
+> server.
+> 
+> "Only btrfs, ext4, and xfs increment it for data changes. Because of
+> this, these filesystems must log the inode to disk whenever the
+> i_version counter changes. That has a non-zero performance impact,
+> especially on write-heavy workloads, because we end up dirtying the
+> inode metadata on every write, not just when the times change. [1]"
+> 
+> 
+> The AFS/AuriStorFS data version is an unsigned 64-bit value that is
+> incremented by the file server as part of a data changing operation. For
+> files, a StoreData and for directories entry manipulations such as
+> create, rename, delete.  This data version is used to tag the version of
+> any subset of the data stream for caching and replication purposes.
+> 
+> As Jeff notes, the AFS data version is not incremented for metadata
+> changes.  Metadata cannot be trusted by clients without acquiring a
+> callback promise from a fileserver.  The callback promise will either be
+> satisfied by the issuing fileserver sending a CallBack notification that
+> the metadata is no longer valid OR the callback promise will expire.
+> 
+> Something else that is important to note that it is assumed that local
+> data changes that occur under a valid callback promise is newer than the
+> data on the fileserver.  It might be useful if the new i_version API
+> supported major and minor version numbers.  AFS implementations would
+> store the fileserver provided data version number as the major version
+> and would increment the minor version when local changes have been made
+> which have yet to be stored back to the fileserver.  This functionality
+> would be especially useful if disconnected operations were implemented
+> for the AFS implementation.
+> 
+> It might also be useful to separate metadata version and data version
+> although some filesystems would set the same value to both.  For AFS,
+> the metadata major version would the timestamp at which the callback was
+> issued.
+> 
+> Jeffrey Altman
 
-Agreed.
+Thanks. That seems like rather specialized use case.
 
-/Jarkko
+If we did want to go that route, we'd probably need to give filesystems
+a way to overload how i_version is handled and queried (maybe some new
+inode ops?).
+
+Given that nothing ever looks at the the i_version in kAFS now, I don't
+have a lot of incentive to do anything along those lines in this set. I
+think this patchset will probably make it simpler to do something like
+that in the future, if you were motivated to do so though.
+-- 
+Jeff Layton <jlayton@kernel.org>
