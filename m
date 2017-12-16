@@ -1,8 +1,8 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:42462 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:41978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757057AbdLPNrj (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 16 Dec 2017 08:47:39 -0500
+        id S1756912AbdLPNrR (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 16 Dec 2017 08:47:17 -0500
 From: Jeff Layton <jlayton@kernel.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
@@ -14,9 +14,9 @@ Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
         dsterba@suse.com, linux-integrity@vger.kernel.org,
         zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
         linux-afs@lists.infradead.org, dhowells@redhat.com
-Subject: [PATCH v2 16/19] fs: only set S_VERSION when updating times if necessary
-Date: Sat, 16 Dec 2017 08:46:53 -0500
-Message-Id: <20171216134656.15561-17-jlayton@kernel.org>
+Subject: [PATCH v2 07/19] exofs: switch to new i_version API
+Date: Sat, 16 Dec 2017 08:46:44 -0500
+Message-Id: <20171216134656.15561-8-jlayton@kernel.org>
 In-Reply-To: <20171216134656.15561-1-jlayton@kernel.org>
 References: <20171216134656.15561-1-jlayton@kernel.org>
 Sender: linux-integrity-owner@vger.kernel.org
@@ -24,61 +24,57 @@ List-ID: <linux-integrity.vger.kernel.org>
 
 From: Jeff Layton <jlayton@redhat.com>
 
-We only really need to update i_version if someone has queried for it
-since we last incremented it. By doing that, we can avoid having to
-update the inode if the times haven't changed.
-
-If the times have changed, then we go ahead and forcibly increment the
-counter, under the assumption that we'll be going to the storage
-anyway, and the increment itself is relatively cheap.
-
 Signed-off-by: Jeff Layton <jlayton@redhat.com>
 ---
- fs/inode.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ fs/exofs/dir.c   | 8 ++++----
+ fs/exofs/super.c | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index 03102d6ef044..82d625203e34 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1634,17 +1634,24 @@ static int relatime_need_update(const struct path *path, struct inode *inode,
- int generic_update_time(struct inode *inode, struct timespec *time, int flags)
- {
- 	int iflags = I_DIRTY_TIME;
-+	bool dirty = false;
+diff --git a/fs/exofs/dir.c b/fs/exofs/dir.c
+index 98233a97b7b8..36e314083b80 100644
+--- a/fs/exofs/dir.c
++++ b/fs/exofs/dir.c
+@@ -60,7 +60,7 @@ static int exofs_commit_chunk(struct page *page, loff_t pos, unsigned len)
+ 	struct inode *dir = mapping->host;
+ 	int err = 0;
  
--	if (flags & S_ATIME)
-+	if (flags & S_ATIME) {
- 		inode->i_atime = *time;
-+		dirty |= !(inode->i_sb->s_flags & SB_LAZYTIME);
-+	}
- 	if (flags & S_VERSION)
--		inode_inc_iversion(inode);
--	if (flags & S_CTIME)
-+		dirty |= inode_maybe_inc_iversion(inode, dirty);
-+	if (flags & S_CTIME) {
- 		inode->i_ctime = *time;
--	if (flags & S_MTIME)
-+		dirty = true;
-+	}
-+	if (flags & S_MTIME) {
- 		inode->i_mtime = *time;
-+		dirty = true;
-+	}
+-	dir->i_version++;
++	inode_inc_iversion(dir);
  
--	if (!(inode->i_sb->s_flags & SB_LAZYTIME) || (flags & S_VERSION))
-+	if (dirty)
- 		iflags |= I_DIRTY_SYNC;
- 	__mark_inode_dirty(inode, iflags);
- 	return 0;
-@@ -1863,7 +1870,7 @@ int file_update_time(struct file *file)
- 	if (!timespec_equal(&inode->i_ctime, &now))
- 		sync_it |= S_CTIME;
+ 	if (!PageUptodate(page))
+ 		SetPageUptodate(page);
+@@ -241,7 +241,7 @@ exofs_readdir(struct file *file, struct dir_context *ctx)
+ 	unsigned long n = pos >> PAGE_SHIFT;
+ 	unsigned long npages = dir_pages(inode);
+ 	unsigned chunk_mask = ~(exofs_chunk_size(inode)-1);
+-	int need_revalidate = (file->f_version != inode->i_version);
++	bool need_revalidate = inode_cmp_iversion(inode, file->f_version);
  
--	if (IS_I_VERSION(inode))
-+	if (IS_I_VERSION(inode) && inode_iversion_need_inc(inode))
- 		sync_it |= S_VERSION;
+ 	if (pos > inode->i_size - EXOFS_DIR_REC_LEN(1))
+ 		return 0;
+@@ -264,8 +264,8 @@ exofs_readdir(struct file *file, struct dir_context *ctx)
+ 								chunk_mask);
+ 				ctx->pos = (n<<PAGE_SHIFT) + offset;
+ 			}
+-			file->f_version = inode->i_version;
+-			need_revalidate = 0;
++			file->f_version = inode_query_iversion(inode);
++			need_revalidate = false;
+ 		}
+ 		de = (struct exofs_dir_entry *)(kaddr + offset);
+ 		limit = kaddr + exofs_last_byte(inode, n) -
+diff --git a/fs/exofs/super.c b/fs/exofs/super.c
+index 819624cfc8da..6746999137df 100644
+--- a/fs/exofs/super.c
++++ b/fs/exofs/super.c
+@@ -159,7 +159,7 @@ static struct inode *exofs_alloc_inode(struct super_block *sb)
+ 	if (!oi)
+ 		return NULL;
  
- 	if (!sync_it)
+-	oi->vfs_inode.i_version = 1;
++	inode_set_iversion(&oi->vfs_inode, 1);
+ 	return &oi->vfs_inode;
+ }
+ 
 -- 
 2.14.3
