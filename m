@@ -1,8 +1,8 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:41978 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:42158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756912AbdLPNrR (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 16 Dec 2017 08:47:17 -0500
+        id S1756981AbdLPNr0 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 16 Dec 2017 08:47:26 -0500
 From: Jeff Layton <jlayton@kernel.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
@@ -14,9 +14,9 @@ Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
         dsterba@suse.com, linux-integrity@vger.kernel.org,
         zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
         linux-afs@lists.infradead.org, dhowells@redhat.com
-Subject: [PATCH v2 07/19] exofs: switch to new i_version API
-Date: Sat, 16 Dec 2017 08:46:44 -0500
-Message-Id: <20171216134656.15561-8-jlayton@kernel.org>
+Subject: [PATCH v2 11/19] nfsd: convert to new i_version API
+Date: Sat, 16 Dec 2017 08:46:48 -0500
+Message-Id: <20171216134656.15561-12-jlayton@kernel.org>
 In-Reply-To: <20171216134656.15561-1-jlayton@kernel.org>
 References: <20171216134656.15561-1-jlayton@kernel.org>
 Sender: linux-integrity-owner@vger.kernel.org
@@ -24,56 +24,25 @@ List-ID: <linux-integrity.vger.kernel.org>
 
 From: Jeff Layton <jlayton@redhat.com>
 
+Mostly just making sure we use the "get" wrappers so we know when
+it is being fetched for later use.
+
 Signed-off-by: Jeff Layton <jlayton@redhat.com>
 ---
- fs/exofs/dir.c   | 8 ++++----
- fs/exofs/super.c | 2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ fs/nfsd/nfsfh.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/exofs/dir.c b/fs/exofs/dir.c
-index 98233a97b7b8..36e314083b80 100644
---- a/fs/exofs/dir.c
-+++ b/fs/exofs/dir.c
-@@ -60,7 +60,7 @@ static int exofs_commit_chunk(struct page *page, loff_t pos, unsigned len)
- 	struct inode *dir = mapping->host;
- 	int err = 0;
- 
--	dir->i_version++;
-+	inode_inc_iversion(dir);
- 
- 	if (!PageUptodate(page))
- 		SetPageUptodate(page);
-@@ -241,7 +241,7 @@ exofs_readdir(struct file *file, struct dir_context *ctx)
- 	unsigned long n = pos >> PAGE_SHIFT;
- 	unsigned long npages = dir_pages(inode);
- 	unsigned chunk_mask = ~(exofs_chunk_size(inode)-1);
--	int need_revalidate = (file->f_version != inode->i_version);
-+	bool need_revalidate = inode_cmp_iversion(inode, file->f_version);
- 
- 	if (pos > inode->i_size - EXOFS_DIR_REC_LEN(1))
- 		return 0;
-@@ -264,8 +264,8 @@ exofs_readdir(struct file *file, struct dir_context *ctx)
- 								chunk_mask);
- 				ctx->pos = (n<<PAGE_SHIFT) + offset;
- 			}
--			file->f_version = inode->i_version;
--			need_revalidate = 0;
-+			file->f_version = inode_query_iversion(inode);
-+			need_revalidate = false;
- 		}
- 		de = (struct exofs_dir_entry *)(kaddr + offset);
- 		limit = kaddr + exofs_last_byte(inode, n) -
-diff --git a/fs/exofs/super.c b/fs/exofs/super.c
-index 819624cfc8da..6746999137df 100644
---- a/fs/exofs/super.c
-+++ b/fs/exofs/super.c
-@@ -159,7 +159,7 @@ static struct inode *exofs_alloc_inode(struct super_block *sb)
- 	if (!oi)
- 		return NULL;
- 
--	oi->vfs_inode.i_version = 1;
-+	inode_set_iversion(&oi->vfs_inode, 1);
- 	return &oi->vfs_inode;
+diff --git a/fs/nfsd/nfsfh.h b/fs/nfsd/nfsfh.h
+index 43f31cf49bae..7dedda5e3ed4 100644
+--- a/fs/nfsd/nfsfh.h
++++ b/fs/nfsd/nfsfh.h
+@@ -259,7 +259,7 @@ static inline u64 nfsd4_change_attribute(struct inode *inode)
+ 	chattr =  inode->i_ctime.tv_sec;
+ 	chattr <<= 30;
+ 	chattr += inode->i_ctime.tv_nsec;
+-	chattr += inode->i_version;
++	chattr += inode_query_iversion(inode);
+ 	return chattr;
  }
  
 -- 
