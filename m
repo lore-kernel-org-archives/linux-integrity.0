@@ -1,17 +1,17 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34370 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933491AbdLRTeX (ORCPT
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:35260 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932808AbdLRT3d (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 18 Dec 2017 14:34:23 -0500
-Received: by mail-wm0-f67.google.com with SMTP id y82so8752066wmg.1
-        for <linux-integrity@vger.kernel.org>; Mon, 18 Dec 2017 11:34:22 -0800 (PST)
+        Mon, 18 Dec 2017 14:29:33 -0500
+Received: by mail-wm0-f45.google.com with SMTP id f9so6268wmh.0
+        for <linux-integrity@vger.kernel.org>; Mon, 18 Dec 2017 11:29:32 -0800 (PST)
 Subject: Re: [BISECTED] tpm CLKRUN breaks PS/2 keyboard and touchpad on
  Braswell system
-To: James Ettle <james@ettle.org.uk>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-integrity@vger.kernel.org, azhar.shaikh@intel.com,
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Ettle <james@ettle.org.uk>,
+        linux-integrity@vger.kernel.org, azhar.shaikh@intel.com,
         linux-kernel@vger.kernel.org, james.l.morris@oracle.com
 References: <57d96314-cc9c-0656-186e-4eb77a132b70@ettle.org.uk>
  <34b361bf-cce7-a1ac-f8a3-76ef22f5b6b0@redhat.com>
@@ -22,39 +22,87 @@ References: <57d96314-cc9c-0656-186e-4eb77a132b70@ettle.org.uk>
  <20171215173826.GD12434@ziepe.ca> <1513443676.29063.0.camel@linux.intel.com>
  <d3984354-56d4-747a-1266-bf28c657daae@redhat.com>
  <16609e73-e35d-4bb0-410d-e87915daba39@redhat.com>
- <6b41f2a7-3b6e-69f2-fd49-d2ae774ff0f5@ettle.org.uk>
+ <20171218175502.GC19056@ziepe.ca>
 From: Javier Martinez Canillas <javierm@redhat.com>
-Message-ID: <b741cc38-03ee-9a4f-7c4e-5c0a2a4828eb@redhat.com>
-Date: Mon, 18 Dec 2017 20:34:20 +0100
+Message-ID: <379b4165-bf82-70e9-4fc9-018fb62ee23c@redhat.com>
+Date: Mon, 18 Dec 2017 20:29:30 +0100
 MIME-Version: 1.0
-In-Reply-To: <6b41f2a7-3b6e-69f2-fd49-d2ae774ff0f5@ettle.org.uk>
+In-Reply-To: <20171218175502.GC19056@ziepe.ca>
 Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hello James,
+Hello Jason,
 
-On 12/18/2017 07:26 PM, James Ettle wrote:
-> The keyboard and touchpad work OK with the patch quoted below and the earlier two applied, i.e. the three patches with signatures:
+Thanks a lot for your feedback.
+
+On 12/18/2017 06:55 PM, Jason Gunthorpe wrote:
+> On Mon, Dec 18, 2017 at 01:29:01PM +0100, Javier Martinez Canillas wrote:
+>> On 12/18/2017 01:22 PM, Javier Martinez Canillas wrote:
+>>
+>> [snip]
+>>
+>>>
+>>> James,
+>>>
+>>> Can you please test the following (untested) patch on top of the other two
+>>> mentioned patches to see if it makes a difference for you?
+>>>
+>>
+>> I should had tried to at least compile the patch :)
 > 
-> 667dcc75be864ff4c17cf58891853b7393bba3e2
-> db3248e8a036c39141c8f7e9f1cf5c5ae6815f76
-> 370d45a34dc8914066a995a3a6d6df1953ea9f60
+> I think this is backwards..
 > 
-> I applied these to a vanilla kernel.org 4.14.7 source using Fedora 4.14.5-300.fc27 .config. Confirmed the tpm modules are loaded.
+> If CLKRUN_EN is on (eg power management is NOT enabled on LPC) then
+> TPM shouldn't do anything at all.
 > 
-> Tests:
-> 1. Keyboard and touchpad work OK on boot - PASS
-> 2. Still work after suspend/resume - PASS
-> 
-> Let me know if you want any further tests.
+> If CLKRUN_EN is off, then it should try to turn it on/off to save
+> power.
 >
 
-Great, thanks a lot for testing!
- 
-> Many thanks,
-> James.
+My knowledge of LPC is near to non-existent so I please forgive me if I'm wrong,
+but my understanding is that it's the opposite of what you said.
+
+When CLKRUN_EN is SET, power management is ENABLED on the LPC bus and the host
+LCLK clock may be stopped when entering in some low-power states.
+
+The CLKRUN# signal is then used by peripherals to restart the LCLK clock after
+resuming from low-power states to be able to transmit again.
+
+When CLKRUN_EN is CLEAR, power management is DISABLED on the LPC bus and the
+host LCLK clock is never stopped even when entering in some low-power states.
+
+IIUC, if CLKRUN_EN is enabled, then all the devices attached to the LPC bus
+have to support the CLKRUN protocol. My guess is that on some Braswell systems
+LPC power management is enabled but the TPM device doesn't have CLKRUN support.
+
+And that was the motivation of commit 5e572cab92f0 ("tpm: Enable CLKRUN protocol
+for Braswell systems") that introduced the regression.
+
+> Perhaps the best work around is to just delete the turning off of
+> CLKRUN_EN ? Uses more power but keeps the clock running which should
+> keep both TPM and superio happy.
 >
+
+But that's exactly the goal of the commit 5e572cab92f0, to disable the CLKRUN
+protocol (probably for what I mentioned before). So doing so will cause issues
+for those systems again.
+
+What the patch I shared with James does is to avoid disabling the CLKRUN_EN
+if this is already disabled. Which should be a no-op anyways but the problem
+is that latter it's enabled even when the driver found disabled to start with.
+
+I still don't like the overall solution since it's too error prone. Touching a
+global bus configuration in a driver for a single peripheral isn't safe to say
+the least.
+
+But regardless of that, the patch I shared has merits on its own since is wrong
+to keep the bus configuration in a different state that was before the driver
+was probed. And in fact, James reported that it makes his system to work again.
+
+> Jason
+>
+
 Best regards,
 -- 
 Javier Martinez Canillas
