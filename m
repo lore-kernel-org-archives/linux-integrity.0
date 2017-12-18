@@ -1,8 +1,8 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:55448 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:55114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752857AbdLRPMd (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 18 Dec 2017 10:12:33 -0500
+        id S1752720AbdLRPMT (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 18 Dec 2017 10:12:19 -0500
 From: Jeff Layton <jlayton@kernel.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
@@ -15,9 +15,9 @@ Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
         zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
         linux-afs@lists.infradead.org, dhowells@redhat.com,
         jaltman@auristor.com
-Subject: [PATCH v3 13/19] ufs: use new i_version API
-Date: Mon, 18 Dec 2017 10:11:50 -0500
-Message-Id: <20171218151156.14565-14-jlayton@kernel.org>
+Subject: [PATCH v3 07/19] exofs: switch to new i_version API
+Date: Mon, 18 Dec 2017 10:11:44 -0500
+Message-Id: <20171218151156.14565-8-jlayton@kernel.org>
 In-Reply-To: <20171218151156.14565-1-jlayton@kernel.org>
 References: <20171218151156.14565-1-jlayton@kernel.org>
 Sender: linux-integrity-owner@vger.kernel.org
@@ -27,43 +27,42 @@ From: Jeff Layton <jlayton@redhat.com>
 
 Signed-off-by: Jeff Layton <jlayton@redhat.com>
 ---
- fs/ufs/dir.c   | 9 +++++----
- fs/ufs/inode.c | 3 ++-
- fs/ufs/super.c | 3 ++-
- 3 files changed, 9 insertions(+), 6 deletions(-)
+ fs/exofs/dir.c   | 9 +++++----
+ fs/exofs/super.c | 3 ++-
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/fs/ufs/dir.c b/fs/ufs/dir.c
-index 2edc1755b7c5..50dfce000864 100644
---- a/fs/ufs/dir.c
-+++ b/fs/ufs/dir.c
-@@ -20,6 +20,7 @@
- #include <linux/time.h>
- #include <linux/fs.h>
- #include <linux/swap.h>
-+#include <linux/iversion.h>
+diff --git a/fs/exofs/dir.c b/fs/exofs/dir.c
+index 98233a97b7b8..c5a53fcc43ea 100644
+--- a/fs/exofs/dir.c
++++ b/fs/exofs/dir.c
+@@ -31,6 +31,7 @@
+  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+  */
  
- #include "ufs_fs.h"
- #include "ufs.h"
-@@ -47,7 +48,7 @@ static int ufs_commit_chunk(struct page *page, loff_t pos, unsigned len)
++#include <linux/iversion.h>
+ #include "exofs.h"
+ 
+ static inline unsigned exofs_chunk_size(struct inode *inode)
+@@ -60,7 +61,7 @@ static int exofs_commit_chunk(struct page *page, loff_t pos, unsigned len)
  	struct inode *dir = mapping->host;
  	int err = 0;
  
 -	dir->i_version++;
 +	inode_inc_iversion(dir);
- 	block_write_end(NULL, mapping, pos, len, len, page, NULL);
- 	if (pos+len > dir->i_size) {
- 		i_size_write(dir, pos+len);
-@@ -428,7 +429,7 @@ ufs_readdir(struct file *file, struct dir_context *ctx)
+ 
+ 	if (!PageUptodate(page))
+ 		SetPageUptodate(page);
+@@ -241,7 +242,7 @@ exofs_readdir(struct file *file, struct dir_context *ctx)
  	unsigned long n = pos >> PAGE_SHIFT;
  	unsigned long npages = dir_pages(inode);
- 	unsigned chunk_mask = ~(UFS_SB(sb)->s_uspi->s_dirblksize - 1);
--	int need_revalidate = file->f_version != inode->i_version;
+ 	unsigned chunk_mask = ~(exofs_chunk_size(inode)-1);
+-	int need_revalidate = (file->f_version != inode->i_version);
 +	bool need_revalidate = inode_cmp_iversion(inode, file->f_version);
- 	unsigned flags = UFS_SB(sb)->s_flags;
  
- 	UFSD("BEGIN\n");
-@@ -455,8 +456,8 @@ ufs_readdir(struct file *file, struct dir_context *ctx)
- 				offset = ufs_validate_entry(sb, kaddr, offset, chunk_mask);
+ 	if (pos > inode->i_size - EXOFS_DIR_REC_LEN(1))
+ 		return 0;
+@@ -264,8 +265,8 @@ exofs_readdir(struct file *file, struct dir_context *ctx)
+ 								chunk_mask);
  				ctx->pos = (n<<PAGE_SHIFT) + offset;
  			}
 -			file->f_version = inode->i_version;
@@ -71,49 +70,28 @@ index 2edc1755b7c5..50dfce000864 100644
 +			file->f_version = inode_query_iversion(inode);
 +			need_revalidate = false;
  		}
- 		de = (struct ufs_dir_entry *)(kaddr+offset);
- 		limit = kaddr + ufs_last_byte(inode, n) - UFS_DIR_REC_LEN(1);
-diff --git a/fs/ufs/inode.c b/fs/ufs/inode.c
-index afb601c0dda0..c843ec858cf7 100644
---- a/fs/ufs/inode.c
-+++ b/fs/ufs/inode.c
-@@ -36,6 +36,7 @@
- #include <linux/mm.h>
- #include <linux/buffer_head.h>
- #include <linux/writeback.h>
+ 		de = (struct exofs_dir_entry *)(kaddr + offset);
+ 		limit = kaddr + exofs_last_byte(inode, n) -
+diff --git a/fs/exofs/super.c b/fs/exofs/super.c
+index 819624cfc8da..7e244093c0e5 100644
+--- a/fs/exofs/super.c
++++ b/fs/exofs/super.c
+@@ -38,6 +38,7 @@
+ #include <linux/module.h>
+ #include <linux/exportfs.h>
+ #include <linux/slab.h>
 +#include <linux/iversion.h>
  
- #include "ufs_fs.h"
- #include "ufs.h"
-@@ -693,7 +694,7 @@ struct inode *ufs_iget(struct super_block *sb, unsigned long ino)
- 	if (err)
- 		goto bad_inode;
+ #include "exofs.h"
  
--	inode->i_version++;
-+	inode_inc_iversion(inode);
- 	ufsi->i_lastfrag =
- 		(inode->i_size + uspi->s_fsize - 1) >> uspi->s_fshift;
- 	ufsi->i_dir_start_lookup = 0;
-diff --git a/fs/ufs/super.c b/fs/ufs/super.c
-index 4d497e9c6883..b6ba80e05bff 100644
---- a/fs/ufs/super.c
-+++ b/fs/ufs/super.c
-@@ -88,6 +88,7 @@
- #include <linux/log2.h>
- #include <linux/mount.h>
- #include <linux/seq_file.h>
-+#include <linux/iversion.h>
- 
- #include "ufs_fs.h"
- #include "ufs.h"
-@@ -1440,7 +1441,7 @@ static struct inode *ufs_alloc_inode(struct super_block *sb)
- 	if (!ei)
+@@ -159,7 +160,7 @@ static struct inode *exofs_alloc_inode(struct super_block *sb)
+ 	if (!oi)
  		return NULL;
  
--	ei->vfs_inode.i_version = 1;
-+	inode_set_iversion(&ei->vfs_inode, 1);
- 	seqlock_init(&ei->meta_lock);
- 	mutex_init(&ei->truncate_mutex);
- 	return &ei->vfs_inode;
+-	oi->vfs_inode.i_version = 1;
++	inode_set_iversion(&oi->vfs_inode, 1);
+ 	return &oi->vfs_inode;
+ }
+ 
 -- 
 2.14.3
