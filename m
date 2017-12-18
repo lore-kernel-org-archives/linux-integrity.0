@@ -1,37 +1,52 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48389 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1758651AbdLRUny (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 18 Dec 2017 15:43:54 -0500
-Date: Tue, 19 Dec 2017 07:43:50 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-next <linux-next@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        James Morris <jmorris@namei.org>
-Subject: Re: ima:  temporary "next-queued-testing" branch  (UPDATE)
-Message-ID: <20171219074350.6974d1b6@canb.auug.org.au>
-In-Reply-To: <1513611047.5221.18.camel@linux.vnet.ibm.com>
-References: <1512564458.4698.33.camel@linux.vnet.ibm.com>
-        <1513029726.3530.29.camel@linux.vnet.ibm.com>
-        <1513611047.5221.18.camel@linux.vnet.ibm.com>
+Received: from mail-wr0-f171.google.com ([209.85.128.171]:33727 "EHLO
+        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933122AbdLRUTI (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 18 Dec 2017 15:19:08 -0500
+Received: by mail-wr0-f171.google.com with SMTP id v21so4856831wrc.0
+        for <linux-integrity@vger.kernel.org>; Mon, 18 Dec 2017 12:19:08 -0800 (PST)
+Date: Mon, 18 Dec 2017 13:19:02 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Shaikh, Azhar" <azhar.shaikh@intel.com>
+Cc: Javier Martinez Canillas <javierm@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Ettle <james@ettle.org.uk>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "james.l.morris@oracle.com" <james.l.morris@oracle.com>
+Subject: Re: [BISECTED] tpm CLKRUN breaks PS/2 keyboard and touchpad on
+ Braswell system
+Message-ID: <20171218201902.GF19056@ziepe.ca>
+References: <011b4d29-9d93-4b7a-90dd-0c25cf184c3e@redhat.com>
+ <20171214191052.GA20833@ziepe.ca>
+ <20171215145630.ftsnj4azqqhzqwsh@linux.intel.com>
+ <20171215173826.GD12434@ziepe.ca>
+ <1513443676.29063.0.camel@linux.intel.com>
+ <d3984354-56d4-747a-1266-bf28c657daae@redhat.com>
+ <16609e73-e35d-4bb0-410d-e87915daba39@redhat.com>
+ <20171218175502.GC19056@ziepe.ca>
+ <379b4165-bf82-70e9-4fc9-018fb62ee23c@redhat.com>
+ <5FFFAD06ADE1CA4381B3F0F7C6AF5828987F13@ORSMSX109.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5FFFAD06ADE1CA4381B3F0F7C6AF5828987F13@ORSMSX109.amr.corp.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Mimi,
+On Mon, Dec 18, 2017 at 07:34:29PM +0000, Shaikh, Azhar wrote:
 
-On Mon, 18 Dec 2017 10:30:47 -0500 Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
->
-> As the integrity subsystem is now back in sync with the security tree,
->  I'd really appreciate if you could include the integrity tree in
-> linux-next.  Instead of including the integrity "next" branch as
-> previously, could you include the "next-integrity" branch instead?
+> >IIUC, if CLKRUN_EN is enabled, then all the devices attached to the
+> >LPC bus have to support the CLKRUN protocol. My guess is that on
+> >some Braswell systems LPC power management is enabled but the TPM
+> >device doesn't have CLKRUN support.
+> 
+> I think this is what might be happening here.
 
-Done.
+That makes it a BIOS bug, not a chipset bug, and we shouldn't be
+trying to fix it like this in Linux.
 
--- 
-Cheers,
-Stephen Rothwell
+Based on the original discussion I always thought this was an Intel
+chipset bug and applies to all cases.
+
+Jason
