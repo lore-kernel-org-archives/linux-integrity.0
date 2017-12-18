@@ -1,8 +1,8 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:55040 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:55448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1758723AbdLRPMN (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 18 Dec 2017 10:12:13 -0500
+        id S1752857AbdLRPMd (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 18 Dec 2017 10:12:33 -0500
 From: Jeff Layton <jlayton@kernel.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
@@ -15,9 +15,9 @@ Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
         zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
         linux-afs@lists.infradead.org, dhowells@redhat.com,
         jaltman@auristor.com
-Subject: [PATCH v3 05/19] afs: convert to new i_version API
-Date: Mon, 18 Dec 2017 10:11:42 -0500
-Message-Id: <20171218151156.14565-6-jlayton@kernel.org>
+Subject: [PATCH v3 13/19] ufs: use new i_version API
+Date: Mon, 18 Dec 2017 10:11:50 -0500
+Message-Id: <20171218151156.14565-14-jlayton@kernel.org>
 In-Reply-To: <20171218151156.14565-1-jlayton@kernel.org>
 References: <20171218151156.14565-1-jlayton@kernel.org>
 Sender: linux-integrity-owner@vger.kernel.org
@@ -25,70 +25,95 @@ List-ID: <linux-integrity.vger.kernel.org>
 
 From: Jeff Layton <jlayton@redhat.com>
 
-For AFS, it's generally treated as an opaque value, so we use the
-*_raw variants of the API here.
-
-Note that AFS has quite a different definition for this counter. AFS
-only increments it on changes to the data, not for the metadata. We'll
-need to reconcile that somehow if we ever want to present this to
-userspace via statx.
-
 Signed-off-by: Jeff Layton <jlayton@redhat.com>
 ---
- fs/afs/fsclient.c | 3 ++-
- fs/afs/inode.c    | 5 +++--
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ fs/ufs/dir.c   | 9 +++++----
+ fs/ufs/inode.c | 3 ++-
+ fs/ufs/super.c | 3 ++-
+ 3 files changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/fs/afs/fsclient.c b/fs/afs/fsclient.c
-index b90ef39ae914..88ec38c2d83c 100644
---- a/fs/afs/fsclient.c
-+++ b/fs/afs/fsclient.c
-@@ -13,6 +13,7 @@
- #include <linux/slab.h>
- #include <linux/sched.h>
- #include <linux/circ_buf.h>
+diff --git a/fs/ufs/dir.c b/fs/ufs/dir.c
+index 2edc1755b7c5..50dfce000864 100644
+--- a/fs/ufs/dir.c
++++ b/fs/ufs/dir.c
+@@ -20,6 +20,7 @@
+ #include <linux/time.h>
+ #include <linux/fs.h>
+ #include <linux/swap.h>
 +#include <linux/iversion.h>
- #include "internal.h"
- #include "afs_fs.h"
  
-@@ -124,7 +125,7 @@ static void xdr_decode_AFSFetchStatus(const __be32 **_bp,
- 		vnode->vfs_inode.i_ctime.tv_sec	= status->mtime_client;
- 		vnode->vfs_inode.i_mtime	= vnode->vfs_inode.i_ctime;
- 		vnode->vfs_inode.i_atime	= vnode->vfs_inode.i_ctime;
--		vnode->vfs_inode.i_version	= data_version;
-+		inode_set_iversion_raw(&vnode->vfs_inode, data_version);
- 	}
+ #include "ufs_fs.h"
+ #include "ufs.h"
+@@ -47,7 +48,7 @@ static int ufs_commit_chunk(struct page *page, loff_t pos, unsigned len)
+ 	struct inode *dir = mapping->host;
+ 	int err = 0;
  
- 	expected_version = status->data_version;
-diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index 3415eb7484f6..dcd2e08d6cdb 100644
---- a/fs/afs/inode.c
-+++ b/fs/afs/inode.c
-@@ -21,6 +21,7 @@
- #include <linux/sched.h>
+-	dir->i_version++;
++	inode_inc_iversion(dir);
+ 	block_write_end(NULL, mapping, pos, len, len, page, NULL);
+ 	if (pos+len > dir->i_size) {
+ 		i_size_write(dir, pos+len);
+@@ -428,7 +429,7 @@ ufs_readdir(struct file *file, struct dir_context *ctx)
+ 	unsigned long n = pos >> PAGE_SHIFT;
+ 	unsigned long npages = dir_pages(inode);
+ 	unsigned chunk_mask = ~(UFS_SB(sb)->s_uspi->s_dirblksize - 1);
+-	int need_revalidate = file->f_version != inode->i_version;
++	bool need_revalidate = inode_cmp_iversion(inode, file->f_version);
+ 	unsigned flags = UFS_SB(sb)->s_flags;
+ 
+ 	UFSD("BEGIN\n");
+@@ -455,8 +456,8 @@ ufs_readdir(struct file *file, struct dir_context *ctx)
+ 				offset = ufs_validate_entry(sb, kaddr, offset, chunk_mask);
+ 				ctx->pos = (n<<PAGE_SHIFT) + offset;
+ 			}
+-			file->f_version = inode->i_version;
+-			need_revalidate = 0;
++			file->f_version = inode_query_iversion(inode);
++			need_revalidate = false;
+ 		}
+ 		de = (struct ufs_dir_entry *)(kaddr+offset);
+ 		limit = kaddr + ufs_last_byte(inode, n) - UFS_DIR_REC_LEN(1);
+diff --git a/fs/ufs/inode.c b/fs/ufs/inode.c
+index afb601c0dda0..c843ec858cf7 100644
+--- a/fs/ufs/inode.c
++++ b/fs/ufs/inode.c
+@@ -36,6 +36,7 @@
+ #include <linux/mm.h>
+ #include <linux/buffer_head.h>
+ #include <linux/writeback.h>
++#include <linux/iversion.h>
+ 
+ #include "ufs_fs.h"
+ #include "ufs.h"
+@@ -693,7 +694,7 @@ struct inode *ufs_iget(struct super_block *sb, unsigned long ino)
+ 	if (err)
+ 		goto bad_inode;
+ 
+-	inode->i_version++;
++	inode_inc_iversion(inode);
+ 	ufsi->i_lastfrag =
+ 		(inode->i_size + uspi->s_fsize - 1) >> uspi->s_fshift;
+ 	ufsi->i_dir_start_lookup = 0;
+diff --git a/fs/ufs/super.c b/fs/ufs/super.c
+index 4d497e9c6883..b6ba80e05bff 100644
+--- a/fs/ufs/super.c
++++ b/fs/ufs/super.c
+@@ -88,6 +88,7 @@
+ #include <linux/log2.h>
  #include <linux/mount.h>
- #include <linux/namei.h>
+ #include <linux/seq_file.h>
 +#include <linux/iversion.h>
- #include "internal.h"
  
- static const struct inode_operations afs_symlink_inode_operations = {
-@@ -89,7 +90,7 @@ static int afs_inode_map_status(struct afs_vnode *vnode, struct key *key)
- 	inode->i_atime		= inode->i_mtime = inode->i_ctime;
- 	inode->i_blocks		= 0;
- 	inode->i_generation	= vnode->fid.unique;
--	inode->i_version	= vnode->status.data_version;
-+	inode_set_iversion_raw(inode, vnode->status.data_version);
- 	inode->i_mapping->a_ops	= &afs_fs_aops;
+ #include "ufs_fs.h"
+ #include "ufs.h"
+@@ -1440,7 +1441,7 @@ static struct inode *ufs_alloc_inode(struct super_block *sb)
+ 	if (!ei)
+ 		return NULL;
  
- 	read_sequnlock_excl(&vnode->cb_lock);
-@@ -218,7 +219,7 @@ struct inode *afs_iget_autocell(struct inode *dir, const char *dev_name,
- 	inode->i_ctime.tv_nsec	= 0;
- 	inode->i_atime		= inode->i_mtime = inode->i_ctime;
- 	inode->i_blocks		= 0;
--	inode->i_version	= 0;
-+	inode_set_iversion_raw(inode, 0);
- 	inode->i_generation	= 0;
- 
- 	set_bit(AFS_VNODE_PSEUDODIR, &vnode->flags);
+-	ei->vfs_inode.i_version = 1;
++	inode_set_iversion(&ei->vfs_inode, 1);
+ 	seqlock_init(&ei->meta_lock);
+ 	mutex_init(&ei->truncate_mutex);
+ 	return &ei->vfs_inode;
 -- 
 2.14.3
