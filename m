@@ -1,136 +1,136 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:40268 "EHLO
-        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935424AbdLRXGs (ORCPT
+Received: from ipmail06.adl6.internode.on.net ([150.101.137.145]:49250 "EHLO
+        ipmail06.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934736AbdLRWNJ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 18 Dec 2017 18:06:48 -0500
-Received: by mail-wm0-f50.google.com with SMTP id f206so660363wmf.5
-        for <linux-integrity@vger.kernel.org>; Mon, 18 Dec 2017 15:06:47 -0800 (PST)
-Subject: Re: [BISECTED] tpm CLKRUN breaks PS/2 keyboard and touchpad on
- Braswell system
-To: "Shaikh, Azhar" <azhar.shaikh@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Ettle <james@ettle.org.uk>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "james.l.morris@oracle.com" <james.l.morris@oracle.com>
-References: <57d96314-cc9c-0656-186e-4eb77a132b70@ettle.org.uk>
- <34b361bf-cce7-a1ac-f8a3-76ef22f5b6b0@redhat.com>
- <5fb5de24-5a4c-4c01-1f72-49fc5844516c@ettle.org.uk>
- <011b4d29-9d93-4b7a-90dd-0c25cf184c3e@redhat.com>
- <20171214191052.GA20833@ziepe.ca>
- <20171215145630.ftsnj4azqqhzqwsh@linux.intel.com>
- <20171215173826.GD12434@ziepe.ca> <1513443676.29063.0.camel@linux.intel.com>
- <d3984354-56d4-747a-1266-bf28c657daae@redhat.com>
- <16609e73-e35d-4bb0-410d-e87915daba39@redhat.com>
- <20171218175502.GC19056@ziepe.ca>
- <379b4165-bf82-70e9-4fc9-018fb62ee23c@redhat.com>
- <5FFFAD06ADE1CA4381B3F0F7C6AF5828987F13@ORSMSX109.amr.corp.intel.com>
-From: Javier Martinez Canillas <javierm@redhat.com>
-Message-ID: <d98db0d0-2615-d13a-e341-749173f3ec1d@redhat.com>
-Date: Tue, 19 Dec 2017 00:06:44 +0100
+        Mon, 18 Dec 2017 17:13:09 -0500
+Date: Tue, 19 Dec 2017 09:07:59 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: "J. Bruce Fields" <bfields@fieldses.org>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org, neilb@suse.de,
+        jack@suse.de, linux-ext4@vger.kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, linux-xfs@vger.kernel.org,
+        darrick.wong@oracle.com, linux-btrfs@vger.kernel.org, clm@fb.com,
+        jbacik@fb.com, dsterba@suse.com, linux-integrity@vger.kernel.org,
+        zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
+        linux-afs@lists.infradead.org, dhowells@redhat.com,
+        jaltman@auristor.com
+Subject: Re: [PATCH v3 19/19] fs: handle inode->i_version more efficiently
+Message-ID: <20171218220759.GF4094@dastard>
+References: <20171218151156.14565-1-jlayton@kernel.org>
+ <20171218151156.14565-20-jlayton@kernel.org>
+ <20171218163418.GF30350@quack2.suse.cz>
+ <1513617740.3422.30.camel@kernel.org>
+ <20171218173651.GB12454@fieldses.org>
+ <1513625720.3422.68.camel@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <5FFFAD06ADE1CA4381B3F0F7C6AF5828987F13@ORSMSX109.amr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1513625720.3422.68.camel@kernel.org>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hello Azhar,
+On Mon, Dec 18, 2017 at 02:35:20PM -0500, Jeff Layton wrote:
+> [PATCH] SQUASH: add memory barriers around i_version accesses
 
-On 12/18/2017 08:34 PM, Shaikh, Azhar wrote:
-> 
-> 
->> -----Original Message-----
->> From: Javier Martinez Canillas [mailto:javierm@redhat.com]
->> Sent: Monday, December 18, 2017 11:30 AM
->> To: Jason Gunthorpe <jgg@ziepe.ca>
->> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>; James Ettle
->> <james@ettle.org.uk>; linux-integrity@vger.kernel.org; Shaikh, Azhar
->> <azhar.shaikh@intel.com>; linux-kernel@vger.kernel.org;
->> james.l.morris@oracle.com
->> Subject: Re: [BISECTED] tpm CLKRUN breaks PS/2 keyboard and touchpad on
->> Braswell system
->>
->> Hello Jason,
->>
->> Thanks a lot for your feedback.
->>
->> On 12/18/2017 06:55 PM, Jason Gunthorpe wrote:
->>> On Mon, Dec 18, 2017 at 01:29:01PM +0100, Javier Martinez Canillas wrote:
->>>> On 12/18/2017 01:22 PM, Javier Martinez Canillas wrote:
->>>>
->>>> [snip]
->>>>
->>>>>
->>>>> James,
->>>>>
->>>>> Can you please test the following (untested) patch on top of the
->>>>> other two mentioned patches to see if it makes a difference for you?
->>>>>
->>>>
->>>> I should had tried to at least compile the patch :)
->>>
->>> I think this is backwards..
->>>
->>> If CLKRUN_EN is on (eg power management is NOT enabled on LPC) then
->>> TPM shouldn't do anything at all.
->>>
->>> If CLKRUN_EN is off, then it should try to turn it on/off to save
->>> power.
->>>
->>
->> My knowledge of LPC is near to non-existent so I please forgive me if I'm
->> wrong, but my understanding is that it's the opposite of what you said.
->>
->> When CLKRUN_EN is SET, power management is ENABLED on the LPC bus and
->> the host LCLK clock may be stopped when entering in some low-power states.
->>
->> The CLKRUN# signal is then used by peripherals to restart the LCLK clock after
->> resuming from low-power states to be able to transmit again.
->>
->> When CLKRUN_EN is CLEAR, power management is DISABLED on the LPC bus
->> and the host LCLK clock is never stopped even when entering in some low-
->> power states.
->>
-> 
-> Hi Javier,
-> 
-> Yes you are correct with the above understanding of the CLKRUN.
->
+Why explicit memory barriers rather than annotating the operations
+with the required semantics and getting the barriers the arch
+requires automatically?  I suspect this should be using
+atomic_read_acquire() and atomic_cmpxchg_release(), because AFAICT
+the atomic_cmpxchg needs to have release semantics to match the
+acquire semantics needed for the load of the current value.
 
-Thanks for the confirmation.
- 
->> IIUC, if CLKRUN_EN is enabled, then all the devices attached to the LPC bus
->> have to support the CLKRUN protocol. My guess is that on some Braswell
->> systems LPC power management is enabled but the TPM device doesn't have
->> CLKRUN support.
->>
-> 
-> I think this is what might be happening here.
->
+>From include/linux/atomics.h:
 
-One question, what happens if the CLKRUN protocol is disabled and never enabled
-again? My understanding is that the CLKRUN# signal is not required if the host
-never stops the LCLK clock, and peripherals that do support the CLKRUN protocol
-should still work if the CLKRUN protocol is disabled and the LCLK isn't stopped.
+ * For compound atomics performing both a load and a store, ACQUIRE
+ * semantics apply only to the load and RELEASE semantics only to the
+ * store portion of the operation. Note that a failed cmpxchg_acquire
+ * does -not- imply any memory ordering constraints.
 
-So from what we discussed above, I think it may be correct to completely disable
-CLKRUN protocol if there's a peripheral that doesn't support it.
- 
-> Since I do not have an end product to test this on, I managed to get one BSW Reference Verification Platform(RVP). I flashed the latest Ubuntu (17.10) which is on 4.13.13 kernel version and does have the patch.
-> 
-> I was able to use the PS/2 mouse and keyboard immediately after bootup and also after suspend/resume cycle. The system does have a TPM.(/dev/tpm0 and /dev/tpmrm0 exist)
->
+Memory barriers hurt my brain. :/
 
-It's not clear to me if the RVP system is the same one where you found the issue
-and lead to the commit that caused the regression.
+At minimum, shouldn't the atomic op specific barriers be used rather
+than full memory barriers? i.e:
 
-Could you please test what happens if you disable the CLKRUN_EN and never enable
-it again?
+> diff --git a/include/linux/iversion.h b/include/linux/iversion.h
+> index a9fbf99709df..39ec9aa9e08e 100644
+> --- a/include/linux/iversion.h
+> +++ b/include/linux/iversion.h
+> @@ -87,6 +87,25 @@ static inline void
+>  inode_set_iversion_raw(struct inode *inode, const u64 val)
+>  {
+>  	atomic64_set(&inode->i_version, val);
+> +	smp_wmb();
 
-Best regards,
+	smp_mb__after_atomic();
+.....
+> +static inline u64
+> +inode_peek_iversion_raw(const struct inode *inode)
+> +{
+> +	smp_rmb();
+
+	smp_mb__before_atomic();
+
+> +	return atomic64_read(&inode->i_version);
+>  }
+
+And, of course, these will require comments explaining what they
+match with and what they are ordering.
+
+> @@ -152,7 +171,7 @@ inode_maybe_inc_iversion(struct inode *inode, bool force)
+>  {
+>  	u64 cur, old, new;
+>  
+> -	cur = (u64)atomic64_read(&inode->i_version);
+> +	cur = inode_peek_iversion_raw(inode);
+>  	for (;;) {
+>  		/* If flag is clear then we needn't do anything */
+>  		if (!force && !(cur & I_VERSION_QUERIED))
+
+cmpxchg in this loop needs a release barrier so everyone will
+see the change?
+
+> @@ -183,23 +202,6 @@ inode_inc_iversion(struct inode *inode)
+>  	inode_maybe_inc_iversion(inode, true);
+>  }
+>  
+> -/**
+> - * inode_peek_iversion_raw - grab a "raw" iversion value
+> - * @inode: inode from which i_version should be read
+> - *
+> - * Grab a "raw" inode->i_version value and return it. The i_version is not
+> - * flagged or converted in any way. This is mostly used to access a self-managed
+> - * i_version.
+> - *
+> - * With those filesystems, we want to treat the i_version as an entirely
+> - * opaque value.
+> - */
+> -static inline u64
+> -inode_peek_iversion_raw(const struct inode *inode)
+> -{
+> -	return atomic64_read(&inode->i_version);
+> -}
+> -
+>  /**
+>   * inode_iversion_need_inc - is the i_version in need of being incremented?
+>   * @inode: inode to check
+> @@ -248,7 +250,7 @@ inode_query_iversion(struct inode *inode)
+>  {
+>  	u64 cur, old, new;
+>  
+> -	cur = atomic64_read(&inode->i_version);
+> +	cur = inode_peek_iversion_raw(inode);
+>  	for (;;) {
+>  		/* If flag is already set, then no need to swap */
+>  		if (cur & I_VERSION_QUERIED)
+
+cmpxchg in this loop needs a release barrier so everyone will
+see the change on load?
+
+Cheers,
+
+Dave.
 -- 
-Javier Martinez Canillas
-Software Engineer - Desktop Hardware Enablement
-Red Hat
+Dave Chinner
+david@fromorbit.com
