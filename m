@@ -1,66 +1,77 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54680 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965510AbdLSIyY (ORCPT
+Received: from mail-io0-f176.google.com ([209.85.223.176]:35809 "EHLO
+        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937031AbdLSCIC (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 19 Dec 2017 03:54:24 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vBJ8rxGj068205
-        for <linux-integrity@vger.kernel.org>; Tue, 19 Dec 2017 03:54:23 -0500
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2exvvyeqw3-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 19 Dec 2017 03:54:23 -0500
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Tue, 19 Dec 2017 03:54:21 -0500
-Subject: Re: [RFC][PATCH 0/9] tpm: fix driver so that burstcount can be safely
- ignored
-To: Alexander Steffen <Alexander.Steffen@infineon.com>,
-        jarkko.sakkinen@linux.intel.com, kgold@linux.vnet.ibm.com,
-        linux-integrity@vger.kernel.org
-References: <20171208184658.9588-1-Alexander.Steffen@infineon.com>
-From: Nayna Jain <nayna@linux.vnet.ibm.com>
-Date: Tue, 19 Dec 2017 14:23:25 +0530
+        Mon, 18 Dec 2017 21:08:02 -0500
+Received: by mail-io0-f176.google.com with SMTP id 14so5455294iou.2
+        for <linux-integrity@vger.kernel.org>; Mon, 18 Dec 2017 18:08:02 -0800 (PST)
+Date: Mon, 18 Dec 2017 19:08:00 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Javier Martinez Canillas <javierm@redhat.com>
+Cc: "Shaikh, Azhar" <azhar.shaikh@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Ettle <james@ettle.org.uk>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "james.l.morris@oracle.com" <james.l.morris@oracle.com>
+Subject: Re: [BISECTED] tpm CLKRUN breaks PS/2 keyboard and touchpad on
+ Braswell system
+Message-ID: <20171219020800.GK19056@ziepe.ca>
+References: <20171215145630.ftsnj4azqqhzqwsh@linux.intel.com>
+ <20171215173826.GD12434@ziepe.ca>
+ <1513443676.29063.0.camel@linux.intel.com>
+ <d3984354-56d4-747a-1266-bf28c657daae@redhat.com>
+ <16609e73-e35d-4bb0-410d-e87915daba39@redhat.com>
+ <20171218175502.GC19056@ziepe.ca>
+ <379b4165-bf82-70e9-4fc9-018fb62ee23c@redhat.com>
+ <5FFFAD06ADE1CA4381B3F0F7C6AF5828987F13@ORSMSX109.amr.corp.intel.com>
+ <20171218201902.GF19056@ziepe.ca>
+ <781b45aa-547c-9b0f-4669-4e081cf39a93@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20171208184658.9588-1-Alexander.Steffen@infineon.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Message-Id: <7c16ebb6-b9d2-dcdd-1219-ce2702a41cd0@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <781b45aa-547c-9b0f-4669-4e081cf39a93@redhat.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
+On Tue, Dec 19, 2017 at 12:34:46AM +0100, Javier Martinez Canillas wrote:
+> Hello Jason,
+> 
+> On 12/18/2017 09:19 PM, Jason Gunthorpe wrote:
+> > On Mon, Dec 18, 2017 at 07:34:29PM +0000, Shaikh, Azhar wrote:
+> > 
+> >>> IIUC, if CLKRUN_EN is enabled, then all the devices attached to the
+> >>> LPC bus have to support the CLKRUN protocol. My guess is that on
+> >>> some Braswell systems LPC power management is enabled but the TPM
+> >>> device doesn't have CLKRUN support.
+> >>
+> >> I think this is what might be happening here.
+> > 
+> > That makes it a BIOS bug, not a chipset bug, and we shouldn't be
+> > trying to fix it like this in Linux.
+> >
+> 
+> Indeed, the system integrator should make sure that all peripherals that
+> are connected through the LPC bus either support the CLKRUN protocol and
+> CLKRUN_EN is enabled or CLKRUN_EN should be disabled.
 
+I would like to hear from Intel why they made this patch in the first
+place, since we are mostly guessing...
 
-On 12/09/2017 12:16 AM, Alexander Steffen wrote:
-> Disclaimer: This is RFC because unfortunately I do not have the time to bring it up to the usual standards. But from lying around on my hard disk it definitely won't improve, so I've decided to publish it now, to get at least some feedback or maybe for somebody else to pick it up. Since the work began some time ago, it is probably not rebased against the current state (but hopefully still applies).
->
-> This is a collection of all the fixes I made during the investigation of the problems with the "ignore burstcount" change. These are mainly fixes for the wait state handling in tpm_tis_spi, that probably was not really tested so far, since the previous implementation avoided wait states as far as possible. It also includes changes to tpm_tis_core, so that it follows the specification more closely. Finally, I've included a rebased version of the original "ignore burstcount" patch. Together, those patches pass all my tests and also each intermediate step is fine (so that bisecting still works).
+> 1) Leave the code as is and apply the patch I shared with James. In that
+>    case the CLKRUN protocol will be disabled only during TPM transactions
+>    and not enabled again after transactions if it wasn't enabled.
 
-Thanks Alex for debugging and fixing. Sorry, I haven't been able to look 
-yet because was mostly on vacation most of the time in last few weeks 
-and would be for few more days in next two weeks.
+This seems necessary no matter what, especially if it works..
 
-Thanks & Regards,
-    - Nayna
+> 2) Drop the pending CLKRUN patch in linux-tpmdd and revert CLKRUN commit
+>    in mainline. And instead of disabling the CLKRUN protocol during the
+>    TPM transactions, disable if the CLKRUN_EN is enabled and the system
+>    is in a list of systems that have a TPM that doesn't support CLKRUN.
 
->
-> Alexander Steffen (8):
->    tpm_tis_core: clean up whitespace
->    tpm_tis_core: access single TIS registers before doing complex
->      transfers
->    tpm_tis_core: correctly wait for flags to become zero
->    tpm_tis_core: send all data in single operation
->    tpm_tis_core: use XDATA_FIFO for transfers if available
->    tpm_tis_spi: fix sending wrong data during wait state handling
->    tpm_tis_spi: release CS line when wait state handling fails
->    tpm_tis_spi: add delay between wait state retries
->
-> Nayna Jain (1):
->    tpm: ignore burstcount to improve tpm_tis send() performance
->
->   drivers/char/tpm/tpm_tis_core.c | 131 ++++++++++++++++++++--------------------
->   drivers/char/tpm/tpm_tis_core.h |  26 ++++----
->   drivers/char/tpm/tpm_tis_spi.c  |  21 +++++--
->   3 files changed, 95 insertions(+), 83 deletions(-)
->
+This is also a good possible idea.
+
+Again, depends why Intel did this. I assumed it was a chipset bug
+since Intel was sending it not a system builder..
+
+Jason
