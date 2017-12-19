@@ -1,53 +1,137 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:60817 "EHLO mga09.intel.com"
+Received: from mx2.suse.de ([195.135.220.15]:44413 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1760710AbdLSNAX (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 19 Dec 2017 08:00:23 -0500
-Date: Tue, 19 Dec 2017 15:00:17 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: James Ettle <james@ettle.org.uk>
-Cc: Javier Martinez Canillas <javierm@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-integrity@vger.kernel.org, azhar.shaikh@intel.com,
-        linux-kernel@vger.kernel.org, james.l.morris@oracle.com
-Subject: Re: [BISECTED] tpm CLKRUN breaks PS/2 keyboard and touchpad on
- Braswell system
-Message-ID: <20171219130017.dhley2g4avwo3vbu@linux.intel.com>
-References: <34b361bf-cce7-a1ac-f8a3-76ef22f5b6b0@redhat.com>
- <5fb5de24-5a4c-4c01-1f72-49fc5844516c@ettle.org.uk>
- <011b4d29-9d93-4b7a-90dd-0c25cf184c3e@redhat.com>
- <20171214191052.GA20833@ziepe.ca>
- <20171215145630.ftsnj4azqqhzqwsh@linux.intel.com>
- <20171215173826.GD12434@ziepe.ca>
- <1513443676.29063.0.camel@linux.intel.com>
- <d3984354-56d4-747a-1266-bf28c657daae@redhat.com>
- <16609e73-e35d-4bb0-410d-e87915daba39@redhat.com>
- <6b41f2a7-3b6e-69f2-fd49-d2ae774ff0f5@ettle.org.uk>
+        id S1750916AbdLSJ3w (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 19 Dec 2017 04:29:52 -0500
+Date: Tue, 19 Dec 2017 10:29:47 +0100
+From: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-nfs@vger.kernel.org, bfields@fieldses.org, neilb@suse.de,
+        jack@suse.de, linux-ext4@vger.kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, linux-xfs@vger.kernel.org,
+        darrick.wong@oracle.com, david@fromorbit.com,
+        linux-btrfs@vger.kernel.org, clm@fb.com, jbacik@fb.com,
+        dsterba@suse.com, linux-integrity@vger.kernel.org,
+        zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
+        linux-afs@lists.infradead.org, dhowells@redhat.com,
+        jaltman@auristor.com
+Subject: Re: [PATCH v3 19/19] fs: handle inode->i_version more efficiently
+Message-ID: <20171219092947.GC2277@quack2.suse.cz>
+References: <20171218151156.14565-1-jlayton@kernel.org>
+ <20171218151156.14565-20-jlayton@kernel.org>
+ <20171218163418.GF30350@quack2.suse.cz>
+ <1513617740.3422.30.camel@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <6b41f2a7-3b6e-69f2-fd49-d2ae774ff0f5@ettle.org.uk>
+In-Reply-To: <1513617740.3422.30.camel@kernel.org>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Dec 18, 2017 at 06:26:35PM +0000, James Ettle wrote:
-> The keyboard and touchpad work OK with the patch quoted below and the earlier two applied, i.e. the three patches with signatures:
+On Mon 18-12-17 12:22:20, Jeff Layton wrote:
+> On Mon, 2017-12-18 at 17:34 +0100, Jan Kara wrote:
+> > On Mon 18-12-17 10:11:56, Jeff Layton wrote:
+> > >  static inline bool
+> > >  inode_maybe_inc_iversion(struct inode *inode, bool force)
+> > >  {
+> > > -	atomic64_t *ivp = (atomic64_t *)&inode->i_version;
+> > > +	u64 cur, old, new;
+> > >  
+> > > -	atomic64_inc(ivp);
+> > > +	cur = (u64)atomic64_read(&inode->i_version);
+> > > +	for (;;) {
+> > > +		/* If flag is clear then we needn't do anything */
+> > > +		if (!force && !(cur & I_VERSION_QUERIED))
+> > > +			return false;
+> > 
+> > The fast path here misses any memory barrier. Thus it seems this query
+> > could be in theory reordered before any store that happened to modify the
+> > inode? Or maybe we could race and miss the fact that in fact this i_version
+> > has already been queried? But maybe there's some higher level locking that
+> > makes sure this is all a non-issue... But in that case it would deserve
+> > some comment I guess.
+> > 
 > 
-> 667dcc75be864ff4c17cf58891853b7393bba3e2
-> db3248e8a036c39141c8f7e9f1cf5c5ae6815f76
-> 370d45a34dc8914066a995a3a6d6df1953ea9f60
+> There's no higher-level locking. Getting locking out of this codepath is
+> a good thing IMO. The larger question here is whether we really care
+> about ordering this with anything else.
 > 
-> I applied these to a vanilla kernel.org 4.14.7 source using Fedora 4.14.5-300.fc27 .config. Confirmed the tpm modules are loaded.
-> 
-> Tests:
-> 1. Keyboard and touchpad work OK on boot - PASS
-> 2. Still work after suspend/resume - PASS
-> 
-> Let me know if you want any further tests.
-> 
-> Many thanks,
-> James.
+> The i_version, as implemented today, is not ordered with actual changes
+> to the inode. We only take the i_lock today when modifying it, not when
+> querying it. It's possible today that you could see the results of a
+> change and then do a fetch of the i_version that doesn't show an
+> increment vs. a previous change.
 
-Thank you for your awesome help! I guess Javier can add your
-Tested-by to the patch?
+Yeah, so I don't suggest that you should fix unrelated issues but original
+i_lock protection did actually provide memory barriers (although
+semi-permeable, but in practice they are very often enough) and your patch
+removing those could have changed a theoretical issue to a practical
+problem. So at least preserving that original acquire-release semantics
+of i_version handling would be IMHO good.
 
-/Jarkko
+> It'd be nice if this were atomic with the actual changes that it
+> represents, but I think that would be prohibitively expensive. That may
+> be something we need to address. I'm not sure we really want to do it as
+> part of this patchset though.
+> 
+> > > +
+> > > +		/* Since lowest bit is flag, add 2 to avoid it */
+> > > +		new = (cur & ~I_VERSION_QUERIED) + I_VERSION_INCREMENT;
+> > > +
+> > > +		old = atomic64_cmpxchg(&inode->i_version, cur, new);
+> > > +		if (likely(old == cur))
+> > > +			break;
+> > > +		cur = old;
+> > > +	}
+> > >  	return true;
+> > >  }
+> > >  
+> > 
+> > ...
+> > 
+> > >  static inline u64
+> > >  inode_query_iversion(struct inode *inode)
+> > >  {
+> > > -	return inode_peek_iversion(inode);
+> > > +	u64 cur, old, new;
+> > > +
+> > > +	cur = atomic64_read(&inode->i_version);
+> > > +	for (;;) {
+> > > +		/* If flag is already set, then no need to swap */
+> > > +		if (cur & I_VERSION_QUERIED)
+> > > +			break;
+> > > +
+> > > +		new = cur | I_VERSION_QUERIED;
+> > > +		old = atomic64_cmpxchg(&inode->i_version, cur, new);
+> > > +		if (old == cur)
+> > > +			break;
+> > > +		cur = old;
+> > > +	}
+> > 
+> > Why not just use atomic64_or() here?
+> > 
+> 
+> If the cmpxchg fails, then either:
+> 
+> 1) it was incremented
+> 2) someone flagged it QUERIED
+> 
+> If an increment happened then we don't need to flag it as QUERIED if
+> we're returning an older value. If we use atomic64_or, then we can't
+> tell if an increment happened so we'd end up potentially flagging it
+> more than necessary.
+> 
+> In principle, either outcome is technically OK and we don't have to loop
+> if the cmpxchg doesn't work. That said, if we think there might be a
+> later i_version available, then I think we probably want to try to query
+> it again so we can return as late a one as possible.
+
+OK, makes sense. I'm just a bit vary of cmpxchg loops as they tend to
+behave pretty badly in contended cases but I guess i_version won't be
+hammered *that* hard.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
