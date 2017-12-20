@@ -1,154 +1,188 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from smtp2.infineon.com ([217.10.52.18]:20481 "EHLO
-        smtp2.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755060AbdLTOHK (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 20 Dec 2017 09:07:10 -0500
-From: <Alexander.Steffen@infineon.com>
-To: <javierm@redhat.com>, <hdegoede@redhat.com>,
-        <linux-kernel@vger.kernel.org>
-CC: <james@ettle.org.uk>, <azhar.shaikh@intel.com>, <arnd@arndb.de>,
-        <jarkko.sakkinen@linux.intel.com>, <peterhuewe@gmx.de>,
-        <jgg@ziepe.ca>, <gregkh@linuxfoundation.org>,
-        <linux-integrity@vger.kernel.org>
-Subject: RE: [PATCH 0/4] tpm: fix PS/2 devices not working on Braswell systems
- due CLKRUN enabled
-Date: Wed, 20 Dec 2017 14:07:07 +0000
-Message-ID: <a114994f3498411dab915403ac214130@infineon.com>
-References: <20171220113538.16099-1-javierm@redhat.com>
- <96f3f833-22f8-5400-bd22-7c1c622bbe61@redhat.com>
- <da95e481-be7d-63f2-1b54-1e1c6145ed3f@redhat.com>
-In-Reply-To: <da95e481-be7d-63f2-1b54-1e1c6145ed3f@redhat.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Received: from mail.kernel.org ([198.145.29.99]:36788 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755227AbdLTODL (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 20 Dec 2017 09:03:11 -0500
+Message-ID: <1513778586.4513.18.camel@kernel.org>
+Subject: Re: [PATCH v3 19/19] fs: handle inode->i_version more efficiently
+From: Jeff Layton <jlayton@kernel.org>
+To: Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>
+Cc: "J. Bruce Fields" <bfields@fieldses.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org, neilb@suse.de,
+        jack@suse.de, linux-ext4@vger.kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, linux-xfs@vger.kernel.org,
+        darrick.wong@oracle.com, linux-btrfs@vger.kernel.org, clm@fb.com,
+        jbacik@fb.com, dsterba@suse.com, linux-integrity@vger.kernel.org,
+        zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
+        linux-afs@lists.infradead.org, dhowells@redhat.com,
+        jaltman@auristor.com
+Date: Wed, 20 Dec 2017 09:03:06 -0500
+In-Reply-To: <20171218220759.GF4094@dastard>
+References: <20171218151156.14565-1-jlayton@kernel.org>
+         <20171218151156.14565-20-jlayton@kernel.org>
+         <20171218163418.GF30350@quack2.suse.cz>
+         <1513617740.3422.30.camel@kernel.org> <20171218173651.GB12454@fieldses.org>
+         <1513625720.3422.68.camel@kernel.org> <20171218220759.GF4094@dastard>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-> Hi Hans,
+On Tue, 2017-12-19 at 09:07 +1100, Dave Chinner wrote:
+> On Mon, Dec 18, 2017 at 02:35:20PM -0500, Jeff Layton wrote:
+> > [PATCH] SQUASH: add memory barriers around i_version accesses
 > 
-> Thanks a lot for your feedback.
+> Why explicit memory barriers rather than annotating the operations
+> with the required semantics and getting the barriers the arch
+> requires automatically?  I suspect this should be using
+> atomic_read_acquire() and atomic_cmpxchg_release(), because AFAICT
+> the atomic_cmpxchg needs to have release semantics to match the
+> acquire semantics needed for the load of the current value.
 > 
-> On 12/20/2017 12:43 PM, Hans de Goede wrote:
-> > Hi,
-> >
-> > On 20-12-17 12:35, Javier Martinez Canillas wrote:
-> >> Hello,
-> >>
-> >> Commit 5e572cab92f0 ("tpm: Enable CLKRUN protocol for Braswell
-> systems")
-> >> added logic in the TPM TIS driver to disable the Low Pin Count CLKRUN
-> >> signal during TPM transactions.
-> >>
-> >> Unfortunately this breaks other devices that are attached to the LPC bus
-> >> like for example PS/2 mouse and keyboards.
-> >>
-> >> The bug was reported to the Fedora kernel [0] and the kernel bugzilla [1].
-> >> This issue and the propossed solution were discussed in this [2] thread,
-> >> and the reporter (Jame Ettle) confirmed that his system works again after
-> >> the fix in this series.
-> >>
-> >> The patches are based on top or Jarkko Sakkinen's linux-tpmdd [3] tree.
-> >>
-> >> James,
-> >>
-> >> Even when there shouldn't be any functional changes, I included some
-> other
-> >> fixes / cleanups in this series so it would be great if you can test them
-> >> again. I can't because I don't have access to a machine affected by this.
-> >>
-> >> [0]: https://bugzilla.redhat.com/show_bug.cgi?id=1498987
-> >> [1]: https://bugzilla.kernel.org/show_bug.cgi?id=197287
-> >> [2]: https://patchwork.kernel.org/patch/10119417/
-> >> [3]: git.infradead.org/users/jjs/linux-tpmdd.git
-> >>
-> >> Best regards,
-> >> Javier
-> >>
-> >>
-> >> Javier Martinez Canillas (4):
-> >>    tpm: fix access attempt to an already unmapped I/O memory region
-> >>    tpm: delete the TPM_TIS_CLK_ENABLE flag
-> >>    tpm: follow coding style for variable declaration in
-> >>      tpm_tis_core_init()
-> >>    tpm: only attempt to disable the LPC CLKRUN if is already enabled
-> >>
-> >>   drivers/char/tpm/tpm_tis.c      | 17 +----------------
-> >>   drivers/char/tpm/tpm_tis_core.c | 24 +++++++++++++++++-------
-> >>   drivers/char/tpm/tpm_tis_core.h |  1 -
-> >>   3 files changed, 18 insertions(+), 24 deletions(-)
-> >
-> > Note I'm just reading along here, but I'm wondering if both the TPM
-> > and now also some PS/2 controllers need CLK_RUN to be disabled,
-> > why don't we just disable it once permanently and be done with it?
-> >
+> From include/linux/atomics.h:
 > 
-> That's the same question I asked to Azhar who authored the patch that
-> added the CLKRUN toggle logic to the driver, but he didn't answer yet:
+>  * For compound atomics performing both a load and a store, ACQUIRE
+>  * semantics apply only to the load and RELEASE semantics only to the
+>  * store portion of the operation. Note that a failed cmpxchg_acquire
+>  * does -not- imply any memory ordering constraints.
 > 
-> https://www.spinics.net/lists/linux-integrity/msg01107.html
+> Memory barriers hurt my brain. :/
 > 
-> My understanding is that by permanently disabling it, then other devices
-> that do support the CLKRUN protocol will continue to work correctly since
-> the CLKRUN# signal is optional and only used if the host LCLK is stopped.
+> At minimum, shouldn't the atomic op specific barriers be used rather
+> than full memory barriers? i.e:
 > 
-> The disadvantage though will be that the power management feature of
-> stopping
-> the LPC host LCLK clock when entering into low-power states will not be
-> used.
-> 
-> > It seems that on machines with a PS/2 controller connected to
-> > the LPC bus the BIOS is already doing this, so I've a feeling that
-> > it not being done on devices with a TPM is a bug in the firmware
-> 
-> Absolutely agree, system integratos should make sure that all the devices
-> connected to the LPC either have CLKRUN protocol support and is enabled
-> or disable the CLKRUN protocol permanently.
 
-As far as I understand it, this is exactly the issue here: They know that there are devices that do not support the CLKRUN protocol (the TPM in this case), but they still need to enable it to prevent other issues. So for the TPM to continue to work, CLKRUN needs to be disabled temporarily while the TPM is active.
+They hurt my brain too. Yes, definitely atomic-specific barriers should
+be used here instead, since this is an atomic64_t now.
 
-> > there and we should just disable it everywhere (and probably
-> > find a better place then the TPM driver to do the disabling).
-> >
-> 
-> Indeed. Touching a global bus configuration in a driver for a single device
-> isn't safe to say the least. One problem is that we don't have a LPC bus
-> subsystem so that's why these sort of quirks are done at the driver level.
-> 
-> > Note this is just an observation, I could be completely wrong here,
-> > but I've a feeling that just disabling CLKRUN all together is the
-> > right thing to do and that seems like an easier fix to me.
-> >
-> 
-> I think your observation is correct. The only problem is the power
-> management
-> feature being disabled as mentioned. Although as you said it seems that
-> most
-> BIOS do that (as shown by the patch I posted that just avoids toggling the
-> CLKRUN state if it's already disabled).
-> 
-> > Specifically what worries me is: what if another driver also takes
-> > the temporarily disable CLK_RUN approach because of similar issues?
-> > Now we've 2 drivers playing with the CLKRUN state and racing with
-> > each others.
-> >
-> 
-> Agreed. You don't even need another driver, if a Braswell system has 2 TPMs
-> then you have a race condition and one driver could enable the CLKRUN
-> state
-> while the other driver thinks that's already disabled, and TPM transactions
-> won't work in that case.
+After going over the docs again...my understanding has always been that
+you primarily need memory barriers to order accesses to different areas
+of memory.
 
-Even though it is an unusual configuration to have multiple TPMs in a system, this is something that we could fix in the driver by putting locks around the state changes, right? And if other drivers also want to change the CLKRUN state, at the very least they'd need to use the same (global) lock.
+As Jan and I were discussing in the other thread, i_version is not
+synchronized with anything else. In this code, we're only dealing with a
+single 64-bit word. I don't think there are any races there wrt the API
+itself.
 
-> So yeah, it's not a great situation.
-> 
-> > Regards,
-> >
-> > Hans
-> >
-> 
-> Best regards,
-> --
-> Javier Martinez Canillas
-> Software Engineer - Desktop Hardware Enablement
-> Red Hat
+The "legacy" inode_inc_iversion() however _does_ have implied memory
+barriers from the i_lock. There could be some subtle de-facto ordering
+there, so I think we probably do want some barriers in here if only to
+preserve that. It's not likely to cost much, and may save us tracking
+down some fiddly bugs.
+
+What about this patch? Note that I've only added barriers to
+inode_maybe_inc_iversion. I don't see that we need it for the other
+functions, but please do tell me if I'm wrong there:
+
+--------------------8<---------------------------
+
+[PATCH] SQUASH: add memory barriers around i_version accesses
+
+Signed-off-by: Jeff Layton <jlayton@redhat.com>
+---
+ include/linux/iversion.h | 53 +++++++++++++++++++++++++++++-------------------
+ 1 file changed, 32 insertions(+), 21 deletions(-)
+
+diff --git a/include/linux/iversion.h b/include/linux/iversion.h
+index a9fbf99709df..02187a3bec3b 100644
+--- a/include/linux/iversion.h
++++ b/include/linux/iversion.h
+@@ -89,6 +89,23 @@ inode_set_iversion_raw(struct inode *inode, const u64 val)
+ 	atomic64_set(&inode->i_version, val);
+ }
+ 
++/**
++ * inode_peek_iversion_raw - grab a "raw" iversion value
++ * @inode: inode from which i_version should be read
++ *
++ * Grab a "raw" inode->i_version value and return it. The i_version is not
++ * flagged or converted in any way. This is mostly used to access a self-managed
++ * i_version.
++ *
++ * With those filesystems, we want to treat the i_version as an entirely
++ * opaque value.
++ */
++static inline u64
++inode_peek_iversion_raw(const struct inode *inode)
++{
++	return atomic64_read(&inode->i_version);
++}
++
+ /**
+  * inode_set_iversion - set i_version to a particular value
+  * @inode: inode to set
+@@ -152,7 +169,16 @@ inode_maybe_inc_iversion(struct inode *inode, bool force)
+ {
+ 	u64 cur, old, new;
+ 
+-	cur = (u64)atomic64_read(&inode->i_version);
++	/*
++	 * The i_version field is not strictly ordered with any other inode
++	 * information, but the legacy inode_inc_iversion code used a spinlock
++	 * to serialize increments.
++	 *
++	 * This code adds full memory barriers to ensure that any de-facto
++	 * ordering with other info is preserved.
++	 */
++	smp_mb__before_atomic();
++	cur = inode_peek_iversion_raw(inode);
+ 	for (;;) {
+ 		/* If flag is clear then we needn't do anything */
+ 		if (!force && !(cur & I_VERSION_QUERIED))
+@@ -162,8 +188,10 @@ inode_maybe_inc_iversion(struct inode *inode, bool force)
+ 		new = (cur & ~I_VERSION_QUERIED) + I_VERSION_INCREMENT;
+ 
+ 		old = atomic64_cmpxchg(&inode->i_version, cur, new);
+-		if (likely(old == cur))
++		if (likely(old == cur)) {
++			smp_mb__after_atomic();
+ 			break;
++		}
+ 		cur = old;
+ 	}
+ 	return true;
+@@ -183,23 +211,6 @@ inode_inc_iversion(struct inode *inode)
+ 	inode_maybe_inc_iversion(inode, true);
+ }
+ 
+-/**
+- * inode_peek_iversion_raw - grab a "raw" iversion value
+- * @inode: inode from which i_version should be read
+- *
+- * Grab a "raw" inode->i_version value and return it. The i_version is not
+- * flagged or converted in any way. This is mostly used to access a self-managed
+- * i_version.
+- *
+- * With those filesystems, we want to treat the i_version as an entirely
+- * opaque value.
+- */
+-static inline u64
+-inode_peek_iversion_raw(const struct inode *inode)
+-{
+-	return atomic64_read(&inode->i_version);
+-}
+-
+ /**
+  * inode_iversion_need_inc - is the i_version in need of being incremented?
+  * @inode: inode to check
+@@ -248,7 +259,7 @@ inode_query_iversion(struct inode *inode)
+ {
+ 	u64 cur, old, new;
+ 
+-	cur = atomic64_read(&inode->i_version);
++	cur = inode_peek_iversion_raw(inode);
+ 	for (;;) {
+ 		/* If flag is already set, then no need to swap */
+ 		if (cur & I_VERSION_QUERIED)
+@@ -256,7 +267,7 @@ inode_query_iversion(struct inode *inode)
+ 
+ 		new = cur | I_VERSION_QUERIED;
+ 		old = atomic64_cmpxchg(&inode->i_version, cur, new);
+-		if (old == cur)
++		if (likely(old == cur))
+ 			break;
+ 		cur = old;
+ 	}
+-- 
+2.14.3
