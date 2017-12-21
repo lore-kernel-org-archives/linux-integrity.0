@@ -1,38 +1,42 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:45821 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751418AbdLUQRd (ORCPT
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:46357 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751220AbdLUP4F (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 21 Dec 2017 11:17:33 -0500
-Received: by mail-wm0-f68.google.com with SMTP id 9so16951375wme.4
-        for <linux-integrity@vger.kernel.org>; Thu, 21 Dec 2017 08:17:33 -0800 (PST)
-Date: Thu, 21 Dec 2017 09:17:28 -0700
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Alexander.Steffen@infineon.com
-Cc: chiu@endlessm.com, peterhuewe@gmx.de,
-        jarkko.sakkinen@linux.intel.com, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux@endlessm.com
-Subject: Re: TPM driver breaks S3 suspend
-Message-ID: <20171221161728.GB20015@ziepe.ca>
-References: <CAB4CAwfSCvj1cudi+MWaB5g2Z67d9DwY1o475YOZD64ma23UiQ@mail.gmail.com>
- <5dbce6c25e7e499aaac05269ba3c0f73@infineon.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5dbce6c25e7e499aaac05269ba3c0f73@infineon.com>
+        Thu, 21 Dec 2017 10:56:05 -0500
+From: Vasyl Gomonovych <gomonovych@gmail.com>
+To: zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
+        james.l.morris@oracle.com, serge@hallyn.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, gomonovych@gmail.com
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] ima: Fix warn potential negative subtraction from max
+Date: Thu, 21 Dec 2017 16:55:53 +0100
+Message-Id: <1513871754-13943-1-git-send-email-gomonovych@gmail.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Dec 21, 2017 at 10:19:09AM +0000, Alexander.Steffen@infineon.com wrote:
+Found by smatch:
+security/integrity/ima/ima_queue.c:122 ima_add_digest_entry() warn:
+potential negative subtraction from max '(~0)- size'
 
-> The correct solution should be something like tpm2_auto_startup
-> (execute selftests, if they fail because of the missing startup
-> command, execute that and retry the selftests). Interestingly,
-> tpm1_auto_startup (same purpose as tpm2_auto_startup, but for TPM
-> 1.2 instead) does not use the same sequence, the startup-retry part
-> is missing. Is there any reason this is done differently for TPM
-> 1.2?
+Signed-off-by: Vasyl Gomonovych <gomonovych@gmail.com>
+---
+ security/integrity/ima/ima_queue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-No TPM 1.2 has needed the retry loop so far.. don't see any problem
-with adding it if the spec supports it.
-
-Jason
+diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+index a02a86d51102..446018478b81 100644
+--- a/security/integrity/ima/ima_queue.c
++++ b/security/integrity/ima/ima_queue.c
+@@ -116,7 +116,7 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
+ 	}
+ 
+ 	if (binary_runtime_size != ULONG_MAX) {
+-		int size;
++		unsigned int size;
+ 
+ 		size = get_binary_runtime_size(entry);
+ 		binary_runtime_size = (binary_runtime_size < ULONG_MAX - size) ?
+-- 
+1.9.1
