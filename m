@@ -1,65 +1,140 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:43035 "EHLO
-        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755153AbdLVCFE (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 21 Dec 2017 21:05:04 -0500
-Received: by mail-wm0-f53.google.com with SMTP id n138so19229896wmg.2
-        for <linux-integrity@vger.kernel.org>; Thu, 21 Dec 2017 18:05:04 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <5dbce6c25e7e499aaac05269ba3c0f73@infineon.com>
-References: <CAB4CAwfSCvj1cudi+MWaB5g2Z67d9DwY1o475YOZD64ma23UiQ@mail.gmail.com>
- <5dbce6c25e7e499aaac05269ba3c0f73@infineon.com>
-From: Chris Chiu <chiu@endlessm.com>
-Date: Fri, 22 Dec 2017 10:05:02 +0800
-Message-ID: <CAB4CAwc7GiyyPt+yRcNnoO7sORVXCQ4tA=szyOW4vP11EX8vPA@mail.gmail.com>
-Subject: Re: TPM driver breaks S3 suspend
-To: Alexander Steffen <Alexander.Steffen@infineon.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-integrity@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+Received: from mga14.intel.com ([192.55.52.115]:35242 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755507AbdLUXNk (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 21 Dec 2017 18:13:40 -0500
+From: Azhar Shaikh <azhar.shaikh@intel.com>
+To: jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca, javierm@redhat.com,
+        peterhuewe@gmx.de
+Cc: linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        azhar.shaikh@intel.com
+Subject: [PATCH v2] tpm: Fix the driver cleanup code
+Date: Thu, 21 Dec 2017 15:13:39 -0800
+Message-Id: <1513898019-164487-1-git-send-email-azhar.shaikh@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Dec 21, 2017 at 6:19 PM,  <Alexander.Steffen@infineon.com> wrote:
->> Hi,
->>     We have a desktop which has S3 suspend (to RAM) problem due to
->> error messages as follows.
->> [  198.908282] tpm tpm0: Error (38) sending savestate before suspend
->> [  198.908289] __pnp_bus_suspend(): tpm_pm_suspend+0x0/0x160 returns
->> 38
->> [  198.908293] dpm_run_callback(): pnp_bus_suspend+0x0/0x20 returns 38
->> [  198.908298] PM: Device 00:0b failed to suspend: error 38
->>
->>     However, the first suspend after boot is working although it still
->> shows an interesting message during resume.
->> [  155.789945] tpm tpm0: A TPM error (38) occurred continue selftest
->>
->>     The error code 38 in definition is TPM_ERR_INVALID_POSTINIT. I
->> found some explanations which said this error code means that this
->> command was received in the wrong sequence relative to a TPM_Startup
->> command. Don't really know what happens here and how should I deal
->> with this? Any suggestions? Please let me know what else information
->> should I provide. Thanks
->>
->> Chris
->
-> Just from looking at the code, this seems to be an issue in tpm_tis_resume.
->
-> When the device is not a TPM 2.0, it tries to execute the selftests, but ignores the results. In your case the selftests fail during resume, but since the error is ignored, the TPM device is still present (though non-functional) and so breaks the subsequent suspend.
->
-> In addition, from the error code we can tell that it is not actually a selftest failure. INVALID_POSTINIT for a command other than TPM_Startup means that no TPM_Startup has been executed for that power cycle yet, so the TPM has to reject all other commands. Usually, the platform sends the TPM_Startup command, but not in your case apparently.
->
-> The correct solution should be something like tpm2_auto_startup (execute selftests, if they fail because of the missing startup command, execute that and retry the selftests). Interestingly, tpm1_auto_startup (same purpose as tpm2_auto_startup, but for TPM 1.2 instead) does not use the same sequence, the startup-retry part is missing. Is there any reason this is done differently for TPM 1.2? Otherwise I'd propose to make tpm1_auto_startup follow the same sequence as tpm2_auto_startup and then call both from tpm_tis_resume, similar to what tpm_chip_register does.
->
-> Alexander
+Commit 3c1701339284353c41 ("tpm: Keep CLKRUN enabled throughout
+the duration of transmit_cmd()") added code which accessed
+chip->ops, even after it was set to NULL in tpm_del_char_device(),
+called from tpm_chip_unregister() in error / driver exit paths.
+So fix this code.
 
-You mean do tpm1(or 2)_auto_startup when I fail selftest with error
-code 38? Then it should retry until the TPM state back to correct
-state?
+Fixes: 3c1701339284353c41 ("tpm: Keep CLKRUN enabled throughout
+the duration of transmit_cmd()")
 
-Chris
+Suggested-by: Javier Martinez Canillas <javierm@redhat.com>
+Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
+Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
+---
+Changes in v2:
+- Remove TPM_CHIP_FLAG_DO_NOT_CLEAR_OPS flag, instead call
+  tpm_tis_clkrun_enable() directly in tpm_tis_remove()
+- Add comment to tpm_tis_clkrun_enable()
+
+ drivers/char/tpm/tpm_tis.c      |  6 ------
+ drivers/char/tpm/tpm_tis_core.c | 29 +++++++++++++++++------------
+ 2 files changed, 17 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index d29add49b033..c847fc69a2fc 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -275,9 +275,6 @@ static void tpm_tis_pnp_remove(struct pnp_dev *dev)
+ 
+ 	tpm_chip_unregister(chip);
+ 	tpm_tis_remove(chip);
+-	if (is_bsw())
+-		iounmap(priv->ilb_base_addr);
+-
+ }
+ 
+ static struct pnp_driver tis_pnp_driver = {
+@@ -329,9 +326,6 @@ static int tpm_tis_plat_remove(struct platform_device *pdev)
+ 	tpm_chip_unregister(chip);
+ 	tpm_tis_remove(chip);
+ 
+-	if (is_bsw())
+-		iounmap(priv->ilb_base_addr);
+-
+ 	return 0;
+ }
+ 
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index c2227983ed88..519e4a78c8f8 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -37,6 +37,8 @@
+  */
+ #define TPM_POLL_SLEEP	1  /* msec */
+ 
++static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value);
++
+ static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+ 					bool check_cancel, bool *canceled)
+ {
+@@ -716,8 +718,7 @@ void tpm_tis_remove(struct tpm_chip *chip)
+ 	u32 interrupt;
+ 	int rc;
+ 
+-	if (chip->ops->clk_enable != NULL)
+-		chip->ops->clk_enable(chip, true);
++	tpm_tis_clkrun_enable(chip, true);
+ 
+ 	rc = tpm_tis_read32(priv, reg, &interrupt);
+ 	if (rc < 0)
+@@ -725,8 +726,10 @@ void tpm_tis_remove(struct tpm_chip *chip)
+ 
+ 	tpm_tis_write32(priv, reg, ~TPM_GLOBAL_INT_ENABLE & interrupt);
+ 
+-	if (chip->ops->clk_enable != NULL)
+-		chip->ops->clk_enable(chip, false);
++	tpm_tis_clkrun_enable(chip, false);
++
++	if (priv->ilb_base_addr)
++		iounmap(priv->ilb_base_addr);
+ }
+ EXPORT_SYMBOL_GPL(tpm_tis_remove);
+ 
+@@ -736,6 +739,9 @@ void tpm_tis_remove(struct tpm_chip *chip)
+  * @chip:	TPM chip to use
+  * @value:	1 - Disable CLKRUN protocol, so that clocks are free running
+  *		0 - Enable CLKRUN protocol
++ *
++ * Call this function directly in tpm_tis_remove() in error or driver removal
++ * path, since the chip->ops is set to NULL in tpm_chip_unregister().
+  */
+ static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value)
+ {
+@@ -922,21 +928,20 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+ 	}
+ 
+ 	rc = tpm_chip_register(chip);
+-	if (rc && is_bsw())
+-		iounmap(priv->ilb_base_addr);
++	if (rc)
++		goto out_err;
+ 
+ 	if (chip->ops->clk_enable != NULL)
+ 		chip->ops->clk_enable(chip, false);
+ 
+-	return rc;
+-out_err:
+-	tpm_tis_remove(chip);
+-	if (is_bsw())
+-		iounmap(priv->ilb_base_addr);
++	return 0;
+ 
+-	if (chip->ops->clk_enable != NULL)
++out_err:
++	if ((chip->ops != NULL) && (chip->ops->clk_enable != NULL))
+ 		chip->ops->clk_enable(chip, false);
+ 
++	tpm_tis_remove(chip);
++
+ 	return rc;
+ }
+ EXPORT_SYMBOL_GPL(tpm_tis_core_init);
+-- 
+1.9.1
