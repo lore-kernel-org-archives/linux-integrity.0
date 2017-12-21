@@ -1,52 +1,65 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wr0-f182.google.com ([209.85.128.182]:39922 "EHLO
-        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750933AbdLUWbA (ORCPT
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:43321 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752901AbdLUVz1 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 21 Dec 2017 17:31:00 -0500
-Received: by mail-wr0-f182.google.com with SMTP id a41so26375029wra.6
-        for <linux-integrity@vger.kernel.org>; Thu, 21 Dec 2017 14:31:00 -0800 (PST)
-Date: Thu, 21 Dec 2017 15:30:49 -0700
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Shaikh, Azhar" <azhar.shaikh@intel.com>
-Cc: "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-        "javierm@redhat.com" <javierm@redhat.com>,
-        "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tpmdd-devel@lists.sourceforge.net"
-        <tpmdd-devel@lists.sourceforge.net>
-Subject: Re: [PATCH] tpm: Fix the driver cleanup code
-Message-ID: <20171221223049.GJ20015@ziepe.ca>
-References: <1513887422-123222-1-git-send-email-azhar.shaikh@intel.com>
- <20171221202652.GH20015@ziepe.ca>
- <5FFFAD06ADE1CA4381B3F0F7C6AF5828989144@ORSMSX109.amr.corp.intel.com>
- <20171221203853.GI20015@ziepe.ca>
- <5FFFAD06ADE1CA4381B3F0F7C6AF582898918B@ORSMSX109.amr.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5FFFAD06ADE1CA4381B3F0F7C6AF582898918B@ORSMSX109.amr.corp.intel.com>
+        Thu, 21 Dec 2017 16:55:27 -0500
+From: Vasyl Gomonovych <gomonovych@gmail.com>
+To: serge@hallyn.com
+Cc: Vasyl Gomonovych <gomonovych@gmail.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <james.l.morris@oracle.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ima: Fix warn potential negative subtraction from max
+Date: Thu, 21 Dec 2017 22:54:18 +0100
+Message-Id: <1513893258-28773-1-git-send-email-gomonovych@gmail.com>
+In-Reply-To: <20171221180001.GC16008@mail.hallyn.com>
+References: <20171221180001.GC16008@mail.hallyn.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Dec 21, 2017 at 09:54:26PM +0000, Shaikh, Azhar wrote:
+Found by smatch:
+security/integrity/ima/ima_queue.c:122 ima_add_digest_entry() warn:
+potential negative subtraction from max '(~0)- size'
 
-> Yes, I checked this part. What I was referring to is any other
-> callback function similar to clk_enable if gets added in future and
-> then needs to Access ops even after it is set to NULL...
+Signed-off-by: Vasyl Gomonovych <gomonovych@gmail.com>
+---
+This minor change remove smatch warning but 
+I don't think that before change it was vulnerable, 
+motivation for this patch was smatch report.
 
-You can't call callback functions after tpm_unregister_chip, it isn't
-allowed.
+Changelog:
+ - v2: change get_binary_runtime_size return type
 
-This is a special case where we know the specific implementation of
-this specific callback is OK.
+ security/integrity/ima/ima_queue.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> But yes I get your point now.
-> 
-> So do you mean something like this?
-
-Yes
-
-Jason
+diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+index a02a86d51102..3d5f981b8453 100644
+--- a/security/integrity/ima/ima_queue.c
++++ b/security/integrity/ima/ima_queue.c
+@@ -74,9 +74,9 @@ static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
+  * binary_runtime_measurement list entry, which contains a
+  * couple of variable length fields (e.g template name and data).
+  */
+-static int get_binary_runtime_size(struct ima_template_entry *entry)
++static unsigned int get_binary_runtime_size(struct ima_template_entry *entry)
+ {
+-	int size = 0;
++	unsigned int size = 0;
+ 
+ 	size += sizeof(u32);	/* pcr */
+ 	size += sizeof(entry->digest);
+@@ -116,7 +116,7 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
+ 	}
+ 
+ 	if (binary_runtime_size != ULONG_MAX) {
+-		int size;
++		unsigned int size;
+ 
+ 		size = get_binary_runtime_size(entry);
+ 		binary_runtime_size = (binary_runtime_size < ULONG_MAX - size) ?
+-- 
+1.9.1
