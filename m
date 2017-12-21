@@ -1,83 +1,58 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:41598 "EHLO
-        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753351AbdLUMsc (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:44745 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752553AbdLUMqa (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 21 Dec 2017 07:48:32 -0500
-Received: by mail-wm0-f50.google.com with SMTP id g75so15836522wme.0
-        for <linux-integrity@vger.kernel.org>; Thu, 21 Dec 2017 04:48:32 -0800 (PST)
-Subject: Re: [PATCH 1/4] tpm: fix access attempt to an already unmapped I/O
- memory region
-To: "Shaikh, Azhar" <azhar.shaikh@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        James Ettle <james@ettle.org.uk>,
-        Hans de Goede <hdegoede@redhat.com>,
+        Thu, 21 Dec 2017 07:46:30 -0500
+Received: by mail-wm0-f67.google.com with SMTP id t8so15682173wmc.3
+        for <linux-integrity@vger.kernel.org>; Thu, 21 Dec 2017 04:46:30 -0800 (PST)
+Subject: Re: [PATCH 0/4] tpm: fix PS/2 devices not working on Braswell systems
+ due CLKRUN enabled
+To: James Ettle <james@ettle.org.uk>, linux-kernel@vger.kernel.org
+Cc: Hans de Goede <hdegoede@redhat.com>,
+        Azhar Shaikh <azhar.shaikh@intel.com>,
         Arnd Bergmann <arnd@arndb.de>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+        linux-integrity@vger.kernel.org
 References: <20171220113538.16099-1-javierm@redhat.com>
- <20171220113538.16099-2-javierm@redhat.com> <20171220180855.GB22908@ziepe.ca>
- <f9da193f-e1b4-c126-d272-b98bafda3b99@redhat.com>
- <20171220185458.GE22908@ziepe.ca>
- <5FFFAD06ADE1CA4381B3F0F7C6AF5828988917@ORSMSX109.amr.corp.intel.com>
+ <5c098570-5aea-533c-c096-b5eb5ecc5c95@ettle.org.uk>
 From: Javier Martinez Canillas <javierm@redhat.com>
-Message-ID: <e47b722a-da89-927d-b87a-1b21edd1b64d@redhat.com>
-Date: Thu, 21 Dec 2017 13:48:30 +0100
+Message-ID: <225df7f0-2422-1c5a-f44e-96cfd3b24232@redhat.com>
+Date: Thu, 21 Dec 2017 13:46:27 +0100
 MIME-Version: 1.0
-In-Reply-To: <5FFFAD06ADE1CA4381B3F0F7C6AF5828988917@ORSMSX109.amr.corp.intel.com>
+In-Reply-To: <5c098570-5aea-533c-c096-b5eb5ecc5c95@ettle.org.uk>
 Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hello Azhar,
+Hello James,
 
-On 12/20/2017 08:15 PM, Shaikh, Azhar wrote:
+On 12/21/2017 11:51 AM, James Ettle wrote:
+> OK, I built a kernel based on:
 > 
-> 
->> -----Original Message-----
->> From: Jason Gunthorpe [mailto:jgg@ziepe.ca]
->> Sent: Wednesday, December 20, 2017 10:55 AM
->> To: Javier Martinez Canillas <javierm@redhat.com>
->> Cc: linux-kernel@vger.kernel.org; James Ettle <james@ettle.org.uk>; Hans de
->> Goede <hdegoede@redhat.com>; Shaikh, Azhar <azhar.shaikh@intel.com>;
->> Arnd Bergmann <arnd@arndb.de>; Jarkko Sakkinen
->> <jarkko.sakkinen@linux.intel.com>; Peter Huewe <peterhuewe@gmx.de>;
->> Greg Kroah-Hartman <gregkh@linuxfoundation.org>; linux-
->> integrity@vger.kernel.org
->> Subject: Re: [PATCH 1/4] tpm: fix access attempt to an already unmapped I/O
->> memory region
->>
->> On Wed, Dec 20, 2017 at 07:21:31PM +0100, Javier Martinez Canillas wrote:
->>
->>>> The below draft fixes everything except #1. That needs a more
->>>> thoughtful idea..
->>>>
->>>
->>> I'll just drop this patch from the series and you can fix all the
->>> issues in the error / driver removal paths. It's not a dependency
->>> anyways, I included it just because noticed the issue while reading the code.
->>
->> Azhar, this means it becomes your problem :)
->>
-> 
-> Sure, I will fix this.
-> Javier you can drop this patch.
->
+> - git clone of git.infradead.org/users/jjs/linux-tpmdd.git taken last night
+> - applying the patch in https://patchwork.kernel.org/patch/10119417/
 
-On a second though, we should just merge $SUBJECT since is an obvious fix for
-one of the issues. Then you could fix the remaining bugs in error and driver
-removal paths.
- 
->> Since the patches Jarkko has queued from you introduce oops's you need to
->> fix them..
->>
->> Jason
+I meant linux-tpmdd + the 4 patches in this series.
+
+> - stock config-4.14.6-300.fc27.x86_64 + make oldconfig
 > 
-> Regards,
-> Azhar Shaikh
+> The tpm modules are loaded and the keyboard is working.
+> 
+> Note: I won't have access to this machine over the next few weeks.
+> 
+
+No worries, there shouldn't be any function changes anyways with the previous
+patch shared in the other thread and the changes are quite simple so I think
+it's OK.
+
+Again thanks a lot for your help and merry Christmas / happy new year.
+
+> Thanks,
+> James.
 > 
 
 Best regards,
