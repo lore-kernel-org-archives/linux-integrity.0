@@ -1,175 +1,45 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:19311 "EHLO mga07.intel.com"
+Received: from mga06.intel.com ([134.134.136.31]:3264 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755940AbdLVTOl (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Dec 2017 14:14:41 -0500
-From: "Shaikh, Azhar" <azhar.shaikh@intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC: "jgg@ziepe.ca" <jgg@ziepe.ca>,
-        "javierm@redhat.com" <javierm@redhat.com>,
-        "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2] tpm: Fix the driver cleanup code
-Date: Fri, 22 Dec 2017 19:14:39 +0000
-Message-ID: <5FFFAD06ADE1CA4381B3F0F7C6AF5828989512@ORSMSX109.amr.corp.intel.com>
-References: <1513898019-164487-1-git-send-email-azhar.shaikh@intel.com>
- <20171222184143.aqkg7vjbkjarod2z@linux.intel.com>
-In-Reply-To: <20171222184143.aqkg7vjbkjarod2z@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+        id S1755458AbdLVSjf (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 22 Dec 2017 13:39:35 -0500
+Date: Fri, 22 Dec 2017 20:39:30 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Javier Martinez Canillas <javierm@redhat.com>,
+        linux-kernel@vger.kernel.org, James Ettle <james@ettle.org.uk>,
+        Azhar Shaikh <azhar.shaikh@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-integrity@vger.kernel.org
+Subject: Re: [PATCH 0/4] tpm: fix PS/2 devices not working on Braswell
+ systems due CLKRUN enabled
+Message-ID: <20171222183930.kvdesz7pzhnhtztq@linux.intel.com>
+References: <20171220113538.16099-1-javierm@redhat.com>
+ <96f3f833-22f8-5400-bd22-7c1c622bbe61@redhat.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <96f3f833-22f8-5400-bd22-7c1c622bbe61@redhat.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
+On Wed, Dec 20, 2017 at 12:43:39PM +0100, Hans de Goede wrote:
+> Note I'm just reading along here, but I'm wondering if both the TPM
+> and now also some PS/2 controllers need CLK_RUN to be disabled,
+> why don't we just disable it once permanently and be done with it?
+> 
+> It seems that on machines with a PS/2 controller connected to
+> the LPC bus the BIOS is already doing this, so I've a feeling that
+> it not being done on devices with a TPM is a bug in the firmware
+> there and we should just disable it everywhere (and probably
+> find a better place then the TPM driver to do the disabling).
+> 
+> Note this is just an observation, I could be completely wrong here,
+> but I've a feeling that just disabling CLKRUN all together is the
+> right thing to do and that seems like an easier fix to me.
 
+Agreed. Thanks for noting this. Right now, I would just apply TPM
+driver specific fixes.
 
->-----Original Message-----
->From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
->Sent: Friday, December 22, 2017 10:42 AM
->To: Shaikh, Azhar <azhar.shaikh@intel.com>
->Cc: jgg@ziepe.ca; javierm@redhat.com; peterhuewe@gmx.de; linux-security-
->module@vger.kernel.org; linux-integrity@vger.kernel.org; linux-
->kernel@vger.kernel.org
->Subject: Re: [PATCH v2] tpm: Fix the driver cleanup code
->
->On Thu, Dec 21, 2017 at 03:13:39PM -0800, Azhar Shaikh wrote:
->> Commit 3c1701339284353c41 ("tpm: Keep CLKRUN enabled throughout the
->> duration of transmit_cmd()") added code which accessed
->> chip->ops, even after it was set to NULL in tpm_del_char_device(),
->> called from tpm_chip_unregister() in error / driver exit paths.
->> So fix this code.
->>
->> Fixes: 3c1701339284353c41 ("tpm: Keep CLKRUN enabled throughout the
->> duration of transmit_cmd()")
->>
->> Suggested-by: Javier Martinez Canillas <javierm@redhat.com>
->> Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
->> Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
->> ---
->> Changes in v2:
->> - Remove TPM_CHIP_FLAG_DO_NOT_CLEAR_OPS flag, instead call
->>   tpm_tis_clkrun_enable() directly in tpm_tis_remove()
->> - Add comment to tpm_tis_clkrun_enable()
->>
->>  drivers/char/tpm/tpm_tis.c      |  6 ------
->>  drivers/char/tpm/tpm_tis_core.c | 29 +++++++++++++++++------------
->>  2 files changed, 17 insertions(+), 18 deletions(-)
->>
->> diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
->> index d29add49b033..c847fc69a2fc 100644
->> --- a/drivers/char/tpm/tpm_tis.c
->> +++ b/drivers/char/tpm/tpm_tis.c
->> @@ -275,9 +275,6 @@ static void tpm_tis_pnp_remove(struct pnp_dev
->> *dev)
->>
->>  	tpm_chip_unregister(chip);
->>  	tpm_tis_remove(chip);
->> -	if (is_bsw())
->> -		iounmap(priv->ilb_base_addr);
->> -
->>  }
->>
->>  static struct pnp_driver tis_pnp_driver = { @@ -329,9 +326,6 @@
->> static int tpm_tis_plat_remove(struct platform_device *pdev)
->>  	tpm_chip_unregister(chip);
->>  	tpm_tis_remove(chip);
->>
->> -	if (is_bsw())
->> -		iounmap(priv->ilb_base_addr);
->> -
->>  	return 0;
->>  }
->>
->> diff --git a/drivers/char/tpm/tpm_tis_core.c
->> b/drivers/char/tpm/tpm_tis_core.c index c2227983ed88..519e4a78c8f8
->> 100644
->> --- a/drivers/char/tpm/tpm_tis_core.c
->> +++ b/drivers/char/tpm/tpm_tis_core.c
->> @@ -37,6 +37,8 @@
->>   */
->>  #define TPM_POLL_SLEEP	1  /* msec */
->>
->> +static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value);
->> +
->>  static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
->>  					bool check_cancel, bool *canceled)  {
->@@ -716,8 +718,7 @@ void
->> tpm_tis_remove(struct tpm_chip *chip)
->>  	u32 interrupt;
->>  	int rc;
->>
->> -	if (chip->ops->clk_enable != NULL)
->> -		chip->ops->clk_enable(chip, true);
->> +	tpm_tis_clkrun_enable(chip, true);
->>
->>  	rc = tpm_tis_read32(priv, reg, &interrupt);
->>  	if (rc < 0)
->> @@ -725,8 +726,10 @@ void tpm_tis_remove(struct tpm_chip *chip)
->>
->>  	tpm_tis_write32(priv, reg, ~TPM_GLOBAL_INT_ENABLE & interrupt);
->>
->> -	if (chip->ops->clk_enable != NULL)
->> -		chip->ops->clk_enable(chip, false);
->> +	tpm_tis_clkrun_enable(chip, false);
->> +
->> +	if (priv->ilb_base_addr)
->> +		iounmap(priv->ilb_base_addr);
->>  }
->>  EXPORT_SYMBOL_GPL(tpm_tis_remove);
->>
->> @@ -736,6 +739,9 @@ void tpm_tis_remove(struct tpm_chip *chip)
->>   * @chip:	TPM chip to use
->>   * @value:	1 - Disable CLKRUN protocol, so that clocks are free running
->>   *		0 - Enable CLKRUN protocol
->> + *
->> + * Call this function directly in tpm_tis_remove() in error or driver
->> + removal
->> + * path, since the chip->ops is set to NULL in tpm_chip_unregister().
->>   */
->>  static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value)
->> { @@ -922,21 +928,20 @@ int tpm_tis_core_init(struct device *dev,
->> struct tpm_tis_data *priv, int irq,
->>  	}
->>
->>  	rc = tpm_chip_register(chip);
->> -	if (rc && is_bsw())
->> -		iounmap(priv->ilb_base_addr);
->> +	if (rc)
->> +		goto out_err;
->>
->>  	if (chip->ops->clk_enable != NULL)
->>  		chip->ops->clk_enable(chip, false);
->>
->> -	return rc;
->> -out_err:
->> -	tpm_tis_remove(chip);
->> -	if (is_bsw())
->> -		iounmap(priv->ilb_base_addr);
->> +	return 0;
->>
->> -	if (chip->ops->clk_enable != NULL)
->> +out_err:
->> +	if ((chip->ops != NULL) && (chip->ops->clk_enable != NULL))
->>  		chip->ops->clk_enable(chip, false);
->>
->> +	tpm_tis_remove(chip);
->> +
->>  	return rc;
->>  }
->>  EXPORT_SYMBOL_GPL(tpm_tis_core_init);
->> --
->> 1.9.1
->>
->
->Since the original commit is not in the mainline yet, you should rather
->send an updated version of that commit.
->
-
-Ok, I will send an updated version of the original commit "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
-
->/Jarkko
-
-Regards,
-Azhar Shaikh
+/Jarkko
