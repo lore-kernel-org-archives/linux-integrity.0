@@ -1,38 +1,47 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:32041 "EHLO mga09.intel.com"
+Received: from mga09.intel.com ([134.134.136.24]:31894 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756218AbdLVSd3 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Dec 2017 13:33:29 -0500
-Date: Fri, 22 Dec 2017 20:33:24 +0200
+        id S1755940AbdLVSa4 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 22 Dec 2017 13:30:56 -0500
+Date: Fri, 22 Dec 2017 20:30:52 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: linux-kernel@vger.kernel.org, James Ettle <james@ettle.org.uk>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Azhar Shaikh <azhar.shaikh@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>, Peter Huewe <peterhuewe@gmx.de>,
+To: James Ettle <james@ettle.org.uk>
+Cc: Javier Martinez Canillas <javierm@redhat.com>,
         Jason Gunthorpe <jgg@ziepe.ca>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org
-Subject: Re: [PATCH 2/4] tpm: delete the TPM_TIS_CLK_ENABLE flag
-Message-ID: <20171222183324.hqav6npybepqn5tz@linux.intel.com>
-References: <20171220113538.16099-1-javierm@redhat.com>
- <20171220113538.16099-3-javierm@redhat.com>
+        linux-integrity@vger.kernel.org, azhar.shaikh@intel.com,
+        linux-kernel@vger.kernel.org, james.l.morris@oracle.com
+Subject: Re: [BISECTED] tpm CLKRUN breaks PS/2 keyboard and touchpad on
+ Braswell system
+Message-ID: <20171222183052.sfz6h5rln65cv7zq@linux.intel.com>
+References: <011b4d29-9d93-4b7a-90dd-0c25cf184c3e@redhat.com>
+ <20171214191052.GA20833@ziepe.ca>
+ <20171215145630.ftsnj4azqqhzqwsh@linux.intel.com>
+ <20171215173826.GD12434@ziepe.ca>
+ <1513443676.29063.0.camel@linux.intel.com>
+ <d3984354-56d4-747a-1266-bf28c657daae@redhat.com>
+ <16609e73-e35d-4bb0-410d-e87915daba39@redhat.com>
+ <6b41f2a7-3b6e-69f2-fd49-d2ae774ff0f5@ettle.org.uk>
+ <20171219130017.dhley2g4avwo3vbu@linux.intel.com>
+ <5d899290-c959-fa27-b0cf-83c86ac7f28c@ettle.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171220113538.16099-3-javierm@redhat.com>
+In-Reply-To: <5d899290-c959-fa27-b0cf-83c86ac7f28c@ettle.org.uk>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Dec 20, 2017 at 12:35:36PM +0100, Javier Martinez Canillas wrote:
-> This flag is only used to warn if CLKRUN_EN wasn't disabled on Braswell
-> systems, but the only way this can happen is if the code is not correct.
+> I'm OK with that.
 > 
-> So it's an unnecessary check that just makes the code harder to read.
+> Do you need any more info on the specifics of the machine I'm using?
 > 
-> Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+> (Note: I'm not currently aware of any BIOS updates for it. If this is ultimately a BIOS problem I wouldn't know what sort of report to file, or how to file it anyway...)
+> 
+> Thanks,
+> James
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+I just found out that the original bug was specific to BSW with
+Infineon SLB9655 chip.
+
+Unless you have this specific chip you can just give Tested-by
+(and Reviewed-by).
 
 /Jarkko
