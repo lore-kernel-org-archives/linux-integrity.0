@@ -1,46 +1,65 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:46807 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752901AbdLVCtI (ORCPT
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:43035 "EHLO
+        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755153AbdLVCFE (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 21 Dec 2017 21:49:08 -0500
-Received: by mail-it0-f68.google.com with SMTP id t1so12791724ite.5
-        for <linux-integrity@vger.kernel.org>; Thu, 21 Dec 2017 18:49:08 -0800 (PST)
-Date: Thu, 21 Dec 2017 19:49:06 -0700
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Azhar Shaikh <azhar.shaikh@intel.com>
-Cc: jarkko.sakkinen@linux.intel.com, javierm@redhat.com,
-        peterhuewe@gmx.de, linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tpm: Fix the driver cleanup code
-Message-ID: <20171222024906.GB23946@ziepe.ca>
-References: <1513898019-164487-1-git-send-email-azhar.shaikh@intel.com>
+        Thu, 21 Dec 2017 21:05:04 -0500
+Received: by mail-wm0-f53.google.com with SMTP id n138so19229896wmg.2
+        for <linux-integrity@vger.kernel.org>; Thu, 21 Dec 2017 18:05:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1513898019-164487-1-git-send-email-azhar.shaikh@intel.com>
+In-Reply-To: <5dbce6c25e7e499aaac05269ba3c0f73@infineon.com>
+References: <CAB4CAwfSCvj1cudi+MWaB5g2Z67d9DwY1o475YOZD64ma23UiQ@mail.gmail.com>
+ <5dbce6c25e7e499aaac05269ba3c0f73@infineon.com>
+From: Chris Chiu <chiu@endlessm.com>
+Date: Fri, 22 Dec 2017 10:05:02 +0800
+Message-ID: <CAB4CAwc7GiyyPt+yRcNnoO7sORVXCQ4tA=szyOW4vP11EX8vPA@mail.gmail.com>
+Subject: Re: TPM driver breaks S3 suspend
+To: Alexander Steffen <Alexander.Steffen@infineon.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-integrity@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Dec 21, 2017 at 03:13:39PM -0800, Azhar Shaikh wrote:
-> Commit 3c1701339284353c41 ("tpm: Keep CLKRUN enabled throughout
-> the duration of transmit_cmd()") added code which accessed
-> chip->ops, even after it was set to NULL in tpm_del_char_device(),
-> called from tpm_chip_unregister() in error / driver exit paths.
-> So fix this code.
-> 
-> Fixes: 3c1701339284353c41 ("tpm: Keep CLKRUN enabled throughout
-> the duration of transmit_cmd()")
-> 
-> Suggested-by: Javier Martinez Canillas <javierm@redhat.com>
-> Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
-> Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
-> Changes in v2:
-> - Remove TPM_CHIP_FLAG_DO_NOT_CLEAR_OPS flag, instead call
->   tpm_tis_clkrun_enable() directly in tpm_tis_remove()
-> - Add comment to tpm_tis_clkrun_enable()
+On Thu, Dec 21, 2017 at 6:19 PM,  <Alexander.Steffen@infineon.com> wrote:
+>> Hi,
+>>     We have a desktop which has S3 suspend (to RAM) problem due to
+>> error messages as follows.
+>> [  198.908282] tpm tpm0: Error (38) sending savestate before suspend
+>> [  198.908289] __pnp_bus_suspend(): tpm_pm_suspend+0x0/0x160 returns
+>> 38
+>> [  198.908293] dpm_run_callback(): pnp_bus_suspend+0x0/0x20 returns 38
+>> [  198.908298] PM: Device 00:0b failed to suspend: error 38
+>>
+>>     However, the first suspend after boot is working although it still
+>> shows an interesting message during resume.
+>> [  155.789945] tpm tpm0: A TPM error (38) occurred continue selftest
+>>
+>>     The error code 38 in definition is TPM_ERR_INVALID_POSTINIT. I
+>> found some explanations which said this error code means that this
+>> command was received in the wrong sequence relative to a TPM_Startup
+>> command. Don't really know what happens here and how should I deal
+>> with this? Any suggestions? Please let me know what else information
+>> should I provide. Thanks
+>>
+>> Chris
+>
+> Just from looking at the code, this seems to be an issue in tpm_tis_resume.
+>
+> When the device is not a TPM 2.0, it tries to execute the selftests, but ignores the results. In your case the selftests fail during resume, but since the error is ignored, the TPM device is still present (though non-functional) and so breaks the subsequent suspend.
+>
+> In addition, from the error code we can tell that it is not actually a selftest failure. INVALID_POSTINIT for a command other than TPM_Startup means that no TPM_Startup has been executed for that power cycle yet, so the TPM has to reject all other commands. Usually, the platform sends the TPM_Startup command, but not in your case apparently.
+>
+> The correct solution should be something like tpm2_auto_startup (execute selftests, if they fail because of the missing startup command, execute that and retry the selftests). Interestingly, tpm1_auto_startup (same purpose as tpm2_auto_startup, but for TPM 1.2 instead) does not use the same sequence, the startup-retry part is missing. Is there any reason this is done differently for TPM 1.2? Otherwise I'd propose to make tpm1_auto_startup follow the same sequence as tpm2_auto_startup and then call both from tpm_tis_resume, similar to what tpm_chip_register does.
+>
+> Alexander
 
-Looks Ok to me
+You mean do tpm1(or 2)_auto_startup when I fail selftest with error
+code 38? Then it should retry until the TPM state back to correct
+state?
 
-Reviewed-by: Jason Gunthorpe <jgg@ziepe.ca>
-
-Jason
+Chris
