@@ -1,63 +1,46 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:37348 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755229AbdLVK0m (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:46807 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752901AbdLVCtI (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Dec 2017 05:26:42 -0500
-Received: by mail-wr0-f196.google.com with SMTP id f8so16731724wre.4
-        for <linux-integrity@vger.kernel.org>; Fri, 22 Dec 2017 02:26:41 -0800 (PST)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javierm@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org
-Subject: [PATCH] tpm: remove unused data fields from I2C and OF device ID tables
-Date: Fri, 22 Dec 2017 11:26:36 +0100
-Message-Id: <20171222102636.12530-1-javierm@redhat.com>
+        Thu, 21 Dec 2017 21:49:08 -0500
+Received: by mail-it0-f68.google.com with SMTP id t1so12791724ite.5
+        for <linux-integrity@vger.kernel.org>; Thu, 21 Dec 2017 18:49:08 -0800 (PST)
+Date: Thu, 21 Dec 2017 19:49:06 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Azhar Shaikh <azhar.shaikh@intel.com>
+Cc: jarkko.sakkinen@linux.intel.com, javierm@redhat.com,
+        peterhuewe@gmx.de, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] tpm: Fix the driver cleanup code
+Message-ID: <20171222024906.GB23946@ziepe.ca>
+References: <1513898019-164487-1-git-send-email-azhar.shaikh@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1513898019-164487-1-git-send-email-azhar.shaikh@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-The data field for the entries in the device tables are set but not used.
+On Thu, Dec 21, 2017 at 03:13:39PM -0800, Azhar Shaikh wrote:
+> Commit 3c1701339284353c41 ("tpm: Keep CLKRUN enabled throughout
+> the duration of transmit_cmd()") added code which accessed
+> chip->ops, even after it was set to NULL in tpm_del_char_device(),
+> called from tpm_chip_unregister() in error / driver exit paths.
+> So fix this code.
+> 
+> Fixes: 3c1701339284353c41 ("tpm: Keep CLKRUN enabled throughout
+> the duration of transmit_cmd()")
+> 
+> Suggested-by: Javier Martinez Canillas <javierm@redhat.com>
+> Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
+> Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
+> Changes in v2:
+> - Remove TPM_CHIP_FLAG_DO_NOT_CLEAR_OPS flag, instead call
+>   tpm_tis_clkrun_enable() directly in tpm_tis_remove()
+> - Add comment to tpm_tis_clkrun_enable()
 
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
----
+Looks Ok to me
 
- drivers/char/tpm/tpm_i2c_infineon.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Reviewed-by: Jason Gunthorpe <jgg@ziepe.ca>
 
-diff --git a/drivers/char/tpm/tpm_i2c_infineon.c b/drivers/char/tpm/tpm_i2c_infineon.c
-index 005c38879b2e..19fbd6a3a8e9 100644
---- a/drivers/char/tpm/tpm_i2c_infineon.c
-+++ b/drivers/char/tpm/tpm_i2c_infineon.c
-@@ -665,9 +665,9 @@ static int tpm_tis_i2c_init(struct device *dev)
- }
- 
- static const struct i2c_device_id tpm_tis_i2c_table[] = {
--	{"tpm_i2c_infineon", 0},
--	{"slb9635tt", 0},
--	{"slb9645tt", 1},
-+	{"tpm_i2c_infineon" },
-+	{"slb9635tt" },
-+	{"slb9645tt" },
- 	{},
- };
- 
-@@ -675,9 +675,9 @@ MODULE_DEVICE_TABLE(i2c, tpm_tis_i2c_table);
- 
- #ifdef CONFIG_OF
- static const struct of_device_id tpm_tis_i2c_of_match[] = {
--	{ .compatible = "infineon,tpm_i2c_infineon", .data = (void *)0 },
--	{ .compatible = "infineon,slb9635tt", .data = (void *)0 },
--	{ .compatible = "infineon,slb9645tt", .data = (void *)1 },
-+	{ .compatible = "infineon,tpm_i2c_infineon" },
-+	{ .compatible = "infineon,slb9635tt" },
-+	{ .compatible = "infineon,slb9645tt" },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, tpm_tis_i2c_of_match);
--- 
-2.14.3
+Jason
