@@ -1,150 +1,57 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:17583 "EHLO mga07.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:25253 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750864AbdLVSls (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Dec 2017 13:41:48 -0500
-Date: Fri, 22 Dec 2017 20:41:44 +0200
+        id S1756515AbdLVSiM (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 22 Dec 2017 13:38:12 -0500
+Date: Fri, 22 Dec 2017 20:38:07 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Azhar Shaikh <azhar.shaikh@intel.com>
-Cc: jgg@ziepe.ca, javierm@redhat.com, peterhuewe@gmx.de,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tpm: Fix the driver cleanup code
-Message-ID: <20171222184143.aqkg7vjbkjarod2z@linux.intel.com>
-References: <1513898019-164487-1-git-send-email-azhar.shaikh@intel.com>
+To: Javier Martinez Canillas <javierm@redhat.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+        "Shaikh, Azhar" <azhar.shaikh@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        James Ettle <james@ettle.org.uk>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>, Peter Huewe <peterhuewe@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Subject: Re: [PATCH 2/4] tpm: delete the TPM_TIS_CLK_ENABLE flag
+Message-ID: <20171222183807.qoqqfptkes42f4rh@linux.intel.com>
+References: <20171220113538.16099-1-javierm@redhat.com>
+ <20171220113538.16099-3-javierm@redhat.com>
+ <5FFFAD06ADE1CA4381B3F0F7C6AF5828988730@ORSMSX109.amr.corp.intel.com>
+ <20171220181005.GC22908@ziepe.ca>
+ <1cde2001-9ec0-02b3-42cc-11e931c0b22a@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1513898019-164487-1-git-send-email-azhar.shaikh@intel.com>
+In-Reply-To: <1cde2001-9ec0-02b3-42cc-11e931c0b22a@redhat.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Dec 21, 2017 at 03:13:39PM -0800, Azhar Shaikh wrote:
-> Commit 3c1701339284353c41 ("tpm: Keep CLKRUN enabled throughout
-> the duration of transmit_cmd()") added code which accessed
-> chip->ops, even after it was set to NULL in tpm_del_char_device(),
-> called from tpm_chip_unregister() in error / driver exit paths.
-> So fix this code.
+On Wed, Dec 20, 2017 at 07:26:03PM +0100, Javier Martinez Canillas wrote:
+> On 12/20/2017 07:10 PM, Jason Gunthorpe wrote:
+> > On Wed, Dec 20, 2017 at 03:19:19PM +0000, Shaikh, Azhar wrote:
+> >>> This flag is only used to warn if CLKRUN_EN wasn't disabled on Braswell
+> >>> systems, but the only way this can happen is if the code is not correct.
+> >>>
+> >>> So it's an unnecessary check that just makes the code harder to read.
+> >>
+> >> This code was implemented as a suggestion from Jason on the previous patches. 
+> >> https://www.spinics.net/lists/linux-integrity/msg00827.html
+> > 
+> > The concept was to be like ASSERT_RTNL, maybe it just needs a suitably
+> > named static inline to addrress Javier's readability concerns?
+> >
 > 
-> Fixes: 3c1701339284353c41 ("tpm: Keep CLKRUN enabled throughout
-> the duration of transmit_cmd()")
+> I really think is not worth it and pollutes all the tpm_tcg_{read,write}
+> functions with those is_bsw() and flags checks. Your example is different
+> since is a core API used by in lot of places in the kernel, but it's not
+> the case here.
 > 
-> Suggested-by: Javier Martinez Canillas <javierm@redhat.com>
-> Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
-> Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
-> ---
-> Changes in v2:
-> - Remove TPM_CHIP_FLAG_DO_NOT_CLEAR_OPS flag, instead call
->   tpm_tis_clkrun_enable() directly in tpm_tis_remove()
-> - Add comment to tpm_tis_clkrun_enable()
-> 
->  drivers/char/tpm/tpm_tis.c      |  6 ------
->  drivers/char/tpm/tpm_tis_core.c | 29 +++++++++++++++++------------
->  2 files changed, 17 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-> index d29add49b033..c847fc69a2fc 100644
-> --- a/drivers/char/tpm/tpm_tis.c
-> +++ b/drivers/char/tpm/tpm_tis.c
-> @@ -275,9 +275,6 @@ static void tpm_tis_pnp_remove(struct pnp_dev *dev)
->  
->  	tpm_chip_unregister(chip);
->  	tpm_tis_remove(chip);
-> -	if (is_bsw())
-> -		iounmap(priv->ilb_base_addr);
-> -
->  }
->  
->  static struct pnp_driver tis_pnp_driver = {
-> @@ -329,9 +326,6 @@ static int tpm_tis_plat_remove(struct platform_device *pdev)
->  	tpm_chip_unregister(chip);
->  	tpm_tis_remove(chip);
->  
-> -	if (is_bsw())
-> -		iounmap(priv->ilb_base_addr);
-> -
->  	return 0;
->  }
->  
-> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-> index c2227983ed88..519e4a78c8f8 100644
-> --- a/drivers/char/tpm/tpm_tis_core.c
-> +++ b/drivers/char/tpm/tpm_tis_core.c
-> @@ -37,6 +37,8 @@
->   */
->  #define TPM_POLL_SLEEP	1  /* msec */
->  
-> +static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value);
-> +
->  static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
->  					bool check_cancel, bool *canceled)
->  {
-> @@ -716,8 +718,7 @@ void tpm_tis_remove(struct tpm_chip *chip)
->  	u32 interrupt;
->  	int rc;
->  
-> -	if (chip->ops->clk_enable != NULL)
-> -		chip->ops->clk_enable(chip, true);
-> +	tpm_tis_clkrun_enable(chip, true);
->  
->  	rc = tpm_tis_read32(priv, reg, &interrupt);
->  	if (rc < 0)
-> @@ -725,8 +726,10 @@ void tpm_tis_remove(struct tpm_chip *chip)
->  
->  	tpm_tis_write32(priv, reg, ~TPM_GLOBAL_INT_ENABLE & interrupt);
->  
-> -	if (chip->ops->clk_enable != NULL)
-> -		chip->ops->clk_enable(chip, false);
-> +	tpm_tis_clkrun_enable(chip, false);
-> +
-> +	if (priv->ilb_base_addr)
-> +		iounmap(priv->ilb_base_addr);
->  }
->  EXPORT_SYMBOL_GPL(tpm_tis_remove);
->  
-> @@ -736,6 +739,9 @@ void tpm_tis_remove(struct tpm_chip *chip)
->   * @chip:	TPM chip to use
->   * @value:	1 - Disable CLKRUN protocol, so that clocks are free running
->   *		0 - Enable CLKRUN protocol
-> + *
-> + * Call this function directly in tpm_tis_remove() in error or driver removal
-> + * path, since the chip->ops is set to NULL in tpm_chip_unregister().
->   */
->  static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value)
->  {
-> @@ -922,21 +928,20 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
->  	}
->  
->  	rc = tpm_chip_register(chip);
-> -	if (rc && is_bsw())
-> -		iounmap(priv->ilb_base_addr);
-> +	if (rc)
-> +		goto out_err;
->  
->  	if (chip->ops->clk_enable != NULL)
->  		chip->ops->clk_enable(chip, false);
->  
-> -	return rc;
-> -out_err:
-> -	tpm_tis_remove(chip);
-> -	if (is_bsw())
-> -		iounmap(priv->ilb_base_addr);
-> +	return 0;
->  
-> -	if (chip->ops->clk_enable != NULL)
-> +out_err:
-> +	if ((chip->ops != NULL) && (chip->ops->clk_enable != NULL))
->  		chip->ops->clk_enable(chip, false);
->  
-> +	tpm_tis_remove(chip);
-> +
->  	return rc;
->  }
->  EXPORT_SYMBOL_GPL(tpm_tis_core_init);
-> -- 
-> 1.9.1
-> 
+> But I don't have a strong opinion either, it was Jarkko who questioned
+> the value of the flag so I can drop this patch too if you disagree with
+> the change. I'm mostly interested in PATCH 4/4 that's the actual fix.
 
-Since the original commit is not in the mainline yet, you should rather
-send an updated version of that commit.
+Not going to fight over this one. I would apply the patch but if there
+is strong opposition I can reconsider.
 
 /Jarkko
