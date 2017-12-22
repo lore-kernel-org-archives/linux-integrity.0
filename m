@@ -1,73 +1,202 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43930 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752224AbdLVTcc (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Dec 2017 14:32:32 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vBMJTHqs038085
-        for <linux-integrity@vger.kernel.org>; Fri, 22 Dec 2017 14:32:32 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2f15bsqt5m-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 22 Dec 2017 14:32:31 -0500
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <kgold@linux.vnet.ibm.com>;
-        Fri, 22 Dec 2017 14:32:30 -0500
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id vBMJWSDP49938454
-        for <linux-integrity@vger.kernel.org>; Fri, 22 Dec 2017 19:32:28 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 86FB0AE03B
-        for <linux-integrity@vger.kernel.org>; Fri, 22 Dec 2017 14:33:32 -0500 (EST)
-Received: from [9.2.202.150] (unknown [9.2.202.150])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP id 76575AE034
-        for <linux-integrity@vger.kernel.org>; Fri, 22 Dec 2017 14:33:32 -0500 (EST)
-Subject: Re: TPM driver breaks S3 suspend
-To: linux-integrity@vger.kernel.org
-References: <CAB4CAwfSCvj1cudi+MWaB5g2Z67d9DwY1o475YOZD64ma23UiQ@mail.gmail.com>
- <5dbce6c25e7e499aaac05269ba3c0f73@infineon.com>
-From: Ken Goldman <kgold@linux.vnet.ibm.com>
-Date: Fri, 22 Dec 2017 14:32:34 -0500
+Received: from mga11.intel.com ([192.55.52.93]:30441 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752224AbdLVT1K (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 22 Dec 2017 14:27:10 -0500
+From: "Shaikh, Azhar" <azhar.shaikh@intel.com>
+To: "Shaikh, Azhar" <azhar.shaikh@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: "jgg@ziepe.ca" <jgg@ziepe.ca>,
+        "javierm@redhat.com" <javierm@redhat.com>,
+        "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2] tpm: Fix the driver cleanup code
+Date: Fri, 22 Dec 2017 19:27:08 +0000
+Message-ID: <5FFFAD06ADE1CA4381B3F0F7C6AF582898952F@ORSMSX109.amr.corp.intel.com>
+References: <1513898019-164487-1-git-send-email-azhar.shaikh@intel.com>
+ <20171222184143.aqkg7vjbkjarod2z@linux.intel.com>
+ <5FFFAD06ADE1CA4381B3F0F7C6AF5828989512@ORSMSX109.amr.corp.intel.com>
+In-Reply-To: <5FFFAD06ADE1CA4381B3F0F7C6AF5828989512@ORSMSX109.amr.corp.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-In-Reply-To: <5dbce6c25e7e499aaac05269ba3c0f73@infineon.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Message-Id: <279113e4-ebd6-33a5-7988-cbb58609fbef@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 12/21/2017 5:19 AM, Alexander.Steffen@infineon.com wrote:
 
->> 
->> The error code 38 in definition is TPM_ERR_INVALID_POSTINIT. I 
->> found some explanations which said this error code means that this 
->> command was received in the wrong sequence relative to a
->> TPM_Startup command. Don't really know what happens here and how
->> should I deal with this? Any suggestions? Please let me know what
->> else information should I provide. Thanks
->> 
->> Chris
-> 
-> In addition, from the error code we can tell that it is not actually
-> a selftest failure. INVALID_POSTINIT for a command other than
-> TPM_Startup means that no TPM_Startup has been executed for that
-> power cycle yet, so the TPM has to reject all other commands.
-> Usually, the platform sends the TPM_Startup command, but not in your
-> case apparently.
 
-I offer another possibility, based on this:
+>-----Original Message-----
+>From: linux-integrity-owner@vger.kernel.org [mailto:linux-integrity-
+>owner@vger.kernel.org] On Behalf Of Shaikh, Azhar
+>Sent: Friday, December 22, 2017 11:15 AM
+>To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>Cc: jgg@ziepe.ca; javierm@redhat.com; peterhuewe@gmx.de; linux-security-
+>module@vger.kernel.org; linux-integrity@vger.kernel.org; linux-
+>kernel@vger.kernel.org
+>Subject: RE: [PATCH v2] tpm: Fix the driver cleanup code
+>
+>
+>
+>>-----Original Message-----
+>>From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
+>>Sent: Friday, December 22, 2017 10:42 AM
+>>To: Shaikh, Azhar <azhar.shaikh@intel.com>
+>>Cc: jgg@ziepe.ca; javierm@redhat.com; peterhuewe@gmx.de;
+>>linux-security- module@vger.kernel.org;
+>>linux-integrity@vger.kernel.org; linux- kernel@vger.kernel.org
+>>Subject: Re: [PATCH v2] tpm: Fix the driver cleanup code
+>>
+>>On Thu, Dec 21, 2017 at 03:13:39PM -0800, Azhar Shaikh wrote:
+>>> Commit 3c1701339284353c41 ("tpm: Keep CLKRUN enabled throughout the
+>>> duration of transmit_cmd()") added code which accessed
+>>> chip->ops, even after it was set to NULL in tpm_del_char_device(),
+>>> called from tpm_chip_unregister() in error / driver exit paths.
+>>> So fix this code.
+>>>
+>>> Fixes: 3c1701339284353c41 ("tpm: Keep CLKRUN enabled throughout the
+>>> duration of transmit_cmd()")
+>>>
+>>> Suggested-by: Javier Martinez Canillas <javierm@redhat.com>
+>>> Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
+>>> Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
+>>> ---
+>>> Changes in v2:
+>>> - Remove TPM_CHIP_FLAG_DO_NOT_CLEAR_OPS flag, instead call
+>>>   tpm_tis_clkrun_enable() directly in tpm_tis_remove()
+>>> - Add comment to tpm_tis_clkrun_enable()
+>>>
+>>>  drivers/char/tpm/tpm_tis.c      |  6 ------
+>>>  drivers/char/tpm/tpm_tis_core.c | 29 +++++++++++++++++------------
+>>>  2 files changed, 17 insertions(+), 18 deletions(-)
+>>>
+>>> diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+>>> index d29add49b033..c847fc69a2fc 100644
+>>> --- a/drivers/char/tpm/tpm_tis.c
+>>> +++ b/drivers/char/tpm/tpm_tis.c
+>>> @@ -275,9 +275,6 @@ static void tpm_tis_pnp_remove(struct pnp_dev
+>>> *dev)
+>>>
+>>>  	tpm_chip_unregister(chip);
+>>>  	tpm_tis_remove(chip);
+>>> -	if (is_bsw())
+>>> -		iounmap(priv->ilb_base_addr);
+>>> -
+>>>  }
+>>>
+>>>  static struct pnp_driver tis_pnp_driver = { @@ -329,9 +326,6 @@
+>>> static int tpm_tis_plat_remove(struct platform_device *pdev)
+>>>  	tpm_chip_unregister(chip);
+>>>  	tpm_tis_remove(chip);
+>>>
+>>> -	if (is_bsw())
+>>> -		iounmap(priv->ilb_base_addr);
+>>> -
+>>>  	return 0;
+>>>  }
+>>>
+>>> diff --git a/drivers/char/tpm/tpm_tis_core.c
+>>> b/drivers/char/tpm/tpm_tis_core.c index c2227983ed88..519e4a78c8f8
+>>> 100644
+>>> --- a/drivers/char/tpm/tpm_tis_core.c
+>>> +++ b/drivers/char/tpm/tpm_tis_core.c
+>>> @@ -37,6 +37,8 @@
+>>>   */
+>>>  #define TPM_POLL_SLEEP	1  /* msec */
+>>>
+>>> +static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool
+>>> +value);
+>>> +
+>>>  static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+>>>  					bool check_cancel, bool *canceled)  {
+>>@@ -716,8 +718,7 @@ void
+>>> tpm_tis_remove(struct tpm_chip *chip)
+>>>  	u32 interrupt;
+>>>  	int rc;
+>>>
+>>> -	if (chip->ops->clk_enable != NULL)
+>>> -		chip->ops->clk_enable(chip, true);
+>>> +	tpm_tis_clkrun_enable(chip, true);
+>>>
+>>>  	rc = tpm_tis_read32(priv, reg, &interrupt);
+>>>  	if (rc < 0)
+>>> @@ -725,8 +726,10 @@ void tpm_tis_remove(struct tpm_chip *chip)
+>>>
+>>>  	tpm_tis_write32(priv, reg, ~TPM_GLOBAL_INT_ENABLE & interrupt);
+>>>
+>>> -	if (chip->ops->clk_enable != NULL)
+>>> -		chip->ops->clk_enable(chip, false);
+>>> +	tpm_tis_clkrun_enable(chip, false);
+>>> +
+>>> +	if (priv->ilb_base_addr)
+>>> +		iounmap(priv->ilb_base_addr);
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(tpm_tis_remove);
+>>>
+>>> @@ -736,6 +739,9 @@ void tpm_tis_remove(struct tpm_chip *chip)
+>>>   * @chip:	TPM chip to use
+>>>   * @value:	1 - Disable CLKRUN protocol, so that clocks are free running
+>>>   *		0 - Enable CLKRUN protocol
+>>> + *
+>>> + * Call this function directly in tpm_tis_remove() in error or
+>>> + driver removal
+>>> + * path, since the chip->ops is set to NULL in tpm_chip_unregister().
+>>>   */
+>>>  static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value)
+>>> { @@ -922,21 +928,20 @@ int tpm_tis_core_init(struct device *dev,
+>>> struct tpm_tis_data *priv, int irq,
+>>>  	}
+>>>
+>>>  	rc = tpm_chip_register(chip);
+>>> -	if (rc && is_bsw())
+>>> -		iounmap(priv->ilb_base_addr);
+>>> +	if (rc)
+>>> +		goto out_err;
+>>>
+>>>  	if (chip->ops->clk_enable != NULL)
+>>>  		chip->ops->clk_enable(chip, false);
+>>>
+>>> -	return rc;
+>>> -out_err:
+>>> -	tpm_tis_remove(chip);
+>>> -	if (is_bsw())
+>>> -		iounmap(priv->ilb_base_addr);
+>>> +	return 0;
+>>>
+>>> -	if (chip->ops->clk_enable != NULL)
+>>> +out_err:
+>>> +	if ((chip->ops != NULL) && (chip->ops->clk_enable != NULL))
+>>>  		chip->ops->clk_enable(chip, false);
+>>>
+>>> +	tpm_tis_remove(chip);
+>>> +
+>>>  	return rc;
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(tpm_tis_core_init);
+>>> --
+>>> 1.9.1
+>>>
+>>
+>>Since the original commit is not in the mainline yet, you should rather
+>>send an updated version of that commit.
+>>
+>
+>Ok, I will send an updated version of the original commit "tpm: Keep CLKRUN
+>enabled throughout the duration of transmit_cmd()"
 
-1 - There are two ways to get TPM_ERR_INVALID_POSTINIT. One is what 
-Alexander said.  The other is a second TPM_Startup without a TPM_Init 
-(reboot).
+Should I send the updated commit on top of these 4?
 
-2 - Chris said that he gets this when doing an S3 suspend.  S3 does
-not do a reboot, and thus there should __not__ be a TPM_Startup.
+https://patchwork.kernel.org/patch/10125543/ 
+https://patchwork.kernel.org/patch/10125535/
+https://patchwork.kernel.org/patch/10125509/ 
+https://patchwork.kernel.org/patch/10125511/ 
 
-Could it be that the device driver is issuing a TPM_Startup when
-resuming from S3?
+>
+>>/Jarkko
+>
+>Regards,
+>Azhar Shaikh
 
-However, Chris indicated that the TPM_ERR_INVALID_POSTINIT is returned 
-from 'savestate'.  This could only happen if the TPM never got a
-TPM_Startup at its first boot, which seems unlikely.
+Regards,
+Azhar Shaikh
