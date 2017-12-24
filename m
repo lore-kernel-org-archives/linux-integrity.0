@@ -1,48 +1,104 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:42740 "EHLO mga01.intel.com"
+Received: from mga09.intel.com ([134.134.136.24]:21530 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750825AbdLXUdj (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 24 Dec 2017 15:33:39 -0500
-Date: Sun, 24 Dec 2017 22:33:35 +0200
+        id S1750846AbdLXTrI (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 24 Dec 2017 14:47:08 -0500
+Date: Sun, 24 Dec 2017 21:47:03 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Chris Chiu <chiu@endlessm.com>
-Cc: peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Subject: Re: TPM driver breaks S3 suspend
-Message-ID: <20171224203335.su56j5qs6rt6wd4v@linux.intel.com>
-References: <CAB4CAwfSCvj1cudi+MWaB5g2Z67d9DwY1o475YOZD64ma23UiQ@mail.gmail.com>
+To: Azhar Shaikh <azhar.shaikh@intel.com>
+Cc: jgg@ziepe.ca, peterhuewe@gmx.de,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/2] Fix corner cases with disabling CLKRUN in tpm_tis
+Message-ID: <20171224194703.zo75mrwqmruqe65f@linux.intel.com>
+References: <1513973624-44226-1-git-send-email-azhar.shaikh@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAB4CAwfSCvj1cudi+MWaB5g2Z67d9DwY1o475YOZD64ma23UiQ@mail.gmail.com>
+In-Reply-To: <1513973624-44226-1-git-send-email-azhar.shaikh@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Dec 21, 2017 at 04:04:56PM +0800, Chris Chiu wrote:
-> Hi,
->     We have a desktop which has S3 suspend (to RAM) problem due to
-> error messages as follows.
-> [  198.908282] tpm tpm0: Error (38) sending savestate before suspend
-> [  198.908289] __pnp_bus_suspend(): tpm_pm_suspend+0x0/0x160 returns 38
-> [  198.908293] dpm_run_callback(): pnp_bus_suspend+0x0/0x20 returns 38
-> [  198.908298] PM: Device 00:0b failed to suspend: error 38
+On Fri, Dec 22, 2017 at 12:13:42PM -0800, Azhar Shaikh wrote:
+> Changes from v1:
+> - Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
+>   - Add NULL checks before calling clk_toggle callback
+>   - Use IS_ENABLED instead of ifdef in tpm_tis_clkrun_toggle()
+>   - Do not call tpm_platform_begin_xfer() and tpm_platform_end_xfer()
+>     from tpm_tis_clkrun_toggle(). Make them static again.
 > 
->     However, the first suspend after boot is working although it still
-> shows an interesting message during resume.
-> [  155.789945] tpm tpm0: A TPM error (38) occurred continue selftest
+> - Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
+>   - This is a new patch in this series as per suggestion from Jason.
+>   - Is the current implementation ok or I should move the code in tpm_tis_pnp_remove()
+>     and tpm_tis_plat_remove() inside tpm_tis_remove(). That way all the unmapping
+>     can be done in one place, instead of 3 different places now. Also the unmapping
+>     in tpm_tis_init() can be moved to tpm_tis_remove(), since in case of error
+>     tpm_tis_core_init() calls tpm_tis_remove(). Kindly suggest.
 > 
->     The error code 38 in definition is TPM_ERR_INVALID_POSTINIT. I
-> found some explanations which said this error code means that this
-> command was received in the wrong sequence relative to a TPM_Startup
-> command. Don't really know what happens here and how should I deal
-> with this? Any suggestions? Please let me know what else information
-> should I provide. Thanks
+> Changes from v2:
+> - Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
+>   - No changes
 > 
-> Chris
+> - Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
+>   - Updated is_bsw() function to have the #ifdef CONFIG_X86 check within the function
+>     itself. Also removed the #ifdef CONFIG_X86 from all other places around is_bsw()
+> 
+> Changes from v3:
+> - Patch 1: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
+>   - Change function name from clk_toggle to clk_enable
+>   - Update the commit message.
+> 
+> - Patch 2: "tpm_tis: Move ilb_base_addr to tpm_tis_tcg_phy"
+>   - No changes
+> 
+> Changes from v4:
+> - The numbering of patches is now interchanged.
+> 
+> - Patch 1: "tpm_tis: Move ilb_base_addr to tpm_tis_data"
+>   - Had to move ilb_base_addr to tpm_tis_data, from tpm_tis_tcg_phy.
+>     Since the ioremapping of ilb_base_addr had to be done before any TPM access,
+>     hence moved the variable to tpm_tis_data.
+>   - Also move the ioremapping of ilb_base_addr from tpm_tis_init() to
+>     tpm_tis_core_init() i.e. before any TPM access is done.
+>   - Rename marco LPC_CNTRL_REG_OFFSET to LPC_CNTRL_OFFSET
+>   - Update the commit message.
+> 
+> - Patch 2: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
+>   - Remove the functions tpm_platform_begin_xfer() and tpm_platform_end_xfer()
+>   - Move the code from these functions to tpm_tis_clkrun_enable().
+> 
+> Changes from v5:
+> - Patch 1: "tpm_tis: Move ilb_base_addr to tpm_tis_data"
+>   - No changes
+> 
+> - Patch 2: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
+>   - Update the commit message.
+> 
+> Changes from v6:
+> - - Patch 1: "tpm_tis: Move ilb_base_addr to tpm_tis_data"
+>   - No changes
+> 
+> - Patch 2: "tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()"
+>   - chip->ops was set to NULL in tpm_del_char_device() called from tpm_chip_unregister() in
+>     error/driver exit path. Fix this code. (Suggested by Javier Martinez Canillas and Jason Gunthorpe)
+>   - Add a comment in tpm_tis_clkrun_enable() function.
+> 
+> Azhar Shaikh (2):
+>   tpm_tis: Move ilb_base_addr to tpm_tis_data
+>   tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()
+> 
+>  drivers/char/tpm/tpm-interface.c |   6 ++
+>  drivers/char/tpm/tpm_tis.c       | 121 ++++++---------------------------------
+>  drivers/char/tpm/tpm_tis_core.c  | 111 +++++++++++++++++++++++++++++++++--
+>  drivers/char/tpm/tpm_tis_core.h  |  17 ++++++
+>  include/linux/tpm.h              |   1 +
+>  5 files changed, 147 insertions(+), 109 deletions(-)
+> 
+> -- 
+> 1.9.1
+> 
 
-The sequences for initializing TPM 1.x devices has been fairly static
-for a long time. Has this occured after a kernel update? Is there a
-kernel version where it used to work and a version where it doesn't?
-Thanks.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkine@linux.intel.com> (with SPI
+TPM on Sandybridge machine)
 
 /Jarkko
