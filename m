@@ -1,41 +1,59 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga05.intel.com ([192.55.52.43]:14289 "EHLO mga05.intel.com"
+Received: from mga09.intel.com ([134.134.136.24]:7998 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750825AbdLXU55 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 24 Dec 2017 15:57:57 -0500
-Date: Sun, 24 Dec 2017 22:57:50 +0200
+        id S1751110AbdLXUlM (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 24 Dec 2017 15:41:12 -0500
+Date: Sun, 24 Dec 2017 22:41:09 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: linux-kernel@vger.kernel.org, James Ettle <james@ettle.org.uk>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Azhar Shaikh <azhar.shaikh@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+To: Alexander Steffen <Alexander.Steffen@infineon.com>
+Cc: nayna@linux.vnet.ibm.com, kgold@linux.vnet.ibm.com,
         linux-integrity@vger.kernel.org
-Subject: Re: [PATCH 1/4] tpm: fix access attempt to an already unmapped I/O
- memory region
-Message-ID: <20171224205750.z25vnk3apew3zuc6@linux.intel.com>
-References: <20171220113538.16099-1-javierm@redhat.com>
- <20171220113538.16099-2-javierm@redhat.com>
+Subject: Re: [RFC][PATCH 0/9] tpm: fix driver so that burstcount can be
+ safely ignored
+Message-ID: <20171224204109.fobx53ffmog2a5nk@linux.intel.com>
+References: <20171208184658.9588-1-Alexander.Steffen@infineon.com>
+ <20171215120439.v7fvyy2cuauhnl2h@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171220113538.16099-2-javierm@redhat.com>
+In-Reply-To: <20171215120439.v7fvyy2cuauhnl2h@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Dec 20, 2017 at 12:35:35PM +0100, Javier Martinez Canillas wrote:
-> The driver maps the I/O memory address to control the LPC bus CLKRUN_EN,
-> but on the error path the memory is accessed by the .clk_enable handler
-> after this was already unmapped. So only unmap the I/O memory region if
-> it will not be used anymore.
+On Fri, Dec 15, 2017 at 02:04:39PM +0200, Jarkko Sakkinen wrote:
+> On Fri, Dec 08, 2017 at 07:46:49PM +0100, Alexander Steffen wrote:
+> > Disclaimer: This is RFC because unfortunately I do not have the time to bring it up to the usual standards. But from lying around on my hard disk it definitely won't improve, so I've decided to publish it now, to get at least some feedback or maybe for somebody else to pick it up. Since the work began some time ago, it is probably not rebased against the current state (but hopefully still applies).
+> > 
+> > This is a collection of all the fixes I made during the investigation of the problems with the "ignore burstcount" change. These are mainly fixes for the wait state handling in tpm_tis_spi, that probably was not really tested so far, since the previous implementation avoided wait states as far as possible. It also includes changes to tpm_tis_core, so that it follows the specification more closely. Finally, I've included a rebased version of the original "ignore burstcount" patch. Together, those patches pass all my tests and also each intermediate step is fine (so that bisecting still works).
+> > 
+> > Alexander Steffen (8):
+> >   tpm_tis_core: clean up whitespace
+> >   tpm_tis_core: access single TIS registers before doing complex
+> >     transfers
+> >   tpm_tis_core: correctly wait for flags to become zero
+> >   tpm_tis_core: send all data in single operation
+> >   tpm_tis_core: use XDATA_FIFO for transfers if available
+> >   tpm_tis_spi: fix sending wrong data during wait state handling
+> >   tpm_tis_spi: release CS line when wait state handling fails
+> >   tpm_tis_spi: add delay between wait state retries
+> > 
+> > Nayna Jain (1):
+> >   tpm: ignore burstcount to improve tpm_tis send() performance
+> > 
+> >  drivers/char/tpm/tpm_tis_core.c | 131 ++++++++++++++++++++--------------------
+> >  drivers/char/tpm/tpm_tis_core.h |  26 ++++----
+> >  drivers/char/tpm/tpm_tis_spi.c  |  21 +++++--
+> >  3 files changed, 95 insertions(+), 83 deletions(-)
+> > 
+> > -- 
+> > 2.7.4
+> > 
 > 
-> Also, the correct thing to do is to cleanup the resources in the inverse
-> order that were acquired to prevent issues like these.
-> 
-> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+> Might not have time to review this before holidays but will do if
+> I can.
 
-I applied Azhar's updated patches to master and next. Shouldn't this be
-dropped now?
+Unfortunately this and your patches for broken TPMs came so late that
+they have no chance to make into 4.16. Thus, I will postpone their
+review after the pull request and take care of the high priority stuff
+for that release.
 
 /Jarkko
