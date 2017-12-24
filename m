@@ -1,59 +1,35 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:7998 "EHLO mga09.intel.com"
+Received: from mga09.intel.com ([134.134.136.24]:22882 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751110AbdLXUlM (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 24 Dec 2017 15:41:12 -0500
-Date: Sun, 24 Dec 2017 22:41:09 +0200
+        id S1751009AbdLXUh4 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 24 Dec 2017 15:37:56 -0500
+Date: Sun, 24 Dec 2017 22:37:51 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Alexander Steffen <Alexander.Steffen@infineon.com>
-Cc: nayna@linux.vnet.ibm.com, kgold@linux.vnet.ibm.com,
-        linux-integrity@vger.kernel.org
-Subject: Re: [RFC][PATCH 0/9] tpm: fix driver so that burstcount can be
- safely ignored
-Message-ID: <20171224204109.fobx53ffmog2a5nk@linux.intel.com>
-References: <20171208184658.9588-1-Alexander.Steffen@infineon.com>
- <20171215120439.v7fvyy2cuauhnl2h@linux.intel.com>
+To: Alexander.Steffen@infineon.com
+Cc: chiu@endlessm.com, peterhuewe@gmx.de, jgg@ziepe.ca,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux@endlessm.com
+Subject: Re: TPM driver breaks S3 suspend
+Message-ID: <20171224203751.2cyemyq7ugy3uquy@linux.intel.com>
+References: <CAB4CAwfSCvj1cudi+MWaB5g2Z67d9DwY1o475YOZD64ma23UiQ@mail.gmail.com>
+ <5dbce6c25e7e499aaac05269ba3c0f73@infineon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171215120439.v7fvyy2cuauhnl2h@linux.intel.com>
+In-Reply-To: <5dbce6c25e7e499aaac05269ba3c0f73@infineon.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Dec 15, 2017 at 02:04:39PM +0200, Jarkko Sakkinen wrote:
-> On Fri, Dec 08, 2017 at 07:46:49PM +0100, Alexander Steffen wrote:
-> > Disclaimer: This is RFC because unfortunately I do not have the time to bring it up to the usual standards. But from lying around on my hard disk it definitely won't improve, so I've decided to publish it now, to get at least some feedback or maybe for somebody else to pick it up. Since the work began some time ago, it is probably not rebased against the current state (but hopefully still applies).
-> > 
-> > This is a collection of all the fixes I made during the investigation of the problems with the "ignore burstcount" change. These are mainly fixes for the wait state handling in tpm_tis_spi, that probably was not really tested so far, since the previous implementation avoided wait states as far as possible. It also includes changes to tpm_tis_core, so that it follows the specification more closely. Finally, I've included a rebased version of the original "ignore burstcount" patch. Together, those patches pass all my tests and also each intermediate step is fine (so that bisecting still works).
-> > 
-> > Alexander Steffen (8):
-> >   tpm_tis_core: clean up whitespace
-> >   tpm_tis_core: access single TIS registers before doing complex
-> >     transfers
-> >   tpm_tis_core: correctly wait for flags to become zero
-> >   tpm_tis_core: send all data in single operation
-> >   tpm_tis_core: use XDATA_FIFO for transfers if available
-> >   tpm_tis_spi: fix sending wrong data during wait state handling
-> >   tpm_tis_spi: release CS line when wait state handling fails
-> >   tpm_tis_spi: add delay between wait state retries
-> > 
-> > Nayna Jain (1):
-> >   tpm: ignore burstcount to improve tpm_tis send() performance
-> > 
-> >  drivers/char/tpm/tpm_tis_core.c | 131 ++++++++++++++++++++--------------------
-> >  drivers/char/tpm/tpm_tis_core.h |  26 ++++----
-> >  drivers/char/tpm/tpm_tis_spi.c  |  21 +++++--
-> >  3 files changed, 95 insertions(+), 83 deletions(-)
-> > 
-> > -- 
-> > 2.7.4
-> > 
-> 
-> Might not have time to review this before holidays but will do if
-> I can.
+> The correct solution should be something like tpm2_auto_startup
+> (execute selftests, if they fail because of the missing startup
+> command, execute that and retry the selftests). Interestingly,
+> tpm1_auto_startup (same purpose as tpm2_auto_startup, but for TPM 1.2
+> instead) does not use the same sequence, the startup-retry part is
+> missing. Is there any reason this is done differently for TPM 1.2?
+> Otherwise I'd propose to make tpm1_auto_startup follow the same
+> sequence as tpm2_auto_startup and then call both from tpm_tis_resume,
+> similar to what tpm_chip_register does.
 
-Unfortunately this and your patches for broken TPMs came so late that
-they have no chance to make into 4.16. Thus, I will postpone their
-review after the pull request and take care of the high priority stuff
-for that release.
+I think the reason for that is that such regression has never reported
+on TPM 1.2 platform. No other reason.
 
 /Jarkko
