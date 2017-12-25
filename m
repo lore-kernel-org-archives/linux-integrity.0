@@ -1,11 +1,11 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33119 "EHLO
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:45331 "EHLO
         mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751895AbdLYCW5 (ORCPT
+        with ESMTP id S1751891AbdLYCXA (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 24 Dec 2017 21:22:57 -0500
-Received: by mail-wm0-f65.google.com with SMTP id g130so31968747wme.0
-        for <linux-integrity@vger.kernel.org>; Sun, 24 Dec 2017 18:22:56 -0800 (PST)
+        Sun, 24 Dec 2017 21:23:00 -0500
+Received: by mail-wm0-f65.google.com with SMTP id 9so30525691wme.4
+        for <linux-integrity@vger.kernel.org>; Sun, 24 Dec 2017 18:22:59 -0800 (PST)
 From: Javier Martinez Canillas <javierm@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: James Ettle <james@ettle.org.uk>,
@@ -15,115 +15,85 @@ Cc: James Ettle <james@ettle.org.uk>,
         Jason Gunthorpe <jgg@ziepe.ca>,
         linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH v2 1/3] tpm: delete the TPM_TIS_CLK_ENABLE flag
-Date: Mon, 25 Dec 2017 03:22:49 +0100
-Message-Id: <20171225022251.6464-2-javierm@redhat.com>
+Subject: [PATCH v2 3/3] tpm: only attempt to disable the LPC CLKRUN if is already enabled
+Date: Mon, 25 Dec 2017 03:22:51 +0100
+Message-Id: <20171225022251.6464-4-javierm@redhat.com>
 In-Reply-To: <20171225022251.6464-1-javierm@redhat.com>
 References: <20171225022251.6464-1-javierm@redhat.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-This flag is only used to warn if CLKRUN_EN wasn't disabled on Braswell
-systems, but the only way this can happen is if the code is not correct.
+Commit 5e572cab92f0 ("tpm: Enable CLKRUN protocol for Braswell systems")
+added logic in the TPM TIS driver to disable the Low Pin Count CLKRUN
+signal during TPM transactions.
 
-So it's an unnecessary check that just makes the code harder to read.
+Unfortunately this breaks other devices that are attached to the LPC bus
+like for example PS/2 mouse and keyboards.
 
-Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+One flaw with the logic is that it assumes that the CLKRUN is always
+enabled, and so it unconditionally enables it after a TPM transaction.
+
+But it could be that the CLKRUN# signal was already disabled in the LPC
+bus and so after the driver probes, CLKRUN_EN will remain enabled which
+may break other devices that are attached to the LPC bus but don't have
+support for the CLKRUN protocol.
+
+Fixes: 5e572cab92f0 ("tpm: Enable CLKRUN protocol for Braswell systems")
 Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Tested-by: James Ettle <james@ettle.org.uk>
+Tested-by: Jeffery Miller <jmiller@neverware.com>
 Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
 ---
 
- drivers/char/tpm/tpm_tis.c      | 15 ---------------
- drivers/char/tpm/tpm_tis_core.c |  2 --
- drivers/char/tpm/tpm_tis_core.h |  1 -
- 3 files changed, 18 deletions(-)
+This patch fixes the bug reported for the Fedora kernel [0] and the kernel
+bugzilla [1]. The issue and the propossed solution were discussed in this
+[2] thread.
 
-diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-index c847fc69a2fc..4b73e28458e3 100644
---- a/drivers/char/tpm/tpm_tis.c
-+++ b/drivers/char/tpm/tpm_tis.c
-@@ -138,9 +138,6 @@ static int tpm_tcg_read_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	if (is_bsw() && !(data->flags & TPM_TIS_CLK_ENABLE))
--		WARN(1, "CLKRUN not enabled!\n");
--
- 	while (len--)
- 		*result++ = ioread8(phy->iobase + addr);
- 
-@@ -152,9 +149,6 @@ static int tpm_tcg_write_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	if (is_bsw() && !(data->flags & TPM_TIS_CLK_ENABLE))
--		WARN(1, "CLKRUN not enabled!\n");
--
- 	while (len--)
- 		iowrite8(*value++, phy->iobase + addr);
- 
-@@ -165,9 +159,6 @@ static int tpm_tcg_read16(struct tpm_tis_data *data, u32 addr, u16 *result)
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	if (is_bsw() && !(data->flags & TPM_TIS_CLK_ENABLE))
--		WARN(1, "CLKRUN not enabled!\n");
--
- 	*result = ioread16(phy->iobase + addr);
- 
- 	return 0;
-@@ -177,9 +168,6 @@ static int tpm_tcg_read32(struct tpm_tis_data *data, u32 addr, u32 *result)
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	if (is_bsw() && !(data->flags & TPM_TIS_CLK_ENABLE))
--		WARN(1, "CLKRUN not enabled!\n");
--
- 	*result = ioread32(phy->iobase + addr);
- 
- 	return 0;
-@@ -189,9 +177,6 @@ static int tpm_tcg_write32(struct tpm_tis_data *data, u32 addr, u32 value)
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	if (is_bsw() && !(data->flags & TPM_TIS_CLK_ENABLE))
--		WARN(1, "CLKRUN not enabled!\n");
--
- 	iowrite32(value, phy->iobase + addr);
- 
- 	return 0;
+[0]: https://bugzilla.redhat.com/show_bug.cgi?id=1498987
+[1]: https://bugzilla.kernel.org/show_bug.cgi?id=197287
+[2]: https://patchwork.kernel.org/patch/10119417/
+
+
+ drivers/char/tpm/tpm_tis_core.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
 diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index dc3600fc79b7..f2bd99fa8352 100644
+index 03daf7017e0f..a72a9f03286d 100644
 --- a/drivers/char/tpm/tpm_tis_core.c
 +++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -751,7 +751,6 @@ static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value)
+@@ -747,7 +747,8 @@ static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value)
+ 	struct tpm_tis_data *data = dev_get_drvdata(&chip->dev);
+ 	u32 clkrun_val;
+ 
+-	if (!IS_ENABLED(CONFIG_X86) || !is_bsw())
++	if (!IS_ENABLED(CONFIG_X86) || !is_bsw() ||
++	    !data->ilb_base_addr)
  		return;
  
  	if (value) {
--		data->flags |= TPM_TIS_CLK_ENABLE;
- 		data->clkrun_enabled++;
- 		if (data->clkrun_enabled > 1)
- 			return;
-@@ -782,7 +781,6 @@ static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value)
- 		 * sure LPC clock is running before sending any TPM command.
- 		 */
- 		outb(0xCC, 0x80);
--		data->flags &= ~TPM_TIS_CLK_ENABLE;
+@@ -806,6 +807,7 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+ 	u32 vendor;
+ 	u32 intfcaps;
+ 	u32 intmask;
++	u32 clkrun_val;
+ 	u8 rid;
+ 	int rc, probe;
+ 	struct tpm_chip *chip;
+@@ -831,6 +833,13 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+ 					ILB_REMAP_SIZE);
+ 		if (!priv->ilb_base_addr)
+ 			return -ENOMEM;
++
++		clkrun_val = ioread32(priv->ilb_base_addr + LPC_CNTRL_OFFSET);
++		/* Check if CLKRUN# is already not enabled in the LPC bus */
++		if (!(clkrun_val & LPC_CLKRUN_EN)) {
++			iounmap(priv->ilb_base_addr);
++			priv->ilb_base_addr = NULL;
++		}
  	}
- }
  
-diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
-index afc50cde1ba6..d5c6a2e952b3 100644
---- a/drivers/char/tpm/tpm_tis_core.h
-+++ b/drivers/char/tpm/tpm_tis_core.h
-@@ -86,7 +86,6 @@ enum tis_defaults {
- 
- enum tpm_tis_flags {
- 	TPM_TIS_ITPM_WORKAROUND		= BIT(0),
--	TPM_TIS_CLK_ENABLE		= BIT(1),
- };
- 
- struct tpm_tis_data {
+ 	if (chip->ops->clk_enable != NULL)
 -- 
 2.14.3
