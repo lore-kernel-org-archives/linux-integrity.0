@@ -1,51 +1,62 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io0-f178.google.com ([209.85.223.178]:48328 "EHLO
-        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751834AbdJ0JNx (ORCPT
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:44704 "EHLO
+        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751039AbdLYCnm (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 27 Oct 2017 05:13:53 -0400
-Received: by mail-io0-f178.google.com with SMTP id j17so11299358iod.5
-        for <linux-integrity@vger.kernel.org>; Fri, 27 Oct 2017 02:13:53 -0700 (PDT)
+        Sun, 24 Dec 2017 21:43:42 -0500
+Received: by mail-wm0-f41.google.com with SMTP id t8so30552931wmc.3
+        for <linux-integrity@vger.kernel.org>; Sun, 24 Dec 2017 18:43:41 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20171026141429.nnmc2ks4m2bm6yhx@linux.intel.com>
-References: <20171024222148.gwnkj5vqsyj43qer@linux.intel.com>
- <CA+zpnLft_o-c2cRxtUEoAPbYiiLzmLqAPYwrkFDdVoyk5t6Zfw@mail.gmail.com>
- <20171025131848.3il7j5rw7nt7e2l6@linux.intel.com> <20171026141429.nnmc2ks4m2bm6yhx@linux.intel.com>
-From: Thiebaud Weksteen <tweek@google.com>
-Date: Fri, 27 Oct 2017 11:13:32 +0200
-Message-ID: <CA+zpnLfr3bZK0EDEpFP3_UkQX2xe1B3W5b+0r72meJ20XVXUAg@mail.gmail.com>
-Subject: Re: Proposal: rename tpm1_eventlog.c and tpm2_eventlog.c
+In-Reply-To: <20171224203335.su56j5qs6rt6wd4v@linux.intel.com>
+References: <CAB4CAwfSCvj1cudi+MWaB5g2Z67d9DwY1o475YOZD64ma23UiQ@mail.gmail.com>
+ <20171224203335.su56j5qs6rt6wd4v@linux.intel.com>
+From: Chris Chiu <chiu@endlessm.com>
+Date: Mon, 25 Dec 2017 10:43:40 +0800
+Message-ID: <CAB4CAwf+nWQ-dpYA1N2oHvODPj01cefoPzzNT00c2h9daXvSRw@mail.gmail.com>
+Subject: Re: TPM driver breaks S3 suspend
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-integrity@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Oct 26, 2017 at 4:14 PM, Jarkko Sakkinen
+On Mon, Dec 25, 2017 at 4:33 AM, Jarkko Sakkinen
 <jarkko.sakkinen@linux.intel.com> wrote:
-> On Wed, Oct 25, 2017 at 03:18:48PM +0200, Jarkko Sakkinen wrote:
->> > Since this may conflict with the last patch set I sent, are you happy
->> > for me to base this new set on tpmdd/master?
+> On Thu, Dec 21, 2017 at 04:04:56PM +0800, Chris Chiu wrote:
+>> Hi,
+>>     We have a desktop which has S3 suspend (to RAM) problem due to
+>> error messages as follows.
+>> [  198.908282] tpm tpm0: Error (38) sending savestate before suspend
+>> [  198.908289] __pnp_bus_suspend(): tpm_pm_suspend+0x0/0x160 returns 38
+>> [  198.908293] dpm_run_callback(): pnp_bus_suspend+0x0/0x20 returns 38
+>> [  198.908298] PM: Device 00:0b failed to suspend: error 38
 >>
->> What about this: you do an updated version of your patch set that
->> includes these clean ups?
+>>     However, the first suspend after boot is working although it still
+>> shows an interesting message during resume.
+>> [  155.789945] tpm tpm0: A TPM error (38) occurred continue selftest
 >>
->> PS. Sorry for slowness with your patches. I've just had a lot of stuff
->> going on lately. They are 2nd in my priority queue right after
->> CVE-2017-15361.
+>>     The error code 38 in definition is TPM_ERR_INVALID_POSTINIT. I
+>> found some explanations which said this error code means that this
+>> command was received in the wrong sequence relative to a TPM_Startup
+>> command. Don't really know what happens here and how should I deal
+>> with this? Any suggestions? Please let me know what else information
+>> should I provide. Thanks
+>>
+>> Chris
 >
-> This is an awful idea as your patch is in great shape and we want to
-> land that feature ASAP. Lets land your patches first and then plan how
-> to do the clean up.
->
-> I have some other suggestions for the clean up work that require even
-> more work. Mainly: I think it would make sense to have an eventlog
-> subdirectory for the eventlog as it's growing so complex.
->
-> What do you think?
-
-Yes, I would prefer this option as well. Also, agreed on a subdirectory.
-
+> The sequences for initializing TPM 1.x devices has been fairly static
+> for a long time. Has this occured after a kernel update? Is there a
+> kernel version where it used to work and a version where it doesn't?
+> Thanks.
 >
 > /Jarkko
+Hi Jarkko,
+
+Actually, it's a new Acer machine which I never tried an older kernel. I only
+tried versions >= 4.13. The output of "lsmod | grep tpm" is none. I think it's
+not built as a module.
+
+Chris
