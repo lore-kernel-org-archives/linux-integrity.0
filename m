@@ -1,57 +1,82 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([217.72.192.73]:64414 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752665AbeABKjx (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 2 Jan 2018 05:39:53 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Azhar Shaikh <azhar.shaikh@intel.com>,
-        James Morris <james.l.morris@oracle.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] tpm: remove unused variables
-Date: Tue,  2 Jan 2018 11:38:54 +0100
-Message-Id: <20180102103924.1035536-1-arnd@arndb.de>
+Received: from mga07.intel.com ([134.134.136.100]:12541 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751216AbeABFbc (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 2 Jan 2018 00:31:32 -0500
+From: "Shaikh, Azhar" <azhar.shaikh@intel.com>
+To: "Shaikh, Azhar" <azhar.shaikh@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+CC: "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
+        "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v8 1/2] tpm_tis: Move ilb_base_addr to tpm_tis_data
+Date: Tue, 2 Jan 2018 05:31:30 +0000
+Message-ID: <5FFFAD06ADE1CA4381B3F0F7C6AF582898A05E@ORSMSX109.amr.corp.intel.com>
+References: <1514865944-95086-1-git-send-email-azhar.shaikh@intel.com>
+ <1514865944-95086-2-git-send-email-azhar.shaikh@intel.com>
+ <20180102044044.GA29208@ziepe.ca>
+ <5FFFAD06ADE1CA4381B3F0F7C6AF582898A03C@ORSMSX109.amr.corp.intel.com>
+In-Reply-To: <5FFFAD06ADE1CA4381B3F0F7C6AF582898A03C@ORSMSX109.amr.corp.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-The CLKRUN fix caused a few harmless compile-time warnings:
 
-drivers/char/tpm/tpm_tis.c: In function 'tpm_tis_pnp_remove':
-drivers/char/tpm/tpm_tis.c:274:23: error: unused variable 'priv' [-Werror=unused-variable]
-drivers/char/tpm/tpm_tis.c: In function 'tpm_tis_plat_remove':
-drivers/char/tpm/tpm_tis.c:324:23: error: unused variable 'priv' [-Werror=unused-variable]
 
-This removes the variables that have now become unused.
+>-----Original Message-----
+>From: linux-integrity-owner@vger.kernel.org [mailto:linux-integrity-
+>owner@vger.kernel.org] On Behalf Of Shaikh, Azhar
+>Sent: Monday, January 1, 2018 9:02 PM
+>To: Jason Gunthorpe <jgg@ziepe.ca>
+>Cc: jarkko.sakkinen@linux.intel.com; peterhuewe@gmx.de; linux-security-
+>module@vger.kernel.org; linux-integrity@vger.kernel.org; linux-
+>kernel@vger.kernel.org
+>Subject: RE: [PATCH v8 1/2] tpm_tis: Move ilb_base_addr to tpm_tis_data
+>
+>
+>
+>>-----Original Message-----
+>>From: Jason Gunthorpe [mailto:jgg@ziepe.ca]
+>>Sent: Monday, January 1, 2018 8:41 PM
+>>To: Shaikh, Azhar <azhar.shaikh@intel.com>
+>>Cc: jarkko.sakkinen@linux.intel.com; peterhuewe@gmx.de; linux-security-
+>>module@vger.kernel.org; linux-integrity@vger.kernel.org; linux-
+>>kernel@vger.kernel.org
+>>Subject: Re: [PATCH v8 1/2] tpm_tis: Move ilb_base_addr to tpm_tis_data
+>>
+>>On Mon, Jan 01, 2018 at 08:05:43PM -0800, Azhar Shaikh wrote:
+>>
+>>> -	return tpm_chip_register(chip);
+>>> +	rc = tpm_chip_register(chip);
+>>> +	if (rc && is_bsw())
+>>> +		iounmap(priv->ilb_base_addr);
+>>> +
+>>> +	return rc;
+>>>  out_err:
+>>>  	tpm_tis_remove(chip);
+>>> +	if (is_bsw())
+>>> +		iounmap(priv->ilb_base_addr);
+>>> +
+>>>  	return rc;
+>>>  }
+>>
+>>I thought you were resending this to fix the above, why is is it still wonky?
+>>
+>
+>Oh! I fixed it in the second patch ("tpm: Keep CLKRUN enabled throughout
+>the duration of transmit_cmd()"). Should have fixed in this patch instead. My
+>bad, didn't see it was introduced in this patch. I thought it was part of second
+>patch. Will fix this.
+>
 
-Fixes: 6d0866cbc2d3 ("tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/char/tpm/tpm_tis.c | 2 --
- 1 file changed, 2 deletions(-)
+On checking, the ops->clk_enable is not still introduced yet. It is introduced in the second patch. The cleanup is done in the next patch.
+So do you want me to still fix this here?
 
-diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-index c847fc69a2fc..1bcbf355141e 100644
---- a/drivers/char/tpm/tpm_tis.c
-+++ b/drivers/char/tpm/tpm_tis.c
-@@ -271,7 +271,6 @@ MODULE_DEVICE_TABLE(pnp, tpm_pnp_tbl);
- static void tpm_tis_pnp_remove(struct pnp_dev *dev)
- {
- 	struct tpm_chip *chip = pnp_get_drvdata(dev);
--	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 
- 	tpm_chip_unregister(chip);
- 	tpm_tis_remove(chip);
-@@ -321,7 +320,6 @@ static int tpm_tis_plat_probe(struct platform_device *pdev)
- static int tpm_tis_plat_remove(struct platform_device *pdev)
- {
- 	struct tpm_chip *chip = dev_get_drvdata(&pdev->dev);
--	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 
- 	tpm_chip_unregister(chip);
- 	tpm_tis_remove(chip);
--- 
-2.9.0
+>>Jason
+
+Regards,
+Azhar Shaikh
