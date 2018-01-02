@@ -1,68 +1,57 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from anor.bigon.be ([91.121.173.99]:59760 "EHLO anor.bigon.be"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750986AbeACAAX (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 2 Jan 2018 19:00:23 -0500
-Subject: Re: [tpmdd-devel] tpm device not showing up in /dev anymore
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Jerry Snitselaar <jsnitsel@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Alexander.Steffen@infineon.com,
-        linux-integrity@vger.kernel.org
-References: <20171110002820.wtfvb3tv5fcjqecu@localhost.localdomain>
- <20171110070738.ki5xie4z7yql77fk@localhost.localdomain>
- <9245ef7d-dd34-fa5f-6fd9-bfb9582f910e@debian.org>
- <20171110205300.eyfkoyabobv7llgb@localhost.localdomain>
- <20171111154516.GI17451@ziepe.ca> <20171111191257.owuqtgzie3ostsab@cantor>
- <20171111194647.GA6918@ziepe.ca> <20171111203132.hkejjs6cdrrzq3y3@cantor>
- <20171114145953.m3a343qvgln2z4er@linux.intel.com>
- <1510672631.4078.7.camel@HansenPartnership.com>
- <20171117131620.het4yxavz6lco6ow@linux.intel.com>
-From: Laurent Bigonville <bigon@debian.org>
-Message-ID: <67ca8d8f-bd2c-a1ad-72d1-7f4b8df0a847@debian.org>
-Date: Wed, 3 Jan 2018 00:54:32 +0100
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:56035 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750745AbeABUyA (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 2 Jan 2018 15:54:00 -0500
+Date: Tue, 2 Jan 2018 21:53:56 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Javier Martinez Canillas <javierm@redhat.com>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        James Ettle <james@ettle.org.uk>,
+        linux-integrity@vger.kernel.org, azhar.shaikh@intel.com,
+        linux-kernel@vger.kernel.org, james.l.morris@oracle.com
+Subject: Re: [BISECTED] tpm CLKRUN breaks PS/2 keyboard and touchpad on
+ Braswell system
+Message-ID: <20180102205356.GA24307@amd>
+References: <57d96314-cc9c-0656-186e-4eb77a132b70@ettle.org.uk>
+ <34b361bf-cce7-a1ac-f8a3-76ef22f5b6b0@redhat.com>
+ <5fb5de24-5a4c-4c01-1f72-49fc5844516c@ettle.org.uk>
+ <011b4d29-9d93-4b7a-90dd-0c25cf184c3e@redhat.com>
+ <20171214191052.GA20833@ziepe.ca>
+ <20171215145630.ftsnj4azqqhzqwsh@linux.intel.com>
+ <20171215173826.GD12434@ziepe.ca>
+ <1513443676.29063.0.camel@linux.intel.com>
+ <34783fa1-4235-0057-1351-f7da9ee57024@redhat.com>
+ <1d724655-b0cc-b1bd-c771-839a04a74000@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20171117131620.het4yxavz6lco6ow@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="6TrnltStXW4iwmi0"
+In-Reply-To: <1d724655-b0cc-b1bd-c771-839a04a74000@redhat.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Le 17/11/17 a 14:16, Jarkko Sakkinen a ecrit :
-> On Tue, Nov 14, 2017 at 07:17:11AM -0800, James Bottomley wrote:
->> On Tue, 2017-11-14 at 16:59 +0200, Jarkko Sakkinen wrote:
->>> On Sat, Nov 11, 2017 at 01:31:32PM -0700, Jerry Snitselaar wrote:
->>>> On Sat Nov 11 17, Jason Gunthorpe wrote:
->>>>> On Sat, Nov 11, 2017 at 12:12:57PM -0700, Jerry Snitselaar wrote:
->>>>>
->>>>>> Before the release_locality code would only actually release
->>>>>> the locality if the request use bit was set. So after it
->>>>>> grabbed the locality during probe it probably never released
->>>>>> it. The idea with the new code was to release it when it was no
->>>>>> longer needed so another requester would be able to take the
->>>>>> tpm without having to wait for it to be released.
->>>>> If I recall, this was so that system level things outside linux
->>>>> could access the TPM properly??
->>>>>
->>>> Yes, that is what drove this initially. I believe Jarkko was also
->>>> thinking of the possibility in the future where something like a vm
->>>> could request a locality as well, but that is just a hazy
->>>> recollection of emails from back then.
->>> This was something I recall discussing in LPC 2016 in the hallway at
->>> least :-) A tidbit but it could make sense to tie it to VMM, not VM.
->> I think we should be extremely wary of different localities before we
->> have a cast iron definition of what they mean.  All the TPM PC spec
->> says is that locality 4 is reserved for firmware (meaning the kernel
->> should have no access) and it implies there's a privilege hierarchy,
->> making 4 the most privileged and 0 the least but leaves all the
->> definition to the OS.  Since we only have four other localities to play
->> with, we need a global definition of what they mean in Linux (and who
->> protects them) otherwise we'll get conflicting uses.  What does Windows
->> use them for?
->>
->> James
-> No idea. If I had to guess, they use only one locality for OS as this
-> what PTT/fTPM had when it didn't have localities. At least their
-> implementation works with only one locality.
->
 
-No more idea then? :(
+
+> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+> index e7bd2e750f69..0858c08b3b89 100644
+> --- a/drivers/char/tpm/tpm_tis_core.c
+> +++ b/drivers/char/tpm/tpm_tis_core.c
+> @@ -688,7 +688,7 @@ static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value)
+>  	struct tpm_tis_data *data = dev_get_drvdata(&chip->dev);
+>  	u32 clkrun_val;
+>  
+> -	if (!IS_ENABLED(CONFIG_X86) || !is_bsw())
+> +	if (!IS_ENABLED(TCG_TIS_ENABLE_CLKRUN_QUIRK) || !is_bsw())
+
+Missing CONFIG_?
+								pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+
+
+    [ Part 2, "Digital signature"  Application/PGP-SIGNATURE (Name: ]
+    [ "signature.asc") 188 bytes. ]
+    [ Unable to print this part. ]
