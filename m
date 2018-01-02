@@ -1,40 +1,63 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:18982 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751561AbeABPgt (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 2 Jan 2018 10:36:49 -0500
-Date: Tue, 2 Jan 2018 17:36:43 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Azhar Shaikh <azhar.shaikh@intel.com>,
-        James Morris <james.l.morris@oracle.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm: remove unused variables
-Message-ID: <20180102153643.hb7eukts7j7dqkdz@linux.intel.com>
-References: <20180102103924.1035536-1-arnd@arndb.de>
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:42223 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751591AbeABO5l (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 2 Jan 2018 09:57:41 -0500
+Received: by mail-wm0-f43.google.com with SMTP id b141so15002049wme.1
+        for <linux-integrity@vger.kernel.org>; Tue, 02 Jan 2018 06:57:40 -0800 (PST)
+Date: Tue, 2 Jan 2018 07:57:35 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Shaikh, Azhar" <azhar.shaikh@intel.com>
+Cc: "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
+        "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 1/2] tpm_tis: Move ilb_base_addr to tpm_tis_data
+Message-ID: <20180102145735.GB29208@ziepe.ca>
+References: <1514865944-95086-1-git-send-email-azhar.shaikh@intel.com>
+ <1514865944-95086-2-git-send-email-azhar.shaikh@intel.com>
+ <20180102044044.GA29208@ziepe.ca>
+ <5FFFAD06ADE1CA4381B3F0F7C6AF582898A03C@ORSMSX109.amr.corp.intel.com>
+ <5FFFAD06ADE1CA4381B3F0F7C6AF582898A05E@ORSMSX109.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180102103924.1035536-1-arnd@arndb.de>
+In-Reply-To: <5FFFAD06ADE1CA4381B3F0F7C6AF582898A05E@ORSMSX109.amr.corp.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Jan 02, 2018 at 11:38:54AM +0100, Arnd Bergmann wrote:
-> The CLKRUN fix caused a few harmless compile-time warnings:
+On Tue, Jan 02, 2018 at 05:31:30AM +0000, Shaikh, Azhar wrote:
+> >>On Mon, Jan 01, 2018 at 08:05:43PM -0800, Azhar Shaikh wrote:
+> >>
+> >>> -	return tpm_chip_register(chip);
+> >>> +	rc = tpm_chip_register(chip);
+> >>> +	if (rc && is_bsw())
+> >>> +		iounmap(priv->ilb_base_addr);
+> >>> +
+> >>> +	return rc;
+> >>>  out_err:
+> >>>  	tpm_tis_remove(chip);
+> >>> +	if (is_bsw())
+> >>> +		iounmap(priv->ilb_base_addr);
+> >>> +
+> >>>  	return rc;
+> >>>  }
+> >>
+> >>I thought you were resending this to fix the above, why is is it still wonky?
+> >>
+> >
+> >Oh! I fixed it in the second patch ("tpm: Keep CLKRUN enabled throughout
+> >the duration of transmit_cmd()"). Should have fixed in this patch instead. My
+> >bad, didn't see it was introduced in this patch. I thought it was part of second
+> >patch. Will fix this.
+> >
 > 
-> drivers/char/tpm/tpm_tis.c: In function 'tpm_tis_pnp_remove':
-> drivers/char/tpm/tpm_tis.c:274:23: error: unused variable 'priv' [-Werror=unused-variable]
-> drivers/char/tpm/tpm_tis.c: In function 'tpm_tis_plat_remove':
-> drivers/char/tpm/tpm_tis.c:324:23: error: unused variable 'priv' [-Werror=unused-variable]
-> 
-> This removes the variables that have now become unused.
-> 
-> Fixes: 6d0866cbc2d3 ("tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> On checking, the ops->clk_enable is not still introduced yet. It is introduced in the second patch. The cleanup is done in the next patch.
+> So do you want me to still fix this here?
 
-Thanks.
+Try hard to not edit your own patches in your series. No reason why
+iounmap cannot be put into tpm_tis_remove in the first place
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-
-/Jarkko
+Jason
