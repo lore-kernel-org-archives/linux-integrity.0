@@ -1,76 +1,82 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from smtp11.infineon.com ([217.10.52.105]:65353 "EHLO
-        smtp11.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752344AbeADNLg (ORCPT
+Received: from sonic307-9.consmr.mail.bf2.yahoo.com ([74.6.134.48]:46682 "EHLO
+        sonic307-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750952AbeACUI1 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 4 Jan 2018 08:11:36 -0500
-From: <Alexander.Steffen@infineon.com>
-To: <jarkko.sakkinen@linux.intel.com>
-CC: <nayna@linux.vnet.ibm.com>, <kgold@linux.vnet.ibm.com>,
-        <linux-integrity@vger.kernel.org>
-Subject: RE: [RFC][PATCH 0/9] tpm: fix driver so that burstcount can be safely
- ignored
-Date: Thu, 4 Jan 2018 13:11:34 +0000
-Message-ID: <97fc00fd033f46038d08b71e7f1d076c@infineon.com>
-References: <20171208184658.9588-1-Alexander.Steffen@infineon.com>
- <20171215120439.v7fvyy2cuauhnl2h@linux.intel.com>
- <20171224204109.fobx53ffmog2a5nk@linux.intel.com>
-In-Reply-To: <20171224204109.fobx53ffmog2a5nk@linux.intel.com>
-Content-Type: text/plain; charset="Windows-1252"
+        Wed, 3 Jan 2018 15:08:27 -0500
+Subject: Re: [PATCH V4 2/3] IMA: Use consistent creds
+To: Matthew Garrett <mjg59@google.com>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, selinux@tycho.nsa.gov,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+References: <20180103012017.7022-1-mjg59@google.com>
+ <20180103012017.7022-2-mjg59@google.com>
+ <cd89f3cf-b620-b098-a3db-c53f05d330bf@schaufler-ca.com>
+ <CACdnJuv7ADizvK8omRJA244N65ReYqWT2HSS_T=_uV66wMZ6Sg@mail.gmail.com>
+ <a1054b8f-cebf-6c4b-be08-524d948b2449@schaufler-ca.com>
+ <CACdnJus+EFtxrCH7RiKMtNqhm9CqWrvv9SviC7hncFB=8g4pew@mail.gmail.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <bfb721eb-6066-4440-069f-d0089426b787@schaufler-ca.com>
+Date: Wed, 3 Jan 2018 12:08:19 -0800
 MIME-Version: 1.0
+In-Reply-To: <CACdnJus+EFtxrCH7RiKMtNqhm9CqWrvv9SviC7hncFB=8g4pew@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-> On Fri, Dec 15, 2017 at 02:04:39PM +0200, Jarkko Sakkinen wrote:
-> > On Fri, Dec 08, 2017 at 07:46:49PM +0100, Alexander Steffen wrote:
-> > > Disclaimer: This is RFC because unfortunately I do not have the time to
-> bring it up to the usual standards. But from lying around on my hard disk it
-> definitely won't improve, so I've decided to publish it now, to get at least
-> some feedback or maybe for somebody else to pick it up. Since the work
-> began some time ago, it is probably not rebased against the current state
-> (but hopefully still applies).
-> > >
-> > > This is a collection of all the fixes I made during the investigation of the
-> problems with the "ignore burstcount" change. These are mainly fixes for the
-> wait state handling in tpm_tis_spi, that probably was not really tested so far,
-> since the previous implementation avoided wait states as far as possible. It
-> also includes changes to tpm_tis_core, so that it follows the specification
-> more closely. Finally, I've included a rebased version of the original "ignore
-> burstcount" patch. Together, those patches pass all my tests and also each
-> intermediate step is fine (so that bisecting still works).
-> > >
-> > > Alexander Steffen (8):
-> > >   tpm_tis_core: clean up whitespace
-> > >   tpm_tis_core: access single TIS registers before doing complex
-> > >     transfers
-> > >   tpm_tis_core: correctly wait for flags to become zero
-> > >   tpm_tis_core: send all data in single operation
-> > >   tpm_tis_core: use XDATA_FIFO for transfers if available
-> > >   tpm_tis_spi: fix sending wrong data during wait state handling
-> > >   tpm_tis_spi: release CS line when wait state handling fails
-> > >   tpm_tis_spi: add delay between wait state retries
-> > >
-> > > Nayna Jain (1):
-> > >   tpm: ignore burstcount to improve tpm_tis send() performance
-> > >
-> > >  drivers/char/tpm/tpm_tis_core.c | 131 ++++++++++++++++++++---------
-> -----------
-> > >  drivers/char/tpm/tpm_tis_core.h |  26 ++++----
-> > >  drivers/char/tpm/tpm_tis_spi.c  |  21 +++++--
-> > >  3 files changed, 95 insertions(+), 83 deletions(-)
-> > >
-> > > --
-> > > 2.7.4
-> > >
-> >
-> > Might not have time to review this before holidays but will do if
-> > I can.
-> 
-> Unfortunately this and your patches for broken TPMs came so late that
-> they have no chance to make into 4.16. Thus, I will postpone their
-> review after the pull request and take care of the high priority stuff
-> for that release.
+On 1/3/2018 11:44 AM, Matthew Garrett wrote:
+> On Wed, Jan 3, 2018 at 11:32 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 1/3/2018 10:11 AM, Matthew Garrett wrote:
+>>> The problem here is that we don't *have* the task secid for one of the
+>>> cases I care about. Validating the task secid at execution time gives
+>>> us the security context of the spawning process, rather than the
+>>> spawned one - by the time it's committed to the task structure, it's
+>>> too late to block execution, so all we have is the secid associated
+>>> with the creds in the bprm structure. Obviously fixing this in a way
+>>> that doesn't break your work is important, so any suggestions on how I
+>>> should be fixing this? :)
+>> A security module is allowed to manage either or both of
+>> task and cred blobs. How a security module uses secids is
+>> completely up to the module. So far, everyone is using the
+>> secid to be an alias for the secctx, and the task and cred
+>> are treated as (roughly) the same kind of thing. But that's
+>> not guaranteed going forward. I don't know what someone
+>> might want to do that would cause a problem, but people are
+>> amazingly creative.
+>>
+>> I'm actually more concerned with the IMA code using the audit
+>> rule matching. There's an assumption that the secid from a
+>> cred and a secid from a task are both acceptable to the audit
+>> system. What if they aren't? It's possible that I'm just
+>> being paranoid, but we're getting too many permutations
+>> (audit/IMA + task/cred) for my liking.
+> The idea here is that we want to be able to trigger an IMA rule
+> conditionally based on the LSM context a process is running under at
+> exec time. The current code does so using the secid of current, which
+> means we're determining whether the new binary should be measured
+> based on the security context of the task that's executing it.
+> However, we want to be able to do so based on the security context of
+> the task that's being executed (usecase here is that I want to measure
+> anything that's executed in a privileged security context, but don't
+> care about anything that's running in an unprivileged context). The
+> child secid has been calculated and put in the creds that are present
+> in the bprm structure, but commit_creds() hasn't been called yet and
+> as a result they're not associated with the task struct. One of the
+> outcomes of measurement may be to block execution, and unfortunately
+> by the time commit_creds() has been called it's too late to do so.
+>
+> If we want to be able to do something conditional on the LSM context
+> that a process is going to be executed under, *before* commit_creds()
+> is called, is there an existing way to do so? I can rework this so we
+> use the task secid for all running processes and the cred secid for
+> the not-yet-running child process, but I don't know if that's
+> sufficient to avoid problems in future.
 
-As long the "ignore burstcount" patch does not make it into 4.16 either, that's fine. Then nothing new gets broken, it just does not get any faster.
-
-Alexander
+It's possible that converting all the existing calls of
+security_task_getsecid() to security_cred_getsecid() is the
+safe approach. No one is using the task blob today, and this
+would disambiguate the situation.
