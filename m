@@ -1,76 +1,77 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from sonic301-9.consmr.mail.bf2.yahoo.com ([74.6.129.48]:42662 "EHLO
-        sonic301-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750864AbeACPyp (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39532 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751168AbeACED0 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 3 Jan 2018 10:54:45 -0500
-Subject: Re: [PATCH V4 2/3] IMA: Use consistent creds
-To: Matthew Garrett <mjg59@google.com>, linux-integrity@vger.kernel.org
-Cc: Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, selinux@tycho.nsa.gov,
-        linux-security-module@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-References: <20180103012017.7022-1-mjg59@google.com>
- <20180103012017.7022-2-mjg59@google.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <cd89f3cf-b620-b098-a3db-c53f05d330bf@schaufler-ca.com>
-Date: Wed, 3 Jan 2018 07:54:38 -0800
-MIME-Version: 1.0
-In-Reply-To: <20180103012017.7022-2-mjg59@google.com>
-Content-Type: text/plain; charset=utf-8
+        Tue, 2 Jan 2018 23:03:26 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w033wt6q015287
+        for <linux-integrity@vger.kernel.org>; Tue, 2 Jan 2018 23:03:25 -0500
+Received: from e06smtp13.uk.ibm.com (e06smtp13.uk.ibm.com [195.75.94.109])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2f8gs54k06-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 02 Jan 2018 23:03:25 -0500
+Received: from localhost
+        by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Wed, 3 Jan 2018 04:03:23 -0000
+Subject: Re: [PATCHv6 1/1] ima: re-introduce own integrity cache lock
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Jan Kara <jack@suse.com>, "Theodore Ts'o" <tytso@mit.edu>,
+        Chris Mason <clm@fb.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
+        xfs <linux-xfs@vger.kernel.org>
+Date: Tue, 02 Jan 2018 23:03:16 -0500
+In-Reply-To: <20180103031621.GK5858@dastard>
+References: <c73e7421902a60bd14c11e1201ba74470d7c782b.1512500794.git.dmitry.kasatkin@huawei.com>
+         <CACE9dm-ws8TKEAzFbCoGdhdEuFLoLtz8dAuF8tor19wMx1pH=g@mail.gmail.com>
+         <20180103014048.GE5146@magnolia>
+         <1514947923.3493.2.camel@linux.vnet.ibm.com>
+         <20180103031621.GK5858@dastard>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1514952196.3493.57.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 1/2/2018 5:20 PM, Matthew Garrett wrote:
-> Right now most of the IMA code is using current->creds, but the LSM
-> checks are using security_task_getsecid() which ends up looking at
-> real_creds. Switch to using security_cred_getsecid() in order to make
-> this consistent.
->
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Stephen Smalley <sds@tycho.nsa.gov>
-> Cc: Eric Paris <eparis@parisplace.org>
-> Cc: selinux@tycho.nsa.gov
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
-> Cc: linux-security-module@vger.kernel.org
-> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-> Cc: linux-integrity@vger.kernel.org
-> ---
->  security/integrity/ima/ima_policy.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index ee4613fa5840..52951ac445ea 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -249,7 +249,6 @@ static void ima_lsm_update_rules(void)
->  static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
->  			    enum ima_hooks func, int mask)
->  {
-> -	struct task_struct *tsk = current;
->  	const struct cred *cred = current_cred();
->  	int i;
->  
-> @@ -305,7 +304,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
->  		case LSM_SUBJ_USER:
->  		case LSM_SUBJ_ROLE:
->  		case LSM_SUBJ_TYPE:
-> -			security_task_getsecid(tsk, &sid);
-> +			security_cred_getsecid(cred, &sid);
->  			rc = security_filter_rule_match(sid,
+On Wed, 2018-01-03 at 14:16 +1100, Dave Chinner wrote:
+> On Tue, Jan 02, 2018 at 09:52:03PM -0500, Mimi Zohar wrote:
+> > On Tue, 2018-01-02 at 17:40 -0800, Darrick J. Wong wrote:
+> > > [might as well cc linux-xfs]
+> > > 
+> > > On Thu, Dec 14, 2017 at 12:22:37AM +0200, Dmitry Kasatkin wrote:
+> > > > Hi,
+> > > > 
+> > > > Could I ask FS maintainers to test IMA with this patch additionally
+> > > > and provide ack/tested.
+> > > > We tested but may be you have and some special testing.
+> > > 
+> > > Super-late to this party, but unless xfstests has automated tests to
+> > > set up IMA on top of an existing filesystem then I most likely have no
+> > > idea /how/ to test IMA.  I did a quick grep of xfstests git and I don't
+> > > see anything IMA-related.
+> > 
+> > Back in June I posted a simple xfstests IMA-appraisal test (https://ma
+> > rc.info/?l=linux-fsdevel&m=149703820814885&w=4).
+> 
+> That's a really, really basic test and it doesn't exercise the
+> problematic direct IO path this patch fixes problems with. nor does
+> it exercise the chmod path, or try to trigger deadlocks or other
+> conditions through all the other paths that can trigger IMA actions
+> and or failures (e.g. ENOSPC).  IOWs, we need a lot more than a
+> "hello world" test to be able to verify filesystems interact with
+> IMA properly. e.g. how does it behave at ENOSPC?
 
-security_filter_rule_match() is security_audit_rule_match() in
-sheep's clothing. Using the cred secid in this case, where the
-task secid is used elsewhere is going to lead to tears. It's
-going to make *me* cry as I work on untangling secids for
-stacking/namespaces. I can't predict how else it's going to
-bite us, but I'm betting on it.
+True, but for now we were looking for some basic testing - opening a
+file and calculating the file hash - on different filesystems, not the
+direct-IO path in particular.  Expanding the IMA-appraisal xfstests is
+high on my "todo" list.
 
- 
-
->  							rule->lsm[i].type,
->  							Audit_equal,
+Mimi
