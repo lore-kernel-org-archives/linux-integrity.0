@@ -1,101 +1,45 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49462 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751056AbeAEGre (ORCPT
+Received: from mail-it0-f49.google.com ([209.85.214.49]:36057 "EHLO
+        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753139AbeADTRQ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 5 Jan 2018 01:47:34 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w056j3gX063096
-        for <linux-integrity@vger.kernel.org>; Fri, 5 Jan 2018 01:47:34 -0500
-Received: from e18.ny.us.ibm.com (e18.ny.us.ibm.com [129.33.205.208])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2f9xubjnv7-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 05 Jan 2018 01:47:33 -0500
-Received: from localhost
-        by e18.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Fri, 5 Jan 2018 01:47:33 -0500
-From: Nayna Jain <nayna@linux.vnet.ibm.com>
-Subject: Re: [RFC][PATCH 0/9] tpm: fix driver so that burstcount can be safely
- ignored
-To: Alexander.Steffen@infineon.com, jarkko.sakkinen@linux.intel.com
-Cc: kgold@linux.vnet.ibm.com, linux-integrity@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>
-References: <20171208184658.9588-1-Alexander.Steffen@infineon.com>
- <20171215120439.v7fvyy2cuauhnl2h@linux.intel.com>
- <20171224204109.fobx53ffmog2a5nk@linux.intel.com>
- <97fc00fd033f46038d08b71e7f1d076c@infineon.com>
-Date: Fri, 5 Jan 2018 12:16:40 +0530
+        Thu, 4 Jan 2018 14:17:16 -0500
+Received: by mail-it0-f49.google.com with SMTP id d16so3552669itj.1
+        for <linux-integrity@vger.kernel.org>; Thu, 04 Jan 2018 11:17:16 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <97fc00fd033f46038d08b71e7f1d076c@infineon.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Message-Id: <2554f425-f016-7026-8f0d-0bfed67dffc2@linux.vnet.ibm.com>
+In-Reply-To: <bfb721eb-6066-4440-069f-d0089426b787@schaufler-ca.com>
+References: <20180103012017.7022-1-mjg59@google.com> <20180103012017.7022-2-mjg59@google.com>
+ <cd89f3cf-b620-b098-a3db-c53f05d330bf@schaufler-ca.com> <CACdnJuv7ADizvK8omRJA244N65ReYqWT2HSS_T=_uV66wMZ6Sg@mail.gmail.com>
+ <a1054b8f-cebf-6c4b-be08-524d948b2449@schaufler-ca.com> <CACdnJus+EFtxrCH7RiKMtNqhm9CqWrvv9SviC7hncFB=8g4pew@mail.gmail.com>
+ <bfb721eb-6066-4440-069f-d0089426b787@schaufler-ca.com>
+From: Matthew Garrett <mjg59@google.com>
+Date: Thu, 4 Jan 2018 11:17:14 -0800
+Message-ID: <CACdnJutPiKUTUpS6d7G0zKjrCS8hR3xy1a+Xsi2Chyj7sAvayg@mail.gmail.com>
+Subject: Re: [PATCH V4 2/3] IMA: Use consistent creds
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, selinux@tycho.nsa.gov,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-
-
-On 01/04/2018 06:41 PM, Alexander.Steffen@infineon.com wrote:
->> On Fri, Dec 15, 2017 at 02:04:39PM +0200, Jarkko Sakkinen wrote:
->>> On Fri, Dec 08, 2017 at 07:46:49PM +0100, Alexander Steffen wrote:
->>>> Disclaimer: This is RFC because unfortunately I do not have the time to
->> bring it up to the usual standards. But from lying around on my hard disk it
->> definitely won't improve, so I've decided to publish it now, to get at least
->> some feedback or maybe for somebody else to pick it up. Since the work
->> began some time ago, it is probably not rebased against the current state
->> (but hopefully still applies).
->>>> This is a collection of all the fixes I made during the investigation of the
->> problems with the "ignore burstcount" change. These are mainly fixes for the
->> wait state handling in tpm_tis_spi, that probably was not really tested so far,
->> since the previous implementation avoided wait states as far as possible. It
->> also includes changes to tpm_tis_core, so that it follows the specification
->> more closely. Finally, I've included a rebased version of the original "ignore
->> burstcount" patch. Together, those patches pass all my tests and also each
->> intermediate step is fine (so that bisecting still works).
->>>> Alexander Steffen (8):
->>>>    tpm_tis_core: clean up whitespace
->>>>    tpm_tis_core: access single TIS registers before doing complex
->>>>      transfers
->>>>    tpm_tis_core: correctly wait for flags to become zero
->>>>    tpm_tis_core: send all data in single operation
->>>>    tpm_tis_core: use XDATA_FIFO for transfers if available
->>>>    tpm_tis_spi: fix sending wrong data during wait state handling
->>>>    tpm_tis_spi: release CS line when wait state handling fails
->>>>    tpm_tis_spi: add delay between wait state retries
->>>>
->>>> Nayna Jain (1):
->>>>    tpm: ignore burstcount to improve tpm_tis send() performance
->>>>
->>>>   drivers/char/tpm/tpm_tis_core.c | 131 ++++++++++++++++++++---------
->> -----------
->>>>   drivers/char/tpm/tpm_tis_core.h |  26 ++++----
->>>>   drivers/char/tpm/tpm_tis_spi.c  |  21 +++++--
->>>>   3 files changed, 95 insertions(+), 83 deletions(-)
->>>>
->>>> --
->>>> 2.7.4
->>>>
->>> Might not have time to review this before holidays but will do if
->>> I can.
->> Unfortunately this and your patches for broken TPMs came so late that
->> they have no chance to make into 4.16. Thus, I will postpone their
->> review after the pull request and take care of the high priority stuff
->> for that release.
-> As long the "ignore burstcount" patch does not make it into 4.16 either, that's fine. Then nothing new gets broken, it just does not get any faster.
-
-Alex, if I am right, among following 4 patches,
-  
-   Patch 1 - tpm: move wait_for_tpm_stat() to respective driver files
-   Patch 2 - tpm: ignore burstcount to improve tpm_tis send() performance
-   Patch 3 - tpm: reduce tpm polling delay in tpm_tis_core
-   Patch 4 - tpm: use tpm_msleep() value as max delay
-
-it is only the burstcount patch (Patch 2) which caused the issue.
-With that, Jarkko, Alex, can we just exclude this and have other three patches pulled for 4.16 ?
-I tested with these other three patches, and performance improvement is from ~41 to ~14.
-
-Thanks & Regards,
-    - Nayna
-
-> Alexander
+On Wed, Jan 3, 2018 at 12:08 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 1/3/2018 11:44 AM, Matthew Garrett wrote:
+>> If we want to be able to do something conditional on the LSM context
+>> that a process is going to be executed under, *before* commit_creds()
+>> is called, is there an existing way to do so? I can rework this so we
+>> use the task secid for all running processes and the cred secid for
+>> the not-yet-running child process, but I don't know if that's
+>> sufficient to avoid problems in future.
 >
+> It's possible that converting all the existing calls of
+> security_task_getsecid() to security_cred_getsecid() is the
+> safe approach. No one is using the task blob today, and this
+> would disambiguate the situation.
+
+Ok. Should we be looking at creds or real_creds?
