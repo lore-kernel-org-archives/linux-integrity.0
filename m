@@ -1,184 +1,76 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:43340 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752679AbeADNeh (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 4 Jan 2018 08:34:37 -0500
-Message-ID: <1515072872.20282.19.camel@kernel.org>
-Subject: Re: [PATCH v4 12/19] ocfs2: convert to new i_version API
-From: Jeff Layton <jlayton@kernel.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-nfs@vger.kernel.org, bfields@fieldses.org, neilb@suse.de,
-        jack@suse.de, linux-ext4@vger.kernel.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, linux-xfs@vger.kernel.org,
-        darrick.wong@oracle.com, david@fromorbit.com,
-        linux-btrfs@vger.kernel.org, clm@fb.com, jbacik@fb.com,
-        dsterba@suse.com, linux-integrity@vger.kernel.org,
-        zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
-        linux-afs@lists.infradead.org, dhowells@redhat.com,
-        jaltman@auristor.com
-Date: Thu, 04 Jan 2018 08:34:32 -0500
-In-Reply-To: <20171222120556.7435-13-jlayton@kernel.org>
-References: <20171222120556.7435-1-jlayton@kernel.org>
-         <20171222120556.7435-13-jlayton@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from smtp11.infineon.com ([217.10.52.105]:65353 "EHLO
+        smtp11.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752344AbeADNLg (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 4 Jan 2018 08:11:36 -0500
+From: <Alexander.Steffen@infineon.com>
+To: <jarkko.sakkinen@linux.intel.com>
+CC: <nayna@linux.vnet.ibm.com>, <kgold@linux.vnet.ibm.com>,
+        <linux-integrity@vger.kernel.org>
+Subject: RE: [RFC][PATCH 0/9] tpm: fix driver so that burstcount can be safely
+ ignored
+Date: Thu, 4 Jan 2018 13:11:34 +0000
+Message-ID: <97fc00fd033f46038d08b71e7f1d076c@infineon.com>
+References: <20171208184658.9588-1-Alexander.Steffen@infineon.com>
+ <20171215120439.v7fvyy2cuauhnl2h@linux.intel.com>
+ <20171224204109.fobx53ffmog2a5nk@linux.intel.com>
+In-Reply-To: <20171224204109.fobx53ffmog2a5nk@linux.intel.com>
+Content-Type: text/plain; charset="Windows-1252"
+MIME-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 2017-12-22 at 07:05 -0500, Jeff Layton wrote:
-> From: Jeff Layton <jlayton@redhat.com>
+> On Fri, Dec 15, 2017 at 02:04:39PM +0200, Jarkko Sakkinen wrote:
+> > On Fri, Dec 08, 2017 at 07:46:49PM +0100, Alexander Steffen wrote:
+> > > Disclaimer: This is RFC because unfortunately I do not have the time to
+> bring it up to the usual standards. But from lying around on my hard disk it
+> definitely won't improve, so I've decided to publish it now, to get at least
+> some feedback or maybe for somebody else to pick it up. Since the work
+> began some time ago, it is probably not rebased against the current state
+> (but hopefully still applies).
+> > >
+> > > This is a collection of all the fixes I made during the investigation of the
+> problems with the "ignore burstcount" change. These are mainly fixes for the
+> wait state handling in tpm_tis_spi, that probably was not really tested so far,
+> since the previous implementation avoided wait states as far as possible. It
+> also includes changes to tpm_tis_core, so that it follows the specification
+> more closely. Finally, I've included a rebased version of the original "ignore
+> burstcount" patch. Together, those patches pass all my tests and also each
+> intermediate step is fine (so that bisecting still works).
+> > >
+> > > Alexander Steffen (8):
+> > >   tpm_tis_core: clean up whitespace
+> > >   tpm_tis_core: access single TIS registers before doing complex
+> > >     transfers
+> > >   tpm_tis_core: correctly wait for flags to become zero
+> > >   tpm_tis_core: send all data in single operation
+> > >   tpm_tis_core: use XDATA_FIFO for transfers if available
+> > >   tpm_tis_spi: fix sending wrong data during wait state handling
+> > >   tpm_tis_spi: release CS line when wait state handling fails
+> > >   tpm_tis_spi: add delay between wait state retries
+> > >
+> > > Nayna Jain (1):
+> > >   tpm: ignore burstcount to improve tpm_tis send() performance
+> > >
+> > >  drivers/char/tpm/tpm_tis_core.c | 131 ++++++++++++++++++++---------
+> -----------
+> > >  drivers/char/tpm/tpm_tis_core.h |  26 ++++----
+> > >  drivers/char/tpm/tpm_tis_spi.c  |  21 +++++--
+> > >  3 files changed, 95 insertions(+), 83 deletions(-)
+> > >
+> > > --
+> > > 2.7.4
+> > >
+> >
+> > Might not have time to review this before holidays but will do if
+> > I can.
 > 
-> Signed-off-by: Jeff Layton <jlayton@redhat.com>
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> ---
->  fs/ocfs2/dir.c          | 15 ++++++++-------
->  fs/ocfs2/inode.c        |  3 ++-
->  fs/ocfs2/namei.c        |  3 ++-
->  fs/ocfs2/quota_global.c |  3 ++-
->  4 files changed, 14 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
-> index febe6312ceff..32f9c72dff17 100644
-> --- a/fs/ocfs2/dir.c
-> +++ b/fs/ocfs2/dir.c
-> @@ -42,6 +42,7 @@
->  #include <linux/highmem.h>
->  #include <linux/quotaops.h>
->  #include <linux/sort.h>
-> +#include <linux/iversion.h>
->  
->  #include <cluster/masklog.h>
->  
-> @@ -1174,7 +1175,7 @@ static int __ocfs2_delete_entry(handle_t *handle, struct inode *dir,
->  				le16_add_cpu(&pde->rec_len,
->  						le16_to_cpu(de->rec_len));
->  			de->inode = 0;
-> -			dir->i_version++;
-> +			inode_inc_iversion(dir);
->  			ocfs2_journal_dirty(handle, bh);
->  			goto bail;
->  		}
-> @@ -1729,7 +1730,7 @@ int __ocfs2_add_entry(handle_t *handle,
->  			if (ocfs2_dir_indexed(dir))
->  				ocfs2_recalc_free_list(dir, handle, lookup);
->  
-> -			dir->i_version++;
-> +			inode_inc_iversion(dir);
->  			ocfs2_journal_dirty(handle, insert_bh);
->  			retval = 0;
->  			goto bail;
-> @@ -1775,7 +1776,7 @@ static int ocfs2_dir_foreach_blk_id(struct inode *inode,
->  		 * readdir(2), then we might be pointing to an invalid
->  		 * dirent right now.  Scan from the start of the block
->  		 * to make sure. */
-> -		if (*f_version != inode->i_version) {
-> +		if (inode_cmp_iversion(inode, *f_version)) {
->  			for (i = 0; i < i_size_read(inode) && i < offset; ) {
->  				de = (struct ocfs2_dir_entry *)
->  					(data->id_data + i);
-> @@ -1791,7 +1792,7 @@ static int ocfs2_dir_foreach_blk_id(struct inode *inode,
->  				i += le16_to_cpu(de->rec_len);
->  			}
->  			ctx->pos = offset = i;
-> -			*f_version = inode->i_version;
-> +			*f_version = inode_query_iversion(inode);
->  		}
->  
->  		de = (struct ocfs2_dir_entry *) (data->id_data + ctx->pos);
-> @@ -1869,7 +1870,7 @@ static int ocfs2_dir_foreach_blk_el(struct inode *inode,
->  		 * readdir(2), then we might be pointing to an invalid
->  		 * dirent right now.  Scan from the start of the block
->  		 * to make sure. */
-> -		if (*f_version != inode->i_version) {
-> +		if (inode_cmp_iversion(inode, *f_version)) {
->  			for (i = 0; i < sb->s_blocksize && i < offset; ) {
->  				de = (struct ocfs2_dir_entry *) (bh->b_data + i);
->  				/* It's too expensive to do a full
-> @@ -1886,7 +1887,7 @@ static int ocfs2_dir_foreach_blk_el(struct inode *inode,
->  			offset = i;
->  			ctx->pos = (ctx->pos & ~(sb->s_blocksize - 1))
->  				| offset;
-> -			*f_version = inode->i_version;
-> +			*f_version = inode_query_iversion(inode);
->  		}
->  
->  		while (ctx->pos < i_size_read(inode)
-> @@ -1940,7 +1941,7 @@ static int ocfs2_dir_foreach_blk(struct inode *inode, u64 *f_version,
->   */
->  int ocfs2_dir_foreach(struct inode *inode, struct dir_context *ctx)
->  {
-> -	u64 version = inode->i_version;
-> +	u64 version = inode_query_iversion(inode);
->  	ocfs2_dir_foreach_blk(inode, &version, ctx, true);
->  	return 0;
->  }
-> diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-> index 1a1e0078ab38..d51b80edd972 100644
-> --- a/fs/ocfs2/inode.c
-> +++ b/fs/ocfs2/inode.c
-> @@ -28,6 +28,7 @@
->  #include <linux/highmem.h>
->  #include <linux/pagemap.h>
->  #include <linux/quotaops.h>
-> +#include <linux/iversion.h>
->  
->  #include <asm/byteorder.h>
->  
-> @@ -302,7 +303,7 @@ void ocfs2_populate_inode(struct inode *inode, struct ocfs2_dinode *fe,
->  	OCFS2_I(inode)->ip_attr = le32_to_cpu(fe->i_attr);
->  	OCFS2_I(inode)->ip_dyn_features = le16_to_cpu(fe->i_dyn_features);
->  
-> -	inode->i_version = 1;
-> +	inode_set_iversion(inode, 1);
->  	inode->i_generation = le32_to_cpu(fe->i_generation);
->  	inode->i_rdev = huge_decode_dev(le64_to_cpu(fe->id1.dev1.i_rdev));
->  	inode->i_mode = le16_to_cpu(fe->i_mode);
-> diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
-> index 3b0a10d9b36f..c801eddc4bf3 100644
-> --- a/fs/ocfs2/namei.c
-> +++ b/fs/ocfs2/namei.c
-> @@ -41,6 +41,7 @@
->  #include <linux/slab.h>
->  #include <linux/highmem.h>
->  #include <linux/quotaops.h>
-> +#include <linux/iversion.h>
->  
->  #include <cluster/masklog.h>
->  
-> @@ -1520,7 +1521,7 @@ static int ocfs2_rename(struct inode *old_dir,
->  			mlog_errno(status);
->  			goto bail;
->  		}
-> -		new_dir->i_version++;
-> +		inode_inc_iversion(new_dir);
->  
->  		if (S_ISDIR(new_inode->i_mode))
->  			ocfs2_set_links_count(newfe, 0);
-> diff --git a/fs/ocfs2/quota_global.c b/fs/ocfs2/quota_global.c
-> index b39d14cbfa34..d03411784aaf 100644
-> --- a/fs/ocfs2/quota_global.c
-> +++ b/fs/ocfs2/quota_global.c
-> @@ -12,6 +12,7 @@
->  #include <linux/writeback.h>
->  #include <linux/workqueue.h>
->  #include <linux/llist.h>
-> +#include <linux/iversion.h>
->  
->  #include <cluster/masklog.h>
->  
-> @@ -289,7 +290,7 @@ ssize_t ocfs2_quota_write(struct super_block *sb, int type,
->  		mlog_errno(err);
->  		return err;
->  	}
-> -	gqinode->i_version++;
-> +	inode_query_iversion(gqinode);
+> Unfortunately this and your patches for broken TPMs came so late that
+> they have no chance to make into 4.16. Thus, I will postpone their
+> review after the pull request and take care of the high priority stuff
+> for that release.
 
-Bug here: this should have been an inode_inc_iversion. Fixed in tree.
+As long the "ignore burstcount" patch does not make it into 4.16 either, that's fine. Then nothing new gets broken, it just does not get any faster.
 
->  	ocfs2_mark_inode_dirty(handle, gqinode, oinfo->dqi_gqi_bh);
->  	return len;
->  }
-
--- 
-Jeff Layton <jlayton@kernel.org>
+Alexander
