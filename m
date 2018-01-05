@@ -1,122 +1,112 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44190 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751333AbeAENno (ORCPT
+Received: from smtp2.infineon.com ([217.10.52.18]:37089 "EHLO
+        smtp2.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751484AbeAEHiZ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 5 Jan 2018 08:43:44 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w05DYDmJ040943
-        for <linux-integrity@vger.kernel.org>; Fri, 5 Jan 2018 08:43:43 -0500
-Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2fa7740d5b-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 05 Jan 2018 08:43:43 -0500
-Received: from localhost
-        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Fri, 5 Jan 2018 13:43:41 -0000
-Subject: [GIT PULL] linux-integrity patches for 4.16-security-next-general
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: James Morris <jmorris@namei.org>
-Cc: linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Date: Fri, 05 Jan 2018 08:43:36 -0500
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1515159816.4418.7.camel@linux.vnet.ibm.com>
+        Fri, 5 Jan 2018 02:38:25 -0500
+Subject: Re: [RFC][PATCH 0/9] tpm: fix driver so that burstcount can be safely
+ ignored
+To: Nayna Jain <nayna@linux.vnet.ibm.com>,
+        <jarkko.sakkinen@linux.intel.com>
+CC: <kgold@linux.vnet.ibm.com>, <linux-integrity@vger.kernel.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>
+References: <20171208184658.9588-1-Alexander.Steffen@infineon.com>
+ <20171215120439.v7fvyy2cuauhnl2h@linux.intel.com>
+ <20171224204109.fobx53ffmog2a5nk@linux.intel.com>
+ <97fc00fd033f46038d08b71e7f1d076c@infineon.com>
+ <2554f425-f016-7026-8f0d-0bfed67dffc2@linux.vnet.ibm.com>
+From: Alexander Steffen <Alexander.Steffen@infineon.com>
+Message-ID: <33a00339-767e-2a55-6aa2-36e24a4af90b@infineon.com>
+Date: Fri, 5 Jan 2018 08:38:11 +0100
+MIME-Version: 1.0
+In-Reply-To: <2554f425-f016-7026-8f0d-0bfed67dffc2@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi James,
+On 05.01.2018 07:46, Nayna Jain wrote:
+> On 01/04/2018 06:41 PM, Alexander.Steffen@infineon.com wrote:
+>>> On Fri, Dec 15, 2017 at 02:04:39PM +0200, Jarkko Sakkinen wrote:
+>>>> On Fri, Dec 08, 2017 at 07:46:49PM +0100, Alexander Steffen wrote:
+>>>>> Disclaimer: This is RFC because unfortunately I do not have the 
+>>>>> time to
+>>> bring it up to the usual standards. But from lying around on my hard 
+>>> disk it
+>>> definitely won't improve, so I've decided to publish it now, to get 
+>>> at least
+>>> some feedback or maybe for somebody else to pick it up. Since the work
+>>> began some time ago, it is probably not rebased against the current 
+>>> state
+>>> (but hopefully still applies).
+>>>>> This is a collection of all the fixes I made during the 
+>>>>> investigation of the
+>>> problems with the "ignore burstcount" change. These are mainly fixes 
+>>> for the
+>>> wait state handling in tpm_tis_spi, that probably was not really 
+>>> tested so far,
+>>> since the previous implementation avoided wait states as far as 
+>>> possible. It
+>>> also includes changes to tpm_tis_core, so that it follows the 
+>>> specification
+>>> more closely. Finally, I've included a rebased version of the 
+>>> original "ignore
+>>> burstcount" patch. Together, those patches pass all my tests and also 
+>>> each
+>>> intermediate step is fine (so that bisecting still works).
+>>>>> Alexander Steffen (8):
+>>>>>    tpm_tis_core: clean up whitespace
+>>>>>    tpm_tis_core: access single TIS registers before doing complex
+>>>>>      transfers
+>>>>>    tpm_tis_core: correctly wait for flags to become zero
+>>>>>    tpm_tis_core: send all data in single operation
+>>>>>    tpm_tis_core: use XDATA_FIFO for transfers if available
+>>>>>    tpm_tis_spi: fix sending wrong data during wait state handling
+>>>>>    tpm_tis_spi: release CS line when wait state handling fails
+>>>>>    tpm_tis_spi: add delay between wait state retries
+>>>>>
+>>>>> Nayna Jain (1):
+>>>>>    tpm: ignore burstcount to improve tpm_tis send() performance
+>>>>>
+>>>>>   drivers/char/tpm/tpm_tis_core.c | 131 ++++++++++++++++++++---------
+>>> -----------
+>>>>>   drivers/char/tpm/tpm_tis_core.h |  26 ++++----
+>>>>>   drivers/char/tpm/tpm_tis_spi.c  |  21 +++++--
+>>>>>   3 files changed, 95 insertions(+), 83 deletions(-)
+>>>>>
+>>>>> -- 
+>>>>> 2.7.4
+>>>>>
+>>>> Might not have time to review this before holidays but will do if
+>>>> I can.
+>>> Unfortunately this and your patches for broken TPMs came so late that
+>>> they have no chance to make into 4.16. Thus, I will postpone their
+>>> review after the pull request and take care of the high priority stuff
+>>> for that release.
+>> As long the "ignore burstcount" patch does not make it into 4.16 
+>> either, that's fine. Then nothing new gets broken, it just does not 
+>> get any faster.
+> 
+> Alex, if I am right, among following 4 patches,
+> 
+>    Patch 1 - tpm: move wait_for_tpm_stat() to respective driver files
+>    Patch 2 - tpm: ignore burstcount to improve tpm_tis send() performance
+>    Patch 3 - tpm: reduce tpm polling delay in tpm_tis_core
+>    Patch 4 - tpm: use tpm_msleep() value as max delay
+> 
+> it is only the burstcount patch (Patch 2) which caused the issue.
+> With that, Jarkko, Alex, can we just exclude this and have other three 
+> patches pulled for 4.16 ?
 
-This pull request contains a mixture of bug fixes, code cleanup, and
-new functionality.  Of note is the integrity cache locking fix, file
-change detection, and support for a new EVM portable and immutable
-signature type.
+Those other three patches do not cause any issues in my tests, so I'm 
+fine with that.
 
-The re-introduction of the integrity cache lock (iint) fixes the
-problem of attempting to take the i_rwsem shared a second time, when it
-was previously taken exclusively.  Defining atomic flags resolves the
-original iint/i_rwsem circular locking - accessing the file data vs.
-modifying the file metadata.  Although it fixes the O_DIRECT problem as
-well, a subsequent patch is needed to remove the explicit O_DIRECT
-prevention.
+Alexander
 
-For performance reasons, detecting when a file has changed and needs to
-be re-measured, re-appraised, and/or re-audited, was limited to after
-the last writer has closed, and only if the file data has changed.
-Detecting file change is based on i_version.  For filesystems that do
-not support i_version, remote filesystems, or userspace filesystems,
-the file was measured, appraised and/or audited once and never
-re-evaluated.  Now local filesystems, which do not support i_version or
-are not mounted with the i_version option, assume the file has changed
-and are required to re-evaluate the file.  This change does not address
-detecting file change on remote or userspace filesystems.
-
-Unlike file data signatures, which can be included and distributed in
-software packages (eg. rpm, deb), the existing EVM signature, which
-protects the file metadata, could not be included in software packages,
-as it includes file system specific information (eg. i_ino, possibly
-the UUID).  This pull request defines a new EVM portable and immutable
-file metadata signature format, which can be included in software
-packages.
-
-thanks,
-
-Mimi
----
-
-The following changes since commit d21bd6898336a7892914d308d5e0868f0b863571:
-
-  Sync to v4.15-rc3 for security subsystem developers to work against. (2017-12-11 17:01:08 +1100)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-
-for you to fetch changes up to a2a2c3c8580a9158bca61221648fd6d5c98c443a:
-
-  ima: Use i_version only when filesystem supports it (2017-12-18 09:43:49 -0500)
-
-----------------------------------------------------------------
-Bruno E. O. Meneguele (1):
-      ima: log message to module appraisal error
-
-Dmitry Kasatkin (1):
-      ima: re-introduce own integrity cache lock
-
-Jeff Layton (1):
-      integrity: remove unneeded initializations in integrity_iint_cache entries
-
-Joe Perches (1):
-      ima: Fix line continuation format
-
-Matthew Garrett (2):
-      EVM: Allow userland to permit modification of EVM-protected metadata
-      EVM: Add support for portable signature format
-
-Mimi Zohar (2):
-      ima: relax requiring a file signature for new files with zero length
-      ima: support new "hash" and "dont_hash" policy actions
-
-Roberto Sassu (1):
-      ima: pass filename to ima_rdwr_violation_check()
-
-Sascha Hauer (1):
-      ima: Use i_version only when filesystem supports it
-
- Documentation/ABI/testing/evm         | 54 +++++++++++++-------
- Documentation/ABI/testing/ima_policy  |  3 +-
- include/linux/integrity.h             |  1 +
- security/integrity/evm/evm.h          |  9 ++--
- security/integrity/evm/evm_crypto.c   | 75 +++++++++++++++++++++++----
- security/integrity/evm/evm_main.c     | 67 +++++++++++++++++-------
- security/integrity/evm/evm_secfs.c    | 20 ++++++--
- security/integrity/iint.c             |  4 +-
- security/integrity/ima/ima_api.c      |  2 +-
- security/integrity/ima/ima_appraise.c | 46 +++++++++--------
- security/integrity/ima/ima_main.c     | 95 +++++++++++++++++++++++++----------
- security/integrity/ima/ima_policy.c   | 30 ++++++++++-
- security/integrity/ima/ima_template.c | 11 ++--
- security/integrity/integrity.h        | 41 +++++++++------
- 14 files changed, 333 insertions(+), 125 deletions(-)
+> I tested with these other three patches, and performance improvement is 
+> from ~41 to ~14.
+> 
+> Thanks & Regards,
+>     - Nayna
+> 
+>> Alexander
+>>
