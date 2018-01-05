@@ -1,40 +1,122 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from lhrrgout.huawei.com ([194.213.3.17]:16824 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751514AbeAEOzV (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 5 Jan 2018 09:55:21 -0500
-Subject: Re: [GIT PULL] linux-integrity patches for 4.16-security-next-general
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        James Morris <jmorris@namei.org>
-CC: linux-security-module <linux-security-module@vger.kernel.org>,
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44190 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751333AbeAENno (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 5 Jan 2018 08:43:44 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w05DYDmJ040943
+        for <linux-integrity@vger.kernel.org>; Fri, 5 Jan 2018 08:43:43 -0500
+Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2fa7740d5b-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 05 Jan 2018 08:43:43 -0500
+Received: from localhost
+        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Fri, 5 Jan 2018 13:43:41 -0000
+Subject: [GIT PULL] linux-integrity patches for 4.16-security-next-general
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: James Morris <jmorris@namei.org>
+Cc: linux-security-module <linux-security-module@vger.kernel.org>,
         linux-integrity <linux-integrity@vger.kernel.org>
-References: <1515159816.4418.7.camel@linux.vnet.ibm.com>
-From: Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <4806797a-bb15-6996-6654-7e21d39b7699@huawei.com>
-Date: Fri, 5 Jan 2018 15:55:16 +0100
-MIME-Version: 1.0
-In-Reply-To: <1515159816.4418.7.camel@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Date: Fri, 05 Jan 2018 08:43:36 -0500
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1515159816.4418.7.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 1/5/2018 2:43 PM, Mimi Zohar wrote:
-> Hi James,
-> 
-> Mimi Zohar (2):
->        ima: relax requiring a file signature for new files with zero length
->        ima: support new "hash" and "dont_hash" policy actions
-Hi Mimi
+Hi James,
 
-I think there is an issue in the patch above.
+This pull request contains a mixture of bug fixes, code cleanup, and
+new functionality.  Of note is the integrity cache locking fix, file
+change detection, and support for a new EVM portable and immutable
+signature type.
 
-+	/* HASH just sets the digital signature flag, nothing else */
-+	if ((action & IMA_HASH) && !(iint->flags & IMA_DIGSIG)) {
+The re-introduction of the integrity cache lock (iint) fixes the
+problem of attempting to take the i_rwsem shared a second time, when it
+was previously taken exclusively.  Defining atomic flags resolves the
+original iint/i_rwsem circular locking - accessing the file data vs.
+modifying the file metadata.  Although it fixes the O_DIRECT problem as
+well, a subsequent patch is needed to remove the explicit O_DIRECT
+prevention.
 
-IMA_DIGSIG now is an atomic flag.
+For performance reasons, detecting when a file has changed and needs to
+be re-measured, re-appraised, and/or re-audited, was limited to after
+the last writer has closed, and only if the file data has changed.
+Detecting file change is based on i_version.  For filesystems that do
+not support i_version, remote filesystems, or userspace filesystems,
+the file was measured, appraised and/or audited once and never
+re-evaluated.  Now local filesystems, which do not support i_version or
+are not mounted with the i_version option, assume the file has changed
+and are required to re-evaluate the file.  This change does not address
+detecting file change on remote or userspace filesystems.
 
-Roberto
+Unlike file data signatures, which can be included and distributed in
+software packages (eg. rpm, deb), the existing EVM signature, which
+protects the file metadata, could not be included in software packages,
+as it includes file system specific information (eg. i_ino, possibly
+the UUID).  This pull request defines a new EVM portable and immutable
+file metadata signature format, which can be included in software
+packages.
 
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
+thanks,
+
+Mimi
+---
+
+The following changes since commit d21bd6898336a7892914d308d5e0868f0b863571:
+
+  Sync to v4.15-rc3 for security subsystem developers to work against. (2017-12-11 17:01:08 +1100)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
+
+for you to fetch changes up to a2a2c3c8580a9158bca61221648fd6d5c98c443a:
+
+  ima: Use i_version only when filesystem supports it (2017-12-18 09:43:49 -0500)
+
+----------------------------------------------------------------
+Bruno E. O. Meneguele (1):
+      ima: log message to module appraisal error
+
+Dmitry Kasatkin (1):
+      ima: re-introduce own integrity cache lock
+
+Jeff Layton (1):
+      integrity: remove unneeded initializations in integrity_iint_cache entries
+
+Joe Perches (1):
+      ima: Fix line continuation format
+
+Matthew Garrett (2):
+      EVM: Allow userland to permit modification of EVM-protected metadata
+      EVM: Add support for portable signature format
+
+Mimi Zohar (2):
+      ima: relax requiring a file signature for new files with zero length
+      ima: support new "hash" and "dont_hash" policy actions
+
+Roberto Sassu (1):
+      ima: pass filename to ima_rdwr_violation_check()
+
+Sascha Hauer (1):
+      ima: Use i_version only when filesystem supports it
+
+ Documentation/ABI/testing/evm         | 54 +++++++++++++-------
+ Documentation/ABI/testing/ima_policy  |  3 +-
+ include/linux/integrity.h             |  1 +
+ security/integrity/evm/evm.h          |  9 ++--
+ security/integrity/evm/evm_crypto.c   | 75 +++++++++++++++++++++++----
+ security/integrity/evm/evm_main.c     | 67 +++++++++++++++++-------
+ security/integrity/evm/evm_secfs.c    | 20 ++++++--
+ security/integrity/iint.c             |  4 +-
+ security/integrity/ima/ima_api.c      |  2 +-
+ security/integrity/ima/ima_appraise.c | 46 +++++++++--------
+ security/integrity/ima/ima_main.c     | 95 +++++++++++++++++++++++++----------
+ security/integrity/ima/ima_policy.c   | 30 ++++++++++-
+ security/integrity/ima/ima_template.c | 11 ++--
+ security/integrity/integrity.h        | 41 +++++++++------
+ 14 files changed, 333 insertions(+), 125 deletions(-)
