@@ -1,49 +1,44 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from userp2120.oracle.com ([156.151.31.85]:39094 "EHLO
+Received: from userp2120.oracle.com ([156.151.31.85]:53000 "EHLO
         userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754726AbeAHAFd (ORCPT
+        with ESMTP id S1754649AbeAGXld (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 7 Jan 2018 19:05:33 -0500
-Date: Mon, 8 Jan 2018 11:04:58 +1100 (AEDT)
+        Sun, 7 Jan 2018 18:41:33 -0500
+Date: Mon, 8 Jan 2018 10:40:33 +1100 (AEDT)
 From: James Morris <james.l.morris@oracle.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-cc: James Morris <jmorris@namei.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Subject: Re: [GIT PULL] linux-integrity patches for
- 4.16-security-next-general
-In-Reply-To: <1515159816.4418.7.camel@linux.vnet.ibm.com>
-Message-ID: <alpine.LFD.2.20.1801081103570.8436@localhost>
-References: <1515159816.4418.7.camel@linux.vnet.ibm.com>
+To: Arnd Bergmann <arnd@arndb.de>
+cc: Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Azhar Shaikh <azhar.shaikh@intel.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: remove unused variables
+In-Reply-To: <20180102103924.1035536-1-arnd@arndb.de>
+Message-ID: <alpine.LFD.2.20.1801081040250.8436@localhost>
+References: <20180102103924.1035536-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 5 Jan 2018, Mimi Zohar wrote:
+On Tue, 2 Jan 2018, Arnd Bergmann wrote:
 
-> The following changes since commit d21bd6898336a7892914d308d5e0868f0b863571:
+> The CLKRUN fix caused a few harmless compile-time warnings:
 > 
->   Sync to v4.15-rc3 for security subsystem developers to work against. (2017-12-11 17:01:08 +1100)
+> drivers/char/tpm/tpm_tis.c: In function 'tpm_tis_pnp_remove':
+> drivers/char/tpm/tpm_tis.c:274:23: error: unused variable 'priv' [-Werror=unused-variable]
+> drivers/char/tpm/tpm_tis.c: In function 'tpm_tis_plat_remove':
+> drivers/char/tpm/tpm_tis.c:324:23: error: unused variable 'priv' [-Werror=unused-variable]
 > 
-> are available in the git repository at:
+> This removes the variables that have now become unused.
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-> 
-> for you to fetch changes up to a2a2c3c8580a9158bca61221648fd6d5c98c443a:
-> 
->   ima: Use i_version only when filesystem supports it (2017-12-18 09:43:49 -0500)
-> 
-
-Thanks, merged into:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git 
-	next-testing
-	next-integrity
+> Fixes: 6d0866cbc2d3 ("tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
 
+Reviewed-by: James Morris <james.l.morris@oracle.com>
 
-- James
 -- 
 James Morris
 <james.l.morris@oracle.com>
