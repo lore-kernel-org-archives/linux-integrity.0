@@ -1,181 +1,434 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:36344 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757806AbeAHVj6 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 8 Jan 2018 16:39:58 -0500
-Message-ID: <1515447593.3486.54.camel@kernel.org>
-Subject: Re: [PATCH v4 19/19] fs: handle inode->i_version more efficiently
-From: Jeff Layton <jlayton@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
-        bfields@fieldses.org, neilb@suse.de, jack@suse.de,
-        linux-ext4@vger.kernel.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, linux-xfs@vger.kernel.org,
-        darrick.wong@oracle.com, david@fromorbit.com,
-        linux-btrfs@vger.kernel.org, clm@fb.com, jbacik@fb.com,
-        dsterba@suse.com, linux-integrity@vger.kernel.org,
-        zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
-        linux-afs@lists.infradead.org, dhowells@redhat.com,
-        jaltman@auristor.com, linux-samsung-soc@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?Q?Bart=C5=82omiej_?= =?UTF-8?Q?=C5=BBo=C5=82nierkiewicz?=
-        <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Mon, 08 Jan 2018 16:39:53 -0500
-In-Reply-To: <20180108201713.rdfjn7j65cuqmwuo@kozik-lap>
-References: <20171222120556.7435-1-jlayton@kernel.org>
-         <20171222120556.7435-20-jlayton@kernel.org>
-         <CAJKOXPd8ojTjiGF3nKQKWtVrEsjWfjvg6rLL+RGnbu_SZMDu7g@mail.gmail.com>
-         <1515416208.3486.14.camel@kernel.org>
-         <CAJKOXPfv4eSERDiUuZuJ7KdpyGU0=Eqt_A+J6knp-FEW9BZoSw@mail.gmail.com>
-         <1515418164.3486.18.camel@kernel.org>
-         <20180108172928.aqndozcpljb73uj6@kozik-lap>
-         <1515434419.3486.41.camel@kernel.org>
-         <20180108183353.emiwsd4aic4gmytr@kozik-lap>
-         <1515438929.3486.48.camel@kernel.org>
-         <20180108201713.rdfjn7j65cuqmwuo@kozik-lap>
+Received: from mail-qk0-f201.google.com ([209.85.220.201]:44421 "EHLO
+        mail-qk0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756468AbeAHVgc (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 8 Jan 2018 16:36:32 -0500
+Received: by mail-qk0-f201.google.com with SMTP id y12so9421103qka.11
+        for <linux-integrity@vger.kernel.org>; Mon, 08 Jan 2018 13:36:32 -0800 (PST)
+MIME-Version: 1.0
+Date: Mon,  8 Jan 2018 13:36:20 -0800
+In-Reply-To: <20180108213620.170042-1-mjg59@google.com>
+Message-Id: <20180108213620.170042-2-mjg59@google.com>
+References: <20180108213620.170042-1-mjg59@google.com>
+Subject: [PATCH V6 2/2] IMA: Support using new creds in appraisal policy
+From: Matthew Garrett <mjg59@google.com>
+To: linux-integrity@vger.kernel.org
+Cc: james.l.morris@oracle.com, Matthew Garrett <mjg59@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, selinux@tycho.nsa.gov,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2018-01-08 at 21:17 +0100, Krzysztof Kozlowski wrote:
-> On Mon, Jan 08, 2018 at 02:15:29PM -0500, Jeff Layton wrote:
-> > On Mon, 2018-01-08 at 19:33 +0100, Krzysztof Kozlowski wrote:
-> > > On Mon, Jan 08, 2018 at 01:00:19PM -0500, Jeff Layton wrote:
-> > > > On Mon, 2018-01-08 at 18:29 +0100, Krzysztof Kozlowski wrote:
-> > > 
-> > > (...)
-> > > 
-> > > > > > Ok, thanks. If you're seeing hangs then that might imply that we have
-> > > > > > some sort of excessive looping going on in the cmpxchg loops.
-> > > > > > 
-> > > > > > Could you apply the patch below and let me know if it causes either of
-> > > > > > the warnings to pop? That might at least point us in the right
-> > > > > > direction:
-> > > > > 
-> > > > > No new warnings with attached patch (except existing already lockdep:
-> > > > > "INFO: trying to register non-static key.").
-> > > > > 
-> > > > 
-> > > > Yeah, I saw that in the original logs and it looks unrelated (and
-> > > > harmless).
-> > > > 
-> > > > > Systemd timeouts on mounting /home but after entering rescue shell there
-> > > > > is no problem running mount /home:
-> > > > > 	Give root password for maintenance
-> > > > > 	(or press Control-D to continue): 
-> > > > > 	root@odroidxu3:~# mount /home
-> > > > > 	[  220.659331] EXT4-fs (mmcblk1p2): mounted filesystem with ordered data mode. Opts: (null)
-> > > > > 
-> > > > 
-> > > > Ok, thanks for testing it. So I guess we can probably rule out excessive
-> > > > looping in those functions as the issue.
-> > > > 
-> > > > To make sure I understand the problem: When systemd tries to do the
-> > > > initial mount of /home (which is an ext4 filesystem), it hangs. But once
-> > > > it drops to the shell, it works, if you do the mount by hand.
-> > > > 
-> > > > Is that correct?
-> > > 
-> > > Yes, although it also timeouts on setting up /dev/ttySAC2 (serial
-> > > console).
-> > > 
-> > > > If so, then is it possible to trigger sysrq commands during the hanging
-> > > > mount attempt? Maybe you could use e.g. sysrq-l, sysrq-w, etc. to
-> > > > determine what it's blocking on?
-> > 
-> > (trimming the output)
-> > 
-> > Thanks. I don't really see anything obvious in that info,
-> > unfortunately. What we really need to do is find the systemd task
-> > performing the mount, and see what it's doing.
-> 
-> It's systemd 236.0-2 coming from Arch Linux for ARM. All packages are
-> updated.
-> 
-> > We do have one questionable bug in the NFS changes though. Does this
-> > patch help at all?
-> 
-> Patches do not change anything (I tried "SQUASH: nfs: fix i_version
-> increment when adding a request" and "SQUASH: ext4: use raw API for
-> xattr inode refcounts").
-> 
-> I tried again regular SDcard-root boot and it succeeded. Only nfsroot
-> fails.
-> 
-> Best regards,
-> Krzysztof
-> 
+The existing BPRM_CHECK functionality in IMA validates against the
+credentials of the existing process, not any new credentials that the
+child process may transition to. Add an additional CREDS_CHECK target
+and refactor IMA to pass the appropriate creds structure. In
+ima_bprm_check(), check with both the existing process credentials and
+the credentials that will be committed when the new process is started.
+This will not change behaviour unless the system policy is extended to
+include CREDS_CHECK targets - BPRM_CHECK will continue to check the same
+credentials that it did previously.
 
-Got it, that's helpful. Does this patch help (on top of the others) ?
+After this patch, an IMA policy rule along the lines of:
 
-------------------------8<--------------------------
+measure func=CREDS_CHECK subj_type=unconfined_t
 
-SQUASH: nfs: compare raw iversion counter since that's what's
- being stored
+will trigger if a process is executed and runs as unconfined_t, ignoring
+the context of the parent process. This is in contrast to:
 
-Signed-off-by: Jeff Layton <jlayton@redhat.com>
+measure func=BPRM_CHECK subj_type=unconfined_t
+
+which will trigger if the process that calls exec() is already executing
+in unconfined_t, ignoring the context that the child process executes
+into.
+
+Signed-off-by: Matthew Garrett <mjg59@google.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: Eric Paris <eparis@parisplace.org>
+Cc: selinux@tycho.nsa.gov
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module@vger.kernel.org
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: linux-integrity@vger.kernel.org
 ---
- fs/nfs/inode.c           |  6 +++---
- include/linux/iversion.h | 13 +++++++++++++
- 2 files changed, 16 insertions(+), 3 deletions(-)
+ Documentation/ABI/testing/ima_policy  |  2 +-
+ security/integrity/iint.c             |  1 +
+ security/integrity/ima/ima.h          |  9 ++++----
+ security/integrity/ima/ima_api.c      |  9 +++++---
+ security/integrity/ima/ima_appraise.c | 13 ++++++++++-
+ security/integrity/ima/ima_main.c     | 42 ++++++++++++++++++++++++++---------
+ security/integrity/ima/ima_policy.c   | 23 ++++++++++++-------
+ security/integrity/integrity.h        |  9 ++++++--
+ 8 files changed, 79 insertions(+), 29 deletions(-)
 
-diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
-index 0b85cca1184b..93552c482992 100644
---- a/fs/nfs/inode.c
-+++ b/fs/nfs/inode.c
-@@ -1289,7 +1289,7 @@ static unsigned long nfs_wcc_update_inode(struct inode *inode, struct nfs_fattr
+diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
+index e76432b9954d..5dc9eed035fb 100644
+--- a/Documentation/ABI/testing/ima_policy
++++ b/Documentation/ABI/testing/ima_policy
+@@ -25,7 +25,7 @@ Description:
+ 				 [obj_user=] [obj_role=] [obj_type=]]
+ 			option:	[[appraise_type=]] [permit_directio]
  
- 	if ((fattr->valid & NFS_ATTR_FATTR_PRECHANGE)
- 			&& (fattr->valid & NFS_ATTR_FATTR_CHANGE)
--			&& !inode_cmp_iversion(inode, fattr->pre_change_attr)) {
-+			&& !inode_cmp_iversion_raw(inode, fattr->pre_change_attr)) {
- 		inode_set_iversion_raw(inode, fattr->change_attr);
- 		if (S_ISDIR(inode->i_mode))
- 			nfs_set_cache_invalid(inode, NFS_INO_INVALID_DATA);
-@@ -1348,7 +1348,7 @@ static int nfs_check_inode_attributes(struct inode *inode, struct nfs_fattr *fat
+-		base: 	func:= [BPRM_CHECK][MMAP_CHECK][FILE_CHECK][MODULE_CHECK]
++		base: 	func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
+ 				[FIRMWARE_CHECK]
+ 				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
+ 			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
+diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+index c84e05866052..62846e331a8b 100644
+--- a/security/integrity/iint.c
++++ b/security/integrity/iint.c
+@@ -78,6 +78,7 @@ static void iint_free(struct integrity_iint_cache *iint)
+ 	iint->ima_mmap_status = INTEGRITY_UNKNOWN;
+ 	iint->ima_bprm_status = INTEGRITY_UNKNOWN;
+ 	iint->ima_read_status = INTEGRITY_UNKNOWN;
++	iint->ima_creds_status = INTEGRITY_UNKNOWN;
+ 	iint->evm_status = INTEGRITY_UNKNOWN;
+ 	iint->measured_pcrs = 0;
+ 	kmem_cache_free(iint_cache, iint);
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index d52b487ad259..35fe91aa1fc9 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -177,6 +177,7 @@ static inline unsigned long ima_hash_key(u8 *digest)
+ 	hook(FILE_CHECK)		\
+ 	hook(MMAP_CHECK)		\
+ 	hook(BPRM_CHECK)		\
++	hook(CREDS_CHECK)		\
+ 	hook(POST_SETATTR)		\
+ 	hook(MODULE_CHECK)		\
+ 	hook(FIRMWARE_CHECK)		\
+@@ -191,8 +192,8 @@ enum ima_hooks {
+ };
  
- 	if (!nfs_file_has_buffered_writers(nfsi)) {
- 		/* Verify a few of the more important attributes */
--		if ((fattr->valid & NFS_ATTR_FATTR_CHANGE) != 0 && inode_cmp_iversion(inode, fattr->change_attr))
-+		if ((fattr->valid & NFS_ATTR_FATTR_CHANGE) != 0 && inode_cmp_iversion_raw(inode, fattr->change_attr))
- 			invalid |= NFS_INO_INVALID_ATTR | NFS_INO_REVAL_PAGECACHE;
+ /* LIM API function definitions */
+-int ima_get_action(struct inode *inode, int mask,
+-		   enum ima_hooks func, int *pcr);
++int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
++		   int mask, enum ima_hooks func, int *pcr);
+ int ima_must_measure(struct inode *inode, int mask, enum ima_hooks func);
+ int ima_collect_measurement(struct integrity_iint_cache *iint,
+ 			    struct file *file, void *buf, loff_t size,
+@@ -212,8 +213,8 @@ void ima_free_template_entry(struct ima_template_entry *entry);
+ const char *ima_d_path(const struct path *path, char **pathbuf, char *filename);
  
- 		if ((fattr->valid & NFS_ATTR_FATTR_MTIME) && !timespec_equal(&inode->i_mtime, &fattr->mtime))
-@@ -1778,7 +1778,7 @@ static int nfs_update_inode(struct inode *inode, struct nfs_fattr *fattr)
+ /* IMA policy related functions */
+-int ima_match_policy(struct inode *inode, enum ima_hooks func, int mask,
+-		     int flags, int *pcr);
++int ima_match_policy(struct inode *inode, const struct cred *cred, u32 secid,
++		     enum ima_hooks func, int mask, int flags, int *pcr);
+ void ima_init_policy(void);
+ void ima_update_policy(void);
+ void ima_update_policy_flag(void);
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index c7e8db0ea4c0..09a8da070162 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -157,6 +157,8 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+ /**
+  * ima_get_action - appraise & measure decision based on policy.
+  * @inode: pointer to inode to measure
++ * @cred: pointer to credentials structure to validate
++ * @secid: secid of the task being validated
+  * @mask: contains the permission mask (MAY_READ, MAY_WRITE, MAY_EXEC,
+  *        MAY_APPEND)
+  * @func: caller identifier
+@@ -165,20 +167,21 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+  * The policy is defined in terms of keypairs:
+  *		subj=, obj=, type=, func=, mask=, fsmagic=
+  *	subj,obj, and type: are LSM specific.
+- *	func: FILE_CHECK | BPRM_CHECK | MMAP_CHECK | MODULE_CHECK
++ *	func: FILE_CHECK | BPRM_CHECK | CREDS_CHECK | MMAP_CHECK | MODULE_CHECK
+  *	mask: contains the permission mask
+  *	fsmagic: hex value
+  *
+  * Returns IMA_MEASURE, IMA_APPRAISE mask.
+  *
+  */
+-int ima_get_action(struct inode *inode, int mask, enum ima_hooks func, int *pcr)
++int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
++		   int mask, enum ima_hooks func, int *pcr)
+ {
+ 	int flags = IMA_MEASURE | IMA_AUDIT | IMA_APPRAISE;
  
- 	/* More cache consistency checks */
- 	if (fattr->valid & NFS_ATTR_FATTR_CHANGE) {
--		if (inode_cmp_iversion(inode, fattr->change_attr)) {
-+		if (inode_cmp_iversion_raw(inode, fattr->change_attr)) {
- 			dprintk("NFS: change_attr change on server for file %s/%ld\n",
- 					inode->i_sb->s_id, inode->i_ino);
- 			/* Could it be a race with writeback? */
-diff --git a/include/linux/iversion.h b/include/linux/iversion.h
-index 107fcb3ec809..8c97f67ffbbc 100644
---- a/include/linux/iversion.h
-+++ b/include/linux/iversion.h
-@@ -190,6 +190,19 @@ inode_query_iversion(struct inode *inode)
- 	return inode_peek_iversion(inode);
+ 	flags &= ima_policy_flag;
+ 
+-	return ima_match_policy(inode, func, mask, flags, pcr);
++	return ima_match_policy(inode, cred, secid, func, mask, flags, pcr);
  }
  
-+/**
-+ * inode_cmp_iversion_raw - check whether the raw i_version counter has changed
-+ * @inode: inode to check
-+ * @old: old value to check against its i_version
-+ *
-+ * Compare the current raw i_version counter with a previous one. Returns 0 if
-+ * they are the same or non-zero if they are different.
-+ */
-+static inline s64
-+inode_cmp_iversion_raw(const struct inode *inode, u64 old)
-+{
-+	return (s64)inode_peek_iversion(inode) - (s64)old;
-+}
+ /*
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 65fbcf3c32c7..23453a5a86ac 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -50,10 +50,14 @@ bool is_ima_appraise_enabled(void)
+  */
+ int ima_must_appraise(struct inode *inode, int mask, enum ima_hooks func)
+ {
++	u32 secid;
++
+ 	if (!ima_appraise)
+ 		return 0;
+ 
+-	return ima_match_policy(inode, func, mask, IMA_APPRAISE, NULL);
++	security_task_getsecid(current, &secid);
++	return ima_match_policy(inode, current_cred(), secid, func, mask,
++				IMA_APPRAISE, NULL);
+ }
+ 
+ static int ima_fix_xattr(struct dentry *dentry,
+@@ -86,6 +90,8 @@ enum integrity_status ima_get_cache_status(struct integrity_iint_cache *iint,
+ 		return iint->ima_mmap_status;
+ 	case BPRM_CHECK:
+ 		return iint->ima_bprm_status;
++	case CREDS_CHECK:
++		return iint->ima_creds_status;
+ 	case FILE_CHECK:
+ 	case POST_SETATTR:
+ 		return iint->ima_file_status;
+@@ -106,6 +112,8 @@ static void ima_set_cache_status(struct integrity_iint_cache *iint,
+ 	case BPRM_CHECK:
+ 		iint->ima_bprm_status = status;
+ 		break;
++	case CREDS_CHECK:
++		iint->ima_creds_status = status;
+ 	case FILE_CHECK:
+ 	case POST_SETATTR:
+ 		iint->ima_file_status = status;
+@@ -127,6 +135,9 @@ static void ima_cache_flags(struct integrity_iint_cache *iint,
+ 	case BPRM_CHECK:
+ 		iint->flags |= (IMA_BPRM_APPRAISED | IMA_APPRAISED);
+ 		break;
++	case CREDS_CHECK:
++		iint->flags |= (IMA_CREDS_APPRAISED | IMA_APPRAISED);
++		break;
+ 	case FILE_CHECK:
+ 	case POST_SETATTR:
+ 		iint->flags |= (IMA_FILE_APPRAISED | IMA_APPRAISED);
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 770654694efc..7ddab02ddd68 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -159,8 +159,9 @@ void ima_file_free(struct file *file)
+ 	ima_check_last_writer(iint, inode, file);
+ }
+ 
+-static int process_measurement(struct file *file, char *buf, loff_t size,
+-			       int mask, enum ima_hooks func, int opened)
++static int process_measurement(struct file *file, const struct cred *cred,
++			       u32 secid, char *buf, loff_t size, int mask,
++			       enum ima_hooks func, int opened)
+ {
+ 	struct inode *inode = file_inode(file);
+ 	struct integrity_iint_cache *iint = NULL;
+@@ -182,7 +183,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+ 	 * bitmask based on the appraise/audit/measurement policy.
+ 	 * Included is the appraise submask.
+ 	 */
+-	action = ima_get_action(inode, mask, func, &pcr);
++	action = ima_get_action(inode, cred, secid, mask, func, &pcr);
+ 	violation_check = ((func == FILE_CHECK || func == MMAP_CHECK) &&
+ 			   (ima_policy_flag & IMA_MEASURE));
+ 	if (!action && !violation_check)
+@@ -284,9 +285,14 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+  */
+ int ima_file_mmap(struct file *file, unsigned long prot)
+ {
+-	if (file && (prot & PROT_EXEC))
+-		return process_measurement(file, NULL, 0, MAY_EXEC,
+-					   MMAP_CHECK, 0);
++	u32 secid;
++
++	if (file && (prot & PROT_EXEC)) {
++		security_task_getsecid(current, &secid);
++		return process_measurement(file, current_cred(), secid, NULL,
++					   0, MAY_EXEC, MMAP_CHECK, 0);
++	}
++
+ 	return 0;
+ }
+ 
+@@ -305,8 +311,18 @@ int ima_file_mmap(struct file *file, unsigned long prot)
+  */
+ int ima_bprm_check(struct linux_binprm *bprm)
+ {
+-	return process_measurement(bprm->file, NULL, 0, MAY_EXEC,
+-				   BPRM_CHECK, 0);
++	int ret;
++	u32 secid;
++
++	security_task_getsecid(current, &secid);
++	ret = process_measurement(bprm->file, current_cred(), secid, NULL, 0,
++				  MAY_EXEC, BPRM_CHECK, 0);
++	if (ret)
++		return ret;
++
++	security_cred_getsecid(bprm->cred, &secid);
++	return process_measurement(bprm->file, bprm->cred, secid, NULL, 0,
++				   MAY_EXEC, CREDS_CHECK, 0);
+ }
+ 
  /**
-  * inode_cmp_iversion - check whether the i_version counter has changed
-  * @inode: inode to check
+@@ -321,7 +337,10 @@ int ima_bprm_check(struct linux_binprm *bprm)
+  */
+ int ima_file_check(struct file *file, int mask, int opened)
+ {
+-	return process_measurement(file, NULL, 0,
++	u32 secid;
++
++	security_task_getsecid(current, &secid);
++	return process_measurement(file, current_cred(), secid, NULL, 0,
+ 				   mask & (MAY_READ | MAY_WRITE | MAY_EXEC |
+ 					   MAY_APPEND), FILE_CHECK, opened);
+ }
+@@ -398,6 +417,7 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 		       enum kernel_read_file_id read_id)
+ {
+ 	enum ima_hooks func;
++	u32 secid;
+ 
+ 	if (!file && read_id == READING_FIRMWARE) {
+ 		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
+@@ -420,7 +440,9 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 	}
+ 
+ 	func = read_idmap[read_id] ?: FILE_CHECK;
+-	return process_measurement(file, buf, size, MAY_READ, func, 0);
++	security_task_getsecid(current, &secid);
++	return process_measurement(file, current_cred(), secid, buf, size,
++				   MAY_READ, func, 0);
+ }
+ 
+ static int __init init_ima(void)
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index ee4613fa5840..4321b3bb61ef 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -241,16 +241,17 @@ static void ima_lsm_update_rules(void)
+  * ima_match_rules - determine whether an inode matches the measure rule.
+  * @rule: a pointer to a rule
+  * @inode: a pointer to an inode
++ * @cred: a pointer to a credentials structure for user validation
++ * @secid: the secid of the task to be validated
+  * @func: LIM hook identifier
+  * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC)
+  *
+  * Returns true on rule match, false on failure.
+  */
+ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
++			    const struct cred *cred, u32 secid,
+ 			    enum ima_hooks func, int mask)
+ {
+-	struct task_struct *tsk = current;
+-	const struct cred *cred = current_cred();
+ 	int i;
+ 
+ 	if ((rule->flags & IMA_FUNC) &&
+@@ -285,7 +286,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
+ 		return false;
+ 	for (i = 0; i < MAX_LSM_RULES; i++) {
+ 		int rc = 0;
+-		u32 osid, sid;
++		u32 osid;
+ 		int retried = 0;
+ 
+ 		if (!rule->lsm[i].rule)
+@@ -305,8 +306,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
+ 		case LSM_SUBJ_USER:
+ 		case LSM_SUBJ_ROLE:
+ 		case LSM_SUBJ_TYPE:
+-			security_task_getsecid(tsk, &sid);
+-			rc = security_filter_rule_match(sid,
++			rc = security_filter_rule_match(secid,
+ 							rule->lsm[i].type,
+ 							Audit_equal,
+ 							rule->lsm[i].rule,
+@@ -339,6 +339,8 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
+ 		return IMA_MMAP_APPRAISE;
+ 	case BPRM_CHECK:
+ 		return IMA_BPRM_APPRAISE;
++	case CREDS_CHECK:
++		return IMA_CREDS_APPRAISE;
+ 	case FILE_CHECK:
+ 	case POST_SETATTR:
+ 		return IMA_FILE_APPRAISE;
+@@ -351,6 +353,9 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
+ /**
+  * ima_match_policy - decision based on LSM and other conditions
+  * @inode: pointer to an inode for which the policy decision is being made
++ * @cred: pointer to a credentials structure for which the policy decision is
++ *        being made
++ * @secid: LSM secid of the task to be validated
+  * @func: IMA hook identifier
+  * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC)
+  * @pcr: set the pcr to extend
+@@ -362,8 +367,8 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
+  * list when walking it.  Reads are many orders of magnitude more numerous
+  * than writes so ima_match_policy() is classical RCU candidate.
+  */
+-int ima_match_policy(struct inode *inode, enum ima_hooks func, int mask,
+-		     int flags, int *pcr)
++int ima_match_policy(struct inode *inode, const struct cred *cred, u32 secid,
++		     enum ima_hooks func, int mask, int flags, int *pcr)
+ {
+ 	struct ima_rule_entry *entry;
+ 	int action = 0, actmask = flags | (flags << 1);
+@@ -374,7 +379,7 @@ int ima_match_policy(struct inode *inode, enum ima_hooks func, int mask,
+ 		if (!(entry->action & actmask))
+ 			continue;
+ 
+-		if (!ima_match_rules(entry, inode, func, mask))
++		if (!ima_match_rules(entry, inode, cred, secid, func, mask))
+ 			continue;
+ 
+ 		action |= entry->flags & IMA_ACTION_FLAGS;
+@@ -691,6 +696,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 				entry->func = MMAP_CHECK;
+ 			else if (strcmp(args[0].from, "BPRM_CHECK") == 0)
+ 				entry->func = BPRM_CHECK;
++			else if (strcmp(args[0].from, "CREDS_CHECK") == 0)
++				entry->func = CREDS_CHECK;
+ 			else if (strcmp(args[0].from, "KEXEC_KERNEL_CHECK") ==
+ 				 0)
+ 				entry->func = KEXEC_KERNEL_CHECK;
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index e1bf040fb110..d70fd875d62f 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -48,10 +48,14 @@
+ #define IMA_BPRM_APPRAISED	0x00002000
+ #define IMA_READ_APPRAISE	0x00004000
+ #define IMA_READ_APPRAISED	0x00008000
++#define IMA_CREDS_APPRAISE	0x00010000
++#define IMA_CREDS_APPRAISED	0x00020000
+ #define IMA_APPRAISE_SUBMASK	(IMA_FILE_APPRAISE | IMA_MMAP_APPRAISE | \
+-				 IMA_BPRM_APPRAISE | IMA_READ_APPRAISE)
++				 IMA_BPRM_APPRAISE | IMA_READ_APPRAISE | \
++				 IMA_CREDS_APPRAISE)
+ #define IMA_APPRAISED_SUBMASK	(IMA_FILE_APPRAISED | IMA_MMAP_APPRAISED | \
+-				 IMA_BPRM_APPRAISED | IMA_READ_APPRAISED)
++				 IMA_BPRM_APPRAISED | IMA_READ_APPRAISED | \
++				 IMA_CREDS_APPRAISED)
+ 
+ enum evm_ima_xattr_type {
+ 	IMA_XATTR_DIGEST = 0x01,
+@@ -108,6 +112,7 @@ struct integrity_iint_cache {
+ 	enum integrity_status ima_mmap_status:4;
+ 	enum integrity_status ima_bprm_status:4;
+ 	enum integrity_status ima_read_status:4;
++	enum integrity_status ima_creds_status:4;
+ 	enum integrity_status evm_status:4;
+ 	struct ima_digest_data *ima_hash;
+ };
 -- 
-2.14.3
+2.16.0.rc0.223.g4a4ac83678-goog
