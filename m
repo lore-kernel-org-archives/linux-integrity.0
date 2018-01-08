@@ -1,56 +1,120 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-it0-f49.google.com ([209.85.214.49]:43382 "EHLO
-        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932750AbeAHTpu (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 8 Jan 2018 14:45:50 -0500
-Received: by mail-it0-f49.google.com with SMTP id u62so8808780ita.2
-        for <linux-integrity@vger.kernel.org>; Mon, 08 Jan 2018 11:45:50 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <1515413905.3460.40.camel@linux.vnet.ibm.com>
-References: <20180105211536.11611-1-mjg59@google.com> <20180105211536.11611-2-mjg59@google.com>
- <1515413905.3460.40.camel@linux.vnet.ibm.com>
-From: Matthew Garrett <mjg59@google.com>
-Date: Mon, 8 Jan 2018 11:45:48 -0800
-Message-ID: <CACdnJuvNz8Rjj2rBe=VTZKhOOnd+eXgp51sesEQF5_A+s2k3VQ@mail.gmail.com>
-Subject: Re: [PATCH V5 2/2] IMA: Support using new creds in appraisal policy
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, selinux@tycho.nsa.gov,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Received: from mail.kernel.org ([198.145.29.99]:48678 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755658AbeAHTPe (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 8 Jan 2018 14:15:34 -0500
+Message-ID: <1515438929.3486.48.camel@kernel.org>
+Subject: Re: [PATCH v4 19/19] fs: handle inode->i_version more efficiently
+From: Jeff Layton <jlayton@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
+        bfields@fieldses.org, neilb@suse.de, jack@suse.de,
+        linux-ext4@vger.kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, linux-xfs@vger.kernel.org,
+        darrick.wong@oracle.com, david@fromorbit.com,
+        linux-btrfs@vger.kernel.org, clm@fb.com, jbacik@fb.com,
+        dsterba@suse.com, linux-integrity@vger.kernel.org,
+        zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
+        linux-afs@lists.infradead.org, dhowells@redhat.com,
+        jaltman@auristor.com, linux-samsung-soc@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?Q?Bart=C5=82omiej_?= =?UTF-8?Q?=C5=BBo=C5=82nierkiewicz?=
+        <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Mon, 08 Jan 2018 14:15:29 -0500
+In-Reply-To: <20180108183353.emiwsd4aic4gmytr@kozik-lap>
+References: <20171222120556.7435-1-jlayton@kernel.org>
+         <20171222120556.7435-20-jlayton@kernel.org>
+         <CAJKOXPd8ojTjiGF3nKQKWtVrEsjWfjvg6rLL+RGnbu_SZMDu7g@mail.gmail.com>
+         <1515416208.3486.14.camel@kernel.org>
+         <CAJKOXPfv4eSERDiUuZuJ7KdpyGU0=Eqt_A+J6knp-FEW9BZoSw@mail.gmail.com>
+         <1515418164.3486.18.camel@kernel.org>
+         <20180108172928.aqndozcpljb73uj6@kozik-lap>
+         <1515434419.3486.41.camel@kernel.org>
+         <20180108183353.emiwsd4aic4gmytr@kozik-lap>
 Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Jan 8, 2018 at 4:18 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> On Fri, 2018-01-05 at 13:15 -0800, Matthew Garrett wrote:
->> The existing BPRM_CHECK functionality in IMA validates against the
->> credentials of the existing process, not any new credentials that the
->> child process may transition to. Add an additional CREDS_CHECK target
->> and refactor IMA to pass the appropriate creds structure. In
->> ima_bprm_check(), check with both the existing process credentials and
->> the credentials that will be committed when the new process is started.
->> This will not change behaviour unless the system policy is extended to
->> include CREDS_CHECK targets - BPRM_CHECK will continue to check the same
->> credentials that it did previously.
->
-> Refactoring IMA to pass the creds structure all the way down is a
-> generic solution, but if the CREDS_CHECK rule is only being called
-> from ima_bprm_check(), "container_of" the bprm->file returns a pointer
-> to the bprm structure.  Perhaps you could limit the amount of
-> refactoring needed based on the func.
+On Mon, 2018-01-08 at 19:33 +0100, Krzysztof Kozlowski wrote:
+> On Mon, Jan 08, 2018 at 01:00:19PM -0500, Jeff Layton wrote:
+> > On Mon, 2018-01-08 at 18:29 +0100, Krzysztof Kozlowski wrote:
+> 
+> (...)
+> 
+> > > > Ok, thanks. If you're seeing hangs then that might imply that we have
+> > > > some sort of excessive looping going on in the cmpxchg loops.
+> > > > 
+> > > > Could you apply the patch below and let me know if it causes either of
+> > > > the warnings to pop? That might at least point us in the right
+> > > > direction:
+> > > 
+> > > No new warnings with attached patch (except existing already lockdep:
+> > > "INFO: trying to register non-static key.").
+> > > 
+> > 
+> > Yeah, I saw that in the original logs and it looks unrelated (and
+> > harmless).
+> > 
+> > > Systemd timeouts on mounting /home but after entering rescue shell there
+> > > is no problem running mount /home:
+> > > 	Give root password for maintenance
+> > > 	(or press Control-D to continue): 
+> > > 	root@odroidxu3:~# mount /home
+> > > 	[  220.659331] EXT4-fs (mmcblk1p2): mounted filesystem with ordered data mode. Opts: (null)
+> > > 
+> > 
+> > Ok, thanks for testing it. So I guess we can probably rule out excessive
+> > looping in those functions as the issue.
+> > 
+> > To make sure I understand the problem: When systemd tries to do the
+> > initial mount of /home (which is an ext4 filesystem), it hangs. But once
+> > it drops to the shell, it works, if you do the mount by hand.
+> > 
+> > Is that correct?
+> 
+> Yes, although it also timeouts on setting up /dev/ttySAC2 (serial
+> console).
+> 
+> > If so, then is it possible to trigger sysrq commands during the hanging
+> > mount attempt? Maybe you could use e.g. sysrq-l, sysrq-w, etc. to
+> > determine what it's blocking on?
 
-Hm. This would avoid adding an argument to process_measurement(), but
-we'd still need to pass additional information down through
-ima_get_action() in order to get the creds and secid right. It feels a
-little ugly to have process_measurement() recreate information rather
-than having the caller pass it in, but I'm not going to object.
+(trimming the output)
 
-> Could you include in the patch description a simple method for testing
-> this change?
+Thanks. I don't really see anything obvious in that info,
+unfortunately. What we really need to do is find the systemd task
+performing the mount, and see what it's doing.
 
-Certainly.
+We do have one questionable bug in the NFS changes though. Does this
+patch help at all?
+
+-------------------------------8<---------------------------------
+
+SQUASH: nfs: fix i_version increment when adding a request
+
+NFS treats this value as an opaque value with no flag, so we must
+increment it as such instead of using inode_inc_iversion.
+
+Signed-off-by: Jeff Layton <jlayton@redhat.com>
+---
+ fs/nfs/write.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/nfs/write.c b/fs/nfs/write.c
+index a03fbac1f88c..48837b6250e9 100644
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -755,7 +755,7 @@ static void nfs_inode_add_request(struct inode *inode, struct nfs_page *req)
+ 	spin_lock(&mapping->private_lock);
+ 	if (!nfs_have_writebacks(inode) &&
+ 	    NFS_PROTO(inode)->have_delegation(inode, FMODE_WRITE))
+-		inode_inc_iversion(inode);
++		atomic64_inc(&inode->i_version);
+ 	if (likely(!PageSwapCache(req->wb_page))) {
+ 		set_bit(PG_MAPPED, &req->wb_flags);
+ 		SetPagePrivate(req->wb_page);
+-- 
+2.14.3
