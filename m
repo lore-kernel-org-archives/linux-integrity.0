@@ -1,38 +1,49 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:14563 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756343AbeAHKr3 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 8 Jan 2018 05:47:29 -0500
-Date: Mon, 8 Jan 2018 12:47:22 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org
-Subject: Re: [PATCH -next] tpm_tis: Remove unused variables
-Message-ID: <20180108104722.2yw4wiwxb6kadqdg@linux.intel.com>
-References: <1514948961-20524-1-git-send-email-weiyongjun1@huawei.com>
+Received: from userp2120.oracle.com ([156.151.31.85]:39094 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754726AbeAHAFd (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 7 Jan 2018 19:05:33 -0500
+Date: Mon, 8 Jan 2018 11:04:58 +1100 (AEDT)
+From: James Morris <james.l.morris@oracle.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+cc: James Morris <jmorris@namei.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Subject: Re: [GIT PULL] linux-integrity patches for
+ 4.16-security-next-general
+In-Reply-To: <1515159816.4418.7.camel@linux.vnet.ibm.com>
+Message-ID: <alpine.LFD.2.20.1801081103570.8436@localhost>
+References: <1515159816.4418.7.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1514948961-20524-1-git-send-email-weiyongjun1@huawei.com>
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Jan 03, 2018 at 03:09:21AM +0000, Wei Yongjun wrote:
-> Fixes the following sparse warnings:
-> 
-> drivers/char/tpm/tpm_tis.c: In function a??tpm_tis_pnp_removea??:
-> drivers/char/tpm/tpm_tis.c:274:23: warning: unused variable a??priva?? [-Wunused-variable]
->   struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
->                        ^
-> drivers/char/tpm/tpm_tis.c: In function a??tpm_tis_plat_removea??:
-> drivers/char/tpm/tpm_tis.c:324:23: warning: unused variable a??priva?? [-Wunused-variable]
->   struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
->                        ^
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+On Fri, 5 Jan 2018, Mimi Zohar wrote:
 
-Thank you. Already merged Arnd's patch.
+> The following changes since commit d21bd6898336a7892914d308d5e0868f0b863571:
+> 
+>   Sync to v4.15-rc3 for security subsystem developers to work against. (2017-12-11 17:01:08 +1100)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
+> 
+> for you to fetch changes up to a2a2c3c8580a9158bca61221648fd6d5c98c443a:
+> 
+>   ima: Use i_version only when filesystem supports it (2017-12-18 09:43:49 -0500)
+> 
 
-/Jarkko
+Thanks, merged into:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git 
+	next-testing
+	next-integrity
+
+
+
+- James
+-- 
+James Morris
+<james.l.morris@oracle.com>
