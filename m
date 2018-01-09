@@ -1,63 +1,54 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from aserp2120.oracle.com ([141.146.126.78]:50748 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751521AbeAIJcZ (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 9 Jan 2018 04:32:25 -0500
-Date: Tue, 9 Jan 2018 12:32:17 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: dmitry.kasatkin@gmail.com
-Cc: linux-integrity@vger.kernel.org
-Subject: [bug report] ima: re-introduce own integrity cache lock
-Message-ID: <20180109093217.hvh7ouly7hqzbxxl@mwanda>
+Received: from mail.kernel.org ([198.145.29.99]:39258 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752488AbeAIJ1y (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 9 Jan 2018 04:27:54 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1515447593.3486.54.camel@kernel.org>
+References: <20171222120556.7435-1-jlayton@kernel.org> <20171222120556.7435-20-jlayton@kernel.org>
+ <CAJKOXPd8ojTjiGF3nKQKWtVrEsjWfjvg6rLL+RGnbu_SZMDu7g@mail.gmail.com>
+ <1515416208.3486.14.camel@kernel.org> <CAJKOXPfv4eSERDiUuZuJ7KdpyGU0=Eqt_A+J6knp-FEW9BZoSw@mail.gmail.com>
+ <1515418164.3486.18.camel@kernel.org> <20180108172928.aqndozcpljb73uj6@kozik-lap>
+ <1515434419.3486.41.camel@kernel.org> <20180108183353.emiwsd4aic4gmytr@kozik-lap>
+ <1515438929.3486.48.camel@kernel.org> <20180108201713.rdfjn7j65cuqmwuo@kozik-lap>
+ <1515447593.3486.54.camel@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Tue, 9 Jan 2018 10:27:50 +0100
+Message-ID: <CAJKOXPfW8h4U8RKY86Sz-5BVxRQAu-ACEJtZ0hCiLVSn7tEB0Q@mail.gmail.com>
+Subject: Re: [PATCH v4 19/19] fs: handle inode->i_version more efficiently
+To: Jeff Layton <jlayton@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
+        bfields@fieldses.org, neilb@suse.de, jack@suse.de,
+        linux-ext4@vger.kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, linux-xfs@vger.kernel.org,
+        darrick.wong@oracle.com, david@fromorbit.com,
+        linux-btrfs@vger.kernel.org, clm@fb.com, jbacik@fb.com,
+        dsterba@suse.com, linux-integrity@vger.kernel.org,
+        zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
+        linux-afs@lists.infradead.org, dhowells@redhat.com,
+        jaltman@auristor.com, linux-samsung-soc@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?=
+        <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hello Dmitry Kasatkin,
+On Mon, Jan 8, 2018 at 10:39 PM, Jeff Layton <jlayton@kernel.org> wrote:
+>>
+>
+> Got it, that's helpful. Does this patch help (on top of the others) ?
+>
+> ------------------------8<--------------------------
+>
+> SQUASH: nfs: compare raw iversion counter since that's what's
+>  being stored
+>
 
-The patch 0d73a55208e9: "ima: re-introduce own integrity cache lock"
-from Dec 5, 2017, leads to the following static checker warning:
+Did not apply cleanly (in include/linux/iversion.h) but it was easy to
+adjust. However still no improvements. Applied on top of others.
 
-	security/integrity/ima/ima_main.c:309 process_measurement()
-	error: we previously assumed 'iint' could be null (see line 209)
-
-security/integrity/ima/ima_main.c
-   207          if (action) {
-   208                  iint = integrity_inode_get(inode);
-   209                  if (!iint)
-                            ^^^^^
-Check for NULL
-
-   210                          rc = -ENOMEM;
-   211          }
-   212  
-   213          if (!rc && violation_check)
-   214                  ima_rdwr_violation_check(file, iint, action & IMA_MEASURE,
-   215                                           &pathbuf, &pathname, filename);
-   216  
-   217          inode_unlock(inode);
-   218  
-   219          if (rc)
-   220                  goto out;
-
-[ snip ]
-
-   302  out:
-   303          if (pathbuf)
-   304                  __putname(pathbuf);
-   305          if (must_appraise) {
-   306                  if (rc && (ima_appraise & IMA_APPRAISE_ENFORCE))
-   307                          return -EACCES;
-   308                  if (file->f_mode & FMODE_WRITE)
-   309                          set_bit(IMA_UPDATE_XATTR, &iint->atomic_flags);
-				                           ^^^^^^^^^^^^^^^^^^
-Potential NULL dereference?  I'm not sure...
-
-   310          }
-   311          return 0;
-   312  }
-
-regards,
-dan carpenter
+Best regards,
+Krzysztof
