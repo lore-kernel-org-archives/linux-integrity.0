@@ -1,156 +1,72 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:44019 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933445AbeAJMoX (ORCPT
+Received: from ipmail07.adl2.internode.on.net ([150.101.137.131]:55747 "EHLO
+        ipmail07.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752009AbeAIW4C (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 10 Jan 2018 07:44:23 -0500
-From: =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>
-To: linux-kernel@vger.kernel.org
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <james.l.morris@oracle.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org
-Subject: [PATCH 2/3] fscrypt: add support for the encrypted key type
-Date: Wed, 10 Jan 2018 12:44:17 +0000
-Message-Id: <20180110124418.24385-2-git@andred.net>
-In-Reply-To: <20180110124418.24385-1-git@andred.net>
-References: <20180110124418.24385-1-git@andred.net>
+        Tue, 9 Jan 2018 17:56:02 -0500
+Date: Wed, 10 Jan 2018 09:55:56 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
+        bfields@fieldses.org, neilb@suse.de, jack@suse.de,
+        linux-ext4@vger.kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, linux-xfs@vger.kernel.org,
+        darrick.wong@oracle.com, linux-btrfs@vger.kernel.org, clm@fb.com,
+        jbacik@fb.com, dsterba@suse.com, linux-integrity@vger.kernel.org,
+        zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
+        linux-afs@lists.infradead.org, dhowells@redhat.com,
+        jaltman@auristor.com, krzk@kernel.org
+Subject: Re: [PATCH v5 19/19] fs: handle inode->i_version more efficiently
+Message-ID: <20180109225556.GM16421@dastard>
+References: <20180109141059.25929-1-jlayton@kernel.org>
+ <20180109141059.25929-20-jlayton@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180109141059.25929-20-jlayton@kernel.org>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-We now try to acquire the key according to the
-encryption policy from both key types, 'logon'
-as well as 'encrypted'.
+On Tue, Jan 09, 2018 at 09:10:59AM -0500, Jeff Layton wrote:
+> From: Jeff Layton <jlayton@redhat.com>
+> 
+> Since i_version is mostly treated as an opaque value, we can exploit that
+> fact to avoid incrementing it when no one is watching. With that change,
+> we can avoid incrementing the counter on writes, unless someone has
+> queried for it since it was last incremented. If the a/c/mtime don't
+> change, and the i_version hasn't changed, then there's no need to dirty
+> the inode metadata on a write.
+> 
+> Convert the i_version counter to an atomic64_t, and use the lowest order
+> bit to hold a flag that will tell whether anyone has queried the value
+> since it was last incremented.
+> 
+> When we go to maybe increment it, we fetch the value and check the flag
+> bit.  If it's clear then we don't need to do anything if the update
+> isn't being forced.
+> 
+> If we do need to update, then we increment the counter by 2, and clear
+> the flag bit, and then use a CAS op to swap it into place. If that
+> works, we return true. If it doesn't then do it again with the value
+> that we fetch from the CAS operation.
+> 
+> On the query side, if the flag is already set, then we just shift the
+> value down by 1 bit and return it. Otherwise, we set the flag in our
+> on-stack value and again use cmpxchg to swap it into place if it hasn't
+> changed. If it has, then we use the value from the cmpxchg as the new
+> "old" value and try again.
+> 
+> This method allows us to avoid incrementing the counter on writes (and
+> dirtying the metadata) under typical workloads. We only need to increment
+> if it has been queried since it was last changed.
+> 
+> Signed-off-by: Jeff Layton <jlayton@redhat.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
 
-Signed-off-by: Andre Draszik <git@andred.net>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: James Morris <james.l.morris@oracle.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: linux-integrity@vger.kernel.org
-Cc: keyrings@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
-Cc: linux-fscrypt@vger.kernel.org
----
- fs/crypto/keyinfo.c | 58 +++++++++++++++++++++++++++++++++++------------------
- 1 file changed, 38 insertions(+), 20 deletions(-)
+Documentation helps a lot in understanding all this. Thanks for
+adding it into the patch!
 
-diff --git a/fs/crypto/keyinfo.c b/fs/crypto/keyinfo.c
-index 5e6e846f5a24..023fa19fec48 100644
---- a/fs/crypto/keyinfo.c
-+++ b/fs/crypto/keyinfo.c
-@@ -10,6 +10,7 @@
-  */
- 
- #include <keys/user-type.h>
-+#include <keys/encrypted-type.h>
- #include <linux/scatterlist.h>
- #include <linux/ratelimit.h>
- #include <crypto/aes.h>
-@@ -66,14 +67,20 @@ static int derive_key_aes(u8 deriving_key[FS_AES_128_ECB_KEY_SIZE],
- 	return res;
- }
- 
--static int validate_user_key(struct fscrypt_info *crypt_info,
-+static inline struct key *fscrypt_get_encrypted_key(const char *sig)
-+{
-+	if (IS_ENABLED(CONFIG_ENCRYPTED_KEYS))
-+		return request_key(&key_type_encrypted, sig, NULL);
-+	return ERR_PTR(-ENOKEY);
-+}
-+
-+static int validate_keyring_key(struct fscrypt_info *crypt_info,
- 			struct fscrypt_context *ctx, u8 *raw_key,
- 			const char *prefix, int min_keysize)
- {
- 	char *description;
- 	struct key *keyring_key;
- 	struct fscrypt_key *master_key;
--	const struct user_key_payload *ukp;
- 	int res;
- 
- 	description = kasprintf(GFP_NOFS, "%s%*phN", prefix,
-@@ -83,28 +90,39 @@ static int validate_user_key(struct fscrypt_info *crypt_info,
- 		return -ENOMEM;
- 
- 	keyring_key = request_key(&key_type_logon, description, NULL);
-+	if (IS_ERR(keyring_key))
-+		keyring_key = fscrypt_get_encrypted_key(description);
- 	kfree(description);
- 	if (IS_ERR(keyring_key))
- 		return PTR_ERR(keyring_key);
- 	down_read(&keyring_key->sem);
- 
--	if (keyring_key->type != &key_type_logon) {
-+	if (keyring_key->type == &key_type_logon) {
-+		const struct user_key_payload *ukp;
-+
-+		ukp = user_key_payload_locked(keyring_key);
-+		if (!ukp) {
-+			/* key was revoked before we acquired its semaphore */
-+			res = -EKEYREVOKED;
-+			goto out;
-+		}
-+		if (ukp->datalen != sizeof(struct fscrypt_key)) {
-+			res = -EINVAL;
-+			goto out;
-+		}
-+		master_key = (struct fscrypt_key *)ukp->data;
-+	} else if (keyring_key->type == &key_type_encrypted) {
-+		const struct encrypted_key_payload *ekp;
-+
-+		ekp = keyring_key->payload.data[0];
-+		master_key = (struct fscrypt_key *)ekp->payload_data;
-+	} else {
- 		printk_once(KERN_WARNING
--				"%s: key type must be logon\n", __func__);
-+				"%s: key type must be logon or encrypted\n",
-+				__func__);
- 		res = -ENOKEY;
- 		goto out;
- 	}
--	ukp = user_key_payload_locked(keyring_key);
--	if (!ukp) {
--		/* key was revoked before we acquired its semaphore */
--		res = -EKEYREVOKED;
--		goto out;
--	}
--	if (ukp->datalen != sizeof(struct fscrypt_key)) {
--		res = -EINVAL;
--		goto out;
--	}
--	master_key = (struct fscrypt_key *)ukp->data;
- 	BUILD_BUG_ON(FS_AES_128_ECB_KEY_SIZE != FS_KEY_DERIVATION_NONCE_SIZE);
- 
- 	if (master_key->size < min_keysize || master_key->size > FS_MAX_KEY_SIZE
-@@ -302,12 +320,12 @@ int fscrypt_get_encryption_info(struct inode *inode)
- 	if (!raw_key)
- 		goto out;
- 
--	res = validate_user_key(crypt_info, &ctx, raw_key, FS_KEY_DESC_PREFIX,
--				keysize);
-+	res = validate_keyring_key(crypt_info, &ctx, raw_key,
-+				   FS_KEY_DESC_PREFIX, keysize);
- 	if (res && inode->i_sb->s_cop->key_prefix) {
--		int res2 = validate_user_key(crypt_info, &ctx, raw_key,
--					     inode->i_sb->s_cop->key_prefix,
--					     keysize);
-+		int res2 = validate_keyring_key(crypt_info, &ctx, raw_key,
-+						inode->i_sb->s_cop->key_prefix,
-+						keysize);
- 		if (res2) {
- 			if (res2 == -ENOKEY)
- 				res = -ENOKEY;
+Acked-by: Dave Chinner <dchinner@redhat.com>
 -- 
-2.15.1
+Dave Chinner
+david@fromorbit.com
