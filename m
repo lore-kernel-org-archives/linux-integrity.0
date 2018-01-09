@@ -1,54 +1,54 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:39258 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752488AbeAIJ1y (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 9 Jan 2018 04:27:54 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:44132 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750913AbeAIAmY (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 8 Jan 2018 19:42:24 -0500
+Date: Tue, 9 Jan 2018 11:42:16 +1100 (AEDT)
+From: James Morris <james.l.morris@oracle.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+cc: jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Subject: Re: [GIT PULL] tpmdd updates for v4.16
+In-Reply-To: <20180108111834.azjo6hdbm62el4qj@linux.intel.com>
+Message-ID: <alpine.LFD.2.20.1801091141410.17337@localhost>
+References: <20180108111834.azjo6hdbm62el4qj@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1515447593.3486.54.camel@kernel.org>
-References: <20171222120556.7435-1-jlayton@kernel.org> <20171222120556.7435-20-jlayton@kernel.org>
- <CAJKOXPd8ojTjiGF3nKQKWtVrEsjWfjvg6rLL+RGnbu_SZMDu7g@mail.gmail.com>
- <1515416208.3486.14.camel@kernel.org> <CAJKOXPfv4eSERDiUuZuJ7KdpyGU0=Eqt_A+J6knp-FEW9BZoSw@mail.gmail.com>
- <1515418164.3486.18.camel@kernel.org> <20180108172928.aqndozcpljb73uj6@kozik-lap>
- <1515434419.3486.41.camel@kernel.org> <20180108183353.emiwsd4aic4gmytr@kozik-lap>
- <1515438929.3486.48.camel@kernel.org> <20180108201713.rdfjn7j65cuqmwuo@kozik-lap>
- <1515447593.3486.54.camel@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Tue, 9 Jan 2018 10:27:50 +0100
-Message-ID: <CAJKOXPfW8h4U8RKY86Sz-5BVxRQAu-ACEJtZ0hCiLVSn7tEB0Q@mail.gmail.com>
-Subject: Re: [PATCH v4 19/19] fs: handle inode->i_version more efficiently
-To: Jeff Layton <jlayton@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
-        bfields@fieldses.org, neilb@suse.de, jack@suse.de,
-        linux-ext4@vger.kernel.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, linux-xfs@vger.kernel.org,
-        darrick.wong@oracle.com, david@fromorbit.com,
-        linux-btrfs@vger.kernel.org, clm@fb.com, jbacik@fb.com,
-        dsterba@suse.com, linux-integrity@vger.kernel.org,
-        zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
-        linux-afs@lists.infradead.org, dhowells@redhat.com,
-        jaltman@auristor.com, linux-samsung-soc@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?=
-        <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Jan 8, 2018 at 10:39 PM, Jeff Layton <jlayton@kernel.org> wrote:
->>
->
-> Got it, that's helpful. Does this patch help (on top of the others) ?
->
-> ------------------------8<--------------------------
->
-> SQUASH: nfs: compare raw iversion counter since that's what's
->  being stored
->
+On Mon, 8 Jan 2018, Jarkko Sakkinen wrote:
 
-Did not apply cleanly (in include/linux/iversion.h) but it was easy to
-adjust. However still no improvements. Applied on top of others.
+> Hi James,
+> 
+> Sorry for a late PR.
+> 
+> Summary of the content:
+> 
+> * Reduced polling delays in tpm_tis.
+> * Support for retrieving TPM 2.0 Event Log through EFI before
+>   ExitBootServices.
+> * Replaced tpm-rng.c with a hwrng device managed by the driver for each
+>   TPM device.
+> * TPM resource manager synthesizes TPM_RC_COMMAND_CODE response instead
+>   of returning -EINVAL for unknown TPM commands. This makes user space
+>   more sound.
+> * CLKRUN fixes:
+>   * Keep #CLKRUN disable through the entier TPM command/response flow.
+>   * Check whether #CLKRUN is enabled before disabling and enabling it
+>     again because enabling it breaks PS/2 devices on a system where it
+>     is disabled.
+> 
 
-Best regards,
-Krzysztof
+Thanks, merged to:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
+	next-tpm
+	next-testing
+
+
+-- 
+James Morris
+<james.l.morris@oracle.com>
