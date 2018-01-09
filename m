@@ -1,8 +1,8 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:42522 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:42246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932310AbeAIOLn (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 9 Jan 2018 09:11:43 -0500
+        id S1752596AbeAIOL0 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 9 Jan 2018 09:11:26 -0500
 From: Jeff Layton <jlayton@kernel.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
@@ -15,9 +15,9 @@ Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
         zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
         linux-afs@lists.infradead.org, dhowells@redhat.com,
         jaltman@auristor.com, krzk@kernel.org
-Subject: [PATCH v5 14/19] xfs: convert to new i_version API
-Date: Tue,  9 Jan 2018 09:10:54 -0500
-Message-Id: <20180109141059.25929-15-jlayton@kernel.org>
+Subject: [PATCH v5 08/19] ext2: convert to new i_version API
+Date: Tue,  9 Jan 2018 09:10:48 -0500
+Message-Id: <20180109141059.25929-9-jlayton@kernel.org>
 In-Reply-To: <20180109141059.25929-1-jlayton@kernel.org>
 References: <20180109141059.25929-1-jlayton@kernel.org>
 Sender: linux-integrity-owner@vger.kernel.org
@@ -26,139 +26,82 @@ List-ID: <linux-integrity.vger.kernel.org>
 From: Jeff Layton <jlayton@redhat.com>
 
 Signed-off-by: Jeff Layton <jlayton@redhat.com>
-Acked-by: Darrick J. Wong <darrick.wong@oracle.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
 ---
- fs/xfs/libxfs/xfs_inode_buf.c | 7 +++++--
- fs/xfs/xfs_icache.c           | 5 +++--
- fs/xfs/xfs_inode.c            | 3 ++-
- fs/xfs/xfs_inode_item.c       | 3 ++-
- fs/xfs/xfs_trans_inode.c      | 4 +++-
- 5 files changed, 15 insertions(+), 7 deletions(-)
+ fs/ext2/dir.c   | 9 +++++----
+ fs/ext2/super.c | 5 +++--
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/fs/xfs/libxfs/xfs_inode_buf.c b/fs/xfs/libxfs/xfs_inode_buf.c
-index 6b7989038d75..b9c0bf80669c 100644
---- a/fs/xfs/libxfs/xfs_inode_buf.c
-+++ b/fs/xfs/libxfs/xfs_inode_buf.c
-@@ -32,6 +32,8 @@
- #include "xfs_ialloc.h"
- #include "xfs_dir2.h"
- 
-+#include <linux/iversion.h>
-+
- /*
-  * Check that none of the inode's in the buffer have a next
-  * unlinked field of 0.
-@@ -264,7 +266,8 @@ xfs_inode_from_disk(
- 	to->di_flags	= be16_to_cpu(from->di_flags);
- 
- 	if (to->di_version == 3) {
--		inode->i_version = be64_to_cpu(from->di_changecount);
-+		inode_set_iversion_queried(inode,
-+					   be64_to_cpu(from->di_changecount));
- 		to->di_crtime.t_sec = be32_to_cpu(from->di_crtime.t_sec);
- 		to->di_crtime.t_nsec = be32_to_cpu(from->di_crtime.t_nsec);
- 		to->di_flags2 = be64_to_cpu(from->di_flags2);
-@@ -314,7 +317,7 @@ xfs_inode_to_disk(
- 	to->di_flags = cpu_to_be16(from->di_flags);
- 
- 	if (from->di_version == 3) {
--		to->di_changecount = cpu_to_be64(inode->i_version);
-+		to->di_changecount = cpu_to_be64(inode_peek_iversion(inode));
- 		to->di_crtime.t_sec = cpu_to_be32(from->di_crtime.t_sec);
- 		to->di_crtime.t_nsec = cpu_to_be32(from->di_crtime.t_nsec);
- 		to->di_flags2 = cpu_to_be64(from->di_flags2);
-diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-index 43005fbe8b1e..4c315adb05e6 100644
---- a/fs/xfs/xfs_icache.c
-+++ b/fs/xfs/xfs_icache.c
-@@ -37,6 +37,7 @@
- 
- #include <linux/kthread.h>
- #include <linux/freezer.h>
+diff --git a/fs/ext2/dir.c b/fs/ext2/dir.c
+index 987647986f47..4111085a129f 100644
+--- a/fs/ext2/dir.c
++++ b/fs/ext2/dir.c
+@@ -26,6 +26,7 @@
+ #include <linux/buffer_head.h>
+ #include <linux/pagemap.h>
+ #include <linux/swap.h>
 +#include <linux/iversion.h>
  
- /*
-  * Allocate and initialise an xfs_inode.
-@@ -293,14 +294,14 @@ xfs_reinit_inode(
- 	int		error;
- 	uint32_t	nlink = inode->i_nlink;
- 	uint32_t	generation = inode->i_generation;
--	uint64_t	version = inode->i_version;
-+	uint64_t	version = inode_peek_iversion(inode);
- 	umode_t		mode = inode->i_mode;
+ typedef struct ext2_dir_entry_2 ext2_dirent;
  
- 	error = inode_init_always(mp->m_super, inode);
+@@ -92,7 +93,7 @@ static int ext2_commit_chunk(struct page *page, loff_t pos, unsigned len)
+ 	struct inode *dir = mapping->host;
+ 	int err = 0;
  
- 	set_nlink(inode, nlink);
- 	inode->i_generation = generation;
--	inode->i_version = version;
-+	inode_set_iversion_queried(inode, version);
- 	inode->i_mode = mode;
- 	return error;
- }
-diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index 801274126648..dfc5e60d8af3 100644
---- a/fs/xfs/xfs_inode.c
-+++ b/fs/xfs/xfs_inode.c
-@@ -16,6 +16,7 @@
-  * Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-  */
- #include <linux/log2.h>
+-	dir->i_version++;
++	inode_inc_iversion(dir);
+ 	block_write_end(NULL, mapping, pos, len, len, page, NULL);
+ 
+ 	if (pos+len > dir->i_size) {
+@@ -293,7 +294,7 @@ ext2_readdir(struct file *file, struct dir_context *ctx)
+ 	unsigned long npages = dir_pages(inode);
+ 	unsigned chunk_mask = ~(ext2_chunk_size(inode)-1);
+ 	unsigned char *types = NULL;
+-	int need_revalidate = file->f_version != inode->i_version;
++	bool need_revalidate = inode_cmp_iversion(inode, file->f_version);
+ 
+ 	if (pos > inode->i_size - EXT2_DIR_REC_LEN(1))
+ 		return 0;
+@@ -319,8 +320,8 @@ ext2_readdir(struct file *file, struct dir_context *ctx)
+ 				offset = ext2_validate_entry(kaddr, offset, chunk_mask);
+ 				ctx->pos = (n<<PAGE_SHIFT) + offset;
+ 			}
+-			file->f_version = inode->i_version;
+-			need_revalidate = 0;
++			file->f_version = inode_query_iversion(inode);
++			need_revalidate = false;
+ 		}
+ 		de = (ext2_dirent *)(kaddr+offset);
+ 		limit = kaddr + ext2_last_byte(inode, n) - EXT2_DIR_REC_LEN(1);
+diff --git a/fs/ext2/super.c b/fs/ext2/super.c
+index 7646818ab266..554c98b8a93a 100644
+--- a/fs/ext2/super.c
++++ b/fs/ext2/super.c
+@@ -33,6 +33,7 @@
+ #include <linux/quotaops.h>
+ #include <linux/uaccess.h>
+ #include <linux/dax.h>
 +#include <linux/iversion.h>
- 
- #include "xfs.h"
- #include "xfs_fs.h"
-@@ -833,7 +834,7 @@ xfs_ialloc(
- 	ip->i_d.di_flags = 0;
- 
- 	if (ip->i_d.di_version == 3) {
--		inode->i_version = 1;
-+		inode_set_iversion(inode, 1);
- 		ip->i_d.di_flags2 = 0;
- 		ip->i_d.di_cowextsize = 0;
- 		ip->i_d.di_crtime.t_sec = (int32_t)tv.tv_sec;
-diff --git a/fs/xfs/xfs_inode_item.c b/fs/xfs/xfs_inode_item.c
-index 6ee5c3bf19ad..7571abf5dfb3 100644
---- a/fs/xfs/xfs_inode_item.c
-+++ b/fs/xfs/xfs_inode_item.c
-@@ -30,6 +30,7 @@
- #include "xfs_buf_item.h"
- #include "xfs_log.h"
- 
-+#include <linux/iversion.h>
- 
- kmem_zone_t	*xfs_ili_zone;		/* inode log item zone */
- 
-@@ -354,7 +355,7 @@ xfs_inode_to_log_dinode(
- 	to->di_next_unlinked = NULLAGINO;
- 
- 	if (from->di_version == 3) {
--		to->di_changecount = inode->i_version;
-+		to->di_changecount = inode_peek_iversion(inode);
- 		to->di_crtime.t_sec = from->di_crtime.t_sec;
- 		to->di_crtime.t_nsec = from->di_crtime.t_nsec;
- 		to->di_flags2 = from->di_flags2;
-diff --git a/fs/xfs/xfs_trans_inode.c b/fs/xfs/xfs_trans_inode.c
-index daa7615497f9..225544327c4f 100644
---- a/fs/xfs/xfs_trans_inode.c
-+++ b/fs/xfs/xfs_trans_inode.c
-@@ -28,6 +28,8 @@
- #include "xfs_inode_item.h"
- #include "xfs_trace.h"
- 
-+#include <linux/iversion.h>
-+
- /*
-  * Add a locked inode to the transaction.
-  *
-@@ -117,7 +119,7 @@ xfs_trans_log_inode(
- 	 */
- 	if (!(ip->i_itemp->ili_item.li_desc->lid_flags & XFS_LID_DIRTY) &&
- 	    IS_I_VERSION(VFS_I(ip))) {
--		VFS_I(ip)->i_version++;
-+		inode_inc_iversion(VFS_I(ip));
- 		flags |= XFS_ILOG_CORE;
- 	}
- 
+ #include "ext2.h"
+ #include "xattr.h"
+ #include "acl.h"
+@@ -184,7 +185,7 @@ static struct inode *ext2_alloc_inode(struct super_block *sb)
+ 	if (!ei)
+ 		return NULL;
+ 	ei->i_block_alloc_info = NULL;
+-	ei->vfs_inode.i_version = 1;
++	inode_set_iversion(&ei->vfs_inode, 1);
+ #ifdef CONFIG_QUOTA
+ 	memset(&ei->i_dquot, 0, sizeof(ei->i_dquot));
+ #endif
+@@ -1569,7 +1570,7 @@ static ssize_t ext2_quota_write(struct super_block *sb, int type,
+ 		return err;
+ 	if (inode->i_size < off+len-towrite)
+ 		i_size_write(inode, off+len-towrite);
+-	inode->i_version++;
++	inode_inc_iversion(inode);
+ 	inode->i_mtime = inode->i_ctime = current_time(inode);
+ 	mark_inode_dirty(inode);
+ 	return len - towrite;
 -- 
 2.14.3
