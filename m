@@ -1,8 +1,8 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:42436 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:42522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756794AbeAIOLi (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 9 Jan 2018 09:11:38 -0500
+        id S932310AbeAIOLn (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 9 Jan 2018 09:11:43 -0500
 From: Jeff Layton <jlayton@kernel.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
@@ -15,9 +15,9 @@ Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
         zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
         linux-afs@lists.infradead.org, dhowells@redhat.com,
         jaltman@auristor.com, krzk@kernel.org
-Subject: [PATCH v5 12/19] ocfs2: convert to new i_version API
-Date: Tue,  9 Jan 2018 09:10:52 -0500
-Message-Id: <20180109141059.25929-13-jlayton@kernel.org>
+Subject: [PATCH v5 14/19] xfs: convert to new i_version API
+Date: Tue,  9 Jan 2018 09:10:54 -0500
+Message-Id: <20180109141059.25929-15-jlayton@kernel.org>
 In-Reply-To: <20180109141059.25929-1-jlayton@kernel.org>
 References: <20180109141059.25929-1-jlayton@kernel.org>
 Sender: linux-integrity-owner@vger.kernel.org
@@ -26,151 +26,139 @@ List-ID: <linux-integrity.vger.kernel.org>
 From: Jeff Layton <jlayton@redhat.com>
 
 Signed-off-by: Jeff Layton <jlayton@redhat.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
+Acked-by: Darrick J. Wong <darrick.wong@oracle.com>
 ---
- fs/ocfs2/dir.c          | 15 ++++++++-------
- fs/ocfs2/inode.c        |  3 ++-
- fs/ocfs2/namei.c        |  3 ++-
- fs/ocfs2/quota_global.c |  3 ++-
- 4 files changed, 14 insertions(+), 10 deletions(-)
+ fs/xfs/libxfs/xfs_inode_buf.c | 7 +++++--
+ fs/xfs/xfs_icache.c           | 5 +++--
+ fs/xfs/xfs_inode.c            | 3 ++-
+ fs/xfs/xfs_inode_item.c       | 3 ++-
+ fs/xfs/xfs_trans_inode.c      | 4 +++-
+ 5 files changed, 15 insertions(+), 7 deletions(-)
 
-diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
-index febe6312ceff..32f9c72dff17 100644
---- a/fs/ocfs2/dir.c
-+++ b/fs/ocfs2/dir.c
-@@ -42,6 +42,7 @@
- #include <linux/highmem.h>
- #include <linux/quotaops.h>
- #include <linux/sort.h>
+diff --git a/fs/xfs/libxfs/xfs_inode_buf.c b/fs/xfs/libxfs/xfs_inode_buf.c
+index 6b7989038d75..b9c0bf80669c 100644
+--- a/fs/xfs/libxfs/xfs_inode_buf.c
++++ b/fs/xfs/libxfs/xfs_inode_buf.c
+@@ -32,6 +32,8 @@
+ #include "xfs_ialloc.h"
+ #include "xfs_dir2.h"
+ 
++#include <linux/iversion.h>
++
+ /*
+  * Check that none of the inode's in the buffer have a next
+  * unlinked field of 0.
+@@ -264,7 +266,8 @@ xfs_inode_from_disk(
+ 	to->di_flags	= be16_to_cpu(from->di_flags);
+ 
+ 	if (to->di_version == 3) {
+-		inode->i_version = be64_to_cpu(from->di_changecount);
++		inode_set_iversion_queried(inode,
++					   be64_to_cpu(from->di_changecount));
+ 		to->di_crtime.t_sec = be32_to_cpu(from->di_crtime.t_sec);
+ 		to->di_crtime.t_nsec = be32_to_cpu(from->di_crtime.t_nsec);
+ 		to->di_flags2 = be64_to_cpu(from->di_flags2);
+@@ -314,7 +317,7 @@ xfs_inode_to_disk(
+ 	to->di_flags = cpu_to_be16(from->di_flags);
+ 
+ 	if (from->di_version == 3) {
+-		to->di_changecount = cpu_to_be64(inode->i_version);
++		to->di_changecount = cpu_to_be64(inode_peek_iversion(inode));
+ 		to->di_crtime.t_sec = cpu_to_be32(from->di_crtime.t_sec);
+ 		to->di_crtime.t_nsec = cpu_to_be32(from->di_crtime.t_nsec);
+ 		to->di_flags2 = cpu_to_be64(from->di_flags2);
+diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
+index 43005fbe8b1e..4c315adb05e6 100644
+--- a/fs/xfs/xfs_icache.c
++++ b/fs/xfs/xfs_icache.c
+@@ -37,6 +37,7 @@
+ 
+ #include <linux/kthread.h>
+ #include <linux/freezer.h>
 +#include <linux/iversion.h>
  
- #include <cluster/masklog.h>
+ /*
+  * Allocate and initialise an xfs_inode.
+@@ -293,14 +294,14 @@ xfs_reinit_inode(
+ 	int		error;
+ 	uint32_t	nlink = inode->i_nlink;
+ 	uint32_t	generation = inode->i_generation;
+-	uint64_t	version = inode->i_version;
++	uint64_t	version = inode_peek_iversion(inode);
+ 	umode_t		mode = inode->i_mode;
  
-@@ -1174,7 +1175,7 @@ static int __ocfs2_delete_entry(handle_t *handle, struct inode *dir,
- 				le16_add_cpu(&pde->rec_len,
- 						le16_to_cpu(de->rec_len));
- 			de->inode = 0;
--			dir->i_version++;
-+			inode_inc_iversion(dir);
- 			ocfs2_journal_dirty(handle, bh);
- 			goto bail;
- 		}
-@@ -1729,7 +1730,7 @@ int __ocfs2_add_entry(handle_t *handle,
- 			if (ocfs2_dir_indexed(dir))
- 				ocfs2_recalc_free_list(dir, handle, lookup);
+ 	error = inode_init_always(mp->m_super, inode);
  
--			dir->i_version++;
-+			inode_inc_iversion(dir);
- 			ocfs2_journal_dirty(handle, insert_bh);
- 			retval = 0;
- 			goto bail;
-@@ -1775,7 +1776,7 @@ static int ocfs2_dir_foreach_blk_id(struct inode *inode,
- 		 * readdir(2), then we might be pointing to an invalid
- 		 * dirent right now.  Scan from the start of the block
- 		 * to make sure. */
--		if (*f_version != inode->i_version) {
-+		if (inode_cmp_iversion(inode, *f_version)) {
- 			for (i = 0; i < i_size_read(inode) && i < offset; ) {
- 				de = (struct ocfs2_dir_entry *)
- 					(data->id_data + i);
-@@ -1791,7 +1792,7 @@ static int ocfs2_dir_foreach_blk_id(struct inode *inode,
- 				i += le16_to_cpu(de->rec_len);
- 			}
- 			ctx->pos = offset = i;
--			*f_version = inode->i_version;
-+			*f_version = inode_query_iversion(inode);
- 		}
- 
- 		de = (struct ocfs2_dir_entry *) (data->id_data + ctx->pos);
-@@ -1869,7 +1870,7 @@ static int ocfs2_dir_foreach_blk_el(struct inode *inode,
- 		 * readdir(2), then we might be pointing to an invalid
- 		 * dirent right now.  Scan from the start of the block
- 		 * to make sure. */
--		if (*f_version != inode->i_version) {
-+		if (inode_cmp_iversion(inode, *f_version)) {
- 			for (i = 0; i < sb->s_blocksize && i < offset; ) {
- 				de = (struct ocfs2_dir_entry *) (bh->b_data + i);
- 				/* It's too expensive to do a full
-@@ -1886,7 +1887,7 @@ static int ocfs2_dir_foreach_blk_el(struct inode *inode,
- 			offset = i;
- 			ctx->pos = (ctx->pos & ~(sb->s_blocksize - 1))
- 				| offset;
--			*f_version = inode->i_version;
-+			*f_version = inode_query_iversion(inode);
- 		}
- 
- 		while (ctx->pos < i_size_read(inode)
-@@ -1940,7 +1941,7 @@ static int ocfs2_dir_foreach_blk(struct inode *inode, u64 *f_version,
+ 	set_nlink(inode, nlink);
+ 	inode->i_generation = generation;
+-	inode->i_version = version;
++	inode_set_iversion_queried(inode, version);
+ 	inode->i_mode = mode;
+ 	return error;
+ }
+diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+index 801274126648..dfc5e60d8af3 100644
+--- a/fs/xfs/xfs_inode.c
++++ b/fs/xfs/xfs_inode.c
+@@ -16,6 +16,7 @@
+  * Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   */
- int ocfs2_dir_foreach(struct inode *inode, struct dir_context *ctx)
- {
--	u64 version = inode->i_version;
-+	u64 version = inode_query_iversion(inode);
- 	ocfs2_dir_foreach_blk(inode, &version, ctx, true);
- 	return 0;
- }
-diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-index 1a1e0078ab38..d51b80edd972 100644
---- a/fs/ocfs2/inode.c
-+++ b/fs/ocfs2/inode.c
-@@ -28,6 +28,7 @@
- #include <linux/highmem.h>
- #include <linux/pagemap.h>
- #include <linux/quotaops.h>
+ #include <linux/log2.h>
 +#include <linux/iversion.h>
  
- #include <asm/byteorder.h>
+ #include "xfs.h"
+ #include "xfs_fs.h"
+@@ -833,7 +834,7 @@ xfs_ialloc(
+ 	ip->i_d.di_flags = 0;
  
-@@ -302,7 +303,7 @@ void ocfs2_populate_inode(struct inode *inode, struct ocfs2_dinode *fe,
- 	OCFS2_I(inode)->ip_attr = le32_to_cpu(fe->i_attr);
- 	OCFS2_I(inode)->ip_dyn_features = le16_to_cpu(fe->i_dyn_features);
+ 	if (ip->i_d.di_version == 3) {
+-		inode->i_version = 1;
++		inode_set_iversion(inode, 1);
+ 		ip->i_d.di_flags2 = 0;
+ 		ip->i_d.di_cowextsize = 0;
+ 		ip->i_d.di_crtime.t_sec = (int32_t)tv.tv_sec;
+diff --git a/fs/xfs/xfs_inode_item.c b/fs/xfs/xfs_inode_item.c
+index 6ee5c3bf19ad..7571abf5dfb3 100644
+--- a/fs/xfs/xfs_inode_item.c
++++ b/fs/xfs/xfs_inode_item.c
+@@ -30,6 +30,7 @@
+ #include "xfs_buf_item.h"
+ #include "xfs_log.h"
  
--	inode->i_version = 1;
-+	inode_set_iversion(inode, 1);
- 	inode->i_generation = le32_to_cpu(fe->i_generation);
- 	inode->i_rdev = huge_decode_dev(le64_to_cpu(fe->id1.dev1.i_rdev));
- 	inode->i_mode = le16_to_cpu(fe->i_mode);
-diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
-index 3b0a10d9b36f..c801eddc4bf3 100644
---- a/fs/ocfs2/namei.c
-+++ b/fs/ocfs2/namei.c
-@@ -41,6 +41,7 @@
- #include <linux/slab.h>
- #include <linux/highmem.h>
- #include <linux/quotaops.h>
 +#include <linux/iversion.h>
  
- #include <cluster/masklog.h>
+ kmem_zone_t	*xfs_ili_zone;		/* inode log item zone */
  
-@@ -1520,7 +1521,7 @@ static int ocfs2_rename(struct inode *old_dir,
- 			mlog_errno(status);
- 			goto bail;
- 		}
--		new_dir->i_version++;
-+		inode_inc_iversion(new_dir);
+@@ -354,7 +355,7 @@ xfs_inode_to_log_dinode(
+ 	to->di_next_unlinked = NULLAGINO;
  
- 		if (S_ISDIR(new_inode->i_mode))
- 			ocfs2_set_links_count(newfe, 0);
-diff --git a/fs/ocfs2/quota_global.c b/fs/ocfs2/quota_global.c
-index b39d14cbfa34..7a922190a8c7 100644
---- a/fs/ocfs2/quota_global.c
-+++ b/fs/ocfs2/quota_global.c
-@@ -12,6 +12,7 @@
- #include <linux/writeback.h>
- #include <linux/workqueue.h>
- #include <linux/llist.h>
+ 	if (from->di_version == 3) {
+-		to->di_changecount = inode->i_version;
++		to->di_changecount = inode_peek_iversion(inode);
+ 		to->di_crtime.t_sec = from->di_crtime.t_sec;
+ 		to->di_crtime.t_nsec = from->di_crtime.t_nsec;
+ 		to->di_flags2 = from->di_flags2;
+diff --git a/fs/xfs/xfs_trans_inode.c b/fs/xfs/xfs_trans_inode.c
+index daa7615497f9..225544327c4f 100644
+--- a/fs/xfs/xfs_trans_inode.c
++++ b/fs/xfs/xfs_trans_inode.c
+@@ -28,6 +28,8 @@
+ #include "xfs_inode_item.h"
+ #include "xfs_trace.h"
+ 
 +#include <linux/iversion.h>
- 
- #include <cluster/masklog.h>
- 
-@@ -289,7 +290,7 @@ ssize_t ocfs2_quota_write(struct super_block *sb, int type,
- 		mlog_errno(err);
- 		return err;
++
+ /*
+  * Add a locked inode to the transaction.
+  *
+@@ -117,7 +119,7 @@ xfs_trans_log_inode(
+ 	 */
+ 	if (!(ip->i_itemp->ili_item.li_desc->lid_flags & XFS_LID_DIRTY) &&
+ 	    IS_I_VERSION(VFS_I(ip))) {
+-		VFS_I(ip)->i_version++;
++		inode_inc_iversion(VFS_I(ip));
+ 		flags |= XFS_ILOG_CORE;
  	}
--	gqinode->i_version++;
-+	inode_inc_iversion(gqinode);
- 	ocfs2_mark_inode_dirty(handle, gqinode, oinfo->dqi_gqi_bh);
- 	return len;
- }
+ 
 -- 
 2.14.3
