@@ -1,72 +1,152 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:52429 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756019AbeAJQIb (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 10 Jan 2018 11:08:31 -0500
-Date: Wed, 10 Jan 2018 18:08:23 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Alexander Steffen <Alexander.Steffen@infineon.com>
-Cc: linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Subject: Re: [GIT PULL] tpmdd updates for v4.16
-Message-ID: <20180110160823.4jco3foc4afxbtl2@linux.intel.com>
-References: <20180108111834.azjo6hdbm62el4qj@linux.intel.com>
- <1b81847f-123f-ea9e-f2e5-48c73174c8b2@infineon.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1b81847f-123f-ea9e-f2e5-48c73174c8b2@infineon.com>
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36442 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934038AbeAJOsL (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 10 Jan 2018 09:48:11 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w0AEl2Wr126852
+        for <linux-integrity@vger.kernel.org>; Wed, 10 Jan 2018 09:48:11 -0500
+Received: from e06smtp13.uk.ibm.com (e06smtp13.uk.ibm.com [195.75.94.109])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2fdhg3hrvj-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 10 Jan 2018 09:48:10 -0500
+Received: from localhost
+        by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Wed, 10 Jan 2018 14:48:07 -0000
+Subject: Re: [PATCH] ima: define a new policy option named "force"
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Seth Forshee <seth.forshee@canonical.com>
+Cc: Alban Crequy <alban.crequy@gmail.com>,
+        linux-integrity@vger.kernel.org,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        dmitry.kasatkin@gmail.com, Sascha Hauer <s.hauer@pengutronix.de>,
+        Alban Crequy <alban@kinvolk.io>, dongsu@kinvolk.io
+Date: Wed, 10 Jan 2018 09:48:02 -0500
+In-Reply-To: <20180110144418.GB4546@ubuntu-xps13>
+References: <CAMXgnP4wsiu5iizCMZ4T=iPvNEa0sr_VdMP4bPibs9+Pq3nmQw@mail.gmail.com>
+         <1515595150.5739.41.camel@linux.vnet.ibm.com>
+         <20180110144418.GB4546@ubuntu-xps13>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1515595682.5739.44.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Jan 09, 2018 at 10:59:07AM +0100, Alexander Steffen wrote:
-> On 08.01.2018 12:18, Jarkko Sakkinen wrote:
-> > Hi James,
+On Wed, 2018-01-10 at 08:44 -0600, Seth Forshee wrote:
+> On Wed, Jan 10, 2018 at 09:39:10AM -0500, Mimi Zohar wrote:
+> > On Wed, 2018-01-10 at 15:13 +0100, Alban Crequy wrote:
+> > > > There are times instead of relying on previously cached status
+> > > > information we want to force the file to be re-measured, re-appraised,
+> > > > and re-audited.
+> > > >
+> > > > This patch defines a new policy option named "force", which forces
+> > > > files to be re-measured, re-appraised or re-audited.
+> > > >
+> > > > Signed-off-by: Mimi Zohar <zohar@xxxxxxxxxxxxxxxxxx>
+> > > 
+> > > Tested-by: Alban Crequy <alban@kinvolk.io>
 > > 
-> > Sorry for a late PR.
+> > Thanks!  The builtin policies should be updated to require force for
+> > fuse filesystems.  I was expecting to receive patches (from Seth) to
+> > update the builtin policies and upstream them together.
+> 
+> Yes, I was working on a patch but need to update/test it. Was planning
+> to do that a few weeks ago but then other things came up, hoping I can
+> get back to it soon. But if someone beats me to it that's okay too :-)
+
+Thanks, just making sure you wouldn't object to someone else doing it ...
+
+> 
 > > 
-> > Summary of the content:
+> > > 
+> > > tl;dr: without the patch, the measurements don't get all the changes
+> > > on FUSE. With the patch and when enabling the "force" option,
+> > > ascii_runtime_measurements gets the updated measurements.
+> > > 
+> > > 
+> > > Longer explanation:
+
+This "Longer explanation" would make for a really good patch
+description for changing the builtin policies.
+
+Mimi
+
+> > > 
+> > > The test I did was using a patched version of the memfs FUSE driver
+> > > [1][2] and two very simple "hello-world" programs [4] (prog1 prints
+> > > "hello world: 1" and prog2 prints "hello world: 2").
+> > > 
+> > > I copy prog1 and prog2 in the fuse-memfs mount point, execute them and
+> > > check the sha1 hash in
+> > > "/sys/kernel/security/ima/ascii_runtime_measurements".
+> > > 
+> > > My patch on the memfs FUSE driver added a backdoor command to serve
+> > > prog1 when the kernel asks for prog2 or vice-versa. In this way, I can
+> > > exec prog1 and get it to print "hello world: 2" without ever replacing
+> > > the file via the VFS, so the kernel is not aware of the change.
+> > > 
+> > > The test was done using Dongsu's branch "fuse-userns-v5-2" [3],
+> > > including both this new force option and Sascha's patch ("ima: Use
+> > > i_version only when filesystem supports it").
+> > > 
+> > > 
+> > > Step by step test procedure:
+> > > 
+> > > 1.  Mount the memfs FUSE using [2]:
+> > > rm -f  /tmp/memfs-switch* ; memfs -L DEBUG  /mnt/memfs
+> > > 
+> > > 2. Copy prog1 and prog2 using [4]
+> > > cp prog1 /mnt/memfs/prog1
+> > > cp prog2 /mnt/memfs/prog2
+> > > 
+> > > 3. Lookup the files and let the FUSE driver to keep the handles open:
+> > > dd if=/mnt/memfs/prog1 bs=1 | (read -n 1 x ; sleep 3600 ) &
+> > > dd if=/mnt/memfs/prog2 bs=1 | (read -n 1 x ; sleep 3600 ) &
+> > > 
+> > > 4. Check the 2 programs work correctly:
+> > > $ /mnt/memfs/prog1
+> > > hello world: 1
+> > > $ /mnt/memfs/prog2
+> > > hello world: 2
+> > > 
+> > > 5.  Check the measurements for prog1 and prog2:
+> > > $ sudo cat /sys/kernel/security/ima/ascii_runtime_measurements|grep
+> > > /mnt/memfs/prog
+> > > 10 7ac5aed52061cb09120e977c6d04ee5c7b11c371 ima-ng
+> > > sha1:ac14c9268cd2811f7a5adea17b27d84f50e1122c /mnt/memfs/prog1
+> > > 10 9acc17a9a32aec4a676b8f6558e17a3d6c9a78e6 ima-ng
+> > > sha1:799cb5d1e06d5c37ae7a76ba25ecd1bd01476383 /mnt/memfs/prog2
+> > > 
+> > > 6. Use the backdoor command in my patched memfs to redirect file
+> > > operations on file handle 3 to file handle 2:
+> > > rm -f  /tmp/memfs-switch* ; touch /tmp/memfs-switch-3-2
+> > > 
+> > > 7. Check how the FUSE driver serves different content for the files:
+> > > $ /mnt/memfs/prog1
+> > > hello world: 2
+> > > $ /mnt/memfs/prog2
+> > > hello world: 2
+> > > 
+> > > 8. Check the measurements:
+> > > sudo cat /sys/kernel/security/ima/ascii_runtime_measurements|grep
+> > > /mnt/memfs/prog
+> > > 
+> > > Without the patches, on a vanilla kernel, there are no new
+> > > measurements, despite the FUSE driver having served different
+> > > executables. Same thing with the patch but without enabling the new
+> > > force option.
+> > > 
+> > > However, with the "force" option enabled, I can see additional
+> > > measurements for prog1 and prog2 with the hashes reversed when the
+> > > FUSE driver served the alternative content.
+> > > 
+> > > 
+> > > [1] https://github.com/bbengfort/memfs
+> > > [2] https://github.com/kinvolk/memfs/commits/alban/switch-files
+> > > [3] https://github.com/kinvolk/linux/commits/dongsu/fuse-userns-v5-2
+> > > [4] https://github.com/kinvolk/fuse-userns-patches/commit/cf1f5750cab0
+> > > 
 > > 
-> > * Reduced polling delays in tpm_tis.
-> > * Support for retrieving TPM 2.0 Event Log through EFI before
-> >    ExitBootServices.
-> > * Replaced tpm-rng.c with a hwrng device managed by the driver for each
-> >    TPM device.
-> > * TPM resource manager synthesizes TPM_RC_COMMAND_CODE response instead
-> >    of returning -EINVAL for unknown TPM commands. This makes user space
-> >    more sound.
-> > * CLKRUN fixes:
-> >    * Keep #CLKRUN disable through the entier TPM command/response flow.
-> >    * Check whether #CLKRUN is enabled before disabling and enabling it
-> >      again because enabling it breaks PS/2 devices on a system where it
-> >      is disabled.
 > 
-> I just spent some time trying to run all that (tpmdd-next-20180108) through
-> my test system and hit a couple of non-TPM problems. In case you see similar
-> issues, this is what I found out:
-> 
-> 1. rmmod for the TPM driver hangs indefinitely. The TPM driver now registers
-> itself as a hwrng, but in case it is the only hwrng in a system, the call to
-> hwrng_unregister never returns. Known bug, but still not fixed in 4.15-rc7
-> (see https://www.mail-archive.com/linux-crypto@vger.kernel.org/msg29884.html
-> for details).
-> 
-> 2. Raspberry Pis (which I use to test tpm_tis_spi and
-> tpm_i2c_infineon) boot with that kernel, but have no USB or ethernet
-> support. Also a known problem
-> (http://lists.infradead.org/pipermail/linux-arm-kernel/2018-January/552280.html).
-> 
-> 3. Device tree overlays with references to non-existent target-paths are
-> rejected now (whereas before the invalid parts were just ignored). I guess
-> this is an intentional change, but the error message does not really point
-> to the problem (applying the overlay just returns with EINVAL).
-
-Do we have these?
-
-> With all that fixed in my environment, my tests now pass successfully.
-> 
-> Alexander
-
-Thank you for reporting these issues.
-
-/Jarkko
