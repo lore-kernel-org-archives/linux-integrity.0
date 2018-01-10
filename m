@@ -1,9 +1,9 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:44023 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933510AbeAJMoY (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35532 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932681AbeAJMoW (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 10 Jan 2018 07:44:24 -0500
+        Wed, 10 Jan 2018 07:44:22 -0500
 From: =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>
 To: linux-kernel@vger.kernel.org
 Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -12,20 +12,32 @@ Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         "Theodore Y. Ts'o" <tytso@mit.edu>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
         Kees Cook <keescook@chromium.org>,
         linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: [PATCH 3/3] encrypted-keys: document new fscrypt key format
-Date: Wed, 10 Jan 2018 12:44:18 +0000
-Message-Id: <20180110124418.24385-3-git@andred.net>
-In-Reply-To: <20180110124418.24385-1-git@andred.net>
-References: <20180110124418.24385-1-git@andred.net>
+        linux-fscrypt@vger.kernel.org
+Subject: [PATCH 1/3] encrypted-keys: add fscrypt format support
+Date: Wed, 10 Jan 2018 12:44:16 +0000
+Message-Id: <20180110124418.24385-1-git@andred.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
+
+This is heavily based on commit 79a73d188726
+("encrypted-keys: add ecryptfs format support").
+
+The 'encrypted' key type defines its own payload format which contains a
+symmetric key randomly generated that cannot be used directly by the
+fscrypt subsystem, because it instead expects an fscrypt_key structure.
+
+This patch introduces the new format 'fscrypt' that allows to store an
+fscrypt_key structure inside the encrypted key payload containing
+a randomly generated symmetric key, as the same for the format 'default'
+and 'ecryptfs'.
+
+More details about the usage of encrypted keys with the fscrypt
+subsystem can be found in the file 'Documentation/security/keys/fscrypt.rst'.
 
 Signed-off-by: Andre Draszik <git@andred.net>
 Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
@@ -34,118 +46,218 @@ Cc: James Morris <james.l.morris@oracle.com>
 Cc: "Serge E. Hallyn" <serge@hallyn.com>
 Cc: "Theodore Y. Ts'o" <tytso@mit.edu>
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: linux-integrity@vger.kernel.org
 Cc: keyrings@vger.kernel.org
 Cc: linux-security-module@vger.kernel.org
 Cc: linux-fscrypt@vger.kernel.org
-Cc: linux-doc@vger.kernel.org
 ---
- Documentation/security/keys/fscrypt.rst           | 67 +++++++++++++++++++++++
- Documentation/security/keys/trusted-encrypted.rst | 12 ++--
- 2 files changed, 74 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/security/keys/fscrypt.rst
+ security/keys/encrypted-keys/Makefile         |  2 +-
+ security/keys/encrypted-keys/encrypted.c      | 19 +++++++-
+ security/keys/encrypted-keys/fscrypt_format.c | 70 +++++++++++++++++++++++++++
+ security/keys/encrypted-keys/fscrypt_format.h | 20 ++++++++
+ 4 files changed, 108 insertions(+), 3 deletions(-)
+ create mode 100644 security/keys/encrypted-keys/fscrypt_format.c
+ create mode 100644 security/keys/encrypted-keys/fscrypt_format.h
 
-diff --git a/Documentation/security/keys/fscrypt.rst b/Documentation/security/keys/fscrypt.rst
+diff --git a/security/keys/encrypted-keys/Makefile b/security/keys/encrypted-keys/Makefile
+index 7a44dce6f69d..586702ce9622 100644
+--- a/security/keys/encrypted-keys/Makefile
++++ b/security/keys/encrypted-keys/Makefile
+@@ -5,7 +5,7 @@
+ 
+ obj-$(CONFIG_ENCRYPTED_KEYS) += encrypted-keys.o
+ 
+-encrypted-keys-y := encrypted.o ecryptfs_format.o
++encrypted-keys-y := encrypted.o ecryptfs_format.o fscrypt_format.o
+ masterkey-$(CONFIG_TRUSTED_KEYS) := masterkey_trusted.o
+ masterkey-$(CONFIG_TRUSTED_KEYS)-$(CONFIG_ENCRYPTED_KEYS) := masterkey_trusted.o
+ encrypted-keys-y += $(masterkey-y) $(masterkey-m-m)
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+index d92cbf9687c3..b570a930583a 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -37,6 +37,7 @@
+ 
+ #include "encrypted.h"
+ #include "ecryptfs_format.h"
++#include "fscrypt_format.h"
+ 
+ static const char KEY_TRUSTED_PREFIX[] = "trusted:";
+ static const char KEY_USER_PREFIX[] = "user:";
+@@ -45,6 +46,7 @@ static const char hmac_alg[] = "hmac(sha256)";
+ static const char blkcipher_alg[] = "cbc(aes)";
+ static const char key_format_default[] = "default";
+ static const char key_format_ecryptfs[] = "ecryptfs";
++static const char key_format_fscrypt[] = "fscrypt";
+ static unsigned int ivsize;
+ static int blksize;
+ 
+@@ -62,12 +64,13 @@ enum {
+ };
+ 
+ enum {
+-	Opt_error = -1, Opt_default, Opt_ecryptfs
++	Opt_error = -1, Opt_default, Opt_ecryptfs, Opt_fscrypt
+ };
+ 
+ static const match_table_t key_format_tokens = {
+ 	{Opt_default, "default"},
+ 	{Opt_ecryptfs, "ecryptfs"},
++	{Opt_fscrypt, "fscrypt"},
+ 	{Opt_error, NULL}
+ };
+ 
+@@ -185,7 +188,7 @@ static int datablob_parse(char *datablob, const char **format,
+ 	}
+ 	key_cmd = match_token(keyword, key_tokens, args);
+ 
+-	/* Get optional format: default | ecryptfs */
++	/* Get optional format: default | ecryptfs | fscrypt */
+ 	p = strsep(&datablob, " \t");
+ 	if (!p) {
+ 		pr_err("encrypted_key: insufficient parameters specified\n");
+@@ -194,6 +197,7 @@ static int datablob_parse(char *datablob, const char **format,
+ 
+ 	key_format = match_token(p, key_format_tokens, args);
+ 	switch (key_format) {
++	case Opt_fscrypt:
+ 	case Opt_ecryptfs:
+ 	case Opt_default:
+ 		*format = p;
+@@ -634,6 +638,11 @@ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
+ 		}
+ 		decrypted_datalen = ECRYPTFS_MAX_KEY_BYTES;
+ 		payload_datalen = sizeof(struct ecryptfs_auth_tok);
++	} else if (format && !strcmp(format, key_format_fscrypt)) {
++		ret = fscrypt_encrypted_key_reserve_payload(decrypted_datalen,
++							    &payload_datalen);
++		if (ret < 0)
++			return ERR_PTR(ret);
+ 	}
+ 
+ 	encrypted_datalen = roundup(decrypted_datalen, blksize);
+@@ -734,6 +743,8 @@ static void __ekey_init(struct encrypted_key_payload *epayload,
+ 		if (!strcmp(format, key_format_ecryptfs))
+ 			epayload->decrypted_data =
+ 				ecryptfs_get_auth_tok_key((struct ecryptfs_auth_tok *)epayload->payload_data);
++		else if (!strcmp(format, key_format_fscrypt))
++			fscrypt__ekey_init(epayload);
+ 
+ 		memcpy(epayload->format, format, format_len);
+ 	}
+@@ -762,6 +773,10 @@ static int encrypted_init(struct encrypted_key_payload *epayload,
+ 
+ 		ecryptfs_fill_auth_tok((struct ecryptfs_auth_tok *)epayload->payload_data,
+ 				       key_desc);
++	} else if (format && !strcmp(format, key_format_fscrypt)) {
++		ret = fscrypt_valid_desc(key_desc);
++		if (ret < 0)
++			return ret;
+ 	}
+ 
+ 	__ekey_init(epayload, format, master_desc, datalen);
+diff --git a/security/keys/encrypted-keys/fscrypt_format.c b/security/keys/encrypted-keys/fscrypt_format.c
 new file mode 100644
-index 000000000000..e4a29592513e
+index 000000000000..7620c0fa3ff9
 --- /dev/null
-+++ b/Documentation/security/keys/fscrypt.rst
-@@ -0,0 +1,67 @@
-+========================================
-+Encrypted keys for the fscrypt subsystem
-+========================================
++++ b/security/keys/encrypted-keys/fscrypt_format.c
+@@ -0,0 +1,70 @@
++/*
++ * fscrypt_format.c: helper functions for the encrypted key type
++ *
++ * Copyright (C) 2006 International Business Machines Corp.
++ * Copyright (C) 2010 Politecnico di Torino, Italy
++ *                    TORSEC group -- http://security.polito.it
++ *
++ * Authors:
++ * Andre Draszik <git@andred.net>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, version 2 of the License.
++ */
 +
-+fscrypt allows file systems to implement transparent encryption and decryption
-+of files, similar to eCryptfs, using keys derived from a master key descriptor.
-+
-+The data structure defined by fscrypt to contain information required for the
-+master key descriptor is the fscrypt_key and, currently, can be stored in a
-+kernel key of the 'user' type, inserted in the user's session specific keyring
-+by the userspace utilities 'keyctl', 'fscryptctl', or 'e4crypt'.
-+
-+The 'encrypted' key type has been extended with the introduction of the new
-+format 'fscrypt' in order to be used in conjunction with the fscrypt
-+subsystem.  Encrypted keys of the newly introduced format store an
-+fscrypt_key in its payload with a master key descriptor randomly generated by
-+the kernel and protected by the parent master key.
-+
-+In order to avoid known-plaintext attacks, the datablob obtained through
-+commands 'keyctl print' or 'keyctl pipe' does not contain the overall
-+fscrypt_key, the contents of which is well known, but only the master key
-+descriptor itself in encrypted form.
-+
-+The fscrypt subsystem may really benefit from using encrypted keys in that the
-+required key can be securely generated by an Administrator and provided at boot
-+time after the unsealing of a 'trusted' key in order to perform the mount in a
-+controlled environment.  Another advantage is that the key is not exposed to
-+threats of malicious software, because it is available in clear form only at
-+kernel level.
-+
-+Usage::
-+
-+   keyctl add encrypted fscrypt:policy "new fscrypt key-type:master-key-name keylen" ring
-+   keyctl add encrypted fscrypt:policy "load hex_blob" ring
-+   keyctl update keyid "update key-type:master-key-name"
-+
-+Where::
-+
-+	policy:= '<16 hexadecimal characters>'
-+	key-type:= 'trusted' | 'user'
-+	keylen:= 16 | 32 | 64
++#include <linux/ctype.h>
++#define __FS_HAS_ENCRYPTION 0
++#include <linux/fscrypt.h>
++#include <keys/encrypted-type.h>
++#include <crypto/aes.h>
++#include "fscrypt_format.h"
 +
 +
-+Example of encrypted key usage with the fscrypt subsystem:
++#define FS_KEY_DESCRIPTOR_HEX_SIZE (FS_KEY_DESCRIPTOR_SIZE*2)
 +
-+Create an encrypted key "1234567890123456" of length 64 bytes with format
-+'fscrypt' and save it using a previously loaded user key "test"::
++int fscrypt_encrypted_key_reserve_payload(unsigned short decrypted_datalen,
++					  unsigned short *payload_datalen)
++{
++	if (decrypted_datalen < AES_BLOCK_SIZE /* FS_AES_128_CBC_KEY_SIZE */
++	    || decrypted_datalen > FS_MAX_KEY_SIZE
++	    || decrypted_datalen % AES_BLOCK_SIZE != 0) {
++		pr_err("encrypted_key: fscrypt keylen must be a multiple of %d up to %d bytes\n",
++		       AES_BLOCK_SIZE, FS_MAX_KEY_SIZE);
++		return -EINVAL;
++	}
++	*payload_datalen = sizeof(struct fscrypt_key);
++	return 0;
++}
 +
-+    $ keyctl add encrypted fscrypt:1234567890123456 "new fscrypt user:test 64" @u
-+    1023935199
++void fscrypt__ekey_init(struct encrypted_key_payload *epayload)
++{
++	struct fscrypt_key *fk = (struct fscrypt_key *)epayload->payload_data;
 +
-+    $ keyctl print 1023935199
-+    fscrypt user:test 64 e5606689fdc25d78a787249f4069fb3b007e992f4b21d0eda60
-+    c97986fc2e3326b5542e2b32216fc5007d9fd19cd3cb6668fa9850e954d2ba25e1b8a331
-+    1b0c1f20666c
++	epayload->decrypted_data = fk->raw;
 +
-+    $ keyctl pipe 1023935199 > fscrypt.blob
++	fk->mode = 0;
++	fk->size = epayload->decrypted_datalen;
++}
 +
-+Set fscrypt policy on an (empty) encrypted directory /encrypted::
++int fscrypt_valid_desc(const char *desc)
++{
++	int i;
 +
-+    $ fscryptctl set_policy 1234567890123456 /encrypted
++	if (strlen(desc) != (FS_KEY_DESC_PREFIX_SIZE
++			     + FS_KEY_DESCRIPTOR_HEX_SIZE))
++		goto error;
++	if (memcmp(desc, FS_KEY_DESC_PREFIX, FS_KEY_DESC_PREFIX_SIZE))
++		goto error;
++	desc += FS_KEY_DESC_PREFIX_SIZE;
++	for (i = 0; i < FS_KEY_DESCRIPTOR_HEX_SIZE; i++)
++		if (!isxdigit(desc[i]))
++			goto error;
 +
-+The directory policy will remain across reboots, so after a reboot the key
-+generated earlier will simply have to be loaded into the kernel keyring
-+again::
++	return 0;
 +
-+    $ keyctl add encrypted fscrypt:1234567890123456 "load $(cat fscrypt.blob)" @u
-diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
-index 3bb24e09a332..d0250112bb4d 100644
---- a/Documentation/security/keys/trusted-encrypted.rst
-+++ b/Documentation/security/keys/trusted-encrypted.rst
-@@ -76,7 +76,7 @@ Usage::
- 
- Where::
- 
--	format:= 'default | ecryptfs'
-+	format:= 'default | ecryptfs | fscrypt'
- 	key-type:= 'trusted' | 'user'
- 
- 
-@@ -169,7 +169,9 @@ Load an encrypted key "evm" from saved blob::
-     24717c64 5972dcb82ab2dde83376d82b2e3c09ffc
- 
- Other uses for trusted and encrypted keys, such as for disk and file encryption
--are anticipated.  In particular the new format 'ecryptfs' has been defined in
--in order to use encrypted keys to mount an eCryptfs filesystem.  More details
--about the usage can be found in the file
--``Documentation/security/keys/ecryptfs.rst``.
-+are anticipated.  In particular the new formats 'ecryptfs' and 'fscrypt' have
-+been defined in order to use encrypted keys to mount an eCryptfs or fscrypt
-+filesystem, respectively. More details about the usage can be found in the
-+files
-+``Documentation/security/keys/ecryptfs.rst`` and
-+``Documentation/security/keys/fscrypt.rst``.
++error:
++	pr_err("encrypted_key: key description must be 'fscrypt:<policy>'\n");
++	return -EINVAL;
++}
++
+diff --git a/security/keys/encrypted-keys/fscrypt_format.h b/security/keys/encrypted-keys/fscrypt_format.h
+new file mode 100644
+index 000000000000..c6d7da1a2113
+--- /dev/null
++++ b/security/keys/encrypted-keys/fscrypt_format.h
+@@ -0,0 +1,20 @@
++/*
++ * fscrypt_format.h: helper functions for the encrypted key type
++ *
++ * Copyright (C) 2006 International Business Machines Corp.
++ * Copyright (C) 2010 Politecnico di Torino, Italy
++ *                    TORSEC group -- http://security.polito.it
++ *
++ * Authors:
++ * Andre Draszik <git@andred.net>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, version 2 of the License.
++ */
++#pragma once
++
++int fscrypt_encrypted_key_reserve_payload(unsigned short decrypted_datalen,
++					  unsigned short *payload_datalen);
++void fscrypt__ekey_init(struct encrypted_key_payload *epayload);
++int fscrypt_valid_desc(const char *desc);
 -- 
 2.15.1
