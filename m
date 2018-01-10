@@ -1,115 +1,151 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:37248 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964879AbeAJONW (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:44023 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933510AbeAJMoY (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 10 Jan 2018 09:13:22 -0500
-Received: by mail-yb0-f196.google.com with SMTP id p83so1035479yba.4
-        for <linux-integrity@vger.kernel.org>; Wed, 10 Jan 2018 06:13:21 -0800 (PST)
+        Wed, 10 Jan 2018 07:44:24 -0500
+From: =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>
+To: linux-kernel@vger.kernel.org
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <james.l.morris@oracle.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: [PATCH 3/3] encrypted-keys: document new fscrypt key format
+Date: Wed, 10 Jan 2018 12:44:18 +0000
+Message-Id: <20180110124418.24385-3-git@andred.net>
+In-Reply-To: <20180110124418.24385-1-git@andred.net>
+References: <20180110124418.24385-1-git@andred.net>
 MIME-Version: 1.0
-From: Alban Crequy <alban.crequy@gmail.com>
-Date: Wed, 10 Jan 2018 15:13:00 +0100
-Message-ID: <CAMXgnP4wsiu5iizCMZ4T=iPvNEa0sr_VdMP4bPibs9+Pq3nmQw@mail.gmail.com>
-Subject: Re: [PATCH] ima: define a new policy option named "force"
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org,
-        Seth Forshee <seth.forshee@canonical.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        dmitry.kasatkin@gmail.com, Sascha Hauer <s.hauer@pengutronix.de>,
-        Alban Crequy <alban@kinvolk.io>, dongsu@kinvolk.io
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-> There are times instead of relying on previously cached status
-> information we want to force the file to be re-measured, re-appraised,
-> and re-audited.
->
-> This patch defines a new policy option named "force", which forces
-> files to be re-measured, re-appraised or re-audited.
->
-> Signed-off-by: Mimi Zohar <zohar@xxxxxxxxxxxxxxxxxx>
+Signed-off-by: Andre Draszik <git@andred.net>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: James Morris <james.l.morris@oracle.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: linux-integrity@vger.kernel.org
+Cc: keyrings@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: linux-fscrypt@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+---
+ Documentation/security/keys/fscrypt.rst           | 67 +++++++++++++++++++++++
+ Documentation/security/keys/trusted-encrypted.rst | 12 ++--
+ 2 files changed, 74 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/security/keys/fscrypt.rst
 
-Tested-by: Alban Crequy <alban@kinvolk.io>
-
-
-tl;dr: without the patch, the measurements don't get all the changes
-on FUSE. With the patch and when enabling the "force" option,
-ascii_runtime_measurements gets the updated measurements.
-
-
-Longer explanation:
-
-The test I did was using a patched version of the memfs FUSE driver
-[1][2] and two very simple "hello-world" programs [4] (prog1 prints
-"hello world: 1" and prog2 prints "hello world: 2").
-
-I copy prog1 and prog2 in the fuse-memfs mount point, execute them and
-check the sha1 hash in
-"/sys/kernel/security/ima/ascii_runtime_measurements".
-
-My patch on the memfs FUSE driver added a backdoor command to serve
-prog1 when the kernel asks for prog2 or vice-versa. In this way, I can
-exec prog1 and get it to print "hello world: 2" without ever replacing
-the file via the VFS, so the kernel is not aware of the change.
-
-The test was done using Dongsu's branch "fuse-userns-v5-2" [3],
-including both this new force option and Sascha's patch ("ima: Use
-i_version only when filesystem supports it").
-
-
-Step by step test procedure:
-
-1.  Mount the memfs FUSE using [2]:
-rm -f  /tmp/memfs-switch* ; memfs -L DEBUG  /mnt/memfs
-
-2. Copy prog1 and prog2 using [4]
-cp prog1 /mnt/memfs/prog1
-cp prog2 /mnt/memfs/prog2
-
-3. Lookup the files and let the FUSE driver to keep the handles open:
-dd if=/mnt/memfs/prog1 bs=1 | (read -n 1 x ; sleep 3600 ) &
-dd if=/mnt/memfs/prog2 bs=1 | (read -n 1 x ; sleep 3600 ) &
-
-4. Check the 2 programs work correctly:
-$ /mnt/memfs/prog1
-hello world: 1
-$ /mnt/memfs/prog2
-hello world: 2
-
-5.  Check the measurements for prog1 and prog2:
-$ sudo cat /sys/kernel/security/ima/ascii_runtime_measurements|grep
-/mnt/memfs/prog
-10 7ac5aed52061cb09120e977c6d04ee5c7b11c371 ima-ng
-sha1:ac14c9268cd2811f7a5adea17b27d84f50e1122c /mnt/memfs/prog1
-10 9acc17a9a32aec4a676b8f6558e17a3d6c9a78e6 ima-ng
-sha1:799cb5d1e06d5c37ae7a76ba25ecd1bd01476383 /mnt/memfs/prog2
-
-6. Use the backdoor command in my patched memfs to redirect file
-operations on file handle 3 to file handle 2:
-rm -f  /tmp/memfs-switch* ; touch /tmp/memfs-switch-3-2
-
-7. Check how the FUSE driver serves different content for the files:
-$ /mnt/memfs/prog1
-hello world: 2
-$ /mnt/memfs/prog2
-hello world: 2
-
-8. Check the measurements:
-sudo cat /sys/kernel/security/ima/ascii_runtime_measurements|grep
-/mnt/memfs/prog
-
-Without the patches, on a vanilla kernel, there are no new
-measurements, despite the FUSE driver having served different
-executables. Same thing with the patch but without enabling the new
-force option.
-
-However, with the "force" option enabled, I can see additional
-measurements for prog1 and prog2 with the hashes reversed when the
-FUSE driver served the alternative content.
-
-
-[1] https://github.com/bbengfort/memfs
-[2] https://github.com/kinvolk/memfs/commits/alban/switch-files
-[3] https://github.com/kinvolk/linux/commits/dongsu/fuse-userns-v5-2
-[4] https://github.com/kinvolk/fuse-userns-patches/commit/cf1f5750cab0
+diff --git a/Documentation/security/keys/fscrypt.rst b/Documentation/security/keys/fscrypt.rst
+new file mode 100644
+index 000000000000..e4a29592513e
+--- /dev/null
++++ b/Documentation/security/keys/fscrypt.rst
+@@ -0,0 +1,67 @@
++========================================
++Encrypted keys for the fscrypt subsystem
++========================================
++
++fscrypt allows file systems to implement transparent encryption and decryption
++of files, similar to eCryptfs, using keys derived from a master key descriptor.
++
++The data structure defined by fscrypt to contain information required for the
++master key descriptor is the fscrypt_key and, currently, can be stored in a
++kernel key of the 'user' type, inserted in the user's session specific keyring
++by the userspace utilities 'keyctl', 'fscryptctl', or 'e4crypt'.
++
++The 'encrypted' key type has been extended with the introduction of the new
++format 'fscrypt' in order to be used in conjunction with the fscrypt
++subsystem.  Encrypted keys of the newly introduced format store an
++fscrypt_key in its payload with a master key descriptor randomly generated by
++the kernel and protected by the parent master key.
++
++In order to avoid known-plaintext attacks, the datablob obtained through
++commands 'keyctl print' or 'keyctl pipe' does not contain the overall
++fscrypt_key, the contents of which is well known, but only the master key
++descriptor itself in encrypted form.
++
++The fscrypt subsystem may really benefit from using encrypted keys in that the
++required key can be securely generated by an Administrator and provided at boot
++time after the unsealing of a 'trusted' key in order to perform the mount in a
++controlled environment.  Another advantage is that the key is not exposed to
++threats of malicious software, because it is available in clear form only at
++kernel level.
++
++Usage::
++
++   keyctl add encrypted fscrypt:policy "new fscrypt key-type:master-key-name keylen" ring
++   keyctl add encrypted fscrypt:policy "load hex_blob" ring
++   keyctl update keyid "update key-type:master-key-name"
++
++Where::
++
++	policy:= '<16 hexadecimal characters>'
++	key-type:= 'trusted' | 'user'
++	keylen:= 16 | 32 | 64
++
++
++Example of encrypted key usage with the fscrypt subsystem:
++
++Create an encrypted key "1234567890123456" of length 64 bytes with format
++'fscrypt' and save it using a previously loaded user key "test"::
++
++    $ keyctl add encrypted fscrypt:1234567890123456 "new fscrypt user:test 64" @u
++    1023935199
++
++    $ keyctl print 1023935199
++    fscrypt user:test 64 e5606689fdc25d78a787249f4069fb3b007e992f4b21d0eda60
++    c97986fc2e3326b5542e2b32216fc5007d9fd19cd3cb6668fa9850e954d2ba25e1b8a331
++    1b0c1f20666c
++
++    $ keyctl pipe 1023935199 > fscrypt.blob
++
++Set fscrypt policy on an (empty) encrypted directory /encrypted::
++
++    $ fscryptctl set_policy 1234567890123456 /encrypted
++
++The directory policy will remain across reboots, so after a reboot the key
++generated earlier will simply have to be loaded into the kernel keyring
++again::
++
++    $ keyctl add encrypted fscrypt:1234567890123456 "load $(cat fscrypt.blob)" @u
+diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
+index 3bb24e09a332..d0250112bb4d 100644
+--- a/Documentation/security/keys/trusted-encrypted.rst
++++ b/Documentation/security/keys/trusted-encrypted.rst
+@@ -76,7 +76,7 @@ Usage::
+ 
+ Where::
+ 
+-	format:= 'default | ecryptfs'
++	format:= 'default | ecryptfs | fscrypt'
+ 	key-type:= 'trusted' | 'user'
+ 
+ 
+@@ -169,7 +169,9 @@ Load an encrypted key "evm" from saved blob::
+     24717c64 5972dcb82ab2dde83376d82b2e3c09ffc
+ 
+ Other uses for trusted and encrypted keys, such as for disk and file encryption
+-are anticipated.  In particular the new format 'ecryptfs' has been defined in
+-in order to use encrypted keys to mount an eCryptfs filesystem.  More details
+-about the usage can be found in the file
+-``Documentation/security/keys/ecryptfs.rst``.
++are anticipated.  In particular the new formats 'ecryptfs' and 'fscrypt' have
++been defined in order to use encrypted keys to mount an eCryptfs or fscrypt
++filesystem, respectively. More details about the usage can be found in the
++files
++``Documentation/security/keys/ecryptfs.rst`` and
++``Documentation/security/keys/fscrypt.rst``.
+-- 
+2.15.1
