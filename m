@@ -1,22 +1,23 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:40487 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935675AbeAKTuj (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:44340 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935681AbeAKTuk (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 11 Jan 2018 14:50:39 -0500
-Received: by mail-wm0-f68.google.com with SMTP id f206so7568022wmf.5
-        for <linux-integrity@vger.kernel.org>; Thu, 11 Jan 2018 11:50:39 -0800 (PST)
+        Thu, 11 Jan 2018 14:50:40 -0500
+Received: by mail-wm0-f66.google.com with SMTP id t8so7759541wmc.3
+        for <linux-integrity@vger.kernel.org>; Thu, 11 Jan 2018 11:50:40 -0800 (PST)
 From: Dongsu Park <dongsu@kinvolk.io>
 To: linux-kernel@vger.kernel.org
 Cc: Alban Crequy <alban@kinvolk.io>,
         Miklos Szeredi <miklos@szeredi.hu>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Seth Forshee <seth.forshee@canonical.com>,
-        Dongsu Park <dongsu@kinvolk.io>, linux-fsdevel@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Subject: [PATCH 1/2] fs/fuse: move SUPER_MAGIC definitions to linux/magic.h
-Date: Thu, 11 Jan 2018 20:51:49 +0100
-Message-Id: <5aa0e3c3a8d67939940b3469fdae81b9f1a0f920.1515682581.git.dongsu@kinvolk.io>
+        Dongsu Park <dongsu@kinvolk.io>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH 2/2] ima: turn on force option for FUSE in builtin policies
+Date: Thu, 11 Jan 2018 20:51:50 +0100
+Message-Id: <7a89ce9a7b8264f83fa5d61e146c01571017cca0.1515682581.git.dongsu@kinvolk.io>
 In-Reply-To: <cover.1515682581.git.dongsu@kinvolk.io>
 References: <cover.1515682581.git.dongsu@kinvolk.io>
 In-Reply-To: <cover.1515682581.git.dongsu@kinvolk.io>
@@ -24,73 +25,126 @@ References: <cover.1515682581.git.dongsu@kinvolk.io>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-To be able to use FUSE_*SUPER_MAGIC macros in other subsystems like
-security/integrity/ima, we need to move the definitions from fs/fuse
-to include/uapi/linux/.
+In case of FUSE filesystem, cached integrity results in IMA could be
+reused, when the userspace FUSE process has changed the
+underlying files. To be able to avoid such cases, we need to turn on
+the force option in builtin policies, for actions of measure and
+appraise. Then integrity values become re-measured and re-appraised.
+In that way, cached integrity results won't be used.
 
-The FUSE_*SUPER_MAGIC macros are made available to userspace in the
-same way as other filesystems.
+This patch depends on the patch "ima: define a new policy option
+named force" by Mimi. [1]
 
-Cc: linux-fsdevel@vger.kernel.org
+How to test the force option written by Alban:
+
+====
+
+The test I did was using a patched version of the memfs FUSE driver
+[2][3] and two very simple "hello-world" programs [5] (prog1 prints
+"hello world: 1" and prog2 prints "hello world: 2").
+
+I copy prog1 and prog2 in the fuse-memfs mount point, execute them and
+check the sha1 hash in
+"/sys/kernel/security/ima/ascii_runtime_measurements".
+
+My patch on the memfs FUSE driver added a backdoor command to serve
+prog1 when the kernel asks for prog2 or vice-versa. In this way, I can
+exec prog1 and get it to print "hello world: 2" without ever replacing
+the file via the VFS, so the kernel is not aware of the change.
+
+The test was done using the branch "dongsu/fuse-userns-v5-2" [4],
+including both this new force option and Sascha's patch ("ima: Use
+i_version only when filesystem supports it").
+
+
+Step by step test procedure:
+
+1. Mount the memfs FUSE using [3]:
+rm -f  /tmp/memfs-switch* ; memfs -L DEBUG  /mnt/memfs
+
+2. Copy prog1 and prog2 using [5]
+cp prog1 /mnt/memfs/prog1
+cp prog2 /mnt/memfs/prog2
+
+3. Lookup the files and let the FUSE driver to keep the handles open:
+dd if=/mnt/memfs/prog1 bs=1 | (read -n 1 x ; sleep 3600 ) &
+dd if=/mnt/memfs/prog2 bs=1 | (read -n 1 x ; sleep 3600 ) &
+
+4. Check the 2 programs work correctly:
+$ /mnt/memfs/prog1
+hello world: 1
+$ /mnt/memfs/prog2
+hello world: 2
+
+5. Check the measurements for prog1 and prog2:
+$ sudo cat /sys/kernel/security/ima/ascii_runtime_measurements|grep
+/mnt/memfs/prog
+10 7ac5aed52061cb09120e977c6d04ee5c7b11c371 ima-ng
+sha1:ac14c9268cd2811f7a5adea17b27d84f50e1122c /mnt/memfs/prog1
+10 9acc17a9a32aec4a676b8f6558e17a3d6c9a78e6 ima-ng
+sha1:799cb5d1e06d5c37ae7a76ba25ecd1bd01476383 /mnt/memfs/prog2
+
+6. Use the backdoor command in my patched memfs to redirect file
+operations on file handle 3 to file handle 2:
+rm -f  /tmp/memfs-switch* ; touch /tmp/memfs-switch-3-2
+
+7. Check how the FUSE driver serves different content for the files:
+$ /mnt/memfs/prog1
+hello world: 2
+$ /mnt/memfs/prog2
+hello world: 2
+
+8. Check the measurements:
+sudo cat /sys/kernel/security/ima/ascii_runtime_measurements|grep
+/mnt/memfs/prog
+
+Without the patches, on a vanilla kernel, there are no new
+measurements, despite the FUSE driver having served different
+executables.
+
+However, with the "force" option enabled, I can see additional
+measurements for prog1 and prog2 with the hashes reversed when the
+FUSE driver served the alternative content.
+
+====
+
+[1] https://www.spinics.net/lists/linux-integrity/msg00948.html
+[2] https://github.com/bbengfort/memfs
+[3] https://github.com/kinvolk/memfs/commits/alban/switch-files
+[4] https://github.com/kinvolk/linux/commits/dongsu/fuse-userns-v5-2
+[5] https://github.com/kinvolk/fuse-userns-patches/commit/cf1f5750cab0
+
 Cc: linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
-Cc: Alban Crequy <alban@kinvolk.io>
 Cc: Miklos Szeredi <miklos@szeredi.hu>
 Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Cc: Seth Forshee <seth.forshee@canonical.com>
+Tested-by: Alban Crequy <alban@kinvolk.io>
 Signed-off-by: Dongsu Park <dongsu@kinvolk.io>
 ---
- fs/fuse/control.c          | 3 +--
- fs/fuse/inode.c            | 3 +--
- include/uapi/linux/magic.h | 3 +++
- 3 files changed, 5 insertions(+), 4 deletions(-)
+ security/integrity/ima/ima_policy.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/fuse/control.c b/fs/fuse/control.c
-index b9ea99c5..9015c15c 100644
---- a/fs/fuse/control.c
-+++ b/fs/fuse/control.c
-@@ -10,8 +10,7 @@
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index fddef8f8..8de40d85 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -127,6 +127,7 @@ static struct ima_rule_entry default_measurement_rules[] __ro_after_init = {
+ 	{.action = MEASURE, .func = MODULE_CHECK, .flags = IMA_FUNC},
+ 	{.action = MEASURE, .func = FIRMWARE_CHECK, .flags = IMA_FUNC},
+ 	{.action = MEASURE, .func = POLICY_CHECK, .flags = IMA_FUNC},
++	{.action = MEASURE, .fsmagic = FUSE_SUPER_MAGIC, .flags = IMA_FSMAGIC | IMA_FORCE},
+ };
  
- #include <linux/init.h>
- #include <linux/module.h>
--
--#define FUSE_CTL_SUPER_MAGIC 0x65735543
-+#include <linux/magic.h>
+ static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
+@@ -154,6 +155,7 @@ static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
+ 	{.action = APPRAISE, .fowner = GLOBAL_ROOT_UID, .fowner_op = &uid_eq,
+ 	 .flags = IMA_FOWNER | IMA_DIGSIG_REQUIRED},
+ #endif
++	{.action = APPRAISE, .fsmagic = FUSE_SUPER_MAGIC, .flags = IMA_FSMAGIC | IMA_FORCE},
+ };
  
- /*
-  * This is non-NULL when the single instance of the control filesystem
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 8c98edee..57371b77 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -22,6 +22,7 @@
- #include <linux/exportfs.h>
- #include <linux/posix_acl.h>
- #include <linux/pid_namespace.h>
-+#include <linux/magic.h>
- 
- MODULE_AUTHOR("Miklos Szeredi <miklos@szeredi.hu>");
- MODULE_DESCRIPTION("Filesystem in Userspace");
-@@ -49,8 +50,6 @@ MODULE_PARM_DESC(max_user_congthresh,
-  "Global limit for the maximum congestion threshold an "
-  "unprivileged user can set");
- 
--#define FUSE_SUPER_MAGIC 0x65735546
--
- #define FUSE_DEFAULT_BLKSIZE 512
- 
- /** Maximum number of outstanding background requests */
-diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
-index 1a6fee97..1534e99c 100644
---- a/include/uapi/linux/magic.h
-+++ b/include/uapi/linux/magic.h
-@@ -90,4 +90,7 @@
- #define BALLOON_KVM_MAGIC	0x13661366
- #define ZSMALLOC_MAGIC		0x58295829
- 
-+#define FUSE_CTL_SUPER_MAGIC	0x65735543
-+#define FUSE_SUPER_MAGIC	0x65735546
-+
- #endif /* __LINUX_MAGIC_H__ */
+ static struct ima_rule_entry secure_boot_rules[] __ro_after_init = {
 -- 
 2.13.6
