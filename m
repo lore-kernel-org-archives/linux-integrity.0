@@ -1,152 +1,128 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:36623 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932314AbeAKN7X (ORCPT
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:37360 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753242AbeAKEsF (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 11 Jan 2018 08:59:23 -0500
-Received: by mail-pg0-f66.google.com with SMTP id j2so2233231pgv.3
-        for <linux-integrity@vger.kernel.org>; Thu, 11 Jan 2018 05:59:22 -0800 (PST)
+        Wed, 10 Jan 2018 23:48:05 -0500
+Date: Wed, 10 Jan 2018 20:48:01 -0800
+From: Eric Biggers <ebiggers3@gmail.com>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <git@andred.net>
+Cc: linux-kernel@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <james.l.morris@oracle.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 3/3] encrypted-keys: document new fscrypt key format
+Message-ID: <20180111044801.GB943@zzz.localdomain>
+References: <20180110124418.24385-1-git@andred.net>
+ <20180110124418.24385-3-git@andred.net>
 MIME-Version: 1.0
-In-Reply-To: <1515595682.5739.44.camel@linux.vnet.ibm.com>
-References: <CAMXgnP4wsiu5iizCMZ4T=iPvNEa0sr_VdMP4bPibs9+Pq3nmQw@mail.gmail.com>
- <1515595150.5739.41.camel@linux.vnet.ibm.com> <20180110144418.GB4546@ubuntu-xps13>
- <1515595682.5739.44.camel@linux.vnet.ibm.com>
-From: Alban Crequy <alban@kinvolk.io>
-Date: Thu, 11 Jan 2018 14:59:21 +0100
-Message-ID: <CADZs7q56r75QGU_7+GWHfKxuqOtnZU17GWyao2Uh+a6rVysJhA@mail.gmail.com>
-Subject: Re: [PATCH] ima: define a new policy option named "force"
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Seth Forshee <seth.forshee@canonical.com>,
-        Alban Crequy <alban.crequy@gmail.com>,
-        linux-integrity@vger.kernel.org,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        dmitry.kasatkin@gmail.com, Sascha Hauer <s.hauer@pengutronix.de>,
-        Dongsu Park <dongsu@kinvolk.io>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20180110124418.24385-3-git@andred.net>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Jan 10, 2018 at 3:48 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> On Wed, 2018-01-10 at 08:44 -0600, Seth Forshee wrote:
->> On Wed, Jan 10, 2018 at 09:39:10AM -0500, Mimi Zohar wrote:
->> > On Wed, 2018-01-10 at 15:13 +0100, Alban Crequy wrote:
->> > > > There are times instead of relying on previously cached status
->> > > > information we want to force the file to be re-measured, re-appraised,
->> > > > and re-audited.
->> > > >
->> > > > This patch defines a new policy option named "force", which forces
->> > > > files to be re-measured, re-appraised or re-audited.
->> > > >
->> > > > Signed-off-by: Mimi Zohar <zohar@xxxxxxxxxxxxxxxxxx>
->> > >
->> > > Tested-by: Alban Crequy <alban@kinvolk.io>
->> >
->> > Thanks!  The builtin policies should be updated to require force for
->> > fuse filesystems.  I was expecting to receive patches (from Seth) to
->> > update the builtin policies and upstream them together.
->>
->> Yes, I was working on a patch but need to update/test it. Was planning
->> to do that a few weeks ago but then other things came up, hoping I can
->> get back to it soon. But if someone beats me to it that's okay too :-)
->
-> Thanks, just making sure you wouldn't object to someone else doing it ...
+Hi Andre,
 
-Thanks. Dongsu is preparing a patch to add this "force" for FUSE by default.
+On Wed, Jan 10, 2018 at 12:44:18PM +0000, Andre Draszik wrote:
+> diff --git a/Documentation/security/keys/fscrypt.rst b/Documentation/security/keys/fscrypt.rst
+> new file mode 100644
+> index 000000000000..e4a29592513e
+> --- /dev/null
+> +++ b/Documentation/security/keys/fscrypt.rst
+> @@ -0,0 +1,67 @@
+> +========================================
+> +Encrypted keys for the fscrypt subsystem
+> +========================================
 
->> > > tl;dr: without the patch, the measurements don't get all the changes
->> > > on FUSE. With the patch and when enabling the "force" option,
->> > > ascii_runtime_measurements gets the updated measurements.
+There is now documentation for fscrypt in Documentation/filesystems/fscrypt.rst;
+see in particular the "Adding keys" section.  The documentation for any new ways
+to add keys should go in there.
 
-Btw, I also tested the "force" option with the memfs FUSE mounted in a
-non-initial user namespace (with the FUSE patches that allow that) and
-it works as well. I don't see any reasons why it would not have
-worked, but I just mention it for completeness. I tested that using
-"unshare -U -r -m".
+> +
+> +fscrypt allows file systems to implement transparent encryption and decryption
+> +of files, similar to eCryptfs, using keys derived from a master key descriptor.
 
-Alban
+Note that the master key *descriptor* refers to the hex string used in the
+keyring key description.  It is not the same as the master key itself, which is
+stored in the payload.  The cryptography is done with the master key, not with
+the master key *descriptor*.
 
->> > > Longer explanation:
->
-> This "Longer explanation" would make for a really good patch
-> description for changing the builtin policies.
->
-> Mimi
->
->> > >
->> > > The test I did was using a patched version of the memfs FUSE driver
->> > > [1][2] and two very simple "hello-world" programs [4] (prog1 prints
->> > > "hello world: 1" and prog2 prints "hello world: 2").
->> > >
->> > > I copy prog1 and prog2 in the fuse-memfs mount point, execute them and
->> > > check the sha1 hash in
->> > > "/sys/kernel/security/ima/ascii_runtime_measurements".
->> > >
->> > > My patch on the memfs FUSE driver added a backdoor command to serve
->> > > prog1 when the kernel asks for prog2 or vice-versa. In this way, I can
->> > > exec prog1 and get it to print "hello world: 2" without ever replacing
->> > > the file via the VFS, so the kernel is not aware of the change.
->> > >
->> > > The test was done using Dongsu's branch "fuse-userns-v5-2" [3],
->> > > including both this new force option and Sascha's patch ("ima: Use
->> > > i_version only when filesystem supports it").
->> > >
->> > >
->> > > Step by step test procedure:
->> > >
->> > > 1.  Mount the memfs FUSE using [2]:
->> > > rm -f  /tmp/memfs-switch* ; memfs -L DEBUG  /mnt/memfs
->> > >
->> > > 2. Copy prog1 and prog2 using [4]
->> > > cp prog1 /mnt/memfs/prog1
->> > > cp prog2 /mnt/memfs/prog2
->> > >
->> > > 3. Lookup the files and let the FUSE driver to keep the handles open:
->> > > dd if=/mnt/memfs/prog1 bs=1 | (read -n 1 x ; sleep 3600 ) &
->> > > dd if=/mnt/memfs/prog2 bs=1 | (read -n 1 x ; sleep 3600 ) &
->> > >
->> > > 4. Check the 2 programs work correctly:
->> > > $ /mnt/memfs/prog1
->> > > hello world: 1
->> > > $ /mnt/memfs/prog2
->> > > hello world: 2
->> > >
->> > > 5.  Check the measurements for prog1 and prog2:
->> > > $ sudo cat /sys/kernel/security/ima/ascii_runtime_measurements|grep
->> > > /mnt/memfs/prog
->> > > 10 7ac5aed52061cb09120e977c6d04ee5c7b11c371 ima-ng
->> > > sha1:ac14c9268cd2811f7a5adea17b27d84f50e1122c /mnt/memfs/prog1
->> > > 10 9acc17a9a32aec4a676b8f6558e17a3d6c9a78e6 ima-ng
->> > > sha1:799cb5d1e06d5c37ae7a76ba25ecd1bd01476383 /mnt/memfs/prog2
->> > >
->> > > 6. Use the backdoor command in my patched memfs to redirect file
->> > > operations on file handle 3 to file handle 2:
->> > > rm -f  /tmp/memfs-switch* ; touch /tmp/memfs-switch-3-2
->> > >
->> > > 7. Check how the FUSE driver serves different content for the files:
->> > > $ /mnt/memfs/prog1
->> > > hello world: 2
->> > > $ /mnt/memfs/prog2
->> > > hello world: 2
->> > >
->> > > 8. Check the measurements:
->> > > sudo cat /sys/kernel/security/ima/ascii_runtime_measurements|grep
->> > > /mnt/memfs/prog
->> > >
->> > > Without the patches, on a vanilla kernel, there are no new
->> > > measurements, despite the FUSE driver having served different
->> > > executables. Same thing with the patch but without enabling the new
->> > > force option.
->> > >
->> > > However, with the "force" option enabled, I can see additional
->> > > measurements for prog1 and prog2 with the hashes reversed when the
->> > > FUSE driver served the alternative content.
->> > >
->> > >
->> > > [1] https://github.com/bbengfort/memfs
->> > > [2] https://github.com/kinvolk/memfs/commits/alban/switch-files
->> > > [3] https://github.com/kinvolk/linux/commits/dongsu/fuse-userns-v5-2
->> > > [4] https://github.com/kinvolk/fuse-userns-patches/commit/cf1f5750cab0
->> > >
->> >
->>
->
+> +In order to avoid known-plaintext attacks, the datablob obtained through
+> +commands 'keyctl print' or 'keyctl pipe' does not contain the overall
+> +fscrypt_key, the contents of which is well known, but only the master key
+> +descriptor itself in encrypted form.
+> +
+> +The fscrypt subsystem may really benefit from using encrypted keys in that the
+> +required key can be securely generated by an Administrator and provided at boot
+> +time after the unsealing of a 'trusted' key in order to perform the mount in a
+> +controlled environment.  Another advantage is that the key is not exposed to
+> +threats of malicious software, because it is available in clear form only at
+> +kernel level.
+
+Please be very clear about exactly what security properties are achieved by
+using encrypted-keys.  Note that such keys are present in the clear in kernel
+memory, so they will be exposed by any exploit that compromises the kernel, or
+even just finds a way to read its memory.  (And if you've been paying attention
+in the last week, you may be aware that certain CPU vendors have "helpfully"
+made reading kernel memory quite easy.)  So, it's definitely *not* categorically
+true that "the key is not exposed to threats of malicious software".
+
+Also note that fscrypt is already using the "logon" key type which cannot be
+read by userspace (without exploits).  This is different from eCryptfs which
+uses the "user" key type.
+
+> +Usage::
+> +
+> +   keyctl add encrypted fscrypt:policy "new fscrypt key-type:master-key-name keylen" ring
+> +   keyctl add encrypted fscrypt:policy "load hex_blob" ring
+> +   keyctl update keyid "update key-type:master-key-name"
+> +
+> +Where::
+> +
+> +	policy:= '<16 hexadecimal characters>'
+> +	key-type:= 'trusted' | 'user'
+> +	keylen:= 16 | 32 | 64
+> +
+> +
+> +Example of encrypted key usage with the fscrypt subsystem:
+> +
+> +Create an encrypted key "1234567890123456" of length 64 bytes with format
+> +'fscrypt' and save it using a previously loaded user key "test"::
+> +
+> +    $ keyctl add encrypted fscrypt:1234567890123456 "new fscrypt user:test 64" @u
+> +    1023935199
+> +
+> +    $ keyctl print 1023935199
+> +    fscrypt user:test 64 e5606689fdc25d78a787249f4069fb3b007e992f4b21d0eda60
+> +    c97986fc2e3326b5542e2b32216fc5007d9fd19cd3cb6668fa9850e954d2ba25e1b8a331
+> +    1b0c1f20666c
+> +
+> +    $ keyctl pipe 1023935199 > fscrypt.blob
+
+What is the point of having the kernel wrap a key with the "user" key type?  It
+seems pointless; userspace could just do it instead.
+
+Note that if you use keyctl_read() to read from an encrypted-key, you can
+actually request that the key be encrypted using an arbitrary key of the type
+with which the key is supposed to be wrapped.  This can be done by adding a key
+to your thread/process/session keyring whose type and description matches the
+intended wrapping key.  Thus, any "encrypted" key wrapped with a "user" key can
+effectively be retrieved in the clear by calling keyctl_read(), then decrypting
+the ciphertext in userspace.
+
+Perhaps that's actually a bug; I don't know.  But using "user" wrapping keys
+seems pretty pointless anyway.
+
+I think it's really only "trusted" wrapping keys where this new feature would
+have any useful security properties.  So the documentation needs to explain
+that, and use that in the examples.
+
+Eric
