@@ -1,150 +1,79 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:44340 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935681AbeAKTuk (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33370 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S935624AbeAKTrF (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 11 Jan 2018 14:50:40 -0500
-Received: by mail-wm0-f66.google.com with SMTP id t8so7759541wmc.3
-        for <linux-integrity@vger.kernel.org>; Thu, 11 Jan 2018 11:50:40 -0800 (PST)
-From: Dongsu Park <dongsu@kinvolk.io>
-To: linux-kernel@vger.kernel.org
-Cc: Alban Crequy <alban@kinvolk.io>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Dongsu Park <dongsu@kinvolk.io>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH 2/2] ima: turn on force option for FUSE in builtin policies
-Date: Thu, 11 Jan 2018 20:51:50 +0100
-Message-Id: <7a89ce9a7b8264f83fa5d61e146c01571017cca0.1515682581.git.dongsu@kinvolk.io>
-In-Reply-To: <cover.1515682581.git.dongsu@kinvolk.io>
-References: <cover.1515682581.git.dongsu@kinvolk.io>
-In-Reply-To: <cover.1515682581.git.dongsu@kinvolk.io>
-References: <cover.1515682581.git.dongsu@kinvolk.io>
+        Thu, 11 Jan 2018 14:47:05 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w0BJhnF5034203
+        for <linux-integrity@vger.kernel.org>; Thu, 11 Jan 2018 14:47:04 -0500
+Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2fec2s6mk5-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 11 Jan 2018 14:47:04 -0500
+Received: from localhost
+        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Thu, 11 Jan 2018 19:47:02 -0000
+Subject: Re: [RFC][PATCH 8/9] tpm_tis_spi: add delay between wait state
+ retries
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Alexander Steffen <Alexander.Steffen@infineon.com>,
+        jarkko.sakkinen@linux.intel.com, nayna@linux.vnet.ibm.com,
+        kgold@linux.vnet.ibm.com, linux-integrity@vger.kernel.org
+Date: Thu, 11 Jan 2018 14:46:58 -0500
+In-Reply-To: <20171208184658.9588-9-Alexander.Steffen@infineon.com>
+References: <20171208184658.9588-1-Alexander.Steffen@infineon.com>
+         <20171208184658.9588-9-Alexander.Steffen@infineon.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1515700018.3420.13.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-In case of FUSE filesystem, cached integrity results in IMA could be
-reused, when the userspace FUSE process has changed the
-underlying files. To be able to avoid such cases, we need to turn on
-the force option in builtin policies, for actions of measure and
-appraise. Then integrity values become re-measured and re-appraised.
-In that way, cached integrity results won't be used.
+Hi Alexander,
 
-This patch depends on the patch "ima: define a new policy option
-named force" by Mimi. [1]
+On Fri, 2017-12-08 at 19:46 +0100, Alexander Steffen wrote:
+> There do not seem to be any real limits one the amount/duration of wait
+> states that the TPM is allowed to generate. So at least give the TPM some
+> time to clean up the situation that caused the wait states instead of
+> retrying the transfers as fast as possible.
 
-How to test the force option written by Alban:
+Without this patch, the TPM performance on the pi is amazing!  A
+thousand extends takes ~6.5 seconds.  Unfortunately, the same thousand
+extends with this patch takes > 2+ minutes.  TPM_TIMEOUT (5 msecs) is
+a really long time.  Why so long?
 
-====
+Mimi
+  
 
-The test I did was using a patched version of the memfs FUSE driver
-[2][3] and two very simple "hello-world" programs [5] (prog1 prints
-"hello world: 1" and prog2 prints "hello world: 2").
-
-I copy prog1 and prog2 in the fuse-memfs mount point, execute them and
-check the sha1 hash in
-"/sys/kernel/security/ima/ascii_runtime_measurements".
-
-My patch on the memfs FUSE driver added a backdoor command to serve
-prog1 when the kernel asks for prog2 or vice-versa. In this way, I can
-exec prog1 and get it to print "hello world: 2" without ever replacing
-the file via the VFS, so the kernel is not aware of the change.
-
-The test was done using the branch "dongsu/fuse-userns-v5-2" [4],
-including both this new force option and Sascha's patch ("ima: Use
-i_version only when filesystem supports it").
-
-
-Step by step test procedure:
-
-1. Mount the memfs FUSE using [3]:
-rm -f  /tmp/memfs-switch* ; memfs -L DEBUG  /mnt/memfs
-
-2. Copy prog1 and prog2 using [5]
-cp prog1 /mnt/memfs/prog1
-cp prog2 /mnt/memfs/prog2
-
-3. Lookup the files and let the FUSE driver to keep the handles open:
-dd if=/mnt/memfs/prog1 bs=1 | (read -n 1 x ; sleep 3600 ) &
-dd if=/mnt/memfs/prog2 bs=1 | (read -n 1 x ; sleep 3600 ) &
-
-4. Check the 2 programs work correctly:
-$ /mnt/memfs/prog1
-hello world: 1
-$ /mnt/memfs/prog2
-hello world: 2
-
-5. Check the measurements for prog1 and prog2:
-$ sudo cat /sys/kernel/security/ima/ascii_runtime_measurements|grep
-/mnt/memfs/prog
-10 7ac5aed52061cb09120e977c6d04ee5c7b11c371 ima-ng
-sha1:ac14c9268cd2811f7a5adea17b27d84f50e1122c /mnt/memfs/prog1
-10 9acc17a9a32aec4a676b8f6558e17a3d6c9a78e6 ima-ng
-sha1:799cb5d1e06d5c37ae7a76ba25ecd1bd01476383 /mnt/memfs/prog2
-
-6. Use the backdoor command in my patched memfs to redirect file
-operations on file handle 3 to file handle 2:
-rm -f  /tmp/memfs-switch* ; touch /tmp/memfs-switch-3-2
-
-7. Check how the FUSE driver serves different content for the files:
-$ /mnt/memfs/prog1
-hello world: 2
-$ /mnt/memfs/prog2
-hello world: 2
-
-8. Check the measurements:
-sudo cat /sys/kernel/security/ima/ascii_runtime_measurements|grep
-/mnt/memfs/prog
-
-Without the patches, on a vanilla kernel, there are no new
-measurements, despite the FUSE driver having served different
-executables.
-
-However, with the "force" option enabled, I can see additional
-measurements for prog1 and prog2 with the hashes reversed when the
-FUSE driver served the alternative content.
-
-====
-
-[1] https://www.spinics.net/lists/linux-integrity/msg00948.html
-[2] https://github.com/bbengfort/memfs
-[3] https://github.com/kinvolk/memfs/commits/alban/switch-files
-[4] https://github.com/kinvolk/linux/commits/dongsu/fuse-userns-v5-2
-[5] https://github.com/kinvolk/fuse-userns-patches/commit/cf1f5750cab0
-
-Cc: linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Seth Forshee <seth.forshee@canonical.com>
-Tested-by: Alban Crequy <alban@kinvolk.io>
-Signed-off-by: Dongsu Park <dongsu@kinvolk.io>
----
- security/integrity/ima/ima_policy.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index fddef8f8..8de40d85 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -127,6 +127,7 @@ static struct ima_rule_entry default_measurement_rules[] __ro_after_init = {
- 	{.action = MEASURE, .func = MODULE_CHECK, .flags = IMA_FUNC},
- 	{.action = MEASURE, .func = FIRMWARE_CHECK, .flags = IMA_FUNC},
- 	{.action = MEASURE, .func = POLICY_CHECK, .flags = IMA_FUNC},
-+	{.action = MEASURE, .fsmagic = FUSE_SUPER_MAGIC, .flags = IMA_FSMAGIC | IMA_FORCE},
- };
- 
- static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
-@@ -154,6 +155,7 @@ static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
- 	{.action = APPRAISE, .fowner = GLOBAL_ROOT_UID, .fowner_op = &uid_eq,
- 	 .flags = IMA_FOWNER | IMA_DIGSIG_REQUIRED},
- #endif
-+	{.action = APPRAISE, .fsmagic = FUSE_SUPER_MAGIC, .flags = IMA_FSMAGIC | IMA_FORCE},
- };
- 
- static struct ima_rule_entry secure_boot_rules[] __ro_after_init = {
--- 
-2.13.6
+> Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
+> ---
+>  drivers/char/tpm/tpm_tis_spi.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_tis_spi.c b/drivers/char/tpm/tpm_tis_spi.c
+> index 2cc6aa9..e53c9c3 100644
+> --- a/drivers/char/tpm/tpm_tis_spi.c
+> +++ b/drivers/char/tpm/tpm_tis_spi.c
+> @@ -88,7 +88,7 @@ static int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
+> 
+>  		if ((phy->iobuf[3] & 0x01) == 0) {
+>  			// handle SPI wait states
+> -			for (i = 0; i < TPM_RETRY; i++) {
+> +			for (i = 1; i <= TPM_RETRY; i++) {
+>  				phy->iobuf[0] = addr;
+>  				spi_xfer.len = 1;
+>  				spi_message_init(&m);
+> @@ -98,9 +98,10 @@ static int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
+>  					goto exit;
+>  				if (phy->iobuf[0] & 0x01)
+>  					break;
+> +				tpm_msleep(i * TPM_TIMEOUT);
+>  			}
+> 
+> -			if (i == TPM_RETRY) {
+> +			if (i > TPM_RETRY) {
+>  				spi_xfer.tx_buf = NULL;
+>  				spi_xfer.rx_buf = NULL;
+>  				spi_xfer.len = 0;
