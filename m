@@ -1,96 +1,86 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from aserp2120.oracle.com ([141.146.126.78]:57614 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933811AbeAKThK (ORCPT
+Received: from smtp2.infineon.com ([217.10.52.18]:37159 "EHLO
+        smtp2.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934655AbeAKR30 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 11 Jan 2018 14:37:10 -0500
-Date: Thu, 11 Jan 2018 11:30:32 -0800
-From: Liu Bo <bo.li.liu@oracle.com>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
-        bfields@fieldses.org, neilb@suse.de, jack@suse.de,
-        linux-ext4@vger.kernel.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, linux-xfs@vger.kernel.org,
-        darrick.wong@oracle.com, david@fromorbit.com,
-        linux-btrfs@vger.kernel.org, clm@fb.com, jbacik@fb.com,
-        dsterba@suse.com, linux-integrity@vger.kernel.org,
-        zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
-        linux-afs@lists.infradead.org, dhowells@redhat.com,
-        jaltman@auristor.com, krzk@kernel.org
-Subject: Re: [PATCH v5 18/19] btrfs: only dirty the inode in
- btrfs_update_time if something was changed
-Message-ID: <20180111193031.GA12421@dhcp-10-159-141-29.vpn.oracle.com>
-Reply-To: bo.li.liu@oracle.com
-References: <20180109141059.25929-1-jlayton@kernel.org>
- <20180109141059.25929-19-jlayton@kernel.org>
+        Thu, 11 Jan 2018 12:29:26 -0500
+Subject: Re: [GIT PULL] tpmdd updates for v4.16
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: <linux-kernel@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>
+References: <20180108111834.azjo6hdbm62el4qj@linux.intel.com>
+ <1b81847f-123f-ea9e-f2e5-48c73174c8b2@infineon.com>
+ <20180110160823.4jco3foc4afxbtl2@linux.intel.com>
+From: Alexander Steffen <Alexander.Steffen@infineon.com>
+Message-ID: <0b10c696-529a-fc33-b0a3-5c7cb1838acb@infineon.com>
+Date: Thu, 11 Jan 2018 18:29:16 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180109141059.25929-19-jlayton@kernel.org>
+In-Reply-To: <20180110160823.4jco3foc4afxbtl2@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Jeff,
-
-On Tue, Jan 09, 2018 at 09:10:58AM -0500, Jeff Layton wrote:
-> From: Jeff Layton <jlayton@redhat.com>
+On 10.01.2018 17:08, Jarkko Sakkinen wrote:
+> On Tue, Jan 09, 2018 at 10:59:07AM +0100, Alexander Steffen wrote:
+>> On 08.01.2018 12:18, Jarkko Sakkinen wrote:
+>>> Hi James,
+>>>
+>>> Sorry for a late PR.
+>>>
+>>> Summary of the content:
+>>>
+>>> * Reduced polling delays in tpm_tis.
+>>> * Support for retrieving TPM 2.0 Event Log through EFI before
+>>>     ExitBootServices.
+>>> * Replaced tpm-rng.c with a hwrng device managed by the driver for each
+>>>     TPM device.
+>>> * TPM resource manager synthesizes TPM_RC_COMMAND_CODE response instead
+>>>     of returning -EINVAL for unknown TPM commands. This makes user space
+>>>     more sound.
+>>> * CLKRUN fixes:
+>>>     * Keep #CLKRUN disable through the entier TPM command/response flow.
+>>>     * Check whether #CLKRUN is enabled before disabling and enabling it
+>>>       again because enabling it breaks PS/2 devices on a system where it
+>>>       is disabled.
+>>
+>> I just spent some time trying to run all that (tpmdd-next-20180108) through
+>> my test system and hit a couple of non-TPM problems. In case you see similar
+>> issues, this is what I found out:
+>>
+>> 1. rmmod for the TPM driver hangs indefinitely. The TPM driver now registers
+>> itself as a hwrng, but in case it is the only hwrng in a system, the call to
+>> hwrng_unregister never returns. Known bug, but still not fixed in 4.15-rc7
+>> (see https://www.mail-archive.com/linux-crypto@vger.kernel.org/msg29884.html
+>> for details).
+>>
+>> 2. Raspberry Pis (which I use to test tpm_tis_spi and
+>> tpm_i2c_infineon) boot with that kernel, but have no USB or ethernet
+>> support. Also a known problem
+>> (http://lists.infradead.org/pipermail/linux-arm-kernel/2018-January/552280.html).
+>>
+>> 3. Device tree overlays with references to non-existent target-paths are
+>> rejected now (whereas before the invalid parts were just ignored). I guess
+>> this is an intentional change, but the error message does not really point
+>> to the problem (applying the overlay just returns with EINVAL).
 > 
-> At this point, we know that "now" and the file times may differ, and we
-> suspect that the i_version has been flagged to be bumped. Attempt to
-> bump the i_version, and only mark the inode dirty if that actually
-> occurred or if one of the times was updated.
+> Do we have these?
+
+No, otherwise I would have sent a fix :)
+
+It is just something that I used for my tests: I had an overlay that I 
+could use for both the mainline kernel and the RPi kernel. On the RPi 
+kernel it would deactivate the spidev entry, so that tpm_tis_spi was 
+able to use the device. On the mainline kernel, there is no spidev in 
+the device tree, so this part is not necessary and I simply removed it 
+now to fix the problem (I'm not using the RPi kernels anymore).
+
+Alexander
+
+>> With all that fixed in my environment, my tests now pass successfully.
+>>
+>> Alexander
 > 
-> Signed-off-by: Jeff Layton <jlayton@redhat.com>
-> Acked-by: David Sterba <dsterba@suse.com>
-> ---
->  fs/btrfs/inode.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+> Thank you for reporting these issues.
 > 
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index ac8692849a81..76245323a7c8 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -6107,19 +6107,20 @@ static int btrfs_update_time(struct inode *inode, struct timespec *now,
->  			     int flags)
->  {
->  	struct btrfs_root *root = BTRFS_I(inode)->root;
-> +	bool dirty = flags & ~S_VERSION;
->  
->  	if (btrfs_root_readonly(root))
->  		return -EROFS;
->  
->  	if (flags & S_VERSION)
-> -		inode_inc_iversion(inode);
-> +		dirty |= inode_maybe_inc_iversion(inode, dirty);
->  	if (flags & S_CTIME)
->  		inode->i_ctime = *now;
->  	if (flags & S_MTIME)
->  		inode->i_mtime = *now;
->  	if (flags & S_ATIME)
->  		inode->i_atime = *now;
-> -	return btrfs_dirty_inode(inode);
-> +	return dirty ? btrfs_dirty_inode(inode) : 0;
->  }
->  
-
-In order to have a easier error handling for ENOSPC, btrfs has split
-file_update_time() into 2-step work,
-- step 1 is to update time/iversion of in-memory inode in
-  update_time_for_write(),
-- step 2 is to update the time/iversion of on-disk inode in
-  btrfs_update_inode()->fill_inode_item().
-
-I think update_time_for_write() also needs to be updated to use the
-new iversion API.
-
-With that,
-
-Reviewed-by: Liu Bo <bo.li.liu@oracle.com>
-
-Thanks,
-
--liubo
->  /*
-> -- 
-> 2.14.3
-> 
+> /Jarkko
