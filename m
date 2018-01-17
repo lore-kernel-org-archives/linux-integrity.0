@@ -1,56 +1,51 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53216 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752654AbeAQS1W (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 17 Jan 2018 13:27:22 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w0HIOvmc042439
-        for <linux-integrity@vger.kernel.org>; Wed, 17 Jan 2018 13:27:22 -0500
-Received: from e06smtp13.uk.ibm.com (e06smtp13.uk.ibm.com [195.75.94.109])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2fjbrar3f9-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 17 Jan 2018 13:27:21 -0500
-Received: from localhost
-        by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Wed, 17 Jan 2018 18:27:19 -0000
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org,
+Received: from imap.thunk.org ([74.207.234.97]:55706 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752654AbeAQSGG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 17 Jan 2018 13:06:06 -0500
+Date: Wed, 17 Jan 2018 13:05:37 -0500
+From: Theodore Ts'o <tytso@mit.edu>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <git@andred.net>
+Cc: Eric Biggers <ebiggers3@gmail.com>, linux-kernel@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <james.l.morris@oracle.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>, stable@vger.kernel.org,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCH] ima/policy: fix parsing of fsuuid
-Date: Wed, 17 Jan 2018 20:27:11 +0200
-Message-Id: <1516213631-8974-1-git-send-email-rppt@linux.vnet.ibm.com>
+        linux-fscrypt@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 3/3] encrypted-keys: document new fscrypt key format
+Message-ID: <20180117180537.GB6948@thunk.org>
+References: <20180110124418.24385-1-git@andred.net>
+ <20180110124418.24385-3-git@andred.net>
+ <20180111044801.GB943@zzz.localdomain>
+ <1516199939.28972.101.camel@andred.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1516199939.28972.101.camel@andred.net>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-The switch to uuid_t invereted the logic of verfication that &entry->fsuuid
-is zero during parsing of "fsuuid=" rule. Instead of making sure the
-&entry->fsuuid field is not attempted to be overwriten, we bail out for
-perfectly correct rule.
+On Wed, Jan 17, 2018 at 02:38:59PM +0000, Andre Draszik wrote:
+> > > [...]
+> > 
+> > Please be very clear about exactly what security properties are achieved
+> > by
+> > using encrypted-keys.
+> 
+> I've left out all of this in the updated documentation, as any such
+> information should probably be in Documentation/security/keys/trusted-
+> encrypted.rst in the first place.
 
-Fixes: 787d8c530af7 ("ima/policy: switch to use uuid_t")
+Where is this document going to be found / when will it be written?
+It seems really odd to be requesting a do code review when the
+specifications aren't available and/or haven't been written yet.  I
+prefer to review the *design* first, as opposed to trying to both
+review the code and try to guess at the design and review my guess of
+the design at the same time....
 
-Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
----
- security/integrity/ima/ima_policy.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index ee4613fa5840..f19f4841a97a 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -743,7 +743,7 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 		case Opt_fsuuid:
- 			ima_log_string(ab, "fsuuid", args[0].from);
- 
--			if (uuid_is_null(&entry->fsuuid)) {
-+			if (!uuid_is_null(&entry->fsuuid)) {
- 				result = -EINVAL;
- 				break;
- 			}
--- 
-2.7.4
+					- Ted
+				
