@@ -1,55 +1,127 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37442 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752855AbeAQRPO (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:41873 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753210AbeAQOjD (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 17 Jan 2018 12:15:14 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w0HHCuSo131817
-        for <linux-integrity@vger.kernel.org>; Wed, 17 Jan 2018 12:15:14 -0500
-Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2fj7633bju-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 17 Jan 2018 12:15:13 -0500
-Received: from localhost
-        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Wed, 17 Jan 2018 17:15:11 -0000
-Subject: Re: [RFC][PATCH 8/9] tpm_tis_spi: add delay between wait state
- retries
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Alexander Steffen <Alexander.Steffen@infineon.com>,
-        jarkko.sakkinen@linux.intel.com, nayna@linux.vnet.ibm.com,
-        kgold@linux.vnet.ibm.com, linux-integrity@vger.kernel.org
-Date: Wed, 17 Jan 2018 12:15:06 -0500
-In-Reply-To: <1516055450.6607.91.camel@linux.vnet.ibm.com>
-References: <20171208184658.9588-1-Alexander.Steffen@infineon.com>
-         <20171208184658.9588-9-Alexander.Steffen@infineon.com>
-         <1515700018.3420.13.camel@linux.vnet.ibm.com>
-         <db63c75f-464d-2fbc-3e97-ea3ef162cea5@infineon.com>
-         <1516055450.6607.91.camel@linux.vnet.ibm.com>
+        Wed, 17 Jan 2018 09:39:03 -0500
+Message-ID: <1516199939.28972.101.camel@andred.net>
+Subject: Re: [PATCH 3/3] encrypted-keys: document new fscrypt key format
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <git@andred.net>
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <james.l.morris@oracle.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-doc@vger.kernel.org
+Date: Wed, 17 Jan 2018 14:38:59 +0000
+In-Reply-To: <20180111044801.GB943@zzz.localdomain>
+References: <20180110124418.24385-1-git@andred.net>
+         <20180110124418.24385-3-git@andred.net>
+         <20180111044801.GB943@zzz.localdomain>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1516209306.5820.19.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2018-01-15 at 17:30 -0500, Mimi Zohar wrote:
-> > What would be a better implementation? No delay and simply retry for 
-> > five seconds?
-> > 
-> > What TPMs are you using for your tests? At least for the TPMs that I 
-> > have available for my tests (with a FIFO size of ~256 bytes) I would not 
-> > expect any wait states for extend commands.
+Hi Eric,
+
+On Wed, 2018-01-10 at 20:48 -0800, Eric Biggers wrote:
+> Hi Andre,
 > 
-> The TPM burstcount is 32.  Unfortunately, with this patch set the
-> performance on the pi is worse than without it.  Without this patch
-> set we're seeing ~14 secs for a thousand measurements vs. either ~38s
-> or ~23s, depending on the wait sleep length introduced in patch 8/9.
+> On Wed, Jan 10, 2018 at 12:44:18PM +0000, Andre Draszik wrote:
+> > diff --git a/Documentation/security/keys/fscrypt.rst
+> > b/Documentation/security/keys/fscrypt.rst
+> > new file mode 100644
+> > index 000000000000..e4a29592513e
+> > --- /dev/null
+> > +++ b/Documentation/security/keys/fscrypt.rst
+> > @@ -0,0 +1,67 @@
+> > +========================================
+> > +Encrypted keys for the fscrypt subsystem
+> > +========================================
+> 
+> There is now documentation for fscrypt in
+> Documentation/filesystems/fscrypt.rst;
+> see in particular the "Adding keys" section.  The documentation for any
+> new ways
+> to add keys should go in there.
 
->From my response, it might not have been clear that with all of the
-patches, except this one 8/9 calling tpm_msleep(), the performance is
-equivalent to without any of the patches.  With this patch set, but
-with or without the call to tpm_msleep(), it loops 2 or 3 times.
+Done.
 
-Mimi
+> 
+> > +
+> > +fscrypt allows file systems to implement transparent encryption and
+> > decryption
+> > +of files, similar to eCryptfs, using keys derived from a master key
+> > descriptor.
+> 
+> Note that the master key *descriptor* refers to the hex string used in the
+> keyring key description.  It is not the same as the master key itself,
+> which is
+> stored in the payload.  The cryptography is done with the master key, not
+> with
+> the master key *descriptor*.
+
+Ups, thanks.
+
+> > [...]
+> 
+> Please be very clear about exactly what security properties are achieved
+> by
+> using encrypted-keys.
+
+I've left out all of this in the updated documentation, as any such
+information should probably be in Documentation/security/keys/trusted-
+encrypted.rst in the first place.
+
+> 
+[...]
+> > +
+> > +Example of encrypted key usage with the fscrypt subsystem:
+> > +
+> > +Create an encrypted key "1234567890123456" of length 64 bytes with
+> > format
+> > +'fscrypt' and save it using a previously loaded user key "test"::
+> > +
+> > +    $ keyctl add encrypted fscrypt:1234567890123456 "new fscrypt
+> > user:test 64" @u
+> > +    1023935199
+> > +
+> > +    $ keyctl print 1023935199
+> > +    fscrypt user:test 64
+> > e5606689fdc25d78a787249f4069fb3b007e992f4b21d0eda60
+> > +    c97986fc2e3326b5542e2b32216fc5007d9fd19cd3cb6668fa9850e954d2ba25e1b
+> > 8a331
+> > +    1b0c1f20666c
+> > +
+> > +    $ keyctl pipe 1023935199 > fscrypt.blob
+> 
+> What is the point of having the kernel wrap a key with the "user" key
+> type?  It
+> seems pointless; userspace could just do it instead.
+
+Yes... My real reasoning is being able to use an encrypted key, backed by a
+trusted TPM key.
+
+I've updated the examples.
+
+> 
+[...]
+> I think it's really only "trusted" wrapping keys where this new feature
+> would
+> have any useful security properties.  So the documentation needs to
+> explain
+> that, and use that in the examples.
+
+You're right. Done.
+
+
+Cheers,
+Andre
