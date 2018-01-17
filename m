@@ -1,11 +1,11 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:41873 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753210AbeAQOjD (ORCPT
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:35280 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753142AbeAQO3c (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 17 Jan 2018 09:39:03 -0500
-Message-ID: <1516199939.28972.101.camel@andred.net>
-Subject: Re: [PATCH 3/3] encrypted-keys: document new fscrypt key format
+        Wed, 17 Jan 2018 09:29:32 -0500
+Message-ID: <1516199369.28972.93.camel@andred.net>
+Subject: Re: [PATCH 1/3] encrypted-keys: add fscrypt format support
 From: =?ISO-8859-1?Q?Andr=E9?= Draszik <git@andred.net>
 To: Eric Biggers <ebiggers3@gmail.com>
 Cc: linux-kernel@vger.kernel.org,
@@ -15,113 +15,71 @@ Cc: linux-kernel@vger.kernel.org,
         "Serge E. Hallyn" <serge@hallyn.com>,
         "Theodore Y. Ts'o" <tytso@mit.edu>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
         Kees Cook <keescook@chromium.org>,
         linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-doc@vger.kernel.org
-Date: Wed, 17 Jan 2018 14:38:59 +0000
-In-Reply-To: <20180111044801.GB943@zzz.localdomain>
+        linux-fscrypt@vger.kernel.org
+Date: Wed, 17 Jan 2018 14:29:29 +0000
+In-Reply-To: <20180111040022.GA943@zzz.localdomain>
 References: <20180110124418.24385-1-git@andred.net>
-         <20180110124418.24385-3-git@andred.net>
-         <20180111044801.GB943@zzz.localdomain>
+         <20180111040022.GA943@zzz.localdomain>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Eric,
+Thanks Eric for the review!
 
-On Wed, 2018-01-10 at 20:48 -0800, Eric Biggers wrote:
+On Wed, 2018-01-10 at 20:00 -0800, Eric Biggers wrote:
 > Hi Andre,
 > 
-> On Wed, Jan 10, 2018 at 12:44:18PM +0000, Andre Draszik wrote:
-> > diff --git a/Documentation/security/keys/fscrypt.rst
-> > b/Documentation/security/keys/fscrypt.rst
-> > new file mode 100644
-> > index 000000000000..e4a29592513e
-> > --- /dev/null
-> > +++ b/Documentation/security/keys/fscrypt.rst
-> > @@ -0,0 +1,67 @@
-> > +========================================
-> > +Encrypted keys for the fscrypt subsystem
-> > +========================================
+> On Wed, Jan 10, 2018 at 12:44:16PM +0000, Andre Draszik wrote:
+> > This is heavily based on commit 79a73d188726
+> > ("encrypted-keys: add ecryptfs format support").
+> > 
+> > The 'encrypted' key type defines its own payload format which contains a
+> > symmetric key randomly generated that cannot be used directly by the
+> > fscrypt subsystem, because it instead expects an fscrypt_key structure.
+> > 
+> > This patch introduces the new format 'fscrypt' that allows to store an
+> > fscrypt_key structure inside the encrypted key payload containing
+> > a randomly generated symmetric key, as the same for the format 'default'
+> > and 'ecryptfs'.
+> > 
+> > More details about the usage of encrypted keys with the fscrypt
+> > subsystem can be found in the file
+> > 'Documentation/security/keys/fscrypt.rst'.
+> > 
 > 
-> There is now documentation for fscrypt in
-> Documentation/filesystems/fscrypt.rst;
-> see in particular the "Adding keys" section.  The documentation for any
-> new ways
-> to add keys should go in there.
+> I don't think a new encrypted-key format is needed.  fscrypt really only
+> needs
+> the raw key.
 
-Done.
+This was actually my original approach, but I thought it might potentially
+be useful to have a new encrypted-key type to be able to do verification of
+parameters (e.g. key size) early.
+Additionally, because the type is then encoded in the blob stored in the
+file system (keyctl pipe), it'd be easy to spot incompatibilities in case
+fscrypt internal data structures change, whereas without one can only rely
+on the name of the key (key description), should such a change ever happen.
 
+> Also I have proposed an fscrypt ioctl to add keys to a filesystem-level
+> keyring,
+> and it doesn't use 'struct fscrypt_key' at all:
+> https://marc.info/?l=linux-fsdevel&m=150879505206393
 > 
-> > +
-> > +fscrypt allows file systems to implement transparent encryption and
-> > decryption
-> > +of files, similar to eCryptfs, using keys derived from a master key
-> > descriptor.
-> 
-> Note that the master key *descriptor* refers to the hex string used in the
-> keyring key description.  It is not the same as the master key itself,
-> which is
-> stored in the payload.  The cryptography is done with the master key, not
+> So I think you should just use the "default" encrypted-key format, where
+> the
+> payload is just the raw key.  fscrypt can very easily be updated to work
 > with
-> the master key *descriptor*.
+> such keys.
 
-Ups, thanks.
+I've done that in v2 - I am generating the fscrypt_key temporarily on the
+fly but haven't gotten rid of fscrypt_key altogether... Is that what you had
+in mind?
 
-> > [...]
-> 
-> Please be very clear about exactly what security properties are achieved
-> by
-> using encrypted-keys.
-
-I've left out all of this in the updated documentation, as any such
-information should probably be in Documentation/security/keys/trusted-
-encrypted.rst in the first place.
-
-> 
-[...]
-> > +
-> > +Example of encrypted key usage with the fscrypt subsystem:
-> > +
-> > +Create an encrypted key "1234567890123456" of length 64 bytes with
-> > format
-> > +'fscrypt' and save it using a previously loaded user key "test"::
-> > +
-> > +    $ keyctl add encrypted fscrypt:1234567890123456 "new fscrypt
-> > user:test 64" @u
-> > +    1023935199
-> > +
-> > +    $ keyctl print 1023935199
-> > +    fscrypt user:test 64
-> > e5606689fdc25d78a787249f4069fb3b007e992f4b21d0eda60
-> > +    c97986fc2e3326b5542e2b32216fc5007d9fd19cd3cb6668fa9850e954d2ba25e1b
-> > 8a331
-> > +    1b0c1f20666c
-> > +
-> > +    $ keyctl pipe 1023935199 > fscrypt.blob
-> 
-> What is the point of having the kernel wrap a key with the "user" key
-> type?  It
-> seems pointless; userspace could just do it instead.
-
-Yes... My real reasoning is being able to use an encrypted key, backed by a
-trusted TPM key.
-
-I've updated the examples.
-
-> 
-[...]
-> I think it's really only "trusted" wrapping keys where this new feature
-> would
-> have any useful security properties.  So the documentation needs to
-> explain
-> that, and use that in the examples.
-
-You're right. Done.
-
+I also haven't based it on your work mentioned above, would that be
+preferred?
 
 Cheers,
-Andre
+Andre'
