@@ -1,64 +1,56 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from smtp11.infineon.com ([217.10.52.105]:59353 "EHLO
-        smtp11.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752368AbeAQS6N (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53216 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752654AbeAQS1W (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 17 Jan 2018 13:58:13 -0500
-Subject: Re: [RFC][PATCH 8/9] tpm_tis_spi: add delay between wait state
- retries
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        <jarkko.sakkinen@linux.intel.com>, <nayna@linux.vnet.ibm.com>,
-        <kgold@linux.vnet.ibm.com>, <linux-integrity@vger.kernel.org>
-References: <20171208184658.9588-1-Alexander.Steffen@infineon.com>
- <20171208184658.9588-9-Alexander.Steffen@infineon.com>
- <1515700018.3420.13.camel@linux.vnet.ibm.com>
- <db63c75f-464d-2fbc-3e97-ea3ef162cea5@infineon.com>
- <1516055450.6607.91.camel@linux.vnet.ibm.com>
- <1516209306.5820.19.camel@linux.vnet.ibm.com>
-From: Alexander Steffen <Alexander.Steffen@infineon.com>
-Message-ID: <d2a6a463-370f-5849-535d-17ad21b67a08@infineon.com>
-Date: Wed, 17 Jan 2018 19:58:09 +0100
-MIME-Version: 1.0
-In-Reply-To: <1516209306.5820.19.camel@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+        Wed, 17 Jan 2018 13:27:22 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w0HIOvmc042439
+        for <linux-integrity@vger.kernel.org>; Wed, 17 Jan 2018 13:27:22 -0500
+Received: from e06smtp13.uk.ibm.com (e06smtp13.uk.ibm.com [195.75.94.109])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2fjbrar3f9-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 17 Jan 2018 13:27:21 -0500
+Received: from localhost
+        by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Wed, 17 Jan 2018 18:27:19 -0000
+From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, stable@vger.kernel.org,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Subject: [PATCH] ima/policy: fix parsing of fsuuid
+Date: Wed, 17 Jan 2018 20:27:11 +0200
+Message-Id: <1516213631-8974-1-git-send-email-rppt@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 17.01.2018 18:15, Mimi Zohar wrote:
-> On Mon, 2018-01-15 at 17:30 -0500, Mimi Zohar wrote:
->>> What would be a better implementation? No delay and simply retry for
->>> five seconds?
->>>
->>> What TPMs are you using for your tests? At least for the TPMs that I
->>> have available for my tests (with a FIFO size of ~256 bytes) I would not
->>> expect any wait states for extend commands.
->>
->> The TPM burstcount is 32.  Unfortunately, with this patch set the
->> performance on the pi is worse than without it.  Without this patch
->> set we're seeing ~14 secs for a thousand measurements vs. either ~38s
->> or ~23s, depending on the wait sleep length introduced in patch 8/9.
-> 
->  From my response, it might not have been clear that with all of the
-> patches, except this one 8/9 calling tpm_msleep(), the performance is
-> equivalent to without any of the patches.  With this patch set, but
-> with or without the call to tpm_msleep(), it loops 2 or 3 times.
+The switch to uuid_t invereted the logic of verfication that &entry->fsuuid
+is zero during parsing of "fsuuid=" rule. Instead of making sure the
+&entry->fsuuid field is not attempted to be overwriten, we bail out for
+perfectly correct rule.
 
-Thanks for your tests. I haven't yet done such extensive performance 
-tests for those changes. But I've got some performance tests that I 
-still want to run to see what performance impact I can measure with my TPMs.
+Fixes: 787d8c530af7 ("ima/policy: switch to use uuid_t")
 
-It seems clear to me that for optimum performance there shouldn't be any 
-sleeps, at least not for the first few retries. If I use a time limit 
-instead of counting the number of retries, are sleeps necessary at all? 
-The SPI bus is locked anyway, so nothing else can use it while we are 
-sleeping. The SPI transfers should slow us down sufficiently, so that we 
-are not consuming 100% of CPU time. And in the common cases (at least 
-those that we know) the wait states seem to clear up pretty quickly.
+Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+---
+ security/integrity/ima/ima_policy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If there are no objections, I'll rewrite the patch in such a way (time 
-limit of several seconds, no sleeps). Maybe it is also worth trying to 
-see what performance can be gained by removing more sleeps, in 
-wait_for_tpm_stat and elsewhere. Perhaps the first millisecond(s) or so 
-should always be busy waiting, and sleeps should only come afterwards.
-
-Alexander
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index ee4613fa5840..f19f4841a97a 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -743,7 +743,7 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 		case Opt_fsuuid:
+ 			ima_log_string(ab, "fsuuid", args[0].from);
+ 
+-			if (uuid_is_null(&entry->fsuuid)) {
++			if (!uuid_is_null(&entry->fsuuid)) {
+ 				result = -EINVAL;
+ 				break;
+ 			}
+-- 
+2.7.4
