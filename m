@@ -1,61 +1,37 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53240 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752955AbeARVLH (ORCPT
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:39806 "EHLO
+        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754170AbeARTYq (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 18 Jan 2018 16:11:07 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w0IL9PqW022835
-        for <linux-integrity@vger.kernel.org>; Thu, 18 Jan 2018 16:11:07 -0500
-Received: from e06smtp13.uk.ibm.com (e06smtp13.uk.ibm.com [195.75.94.109])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2fk1btcuu8-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 18 Jan 2018 16:11:06 -0500
-Received: from localhost
-        by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Thu, 18 Jan 2018 21:11:05 -0000
-Subject: Re: [PATCH] ima/policy: fix parsing of fsuuid
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>, stable@vger.kernel.org
-Date: Thu, 18 Jan 2018 16:11:00 -0500
-In-Reply-To: <1516213631-8974-1-git-send-email-rppt@linux.vnet.ibm.com>
-References: <1516213631-8974-1-git-send-email-rppt@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1516309860.3772.0.camel@linux.vnet.ibm.com>
+        Thu, 18 Jan 2018 14:24:46 -0500
+Received: by mail-wm0-f47.google.com with SMTP id i11so24989164wmf.4
+        for <linux-integrity@vger.kernel.org>; Thu, 18 Jan 2018 11:24:46 -0800 (PST)
+Date: Thu, 18 Jan 2018 12:24:41 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Alexander Steffen <Alexander.Steffen@infineon.com>,
+        linux-integrity@vger.kernel.org
+Subject: Re: [RFC][PATCH 3/3] tpm-chip: Export TPM device to user space even
+ when startup failed
+Message-ID: <20180118192441.GA17294@ziepe.ca>
+References: <20171214160614.11808-1-Alexander.Steffen@infineon.com>
+ <20171214160614.11808-4-Alexander.Steffen@infineon.com>
+ <20180118184510.zamelyx7c7fo3alh@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180118184510.zamelyx7c7fo3alh@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, 2018-01-17 at 20:27 +0200, Mike Rapoport wrote:
-> The switch to uuid_t invereted the logic of verfication that &entry->fsuuid
-> is zero during parsing of "fsuuid=" rule. Instead of making sure the
-> &entry->fsuuid field is not attempted to be overwriten, we bail out for
-> perfectly correct rule.
-> 
-> Fixes: 787d8c530af7 ("ima/policy: switch to use uuid_t")
-> 
-> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+On Thu, Jan 18, 2018 at 08:45:10PM +0200, Jarkko Sakkinen wrote:
 
-Thanks, Mike.
+> For SGX code that I've been upstreaming to arch/x86 tree the feedback
+> was that local variable declarations should be in line length order,
+> which makes sense to me i.e. startup_succesful should be the first
+> declaration.
 
-> ---
->  security/integrity/ima/ima_policy.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index ee4613fa5840..f19f4841a97a 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -743,7 +743,7 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->  		case Opt_fsuuid:
->  			ima_log_string(ab, "fsuuid", args[0].from);
-> 
-> -			if (uuid_is_null(&entry->fsuuid)) {
-> +			if (!uuid_is_null(&entry->fsuuid)) {
->  				result = -EINVAL;
->  				break;
->  			}
+AFAIK that 'reverse christmas tree' style particularly local to the
+net tree, not a general kernel style guideline. We've never used it in
+TPM for instance.
+
+Jason
