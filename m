@@ -1,58 +1,85 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59518 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932473AbeARWbW (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 18 Jan 2018 17:31:22 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w0IMSlq7084410
-        for <linux-integrity@vger.kernel.org>; Thu, 18 Jan 2018 17:31:22 -0500
-Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2fk3hy24fy-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 18 Jan 2018 17:31:21 -0500
-Received: from localhost
-        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Thu, 18 Jan 2018 22:31:19 -0000
-Subject: [GIT PULL] IMA bug fix for 4.16
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: James Morris <jmorris@namei.org>
-Cc: linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date: Thu, 18 Jan 2018 17:31:16 -0500
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1516314676.3772.20.camel@linux.vnet.ibm.com>
+Received: from fieldses.org ([173.255.197.46]:49846 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750718AbeARVpf (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 18 Jan 2018 16:45:35 -0500
+Date: Thu, 18 Jan 2018 16:45:34 -0500
+From: "J. Bruce Fields" <bfields@fieldses.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org, neilb@suse.de,
+        jack@suse.de, linux-ext4@vger.kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, linux-xfs@vger.kernel.org,
+        darrick.wong@oracle.com, david@fromorbit.com,
+        linux-btrfs@vger.kernel.org, clm@fb.com, jbacik@fb.com,
+        dsterba@suse.com, linux-integrity@vger.kernel.org,
+        zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
+        linux-afs@lists.infradead.org, dhowells@redhat.com,
+        jaltman@auristor.com, krzk@kernel.org
+Subject: Re: [PATCH v5 02/19] fs: don't take the i_lock in inode_inc_iversion
+Message-ID: <20180118214534.GB5299@fieldses.org>
+References: <20180109141059.25929-1-jlayton@kernel.org>
+ <20180109141059.25929-3-jlayton@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180109141059.25929-3-jlayton@kernel.org>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi James,
+On Tue, Jan 09, 2018 at 09:10:42AM -0500, Jeff Layton wrote:
+> From: Jeff Layton <jlayton@redhat.com>
+> 
+> The rationale for taking the i_lock when incrementing this value is
+> lost in antiquity. The readers of the field don't take it (at least
+> not universally), so my assumption is that it was only done here to
+> serialize incrementors.
+> 
+> If that is indeed the case, then we can drop the i_lock from this
+> codepath and treat it as a atomic64_t for the purposes of
+> incrementing it. This allows us to use inode_inc_iversion without
+> any danger of lock inversion.
+> 
+> Note that the read side is not fetched atomically with this change.
+> The assumption here is that that is not a critical issue since the
+> i_version is not fully synchronized with anything else anyway.
 
-Sorry, here's one last patch for 4.16.
+So I guess it's theoretically possible that e.g. if you read while it's
+incrementing from 2^32-1 to 2^32 you could read 0, 1, or 2^32+1?
 
-thanks,
+If so then you could see an i_version value reused and incorrectly
+decide that a file hadn't changed.
 
-Mimi
+But it's such a tiny case, and I think you convert this to atomic64_t
+later anyway, so, whatever.
 
----
- 
-The following changes since commit a2a2c3c8580a9158bca61221648fd6d5c98c443a:
+--b.
 
-  ima: Use i_version only when filesystem supports it (2017-12-18 09:43:49 -0500)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-
-for you to fetch changes up to 36447456e1cca853188505f2a964dbbeacfc7a7a:
-
-  ima/policy: fix parsing of fsuuid (2018-01-18 16:52:49 -0500)
-
-----------------------------------------------------------------
-Mike Rapoport (1):
-      ima/policy: fix parsing of fsuuid
-
- security/integrity/ima/ima_policy.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Signed-off-by: Jeff Layton <jlayton@redhat.com>
+> ---
+>  include/linux/iversion.h | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/iversion.h b/include/linux/iversion.h
+> index d09cc3a08740..5ad9eaa3a9b0 100644
+> --- a/include/linux/iversion.h
+> +++ b/include/linux/iversion.h
+> @@ -104,12 +104,13 @@ inode_set_iversion_queried(struct inode *inode, u64 new)
+>  static inline bool
+>  inode_maybe_inc_iversion(struct inode *inode, bool force)
+>  {
+> -	spin_lock(&inode->i_lock);
+> -	inode->i_version++;
+> -	spin_unlock(&inode->i_lock);
+> +	atomic64_t *ivp = (atomic64_t *)&inode->i_version;
+> +
+> +	atomic64_inc(ivp);
+>  	return true;
+>  }
+>  
+> +
+>  /**
+>   * inode_inc_iversion - forcibly increment i_version
+>   * @inode: inode that needs to be updated
+> -- 
+> 2.14.3
