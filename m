@@ -1,34 +1,32 @@
-Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:19449 "EHLO mga02.intel.com"
+Return-Path: <MAILER-DAEMON@orsmga103.jf.intel.com>
+Subject: Re: [RFC][PATCH 8/9] tpm_tis_spi: add delay between wait state retries
+Received: from mga11.intel.com ([192.55.52.93]:48905 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754513AbeARSiY (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 18 Jan 2018 13:38:24 -0500
-Date: Thu, 18 Jan 2018 20:38:19 +0200
+        id S1754974AbeARScf (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 18 Jan 2018 13:32:35 -0500
+Date: Thu, 18 Jan 2018 20:32:31 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: Alexander Steffen <Alexander.Steffen@infineon.com>
-Cc: linux-integrity@vger.kernel.org
-Subject: Re: [RFC][PATCH 1/3] tpm-chip: Move idr_replace calls to appropriate
- places
-Message-ID: <20180118183819.wgdahp5d4n6pwu6z@linux.intel.com>
-References: <20171214160614.11808-1-Alexander.Steffen@infineon.com>
- <20171214160614.11808-2-Alexander.Steffen@infineon.com>
+Cc: nayna@linux.vnet.ibm.com, kgold@linux.vnet.ibm.com,
+        linux-integrity@vger.kernel.org
+Message-ID: <20180118183231.xew6ta4okbzlmsdi@linux.intel.com>
+References: <20171208184658.9588-1-Alexander.Steffen@infineon.com>
+ <20171208184658.9588-9-Alexander.Steffen@infineon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171214160614.11808-2-Alexander.Steffen@infineon.com>
+In-Reply-To: <20171208184658.9588-9-Alexander.Steffen@infineon.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Dec 14, 2017 at 05:06:12PM +0100, Alexander Steffen wrote:
-> According to the comments, adding/removing the chip from the list should be
-> the first/last action in (un)register. But currently it is done in a
-> subfunction in the middle of the process. Moving the code from the
-> subfunctions to the appropriate places within (un)register ensures that the
-> code matches the comments.
+On Fri, Dec 08, 2017 at 07:46:57PM +0100, Alexander Steffen wrote:
+> There do not seem to be any real limits one the amount/duration of wait
+> states that the TPM is allowed to generate. So at least give the TPM some
+> time to clean up the situation that caused the wait states instead of
+> retrying the transfers as fast as possible.
 > 
 > Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
 
-What is the problem you are having that this commit tries to
-address. Rather would not make changes for cosmetic reasons
-to init code.
+I agreee with Mimis comment that this change should be based on
+time rather than retries.
 
 /Jarkko
