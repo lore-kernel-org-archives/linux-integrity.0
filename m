@@ -1,37 +1,36 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:39806 "EHLO
-        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754170AbeARTYq (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 18 Jan 2018 14:24:46 -0500
-Received: by mail-wm0-f47.google.com with SMTP id i11so24989164wmf.4
-        for <linux-integrity@vger.kernel.org>; Thu, 18 Jan 2018 11:24:46 -0800 (PST)
-Date: Thu, 18 Jan 2018 12:24:41 -0700
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Alexander Steffen <Alexander.Steffen@infineon.com>,
+Received: from mga01.intel.com ([192.55.52.88]:23288 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755842AbeARSq1 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 18 Jan 2018 13:46:27 -0500
+Date: Thu, 18 Jan 2018 20:46:22 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Alexander Steffen <Alexander.Steffen@infineon.com>
+Cc: pmenzel@molgen.mpg.de, jgg@ziepe.ca,
         linux-integrity@vger.kernel.org
-Subject: Re: [RFC][PATCH 3/3] tpm-chip: Export TPM device to user space even
- when startup failed
-Message-ID: <20180118192441.GA17294@ziepe.ca>
-References: <20171214160614.11808-1-Alexander.Steffen@infineon.com>
- <20171214160614.11808-4-Alexander.Steffen@infineon.com>
- <20180118184510.zamelyx7c7fo3alh@linux.intel.com>
+Subject: Re: [PATCH] tpm2-cmd: try full selftest once if continue selftest
+ failed
+Message-ID: <20180118184622.5iox24xbmovwraht@linux.intel.com>
+References: <20171222135610.7056-1-Alexander.Steffen@infineon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180118184510.zamelyx7c7fo3alh@linux.intel.com>
+In-Reply-To: <20171222135610.7056-1-Alexander.Steffen@infineon.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Jan 18, 2018 at 08:45:10PM +0200, Jarkko Sakkinen wrote:
+On Fri, Dec 22, 2017 at 02:56:10PM +0100, Alexander Steffen wrote:
+> If the usual approach of triggering only the missing selftests failed, give
+> the TPM another chance by requesting all selftests once.
+> 
+> With the current implementation, this will only help for TPMs that then
+> choose to run the selftests synchronously and return the selftest result.
+> There is no retry loop that again polls a TPM returning TPM_RC_TESTING in
+> this case.
+> 
+> Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
+> ---
+> Patch depends on https://patchwork.kernel.org/patch/10105483/
 
-> For SGX code that I've been upstreaming to arch/x86 tree the feedback
-> was that local variable declarations should be in line length order,
-> which makes sense to me i.e. startup_succesful should be the first
-> declaration.
+NAK because of dependency.
 
-AFAIK that 'reverse christmas tree' style particularly local to the
-net tree, not a general kernel style guideline. We've never used it in
-TPM for instance.
-
-Jason
+/Jarkko
