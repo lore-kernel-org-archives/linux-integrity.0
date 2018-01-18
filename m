@@ -1,74 +1,61 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40254 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753397AbeARVZN (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53240 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752955AbeARVLH (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 18 Jan 2018 16:25:13 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w0ILNdNh024502
-        for <linux-integrity@vger.kernel.org>; Thu, 18 Jan 2018 16:25:13 -0500
+        Thu, 18 Jan 2018 16:11:07 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w0IL9PqW022835
+        for <linux-integrity@vger.kernel.org>; Thu, 18 Jan 2018 16:11:07 -0500
 Received: from e06smtp13.uk.ibm.com (e06smtp13.uk.ibm.com [195.75.94.109])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2fk277349w-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2fk1btcuu8-1
         (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 18 Jan 2018 16:25:12 -0500
+        for <linux-integrity@vger.kernel.org>; Thu, 18 Jan 2018 16:11:06 -0500
 Received: from localhost
         by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Thu, 18 Jan 2018 21:25:09 -0000
-Subject: Re: [RFC PATCH v2] ima,fuse: introduce new fs flag FS_NO_IMA_CACHE
+        Thu, 18 Jan 2018 21:11:05 -0000
+Subject: Re: [PATCH] ima/policy: fix parsing of fsuuid
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Alban Crequy <alban.crequy@gmail.com>,
-        Alban Crequy <alban@kinvolk.io>
-Cc: iago@kinvolk.io, dongsu@kinvolk.io, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
+To: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <james.l.morris@oracle.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Christoph Hellwig <hch@infradead.org>
-Date: Thu, 18 Jan 2018 16:25:02 -0500
-In-Reply-To: <20180116151000.443-1-alban@kinvolk.io>
-References: <20180116151000.443-1-alban@kinvolk.io>
+        Christoph Hellwig <hch@lst.de>, stable@vger.kernel.org
+Date: Thu, 18 Jan 2018 16:11:00 -0500
+In-Reply-To: <1516213631-8974-1-git-send-email-rppt@linux.vnet.ibm.com>
+References: <1516213631-8974-1-git-send-email-rppt@linux.vnet.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1516310702.3772.11.camel@linux.vnet.ibm.com>
+Message-Id: <1516309860.3772.0.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, 2018-01-16 at 16:10 +0100, Alban Crequy wrote:
-> From: Alban Crequy <alban@kinvolk.io>
+On Wed, 2018-01-17 at 20:27 +0200, Mike Rapoport wrote:
+> The switch to uuid_t invereted the logic of verfication that &entry->fsuuid
+> is zero during parsing of "fsuuid=" rule. Instead of making sure the
+> &entry->fsuuid field is not attempted to be overwriten, we bail out for
+> perfectly correct rule.
 > 
-> This patch forces files to be re-measured, re-appraised and re-audited
-> on file systems with the feature flag FS_NO_IMA_CACHE. In that way,
-> cached integrity results won't be used.
+> Fixes: 787d8c530af7 ("ima/policy: switch to use uuid_t")
 > 
-> For now, this patch adds the new flag only FUSE filesystems. This is
-> needed because the userspace FUSE process can change the underlying
-> files at any time.
+> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 
-Thanks, it's working nicely. 
+Thanks, Mike.
 
-
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 511fbaabf624..2bd7e73ebc2a 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2075,6 +2075,7 @@ struct file_system_type {
->  #define FS_BINARY_MOUNTDATA	2
->  #define FS_HAS_SUBTYPE		4
->  #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
-> +#define FS_NO_IMA_CACHE		16	/* Force IMA to re-measure, re-appraise, re-audit files */
->  #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
->  	struct dentry *(*mount) (struct file_system_type *, int,
->  		       const char *, void *);
+> ---
+>  security/integrity/ima/ima_policy.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-
-Since IMA is going to need another flag, we probably should have a
-consistent prefix (eg. "FS_IMA").  Maybe rename this flag to
-FS_IMA_NO_CACHE.  I'm also wondering if this change should be
-separated from the IMA change.
-
-Mimi
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index ee4613fa5840..f19f4841a97a 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -743,7 +743,7 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+>  		case Opt_fsuuid:
+>  			ima_log_string(ab, "fsuuid", args[0].from);
+> 
+> -			if (uuid_is_null(&entry->fsuuid)) {
+> +			if (!uuid_is_null(&entry->fsuuid)) {
+>  				result = -EINVAL;
+>  				break;
+>  			}
