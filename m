@@ -1,59 +1,37 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38661 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750923AbeASJQ6 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 19 Jan 2018 04:16:58 -0500
-Message-ID: <1516353413.28972.119.camel@andred.net>
-Subject: Re: [PATCH 3/3] encrypted-keys: document new fscrypt key format
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <git@andred.net>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Eric Biggers <ebiggers3@gmail.com>, linux-kernel@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <james.l.morris@oracle.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-doc@vger.kernel.org
-Date: Fri, 19 Jan 2018 09:16:53 +0000
-In-Reply-To: <20180117180537.GB6948@thunk.org>
-References: <20180110124418.24385-1-git@andred.net>
-         <20180110124418.24385-3-git@andred.net>
-         <20180111044801.GB943@zzz.localdomain>
-         <1516199939.28972.101.camel@andred.net> <20180117180537.GB6948@thunk.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from namei.org ([65.99.196.166]:37068 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755393AbeASECB (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 18 Jan 2018 23:02:01 -0500
+Date: Fri, 19 Jan 2018 14:00:01 +1100 (AEDT)
+From: James Morris <jmorris@namei.org>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+cc: linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] IMA bug fix for 4.16
+In-Reply-To: <1516314676.3772.20.camel@linux.vnet.ibm.com>
+Message-ID: <alpine.LRH.2.21.1801191359190.27335@namei.org>
+References: <1516314676.3772.20.camel@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Thank you Ted,
+On Thu, 18 Jan 2018, Mimi Zohar wrote:
 
-On Wed, 2018-01-17 at 13:05 -0500, Theodore Ts'o wrote:
-> On Wed, Jan 17, 2018 at 02:38:59PM +0000, Andre Draszik wrote:
-> > > > [...]
-> > > 
-> > > Please be very clear about exactly what security properties are
-> > > achieved
-> > > by
-> > > using encrypted-keys.
-> > 
-> > I've left out all of this in the updated documentation, as any such
-> > information should probably be in Documentation/security/keys/trusted-
-> > encrypted.rst in the first place.
+> Hi James,
 > 
-> Where is this document going to be found / when will it be written?
-> It seems really odd to be requesting a do code review when the
-> specifications aren't available and/or haven't been written yet.  I
-> prefer to review the *design* first, as opposed to trying to both
-> review the code and try to guess at the design and review my guess of
-> the design at the same time....
+> Sorry, here's one last patch for 4.16.
+> 
 
-Does v3's commit message https://patchwork.kernel.org/patch/10173189/ serve
-as a good enough design document?
+Thanks, merged to:
 
-Cheers,
-Andre'
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
+	next-testing
+	next-integrity
+
+	
+-- 
+James Morris
+<jmorris@namei.org>
