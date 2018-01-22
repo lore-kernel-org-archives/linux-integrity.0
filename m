@@ -1,161 +1,140 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54004 "EHLO
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53918 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751121AbeAVOyf (ORCPT
+        by vger.kernel.org with ESMTP id S1751189AbeAVOyj (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 22 Jan 2018 09:54:35 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w0MEpgbj027601
-        for <linux-integrity@vger.kernel.org>; Mon, 22 Jan 2018 09:54:35 -0500
-Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2fnhdeabd3-1
+        Mon, 22 Jan 2018 09:54:39 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w0MEqrTQ088722
+        for <linux-integrity@vger.kernel.org>; Mon, 22 Jan 2018 09:54:38 -0500
+Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2fnfnqevrm-1
         (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 22 Jan 2018 09:54:34 -0500
+        for <linux-integrity@vger.kernel.org>; Mon, 22 Jan 2018 09:54:38 -0500
 Received: from localhost
-        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Mon, 22 Jan 2018 14:54:32 -0000
+        Mon, 22 Jan 2018 14:54:35 -0000
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         Roberto Sassu <roberto.sassu@huawei.com>,
         "Bruno E . O . Meneguele" <brdeoliv@redhat.com>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: [PATCH 08/10] ima-evm-utils: verify the measurement list signature based on the list digest
-Date: Mon, 22 Jan 2018 09:54:03 -0500
+Subject: [PATCH 10/10] ima-evm-utils: add support for validating multiple pcrs
+Date: Mon, 22 Jan 2018 09:54:05 -0500
 In-Reply-To: <1516632845-7087-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1516632845-7087-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-Id: <1516632845-7087-9-git-send-email-zohar@linux.vnet.ibm.com>
+Message-Id: <1516632845-7087-11-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Instead of verifying file signatures included in the measurement list,
-by calculating the local file hash, verify the file signature based on the
-digest contained in the measurement list.
-
-This patch defines a new option named "--list".
+The IMA measurement list may contain records for different PCRs.  This
+patch walks the measurement list, calculating a PCR aggregate value for
+each PCR.
 
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 ---
- README          |  2 +-
- src/evmctl.c    | 14 ++++++++++++--
- src/imaevm.h    |  2 +-
- src/libimaevm.c | 10 +++++++++-
- 4 files changed, 23 insertions(+), 5 deletions(-)
+ src/evmctl.c | 44 +++++++++++++++++++++++++++-----------------
+ src/imaevm.h |  3 +++
+ 2 files changed, 30 insertions(+), 17 deletions(-)
 
-diff --git a/README b/README
-index f9706f8..f60a9fd 100644
---- a/README
-+++ b/README
-@@ -31,7 +31,7 @@ COMMANDS
-  ima_sign [--sigfile] [--key key] [--pass password] file
-  ima_verify file
-  ima_hash file
-- ima_measurement [--key "key1, key2, ..."] [--pcrs <sysfs file>] file
-+ ima_measurement [--key "key1, key2, ..."] [--pcrs <sysfs file>] [--list] file
-  ima_fix [-t fdsxm] path
-  sign_hash [--key key] [--pass password]
-  hmac [--imahash | --imasig ] file
 diff --git a/src/evmctl.c b/src/evmctl.c
-index 310ff4e..5d1c6ea 100644
+index 9142ed4..5029235 100644
 --- a/src/evmctl.c
 +++ b/src/evmctl.c
-@@ -114,6 +114,7 @@ static char *ima_str;
- static char *selinux_str;
- static char *pcrs_sysfs;
- static char *search_type;
-+static int measurement_list;
- static int recursive;
- static int msize;
- static dev_t fs_dev;
-@@ -793,7 +794,7 @@ static int verify_ima(const char *file)
+@@ -1417,13 +1417,16 @@ int ima_ng_show(struct template_entry *entry)
+ 
+ static int ima_measurement(const char *file)
+ {
+-	uint8_t pcr[SHA_DIGEST_LENGTH] = {0,};
+-	uint8_t pcr10[SHA_DIGEST_LENGTH];
++	uint8_t pcr[NUM_PCRS][SHA_DIGEST_LENGTH] = {{0}};
++	uint8_t hwpcr[SHA_DIGEST_LENGTH];
+ 	struct template_entry entry = { .template = 0 };
+ 	FILE *fp;
+ 	int err = -1;
+-	int verify_sig_failed = 0;
++	bool verify_sig_failed[NUM_PCRS] = {0,};
++	bool verify_failed = false;
++	int i;
+ 
++	memset(zero, 0, SHA_DIGEST_LENGTH);
+ 	memset(fox, 0xff, SHA_DIGEST_LENGTH);
+ 
+ 	log_debug("Initial PCR value: ");
+@@ -1440,7 +1443,8 @@ static int ima_measurement(const char *file)
+ 		init_public_keys(params.keyfile);
+ 
+ 	while (fread(&entry.header, sizeof(entry.header), 1, fp)) {
+-		ima_extend_pcr(pcr, entry.header.digest, SHA_DIGEST_LENGTH);
++		ima_extend_pcr(pcr[entry.header.pcr], entry.header.digest,
++			       SHA_DIGEST_LENGTH);
+ 
+ 		if (!fread(entry.name, entry.header.name_len, 1, fp)) {
+ 			log_err("Unable to read template name\n");
+@@ -1472,29 +1476,35 @@ static int ima_measurement(const char *file)
+ 			ima_show(&entry);
+ 		} else {
+ 			if (ima_ng_show(&entry) != 0)
+-				verify_sig_failed = 1;
++				verify_sig_failed[entry.header.pcr] = true;
  		}
  	}
  
--	return ima_verify_signature(file, sig, len);
-+	return ima_verify_signature(file, sig, len, NULL, 0);
+-	tpm_pcr_read(10, pcr10, sizeof(pcr10));
+ 
+-	log_info("PCRAgg: ");
+-	log_dump(pcr, sizeof(pcr));
++	for (i = 0; i < NUM_PCRS; i++) {
++		if (memcmp(pcr[i], zero, SHA_DIGEST_LENGTH) == 0)
++			continue;
++
++		log_info("PCRAgg %.2d: ", i);
++		log_dump(pcr[i], SHA_DIGEST_LENGTH);
+ 
+-	log_info("PCR-10: ");
+-	log_dump(pcr10, sizeof(pcr10));
++		tpm_pcr_read(i, hwpcr, sizeof(hwpcr));
++		log_info("HW PCR-%d: ", i);
++		log_dump(hwpcr, sizeof(hwpcr));
+ 
+-	if (memcmp(pcr, pcr10, sizeof(pcr))) {
+-		log_err("PCRAgg does not match PCR-10\n");
+-		goto out;
+-	} else if (verify_sig_failed == 1) {
+-		log_err("PCRAgg matches PCR-10, but list contains unknown keys or invalid signatures\n");
++		if (memcmp(pcr[i], hwpcr, sizeof(SHA_DIGEST_LENGTH)) != 0) {
++			log_err("PCRAgg %d does not match HW PCR-%d\n", i, i);
++
++			verify_failed = true;
++		} else if (verify_sig_failed[i] == true) {
++			log_err("PCRAgg %d matches PCR-%d, but list contains unknown keys or invalid signatures\n", i, i);
++		}
+ 	}
+ 
+-	err = 0;
++	if (!verify_failed)
++		err = 0;
+ out:
+ 	fclose(fp);
+-
+ 	return err;
  }
  
- static int cmd_verify_ima(struct command *cmd)
-@@ -1398,7 +1399,11 @@ int ima_ng_show(struct template_entry *entry)
- 	if (sig) {
- 		log_info(" ");
- 		log_dump(sig, sig_len);
--		err = ima_verify_signature(path, sig, sig_len);
-+		if (measurement_list)
-+			err = ima_verify_signature(path, sig, sig_len,
-+						   digest, digest_len);
-+		else
-+			err = ima_verify_signature(path, sig, sig_len, NULL, 0);
- 	} else
- 		log_info("\n");
- 
-@@ -1599,6 +1604,7 @@ static void usage(void)
- 		"      --selinux      use custom Selinux label for EVM\n"
- 		"      --caps         use custom Capabilities for EVM(unspecified: from FS, empty: do not use)\n"
- 		"      --pcrs         specify local sysfs pcr file\n"
-+		"      --list         measurement list verification\n"
- 		"  -v                 increase verbosity level\n"
- 		"  -h, --help         display this help and exit\n"
- 		"\n");
-@@ -1651,6 +1657,7 @@ static struct option opts[] = {
- 	{"selinux", 1, 0, 136},
- 	{"caps", 2, 0, 137},
- 	{"pcrs", 1, 0, 138},
-+	{"list", 0, 0, 139},
- 	{}
- 
- };
-@@ -1802,6 +1809,9 @@ int main(int argc, char *argv[])
- 		case 138:
- 			pcrs_sysfs = optarg;
- 			break;
-+		case 139:
-+			measurement_list = 1;
-+			break;
- 		case '?':
- 			exit(1);
- 			break;
 diff --git a/src/imaevm.h b/src/imaevm.h
-index ea6a7b1..f5cee7d 100644
+index d624571..0507947 100644
 --- a/src/imaevm.h
 +++ b/src/imaevm.h
-@@ -204,7 +204,7 @@ int key2bin(RSA *key, unsigned char *pub);
+@@ -188,6 +188,9 @@ struct RSA_ASN1_template {
+ 	size_t size;
+ };
  
- int sign_hash(const char *algo, const unsigned char *hash, int size, const char *keyfile, const char *keypass, unsigned char *sig);
- int verify_hash(const unsigned char *hash, int size, unsigned char *sig, int siglen);
--int ima_verify_signature(const char *file, unsigned char *sig, int siglen);
-+int ima_verify_signature(const char *file, unsigned char *sig, int siglen, unsigned char *digest, int digestlen);
- void init_public_keys(const char *keyfiles);
- 
- #endif
-diff --git a/src/libimaevm.c b/src/libimaevm.c
-index 0ad290a..247100f 100644
---- a/src/libimaevm.c
-+++ b/src/libimaevm.c
-@@ -580,7 +580,8 @@ int verify_hash(const unsigned char *hash, int size, unsigned char *sig, int sig
- 	return verify_hash(hash, size, sig, siglen, key);
- }
- 
--int ima_verify_signature(const char *file, unsigned char *sig, int siglen)
-+int ima_verify_signature(const char *file, unsigned char *sig, int siglen,
-+			 unsigned char *digest, int digestlen)
- {
- 	unsigned char hash[64];
- 	int hashlen, sig_hash_algo;
-@@ -598,6 +599,13 @@ int ima_verify_signature(const char *file, unsigned char *sig, int siglen)
- 	/* Use hash algorithm as retrieved from signature */
- 	params.hash_algo = pkey_hash_algo[sig_hash_algo];
- 
-+	/*
-+	 * Validate the signature based on the digest included in the
-+	 * measurement list, not by calculating the local file digest.
-+	 */
-+	if (digestlen > 0)
-+	    return verify_hash(digest, digestlen, sig + 1, siglen - 1);
++#define	NUM_PCRS 20
++#define DEFAULT_PCR 10
 +
- 	hashlen = ima_calc_hash(file, hash);
- 	if (hashlen <= 1)
- 		return hashlen;
+ extern const struct RSA_ASN1_template RSA_ASN1_templates[PKEY_HASH__LAST];
+ extern struct libevm_params params;
+ 
 -- 
 2.7.4
