@@ -1,56 +1,71 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39205 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751028AbeAVQZA (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34168 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751087AbeAVOyW (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 22 Jan 2018 11:25:00 -0500
-From: Alban Crequy <alban.crequy@gmail.com>
-To: alban@kinvolk.io
-Cc: dongsu@kinvolk.io, iago@kinvolk.io, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, miklos@szeredi.hu,
-        viro@zeniv.linux.org.uk, zohar@linux.vnet.ibm.com,
-        dmitry.kasatkin@gmail.com, james.l.morris@oracle.com,
-        serge@hallyn.com, seth.forshee@canonical.com, hch@infradead.org
-Subject: [RFC PATCH v3 0/2] ima,fuse: introduce new fs flag FS_IMA_NO_CACHE
-Date: Mon, 22 Jan 2018 17:24:50 +0100
-Message-Id: <20180122162452.8756-1-alban@kinvolk.io>
+        Mon, 22 Jan 2018 09:54:22 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w0MEnlG2082920
+        for <linux-integrity@vger.kernel.org>; Mon, 22 Jan 2018 09:54:21 -0500
+Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2fnh3yu4sa-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 22 Jan 2018 09:54:21 -0500
+Received: from localhost
+        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Mon, 22 Jan 2018 14:54:19 -0000
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        "Bruno E . O . Meneguele" <brdeoliv@redhat.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>
+Subject: [PATCH 01/10] ima-evm-utils: fix "ima_measurement" template fields length
+Date: Mon, 22 Jan 2018 09:53:56 -0500
+In-Reply-To: <1516632845-7087-1-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1516632845-7087-1-git-send-email-zohar@linux.vnet.ibm.com>
+Message-Id: <1516632845-7087-2-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-This patchset v3 introduces a new fs flag FS_IMA_NO_CACHE and uses it in
-FUSE. This forces files to be re-measured, re-appraised and re-audited
-on file systems with the feature flag FS_IMA_NO_CACHE. In that way,
-cached integrity results won't be used.
+The template data field length is uint32_t, not uint8_t.
 
-There was a previous attempt (unmerged) with a IMA option named "force" and using
-that option for FUSE filesystems. These patches use a different approach
-so that the IMA subsystem does not need to know about FUSE.
-- https://www.spinics.net/lists/linux-integrity/msg00948.html
-- https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1584131.html
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+---
+ src/evmctl.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Changes since v1: https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1587390.html
-- include linux-fsdevel mailing list in cc
-- mark patch as RFC
-- based on next-integrity, without other unmerged FUSE / IMA patches
-
-Changes since v2: https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1587678.html
-- rename flag to FS_IMA_NO_CACHE
-- split patch into 2
-
-The patchset is also available in our github repo:
-  https://github.com/kinvolk/linux/tree/alban/fuse-flag-ima-nocache-v3
-
-
-Alban Crequy (2):
-  fuse: introduce new fs_type flag FS_IMA_NO_CACHE
-  ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE
-
- fs/fuse/inode.c                   |  2 +-
- include/linux/fs.h                |  1 +
- security/integrity/ima/ima_main.c | 24 ++++++++++++++++++++++--
- 3 files changed, 24 insertions(+), 3 deletions(-)
-
+diff --git a/src/evmctl.c b/src/evmctl.c
+index 313a0c5..a6c6e01 100644
+--- a/src/evmctl.c
++++ b/src/evmctl.c
+@@ -1342,7 +1342,7 @@ void ima_ng_show(struct template_entry *entry)
+ 	char *algo, *path;
+ 
+ 	/* get binary digest */
+-	field_len = *(uint8_t *)fieldp;
++	field_len = *(uint32_t *)fieldp;
+ 	fieldp += sizeof(field_len);
+ 	total_len -= sizeof(field_len);
+ 
+@@ -1356,7 +1356,7 @@ void ima_ng_show(struct template_entry *entry)
+ 	total_len -= field_len;
+ 
+ 	/* get path */
+-	field_len = *(uint8_t *)fieldp;
++	field_len = *(uint32_t *)fieldp;
+ 	fieldp += sizeof(field_len);
+ 	total_len -= sizeof(field_len);
+ 
+@@ -1368,7 +1368,7 @@ void ima_ng_show(struct template_entry *entry)
+ 
+ 	if (!strcmp(entry->name, "ima-sig")) {
+ 		/* get signature */
+-		field_len = *(uint8_t *)fieldp;
++		field_len = *(uint32_t *)fieldp;
+ 		fieldp += sizeof(field_len);
+ 		total_len -= sizeof(field_len);
+ 
 -- 
-2.13.6
+2.7.4
