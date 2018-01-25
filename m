@@ -1,240 +1,177 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io0-f182.google.com ([209.85.223.182]:40385 "EHLO
-        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751415AbeAZAgw (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41282 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751631AbeAYW3d (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 25 Jan 2018 19:36:52 -0500
-Date: Thu, 25 Jan 2018 16:36:48 -0800
-From: Eric Biggers <ebiggers3@gmail.com>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <git@andred.net>
-Cc: linux-kernel@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <james.l.morris@oracle.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org
-Subject: Re: [PATCH v3] fscrypt: add support for the encrypted key type
-Message-ID: <20180126003648.jtmiznczkinla353@gmail.com>
-References: <20180118131359.8365-1-git@andred.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20180118131359.8365-1-git@andred.net>
+        Thu, 25 Jan 2018 17:29:33 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w0PMTAf5144510
+        for <linux-integrity@vger.kernel.org>; Thu, 25 Jan 2018 17:29:33 -0500
+Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2fqnw4w5nw-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 25 Jan 2018 17:29:32 -0500
+Received: from localhost
+        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Thu, 25 Jan 2018 22:29:30 -0000
+Subject: Re: [RFC PATCH 0/2] IMA: Rewrite tests into new API + fixes
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Petr Vorel <pvorel@suse.cz>
+Cc: ltp@lists.linux.it, Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
+        linux-integrity@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@polito.it>
+Date: Thu, 25 Jan 2018 17:29:25 -0500
+In-Reply-To: <20180125203057.mzzpilp6i43xftka@dell5510>
+References: <20180111202821.31639-1-pvorel@suse.cz>
+         <1516815417.3686.55.camel@linux.vnet.ibm.com>
+         <20180125203057.mzzpilp6i43xftka@dell5510>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1516919365.6513.72.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Jan 18, 2018 at 01:13:59PM +0000, Andre Draszik wrote:
-> fscrypt uses a master key for each directory policy from
-> which all further keys for that policy are derived, and
-> at the moment such a master key has to be inserted into
-> a kernel keyring as a 'logon' key by user-space.
+On Thu, 2018-01-25 at 21:30 +0100, Petr Vorel wrote:
+> Hi Mimi,
 > 
-> While 'logon' keys have the nice property of not being
-> readable by user-space (keyctl dump etc.), the fscrypt
-
-There is no 'keyctl dump' command.  Probably you meant 'keyctl read'.
-
-> master key still needs to be generated initially, in a
-> secure way, and it needs to be saved somewhere for
-> subsequent reboots, and hence also needs securing itself.
+> > Hi Petr,
 > 
-> Usage of the 'logon' key means that it is up to user-space
-> to do all that, opening up the possibility of creating
-> cryptographically non-sound master keys, or not storing
-> the master key securely across reboots.
+> > [Cc'ing Roberto]
 > 
-> One approach for securing the master key would be to do
-> that using a TPM and while one could manually do so e.g.
-> using tpm-tools, that still leaves creation and actual
-> correct usage of tpm-tools up to user-space, though. As an
-> aside, tpm-tools needs the tcsd daemon running, which makes
-> it awkward to use from within an initramfs, and while other
-> libraries for interfacing with a TPM do exist, there
-> appears to be a better way:
+> > On Thu, 2018-01-11 at 21:28 +0100, Petr Vorel wrote:
+> > > Hi,
 > 
-> The kernel already has a concept of trusted as well as
-> encrypted keys. Trusted keys are TPM backed keys, which can
-> be sealed to PCRs and also easily be re-sealed against new
-> future PCRs, and encrypted keys are keys that are encrypted
-> using another key, e.g. a trusted key. All are generated
-> automatically by the kernel using the RNG and never leave
-> kernel memory space (bar any kernel or hardware bugs).
+> > > I rewrote IMA tests to use new API + add small fixes.
+> > > I haven't tested ima_tpm.sh as I have no TPM :-(.
+> 
+> > > Comments are welcomed.
+> 
+> > The LTP tests are quite dated, and need some major rework.  I really
+> > appreciate your addressing some of the issues.  Below are some
+> > additional ones.
+> Thanks a lot for your comments. As you didn't report any regression in my patch-set, I'm
+> for merging it as it's an improvement. But I see there is more work to be done.
 
-Saying "the RNG" is unclear, since "encrypted" keys are generated using the
-kernel's RNG whereas "trusted" keys are generated using the TPM's RNG.
+Sounds good.
+
+> Your comments or patches are always welcomed.
+
+Thank you.
+
+> Is there more recent version of testcases/kernel/security/integrity/ima/README [1] ?
+
+Ok, I'll take a look.
+
+
+> > Tests "ima02 ima_measurement.sh" and "ima04 ima_violations.sh" assume
+> > files are created on a filesystem in policy.  The "measure.policy"
+> > excludes tmpfs, yet TMPDIR defaults to a tmpfs filesystem.  There are
+> > a couple of ways of resolving this problem (eg. removing tmpfs from
+> > the "measure.policy", use a RAM block device instead of tmpfs, etc).
+> >  Since the builtin "ima_policy=tcb" also excludes tmpfs, not using a
+> > tmpfs filesystem would be preferable.
+
+> OK, I'll try to implement test using RAM block device.
+
+It would be nice to be able to define policies that limit testing to a
+specific filesystem/device.  Without being able to limit IMA-appraisal 
+testing to specific devices, things might stop working rather quickly.
 
 > 
-> So it seems reasonable to allow the fscrypt subsystem to
-> work with encrypted keys as well. This is what this change
-> here does.
+> > Originally IMA allowed a builtin policy to be replaced with a custom
+> > policy, by simply cat'ing a file into the securityfs IMA policy file.
+> > Currently, if new rules can be added to the custom policy (Kconfig
+> > IMA_WRITE_POLICY enabled), the policy file must be signed.  Similarly,
+> > if the builtin "secure-boot" policy is defined on the boot command
+> > line, the custom policy must be signed.  Test "ima01 ima_policy.sh"
+> > should first detect if the policy must be signed, before running the
+> > tests.
+
+> Right, I'll check it. Is there other way how to detect it than reading
+> /boot/config-$(uname -r) or /proc/config.gz ? I'm asking because IMA might be using on
+> embedded devices (guessing from [2], [3]), which might not have either of them.
+
+Until the IMA-measurement list supports TPM 2.0 hash agility, the
+template name defines the old ("ima") vs. new formats.  The builtin
+new template formats are "ima-ng" and "ima-sig", but custom formats
+can be defined (eg. ima_template_fmt="d-ng|n-ng|sig") on the boot
+command line.  "d-ng|n-ng|sig" is the definition for ima-sig.
+
+> > ima_boot_aggregate.c defines the BIOS MAX_EVENT_SIZE BIOS size as 500,
+> > but I'm currently seeing BIOS events larger than 4k.
+> So, what is the recommended size?
+
+> Any reference to it?
+
+According to Kenneth Goldman, the maximum BIOS event entry for TPM 1.2
+is undefined.  For TPM 2.0 this was corrected.  The spec says, "For
+software parsing the event log, the parser can choose an arbitrary
+maximum size, but this specification recommends a maximum value for
+the TCG_PCR_EVENT2.eventSize field of 1MB."
+
+I think the BIOS event log is currently only exported via sysfs for
+TPM 1.2.
+
+
+> > Since these tests were first written, Roberto's IMA templates and
+> > Dmitry's support for larger digests were upstreamed.  With the new
+> > template format, the file hash is prefixed with the hash algorithm.
+> >  Before comparing the calculated boot aggregate with the value in the
+> > IMA measurement list, the hash algorithm needs to be removed.
+
+> Do you mean entries in /sys/kernel/security/ima/ascii_runtime_measurements ?
+> system with config CONFIG_IMA_DEFAULT_HASH_SHA256=y
+> 10 4814642f7955ad7a9c7b47785d002374b34902fd ima-ng sha256:f20cec9d158c4c453899f97595c40257c2518a40a310a550a1cd26a63e7fff7a /usr/lib64/libsha1detectcoll.so.1.0.0
+> system with config CONFIG_IMA_DEFAULT_HASH_SHA1=y
+> 10 2990cfe74ff309268e4fb928102574c28f9bb876 ima-ng sha1:71b543ad6af36b0976d0e3f71fed4ce0954eda0c /var/log/messages
+
+Exactly.  The following code snippet strips off the hash algorithm,
+before doing the hash comparison.  I'm sure there are better ways of
+doing it.
+
++++ b/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
+@@ -39,7 +39,7 @@ test1()
+ 
+        # IMA boot aggregate
+        read line < $ima_measurements
+-       ima_aggr=$(expr substr "${line}" 49 40)
++       ima_aggr=$(echo "$line" | cut -d' ' -f4 | cut -d':' -f2)
+
+
+> As it's done with grep it shouldn't be needed:
+> grep -q '^CONFIG_IMA_DEFAULT_HASH_SHA256=y' /boot/config-$(uname -r) && \
+> 		HASH_COMMAND="sha256sum"
 > 
-> We can utilise keys that never ever exist in user-space,
-> not even at initial creation time, as well as simplifying
-> usage / configuration. Something very very similar exists
-> for eCrypts already.
+> I kept sha1sum as the default command for checking and I'm detecting with
+> CONFIG_IMA_DEFAULT_HASH_SHA256 whether to use sha256:
+> This is not enough, I'll add checks for CONFIG_IMA_DEFAULT_HASH_SHA512 and
+> CONFIG_IMA_DEFAULT_HASH_WP512.
 
-typo: eCrypts => eCryptfs
+The list of supported hash algorithms is defined in
+include/uapi/linux/hash_info.h.
 
-[...]
-> diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
-> index 776ddc655f79..852ac2900b66 100644
-> --- a/Documentation/filesystems/fscrypt.rst
-> +++ b/Documentation/filesystems/fscrypt.rst
-> @@ -368,11 +368,19 @@ Adding keys
->  To provide a master key, userspace must add it to an appropriate
->  keyring using the add_key() system call (see:
->  ``Documentation/security/keys/core.rst``).  The key type must be
-> -"logon"; keys of this type are kept in kernel memory and cannot be
-> -read back by userspace.  The key description must be "fscrypt:"
-> -followed by the 16-character lower case hex representation of the
-> -``master_key_descriptor`` that was set in the encryption policy.  The
-> -key payload must conform to the following structure::
-> +either "logon" or "encrypted"; "logon" keys are kept in kernel
-> +memory and cannot be read back by userspace while "encrypted"
-> +keys can be rooted in a "trusted" key and thus are protected by
-> +a TPM and cannot be read by userspace in unencrypted form. Note
-> +that while an "encrypted" key can also be rooted in a "user" key,
-> +any "encrypted" key rooted in a "user" key can effectively be
-> +retrieved in the clear, hence only rooting the key in a "trusted"
-> +key has any useful security properties!
-> +
-> +The key description must be "fscrypt:" followed by the 16-character
-> +lower case hex representation of the ``master_key_descriptor`` that
-> +was set in the encryption policy.  For a "logon" key, key payload
-> +must conform to the following structure::
->  
->      #define FS_MAX_KEY_SIZE 64
->  
-> @@ -386,6 +394,17 @@ key payload must conform to the following structure::
->  ``raw`` with ``size`` indicating its size in bytes.  That is, the
->  bytes ``raw[0..size-1]`` (inclusive) are the actual key.
->  
-> +When using an "encrypted" key, only the actual ``raw`` key from above
-> +fscrypt_key structure is needed::
-> +
-> +    keyctl add encrypted "fscrypt:``master_key_descriptor``" "new default trusted:``master-key-name`` ``size``" ``ring``
-> +    keyctl add encrypted "fscrypt:``master_key_descriptor``" "load ``hex_blob``" ``ring``
-> +
-> +Where::
-> +
-> +    master-key-name:= name of the trusted key this fscrypt master key
-> +                      shall be rooted in
-> +
+The first entry, the boot aggregate, is always sha1.  The rest of the
+measurements will be the same hash algorithm, either as Kconfig
+defined or as specified on the boot command line "ima_hash=" option,
+per boot. 
 
-We need to be very careful with the wording.  For example it's implied that
-encrypted keys cannot be read by userspace because they are protected by a TPM,
-but that's not true.  They can be *wrapped* by a key which in turn can be
-TPM-sealed, but once unwrapped they are present in the clear in kernel memory,
-and it's only the policy of the kernel code that they can't be read back in the
-clear.
+With the support for carrying the IMA-measurement list across kexec,
+the measurement list might contain entries with different hash
+algorithms.
 
-Also the "logon" and "encrypted" key types should probably be in their own
-subsections, so that there is space to explain them properly.
+> >  
+> > For the new template format measurement lists, walking the measurement
+> > list, re-calculating the PCRs and comparing them with the HW or vTPM
+> > PCRs fail.  The ima-evm-utils package has a working version.  Invoke
+> > "evmctl" with the "ima_measurement" option.
+> So you mean that src/ima_measure.c is broken and should be replaced by evmctl from your
+> repository on sf.net [4]? Fortunately this package is on all major distros [5] (except
+> Debian, but Ubuntu package is installable on Debian), so we don't need to include your
+> repository as submodule.
 
-I've tried reorganizing the section a bit and this is what I came up with:
+Fantastic!  So we'll concentrate on extending ima-evm-utils.
 
-Adding keys
------------
+thanks,
 
-To provide a master key, userspace must add it to an appropriate
-keyring using the add_key() system call (see:
-``Documentation/security/keys/core.rst``).
-
-The key description must be "fscrypt:" followed by the 16-character
-lower case hex representation of the ``master_key_descriptor`` that
-was set in the encryption policy.  The "fscrypt:" prefix can
-alternatively be replaced with a filesystem-specific prefix such as
-"ext4:".  However, the filesystem-specific prefixes are deprecated and
-should not be used in new programs.
-
-The key type must be "logon" or "encrypted", as described below.
-Support for the "logon" key type will always be available when any
-filesystem has fscrypt support enabled, whereas support for the
-"encrypted" key type additionally requires CONFIG_ENCRYPTED_KEYS=y.
-
-Logon key type
-~~~~~~~~~~~~~~
-
-With the "logon" type, userspace is responsible for generating or
-unwrapping the master key, then passing it to the kernel in the
-following format:
-
-    #define FS_MAX_KEY_SIZE 64
-
-    struct fscrypt_key {
-            u32 mode;
-            u8 raw[FS_MAX_KEY_SIZE];
-            u32 size;
-    };
-
-``mode`` is ignored; just set it to 0.  The actual key is provided in
-``raw`` with ``size`` indicating its size in bytes.  That is, the
-bytes ``raw[0..size-1]`` (inclusive) are the actual key.
-
-The "logon" key will then be stored in kernel memory for the
-filesystem to use.  There is no API for userspace to read it back.
-
-Encrypted key type
-~~~~~~~~~~~~~~~~~~
-
-With the "encrypted" key type, the key is initially randomly generated
-by the kernel.  Then, userspace can read it back as a blob wrapped by
-another key.  In particular, it can be wrapped by a "trusted" key,
-which can be sealed to a TPM in a certain state, with only the
-TPM-sealed blob being made available to userspace.  Then, userspace
-can later re-instantiate the "encrypted" key by first re-instantiating
-the needed "trusted" key, then providing the encrypted-key blob to be
-unwrapped by the kernel.  For example:
-
-    # create a new encrypted-key
-    keyctl add encrypted "fscrypt:``master_key_descriptor``" "new default trusted:``master-key-desc`` ``size``" ``ring``
-
-    # unwrap an existing encrypted-key blob
-    keyctl add encrypted "fscrypt:``master_key_descriptor``" "load ``hex_blob``" ``ring``
-
-Where::
-
-    master-key-desc:= description of the trusted key this fscrypt master key
-                      shall be wrapped by
-
-    size := desired size of the fscrypt master key in bytes
-
-    ring := keyring to add the key to
-
-The "encrypted" key must be instantiated using the "default" format,
-since its decrypted payload is treated as the raw master key; that is,
-the ``fscrypt_key`` structure is not used.
-
-Note that just like "logon" keys, "encrypted" keys are actually
-present in kernel memory in the clear after being added.  Thus, they
-are not safe from attacks that compromise kernel memory.  However,
-they cannot be read back in the clear using the system call interface.
-
-Choice of keyring
-~~~~~~~~~~~~~~~~~
-
-There are several different types of keyrings in which fscrypt master
-keys may be placed, such as a session keyring, a user session keyring,
-or a user keyring.  Each key must be placed in a keyring that is
-"attached" to all processes that might need to access files encrypted
-with it, in the sense that request_key() will find the key.
-Generally, if only processes belonging to a specific user need to
-access a given encrypted directory and no session keyring has been
-installed, then that directory's key should be placed in that user's
-user session keyring or user keyring.  Otherwise, a session keyring
-should be installed if needed, and the key should be linked into that
-session keyring, or in a keyring linked into that session keyring.
-
-Note: introducing the complex visibility semantics of keyrings here
-was arguably a mistake --- especially given that by design, after any
-process successfully opens an encrypted file (thereby setting up the
-per-file key), possessing the keyring key is not actually required for
-any process to read/write the file until its in-memory inode is
-evicted.  In the future there probably should be a way to provide keys
-directly to the filesystem instead, which would make the intended
-semantics clearer.
+Mimi
