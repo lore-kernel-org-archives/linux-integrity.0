@@ -1,283 +1,174 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:40962 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751405AbeA0GXi (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 27 Jan 2018 01:23:38 -0500
-Message-ID: <1517034216.3034.50.camel@HansenPartnership.com>
-Subject: Re: [PATCH] ima-evm-utils: migrate to the new openssl 1.1 api
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: "Bruno E. O. Meneguele" <brdeoliv@redhat.com>,
-        dmitry.kasatkin@gmail.com, zohar@linux.vnet.ibm.com,
-        jarkko.sakkinen@linux.intel.com
-Cc: linux-integrity@vger.kernel.org
-Date: Fri, 26 Jan 2018 22:23:36 -0800
-In-Reply-To: <20171207190508.28292-1-brdeoliv@redhat.com>
-References: <20171207190508.28292-1-brdeoliv@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mx2.suse.de ([195.135.220.15]:59346 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751582AbeA0Dga (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 26 Jan 2018 22:36:30 -0500
+Date: Fri, 26 Jan 2018 18:51:10 +0100
+From: Petr Vorel <pvorel@suse.cz>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: ltp@lists.linux.it, Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
+        linux-integrity@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@polito.it>
+Subject: Re: [RFC PATCH 0/2] IMA: Rewrite tests into new API + fixes
+Message-ID: <20180126175110.boaepz6dqe3uojq6@dell5510>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20180111202821.31639-1-pvorel@suse.cz>
+ <1516815417.3686.55.camel@linux.vnet.ibm.com>
+ <20180125203057.mzzpilp6i43xftka@dell5510>
+ <1516919365.6513.72.camel@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-2
+In-Reply-To: <1516919365.6513.72.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, 2017-12-07 at 17:05 -0200, Bruno E. O. Meneguele wrote:
-> This patch adds and changes the points needed to support the new
-> OpenSSL
-> 1.1 API, considering the older one, OpenSSL 1.0.z, will be dropped by
-> the major distros in following releases.
+Hi Mimi,
 
-This would break compilation on every 1.0 distro:
+> > Thanks a lot for your comments. As you didn't report any regression in my patch-set, I'm
+> > for merging it as it's an improvement. But I see there is more work to be done.
+> Sounds good.
+Well, there will be v2, as Cyril Hrubis asked for some more fixes.
 
-gcc -DHAVE_CONFIG_H -I. -I.. -I.. -include config.h    -g -O2 -g -O1
--Wall -Wstrict-prototypes -pipe -MT evmctl-evmctl.o -MD -MP -MF
-.deps/evmctl-evmctl.Tpo -c -o evmctl-evmctl.o `test -f 'evmctl.c' ||
-echo './'`evmctl.c
-evmctl.c: In function 'calc_evm_hash':
-evmctl.c:369:2: warning: implicit declaration of function
-'EVP_MD_CTX_new' [-Wimplicit-function-declaration]
-  ctx = EVP_MD_CTX_new();
-...
+> > Is there more recent version of testcases/kernel/security/integrity/ima/README [1] ?
+> Ok, I'll take a look.
+Thanks a lot. You're definitely better person to review it :-).
 
-Unfortunately you have to ifdef the compilations if you want it to work
-on both 1.0 and 1.1.
 
-How about this?
+> > > Tests "ima02 ima_measurement.sh" and "ima04 ima_violations.sh" assume
+> > > files are created on a filesystem in policy.  The "measure.policy"
+> > > excludes tmpfs, yet TMPDIR defaults to a tmpfs filesystem.  There are
+> > > a couple of ways of resolving this problem (eg. removing tmpfs from
+> > > the "measure.policy", use a RAM block device instead of tmpfs, etc).
+> > >  Since the builtin "ima_policy=tcb" also excludes tmpfs, not using a
+> > > tmpfs filesystem would be preferable.
 
-James
+> > OK, I'll try to implement test using RAM block device.
 
----
+> It would be nice to be able to define policies that limit testing to a
+> specific filesystem/device.  Without being able to limit IMA-appraisal 
+> testing to specific devices, things might stop working rather quickly.
+Not sure how to define it, I need to study the specification. Or can you be more specific?
+BTW I suppose that kernel code supports both TPM 2.0 and the old 1.2.
 
-diff --git a/src/evmctl.c b/src/evmctl.c
-index c54efbb..6471404 100644
---- a/src/evmctl.c
-+++ b/src/evmctl.c
-@@ -314,7 +314,7 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
- 	struct stat st;
- 	int err;
- 	uint32_t generation = 0;
--	EVP_MD_CTX ctx;
-+	EVP_MD_CTX *pctx;
- 	unsigned int mdlen;
- 	char **xattrname;
- 	char xattr_value[1024];
-@@ -323,6 +323,12 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
- 	char uuid[16];
- 	struct h_misc_64 hmac_misc;
- 	int hmac_size;
-+#if OPENSSL_VERSION_NUMBER < 0x10100000
-+	EVP_MD_CTX ctx;
-+	pctx = &ctx;
-+#else
-+	pctx = EVP_MD_CTX_new();
-+#endif
- 
- 	if (lstat(file, &st)) {
- 		log_err("Failed to stat: %s\n", file);
-@@ -366,7 +372,7 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
- 		return -1;
- 	}
- 
--	err = EVP_DigestInit(&ctx, EVP_sha1());
-+	err = EVP_DigestInit(pctx, EVP_sha1());
- 	if (!err) {
- 		log_err("EVP_DigestInit() failed\n");
- 		return 1;
-@@ -398,7 +404,7 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
- 		/*log_debug("name: %s, value: %s, size: %d\n", *xattrname, xattr_value, err);*/
- 		log_info("name: %s, size: %d\n", *xattrname, err);
- 		log_debug_dump(xattr_value, err);
--		err = EVP_DigestUpdate(&ctx, xattr_value, err);
-+		err = EVP_DigestUpdate(pctx, xattr_value, err);
- 		if (!err) {
- 			log_err("EVP_DigestUpdate() failed\n");
- 			return 1;
-@@ -446,7 +452,7 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
- 	log_debug("hmac_misc (%d): ", hmac_size);
- 	log_debug_dump(&hmac_misc, hmac_size);
- 
--	err = EVP_DigestUpdate(&ctx, &hmac_misc, hmac_size);
-+	err = EVP_DigestUpdate(pctx, &hmac_misc, hmac_size);
- 	if (!err) {
- 		log_err("EVP_DigestUpdate() failed\n");
- 		return 1;
-@@ -457,14 +463,14 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
- 		if (err)
- 			return -1;
- 
--		err = EVP_DigestUpdate(&ctx, (const unsigned char *)uuid, sizeof(uuid));
-+		err = EVP_DigestUpdate(pctx, (const unsigned char *)uuid, sizeof(uuid));
- 		if (!err) {
- 			log_err("EVP_DigestUpdate() failed\n");
- 			return 1;
- 		}
- 	}
- 
--	err = EVP_DigestFinal(&ctx, hash, &mdlen);
-+	err = EVP_DigestFinal(pctx, hash, &mdlen);
- 	if (!err) {
- 		log_err("EVP_DigestFinal() failed\n");
- 		return 1;
-@@ -908,7 +914,7 @@ static int calc_evm_hmac(const char *file, const char *keyfile, unsigned char *h
- 	struct stat st;
- 	int err = -1;
- 	uint32_t generation = 0;
--	HMAC_CTX ctx;
-+	HMAC_CTX *pctx;
- 	unsigned int mdlen;
- 	char **xattrname;
- 	unsigned char xattr_value[1024];
-@@ -919,6 +925,12 @@ static int calc_evm_hmac(const char *file, const char *keyfile, unsigned char *h
- 	ssize_t list_size;
- 	struct h_misc_64 hmac_misc;
- 	int hmac_size;
-+#if OPENSSL_VERSION_NUMBER < 0x10100000
-+	HMAC_CTX ctx;
-+	pctx = &ctx;
-+#else
-+	pctx = HMAC_CTX_new();
-+#endif
- 
- 	key = file2bin(keyfile, NULL, &keylen);
- 	if (!key) {
-@@ -965,7 +977,7 @@ static int calc_evm_hmac(const char *file, const char *keyfile, unsigned char *h
- 		goto out;
- 	}
- 
--	err = !HMAC_Init(&ctx, evmkey, sizeof(evmkey), EVP_sha1());
-+	err = !HMAC_Init_ex(pctx, evmkey, sizeof(evmkey), EVP_sha1(), NULL);
- 	if (err) {
- 		log_err("HMAC_Init() failed\n");
- 		goto out;
-@@ -984,7 +996,7 @@ static int calc_evm_hmac(const char *file, const char *keyfile, unsigned char *h
- 		/*log_debug("name: %s, value: %s, size: %d\n", *xattrname, xattr_value, err);*/
- 		log_info("name: %s, size: %d\n", *xattrname, err);
- 		log_debug_dump(xattr_value, err);
--		err = !HMAC_Update(&ctx, xattr_value, err);
-+		err = !HMAC_Update(pctx, xattr_value, err);
- 		if (err) {
- 			log_err("HMAC_Update() failed\n");
- 			goto out_ctx_cleanup;
-@@ -1025,16 +1037,20 @@ static int calc_evm_hmac(const char *file, const char *keyfile, unsigned char *h
- 	log_debug("hmac_misc (%d): ", hmac_size);
- 	log_debug_dump(&hmac_misc, hmac_size);
- 
--	err = !HMAC_Update(&ctx, (const unsigned char *)&hmac_misc, hmac_size);
-+	err = !HMAC_Update(pctx, (const unsigned char *)&hmac_misc, hmac_size);
- 	if (err) {
- 		log_err("HMAC_Update() failed\n");
- 		goto out_ctx_cleanup;
- 	}
--	err = !HMAC_Final(&ctx, hash, &mdlen);
-+	err = !HMAC_Final(pctx, hash, &mdlen);
- 	if (err)
- 		log_err("HMAC_Final() failed\n");
- out_ctx_cleanup:
--	HMAC_CTX_cleanup(&ctx);
-+#if OPENSSL_VERSION_NUMBER < 0x10100000
-+	HMAC_CTX_cleanup(pctx);
-+#else
-+	HMAC_CTX_free(pctx);
-+#endif
- out:
- 	free(key);
- 	return err ?: mdlen;
-diff --git a/src/libimaevm.c b/src/libimaevm.c
-index eedffb4..fd1bde6 100644
---- a/src/libimaevm.c
-+++ b/src/libimaevm.c
-@@ -271,9 +271,15 @@ int ima_calc_hash(const char *file, uint8_t *hash)
- {
- 	const EVP_MD *md;
- 	struct stat st;
--	EVP_MD_CTX ctx;
-+	EVP_MD_CTX *pctx;
- 	unsigned int mdlen;
- 	int err;
-+#if OPENSSL_VERSION_NUMBER < 0x10100000
-+	EVP_MD_CTX ctx;
-+	pctx = &ctx;
-+#else
-+	pctx = EVP_MD_CTX_new();
-+#endif
- 
- 	/*  Need to know the file length */
- 	err = lstat(file, &st);
-@@ -288,7 +294,7 @@ int ima_calc_hash(const char *file, uint8_t *hash)
- 		return 1;
- 	}
- 
--	err = EVP_DigestInit(&ctx, md);
-+	err = EVP_DigestInit(pctx, md);
- 	if (!err) {
- 		log_err("EVP_DigestInit() failed\n");
- 		return 1;
-@@ -296,17 +302,17 @@ int ima_calc_hash(const char *file, uint8_t *hash)
- 
- 	switch (st.st_mode & S_IFMT) {
- 	case S_IFREG:
--		err = add_file_hash(file, &ctx);
-+		err = add_file_hash(file, pctx);
- 		break;
- 	case S_IFDIR:
--		err = add_dir_hash(file, &ctx);
-+		err = add_dir_hash(file, pctx);
- 		break;
- 	case S_IFLNK:
--		err = add_link_hash(file, &ctx);
-+		err = add_link_hash(file, pctx);
- 		break;
- 	case S_IFIFO: case S_IFSOCK:
- 	case S_IFCHR: case S_IFBLK:
--		err = add_dev_hash(&st, &ctx);
-+		err = add_dev_hash(&st, pctx);
- 		break;
- 	default:
- 		log_errno("Unsupported file type");
-@@ -316,7 +322,7 @@ int ima_calc_hash(const char *file, uint8_t *hash)
- 	if (err)
- 		return err;
- 
--	err = EVP_DigestFinal(&ctx, hash, &mdlen);
-+	err = EVP_DigestFinal(pctx, hash, &mdlen);
- 	if (!err) {
- 		log_err("EVP_DigestFinal() failed\n");
- 		return 1;
-@@ -549,6 +555,14 @@ int key2bin(RSA *key, unsigned char *pub)
- {
- 	int len, b, offset = 0;
- 	struct pubkey_hdr *pkh = (struct pubkey_hdr *)pub;
-+	const BIGNUM *n, *e;
-+
-+#if OPENSSL_VERSION_NUMBER < 0x10100000
-+	n = key->n;
-+	e = key->e;
-+#else
-+	RSA_get0_key(key, &n, &e, NULL);
-+#endif
- 
- 	/* add key header */
- 	pkh->version = 1;
-@@ -558,18 +572,18 @@ int key2bin(RSA *key, unsigned char *pub)
- 
- 	offset += sizeof(*pkh);
- 
--	len = BN_num_bytes(key->n);
--	b = BN_num_bits(key->n);
-+	len = BN_num_bytes(n);
-+	b = BN_num_bits(n);
- 	pub[offset++] = b >> 8;
- 	pub[offset++] = b & 0xff;
--	BN_bn2bin(key->n, &pub[offset]);
-+	BN_bn2bin(n, &pub[offset]);
- 	offset += len;
- 
--	len = BN_num_bytes(key->e);
--	b = BN_num_bits(key->e);
-+	len = BN_num_bytes(e);
-+	b = BN_num_bits(e);
- 	pub[offset++] = b >> 8;
- 	pub[offset++] = b & 0xff;
--	BN_bn2bin(key->e, &pub[offset]);
-+	BN_bn2bin(e, &pub[offset]);
- 	offset += len;
- 
- 	return offset;
+> > > Originally IMA allowed a builtin policy to be replaced with a custom
+> > > policy, by simply cat'ing a file into the securityfs IMA policy file.
+> > > Currently, if new rules can be added to the custom policy (Kconfig
+> > > IMA_WRITE_POLICY enabled), the policy file must be signed.  Similarly,
+> > > if the builtin "secure-boot" policy is defined on the boot command
+> > > line, the custom policy must be signed.  Test "ima01 ima_policy.sh"
+> > > should first detect if the policy must be signed, before running the
+> > > tests.
+
+> > Right, I'll check it. Is there other way how to detect it than reading
+> > /boot/config-$(uname -r) or /proc/config.gz ? I'm asking because IMA might be using on
+> > embedded devices (guessing from [2], [3]), which might not have either of them.
+This is important. As Cyril agreed with me grepping /boot/config-$(uname -r) or
+/proc/config.gz isn't good solution. I don't see any ioctl interface and
+security/integrity/ima/ima_fs.c which handles IMA sysfs doesn't have this functionality.
+Is it deliberate (security reason), that it's not exported to users?
+
+
+> Until the IMA-measurement list supports TPM 2.0 hash agility, the
+> template name defines the old ("ima") vs. new formats.  The builtin
+> new template formats are "ima-ng" and "ima-sig", but custom formats
+> can be defined (eg. ima_template_fmt="d-ng|n-ng|sig") on the boot
+> command line.  "d-ng|n-ng|sig" is the definition for ima-sig.
+OK, we cannot rely on the default format. I'll fix it :-).
+
+> > > ima_boot_aggregate.c defines the BIOS MAX_EVENT_SIZE BIOS size as 500,
+> > > but I'm currently seeing BIOS events larger than 4k.
+> > So, what is the recommended size?
+
+> > Any reference to it?
+
+> According to Kenneth Goldman, the maximum BIOS event entry for TPM 1.2
+> is undefined.  For TPM 2.0 this was corrected.  The spec says, "For
+> software parsing the event log, the parser can choose an arbitrary
+> maximum size, but this specification recommends a maximum value for
+> the TCG_PCR_EVENT2.eventSize field of 1MB."
+Great, thanks for info. Just for a record links to the specification [1].
+
+> I think the BIOS event log is currently only exported via sysfs for
+> TPM 1.2.
+
+This commit 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware event log")
+adds security [1]. And indeed structs tcg_pcr_event and tcg_pcr_event2 defined
+in [2] on pages 15 and 16 were added in this commit and used in TPM 2.0 related
+functions calc_tpm2_event_size(), tpm2_bios_measurements_start() and
+tpm2_bios_measurements_next().
+
+> > > Since these tests were first written, Roberto's IMA templates and
+> > > Dmitry's support for larger digests were upstreamed.  With the new
+> > > template format, the file hash is prefixed with the hash algorithm.
+> > >  Before comparing the calculated boot aggregate with the value in the
+> > > IMA measurement list, the hash algorithm needs to be removed.
+
+> > Do you mean entries in /sys/kernel/security/ima/ascii_runtime_measurements ?
+> > system with config CONFIG_IMA_DEFAULT_HASH_SHA256=y
+> > 10 4814642f7955ad7a9c7b47785d002374b34902fd ima-ng sha256:f20cec9d158c4c453899f97595c40257c2518a40a310a550a1cd26a63e7fff7a /usr/lib64/libsha1detectcoll.so.1.0.0
+> > system with config CONFIG_IMA_DEFAULT_HASH_SHA1=y
+> > 10 2990cfe74ff309268e4fb928102574c28f9bb876 ima-ng sha1:71b543ad6af36b0976d0e3f71fed4ce0954eda0c /var/log/messages
+
+> Exactly.  The following code snippet strips off the hash algorithm,
+> before doing the hash comparison.  I'm sure there are better ways of
+> doing it.
+
+> +++ b/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
+> @@ -39,7 +39,7 @@ test1()
+
+>         # IMA boot aggregate
+>         read line < $ima_measurements
+> -       ima_aggr=$(expr substr "${line}" 49 40)
+> +       ima_aggr=$(echo "$line" | cut -d' ' -f4 | cut -d':' -f2)
+
+
+> > As it's done with grep it shouldn't be needed:
+> > grep -q '^CONFIG_IMA_DEFAULT_HASH_SHA256=y' /boot/config-$(uname -r) && \
+> > 		HASH_COMMAND="sha256sum"
+
+> > I kept sha1sum as the default command for checking and I'm detecting with
+> > CONFIG_IMA_DEFAULT_HASH_SHA256 whether to use sha256:
+> > This is not enough, I'll add checks for CONFIG_IMA_DEFAULT_HASH_SHA512 and
+> > CONFIG_IMA_DEFAULT_HASH_WP512.
+
+> The list of supported hash algorithms is defined in
+> include/uapi/linux/hash_info.h.
+I see. And constants I take into account are values for ima template.
+
+> The first entry, the boot aggregate, is always sha1.  The rest of the
+> measurements will be the same hash algorithm, either as Kconfig
+> defined or as specified on the boot command line "ima_hash=" option,
+> per boot. 
+
+> With the support for carrying the IMA-measurement list across kexec,
+> the measurement list might contain entries with different hash
+> algorithms.
+OK, I'll detect correct hash algorithm and check it.
+
+> > >  
+> > > For the new template format measurement lists, walking the measurement
+> > > list, re-calculating the PCRs and comparing them with the HW or vTPM
+> > > PCRs fail.  The ima-evm-utils package has a working version.  Invoke
+> > > "evmctl" with the "ima_measurement" option.
+> > So you mean that src/ima_measure.c is broken and should be replaced by evmctl from your
+> > repository on sf.net [4]? Fortunately this package is on all major distros [5] (except
+> > Debian, but Ubuntu package is installable on Debian), so we don't need to include your
+> > repository as submodule.
+
+> Fantastic!  So we'll concentrate on extending ima-evm-utils.
+There might be problem in old distros, where users will have to compile it themselves.
+It'd be more comfortable for users to have all the source codes in LTP tree, so if they
+report problems to us we might copy your source to LTP git or use it as submodule. But
+I'll try to avoid it.
+
+> thanks,
+Thanks a lot for your help!
+
+> Mimi
+
+
+Kind regards,
+Petr
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=v4.15-rc9&id=4d23cc323cdbee1cbcd8a7f059fff9ef2b0c473d
+[2] https://www.trustedcomputinggroup.org/wp-content/uploads/EFI-Protocol-Specification-rev9-150513_Public-Review.pdf
