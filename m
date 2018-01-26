@@ -1,72 +1,95 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44284 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752394AbeAZSNs (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54694 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751566AbeAZRyL (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 26 Jan 2018 13:13:48 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w0QI6ngd064142
-        for <linux-integrity@vger.kernel.org>; Fri, 26 Jan 2018 13:13:48 -0500
-Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2fr5u816xs-1
+        Fri, 26 Jan 2018 12:54:11 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w0QHr5bi031753
+        for <linux-integrity@vger.kernel.org>; Fri, 26 Jan 2018 12:54:11 -0500
+Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2fr5cw1cmm-1
         (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 26 Jan 2018 13:13:47 -0500
+        for <linux-integrity@vger.kernel.org>; Fri, 26 Jan 2018 12:54:10 -0500
 Received: from localhost
-        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Fri, 26 Jan 2018 18:13:45 -0000
+        Fri, 26 Jan 2018 17:54:08 -0000
 Subject: Re: [LSF/MM TOPIC] fs-verity: file system-level integrity protection
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: "Theodore Ts'o" <tytso@mit.edu>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: lsf-pc@lists.linux-foundation.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+To: "Theodore Ts'o" <tytso@mit.edu>, lsf-pc@lists.linux-foundation.org
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         linux-integrity <linux-integrity@vger.kernel.org>
-Date: Fri, 26 Jan 2018 13:13:40 -0500
-In-Reply-To: <20180126145856.GA2841@thunk.org>
+Date: Fri, 26 Jan 2018 12:54:03 -0500
+In-Reply-To: <20180125191152.GA11197@thunk.org>
 References: <20180125191152.GA11197@thunk.org>
-         <1516927666.4082.25.camel@HansenPartnership.com>
-         <20180126023054.GC31091@thunk.org>
-         <1516942235.4082.52.camel@HansenPartnership.com>
-         <20180126145856.GA2841@thunk.org>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1516990420.29187.65.camel@linux.vnet.ibm.com>
+Message-Id: <1516989243.29187.54.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-[Cc'ing linux-integrity]
+[Cc'ing the linux-integrity mailing list]
 
-On Fri, 2018-01-26 at 09:58 -0500, Theodore Ts'o wrote:
-
-> > 
-> > Currently container images are simple tar files and one of the main
-> > value adds of docker as a tool is the simplicity of the image creation
-> > process.  That process depends on standard tools like tar to create the
-> > image, so I was trying to fit this proposal into that process.
+On Thu, 2018-01-25 at 14:11 -0500, Theodore Ts'o wrote:
+> I'd like to talk about a proposal to implement and upstream something
+> that we've been calling fs-verity, which is something like dm-verity,
+> but implemnted on a per-file basis.  It will be implemnted much like
+> fs/crypto, in that most of the code will be in a generic layer, with
+> minimal modifications needed in the file system layer.
 > 
-> The goal of fs-verity is protect arbitrary files without breaking the
-> backwards compatibility of those that *read* the file.  So for
-> example, an APK file is downloaded and verified at the intial download
-> --- and never verified again.  It is *used* many times after the
-> initial download (and hence, potentially after an evil maid attack),
-> and this is done by many different tools, including by code inside the
-> APK itself.  So it is not feasible to change the tools that read the
-> APK, which means we can't make any backwards-incompatible changes to
-> the file itself.
+> The merkle tree will be located after file's normal data, and then
+> after the package manager sets the verity bit, i_size will be updated
+> so that the fs-verity header and merkle tree will be "hidden" from
+> userspace and the file will become immutable.
 > 
-> However, changing the tools that *establish* the locally verified copy
-> is considered completely fair game.  I'll note that this is true no
-> matter what system you use.  If you are using IMA, after the file is
-> downloaded, you still have to set the magic "trusted xattr" (which, I
-> will note, requires root access since it is a trusted root access).
-> So you have to make at least *some* changes to the code path which
-> writes the file that you want to be integrity protected.  In the case
-> of IMA, this includes code that has to run as root.
+> How does this differ from IMA's file integrity?
+> 
+> *) The pages are verified as they are read, so pages are verified as
+> they are read the storage device; this avoids a large latency hit when
+> the file is first opened or referenced.
 
-Different types of software packages (eg. tar, rpm, multiple deb
-prototypes) can be built to include file signatures.  Both the file
-data and metadata (eg. signatures) would be installed together by the
-same app, which already has root privileges needed to install them.
+Secure and trusted boot standards require files to be measured and
+appraised before usage.  Perhaps verifying the merkle tree satifies
+these requirements.
+
+IMA-appraisal is being extended to support appended signatures, as
+generated by scripts/sign-file.  This proposed method of calculating
+the file hash could be another signature method.
+
+> *) The design and code are done by file system developers, so it
+> doesn't have the locking problems of the IMA code.
+
+True, the locking problem is a direct result of using xattrs for
+storing file metadata, which requires taking the i_rwsem exclusively
+for writing.  This solution circumvents the locking issues because it
+appends the file metadata to the file data instead of using xattrs.
+
+By using atomic flags, as suggested by Linus, Dmitry Kasatkin has
+resolved the xattr locking issue.  The patch is currently staged to
+be upstreamed in the next open window.
+
+> 
+> The initial use case of this will be for Android, where the latency
+> concerns of doing the full checksum at file open time is important.
+> 
+> In the future, the fact that a file has been signed using fs-verity,
+> using a PKCS 11 signature with a key on a trusted keyring (possibly
+> the same one used for signed kernel modules, or perhaps a separate
+> keyring) could be used as input into a security policy which requires
+> this for say, setuid executables, setuid shell scripts, etc.
+> 
+> Most of this feature could also be used with a non-cryptographic
+> checksum to provide data checksums for read-only files in a general
+> way for all file systems.  It wouldn't be as flexible as btrfs, but
+> for files being stored for backup purposes, it should work quite well.
+
+Signing and verifying local file signatures, is a lot simpler than
+supporting a full software package life cycle.  Can the file metadata
+- signatures and trees - be calculated and included in software
+packages, with the file data, for distribution?
+
+In terms of remote filesystems, the same trust issues exist with this
+solution as with IMA-appraisal.
 
 Mimi
