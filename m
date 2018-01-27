@@ -1,80 +1,144 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37088 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751839AbeA1Ar3 (ORCPT
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:51090 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751905AbeA0RJX (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 27 Jan 2018 19:47:29 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w0S0l8xZ100592
-        for <linux-integrity@vger.kernel.org>; Sat, 27 Jan 2018 19:47:28 -0500
-Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2frpfnjds3-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Sat, 27 Jan 2018 19:47:28 -0500
-Received: from localhost
-        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Sun, 28 Jan 2018 00:47:26 -0000
-Subject: Re: [RFC PATCH 0/2] IMA: Rewrite tests into new API + fixes
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Petr Vorel <pvorel@suse.cz>
-Cc: ltp@lists.linux.it, Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
-        linux-integrity@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@polito.it>
-Date: Sat, 27 Jan 2018 19:47:20 -0500
-In-Reply-To: <20180126175110.boaepz6dqe3uojq6@dell5510>
-References: <20180111202821.31639-1-pvorel@suse.cz>
-         <1516815417.3686.55.camel@linux.vnet.ibm.com>
-         <20180125203057.mzzpilp6i43xftka@dell5510>
-         <1516919365.6513.72.camel@linux.vnet.ibm.com>
-         <20180126175110.boaepz6dqe3uojq6@dell5510>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 27 Jan 2018 12:09:23 -0500
+Message-ID: <1517072939.3012.23.camel@HansenPartnership.com>
+Subject: Re: [Lsf-pc] [LSF/MM TOPIC] fs-verity: file system-level integrity
+ protection
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Andreas Dilger <adilger@dilger.ca>, Theodore Ts'o <tytso@mit.edu>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Date: Sat, 27 Jan 2018 09:08:59 -0800
+In-Reply-To: <1517069959.3012.13.camel@HansenPartnership.com>
+References: <20180125191152.GA11197@thunk.org>
+         <1516927666.4082.25.camel@HansenPartnership.com>
+         <20180126023054.GC31091@thunk.org>
+         <1516942235.4082.52.camel@HansenPartnership.com>
+         <20180126145856.GA2841@thunk.org>
+         <1516985067.4000.10.camel@HansenPartnership.com>
+         <20180126215540.GA23308@thunk.org>
+         <275E5E86-635E-4D79-9AC9-3D24318EDDDF@dilger.ca>
+         <1517069959.3012.13.camel@HansenPartnership.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-Y/2MHM2cYBl83hfNKNO+"
 Mime-Version: 1.0
-Message-Id: <1517100440.29187.120.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 2018-01-26 at 18:51 +0100, Petr Vorel wrote:
+[cc'ing linux-integrity, since they're the experts]
 
-> > It would be nice to be able to define policies that limit testing to a
-> > specific filesystem/device.  Without being able to limit IMA-appraisal 
-> > testing to specific devices, things might stop working rather quickly.
-> Not sure how to define it, I need to study the specification. Or can
-> you be more specific?
-
-These tests are for the IMA-measurement aspect only, not IMA-
-appraisal.  Adding measurements to the measurement list won't cause
-the system to stop working, unless keys are sealed to a particular TPM
-PCR value.  Nobody is or should be sealing keys to PCR-10, since the
-ordering of the measurements is non deterministic.
-
-As we add IMA-appraisal tests requiring files to be signed, things
-will fail if either the public key isn't on the IMA keyring or the
-file isn't properly signed.  For this reason, limiting file IMA-
-appraisal tests to a particular filesystem simplifies testing.
-
-> BTW I suppose that kernel code supports both TPM 2.0 and the old 1.2.
-
-Yes, Jarkko added TPM 2.0 support, including IMA support.
-
-> > > > Originally IMA allowed a builtin policy to be replaced with a custom
-> > > > policy, by simply cat'ing a file into the securityfs IMA policy file.
-> > > > Currently, if new rules can be added to the custom policy (Kconfig
-> > > > IMA_WRITE_POLICY enabled), the policy file must be signed.  Similarly,
-> > > > if the builtin "secure-boot" policy is defined on the boot command
-> > > > line, the custom policy must be signed.  Test "ima01 ima_policy.sh"
-> > > > should first detect if the policy must be signed, before running the
-> > > > tests.
+On Sat, 2018-01-27 at 08:19 -0800, James Bottomley wrote:
+> On Sat, 2018-01-27 at 00:58 -0700, Andreas Dilger wrote:
+> > 
+> > On Jan 26, 2018, at 2:55 PM, Theodore Ts'o <tytso@mit.edu> wrote:
+> > > 
+> > > 
+> > > 
+> > > On Fri, Jan 26, 2018 at 08:44:27AM -0800, James Bottomley wrote:
+> > > > 
+> > > > 
+> > > > On Fri, 2018-01-26 at 09:58 -0500, Theodore Ts'o wrote:
+> > > > > 
+> > > > > 
+> > > > > Docker save was going to have to be altered to use IMA,
+> > > > > anyway.
+> > > > 
+> > > > Actually, no, that's not entirely true[1].  Docker save
+> > > > produces a tar file.  Once the tar on your platform picks up
+> > > > xattrs, docker save just works for container images with IMA
+> > > > hashes and signatures (and selinux labels, which was actually
+> > > > the driver for the change).  The point at which the ecosystem
+> > > > changed to "just work" was the point at which tar understood
+> > > > xattrs.  That's why I was poking on how do we get tar to
+> > > > understand this format, following on the way IMA and selinux
+> > > > did it.  There may be another way of getting this change into
+> > > > the ecosystem, but ecosystem adoption has to be part of the
+> > > > considerations for this.
+> > > 
+> > > Oh, I see.  You are saying that you want to be able to use tar to
+> > > backup integrity protected files, and then restore them later.
+> > > 
+> > > Yes, that's different from what I was assuming, which is a model
+> > > where the integrity protect file would be written by some package
+> > > manager (e.g,. rpm, dpkg, the code that downloads the apk, etc.),
+> > > and that we would *not* be trying to backup the file with the
+> > > integrity data, and then restore it later via some kind of untar
+> > > operation.
+> > > 
+> > > The problem here is that a merkle tree simply won't fit inside an
+> > > xattr for any non-trivail file.  And there may be use cases where
+> > > blocking the open until the integrity is verifeid on the entire
+> > > file. However, there are uses cases where the a signifcant
+> > > increase in the open latency can't be tolerated, and wher the
+> > > file might have might have large portions of dat which will never
+> > > be read, and thus, don't need to have their integrity
+> > > verified.  (Example: an APK might have megabytes and megabytes of
+> > > translation resources for N languages, only one of which will
+> > > normally be used by a particular user on a particular phone.  Or
+> > > as another example, an ELF binary that has huge portions of
+> > > symbol table and debugging information that is normally not
+> > > used.)
+> > > 
+> > > So the requirement that you must be able to backup an integrity
+> > > protected file, and then restore it again, without modifying the
+> > > tool which does the backup and restore, does certainly push you
+> > > towards using xattrs.  But xattrs force the huge open latency,
+> > > and while Docker is big in some circles, there are lots of use
+> > > cases where the unmodified backup/restore requiremnt is simply
+> > > not applicable.
+> > > 
+> > > So perhaps there is room for both solutions.
+> > 
+> > I think this is relatively straight forward to handle.  The package
+> > (tarball, whatever) itself only needs to store the top-level
+> > checksum, since this validates the whole Merkle tree, and in turn
+> > the integrity of the whole file.  This is exactly what Bittorrent
+> > does for files.
 > 
-> > > Right, I'll check it. Is there other way how to detect it than reading
-> > > /boot/config-$(uname -r) or /proc/config.gz ? I'm asking because IMA might be using on
-> > > embedded devices (guessing from [2], [3]), which might not have either of them.
-> This is important. As Cyril agreed with me grepping /boot/config-$(uname -r) or
-> /proc/config.gz isn't good solution. I don't see any ioctl interface and
-> security/integrity/ima/ima_fs.c which handles IMA sysfs doesn't have this functionality.
-> Is it deliberate (security reason), that it's not exported to users?
+> Well, not quite: bittorrent doesn't reconstruct the hash from the
+> file, it downloads the hash a piece at a time and uses that to verify
+> the piece of the file it's obtained.  However, I accept that's only
+> because the leechers don't have the whole file from which to
+> reconstruct the hash; seed creation certainly does this.
+> 
+> > 
+> > When the package is extracted, the Merkle tree can be regenerated
+> > and written with the file for random IO access using fs-
+> > verity.  When the Merkle tree is written to disk, the top-level
+> > checksum is verified against the checksum stored in the package to
+> > ensure it was written correctly.  This means only a small checksum
+> > needs to be stored in the archive (32 bytes), but an integrated
+> > system will have end-to-end data verification.
+> 
+> I certainly buy this approach, and it fits well with the limited data
+> size there is in xattrs but Ted said in the initial proposal the
+> entire tree would be present in the file.  I can't see a need for
+> supplying the entire tree rather than reconstructing it but maybe
+> there's an android use case I'm not seeing (Like not wanting to waste
+> limited CPU power).
+> 
+> Just so I understand the mechanics: The xattr would contain the head
+> node.  When this is written, the tree would be reconstructed from the
+> file and verified.  If it verifies, it must be stored in the
+> filesystem data somehow (or at least the lowest layer), so all
+> subsequent uses of the file can proceed from the per page hash even
+> after unmount and remount?  Then I certainly think it suits both
+> cases.
 
-This isn't really an IMA issue, but a TPM one.  The TPM device driver
-would need to export this information.
+Just adding to this: it looks like the merkle tree could be an internal
+thing only depending on whether the filesystem supported it and whether
+the user wanted this mode of verification (likely because of the space
+it takes in the filesystem) because you can also construct a merkle
+tree from a standard IMA signed hash, so there's no real need for a new
+external format.
 
-Mimi
+James
+
+
+    [ Part 2, "This is a digitally signed message part" ]
+    [ Application/PGP-SIGNATURE (Name: "signature.asc") 235 bytes. ]
+    [ Unable to print this part. ]
