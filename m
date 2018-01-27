@@ -1,49 +1,54 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:39613 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752243AbeA0KJJ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 27 Jan 2018 05:09:09 -0500
-Date: Fri, 26 Jan 2018 14:11:45 +0100
-From: Cyril Hrubis <chrubis@suse.cz>
-To: Petr Vorel <pvorel@suse.cz>
-Cc: ltp@lists.linux.it, linux-integrity@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
-Subject: Re: [LTP] [RFC PATCH 2/2] security/ima: Run measurements after policy
-Message-ID: <20180126131145.GB12731@rei>
-References: <20180111202821.31639-1-pvorel@suse.cz>
- <20180111202821.31639-3-pvorel@suse.cz>
+Received: from mail-io0-f193.google.com ([209.85.223.193]:36342 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751572AbeA0GuT (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 27 Jan 2018 01:50:19 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180111202821.31639-3-pvorel@suse.cz>
+In-Reply-To: <20171117135758.wvx3w5phndvfmfsh@linux.intel.com>
+References: <20171031200503.GC18578@ziepe.ca> <20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
+ <20171106022704.GD26011@ziepe.ca> <CANc+2y6dx_2zOzFA5aFs7RpEV8aNqxpDghmx+q_+XyendYJoew@mail.gmail.com>
+ <20171107160404.GG21466@ziepe.ca> <20171114143421.3jxn6fzvgp2xmyk6@linux.intel.com>
+ <20171117132853.cmr3wmsc3biedv7p@linux.intel.com> <20171117135758.wvx3w5phndvfmfsh@linux.intel.com>
+From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Date: Sat, 27 Jan 2018 12:20:18 +0530
+Message-ID: <CANc+2y4nALRpw9dY8PK8A56St4NONQoTLc8aHqxuV1RWg_PiCw@mail.gmail.com>
+Subject: Re: [PATCH v2] tpm: Move Linux RNG connection to hwrng
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:INTEGRITY MEASUREMENT ARCHITECTURE (IMA)"
+        <linux-security-module@vger.kernel.org>,
+        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
+        <linux-crypto@vger.kernel.org>,
+        James Morris <james.l.morris@oracle.com>,
+        Matt Mackall <mpm@selenic.com>,
+        David Safford <safford@us.ibm.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi!
-> Signed-off-by: Petr Vorel <pvorel@suse.cz>
-> ---
->  runtest/ima | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/runtest/ima b/runtest/ima
-> index 20d2e0810..3462d12b1 100644
-> --- a/runtest/ima
-> +++ b/runtest/ima
-> @@ -1,5 +1,5 @@
->  #DESCRIPTION:Integrity Measurement Architecture (IMA)
-> -ima01 ima_measurements.sh
-> -ima02 ima_policy.sh
-> +ima01 ima_policy.sh
-> +ima02 ima_measurements.sh
->  ima03 ima_tpm.sh
->  ima04 ima_violations.sh
+Hi Jarkko,
 
-Uh, depending on order of testcases in runtest file is broken anyways,
-what is the real problem here?
+On 17 November 2017 at 19:27, Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+> On Fri, Nov 17, 2017 at 03:28:53PM +0200, Jarkko Sakkinen wrote:
+>
+> At least signed-off-by from PrassanaKumar is missing from the 2nd
+> commit. I'll add it.
 
-Also I suppose that we may as well rename the test ids (e.g. ima01) to
-match the shell script name, since I find it more descriptive.
+I had the impression that my signed-off-by will be present in this
+change. But it is missing in [1]. Is it supposed to be that way?
 
--- 
-Cyril Hrubis
-chrubis@suse.cz
+1. https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=6e592a065d51d26f9d62b8b7501a5114076af8b4
+
+Thanks,
+PrasannaKumar
