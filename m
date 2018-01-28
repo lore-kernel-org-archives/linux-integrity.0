@@ -1,58 +1,59 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55280 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752198AbeA1TBz (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54364 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751986AbeA1Rwx (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 28 Jan 2018 14:01:55 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w0SIx0sJ089339
-        for <linux-integrity@vger.kernel.org>; Sun, 28 Jan 2018 14:01:55 -0500
-Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2fs78nu1t6-1
+        Sun, 28 Jan 2018 12:52:53 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w0SHmeCd138821
+        for <linux-integrity@vger.kernel.org>; Sun, 28 Jan 2018 12:52:53 -0500
+Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2fs8060p55-1
         (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Sun, 28 Jan 2018 14:01:55 -0500
+        for <linux-integrity@vger.kernel.org>; Sun, 28 Jan 2018 12:52:52 -0500
 Received: from localhost
-        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Sun, 28 Jan 2018 19:01:53 -0000
-Subject: Re: [PATCH 00/10] ima-evm-utils
+        Sun, 28 Jan 2018 17:52:50 -0000
+Subject: Re: [PATCH] ima-evm-utils: Add backward compatible support for
+ openssl 1.1
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        "Bruno E . O . Meneguele" <brdeoliv@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-Date: Sun, 28 Jan 2018 14:01:48 -0500
-In-Reply-To: <1516632845-7087-1-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1516632845-7087-1-git-send-email-zohar@linux.vnet.ibm.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        linux-integrity@vger.kernel.org
+Date: Sun, 28 Jan 2018 12:52:47 -0500
+In-Reply-To: <1517161157.3082.41.camel@HansenPartnership.com>
+References: <1517157665.3082.17.camel@HansenPartnership.com>
+         <1517161157.3082.41.camel@HansenPartnership.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1517166108.29187.284.camel@linux.vnet.ibm.com>
+Message-Id: <1517161967.29187.262.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2018-01-22 at 09:53 -0500, Mimi Zohar wrote:
-> Before upgrading to the new OpenSSL 1.1 API, let's clean up the code
-> a bit and add some missing functionality:
-> - option to specify the pcr sysfs location
-> - verify the measurement list using multiple keys
-> - verify the measurement list using multiple pcrs
-> - verify a measurement signature against the measurement list digest
-> - for completeness, extend "ima_verify" to verify the local security.ima hash
+On Sun, 2018-01-28 at 09:39 -0800, James Bottomley wrote:
+> On Sun, 2018-01-28 at 08:41 -0800, James Bottomley wrote:
+> > Openssl 1.1 is really annoying in that it made certain objects opaque
+> > and added accessors for the necessary components, but these accessors
+> > often don't exist in 1.0 and before, so there's no way to create
+> > clean code that will compile with both 1.0 and 1.1; instead you have
+> > to compiled with both code bases to make sure everything is working.
+> > 
+> > The other problem is that since the structures are opaque, their size
+> > isn't known, so having a structure declared as a variable is no
+> > longer possible.
+> > 
+> > This change switches all uses of EVP_MD_CTX to be pointers
+> > initialised with the correct EVP_MD_CTX_new() (not available in 1.0),
+> > does the same for HMAC_CTX, and uses the 1.1 only primitive
+> > RSA_get0_key() to extract the public modulus and exponent from an RSA
+> > key.
+> > 
+> > Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com
+> > >
+> > Tested-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> 
+> OK, let me try that again without the line breaks.
 
-With James' "ima-evm-utils: Add backward compatible support for
-openssl 1.1" patch, which supports both OpenSSL 1.0 and 1.1, there is
-no rush for including all these changes now.
-
-For example instead of specifying the pcr sysfs location, a better
-solution would be for the TPM device driver to export this
-information.
-
-The next branch contains the proposed changes for ima-evm-utils
-version 1.1, which I'm hoping to release within the next day or so.
-
-thanks,
+Definitely a lot better.
 
 Mimi
-
- 
