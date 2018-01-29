@@ -1,58 +1,99 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:40353 "EHLO
-        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751405AbeA2R5Z (ORCPT
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:40013 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751072AbeA2RkS (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 29 Jan 2018 12:57:25 -0500
-Received: by mail-wm0-f42.google.com with SMTP id v123so35416937wmd.5
-        for <linux-integrity@vger.kernel.org>; Mon, 29 Jan 2018 09:57:25 -0800 (PST)
-Date: Mon, 29 Jan 2018 10:57:20 -0700
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2 v2] tpm: cmd_ready command can be issued only after
- granting locality
-Message-ID: <20180129175720.GB23714@ziepe.ca>
-References: <20180128075101.6883-1-tomas.winkler@intel.com>
- <20180128075101.6883-2-tomas.winkler@intel.com>
- <20180128201559.GG23869@ziepe.ca>
- <5B8DA87D05A7694D9FA63FD143655C1B9420DD08@hasmsx108.ger.corp.intel.com>
+        Mon, 29 Jan 2018 12:40:18 -0500
+Received: by mail-yw0-f194.google.com with SMTP id j128so2986769ywg.7
+        for <linux-integrity@vger.kernel.org>; Mon, 29 Jan 2018 09:40:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9420DD08@hasmsx108.ger.corp.intel.com>
+In-Reply-To: <1517243585.29187.546.camel@linux.vnet.ibm.com>
+References: <20180122162452.8756-1-alban@kinvolk.io> <20180122162452.8756-3-alban@kinvolk.io>
+ <20180124175234.GA29811@mail.hallyn.com> <1516881401.3751.37.camel@linux.vnet.ibm.com>
+ <1517243585.29187.546.camel@linux.vnet.ibm.com>
+From: Dongsu Park <dongsu@kinvolk.io>
+Date: Mon, 29 Jan 2018 18:40:16 +0100
+Message-ID: <CANxcAMs_1r0xz=D4bZ9C0k+gdkfrP=DJR0r97G1hG=nUKzKrcw@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 2/2] ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>,
+        Alban Crequy <alban.crequy@gmail.com>,
+        Alban Crequy <alban@kinvolk.io>,
+        =?UTF-8?Q?Iago_L=C3=B3pez_Galeiras?= <iago@kinvolk.io>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        dmitry.kasatkin@gmail.com,
+        James Morris <james.l.morris@oracle.com>,
+        Seth Forshee <seth.forshee@canonical.com>, hch@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sun, Jan 28, 2018 at 09:17:53PM +0000, Winkler, Tomas wrote:
+Hi Mimi,
 
-> > I think if a driver can fail reliquish then it needs some kind of strategy to
-> > recover.
+On Mon, Jan 29, 2018 at 5:33 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> Hi Alban,
+>
+> On Thu, 2018-01-25 at 06:56 -0500, Mimi Zohar wrote:
+>> > > @@ -228,9 +229,28 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+>> > >                            IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
+>> > >                            IMA_ACTION_FLAGS);
+>> > >
+>> > > - if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags))
+>> > > -         /* reset all flags if ima_inode_setxattr was called */
+>> > > + /*
+>> > > +  * Reset the measure, appraise and audit cached flags either if:
+>> > > +  * - ima_inode_setxattr was called, or
+>> > > +  * - based on filesystem feature flag
+>> > > +  * forcing the file to be re-evaluated.
+>> > > +  */
+>> > > + if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags)) {
+>> > >           iint->flags &= ~IMA_DONE_MASK;
+>> > > + } else if (inode->i_sb->s_type->fs_flags & FS_IMA_NO_CACHE) {
+>> > > +         if (action & IMA_MEASURE) {
+>> > > +                 iint->measured_pcrs = 0;
+>> > > +                 iint->flags &=
+>> > > +                     ~(IMA_COLLECTED | IMA_MEASURE | IMA_MEASURED);
+>> > > +         }
+>> > > +         if (action & IMA_APPRAISE)
+>> > > +                 iint->flags &=
+>> > > +                     ~(IMA_COLLECTED | IMA_APPRAISE | IMA_APPRAISED |
+>> > > +                       IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK);
+>> > > +         if (action & IMA_AUDIT)
+>> > > +                 iint->flags &=
+>> > > +                     ~(IMA_COLLECTED | IMA_AUDIT | IMA_AUDITED);
+>> > > + }
+>> > >
+>>
+>> Alban, I don't know what I was thinking, but this can be simplified
+>> like for the IMA_CHANGE_XATTR case.  Except in the IMA_CHANGE_XATTR
+>> case, "measured_pcrs" was already reset, whereas in this case
+>> "measured_pcrs" needs to be reset.
+>
+> Did you get a chance to make the change and test it?
 
-> Maybe some driver can and some not, but if it doesn't succeed it
-> should return an error.
+Alban has been on holidays, so he will be back on Wednesday or so.
+So I'll try to understand what you meant in the last email.
 
-But you can't just leave the driver in some inconsistent state..
+As IMA_DONE_MASK contains all other bitmasks, it's possible to
+optimize the code like this:
 
-Every time I've audited something to do with 'add error codes to
-destroy/free/release' I find driver design issues..
+        if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags)) {
+                iint->flags &= ~IMA_DONE_MASK;
+        } else if (inode->i_sb->s_type->fs_flags & FS_IMA_NO_CACHE) {
+                iint->flags &= ~IMA_DONE_MASK;
+                if (action & IMA_MEASURE)
+                        iint->measured_pcrs = 0;
+        }
 
-> > Suggest trying the reliquish again on every next request until success,
-> > otherwise fail request locality, potentially permanently.
-> 
-> This is something I rather prevent because it leaves the HW in kind of undefined state 
-> ( and we should probably work on that a bit more later).
-> As far as I've debugged the flow now, the driver just fails, and the error goes up 
-> user space caller or the internal flow is stopped.
+Is that what you want to see? Please let me know if it's not.
+Tomorrow I will try to test with a new patch.
 
-But tranmist_command will be called again - then what does the driver
-do? The driver needs an answer for that..
+Thanks,
+Dongsu
 
-If you don't want to retry then I'd rather see request_locality
-permanently fail then adding a return code to release.
-
-Jason
+> Mimi
+>
