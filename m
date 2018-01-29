@@ -1,66 +1,38 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:3004 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751439AbeA2WGe (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 29 Jan 2018 17:06:34 -0500
-Date: Tue, 30 Jan 2018 00:06:12 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        jmorris@namei.org
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:INTEGRITY MEASUREMENT ARCHITECTURE (IMA)"
-        <linux-security-module@vger.kernel.org>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
-        <linux-crypto@vger.kernel.org>,
-        James Morris <james.l.morris@oracle.com>,
-        Matt Mackall <mpm@selenic.com>,
-        David Safford <safford@us.ibm.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH v2] tpm: Move Linux RNG connection to hwrng
-Message-ID: <20180129220612.ifk7r4md5tynlvz4@linux.intel.com>
-References: <20171031200503.GC18578@ziepe.ca>
- <20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
- <20171106022704.GD26011@ziepe.ca>
- <CANc+2y6dx_2zOzFA5aFs7RpEV8aNqxpDghmx+q_+XyendYJoew@mail.gmail.com>
- <20171107160404.GG21466@ziepe.ca>
- <20171114143421.3jxn6fzvgp2xmyk6@linux.intel.com>
- <20171117132853.cmr3wmsc3biedv7p@linux.intel.com>
- <20171117135758.wvx3w5phndvfmfsh@linux.intel.com>
- <CANc+2y4nALRpw9dY8PK8A56St4NONQoTLc8aHqxuV1RWg_PiCw@mail.gmail.com>
+Received: from mail-io0-f170.google.com ([209.85.223.170]:41042 "EHLO
+        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751873AbeA2Vvh (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 29 Jan 2018 16:51:37 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CANc+2y4nALRpw9dY8PK8A56St4NONQoTLc8aHqxuV1RWg_PiCw@mail.gmail.com>
+In-Reply-To: <CA+55aFxXg8JprOwfm0qCm4VkkM8cPM38YMvpkf3gBJq3bSJwPw@mail.gmail.com>
+References: <1517228795.5965.24.camel@redhat.com> <CA+55aFxXg8JprOwfm0qCm4VkkM8cPM38YMvpkf3gBJq3bSJwPw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 29 Jan 2018 13:51:35 -0800
+Message-ID: <CA+55aFzRMS15X7ujHJB2tmFVOteCEgLPB7ysyD+fkRF9dLFaHQ@mail.gmail.com>
+Subject: Re: [GIT PULL] inode->i_version rework for v4.16
+To: Jeff Layton <jlayton@redhat.com>
+Cc: open list <linux-kernel@vger.kernel.org>,
+        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        xfs <linux-xfs@vger.kernel.org>,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sat, Jan 27, 2018 at 12:20:18PM +0530, PrasannaKumar Muralidharan wrote:
-> Hi Jarkko,
-> 
-> On 17 November 2017 at 19:27, Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> > On Fri, Nov 17, 2017 at 03:28:53PM +0200, Jarkko Sakkinen wrote:
-> >
-> > At least signed-off-by from PrassanaKumar is missing from the 2nd
-> > commit. I'll add it.
-> 
-> I had the impression that my signed-off-by will be present in this
-> change. But it is missing in [1]. Is it supposed to be that way?
-> 
-> 1. https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=6e592a065d51d26f9d62b8b7501a5114076af8b4
-> 
-> Thanks,
-> PrasannaKumar
+On Mon, Jan 29, 2018 at 1:50 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Hmm. I have pulled this, but it is really really broken in one place,
+> to the degree that I always went "no, I won't pull this garbage".
 
-Yes, it would be senseful.
+always=almost.
 
-James, would it still be possible to amend this tag to security tree?
+I'd blame auto-correct, but I'm not on the phone.
 
-/Jarkko
+                Linus
