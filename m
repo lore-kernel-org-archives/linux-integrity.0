@@ -1,78 +1,68 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56020 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751604AbeA2T6a (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 29 Jan 2018 14:58:30 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w0TJuvxo120293
-        for <linux-integrity@vger.kernel.org>; Mon, 29 Jan 2018 14:58:30 -0500
-Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ft7j07rwf-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 29 Jan 2018 14:58:29 -0500
-Received: from localhost
-        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Mon, 29 Jan 2018 19:58:27 -0000
-Subject: Re: [RFC PATCH 0/2] IMA: Rewrite tests into new API + fixes
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Petr Vorel <pvorel@suse.cz>
-Cc: ltp@lists.linux.it, Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
-        linux-integrity@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@polito.it>
-Date: Mon, 29 Jan 2018 14:58:23 -0500
-In-Reply-To: <1517100440.29187.120.camel@linux.vnet.ibm.com>
-References: <20180111202821.31639-1-pvorel@suse.cz>
-         <1516815417.3686.55.camel@linux.vnet.ibm.com>
-         <20180125203057.mzzpilp6i43xftka@dell5510>
-         <1516919365.6513.72.camel@linux.vnet.ibm.com>
-         <20180126175110.boaepz6dqe3uojq6@dell5510>
-         <1517100440.29187.120.camel@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1517255903.29187.560.camel@linux.vnet.ibm.com>
+Received: from mga07.intel.com ([134.134.136.100]:49043 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751576AbeA2TkT (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 29 Jan 2018 14:40:19 -0500
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+CC: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/2 v2] tpm: cmd_ready command can be issued only after
+ granting locality
+Date: Mon, 29 Jan 2018 19:40:14 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9420FBB5@hasmsx108.ger.corp.intel.com>
+References: <20180128075101.6883-1-tomas.winkler@intel.com>
+ <20180128075101.6883-2-tomas.winkler@intel.com>
+ <20180128201559.GG23869@ziepe.ca>
+ <5B8DA87D05A7694D9FA63FD143655C1B9420DD08@hasmsx108.ger.corp.intel.com>
+ <20180129175720.GB23714@ziepe.ca>
+In-Reply-To: <20180129175720.GB23714@ziepe.ca>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sat, 2018-01-27 at 19:47 -0500, Mimi Zohar wrote:
-> On Fri, 2018-01-26 at 18:51 +0100, Petr Vorel wrote:
 
-
-> > > > > Originally IMA allowed a builtin policy to be replaced with a custom
-> > > > > policy, by simply cat'ing a file into the securityfs IMA policy file.
-> > > > > Currently, if new rules can be added to the custom policy (Kconfig
-> > > > > IMA_WRITE_POLICY enabled), the policy file must be signed.  Similarly,
-> > > > > if the builtin "secure-boot" policy is defined on the boot command
-> > > > > line, the custom policy must be signed.  Test "ima01 ima_policy.sh"
-> > > > > should first detect if the policy must be signed, before running the
-> > > > > tests.
-> > 
-> > > > Right, I'll check it. Is there other way how to detect it than reading
-> > > > /boot/config-$(uname -r) or /proc/config.gz ? I'm asking because IMA might be using on
-> > > > embedded devices (guessing from [2], [3]), which might not have either of them.
-> > This is important. As Cyril agreed with me grepping /boot/config-$(uname -r) or
-> > /proc/config.gz isn't good solution. I don't see any ioctl interface and
-> > security/integrity/ima/ima_fs.c which handles IMA sysfs doesn't have this functionality.
-> > Is it deliberate (security reason), that it's not exported to users?
+> On Sun, Jan 28, 2018 at 09:17:53PM +0000, Winkler, Tomas wrote:
 > 
-> This isn't really an IMA issue, but a TPM one.  The TPM device driver
-> would need to export this information.
+> > > I think if a driver can fail reliquish then it needs some kind of
+> > > strategy to recover.
+> 
+> > Maybe some driver can and some not, but if it doesn't succeed it
+> > should return an error.
+> 
+> But you can't just leave the driver in some inconsistent state..
+> 
+> Every time I've audited something to do with 'add error codes to
+> destroy/free/release' I find driver design issues..
 
-Sorry, that was an answer to the wrong question.  In ima_tpm.sh,
-there's the question:
+I'm sure of it, but from this particular point the driver itself is stateless, 
+it's just reading HW state via registers. It's not going through driver state changes.
 
-# Would be nice to know where the PCRs are located. Is this safe?".
+> > > Suggest trying the reliquish again on every next request until
+> > > success, otherwise fail request locality, potentially permanently.
+> >
+> > This is something I rather prevent because it leaves the HW in kind of
+> > undefined state ( and we should probably work on that a bit more later).
+> > As far as I've debugged the flow now, the driver just fails, and the
+> > error goes up user space caller or the internal flow is stopped.
+> 
+> But tranmist_command will be called again - then what does the driver do?
+> The driver needs an answer for that..
+It will just fail again
+> 
+> If you don't want to retry then I'd rather see request_locality permanently
+> fail then adding a return code to release.
 
-Commit 313d21e "tpm: device class for tpm" moved the TPM sysfs
-location from /sys/class/misc/tpmX/device/ to
-/sys/class/tpm/tpmX/device/.  The pcrs are 
+What do you mean exactly mean by permanently fail,  
+My current assumption is that  it will fail permanently because the HW is not responsive
+Or indicate error on any subsequent command, unless the hw recover somehow. 
+Currently I'm not aware of any possibility to reset the device except rebooting the system.
 
 
-To answer your question, if after writing the custom policy, the
-policy file disappears, then you obviously can't extend the policy.
- If the policy file doesn't disappear, you might not be able to extend
-the policy, just view it.  Sorry, there's no method of knowing apriori
-whether the policy can be extended.
-
-Mimi
+Thanks
+Tomas
