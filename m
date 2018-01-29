@@ -1,88 +1,78 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-it0-f41.google.com ([209.85.214.41]:33606 "EHLO
-        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751574AbeA2Vut (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56020 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751604AbeA2T6a (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 29 Jan 2018 16:50:49 -0500
-MIME-Version: 1.0
-In-Reply-To: <1517228795.5965.24.camel@redhat.com>
-References: <1517228795.5965.24.camel@redhat.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 29 Jan 2018 13:50:47 -0800
-Message-ID: <CA+55aFxXg8JprOwfm0qCm4VkkM8cPM38YMvpkf3gBJq3bSJwPw@mail.gmail.com>
-Subject: Re: [GIT PULL] inode->i_version rework for v4.16
-To: Jeff Layton <jlayton@redhat.com>
-Cc: open list <linux-kernel@vger.kernel.org>,
-        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        xfs <linux-xfs@vger.kernel.org>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>
+        Mon, 29 Jan 2018 14:58:30 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w0TJuvxo120293
+        for <linux-integrity@vger.kernel.org>; Mon, 29 Jan 2018 14:58:30 -0500
+Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ft7j07rwf-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 29 Jan 2018 14:58:29 -0500
+Received: from localhost
+        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Mon, 29 Jan 2018 19:58:27 -0000
+Subject: Re: [RFC PATCH 0/2] IMA: Rewrite tests into new API + fixes
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Petr Vorel <pvorel@suse.cz>
+Cc: ltp@lists.linux.it, Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
+        linux-integrity@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@polito.it>
+Date: Mon, 29 Jan 2018 14:58:23 -0500
+In-Reply-To: <1517100440.29187.120.camel@linux.vnet.ibm.com>
+References: <20180111202821.31639-1-pvorel@suse.cz>
+         <1516815417.3686.55.camel@linux.vnet.ibm.com>
+         <20180125203057.mzzpilp6i43xftka@dell5510>
+         <1516919365.6513.72.camel@linux.vnet.ibm.com>
+         <20180126175110.boaepz6dqe3uojq6@dell5510>
+         <1517100440.29187.120.camel@linux.vnet.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1517255903.29187.560.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Jan 29, 2018 at 4:26 AM, Jeff Layton <jlayton@redhat.com> wrote:
->
-> This pile of patches is a rework of the inode->i_version field. We have
-> traditionally incremented that field on every inode data or metadata
-> change. Typically this increment needs to be logged on disk even when
-> nothing else has changed, which is rather expensive.
+On Sat, 2018-01-27 at 19:47 -0500, Mimi Zohar wrote:
+> On Fri, 2018-01-26 at 18:51 +0100, Petr Vorel wrote:
 
-Hmm. I have pulled this, but it is really really broken in one place,
-to the degree that I always went "no, I won't pull this garbage".
 
-But the breakage is potential, not actual, and can be fixed trivially,
-so I'll let it slide - but I do require it to be fixed. And I require
-people to *think* about it.
+> > > > > Originally IMA allowed a builtin policy to be replaced with a custom
+> > > > > policy, by simply cat'ing a file into the securityfs IMA policy file.
+> > > > > Currently, if new rules can be added to the custom policy (Kconfig
+> > > > > IMA_WRITE_POLICY enabled), the policy file must be signed.  Similarly,
+> > > > > if the builtin "secure-boot" policy is defined on the boot command
+> > > > > line, the custom policy must be signed.  Test "ima01 ima_policy.sh"
+> > > > > should first detect if the policy must be signed, before running the
+> > > > > tests.
+> > 
+> > > > Right, I'll check it. Is there other way how to detect it than reading
+> > > > /boot/config-$(uname -r) or /proc/config.gz ? I'm asking because IMA might be using on
+> > > > embedded devices (guessing from [2], [3]), which might not have either of them.
+> > This is important. As Cyril agreed with me grepping /boot/config-$(uname -r) or
+> > /proc/config.gz isn't good solution. I don't see any ioctl interface and
+> > security/integrity/ima/ima_fs.c which handles IMA sysfs doesn't have this functionality.
+> > Is it deliberate (security reason), that it's not exported to users?
+> 
+> This isn't really an IMA issue, but a TPM one.  The TPM device driver
+> would need to export this information.
 
-So what's to horribly horribly wrong?
+Sorry, that was an answer to the wrong question.  In ima_tpm.sh,
+there's the question:
 
-The inode_cmp_iversion{+raw}() functions are pure and utter crap.
+# Would be nice to know where the PCRs are located. Is this safe?".
 
-Why?
+Commit 313d21e "tpm: device class for tpm" moved the TPM sysfs
+location from /sys/class/misc/tpmX/device/ to
+/sys/class/tpm/tpmX/device/.  The pcrs are 
 
-You say that they return 0/negative/positive, but they do so in a
-completely broken manner. They return that ternary value as the
-sequence number difference in a 's64', which means that if you
-actually care about that ternary value, and do the *sane* thing that
-the kernel-doc of the function implies is the right thing, you would
-do
 
-    int cmp = inode_cmp_iversion(inode, old);
+To answer your question, if after writing the custom policy, the
+policy file disappears, then you obviously can't extend the policy.
+ If the policy file doesn't disappear, you might not be able to extend
+the policy, just view it.  Sorry, there's no method of knowing apriori
+whether the policy can be extended.
 
-    if (cmp < 0 ...
-
-and as a result you get code that looks sane, but that doesn't
-actually *WORK* right.
-
-To make it even worse, it will actually work in practice by accident
-in 99.99999% of all cases, so now you have
-
- (a) subtly buggy code
- (b) that looks fine
- (c) and that works in testing
-
-which is just about the worst possible case for any code. The
-interface is simply garbage that encourages bugs.
-
-And the bug wouldn't be in the user, the bug would be in this code you
-just sent me. The interface is simply wrong.
-
-So this absolutely needs to be fixed. I see two fixes:
-
- - just return a boolean. That's all that any current user actually
-wants, so the ternary value seems pointless.
-
- - make it return an 'int', and not just any int, but -1/0/1. That way
-there is no worry about uses, and if somebody *really* cares about the
-ternary value, they can now use a "switch" statement to get it
-(alternatively, make it return an enum, but whatever).
-
-That "ternary" function that has 18446744069414584320 incorrect return
-values really is unacceptable.
-
-                Linus
+Mimi
