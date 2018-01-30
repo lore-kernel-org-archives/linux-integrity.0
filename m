@@ -1,132 +1,72 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:56506 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752321AbeA3Tm7 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 30 Jan 2018 14:42:59 -0500
-Message-ID: <1517341375.3658.12.camel@kernel.org>
-Subject: Re: [PATCH] iversion: make inode_cmp_iversion{+raw} return bool
- instead of s64
-From: Jeff Layton <jlayton@kernel.org>
-To: Trond Myklebust <trondmy@primarydata.com>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
-Cc: "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "tytso@mit.edu" <tytso@mit.edu>
-Date: Tue, 30 Jan 2018 14:42:55 -0500
-In-Reply-To: <1517334602.5412.3.camel@primarydata.com>
-References: <20180130173126.2806-1-jlayton@kernel.org>
-         <1517334602.5412.3.camel@primarydata.com>
+Received: from mail-yw0-f177.google.com ([209.85.161.177]:40978 "EHLO
+        mail-yw0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751795AbeA3SNG (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 30 Jan 2018 13:13:06 -0500
+Received: by mail-yw0-f177.google.com with SMTP id b129so5433749ywa.8
+        for <linux-integrity@vger.kernel.org>; Tue, 30 Jan 2018 10:13:06 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <CANxcAMs_1r0xz=D4bZ9C0k+gdkfrP=DJR0r97G1hG=nUKzKrcw@mail.gmail.com>
+References: <20180122162452.8756-1-alban@kinvolk.io> <20180122162452.8756-3-alban@kinvolk.io>
+ <20180124175234.GA29811@mail.hallyn.com> <1516881401.3751.37.camel@linux.vnet.ibm.com>
+ <1517243585.29187.546.camel@linux.vnet.ibm.com> <CANxcAMs_1r0xz=D4bZ9C0k+gdkfrP=DJR0r97G1hG=nUKzKrcw@mail.gmail.com>
+From: Dongsu Park <dongsu@kinvolk.io>
+Date: Tue, 30 Jan 2018 19:13:05 +0100
+Message-ID: <CANxcAMs1A_s-i=vDRfcYqi_149hkS47V3iaJzxdMNgzUyRS7GA@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 2/2] ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>,
+        Alban Crequy <alban.crequy@gmail.com>,
+        Alban Crequy <alban@kinvolk.io>,
+        =?UTF-8?Q?Iago_L=C3=B3pez_Galeiras?= <iago@kinvolk.io>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <james.l.morris@oracle.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Christoph Hellwig <hch@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, 2018-01-30 at 17:50 +0000, Trond Myklebust wrote:
-> On Tue, 2018-01-30 at 12:31 -0500, Jeff Layton wrote:
-> > From: Jeff Layton <jlayton@redhat.com>
-> > 
-> > As Linus points out:
-> > 
-> >     The inode_cmp_iversion{+raw}() functions are pure and utter crap.
-> > 
-> >     Why?
-> > 
-> >     You say that they return 0/negative/positive, but they do so in a
-> >     completely broken manner. They return that ternary value as the
-> >     sequence number difference in a 's64', which means that if you
-> >     actually care about that ternary value, and do the *sane* thing
-> > that
-> >     the kernel-doc of the function implies is the right thing, you
-> > would
-> >     do
-> > 
-> >         int cmp = inode_cmp_iversion(inode, old);
-> >         if (cmp < 0 ...
-> > 
-> >     and as a result you get code that looks sane, but that doesn't
-> >     actually *WORK* right.
-> > 
-> > Since none of the callers actually care about the ternary value here,
-> > convert the inode_cmp_iversion{+raw} functions to just return a
-> > boolean
-> > value (false for matching, true for non-matching).
-> > 
-> > This matches the existing use of these functions just fine, and makes
-> > it
-> > simple to convert them to return a ternary value in the future if we
-> > grow callers that need it.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@redhat.com>
-> > ---
-> >  include/linux/iversion.h | 20 +++++++++-----------
-> >  1 file changed, 9 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/include/linux/iversion.h b/include/linux/iversion.h
-> > index 858463fca249..ace32775c5f0 100644
-> > --- a/include/linux/iversion.h
-> > +++ b/include/linux/iversion.h
-> > @@ -309,13 +309,13 @@ inode_query_iversion(struct inode *inode)
-> >   * @inode: inode to check
-> >   * @old: old value to check against its i_version
-> >   *
-> > - * Compare the current raw i_version counter with a previous one.
-> > Returns 0 if
-> > - * they are the same or non-zero if they are different.
-> > + * Compare the current raw i_version counter with a previous one.
-> > Returns false
-> > + * if they are the same or true if they are different.
-> >   */
-> > -static inline s64
-> > +static inline bool
-> >  inode_cmp_iversion_raw(const struct inode *inode, u64 old)
-> >  {
-> > -	return (s64)inode_peek_iversion_raw(inode) - (s64)old;
-> > +	return inode_peek_iversion_raw(inode) != old;
-> >  }
-> >  
-> >  /**
-> > @@ -323,19 +323,17 @@ inode_cmp_iversion_raw(const struct inode
-> > *inode, u64 old)
-> >   * @inode: inode to check
-> >   * @old: old value to check against its i_version
-> >   *
-> > - * Compare an i_version counter with a previous one. Returns 0 if
-> > they are
-> > - * the same, a positive value if the one in the inode appears newer
-> > than @old,
-> > - * and a negative value if @old appears to be newer than the one in
-> > the
-> > - * inode.
-> > + * Compare an i_version counter with a previous one. Returns false
-> > if they are
-> > + * the same, and true if they are different.
-> >   *
-> >   * Note that we don't need to set the QUERIED flag in this case, as
-> > the value
-> >   * in the inode is not being recorded for later use.
-> >   */
-> >  
-> > -static inline s64
-> > +static inline bool
-> >  inode_cmp_iversion(const struct inode *inode, u64 old)
-> >  {
-> > -	return (s64)(inode_peek_iversion_raw(inode) &
-> > ~I_VERSION_QUERIED) -
-> > -	       (s64)(old << I_VERSION_QUERIED_SHIFT);
-> > +	return (inode_peek_iversion_raw(inode) & ~I_VERSION_QUERIED)
-> > !=
-> > +			(old << I_VERSION_QUERIED_SHIFT);
-> >  }
-> 
-> Is there any reason why this couldn't just use inode_peek_iversion()
-> instead of having to both mask the output from
-> inode_peek_iversion_raw() and shift 'old'?
+Hi,
 
-None at all. I'll send a v2.
--- 
-Jeff Layton <jlayton@kernel.org>
+On Mon, Jan 29, 2018 at 6:40 PM, Dongsu Park <dongsu@kinvolk.io> wrote:
+> On Mon, Jan 29, 2018 at 5:33 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+>> On Thu, 2018-01-25 at 06:56 -0500, Mimi Zohar wrote:
+...
+>> Did you get a chance to make the change and test it?
+>
+> Alban has been on holidays, so he will be back on Wednesday or so.
+> So I'll try to understand what you meant in the last email.
+>
+> As IMA_DONE_MASK contains all other bitmasks, it's possible to
+> optimize the code like this:
+>
+>         if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags)) {
+>                 iint->flags &= ~IMA_DONE_MASK;
+>         } else if (inode->i_sb->s_type->fs_flags & FS_IMA_NO_CACHE) {
+>                 iint->flags &= ~IMA_DONE_MASK;
+>                 if (action & IMA_MEASURE)
+>                         iint->measured_pcrs = 0;
+>         }
+>
+> Is that what you want to see? Please let me know if it's not.
+> Tomorrow I will try to test with a new patch.
+
+Today I created a new patch, and tested it. It worked fine.
+So I've just sent a new patchset v4. Please see:
+https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1598387.html
+
+Thanks,
+Dongsu
+
+> Thanks,
+> Dongsu
+>
+>> Mimi
+>>
