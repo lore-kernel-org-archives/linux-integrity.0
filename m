@@ -1,40 +1,74 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from imap.thunk.org ([74.207.234.97]:44560 "EHLO imap.thunk.org"
+Received: from mga03.intel.com ([134.134.136.65]:8255 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751444AbeA3QIh (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 30 Jan 2018 11:08:37 -0500
-Date: Tue, 30 Jan 2018 10:15:43 -0500
-From: Theodore Ts'o <tytso@mit.edu>
-To: Jeff Layton <jlayton@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        id S1752933AbeA3P2R (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 30 Jan 2018 10:28:17 -0500
+Date: Tue, 30 Jan 2018 17:28:08 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: James Morris <jmorris@namei.org>
+Cc: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         open list <linux-kernel@vger.kernel.org>,
-        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        xfs <linux-xfs@vger.kernel.org>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>
-Subject: Re: [GIT PULL] inode->i_version rework for v4.16
-Message-ID: <20180130151543.GB8351@thunk.org>
-References: <1517228795.5965.24.camel@redhat.com>
- <CA+55aFxXg8JprOwfm0qCm4VkkM8cPM38YMvpkf3gBJq3bSJwPw@mail.gmail.com>
- <1517313948.3658.8.camel@redhat.com>
+        "open list:INTEGRITY MEASUREMENT ARCHITECTURE (IMA)"
+        <linux-security-module@vger.kernel.org>,
+        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
+        <linux-crypto@vger.kernel.org>,
+        James Morris <james.l.morris@oracle.com>,
+        Matt Mackall <mpm@selenic.com>,
+        David Safford <safford@us.ibm.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH v2] tpm: Move Linux RNG connection to hwrng
+Message-ID: <20180130152808.2egxs2ki657eyxe3@linux.intel.com>
+References: <20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
+ <20171106022704.GD26011@ziepe.ca>
+ <CANc+2y6dx_2zOzFA5aFs7RpEV8aNqxpDghmx+q_+XyendYJoew@mail.gmail.com>
+ <20171107160404.GG21466@ziepe.ca>
+ <20171114143421.3jxn6fzvgp2xmyk6@linux.intel.com>
+ <20171117132853.cmr3wmsc3biedv7p@linux.intel.com>
+ <20171117135758.wvx3w5phndvfmfsh@linux.intel.com>
+ <CANc+2y4nALRpw9dY8PK8A56St4NONQoTLc8aHqxuV1RWg_PiCw@mail.gmail.com>
+ <20180129220612.ifk7r4md5tynlvz4@linux.intel.com>
+ <alpine.LRH.2.21.1801302252020.20741@namei.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1517313948.3658.8.camel@redhat.com>
+In-Reply-To: <alpine.LRH.2.21.1801302252020.20741@namei.org>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Jan 30, 2018 at 07:05:48AM -0500, Jeff Layton wrote:
+On Tue, Jan 30, 2018 at 10:52:13PM +1100, James Morris wrote:
+> On Tue, 30 Jan 2018, Jarkko Sakkinen wrote:
 > 
-> I want to make sure I understand what's actually broken here thoug. Is
-> it only broken when the two values are more than 2**63 apart, or is
-> there something else more fundamentally wrong here?
+> > On Sat, Jan 27, 2018 at 12:20:18PM +0530, PrasannaKumar Muralidharan wrote:
+> > > Hi Jarkko,
+> > > 
+> > > On 17 November 2017 at 19:27, Jarkko Sakkinen
+> > > <jarkko.sakkinen@linux.intel.com> wrote:
+> > > > On Fri, Nov 17, 2017 at 03:28:53PM +0200, Jarkko Sakkinen wrote:
+> > > >
+> > > > At least signed-off-by from PrassanaKumar is missing from the 2nd
+> > > > commit. I'll add it.
+> > > 
+> > > I had the impression that my signed-off-by will be present in this
+> > > change. But it is missing in [1]. Is it supposed to be that way?
+> > > 
+> > > 1. https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=6e592a065d51d26f9d62b8b7501a5114076af8b4
+> > > 
+> > > Thanks,
+> > > PrasannaKumar
+> > 
+> > Yes, it would be senseful.
+> > 
+> > James, would it still be possible to amend this tag to security tree?
+> 
+> Nope, it's been pushed to Linus.
 
-The other problem is that returning a s64 (or a u64) is extremely
-inefficient on a 32-bit platform.  So in general, it's better to avoid
-returning a 64-bit type unless it's really necessary....
+Damn. Well, good that Tested-by is there. I'm sorry about this.
 
-						- Ted
+/Jarkko
