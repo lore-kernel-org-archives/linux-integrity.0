@@ -1,74 +1,108 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:8255 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752933AbeA3P2R (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 30 Jan 2018 10:28:17 -0500
-Date: Tue, 30 Jan 2018 17:28:08 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: James Morris <jmorris@namei.org>
-Cc: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:INTEGRITY MEASUREMENT ARCHITECTURE (IMA)"
-        <linux-security-module@vger.kernel.org>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
-        <linux-crypto@vger.kernel.org>,
-        James Morris <james.l.morris@oracle.com>,
-        Matt Mackall <mpm@selenic.com>,
-        David Safford <safford@us.ibm.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH v2] tpm: Move Linux RNG connection to hwrng
-Message-ID: <20180130152808.2egxs2ki657eyxe3@linux.intel.com>
-References: <20171105110506.usxmuzrvcjvxahr6@linux.intel.com>
- <20171106022704.GD26011@ziepe.ca>
- <CANc+2y6dx_2zOzFA5aFs7RpEV8aNqxpDghmx+q_+XyendYJoew@mail.gmail.com>
- <20171107160404.GG21466@ziepe.ca>
- <20171114143421.3jxn6fzvgp2xmyk6@linux.intel.com>
- <20171117132853.cmr3wmsc3biedv7p@linux.intel.com>
- <20171117135758.wvx3w5phndvfmfsh@linux.intel.com>
- <CANc+2y4nALRpw9dY8PK8A56St4NONQoTLc8aHqxuV1RWg_PiCw@mail.gmail.com>
- <20180129220612.ifk7r4md5tynlvz4@linux.intel.com>
- <alpine.LRH.2.21.1801302252020.20741@namei.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <alpine.LRH.2.21.1801302252020.20741@namei.org>
+Received: from mail-qk0-f177.google.com ([209.85.220.177]:41352 "EHLO
+        mail-qk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751467AbeA3MFv (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 30 Jan 2018 07:05:51 -0500
+Received: by mail-qk0-f177.google.com with SMTP id l29so9731539qkj.8
+        for <linux-integrity@vger.kernel.org>; Tue, 30 Jan 2018 04:05:51 -0800 (PST)
+Message-ID: <1517313948.3658.8.camel@redhat.com>
+Subject: Re: [GIT PULL] inode->i_version rework for v4.16
+From: Jeff Layton <jlayton@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: open list <linux-kernel@vger.kernel.org>,
+        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        xfs <linux-xfs@vger.kernel.org>,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>
+Date: Tue, 30 Jan 2018 07:05:48 -0500
+In-Reply-To: <CA+55aFxXg8JprOwfm0qCm4VkkM8cPM38YMvpkf3gBJq3bSJwPw@mail.gmail.com>
+References: <1517228795.5965.24.camel@redhat.com>
+         <CA+55aFxXg8JprOwfm0qCm4VkkM8cPM38YMvpkf3gBJq3bSJwPw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Jan 30, 2018 at 10:52:13PM +1100, James Morris wrote:
-> On Tue, 30 Jan 2018, Jarkko Sakkinen wrote:
-> 
-> > On Sat, Jan 27, 2018 at 12:20:18PM +0530, PrasannaKumar Muralidharan wrote:
-> > > Hi Jarkko,
-> > > 
-> > > On 17 November 2017 at 19:27, Jarkko Sakkinen
-> > > <jarkko.sakkinen@linux.intel.com> wrote:
-> > > > On Fri, Nov 17, 2017 at 03:28:53PM +0200, Jarkko Sakkinen wrote:
-> > > >
-> > > > At least signed-off-by from PrassanaKumar is missing from the 2nd
-> > > > commit. I'll add it.
-> > > 
-> > > I had the impression that my signed-off-by will be present in this
-> > > change. But it is missing in [1]. Is it supposed to be that way?
-> > > 
-> > > 1. https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=6e592a065d51d26f9d62b8b7501a5114076af8b4
-> > > 
-> > > Thanks,
-> > > PrasannaKumar
+On Mon, 2018-01-29 at 13:50 -0800, Linus Torvalds wrote:
+> On Mon, Jan 29, 2018 at 4:26 AM, Jeff Layton <jlayton@redhat.com> wrote:
 > > 
-> > Yes, it would be senseful.
-> > 
-> > James, would it still be possible to amend this tag to security tree?
+> > This pile of patches is a rework of the inode->i_version field. We have
+> > traditionally incremented that field on every inode data or metadata
+> > change. Typically this increment needs to be logged on disk even when
+> > nothing else has changed, which is rather expensive.
 > 
-> Nope, it's been pushed to Linus.
+> Hmm. I have pulled this, but it is really really broken in one place,
+> to the degree that I always went "no, I won't pull this garbage".
+> 
+> But the breakage is potential, not actual, and can be fixed trivially,
+> so I'll let it slide - but I do require it to be fixed. And I require
+> people to *think* about it.
+> 
+> So what's to horribly horribly wrong?
+> 
+> The inode_cmp_iversion{+raw}() functions are pure and utter crap.
+> 
+> Why?
+> 
+> You say that they return 0/negative/positive, but they do so in a
+> completely broken manner. They return that ternary value as the
+> sequence number difference in a 's64', which means that if you
+> actually care about that ternary value, and do the *sane* thing that
+> the kernel-doc of the function implies is the right thing, you would
+> do
+> 
+>     int cmp = inode_cmp_iversion(inode, old);
+> 
+>     if (cmp < 0 ...
+> 
+> and as a result you get code that looks sane, but that doesn't
+> actually *WORK* right.
+> 
 
-Damn. Well, good that Tested-by is there. I'm sorry about this.
+My intent here was to have this handle wraparound using the same sort of
+method that the time_before/time_after macros do. Obviously, I didn't
+document that well.
 
-/Jarkko
+I want to make sure I understand what's actually broken here thoug. Is
+it only broken when the two values are more than 2**63 apart, or is
+there something else more fundamentally wrong here?
+
+> To make it even worse, it will actually work in practice by accident
+> in 99.99999% of all cases, so now you have
+> 
+>  (a) subtly buggy code
+>  (b) that looks fine
+>  (c) and that works in testing
+> 
+> which is just about the worst possible case for any code. The
+> interface is simply garbage that encourages bugs.
+> 
+> And the bug wouldn't be in the user, the bug would be in this code you
+> just sent me. The interface is simply wrong.
+> 
+> So this absolutely needs to be fixed. I see two fixes:
+> 
+>  - just return a boolean. That's all that any current user actually
+> wants, so the ternary value seems pointless.
+> 
+>  - make it return an 'int', and not just any int, but -1/0/1. That way
+> there is no worry about uses, and if somebody *really* cares about the
+> ternary value, they can now use a "switch" statement to get it
+> (alternatively, make it return an enum, but whatever).
+> 
+> That "ternary" function that has 18446744069414584320 incorrect return
+> values really is unacceptable.
+> 
+
+I think I'll just make it return a boolean value like you suggested
+first. I'll send a patch to fix it once I've done some basic testing
+with it.
+
+Many thanks,
+--
+Jeff Layton <jlayton@redhat.com>
