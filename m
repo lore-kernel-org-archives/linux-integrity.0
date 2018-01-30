@@ -1,11 +1,11 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:56136 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753101AbeA3SFb (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:39707 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752997AbeA3SFa (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 30 Jan 2018 13:05:31 -0500
-Received: by mail-wm0-f65.google.com with SMTP id 143so2948198wma.5
-        for <linux-integrity@vger.kernel.org>; Tue, 30 Jan 2018 10:05:30 -0800 (PST)
+        Tue, 30 Jan 2018 13:05:30 -0500
+Received: by mail-wm0-f67.google.com with SMTP id b21so2944857wme.4
+        for <linux-integrity@vger.kernel.org>; Tue, 30 Jan 2018 10:05:29 -0800 (PST)
 From: Dongsu Park <dongsu@kinvolk.io>
 To: linux-kernel@vger.kernel.org
 Cc: linux-integrity@vger.kernel.org,
@@ -21,9 +21,9 @@ Cc: linux-integrity@vger.kernel.org,
         "Serge E . Hallyn" <serge@hallyn.com>,
         Seth Forshee <seth.forshee@canonical.com>,
         Miklos Szeredi <miklos@szeredi.hu>
-Subject: [RFC PATCH v4 2/2] ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE
-Date: Tue, 30 Jan 2018 19:06:32 +0100
-Message-Id: <10ef27e369ce46652ee7b2b6238aa4551de2be8b.1517314847.git.dongsu@kinvolk.io>
+Subject: [RFC PATCH v4 1/2] fuse: introduce new fs_type flag FS_IMA_NO_CACHE
+Date: Tue, 30 Jan 2018 19:06:31 +0100
+Message-Id: <86832c6adb256f29f44b6229222b80964fc8cfcc.1517314847.git.dongsu@kinvolk.io>
 In-Reply-To: <cover.1517314847.git.dongsu@kinvolk.io>
 References: <cover.1517314847.git.dongsu@kinvolk.io>
 In-Reply-To: <cover.1517314847.git.dongsu@kinvolk.io>
@@ -33,77 +33,12 @@ List-ID: <linux-integrity.vger.kernel.org>
 
 From: Alban Crequy <alban@kinvolk.io>
 
-This patch forces files to be re-measured, re-appraised and re-audited
-on file systems with the feature flag FS_IMA_NO_CACHE. In that way,
-cached integrity results won't be used.
+This new fs_type flag FS_IMA_NO_CACHE means files should be re-measured,
+re-appraised and re-audited each time. Cached integrity results should
+not be used.
 
-How to test this:
-
-The test I did was using a patched version of the memfs FUSE driver
-[1][2] and two very simple "hello-world" programs [4] (prog1 prints
-"hello world: 1" and prog2 prints "hello world: 2").
-
-I copy prog1 and prog2 in the fuse-memfs mount point, execute them and
-check the sha1 hash in
-"/sys/kernel/security/ima/ascii_runtime_measurements".
-
-My patch on the memfs FUSE driver added a backdoor command to serve
-prog1 when the kernel asks for prog2 or vice-versa. In this way, I can
-exec prog1 and get it to print "hello world: 2" without ever replacing
-the file via the VFS, so the kernel is not aware of the change.
-
-The test was done using the branch "dongsu/fuse-flag-ima-nocache-v4" [3].
-
-Step by step test procedure:
-
-1. Mount the memfs FUSE using [2]:
-rm -f  /tmp/memfs-switch* ; memfs -L DEBUG  /mnt/memfs
-
-2. Copy prog1 and prog2 using [4]
-cp prog1 /mnt/memfs/prog1
-cp prog2 /mnt/memfs/prog2
-
-3. Lookup the files and let the FUSE driver to keep the handles open:
-dd if=/mnt/memfs/prog1 bs=1 | (read -n 1 x ; sleep 3600 ) &
-dd if=/mnt/memfs/prog2 bs=1 | (read -n 1 x ; sleep 3600 ) &
-
-4. Check the 2 programs work correctly:
-$ /mnt/memfs/prog1
-hello world: 1
-$ /mnt/memfs/prog2
-hello world: 2
-
-5. Check the measurements for prog1 and prog2:
-$ sudo cat /sys/kernel/security/ima/ascii_runtime_measurements \
-                | grep /mnt/memfs/prog
-10 [...] ima-ng sha1:ac14c9268cd2[...] /mnt/memfs/prog1
-10 [...] ima-ng sha1:799cb5d1e06d[...] /mnt/memfs/prog2
-
-6. Use the backdoor command in my patched memfs to redirect file
-operations on file handle 3 to file handle 2:
-rm -f  /tmp/memfs-switch* ; touch /tmp/memfs-switch-3-2
-
-7. Check how the FUSE driver serves different content for the files:
-$ /mnt/memfs/prog1
-hello world: 2
-$ /mnt/memfs/prog2
-hello world: 2
-
-8. Check the measurements:
-sudo cat /sys/kernel/security/ima/ascii_runtime_measurements \
-                | grep /mnt/memfs/prog
-
-Without the patch, there are no new measurements, despite the FUSE
-driver having served different executables.
-
-With the patch, I can see additional measurements for prog1 and prog2
-with the hashes reversed when the FUSE driver served the alternative
-content.
-
-[1] https://github.com/bbengfort/memfs
-[2] https://github.com/kinvolk/memfs/commits/alban/switch-files
-[3] https://github.com/kinvolk/linux/commits/dongsu/fuse-flag-ima-nocache-v4
-[4] https://github.com/kinvolk/fuse-userns-patches/commit/cf1f5750cab0
+It is useful in FUSE because the userspace FUSE process can change the
+underlying files at any time without notifying the kernel.
 
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-integrity@vger.kernel.org
@@ -119,45 +54,35 @@ Acked-by: "Serge E. Hallyn" <serge@hallyn.com>
 Acked-by: Seth Forshee <seth.forshee@canonical.com>
 Tested-by: Dongsu Park <dongsu@kinvolk.io>
 Signed-off-by: Alban Crequy <alban@kinvolk.io>
-[dongsu: optimized code to address review comments by Mimi]
-Signed-off-by: Dongsu Park <dongsu@kinvolk.io>
 ---
- security/integrity/ima/ima_main.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ fs/fuse/inode.c    | 2 +-
+ include/linux/fs.h | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 6d78cb26..83edbad8 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -24,6 +24,7 @@
- #include <linux/slab.h>
- #include <linux/xattr.h>
- #include <linux/ima.h>
-+#include <linux/fs.h>
- 
- #include "ima.h"
- 
-@@ -228,9 +229,19 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
- 				 IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
- 				 IMA_ACTION_FLAGS);
- 
--	if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags))
--		/* reset all flags if ima_inode_setxattr was called */
-+	/*
-+	 * Reset the measure, appraise and audit cached flags either if:
-+	 * - ima_inode_setxattr was called, or
-+	 * - based on filesystem feature flag
-+	 * forcing the file to be re-evaluated.
-+	 */
-+	if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags)) {
- 		iint->flags &= ~IMA_DONE_MASK;
-+	} else if (inode->i_sb->s_type->fs_flags & FS_IMA_NO_CACHE) {
-+		iint->flags &= ~IMA_DONE_MASK;
-+		if (action & IMA_MEASURE)
-+			iint->measured_pcrs = 0;
-+	}
- 
- 	/* Determine if already appraised/measured based on bitmask
- 	 * (IMA_MEASURE, IMA_MEASURED, IMA_XXXX_APPRAISE, IMA_XXXX_APPRAISED,
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 624f18bb..0a9e5164 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1205,7 +1205,7 @@ static void fuse_kill_sb_anon(struct super_block *sb)
+ static struct file_system_type fuse_fs_type = {
+ 	.owner		= THIS_MODULE,
+ 	.name		= "fuse",
+-	.fs_flags	= FS_HAS_SUBTYPE,
++	.fs_flags	= FS_HAS_SUBTYPE | FS_IMA_NO_CACHE,
+ 	.mount		= fuse_mount,
+ 	.kill_sb	= fuse_kill_sb_anon,
+ };
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 511fbaab..ced841ba 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2075,6 +2075,7 @@ struct file_system_type {
+ #define FS_BINARY_MOUNTDATA	2
+ #define FS_HAS_SUBTYPE		4
+ #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
++#define FS_IMA_NO_CACHE		16	/* Force IMA to re-measure, re-appraise, re-audit files */
+ #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
+ 	struct dentry *(*mount) (struct file_system_type *, int,
+ 		       const char *, void *);
 -- 
 2.13.6
