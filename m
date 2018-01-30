@@ -1,66 +1,133 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:32987 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752388AbeA3SF2 (ORCPT
+Received: from us-smtp-delivery-194.mimecast.com ([63.128.21.194]:24254 "EHLO
+        us-smtp-delivery-194.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753132AbeA3RuN (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 30 Jan 2018 13:05:28 -0500
-Received: by mail-wm0-f67.google.com with SMTP id x4so4785974wmc.0
-        for <linux-integrity@vger.kernel.org>; Tue, 30 Jan 2018 10:05:28 -0800 (PST)
-From: Dongsu Park <dongsu@kinvolk.io>
-To: linux-kernel@vger.kernel.org
-Cc: linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Alban Crequy <alban@kinvolk.io>,
-        Dongsu Park <dongsu@kinvolk.io>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Seth Forshee <seth.forshee@canonical.com>
-Subject: [RFC PATCH v4 0/2] ima,fuse: introduce new fs flag FS_IMA_NO_CACHE
-Date: Tue, 30 Jan 2018 19:06:30 +0100
-Message-Id: <cover.1517314847.git.dongsu@kinvolk.io>
+        Tue, 30 Jan 2018 12:50:13 -0500
+From: Trond Myklebust <trondmy@primarydata.com>
+To: "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>
+CC: "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "tytso@mit.edu" <tytso@mit.edu>
+Subject: Re: [PATCH] iversion: make inode_cmp_iversion{+raw} return bool
+ instead of s64
+Date: Tue, 30 Jan 2018 17:50:05 +0000
+Message-ID: <1517334602.5412.3.camel@primarydata.com>
+References: <20180130173126.2806-1-jlayton@kernel.org>
+In-Reply-To: <20180130173126.2806-1-jlayton@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-This patchset v4 introduces a new fs flag FS_IMA_NO_CACHE and uses it in
-FUSE. This forces files to be re-measured, re-appraised and re-audited
-on file systems with the feature flag FS_IMA_NO_CACHE. In that way,
-cached integrity results won't be used.
+On Tue, 2018-01-30 at 12:31 -0500, Jeff Layton wrote:
+> From: Jeff Layton <jlayton@redhat.com>
+> 
+> As Linus points out:
+> 
+>     The inode_cmp_iversion{+raw}() functions are pure and utter crap.
+> 
+>     Why?
+> 
+>     You say that they return 0/negative/positive, but they do so in a
+>     completely broken manner. They return that ternary value as the
+>     sequence number difference in a 's64', which means that if you
+>     actually care about that ternary value, and do the *sane* thing
+> that
+>     the kernel-doc of the function implies is the right thing, you
+> would
+>     do
+> 
+>         int cmp = inode_cmp_iversion(inode, old);
+>         if (cmp < 0 ...
+> 
+>     and as a result you get code that looks sane, but that doesn't
+>     actually *WORK* right.
+> 
+> Since none of the callers actually care about the ternary value here,
+> convert the inode_cmp_iversion{+raw} functions to just return a
+> boolean
+> value (false for matching, true for non-matching).
+> 
+> This matches the existing use of these functions just fine, and makes
+> it
+> simple to convert them to return a ternary value in the future if we
+> grow callers that need it.
+> 
+> Signed-off-by: Jeff Layton <jlayton@redhat.com>
+> ---
+>  include/linux/iversion.h | 20 +++++++++-----------
+>  1 file changed, 9 insertions(+), 11 deletions(-)
+> 
+> diff --git a/include/linux/iversion.h b/include/linux/iversion.h
+> index 858463fca249..ace32775c5f0 100644
+> --- a/include/linux/iversion.h
+> +++ b/include/linux/iversion.h
+> @@ -309,13 +309,13 @@ inode_query_iversion(struct inode *inode)
+>   * @inode: inode to check
+>   * @old: old value to check against its i_version
+>   *
+> - * Compare the current raw i_version counter with a previous one.
+> Returns 0 if
+> - * they are the same or non-zero if they are different.
+> + * Compare the current raw i_version counter with a previous one.
+> Returns false
+> + * if they are the same or true if they are different.
+>   */
+> -static inline s64
+> +static inline bool
+>  inode_cmp_iversion_raw(const struct inode *inode, u64 old)
+>  {
+> -	return (s64)inode_peek_iversion_raw(inode) - (s64)old;
+> +	return inode_peek_iversion_raw(inode) != old;
+>  }
+>  
+>  /**
+> @@ -323,19 +323,17 @@ inode_cmp_iversion_raw(const struct inode
+> *inode, u64 old)
+>   * @inode: inode to check
+>   * @old: old value to check against its i_version
+>   *
+> - * Compare an i_version counter with a previous one. Returns 0 if
+> they are
+> - * the same, a positive value if the one in the inode appears newer
+> than @old,
+> - * and a negative value if @old appears to be newer than the one in
+> the
+> - * inode.
+> + * Compare an i_version counter with a previous one. Returns false
+> if they are
+> + * the same, and true if they are different.
+>   *
+>   * Note that we don't need to set the QUERIED flag in this case, as
+> the value
+>   * in the inode is not being recorded for later use.
+>   */
+>  
+> -static inline s64
+> +static inline bool
+>  inode_cmp_iversion(const struct inode *inode, u64 old)
+>  {
+> -	return (s64)(inode_peek_iversion_raw(inode) &
+> ~I_VERSION_QUERIED) -
+> -	       (s64)(old << I_VERSION_QUERIED_SHIFT);
+> +	return (inode_peek_iversion_raw(inode) & ~I_VERSION_QUERIED)
+> !=
+> +			(old << I_VERSION_QUERIED_SHIFT);
+>  }
 
-There was a previous attempt (unmerged) with a IMA option named "force" and using
-that option for FUSE filesystems. These patches use a different approach
-so that the IMA subsystem does not need to know about FUSE.
-- https://www.spinics.net/lists/linux-integrity/msg00948.html
-- https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1584131.html
+Is there any reason why this couldn't just use inode_peek_iversion()
+instead of having to both mask the output from
+inode_peek_iversion_raw() and shift 'old'?
 
-Changes since v1: https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1587390.html
-- include linux-fsdevel mailing list in cc
-- mark patch as RFC
-- based on next-integrity, without other unmerged FUSE / IMA patches
-
-Changes since v2: https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1587678.html
-- rename flag to FS_IMA_NO_CACHE
-- split patch into 2
-
-Changes since v3: https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1592393.html
-- make the code simpler by resetting IMA_DONE_MASK
-
-The patchset is also available in our github repo:
-  https://github.com/kinvolk/linux/tree/dongsu/fuse-flag-ima-nocache-v4
-
-
-Alban Crequy (2):
-  fuse: introduce new fs_type flag FS_IMA_NO_CACHE
-  ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE
-
- fs/fuse/inode.c                   |  2 +-
- include/linux/fs.h                |  1 +
- security/integrity/ima/ima_main.c | 15 +++++++++++++--
- 3 files changed, 15 insertions(+), 3 deletions(-)
-
+>  #endif
 -- 
-2.13.6
+Trond Myklebust
+Linux NFS client maintainer, PrimaryData
+trond.myklebust@primarydata.com
