@@ -1,45 +1,45 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:32643 "EHLO mga07.intel.com"
+Received: from mail.kernel.org ([198.145.29.99]:41900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751587AbeAaNcq (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 31 Jan 2018 08:32:46 -0500
-Date: Wed, 31 Jan 2018 15:32:41 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: ltp@lists.linux.it, linux-integrity@vger.kernel.org,
-        Petr Vorel <pvorel@suse.cz>
-Subject: Re: Hidden TPM questions in the LTP IMA posts
-Message-ID: <20180131133241.rbxy252l6p5rqlh2@linux.intel.com>
-References: <1516978199.29187.43.camel@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1516978199.29187.43.camel@linux.vnet.ibm.com>
+        id S1751025AbeAaM31 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 31 Jan 2018 07:29:27 -0500
+Message-ID: <1517401762.3612.0.camel@kernel.org>
+Subject: Re: [PATCH v2] iversion: make inode_cmp_iversion{+raw} return bool
+ instead of s64
+From: Jeff Layton <jlayton@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Trond Myklebust <trondmy@primarydata.com>
+Date: Wed, 31 Jan 2018 07:29:22 -0500
+In-Reply-To: <CA+55aFw5Xf4V-BF1JK+SpjXnmrgeMe-k0wLaFc_=6ojbhfWEtQ@mail.gmail.com>
+References: <20180130173126.2806-1-jlayton@kernel.org>
+         <20180130203221.29310-1-jlayton@kernel.org>
+         <CA+55aFw5Xf4V-BF1JK+SpjXnmrgeMe-k0wLaFc_=6ojbhfWEtQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi
+On Tue, 2018-01-30 at 12:53 -0800, Linus Torvalds wrote:
+> Ack. Should I expect this in a future pull request, or take it directly?
+> 
+> There's no hurry about this, since none of the existing users of that
+> function actually do anything but test the return value against zero,
+> and nobody saves it into anything but a "bool" (which has magical
+> casting properties and does not lose upper bits).
+> 
+>               Linus
 
-On Fri, Jan 26, 2018 at 09:49:59AM -0500, Mimi Zohar wrote:
-> Hi Jarkko,
-> 
-> There are a few TPM questions for the fixing the IMA Linux Test
-> Program (LTP) tests:
-> 
-> - The maximum size of the TPM 1.2 event record is unspecified.  What
-> is the expected maximum size?
-> - Is there a way of knowing the location of the TPM 1.2 PCRs without
-> grepping for them?
-> 
-> Additional question:
-> - Are the TPM 2.0 PCRs and event log exported by the kernel?  If not,
-> how are they accessed?
-> 
-> thanks,
-> 
-> Mimi
-> 
+Do you mind just taking it directly? I don't have anything else queued
+up for this cycle.
 
-Have not missed this email. I'll answer this as soon as I have time
-to write a proper response.
-
-/Jarkko
+Thanks,
+-- 
+Jeff Layton <jlayton@kernel.org>
