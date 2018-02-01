@@ -1,49 +1,48 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60448 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752292AbeBAShC (ORCPT
+Received: from mail-wr0-f181.google.com ([209.85.128.181]:36214 "EHLO
+        mail-wr0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751526AbeBARlA (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 1 Feb 2018 13:37:02 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w11Ia6Na110237
-        for <linux-integrity@vger.kernel.org>; Thu, 1 Feb 2018 13:37:02 -0500
-Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2fv7nc9v9h-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 01 Feb 2018 13:37:02 -0500
-Received: from localhost
-        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Thu, 1 Feb 2018 18:36:59 -0000
-Subject: Re: [RFC PATCH v4 0/2] ima,fuse: introduce new fs flag
- FS_IMA_NO_CACHE
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Dongsu Park <dongsu@kinvolk.io>, linux-kernel@vger.kernel.org
-Cc: linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Alban Crequy <alban@kinvolk.io>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Seth Forshee <seth.forshee@canonical.com>
-Date: Thu, 01 Feb 2018 13:36:53 -0500
-In-Reply-To: <cover.1517314847.git.dongsu@kinvolk.io>
-References: <cover.1517314847.git.dongsu@kinvolk.io>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1517510213.6675.12.camel@linux.vnet.ibm.com>
+        Thu, 1 Feb 2018 12:41:00 -0500
+Received: by mail-wr0-f181.google.com with SMTP id y3so10060585wrh.3
+        for <linux-integrity@vger.kernel.org>; Thu, 01 Feb 2018 09:40:59 -0800 (PST)
+Date: Thu, 1 Feb 2018 10:40:53 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Paul Menzel <pmenzel@molgen.mpg.de>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Subject: Re: TPM selftest failure in 4.15
+Message-ID: <20180201174053.GQ17053@ziepe.ca>
+References: <1517487371.3251.9.camel@HansenPartnership.com>
+ <db0a58b7-b021-9df3-aac1-bf3e23cacc0c@molgen.mpg.de>
+ <1517488970.3251.26.camel@HansenPartnership.com>
+ <1517498648.3145.4.camel@HansenPartnership.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1517498648.3145.4.camel@HansenPartnership.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, 2018-01-30 at 19:06 +0100, Dongsu Park wrote:
-> This patchset v4 introduces a new fs flag FS_IMA_NO_CACHE and uses it in
-> FUSE. This forces files to be re-measured, re-appraised and re-audited
-> on file systems with the feature flag FS_IMA_NO_CACHE. In that way,
-> cached integrity results won't be used.
+On Thu, Feb 01, 2018 at 03:24:08PM +0000, James Bottomley wrote:
 
-Thanks!
+> OK, I investigated but now my TPM has returned to normal (as in it
+> passes the selftest immediately).  There's clearly something that makes
+> it return TPM_RC_TESTING to every self test probe for seconds at a
+> time, but I don't know what it is.  Sending a different command seems
+> to cause the problem to clear (Managed to reproduce once with the patch
+> to verify), so this is my proposed fix.  It's clearly nonsensical to
+> detach the driver because the self test still returns TPM_RC_TESTING,
+> so convert that return to a TPM_RC_SUCCESS on timeout.  It prints a
+> warning message so we'll see it in the logs if it causes problems.
+>  Given that this seems to be some type of internal TPM issue, I don't
+> believe changing the timings would work.
 
-Mimi
+But if a selftest returns TPM2_RC_TESTING I would expect the next
+command to also fail with a testing in progress code? At least by the
+spec..
+
+The point of invoking selftest is to get to a state where future TPM
+commands will succeed, so returning immediately on RC_TESTING seems
+wrong?
+
+Jason
