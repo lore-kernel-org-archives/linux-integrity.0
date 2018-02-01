@@ -1,45 +1,51 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wr0-f169.google.com ([209.85.128.169]:44325 "EHLO
-        mail-wr0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751827AbeBAWW5 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 1 Feb 2018 17:22:57 -0500
-Received: by mail-wr0-f169.google.com with SMTP id v31so20666042wrc.11
-        for <linux-integrity@vger.kernel.org>; Thu, 01 Feb 2018 14:22:56 -0800 (PST)
-Date: Thu, 1 Feb 2018 15:22:51 -0700
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Mario.Limonciello@dell.com
-Cc: Alexander.Steffen@infineon.com, linux-integrity@vger.kernel.org,
-        regressions@leemhuis.info, James.Bottomley@HansenPartnership.com,
-        pmenzel@molgen.mpg.de
-Subject: Re: TPM selftest failure in 4.15 (Dell XPS 13, Nuvoton 6xx)
-Message-ID: <20180201222251.GB17053@ziepe.ca>
-References: <1517487371.3251.9.camel@HansenPartnership.com>
- <db0a58b7-b021-9df3-aac1-bf3e23cacc0c@molgen.mpg.de>
- <1517488970.3251.26.camel@HansenPartnership.com>
- <1517498648.3145.4.camel@HansenPartnership.com>
- <4384419e-b2c6-7c51-e905-281ddfe68442@molgen.mpg.de>
- <d9c63b11-363a-2007-d7d5-a0112e58cb46@molgen.mpg.de>
- <d95f60f2e375446db3987f7d082d5cdd@ausx13mpc120.AMER.DELL.COM>
- <0d6c700430264d9584426a587b7c056e@ausx13mpc120.AMER.DELL.COM>
+Received: from mga04.intel.com ([192.55.52.120]:57896 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752079AbeBAWIX (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 1 Feb 2018 17:08:23 -0500
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: Jason Gunthorpe <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "tpmdd-devel@lists.sourceforge.net"
+        <tpmdd-devel@lists.sourceforge.net>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/3] tpm: cmd_ready command can be issued only after
+ granting locality
+Date: Thu, 1 Feb 2018 22:08:19 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B94214CFE@hasmsx108.ger.corp.intel.com>
+References: <20180123112731.3687-1-tomas.winkler@intel.com>
+ <20180123125426.t6xjgrqcfbkmvkdl@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94203771@hasmsx108.ger.corp.intel.com>
+ <20180129084441.6oc4m4jgbqzsfq3v@linux.intel.com>
+In-Reply-To: <20180129084441.6oc4m4jgbqzsfq3v@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <0d6c700430264d9584426a587b7c056e@ausx13mpc120.AMER.DELL.COM>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Feb 01, 2018 at 09:06:55PM +0000, Mario.Limonciello@dell.com wrote:
 
-> I discussed this with some folks and although it would fix the
-> problem it is not accurately characterizing the situation.  What is
-> likely happening here is that issuing the self test command in
-> succession is causing the TPM to restart the self test and not
-> complete.  Instead the selfTestDone bit should be polled.
+> 
+> On Wed, Jan 24, 2018 at 06:33:53PM +0000, Winkler, Tomas wrote:
+> > > > -	pm_runtime_put(dev);
+> > > > +	pm_runtime_put_sync(dev);
+> > >
+> > > Change to put_sync is needed so that the idle handshake gets
+> completed?
+> >
+> > Right.
+> 
+> Since we seem to agree that your change to get rid of the use of PM runtime
+> should that be actually the first change in the patch set?
+> 
+> Or are you looking forward to get these backported to stable kernels?
 
-Oh, I wonder if that is beacuse this was copied from the TPM1 version
-where we don't have a bit like that??
+Yes, that was one of the reason behind for splitting this into two patches. 
+So this first patch is the actual fix and second is the rather non user visible fix 
+as runtime_pm should be enabled by default.  But .. maybe both need to be backported.
 
-Should we check this selfTestDone bit before event sending the self
-test?
-
-Jsaon
+Thanks
+Tomas
