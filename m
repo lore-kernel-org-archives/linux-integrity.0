@@ -1,72 +1,67 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:43230 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752894AbeBASqI (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39320 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752661AbeBASiK (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 1 Feb 2018 13:46:08 -0500
-Message-ID: <1517510764.3145.38.camel@HansenPartnership.com>
-Subject: Re: TPM selftest failure in 4.15
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Paul Menzel <pmenzel@molgen.mpg.de>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Date: Thu, 01 Feb 2018 19:46:04 +0100
-In-Reply-To: <20180201174053.GQ17053@ziepe.ca>
-References: <1517487371.3251.9.camel@HansenPartnership.com>
-         <db0a58b7-b021-9df3-aac1-bf3e23cacc0c@molgen.mpg.de>
-         <1517488970.3251.26.camel@HansenPartnership.com>
-         <1517498648.3145.4.camel@HansenPartnership.com>
-         <20180201174053.GQ17053@ziepe.ca>
+        Thu, 1 Feb 2018 13:38:10 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w11IYuns143012
+        for <linux-integrity@vger.kernel.org>; Thu, 1 Feb 2018 13:38:10 -0500
+Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2fv85qggfs-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 01 Feb 2018 13:38:09 -0500
+Received: from localhost
+        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Thu, 1 Feb 2018 18:38:07 -0000
+Subject: [GIT PULL] IMA bug fixes for 4.16
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: James Morris <jmorris@namei.org>
+Cc: linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date: Thu, 01 Feb 2018 13:38:02 -0500
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
+Message-Id: <1517510282.6675.13.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, 2018-02-01 at 10:40 -0700, Jason Gunthorpe wrote:
-> On Thu, Feb 01, 2018 at 03:24:08PM +0000, James Bottomley wrote:
-> 
-> > 
-> > OK, I investigated but now my TPM has returned to normal (as in it
-> > passes the selftest immediately).  There's clearly something that
-> > makes it return TPM_RC_TESTING to every self test probe for seconds
-> > at a time, but I don't know what it is.  Sending a different
-> > command seems to cause the problem to clear (Managed to reproduce
-> > once with the patch to verify), so this is my proposed fix.  It's
-> > clearly nonsensical to detach the driver because the self test
-> > still returns TPM_RC_TESTING, so convert that return to a
-> > TPM_RC_SUCCESS on timeout.  It prints a warning message so we'll
-> > see it in the logs if it causes problems.  Given that this seems to
-> > be some type of internal TPM issue, I don't believe changing the
-> > timings would work.
-> 
-> But if a selftest returns TPM2_RC_TESTING I would expect the next
-> command to also fail with a testing in progress code? At least by the
-> spec..
+Hi James,
 
-No, the spec says only that the command may fail with TPM_RC_TESTING
-*if* the system it requires is under test.
+Included in this pull request are three bug fixes, assuming the 2 FUSE
+patches are considered bugs and not new features, and a maintainer update.
+I'd appreciate your sending them to Linus for 4.16.
 
-I have no idea what's up with my TPM.  The selftests usually complete
-in under 1ms and return TPM_RC_SUCCESS.  However occasionally the self
-test can return TPM_RC_TESTING for seconds.
+thanks,
 
-I've already booted with the patch and verified it doesn't induce any
-failures for me.  Either the long running test is in a completely
-unconnected subsystem or invoking a different command forces the TPM to
-clear the testing state.
+Mimi
 
-> The point of invoking selftest is to get to a state where future TPM
-> commands will succeed, so returning immediately on RC_TESTING seems
-> wrong?
+The following changes since commit 36447456e1cca853188505f2a964dbbeacfc7a7a:
 
-Well it's definitely less wrong than the converse of actually detaching
-the TPM driver because a self test is apparently still in progress.  If
-you depend on the TPM for a critical function, your entire system is
-hosed at that point.
+  ima/policy: fix parsing of fsuuid (2018-01-18 16:52:49 -0500)
 
-I honestly don't think we should be waiting for the self test at all.
- We should kick it off and treat any TPM_RC_TESTING error as -EAGAIN.
- We're already under fire for slow boot sequences and adding 2s just to
-wait for the TPM to self test adds to that for no real value.
+are available in the git repository at:
 
-James
+  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
+
+for you to fetch changes up to d56f30ac85c067d0d3a6c4f293f655dc298cb5ce:
+
+  ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE (2018-02-01 12:38:31 -0500)
+
+----------------------------------------------------------------
+Alban Crequy (2):
+      fuse: introduce new fs_type flag FS_IMA_NO_CACHE
+      ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE
+
+Mimi Zohar (2):
+      ima: re-initialize iint->atomic_flags
+      maintainers: update trusted keys
+
+ MAINTAINERS                       |  1 +
+ fs/fuse/inode.c                   |  2 +-
+ include/linux/fs.h                |  1 +
+ security/integrity/iint.c         |  1 +
+ security/integrity/ima/ima_main.c | 15 +++++++++++++--
+ 5 files changed, 17 insertions(+), 3 deletions(-)
