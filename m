@@ -1,43 +1,36 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from namei.org ([65.99.196.166]:47758 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751655AbeBBVbN (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 2 Feb 2018 16:31:13 -0500
-Date: Sat, 3 Feb 2018 08:31:06 +1100 (AEDT)
-From: James Morris <jmorris@namei.org>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-cc: linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [GIT PULL] IMA bug fixes for 4.16
-In-Reply-To: <1517582979.3171.46.camel@linux.vnet.ibm.com>
-Message-ID: <alpine.LRH.2.21.1802030831010.10919@namei.org>
-References: <1517510282.6675.13.camel@linux.vnet.ibm.com>         <alpine.LRH.2.21.1802022106130.2739@namei.org> <1517582979.3171.46.camel@linux.vnet.ibm.com>
+Received: from mail-wm0-f44.google.com ([74.125.82.44]:40473 "EHLO
+        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751907AbeBBSsZ (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 2 Feb 2018 13:48:25 -0500
+Received: by mail-wm0-f44.google.com with SMTP id v123so14309917wmd.5
+        for <linux-integrity@vger.kernel.org>; Fri, 02 Feb 2018 10:48:24 -0800 (PST)
+Date: Fri, 2 Feb 2018 11:48:19 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-integrity@vger.kernel.org,
+        Jeremy Boone <Jeremy.Boone@nccgroup.trust>
+Subject: Re: [PATCH 0/2] Fix kernel buffer overruns caused by bit flips
+Message-ID: <20180202184819.GB9080@ziepe.ca>
+References: <1517592221.3137.18.camel@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1517592221.3137.18.camel@HansenPartnership.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 2 Feb 2018, Mimi Zohar wrote:
-
-> On Fri, 2018-02-02 at 21:07 +1100, James Morris wrote:
-> > On Thu, 1 Feb 2018, Mimi Zohar wrote:
-> > 
-> > > Hi James,
-> > > 
-> > > Included in this pull request are three bug fixes, assuming the 2 FUSE
-> > > patches are considered bugs and not new features, and a maintainer update.
-> > > I'd appreciate your sending them to Linus for 4.16.
-> > 
-> > I'd like to see an acked-by or reviewed-by from the FUSE maintainer 
-> > (cc'd), on the FUSE patches.
+On Fri, Feb 02, 2018 at 06:23:41PM +0100, James Bottomley wrote:
+> If a TPM is attached to a system via a serial bus on a platform that
+> suffers bit flips, we can get back dangerously wrong data.  This patch
+> series aims never to do a direct copy into a kernel buffer based on an
+> unchecked size value returned from the TPM.
 > 
-> Ok.  For now, can you take the first two patches?
+> Jeremy Boone (2):
+>   tpm: fix potential buffer overruns caused by bit glitches on the bus
+>   tpm drivers: fix potential buffer overruns caused by bit glitches on
+>     the bus
 
-Sure.
+Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
 
-
--- 
-James Morris
-<jmorris@namei.org>
+Jason
