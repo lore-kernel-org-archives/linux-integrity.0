@@ -1,63 +1,43 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:20640 "EHLO mga01.intel.com"
+Received: from namei.org ([65.99.196.166]:47758 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750962AbeBEIme (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 5 Feb 2018 03:42:34 -0500
-Message-ID: <1517820147.7570.4.camel@linux.intel.com>
-Subject: Re: Hidden TPM questions in the LTP IMA posts
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+        id S1751655AbeBBVbN (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 2 Feb 2018 16:31:13 -0500
+Date: Sat, 3 Feb 2018 08:31:06 +1100 (AEDT)
+From: James Morris <jmorris@namei.org>
 To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: ltp@lists.linux.it, linux-integrity@vger.kernel.org,
-        Petr Vorel <pvorel@suse.cz>,
-        "Tricca, Philip B" <philip.b.tricca@intel.com>
-Date: Mon, 05 Feb 2018 10:42:27 +0200
-In-Reply-To: <1517416161.3469.142.camel@linux.vnet.ibm.com>
-References: <1516978199.29187.43.camel@linux.vnet.ibm.com>
-         <20180131133241.rbxy252l6p5rqlh2@linux.intel.com>
-         <1517416161.3469.142.camel@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+cc: linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: [GIT PULL] IMA bug fixes for 4.16
+In-Reply-To: <1517582979.3171.46.camel@linux.vnet.ibm.com>
+Message-ID: <alpine.LRH.2.21.1802030831010.10919@namei.org>
+References: <1517510282.6675.13.camel@linux.vnet.ibm.com>         <alpine.LRH.2.21.1802022106130.2739@namei.org> <1517582979.3171.46.camel@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, 2018-01-31 at 11:29 -0500, Mimi Zohar wrote:
-> On Wed, 2018-01-31 at 15:32 +0200, Jarkko Sakkinen wrote:
-> > Hi
+On Fri, 2 Feb 2018, Mimi Zohar wrote:
+
+> On Fri, 2018-02-02 at 21:07 +1100, James Morris wrote:
+> > On Thu, 1 Feb 2018, Mimi Zohar wrote:
 > > 
-> > On Fri, Jan 26, 2018 at 09:49:59AM -0500, Mimi Zohar wrote:
-> > > Hi Jarkko,
+> > > Hi James,
 > > > 
-> > > There are a few TPM questions for the fixing the IMA Linux Test
-> > > Program (LTP) tests:
-> > > 
-> > > - The maximum size of the TPM 1.2 event record is unspecified.  What
-> > > is the expected maximum size?
-> > > - Is there a way of knowing the location of the TPM 1.2 PCRs without
-> > > grepping for them?
+> > > Included in this pull request are three bug fixes, assuming the 2 FUSE
+> > > patches are considered bugs and not new features, and a maintainer update.
+> > > I'd appreciate your sending them to Linus for 4.16.
+> > 
+> > I'd like to see an acked-by or reviewed-by from the FUSE maintainer 
+> > (cc'd), on the FUSE patches.
 > 
-> I responded (in the original thread) to my own question:
-> 
-> Commit 313d21e "tpm: device class for tpm" moved the TPM sysfs
-> location from /sys/class/misc/tpmX/device/ to
-> /sys/class/tpm/tpmX/device/.
+> Ok.  For now, can you take the first two patches?
 
-I was wondering what you meant by "location". That was the reason why I
-postponed my response in the first place. I did not understand that you
-were talking about the sysfs path. The only location I know for PCRs is
-that they are inside the TPM.
+Sure.
 
-For the first question, I don't think there is a hard coded limit but I
-could be wrong. In the area of event log I think the TCG documentation
-is just utter shit.
 
-There is some documentation in EFI platform and protocol specifications
-but it quite lacking.
-
-It is awkward that this stuff is in EFI specifications in the first
-place when with TPM 1.2 you access the log through ACPI and on some
-platforms the event log is available through DT. It is hard to find
-answers even to simple questions like what is put into the event log,
-which is a very basic question that I do not have to day a definitive
-answer.
-
-/Jarkko
+-- 
+James Morris
+<jmorris@namei.org>
