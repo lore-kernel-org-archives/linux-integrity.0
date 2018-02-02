@@ -1,49 +1,69 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43108 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751643AbeBBOtq (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 2 Feb 2018 09:49:46 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w12EnG3m125733
-        for <linux-integrity@vger.kernel.org>; Fri, 2 Feb 2018 09:49:46 -0500
-Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2fvscst34s-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 02 Feb 2018 09:49:45 -0500
-Received: from localhost
-        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Fri, 2 Feb 2018 14:49:44 -0000
-Subject: Re: [GIT PULL] IMA bug fixes for 4.16
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: James Morris <jmorris@namei.org>
-Cc: linux-security-module <linux-security-module@vger.kernel.org>,
+Received: from namei.org ([65.99.196.166]:47250 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750799AbeBBKHq (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 2 Feb 2018 05:07:46 -0500
+Date: Fri, 2 Feb 2018 21:07:37 +1100 (AEDT)
+From: James Morris <jmorris@namei.org>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+cc: linux-security-module <linux-security-module@vger.kernel.org>,
         linux-integrity <linux-integrity@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 02 Feb 2018 09:49:39 -0500
-In-Reply-To: <alpine.LRH.2.21.1802022106130.2739@namei.org>
+Subject: Re: [GIT PULL] IMA bug fixes for 4.16
+In-Reply-To: <1517510282.6675.13.camel@linux.vnet.ibm.com>
+Message-ID: <alpine.LRH.2.21.1802022106130.2739@namei.org>
 References: <1517510282.6675.13.camel@linux.vnet.ibm.com>
-         <alpine.LRH.2.21.1802022106130.2739@namei.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1517582979.3171.46.camel@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 2018-02-02 at 21:07 +1100, James Morris wrote:
-> On Thu, 1 Feb 2018, Mimi Zohar wrote:
-> 
-> > Hi James,
-> > 
-> > Included in this pull request are three bug fixes, assuming the 2 FUSE
-> > patches are considered bugs and not new features, and a maintainer update.
-> > I'd appreciate your sending them to Linus for 4.16.
-> 
-> I'd like to see an acked-by or reviewed-by from the FUSE maintainer 
-> (cc'd), on the FUSE patches.
+On Thu, 1 Feb 2018, Mimi Zohar wrote:
 
-Ok.  For now, can you take the first two patches?
+> Hi James,
+> 
+> Included in this pull request are three bug fixes, assuming the 2 FUSE
+> patches are considered bugs and not new features, and a maintainer update.
+> I'd appreciate your sending them to Linus for 4.16.
 
-Mimi
+I'd like to see an acked-by or reviewed-by from the FUSE maintainer 
+(cc'd), on the FUSE patches.
+
+
+
+> 
+> Mimi
+> 
+> The following changes since commit 36447456e1cca853188505f2a964dbbeacfc7a7a:
+> 
+>   ima/policy: fix parsing of fsuuid (2018-01-18 16:52:49 -0500)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
+> 
+> for you to fetch changes up to d56f30ac85c067d0d3a6c4f293f655dc298cb5ce:
+> 
+>   ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE (2018-02-01 12:38:31 -0500)
+> 
+> ----------------------------------------------------------------
+> Alban Crequy (2):
+>       fuse: introduce new fs_type flag FS_IMA_NO_CACHE
+>       ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE
+> 
+> Mimi Zohar (2):
+>       ima: re-initialize iint->atomic_flags
+>       maintainers: update trusted keys
+> 
+>  MAINTAINERS                       |  1 +
+>  fs/fuse/inode.c                   |  2 +-
+>  include/linux/fs.h                |  1 +
+>  security/integrity/iint.c         |  1 +
+>  security/integrity/ima/ima_main.c | 15 +++++++++++++--
+>  5 files changed, 17 insertions(+), 3 deletions(-)
+> 
+
+-- 
+James Morris
+<jmorris@namei.org>
