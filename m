@@ -1,72 +1,72 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:36502 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752808AbeBEOY5 (ORCPT
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:43290 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753152AbeBEOQG (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 5 Feb 2018 09:24:57 -0500
-Received: by mail-pg0-f68.google.com with SMTP id x25so6038667pge.3
-        for <linux-integrity@vger.kernel.org>; Mon, 05 Feb 2018 06:24:57 -0800 (PST)
+        Mon, 5 Feb 2018 09:16:06 -0500
+Received: by mail-pl0-f65.google.com with SMTP id f4so11850897plr.10
+        for <linux-integrity@vger.kernel.org>; Mon, 05 Feb 2018 06:16:05 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1517838054.3736.49.camel@linux.vnet.ibm.com>
-References: <1517838054.3736.49.camel@linux.vnet.ibm.com>
+In-Reply-To: <CAJfpegvt5W-q0W8_VRML-MNW6+n2ZQYW+51utRXDDKSbvsqf3w@mail.gmail.com>
+References: <cover.1517314847.git.dongsu@kinvolk.io> <86832c6adb256f29f44b6229222b80964fc8cfcc.1517314847.git.dongsu@kinvolk.io>
+ <1517584816.3171.61.camel@linux.vnet.ibm.com> <1517585624.3171.64.camel@linux.vnet.ibm.com>
+ <CAJfpegvt5W-q0W8_VRML-MNW6+n2ZQYW+51utRXDDKSbvsqf3w@mail.gmail.com>
 From: Alban Crequy <alban@kinvolk.io>
-Date: Mon, 5 Feb 2018 15:24:56 +0100
-Message-ID: <CADZs7q7oyC3LPmCFDTK9a7rdpXAAS=kT5HSURcN3t3oirvBpmg@mail.gmail.com>
-Subject: Re: [RFC PATCH] ima: force the re-evaluation of files on untrusted
- file systems
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,
+Date: Mon, 5 Feb 2018 15:16:04 +0100
+Message-ID: <CADZs7q6cXaRqsapPOA_h62ayny+AtJ02Zr3tbQxVGA7JoChiyA@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 1/2] fuse: introduce new fs_type flag FS_IMA_NO_CACHE
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-integrity@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
         Dongsu Park <dongsu@kinvolk.io>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Feb 5, 2018 at 2:40 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> On filesystems, such as fuse or remote filesystems, that we can not
-> detect or rely on the filesystem to tell us when a file has changed,
-> always re-measure, re-appraise, and/or re-audit the file.
+On Fri, Feb 2, 2018 at 5:10 PM, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> On Fri, Feb 2, 2018 at 4:33 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+>> On Fri, 2018-02-02 at 10:20 -0500, Mimi Zohar wrote:
+>>> Hi Miklos,
+>>>
+>>> On Tue, 2018-01-30 at 19:06 +0100, Dongsu Park wrote:
+>>> > From: Alban Crequy <alban@kinvolk.io>
+>>> >
+>>> > This new fs_type flag FS_IMA_NO_CACHE means files should be re-measured,
+>>> > re-appraised and re-audited each time. Cached integrity results should
+>>> > not be used.
+>>> >
+>>> > It is useful in FUSE because the userspace FUSE process can change the
+>>> > underlying files at any time without notifying the kernel.
 >
-> Signed-of-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> I don't really have an understanding what IMA is doing, I think the
+> same thing applies to any network filesystem (i.e. ones with
+> d_revalidate).
 >
-> ---
-> Hi Miklos,
->
-> Was something like this what you had in mind?
->
-> Mimi
-> ---
->  security/integrity/ima/ima_main.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
->
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 6d78cb26784d..a428bd75232e 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -170,6 +170,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
->                                int mask, enum ima_hooks func, int opened)
->  {
->         struct inode *inode = file_inode(file);
-> +       struct dentry *dentry = file_dentry(file);
->         struct integrity_iint_cache *iint = NULL;
->         struct ima_template_desc *template_desc;
->         char *pathbuf = NULL;
-> @@ -228,9 +229,16 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
->                                  IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
->                                  IMA_ACTION_FLAGS);
->
-> -       if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags))
-> -               /* reset all flags if ima_inode_setxattr was called */
-> +       /*
-> +        * Re-measure, re-appraise, and/or re-audit a file, if the security
-> +        * xattrs changed or if the file is on an untrusted file system
-> +        * (eg. FUSE, remote filesystems).
-> +        */
-> +       if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags) ||
-> +           (dentry->d_op && dentry->d_op->d_revalidate)) {
+> Isn't that the case?
 
-It seems dangerous to rely implicitly on "d_revalidate != NULL". vfat
-has a d_revalidate for handling 8.3 filenames but it's not a network
-filesystem.
+Hi Miklos,
+
+>From my limited understanding, network filesystems might need that
+too, yes. I don't know if there are people interested in using both
+IMA and network filesystems. If so, they would have to write that
+patch and test it.
+
+It is not a new issue, for neither network filesystems or FUSE. But I
+am more interested in the FUSE use case because FUSE can be mounted by
+unprivileged users either today with fusermount installed with setuid,
+or soon with the coming patches to allow FUSE mounts in a non-init
+user namespace. That makes the issue more visible than for network
+filesystems where unprivileged users cannot mount.
+
+Cheers,
+Alban
