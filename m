@@ -1,8 +1,8 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:7036 "EHLO mga01.intel.com"
+Received: from mga03.intel.com ([134.134.136.65]:26350 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753043AbeBFV0S (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 6 Feb 2018 16:26:18 -0500
+        id S1752514AbeBFUwI (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 6 Feb 2018 15:52:08 -0500
 From: "Winkler, Tomas" <tomas.winkler@intel.com>
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 CC: Jason Gunthorpe <jgg@ziepe.ca>,
@@ -11,54 +11,34 @@ CC: Jason Gunthorpe <jgg@ziepe.ca>,
         "linux-security-module@vger.kernel.org"
         <linux-security-module@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/2 v2] tpm: cmd_ready command can be issued only after
- granting locality
-Date: Tue, 6 Feb 2018 21:26:15 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9421889F@hasmsx108.ger.corp.intel.com>
-References: <20180128075101.6883-1-tomas.winkler@intel.com>
- <20180128075101.6883-2-tomas.winkler@intel.com>
- <20180128201559.GG23869@ziepe.ca>
- <5B8DA87D05A7694D9FA63FD143655C1B9420DD08@hasmsx108.ger.corp.intel.com>
- <20180206200255.ib7hblberqj6anh5@linux.intel.com>
-In-Reply-To: <20180206200255.ib7hblberqj6anh5@linux.intel.com>
+Subject: RE: [PATCH v2] tpm: add longer timeouts for creation commands.
+Date: Tue, 6 Feb 2018 20:51:48 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9421881D@hasmsx108.ger.corp.intel.com>
+References: <20180128081739.8066-1-tomas.winkler@intel.com>
+ <20180206200650.ozcwsv3uks6eyah3@linux.intel.com>
+In-Reply-To: <20180206200650.ozcwsv3uks6eyah3@linux.intel.com>
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
 > 
-> On Sun, Jan 28, 2018 at 09:17:53PM +0000, Winkler, Tomas wrote:
+> On Sun, Jan 28, 2018 at 10:17:39AM +0200, Tomas Winkler wrote:
+> > TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve
+> > generation of crypto keys which can be a computationally intensive task.
+> > The timeout is set to 3min.
 > >
-> > >
-> > > On Sun, Jan 28, 2018 at 09:51:00AM +0200, Tomas Winkler wrote:
-> > >
-> > > > diff --git a/include/linux/tpm.h b/include/linux/tpm.h index
-> > > > bcdd3790e94d..06639fb6ab85 100644
-> > > > +++ b/include/linux/tpm.h
-> > > > @@ -44,7 +44,7 @@ struct tpm_class_ops {
-> > > >  	bool (*update_timeouts)(struct tpm_chip *chip,
-> > > >  				unsigned long *timeout_cap);
-> > > >  	int (*request_locality)(struct tpm_chip *chip, int loc);
-> > > > -	void (*relinquish_locality)(struct tpm_chip *chip, int loc);
-> > > > +	int (*relinquish_locality)(struct tpm_chip *chip, int loc);
-> > >
-> > > This seems wrong.. What is the core code supposed to do if relinquish
-> fails?
-> >
-> > Not much just propage the error to the caller and leave the policy
-> > decision to it.
+> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 > 
-> Your patch set must either cover this or keep it as void.
+> This is still NAK because we need some kind of reference for the new value.
+> Is that also right value for ARM64/TrustZone based TPMs?
 
-
-How the code is covering other failures in the transmit functions,  
-how is this one different from for example request_locality failure?
-Why we should not propage this error up?
-
-> 
-> A better idea is to print an error to klog.
-We can do that in addition.
-
+The SPEC itself, doesn't define the timeout,  except for specific commands, 
+also the current 'undefined' number is born in air, I wonder if you  can provide the reference as well.
+If I would suggest to shorten the number that would maybe a problem for other implementation, 
+but I don't see how the increase in timeout is adverse another implementations.
+Key generation is computational intensive task because of generation of a prime number, so this is really 
+dependent on device capabilities, so there is no better source of definition that HW itself.
 
 Thanks
 Tomas
