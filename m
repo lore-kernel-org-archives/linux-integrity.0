@@ -1,60 +1,107 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:30597 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750881AbeBHMga (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 8 Feb 2018 07:36:30 -0500
-Date: Thu, 8 Feb 2018 14:36:24 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, ltp@lists.linux.it,
-        linux-integrity@vger.kernel.org, Petr Vorel <pvorel@suse.cz>,
-        "Tricca, Philip B" <philip.b.tricca@intel.com>,
-        Thiebaud Weksteen <tweek@google.com>,
-        Petr Vandrovec <petr@vmware.com>
-Subject: Re: Hidden TPM questions in the LTP IMA posts
-Message-ID: <20180208123624.3ib7w7hgj2kk7pfu@linux.intel.com>
-References: <1516978199.29187.43.camel@linux.vnet.ibm.com>
- <20180131133241.rbxy252l6p5rqlh2@linux.intel.com>
- <1517416161.3469.142.camel@linux.vnet.ibm.com>
- <1517820147.7570.4.camel@linux.intel.com>
- <3279a223-a638-a21d-aa24-1879cf20df4c@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <3279a223-a638-a21d-aa24-1879cf20df4c@redhat.com>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:39644 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754543AbeBGPnx (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 7 Feb 2018 10:43:53 -0500
+Received: by mail-wm0-f67.google.com with SMTP id b21so4169665wme.4
+        for <linux-integrity@vger.kernel.org>; Wed, 07 Feb 2018 07:43:52 -0800 (PST)
+From: Dongsu Park <dongsu@kinvolk.io>
+To: linux-kernel@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Alban Crequy <alban@kinvolk.io>,
+        Dongsu Park <dongsu@kinvolk.io>
+Subject: [RFC PATCH v5 1/2] ima: force re-appraisal on filesystems with FS_IMA_NO_CACHE
+Date: Wed,  7 Feb 2018 16:45:12 +0100
+Message-Id: <9b3794980f61bdb5d5f92fe0ae620491be857a8a.1517999503.git.dongsu@kinvolk.io>
+In-Reply-To: <cover.1517999503.git.dongsu@kinvolk.io>
+References: <cover.1517999503.git.dongsu@kinvolk.io>
+In-Reply-To: <cover.1517999503.git.dongsu@kinvolk.io>
+References: <cover.1517999503.git.dongsu@kinvolk.io>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Feb 05, 2018 at 02:34:49PM +0100, Javier Martinez Canillas wrote:
-> Support for reading from EFI is what landed for this release, but only the
-> TPM 1.2 (SHA1) format is supported, there's still not support for TPM 2.0
-> (crypto agile). You can see that in drivers/firmware/efi/libstub/tpm.c:
-> 
-> void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
-> {
-> ...
-> 	status = efi_call_proto(efi_tcg2_protocol, get_event_log, tcg2_protocol,
-> 				EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2,
-> 				&log_location, &log_last_entry, &truncated);
-> ...
-> }
-> 
-> void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
-> {
-> 	/* Only try to retrieve the logs in 1.2 format. */
-> 	efi_retrieve_tpm2_eventlog_1_2(sys_table_arg);
-> }
-> 
-> But all the bits for TPM 2.0 (crypto agile) support seems to already be in
-> drivers/char/tpm/tpm2_eventlog.c, are only missing in the EFI stub AFAICT.
+From: Alban Crequy <alban@kinvolk.io>
 
-This is correct. DT based platforms already support crypto agile.
+This patch forces files to be re-measured, re-appraised and re-audited
+on file systems with the feature flag FS_IMA_NO_CACHE. In that way,
+cached integrity results won't be used.
 
-> Now, on latest TCG ACPI Specification (Revision 8, August 18, 2017) [1],
-> the spec does mention that the ACPI table with signature 'TPM2' can have
-> the LASA and LAML as optional fields. This is mentioned in section 7.3
-> "ACPI Table for TPM 2.0".
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: Christoph Hellwig <hch@infradead.org>
+Acked-by: "Serge E. Hallyn" <serge@hallyn.com>
+Acked-by: Seth Forshee <seth.forshee@canonical.com>
+Tested-by: Dongsu Park <dongsu@kinvolk.io>
+Signed-off-by: Alban Crequy <alban@kinvolk.io>
+Signed-off-by: Dongsu Park <dongsu@kinvolk.io>
+---
+ include/linux/fs.h                |  1 +
+ security/integrity/ima/ima_main.c | 15 +++++++++++++--
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
-Oh, this is new to me. We can support it as soon as there is a plaform
-that has it. I do not have any at this point.
-
-/Jarkko
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 511fbaab..ced841ba 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2075,6 +2075,7 @@ struct file_system_type {
+ #define FS_BINARY_MOUNTDATA	2
+ #define FS_HAS_SUBTYPE		4
+ #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
++#define FS_IMA_NO_CACHE		16	/* Force IMA to re-measure, re-appraise, re-audit files */
+ #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
+ 	struct dentry *(*mount) (struct file_system_type *, int,
+ 		       const char *, void *);
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 6d78cb26..83edbad8 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -24,6 +24,7 @@
+ #include <linux/slab.h>
+ #include <linux/xattr.h>
+ #include <linux/ima.h>
++#include <linux/fs.h>
+ 
+ #include "ima.h"
+ 
+@@ -228,9 +229,19 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+ 				 IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
+ 				 IMA_ACTION_FLAGS);
+ 
+-	if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags))
+-		/* reset all flags if ima_inode_setxattr was called */
++	/*
++	 * Reset the measure, appraise and audit cached flags either if:
++	 * - ima_inode_setxattr was called, or
++	 * - based on filesystem feature flag
++	 * forcing the file to be re-evaluated.
++	 */
++	if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags)) {
+ 		iint->flags &= ~IMA_DONE_MASK;
++	} else if (inode->i_sb->s_type->fs_flags & FS_IMA_NO_CACHE) {
++		iint->flags &= ~IMA_DONE_MASK;
++		if (action & IMA_MEASURE)
++			iint->measured_pcrs = 0;
++	}
+ 
+ 	/* Determine if already appraised/measured based on bitmask
+ 	 * (IMA_MEASURE, IMA_MEASURED, IMA_XXXX_APPRAISE, IMA_XXXX_APPRAISED,
+-- 
+2.13.6
