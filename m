@@ -1,104 +1,75 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:57968 "EHLO
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:57930 "EHLO
         bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750847AbeBHRHd (ORCPT
+        by vger.kernel.org with ESMTP id S1751544AbeBHRCC (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 8 Feb 2018 12:07:33 -0500
-Message-ID: <1518109652.21828.6.camel@HansenPartnership.com>
-Subject: Re: [PATCH 1/2] tpm: fix potential buffer overruns caused by bit
- glitches on the bus
+        Thu, 8 Feb 2018 12:02:02 -0500
+Message-ID: <1518109320.21828.2.camel@HansenPartnership.com>
+Subject: Re: TPM selftest failure in 4.15
 From: James Bottomley <James.Bottomley@HansenPartnership.com>
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: linux-integrity@vger.kernel.org,
-        Jeremy Boone <Jeremy.Boone@nccgroup.trust>
-Date: Thu, 08 Feb 2018 09:07:32 -0800
-In-Reply-To: <20180208133402.xpszh2p5cpjnu6ki@linux.intel.com>
-References: <1517592221.3137.18.camel@HansenPartnership.com>
-         <1517592278.3137.19.camel@HansenPartnership.com>
-         <20180208133402.xpszh2p5cpjnu6ki@linux.intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Date: Thu, 08 Feb 2018 09:02:00 -0800
+In-Reply-To: <20180208131007.wedzl5itrlx2dawn@linux.intel.com>
+References: <1517487371.3251.9.camel@HansenPartnership.com>
+         <db0a58b7-b021-9df3-aac1-bf3e23cacc0c@molgen.mpg.de>
+         <1517488970.3251.26.camel@HansenPartnership.com>
+         <1517498648.3145.4.camel@HansenPartnership.com>
+         <20180201174053.GQ17053@ziepe.ca>
+         <1517510764.3145.38.camel@HansenPartnership.com>
+         <20180201185909.GW17053@ziepe.ca>
+         <1517515204.3145.51.camel@HansenPartnership.com>
+         <20180208131007.wedzl5itrlx2dawn@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, 2018-02-08 at 15:34 +0200, Jarkko Sakkinen wrote:
-> On Fri, Feb 02, 2018 at 06:24:38PM +0100, James Bottomley wrote:
+On Thu, 2018-02-08 at 15:10 +0200, Jarkko Sakkinen wrote:
+> On Thu, Feb 01, 2018 at 09:00:04PM +0100, James Bottomley wrote:
 > > 
-> > From: Jeremy Boone <jeremy.boone@nccgroup.trust>
+> > On Thu, 2018-02-01 at 11:59 -0700, Jason Gunthorpe wrote:
+> > > 
+> > > On Thu, Feb 01, 2018 at 07:46:04PM +0100, James Bottomley wrote:
+> > > 
+> > > > 
+> > > > 
+> > > > I honestly don't think we should be waiting for the self test
+> > > > at
+> > > > all.
+> > > > We should kick it off and treat any TPM_RC_TESTING error as
+> > > > -EAGAIN.
+> > > > We're already under fire for slow boot sequences and adding 2s
+> > > > just
+> > > > to
+> > > > wait for the TPM to self test adds to that for no real value.
+> > > 
+> > > Arguably the BIOS should have completed the selftest - this stuff
+> > > generally only exists to support embedded.
+> > > 
+> > > I don't like the idea of EAGAIN, that just expose all our users
+> > > to
+> > > this mess.
+> > > 
+> > > I would support making transmit_cmd genericly wait and retry if
+> > > the
+> > > TPM insists we need to wait for selftest to complete the specific
+> > > command though.
 > > 
-> > Discrete TPMs are often connected over slow serial buses which, on
-> > some platforms, can have glitches causing bit flips.  If a bit does
-> > flip it could cause an overrun if it's in one of the size
-> > parameters,
-> > so sanity check that we're not overrunning the provided buffer when
-> > doing a memcpy().
+> > OK, how about this then?
 > > 
-> > Signed-off-by: Jeremy Boone <jeremy.boone@nccgroup.trust>
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.c
-> > om>
-> > ---
-> >  drivers/char/tpm/tpm-interface.c | 1 +
-> >  drivers/char/tpm/tpm2-cmd.c      | 4 ++++
-> >  2 files changed, 5 insertions(+)
+> > James
 > 
-> Please add me to to-field in the future.
+> As long as there is no identified a regression it is a waste
+> of time to review these...
 
-Will do.  I tend to assume everyone uses my workflow which means I junk
-the additional cc to me since I'll read it on the list anyway.
-
->  I'm also wondering where is the cover letter.
-
-https://marc.info/?l=linux-integrity&m=151759223601566
-
-> > diff --git a/drivers/char/tpm/tpm-interface.c
-> > b/drivers/char/tpm/tpm-interface.c
-> > index 1d6729be4cd6..e99f4f71c74f 100644
-> > --- a/drivers/char/tpm/tpm-interface.c
-> > +++ b/drivers/char/tpm/tpm-interface.c
-> > @@ -1228,6 +1228,7 @@ int tpm_get_random(u32 chip_num, u8 *out,
-> > size_t max)
-> >  			break;
-> >  
-> >  		recd =
-> > be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
-> > +		recd = min_t(u32, recd, num_bytes);
-> 
-> Shouldn't this be rather a check whether num_bytes is surpassed and
-> return an error if that happens and maybe a klog message?
-
-I can do that.  The aim of the patch series is to make sure we don't
-overrun buffers and the min achieves that.  A message might help, but
-there are still many forms of corruption we could get that won't be
-detected without using HMACs.
-
-> > 
-> >  		rlength = be32_to_cpu(tpm_cmd.header.out.length);
-> >  		if (rlength < offsetof(struct tpm_getrandom_out,
-> > rng_data) +
-> > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-
-> > cmd.c
-> > index f40d20671a78..f6be08483ae6 100644
-> > --- a/drivers/char/tpm/tpm2-cmd.c
-> > +++ b/drivers/char/tpm/tpm2-cmd.c
-> > @@ -683,6 +683,10 @@ static int tpm2_unseal_cmd(struct tpm_chip
-> > *chip,
-> >  	if (!rc) {
-> >  		data_len = be16_to_cpup(
-> >  			(__be16 *) &buf.data[TPM_HEADER_SIZE +
-> > 4]);
-> > +		if (data_len < MIN_KEY_SIZE ||  data_len >
-> > MAX_KEY_SIZE + 1) {
-> > +			rc = -EFAULT;
-> > +			goto out;
-> > +		}
-> 
-> This change looks good to me but I'm thinking if this commit should
-> split into two?
-
-You mean one for each driver?  I can do that.
+There is an identified regression: the TPM driver will now periodically
+fail to attach.  However, there's no point reviewing until we agree
+what the fix is.  I was just waiting to verify this fixed my problem
+(which means seeing the messages it spits out proving the TPM has
+remained in self test).  I have now seen this and the driver still
+works, so I can submit a formal patch.
 
 James
-
-> /Jarkko
-> 
