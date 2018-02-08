@@ -1,70 +1,104 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58476 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752380AbeBHR1G (ORCPT
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:57968 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750847AbeBHRHd (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 8 Feb 2018 12:27:06 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w18HP0bN019370
-        for <linux-integrity@vger.kernel.org>; Thu, 8 Feb 2018 12:27:05 -0500
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2g0rhv7t2n-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 08 Feb 2018 12:27:05 -0500
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <kgold@linux.vnet.ibm.com>;
-        Thu, 8 Feb 2018 12:27:04 -0500
-Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w18HR3kZ48103600
-        for <linux-integrity@vger.kernel.org>; Thu, 8 Feb 2018 17:27:03 GMT
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BA5C712404C
-        for <linux-integrity@vger.kernel.org>; Thu,  8 Feb 2018 12:23:49 -0500 (EST)
-Received: from [9.2.55.233] (unknown [9.2.55.233])
-        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP id AA423124044
-        for <linux-integrity@vger.kernel.org>; Thu,  8 Feb 2018 12:23:49 -0500 (EST)
-Subject: Re: TPM selftest failure in 4.15
-To: linux-integrity <linux-integrity@vger.kernel.org>
-References: <1517487371.3251.9.camel@HansenPartnership.com>
- <db0a58b7-b021-9df3-aac1-bf3e23cacc0c@molgen.mpg.de>
- <1517488970.3251.26.camel@HansenPartnership.com>
- <1517498648.3145.4.camel@HansenPartnership.com>
- <20180201174053.GQ17053@ziepe.ca>
-From: Ken Goldman <kgold@linux.vnet.ibm.com>
-Date: Thu, 8 Feb 2018 12:27:21 -0500
-MIME-Version: 1.0
-In-Reply-To: <20180201174053.GQ17053@ziepe.ca>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Message-Id: <f0a615cf-e8c3-abf3-3b17-dfae52e7b60e@linux.vnet.ibm.com>
+        Thu, 8 Feb 2018 12:07:33 -0500
+Message-ID: <1518109652.21828.6.camel@HansenPartnership.com>
+Subject: Re: [PATCH 1/2] tpm: fix potential buffer overruns caused by bit
+ glitches on the bus
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: linux-integrity@vger.kernel.org,
+        Jeremy Boone <Jeremy.Boone@nccgroup.trust>
+Date: Thu, 08 Feb 2018 09:07:32 -0800
+In-Reply-To: <20180208133402.xpszh2p5cpjnu6ki@linux.intel.com>
+References: <1517592221.3137.18.camel@HansenPartnership.com>
+         <1517592278.3137.19.camel@HansenPartnership.com>
+         <20180208133402.xpszh2p5cpjnu6ki@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 2/1/2018 12:40 PM, Jason Gunthorpe wrote:
-
+On Thu, 2018-02-08 at 15:34 +0200, Jarkko Sakkinen wrote:
+> On Fri, Feb 02, 2018 at 06:24:38PM +0100, James Bottomley wrote:
+> > 
+> > From: Jeremy Boone <jeremy.boone@nccgroup.trust>
+> > 
+> > Discrete TPMs are often connected over slow serial buses which, on
+> > some platforms, can have glitches causing bit flips.  If a bit does
+> > flip it could cause an overrun if it's in one of the size
+> > parameters,
+> > so sanity check that we're not overrunning the provided buffer when
+> > doing a memcpy().
+> > 
+> > Signed-off-by: Jeremy Boone <jeremy.boone@nccgroup.trust>
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.c
+> > om>
+> > ---
+> >  drivers/char/tpm/tpm-interface.c | 1 +
+> >  drivers/char/tpm/tpm2-cmd.c      | 4 ++++
+> >  2 files changed, 5 insertions(+)
 > 
-> But if a selftest returns TPM2_RC_TESTING I would expect the next
-> command to also fail with a testing in progress code? At least by the
-> spec..
+> Please add me to to-field in the future.
 
-It will return that code if the command requires an untested function.
-For FIPS, the code is returned if there is any untested function.
+Will do.  I tend to assume everyone uses my workflow which means I junk
+the additional cc to me since I'll read it on the list anyway.
 
-Commands that don't require testable functions will succeed.
+>  I'm also wondering where is the cover letter.
 
-> The point of invoking selftest is to get to a state where future TPM
-> commands will succeed, so returning immediately on RC_TESTING seems
-> wrong?
+https://marc.info/?l=linux-integrity&m=151759223601566
 
-Blocking vs. non-blocking is a TPM vendor implementation option.
+> > diff --git a/drivers/char/tpm/tpm-interface.c
+> > b/drivers/char/tpm/tpm-interface.c
+> > index 1d6729be4cd6..e99f4f71c74f 100644
+> > --- a/drivers/char/tpm/tpm-interface.c
+> > +++ b/drivers/char/tpm/tpm-interface.c
+> > @@ -1228,6 +1228,7 @@ int tpm_get_random(u32 chip_num, u8 *out,
+> > size_t max)
+> >  			break;
+> >  
+> >  		recd =
+> > be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
+> > +		recd = min_t(u32, recd, num_bytes);
+> 
+> Shouldn't this be rather a check whether num_bytes is surpassed and
+> return an error if that happens and maybe a klog message?
 
-Re., "seems wrong", the PC Client TPM changed the requirement, so that
-a guaranteed non-blocking option is available.
+I can do that.  The aim of the patch series is to make sure we don't
+overrun buffers and the min achieves that.  A message might help, but
+there are still many forms of corruption we could get that won't be
+detected without using HMACs.
 
-~~
-2.	On receipt of TPM2_SelfTest(fullTest == YES), the TPM SHALL perform a 
-full self-test and return the result when all tests are complete.
-~~
+> > 
+> >  		rlength = be32_to_cpu(tpm_cmd.header.out.length);
+> >  		if (rlength < offsetof(struct tpm_getrandom_out,
+> > rng_data) +
+> > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-
+> > cmd.c
+> > index f40d20671a78..f6be08483ae6 100644
+> > --- a/drivers/char/tpm/tpm2-cmd.c
+> > +++ b/drivers/char/tpm/tpm2-cmd.c
+> > @@ -683,6 +683,10 @@ static int tpm2_unseal_cmd(struct tpm_chip
+> > *chip,
+> >  	if (!rc) {
+> >  		data_len = be16_to_cpup(
+> >  			(__be16 *) &buf.data[TPM_HEADER_SIZE +
+> > 4]);
+> > +		if (data_len < MIN_KEY_SIZE ||  data_len >
+> > MAX_KEY_SIZE + 1) {
+> > +			rc = -EFAULT;
+> > +			goto out;
+> > +		}
+> 
+> This change looks good to me but I'm thinking if this commit should
+> split into two?
 
-Of course, at some layer, the device drive is still polling, either for 
-a success code (non-blocking) or a response (blocking).
+You mean one for each driver?  I can do that.
+
+James
+
+> /Jarkko
+> 
