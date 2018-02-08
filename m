@@ -1,68 +1,60 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:20028 "EHLO mga11.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:30597 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751079AbeBHMog (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 8 Feb 2018 07:44:36 -0500
-Date: Thu, 8 Feb 2018 14:44:31 +0200
+        id S1750881AbeBHMga (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 8 Feb 2018 07:36:30 -0500
+Date: Thu, 8 Feb 2018 14:36:24 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2 v2] tpm: cmd_ready command can be issued only after
- granting locality
-Message-ID: <20180208124431.26f43gj66c36gugz@linux.intel.com>
-References: <20180128075101.6883-1-tomas.winkler@intel.com>
- <20180128075101.6883-2-tomas.winkler@intel.com>
- <20180128201559.GG23869@ziepe.ca>
- <5B8DA87D05A7694D9FA63FD143655C1B9420DD08@hasmsx108.ger.corp.intel.com>
- <20180206200255.ib7hblberqj6anh5@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9421889F@hasmsx108.ger.corp.intel.com>
+To: Javier Martinez Canillas <javierm@redhat.com>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, ltp@lists.linux.it,
+        linux-integrity@vger.kernel.org, Petr Vorel <pvorel@suse.cz>,
+        "Tricca, Philip B" <philip.b.tricca@intel.com>,
+        Thiebaud Weksteen <tweek@google.com>,
+        Petr Vandrovec <petr@vmware.com>
+Subject: Re: Hidden TPM questions in the LTP IMA posts
+Message-ID: <20180208123624.3ib7w7hgj2kk7pfu@linux.intel.com>
+References: <1516978199.29187.43.camel@linux.vnet.ibm.com>
+ <20180131133241.rbxy252l6p5rqlh2@linux.intel.com>
+ <1517416161.3469.142.camel@linux.vnet.ibm.com>
+ <1517820147.7570.4.camel@linux.intel.com>
+ <3279a223-a638-a21d-aa24-1879cf20df4c@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9421889F@hasmsx108.ger.corp.intel.com>
+In-Reply-To: <3279a223-a638-a21d-aa24-1879cf20df4c@redhat.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Feb 06, 2018 at 09:26:15PM +0000, Winkler, Tomas wrote:
-> > 
-> > On Sun, Jan 28, 2018 at 09:17:53PM +0000, Winkler, Tomas wrote:
-> > >
-> > > >
-> > > > On Sun, Jan 28, 2018 at 09:51:00AM +0200, Tomas Winkler wrote:
-> > > >
-> > > > > diff --git a/include/linux/tpm.h b/include/linux/tpm.h index
-> > > > > bcdd3790e94d..06639fb6ab85 100644
-> > > > > +++ b/include/linux/tpm.h
-> > > > > @@ -44,7 +44,7 @@ struct tpm_class_ops {
-> > > > >  	bool (*update_timeouts)(struct tpm_chip *chip,
-> > > > >  				unsigned long *timeout_cap);
-> > > > >  	int (*request_locality)(struct tpm_chip *chip, int loc);
-> > > > > -	void (*relinquish_locality)(struct tpm_chip *chip, int loc);
-> > > > > +	int (*relinquish_locality)(struct tpm_chip *chip, int loc);
-> > > >
-> > > > This seems wrong.. What is the core code supposed to do if relinquish
-> > fails?
-> > >
-> > > Not much just propage the error to the caller and leave the policy
-> > > decision to it.
-> > 
-> > Your patch set must either cover this or keep it as void.
+On Mon, Feb 05, 2018 at 02:34:49PM +0100, Javier Martinez Canillas wrote:
+> Support for reading from EFI is what landed for this release, but only the
+> TPM 1.2 (SHA1) format is supported, there's still not support for TPM 2.0
+> (crypto agile). You can see that in drivers/firmware/efi/libstub/tpm.c:
 > 
+> void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+> {
+> ...
+> 	status = efi_call_proto(efi_tcg2_protocol, get_event_log, tcg2_protocol,
+> 				EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2,
+> 				&log_location, &log_last_entry, &truncated);
+> ...
+> }
 > 
-> How the code is covering other failures in the transmit functions,  
-> how is this one different from for example request_locality failure?
-> Why we should not propage this error up?
+> void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
+> {
+> 	/* Only try to retrieve the logs in 1.2 format. */
+> 	efi_retrieve_tpm2_eventlog_1_2(sys_table_arg);
+> }
 > 
-> > 
-> > A better idea is to print an error to klog.
-> We can do that in addition.
+> But all the bits for TPM 2.0 (crypto agile) support seems to already be in
+> drivers/char/tpm/tpm2_eventlog.c, are only missing in the EFI stub AFAICT.
 
-I guess you are right. This can be propagated to the user space so that
-it knows that there is problem. To make the root more visible the klog
-message would make sense.
+This is correct. DT based platforms already support crypto agile.
+
+> Now, on latest TCG ACPI Specification (Revision 8, August 18, 2017) [1],
+> the spec does mention that the ACPI table with signature 'TPM2' can have
+> the LASA and LAML as optional fields. This is mentioned in section 7.3
+> "ACPI Table for TPM 2.0".
+
+Oh, this is new to me. We can support it as soon as there is a plaform
+that has it. I do not have any at this point.
 
 /Jarkko
