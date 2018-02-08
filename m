@@ -1,74 +1,40 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:61324 "EHLO mga01.intel.com"
+Received: from mga03.intel.com ([134.134.136.65]:13018 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750961AbeBHNeG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 8 Feb 2018 08:34:06 -0500
-Date: Thu, 8 Feb 2018 15:34:02 +0200
+        id S1750876AbeBHNSe (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 8 Feb 2018 08:18:34 -0500
+Date: Thu, 8 Feb 2018 15:18:29 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-integrity@vger.kernel.org,
-        Jeremy Boone <Jeremy.Boone@nccgroup.trust>
-Subject: Re: [PATCH 1/2] tpm: fix potential buffer overruns caused by bit
- glitches on the bus
-Message-ID: <20180208133402.xpszh2p5cpjnu6ki@linux.intel.com>
-References: <1517592221.3137.18.camel@HansenPartnership.com>
- <1517592278.3137.19.camel@HansenPartnership.com>
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        regression@leemhuis.info,
+        Alexander Steffen <Alexander.Steffen@infineon.com>
+Subject: Re: TPM selftest failure in 4.15 (Dell XPS 13, Nuvoton 6xx)
+Message-ID: <20180208131829.nws75cermvf2e4uq@linux.intel.com>
+References: <1517487371.3251.9.camel@HansenPartnership.com>
+ <db0a58b7-b021-9df3-aac1-bf3e23cacc0c@molgen.mpg.de>
+ <1517488970.3251.26.camel@HansenPartnership.com>
+ <1517498648.3145.4.camel@HansenPartnership.com>
+ <4384419e-b2c6-7c51-e905-281ddfe68442@molgen.mpg.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1517592278.3137.19.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <4384419e-b2c6-7c51-e905-281ddfe68442@molgen.mpg.de>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Feb 02, 2018 at 06:24:38PM +0100, James Bottomley wrote:
-> From: Jeremy Boone <jeremy.boone@nccgroup.trust>
+On Thu, Feb 01, 2018 at 08:16:26PM +0100, Paul Menzel wrote:
+> > The list of "A TPM error (2314) occurred continue selftest" is caused by
+> > my commit 125a2210541079e8e7c69e629ad06cabed788f8c ("tpm: React
+> > correctly to
+> > RC_TESTING from TPM 2.0 self tests") [1]. 2314 is TPM_RC_TESTING, so the TPM
+> > tells us that self-tests are still running in the background. This problem was
+> > not visible in previous versions, since it (incorrectly) ignored > TPM_RC_TESTING.
 > 
-> Discrete TPMs are often connected over slow serial buses which, on
-> some platforms, can have glitches causing bit flips.  If a bit does
-> flip it could cause an overrun if it's in one of the size parameters,
-> so sanity check that we're not overrunning the provided buffer when
-> doing a memcpy().
-> 
-> Signed-off-by: Jeremy Boone <jeremy.boone@nccgroup.trust>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> ---
->  drivers/char/tpm/tpm-interface.c | 1 +
->  drivers/char/tpm/tpm2-cmd.c      | 4 ++++
->  2 files changed, 5 insertions(+)
+> Maybe the commit should be reverted for now until this has cleared up for
+> the Dell XPS 13 9360(?) to adhere to Linux' no regression policy.
 
-Please add me to to-field in the future. I'm also wondering where is the
-cover letter.
-
-> 
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 1d6729be4cd6..e99f4f71c74f 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -1228,6 +1228,7 @@ int tpm_get_random(u32 chip_num, u8 *out, size_t max)
->  			break;
->  
->  		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
-> +		recd = min_t(u32, recd, num_bytes);
-
-Shouldn't this be rather a check whether num_bytes is surpassed and
-return an error if that happens and maybe a klog message?
-
->  		rlength = be32_to_cpu(tpm_cmd.header.out.length);
->  		if (rlength < offsetof(struct tpm_getrandom_out, rng_data) +
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index f40d20671a78..f6be08483ae6 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -683,6 +683,10 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
->  	if (!rc) {
->  		data_len = be16_to_cpup(
->  			(__be16 *) &buf.data[TPM_HEADER_SIZE + 4]);
-> +		if (data_len < MIN_KEY_SIZE ||  data_len > MAX_KEY_SIZE + 1) {
-> +			rc = -EFAULT;
-> +			goto out;
-> +		}
-
-This change looks good to me but I'm thinking if this commit should
-split into two?
+I think this should be done as an immediate action with Cc to stable.
 
 /Jarkko
