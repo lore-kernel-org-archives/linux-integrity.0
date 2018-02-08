@@ -1,55 +1,73 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga12.intel.com ([192.55.52.136]:56234 "EHLO mga12.intel.com"
+Received: from mga11.intel.com ([192.55.52.93]:20102 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750847AbeBHMto (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 8 Feb 2018 07:49:44 -0500
-Date: Thu, 8 Feb 2018 14:49:41 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>
-Subject: Re: TPM selftest failure in 4.15
-Message-ID: <20180208124941.7k6zelnsorrsbgpi@linux.intel.com>
-References: <1517487371.3251.9.camel@HansenPartnership.com>
+        id S1750881AbeBHMqZ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 8 Feb 2018 07:46:25 -0500
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: Jason Gunthorpe <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/2 v2] tpm: cmd_ready command can be issued only after
+ granting locality
+Date: Thu, 8 Feb 2018 12:46:20 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9421AB87@hasmsx108.ger.corp.intel.com>
+References: <20180128075101.6883-1-tomas.winkler@intel.com>
+ <20180128075101.6883-2-tomas.winkler@intel.com>
+ <20180128201559.GG23869@ziepe.ca>
+ <5B8DA87D05A7694D9FA63FD143655C1B9420DD08@hasmsx108.ger.corp.intel.com>
+ <20180206200255.ib7hblberqj6anh5@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9421889F@hasmsx108.ger.corp.intel.com>
+ <20180208124431.26f43gj66c36gugz@linux.intel.com>
+In-Reply-To: <20180208124431.26f43gj66c36gugz@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1517487371.3251.9.camel@HansenPartnership.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Feb 01, 2018 at 12:16:11PM +0000, James Bottomley wrote:
-> Embarrassingly enough, I'm just on my way to do a TPM talk at FOSDEM.
->  I installed my shiny new 4.15 kernel on the 'plane and this is what I
-> got after I arrived this morning:
-> 
-> jejb@jarvis:~> dmesg | grep -i tpm
-> [    0.000000] ACPI: TPM2 0x0000000079446CC0 000034
-> (v03        Tpm2Tabl 00000001 AMI  00000000)
-> [    1.598059] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
-> [    1.608863] tpm tpm0: A TPM error (2314) occurred continue selftest
-> [    1.640052] tpm tpm0: A TPM error (2314) occurred continue selftest
-> [    1.691215] tpm tpm0: A TPM error (2314) occurred continue selftest
-> [    1.782377] tpm tpm0: A TPM error (2314) occurred continue selftest
-> [    1.953539] tpm tpm0: A TPM error (2314) occurred continue selftest
-> [    2.284701] tpm tpm0: A TPM error (2314) occurred continue selftest
-> [    2.935743] tpm tpm0: A TPM error (2314) occurred continue selftest
-> [    4.216236] tpm tpm0: TPM self test failed
-> [    4.236829] ima: No TPM chip found, activating TPM-bypass! (rc=-19)
-> 
-> The error is TPM_RC_TESTING, which means it looks like we don't wait
-> long enough for the selftests to complete.  I get this all the time
-> booting with 4.15.  Fortunately I have a 4.13 backup kernel which is
-> fine (otherwise I'd be a bit hosed since all my keys now require a
-> TPM).
-> 
-> I'll debug on the train; my current suspicion is that the TPM_LONG
-> duration might be a bit short for this chip (A nuvoton 6xx in a dell
-> XPS-13).
-> 
-> James
 
-I also have XPS 13. I'll check if I can reproduce this. Sorry for the
-latency. At busy times I have some latency for messages that do not
-include me in to/cc fields but I eventually catch these. If you want
-a quicker response, do that in the future.
+> 
+> On Tue, Feb 06, 2018 at 09:26:15PM +0000, Winkler, Tomas wrote:
+> > >
+> > > On Sun, Jan 28, 2018 at 09:17:53PM +0000, Winkler, Tomas wrote:
+> > > >
+> > > > >
+> > > > > On Sun, Jan 28, 2018 at 09:51:00AM +0200, Tomas Winkler wrote:
+> > > > >
+> > > > > > diff --git a/include/linux/tpm.h b/include/linux/tpm.h index
+> > > > > > bcdd3790e94d..06639fb6ab85 100644
+> > > > > > +++ b/include/linux/tpm.h
+> > > > > > @@ -44,7 +44,7 @@ struct tpm_class_ops {
+> > > > > >  	bool (*update_timeouts)(struct tpm_chip *chip,
+> > > > > >  				unsigned long *timeout_cap);
+> > > > > >  	int (*request_locality)(struct tpm_chip *chip, int loc);
+> > > > > > -	void (*relinquish_locality)(struct tpm_chip *chip, int loc);
+> > > > > > +	int (*relinquish_locality)(struct tpm_chip *chip, int loc);
+> > > > >
+> > > > > This seems wrong.. What is the core code supposed to do if
+> > > > > relinquish
+> > > fails?
+> > > >
+> > > > Not much just propage the error to the caller and leave the policy
+> > > > decision to it.
+> > >
+> > > Your patch set must either cover this or keep it as void.
+> >
+> >
+> > How the code is covering other failures in the transmit functions, how
+> > is this one different from for example request_locality failure?
+> > Why we should not propage this error up?
+> >
+> > >
+> > > A better idea is to print an error to klog.
+> > We can do that in addition.
+> 
+> I guess you are right. This can be propagated to the user space so that it
+> knows that there is problem. To make the root more visible the klog
+> message would make sense.
 
-/Jarkko
+Thanks, will add an error message.
+Tomas
