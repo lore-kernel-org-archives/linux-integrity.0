@@ -1,62 +1,37 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:13512 "EHLO mga14.intel.com"
+Received: from mga12.intel.com ([192.55.52.136]:24657 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751028AbeBIRN3 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 9 Feb 2018 12:13:29 -0500
-Date: Fri, 9 Feb 2018 19:13:24 +0200
+        id S1751028AbeBIQox (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 9 Feb 2018 11:44:53 -0500
+Date: Fri, 9 Feb 2018 18:44:49 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        jmorris@namei.org
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
 Cc: linux-integrity@vger.kernel.org,
         Jeremy Boone <Jeremy.Boone@nccgroup.trust>
-Subject: Re: [PATCH v2 0/2] Fix kernel buffer overruns caused by bit flips
-Message-ID: <20180209171324.ciuw6jadxnoyxty7@linux.intel.com>
-References: <1518121576.21828.10.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2 1/5] tpm: fix potential buffer overruns caused by bit
+ glitches on the bus
+Message-ID: <20180209164449.udqwdxmsp2o3wdx7@linux.intel.com>
+References: <1518121688.21828.12.camel@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1518121576.21828.10.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1518121688.21828.12.camel@HansenPartnership.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Feb 08, 2018 at 12:26:16PM -0800, James Bottomley wrote:
-> If a TPM is attached to a system via a serial bus on a platform that
-> suffers bit flips, we can get back dangerously wrong data.  This patch
-> series aims never to do a direct copy into a kernel buffer based on an
-> unchecked size value returned from the TPM.
+On Thu, Feb 08, 2018 at 12:28:08PM -0800, James Bottomley wrote:
+> From: Jeremy Boone <jeremy.boone@nccgroup.trust>
 > 
-> Jeremy Boone (5):
->   tpm: fix potential buffer overruns caused by bit glitches on the bus
->   tpm: st33zp24: fix potential buffer overruns caused by bit glitches on
->     the bus
->   tpm_i2c_infineon: fix potential buffer overruns caused by bit glitches
->     on the bus
->   tpm_i2c_nuvoton: fix potential buffer overruns caused by bit glitches
->     on the bus
->   tpm_tis: fix potential buffer overruns caused by bit glitches on the
->     bus
+> Discrete TPMs are often connected over slow serial buses which, on
+> some platforms, can have glitches causing bit flips.  If a bit does
+> flip it could cause an overrun if it's in one of the size parameters,
+> so sanity check that we're not overrunning the provided buffer when
+> doing a memcpy().
 > 
->  drivers/char/tpm/st33zp24/st33zp24.c | 4 ++--
->  drivers/char/tpm/tpm-interface.c     | 4 ++++
->  drivers/char/tpm/tpm2-cmd.c          | 4 ++++
->  drivers/char/tpm/tpm_i2c_infineon.c  | 5 +++--
->  drivers/char/tpm/tpm_i2c_nuvoton.c   | 5 +++--
->  drivers/char/tpm/tpm_tis_core.c      | 5 +++--
->  6 files changed, 19 insertions(+), 8 deletions(-)
-> 
-> -- 
->o 2.12.3
+> Signed-off-by: Jeremy Boone <jeremy.boone@nccgroup.trust>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkkinen@linux.intel.com>
-
-I cannot test all of these but I'll put these to linux-next anyway. The
-changes are obvious and small scoped so if no one shouts they'll be part
-of the next PR.
-
-I've tested the changes that affect tpm2-cmd.c, tpm-interface.c and
-tpm_tis_core.c. For HW specific changes tested-by's would be much
-appreciated but I don't think they will break anything.
-
-Because these are quite critical fixes I wonder if I could do one more
-PR to 4.16?
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
 /Jarkko
