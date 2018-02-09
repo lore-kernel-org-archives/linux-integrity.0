@@ -1,99 +1,85 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:1704 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750997AbeBINSi (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 9 Feb 2018 08:18:38 -0500
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: linux-integrity@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] tpm: migrate tpm2_do_selftest() to use struct tpm_buf
-Date: Fri,  9 Feb 2018 15:18:20 +0200
-Message-Id: <20180209131820.23718-1-jarkko.sakkinen@linux.intel.com>
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36400 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750981AbeBIM0s (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 9 Feb 2018 07:26:48 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w19CQhAT089573
+        for <linux-integrity@vger.kernel.org>; Fri, 9 Feb 2018 07:26:48 -0500
+Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2g17fa408m-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 09 Feb 2018 07:26:47 -0500
+Received: from localhost
+        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Fri, 9 Feb 2018 12:26:44 -0000
+Subject: Re: TPM selftest failure in 4.15
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Date: Fri, 09 Feb 2018 07:26:40 -0500
+In-Reply-To: <20180209100204.likckglpdx427dnl@linux.intel.com>
+References: <1517487371.3251.9.camel@HansenPartnership.com>
+         <db0a58b7-b021-9df3-aac1-bf3e23cacc0c@molgen.mpg.de>
+         <1517488970.3251.26.camel@HansenPartnership.com>
+         <1517498648.3145.4.camel@HansenPartnership.com>
+         <20180201174053.GQ17053@ziepe.ca>
+         <1517510764.3145.38.camel@HansenPartnership.com>
+         <20180201185909.GW17053@ziepe.ca>
+         <1517515204.3145.51.camel@HansenPartnership.com>
+         <20180208131007.wedzl5itrlx2dawn@linux.intel.com>
+         <1518109320.21828.2.camel@HansenPartnership.com>
+         <20180209100204.likckglpdx427dnl@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1518179200.3445.31.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-As part of an ongoing effort to encapsulate TPM commands to struct
-tpm_buf instead of using clunky union of structs, migrated
-tpm2_do_selft_test() to use struct tpm_buf.
+On Fri, 2018-02-09 at 12:02 +0200, Jarkko Sakkinen wrote:
+> On Thu, Feb 08, 2018 at 09:02:00AM -0800, James Bottomley wrote:
+> > There is an identified regression: the TPM driver will now periodically
+> > fail to attach.  However, there's no point reviewing until we agree
+> > what the fix is.  I was just waiting to verify this fixed my problem
+> > (which means seeing the messages it spits out proving the TPM has
+> > remained in self test).  I have now seen this and the driver still
+> > works, so I can submit a formal patch.
+> 
+> For the self-test the duration falls down to 2 seconds as the specs do
+> not contain any well-defined duration for it, or at least I haven't
+> found it.
+> 
+> I see three alternative ways the fix the self-test:
+> 
+> 1. Execute self-test with fullTest = YES.
+> 2. Have a flag TPM_CHIP_TESTING that is set when the self-test is
+>    started. Issue a warning on time-out. Check for this flag in
+>    tpm_transmit_cmd() and tpm_write() and resend self-test command
+>    if the flag is stil test before the actual command. Return -EBUSY
+>    and print a warning if self-test is still active.
+> 3. Increase the duration to the "correct" value if we have one.
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
-I wish this would be included as part of patch set that fixes the timing
-issue.
- drivers/char/tpm/tpm2-cmd.c | 32 ++++++++++----------------------
- 1 file changed, 10 insertions(+), 22 deletions(-)
+Please take into account that the TPM must complete initialization
+BEFORE IMA looks for the TPM, otherwise IMA goes into TPM-bypass mode.
+ This consistently happens with a full self-test (option 1).
+Increasing the wait duration will most likely cause this to happen as
+well (option 2).
 
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index c17e75348a99..a91a2c6f03a7 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -31,10 +31,6 @@ struct tpm2_startup_in {
- 	__be16	startup_type;
- } __packed;
- 
--struct tpm2_self_test_in {
--	u8	full_test;
--} __packed;
--
- struct tpm2_get_tpm_pt_in {
- 	__be32	cap_id;
- 	__be32	property_id;
-@@ -60,7 +56,6 @@ struct tpm2_get_random_out {
- 
- union tpm2_cmd_params {
- 	struct	tpm2_startup_in		startup_in;
--	struct	tpm2_self_test_in	selftest_in;
- 	struct	tpm2_get_tpm_pt_in	get_tpm_pt_in;
- 	struct	tpm2_get_tpm_pt_out	get_tpm_pt_out;
- 	struct	tpm2_get_random_in	getrandom_in;
-@@ -823,16 +818,6 @@ unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
- }
- EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
- 
--#define TPM2_SELF_TEST_IN_SIZE \
--	(sizeof(struct tpm_input_header) + \
--	 sizeof(struct tpm2_self_test_in))
--
--static const struct tpm_input_header tpm2_selftest_header = {
--	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
--	.length = cpu_to_be32(TPM2_SELF_TEST_IN_SIZE),
--	.ordinal = cpu_to_be32(TPM2_CC_SELF_TEST)
--};
--
- /**
-  * tpm2_do_selftest() - ensure that all self tests have passed
-  *
-@@ -851,18 +836,21 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
- 	int rc;
- 	unsigned int delay_msec = 10;
- 	long duration;
--	struct tpm2_cmd cmd;
-+	struct tpm_buf buf;
- 
- 	duration = jiffies_to_msecs(
- 		tpm2_calc_ordinal_duration(chip, TPM2_CC_SELF_TEST));
- 
--	while (1) {
--		cmd.header.in = tpm2_selftest_header;
--		cmd.params.selftest_in.full_test = 0;
--
--		rc = tpm_transmit_cmd(chip, NULL, &cmd, TPM2_SELF_TEST_IN_SIZE,
--				      0, 0, "continue selftest");
-+	for (;;) {
-+		rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_SELF_TEST);
-+		if (rc)
-+			return rc;
- 
-+		/* Perform tests in the background. */
-+		tpm_buf_append_u8(&buf, 0);
-+		rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
-+				      "continue selftest");
-+		tpm_buf_destroy(&buf);
- 		if (rc != TPM2_RC_TESTING || delay_msec >= duration)
- 			break;
- 
--- 
-2.14.1
+Based on James' patch description, which says "There are various
+theories that resending the self-test command actually causes the
+tests to restart and thus triggers more TPM_RC_TESTING returns until
+the timeout is exceeded", I think IMA's detecting the TPM, by doing a
+PCR read, will cause the self-test to restart (option 2).
+
+Reverting the patch that enabled the TPM full self-test, or commenting
+out self-test completely, allows IMA to properly find the TPM.
+
+Side note, if the kernel emits TPM initialization warnings, there
+should be a successfully completed message as well.
+
+Mimi
