@@ -1,108 +1,338 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from h2.hallyn.com ([78.46.35.8]:58452 "EHLO mail.hallyn.com"
+Received: from mga11.intel.com ([192.55.52.93]:43521 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030749AbeBNOtF (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 14 Feb 2018 09:49:05 -0500
-Date: Wed, 14 Feb 2018 08:49:03 -0600
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org,
+        id S1030289AbeBNNqZ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 14 Feb 2018 08:46:25 -0500
+From: Tomas Winkler <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Dongsu Park <dongsu@kinvolk.io>,
-        Alban Crequy <alban@kinvolk.io>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [RFC PATCH 2/4] ima: fail signature verification on unprivileged
- & untrusted filesystems
-Message-ID: <20180214144903.GA1953@mail.hallyn.com>
-References: <1518615315-7162-1-git-send-email-zohar@linux.vnet.ibm.com>
- <1518615315-7162-2-git-send-email-zohar@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1518615315-7162-2-git-send-email-zohar@linux.vnet.ibm.com>
+        linux-kernel@vger.kernel.org,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH 1/2 v3] tpm: cmd_ready command can be issued only after granting locality
+Date: Wed, 14 Feb 2018 15:43:18 +0200
+Message-Id: <20180214134319.4400-2-tomas.winkler@intel.com>
+In-Reply-To: <20180214134319.4400-1-tomas.winkler@intel.com>
+References: <20180214134319.4400-1-tomas.winkler@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Quoting Mimi Zohar (zohar@linux.vnet.ibm.com):
-> Files on untrusted filesystems, such as fuse, can change at any time,
-> making the measurement(s) and by extension signature verification
-> meaningless.
-> 
-> FUSE can be mounted by unprivileged users either today with fusermount
-> installed with setuid, or soon with the upcoming patches to allow FUSE
-> mounts in a non-init user namespace.
-> 
-> This patch always fails the file signature verification on unprivileged
-> and untrusted filesystems.  To also fail file signature verification on
+The correct sequence is to first request locality and only after
+that perform cmd_ready  handshake, otherwise the hardware will drop
+the subsequent message as from the device point of view the cmd_ready
+handshake wasn't performed. Symmetrically locality has to be relinquished
+only after going idle handshake has completed, this requires that
+go_idle has to poll for the completion and as well locality
+relinquish has to poll for completion so it is not overridden
+in back to back commands flow.
 
-Why only untrusted?  Fuse could cause the same issue if it just
-messes up when mounted from init userns right?
+The issue is only visible on devices that support multiple localities.
 
-> privileged, untrusted filesystems requires a custom policy.
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+---
+V2: poll for locality relinquish completion
+V3: 1. Print error message upon locality relinquish failure
+    2. Don't override rc code on error path with locality relinquish
+       return value.
 
-(I'm not saying you shouldn't do this, but) does this mean that
-a container whose rootfs is fuse-mounted by the unprivileged user
-cannot possibly use IMA?
+ drivers/char/tpm/tpm-interface.c |  21 +++++---
+ drivers/char/tpm/tpm_crb.c       | 108 +++++++++++++++++++++++++++------------
+ drivers/char/tpm/tpm_tis_core.c  |   4 +-
+ include/linux/tpm.h              |   2 +-
+ 4 files changed, 94 insertions(+), 41 deletions(-)
 
-Good thing we can partially work around that by intercepting real
-mount calls with Tycho's new patchset :)
-
-> (This patch is based on Alban Crequy's use of fs_flags and patch
->  description.)
-> 
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Seth Forshee <seth.forshee@canonical.com>
-> Cc: Eric W. Biederman <ebiederm@xmission.com>
-> Cc: Dongsu Park <dongsu@kinvolk.io>
-> Cc: Alban Crequy <alban@kinvolk.io>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> ---
->  include/linux/fs.h                    |  1 +
->  security/integrity/ima/ima_appraise.c | 10 +++++++++-
->  2 files changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 2a815560fda0..faffe4aab43d 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2069,6 +2069,7 @@ struct file_system_type {
->  #define FS_BINARY_MOUNTDATA	2
->  #define FS_HAS_SUBTYPE		4
->  #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
-> +#define FS_UNTRUSTED		16	/* Defined filesystem as untrusted */
->  #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
->  	struct dentry *(*mount) (struct file_system_type *, int,
->  		       const char *, void *);
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> index f2803a40ff82..af8add31fe26 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -292,7 +292,14 @@ int ima_appraise_measurement(enum ima_hooks func,
->  	}
->  
->  out:
-> -	if (status != INTEGRITY_PASS) {
-> +	/* Fail untrusted and unpriviliged filesystems (eg FUSE) */
-> +	if ((inode->i_sb->s_type->fs_flags & FS_UNTRUSTED) &&
-> +	    (inode->i_sb->s_user_ns != &init_user_ns)) {
-> +		status = INTEGRITY_FAIL;
-> +		cause = "untrusted-filesystem";
-> +		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
-> +				    op, cause, rc, 0);
-> +	} else if (status != INTEGRITY_PASS) {
->  		if ((ima_appraise & IMA_APPRAISE_FIX) &&
->  		    (!xattr_value ||
->  		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
-> @@ -309,6 +316,7 @@ int ima_appraise_measurement(enum ima_hooks func,
->  	} else {
->  		ima_cache_flags(iint, func);
->  	}
-> +
->  	ima_set_cache_status(iint, func, status);
->  	return status;
->  }
-> -- 
-> 2.7.5
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 9e80a953d693..f47b29c1a963 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -422,8 +422,6 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	if (!(flags & TPM_TRANSMIT_UNLOCKED))
+ 		mutex_lock(&chip->tpm_mutex);
+ 
+-	if (chip->dev.parent)
+-		pm_runtime_get_sync(chip->dev.parent);
+ 
+ 	if (chip->ops->clk_enable != NULL)
+ 		chip->ops->clk_enable(chip, true);
+@@ -439,6 +437,9 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 		chip->locality = rc;
+ 	}
+ 
++	if (chip->dev.parent)
++		pm_runtime_get_sync(chip->dev.parent);
++
+ 	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+ 	if (rc)
+ 		goto out;
+@@ -499,17 +500,25 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+ 
+ out:
++	if (chip->dev.parent)
++		pm_runtime_put_sync(chip->dev.parent);
++
+ 	if (need_locality && chip->ops->relinquish_locality) {
+-		chip->ops->relinquish_locality(chip, chip->locality);
++		/* this coud be on error path, don't override error code */
++		int l_rc = chip->ops->relinquish_locality(chip, chip->locality);
++
++		if (l_rc) {
++			dev_err(&chip->dev, "%s: relinquish_locality: error %d\n",
++				__func__, l_rc);
++			rc = l_rc;
++		}
+ 		chip->locality = -1;
+ 	}
++
+ out_no_locality:
+ 	if (chip->ops->clk_enable != NULL)
+ 		chip->ops->clk_enable(chip, false);
+ 
+-	if (chip->dev.parent)
+-		pm_runtime_put_sync(chip->dev.parent);
+-
+ 	if (!(flags & TPM_TRANSMIT_UNLOCKED))
+ 		mutex_unlock(&chip->tpm_mutex);
+ 	return rc ? rc : len;
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index 7b3c2a8aa9de..497edd9848cd 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -112,6 +112,25 @@ struct tpm2_crb_smc {
+ 	u32 smc_func_id;
+ };
+ 
++static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
++				unsigned long timeout)
++{
++	ktime_t start;
++	ktime_t stop;
++
++	start = ktime_get();
++	stop = ktime_add(start, ms_to_ktime(timeout));
++
++	do {
++		if ((ioread32(reg) & mask) == value)
++			return true;
++
++		usleep_range(50, 100);
++	} while (ktime_before(ktime_get(), stop));
++
++	return ((ioread32(reg) & mask) == value);
++}
++
+ /**
+  * crb_go_idle - request tpm crb device to go the idle state
+  *
+@@ -128,7 +147,7 @@ struct tpm2_crb_smc {
+  *
+  * Return: 0 always
+  */
+-static int __maybe_unused crb_go_idle(struct device *dev, struct crb_priv *priv)
++static int crb_go_idle(struct device *dev, struct crb_priv *priv)
+ {
+ 	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
+ 	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
+@@ -136,30 +155,17 @@ static int __maybe_unused crb_go_idle(struct device *dev, struct crb_priv *priv)
+ 		return 0;
+ 
+ 	iowrite32(CRB_CTRL_REQ_GO_IDLE, &priv->regs_t->ctrl_req);
+-	/* we don't really care when this settles */
+ 
++	if (!crb_wait_for_reg_32(&priv->regs_t->ctrl_req,
++				 CRB_CTRL_REQ_GO_IDLE/* mask */,
++				 0, /* value */
++				 TPM2_TIMEOUT_C)) {
++		dev_warn(dev, "goIdle timed out\n");
++		return -ETIME;
++	}
+ 	return 0;
+ }
+ 
+-static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
+-				unsigned long timeout)
+-{
+-	ktime_t start;
+-	ktime_t stop;
+-
+-	start = ktime_get();
+-	stop = ktime_add(start, ms_to_ktime(timeout));
+-
+-	do {
+-		if ((ioread32(reg) & mask) == value)
+-			return true;
+-
+-		usleep_range(50, 100);
+-	} while (ktime_before(ktime_get(), stop));
+-
+-	return false;
+-}
+-
+ /**
+  * crb_cmd_ready - request tpm crb device to enter ready state
+  *
+@@ -175,8 +181,7 @@ static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
+  *
+  * Return: 0 on success -ETIME on timeout;
+  */
+-static int __maybe_unused crb_cmd_ready(struct device *dev,
+-					struct crb_priv *priv)
++static int crb_cmd_ready(struct device *dev, struct crb_priv *priv)
+ {
+ 	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
+ 	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
+@@ -195,11 +200,11 @@ static int __maybe_unused crb_cmd_ready(struct device *dev,
+ 	return 0;
+ }
+ 
+-static int crb_request_locality(struct tpm_chip *chip, int loc)
++static int __crb_request_locality(struct device *dev,
++				  struct crb_priv *priv, int loc)
+ {
+-	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+ 	u32 value = CRB_LOC_STATE_LOC_ASSIGNED |
+-		CRB_LOC_STATE_TPM_REG_VALID_STS;
++		    CRB_LOC_STATE_TPM_REG_VALID_STS;
+ 
+ 	if (!priv->regs_h)
+ 		return 0;
+@@ -207,21 +212,45 @@ static int crb_request_locality(struct tpm_chip *chip, int loc)
+ 	iowrite32(CRB_LOC_CTRL_REQUEST_ACCESS, &priv->regs_h->loc_ctrl);
+ 	if (!crb_wait_for_reg_32(&priv->regs_h->loc_state, value, value,
+ 				 TPM2_TIMEOUT_C)) {
+-		dev_warn(&chip->dev, "TPM_LOC_STATE_x.requestAccess timed out\n");
++		dev_warn(dev, "TPM_LOC_STATE_x.requestAccess timed out\n");
+ 		return -ETIME;
+ 	}
+ 
+ 	return 0;
+ }
+ 
+-static void crb_relinquish_locality(struct tpm_chip *chip, int loc)
++static int crb_request_locality(struct tpm_chip *chip, int loc)
+ {
+ 	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+ 
++	return __crb_request_locality(&chip->dev, priv, loc);
++}
++
++static int __crb_relinquish_locality(struct device *dev,
++				     struct crb_priv *priv, int loc)
++{
++	u32 mask = CRB_LOC_STATE_LOC_ASSIGNED |
++		   CRB_LOC_STATE_TPM_REG_VALID_STS;
++	u32 value = CRB_LOC_STATE_TPM_REG_VALID_STS;
++
+ 	if (!priv->regs_h)
+-		return;
++		return 0;
+ 
+ 	iowrite32(CRB_LOC_CTRL_RELINQUISH, &priv->regs_h->loc_ctrl);
++	if (!crb_wait_for_reg_32(&priv->regs_h->loc_state, mask, value,
++				 TPM2_TIMEOUT_C)) {
++		dev_warn(dev, "TPM_LOC_STATE_x.requestAccess timed out\n");
++		return -ETIME;
++	}
++
++	return 0;
++}
++
++static int crb_relinquish_locality(struct tpm_chip *chip, int loc)
++{
++	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
++
++	return __crb_relinquish_locality(&chip->dev, priv, loc);
+ }
+ 
+ static u8 crb_status(struct tpm_chip *chip)
+@@ -475,6 +504,10 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 			dev_warn(dev, FW_BUG "Bad ACPI memory layout");
+ 	}
+ 
++	ret = __crb_request_locality(dev, priv, 0);
++	if (ret)
++		return ret;
++
+ 	priv->regs_t = crb_map_res(dev, priv, &io_res, buf->control_address,
+ 				   sizeof(struct crb_regs_tail));
+ 	if (IS_ERR(priv->regs_t))
+@@ -531,6 +564,8 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 
+ 	crb_go_idle(dev, priv);
+ 
++	__crb_relinquish_locality(dev, priv, 0);
++
+ 	return ret;
+ }
+ 
+@@ -588,10 +623,14 @@ static int crb_acpi_add(struct acpi_device *device)
+ 	chip->acpi_dev_handle = device->handle;
+ 	chip->flags = TPM_CHIP_FLAG_TPM2;
+ 
+-	rc  = crb_cmd_ready(dev, priv);
++	rc = __crb_request_locality(dev, priv, 0);
+ 	if (rc)
+ 		return rc;
+ 
++	rc  = crb_cmd_ready(dev, priv);
++	if (rc)
++		goto out;
++
+ 	pm_runtime_get_noresume(dev);
+ 	pm_runtime_set_active(dev);
+ 	pm_runtime_enable(dev);
+@@ -601,12 +640,15 @@ static int crb_acpi_add(struct acpi_device *device)
+ 		crb_go_idle(dev, priv);
+ 		pm_runtime_put_noidle(dev);
+ 		pm_runtime_disable(dev);
+-		return rc;
++		goto out;
+ 	}
+ 
+-	pm_runtime_put(dev);
++	pm_runtime_put_sync(dev);
+ 
+-	return 0;
++out:
++	__crb_relinquish_locality(dev, priv, 0);
++
++	return rc;
+ }
+ 
+ static int crb_acpi_remove(struct acpi_device *device)
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 183a5f54d875..a22b12adbdfd 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -143,11 +143,13 @@ static bool check_locality(struct tpm_chip *chip, int l)
+ 	return false;
+ }
+ 
+-static void release_locality(struct tpm_chip *chip, int l)
++static int release_locality(struct tpm_chip *chip, int l)
+ {
+ 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+ 
+ 	tpm_tis_write8(priv, TPM_ACCESS(l), TPM_ACCESS_ACTIVE_LOCALITY);
++
++	return 0;
+ }
+ 
+ static int request_locality(struct tpm_chip *chip, int l)
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index bcdd3790e94d..06639fb6ab85 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -44,7 +44,7 @@ struct tpm_class_ops {
+ 	bool (*update_timeouts)(struct tpm_chip *chip,
+ 				unsigned long *timeout_cap);
+ 	int (*request_locality)(struct tpm_chip *chip, int loc);
+-	void (*relinquish_locality)(struct tpm_chip *chip, int loc);
++	int (*relinquish_locality)(struct tpm_chip *chip, int loc);
+ 	void (*clk_enable)(struct tpm_chip *chip, bool value);
+ };
+ 
+-- 
+2.14.3
