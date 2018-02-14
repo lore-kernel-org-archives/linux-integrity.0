@@ -1,81 +1,78 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga12.intel.com ([192.55.52.136]:9033 "EHLO mga12.intel.com"
+Received: from mga06.intel.com ([134.134.136.31]:20033 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967448AbeBNLpA (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 14 Feb 2018 06:45:00 -0500
-Date: Wed, 14 Feb 2018 13:44:56 +0200
+        id S967360AbeBNLoN (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 14 Feb 2018 06:44:13 -0500
+Date: Wed, 14 Feb 2018 13:44:07 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: jmorris@namei.org, linux-integrity@vger.kernel.org,
-        Jeremy Boone <Jeremy.Boone@nccgroup.trust>
-Subject: Re: [PATCH v2 0/2] Fix kernel buffer overruns caused by bit flips
-Message-ID: <20180214114456.l5ddzcqro7li575p@linux.intel.com>
-References: <1518121576.21828.10.camel@HansenPartnership.com>
- <20180209171324.ciuw6jadxnoyxty7@linux.intel.com>
- <1518197611.3930.12.camel@HansenPartnership.com>
+To: Laurent Bigonville <bigon@debian.org>
+Cc: Jerry Snitselaar <jsnitsel@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Alexander.Steffen@infineon.com,
+        linux-integrity@vger.kernel.org
+Subject: Re: [tpmdd-devel] tpm device not showing up in /dev anymore
+Message-ID: <20180214114353.tw72tztmth2agpqu@linux.intel.com>
+References: <20171111154516.GI17451@ziepe.ca>
+ <20171111191257.owuqtgzie3ostsab@cantor>
+ <20171111194647.GA6918@ziepe.ca>
+ <20171111203132.hkejjs6cdrrzq3y3@cantor>
+ <20171114145953.m3a343qvgln2z4er@linux.intel.com>
+ <1510672631.4078.7.camel@HansenPartnership.com>
+ <20171117131620.het4yxavz6lco6ow@linux.intel.com>
+ <67ca8d8f-bd2c-a1ad-72d1-7f4b8df0a847@debian.org>
+ <20180103003355.oaie7tych5lmtxiq@cantor>
+ <bea3c5c2-4abe-27bc-3fe0-761457cca897@debian.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1518197611.3930.12.camel@HansenPartnership.com>
+In-Reply-To: <bea3c5c2-4abe-27bc-3fe0-761457cca897@debian.org>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Feb 09, 2018 at 09:33:31AM -0800, James Bottomley wrote:
-> On Fri, 2018-02-09 at 19:13 +0200, Jarkko Sakkinen wrote:
-> > On Thu, Feb 08, 2018 at 12:26:16PM -0800, James Bottomley wrote:
-> > > 
-> > > If a TPM is attached to a system via a serial bus on a platform
-> > > that suffers bit flips, we can get back dangerously wrong
-> > > data.  This patch series aims never to do a direct copy into a
-> > > kernel buffer based on an unchecked size value returned from the
-> > > TPM.
-> > > 
-> > > Jeremy Boone (5):
-> > >   tpm: fix potential buffer overruns caused by bit glitches on the
-> > > bus
-> > >   tpm: st33zp24: fix potential buffer overruns caused by bit
-> > > glitches on
-> > >     the bus
-> > >   tpm_i2c_infineon: fix potential buffer overruns caused by bit
-> > > glitches
-> > >     on the bus
-> > >   tpm_i2c_nuvoton: fix potential buffer overruns caused by bit
-> > > glitches
-> > >     on the bus
-> > >   tpm_tis: fix potential buffer overruns caused by bit glitches on
-> > > the
-> > >     bus
-> > > 
-> > >  drivers/char/tpm/st33zp24/st33zp24.c | 4 ++--
-> > >  drivers/char/tpm/tpm-interface.c     | 4 ++++
-> > >  drivers/char/tpm/tpm2-cmd.c          | 4 ++++
-> > >  drivers/char/tpm/tpm_i2c_infineon.c  | 5 +++--
-> > >  drivers/char/tpm/tpm_i2c_nuvoton.c   | 5 +++--
-> > >  drivers/char/tpm/tpm_tis_core.c      | 5 +++--
-> > >  6 files changed, 19 insertions(+), 8 deletions(-)
-> > > 
-> > > -- 
-> > > o 2.12.3
-> > 
-> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkkinen@linux.intel.com>
-> > 
-> > I cannot test all of these but I'll put these to linux-next anyway.
-> > The changes are obvious and small scoped so if no one shouts they'll
-> > be part of the next PR.
-> > 
-> > I've tested the changes that affect tpm2-cmd.c, tpm-interface.c and
-> > tpm_tis_core.c. For HW specific changes tested-by's would be much
-> > appreciated but I don't think they will break anything.
-> > 
-> > Because these are quite critical fixes I wonder if I could do one
-> > more PR to 4.16?
-> 
-> They're all cc'd to stable, so they'd make the stable updates to 4.16
-> regardless of when they're pulled.  Since the merge window will close
-> on Sunday and you have to go via James' tree, I'd say it would cause a
-> lot of stress to try to make 4.16 but it's your call.
-> 
-> James
+On Fri, Feb 09, 2018 at 11:53:55AM +0100, Laurent Bigonville wrote:
+> I don't remember if I replied to this, re-posting to be sure:
+>
+> Le 03/01/18 a 01:33, Jerry Snitselaar a ecrit :
+> > Hi Laurent,
+> >
+> > Can you try the following debug patch (earlier idea of adding a sleep to
+> > allow
+> > tpm to complete state transition):
+> >
+> > --8<--
+> >
+> > diff --git a/drivers/char/tpm/tpm_tis_core.c
+> > b/drivers/char/tpm/tpm_tis_core.c
+> > index fdde971bc810..6a9325b02059 100644
+> > --- a/drivers/char/tpm/tpm_tis_core.c
+> > +++ b/drivers/char/tpm/tpm_tis_core.c
+> > @@ -80,6 +80,7 @@ static void release_locality(struct tpm_chip *chip,
+> > int l)
+> >     struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+> >
+> >     tpm_tis_write8(priv, TPM_ACCESS(l), TPM_ACCESS_ACTIVE_LOCALITY);
+> > +    tpm_msleep(200);
+> > }
+> >
+> > static int request_locality(struct tpm_chip *chip, int l)
+>
+> I tried the patch and this is working.
+>
+> Would that be a viable solution?
+>
+> Kind regards,
+>
+> Laurent Bigonville
 
-Agreed, thanks for input!
+According to the PC client specification in the section 5.5.2.3:
+
+"For commands indicated as short or medium duration (i.e., those that do
+not cause key  generation), the TPM SHALL respond to an abort within
+TIMEOUT_A. For commands indicated as lon g duration or those that cause
+key generation, the TPM SHALL respond to a request to abort the command
+within TIMEOUT B"
+
+The section 5.5.2.4 describing the access register does not give much
+more light to this i.e. what the expected duration maximum is when there
+is no command executing.
 
 /Jarkko
