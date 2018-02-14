@@ -1,142 +1,108 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52926 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1030731AbeBNPI2 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 14 Feb 2018 10:08:28 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w1EF6l6I135890
-        for <linux-integrity@vger.kernel.org>; Wed, 14 Feb 2018 10:08:27 -0500
-Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2g4nw0vv56-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 14 Feb 2018 10:08:27 -0500
-Received: from localhost
-        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Wed, 14 Feb 2018 15:08:24 -0000
-Subject: Re: [RFC PATCH 2/4] ima: fail signature verification on
- unprivileged & untrusted filesystems
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: "Serge E. Hallyn" <serge@hallyn.com>
+Received: from h2.hallyn.com ([78.46.35.8]:58452 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030749AbeBNOtF (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 14 Feb 2018 09:49:05 -0500
+Date: Wed, 14 Feb 2018 08:49:03 -0600
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Cc: linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
         Seth Forshee <seth.forshee@canonical.com>,
         "Eric W . Biederman" <ebiederm@xmission.com>,
         Dongsu Park <dongsu@kinvolk.io>,
-        Alban Crequy <alban@kinvolk.io>
-Date: Wed, 14 Feb 2018 10:08:19 -0500
-In-Reply-To: <20180214144903.GA1953@mail.hallyn.com>
+        Alban Crequy <alban@kinvolk.io>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [RFC PATCH 2/4] ima: fail signature verification on unprivileged
+ & untrusted filesystems
+Message-ID: <20180214144903.GA1953@mail.hallyn.com>
 References: <1518615315-7162-1-git-send-email-zohar@linux.vnet.ibm.com>
-         <1518615315-7162-2-git-send-email-zohar@linux.vnet.ibm.com>
-         <20180214144903.GA1953@mail.hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1518620899.5667.10.camel@linux.vnet.ibm.com>
+ <1518615315-7162-2-git-send-email-zohar@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1518615315-7162-2-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, 2018-02-14 at 08:49 -0600, Serge E. Hallyn wrote:
-> Quoting Mimi Zohar (zohar@linux.vnet.ibm.com):
-> > Files on untrusted filesystems, such as fuse, can change at any time,
-> > making the measurement(s) and by extension signature verification
-> > meaningless.
-> > 
-> > FUSE can be mounted by unprivileged users either today with fusermount
-> > installed with setuid, or soon with the upcoming patches to allow FUSE
-> > mounts in a non-init user namespace.
-> > 
-> > This patch always fails the file signature verification on unprivileged
-> > and untrusted filesystems.  To also fail file signature verification on
+Quoting Mimi Zohar (zohar@linux.vnet.ibm.com):
+> Files on untrusted filesystems, such as fuse, can change at any time,
+> making the measurement(s) and by extension signature verification
+> meaningless.
 > 
-> Why only untrusted?  Fuse could cause the same issue if it just
-> messes up when mounted from init userns right?
-
-Right, whether it is an unprivileged mount or not, fuse can return
-whatever it wants, whenever it wants.  IMA can calculate the file hash
-based based on what it reads, but fuse can return whatever it wants on
-subsequent reads.
-
-Refer to the discussion with Linus - http://kernsec.org/pipermail/linu
-x-security-module-archive/2018-February/005200.html
-
-> > privileged, untrusted filesystems requires a custom policy.
+> FUSE can be mounted by unprivileged users either today with fusermount
+> installed with setuid, or soon with the upcoming patches to allow FUSE
+> mounts in a non-init user namespace.
 > 
-> (I'm not saying you shouldn't do this, but) does this mean that
-> a container whose rootfs is fuse-mounted by the unprivileged user
-> cannot possibly use IMA?
+> This patch always fails the file signature verification on unprivileged
+> and untrusted filesystems.  To also fail file signature verification on
 
-How would you suggest to differentiate between your unprivileged fuse
-mounts from unintended, unintended malicious ones?
+Why only untrusted?  Fuse could cause the same issue if it just
+messes up when mounted from init userns right?
 
-The remaining patches are policy based.
+> privileged, untrusted filesystems requires a custom policy.
 
-> Good thing we can partially work around that by intercepting real
-> mount calls with Tycho's new patchset :)
+(I'm not saying you shouldn't do this, but) does this mean that
+a container whose rootfs is fuse-mounted by the unprivileged user
+cannot possibly use IMA?
 
-Can you provide a little more details?
+Good thing we can partially work around that by intercepting real
+mount calls with Tycho's new patchset :)
 
-thanks,
-
-Mimi
-
+> (This patch is based on Alban Crequy's use of fs_flags and patch
+>  description.)
 > 
-> > (This patch is based on Alban Crequy's use of fs_flags and patch
-> >  description.)
-> > 
-> > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> > Cc: Miklos Szeredi <miklos@szeredi.hu>
-> > Cc: Seth Forshee <seth.forshee@canonical.com>
-> > Cc: Eric W. Biederman <ebiederm@xmission.com>
-> > Cc: Dongsu Park <dongsu@kinvolk.io>
-> > Cc: Alban Crequy <alban@kinvolk.io>
-> > Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> > ---
-> >  include/linux/fs.h                    |  1 +
-> >  security/integrity/ima/ima_appraise.c | 10 +++++++++-
-> >  2 files changed, 10 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 2a815560fda0..faffe4aab43d 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -2069,6 +2069,7 @@ struct file_system_type {
-> >  #define FS_BINARY_MOUNTDATA	2
-> >  #define FS_HAS_SUBTYPE		4
-> >  #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
-> > +#define FS_UNTRUSTED		16	/* Defined filesystem as untrusted */
-> >  #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
-> >  	struct dentry *(*mount) (struct file_system_type *, int,
-> >  		       const char *, void *);
-> > diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> > index f2803a40ff82..af8add31fe26 100644
-> > --- a/security/integrity/ima/ima_appraise.c
-> > +++ b/security/integrity/ima/ima_appraise.c
-> > @@ -292,7 +292,14 @@ int ima_appraise_measurement(enum ima_hooks func,
-> >  	}
-> >  
-> >  out:
-> > -	if (status != INTEGRITY_PASS) {
-> > +	/* Fail untrusted and unpriviliged filesystems (eg FUSE) */
-> > +	if ((inode->i_sb->s_type->fs_flags & FS_UNTRUSTED) &&
-> > +	    (inode->i_sb->s_user_ns != &init_user_ns)) {
-> > +		status = INTEGRITY_FAIL;
-> > +		cause = "untrusted-filesystem";
-> > +		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
-> > +				    op, cause, rc, 0);
-> > +	} else if (status != INTEGRITY_PASS) {
-> >  		if ((ima_appraise & IMA_APPRAISE_FIX) &&
-> >  		    (!xattr_value ||
-> >  		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
-> > @@ -309,6 +316,7 @@ int ima_appraise_measurement(enum ima_hooks func,
-> >  	} else {
-> >  		ima_cache_flags(iint, func);
-> >  	}
-> > +
-> >  	ima_set_cache_status(iint, func, status);
-> >  	return status;
-> >  }
-> > -- 
-> > 2.7.5
+> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Seth Forshee <seth.forshee@canonical.com>
+> Cc: Eric W. Biederman <ebiederm@xmission.com>
+> Cc: Dongsu Park <dongsu@kinvolk.io>
+> Cc: Alban Crequy <alban@kinvolk.io>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> ---
+>  include/linux/fs.h                    |  1 +
+>  security/integrity/ima/ima_appraise.c | 10 +++++++++-
+>  2 files changed, 10 insertions(+), 1 deletion(-)
 > 
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 2a815560fda0..faffe4aab43d 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2069,6 +2069,7 @@ struct file_system_type {
+>  #define FS_BINARY_MOUNTDATA	2
+>  #define FS_HAS_SUBTYPE		4
+>  #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
+> +#define FS_UNTRUSTED		16	/* Defined filesystem as untrusted */
+>  #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
+>  	struct dentry *(*mount) (struct file_system_type *, int,
+>  		       const char *, void *);
+> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> index f2803a40ff82..af8add31fe26 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -292,7 +292,14 @@ int ima_appraise_measurement(enum ima_hooks func,
+>  	}
+>  
+>  out:
+> -	if (status != INTEGRITY_PASS) {
+> +	/* Fail untrusted and unpriviliged filesystems (eg FUSE) */
+> +	if ((inode->i_sb->s_type->fs_flags & FS_UNTRUSTED) &&
+> +	    (inode->i_sb->s_user_ns != &init_user_ns)) {
+> +		status = INTEGRITY_FAIL;
+> +		cause = "untrusted-filesystem";
+> +		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
+> +				    op, cause, rc, 0);
+> +	} else if (status != INTEGRITY_PASS) {
+>  		if ((ima_appraise & IMA_APPRAISE_FIX) &&
+>  		    (!xattr_value ||
+>  		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
+> @@ -309,6 +316,7 @@ int ima_appraise_measurement(enum ima_hooks func,
+>  	} else {
+>  		ima_cache_flags(iint, func);
+>  	}
+> +
+>  	ima_set_cache_status(iint, func, status);
+>  	return status;
+>  }
+> -- 
+> 2.7.5
