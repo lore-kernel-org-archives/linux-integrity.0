@@ -1,102 +1,94 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from out03.mta.xmission.com ([166.70.13.233]:50252 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423802AbeBOQra (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58286 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1033088AbeBOPPf (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 15 Feb 2018 11:47:30 -0500
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Dongsu Park <dongsu@kinvolk.io>,
-        Alban Crequy <alban@kinvolk.io>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-References: <1518615315-7162-1-git-send-email-zohar@linux.vnet.ibm.com>
-        <1518615315-7162-2-git-send-email-zohar@linux.vnet.ibm.com>
-        <87po57yvix.fsf@xmission.com>
-        <1518698285.5667.87.camel@linux.vnet.ibm.com>
-Date: Thu, 15 Feb 2018 10:47:06 -0600
-In-Reply-To: <1518698285.5667.87.camel@linux.vnet.ibm.com> (Mimi Zohar's
-        message of "Thu, 15 Feb 2018 07:38:05 -0500")
-Message-ID: <87a7wayzcl.fsf@xmission.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Subject: Re: [RFC PATCH 2/4] ima: fail signature verification on unprivileged & untrusted filesystems
+        Thu, 15 Feb 2018 10:15:35 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w1FFFI33084576
+        for <linux-integrity@vger.kernel.org>; Thu, 15 Feb 2018 10:15:35 -0500
+Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2g5bymjgkw-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 15 Feb 2018 10:15:32 -0500
+Received: from localhost
+        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Thu, 15 Feb 2018 15:13:59 -0000
+Subject: Re: TPM selftest failure in 4.15
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Date: Thu, 15 Feb 2018 10:13:52 -0500
+In-Reply-To: <20180215121231.yc74vwg3fqz3ybop@linux.intel.com>
+References: <1517488970.3251.26.camel@HansenPartnership.com>
+         <1517498648.3145.4.camel@HansenPartnership.com>
+         <20180201174053.GQ17053@ziepe.ca>
+         <1517510764.3145.38.camel@HansenPartnership.com>
+         <20180201185909.GW17053@ziepe.ca>
+         <1517515204.3145.51.camel@HansenPartnership.com>
+         <20180208131007.wedzl5itrlx2dawn@linux.intel.com>
+         <1518109320.21828.2.camel@HansenPartnership.com>
+         <20180209100204.likckglpdx427dnl@linux.intel.com>
+         <6066758e-efe3-7432-0b8f-540a781cb3aa@infineon.com>
+         <20180215121231.yc74vwg3fqz3ybop@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1518707632.5667.118.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+On Thu, 2018-02-15 at 14:12 +0200, Jarkko Sakkinen wrote:
+> On Fri, Feb 09, 2018 at 12:47:10PM +0100, Alexander Steffen wrote:
+> > On 09.02.2018 11:02, Jarkko Sakkinen wrote:
+> > > On Thu, Feb 08, 2018 at 09:02:00AM -0800, James Bottomley wrote:
+> > > > There is an identified regression: the TPM driver will now periodically
+> > > > fail to attach.  However, there's no point reviewing until we agree
+> > > > what the fix is.  I was just waiting to verify this fixed my problem
+> > > > (which means seeing the messages it spits out proving the TPM has
+> > > > remained in self test).  I have now seen this and the driver still
+> > > > works, so I can submit a formal patch.
+> > > 
+> > > For the self-test the duration falls down to 2 seconds as the specs do
+> > > not contain any well-defined duration for it, or at least I haven't
+> > > found it.
+> > > 
+> > > I see three alternative ways the fix the self-test:
+> > > 
+> > > 1. Execute self-test with fullTest = YES.
+> > 
+> > I had proposed some fixes in this direction last year:
+> > https://patchwork.kernel.org/patch/10105483/
+> > https://patchwork.kernel.org/patch/10130535/
+> > 
+> > Those combine the fast test execution with fullTest = NO for spec-compliant
+> > TPMs with a fallback to fullTest = YES.
+> 
+> The first was accepted.
+> 
+> The 2nd wasn't accpeted mainly for reasons that for me only acceptable
+> dependency is:
+> 
+> 1. Patch that is part of the same patch set.
+> 2. A merged commit.
+> 
+> I didn't event look at the code for the second one at that point because
+> it was formally done wrong.
+> 
+> What it is doing would be acceptable for me. I still think that TPM
+> should be fully tested before letting IMA for example to use it.
 
-> On Wed, 2018-02-14 at 17:57 -0600, Eric W. Biederman wrote:
->> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
->> 
->> > Files on untrusted filesystems, such as fuse, can change at any time,
->> > making the measurement(s) and by extension signature verification
->> > meaningless.
->> >
->> > FUSE can be mounted by unprivileged users either today with fusermount
->> > installed with setuid, or soon with the upcoming patches to allow FUSE
->> > mounts in a non-init user namespace.
->> >
->> > This patch always fails the file signature verification on unprivileged
->> > and untrusted filesystems.  To also fail file signature verification on
->> > privileged, untrusted filesystems requires a custom policy.
->> >
->> > (This patch is based on Alban Crequy's use of fs_flags and patch
->> >  description.)
->> 
->> This would be much better done based on a flag in s_iflags and then the
->> mounts that need this can set this.  That new flag can perhaps be called
->> SB_I_IMA_FAIL.
->> 
->> Among other things that should allow the policy of when to set this to
->> be set in fuse where it is obvious rather than in an magic location in
->> IMA.
->
-> Using s_iflags instead of fs_flags is fine, but I'm not sure how this
-> affects the IMA policy.  This patch set assumes only unprivileged,
-> untrusted filesytems can automatically fail file signature
-> verification (2nd patch), as that hasn't yet been upstreamed and won't
-> break userspace.
->
-> Based on policy, IMA should additionally be able to fail the signature
-> verification for files on privileged, untrusted filesystems.
+Why?  The short selftest has worked fine up to now.  The full selftest
+delays the TPM way too long and causes IMA to go into TPM-bypass mode.
+ The faster the TPM is available, the better for IMA.
 
-Apologies ima has a very specific meaning of policy, as in the loaded
-ima policy.  I was meaning the hard coded policy of which filesystems
-we simply would not trust by default.
+It seems all commands, except selftest, the code sleeps in a loop and
+checks for the command to finish, but doesn't resend the command.
+ Only for selftest is the command resent, instead of just waiting for
+it to complete.  Is there any reason for this?
 
-In code terms what I was thinking would look something like:
-
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -292,7 +292,14 @@ int ima_appraise_measurement(enum ima_hooks func,
- 	}
-  
- out:
--	if (status != INTEGRITY_PASS) {
-+	/* Fail if we can't trust the fs enough to support ima xattrs (FUSE) */
-+	if (inode->i_sb->s_iflags & SB_I_NOIMA) {
-+		status = INTEGRITY_FAIL;
-+		cause = "untrusted-filesystem";
-+		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
-+				    op, cause, rc, 0);
-+	} else if (status != INTEGRITY_PASS) {
- 		if ((ima_appraise & IMA_APPRAISE_FIX) &&
- 		    (!xattr_value ||
-  		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
-
-And somewhere in the fuse mount code it would say:
-
-	if (sb->s_user_ns != &init_user_ns)
-        	sb->s_iflags |= SB_I_NOIMA);
-
-The point being that the logic for setting the flag can live in fuse or
-a simpler filesystem and all ima proper needs to do is deal with the flag being
-set.  That should be easier to maintainer and simpler to code all
-around.
-
-Eric
+Mimi
