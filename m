@@ -1,110 +1,132 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:46023 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031726AbeBONlJ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 15 Feb 2018 08:41:09 -0500
-Date: Thu, 15 Feb 2018 15:41:04 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Nayna Jain <nayna@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tpm: migrate tpm2_do_selftest() to use struct tpm_buf
-Message-ID: <20180215134104.2m2vd5dhz25kzspq@linux.intel.com>
-References: <20180209131820.23718-1-jarkko.sakkinen@linux.intel.com>
- <f2cace35-b460-08d8-798b-9fb6b5acbcea@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <f2cace35-b460-08d8-798b-9fb6b5acbcea@linux.vnet.ibm.com>
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55164 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S967921AbeBOMiP (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 15 Feb 2018 07:38:15 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w1FCZSrX099379
+        for <linux-integrity@vger.kernel.org>; Thu, 15 Feb 2018 07:38:14 -0500
+Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2g56a49xaa-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 15 Feb 2018 07:38:13 -0500
+Received: from localhost
+        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Thu, 15 Feb 2018 12:38:11 -0000
+Subject: Re: [RFC PATCH 2/4] ima: fail signature verification on
+ unprivileged & untrusted filesystems
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Dongsu Park <dongsu@kinvolk.io>,
+        Alban Crequy <alban@kinvolk.io>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Date: Thu, 15 Feb 2018 07:38:05 -0500
+In-Reply-To: <87po57yvix.fsf@xmission.com>
+References: <1518615315-7162-1-git-send-email-zohar@linux.vnet.ibm.com>
+         <1518615315-7162-2-git-send-email-zohar@linux.vnet.ibm.com>
+         <87po57yvix.fsf@xmission.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1518698285.5667.87.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Feb 12, 2018 at 02:31:43PM +0530, Nayna Jain wrote:
+On Wed, 2018-02-14 at 17:57 -0600, Eric W. Biederman wrote:
+> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
 > 
+> > Files on untrusted filesystems, such as fuse, can change at any time,
+> > making the measurement(s) and by extension signature verification
+> > meaningless.
+> >
+> > FUSE can be mounted by unprivileged users either today with fusermount
+> > installed with setuid, or soon with the upcoming patches to allow FUSE
+> > mounts in a non-init user namespace.
+> >
+> > This patch always fails the file signature verification on unprivileged
+> > and untrusted filesystems.  To also fail file signature verification on
+> > privileged, untrusted filesystems requires a custom policy.
+> >
+> > (This patch is based on Alban Crequy's use of fs_flags and patch
+> >  description.)
 > 
-> On 02/09/2018 06:48 PM, Jarkko Sakkinen wrote:
-> > As part of an ongoing effort to encapsulate TPM commands to struct
-> > tpm_buf instead of using clunky union of structs, migrated
-> > tpm2_do_selft_test() to use struct tpm_buf.
-> > 
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> This would be much better done based on a flag in s_iflags and then the
+> mounts that need this can set this.  That new flag can perhaps be called
+> SB_I_IMA_FAIL.
+> 
+> Among other things that should allow the policy of when to set this to
+> be set in fuse where it is obvious rather than in an magic location in
+> IMA.
+
+Using s_iflags instead of fs_flags is fine, but I'm not sure how this
+affects the IMA policy.  This patch set assumes only unprivileged,
+untrusted filesytems can automatically fail file signature
+verification (2nd patch), as that hasn't yet been upstreamed and won't
+break userspace.
+
+Based on policy, IMA should additionally be able to fail the signature
+verification for files on privileged, untrusted filesystems.
+
+Mimi
+
+
+> Eric
+> 
+> > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> > Cc: Miklos Szeredi <miklos@szeredi.hu>
+> > Cc: Seth Forshee <seth.forshee@canonical.com>
+> > Cc: Eric W. Biederman <ebiederm@xmission.com>
+> > Cc: Dongsu Park <dongsu@kinvolk.io>
+> > Cc: Alban Crequy <alban@kinvolk.io>
+> > Cc: "Serge E. Hallyn" <serge@hallyn.com>
 > > ---
-> > I wish this would be included as part of patch set that fixes the timing
-> > issue.
-> >   drivers/char/tpm/tpm2-cmd.c | 32 ++++++++++----------------------
-> >   1 file changed, 10 insertions(+), 22 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> > index c17e75348a99..a91a2c6f03a7 100644
-> > --- a/drivers/char/tpm/tpm2-cmd.c
-> > +++ b/drivers/char/tpm/tpm2-cmd.c
-> > @@ -31,10 +31,6 @@ struct tpm2_startup_in {
-> >   	__be16	startup_type;
-> >   } __packed;
-> > 
-> > -struct tpm2_self_test_in {
-> > -	u8	full_test;
-> > -} __packed;
-> > -
-> >   struct tpm2_get_tpm_pt_in {
-> >   	__be32	cap_id;
-> >   	__be32	property_id;
-> > @@ -60,7 +56,6 @@ struct tpm2_get_random_out {
-> > 
-> >   union tpm2_cmd_params {
-> >   	struct	tpm2_startup_in		startup_in;
-> > -	struct	tpm2_self_test_in	selftest_in;
-> >   	struct	tpm2_get_tpm_pt_in	get_tpm_pt_in;
-> >   	struct	tpm2_get_tpm_pt_out	get_tpm_pt_out;
-> >   	struct	tpm2_get_random_in	getrandom_in;
-> > @@ -823,16 +818,6 @@ unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
-> >   }
-> >   EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
-> > 
-> > -#define TPM2_SELF_TEST_IN_SIZE \
-> > -	(sizeof(struct tpm_input_header) + \
-> > -	 sizeof(struct tpm2_self_test_in))
-> > -
-> > -static const struct tpm_input_header tpm2_selftest_header = {
-> > -	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
-> > -	.length = cpu_to_be32(TPM2_SELF_TEST_IN_SIZE),
-> > -	.ordinal = cpu_to_be32(TPM2_CC_SELF_TEST)
-> > -};
-> > -
-> >   /**
-> >    * tpm2_do_selftest() - ensure that all self tests have passed
-> >    *
-> > @@ -851,18 +836,21 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
-> >   	int rc;
-> >   	unsigned int delay_msec = 10;
-> >   	long duration;
-> > -	struct tpm2_cmd cmd;
-> > +	struct tpm_buf buf;
-> > 
-> >   	duration = jiffies_to_msecs(
-> >   		tpm2_calc_ordinal_duration(chip, TPM2_CC_SELF_TEST));
-> > 
-> > -	while (1) {
-> > -		cmd.header.in = tpm2_selftest_header;
-> > -		cmd.params.selftest_in.full_test = 0;
-> > -
-> > -		rc = tpm_transmit_cmd(chip, NULL, &cmd, TPM2_SELF_TEST_IN_SIZE,
-> > -				      0, 0, "continue selftest");
-> > +	for (;;) {
-> > +		rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_SELF_TEST);
-> > +		if (rc)
-> > +			return rc;
-> > 
-> > +		/* Perform tests in the background. */
-> > +		tpm_buf_append_u8(&buf, 0);
-> > +		rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
-> > +				      "continue selftest");
-> > +		tpm_buf_destroy(&buf);
-> >   		if (rc != TPM2_RC_TESTING || delay_msec >= duration)
-> >   			break;
-> > 
-> Tested-By: Nayna Jain <nayna@linux.vnet.ibm.com>
-
-Thank you Nayna.
-
-/Jarkko
+> >  include/linux/fs.h                    |  1 +
+> >  security/integrity/ima/ima_appraise.c | 10 +++++++++-
+> >  2 files changed, 10 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index 2a815560fda0..faffe4aab43d 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -2069,6 +2069,7 @@ struct file_system_type {
+> >  #define FS_BINARY_MOUNTDATA	2
+> >  #define FS_HAS_SUBTYPE		4
+> >  #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
+> > +#define FS_UNTRUSTED		16	/* Defined filesystem as untrusted */
+> >  #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
+> >  	struct dentry *(*mount) (struct file_system_type *, int,
+> >  		       const char *, void *);
+> > diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> > index f2803a40ff82..af8add31fe26 100644
+> > --- a/security/integrity/ima/ima_appraise.c
+> > +++ b/security/integrity/ima/ima_appraise.c
+> > @@ -292,7 +292,14 @@ int ima_appraise_measurement(enum ima_hooks func,
+> >  	}
+> >  
+> >  out:
+> > -	if (status != INTEGRITY_PASS) {
+> > +	/* Fail untrusted and unpriviliged filesystems (eg FUSE) */
+> > +	if ((inode->i_sb->s_type->fs_flags & FS_UNTRUSTED) &&
+> > +	    (inode->i_sb->s_user_ns != &init_user_ns)) {
+> > +		status = INTEGRITY_FAIL;
+> > +		cause = "untrusted-filesystem";
+> > +		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
+> > +				    op, cause, rc, 0);
+> > +	} else if (status != INTEGRITY_PASS) {
+> >  		if ((ima_appraise & IMA_APPRAISE_FIX) &&
+> >  		    (!xattr_value ||
+> >  		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
+> > @@ -309,6 +316,7 @@ int ima_appraise_measurement(enum ima_hooks func,
+> >  	} else {
+> >  		ima_cache_flags(iint, func);
+> >  	}
+> > +
+> >  	ima_set_cache_status(iint, func, status);
+> >  	return status;
+> >  }
+> 
