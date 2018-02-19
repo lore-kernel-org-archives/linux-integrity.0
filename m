@@ -1,42 +1,72 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:58030 "EHLO mga18.intel.com"
+Received: from mga03.intel.com ([134.134.136.65]:1048 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752519AbeBSLwY (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 19 Feb 2018 06:52:24 -0500
-Date: Mon, 19 Feb 2018 13:52:21 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Tomas Winkler <tomas.winkler@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2 v3] tpm: separate cmd_ready/go_idle from runtime_pm
-Message-ID: <20180219115221.7kd3ks7mrzmw36mz@linux.intel.com>
+        id S1752528AbeBSLnY (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 19 Feb 2018 06:43:24 -0500
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: Jason Gunthorpe <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/2 v3] tpm: cmd_ready command can be issued only after
+ granting locality
+Date: Mon, 19 Feb 2018 11:43:19 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B942240B1@hasmsx108.ger.corp.intel.com>
 References: <20180214134319.4400-1-tomas.winkler@intel.com>
- <20180214134319.4400-3-tomas.winkler@intel.com>
+ <20180214134319.4400-2-tomas.winkler@intel.com>
+ <20180219112700.yfoywzegqzrpynlk@linux.intel.com>
+In-Reply-To: <20180219112700.yfoywzegqzrpynlk@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180214134319.4400-3-tomas.winkler@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Feb 14, 2018 at 03:43:19PM +0200, Tomas Winkler wrote:
-> We cannot use go_idle cmd_ready commands via runtime_pm handles
-> as with the introduction of localities this is no longer an optional
-> feature, while runtime pm can be not enabled.
-> Though cmd_ready/go_idle provides power saving feature, it's also part of
-> TPM2 protocol and should be called explicitly.
-> This patch exposes cmd_read/go_idle via tpm class ops and removes
-> runtime pm support as it is not used by any driver.
 > 
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> ---
-> V2: resent
-> V3: resent
+> On Wed, Feb 14, 2018 at 03:43:18PM +0200, Tomas Winkler wrote:
+> >  	if (need_locality && chip->ops->relinquish_locality) {
+> > -		chip->ops->relinquish_locality(chip, chip->locality);
+> > +		/* this coud be on error path, don't override error code */
+> > +		int l_rc = chip->ops->relinquish_locality(chip, chip->locality);
+> 
+> All local variable declarations must be in the beginning of the function.
 
-Only the cover letter needs a backlog but the code change looks
-good to me.
+Who says?
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-/Jarkko
+> 
+> > +
+> > +		if (l_rc) {
+> > +			dev_err(&chip->dev, "%s: relinquish_locality: error
+> %d\n",
+> > +				__func__, l_rc);
+> > +			rc = l_rc;
+> > +		}
+> 
+> Your comment about not overriding error code is incorrect. 
+
+Please explain? 
+
+> The value of 'rc' should be never overridden, which kind of supports to "just
+> print" behavior that we had for a locality error.
+
+You are not consistent, you've agreed with propagating it to user space. 
+The error will  be propagated in case of an error in locality relinquish
+the device is pretty much in non functional state and provious errors do not matter much,
+but rc value won't be modified if locality_reliquish succeeds.
+
+> Is your fix somehow dependent on changing relinquish_locality() behavior? If
+> not, please remove this change. If you want to contribute such behavioral
+> change, you should make a separate patch of it.
+
+The issue is structural, this is required just because the relinquish locality  is inside the error path handling.
+
+> Now it's like a trojan horse bundled inside a bug fix.
+
+Not sure I understand your methaphore. 
+Please review again.
+
+Thanks
+Tomas
