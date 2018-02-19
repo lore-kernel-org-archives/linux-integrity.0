@@ -1,51 +1,141 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:11257 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752580AbeBSL1F (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 19 Feb 2018 06:27:05 -0500
-Date: Mon, 19 Feb 2018 13:27:00 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Tomas Winkler <tomas.winkler@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2 v3] tpm: cmd_ready command can be issued only after
- granting locality
-Message-ID: <20180219112700.yfoywzegqzrpynlk@linux.intel.com>
-References: <20180214134319.4400-1-tomas.winkler@intel.com>
- <20180214134319.4400-2-tomas.winkler@intel.com>
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58762 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752244AbeBSJQk (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 19 Feb 2018 04:16:40 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w1J9ETV6036521
+        for <linux-integrity@vger.kernel.org>; Mon, 19 Feb 2018 04:16:40 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2g7te1k7m0-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 19 Feb 2018 04:16:40 -0500
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
+        Mon, 19 Feb 2018 04:16:38 -0500
+Subject: Re: TPM selftest failure in 4.15
+To: Alexander Steffen <Alexander.Steffen@infineon.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+References: <1517488970.3251.26.camel@HansenPartnership.com>
+ <1517498648.3145.4.camel@HansenPartnership.com>
+ <20180201174053.GQ17053@ziepe.ca>
+ <1517510764.3145.38.camel@HansenPartnership.com>
+ <20180201185909.GW17053@ziepe.ca>
+ <1517515204.3145.51.camel@HansenPartnership.com>
+ <20180208131007.wedzl5itrlx2dawn@linux.intel.com>
+ <1518109320.21828.2.camel@HansenPartnership.com>
+ <20180209100204.likckglpdx427dnl@linux.intel.com>
+ <6066758e-efe3-7432-0b8f-540a781cb3aa@infineon.com>
+ <20180215121231.yc74vwg3fqz3ybop@linux.intel.com>
+ <1518707632.5667.118.camel@linux.vnet.ibm.com>
+ <a85f5b00-8291-b394-ca76-a2044b347d64@infineon.com>
+From: Nayna Jain <nayna@linux.vnet.ibm.com>
+Date: Mon, 19 Feb 2018 14:45:31 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180214134319.4400-2-tomas.winkler@intel.com>
+In-Reply-To: <a85f5b00-8291-b394-ca76-a2044b347d64@infineon.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Message-Id: <67ef8389-fefa-d2c0-43c0-11c87724abc0@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Feb 14, 2018 at 03:43:18PM +0200, Tomas Winkler wrote:
->  	if (need_locality && chip->ops->relinquish_locality) {
-> -		chip->ops->relinquish_locality(chip, chip->locality);
-> +		/* this coud be on error path, don't override error code */
-> +		int l_rc = chip->ops->relinquish_locality(chip, chip->locality);
 
-All local variable declarations must be in the beginning of the
-function.
 
-> +
-> +		if (l_rc) {
-> +			dev_err(&chip->dev, "%s: relinquish_locality: error %d\n",
-> +				__func__, l_rc);
-> +			rc = l_rc;
-> +		}
+On 02/17/2018 12:00 AM, Alexander Steffen wrote:
+> On 15.02.2018 16:13, Mimi Zohar wrote:
+>> On Thu, 2018-02-15 at 14:12 +0200, Jarkko Sakkinen wrote:
+>>> On Fri, Feb 09, 2018 at 12:47:10PM +0100, Alexander Steffen wrote:
+>>>> On 09.02.2018 11:02, Jarkko Sakkinen wrote:
+>>>>> On Thu, Feb 08, 2018 at 09:02:00AM -0800, James Bottomley wrote:
+>>>>>> There is an identified regression: the TPM driver will now 
+>>>>>> periodically
+>>>>>> fail to attach.  However, there's no point reviewing until we agree
+>>>>>> what the fix is.  I was just waiting to verify this fixed my problem
+>>>>>> (which means seeing the messages it spits out proving the TPM has
+>>>>>> remained in self test).  I have now seen this and the driver still
+>>>>>> works, so I can submit a formal patch.
+>>>>>
+>>>>> For the self-test the duration falls down to 2 seconds as the 
+>>>>> specs do
+>>>>> not contain any well-defined duration for it, or at least I haven't
+>>>>> found it.
+>>>>>
+>>>>> I see three alternative ways the fix the self-test:
+>>>>>
+>>>>> 1. Execute self-test with fullTest = YES.
+>>>>
+>>>> I had proposed some fixes in this direction last year:
+>>>> https://patchwork.kernel.org/patch/10105483/
+>>>> https://patchwork.kernel.org/patch/10130535/
+>>>>
+>>>> Those combine the fast test execution with fullTest = NO for 
+>>>> spec-compliant
+>>>> TPMs with a fallback to fullTest = YES.
+>>>
+>>> The first was accepted.
+>>>
+>>> The 2nd wasn't accpeted mainly for reasons that for me only acceptable
+>>> dependency is:
+>>>
+>>> 1. Patch that is part of the same patch set.
+>>> 2. A merged commit.
+>>>
+>>> I didn't event look at the code for the second one at that point 
+>>> because
+>>> it was formally done wrong.
+>>>
+>>> What it is doing would be acceptable for me. I still think that TPM
+>>> should be fully tested before letting IMA for example to use it.
+>>
+>> Why?  The short selftest has worked fine up to now.  The full selftest
+>> delays the TPM way too long and causes IMA to go into TPM-bypass mode.
+>>   The faster the TPM is available, the better for IMA.
+>
+> I assume that IMA can deal with the TPM not returning RC_SUCCESS for a 
+> command, right? Then, if speed is the goal, not explicitly triggering 
+> any selftests and instead letting the TPM handle them internally still 
+> seems like the best solution. If the user needs a fully tested TPM for 
+> some reason, he can trigger the selftests himself. But the kernel 
+> cannot at the same time guarantee that all selftests pass (especially 
+> on broken/slow devices that take forever to complete them) and make 
+> the TPM available as early as possible.
+>
+> I think we had a similar example elsewhere already: The kernel does 
+> not check all SMART results before accessing the hard disk, why should 
+> it do that for the TPM?
+>
+>> It seems all commands, except selftest, the code sleeps in a loop and
+>> checks for the command to finish, but doesn't resend the command.
+>>   Only for selftest is the command resent, instead of just waiting for
+>> it to complete.  Is there any reason for this?
+>
+> The selftest command is special in that the vendor can choose to have 
+> it execute its actions synchronously (like all other commands) or 
+> asynchronously (that is, return immediately and schedule the actions 
+> in the background). Only in the asynchronous case is the command 
+> repeated, as a simple way of querying the result. Since we call the 
+> command with fullTest=NO, only missing selftests are scheduled and 
+> with each iteration there should be fewer and fewer tests left to be 
+> executed, similar to how RC_YIELDED works.
+To query for the result, it need not send self test command again, I 
+think we can use TPM2_GetTestResult().
+According to Spec, TPM Rev 2.0 Part 3 - Commands , Section 10.4, the 
+command will return the following possible test results.
 
-Your comment about not overriding error code is incorrect.
+TPM_RC_NEEDS_TEST - SelfTest has not been executed.
+TPM_RC_TESTING - Tests are still in progress
+TPM_RC_FAILURE - Tests Failure.
+TPM_RC_SUCCESS - Tests successfully completed.
 
-The value of 'rc' should be never overridden, which kind of supports
-to "just print" behavior that we had for a locality error.
+Thanks & Regards,
+     - Nayna
 
-Is your fix somehow dependent on changing relinquish_locality()
-behavior? If not, please remove this change. If you want to contribute
-such behavioral change, you should make a separate patch of it.
-
-Now it's like a trojan horse bundled inside a bug fix.
-
-/Jarkko
+>
+> Alexander
+>
