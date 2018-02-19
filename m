@@ -1,189 +1,267 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46890 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752995AbeBSPSW (ORCPT
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:50678 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752657AbeBSM4d (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 19 Feb 2018 10:18:22 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w1JFGUA0017197
-        for <linux-integrity@vger.kernel.org>; Mon, 19 Feb 2018 10:18:22 -0500
-Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2g80b22kb2-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 19 Feb 2018 10:18:21 -0500
-Received: from localhost
-        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Mon, 19 Feb 2018 15:18:20 -0000
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Dongsu Park <dongsu@kinvolk.io>,
-        Alban Crequy <alban@kinvolk.io>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Subject: [PATCH v1 1/2] ima: fail signature verification on untrusted filesystems
-Date: Mon, 19 Feb 2018 10:18:02 -0500
-In-Reply-To: <1519053483-18396-1-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1519053483-18396-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-Id: <1519053483-18396-2-git-send-email-zohar@linux.vnet.ibm.com>
+        Mon, 19 Feb 2018 07:56:33 -0500
+Message-ID: <1519044991.4721.7.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2] tpm: fix intermittent failure with self tests
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: linux-integrity@vger.kernel.org
+Date: Mon, 19 Feb 2018 07:56:31 -0500
+In-Reply-To: <20180219123244.ucno7eaqupwko6ff@linux.intel.com>
+References: <1518813108.4419.3.camel@HansenPartnership.com>
+         <20180219123244.ucno7eaqupwko6ff@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Files on untrusted filesystems, such as fuse, can change at any time,
-making the measurement(s) and by extension signature verification
-meaningless.
+On Mon, 2018-02-19 at 14:32 +0200, Jarkko Sakkinen wrote:
+> Trying to figure out how this was never merged. Sorry about that.
+> I'll take the blame from this :-( I'll test this commit ASAP.
 
-FUSE can be mounted by unprivileged users either today with fusermount
-installed with setuid, or soon with the upcoming patches to allow FUSE
-mounts in a non-init user namespace.
+Actually, could you test v3 (just posted).  Also, I'm going to have
+someone run v3 on another failing TPM today (the ST Micro) so I should
+get a tested-by as well if it works.
 
-This patch differentiates between the new unprivileged non-init mounted
-filesystems and everything else, by always failing file signature
-verification on unprivileged non-init mounted untrusted filesystems, but
-only failing everything else based on policy to avoid breaking existing
-systems.
+Thanks,
 
-This patch defines a new sb->s_iflags option named SB_I_IMA_UNTRUSTED_FS
-and a new builtin IMA policy named "untrusted_fs".
+James
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Seth Forshee <seth.forshee@canonical.com>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Dongsu Park <dongsu@kinvolk.io>
-Cc: Alban Crequy <alban@kinvolk.io>
-Cc: Serge E. Hallyn <serge@hallyn.com>
 
----
-Changelog v1:
-- Merged the unprivileged and privileged patches.
-- Dropped IMA fsname support.
-- Introduced a new IMA builtin policy named "untrusted_fs".
-- Replaced fs_type flag with sb->s_iflags flag.
-
- Documentation/admin-guide/kernel-parameters.txt |  6 +++++-
- include/linux/fs.h                              |  1 +
- security/integrity/ima/ima_appraise.c           | 16 +++++++++++++++-
- security/integrity/ima/ima_policy.c             |  5 +++++
- security/integrity/integrity.h                  |  1 +
- 5 files changed, 27 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 90cefbddf1ed..f9eb24cea9a6 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1522,7 +1522,7 @@
- 
- 	ima_policy=	[IMA]
- 			The builtin policies to load during IMA setup.
--			Format: "tcb | appraise_tcb | secure_boot"
-+			Format: "tcb | appraise_tcb | secure_boot | untrusted_fs"
- 
- 			The "tcb" policy measures all programs exec'd, files
- 			mmap'd for exec, and all files opened with the read
-@@ -1537,6 +1537,10 @@
- 			of files (eg. kexec kernel image, kernel modules,
- 			firmware, policy, etc) based on file signatures.
- 
-+			The "untrusted_fs" policy fails the file signature
-+			verification on privileged mounted untrusted
-+			filesystems.
-+
- 	ima_tcb		[IMA] Deprecated.  Use ima_policy= instead.
- 			Load a policy which meets the needs of the Trusted
- 			Computing Base.  This means IMA will measure all
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 2a815560fda0..1d3fe0fe49ee 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1320,6 +1320,7 @@ extern int send_sigurg(struct fown_struct *fown);
- 
- /* sb->s_iflags to limit user namespace mounts */
- #define SB_I_USERNS_VISIBLE		0x00000010 /* fstype already mounted */
-+#define SB_I_IMA_UNTRUSTED_FS	0x00000020 /* Kernel unaware of fs changes */
- 
- /* Possible states of 'frozen' field */
- enum {
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index f2803a40ff82..ebfeec9b579f 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -292,7 +292,20 @@ int ima_appraise_measurement(enum ima_hooks func,
- 	}
- 
- out:
--	if (status != INTEGRITY_PASS) {
-+	/*
-+	 * Files on both privileged and unprivileged mounted untrusted
-+	 * filesystems (eg. FUSE) should fail signature verification, but
-+	 * this might break existing systems.  Differentiate between the
-+	 * new unprivileged non-init mounted filesystems and everything else.
-+	 */
-+	if ((inode->i_sb->s_iflags & SB_I_IMA_UNTRUSTED_FS) &&
-+	    ((inode->i_sb->s_user_ns != &init_user_ns) ||
-+	     (iint->flags & IMA_FAIL_UNTRUSTED_FS))) {
-+		status = INTEGRITY_FAIL;
-+		cause = "untrusted-filesystem";
-+		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
-+				    op, cause, rc, 0);
-+	} else if (status != INTEGRITY_PASS) {
- 		if ((ima_appraise & IMA_APPRAISE_FIX) &&
- 		    (!xattr_value ||
- 		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
-@@ -309,6 +322,7 @@ int ima_appraise_measurement(enum ima_hooks func,
- 	} else {
- 		ima_cache_flags(iint, func);
- 	}
-+
- 	ima_set_cache_status(iint, func, status);
- 	return status;
- }
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 915f5572c6ff..43fb05b9686d 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -188,6 +188,7 @@ __setup("ima_tcb", default_measure_policy_setup);
- 
- static bool ima_use_appraise_tcb __initdata;
- static bool ima_use_secure_boot __initdata;
-+static bool ima_fail_untrusted_fs __initdata;
- static int __init policy_setup(char *str)
- {
- 	char *p;
-@@ -201,6 +202,8 @@ static int __init policy_setup(char *str)
- 			ima_use_appraise_tcb = true;
- 		else if (strcmp(p, "secure_boot") == 0)
- 			ima_use_secure_boot = true;
-+		else if (strcmp(p, "untrusted_fs") == 0)
-+			ima_fail_untrusted_fs = true;
- 	}
- 
- 	return 1;
-@@ -385,6 +388,8 @@ int ima_match_policy(struct inode *inode, enum ima_hooks func, int mask,
- 		if (entry->action & IMA_APPRAISE) {
- 			action |= get_subaction(entry, func);
- 			action ^= IMA_HASH;
-+			if (ima_fail_untrusted_fs)
-+				action |= IMA_FAIL_UNTRUSTED_FS;
- 		}
- 
- 		if (entry->action & IMA_DO_MASK)
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 50a8e3365df7..f8fa60f560a6 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -35,6 +35,7 @@
- #define IMA_PERMIT_DIRECTIO	0x02000000
- #define IMA_NEW_FILE		0x04000000
- #define EVM_IMMUTABLE_DIGSIG	0x08000000
-+#define IMA_FAIL_UNTRUSTED_FS	0x10000000
- 
- #define IMA_DO_MASK		(IMA_MEASURE | IMA_APPRAISE | IMA_AUDIT | \
- 				 IMA_HASH | IMA_APPRAISE_SUBMASK)
--- 
-2.7.5
+> /Jarkko
+> 
+> On Fri, Feb 16, 2018 at 12:31:48PM -0800, James Bottomley wrote:
+> > 
+> > Ever since
+> > 
+> > commit 2482b1bba5122b1d5516c909832bdd282015b8e9
+> > Author: Alexander Steffen <Alexander.Steffen@infineon.com>
+> > Date:   Thu Aug 31 19:18:56 2017 +0200
+> > 
+> >     tpm: Trigger only missing TPM 2.0 self tests
+> > 
+> > My Nuvoton 6xx in a Dell XPS-13 has been intermittently failing to
+> > work (necessitating a reboot). The problem seems to be that the TPM
+> > gets into a state where the partial self-test doesn't return
+> > TPM_RC_SUCCESS (meaning all tests have run to completion), but
+> > instead
+> > returns TPM_RC_TESTING (meaning some tests are still running in the
+> > background).  There are various theories that resending the self-
+> > test
+> > command actually causes the tests to restart and thus triggers more
+> > TPM_RC_TESTING returns until the timeout is exceeded.
+> > 
+> > There are several issues here: firstly being we shouldn't slow down
+> > the boot sequence waiting for the self test to complete once the
+> > TPM
+> > backgrounds them.  It will actually make available all functions
+> > that
+> > have passed and if it gets a failure return TPM_RC_FAILURE to every
+> > subsequent command.  So the fix is to kick off self tests once and
+> > if
+> > they return TPM_RC_TESTING log that as a backgrounded self test and
+> > continue on.  In order to prevent other tpm users from seeing any
+> > TPM_RC_TESTING returns (which it might if they send a command
+> > that needs a TPM subsystem which is still under test), we loop in
+> > tpm_transmit_cmd until either a timeout or we don't get a
+> > TPM_RC_TESTING return.
+> > 
+> > Finally, there have been observations of strange returns from a
+> > partial
+> > test.  One Nuvoton is occasionally returning TPM_RC_COMMAND_CODE,
+> > so
+> > treat any unexpected return from a partial self test as an
+> > indication
+> > we need to run a full self test.
+> > 
+> > Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.c
+> > om>
+> > Fixes: 2482b1bba5122b1d5516c909832bdd282015b8e9
+> > 
+> > ---
+> > 
+> > v2: - review feedback: encapsulate transmission and rename NOWAIT
+> > constant
+> >     - Rewrite selftest routine to run full test on any unexpected
+> >       (meaning not TPM2_RC_TESTING, TPM2_RC_SUCCESS or
+> >       TPM2_RC_FAILURE) from the partial selftest.
+> > ---
+> >  drivers/char/tpm/tpm-interface.c | 37
+> > ++++++++++++++++++++++++++++++++++++-
+> >  drivers/char/tpm/tpm.h           |  6 ++++--
+> >  drivers/char/tpm/tpm2-cmd.c      | 40
+> > ++++++++++++++++++++++++++++------------
+> >  3 files changed, 68 insertions(+), 15 deletions(-)
+> > 
+> > diff --git a/drivers/char/tpm/tpm-interface.c
+> > b/drivers/char/tpm/tpm-interface.c
+> > index 9e80a953d693..b9a8914b05d9 100644
+> > --- a/drivers/char/tpm/tpm-interface.c
+> > +++ b/drivers/char/tpm/tpm-interface.c
+> > @@ -515,6 +515,41 @@ ssize_t tpm_transmit(struct tpm_chip *chip,
+> > struct tpm_space *space,
+> >  	return rc ? rc : len;
+> >  }
+> >  
+> > +static ssize_t tpm_transmit_check(struct tpm_chip *chip,
+> > +				  struct tpm_space *space, const
+> > void *buf,
+> > +				  size_t bufsiz, unsigned int
+> > flags)
+> > +{
+> > +	const struct tpm_output_header *header = buf;
+> > +	unsigned int delay_msec = 20;
+> > +	ssize_t len;
+> > +	u32 err;
+> > +
+> > +	/*
+> > +	 * on first probe we kick off a TPM self test in the
+> > +	 * background This means the TPM may return RC_TESTING to
+> > any
+> > +	 * command that tries to use a subsystem under test, so do
+> > an
+> > +	 * exponential backoff wait if that happens
+> > +	 */
+> > +	for (;;) {
+> > +		len = tpm_transmit(chip, space, (u8 *)buf, bufsiz,
+> > flags);
+> > +		if (len <  0)
+> > +			return len;
+> > +
+> > +		err = be32_to_cpu(header->return_code);
+> > +		if (err != TPM2_RC_TESTING ||
+> > +		    (flags & TPM_TRANSMIT_NO_WAIT_TESTING))
+> > +			break;
+> > +
+> > +		delay_msec *= 2;
+> > +		if (delay_msec > TPM2_DURATION_LONG) {
+> > +			dev_err(&chip->dev,"TPM: still running
+> > self tests, giving up waiting\n");
+> > +			break;
+> > +		}
+> > +		tpm_msleep(delay_msec);
+> > +	}
+> > +	return len;
+> > +}
+> > +
+> >  /**
+> >   * tmp_transmit_cmd - send a tpm command to the device
+> >   *    The function extracts tpm out header return code
+> > @@ -540,7 +575,7 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip,
+> > struct tpm_space *space,
+> >  	int err;
+> >  	ssize_t len;
+> >  
+> > -	len = tpm_transmit(chip, space, (u8 *)buf, bufsiz, flags);
+> > +	len = tpm_transmit_check(chip, space, buf, bufsiz, flags);
+> >  	if (len <  0)
+> >  		return len;
+> >  
+> > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> > index f895fba4e20d..3e083a30a108 100644
+> > --- a/drivers/char/tpm/tpm.h
+> > +++ b/drivers/char/tpm/tpm.h
+> > @@ -104,6 +104,7 @@ enum tpm2_return_codes {
+> >  	TPM2_RC_HASH		= 0x0083, /* RC_FMT1 */
+> >  	TPM2_RC_HANDLE		= 0x008B,
+> >  	TPM2_RC_INITIALIZE	= 0x0100, /* RC_VER1 */
+> > +	TPM2_RC_FAILURE		= 0x0101,
+> >  	TPM2_RC_DISABLED	= 0x0120,
+> >  	TPM2_RC_COMMAND_CODE    = 0x0143,
+> >  	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
+> > @@ -499,8 +500,9 @@ extern const struct file_operations tpmrm_fops;
+> >  extern struct idr dev_nums_idr;
+> >  
+> >  enum tpm_transmit_flags {
+> > -	TPM_TRANSMIT_UNLOCKED	= BIT(0),
+> > -	TPM_TRANSMIT_RAW	= BIT(1),
+> > +	TPM_TRANSMIT_UNLOCKED		= BIT(0),
+> > +	TPM_TRANSMIT_RAW		= BIT(1),
+> > +	TPM_TRANSMIT_NO_WAIT_TESTING	= BIT(2),
+> >  };
+> >  
+> >  ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space
+> > *space,
+> > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-
+> > cmd.c
+> > index e5052e2f1924..cfe13d0bab07 100644
+> > --- a/drivers/char/tpm/tpm2-cmd.c
+> > +++ b/drivers/char/tpm/tpm2-cmd.c
+> > @@ -838,29 +838,45 @@
+> > EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
+> >  static int tpm2_do_selftest(struct tpm_chip *chip)
+> >  {
+> >  	int rc;
+> > -	unsigned int delay_msec = 10;
+> > -	long duration;
+> >  	struct tpm_buf buf;
+> > +	int full_test;
+> >  
+> > -	duration = jiffies_to_msecs(
+> > -		tpm2_calc_ordinal_duration(chip,
+> > TPM2_CC_SELF_TEST));
+> > +	for (full_test = 0; full_test < 2; full_test++) {
+> > +		const char *test_str = full_test ?
+> > +			"full selftest" : "incremental selftest";
+> >  
+> > -	for (;;) {
+> >  		rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS,
+> > TPM2_CC_SELF_TEST);
+> >  		if (rc)
+> >  			return rc;
+> >  
+> > -		/* Perform tests in the background. */
+> > -		tpm_buf_append_u8(&buf, 0);
+> > +		tpm_buf_append_u8(&buf, full_test);
+> > +		dev_info(&chip->dev, "TPM: running %s\n",
+> > test_str);
+> >  		rc = tpm_transmit_cmd(chip, NULL, buf.data,
+> > PAGE_SIZE, 0, 0,
+> > -				      "continue selftest");
+> > +				      test_str);
+> >  		tpm_buf_destroy(&buf);
+> > -		if (rc != TPM2_RC_TESTING || delay_msec >=
+> > duration)
+> > +
+> > +		if (rc == TPM2_RC_TESTING) {
+> > +			/*
+> > +			 * A return of RC_TESTING means the TPM is
+> > still
+> > +			 * running self tests.  If one fails it
+> > will go into
+> > +			 * failure mode and return RC_FAILED to
+> > every command,
+> > +			 * so treat a still in testing return as a
+> > success
+> > +			 * rather than causing a driver detach.
+> > +			 */
+> > +			dev_info(&chip->dev, "TPM: Running self
+> > test in background\n");
+> > +			rc = TPM2_RC_SUCCESS;
+> > +		}
+> > +		if (rc == TPM2_RC_SUCCESS)
+> >  			break;
+> >  
+> > -		/* wait longer than before */
+> > -		delay_msec *= 2;
+> > -		tpm_msleep(delay_msec);
+> > +		dev_info(&chip->dev, "TPM: %s failed\n",
+> > test_str);
+> > +	}
+> > +
+> > +	if (rc != TPM2_RC_FAILURE && rc != TPM2_RC_SUCCESS) {
+> > +		/* only TPM2_RC_FAILURE should prevent us from
+> > detaching
+> > +		 * so log the problem but attach the TPM */
+> > +		dev_err(&chip->dev, "TPM: selftest returns 0x%x,
+> > continuing anyway\n", rc);
+> > +		rc = TPM2_RC_SUCCESS;
+> >  	}
+> >  
+> >  	return rc;
+> > -- 
+> > 2.12.3
+> 
