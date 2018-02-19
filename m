@@ -1,9 +1,9 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:62037 "EHLO mga07.intel.com"
+Received: from mga06.intel.com ([134.134.136.31]:48737 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932223AbeBSXhF (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 19 Feb 2018 18:37:05 -0500
-Date: Tue, 20 Feb 2018 07:36:30 +0800
+        id S932180AbeBSWvB (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 19 Feb 2018 17:51:01 -0500
+Date: Tue, 20 Feb 2018 06:50:34 +0800
 From: kbuild test robot <lkp@intel.com>
 To: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Cc: kbuild-all@01.org, linux-integrity@vger.kernel.org,
@@ -18,10 +18,10 @@ Cc: kbuild-all@01.org, linux-integrity@vger.kernel.org,
         "Serge E . Hallyn" <serge@hallyn.com>
 Subject: Re: [PATCH v1 1/2] ima: fail signature verification on untrusted
  filesystems
-Message-ID: <201802200726.dwtJaW4L%fengguang.wu@intel.com>
+Message-ID: <201802200637.f8w7cht0%fengguang.wu@intel.com>
 References: <1519053483-18396-2-git-send-email-zohar@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="BXVAT5kNtrzKuDFl"
+Content-Type: multipart/mixed; boundary="HlL+5n6rz5pIUxbD"
 In-Reply-To: <1519053483-18396-2-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
@@ -36,24 +36,24 @@ I love your patch! Perhaps something to improve:
 [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
 url:    https://github.com/0day-ci/linux/commits/Mimi-Zohar/ima-untrusted-filesystems/20180220-040517
-config: x86_64-rhel (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+config: i386-randconfig-s1-201807 (attached as .config)
+compiler: gcc-6 (Debian 6.4.0-9) 6.4.0 20171026
 reproduce:
         # save the attached .config to linux build tree
-        make ARCH=x86_64 
+        make ARCH=i386 
 
 All warnings (new ones prefixed by >>):
 
->> WARNING: vmlinux.o(.text+0x3b320a): Section mismatch in reference from the function ima_match_policy() to the variable .init.data:init_keyring
+>> WARNING: vmlinux.o(.text+0x2afe73): Section mismatch in reference from the function ima_match_policy() to the variable .init.data:ima_fail_untrusted_fs
    The function ima_match_policy() references
-   the variable __initdata init_keyring.
+   the variable __initdata ima_fail_untrusted_fs.
    This is often because ima_match_policy lacks a __initdata
-   annotation or the annotation of init_keyring is wrong.
+   annotation or the annotation of ima_fail_untrusted_fs is wrong.
 
 ---
 0-DAY kernel test infrastructure                Open Source Technology Center
 https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
 
-    [ Part 2, Application/GZIP 41 KB. ]
+    [ Part 2, Application/GZIP 26 KB. ]
     [ Unable to print this part. ]
