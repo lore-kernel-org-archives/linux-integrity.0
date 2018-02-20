@@ -1,88 +1,125 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:43497 "EHLO mga11.intel.com"
+Received: from h2.hallyn.com ([78.46.35.8]:54256 "EHLO mail.hallyn.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750915AbeBTU0u (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 20 Feb 2018 15:26:50 -0500
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/2 v3] tpm: cmd_ready command can be issued only after
- granting locality
-Date: Tue, 20 Feb 2018 20:26:45 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B94224C36@hasmsx108.ger.corp.intel.com>
-References: <20180214134319.4400-1-tomas.winkler@intel.com>
-         <20180214134319.4400-2-tomas.winkler@intel.com>
-         <20180219112700.yfoywzegqzrpynlk@linux.intel.com>
-         <5B8DA87D05A7694D9FA63FD143655C1B942240B1@hasmsx108.ger.corp.intel.com>
- <1519138649.26293.1.camel@linux.intel.com>
-In-Reply-To: <1519138649.26293.1.camel@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"
+        id S1750829AbeBTUQi (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 20 Feb 2018 15:16:38 -0500
+Date: Tue, 20 Feb 2018 14:16:36 -0600
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+        James Morris <jmorris@namei.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Dongsu Park <dongsu@kinvolk.io>,
+        Alban Crequy <alban@kinvolk.io>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH v1 1/2] ima: fail signature verification on untrusted
+ filesystems
+Message-ID: <20180220201636.GA1565@mail.hallyn.com>
+References: <1519053483-18396-1-git-send-email-zohar@linux.vnet.ibm.com>
+ <1519053483-18396-2-git-send-email-zohar@linux.vnet.ibm.com>
+ <87zi44mz26.fsf@xmission.com>
+ <alpine.LRH.2.21.1802201152240.883@namei.org>
+ <87tvucifji.fsf@xmission.com>
+ <1519135329.3736.88.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1519135329.3736.88.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
+Quoting Mimi Zohar (zohar@linux.vnet.ibm.com):
+> On Mon, 2018-02-19 at 20:02 -0600, Eric W. Biederman wrote:
+> > James Morris <jmorris@namei.org> writes:
+> > 
+> > > On Mon, 19 Feb 2018, Eric W. Biederman wrote:
+> > >
+> > >> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+> > >> 
+> > >> > Files on untrusted filesystems, such as fuse, can change at any time,
+> > >> > making the measurement(s) and by extension signature verification
+> > >> > meaningless.
+> > >> 
+> > >> Filesystems with servers?
+> > >> Remote filesystems?
+> > >> Perhaps unexpected changes.
+> > >> 
+> > >> Untrusted sounds a bit harsh, and I am not certain it quite captures
+> > >> what you are looking to avoid.
+> > >
+> > > Right -- I think whether you trust a filesystem or not depends on how much 
+> > > assurance you have in your specific configuration, rather than whether you 
+> > > think the filesystem can be manipulated or not.
+> > >
+> > > There is a difference between:
+> > >
+> > >   - This fs has no way to communicate a change to IMA, and;
+> > >
+> > >   - This fs could be malicious.
+> > >
+> > > In the latter case, I suggest that any fs could be malicious if the 
+> > > overall security policy / settings are inadequate for the threat model, or 
+> > > if there are vulnerabilities which allow such security to be bypassed.
+> > >
+> > > Whether a user trusts FUSE on their particular system should be a policy 
+> > > decision on the part of the user.  The kernel should not be deciding what 
+> > > is trusted or not trusted here.
+> > 
+> > I believe there has been a good techincal argument made that fuse
+> > mounted by an malicious user can defeat the protections ima is trying to
+> > provide.
+> > 
+> > In particular the file could change after the signature of the file has
+> > been verified without ima being alerted.
+> > 
+> > As such I think it is very reasonable for ima when a fuse filesystem has
+> > been mounted by an unprivileged user to report that it can not verify
+> > signatures, because IMA can not verify signatures in a meaningful way.
+> > 
+> > Now that might be better called SB_I_IMA_UNVERIFIABLE_SIGNATURES.
 > 
-> On Mon, 2018-02-19 at 11:43 +0000, Winkler, Tomas wrote:
-> > > All local variable declarations must be in the beginning of the
-> > > function.
-> >
-> > Who says?
+> The file signatures are always unverifiable, whether it is mounted by
+> root or an unprivileged user.  This flag would always be set.
 > 
-> It is coherent how we have everything else.
- I will have to care about its value out of the scope where the variable existence is not relevant.
-
-> It is much easier to see the stack allocation this way when the allocation is
-> only done in the beginning of each function. If you really need to do such
-> pattern, then it would be a better idea to consider an additional helper
-> function.
-The code block decides whether to modify 'rc'. I'm not sure if additional function will make
- the code cleaner, on the opposite.
+> > We may want to complement that flag with SB_I_UNTRUSTED_MOUNTER.
+> > For the times when it is not the global root user who mounts
+> > the filesystem.
 > 
-> > > Your comment about not overriding error code is incorrect.
-> >
-> > Please explain?
+> Ok
 > 
-> 'l_rc' overrides 'rc' in the case when both are non-zero.
-
-Yes, that's been the intention, we cannot return more than one value. 
-l_rc if set it has hire priority. 
-
+> > So I do think when both conditions are true there very much is a case
+> > for the kernel saying realizing it would be stupid to trust sigantures
+> > it can not reliably verify.
 > 
-> > > The value of 'rc' should be never overridden, which kind of supports
-> > > to "just print" behavior that we had for a locality error.
-> >
-> > You are not consistent, you've agreed with propagating it to user
-> > space.  The error will  be propagated in case of an error in locality
-> > relinquish the device is pretty much in non functional state and
-> > provious errors do not matter much, but rc value won't be modified if
-> > locality_reliquish succeeds.
+> Agreed
 > 
-> Well, sometimes you fail to notice things and I failed to notice the collision
-> above. The commit message does not describe why 'l_rc'
-> overrides 'rc' in the case when both are non-zero. What was the reasoning,
-> which made you end up with this priority order?  Why is 'l_rc' more
-> important than 'rc'?
+> > On the flip side when it really is a trusted mounter, and it is in a
+> > configuration that IMA has a reasonable expectation of seeing all of
+> > the changes it would be nice if we can say please trust this mount.
+> 
+> IMA has no way of detecting file change.  This was one of the reasons
+> for the original patch set's not using the cached IMA results.
+> 
+> Even in the case of a trusted mounter and not using IMA cached
+> results, there are no guarantees that the data read to calculate the
+> file hash, will be the same as what is subsequently read.  In some
+> environments this might be an acceptable risk, while in others not.
 
-Because, it's fatal. I'm not sure it's matter much what the previous error was, it cannot be recovered
-That's my understanding of this flow.
+So for the cases where it's not, there should be an IMA option or policy
+to say any SB_I_IMA_UNVERIFIABLE_SIGNATURES mounts should be not
+trusted, with the default being both SB_I_IMA_UNVERIFIABLE_SIGNATURES and
+SB_I_UNTRUSTED_MOUNTER must be true to not trust, right?
 
- 
-> My take is that does it really make sense have this change as part of a high
-> priority bug fix that should be as localized as possible?
-> Seems like a non-trivial problem by itself.
+> > It would also be nice if I could provide all of this information at
+> > mount time (when I am the global root) with mount options.  So I don't
+> > need to update all of my tooling to know how to update ima policy when I
+> > am mounting a filesystem.
+> 
+> The latest version of this patch relies on a builtin IMA policy to set
+> a flag.  No other changes are required to the IMA policy.  This
+> builtin policy could be used for environments not willing to accept
+> the default unverifiable signature risk.
 
-Yes, the issue here is that also an error path can fail. Now what is the correct return value.. 
-
-In any case, in order to resolve this dispute, I will post a version when the error is just prints out,
-Once, however fatal the error is, it's very unlikely that it will happen.
-Second the driver will find the device not responding in a subsequent command.
-
-Not perfect, but at least we will have functional driver.
-
-Thanks
-Tomas
+iiuc that sounds good.
