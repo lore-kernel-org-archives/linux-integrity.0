@@ -1,37 +1,48 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:31167 "EHLO mga11.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:64516 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752590AbeBTRKX (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 20 Feb 2018 12:10:23 -0500
-Message-ID: <1519146619.6941.0.camel@linux.intel.com>
-Subject: Re: [PATCH v2] tpm: fix intermittent failure with self tests
+        id S1751476AbeBTO61 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 20 Feb 2018 09:58:27 -0500
+Message-ID: <1519138703.26293.2.camel@linux.intel.com>
+Subject: Re: [PATCH] tpm: use kmemdup() to copy the EFI event log
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-integrity@vger.kernel.org
-Date: Tue, 20 Feb 2018 19:10:19 +0200
-In-Reply-To: <1519044991.4721.7.camel@HansenPartnership.com>
-References: <1518813108.4419.3.camel@HansenPartnership.com>
-         <20180219123244.ucno7eaqupwko6ff@linux.intel.com>
-         <1519044991.4721.7.camel@HansenPartnership.com>
+To: linux-integrity@vger.kernel.org
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        open list <linux-kernel@vger.kernel.org>
+Date: Tue, 20 Feb 2018 16:58:23 +0200
+In-Reply-To: <20180219121026.14304-1-jarkko.sakkinen@linux.intel.com>
+References: <20180219121026.14304-1-jarkko.sakkinen@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2018-02-19 at 07:56 -0500, James Bottomley wrote:
-> On Mon, 2018-02-19 at 14:32 +0200, Jarkko Sakkinen wrote:
-> > Trying to figure out how this was never merged. Sorry about that.
-> > I'll take the blame from this :-( I'll test this commit ASAP.
-> 
-> Actually, could you test v3 (just posted).  Also, I'm going to have
-> someone run v3 on another failing TPM today (the ST Micro) so I
-> should
-> get a tested-by as well if it works.
-> 
-> Thanks,
-> 
-> James
-
-Yes.
+Send an updated version with corresponding change also to
+tpm_eventlog_of.c
 
 /Jarkko
+
+On Mon, 2018-02-19 at 14:10 +0200, Jarkko Sakkinen wrote:
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  drivers/char/tpm/tpm_eventlog_efi.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_eventlog_efi.c
+> b/drivers/char/tpm/tpm_eventlog_efi.c
+> index e3f9ffd341d2..57c8b3cc46be 100644
+> --- a/drivers/char/tpm/tpm_eventlog_efi.c
+> +++ b/drivers/char/tpm/tpm_eventlog_efi.c
+> @@ -50,10 +50,9 @@ int tpm_read_log_efi(struct tpm_chip *chip)
+>  	}
+>  
+>  	/* malloc EventLog space */
+> -	log->bios_event_log = kmalloc(log_size, GFP_KERNEL);
+> +	log->bios_event_log = kmemdup(log_tbl->log, log_size,
+> GFP_KERNEL);
+>  	if (!log->bios_event_log)
+>  		goto err_memunmap;
+> -	memcpy(log->bios_event_log, log_tbl->log, log_size);
+>  	log->bios_event_log_end = log->bios_event_log + log_size;
+>  
+>  	tpm_log_version = log_tbl->version;
