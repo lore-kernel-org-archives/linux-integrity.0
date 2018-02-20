@@ -1,102 +1,67 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:48068 "EHLO mga09.intel.com"
+Received: from mga06.intel.com ([134.134.136.31]:35043 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752135AbeBTNFo (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 20 Feb 2018 08:05:44 -0500
-Message-ID: <1519131940.4113.4.camel@linux.intel.com>
-Subject: Re: TPM selftest failure in 4.15
+        id S1750710AbeBTLln (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 20 Feb 2018 06:41:43 -0500
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Alexander Steffen <Alexander.Steffen@infineon.com>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+To: linux-integrity@vger.kernel.org
+Cc: Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Thiebaud Weksteen <tweek@google.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
         Jason Gunthorpe <jgg@ziepe.ca>,
-        Paul Menzel <pmenzel@molgen.mpg.de>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Date: Tue, 20 Feb 2018 15:05:40 +0200
-In-Reply-To: <399d15fd-0532-aa06-0b0e-0630eed7de09@infineon.com>
-References: <1517488970.3251.26.camel@HansenPartnership.com>
-         <1517498648.3145.4.camel@HansenPartnership.com>
-         <20180201174053.GQ17053@ziepe.ca>
-         <1517510764.3145.38.camel@HansenPartnership.com>
-         <20180201185909.GW17053@ziepe.ca>
-         <1517515204.3145.51.camel@HansenPartnership.com>
-         <20180208131007.wedzl5itrlx2dawn@linux.intel.com>
-         <1518109320.21828.2.camel@HansenPartnership.com>
-         <20180209100204.likckglpdx427dnl@linux.intel.com>
-         <6066758e-efe3-7432-0b8f-540a781cb3aa@infineon.com>
-         <20180215121231.yc74vwg3fqz3ybop@linux.intel.com>
-         <399d15fd-0532-aa06-0b0e-0630eed7de09@infineon.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] tpm: use kmemdup() to copy the event log
+Date: Tue, 20 Feb 2018 13:41:29 +0200
+Message-Id: <20180220114129.9300-1-jarkko.sakkinen@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 2018-02-16 at 19:27 +0100, Alexander Steffen wrote:
-> On 15.02.2018 13:12, Jarkko Sakkinen wrote:
-> > On Fri, Feb 09, 2018 at 12:47:10PM +0100, Alexander Steffen wrote:
-> > > On 09.02.2018 11:02, Jarkko Sakkinen wrote:
-> > > > On Thu, Feb 08, 2018 at 09:02:00AM -0800, James Bottomley
-> > > > wrote:
-> > > > > There is an identified regression: the TPM driver will now
-> > > > > periodically
-> > > > > fail to attach.  However, there's no point reviewing until we
-> > > > > agree
-> > > > > what the fix is.  I was just waiting to verify this fixed my
-> > > > > problem
-> > > > > (which means seeing the messages it spits out proving the TPM
-> > > > > has
-> > > > > remained in self test).  I have now seen this and the driver
-> > > > > still
-> > > > > works, so I can submit a formal patch.
-> > > > 
-> > > > For the self-test the duration falls down to 2 seconds as the
-> > > > specs do
-> > > > not contain any well-defined duration for it, or at least I
-> > > > haven't
-> > > > found it.
-> > > > 
-> > > > I see three alternative ways the fix the self-test:
-> > > > 
-> > > > 1. Execute self-test with fullTest = YES.
-> > > 
-> > > I had proposed some fixes in this direction last year:
-> > > https://patchwork.kernel.org/patch/10105483/
-> > > https://patchwork.kernel.org/patch/10130535/
-> > > 
-> > > Those combine the fast test execution with fullTest = NO for
-> > > spec-compliant
-> > > TPMs with a fallback to fullTest = YES.
-> > 
-> > The first was accepted.
-> > 
-> > The 2nd wasn't accpeted mainly for reasons that for me only
-> > acceptable
-> > dependency is:
-> > 
-> > 1. Patch that is part of the same patch set.
-> > 2. A merged commit.
-> > 
-> > I didn't event look at the code for the second one at that point
-> > because
-> > it was formally done wrong.
-> 
-> Ah, sorry, I thought this was the easiest solution, since it seemed 
-> likely that the first patch would be merged at some point.
-> 
-> If a similar situation arises, should I then include the first patch
-> in 
-> a series together with the second, even if that means that there will
-> be 
-> two identical copies of the first patch (one from when it was first 
-> published, one as part of the new series)? Or should I just avoid
-> the 
-> dependency in the second patch, though that will lead to merge
-> conflicts 
-> when you want accept both patches?
-> 
-> Alexander
+Replaced kmalloc() + memcpy() in tpm_eventlog_efi.c and
+tpm_eventlog_of.c.
 
-Yes, it would be best to include all patches to the patch set that
-have not yet been merged in order to make it self-contained and
-easy test and review.
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+v2: update also tpm_eventlog_of.c
+ drivers/char/tpm/tpm_eventlog_efi.c | 3 +--
+ drivers/char/tpm/tpm_eventlog_of.c  | 5 +----
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-/Jarkko
+diff --git a/drivers/char/tpm/tpm_eventlog_efi.c b/drivers/char/tpm/tpm_eventlog_efi.c
+index e3f9ffd341d2..57c8b3cc46be 100644
+--- a/drivers/char/tpm/tpm_eventlog_efi.c
++++ b/drivers/char/tpm/tpm_eventlog_efi.c
+@@ -50,10 +50,9 @@ int tpm_read_log_efi(struct tpm_chip *chip)
+ 	}
+ 
+ 	/* malloc EventLog space */
+-	log->bios_event_log = kmalloc(log_size, GFP_KERNEL);
++	log->bios_event_log = kmemdup(log_tbl->log, log_size, GFP_KERNEL);
+ 	if (!log->bios_event_log)
+ 		goto err_memunmap;
+-	memcpy(log->bios_event_log, log_tbl->log, log_size);
+ 	log->bios_event_log_end = log->bios_event_log + log_size;
+ 
+ 	tpm_log_version = log_tbl->version;
+diff --git a/drivers/char/tpm/tpm_eventlog_of.c b/drivers/char/tpm/tpm_eventlog_of.c
+index 96fd5646f866..c4b1d3049060 100644
+--- a/drivers/char/tpm/tpm_eventlog_of.c
++++ b/drivers/char/tpm/tpm_eventlog_of.c
+@@ -68,14 +68,11 @@ int tpm_read_log_of(struct tpm_chip *chip)
+ 		return -EIO;
+ 	}
+ 
+-	log->bios_event_log = kmalloc(size, GFP_KERNEL);
++	log->bios_event_log = kmemdup(__va(base), size, GFP_KERNEL);
+ 	if (!log->bios_event_log)
+ 		return -ENOMEM;
+-
+ 	log->bios_event_log_end = log->bios_event_log + size;
+ 
+-	memcpy(log->bios_event_log, __va(base), size);
+-
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+ 		return EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
+ 	return EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
+-- 
+2.14.1
