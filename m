@@ -1,67 +1,51 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:23089 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751763AbeBTO5e (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 20 Feb 2018 09:57:34 -0500
-Message-ID: <1519138649.26293.1.camel@linux.intel.com>
-Subject: Re: [PATCH 1/2 v3] tpm: cmd_ready command can be issued only after
- granting locality
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date: Tue, 20 Feb 2018 16:57:29 +0200
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B942240B1@hasmsx108.ger.corp.intel.com>
-References: <20180214134319.4400-1-tomas.winkler@intel.com>
-         <20180214134319.4400-2-tomas.winkler@intel.com>
-         <20180219112700.yfoywzegqzrpynlk@linux.intel.com>
-         <5B8DA87D05A7694D9FA63FD143655C1B942240B1@hasmsx108.ger.corp.intel.com>
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:58824 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750799AbeBTOdh (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 20 Feb 2018 09:33:37 -0500
+Message-ID: <1519137213.9433.10.camel@HansenPartnership.com>
+Subject: Re: [PATCH] tpm: fix selftest failure regression
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>
+Cc: linux-integrity@vger.kernel.org
+Date: Tue, 20 Feb 2018 09:33:33 -0500
+In-Reply-To: <1519136646.4113.13.camel@linux.intel.com>
+References: <1518122886.21828.20.camel@HansenPartnership.com>
+         <20180216083406.ysbujdgwo4jg2e46@linux.intel.com>
+         <1518805037.4640.27.camel@HansenPartnership.com>
+         <1518807576.4475.3.camel@HansenPartnership.com>
+         <0f489217-b1f2-0265-d5d3-05f7b72d717e@infineon.com>
+         <1518810337.4475.16.camel@HansenPartnership.com>
+         <1519136646.4113.13.camel@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2018-02-19 at 11:43 +0000, Winkler, Tomas wrote:
-> > All local variable declarations must be in the beginning of the
-> > function.
->
-> Who says?
+On Tue, 2018-02-20 at 16:24 +0200, Jarkko Sakkinen wrote:
+> On Fri, 2018-02-16 at 11:45 -0800, James Bottomley wrote:
+> > 
+> > tsscreateek -cp -alg ec -noflush
+> 
+> Can you describe in high-level what this command does? I will rather
+> add a test to my smoke test suite than depend on TSS implementations
+> for various reasons. This seems like a good test case to add as
+> part of it.
 
-It is coherent how we have everything else.
+It's basically doing a create primary on the endorsement seed for an
+elliptic curve key.  However, it first tries to get the seed template
+and unique data from the correct NV index, and if that doesn't work it
+uses the data defined in:
 
-It is much easier to see the stack allocation this way when the
-allocation is only done in the beginning of each function. If
-you really need to do such pattern, then it would be a better
-idea to consider an additional helper function.
+https://trustedcomputinggroup.org/tcg-ek-credential-profile-tpm-family-2-0/
 
-> > Your comment about not overriding error code is incorrect.
->
-> Please explain?
+to build a template and uses that.
 
-'l_rc' overrides 'rc' in the case when both are non-zero.
+I think what's happening is my Nuvoton recognises the template and
+tries its derivation shortcut which causes a BUG_ON in its
+implementation because no EC keys or certificate was provisioned in
+this TPM.
 
-> > The value of 'rc' should be never overridden, which kind of
-> > supports to "just
-> > print" behavior that we had for a locality error.
->
-> You are not consistent, you've agreed with propagating it to user
-> space.  The error will  be propagated in case of an error in
-> locality relinquish the device is pretty much in non functional
-> state and provious errors do not matter much, but rc value won't
-> be modified if locality_reliquish succeeds.
-
-Well, sometimes you fail to notice things and I failed to notice the
-collision above. The commit message does not describe why 'l_rc'
-overrides 'rc' in the case when both are non-zero. What was the
-reasoning, which made you end up with this priority order?  Why is
-'l_rc' more important than 'rc'?
-
-My take is that does it really make sense have this change as part
-of a high priority bug fix that should be as localized as possible?
-Seems like a non-trivial problem by itself.
-
-/Jarkko
+James
