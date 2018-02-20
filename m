@@ -1,67 +1,96 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:35043 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750710AbeBTLln (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 20 Feb 2018 06:41:43 -0500
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: linux-integrity@vger.kernel.org
-Cc: Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Thiebaud Weksteen <tweek@google.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] tpm: use kmemdup() to copy the event log
-Date: Tue, 20 Feb 2018 13:41:29 +0200
-Message-Id: <20180220114129.9300-1-jarkko.sakkinen@linux.intel.com>
+Received: from out03.mta.xmission.com ([166.70.13.233]:39180 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932297AbeBTCDk (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 19 Feb 2018 21:03:40 -0500
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: James Morris <jmorris@namei.org>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Dongsu Park <dongsu@kinvolk.io>,
+        Alban Crequy <alban@kinvolk.io>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+References: <1519053483-18396-1-git-send-email-zohar@linux.vnet.ibm.com>
+        <1519053483-18396-2-git-send-email-zohar@linux.vnet.ibm.com>
+        <87zi44mz26.fsf@xmission.com>
+        <alpine.LRH.2.21.1802201152240.883@namei.org>
+Date: Mon, 19 Feb 2018 20:02:57 -0600
+In-Reply-To: <alpine.LRH.2.21.1802201152240.883@namei.org> (James Morris's
+        message of "Tue, 20 Feb 2018 11:52:42 +1100 (AEDT)")
+Message-ID: <87tvucifji.fsf@xmission.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Subject: Re: [PATCH v1 1/2] ima: fail signature verification on untrusted filesystems
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Replaced kmalloc() + memcpy() in tpm_eventlog_efi.c and
-tpm_eventlog_of.c.
+James Morris <jmorris@namei.org> writes:
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
-v2: update also tpm_eventlog_of.c
- drivers/char/tpm/tpm_eventlog_efi.c | 3 +--
- drivers/char/tpm/tpm_eventlog_of.c  | 5 +----
- 2 files changed, 2 insertions(+), 6 deletions(-)
+> On Mon, 19 Feb 2018, Eric W. Biederman wrote:
+>
+>> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+>> 
+>> > Files on untrusted filesystems, such as fuse, can change at any time,
+>> > making the measurement(s) and by extension signature verification
+>> > meaningless.
+>> 
+>> Filesystems with servers?
+>> Remote filesystems?
+>> Perhaps unexpected changes.
+>> 
+>> Untrusted sounds a bit harsh, and I am not certain it quite captures
+>> what you are looking to avoid.
+>
+> Right -- I think whether you trust a filesystem or not depends on how much 
+> assurance you have in your specific configuration, rather than whether you 
+> think the filesystem can be manipulated or not.
+>
+> There is a difference between:
+>
+>   - This fs has no way to communicate a change to IMA, and;
+>
+>   - This fs could be malicious.
+>
+> In the latter case, I suggest that any fs could be malicious if the 
+> overall security policy / settings are inadequate for the threat model, or 
+> if there are vulnerabilities which allow such security to be bypassed.
+>
+> Whether a user trusts FUSE on their particular system should be a policy 
+> decision on the part of the user.  The kernel should not be deciding what 
+> is trusted or not trusted here.
 
-diff --git a/drivers/char/tpm/tpm_eventlog_efi.c b/drivers/char/tpm/tpm_eventlog_efi.c
-index e3f9ffd341d2..57c8b3cc46be 100644
---- a/drivers/char/tpm/tpm_eventlog_efi.c
-+++ b/drivers/char/tpm/tpm_eventlog_efi.c
-@@ -50,10 +50,9 @@ int tpm_read_log_efi(struct tpm_chip *chip)
- 	}
- 
- 	/* malloc EventLog space */
--	log->bios_event_log = kmalloc(log_size, GFP_KERNEL);
-+	log->bios_event_log = kmemdup(log_tbl->log, log_size, GFP_KERNEL);
- 	if (!log->bios_event_log)
- 		goto err_memunmap;
--	memcpy(log->bios_event_log, log_tbl->log, log_size);
- 	log->bios_event_log_end = log->bios_event_log + log_size;
- 
- 	tpm_log_version = log_tbl->version;
-diff --git a/drivers/char/tpm/tpm_eventlog_of.c b/drivers/char/tpm/tpm_eventlog_of.c
-index 96fd5646f866..c4b1d3049060 100644
---- a/drivers/char/tpm/tpm_eventlog_of.c
-+++ b/drivers/char/tpm/tpm_eventlog_of.c
-@@ -68,14 +68,11 @@ int tpm_read_log_of(struct tpm_chip *chip)
- 		return -EIO;
- 	}
- 
--	log->bios_event_log = kmalloc(size, GFP_KERNEL);
-+	log->bios_event_log = kmemdup(__va(base), size, GFP_KERNEL);
- 	if (!log->bios_event_log)
- 		return -ENOMEM;
--
- 	log->bios_event_log_end = log->bios_event_log + size;
- 
--	memcpy(log->bios_event_log, __va(base), size);
--
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
- 		return EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
- 	return EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
--- 
-2.14.1
+I believe there has been a good techincal argument made that fuse
+mounted by an malicious user can defeat the protections ima is trying to
+provide.
+
+In particular the file could change after the signature of the file has
+been verified without ima being alerted.
+
+As such I think it is very reasonable for ima when a fuse filesystem has
+been mounted by an unprivileged user to report that it can not verify
+signatures, because IMA can not verify signatures in a meaningful way.
+
+Now that might be better called SB_I_IMA_UNVERIFIABLE_SIGNATURES.
+
+We may want to complement that flag with SB_I_UNTRUSTED_MOUNTER.
+For the times when it is not the global root user who mounts
+the filesystem.
+
+So I do think when both conditions are true there very much is a case
+for the kernel saying realizing it would be stupid to trust sigantures
+it can not reliably verify.
+
+On the flip side when it really is a trusted mounter, and it is in a
+configuration that IMA has a reasonable expectation of seeing all of
+the changes it would be nice if we can say please trust this mount.
+
+It would also be nice if I could provide all of this information at
+mount time (when I am the global root) with mount options.  So I don't
+need to update all of my tooling to know how to update ima policy when I
+am mounting a filesystem.
+
+Eric
