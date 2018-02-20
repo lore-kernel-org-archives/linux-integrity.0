@@ -1,42 +1,33 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wr0-f172.google.com ([209.85.128.172]:37532 "EHLO
-        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751273AbeBTO0J (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 20 Feb 2018 09:26:09 -0500
-Received: by mail-wr0-f172.google.com with SMTP id z12so8759896wrg.4
-        for <linux-integrity@vger.kernel.org>; Tue, 20 Feb 2018 06:26:08 -0800 (PST)
-Subject: Re: [PATCH v2] tpm: use kmemdup() to copy the event log
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc: Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Thiebaud Weksteen <tweek@google.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20180220114129.9300-1-jarkko.sakkinen@linux.intel.com>
-From: Javier Martinez Canillas <javierm@redhat.com>
-Message-ID: <7756fff1-ec94-1c26-9bbd-938337bc3c45@redhat.com>
-Date: Tue, 20 Feb 2018 15:26:05 +0100
-MIME-Version: 1.0
-In-Reply-To: <20180220114129.9300-1-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
+Received: from mga01.intel.com ([192.55.52.88]:62799 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751273AbeBTOZ4 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 20 Feb 2018 09:25:56 -0500
+Message-ID: <1519136753.4113.14.camel@linux.intel.com>
+Subject: Re: [PATCH] tpm: fix selftest failure regression
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-integrity@vger.kernel.org
+Date: Tue, 20 Feb 2018 16:25:53 +0200
+In-Reply-To: <1518812108.4475.21.camel@HansenPartnership.com>
+References: <1518122886.21828.20.camel@HansenPartnership.com>
+         <20180216083406.ysbujdgwo4jg2e46@linux.intel.com>
+         <1518812108.4475.21.camel@HansenPartnership.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 02/20/2018 12:41 PM, Jarkko Sakkinen wrote:
-> Replaced kmalloc() + memcpy() in tpm_eventlog_efi.c and
-> tpm_eventlog_of.c.
+On Fri, 2018-02-16 at 12:15 -0800, James Bottomley wrote:
+> > I'm not sure how tpm_write() call path is handled.
 > 
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
+> It isn't currently since it uses tpm_transmit directly.  My thought
+> on
+> this is that if the TPM hasn't got its testing crap together by the
+> time we enter userspace (which will be 10 or more seconds after we
+> first sent the test commands), then we really have a problem and the
+> user should see it.
 
-Looks good to me.
+Fair enough.
 
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-
-Best regards,
--- 
-Javier Martinez Canillas
-Software Engineer - Desktop Hardware Enablement
-Red Hat
+/Jarkko
