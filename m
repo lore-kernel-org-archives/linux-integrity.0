@@ -1,95 +1,66 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:32736 "EHLO mga18.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:31337 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751539AbeBTXDM (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 20 Feb 2018 18:03:12 -0500
-Date: Wed, 21 Feb 2018 01:03:01 +0200
+        id S1750998AbeBTW6R (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 20 Feb 2018 17:58:17 -0500
+Date: Wed, 21 Feb 2018 00:58:11 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2 v3] tpm: cmd_ready command can be issued only after
- granting locality
-Message-ID: <20180220230301.fdvczohdtp635kav@linux.intel.com>
-References: <20180214134319.4400-1-tomas.winkler@intel.com>
- <20180214134319.4400-2-tomas.winkler@intel.com>
- <20180219112700.yfoywzegqzrpynlk@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B942240B1@hasmsx108.ger.corp.intel.com>
- <1519138649.26293.1.camel@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B94224C36@hasmsx108.ger.corp.intel.com>
+To: linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4] tpm: Trigger only missing TPM 2.0 self tests
+Message-ID: <20180220225811.eedakhqvrmw3yhrb@linux.intel.com>
+References: <20180220225347.25448-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B94224C36@hasmsx108.ger.corp.intel.com>
+In-Reply-To: <20180220225347.25448-1-jarkko.sakkinen@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Feb 20, 2018 at 08:26:45PM +0000, Winkler, Tomas wrote:
-> > 
-> > On Mon, 2018-02-19 at 11:43 +0000, Winkler, Tomas wrote:
-> > > > All local variable declarations must be in the beginning of the
-> > > > function.
-> > >
-> > > Who says?
-> > 
-> > It is coherent how we have everything else.
->  I will have to care about its value out of the scope where the variable existence is not relevant.
+On Wed, Feb 21, 2018 at 12:53:47AM +0200, Jarkko Sakkinen wrote:
+> From: Alexander Steffen <Alexander.Steffen@infineon.com>
 > 
-> > It is much easier to see the stack allocation this way when the allocation is
-> > only done in the beginning of each function. If you really need to do such
-> > pattern, then it would be a better idea to consider an additional helper
-> > function.
-> The code block decides whether to modify 'rc'. I'm not sure if additional function will make
->  the code cleaner, on the opposite.
-> > 
-> > > > Your comment about not overriding error code is incorrect.
-> > >
-> > > Please explain?
-> > 
-> > 'l_rc' overrides 'rc' in the case when both are non-zero.
+> My Nuvoton 6xx in a Dell XPS-13 has been intermittently failing to work
+> (necessitating a reboot). The problem seems to be that the TPM gets into a
+> state where the partial self-test doesn't return TPM_RC_SUCCESS (meaning
+> all tests have run to completion), but instead returns TPM_RC_TESTING
+> (meaning some tests are still running in the background).  There are
+> various theories that resending the self-test command actually causes the
+> tests to restart and thus triggers more TPM_RC_TESTING returns until the
+> timeout is exceeded.
 > 
-> Yes, that's been the intention, we cannot return more than one value. 
-> l_rc if set it has hire priority. 
+> There are several issues here: firstly being we shouldn't slow down the
+> boot sequence waiting for the self test to complete once the TPM
+> backgrounds them.  It will actually make available all functions that have
+> passed and if it gets a failure return TPM_RC_FAILURE to every subsequent
+> command.  So the fix is to kick off self tests once and if they return
+> TPM_RC_TESTING log that as a backgrounded self test and continue on.  In
+> order to prevent other tpm users from seeing any TPM_RC_TESTING returns
+> (which it might if they send a command that needs a TPM subsystem which is
+> still under test), we loop in tpm_transmit_cmd until either a timeout or we
+> don't get a TPM_RC_TESTING return.
 > 
-> > 
-> > > > The value of 'rc' should be never overridden, which kind of supports
-> > > > to "just print" behavior that we had for a locality error.
-> > >
-> > > You are not consistent, you've agreed with propagating it to user
-> > > space.  The error will  be propagated in case of an error in locality
-> > > relinquish the device is pretty much in non functional state and
-> > > provious errors do not matter much, but rc value won't be modified if
-> > > locality_reliquish succeeds.
-> > 
-> > Well, sometimes you fail to notice things and I failed to notice the collision
-> > above. The commit message does not describe why 'l_rc'
-> > overrides 'rc' in the case when both are non-zero. What was the reasoning,
-> > which made you end up with this priority order?  Why is 'l_rc' more
-> > important than 'rc'?
+> Finally, there have been observations of strange returns from a partial
+> test. One Nuvoton is occasionally returning TPM_RC_COMMAND_CODE, so treat
+> any unexpected return from a partial self test as an indication we need to
+> run a full self test.
 > 
-> Because, it's fatal. I'm not sure it's matter much what the previous error was, it cannot be recovered
-> That's my understanding of this flow.
-> 
->  
-> > My take is that does it really make sense have this change as part of a high
-> > priority bug fix that should be as localized as possible?
-> > Seems like a non-trivial problem by itself.
-> 
-> Yes, the issue here is that also an error path can fail. Now what is the correct return value.. 
-> 
-> In any case, in order to resolve this dispute, I will post a version when the error is just prints out,
-> Once, however fatal the error is, it's very unlikely that it will happen.
-> Second the driver will find the device not responding in a subsequent command.
-> 
-> Not perfect, but at least we will have functional driver.
-> 
-> Thanks
-> Tomas
-> 
+> Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
+> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>
+> Fixes: 2482b1bba5122b1d5516c909832bdd282015b8e9
+> ---
+> v4: Some updatees from jarkko.sakkinen@linux.intel.com:
+>     - squashed tpm_buf migration
+>     - cleaned up a bunch of clutter from the original patch
 
-Please add my tested by to next version. Thanks.
+I decided to rather just clean up the code. Would have taken more
+time to explain than do the code change. Hope you don't mind and
+hope I didn't break it.
 
 /Jarkko
