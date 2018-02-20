@@ -1,39 +1,37 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:9605 "EHLO mga01.intel.com"
+Received: from mga11.intel.com ([192.55.52.93]:31167 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752569AbeBTRON (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 20 Feb 2018 12:14:13 -0500
-Message-ID: <1519146846.6941.1.camel@linux.intel.com>
-Subject: Re: [PATCH v2] tpm: use kmemdup() to copy the event log
+        id S1752590AbeBTRKX (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 20 Feb 2018 12:10:23 -0500
+Message-ID: <1519146619.6941.0.camel@linux.intel.com>
+Subject: Re: [PATCH v2] tpm: fix intermittent failure with self tests
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Javier Martinez Canillas <javierm@redhat.com>,
-        linux-integrity@vger.kernel.org
-Cc: Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Thiebaud Weksteen <tweek@google.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        open list <linux-kernel@vger.kernel.org>
-Date: Tue, 20 Feb 2018 19:14:06 +0200
-In-Reply-To: <7756fff1-ec94-1c26-9bbd-938337bc3c45@redhat.com>
-References: <20180220114129.9300-1-jarkko.sakkinen@linux.intel.com>
-         <7756fff1-ec94-1c26-9bbd-938337bc3c45@redhat.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-integrity@vger.kernel.org
+Date: Tue, 20 Feb 2018 19:10:19 +0200
+In-Reply-To: <1519044991.4721.7.camel@HansenPartnership.com>
+References: <1518813108.4419.3.camel@HansenPartnership.com>
+         <20180219123244.ucno7eaqupwko6ff@linux.intel.com>
+         <1519044991.4721.7.camel@HansenPartnership.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, 2018-02-20 at 15:26 +0100, Javier Martinez Canillas wrote:
-> On 02/20/2018 12:41 PM, Jarkko Sakkinen wrote:
-> > Replaced kmalloc() + memcpy() in tpm_eventlog_efi.c and
-> > tpm_eventlog_of.c.
-> > 
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > ---
+On Mon, 2018-02-19 at 07:56 -0500, James Bottomley wrote:
+> On Mon, 2018-02-19 at 14:32 +0200, Jarkko Sakkinen wrote:
+> > Trying to figure out how this was never merged. Sorry about that.
+> > I'll take the blame from this :-( I'll test this commit ASAP.
 > 
-> Looks good to me.
+> Actually, could you test v3 (just posted).  Also, I'm going to have
+> someone run v3 on another failing TPM today (the ST Micro) so I
+> should
+> get a tested-by as well if it works.
 > 
-> Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+> Thanks,
+> 
+> James
 
-Thanks!
+Yes.
 
 /Jarkko
