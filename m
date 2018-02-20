@@ -1,63 +1,128 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:25967 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751270AbeBTOMd (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 20 Feb 2018 09:12:33 -0500
-Message-ID: <1519135945.4113.9.camel@linux.intel.com>
-Subject: Re: [PATCH 1/2 v3] tpm: cmd_ready command can be issued only after
- granting locality
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Tomas Winkler <tomas.winkler@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 20 Feb 2018 16:12:25 +0200
-In-Reply-To: <20180219112700.yfoywzegqzrpynlk@linux.intel.com>
-References: <20180214134319.4400-1-tomas.winkler@intel.com>
-         <20180214134319.4400-2-tomas.winkler@intel.com>
-         <20180219112700.yfoywzegqzrpynlk@linux.intel.com>
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58104 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751344AbeBTOCW (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 20 Feb 2018 09:02:22 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w1KE0s5A049002
+        for <linux-integrity@vger.kernel.org>; Tue, 20 Feb 2018 09:02:21 -0500
+Received: from e06smtp11.uk.ibm.com (e06smtp11.uk.ibm.com [195.75.94.107])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2g8j0p7wf4-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 20 Feb 2018 09:02:20 -0500
+Received: from localhost
+        by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Tue, 20 Feb 2018 14:02:16 -0000
+Subject: Re: [PATCH v1 1/2] ima: fail signature verification on untrusted
+ filesystems
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>,
+        James Morris <jmorris@namei.org>
+Cc: linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Dongsu Park <dongsu@kinvolk.io>,
+        Alban Crequy <alban@kinvolk.io>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Date: Tue, 20 Feb 2018 09:02:09 -0500
+In-Reply-To: <87tvucifji.fsf@xmission.com>
+References: <1519053483-18396-1-git-send-email-zohar@linux.vnet.ibm.com>
+         <1519053483-18396-2-git-send-email-zohar@linux.vnet.ibm.com>
+         <87zi44mz26.fsf@xmission.com> <alpine.LRH.2.21.1802201152240.883@namei.org>
+         <87tvucifji.fsf@xmission.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
+Message-Id: <1519135329.3736.88.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2018-02-19 at 13:27 +0200, Jarkko Sakkinen wrote:
-> On Wed, Feb 14, 2018 at 03:43:18PM +0200, Tomas Winkler wrote:
-> >  	if (need_locality && chip->ops->relinquish_locality) {
-> > -		chip->ops->relinquish_locality(chip, chip-
-> > >locality);
-> > +		/* this coud be on error path, don't override
-> > error code */
-> > +		int l_rc = chip->ops->relinquish_locality(chip,
-> > chip->locality);
+On Mon, 2018-02-19 at 20:02 -0600, Eric W. Biederman wrote:
+> James Morris <jmorris@namei.org> writes:
 > 
-> All local variable declarations must be in the beginning of the
-> function.
+> > On Mon, 19 Feb 2018, Eric W. Biederman wrote:
+> >
+> >> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+> >> 
+> >> > Files on untrusted filesystems, such as fuse, can change at any time,
+> >> > making the measurement(s) and by extension signature verification
+> >> > meaningless.
+> >> 
+> >> Filesystems with servers?
+> >> Remote filesystems?
+> >> Perhaps unexpected changes.
+> >> 
+> >> Untrusted sounds a bit harsh, and I am not certain it quite captures
+> >> what you are looking to avoid.
+> >
+> > Right -- I think whether you trust a filesystem or not depends on how much 
+> > assurance you have in your specific configuration, rather than whether you 
+> > think the filesystem can be manipulated or not.
+> >
+> > There is a difference between:
+> >
+> >   - This fs has no way to communicate a change to IMA, and;
+> >
+> >   - This fs could be malicious.
+> >
+> > In the latter case, I suggest that any fs could be malicious if the 
+> > overall security policy / settings are inadequate for the threat model, or 
+> > if there are vulnerabilities which allow such security to be bypassed.
+> >
+> > Whether a user trusts FUSE on their particular system should be a policy 
+> > decision on the part of the user.  The kernel should not be deciding what 
+> > is trusted or not trusted here.
 > 
-> > +
-> > +		if (l_rc) {
-> > +			dev_err(&chip->dev, "%s:
-> > relinquish_locality: error %d\n",
-> > +				__func__, l_rc);
-> > +			rc = l_rc;
-> > +		}
+> I believe there has been a good techincal argument made that fuse
+> mounted by an malicious user can defeat the protections ima is trying to
+> provide.
 > 
-> Your comment about not overriding error code is incorrect.
+> In particular the file could change after the signature of the file has
+> been verified without ima being alerted.
 > 
-> The value of 'rc' should be never overridden, which kind of supports
-> to "just print" behavior that we had for a locality error.
+> As such I think it is very reasonable for ima when a fuse filesystem has
+> been mounted by an unprivileged user to report that it can not verify
+> signatures, because IMA can not verify signatures in a meaningful way.
 > 
-> Is your fix somehow dependent on changing relinquish_locality()
-> behavior? If not, please remove this change. If you want to
-> contribute
-> such behavioral change, you should make a separate patch of it.
-> 
-> Now it's like a trojan horse bundled inside a bug fix.
+> Now that might be better called SB_I_IMA_UNVERIFIABLE_SIGNATURES.
 
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+The file signatures are always unverifiable, whether it is mounted by
+root or an unprivileged user.  This flag would always be set.
 
-[And while doing this noticed a flaw in my test suite:
-https://github.com/jsakkine-intel/tpm2-scripts/issues/3]
+> We may want to complement that flag with SB_I_UNTRUSTED_MOUNTER.
+> For the times when it is not the global root user who mounts
+> the filesystem.
 
-/Jarkko
+Ok
+
+> So I do think when both conditions are true there very much is a case
+> for the kernel saying realizing it would be stupid to trust sigantures
+> it can not reliably verify.
+
+Agreed
+
+> On the flip side when it really is a trusted mounter, and it is in a
+> configuration that IMA has a reasonable expectation of seeing all of
+> the changes it would be nice if we can say please trust this mount.
+
+IMA has no way of detecting file change.  This was one of the reasons
+for the original patch set's not using the cached IMA results.
+
+Even in the case of a trusted mounter and not using IMA cached
+results, there are no guarantees that the data read to calculate the
+file hash, will be the same as what is subsequently read.  In some
+environments this might be an acceptable risk, while in others not.
+
+> It would also be nice if I could provide all of this information at
+> mount time (when I am the global root) with mount options.  So I don't
+> need to update all of my tooling to know how to update ima policy when I
+> am mounting a filesystem.
+
+The latest version of this patch relies on a builtin IMA policy to set
+a flag.  No other changes are required to the IMA policy.  This
+builtin policy could be used for environments not willing to accept
+the default unverifiable signature risk.
+
+Mimi
