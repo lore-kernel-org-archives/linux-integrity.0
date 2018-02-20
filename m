@@ -1,51 +1,42 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:58824 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750799AbeBTOdh (ORCPT
+Received: from mail-wr0-f172.google.com ([209.85.128.172]:37532 "EHLO
+        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751273AbeBTO0J (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 20 Feb 2018 09:33:37 -0500
-Message-ID: <1519137213.9433.10.camel@HansenPartnership.com>
-Subject: Re: [PATCH] tpm: fix selftest failure regression
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
+        Tue, 20 Feb 2018 09:26:09 -0500
+Received: by mail-wr0-f172.google.com with SMTP id z12so8759896wrg.4
+        for <linux-integrity@vger.kernel.org>; Tue, 20 Feb 2018 06:26:08 -0800 (PST)
+Subject: Re: [PATCH v2] tpm: use kmemdup() to copy the event log
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>
-Cc: linux-integrity@vger.kernel.org
-Date: Tue, 20 Feb 2018 09:33:33 -0500
-In-Reply-To: <1519136646.4113.13.camel@linux.intel.com>
-References: <1518122886.21828.20.camel@HansenPartnership.com>
-         <20180216083406.ysbujdgwo4jg2e46@linux.intel.com>
-         <1518805037.4640.27.camel@HansenPartnership.com>
-         <1518807576.4475.3.camel@HansenPartnership.com>
-         <0f489217-b1f2-0265-d5d3-05f7b72d717e@infineon.com>
-         <1518810337.4475.16.camel@HansenPartnership.com>
-         <1519136646.4113.13.camel@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+        linux-integrity@vger.kernel.org
+Cc: Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Thiebaud Weksteen <tweek@google.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20180220114129.9300-1-jarkko.sakkinen@linux.intel.com>
+From: Javier Martinez Canillas <javierm@redhat.com>
+Message-ID: <7756fff1-ec94-1c26-9bbd-938337bc3c45@redhat.com>
+Date: Tue, 20 Feb 2018 15:26:05 +0100
+MIME-Version: 1.0
+In-Reply-To: <20180220114129.9300-1-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, 2018-02-20 at 16:24 +0200, Jarkko Sakkinen wrote:
-> On Fri, 2018-02-16 at 11:45 -0800, James Bottomley wrote:
-> > 
-> > tsscreateek -cp -alg ec -noflush
+On 02/20/2018 12:41 PM, Jarkko Sakkinen wrote:
+> Replaced kmalloc() + memcpy() in tpm_eventlog_efi.c and
+> tpm_eventlog_of.c.
 > 
-> Can you describe in high-level what this command does? I will rather
-> add a test to my smoke test suite than depend on TSS implementations
-> for various reasons. This seems like a good test case to add as
-> part of it.
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
 
-It's basically doing a create primary on the endorsement seed for an
-elliptic curve key.  However, it first tries to get the seed template
-and unique data from the correct NV index, and if that doesn't work it
-uses the data defined in:
+Looks good to me.
 
-https://trustedcomputinggroup.org/tcg-ek-credential-profile-tpm-family-2-0/
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 
-to build a template and uses that.
-
-I think what's happening is my Nuvoton recognises the template and
-tries its derivation shortcut which causes a BUG_ON in its
-implementation because no EC keys or certificate was provisioned in
-this TPM.
-
-James
+Best regards,
+-- 
+Javier Martinez Canillas
+Software Engineer - Desktop Hardware Enablement
+Red Hat
