@@ -1,80 +1,95 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:34588 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751422AbeBTXJy (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 20 Feb 2018 18:09:54 -0500
-Message-ID: <1519168191.4446.31.camel@HansenPartnership.com>
-Subject: Re: [PATCH v3] tpm: fix intermittent failure with self tests
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: linux-integrity@vger.kernel.org
-Date: Tue, 20 Feb 2018 18:09:51 -0500
-In-Reply-To: <20180220212847.il76cysi3t4ibhhi@linux.intel.com>
-References: <1519043040.4721.5.camel@HansenPartnership.com>
-         <1519148635.6941.5.camel@linux.intel.com>
-         <1519149111.4446.11.camel@HansenPartnership.com>
-         <20180220192600.gvlfgs5bw6ve563l@linux.intel.com>
-         <20180220212725.gwqi3w6lua527yu5@linux.intel.com>
-         <20180220212847.il76cysi3t4ibhhi@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mga18.intel.com ([134.134.136.126]:32736 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751539AbeBTXDM (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 20 Feb 2018 18:03:12 -0500
+Date: Wed, 21 Feb 2018 01:03:01 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2 v3] tpm: cmd_ready command can be issued only after
+ granting locality
+Message-ID: <20180220230301.fdvczohdtp635kav@linux.intel.com>
+References: <20180214134319.4400-1-tomas.winkler@intel.com>
+ <20180214134319.4400-2-tomas.winkler@intel.com>
+ <20180219112700.yfoywzegqzrpynlk@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B942240B1@hasmsx108.ger.corp.intel.com>
+ <1519138649.26293.1.camel@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94224C36@hasmsx108.ger.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B94224C36@hasmsx108.ger.corp.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, 2018-02-20 at 23:28 +0200, Jarkko Sakkinen wrote:
-> On Tue, Feb 20, 2018 at 11:27:25PM +0200, Jarkko Sakkinen wrote:
+On Tue, Feb 20, 2018 at 08:26:45PM +0000, Winkler, Tomas wrote:
 > > 
-> > On Tue, Feb 20, 2018 at 09:26:00PM +0200, Jarkko Sakkinen wrote:
-> > > 
-> > > On Tue, Feb 20, 2018 at 12:51:51PM -0500, James Bottomley wrote:
-> > > > 
-> > > > On Tue, 2018-02-20 at 19:43 +0200, Jarkko Sakkinen wrote:
-> > > > > 
-> > > > > I get merge conflicts in my tree but I'll review this.
-> > > > 
-> > > > You told me to rebase it on that patch that wasn't in your
-> > > > tree:
-> > > > 
-> > > > https://patchwork.kernel.org/patch/10208965/
-> > > > 
-> > > > If you put it in your tree, I can just rebase on top of
-> > > > everything.
-> > > > 
-> > > > James
-> > > 
-> > > Aah. Sorry, my bad I'll move forward on testing :-)
-> > > 
-> > > /Jarkko
+> > On Mon, 2018-02-19 at 11:43 +0000, Winkler, Tomas wrote:
+> > > > All local variable declarations must be in the beginning of the
+> > > > function.
+> > >
+> > > Who says?
 > > 
-> > Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > 
-> > /Jarkko
+> > It is coherent how we have everything else.
+>  I will have to care about its value out of the scope where the variable existence is not relevant.
 > 
-> These must be taken away:
+> > It is much easier to see the stack allocation this way when the allocation is
+> > only done in the beginning of each function. If you really need to do such
+> > pattern, then it would be a better idea to consider an additional helper
+> > function.
+> The code block decides whether to modify 'rc'. I'm not sure if additional function will make
+>  the code cleaner, on the opposite.
+> > 
+> > > > Your comment about not overriding error code is incorrect.
+> > >
+> > > Please explain?
+> > 
+> > 'l_rc' overrides 'rc' in the case when both are non-zero.
 > 
-> [    2.843641] tpm tpm0: TPM: running incremental selftest
-> [    2.854087] tpm tpm0: TPM: selftest succeeded
+> Yes, that's been the intention, we cannot return more than one value. 
+> l_rc if set it has hire priority. 
+> 
+> > 
+> > > > The value of 'rc' should be never overridden, which kind of supports
+> > > > to "just print" behavior that we had for a locality error.
+> > >
+> > > You are not consistent, you've agreed with propagating it to user
+> > > space.  The error will  be propagated in case of an error in locality
+> > > relinquish the device is pretty much in non functional state and
+> > > provious errors do not matter much, but rc value won't be modified if
+> > > locality_reliquish succeeds.
+> > 
+> > Well, sometimes you fail to notice things and I failed to notice the collision
+> > above. The commit message does not describe why 'l_rc'
+> > overrides 'rc' in the case when both are non-zero. What was the reasoning,
+> > which made you end up with this priority order?  Why is 'l_rc' more
+> > important than 'rc'?
+> 
+> Because, it's fatal. I'm not sure it's matter much what the previous error was, it cannot be recovered
+> That's my understanding of this flow.
+> 
+>  
+> > My take is that does it really make sense have this change as part of a high
+> > priority bug fix that should be as localized as possible?
+> > Seems like a non-trivial problem by itself.
+> 
+> Yes, the issue here is that also an error path can fail. Now what is the correct return value.. 
+> 
+> In any case, in order to resolve this dispute, I will post a version when the error is just prints out,
+> Once, however fatal the error is, it's very unlikely that it will happen.
+> Second the driver will find the device not responding in a subsequent command.
+> 
+> Not perfect, but at least we will have functional driver.
+> 
+> Thanks
+> Tomas
+> 
 
-I'm not wedded to having the messages, but it helps give context when
-something like this happens:
+Please add my tested by to next version. Thanks.
 
-[    1.550099] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
-[    1.550108] tpm tpm0: TPM: running incremental selftest
-[    1.602294] tpm tpm0: A TPM error (323) occurred incremental selftest
-[    1.602320] tpm tpm0: TPM: incremental selftest failed
-[    1.602322] tpm tpm0: TPM: running full selftest
-[    2.523689] tpm tpm0: TPM: selftest succeeded
-
-It also helps explain why I lost a second in the boot sequence to the
-TPM having to run a full self test.
-
-Without the chatty messages, what you see is 
-
-[    1.550099] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
-[
-    1.602294] tpm tpm0: A TPM error (323) occurred incremental selftest
-
-Which is a bit harder to interpret.
-
-James
+/Jarkko
