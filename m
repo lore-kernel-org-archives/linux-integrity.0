@@ -1,63 +1,89 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga12.intel.com ([192.55.52.136]:33285 "EHLO mga12.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:54591 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751295AbeBUHbi (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 21 Feb 2018 02:31:38 -0500
-Date: Wed, 21 Feb 2018 09:31:32 +0200
+        id S1751295AbeBUHZW (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 21 Feb 2018 02:25:22 -0500
+Date: Wed, 21 Feb 2018 09:25:18 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] tpm: Trigger only missing TPM 2.0 self tests
-Message-ID: <20180221073132.vrznvdp5oh7w6n53@linux.intel.com>
-References: <20180220225347.25448-1-jarkko.sakkinen@linux.intel.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v3] tpm: fix intermittent failure with self tests
+Message-ID: <20180221072518.emmos62oegedw7rz@linux.intel.com>
+References: <1519043040.4721.5.camel@HansenPartnership.com>
+ <1519148635.6941.5.camel@linux.intel.com>
+ <1519149111.4446.11.camel@HansenPartnership.com>
+ <20180220192600.gvlfgs5bw6ve563l@linux.intel.com>
+ <20180220212725.gwqi3w6lua527yu5@linux.intel.com>
+ <20180220212847.il76cysi3t4ibhhi@linux.intel.com>
+ <1519168191.4446.31.camel@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180220225347.25448-1-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1519168191.4446.31.camel@HansenPartnership.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Feb 21, 2018 at 12:53:47AM +0200, Jarkko Sakkinen wrote:
-> From: Alexander Steffen <Alexander.Steffen@infineon.com>
+On Tue, Feb 20, 2018 at 06:09:51PM -0500, James Bottomley wrote:
+> On Tue, 2018-02-20 at 23:28 +0200, Jarkko Sakkinen wrote:
+> > On Tue, Feb 20, 2018 at 11:27:25PM +0200, Jarkko Sakkinen wrote:
+> > > 
+> > > On Tue, Feb 20, 2018 at 09:26:00PM +0200, Jarkko Sakkinen wrote:
+> > > > 
+> > > > On Tue, Feb 20, 2018 at 12:51:51PM -0500, James Bottomley wrote:
+> > > > > 
+> > > > > On Tue, 2018-02-20 at 19:43 +0200, Jarkko Sakkinen wrote:
+> > > > > > 
+> > > > > > I get merge conflicts in my tree but I'll review this.
+> > > > > 
+> > > > > You told me to rebase it on that patch that wasn't in your
+> > > > > tree:
+> > > > > 
+> > > > > https://patchwork.kernel.org/patch/10208965/
+> > > > > 
+> > > > > If you put it in your tree, I can just rebase on top of
+> > > > > everything.
+> > > > > 
+> > > > > James
+> > > > 
+> > > > Aah. Sorry, my bad I'll move forward on testing :-)
+> > > > 
+> > > > /Jarkko
+> > > 
+> > > Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > 
+> > > /Jarkko
+> > 
+> > These must be taken away:
+> > 
+> > [    2.843641] tpm tpm0: TPM: running incremental selftest
+> > [    2.854087] tpm tpm0: TPM: selftest succeeded
 > 
-> My Nuvoton 6xx in a Dell XPS-13 has been intermittently failing to work
-> (necessitating a reboot). The problem seems to be that the TPM gets into a
-> state where the partial self-test doesn't return TPM_RC_SUCCESS (meaning
-> all tests have run to completion), but instead returns TPM_RC_TESTING
-> (meaning some tests are still running in the background).  There are
-> various theories that resending the self-test command actually causes the
-> tests to restart and thus triggers more TPM_RC_TESTING returns until the
-> timeout is exceeded.
+> I'm not wedded to having the messages, but it helps give context when
+> something like this happens:
 > 
-> There are several issues here: firstly being we shouldn't slow down the
-> boot sequence waiting for the self test to complete once the TPM
-> backgrounds them.  It will actually make available all functions that have
-> passed and if it gets a failure return TPM_RC_FAILURE to every subsequent
-> command.  So the fix is to kick off self tests once and if they return
-> TPM_RC_TESTING log that as a backgrounded self test and continue on.  In
-> order to prevent other tpm users from seeing any TPM_RC_TESTING returns
-> (which it might if they send a command that needs a TPM subsystem which is
-> still under test), we loop in tpm_transmit_cmd until either a timeout or we
-> don't get a TPM_RC_TESTING return.
+> [    1.550099] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
+> [    1.550108] tpm tpm0: TPM: running incremental selftest
+> [    1.602294] tpm tpm0: A TPM error (323) occurred incremental selftest
+> [    1.602320] tpm tpm0: TPM: incremental selftest failed
+> [    1.602322] tpm tpm0: TPM: running full selftest
+> [    2.523689] tpm tpm0: TPM: selftest succeeded
 > 
-> Finally, there have been observations of strange returns from a partial
-> test. One Nuvoton is occasionally returning TPM_RC_COMMAND_CODE, so treat
-> any unexpected return from a partial self test as an indication we need to
-> run a full self test.
+> It also helps explain why I lost a second in the boot sequence to the
+> TPM having to run a full self test.
 > 
-> Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
-> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>
-> Fixes: 2482b1bba5122b1d5516c909832bdd282015b8e9
+> Without the chatty messages, what you see is 
+> 
+> [    1.550099] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
+> [
+>     1.602294] tpm tpm0: A TPM error (323) occurred incremental selftest
+> 
+> Which is a bit harder to interpret.
+> 
+> James
 
-Fixes tag is in wrong format. Should be 12 characters of the hash and
-short summary in parentheses:
+Way too much bloat to klog. Telling whether the full or incremental test
+failed makes sense. Otherwise, not so much.
 
-Fixes: 2482b1bba512 ("tpm: Trigger only missing TPM 2.0 self tests")
+I updated the patch (v4) with things cleaned up that add bloat to the
+driver code and squashed tpm_buf patch to it.
 
 /Jarkko
