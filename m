@@ -1,20 +1,20 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53174 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41286 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751158AbeBVVdS (ORCPT
+        by vger.kernel.org with ESMTP id S1751158AbeBVVdQ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 22 Feb 2018 16:33:18 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w1MLTJAk113816
-        for <linux-integrity@vger.kernel.org>; Thu, 22 Feb 2018 16:33:18 -0500
-Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ga5mr8j5v-1
+        Thu, 22 Feb 2018 16:33:16 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w1MLTMCt061331
+        for <linux-integrity@vger.kernel.org>; Thu, 22 Feb 2018 16:33:15 -0500
+Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ga25yrgmk-1
         (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 22 Feb 2018 16:33:17 -0500
+        for <linux-integrity@vger.kernel.org>; Thu, 22 Feb 2018 16:33:14 -0500
 Received: from localhost
-        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Thu, 22 Feb 2018 21:33:16 -0000
+        Thu, 22 Feb 2018 21:33:13 -0000
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: linux-security-module@vger.kernel.org,
@@ -26,22 +26,23 @@ Cc: linux-security-module@vger.kernel.org,
         Dongsu Park <dongsu@kinvolk.io>,
         Alban Crequy <alban@kinvolk.io>,
         "Serge E . Hallyn" <serge@hallyn.com>
-Subject: [PATCH v2 2/4] ima: re-evaluate files on privileged mounted filesystems
-Date: Thu, 22 Feb 2018 16:33:02 -0500
+Subject: [PATCH v2 1/4] ima: fail file signature verification on non-init mounted filesystems
+Date: Thu, 22 Feb 2018 16:33:01 -0500
 In-Reply-To: <1519335184-17808-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1519335184-17808-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-Id: <1519335184-17808-3-git-send-email-zohar@linux.vnet.ibm.com>
+Message-Id: <1519335184-17808-2-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-This patch addresses the fuse privileged mounted filesystems in a "secure"
-environment, with a correctly enforced security policy, which is willing
-to assume the inherent risk of specific fuse filesystems that are well
-defined and properly implemented.
+FUSE can be mounted by unprivileged users either today with fusermount
+installed with setuid, or soon with the upcoming patches to allow FUSE
+mounts in a non-init user namespace.
 
-As there is no way for the kernel to detect file changes, the kernel
-ignores the cached file integrity results and re-measures, re-appraises,
-and re-audits the file.
+This patch addresses the new unprivileged non-init mounted filesystems,
+which are untrusted, by failing the signature verification.
+
+This patch defines two new flags SB_I_IMA_UNVERIFIABLE_SIGNATURE and
+SB_I_UNTRUSTED_MOUNTER.
 
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Cc: Miklos Szeredi <miklos@szeredi.hu>
@@ -50,41 +51,65 @@ Cc: Eric W. Biederman <ebiederm@xmission.com>
 Cc: Dongsu Park <dongsu@kinvolk.io>
 Cc: Alban Crequy <alban@kinvolk.io>
 Cc: Serge E. Hallyn <serge@hallyn.com>
----
- security/integrity/ima/ima_main.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index a5d225ffc388..f550f25294a3 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -25,6 +25,7 @@
- #include <linux/xattr.h>
- #include <linux/ima.h>
- #include <linux/iversion.h>
-+#include <linux/fs.h>
+Changelog v2:
+- Limit patch to non-init mounted filesystems.
+- Define 2 sb->s_iflags
+
+Changelog v1:
+- Merged the unprivileged and privileged patches.
+- Dropped IMA fsname support.
+- Introduced a new IMA builtin policy named "untrusted_fs".
+- Replaced fs_type flag with sb->s_iflags flag.
+---
+ include/linux/fs.h                    |  2 ++
+ security/integrity/ima/ima_appraise.c | 14 +++++++++++++-
+ 2 files changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 2a815560fda0..4e1c76af7b68 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1320,6 +1320,8 @@ extern int send_sigurg(struct fown_struct *fown);
  
- #include "ima.h"
+ /* sb->s_iflags to limit user namespace mounts */
+ #define SB_I_USERNS_VISIBLE		0x00000010 /* fstype already mounted */
++#define SB_I_IMA_UNVERIFIABLE_SIGNATURE	0x00000020
++#define SB_I_UNTRUSTED_MOUNTER		0x00000040
  
-@@ -230,9 +231,17 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 				 IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
- 				 IMA_ACTION_FLAGS);
+ /* Possible states of 'frozen' field */
+ enum {
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 1b177461f20e..f34901069e78 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -302,7 +302,18 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 	}
  
--	if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags))
--		/* reset all flags if ima_inode_setxattr was called */
+ out:
+-	if (status != INTEGRITY_PASS) {
 +	/*
-+	 * Re-evaulate the file if either the xattr has changed or the
-+	 * kernel has no way of detecting file change on the filesystem.
-+	 * (Limited to privileged mounted filesystems.)
++	 * File signatures on some filesystems can not be properly verified.
++	 * On these filesytems, that are mounted by an untrusted mounter,
++	 * fail the file signature verification.
 +	 */
-+	if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags) ||
-+	    ((inode->i_sb->s_iflags & SB_I_IMA_UNVERIFIABLE_SIGNATURE) &&
-+	     !(inode->i_sb->s_iflags & SB_I_UNTRUSTED_MOUNTER))) {
- 		iint->flags &= ~IMA_DONE_MASK;
-+		iint->measured_pcrs = 0;
-+	}
- 
- 	/* Determine if already appraised/measured based on bitmask
- 	 * (IMA_MEASURE, IMA_MEASURED, IMA_XXXX_APPRAISE, IMA_XXXX_APPRAISED,
++	if (inode->i_sb->s_iflags &
++	    (SB_I_IMA_UNVERIFIABLE_SIGNATURE | SB_I_UNTRUSTED_MOUNTER)) {
++		status = INTEGRITY_FAIL;
++		cause = "unverifiable-signature";
++		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
++				    op, cause, rc, 0);
++	} else if (status != INTEGRITY_PASS) {
+ 		if ((ima_appraise & IMA_APPRAISE_FIX) &&
+ 		    (!xattr_value ||
+ 		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
+@@ -319,6 +330,7 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 	} else {
+ 		ima_cache_flags(iint, func);
+ 	}
++
+ 	ima_set_cache_status(iint, func, status);
+ 	return status;
+ }
 -- 
 2.7.5
