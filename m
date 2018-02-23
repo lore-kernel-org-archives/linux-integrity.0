@@ -1,47 +1,56 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from namei.org ([65.99.196.166]:50386 "EHLO namei.org"
+Received: from namei.org ([65.99.196.166]:50374 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751296AbeBWEKk (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 22 Feb 2018 23:10:40 -0500
-Date: Fri, 23 Feb 2018 15:10:15 +1100 (AEDT)
+        id S1751274AbeBWEA0 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 22 Feb 2018 23:00:26 -0500
+Date: Fri, 23 Feb 2018 15:00:23 +1100 (AEDT)
 From: James Morris <jmorris@namei.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-cc: LKML <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org
-Subject: Re: [PATCH] integrity/security: fix digsig.c build error with header
- file
-In-Reply-To: <b3b7eebb-0e9f-f175-94a8-379c5ddcaa86@infradead.org>
-Message-ID: <alpine.LRH.2.21.1802231509460.4713@namei.org>
-References: <b3b7eebb-0e9f-f175-94a8-379c5ddcaa86@infradead.org>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+cc: linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] ima: unverifiable file signatures
+In-Reply-To: <1519335184-17808-1-git-send-email-zohar@linux.vnet.ibm.com>
+Message-ID: <alpine.LRH.2.21.1802231500070.3442@namei.org>
+References: <1519335184-17808-1-git-send-email-zohar@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 12 Feb 2018, Randy Dunlap wrote:
+On Thu, 22 Feb 2018, Mimi Zohar wrote:
 
-> From: Randy Dunlap <rdunlap@infradead.org>
+> For local filesystems, the kernel prevents files being executed from
+> being modified.  With IMA-measurement enabled, the kernel also emits
+> audit "time of measure, time of use" messages for files opened for
+> read, and subsequently opened for write.
 > 
-> security/integrity/digsig.c has build errors on some $ARCH due to a
-> missing header file, so add it.
+> Files on fuse are initially measured, appraised, and audited.  Although
+> the file data can change dynamically any time, making re-measuring,
+> re-appraising, or re-auditing pointless, this patch set attempts to
+> differentiate between unprivileged non-init root and privileged
+> mounted fuse filesystems.
 > 
->   security/integrity/digsig.c:146:2: error: implicit declaration of function 'vfree' [-Werror=implicit-function-declaration]
+> This patch set addresses three different scenarios:
+> - Unprivileged non-init root mounted fuse filesystems are untrusted.
+>   Signature verification should always fail and re-measuring,
+>   re-appraising, re-auditing files makes no sense.
 > 
-> Reported-by: Michael Ellerman <mpe@ellerman.id.au>
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: linux-integrity@vger.kernel.org
-> Link: http://kisskb.ellerman.id.au/kisskb/head/13396/
-> ---
->  security/integrity/digsig.c |    1 +
->  1 file changed, 1 insertion(+)
+>   Always enabled.
+> 
+> - For privileged mounted filesystems in a "secure" environment, with a
+>   correctly enforced security policy, which is willing to assume the
+>   inherent risk of specific fuse filesystems, it is reasonable to
+>   re-measure, re-appraise, and re-audit files.
+> 
+>   Enabled by default to prevent breaking existing systems.
+> 
+> - Privileged mounted filesystems unwilling to assume the risks and
+>   prefers to fail safe.
+> 
+>   Enabled based on policy.
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v4.16-rc3
-
-
+I like this approach.
 
 
 -- 
