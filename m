@@ -1,45 +1,68 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:47655 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753298AbeBZOXH (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 26 Feb 2018 09:23:07 -0500
-Date: Mon, 26 Feb 2018 15:23:05 +0100
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: linux-integrity@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, kernel@pengutronix.de
-Subject: IMA/EVM writing xattrs during remount filesystem
-Message-ID: <20180226142305.mbuuyibpvzzrcvbm@pengutronix.de>
+Received: from mga11.intel.com ([192.55.52.93]:15937 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752508AbeBZN7r (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 26 Feb 2018 08:59:47 -0500
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+CC: "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/2 v5] tpm: cmd_ready command can be issued only after
+ granting locality
+Date: Mon, 26 Feb 2018 13:59:42 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B94229743@hasmsx108.ger.corp.intel.com>
+References: <20180225120049.29308-1-tomas.winkler@intel.com>
+ <1519646980.12825.4.camel@linux.intel.com>
+In-Reply-To: <1519646980.12825.4.camel@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi All,
 
-When a filesystem is remounted from rw to ro then
-sb_prepare_remount_readonly() is called. After this call there shouldn't
-be any writers left on the filesystem. However, IMA/EVM is not aware of
-this as it never calls mnt_want_write[_file](), but only looks add the
-MS_RDONLY superblock flag before writing to its xattrs. This flag is
-only changed after sb->s_op->remount_fs() is called. As a consequence
-IMA/EVM still updates xattrs while the filesystem is going to readonly
-mode.
+> 
+> On Sun, 2018-02-25 at 14:00 +0200, Tomas Winkler wrote:
+> >  	if (need_locality && chip->ops->relinquish_locality) {
+> > -		chip->ops->relinquish_locality(chip, chip->locality);
+> > +		/* this coud be on error path, don't override error code */
+> > +		int l_rc = chip->ops->relinquish_locality(chip, chip-
+> > >locality);
+> > +
+> > +		if (l_rc)
+> > +			dev_err(&chip->dev, "%s: relinquish_locality: error
+> > %d\n",
+> > +				__func__, l_rc);
+> > +
+> >  		chip->locality = -1;
+> >  	}
+> 
+> The 'l_rc' declaration causes NAK as I've stated before.
 
-We observed that on a 4.0 Kernel in conjunction with UBIFS, but the
-relevant code in IMA/EVM still looks the same so I assume it's present
-in the current kernel aswell.
+I will provide a sixth version that let us both down the tree
 
-UBIFS calculates its free space before and after the remount_fs op and
-if there's a difference it prints a backtrace (dbg_check_space_info:
-free space changed from x to y). We see this backtrace sometimes when
-remounting the fs readonly. If I understand the situation correctly this
-is not UBIFS's fault, right? Any hint what we can do about it?
-
-Sascha
-
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+> 
+> Why don't you just make a helper function:
+> 
+> static void tpm_relinquish_locality(struct tpm_chip *chip) {
+> 	int rc;
+> 
+> 	if (!chip->ops->relinquish_locality)
+> 		return 0;
+> 
+> 	rc = chip->ops->relinquish_locality(chip);
+> 	if (rc)
+> 		dev_err(&chip->dev, "%s: error %d\n", __func__, rc);
+> 
+> 	chip->locality = -1;
+> }
+> 
+> Then the original code would be simply:
+> 
+> if (need_locality)
+> 	tpm_relinquish_locality(chip);
+> 
+> /Jarkko
