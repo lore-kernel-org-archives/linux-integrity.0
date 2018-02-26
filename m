@@ -1,50 +1,44 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from namei.org ([65.99.196.166]:50722 "EHLO namei.org"
+Received: from namei.org ([65.99.196.166]:50712 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751351AbeBZXsp (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 26 Feb 2018 18:48:45 -0500
-Date: Tue, 27 Feb 2018 10:48:41 +1100 (AEDT)
+        id S1751079AbeBZXem (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 26 Feb 2018 18:34:42 -0500
+Date: Tue, 27 Feb 2018 10:33:37 +1100 (AEDT)
 From: James Morris <jmorris@namei.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: linux-kernel@vger.kernel.org,
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [GIT PULL] TPM: Bug fixes
-Message-ID: <alpine.LRH.2.21.1802271046100.9820@namei.org>
+        linux-integrity@vger.kernel.org
+Subject: Re: [GIT PULL] tpmdd fixes for 4.16
+In-Reply-To: <1519674546.3941.2.camel@HansenPartnership.com>
+Message-ID: <alpine.LRH.2.21.1802271033190.9747@namei.org>
+References: <20180226124144.GA8675@linux.intel.com>         <alpine.LRH.2.21.1802270552260.29062@namei.org> <1519674546.3941.2.camel@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/mixed; boundary="1665246916-613390738-1519688018=:9747"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Please pull these bugfixes for TPM, from Jeremy Boone, via Jarkko 
-Sakkinen.
+On Mon, 26 Feb 2018, James Bottomley wrote:
 
+> On Tue, 2018-02-27 at 05:52 +1100, James Morris wrote:
+> > On Mon, 26 Feb 2018, Jarkko Sakkinen wrote:
+> > 
+> > > 
+> > > Hi
+> > > 
+> > > Here is a batch of critical fixes for 4.16.
+> > > 
+> > 
+> > Do you have CVEs for these?  If so, please include them in the commit
+> > messages.
+> 
+> Heh, well, I suppose from this everyone now knows they're fixes for
+> vulnerabilities.  The CVE doesn't usually show up until after the
+> embargo is released, so we don't have one yet.
 
-The following changes since commit 4c3579f6cadd5eb8250a36e789e6df66f660237a:
+Anyone with half a brain can read Linus' -rc commits and work it out.
 
-  Merge tag 'edac_fixes_for_4.16' of git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp (2018-02-26 10:19:15 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v4.16-rc4
-
-for you to fetch changes up to 3be23274755ee85771270a23af7691dc9b3a95db:
-
-  tpm: fix potential buffer overruns caused by bit glitches on the bus (2018-02-26 15:43:46 -0800)
-
-----------------------------------------------------------------
-Jeremy Boone (5):
-      tpm_tis: fix potential buffer overruns caused by bit glitches on the bus
-      tpm_i2c_nuvoton: fix potential buffer overruns caused by bit glitches on the bus
-      tpm_i2c_infineon: fix potential buffer overruns caused by bit glitches on the bus
-      tpm: st33zp24: fix potential buffer overruns caused by bit glitches on the bus
-      tpm: fix potential buffer overruns caused by bit glitches on the bus
-
- drivers/char/tpm/st33zp24/st33zp24.c | 4 ++--
- drivers/char/tpm/tpm-interface.c     | 4 ++++
- drivers/char/tpm/tpm2-cmd.c          | 4 ++++
- drivers/char/tpm/tpm_i2c_infineon.c  | 5 +++--
- drivers/char/tpm/tpm_i2c_nuvoton.c   | 8 ++++++--
- drivers/char/tpm/tpm_tis_core.c      | 5 +++--
- 6 files changed, 22 insertions(+), 8 deletions(-)
+-- 
+James Morris
+<jmorris@namei.org>
