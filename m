@@ -1,79 +1,120 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:34911 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751656AbeB0WRV (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42484 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932174AbeB0QSK (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 27 Feb 2018 17:17:21 -0500
-Received: by mail-qk0-f194.google.com with SMTP id s188so589672qkb.2
-        for <linux-integrity@vger.kernel.org>; Tue, 27 Feb 2018 14:17:21 -0800 (PST)
-From: =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>
-To: zohar@linux.vnet.ibm.com, jmorris@namei.org, serge@hallyn.com,
-        linux-integrity@vger.kernel.org,
+        Tue, 27 Feb 2018 11:18:10 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w1RGEZrB065046
+        for <linux-integrity@vger.kernel.org>; Tue, 27 Feb 2018 11:18:10 -0500
+Received: from e06smtp13.uk.ibm.com (e06smtp13.uk.ibm.com [195.75.94.109])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2gd95c521y-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 27 Feb 2018 11:18:08 -0500
+Received: from localhost
+        by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Tue, 27 Feb 2018 16:18:05 -0000
+Subject: Re: [PATCH v2 0/4] ima: unverifiable file signatures
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hernan@vanguardiasur.com.ar
-Subject: [PATCH 1/2] security: evm: Move evm_hmac and evm_hash from evm_main.c to evm_crypto.c
-Date: Tue, 27 Feb 2018 19:16:59 -0300
-Message-Id: <1519769820-20365-1-git-send-email-hernan@vanguardiasur.com.ar>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Dongsu Park <dongsu@kinvolk.io>,
+        Alban Crequy <alban@kinvolk.io>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Date: Tue, 27 Feb 2018 11:17:58 -0500
+In-Reply-To: <87k1uzw5e6.fsf@xmission.com>
+References: <1519335184-17808-1-git-send-email-zohar@linux.vnet.ibm.com>
+         <87k1uzw5e6.fsf@xmission.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1519748278.3562.394.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Note: This is compile only tested.
-This variable was not used where it was defined, there was no point in
-declaring it there as extern, thus it got moved and constified saving up 2
-bytes.
+On Mon, 2018-02-26 at 20:08 -0600, Eric W. Biederman wrote:
+> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+> 
+> > For local filesystems, the kernel prevents files being executed from
+> > being modified.  With IMA-measurement enabled, the kernel also emits
+> > audit "time of measure, time of use" messages for files opened for
+> > read, and subsequently opened for write.
+> >
+> > Files on fuse are initially measured, appraised, and audited.  Although
+> > the file data can change dynamically any time, making re-measuring,
+> > re-appraising, or re-auditing pointless, this patch set attempts to
+> > differentiate between unprivileged non-init root and privileged
+> > mounted fuse filesystems.
+> >
+> > This patch set addresses three different scenarios:
+> > - Unprivileged non-init root mounted fuse filesystems are untrusted.
+> >   Signature verification should always fail and re-measuring,
+> >   re-appraising, re-auditing files makes no sense.
+> >
+> >   Always enabled.
+> >
+> > - For privileged mounted filesystems in a "secure" environment, with a
+> >   correctly enforced security policy, which is willing to assume the
+> >   inherent risk of specific fuse filesystems, it is reasonable to
+> >   re-measure, re-appraise, and re-audit files.
+> >
+> >   Enabled by default to prevent breaking existing systems.
+> >
+> > - Privileged mounted filesystems unwilling to assume the risks and
+> >   prefers to fail safe.
+> >
+> >   Enabled based on policy.
+> 
+> I really like the way the flags work in this patchset.
+> 
+> There is a lot of other nit-picking and bike-shedding I would like to
+> do.  However those are details specific to IMA.  So my opion really
+> doesn't count.
+> 
+> Those two flags set as you have them in the last patch make it possible
+> to slightly alter details of when they get set, that are in the perview
+> of filesystems without having too big a debate over them.
+> 
+> The changes I imagine most easily are:
+> In fuse_fill_super:
+> 	if (!fc->allow_other)
+> 		sb->s_iflags |= SB_I_UNTRUSTED_MOUNTER;
 
-Function                                     old     new   delta
-init_desc                                    273     271      -2
-Total: Before=2112094, After=2112092, chg -0.00%
+Right, as described, above, as the 2nd senario.
 
-Signed-off-by: Hernan Gonzalez <hernan@vanguardiasur.com.ar>
----
- security/integrity/evm/evm.h        | 2 --
- security/integrity/evm/evm_crypto.c | 3 +++
- security/integrity/evm/evm_main.c   | 2 --
- 3 files changed, 3 insertions(+), 4 deletions(-)
+> 
+> In sget_user_ns:
+> 	if (sb->s_user_ns != &init_user_ns)
+>         	sb->s_iflags |= SB_I_UNTRUSTED_MOUNTER;
 
-diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
-index 0482539..45c4a89 100644
---- a/security/integrity/evm/evm.h
-+++ b/security/integrity/evm/evm.h
-@@ -31,8 +31,6 @@
- 		       EVM_ALLOW_METADATA_WRITES)
- 
- extern int evm_initialized;
--extern char *evm_hmac;
--extern char *evm_hash;
- 
- #define EVM_ATTR_FSUUID		0x0001
- 
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index 691f3e0..fdde9cb 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -37,6 +37,9 @@ static DEFINE_MUTEX(mutex);
- 
- static unsigned long evm_set_key_flags;
- 
-+char * const evm_hmac = "hmac(sha1)";
-+char * const evm_hash = "sha1";
-+
- /**
-  * evm_set_key() - set EVM HMAC key from the kernel
-  * @key: pointer to a buffer with the key data
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index a8d5028..826926d 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -33,8 +33,6 @@ int evm_initialized;
- static char *integrity_status_msg[] = {
- 	"pass", "pass_immutable", "fail", "no_label", "no_xattrs", "unknown"
- };
--char *evm_hmac = "hmac(sha1)";
--char *evm_hash = "sha1";
- int evm_hmac_attrs;
- 
- char *evm_config_xattrnames[] = {
--- 
-2.7.4
+The filesystems would then only set SB_I_IMA_UNVERIFIABLE_SIGNATURE.
+
+> 
+> My biggest nitpick is I would be inclined to flip the sense of the
+> unverifiable_sigs policy.  By default not trust and trust only if
+> a special command line option was given.   But I realize this could
+> run into backwards compatibility concerns.  And it is IMA specific so
+> not really my call.
+
+The boot command line policy option forces the system to fail safe.
+Reversing the default to fail unverifiable_sigs and only allow them
+based on policy, would not be a simple command line option, but would
+require a per filesystem rule.
+
+I agree with you, but as we're not breaking existing userspace, our
+only option is to audit/log the concern, as suggested by Linus in
+other threads.  It would be nice if we could audit/log it once per
+each mount.
+
+> 
+> But the important part is what winds up in the core of ima.  Baring
+> typo's I think you have something we can all live with.
+> 
+> So double check yourself and let's start getting this merged.
+
+Sure.
+
+Mimi
