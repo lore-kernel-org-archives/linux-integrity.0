@@ -1,9 +1,9 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:56222 "EHLO mga18.intel.com"
+Received: from mga12.intel.com ([192.55.52.136]:38009 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967141AbeCAJ6r (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 1 Mar 2018 04:58:47 -0500
-Date: Thu, 1 Mar 2018 11:58:40 +0200
+        id S965026AbeCAJWv (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 1 Mar 2018 04:22:51 -0500
+Date: Thu, 1 Mar 2018 11:22:45 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: Nayna Jain <nayna@linux.vnet.ibm.com>
 Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
@@ -11,60 +11,26 @@ Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
         linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
         tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com,
         patrickc@us.ibm.com
-Subject: Re: [RFC PATCH 3/3] tpm: tpm_msleep() with finer granularity
- improves performance
-Message-ID: <20180301095840.GD29420@linux.intel.com>
+Subject: Re: [PATCH 2/3] tpm: reduce poll sleep time between send() and
+ recv() in tpm_transmit()
+Message-ID: <20180301092222.GC29420@linux.intel.com>
 References: <20180228191828.20056-1-nayna@linux.vnet.ibm.com>
- <20180228191828.20056-3-nayna@linux.vnet.ibm.com>
+ <20180228191828.20056-2-nayna@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180228191828.20056-3-nayna@linux.vnet.ibm.com>
+In-Reply-To: <20180228191828.20056-2-nayna@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Feb 28, 2018 at 02:18:28PM -0500, Nayna Jain wrote:
-> When 'commit 9f3fc7bcddcb ("tpm: replace msleep() with  usleep_range()
-> in TPM 1.2/2.0 generic drivers")' was upstreamed, it replaced the
+On Wed, Feb 28, 2018 at 02:18:27PM -0500, Nayna Jain wrote:
+> In tpm_transmit, after send(), the code checks for status in a loop
 
-"was upstreamed" is redundant information. If you speak about commit ID,
-it is expected to be in the mainline. Why there is "'" before the word
-'commit'?
+Maybe cutting hairs now but please just use the actual function name
+instead of send(). Just makes the commit log more useful asset.
 
-Just write
+> -		tpm_msleep(TPM_TIMEOUT);
+> +		tpm_msleep(TPM_TIMEOUT_POLL);
 
-  In commit 9f3fc7bcddcb ("tpm: replace msleep() with  usleep_range()
-  in TPM 1.2/2.0 generic drivers")' msleep() was replaced with
-  usleep_range().
-
-> msleep() calls with usleep_range(), but did not change the
-> granularity of the calls. They're still defined in terms of msec.
-> Test results show that refining the granularity further improves
-> the performance. We're posting this patch as an RFC to show that there
-> needs to be another function which allows finer granularity.
-> 
-> After this change, performance on a TPM 1.2 with an 8 byte
-> burstcount for 1000 extends improved from ~10.7sec to ~6.9sec.
-
-Environment where this result was achieved would be mandatory.
-
-> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-> ---
->  drivers/char/tpm/tpm.h | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index 7e797377e1eb..8cad6bfc5f46 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -522,8 +522,7 @@ int tpm_pm_resume(struct device *dev);
->  
->  static inline void tpm_msleep(unsigned int delay_msec)
->  {
-> -	usleep_range((delay_msec * 1000) - TPM_TIMEOUT_RANGE_US,
-> -		     delay_msec * 1000);
-> +	usleep_range((delay_msec * 1000) / 10, (delay_msec * 1000) / 2);
-
-Shouldn't the max be 'delay_msec * 1000'? Where do these numbers
-come from?
+What about just calling schedule()?
 
 /Jarkko
