@@ -1,96 +1,61 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:49746 "EHLO
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:51086 "EHLO
         bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752330AbeCCUMC (ORCPT
+        by vger.kernel.org with ESMTP id S1750924AbeCCGE4 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 3 Mar 2018 15:12:02 -0500
-Message-ID: <1520107919.3105.9.camel@HansenPartnership.com>
-Subject: Re: [PATCH 1/5] tpm: Trigger only missing TPM 2.0 self tests
+        Sat, 3 Mar 2018 01:04:56 -0500
+Message-ID: <1520057094.27452.16.camel@HansenPartnership.com>
+Subject: [RFC 0/2] add integrity and security to TPM2 transactions
 From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
-        stable@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Date: Sat, 03 Mar 2018 12:11:59 -0800
-In-Reply-To: <20180228195819.22231-2-jarkko.sakkinen@linux.intel.com>
-References: <20180228195819.22231-1-jarkko.sakkinen@linux.intel.com>
-         <20180228195819.22231-2-jarkko.sakkinen@linux.intel.com>
+To: linux-integrity@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org
+Date: Fri, 02 Mar 2018 22:04:54 -0800
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, 2018-02-28 at 21:58 +0200, Jarkko Sakkinen wrote:
-> From: Alexander Steffen <Alexander.Steffen@infineon.com>
-> 
-> My Nuvoton 6xx in a Dell XPS-13 has been intermittently failing to
-> work (necessitating a reboot). The problem seems to be that the TPM
-> gets into a state where the partial self-test doesn't return
-> TPM_RC_SUCCESS (meaning all tests have run to completion), but
-> instead returns TPM_RC_TESTING (meaning some tests are still running
-> in the background).  There are various theories that resending the
-> self-test command actually causes the tests to restart and thus
-> triggers more TPM_RC_TESTING returns until the timeout is exceeded.
-> 
-> There are several issues here: firstly being we shouldn't slow down
-> the boot sequence waiting for the self test to complete once the TPM
-> backgrounds them.  It will actually make available all functions that
-> have passed and if it gets a failure return TPM_RC_FAILURE to every
-> subsequent command.  So the fix is to kick off self tests once and if
-> they return TPM_RC_TESTING log that as a backgrounded self test
+By now, everybody knows we have a problem with the TPM2_RS_PW easy
+button on TPM2 in that transactions on the TPM bus can be intercepted
+and altered.  The way to fix this is to use real sessions for HMAC
+capabilities to ensure integrity and to use parameter and response
+encryption to ensure confidentiality of the data flowing over the TPM
+bus.
 
-I still think removing all logging traces is a mistake for something
-that can consume a significant amount of time in the boot sequence.
- It's going to cause lost of people doing boot timings to waste lots of
-effort.
+This RFC is about adding a simple API which can ensure the above
+properties as a layered addition to the existing TPM handling code.
+ Eventually we can add this to the random number generator, the PCR
+extensions and the trusted key handling, but this all depends on the
+conversion to tpm_buf which is not yet upstream, so I've constructed a
+second patch which demonstrates the new API in a test module for those
+who wish to play with it.
 
-However, removing the log messages makes the above statement a lie, so
-one of the two needs fixing.
+This series is also dependent on additions to the crypto subsystem to
+fix problems in the elliptic curve key handling and add the Cipher
+FeedBack encryption scheme:
 
-[...]
-> @@ -852,27 +837,24 @@ static const struct tpm_input_header
-> tpm2_selftest_header = {
->   */
->  static int tpm2_do_selftest(struct tpm_chip *chip)
->  {
-> +	struct tpm_buf buf;
-> +	int full;
->  	int rc;
-> -	unsigned int delay_msec = 10;
-> -	long duration;
-> -	struct tpm2_cmd cmd;
->  
-> -	duration = jiffies_to_msecs(
-> -		tpm2_calc_ordinal_duration(chip,
-> TPM2_CC_SELF_TEST));
-> -
-> -	while (1) {
-> -		cmd.header.in = tpm2_selftest_header;
-> -		cmd.params.selftest_in.full_test = 0;
-> -
-> -		rc = tpm_transmit_cmd(chip, NULL, &cmd,
-> TPM2_SELF_TEST_IN_SIZE,
-> -				      0, 0, "continue selftest");
-> +	for (full = 0; full < 2; full++) {
-> +		rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS,
-> TPM2_CC_SELF_TEST);
-> +		if (rc)
-> +			return rc;
->  
-> -		if (rc != TPM2_RC_TESTING || delay_msec >= duration)
-> -			break;
-> +		tpm_buf_append_u8(&buf, full);
-> +		rc = tpm_transmit_cmd(chip, NULL, buf.data,
-> PAGE_SIZE, 0, 0,
-> +				      "attempting the self test\n");
+https://marc.info/?l=linux-crypto-vger&m=151994371015475
 
-There shouldn't be a \n in the string: the failure message already
-appends one.
+---
 
-James
+James Bottomley (2):
+  tpm2-sessions: Add full HMAC and encrypt/decrypt session handling
+  tpm2-sessions: NOT FOR COMMITTING add sessions testing
+
+ drivers/char/tpm/Kconfig              |   3 +
+ drivers/char/tpm/Makefile             |   3 +-
+ drivers/char/tpm/tpm-chip.c           |   1 +
+ drivers/char/tpm/tpm.h                |  22 +
+ drivers/char/tpm/tpm2-cmd.c           |  22 +-
+ drivers/char/tpm/tpm2-sessions-test.c | 178 +++++++
+ drivers/char/tpm/tpm2-sessions.c      | 907 ++++++++++++++++++++++++++++++++++
+ drivers/char/tpm/tpm2-sessions.h      |  55 +++
+ drivers/char/tpm/tpm2b.h              |  82 +++
+ 9 files changed, 1260 insertions(+), 13 deletions(-)
+ create mode 100644 drivers/char/tpm/tpm2-sessions-test.c
+ create mode 100644 drivers/char/tpm/tpm2-sessions.c
+ create mode 100644 drivers/char/tpm/tpm2-sessions.h
+ create mode 100644 drivers/char/tpm/tpm2b.h
+
+-- 
+2.12.3
