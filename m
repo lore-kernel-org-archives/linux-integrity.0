@@ -1,84 +1,93 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56536 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751779AbeCETHj (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 5 Mar 2018 14:07:39 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w25J2WFB074679
-        for <linux-integrity@vger.kernel.org>; Mon, 5 Mar 2018 14:07:39 -0500
-Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ghbnagcgj-1
-        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 05 Mar 2018 14:07:38 -0500
-Received: from localhost
-        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Mon, 5 Mar 2018 19:07:36 -0000
-Subject: Re: [PATCH 2/3] tpm: reduce poll sleep time between send() and
- recv() in tpm_transmit()
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
-        tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com,
-        patrickc@us.ibm.com
-Date: Mon, 05 Mar 2018 14:07:32 -0500
-In-Reply-To: <20180305180144.GE5791@linux.intel.com>
-References: <20180228191828.20056-1-nayna@linux.vnet.ibm.com>
-         <20180228191828.20056-2-nayna@linux.vnet.ibm.com>
-         <20180301092222.GC29420@linux.intel.com>
-         <6ef601be-5627-6746-bd4a-4f391aba8b04@linux.vnet.ibm.com>
-         <20180305105633.GE25377@linux.intel.com>
-         <20180305180144.GE5791@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1520276852.10396.351.camel@linux.vnet.ibm.com>
+Received: from mga18.intel.com ([134.134.136.126]:25349 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751874AbeCESMz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 5 Mar 2018 13:12:55 -0500
+Date: Mon, 5 Mar 2018 20:12:49 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Tomas Winkler <tomas.winkler@intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] tpm: fix buffer type in tpm_transimt/_cmd
+Message-ID: <20180305181249.GE6220@linux.intel.com>
+References: <20180305124826.5160-1-tomas.winkler@intel.com>
+ <20180305124826.5160-2-tomas.winkler@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180305124826.5160-2-tomas.winkler@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2018-03-05 at 20:01 +0200, Jarkko Sakkinen wrote:
-> On Mon, Mar 05, 2018 at 12:56:33PM +0200, Jarkko Sakkinen wrote:
-> > On Fri, Mar 02, 2018 at 12:26:35AM +0530, Nayna Jain wrote:
-> > > 
-> > > 
-> > > On 03/01/2018 02:52 PM, Jarkko Sakkinen wrote:
-> > > > On Wed, Feb 28, 2018 at 02:18:27PM -0500, Nayna Jain wrote:
-> > > > > In tpm_transmit, after send(), the code checks for status in a loop
-> > > > Maybe cutting hairs now but please just use the actual function name
-> > > > instead of send(). Just makes the commit log more useful asset.
-> > > Sure, will do.
-> > > > 
-> > > > > -		tpm_msleep(TPM_TIMEOUT);
-> > > > > +		tpm_msleep(TPM_TIMEOUT_POLL);
-> > > > What about just calling schedule()?
-> > > I'm not sure what you mean by "schedule()".  Are you suggesting instead of
-> > > using usleep_range(),  using something with an even finer grain construct?
-> > > 
-> > > Thanks & Regards,
-> > >      - Nayna
-> > 
-> > kernel/sched/core.c
+On Mon, Mar 05, 2018 at 02:48:26PM +0200, Tomas Winkler wrote:
+> 1. The buffer cannot be const as it is used both for send and receive.
+> 2. Drop useless casting to u8 *, as this is already a
+> type of 'buf' parameter, it has just masked the 'const' issue.
 > 
-> The question I'm trying ask to is: is it better to sleep such a short
-> time or just ask scheduler to schedule something else after each
-> iteration?
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> ---
+>  drivers/char/tpm/tpm-interface.c | 8 ++++----
+>  drivers/char/tpm/tpm.h           | 2 +-
+>  2 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index cafec634181a..4afd95c83612 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -475,7 +475,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>  	if (rc)
+>  		goto out;
+>  
+> -	rc = chip->ops->send(chip, (u8 *) buf, count);
+> +	rc = chip->ops->send(chip, buf, count);
+>  	if (rc < 0) {
+>  		if (rc != -EPIPE)
+>  			dev_err(&chip->dev,
+> @@ -512,7 +512,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>  	goto out;
+>  
+>  out_recv:
+> -	len = chip->ops->recv(chip, (u8 *) buf, bufsiz);
+> +	len = chip->ops->recv(chip, buf, bufsiz);
+>  	if (len < 0) {
+>  		rc = len;
+>  		dev_err(&chip->dev,
+> @@ -567,7 +567,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>   *     A positive number for a TPM error.
+>   */
+>  ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+> -			 const void *buf, size_t bufsiz,
+> +			 void *buf, size_t bufsiz,
+>  			 size_t min_rsp_body_length, unsigned int flags,
+>  			 const char *desc)
+>  {
+> @@ -575,7 +575,7 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+>  	int err;
+>  	ssize_t len;
+>  
+> -	len = tpm_transmit(chip, space, (u8 *)buf, bufsiz, flags);
+> +	len = tpm_transmit(chip, space, buf, bufsiz, flags);
+>  	if (len <  0)
+>  		return len;
+>  
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index b82b924d763c..50dcbf3b60aa 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -520,7 +520,7 @@ enum tpm_transmit_flags {
+>  ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>  		     u8 *buf, size_t bufsiz, unsigned int flags);
+>  ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+> -			 const void *buf, size_t bufsiz,
+> +			 void *buf, size_t bufsiz,
+>  			 size_t min_rsp_body_length, unsigned int flags,
+>  			 const char *desc);
+>  int tpm_startup(struct tpm_chip *chip);
+> -- 
+> 2.14.3
+> 
 
-I still don't understand why scheduling some work would be an
-improvement.  We still need to loop, testing for the TPM command to
-complete.
+Thanks, these changes have applied.
 
-According to the schedule_hrtimeout_range() function comment,
-schedule_hrtimeout_range() is both power and performance friendly.
- What we didn't realize is that the hrtimer *uses* the maximum range
-to calculate the sleep time, but *may* return earlier based on the
-minimum time.
-
-This patch minimizes the tpm_msleep().  The subsequent patch in this
-patch set shows that 1 msec isn't fine enough granularity.  I still
-think calling usleep_range() is the right solution, but it needs to be
-at a finer granularity than tpm_msleep() provides.
-
-Mimi
+/Jarkko
