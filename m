@@ -1,97 +1,81 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33732 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932088AbeCEWwc (ORCPT
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:39571 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753035AbeCEWId (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 5 Mar 2018 17:52:32 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w25MncZL105072
-        for <linux-integrity@vger.kernel.org>; Mon, 5 Mar 2018 17:52:32 -0500
-Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ghcn1waqt-1
-        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 05 Mar 2018 17:52:31 -0500
-Received: from localhost
-        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Mon, 5 Mar 2018 22:52:30 -0000
-Subject: Re: [PATCH v3 3/5] tpm: migrate tpm2_probe() to use struct tpm_buf
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Date: Mon, 05 Mar 2018 17:52:24 -0500
-In-Reply-To: <20180305165614.5469-4-jarkko.sakkinen@linux.intel.com>
-References: <20180305165614.5469-1-jarkko.sakkinen@linux.intel.com>
-         <20180305165614.5469-4-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1520290344.10396.357.camel@linux.vnet.ibm.com>
+        Mon, 5 Mar 2018 17:08:33 -0500
+Received: by mail-wr0-f194.google.com with SMTP id w77so18923135wrc.6
+        for <linux-integrity@vger.kernel.org>; Mon, 05 Mar 2018 14:08:33 -0800 (PST)
+Date: Mon, 5 Mar 2018 15:08:28 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/6] tpm: sort objects in the Makefile
+Message-ID: <20180305220828.GC9335@ziepe.ca>
+References: <20180305202017.24008-1-tomas.winkler@intel.com>
+ <20180305202017.24008-2-tomas.winkler@intel.com>
+ <20180305211206.GB9335@ziepe.ca>
+ <5B8DA87D05A7694D9FA63FD143655C1B9422E7F3@hasmsx108.ger.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9422E7F3@hasmsx108.ger.corp.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Jarrko,
-
-On Mon, 2018-03-05 at 18:56 +0200, Jarkko Sakkinen wrote:
-> In order to make struct tpm_buf the first class object for constructing TPM
-> commands, migrate tpm2_probe() to use it.
+On Mon, Mar 05, 2018 at 09:21:37PM +0000, Winkler, Tomas wrote:
+> > On Mon, Mar 05, 2018 at 10:20:12PM +0200, Tomas Winkler wrote:
+> > > Make the tpm Makefile a bit more in order by putting objects in one
+> > > column and group together tpm2 modules
+> > >
+> > > Prefer tpm-objs += instead of tpm-y += notation.
+> > >
+> > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > > drivers/char/tpm/Makefile | 14 +++++++++++---
+> > >  1 file changed, 11 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
+> > > index acd758381c58..2fc0e9a73cd6 100644
+> > > +++ b/drivers/char/tpm/Makefile
+> > > @@ -3,9 +3,17 @@
+> > >  # Makefile for the kernel tpm device drivers.
+> > >  #
+> > >  obj-$(CONFIG_TCG_TPM) += tpm.o
+> > > -tpm-y := tpm-interface.o tpm-dev.o tpm-sysfs.o tpm-chip.o tpm2-cmd.o \
+> > > -	 tpm-dev-common.o tpmrm-dev.o tpm1_eventlog.o tpm2_eventlog.o
+> > \
+> > > -         tpm2-space.o
+> > > +tpm-objs := tpm-interface.o
+> > > +tpm-objs += tpm-dev.o
+> > > +tpm-objs += tpm-chip.o
+> > > +tpm-objs += tpm-dev-common.o
+> > > +tpm-objs += tpmrm-dev.o
+> > > +tpm-objs += tpm-sysfs.o
+> > > +tpm-objs += tpm1_eventlog.o
+> > > +tpm-objs += tpm2-cmd.o
+> > > +tpm-objs += tpm2-space.o
+> > > +tpm-objs += tpm2_eventlog.o
+> > 
+> > If you are going to do this then sort the list please
 > 
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> I've sorted in that way that in the future will probably will
+> compile tpm1- out, you probably mean to alphabetically.
 
-With this patch, the Pi doesn't find the TPM.  I'm seeing the
-following line in dmesg.
+Yes alphabetically.. helps avoid merge conflicts
 
-[    1.087414] tpm_tis_spi: probe of spi0.0 failed with error 256
+If you wan to make TPM1 optional then the original pattern was right..
 
-Mimi
+tpm-y += \
+   tpm-dev.o \
+tpm-$(CONFIG_TPM1) += \
+   tpm1_eventlog.o
+tpm-$(CONFIG_TPM2) += \
+   tpm2_eventlog.o
 
-> ---
->  drivers/char/tpm/tpm2-cmd.c | 27 +++++++++++++++------------
->  1 file changed, 15 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index abe6ef4a7a0b..890d83c5c78b 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -851,22 +851,25 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
->   */
->  int tpm2_probe(struct tpm_chip *chip)
->  {
-> -	struct tpm2_cmd cmd;
-> +	struct tpm_output_header *out;
-> +	struct tpm_buf buf;
->  	int rc;
-> 
-> -	cmd.header.in = tpm2_get_tpm_pt_header;
-> -	cmd.params.get_tpm_pt_in.cap_id = cpu_to_be32(TPM2_CAP_TPM_PROPERTIES);
-> -	cmd.params.get_tpm_pt_in.property_id = cpu_to_be32(0x100);
-> -	cmd.params.get_tpm_pt_in.property_cnt = cpu_to_be32(1);
-> -
-> -	rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd), 0, 0, NULL);
-> -	if (rc <  0)
-> +	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_CAPABILITY);
-> +	if (rc)
->  		return rc;
-> -
-> -	if (be16_to_cpu(cmd.header.out.tag) == TPM2_ST_NO_SESSIONS)
-> +	tpm_buf_append_u32(&buf, TPM2_CAP_TPM_PROPERTIES);
-> +	tpm_buf_append_u32(&buf, TPM_PT_TOTAL_COMMANDS);
-> +	tpm_buf_append_u32(&buf, 1);
-> +	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0, NULL);
-> +	if (rc <  0)
-> +		goto out;
-> +	out = (struct tpm_output_header *)buf.data;
-> +	if (be16_to_cpu(out->tag) == TPM2_ST_NO_SESSIONS)
->  		chip->flags |= TPM_CHIP_FLAG_TPM2;
-> -
-> -	return 0;
-> +out:
-> +	tpm_buf_destroy(&buf);
-> +	return rc;
->  }
->  EXPORT_SYMBOL_GPL(tpm2_probe);
-> 
+etc
+
+Jason
