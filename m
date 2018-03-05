@@ -1,60 +1,128 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60596 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932837AbeCENnY (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 5 Mar 2018 08:43:24 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w25Devfi001748
-        for <linux-integrity@vger.kernel.org>; Mon, 5 Mar 2018 08:43:23 -0500
-Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2gh5djcfd9-1
-        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 05 Mar 2018 08:43:23 -0500
-Received: from localhost
-        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Mon, 5 Mar 2018 13:43:17 -0000
-Subject: [PATCH] audit: add containerid support for IMA-audit
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: containers@lists.linux-foundation.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Date: Mon, 05 Mar 2018 08:43:13 -0500
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1520257393.10396.291.camel@linux.vnet.ibm.com>
+Received: from mga17.intel.com ([192.55.52.151]:28145 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751294AbeCENJN (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 5 Mar 2018 08:09:13 -0500
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: Jason Gunthorpe <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
+ commands.
+Date: Mon, 5 Mar 2018 13:09:09 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
+References: <20180304121205.16934-1-tomas.winkler@intel.com>
+ <20180305125642.GA3425@linux.intel.com>
+In-Reply-To: <20180305125642.GA3425@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Richard,
 
-This patch has been compiled, but not runtime tested.
 
----
-
-If the containerid is defined, include it in the IMA-audit record.
-
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
----
- security/integrity/ima/ima_api.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index 33b4458cdbef..41d29a06f28f 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -335,6 +335,9 @@ void ima_audit_measurement(struct integrity_iint_cache *iint,
- 	audit_log_untrustedstring(ab, algo_hash);
+> -----Original Message-----
+> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
+> Sent: Monday, March 05, 2018 14:57
+> To: Winkler, Tomas <tomas.winkler@intel.com>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>; Usyskin, Alexander
+> <alexander.usyskin@intel.com>; linux-integrity@vger.kernel.org; linux-
+> security-module@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
+> commands.
+> 
+> On Sun, Mar 04, 2018 at 02:12:03PM +0200, Tomas Winkler wrote:
+> > TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve
+> > generation of crypto keys which can be a computationally intensive task.
+> > The timeout is set to 3min.
+> >
+> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> 
+> Where is the cover letter? Please send separate patches if they are unrelated
+> *or* add a cover letter that describes what they do as a whole.
+>
+Why you need cover letter?  What are u missing in the patch description
  
- 	audit_log_task_info(ab, current);
-+	if (audit_containerid_set(current))
-+		audit_log_format(ab, " contid=%llu",
-+				 audit_get_containerid(current));
- 	audit_log_end(ab);
+> I will not review the next version if it does not have cover letter describing
+> the high level change and containing the change log.
+
+Don't follow.
+
+> 
+> > ---
+> >  drivers/char/tpm/tpm-interface.c |  4 ++++
+> >  drivers/char/tpm/tpm.h           | 27 ++++++++++++++++-----------
+> >  drivers/char/tpm/tpm2-cmd.c      |  8 +++++---
+> >  3 files changed, 25 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/drivers/char/tpm/tpm-interface.c
+> > b/drivers/char/tpm/tpm-interface.c
+> > index 85bdfa8c3348..c0aa9d11ec7a 100644
+> > --- a/drivers/char/tpm/tpm-interface.c
+> > +++ b/drivers/char/tpm/tpm-interface.c
+> > @@ -699,6 +699,10 @@ int tpm_get_timeouts(struct tpm_chip *chip)
+> >  		    msecs_to_jiffies(TPM2_DURATION_MEDIUM);
+> >  		chip->duration[TPM_LONG] =
+> >  		    msecs_to_jiffies(TPM2_DURATION_LONG);
+> > +		chip->duration[TPM_LONG_LONG] =
+> > +		    msecs_to_jiffies(TPM2_DURATION_LONG_LONG);
+> > +		chip->duration[TPM_UNDEFINED] =
+> > +		    msecs_to_jiffies(TPM2_DURATION_DEFAULT);
+> >
+> >  		chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
+> >  		return 0;
+> > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h index
+> > f895fba4e20d..192ba68b39c2 100644
+> > --- a/drivers/char/tpm/tpm.h
+> > +++ b/drivers/char/tpm/tpm.h
+> > @@ -67,7 +67,9 @@ enum tpm_duration {
+> >  	TPM_SHORT = 0,
+> >  	TPM_MEDIUM = 1,
+> >  	TPM_LONG = 2,
+> > -	TPM_UNDEFINED,
+> > +	TPM_LONG_LONG = 3,
+> > +	TPM_UNDEFINED = 4,
+> > +	TPM_DURATION_MAX,
+> 
+> This is starting to rotten to become unmaintainable.
+
+> Here is what I suggest to move forward:
+
+I fixed that in next patch, but this also moves the code to new spec,  so I didn't want to make too much noise in this one. 
  
- 	iint->flags |= IMA_AUDITED;
--- 
-2.7.5
+> * Have essentially two duration types:
+>   1. Default
+>   2. Long
+>   'default' is the old long duration i.e. two seconds. 'long' is a
+
+> 
+> We should probably have two durations:
+> 
+> enum tpm_duration {
+> 	TPM_DURATION_DEFAULT = 2000,
+> 	TPM_DURATION_LONG = 300000,
+> };
+> 
+How is this aligned with the spec PTP spec?
+
+> These would be both for TPM 1.2 and TPM 2.0. Instead of having table for
+> every ordinal there should be a small tables describing commands that
+> require long timeout.
+
+Yeah I didn't cover the 1.2. 
+> 
+> > -		duration = 2 * 60 * HZ;
+> > +		duration = msecs_to_jiffies(TPM2_DURATION_DEFAULT);
+> 
+> NAK for this change.
+
+
+You should explain your NAKs, .... in general, doesn't look good.
+
+
+Thanks
+Tomas
