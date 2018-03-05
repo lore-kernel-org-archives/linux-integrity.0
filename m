@@ -1,150 +1,135 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:58550 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751294AbeCEO6e (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 5 Mar 2018 09:58:34 -0500
-Message-ID: <1520261912.5312.3.camel@HansenPartnership.com>
-Subject: Re: [PATCH 1/2] tpm2-sessions: Add full HMAC and encrypt/decrypt
- session handling
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org
-Date: Mon, 05 Mar 2018 06:58:32 -0800
-In-Reply-To: <20180305113533.GJ25377@linux.intel.com>
-References: <1520057094.27452.16.camel@HansenPartnership.com>
-         <1520057175.27452.18.camel@HansenPartnership.com>
-         <20180305113533.GJ25377@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mga03.intel.com ([134.134.136.65]:1946 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932317AbeCEOjp (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 5 Mar 2018 09:39:45 -0500
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 4/5] tpm: migrate tpm2_get_tpm_pt() to use struct tpm_buf
+Date: Mon,  5 Mar 2018 16:39:02 +0200
+Message-Id: <20180305143904.7477-5-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20180305143904.7477-1-jarkko.sakkinen@linux.intel.com>
+References: <20180305143904.7477-1-jarkko.sakkinen@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2018-03-05 at 13:35 +0200, Jarkko Sakkinen wrote:
-> On Fri, Mar 02, 2018 at 10:06:15PM -0800, James Bottomley wrote:
-> > 
-> > diff --git a/drivers/char/tpm/tpm2b.h b/drivers/char/tpm/tpm2b.h
-> > new file mode 100644
-> > index 000000000000..c7726f2895aa
-> > --- /dev/null
-> > +++ b/drivers/char/tpm/tpm2b.h
-> > @@ -0,0 +1,82 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +#ifndef _TPM2_TPM2B_H
-> > +#define _TPM2_TPM2B_H
-> > +/*
-> > + * Handing for tpm2b structures to facilitate the building of
-> > commands
-> > + */
-> > +
-> > +#include "tpm.h"
-> > +
-> > +#include <asm/unaligned.h>
-> > +
-> > +struct tpm2b {
-> > +	struct tpm_buf buf;
-> > +};
-> > +
-> > +/* opaque structure, holds auth session parameters like the
-> > session key */
-> > +struct tpm2_auth;
-> > +
-> > +static inline int tpm2b_init(struct tpm2b *buf)
-> > +{
-> > +	return tpm_buf_init(&buf->buf, 0, 0);
-> > +}
-> > +
-> > +static inline void tpm2b_reset(struct tpm2b *buf)
-> > +{
-> > +	struct tpm_input_header *head;
-> > +
-> > +	head = (struct tpm_input_header *)buf->buf.data;
-> > +	head->length = cpu_to_be32(sizeof(*head));
-> > +}
-> > +
-> > +static inline void tpm2b_append(struct tpm2b *buf, const unsigned
-> > char *data,
-> > +				unsigned int len)
-> > +{
-> > +	tpm_buf_append(&buf->buf, data, len);
-> > +}
-> > +
-> > +#define TPM2B_APPEND(type) \
-> > +	static inline void tpm2b_append_##type(struct tpm2b *buf,
-> > const type value) { tpm_buf_append_##type(&buf->buf, value); }
-> > +
-> > +TPM2B_APPEND(u8)
-> > +TPM2B_APPEND(u16)
-> > +TPM2B_APPEND(u32)
-> > +
-> > +static inline void *tpm2b_buffer(const struct tpm2b *buf)
-> > +{
-> > +	return buf->buf.data + sizeof(struct tpm_input_header);
-> > +}
-> > +
-> > +static inline u16 tpm2b_len(struct tpm2b *buf)
-> > +{
-> > +	return tpm_buf_length(&buf->buf) - sizeof(struct
-> > tpm_input_header);
-> > +}
-> > +
-> > +static inline void tpm2b_destroy(struct tpm2b *buf)
-> > +{
-> > +	tpm_buf_destroy(&buf->buf);
-> > +}
-> > +
-> > +static inline void tpm_buf_append_2b(struct tpm_buf *buf, struct
-> > tpm2b *tpm2b)
-> > +{
-> > +	u16 len = tpm2b_len(tpm2b);
-> > +
-> > +	tpm_buf_append_u16(buf, len);
-> > +	tpm_buf_append(buf, tpm2b_buffer(tpm2b), len);
-> > +	/* clear the buf for reuse */
-> > +	tpm2b_reset(tpm2b);
-> > +}
-> > +
-> > +/* Macros for unmarshalling known size BE data */
-> > +#define GET_INC(type)					\
-> > +static inline u##type get_inc_##type(const u8 **ptr) {	\
-> > +	u##type val;					\
-> > +	val = get_unaligned_be##type(*ptr);		\
-> > +	*ptr += sizeof(val);				\
-> > +	return val;					\
-> > +}
-> > +
-> > +GET_INC(16)
-> > +GET_INC(32)
-> > +
-> > +#endif
-> > -- 
-> > 2.12.3
-> > 
-> 
-> Some meta stuff:
-> 
-> * Add me to TO-field because I should probably review and eventually
->   test these, right?
+In order to make struct tpm_buf the first class object for constructing TPM
+commands, migrate tpm2_get_tpm_pt() to use it.
 
-Eventually; they're an RFC because we need to get the API right first
-(I've already got a couple of fixes to it).
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ drivers/char/tpm/tpm2-cmd.c | 63 +++++++++++++++++----------------------------
+ 1 file changed, 23 insertions(+), 40 deletions(-)
 
-> * CC to linux-security-module
-
-There's no change to anything in security module, so why?  All security
-module people who care about the TPM should be on linux-integrity and
-those who don't likely don't want to see the changes.  The reason
-linux-crypto is on the cc is because I want them to make sure I'm using
-their crypto system correctly.
-
-> * Why there is no RFC tag given that these are so quite large
-> changes?
-
-There is an RFC tag on 0/2
-
-> * Why in hell tpm2b.h?
-
-Because all sized TPM structures are in 2B form and manipulating them
-can be made a lot easier with helper routines.
-
-James
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 890d83c5c78b..e02f7d46e9ac 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -27,20 +27,6 @@ enum tpm2_session_attributes {
+ 	TPM2_SA_CONTINUE_SESSION	= BIT(0),
+ };
+ 
+-struct tpm2_get_tpm_pt_in {
+-	__be32	cap_id;
+-	__be32	property_id;
+-	__be32	property_cnt;
+-} __packed;
+-
+-struct tpm2_get_tpm_pt_out {
+-	u8	more_data;
+-	__be32	subcap_id;
+-	__be32	property_cnt;
+-	__be32	property_id;
+-	__be32	value;
+-} __packed;
+-
+ struct tpm2_get_random_in {
+ 	__be16	size;
+ } __packed;
+@@ -51,8 +37,6 @@ struct tpm2_get_random_out {
+ } __packed;
+ 
+ union tpm2_cmd_params {
+-	struct	tpm2_get_tpm_pt_in	get_tpm_pt_in;
+-	struct	tpm2_get_tpm_pt_out	get_tpm_pt_out;
+ 	struct	tpm2_get_random_in	getrandom_in;
+ 	struct	tpm2_get_random_out	getrandom_out;
+ };
+@@ -377,19 +361,6 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *out, size_t max)
+ 	return total ? total : -EIO;
+ }
+ 
+-#define TPM2_GET_TPM_PT_IN_SIZE \
+-	(sizeof(struct tpm_input_header) + \
+-	 sizeof(struct tpm2_get_tpm_pt_in))
+-
+-#define TPM2_GET_TPM_PT_OUT_BODY_SIZE \
+-	 sizeof(struct tpm2_get_tpm_pt_out)
+-
+-static const struct tpm_input_header tpm2_get_tpm_pt_header = {
+-	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
+-	.length = cpu_to_be32(TPM2_GET_TPM_PT_IN_SIZE),
+-	.ordinal = cpu_to_be32(TPM2_CC_GET_CAPABILITY)
+-};
+-
+ /**
+  * tpm2_flush_context_cmd() - execute a TPM2_FlushContext command
+  * @chip: TPM chip to use
+@@ -723,6 +694,14 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
+ 	return rc;
+ }
+ 
++struct tpm2_get_cap_out {
++	u8 more_data;
++	__be32 subcap_id;
++	__be32 property_cnt;
++	__be32 property_id;
++	__be32 value;
++} __packed;
++
+ /**
+  * tpm2_get_tpm_pt() - get value of a TPM_CAP_TPM_PROPERTIES type property
+  * @chip:		TPM chip to use.
+@@ -735,19 +714,23 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
+ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,  u32 *value,
+ 			const char *desc)
+ {
+-	struct tpm2_cmd cmd;
++	struct tpm2_get_cap_out *out;
++	struct tpm_buf buf;
+ 	int rc;
+ 
+-	cmd.header.in = tpm2_get_tpm_pt_header;
+-	cmd.params.get_tpm_pt_in.cap_id = cpu_to_be32(TPM2_CAP_TPM_PROPERTIES);
+-	cmd.params.get_tpm_pt_in.property_id = cpu_to_be32(property_id);
+-	cmd.params.get_tpm_pt_in.property_cnt = cpu_to_be32(1);
+-
+-	rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd),
+-			      TPM2_GET_TPM_PT_OUT_BODY_SIZE, 0, desc);
+-	if (!rc)
+-		*value = be32_to_cpu(cmd.params.get_tpm_pt_out.value);
+-
++	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_CAPABILITY);
++	if (rc)
++		return rc;
++	tpm_buf_append_u32(&buf, TPM2_CAP_TPM_PROPERTIES);
++	tpm_buf_append_u32(&buf, property_id);
++	tpm_buf_append_u32(&buf, 1);
++	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0, NULL);
++	if (!rc) {
++		out = (struct tpm2_get_cap_out *)
++			&buf.data[TPM_HEADER_SIZE];
++		*value = be32_to_cpu(out->value);
++	}
++	tpm_buf_destroy(&buf);
+ 	return rc;
+ }
+ EXPORT_SYMBOL_GPL(tpm2_get_tpm_pt);
+-- 
+2.15.1
