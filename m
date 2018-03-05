@@ -1,54 +1,84 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:19709 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751764AbeCEUXr (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 5 Mar 2018 15:23:47 -0500
-From: Tomas Winkler <tomas.winkler@intel.com>
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56536 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751779AbeCETHj (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 5 Mar 2018 14:07:39 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w25J2WFB074679
+        for <linux-integrity@vger.kernel.org>; Mon, 5 Mar 2018 14:07:39 -0500
+Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ghbnagcgj-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 05 Mar 2018 14:07:38 -0500
+Received: from localhost
+        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Mon, 5 Mar 2018 19:07:36 -0000
+Subject: Re: [PATCH 2/3] tpm: reduce poll sleep time between send() and
+ recv() in tpm_transmit()
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org,
+        Nayna Jain <nayna@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH 0/6] tpm: timeouts revamp
-Date: Mon,  5 Mar 2018 22:20:11 +0200
-Message-Id: <20180305202017.24008-1-tomas.winkler@intel.com>
+        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
+        tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com,
+        patrickc@us.ibm.com
+Date: Mon, 05 Mar 2018 14:07:32 -0500
+In-Reply-To: <20180305180144.GE5791@linux.intel.com>
+References: <20180228191828.20056-1-nayna@linux.vnet.ibm.com>
+         <20180228191828.20056-2-nayna@linux.vnet.ibm.com>
+         <20180301092222.GC29420@linux.intel.com>
+         <6ef601be-5627-6746-bd4a-4f391aba8b04@linux.vnet.ibm.com>
+         <20180305105633.GE25377@linux.intel.com>
+         <20180305180144.GE5791@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1520276852.10396.351.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-This series cleans up tpm timeouts setting and handling.
+On Mon, 2018-03-05 at 20:01 +0200, Jarkko Sakkinen wrote:
+> On Mon, Mar 05, 2018 at 12:56:33PM +0200, Jarkko Sakkinen wrote:
+> > On Fri, Mar 02, 2018 at 12:26:35AM +0530, Nayna Jain wrote:
+> > > 
+> > > 
+> > > On 03/01/2018 02:52 PM, Jarkko Sakkinen wrote:
+> > > > On Wed, Feb 28, 2018 at 02:18:27PM -0500, Nayna Jain wrote:
+> > > > > In tpm_transmit, after send(), the code checks for status in a loop
+> > > > Maybe cutting hairs now but please just use the actual function name
+> > > > instead of send(). Just makes the commit log more useful asset.
+> > > Sure, will do.
+> > > > 
+> > > > > -		tpm_msleep(TPM_TIMEOUT);
+> > > > > +		tpm_msleep(TPM_TIMEOUT_POLL);
+> > > > What about just calling schedule()?
+> > > I'm not sure what you mean by "schedule()".  Are you suggesting instead of
+> > > using usleep_range(),  using something with an even finer grain construct?
+> > > 
+> > > Thanks & Regards,
+> > >      - Nayna
+> > 
+> > kernel/sched/core.c
+> 
+> The question I'm trying ask to is: is it better to sleep such a short
+> time or just ask scheduler to schedule something else after each
+> iteration?
 
-First motivation was to fix failures coming from too short timeouts
-for commands that creates keys.
-Key generation may take significant time depending on the underlying
-hardware. Rather than increasing default timeout a new constant is
-added, to not stall too long on regular commands failures.
+I still don't understand why scheduling some work would be an
+improvement.  We still need to loop, testing for the TPM command to
+complete.
 
-Second is to define timeouts for new tpm2 commands
-defined in TCG 1.36 spec.
+According to the schedule_hrtimeout_range() function comment,
+schedule_hrtimeout_range() is both power and performance friendly.
+ What we didn't realize is that the hrtimer *uses* the maximum range
+to calculate the sleep time, but *may* return earlier based on the
+minimum time.
 
-Last, is to factor out tpm1.2 commands out of tpm-interface.c
+This patch minimizes the tpm_msleep().  The subsequent patch in this
+patch set shows that 1 msec isn't fine enough granularity.  I still
+think calling usleep_range() is the right solution, but it needs to be
+at a finer granularity than tpm_msleep() provides.
 
-Tomas Winkler (6):
-  tpm: sort objects in the Makefile
-  tpm: factor out tpm 1.2 duration calculation to tpm1-cmd.c
-  tpm2: add longer timeouts for creation commands.
-  tpm2: add new tpm2 commands according to TCG 1.36
-  tmp: factor out tpm_get_timeouts
-  tpm: tpm-interface: drop unused tpm_input_header headers.
-
- drivers/char/tpm/Makefile            |  15 +-
- drivers/char/tpm/st33zp24/st33zp24.c |   2 +-
- drivers/char/tpm/tpm-interface.c     | 424 +----------------------------------
- drivers/char/tpm/tpm.h               |  74 +++---
- drivers/char/tpm/tpm1-cmd.c          | 416 ++++++++++++++++++++++++++++++++++
- drivers/char/tpm/tpm2-cmd.c          | 220 ++++++++----------
- drivers/char/tpm/tpm_i2c_nuvoton.c   |  10 +-
- drivers/char/tpm/tpm_tis_core.c      |   2 +-
- drivers/char/tpm/xen-tpmfront.c      |   2 +-
- 9 files changed, 582 insertions(+), 583 deletions(-)
- create mode 100644 drivers/char/tpm/tpm1-cmd.c
-
--- 
-2.14.3
+Mimi
