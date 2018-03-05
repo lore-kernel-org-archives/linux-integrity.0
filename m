@@ -1,9 +1,9 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:25349 "EHLO mga18.intel.com"
+Received: from mga17.intel.com ([192.55.52.151]:43649 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751874AbeCESMz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 5 Mar 2018 13:12:55 -0500
-Date: Mon, 5 Mar 2018 20:12:49 +0200
+        id S1751874AbeCESKi (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 5 Mar 2018 13:10:38 -0500
+Date: Mon, 5 Mar 2018 20:10:34 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: Tomas Winkler <tomas.winkler@intel.com>
 Cc: Jason Gunthorpe <jgg@ziepe.ca>,
@@ -11,7 +11,7 @@ Cc: Jason Gunthorpe <jgg@ziepe.ca>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 2/2] tpm: fix buffer type in tpm_transimt/_cmd
-Message-ID: <20180305181249.GE6220@linux.intel.com>
+Message-ID: <20180305181034.GD6220@linux.intel.com>
 References: <20180305124826.5160-1-tomas.winkler@intel.com>
  <20180305124826.5160-2-tomas.winkler@intel.com>
 MIME-Version: 1.0
@@ -88,6 +88,6 @@ On Mon, Mar 05, 2018 at 02:48:26PM +0200, Tomas Winkler wrote:
 > 2.14.3
 > 
 
-Thanks, these changes have applied.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
 /Jarkko
