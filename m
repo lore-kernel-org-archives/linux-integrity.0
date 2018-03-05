@@ -1,56 +1,54 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:14591 "EHLO mga07.intel.com"
+Received: from mga14.intel.com ([192.55.52.115]:12891 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751852AbeCESFB (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 5 Mar 2018 13:05:01 -0500
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
- commands.
-Date: Mon, 5 Mar 2018 18:04:56 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9422E568@hasmsx108.ger.corp.intel.com>
-References: <20180304121205.16934-1-tomas.winkler@intel.com>
- <20180305125642.GA3425@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
- <20180305175912.GD5791@linux.intel.com>
-In-Reply-To: <20180305175912.GD5791@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+        id S1751852AbeCESBv (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 5 Mar 2018 13:01:51 -0500
+Date: Mon, 5 Mar 2018 20:01:44 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Nayna Jain <nayna@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
+        tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com,
+        patrickc@us.ibm.com
+Subject: Re: [PATCH 2/3] tpm: reduce poll sleep time between send() and
+ recv() in tpm_transmit()
+Message-ID: <20180305180144.GE5791@linux.intel.com>
+References: <20180228191828.20056-1-nayna@linux.vnet.ibm.com>
+ <20180228191828.20056-2-nayna@linux.vnet.ibm.com>
+ <20180301092222.GC29420@linux.intel.com>
+ <6ef601be-5627-6746-bd4a-4f391aba8b04@linux.vnet.ibm.com>
+ <20180305105633.GE25377@linux.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20180305105633.GE25377@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
+On Mon, Mar 05, 2018 at 12:56:33PM +0200, Jarkko Sakkinen wrote:
+> On Fri, Mar 02, 2018 at 12:26:35AM +0530, Nayna Jain wrote:
+> > 
+> > 
+> > On 03/01/2018 02:52 PM, Jarkko Sakkinen wrote:
+> > > On Wed, Feb 28, 2018 at 02:18:27PM -0500, Nayna Jain wrote:
+> > > > In tpm_transmit, after send(), the code checks for status in a loop
+> > > Maybe cutting hairs now but please just use the actual function name
+> > > instead of send(). Just makes the commit log more useful asset.
+> > Sure, will do.
+> > > 
+> > > > -		tpm_msleep(TPM_TIMEOUT);
+> > > > +		tpm_msleep(TPM_TIMEOUT_POLL);
+> > > What about just calling schedule()?
+> > I'm not sure what you mean by "schedule()".  Are you suggesting instead of
+> > using usleep_range(),  using something with an even finer grain construct?
+> > 
+> > Thanks & Regards,
+> >      - Nayna
 > 
-> On Mon, Mar 05, 2018 at 01:09:09PM +0000, Winkler, Tomas wrote:
-> > > enum tpm_duration {
-> > > 	TPM_DURATION_DEFAULT = 2000,
-> > > 	TPM_DURATION_LONG = 300000,
-> > > };
-> > >
-> > How is this aligned with the spec PTP spec?
-> 
-> For TPM 2.0 that spec only partially defines durations for CCs and thus our
-> look up table is already kind "flakky". In a sense that the default duration is
-> upper limit for spec defined durations.
+> kernel/sched/core.c
 
-The timeouts for LONG and MEDIUM is defined by the  PTP spec,  we need to maintain those as those effect the system.
-The UNDEFINED and LONG LONG is the implementation choice we driver from empirical data we have so far.
+The question I'm trying ask to is: is it better to sleep such a short
+time or just ask scheduler to schedule something else after each
+iteration?
 
-> 
-> > > These would be both for TPM 1.2 and TPM 2.0. Instead of having table
-> > > for every ordinal there should be a small tables describing commands
-> > > that require long timeout.
-> >
-> > Yeah I didn't cover the 1.2.
-> 
-> I could probably help with TPM 1.2 changes if required.
-
-In middle of it, will send for review in few.
-
-Thanks
-Tomas
+/Jarkko
