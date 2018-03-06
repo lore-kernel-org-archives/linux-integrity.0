@@ -1,51 +1,71 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:35352 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751023AbeCGF0h (ORCPT
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:51549 "EHLO
+        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753957AbeCFV7K (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 7 Mar 2018 00:26:37 -0500
-From: Jiandi An <anjiandi@codeaurora.org>
-To: zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
-        jmorris@namei.org, serge@hallyn.com, anjiandi@codeaurora.org
-Cc: linux-integrity@vger.kernel.org,
-        linux-ima-devel@lists.sourceforge.net,
-        linux-ima-user@lists.sourceforge.net,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
-Date: Tue,  6 Mar 2018 23:26:26 -0600
-Message-Id: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
+        Tue, 6 Mar 2018 16:59:10 -0500
+Received: by mail-wm0-f41.google.com with SMTP id h21so1084394wmd.1
+        for <linux-integrity@vger.kernel.org>; Tue, 06 Mar 2018 13:59:10 -0800 (PST)
+Date: Tue, 6 Mar 2018 14:59:04 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Winkler, Tomas" <tomas.winkler@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
+ commands.
+Message-ID: <20180306215904.GA32097@ziepe.ca>
+References: <20180304121205.16934-1-tomas.winkler@intel.com>
+ <20180305125642.GA3425@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
+ <20180306074932.GB3624@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
+ <1520353933.5393.21.camel@HansenPartnership.com>
+ <1520361396.10396.396.camel@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1520361396.10396.396.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-TPM_CRB driver is the TPM support for ARM64.  If it
-is built as module, TPM chip is registered after IMA
-init.  tpm_pcr_read() in IMA driver would fail and
-display the following message even though eventually
-there is TPM chip on the system:
+On Tue, Mar 06, 2018 at 01:36:36PM -0500, Mimi Zohar wrote:
+> On Tue, 2018-03-06 at 08:32 -0800, James Bottomley wrote:
+> > On Tue, 2018-03-06 at 08:06 +0000, Winkler, Tomas wrote:
+> > > > 
+> > > > 
+> > > > On Mon, Mar 05, 2018 at 01:09:09PM +0000, Winkler, Tomas wrote:
+> > > > > 
+> > > > > Why you need cover letter?  What are u missing in the patch
+> > > > > description
+> > > > 
+> > > > If you submit a *patch set* I *require* a cover letter, yes.
+> > > 
+> > > It's good but it is not must, you are inventing your own rules.
+> > 
+> > As long as the Maintainer is the gatekeeper, you're not going to get
+> > very far with this argument.  The fact is that a lot of subsystems have
+> > varying rules; often undocumented, some of which are even in conflict,
+> > like alphabetic vs reverse christmas tree format for includes.
+> > 
+> > A cover letter is actually one of the more uniform rules.  It's
+> > referred to in submitting patches, but not actually documented there.
+> 
+> I've heard that some maintainers are moving away from cover letters,
+> since they are not include in the git repo and are lost.  I've seen
+> Andrew Morton cut and paste the cover letter in the first patch
+> description of the patch set.
 
-ima: No TPM chip found, activating TPM-bypass! (rc=-19)
+Andrew has a workflow unlike any other I've seen..
 
-Fix IMA Kconfig to select TPM_CRB so TPM_CRB driver is
-built in kernel and initializes before IMA driver.
+In my view the cover letter should explain why the maintainer should
+apply the series, and give any guidance to the review process.
 
-Signed-off-by: Jiandi An <anjiandi@codeaurora.org>
----
- security/integrity/ima/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Not duplicate information that belongs in the patch comments. It
+shouldn't explain how/why the patch(es) works, etc.
 
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 35ef693..6a8f677 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -10,6 +10,7 @@ config IMA
- 	select CRYPTO_HASH_INFO
- 	select TCG_TPM if HAS_IOMEM && !UML
- 	select TCG_TIS if TCG_TPM && X86
-+	select TCG_CRB if TCG_TPM && ACPI
- 	select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
- 	help
- 	  The Trusted Computing Group(TCG) runtime Integrity
--- 
-Jiandi An
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+Jason
