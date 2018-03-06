@@ -1,29 +1,28 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:6234 "EHLO mga11.intel.com"
+Received: from mga17.intel.com ([192.55.52.151]:40535 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932313AbeCFPBX (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 6 Mar 2018 10:01:23 -0500
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-To: Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-CC: "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 0/5 V2] tpm: timeouts revamp
-Date: Tue, 6 Mar 2018 15:01:19 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9422F457@hasmsx108.ger.corp.intel.com>
+        id S1753664AbeCFODD (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 6 Mar 2018 09:03:03 -0500
+Date: Tue, 6 Mar 2018 16:02:56 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Javier Martinez Canillas <javierm@redhat.com>
+Cc: Tomas Winkler <tomas.winkler@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5 V2] tpm: timeouts revamp
+Message-ID: <20180306140256.GC5700@linux.intel.com>
 References: <20180306092503.11568-1-tomas.winkler@intel.com>
  <1520338622.3779.1.camel@linux.intel.com>
  <031568ca-8999-478d-8c53-8b206f312e90@redhat.com>
-In-Reply-To: <031568ca-8999-478d-8c53-8b206f312e90@redhat.com>
-Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <031568ca-8999-478d-8c53-8b206f312e90@redhat.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
+On Tue, Mar 06, 2018 at 01:39:49PM +0100, Javier Martinez Canillas wrote:
 > On 03/06/2018 01:17 PM, Jarkko Sakkinen wrote:
 > > On Tue, 2018-03-06 at 11:24 +0200, Tomas Winkler wrote:
 > >> This series cleans up tpm timeouts setting and handling.
@@ -34,22 +33,28 @@ List-ID: <linux-integrity.vger.kernel.org>
 > >> hardware. Rather than increasing default timeout a new constant is
 > >> added, to not stall too long on regular commands failures.
 > >>
-> >> Second is to define timeouts for new tpm2 commands defined in TCG
-> >> 1.36 spec.
+> >> Second is to define timeouts for new tpm2 commands
+> >> defined in TCG 1.36 spec.
 > >
 > 
 > Probably a typo, since the latest TCG spec version is the 1.38 [0].
-
-
-I have 1.36 as this is what we implement in the HW, but there might be a new one.  
-
-> > Where can we get that specification? I don't have that new version and
-> > couldn't find it from the public internet.
-
+>  
+> > Where can we get that specification? I don't have that new
+> > version and couldn't find it from the public internet.
+> > 
+> > /Jarkko
+> > 
 > 
 > [0]: https://trustedcomputinggroup.org/tpm-library-specification/
-> 
 
-Yes this is the place.
-Thanks
-Tomas
+I already have that version of the specifications but I thought that we
+were speaking about PC Client Platform spefication, which is at version
+1.30. TCG spec is an ambiguous term so that is where the confusion
+started from.
+
+The only spec I've seen some timeouts is the PC Client Specification but
+I guess I've then missed the list in TPM 2.0 spefication. Where are they
+listed? I worked with Will Arthur durations based on PC Client Specification
+when TPM 2.0 support was first implemented.
+
+/Jarkko
