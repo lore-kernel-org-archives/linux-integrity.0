@@ -1,51 +1,34 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:40420 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750817AbeCFQcQ (ORCPT
+Received: from a8-62.smtp-out.amazonses.com ([54.240.8.62]:53348 "EHLO
+        a8-62.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932112AbeCFQAy (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 6 Mar 2018 11:32:16 -0500
-Message-ID: <1520353933.5393.21.camel@HansenPartnership.com>
-Subject: Re: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
- commands.
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: "Winkler, Tomas" <tomas.winkler@intel.com>,
+        Tue, 6 Mar 2018 11:00:54 -0500
+From: Jeremy Cline <jeremy@jcline.org>
+Subject: Regression from efi: call get_event_log before ExitBootServices
+To: Thiebaud Weksteen <tweek@google.com>,
+        Javier Martinez Canillas <javierm@redhat.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date: Tue, 06 Mar 2018 08:32:13 -0800
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
-References: <20180304121205.16934-1-tomas.winkler@intel.com>
-         <20180305125642.GA3425@linux.intel.com>
-         <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
-         <20180306074932.GB3624@linux.intel.com>
-         <5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Cc: Hans de Goede <hdegoede@redhat.com>, linux-efi@vger.kernel.org,
+        linux-integrity@vger.kernel.org, tpmdd-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Message-ID: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
+Date: Tue, 6 Mar 2018 16:00:53 +0000
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, 2018-03-06 at 08:06 +0000, Winkler, Tomas wrote:
-> > 
-> > 
-> > On Mon, Mar 05, 2018 at 01:09:09PM +0000, Winkler, Tomas wrote:
-> > > 
-> > > Why you need cover letter?  What are u missing in the patch
-> > > description
-> > 
-> > If you submit a *patch set* I *require* a cover letter, yes.
-> 
-> It's good but it is not must, you are inventing your own rules.
+Hi folks,
 
-As long as the Maintainer is the gatekeeper, you're not going to get
-very far with this argument.  The fact is that a lot of subsystems have
-varying rules; often undocumented, some of which are even in conflict,
-like alphabetic vs reverse christmas tree format for includes.
+Commit 33b6d03469b2 ("efi: call get_event_log before ExitBootServices")
+causes my GP-electronic T701 tablet to hang when booting. Reverting the
+patch series or hiding the TPM in the BIOS fixes the problem.
 
-A cover letter is actually one of the more uniform rules.  It's
-referred to in submitting patches, but not actually documented there.
+I've never fiddled with TPMs before so I'm not sure what what debugging
+information to provide. It's got an Atom Z3735G and the UEFI firmware is
+InsydeH20 version BYT70A.YNCHENG.WIN.007.
 
-James
+
+Regards,
+Jeremy
