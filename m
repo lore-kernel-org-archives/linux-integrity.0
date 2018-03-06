@@ -1,60 +1,46 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga17.intel.com ([192.55.52.151]:40535 "EHLO mga17.intel.com"
+Received: from mga17.intel.com ([192.55.52.151]:40148 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753664AbeCFODD (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 6 Mar 2018 09:03:03 -0500
-Date: Tue, 6 Mar 2018 16:02:56 +0200
+        id S932543AbeCFN4N (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 6 Mar 2018 08:56:13 -0500
+Date: Tue, 6 Mar 2018 15:56:07 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: Tomas Winkler <tomas.winkler@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5 V2] tpm: timeouts revamp
-Message-ID: <20180306140256.GC5700@linux.intel.com>
-References: <20180306092503.11568-1-tomas.winkler@intel.com>
- <1520338622.3779.1.camel@linux.intel.com>
- <031568ca-8999-478d-8c53-8b206f312e90@redhat.com>
+To: "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/4] tmp: factor out tpm1_get_random into tpm1-cmd.c
+Message-ID: <20180306135607.GB5700@linux.intel.com>
+References: <20180306093041.11996-1-tomas.winkler@intel.com>
+ <20180306093041.11996-4-tomas.winkler@intel.com>
+ <1520335881.7549.9.camel@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9422F24F@hasmsx108.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <031568ca-8999-478d-8c53-8b206f312e90@redhat.com>
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9422F24F@hasmsx108.ger.corp.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Mar 06, 2018 at 01:39:49PM +0100, Javier Martinez Canillas wrote:
-> On 03/06/2018 01:17 PM, Jarkko Sakkinen wrote:
-> > On Tue, 2018-03-06 at 11:24 +0200, Tomas Winkler wrote:
-> >> This series cleans up tpm timeouts setting and handling.
-> >>
-> >> First motivation was to fix failures coming from too short timeouts
-> >> for commands that creates keys.
-> >> Key generation may take significant time depending on the underlying
-> >> hardware. Rather than increasing default timeout a new constant is
-> >> added, to not stall too long on regular commands failures.
-> >>
-> >> Second is to define timeouts for new tpm2 commands
-> >> defined in TCG 1.36 spec.
-> >
+On Tue, Mar 06, 2018 at 11:34:50AM +0000, Winkler, Tomas wrote:
 > 
-> Probably a typo, since the latest TCG spec version is the 1.38 [0].
->  
-> > Where can we get that specification? I don't have that new
-> > version and couldn't find it from the public internet.
 > > 
-> > /Jarkko
+> > On Tue, 2018-03-06 at 11:30 +0200, Tomas Winkler wrote:
+> > > Factor out get random implementation from tpm-interface.c into
+> > > tpm1_get_random function in tpm1-cmd.c.
+> > > No functional changes.
+> > >
+> > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 > > 
+> > While you are doing this, please make it use tpm_buf so tha we get stuff out
+> > of that nasty union. Using "helper" structs is still fine, just move it right
+> > before the function implementation out of tpm.h (there are examples of this
+> > tpm2-cmd.c).
 > 
-> [0]: https://trustedcomputinggroup.org/tpm-library-specification/
+> Sure, but not while moving code, this is dangerous. Should be done after code is moved.
 
-I already have that version of the specifications but I thought that we
-were speaking about PC Client Platform spefication, which is at version
-1.30. TCG spec is an ambiguous term so that is where the confusion
-started from.
-
-The only spec I've seen some timeouts is the PC Client Specification but
-I guess I've then missed the list in TPM 2.0 spefication. Where are they
-listed? I worked with Will Arthur durations based on PC Client Specification
-when TPM 2.0 support was first implemented.
+Makes sense have use two steps here.
 
 /Jarkko
