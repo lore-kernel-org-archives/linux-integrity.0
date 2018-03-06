@@ -1,60 +1,57 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:37228 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753863AbeCFPjj (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 6 Mar 2018 10:39:39 -0500
-Received: by mail-io0-f193.google.com with SMTP id d71so22505901iog.4
-        for <linux-integrity@vger.kernel.org>; Tue, 06 Mar 2018 07:39:39 -0800 (PST)
-Date: Tue, 6 Mar 2018 08:39:36 -0700
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Tomas Winkler <tomas.winkler@intel.com>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] tpm_crb: use __le64 annotated variable for response
- buffer address
-Message-ID: <20180306153936.GA13395@ziepe.ca>
-References: <20180304121205.16934-1-tomas.winkler@intel.com>
- <20180304121205.16934-3-tomas.winkler@intel.com>
- <20180305130320.GC3425@linux.intel.com>
- <20180306082821.GB5705@linux.intel.com>
+Received: from mga02.intel.com ([134.134.136.20]:51915 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932078AbeCFPT2 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 6 Mar 2018 10:19:28 -0500
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+CC: "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 3/5 V2] tpm2: add longer timeouts for creation commands.
+Date: Tue, 6 Mar 2018 15:19:23 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9422F4C1@hasmsx108.ger.corp.intel.com>
+References: <20180306092503.11568-1-tomas.winkler@intel.com>
+         <20180306092503.11568-4-tomas.winkler@intel.com>
+ <1520339005.3779.3.camel@linux.intel.com>
+In-Reply-To: <1520339005.3779.3.camel@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180306082821.GB5705@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Mar 06, 2018 at 10:28:21AM +0200, Jarkko Sakkinen wrote:
-> On Mon, Mar 05, 2018 at 03:03:20PM +0200, Jarkko Sakkinen wrote:
-> > On Sun, Mar 04, 2018 at 02:12:05PM +0200, Tomas Winkler wrote:
-> > > This suppresses sparse warning
-> > > drivers/char/tpm/tpm_crb.c:558:18: warning: cast to restricted __le64
-> > > 
-> > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > >  drivers/char/tpm/tpm_crb.c | 5 +++--
-> > >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > 
-> > The guideline is that you should describe what is wrong rather than
-> > copy-paste the sparse message.
+> On Tue, 2018-03-06 at 11:25 +0200, Tomas Winkler wrote:
+> > TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve
+> > generation of crypto keys which can be a computationally intensive task.
+> > The timeout is set to 3min.
+> > Rather than increasing default timeout a new constant is added, to not
+> > stall for too long on regular commands failures.
+> >
+> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 > 
-> Jason, didn't yo give the feedback to some patch 1-2 years ago that
-> instead of copy-pasting parse error one should write a clear commit
-> msg or is this OK?
+> Why are you radically chaging the default timeout? The commit message
+> does not tell anything about that change.
+>
+Let me, recheck but it should be same value just converted to msecs.
+ 
+> Why couldn't we just have two timeouts: one default and one long that
+> would be at least as long as the longest timeout defined in the spec?
 
-The standard is to give some explaination why the tool complaint is
-valid and then if suitable include the tool complaint itself.
+I've tried to explain it in the commit message but apparently has failed. 
 
-Eg bad:
+We have a default or undefined which should be the same as it was unless I did some silly mistake in conversion to msecs (will check), ass all others are in msecs.
+It was 2 min = 2 * 60 * HZ (in jiffies) which would be msecs_to_jiffies(2 * 60 * 1000 = 120000) 
+TPM2_DURATION_DEFAULT   = 120000
 
-Fix sparse warning on resp
+Then we have a new one which is 3 min just for key generation (Prime number generation is heavy liffting) 
 
-Good:
+> Then we would not have to ever update LAST_CC constant, we could actually
+> remove it completely.
 
-use __le64 annotated variable for response buffer address
+I believe I've removed it next patch, I didn't want do too much in this one.
 
-IMHO, the subject line sufficiently describes the patch, and it is
-generally OK to clip the tool warning into the body..
-
-Jason
+Thanks
+Tomas
