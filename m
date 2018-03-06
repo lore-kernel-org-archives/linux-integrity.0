@@ -1,8 +1,8 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga05.intel.com ([192.55.52.43]:18438 "EHLO mga05.intel.com"
+Received: from mga07.intel.com ([134.134.136.100]:24940 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753297AbeCFJho (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 6 Mar 2018 04:37:44 -0500
+        id S1753263AbeCFJeS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 6 Mar 2018 04:34:18 -0500
 From: Tomas Winkler <tomas.winkler@intel.com>
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
@@ -11,47 +11,181 @@ Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH V2] tpm_crb: use __le64 annotated variable for response buffer address
-Date: Tue,  6 Mar 2018 11:34:15 +0200
-Message-Id: <20180306093415.12356-1-tomas.winkler@intel.com>
+Subject: [PATCH 3/4] tmp: factor out tpm1_get_random into tpm1-cmd.c
+Date: Tue,  6 Mar 2018 11:30:40 +0200
+Message-Id: <20180306093041.11996-4-tomas.winkler@intel.com>
+In-Reply-To: <20180306093041.11996-1-tomas.winkler@intel.com>
+References: <20180306093041.11996-1-tomas.winkler@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-use __le64 annotated variable for response buffer address as this is
-read in little endian format form the register.
-
-This suppresses sparse warning
-drivers/char/tpm/tpm_crb.c:558:18: warning: cast to restricted __le64
+Factor out get random implementation from tpm-interface.c
+into tpm1_get_random function in tpm1-cmd.c.
+No functional changes.
 
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 ---
-V2: Add more info into the commit message
+ drivers/char/tpm/tpm-interface.c | 56 ++++------------------------------------
+ drivers/char/tpm/tpm.h           |  2 ++
+ drivers/char/tpm/tpm1-cmd.c      | 54 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 61 insertions(+), 51 deletions(-)
 
- drivers/char/tpm/tpm_crb.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-index acfcdc6f31af..29fecdea0b2d 100644
---- a/drivers/char/tpm/tpm_crb.c
-+++ b/drivers/char/tpm/tpm_crb.c
-@@ -489,6 +489,7 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
- 	u32 pa_high, pa_low;
- 	u64 cmd_pa;
- 	u32 cmd_size;
-+	__le64 __rsp_pa;
- 	u64 rsp_pa;
- 	u32 rsp_size;
- 	int ret;
-@@ -554,8 +555,8 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
- 		goto out;
- 	}
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 6b70cefed505..59ca2e30b4d2 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -707,14 +707,6 @@ int tpm_pm_resume(struct device *dev)
+ }
+ EXPORT_SYMBOL_GPL(tpm_pm_resume);
  
--	memcpy_fromio(&rsp_pa, &priv->regs_t->ctrl_rsp_pa, 8);
--	rsp_pa = le64_to_cpu(rsp_pa);
-+	memcpy_fromio(&__rsp_pa, &priv->regs_t->ctrl_rsp_pa, 8);
-+	rsp_pa = le64_to_cpu(__rsp_pa);
- 	rsp_size = crb_fixup_cmd_size(dev, &io_res, rsp_pa,
- 				      ioread32(&priv->regs_t->ctrl_rsp_size));
+-#define TPM_ORD_GET_RANDOM 70
+-#define TPM_GETRANDOM_RESULT_SIZE	18
+-static const struct tpm_input_header tpm_getrandom_header = {
+-	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+-	.length = cpu_to_be32(14),
+-	.ordinal = cpu_to_be32(TPM_ORD_GET_RANDOM)
+-};
+-
+ /**
+  * tpm_get_random() - get random bytes from the TPM's RNG
+  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
+@@ -725,57 +717,19 @@ static const struct tpm_input_header tpm_getrandom_header = {
+  */
+ int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
+ {
+-	struct tpm_cmd_t tpm_cmd;
+-	u32 recd, num_bytes = min_t(u32, max, TPM_MAX_RNG_DATA), rlength;
+-	int err, total = 0, retries = 5;
+-	u8 *dest = out;
+-
+-	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
+-		return -EINVAL;
++	int err;
  
+ 	chip = tpm_chip_find_get(chip);
+ 	if (!chip)
+ 		return -ENODEV;
+ 
+-	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
++	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+ 		err = tpm2_get_random(chip, out, max);
+-		tpm_put_ops(chip);
+-		return err;
+-	}
+-
+-	do {
+-		tpm_cmd.header.in = tpm_getrandom_header;
+-		tpm_cmd.params.getrandom_in.num_bytes = cpu_to_be32(num_bytes);
+-
+-		err = tpm_transmit_cmd(chip, NULL, &tpm_cmd,
+-				       TPM_GETRANDOM_RESULT_SIZE + num_bytes,
+-				       offsetof(struct tpm_getrandom_out,
+-						rng_data),
+-				       0, "attempting get random");
+-		if (err)
+-			break;
+-
+-		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
+-		if (recd > num_bytes) {
+-			total = -EFAULT;
+-			break;
+-		}
+-
+-		rlength = be32_to_cpu(tpm_cmd.header.out.length);
+-		if (rlength < offsetof(struct tpm_getrandom_out, rng_data) +
+-			      recd) {
+-			total = -EFAULT;
+-			break;
+-		}
+-		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
+-
+-		dest += recd;
+-		total += recd;
+-		num_bytes -= recd;
+-	} while (retries-- && total < max);
++	else
++		err = tpm1_get_random(chip, out, max);
+ 
+ 	tpm_put_ops(chip);
+-	return total ? total : -EIO;
++	return err;
+ }
+ EXPORT_SYMBOL_GPL(tpm_get_random);
+ 
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 1a8ef4d3cb1c..b5fe0269a833 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -537,6 +537,8 @@ int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+ 		    const char *log_msg);
+ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+ 		    const char *desc, size_t min_cap_length);
++int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max);
++
+ int tpm_pm_suspend(struct device *dev);
+ int tpm_pm_resume(struct device *dev);
+ 
+diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+index 0e10a40b28b1..2c075a03a17a 100644
+--- a/drivers/char/tpm/tpm1-cmd.c
++++ b/drivers/char/tpm/tpm1-cmd.c
+@@ -472,3 +472,57 @@ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+ 	return rc;
+ }
+ EXPORT_SYMBOL_GPL(tpm1_getcap);
++
++#define TPM_ORD_GET_RANDOM 70
++#define TPM_GETRANDOM_RESULT_SIZE	18
++static const struct tpm_input_header tpm_getrandom_header = {
++	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
++	.length = cpu_to_be32(14),
++	.ordinal = cpu_to_be32(TPM_ORD_GET_RANDOM)
++};
++
++int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max)
++{
++	struct tpm_cmd_t tpm_cmd;
++	u32 recd;
++	u32 num_bytes = min_t(u32, max, TPM_MAX_RNG_DATA);
++	u32 rlength;
++	int err, total = 0, retries = 5;
++	u8 *dest = out;
++
++	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
++		return -EINVAL;
++
++	do {
++		tpm_cmd.header.in = tpm_getrandom_header;
++		tpm_cmd.params.getrandom_in.num_bytes = cpu_to_be32(num_bytes);
++
++		err = tpm_transmit_cmd(chip, NULL, &tpm_cmd,
++				       TPM_GETRANDOM_RESULT_SIZE + num_bytes,
++				       offsetof(struct tpm_getrandom_out,
++						rng_data),
++				       0, "attempting get random");
++		if (err)
++			break;
++
++		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
++		if (recd > num_bytes) {
++			total = -EFAULT;
++			break;
++		}
++
++		rlength = be32_to_cpu(tpm_cmd.header.out.length);
++		if (rlength < offsetof(struct tpm_getrandom_out, rng_data) +
++			      recd) {
++			total = -EFAULT;
++			break;
++		}
++		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
++
++		dest += recd;
++		total += recd;
++		num_bytes -= recd;
++	} while (retries-- && total < max);
++
++	return total ? total : -EIO;
++}
 -- 
 2.14.3
