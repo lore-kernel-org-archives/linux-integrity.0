@@ -1,32 +1,42 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:63757 "EHLO mga14.intel.com"
+Received: from mga17.intel.com ([192.55.52.151]:34486 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750838AbeCFLhh (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 6 Mar 2018 06:37:37 -0500
-Message-ID: <1520336251.7549.13.camel@linux.intel.com>
-Subject: Re: [PATCH v3 3/5] tpm: migrate tpm2_probe() to use struct tpm_buf
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Date: Tue, 06 Mar 2018 13:37:31 +0200
-In-Reply-To: <20180305165614.5469-4-jarkko.sakkinen@linux.intel.com>
-References: <20180305165614.5469-1-jarkko.sakkinen@linux.intel.com>
-         <20180305165614.5469-4-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+        id S1753491AbeCFLez (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 6 Mar 2018 06:34:55 -0500
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+CC: "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 3/4] tmp: factor out tpm1_get_random into tpm1-cmd.c
+Date: Tue, 6 Mar 2018 11:34:50 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9422F24F@hasmsx108.ger.corp.intel.com>
+References: <20180306093041.11996-1-tomas.winkler@intel.com>
+         <20180306093041.11996-4-tomas.winkler@intel.com>
+ <1520335881.7549.9.camel@linux.intel.com>
+In-Reply-To: <1520335881.7549.9.camel@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2018-03-05 at 18:56 +0200, Jarkko Sakkinen wrote:
-> In order to make struct tpm_buf the first class object for constructing TPM
-> commands, migrate tpm2_probe() to use it.
+
 > 
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> On Tue, 2018-03-06 at 11:30 +0200, Tomas Winkler wrote:
+> > Factor out get random implementation from tpm-interface.c into
+> > tpm1_get_random function in tpm1-cmd.c.
+> > No functional changes.
+> >
+> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> 
+> While you are doing this, please make it use tpm_buf so tha we get stuff out
+> of that nasty union. Using "helper" structs is still fine, just move it right
+> before the function implementation out of tpm.h (there are examples of this
+> tpm2-cmd.c).
 
-Jason, is this now OK? I removed the error klog.
-
-/Jarkko
+Sure, but not while moving code, this is dangerous. Should be done after code is moved.
+Thanks
+Tomas
