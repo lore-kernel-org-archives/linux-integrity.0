@@ -1,34 +1,40 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from a8-62.smtp-out.amazonses.com ([54.240.8.62]:53348 "EHLO
-        a8-62.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932112AbeCFQAy (ORCPT
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:39813 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932448AbeCFPoE (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 6 Mar 2018 11:00:54 -0500
-From: Jeremy Cline <jeremy@jcline.org>
-Subject: Regression from efi: call get_event_log before ExitBootServices
-To: Thiebaud Weksteen <tweek@google.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, linux-efi@vger.kernel.org,
-        linux-integrity@vger.kernel.org, tpmdd-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Message-ID: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
-Date: Tue, 6 Mar 2018 16:00:53 +0000
+        Tue, 6 Mar 2018 10:44:04 -0500
+Received: by mail-pg0-f67.google.com with SMTP id e3so3719294pga.6
+        for <linux-integrity@vger.kernel.org>; Tue, 06 Mar 2018 07:44:04 -0800 (PST)
+Date: Tue, 6 Mar 2018 08:44:01 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        Peter Huewe <peterhuewe@gmx.de>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 3/5] tpm: migrate tpm2_probe() to use struct tpm_buf
+Message-ID: <20180306154401.GB13395@ziepe.ca>
+References: <20180305165614.5469-1-jarkko.sakkinen@linux.intel.com>
+ <20180305165614.5469-4-jarkko.sakkinen@linux.intel.com>
+ <1520336251.7549.13.camel@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1520336251.7549.13.camel@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi folks,
+On Tue, Mar 06, 2018 at 01:37:31PM +0200, Jarkko Sakkinen wrote:
+> On Mon, 2018-03-05 at 18:56 +0200, Jarkko Sakkinen wrote:
+> > In order to make struct tpm_buf the first class object for constructing TPM
+> > commands, migrate tpm2_probe() to use it.
+> > 
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> 
+> Jason, is this now OK? I removed the error klog.
 
-Commit 33b6d03469b2 ("efi: call get_event_log before ExitBootServices")
-causes my GP-electronic T701 tablet to hang when booting. Reverting the
-patch series or hiding the TPM in the BIOS fixes the problem.
+Sure the log message is gone - but I haven't been auditing your tpm_buf
+work..
 
-I've never fiddled with TPMs before so I'm not sure what what debugging
-information to provide. It's got an Atom Z3735G and the UEFI firmware is
-InsydeH20 version BYT70A.YNCHENG.WIN.007.
-
-
-Regards,
-Jeremy
+Jason
