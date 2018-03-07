@@ -1,38 +1,45 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37490 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933335AbeCGQDT (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 7 Mar 2018 11:03:19 -0500
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20180228175521.10287-1-nayna@linux.vnet.ibm.com>
-References: <20180228175521.10287-1-nayna@linux.vnet.ibm.com>
-To: Nayna Jain <nayna@linux.vnet.ibm.com>
-Cc: dhowells@redhat.com, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH 1/3] certs: define a trusted platform keyring
+Received: from ms.lwn.net ([45.79.88.28]:58150 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933728AbeCGPy4 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 7 Mar 2018 10:54:56 -0500
+Date: Wed, 7 Mar 2018 08:54:54 -0700
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Winkler, Tomas" <tomas.winkler@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org\" <linux-security-module@vger.kernel.org>, "@lwn.net,
+        linux-kernel@vger.kernel.org,
+        " <linux-kernel@vger.kernel.org>"@lwn.net
+Subject: Re: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
+ commands.
+Message-ID: <20180307085454.2c820a13@lwn.net>
+In-Reply-To: <1520361396.10396.396.camel@linux.vnet.ibm.com>
+References: <20180304121205.16934-1-tomas.winkler@intel.com>
+        <20180305125642.GA3425@linux.intel.com>
+        <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
+        <20180306074932.GB3624@linux.intel.com>
+        <5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
+        <1520353933.5393.21.camel@HansenPartnership.com>
+        <1520361396.10396.396.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Date: Wed, 07 Mar 2018 16:03:18 +0000
-Message-ID: <31489.1520438598@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Nayna Jain <nayna@linux.vnet.ibm.com> wrote:
+On Tue, 06 Mar 2018 13:36:36 -0500
+Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
 
-> +		key = key_create_or_update(make_key_ref(keyring, 1),
-> +				"asymmetric",
-> +				NULL,
-> +				p,
-> +				plen,
-> +				((KEY_POS_ALL & ~KEY_POS_SETATTR) |
-> +				 KEY_USR_VIEW | KEY_USR_READ),
-> +				KEY_ALLOC_NOT_IN_QUOTA |
-> +				KEY_ALLOC_BUILT_IN |
-> +				KEY_ALLOC_BYPASS_RESTRICTION);
+> I've heard that some maintainers are moving away from cover letters,
+> since they are not include in the git repo and are lost.
 
-There's no need to reindent here.  Please line up all the arguments: either
-push the first argument over onto the next line if you need to or line them
-all up with the char after the opening bracket.
+If I get a patch series with a cover letter that should be preserved, I
+apply the series in a branch then do a no-ff merge; the cover letter can
+then go into the merge commit.  There's no reason why cover letters need to
+be lost.
 
-David
+jon
