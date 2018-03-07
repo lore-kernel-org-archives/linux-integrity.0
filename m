@@ -1,63 +1,51 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io0-f181.google.com ([209.85.223.181]:46547 "EHLO
-        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751229AbeCGIly (ORCPT
+Received: from smtp.codeaurora.org ([198.145.29.96]:35352 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751023AbeCGF0h (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 7 Mar 2018 03:41:54 -0500
-Received: by mail-io0-f181.google.com with SMTP id p78so2138196iod.13
-        for <linux-integrity@vger.kernel.org>; Wed, 07 Mar 2018 00:41:53 -0800 (PST)
-MIME-Version: 1.0
-References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
-In-Reply-To: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
-From: Thiebaud Weksteen <tweek@google.com>
-Date: Wed, 07 Mar 2018 08:41:42 +0000
-Message-ID: <CA+zpnLdSyuyKjJEH3Oowmha2mF0B-j5b4A7CLuXXY7RH47SiFQ@mail.gmail.com>
-Subject: Re: Regression from efi: call get_event_log before ExitBootServices
-To: jeremy@jcline.org
-Cc: Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        hdegoede@redhat.com, linux-efi@vger.kernel.org,
-        linux-integrity@vger.kernel.org, tpmdd-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 7 Mar 2018 00:26:37 -0500
+From: Jiandi An <anjiandi@codeaurora.org>
+To: zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
+        jmorris@namei.org, serge@hallyn.com, anjiandi@codeaurora.org
+Cc: linux-integrity@vger.kernel.org,
+        linux-ima-devel@lists.sourceforge.net,
+        linux-ima-user@lists.sourceforge.net,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
+Date: Tue,  6 Mar 2018 23:26:26 -0600
+Message-Id: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi,
+TPM_CRB driver is the TPM support for ARM64.  If it
+is built as module, TPM chip is registered after IMA
+init.  tpm_pcr_read() in IMA driver would fail and
+display the following message even though eventually
+there is TPM chip on the system:
 
-Thanks for testing and sending this report! This patch relies heavily on
-the functions exposed by the firmware. My first guess would be that some of
-these may not be implemented correctly by the manufacturer.
+ima: No TPM chip found, activating TPM-bypass! (rc=-19)
 
-Could you share more information on this specific device?
-Do you have any link to the manufacturer website (I found [1] but it is
-based on an ARM CPU)?
-Do you have the option to update your firmware? Is a copy of the firmware
-available from the manufacturer?
+Fix IMA Kconfig to select TPM_CRB so TPM_CRB driver is
+built in kernel and initializes before IMA driver.
 
-On your side, I assume no error message got displayed on the screen when
-booting. Would you be able to try to boot in an UEFI shell [2] and execute
-the command "dh -v"?
+Signed-off-by: Jiandi An <anjiandi@codeaurora.org>
+---
+ security/integrity/ima/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks,
-Thiebaud
-
-[1] https://www.gp-electronic.nl/product/7inchtablet
-[2]
-https://wiki.archlinux.org/index.php/Unified_Extensible_Firmware_Interface#UEFI_Shell
-
-On Tue, Mar 6, 2018 at 5:00 PM Jeremy Cline <jeremy@jcline.org> wrote:
-
-> Hi folks,
-
-> Commit 33b6d03469b2 ("efi: call get_event_log before ExitBootServices")
-> causes my GP-electronic T701 tablet to hang when booting. Reverting the
-> patch series or hiding the TPM in the BIOS fixes the problem.
-
-> I've never fiddled with TPMs before so I'm not sure what what debugging
-> information to provide. It's got an Atom Z3735G and the UEFI firmware is
-> InsydeH20 version BYT70A.YNCHENG.WIN.007.
-
-
-> Regards,
-> Jeremy
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index 35ef693..6a8f677 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -10,6 +10,7 @@ config IMA
+ 	select CRYPTO_HASH_INFO
+ 	select TCG_TPM if HAS_IOMEM && !UML
+ 	select TCG_TIS if TCG_TPM && X86
++	select TCG_CRB if TCG_TPM && ACPI
+ 	select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
+ 	help
+ 	  The Trusted Computing Group(TCG) runtime Integrity
+-- 
+Jiandi An
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
