@@ -1,96 +1,81 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34524 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933741AbeCGPW6 (ORCPT
+Received: from mail-wr0-f171.google.com ([209.85.128.171]:36216 "EHLO
+        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754297AbeCGMAs (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 7 Mar 2018 10:22:58 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w27FMS2H078592
-        for <linux-integrity@vger.kernel.org>; Wed, 7 Mar 2018 10:22:57 -0500
-Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2gjhcem6b7-1
-        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 07 Mar 2018 10:22:56 -0500
-Received: from localhost
-        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Wed, 7 Mar 2018 15:22:54 -0000
-Subject: Re: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
- commands.
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Winkler, Tomas" <tomas.winkler@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date: Wed, 07 Mar 2018 10:22:49 -0500
-In-Reply-To: <20180306215904.GA32097@ziepe.ca>
-References: <20180304121205.16934-1-tomas.winkler@intel.com>
-         <20180305125642.GA3425@linux.intel.com>
-         <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
-         <20180306074932.GB3624@linux.intel.com>
-         <5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
-         <1520353933.5393.21.camel@HansenPartnership.com>
-         <1520361396.10396.396.camel@linux.vnet.ibm.com>
-         <20180306215904.GA32097@ziepe.ca>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1520436169.10396.516.camel@linux.vnet.ibm.com>
+        Wed, 7 Mar 2018 07:00:48 -0500
+Received: by mail-wr0-f171.google.com with SMTP id v111so1897455wrb.3
+        for <linux-integrity@vger.kernel.org>; Wed, 07 Mar 2018 04:00:48 -0800 (PST)
+Subject: Re: Regression from efi: call get_event_log before ExitBootServices
+To: Hans de Goede <hdegoede@redhat.com>,
+        Thiebaud Weksteen <tweek@google.com>, jeremy@jcline.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
+ <CA+zpnLdSyuyKjJEH3Oowmha2mF0B-j5b4A7CLuXXY7RH47SiFQ@mail.gmail.com>
+ <185d1c06-c379-ee7d-496b-2f4e49f8c9a3@redhat.com>
+From: Javier Martinez Canillas <javierm@redhat.com>
+Message-ID: <ec9d004b-4bd1-896f-b132-9fd84cac47eb@redhat.com>
+Date: Wed, 7 Mar 2018 13:00:46 +0100
+MIME-Version: 1.0
+In-Reply-To: <185d1c06-c379-ee7d-496b-2f4e49f8c9a3@redhat.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, 2018-03-06 at 14:59 -0700, Jason Gunthorpe wrote:
-> On Tue, Mar 06, 2018 at 01:36:36PM -0500, Mimi Zohar wrote:
-> > On Tue, 2018-03-06 at 08:32 -0800, James Bottomley wrote:
-> > > On Tue, 2018-03-06 at 08:06 +0000, Winkler, Tomas wrote:
-> > > > > 
-> > > > > 
-> > > > > On Mon, Mar 05, 2018 at 01:09:09PM +0000, Winkler, Tomas wrote:
-> > > > > > 
-> > > > > > Why you need cover letter?  What are u missing in the patch
-> > > > > > description
-> > > > > 
-> > > > > If you submit a *patch set* I *require* a cover letter, yes.
-> > > > 
-> > > > It's good but it is not must, you are inventing your own rules.
-> > > 
-> > > As long as the Maintainer is the gatekeeper, you're not going to get
-> > > very far with this argument.  The fact is that a lot of subsystems have
-> > > varying rules; often undocumented, some of which are even in conflict,
-> > > like alphabetic vs reverse christmas tree format for includes.
-> > > 
-> > > A cover letter is actually one of the more uniform rules.  It's
-> > > referred to in submitting patches, but not actually documented there.
-> > 
-> > I've heard that some maintainers are moving away from cover letters,
-> > since they are not include in the git repo and are lost.  I've seen
-> > Andrew Morton cut and paste the cover letter in the first patch
-> > description of the patch set.
+Hi Hans,
+
+On 03/07/2018 12:16 PM, Hans de Goede wrote:
+> Hi,
 > 
-> Andrew has a workflow unlike any other I've seen..
+> On 07-03-18 09:41, Thiebaud Weksteen wrote:
+>> Hi,
+>>
+>> Thanks for testing and sending this report! This patch relies heavily on
+>> the functions exposed by the firmware. My first guess would be that some of
+>> these may not be implemented correctly by the manufacturer.
+>>
+>> Could you share more information on this specific device?
+> 
+> I've the same device as Jeremy, but I just tried a 4.16-rc3 kernel
+> and I'm not seeing this problem, BIOS settings all default (I loaded
+> the BIOS defaults to make sure).
+> 
+>> Do you have any link to the manufacturer website (I found [1] but it is
+>> based on an ARM CPU)?
+>> Do you have the option to update your firmware? Is a copy of the firmware
+>> available from the manufacturer?
+> 
+> This is a really cheap Windows tablet which was given away for free in
+> the Netherlands with some home-schooling language courses, or something
+> similar.
+> 
+> Both mine and Jeremy tablets come from a website in the Netherlands
+> where people can buy/sell used goods.
+> 
+> Most relevant for this discussion I guess is that this device is
+> based on a Bay Trail Z3735G SoC, on which according to the internets:
+> https://embedded.communities.intel.com/thread/7868
+> 
+> The TPM 2.0 it contains is implemented as part of the TXE firmware.
+> 
+> Since I cannot reproduce I'm thinking that maybe Jeremy actually has
+> some log messages in the TPM log, where as mine is empty.  Is there a
+> way to make sure some messages are in there?
+>
 
-Andrew is the only one that actually cut and pasted the cover letter
-in the first patch description, but I've heard this from others.
+The UEFI firmware does some measurements and so does shim. So you should
+have some event logs. What version of shim are you using? And also would
+be good to know if it's the same shim version that Jeremy is using.
 
-> In my view the cover letter should explain why the maintainer should
-> apply the series, and give any guidance to the review process.
+> Regards,
+> 
+> Hans
+> 
 
-> Not duplicate information that belongs in the patch comments. It
-> shouldn't explain how/why the patch(es) works, etc.
-
-Patch descriptions should never explain how/why a particular patch
-works.  If it is that difficult to understand, then something is wrong
-with the patch.  The individual patch descriptions should provide the
-current status, the motivation for the change, and short summary of
-the change (eg. new features, configs, etc).
-
-The cover letter is needed for (larger) patch sets in order to explain
-the overall motivation, instead of having to guess where the patch set
-is going.  I wouldn't expect to see a cover letter for a single bug
-fix or two.
-
-Mimi
+Best regards,
+-- 
+Javier Martinez Canillas
+Software Engineer - Desktop Hardware Enablement
+Red Hat
