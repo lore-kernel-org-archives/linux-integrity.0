@@ -1,72 +1,144 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:52976 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933415AbeCGX3g (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56504 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754039AbeCGWTe (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 7 Mar 2018 18:29:36 -0500
-Message-ID: <1520465374.4894.12.camel@HansenPartnership.com>
-Subject: [RFC 0/5] add integrity and security to TPM2 transactions
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: linux-integrity@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Wed, 07 Mar 2018 15:29:34 -0800
+        Wed, 7 Mar 2018 17:19:34 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w27MJU9f061797
+        for <linux-integrity@vger.kernel.org>; Wed, 7 Mar 2018 17:19:34 -0500
+Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2gjpe25drx-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 07 Mar 2018 17:19:33 -0500
+Received: from localhost
+        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Wed, 7 Mar 2018 22:19:24 -0000
+Subject: Re: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jiandi An <anjiandi@codeaurora.org>
+Cc: dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org,
+        linux-ima-devel@lists.sourceforge.net,
+        linux-ima-user@lists.sourceforge.net,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 07 Mar 2018 17:19:16 -0500
+In-Reply-To: <1520451662.24314.5.camel@HansenPartnership.com>
+References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
+         <20180307185132.GA30102@ziepe.ca>
+         <1520448953.10396.565.camel@linux.vnet.ibm.com>
+         <1520449719.5558.28.camel@HansenPartnership.com>
+         <1520450495.10396.587.camel@linux.vnet.ibm.com>
+         <1520451662.24314.5.camel@HansenPartnership.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
+Message-Id: <1520461156.10396.654.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-By now, everybody knows we have a problem with the TPM2_RS_PW easy
-button on TPM2 in that transactions on the TPM bus can be intercepted
-and altered.  The way to fix this is to use real sessions for HMAC
-capabilities to ensure integrity and to use parameter and response
-encryption to ensure confidentiality of the data flowing over the TPM
-bus.
+On Wed, 2018-03-07 at 11:41 -0800, James Bottomley wrote:
+> On Wed, 2018-03-07 at 14:21 -0500, Mimi Zohar wrote:
+> > On Wed, 2018-03-07 at 11:08 -0800, James Bottomley wrote:
+> > > 
+> > > On Wed, 2018-03-07 at 13:55 -0500, Mimi Zohar wrote:
+> > > > 
+> > > > On Wed, 2018-03-07 at 11:51 -0700, Jason Gunthorpe wrote:
+> > > > > 
+> > > > > 
+> > > > > On Tue, Mar 06, 2018 at 11:26:26PM -0600, Jiandi An wrote:
+> > > > > > 
+> > > > > > 
+> > > > > > TPM_CRB driver is the TPM support for ARM64.  If it
+> > > > > > is built as module, TPM chip is registered after IMA
+> > > > > > init.  tpm_pcr_read() in IMA driver would fail and
+> > > > > > display the following message even though eventually
+> > > > > > there is TPM chip on the system:
+> > > > > > 
+> > > > > > ima: No TPM chip found, activating TPM-bypass! (rc=-19)
+> > > > > > 
+> > > > > > Fix IMA Kconfig to select TPM_CRB so TPM_CRB driver is
+> > > > > > built in kernel and initializes before IMA driver.
+> > > > > > 
+> > > > > > Signed-off-by: Jiandi An <anjiandi@codeaurora.org>
+> > > > > >  security/integrity/ima/Kconfig | 1 +
+> > > > > >  1 file changed, 1 insertion(+)
+> > > > > > 
+> > > > > > diff --git a/security/integrity/ima/Kconfig
+> > > > > > b/security/integrity/ima/Kconfig
+> > > > > > index 35ef693..6a8f677 100644
+> > > > > > +++ b/security/integrity/ima/Kconfig
+> > > > > > @@ -10,6 +10,7 @@ config IMA
+> > > > > >  	select CRYPTO_HASH_INFO
+> > > > > >  	select TCG_TPM if HAS_IOMEM && !UML
+> > > > > >  	select TCG_TIS if TCG_TPM && X86
+> > > 
+> > > Well, this explains why IMA doesn't work on one of my X86 systems:
+> > > it's got a non i2c infineon TPM.
+> > > 
+> > > > 
+> > > > > 
+> > > > > > 
+> > > > > > +	select TCG_CRB if TCG_TPM && ACPI
+> > > > > >  	select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
+> > > > > >  	help
+> > > > > >  	  The Trusted Computing Group(TCG) runtime Integrity
+> > > > > 
+> > > > > This seems really weird, why are any specific TPM drivers
+> > > > > linked to IMA config, we have lots of drivers..
+> > > > > 
+> > > > > I don't think I've ever seen this pattern in Kconfig before?
+> > > > 
+> > > > As you've seen by the current discussions, the TPM driver needs
+> > > > to be initialized prior to IMA.  Otherwise IMA goes into TPM-
+> > > > bypass mode.  That implies that the TPM must be builtin to the
+> > > > kernel, and not as a kernel module.
+> > > 
+> > > Actually, that's not necessarily true:  If we don't begin appraisal
+> > > until after the initrd phase, then the initrd can load TPM modules
+> > > before IMA starts.
+> > > 
+> > > This would involve a bit of code rejigging to not require a TPM
+> > > until IMA wants to write its first measurement, but it looks doable
+> > > and would get us out of having to second guess TPM selections.
+> > 
+> > The question is about measurement, not appraisal.  Although the
+> > initramfs might be measured, the initramfs can access files on the
+> > real root filesystem.  Those files need to be measured, before they
+> > are used/accessed.
+> 
+> Isn't it a question of threat model?  Because the initrd is measured,
+> you know it's the one you specified and you should know its security
+> properties, so measurement doesn't really need to begin until the root
+> pivots.
 
-This RFC is about adding a simple API which can ensure the above
-properties as a layered addition to the existing TPM handling code.
- Eventually we can add this to the random number generator, the PCR
-extensions and the trusted key handling, but this all depends on the
-conversion to tpm_buf which is not yet upstream, so I've constructed a
-second patch which demonstrates the new API in a test module for those
-who wish to play with it.
+Perhaps in the case where the initramfs is signed and the signature is
+verified, I would agree that I know the security properties of the
+initramfs.  That still doesn't negate the fact that the initramfs
+could access files on real root, without first measuring them.
 
-This series is also dependent on additions to the crypto subsystem to
-fix problems in the elliptic curve key handling and add the Cipher
-FeedBack encryption scheme:
+> At that point you pick up the boot aggregate so the log now is
+> tied to the initrd measurement.  Conversely, I can't really see a
+> threat model where you could trick a correctly measured initrd into
+> subverting IMA, especially because listening network daemons aren't
+> usually active at this stage.
 
-https://marc.info/?l=linux-crypto-vger&m=151994371015475
+Linux based boot loaders can be configured to download remote kernel
+images and initramfs files - network boot.
 
-In the second version, I added security HMAC to our PCR extend and
-encryption to the returned random number generators and also extracted
-the parsing and tpm2b construction API into a new file.
+> I'm not saying there isn't a use case for wanting your TPM built in,
+> I'm just saying I don't think it needs to be required for everyone who
+> uses IMA.
 
-James
+If the TPM module is not builtin, there are no guarantees when it was
+loaded.  There could be a disconnect between the IMA measurement list
+and the TPM PCRs.
 
----
+If someone has a special use case, then I agree with you, that we
+could theoretically support it, but I don't think we want to confuse
+distros or anyone else.  The TPM should be builtin, so that IMA
+measurements can begin before accessing real root.
 
-James Bottomley (5):
-  tpm-buf: create new functions for handling TPM buffers
-  tpm2-sessions: Add full HMAC and encrypt/decrypt session handling
-  tpm2: add hmac checks to tpm2_pcr_extend()
-  tpm2: add session encryption protection to tpm2_get_random()
-  tpm2-sessions: NOT FOR COMMITTING add sessions testing
-
- drivers/char/tpm/Kconfig              |    3 +
- drivers/char/tpm/Makefile             |    3 +-
- drivers/char/tpm/tpm-buf.c            |  184 ++++++
- drivers/char/tpm/tpm-chip.c           |    1 +
- drivers/char/tpm/tpm.h                |  116 ++--
- drivers/char/tpm/tpm2-cmd.c           |  129 ++---
- drivers/char/tpm/tpm2-sessions-test.c |  177 ++++++
- drivers/char/tpm/tpm2-sessions.c      | 1030 +++++++++++++++++++++++++++++++++
- drivers/char/tpm/tpm2-sessions.h      |   56 ++
- 9 files changed, 1548 insertions(+), 151 deletions(-)
- create mode 100644 drivers/char/tpm/tpm-buf.c
- create mode 100644 drivers/char/tpm/tpm2-sessions-test.c
- create mode 100644 drivers/char/tpm/tpm2-sessions.c
- create mode 100644 drivers/char/tpm/tpm2-sessions.h
-
--- 
-2.12.3
+Mimi
