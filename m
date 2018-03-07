@@ -1,53 +1,60 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from ms.lwn.net ([45.79.88.28]:58668 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754577AbeCGSYs (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 7 Mar 2018 13:24:48 -0500
-Date: Wed, 7 Mar 2018 11:24:47 -0700
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Winkler, Tomas" <tomas.winkler@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
- commands.
-Message-ID: <20180307112447.1eff794a@lwn.net>
-In-Reply-To: <1520440503.10396.534.camel@linux.vnet.ibm.com>
-References: <20180304121205.16934-1-tomas.winkler@intel.com>
-        <20180305125642.GA3425@linux.intel.com>
-        <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
-        <20180306074932.GB3624@linux.intel.com>
-        <5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
-        <1520353933.5393.21.camel@HansenPartnership.com>
-        <1520361396.10396.396.camel@linux.vnet.ibm.com>
-        <20180307085454.2c820a13@lwn.net>
-        <1520440503.10396.534.camel@linux.vnet.ibm.com>
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58860 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933474AbeCGRtA (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 7 Mar 2018 12:49:00 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w27Higag138118
+        for <linux-integrity@vger.kernel.org>; Wed, 7 Mar 2018 12:48:59 -0500
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2gjk4ecvu4-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 07 Mar 2018 12:48:59 -0500
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
+        Wed, 7 Mar 2018 12:48:58 -0500
+Subject: Re: [PATCH 1/3] certs: define a trusted platform keyring
+To: David Howells <dhowells@redhat.com>
+Cc: keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+References: <20180228175521.10287-1-nayna@linux.vnet.ibm.com>
+ <31489.1520438598@warthog.procyon.org.uk>
+From: Nayna Jain <nayna@linux.vnet.ibm.com>
+Date: Wed, 7 Mar 2018 23:17:46 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <31489.1520438598@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Message-Id: <8873df7f-490f-28e0-249e-34bb3b133015@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, 07 Mar 2018 11:35:03 -0500
-Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
 
-> Some maintainers are saying to put the Changelog after the "---" so
-> that it isn't included in the patch description.
-> 
-> One of the reasons for including the Changelog in the patch
-> description, is to credit people with bug fixes, important rework of
-> the patch, etc.
-> 
-> Do you have any thoughts on this?
 
-Not sure I have a strong opinion there.  We do have various tags meant to
-ensure proper credit; I would lean toward using those when possible rather
-than including long change histories that, in the long term, don't help
-readers to understand why the patch was applied.
+On 03/07/2018 09:33 PM, David Howells wrote:
+> Nayna Jain <nayna@linux.vnet.ibm.com> wrote:
+>
+>> +		key = key_create_or_update(make_key_ref(keyring, 1),
+>> +				"asymmetric",
+>> +				NULL,
+>> +				p,
+>> +				plen,
+>> +				((KEY_POS_ALL & ~KEY_POS_SETATTR) |
+>> +				 KEY_USR_VIEW | KEY_USR_READ),
+>> +				KEY_ALLOC_NOT_IN_QUOTA |
+>> +				KEY_ALLOC_BUILT_IN |
+>> +				KEY_ALLOC_BYPASS_RESTRICTION);
+> There's no need to reindent here.  Please line up all the arguments: either
+> push the first argument over onto the next line if you need to or line them
+> all up with the char after the opening bracket.
 
-Thanks,
+Thanks David for the feedback. I will post the v2 version with this fix. 
+Are there any other changes ?
 
-jon
+Thanks & Regards,
+    - Nayna
+
+>
+> David
+>
