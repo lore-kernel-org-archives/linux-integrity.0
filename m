@@ -1,85 +1,103 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:34464 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750867AbeCHXJh (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45596 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750787AbeCHW2O (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 8 Mar 2018 18:09:37 -0500
-Received: by mail-io0-f196.google.com with SMTP id e7so1564047ioj.1
-        for <linux-integrity@vger.kernel.org>; Thu, 08 Mar 2018 15:09:36 -0800 (PST)
-From: Tycho Andersen <tycho@tycho.ws>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-hardening@lists.openwall.com,
-        Tycho Andersen <tycho@tycho.ws>
-Subject: [PATCH v3] ima: drop vla in ima_audit_measurement()
-Date: Thu,  8 Mar 2018 16:08:36 -0700
-Message-Id: <20180308230836.24329-1-tycho@tycho.ws>
+        Thu, 8 Mar 2018 17:28:14 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w28MPm9k129229
+        for <linux-integrity@vger.kernel.org>; Thu, 8 Mar 2018 17:28:14 -0500
+Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2gkctvtgh7-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 08 Mar 2018 17:28:13 -0500
+Received: from localhost
+        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Thu, 8 Mar 2018 22:28:11 -0000
+Subject: Re: [PATCH v2] ima: drop vla in ima_audit_measurement()
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Tycho Andersen <tycho@tycho.ws>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Date: Thu, 08 Mar 2018 17:28:06 -0500
+In-Reply-To: <20180308221537.46ogqx64cev767ur@smitten>
+References: <20180308202347.31331-1-tycho@tycho.ws>
+         <1520541374.3605.101.camel@linux.vnet.ibm.com>
+         <20180308214547.kdeoeozugxffzumn@smitten>
+         <1520546740.3605.124.camel@linux.vnet.ibm.com>
+         <20180308221537.46ogqx64cev767ur@smitten>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1520548086.3605.135.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-In keeping with the directive to get rid of VLAs [1], let's drop the VLA
-from ima_audit_measurement(). We need to adjust the return type of
-ima_audit_measurement, because now this function can fail if an allocation
-fails.
+On Thu, 2018-03-08 at 15:15 -0700, Tycho Andersen wrote:
+> Hi Mimi,
+> 
+> On Thu, Mar 08, 2018 at 05:05:40PM -0500, Mimi Zohar wrote:
+> > On Thu, 2018-03-08 at 14:45 -0700, Tycho Andersen wrote:
+> > > Hi Mimi,
+> > > 
+> > > On Thu, Mar 08, 2018 at 03:36:14PM -0500, Mimi Zohar wrote:
+> > > > On Thu, 2018-03-08 at 13:23 -0700, Tycho Andersen wrote:
+> > > > 
+> > > > >  /*
+> > > > > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> > > > > index 2cfb0c714967..356faae6f09c 100644
+> > > > > --- a/security/integrity/ima/ima_main.c
+> > > > > +++ b/security/integrity/ima/ima_main.c
+> > > > > @@ -288,8 +288,11 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+> > > > >  					      xattr_value, xattr_len, opened);
+> > > > >  		inode_unlock(inode);
+> > > > >  	}
+> > > > > -	if (action & IMA_AUDIT)
+> > > > > -		ima_audit_measurement(iint, pathname);
+> > > > > +	if (action & IMA_AUDIT) {
+> > > > > +		rc = ima_audit_measurement(iint, pathname);
+> > > > > +		if (rc < 0)
+> > > > > +			goto out_locked;
+> > > > > +	}
+> > > > > 
+> > > > >  	if ((file->f_flags & O_DIRECT) && (iint->flags & IMA_PERMIT_DIRECTIO))
+> > > > >  		rc = 0;
+> > > > 
+> > > > Only when IMA-appraisal is enforcing file data integrity should
+> > > > process_measurement() ever fail.  Other errors can be logged/audited.
+> > > 
+> > > Ok, so previously in ima_audit_measurement() when allocation failed,
+> > > there was nothing logged. If we just keep this behavior like below,
+> > > does that look good?
+> > 
+> > Before the IMA locking change that were just upstreamed, there were
+> > problems with measuring/appraising files that were opened with the
+> > O_DIRECT flag.  Unless the IMA policy specified permit_directio, the
+> > measurement/appraisal failed.  With the new locking, opening files
+> > with the O_DIRECTIO flag shouldn't be a problem.  It just needs to be
+> > fully tested before removing this code.
+> > 
+> > On failure, the code below tests the ima_audit_measurement() result
+> > and skips the IMA_PERMIT_DIRECTIO test.  Unless I'm missing something,
+> > I don't see the point.
+> 
+> It skips the IMA_PERMIT_DIRECTIO test because it's already going to
+> fail: we're in enforce mode and we got an allocation failure and so we
+> can't audit this access (note: there is another allocation failure in
+> ima_audit_measurement() which is still ignored after this patch, so
+> maybe ignoring failures is ok; seems like it's not, though
 
-[1]: https://lkml.org/lkml/2018/3/7/621
+By the time we get here, we've already verified the file's integrity,
+if it is in policy.  At this point, we're attempting to add the file
+hash to the audit log.  If for some reason the audit fails, there's
+not much we can do.
 
-v2: just use audit_log_format instead of doing a second allocation
-v3: ignore failures in ima_audit_measurement()
+> I'm not sure I really understand the rest of your message though. Can
+> you suggest what the patch should do here? Should we just ignore all
+> failures as before?
 
-Signed-off-by: Tycho Andersen <tycho@tycho.ws>
----
- security/integrity/ima/ima_api.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+I would leave it as it is.
 
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index 08fe405338e1..2aab9170ef68 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -308,14 +308,17 @@ void ima_audit_measurement(struct integrity_iint_cache *iint,
- 			   const unsigned char *filename)
- {
- 	struct audit_buffer *ab;
--	char hash[(iint->ima_hash->length * 2) + 1];
-+	char *hash;
- 	const char *algo_name = hash_algo_name[iint->ima_hash->algo];
--	char algo_hash[sizeof(hash) + strlen(algo_name) + 2];
- 	int i;
+Mimi
  
- 	if (iint->flags & IMA_AUDITED)
- 		return;
- 
-+	hash = kzalloc((iint->ima_hash->length * 2) + 1, GFP_KERNEL);
-+	if (!hash)
-+		return;
-+
- 	for (i = 0; i < iint->ima_hash->length; i++)
- 		hex_byte_pack(hash + (i * 2), iint->ima_hash->digest[i]);
- 	hash[i * 2] = '\0';
-@@ -323,18 +326,19 @@ void ima_audit_measurement(struct integrity_iint_cache *iint,
- 	ab = audit_log_start(current->audit_context, GFP_KERNEL,
- 			     AUDIT_INTEGRITY_RULE);
- 	if (!ab)
--		return;
-+		goto out;
- 
- 	audit_log_format(ab, "file=");
- 	audit_log_untrustedstring(ab, filename);
--	audit_log_format(ab, " hash=");
--	snprintf(algo_hash, sizeof(algo_hash), "%s:%s", algo_name, hash);
--	audit_log_untrustedstring(ab, algo_hash);
-+	audit_log_format(ab, " hash=\"%s:%s\"", algo_name, hash);
- 
- 	audit_log_task_info(ab, current);
- 	audit_log_end(ab);
- 
- 	iint->flags |= IMA_AUDITED;
-+out:
-+	kfree(hash);
-+	return;
- }
- 
- /*
--- 
-2.14.1
