@@ -1,42 +1,93 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-qt0-f169.google.com ([209.85.216.169]:43436 "EHLO
-        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935982AbeCHRri (ORCPT
+Received: from a8-200.smtp-out.amazonses.com ([54.240.8.200]:37946 "EHLO
+        a8-200.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934055AbeCHR0l (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 8 Mar 2018 12:47:38 -0500
+        Thu, 8 Mar 2018 12:26:41 -0500
+Subject: Re: Regression from efi: call get_event_log before ExitBootServices
+To: Hans de Goede <hdegoede@redhat.com>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Thiebaud Weksteen <tweek@google.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
+ <e7c2be5c-cf21-fc2d-efda-d9222d93ffad@redhat.com>
+ <b32f335c-0d77-1749-f7fe-65f512280255@redhat.com>
+ <ade378f6-c997-1d48-a30d-cceee6435fc8@redhat.com>
+ <a3b5f822-f8f4-e2f5-46da-e23e13174f28@redhat.com>
+ <cec36124-0950-6ad9-58a8-9bd69e63aa04@redhat.com>
+From: Jeremy Cline <jeremy@jcline.org>
+Message-ID: <0100016206a68850-bd5c96b3-f275-46ea-98b1-1317e02a5d6e-000000@email.amazonses.com>
+Date: Thu, 8 Mar 2018 17:26:40 +0000
 MIME-Version: 1.0
-In-Reply-To: <20180308171456.2597-1-tycho@tycho.ws>
-References: <20180308171456.2597-1-tycho@tycho.ws>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 8 Mar 2018 19:47:37 +0200
-Message-ID: <CAHp75VfoiQ_PxBph8JnNzun4y5Z-9z_rUcjGyM7A2CAwynddeA@mail.gmail.com>
-Subject: Re: [PATCH] ima: drop vla in ima_audit_measurement()
-To: Tycho Andersen <tycho@tycho.ws>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-hardening@lists.openwall.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <cec36124-0950-6ad9-58a8-9bd69e63aa04@redhat.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Mar 8, 2018 at 7:14 PM, Tycho Andersen <tycho@tycho.ws> wrote:
-> In keeping with the directive to get rid of VLAs [1], let's drop the VLA
-> from ima_audit_measurement(). We need to adjust the return type of
-> ima_audit_measurement, because now this function can fail if an allocation
-> fails.
+On 03/08/2018 11:50 AM, Hans de Goede wrote:
+> <somehow this part of the thread was missing some email addresses, I've
+> added these now>
+> 
+> Hi,
+> 
+> On 07-03-18 12:34, Javier Martinez Canillas wrote:
 
+<snip>
 
+>> Are you also able to read the TPM event logs?
+>>
+>> $ hexdump /sys/kernel/security/tpm0/binary_bios_measurements
+> 
+> Yes for me that outputs a lot of hex :)
 
-> +       algo_hash_len = hash_len + strlen(algo_name) + 2;
-> +       algo_hash = kzalloc(algo_hash_len, GFP_KERNEL);
+For me, /sys/kernel/security/tmp0 doesn't exist on 4.15.6 or 4.16 with
+the patch reverted.
 
-> -       snprintf(algo_hash, sizeof(algo_hash), "%s:%s", algo_name, hash);
-> +       snprintf(algo_hash, algo_hash_len, "%s:%s", algo_name, hash);
+>> The UEFI firmware does some measurements and so does shim. So you should
+>> have some event logs. What version of shim are you using? And also would
+>> be good to know if it's the same shim version that Jeremy is using.
+> 
+> That is a very good question, I'm using: shim-ia32-13-0.7.x86_64, which is
+> the last version for F27 AFAICT.
 
-kasprintf() ?
+All my tablet has installed is shim-0.8-10.x86_64, no shim-ia32.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> 
+> But Jeremy's tablet might very well be not using the shim at all, as
+> I manually installed Fedora 25 on the tablet he now has, before Fedora
+> supported
+> machines with 32 bit EFI. I then later did a "dnf distro-sync" to
+> Fedora-27.
+> 
+> Jeremy might also very well still be booting using a grub binary I build
+> manually back then, without any shim being involved.
+> 
+> Jeremy what does efibootmgr -v output on your device ?
+
+# efibootmgr -v
+BootCurrent: 0003
+Timeout: 4 seconds
+BootOrder: 0003,0000,0001,2001,2002,2003
+Boot0000* Android X64 OS
+HD(1,GPT,215e6cf3-e97d-4735-9c4e-7338c8f5a645,0x800,0x32000)/File(\EFI\BOOT\bootx64.efi)RC
+Boot0001* Internal EFI Shell
+FvVol(a881d567-6cb0-4eee-8435-2e72d33e45b5)/FvFile(c57ad6b7-0515-40a8-9d21-551652854e37)RCM&".
+Boot0003* Fedora
+HD(1,GPT,215e6cf3-e97d-4735-9c4e-7338c8f5a645,0x800,0x32000)/File(\EFI\fedora\grubx64.efi)
+Boot2001* EFI USB Device	RC
+Boot2002* EFI DVD/CDROM	RC
+Boot2003* EFI Network	RC
+Boot8087* Udm
+FvVol(a881d567-6cb0-4eee-8435-2e72d33e45b5)/FvFile(9a9ab4c1-ee1b-488b-b300-24544a7bd418)
+
+I think you're right about it using the old grub binary. I'm
+embarrassingly unfamiliar with both UEFI and grub, but I'm guessing you
+set the location of grub.cfg at compile time? When I boot
+\EFI\fedora\grubx64.efi, it's pulling the grub.cfg from
+\EFI\redhat\grub.cfg.
+
+Regards,
+Jeremy
