@@ -1,75 +1,81 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57190 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750783AbeCHUZI (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48792 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750849AbeCHUYT (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 8 Mar 2018 15:25:08 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w28KP8OO124159
-        for <linux-integrity@vger.kernel.org>; Thu, 8 Mar 2018 15:25:08 -0500
-Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2gkaf9v1tw-1
+        Thu, 8 Mar 2018 15:24:19 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w28K6sKu072148
+        for <linux-integrity@vger.kernel.org>; Thu, 8 Mar 2018 15:24:18 -0500
+Received: from e06smtp13.uk.ibm.com (e06smtp13.uk.ibm.com [195.75.94.109])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2gk98s743u-1
         (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 08 Mar 2018 15:24:32 -0500
+        for <linux-integrity@vger.kernel.org>; Thu, 08 Mar 2018 15:24:17 -0500
 Received: from localhost
-        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Thu, 8 Mar 2018 20:24:30 -0000
+        Thu, 8 Mar 2018 20:24:16 -0000
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Dongsu Park <dongsu@kinvolk.io>,
-        Alban Crequy <alban@kinvolk.io>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: [PATCH v3 4/4] fuse: define the filesystem as untrusted
-Date: Thu,  8 Mar 2018 15:24:10 -0500
-In-Reply-To: <1520540650-7451-1-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1520540650-7451-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-Id: <1520540650-7451-5-git-send-email-zohar@linux.vnet.ibm.com>
+        Mimi Zohar <zohar@linux.vnet.ibm.com>
+Subject: [PATCH v3 0/4] unverifiable file signatures
+Date: Thu,  8 Mar 2018 15:24:06 -0500
+Message-Id: <1520540650-7451-1-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Files on FUSE can change at any point in time without IMA being able
-to detect it.  The file data read for the file signature verification
-could be totally different from what is subsequently read, making the
-signature verification useless.
+For local filesystems, the kernel prevents files being executed from
+being modified.  With IMA-measurement enabled, the kernel also emits
+audit "time of measure, time of use" messages for files opened for
+read, and subsequently opened for write.
 
-FUSE can be mounted by unprivileged users either today with fusermount
-installed with setuid, or soon with the upcoming patches to allow FUSE
-mounts in a non-init user namespace.
+Files on fuse are initially measured, appraised, and audited.  Although
+the file data can change dynamically any time, making re-measuring,
+re-appraising, or re-auditing pointless, this patch set attempts to
+differentiate between unprivileged non-init root and privileged
+mounted fuse filesystems.
 
-This patch sets the SB_I_IMA_UNVERIFIABLE_SIGNATURE flag and when
-appropriate sets the SB_I_UNTRUSTED_MOUNTER flag.
+This patch set addresses three different scenarios:
+- Unprivileged non-init root mounted fuse filesystems are untrusted.
+  Signature verification should always fail and re-measuring,
+  re-appraising, re-auditing files makes no sense.
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Seth Forshee <seth.forshee@canonical.com>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Dongsu Park <dongsu@kinvolk.io>
-Cc: Alban Crequy <alban@kinvolk.io>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
----
- fs/fuse/inode.c | 3 +++
- 1 file changed, 3 insertions(+)
+  Always enabled.
 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 624f18bbfd2b..ef309958e060 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -1080,6 +1080,9 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
- 	sb->s_maxbytes = MAX_LFS_FILESIZE;
- 	sb->s_time_gran = 1;
- 	sb->s_export_op = &fuse_export_operations;
-+	sb->s_iflags |= SB_I_IMA_UNVERIFIABLE_SIGNATURE;
-+	if (sb->s_user_ns != &init_user_ns)
-+		sb->s_iflags |= SB_I_UNTRUSTED_MOUNTER;
- 
- 	file = fget(d.fd);
- 	err = -EINVAL;
+- For privileged mounted filesystems in a "secure" environment, with a
+  correctly enforced security policy, which is willing to assume the
+  inherent risk of specific fuse filesystems, it is reasonable to
+  re-measure, re-appraise, and re-audit files.
+
+  Enabled by default to prevent breaking existing systems.
+
+- Privileged mounted filesystems unwilling to assume the risks and
+  prefers to securely fail safe.
+
+  Enabled based on policy.
+
+Changelog v3:
+- Fix SB_IMA_UNVERIFIABLE_SIGNATURE & SB_I_UNTRUSTED_MOUNTER test.
+- Rename the builtin policy name to "fail_securely".
+
+Mimi
+
+Mimi Zohar (4):
+  ima: fail file signature verification on non-init mounted filesystems
+  ima: re-evaluate files on privileged mounted filesystems
+  ima: fail signature verification based on policy
+  fuse: define the filesystem as untrusted
+
+ Documentation/admin-guide/kernel-parameters.txt |  8 +++++++-
+ fs/fuse/inode.c                                 |  3 +++
+ include/linux/fs.h                              |  2 ++
+ security/integrity/ima/ima_appraise.c           | 16 +++++++++++++++-
+ security/integrity/ima/ima_main.c               | 14 ++++++++++++--
+ security/integrity/ima/ima_policy.c             |  5 +++++
+ security/integrity/integrity.h                  |  1 +
+ 7 files changed, 45 insertions(+), 4 deletions(-)
+
 -- 
 2.7.5
