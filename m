@@ -1,57 +1,55 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io0-f170.google.com ([209.85.223.170]:35136 "EHLO
-        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752179AbeCHShY (ORCPT
+Received: from a8-57.smtp-out.amazonses.com ([54.240.8.57]:54714 "EHLO
+        a8-57.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755957AbeCHSUG (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 8 Mar 2018 13:37:24 -0500
-Received: by mail-io0-f170.google.com with SMTP id 30so743717iog.2
-        for <linux-integrity@vger.kernel.org>; Thu, 08 Mar 2018 10:37:24 -0800 (PST)
-Date: Thu, 8 Mar 2018 11:37:21 -0700
-From: Tycho Andersen <tycho@tycho.ws>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-hardening@lists.openwall.com
-Subject: Re: [PATCH] ima: drop vla in ima_audit_measurement()
-Message-ID: <20180308183721.mnsrmhekyfo2dbso@smitten>
-References: <20180308171456.2597-1-tycho@tycho.ws>
- <CAHp75VfoiQ_PxBph8JnNzun4y5Z-9z_rUcjGyM7A2CAwynddeA@mail.gmail.com>
+        Thu, 8 Mar 2018 13:20:06 -0500
+Subject: Re: Regression from efi: call get_event_log before ExitBootServices
+To: Thiebaud Weksteen <tweek@google.com>
+Cc: Javier Martinez Canillas <javierm@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        hdegoede@redhat.com, linux-efi@vger.kernel.org,
+        linux-integrity@vger.kernel.org, tpmdd-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
+ <CA+zpnLdSyuyKjJEH3Oowmha2mF0B-j5b4A7CLuXXY7RH47SiFQ@mail.gmail.com>
+ <0100016201863c0f-70600bd6-12d3-461d-9173-e4d61e8d09d5-000000@email.amazonses.com>
+ <CA+zpnLf1WNxYY-FaoFbas480GmkUW6kw_L7zi5mES3EPhL7egA@mail.gmail.com>
+From: Jeremy Cline <jeremy@jcline.org>
+Message-ID: <0100016206d770c7-11c5bffc-70e7-41bf-a62a-d8aad8209f7e-000000@email.amazonses.com>
+Date: Thu, 8 Mar 2018 18:20:05 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAHp75VfoiQ_PxBph8JnNzun4y5Z-9z_rUcjGyM7A2CAwynddeA@mail.gmail.com>
+In-Reply-To: <CA+zpnLf1WNxYY-FaoFbas480GmkUW6kw_L7zi5mES3EPhL7egA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Mar 08, 2018 at 07:47:37PM +0200, Andy Shevchenko wrote:
-> On Thu, Mar 8, 2018 at 7:14 PM, Tycho Andersen <tycho@tycho.ws> wrote:
-> > In keeping with the directive to get rid of VLAs [1], let's drop the VLA
-> > from ima_audit_measurement(). We need to adjust the return type of
-> > ima_audit_measurement, because now this function can fail if an allocation
-> > fails.
-> 
-> 
-> 
-> > +       algo_hash_len = hash_len + strlen(algo_name) + 2;
-> > +       algo_hash = kzalloc(algo_hash_len, GFP_KERNEL);
-> 
-> > -       snprintf(algo_hash, sizeof(algo_hash), "%s:%s", algo_name, hash);
-> > +       snprintf(algo_hash, algo_hash_len, "%s:%s", algo_name, hash);
-> 
-> kasprintf() ?
+On 03/08/2018 03:45 AM, Thiebaud Weksteen wrote:
+> Jeremy, Hans, could you both describe precisely how your boot is
+> configured? This feature is only triggered when booting the EFI stub of the
+> kernel so this may be not executed if you are using something else in
+> between.
 
-Sure, in fact I think we could just do:
+I put everything I know in the other sub-thread.
+> Jeremy, would you be able to modify the efi_retrieve_tpm2_eventlog_1_2
+> function to add multiple efi_printk(sys_table_arg,  "message\n"); to test:
+> if you get the output on your screen; and isolate which call might be the
+> cause of the hang?
+> I can forward a debug patch if that helps.
 
--	snprintf(algo_hash, algo_hash_len, "%s:%s", algo_name, hash);
--	audit_log_untrustedstring(ab, algo_hash);
-+	audit_log_untrustedstring(ab, algo_name);
-+	audit_log_format(ab, ":");
-+	audit_log_untrustedstring(ab, hash);
+Thanks for the patch, here's the output:
 
-and get rid of the allocation entirely. I'll test and make sure it
-works and then re-send.
+Locating the TCG2Protocol
+Calling GetEventLog on TCG2Protocol
+Log returned
+log_location is not empty
+log_size != 0
+Allocating memory for storing the logs
+Returned from memory allocation
+Copying log to new location
 
-Cheers,
+At this point it hangs.
 
-Tycho
+
+Regards,
+Jeremy
