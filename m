@@ -1,93 +1,133 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from a8-200.smtp-out.amazonses.com ([54.240.8.200]:37946 "EHLO
-        a8-200.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934055AbeCHR0l (ORCPT
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:37193 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752087AbeCHRPZ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 8 Mar 2018 12:26:41 -0500
-Subject: Re: Regression from efi: call get_event_log before ExitBootServices
-To: Hans de Goede <hdegoede@redhat.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Thiebaud Weksteen <tweek@google.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
- <e7c2be5c-cf21-fc2d-efda-d9222d93ffad@redhat.com>
- <b32f335c-0d77-1749-f7fe-65f512280255@redhat.com>
- <ade378f6-c997-1d48-a30d-cceee6435fc8@redhat.com>
- <a3b5f822-f8f4-e2f5-46da-e23e13174f28@redhat.com>
- <cec36124-0950-6ad9-58a8-9bd69e63aa04@redhat.com>
-From: Jeremy Cline <jeremy@jcline.org>
-Message-ID: <0100016206a68850-bd5c96b3-f275-46ea-98b1-1317e02a5d6e-000000@email.amazonses.com>
-Date: Thu, 8 Mar 2018 17:26:40 +0000
-MIME-Version: 1.0
-In-Reply-To: <cec36124-0950-6ad9-58a8-9bd69e63aa04@redhat.com>
-Content-Type: text/plain; charset=utf-8
+        Thu, 8 Mar 2018 12:15:25 -0500
+Received: by mail-qk0-f194.google.com with SMTP id y137so493416qka.4
+        for <linux-integrity@vger.kernel.org>; Thu, 08 Mar 2018 09:15:25 -0800 (PST)
+From: Tycho Andersen <tycho@tycho.ws>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-hardening@lists.openwall.com,
+        Tycho Andersen <tycho@tycho.ws>
+Subject: [PATCH] ima: drop vla in ima_audit_measurement()
+Date: Thu,  8 Mar 2018 10:14:56 -0700
+Message-Id: <20180308171456.2597-1-tycho@tycho.ws>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 03/08/2018 11:50 AM, Hans de Goede wrote:
-> <somehow this part of the thread was missing some email addresses, I've
-> added these now>
-> 
-> Hi,
-> 
-> On 07-03-18 12:34, Javier Martinez Canillas wrote:
+In keeping with the directive to get rid of VLAs [1], let's drop the VLA
+from ima_audit_measurement(). We need to adjust the return type of
+ima_audit_measurement, because now this function can fail if an allocation
+fails.
 
-<snip>
+[1]: https://lkml.org/lkml/2018/3/7/621
 
->> Are you also able to read the TPM event logs?
->>
->> $ hexdump /sys/kernel/security/tpm0/binary_bios_measurements
-> 
-> Yes for me that outputs a lot of hex :)
+Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+---
+ security/integrity/ima/ima.h      |  4 ++--
+ security/integrity/ima/ima_api.c  | 31 +++++++++++++++++++++++--------
+ security/integrity/ima/ima_main.c |  7 +++++--
+ 3 files changed, 30 insertions(+), 12 deletions(-)
 
-For me, /sys/kernel/security/tmp0 doesn't exist on 4.15.6 or 4.16 with
-the patch reverted.
-
->> The UEFI firmware does some measurements and so does shim. So you should
->> have some event logs. What version of shim are you using? And also would
->> be good to know if it's the same shim version that Jeremy is using.
-> 
-> That is a very good question, I'm using: shim-ia32-13-0.7.x86_64, which is
-> the last version for F27 AFAICT.
-
-All my tablet has installed is shim-0.8-10.x86_64, no shim-ia32.
-
-> 
-> But Jeremy's tablet might very well be not using the shim at all, as
-> I manually installed Fedora 25 on the tablet he now has, before Fedora
-> supported
-> machines with 32 bit EFI. I then later did a "dnf distro-sync" to
-> Fedora-27.
-> 
-> Jeremy might also very well still be booting using a grub binary I build
-> manually back then, without any shim being involved.
-> 
-> Jeremy what does efibootmgr -v output on your device ?
-
-# efibootmgr -v
-BootCurrent: 0003
-Timeout: 4 seconds
-BootOrder: 0003,0000,0001,2001,2002,2003
-Boot0000* Android X64 OS
-HD(1,GPT,215e6cf3-e97d-4735-9c4e-7338c8f5a645,0x800,0x32000)/File(\EFI\BOOT\bootx64.efi)RC
-Boot0001* Internal EFI Shell
-FvVol(a881d567-6cb0-4eee-8435-2e72d33e45b5)/FvFile(c57ad6b7-0515-40a8-9d21-551652854e37)RCM&".
-Boot0003* Fedora
-HD(1,GPT,215e6cf3-e97d-4735-9c4e-7338c8f5a645,0x800,0x32000)/File(\EFI\fedora\grubx64.efi)
-Boot2001* EFI USB Device	RC
-Boot2002* EFI DVD/CDROM	RC
-Boot2003* EFI Network	RC
-Boot8087* Udm
-FvVol(a881d567-6cb0-4eee-8435-2e72d33e45b5)/FvFile(9a9ab4c1-ee1b-488b-b300-24544a7bd418)
-
-I think you're right about it using the old grub binary. I'm
-embarrassingly unfamiliar with both UEFI and grub, but I'm guessing you
-set the location of grub.cfg at compile time? When I boot
-\EFI\fedora\grubx64.efi, it's pulling the grub.cfg from
-\EFI\redhat\grub.cfg.
-
-Regards,
-Jeremy
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index d52b487ad259..8e2470f72f7f 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -201,8 +201,8 @@ void ima_store_measurement(struct integrity_iint_cache *iint, struct file *file,
+ 			   const unsigned char *filename,
+ 			   struct evm_ima_xattr_data *xattr_value,
+ 			   int xattr_len, int pcr);
+-void ima_audit_measurement(struct integrity_iint_cache *iint,
+-			   const unsigned char *filename);
++int ima_audit_measurement(struct integrity_iint_cache *iint,
++			  const unsigned char *filename);
+ int ima_alloc_init_template(struct ima_event_data *event_data,
+ 			    struct ima_template_entry **entry);
+ int ima_store_template(struct ima_template_entry *entry, int violation,
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index 08fe405338e1..008d3887ae00 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -304,17 +304,28 @@ void ima_store_measurement(struct integrity_iint_cache *iint,
+ 		ima_free_template_entry(entry);
+ }
+ 
+-void ima_audit_measurement(struct integrity_iint_cache *iint,
+-			   const unsigned char *filename)
++int ima_audit_measurement(struct integrity_iint_cache *iint,
++			  const unsigned char *filename)
+ {
+ 	struct audit_buffer *ab;
+-	char hash[(iint->ima_hash->length * 2) + 1];
++	char *hash, *algo_hash;
+ 	const char *algo_name = hash_algo_name[iint->ima_hash->algo];
+-	char algo_hash[sizeof(hash) + strlen(algo_name) + 2];
+-	int i;
++	int i, hash_len, algo_hash_len;
+ 
+ 	if (iint->flags & IMA_AUDITED)
+-		return;
++		return 0;
++
++	hash_len = (iint->ima_hash->length * 2) + 1;
++	hash = kzalloc(hash_len, GFP_KERNEL);
++	if (!hash)
++		return -ENOMEM;
++
++	algo_hash_len = hash_len + strlen(algo_name) + 2;
++	algo_hash = kzalloc(algo_hash_len, GFP_KERNEL);
++	if (!algo_hash) {
++		kfree(hash);
++		return -ENOMEM;
++	}
+ 
+ 	for (i = 0; i < iint->ima_hash->length; i++)
+ 		hex_byte_pack(hash + (i * 2), iint->ima_hash->digest[i]);
+@@ -323,18 +334,22 @@ void ima_audit_measurement(struct integrity_iint_cache *iint,
+ 	ab = audit_log_start(current->audit_context, GFP_KERNEL,
+ 			     AUDIT_INTEGRITY_RULE);
+ 	if (!ab)
+-		return;
++		goto out;
+ 
+ 	audit_log_format(ab, "file=");
+ 	audit_log_untrustedstring(ab, filename);
+ 	audit_log_format(ab, " hash=");
+-	snprintf(algo_hash, sizeof(algo_hash), "%s:%s", algo_name, hash);
++	snprintf(algo_hash, algo_hash_len, "%s:%s", algo_name, hash);
+ 	audit_log_untrustedstring(ab, algo_hash);
+ 
+ 	audit_log_task_info(ab, current);
+ 	audit_log_end(ab);
+ 
+ 	iint->flags |= IMA_AUDITED;
++out:
++	kfree(hash);
++	kfree(algo_hash);
++	return 0;
+ }
+ 
+ /*
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 2cfb0c714967..356faae6f09c 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -288,8 +288,11 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+ 					      xattr_value, xattr_len, opened);
+ 		inode_unlock(inode);
+ 	}
+-	if (action & IMA_AUDIT)
+-		ima_audit_measurement(iint, pathname);
++	if (action & IMA_AUDIT) {
++		rc = ima_audit_measurement(iint, pathname);
++		if (rc < 0)
++			goto out_locked;
++	}
+ 
+ 	if ((file->f_flags & O_DIRECT) && (iint->flags & IMA_PERMIT_DIRECTIO))
+ 		rc = 0;
+-- 
+2.14.1
