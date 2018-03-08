@@ -1,86 +1,80 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:37207 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750836AbeCHVrF (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:55735 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750792AbeCHVpu (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 8 Mar 2018 16:47:05 -0500
-Subject: Re: [PATCH v3 3/5] tpm: migrate tpm2_probe() to use struct tpm_buf
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20180305165614.5469-1-jarkko.sakkinen@linux.intel.com>
- <20180305165614.5469-4-jarkko.sakkinen@linux.intel.com>
-From: J Freyensee <why2jjj.linux@gmail.com>
-Message-ID: <3f3f9059-06ae-cb78-0d02-2658b2edc234@gmail.com>
-Date: Thu, 8 Mar 2018 13:47:00 -0800
+        Thu, 8 Mar 2018 16:45:50 -0500
+Received: by mail-it0-f65.google.com with SMTP id n136so348518itg.5
+        for <linux-integrity@vger.kernel.org>; Thu, 08 Mar 2018 13:45:50 -0800 (PST)
+Date: Thu, 8 Mar 2018 14:45:47 -0700
+From: Tycho Andersen <tycho@tycho.ws>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Subject: Re: [PATCH v2] ima: drop vla in ima_audit_measurement()
+Message-ID: <20180308214547.kdeoeozugxffzumn@smitten>
+References: <20180308202347.31331-1-tycho@tycho.ws>
+ <1520541374.3605.101.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180305165614.5469-4-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1520541374.3605.101.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
+Hi Mimi,
 
+On Thu, Mar 08, 2018 at 03:36:14PM -0500, Mimi Zohar wrote:
+> On Thu, 2018-03-08 at 13:23 -0700, Tycho Andersen wrote:
+> 
+> >  /*
+> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> > index 2cfb0c714967..356faae6f09c 100644
+> > --- a/security/integrity/ima/ima_main.c
+> > +++ b/security/integrity/ima/ima_main.c
+> > @@ -288,8 +288,11 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+> >  					      xattr_value, xattr_len, opened);
+> >  		inode_unlock(inode);
+> >  	}
+> > -	if (action & IMA_AUDIT)
+> > -		ima_audit_measurement(iint, pathname);
+> > +	if (action & IMA_AUDIT) {
+> > +		rc = ima_audit_measurement(iint, pathname);
+> > +		if (rc < 0)
+> > +			goto out_locked;
+> > +	}
+> > 
+> >  	if ((file->f_flags & O_DIRECT) && (iint->flags & IMA_PERMIT_DIRECTIO))
+> >  		rc = 0;
+> 
+> Only when IMA-appraisal is enforcing file data integrity should
+> process_measurement() ever fail.  Other errors can be logged/audited.
 
-On 3/5/18 8:56 AM, Jarkko Sakkinen wrote:
-> In order to make struct tpm_buf the first class object for constructing TPM
-> commands, migrate tpm2_probe() to use it.
->
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->   drivers/char/tpm/tpm2-cmd.c | 27 +++++++++++++++------------
->   1 file changed, 15 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index abe6ef4a7a0b..890d83c5c78b 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -851,22 +851,25 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
->    */
->   int tpm2_probe(struct tpm_chip *chip)
->   {
-> -	struct tpm2_cmd cmd;
-> +	struct tpm_output_header *out;
-> +	struct tpm_buf buf;
->   	int rc;
->   
-> -	cmd.header.in = tpm2_get_tpm_pt_header;
-> -	cmd.params.get_tpm_pt_in.cap_id = cpu_to_be32(TPM2_CAP_TPM_PROPERTIES);
-> -	cmd.params.get_tpm_pt_in.property_id = cpu_to_be32(0x100);
-> -	cmd.params.get_tpm_pt_in.property_cnt = cpu_to_be32(1);
-> -
-> -	rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd), 0, 0, NULL);
-> -	if (rc <  0)
-> +	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_CAPABILITY);
-> +	if (rc)
->   		return rc;
-> -
-> -	if (be16_to_cpu(cmd.header.out.tag) == TPM2_ST_NO_SESSIONS)
-> +	tpm_buf_append_u32(&buf, TPM2_CAP_TPM_PROPERTIES);
-> +	tpm_buf_append_u32(&buf, TPM_PT_TOTAL_COMMANDS);
-> +	tpm_buf_append_u32(&buf, 1);
-> +	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0, NULL);
-> +	if (rc <  0)
-> +		goto out;
-> +	out = (struct tpm_output_header *)buf.data;
-> +	if (be16_to_cpu(out->tag) == TPM2_ST_NO_SESSIONS)
->   		chip->flags |= TPM_CHIP_FLAG_TPM2;
-> -
-> -	return 0;
-> +out:
-> +	tpm_buf_destroy(&buf);
-> +	return rc;
+Ok, so previously in ima_audit_measurement() when allocation failed,
+there was nothing logged. If we just keep this behavior like below,
+does that look good?
 
+Thanks!
 
-Looks better :-).
+Tycho
 
-
-Acked-by: Jay Freyensee <why2jjj.linux@gmail.com>
-
-
->   }
->   EXPORT_SYMBOL_GPL(tpm2_probe);
->   
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 356faae6f09c..4e699bc7adc5 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -289,9 +289,13 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+ 		inode_unlock(inode);
+ 	}
+ 	if (action & IMA_AUDIT) {
+-		rc = ima_audit_measurement(iint, pathname);
+-		if (rc < 0)
++		int ret;
++
++		ret = ima_audit_measurement(iint, pathname);
++		if (ret < 0 && ima_appraise & IMA_APPRAISE_ENFORCE) {
++			rc = ret;
+ 			goto out_locked;
++		}
+ 	}
+ 
+ 	if ((file->f_flags & O_DIRECT) && (iint->flags & IMA_PERMIT_DIRECTIO))
