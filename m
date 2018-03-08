@@ -1,125 +1,75 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:39074 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751047AbeCHUZk (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57190 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750783AbeCHUZI (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 8 Mar 2018 15:25:40 -0500
-Received: by mail-io0-f194.google.com with SMTP id b34so1083769ioj.6
-        for <linux-integrity@vger.kernel.org>; Thu, 08 Mar 2018 12:25:40 -0800 (PST)
-From: Tycho Andersen <tycho@tycho.ws>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-hardening@lists.openwall.com,
-        Tycho Andersen <tycho@tycho.ws>
-Subject: [PATCH v2] ima: drop vla in ima_audit_measurement()
-Date: Thu,  8 Mar 2018 13:23:47 -0700
-Message-Id: <20180308202347.31331-1-tycho@tycho.ws>
+        Thu, 8 Mar 2018 15:25:08 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w28KP8OO124159
+        for <linux-integrity@vger.kernel.org>; Thu, 8 Mar 2018 15:25:08 -0500
+Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2gkaf9v1tw-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 08 Mar 2018 15:24:32 -0500
+Received: from localhost
+        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Thu, 8 Mar 2018 20:24:30 -0000
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Dongsu Park <dongsu@kinvolk.io>,
+        Alban Crequy <alban@kinvolk.io>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Subject: [PATCH v3 4/4] fuse: define the filesystem as untrusted
+Date: Thu,  8 Mar 2018 15:24:10 -0500
+In-Reply-To: <1520540650-7451-1-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1520540650-7451-1-git-send-email-zohar@linux.vnet.ibm.com>
+Message-Id: <1520540650-7451-5-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-In keeping with the directive to get rid of VLAs [1], let's drop the VLA
-from ima_audit_measurement(). We need to adjust the return type of
-ima_audit_measurement, because now this function can fail if an allocation
-fails.
+Files on FUSE can change at any point in time without IMA being able
+to detect it.  The file data read for the file signature verification
+could be totally different from what is subsequently read, making the
+signature verification useless.
 
-[1]: https://lkml.org/lkml/2018/3/7/621
+FUSE can be mounted by unprivileged users either today with fusermount
+installed with setuid, or soon with the upcoming patches to allow FUSE
+mounts in a non-init user namespace.
 
-v2: just use audit_log_format instead of doing a second allocation
+This patch sets the SB_I_IMA_UNVERIFIABLE_SIGNATURE flag and when
+appropriate sets the SB_I_UNTRUSTED_MOUNTER flag.
 
-Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Seth Forshee <seth.forshee@canonical.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Dongsu Park <dongsu@kinvolk.io>
+Cc: Alban Crequy <alban@kinvolk.io>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
 ---
- security/integrity/ima/ima.h      |  4 ++--
- security/integrity/ima/ima_api.c  | 22 +++++++++++++---------
- security/integrity/ima/ima_main.c |  7 +++++--
- 3 files changed, 20 insertions(+), 13 deletions(-)
+ fs/fuse/inode.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index d52b487ad259..8e2470f72f7f 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -201,8 +201,8 @@ void ima_store_measurement(struct integrity_iint_cache *iint, struct file *file,
- 			   const unsigned char *filename,
- 			   struct evm_ima_xattr_data *xattr_value,
- 			   int xattr_len, int pcr);
--void ima_audit_measurement(struct integrity_iint_cache *iint,
--			   const unsigned char *filename);
-+int ima_audit_measurement(struct integrity_iint_cache *iint,
-+			  const unsigned char *filename);
- int ima_alloc_init_template(struct ima_event_data *event_data,
- 			    struct ima_template_entry **entry);
- int ima_store_template(struct ima_template_entry *entry, int violation,
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index 08fe405338e1..3a4442405cc8 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -304,17 +304,20 @@ void ima_store_measurement(struct integrity_iint_cache *iint,
- 		ima_free_template_entry(entry);
- }
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 624f18bbfd2b..ef309958e060 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1080,6 +1080,9 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
+ 	sb->s_maxbytes = MAX_LFS_FILESIZE;
+ 	sb->s_time_gran = 1;
+ 	sb->s_export_op = &fuse_export_operations;
++	sb->s_iflags |= SB_I_IMA_UNVERIFIABLE_SIGNATURE;
++	if (sb->s_user_ns != &init_user_ns)
++		sb->s_iflags |= SB_I_UNTRUSTED_MOUNTER;
  
--void ima_audit_measurement(struct integrity_iint_cache *iint,
--			   const unsigned char *filename)
-+int ima_audit_measurement(struct integrity_iint_cache *iint,
-+			  const unsigned char *filename)
- {
- 	struct audit_buffer *ab;
--	char hash[(iint->ima_hash->length * 2) + 1];
-+	char *hash;
- 	const char *algo_name = hash_algo_name[iint->ima_hash->algo];
--	char algo_hash[sizeof(hash) + strlen(algo_name) + 2];
- 	int i;
- 
- 	if (iint->flags & IMA_AUDITED)
--		return;
-+		return 0;
-+
-+	hash = kzalloc((iint->ima_hash->length * 2) + 1, GFP_KERNEL);
-+	if (!hash)
-+		return -ENOMEM;
- 
- 	for (i = 0; i < iint->ima_hash->length; i++)
- 		hex_byte_pack(hash + (i * 2), iint->ima_hash->digest[i]);
-@@ -323,18 +326,19 @@ void ima_audit_measurement(struct integrity_iint_cache *iint,
- 	ab = audit_log_start(current->audit_context, GFP_KERNEL,
- 			     AUDIT_INTEGRITY_RULE);
- 	if (!ab)
--		return;
-+		goto out;
- 
- 	audit_log_format(ab, "file=");
- 	audit_log_untrustedstring(ab, filename);
--	audit_log_format(ab, " hash=");
--	snprintf(algo_hash, sizeof(algo_hash), "%s:%s", algo_name, hash);
--	audit_log_untrustedstring(ab, algo_hash);
-+	audit_log_format(ab, " hash=\"%s:%s\"", algo_name, hash);
- 
- 	audit_log_task_info(ab, current);
- 	audit_log_end(ab);
- 
- 	iint->flags |= IMA_AUDITED;
-+out:
-+	kfree(hash);
-+	return 0;
- }
- 
- /*
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 2cfb0c714967..356faae6f09c 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -288,8 +288,11 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
- 					      xattr_value, xattr_len, opened);
- 		inode_unlock(inode);
- 	}
--	if (action & IMA_AUDIT)
--		ima_audit_measurement(iint, pathname);
-+	if (action & IMA_AUDIT) {
-+		rc = ima_audit_measurement(iint, pathname);
-+		if (rc < 0)
-+			goto out_locked;
-+	}
- 
- 	if ((file->f_flags & O_DIRECT) && (iint->flags & IMA_PERMIT_DIRECTIO))
- 		rc = 0;
+ 	file = fget(d.fd);
+ 	err = -EINVAL;
 -- 
-2.14.1
+2.7.5
