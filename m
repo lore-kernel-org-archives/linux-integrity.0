@@ -1,116 +1,85 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33305 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751054AbeCIJ3I (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:34464 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750867AbeCHXJh (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 9 Mar 2018 04:29:08 -0500
-Received: by mail-wm0-f68.google.com with SMTP id s206so2643587wme.0
-        for <linux-integrity@vger.kernel.org>; Fri, 09 Mar 2018 01:29:07 -0800 (PST)
-Subject: Re: Regression from efi: call get_event_log before ExitBootServices
-To: Jeremy Cline <jeremy@jcline.org>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Thiebaud Weksteen <tweek@google.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
- <e7c2be5c-cf21-fc2d-efda-d9222d93ffad@redhat.com>
- <b32f335c-0d77-1749-f7fe-65f512280255@redhat.com>
- <ade378f6-c997-1d48-a30d-cceee6435fc8@redhat.com>
- <a3b5f822-f8f4-e2f5-46da-e23e13174f28@redhat.com>
- <cec36124-0950-6ad9-58a8-9bd69e63aa04@redhat.com>
- <0100016206a68850-bd5c96b3-f275-46ea-98b1-1317e02a5d6e-000000@email.amazonses.com>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <29c1640a-cf19-ca19-7de9-96f202edfb5a@redhat.com>
-Date: Fri, 9 Mar 2018 10:29:04 +0100
-MIME-Version: 1.0
-In-Reply-To: <0100016206a68850-bd5c96b3-f275-46ea-98b1-1317e02a5d6e-000000@email.amazonses.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Thu, 8 Mar 2018 18:09:37 -0500
+Received: by mail-io0-f196.google.com with SMTP id e7so1564047ioj.1
+        for <linux-integrity@vger.kernel.org>; Thu, 08 Mar 2018 15:09:36 -0800 (PST)
+From: Tycho Andersen <tycho@tycho.ws>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-hardening@lists.openwall.com,
+        Tycho Andersen <tycho@tycho.ws>
+Subject: [PATCH v3] ima: drop vla in ima_audit_measurement()
+Date: Thu,  8 Mar 2018 16:08:36 -0700
+Message-Id: <20180308230836.24329-1-tycho@tycho.ws>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi,
+In keeping with the directive to get rid of VLAs [1], let's drop the VLA
+from ima_audit_measurement(). We need to adjust the return type of
+ima_audit_measurement, because now this function can fail if an allocation
+fails.
 
-On 08-03-18 18:26, Jeremy Cline wrote:
-> On 03/08/2018 11:50 AM, Hans de Goede wrote:
->> <somehow this part of the thread was missing some email addresses, I've
->> added these now>
->>
->> Hi,
->>
->> On 07-03-18 12:34, Javier Martinez Canillas wrote:
-> 
-> <snip>
-> 
->>> Are you also able to read the TPM event logs?
->>>
->>> $ hexdump /sys/kernel/security/tpm0/binary_bios_measurements
->>
->> Yes for me that outputs a lot of hex :)
-> 
-> For me, /sys/kernel/security/tmp0 doesn't exist on 4.15.6 or 4.16 with
-> the patch reverted.
+[1]: https://lkml.org/lkml/2018/3/7/621
 
-Hmm, have you re-enabled the TPM in the BIOS?
+v2: just use audit_log_format instead of doing a second allocation
+v3: ignore failures in ima_audit_measurement()
 
->>> The UEFI firmware does some measurements and so does shim. So you should
->>> have some event logs. What version of shim are you using? And also would
->>> be good to know if it's the same shim version that Jeremy is using.
->>
->> That is a very good question, I'm using: shim-ia32-13-0.7.x86_64, which is
->> the last version for F27 AFAICT.
-> 
-> All my tablet has installed is shim-0.8-10.x86_64, no shim-ia32.
+Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+---
+ security/integrity/ima/ima_api.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-Yes my bad, although if the kernel changes break booting on systems
-without the shim that is still good to know and something which
-we probably ought to fix.
-
->> But Jeremy's tablet might very well be not using the shim at all, as
->> I manually installed Fedora 25 on the tablet he now has, before Fedora
->> supported
->> machines with 32 bit EFI. I then later did a "dnf distro-sync" to
->> Fedora-27.
->>
->> Jeremy might also very well still be booting using a grub binary I build
->> manually back then, without any shim being involved.
->>
->> Jeremy what does efibootmgr -v output on your device ?
-> 
-> # efibootmgr -v
-> BootCurrent: 0003
-> Timeout: 4 seconds
-> BootOrder: 0003,0000,0001,2001,2002,2003
-> Boot0000* Android X64 OS
-> HD(1,GPT,215e6cf3-e97d-4735-9c4e-7338c8f5a645,0x800,0x32000)/File(\EFI\BOOT\bootx64.efi)RC
-> Boot0001* Internal EFI Shell
-> FvVol(a881d567-6cb0-4eee-8435-2e72d33e45b5)/FvFile(c57ad6b7-0515-40a8-9d21-551652854e37)RCM&".
-> Boot0003* Fedora
-> HD(1,GPT,215e6cf3-e97d-4735-9c4e-7338c8f5a645,0x800,0x32000)/File(\EFI\fedora\grubx64.efi)
-> Boot2001* EFI USB Device	RC
-> Boot2002* EFI DVD/CDROM	RC
-> Boot2003* EFI Network	RC
-> Boot8087* Udm
-> FvVol(a881d567-6cb0-4eee-8435-2e72d33e45b5)/FvFile(9a9ab4c1-ee1b-488b-b300-24544a7bd418)
-> 
-> I think you're right about it using the old grub binary. I'm
-> embarrassingly unfamiliar with both UEFI and grub, but I'm guessing you
-> set the location of grub.cfg at compile time? When I boot
-> \EFI\fedora\grubx64.efi, it's pulling the grub.cfg from
-> \EFI\redhat\grub.cfg.
-
-Ah yes, so I did not build my own grub I took one from RHEL as that had
-32 bit UEFI support before Fedora got it and as I was lazy I copied the
-32 bit binary over the 64 bit one, so don't let the filename fool you.
-
-What you could do is install grub2-efi-ia32 from the Fedora 27 repos
-and then use efibootmgr to add an entry pointing to \EFI\fedora\grubia32.efi
-note that one will look at \EFI\fedora\grub.cfg .
-
-Then see if the problem persists. A second step would be to also install
-shim-ia32 and point to that...
-
-Regards,
-
-Hans
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index 08fe405338e1..2aab9170ef68 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -308,14 +308,17 @@ void ima_audit_measurement(struct integrity_iint_cache *iint,
+ 			   const unsigned char *filename)
+ {
+ 	struct audit_buffer *ab;
+-	char hash[(iint->ima_hash->length * 2) + 1];
++	char *hash;
+ 	const char *algo_name = hash_algo_name[iint->ima_hash->algo];
+-	char algo_hash[sizeof(hash) + strlen(algo_name) + 2];
+ 	int i;
+ 
+ 	if (iint->flags & IMA_AUDITED)
+ 		return;
+ 
++	hash = kzalloc((iint->ima_hash->length * 2) + 1, GFP_KERNEL);
++	if (!hash)
++		return;
++
+ 	for (i = 0; i < iint->ima_hash->length; i++)
+ 		hex_byte_pack(hash + (i * 2), iint->ima_hash->digest[i]);
+ 	hash[i * 2] = '\0';
+@@ -323,18 +326,19 @@ void ima_audit_measurement(struct integrity_iint_cache *iint,
+ 	ab = audit_log_start(current->audit_context, GFP_KERNEL,
+ 			     AUDIT_INTEGRITY_RULE);
+ 	if (!ab)
+-		return;
++		goto out;
+ 
+ 	audit_log_format(ab, "file=");
+ 	audit_log_untrustedstring(ab, filename);
+-	audit_log_format(ab, " hash=");
+-	snprintf(algo_hash, sizeof(algo_hash), "%s:%s", algo_name, hash);
+-	audit_log_untrustedstring(ab, algo_hash);
++	audit_log_format(ab, " hash=\"%s:%s\"", algo_name, hash);
+ 
+ 	audit_log_task_info(ab, current);
+ 	audit_log_end(ab);
+ 
+ 	iint->flags |= IMA_AUDITED;
++out:
++	kfree(hash);
++	return;
+ }
+ 
+ /*
+-- 
+2.14.1
