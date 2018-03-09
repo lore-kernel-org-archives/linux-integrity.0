@@ -1,82 +1,85 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from a8-200.smtp-out.amazonses.com ([54.240.8.200]:44496 "EHLO
-        a8-200.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932157AbeCIQyo (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57700 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932221AbeCIPjb (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 9 Mar 2018 11:54:44 -0500
-Date: Fri, 9 Mar 2018 16:54:42 +0000
-From: Jeremy Cline <jeremy@jcline.org>
-To: Thiebaud Weksteen <tweek@google.com>
-Cc: hdegoede@redhat.com, Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: Regression from efi: call get_event_log before ExitBootServices
-Message-ID: <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
-References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
- <e7c2be5c-cf21-fc2d-efda-d9222d93ffad@redhat.com>
- <b32f335c-0d77-1749-f7fe-65f512280255@redhat.com>
- <ade378f6-c997-1d48-a30d-cceee6435fc8@redhat.com>
- <a3b5f822-f8f4-e2f5-46da-e23e13174f28@redhat.com>
- <cec36124-0950-6ad9-58a8-9bd69e63aa04@redhat.com>
- <0100016206a68850-bd5c96b3-f275-46ea-98b1-1317e02a5d6e-000000@email.amazonses.com>
- <29c1640a-cf19-ca19-7de9-96f202edfb5a@redhat.com>
- <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
+        Fri, 9 Mar 2018 10:39:31 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w29FVW9K099411
+        for <linux-integrity@vger.kernel.org>; Fri, 9 Mar 2018 10:39:30 -0500
+Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2gksg6hjyv-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 09 Mar 2018 10:39:30 -0500
+Received: from localhost
+        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
+        Fri, 9 Mar 2018 15:39:28 -0000
+From: Nayna Jain <nayna@linux.vnet.ibm.com>
+To: dhowells@redhat.com
+Cc: keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Nayna Jain <nayna@linux.vnet.ibm.com>
+Subject: [PATCH v2 2/3] keys: export find_keyring_by_name()
+Date: Fri,  9 Mar 2018 21:08:02 +0530
+In-Reply-To: <20180309153803.25859-1-nayna@linux.vnet.ibm.com>
+References: <20180309153803.25859-1-nayna@linux.vnet.ibm.com>
+Message-Id: <20180309153803.25859-2-nayna@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Mar 09, 2018 at 10:43:50AM +0000, Thiebaud Weksteen wrote:
-> Thanks a lot for trying out the patch!
-> 
-> Please don't modify your install at this stage, I think we are hitting a
-> firmware bug and that would be awesome if we can fix how we are handling it.
-> So, if we reach that stage in the function it could either be that:
-> * The allocation did not succeed, somehow, but the firmware still returned
-> EFI_SUCCEED.
-> * The size requested is incorrect (I'm thinking something like a 1G of
-> log). This would be due to either a miscalculation of log_size (possible)
-> or; the returned values of GetEventLog are not correct.
-> I'm sending a patch to add checks for these. Could you please apply and
-> retest?
-> Again, thanks for helping debugging this.
+This patch exports the function find_keyring_by_name() to be used by
+other subsystems.
 
-No problem, thanks for the help :)
+Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+---
+Changelog:
 
-With the new patch:
+v2:
+* Fix the patch description per line length as suggested by Mimi
 
-Locating the TCG2Protocol
-Calling GetEventLog on TCG2Protocol
-Log returned
-log_location is not empty
-log_size != 0
-log_size < 1M
-Allocating memory for storing the logs
-Returned from memory allocation
-Copying log to new location
+ include/linux/key.h      | 2 ++
+ security/keys/internal.h | 2 --
+ security/keys/keyring.c  | 1 +
+ 3 files changed, 3 insertions(+), 2 deletions(-)
 
-And then it hangs. I added a couple more print statements:
-
-diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
-index ee3fac109078..1ab5638bc50e 100644
---- a/drivers/firmware/efi/libstub/tpm.c
-+++ b/drivers/firmware/efi/libstub/tpm.c
-@@ -148,8 +148,11 @@ void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
-        efi_printk(sys_table_arg, "Copying log to new location\n");
+diff --git a/include/linux/key.h b/include/linux/key.h
+index e58ee10f6e58..c8d332d4103c 100644
+--- a/include/linux/key.h
++++ b/include/linux/key.h
+@@ -346,6 +346,8 @@ static inline key_serial_t key_serial(const struct key *key)
  
-        memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
-+       efi_printk(sys_table_arg, "Successfully memset log_tbl to 0\n");
-        log_tbl->size = log_size;
-+       efi_printk(sys_table_arg, "Set log_tbl->size\n");
-        log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
-+       efi_printk(sys_table_arg, "Set log_tbl-version\n");
-        memcpy(log_tbl->log, (void *) first_entry_addr, log_size);
+ extern void key_set_timeout(struct key *, unsigned);
  
-        efi_printk(sys_table_arg, "Installing the log into the configuration table\n");
-
-and it's hanging at "memset(log_tbl, 0, sizeof(*log_tbl) + log_size);"
-
-Regards,
-Jeremy
++extern struct key *find_keyring_by_name(const char *name, bool uid_keyring);
++
+ /*
+  * The permissions required on a key that we're looking up.
+  */
+diff --git a/security/keys/internal.h b/security/keys/internal.h
+index 9f8208dc0e55..8aa8d347a1ab 100644
+--- a/security/keys/internal.h
++++ b/security/keys/internal.h
+@@ -141,8 +141,6 @@ extern key_ref_t keyring_search_aux(key_ref_t keyring_ref,
+ extern key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx);
+ extern key_ref_t search_process_keyrings(struct keyring_search_context *ctx);
+ 
+-extern struct key *find_keyring_by_name(const char *name, bool uid_keyring);
+-
+ extern int install_user_keyrings(void);
+ extern int install_thread_keyring_to_cred(struct cred *);
+ extern int install_process_keyring_to_cred(struct cred *);
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index 41bcf57e96f2..4b9c3f1166d1 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -1152,6 +1152,7 @@ struct key *find_keyring_by_name(const char *name, bool uid_keyring)
+ 	read_unlock(&keyring_name_lock);
+ 	return keyring;
+ }
++EXPORT_SYMBOL(find_keyring_by_name);
+ 
+ static int keyring_detect_cycle_iterator(const void *object,
+ 					 void *iterator_data)
+-- 
+2.13.6
