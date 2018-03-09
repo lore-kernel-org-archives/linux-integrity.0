@@ -1,76 +1,61 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53540 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751192AbeCIUOj (ORCPT
+Received: from mail-vk0-f42.google.com ([209.85.213.42]:46351 "EHLO
+        mail-vk0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751278AbeCITyG (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 9 Mar 2018 15:14:39 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w29JtS7V072774
-        for <linux-integrity@vger.kernel.org>; Fri, 9 Mar 2018 15:14:38 -0500
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2gkwdpg5sr-1
-        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 09 Mar 2018 15:14:38 -0500
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Fri, 9 Mar 2018 15:14:37 -0500
-From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-To: linux-ima-devel@lists.sourceforge.net
-Cc: containers@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, tycho@docker.com,
-        serge@hallyn.com, sunyuqiong1988@gmail.com, david.safford@ge.com,
-        mkayaalp@cs.binghamton.edu, linux-integrity@vger.kernel.org,
-        James.Bottomley@HansenPartnership.com, zohar@linux.vnet.ibm.com,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: [RFC PATCH v2 0/3] ima: namespacing IMA
-Date: Fri,  9 Mar 2018 15:14:18 -0500
-Message-Id: <20180309201421.6150-1-stefanb@linux.vnet.ibm.com>
+        Fri, 9 Mar 2018 14:54:06 -0500
+Received: by mail-vk0-f42.google.com with SMTP id x125so2821653vkc.13
+        for <linux-integrity@vger.kernel.org>; Fri, 09 Mar 2018 11:54:06 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <CA+55aFyp4Lvz8QVckBr+zp4OfB1VaFNb2J1s0-xEMA9h44c0UA@mail.gmail.com>
+References: <20180309193020.GA5149@beast> <CA+55aFyp4Lvz8QVckBr+zp4OfB1VaFNb2J1s0-xEMA9h44c0UA@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Fri, 9 Mar 2018 11:54:04 -0800
+Message-ID: <CAGXu5j++Ju0Jg0O3gXPGD7Nzy8uE3NZo_dCF-L0hontG_P+5yw@mail.gmail.com>
+Subject: Re: [PATCH v2] exec: Set file unwritable before LSM check
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: James Morris <jmorris@namei.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-This patch set implements an IMA namespace data structure that gets
-created alongside a mount namespace with CLONE_NEWNS, and lays down the
-foundation for namespacing the different aspects of IMA (eg. IMA-audit,
-IMA-measurement, IMA-appraisal).
+On Fri, Mar 9, 2018 at 11:47 AM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Fri, Mar 9, 2018 at 11:30 AM, Kees Cook <keescook@chromium.org> wrote:
+>> The LSM check should happen after the file has been confirmed to be
+>> unchanging. Without this, we could have a race between the Time of Check
+>> (the call to security_kernel_read_file() which could read the file and
+>> make access policy decisions) and the Time of Use (starting with
+>> kernel_read_file()'s reading of the file contents). In theory, file
+>> contents could change between the two.
+>
+> I'm going to assume I get this for 4.17 from the security tree.
+>
+> Because I'm guessing there are actually no existing users that care?
+> selinux seems to just look at file state, not actually at contents or
+> anything that write access denial would care about.
+>
+> And the only other security module that even registers this is
+> loadpin, and again it just seems to check things like "on the right
+> filesystem" that aren't actually impacted by write access (in fact,
+> the documented reason is to check that it's a read-only filesystem so
+> that write access is simply _irrelevant_).
+>
+> So this issue seems to be mainly a cleanliness thing, not an actual bug.
 
-The original PoC patches [1] created a new CLONE_NEWIMA flag to
-explicitly control when a new IMA namespace should be created. Based on
-comments, we elected to hang the IMA namepace off of existing namespaces,
-and the mount namespace made the most sense. In this version of the patches
-we are adding a pointer to the mnt_namespace pointing to the ima_namespace.
-Both are now tied together and joining the mnt_namespace with setns()
-also joins the ima_namespace that was created along with it.
+That is my assumption too (I left off the Cc: stable as a result). I'm
+much less familiar with IMA, though, but it's a caller of
+kernel_read_file(), not hooking it, etc.
 
-The first patch creates the ima_namespace data, while the second patch
-puts the iint->flags in the namespace. The third patch uses these flags
-for namespacing the IMA-audit messages, enabling the same file to be
-audited each time it is accessed in a new namespace.
-
-Mehmet Kayaalp (2):
-  ima: Add ns_status for storing namespaced iint data
-  ima: mamespace audit status flags
-
-Yuqiong Sun (1):
-  ima: extend clone() with IMA namespace support
-
- fs/mount.h                               |  14 --
- fs/namespace.c                           |  29 +++-
- include/linux/ima.h                      |  70 ++++++++++
- include/linux/mount.h                    |  20 ++-
- init/Kconfig                             |  10 ++
- kernel/nsproxy.c                         |   1 +
- security/integrity/ima/Makefile          |   3 +-
- security/integrity/ima/ima.h             |  47 ++++++-
- security/integrity/ima/ima_api.c         |   8 +-
- security/integrity/ima/ima_init.c        |   4 +
- security/integrity/ima/ima_init_ima_ns.c |  44 ++++++
- security/integrity/ima/ima_main.c        |  15 +-
- security/integrity/ima/ima_ns.c          | 230 +++++++++++++++++++++++++++++++
- 13 files changed, 469 insertions(+), 26 deletions(-)
- create mode 100644 security/integrity/ima/ima_init_ima_ns.c
- create mode 100644 security/integrity/ima/ima_ns.c
+-Kees
 
 -- 
-2.13.6
+Kees Cook
+Pixel Security
