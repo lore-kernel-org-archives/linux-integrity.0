@@ -1,19 +1,17 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-vk0-f42.google.com ([209.85.213.42]:46351 "EHLO
-        mail-vk0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751278AbeCITyG (ORCPT
+Received: from mail-io0-f177.google.com ([209.85.223.177]:32845 "EHLO
+        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932183AbeCITro (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 9 Mar 2018 14:54:06 -0500
-Received: by mail-vk0-f42.google.com with SMTP id x125so2821653vkc.13
-        for <linux-integrity@vger.kernel.org>; Fri, 09 Mar 2018 11:54:06 -0800 (PST)
+        Fri, 9 Mar 2018 14:47:44 -0500
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFyp4Lvz8QVckBr+zp4OfB1VaFNb2J1s0-xEMA9h44c0UA@mail.gmail.com>
-References: <20180309193020.GA5149@beast> <CA+55aFyp4Lvz8QVckBr+zp4OfB1VaFNb2J1s0-xEMA9h44c0UA@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Fri, 9 Mar 2018 11:54:04 -0800
-Message-ID: <CAGXu5j++Ju0Jg0O3gXPGD7Nzy8uE3NZo_dCF-L0hontG_P+5yw@mail.gmail.com>
+In-Reply-To: <20180309193020.GA5149@beast>
+References: <20180309193020.GA5149@beast>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 9 Mar 2018 11:47:43 -0800
+Message-ID: <CA+55aFyp4Lvz8QVckBr+zp4OfB1VaFNb2J1s0-xEMA9h44c0UA@mail.gmail.com>
 Subject: Re: [PATCH v2] exec: Set file unwritable before LSM check
-To: Linus Torvalds <torvalds@linux-foundation.org>
+To: Kees Cook <keescook@chromium.org>
 Cc: James Morris <jmorris@namei.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>,
@@ -26,36 +24,26 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Mar 9, 2018 at 11:47 AM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Fri, Mar 9, 2018 at 11:30 AM, Kees Cook <keescook@chromium.org> wrote:
->> The LSM check should happen after the file has been confirmed to be
->> unchanging. Without this, we could have a race between the Time of Check
->> (the call to security_kernel_read_file() which could read the file and
->> make access policy decisions) and the Time of Use (starting with
->> kernel_read_file()'s reading of the file contents). In theory, file
->> contents could change between the two.
->
-> I'm going to assume I get this for 4.17 from the security tree.
->
-> Because I'm guessing there are actually no existing users that care?
-> selinux seems to just look at file state, not actually at contents or
-> anything that write access denial would care about.
->
-> And the only other security module that even registers this is
-> loadpin, and again it just seems to check things like "on the right
-> filesystem" that aren't actually impacted by write access (in fact,
-> the documented reason is to check that it's a read-only filesystem so
-> that write access is simply _irrelevant_).
->
-> So this issue seems to be mainly a cleanliness thing, not an actual bug.
+On Fri, Mar 9, 2018 at 11:30 AM, Kees Cook <keescook@chromium.org> wrote:
+> The LSM check should happen after the file has been confirmed to be
+> unchanging. Without this, we could have a race between the Time of Check
+> (the call to security_kernel_read_file() which could read the file and
+> make access policy decisions) and the Time of Use (starting with
+> kernel_read_file()'s reading of the file contents). In theory, file
+> contents could change between the two.
 
-That is my assumption too (I left off the Cc: stable as a result). I'm
-much less familiar with IMA, though, but it's a caller of
-kernel_read_file(), not hooking it, etc.
+I'm going to assume I get this for 4.17 from the security tree.
 
--Kees
+Because I'm guessing there are actually no existing users that care?
+selinux seems to just look at file state, not actually at contents or
+anything that write access denial would care about.
 
--- 
-Kees Cook
-Pixel Security
+And the only other security module that even registers this is
+loadpin, and again it just seems to check things like "on the right
+filesystem" that aren't actually impacted by write access (in fact,
+the documented reason is to check that it's a read-only filesystem so
+that write access is simply _irrelevant_).
+
+So this issue seems to be mainly a cleanliness thing, not an actual bug.
+
+             Linus
