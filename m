@@ -1,257 +1,68 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56170 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751263AbeCIPj1 (ORCPT
+Received: from mail-ua0-f202.google.com ([209.85.217.202]:33323 "EHLO
+        mail-ua0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751008AbeCIKu0 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 9 Mar 2018 10:39:27 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w29Famv9089119
-        for <linux-integrity@vger.kernel.org>; Fri, 9 Mar 2018 10:39:26 -0500
-Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2gku4pdn8w-1
-        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 09 Mar 2018 10:39:25 -0500
-Received: from localhost
-        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Fri, 9 Mar 2018 15:39:23 -0000
-From: Nayna Jain <nayna@linux.vnet.ibm.com>
-To: dhowells@redhat.com
-Cc: keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Nayna Jain <nayna@linux.vnet.ibm.com>
-Subject: [PATCH v2 1/3] certs: define a trusted platform keyring
-Date: Fri,  9 Mar 2018 21:08:01 +0530
-Message-Id: <20180309153803.25859-1-nayna@linux.vnet.ibm.com>
+        Fri, 9 Mar 2018 05:50:26 -0500
+Received: by mail-ua0-f202.google.com with SMTP id d35so1692152uag.0
+        for <linux-integrity@vger.kernel.org>; Fri, 09 Mar 2018 02:50:26 -0800 (PST)
+MIME-Version: 1.0
+Date: Fri,  9 Mar 2018 11:50:15 +0100
+Message-Id: <20180309105015.97429-1-tweek@google.com>
+Subject: Re: Regression from efi: call get_event_log before ExitBootServices
+From: Thiebaud Weksteen <tweek@google.com>
+To: Jeremy Cline <jeremy@jcline.org>
+Cc: Javier Martinez Canillas <javierm@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        hdegoede@redhat.com, linux-efi@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thiebaud Weksteen <tweek@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-The kernel can be supplied in SEEPROM or lockable flash memory in embedded
-devices. Some devices may not support secure boot, but the kernel is
-trusted because the image is stored in protected memory. That kernel may
-need to kexec additional kernels, it may be used as a bootloader, for
-example, or it may need to kexec a crashdump kernel. In such cases, it may
-want to verify the signature of the next kernel.
-
-The kernel, however, cannot directly verify platform keys, and an
-administrator may therefore not want to trust them for arbitrary usage.
-In order to differentiate platform keys from other keys and provide the
-necessary separation of trust, the kernel needs an additional keyring to
-store platform keys.
-
-This patch implements a built-in list of certificates that are loaded onto
-the trusted platform keyring named ".platform_keys" to facilitate signature
-verification during kexec. Because the platform keyring are builtin, it
-cannot be updated from userspace.
-
-This keyring can be enabled by setting CONFIG_PLATFORM_KEYRING. The
-platform certificate can be provided using CONFIG_PLATFORM_TRUSTED_KEYS.
-
-Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
 ---
-Changelog:
+ drivers/firmware/efi/libstub/tpm.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-v2:
-
-* Include David Howell's feedback:
- * Fix the indentation
-* Fix the patch description per line length as suggested by Mimi
-
- certs/Kconfig               | 17 ++++++++++++++
- certs/Makefile              | 13 +++++++++++
- certs/system_certificates.S | 20 +++++++++++++++++
- certs/system_keyring.c      | 55 ++++++++++++++++++++++++++++++++++++++-------
- 4 files changed, 97 insertions(+), 8 deletions(-)
-
-diff --git a/certs/Kconfig b/certs/Kconfig
-index 5f7663df6e8e..608a4358a25e 100644
---- a/certs/Kconfig
-+++ b/certs/Kconfig
-@@ -83,4 +83,21 @@ config SYSTEM_BLACKLIST_HASH_LIST
- 	  wrapper to incorporate the list into the kernel.  Each <hash> should
- 	  be a string of hex digits.
+diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
+index 773afcd6a37c..ee3fac109078 100644
+--- a/drivers/firmware/efi/libstub/tpm.c
++++ b/drivers/firmware/efi/libstub/tpm.c
+@@ -112,6 +112,22 @@ void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+ 		log_size = log_last_entry - log_location + last_entry_size;
+ 	}
  
-+config PLATFORM_KEYRING
-+        bool "Provide keyring for platform trusted keys"
-+        depends on KEYS
-+        depends on ASYMMETRIC_KEY_TYPE
-+        help
-+	  Provide a separate, distinct keyring for platform trusted keys, which
-+	  the kernel automatically populates during initialization from values
-+	  embedded during build, used for verifying the kexec'ed kernel image
-+	  and, possibly, the initramfs signature.
++	if (log_size == 0) {
++		efi_printk(sys_table_arg, "log_size == 0\n");
++	}
++	else if (log_size < 1 * 1024 * 1024) {
++		efi_printk(sys_table_arg, "log_size < 1M\n");
++	}
++	else if (log_size < 500 * 1024 * 1024) {
++		efi_printk(sys_table_arg, "log_size < 500M\n");
++	}
++	else if (log_size < 1000 * 1024 * 1024) {
++		efi_printk(sys_table_arg, "log_size < 1G\n");
++	}
++	else {
++		efi_printk(sys_table_arg, "log_size > 1G\n");
++	}
 +
-+config PLATFORM_TRUSTED_KEYS
-+	string "Platform/Firmware trusted X.509 certs."
-+	depends on PLATFORM_KEYRING
-+	help
-+	  Provide the filename of a PEM-formatted file containing the platform
-+	  trusted X.509 certificates to be loaded in the platform keyring.
+ 	efi_printk(sys_table_arg, "Allocating memory for storing the logs\n");
+ 	/* Allocate space for the logs and copy them. */
+ 	status = efi_call_early(allocate_pool, EFI_LOADER_DATA,
+@@ -124,6 +140,11 @@ void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+ 			   "Unable to allocate memory for event log\n");
+ 		return;
+ 	}
++	if (!log_tbl) {
++		efi_printk(sys_table_arg, "Pointer returned from allocation is NULL!\n");
++		return;
++	}
 +
- endmenu
-diff --git a/certs/Makefile b/certs/Makefile
-index 5d0999b9e21b..680903725031 100644
---- a/certs/Makefile
-+++ b/certs/Makefile
-@@ -104,3 +104,16 @@ targets += signing_key.x509
- $(obj)/signing_key.x509: scripts/extract-cert $(X509_DEP) FORCE
- 	$(call if_changed,extract_certs,$(MODULE_SIG_KEY_SRCPREFIX)$(CONFIG_MODULE_SIG_KEY))
- endif # CONFIG_MODULE_SIG
-+
-+
-+ifeq ($(CONFIG_PLATFORM_KEYRING),y)
-+
-+$(eval $(call config_filename,PLATFORM_TRUSTED_KEYS))
-+
-+# GCC doesn't include .incbin files in -MD generated dependencies (PR#66871)
-+$(obj)/system_certificates.o: $(obj)/platform_certificate_list
-+
-+targets += platform_certificate_list
-+$(obj)/platform_certificate_list: scripts/extract-cert $(PLATFORM_TRUSTED_KEYS_FILENAME) FORCE
-+	$(call if_changed,extract_certs,$(CONFIG_PLATFORM_TRUSTED_KEYS))
-+endif # CONFIG_PLATFORM_KEYRING
-diff --git a/certs/system_certificates.S b/certs/system_certificates.S
-index 3918ff7235ed..b0eb448ee617 100644
---- a/certs/system_certificates.S
-+++ b/certs/system_certificates.S
-@@ -14,6 +14,15 @@ __cert_list_start:
- 	.incbin "certs/x509_certificate_list"
- __cert_list_end:
+ 	efi_printk(sys_table_arg, "Copying log to new location\n");
  
-+#ifdef CONFIG_PLATFORM_KEYRING
-+	.align 8
-+	.globl VMLINUX_SYMBOL(platform_certificate_list)
-+VMLINUX_SYMBOL(platform_certificate_list):
-+__platform_cert_list_start:
-+	.incbin "certs/platform_certificate_list"
-+__platform_cert_list_end:
-+#endif /* CONFIG_PLATFORM_KEYRING */
-+
- #ifdef CONFIG_SYSTEM_EXTRA_CERTIFICATE
- 	.globl VMLINUX_SYMBOL(system_extra_cert)
- 	.size system_extra_cert, CONFIG_SYSTEM_EXTRA_CERTIFICATE_SIZE
-@@ -35,3 +44,14 @@ VMLINUX_SYMBOL(system_certificate_list_size):
- #else
- 	.long __cert_list_end - __cert_list_start
- #endif
-+
-+#ifdef CONFIG_PLATFORM_KEYRING
-+	.align 8
-+	.globl VMLINUX_SYMBOL(platform_certificate_list_size)
-+VMLINUX_SYMBOL(platform_certificate_list_size):
-+#ifdef CONFIG_64BIT
-+	.quad __platform_cert_list_end - __platform_cert_list_start
-+#else
-+	.long __platform_cert_list_end - __platform_cert_list_start
-+#endif
-+#endif /* CONFIG_PLATFORM_KEYRING */
-diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-index 6251d1b27f0c..594b4986a081 100644
---- a/certs/system_keyring.c
-+++ b/certs/system_keyring.c
-@@ -19,14 +19,22 @@
- #include <keys/system_keyring.h>
- #include <crypto/pkcs7.h>
- 
-+#define BUILTIN_TRUSTED_KEYRING	0
-+#define PLATFORM_KEYRING	1
-+
- static struct key *builtin_trusted_keys;
- #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
- static struct key *secondary_trusted_keys;
- #endif
-+#ifdef CONFIG_PLATFORM_KEYRING
-+static struct key *platform_keys __ro_after_init;
-+#endif
- 
- extern __initconst const u8 system_certificate_list[];
- extern __initconst const unsigned long system_certificate_list_size;
- 
-+extern __initconst const u8 platform_certificate_list[];
-+extern __initconst const unsigned long platform_certificate_list_size;
- /**
-  * restrict_link_to_builtin_trusted - Restrict keyring addition by built in CA
-  *
-@@ -123,6 +131,18 @@ static __init int system_trusted_keyring_init(void)
- 		panic("Can't link trusted keyrings\n");
- #endif
- 
-+#ifdef CONFIG_PLATFORM_KEYRING
-+	platform_keys =
-+		keyring_alloc(".platform_keys",
-+			      KUIDT_INIT(0), KGIDT_INIT(0), current_cred(),
-+			      ((KEY_POS_ALL & ~KEY_POS_SETATTR) |
-+			      KEY_USR_VIEW | KEY_USR_READ | KEY_USR_SEARCH),
-+			      KEY_ALLOC_NOT_IN_QUOTA,
-+			      NULL, NULL);
-+	if (IS_ERR(platform_keys))
-+		panic("Can't allocate platform keyring\n");
-+#endif
-+
- 	return 0;
- }
- 
-@@ -132,18 +152,19 @@ static __init int system_trusted_keyring_init(void)
- device_initcall(system_trusted_keyring_init);
- 
- /*
-- * Load the compiled-in list of X.509 certificates.
-+ * Load the certificates to the keyring.
-  */
--static __init int load_system_certificate_list(void)
-+static __init int load_certificate_list(const u8 *p, unsigned long size,
-+		struct key *keyring)
- {
- 	key_ref_t key;
--	const u8 *p, *end;
-+	const u8 *end;
- 	size_t plen;
- 
--	pr_notice("Loading compiled-in X.509 certificates\n");
-+	pr_notice("Loading compiled-in X.509 certificates to %s\n",
-+			keyring->description);
- 
--	p = system_certificate_list;
--	end = p + system_certificate_list_size;
-+	end = p + size;
- 	while (p < end) {
- 		/* Each cert begins with an ASN.1 SEQUENCE tag and must be more
- 		 * than 256 bytes in size.
-@@ -158,7 +179,7 @@ static __init int load_system_certificate_list(void)
- 		if (plen > end - p)
- 			goto dodgy_cert;
- 
--		key = key_create_or_update(make_key_ref(builtin_trusted_keys, 1),
-+		key = key_create_or_update(make_key_ref(keyring, 1),
- 					   "asymmetric",
- 					   NULL,
- 					   p,
-@@ -185,7 +206,25 @@ static __init int load_system_certificate_list(void)
- 	pr_err("Problem parsing in-kernel X.509 certificate list\n");
- 	return 0;
- }
--late_initcall(load_system_certificate_list);
-+
-+/*
-+ * Load the compiled-in list of system and platform X.509 certificates.
-+ */
-+static __init int load_compiled_certificate_list(void)
-+{
-+	/* Loading certs in builtin keyring */
-+	load_certificate_list(system_certificate_list,
-+			system_certificate_list_size, builtin_trusted_keys);
-+
-+#ifdef CONFIG_PLATFORM_KEYRING
-+	/* Loading certs in platform keyring */
-+	load_certificate_list(platform_certificate_list,
-+			platform_certificate_list_size, platform_keys);
-+#endif
-+
-+	return 0;
-+}
-+late_initcall(load_compiled_certificate_list);
- 
- #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
- 
+ 	memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
 -- 
-2.13.6
+2.16.2.395.g2e18187dfd-goog
