@@ -1,37 +1,67 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io0-f179.google.com ([209.85.223.179]:37312 "EHLO
-        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751205AbeCITNv (ORCPT
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:38264 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932299AbeCITHj (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 9 Mar 2018 14:13:51 -0500
-MIME-Version: 1.0
-In-Reply-To: <20180309190736.GA4657@beast>
-References: <20180309190736.GA4657@beast>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 9 Mar 2018 11:13:50 -0800
-Message-ID: <CA+55aFwsggrvj1Xbo8-uV-Vgj5Ekt5vDwhGtjEgk9EJNP1a3Tw@mail.gmail.com>
-Subject: Re: [PATCH] exec: Set file unwritable before LSM check
-To: Kees Cook <keescook@chromium.org>
-Cc: James Morris <jmorris@namei.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
+        Fri, 9 Mar 2018 14:07:39 -0500
+Received: by mail-pl0-f65.google.com with SMTP id m22-v6so5740422pls.5
+        for <linux-integrity@vger.kernel.org>; Fri, 09 Mar 2018 11:07:39 -0800 (PST)
+Date: Fri, 9 Mar 2018 11:07:36 -0800
+From: Kees Cook <keescook@chromium.org>
+To: James Morris <jmorris@namei.org>
+Cc: linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
         "Serge E. Hallyn" <serge@hallyn.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
+        linux-integrity@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
         Stephen Smalley <sds@tycho.nsa.gov>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH] exec: Set file unwritable before LSM check
+Message-ID: <20180309190736.GA4657@beast>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Mar 9, 2018 at 11:07 AM, Kees Cook <keescook@chromium.org> wrote:
-> The LSM check should happen after the file has been confirmed to be
-> unchanging. Without this, we could have a ToCToU issue between the
-> LSM verification and the actual contents of the file later.
+The LSM check should happen after the file has been confirmed to be
+unchanging. Without this, we could have a ToCToU issue between the
+LSM verification and the actual contents of the file later.
 
-Can we please not add random crazy six-letter acronyms that nobody
-uses outside of a very small community?
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+Only loadpin and SELinux implement this hook. From what I can see, this
+won't change anything for either of them. IMA calls kernel_read_file(),
+but looking there it seems those callers won't be negatively impacted
+either. Can folks double-check this and send an Ack please?
+---
+ fs/exec.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-The point of a commit message is to *explain*, not confuse.
+diff --git a/fs/exec.c b/fs/exec.c
+index 7eb8d21bcab9..a919a827d181 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -895,13 +895,13 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+ 	if (!S_ISREG(file_inode(file)->i_mode) || max_size < 0)
+ 		return -EINVAL;
+ 
+-	ret = security_kernel_read_file(file, id);
++	ret = deny_write_access(file);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = deny_write_access(file);
++	ret = security_kernel_read_file(file, id);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	i_size = i_size_read(file_inode(file));
+ 	if (max_size > 0 && i_size > max_size) {
+-- 
+2.7.4
 
-            Linus
+
+-- 
+Kees Cook
+Pixel Security
