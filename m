@@ -1,87 +1,261 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43088 "EHLO
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48180 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932104AbeCIVyh (ORCPT
+        by vger.kernel.org with ESMTP id S932405AbeCIUOo (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 9 Mar 2018 16:54:37 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w29LsSjA097515
-        for <linux-integrity@vger.kernel.org>; Fri, 9 Mar 2018 16:54:37 -0500
-Received: from e06smtp13.uk.ibm.com (e06smtp13.uk.ibm.com [195.75.94.109])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2gkyv75svt-1
+        Fri, 9 Mar 2018 15:14:44 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w29K68JY086576
+        for <linux-integrity@vger.kernel.org>; Fri, 9 Mar 2018 15:14:44 -0500
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2gm0t80q32-1
         (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 09 Mar 2018 16:54:36 -0500
+        for <linux-integrity@vger.kernel.org>; Fri, 09 Mar 2018 15:14:43 -0500
 Received: from localhost
-        by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Fri, 9 Mar 2018 21:54:34 -0000
-Subject: Re: [PATCH v2] exec: Set file unwritable before LSM check
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc: James Morris <jmorris@namei.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Date: Fri, 09 Mar 2018 16:54:27 -0500
-In-Reply-To: <CAGXu5j++Ju0Jg0O3gXPGD7Nzy8uE3NZo_dCF-L0hontG_P+5yw@mail.gmail.com>
-References: <20180309193020.GA5149@beast>
-         <CA+55aFyp4Lvz8QVckBr+zp4OfB1VaFNb2J1s0-xEMA9h44c0UA@mail.gmail.com>
-         <CAGXu5j++Ju0Jg0O3gXPGD7Nzy8uE3NZo_dCF-L0hontG_P+5yw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1520632467.3911.49.camel@linux.vnet.ibm.com>
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
+        Fri, 9 Mar 2018 15:14:42 -0500
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+To: linux-ima-devel@lists.sourceforge.net
+Cc: containers@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, tycho@docker.com,
+        serge@hallyn.com, sunyuqiong1988@gmail.com, david.safford@ge.com,
+        mkayaalp@cs.binghamton.edu, linux-integrity@vger.kernel.org,
+        James.Bottomley@HansenPartnership.com, zohar@linux.vnet.ibm.com,
+        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
+Subject: [RFC PATCH v2 2/3] ima: Add ns_status for storing namespaced iint data
+Date: Fri,  9 Mar 2018 15:14:20 -0500
+In-Reply-To: <20180309201421.6150-1-stefanb@linux.vnet.ibm.com>
+References: <20180309201421.6150-1-stefanb@linux.vnet.ibm.com>
+Message-Id: <20180309201421.6150-3-stefanb@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 2018-03-09 at 11:54 -0800, Kees Cook wrote:
-> On Fri, Mar 9, 2018 at 11:47 AM, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> > On Fri, Mar 9, 2018 at 11:30 AM, Kees Cook <keescook@chromium.org> wrote:
-> >> The LSM check should happen after the file has been confirmed to be
-> >> unchanging. Without this, we could have a race between the Time of Check
-> >> (the call to security_kernel_read_file() which could read the file and
-> >> make access policy decisions) and the Time of Use (starting with
-> >> kernel_read_file()'s reading of the file contents). In theory, file
-> >> contents could change between the two.
+From: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
 
-For files opened by userspace, IMA refers to the problem as "Time of
-Measure, Time of Use" (ToMToU) and emits an audit message.
+This patch adds an rbtree to the IMA namespace structure that stores a
+namespaced version of iint->flags in ns_status struct. Similar to the
+integrity_iint_cache, both the iint ns_struct are looked up using the
+inode pointer value. The lookup, allocate, and insertion code is also
+similar, except ns_struct is not free'd when the inode is free'd.
+Instead, the lookup verifies the i_ino and i_generation fields are also a
+match. This could be replaced by a lazy clean up of the rbtree.
 
-security_kernel_read_file() is being called by the kernel to read the
-kexec kernel image and initramfs, kernel modules (new syscall),
-ima_policy, EVM x509 certificate, and firmware.
+Signed-off-by: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
+---
+ include/linux/ima.h                      |   3 +
+ security/integrity/ima/ima.h             |  19 +++++
+ security/integrity/ima/ima_init_ima_ns.c |   6 ++
+ security/integrity/ima/ima_ns.c          | 117 +++++++++++++++++++++++++++++++
+ 4 files changed, 145 insertions(+)
 
-If these files are signed, like they should be, then IMA prevents them
-from being opened for write.  Modifying the file via the filesystem
-should not be possible.  Other sorts of attacks, would probably be
-possible.
-
-If these files aren't signed, then in terms of IMA-measurement the
-file measured, might not be the file used.  The ToMToU audit message
-is not being generated for these files.
-
-> > I'm going to assume I get this for 4.17 from the security tree.
-> >
-> > Because I'm guessing there are actually no existing users that care?
-> > selinux seems to just look at file state, not actually at contents or
-> > anything that write access denial would care about.
-> >
-> > And the only other security module that even registers this is
-> > loadpin, and again it just seems to check things like "on the right
-> > filesystem" that aren't actually impacted by write access (in fact,
-> > the documented reason is to check that it's a read-only filesystem so
-> > that write access is simply _irrelevant_).
-> >
-> > So this issue seems to be mainly a cleanliness thing, not an actual bug.
-> 
-> That is my assumption too (I left off the Cc: stable as a result). I'm
-> much less familiar with IMA, though, but it's a caller of
-> kernel_read_file(), not hooking it, etc.
-
-Please add my reviewed-by.
-
-Mimi
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index fd150dfde277..52c9d338819c 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -111,6 +111,9 @@ struct ima_namespace {
+ 	struct kref kref;
+ 	struct user_namespace *user_ns;
+ 	struct ima_namespace *parent;
++	struct rb_root ns_status_tree;
++	rwlock_t ns_status_lock;
++	struct kmem_cache *ns_status_cache;
+ };
+ 
+ extern struct ima_namespace init_ima_ns;
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index e98c11c7cf75..e51a39ff75ff 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -128,6 +128,14 @@ static inline void ima_load_kexec_buffer(void) {}
+  */
+ extern bool ima_canonical_fmt;
+ 
++struct ns_status {
++	struct rb_node rb_node;
++	struct inode *inode;
++	ino_t i_ino;
++	u32 i_generation;
++	unsigned long flags;
++};
++
+ /* Internal IMA function definitions */
+ int ima_init(void);
+ int ima_fs_init(void);
+@@ -295,6 +303,17 @@ int ima_ns_init(void);
+ struct ima_namespace;
+ int ima_init_namespace(struct ima_namespace *ns);
+ 
++#ifdef CONFIG_IMA_NS
++struct ns_status *ima_get_ns_status(struct ima_namespace *ns,
++				    struct inode *inode);
++#else
++static inline struct ns_status *ima_get_ns_status(struct ima_namespace *ns,
++						  struct inode *inode)
++{
++	return NULL;
++}
++#endif /* CONFIG_IMA_NS */
++
+ /* LSM based policy rules require audit */
+ #ifdef CONFIG_IMA_LSM_RULES
+ 
+diff --git a/security/integrity/ima/ima_init_ima_ns.c b/security/integrity/ima/ima_init_ima_ns.c
+index 4b081dbfac07..9e0d5fafdfba 100644
+--- a/security/integrity/ima/ima_init_ima_ns.c
++++ b/security/integrity/ima/ima_init_ima_ns.c
+@@ -10,9 +10,15 @@
+ #include <linux/export.h>
+ #include <linux/user_namespace.h>
+ #include <linux/ima.h>
++#include <linux/slab.h>
++
++#include "ima.h"
+ 
+ int ima_init_namespace(struct ima_namespace *ns)
+ {
++	ns->ns_status_tree = RB_ROOT;
++	rwlock_init(&ns->ns_status_lock);
++	ns->ns_status_cache = KMEM_CACHE(ns_status, SLAB_PANIC);
+ 	return 0;
+ }
+ 
+diff --git a/security/integrity/ima/ima_ns.c b/security/integrity/ima/ima_ns.c
+index 7ab4322c88ae..03acf1431868 100644
+--- a/security/integrity/ima/ima_ns.c
++++ b/security/integrity/ima/ima_ns.c
+@@ -73,10 +73,24 @@ struct ima_namespace *copy_ima(struct user_namespace *user_ns,
+ 	return new_ns;
+ }
+ 
++static void free_ns_status_cache(struct ima_namespace *ns)
++{
++	struct ns_status *status, *next;
++
++	write_lock(&ns->ns_status_lock);
++	rbtree_postorder_for_each_entry_safe(status, next,
++					     &ns->ns_status_tree, rb_node)
++		kmem_cache_free(ns->ns_status_cache, status);
++	ns->ns_status_tree = RB_ROOT;
++	write_unlock(&ns->ns_status_lock);
++	kmem_cache_destroy(ns->ns_status_cache);
++}
++
+ static void destroy_ima_ns(struct ima_namespace *ns)
+ {
+ 	put_user_ns(ns->user_ns);
+ 	put_ima_ns(ns->parent);
++	free_ns_status_cache(ns);
+ 	kfree(ns);
+ }
+ 
+@@ -89,3 +103,106 @@ void free_ima_ns(struct kref *kref)
+ 
+ 	destroy_ima_ns(ns);
+ }
++
++/*
++ * __ima_ns_status_find - return the ns_status associated with an inode
++ */
++static struct ns_status *__ima_ns_status_find(struct ima_namespace *ns,
++					      struct inode *inode)
++{
++	struct ns_status *status;
++	struct rb_node *n = ns->ns_status_tree.rb_node;
++
++	while (n) {
++		status = rb_entry(n, struct ns_status, rb_node);
++
++		if (inode < status->inode)
++			n = n->rb_left;
++		else if (inode > status->inode)
++			n = n->rb_right;
++		else
++			break;
++	}
++	if (!n)
++		return NULL;
++
++	return status;
++}
++
++/*
++ * ima_ns_status_find - return the ns_status associated with an inode
++ */
++static struct ns_status *ima_ns_status_find(struct ima_namespace *ns,
++					    struct inode *inode)
++{
++	struct ns_status *status;
++
++	read_lock(&ns->ns_status_lock);
++	status = __ima_ns_status_find(ns, inode);
++	read_unlock(&ns->ns_status_lock);
++
++	return status;
++}
++
++void insert_ns_status(struct ima_namespace *ns, struct inode *inode,
++		      struct ns_status *status)
++{
++	struct rb_node **p;
++	struct rb_node *node, *parent = NULL;
++	struct ns_status *test_status;
++
++	p = &ns->ns_status_tree.rb_node;
++	while (*p) {
++		parent = *p;
++		test_status = rb_entry(parent, struct ns_status, rb_node);
++		if (inode < test_status->inode)
++			p = &(*p)->rb_left;
++		else
++			p = &(*p)->rb_right;
++	}
++	node = &status->rb_node;
++	rb_link_node(node, parent, p);
++	rb_insert_color(node, &ns->ns_status_tree);
++}
++
++struct ns_status *ima_get_ns_status(struct ima_namespace *ns,
++				    struct inode *inode)
++{
++	struct ns_status *status;
++	int skip_insert = 0;
++
++	status = ima_ns_status_find(ns, inode);
++	if (status) {
++		/*
++		 * Unlike integrity_iint_cache we are not free'ing the
++		 * ns_status data when the inode is free'd. So, in addition to
++		 * checking the inode pointer, we need to make sure the
++		 * (i_generation, i_ino) pair matches as well. In the future
++		 * we might want to add support for lazily walking the rbtree
++		 * to clean it up.
++		 */
++		if (inode->i_ino == status->i_ino &&
++		    inode->i_generation == status->i_generation)
++			return status;
++
++		/* Same inode number is reused, overwrite the ns_status */
++		skip_insert = 1;
++	} else {
++		status = kmem_cache_alloc(ns->ns_status_cache, GFP_NOFS);
++		if (!status)
++			return ERR_PTR(-ENOMEM);
++	}
++
++	write_lock(&ns->ns_status_lock);
++
++	if (!skip_insert)
++		insert_ns_status(ns, inode, status);
++
++	status->inode = inode;
++	status->i_ino = inode->i_ino;
++	status->i_generation = inode->i_generation;
++	status->flags = 0UL;
++	write_unlock(&ns->ns_status_lock);
++
++	return status;
++}
+-- 
+2.13.6
