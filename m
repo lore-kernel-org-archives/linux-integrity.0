@@ -1,50 +1,61 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:32318 "EHLO mga02.intel.com"
+Received: from mga09.intel.com ([134.134.136.24]:41379 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752166AbeCJMii (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 10 Mar 2018 07:38:38 -0500
-Message-ID: <f29db30997454e99c57b3fe0f5928b71efa484a7.camel@linux.intel.com>
-Subject: Re: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
- commands.
+        id S1751974AbeCJLVU (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 10 Mar 2018 06:21:20 -0500
+Message-ID: <d00187b102355c74b5efc2f7923c441785a6390c.camel@linux.intel.com>
+Subject: Re: [PATCH 3/5 V2] tpm2: add longer timeouts for creation commands.
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+To: "Winkler, Tomas" <tomas.winkler@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: "Usyskin, Alexander" <alexander.usyskin@intel.com>,
         "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
         "linux-security-module@vger.kernel.org"
         <linux-security-module@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-In-Reply-To: <1520361396.10396.396.camel@linux.vnet.ibm.com>
-References: <20180304121205.16934-1-tomas.winkler@intel.com>
-         <20180305125642.GA3425@linux.intel.com>
-         <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
-         <20180306074932.GB3624@linux.intel.com>
-         <5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
-         <1520353933.5393.21.camel@HansenPartnership.com>
-         <1520361396.10396.396.camel@linux.vnet.ibm.com>
+Date: Sat, 10 Mar 2018 13:21:16 +0200
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9422F4C1@hasmsx108.ger.corp.intel.com>
+References: <20180306092503.11568-1-tomas.winkler@intel.com>
+         <20180306092503.11568-4-tomas.winkler@intel.com>
+         <1520339005.3779.3.camel@linux.intel.com>
+         <5B8DA87D05A7694D9FA63FD143655C1B9422F4C1@hasmsx108.ger.corp.intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Date: Sat, 10 Mar 2018 14:37:53 +0200
 Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, 2018-03-06 at 13:36 -0500, Mimi Zohar wrote:
-> I've heard that some maintainers are moving away from cover letters,
-> since they are not include in the git repo and are lost.  I've seen
-> Andrew Morton cut and paste the cover letter in the first patch
-> description of the patch set.
+On Tue, 2018-03-06 at 15:19 +0000, Winkler, Tomas wrote:
+> > On Tue, 2018-03-06 at 11:25 +0200, Tomas Winkler wrote:
+> > > TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve
+> > > generation of crypto keys which can be a computationally intensive task.
+> > > The timeout is set to 3min.
+> > > Rather than increasing default timeout a new constant is added, to not
+> > > stall for too long on regular commands failures.
+> > > 
+> > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > 
+> > Why are you radically chaging the default timeout? The commit message
+> > does not tell anything about that change.
+> > 
+> 
+> Let me, recheck but it should be same value just converted to msecs.
+>  
+> > Why couldn't we just have two timeouts: one default and one long that
+> > would be at least as long as the longest timeout defined in the spec?
+> 
+> I've tried to explain it in the commit message but apparently has failed. 
+> 
+> We have a default or undefined which should be the same as it was unless I did
+> some silly mistake in conversion to msecs (will check), ass all others are in
+> msecs.
+> It was 2 min = 2 * 60 * HZ (in jiffies) which would be msecs_to_jiffies(2 * 60
+> * 1000 = 120000) 
+> TPM2_DURATION_DEFAULT   = 120000
 
-When I contribute code, the cover letter helps me to do the Right
-Thing.. Taking the time to write a proper cover letter helps to do a
-"mental exercise" that
+Aah, of course :-) The problem was that I had somehow a blid spot with
+seeing the msec_to_jiffies() conversion.
 
-1. The changes make sense in the first place.
-2. Only the necessary is done, not more or less.
-
-Even for a small patch set the time used to write the cover letter
-will pay off because it helps the maitainer to make a fair and
-educated decision.
+TPM_NUM_DURATIONS would a better name than TPM_DURATION_MAX because
+TPM_DURATION_MAX is easy to confuse with TPM_DURATION_* constants.
 
 /Jarkko
