@@ -1,8 +1,8 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
 Received: from mga12.intel.com ([192.55.52.136]:63004 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932337AbeCJI2A (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 10 Mar 2018 03:28:00 -0500
+        id S1750829AbeCJI16 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 10 Mar 2018 03:27:58 -0500
 From: Tomas Winkler <tomas.winkler@intel.com>
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
@@ -11,106 +11,52 @@ Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH v2 1/8] tpm: move tpm1_pcr_extend to tpm1-cmd.c
-Date: Sat, 10 Mar 2018 10:24:21 +0200
-Message-Id: <20180310082428.31519-2-tomas.winkler@intel.com>
-In-Reply-To: <20180310082428.31519-1-tomas.winkler@intel.com>
-References: <20180310082428.31519-1-tomas.winkler@intel.com>
+Subject: [PATCH v2 0/8] tpm: factor out tpm1 code into tpm1-cmd.c
+Date: Sat, 10 Mar 2018 10:24:20 +0200
+Message-Id: <20180310082428.31519-1-tomas.winkler@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Move tpm1_pcr_extend to tpm1-cmd.c and remove
-unused pcrextend_header structure.
+Move TPM1 implementation from tpm-interface.c to tpm1-cmd.c
+similarly to tpm2-cmd.c, as well as move TPM2 open code flows
+into new functions to tpm2-cmd.c
+The functions in tpm-interface.c should now be in form:
 
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
----
- drivers/char/tpm/tpm-interface.c | 28 ----------------------------
- drivers/char/tpm/tpm.h           |  2 ++
- drivers/char/tpm/tpm1-cmd.c      | 23 +++++++++++++++++++++++
- 3 files changed, 25 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 7f6968b750c8..83eeefb2a4af 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -514,34 +514,6 @@ int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
- }
- EXPORT_SYMBOL_GPL(tpm_pcr_read);
- 
--#define TPM_ORD_PCR_EXTEND 20
--#define EXTEND_PCR_RESULT_SIZE 34
--#define EXTEND_PCR_RESULT_BODY_SIZE 20
--static const struct tpm_input_header pcrextend_header = {
--	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
--	.length = cpu_to_be32(34),
--	.ordinal = cpu_to_be32(TPM_ORD_PCR_EXTEND)
--};
--
--static int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
--			   char *log_msg)
--{
--	struct tpm_buf buf;
--	int rc;
--
--	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
--	if (rc)
--		return rc;
--
--	tpm_buf_append_u32(&buf, pcr_idx);
--	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
--
--	rc = tpm_transmit_cmd(chip, NULL, buf.data, EXTEND_PCR_RESULT_SIZE,
--			      EXTEND_PCR_RESULT_BODY_SIZE, 0, log_msg);
--	tpm_buf_destroy(&buf);
--	return rc;
--}
--
- /**
-  * tpm_pcr_extend - extend a PCR value in SHA1 bank.
-  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 48706f091856..4306c878f1d9 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -535,6 +535,8 @@ int tpm_do_selftest(struct tpm_chip *chip);
- int tpm1_auto_startup(struct tpm_chip *chip);
- int tpm1_get_timeouts(struct tpm_chip *chip);
- unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
-+int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
-+		    const char *log_msg);
- int tpm_pm_suspend(struct device *dev);
- int tpm_pm_resume(struct device *dev);
- 
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 14dfb2b9a067..6a0d8717fdf6 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -414,3 +414,26 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
- 	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
- 	return 0;
- }
-+
-+#define TPM_ORD_PCR_EXTEND 20
-+#define EXTEND_PCR_RESULT_SIZE 34
-+#define EXTEND_PCR_RESULT_BODY_SIZE 20
-+int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
-+		    const char *log_msg)
-+{
-+	struct tpm_buf buf;
-+	int rc;
-+
-+	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
-+	if (rc)
-+		return rc;
-+
-+	tpm_buf_append_u32(&buf, pcr_idx);
-+	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
-+
-+	rc = tpm_transmit_cmd(chip, NULL, buf.data, EXTEND_PCR_RESULT_SIZE,
-+			      EXTEND_PCR_RESULT_BODY_SIZE, 0, log_msg);
-+	tpm_buf_destroy(&buf);
-+	return rc;
-+}
-+
+int tpm_func(struct tpm_chip *chip)
+{
+ if (chip->flags & TPM_CHIP_FLAG_TPM2)
+                return tpm2_func(chip);
+        else
+                return tpm1_func(chip);
+}
+
+This is work in progress of possible dropping compiling out one tpm 1.x or tpm 2.x in case
+not needed on a target platform.
+
+V2: 1. This resend includes more patches that cleans the tpm-interface.c
+completely 
+    2. Fix notorious typo tmp -> tpm, in some patches
+
+Tomas Winkler (8):
+  tpm: move tpm1_pcr_extend to tpm1-cmd.c
+  tpm: move tpm_getcap to tpm1-cmd.c
+  tpm: factor out tpm1_get_random into tpm1-cmd.c
+  tpm: move tpm1 selftest code from tpm-interface tpm1-cmd.c
+  tpm: factor out tpm1 pm suspend flow into tpm1-cmd.c
+  tpm: factor out tpm_startup function
+  tpm: Move pcr extend to tpm2-cmd.c
+  tpm: move tpm2 code validation to tpm2-space.c
+
+ drivers/char/tpm/st33zp24/st33zp24.c |   2 +-
+ drivers/char/tpm/tpm-interface.c     | 425 ++---------------------------------
+ drivers/char/tpm/tpm-sysfs.c         |  50 ++---
+ drivers/char/tpm/tpm.h               |  18 +-
+ drivers/char/tpm/tpm1-cmd.c          | 358 ++++++++++++++++++++++++++++-
+ drivers/char/tpm/tpm2-cmd.c          |  60 ++++-
+ drivers/char/tpm/tpm2-space.c        |  32 +++
+ drivers/char/tpm/tpm_tis_core.c      |   4 +-
+ 8 files changed, 496 insertions(+), 453 deletions(-)
+
 -- 
 2.14.3
