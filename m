@@ -1,61 +1,97 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:41379 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751974AbeCJLVU (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 10 Mar 2018 06:21:20 -0500
-Message-ID: <d00187b102355c74b5efc2f7923c441785a6390c.camel@linux.intel.com>
-Subject: Re: [PATCH 3/5 V2] tpm2: add longer timeouts for creation commands.
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "Winkler, Tomas" <tomas.winkler@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date: Sat, 10 Mar 2018 13:21:16 +0200
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9422F4C1@hasmsx108.ger.corp.intel.com>
-References: <20180306092503.11568-1-tomas.winkler@intel.com>
-         <20180306092503.11568-4-tomas.winkler@intel.com>
-         <1520339005.3779.3.camel@linux.intel.com>
-         <5B8DA87D05A7694D9FA63FD143655C1B9422F4C1@hasmsx108.ger.corp.intel.com>
+Received: from mail-io0-f193.google.com ([209.85.223.193]:36099 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751984AbeCJKpc (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 10 Mar 2018 05:45:32 -0500
+Received: by mail-io0-f193.google.com with SMTP id e30so6292857ioc.3
+        for <linux-integrity@vger.kernel.org>; Sat, 10 Mar 2018 02:45:32 -0800 (PST)
+MIME-Version: 1.0
+References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
+ <e7c2be5c-cf21-fc2d-efda-d9222d93ffad@redhat.com> <b32f335c-0d77-1749-f7fe-65f512280255@redhat.com>
+ <ade378f6-c997-1d48-a30d-cceee6435fc8@redhat.com> <a3b5f822-f8f4-e2f5-46da-e23e13174f28@redhat.com>
+ <cec36124-0950-6ad9-58a8-9bd69e63aa04@redhat.com> <0100016206a68850-bd5c96b3-f275-46ea-98b1-1317e02a5d6e-000000@email.amazonses.com>
+ <29c1640a-cf19-ca19-7de9-96f202edfb5a@redhat.com> <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
+ <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
+In-Reply-To: <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
+From: Thiebaud Weksteen <tweek@google.com>
+Date: Sat, 10 Mar 2018 10:45:20 +0000
+Message-ID: <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
+Subject: Re: Regression from efi: call get_event_log before ExitBootServices
+To: Jeremy Cline <jeremy@jcline.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: hdegoede@redhat.com, Javier Martinez Canillas <javierm@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, 2018-03-06 at 15:19 +0000, Winkler, Tomas wrote:
-> > On Tue, 2018-03-06 at 11:25 +0200, Tomas Winkler wrote:
-> > > TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve
-> > > generation of crypto keys which can be a computationally intensive task.
-> > > The timeout is set to 3min.
-> > > Rather than increasing default timeout a new constant is added, to not
-> > > stall for too long on regular commands failures.
-> > > 
-> > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > 
-> > Why are you radically chaging the default timeout? The commit message
-> > does not tell anything about that change.
-> > 
-> 
-> Let me, recheck but it should be same value just converted to msecs.
->  
-> > Why couldn't we just have two timeouts: one default and one long that
-> > would be at least as long as the longest timeout defined in the spec?
-> 
-> I've tried to explain it in the commit message but apparently has failed. 
-> 
-> We have a default or undefined which should be the same as it was unless I did
-> some silly mistake in conversion to msecs (will check), ass all others are in
-> msecs.
-> It was 2 min = 2 * 60 * HZ (in jiffies) which would be msecs_to_jiffies(2 * 60
-> * 1000 = 120000) 
-> TPM2_DURATION_DEFAULT   = 120000
+On Fri, Mar 9, 2018 at 5:54 PM Jeremy Cline <jeremy@jcline.org> wrote:
 
-Aah, of course :-) The problem was that I had somehow a blid spot with
-seeing the msec_to_jiffies() conversion.
+> On Fri, Mar 09, 2018 at 10:43:50AM +0000, Thiebaud Weksteen wrote:
+> > Thanks a lot for trying out the patch!
+> >
+> > Please don't modify your install at this stage, I think we are hitting a
+> > firmware bug and that would be awesome if we can fix how we are
+handling it.
+> > So, if we reach that stage in the function it could either be that:
+> > * The allocation did not succeed, somehow, but the firmware still
+returned
+> > EFI_SUCCEED.
+> > * The size requested is incorrect (I'm thinking something like a 1G of
+> > log). This would be due to either a miscalculation of log_size
+(possible)
+> > or; the returned values of GetEventLog are not correct.
+> > I'm sending a patch to add checks for these. Could you please apply and
+> > retest?
+> > Again, thanks for helping debugging this.
 
-TPM_NUM_DURATIONS would a better name than TPM_DURATION_MAX because
-TPM_DURATION_MAX is easy to confuse with TPM_DURATION_* constants.
+> No problem, thanks for the help :)
 
-/Jarkko
+> With the new patch:
+
+> Locating the TCG2Protocol
+> Calling GetEventLog on TCG2Protocol
+> Log returned
+> log_location is not empty
+> log_size != 0
+> log_size < 1M
+> Allocating memory for storing the logs
+> Returned from memory allocation
+> Copying log to new location
+
+> And then it hangs. I added a couple more print statements:
+
+> diff --git a/drivers/firmware/efi/libstub/tpm.c
+b/drivers/firmware/efi/libstub/tpm.c
+> index ee3fac109078..1ab5638bc50e 100644
+> --- a/drivers/firmware/efi/libstub/tpm.c
+> +++ b/drivers/firmware/efi/libstub/tpm.c
+> @@ -148,8 +148,11 @@ void
+efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>          efi_printk(sys_table_arg, "Copying log to new location\n");
+
+>          memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
+> +       efi_printk(sys_table_arg, "Successfully memset log_tbl to 0\n");
+>          log_tbl->size = log_size;
+> +       efi_printk(sys_table_arg, "Set log_tbl->size\n");
+>          log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
+> +       efi_printk(sys_table_arg, "Set log_tbl-version\n");
+>          memcpy(log_tbl->log, (void *) first_entry_addr, log_size);
+
+>          efi_printk(sys_table_arg, "Installing the log into the
+configuration table\n");
+
+> and it's hanging at "memset(log_tbl, 0, sizeof(*log_tbl) + log_size);"
+
+Thanks. Well, it looks like the memory that is supposedly allocated is not
+usable. I'm thinking this is a firmware bug.
+Ard, would you agree on this assumption? Thoughts on how to proceed?
+
+Thanks
+
+
+> Regards,
+> Jeremy
