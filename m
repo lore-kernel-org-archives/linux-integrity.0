@@ -1,47 +1,34 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:3557 "EHLO mga18.intel.com"
+Received: from mga18.intel.com ([134.134.136.126]:3113 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932329AbeCJQQr (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 10 Mar 2018 11:16:47 -0500
+        id S932368AbeCJQBz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 10 Mar 2018 11:01:55 -0500
+Message-ID: <c440c1eeedc9640d8355606f4935048279bf5b1e.camel@linux.intel.com>
+Subject: Re: [PATCH V2] tpm_crb: use __le64 annotated variable for response
+ buffer address
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org, Sahil Rihan <srihan@fb.com>,
-        Alexei Starovoitov <ast@fb.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        stable@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] tpm: allow TCPA log area to be empty
-Date: Sat, 10 Mar 2018 18:16:37 +0200
-Message-Id: <20180310161637.7723-1-jarkko.sakkinen@linux.intel.com>
+To: Tomas Winkler <tomas.winkler@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Sat, 10 Mar 2018 18:01:52 +0200
+In-Reply-To: <20180306093415.12356-1-tomas.winkler@intel.com>
+References: <20180306093415.12356-1-tomas.winkler@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-TCPA log are can be empty when the TPM is disabled. This commit changes the
-behavior of tpm_read_log_acpi() to return successfully in this case.
+On Tue, 2018-03-06 at 11:34 +0200, Tomas Winkler wrote:
+> use __le64 annotated variable for response buffer address as this is
+> read in little endian format form the register.
+> 
+> This suppresses sparse warning
+> drivers/char/tpm/tpm_crb.c:558:18: warning: cast to restricted __le64
+> 
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 
-Cc: stable@vger.kernel.org
-Fixes: 55a82ab3181b ("[PATCH] tpm: add bios measurement log")
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- drivers/char/tpm/tpm_eventlog_acpi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-diff --git a/drivers/char/tpm/tpm_eventlog_acpi.c b/drivers/char/tpm/tpm_eventlog_acpi.c
-index 66f19e93c216..f5f66dcd6f30 100644
---- a/drivers/char/tpm/tpm_eventlog_acpi.c
-+++ b/drivers/char/tpm/tpm_eventlog_acpi.c
-@@ -84,8 +84,8 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
- 		break;
- 	}
- 	if (!len) {
--		dev_warn(&chip->dev, "%s: TCPA log area empty\n", __func__);
--		return -EIO;
-+		dev_info(&chip->dev, "TCPA log area is empty\n");
-+		return 0;
- 	}
- 
- 	/* malloc EventLog space */
--- 
-2.15.1
+/Jarkko
