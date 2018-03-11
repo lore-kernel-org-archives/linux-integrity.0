@@ -1,68 +1,101 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57388 "EHLO
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45636 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932368AbeCKWGu (ORCPT
+        by vger.kernel.org with ESMTP id S932344AbeCKWBN (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 11 Mar 2018 18:06:50 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2BM4U8t047993
-        for <linux-integrity@vger.kernel.org>; Sun, 11 Mar 2018 18:06:50 -0400
-Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2gn2xadc5d-1
+        Sun, 11 Mar 2018 18:01:13 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2BM0UoN029345
+        for <linux-integrity@vger.kernel.org>; Sun, 11 Mar 2018 18:01:13 -0400
+Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2gmwv6502e-1
         (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Sun, 11 Mar 2018 18:06:50 -0400
+        for <linux-integrity@vger.kernel.org>; Sun, 11 Mar 2018 18:01:12 -0400
 Received: from localhost
-        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Sun, 11 Mar 2018 22:06:47 -0000
-Subject: Re: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
+        Sun, 11 Mar 2018 22:01:10 -0000
+Subject: Re: [PATCH v3] ima: drop vla in ima_audit_measurement()
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Jiandi An <anjiandi@codeaurora.org>, dmitry.kasatkin@gmail.com,
-        jmorris@namei.org, serge@hallyn.com
-Cc: linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Date: Sun, 11 Mar 2018 18:06:41 -0400
-In-Reply-To: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
-References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
+To: Tycho Andersen <tycho@tycho.ws>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Date: Sun, 11 Mar 2018 18:01:05 -0400
+In-Reply-To: <20180308230836.24329-1-tycho@tycho.ws>
+References: <20180308230836.24329-1-tycho@tycho.ws>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1520806001.3547.10.camel@linux.vnet.ibm.com>
+Message-Id: <1520805665.3547.7.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, 2018-03-06 at 23:26 -0600, Jiandi An wrote:
-> TPM_CRB driver is the TPM support for ARM64.  If it
-> is built as module, TPM chip is registered after IMA
-> init.  tpm_pcr_read() in IMA driver would fail and
-> display the following message even though eventually
-> there is TPM chip on the system:
+On Thu, 2018-03-08 at 16:08 -0700, Tycho Andersen wrote:
+> In keeping with the directive to get rid of VLAs [1], let's drop the VLA
+> from ima_audit_measurement(). We need to adjust the return type of
+> ima_audit_measurement, because now this function can fail if an allocation
+> fails.
 > 
-> ima: No TPM chip found, activating TPM-bypass! (rc=-19)
+> [1]: https://lkml.org/lkml/2018/3/7/621
 > 
-> Fix IMA Kconfig to select TPM_CRB so TPM_CRB driver is
-> built in kernel and initializes before IMA driver.
+> v2: just use audit_log_format instead of doing a second allocation
+> v3: ignore failures in ima_audit_measurement()
 > 
-> Signed-off-by: Jiandi An <anjiandi@codeaurora.org>
+> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
 
 Thanks, this patch has been applied.
 
 Mimi
 
 > ---
->  security/integrity/ima/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+>  security/integrity/ima/ima_api.c | 16 ++++++++++------
+>  1 file changed, 10 insertions(+), 6 deletions(-)
 > 
-> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-> index 35ef693..6a8f677 100644
-> --- a/security/integrity/ima/Kconfig
-> +++ b/security/integrity/ima/Kconfig
-> @@ -10,6 +10,7 @@ config IMA
->  	select CRYPTO_HASH_INFO
->  	select TCG_TPM if HAS_IOMEM && !UML
->  	select TCG_TIS if TCG_TPM && X86
-> +	select TCG_CRB if TCG_TPM && ACPI
->  	select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
->  	help
->  	  The Trusted Computing Group(TCG) runtime Integrity
+> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+> index 08fe405338e1..2aab9170ef68 100644
+> --- a/security/integrity/ima/ima_api.c
+> +++ b/security/integrity/ima/ima_api.c
+> @@ -308,14 +308,17 @@ void ima_audit_measurement(struct integrity_iint_cache *iint,
+>  			   const unsigned char *filename)
+>  {
+>  	struct audit_buffer *ab;
+> -	char hash[(iint->ima_hash->length * 2) + 1];
+> +	char *hash;
+>  	const char *algo_name = hash_algo_name[iint->ima_hash->algo];
+> -	char algo_hash[sizeof(hash) + strlen(algo_name) + 2];
+>  	int i;
+> 
+>  	if (iint->flags & IMA_AUDITED)
+>  		return;
+> 
+> +	hash = kzalloc((iint->ima_hash->length * 2) + 1, GFP_KERNEL);
+> +	if (!hash)
+> +		return;
+> +
+>  	for (i = 0; i < iint->ima_hash->length; i++)
+>  		hex_byte_pack(hash + (i * 2), iint->ima_hash->digest[i]);
+>  	hash[i * 2] = '\0';
+> @@ -323,18 +326,19 @@ void ima_audit_measurement(struct integrity_iint_cache *iint,
+>  	ab = audit_log_start(current->audit_context, GFP_KERNEL,
+>  			     AUDIT_INTEGRITY_RULE);
+>  	if (!ab)
+> -		return;
+> +		goto out;
+> 
+>  	audit_log_format(ab, "file=");
+>  	audit_log_untrustedstring(ab, filename);
+> -	audit_log_format(ab, " hash=");
+> -	snprintf(algo_hash, sizeof(algo_hash), "%s:%s", algo_name, hash);
+> -	audit_log_untrustedstring(ab, algo_hash);
+> +	audit_log_format(ab, " hash=\"%s:%s\"", algo_name, hash);
+> 
+>  	audit_log_task_info(ab, current);
+>  	audit_log_end(ab);
+> 
+>  	iint->flags |= IMA_AUDITED;
+> +out:
+> +	kfree(hash);
+> +	return;
+>  }
+> 
+>  /*
