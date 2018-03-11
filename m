@@ -1,101 +1,95 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45636 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932344AbeCKWBN (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44524 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932334AbeCKWB1 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 11 Mar 2018 18:01:13 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2BM0UoN029345
-        for <linux-integrity@vger.kernel.org>; Sun, 11 Mar 2018 18:01:13 -0400
+        Sun, 11 Mar 2018 18:01:27 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2BLxRVS025182
+        for <linux-integrity@vger.kernel.org>; Sun, 11 Mar 2018 18:01:27 -0400
 Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2gmwv6502e-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2gmwhfn4vr-1
         (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Sun, 11 Mar 2018 18:01:12 -0400
+        for <linux-integrity@vger.kernel.org>; Sun, 11 Mar 2018 18:01:26 -0400
 Received: from localhost
         by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Sun, 11 Mar 2018 22:01:10 -0000
-Subject: Re: [PATCH v3] ima: drop vla in ima_audit_measurement()
+        Sun, 11 Mar 2018 22:01:24 -0000
+Subject: Re: [PATCH 1/2] security: evm: Move evm_hmac and evm_hash from
+ evm_main.c to evm_crypto.c
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Tycho Andersen <tycho@tycho.ws>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-Date: Sun, 11 Mar 2018 18:01:05 -0400
-In-Reply-To: <20180308230836.24329-1-tycho@tycho.ws>
-References: <20180308230836.24329-1-tycho@tycho.ws>
+To: =?ISO-8859-1?Q?Hern=E1n?= Gonzalez <hernan@vanguardiasur.com.ar>,
+        jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Sun, 11 Mar 2018 18:01:18 -0400
+In-Reply-To: <1519769820-20365-1-git-send-email-hernan@vanguardiasur.com.ar>
+References: <1519769820-20365-1-git-send-email-hernan@vanguardiasur.com.ar>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1520805665.3547.7.camel@linux.vnet.ibm.com>
+Message-Id: <1520805678.3547.8.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, 2018-03-08 at 16:08 -0700, Tycho Andersen wrote:
-> In keeping with the directive to get rid of VLAs [1], let's drop the VLA
-> from ima_audit_measurement(). We need to adjust the return type of
-> ima_audit_measurement, because now this function can fail if an allocation
-> fails.
+On Tue, 2018-02-27 at 19:16 -0300, Hernan Gonzalez wrote:
+> Note: This is compile only tested.
+> This variable was not used where it was defined, there was no point in
+> declaring it there as extern, thus it got moved and constified saving up 2
+> bytes.
 > 
-> [1]: https://lkml.org/lkml/2018/3/7/621
+> Function                                     old     new   delta
+> init_desc                                    273     271      -2
+> Total: Before=2112094, After=2112092, chg -0.00%
 > 
-> v2: just use audit_log_format instead of doing a second allocation
-> v3: ignore failures in ima_audit_measurement()
-> 
-> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+> Signed-off-by: Hernan Gonzalez <hernan@vanguardiasur.com.ar>
 
-Thanks, this patch has been applied.
+Thanks, both patches have been applied.
 
 Mimi
 
 > ---
->  security/integrity/ima/ima_api.c | 16 ++++++++++------
->  1 file changed, 10 insertions(+), 6 deletions(-)
+>  security/integrity/evm/evm.h        | 2 --
+>  security/integrity/evm/evm_crypto.c | 3 +++
+>  security/integrity/evm/evm_main.c   | 2 --
+>  3 files changed, 3 insertions(+), 4 deletions(-)
 > 
-> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-> index 08fe405338e1..2aab9170ef68 100644
-> --- a/security/integrity/ima/ima_api.c
-> +++ b/security/integrity/ima/ima_api.c
-> @@ -308,14 +308,17 @@ void ima_audit_measurement(struct integrity_iint_cache *iint,
->  			   const unsigned char *filename)
->  {
->  	struct audit_buffer *ab;
-> -	char hash[(iint->ima_hash->length * 2) + 1];
-> +	char *hash;
->  	const char *algo_name = hash_algo_name[iint->ima_hash->algo];
-> -	char algo_hash[sizeof(hash) + strlen(algo_name) + 2];
->  	int i;
+> diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
+> index 0482539..45c4a89 100644
+> --- a/security/integrity/evm/evm.h
+> +++ b/security/integrity/evm/evm.h
+> @@ -31,8 +31,6 @@
+>  		       EVM_ALLOW_METADATA_WRITES)
 > 
->  	if (iint->flags & IMA_AUDITED)
->  		return;
+>  extern int evm_initialized;
+> -extern char *evm_hmac;
+> -extern char *evm_hash;
 > 
-> +	hash = kzalloc((iint->ima_hash->length * 2) + 1, GFP_KERNEL);
-> +	if (!hash)
-> +		return;
+>  #define EVM_ATTR_FSUUID		0x0001
+> 
+> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+> index 691f3e0..fdde9cb 100644
+> --- a/security/integrity/evm/evm_crypto.c
+> +++ b/security/integrity/evm/evm_crypto.c
+> @@ -37,6 +37,9 @@ static DEFINE_MUTEX(mutex);
+> 
+>  static unsigned long evm_set_key_flags;
+> 
+> +char * const evm_hmac = "hmac(sha1)";
+> +char * const evm_hash = "sha1";
 > +
->  	for (i = 0; i < iint->ima_hash->length; i++)
->  		hex_byte_pack(hash + (i * 2), iint->ima_hash->digest[i]);
->  	hash[i * 2] = '\0';
-> @@ -323,18 +326,19 @@ void ima_audit_measurement(struct integrity_iint_cache *iint,
->  	ab = audit_log_start(current->audit_context, GFP_KERNEL,
->  			     AUDIT_INTEGRITY_RULE);
->  	if (!ab)
-> -		return;
-> +		goto out;
+>  /**
+>   * evm_set_key() - set EVM HMAC key from the kernel
+>   * @key: pointer to a buffer with the key data
+> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+> index a8d5028..826926d 100644
+> --- a/security/integrity/evm/evm_main.c
+> +++ b/security/integrity/evm/evm_main.c
+> @@ -33,8 +33,6 @@ int evm_initialized;
+>  static char *integrity_status_msg[] = {
+>  	"pass", "pass_immutable", "fail", "no_label", "no_xattrs", "unknown"
+>  };
+> -char *evm_hmac = "hmac(sha1)";
+> -char *evm_hash = "sha1";
+>  int evm_hmac_attrs;
 > 
->  	audit_log_format(ab, "file=");
->  	audit_log_untrustedstring(ab, filename);
-> -	audit_log_format(ab, " hash=");
-> -	snprintf(algo_hash, sizeof(algo_hash), "%s:%s", algo_name, hash);
-> -	audit_log_untrustedstring(ab, algo_hash);
-> +	audit_log_format(ab, " hash=\"%s:%s\"", algo_name, hash);
-> 
->  	audit_log_task_info(ab, current);
->  	audit_log_end(ab);
-> 
->  	iint->flags |= IMA_AUDITED;
-> +out:
-> +	kfree(hash);
-> +	return;
->  }
-> 
->  /*
+>  char *evm_config_xattrnames[] = {
