@@ -1,43 +1,68 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:16613 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751229AbeCLKRb (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 12 Mar 2018 06:17:31 -0400
-Message-ID: <f9098c326ab3070c3215901e3383a3a2d208b2ae.camel@linux.intel.com>
-Subject: Re: Regression from efi: call get_event_log before ExitBootServices
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Thiebaud Weksteen <tweek@google.com>,
-        Jeremy Cline <jeremy@jcline.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: hdegoede@redhat.com, Javier Martinez Canillas <javierm@redhat.com>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Date: Mon, 12 Mar 2018 12:17:27 +0200
-In-Reply-To: <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
-References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
-         <e7c2be5c-cf21-fc2d-efda-d9222d93ffad@redhat.com>
-         <b32f335c-0d77-1749-f7fe-65f512280255@redhat.com>
-         <ade378f6-c997-1d48-a30d-cceee6435fc8@redhat.com>
-         <a3b5f822-f8f4-e2f5-46da-e23e13174f28@redhat.com>
-         <cec36124-0950-6ad9-58a8-9bd69e63aa04@redhat.com>
-         <0100016206a68850-bd5c96b3-f275-46ea-98b1-1317e02a5d6e-000000@email.amazonses.com>
-         <29c1640a-cf19-ca19-7de9-96f202edfb5a@redhat.com>
-         <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
-         <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
-         <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57388 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932368AbeCKWGu (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 11 Mar 2018 18:06:50 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2BM4U8t047993
+        for <linux-integrity@vger.kernel.org>; Sun, 11 Mar 2018 18:06:50 -0400
+Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2gn2xadc5d-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Sun, 11 Mar 2018 18:06:50 -0400
+Received: from localhost
+        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Sun, 11 Mar 2018 22:06:47 -0000
+Subject: Re: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Jiandi An <anjiandi@codeaurora.org>, dmitry.kasatkin@gmail.com,
+        jmorris@namei.org, serge@hallyn.com
+Cc: linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Date: Sun, 11 Mar 2018 18:06:41 -0400
+In-Reply-To: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
+References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
+Message-Id: <1520806001.3547.10.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sat, 2018-03-10 at 10:45 +0000, Thiebaud Weksteen wrote:
-> On Fri, Mar 9, 2018 at 5:54 PM Jeremy Cline <jeremy@jcline.org> wrote:
-> > and it's hanging at "memset(log_tbl, 0, sizeof(*log_tbl) + log_size);"
+On Tue, 2018-03-06 at 23:26 -0600, Jiandi An wrote:
+> TPM_CRB driver is the TPM support for ARM64.  If it
+> is built as module, TPM chip is registered after IMA
+> init.  tpm_pcr_read() in IMA driver would fail and
+> display the following message even though eventually
+> there is TPM chip on the system:
 > 
-> Thanks. Well, it looks like the memory that is supposedly allocated is not
-> usable. I'm thinking this is a firmware bug.
-> Ard, would you agree on this assumption? Thoughts on how to proceed?
+> ima: No TPM chip found, activating TPM-bypass! (rc=-19)
+> 
+> Fix IMA Kconfig to select TPM_CRB so TPM_CRB driver is
+> built in kernel and initializes before IMA driver.
+> 
+> Signed-off-by: Jiandi An <anjiandi@codeaurora.org>
 
-Check if the BIOS is up to date?
+Thanks, this patch has been applied.
 
-/Jarkko
+Mimi
+
+> ---
+>  security/integrity/ima/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+> index 35ef693..6a8f677 100644
+> --- a/security/integrity/ima/Kconfig
+> +++ b/security/integrity/ima/Kconfig
+> @@ -10,6 +10,7 @@ config IMA
+>  	select CRYPTO_HASH_INFO
+>  	select TCG_TPM if HAS_IOMEM && !UML
+>  	select TCG_TIS if TCG_TPM && X86
+> +	select TCG_CRB if TCG_TPM && ACPI
+>  	select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
+>  	help
+>  	  The Trusted Computing Group(TCG) runtime Integrity
