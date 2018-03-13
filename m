@@ -1,160 +1,77 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35132 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751385AbeCMF6V (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 13 Mar 2018 01:58:21 -0400
-Date: Tue, 13 Mar 2018 01:53:34 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: containers@lists.linux-foundation.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
+Received: from namei.org ([65.99.196.166]:52738 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750861AbeCMFQm (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 13 Mar 2018 01:16:42 -0400
+Date: Tue, 13 Mar 2018 16:16:04 +1100 (AEDT)
+From: James Morris <jmorris@namei.org>
+To: Kees Cook <keescook@chromium.org>, Al Viro <viro@ftp.linux.org.uk>
+cc: linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
         linux-integrity <linux-integrity@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, paul@paul-moore.com,
-        sgrubb@redhat.com, Matthew Garrett <mjg59@google.com>,
-        Peter Moody <peter@hda3.com>
-Subject: Re: [PATCH] audit: add containerid support for IMA-audit
-Message-ID: <20180313055334.hnxuxifv5rcrgb77@madcap2.tricolour.ca>
-References: <1520257393.10396.291.camel@linux.vnet.ibm.com>
- <20180305135008.po6lheqnmkqqo6q4@madcap2.tricolour.ca>
- <1520259854.10396.313.camel@linux.vnet.ibm.com>
- <20180308112104.z67wohdvjqemy7wy@madcap2.tricolour.ca>
- <1520532165.3605.51.camel@linux.vnet.ibm.com>
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Subject: Re: [PATCH v2] exec: Set file unwritable before LSM check
+In-Reply-To: <20180309193020.GA5149@beast>
+Message-ID: <alpine.LRH.2.21.1803131615390.21929@namei.org>
+References: <20180309193020.GA5149@beast>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1520532165.3605.51.camel@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 2018-03-08 13:02, Mimi Zohar wrote:
-> On Thu, 2018-03-08 at 06:21 -0500, Richard Guy Briggs wrote:
-> > On 2018-03-05 09:24, Mimi Zohar wrote:
-> > > On Mon, 2018-03-05 at 08:50 -0500, Richard Guy Briggs wrote:
-> > > > On 2018-03-05 08:43, Mimi Zohar wrote:
-> > > > > Hi Richard,
-> > > > > 
-> > > > > This patch has been compiled, but not runtime tested.
-> > > > 
-> > > > Ok, great, thank you.  I assume you are offering this patch to be
-> > > > included in this patchset?
-> > > 
-> > > Yes, thank you.
-> > > 
-> > > > I'll have a look to see where it fits in the
-> > > > IMA record.  It might be better if it were an AUDIT_CONTAINER_INFO
-> > > > auxiliary record, but I'll have a look at the circumstances of the
-> > > > event.  
-> > 
-> > I had a look at the context of this record to see if adding the contid
-> > field to it made sense.  I think the only records for which the contid
-> > field makes sense are the two newly proposed records, AUDIT_CONTAINER
-> > which introduces the container ID and the and AUDIT_CONTAINER_INFO which
-> > documents the presence of the container ID in a process event (or
-> > process-less network event).  All others should use the auxiliary record
-> > AUDIT_CONTAINER_INFO rather than include the contid field directly
-> > itself.  There are several reasons for this including record length, the
-> > ability to filter unwanted records, the difficulty of changing the order
-> > of or removing fields in the future.
-> > 
-> > Syscalls get this information automatically if the container ID is set
-> > for a task via the AUDIT_CONTAINER_INFO auxiliary record.  Generally a
-> > syscall event is one that uses the task's audit_context while a
-> > standalone event uses NULL or builds a local audit_context that is
-> > discarded immediately after the local use.
-> > 
-> > Looking at the two cases of AUDIT_INTEGRITY_RULE record generation, it
-> > appears that they should be split into two distinct audit record types.
-> > 
-> > The record created in ima_audit_measurement() is a syscall record that
-> > could possibly stand on its own since the subject attributes are
-> > present.  If it remains a syscall auxiliary record it will automatically
-> > have the AUDIT_CONTAINER_INFO record accompany it anyways.  If it is
-> > decided to detach it (which would save cpu/netlink/disk bandwidth but is
-> > not recommended due to not wanting to throw away any other syscall
-> > information or other involved records (PATH, CWD, etc...) then a local
-> > audit_context would be created for the AUDIT_INTEGRITY_RULE and
-> > AUDIT_CONTAINERID_INFO records only and immediately discarded.
-> > 
-> > The record created in ima_parse_rule() is not currently a syscall record
-> > since it is passed an audit_context of NULL and it has a very different
-> > format that does not include any subject attributes (except subj_*=).
-> > At first glance it appears this one should be a syscall accompanied
-> > auxiliary record.  Either way it should have an AUDIT_CONTAINER_INFO
-> > auxiliary record either by being converted to a syscall auxiliary record
-> > by using current->audit_context rather than NULL when calling
-> > audit_log_start(), or creating a local audit_context and calling
-> > audit_log_container_info() then releasing the local context.  This
-> > version of the record has additional concerns covered here:
-> > https://github.com/linux-audit/audit-kernel/issues/52
-> > 
-> > Can you briefly describe the circumstances under which these two
-> > different identically-numbered records are produced as a first step
-> > towards splitting them into two distict records?
+On Fri, 9 Mar 2018, Kees Cook wrote:
+
+> The LSM check should happen after the file has been confirmed to be
+> unchanging. Without this, we could have a race between the Time of Check
+> (the call to security_kernel_read_file() which could read the file and
+> make access policy decisions) and the Time of Use (starting with
+> kernel_read_file()'s reading of the file contents). In theory, file
+> contents could change between the two.
 > 
-> Agreed, the two uses should really be separated.  ima_parse_rule()
-> generates audit messages, when the IMA policy is initially loaded,
-> replaced, or extended, the policy rules are included in the audit log.
-> When IMA is namespaced, there will be a host policy and namespace
-> policies.  We'll need to be able differentiate between the host policy
-> rules and IMA namespaced policy rules, and between IMA namespaced
-> policy rules.
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+> v2: Clarify the ToC/ToU race (Linus)
 
-I would argue this type of message/record should be converted to an
-accompanied syscall record, or have the subject attributes added to the
-record so that it is clear what user/process initiated this action.  It
-now occurs to me that to save audit communications and disk bandwidth,
-one syscall record could accompany all the rule records, but if the list
-is long enough it might overwhelm userspace audit event parsing code.
-Steve?
 
-Regardless, the ima_parse_rule() record format needs to be fixed to
-address the non-standard use of "<" and ">" operators instead of the
-standard "=" field/value separator.
+I'll merge this unless Al objects (cc'd).
 
-> The audit messages produced by ima_audit_measurement() were originally
-> upstreamed for forensics, and as seen by the FireEye blog are now used
-> to augment existing security analytics.  These records are probably
-> being used independently of any other audit records.  A single record
-> is generated per file, per system.  With IMA namespacing, these
-> records need to be generated once per file, per namespace as well.  In
-> order to differentiate the records between the host and namespace, and
-> between namespaces, these records should include the container id.
-
-Ok, so this might be one circumstance where the container id field
-could make sense to include it in the primary record, but it will
-already be automatically getting an AUDIT_CONTAINER_INFO record by
-virtue of being a syscall auxiliary record.  You say "These records are
-probably being used independently of any other audit records.", but
-unless you are certain these are not used by any other tools, it will
-have to remain as a syscall auxiliary record.  This means it will
-duplicate the container id info if the container id field is added to
-the AUDIT_INTEGRITY_RULE record or cause your tools to need to be able
-to parse audit *events* rather than just individual audit *records* to
-get the associated container id if the container id field is not added
-to the AUDIT_INTEGRITY_RULE.
-
-> To disambiguate between these audit messages and the policy rule
-> messages, we could rename these audit messages to AUDIT_INTEGRITY_IMA.
-
-This makes sense to me, but will depend on other users of this record
-type.  Since there are already two very different formats for this one
-existing record type, changing the record type either doesn't matter if
-nothing else has noticed or this is what triggered the examination of
-this issue in the first place and should be fixed.
-
-> > The four AUDIT_INTEGRITY _METADATA, _PCR, _DATA and _STATUS records
-> > appear to be already properly covered for AUDIT_CONTAINER_INFO records
-> > by being syscall auxiliary records.  The AUDIT_INTEGRITY_HASH record
-> > appears to be unused.
 > 
-> Ok
+> Only loadpin and SELinux currently implement this hook. From what
+> I can see, this won't change anything for either of them. IMA calls
+> kernel_read_file(), but looking there it seems those callers won't be
+> negatively impacted either. Can folks double-check this and send an
+> Ack please?
+> ---
+>  fs/exec.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> Mimi
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 7eb8d21bcab9..a919a827d181 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -895,13 +895,13 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+>  	if (!S_ISREG(file_inode(file)->i_mode) || max_size < 0)
+>  		return -EINVAL;
+>  
+> -	ret = security_kernel_read_file(file, id);
+> +	ret = deny_write_access(file);
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = deny_write_access(file);
+> +	ret = security_kernel_read_file(file, id);
+>  	if (ret)
+> -		return ret;
+> +		goto out;
+>  
+>  	i_size = i_size_read(file_inode(file));
+>  	if (max_size > 0 && i_size > max_size) {
+> 
 
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+-- 
+James Morris
+<jmorris@namei.org>
