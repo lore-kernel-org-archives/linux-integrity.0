@@ -1,11 +1,13 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-qt0-f181.google.com ([209.85.216.181]:40034 "EHLO
-        mail-qt0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751624AbeCMMvu (ORCPT
+Received: from mail-it0-f45.google.com ([209.85.214.45]:35920 "EHLO
+        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932694AbeCMKat (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 13 Mar 2018 08:51:50 -0400
+        Tue, 13 Mar 2018 06:30:49 -0400
+Received: by mail-it0-f45.google.com with SMTP id u5-v6so15589957itc.1
+        for <linux-integrity@vger.kernel.org>; Tue, 13 Mar 2018 03:30:49 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <bf12c497-db2a-f1f0-efc3-07e6a6ee9daa@redhat.com>
+In-Reply-To: <CA+zpnLeyu4MQA2mgdLkEscTx9cfUp4Qcw-0cgfRa4cdLCRVwkg@mail.gmail.com>
 References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
  <29c1640a-cf19-ca19-7de9-96f202edfb5a@redhat.com> <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
  <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
@@ -17,41 +19,54 @@ References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.
  <CAKv+Gu_hLR3YNZF=taLM++LdfqmPpGG+vR1O8NfKNP00PNeiYA@mail.gmail.com>
  <CA+zpnLdxGT08citakzZwZsSQAFeTJw-j6S7udHk6-sEJ9R3xpA@mail.gmail.com>
  <010001621b7ce5a3-b80c55b8-be68-4b44-ab52-4949e8ddb8d0-000000@email.amazonses.com>
- <CA+zpnLf=JDUxyorH7yP=08FD_u=+UoQ6ubsKyVLD+4w9raYAKQ@mail.gmail.com> <bf12c497-db2a-f1f0-efc3-07e6a6ee9daa@redhat.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 13 Mar 2018 14:51:49 +0200
-Message-ID: <CAHp75Vdds=iv_aExbAWZBdcrVyR=zzb+BY7_=bNovrrc0oxwsA@mail.gmail.com>
+ <CA+zpnLf=JDUxyorH7yP=08FD_u=+UoQ6ubsKyVLD+4w9raYAKQ@mail.gmail.com>
+ <bf12c497-db2a-f1f0-efc3-07e6a6ee9daa@redhat.com> <CAKv+Gu9_rYv_XocRwTLdH+P7dVq+3=CQRJ9O9kKyry_=Ekz0aQ@mail.gmail.com>
+ <CA+zpnLeyu4MQA2mgdLkEscTx9cfUp4Qcw-0cgfRa4cdLCRVwkg@mail.gmail.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Tue, 13 Mar 2018 10:30:47 +0000
+Message-ID: <CAKv+Gu_EN2djoJQQ_QAxUQenD5=kKtyS8TFKg7cZaz+6xsbDRg@mail.gmail.com>
 Subject: Re: Regression from efi: call get_event_log before ExitBootServices
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Thiebaud Weksteen <tweek@google.com>,
+To: Thiebaud Weksteen <tweek@google.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
         Jeremy Cline <jeremy@jcline.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Javier Martinez Canillas <javierm@redhat.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        linux-integrity@vger.kernel.org, tpmdd-devel@lists.sourceforge.net,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Mar 13, 2018 at 9:47 AM, Hans de Goede <hdegoede@redhat.com> wrote:
-> On 12-03-18 20:55, Thiebaud Weksteen wrote:
+On 13 March 2018 at 10:23, Thiebaud Weksteen <tweek@google.com> wrote:
+> On Tue, Mar 13, 2018 at 8:59 AM Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> wrote:
+>
+>> On 13 March 2018 at 07:47, Hans de Goede <hdegoede@redhat.com> wrote:
+...
+>> > Could the problem perhaps be that the new code for the TPM event-log is
+>> > missing some handling to deal with running on a 32 bit firmware? I know
+> the
+>> > rest of the kernel has special code to deal with this.
+>> >
+>
+> Yes, that was my guess as well.
+>
+>> That is a very good point, and I missed that this is a 64-bit kernel
+>> running on 32-bit UEFI.
+>
+>> The TPM code does use efi_call_proto() directly, and now I am thinking
+>> it is perhaps the allocate_pages() call that simply only initializes
+>> the low 32-bits of log_tbl.
+>
+> That make sense. Would you know what happens to the arguments of the
+> function in this case? (I'm thinking &log_location ?)
 
->> Hans, you said you configured the tablet to use the 32-bit version of grub
->> instead
->> of 64. Why's that?
+log_location and log_last_entry are always 64-bit quantities, and
+efi_bool_t is always u8, so that shouldn't matter.
 
-> Because this tablet, like (almost?) all Bay Trail hardware has a 32 bit
-> UEFI,
-> even though the processor is 64 bit capable (AFAIK 64 bit Windows drivers
-> were
-> not ready in time so all Bay Trail devices shipped with a 32 bit Windows).
+> Would it be safer to skip the code completely on EFI_MIXED systems?
+>
 
-Almost.
-
-Lenovo Thinkpad 10 tablet has 64-bit firmware.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Obviously, but I would like to avoid that if possible. Let's see first
+if we've pinpointed it now.
