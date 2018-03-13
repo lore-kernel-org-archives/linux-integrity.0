@@ -1,77 +1,228 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from namei.org ([65.99.196.166]:52738 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750861AbeCMFQm (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 13 Mar 2018 01:16:42 -0400
-Date: Tue, 13 Mar 2018 16:16:04 +1100 (AEDT)
-From: James Morris <jmorris@namei.org>
-To: Kees Cook <keescook@chromium.org>, Al Viro <viro@ftp.linux.org.uk>
-cc: linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Subject: Re: [PATCH v2] exec: Set file unwritable before LSM check
-In-Reply-To: <20180309193020.GA5149@beast>
-Message-ID: <alpine.LRH.2.21.1803131615390.21929@namei.org>
-References: <20180309193020.GA5149@beast>
+Received: from a8-126.smtp-out.amazonses.com ([54.240.8.126]:52500 "EHLO
+        a8-126.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751419AbeCMBvA (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 12 Mar 2018 21:51:00 -0400
+Subject: Re: Regression from efi: call get_event_log before ExitBootServices
+To: Thiebaud Weksteen <tweek@google.com>, hdegoede@redhat.com
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
+ <29c1640a-cf19-ca19-7de9-96f202edfb5a@redhat.com>
+ <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
+ <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
+ <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
+ <CAKv+Gu-KPU+kQ0z3jJ+CcgNPq3PuqjF_CCB_2LR_5VoYaynTJw@mail.gmail.com>
+ <010001621a9e5069-0b1a6328-97e4-4396-9438-b90f5b8c82a4-000000@email.amazonses.com>
+ <CAKv+Gu8+x=5nU9MmYQKKc=3fhMXoUYjGSjYYfhjaFtdGG2NkaA@mail.gmail.com>
+ <010001621b287e42-58955302-cc14-4212-b7b0-e6e358633dab-000000@email.amazonses.com>
+ <CAKv+Gu_hLR3YNZF=taLM++LdfqmPpGG+vR1O8NfKNP00PNeiYA@mail.gmail.com>
+ <CA+zpnLdxGT08citakzZwZsSQAFeTJw-j6S7udHk6-sEJ9R3xpA@mail.gmail.com>
+ <010001621b7ce5a3-b80c55b8-be68-4b44-ab52-4949e8ddb8d0-000000@email.amazonses.com>
+ <CA+zpnLf=JDUxyorH7yP=08FD_u=+UoQ6ubsKyVLD+4w9raYAKQ@mail.gmail.com>
+From: Jeremy Cline <jeremy@jcline.org>
+Message-ID: <010001621d0db0f5-a514b097-9f94-4a25-8d2c-ad22c0ae1a96-000000@email.amazonses.com>
+Date: Tue, 13 Mar 2018 01:50:59 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CA+zpnLf=JDUxyorH7yP=08FD_u=+UoQ6ubsKyVLD+4w9raYAKQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 9 Mar 2018, Kees Cook wrote:
-
-> The LSM check should happen after the file has been confirmed to be
-> unchanging. Without this, we could have a race between the Time of Check
-> (the call to security_kernel_read_file() which could read the file and
-> make access policy decisions) and the Time of Use (starting with
-> kernel_read_file()'s reading of the file contents). In theory, file
-> contents could change between the two.
+On 03/12/2018 03:55 PM, Thiebaud Weksteen wrote:
+> On Mon, Mar 12, 2018 at 7:33 PM Jeremy Cline <jeremy@jcline.org> wrote:
 > 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
-> v2: Clarify the ToC/ToU race (Linus)
-
-
-I'll merge this unless Al objects (cc'd).
-
+>> On 03/12/2018 02:29 PM, Thiebaud Weksteen wrote:
+>>> On Mon, Mar 12, 2018 at 6:30 PM Ard Biesheuvel <
+> ard.biesheuvel@linaro.org>
+>>> wrote:
+>>>
+>>>> On 12 March 2018 at 17:01, Jeremy Cline <jeremy@jcline.org> wrote:
+>>>>> On 03/12/2018 10:56 AM, Ard Biesheuvel wrote:
+>>>>>> On 12 March 2018 at 14:30, Jeremy Cline <jeremy@jcline.org> wrote:
+>>>>>>> On 03/12/2018 07:08 AM, Ard Biesheuvel wrote:
+>>>>>>>> On 10 March 2018 at 10:45, Thiebaud Weksteen <tweek@google.com>
+>>> wrote:
+>>>>>>>>> On Fri, Mar 9, 2018 at 5:54 PM Jeremy Cline <jeremy@jcline.org>
+>>> wrote:
+>>>>>>>>>
+>>>>>>>>>> On Fri, Mar 09, 2018 at 10:43:50AM +0000, Thiebaud Weksteen
+> wrote:
+>>>>>>>>>>> Thanks a lot for trying out the patch!
+>>>>>>>>>>>
+>>>>>>>>>>> Please don't modify your install at this stage, I think we are
+>>> hitting a
+>>>>>>>>>>> firmware bug and that would be awesome if we can fix how we are
+>>>>>>>>> handling it.
+>>>>>>>>>>> So, if we reach that stage in the function it could either be
+>>> that:
+>>>>>>>>>>> * The allocation did not succeed, somehow, but the firmware
+> still
+>>>>>>>>> returned
+>>>>>>>>>>> EFI_SUCCEED.
+>>>>>>>>>>> * The size requested is incorrect (I'm thinking something like a
+>>> 1G of
+>>>>>>>>>>> log). This would be due to either a miscalculation of log_size
+>>>>>>>>> (possible)
+>>>>>>>>>>> or; the returned values of GetEventLog are not correct.
+>>>>>>>>>>> I'm sending a patch to add checks for these. Could you please
+>>> apply and
+>>>>>>>>>>> retest?
+>>>>>>>>>>> Again, thanks for helping debugging this.
+>>>>>>>>>
+>>>>>>>>>> No problem, thanks for the help :)
+>>>>>>>>>
+>>>>>>>>>> With the new patch:
+>>>>>>>>>
+>>>>>>>>>> Locating the TCG2Protocol
+>>>>>>>>>> Calling GetEventLog on TCG2Protocol
+>>>>>>>>>> Log returned
+>>>>>>>>>> log_location is not empty
+>>>>>>>>>> log_size != 0
+>>>>>>>>>> log_size < 1M
+>>>>>>>>>> Allocating memory for storing the logs
+>>>>>>>>>> Returned from memory allocation
+>>>>>>>>>> Copying log to new location
+>>>>>>>>>
+>>>>>>>>>> And then it hangs. I added a couple more print statements:
+>>>>>>>>>
+>>>>>>>>>> diff --git a/drivers/firmware/efi/libstub/tpm.c
+>>>>>>>>> b/drivers/firmware/efi/libstub/tpm.c
+>>>>>>>>>> index ee3fac109078..1ab5638bc50e 100644
+>>>>>>>>>> --- a/drivers/firmware/efi/libstub/tpm.c
+>>>>>>>>>> +++ b/drivers/firmware/efi/libstub/tpm.c
+>>>>>>>>>> @@ -148,8 +148,11 @@ void
+>>>>>>>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>>>>>>>>>>          efi_printk(sys_table_arg, "Copying log to new
+>>> location\n");
+>>>>>>>>>
+>>>>>>>>>>          memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
+>>>>>>>>>> +       efi_printk(sys_table_arg, "Successfully memset log_tbl to
+>>> 0\n");
+>>>>>>>>>>          log_tbl->size = log_size;
+>>>>>>>>>> +       efi_printk(sys_table_arg, "Set log_tbl->size\n");
+>>>>>>>>>>          log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
+>>>>>>>>>> +       efi_printk(sys_table_arg, "Set log_tbl-version\n");
+>>>>>>>>>>          memcpy(log_tbl->log, (void *) first_entry_addr,
+> log_size);
+>>>>>>>>>
+>>>>>>>>>>          efi_printk(sys_table_arg, "Installing the log into the
+>>>>>>>>> configuration table\n");
+>>>>>>>>>
+>>>>>>>>>> and it's hanging at "memset(log_tbl, 0, sizeof(*log_tbl) +
+>>> log_size);"
+>>>>>>>>>
+>>>>>>>>> Thanks. Well, it looks like the memory that is supposedly
+> allocated
+>>> is not
+>>>>>>>>> usable. I'm thinking this is a firmware bug.
+>>>>>>>>> Ard, would you agree on this assumption? Thoughts on how to
+> proceed?
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> I am rather puzzled why the allocate_pool() should succeed and the
+>>>>>>>> subsequent memset() should fail. This does not look like an issue
+>>> that
+>>>>>>>> is intimately related to TPM2 support, rather an issue in the
+>>> firmware
+>>>>>>>> that happens to get tickled after the change.
+>>>>>>>>
+>>>>>>>> Would you mind trying replacing EFI_LOADER_DATA with
+>>>>>>>> EFI_BOOT_SERVICES_DATA in the allocate_pool() call?
+>>>>>>>
+>>>>>>> Replacing EFI_LOADER_DATA with EFI_BOOT_SERVICES_DATA still hangs at
+>>> the
+>>>>>>> memset() call.
+>>>>>>>
+>>>>>>
+>>>>>> Could you try the following please? (attached as well in case gmail
+>>> mangles it)
+>>>>>>
+>>>>>> diff --git a/drivers/firmware/efi/libstub/tpm.c
+>>>>>> b/drivers/firmware/efi/libstub/tpm.c
+>>>>>> index 2298560cea72..30d960a344b7 100644
+>>>>>> --- a/drivers/firmware/efi/libstub/tpm.c
+>>>>>> +++ b/drivers/firmware/efi/libstub/tpm.c
+>>>>>> @@ -70,6 +70,8 @@ void
+>>>>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>>>>>>         size_t log_size, last_entry_size;
+>>>>>>         efi_bool_t truncated;
+>>>>>>         void *tcg2_protocol;
+>>>>>> +       unsigned long num_pages;
+>>>>>> +       efi_physical_addr_t log_tbl_alloc;
+>>>>>>
+>>>>>>         status = efi_call_early(locate_protocol, &tcg2_guid, NULL,
+>>>>>>                                 &tcg2_protocol);
+>>>>>> @@ -104,9 +106,12 @@ void
+>>>>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>>>>>>         }
+>>>>>>
+>>>>>>         /* Allocate space for the logs and copy them. */
+>>>>>> -       status = efi_call_early(allocate_pool, EFI_LOADER_DATA,
+>>>>>> -                               sizeof(*log_tbl) + log_size,
+>>>>>> -                               (void **) &log_tbl);
+>>>>>> +       num_pages = DIV_ROUND_UP(sizeof(*log_tbl) + log_size,
+>>> EFI_PAGE_SIZE);
+>>>>>> +       status = efi_call_early(allocate_pages,
+>>>>>> +                               EFI_ALLOCATE_ANY_PAGES,
+>>>>>> +                               EFI_LOADER_DATA,
+>>>>>> +                               num_pages,
+>>>>>> +                               &log_tbl_alloc);
+>>>>>>
+>>>>>>         if (status != EFI_SUCCESS) {
+>>>>>>                 efi_printk(sys_table_arg,
+>>>>>> @@ -114,6 +119,7 @@ void
+>>>>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>>>>>>                 return;
+>>>>>>         }
+>>>>>>
+>>>>>> +       log_tbl = (struct linux_efi_tpm_eventlog *)(unsigned
+>>> long)log_tbl_alloc;
+>>>>>>         memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
+>>>>>>         log_tbl->size = log_size;
+>>>>>>         log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
+>>>>>> @@ -126,7 +132,7 @@ void
+>>>>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>>>>>>         return;
+>>>>>>
+>>>>>>  err_free:
+>>>>>> -       efi_call_early(free_pool, log_tbl);
+>>>>>> +       efi_call_early(free_pages, log_tbl_alloc, num_pages);
+>>>>>>  }
+>>>>>>
+>>>>>>  void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
+>>>>>>
+>>>>>
+>>>>> Hi Ard,
+>>>>>
+>>>>> When I apply this, it starts hanging at
+>>>>>
+>>>>> status = efi_call_proto(efi_tcg2_protocol, get_event_log,
+> tcg2_protocol,
+>>>>>                         EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2,
+>>>>>                         &log_location, &log_last_entry, &truncated);
+>>>>>
+>>>>> rather than at the memset() call.
+>>>>>
+>>>
+>>>> That is *very* surprising, given that the change only affects code
+>>>> that executes after that.
+>>>
 > 
-> Only loadpin and SELinux currently implement this hook. From what
-> I can see, this won't change anything for either of them. IMA calls
-> kernel_read_file(), but looking there it seems those callers won't be
-> negatively impacted either. Can folks double-check this and send an
-> Ack please?
-> ---
->  fs/exec.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> Hans, you said you configured the tablet to use the 32-bit version of grub
+> instead
+> of 64. Why's that?
 > 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 7eb8d21bcab9..a919a827d181 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -895,13 +895,13 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
->  	if (!S_ISREG(file_inode(file)->i_mode) || max_size < 0)
->  		return -EINVAL;
->  
-> -	ret = security_kernel_read_file(file, id);
-> +	ret = deny_write_access(file);
->  	if (ret)
->  		return ret;
->  
-> -	ret = deny_write_access(file);
-> +	ret = security_kernel_read_file(file, id);
->  	if (ret)
-> -		return ret;
-> +		goto out;
->  
->  	i_size = i_size_read(file_inode(file));
->  	if (max_size > 0 && i_size > max_size) {
-> 
+> Jeremy, could you confirm if you are building the kernel in 64bit mode? Is
+> your Android install working? (that is, what happens if you boot Boot0000)?
 
--- 
-James Morris
-<jmorris@namei.org>
+It's definitely being built in 64bit mode. The Android install entry is
+a remnant from Hans, but it appears to be a Red Hat grub so it just
+boots to Fedora.
+
+Regards,
+Jeremy
