@@ -1,114 +1,60 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from out02.mta.xmission.com ([166.70.13.232]:42570 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751842AbeCMSqG (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45184 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751714AbeCMS0w (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 13 Mar 2018 14:46:06 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Dongsu Park <dongsu@kinvolk.io>,
-        Alban Crequy <alban@kinvolk.io>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-References: <1520540650-7451-1-git-send-email-zohar@linux.vnet.ibm.com>
-        <1520540650-7451-2-git-send-email-zohar@linux.vnet.ibm.com>
-Date: Tue, 13 Mar 2018 13:45:15 -0500
-In-Reply-To: <1520540650-7451-2-git-send-email-zohar@linux.vnet.ibm.com> (Mimi
-        Zohar's message of "Thu, 8 Mar 2018 15:24:07 -0500")
-Message-ID: <87sh93yfus.fsf@xmission.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Subject: Re: [PATCH v3 1/4] ima: fail file signature verification on non-init mounted filesystems
+        Tue, 13 Mar 2018 14:26:52 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2DIF7Rk186320
+        for <linux-integrity@vger.kernel.org>; Tue, 13 Mar 2018 14:26:52 -0400
+Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2gpkfks5xn-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 13 Mar 2018 14:26:51 -0400
+Received: from localhost
+        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Tue, 13 Mar 2018 18:16:48 -0000
+Subject: Re: [RFC PATCH linux-next] evm: evm_hmac can be static
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: kbuild test robot <fengguang.wu@intel.com>,
+        =?ISO-8859-1?Q?Hern=E1n?= Gonzalez <hernan@vanguardiasur.com.ar>
+Cc: kbuild-all@01.org, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 13 Mar 2018 14:16:42 -0400
+In-Reply-To: <20180313174224.GA28779@intel17>
+References: <201803140150.bfjQDiL5%fengguang.wu@intel.com>
+         <20180313174224.GA28779@intel17>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1520965002.3547.342.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+On Wed, 2018-03-14 at 01:42 +0800, kbuild test robot wrote:
+> Fixes: c49fc264be98 ("evm: Move evm_hmac and evm_hash from evm_main.c to evm_crypto.c")
+> Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
 
-> FUSE can be mounted by unprivileged users either today with fusermount
-> installed with setuid, or soon with the upcoming patches to allow FUSE
-> mounts in a non-init user namespace.
->
-> This patch addresses the new unprivileged non-init mounted filesystems,
-> which are untrusted, by failing the signature verification.
->
-> This patch defines two new flags SB_I_IMA_UNVERIFIABLE_SIGNATURE and
-> SB_I_UNTRUSTED_MOUNTER.
+Thanks!
 
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-
->
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Seth Forshee <seth.forshee@canonical.com>
-> Cc: Eric W. Biederman <ebiederm@xmission.com>
-> Cc: Dongsu Park <dongsu@kinvolk.io>
-> Cc: Alban Crequy <alban@kinvolk.io>
-> Cc: Serge E. Hallyn <serge@hallyn.com>
->
 > ---
-> Changelog v3:
-> - Fix SB_IMA_UNVERIFIABLE_SIGNATURE & SB_I_UNTRUSTED_MOUNTER test.
->
-> Changelog v2:
-> - Limit patch to non-init mounted filesystems.
-> - Define 2 sb->s_iflags
->
-> Changelog v1:
-> - Merged the unprivileged and privileged patches.
-> - Dropped IMA fsname support.
-> - Introduced a new IMA builtin policy named "untrusted_fs".
-> - Replaced fs_type flag with sb->s_iflags flag.
->
->  include/linux/fs.h                    |  2 ++
->  security/integrity/ima/ima_appraise.c | 15 ++++++++++++++-
->  2 files changed, 16 insertions(+), 1 deletion(-)
->
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 2a815560fda0..4e1c76af7b68 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1320,6 +1320,8 @@ extern int send_sigurg(struct fown_struct *fown);
->  
->  /* sb->s_iflags to limit user namespace mounts */
->  #define SB_I_USERNS_VISIBLE		0x00000010 /* fstype already mounted */
-> +#define SB_I_IMA_UNVERIFIABLE_SIGNATURE	0x00000020
-> +#define SB_I_UNTRUSTED_MOUNTER		0x00000040
->  
->  /* Possible states of 'frozen' field */
->  enum {
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> index 1b177461f20e..4bafb397ee91 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -302,7 +302,19 @@ int ima_appraise_measurement(enum ima_hooks func,
->  	}
->  
->  out:
-> -	if (status != INTEGRITY_PASS) {
-> +	/*
-> +	 * File signatures on some filesystems can not be properly verified.
-> +	 * On these filesytems, that are mounted by an untrusted mounter,
-> +	 * fail the file signature verification.
-> +	 */
-> +	if ((inode->i_sb->s_iflags &
-> +	    (SB_I_IMA_UNVERIFIABLE_SIGNATURE | SB_I_UNTRUSTED_MOUNTER)) ==
-> +	    (SB_I_IMA_UNVERIFIABLE_SIGNATURE | SB_I_UNTRUSTED_MOUNTER)) {
-> +		status = INTEGRITY_FAIL;
-> +		cause = "unverifiable-signature";
-> +		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
-> +				    op, cause, rc, 0);
-> +	} else if (status != INTEGRITY_PASS) {
->  		if ((ima_appraise & IMA_APPRAISE_FIX) &&
->  		    (!xattr_value ||
->  		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
-> @@ -319,6 +331,7 @@ int ima_appraise_measurement(enum ima_hooks func,
->  	} else {
->  		ima_cache_flags(iint, func);
->  	}
-> +
->  	ima_set_cache_status(iint, func, status);
->  	return status;
->  }
+>  evm_crypto.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+> index fdde9cb..a46fba3 100644
+> --- a/security/integrity/evm/evm_crypto.c
+> +++ b/security/integrity/evm/evm_crypto.c
+> @@ -37,8 +37,8 @@ static DEFINE_MUTEX(mutex);
+> 
+>  static unsigned long evm_set_key_flags;
+> 
+> -char * const evm_hmac = "hmac(sha1)";
+> -char * const evm_hash = "sha1";
+> +static char * const evm_hmac = "hmac(sha1)";
+> +static char * const evm_hash = "sha1";
+> 
+>  /**
+>   * evm_set_key() - set EVM HMAC key from the kernel
