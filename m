@@ -1,13 +1,18 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-it0-f53.google.com ([209.85.214.53]:52081 "EHLO
-        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933113AbeCMNnV (ORCPT
+Received: from a8-53.smtp-out.amazonses.com ([54.240.8.53]:45090 "EHLO
+        a8-53.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752261AbeCMNlD (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:43:21 -0400
-Received: by mail-it0-f53.google.com with SMTP id u66-v6so178425ith.1
-        for <linux-integrity@vger.kernel.org>; Tue, 13 Mar 2018 06:43:21 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <010001621f97c0bb-898ceaeb-668d-4543-8835-dc374ba02539-000000@email.amazonses.com>
+        Tue, 13 Mar 2018 09:41:03 -0400
+Subject: Re: Regression from efi: call get_event_log before ExitBootServices
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Hans de Goede <hdegoede@redhat.com>
+Cc: Thiebaud Weksteen <tweek@google.com>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
  <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
  <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
@@ -19,71 +24,63 @@ References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.
  <CA+zpnLdxGT08citakzZwZsSQAFeTJw-j6S7udHk6-sEJ9R3xpA@mail.gmail.com>
  <010001621b7ce5a3-b80c55b8-be68-4b44-ab52-4949e8ddb8d0-000000@email.amazonses.com>
  <CA+zpnLf=JDUxyorH7yP=08FD_u=+UoQ6ubsKyVLD+4w9raYAKQ@mail.gmail.com>
- <bf12c497-db2a-f1f0-efc3-07e6a6ee9daa@redhat.com> <CAKv+Gu9_rYv_XocRwTLdH+P7dVq+3=CQRJ9O9kKyry_=Ekz0aQ@mail.gmail.com>
- <010001621f97c0bb-898ceaeb-668d-4543-8835-dc374ba02539-000000@email.amazonses.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Tue, 13 Mar 2018 13:43:19 +0000
-Message-ID: <CAKv+Gu98sgrk8Jn9gNG-g-Ku77scxO_3JuMDSOLCULZCo26XPA@mail.gmail.com>
-Subject: Re: Regression from efi: call get_event_log before ExitBootServices
-To: Jeremy Cline <jeremy@jcline.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-        Thiebaud Weksteen <tweek@google.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+ <bf12c497-db2a-f1f0-efc3-07e6a6ee9daa@redhat.com>
+ <CAKv+Gu9_rYv_XocRwTLdH+P7dVq+3=CQRJ9O9kKyry_=Ekz0aQ@mail.gmail.com>
+From: Jeremy Cline <jeremy@jcline.org>
+Message-ID: <010001621f97c0bb-898ceaeb-668d-4543-8835-dc374ba02539-000000@email.amazonses.com>
+Date: Tue, 13 Mar 2018 13:41:02 +0000
+MIME-Version: 1.0
+In-Reply-To: <CAKv+Gu9_rYv_XocRwTLdH+P7dVq+3=CQRJ9O9kKyry_=Ekz0aQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 13 March 2018 at 13:41, Jeremy Cline <jeremy@jcline.org> wrote:
-> On 03/13/2018 03:59 AM, Ard Biesheuvel wrote:
->> On 13 March 2018 at 07:47, Hans de Goede <hdegoede@redhat.com> wrote:
->>> Hi,
->>>
->>>
->>> On 12-03-18 20:55, Thiebaud Weksteen wrote:
->>>>
->> ...
->>>>
->>>> Hans, you said you configured the tablet to use the 32-bit version of grub
->>>> instead
->>>> of 64. Why's that?
->>>
->>>
->>> Because this tablet, like (almost?) all Bay Trail hardware has a 32 bit
->>> UEFI,
->>> even though the processor is 64 bit capable (AFAIK 64 bit Windows drivers
->>> were
->>> not ready in time so all Bay Trail devices shipped with a 32 bit Windows).
->>>
->>> So this is running a 32 bit grub which boots a 64 bit kernel.
->>>
->>>> Jeremy, could you confirm if you are building the kernel in 64bit mode? Is
->>>> your Android install working? (that is, what happens if you boot
->>>> Boot0000)?
->>>
->>>
->>> AFAIK the kernel on Jeremy's tablet (which I initially installed) is 64 bit.
->>>
->>> Could the problem perhaps be that the new code for the TPM event-log is
->>> missing some handling to deal with running on a 32 bit firmware? I know the
->>> rest of the kernel has special code to deal with this.
->>>
+On 03/13/2018 03:59 AM, Ard Biesheuvel wrote:
+> On 13 March 2018 at 07:47, Hans de Goede <hdegoede@redhat.com> wrote:
+>> Hi,
 >>
->> That is a very good point, and I missed that this is a 64-bit kernel
->> running on 32-bit UEFI.
 >>
->> The TPM code does use efi_call_proto() directly, and now I am thinking
->> it is perhaps the allocate_pages() call that simply only initializes
->> the low 32-bits of log_tbl.
+>> On 12-03-18 20:55, Thiebaud Weksteen wrote:
+>>>
+> ...
+>>>
+>>> Hans, you said you configured the tablet to use the 32-bit version of grub
+>>> instead
+>>> of 64. Why's that?
 >>
->> Jeremy, could you please try initializing tcg2_protocol and log_tbl to
->> NULL at the start of the function?
 >>
->
-> That was it, it boots when those are initialized to NULL.
->
+>> Because this tablet, like (almost?) all Bay Trail hardware has a 32 bit
+>> UEFI,
+>> even though the processor is 64 bit capable (AFAIK 64 bit Windows drivers
+>> were
+>> not ready in time so all Bay Trail devices shipped with a 32 bit Windows).
+>>
+>> So this is running a 32 bit grub which boots a 64 bit kernel.
+>>
+>>> Jeremy, could you confirm if you are building the kernel in 64bit mode? Is
+>>> your Android install working? (that is, what happens if you boot
+>>> Boot0000)?
+>>
+>>
+>> AFAIK the kernel on Jeremy's tablet (which I initially installed) is 64 bit.
+>>
+>> Could the problem perhaps be that the new code for the TPM event-log is
+>> missing some handling to deal with running on a 32 bit firmware? I know the
+>> rest of the kernel has special code to deal with this.
+>>
+> 
+> That is a very good point, and I missed that this is a 64-bit kernel
+> running on 32-bit UEFI.
+> 
+> The TPM code does use efi_call_proto() directly, and now I am thinking
+> it is perhaps the allocate_pages() call that simply only initializes
+> the low 32-bits of log_tbl.
+> 
+> Jeremy, could you please try initializing tcg2_protocol and log_tbl to
+> NULL at the start of the function?
+> 
 
-Thanks for confirming. I'll send out a patch.
+That was it, it boots when those are initialized to NULL.
+
+Regards,
+Jeremy
