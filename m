@@ -1,285 +1,160 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:41791 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752038AbeCMHYe (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 13 Mar 2018 03:24:34 -0400
-Received: by mail-io0-f193.google.com with SMTP id m83so2023417ioi.8
-        for <linux-integrity@vger.kernel.org>; Tue, 13 Mar 2018 00:24:34 -0700 (PDT)
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35132 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751385AbeCMF6V (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 13 Mar 2018 01:58:21 -0400
+Date: Tue, 13 Mar 2018 01:53:34 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: containers@lists.linux-foundation.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, paul@paul-moore.com,
+        sgrubb@redhat.com, Matthew Garrett <mjg59@google.com>,
+        Peter Moody <peter@hda3.com>
+Subject: Re: [PATCH] audit: add containerid support for IMA-audit
+Message-ID: <20180313055334.hnxuxifv5rcrgb77@madcap2.tricolour.ca>
+References: <1520257393.10396.291.camel@linux.vnet.ibm.com>
+ <20180305135008.po6lheqnmkqqo6q4@madcap2.tricolour.ca>
+ <1520259854.10396.313.camel@linux.vnet.ibm.com>
+ <20180308112104.z67wohdvjqemy7wy@madcap2.tricolour.ca>
+ <1520532165.3605.51.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
-References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
- <a3b5f822-f8f4-e2f5-46da-e23e13174f28@redhat.com> <cec36124-0950-6ad9-58a8-9bd69e63aa04@redhat.com>
- <0100016206a68850-bd5c96b3-f275-46ea-98b1-1317e02a5d6e-000000@email.amazonses.com>
- <29c1640a-cf19-ca19-7de9-96f202edfb5a@redhat.com> <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
- <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
- <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
- <CAKv+Gu-KPU+kQ0z3jJ+CcgNPq3PuqjF_CCB_2LR_5VoYaynTJw@mail.gmail.com>
- <010001621a9e5069-0b1a6328-97e4-4396-9438-b90f5b8c82a4-000000@email.amazonses.com>
- <CAKv+Gu8+x=5nU9MmYQKKc=3fhMXoUYjGSjYYfhjaFtdGG2NkaA@mail.gmail.com>
- <010001621b287e42-58955302-cc14-4212-b7b0-e6e358633dab-000000@email.amazonses.com>
- <CAKv+Gu_hLR3YNZF=taLM++LdfqmPpGG+vR1O8NfKNP00PNeiYA@mail.gmail.com>
- <CA+zpnLdxGT08citakzZwZsSQAFeTJw-j6S7udHk6-sEJ9R3xpA@mail.gmail.com>
- <010001621b7ce5a3-b80c55b8-be68-4b44-ab52-4949e8ddb8d0-000000@email.amazonses.com>
- <CA+zpnLf=JDUxyorH7yP=08FD_u=+UoQ6ubsKyVLD+4w9raYAKQ@mail.gmail.com> <CAKv+Gu-se-O0aNjjA==8_aB9qBaGks7+sUjGvgT8qFekUVg4PA@mail.gmail.com>
-In-Reply-To: <CAKv+Gu-se-O0aNjjA==8_aB9qBaGks7+sUjGvgT8qFekUVg4PA@mail.gmail.com>
-From: Thiebaud Weksteen <tweek@google.com>
-Date: Tue, 13 Mar 2018 07:24:22 +0000
-Message-ID: <CA+zpnLfGfcsNGxLdk=pWgvMZqHqSp-BBo1DX4nL=hcHQxnpmGQ@mail.gmail.com>
-Subject: Re: Regression from efi: call get_event_log before ExitBootServices
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Jeremy Cline <jeremy@jcline.org>, hdegoede@redhat.com,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1520532165.3605.51.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Mar 12, 2018 at 10:03 PM Ard Biesheuvel <ard.biesheuvel@linaro.org>
-wrote:
+On 2018-03-08 13:02, Mimi Zohar wrote:
+> On Thu, 2018-03-08 at 06:21 -0500, Richard Guy Briggs wrote:
+> > On 2018-03-05 09:24, Mimi Zohar wrote:
+> > > On Mon, 2018-03-05 at 08:50 -0500, Richard Guy Briggs wrote:
+> > > > On 2018-03-05 08:43, Mimi Zohar wrote:
+> > > > > Hi Richard,
+> > > > > 
+> > > > > This patch has been compiled, but not runtime tested.
+> > > > 
+> > > > Ok, great, thank you.  I assume you are offering this patch to be
+> > > > included in this patchset?
+> > > 
+> > > Yes, thank you.
+> > > 
+> > > > I'll have a look to see where it fits in the
+> > > > IMA record.  It might be better if it were an AUDIT_CONTAINER_INFO
+> > > > auxiliary record, but I'll have a look at the circumstances of the
+> > > > event.  
+> > 
+> > I had a look at the context of this record to see if adding the contid
+> > field to it made sense.  I think the only records for which the contid
+> > field makes sense are the two newly proposed records, AUDIT_CONTAINER
+> > which introduces the container ID and the and AUDIT_CONTAINER_INFO which
+> > documents the presence of the container ID in a process event (or
+> > process-less network event).  All others should use the auxiliary record
+> > AUDIT_CONTAINER_INFO rather than include the contid field directly
+> > itself.  There are several reasons for this including record length, the
+> > ability to filter unwanted records, the difficulty of changing the order
+> > of or removing fields in the future.
+> > 
+> > Syscalls get this information automatically if the container ID is set
+> > for a task via the AUDIT_CONTAINER_INFO auxiliary record.  Generally a
+> > syscall event is one that uses the task's audit_context while a
+> > standalone event uses NULL or builds a local audit_context that is
+> > discarded immediately after the local use.
+> > 
+> > Looking at the two cases of AUDIT_INTEGRITY_RULE record generation, it
+> > appears that they should be split into two distinct audit record types.
+> > 
+> > The record created in ima_audit_measurement() is a syscall record that
+> > could possibly stand on its own since the subject attributes are
+> > present.  If it remains a syscall auxiliary record it will automatically
+> > have the AUDIT_CONTAINER_INFO record accompany it anyways.  If it is
+> > decided to detach it (which would save cpu/netlink/disk bandwidth but is
+> > not recommended due to not wanting to throw away any other syscall
+> > information or other involved records (PATH, CWD, etc...) then a local
+> > audit_context would be created for the AUDIT_INTEGRITY_RULE and
+> > AUDIT_CONTAINERID_INFO records only and immediately discarded.
+> > 
+> > The record created in ima_parse_rule() is not currently a syscall record
+> > since it is passed an audit_context of NULL and it has a very different
+> > format that does not include any subject attributes (except subj_*=).
+> > At first glance it appears this one should be a syscall accompanied
+> > auxiliary record.  Either way it should have an AUDIT_CONTAINER_INFO
+> > auxiliary record either by being converted to a syscall auxiliary record
+> > by using current->audit_context rather than NULL when calling
+> > audit_log_start(), or creating a local audit_context and calling
+> > audit_log_container_info() then releasing the local context.  This
+> > version of the record has additional concerns covered here:
+> > https://github.com/linux-audit/audit-kernel/issues/52
+> > 
+> > Can you briefly describe the circumstances under which these two
+> > different identically-numbered records are produced as a first step
+> > towards splitting them into two distict records?
+> 
+> Agreed, the two uses should really be separated.  ima_parse_rule()
+> generates audit messages, when the IMA policy is initially loaded,
+> replaced, or extended, the policy rules are included in the audit log.
+> When IMA is namespaced, there will be a host policy and namespace
+> policies.  We'll need to be able differentiate between the host policy
+> rules and IMA namespaced policy rules, and between IMA namespaced
+> policy rules.
 
-> On 12 March 2018 at 19:55, Thiebaud Weksteen <tweek@google.com> wrote:
-> > On Mon, Mar 12, 2018 at 7:33 PM Jeremy Cline <jeremy@jcline.org> wrote:
-> >
-> >> On 03/12/2018 02:29 PM, Thiebaud Weksteen wrote:
-> >> > On Mon, Mar 12, 2018 at 6:30 PM Ard Biesheuvel <
-> > ard.biesheuvel@linaro.org>
-> >> > wrote:
-> >> >
-> >> >> On 12 March 2018 at 17:01, Jeremy Cline <jeremy@jcline.org> wrote:
-> >> >>> On 03/12/2018 10:56 AM, Ard Biesheuvel wrote:
-> >> >>>> On 12 March 2018 at 14:30, Jeremy Cline <jeremy@jcline.org> wrote:
-> >> >>>>> On 03/12/2018 07:08 AM, Ard Biesheuvel wrote:
-> >> >>>>>> On 10 March 2018 at 10:45, Thiebaud Weksteen <tweek@google.com>
-> >> > wrote:
-> >> >>>>>>> On Fri, Mar 9, 2018 at 5:54 PM Jeremy Cline <jeremy@jcline.org>
-> >> > wrote:
-> >> >>>>>>>
-> >> >>>>>>>> On Fri, Mar 09, 2018 at 10:43:50AM +0000, Thiebaud Weksteen
-> > wrote:
-> >> >>>>>>>>> Thanks a lot for trying out the patch!
-> >> >>>>>>>>>
-> >> >>>>>>>>> Please don't modify your install at this stage, I think we
-are
-> >> > hitting a
-> >> >>>>>>>>> firmware bug and that would be awesome if we can fix how we
-are
-> >> >>>>>>> handling it.
-> >> >>>>>>>>> So, if we reach that stage in the function it could either be
-> >> > that:
-> >> >>>>>>>>> * The allocation did not succeed, somehow, but the firmware
-> > still
-> >> >>>>>>> returned
-> >> >>>>>>>>> EFI_SUCCEED.
-> >> >>>>>>>>> * The size requested is incorrect (I'm thinking something
-like a
-> >> > 1G of
-> >> >>>>>>>>> log). This would be due to either a miscalculation of
-log_size
-> >> >>>>>>> (possible)
-> >> >>>>>>>>> or; the returned values of GetEventLog are not correct.
-> >> >>>>>>>>> I'm sending a patch to add checks for these. Could you please
-> >> > apply and
-> >> >>>>>>>>> retest?
-> >> >>>>>>>>> Again, thanks for helping debugging this.
-> >> >>>>>>>
-> >> >>>>>>>> No problem, thanks for the help :)
-> >> >>>>>>>
-> >> >>>>>>>> With the new patch:
-> >> >>>>>>>
-> >> >>>>>>>> Locating the TCG2Protocol
-> >> >>>>>>>> Calling GetEventLog on TCG2Protocol
-> >> >>>>>>>> Log returned
-> >> >>>>>>>> log_location is not empty
-> >> >>>>>>>> log_size != 0
-> >> >>>>>>>> log_size < 1M
-> >> >>>>>>>> Allocating memory for storing the logs
-> >> >>>>>>>> Returned from memory allocation
-> >> >>>>>>>> Copying log to new location
-> >> >>>>>>>
-> >> >>>>>>>> And then it hangs. I added a couple more print statements:
-> >> >>>>>>>
-> >> >>>>>>>> diff --git a/drivers/firmware/efi/libstub/tpm.c
-> >> >>>>>>> b/drivers/firmware/efi/libstub/tpm.c
-> >> >>>>>>>> index ee3fac109078..1ab5638bc50e 100644
-> >> >>>>>>>> --- a/drivers/firmware/efi/libstub/tpm.c
-> >> >>>>>>>> +++ b/drivers/firmware/efi/libstub/tpm.c
-> >> >>>>>>>> @@ -148,8 +148,11 @@ void
-> >> >>>>>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t
-*sys_table_arg)
-> >> >>>>>>>>          efi_printk(sys_table_arg, "Copying log to new
-> >> > location\n");
-> >> >>>>>>>
-> >> >>>>>>>>          memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
-> >> >>>>>>>> +       efi_printk(sys_table_arg, "Successfully memset
-log_tbl to
-> >> > 0\n");
-> >> >>>>>>>>          log_tbl->size = log_size;
-> >> >>>>>>>> +       efi_printk(sys_table_arg, "Set log_tbl->size\n");
-> >> >>>>>>>>          log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
-> >> >>>>>>>> +       efi_printk(sys_table_arg, "Set log_tbl-version\n");
-> >> >>>>>>>>          memcpy(log_tbl->log, (void *) first_entry_addr,
-> > log_size);
-> >> >>>>>>>
-> >> >>>>>>>>          efi_printk(sys_table_arg, "Installing the log into
-the
-> >> >>>>>>> configuration table\n");
-> >> >>>>>>>
-> >> >>>>>>>> and it's hanging at "memset(log_tbl, 0, sizeof(*log_tbl) +
-> >> > log_size);"
-> >> >>>>>>>
-> >> >>>>>>> Thanks. Well, it looks like the memory that is supposedly
-> > allocated
-> >> > is not
-> >> >>>>>>> usable. I'm thinking this is a firmware bug.
-> >> >>>>>>> Ard, would you agree on this assumption? Thoughts on how to
-> > proceed?
-> >> >>>>>>>
-> >> >>>>>>
-> >> >>>>>> I am rather puzzled why the allocate_pool() should succeed and
-the
-> >> >>>>>> subsequent memset() should fail. This does not look like an
-issue
-> >> > that
-> >> >>>>>> is intimately related to TPM2 support, rather an issue in the
-> >> > firmware
-> >> >>>>>> that happens to get tickled after the change.
-> >> >>>>>>
-> >> >>>>>> Would you mind trying replacing EFI_LOADER_DATA with
-> >> >>>>>> EFI_BOOT_SERVICES_DATA in the allocate_pool() call?
-> >> >>>>>
-> >> >>>>> Replacing EFI_LOADER_DATA with EFI_BOOT_SERVICES_DATA still
-hangs at
-> >> > the
-> >> >>>>> memset() call.
-> >> >>>>>
-> >> >>>>
-> >> >>>> Could you try the following please? (attached as well in case
-gmail
-> >> > mangles it)
-> >> >>>>
-> >> >>>> diff --git a/drivers/firmware/efi/libstub/tpm.c
-> >> >>>> b/drivers/firmware/efi/libstub/tpm.c
-> >> >>>> index 2298560cea72..30d960a344b7 100644
-> >> >>>> --- a/drivers/firmware/efi/libstub/tpm.c
-> >> >>>> +++ b/drivers/firmware/efi/libstub/tpm.c
-> >> >>>> @@ -70,6 +70,8 @@ void
-> >> >>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
-> >> >>>>         size_t log_size, last_entry_size;
-> >> >>>>         efi_bool_t truncated;
-> >> >>>>         void *tcg2_protocol;
-> >> >>>> +       unsigned long num_pages;
-> >> >>>> +       efi_physical_addr_t log_tbl_alloc;
-> >> >>>>
-> >> >>>>         status = efi_call_early(locate_protocol, &tcg2_guid, NULL,
-> >> >>>>                                 &tcg2_protocol);
-> >> >>>> @@ -104,9 +106,12 @@ void
-> >> >>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
-> >> >>>>         }
-> >> >>>>
-> >> >>>>         /* Allocate space for the logs and copy them. */
-> >> >>>> -       status = efi_call_early(allocate_pool, EFI_LOADER_DATA,
-> >> >>>> -                               sizeof(*log_tbl) + log_size,
-> >> >>>> -                               (void **) &log_tbl);
-> >> >>>> +       num_pages = DIV_ROUND_UP(sizeof(*log_tbl) + log_size,
-> >> > EFI_PAGE_SIZE);
-> >> >>>> +       status = efi_call_early(allocate_pages,
-> >> >>>> +                               EFI_ALLOCATE_ANY_PAGES,
-> >> >>>> +                               EFI_LOADER_DATA,
-> >> >>>> +                               num_pages,
-> >> >>>> +                               &log_tbl_alloc);
-> >> >>>>
-> >> >>>>         if (status != EFI_SUCCESS) {
-> >> >>>>                 efi_printk(sys_table_arg,
-> >> >>>> @@ -114,6 +119,7 @@ void
-> >> >>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
-> >> >>>>                 return;
-> >> >>>>         }
-> >> >>>>
-> >> >>>> +       log_tbl = (struct linux_efi_tpm_eventlog *)(unsigned
-> >> > long)log_tbl_alloc;
-> >> >>>>         memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
-> >> >>>>         log_tbl->size = log_size;
-> >> >>>>         log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
-> >> >>>> @@ -126,7 +132,7 @@ void
-> >> >>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
-> >> >>>>         return;
-> >> >>>>
-> >> >>>>  err_free:
-> >> >>>> -       efi_call_early(free_pool, log_tbl);
-> >> >>>> +       efi_call_early(free_pages, log_tbl_alloc, num_pages);
-> >> >>>>  }
-> >> >>>>
-> >> >>>>  void efi_retrieve_tpm2_eventlog(efi_system_table_t
-*sys_table_arg)
-> >> >>>>
-> >> >>>
-> >> >>> Hi Ard,
-> >> >>>
-> >> >>> When I apply this, it starts hanging at
-> >> >>>
-> >> >>> status = efi_call_proto(efi_tcg2_protocol, get_event_log,
-> > tcg2_protocol,
-> >> >>>                         EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2,
-> >> >>>                         &log_location, &log_last_entry,
-&truncated);
-> >> >>>
-> >> >>> rather than at the memset() call.
-> >> >>>
-> >> >
-> >> >> That is *very* surprising, given that the change only affects code
-> >> >> that executes after that.
-> >> >
-> >
-> > Hans, you said you configured the tablet to use the 32-bit version of
-grub
-> > instead
-> > of 64. Why's that?
-> >
-> > Jeremy, could you confirm if you are building the kernel in 64bit mode?
-Is
-> > your Android install working? (that is, what happens if you boot
-Boot0000)?
-> >
-> >> >> I understand how annoying this is for you, and I think we should try
-> >> >> to fix this, but reverting the patches outright isn't the solution
-> >> >> either.
-> >> >
-> >> >> Which UEFI vendor and version does your system report?
-> >> >
-> >> > You should be able to find this info using the "ver" command in the
-UEFI
-> >> > shell.
-> >> > The UEFI vendor is Insyde (see first message).
-> >> >
-> >
-> >> Ah, thanks!
-> >
-> >> EFI Specification Revision      : 2.40
-> >> EFI Vendor                      : INSYDE Corp.
-> >> EFI Revision                    : 21573.83
-> >
+I would argue this type of message/record should be converted to an
+accompanied syscall record, or have the subject attributes added to the
+record so that it is clear what user/process initiated this action.  It
+now occurs to me that to save audit communications and disk bandwidth,
+one syscall record could accompany all the rule records, but if the list
+is long enough it might overwhelm userspace audit event parsing code.
+Steve?
 
-> Thiebaud,
+Regardless, the ima_parse_rule() record format needs to be fixed to
+address the non-standard use of "<" and ">" operators instead of the
+standard "=" field/value separator.
 
-> If we don't manage to resolve this, do you see any way to blacklist
-> systems based on this information? Would it be reasonable, say, to
-> require UEFI v2.5 or later for TPM2 support? Or doesn't that make any
-> sense (I am aware that the TCG EFI spec and the UEFI spec are somewhat
-> orthogonal, but it also depends on the hardware you are targetting, I
-> guess). Otherwise, we could use a more specific match, perhaps?
+> The audit messages produced by ima_audit_measurement() were originally
+> upstreamed for forensics, and as seen by the FireEye blog are now used
+> to augment existing security analytics.  These records are probably
+> being used independently of any other audit records.  A single record
+> is generated per file, per system.  With IMA namespacing, these
+> records need to be generated once per file, per namespace as well.  In
+> order to differentiate the records between the host and namespace, and
+> between namespaces, these records should include the container id.
 
-I understand we are getting late in the rc and that this should be resolved
-quickly. As we have seen, this is a bug related to the firmware more than
-the TPM version. So filtering out on the UEFI version make sense. If it is
-too late and our only option, I'm ok with filtering out on >= 2.5. A more
-specific match would target the exact EFI revision, right? If so, yes that
-would be better but I'm not sure how this can be implemented.
+Ok, so this might be one circumstance where the container id field
+could make sense to include it in the primary record, but it will
+already be automatically getting an AUDIT_CONTAINER_INFO record by
+virtue of being a syscall auxiliary record.  You say "These records are
+probably being used independently of any other audit records.", but
+unless you are certain these are not used by any other tools, it will
+have to remain as a syscall auxiliary record.  This means it will
+duplicate the container id info if the container id field is added to
+the AUDIT_INTEGRITY_RULE record or cause your tools to need to be able
+to parse audit *events* rather than just individual audit *records* to
+get the associated container id if the container id field is not added
+to the AUDIT_INTEGRITY_RULE.
 
-> This is of course depending on whether we reach consensus on whether
-> we should make any changes at all for what appears to be a single
-> sample of a certain piece of hardware, where other samples running the
-> same firmware (right?) are working fine.
+> To disambiguate between these audit messages and the policy rule
+> messages, we could rename these audit messages to AUDIT_INTEGRITY_IMA.
 
-Right, this is my understanding as well.
+This makes sense to me, but will depend on other users of this record
+type.  Since there are already two very different formats for this one
+existing record type, changing the record type either doesn't matter if
+nothing else has noticed or this is what triggered the examination of
+this issue in the first place and should be fixed.
+
+> > The four AUDIT_INTEGRITY _METADATA, _PCR, _DATA and _STATUS records
+> > appear to be already properly covered for AUDIT_CONTAINER_INFO records
+> > by being syscall auxiliary records.  The AUDIT_INTEGRITY_HASH record
+> > appears to be unused.
+> 
+> Ok
+> 
+> Mimi
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
