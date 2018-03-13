@@ -1,103 +1,91 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-it0-f43.google.com ([209.85.214.43]:51789 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751572AbeCMPAe (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56102 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752434AbeCMOqK (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 13 Mar 2018 11:00:34 -0400
-Received: by mail-it0-f43.google.com with SMTP id u66-v6so502997ith.1
-        for <linux-integrity@vger.kernel.org>; Tue, 13 Mar 2018 08:00:34 -0700 (PDT)
+        Tue, 13 Mar 2018 10:46:10 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2DEgjw7093607
+        for <linux-integrity@vger.kernel.org>; Tue, 13 Mar 2018 10:46:10 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2gpewynqae-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 13 Mar 2018 10:46:09 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
+        Tue, 13 Mar 2018 10:46:08 -0400
+Subject: Re: [PATCH v3 4/4] fuse: define the filesystem as untrusted
+To: "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>
+References: <1520540650-7451-1-git-send-email-zohar@linux.vnet.ibm.com>
+ <1520540650-7451-5-git-send-email-zohar@linux.vnet.ibm.com>
+ <20180312192950.GE29878@mail.hallyn.com>
+Cc: linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Dongsu Park <dongsu@kinvolk.io>,
+        Alban Crequy <alban@kinvolk.io>
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Date: Tue, 13 Mar 2018 10:46:04 -0400
 MIME-Version: 1.0
-References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
- <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
- <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
- <CAKv+Gu-KPU+kQ0z3jJ+CcgNPq3PuqjF_CCB_2LR_5VoYaynTJw@mail.gmail.com>
- <010001621a9e5069-0b1a6328-97e4-4396-9438-b90f5b8c82a4-000000@email.amazonses.com>
- <CAKv+Gu8+x=5nU9MmYQKKc=3fhMXoUYjGSjYYfhjaFtdGG2NkaA@mail.gmail.com>
- <010001621b287e42-58955302-cc14-4212-b7b0-e6e358633dab-000000@email.amazonses.com>
- <CAKv+Gu_hLR3YNZF=taLM++LdfqmPpGG+vR1O8NfKNP00PNeiYA@mail.gmail.com>
- <CA+zpnLdxGT08citakzZwZsSQAFeTJw-j6S7udHk6-sEJ9R3xpA@mail.gmail.com>
- <010001621b7ce5a3-b80c55b8-be68-4b44-ab52-4949e8ddb8d0-000000@email.amazonses.com>
- <CA+zpnLf=JDUxyorH7yP=08FD_u=+UoQ6ubsKyVLD+4w9raYAKQ@mail.gmail.com>
- <bf12c497-db2a-f1f0-efc3-07e6a6ee9daa@redhat.com> <CAKv+Gu9_rYv_XocRwTLdH+P7dVq+3=CQRJ9O9kKyry_=Ekz0aQ@mail.gmail.com>
- <010001621f97c0bb-898ceaeb-668d-4543-8835-dc374ba02539-000000@email.amazonses.com>
- <CAKv+Gu98sgrk8Jn9gNG-g-Ku77scxO_3JuMDSOLCULZCo26XPA@mail.gmail.com>
-In-Reply-To: <CAKv+Gu98sgrk8Jn9gNG-g-Ku77scxO_3JuMDSOLCULZCo26XPA@mail.gmail.com>
-From: Thiebaud Weksteen <tweek@google.com>
-Date: Tue, 13 Mar 2018 15:00:22 +0000
-Message-ID: <CA+zpnLdiqvRcsjbVW248LQHr13NBTLd8bo1dY0T_sc+yhh9itg@mail.gmail.com>
-Subject: Re: Regression from efi: call get_event_log before ExitBootServices
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>, hdegoede@redhat.com,
-        Jeremy Cline <jeremy@jcline.org>
-Cc: Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180312192950.GE29878@mail.hallyn.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Message-Id: <1fd04e0e-37ab-329c-c75d-d349a3b2f136@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Mar 13, 2018 at 2:43 PM Ard Biesheuvel <ard.biesheuvel@linaro.org>
-wrote:
+On 03/12/2018 03:29 PM, Serge E. Hallyn wrote:
+> Quoting Mimi Zohar (zohar@linux.vnet.ibm.com):
+>> Files on FUSE can change at any point in time without IMA being able
+>> to detect it.  The file data read for the file signature verification
+>> could be totally different from what is subsequently read, making the
+>> signature verification useless.
+>>
+>> FUSE can be mounted by unprivileged users either today with fusermount
+>> installed with setuid, or soon with the upcoming patches to allow FUSE
+>> mounts in a non-init user namespace.
+>>
+>> This patch sets the SB_I_IMA_UNVERIFIABLE_SIGNATURE flag and when
+>> appropriate sets the SB_I_UNTRUSTED_MOUNTER flag.
+>>
+>> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+>> Cc: Miklos Szeredi <miklos@szeredi.hu>
+>> Cc: Seth Forshee <seth.forshee@canonical.com>
+>> Cc: Eric W. Biederman <ebiederm@xmission.com>
+>> Cc: Dongsu Park <dongsu@kinvolk.io>
+>> Cc: Alban Crequy <alban@kinvolk.io>
+>> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Acked-by: Serge Hallyn <serge@hallyn.com>
+>
+> Of course when IMA namespacing hits, you'll want to compare the
+> sb->s_user_ns to the (~handwaving~) user_ns owning the ima ns
+> right?
 
-> On 13 March 2018 at 13:41, Jeremy Cline <jeremy@jcline.org> wrote:
-> > On 03/13/2018 03:59 AM, Ard Biesheuvel wrote:
-> >> On 13 March 2018 at 07:47, Hans de Goede <hdegoede@redhat.com> wrote:
-> >>> Hi,
-> >>>
-> >>>
-> >>> On 12-03-18 20:55, Thiebaud Weksteen wrote:
-> >>>>
-> >> ...
-> >>>>
-> >>>> Hans, you said you configured the tablet to use the 32-bit version
-of grub
-> >>>> instead
-> >>>> of 64. Why's that?
-> >>>
-> >>>
-> >>> Because this tablet, like (almost?) all Bay Trail hardware has a 32
-bit
-> >>> UEFI,
-> >>> even though the processor is 64 bit capable (AFAIK 64 bit Windows
-drivers
-> >>> were
-> >>> not ready in time so all Bay Trail devices shipped with a 32 bit
-Windows).
-> >>>
-> >>> So this is running a 32 bit grub which boots a 64 bit kernel.
-> >>>
-> >>>> Jeremy, could you confirm if you are building the kernel in 64bit
-mode? Is
-> >>>> your Android install working? (that is, what happens if you boot
-> >>>> Boot0000)?
-> >>>
-> >>>
-> >>> AFAIK the kernel on Jeremy's tablet (which I initially installed) is
-64 bit.
-> >>>
-> >>> Could the problem perhaps be that the new code for the TPM event-log
-is
-> >>> missing some handling to deal with running on a 32 bit firmware? I
-know the
-> >>> rest of the kernel has special code to deal with this.
-> >>>
-> >>
-> >> That is a very good point, and I missed that this is a 64-bit kernel
-> >> running on 32-bit UEFI.
-> >>
-> >> The TPM code does use efi_call_proto() directly, and now I am thinking
-> >> it is perhaps the allocate_pages() call that simply only initializes
-> >> the low 32-bits of log_tbl.
-> >>
-> >> Jeremy, could you please try initializing tcg2_protocol and log_tbl to
-> >> NULL at the start of the function?
-> >>
-> >
-> > That was it, it boots when those are initialized to NULL.
-> >
+I suppose this would be the only way to enable 'trusted mounters' within 
+IMA namespaces. Maybe there could be an additional capability gate that 
+would allow one to be a 'trusted mounter' then?
 
-> Thanks for confirming. I'll send out a patch.
-
-Sweet!
-Jeremy, Hans, thanks for the help debugging!
-Ard, thanks for the help fixing the issue!
+>
+>> ---
+>>   fs/fuse/inode.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+>> index 624f18bbfd2b..ef309958e060 100644
+>> --- a/fs/fuse/inode.c
+>> +++ b/fs/fuse/inode.c
+>> @@ -1080,6 +1080,9 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
+>>   	sb->s_maxbytes = MAX_LFS_FILESIZE;
+>>   	sb->s_time_gran = 1;
+>>   	sb->s_export_op = &fuse_export_operations;
+>> +	sb->s_iflags |= SB_I_IMA_UNVERIFIABLE_SIGNATURE;
+>> +	if (sb->s_user_ns != &init_user_ns)
+>> +		sb->s_iflags |= SB_I_UNTRUSTED_MOUNTER;
+>>   
+>>   	file = fget(d.fd);
+>>   	err = -EINVAL;
+>> -- 
+>> 2.7.5
