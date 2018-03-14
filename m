@@ -1,64 +1,118 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52418 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751549AbeCNUUi (ORCPT
+Received: from out01.mta.xmission.com ([166.70.13.231]:39006 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751289AbeCNTrb (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 14 Mar 2018 16:20:38 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2EKJoZG017928
-        for <linux-integrity@vger.kernel.org>; Wed, 14 Mar 2018 16:20:38 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2gqaa38w7b-1
-        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 14 Mar 2018 16:20:37 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <bauerman@linux.vnet.ibm.com>;
-        Wed, 14 Mar 2018 16:20:36 -0400
-From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, James Morris <jmorris@namei.org>,
+        Wed, 14 Mar 2018 15:47:31 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Stef Bon <stefbon@gmail.com>, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Dongsu Park <dongsu@kinvolk.io>,
+        Alban Crequy <alban@kinvolk.io>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-Subject: [PATCH 0/4] Code improvements in integrity and IMA
-Date: Wed, 14 Mar 2018 17:20:16 -0300
-Message-Id: <20180314202020.3794-1-bauerman@linux.vnet.ibm.com>
+        Michael Halcrow <mhalcrow@google.com>
+References: <1520540650-7451-1-git-send-email-zohar@linux.vnet.ibm.com>
+        <1520540650-7451-5-git-send-email-zohar@linux.vnet.ibm.com>
+        <CANXojczCU3UC4xsPYzAYqFW3_WR9Z7QO_exd4dB6eyQR2STuUg@mail.gmail.com>
+        <1521032461.3547.404.camel@linux.vnet.ibm.com>
+        <877eqer5r6.fsf@xmission.com>
+        <1521049841.3547.500.camel@linux.vnet.ibm.com>
+        <279C5F8D-9A75-44C7-8287-023F634BB3A0@oracle.com>
+Date: Wed, 14 Mar 2018 14:46:41 -0500
+In-Reply-To: <279C5F8D-9A75-44C7-8287-023F634BB3A0@oracle.com> (Chuck Lever's
+        message of "Wed, 14 Mar 2018 14:08:50 -0400")
+Message-ID: <87in9yo2xq.fsf@xmission.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Subject: Re: [PATCH v3 4/4] fuse: define the filesystem as untrusted
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hello,
+Chuck Lever <chuck.lever@oracle.com> writes:
 
-These patches come from the "appended signatures support for IMA appraisal"
-series. They are code improvements and cleanups and I decided to submit
-them separately for a couple of reasons:
+>> On Mar 14, 2018, at 1:50 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+>> 
+>> On Wed, 2018-03-14 at 11:17 -0500, Eric W. Biederman wrote:
+>>> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+>>> 
+>>>> On Wed, 2018-03-14 at 08:52 +0100, Stef Bon wrote:
+>>>>> I do not have any comments about the patches but a question.
+>>>>> I completely agree that the files can change without the VFS knowing
+>>>>> about it, but isn't that in general the case with filesystems with a
+>>>>> backend shared with others (network fs's?).
+>>>> 
+>>>> Right, the problem is not limited to fuse, but needs to be addressed
+>>>> before unprivileged fuse mounts are upstreamed.
+>>>> 
+>>>> Alban's response to this question:
+>>>> https://marc.info/?l=linux-kernel&m=151784020321045&w=2
+>>> 
+>>> Which goes to why it is a flag that get's set.
+>>> 
+>>> All of this just needs a follow-up patch to update every filesystem
+>>> that does not meet ima's requirements.
+>> 
+>> Currently files on remote filesystems are measured/appraised/audited
+>> once.  With the new flags, our options would be to either fail the
+>> signature verification or constantly re-measure/re-appraise files on
+>> remote file systems.  Neither option seems like the right solution.
 
-1. they stand on their own and could be included in v4.17;
+They are measured/appraised/audited once, and you can not trust that at
+all because you don't know when the files are going to be different.
 
-2. this will simplify the original patch series a bit, by having it contain
-   only the patches actually necessary to implement the feature.
+So either keeping the filesystem out of the ima game or failing sounds
+like the right answer to me.  At least until you can get better
+information from the filesystem.
 
-These are the changes made to them since v5 of the modsig series:
+> Being new to this game, I may be making a bad assumption, but I thought
+> that the (NFSv4) change attribute can be used to detect remote mutations
+> to a file's content or metadata, so that the appraisal could be cached
+> as long as that attribute does not change. At least for NFSv4, clients
+> assume their data cache is valid while the change attribute remains the
+> same.
+>
+> NFSv4 (and SMB) also has a mechanism where a server guarantees it will
+> report any other clients that want to update a file. This is an NFSv4
+> read delegation or an SMB oplock. NFSv4 clients use this mechanism to
+> cache file data quite aggressively, and it could also be used to
+> preserve or cache audit state on remote files.
 
-- Patch "integrity: Remove unused macro IMA_ACTION_RULE_FLAGS"
-  - New patch.
+The file data invalid message, plus trusting the server, is what
+would be needed for reliably caching the validity of the file.
 
-- Patch "ima: Improvements in ima_appraise_measurement()"
-  - Moved is_ima_sig() to its own patch (not in this series).
+>> There's some very initial discussions on how to support file integrity
+>> on remote filesystems.  Chuck Lever has some thoughts on piggy-backing 
+>> on the fs-verity work being done.  From a very, very high level, IMA-
+>> appraisal would verify the file signature, but leave the integrity
+>> enforcement to the vfs/fs layer.  By integrating fs-verity or similar
+>> proposal with IMA, measurements would be included in the measurement
+>> list and keys used for file signature verification would use the same
+>> existing IMA-appraisal infrastructure.
+>
+>>> Mimi I believe you said that the requirement is that all file changes
+>>> can be detected through the final __fput of a file that calls
+>>> ima_file_free.
+>> 
+>> Right, like for fuse, I don't believe this existing hook works for
+>> remote filesystems.
 
-Mimi Zohar (1):
-  ima: Improvements in ima_appraise_measurement()
+I am trying to understand things.
 
-Thiago Jung Bauermann (3):
-  integrity: Remove unused macro IMA_ACTION_RULE_FLAGS
-  ima: Simplify ima_eventsig_init()
-  integrity: Introduce struct evm_xattr
+- I believe the beginning of any file write should invalidate the
+  validity of the files cache.  IMA does something like that by looking
+  at i_writecount.
 
- security/integrity/evm/evm_crypto.c       |  4 ++--
- security/integrity/evm/evm_main.c         | 10 ++++----
- security/integrity/ima/ima_appraise.c     | 40 ++++++++++++++++++-------------
- security/integrity/ima/ima_template_lib.c | 11 +++------
- security/integrity/integrity.h            |  6 ++++-
- 5 files changed, 39 insertions(+), 32 deletions(-)
+- As I read the code ima_file_free triggers an update of the ima xattr
+  and that update needs to wait until the file is quiescent.  AKA no
+  more writers.  I am not certain how you get that in a remote
+  filesystem.
+
+  If the write is not coming from the local kernel I don't see how it
+  makes any sense for IMA to actually update the xattr on write.
+
+Eric
