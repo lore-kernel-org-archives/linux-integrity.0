@@ -1,84 +1,117 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56802 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751000AbeCNRux (ORCPT
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:54512 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751279AbeCNRZI (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 14 Mar 2018 13:50:53 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2EHoVli057963
-        for <linux-integrity@vger.kernel.org>; Wed, 14 Mar 2018 13:50:53 -0400
-Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2gq6new78s-1
-        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 14 Mar 2018 13:50:52 -0400
-Received: from localhost
-        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Wed, 14 Mar 2018 17:50:49 -0000
-Subject: Re: [PATCH v3 4/4] fuse: define the filesystem as untrusted
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Stef Bon <stefbon@gmail.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Dongsu Park <dongsu@kinvolk.io>,
-        Alban Crequy <alban@kinvolk.io>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        chuck Lever <chuck.lever@oracle.com>,
-        Michael Halcrow <mhalcrow@google.com>
-Date: Wed, 14 Mar 2018 13:50:41 -0400
-In-Reply-To: <877eqer5r6.fsf@xmission.com>
-References: <1520540650-7451-1-git-send-email-zohar@linux.vnet.ibm.com>
-         <1520540650-7451-5-git-send-email-zohar@linux.vnet.ibm.com>
-         <CANXojczCU3UC4xsPYzAYqFW3_WR9Z7QO_exd4dB6eyQR2STuUg@mail.gmail.com>
-         <1521032461.3547.404.camel@linux.vnet.ibm.com>
-         <877eqer5r6.fsf@xmission.com>
+        Wed, 14 Mar 2018 13:25:08 -0400
+Message-ID: <1521048306.4508.56.camel@HansenPartnership.com>
+Subject: Re: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        "Safford, David (GE Global Research, US)" <david.safford@ge.com>,
+        Jiandi An <anjiandi@codeaurora.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-ima-devel@lists.sourceforge.net"
+        <linux-ima-devel@lists.sourceforge.net>,
+        "linux-ima-user@lists.sourceforge.net"
+        <linux-ima-user@lists.sourceforge.net>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date: Wed, 14 Mar 2018 10:25:06 -0700
+In-Reply-To: <1521047286.3547.470.camel@linux.vnet.ibm.com>
+References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
+         <20180307185132.GA30102@ziepe.ca>
+         <1520448953.10396.565.camel@linux.vnet.ibm.com>
+         <1520449719.5558.28.camel@HansenPartnership.com>
+         <1520450495.10396.587.camel@linux.vnet.ibm.com>
+         <1520451662.24314.5.camel@HansenPartnership.com>
+         <1520461156.10396.654.camel@linux.vnet.ibm.com>
+         <191cfd49-0c66-a5ef-3d2b-b6c4132aa294@codeaurora.org>
+         <1520615461.12216.6.camel@HansenPartnership.com>
+         <1520891598.3547.190.camel@linux.vnet.ibm.com>
+         <1520893847.4522.62.camel@HansenPartnership.com>
+         <1520897400.3547.253.camel@linux.vnet.ibm.com>
+         <1520899605.4522.67.camel@HansenPartnership.com>
+         <BCA04D5D9A3B764C9B7405BBA4D4A3C002367FEF@ALPMBAPA12.e2k.ad.ge.com>
+         <1521038471.4508.25.camel@HansenPartnership.com>
+         <1521047286.3547.470.camel@linux.vnet.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1521049841.3547.500.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, 2018-03-14 at 11:17 -0500, Eric W. Biederman wrote:
-> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+On Wed, 2018-03-14 at 13:08 -0400, Mimi Zohar wrote:
+> On Wed, 2018-03-14 at 07:41 -0700, James Bottomley wrote:
+[...]
+> > What about a compromise: we
+> > already get the boot loader to do measurements and PCR extensions
+> > using the BIOS TPM driver, there's no reason why we can't do the
+> > same in the early kernel until a real TPM driver is found.
 > 
-> > On Wed, 2018-03-14 at 08:52 +0100, Stef Bon wrote:
-> >> I do not have any comments about the patches but a question.
-> >> I completely agree that the files can change without the VFS knowing
-> >> about it, but isn't that in general the case with filesystems with a
-> >> backend shared with others (network fs's?).
-> >
-> > Right, the problem is not limited to fuse, but needs to be addressed
-> > before unprivileged fuse mounts are upstreamed.
-> >
-> > Alban's response to this question:
-> > https://marc.info/?l=linux-kernel&m=151784020321045&w=2
+> Your proposal requires changes to the existing boot loaders, not all
+> of which are X86 based.
+
+I don't believe it does, see below.
+
+>   Grub, to the best of my knowledge, is not interested in having
+> anything to do with TPM based measurements.  Many attempts have been
+> made to upstream trusted boot patches, but none have been accepted. 
+
+Just for the sake of accuracy, even though it has nothing to do with
+the current proposal, grub does actually measure the booting
+components.  It does this via a shim protocol trick, so when grub
+passes the kernel to shim to verify the signature, shim also stores its
+measurement in the TPM boot log.
+
+>  Any support would need to piggyback on the callback hooks introduced
+> for secure boot and then be carried by the distros.
+
+Right, that's how it does actually work today.
+
+This is more or less what made me think of the compromise: the way shim
+does measurements is using the EFI TPM protocol.  Although this is
+technically a boot time UEFI driver, we can make it serve us until
+we're ready to load the real TPM driver, so we could write measurements
+to a PCR without any kernel drivers loaded.
+
+> As for Linux based boot loaders, the driver needs to be builtin for
+> these measurements.  So this wouldn't help you.
 > 
-> Which goes to why it is a flag that get's set.
+> > 
+> > That way IMA would have no dependency on any built in TPM driver
+> > ... is that an acceptable compromise to everyone?
 > 
-> All of this just needs a follow-up patch to update every filesystem
-> that does not meet ima's requirements.
+> Adding additional support for post IMA-initialization for TPM's built
+> as kernel modules is clearly not optimal for all of the reasons
+> provided to now and will be confusing, but could be supported.  This
+> delayed loading of the TPM needs to be clearly indicated in both the
+> audit log and in IMA's measurement list.
 
-Currently files on remote filesystems are measured/appraised/audited
-once.  With the new flags, our options would be to either fail the
-signature verification or constantly re-measure/re-appraise files on
-remote file systems.  Neither option seems like the right solution.
+Why if the measurement chain isn't broken?  The way I'm thinking of
+implementing it, IMA wouldn't even know.  What would happen is that a
+NULL tpm chip in tpm_pcr_read/tpm_pcr_extend would trigger the usual
+search for the first TPM but if none were found and we'd booted on an
+EFI system, we'd just use the EFI driver to do perform the operation.
 
-There's some very initial discussions on how to support file integrity
-on remote filesystems.  Chuck Lever has some thoughts on piggy-backing 
-on the fs-verity work being done.  From a very, very high level, IMA-
-appraisal would verify the file signature, but leave the integrity
-enforcement to the vfs/fs layer.  By integrating fs-verity or similar
-proposal with IMA, measurements would be included in the measurement
-list and keys used for file signature verification would use the same
-existing IMA-appraisal infrastructure.
+There's probably a bit of additional subtlety making the kernel and EFI
+agree which TPM they're using in a multi-TPM situation.
 
-> Mimi I believe you said that the requirement is that all file changes
-> can be detected through the final __fput of a file that calls
-> ima_file_free.
+The EFI driver isn't full featured: it only does measurement and
+logging, but it looks like that's all IMA needs.
 
-Right, like for fuse, I don't believe this existing hook works for
-remote filesystems.
+James
 
-Mimi
+> In terms of attestation, if a measurement policy is enabled before
+> the TPM is loaded, any records up to the delayed TPM entry in the IMA
+> measurement list would need to be ignored.
+> 
+> In addition, your changes should not in any way change the existing
+> IMA-measurement initialization.
+> 
+> Mimi
+> 
