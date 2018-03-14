@@ -1,13 +1,23 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:54512 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751279AbeCNRZI (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56308 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751413AbeCNRIS (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 14 Mar 2018 13:25:08 -0400
-Message-ID: <1521048306.4508.56.camel@HansenPartnership.com>
+        Wed, 14 Mar 2018 13:08:18 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2EH3djn073329
+        for <linux-integrity@vger.kernel.org>; Wed, 14 Mar 2018 13:08:17 -0400
+Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2gq4phshmr-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 14 Mar 2018 13:08:17 -0400
+Received: from localhost
+        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Wed, 14 Mar 2018 17:08:15 -0000
 Subject: Re: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
         "Safford, David (GE Global Research, US)" <david.safford@ge.com>,
         Jiandi An <anjiandi@codeaurora.org>,
         Jason Gunthorpe <jgg@ziepe.ca>
@@ -22,8 +32,8 @@ Cc: "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
         "linux-security-module@vger.kernel.org"
         <linux-security-module@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date: Wed, 14 Mar 2018 10:25:06 -0700
-In-Reply-To: <1521047286.3547.470.camel@linux.vnet.ibm.com>
+Date: Wed, 14 Mar 2018 13:08:06 -0400
+In-Reply-To: <1521038471.4508.25.camel@HansenPartnership.com>
 References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
          <20180307185132.GA30102@ziepe.ca>
          <1520448953.10396.565.camel@linux.vnet.ibm.com>
@@ -39,79 +49,111 @@ References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
          <1520899605.4522.67.camel@HansenPartnership.com>
          <BCA04D5D9A3B764C9B7405BBA4D4A3C002367FEF@ALPMBAPA12.e2k.ad.ge.com>
          <1521038471.4508.25.camel@HansenPartnership.com>
-         <1521047286.3547.470.camel@linux.vnet.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
+Message-Id: <1521047286.3547.470.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, 2018-03-14 at 13:08 -0400, Mimi Zohar wrote:
-> On Wed, 2018-03-14 at 07:41 -0700, James Bottomley wrote:
-[...]
-> > What about a compromise: we
-> > already get the boot loader to do measurements and PCR extensions
-> > using the BIOS TPM driver, there's no reason why we can't do the
-> > same in the early kernel until a real TPM driver is found.
-> 
-> Your proposal requires changes to the existing boot loaders, not all
-> of which are X86 based.
-
-I don't believe it does, see below.
-
->   Grub, to the best of my knowledge, is not interested in having
-> anything to do with TPM based measurements.  Many attempts have been
-> made to upstream trusted boot patches, but none have been accepted. 
-
-Just for the sake of accuracy, even though it has nothing to do with
-the current proposal, grub does actually measure the booting
-components.  It does this via a shim protocol trick, so when grub
-passes the kernel to shim to verify the signature, shim also stores its
-measurement in the TPM boot log.
-
->  Any support would need to piggyback on the callback hooks introduced
-> for secure boot and then be carried by the distros.
-
-Right, that's how it does actually work today.
-
-This is more or less what made me think of the compromise: the way shim
-does measurements is using the EFI TPM protocol.  Although this is
-technically a boot time UEFI driver, we can make it serve us until
-we're ready to load the real TPM driver, so we could write measurements
-to a PCR without any kernel drivers loaded.
-
-> As for Linux based boot loaders, the driver needs to be builtin for
-> these measurements.  So this wouldn't help you.
-> 
+On Wed, 2018-03-14 at 07:41 -0700, James Bottomley wrote:
+> On Tue, 2018-03-13 at 12:57 +0000, Safford, David (GE Global Research,
+> US) wrote:
+> > > 
+> > > -----Original Message-----
+> > > From: James Bottomley [mailto:James.Bottomley@HansenPartnership.com
+> > > ]
+> > > Sent: Monday, March 12, 2018 8:07 PM
+> > > To: Mimi Zohar <zohar@linux.vnet.ibm.com>; Jiandi An
+> [...]
+> > > > > The key question is not whether the component could
+> > > > > theoretically
+> > > > > access the files but whether it actually does so.
+> > > > 
+> > > > As much as you might think you know what is included in the
+> > > > initramfs, IMA-measurement is your safety net, including
+> > > > everything accessed in the TCB.
+> > > 
+> > > The initrd *is* part of the Trusted Computing Base because it's
+> > > part of the boot custody chain.  That's really my point.  If I
+> > > don't know what's in my initrd, I've broken the chain there and IMA
+> > > can't fix it.
+> > > 
+> > > James
 > > 
-> > That way IMA would have no dependency on any built in TPM driver
-> > ... is that an acceptable compromise to everyone?
+> > That's exactly the point - how do you know what's in your initrd?
+> > The initrd is normally built on the possibly compromised system in
+> > question.
 > 
-> Adding additional support for post IMA-initialization for TPM's built
-> as kernel modules is clearly not optimal for all of the reasons
-> provided to now and will be confusing, but could be supported.  This
-> delayed loading of the TPM needs to be clearly indicated in both the
-> audit log and in IMA's measurement list.
-
-Why if the measurement chain isn't broken?  The way I'm thinking of
-implementing it, IMA wouldn't even know.  What would happen is that a
-NULL tpm chip in tpm_pcr_read/tpm_pcr_extend would trigger the usual
-search for the first TPM but if none were found and we'd booted on an
-EFI system, we'd just use the EFI driver to do perform the operation.
-
-There's probably a bit of additional subtlety making the kernel and EFI
-agree which TPM they're using in a multi-TPM situation.
-
-The EFI driver isn't full featured: it only does measurement and
-logging, but it looks like that's all IMA needs.
-
-James
-
-> In terms of attestation, if a measurement policy is enabled before
-> the TPM is loaded, any records up to the delayed TPM entry in the IMA
-> measurement list would need to be ignored.
+> The point of deploying security measures is to make sure my system
+> isn't compromised.  I realise the institutional view is "we didn't
+> build the initrd" and my individual view is well, I built my own kernel
+> as well, so what's the difference?  But the initrd in both models is
+> still part of the chain.
 > 
-> In addition, your changes should not in any way change the existing
-> IMA-measurement initialization.
+> > It's not signed as a whole by someone trusted. How can the
+> > attestation server say a given hash of the initrd as a whole is good?
 > 
-> Mimi
+> I trust myself.  I can get the hash at build time.  In the same way as
+> I sign my own kernel at build time for secure boot.
 > 
+> > If IMA is running from the very start, it can at least measure (and
+> > eventually appraise) every individual file in the initrd. Given this
+> > more detailed measurement list, the attestation server can verify all
+> > the components in the initrd, even when it is assembled on the
+> > untrusted system.
+> > 
+> > On many embedded systems, there is no initrd, and IMA has to start
+> > measuring and appraising immediately, anyway.
+> > 
+> > Perhaps there is a use case where there is a known set of initrd
+> > images, and so the bootloader's measurement of the initrd is
+> > sufficient for verification. I've not run into that situation yet. If
+> > you want an option for this use case,  that's fine, (I'm all for
+> > choice) but it should not be the default for IMA.
+> 
+> Actually, we seem to have wandered away from the main concern which was
+> trying to select built in TPM drivers.
+
+IMA selecting the generic TPM drivers has never been an issue.  As I
+mentioned previously, this is simply a convenience.  Anyone building a
+kernel can configure the vendor specific TPM drivers as builtin.
+
+In terms of distro's, configuring vendor specific TPMs as builtin is a
+ TPM vandor/distro discussion.  On OpenPower, we've requested the
+Atmel, Infineon, and Nuvoton TPM drivers be builtin by the different
+distro's.
+
+> What about a compromise: we
+> already get the boot loader to do measurements and PCR extensions using
+> the BIOS TPM driver, there's no reason why we can't do the same in the
+> early kernel until a real TPM driver is found.
+
+Your proposal requires changes to the existing boot loaders, not all
+of which are X86 based.  Grub, to the best of my knowledge, is not
+interested in having anything to do with TPM based measurements.  Many
+attempts have been made to upstream trusted boot patches, but none
+have been accepted.  Any support would need to piggyback on the
+callback hooks introduced for secure boot and then be carried by the
+distros.
+
+As for Linux based boot loaders, the driver needs to be builtin for
+these measurements.  So this wouldn't help you.
+
+> That way IMA would have
+> no dependency on any built in TPM driver ... is that an acceptable
+> compromise to everyone?
+
+Adding additional support for post IMA-initialization for TPM's built
+as kernel modules is clearly not optimal for all of the reasons
+provided to now and will be confusing, but could be supported.  This
+delayed loading of the TPM needs to be clearly indicated in both the
+audit log and in IMA's measurement list.
+
+In terms of attestation, if a measurement policy is enabled before the
+TPM is loaded, any records up to the delayed TPM entry in the IMA
+measurement list would need to be ignored.
+
+In addition, your changes should not in any way change the existing
+IMA-measurement initialization.
+
+Mimi
