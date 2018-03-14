@@ -1,117 +1,75 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37028 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751824AbeCOADq (ORCPT
+Received: from mail-pf0-f171.google.com ([209.85.192.171]:34732 "EHLO
+        mail-pf0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751599AbeCNWxk (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 14 Mar 2018 20:03:46 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2ENx51a137532
-        for <linux-integrity@vger.kernel.org>; Wed, 14 Mar 2018 20:03:46 -0400
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2gqcn3agad-1
-        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 14 Mar 2018 20:03:45 -0400
-Received: from localhost
-        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <bauerman@linux.vnet.ibm.com>;
-        Wed, 14 Mar 2018 18:03:45 -0600
-References: <20180314202020.3794-1-bauerman@linux.vnet.ibm.com> <20180314202020.3794-4-bauerman@linux.vnet.ibm.com> <20180314214045.GC14289@mail.hallyn.com>
-From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, James Morris <jmorris@namei.org>,
+        Wed, 14 Mar 2018 18:53:40 -0400
+Received: by mail-pf0-f171.google.com with SMTP id j20so2076373pfi.1
+        for <linux-integrity@vger.kernel.org>; Wed, 14 Mar 2018 15:53:40 -0700 (PDT)
+Date: Wed, 14 Mar 2018 15:53:38 -0700
+From: Michael Halcrow <mhalcrow@google.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Subject: Re: [PATCH 3/4] ima: Improvements in ima_appraise_measurement()
-In-reply-to: <20180314214045.GC14289@mail.hallyn.com>
-Date: Wed, 14 Mar 2018 21:03:36 -0300
+        Stef Bon <stefbon@gmail.com>, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Dongsu Park <dongsu@kinvolk.io>,
+        Alban Crequy <alban@kinvolk.io>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Ted Ts'o <tytso@mit.edu>,
+        Eric Biggers <ebiggers@google.com>
+Subject: Re: [PATCH v3 4/4] fuse: define the filesystem as untrusted
+Message-ID: <20180314225338.GA147255@google.com>
+References: <1520540650-7451-1-git-send-email-zohar@linux.vnet.ibm.com>
+ <1520540650-7451-5-git-send-email-zohar@linux.vnet.ibm.com>
+ <CANXojczCU3UC4xsPYzAYqFW3_WR9Z7QO_exd4dB6eyQR2STuUg@mail.gmail.com>
+ <1521032461.3547.404.camel@linux.vnet.ibm.com>
+ <877eqer5r6.fsf@xmission.com>
+ <1521049841.3547.500.camel@linux.vnet.ibm.com>
+ <279C5F8D-9A75-44C7-8287-023F634BB3A0@oracle.com>
+ <87in9yo2xq.fsf@xmission.com>
+ <874F0391-1E88-498E-970B-78674057028D@oracle.com>
+ <87a7vamizo.fsf@xmission.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Message-Id: <87efkmjjc7.fsf@morokweng.localdomain>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <87a7vamizo.fsf@xmission.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
+On Wed, Mar 14, 2018 at 04:42:51PM -0500, Eric W. Biederman wrote:
+> In this case I mean trust as in the believe that the server is not
+> actively trying to subvert the guarantees that IMA is depending
+> upon.
 
-Hello Serge,
+The fs-verity adversarial model we're targeting includes a malicious
+layer backing the local file system inode's page cache.
 
-Thanks for quickly reviewing these patches!
+For example, the malicious layer can be a drive controller with
+trojaned firmware or a compromised remote server.
 
-Serge E. Hallyn <serge@hallyn.com> writes:
+> What happens if the server on the first read returns an innocuous
+> file that matches it's ima xattr, but on the next read of the file
+> returns an evil trojan horse.  Or what if the server implements a
+> cache coherency protocol but lies and does not report all of the
+> changes to a file.
 
-> Quoting Thiago Jung Bauermann (bauerman@linux.vnet.ibm.com):
->> From: Mimi Zohar <zohar@linux.vnet.ibm.com>
->> @@ -241,16 +241,20 @@ int ima_appraise_measurement(enum ima_hooks func,
->>  	}
->>  
->>  	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
->> -	if ((status != INTEGRITY_PASS) &&
->> -	    (status != INTEGRITY_PASS_IMMUTABLE) &&
->> -	    (status != INTEGRITY_UNKNOWN)) {
->> -		if ((status == INTEGRITY_NOLABEL)
->> -		    || (status == INTEGRITY_NOXATTRS))
->> -			cause = "missing-HMAC";
->> -		else if (status == INTEGRITY_FAIL)
->> -			cause = "invalid-HMAC";
->> +	switch (status) {
->> +	case INTEGRITY_PASS:
->> +	case INTEGRITY_PASS_IMMUTABLE:
->> +	case INTEGRITY_UNKNOWN:
->
-> Wouldn't it be more future-proof to replace this with a 'default', or
-> to at least add a "default: BUG()" to catch new status values?
+fs-verity validates each page in the inode's page cache against the
+inode's root-of-trust every time the page is read into the cache.
 
-I agree. I like the "default: BUG()" option.
+The signature mechanism on the root-of-trust must bind the inode
+identity.
 
->> +		break;
->> +	case INTEGRITY_NOXATTRS:	/* No EVM protected xattrs. */
->> +	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
->> +		cause = "missing-HMAC";
->> +		goto out;
->> +	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
->> +		cause = "invalid-HMAC";
->>  		goto out;
->>  	}
->> +
->>  	switch (xattr_value->type) {
->>  	case IMA_XATTR_DIGEST_NG:
->>  		/* first byte contains algorithm id */
->> @@ -316,17 +320,20 @@ int ima_appraise_measurement(enum ima_hooks func,
->>  		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
->>  				    op, cause, rc, 0);
->>  	} else if (status != INTEGRITY_PASS) {
->> +		/* Fix mode, but don't replace file signatures. */
->>  		if ((ima_appraise & IMA_APPRAISE_FIX) &&
->>  		    (!xattr_value ||
->>  		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
->>  			if (!ima_fix_xattr(dentry, iint))
->>  				status = INTEGRITY_PASS;
->> -		} else if ((inode->i_size == 0) &&
->> -			   (iint->flags & IMA_NEW_FILE) &&
->> -			   (xattr_value &&
->> -			    xattr_value->type == EVM_IMA_XATTR_DIGSIG)) {
->> +		}
->> +
->> +		/* Permit new files with file signatures, but without data. */
->> +		if (inode->i_size == 0 && iint->flags & IMA_NEW_FILE &&
->
-> This may be correct, but it's not identical to what you're replacing.
-> Since in either case you're setting status to INTEGRITY_PASS the final
-> result is the same, but with a few extra possible steps.  Not sure
-> whether that matters.
+The initial version of fs-verity supports Secure Boot, and the TCB
+validates each inode identity in the mount during the boot process.
+fs-verity does this via an ioctl that provisions the fs-verity
+measurement, causing the inode (along with its immutable measurement)
+to be pinned by the superblock for the life of the mount.  This meets
+requirements for the Android platform's use case, which only needs to
+cover about 15 APKs during boot.
 
-Good point. I'll have to defer this one to Mimi though.
-
->
->> +		    xattr_value && xattr_value->type == EVM_IMA_XATTR_DIGSIG) {
->>  			status = INTEGRITY_PASS;
->>  		}
->> +
->>  		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
->>  				    op, cause, rc, 0);
->>  	} else {
-
-
--- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
+This doesn't scale.  Future work will include integration with PKCS7
+and/or IMA.  Signatures will be dynamically verifiable against a key
+or keys in the TCB, and I'd like to establish a safe way to avoid
+having to pin inodes and their measurements.
