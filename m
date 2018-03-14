@@ -1,58 +1,53 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:46137 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751719AbeCNQcn (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 14 Mar 2018 12:32:43 -0400
-Date: Wed, 14 Mar 2018 17:32:41 +0100
-From: Petr Vorel <pvorel@suse.cz>
-To: ltp@lists.linux.it
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org
-Subject: Re: [RFC PATCH v2 1/4] security/ima: Rewrite tests into new API +
- fixes
-Message-ID: <20180314163241.2d5ekhz4mfsqgxjn@dell5510>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20180314155731.5943-1-pvorel@suse.cz>
- <20180314155731.5943-2-pvorel@suse.cz>
+Received: from out02.mta.xmission.com ([166.70.13.232]:37406 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751755AbeCNQSZ (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 14 Mar 2018 12:18:25 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Stef Bon <stefbon@gmail.com>, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Dongsu Park <dongsu@kinvolk.io>,
+        Alban Crequy <alban@kinvolk.io>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+References: <1520540650-7451-1-git-send-email-zohar@linux.vnet.ibm.com>
+        <1520540650-7451-5-git-send-email-zohar@linux.vnet.ibm.com>
+        <CANXojczCU3UC4xsPYzAYqFW3_WR9Z7QO_exd4dB6eyQR2STuUg@mail.gmail.com>
+        <1521032461.3547.404.camel@linux.vnet.ibm.com>
+Date: Wed, 14 Mar 2018 11:17:33 -0500
+In-Reply-To: <1521032461.3547.404.camel@linux.vnet.ibm.com> (Mimi Zohar's
+        message of "Wed, 14 Mar 2018 09:01:01 -0400")
+Message-ID: <877eqer5r6.fsf@xmission.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180314155731.5943-2-pvorel@suse.cz>
+Content-Type: text/plain
+Subject: Re: [PATCH v3 4/4] fuse: define the filesystem as untrusted
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi,
+Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
 
-> -# Function:     test02
-> -# Description	- Verify ima calculated aggregate PCR values matches
-> -#		  actual PCR value.
-> -test02()
-> +test2()
->  {
-> +	tst_res TINFO "verify PCR values"
+> On Wed, 2018-03-14 at 08:52 +0100, Stef Bon wrote:
+>> I do not have any comments about the patches but a question.
+>> I completely agree that the files can change without the VFS knowing
+>> about it, but isn't that in general the case with filesystems with a
+>> backend shared with others (network fs's?).
+>
+> Right, the problem is not limited to fuse, but needs to be addressed
+> before unprivileged fuse mounts are upstreamed.
+>
+> Alban's response to this question:
+> https://marc.info/?l=linux-kernel&m=151784020321045&w=2
 
-> -	# Would be nice to know where the PCRs are located.  Is this safe?
-> -	PCRS_PATH=$(find /$SYSFS/devices/ | grep pcrs)
-> +	# Would be nice to know where the PCRs are located. Is this safe?
-> +	local pcrs_path="$(find $SYSFS/devices/ | grep pcrs)"
->  	if [ $? -eq 0 ]; then
-> -		validate_pcr $PCRS_PATH
-> +		validate_pcr $pcrs_path
->  		if [ $? -eq 0 ]; then
-> -			tst_resm TPASS "aggregate PCR value matches real PCR value."
-> +			tst_res TPASS "aggregate PCR value matches real PCR value"
->  		else
-> -			tst_resm TFAIL "aggregate PCR value does not match real PCR value."
-> +			tst_res TFAIL "aggregate PCR value does not match real PCR value"
->  		fi
->  	else
-> -		tst_resm TFAIL "TPM not enabled, no PCR value to validate"
-> +		tst_res TFAIL "TPM not enabled, no PCR value to validate"
-Wrong, This must be TCONF:
-		tst_res TCONF "TPM not enabled, no PCR value to validate"
+Which goes to why it is a flag that get's set.
 
->  	fi
->  }
+All of this just needs a follow-up patch to update every filesystem
+that does not meet ima's requirements.
 
+Mimi I believe you said that the requirement is that all file changes
+can be detected through the final __fput of a file that calls
+ima_file_free.
 
-Kind regards,
-Petr
+Eric
