@@ -1,94 +1,78 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50418 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34184 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752822AbeCOVYR (ORCPT
+        by vger.kernel.org with ESMTP id S1751546AbeCOVBs (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 15 Mar 2018 17:24:17 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2FLLdG3026275
-        for <linux-integrity@vger.kernel.org>; Thu, 15 Mar 2018 17:24:17 -0400
-Received: from e06smtp11.uk.ibm.com (e06smtp11.uk.ibm.com [195.75.94.107])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2gqxw44tq5-1
+        Thu, 15 Mar 2018 17:01:48 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2FKtXuG168345
+        for <linux-integrity@vger.kernel.org>; Thu, 15 Mar 2018 17:01:48 -0400
+Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2gqyehaqnd-1
         (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 15 Mar 2018 17:24:16 -0400
+        for <linux-integrity@vger.kernel.org>; Thu, 15 Mar 2018 17:01:48 -0400
 Received: from localhost
-        by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Thu, 15 Mar 2018 21:24:14 -0000
-Subject: Re: [PATCH v3 4/4] fuse: define the filesystem as untrusted
+        Thu, 15 Mar 2018 21:01:46 -0000
+Subject: Re: [PATCH 0/4] Code improvements in integrity and IMA
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Michael Halcrow <mhalcrow@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Stef Bon <stefbon@gmail.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Dongsu Park <dongsu@kinvolk.io>,
-        Alban Crequy <alban@kinvolk.io>,
-        "Serge E. Hallyn" <serge@hallyn.com>, "Ted Ts'o" <tytso@mit.edu>,
-        Eric Biggers <ebiggers@google.com>
-Date: Thu, 15 Mar 2018 17:24:07 -0400
-In-Reply-To: <20180314225338.GA147255@google.com>
-References: <1520540650-7451-1-git-send-email-zohar@linux.vnet.ibm.com>
-         <1520540650-7451-5-git-send-email-zohar@linux.vnet.ibm.com>
-         <CANXojczCU3UC4xsPYzAYqFW3_WR9Z7QO_exd4dB6eyQR2STuUg@mail.gmail.com>
-         <1521032461.3547.404.camel@linux.vnet.ibm.com>
-         <877eqer5r6.fsf@xmission.com>
-         <1521049841.3547.500.camel@linux.vnet.ibm.com>
-         <279C5F8D-9A75-44C7-8287-023F634BB3A0@oracle.com>
-         <87in9yo2xq.fsf@xmission.com>
-         <874F0391-1E88-498E-970B-78674057028D@oracle.com>
-         <87a7vamizo.fsf@xmission.com> <20180314225338.GA147255@google.com>
+To: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Date: Thu, 15 Mar 2018 17:01:40 -0400
+In-Reply-To: <20180314202020.3794-1-bauerman@linux.vnet.ibm.com>
+References: <20180314202020.3794-1-bauerman@linux.vnet.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1521149047.3547.674.camel@linux.vnet.ibm.com>
+Message-Id: <1521147700.3547.662.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, 2018-03-14 at 15:53 -0700, Michael Halcrow wrote:
-> On Wed, Mar 14, 2018 at 04:42:51PM -0500, Eric W. Biederman wrote:
-> > In this case I mean trust as in the believe that the server is not
-> > actively trying to subvert the guarantees that IMA is depending
-> > upon.
-> 
-> The fs-verity adversarial model we're targeting includes a malicious
-> layer backing the local file system inode's page cache.
-> 
-> For example, the malicious layer can be a drive controller with
-> trojaned firmware or a compromised remote server.
-> 
-> > What happens if the server on the first read returns an innocuous
-> > file that matches it's ima xattr, but on the next read of the file
-> > returns an evil trojan horse.  Or what if the server implements a
-> > cache coherency protocol but lies and does not report all of the
-> > changes to a file.
-> 
-> fs-verity validates each page in the inode's page cache against the
-> inode's root-of-trust every time the page is read into the cache.
-> 
-> The signature mechanism on the root-of-trust must bind the inode
-> identity.
-> 
-> The initial version of fs-verity supports Secure Boot, and the TCB
-> validates each inode identity in the mount during the boot process.
-> fs-verity does this via an ioctl that provisions the fs-verity
-> measurement, causing the inode (along with its immutable measurement)
-> to be pinned by the superblock for the life of the mount.  This meets
-> requirements for the Android platform's use case, which only needs to
-> cover about 15 APKs during boot.
-> 
-> This doesn't scale.  Future work will include integration with PKCS7
-> and/or IMA.  Signatures will be dynamically verifiable against a key
-> or keys in the TCB, and I'd like to establish a safe way to avoid
-> having to pin inodes and their measurements.
+Hi Thiago,
 
-Next steps should also include identifying methods for storing and
-transporting the Merkle tree signature without having to read the
-entire file for remote filesystems.
+On Wed, 2018-03-14 at 17:20 -0300, Thiago Jung Bauermann wrote:
+> Hello,
+> 
+> These patches come from the "appended signatures support for IMA appraisal"
+> series. They are code improvements and cleanups and I decided to submit
+> them separately for a couple of reasons:
+> 
+> 1. they stand on their own and could be included in v4.17;
+> 
+> 2. this will simplify the original patch series a bit, by having it contain
+>    only the patches actually necessary to implement the feature.
 
-With this fs support, signed files on file systems mounted with the
- SB_I_IMA_UNVERIFIABLE_SIGNATURE flag would then be verifiable.  
+Agreed.  The first 3 patches are applied.  The last one, we'll see
+about.
 
 Mimi
+
+
+> 
+> These are the changes made to them since v5 of the modsig series:
+> 
+> - Patch "integrity: Remove unused macro IMA_ACTION_RULE_FLAGS"
+>   - New patch.
+> 
+> - Patch "ima: Improvements in ima_appraise_measurement()"
+>   - Moved is_ima_sig() to its own patch (not in this series).
+> 
+> Mimi Zohar (1):
+>   ima: Improvements in ima_appraise_measurement()
+> 
+> Thiago Jung Bauermann (3):
+>   integrity: Remove unused macro IMA_ACTION_RULE_FLAGS
+>   ima: Simplify ima_eventsig_init()
+>   integrity: Introduce struct evm_xattr
+> 
+>  security/integrity/evm/evm_crypto.c       |  4 ++--
+>  security/integrity/evm/evm_main.c         | 10 ++++----
+>  security/integrity/ima/ima_appraise.c     | 40 ++++++++++++++++++-------------
+>  security/integrity/ima/ima_template_lib.c | 11 +++------
+>  security/integrity/integrity.h            |  6 ++++-
+>  5 files changed, 39 insertions(+), 32 deletions(-)
+> 
