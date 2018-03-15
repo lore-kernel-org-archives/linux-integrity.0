@@ -1,78 +1,64 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-pg0-f42.google.com ([74.125.83.42]:42411 "EHLO
-        mail-pg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750745AbeCOKLZ (ORCPT
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:44303 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751698AbeCOKHq (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 15 Mar 2018 06:11:25 -0400
-Received: by mail-pg0-f42.google.com with SMTP id x2so2571659pgo.9
-        for <linux-integrity@vger.kernel.org>; Thu, 15 Mar 2018 03:11:25 -0700 (PDT)
-From: Daniel Drake <drake@endlessm.com>
-To: jarkko.sakkinen@linux.intel.com
-Cc: chiu@endlessm.com, linux@endlessm.com, peterhuewe@gmx.de,
-        jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: TPM driver breaks S3 suspend
-Date: Thu, 15 Mar 2018 18:11:19 +0800
-Message-Id: <20180315101119.30222-1-drake@endlessm.com>
-In-Reply-To: <20180102144305.jjjss4nj5yviyiwd@linux.intel.com>
-References: <20180102144305.jjjss4nj5yviyiwd@linux.intel.com>
+        Thu, 15 Mar 2018 06:07:46 -0400
+MIME-Version: 1.0
+In-Reply-To: <87a7vamizo.fsf@xmission.com>
+References: <1520540650-7451-1-git-send-email-zohar@linux.vnet.ibm.com>
+ <1520540650-7451-5-git-send-email-zohar@linux.vnet.ibm.com>
+ <CANXojczCU3UC4xsPYzAYqFW3_WR9Z7QO_exd4dB6eyQR2STuUg@mail.gmail.com>
+ <1521032461.3547.404.camel@linux.vnet.ibm.com> <877eqer5r6.fsf@xmission.com>
+ <1521049841.3547.500.camel@linux.vnet.ibm.com> <279C5F8D-9A75-44C7-8287-023F634BB3A0@oracle.com>
+ <87in9yo2xq.fsf@xmission.com> <874F0391-1E88-498E-970B-78674057028D@oracle.com>
+ <87a7vamizo.fsf@xmission.com>
+From: Stef Bon <stefbon@gmail.com>
+Date: Thu, 15 Mar 2018 11:07:44 +0100
+Message-ID: <CANXojcykVCExV9Hops4Py8mGvS=g1u=oLV4BNyM04iW+asQUpA@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] fuse: define the filesystem as untrusted
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Dongsu Park <dongsu@kinvolk.io>,
+        Alban Crequy <alban@kinvolk.io>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Michael Halcrow <mhalcrow@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi,
+2018-03-14 22:42 GMT+01:00 Eric W. Biederman <ebiederm@xmission.com>:
+>>
+>> Please tell me if I'm hijacking the thread.
+>
+> Unless something brings us to non-consensus about the patches to merge
+> we are good.  I think this is an area that need some discussion.
+>
+> The big big thing right now, as I understand it, is these mechanisms that
+> nfs uses to keep the cache in sync are not clearly reflected in the vfs
+> in a way that ima can take advantage of them.
+>
+>
 
-Sorry for the delayed response.
+Chuck you mean fschange notifications methods like
+NT_TRANSACT_NOTIFY_CHANGE for cifs. I believe that NFS4 has something simular.
+These mechanism will inform the client when a file in a watched
+directory is changed.
+This is not yet supported in Linux (these methods are not triggered
+any way when setting a watch using inotify for exmple).
+There was support with dnotify
+(https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/cifs/cifssmb.c#n6393).
 
-Unfortunately we had to return the affected machine to the vendor
-(Acer Veriton X4110G) although given we have a fairly complete
-understanding of the problem, perhaps we can find and push a fix
-anyway.
+But these methods are triggered by the user and not the VFS/kernel and
+therefore cannot garantee that all files on the client
+are the same as on the server.
+This also counts for a read delegation with nfs and methods like
+leases in a client server environment.
 
-Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
-> Can you try it on git://git.infradead.org/users/jjs/linux-tpmdd.git ?
-> Maybe it is related to the LPC #CLKRUN issues we've had.
-
-I don't see anything relevant in that git tree, and it seems like
-a distant issue from the CLKRUN changes that have been made.
-
-To recap, the first suspend works OK, and then the TPM shows shows the
-following message on the first resume:
-  tpm tpm0: A TPM error(38) occured continue selftest
-And error(38) is TPM_ERR_INVALID_POSTINIT which means the TPM is
-not in the correct state. Then the following suspend will always
-fail with the following messages.
-  tpm tpm0: Error (38) sending savestate before suspend
-  PM: Device 00:0b failed to suspend: error 38
-
-tpm_crb is the driver here (not tpm2).
-
-This exact problem was also discussed in depth years ago at
-https://lists.gt.net/linux/kernel/1358716
-
-The patch that we used to avoid the issue is below. What do you think?
-
-Thanks
-Daniel
-
-
----
- drivers/char/tpm/tpm-interface.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 1d6729be4cd6..444ae2df4a06 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -953,6 +953,10 @@ int tpm_do_selftest(struct tpm_chip *chip)
- 	loops = jiffies_to_msecs(duration) / delay_msec;
- 
- 	rc = tpm_continue_selftest(chip);
-+	if (rc == TPM_ERR_INVALID_POSTINIT) {
-+		chip->flags |= TPM_CHIP_FLAG_ALWAYS_POWERED;
-+		dev_info(&chip->dev, "TPM not ready (%d)\n", rc);
-+	}
- 	/* This may fail if there was no TPM driver during a suspend/resume
- 	 * cycle; some may return 10 (BAD_ORDINAL), others 28 (FAILEDSELFTEST)
- 	 */
--- 
-2.14.1
+Stef
