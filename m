@@ -1,107 +1,125 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from out01.mta.xmission.com ([166.70.13.231]:56264 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751546AbeCOTVX (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43038 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751488AbeCOTSo (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 15 Mar 2018 15:21:23 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        mkayaalp@cs.binghamton.edu,
-        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>,
-        sunyuqiong1988@gmail.com, containers@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, david.safford@ge.com,
+        Thu, 15 Mar 2018 15:18:44 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2FJI5JE059071
+        for <linux-integrity@vger.kernel.org>; Thu, 15 Mar 2018 15:18:43 -0400
+Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2gqu37c9y1-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 15 Mar 2018 15:18:43 -0400
+Received: from localhost
+        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Thu, 15 Mar 2018 19:18:40 -0000
+Subject: Re: [PATCH 3/4] ima: Improvements in ima_appraise_measurement()
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com
-References: <20180309201421.6150-1-stefanb@linux.vnet.ibm.com>
-        <20180309201421.6150-2-stefanb@linux.vnet.ibm.com>
-        <87vadxfwqj.fsf@xmission.com>
-        <c18b6e92-57f0-5994-eb60-5fadc6671832@linux.vnet.ibm.com>
-        <1521135192.5348.64.camel@HansenPartnership.com>
-        <2183a3b4-6270-d2e9-70ad-a7399eb1681c@linux.vnet.ibm.com>
-        <1521139535.5348.89.camel@HansenPartnership.com>
-        <0dc5b856-8dc6-7b5a-eeac-febd19f6498c@linux.vnet.ibm.com>
-        <1521140467.5348.94.camel@HansenPartnership.com>
-        <056e5b9e-b4d3-1862-baea-06dda4bd0713@linux.vnet.ibm.com>
-Date: Thu, 15 Mar 2018 14:20:31 -0500
-In-Reply-To: <056e5b9e-b4d3-1862-baea-06dda4bd0713@linux.vnet.ibm.com> (Stefan
-        Berger's message of "Thu, 15 Mar 2018 15:15:25 -0400")
-Message-ID: <87sh915eo0.fsf@xmission.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Subject: Re: [RFC PATCH v2 1/3] ima: extend clone() with IMA namespace support
+        linux-kernel@vger.kernel.org, James Morris <jmorris@namei.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Date: Thu, 15 Mar 2018 15:18:34 -0400
+In-Reply-To: <87efkmjjc7.fsf@morokweng.localdomain>
+References: <20180314202020.3794-1-bauerman@linux.vnet.ibm.com>
+         <20180314202020.3794-4-bauerman@linux.vnet.ibm.com>
+         <20180314214045.GC14289@mail.hallyn.com>
+         <87efkmjjc7.fsf@morokweng.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1521141514.3547.637.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Stefan Berger <stefanb@linux.vnet.ibm.com> writes:
+On Wed, 2018-03-14 at 21:03 -0300, Thiago Jung Bauermann wrote:
+> Hello Serge,
+> 
+> Thanks for quickly reviewing these patches!
+> 
+> Serge E. Hallyn <serge@hallyn.com> writes:
+> 
+> > Quoting Thiago Jung Bauermann (bauerman@linux.vnet.ibm.com):
+> >> From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> >> @@ -241,16 +241,20 @@ int ima_appraise_measurement(enum ima_hooks func,
+> >>  	}
+> >>  
+> >>  	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
+> >> -	if ((status != INTEGRITY_PASS) &&
+> >> -	    (status != INTEGRITY_PASS_IMMUTABLE) &&
+> >> -	    (status != INTEGRITY_UNKNOWN)) {
+> >> -		if ((status == INTEGRITY_NOLABEL)
+> >> -		    || (status == INTEGRITY_NOXATTRS))
+> >> -			cause = "missing-HMAC";
+> >> -		else if (status == INTEGRITY_FAIL)
+> >> -			cause = "invalid-HMAC";
+> >> +	switch (status) {
+> >> +	case INTEGRITY_PASS:
+> >> +	case INTEGRITY_PASS_IMMUTABLE:
+> >> +	case INTEGRITY_UNKNOWN:
+> >
+> > Wouldn't it be more future-proof to replace this with a 'default', or
+> > to at least add a "default: BUG()" to catch new status values?
+> 
+> I agree. I like the "default: BUG()" option.
 
-> On 03/15/2018 03:01 PM, James Bottomley wrote:
->> On Thu, 2018-03-15 at 14:51 -0400, Stefan Berger wrote:
->>> On 03/15/2018 02:45 PM, James Bottomley wrote:
->> [...]
->>>>>> going to need some type of keyring namespace and there's
->>>>>> already
->>>>>> one hanging off the user_ns:
->>>>>>
->>>>>> commit f36f8c75ae2e7d4da34f4c908cebdb4aa42c977e
->>>>>> Author: David Howells <dhowells@redhat.com>
->>>>>> Date:   Tue Sep 24 10:35:19 2013 +0100
->>>>>>
->>>>>>        KEYS: Add per-user_namespace registers for persistent
->>>>>> per-UID
->>>>>> kerberos caches
->>>>> The benefit for IMA would be that this would then tie the keys
->>>>> needed for appraising to the IMA namespace's policy.
->>>>> However, if you have an appraise policy in your IMA namespace,
->>>>> which is now hooked to the user namespace, and you join that user
->>>>> namespace but your files don't have signatures, nothing will
->>>>> execute anymore. That's now a side effect of joining this user
->>>>> namespace unless we have a magic  exception. My feeling is,
->>>>> people may not like that...
->>>> Agree, but I think the magic might be to populate the ima keyring
->>>> with the parent on user_ns creation.  That way the user_ns owner
->>>> can delete the parent keys if they don't like them, but by default
->>>> the parent appraisal policy should just work.
->>> That may add keys to your keyring but doesn't get you signatures on
->>> your  files.
->> But it doesn't need to.  The only way we'd get a failure is if the file
->> is already being appraised and we lose access to the key.  If the
->
-> Well, the configuration I talked about above was assuming that we have
-> an appraisal policy active in the IMA namespace, which is now tied to
-> the user namespace that was just joined.
->
-> If we are fine with the side effects of an IMA policy active as part
-> of a user namespace then let's go with it. The side effects in case of
-> an active IMA appraisal may then be that files cannot be
-> read/accessed, or file measurements or IMA auditing may occur.
->
-> The alternative is we have an independent IMA namespace. If one joins
-> the USER namespace and there are no IMA-related side effects. If one
-> joins the IMA namespace its IMA policy should start being enforced. If
-> the current active USER namespace has the keys that go with the
-> signatures of the filesystem, then we're fine from the appraisal
-> perspective. If not, then IMA namespace joining may prevent file
-> accesses.
->
->> parent policy isn't appraisal, entering the IMA NS won't cause
->
-> Why parent policy? The policy of the namespace that was joined should
-> be the active one, no ?
+Agreed.  I would put it at the end after INTEGRITY_FAIL.
 
-Unless I am completely blind we should never stop enforcing the parent's
-polciy.  We should only add policy to enforce for the scope of a
-container.
+> 
+> >> +		break;
+> >> +	case INTEGRITY_NOXATTRS:	/* No EVM protected xattrs. */
+> >> +	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
+> >> +		cause = "missing-HMAC";
+> >> +		goto out;
+> >> +	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
+> >> +		cause = "invalid-HMAC";
+> >>  		goto out;
+> >>  	}
+> >> +
+> >>  	switch (xattr_value->type) {
+> >>  	case IMA_XATTR_DIGEST_NG:
+> >>  		/* first byte contains algorithm id */
+> >> @@ -316,17 +320,20 @@ int ima_appraise_measurement(enum ima_hooks func,
+> >>  		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
+> >>  				    op, cause, rc, 0);
+> >>  	} else if (status != INTEGRITY_PASS) {
+> >> +		/* Fix mode, but don't replace file signatures. */
+> >>  		if ((ima_appraise & IMA_APPRAISE_FIX) &&
+> >>  		    (!xattr_value ||
+> >>  		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
+> >>  			if (!ima_fix_xattr(dentry, iint))
+> >>  				status = INTEGRITY_PASS;
+> >> -		} else if ((inode->i_size == 0) &&
+> >> -			   (iint->flags & IMA_NEW_FILE) &&
+> >> -			   (xattr_value &&
+> >> -			    xattr_value->type == EVM_IMA_XATTR_DIGSIG)) {
+> >> +		}
+> >> +
+> >> +		/* Permit new files with file signatures, but without data. */
+> >> +		if (inode->i_size == 0 && iint->flags & IMA_NEW_FILE &&
+> >
+> > This may be correct, but it's not identical to what you're replacing.
+> > Since in either case you're setting status to INTEGRITY_PASS the final
+> > result is the same, but with a few extra possible steps.  Not sure
+> > whether that matters.
+> 
+> Good point. I'll have to defer this one to Mimi though.
 
-In practice this is just the containers policy as the container is most
-likely a do whatever you want to in the parent policy.  But not always
-and not explicitly.
+The end result is the same, but add some needed comments.
 
-Mount namespaces are not hierarchical, user namespaces are.  Which makes
-them much more appropriate for being part of nested policy enforcement.
+Mimi
 
->From previous conversations I remember that there is a legitimate
-bootstrap problem for IMA.  That needs to be looked at, and I am not
-seeing that mentioned.
-
-Eric
+> 
+> >
+> >> +		    xattr_value && xattr_value->type == EVM_IMA_XATTR_DIGSIG) {
+> >>  			status = INTEGRITY_PASS;
+> >>  		}
+> >> +
+> >>  		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
+> >>  				    op, cause, rc, 0);
+> >>  	} else {
+> 
+> 
