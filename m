@@ -1,41 +1,33 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:9723 "EHLO mga18.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:36883 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751302AbeCOQsD (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:48:03 -0400
-Message-ID: <62dcb95fa349f0b195afd3c28c9fa9aeac60fe98.camel@linux.intel.com>
-Subject: Re: [PATCH v2 7/8] tpm: Move pcr extend to tpm2-cmd.c
+        id S932292AbeCOQlr (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 15 Mar 2018 12:41:47 -0400
+Message-ID: <d224d2ad2e9a6c1ba91b379401fb51f132074fdf.camel@linux.intel.com>
+Subject: Re: [PATCH v2 6/8] tpm: factor out tpm_startup function
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: Tomas Winkler <tomas.winkler@intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
 Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 15 Mar 2018 18:47:58 +0200
-In-Reply-To: <20180310082428.31519-8-tomas.winkler@intel.com>
+Date: Thu, 15 Mar 2018 18:41:43 +0200
+In-Reply-To: <20180310082428.31519-7-tomas.winkler@intel.com>
 References: <20180310082428.31519-1-tomas.winkler@intel.com>
-         <20180310082428.31519-8-tomas.winkler@intel.com>
+         <20180310082428.31519-7-tomas.winkler@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
 On Sat, 2018-03-10 at 10:24 +0200, Tomas Winkler wrote:
-> Add tpm2_pcr_extend function to tpm2-cmd.c with signature required
-> by tpm-interface.c. It wraps the original open code
-> implementation. The original original tpm2_pcr_extend function
-> is renamed and made static, called only from new tpm2_pcr_extend.
+> tpm manual startup is used only from within tpm1 or tpm2
+> code, hence remove tpm_startup function from tpm-interface.c
+> and add two static functions implementations tpm1_startup
+> and tpm2_startup into to tpm1-cmd.c and tpm2-cmd.c respectively.
 > 
 > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 
-This might concern some of the earlier patches too but please use exact
-names for functions in the short and long summary i.e.
-
-  tpm: migrate all of the PCR extension code to tpm2_pcr_extend()
-
-Check this also for your long descriptions and previous that I gave
-reviewed-by (I think they were otherwise fine). And you refer to a
-function in text use parentheses after the name. I don't like
-hastily written commit messages.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.com>
 
 /Jarkko
