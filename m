@@ -1,50 +1,104 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:39274 "EHLO
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:38988 "EHLO
         bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751488AbeCOSCM (ORCPT
+        by vger.kernel.org with ESMTP id S1751624AbeCORdR (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 15 Mar 2018 14:02:12 -0400
-Message-ID: <1521136931.5348.76.camel@HansenPartnership.com>
-Subject: Should we handle TPM_RC_RETRY internally?
+        Thu, 15 Mar 2018 13:33:17 -0400
+Message-ID: <1521135192.5348.64.camel@HansenPartnership.com>
+Subject: Re: [RFC PATCH v2 1/3] ima: extend clone() with IMA namespace
+ support
 From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Thu, 15 Mar 2018 11:02:11 -0700
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-ima-devel@lists.sourceforge.net, mkayaalp@cs.binghamton.edu,
+        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>,
+        sunyuqiong1988@gmail.com, containers@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, david.safford@ge.com,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, Yuqiong Sun <suny@us.ibm.com>,
+        zohar@linux.vnet.ibm.com
+Date: Thu, 15 Mar 2018 10:33:12 -0700
+In-Reply-To: <c18b6e92-57f0-5994-eb60-5fadc6671832@linux.vnet.ibm.com>
+References: <20180309201421.6150-1-stefanb@linux.vnet.ibm.com>
+         <20180309201421.6150-2-stefanb@linux.vnet.ibm.com>
+         <87vadxfwqj.fsf@xmission.com>
+         <c18b6e92-57f0-5994-eb60-5fadc6671832@linux.vnet.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-I was investigating an apparent bug in the trusted keys implementation
-where periodically the key operation barfs and returns an error to
-userspace.  It turns out this error is because the TPM returns
-TPM_RC_RETRY to an operation.
+On Thu, 2018-03-15 at 11:26 -0400, Stefan Berger wrote:
+> On 03/15/2018 06:40 AM, Eric W. Biederman wrote:
+> > 
+> > Stefan Berger <stefanb@linux.vnet.ibm.com> writes:
+> > 
+> > > 
+> > > From: Yuqiong Sun <suny@us.ibm.com>
+> > > 
+> > > Add new CONFIG_IMA_NS config option.  Let clone() create a new
+> > > IMA namespace upon CLONE_NEWNS flag. Add ima_ns data structure in
+> > > nsproxy.  ima_ns is allocated and freed upon IMA namespace
+> > > creation and exit.  Currently, the ima_ns contains no useful IMA
+> > > data but only a dummy interface. This patch creates the framework
+> > > for namespacing the different aspects of IMA (eg. IMA-audit, IMA-
+> > > measurement, IMA-appraisal).
+> > IMA is not path based.  The only thing that belongs to a mount
+> > namespace are paths.  Therefore IMA is completely inappropriate to
+> > be joint with a mount namespace.
 
-The TPM spec is a bit unclear why the TPM would return TPM_RC_RETRY,
-but it is clear that it may happen on a lot of operations.  I checked
-with the microsoft reference implementation:
+Just to be clear: The mount namespace is not only about paths it's also
+about subtree properties.  However, the point still stands that IMA has
+a dependency on neither.
 
-https://github.com/Microsoft/ms-tpm-20-ref/
+> IMA measures the files described by these paths. The files also may
+> hold signatures (security.ima xattr) needed for IMA appraisal.
 
-Which implies it's only set if the lockout check is invoked by the
-command and the previous TPM shutdown wasn't orderly.  It does seem to
-me that I've only seen it involving objects with DA implications, which
-explains why it's seen in trusted keys.
+The xattr is an inode property, which isn't namespaced by the mount_ns.
 
-If I read the UEFI TPM API, it does automatic retries.  This is the
-note:
+When we had this discussion last year, we talked about possibly using
+the user_ns instead.  It makes sense because for IMA signatures you're
+going to need some type of keyring namespace and there's already one
+hanging off the user_ns:
 
-    The firmware SHALL not return TPM2_RC_RETRY prior to the completion
-    of the call to ExitBootServices().
+commit f36f8c75ae2e7d4da34f4c908cebdb4aa42c977e
+Author: David Howells <dhowells@redhat.com>
+Date:   Tue Sep 24 10:35:19 2013 +0100
 
-    Implementer's Note: the implementation of this function should check
-    the return value in the TPM response and, if it is TPM2_RC_RETRY,
-    resend the command. The implementation may abort if a sufficient
-    number of retries has been done.
+    KEYS: Add per-user_namespace registers for persistent per-UID
+kerberos caches
 
-I really think if UEFI does it, we should do it too (and it will fix my
-trusted key bug).
+> > I saw that Serge even recently mentioned that you need to take
+> > this aspect of the changes back to the drawing board.  With my
+> > namespace maintainer hat on I repeat that.
+> 
+> Drawing board is here now (tuning on the text...):
+> 
+> http://kernsec.org/wiki/index.php/IMA_Namespacing_design_consideratio
+> ns
 
-What does everyone else think?  If it's agreed, I'll code up the patch.
+You mention an abuse case here which is basically a way of relaxing
+security policy.  Cannot we fix that by making policy hierarchical, so
+a child namespace must have the same or a more strict policy than the
+parent?
+
+> >  From a 10,000 foot view I can already tell that this is hopeless.
+> > So for binding IMA namspaces and CLONE_NEWNS:
+> > 
+> > Nacked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> > 
+> > I am not nacking IMA namespacing just inappropriately tying ima
+> > namespaces to mount namespaces.  These should be completely
+> > separate entities.
+> 
+> Let's say we go down the road of spawning it independently. Can we
+> use the unused clone flag 0x1000? Or should we come up with new 
+> unshare2()/clone2() syscalls to extend the clone bits to 64 bit? Or
+> use a sysfs/securityfs file to spawn a new IMA namespace? Make this a
+> generic file not an IMA specific one?
+
+If, as a result of discussions, it turns out that a separate namespace
+is the correct way to proceed, I'm sure we can sort out the details of
+how we cope with the flag paucity problem.
 
 James
