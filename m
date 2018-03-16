@@ -1,42 +1,44 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga12.intel.com ([192.55.52.136]:28171 "EHLO mga12.intel.com"
+Received: from mga04.intel.com ([192.55.52.120]:9788 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750847AbeCPMVh (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 16 Mar 2018 08:21:37 -0400
-Date: Fri, 16 Mar 2018 14:21:29 +0200
+        id S1750748AbeCPMCk (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 16 Mar 2018 08:02:40 -0400
+Message-ID: <f1521f6afa2e89ce666503148d6fad425cb5b813.camel@linux.intel.com>
+Subject: Re: [PATCH v3 1/6] tpm-buf: create new functions for handling TPM
+ buffers
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 3/5] tpm: migrate tpm2_probe() to use struct tpm_buf
-Message-ID: <20180316122129.GA2458@linux.intel.com>
-References: <20180305165614.5469-1-jarkko.sakkinen@linux.intel.com>
- <20180305165614.5469-4-jarkko.sakkinen@linux.intel.com>
- <1520290344.10396.357.camel@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1520290344.10396.357.camel@linux.vnet.ibm.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        linux-integrity@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org
+Date: Fri, 16 Mar 2018 14:02:26 +0200
+In-Reply-To: <6da309e727bec176fed7253ba5276f47f784d759.camel@linux.intel.com>
+References: <1520720026.4495.11.camel@HansenPartnership.com>
+         <1520720090.4495.12.camel@HansenPartnership.com>
+         <6da309e727bec176fed7253ba5276f47f784d759.camel@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Mar 05, 2018 at 05:52:24PM -0500, Mimi Zohar wrote:
-> Hi Jarrko,
+On Fri, 2018-03-16 at 13:58 +0200, Jarkko Sakkinen wrote:
+> On Sat, 2018-03-10 at 14:14 -0800, James Bottomley wrote:
+> >  	TPM_BUF_OVERFLOW	= BIT(0),
+> > +	TPM_BUF_2B		= BIT(1),
 > 
-> On Mon, 2018-03-05 at 18:56 +0200, Jarkko Sakkinen wrote:
-> > In order to make struct tpm_buf the first class object for constructing TPM
-> > commands, migrate tpm2_probe() to use it.
-> > 
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Instead of re-using this I would prefer to have another enum for
+> buffer type. tpm_buf_init() could have the signature:
 > 
-> With this patch, the Pi doesn't find the TPM.  I'm seeing the
-> following line in dmesg.
+> int tpm_buf_init(unsigned int type);
 > 
-> [    1.087414] tpm_tis_spi: probe of spi0.0 failed with error 256
+> For commands there should be a function:
+> 
+> void tpm_buf_set_command_header(struct tpm_buf *buf, u16 tag, u32 ordinal);
+> 
+> And tpm_buf_append_2b() should not exist at all. It should be
+> maintained automatically by other append commands.
 
-Thank you for reporting this Mimi. Does it have TPM1/TPM2?
+Can you send the next version this patch as a separate entity? Once
+I can land this we have kind of stable ground for the following
+patches. After that it is easier test and review them.
 
 /Jarkko
