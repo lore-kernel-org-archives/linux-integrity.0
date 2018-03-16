@@ -1,87 +1,142 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:48768 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965129AbeCPPs1 (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35252 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753083AbeCPOtb (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 16 Mar 2018 11:48:27 -0400
-Message-ID: <1521215304.4379.8.camel@HansenPartnership.com>
-Subject: Re: Should we handle TPM_RC_RETRY internally?
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Date: Fri, 16 Mar 2018 08:48:24 -0700
-In-Reply-To: <20180316142958.GD9616@linux.intel.com>
-References: <1521136931.5348.76.camel@HansenPartnership.com>
-         <20180316142958.GD9616@linux.intel.com>
+        Fri, 16 Mar 2018 10:49:31 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2GEiQhh122296
+        for <linux-integrity@vger.kernel.org>; Fri, 16 Mar 2018 10:49:30 -0400
+Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2grf212qv2-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 16 Mar 2018 10:49:30 -0400
+Received: from localhost
+        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Fri, 16 Mar 2018 14:49:28 -0000
+Subject: Re: Problem mounting pseudo filesystems with SMACK and IMA enabled.
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Martin Townsend <mtownsend1973@gmail.com>
+Cc: linux-integrity@vger.kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Date: Fri, 16 Mar 2018 10:49:22 -0400
+In-Reply-To: <CABatt_zxC1W-OirRLM-PVERAkUZaJDSnRDc_i4a7ebh-NJZ9Ag@mail.gmail.com>
+References: <CABatt_zunDV_g3oR5_O5GMm0EVEnT0LEnmjp5PQgu26Q6T+4SA@mail.gmail.com>
+         <1521206743.3503.29.camel@linux.vnet.ibm.com>
+         <CABatt_zxC1W-OirRLM-PVERAkUZaJDSnRDc_i4a7ebh-NJZ9Ag@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
+Message-Id: <1521211762.3503.46.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 2018-03-16 at 16:29 +0200, Jarkko Sakkinen wrote:
-> On Thu, Mar 15, 2018 at 11:02:11AM -0700, James Bottomley wrote:
-> > 
-> > I was investigating an apparent bug in the trusted keys
-> > implementation where periodically the key operation barfs and
-> > returns an error to userspace.  It turns out this error is because
-> > the TPM returns TPM_RC_RETRY to an operation.
-> > 
-> > The TPM spec is a bit unclear why the TPM would return
-> > TPM_RC_RETRY, but it is clear that it may happen on a lot of
-> > operations.  I checked with the microsoft reference implementation:
-> > 
-> > https://github.com/Microsoft/ms-tpm-20-ref/
-> > 
-> > Which implies it's only set if the lockout check is invoked by the
-> > command and the previous TPM shutdown wasn't orderly.  It does seem
-> > to me that I've only seen it involving objects with DA
-> > implications, which explains why it's seen in trusted keys.
-> > 
-> > If I read the UEFI TPM API, it does automatic retries.  This is the
-> > note:
-> > 
-> >     The firmware SHALL not return TPM2_RC_RETRY prior to the
-> > completion
-> >     of the call to ExitBootServices().
-> > 
-> >     Implementer's Note: the implementation of this function should
-> > check
-> >     the return value in the TPM response and, if it is
-> > TPM2_RC_RETRY,
-> >     resend the command. The implementation may abort if a
-> > sufficient
-> >     number of retries has been done.
-> > 
-> > I really think if UEFI does it, we should do it too (and it will
-> > fix my trusted key bug).
-> > 
-> > What does everyone else think?  If it's agreed, I'll code up the
-> > patch.
-> > 
-> > James
+On Fri, 2018-03-16 at 14:34 +0000, Martin Townsend wrote:
+> Hi Mimi,
 > 
-> I think I agree but what worries me is that this error code is almost
-> not documented at all in TCG specifications.
+> On Fri, Mar 16, 2018 at 1:25 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> > On Fri, 2018-03-16 at 09:32 +0000, Martin Townsend wrote:
+> >> [Resending to new integrity mailing list]
+> >>
+> >> Hi,
+> >>
+> >> I have a system with a pre-signed UBI root filesystem image with both
+> >> IMA/EVM signatures on all files.  The Root CA Cert is compiled into
+> >> the kernel and the public keys is in the rootfs.  All SMACK labels
+> >> have also been applied although at this early stage there aren't many
+> >> (just a few application specific ones) so it's mainly the defaults.
+> >> This image is then flashed to the on board NAND.
+> >>
+> >> The kernel bootargs for IMA are
+> >>
+> >> "ima_audit=1 ima_template=ima-ng ima_hash=sha1 ima_tcb
+> >> ima_appraise_tcb rootflags=i_version"
+> >>
+> >> and I'm enabling SMACK by using the kernel bootarg
+> >>
+> >> "security=smack"
+> >>
+> >> now if I boot without the "security=smack" it boots fine and I can
+> >> check the IMA/EVM signatures and can see that measurements are being
+> >> taken, but if I enable SMACK using the above kernel bootarg it fails
+> >> to boot and it looks like some problem early in systemd where it
+> >> mounts the required filesystems in mount-setup.c (log provided below).
+> >> Now if I flash an image that hasn't been signed and enable SMACK it
+> >> boots fine and I can use SMACK to enforce access control.  So there
+> >> seems to some interaction between the two when mounting the early
+> >> filesystems.
+> >>
+> >> Before I delve into this I would appreciate any pointers to where to
+> >> start looking, any printk's to put in SMACK/IMA/mount code to help
+> >> diagnose this would be really appreciated.
+> >>
+> >> The Kernel is 4.9 LTSI, systemd is v229
+> >>
+> >> Apologies if I have the wrong mailing list for SMACK, I couldn't find
+> >> one on vger.kernel.org.
+> >>
+> >>
+> >> Boot log.
+> >> ...
+> >> Security Framework initialized
+> >> Smack:  Initializing.
+> >> Smack:  IPv6 port labeling enabled.
+> >> Mount-cache hash table entries: 1024 (order: 0, 4096 bytes)
+> >> Mountpoint-cache hash table entries: 1024 (order: 0, 4096 bytes)
+> >> CPU: Testing write buffer coherency: ok
+> >> Setting up static identity map for 0x80100000 - 0x80100058
+> >> devtmpfs: initialized
+> >> evm: security.SMACK64
+> >> evm: security.SMACK64EXEC
+> >> evm: security.SMACK64TRANSMUTE
+> >> evm: security.SMACK64MMAP
+> >> evm: security.ima
+> >> evm: security.capability
+> >> ...
+> >> Loading compiled-in X.509 certificates
+> >> Loaded X.509 cert 'IMA-EVM Root CA: cc972d25acf7c1efaa5329a48104efa303f0833a'
+> >> ...
+> >> UBIFS (ubi0:0): FS size: 201764864 bytes (192 MiB, 1589 LEBs), journal
+> >> size 9023488 bytes (8 MiB, 72 LEBs)
+> >> UBIFS (ubi0:0): reserved for root: 0 bytes (0 KiB)
+> >> UBIFS (ubi0:0): media format: w4/r0 (latest is w4/r0), UUID
+> >> F6EA70A5-1931-4049-89CB-93B82F37F6A4, small LPT model
+> >> VFS: Mounted root (ubifs filesystem) readonly on device 0:16.
+> >> devtmpfs: mounted
+> >> integrity: Loaded X.509 cert 'IMA Certificate Authority:
+> >> e2c191a6e31fd02d6beba0c7c7847720a35fd9c6': /etc/keys/ima-x509.der
+> >> Freeing unused kernel memory: 1024K
+> >> systemd[1]: Successfully loaded Smack policies.
+> >> systemd[1]: Successfully loaded Smack/CIPSO policies.
+> >> systemd[1]: System time before build time, advancing clock.
+> >> systemd[1]: Failed to mount tmpfs at /dev/shm: No such file or directory
+> >> systemd[1]: Failed to mount tmpfs at /dev/shm: No such file or directory
+> >> systemd[1]: Failed to mount cgroup at /sys/fs/cgroup/systemd: No such
+> >> file or directory
+> >> [!!!!!!] Failed to mount API filesystems, freezing.
+> >> systemd[1]: Freezing execution.
+> >
+> > [Cc'ing Sascha]
+> >
+> > Are there any additional messages in /var/log/audit/audit.log?
+> >
+> > Mimi
+> >
+> 
+> Sadly I can't see this file, I don't even think the relevant
+> filesystems have been mounted as this point. I tried the emergency
+> shell but no joy. Is there a way of patching the kernel to show audit
+> messages to the console?  If you point me at the relevant code I'll
+> hack something in.  I'm currently putting printk's everywhere I can
+> think of to see what's going on.   If you can think of anywhere in the
+> IMA that would be good to see a debug print let me know, currently I
+> have something in process_measurements and a few other places in
+> ima_main.c.
 
-Yes, it's cryptic, it just says "the TPM was not able to start the
-command", which is why I checked the reference implementation.  I think
-the UEFI ref is the clearest because it provides implementation
-guidance (basically to retry the command until timeout) which I see no
-reason we can't follow in the kernel.
+I would think the audit messages would go to the console.  With
+dracut, I use a couple of boot command line options for debugging (eg.
+rd.debug rd.break=pre-mount, rd.shell).
 
-The alternative is that we handle it in the TSS and I have to patch
-trusted keys.  However none of the core TPM routines that use
-tpm_transmit_cmd() have any retry logic, so if we find a TPM that
-returns it to a kernel sent command we'll get random unexplained
-failures (based on the ref implementation I don't think this is likely,
-but by the spec it's possible, especially for a manufacturer who isn't
-using the reference), so we may end up having to add retry logic to
-every place in the kernel where we use tpm_transmit_cmd() ... then
-we'll wish we'd done it generically inside that routine.
-
-Based on this, I think the UEFI spec gives us the safety of knowing
-that internal handling is correct and the advantages of doing so now
-are that we don't get a potentially exploding problem later, so it
-seems like a net win.  I'll code up a patch.
-
-James
+Mimi
