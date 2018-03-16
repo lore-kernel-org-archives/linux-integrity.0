@@ -1,71 +1,93 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:54234 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751437AbeCQBUd (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 16 Mar 2018 21:20:33 -0400
-Message-ID: <1521249631.12827.5.camel@HansenPartnership.com>
-Subject: Re: [PATCH v3 1/5] tpm: fix intermittent failure with self tests
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        stable@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Date: Fri, 16 Mar 2018 18:20:31 -0700
-In-Reply-To: <20180305165614.5469-2-jarkko.sakkinen@linux.intel.com>
-References: <20180305165614.5469-1-jarkko.sakkinen@linux.intel.com>
-         <20180305165614.5469-2-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mx2.suse.de ([195.135.220.15]:52571 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751475AbeCPX2i (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 16 Mar 2018 19:28:38 -0400
+From: Petr Vorel <pvorel@suse.cz>
+To: linux-integrity@vger.kernel.org
+Cc: Petr Vorel <pvorel@suse.cz>, Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Subject: [PATCH] ima: Avoid using not initialized IMA
+Date: Sat, 17 Mar 2018 00:28:27 +0100
+Message-Id: <20180316232827.3791-1-pvorel@suse.cz>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2018-03-05 at 18:56 +0200, Jarkko Sakkinen wrote:
-> index 9e80a953d693..1adb976a2e37 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -537,14 +537,26 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip,
-> struct tpm_space *space,
->  			 const char *desc)
->  {
->  	const struct tpm_output_header *header = buf;
-> +	unsigned int delay_msec = TPM2_DURATION_SHORT;
->  	int err;
->  	ssize_t len;
->  
-> -	len = tpm_transmit(chip, space, (u8 *)buf, bufsiz, flags);
-> -	if (len <  0)
-> -		return len;
-> +	for (;;) {
-> +		len = tpm_transmit(chip, space, (u8 *)buf, bufsiz,
-> flags);
-> +		if (len <  0)
-> +			return len;
-> +		err = be32_to_cpu(header->return_code);
-> +		if (err != TPM2_RC_TESTING)
-> +			break;
-> +
-> +		delay_msec *= 2;
-> +		if (delay_msec > TPM2_DURATION_LONG) {
-> +			dev_err(&chip->dev, "the self test is still
-> running\n");
-> +			break;
-> +		}
-> +		tpm_msleep(delay_msec);
-> +	}
+IMA requires have it's hash algorithm to be compiled-in due it's early
+use. Default IMA algorithm is protected by Kconfig to be compiled-in.
 
-It turns out this bit is wrong ... I just discovered it testing the
-RC_RETRY code.  You can't feed the buf back to tpm_transmit because the
-header has already been changed to give you back the return code.  To
-make this work, you have to save the header and handle area and restore
-it before the command is resent.
+ima_hash kernel parameter allows to choose hash algorithm. When
+specified algorithm not available or available as module, IMA
+initialization fails, but mknodat syscall expect it and calls
+ima_post_path_mknod(). This leads to to kernel oops:
 
-I think the best solution for this hunk of code is to merge it with the
-retry code.
+$ grep CONFIG_CRYPTO_MD4 .config
+CONFIG_CRYPTO_MD4=m
 
-James
+[    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-4.12.14-2.3-default root=UUID=74ae8202-9ca7-4e39-813b-22287ec52f7a video=1024x768-16 plymouth.ignore-serial-consoles console=ttyS0 console=tty resume=/dev/disk/by-path/pci-0000:00:07.0-part3 splash=silent showopts ima_hash=md4
+...
+[    1.545190] ima: Can not allocate md4 (reason: -2)
+...
+[    2.610120] BUG: unable to handle kernel NULL pointer dereference at           (null)
+[    2.611903] IP: ima_match_policy+0x23/0x390
+[    2.612967] PGD 0 P4D 0
+[    2.613080] Oops: 0000 [#1] SMP
+[    2.613080] Modules linked in: autofs4
+[    2.613080] Supported: Yes
+[    2.613080] CPU: 0 PID: 1 Comm: systemd Not tainted 4.12.14-2.3-default #1
+[    2.613080] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
+[    2.613080] task: ffff88003e2d0040 task.stack: ffffc90000190000
+[    2.613080] RIP: 0010:ima_match_policy+0x23/0x390
+[    2.613080] RSP: 0018:ffffc90000193e88 EFLAGS: 00010296
+[    2.613080] RAX: 0000000000000000 RBX: 000000000000000c RCX: 0000000000000004
+[    2.613080] RDX: 0000000000000010 RSI: 0000000000000001 RDI: ffff880037071728
+[    2.613080] RBP: 0000000000008000 R08: 0000000000000000 R09: 0000000000000000
+[    2.613080] R10: 0000000000000008 R11: 61c8864680b583eb R12: 00005580ff10086f
+[    2.613080] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000008000
+[    2.613080] FS:  00007f5c1da08940(0000) GS:ffff88003fc00000(0000) knlGS:0000000000000000
+[    2.613080] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    2.613080] CR2: 0000000000000000 CR3: 0000000037002000 CR4: 00000000003406f0
+[    2.613080] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[    2.613080] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[    2.613080] Call Trace:
+[    2.613080]  ? shmem_mknod+0xbf/0xd0
+[    2.613080]  ima_post_path_mknod+0x1c/0x40
+[    2.613080]  SyS_mknod+0x210/0x220
+[    2.613080]  entry_SYSCALL_64_fastpath+0x1a/0xa5
+[    2.613080] RIP: 0033:0x7f5c1bfde570
+[    2.613080] RSP: 002b:00007ffde1c90dc8 EFLAGS: 00000246 ORIG_RAX: 0000000000000085
+[    2.613080] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f5c1bfde570
+[    2.613080] RDX: 0000000000000000 RSI: 0000000000008000 RDI: 00005580ff10086f
+[    2.613080] RBP: 00007ffde1c91040 R08: 00005580ff10086f R09: 0000000000000000
+[    2.613080] R10: 0000000000104000 R11: 0000000000000246 R12: 00005580ffb99660
+[    2.613080] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000002
+[    2.613080] Code: 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 41 57 41 56 44 8d 14 09 41 55 41 54 55 53 44 89 d3 09 cb 48 83 ec 38 48 8b 05 c5 03 29 01 <4c> 8b 20 4c 39 e0 0f 84 d7 01 00 00 4c 89 44 24 08 89 54 24 20
+[    2.613080] RIP: ima_match_policy+0x23/0x390 RSP: ffffc90000193e88
+[    2.613080] CR2: 0000000000000000
+[    2.613080] ---[ end trace 9a9f0a8a73079f6a ]---
+[    2.673052] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
+[    2.673052]
+[    2.675337] Kernel Offset: disabled
+[    2.676405] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
+
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
+---
+ security/integrity/ima/ima_main.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 2cfb0c714967..503366805554 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -380,6 +380,9 @@ void ima_post_path_mknod(struct dentry *dentry)
+ 	struct inode *inode = dentry->d_inode;
+ 	int must_appraise;
+
++	if (!ima_initialized)
++		return;
++
+ 	must_appraise = ima_must_appraise(inode, MAY_ACCESS, FILE_CHECK);
+ 	if (!must_appraise)
+ 		return;
+--
+2.12.3
