@@ -1,93 +1,56 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:52571 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751475AbeCPX2i (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 16 Mar 2018 19:28:38 -0400
-From: Petr Vorel <pvorel@suse.cz>
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45243 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751233AbeCPVix (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 16 Mar 2018 17:38:53 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2GLY2X6051007
+        for <linux-integrity@vger.kernel.org>; Fri, 16 Mar 2018 17:38:52 -0400
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2grhf09pjq-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 16 Mar 2018 17:38:52 -0400
+Received: from localhost
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <bauerman@linux.vnet.ibm.com>;
+        Fri, 16 Mar 2018 15:38:51 -0600
+References: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
+From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
-Cc: Petr Vorel <pvorel@suse.cz>, Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Subject: [PATCH] ima: Avoid using not initialized IMA
-Date: Sat, 17 Mar 2018 00:28:27 +0100
-Message-Id: <20180316232827.3791-1-pvorel@suse.cz>
+Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        "AKASHI\, Takahiro" <takahiro.akashi@linaro.org>
+Subject: Re: [PATCH v6 00/12] Appended signatures support for IMA appraisal
+In-reply-to: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
+Date: Fri, 16 Mar 2018 18:38:38 -0300
+MIME-Version: 1.0
+Content-Type: text/plain
+Message-Id: <87zi37og4h.fsf@morokweng.localdomain>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-IMA requires have it's hash algorithm to be compiled-in due it's early
-use. Default IMA algorithm is protected by Kconfig to be compiled-in.
 
-ima_hash kernel parameter allows to choose hash algorithm. When
-specified algorithm not available or available as module, IMA
-initialization fails, but mknodat syscall expect it and calls
-ima_post_path_mknod(). This leads to to kernel oops:
+Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com> writes:
 
-$ grep CONFIG_CRYPTO_MD4 .config
-CONFIG_CRYPTO_MD4=m
+> Now the modsig is only ignored if it references a signature that is not
+> present in IMA's keyring (or if there's a parsing error, obviously). If the
 
-[    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-4.12.14-2.3-default root=UUID=74ae8202-9ca7-4e39-813b-22287ec52f7a video=1024x768-16 plymouth.ignore-serial-consoles console=ttyS0 console=tty resume=/dev/disk/by-path/pci-0000:00:07.0-part3 splash=silent showopts ima_hash=md4
-...
-[    1.545190] ima: Can not allocate md4 (reason: -2)
-...
-[    2.610120] BUG: unable to handle kernel NULL pointer dereference at           (null)
-[    2.611903] IP: ima_match_policy+0x23/0x390
-[    2.612967] PGD 0 P4D 0
-[    2.613080] Oops: 0000 [#1] SMP
-[    2.613080] Modules linked in: autofs4
-[    2.613080] Supported: Yes
-[    2.613080] CPU: 0 PID: 1 Comm: systemd Not tainted 4.12.14-2.3-default #1
-[    2.613080] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
-[    2.613080] task: ffff88003e2d0040 task.stack: ffffc90000190000
-[    2.613080] RIP: 0010:ima_match_policy+0x23/0x390
-[    2.613080] RSP: 0018:ffffc90000193e88 EFLAGS: 00010296
-[    2.613080] RAX: 0000000000000000 RBX: 000000000000000c RCX: 0000000000000004
-[    2.613080] RDX: 0000000000000010 RSI: 0000000000000001 RDI: ffff880037071728
-[    2.613080] RBP: 0000000000008000 R08: 0000000000000000 R09: 0000000000000000
-[    2.613080] R10: 0000000000000008 R11: 61c8864680b583eb R12: 00005580ff10086f
-[    2.613080] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000008000
-[    2.613080] FS:  00007f5c1da08940(0000) GS:ffff88003fc00000(0000) knlGS:0000000000000000
-[    2.613080] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    2.613080] CR2: 0000000000000000 CR3: 0000000037002000 CR4: 00000000003406f0
-[    2.613080] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[    2.613080] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[    2.613080] Call Trace:
-[    2.613080]  ? shmem_mknod+0xbf/0xd0
-[    2.613080]  ima_post_path_mknod+0x1c/0x40
-[    2.613080]  SyS_mknod+0x210/0x220
-[    2.613080]  entry_SYSCALL_64_fastpath+0x1a/0xa5
-[    2.613080] RIP: 0033:0x7f5c1bfde570
-[    2.613080] RSP: 002b:00007ffde1c90dc8 EFLAGS: 00000246 ORIG_RAX: 0000000000000085
-[    2.613080] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f5c1bfde570
-[    2.613080] RDX: 0000000000000000 RSI: 0000000000008000 RDI: 00005580ff10086f
-[    2.613080] RBP: 00007ffde1c91040 R08: 00005580ff10086f R09: 0000000000000000
-[    2.613080] R10: 0000000000104000 R11: 0000000000000246 R12: 00005580ffb99660
-[    2.613080] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000002
-[    2.613080] Code: 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 41 57 41 56 44 8d 14 09 41 55 41 54 55 53 44 89 d3 09 cb 48 83 ec 38 48 8b 05 c5 03 29 01 <4c> 8b 20 4c 39 e0 0f 84 d7 01 00 00 4c 89 44 24 08 89 54 24 20
-[    2.613080] RIP: ima_match_policy+0x23/0x390 RSP: ffffc90000193e88
-[    2.613080] CR2: 0000000000000000
-[    2.613080] ---[ end trace 9a9f0a8a73079f6a ]---
-[    2.673052] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
-[    2.673052]
-[    2.675337] Kernel Offset: disabled
-[    2.676405] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
+The above should read "Now the modsig is only ignored if it references a
+*key* that is not present in IMA's keyring".
 
-Signed-off-by: Petr Vorel <pvorel@suse.cz>
----
- security/integrity/ima/ima_main.c | 3 +++
- 1 file changed, 3 insertions(+)
+Sorry, I only noticed the mistake after sending the emails.
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 2cfb0c714967..503366805554 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -380,6 +380,9 @@ void ima_post_path_mknod(struct dentry *dentry)
- 	struct inode *inode = dentry->d_inode;
- 	int must_appraise;
-
-+	if (!ima_initialized)
-+		return;
-+
- 	must_appraise = ima_must_appraise(inode, MAY_ACCESS, FILE_CHECK);
- 	if (!must_appraise)
- 		return;
 --
-2.12.3
+Thiago Jung Bauermann
+IBM Linux Technology Center
