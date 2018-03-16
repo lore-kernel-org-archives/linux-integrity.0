@@ -1,159 +1,63 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46258 "EHLO
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48730 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752238AbeCPRrD (ORCPT
+        by vger.kernel.org with ESMTP id S1750757AbeCPRMG (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 16 Mar 2018 13:47:03 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2GHiSbm105466
-        for <linux-integrity@vger.kernel.org>; Fri, 16 Mar 2018 13:47:03 -0400
-Received: from e06smtp13.uk.ibm.com (e06smtp13.uk.ibm.com [195.75.94.109])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2grj6cgy7p-1
+        Fri, 16 Mar 2018 13:12:06 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2GH9Wdb015878
+        for <linux-integrity@vger.kernel.org>; Fri, 16 Mar 2018 13:12:05 -0400
+Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2grhf6hn9d-1
         (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 16 Mar 2018 13:47:03 -0400
+        for <linux-integrity@vger.kernel.org>; Fri, 16 Mar 2018 13:12:05 -0400
 Received: from localhost
-        by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Fri, 16 Mar 2018 17:47:00 -0000
-From: Nayna Jain <nayna@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: zohar@linux.vnet.ibm.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
-        jarkko.sakkinen@linux.intel.com, tpmdd@selhorst.net,
-        jgunthorpe@obsidianresearch.com,
-        Nayna Jain <nayna@linux.vnet.ibm.com>
-Subject: [PATCH] tpm: TPM 2.0 selftest performance improvement
-Date: Fri, 16 Mar 2018 23:15:28 +0530
-Message-Id: <20180316174528.21018-1-nayna@linux.vnet.ibm.com>
+        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Fri, 16 Mar 2018 17:12:03 -0000
+Subject: Re: [PATCH] evm: check for remount ro in progress before writing
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-integrity@vger.kernel.org
+Date: Fri, 16 Mar 2018 13:12:00 -0400
+In-Reply-To: <20180301123845.26189-1-s.hauer@pengutronix.de>
+References: <20180301123845.26189-1-s.hauer@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1521220320.3503.57.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-For selftest being run in the background, the TCG 2.0 Specification
-provides the command TPM2_GetTestResult to check the status of selftest
-completion.
+On Thu, 2018-03-01 at 13:38 +0100, Sascha Hauer wrote:
+> EVM might update the evm xattr while the VFS performs a remount to
+> readonly mode. This is not properly checked for, additionally check
+> the s_readonly_remount superblock flag before writing.
+> The bug can for example be observed with UBIFS. UBIFS checks the free
+> space on the device before and after a remount. With EVM enabled the
+> free space sometimes differs between both checks.
+> 
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 
-When the partial selftest command is sent just after TPM initialization,
-it is observed that it returns RC_COMMAND_CODE error, which as per TPM 2.0
-Specification, indicates "the response code that is returned if the TPM is
-unmarshalling a value that it expects to be a TPM_CC and the input value is
-not in the table." This doesn't indicate the exact status of selftest
-command on TPM. But, it can be verified by sending the TPM2_GetTestResult.
+I've modified the patch to use d_backing_inode() and fixed the
+checkpatch over 80 character warning.  It's now applied.
 
-This patch implements the TPM2_GetTestResult command and uses it to check
-the selftest status, before sending the full selftest command after partial
-selftest returns RC_COMMAND_CODE.
+thanks!
 
-With this change, dmesg shows the TPM selftest completed at 1.243864
-compared with the previous 1.939667 time.
+Mimi
 
-Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-Tested-by: Mimi Zohar <zohar@linux.vnet.ibm.com> (on Pi with TPM 2.0)
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
----
- drivers/char/tpm/tpm.h      |  2 ++
- drivers/char/tpm/tpm2-cmd.c | 59 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 61 insertions(+)
-
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 82ae7b722161..d95eeb7c002a 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -107,6 +107,7 @@ enum tpm2_return_codes {
- 	TPM2_RC_FAILURE		= 0x0101,
- 	TPM2_RC_DISABLED	= 0x0120,
- 	TPM2_RC_COMMAND_CODE    = 0x0143,
-+	TPM2_RC_NEEDS_TEST      = 0x0153,
- 	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
- 	TPM2_RC_REFERENCE_H0	= 0x0910,
- };
-@@ -135,6 +136,7 @@ enum tpm2_command_codes {
- 	TPM2_CC_FLUSH_CONTEXT	= 0x0165,
- 	TPM2_CC_GET_CAPABILITY	= 0x017A,
- 	TPM2_CC_GET_RANDOM	= 0x017B,
-+	TPM2_CC_GET_TEST_RESULT = 0x017C,
- 	TPM2_CC_PCR_READ	= 0x017E,
- 	TPM2_CC_PCR_EXTEND	= 0x0182,
- 	TPM2_CC_LAST		= 0x018F,
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 89a5397b18d2..494f6dfbc65d 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -823,6 +823,50 @@ unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
- EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
- 
- /**
-+ * tpm2_get_selftest_result() - get the status of self tests
-+ *
-+ * @chip: TPM chip to use
-+ *
-+ * Return: If error return rc, else return the result of the self tests.
-+ * TPM_RC_NEEDS_TESTING: No self tests are done. Needs testing.
-+ * TPM_RC_TESTING: Self tests are in progress.
-+ * TPM_RC_SUCCESS: Self tests completed successfully.
-+ * TPM_RC_FAILURE: Self tests completed failure.
-+ *
-+ * This function can be used to check the status of self tests on the TPM.
-+ */
-+static int tpm2_get_selftest_result(struct tpm_chip *chip)
-+{
-+	struct tpm_buf buf;
-+	int rc;
-+	int test_result;
-+	uint16_t data_size;
-+	int len;
-+	const struct tpm_output_header *header;
-+
-+	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_TEST_RESULT);
-+	if (rc)
-+		return rc;
-+
-+	len = tpm_transmit(chip, NULL, buf.data, PAGE_SIZE, 0);
-+	if (len <  0)
-+		return len;
-+
-+	header = (struct tpm_output_header *)buf.data;
-+
-+	rc = be32_to_cpu(header->return_code);
-+	if (rc)
-+		return rc;
-+
-+	data_size = be16_to_cpup((__be16 *)&buf.data[TPM_HEADER_SIZE]);
-+
-+	test_result = be32_to_cpup((__be32 *)
-+			(&buf.data[TPM_HEADER_SIZE + 2 + data_size]));
-+
-+	return test_result;
-+}
-+
-+/**
-  * tpm2_do_selftest() - ensure that all self tests have passed
-  *
-  * @chip: TPM chip to use
-@@ -851,10 +895,25 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
- 				      "attempting the self test");
- 		tpm_buf_destroy(&buf);
- 
-+		dev_dbg(&chip->dev, "tpm selftest command returned %04x\n", rc);
- 		if (rc == TPM2_RC_TESTING)
- 			rc = TPM2_RC_SUCCESS;
- 		if (rc == TPM2_RC_INITIALIZE || rc == TPM2_RC_SUCCESS)
- 			return rc;
-+
-+		if (rc == TPM2_RC_COMMAND_CODE) {
-+
-+			dev_info(&chip->dev, "Check TPM Test Results\n");
-+			rc = tpm2_get_selftest_result(chip);
-+
-+			dev_info(&chip->dev, "tpm self test result is %04x\n",
-+					rc);
-+			if (rc == TPM2_RC_TESTING)
-+				rc = TPM2_RC_SUCCESS;
-+			if (rc == TPM2_RC_INITIALIZE || rc == TPM2_RC_SUCCESS
-+					|| TPM2_RC_FAILURE)
-+				return rc;
-+		}
- 	}
- 
- 	return rc;
--- 
-2.13.6
+> ---
+>  security/integrity/evm/evm_main.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+> index a8d502827270..4a147a998aa7 100644
+> --- a/security/integrity/evm/evm_main.c
+> +++ b/security/integrity/evm/evm_main.c
+> @@ -185,6 +185,7 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+>  					iint->flags |= EVM_IMMUTABLE_DIGSIG;
+>  				evm_status = INTEGRITY_PASS_IMMUTABLE;
+>  			} else if (!IS_RDONLY(d_backing_inode(dentry)) &&
+> +				   !(dentry->d_inode->i_sb->s_readonly_remount) &&
+>  				   !IS_IMMUTABLE(d_backing_inode(dentry))) {
+>  				evm_update_evmxattr(dentry, xattr_name,
+>  						    xattr_value,
