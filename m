@@ -1,9 +1,9 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga12.intel.com ([192.55.52.136]:32243 "EHLO mga12.intel.com"
+Received: from mga12.intel.com ([192.55.52.136]:31972 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752048AbeCPOIy (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:08:54 -0400
-Date: Fri, 16 Mar 2018 16:08:50 +0200
+        id S1750982AbeCPODo (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 16 Mar 2018 10:03:44 -0400
+Date: Fri, 16 Mar 2018 16:03:39 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: "Winkler, Tomas" <tomas.winkler@intel.com>
 Cc: Jason Gunthorpe <jgg@ziepe.ca>,
@@ -12,41 +12,29 @@ Cc: Jason Gunthorpe <jgg@ziepe.ca>,
         "linux-security-module@vger.kernel.org"
         <linux-security-module@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 7/8] tpm: Move pcr extend to tpm2-cmd.c
-Message-ID: <20180316140850.GC9616@linux.intel.com>
+Subject: Re: [PATCH v2 0/8] tpm: factor out tpm1 code into tpm1-cmd.c
+Message-ID: <20180316140339.GB9616@linux.intel.com>
 References: <20180310082428.31519-1-tomas.winkler@intel.com>
- <20180310082428.31519-8-tomas.winkler@intel.com>
- <62dcb95fa349f0b195afd3c28c9fa9aeac60fe98.camel@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B94237DEE@hasmsx108.ger.corp.intel.com>
+ <ee4a88f87158e8cb38f90b955af85d68b9105a97.camel@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94237DDA@hasmsx108.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B94237DEE@hasmsx108.ger.corp.intel.com>
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B94237DDA@hasmsx108.ger.corp.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Mar 15, 2018 at 11:28:55PM +0000, Winkler, Tomas wrote:
-> > 
+On Thu, Mar 15, 2018 at 11:25:48PM +0000, Winkler, Tomas wrote:
 > > On Sat, 2018-03-10 at 10:24 +0200, Tomas Winkler wrote:
-> > > Add tpm2_pcr_extend function to tpm2-cmd.c with signature required by
-> > > tpm-interface.c. It wraps the original open code implementation. The
-> > > original original tpm2_pcr_extend function is renamed and made static,
-> > > called only from new tpm2_pcr_extend.
-> > >
-> > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > > Move TPM1 implementation from tpm-interface.c to tpm1-cmd.c similarly
+> > > to tpm2-cmd.c, as well as move TPM2 open code flows into new functions
+> > > to tpm2-cmd.c The functions in tpm-interface.c should now be in form:
 > > 
-> > This might concern some of the earlier patches too but please use exact
-> > names for functions in the short and long summary i.e.
-> > 
-> >   tpm: migrate all of the PCR extension code to tpm2_pcr_extend()
-> > 
-> > Check this also for your long descriptions and previous that I gave reviewed-
-> > by (I think they were otherwise fine). And you refer to a function in text use
-> > parentheses after the name. I don't like hastily written commit messages.
+> > In which patch tpm1-cmd.c is created?
 > 
+> tpm: factor out tpm 1.2 duration calculation to tpm1-cmd.c
 > 
-> Yeah,  got little tired of describing the obvious. but you are right.
-> Tomas
+> https://patchwork.kernel.org/patch/10259691/
 
-Might sound nit picking but a solid git log is useful tool.
+Please include it to the series.
 
 /Jarkko
