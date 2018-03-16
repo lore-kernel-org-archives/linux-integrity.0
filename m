@@ -1,83 +1,100 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:53690 "EHLO
-        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753652AbeCPKgc (ORCPT
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:33500 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750793AbeCPJcg (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 16 Mar 2018 06:36:32 -0400
-Received: by mail-wm0-f53.google.com with SMTP id e194so2117787wmd.3
-        for <linux-integrity@vger.kernel.org>; Fri, 16 Mar 2018 03:36:31 -0700 (PDT)
-Subject: Re: Should we handle TPM_RC_RETRY internally?
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "Tricca, Philip B" <philip.b.tricca@intel.com>
-References: <1521136931.5348.76.camel@HansenPartnership.com>
-From: Javier Martinez Canillas <javierm@redhat.com>
-Message-ID: <eaa8e31f-62cb-dcf0-a27f-87d993d2f3e4@redhat.com>
-Date: Fri, 16 Mar 2018 11:36:28 +0100
+        Fri, 16 Mar 2018 05:32:36 -0400
+Received: by mail-lf0-f50.google.com with SMTP id x205-v6so14387589lfa.0
+        for <linux-integrity@vger.kernel.org>; Fri, 16 Mar 2018 02:32:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1521136931.5348.76.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8
+From: Martin Townsend <mtownsend1973@gmail.com>
+Date: Fri, 16 Mar 2018 09:32:34 +0000
+Message-ID: <CABatt_zunDV_g3oR5_O5GMm0EVEnT0LEnmjp5PQgu26Q6T+4SA@mail.gmail.com>
+Subject: Problem mounting pseudo filesystems with SMACK and IMA enabled.
+To: linux-integrity@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-[adding Philip Tricca to the cc list]
+[Resending to new integrity mailing list]
 
-Hello James,
+Hi,
 
-On 03/15/2018 07:02 PM, James Bottomley wrote:
-> I was investigating an apparent bug in the trusted keys implementation
-> where periodically the key operation barfs and returns an error to
-> userspace.  It turns out this error is because the TPM returns
-> TPM_RC_RETRY to an operation.
-> 
-> The TPM spec is a bit unclear why the TPM would return TPM_RC_RETRY,
-> but it is clear that it may happen on a lot of operations.  I checked
-> with the microsoft reference implementation:
-> 
-> https://github.com/Microsoft/ms-tpm-20-ref/
-> 
-> Which implies it's only set if the lockout check is invoked by the
-> command and the previous TPM shutdown wasn't orderly.  It does seem to
-> me that I've only seen it involving objects with DA implications, which
-> explains why it's seen in trusted keys.
-> 
-> If I read the UEFI TPM API, it does automatic retries.  This is the
-> note:
-> 
->     The firmware SHALL not return TPM2_RC_RETRY prior to the completion
->     of the call to ExitBootServices().
-> 
->     Implementer's Note: the implementation of this function should check
->     the return value in the TPM response and, if it is TPM2_RC_RETRY,
->     resend the command. The implementation may abort if a sufficient
->     number of retries has been done.
-> 
-> I really think if UEFI does it, we should do it too (and it will fix my
-> trusted key bug).
-> 
-> What does everyone else think?  If it's agreed, I'll code up the patch.
-> 
+I have a system with a pre-signed UBI root filesystem image with both
+IMA/EVM signatures on all files.  The Root CA Cert is compiled into
+the kernel and the public keys is in the rootfs.  All SMACK labels
+have also been applied although at this early stage there aren't many
+(just a few application specific ones) so it's mainly the defaults.
+This image is then flashed to the on board NAND.
 
-That's a very good question. I don't know the answer but maybe Philip does
-since he said that would ask the TCG TSS WG members for their thoughts on
-this [0].
+The kernel bootargs for IMA are
 
-We had the same issue in the tpm2-software project, and at the end Philip
-added a macro that retries sending commands on TPM_RC_RETRY responses [1].
+"ima_audit=1 ima_template=ima-ng ima_hash=sha1 ima_tcb
+ima_appraise_tcb rootflags=i_version"
 
-If the kernel handles this, then such a macro won't be needed anymore for
-user-space programs and will simplify things. So I'm in favour to handle
-at the driver level but I'm not sure if is the correct thing to do or not.
+and I'm enabling SMACK by using the kernel bootarg
 
-> James
-> 
+"security=smack"
 
-[0]: https://github.com/tpm2-software/tpm2-tools/issues/469#issuecomment-340501128
-[1]: https://github.com/tpm2-software/tpm2-tools/pull/585/commits/9b0f3e59bab0810cf3721bf6765bd083f23f811f
+now if I boot without the "security=smack" it boots fine and I can
+check the IMA/EVM signatures and can see that measurements are being
+taken, but if I enable SMACK using the above kernel bootarg it fails
+to boot and it looks like some problem early in systemd where it
+mounts the required filesystems in mount-setup.c (log provided below).
+Now if I flash an image that hasn't been signed and enable SMACK it
+boots fine and I can use SMACK to enforce access control.  So there
+seems to some interaction between the two when mounting the early
+filesystems.
 
-Best regards,
--- 
-Javier Martinez Canillas
-Software Engineer - Desktop Hardware Enablement
-Red Hat
+Before I delve into this I would appreciate any pointers to where to
+start looking, any printk's to put in SMACK/IMA/mount code to help
+diagnose this would be really appreciated.
+
+The Kernel is 4.9 LTSI, systemd is v229
+
+Apologies if I have the wrong mailing list for SMACK, I couldn't find
+one on vger.kernel.org.
+
+
+Boot log.
+...
+Security Framework initialized
+Smack:  Initializing.
+Smack:  IPv6 port labeling enabled.
+Mount-cache hash table entries: 1024 (order: 0, 4096 bytes)
+Mountpoint-cache hash table entries: 1024 (order: 0, 4096 bytes)
+CPU: Testing write buffer coherency: ok
+Setting up static identity map for 0x80100000 - 0x80100058
+devtmpfs: initialized
+evm: security.SMACK64
+evm: security.SMACK64EXEC
+evm: security.SMACK64TRANSMUTE
+evm: security.SMACK64MMAP
+evm: security.ima
+evm: security.capability
+...
+Loading compiled-in X.509 certificates
+Loaded X.509 cert 'IMA-EVM Root CA: cc972d25acf7c1efaa5329a48104efa303f0833a'
+...
+UBIFS (ubi0:0): FS size: 201764864 bytes (192 MiB, 1589 LEBs), journal
+size 9023488 bytes (8 MiB, 72 LEBs)
+UBIFS (ubi0:0): reserved for root: 0 bytes (0 KiB)
+UBIFS (ubi0:0): media format: w4/r0 (latest is w4/r0), UUID
+F6EA70A5-1931-4049-89CB-93B82F37F6A4, small LPT model
+VFS: Mounted root (ubifs filesystem) readonly on device 0:16.
+devtmpfs: mounted
+integrity: Loaded X.509 cert 'IMA Certificate Authority:
+e2c191a6e31fd02d6beba0c7c7847720a35fd9c6': /etc/keys/ima-x509.der
+Freeing unused kernel memory: 1024K
+systemd[1]: Successfully loaded Smack policies.
+systemd[1]: Successfully loaded Smack/CIPSO policies.
+systemd[1]: System time before build time, advancing clock.
+systemd[1]: Failed to mount tmpfs at /dev/shm: No such file or directory
+systemd[1]: Failed to mount tmpfs at /dev/shm: No such file or directory
+systemd[1]: Failed to mount cgroup at /sys/fs/cgroup/systemd: No such
+file or directory
+[!!!!!!] Failed to mount API filesystems, freezing.
+systemd[1]: Freezing execution.
+
+Many Thanks,
+Martin.
