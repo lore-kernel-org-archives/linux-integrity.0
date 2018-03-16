@@ -1,63 +1,99 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48730 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750757AbeCPRMG (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58872 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753674AbeCPREW (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 16 Mar 2018 13:12:06 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2GH9Wdb015878
-        for <linux-integrity@vger.kernel.org>; Fri, 16 Mar 2018 13:12:05 -0400
-Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2grhf6hn9d-1
+        Fri, 16 Mar 2018 13:04:22 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2GGtEaj142552
+        for <linux-integrity@vger.kernel.org>; Fri, 16 Mar 2018 13:04:21 -0400
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2grhkfryvw-1
         (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 16 Mar 2018 13:12:05 -0400
+        for <linux-integrity@vger.kernel.org>; Fri, 16 Mar 2018 13:04:21 -0400
 Received: from localhost
-        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Fri, 16 Mar 2018 17:12:03 -0000
-Subject: Re: [PATCH] evm: check for remount ro in progress before writing
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-integrity@vger.kernel.org
-Date: Fri, 16 Mar 2018 13:12:00 -0400
-In-Reply-To: <20180301123845.26189-1-s.hauer@pengutronix.de>
-References: <20180301123845.26189-1-s.hauer@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1521220320.3503.57.camel@linux.vnet.ibm.com>
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
+        Fri, 16 Mar 2018 11:04:20 -0600
+Subject: Re: [RFC PATCH v2 1/3] ima: extend clone() with IMA namespace support
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+References: <20180309201421.6150-1-stefanb@linux.vnet.ibm.com>
+ <20180309201421.6150-2-stefanb@linux.vnet.ibm.com>
+ <87vadxfwqj.fsf@xmission.com>
+ <c18b6e92-57f0-5994-eb60-5fadc6671832@linux.vnet.ibm.com>
+ <1521135192.5348.64.camel@HansenPartnership.com>
+ <2183a3b4-6270-d2e9-70ad-a7399eb1681c@linux.vnet.ibm.com>
+ <1521139535.5348.89.camel@HansenPartnership.com>
+ <0dc5b856-8dc6-7b5a-eeac-febd19f6498c@linux.vnet.ibm.com>
+ <1521140467.5348.94.camel@HansenPartnership.com>
+ <056e5b9e-b4d3-1862-baea-06dda4bd0713@linux.vnet.ibm.com>
+Cc: mkayaalp@cs.binghamton.edu,
+        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>,
+        sunyuqiong1988@gmail.com, containers@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, david.safford@ge.com,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Date: Fri, 16 Mar 2018 13:04:16 -0400
+MIME-Version: 1.0
+In-Reply-To: <056e5b9e-b4d3-1862-baea-06dda4bd0713@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Message-Id: <7e015d3c-4fab-3d69-711b-2ebbad07018f@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, 2018-03-01 at 13:38 +0100, Sascha Hauer wrote:
-> EVM might update the evm xattr while the VFS performs a remount to
-> readonly mode. This is not properly checked for, additionally check
-> the s_readonly_remount superblock flag before writing.
-> The bug can for example be observed with UBIFS. UBIFS checks the free
-> space on the device before and after a remount. With EVM enabled the
-> free space sometimes differs between both checks.
-> 
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+On 03/15/2018 03:15 PM, Stefan Berger wrote:
+> On 03/15/2018 03:01 PM, James Bottomley wrote:
+>> On Thu, 2018-03-15 at 14:51 -0400, Stefan Berger wrote:
+>>> On 03/15/2018 02:45 PM, James Bottomley wrote:
+>> [...]
+>>>>>> going to need some type of keyring namespace and there's
+>>>>>> already
+>>>>>> one hanging off the user_ns:
+>>>>>>
+>>>>>> commit f36f8c75ae2e7d4da34f4c908cebdb4aa42c977e
+>>>>>> Author: David Howells <dhowells@redhat.com>
+>>>>>> Date:   Tue Sep 24 10:35:19 2013 +0100
+>>>>>>
+>>>>>>        KEYS: Add per-user_namespace registers for persistent
+>>>>>> per-UID
+>>>>>> kerberos caches
+>>>>> The benefit for IMA would be that this would then tie the keys
+>>>>> needed for appraising to the IMA namespace's policy.
+>>>>> However, if you have an appraise policy in your IMA namespace,
+>>>>> which is now hooked to the user namespace, and you join that user
+>>>>> namespace but your files don't have signatures, nothing will
+>>>>> execute anymore. That's now a side effect of joining this user
+>>>>> namespace unless we have a magic  exception. My feeling is,
+>>>>> people may not like that...
+>>>> Agree, but I think the magic might be to populate the ima keyring
+>>>> with the parent on user_ns creation.  That way the user_ns owner
+>>>> can delete the parent keys if they don't like them, but by default
+>>>> the parent appraisal policy should just work.
+>>> That may add keys to your keyring but doesn't get you signatures on
+>>> your  files.
+>> But it doesn't need to.  The only way we'd get a failure is if the file
+>> is already being appraised and we lose access to the key.  If the
+>
+> Well, the configuration I talked about above was assuming that we have 
+> an appraisal policy active in the IMA namespace, which is now tied to 
+> the user namespace that was just joined.
+>
+> If we are fine with the side effects of an IMA policy active as part 
+> of a user namespace then let's go with it. The side effects in case of 
+> an active IMA appraisal may then be that files cannot be 
+> read/accessed, or file measurements or IMA auditing may occur.
+>
+> The alternative is we have an independent IMA namespace. If one joins 
+> the USER namespace and there are no IMA-related side effects. If one 
+> joins the IMA namespace its IMA policy should start being enforced. If 
+> the current active USER namespace has the keys that go with the 
+> signatures of the filesystem, then we're fine from the appraisal 
+> perspective. If not, then IMA namespace joining may prevent file 
+> accesses.
 
-I've modified the patch to use d_backing_inode() and fixed the
-checkpatch over 80 character warning.  It's now applied.
+With these differences pointed out, which path do we want to go now ? 
+Eric ? James ?
 
-thanks!
-
-Mimi
-
-> ---
->  security/integrity/evm/evm_main.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-> index a8d502827270..4a147a998aa7 100644
-> --- a/security/integrity/evm/evm_main.c
-> +++ b/security/integrity/evm/evm_main.c
-> @@ -185,6 +185,7 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
->  					iint->flags |= EVM_IMMUTABLE_DIGSIG;
->  				evm_status = INTEGRITY_PASS_IMMUTABLE;
->  			} else if (!IS_RDONLY(d_backing_inode(dentry)) &&
-> +				   !(dentry->d_inode->i_sb->s_readonly_remount) &&
->  				   !IS_IMMUTABLE(d_backing_inode(dentry))) {
->  				evm_update_evmxattr(dentry, xattr_name,
->  						    xattr_value,
+    Stefan
