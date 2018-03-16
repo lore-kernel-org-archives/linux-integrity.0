@@ -1,75 +1,52 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:32607 "EHLO mga07.intel.com"
+Received: from mga12.intel.com ([192.55.52.136]:32243 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750749AbeCPObN (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:31:13 -0400
-Date: Fri, 16 Mar 2018 16:31:09 +0200
+        id S1752048AbeCPOIy (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 16 Mar 2018 10:08:54 -0400
+Date: Fri, 16 Mar 2018 16:08:50 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+To: "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
         "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "Tricca, Philip B" <philip.b.tricca@intel.com>
-Subject: Re: Should we handle TPM_RC_RETRY internally?
-Message-ID: <20180316143109.GE9616@linux.intel.com>
-References: <1521136931.5348.76.camel@HansenPartnership.com>
- <eaa8e31f-62cb-dcf0-a27f-87d993d2f3e4@redhat.com>
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 7/8] tpm: Move pcr extend to tpm2-cmd.c
+Message-ID: <20180316140850.GC9616@linux.intel.com>
+References: <20180310082428.31519-1-tomas.winkler@intel.com>
+ <20180310082428.31519-8-tomas.winkler@intel.com>
+ <62dcb95fa349f0b195afd3c28c9fa9aeac60fe98.camel@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94237DEE@hasmsx108.ger.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <eaa8e31f-62cb-dcf0-a27f-87d993d2f3e4@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B94237DEE@hasmsx108.ger.corp.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Mar 16, 2018 at 11:36:28AM +0100, Javier Martinez Canillas wrote:
-> [adding Philip Tricca to the cc list]
+On Thu, Mar 15, 2018 at 11:28:55PM +0000, Winkler, Tomas wrote:
+> > 
+> > On Sat, 2018-03-10 at 10:24 +0200, Tomas Winkler wrote:
+> > > Add tpm2_pcr_extend function to tpm2-cmd.c with signature required by
+> > > tpm-interface.c. It wraps the original open code implementation. The
+> > > original original tpm2_pcr_extend function is renamed and made static,
+> > > called only from new tpm2_pcr_extend.
+> > >
+> > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > 
+> > This might concern some of the earlier patches too but please use exact
+> > names for functions in the short and long summary i.e.
+> > 
+> >   tpm: migrate all of the PCR extension code to tpm2_pcr_extend()
+> > 
+> > Check this also for your long descriptions and previous that I gave reviewed-
+> > by (I think they were otherwise fine). And you refer to a function in text use
+> > parentheses after the name. I don't like hastily written commit messages.
 > 
-> Hello James,
 > 
-> On 03/15/2018 07:02 PM, James Bottomley wrote:
-> > I was investigating an apparent bug in the trusted keys implementation
-> > where periodically the key operation barfs and returns an error to
-> > userspace.  It turns out this error is because the TPM returns
-> > TPM_RC_RETRY to an operation.
-> > 
-> > The TPM spec is a bit unclear why the TPM would return TPM_RC_RETRY,
-> > but it is clear that it may happen on a lot of operations.  I checked
-> > with the microsoft reference implementation:
-> > 
-> > https://github.com/Microsoft/ms-tpm-20-ref/
-> > 
-> > Which implies it's only set if the lockout check is invoked by the
-> > command and the previous TPM shutdown wasn't orderly.  It does seem to
-> > me that I've only seen it involving objects with DA implications, which
-> > explains why it's seen in trusted keys.
-> > 
-> > If I read the UEFI TPM API, it does automatic retries.  This is the
-> > note:
-> > 
-> >     The firmware SHALL not return TPM2_RC_RETRY prior to the completion
-> >     of the call to ExitBootServices().
-> > 
-> >     Implementer's Note: the implementation of this function should check
-> >     the return value in the TPM response and, if it is TPM2_RC_RETRY,
-> >     resend the command. The implementation may abort if a sufficient
-> >     number of retries has been done.
-> > 
-> > I really think if UEFI does it, we should do it too (and it will fix my
-> > trusted key bug).
-> > 
-> > What does everyone else think?  If it's agreed, I'll code up the patch.
-> > 
-> 
-> That's a very good question. I don't know the answer but maybe Philip does
-> since he said that would ask the TCG TSS WG members for their thoughts on
-> this [0].
-> 
-> We had the same issue in the tpm2-software project, and at the end Philip
-> added a macro that retries sending commands on TPM_RC_RETRY responses [1].
-> 
-> If the kernel handles this, then such a macro won't be needed anymore for
-> user-space programs and will simplify things. So I'm in favour to handle
-> at the driver level but I'm not sure if is the correct thing to do or not.
+> Yeah,  got little tired of describing the obvious. but you are right.
+> Tomas
 
-Can we get input from TCG how to fix this properly and request to
-update their specs accordingly?
+Might sound nit picking but a solid git log is useful tool.
 
 /Jarkko
