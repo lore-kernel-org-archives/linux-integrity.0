@@ -1,20 +1,20 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35874 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932279AbeCPUka (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37034 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753137AbeCPUkT (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 16 Mar 2018 16:40:30 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2GKdVux145752
-        for <linux-integrity@vger.kernel.org>; Fri, 16 Mar 2018 16:40:30 -0400
-Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2grhf6rbg7-1
+        Fri, 16 Mar 2018 16:40:19 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2GKdKC3056552
+        for <linux-integrity@vger.kernel.org>; Fri, 16 Mar 2018 16:40:18 -0400
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2grj7xebm9-1
         (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 16 Mar 2018 16:40:29 -0400
+        for <linux-integrity@vger.kernel.org>; Fri, 16 Mar 2018 16:40:18 -0400
 Received: from localhost
-        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <bauerman@linux.vnet.ibm.com>;
-        Fri, 16 Mar 2018 14:40:28 -0600
+        Fri, 16 Mar 2018 14:40:17 -0600
 From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
@@ -31,146 +31,303 @@ Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         "David S. Miller" <davem@davemloft.net>,
         "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
         Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-Subject: [PATCH v6 12/12] ima: Write modsig to the measurement list
-Date: Fri, 16 Mar 2018 17:38:37 -0300
+Subject: [PATCH v6 10/12] ima: Add functions to read and verify a modsig signature
+Date: Fri, 16 Mar 2018 17:38:35 -0300
 In-Reply-To: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
 References: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
-Message-Id: <20180316203837.10174-13-bauerman@linux.vnet.ibm.com>
+Message-Id: <20180316203837.10174-11-bauerman@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Define new "d-sig" template field which holds the digest that is expected
-to match the one contained in the modsig.
+This is the code needed by IMA-appraise to work with modsig signatures.
+It will be used by the next two patches.
 
-Also add modsig support to the "sig" template field, allowing the the
-contents of the modsig to be included in the measurement list.
-
-Suggested-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 ---
- Documentation/security/IMA-templates.rst  |  5 ++++
- security/integrity/ima/ima_template.c     |  4 ++-
- security/integrity/ima/ima_template_lib.c | 47 +++++++++++++++++++++++++++++--
- security/integrity/ima/ima_template_lib.h |  2 ++
- 4 files changed, 55 insertions(+), 3 deletions(-)
+ security/integrity/ima/Kconfig      |   3 +
+ security/integrity/ima/ima.h        |  41 ++++++++
+ security/integrity/ima/ima_modsig.c | 181 ++++++++++++++++++++++++++++++++++++
+ security/integrity/integrity.h      |   1 +
+ 4 files changed, 226 insertions(+)
 
-diff --git a/Documentation/security/IMA-templates.rst b/Documentation/security/IMA-templates.rst
-index 2cd0e273cc9a..f2a0f4225857 100644
---- a/Documentation/security/IMA-templates.rst
-+++ b/Documentation/security/IMA-templates.rst
-@@ -68,6 +68,11 @@ descriptors by adding their identifier to the format string
-  - 'd-ng': the digest of the event, calculated with an arbitrary hash
-    algorithm (field format: [<hash algo>:]digest, where the digest
-    prefix is shown only if the hash algorithm is not SHA1 or MD5);
-+ - 'd-sig': the digest of the event for files that have an appended modsig. This
-+   field is calculated without including the modsig and thus will differ from
-+   the total digest of the file, but it is what should match the digest
-+   contained in the modsig (if it doesn't, the signature is invalid). It is
-+   shown in the same format as 'd-ng';
-  - 'n-ng': the name of the event, without size limitations;
-  - 'sig': the file signature.
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index ee278189e0bb..306601d62f0b 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -167,6 +167,9 @@ config IMA_APPRAISE_BOOTPARAM
+ config IMA_APPRAISE_MODSIG
+ 	bool "Support module-style signatures for appraisal"
+ 	depends on IMA_APPRAISE
++	depends on INTEGRITY_ASYMMETRIC_KEYS
++	select PKCS7_MESSAGE_PARSER
++	select MODULE_SIG_FORMAT
+ 	default n
+ 	help
+ 	   Adds support for signatures appended to files. The format of the
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index c61d8fc5190d..49aef56dc96d 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -301,11 +301,52 @@ static inline int ima_read_xattr(struct dentry *dentry,
  
-diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
-index 30db39b23804..36fc32f538b5 100644
---- a/security/integrity/ima/ima_template.c
-+++ b/security/integrity/ima/ima_template.c
-@@ -43,8 +43,10 @@ static struct ima_template_field supported_fields[] = {
- 	 .field_show = ima_show_template_string},
- 	{.field_id = "sig", .field_init = ima_eventsig_init,
- 	 .field_show = ima_show_template_sig},
-+	{.field_id = "d-sig", .field_init = ima_eventdigest_sig_init,
-+	 .field_show = ima_show_template_digest_ng},
- };
--#define MAX_TEMPLATE_NAME_LEN 15
-+#define MAX_TEMPLATE_NAME_LEN 24
- 
- static struct ima_template_desc *ima_template;
- static struct ima_template_desc *lookup_template_desc(const char *name);
-diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-index afb52a90e532..1dca082cce43 100644
---- a/security/integrity/ima/ima_template_lib.c
-+++ b/security/integrity/ima/ima_template_lib.c
-@@ -220,7 +220,8 @@ int ima_parse_buf(void *bufstartp, void *bufendp, void **bufcurp,
- 	return 0;
- }
- 
--static int ima_eventdigest_init_common(u8 *digest, u32 digestsize, u8 hash_algo,
-+static int ima_eventdigest_init_common(const u8 *digest, u32 digestsize,
-+				       u8 hash_algo,
- 				       struct ima_field_data *field_data)
+ #ifdef CONFIG_IMA_APPRAISE_MODSIG
+ bool ima_hook_supports_modsig(enum ima_hooks func);
++int ima_read_modsig(enum ima_hooks func, const void *buf, loff_t buf_len,
++		    struct evm_ima_xattr_data **xattr_value,
++		    int *xattr_len);
++int ima_get_modsig_hash(struct evm_ima_xattr_data *hdr, enum hash_algo *algo,
++			const u8 **hash, u8 *len);
++int ima_modsig_serialize_data(struct evm_ima_xattr_data **data, int *data_len);
++int ima_modsig_verify(const unsigned int keyring_id,
++		      struct evm_ima_xattr_data *hdr);
++void ima_free_xattr_data(struct evm_ima_xattr_data *hdr);
+ #else
+ static inline bool ima_hook_supports_modsig(enum ima_hooks func)
  {
- 	/*
-@@ -323,6 +324,35 @@ int ima_eventdigest_ng_init(struct ima_event_data *event_data,
- 					   hash_algo, field_data);
+ 	return false;
  }
- 
-+/*
-+ * This function writes the digest of the file which is expected to match the
-+ * digest contained in the file's embedded signature.
-+ */
-+int ima_eventdigest_sig_init(struct ima_event_data *event_data,
-+			     struct ima_field_data *field_data)
++
++static inline int ima_read_modsig(enum ima_hooks func, const void *buf,
++				  loff_t buf_len,
++				  struct evm_ima_xattr_data **xattr_value,
++				  int *xattr_len)
 +{
-+	struct evm_ima_xattr_data *xattr_value = event_data->xattr_value;
-+	enum hash_algo hash_algo = HASH_ALGO_SHA1;
-+	const u8 *cur_digest = NULL;
-+	u8 cur_digestsize = 0;
-+	int ret;
-+
-+	if (!xattr_value || xattr_value->type != IMA_MODSIG)
-+		return 0;
-+
-+	if (event_data->violation)	/* recording a violation. */
-+		goto out;
-+
-+	ret = ima_get_modsig_hash(xattr_value, &hash_algo, &cur_digest,
-+				  &cur_digestsize);
-+	if (ret)
-+		return ret;
-+
-+ out:
-+	return ima_eventdigest_init_common(cur_digest, cur_digestsize,
-+					   hash_algo, field_data);
++	return -ENOTSUPP;
 +}
 +
- static int ima_eventname_init_common(struct ima_event_data *event_data,
- 				     struct ima_field_data *field_data,
- 				     bool size_limit)
-@@ -379,10 +409,23 @@ int ima_eventsig_init(struct ima_event_data *event_data,
- 		      struct ima_field_data *field_data)
- {
- 	struct evm_ima_xattr_data *xattr_value = event_data->xattr_value;
-+	int xattr_len = event_data->xattr_len;
- 
- 	if (!is_ima_sig(xattr_value))
- 		return 0;
- 
--	return ima_write_template_field_data(xattr_value, event_data->xattr_len,
-+	/*
-+	 * The xattr_value for IMA_MODSIG is a runtime structure containing
-+	 * pointers. Get its raw data instead.
-+	 */
-+	if (xattr_value->type == IMA_MODSIG) {
-+		int rc;
++static inline int ima_get_modsig_hash(struct evm_ima_xattr_data *hdr,
++				      enum hash_algo *algo, const u8 **hash,
++				      u8 *len)
++{
++	return -ENOTSUPP;
++}
 +
-+		rc = ima_modsig_serialize_data(&xattr_value, &xattr_len);
-+		if (rc)
-+			return rc;
++static inline int ima_modsig_serialize_data(struct evm_ima_xattr_data **data,
++					    int *data_len)
++{
++	return -ENOTSUPP;
++}
++
++static inline int ima_modsig_verify(const unsigned int keyring_id,
++				    struct evm_ima_xattr_data *hdr)
++{
++	return -ENOTSUPP;
++}
++
++static inline void ima_free_xattr_data(struct evm_ima_xattr_data *hdr)
++{
++	kfree(hdr);
++}
+ #endif /* CONFIG_IMA_APPRAISE_MODSIG */
+ 
+ /* LSM based policy rules require audit */
+diff --git a/security/integrity/ima/ima_modsig.c b/security/integrity/ima/ima_modsig.c
+index d8ea811b6f74..105fd04d585e 100644
+--- a/security/integrity/ima/ima_modsig.c
++++ b/security/integrity/ima/ima_modsig.c
+@@ -8,8 +8,25 @@
+  * Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+  */
+ 
++#include <linux/types.h>
++#include <linux/module_signature.h>
++#include <keys/asymmetric-type.h>
++#include <crypto/pkcs7.h>
++
+ #include "ima.h"
+ 
++struct modsig_hdr {
++	uint8_t type;		/* Should be IMA_MODSIG. */
++	struct pkcs7_message *pkcs7_msg;
++	int raw_pkcs7_len;
++
++	/*
++	 * This is what will go to the measurement list if the template requires
++	 * storing the signature.
++	 */
++	struct evm_ima_xattr_data raw_pkcs7;
++};
++
+ /**
+  * ima_hook_supports_modsig - can the policy allow modsig for this hook?
+  *
+@@ -29,3 +46,167 @@ bool ima_hook_supports_modsig(enum ima_hooks func)
+ 		return false;
+ 	}
+ }
++
++static bool modsig_has_known_key(struct modsig_hdr *hdr)
++{
++	const struct public_key_signature *pks;
++	struct key *keyring;
++	struct key *key;
++
++	keyring = integrity_keyring_from_id(INTEGRITY_KEYRING_IMA);
++	if (IS_ERR(keyring))
++		return false;
++
++	pks = pkcs7_get_message_sig(hdr->pkcs7_msg);
++	if (!pks)
++		return false;
++
++	key = find_asymmetric_key(keyring, pks->auth_ids[0], NULL, false);
++	if (IS_ERR(key))
++		return false;
++
++	key_put(key);
++
++	return true;
++}
++
++int ima_read_modsig(enum ima_hooks func, const void *buf, loff_t buf_len,
++		    struct evm_ima_xattr_data **xattr_value,
++		    int *xattr_len)
++{
++	const size_t marker_len = sizeof(MODULE_SIG_STRING) - 1;
++	const struct module_signature *sig;
++	struct modsig_hdr *hdr;
++	size_t sig_len;
++	const void *p;
++	int rc;
++
++	/*
++	 * Not supposed to happen. Hooks that support modsig are whitelisted
++	 * when parsing the policy using ima_hooks_supports_modsig().
++	 */
++	if (!buf || !buf_len) {
++		WARN_ONCE(true, "%s doesn't support modsig\n",
++			  func_tokens[func]);
++		return -ENOENT;
++	} else if (buf_len <= marker_len + sizeof(*sig))
++		return -ENOENT;
++
++	p = buf + buf_len - marker_len;
++	if (memcmp(p, MODULE_SIG_STRING, marker_len))
++		return -ENOENT;
++
++	buf_len -= marker_len;
++	sig = (const struct module_signature *) (p - sizeof(*sig));
++
++	rc = validate_module_sig(sig, buf_len);
++	if (rc)
++		return rc;
++
++	sig_len = be32_to_cpu(sig->sig_len);
++	buf_len -= sig_len + sizeof(*sig);
++
++	/* Allocate sig_len additional bytes to hold the raw PKCS#7 data. */
++	hdr = kmalloc(sizeof(*hdr) + sig_len, GFP_KERNEL);
++	if (!hdr)
++		return -ENOMEM;
++
++	hdr->pkcs7_msg = pkcs7_parse_message(buf + buf_len, sig_len);
++	if (IS_ERR(hdr->pkcs7_msg)) {
++		rc = PTR_ERR(hdr->pkcs7_msg);
++		goto err_no_msg;
 +	}
 +
-+	return ima_write_template_field_data(xattr_value, xattr_len,
- 					     DATA_FMT_HEX, field_data);
- }
-diff --git a/security/integrity/ima/ima_template_lib.h b/security/integrity/ima/ima_template_lib.h
-index 6a3d8b831deb..3cd353e83f73 100644
---- a/security/integrity/ima/ima_template_lib.h
-+++ b/security/integrity/ima/ima_template_lib.h
-@@ -38,6 +38,8 @@ int ima_eventname_init(struct ima_event_data *event_data,
- 		       struct ima_field_data *field_data);
- int ima_eventdigest_ng_init(struct ima_event_data *event_data,
- 			    struct ima_field_data *field_data);
-+int ima_eventdigest_sig_init(struct ima_event_data *event_data,
-+			     struct ima_field_data *field_data);
- int ima_eventname_ng_init(struct ima_event_data *event_data,
- 			  struct ima_field_data *field_data);
- int ima_eventsig_init(struct ima_event_data *event_data,
++	rc = pkcs7_supply_detached_data(hdr->pkcs7_msg, buf, buf_len);
++	if (rc)
++		goto err;
++
++	if (!modsig_has_known_key(hdr)) {
++		rc = -ENOKEY;
++		goto err;
++	}
++
++	memcpy(hdr->raw_pkcs7.data, buf + buf_len, sig_len);
++	hdr->raw_pkcs7_len = sig_len + 1;
++	hdr->raw_pkcs7.type = IMA_MODSIG;
++
++	hdr->type = IMA_MODSIG;
++
++	*xattr_value = (typeof(*xattr_value)) hdr;
++	*xattr_len = sizeof(*hdr);
++
++	return 0;
++
++ err:
++	pkcs7_free_message(hdr->pkcs7_msg);
++ err_no_msg:
++	kfree(hdr);
++	return rc;
++}
++
++int ima_get_modsig_hash(struct evm_ima_xattr_data *hdr, enum hash_algo *algo,
++			const u8 **hash, u8 *len)
++{
++	struct modsig_hdr *modsig = (typeof(modsig)) hdr;
++	const struct public_key_signature *pks;
++	int i;
++
++	if (!hdr || hdr->type != IMA_MODSIG)
++		return -EINVAL;
++
++	pks = pkcs7_get_message_sig(modsig->pkcs7_msg);
++	if (!pks)
++		return -EBADMSG;
++
++	for (i = 0; i < HASH_ALGO__LAST; i++)
++		if (!strcmp(hash_algo_name[i], pks->hash_algo))
++			break;
++
++	*algo = i;
++
++	return pkcs7_get_digest(modsig->pkcs7_msg, hash, len);
++}
++
++int ima_modsig_serialize_data(struct evm_ima_xattr_data **data, int *data_len)
++{
++	struct modsig_hdr *modsig = (struct modsig_hdr *) *data;
++
++	if (!*data || (*data)->type != IMA_MODSIG)
++		return -EINVAL;
++
++	*data = &modsig->raw_pkcs7;
++	*data_len = modsig->raw_pkcs7_len;
++
++	return 0;
++}
++
++int ima_modsig_verify(const unsigned int keyring_id,
++		      struct evm_ima_xattr_data *hdr)
++{
++	struct modsig_hdr *modsig = (struct modsig_hdr *) hdr;
++	struct key *keyring;
++
++	if (!hdr || hdr->type != IMA_MODSIG)
++		return -EINVAL;
++
++	keyring = integrity_keyring_from_id(keyring_id);
++	if (IS_ERR(keyring))
++		return PTR_ERR(keyring);
++
++	return verify_pkcs7_message_sig(NULL, 0, modsig->pkcs7_msg, keyring,
++					VERIFYING_MODULE_SIGNATURE, NULL, NULL);
++}
++
++void ima_free_xattr_data(struct evm_ima_xattr_data *hdr)
++{
++	if (!hdr)
++		return;
++
++	if (hdr->type == IMA_MODSIG) {
++		struct modsig_hdr *modsig = (struct modsig_hdr *) hdr;
++
++		pkcs7_free_message(modsig->pkcs7_msg);
++	}
++
++	kfree(hdr);
++}
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index 6643c6550787..4acb1fb86b3b 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -74,6 +74,7 @@ enum evm_ima_xattr_type {
+ 	EVM_IMA_XATTR_DIGSIG,
+ 	IMA_XATTR_DIGEST_NG,
+ 	EVM_XATTR_PORTABLE_DIGSIG,
++	IMA_MODSIG,
+ 	IMA_XATTR_LAST
+ };
+ 
