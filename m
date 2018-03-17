@@ -1,208 +1,150 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:40041 "EHLO
-        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750778AbeCQJUU (ORCPT
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:54294 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753020AbeCQBWg (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 17 Mar 2018 05:20:20 -0400
-MIME-Version: 1.0
-In-Reply-To: <77f5ac13-dd79-abf7-13b2-336bf799a25c@schaufler-ca.com>
-References: <CABatt_zunDV_g3oR5_O5GMm0EVEnT0LEnmjp5PQgu26Q6T+4SA@mail.gmail.com>
- <1521206743.3503.29.camel@linux.vnet.ibm.com> <CABatt_zxC1W-OirRLM-PVERAkUZaJDSnRDc_i4a7ebh-NJZ9Ag@mail.gmail.com>
- <1521211762.3503.46.camel@linux.vnet.ibm.com> <77f5ac13-dd79-abf7-13b2-336bf799a25c@schaufler-ca.com>
-From: Martin Townsend <mtownsend1973@gmail.com>
-Date: Sat, 17 Mar 2018 09:20:18 +0000
-Message-ID: <CABatt_yk_73BsgaD7UsHOL9wse0FxR=i1YXneUfx6aUiBra_JQ@mail.gmail.com>
-Subject: Re: Problem mounting pseudo filesystems with SMACK and IMA enabled.
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
-        "SMACK-discuss@lists.01.org" <SMACK-discuss@lists.01.org>,
-        LSM <linux-security-module@vger.kernel.org>
+        Fri, 16 Mar 2018 21:22:36 -0400
+Message-ID: <1521249754.12827.7.camel@HansenPartnership.com>
+Subject: [PATCH] tpm: add retry logic
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Date: Fri, 16 Mar 2018 18:22:34 -0700
 Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Casey,
+TPM2 can return TPM2_RC_RETRY to any command and when it does we get
+unexpected failures inside the kernel that surprise users (this is
+mostly observed in the trusted key handling code).  The UEFI 2.6 spec
+has advice on how to handle this:
 
-On Fri, Mar 16, 2018 at 3:52 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 3/16/2018 7:49 AM, Mimi Zohar wrote:
->> On Fri, 2018-03-16 at 14:34 +0000, Martin Townsend wrote:
->>> Hi Mimi,
->>>
->>> On Fri, Mar 16, 2018 at 1:25 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
->>>> On Fri, 2018-03-16 at 09:32 +0000, Martin Townsend wrote:
->>>>> [Resending to new integrity mailing list]
->>>>>
->>>>> Hi,
->>>>>
->>>>> I have a system with a pre-signed UBI root filesystem image with both
->>>>> IMA/EVM signatures on all files.  The Root CA Cert is compiled into
->>>>> the kernel and the public keys is in the rootfs.  All SMACK labels
->>>>> have also been applied although at this early stage there aren't many
->>>>> (just a few application specific ones) so it's mainly the defaults.
->
-> If you can apply a label to all of the files on the filesystem
-> ( find $FSROOT -exec chsmack -a "_" {} \; ) and then set the
-> specific file labels you want you will ensure that you won't
-> go through the label defaulting mechanism. I don't think that
-> is your problem, but it's worth a try.
->
-I tried this but no joy.
+    The firmware SHALL not return TPM2_RC_RETRY prior to the completion
+    of the call to ExitBootServices().
 
->>>>> This image is then flashed to the on board NAND.
->>>>>
->>>>> The kernel bootargs for IMA are
->>>>>
->>>>> "ima_audit=1 ima_template=ima-ng ima_hash=sha1 ima_tcb
->>>>> ima_appraise_tcb rootflags=i_version"
->>>>>
->>>>> and I'm enabling SMACK by using the kernel bootarg
->>>>>
->>>>> "security=smack"
->>>>>
->>>>> now if I boot without the "security=smack" it boots fine and I can
->>>>> check the IMA/EVM signatures and can see that measurements are being
->>>>> taken, but if I enable SMACK using the above kernel bootarg it fails
->>>>> to boot and it looks like some problem early in systemd where it
->>>>> mounts the required filesystems in mount-setup.c (log provided below).
->>>>> Now if I flash an image that hasn't been signed and enable SMACK it
->>>>> boots fine and I can use SMACK to enforce access control.  So there
->>>>> seems to some interaction between the two when mounting the early
->>>>> filesystems.
->>>>>
->>>>> Before I delve into this I would appreciate any pointers to where to
->>>>> start looking, any printk's to put in SMACK/IMA/mount code to help
->>>>> diagnose this would be really appreciated.
->>>>>
->>>>> The Kernel is 4.9 LTSI, systemd is v229
->
-> Are you using a base distribution? Fedora, Ubuntu, Debian, Alpine?
-> That information may make the issue easier to reproduce.
+    Implementer's Note: the implementation of this function should check
+    the return value in the TPM response and, if it is TPM2_RC_RETRY,
+    resend the command. The implementation may abort if a sufficient
+    number of retries has been done.
 
-It's a linux-yocto distribution for an i.MX6UL board. I'm trying to
-get QEMU working to make it easier to debug and reproduce but alas
-this may prove harder to achieve than debugging this issue with
-printk's
+So we follow that advice in our tpm_transmit() code using
+TPM2_DURATION_SHORT as the initial wait duration and
+TPM2_DURATION_LONG as the maximum wait time.  This should fix all the
+in-kernel use cases and also means that user space TSS implementations
+don't have to have their own retry handling.
 
->
->>>>>
->>>>> Apologies if I have the wrong mailing list for SMACK, I couldn't find
->>>>> one on vger.kernel.org.
->
-> SMACK-discuss@lists.01.org is the most Smack directed list.
-> linux-security-module@vger.kernel.org is the "official" place.
-> casey@schaufler-ca.com is me directly.
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: stable@vger.kernel.org
+---
+ drivers/char/tpm/tpm-interface.c | 75 ++++++++++++++++++++++++++++++++--------
+ drivers/char/tpm/tpm.h           |  1 +
+ 2 files changed, 61 insertions(+), 15 deletions(-)
 
-Thank you I will use these in future.
->
->>>>>
->>>>>
->>>>> Boot log.
->>>>> ...
->>>>> Security Framework initialized
->>>>> Smack:  Initializing.
->>>>> Smack:  IPv6 port labeling enabled.
->>>>> Mount-cache hash table entries: 1024 (order: 0, 4096 bytes)
->>>>> Mountpoint-cache hash table entries: 1024 (order: 0, 4096 bytes)
->>>>> CPU: Testing write buffer coherency: ok
->>>>> Setting up static identity map for 0x80100000 - 0x80100058
->>>>> devtmpfs: initialized
->>>>> evm: security.SMACK64
->>>>> evm: security.SMACK64EXEC
->>>>> evm: security.SMACK64TRANSMUTE
->>>>> evm: security.SMACK64MMAP
->>>>> evm: security.ima
->>>>> evm: security.capability
->>>>> ...
->>>>> Loading compiled-in X.509 certificates
->>>>> Loaded X.509 cert 'IMA-EVM Root CA: cc972d25acf7c1efaa5329a48104efa303f0833a'
->>>>> ...
->>>>> UBIFS (ubi0:0): FS size: 201764864 bytes (192 MiB, 1589 LEBs), journal
->>>>> size 9023488 bytes (8 MiB, 72 LEBs)
->>>>> UBIFS (ubi0:0): reserved for root: 0 bytes (0 KiB)
->>>>> UBIFS (ubi0:0): media format: w4/r0 (latest is w4/r0), UUID
->>>>> F6EA70A5-1931-4049-89CB-93B82F37F6A4, small LPT model
->>>>> VFS: Mounted root (ubifs filesystem) readonly on device 0:16.
->>>>> devtmpfs: mounted
->>>>> integrity: Loaded X.509 cert 'IMA Certificate Authority:
->>>>> e2c191a6e31fd02d6beba0c7c7847720a35fd9c6': /etc/keys/ima-x509.der
->>>>> Freeing unused kernel memory: 1024K
->>>>> systemd[1]: Successfully loaded Smack policies.
->
-> Is your list of Smack rules large? What is it based on?
-
-At the moment there are 2 rules :)  It's not based on anything, the
-next step is to start creating rules for the system but I don't
-envisage that there will be many.
-
->
->>>>> systemd[1]: Successfully loaded Smack/CIPSO policies.
->>>>> systemd[1]: System time before build time, advancing clock.
->>>>> systemd[1]: Failed to mount tmpfs at /dev/shm: No such file or directory
->>>>> systemd[1]: Failed to mount tmpfs at /dev/shm: No such file or directory
->>>>> systemd[1]: Failed to mount cgroup at /sys/fs/cgroup/systemd: No such
->>>>> file or directory
->
-> This is where the audit trail could be very helpful. It can tell us
-> what action failed.
-
-I thought I found the problem.  systemd was changing the SMACK label
-on /dev to '*' and I had put IMA/EVM signature on /dev in the rootfs
-so I was thinking the new SMACK label would break IMA/EVM for the dev
-folder and as the first message were about /dev/shm not being found I
-thought this was it.  But after removing the IMA/EVM signing of
-directories, labelling /dev with '*' during the image signing and even
-replacing all calls to lsetxattr in systemd with a log message the
-problem still exists.
-
-I put a printk at the end of common_lsm_audit and it never appeared so
-I'm assuming there are no audit messages.  I put a prink on
-process_measurements in IMA and it always returned 0 except for one
-place where systemd was trying to load rules into load2
-
-process_measurement: process_measurement: [smackfs magic:43415d53] /load2
-process_measurements: ret -EACCESS rc:4
-
-Not sure this is the problem though as there are 2 rules which are
-application specific.  I load them later anyway with a systemd
-service.  Put a printk on various SMACK functions including
-smack_sb_kern_mount and they all return 0.
-
-It looks like this is something particular to my system so I don't
-want to take anymore of your time unless I find something that tells
-me otherwise.  I'm going to start by investigating what's special
-about mounting /dev/shm and /sys/fs/cgroup/systemd as these are the
-two that are failing, it seems to mounting other things by looking at
-the systemd mount table.
-
-If anyone can suggest a good place to start looking that would be
-appreciated otherwise I'll start with mounting code and shm code.
-
->
->>>>> [!!!!!!] Failed to mount API filesystems, freezing.
->>>>> systemd[1]: Freezing execution.
->>>> [Cc'ing Sascha]
->>>>
->>>> Are there any additional messages in /var/log/audit/audit.log?
->>>>
->>>> Mimi
->>>>
->>> Sadly I can't see this file, I don't even think the relevant
->>> filesystems have been mounted as this point. I tried the emergency
->>> shell but no joy. Is there a way of patching the kernel to show audit
->>> messages to the console?  If you point me at the relevant code I'll
->>> hack something in.  I'm currently putting printk's everywhere I can
->>> think of to see what's going on.   If you can think of anywhere in the
->>> IMA that would be good to see a debug print let me know, currently I
->>> have something in process_measurements and a few other places in
->>> ima_main.c.
->> I would think the audit messages would go to the console.  With
->> dracut, I use a couple of boot command line options for debugging (eg.
->> rd.debug rd.break=pre-mount, rd.shell).
->>
->> Mimi
->>
->>
->
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 7c3380201960..1d25d1dca2f0 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -398,21 +398,10 @@ static void tpm_relinquish_locality(struct tpm_chip *chip)
+ 	chip->locality = -1;
+ }
+ 
+-/**
+- * tpm_transmit - Internal kernel interface to transmit TPM commands.
+- *
+- * @chip: TPM chip to use
+- * @space: tpm space
+- * @buf: TPM command buffer
+- * @bufsiz: length of the TPM command buffer
+- * @flags: tpm transmit flags - bitmap
+- *
+- * Return:
+- *     0 when the operation is successful.
+- *     A negative number for system errors (errno).
+- */
+-ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+-		     u8 *buf, size_t bufsiz, unsigned int flags)
++static ssize_t tpm_transmit_internal(struct tpm_chip *chip,
++				     struct tpm_space *space,
++				     u8 *buf, size_t bufsiz,
++				     unsigned int flags)
+ {
+ 	struct tpm_output_header *header = (void *)buf;
+ 	int rc;
+@@ -550,6 +539,62 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ }
+ 
+ /**
++ * tpm_transmit - Internal kernel interface to transmit TPM commands.
++ *
++ * @chip: TPM chip to use
++ * @space: tpm space
++ * @buf: TPM command buffer
++ * @bufsiz: length of the TPM command buffer
++ * @flags: tpm transmit flags - bitmap
++ *
++ * A wrapper around tpm_transmit_internal that handles TPM2_RC_RETRY
++ * returns from the TPM and retransmits the command after a delay up
++ * to a maximum wait of TPM2_DURATION_LONG.
++ *
++ * Note: TPM1 never returns TPM2_RC_RETRY so the retry logic is TPM2
++ * only
++ *
++ * Return:
++ *     the length of the return when the operation is successful.
++ *     A negative number for system errors (errno).
++ */
++ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
++		     u8 *buf, size_t bufsiz, unsigned int flags)
++{
++	struct tpm_output_header *header = (struct tpm_output_header *)buf;
++	/* space for header and handles */
++	u8 save[TPM_HEADER_SIZE + 3*sizeof(u32)];
++	unsigned int delay_msec = TPM2_DURATION_SHORT;
++	u32 rc = 0;
++	ssize_t ret;
++	const size_t save_size = min(space ? sizeof(save): TPM_HEADER_SIZE,
++				     bufsiz);
++
++	/*
++	 * Subtlety here: if we have a space, the handles will be
++	 * transformed, so when we restore the header we also have to
++	 * restore the handles.
++	 */
++	memcpy(save, buf, save_size);
++
++	for (;;) {
++		ret = tpm_transmit_internal(chip, space, buf, bufsiz, flags);
++		if (ret < 0)
++			break;
++		rc = be32_to_cpu(header->return_code);
++		if (rc != TPM2_RC_RETRY)
++			break;
++		delay_msec *= 2;
++		if (delay_msec > TPM2_DURATION_LONG) {
++			dev_err(&chip->dev, "TPM is in retry loop\n");
++			break;
++		}
++		tpm_msleep(delay_msec);
++		memcpy(buf, save, save_size);
++	}
++	return ret;
++}
++/**
+  * tpm_transmit_cmd - send a tpm command to the device
+  *    The function extracts tpm out header return code
+  *
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index b2547a11271a..c542f877cea7 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -113,6 +113,7 @@ enum tpm2_return_codes {
+ 	TPM2_RC_COMMAND_CODE    = 0x0143,
+ 	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
+ 	TPM2_RC_REFERENCE_H0	= 0x0910,
++	TPM2_RC_RETRY		= 0x0922,
+ };
+ 
+ enum tpm2_algorithms {
+-- 
+2.12.3
