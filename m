@@ -1,62 +1,65 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:39646 "EHLO mx2.suse.de"
+Received: from mga02.intel.com ([134.134.136.20]:61272 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031249AbeCSUFT (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 19 Mar 2018 16:05:19 -0400
-Date: Mon, 19 Mar 2018 21:05:16 +0100
-From: Petr Vorel <pvorel@suse.cz>
+        id S1755655AbeCSOmN (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 19 Mar 2018 10:42:13 -0400
+Date: Mon, 19 Mar 2018 16:42:05 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: James Morris <jmorris@namei.org>, linux-integrity@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Subject: Re: [PATCH] ima: Avoid using not initialized IMA
-Message-ID: <20180319200516.5kgloj4vdigxb52y@dell5510>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20180316232827.3791-1-pvorel@suse.cz>
- <1521336476.3503.74.camel@linux.vnet.ibm.com>
- <alpine.LRH.2.21.1803191542410.5791@namei.org>
- <1521457159.3503.93.camel@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 3/5] tpm: migrate tpm2_probe() to use struct tpm_buf
+Message-ID: <20180319144205.GA4619@linux.intel.com>
+References: <20180305165614.5469-1-jarkko.sakkinen@linux.intel.com>
+ <20180305165614.5469-4-jarkko.sakkinen@linux.intel.com>
+ <1520290344.10396.357.camel@linux.vnet.ibm.com>
+ <20180316122129.GA2458@linux.intel.com>
+ <1521203812.3503.19.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-In-Reply-To: <1521457159.3503.93.camel@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1521203812.3503.19.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Mimi,
-
-> On Mon, 2018-03-19 at 15:43 +1100, James Morris wrote:
-> > On Sat, 17 Mar 2018, Mimi Zohar wrote:
-
-> > > On Sat, 2018-03-17 at 00:28 +0100, Petr Vorel wrote:
-> > > > IMA requires have it's hash algorithm to be compiled-in due it's early
-> > > > use. Default IMA algorithm is protected by Kconfig to be compiled-in.
-
-> > > > ima_hash kernel parameter allows to choose hash algorithm. When
-> > > > specified algorithm not available or available as module, IMA
-> > > > initialization fails, but mknodat syscall expect it and calls
-> > > > ima_post_path_mknod(). This leads to to kernel oops:
-
-> > > > $ grep CONFIG_CRYPTO_MD4 .config
-> > > > CONFIG_CRYPTO_MD4=m
-
-> > > > [    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-4.12.14-2.3-default root=UUID=74ae8202-9ca7-4e39-813b-22287ec52f7a video=1024x768-16 plymouth.ignore-serial-consoles console=ttyS0 console=tty resume=/dev/disk/by-path/pci-0000:00:07.0-part3 splash=silent showopts ima_hash=md4
-> > > > ...
-> > > > [    1.545190] ima: Can not allocate md4 (reason: -2)
-
-> > > The hash algorithm specified on the boot command line needs to be
-> > > builtin.  For whatever reason it isn't builtin, rather than skipping
-> > > measurements, a better solution I think would be to fallback to the
-> > > builtin hash algorithm.
-
-> > What if this falls back to a hash which is not secure enough?
-
-> It should fallback to the Kconfig selected hash algorithm as defined
-> in CONFIG_IMA_DEFAULT_HASH.
-
-OK, I have v2 which use CONFIG_IMA_DEFAULT_HASH, I'll post it tomorrow.
-But I'd also keep this patch as well, this check doesn't harm and IMHO you can never be
-sure it does not fail.
-
+On Fri, Mar 16, 2018 at 08:36:52AM -0400, Mimi Zohar wrote:
+> On Fri, 2018-03-16 at 14:21 +0200, Jarkko Sakkinen wrote:
+> > On Mon, Mar 05, 2018 at 05:52:24PM -0500, Mimi Zohar wrote:
+> > > Hi Jarrko,
+> > > 
+> > > On Mon, 2018-03-05 at 18:56 +0200, Jarkko Sakkinen wrote:
+> > > > In order to make struct tpm_buf the first class object for constructing TPM
+> > > > commands, migrate tpm2_probe() to use it.
+> > > > 
+> > > > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > 
+> > > With this patch, the Pi doesn't find the TPM.  I'm seeing the
+> > > following line in dmesg.
+> > > 
+> > > [    1.087414] tpm_tis_spi: probe of spi0.0 failed with error 256
+> > 
+> > Thank you for reporting this Mimi. Does it have TPM1/TPM2?
+> 
+> The pi has a TPM 2.0 attached to the GPIO.  James pointed out the
+> change in return codes.
+> 
+> 
+> +       if (be16_to_cpu(out->tag) == TPM2_ST_NO_SESSIONS)
+>                 chip->flags |= TPM_CHIP_FLAG_TPM2;
+> -
+> -       return 0;
+> +out:
+> +       tpm_buf_destroy(&buf);
+> +       return rc;
+>  }
+>  EXPORT_SYMBOL_GPL(tpm2_probe);
+> 
 > Mimi
 
-Kind regards,
-Petr
+Oops, thank you James and Mimi for pointing this out. I'll refine
+the patch set.
+
+/Jarkko
