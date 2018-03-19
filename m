@@ -1,63 +1,38 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48704 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932296AbeCSK7k (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 19 Mar 2018 06:59:40 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2JAxXLg140322
-        for <linux-integrity@vger.kernel.org>; Mon, 19 Mar 2018 06:59:39 -0400
-Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2gt858s8x2-1
-        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 19 Mar 2018 06:59:38 -0400
-Received: from localhost
-        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Mon, 19 Mar 2018 10:59:24 -0000
-Subject: Re: [PATCH] ima: Avoid using not initialized IMA
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: James Morris <jmorris@namei.org>
-Cc: Petr Vorel <pvorel@suse.cz>, linux-integrity@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Date: Mon, 19 Mar 2018 06:59:19 -0400
-In-Reply-To: <alpine.LRH.2.21.1803191542410.5791@namei.org>
-References: <20180316232827.3791-1-pvorel@suse.cz>
-         <1521336476.3503.74.camel@linux.vnet.ibm.com>
-         <alpine.LRH.2.21.1803191542410.5791@namei.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1521457159.3503.93.camel@linux.vnet.ibm.com>
+Received: from mga05.intel.com ([192.55.52.43]:30290 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754923AbeCSJhp (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 19 Mar 2018 05:37:45 -0400
+Date: Mon, 19 Mar 2018 11:37:35 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Tomas Winkler <tomas.winkler@intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5 V3] tpm2: add longer timeouts for creation commands.
+Message-ID: <20180319093735.GA4587@linux.intel.com>
+References: <20180310151545.22237-1-tomas.winkler@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180310151545.22237-1-tomas.winkler@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2018-03-19 at 15:43 +1100, James Morris wrote:
-> On Sat, 17 Mar 2018, Mimi Zohar wrote:
+On Sat, Mar 10, 2018 at 05:15:45PM +0200, Tomas Winkler wrote:
+> TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve generation
+> of crypto keys which can be a computationally intensive task.
+> The timeout is set to 3min.
+> Rather than increasing default timeout a new constant is
+> added, to not stall for too long on regular commands failures.
 > 
-> > On Sat, 2018-03-17 at 00:28 +0100, Petr Vorel wrote:
-> > > IMA requires have it's hash algorithm to be compiled-in due it's early
-> > > use. Default IMA algorithm is protected by Kconfig to be compiled-in.
-> > > 
-> > > ima_hash kernel parameter allows to choose hash algorithm. When
-> > > specified algorithm not available or available as module, IMA
-> > > initialization fails, but mknodat syscall expect it and calls
-> > > ima_post_path_mknod(). This leads to to kernel oops:
-> > > 
-> > > $ grep CONFIG_CRYPTO_MD4 .config
-> > > CONFIG_CRYPTO_MD4=m
-> > > 
-> > > [    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-4.12.14-2.3-default root=UUID=74ae8202-9ca7-4e39-813b-22287ec52f7a video=1024x768-16 plymouth.ignore-serial-consoles console=ttyS0 console=tty resume=/dev/disk/by-path/pci-0000:00:07.0-part3 splash=silent showopts ima_hash=md4
-> > > ...
-> > > [    1.545190] ima: Can not allocate md4 (reason: -2)
-> > 
-> > The hash algorithm specified on the boot command line needs to be
-> > builtin.  For whatever reason it isn't builtin, rather than skipping
-> > measurements, a better solution I think would be to fallback to the
-> > builtin hash algorithm.
-> 
-> What if this falls back to a hash which is not secure enough?
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 
-It should fallback to the Kconfig selected hash algorithm as defined
-in CONFIG_IMA_DEFAULT_HASH.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Mimi
+PS. Please format the long description properly. Now the lines cut from
+weird places. I use gq command in Vim to get that done. The description
+itself is nice and concise.
+
+/Jarkko
