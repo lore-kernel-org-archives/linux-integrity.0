@@ -1,53 +1,75 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:30682 "EHLO mga07.intel.com"
+Received: from mga12.intel.com ([192.55.52.136]:57754 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933000AbeCSVeZ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 19 Mar 2018 17:34:25 -0400
-Date: Mon, 19 Mar 2018 23:34:20 +0200
+        id S933624AbeCSV0I (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 19 Mar 2018 17:26:08 -0400
+Date: Mon, 19 Mar 2018 23:26:04 +0200
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Andrey Pronin <apronin@chromium.org>
-Cc: James.Bottomley@hansenpartnership.com,
-        linux-integrity@vger.kernel.org
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
 Subject: Re: Should we handle TPM_RC_RETRY internally?
-Message-ID: <20180319213420.GF14364@linux.intel.com>
+Message-ID: <20180319212604.GE14364@linux.intel.com>
 References: <1521136931.5348.76.camel@HansenPartnership.com>
  <20180316142958.GD9616@linux.intel.com>
  <1521215304.4379.8.camel@HansenPartnership.com>
- <CAP7wa8Kq_++HasQY6bZ9idJ_TDOyXhnRAmyUY6t1B+HZWKF8ig@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <CAP7wa8Kq_++HasQY6bZ9idJ_TDOyXhnRAmyUY6t1B+HZWKF8ig@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1521215304.4379.8.camel@HansenPartnership.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sat, Mar 17, 2018 at 01:21:08AM +0000, Andrey Pronin wrote:
->    If the TSS starts retrying commands itself, then it's more than just
->    handling TPM_RC_RETRY.
->    There is also even more cryptic TPM_RC_YIELDED, which allows (suggests?)
->    retrying, and TPM_RC_NV_RATE, which covers one of the few legitimate and
->    easily explainable reasons why a command can fail now but succeed later.
->    And what about TPM_RC_MEMORY, TPM_RC_NV_UNAVAILABLE and such?
->    Though quite exotic, they are all warnings, and all indicate a possibly
->    temporary lack of access/resources. Unlike TPM_RC_*_HANDLES, CONTEXT_GAP
->    etc, they don't require RM to do anything with objects and handles to
->    recover, and may succeed if simply retried after a delay.
->    Shall these retries be also handled in tpm_transmit_cmd() or left up to
->    the caller to take care of? And how are they different from TPM_RC_RETRY
->    case, if the latter?
->    If you are interested in the actual in-kernel use of the commands that
->    can face such codes, look no further than tpm2_load_context().
->    The referenceA implementation may return TPM_RC_NV* fromA TPM2_ContextLoad
->    since it callsA NvIsAvailable().
->    --
->    Andrey
+On Fri, Mar 16, 2018 at 08:48:24AM -0700, James Bottomley wrote:
+> On Fri, 2018-03-16 at 16:29 +0200, Jarkko Sakkinen wrote:
+> > On Thu, Mar 15, 2018 at 11:02:11AM -0700, James Bottomley wrote:
+> > > 
+> > > I was investigating an apparent bug in the trusted keys
+> > > implementation where periodically the key operation barfs and
+> > > returns an error to userspace.  It turns out this error is because
+> > > the TPM returns TPM_RC_RETRY to an operation.
+> > > 
+> > > The TPM spec is a bit unclear why the TPM would return
+> > > TPM_RC_RETRY, but it is clear that it may happen on a lot of
+> > > operations.  I checked with the microsoft reference implementation:
+> > > 
+> > > https://github.com/Microsoft/ms-tpm-20-ref/
+> > > 
+> > > Which implies it's only set if the lockout check is invoked by the
+> > > command and the previous TPM shutdown wasn't orderly.  It does seem
+> > > to me that I've only seen it involving objects with DA
+> > > implications, which explains why it's seen in trusted keys.
+> > > 
+> > > If I read the UEFI TPM API, it does automatic retries.  This is the
+> > > note:
+> > > 
+> > >     The firmware SHALL not return TPM2_RC_RETRY prior to the
+> > > completion
+> > >     of the call to ExitBootServices().
+> > > 
+> > >     Implementer's Note: the implementation of this function should
+> > > check
+> > >     the return value in the TPM response and, if it is
+> > > TPM2_RC_RETRY,
+> > >     resend the command. The implementation may abort if a
+> > > sufficient
+> > >     number of retries has been done.
+> > > 
+> > > I really think if UEFI does it, we should do it too (and it will
+> > > fix my trusted key bug).
+> > > 
+> > > What does everyone else think?  If it's agreed, I'll code up the
+> > > patch.
+> > > 
+> > > James
+> > 
+> > I think I agree but what worries me is that this error code is almost
+> > not documented at all in TCG specifications.
+> 
+> Yes, it's cryptic, it just says "the TPM was not able to start the
+> command", which is why I checked the reference implementation.  I think
+> the UEFI ref is the clearest because it provides implementation
+> guidance (basically to retry the command until timeout) which I see no
+> reason we can't follow in the kernel.
 
-Hey, thanks for this feedback. It changed my point of view.
-
-tpm_transmit_cmd() should be able to handle exactly the subset that in-kernel
-clients of the TPM need, not more or less.
-
-I do no want TPM_RC_RETRY logic at this point to tpm_transmit() path. We can
-consider that later (maybe). It is at least too late to consider it in 4.17
-timeline.
+I agree with your reasoning.
 
 /Jarkko
