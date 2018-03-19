@@ -1,38 +1,46 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga05.intel.com ([192.55.52.43]:30290 "EHLO mga05.intel.com"
+Received: from namei.org ([65.99.196.166]:53460 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754923AbeCSJhp (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 19 Mar 2018 05:37:45 -0400
-Date: Mon, 19 Mar 2018 11:37:35 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Tomas Winkler <tomas.winkler@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5 V3] tpm2: add longer timeouts for creation commands.
-Message-ID: <20180319093735.GA4587@linux.intel.com>
-References: <20180310151545.22237-1-tomas.winkler@intel.com>
+        id S1752273AbeCSEwa (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 19 Mar 2018 00:52:30 -0400
+Date: Mon, 19 Mar 2018 15:52:18 +1100 (AEDT)
+From: James Morris <jmorris@namei.org>
+To: Kees Cook <keescook@chromium.org>
+cc: linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Subject: Re: [PATCH v2] exec: Set file unwritable before LSM check
+In-Reply-To: <20180309193020.GA5149@beast>
+Message-ID: <alpine.LRH.2.21.1803191551580.5791@namei.org>
+References: <20180309193020.GA5149@beast>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180310151545.22237-1-tomas.winkler@intel.com>
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sat, Mar 10, 2018 at 05:15:45PM +0200, Tomas Winkler wrote:
-> TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve generation
-> of crypto keys which can be a computationally intensive task.
-> The timeout is set to 3min.
-> Rather than increasing default timeout a new constant is
-> added, to not stall for too long on regular commands failures.
+On Fri, 9 Mar 2018, Kees Cook wrote:
+
+> The LSM check should happen after the file has been confirmed to be
+> unchanging. Without this, we could have a race between the Time of Check
+> (the call to security_kernel_read_file() which could read the file and
+> make access policy decisions) and the Time of Use (starting with
+> kernel_read_file()'s reading of the file contents). In theory, file
+> contents could change between the two.
 > 
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+> v2: Clarify the ToC/ToU race (Linus)
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Applied to
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
+and next-testing
 
-PS. Please format the long description properly. Now the lines cut from
-weird places. I use gq command in Vim to get that done. The description
-itself is nice and concise.
 
-/Jarkko
+-- 
+James Morris
+<jmorris@namei.org>
