@@ -1,48 +1,99 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:39331 "EHLO mx2.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:37358 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751408AbeCTIk1 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 20 Mar 2018 04:40:27 -0400
-Date: Tue, 20 Mar 2018 09:40:26 +0100
+        id S1751918AbeCTI1e (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 20 Mar 2018 04:27:34 -0400
 From: Petr Vorel <pvorel@suse.cz>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: James Morris <jmorris@namei.org>, linux-integrity@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Subject: Re: [PATCH] ima: Avoid using not initialized IMA
-Message-ID: <20180320084026.tugrsi73qjxxkjig@dell5510>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20180316232827.3791-1-pvorel@suse.cz>
- <1521336476.3503.74.camel@linux.vnet.ibm.com>
- <alpine.LRH.2.21.1803191542410.5791@namei.org>
- <1521457159.3503.93.camel@linux.vnet.ibm.com>
- <20180319200516.5kgloj4vdigxb52y@dell5510>
- <1521490800.3503.202.camel@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-In-Reply-To: <1521490800.3503.202.camel@linux.vnet.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        James Morris <jmorris@namei.org>, Petr Vorel <pvorel@suse.cz>
+Subject: [PATCH] ima: Fallback to the builtin hash algorithm
+Date: Tue, 20 Mar 2018 09:27:14 +0100
+Message-Id: <20180320082714.9716-1-pvorel@suse.cz>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Mimi,
+IMA requires have it's hash algorithm to be compiled-in due it's early
+use. Default IMA algorithm is protected by Kconfig to be compiled-in.
 
-> > OK, I have v2 which use CONFIG_IMA_DEFAULT_HASH, I'll post it tomorrow.
-> > But I'd also keep this patch as well, this check doesn't harm and IMHO you can never be
-> > sure it does not fail.
+ima_hash kernel parameter allows to choose hash algorithm. When
+specified algorithm not available or available as module, IMA
+initialization fails, which leads to kernel panic (mknodat syscall calls
+ima_post_path_mknod()). Therefore as fallback we force IMA to use
+the default builtin Kconfig hash algorithm.
 
-> Adding a new measurement gap is not an acceptable solution.  Either an
-> ima_init() failure causes the kernel to panic, or we force IMA to use
-> the default builtin Kconfig hash algorithm.
+$ grep CONFIG_CRYPTO_MD4 .config
+CONFIG_CRYPTO_MD4=m
 
-Thank you for a clarification. I posted new patch which forces using default hash in case
-of error and using different algorithm.
+[    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-4.12.14-2.3-default root=UUID=74ae8202-9ca7-4e39-813b-22287ec52f7a video=1024x768-16 plymouth.ignore-serial-consoles console=ttyS0 console=tty resume=/dev/disk/by-path/pci-0000:00:07.0-part3 splash=silent showopts ima_hash=md4
+...
+[    1.545190] ima: Can not allocate md4 (reason: -2)
+...
+[    2.610120] BUG: unable to handle kernel NULL pointer dereference at           (null)
+[    2.611903] IP: ima_match_policy+0x23/0x390
+[    2.612967] PGD 0 P4D 0
+[    2.613080] Oops: 0000 [#1] SMP
+[    2.613080] Modules linked in: autofs4
+[    2.613080] Supported: Yes
+[    2.613080] CPU: 0 PID: 1 Comm: systemd Not tainted 4.12.14-2.3-default #1
+[    2.613080] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
+[    2.613080] task: ffff88003e2d0040 task.stack: ffffc90000190000
+[    2.613080] RIP: 0010:ima_match_policy+0x23/0x390
+[    2.613080] RSP: 0018:ffffc90000193e88 EFLAGS: 00010296
+[    2.613080] RAX: 0000000000000000 RBX: 000000000000000c RCX: 0000000000000004
+[    2.613080] RDX: 0000000000000010 RSI: 0000000000000001 RDI: ffff880037071728
+[    2.613080] RBP: 0000000000008000 R08: 0000000000000000 R09: 0000000000000000
+[    2.613080] R10: 0000000000000008 R11: 61c8864680b583eb R12: 00005580ff10086f
+[    2.613080] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000008000
+[    2.613080] FS:  00007f5c1da08940(0000) GS:ffff88003fc00000(0000) knlGS:0000000000000000
+[    2.613080] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    2.613080] CR2: 0000000000000000 CR3: 0000000037002000 CR4: 00000000003406f0
+[    2.613080] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[    2.613080] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[    2.613080] Call Trace:
+[    2.613080]  ? shmem_mknod+0xbf/0xd0
+[    2.613080]  ima_post_path_mknod+0x1c/0x40
+[    2.613080]  SyS_mknod+0x210/0x220
+[    2.613080]  entry_SYSCALL_64_fastpath+0x1a/0xa5
+[    2.613080] RIP: 0033:0x7f5c1bfde570
+[    2.613080] RSP: 002b:00007ffde1c90dc8 EFLAGS: 00000246 ORIG_RAX: 0000000000000085
+[    2.613080] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f5c1bfde570
+[    2.613080] RDX: 0000000000000000 RSI: 0000000000008000 RDI: 00005580ff10086f
+[    2.613080] RBP: 00007ffde1c91040 R08: 00005580ff10086f R09: 0000000000000000
+[    2.613080] R10: 0000000000104000 R11: 0000000000000246 R12: 00005580ffb99660
+[    2.613080] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000002
+[    2.613080] Code: 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 41 57 41 56 44 8d 14 09 41 55 41 54 55 53 44 89 d3 09 cb 48 83 ec 38 48 8b 05 c5 03 29 01 <4c> 8b 20 4c 39 e0 0f 84 d7 01 00 00 4c 89 44 24 08 89 54 24 20
+[    2.613080] RIP: ima_match_policy+0x23/0x390 RSP: ffffc90000193e88
+[    2.613080] CR2: 0000000000000000
+[    2.613080] ---[ end trace 9a9f0a8a73079f6a ]---
+[    2.673052] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
+[    2.673052]
+[    2.675337] Kernel Offset: disabled
+[    2.676405] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
 
-I don't know whether even this (third) attempt (to use default hash) can fail, but in case
-it can, how do you prefer to handle this situation? If you really prefer kernel panic
-(e.g. don't like previous patch fixing at least ima_post_path_mknod()), I suggest removing
-ima_initialized as it's unused and confusing.
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
+---
+ security/integrity/ima/ima_main.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-> Mimi
-
-
-Kind regards,
-Petr
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 5d122daf5c8a..6ca69ab61be2 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -504,6 +504,14 @@ static int __init init_ima(void)
+ 	ima_init_template_list();
+ 	hash_setup(CONFIG_IMA_DEFAULT_HASH);
+ 	error = ima_init();
++
++	if (error && strcmp(hash_algo_name[ima_hash_algo],
++			    CONFIG_IMA_DEFAULT_HASH) != 0) {
++		hash_setup_done = 0;
++		hash_setup(CONFIG_IMA_DEFAULT_HASH);
++		error = ima_init();
++	}
++
+ 	if (!error) {
+ 		ima_initialized = 1;
+ 		ima_update_policy_flag();
+-- 
+2.12.3
