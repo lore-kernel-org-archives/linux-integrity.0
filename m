@@ -1,99 +1,70 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:37358 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751918AbeCTI1e (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 20 Mar 2018 04:27:34 -0400
-From: Petr Vorel <pvorel@suse.cz>
-To: linux-integrity@vger.kernel.org
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        James Morris <jmorris@namei.org>, Petr Vorel <pvorel@suse.cz>
-Subject: [PATCH] ima: Fallback to the builtin hash algorithm
-Date: Tue, 20 Mar 2018 09:27:14 +0100
-Message-Id: <20180320082714.9716-1-pvorel@suse.cz>
+Received: from mail-pf0-f172.google.com ([209.85.192.172]:39800 "EHLO
+        mail-pf0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751330AbeCTHgq (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 20 Mar 2018 03:36:46 -0400
+Received: by mail-pf0-f172.google.com with SMTP id u5so325211pfh.6
+        for <linux-integrity@vger.kernel.org>; Tue, 20 Mar 2018 00:36:46 -0700 (PDT)
+From: Daniel Drake <drake@endlessm.com>
+To: peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com
+Cc: linux-integrity@vger.kernel.org, chiu@endlessm.com,
+        linux@endlessm.com, jgg@ziepe.ca
+Subject: [PATCH] tpm: self test failure should not cause suspend to fail
+Date: Tue, 20 Mar 2018 15:36:40 +0800
+Message-Id: <20180320073640.17062-1-drake@endlessm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-IMA requires have it's hash algorithm to be compiled-in due it's early
-use. Default IMA algorithm is protected by Kconfig to be compiled-in.
+From: Chris Chiu <chiu@endlessm.com>
 
-ima_hash kernel parameter allows to choose hash algorithm. When
-specified algorithm not available or available as module, IMA
-initialization fails, which leads to kernel panic (mknodat syscall calls
-ima_post_path_mknod()). Therefore as fallback we force IMA to use
-the default builtin Kconfig hash algorithm.
+The Acer Acer Veriton X4110G has a TPM device detected as:
+  tpm_tis 00:0b: 1.2 TPM (device-id 0xFE, rev-id 71)
 
-$ grep CONFIG_CRYPTO_MD4 .config
-CONFIG_CRYPTO_MD4=m
+After the first S3 suspend, the following error appears during resume:
+  tpm tpm0: A TPM error(38) occured continue selftest
 
-[    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-4.12.14-2.3-default root=UUID=74ae8202-9ca7-4e39-813b-22287ec52f7a video=1024x768-16 plymouth.ignore-serial-consoles console=ttyS0 console=tty resume=/dev/disk/by-path/pci-0000:00:07.0-part3 splash=silent showopts ima_hash=md4
-...
-[    1.545190] ima: Can not allocate md4 (reason: -2)
-...
-[    2.610120] BUG: unable to handle kernel NULL pointer dereference at           (null)
-[    2.611903] IP: ima_match_policy+0x23/0x390
-[    2.612967] PGD 0 P4D 0
-[    2.613080] Oops: 0000 [#1] SMP
-[    2.613080] Modules linked in: autofs4
-[    2.613080] Supported: Yes
-[    2.613080] CPU: 0 PID: 1 Comm: systemd Not tainted 4.12.14-2.3-default #1
-[    2.613080] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
-[    2.613080] task: ffff88003e2d0040 task.stack: ffffc90000190000
-[    2.613080] RIP: 0010:ima_match_policy+0x23/0x390
-[    2.613080] RSP: 0018:ffffc90000193e88 EFLAGS: 00010296
-[    2.613080] RAX: 0000000000000000 RBX: 000000000000000c RCX: 0000000000000004
-[    2.613080] RDX: 0000000000000010 RSI: 0000000000000001 RDI: ffff880037071728
-[    2.613080] RBP: 0000000000008000 R08: 0000000000000000 R09: 0000000000000000
-[    2.613080] R10: 0000000000000008 R11: 61c8864680b583eb R12: 00005580ff10086f
-[    2.613080] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000008000
-[    2.613080] FS:  00007f5c1da08940(0000) GS:ffff88003fc00000(0000) knlGS:0000000000000000
-[    2.613080] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    2.613080] CR2: 0000000000000000 CR3: 0000000037002000 CR4: 00000000003406f0
-[    2.613080] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[    2.613080] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[    2.613080] Call Trace:
-[    2.613080]  ? shmem_mknod+0xbf/0xd0
-[    2.613080]  ima_post_path_mknod+0x1c/0x40
-[    2.613080]  SyS_mknod+0x210/0x220
-[    2.613080]  entry_SYSCALL_64_fastpath+0x1a/0xa5
-[    2.613080] RIP: 0033:0x7f5c1bfde570
-[    2.613080] RSP: 002b:00007ffde1c90dc8 EFLAGS: 00000246 ORIG_RAX: 0000000000000085
-[    2.613080] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f5c1bfde570
-[    2.613080] RDX: 0000000000000000 RSI: 0000000000008000 RDI: 00005580ff10086f
-[    2.613080] RBP: 00007ffde1c91040 R08: 00005580ff10086f R09: 0000000000000000
-[    2.613080] R10: 0000000000104000 R11: 0000000000000246 R12: 00005580ffb99660
-[    2.613080] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000002
-[    2.613080] Code: 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 41 57 41 56 44 8d 14 09 41 55 41 54 55 53 44 89 d3 09 cb 48 83 ec 38 48 8b 05 c5 03 29 01 <4c> 8b 20 4c 39 e0 0f 84 d7 01 00 00 4c 89 44 24 08 89 54 24 20
-[    2.613080] RIP: ima_match_policy+0x23/0x390 RSP: ffffc90000193e88
-[    2.613080] CR2: 0000000000000000
-[    2.613080] ---[ end trace 9a9f0a8a73079f6a ]---
-[    2.673052] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
-[    2.673052]
-[    2.675337] Kernel Offset: disabled
-[    2.676405] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
+Any following S3 suspend attempts will now fail with this error:
+  tpm tpm0: Error (38) sending savestate before suspend
+  PM: Device 00:0b failed to suspend: error 38
 
-Signed-off-by: Petr Vorel <pvorel@suse.cz>
+Error 38 is TPM_ERR_INVALID_POSTINIT which means the TPM is
+not in the correct state. This indicates that the platform BIOS
+is not sending the usual TPM_Startup command during S3 resume.
+>From this point onwards, all TPM commands will fail.
+
+The same issue was previously reported on Foxconn 6150BK8MC and
+Sony Vaio TX3.
+
+The platform behaviour seems broken here, but we should not break
+suspend/resume because of this.
+
+When the unexpected TPM state is encountered, set a flag to skip the
+affected TPM_SaveState command on later suspends.
+
+Signed-off-by: Chris Chiu <chiu@endlessm.com>
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Link: http://lkml.kernel.org/r/CAB4CAwfSCvj1cudi+MWaB5g2Z67d9DwY1o475YOZD64ma23UiQ@mail.gmail.com
+Link: https://lkml.org/lkml/2011/3/28/192
+Link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=591031
 ---
- security/integrity/ima/ima_main.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/char/tpm/tpm-interface.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 5d122daf5c8a..6ca69ab61be2 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -504,6 +504,14 @@ static int __init init_ima(void)
- 	ima_init_template_list();
- 	hash_setup(CONFIG_IMA_DEFAULT_HASH);
- 	error = ima_init();
-+
-+	if (error && strcmp(hash_algo_name[ima_hash_algo],
-+			    CONFIG_IMA_DEFAULT_HASH) != 0) {
-+		hash_setup_done = 0;
-+		hash_setup(CONFIG_IMA_DEFAULT_HASH);
-+		error = ima_init();
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 9e80a953d693..248c04090dea 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -969,6 +969,10 @@ int tpm_do_selftest(struct tpm_chip *chip)
+ 	loops = jiffies_to_msecs(duration) / delay_msec;
+ 
+ 	rc = tpm_continue_selftest(chip);
++	if (rc == TPM_ERR_INVALID_POSTINIT) {
++		chip->flags |= TPM_CHIP_FLAG_ALWAYS_POWERED;
++		dev_info(&chip->dev, "TPM not ready (%d)\n", rc);
 +	}
-+
- 	if (!error) {
- 		ima_initialized = 1;
- 		ima_update_policy_flag();
+ 	/* This may fail if there was no TPM driver during a suspend/resume
+ 	 * cycle; some may return 10 (BAD_ORDINAL), others 28 (FAILEDSELFTEST)
+ 	 */
 -- 
-2.12.3
+2.14.1
