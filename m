@@ -1,48 +1,73 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37932 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754547AbeCVNqL (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57100 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754032AbeCUXS5 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 22 Mar 2018 09:46:11 -0400
-From: Martin Townsend <mtownsend1973@gmail.com>
-To: zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
-        jmorris@namei.org, serge@hallyn.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, casey@schaufler-ca.com,
-        mtownsend1973@gmail.com
-Subject: [PATCH] ima: Add smackfs to the default appraise/measure list
-Date: Thu, 22 Mar 2018 13:46:01 +0000
-Message-Id: <1521726361-29916-1-git-send-email-mtownsend1973@gmail.com>
+        Wed, 21 Mar 2018 19:18:57 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2LNEci9097931
+        for <linux-integrity@vger.kernel.org>; Wed, 21 Mar 2018 19:18:57 -0400
+Received: from e06smtp13.uk.ibm.com (e06smtp13.uk.ibm.com [195.75.94.109])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2guybwk8ce-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 21 Mar 2018 19:18:56 -0400
+Received: from localhost
+        by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Wed, 21 Mar 2018 23:18:54 -0000
+Subject: Re: [PATCH v6 07/12] integrity: Select CONFIG_KEYS instead of
+ depending on it
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>
+Date: Wed, 21 Mar 2018 19:18:47 -0400
+In-Reply-To: <20180316203837.10174-8-bauerman@linux.vnet.ibm.com>
+References: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
+         <20180316203837.10174-8-bauerman@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1521674327.3848.221.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-This is required to use SMACK and IMA/EVM together. Add it to the
-default nomeasure/noappraise list like other pseudo filesystems.
+On Fri, 2018-03-16 at 17:38 -0300, Thiago Jung Bauermann wrote:
+> This avoids a dependency cycle in CONFIG_IMA_APPRAISE_MODSIG (introduced by
+> a later patch in this series): it will select CONFIG_MODULE_SIG_FORMAT
+> which in turn selects CONFIG_KEYS. Kconfig then complains that
+> CONFIG_INTEGRITY_SIGNATURE depends on CONFIG_KEYS.
+> 
+> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 
-Signed-off-by: Martin Townsend <mtownsend1973@gmail.com>
----
- security/integrity/ima/ima_policy.c | 2 ++
- 1 file changed, 2 insertions(+)
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 915f557..d89ed15 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -96,6 +96,7 @@ static struct ima_rule_entry dont_measure_rules[] __ro_after_init = {
- 	{.action = DONT_MEASURE, .fsmagic = BINFMTFS_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_MEASURE, .fsmagic = SECURITYFS_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_MEASURE, .fsmagic = SELINUX_MAGIC, .flags = IMA_FSMAGIC},
-+	{.action = DONT_MEASURE, .fsmagic = SMACK_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_MEASURE, .fsmagic = CGROUP_SUPER_MAGIC,
- 	 .flags = IMA_FSMAGIC},
- 	{.action = DONT_MEASURE, .fsmagic = CGROUP2_SUPER_MAGIC,
-@@ -141,6 +142,7 @@ static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
- 	{.action = DONT_APPRAISE, .fsmagic = BINFMTFS_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_APPRAISE, .fsmagic = SECURITYFS_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_APPRAISE, .fsmagic = SELINUX_MAGIC, .flags = IMA_FSMAGIC},
-+	{.action = DONT_APPRAISE, .fsmagic = SMACK_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_APPRAISE, .fsmagic = NSFS_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_APPRAISE, .fsmagic = CGROUP_SUPER_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_APPRAISE, .fsmagic = CGROUP2_SUPER_MAGIC, .flags = IMA_FSMAGIC},
--- 
-2.7.4
+> ---
+>  security/integrity/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/security/integrity/Kconfig b/security/integrity/Kconfig
+> index da9565891738..0d642e0317c7 100644
+> --- a/security/integrity/Kconfig
+> +++ b/security/integrity/Kconfig
+> @@ -17,8 +17,8 @@ if INTEGRITY
+> 
+>  config INTEGRITY_SIGNATURE
+>  	bool "Digital signature verification using multiple keyrings"
+> -	depends on KEYS
+>  	default n
+> +	select KEYS
+>  	select SIGNATURE
+>  	help
+>  	  This option enables digital signature verification support
+> 
