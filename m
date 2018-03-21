@@ -1,137 +1,226 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57858 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753659AbeCUWrB (ORCPT
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:41732 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752556AbeCUSpv (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 21 Mar 2018 18:47:01 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2LMiKMF077295
-        for <linux-integrity@vger.kernel.org>; Wed, 21 Mar 2018 18:47:00 -0400
-Received: from e06smtp11.uk.ibm.com (e06smtp11.uk.ibm.com [195.75.94.107])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2guvmsh3rq-1
-        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 21 Mar 2018 18:47:00 -0400
-Received: from localhost
-        by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Wed, 21 Mar 2018 22:46:58 -0000
-Subject: Re: [PATCH v6 05/12] integrity: Introduce
- integrity_keyring_from_id()
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>
-Date: Wed, 21 Mar 2018 18:46:51 -0400
-In-Reply-To: <20180316203837.10174-6-bauerman@linux.vnet.ibm.com>
-References: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
-         <20180316203837.10174-6-bauerman@linux.vnet.ibm.com>
+        Wed, 21 Mar 2018 14:45:51 -0400
+Message-ID: <1521657949.6397.22.camel@HansenPartnership.com>
+Subject: [PATCH v2 2/2] tpm: fix intermittent failure with self tests
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Date: Wed, 21 Mar 2018 11:45:49 -0700
+In-Reply-To: <1521657747.6397.18.camel@HansenPartnership.com>
+References: <1521657747.6397.18.camel@HansenPartnership.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1521672411.3848.219.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 2018-03-16 at 17:38 -0300, Thiago Jung Bauermann wrote:
-> IMA will need to obtain the keyring used to verify file signatures so that
-> it can verify the module-style signature appended to files.
-> 
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+My Nuvoton 6xx in a Dell XPS-13 has been intermittently failing to work
+(necessitating a reboot). The problem seems to be that the TPM gets into a
+state where the partial self-test doesn't return TPM_RC_SUCCESS (meaning
+all tests have run to completion), but instead returns TPM_RC_TESTING
+(meaning some tests are still running in the background).  There are
+various theories that resending the self-test command actually causes the
+tests to restart and thus triggers more TPM_RC_TESTING returns until the
+timeout is exceeded.
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+There are several issues here: firstly being we shouldn't slow down the
+boot sequence waiting for the self test to complete once the TPM
+backgrounds them.  It will actually make available all functions that have
+passed and if it gets a failure return TPM_RC_FAILURE to every subsequent
+command.  So the fix is to kick off self tests once and if they return
+TPM_RC_TESTING log that as a backgrounded self test and continue on.  In
+order to prevent other tpm users from seeing any TPM_RC_TESTING returns
+(which it might if they send a command that needs a TPM subsystem which is
+still under test), we loop in tpm_transmit_cmd until either a timeout or we
+don't get a TPM_RC_TESTING return.
 
-> ---
->  security/integrity/digsig.c    | 28 +++++++++++++++++++++-------
->  security/integrity/integrity.h |  6 ++++++
->  2 files changed, 27 insertions(+), 7 deletions(-)
-> 
-> diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-> index 6f9e4ce568cd..e641a67b9fc7 100644
-> --- a/security/integrity/digsig.c
-> +++ b/security/integrity/digsig.c
-> @@ -48,11 +48,10 @@ static bool init_keyring __initdata;
->  #define restrict_link_to_ima restrict_link_by_builtin_trusted
->  #endif
-> 
-> -int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
-> -			    const char *digest, int digestlen)
-> +struct key *integrity_keyring_from_id(const unsigned int id)
->  {
-> -	if (id >= INTEGRITY_KEYRING_MAX || siglen < 2)
-> -		return -EINVAL;
-> +	if (id >= INTEGRITY_KEYRING_MAX)
-> +		return ERR_PTR(-EINVAL);
-> 
->  	if (!keyring[id]) {
->  		keyring[id] =
-> @@ -61,17 +60,32 @@ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
->  			int err = PTR_ERR(keyring[id]);
->  			pr_err("no %s keyring: %d\n", keyring_name[id], err);
->  			keyring[id] = NULL;
-> -			return err;
-> +			return ERR_PTR(err);
->  		}
->  	}
-> 
-> +	return keyring[id];
-> +}
-> +
-> +int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
-> +			    const char *digest, int digestlen)
-> +{
-> +	struct key *keyring;
-> +
-> +	if (siglen < 2)
-> +		return -EINVAL;
-> +
-> +	keyring = integrity_keyring_from_id(id);
-> +	if (IS_ERR(keyring))
-> +		return PTR_ERR(keyring);
-> +
->  	switch (sig[1]) {
->  	case 1:
->  		/* v1 API expect signature without xattr type */
-> -		return digsig_verify(keyring[id], sig + 1, siglen - 1,
-> +		return digsig_verify(keyring, sig + 1, siglen - 1,
->  				     digest, digestlen);
->  	case 2:
-> -		return asymmetric_verify(keyring[id], sig, siglen,
-> +		return asymmetric_verify(keyring, sig, siglen,
->  					 digest, digestlen);
->  	}
-> 
-> diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-> index 79799a0d9195..2d245f44ca26 100644
-> --- a/security/integrity/integrity.h
-> +++ b/security/integrity/integrity.h
-> @@ -150,6 +150,7 @@ int integrity_kernel_read(struct file *file, loff_t offset,
-> 
->  #ifdef CONFIG_INTEGRITY_SIGNATURE
-> 
-> +struct key *integrity_keyring_from_id(const unsigned int id);
->  int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
->  			    const char *digest, int digestlen);
-> 
-> @@ -157,6 +158,11 @@ int __init integrity_init_keyring(const unsigned int id);
->  int __init integrity_load_x509(const unsigned int id, const char *path);
->  #else
-> 
-> +static inline struct key *integrity_keyring_from_id(const unsigned int id)
-> +{
-> +	return ERR_PTR(-EINVAL);
-> +}
-> +
->  static inline int integrity_digsig_verify(const unsigned int id,
->  					  const char *sig, int siglen,
->  					  const char *digest, int digestlen)
-> 
+Finally, there have been observations of strange returns from a partial
+test. One Nuvoton is occasionally returning TPM_RC_COMMAND_CODE, so treat
+any unexpected return from a partial self test as an indication we need to
+run a full self test.
+
+[jarkko.sakkinen@linux.intel.com: cleaned up some klog messages and
+ dropped tpm_transmit_check() helper function from James' original
+ commit.]
+
+Fixes: 2482b1bba5122 ("tpm: Trigger only missing TPM 2.0 self tests")
+Cc: stable@vger.kernel.org
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>
+
+---
+
+v2:
+
+Take the original commit from the tpmdd tree (which didn't work
+because of a failure to restore the header and handles) and integrate
+the TPM2_RC_TESTING retry logic with TPM2_RC_RETRY handling.  Have
+tested this version in the face of TPM2_RC_TESTING returns using an
+emulator
+---
+ drivers/char/tpm/tpm-interface.c | 16 ++++++++++--
+ drivers/char/tpm/tpm.h           |  1 +
+ drivers/char/tpm/tpm2-cmd.c      | 54 ++++++++++++----------------------------
+ 3 files changed, 31 insertions(+), 40 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 9e9bb62ae6b8..62fee2c10013 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -569,6 +569,8 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	ssize_t ret;
+ 	const size_t save_size = min(space ? sizeof(save) : TPM_HEADER_SIZE,
+ 				     bufsiz);
++	/* the command code is where the return code will be */
++	u32 cc = be32_to_cpu(header->return_code);
+ 
+ 	/*
+ 	 * Subtlety here: if we have a space, the handles will be
+@@ -582,11 +584,21 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 		if (ret < 0)
+ 			break;
+ 		rc = be32_to_cpu(header->return_code);
+-		if (rc != TPM2_RC_RETRY)
++		if (rc != TPM2_RC_RETRY && rc != TPM2_RC_TESTING)
++			break;
++		/*
++		 * return immediately if self test returns test
++		 * still running to shorten boot time.
++		 */
++		if (rc == TPM2_RC_TESTING && cc == TPM2_CC_SELF_TEST)
+ 			break;
+ 		delay_msec *= 2;
+ 		if (delay_msec > TPM2_DURATION_LONG) {
+-			dev_err(&chip->dev, "TPM is in retry loop\n");
++			if (rc == TPM2_RC_RETRY)
++				dev_err(&chip->dev, "in retry loop\n");
++			else
++				dev_err(&chip->dev,
++					"self test is still running\n");
+ 			break;
+ 		}
+ 		tpm_msleep(delay_msec);
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 05967c1a1f32..c542f877cea7 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -108,6 +108,7 @@ enum tpm2_return_codes {
+ 	TPM2_RC_HASH		= 0x0083, /* RC_FMT1 */
+ 	TPM2_RC_HANDLE		= 0x008B,
+ 	TPM2_RC_INITIALIZE	= 0x0100, /* RC_VER1 */
++	TPM2_RC_FAILURE		= 0x0101,
+ 	TPM2_RC_DISABLED	= 0x0120,
+ 	TPM2_RC_COMMAND_CODE    = 0x0143,
+ 	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 47f612ded599..909150f6db7f 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -24,10 +24,6 @@ struct tpm2_startup_in {
+ 	__be16	startup_type;
+ } __packed;
+ 
+-struct tpm2_self_test_in {
+-	u8	full_test;
+-} __packed;
+-
+ struct tpm2_get_tpm_pt_in {
+ 	__be32	cap_id;
+ 	__be32	property_id;
+@@ -49,7 +45,6 @@ struct tpm2_get_random_out {
+ 
+ union tpm2_cmd_params {
+ 	struct	tpm2_startup_in		startup_in;
+-	struct	tpm2_self_test_in	selftest_in;
+ 	struct	tpm2_get_tpm_pt_in	get_tpm_pt_in;
+ 	struct	tpm2_get_tpm_pt_out	get_tpm_pt_out;
+ };
+@@ -864,16 +859,6 @@ unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+ }
+ EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
+ 
+-#define TPM2_SELF_TEST_IN_SIZE \
+-	(sizeof(struct tpm_input_header) + \
+-	 sizeof(struct tpm2_self_test_in))
+-
+-static const struct tpm_input_header tpm2_selftest_header = {
+-	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
+-	.length = cpu_to_be32(TPM2_SELF_TEST_IN_SIZE),
+-	.ordinal = cpu_to_be32(TPM2_CC_SELF_TEST)
+-};
+-
+ /**
+  * tpm2_do_selftest() - ensure that all self tests have passed
+  *
+@@ -889,27 +874,24 @@ static const struct tpm_input_header tpm2_selftest_header = {
+  */
+ static int tpm2_do_selftest(struct tpm_chip *chip)
+ {
++	struct tpm_buf buf;
++	int full;
+ 	int rc;
+-	unsigned int delay_msec = 10;
+-	long duration;
+-	struct tpm2_cmd cmd;
+ 
+-	duration = jiffies_to_msecs(
+-		tpm2_calc_ordinal_duration(chip, TPM2_CC_SELF_TEST));
+-
+-	while (1) {
+-		cmd.header.in = tpm2_selftest_header;
+-		cmd.params.selftest_in.full_test = 0;
+-
+-		rc = tpm_transmit_cmd(chip, NULL, &cmd, TPM2_SELF_TEST_IN_SIZE,
+-				      0, 0, "continue selftest");
++	for (full = 0; full < 2; full++) {
++		rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_SELF_TEST);
++		if (rc)
++			return rc;
+ 
+-		if (rc != TPM2_RC_TESTING || delay_msec >= duration)
+-			break;
++		tpm_buf_append_u8(&buf, full);
++		rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
++				      "attempting the self test");
++		tpm_buf_destroy(&buf);
+ 
+-		/* wait longer than before */
+-		delay_msec *= 2;
+-		tpm_msleep(delay_msec);
++		if (rc == TPM2_RC_TESTING)
++			rc = TPM2_RC_SUCCESS;
++		if (rc == TPM2_RC_INITIALIZE || rc == TPM2_RC_SUCCESS)
++			return rc;
+ 	}
+ 
+ 	return rc;
+@@ -1095,10 +1077,8 @@ int tpm2_auto_startup(struct tpm_chip *chip)
+ 		goto out;
+ 
+ 	rc = tpm2_do_selftest(chip);
+-	if (rc != 0 && rc != TPM2_RC_INITIALIZE) {
+-		dev_err(&chip->dev, "TPM self test failed\n");
++	if (rc && rc != TPM2_RC_INITIALIZE)
+ 		goto out;
+-	}
+ 
+ 	if (rc == TPM2_RC_INITIALIZE) {
+ 		rc = tpm_startup(chip);
+@@ -1106,10 +1086,8 @@ int tpm2_auto_startup(struct tpm_chip *chip)
+ 			goto out;
+ 
+ 		rc = tpm2_do_selftest(chip);
+-		if (rc) {
+-			dev_err(&chip->dev, "TPM self test failed\n");
++		if (rc)
+ 			goto out;
+-		}
+ 	}
+ 
+ 	rc = tpm2_get_pcr_allocation(chip);
+-- 
+2.12.3
