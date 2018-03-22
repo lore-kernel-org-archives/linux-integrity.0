@@ -1,33 +1,79 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:6418 "EHLO mga11.intel.com"
+Received: from mx2.suse.de ([195.135.220.15]:47253 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751611AbeCVOog (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 22 Mar 2018 10:44:36 -0400
-Message-ID: <81bb819d7e914afc75cb6c8e7d9137d188f38793.camel@linux.intel.com>
-Subject: Re: 4.17 pull request
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: James Morris <jmorris@namei.org>
-Cc: linux-integrity@vger.kernel.org
-Date: Thu, 22 Mar 2018 16:44:19 +0200
-In-Reply-To: <alpine.LRH.2.21.1803201657100.29127@namei.org>
-References: <20180319220602.GA17000@linux.intel.com>
-         <alpine.LRH.2.21.1803201657100.29127@namei.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+        id S1753456AbeCVOnw (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 22 Mar 2018 10:43:52 -0400
+From: Petr Vorel <pvorel@suse.cz>
+To: linux-integrity@vger.kernel.org
+Cc: Petr Vorel <pvorel@suse.cz>, Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Subject: [PATCH v2 1/2] ima: Introduce ima_alloc_alg() to reduce duplicity
+Date: Thu, 22 Mar 2018 15:43:12 +0100
+Message-Id: <20180322144313.28748-2-pvorel@suse.cz>
+In-Reply-To: <20180322144313.28748-1-pvorel@suse.cz>
+References: <20180322144313.28748-1-pvorel@suse.cz>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, 2018-03-20 at 16:58 +1100, James Morris wrote:
-> On Tue, 20 Mar 2018, Jarkko Sakkinen wrote:
-> 
-> > Hi
-> > 
-> > In order to make 4.17 pull request, could you rebase next-general
-> > so that I can drop the security fixes from my tree?
-> 
-> Rebase it to 4.16-rc6?
+This is preparation for next commit.
 
-Yes, thank you, and apologies for the latency in my
-response :-(
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
+---
+ security/integrity/ima/ima_crypto.c | 27 ++++++++++++---------------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
 
-/Jarkko
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index 205bc69361ea..ddc18f4633e5 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -62,36 +62,33 @@ MODULE_PARM_DESC(ahash_bufsize, "Maximum ahash buffer size");
+ static struct crypto_shash *ima_shash_tfm;
+ static struct crypto_ahash *ima_ahash_tfm;
+ 
+-int __init ima_init_crypto(void)
++static int ima_alloc_shash(struct crypto_shash **tfm, const char *alg_name)
+ {
+ 	long rc;
+ 
+-	ima_shash_tfm = crypto_alloc_shash(hash_algo_name[ima_hash_algo], 0, 0);
+-	if (IS_ERR(ima_shash_tfm)) {
+-		rc = PTR_ERR(ima_shash_tfm);
+-		pr_err("Can not allocate %s (reason: %ld)\n",
+-		       hash_algo_name[ima_hash_algo], rc);
++	*tfm = crypto_alloc_shash(alg_name, 0, 0);
++	if (IS_ERR(*tfm)) {
++		rc = PTR_ERR(*tfm);
++		pr_err("Can not allocate %s (reason: %ld)\n", alg_name, rc);
+ 		return rc;
+ 	}
+ 	return 0;
+ }
+ 
++int __init ima_init_crypto(void)
++{
++	return ima_alloc_shash(&ima_shash_tfm, hash_algo_name[ima_hash_algo]);
++}
++
+ static struct crypto_shash *ima_alloc_tfm(enum hash_algo algo)
+ {
+ 	struct crypto_shash *tfm = ima_shash_tfm;
+-	int rc;
+ 
+ 	if (algo < 0 || algo >= HASH_ALGO__LAST)
+ 		algo = ima_hash_algo;
+ 
+-	if (algo != ima_hash_algo) {
+-		tfm = crypto_alloc_shash(hash_algo_name[algo], 0, 0);
+-		if (IS_ERR(tfm)) {
+-			rc = PTR_ERR(tfm);
+-			pr_err("Can not allocate %s (reason: %d)\n",
+-			       hash_algo_name[algo], rc);
+-		}
+-	}
++	if (algo != ima_hash_algo)
++		ima_alloc_shash(&tfm, hash_algo_name[algo]);
+ 	return tfm;
+ }
+ 
+-- 
+2.12.3
