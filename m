@@ -1,113 +1,46 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45310 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751319AbeCVQPU (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 22 Mar 2018 12:15:20 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2MG7MZg119140
-        for <linux-integrity@vger.kernel.org>; Thu, 22 Mar 2018 12:15:20 -0400
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2gve50p9yj-1
-        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 22 Mar 2018 12:15:19 -0400
-Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Thu, 22 Mar 2018 10:15:18 -0600
+Received: from mga09.intel.com ([134.134.136.24]:23728 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754917AbeCVPOG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 22 Mar 2018 11:14:06 -0400
+Message-ID: <a220d693c2fc2de660223de76e2279ef2080192b.camel@linux.intel.com>
 Subject: Re: [PATCH v2 1/2] tpm: add retry logic
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
 Cc: "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-References: <1521657747.6397.18.camel@HansenPartnership.com>
- <1521657828.6397.19.camel@HansenPartnership.com>
-From: Nayna Jain <nayna@linux.vnet.ibm.com>
-Date: Thu, 22 Mar 2018 21:43:50 +0530
-MIME-Version: 1.0
+Date: Thu, 22 Mar 2018 17:14:02 +0200
 In-Reply-To: <1521657828.6397.19.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Message-Id: <7236ada1-43b5-8280-ce21-3d0c095dfe9d@linux.vnet.ibm.com>
+References: <1521657747.6397.18.camel@HansenPartnership.com>
+         <1521657828.6397.19.camel@HansenPartnership.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
+On Wed, 2018-03-21 at 11:43 -0700, James Bottomley wrote:
+> TPM2 can return TPM2_RC_RETRY to any command and when it does we get
+> unexpected failures inside the kernel that surprise users (this is
+> mostly observed in the trusted key handling code).  The UEFI 2.6 spec
+> has advice on how to handle this:
+> 
+>     The firmware SHALL not return TPM2_RC_RETRY prior to the completion
+>     of the call to ExitBootServices().
+> 
+>     Implementer's Note: the implementation of this function should check
+>     the return value in the TPM response and, if it is TPM2_RC_RETRY,
+>     resend the command. The implementation may abort if a sufficient
+>     number of retries has been done.
+> 
+> So we follow that advice in our tpm_transmit() code using
+> TPM2_DURATION_SHORT as the initial wait duration and
+> TPM2_DURATION_LONG as the maximum wait time.  This should fix all the
+> in-kernel use cases and also means that user space TSS implementations
+> don't have to have their own retry handling.
+> 
+> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> Cc: stable@vger.kernel.org
 
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
->   /**
-> + * tpm_transmit - Internal kernel interface to transmit TPM commands.
-> + *
-> + * @chip: TPM chip to use
-> + * @space: tpm space
-> + * @buf: TPM command buffer
-> + * @bufsiz: length of the TPM command buffer
-> + * @flags: tpm transmit flags - bitmap
-> + *
-> + * A wrapper around tpm_try_transmit that handles TPM2_RC_RETRY
-> + * returns from the TPM and retransmits the command after a delay up
-> + * to a maximum wait of TPM2_DURATION_LONG.
-> + *
-> + * Note: TPM1 never returns TPM2_RC_RETRY so the retry logic is TPM2
-> + * only
-> + *
-> + * Return:
-> + *     the length of the return when the operation is successful.
-> + *     A negative number for system errors (errno).
-> + */
-> +ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
-> +		     u8 *buf, size_t bufsiz, unsigned int flags)
-> +{
-> +	struct tpm_output_header *header = (struct tpm_output_header *)buf;
-> +	/* space for header and handles */
-> +	u8 save[TPM_HEADER_SIZE + 3*sizeof(u32)];
-> +	unsigned int delay_msec = TPM2_DURATION_SHORT;
-> +	u32 rc = 0;
-> +	ssize_t ret;
-> +	const size_t save_size = min(space ? sizeof(save) : TPM_HEADER_SIZE,
-> +				     bufsiz);
-> +
-> +	/*
-> +	 * Subtlety here: if we have a space, the handles will be
-> +	 * transformed, so when we restore the header we also have to
-> +	 * restore the handles.
-> +	 */
-> +	memcpy(save, buf, save_size);
-> +
-> +	for (;;) {
-> +		ret = tpm_try_transmit(chip, space, buf, bufsiz, flags);
-> +		if (ret < 0)
-> +			break;
-> +		rc = be32_to_cpu(header->return_code);
-> +		if (rc != TPM2_RC_RETRY)
-> +			break;
-> +		delay_msec *= 2;
-
-Was wondering if this increment could be moved after 
-tpm_msleep(delay_msec) ?
-
-Thanks & Regards,
-    - Nayna
-
-> +		if (delay_msec > TPM2_DURATION_LONG) {
-> +			dev_err(&chip->dev, "TPM is in retry loop\n");
-> +			break;
-> +		}
-> +		tpm_msleep(delay_msec);
-> +		memcpy(buf, save, save_size);
-> +	}
-> +	return ret;
-> +}
-> +/**
->    * tpm_transmit_cmd - send a tpm command to the device
->    *    The function extracts tpm out header return code
->    *
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index ab3861631d27..05967c1a1f32 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -112,6 +112,7 @@ enum tpm2_return_codes {
->   	TPM2_RC_COMMAND_CODE    = 0x0143,
->   	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
->   	TPM2_RC_REFERENCE_H0	= 0x0910,
-> +	TPM2_RC_RETRY		= 0x0922,
->   };
->
->   enum tpm2_algorithms {
+/Jarkko
