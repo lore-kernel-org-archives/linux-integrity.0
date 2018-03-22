@@ -1,54 +1,94 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from sonic310-20.consmr.mail.bf2.yahoo.com ([74.6.135.194]:44561
-        "EHLO sonic310-20.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751668AbeCVTGA (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36590 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751811AbeCVQrU (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 22 Mar 2018 15:06:00 -0400
-Subject: Re: [PATCH] ima: Add smackfs to the default appraise/measure list
-To: Martin Townsend <mtownsend1973@gmail.com>,
-        zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
-        jmorris@namei.org, serge@hallyn.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <1521726361-29916-1-git-send-email-mtownsend1973@gmail.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <8d00361b-92ef-1fc6-fb2c-2316666dfbd3@schaufler-ca.com>
-Date: Thu, 22 Mar 2018 12:05:51 -0700
+        Thu, 22 Mar 2018 12:47:20 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2MGkh0I106535
+        for <linux-integrity@vger.kernel.org>; Thu, 22 Mar 2018 12:47:19 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2gvedrpj7b-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 22 Mar 2018 12:47:19 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
+        Thu, 22 Mar 2018 12:47:19 -0400
+Subject: Re: [RFC PATCH v2 1/3] ima: extend clone() with IMA namespace support
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+References: <20180309201421.6150-1-stefanb@linux.vnet.ibm.com>
+ <20180309201421.6150-2-stefanb@linux.vnet.ibm.com>
+ <87vadxfwqj.fsf@xmission.com>
+ <c18b6e92-57f0-5994-eb60-5fadc6671832@linux.vnet.ibm.com>
+ <1521135192.5348.64.camel@HansenPartnership.com>
+ <2183a3b4-6270-d2e9-70ad-a7399eb1681c@linux.vnet.ibm.com>
+ <1521139535.5348.89.camel@HansenPartnership.com>
+ <0dc5b856-8dc6-7b5a-eeac-febd19f6498c@linux.vnet.ibm.com>
+ <1521140467.5348.94.camel@HansenPartnership.com>
+Cc: mkayaalp@cs.binghamton.edu,
+        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>,
+        sunyuqiong1988@gmail.com, containers@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, david.safford@ge.com,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Date: Thu, 22 Mar 2018 12:47:14 -0400
 MIME-Version: 1.0
-In-Reply-To: <1521726361-29916-1-git-send-email-mtownsend1973@gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1521140467.5348.94.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Message-Id: <8d9220d5-2acc-2818-c351-36b369e4b50e@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 3/22/2018 6:46 AM, Martin Townsend wrote:
-> This is required to use SMACK and IMA/EVM together. Add it to the
-> default nomeasure/noappraise list like other pseudo filesystems.
->
-> Signed-off-by: Martin Townsend <mtownsend1973@gmail.com>
+On 03/15/2018 03:01 PM, James Bottomley wrote:
+> On Thu, 2018-03-15 at 14:51 -0400, Stefan Berger wrote:
+>> On 03/15/2018 02:45 PM, James Bottomley wrote:
+> [...]
+>>>>> going to need some type of keyring namespace and there's
+>>>>> already
+>>>>> one hanging off the user_ns:
+>>>>>
+>>>>> commit f36f8c75ae2e7d4da34f4c908cebdb4aa42c977e
+>>>>> Author: David Howells <dhowells@redhat.com>
+>>>>> Date:   Tue Sep 24 10:35:19 2013 +0100
+>>>>>
+>>>>>        KEYS: Add per-user_namespace registers for persistent
+>>>>> per-UID
+>>>>> kerberos caches
+>>>> The benefit for IMA would be that this would then tie the keys
+>>>> needed for appraising to the IMA namespace's policy.
+>>>> However, if you have an appraise policy in your IMA namespace,
+>>>> which is now hooked to the user namespace, and you join that user
+>>>> namespace but your files don't have signatures, nothing will
+>>>> execute anymore. That's now a side effect of joining this user
+>>>> namespace unless we have a magic  exception. My feeling is,
+>>>> people may not like that...
+>>> Agree, but I think the magic might be to populate the ima keyring
+>>> with the parent on user_ns creation.  That way the user_ns owner
+>>> can delete the parent keys if they don't like them, but by default
+>>> the parent appraisal policy should just work.
+>> That may add keys to your keyring but doesn't get you signatures on
+>> your  files.
+> But it doesn't need to.  The only way we'd get a failure is if the file
+> is already being appraised and we lose access to the key.  If the
+> parent policy isn't appraisal, entering the IMA NS won't cause
+> appraisal to be turned on unless the owner asks for it, in which case
+> it's caveat emptor: As it works today, if as root I add a default
+> appraisal policy to IMA without either a key or xattrs, I get an
+> unusable system.
 
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+When I post a next implementation for the spawning if an IMA namespace, 
+what shall be the criterion for accepting it?
 
-> ---
->  security/integrity/ima/ima_policy.c | 2 ++
->  1 file changed, 2 insertions(+)
+     Stefan
+
 >
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index 915f557..d89ed15 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -96,6 +96,7 @@ static struct ima_rule_entry dont_measure_rules[] __ro_after_init = {
->  	{.action = DONT_MEASURE, .fsmagic = BINFMTFS_MAGIC, .flags = IMA_FSMAGIC},
->  	{.action = DONT_MEASURE, .fsmagic = SECURITYFS_MAGIC, .flags = IMA_FSMAGIC},
->  	{.action = DONT_MEASURE, .fsmagic = SELINUX_MAGIC, .flags = IMA_FSMAGIC},
-> +	{.action = DONT_MEASURE, .fsmagic = SMACK_MAGIC, .flags = IMA_FSMAGIC},
->  	{.action = DONT_MEASURE, .fsmagic = CGROUP_SUPER_MAGIC,
->  	 .flags = IMA_FSMAGIC},
->  	{.action = DONT_MEASURE, .fsmagic = CGROUP2_SUPER_MAGIC,
-> @@ -141,6 +142,7 @@ static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
->  	{.action = DONT_APPRAISE, .fsmagic = BINFMTFS_MAGIC, .flags = IMA_FSMAGIC},
->  	{.action = DONT_APPRAISE, .fsmagic = SECURITYFS_MAGIC, .flags = IMA_FSMAGIC},
->  	{.action = DONT_APPRAISE, .fsmagic = SELINUX_MAGIC, .flags = IMA_FSMAGIC},
-> +	{.action = DONT_APPRAISE, .fsmagic = SMACK_MAGIC, .flags = IMA_FSMAGIC},
->  	{.action = DONT_APPRAISE, .fsmagic = NSFS_MAGIC, .flags = IMA_FSMAGIC},
->  	{.action = DONT_APPRAISE, .fsmagic = CGROUP_SUPER_MAGIC, .flags = IMA_FSMAGIC},
->  	{.action = DONT_APPRAISE, .fsmagic = CGROUP2_SUPER_MAGIC, .flags = IMA_FSMAGIC},
+> James
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
