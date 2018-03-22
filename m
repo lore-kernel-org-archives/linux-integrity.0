@@ -1,58 +1,48 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:41591 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755662AbeCVOCv (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 22 Mar 2018 10:02:51 -0400
-Message-ID: <9764f6e79dd7e8938eef9746eca88573f712efcb.camel@linux.intel.com>
-Subject: Re: [PATCH] tpm: self test failure should not cause suspend to fail
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Daniel Drake <drake@endlessm.com>, peterhuewe@gmx.de
-Cc: linux-integrity@vger.kernel.org, chiu@endlessm.com,
-        linux@endlessm.com, jgg@ziepe.ca
-Date: Thu, 22 Mar 2018 16:02:46 +0200
-In-Reply-To: <20180320073640.17062-1-drake@endlessm.com>
-References: <20180320073640.17062-1-drake@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:37932 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754547AbeCVNqL (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 22 Mar 2018 09:46:11 -0400
+From: Martin Townsend <mtownsend1973@gmail.com>
+To: zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
+        jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, casey@schaufler-ca.com,
+        mtownsend1973@gmail.com
+Subject: [PATCH] ima: Add smackfs to the default appraise/measure list
+Date: Thu, 22 Mar 2018 13:46:01 +0000
+Message-Id: <1521726361-29916-1-git-send-email-mtownsend1973@gmail.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, 2018-03-20 at 15:36 +0800, Daniel Drake wrote:
-> From: Chris Chiu <chiu@endlessm.com>
-> 
-> The Acer Acer Veriton X4110G has a TPM device detected as:
->   tpm_tis 00:0b: 1.2 TPM (device-id 0xFE, rev-id 71)
-> 
-> After the first S3 suspend, the following error appears during resume:
->   tpm tpm0: A TPM error(38) occured continue selftest
-> 
-> Any following S3 suspend attempts will now fail with this error:
->   tpm tpm0: Error (38) sending savestate before suspend
->   PM: Device 00:0b failed to suspend: error 38
-> 
-> Error 38 is TPM_ERR_INVALID_POSTINIT which means the TPM is
-> not in the correct state. This indicates that the platform BIOS
-> is not sending the usual TPM_Startup command during S3 resume.
-> From this point onwards, all TPM commands will fail.
-> 
-> The same issue was previously reported on Foxconn 6150BK8MC and
-> Sony Vaio TX3.
-> 
-> The platform behaviour seems broken here, but we should not break
-> suspend/resume because of this.
-> 
-> When the unexpected TPM state is encountered, set a flag to skip the
-> affected TPM_SaveState command on later suspends.
-> 
-> Signed-off-by: Chris Chiu <chiu@endlessm.com>
-> Signed-off-by: Daniel Drake <drake@endlessm.com>
-> Link: http://lkml.kernel.org/r/CAB4CAwfSCvj1cudi+MWaB5g2Z67d9DwY1o475YOZD64ma2
-> 3UiQ@mail.gmail.com
-> Link: https://lkml.org/lkml/2011/3/28/192
-> Link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=591031
+This is required to use SMACK and IMA/EVM together. Add it to the
+default nomeasure/noappraise list like other pseudo filesystems.
 
-Thank you.
+Signed-off-by: Martin Townsend <mtownsend1973@gmail.com>
+---
+ security/integrity/ima/ima_policy.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-
-/Jarkko
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 915f557..d89ed15 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -96,6 +96,7 @@ static struct ima_rule_entry dont_measure_rules[] __ro_after_init = {
+ 	{.action = DONT_MEASURE, .fsmagic = BINFMTFS_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_MEASURE, .fsmagic = SECURITYFS_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_MEASURE, .fsmagic = SELINUX_MAGIC, .flags = IMA_FSMAGIC},
++	{.action = DONT_MEASURE, .fsmagic = SMACK_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_MEASURE, .fsmagic = CGROUP_SUPER_MAGIC,
+ 	 .flags = IMA_FSMAGIC},
+ 	{.action = DONT_MEASURE, .fsmagic = CGROUP2_SUPER_MAGIC,
+@@ -141,6 +142,7 @@ static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
+ 	{.action = DONT_APPRAISE, .fsmagic = BINFMTFS_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_APPRAISE, .fsmagic = SECURITYFS_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_APPRAISE, .fsmagic = SELINUX_MAGIC, .flags = IMA_FSMAGIC},
++	{.action = DONT_APPRAISE, .fsmagic = SMACK_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_APPRAISE, .fsmagic = NSFS_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_APPRAISE, .fsmagic = CGROUP_SUPER_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_APPRAISE, .fsmagic = CGROUP2_SUPER_MAGIC, .flags = IMA_FSMAGIC},
+-- 
+2.7.4
