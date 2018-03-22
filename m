@@ -1,91 +1,63 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:51390 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751553AbeCVQbk (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45094 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751286AbeCVQUk (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 22 Mar 2018 12:31:40 -0400
-Message-ID: <1521736298.7197.4.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2 1/2] tpm: add retry logic
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Thu, 22 Mar 2018 12:20:40 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2MGKUV4040797
+        for <linux-integrity@vger.kernel.org>; Thu, 22 Mar 2018 12:20:39 -0400
+Received: from e18.ny.us.ibm.com (e18.ny.us.ibm.com [129.33.205.208])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2gvergv7sp-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 22 Mar 2018 12:20:38 -0400
+Received: from localhost
+        by e18.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
+        Thu, 22 Mar 2018 12:20:37 -0400
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Subject: A subtle problem when resuming xen-front and using IMA and multiple
+ TPM devices on the system
+To: linux-integrity@vger.kernel.org
+Cc: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Date: Thu, 22 Mar 2018 09:31:38 -0700
-In-Reply-To: <7236ada1-43b5-8280-ce21-3d0c095dfe9d@linux.vnet.ibm.com>
-References: <1521657747.6397.18.camel@HansenPartnership.com>
-         <1521657828.6397.19.camel@HansenPartnership.com>
-         <7236ada1-43b5-8280-ce21-3d0c095dfe9d@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Date: Thu, 22 Mar 2018 12:20:33 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Message-Id: <28f8dc8a-cfa3-376a-5e6a-98d79418e3d1@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, 2018-03-22 at 21:43 +0530, Nayna Jain wrote:
-> 
-> > 
-> >   /**
-> > + * tpm_transmit - Internal kernel interface to transmit TPM
-> > commands.
-> > + *
-> > + * @chip: TPM chip to use
-> > + * @space: tpm space
-> > + * @buf: TPM command buffer
-> > + * @bufsiz: length of the TPM command buffer
-> > + * @flags: tpm transmit flags - bitmap
-> > + *
-> > + * A wrapper around tpm_try_transmit that handles TPM2_RC_RETRY
-> > + * returns from the TPM and retransmits the command after a delay
-> > up
-> > + * to a maximum wait of TPM2_DURATION_LONG.
-> > + *
-> > + * Note: TPM1 never returns TPM2_RC_RETRY so the retry logic is
-> > TPM2
-> > + * only
-> > + *
-> > + * Return:
-> > + *     the length of the return when the operation is successful.
-> > + *     A negative number for system errors (errno).
-> > + */
-> > +ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space
-> > *space,
-> > +		     u8 *buf, size_t bufsiz, unsigned int flags)
-> > +{
-> > +	struct tpm_output_header *header = (struct
-> > tpm_output_header *)buf;
-> > +	/* space for header and handles */
-> > +	u8 save[TPM_HEADER_SIZE + 3*sizeof(u32)];
-> > +	unsigned int delay_msec = TPM2_DURATION_SHORT;
-> > +	u32 rc = 0;
-> > +	ssize_t ret;
-> > +	const size_t save_size = min(space ? sizeof(save) :
-> > TPM_HEADER_SIZE,
-> > +				     bufsiz);
-> > +
-> > +	/*
-> > +	 * Subtlety here: if we have a space, the handles will be
-> > +	 * transformed, so when we restore the header we also have
-> > to
-> > +	 * restore the handles.
-> > +	 */
-> > +	memcpy(save, buf, save_size);
-> > +
-> > +	for (;;) {
-> > +		ret = tpm_try_transmit(chip, space, buf, bufsiz,
-> > flags);
-> > +		if (ret < 0)
-> > +			break;
-> > +		rc = be32_to_cpu(header->return_code);
-> > +		if (rc != TPM2_RC_RETRY)
-> > +			break;
-> > +		delay_msec *= 2;
-> 
-> Was wondering if this increment could be moved after 
-> tpm_msleep(delay_msec) ?
+I tried to convert the IMA code to look up a TPM chip and use it until 
+shutdown, when it releases it before device_shutdown(). Ideally this 
+would work but because of xen-front's resume code it doesn't. There the 
+chip is unregistered upon domU resume (tpmfront_resume calls 
+tpmfron_remove) and for that reason IMA cannot be holding onto that chip 
+until shutdown. Now the subtle problem comes into play when we were to 
+use tpm_vtpm_proxy (with IMA namespaces for example some day) inside a 
+domU that is resumed. Upon resume the domU looses its first chip, which 
+would be the vTPM accessed via xen-front. IMA now uses 
+tpm_pcr_extrend(NULL, ...) to extend a PCR and looks up the first chip 
+due to the NULL parameter and now finds a tpm_vtpm_proxy's chip to 
+extend the PCR into and this messes up the PCR. So that's bad and only 
+in this particular configuration.
 
-I thought about that when I saw the logic in the original but what it
-would do is double the maximum delay (which is already nearly double
-TPM2_DURATION_LONG).  I figured doubling the initial timeout was fine
-rather than trying to do complex logic to get the delay exact (and then
-having to litter the file with comments explaining why).
+Due to how the xen-front works, the solution may be to:
+- return -ENODEV from any public TPM API functions in case NULL is being 
+passed as chip parameter; do not look up the chip, it will not return 
+the one that was there before domU resume
+- all subsystems that want to use a TPM have to look it up at the very 
+beginning when there is only a hardware TPM there or the domU TPM
+    - all these subsystems (looks like IMA and trusted keys) have to 
+register a xen-release-tpm-device notifier that is invoked upon 
+xen-front resume and causes the subsystems to release the device; upon 
+domU resume these subsystems loose their TPM access
 
-James
+Another solution may be to introduce some flags that describe the chips 
+and tpm_chip_find_get() would take these flags and check whether a chip 
+has these flags set so that IMA and trusted keys wouldn't use a 
+tpm_vtpm_proxy in that case.
+
+Comments?
+
+    Stefan
