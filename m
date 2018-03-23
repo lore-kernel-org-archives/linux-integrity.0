@@ -1,115 +1,52 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:47822 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751551AbeCWIMP (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 23 Mar 2018 04:12:15 -0400
-Date: Fri, 23 Mar 2018 10:12:10 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Tomas Winkler <tomas.winkler@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2 v3] tpm: separate cmd_ready/go_idle from runtime_pm
-Message-ID: <20180323081210.GA28857@linux.intel.com>
-References: <20180214134319.4400-1-tomas.winkler@intel.com>
- <20180214134319.4400-3-tomas.winkler@intel.com>
- <20180219115221.7kd3ks7mrzmw36mz@linux.intel.com>
- <1519136010.4113.10.camel@linux.intel.com>
- <20180305180831.GB6220@linux.intel.com>
+Received: from mail-pg0-f42.google.com ([74.125.83.42]:40040 "EHLO
+        mail-pg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751175AbeCWEEr (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 23 Mar 2018 00:04:47 -0400
+Received: by mail-pg0-f42.google.com with SMTP id g8so4143208pgv.7
+        for <linux-integrity@vger.kernel.org>; Thu, 22 Mar 2018 21:04:47 -0700 (PDT)
+Date: Thu, 22 Mar 2018 22:04:45 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: Re: A subtle problem when resuming xen-front and using IMA and
+ multiple TPM devices on the system
+Message-ID: <20180323040445.GB13175@ziepe.ca>
+References: <28f8dc8a-cfa3-376a-5e6a-98d79418e3d1@linux.vnet.ibm.com>
+ <20180322213937.GF9469@ziepe.ca>
+ <0d302b6b-850f-9ae7-39e2-b28d859dbd38@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180305180831.GB6220@linux.intel.com>
+In-Reply-To: <0d302b6b-850f-9ae7-39e2-b28d859dbd38@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Mar 05, 2018 at 08:08:31PM +0200, Jarkko Sakkinen wrote:
-> On Tue, Feb 20, 2018 at 04:13:30PM +0200, Jarkko Sakkinen wrote:
-> > On Mon, 2018-02-19 at 13:52 +0200, Jarkko Sakkinen wrote:
-> > > On Wed, Feb 14, 2018 at 03:43:19PM +0200, Tomas Winkler wrote:
-> > > > We cannot use go_idle cmd_ready commands via runtime_pm handles
-> > > > as with the introduction of localities this is no longer an
-> > > > optional
-> > > > feature, while runtime pm can be not enabled.
-> > > > Though cmd_ready/go_idle provides power saving feature, it's also
-> > > > part of
-> > > > TPM2 protocol and should be called explicitly.
-> > > > This patch exposes cmd_read/go_idle via tpm class ops and removes
-> > > > runtime pm support as it is not used by any driver.
-> > > > 
-> > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > > > ---
-> > > > V2: resent
-> > > > V3: resent
-> > > 
-> > > Only the cover letter needs a backlog but the code change looks
-> > > good to me.
-> > > 
-> > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > 
-> > Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > 
-> > /Jarkko
+On Thu, Mar 22, 2018 at 08:57:59PM -0400, Stefan Berger wrote:
+> On 03/22/2018 05:39 PM, Jason Gunthorpe wrote:
+> >On Thu, Mar 22, 2018 at 12:20:33PM -0400, Stefan Berger wrote:
+> >>I tried to convert the IMA code to look up a TPM chip and use it until
+> >>shutdown, when it releases it before device_shutdown(). Ideally this would
+> >>work but because of xen-front's resume code it doesn't. There the chip is
+> >>unregistered upon domU resume (tpmfront_resume calls tpmfron_remove) and for
+> >>that reason IMA cannot be holding onto that chip until shutdown.
+> >Well removing the TPM during resume seems totally wrong, don't do
+> >that.
 > 
-> Applied.
-> 
-> /Jarkko
+> though that's what seems to be happening:
 
-This commit breaks my smoke tests on Kabylake [1] so I need to drop it.
-The bug fix for locality works without any issues.
+Sure, but that is totally wrong, Xen shouldn't do that.
 
-[1]
-$ python -m unittest -v tpm2_smoke
-test_seal_with_auth (tpm2_smoke.SmokeTest) ... ok
-test_seal_with_policy (tpm2_smoke.SmokeTest) ... ok
-test_seal_with_too_long_auth (tpm2_smoke.SmokeTest) ... ok
-test_too_short_cmd (tpm2_smoke.SmokeTest) ... ok
-test_unseal_with_wrong_auth (tpm2_smoke.SmokeTest) ... ok
-test_unseal_with_wrong_policy (tpm2_smoke.SmokeTest) ... ok
-test_flush_context (tpm2_smoke.SpaceTest) ... ERROR
-test_get_handles (tpm2_smoke.SpaceTest) ... ERROR
-test_invalid_cc (tpm2_smoke.SpaceTest) ... ok
-test_make_two_spaces (tpm2_smoke.SpaceTest) ... ERROR
+Don't design core interfaces around an insane driver, you were on the
+right path to have IMA hold a chip handle not use a chip index. That
+is a long standing needed cleanup.
 
-======================================================================
-ERROR: test_flush_context (tpm2_smoke.SpaceTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_smoke.py", line 185, in test_flush_context
-    space1.flush_context(root1)
-  File "tpm2.py", line 517, in flush_context
-    self.send_cmd(cmd)
-  File "tpm2.py", line 378, in send_cmd
-    raise ProtocolError(cc, rc)
-ProtocolError: TPM_RC_UNKNOWN: cc=0x00000165, rc=0x00000165
+Xen, IMA and suspend will just not be compatible until someone fixes
+that driver.
 
-======================================================================
-ERROR: test_get_handles (tpm2_smoke.SpaceTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_smoke.py", line 195, in test_get_handles
-    space2.create_root_key()
-  File "tpm2.py", line 562, in create_root_key
-    return struct.unpack('>I', self.send_cmd(cmd)[10:14])[0]
-  File "tpm2.py", line 378, in send_cmd
-    raise ProtocolError(cc, rc)
-ProtocolError: TPM_RC_UNBALANCED: cc=0x00000131, rc=0x00000131
+And maybe that is for the best, perhaps that remove thing is some
+statement that TPM state does not preserve across suspend/resume. Who
+knows.
 
-======================================================================
-ERROR: test_make_two_spaces (tpm2_smoke.SpaceTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_smoke.py", line 171, in test_make_two_spaces
-    root3 = space2.create_root_key()
-  File "tpm2.py", line 562, in create_root_key
-    return struct.unpack('>I', self.send_cmd(cmd)[10:14])[0]
-  File "tpm2.py", line 378, in send_cmd
-    raise ProtocolError(cc, rc)
-ProtocolError: TPM_RC_UNBALANCED: cc=0x00000131, rc=0x00000131
-
-----------------------------------------------------------------------
-Ran 10 tests in 44.545s
-
-FAILED (errors=3)
-
-/Jarkko
+Jason
