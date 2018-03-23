@@ -1,52 +1,72 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-pg0-f42.google.com ([74.125.83.42]:40040 "EHLO
-        mail-pg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751175AbeCWEEr (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56826 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751864AbeCWA6F (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 23 Mar 2018 00:04:47 -0400
-Received: by mail-pg0-f42.google.com with SMTP id g8so4143208pgv.7
-        for <linux-integrity@vger.kernel.org>; Thu, 22 Mar 2018 21:04:47 -0700 (PDT)
-Date: Thu, 22 Mar 2018 22:04:45 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+        Thu, 22 Mar 2018 20:58:05 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2N0u9gW059881
+        for <linux-integrity@vger.kernel.org>; Thu, 22 Mar 2018 20:58:05 -0400
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2gvkmtqpt8-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 22 Mar 2018 20:58:04 -0400
+Received: from localhost
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
+        Thu, 22 Mar 2018 18:58:04 -0600
 Subject: Re: A subtle problem when resuming xen-front and using IMA and
  multiple TPM devices on the system
-Message-ID: <20180323040445.GB13175@ziepe.ca>
+To: Jason Gunthorpe <jgg@ziepe.ca>
 References: <28f8dc8a-cfa3-376a-5e6a-98d79418e3d1@linux.vnet.ibm.com>
  <20180322213937.GF9469@ziepe.ca>
- <0d302b6b-850f-9ae7-39e2-b28d859dbd38@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Date: Thu, 22 Mar 2018 20:57:59 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <0d302b6b-850f-9ae7-39e2-b28d859dbd38@linux.vnet.ibm.com>
+In-Reply-To: <20180322213937.GF9469@ziepe.ca>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Message-Id: <0d302b6b-850f-9ae7-39e2-b28d859dbd38@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Mar 22, 2018 at 08:57:59PM -0400, Stefan Berger wrote:
-> On 03/22/2018 05:39 PM, Jason Gunthorpe wrote:
-> >On Thu, Mar 22, 2018 at 12:20:33PM -0400, Stefan Berger wrote:
-> >>I tried to convert the IMA code to look up a TPM chip and use it until
-> >>shutdown, when it releases it before device_shutdown(). Ideally this would
-> >>work but because of xen-front's resume code it doesn't. There the chip is
-> >>unregistered upon domU resume (tpmfront_resume calls tpmfron_remove) and for
-> >>that reason IMA cannot be holding onto that chip until shutdown.
-> >Well removing the TPM during resume seems totally wrong, don't do
-> >that.
-> 
-> though that's what seems to be happening:
+On 03/22/2018 05:39 PM, Jason Gunthorpe wrote:
+> On Thu, Mar 22, 2018 at 12:20:33PM -0400, Stefan Berger wrote:
+>> I tried to convert the IMA code to look up a TPM chip and use it until
+>> shutdown, when it releases it before device_shutdown(). Ideally this would
+>> work but because of xen-front's resume code it doesn't. There the chip is
+>> unregistered upon domU resume (tpmfront_resume calls tpmfron_remove) and for
+>> that reason IMA cannot be holding onto that chip until shutdown.
+> Well removing the TPM during resume seems totally wrong, don't do
+> that.
 
-Sure, but that is totally wrong, Xen shouldn't do that.
+though that's what seems to be happening:
 
-Don't design core interfaces around an insane driver, you were on the
-right path to have IMA hold a chip handle not use a chip index. That
-is a long standing needed cleanup.
+static int tpmfront_remove(struct xenbus_device *dev)
+{
+     struct tpm_chip *chip = dev_get_drvdata(&dev->dev);
+     struct tpm_private *priv = dev_get_drvdata(&chip->dev);
+     tpm_chip_unregister(chip);                    <---- chip is gone 
+upon resume
+     ring_free(priv);
+     dev_set_drvdata(&chip->dev, NULL);      <---- no additional 
+get_device in this code; chip should be freed by now;
+     return 0;
+}
 
-Xen, IMA and suspend will just not be compatible until someone fixes
-that driver.
+static int tpmfront_resume(struct xenbus_device *dev)
+{
+     /* A suspend/resume/migrate will interrupt a vTPM anyway */
+     tpmfront_remove(dev);
+     return tpmfront_probe(dev, NULL);
+}
 
-And maybe that is for the best, perhaps that remove thing is some
-statement that TPM state does not preserve across suspend/resume. Who
-knows.
 
-Jason
+
+
+
+
+>
+> Jason
+>
