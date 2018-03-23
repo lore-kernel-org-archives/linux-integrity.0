@@ -1,47 +1,63 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:55985 "EHLO mx2.suse.de"
+Received: from mga03.intel.com ([134.134.136.65]:44832 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752146AbeCWKyo (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 23 Mar 2018 06:54:44 -0400
-Date: Fri, 23 Mar 2018 11:54:42 +0100
-From: Petr Vorel <pvorel@suse.cz>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Subject: Re: [PATCH v2 0/2] ima: Fallback to the builtin hash algorithm
-Message-ID: <20180323105442.nyolkydmggw2uvlx@dell5510>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20180322144313.28748-1-pvorel@suse.cz>
- <1521747535.3848.273.camel@linux.vnet.ibm.com>
+        id S1750789AbeCWJdQ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 23 Mar 2018 05:33:16 -0400
+Date: Fri, 23 Mar 2018 11:33:12 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: jmorris@namei.org
+Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [GIT PULL] tpmdd updates for Linux 4.17
+Message-ID: <20180323093312.GA21411@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-In-Reply-To: <1521747535.3848.273.camel@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hello Mimi,
+Hi James
 
-> Agreed, the previous version was simpler/better.  My complaint with
-> the previous version was that there was an error message, but
-> continued without any indication of how it was resolved.  Changing the
-> message in ima_init_crypto() is one solution, but adding an additional
-> message works too. Would this work for you?
+This release contains only bug fixes. There are no new major features
+added.
 
-> @@ -73,6 +73,8 @@ int __init ima_init_crypto(void)
->                        hash_algo_name[ima_hash_algo], rc);
->                 return rc;
->         }
-> +       pr_info("Allocated default hash algorithm: %s\n",
-> +                hash_algo_name[ima_hash_algo]);
->         return 0;
->  }
-Well, this is not correct, as if you specify correct (i.e. buildin) non default algorithm, it's said to
-be the default. e.g. ima_hash=md5
-[    2.161089] ima: Allocated default hash algorithm: md5
-Just a detail, but why not be precise?
-Going to post a version which fixes that having a message in ima_init_crypto().
+/Jarkko
 
-> Mimi
+The following changes since commit 5893ed18a26d1f56b97c0290b0cbbc2d49d6de28:
 
-Kind regards,
-Petr
+  Merge tag 'v4.16-rc6' into next-general (2018-03-23 08:26:16 +1100)
+
+are available in the Git repository at:
+
+  git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20180323
+
+for you to fetch changes up to 2be8ffed093b91536d52b5cd2c99b52f605c9ba6:
+
+  tpm: fix intermittent failure with self tests (2018-03-23 10:25:09 +0200)
+
+----------------------------------------------------------------
+tpmdd updates for Linux 4.17
+
+----------------------------------------------------------------
+Chris Chiu (1):
+      tpm: self test failure should not cause suspend to fail
+
+James Bottomley (2):
+      tpm: add retry logic
+      tpm: fix intermittent failure with self tests
+
+Tomas Winkler (3):
+      tpm: cmd_ready command can be issued only after granting locality
+      tpm_crb: use __le64 annotated variable for response buffer address
+      tpm2: add longer timeouts for creation commands.
+
+Winkler, Tomas (2):
+      tpm: tpm-interface: fix tpm_transmit/_cmd kdoc
+      tpm: fix buffer type in tpm_transmit_cmd
+
+ drivers/char/tpm/tpm-interface.c | 158 +++++++++++++++++++++++++++++++--------
+ drivers/char/tpm/tpm.h           |  32 +++++---
+ drivers/char/tpm/tpm2-cmd.c      |  62 ++++++---------
+ drivers/char/tpm/tpm_crb.c       | 113 +++++++++++++++++++---------
+ drivers/char/tpm/tpm_tis_core.c  |   4 +-
+ include/linux/tpm.h              |   2 +-
+ 6 files changed, 250 insertions(+), 121 deletions(-)
