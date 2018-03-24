@@ -1,126 +1,278 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41750 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753680AbeCYRqc (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 25 Mar 2018 13:46:32 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2PHi3QB069760
-        for <linux-integrity@vger.kernel.org>; Sun, 25 Mar 2018 13:46:32 -0400
-Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2gx47bh0qk-1
-        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Sun, 25 Mar 2018 13:46:31 -0400
-Received: from localhost
-        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Sun, 25 Mar 2018 18:46:29 +0100
-Subject: [GIT PULL] linux-integrity patches for Linux 4.17
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: James Morris <jmorris@namei.org>
-Cc: linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Date: Sun, 25 Mar 2018 13:46:25 -0400
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1521999985.3541.32.camel@linux.vnet.ibm.com>
+Received: from mga14.intel.com ([192.55.52.115]:16759 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752579AbeCXSn2 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 24 Mar 2018 14:43:28 -0400
+From: Tomas Winkler <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Winkler, Tomas" <tomas.winkler@intel.com>
+Subject: [PATCH V4] tpm: separate cmd_ready/go_idle from runtime_pm
+Date: Sat, 24 Mar 2018 21:39:35 +0300
+Message-Id: <20180324183935.20784-1-tomas.winkler@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi James,
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
 
-This pull request contains a mixture of bug fixes, code cleanup, and
-continues to close IMA-measurement, IMA-appraisal, and IMA-audit gaps.
+We cannot use go_idle cmd_ready commands via runtime_pm handles
+as with the introduction of localities this is no longer an optional
+feature, while runtime pm can be not enabled.
+Though cmd_ready/go_idle provides power saving feature, it's also part of
+TPM2 protocol and should be called explicitly.
+This patch exposes cmd_read/go_idle via tpm class ops and removes
+runtime pm support as it is not used by any driver.
 
-Closing measurement, appraisal, and audit gaps:
-- A new LSM hook named security_cred_getsecid is defined in order to
-validate a file's integrity based on the credentials of the process
-going to being executed, not of the existing process.
+tpm_crb no longer needs own power saving functions and can drop using
+tpm_pm_suspend/resume.
 
-- Fuse filesystems are inherently untrusted.  Instead of always re-
-evaluating files, this pull request differentiates between privileged
-and unprivileged mounts, and defines a new builtin policy to fail file
-signature verification even on privileged mounted filesystems.
-
-Code cleanup:
-- Support for verifying a file's integrity based on an appended
-signature (scripts/sign-file) is coming along really nicely.  This
-pull request includes some of the cleanup patches from the appended
-signature patch series.
- 
-thanks,
-
-Mimi
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 ---
+V2-3:resent
+V4: 1. Use tpm_pm_suspend/resume in tpm_crb
+    2. Drop cmd_ready/go_idle around tpm_chip_register, as there is no
+       usage counter like in runtime_pm.
+    
+ drivers/char/tpm/tpm-interface.c |  15 ++++--
+ drivers/char/tpm/tpm_crb.c       | 100 ++++++++++-----------------------------
+ include/linux/tpm.h              |   2 +
+ 3 files changed, 38 insertions(+), 79 deletions(-)
 
-The following changes since commit 5893ed18a26d1f56b97c0290b0cbbc2d49d6de28:
-
-  Merge tag 'v4.16-rc6' into next-general (2018-03-23 08:26:16 +1100)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-
-for you to fetch changes up to ab60368ab6a452466885ef4edf0cefd089465132:
-
-  ima: Fallback to the builtin hash algorithm (2018-03-25 07:26:32 -0400)
-
-----------------------------------------------------------------
-Hernan Gonzalez (2):
-      evm: Move evm_hmac and evm_hash from evm_main.c to evm_crypto.c
-      evm: Constify *integrity_status_msg[]
-
-Jiandi An (1):
-      ima: Fix Kconfig to select TPM 2.0 CRB interface
-
-Martin Townsend (1):
-      ima: Add smackfs to the default appraise/measure list
-
-Matthew Garrett (2):
-      security: Add a cred_getsecid hook
-      IMA: Support using new creds in appraisal policy
-
-Mimi Zohar (5):
-      ima: fail file signature verification on non-init mounted filesystems
-      ima: re-evaluate files on privileged mounted filesystems
-      ima: clear IMA_HASH
-      ima: fail signature verification based on policy
-      fuse: define the filesystem as untrusted
-
-Petr Vorel (1):
-      ima: Fallback to the builtin hash algorithm
-
-Sascha Hauer (1):
-      evm: check for remount ro in progress before writing
-
-Thiago Jung Bauermann (3):
-      integrity: Remove unused macro IMA_ACTION_RULE_FLAGS
-      ima: Simplify ima_eventsig_init()
-      ima: Improvements in ima_appraise_measurement()
-
-Tycho Andersen (1):
-      ima: drop vla in ima_audit_measurement()
-
- Documentation/ABI/testing/ima_policy            |  2 +-
- Documentation/admin-guide/kernel-parameters.txt |  8 ++-
- fs/fuse/inode.c                                 |  3 ++
- include/linux/fs.h                              |  2 +
- include/linux/lsm_hooks.h                       |  6 +++
- include/linux/security.h                        |  1 +
- security/integrity/evm/evm.h                    |  2 -
- security/integrity/evm/evm_crypto.c             |  3 ++
- security/integrity/evm/evm_main.c               | 12 +++--
- security/integrity/iint.c                       |  2 +
- security/integrity/ima/Kconfig                  |  1 +
- security/integrity/ima/ima.h                    |  9 ++--
- security/integrity/ima/ima_api.c                | 25 +++++----
- security/integrity/ima/ima_appraise.c           | 65 +++++++++++++++++------
- security/integrity/ima/ima_crypto.c             |  2 +
- security/integrity/ima/ima_main.c               | 69 ++++++++++++++++++++-----
- security/integrity/ima/ima_policy.c             | 32 ++++++++----
- security/integrity/ima/ima_template_lib.c       | 11 ++--
- security/integrity/integrity.h                  | 11 ++--
- security/security.c                             |  7 +++
- security/selinux/hooks.c                        |  6 +++
- security/smack/smack_lsm.c                      | 18 +++++++
- 22 files changed, 227 insertions(+), 70 deletions(-)
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index c43a9e28995e..1dc4961c42c6 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -29,7 +29,6 @@
+ #include <linux/mutex.h>
+ #include <linux/spinlock.h>
+ #include <linux/freezer.h>
+-#include <linux/pm_runtime.h>
+ #include <linux/tpm_eventlog.h>
+ 
+ #include "tpm.h"
+@@ -455,8 +454,11 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 			goto out_no_locality;
+ 	}
+ 
+-	if (chip->dev.parent)
+-		pm_runtime_get_sync(chip->dev.parent);
++	if (chip->ops->cmd_ready) {
++		rc = chip->ops->cmd_ready(chip);
++		if (rc)
++			goto out;
++	}
+ 
+ 	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+ 	if (rc)
+@@ -518,8 +520,11 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+ 
+ out:
+-	if (chip->dev.parent)
+-		pm_runtime_put_sync(chip->dev.parent);
++	if (chip->ops->go_idle) {
++		rc = chip->ops->go_idle(chip);
++		if (rc)
++			goto out;
++	}
+ 
+ 	if (need_locality)
+ 		tpm_relinquish_locality(chip);
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index 7f78482cd157..1b11c9b8908f 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -132,7 +132,7 @@ static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
+ }
+ 
+ /**
+- * crb_go_idle - request tpm crb device to go the idle state
++ * __crb_go_idle - request tpm crb device to go the idle state
+  *
+  * @dev:  crb device
+  * @priv: crb private data
+@@ -147,7 +147,7 @@ static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
+  *
+  * Return: 0 always
+  */
+-static int crb_go_idle(struct device *dev, struct crb_priv *priv)
++static int __crb_go_idle(struct device *dev, struct crb_priv *priv)
+ {
+ 	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
+ 	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
+@@ -166,8 +166,16 @@ static int crb_go_idle(struct device *dev, struct crb_priv *priv)
+ 	return 0;
+ }
+ 
++static int crb_go_idle(struct tpm_chip *chip)
++{
++	struct device *dev = &chip->dev;
++	struct crb_priv *priv = dev_get_drvdata(dev);
++
++	return __crb_go_idle(dev, priv);
++}
++
+ /**
+- * crb_cmd_ready - request tpm crb device to enter ready state
++ * __crb_cmd_ready - request tpm crb device to enter ready state
+  *
+  * @dev:  crb device
+  * @priv: crb private data
+@@ -181,7 +189,7 @@ static int crb_go_idle(struct device *dev, struct crb_priv *priv)
+  *
+  * Return: 0 on success -ETIME on timeout;
+  */
+-static int crb_cmd_ready(struct device *dev, struct crb_priv *priv)
++static int __crb_cmd_ready(struct device *dev, struct crb_priv *priv)
+ {
+ 	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
+ 	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
+@@ -200,6 +208,14 @@ static int crb_cmd_ready(struct device *dev, struct crb_priv *priv)
+ 	return 0;
+ }
+ 
++static int crb_cmd_ready(struct tpm_chip *chip)
++{
++	struct device *dev = &chip->dev;
++	struct crb_priv *priv = dev_get_drvdata(dev);
++
++	return __crb_cmd_ready(dev, priv);
++}
++
+ static int __crb_request_locality(struct device *dev,
+ 				  struct crb_priv *priv, int loc)
+ {
+@@ -401,6 +417,8 @@ static const struct tpm_class_ops tpm_crb = {
+ 	.send = crb_send,
+ 	.cancel = crb_cancel,
+ 	.req_canceled = crb_req_canceled,
++	.go_idle  = crb_go_idle,
++	.cmd_ready = crb_cmd_ready,
+ 	.request_locality = crb_request_locality,
+ 	.relinquish_locality = crb_relinquish_locality,
+ 	.req_complete_mask = CRB_DRV_STS_COMPLETE,
+@@ -518,7 +536,7 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 	 * PTT HW bug w/a: wake up the device to access
+ 	 * possibly not retained registers.
+ 	 */
+-	ret = crb_cmd_ready(dev, priv);
++	ret = __crb_cmd_ready(dev, priv);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -563,7 +581,7 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 	if (!ret)
+ 		priv->cmd_size = cmd_size;
+ 
+-	crb_go_idle(dev, priv);
++	__crb_go_idle(dev, priv);
+ 
+ 	__crb_relinquish_locality(dev, priv, 0);
+ 
+@@ -624,32 +642,7 @@ static int crb_acpi_add(struct acpi_device *device)
+ 	chip->acpi_dev_handle = device->handle;
+ 	chip->flags = TPM_CHIP_FLAG_TPM2;
+ 
+-	rc = __crb_request_locality(dev, priv, 0);
+-	if (rc)
+-		return rc;
+-
+-	rc  = crb_cmd_ready(dev, priv);
+-	if (rc)
+-		goto out;
+-
+-	pm_runtime_get_noresume(dev);
+-	pm_runtime_set_active(dev);
+-	pm_runtime_enable(dev);
+-
+-	rc = tpm_chip_register(chip);
+-	if (rc) {
+-		crb_go_idle(dev, priv);
+-		pm_runtime_put_noidle(dev);
+-		pm_runtime_disable(dev);
+-		goto out;
+-	}
+-
+-	pm_runtime_put_sync(dev);
+-
+-out:
+-	__crb_relinquish_locality(dev, priv, 0);
+-
+-	return rc;
++	return tpm_chip_register(chip);
+ }
+ 
+ static int crb_acpi_remove(struct acpi_device *device)
+@@ -659,52 +652,11 @@ static int crb_acpi_remove(struct acpi_device *device)
+ 
+ 	tpm_chip_unregister(chip);
+ 
+-	pm_runtime_disable(dev);
+-
+ 	return 0;
+ }
+ 
+-static int __maybe_unused crb_pm_runtime_suspend(struct device *dev)
+-{
+-	struct tpm_chip *chip = dev_get_drvdata(dev);
+-	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+-
+-	return crb_go_idle(dev, priv);
+-}
+-
+-static int __maybe_unused crb_pm_runtime_resume(struct device *dev)
+-{
+-	struct tpm_chip *chip = dev_get_drvdata(dev);
+-	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+-
+-	return crb_cmd_ready(dev, priv);
+-}
+-
+-static int __maybe_unused crb_pm_suspend(struct device *dev)
+-{
+-	int ret;
+-
+-	ret = tpm_pm_suspend(dev);
+-	if (ret)
+-		return ret;
+-
+-	return crb_pm_runtime_suspend(dev);
+-}
+-
+-static int __maybe_unused crb_pm_resume(struct device *dev)
+-{
+-	int ret;
+-
+-	ret = crb_pm_runtime_resume(dev);
+-	if (ret)
+-		return ret;
+-
+-	return tpm_pm_resume(dev);
+-}
+-
+ static const struct dev_pm_ops crb_pm = {
+-	SET_SYSTEM_SLEEP_PM_OPS(crb_pm_suspend, crb_pm_resume)
+-	SET_RUNTIME_PM_OPS(crb_pm_runtime_suspend, crb_pm_runtime_resume, NULL)
++	SET_SYSTEM_SLEEP_PM_OPS(tpm_pm_suspend, tpm_pm_resume)
+ };
+ 
+ static const struct acpi_device_id crb_device_ids[] = {
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 06639fb6ab85..8eb5e5ebe136 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -43,6 +43,8 @@ struct tpm_class_ops {
+ 	u8 (*status) (struct tpm_chip *chip);
+ 	bool (*update_timeouts)(struct tpm_chip *chip,
+ 				unsigned long *timeout_cap);
++	int (*go_idle)(struct tpm_chip *chip);
++	int (*cmd_ready)(struct tpm_chip *chip);
+ 	int (*request_locality)(struct tpm_chip *chip, int loc);
+ 	int (*relinquish_locality)(struct tpm_chip *chip, int loc);
+ 	void (*clk_enable)(struct tpm_chip *chip, bool value);
+-- 
+2.14.3
