@@ -1,174 +1,126 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56048 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751449AbeCYSBR (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41750 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753680AbeCYRqc (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 25 Mar 2018 14:01:17 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2PHx5kX021744
-        for <linux-integrity@vger.kernel.org>; Sun, 25 Mar 2018 14:01:16 -0400
-Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2gx40q0v5p-1
+        Sun, 25 Mar 2018 13:46:32 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2PHi3QB069760
+        for <linux-integrity@vger.kernel.org>; Sun, 25 Mar 2018 13:46:32 -0400
+Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2gx47bh0qk-1
         (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Sun, 25 Mar 2018 14:01:16 -0400
+        for <linux-integrity@vger.kernel.org>; Sun, 25 Mar 2018 13:46:31 -0400
 Received: from localhost
-        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Sun, 25 Mar 2018 19:01:14 +0100
-Subject: Re: [PATCH v3] ima: Fallback to the builtin hash algorithm
+        Sun, 25 Mar 2018 18:46:29 +0100
+Subject: [GIT PULL] linux-integrity patches for Linux 4.17
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Petr Vorel <pvorel@suse.cz>, linux-integrity@vger.kernel.org
-Date: Sun, 25 Mar 2018 14:01:10 -0400
-In-Reply-To: <20180323134108.9435-1-pvorel@suse.cz>
-References: <20180323134108.9435-1-pvorel@suse.cz>
+To: James Morris <jmorris@namei.org>
+Cc: linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Date: Sun, 25 Mar 2018 13:46:25 -0400
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1522000870.3541.34.camel@linux.vnet.ibm.com>
+Message-Id: <1521999985.3541.32.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 2018-03-23 at 14:41 +0100, Petr Vorel wrote:
-> IMA requires have it's hash algorithm to be compiled-in due it's early
-> use. Default IMA algorithm is protected by Kconfig to be compiled-in.
-> 
-> ima_hash kernel parameter allows to choose hash algorithm. When
-> specified algorithm not available or available as module, IMA
-> initialization fails, which leads to kernel panic (mknodat syscall calls
-> ima_post_path_mknod()). Therefore as fallback we force IMA to use
-> the default builtin Kconfig hash algorithm.
-> 
-> Fixed crash:
-> 
-> $ grep CONFIG_CRYPTO_MD4 .config
-> CONFIG_CRYPTO_MD4=m
-> 
-> [    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-4.12.14-2.3-default root=UUID=74ae8202-9ca7-4e39-813b-22287ec52f7a video=1024x768-16 plymouth.ignore-serial-consoles console=ttyS0 console=tty resume=/dev/disk/by-path/pci-0000:00:07.0-part3 splash=silent showopts ima_hash=md4
-> ...
-> [    1.545190] ima: Can not allocate md4 (reason: -2)
-> ...
-> [    2.610120] BUG: unable to handle kernel NULL pointer dereference at           (null)
-> [    2.611903] IP: ima_match_policy+0x23/0x390
-> [    2.612967] PGD 0 P4D 0
-> [    2.613080] Oops: 0000 [#1] SMP
-> [    2.613080] Modules linked in: autofs4
-> [    2.613080] Supported: Yes
-> [    2.613080] CPU: 0 PID: 1 Comm: systemd Not tainted 4.12.14-2.3-default #1
-> [    2.613080] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
-> [    2.613080] task: ffff88003e2d0040 task.stack: ffffc90000190000
-> [    2.613080] RIP: 0010:ima_match_policy+0x23/0x390
-> [    2.613080] RSP: 0018:ffffc90000193e88 EFLAGS: 00010296
-> [    2.613080] RAX: 0000000000000000 RBX: 000000000000000c RCX: 0000000000000004
-> [    2.613080] RDX: 0000000000000010 RSI: 0000000000000001 RDI: ffff880037071728
-> [    2.613080] RBP: 0000000000008000 R08: 0000000000000000 R09: 0000000000000000
-> [    2.613080] R10: 0000000000000008 R11: 61c8864680b583eb R12: 00005580ff10086f
-> [    2.613080] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000008000
-> [    2.613080] FS:  00007f5c1da08940(0000) GS:ffff88003fc00000(0000) knlGS:0000000000000000
-> [    2.613080] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [    2.613080] CR2: 0000000000000000 CR3: 0000000037002000 CR4: 00000000003406f0
-> [    2.613080] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [    2.613080] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> [    2.613080] Call Trace:
-> [    2.613080]  ? shmem_mknod+0xbf/0xd0
-> [    2.613080]  ima_post_path_mknod+0x1c/0x40
-> [    2.613080]  SyS_mknod+0x210/0x220
-> [    2.613080]  entry_SYSCALL_64_fastpath+0x1a/0xa5
-> [    2.613080] RIP: 0033:0x7f5c1bfde570
-> [    2.613080] RSP: 002b:00007ffde1c90dc8 EFLAGS: 00000246 ORIG_RAX: 0000000000000085
-> [    2.613080] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f5c1bfde570
-> [    2.613080] RDX: 0000000000000000 RSI: 0000000000008000 RDI: 00005580ff10086f
-> [    2.613080] RBP: 00007ffde1c91040 R08: 00005580ff10086f R09: 0000000000000000
-> [    2.613080] R10: 0000000000104000 R11: 0000000000000246 R12: 00005580ffb99660
-> [    2.613080] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000002
-> [    2.613080] Code: 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 41 57 41 56 44 8d 14 09 41 55 41 54 55 53 44 89 d3 09 cb 48 83 ec 38 48 8b 05 c5 03 29 01 <4c> 8b 20 4c 39 e0 0f 84 d7 01 00 00 4c 89 44 24 08 89 54 24 20
-> [    2.613080] RIP: ima_match_policy+0x23/0x390 RSP: ffffc90000193e88
-> [    2.613080] CR2: 0000000000000000
-> [    2.613080] ---[ end trace 9a9f0a8a73079f6a ]---
-> [    2.673052] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
-> [    2.673052]
-> [    2.675337] Kernel Offset: disabled
-> [    2.676405] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
-> 
-> Signed-off-by: Petr Vorel <pvorel@suse.cz>
+Hi James,
 
-Thanks!
+This pull request contains a mixture of bug fixes, code cleanup, and
+continues to close IMA-measurement, IMA-appraisal, and IMA-audit gaps.
+
+Closing measurement, appraisal, and audit gaps:
+- A new LSM hook named security_cred_getsecid is defined in order to
+validate a file's integrity based on the credentials of the process
+going to being executed, not of the existing process.
+
+- Fuse filesystems are inherently untrusted.  Instead of always re-
+evaluating files, this pull request differentiates between privileged
+and unprivileged mounts, and defines a new builtin policy to fail file
+signature verification even on privileged mounted filesystems.
+
+Code cleanup:
+- Support for verifying a file's integrity based on an appended
+signature (scripts/sign-file) is coming along really nicely.  This
+pull request includes some of the cleanup patches from the appended
+signature patch series.
+ 
+thanks,
 
 Mimi
+---
 
-> ---
-> Changes v2->v3:
-> * Return back to v1 variant + log in ima_init_crypto() and in
-> init_ima().
-> 
-> I choose not to detect and mention in ima_init_crypto() whether
-> allocated hash is default or not (I don't consider it important enough
-> if everything work well and don't want to say "default" when some of
-> working algorithms actually aren't default, e.g. md5).
-> 
-> But I decide to put this info in init_ima() in case we load default
-> algorithm as fallback.
-> 
-> $ grep -e ^CONFIG_IMA_DEFAULT_HASH -e CONFIG_CRYPTO_MD[45] .config
-> CONFIG_IMA_DEFAULT_HASH_SHA256=y
-> CONFIG_IMA_DEFAULT_HASH="sha256"
-> CONFIG_CRYPTO_MD4=m
-> CONFIG_CRYPTO_MD5=y
-> 
-> * default (none) or ima_hash=sha256
-> [    2.162025] ima: Allocated hash algorithm: sha256
-> 
-> * ima_hash=md4
-> [    2.136885] ima: Can not allocate md4 (reason: -2)
-> [    2.138364] ima: Allocating md4 failed, going to use default hash algorithm sha256
-> [    2.141472] ima: Allocated hash algorithm: sha256
-> 
-> * ima_hash=md5
-> [    2.128360] ima: Allocated hash algorithm: md5
-> ---
->  security/integrity/ima/ima_crypto.c |  2 ++
->  security/integrity/ima/ima_main.c   | 13 +++++++++++++
->  2 files changed, 15 insertions(+)
-> 
-> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-> index 205bc69361ea..4e085a17124f 100644
-> --- a/security/integrity/ima/ima_crypto.c
-> +++ b/security/integrity/ima/ima_crypto.c
-> @@ -73,6 +73,8 @@ int __init ima_init_crypto(void)
->  		       hash_algo_name[ima_hash_algo], rc);
->  		return rc;
->  	}
-> +	pr_info("Allocated hash algorithm: %s\n",
-> +		hash_algo_name[ima_hash_algo]);
->  	return 0;
->  }
-> 
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 5d122daf5c8a..74d0bd7e76d7 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -16,6 +16,9 @@
->   *	implements the IMA hooks: ima_bprm_check, ima_file_mmap,
->   *	and ima_file_check.
->   */
-> +
-> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> +
->  #include <linux/module.h>
->  #include <linux/file.h>
->  #include <linux/binfmts.h>
-> @@ -504,6 +507,16 @@ static int __init init_ima(void)
->  	ima_init_template_list();
->  	hash_setup(CONFIG_IMA_DEFAULT_HASH);
->  	error = ima_init();
-> +
-> +	if (error && strcmp(hash_algo_name[ima_hash_algo],
-> +			    CONFIG_IMA_DEFAULT_HASH) != 0) {
-> +		pr_info("Allocating %s failed, going to use default hash algorithm %s\n",
-> +			hash_algo_name[ima_hash_algo], CONFIG_IMA_DEFAULT_HASH);
-> +		hash_setup_done = 0;
-> +		hash_setup(CONFIG_IMA_DEFAULT_HASH);
-> +		error = ima_init();
-> +	}
-> +
->  	if (!error) {
->  		ima_initialized = 1;
->  		ima_update_policy_flag();
+The following changes since commit 5893ed18a26d1f56b97c0290b0cbbc2d49d6de28:
+
+  Merge tag 'v4.16-rc6' into next-general (2018-03-23 08:26:16 +1100)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
+
+for you to fetch changes up to ab60368ab6a452466885ef4edf0cefd089465132:
+
+  ima: Fallback to the builtin hash algorithm (2018-03-25 07:26:32 -0400)
+
+----------------------------------------------------------------
+Hernan Gonzalez (2):
+      evm: Move evm_hmac and evm_hash from evm_main.c to evm_crypto.c
+      evm: Constify *integrity_status_msg[]
+
+Jiandi An (1):
+      ima: Fix Kconfig to select TPM 2.0 CRB interface
+
+Martin Townsend (1):
+      ima: Add smackfs to the default appraise/measure list
+
+Matthew Garrett (2):
+      security: Add a cred_getsecid hook
+      IMA: Support using new creds in appraisal policy
+
+Mimi Zohar (5):
+      ima: fail file signature verification on non-init mounted filesystems
+      ima: re-evaluate files on privileged mounted filesystems
+      ima: clear IMA_HASH
+      ima: fail signature verification based on policy
+      fuse: define the filesystem as untrusted
+
+Petr Vorel (1):
+      ima: Fallback to the builtin hash algorithm
+
+Sascha Hauer (1):
+      evm: check for remount ro in progress before writing
+
+Thiago Jung Bauermann (3):
+      integrity: Remove unused macro IMA_ACTION_RULE_FLAGS
+      ima: Simplify ima_eventsig_init()
+      ima: Improvements in ima_appraise_measurement()
+
+Tycho Andersen (1):
+      ima: drop vla in ima_audit_measurement()
+
+ Documentation/ABI/testing/ima_policy            |  2 +-
+ Documentation/admin-guide/kernel-parameters.txt |  8 ++-
+ fs/fuse/inode.c                                 |  3 ++
+ include/linux/fs.h                              |  2 +
+ include/linux/lsm_hooks.h                       |  6 +++
+ include/linux/security.h                        |  1 +
+ security/integrity/evm/evm.h                    |  2 -
+ security/integrity/evm/evm_crypto.c             |  3 ++
+ security/integrity/evm/evm_main.c               | 12 +++--
+ security/integrity/iint.c                       |  2 +
+ security/integrity/ima/Kconfig                  |  1 +
+ security/integrity/ima/ima.h                    |  9 ++--
+ security/integrity/ima/ima_api.c                | 25 +++++----
+ security/integrity/ima/ima_appraise.c           | 65 +++++++++++++++++------
+ security/integrity/ima/ima_crypto.c             |  2 +
+ security/integrity/ima/ima_main.c               | 69 ++++++++++++++++++++-----
+ security/integrity/ima/ima_policy.c             | 32 ++++++++----
+ security/integrity/ima/ima_template_lib.c       | 11 ++--
+ security/integrity/integrity.h                  | 11 ++--
+ security/security.c                             |  7 +++
+ security/selinux/hooks.c                        |  6 +++
+ security/smack/smack_lsm.c                      | 18 +++++++
+ 22 files changed, 227 insertions(+), 70 deletions(-)
