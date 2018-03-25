@@ -1,36 +1,174 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from namei.org ([65.99.196.166]:53888 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751208AbeCYVTZ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 25 Mar 2018 17:19:25 -0400
-Date: Mon, 26 Mar 2018 08:19:24 +1100 (AEDT)
-From: James Morris <jmorris@namei.org>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-cc: linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Subject: Re: [GIT PULL] linux-integrity patches for Linux 4.17
-In-Reply-To: <1521999985.3541.32.camel@linux.vnet.ibm.com>
-Message-ID: <alpine.LRH.2.21.1803260818400.324@namei.org>
-References: <1521999985.3541.32.camel@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56048 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751449AbeCYSBR (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 25 Mar 2018 14:01:17 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2PHx5kX021744
+        for <linux-integrity@vger.kernel.org>; Sun, 25 Mar 2018 14:01:16 -0400
+Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2gx40q0v5p-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Sun, 25 Mar 2018 14:01:16 -0400
+Received: from localhost
+        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Sun, 25 Mar 2018 19:01:14 +0100
+Subject: Re: [PATCH v3] ima: Fallback to the builtin hash algorithm
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Petr Vorel <pvorel@suse.cz>, linux-integrity@vger.kernel.org
+Date: Sun, 25 Mar 2018 14:01:10 -0400
+In-Reply-To: <20180323134108.9435-1-pvorel@suse.cz>
+References: <20180323134108.9435-1-pvorel@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1522000870.3541.34.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sun, 25 Mar 2018, Mimi Zohar wrote:
-
-> Hi James,
+On Fri, 2018-03-23 at 14:41 +0100, Petr Vorel wrote:
+> IMA requires have it's hash algorithm to be compiled-in due it's early
+> use. Default IMA algorithm is protected by Kconfig to be compiled-in.
 > 
-> This pull request contains a mixture of bug fixes, code cleanup, and
-> continues to close IMA-measurement, IMA-appraisal, and IMA-audit gaps.
+> ima_hash kernel parameter allows to choose hash algorithm. When
+> specified algorithm not available or available as module, IMA
+> initialization fails, which leads to kernel panic (mknodat syscall calls
+> ima_post_path_mknod()). Therefore as fallback we force IMA to use
+> the default builtin Kconfig hash algorithm.
 > 
+> Fixed crash:
+> 
+> $ grep CONFIG_CRYPTO_MD4 .config
+> CONFIG_CRYPTO_MD4=m
+> 
+> [    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-4.12.14-2.3-default root=UUID=74ae8202-9ca7-4e39-813b-22287ec52f7a video=1024x768-16 plymouth.ignore-serial-consoles console=ttyS0 console=tty resume=/dev/disk/by-path/pci-0000:00:07.0-part3 splash=silent showopts ima_hash=md4
+> ...
+> [    1.545190] ima: Can not allocate md4 (reason: -2)
+> ...
+> [    2.610120] BUG: unable to handle kernel NULL pointer dereference at           (null)
+> [    2.611903] IP: ima_match_policy+0x23/0x390
+> [    2.612967] PGD 0 P4D 0
+> [    2.613080] Oops: 0000 [#1] SMP
+> [    2.613080] Modules linked in: autofs4
+> [    2.613080] Supported: Yes
+> [    2.613080] CPU: 0 PID: 1 Comm: systemd Not tainted 4.12.14-2.3-default #1
+> [    2.613080] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
+> [    2.613080] task: ffff88003e2d0040 task.stack: ffffc90000190000
+> [    2.613080] RIP: 0010:ima_match_policy+0x23/0x390
+> [    2.613080] RSP: 0018:ffffc90000193e88 EFLAGS: 00010296
+> [    2.613080] RAX: 0000000000000000 RBX: 000000000000000c RCX: 0000000000000004
+> [    2.613080] RDX: 0000000000000010 RSI: 0000000000000001 RDI: ffff880037071728
+> [    2.613080] RBP: 0000000000008000 R08: 0000000000000000 R09: 0000000000000000
+> [    2.613080] R10: 0000000000000008 R11: 61c8864680b583eb R12: 00005580ff10086f
+> [    2.613080] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000008000
+> [    2.613080] FS:  00007f5c1da08940(0000) GS:ffff88003fc00000(0000) knlGS:0000000000000000
+> [    2.613080] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    2.613080] CR2: 0000000000000000 CR3: 0000000037002000 CR4: 00000000003406f0
+> [    2.613080] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [    2.613080] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [    2.613080] Call Trace:
+> [    2.613080]  ? shmem_mknod+0xbf/0xd0
+> [    2.613080]  ima_post_path_mknod+0x1c/0x40
+> [    2.613080]  SyS_mknod+0x210/0x220
+> [    2.613080]  entry_SYSCALL_64_fastpath+0x1a/0xa5
+> [    2.613080] RIP: 0033:0x7f5c1bfde570
+> [    2.613080] RSP: 002b:00007ffde1c90dc8 EFLAGS: 00000246 ORIG_RAX: 0000000000000085
+> [    2.613080] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f5c1bfde570
+> [    2.613080] RDX: 0000000000000000 RSI: 0000000000008000 RDI: 00005580ff10086f
+> [    2.613080] RBP: 00007ffde1c91040 R08: 00005580ff10086f R09: 0000000000000000
+> [    2.613080] R10: 0000000000104000 R11: 0000000000000246 R12: 00005580ffb99660
+> [    2.613080] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000002
+> [    2.613080] Code: 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 41 57 41 56 44 8d 14 09 41 55 41 54 55 53 44 89 d3 09 cb 48 83 ec 38 48 8b 05 c5 03 29 01 <4c> 8b 20 4c 39 e0 0f 84 d7 01 00 00 4c 89 44 24 08 89 54 24 20
+> [    2.613080] RIP: ima_match_policy+0x23/0x390 RSP: ffffc90000193e88
+> [    2.613080] CR2: 0000000000000000
+> [    2.613080] ---[ end trace 9a9f0a8a73079f6a ]---
+> [    2.673052] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
+> [    2.673052]
+> [    2.675337] Kernel Offset: disabled
+> [    2.676405] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
+> 
+> Signed-off-by: Petr Vorel <pvorel@suse.cz>
 
-Thanks, merged to:
+Thanks!
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-integrity
-and next-testing
+Mimi
 
-
--- 
-James Morris
-<jmorris@namei.org>
+> ---
+> Changes v2->v3:
+> * Return back to v1 variant + log in ima_init_crypto() and in
+> init_ima().
+> 
+> I choose not to detect and mention in ima_init_crypto() whether
+> allocated hash is default or not (I don't consider it important enough
+> if everything work well and don't want to say "default" when some of
+> working algorithms actually aren't default, e.g. md5).
+> 
+> But I decide to put this info in init_ima() in case we load default
+> algorithm as fallback.
+> 
+> $ grep -e ^CONFIG_IMA_DEFAULT_HASH -e CONFIG_CRYPTO_MD[45] .config
+> CONFIG_IMA_DEFAULT_HASH_SHA256=y
+> CONFIG_IMA_DEFAULT_HASH="sha256"
+> CONFIG_CRYPTO_MD4=m
+> CONFIG_CRYPTO_MD5=y
+> 
+> * default (none) or ima_hash=sha256
+> [    2.162025] ima: Allocated hash algorithm: sha256
+> 
+> * ima_hash=md4
+> [    2.136885] ima: Can not allocate md4 (reason: -2)
+> [    2.138364] ima: Allocating md4 failed, going to use default hash algorithm sha256
+> [    2.141472] ima: Allocated hash algorithm: sha256
+> 
+> * ima_hash=md5
+> [    2.128360] ima: Allocated hash algorithm: md5
+> ---
+>  security/integrity/ima/ima_crypto.c |  2 ++
+>  security/integrity/ima/ima_main.c   | 13 +++++++++++++
+>  2 files changed, 15 insertions(+)
+> 
+> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+> index 205bc69361ea..4e085a17124f 100644
+> --- a/security/integrity/ima/ima_crypto.c
+> +++ b/security/integrity/ima/ima_crypto.c
+> @@ -73,6 +73,8 @@ int __init ima_init_crypto(void)
+>  		       hash_algo_name[ima_hash_algo], rc);
+>  		return rc;
+>  	}
+> +	pr_info("Allocated hash algorithm: %s\n",
+> +		hash_algo_name[ima_hash_algo]);
+>  	return 0;
+>  }
+> 
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 5d122daf5c8a..74d0bd7e76d7 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -16,6 +16,9 @@
+>   *	implements the IMA hooks: ima_bprm_check, ima_file_mmap,
+>   *	and ima_file_check.
+>   */
+> +
+> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> +
+>  #include <linux/module.h>
+>  #include <linux/file.h>
+>  #include <linux/binfmts.h>
+> @@ -504,6 +507,16 @@ static int __init init_ima(void)
+>  	ima_init_template_list();
+>  	hash_setup(CONFIG_IMA_DEFAULT_HASH);
+>  	error = ima_init();
+> +
+> +	if (error && strcmp(hash_algo_name[ima_hash_algo],
+> +			    CONFIG_IMA_DEFAULT_HASH) != 0) {
+> +		pr_info("Allocating %s failed, going to use default hash algorithm %s\n",
+> +			hash_algo_name[ima_hash_algo], CONFIG_IMA_DEFAULT_HASH);
+> +		hash_setup_done = 0;
+> +		hash_setup(CONFIG_IMA_DEFAULT_HASH);
+> +		error = ima_init();
+> +	}
+> +
+>  	if (!error) {
+>  		ima_initialized = 1;
+>  		ima_update_policy_flag();
