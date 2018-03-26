@@ -1,47 +1,40 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:35041 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751076AbeCZUJk (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 26 Mar 2018 16:09:40 -0400
-Date: Mon, 26 Mar 2018 23:09:36 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Tomas Winkler <tomas.winkler@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V4] tpm: separate cmd_ready/go_idle from runtime_pm
-Message-ID: <20180326200936.GA3810@linux.intel.com>
-References: <20180324183935.20784-1-tomas.winkler@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180324183935.20784-1-tomas.winkler@intel.com>
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45804 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751739AbeCZSbW (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 26 Mar 2018 14:31:22 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2QITRY5053624
+        for <linux-integrity@vger.kernel.org>; Mon, 26 Mar 2018 14:31:21 -0400
+Received: from e06smtp11.uk.ibm.com (e06smtp11.uk.ibm.com [195.75.94.107])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2gy4neuy88-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 26 Mar 2018 14:31:21 -0400
+Received: from localhost
+        by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Mon, 26 Mar 2018 19:31:19 +0100
+Subject: Re: [PATCH v3] ima: Fallback to the builtin hash algorithm
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Petr Vorel <pvorel@suse.cz>
+Cc: linux-integrity@vger.kernel.org
+Date: Mon, 26 Mar 2018 14:31:14 -0400
+In-Reply-To: <20180326081627.GB12097@x230>
+References: <20180323134108.9435-1-pvorel@suse.cz>
+         <1522000870.3541.34.camel@linux.vnet.ibm.com> <20180326081627.GB12097@x230>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1522089074.3541.95.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sat, Mar 24, 2018 at 09:39:35PM +0300, Tomas Winkler wrote:
-> From: "Winkler, Tomas" <tomas.winkler@intel.com>
-> 
-> We cannot use go_idle cmd_ready commands via runtime_pm handles
-> as with the introduction of localities this is no longer an optional
-> feature, while runtime pm can be not enabled.
-> Though cmd_ready/go_idle provides power saving feature, it's also part of
-> TPM2 protocol and should be called explicitly.
-> This patch exposes cmd_read/go_idle via tpm class ops and removes
-> runtime pm support as it is not used by any driver.
-> 
-> tpm_crb no longer needs own power saving functions and can drop using
-> tpm_pm_suspend/resume.
-> 
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+On Mon, 2018-03-26 at 10:16 +0200, Petr Vorel wrote:
 
-Still fails on Kabylake exactly the same way. With this I get
-RC_UNBALANCED in these four test cases:
+> Thanks for merging! I've forgotten to add Cc: stable@vger.kernel.org, so I'll send it to
+> stable@vger.kernel.org once it gets into mainline (unless you objects, of course).
 
-test_flush_context (tpm2_smoke.SpaceTest) ... ERROR
-test_get_handles (tpm2_smoke.SpaceTest) ... ERROR
-test_make_two_spaces (tpm2_smoke.SpaceTest) ... ERROR
+Sorry, I think it is the maintainer's responsibility, but I forgot to
+add it.  Thank you for the reminder.
 
-Without this patch applied these errors do not occur.
-
-/Jarkko
+Mimi
