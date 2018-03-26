@@ -1,57 +1,144 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:43290 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751160AbeC0AH0 (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38380 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752278AbeCZWbf (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 26 Mar 2018 20:07:26 -0400
-From: Sahil Rihan <srihan@fb.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-CC: "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        Alexei Starovoitov <ast@fb.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Peter Huewe <peterhuewe@gmx.de>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tpm: allow TCPA log area to be empty
-Date: Tue, 27 Mar 2018 00:07:14 +0000
-Message-ID: <49C2A39F-C9ED-4620-82C9-C0919DA3F2CD@fb.com>
-References: <20180310161637.7723-1-jarkko.sakkinen@linux.intel.com>
- <20180312150231.GA24717@ziepe.ca> <20180316125525.GB5035@linux.intel.com>
- <20180319021323.GD27186@ziepe.ca> <20180319212436.GD14364@linux.intel.com>
- <A799BB0A-C44B-41AB-9C38-4B974A50210D@fb.com>
- <edcff887ff133df486812bb5ecadcc101bc1d227.camel@linux.intel.com>
-In-Reply-To: <edcff887ff133df486812bb5ecadcc101bc1d227.camel@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        Mon, 26 Mar 2018 18:31:35 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w2QMUxSl112464
+        for <linux-integrity@vger.kernel.org>; Mon, 26 Mar 2018 18:31:34 -0400
+Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2gy8vf1nr6-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 26 Mar 2018 18:31:34 -0400
+Received: from localhost
+        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Mon, 26 Mar 2018 23:31:30 +0100
+Subject: Re: [RFC PATCH v2 0/4] Rewrite tests into new API + fixes
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Petr Vorel <pvorel@suse.cz>, ltp@lists.linux.it
+Cc: linux-integrity@vger.kernel.org
+Date: Mon, 26 Mar 2018 18:31:27 -0400
+In-Reply-To: <20180314155731.5943-1-pvorel@suse.cz>
+References: <20180314155731.5943-1-pvorel@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1522103487.3541.162.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-> On 3/22/18, 7:20 AM, "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com> wrote:
->
->   On Tue, 2018-03-20 at 22:29 +0000, Sahil Rihan wrote:
->   > > On 3/19/18, 2:25 PM, "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
->   > > wrote:
->   > >     
->   > >    Sahil, would you care to try if this fixes the issue that you are
->   > >    having or not?
->   > 
->   > Yes, we can test this out. Might take a day or two.
->    
->   Awesome, thank you. I'll add
->    
->   Reported-by: Sahil Rihan <srihan@fb.com>
->    
->   if that is OK for you?
+Hi Petr,
 
-Jarkko, 
+On Wed, 2018-03-14 at 16:57 +0100, Petr Vorel wrote:
+> Hi,
+> 
+> this is a second attempt to rewrite IMA tests.
+> Comments and fixes are welcome.
+> 
+> Changes v1->v2:
+> * ima_measurements.sh: add support for "ima-ng" and "ima-sig" IMA
+>   measurement templates
+> * ima_measurements.sh: add support for most of hash algorithms is
+>   defined in include/uapi/linux/hash_info.h
+> * fix ima_boot_aggregate ("ima/ima_boot_aggregate: Increase MAX_EVENT_SIZE to 8k")
+> * ima_tpm.sh: fixes of TPM test ("ima/tpm: Various fixes")
+> * ima_measurements.sh: drop ima_measure and use evmctl (external dependency) instead
+> * ima_measurements.sh: check XFS version for iversion support
+> 
+> TODO
+> * ima_measurements.sh: Add support for ima_template_fmt kernel parameter.
+> 
+> * ima_policy.sh: Detect if the policy must be signed [1] (IMA_WRITE_POLICY or
+> "secure_boot" kernel parameter).
 
-We applied your patch to a 4.11 kernel (unfortunately not the latest upstream) and were able to confirm that the char device is now being created correctly. The sysfs enabled node is also present.
+> @Mimi: What is a best approach in case policy must be signed? measure.policy
+> and measure.policy-invalid files are not signed should we skip all tests in
+> ima_policy.sh with something like "Not supported when policy must be signed"?
+> Or running them both and expect them to fail as they're not signed?
 
-And yes, please add the "Reported-by" line.
+> As that's how I understand your related commit in kernel
+> (19f8a84713ed "ima: measure and appraise the IMA policy itself").
 
-Thanks,
-Sahil
- 
+If you can determine that writing the policy should fail and then
+detect that it actually did fail, the latter option is more complete. 
+
+> BTW load_policy() use old approach catting the content into sysfs policy file.
+> Maybe it'd be good to echo policy filename into sysfs policy file for kernel >
+> 4.6 (feature added in 7429b092811f "ima: load policy using path").
+
+Cat'ing the file doesn't work if the policy has to be signed. I
+haven't tried writing the policy pathname, when the file doesn't
+require it to be signed.  There's no reason that it wouldn't work.
+
+> * ima_measurement.sh,ima_violations.sh: Avoid using tmpfs filesystem [1]. You
+> suggested using RAM block device. Would it be ok to use filesystem created on
+> loop device (/dev/loop0)? Or even create image file in $TMPDIR (mostly
+> /tmp, which can be tmpfs) and use it as a loop device?
+
+Yes, creating a filesystem on a loop device should work.
+
+eg.
+$ dd if=/dev/zero of=/tmp/test.img count=40960
+$ mkfs -t ext3 -q /tmp/test.img
+$ sudo mount -o loop=/dev/loop0 /tmp/test.img /mnt
+$ sudo cp --preserve=xattr /usr/bin/ls /mnt/
+$ getfattr -n security.ima -e hex --dump /mnt/ls
+
+# file: mnt/ls
+security.ima=0x0302046e6c104601001f0e4ed440b63a16bb13e68a3ae556a311047
+57daa51bce56f505367c00ec05bbfe38a1f7b0aa56b86ff41eba7cddaca0b7522bb46e
+00e72b63aeb81645c2e0fdf896dfc51303917bfb4c7b360ad22a85ff4a0570b2e29059
+aba6c8ddd1db84d6cbfe6bb341549b7aa5a004acb96c4a14273ead954fb3ce3bcece04
+680cba0c763b0d122d8f358a534cb2b786ef892d3729ff56abe10694c3bbcd35909cc1
+046cb89553bb4636bc0493362758f24bb8cbaf5c88b16c0ecbb879ef7c4a3281cb970a
+b34634923a5c73a624528f70a03ce5fbef2845e770c536a8da1cce374381a1b176a230
+d438e9fd2f16f95c6ee16f49ba107cd57120a31f18339cfe3215a69
+
+
+> To be honnest, I'm not sure if I addressed your comment [2]:
+> These tests are for the IMA-measurement aspect only, not IMA-
+> appraisal.  Adding measurements to the measurement list won't cause
+> the system to stop working, unless keys are sealed to a particular TPM
+> PCR value.  Nobody is or should be sealing keys to PCR-10, since the
+> ordering of the measurements is non deterministic.
+> As we add IMA-appraisal tests requiring files to be signed, things
+> will fail if either the public key isn't on the IMA keyring or the
+> file isn't properly signed.  For this reason, limiting file IMA-
+> appraisal tests to a particular filesystem simplifies testing.
+
+Even without adding IMA-appraisal tests, updating/cleaning up the IMA-
+measurement tests is good.
+
+thank you!
+
+Mimi
+
+> [1] http://lists.linux.it/pipermail/ltp/2018-January/006970.html
+> [2] http://lists.linux.it/pipermail/ltp/2018-January/007024.html
+> 
+
+> 
+> Kind regards,
+> Petr
+> 
+> 
+> Petr Vorel (4):
+>   security/ima: Rewrite tests into new API + fixes
+>   security/ima: Run measurements after policy
+>   ima/ima_boot_aggregate: Increase MAX_EVENT_SIZE to 8k
+>   ima/tpm: Various fixes
+> 
+>  runtest/ima                                        |   8 +-
+>  testcases/kernel/security/integrity/.gitignore     |   1 -
+>  .../integrity/ima/src/ima_boot_aggregate.c         |   2 +-
+>  .../security/integrity/ima/src/ima_measure.c       | 219 -------------------
+>  .../integrity/ima/tests/ima_measurements.sh        | 239 +++++++++++----------
+>  .../security/integrity/ima/tests/ima_policy.sh     | 148 ++++++-------
+>  .../security/integrity/ima/tests/ima_setup.sh      | 110 ++++------
+>  .../kernel/security/integrity/ima/tests/ima_tpm.sh | 160 ++++++--------
+>  .../security/integrity/ima/tests/ima_violations.sh | 217 +++++++++----------
+>  9 files changed, 417 insertions(+), 687 deletions(-)
+>  delete mode 100644 testcases/kernel/security/integrity/ima/src/ima_measure.c
+>  mode change 100755 => 100644 testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+> 
