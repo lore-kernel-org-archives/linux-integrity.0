@@ -1,170 +1,115 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:35728 "EHLO mx2.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:34267 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751196AbeCZIQa (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 26 Mar 2018 04:16:30 -0400
-Date: Mon, 26 Mar 2018 10:16:27 +0200
+        id S1750864AbeCZIEo (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 26 Mar 2018 04:04:44 -0400
 From: Petr Vorel <pvorel@suse.cz>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v3] ima: Fallback to the builtin hash algorithm
-Message-ID: <20180326081627.GB12097@x230>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20180323134108.9435-1-pvorel@suse.cz>
- <1522000870.3541.34.camel@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1522000870.3541.34.camel@linux.vnet.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: Petr Vorel <pvorel@suse.cz>, Mimi Zohar <zohar@linux.vnet.ibm.com>
+Subject: [PATCH ima-evm-utils] autotools: Try to find correct manpage stylesheet path
+Date: Mon, 26 Mar 2018 10:04:36 +0200
+Message-Id: <20180326080436.18188-1-pvorel@suse.cz>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-> On Fri, 2018-03-23 at 14:41 +0100, Petr Vorel wrote:
-> > IMA requires have it's hash algorithm to be compiled-in due it's early
-> > use. Default IMA algorithm is protected by Kconfig to be compiled-in.
+xslt docbook styles differ across distributions, which requires some
+workarounds [1]. Try to check the manpage stylesheet path with
+xmlcatalog and fallback to the original one.
 
-> > ima_hash kernel parameter allows to choose hash algorithm. When
-> > specified algorithm not available or available as module, IMA
-> > initialization fails, which leads to kernel panic (mknodat syscall calls
-> > ima_post_path_mknod()). Therefore as fallback we force IMA to use
-> > the default builtin Kconfig hash algorithm.
+Add option --with-xml-catalog to use non-default catalog.
 
-> > Fixed crash:
++ remove trailing whitespace
 
-> > $ grep CONFIG_CRYPTO_MD4 .config
-> > CONFIG_CRYPTO_MD4=m
+[1] https://github.com/CESNET/ipfixcol/blob/master/base/m4/lbr_check_xsltproc.m4
 
-> > [    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-4.12.14-2.3-default root=UUID=74ae8202-9ca7-4e39-813b-22287ec52f7a video=1024x768-16 plymouth.ignore-serial-consoles console=ttyS0 console=tty resume=/dev/disk/by-path/pci-0000:00:07.0-part3 splash=silent showopts ima_hash=md4
-> > ...
-> > [    1.545190] ima: Can not allocate md4 (reason: -2)
-> > ...
-> > [    2.610120] BUG: unable to handle kernel NULL pointer dereference at           (null)
-> > [    2.611903] IP: ima_match_policy+0x23/0x390
-> > [    2.612967] PGD 0 P4D 0
-> > [    2.613080] Oops: 0000 [#1] SMP
-> > [    2.613080] Modules linked in: autofs4
-> > [    2.613080] Supported: Yes
-> > [    2.613080] CPU: 0 PID: 1 Comm: systemd Not tainted 4.12.14-2.3-default #1
-> > [    2.613080] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
-> > [    2.613080] task: ffff88003e2d0040 task.stack: ffffc90000190000
-> > [    2.613080] RIP: 0010:ima_match_policy+0x23/0x390
-> > [    2.613080] RSP: 0018:ffffc90000193e88 EFLAGS: 00010296
-> > [    2.613080] RAX: 0000000000000000 RBX: 000000000000000c RCX: 0000000000000004
-> > [    2.613080] RDX: 0000000000000010 RSI: 0000000000000001 RDI: ffff880037071728
-> > [    2.613080] RBP: 0000000000008000 R08: 0000000000000000 R09: 0000000000000000
-> > [    2.613080] R10: 0000000000000008 R11: 61c8864680b583eb R12: 00005580ff10086f
-> > [    2.613080] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000008000
-> > [    2.613080] FS:  00007f5c1da08940(0000) GS:ffff88003fc00000(0000) knlGS:0000000000000000
-> > [    2.613080] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [    2.613080] CR2: 0000000000000000 CR3: 0000000037002000 CR4: 00000000003406f0
-> > [    2.613080] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > [    2.613080] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > [    2.613080] Call Trace:
-> > [    2.613080]  ? shmem_mknod+0xbf/0xd0
-> > [    2.613080]  ima_post_path_mknod+0x1c/0x40
-> > [    2.613080]  SyS_mknod+0x210/0x220
-> > [    2.613080]  entry_SYSCALL_64_fastpath+0x1a/0xa5
-> > [    2.613080] RIP: 0033:0x7f5c1bfde570
-> > [    2.613080] RSP: 002b:00007ffde1c90dc8 EFLAGS: 00000246 ORIG_RAX: 0000000000000085
-> > [    2.613080] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f5c1bfde570
-> > [    2.613080] RDX: 0000000000000000 RSI: 0000000000008000 RDI: 00005580ff10086f
-> > [    2.613080] RBP: 00007ffde1c91040 R08: 00005580ff10086f R09: 0000000000000000
-> > [    2.613080] R10: 0000000000104000 R11: 0000000000000246 R12: 00005580ffb99660
-> > [    2.613080] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000002
-> > [    2.613080] Code: 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 41 57 41 56 44 8d 14 09 41 55 41 54 55 53 44 89 d3 09 cb 48 83 ec 38 48 8b 05 c5 03 29 01 <4c> 8b 20 4c 39 e0 0f 84 d7 01 00 00 4c 89 44 24 08 89 54 24 20
-> > [    2.613080] RIP: ima_match_policy+0x23/0x390 RSP: ffffc90000193e88
-> > [    2.613080] CR2: 0000000000000000
-> > [    2.613080] ---[ end trace 9a9f0a8a73079f6a ]---
-> > [    2.673052] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
-> > [    2.673052]
-> > [    2.675337] Kernel Offset: disabled
-> > [    2.676405] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
+---
+NOTE: resent to inux-integrity ML as ML on sourceforge seems to be left.
+---
+ Makefile.am               |  3 ---
+ configure.ac              |  6 ++++--
+ m4/manpage-docbook-xsl.m4 | 28 ++++++++++++++++++++++++++++
+ 3 files changed, 32 insertions(+), 5 deletions(-)
+ create mode 100644 m4/manpage-docbook-xsl.m4
 
-> > Signed-off-by: Petr Vorel <pvorel@suse.cz>
-
-> Thanks!
-Thanks for merging! I've forgotten to add Cc: stable@vger.kernel.org, so I'll send it to
-stable@vger.kernel.org once it gets into mainline (unless you objects, of course).
-
-Kind regards,
-Petr
-
-> Mimi
-
-> > ---
-> > Changes v2->v3:
-> > * Return back to v1 variant + log in ima_init_crypto() and in
-> > init_ima().
-
-> > I choose not to detect and mention in ima_init_crypto() whether
-> > allocated hash is default or not (I don't consider it important enough
-> > if everything work well and don't want to say "default" when some of
-> > working algorithms actually aren't default, e.g. md5).
-
-> > But I decide to put this info in init_ima() in case we load default
-> > algorithm as fallback.
-
-> > $ grep -e ^CONFIG_IMA_DEFAULT_HASH -e CONFIG_CRYPTO_MD[45] .config
-> > CONFIG_IMA_DEFAULT_HASH_SHA256=y
-> > CONFIG_IMA_DEFAULT_HASH="sha256"
-> > CONFIG_CRYPTO_MD4=m
-> > CONFIG_CRYPTO_MD5=y
-
-> > * default (none) or ima_hash=sha256
-> > [    2.162025] ima: Allocated hash algorithm: sha256
-
-> > * ima_hash=md4
-> > [    2.136885] ima: Can not allocate md4 (reason: -2)
-> > [    2.138364] ima: Allocating md4 failed, going to use default hash algorithm sha256
-> > [    2.141472] ima: Allocated hash algorithm: sha256
-
-> > * ima_hash=md5
-> > [    2.128360] ima: Allocated hash algorithm: md5
-> > ---
-> >  security/integrity/ima/ima_crypto.c |  2 ++
-> >  security/integrity/ima/ima_main.c   | 13 +++++++++++++
-> >  2 files changed, 15 insertions(+)
-
-> > diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-> > index 205bc69361ea..4e085a17124f 100644
-> > --- a/security/integrity/ima/ima_crypto.c
-> > +++ b/security/integrity/ima/ima_crypto.c
-> > @@ -73,6 +73,8 @@ int __init ima_init_crypto(void)
-> >  		       hash_algo_name[ima_hash_algo], rc);
-> >  		return rc;
-> >  	}
-> > +	pr_info("Allocated hash algorithm: %s\n",
-> > +		hash_algo_name[ima_hash_algo]);
-> >  	return 0;
-> >  }
-
-> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> > index 5d122daf5c8a..74d0bd7e76d7 100644
-> > --- a/security/integrity/ima/ima_main.c
-> > +++ b/security/integrity/ima/ima_main.c
-> > @@ -16,6 +16,9 @@
-> >   *	implements the IMA hooks: ima_bprm_check, ima_file_mmap,
-> >   *	and ima_file_check.
-> >   */
-> > +
-> > +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> > +
-> >  #include <linux/module.h>
-> >  #include <linux/file.h>
-> >  #include <linux/binfmts.h>
-> > @@ -504,6 +507,16 @@ static int __init init_ima(void)
-> >  	ima_init_template_list();
-> >  	hash_setup(CONFIG_IMA_DEFAULT_HASH);
-> >  	error = ima_init();
-> > +
-> > +	if (error && strcmp(hash_algo_name[ima_hash_algo],
-> > +			    CONFIG_IMA_DEFAULT_HASH) != 0) {
-> > +		pr_info("Allocating %s failed, going to use default hash algorithm %s\n",
-> > +			hash_algo_name[ima_hash_algo], CONFIG_IMA_DEFAULT_HASH);
-> > +		hash_setup_done = 0;
-> > +		hash_setup(CONFIG_IMA_DEFAULT_HASH);
-> > +		error = ima_init();
-> > +	}
-> > +
-> >  	if (!error) {
-> >  		ima_initialized = 1;
-> >  		ima_update_policy_flag();
+diff --git a/Makefile.am b/Makefile.am
+index 06ebf59..dba408d 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -23,9 +23,6 @@ rpm: $(tarname)
+ 	cp $(tarname) $(SRCS)/
+ 	rpmbuild -ba --nodeps $(SPEC)
+ 
+-# requires asciidoc, xslproc, docbook-xsl
+-MANPAGE_DOCBOOK_XSL = /usr/share/xml/docbook/stylesheet/docbook-xsl/manpages/docbook.xsl
+-
+ evmctl.1.html: README
+ 	@asciidoc -o $@ $<
+ 
+diff --git a/configure.ac b/configure.ac
+index 6822f39..0497eb7 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -5,7 +5,7 @@ AC_INIT(ima-evm-utils, 1.1, zohar@linux.vnet.ibm.com)
+ AM_INIT_AUTOMAKE
+ AC_CONFIG_HEADERS([config.h])
+ AC_CONFIG_MACRO_DIR([m4])
+- 
++
+ AC_CANONICAL_HOST
+ 
+ # Checks for programs.
+@@ -41,6 +41,8 @@ else
+ 	CFLAGS="$CFLAGS -Wall -Wstrict-prototypes -pipe -fomit-frame-pointer"
+ fi
+ 
++EVMCTL_MANPAGE_DOCBOOK_XSL
++
+ # for gcov
+ #CFLAGS="$CFLAGS -Wall -fprofile-arcs -ftest-coverage"
+ #CXXFLAGS="$CXXFLAGS -Wall -fprofile-arcs -ftest-coverage"
+@@ -56,7 +58,7 @@ AC_OUTPUT
+ # Give some feedback
+ echo
+ echo
+-echo	"Configuration:"		
++echo	"Configuration:"
+ echo	"	debug:	$pkg_cv_enable_debug"
+ echo
+ 
+diff --git a/m4/manpage-docbook-xsl.m4 b/m4/manpage-docbook-xsl.m4
+new file mode 100644
+index 0000000..24ae55a
+--- /dev/null
++++ b/m4/manpage-docbook-xsl.m4
+@@ -0,0 +1,28 @@
++dnl Copyright (c) 2018 Petr Vorel <pvorel@suse.cz>
++dnl Find docbook manpage stylesheet
++
++AC_DEFUN([EVMCTL_MANPAGE_DOCBOOK_XSL], [
++	AC_PATH_PROGS(XMLCATALOG, xmlcatalog)
++	AC_ARG_WITH([xml-catalog],
++		AC_HELP_STRING([--with-xml-catalog=CATALOG],
++				[path to xml catalog to use]),,
++				[with_xml_catalog=/etc/xml/catalog])
++	XML_CATALOG_FILE="$with_xml_catalog"
++	AC_SUBST([XML_CATALOG_FILE])
++	AC_MSG_CHECKING([for XML catalog ($XML_CATALOG_FILE)])
++	if test -f "$XML_CATALOG_FILE"; then
++		have_xmlcatalog_file=yes
++		AC_MSG_RESULT([found])
++	else
++		AC_MSG_RESULT([not found])
++	fi
++	if test "x${XMLCATALOG}" != "x" -a "x$have_xmlcatalog_file" = "xyes"; then
++		DOCBOOK_XSL_URI="http://docbook.sourceforge.net/release/xsl/current"
++		DOCBOOK_XSL_PATH="manpages/docbook.xsl"
++		MANPAGE_DOCBOOK_XSL=$(${XMLCATALOG} ${XML_CATALOG_FILE} ${DOCBOOK_XSL_URI}/${DOCBOOK_XSL_PATH} | sed -n 's|^file:/\+|/|p;q')
++	fi
++	if test "x${MANPAGE_DOCBOOK_XSL}" = "x"; then
++		MANPAGE_DOCBOOK_XSL="/usr/share/xml/docbook/stylesheet/docbook-xsl/manpages/docbook.xsl"
++	fi
++	AC_SUBST(MANPAGE_DOCBOOK_XSL)
++])
+-- 
+2.16.2
