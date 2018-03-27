@@ -1,36 +1,67 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:37831 "EHLO mx2.suse.de"
+Received: from mga18.intel.com ([134.134.136.126]:58657 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752124AbeC0Isw (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 27 Mar 2018 04:48:52 -0400
-Date: Tue, 27 Mar 2018 10:48:50 +0200
-From: Petr Vorel <pvorel@suse.cz>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v3] ima: Fallback to the builtin hash algorithm
-Message-ID: <20180327084850.niibb5pyoepcsips@dell5510>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20180323134108.9435-1-pvorel@suse.cz>
- <1522000870.3541.34.camel@linux.vnet.ibm.com>
- <20180326081627.GB12097@x230>
- <1522089074.3541.95.camel@linux.vnet.ibm.com>
+        id S1752082AbeC0IFO (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 27 Mar 2018 04:05:14 -0400
+Date: Tue, 27 Mar 2018 11:05:02 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Sahil Rihan <srihan@fb.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        Alexei Starovoitov <ast@fb.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Peter Huewe <peterhuewe@gmx.de>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] tpm: allow TCPA log area to be empty
+Message-ID: <20180327080502.GA11855@linux.intel.com>
+References: <20180310161637.7723-1-jarkko.sakkinen@linux.intel.com>
+ <20180312150231.GA24717@ziepe.ca>
+ <20180316125525.GB5035@linux.intel.com>
+ <20180319021323.GD27186@ziepe.ca>
+ <20180319212436.GD14364@linux.intel.com>
+ <A799BB0A-C44B-41AB-9C38-4B974A50210D@fb.com>
+ <edcff887ff133df486812bb5ecadcc101bc1d227.camel@linux.intel.com>
+ <49C2A39F-C9ED-4620-82C9-C0919DA3F2CD@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-In-Reply-To: <1522089074.3541.95.camel@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <49C2A39F-C9ED-4620-82C9-C0919DA3F2CD@fb.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hello Mimi,
+On Tue, Mar 27, 2018 at 12:07:14AM +0000, Sahil Rihan wrote:
+> > On 3/22/18, 7:20 AM, "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> >   On Tue, 2018-03-20 at 22:29 +0000, Sahil Rihan wrote:
+> >   > > On 3/19/18, 2:25 PM, "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
+> >   > > wrote:
+> >   > >     
+> >   > >    Sahil, would you care to try if this fixes the issue that you are
+> >   > >    having or not?
+> >   > 
+> >   > Yes, we can test this out. Might take a day or two.
+> >    
+> >   Awesome, thank you. I'll add
+> >    
+> >   Reported-by: Sahil Rihan <srihan@fb.com>
+> >    
+> >   if that is OK for you?
+> 
+> Jarkko, 
+> 
+> We applied your patch to a 4.11 kernel (unfortunately not the latest upstream) and were able to confirm that the char device is now being created correctly. The sysfs enabled node is also present.
+> 
+> And yes, please add the "Reported-by" line.
+> 
+> Thanks,
+> Sahil
 
-> > Thanks for merging! I've forgotten to add Cc: stable@vger.kernel.org, so I'll send it to
-> > stable@vger.kernel.org once it gets into mainline (unless you objects, of course).
+And also
 
-> Sorry, I think it is the maintainer's responsibility, but I forgot to
-> add it.  Thank you for the reminder.
-Thanks for handling that!
+Tested-by: Sahil Rihan <srihan@fb.com>
 
-> Mimi
+?
 
-
-Kind regards,
-Petr
+/Jarkko
