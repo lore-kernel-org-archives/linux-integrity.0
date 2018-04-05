@@ -1,77 +1,69 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from lhrrgout.huawei.com ([194.213.3.17]:34420 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750786AbeDERpD (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 5 Apr 2018 13:45:03 -0400
-From: Roberto Sassu <roberto.sassu@huawei.com>
-To: linux-integrity <linux-integrity@vger.kernel.org>
-CC: linux-security-module <linux-security-module@vger.kernel.org>,
-        "Silviu Vlasceanu" <silviu.vlasceanu@huawei.com>
-Subject: Updates on ima digest list feature
-Message-ID: <90d641fa-27eb-5ffd-2b8a-9241dc86aa16@huawei.com>
-Date: Thu, 5 Apr 2018 19:44:52 +0200
+Received: from mga02.intel.com ([134.134.136.20]:7322 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751278AbeDEKMf (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 5 Apr 2018 06:12:35 -0400
+Date: Thu, 5 Apr 2018 13:12:10 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Nayna Jain <nayna@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
+        tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com
+Subject: Re: [PATCH] tpm: moves the delay_msec increment after sleep in
+ tpm_transmit()
+Message-ID: <20180405101210.GA21636@linux.intel.com>
+References: <20180402162006.5030-1-nayna@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180402162006.5030-1-nayna@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi everyone
+On Mon, Apr 02, 2018 at 09:50:06PM +0530, Nayna Jain wrote:
+> Commit e2fb992d82c6 ("tpm: add retry logic") introduced a new loop to
+> handle the TPM2_RC_RETRY error. The loop retries the command after
+> sleeping for the specified time, which is incremented exponentially in
+> every iteration. This patch fixes the initial sleep to be the default
+> sleep time.
 
-back in November, I submitted the second version of the patch set for
-measuring and appraising files with digest lists
-(https://lkml.org/lkml/2017/11/7/231).
+I think I understand the code change but do not understand what the
+long description.
 
-For those who did not follow the previous discussion, the digest list
-feature is an enhancement of Integrity Measurement Architecture (IMA)
-which introduces a white list of file digests to the kernel. If the
-digest of an accessed file is not found in the white list, a measurement
-is reported (the standard behavior is to report every access depending
-on the policy) and access to that file is denied if appraisal is
-enabled.
+> 
+> Fixes: commit e2fb992d82c6 ("tpm: add retry logic")
+> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> ---
+>  drivers/char/tpm/tpm-interface.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index c43a9e28995e..6201aab374e6 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -587,7 +587,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>  		 */
+>  		if (rc == TPM2_RC_TESTING && cc == TPM2_CC_SELF_TEST)
+>  			break;
+> -		delay_msec *= 2;
+> +
 
-Although this feature was initially developed to solve a performance
-degradation due to the TPM, it became useful for other open issues.
+Extra whitespace
 
-Digest lists address the issue of availability of reference measurements
-for remote attestation and appraisal. RPM packages and DEB repository
-metadata already contain file digests and are signed by Linux vendors.
-Including file signatures into packages wouldn't be necessary.
+>  		if (delay_msec > TPM2_DURATION_LONG) {
+>  			if (rc == TPM2_RC_RETRY)
+>  				dev_err(&chip->dev, "in retry loop\n");
+> @@ -597,6 +597,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>  			break;
+>  		}
+>  		tpm_msleep(delay_msec);
+> +		delay_msec *= 2;
+>  		memcpy(buf, save, save_size);
+>  	}
+>  	return ret;
+> -- 
+> 2.13.6
+> 
 
-Digest lists also address the issue of unpredictability of PCR values,
-since a PCR is extended only when unknown files are accessed. PCRs can
-be useful to restrict the usage of the EVM key depending on the software
-being executed on the system (now, unsealing depends only on boot
-components), or restrict the usage of TPM keys for secure communication.
-
-I developed a new patch set, by taking into consideration the comments
-received for the previous version. Digest lists parsers have been moved
-from kernel space to user space, PGP signature verification is now
-supported and a different PCR (11) is used for measurements with
-digest lists.
-
-I'm providing some links:
-
-- kernel patches (53d3a65aed39..b9febcfd9c84):
-
-https://github.com/euleros/linux/commits/ima-digest-lists-v3
-
-- documentation of the kernel patches
-
-https://github.com/euleros/linux/wiki/IMA-Digest-Lists-Extension
-
-- documentation of a user space tool
-
-https://github.com/euleros/digest-list-tools/wiki
-
-I also created binary packages for openSUSE Leap 42.3 and Fedora 27, for
-simplyfing the installation process.
-
-I would be happy to receive a feedback on the code or the packages.
-
-Thanks
-
-Roberto
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Qiuen PENG, Shengli WANG
+/Jarkko
