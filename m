@@ -1,55 +1,59 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:46551 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751643AbeDFQVs (ORCPT
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:36158 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751624AbeDFQHN (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 6 Apr 2018 12:21:48 -0400
-From: Colin King <colin.king@canonical.com>
-To: Peter Huewe <peterhuewe@gmx.de>,
+        Fri, 6 Apr 2018 12:07:13 -0400
+Received: by mail-pl0-f66.google.com with SMTP id 91-v6so904992pld.3
+        for <linux-integrity@vger.kernel.org>; Fri, 06 Apr 2018 09:07:13 -0700 (PDT)
+Date: Fri, 6 Apr 2018 10:07:11 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Colin King <colin.king@canonical.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] tpm: st33zp24: remove redundant null check on chip
-Date: Fri,  6 Apr 2018 17:21:44 +0100
-Message-Id: <20180406162144.14717-1-colin.king@canonical.com>
+        linux-integrity@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: st33zp24: check if chip is null before dereferencing
+Message-ID: <20180406160711.GA14097@ziepe.ca>
+References: <20180406160541.8188-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180406160541.8188-1-colin.king@canonical.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, Apr 06, 2018 at 05:05:41PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently chip is being dereferenced by the call to dev_get_drvdata
+> before it is being null checked, hence we have a potential null
+> pointer dereference bug. Fix this by only dereferencing it after the
+> null check.
+> 
+> Detected by CoverityScan, CID#1357806 ("Dereference before null check")
+> 
+> Fixes: 9e0d39d8a6a0 ("tpm: Remove useless priv field in struct tpm_vendor_specific")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>  drivers/char/tpm/st33zp24/st33zp24.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
+> index f95b9c75175b..476865d66a0e 100644
+> +++ b/drivers/char/tpm/st33zp24/st33zp24.c
+> @@ -367,7 +367,7 @@ static irqreturn_t tpm_ioserirq_handler(int irq, void *dev_id)
+>  static int st33zp24_send(struct tpm_chip *chip, unsigned char *buf,
+>  			 size_t len)
+>  {
+> -	struct st33zp24_dev *tpm_dev = dev_get_drvdata(&chip->dev);
+> +	struct st33zp24_dev *tpm_dev;
+>  	u32 status, i, size, ordinal;
+>  	int burstcnt = 0;
+>  	int ret;
 
-Currently chip is being dereferenced by the call to dev_get_drvdata
-before it is being null checked, however, chip can never be null, so
-this check is misleading and redundant. Remove it.
+Chip can't be NULL here, so I would prefer to see the NULL test
+deleted.
 
-Detected by CoverityScan, CID#1357806 ("Dereference before null check")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
----
-
-V2: don't check for null, just remove redundant null check,
-    thanks to Jason Gunthorpe for spotting that.
-
----
- drivers/char/tpm/st33zp24/st33zp24.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
-index f95b9c75175b..abd675bec88c 100644
---- a/drivers/char/tpm/st33zp24/st33zp24.c
-+++ b/drivers/char/tpm/st33zp24/st33zp24.c
-@@ -373,8 +373,6 @@ static int st33zp24_send(struct tpm_chip *chip, unsigned char *buf,
- 	int ret;
- 	u8 data;
- 
--	if (!chip)
--		return -EBUSY;
- 	if (len < TPM_HEADER_SIZE)
- 		return -EBUSY;
- 
--- 
-2.15.1
+Thanks,
+Jason
