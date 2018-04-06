@@ -1,42 +1,55 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:5840 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751334AbeDGKgT (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 7 Apr 2018 06:36:19 -0400
-Date: Sat, 7 Apr 2018 13:36:10 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Nayna Jain <nayna@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
-        tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com
-Subject: Re: [PATCH] tpm: moves the delay_msec increment after sleep in
- tpm_transmit()
-Message-ID: <20180407103610.GA22542@linux.intel.com>
-References: <20180402162006.5030-1-nayna@linux.vnet.ibm.com>
- <20180405101210.GA21636@linux.intel.com>
- <95af65a1-e618-5cdf-fb81-56434f1aa973@linux.vnet.ibm.com>
+Received: from youngberry.canonical.com ([91.189.89.112]:46551 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751643AbeDFQVs (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 6 Apr 2018 12:21:48 -0400
+From: Colin King <colin.king@canonical.com>
+To: Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-integrity@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] tpm: st33zp24: remove redundant null check on chip
+Date: Fri,  6 Apr 2018 17:21:44 +0100
+Message-Id: <20180406162144.14717-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <95af65a1-e618-5cdf-fb81-56434f1aa973@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="utf-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Apr 06, 2018 at 02:03:37PM +0530, Nayna Jain wrote:
-> On 04/05/2018 03:42 PM, Jarkko Sakkinen wrote:
-> > On Mon, Apr 02, 2018 at 09:50:06PM +0530, Nayna Jain wrote:
-> > > Commit e2fb992d82c6 ("tpm: add retry logic") introduced a new loop to
-> > > handle the TPM2_RC_RETRY error. The loop retries the command after
-> > > sleeping for the specified time, which is incremented exponentially in
-> > > every iteration. This patch fixes the initial sleep to be the default
-> > > sleep time.
-> > I think I understand the code change but do not understand what the
-> > long description.
-> 
-> It tells that the first sleep is delay_msec * 2 and not delay_msec.
+From: Colin Ian King <colin.king@canonical.com>
 
-So the problem is that the loop doubles the time before sleeping
-for the first time. This is missing from the description. Please
-refine it in some way.
+Currently chip is being dereferenced by the call to dev_get_drvdata
+before it is being null checked, however, chip can never be null, so
+this check is misleading and redundant. Remove it.
 
-/Jarkko
+Detected by CoverityScan, CID#1357806 ("Dereference before null check")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+---
+
+V2: don't check for null, just remove redundant null check,
+    thanks to Jason Gunthorpe for spotting that.
+
+---
+ drivers/char/tpm/st33zp24/st33zp24.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
+index f95b9c75175b..abd675bec88c 100644
+--- a/drivers/char/tpm/st33zp24/st33zp24.c
++++ b/drivers/char/tpm/st33zp24/st33zp24.c
+@@ -373,8 +373,6 @@ static int st33zp24_send(struct tpm_chip *chip, unsigned char *buf,
+ 	int ret;
+ 	u8 data;
+ 
+-	if (!chip)
+-		return -EBUSY;
+ 	if (len < TPM_HEADER_SIZE)
+ 		return -EBUSY;
+ 
+-- 
+2.15.1
