@@ -1,67 +1,42 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:46521 "EHLO mga18.intel.com"
+Received: from mga18.intel.com ([134.134.136.126]:5840 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751387AbeDGQQI (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 7 Apr 2018 12:16:08 -0400
-From: Tomas Winkler <tomas.winkler@intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org,
+        id S1751334AbeDGKgT (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 7 Apr 2018 06:36:19 -0400
+Date: Sat, 7 Apr 2018 13:36:10 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Nayna Jain <nayna@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH] tpm: tpm_crb: relinquish locality on error path.
-Date: Sat,  7 Apr 2018 19:12:36 +0300
-Message-Id: <20180407161236.22969-1-tomas.winkler@intel.com>
+        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
+        tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com
+Subject: Re: [PATCH] tpm: moves the delay_msec increment after sleep in
+ tpm_transmit()
+Message-ID: <20180407103610.GA22542@linux.intel.com>
+References: <20180402162006.5030-1-nayna@linux.vnet.ibm.com>
+ <20180405101210.GA21636@linux.intel.com>
+ <95af65a1-e618-5cdf-fb81-56434f1aa973@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <95af65a1-e618-5cdf-fb81-56434f1aa973@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-In crb_map_io() function, __crb_request_locality() is called prior
-to crb_cmd_ready(), but if one of the consecutive function fails
-the flow bails out instead of trying to relinquish locality.
-This patch adds goto jump to __crb_relinquish_locality() on the error path.
+On Fri, Apr 06, 2018 at 02:03:37PM +0530, Nayna Jain wrote:
+> On 04/05/2018 03:42 PM, Jarkko Sakkinen wrote:
+> > On Mon, Apr 02, 2018 at 09:50:06PM +0530, Nayna Jain wrote:
+> > > Commit e2fb992d82c6 ("tpm: add retry logic") introduced a new loop to
+> > > handle the TPM2_RC_RETRY error. The loop retries the command after
+> > > sleeping for the specified time, which is incremented exponentially in
+> > > every iteration. This patch fixes the initial sleep to be the default
+> > > sleep time.
+> > I think I understand the code change but do not understand what the
+> > long description.
+> 
+> It tells that the first sleep is delay_msec * 2 and not delay_msec.
 
-Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after granting locality)
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
----
- drivers/char/tpm/tpm_crb.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+So the problem is that the loop doubles the time before sleeping
+for the first time. This is missing from the description. Please
+refine it in some way.
 
-diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-index 7f78482cd157..34fbc6cb097b 100644
---- a/drivers/char/tpm/tpm_crb.c
-+++ b/drivers/char/tpm/tpm_crb.c
-@@ -511,8 +511,10 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
- 
- 	priv->regs_t = crb_map_res(dev, priv, &io_res, buf->control_address,
- 				   sizeof(struct crb_regs_tail));
--	if (IS_ERR(priv->regs_t))
--		return PTR_ERR(priv->regs_t);
-+	if (IS_ERR(priv->regs_t)) {
-+		ret = PTR_ERR(priv->regs_t);
-+		goto out_relinquish_locality;
-+	}
- 
- 	/*
- 	 * PTT HW bug w/a: wake up the device to access
-@@ -520,7 +522,7 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
- 	 */
- 	ret = crb_cmd_ready(dev, priv);
- 	if (ret)
--		return ret;
-+		goto out_relinquish_locality;
- 
- 	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
- 	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
-@@ -565,6 +567,8 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
- 
- 	crb_go_idle(dev, priv);
- 
-+out_relinquish_locality:
-+
- 	__crb_relinquish_locality(dev, priv, 0);
- 
- 	return ret;
--- 
-2.14.3
+/Jarkko
