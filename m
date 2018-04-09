@@ -1,260 +1,76 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55192 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751549AbeDIMqW (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 9 Apr 2018 08:46:22 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w39Cjla7011528
-        for <linux-integrity@vger.kernel.org>; Mon, 9 Apr 2018 08:46:21 -0400
-Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2h88da871x-1
-        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 09 Apr 2018 08:46:21 -0400
-Received: from localhost
-        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Mon, 9 Apr 2018 13:46:17 +0100
-Subject: Re: CAAM and IMA/EVM : caam_rsa_enc: DECO: desc idx 7: Protocol
- Size Error
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Martin Townsend <mtownsend1973@gmail.com>,
-        linux-integrity@vger.kernel.org
-Cc: tudor-dan.ambarus@nxp.com, linux-crypto@vger.kernel.org,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
-Date: Mon, 09 Apr 2018 08:46:11 -0400
-In-Reply-To: <CABatt_ytYORYKtApcB4izhNanEKkGFi9XAQMjHi_n-8YWoCRiw@mail.gmail.com>
-References: <CABatt_ytYORYKtApcB4izhNanEKkGFi9XAQMjHi_n-8YWoCRiw@mail.gmail.com>
+Received: from mga06.intel.com ([134.134.136.31]:27590 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751609AbeDILN1 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 9 Apr 2018 07:13:27 -0400
+Message-ID: <c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
+Subject: Re: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Tomas Winkler <tomas.winkler@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 09 Apr 2018 14:13:20 +0300
+In-Reply-To: <20180407161236.22969-1-tomas.winkler@intel.com>
+References: <20180407161236.22969-1-tomas.winkler@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1523277971.16421.189.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2018-04-09 at 09:41 +0100, Martin Townsend wrote:
-> Hi,
+On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
+> In crb_map_io() function, __crb_request_locality() is called prior
+> to crb_cmd_ready(), but if one of the consecutive function fails
+> the flow bails out instead of trying to relinquish locality.
+> This patch adds goto jump to __crb_relinquish_locality() on the error path.
 > 
-> I'm trying to get to the bottom of an issue I'm seeing when enabling
-> the CAAM in the kernel with IMA/EVM enabled.  I'm using the official
-> NXP (imx_4.9.11_1.0.0_ga) vendor Kernel.
+> Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after granting
+> locality)
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> ---
+>  drivers/char/tpm/tpm_crb.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
 > 
-> Here's the error message I'm getting.
-> 
-> caam_jr 2142000.jr1: 40000789: DECO: desc idx 7: Protocol Size Error -
-> A protocol has seen an error in size. When running RSA, pdb size N <
-> (size of F) when no formatting is used; or pdb size N < (F + 11) when
-> formatting is used.
-> integrity: Problem loading X.509 certificate (-129): /etc/keys/ima-x509.der
+> diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+> index 7f78482cd157..34fbc6cb097b 100644
+> --- a/drivers/char/tpm/tpm_crb.c
+> +++ b/drivers/char/tpm/tpm_crb.c
+> @@ -511,8 +511,10 @@ static int crb_map_io(struct acpi_device *device, struct
+> crb_priv *priv,
+>  
+>  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf->control_address,
+>  				   sizeof(struct crb_regs_tail));
+> -	if (IS_ERR(priv->regs_t))
+> -		return PTR_ERR(priv->regs_t);
+> +	if (IS_ERR(priv->regs_t)) {
+> +		ret = PTR_ERR(priv->regs_t);
+> +		goto out_relinquish_locality;
+> +	}
+>  
+>  	/*
+>  	 * PTT HW bug w/a: wake up the device to access
+> @@ -520,7 +522,7 @@ static int crb_map_io(struct acpi_device *device, struct
+> crb_priv *priv,
+>  	 */
+>  	ret = crb_cmd_ready(dev, priv);
+>  	if (ret)
+> -		return ret;
+> +		goto out_relinquish_locality;
+>  
+>  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
+>  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
+> @@ -565,6 +567,8 @@ static int crb_map_io(struct acpi_device *device, struct
+> crb_priv *priv,
+>  
+>  	crb_go_idle(dev, priv);
+>  
+> +out_relinquish_locality:
+> +
+>  	__crb_relinquish_locality(dev, priv, 0);
+>  
+>  	return ret;
 
-This error message indicates that the kernel is trying to load a key
-onto the IMA keyring, but any key added to the trusted IMA keyring
-(.ima) must be signed by a key on the builtin (or secondary) keyring.
+Thanks, please just call it before returning in the error path.
 
-Please verify that the public key used to sign the ima-x509.der is on
-the builtin keyring (eg. "keyctl show %keyring:.builtin_trusted_keys)
-or the secondary keyring.  Depending on how the kernel was configured,
-loading the public CA onto the builtin (or secondary) keyring might be
-possible.
-
-Some distros are carrying patches which load the UEFI keys onto the
-secondary keyring.  The other (preferred) method would be to insert
-the CA certificate into the kernel and resign the kernel.  This
-requires reserving memory for the key when the kernel is built.
-
-CONFIG_SYSTEM_EXTRA_CERTIFICATE=y
-CONFIG_SYSTEM_EXTRA_CERTIFICATE_SIZE=4096
-
-Mimi
-
-
-> I put a dump_stack in the error handling routine in CAAM and in the
-> caam_jr_enqueue to get (I removed some of the caam_jr_enqueue
-> dump_stacks during initialisation to highlight the one of interest)
-> 
-> caam 2140000.caam: ERA source: CCBVID.
-> caam 2140000.caam: Entropy delay = 3200
-> caam 2140000.caam: Instantiated RNG4 SH0
-> caam 2140000.caam: Instantiated RNG4 SH1
-> caam 2140000.caam: device ID = 0x0a16030000000000 (Era 8)
-> caam 2140000.caam: job rings = 3, qi = 0
-> caam algorithms registered in /proc/crypto
-> caam_jr_enqueue
-> CPU: 0 PID: 1 Comm: swapper Not tainted 4.9.11-1.0.0+gc27010d #4
-> Hardware name: Freescale i.MX6 UltraLite (Device Tree)
-> caam_jr_enqueue
-> CPU: 0 PID: 1 Comm: swapper Not tainted 4.9.11-1.0.0+gc27010d #4
-> Hardware name: Freescale i.MX6 UltraLite (Device Tree)
-> caam_jr 2141000.jr0: registering rng-caam
-> caam 2140000.caam: caam pkc algorithms registered in /proc/crypto
-> caam_jr_enqueue
-> CPU: 0 PID: 1 Comm: swapper Not tainted 4.9.11-1.0.0+gc27010d #4
-> Hardware name: Freescale i.MX6 UltraLite (Device Tree)
-> caam_rsa_set_pub_key
-> caam_rsa_max_size
-> caam_rsa_enc
-> caam_jr_enqueue
-> CPU: 0 PID: 1 Comm: swapper Not tainted 4.9.11-1.0.0+gc27010d #4
-> Hardware name: Freescale i.MX6 UltraLite (Device Tree)
-> [<8010dd8c>] (unwind_backtrace) from [<8010b8cc>] (show_stack+0x10/0x14)
-> [<8010b8cc>] (show_stack) from [<80608f74>] (caam_jr_enqueue+0x3c/0x2bc)
-> [<80608f74>] (caam_jr_enqueue) from [<8061fb84>] (caam_rsa_enc+0x210/0x3ac)
-> [<8061fb84>] (caam_rsa_enc) from [<803ed910>] (pkcs1pad_verify+0xa8/0xe4)
-> [<803ed910>] (pkcs1pad_verify) from [<804134e4>]
-> (public_key_verify_signature+0x17c/0x248)
-> [<804134e4>] (public_key_verify_signature) from [<804132a0>]
-> (restrict_link_by_signature+0xa8/0xd4)
-> [<804132a0>] (restrict_link_by_signature) from [<803cadd4>]
-> (key_create_or_update+0x12c/0x370)
-> [<803cadd4>] (key_create_or_update) from [<80c253a0>]
-> (integrity_load_x509+0x70/0xc4)
-> [<80c253a0>] (integrity_load_x509) from [<80c256bc>] (ima_load_x509+0x28/0x3c)
-> [<80c256bc>] (ima_load_x509) from [<80c2510c>] (integrity_load_keys+0x8/0x10)
-> [<80c2510c>] (integrity_load_keys) from [<80c00de0>]
-> (kernel_init_freeable+0x1bc/0x1cc)
-> [<80c00de0>] (kernel_init_freeable) from [<80844ccc>] (kernel_init+0x8/0x114)
-> [<80844ccc>] (kernel_init) from [<801078d8>] (ret_from_fork+0x14/0x3c)
-> CPU: 0 PID: 112 Comm: irq/214-2142000 Not tainted 4.9.11-1.0.0+gc27010d #4
-> Hardware name: Freescale i.MX6 UltraLite (Device Tree)
-> [<8010dd8c>] (unwind_backtrace) from [<8010b8cc>] (show_stack+0x10/0x14)
-> [<8010b8cc>] (show_stack) from [<8060a0e8>] (report_deco_status+0x30/0xf8)
-> [<8060a0e8>] (report_deco_status) from [<8061f3c8>] (rsa_pub_done+0x20/0x60)
-> [<8061f3c8>] (rsa_pub_done) from [<80608d94>] (caam_jr_threadirq+0x1dc/0x29c)
-> [<80608d94>] (caam_jr_threadirq) from [<80165dcc>] (irq_thread_fn+0x1c/0x54)
-> [<80165dcc>] (irq_thread_fn) from [<80166024>] (irq_thread+0x114/0x1d4)
-> [<80166024>] (irq_thread) from [<801415b4>] (kthread+0xe4/0xec)
-> [<801415b4>] (kthread) from [<801078d8>] (ret_from_fork+0x14/0x3c)
-> caam_jr 2142000.jr1: 40000789: DECO: desc idx 7: Protocol Size Error -
-> A protocol has seen an error in size. When running RSA, pdb size N <
-> (size of F) when no formatting is used; or pdb size N < (F + 11) when
-> formatting is used.
-> integrity: Problem loading X.509 certificate (-129): /etc/keys/ima-x509.der
-> [<8010dd8c>] (unwind_backtrace) from [<8010b8cc>] (show_stack+0x10/0x14)
-> [<8010b8cc>] (show_stack) from [<8060a0d0>] (report_deco_status+0x30/0xf8)
-> [<8060a0d0>] (report_deco_status) from [<8061db94>] (rsa_pub_done+0x20/0x60)
-> [<8061db94>] (rsa_pub_done) from [<80608d94>] (caam_jr_threadirq+0x1dc/0x29c)
-> [<80608d94>] (caam_jr_threadirq) from [<80165dcc>] (irq_thread_fn+0x1c/0x54)
-> [<80165dcc>] (irq_thread_fn) from [<80166024>] (irq_thread+0x114/0x1d4)
-> [<80166024>] (irq_thread) from [<801415b4>] (kthread+0xe4/0xec)
-> [<801415b4>] (kthread) from [<801078d8>] (ret_from_fork+0x14/0x3c)
-> 
-> So it's failing to verify the signature on my x509 certificate because
-> pdb size M < (size of F) ...
-> 
-> On the NXP mailing lists there is someone with a similar issue and the
-> response was
-> "The error appears to be saying that the public RSA modulus is shorter
-> than the signature being verified.
-> 
-> RSA uses modular arithmetic, and all valid values are smaller than the
-> public RSA modulus. However, the signature (F in the error message
-> below), is too large.
-> 
-> The customer should try to determine why their public RSA Modulus (N)
-> is shorter than the signature (F)."
-> 
-> I have to admit I'm not really sure what this means, I've created my
-> certificate using openssl and a configuration file (shown below) that
-> set the keysize to 2048 bits so I'm not sure how the signature in the
-> x509 is greater than the RSA modulus which in my limited understanding
-> is the key size in bits.
-> 
-> I added the following to public_key_verify_signature()
-> 
-> printk("%s: Public Key: Keylen: %u\n", __func__, pkey->keylen);
-> printk("%s: Signature: %u\n", __func__, sig->s_size);
-> 
-> and get
-> 
-> public_key_verify_signature: Public Key: Keylen: 270
-> public_key_verify_signature: Signature: 257
-> 
-> I'm assuming they are both in bytes which kind of suggests the key
-> length is larger than the signature but then again this keylen may
-> include other information.  I'm a bit suspicious of the signature
-> length of 257 maybe this is causing the problem which could point to
-> creating the certificate incorrectly??  Here's the configuration I'm
-> using for the root cert:
-> [ ca ]
-> default_ca                      = CA_default
-> 
-> [ CA_default ]
-> dir                             = ./ca
-> 
-> certs                           = $dir/certsdb                  #
-> Where the issued certs are kept
-> new_certs_dir                   = $certs                        #
-> default place for new certs.
-> database                        = $dir/certdbindex.txt          #
-> database index file.
-> certificate                     = $dir/certs/ima-local-ca.x509  # The
-> CA certificate
-> private_key                     = $dir/private/ca-privkey.pem   # The
-> private key
-> default_days                    = 3650
-> default_md                      = sha256
-> preserve                        = no
-> email_in_dn                     = no
-> nameopt                         = default_ca
-> certopt                         = default_ca
-> policy                          = policy_ima_ca
-> 
-> [ policy_ima_ca ]
-> countryName                     = match                   # Must be
-> the same as the CA
-> stateOrProvinceName             = match                   # Must be
-> the same as the CA
-> organizationName                = supplied
-> organizationalUnitName          = optional
-> commonName                      = supplied                # Must be there
-> emailAddress                    = optional
-> 
-> [ req ]
-> default_bits                    = 2048                    # Size of keys
-> default_keyfile                 = privkey.pem             # name of
-> generated keys
-> string_mask                     = utf8only                # permitted characters
-> distinguished_name              = req_distinguished_name  # where to
-> get DN for reqs
-> prompt                          = no                      # No prompting
-> x509_extensions                 = v3_ca                   # The
-> extentions to add to self signed certs
-> req_extensions                  = v3_req                  # The
-> extensions to add to req's
-> 
-> [ req_distinguished_name ]
-> O                               = xxx
-> OU                              = IMA
-> CN                              = xxx IMA-EVM Root CA
-> emailAddress                    = ca-ima-evm@xxx.com
-> L                               = xxx
-> ST                              = Dorset
-> C                               = xxx
-> 
-> [ v3_ca ]
-> basicConstraints                = CA:TRUE
-> subjectKeyIdentifier            = hash
-> authorityKeyIdentifier          = keyid:always,issuer:always
-> subjectAltName                  = email:move
-> 
-> [ v3_req ]
-> subjectAltName=email:move
-> 
-> 
-> Then the openssl (1.0.2n  7 Dec 2017) command to create the self
-> signed root CA certificate.
-> 
-> openssl req -new -x509 -utf8 -sha256 \
->             -days $((365 * $duration)) \
->             -passout file:$rootcadir/private/key_pass.txt \
->             -keyout $rootca_privkey \
->             -outform DER \
->             -out $rootca_pubcert_der \
->             -config $rootcadir/$ima_root_openssl_cnf
-> 
-> I'm not sure what I can do further to debug this so any help or
-> suggestions would be really appreciated.  If there is any further
-> debug that would help let me know and I'll try it out.
-> 
-> Many Thanks,
-> Martin.
-> 
+/Jarkko
