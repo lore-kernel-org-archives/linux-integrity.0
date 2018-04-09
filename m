@@ -1,76 +1,61 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:27590 "EHLO mga06.intel.com"
+Received: from mga17.intel.com ([192.55.52.151]:24105 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751609AbeDILN1 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 9 Apr 2018 07:13:27 -0400
-Message-ID: <c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
-Subject: Re: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+        id S1750877AbeDILLP (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 9 Apr 2018 07:11:15 -0400
+Message-ID: <4ea103c15998af56813fb870ac9a27a34a694f49.camel@linux.intel.com>
+Subject: Re: [PATCH] tpm: st33zp24: remove redundant null check on chip
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Tomas Winkler <tomas.winkler@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 09 Apr 2018 14:13:20 +0300
-In-Reply-To: <20180407161236.22969-1-tomas.winkler@intel.com>
-References: <20180407161236.22969-1-tomas.winkler@intel.com>
+To: Colin King <colin.king@canonical.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-integrity@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 09 Apr 2018 14:11:08 +0300
+In-Reply-To: <20180406162144.14717-1-colin.king@canonical.com>
+References: <20180406162144.14717-1-colin.king@canonical.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
-> In crb_map_io() function, __crb_request_locality() is called prior
-> to crb_cmd_ready(), but if one of the consecutive function fails
-> the flow bails out instead of trying to relinquish locality.
-> This patch adds goto jump to __crb_relinquish_locality() on the error path.
+On Fri, 2018-04-06 at 17:21 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after granting
-> locality)
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> Currently chip is being dereferenced by the call to dev_get_drvdata
+> before it is being null checked, however, chip can never be null, so
+> this check is misleading and redundant. Remove it.
+> 
+> Detected by CoverityScan, CID#1357806 ("Dereference before null check")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> 
 > ---
->  drivers/char/tpm/tpm_crb.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-> index 7f78482cd157..34fbc6cb097b 100644
-> --- a/drivers/char/tpm/tpm_crb.c
-> +++ b/drivers/char/tpm/tpm_crb.c
-> @@ -511,8 +511,10 @@ static int crb_map_io(struct acpi_device *device, struct
-> crb_priv *priv,
+> V2: don't check for null, just remove redundant null check,
+>     thanks to Jason Gunthorpe for spotting that.
+> 
+> ---
+>  drivers/char/tpm/st33zp24/st33zp24.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/st33zp24/st33zp24.c
+> b/drivers/char/tpm/st33zp24/st33zp24.c
+> index f95b9c75175b..abd675bec88c 100644
+> --- a/drivers/char/tpm/st33zp24/st33zp24.c
+> +++ b/drivers/char/tpm/st33zp24/st33zp24.c
+> @@ -373,8 +373,6 @@ static int st33zp24_send(struct tpm_chip *chip, unsigned
+> char *buf,
+>  	int ret;
+>  	u8 data;
 >  
->  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf->control_address,
->  				   sizeof(struct crb_regs_tail));
-> -	if (IS_ERR(priv->regs_t))
-> -		return PTR_ERR(priv->regs_t);
-> +	if (IS_ERR(priv->regs_t)) {
-> +		ret = PTR_ERR(priv->regs_t);
-> +		goto out_relinquish_locality;
-> +	}
+> -	if (!chip)
+> -		return -EBUSY;
+>  	if (len < TPM_HEADER_SIZE)
+>  		return -EBUSY;
 >  
->  	/*
->  	 * PTT HW bug w/a: wake up the device to access
-> @@ -520,7 +522,7 @@ static int crb_map_io(struct acpi_device *device, struct
-> crb_priv *priv,
->  	 */
->  	ret = crb_cmd_ready(dev, priv);
->  	if (ret)
-> -		return ret;
-> +		goto out_relinquish_locality;
->  
->  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
->  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
-> @@ -565,6 +567,8 @@ static int crb_map_io(struct acpi_device *device, struct
-> crb_priv *priv,
->  
->  	crb_go_idle(dev, priv);
->  
-> +out_relinquish_locality:
-> +
->  	__crb_relinquish_locality(dev, priv, 0);
->  
->  	return ret;
 
-Thanks, please just call it before returning in the error path.
+Reviewed-by: Jarkko Sakkinen <jarkkko.sakkinen@linux.intel.com>
 
 /Jarkko
