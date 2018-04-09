@@ -1,297 +1,287 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:45905 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751653AbeDIRlk (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46966 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753167AbeDIQxM (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 9 Apr 2018 13:41:40 -0400
-MIME-Version: 1.0
-In-Reply-To: <20180409165302.GA26323@rapoport-lnx>
-References: <CABatt_ytYORYKtApcB4izhNanEKkGFi9XAQMjHi_n-8YWoCRiw@mail.gmail.com>
- <1523277971.16421.189.camel@linux.vnet.ibm.com> <CABatt_y9kVNit-Cyo0hFmrjgQMUqi6W1XkCkHxHMPaQeB4Ry8Q@mail.gmail.com>
- <20180409165302.GA26323@rapoport-lnx>
-From: Martin Townsend <mtownsend1973@gmail.com>
-Date: Mon, 9 Apr 2018 18:41:37 +0100
-Message-ID: <CABatt_wK7rZABy=GGVcPwQfRSZDOtvpJtEkAYedr6a1ZPSKYTQ@mail.gmail.com>
-Subject: Re: CAAM and IMA/EVM : caam_rsa_enc: DECO: desc idx 7: Protocol Size Error
-To: Mike Rapoport <rppt@linux.vnet.ibm.com>
+        Mon, 9 Apr 2018 12:53:12 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w39GoxH6070289
+        for <linux-integrity@vger.kernel.org>; Mon, 9 Apr 2018 12:53:11 -0400
+Received: from e06smtp11.uk.ibm.com (e06smtp11.uk.ibm.com [195.75.94.107])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2h8b8c2egn-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 09 Apr 2018 12:53:11 -0400
+Received: from localhost
+        by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Mon, 9 Apr 2018 17:53:09 +0100
+Date: Mon, 9 Apr 2018 19:53:03 +0300
+From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+To: Martin Townsend <mtownsend1973@gmail.com>
 Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
         linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
-        =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
+        Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
         Aymen Sghaier <aymen.sghaier@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: CAAM and IMA/EVM : caam_rsa_enc: DECO: desc idx 7: Protocol Size
+ Error
+References: <CABatt_ytYORYKtApcB4izhNanEKkGFi9XAQMjHi_n-8YWoCRiw@mail.gmail.com>
+ <1523277971.16421.189.camel@linux.vnet.ibm.com>
+ <CABatt_y9kVNit-Cyo0hFmrjgQMUqi6W1XkCkHxHMPaQeB4Ry8Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CABatt_y9kVNit-Cyo0hFmrjgQMUqi6W1XkCkHxHMPaQeB4Ry8Q@mail.gmail.com>
+Message-Id: <20180409165302.GA26323@rapoport-lnx>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Mike,
+(added CAAM maintainers)
 
-On Mon, Apr 9, 2018 at 5:53 PM, Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
-> (added CAAM maintainers)
->
-> On Mon, Apr 09, 2018 at 03:10:11PM +0100, Martin Townsend wrote:
->> Hi Mimi,
->>
->> On Mon, Apr 9, 2018 at 1:46 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
->> > On Mon, 2018-04-09 at 09:41 +0100, Martin Townsend wrote:
->> >> Hi,
->> >>
->> >> I'm trying to get to the bottom of an issue I'm seeing when enabling
->> >> the CAAM in the kernel with IMA/EVM enabled.  I'm using the official
->> >> NXP (imx_4.9.11_1.0.0_ga) vendor Kernel.
->> >>
->
-> [ snip ]
->
->> I think the integrity error message is a side effect of the previous
->> error, ie we are getting this error message because the CAAM is
->> failing to verify the certificates signature and hence IMA fails to
->> load the certificate onto the keyring.  If I disable CAAM then
->> everything works as expected.  What I'm trying to get to the bottom of
->> is why CAAM is failing to verify the signature.  Further below in the
->> email I have determined that the signature is 257 bytes do you think
->> this is correct?  I've read a post here:
->> https://crypto.stackexchange.com/questions/3505/what-is-the-length-of-an-rsa-signature
->>
->> That says that for PKCS#1 the signature should always be of the size
->> of the modulus, then it goes on to say: "In some protocols, there can
->> be some wrapping around the signature, e.g. to indicate which
->> algorithm was used,"  I'm wondering if that's what I'm seeing, an
->> extra byte in the signature that is the type of algorithm used but
->> this extra byte is also passed to the CAAM and causes it to fail as
->> then the signature is now larger than the modulus.  But I don't know
->> what I can do about this, I'm not even sure what protocol is being
->> used to generate this extra byte, any suggestions on how to find this
->> out would be appreciated.
->
-> I don't really understand crypto and I maybe talking complete nonsense, but
-> judging by diffstat between the imx_4.9.11_1.0.0_ga and mainline, the CAAM
-> driver had a lot of additions since then :)
->
-> The caam_rsa_dec function gained form 2 and form of 3 RSA decoding.
-> That might explain your issue...
->
+On Mon, Apr 09, 2018 at 03:10:11PM +0100, Martin Townsend wrote:
+> Hi Mimi,
+> 
+> On Mon, Apr 9, 2018 at 1:46 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> > On Mon, 2018-04-09 at 09:41 +0100, Martin Townsend wrote:
+> >> Hi,
+> >>
+> >> I'm trying to get to the bottom of an issue I'm seeing when enabling
+> >> the CAAM in the kernel with IMA/EVM enabled.  I'm using the official
+> >> NXP (imx_4.9.11_1.0.0_ga) vendor Kernel.
+> >>
 
-Thanks very interesting, definitely worth investigating, hopefully
-they will backport fairly easily.
+[ snip ]
 
-I'm not seeing any caam_rsa_dec but I do see caam_rsa_enc, is this
-expected when verifying signatures?
-public_key_verify_signature -> pkcs1pad_verify -> caam_rsa_enc
+> I think the integrity error message is a side effect of the previous
+> error, ie we are getting this error message because the CAAM is
+> failing to verify the certificates signature and hence IMA fails to
+> load the certificate onto the keyring.  If I disable CAAM then
+> everything works as expected.  What I'm trying to get to the bottom of
+> is why CAAM is failing to verify the signature.  Further below in the
+> email I have determined that the signature is 257 bytes do you think
+> this is correct?  I've read a post here:
+> https://crypto.stackexchange.com/questions/3505/what-is-the-length-of-an-rsa-signature
+> 
+> That says that for PKCS#1 the signature should always be of the size
+> of the modulus, then it goes on to say: "In some protocols, there can
+> be some wrapping around the signature, e.g. to indicate which
+> algorithm was used,"  I'm wondering if that's what I'm seeing, an
+> extra byte in the signature that is the type of algorithm used but
+> this extra byte is also passed to the CAAM and causes it to fail as
+> then the signature is now larger than the modulus.  But I don't know
+> what I can do about this, I'm not even sure what protocol is being
+> used to generate this extra byte, any suggestions on how to find this
+> out would be appreciated.
 
->> >
->> >
->> >> I put a dump_stack in the error handling routine in CAAM and in the
->> >> caam_jr_enqueue to get (I removed some of the caam_jr_enqueue
->> >> dump_stacks during initialisation to highlight the one of interest)
->
-> Does any of the other caam_jr_enqueue stacks include
-> load_system_certificate_list() call?
+I don't really understand crypto and I maybe talking complete nonsense, but
+judging by diffstat between the imx_4.9.11_1.0.0_ga and mainline, the CAAM
+driver had a lot of additions since then :)
 
-Not that I've seen, the only stack trace I've seen stem from
-integrity_load_x509; the IMA x509 certificate is the first thing that
-gets processed by CAAM.
+The caam_rsa_dec function gained form 2 and form of 3 RSA decoding.
+That might explain your issue...
+ 
+> >
+> >
+> >> I put a dump_stack in the error handling routine in CAAM and in the
+> >> caam_jr_enqueue to get (I removed some of the caam_jr_enqueue
+> >> dump_stacks during initialisation to highlight the one of interest)
 
-> If you have a x509 certificate built into the kernel I presume it will also
-> pass through caam_rsa_dec.
->
-> You can also try using the built-in certificate as IMA x509 certificate and see
-> if it changes anything.
+Does any of the other caam_jr_enqueue stacks include
+load_system_certificate_list() call?
+If you have a x509 certificate built into the kernel I presume it will also
+pass through caam_rsa_dec.
 
-I'm compiling the certificate into the kernel as it's required so
-early in the boot for IMA.
+You can also try using the built-in certificate as IMA x509 certificate and see
+if it changes anything.
 
+> >> caam 2140000.caam: ERA source: CCBVID.
+> >> caam 2140000.caam: Entropy delay = 3200
+> >> caam 2140000.caam: Instantiated RNG4 SH0
+> >> caam 2140000.caam: Instantiated RNG4 SH1
+> >> caam 2140000.caam: device ID = 0x0a16030000000000 (Era 8)
+> >> caam 2140000.caam: job rings = 3, qi = 0
+> >> caam algorithms registered in /proc/crypto
+> >> caam_jr_enqueue
+> >> CPU: 0 PID: 1 Comm: swapper Not tainted 4.9.11-1.0.0+gc27010d #4
+> >> Hardware name: Freescale i.MX6 UltraLite (Device Tree)
+> >> caam_jr_enqueue
+> >> CPU: 0 PID: 1 Comm: swapper Not tainted 4.9.11-1.0.0+gc27010d #4
+> >> Hardware name: Freescale i.MX6 UltraLite (Device Tree)
+> >> caam_jr 2141000.jr0: registering rng-caam
+> >> caam 2140000.caam: caam pkc algorithms registered in /proc/crypto
+> >> caam_jr_enqueue
+> >> CPU: 0 PID: 1 Comm: swapper Not tainted 4.9.11-1.0.0+gc27010d #4
+> >> Hardware name: Freescale i.MX6 UltraLite (Device Tree)
+> >> caam_rsa_set_pub_key
+> >> caam_rsa_max_size
+> >> caam_rsa_enc
+> >> caam_jr_enqueue
+> >> CPU: 0 PID: 1 Comm: swapper Not tainted 4.9.11-1.0.0+gc27010d #4
+> >> Hardware name: Freescale i.MX6 UltraLite (Device Tree)
+> >> [<8010dd8c>] (unwind_backtrace) from [<8010b8cc>] (show_stack+0x10/0x14)
+> >> [<8010b8cc>] (show_stack) from [<80608f74>] (caam_jr_enqueue+0x3c/0x2bc)
+> >> [<80608f74>] (caam_jr_enqueue) from [<8061fb84>] (caam_rsa_enc+0x210/0x3ac)
+> >> [<8061fb84>] (caam_rsa_enc) from [<803ed910>] (pkcs1pad_verify+0xa8/0xe4)
+> >> [<803ed910>] (pkcs1pad_verify) from [<804134e4>]
+> >> (public_key_verify_signature+0x17c/0x248)
+> >> [<804134e4>] (public_key_verify_signature) from [<804132a0>]
+> >> (restrict_link_by_signature+0xa8/0xd4)
+> >> [<804132a0>] (restrict_link_by_signature) from [<803cadd4>]
+> >> (key_create_or_update+0x12c/0x370)
+> >> [<803cadd4>] (key_create_or_update) from [<80c253a0>]
+> >> (integrity_load_x509+0x70/0xc4)
+> >> [<80c253a0>] (integrity_load_x509) from [<80c256bc>] (ima_load_x509+0x28/0x3c)
+> >> [<80c256bc>] (ima_load_x509) from [<80c2510c>] (integrity_load_keys+0x8/0x10)
+> >> [<80c2510c>] (integrity_load_keys) from [<80c00de0>]
+> >> (kernel_init_freeable+0x1bc/0x1cc)
+> >> [<80c00de0>] (kernel_init_freeable) from [<80844ccc>] (kernel_init+0x8/0x114)
+> >> [<80844ccc>] (kernel_init) from [<801078d8>] (ret_from_fork+0x14/0x3c)
+> >> CPU: 0 PID: 112 Comm: irq/214-2142000 Not tainted 4.9.11-1.0.0+gc27010d #4
+> >> Hardware name: Freescale i.MX6 UltraLite (Device Tree)
+> >> [<8010dd8c>] (unwind_backtrace) from [<8010b8cc>] (show_stack+0x10/0x14)
+> >> [<8010b8cc>] (show_stack) from [<8060a0e8>] (report_deco_status+0x30/0xf8)
+> >> [<8060a0e8>] (report_deco_status) from [<8061f3c8>] (rsa_pub_done+0x20/0x60)
+> >> [<8061f3c8>] (rsa_pub_done) from [<80608d94>] (caam_jr_threadirq+0x1dc/0x29c)
+> >> [<80608d94>] (caam_jr_threadirq) from [<80165dcc>] (irq_thread_fn+0x1c/0x54)
+> >> [<80165dcc>] (irq_thread_fn) from [<80166024>] (irq_thread+0x114/0x1d4)
+> >> [<80166024>] (irq_thread) from [<801415b4>] (kthread+0xe4/0xec)
+> >> [<801415b4>] (kthread) from [<801078d8>] (ret_from_fork+0x14/0x3c)
+> >> caam_jr 2142000.jr1: 40000789: DECO: desc idx 7: Protocol Size Error -
+> >> A protocol has seen an error in size. When running RSA, pdb size N <
+> >> (size of F) when no formatting is used; or pdb size N < (F + 11) when
+> >> formatting is used.
+> >> integrity: Problem loading X.509 certificate (-129): /etc/keys/ima-x509.der
+> >> [<8010dd8c>] (unwind_backtrace) from [<8010b8cc>] (show_stack+0x10/0x14)
+> >> [<8010b8cc>] (show_stack) from [<8060a0d0>] (report_deco_status+0x30/0xf8)
+> >> [<8060a0d0>] (report_deco_status) from [<8061db94>] (rsa_pub_done+0x20/0x60)
+> >> [<8061db94>] (rsa_pub_done) from [<80608d94>] (caam_jr_threadirq+0x1dc/0x29c)
+> >> [<80608d94>] (caam_jr_threadirq) from [<80165dcc>] (irq_thread_fn+0x1c/0x54)
+> >> [<80165dcc>] (irq_thread_fn) from [<80166024>] (irq_thread+0x114/0x1d4)
+> >> [<80166024>] (irq_thread) from [<801415b4>] (kthread+0xe4/0xec)
+> >> [<801415b4>] (kthread) from [<801078d8>] (ret_from_fork+0x14/0x3c)
+> >>
+> >> So it's failing to verify the signature on my x509 certificate because
+> >> pdb size M < (size of F) ...
+> >>
+> >> On the NXP mailing lists there is someone with a similar issue and the
+> >> response was
+> >> "The error appears to be saying that the public RSA modulus is shorter
+> >> than the signature being verified.
+> >>
+> >> RSA uses modular arithmetic, and all valid values are smaller than the
+> >> public RSA modulus. However, the signature (F in the error message
+> >> below), is too large.
+> >>
+> >> The customer should try to determine why their public RSA Modulus (N)
+> >> is shorter than the signature (F)."
+> >>
+> >> I have to admit I'm not really sure what this means, I've created my
+> >> certificate using openssl and a configuration file (shown below) that
+> >> set the keysize to 2048 bits so I'm not sure how the signature in the
+> >> x509 is greater than the RSA modulus which in my limited understanding
+> >> is the key size in bits.
+> >>
+> >> I added the following to public_key_verify_signature()
+> >>
+> >> printk("%s: Public Key: Keylen: %u\n", __func__, pkey->keylen);
+> >> printk("%s: Signature: %u\n", __func__, sig->s_size);
+> >>
+> >> and get
+> >>
+> >> public_key_verify_signature: Public Key: Keylen: 270
+> >> public_key_verify_signature: Signature: 257
+> >>
+> >> I'm assuming they are both in bytes which kind of suggests the key
+> >> length is larger than the signature but then again this keylen may
+> >> include other information.  I'm a bit suspicious of the signature
+> >> length of 257 maybe this is causing the problem which could point to
+> >> creating the certificate incorrectly??  Here's the configuration I'm
+> >> using for the root cert:
+> >> [ ca ]
+> >> default_ca                      = CA_default
+> >>
+> >> [ CA_default ]
+> >> dir                             = ./ca
+> >>
+> >> certs                           = $dir/certsdb                  #
+> >> Where the issued certs are kept
+> >> new_certs_dir                   = $certs                        #
+> >> default place for new certs.
+> >> database                        = $dir/certdbindex.txt          #
+> >> database index file.
+> >> certificate                     = $dir/certs/ima-local-ca.x509  # The
+> >> CA certificate
+> >> private_key                     = $dir/private/ca-privkey.pem   # The
+> >> private key
+> >> default_days                    = 3650
+> >> default_md                      = sha256
+> >> preserve                        = no
+> >> email_in_dn                     = no
+> >> nameopt                         = default_ca
+> >> certopt                         = default_ca
+> >> policy                          = policy_ima_ca
+> >>
+> >> [ policy_ima_ca ]
+> >> countryName                     = match                   # Must be
+> >> the same as the CA
+> >> stateOrProvinceName             = match                   # Must be
+> >> the same as the CA
+> >> organizationName                = supplied
+> >> organizationalUnitName          = optional
+> >> commonName                      = supplied                # Must be there
+> >> emailAddress                    = optional
+> >>
+> >> [ req ]
+> >> default_bits                    = 2048                    # Size of keys
+> >> default_keyfile                 = privkey.pem             # name of
+> >> generated keys
+> >> string_mask                     = utf8only                # permitted characters
+> >> distinguished_name              = req_distinguished_name  # where to
+> >> get DN for reqs
+> >> prompt                          = no                      # No prompting
+> >> x509_extensions                 = v3_ca                   # The
+> >> extentions to add to self signed certs
+> >> req_extensions                  = v3_req                  # The
+> >> extensions to add to req's
+> >>
+> >> [ req_distinguished_name ]
+> >> O                               = xxx
+> >> OU                              = IMA
+> >> CN                              = xxx IMA-EVM Root CA
+> >> emailAddress                    = ca-ima-evm@xxx.com
+> >> L                               = xxx
+> >> ST                              = Dorset
+> >> C                               = xxx
+> >>
+> >> [ v3_ca ]
+> >> basicConstraints                = CA:TRUE
+> >> subjectKeyIdentifier            = hash
+> >> authorityKeyIdentifier          = keyid:always,issuer:always
+> >> subjectAltName                  = email:move
+> >>
+> >> [ v3_req ]
+> >> subjectAltName=email:move
+> >>
+> >>
+> >> Then the openssl (1.0.2n  7 Dec 2017) command to create the self
+> >> signed root CA certificate.
+> >>
+> >> openssl req -new -x509 -utf8 -sha256 \
+> >>             -days $((365 * $duration)) \
+> >>             -passout file:$rootcadir/private/key_pass.txt \
+> >>             -keyout $rootca_privkey \
+> >>             -outform DER \
+> >>             -out $rootca_pubcert_der \
+> >>             -config $rootcadir/$ima_root_openssl_cnf
+> >>
+> >> I'm not sure what I can do further to debug this so any help or
+> >> suggestions would be really appreciated.  If there is any further
+> >> debug that would help let me know and I'll try it out.
+> >>
+> >> Many Thanks,
+> >> Martin.
+> >>
+> >
+> 
 
->
->> >> caam 2140000.caam: ERA source: CCBVID.
->> >> caam 2140000.caam: Entropy delay = 3200
->> >> caam 2140000.caam: Instantiated RNG4 SH0
->> >> caam 2140000.caam: Instantiated RNG4 SH1
->> >> caam 2140000.caam: device ID = 0x0a16030000000000 (Era 8)
->> >> caam 2140000.caam: job rings = 3, qi = 0
->> >> caam algorithms registered in /proc/crypto
->> >> caam_jr_enqueue
->> >> CPU: 0 PID: 1 Comm: swapper Not tainted 4.9.11-1.0.0+gc27010d #4
->> >> Hardware name: Freescale i.MX6 UltraLite (Device Tree)
->> >> caam_jr_enqueue
->> >> CPU: 0 PID: 1 Comm: swapper Not tainted 4.9.11-1.0.0+gc27010d #4
->> >> Hardware name: Freescale i.MX6 UltraLite (Device Tree)
->> >> caam_jr 2141000.jr0: registering rng-caam
->> >> caam 2140000.caam: caam pkc algorithms registered in /proc/crypto
->> >> caam_jr_enqueue
->> >> CPU: 0 PID: 1 Comm: swapper Not tainted 4.9.11-1.0.0+gc27010d #4
->> >> Hardware name: Freescale i.MX6 UltraLite (Device Tree)
->> >> caam_rsa_set_pub_key
->> >> caam_rsa_max_size
->> >> caam_rsa_enc
->> >> caam_jr_enqueue
->> >> CPU: 0 PID: 1 Comm: swapper Not tainted 4.9.11-1.0.0+gc27010d #4
->> >> Hardware name: Freescale i.MX6 UltraLite (Device Tree)
->> >> [<8010dd8c>] (unwind_backtrace) from [<8010b8cc>] (show_stack+0x10/0x14)
->> >> [<8010b8cc>] (show_stack) from [<80608f74>] (caam_jr_enqueue+0x3c/0x2bc)
->> >> [<80608f74>] (caam_jr_enqueue) from [<8061fb84>] (caam_rsa_enc+0x210/0x3ac)
->> >> [<8061fb84>] (caam_rsa_enc) from [<803ed910>] (pkcs1pad_verify+0xa8/0xe4)
->> >> [<803ed910>] (pkcs1pad_verify) from [<804134e4>]
->> >> (public_key_verify_signature+0x17c/0x248)
->> >> [<804134e4>] (public_key_verify_signature) from [<804132a0>]
->> >> (restrict_link_by_signature+0xa8/0xd4)
->> >> [<804132a0>] (restrict_link_by_signature) from [<803cadd4>]
->> >> (key_create_or_update+0x12c/0x370)
->> >> [<803cadd4>] (key_create_or_update) from [<80c253a0>]
->> >> (integrity_load_x509+0x70/0xc4)
->> >> [<80c253a0>] (integrity_load_x509) from [<80c256bc>] (ima_load_x509+0x28/0x3c)
->> >> [<80c256bc>] (ima_load_x509) from [<80c2510c>] (integrity_load_keys+0x8/0x10)
->> >> [<80c2510c>] (integrity_load_keys) from [<80c00de0>]
->> >> (kernel_init_freeable+0x1bc/0x1cc)
->> >> [<80c00de0>] (kernel_init_freeable) from [<80844ccc>] (kernel_init+0x8/0x114)
->> >> [<80844ccc>] (kernel_init) from [<801078d8>] (ret_from_fork+0x14/0x3c)
->> >> CPU: 0 PID: 112 Comm: irq/214-2142000 Not tainted 4.9.11-1.0.0+gc27010d #4
->> >> Hardware name: Freescale i.MX6 UltraLite (Device Tree)
->> >> [<8010dd8c>] (unwind_backtrace) from [<8010b8cc>] (show_stack+0x10/0x14)
->> >> [<8010b8cc>] (show_stack) from [<8060a0e8>] (report_deco_status+0x30/0xf8)
->> >> [<8060a0e8>] (report_deco_status) from [<8061f3c8>] (rsa_pub_done+0x20/0x60)
->> >> [<8061f3c8>] (rsa_pub_done) from [<80608d94>] (caam_jr_threadirq+0x1dc/0x29c)
->> >> [<80608d94>] (caam_jr_threadirq) from [<80165dcc>] (irq_thread_fn+0x1c/0x54)
->> >> [<80165dcc>] (irq_thread_fn) from [<80166024>] (irq_thread+0x114/0x1d4)
->> >> [<80166024>] (irq_thread) from [<801415b4>] (kthread+0xe4/0xec)
->> >> [<801415b4>] (kthread) from [<801078d8>] (ret_from_fork+0x14/0x3c)
->> >> caam_jr 2142000.jr1: 40000789: DECO: desc idx 7: Protocol Size Error -
->> >> A protocol has seen an error in size. When running RSA, pdb size N <
->> >> (size of F) when no formatting is used; or pdb size N < (F + 11) when
->> >> formatting is used.
->> >> integrity: Problem loading X.509 certificate (-129): /etc/keys/ima-x509.der
->> >> [<8010dd8c>] (unwind_backtrace) from [<8010b8cc>] (show_stack+0x10/0x14)
->> >> [<8010b8cc>] (show_stack) from [<8060a0d0>] (report_deco_status+0x30/0xf8)
->> >> [<8060a0d0>] (report_deco_status) from [<8061db94>] (rsa_pub_done+0x20/0x60)
->> >> [<8061db94>] (rsa_pub_done) from [<80608d94>] (caam_jr_threadirq+0x1dc/0x29c)
->> >> [<80608d94>] (caam_jr_threadirq) from [<80165dcc>] (irq_thread_fn+0x1c/0x54)
->> >> [<80165dcc>] (irq_thread_fn) from [<80166024>] (irq_thread+0x114/0x1d4)
->> >> [<80166024>] (irq_thread) from [<801415b4>] (kthread+0xe4/0xec)
->> >> [<801415b4>] (kthread) from [<801078d8>] (ret_from_fork+0x14/0x3c)
->> >>
->> >> So it's failing to verify the signature on my x509 certificate because
->> >> pdb size M < (size of F) ...
->> >>
->> >> On the NXP mailing lists there is someone with a similar issue and the
->> >> response was
->> >> "The error appears to be saying that the public RSA modulus is shorter
->> >> than the signature being verified.
->> >>
->> >> RSA uses modular arithmetic, and all valid values are smaller than the
->> >> public RSA modulus. However, the signature (F in the error message
->> >> below), is too large.
->> >>
->> >> The customer should try to determine why their public RSA Modulus (N)
->> >> is shorter than the signature (F)."
->> >>
->> >> I have to admit I'm not really sure what this means, I've created my
->> >> certificate using openssl and a configuration file (shown below) that
->> >> set the keysize to 2048 bits so I'm not sure how the signature in the
->> >> x509 is greater than the RSA modulus which in my limited understanding
->> >> is the key size in bits.
->> >>
->> >> I added the following to public_key_verify_signature()
->> >>
->> >> printk("%s: Public Key: Keylen: %u\n", __func__, pkey->keylen);
->> >> printk("%s: Signature: %u\n", __func__, sig->s_size);
->> >>
->> >> and get
->> >>
->> >> public_key_verify_signature: Public Key: Keylen: 270
->> >> public_key_verify_signature: Signature: 257
->> >>
->> >> I'm assuming they are both in bytes which kind of suggests the key
->> >> length is larger than the signature but then again this keylen may
->> >> include other information.  I'm a bit suspicious of the signature
->> >> length of 257 maybe this is causing the problem which could point to
->> >> creating the certificate incorrectly??  Here's the configuration I'm
->> >> using for the root cert:
->> >> [ ca ]
->> >> default_ca                      = CA_default
->> >>
->> >> [ CA_default ]
->> >> dir                             = ./ca
->> >>
->> >> certs                           = $dir/certsdb                  #
->> >> Where the issued certs are kept
->> >> new_certs_dir                   = $certs                        #
->> >> default place for new certs.
->> >> database                        = $dir/certdbindex.txt          #
->> >> database index file.
->> >> certificate                     = $dir/certs/ima-local-ca.x509  # The
->> >> CA certificate
->> >> private_key                     = $dir/private/ca-privkey.pem   # The
->> >> private key
->> >> default_days                    = 3650
->> >> default_md                      = sha256
->> >> preserve                        = no
->> >> email_in_dn                     = no
->> >> nameopt                         = default_ca
->> >> certopt                         = default_ca
->> >> policy                          = policy_ima_ca
->> >>
->> >> [ policy_ima_ca ]
->> >> countryName                     = match                   # Must be
->> >> the same as the CA
->> >> stateOrProvinceName             = match                   # Must be
->> >> the same as the CA
->> >> organizationName                = supplied
->> >> organizationalUnitName          = optional
->> >> commonName                      = supplied                # Must be there
->> >> emailAddress                    = optional
->> >>
->> >> [ req ]
->> >> default_bits                    = 2048                    # Size of keys
->> >> default_keyfile                 = privkey.pem             # name of
->> >> generated keys
->> >> string_mask                     = utf8only                # permitted characters
->> >> distinguished_name              = req_distinguished_name  # where to
->> >> get DN for reqs
->> >> prompt                          = no                      # No prompting
->> >> x509_extensions                 = v3_ca                   # The
->> >> extentions to add to self signed certs
->> >> req_extensions                  = v3_req                  # The
->> >> extensions to add to req's
->> >>
->> >> [ req_distinguished_name ]
->> >> O                               = xxx
->> >> OU                              = IMA
->> >> CN                              = xxx IMA-EVM Root CA
->> >> emailAddress                    = ca-ima-evm@xxx.com
->> >> L                               = xxx
->> >> ST                              = Dorset
->> >> C                               = xxx
->> >>
->> >> [ v3_ca ]
->> >> basicConstraints                = CA:TRUE
->> >> subjectKeyIdentifier            = hash
->> >> authorityKeyIdentifier          = keyid:always,issuer:always
->> >> subjectAltName                  = email:move
->> >>
->> >> [ v3_req ]
->> >> subjectAltName=email:move
->> >>
->> >>
->> >> Then the openssl (1.0.2n  7 Dec 2017) command to create the self
->> >> signed root CA certificate.
->> >>
->> >> openssl req -new -x509 -utf8 -sha256 \
->> >>             -days $((365 * $duration)) \
->> >>             -passout file:$rootcadir/private/key_pass.txt \
->> >>             -keyout $rootca_privkey \
->> >>             -outform DER \
->> >>             -out $rootca_pubcert_der \
->> >>             -config $rootcadir/$ima_root_openssl_cnf
->> >>
->> >> I'm not sure what I can do further to debug this so any help or
->> >> suggestions would be really appreciated.  If there is any further
->> >> debug that would help let me know and I'll try it out.
->> >>
->> >> Many Thanks,
->> >> Martin.
->> >>
->> >
->>
->
-> --
-> Sincerely yours,
-> Mike.
->
+-- 
+Sincerely yours,
+Mike.
