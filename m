@@ -1,42 +1,38 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46966 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753167AbeDIQxM (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43046 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751902AbeDIPHe (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 9 Apr 2018 12:53:12 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w39GoxH6070289
-        for <linux-integrity@vger.kernel.org>; Mon, 9 Apr 2018 12:53:11 -0400
-Received: from e06smtp11.uk.ibm.com (e06smtp11.uk.ibm.com [195.75.94.107])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2h8b8c2egn-1
+        Mon, 9 Apr 2018 11:07:34 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w39F6sRu007861
+        for <linux-integrity@vger.kernel.org>; Mon, 9 Apr 2018 11:07:34 -0400
+Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2h88dafft3-1
         (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 09 Apr 2018 12:53:11 -0400
+        for <linux-integrity@vger.kernel.org>; Mon, 09 Apr 2018 11:07:26 -0400
 Received: from localhost
-        by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Mon, 9 Apr 2018 17:53:09 +0100
-Date: Mon, 9 Apr 2018 19:53:03 +0300
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Mon, 9 Apr 2018 16:07:16 +0100
+Subject: Re: CAAM and IMA/EVM : caam_rsa_enc: DECO: desc idx 7: Protocol
+ Size Error
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 To: Martin Townsend <mtownsend1973@gmail.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
-        Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>
-Subject: Re: CAAM and IMA/EVM : caam_rsa_enc: DECO: desc idx 7: Protocol Size
- Error
-References: <CABatt_ytYORYKtApcB4izhNanEKkGFi9XAQMjHi_n-8YWoCRiw@mail.gmail.com>
- <1523277971.16421.189.camel@linux.vnet.ibm.com>
- <CABatt_y9kVNit-Cyo0hFmrjgQMUqi6W1XkCkHxHMPaQeB4Ry8Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Cc: linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Date: Mon, 09 Apr 2018 11:07:12 -0400
 In-Reply-To: <CABatt_y9kVNit-Cyo0hFmrjgQMUqi6W1XkCkHxHMPaQeB4Ry8Q@mail.gmail.com>
-Message-Id: <20180409165302.GA26323@rapoport-lnx>
+References: <CABatt_ytYORYKtApcB4izhNanEKkGFi9XAQMjHi_n-8YWoCRiw@mail.gmail.com>
+         <1523277971.16421.189.camel@linux.vnet.ibm.com>
+         <CABatt_y9kVNit-Cyo0hFmrjgQMUqi6W1XkCkHxHMPaQeB4Ry8Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1523286432.16421.209.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-(added CAAM maintainers)
-
-On Mon, Apr 09, 2018 at 03:10:11PM +0100, Martin Townsend wrote:
+On Mon, 2018-04-09 at 15:10 +0100, Martin Townsend wrote:
 > Hi Mimi,
 > 
 > On Mon, Apr 9, 2018 at 1:46 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
@@ -47,19 +43,59 @@ On Mon, Apr 09, 2018 at 03:10:11PM +0100, Martin Townsend wrote:
 > >> the CAAM in the kernel with IMA/EVM enabled.  I'm using the official
 > >> NXP (imx_4.9.11_1.0.0_ga) vendor Kernel.
 > >>
-
-[ snip ]
-
+> >> Here's the error message I'm getting.
+> >>
+> >> caam_jr 2142000.jr1: 40000789: DECO: desc idx 7: Protocol Size Error -
+> >> A protocol has seen an error in size. When running RSA, pdb size N <
+> >> (size of F) when no formatting is used; or pdb size N < (F + 11) when
+> >> formatting is used.
+> >> integrity: Problem loading X.509 certificate (-129): /etc/keys/ima-x509.der
+> >
+> > This error message indicates that the kernel is trying to load a key
+> > onto the IMA keyring, but any key added to the trusted IMA keyring
+> > (.ima) must be signed by a key on the builtin (or secondary) keyring.
+> >
+> > Please verify that the public key used to sign the ima-x509.der is on
+> > the builtin keyring (eg. "keyctl show %keyring:.builtin_trusted_keys)
+> > or the secondary keyring.  Depending on how the kernel was configured,
+> > loading the public CA onto the builtin (or secondary) keyring might be
+> > possible.
+> >
+> > Some distros are carrying patches which load the UEFI keys onto the
+> > secondary keyring.  The other (preferred) method would be to insert
+> > the CA certificate into the kernel and resign the kernel.  This
+> > requires reserving memory for the key when the kernel is built.
+> >
+> > CONFIG_SYSTEM_EXTRA_CERTIFICATE=y
+> > CONFIG_SYSTEM_EXTRA_CERTIFICATE_SIZE=4096
+> >
+> > Mimi
+> 
 > I think the integrity error message is a side effect of the previous
 > error, ie we are getting this error message because the CAAM is
 > failing to verify the certificates signature and hence IMA fails to
 > load the certificate onto the keyring.  If I disable CAAM then
-> everything works as expected.  What I'm trying to get to the bottom of
+> everything works as expected.
+
+Thanks!
+
+> What I'm trying to get to the bottom of
 > is why CAAM is failing to verify the signature.  Further below in the
 > email I have determined that the signature is 257 bytes do you think
-> this is correct?  I've read a post here:
+> this is correct?
+
+Sorry, I'm not going to be of much help here.  Remember everything
+that CAAM uses (eg. kernel crypto modules) must be builtin to the
+kernel until a key is loaded onto to the IMA keyring.  Perhaps
+enabling pr_devel/pr_debug in crypto/asymmetric_keys/ might provide
+some additional information.
+
+Mimi
+
+
+> I've read a post here:
 > https://crypto.stackexchange.com/questions/3505/what-is-the-length-of-an-rsa-signature
-> 
+
 > That says that for PKCS#1 the signature should always be of the size
 > of the modulus, then it goes on to say: "In some protocols, there can
 > be some wrapping around the signature, e.g. to indicate which
@@ -70,28 +106,13 @@ On Mon, Apr 09, 2018 at 03:10:11PM +0100, Martin Townsend wrote:
 > what I can do about this, I'm not even sure what protocol is being
 > used to generate this extra byte, any suggestions on how to find this
 > out would be appreciated.
-
-I don't really understand crypto and I maybe talking complete nonsense, but
-judging by diffstat between the imx_4.9.11_1.0.0_ga and mainline, the CAAM
-driver had a lot of additions since then :)
-
-The caam_rsa_dec function gained form 2 and form of 3 RSA decoding.
-That might explain your issue...
- 
+> 
 > >
 > >
 > >> I put a dump_stack in the error handling routine in CAAM and in the
 > >> caam_jr_enqueue to get (I removed some of the caam_jr_enqueue
 > >> dump_stacks during initialisation to highlight the one of interest)
-
-Does any of the other caam_jr_enqueue stacks include
-load_system_certificate_list() call?
-If you have a x509 certificate built into the kernel I presume it will also
-pass through caam_rsa_dec.
-
-You can also try using the built-in certificate as IMA x509 certificate and see
-if it changes anything.
-
+> >>
 > >> caam 2140000.caam: ERA source: CCBVID.
 > >> caam 2140000.caam: Entropy delay = 3200
 > >> caam 2140000.caam: Instantiated RNG4 SH0
@@ -281,7 +302,3 @@ if it changes anything.
 > >>
 > >
 > 
-
--- 
-Sincerely yours,
-Mike.
