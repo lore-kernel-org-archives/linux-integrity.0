@@ -1,94 +1,60 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48130 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755178AbeDJXKH (ORCPT
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:57480 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932384AbeDJWgW (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 10 Apr 2018 19:10:07 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w3AN9tsc045028
-        for <linux-integrity@vger.kernel.org>; Tue, 10 Apr 2018 19:10:07 -0400
-Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2h9274te8k-1
-        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 10 Apr 2018 19:10:06 -0400
-Received: from localhost
-        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Wed, 11 Apr 2018 00:10:04 +0100
-Subject: Re: Fwd: New Version Notification for
- draft-cel-nfsv4-linux-seclabel-xtensions-00.txt
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Chuck Lever <chuck.lever@oracle.com>,
-        linux-integrity@vger.kernel.org
-Cc: "Serge E. Hallyn" <serge@hallyn.com>,
-        Michael Halcrow <mhalcrow@google.com>
-Date: Tue, 10 Apr 2018 19:10:00 -0400
-In-Reply-To: <FB6125E9-528C-47DD-9774-86D9D4975A54@oracle.com>
-References: <152337099624.13448.11040477333954216664.idtracker@ietfa.amsl.com>
-         <FB6125E9-528C-47DD-9774-86D9D4975A54@oracle.com>
+        Tue, 10 Apr 2018 18:36:22 -0400
+Message-ID: <1523399780.3238.30.camel@HansenPartnership.com>
+Subject: Re: CAAM and IMA/EVM : caam_rsa_enc: DECO: desc idx 7: Protocol
+ Size Error
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Martin Townsend <mtownsend1973@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>
+Cc: Horia Geanta Neag <horia.geanta@nxp.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Breno Matheus Lima <brenomatheus@gmail.com>,
+        linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
+        Aymen Sghaier <aymen.sghaier@nxp.com>
+Date: Tue, 10 Apr 2018 15:36:20 -0700
+In-Reply-To: <CABatt_yokAz4bozv5mGu44rh_sZaok-fGj36p2Z3EpcXYiphVA@mail.gmail.com>
+References: <CABatt_ytYORYKtApcB4izhNanEKkGFi9XAQMjHi_n-8YWoCRiw@mail.gmail.com>
+         <CAOMZO5Aycn37omkEuevpBrkMTYt0xSeDcX3y79asqUDHYTM-eA@mail.gmail.com>
+         <CABatt_yUbBdNbi_i3SQD5wnc99D8O1RQ_4Ysa+6n5X1vw4Lqnw@mail.gmail.com>
+         <CAOMZO5DdS-n2taSMsXHAFotCHZdg3Z1in5fy10_5F4Ttwj4vLw@mail.gmail.com>
+         <CABatt_y94bWRJct_T94kcUt1F-BLgsNf4Q0Ay=_ozV93E7pUSA@mail.gmail.com>
+         <CABatt_yokAz4bozv5mGu44rh_sZaok-fGj36p2Z3EpcXYiphVA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1523401800.5268.61.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Chuck,
-
-On Tue, 2018-04-10 at 08:44 -0600, Chuck Lever wrote:
-> > Begin forwarded message:
-> > 
-> > From: internet-drafts@ietf.org
-> > Subject: New Version Notification for draft-cel-nfsv4-linux-seclabel-xtensions-00.txt
-> > Date: April 10, 2018 at 8:36:36 AM MDT
-> > To: "Charles Lever" <chuck.lever@oracle.com>, "Chuck Lever" <chuck.lever@oracle.com>
-> > 
-> > 
-> > A new version of I-D, draft-cel-nfsv4-linux-seclabel-xtensions-00.txt
-> > has been successfully submitted by Charles Lever and posted to the
-> > IETF repository.
-> > 
-> > Name:		draft-cel-nfsv4-linux-seclabel-xtensions
-> > Revision:	00
-> > Title:		Linux-related Extensions to NFS version 4.2 Security Labels
-> > Document date:	2018-04-09
-> > Group:		Individual Submission
-> > Pages:		8
-> > URL:            https://www.ietf.org/internet-drafts/draft-cel-nfsv4-linux-seclabel-xtensions-00.txt
-> > Status:         https://datatracker.ietf.org/doc/draft-cel-nfsv4-linux-seclabel-xtensions/
-> > Htmlized:       https://tools.ietf.org/html/draft-cel-nfsv4-linux-seclabel-xtensions-00
-> > Htmlized:       https://datatracker.ietf.org/doc/html/draft-cel-nfsv4-linux-seclabel-xtensions
-> > 
-> > 
-> > Abstract:
-> >   NFS version 4.2 introduces an optional feature known as NFSv4
-> >   Security Labels.  This document extends NFSv4 Security Labels to
-> >   support Linux file capabilities and the Linux Integrity Measurement
-> >   Architecture.
-> > 
-
-Very nice!  Thank you so much for writing this up.
-
-> > 
-> > 
-> > Please note that it may take a couple of minutes from the time of submission
-> > until the htmlized version and diff are available at tools.ietf.org.
-> > 
-> > The IETF Secretariat
+On Tue, 2018-04-10 at 23:01 +0100, Martin Townsend wrote:
+> Using openssl to get the signature in my x509 cert
 > 
-> Initial revision, by no means final. Review comments welcome.
+>    Signature Algorithm: sha256WithRSAEncryption
+>          68:82:cc:5d:f9:ee:fb:1a:77:72:a6:a9:c6:4c:cc:d7:f6:2a:
+>          17:a5:db:bf:5a:2b:8d:39:60:dc:a0:93:39:45:0f:bc:a7:e8:
+>          7f:6c:06:84:2d:f3:c1:94:0a:60:56:1c:50:78:dc:34:d1:87:
 > 
-> I'm toying with some ideas here. If you find anything controversial
-> you are welcome to provide input.
+> So there's an extra 0x00 and the signature is 257 bytes so I guess
+> this is upsetting CAAM, just need to work out where it's coming from,
+> or whether it's valid and CAAM should be handling it.
 
-"security.ima" may contain either a file hash or a file signature.
- "security.evm" may contain either an HMAC or a signature of the file
-metdata.  Only the security.evm portable and immutable file signature,
-not the HMAC which is TPM specific, will be applicable.
+A signature is just a bignum so leading zeros are permitted because
+it's the same numeric value; however, there are normalization
+procedures that require stripping the leading zeros, say before doing a
+hash or other operation which would be affected by them.
 
-The last paragraph of section 1.1 mentions that the private key needs
-to be protected, which is fine, but then mentions a TPM.  This might
-be a bit confusing in the context of EVM/IMA-appraisal as only the
-trusted "master" key, which is used to encrypt/decrypt the EVM key, is
-created and decrypted by the TPM.
+CAAM should definitely handle it on the "be liberal in what you accept"
+ principle.  The kernel should probably remove the leading zeros on the
+"be conservative in what you do" part of the same principle. 
 
-Mimi
+>   I notice that in my stack trace I have pkcs1pad_verify which
+> suggests some sort of padding?
+
+Yes, RSA has various forms of padding because the information being
+encrypted is usually much smaller than the encryption unit; PKCS1 is
+the most common (although its now deprecated in favour of OAEP because
+of all the padding oracle problems).
+
+James
