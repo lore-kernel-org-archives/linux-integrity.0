@@ -1,80 +1,96 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from userp2120.oracle.com ([156.151.31.85]:47822 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753097AbeDJOo1 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 10 Apr 2018 10:44:27 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w3AEfDJ2102928
-        for <linux-integrity@vger.kernel.org>; Tue, 10 Apr 2018 14:44:27 GMT
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2h6pn4jg77-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-integrity@vger.kernel.org>; Tue, 10 Apr 2018 14:44:27 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w3AEiPbe004887
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-integrity@vger.kernel.org>; Tue, 10 Apr 2018 14:44:26 GMT
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w3AEiPXv002151
-        for <linux-integrity@vger.kernel.org>; Tue, 10 Apr 2018 14:44:25 GMT
-From: Chuck Lever <chuck.lever@oracle.com>
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Fwd: New Version Notification for
- draft-cel-nfsv4-linux-seclabel-xtensions-00.txt
-Message-Id: <FB6125E9-528C-47DD-9774-86D9D4975A54@oracle.com>
-References: <152337099624.13448.11040477333954216664.idtracker@ietfa.amsl.com>
-To: linux-integrity@vger.kernel.org
-Date: Tue, 10 Apr 2018 08:44:24 -0600
+Received: from mga18.intel.com ([134.134.136.126]:23314 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753203AbeDJMdO (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 10 Apr 2018 08:33:14 -0400
+Message-ID: <4984305eae452b7a72b8a13aa20cecec420df580.camel@linux.intel.com>
+Subject: Re: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: "Winkler, Tomas" <tomas.winkler@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date: Tue, 10 Apr 2018 15:33:08 +0300
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
+References: <20180407161236.22969-1-tomas.winkler@intel.com>
+         <c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
+         <5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
+On Tue, 2018-04-10 at 09:00 +0000, Winkler, Tomas wrote:
+> > 
+> > On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
+> > > In crb_map_io() function, __crb_request_locality() is called prior to
+> > > crb_cmd_ready(), but if one of the consecutive function fails the flow
+> > > bails out instead of trying to relinquish locality.
+> > > This patch adds goto jump to __crb_relinquish_locality() on the error
+> > > path.
+> > > 
+> > > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after
+> > > granting
+> > > locality)
+> > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > > ---
+> > >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
+> > >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+> > > index 7f78482cd157..34fbc6cb097b 100644
+> > > --- a/drivers/char/tpm/tpm_crb.c
+> > > +++ b/drivers/char/tpm/tpm_crb.c
+> > > @@ -511,8 +511,10 @@ static int crb_map_io(struct acpi_device *device,
+> > > struct crb_priv *priv,
+> > > 
+> > >  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf-
+> > > >control_address,
+> > >  				   sizeof(struct crb_regs_tail));
+> > > -	if (IS_ERR(priv->regs_t))
+> > > -		return PTR_ERR(priv->regs_t);
+> > > +	if (IS_ERR(priv->regs_t)) {
+> > > +		ret = PTR_ERR(priv->regs_t);
+> > > +		goto out_relinquish_locality;
+> > > +	}
+> > > 
+> > >  	/*
+> > >  	 * PTT HW bug w/a: wake up the device to access @@ -520,7 +522,7
+> > 
+> > @@
+> > > static int crb_map_io(struct acpi_device *device, struct crb_priv
+> > > *priv,
+> > >  	 */
+> > >  	ret = crb_cmd_ready(dev, priv);
+> > >  	if (ret)
+> > > -		return ret;
+> > > +		goto out_relinquish_locality;
+> > > 
+> > >  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
+> > >  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
+> > > @@ -565,6 +567,8 @@ static int crb_map_io(struct acpi_device *device,
+> > > struct crb_priv *priv,
+> > > 
+> > >  	crb_go_idle(dev, priv);
+> > > 
+> > > +out_relinquish_locality:
+> > > +
+> > >  	__crb_relinquish_locality(dev, priv, 0);
+> > > 
+> > >  	return ret;
+> > 
+> > Thanks, please just call it before returning in the error path.
+> 
+> Can you please elaborate why, isn't the centralized exiting of functions
+> preferred kernel coding style? 
+> https://www.kernel.org/doc/html/v4.11/process/coding-style.html#centralized-ex
+> iting-of-functions 
 
-> Begin forwarded message:
-> 
-> From: internet-drafts@ietf.org
-> Subject: New Version Notification for draft-cel-nfsv4-linux-seclabel-xtensions-00.txt
-> Date: April 10, 2018 at 8:36:36 AM MDT
-> To: "Charles Lever" <chuck.lever@oracle.com>, "Chuck Lever" <chuck.lever@oracle.com>
-> 
-> 
-> A new version of I-D, draft-cel-nfsv4-linux-seclabel-xtensions-00.txt
-> has been successfully submitted by Charles Lever and posted to the
-> IETF repository.
-> 
-> Name:		draft-cel-nfsv4-linux-seclabel-xtensions
-> Revision:	00
-> Title:		Linux-related Extensions to NFS version 4.2 Security Labels
-> Document date:	2018-04-09
-> Group:		Individual Submission
-> Pages:		8
-> URL:            https://www.ietf.org/internet-drafts/draft-cel-nfsv4-linux-seclabel-xtensions-00.txt
-> Status:         https://datatracker.ietf.org/doc/draft-cel-nfsv4-linux-seclabel-xtensions/
-> Htmlized:       https://tools.ietf.org/html/draft-cel-nfsv4-linux-seclabel-xtensions-00
-> Htmlized:       https://datatracker.ietf.org/doc/html/draft-cel-nfsv4-linux-seclabel-xtensions
-> 
-> 
-> Abstract:
->   NFS version 4.2 introduces an optional feature known as NFSv4
->   Security Labels.  This document extends NFSv4 Security Labels to
->   support Linux file capabilities and the Linux Integrity Measurement
->   Architecture.
-> 
-> 
-> 
-> 
-> Please note that it may take a couple of minutes from the time of submission
-> until the htmlized version and diff are available at tools.ietf.org.
-> 
-> The IETF Secretariat
+You exit only from one location (not multiple) and not from a
+nested context. Here you just add more complexity by doing
+this.
 
-Initial revision, by no means final. Review comments welcome.
-
-I'm toying with some ideas here. If you find anything controversial
-you are welcome to provide input.
-
-
---
-Chuck Lever
+/Jarkko
