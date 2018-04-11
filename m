@@ -1,50 +1,142 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:40054 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751599AbeDKR0C (ORCPT
+Received: from mail-qt0-f202.google.com ([209.85.216.202]:40651 "EHLO
+        mail-qt0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753101AbeDKMzp (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 11 Apr 2018 13:26:02 -0400
+        Wed, 11 Apr 2018 08:55:45 -0400
+Received: by mail-qt0-f202.google.com with SMTP id d5so1200046qtg.7
+        for <linux-integrity@vger.kernel.org>; Wed, 11 Apr 2018 05:55:45 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <VI1PR0402MB3485F2A0D0A92BD055F4973098BD0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-References: <CABatt_ytYORYKtApcB4izhNanEKkGFi9XAQMjHi_n-8YWoCRiw@mail.gmail.com>
- <CAOMZO5Aycn37omkEuevpBrkMTYt0xSeDcX3y79asqUDHYTM-eA@mail.gmail.com>
- <CABatt_yUbBdNbi_i3SQD5wnc99D8O1RQ_4Ysa+6n5X1vw4Lqnw@mail.gmail.com>
- <CAOMZO5DdS-n2taSMsXHAFotCHZdg3Z1in5fy10_5F4Ttwj4vLw@mail.gmail.com>
- <CABatt_y94bWRJct_T94kcUt1F-BLgsNf4Q0Ay=_ozV93E7pUSA@mail.gmail.com>
- <CABatt_yokAz4bozv5mGu44rh_sZaok-fGj36p2Z3EpcXYiphVA@mail.gmail.com>
- <CAOMZO5Dfyp8iFd7i+6a-4XefFd0iHF6rUY6N12b_W_MeHQ4QpA@mail.gmail.com> <VI1PR0402MB3485F2A0D0A92BD055F4973098BD0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Wed, 11 Apr 2018 14:26:01 -0300
-Message-ID: <CAOMZO5BmepNWhMzL6J2hbf=+0YzsBZuOVqo+8jA-bLsYuGm8dA@mail.gmail.com>
-Subject: Re: CAAM and IMA/EVM : caam_rsa_enc: DECO: desc idx 7: Protocol Size Error
-To: =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>
-Cc: Martin Townsend <mtownsend1973@gmail.com>,
-        "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-        Breno Matheus Lima <brenomatheus@gmail.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>
+Date: Wed, 11 Apr 2018 14:54:59 +0200
+In-Reply-To: <20180411125501.188477-1-tweek@google.com>
+Message-Id: <20180411125501.188477-2-tweek@google.com>
+References: <20180411125501.188477-1-tweek@google.com>
+Subject: [PATCH 1/3] tpm: Move eventlog files to a subdirectory
+From: Thiebaud Weksteen <tweek@google.com>
+To: jarkko.sakkinen@linux.intel.com, nayna@linux.vnet.ibm.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tweek@google.com
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thiebaud Weksteen <tweek@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Horia,
 
-On Wed, Apr 11, 2018 at 7:15 AM, Horia Geanta <horia.geanta@nxp.com> wrote:
+Signed-off-by: Thiebaud Weksteen <tweek@google.com>
+---
+ drivers/char/tpm/Makefile                                 | 8 ++++----
+ drivers/char/tpm/{tpm_eventlog_acpi.c => eventlog/acpi.c} | 2 +-
+ drivers/char/tpm/{tpm_eventlog_efi.c => eventlog/efi.c}   | 2 +-
+ drivers/char/tpm/{tpm_eventlog_of.c => eventlog/of.c}     | 2 +-
+ drivers/char/tpm/{tpm1_eventlog.c => eventlog/tpm1.c}     | 2 +-
+ drivers/char/tpm/{tpm2_eventlog.c => eventlog/tpm2.c}     | 2 +-
+ 6 files changed, 9 insertions(+), 9 deletions(-)
+ rename drivers/char/tpm/{tpm_eventlog_acpi.c => eventlog/acpi.c} (99%)
+ rename drivers/char/tpm/{tpm_eventlog_efi.c => eventlog/efi.c} (98%)
+ rename drivers/char/tpm/{tpm_eventlog_of.c => eventlog/of.c} (99%)
+ rename drivers/char/tpm/{tpm1_eventlog.c => eventlog/tpm1.c} (99%)
+ rename drivers/char/tpm/{tpm2_eventlog.c => eventlog/tpm2.c} (99%)
 
-> You'd want to make sure rsa is offloaded to caam in this case - check in
-> /proc/crypto.
-> IIRC there are some i.mx parts that don't have support for Public Key
-> acceleration (PKHA).
-
-PKHA is present on mx6ul and not present on mx6q.
-
-mx6uq uses the generic rsa driver and handles the certificate correctly.
-
-mx6ul uses pkcs1pad(rsa-caam,sha256) and it fails to handle the certificate.
-
-So that explains the different behavior of mx6q versus mx6ul.
-
-Any ideas as to how to fix rsa-caam?
-
-Thanks
+diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
+index acd758381c58..5dcf5bd35a3d 100644
+--- a/drivers/char/tpm/Makefile
++++ b/drivers/char/tpm/Makefile
+@@ -4,11 +4,11 @@
+ #
+ obj-$(CONFIG_TCG_TPM) += tpm.o
+ tpm-y := tpm-interface.o tpm-dev.o tpm-sysfs.o tpm-chip.o tpm2-cmd.o \
+-	 tpm-dev-common.o tpmrm-dev.o tpm1_eventlog.o tpm2_eventlog.o \
++	 tpm-dev-common.o tpmrm-dev.o eventlog/tpm1.o eventlog/tpm2.o \
+          tpm2-space.o
+-tpm-$(CONFIG_ACPI) += tpm_ppi.o tpm_eventlog_acpi.o
+-tpm-$(CONFIG_EFI) += tpm_eventlog_efi.o
+-tpm-$(CONFIG_OF) += tpm_eventlog_of.o
++tpm-$(CONFIG_ACPI) += tpm_ppi.o eventlog/acpi.o
++tpm-$(CONFIG_EFI) += eventlog/efi.o
++tpm-$(CONFIG_OF) += eventlog/of.o
+ obj-$(CONFIG_TCG_TIS_CORE) += tpm_tis_core.o
+ obj-$(CONFIG_TCG_TIS) += tpm_tis.o
+ obj-$(CONFIG_TCG_TIS_SPI) += tpm_tis_spi.o
+diff --git a/drivers/char/tpm/tpm_eventlog_acpi.c b/drivers/char/tpm/eventlog/acpi.c
+similarity index 99%
+rename from drivers/char/tpm/tpm_eventlog_acpi.c
+rename to drivers/char/tpm/eventlog/acpi.c
+index 66f19e93c216..8476be2e9526 100644
+--- a/drivers/char/tpm/tpm_eventlog_acpi.c
++++ b/drivers/char/tpm/eventlog/acpi.c
+@@ -27,7 +27,7 @@
+ #include <linux/acpi.h>
+ #include <linux/tpm_eventlog.h>
+ 
+-#include "tpm.h"
++#include "../tpm.h"
+ 
+ struct acpi_tcpa {
+ 	struct acpi_table_header hdr;
+diff --git a/drivers/char/tpm/tpm_eventlog_efi.c b/drivers/char/tpm/eventlog/efi.c
+similarity index 98%
+rename from drivers/char/tpm/tpm_eventlog_efi.c
+rename to drivers/char/tpm/eventlog/efi.c
+index e3f9ffd341d2..e1593c5271a4 100644
+--- a/drivers/char/tpm/tpm_eventlog_efi.c
++++ b/drivers/char/tpm/eventlog/efi.c
+@@ -14,7 +14,7 @@
+ #include <linux/efi.h>
+ #include <linux/tpm_eventlog.h>
+ 
+-#include "tpm.h"
++#include "../tpm.h"
+ 
+ /* read binary bios log from EFI configuration table */
+ int tpm_read_log_efi(struct tpm_chip *chip)
+diff --git a/drivers/char/tpm/tpm_eventlog_of.c b/drivers/char/tpm/eventlog/of.c
+similarity index 99%
+rename from drivers/char/tpm/tpm_eventlog_of.c
+rename to drivers/char/tpm/eventlog/of.c
+index 96fd5646f866..c38c37e41389 100644
+--- a/drivers/char/tpm/tpm_eventlog_of.c
++++ b/drivers/char/tpm/eventlog/of.c
+@@ -19,7 +19,7 @@
+ #include <linux/of.h>
+ #include <linux/tpm_eventlog.h>
+ 
+-#include "tpm.h"
++#include "../tpm.h"
+ 
+ int tpm_read_log_of(struct tpm_chip *chip)
+ {
+diff --git a/drivers/char/tpm/tpm1_eventlog.c b/drivers/char/tpm/eventlog/tpm1.c
+similarity index 99%
+rename from drivers/char/tpm/tpm1_eventlog.c
+rename to drivers/char/tpm/eventlog/tpm1.c
+index add798bd69d0..d6aea3ca950e 100644
+--- a/drivers/char/tpm/tpm1_eventlog.c
++++ b/drivers/char/tpm/eventlog/tpm1.c
+@@ -28,7 +28,7 @@
+ #include <linux/slab.h>
+ #include <linux/tpm_eventlog.h>
+ 
+-#include "tpm.h"
++#include "../tpm.h"
+ 
+ 
+ static const char* tcpa_event_type_strings[] = {
+diff --git a/drivers/char/tpm/tpm2_eventlog.c b/drivers/char/tpm/eventlog/tpm2.c
+similarity index 99%
+rename from drivers/char/tpm/tpm2_eventlog.c
+rename to drivers/char/tpm/eventlog/tpm2.c
+index 1ce4411292ba..f0723fa9ae14 100644
+--- a/drivers/char/tpm/tpm2_eventlog.c
++++ b/drivers/char/tpm/eventlog/tpm2.c
+@@ -23,7 +23,7 @@
+ #include <linux/slab.h>
+ #include <linux/tpm_eventlog.h>
+ 
+-#include "tpm.h"
++#include "../tpm.h"
+ 
+ /*
+  * calc_tpm2_event_size() - calculate the event size, where event
+-- 
+2.17.0.484.g0c8726318c-goog
