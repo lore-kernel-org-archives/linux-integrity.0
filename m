@@ -1,64 +1,50 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:55449 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934739AbeDKTDq (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 11 Apr 2018 15:03:46 -0400
-Date: Wed, 11 Apr 2018 21:03:35 +0200
-From: Petr Vorel <pvorel@suse.cz>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: ltp@lists.linux.it, linux-integrity@vger.kernel.org
-Subject: Re: [RFC PATCH v2 1/4] security/ima: Rewrite tests into new API +
- fixes
-Message-ID: <20180411190335.GB25859@x230>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20180314155731.5943-1-pvorel@suse.cz>
- <20180314155731.5943-2-pvorel@suse.cz>
- <1522177951.3541.180.camel@linux.vnet.ibm.com>
- <20180329085947.hns5mhwu3co2tkox@dell5510>
- <1523375764.5268.12.camel@linux.vnet.ibm.com>
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:40054 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751599AbeDKR0C (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 11 Apr 2018 13:26:02 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-In-Reply-To: <1523375764.5268.12.camel@linux.vnet.ibm.com>
+In-Reply-To: <VI1PR0402MB3485F2A0D0A92BD055F4973098BD0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+References: <CABatt_ytYORYKtApcB4izhNanEKkGFi9XAQMjHi_n-8YWoCRiw@mail.gmail.com>
+ <CAOMZO5Aycn37omkEuevpBrkMTYt0xSeDcX3y79asqUDHYTM-eA@mail.gmail.com>
+ <CABatt_yUbBdNbi_i3SQD5wnc99D8O1RQ_4Ysa+6n5X1vw4Lqnw@mail.gmail.com>
+ <CAOMZO5DdS-n2taSMsXHAFotCHZdg3Z1in5fy10_5F4Ttwj4vLw@mail.gmail.com>
+ <CABatt_y94bWRJct_T94kcUt1F-BLgsNf4Q0Ay=_ozV93E7pUSA@mail.gmail.com>
+ <CABatt_yokAz4bozv5mGu44rh_sZaok-fGj36p2Z3EpcXYiphVA@mail.gmail.com>
+ <CAOMZO5Dfyp8iFd7i+6a-4XefFd0iHF6rUY6N12b_W_MeHQ4QpA@mail.gmail.com> <VI1PR0402MB3485F2A0D0A92BD055F4973098BD0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Wed, 11 Apr 2018 14:26:01 -0300
+Message-ID: <CAOMZO5BmepNWhMzL6J2hbf=+0YzsBZuOVqo+8jA-bLsYuGm8dA@mail.gmail.com>
+Subject: Re: CAAM and IMA/EVM : caam_rsa_enc: DECO: desc idx 7: Protocol Size Error
+To: =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>
+Cc: Martin Townsend <mtownsend1973@gmail.com>,
+        "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Breno Matheus Lima <brenomatheus@gmail.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Mimi,
+Hi Horia,
 
-> > > >  load_policy()
-> > ...
-> > > >  	cat $1 |
-> > > > -	while read line ; do
-> > > > -	{
-> > > > -		if [ "${line#\#}" = "${line}" ] ; then
-> > > > -			echo $line >&4 2> /dev/null
-> > > > +	while read line; do
-> > > > +		if [ "${line#\#}" = "${line}" ]; then
-> > > > +			echo "$line" >&4 2> /dev/null
-> > > >  			if [ $? -ne 0 ]; then
-> > > >  				exec 4>&-
-> > > >  				return 1
-> > > >  			fi
-> > > >  		fi
-> > > > -	}
+On Wed, Apr 11, 2018 at 7:15 AM, Horia Geanta <horia.geanta@nxp.com> wrote:
 
-> > > Originally writing the policy was done one rule at a time, but hasn't
-> > > been required for a long time.  dracut and systemd 'cat' the policy
-> > > directly to the pseudo file.
-> > OK, let's simplify it to catting the content.
+> You'd want to make sure rsa is offloaded to caam in this case - check in
+> /proc/crypto.
+> IIRC there are some i.mx parts that don't have support for Public Key
+> acceleration (PKHA).
 
-> Replacing the builtin policy with a new policy in the initramfs was
-> considered safe.  With commit 38d859f991f3 ("IMA: policy can now be
-> updated multiple times") the policy can be extended multiple times,
-> not only from the initramfs.  For it to be safe to extend the IMA
-> policy (eg. CONFIG_IMA_WRITE_POLICY), the policy must be signed.
+PKHA is present on mx6ul and not present on mx6q.
 
-> These tests assume the policy does not need to be signed.
+mx6uq uses the generic rsa driver and handles the certificate correctly.
 
-Is it a good idea to expect that policy must be signed also for older kernels
-(kernels before 4.5)?
+mx6ul uses pkcs1pad(rsa-caam,sha256) and it fails to handle the certificate.
 
-> Mimi
+So that explains the different behavior of mx6q versus mx6ul.
 
+Any ideas as to how to fix rsa-caam?
 
-Kind regards,
-Petr
+Thanks
