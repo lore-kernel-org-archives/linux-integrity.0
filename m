@@ -1,93 +1,62 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48264 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750761AbeDMP2B (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 13 Apr 2018 11:28:01 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w3DFQtlH033164
-        for <linux-integrity@vger.kernel.org>; Fri, 13 Apr 2018 11:28:00 -0400
-Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2haw9qxa50-1
-        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 13 Apr 2018 11:28:00 -0400
-Received: from localhost
-        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Fri, 13 Apr 2018 16:27:57 +0100
-Subject: [PATCH] lockdown: fix coordination of kernel module signature
- verification
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: David Howells <dhowells@redhat.com>
-Cc: Luca Boccassi <bluca@debian.org>,
-        "Bruno E. O. Meneguele" <bmeneg@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date: Fri, 13 Apr 2018 11:27:52 -0400
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1523633272.3272.30.camel@linux.vnet.ibm.com>
+Received: from mail-he1eur01on0045.outbound.protection.outlook.com ([104.47.0.45]:14619
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752929AbeDMGSK (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 13 Apr 2018 02:18:10 -0400
+From: =?iso-8859-2?Q?Horia_Geant=E3?= <horia.geanta@nxp.com>
+To: Fabio Estevam <festevam@gmail.com>
+CC: Martin Townsend <mtownsend1973@gmail.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Breno Matheus Lima <brenomatheus@gmail.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>
+Subject: Re: CAAM and IMA/EVM : caam_rsa_enc: DECO: desc idx 7: Protocol Size
+ Error
+Date: Fri, 13 Apr 2018 06:18:06 +0000
+Message-ID: <VI1PR0402MB348540499F4BE0C139D9FF0C98B30@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+References: <CABatt_ytYORYKtApcB4izhNanEKkGFi9XAQMjHi_n-8YWoCRiw@mail.gmail.com>
+ <CAOMZO5Aycn37omkEuevpBrkMTYt0xSeDcX3y79asqUDHYTM-eA@mail.gmail.com>
+ <CABatt_yUbBdNbi_i3SQD5wnc99D8O1RQ_4Ysa+6n5X1vw4Lqnw@mail.gmail.com>
+ <CAOMZO5DdS-n2taSMsXHAFotCHZdg3Z1in5fy10_5F4Ttwj4vLw@mail.gmail.com>
+ <CABatt_y94bWRJct_T94kcUt1F-BLgsNf4Q0Ay=_ozV93E7pUSA@mail.gmail.com>
+ <CABatt_yokAz4bozv5mGu44rh_sZaok-fGj36p2Z3EpcXYiphVA@mail.gmail.com>
+ <CAOMZO5Dfyp8iFd7i+6a-4XefFd0iHF6rUY6N12b_W_MeHQ4QpA@mail.gmail.com>
+ <VI1PR0402MB3485F2A0D0A92BD055F4973098BD0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+ <CAOMZO5BmepNWhMzL6J2hbf=+0YzsBZuOVqo+8jA-bLsYuGm8dA@mail.gmail.com>
+ <VI1PR0402MB3485555C22D36209A5F65A4598BC0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+ <CAOMZO5CLYRidtr9z_dhFLrVNau-Sn-s__RBeLe0N_J3-D51yEg@mail.gmail.com>
+Content-Type: text/plain; charset="iso-8859-2"
+MIME-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-If both IMA-appraisal and sig_enforce are enabled, then both signatures
-are currently required.  If the IMA-appraisal signature verification
-fails, it could rely on the appended signature verification; but with the
-lockdown patch set, the appended signature verification assumes that if
-IMA-appraisal is enabled, it has verified the signature.  Basically each
-signature verification method would be relying on the other to verify the
-kernel module signature.
+On 4/13/2018 3:12 AM, Fabio Estevam wrote:
+> Hi Horia,
+> 
+> On Thu, Apr 12, 2018 at 4:12 AM, Horia Geanta <horia.geanta@nxp.com> wrote:
+> 
+>> Yes, driver needs to strip off leading zeros from input data before feeding it
+>> to the accelerator.
+>> I am working at a fix.
+> 
+> I was able to to strip off the leading zeros from input data as you suggested.
+> 
+> My changes are like this at the moment:
+> 
+[snip]
+> but still get the original error as shown below.
+> 
+> Any ideas?
+> 
+Stripping should happen before set_rsa_pub_pdb() is called since the Protocol
+Data Block contains the input length that is used by the accelerator:
+	pdb->f_len = req->src_len;
 
-This patch addresses the problem of requiring both kernel module signature
-verification methods, when both are enabled, by verifying just the
-appended signature.
+It should probably be moved at the top of rsa_edesc_alloc().
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
----
- kernel/module.c                   | 4 +---
- security/integrity/ima/ima_main.c | 7 ++++++-
- 2 files changed, 7 insertions(+), 4 deletions(-)
+Ideally stripping would avoid copying data (and memory allocation for temporary
+buffers).
 
-diff --git a/kernel/module.c b/kernel/module.c
-index 9c1709a05037..60861eb7bc4d 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2803,9 +2803,7 @@ static int module_sig_check(struct load_info *info, int flags,
- 		if (sig_enforce) {
- 			pr_notice("%s is rejected\n", reason);
- 			return -EKEYREJECTED;
--		}
--
--		if (can_do_ima_check && is_ima_appraise_enabled())
-+		} else if (can_do_ima_check && is_ima_appraise_enabled())
- 			return 0;
- 		if (kernel_is_locked_down(reason))
- 			return -EPERM;
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 754ece08e1c6..2155b1f316a4 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -480,6 +480,7 @@ static int read_idmap[READING_MAX_ID] = {
- int ima_post_read_file(struct file *file, void *buf, loff_t size,
- 		       enum kernel_read_file_id read_id)
- {
-+	bool sig_enforce = is_module_sig_enforced();
- 	enum ima_hooks func;
- 	u32 secid;
- 
-@@ -490,7 +491,11 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
- 		return 0;
- 	}
- 
--	if (!file && read_id == READING_MODULE) /* MODULE_SIG_FORCE enabled */
-+	/*
-+	 * If both IMA-appraisal and appended signature verification are
-+	 * enabled, rely on the appended signature verification.
-+	 */
-+	if (sig_enforce && read_id == READING_MODULE)
- 		return 0;
- 
- 	/* permit signed certs */
--- 
-2.7.5
+Horia
