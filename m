@@ -1,94 +1,61 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:41156 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750904AbeDMUk1 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 13 Apr 2018 16:40:27 -0400
-Date: Fri, 13 Apr 2018 17:40:25 -0300
-From: "Bruno E. O. Meneguele" <bmeneg@redhat.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: David Howells <dhowells@redhat.com>,
-        Luca Boccassi <bluca@debian.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] lockdown: fix coordination of kernel module signature
- verification
-Message-ID: <20180413204025.GC2047@rhlt>
-References: <1523633272.3272.30.camel@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="E/DnYTRukya0zdZ1"
-In-Reply-To: <1523633272.3272.30.camel@linux.vnet.ibm.com>
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52642 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751208AbeDMQZO (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 13 Apr 2018 12:25:14 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w3DGN6Ok051251
+        for <linux-integrity@vger.kernel.org>; Fri, 13 Apr 2018 12:25:13 -0400
+Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2havqujptk-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 13 Apr 2018 12:25:12 -0400
+Received: from localhost
+        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Fri, 13 Apr 2018 17:25:09 +0100
+Subject: Re: [RFC PATCH v3 1/3] ima: extend clone() with IMA namespace
+ support
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, tycho@docker.com,
+        serge@hallyn.com, sunyuqiong1988@gmail.com, david.safford@ge.com,
+        mkayaalp@cs.binghamton.edu, James.Bottomley@HansenPartnership.com,
+        Yuqiong Sun <suny@us.ibm.com>,
+        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>,
+        John Johansen <john.johansen@canonical.com>
+Date: Fri, 13 Apr 2018 12:25:02 -0400
+In-Reply-To: <87sh8lcecn.fsf@xmission.com>
+References: <1522159038-14175-1-git-send-email-stefanb@linux.vnet.ibm.com>
+         <1522159038-14175-2-git-send-email-stefanb@linux.vnet.ibm.com>
+         <87sh8lcecn.fsf@xmission.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1523636702.3272.63.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Apr 13, 2018 at 11:27:52AM -0400, Mimi Zohar wrote:
-> If both IMA-appraisal and sig_enforce are enabled, then both signatures
-> are currently required.  If the IMA-appraisal signature verification
-> fails, it could rely on the appended signature verification; but with the
-> lockdown patch set, the appended signature verification assumes that if
-> IMA-appraisal is enabled, it has verified the signature.  Basically each
-> signature verification method would be relying on the other to verify the
-> kernel module signature.
-> 
-> This patch addresses the problem of requiring both kernel module signature
-> verification methods, when both are enabled, by verifying just the
-> appended signature.
-> 
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> ---
->  kernel/module.c                   | 4 +---
->  security/integrity/ima/ima_main.c | 7 ++++++-
->  2 files changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/kernel/module.c b/kernel/module.c
-> index 9c1709a05037..60861eb7bc4d 100644
-> --- a/kernel/module.c
-> +++ b/kernel/module.c
-> @@ -2803,9 +2803,7 @@ static int module_sig_check(struct load_info *info, int flags,
->  		if (sig_enforce) {
->  			pr_notice("%s is rejected\n", reason);
->  			return -EKEYREJECTED;
-> -		}
-> -
-> -		if (can_do_ima_check && is_ima_appraise_enabled())
-> +		} else if (can_do_ima_check && is_ima_appraise_enabled())
->  			return 0;
->  		if (kernel_is_locked_down(reason))
->  			return -EPERM;
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 754ece08e1c6..2155b1f316a4 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -480,6 +480,7 @@ static int read_idmap[READING_MAX_ID] = {
->  int ima_post_read_file(struct file *file, void *buf, loff_t size,
->  		       enum kernel_read_file_id read_id)
->  {
-> +	bool sig_enforce = is_module_sig_enforced();
->  	enum ima_hooks func;
->  	u32 secid;
->  
-> @@ -490,7 +491,11 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
->  		return 0;
->  	}
->  
-> -	if (!file && read_id == READING_MODULE) /* MODULE_SIG_FORCE enabled */
-> +	/*
-> +	 * If both IMA-appraisal and appended signature verification are
-> +	 * enabled, rely on the appended signature verification.
-> +	 */
-> +	if (sig_enforce && read_id == READING_MODULE)
->  		return 0;
->  
->  	/* permit signed certs */
-> -- 
-> 2.7.5
-> 
+[Cc'ing John Johansen]
 
-I agree with the solution.
+On Tue, 2018-03-27 at 18:01 -0500, Eric W. Biederman wrote:
+[...]
+> As such I expect the best way to create the ima namespace is by simply
+> writing to securityfs/imafs.  Possibly before the user namespace is
+> even unshared.  That would allow IMA to keep track of things from
+> before a container is created.
 
-Acked-by: Bruno E. O. Meneguele <bmeneg@redhat.com>
+My initial thought was to stage IMA namespacing with just IMA-audit
+first, followed by either IMA-measurement or IMA-appraisal.  This
+would allow us to get the basic IMA namespacing framework working and
+defer dealing with the securityfs related namespacing of the IMA
+policy and measurement list issues to later.
 
+By tying IMA namespacing to a securityfs ima/unshare file, we would
+need to address the securityfs issues first.
 
-    [ Part 2, Application/PGP-SIGNATURE (Name: "signature.asc") 499 bytes. ]
-    [ Unable to print this part. ]
+Mimi
