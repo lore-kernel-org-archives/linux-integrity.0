@@ -1,43 +1,47 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:37767 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751086AbeDQDCG (ORCPT
+Received: from mail-it0-f42.google.com ([209.85.214.42]:56311 "EHLO
+        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751099AbeDPUWj (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 16 Apr 2018 23:02:06 -0400
-Received: by mail-pf0-f195.google.com with SMTP id p6so11479830pfn.4
-        for <linux-integrity@vger.kernel.org>; Mon, 16 Apr 2018 20:02:06 -0700 (PDT)
-Date: Mon, 16 Apr 2018 21:02:02 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Thiebaud Weksteen <tweek@google.com>
-Cc: jarkko.sakkinen@linux.intel.com, nayna@linux.vnet.ibm.com,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] tpm: Add explicit endianness cast
-Message-ID: <20180417030202.GA30624@ziepe.ca>
-References: <20180412101350.210547-1-tweek@google.com>
- <20180412101350.210547-2-tweek@google.com>
+        Mon, 16 Apr 2018 16:22:39 -0400
+Received: by mail-it0-f42.google.com with SMTP id 145-v6so7137314itf.5
+        for <linux-integrity@vger.kernel.org>; Mon, 16 Apr 2018 13:22:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180412101350.210547-2-tweek@google.com>
+References: <20180413225220.20130-1-mjg59@google.com> <1523801140.3272.187.camel@linux.vnet.ibm.com>
+ <CACdnJutNLdkqaz0UfveSq_vYBZ37Qx8DkfGWKR3_=bcLpj5MwA@mail.gmail.com> <1523909802.3272.238.camel@linux.vnet.ibm.com>
+In-Reply-To: <1523909802.3272.238.camel@linux.vnet.ibm.com>
+From: Matthew Garrett <mjg59@google.com>
+Date: Mon, 16 Apr 2018 20:22:27 +0000
+Message-ID: <CACdnJusXUkwmxsJiwysMniYj4AvmJjBjH0XXzMiTXwsR9+T+Fw@mail.gmail.com>
+Subject: Re: [PATCH] EVM: Allow runtime modification of the set of verified xattrs
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Apr 12, 2018 at 12:13:47PM +0200, Thiebaud Weksteen wrote:
-> Signed-off-by: Thiebaud Weksteen <tweek@google.com>
->  drivers/char/tpm/tpm_eventlog_of.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_eventlog_of.c b/drivers/char/tpm/tpm_eventlog_of.c
-> index 96fd5646f866..d74568d58a66 100644
-> +++ b/drivers/char/tpm/tpm_eventlog_of.c
-> @@ -56,8 +56,8 @@ int tpm_read_log_of(struct tpm_chip *chip)
->  	 * but physical tpm needs the conversion.
->  	 */
->  	if (of_property_match_string(np, "compatible", "IBM,vtpm") < 0) {
-> -		size = be32_to_cpup(sizep);
-> -		base = be64_to_cpup(basep);
-> +		size = be32_to_cpup((__be32 *)sizep);
-> +		base = be64_to_cpup((__be64 *)basep);
+On Mon, Apr 16, 2018 at 1:16 PM Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
 
-Er, no.. change the definitions of sizep and basep to be __be
+> On Mon, 2018-04-16 at 18:32 +0000, Matthew Garrett wrote:
+> > Runtime. I'll look into the post-init stuff, but given that this doesn't
+> > change the current security position do you think it's a blocker?
 
-Jason
+> I would probably make the existing evm_config_xattrnames a const and
+> create a link list.  As new xattrs are defined, append them to the
+> tail.
+
+Ok, that's definitely an option. But thinking about it some more - if an
+attacker has arbitrary memory overwrite of writable pages, wouldn't it be
+easier for them to just overwrite the policy and disable appraisal?
+
+> Is there a reason for adding one additional xattrs one at a time, as
+> opposed to parsing a string?
+
+Mostly to avoid introducing more string parsing into the kernel.
+
+> Is it better to define a securityfs file, rather than a boot command
+> line argument?  With a boot command line argument, the list of xattrs
+> could be defined as __ro_after_init.
+
+I could go either way on this - I think that doing it on the command line
+would satisfy all my use cases.
