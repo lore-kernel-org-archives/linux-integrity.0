@@ -1,56 +1,52 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:56723 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752162AbeDRLVK (ORCPT
+Received: from mail-yw0-f202.google.com ([209.85.161.202]:48064 "EHLO
+        mail-yw0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751879AbeDQW4R (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 18 Apr 2018 07:21:10 -0400
-From: Colin King <colin.king@canonical.com>
-To: Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] tpm/st33zp24: Fix spelling mistake in macro ST33ZP24_TISREGISTER_UKNOWN
-Date: Wed, 18 Apr 2018 12:21:05 +0100
-Message-Id: <20180418112105.894-1-colin.king@canonical.com>
+        Tue, 17 Apr 2018 18:56:17 -0400
+Received: by mail-yw0-f202.google.com with SMTP id i204so13456005ywb.14
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Apr 2018 15:56:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Date: Tue, 17 Apr 2018 15:56:01 -0700
+In-Reply-To: <20180417225601.6965-1-mjg59@google.com>
+Message-Id: <20180417225601.6965-2-mjg59@google.com>
+References: <20180417225601.6965-1-mjg59@google.com>
+Subject: [USER] [PATCH 2/2] Add security.apparmor to the set of extended
+ attributes used by EVM
+From: Matthew Garrett <mjg59@google.com>
+To: linux-integrity@vger.kernel.org
+Cc: zohar@linux.vnet.ibm.com, Matthew Garrett <mjg59@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+The kernel is taking security.apparmor into account when validating EVM,
+so evmctl should be doing the same.
 
-Fix spelling mistake, rename ST33ZP24_TISREGISTER_UKNOWN to
-ST33ZP24_TISREGISTER_UNKNOWN
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Matthew Garrett <mjg59@google.com>
 ---
- drivers/char/tpm/st33zp24/spi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ src/evmctl.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/char/tpm/st33zp24/spi.c b/drivers/char/tpm/st33zp24/spi.c
-index 0fc4f20b5f83..d7909ab287a8 100644
---- a/drivers/char/tpm/st33zp24/spi.c
-+++ b/drivers/char/tpm/st33zp24/spi.c
-@@ -40,7 +40,7 @@
- #define ST33ZP24_OK					0x5A
- #define ST33ZP24_UNDEFINED_ERR				0x80
- #define ST33ZP24_BADLOCALITY				0x81
--#define ST33ZP24_TISREGISTER_UKNOWN			0x82
-+#define ST33ZP24_TISREGISTER_UNKNOWN			0x82
- #define ST33ZP24_LOCALITY_NOT_ACTIVATED			0x83
- #define ST33ZP24_HASH_END_BEFORE_HASH_START		0x84
- #define ST33ZP24_BAD_COMMAND_ORDER			0x85
-@@ -84,7 +84,7 @@ static int st33zp24_status_to_errno(u8 code)
- 		return 0;
- 	case ST33ZP24_UNDEFINED_ERR:
- 	case ST33ZP24_BADLOCALITY:
--	case ST33ZP24_TISREGISTER_UKNOWN:
-+	case ST33ZP24_TISREGISTER_UNKNOWN:
- 	case ST33ZP24_LOCALITY_NOT_ACTIVATED:
- 	case ST33ZP24_HASH_END_BEFORE_HASH_START:
- 	case ST33ZP24_BAD_COMMAND_ORDER:
+diff --git a/src/evmctl.c b/src/evmctl.c
+index 43d261f..e350f69 100644
+--- a/src/evmctl.c
++++ b/src/evmctl.c
+@@ -69,6 +69,7 @@
+ static char *evm_default_xattrs[] = {
+ 	XATTR_NAME_SELINUX,
+ 	XATTR_NAME_SMACK,
++	XATTR_NAME_APPARMOR,
+ 	XATTR_NAME_IMA,
+ 	XATTR_NAME_CAPS,
+ 	NULL
+@@ -80,6 +81,7 @@ static char *evm_extra_smack_xattrs[] = {
+ 	XATTR_NAME_SMACKEXEC,
+ 	XATTR_NAME_SMACKTRANSMUTE,
+ 	XATTR_NAME_SMACKMMAP,
++	XATTR_NAME_APPARMOR,
+ 	XATTR_NAME_IMA,
+ 	XATTR_NAME_CAPS,
+ 	NULL
 -- 
-2.17.0
+2.17.0.484.g0c8726318c-goog
