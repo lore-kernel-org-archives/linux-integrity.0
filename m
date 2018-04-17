@@ -1,89 +1,59 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-yw0-f201.google.com ([209.85.161.201]:48062 "EHLO
-        mail-yw0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751879AbeDQW4L (ORCPT
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:39161 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753592AbeDQOAR (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 17 Apr 2018 18:56:11 -0400
-Received: by mail-yw0-f201.google.com with SMTP id i204so13455907ywb.14
-        for <linux-integrity@vger.kernel.org>; Tue, 17 Apr 2018 15:56:11 -0700 (PDT)
+        Tue, 17 Apr 2018 10:00:17 -0400
+Received: by mail-pg0-f65.google.com with SMTP id b9so5451501pgf.6
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Apr 2018 07:00:16 -0700 (PDT)
+Date: Tue, 17 Apr 2018 08:00:13 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Thiebaud Weksteen <tweek@google.com>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] tpm: Add explicit endianness cast
+Message-ID: <20180417140013.GA2029@ziepe.ca>
+References: <20180412101350.210547-1-tweek@google.com>
+ <20180412101350.210547-2-tweek@google.com>
+ <20180417030202.GA30624@ziepe.ca>
+ <CA+zpnLdU=t6eOY9GOLAyiXkZBw=NueckiejHSexd8P7MKYuRww@mail.gmail.com>
 MIME-Version: 1.0
-Date: Tue, 17 Apr 2018 15:56:00 -0700
-Message-Id: <20180417225601.6965-1-mjg59@google.com>
-Subject: [USER] [PATCH 1/2] Remove hardcoding of SHA1 in EVM signatures
-From: Matthew Garrett <mjg59@google.com>
-To: linux-integrity@vger.kernel.org
-Cc: zohar@linux.vnet.ibm.com, Matthew Garrett <mjg59@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CA+zpnLdU=t6eOY9GOLAyiXkZBw=NueckiejHSexd8P7MKYuRww@mail.gmail.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-EVM signatures are always being generated with SHA1 even if the -a
-argument has been provided to evmctl. Fix this so the provided hash
-algorithm is used instead.
+On Tue, Apr 17, 2018 at 08:32:33AM +0000, Thiebaud Weksteen wrote:
+> On Tue, Apr 17, 2018 at 5:02 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> 
+> > On Thu, Apr 12, 2018 at 12:13:47PM +0200, Thiebaud Weksteen wrote:
+> > > Signed-off-by: Thiebaud Weksteen <tweek@google.com>
+> > >  drivers/char/tpm/tpm_eventlog_of.c | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/char/tpm/tpm_eventlog_of.c
+> b/drivers/char/tpm/tpm_eventlog_of.c
+> > > index 96fd5646f866..d74568d58a66 100644
+> > > +++ b/drivers/char/tpm/tpm_eventlog_of.c
+> > > @@ -56,8 +56,8 @@ int tpm_read_log_of(struct tpm_chip *chip)
+> > >        * but physical tpm needs the conversion.
+> > >        */
+> > >       if (of_property_match_string(np, "compatible", "IBM,vtpm") < 0) {
+> > > -             size = be32_to_cpup(sizep);
+> > > -             base = be64_to_cpup(basep);
+> > > +             size = be32_to_cpup((__be32 *)sizep);
+> > > +             base = be64_to_cpup((__be64 *)basep);
+> 
+> > Er, no.. change the definitions of sizep and basep to be __be
+> 
+> > Jason
+> 
+> Please read the comment before the condition. sizep and
+> basep may contain either little endian or big endian and this block is used
+> to adjust that. Let me know if there is a better way for handling this.
 
-Signed-off-by: Matthew Garrett <mjg59@google.com>
----
- src/evmctl.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+Well a cast like that will throw sparse warnings, you need __force at
+least
 
-diff --git a/src/evmctl.c b/src/evmctl.c
-index 2ffee78..43d261f 100644
---- a/src/evmctl.c
-+++ b/src/evmctl.c
-@@ -313,6 +313,7 @@ err:
- 
- static int calc_evm_hash(const char *file, unsigned char *hash)
- {
-+        const EVP_MD *md;
- 	struct stat st;
- 	int err;
- 	uint32_t generation = 0;
-@@ -374,7 +375,13 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
- 		return -1;
- 	}
- 
--	err = EVP_DigestInit(pctx, EVP_sha1());
-+	md = EVP_get_digestbyname(params.hash_algo);
-+	if (!md) {
-+		log_err("EVP_get_digestbyname() failed\n");
-+		return 1;
-+	}
-+
-+	err = EVP_DigestInit(pctx, md);
- 	if (!err) {
- 		log_err("EVP_DigestInit() failed\n");
- 		return 1;
-@@ -498,7 +505,7 @@ static int sign_evm(const char *file, const char *key)
- 	if (len <= 1)
- 		return len;
- 
--	len = sign_hash("sha1", hash, len, key, NULL, sig + 1);
-+	len = sign_hash(params.hash_algo, hash, len, key, NULL, sig + 1);
- 	if (len <= 1)
- 		return len;
- 
-@@ -967,6 +974,7 @@ static int cmd_setxattr_ima(struct command *cmd)
- 
- static int calc_evm_hmac(const char *file, const char *keyfile, unsigned char *hash)
- {
-+        const EVP_MD *md;
- 	struct stat st;
- 	int err = -1;
- 	uint32_t generation = 0;
-@@ -1033,7 +1041,13 @@ static int calc_evm_hmac(const char *file, const char *keyfile, unsigned char *h
- 		goto out;
- 	}
- 
--	err = !HMAC_Init_ex(pctx, evmkey, sizeof(evmkey), EVP_sha1(), NULL);
-+	md = EVP_get_digestbyname(params.hash_algo);
-+	if (!md) {
-+		log_err("EVP_get_digestbyname() failed\n");
-+		goto out;
-+	}
-+
-+	err = !HMAC_Init_ex(pctx, evmkey, sizeof(evmkey), md, NULL);
- 	if (err) {
- 		log_err("HMAC_Init() failed\n");
- 		goto out;
--- 
-2.17.0.484.g0c8726318c-goog
+Jason
