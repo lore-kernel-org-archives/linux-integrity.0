@@ -1,71 +1,84 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:40241 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750981AbeDRVdL (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56802 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750981AbeDRU1R (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 18 Apr 2018 17:33:11 -0400
-Subject: Re: [RFC PATCH v3 1/3] ima: extend clone() with IMA namespace support
-To: "Eric W. Biederman" <ebiederm@xmission.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Wed, 18 Apr 2018 16:27:17 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w3IKOuV9051316
+        for <linux-integrity@vger.kernel.org>; Wed, 18 Apr 2018 16:27:17 -0400
+Received: from e06smtp11.uk.ibm.com (e06smtp11.uk.ibm.com [195.75.94.107])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2he986tpn7-1
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 18 Apr 2018 16:27:16 -0400
+Received: from localhost
+        by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Wed, 18 Apr 2018 21:27:14 +0100
+Subject: Re: [RFC PATCH v3 1/3] ima: extend clone() with IMA namespace
+ support
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: John Johansen <john.johansen@canonical.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
         linux-integrity@vger.kernel.org,
         containers@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, tycho@docker.com,
-        serge@hallyn.com, sunyuqiong1988@gmail.com, david.safford@ge.com,
-        mkayaalp@cs.binghamton.edu, James.Bottomley@HansenPartnership.com,
-        Yuqiong Sun <suny@us.ibm.com>,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        sunyuqiong1988@gmail.com, david.safford@ge.com,
+        mkayaalp@cs.binghamton.edu,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
         Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
-References: <1522159038-14175-1-git-send-email-stefanb@linux.vnet.ibm.com>
- <1522159038-14175-2-git-send-email-stefanb@linux.vnet.ibm.com>
- <87sh8lcecn.fsf@xmission.com> <1523636702.3272.63.camel@linux.vnet.ibm.com>
- <d8c30d7d-c679-9323-7a25-d3148e9b96c6@canonical.com>
- <1524081472.3272.319.camel@linux.vnet.ibm.com> <87wox4s282.fsf@xmission.com>
-From: John Johansen <john.johansen@canonical.com>
-Message-ID: <8895cb9c-7b9e-2f82-e3d8-a15f5fc26e25@canonical.com>
-Date: Wed, 18 Apr 2018 14:32:59 -0700
-MIME-Version: 1.0
+Date: Wed, 18 Apr 2018 16:27:08 -0400
 In-Reply-To: <87wox4s282.fsf@xmission.com>
-Content-Type: text/plain; charset=utf-8
+References: <1522159038-14175-1-git-send-email-stefanb@linux.vnet.ibm.com>
+         <1522159038-14175-2-git-send-email-stefanb@linux.vnet.ibm.com>
+         <87sh8lcecn.fsf@xmission.com>  <1523636702.3272.63.camel@linux.vnet.ibm.com>
+         <d8c30d7d-c679-9323-7a25-d3148e9b96c6@canonical.com>
+         <1524081472.3272.319.camel@linux.vnet.ibm.com>
+         <87wox4s282.fsf@xmission.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1524083228.3272.331.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 04/18/2018 01:12 PM, Eric W. Biederman wrote:
+On Wed, 2018-04-18 at 15:12 -0500, Eric W. Biederman wrote:
 > Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
 > 
->> On Wed, 2018-04-18 at 09:09 -0700, John Johansen wrote:
->>> On 04/13/2018 09:25 AM, Mimi Zohar wrote:
->>>> [Cc'ing John Johansen]
->>>>
->>>> On Tue, 2018-03-27 at 18:01 -0500, Eric W. Biederman wrote:
->>>> [...]
->>>>> As such I expect the best way to create the ima namespace is by simply
->>>>> writing to securityfs/imafs.  Possibly before the user namespace is
->>>>> even unshared.  That would allow IMA to keep track of things from
->>>>> before a container is created.
->>>>
->>>
->>> I do think this is generally the right approach for LSMs when looking
->>> forward to LSM stacking and more LSMs.
->>>
->>>
->>>> My initial thought was to stage IMA namespacing with just IMA-audit
->>>> first, followed by either IMA-measurement or IMA-appraisal.  This
->>>> would allow us to get the basic IMA namespacing framework working and
->>>> defer dealing with the securityfs related namespacing of the IMA
->>>> policy and measurement list issues to later.
->>>>
->>>> By tying IMA namespacing to a securityfs ima/unshare file, we would
->>>> need to address the securityfs issues first.
->>>>
->>>
->>> well it depends on what you want to do. It would be possible to have
->>> a simple file (not a jump link) within securityfs that IMA could use
->>> without having to deal with all the securityfs issues first. However it
->>> does require that securityfs (not necessarily imafs) be visible within
->>> the mount namespace of the task doing the setup.
->>
->> Eric, would you be OK with that?
+> > On Wed, 2018-04-18 at 09:09 -0700, John Johansen wrote:
+> >> On 04/13/2018 09:25 AM, Mimi Zohar wrote:
+> >> > [Cc'ing John Johansen]
+> >> > 
+> >> > On Tue, 2018-03-27 at 18:01 -0500, Eric W. Biederman wrote:
+> >> > [...]
+> >> >> As such I expect the best way to create the ima namespace is by simply
+> >> >> writing to securityfs/imafs.  Possibly before the user namespace is
+> >> >> even unshared.  That would allow IMA to keep track of things from
+> >> >> before a container is created.
+> >> > 
+> >> 
+> >> I do think this is generally the right approach for LSMs when looking
+> >> forward to LSM stacking and more LSMs.
+> >> 
+> >> 
+> >> > My initial thought was to stage IMA namespacing with just IMA-audit
+> >> > first, followed by either IMA-measurement or IMA-appraisal.  This
+> >> > would allow us to get the basic IMA namespacing framework working and
+> >> > defer dealing with the securityfs related namespacing of the IMA
+> >> > policy and measurement list issues to later.
+> >> > 
+> >> > By tying IMA namespacing to a securityfs ima/unshare file, we would
+> >> > need to address the securityfs issues first.
+> >> > 
+> >> 
+> >> well it depends on what you want to do. It would be possible to have
+> >> a simple file (not a jump link) within securityfs that IMA could use
+> >> without having to deal with all the securityfs issues first. However it
+> >> does require that securityfs (not necessarily imafs) be visible within
+> >> the mount namespace of the task doing the setup.
+> >
+> > Eric, would you be OK with that?
 > 
 > Roughly.  My understanding is that you have to have a write to some
 > filesystem to set the ima policy.
@@ -75,35 +88,9 @@ On 04/18/2018 01:12 PM, Eric W. Biederman wrote:
 > 
 > Now it sounds like providing the "create an ima namespace" is going to
 > be a special case, and that does not sound correct.
-> 
-not necessarily special case, but they do need to settle on an interface
-that will work for them, and will work with the order they want to land
-things. I was just trying to point out that there are fs solutions that
-can work without having deal with the full securityfs/imafs namespacing
-solution landing first.
 
-While create a file directly in securityfs that lives along side the imafs
-dir.
-ima_create_ns
-ima/
-does feel like a special case. It could work
+This is not any different than any of the other security/ima/ files
+(eg. policy, ascii_runtime_measurements, ...).  The next IMA
+namespacing stage would add support for these files.
 
-what I was thinking of when I proposed a simple is to do it within the ima
-dir, say
-ima/create_ns
-
-For now its just a single file but once imafs becomes "virtualized" to a
-namespace view, each dir that imafs jumplinks to contains a instance of the
-file.
-
-
-Or they could avoid securityfs/imafs entirely and leverage a file in
-procfs
-
-/proc/<pid>/attr/{current,exec,...}
-
-currently those are claimed by the LSMs but new file could be added or
-perhaps even better we could lift the some code from the LSM stacking work
-to provide an ima specific dir
-
-  /proc/<pid>/attr/ima/{current,exec,...}
+Mimi
