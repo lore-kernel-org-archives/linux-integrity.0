@@ -1,119 +1,107 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51776 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751256AbeDRPCA (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49206 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753303AbeDRMNz (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 18 Apr 2018 11:02:00 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w3IEwbs9137629
-        for <linux-integrity@vger.kernel.org>; Wed, 18 Apr 2018 11:01:59 -0400
-Received: from e06smtp13.uk.ibm.com (e06smtp13.uk.ibm.com [195.75.94.109])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2he6m1wu0j-1
+        Wed, 18 Apr 2018 08:13:55 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w3IC9LCx087102
+        for <linux-integrity@vger.kernel.org>; Wed, 18 Apr 2018 08:13:54 -0400
+Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2he5r80akv-1
         (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 18 Apr 2018 11:01:58 -0400
+        for <linux-integrity@vger.kernel.org>; Wed, 18 Apr 2018 08:13:54 -0400
 Received: from localhost
-        by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Wed, 18 Apr 2018 16:01:53 +0100
-Subject: Re: [PATCH v2 1/2] tpm: reduce poll sleep time in tpm_transmit()
+        Wed, 18 Apr 2018 13:13:52 +0100
+Subject: Re: [USER] [PATCH 1/2] Remove hardcoding of SHA1 in EVM signatures
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Nayna Jain <nayna@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
-        jarkko.sakkinen@linux.intel.com, tpmdd@selhorst.net,
-        jgunthorpe@obsidianresearch.com, patrickc@us.ibm.com
-Date: Wed, 18 Apr 2018 11:01:48 -0400
-In-Reply-To: <20180417131246.434-2-nayna@linux.vnet.ibm.com>
-References: <20180417131246.434-1-nayna@linux.vnet.ibm.com>
-         <20180417131246.434-2-nayna@linux.vnet.ibm.com>
+To: Matthew Garrett <mjg59@google.com>, linux-integrity@vger.kernel.org
+Date: Wed, 18 Apr 2018 08:13:49 -0400
+In-Reply-To: <20180417225601.6965-1-mjg59@google.com>
+References: <20180417225601.6965-1-mjg59@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1524063708.3272.301.camel@linux.vnet.ibm.com>
+Message-Id: <1524053629.3272.270.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, 2018-04-17 at 09:12 -0400, Nayna Jain wrote:
-> The TPM polling code in tpm_transmit sleeps in each loop iteration for
-> 5 msecs. However, the TPM might return earlier, and thus waiting for
-> 5 msecs adds an unnecessary delay. This patch reduces the polling sleep
-> time in tpm_transmit() from 5 msecs to 1 msecs.
-> 
-> Additionally, this patch renames TPM_POLL_SLEEP and moves it to tpm.h as
-> an enum value.
-> 
-> After this change, performance on a TPM 1.2 with an 8 byte burstcount
-> for 1000 extends improved from ~14 sec to ~10.7 sec.
-> 
-> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+On Tue, 2018-04-17 at 15:56 -0700, Matthew Garrett wrote:
+> EVM signatures are always being generated with SHA1 even if the -a
+> argument has been provided to evmctl. Fix this so the provided hash
+> algorithm is used instead.
 
-Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+The kernel assumes both the HMAC and signature are sha1 as well.
 
+static char * const evm_hmac = "hmac(sha1)";
+static char * const evm_hash = "sha1";
+
+Mimi
+
+
+
+> Signed-off-by: Matthew Garrett <mjg59@google.com>
 > ---
->  drivers/char/tpm/tpm-interface.c |  2 +-
->  drivers/char/tpm/tpm.h           |  3 ++-
->  drivers/char/tpm/tpm_tis_core.c  | 10 ++--------
->  3 files changed, 5 insertions(+), 10 deletions(-)
+>  src/evmctl.c | 20 +++++++++++++++++---
+>  1 file changed, 17 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 9e80a953d693..a676d8ad5992 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -470,7 +470,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
->  			goto out;
->  		}
+> diff --git a/src/evmctl.c b/src/evmctl.c
+> index 2ffee78..43d261f 100644
+> --- a/src/evmctl.c
+> +++ b/src/evmctl.c
+> @@ -313,6 +313,7 @@ err:
 > 
-> -		tpm_msleep(TPM_TIMEOUT);
-> +		tpm_msleep(TPM_TIMEOUT_POLL);
->  		rmb();
->  	} while (time_before(jiffies, stop));
+>  static int calc_evm_hash(const char *file, unsigned char *hash)
+>  {
+> +        const EVP_MD *md;
+>  	struct stat st;
+>  	int err;
+>  	uint32_t generation = 0;
+> @@ -374,7 +375,13 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
+>  		return -1;
+>  	}
 > 
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index f895fba4e20d..7e797377e1eb 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -53,7 +53,8 @@ enum tpm_const {
->  enum tpm_timeout {
->  	TPM_TIMEOUT = 5,	/* msecs */
->  	TPM_TIMEOUT_RETRY = 100, /* msecs */
-> -	TPM_TIMEOUT_RANGE_US = 300	/* usecs */
-> +	TPM_TIMEOUT_RANGE_US = 300,	/* usecs */
-> +	TPM_TIMEOUT_POLL = 1	/* msecs */
->  };
+> -	err = EVP_DigestInit(pctx, EVP_sha1());
+> +	md = EVP_get_digestbyname(params.hash_algo);
+> +	if (!md) {
+> +		log_err("EVP_get_digestbyname() failed\n");
+> +		return 1;
+> +	}
+> +
+> +	err = EVP_DigestInit(pctx, md);
+>  	if (!err) {
+>  		log_err("EVP_DigestInit() failed\n");
+>  		return 1;
+> @@ -498,7 +505,7 @@ static int sign_evm(const char *file, const char *key)
+>  	if (len <= 1)
+>  		return len;
 > 
->  /* TPM addresses */
-> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-> index da074e3db19b..021e6b68f2db 100644
-> --- a/drivers/char/tpm/tpm_tis_core.c
-> +++ b/drivers/char/tpm/tpm_tis_core.c
-> @@ -31,12 +31,6 @@
->  #include "tpm.h"
->  #include "tpm_tis_core.h"
+> -	len = sign_hash("sha1", hash, len, key, NULL, sig + 1);
+> +	len = sign_hash(params.hash_algo, hash, len, key, NULL, sig + 1);
+>  	if (len <= 1)
+>  		return len;
 > 
-> -/* This is a polling delay to check for status and burstcount.
-> - * As per ddwg input, expectation is that status check and burstcount
-> - * check should return within few usecs.
-> - */
-> -#define TPM_POLL_SLEEP	1  /* msec */
-> -
->  static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value);
+> @@ -967,6 +974,7 @@ static int cmd_setxattr_ima(struct command *cmd)
 > 
->  static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
-> @@ -90,7 +84,7 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
->  		}
->  	} else {
->  		do {
-> -			tpm_msleep(TPM_POLL_SLEEP);
-> +			tpm_msleep(TPM_TIMEOUT_POLL);
->  			status = chip->ops->status(chip);
->  			if ((status & mask) == mask)
->  				return 0;
-> @@ -232,7 +226,7 @@ static int get_burstcount(struct tpm_chip *chip)
->  		burstcnt = (value >> 8) & 0xFFFF;
->  		if (burstcnt)
->  			return burstcnt;
-> -		tpm_msleep(TPM_POLL_SLEEP);
-> +		tpm_msleep(TPM_TIMEOUT_POLL);
->  	} while (time_before(jiffies, stop));
->  	return -EBUSY;
->  }
+>  static int calc_evm_hmac(const char *file, const char *keyfile, unsigned char *hash)
+>  {
+> +        const EVP_MD *md;
+>  	struct stat st;
+>  	int err = -1;
+>  	uint32_t generation = 0;
+> @@ -1033,7 +1041,13 @@ static int calc_evm_hmac(const char *file, const char *keyfile, unsigned char *h
+>  		goto out;
+>  	}
+> 
+> -	err = !HMAC_Init_ex(pctx, evmkey, sizeof(evmkey), EVP_sha1(), NULL);
+> +	md = EVP_get_digestbyname(params.hash_algo);
+> +	if (!md) {
+> +		log_err("EVP_get_digestbyname() failed\n");
+> +		goto out;
+> +	}
+> +
+> +	err = !HMAC_Init_ex(pctx, evmkey, sizeof(evmkey), md, NULL);
+>  	if (err) {
+>  		log_err("HMAC_Init() failed\n");
+>  		goto out;
