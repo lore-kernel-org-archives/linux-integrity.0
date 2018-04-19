@@ -1,83 +1,66 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:38391 "EHLO mx2.suse.de"
+Received: from h2.hallyn.com ([78.46.35.8]:52618 "EHLO mail.hallyn.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752778AbeDSTzT (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 19 Apr 2018 15:55:19 -0400
-From: Petr Vorel <pvorel@suse.cz>
-To: ltp@lists.linux.it
-Cc: Petr Vorel <pvorel@suse.cz>, Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org
-Subject: [RFC PATCH v3 00/10] Rewrite tests into new API + fixes
-Date: Thu, 19 Apr 2018 21:54:53 +0200
-Message-Id: <20180419195503.7194-1-pvorel@suse.cz>
+        id S1753552AbeDSQcn (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 19 Apr 2018 12:32:43 -0400
+Date: Thu, 19 Apr 2018 11:32:42 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+        linux-integrity@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Michael Halcrow <mhalcrow@google.com>
+Subject: Re: Fwd: New Version Notification for
+ draft-cel-nfsv4-linux-seclabel-xtensions-00.txt
+Message-ID: <20180419163242.GA3049@mail.hallyn.com>
+References: <152337099624.13448.11040477333954216664.idtracker@ietfa.amsl.com>
+ <FB6125E9-528C-47DD-9774-86D9D4975A54@oracle.com>
+ <1523401800.5268.61.camel@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1523401800.5268.61.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi,
+Quoting Mimi Zohar (zohar@linux.vnet.ibm.com):
+> Hi Chuck,
+> 
+> On Tue, 2018-04-10 at 08:44 -0600, Chuck Lever wrote:
+> > > Begin forwarded message:
+> > > 
+> > > From: internet-drafts@ietf.org
+> > > Subject: New Version Notification for draft-cel-nfsv4-linux-seclabel-xtensions-00.txt
+> > > Date: April 10, 2018 at 8:36:36 AM MDT
+> > > To: "Charles Lever" <chuck.lever@oracle.com>, "Chuck Lever" <chuck.lever@oracle.com>
+> > > 
+> > > 
+> > > A new version of I-D, draft-cel-nfsv4-linux-seclabel-xtensions-00.txt
+> > > has been successfully submitted by Charles Lever and posted to the
+> > > IETF repository.
+> > > 
+> > > Name:		draft-cel-nfsv4-linux-seclabel-xtensions
+> > > Revision:	00
+> > > Title:		Linux-related Extensions to NFS version 4.2 Security Labels
+> > > Document date:	2018-04-09
+> > > Group:		Individual Submission
+> > > Pages:		8
+> > > URL:            https://www.ietf.org/internet-drafts/draft-cel-nfsv4-linux-seclabel-xtensions-00.txt
+> > > Status:         https://datatracker.ietf.org/doc/draft-cel-nfsv4-linux-seclabel-xtensions/
+> > > Htmlized:       https://tools.ietf.org/html/draft-cel-nfsv4-linux-seclabel-xtensions-00
+> > > Htmlized:       https://datatracker.ietf.org/doc/html/draft-cel-nfsv4-linux-seclabel-xtensions
+> > > 
+> > > 
+> > > Abstract:
+> > >   NFS version 4.2 introduces an optional feature known as NFSv4
+> > >   Security Labels.  This document extends NFSv4 Security Labels to
+> > >   support Linux file capabilities and the Linux Integrity Measurement
+> > >   Architecture.
+> > > 
+> 
+> Very nice!  Thank you so much for writing this up.
 
-changes v2->v3:
-* Fixed some of errors caused by test order.
+Hi Chuck,
 
-* ima_boot_aggregate
-  - max event size is now 1MB according to spec
-
-* ima_mmap
-  - reduce sleep + log it
-  - rewritten into new API
-
-* ima_measurements.sh
-  - don't require iversion for kernel >= 4.16
-  - avoid using tmpfs
-
-* ima_policy.sh
-  - improved detection of policy writability
-  - merge test2 and test3
-
-* ima_violations.sh
-  - avoid using tmpfs
-  - improved grepping logs (no sleep is needed)
-
-* ima_tpm.sh
-  - Improve error messages
-
-TODO:
-* fix problems with violations tests (see patch 02/10).
-* detect whether policy must be signed (currently tests assume the
-policy does not need to be signed):
-https://lists.linux.it/pipermail/ltp/2018-April/007702.html
-http://lists.linux.it/pipermail/ltp/2018-January/006970.html
-
-Comments and patches are welcome.
-
-Kind regards,
-Petr
-
-Petr Vorel (10):
-  security/ima: Rewrite tests into new API + fixes
-  security/ima: Change order of tests
-  ima/ima_policy.sh: Improve check of policy writability
-  ima/ima_policy.sh: Load whole policy with cat
-  ima/ima_boot_aggregate: Increase MAX_EVENT_SIZE to 1MB
-  ima/tpm.sh: Use evmctl + other fixes
-  ima/ima_mmap: Reduce sleep + log it
-  ima/{ima_measurements,ima_violations}.sh: Avoid running on tmpfs
-  ima: CRYPTO_LIBS are needed only for ima_boot_aggregate
-  ima/ima_mmap: Rewrite to new library
-
- runtest/ima                                        |   8 +-
- testcases/kernel/security/integrity/.gitignore     |   1 -
- .../kernel/security/integrity/ima/src/Makefile     |   2 +-
- .../integrity/ima/src/ima_boot_aggregate.c         |  16 +-
- .../security/integrity/ima/src/ima_measure.c       | 219 ------------------
- .../kernel/security/integrity/ima/src/ima_mmap.c   |  82 +++----
- .../integrity/ima/tests/ima_measurements.sh        | 247 +++++++++++----------
- .../security/integrity/ima/tests/ima_policy.sh     | 169 ++++++--------
- .../security/integrity/ima/tests/ima_setup.sh      | 141 ++++++------
- .../kernel/security/integrity/ima/tests/ima_tpm.sh | 165 ++++++--------
- .../security/integrity/ima/tests/ima_violations.sh | 228 ++++++++++---------
- 11 files changed, 530 insertions(+), 748 deletions(-)
- delete mode 100644 testcases/kernel/security/integrity/ima/src/ima_measure.c
- mode change 100755 => 100644 testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-
--- 
-2.16.3
+did you have any plans to extend the file capabilities support to
+also handle namespaced file capabilities?  Is that orthogonal to
+this spec?
