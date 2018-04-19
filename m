@@ -1,97 +1,131 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:38430 "EHLO mx2.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:38416 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752558AbeDSTz3 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 19 Apr 2018 15:55:29 -0400
+        id S1752558AbeDSTz0 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 19 Apr 2018 15:55:26 -0400
 From: Petr Vorel <pvorel@suse.cz>
 To: ltp@lists.linux.it
 Cc: Petr Vorel <pvorel@suse.cz>, Mimi Zohar <zohar@linux.vnet.ibm.com>,
         linux-integrity@vger.kernel.org
-Subject: [RFC PATCH v3 05/10] ima/ima_boot_aggregate: Increase MAX_EVENT_SIZE to 1MB
-Date: Thu, 19 Apr 2018 21:54:58 +0200
-Message-Id: <20180419195503.7194-6-pvorel@suse.cz>
+Subject: [RFC PATCH v3 03/10] ima/ima_policy.sh: Improve check of policy writability
+Date: Thu, 19 Apr 2018 21:54:56 +0200
+Message-Id: <20180419195503.7194-4-pvorel@suse.cz>
 In-Reply-To: <20180419195503.7194-1-pvorel@suse.cz>
 References: <20180419195503.7194-1-pvorel@suse.cz>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-This is needed as according IMA developers there are BIOS events larger
-than 4k [1]. Actual size for TPM 1.2 is undefined, TPM 2.0 specifies:
-"For software parsing the event log, the parser can choose an arbitrary
-maximum size, but this specification recommends a maximum value for the
-TCG_PCR_EVENT2.eventSize field of 1MB." [2].
++ merge test3 into test2 as we test multiple writes already in test2.
 
-So lets follow the specification and allocate 1MB.
+Kernel without CONFIG_IMA_WRITE_POLICY is not possible to repeat writing
+into policy. Add check to TCONF in this case.
 
-[1] http://lists.linux.it/pipermail/ltp/2018-January/006970.html
-[2] http://lists.linux.it/pipermail/ltp/2018-January/007002.html
+It's not easy to detect disabled CONFIG_IMA_WRITE_POLICY for different
+behavior across kernel versions.
+On older kernels (before CONFIG_IMA_WRITE_POLICY enabled) or on new ones
+with enabled both CONFIG_IMA_READ_POLICY and CONFIG_IMA_WRITE_POLICY
+policy file after writing disappears.
 
-Suggested-by: George Wilson <gcwilson@us.ibm.com>
+Kernels with enabled CONFIG_IMA_READ_POLICY and (regardless of
+CONFIG_IMA_WRITE_POLICY) keeps policy file with the same permissions
+600. The only way to detect is is to echo empty string into policy and
+detect errno:
+
+       | OLD    | WRITE       | READ && !WRITE | !READ && !WRITE
+------------------------------------------------------------------
+before | ENOENT | exit code 0 | exit code 0    | exit code 0
+after  | EACCES | exit code 0 | EBUSY	       | EACCES
+
+OLD: kernels before CONFIG_IMA_WRITE_POLICY introduced (kernel < 4.5)
+READ: CONFIG_IMA_READ_POLICY
+WRITE: CONFIG_IMA_WRITE_POLICY
+
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
+
 Signed-off-by: Petr Vorel <pvorel@suse.cz>
 ---
- .../security/integrity/ima/src/ima_boot_aggregate.c      | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ .../security/integrity/ima/tests/ima_policy.sh     | 38 ++++++++++------------
+ 1 file changed, 17 insertions(+), 21 deletions(-)
 
-diff --git a/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c b/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
-index f7ae77cb1..862cc07ba 100644
---- a/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
-+++ b/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
-@@ -21,6 +21,7 @@
- #include <fcntl.h>
- #include <string.h>
- #include <unistd.h>
-+#include <limits.h>
+diff --git a/testcases/kernel/security/integrity/ima/tests/ima_policy.sh b/testcases/kernel/security/integrity/ima/tests/ima_policy.sh
+index 2efa90038..35eb4055b 100755
+--- a/testcases/kernel/security/integrity/ima/tests/ima_policy.sh
++++ b/testcases/kernel/security/integrity/ima/tests/ima_policy.sh
+@@ -20,15 +20,24 @@
+ # Test replacing the default integrity measurement policy.
  
- #include "config.h"
- #include "test.h"
-@@ -30,7 +31,7 @@ char *TCID = "ima_boot_aggregate";
- #if HAVE_LIBCRYPTO
- #include <openssl/sha.h>
+ TST_SETUP="setup"
+-TST_CNT=3
++TST_CNT=2
  
--#define MAX_EVENT_SIZE 500
-+#define MAX_EVENT_SIZE (1024*1024)
- #define EVENT_HEADER_SIZE 32
- #define MAX_EVENT_DATA_SIZE (MAX_EVENT_SIZE - EVENT_HEADER_SIZE)
- #define NUM_PCRS 8		/*  PCR registers 0-7 in boot aggregate */
-@@ -56,7 +57,7 @@ int main(int argc, char *argv[])
- 			unsigned char digest[SHA_DIGEST_LENGTH];
- 			u_int16_t len;
- 		} header;
--		unsigned char data[MAX_EVENT_DATA_SIZE];
-+		char *data;
- 	} event;
- 	struct {
- 		unsigned char digest[SHA_DIGEST_LENGTH];
-@@ -80,6 +81,12 @@ int main(int argc, char *argv[])
- 	for (i = 0; i < NUM_PCRS; i++)
- 		memset(&pcr[i].digest, 0, SHA_DIGEST_LENGTH);
+ . ima_setup.sh
  
-+	event.data = (char *) malloc(MAX_EVENT_DATA_SIZE);
-+	if (!event.data) {
-+		printf("Cannot allocate memory\n");
-+		return 1;
-+	}
++check_policy_writable()
++{
++	local err="IMA policy already loaded and kernel not configured to enable multiple writes to it (need CONFIG_IMA_WRITE_POLICY=y)"
 +
- 	/* Extend the pseudo PCRs with the event digest */
- 	while (fread(&event, sizeof(event.header), 1, fp)) {
- 		if (debug) {
-@@ -90,13 +97,16 @@ int main(int argc, char *argv[])
- 		SHA1_Update(&c, pcr[event.header.pcr].digest, 20);
- 		SHA1_Update(&c, event.header.digest, 20);
- 		SHA1_Final(pcr[event.header.pcr].digest, &c);
-+#if MAX_EVENT_DATA_SIZE < USHRT_MAX
- 		if (event.header.len > MAX_EVENT_DATA_SIZE) {
--			printf("Error event too long");
-+			printf("Error event too long\n");
- 			break;
- 		}
-+#endif
- 		fread(event.data, event.header.len, 1, fp);
- 	}
- 	fclose(fp);
-+	free(event.data);
++	[ -f /sys/kernel/security/ima/policy ] || tst_brk TCONF "$err"
++	# CONFIG_IMA_READ_POLICY
++	echo "" 2> log > $IMA_POLICY
++	grep -q "Device or resource busy" log && tst_brk TCONF "$err"
++}
++
+ setup()
+ {
+ 	IMA_POLICY="$IMA_DIR/policy"
+-	[ -f $IMA_POLICY ] || \
+-		tst_brk TCONF "IMA policy already loaded and kernel not configured to enable multiple writes it"
++	check_policy_writable
  
- 	/* Extend the boot aggregate with the pseudo PCR digest values */
- 	memset(&boot_aggregate, 0, SHA_DIGEST_LENGTH);
+ 	VALID_POLICY="$TST_DATAROOT/measure.policy"
+ 	[ -f $VALID_POLICY ] || tst_brk TCONF "missing $VALID_POLICY"
+@@ -68,6 +77,7 @@ test1()
+ 
+ 	local p1
+ 
++	check_policy_writable
+ 	load_policy $INVALID_POLICY & p1=$!
+ 	wait "$p1"
+ 	if [ $? -ne 0 ]; then
+@@ -79,10 +89,11 @@ test1()
+ 
+ test2()
+ {
+-	tst_res TINFO "verify that policy file is not opened concurrently"
++	tst_res TINFO "verify that policy file is not opened concurrently and able to loaded multiple times"
+ 
+ 	local p1 p2 rc1 rc2
+ 
++	check_policy_writable
+ 	load_policy $VALID_POLICY & p1=$!
+ 	load_policy $VALID_POLICY & p2=$!
+ 	wait "$p1"; rc1=$?
+@@ -90,24 +101,9 @@ test2()
+ 	if [ $rc1 -eq 0 ] && [ $rc2 -eq 0 ]; then
+ 		tst_res TFAIL "policy opened concurrently"
+ 	elif [ $rc1 -eq 0 ] || [ $rc2 -eq 0 ]; then
+-		tst_res TPASS "policy was loaded just by one process"
+-	else
+-		tst_res TFAIL "problem loading policy"
+-	fi
+-}
+-
+-test3()
+-{
+-	tst_res TINFO "verify that invalid policy isn't loaded"
+-
+-	local p1
+-
+-	load_policy $INVALID_POLICY & p1=$!
+-	wait "$p1"
+-	if [ $? -ne 0 ]; then
+-		tst_res TPASS "didn't replace valid policy"
++		tst_res TPASS "policy was loaded just by one process and able to loaded multiple times"
+ 	else
+-		tst_res TFAIL "replaced valid policy"
++		tst_res TFAIL "problem with loading policy (policy should be able to load multiple times)"
+ 	fi
+ }
+ 
 -- 
 2.16.3
