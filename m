@@ -1,52 +1,48 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:38421 "EHLO mx2.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:38405 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753484AbeDSTz2 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 19 Apr 2018 15:55:28 -0400
+        id S1752558AbeDSTzX (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 19 Apr 2018 15:55:23 -0400
 From: Petr Vorel <pvorel@suse.cz>
 To: ltp@lists.linux.it
 Cc: Petr Vorel <pvorel@suse.cz>, Mimi Zohar <zohar@linux.vnet.ibm.com>,
         linux-integrity@vger.kernel.org
-Subject: [RFC PATCH v3 04/10] ima/ima_policy.sh: Load whole policy with cat
-Date: Thu, 19 Apr 2018 21:54:57 +0200
-Message-Id: <20180419195503.7194-5-pvorel@suse.cz>
+Subject: [RFC PATCH v3 02/10] security/ima: Change order of tests
+Date: Thu, 19 Apr 2018 21:54:55 +0200
+Message-Id: <20180419195503.7194-3-pvorel@suse.cz>
 In-Reply-To: <20180419195503.7194-1-pvorel@suse.cz>
 References: <20180419195503.7194-1-pvorel@suse.cz>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Originally writing the policy was done one rule at a time, but that's
-not required since kernel 2.6.35 (6ccd04563005 "ima: handle multiple rules per write")
+Unfortunately in some circumstances there are interdependencies between
+tests.
+measurements test require loaded IMA policy. If it's not loaded, policy
+test do it for us => run measurements test after policy test.
+
+Policy test somehow breaks violations test => run it before policy test.
+TODO: this does not help if CONFIG_IMA_WRITE_POLICY=y and without auditd
+daemon. Maybe we should require auditd for violation tests.
 
 Signed-off-by: Petr Vorel <pvorel@suse.cz>
-Suggested-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 ---
- testcases/kernel/security/integrity/ima/tests/ima_policy.sh | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+Is it caused by using unsigned policy?
+This problem haven't been solved by avoiding tmpfs.
+---
+ runtest/ima | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/testcases/kernel/security/integrity/ima/tests/ima_policy.sh b/testcases/kernel/security/integrity/ima/tests/ima_policy.sh
-index 35eb4055b..1c4a0b922 100755
---- a/testcases/kernel/security/integrity/ima/tests/ima_policy.sh
-+++ b/testcases/kernel/security/integrity/ima/tests/ima_policy.sh
-@@ -53,17 +53,9 @@ load_policy()
- 	exec 2>/dev/null 4>$IMA_POLICY
- 	[ $? -eq 0 ] || exit 1
- 
--	cat $1 |
--	while read line; do
--		if [ "${line#\#}" = "${line}" ]; then
--			echo "$line" >&4 2> /dev/null
--			if [ $? -ne 0 ]; then
--				exec 4>&-
--				return 1
--			fi
--		fi
--	done
-+	cat $1 >&4 2> /dev/null
- 	ret=$?
-+	exec 4>&-
- 
- 	[ $ret -eq 0 ] && \
- 		tst_res TINFO "IMA policy updated, please reboot after testing to restore settings"
+diff --git a/runtest/ima b/runtest/ima
+index bcae16bb7..e7824a62a 100644
+--- a/runtest/ima
++++ b/runtest/ima
+@@ -1,5 +1,5 @@
+ #DESCRIPTION:Integrity Measurement Architecture (IMA)
+-ima_measurements ima_measurements.sh
++ima_violations ima_violations.sh
+ ima_policy ima_policy.sh
++ima_measurements ima_measurements.sh
+ ima_tpm ima_tpm.sh
+-ima_violations ima_violations.sh
 -- 
 2.16.3
