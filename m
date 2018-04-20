@@ -1,38 +1,106 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:52071 "EHLO mx2.suse.de"
+Received: from mga04.intel.com ([192.55.52.120]:60647 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755053AbeDTN3J (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 20 Apr 2018 09:29:09 -0400
-From: Petr Vorel <pvorel@suse.cz>
-To: linux-integrity@vger.kernel.org
-Cc: Petr Vorel <pvorel@suse.cz>, Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: [PATCH] ima: Reflect correct permissions for policy
-Date: Fri, 20 Apr 2018 15:28:57 +0200
-Message-Id: <20180420132857.31332-1-pvorel@suse.cz>
+        id S1754966AbeDTNTR (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 20 Apr 2018 09:19:17 -0400
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: 'Jarkko Sakkinen' <jarkko.sakkinen@linux.intel.com>,
+        'Jason Gunthorpe' <jgg@ziepe.ca>
+CC: "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "'linux-integrity@vger.kernel.org'" <linux-integrity@vger.kernel.org>,
+        "'linux-security-module@vger.kernel.org'"
+        <linux-security-module@vger.kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+Date: Fri, 20 Apr 2018 13:19:12 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
+References: <20180407161236.22969-1-tomas.winkler@intel.com>
+         <c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
+         <5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
+ <4984305eae452b7a72b8a13aa20cecec420df580.camel@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Kernel configured as CONFIG_IMA_READ_POLICY=y && CONFIG_IMA_WRITE_POLICY=n
-keeps 0600 mode after loading policy. Remove write permission to state
-that policy file no longer be written.
+> > On Tue, 2018-04-10 at 09:00 +0000, Winkler, Tomas wrote:
+> > > >
+> > > > On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
+> > > > > In crb_map_io() function, __crb_request_locality() is called
+> > > > > prior to crb_cmd_ready(), but if one of the consecutive function
+> > > > > fails the flow bails out instead of trying to relinquish locality.
+> > > > > This patch adds goto jump to __crb_relinquish_locality() on the
+> > > > > error path.
+> > > > >
+> > > > > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only
+> > > > > after granting
+> > > > > locality)
+> > > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > > > > ---
+> > > > >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
+> > > > >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/char/tpm/tpm_crb.c
+> > > > > b/drivers/char/tpm/tpm_crb.c index 7f78482cd157..34fbc6cb097b
+> > > > > 100644
+> > > > > --- a/drivers/char/tpm/tpm_crb.c
+> > > > > +++ b/drivers/char/tpm/tpm_crb.c
+> > > > > @@ -511,8 +511,10 @@ static int crb_map_io(struct acpi_device
+> > > > > *device, struct crb_priv *priv,
+> > > > >
+> > > > >  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf-
+> > > > > >control_address,
+> > > > >  				   sizeof(struct crb_regs_tail));
+> > > > > -	if (IS_ERR(priv->regs_t))
+> > > > > -		return PTR_ERR(priv->regs_t);
+> > > > > +	if (IS_ERR(priv->regs_t)) {
+> > > > > +		ret = PTR_ERR(priv->regs_t);
+> > > > > +		goto out_relinquish_locality;
+> > > > > +	}
+> > > > >
+> > > > >  	/*
+> > > > >  	 * PTT HW bug w/a: wake up the device to access @@ -520,7
+> > > > > +522,7
+> > > >
+> > > > @@
+> > > > > static int crb_map_io(struct acpi_device *device, struct
+> > > > > crb_priv *priv,
+> > > > >  	 */
+> > > > >  	ret = crb_cmd_ready(dev, priv);
+> > > > >  	if (ret)
+> > > > > -		return ret;
+> > > > > +		goto out_relinquish_locality;
+> > > > >
+> > > > >  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
+> > > > >  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
+> > > > > @@ -565,6 +567,8 @@ static int crb_map_io(struct acpi_device
+> > > > > *device, struct crb_priv *priv,
+> > > > >
+> > > > >  	crb_go_idle(dev, priv);
+> > > > >
+> > > > > +out_relinquish_locality:
+> > > > > +
+> > > > >  	__crb_relinquish_locality(dev, priv, 0);
+> > > > >
+> > > > >  	return ret;
+> > > >
+> > > > Thanks, please just call it before returning in the error path.
+> > >
+> > > Can you please elaborate why, isn't the centralized exiting of
+> > > functions preferred kernel coding style?
+> > > https://www.kernel.org/doc/html/v4.11/process/coding-style.html#cent
+> > > ra
+> > > lized-ex
+> > > iting-of-functions
+> >
+> > You exit only from one location (not multiple) and not from a nested
+> > context. Here you just add more complexity by doing this.
+> 
+> Where is the complexity ? I see it as a standard way of undoing on exit.
+> Tomas
 
-Signed-off-by: Petr Vorel <pvorel@suse.cz>
----
- security/integrity/ima/ima_fs.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index fa540c0469da..c1265127d1b6 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -434,6 +434,8 @@ static int ima_release_policy(struct inode *inode, struct file *file)
- 	ima_policy = NULL;
- #elif defined(CONFIG_IMA_WRITE_POLICY)
- 	clear_bit(IMA_FS_BUSY, &ima_fs_flags);
-+#elif defined(CONFIG_IMA_READ_POLICY)
-+	inode->i_mode &= ~S_IWUSR;
- #endif
- 	return 0;
- }
--- 
-2.12.3
+Jarkko, can you please respond.
+Thanks
+Tomas
