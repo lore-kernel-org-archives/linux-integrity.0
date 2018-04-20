@@ -1,33 +1,28 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:38357 "EHLO mx2.suse.de"
+Received: from mga06.intel.com ([134.134.136.31]:44180 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754549AbeDTLEh (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 20 Apr 2018 07:04:37 -0400
-Date: Fri, 20 Apr 2018 13:02:49 +0200
-From: Cyril Hrubis <chrubis@suse.cz>
-To: Petr Vorel <pvorel@suse.cz>
-Cc: ltp@lists.linux.it, linux-integrity@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: Re: [LTP] [RFC PATCH v3 05/10] ima/ima_boot_aggregate: Increase
- MAX_EVENT_SIZE to 1MB
-Message-ID: <20180420110248.GB19090@rei>
-References: <20180419195503.7194-1-pvorel@suse.cz>
- <20180419195503.7194-6-pvorel@suse.cz>
+        id S1753419AbeDTFj3 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 20 Apr 2018 01:39:29 -0400
+Date: Fri, 20 Apr 2018 08:39:26 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Thiebaud Weksteen <tweek@google.com>
+Cc: nayna@linux.vnet.ibm.com, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] tpm: Move eventlog files to a subdirectory
+Message-ID: <20180420053926.GB15364@linux.intel.com>
+References: <20180412101350.210547-1-tweek@google.com>
+ <20180412101350.210547-3-tweek@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180419195503.7194-6-pvorel@suse.cz>
+In-Reply-To: <20180412101350.210547-3-tweek@google.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi!
-> +	event.data = (char *) malloc(MAX_EVENT_DATA_SIZE);
-                        ^
-		Please never cast return value from malloc() in	C.
+On Thu, Apr 12, 2018 at 12:13:48PM +0200, Thiebaud Weksteen wrote:
+> Signed-off-by: Thiebaud Weksteen <tweek@google.com>
+> Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-The malloc returns void* which is compatible with any other pointer type
-for assigments. This is only needed when you attempt to use malloc()
-in C++, but that is not the case here.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
--- 
-Cyril Hrubis
-chrubis@suse.cz
+/Jarkko
