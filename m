@@ -1,133 +1,35 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:37442 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756844AbeDXJ6K (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 24 Apr 2018 05:58:10 -0400
-Received: by mail-io0-f193.google.com with SMTP id y128-v6so21956177iod.4
-        for <linux-integrity@vger.kernel.org>; Tue, 24 Apr 2018 02:58:10 -0700 (PDT)
+Received: from mga11.intel.com ([192.55.52.93]:36786 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932292AbeDWTtd (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 23 Apr 2018 15:49:33 -0400
+Date: Mon, 23 Apr 2018 22:49:01 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-integrity@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm/st33zp24: Fix spelling mistake in macro
+ ST33ZP24_TISREGISTER_UKNOWN
+Message-ID: <20180423194849.GC7653@linux.intel.com>
+References: <20180418112105.894-1-colin.king@canonical.com>
 MIME-Version: 1.0
-References: <20180412101350.210547-1-tweek@google.com> <20180412101350.210547-2-tweek@google.com>
- <20180417030202.GA30624@ziepe.ca> <CA+zpnLdU=t6eOY9GOLAyiXkZBw=NueckiejHSexd8P7MKYuRww@mail.gmail.com>
- <20180417140013.GA2029@ziepe.ca> <CA+zpnLePcFJQURBNZEt=mRSRb9GUYR=1t9EQn82W0+311xKZ7w@mail.gmail.com>
- <20180420145740.GC30433@ziepe.ca> <CA+zpnLcSDTz99Z4fe4CGxH6RzTGvQCoGqQc4p_EMOj9=cuFQgg@mail.gmail.com>
- <20180423100629.effueb6i7q3hmhu3@ltop.local>
-In-Reply-To: <20180423100629.effueb6i7q3hmhu3@ltop.local>
-From: Thiebaud Weksteen <tweek@google.com>
-Date: Tue, 24 Apr 2018 09:57:58 +0000
-Message-ID: <CA+zpnLeJ_aKnmiQaOwRERj43uAFSaJQsWnSKJVzsJJB0VW-52w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] tpm: Add explicit endianness cast
-To: luc.vanoostenryck@gmail.com
-Cc: jgg@ziepe.ca, Christopher Li <sparse@chrisli.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sparse@vger.kernel.org, josh@joshtriplett.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180418112105.894-1-colin.king@canonical.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Apr 23, 2018 at 12:06 PM Luc Van Oostenryck <
-luc.vanoostenryck@gmail.com> wrote:
+On Wed, Apr 18, 2018 at 12:21:05PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Fix spelling mistake, rename ST33ZP24_TISREGISTER_UKNOWN to
+> ST33ZP24_TISREGISTER_UNKNOWN
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-> On Mon, Apr 23, 2018 at 09:22:06AM +0000, Thiebaud Weksteen wrote:
-> > On Fri, Apr 20, 2018 at 4:57 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> >
-> > > On Thu, Apr 19, 2018 at 01:09:12PM +0000, Thiebaud Weksteen wrote:
-> > > > On Tue, Apr 17, 2018 at 4:00 PM Jason Gunthorpe <jgg@ziepe.ca>
-wrote:
-> > > >
-> > > > > On Tue, Apr 17, 2018 at 08:32:33AM +0000, Thiebaud Weksteen wrote:
-> > > > > > On Tue, Apr 17, 2018 at 5:02 AM Jason Gunthorpe <jgg@ziepe.ca>
-> > wrote:
-> > > > > >
-> > > > > > > On Thu, Apr 12, 2018 at 12:13:47PM +0200, Thiebaud Weksteen
-wrote:
-> > > > > > > > Signed-off-by: Thiebaud Weksteen <tweek@google.com>
-> > > > > > > >  drivers/char/tpm/tpm_eventlog_of.c | 4 ++--
-> > > > > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > > > > > >
-> > > > > > > > diff --git a/drivers/char/tpm/tpm_eventlog_of.c
-> > > > > > b/drivers/char/tpm/tpm_eventlog_of.c
-> > > > > > > > index 96fd5646f866..d74568d58a66 100644
-> > > > > > > > +++ b/drivers/char/tpm/tpm_eventlog_of.c
-> > > > > > > > @@ -56,8 +56,8 @@ int tpm_read_log_of(struct tpm_chip *chip)
-> > > > > > > >        * but physical tpm needs the conversion.
-> > > > > > > >        */
-> > > > > > > >       if (of_property_match_string(np, "compatible",
-> > "IBM,vtpm") <
-> > > > 0) {
-> > > > > > > > -             size = be32_to_cpup(sizep);
-> > > > > > > > -             base = be64_to_cpup(basep);
-> > > > > > > > +             size = be32_to_cpup((__be32 *)sizep);
-> > > > > > > > +             base = be64_to_cpup((__be64 *)basep);
-> > > > > >
-> > > > > > > Er, no.. change the definitions of sizep and basep to be __be
-> > > > > >
-> > > > > > > Jason
-> > > > > >
-> > > > > > Please read the comment before the condition. sizep and
-> > > > > > basep may contain either little endian or big endian and this
-block
-> > is
-> > > > used
-> > > > > > to adjust that. Let me know if there is a better way for
-handling
-> > this.
-> > > >
-> > > > > Well a cast like that will throw sparse warnings, you need
-__force at
-> > > > > least
-> > > >
-> > > > I don't think so. Since the variable is only defined as u32*, no
-> > specific
-> > > > warning is generated. I've used `make C=2 drivers/char/tpm/` with
-this
-> > > > patch applied and no new warning is being triggered.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-> Interesting.
-
-> > > I'm surprised to hear you say that..
-
-> Same for me.
-
-> > > Sparse is supposed to require force on all cast that change the
-> > > annotation, and there are many examples in the kernel that have force
-> > > in that case.
-
-
-> Yes, sparse is supposed to warn in such cases and the __force is there
-> to quiets the warning when it is known that the cast is in fact correct.
-
-
-> > +linux-sparse@vger.kernel.org and sparse@chrisli.org for a sanity check.
-> >
-> > If you look at the man page of sparse, under the bitwise option, it
-states:
-> > "Sparse will warn on [...] any conversion of one restricted type into
-> > another, except via a cast that includes __attribute__((force)).". In
-our
-> > case, it is a conversion from unrestricted to restricted which does not
-> > fall in this category.
-
-> The man page is not very clear here. It must be understood in the context
-> where each use of '__bitwise' will create a new *distinct* type.
-> Given this and the normal type checking, sparse should warn
-> "on any conversion of one restricted type into another *or* between a
-> restricted and the corresponding plain/unrestricted type" (or consider
-> that an 'unrestricted type' is 'a restricted type with no restriction',
-> which is, I think, what was meant here).
-
-
-Thanks for the explanation, that make sense. I believe the issue happens
-when dealing with restricted pointer types more than regular types. Also,
-this is not new and has probably been going on for the last 13 years. For
-instance, 81179bb6a54c2c626b4cbcc084ca974bb2d7f2a3 explicitly removed the
-__force attribute. I'll send a validation patch for sparse and update this
-patch.
-
-> The fact that sparse doesn't warn in your case is clearly a bug in
-> sparse's type checking.
-
-> Regards,
-> -- Luc Van Oostenryck
+/Jarkko
