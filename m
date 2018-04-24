@@ -1,9 +1,9 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:3592 "EHLO mga01.intel.com"
+Received: from mga06.intel.com ([134.134.136.31]:16170 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750814AbeDXQa6 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:30:58 -0400
-Date: Tue, 24 Apr 2018 19:30:52 +0300
+        id S1751053AbeDXQ17 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 24 Apr 2018 12:27:59 -0400
+Date: Tue, 24 Apr 2018 19:27:52 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: Nayna Jain <nayna@linux.vnet.ibm.com>
 Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
@@ -11,54 +11,34 @@ Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
         linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
         tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com,
         patrickc@us.ibm.com
-Subject: Re: [PATCH v2 2/2] tpm: reduce polling time to usecs for even finer
- granularity
-Message-ID: <20180424163052.GD5119@linux.intel.com>
+Subject: Re: [PATCH v2 1/2] tpm: reduce poll sleep time in tpm_transmit()
+Message-ID: <20180424162752.GC5119@linux.intel.com>
 References: <20180417131246.434-1-nayna@linux.vnet.ibm.com>
- <20180417131246.434-3-nayna@linux.vnet.ibm.com>
+ <20180417131246.434-2-nayna@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20180417131246.434-3-nayna@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180417131246.434-2-nayna@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Apr 17, 2018 at 09:12:46AM -0400, Nayna Jain wrote:
-> The TPM burstcount and status commands are supposed to return very
-> quickly [1][2]. This patch further reduces the TPM poll sleep time to usecs
-> in get_burstcount() and wait_for_tpm_stat() by calling usleep_range()
-> directly.
+On Tue, Apr 17, 2018 at 09:12:45AM -0400, Nayna Jain wrote:
+> The TPM polling code in tpm_transmit sleeps in each loop iteration for
+> 5 msecs. However, the TPM might return earlier, and thus waiting for
+> 5 msecs adds an unnecessary delay. This patch reduces the polling sleep
+> time in tpm_transmit() from 5 msecs to 1 msecs.
+
+I'm not sure what TPM returning earlier has to do with this. TPM probably
+never returns exactly in the spec defined timeout/duration. I just don't
+understand reasoning in this paragraph.
+
+> Additionally, this patch renames TPM_POLL_SLEEP and moves it to tpm.h as
+> an enum value.
 > 
-> After this change, performance on a TPM 1.2 with an 8 byte burstcount for
-> 1000 extends improved from ~10.7 sec to ~7 sec.
-> 
-> [1] From TCG Specification "TCG PC Client Specific TPM Interface
-> Specification (TIS), Family 1.2":
-> 
-> "NOTE : It takes roughly 330 ns per byte transfer on LPC. 256 bytes would
-> take 84 us, which is a long time to stall the CPU. Chipsets may not be
-> designed to post this much data to LPC; therefore, the CPU itself is
-> stalled for much of this time. Sending 1 kB would take 350 us. Therefore,
-> even if the TPM_STS_x.burstCount field is a high value, software SHOULD
-> be interruptible during this period."
-> 
-> [2] From TCG Specification 2.0, "TCG PC Client Platform TPM Profile
-> (PTP) Specification":
-> 
-> "It takes roughly 330 ns per byte transfer on LPC. 256 bytes would take
-> 84 us. Chipsets may not be designed to post this much data to LPC;
-> therefore, the CPU itself is stalled for much of this time. Sending 1 kB
-> would take 350 us. Therefore, even if the TPM_STS_x.burstCount field is a
-> high value, software should be interruptible during this period. For SPI,
-> assuming 20MHz clock and 64-byte transfers, it would take about 120 usec
-> to move 256B of data. Sending 1kB would take about 500 usec. If the
-> transactions are done using 4 bytes at a time, then it would take about
-> 1 msec. to transfer 1kB of data."
-> 
+> After this change, performance on a TPM 1.2 with an 8 byte burstcount
+> for 1000 extends improved from ~14 sec to ~10.7 sec.
+
+You cannot give absolute numbers without a context (platform, software).
+
 > Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-
-Great, thanks for finding those references. Kind of stuff that I will
-forget within months and have to revisit with git blame/log :-)
-
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
 /Jarkko
