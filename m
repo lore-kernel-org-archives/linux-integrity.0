@@ -1,44 +1,123 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:16170 "EHLO mga06.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:53357 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751053AbeDXQ17 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:27:59 -0400
-Date: Tue, 24 Apr 2018 19:27:52 +0300
+        id S1750757AbeDXQDd (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 24 Apr 2018 12:03:33 -0400
+Date: Tue, 24 Apr 2018 19:03:28 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Nayna Jain <nayna@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
-        tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com,
-        patrickc@us.ibm.com
-Subject: Re: [PATCH v2 1/2] tpm: reduce poll sleep time in tpm_transmit()
-Message-ID: <20180424162752.GC5119@linux.intel.com>
-References: <20180417131246.434-1-nayna@linux.vnet.ibm.com>
- <20180417131246.434-2-nayna@linux.vnet.ibm.com>
+To: "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc: 'Jason Gunthorpe' <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "'linux-integrity@vger.kernel.org'" <linux-integrity@vger.kernel.org>,
+        "'linux-security-module@vger.kernel.org'"
+        <linux-security-module@vger.kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+Message-ID: <20180424160328.GA5119@linux.intel.com>
+References: <20180407161236.22969-1-tomas.winkler@intel.com>
+ <c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
+ <4984305eae452b7a72b8a13aa20cecec420df580.camel@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180417131246.434-2-nayna@linux.vnet.ibm.com>
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Apr 17, 2018 at 09:12:45AM -0400, Nayna Jain wrote:
-> The TPM polling code in tpm_transmit sleeps in each loop iteration for
-> 5 msecs. However, the TPM might return earlier, and thus waiting for
-> 5 msecs adds an unnecessary delay. This patch reduces the polling sleep
-> time in tpm_transmit() from 5 msecs to 1 msecs.
-
-I'm not sure what TPM returning earlier has to do with this. TPM probably
-never returns exactly in the spec defined timeout/duration. I just don't
-understand reasoning in this paragraph.
-
-> Additionally, this patch renames TPM_POLL_SLEEP and moves it to tpm.h as
-> an enum value.
+On Fri, Apr 20, 2018 at 01:19:12PM +0000, Winkler, Tomas wrote:
+> > > On Tue, 2018-04-10 at 09:00 +0000, Winkler, Tomas wrote:
+> > > > >
+> > > > > On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
+> > > > > > In crb_map_io() function, __crb_request_locality() is called
+> > > > > > prior to crb_cmd_ready(), but if one of the consecutive function
+> > > > > > fails the flow bails out instead of trying to relinquish locality.
+> > > > > > This patch adds goto jump to __crb_relinquish_locality() on the
+> > > > > > error path.
+> > > > > >
+> > > > > > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only
+> > > > > > after granting
+> > > > > > locality)
+> > > > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > > > > > ---
+> > > > > >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
+> > > > > >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > > > > >
+> > > > > > diff --git a/drivers/char/tpm/tpm_crb.c
+> > > > > > b/drivers/char/tpm/tpm_crb.c index 7f78482cd157..34fbc6cb097b
+> > > > > > 100644
+> > > > > > --- a/drivers/char/tpm/tpm_crb.c
+> > > > > > +++ b/drivers/char/tpm/tpm_crb.c
+> > > > > > @@ -511,8 +511,10 @@ static int crb_map_io(struct acpi_device
+> > > > > > *device, struct crb_priv *priv,
+> > > > > >
+> > > > > >  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf-
+> > > > > > >control_address,
+> > > > > >  				   sizeof(struct crb_regs_tail));
+> > > > > > -	if (IS_ERR(priv->regs_t))
+> > > > > > -		return PTR_ERR(priv->regs_t);
+> > > > > > +	if (IS_ERR(priv->regs_t)) {
+> > > > > > +		ret = PTR_ERR(priv->regs_t);
+> > > > > > +		goto out_relinquish_locality;
+> > > > > > +	}
+> > > > > >
+> > > > > >  	/*
+> > > > > >  	 * PTT HW bug w/a: wake up the device to access @@ -520,7
+> > > > > > +522,7
+> > > > >
+> > > > > @@
+> > > > > > static int crb_map_io(struct acpi_device *device, struct
+> > > > > > crb_priv *priv,
+> > > > > >  	 */
+> > > > > >  	ret = crb_cmd_ready(dev, priv);
+> > > > > >  	if (ret)
+> > > > > > -		return ret;
+> > > > > > +		goto out_relinquish_locality;
+> > > > > >
+> > > > > >  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
+> > > > > >  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
+> > > > > > @@ -565,6 +567,8 @@ static int crb_map_io(struct acpi_device
+> > > > > > *device, struct crb_priv *priv,
+> > > > > >
+> > > > > >  	crb_go_idle(dev, priv);
+> > > > > >
+> > > > > > +out_relinquish_locality:
+> > > > > > +
+> > > > > >  	__crb_relinquish_locality(dev, priv, 0);
+> > > > > >
+> > > > > >  	return ret;
+> > > > >
+> > > > > Thanks, please just call it before returning in the error path.
+> > > >
+> > > > Can you please elaborate why, isn't the centralized exiting of
+> > > > functions preferred kernel coding style?
+> > > > https://www.kernel.org/doc/html/v4.11/process/coding-style.html#cent
+> > > > ra
+> > > > lized-ex
+> > > > iting-of-functions
+> > >
+> > > You exit only from one location (not multiple) and not from a nested
+> > > context. Here you just add more complexity by doing this.
+> > 
+> > Where is the complexity ? I see it as a standard way of undoing on exit.
+> > Tomas
 > 
-> After this change, performance on a TPM 1.2 with an 8 byte burstcount
-> for 1000 extends improved from ~14 sec to ~10.7 sec.
+> Jarkko, can you please respond.
+> Thanks
+> Tomas
 
-You cannot give absolute numbers without a context (platform, software).
+I was away for Mon-Wed last week and did not work on TPM for Thu-Fri.
 
-> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+My earlier comment was incorrect as there are two locations to exit (not
+sure how I managed to overlook the patch that way).
+
+Thus, I have only two very  minor requets:
+
+* Remove the extra newline (the last line addition in the patch).
+* Use just label named out as we have only one exception handler.
+
+I'll move on to testing, and if it it passes, I can do those updates
+myself.
 
 /Jarkko
