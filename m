@@ -1,120 +1,136 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from aserp2120.oracle.com ([141.146.126.78]:42052 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750841AbeDXVKk (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 24 Apr 2018 17:10:40 -0400
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [Fwd: Re: Fwd: New Version Notification for
- draft-cel-nfsv4-linux-seclabel-xtensions-00.txt]
-From: Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <20180424194736.GA23575@mail.hallyn.com>
-Date: Tue, 24 Apr 2018 15:10:32 -0600
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        Michael Halcrow <mhalcrow@google.com>
-Message-Id: <F9577105-BC5B-4084-BD8D-3B6B5D8FEC1D@oracle.com>
-References: <20180419163242.GA3049@mail.hallyn.com>
- <1524589082.3364.26.camel@linux.vnet.ibm.com>
- <B30998E8-66A3-49FE-8078-B4B4A9AFD480@oracle.com>
- <20180424194736.GA23575@mail.hallyn.com>
-To: "Serge E. Hallyn" <serge@hallyn.com>
+Received: from mga02.intel.com ([134.134.136.20]:12792 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750853AbeDXUKr (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 24 Apr 2018 16:10:47 -0400
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: 'Jason Gunthorpe' <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "'linux-integrity@vger.kernel.org'" <linux-integrity@vger.kernel.org>,
+        "'linux-security-module@vger.kernel.org'"
+        <linux-security-module@vger.kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+Date: Tue, 24 Apr 2018 20:10:26 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B94272F62@hasmsx108.ger.corp.intel.com>
+References: <20180407161236.22969-1-tomas.winkler@intel.com>
+ <c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
+ <4984305eae452b7a72b8a13aa20cecec420df580.camel@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
+ <20180424160328.GA5119@linux.intel.com>
+ <20180424174802.GA24613@linux.intel.com>
+In-Reply-To: <20180424174802.GA24613@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
 
-
-> On Apr 24, 2018, at 1:47 PM, Serge E. Hallyn <serge@hallyn.com> wrote:
+> On Tue, Apr 24, 2018 at 07:03:28PM +0300, Jarkko Sakkinen wrote:
+> > On Fri, Apr 20, 2018 at 01:19:12PM +0000, Winkler, Tomas wrote:
+> > > > > On Tue, 2018-04-10 at 09:00 +0000, Winkler, Tomas wrote:
+> > > > > > >
+> > > > > > > On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
+> > > > > > > > In crb_map_io() function, __crb_request_locality() is
+> > > > > > > > called prior to crb_cmd_ready(), but if one of the
+> > > > > > > > consecutive function fails the flow bails out instead of trying to
+> relinquish locality.
+> > > > > > > > This patch adds goto jump to __crb_relinquish_locality()
+> > > > > > > > on the error path.
+> > > > > > > >
+> > > > > > > > Fixes: 888d867df441 (tpm: cmd_ready command can be issued
+> > > > > > > > only after granting
+> > > > > > > > locality)
+> > > > > > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > > > > > > > ---
+> > > > > > > >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
+> > > > > > > >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > > > > > > >
+> > > > > > > > diff --git a/drivers/char/tpm/tpm_crb.c
+> > > > > > > > b/drivers/char/tpm/tpm_crb.c index
+> > > > > > > > 7f78482cd157..34fbc6cb097b
+> > > > > > > > 100644
+> > > > > > > > --- a/drivers/char/tpm/tpm_crb.c
+> > > > > > > > +++ b/drivers/char/tpm/tpm_crb.c
+> > > > > > > > @@ -511,8 +511,10 @@ static int crb_map_io(struct
+> > > > > > > > acpi_device *device, struct crb_priv *priv,
+> > > > > > > >
+> > > > > > > >  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf-
+> > > > > > > > >control_address,
+> > > > > > > >  				   sizeof(struct crb_regs_tail));
+> > > > > > > > -	if (IS_ERR(priv->regs_t))
+> > > > > > > > -		return PTR_ERR(priv->regs_t);
+> > > > > > > > +	if (IS_ERR(priv->regs_t)) {
+> > > > > > > > +		ret = PTR_ERR(priv->regs_t);
+> > > > > > > > +		goto out_relinquish_locality;
+> > > > > > > > +	}
+> > > > > > > >
+> > > > > > > >  	/*
+> > > > > > > >  	 * PTT HW bug w/a: wake up the device to access @@
+> > > > > > > > -520,7
+> > > > > > > > +522,7
+> > > > > > >
+> > > > > > > @@
+> > > > > > > > static int crb_map_io(struct acpi_device *device, struct
+> > > > > > > > crb_priv *priv,
+> > > > > > > >  	 */
+> > > > > > > >  	ret = crb_cmd_ready(dev, priv);
+> > > > > > > >  	if (ret)
+> > > > > > > > -		return ret;
+> > > > > > > > +		goto out_relinquish_locality;
+> > > > > > > >
+> > > > > > > >  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
+> > > > > > > >  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
+> > > > > > > > @@ -565,6 +567,8 @@ static int crb_map_io(struct
+> > > > > > > > acpi_device *device, struct crb_priv *priv,
+> > > > > > > >
+> > > > > > > >  	crb_go_idle(dev, priv);
+> > > > > > > >
+> > > > > > > > +out_relinquish_locality:
+> > > > > > > > +
+> > > > > > > >  	__crb_relinquish_locality(dev, priv, 0);
+> > > > > > > >
+> > > > > > > >  	return ret;
+> > > > > > >
+> > > > > > > Thanks, please just call it before returning in the error path.
+> > > > > >
+> > > > > > Can you please elaborate why, isn't the centralized exiting of
+> > > > > > functions preferred kernel coding style?
+> > > > > > https://www.kernel.org/doc/html/v4.11/process/coding-style.htm
+> > > > > > l#cent
+> > > > > > ra
+> > > > > > lized-ex
+> > > > > > iting-of-functions
+> > > > >
+> > > > > You exit only from one location (not multiple) and not from a
+> > > > > nested context. Here you just add more complexity by doing this.
+> > > >
+> > > > Where is the complexity ? I see it as a standard way of undoing on exit.
+> > > > Tomas
+> > >
+> > > Jarkko, can you please respond.
+> > > Thanks
+> > > Tomas
+> >
+> > I was away for Mon-Wed last week and did not work on TPM for Thu-Fri.
+> >
+> > My earlier comment was incorrect as there are two locations to exit
+> > (not sure how I managed to overlook the patch that way).
+> >
+> > Thus, I have only two very  minor requets:
+> >
+> > * Remove the extra newline (the last line addition in the patch).
+> > * Use just label named out as we have only one exception handler.
+> >
+> > I'll move on to testing, and if it it passes, I can do those updates
+> > myself.
+> >
+> > /Jarkko
 > 
-> Quoting Chuck Lever (chuck.lever@oracle.com):
->> Hi Serge-
->> 
->> Apologies for the delay. My e-mail system dropped your reply.
->> Mimi forwarded it to me today (thanks!). See below.
+> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > 
-> Oh - I hope this one goes through :)
-> 
->>> On Apr 24, 2018, at 10:58 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> ...
->>> Hi Chuck,
->>> 
->>> did you have any plans to extend the file capabilities support to
->>> also handle namespaced file capabilities?  Is that orthogonal to
->>> this spec?
->> 
->> It probably isn't clear to readers who are not familiar with
->> how the IETF works; that's OK, there have been similar comments
->> about this document in other forums. Just to be clear, this I-D
->> is not a design doc for a Linux implementation of either IMA on
->> NFS, or file capabilities on NFS. It is only about what goes on
->> the wire. An eventual prototype implementation will help us
->> understand subtleties and further implementation requirements.
-> 
-> Right so the details of how they are namespaced are (I believe) out
-> of scope not only for the wire protocol but also for the NFS server.
-> However the V3 capabilities (see below) will need to be able to pass
-> a "namespaced root ID" along with the capability.  This is to support
-> serving a filesystem which will be used by a user namespace (usually
-> meaning "a container") created by the namespace which mounted the NFS
-> filesystem.
-> 
-> This will allow a host (or a container) to nfs-mount a filesystem
-> which has files owned by (say) uid 100005, with file capabilities
-> attached which will only take effect when (say) uid 100000 is mapped to
-> root in the container.
-> 
-> So root in the container will be able to add cap_net_raw=pe to
-> /usr/bin/ping, and that capability will take effect only inside the
-> container, not on the host.  Without this ability, installing/upgrading
-> fedora/centos fails in user namespaced containers.
-
-OK, fair enough.
-
-There is an interoperability concern with how file capabilities
-are represented in text format. Currently the I-D does not
-specify how this conversion is done, but rather rashly assumes
-that all NFS endpoints that claim to support Linux file capabi-
-lities will be able to understand that format.
-
-Mostly this is because I don't know of a real citable standard
-that describes the text that comes out of cap_to_text(3). A man
-page doesn't really count as citable :-)
-
-So if cap_to_text(3) handles namespaces already, then this
-should be taken care of transparently. Otherwise, we have to
-start thinking carefully about what else will go into the text
-strings: versioning, namespace, and so on, and that will have
-to be spelled out to some extent in the I-D.
-
-
->> My naive response to your specific question is that namespaces
->> are objects that exist on Linux NFS clients, thus are not directly
->> exposed to servers or other clients. Do you have a convenient
->> description of file capabilities so I can better understand if
->> the NFS protocol needs to be aware of namespaces?
-> 
-> The general capabilities.7 and user_namespaces.7 manpages (see
-> http://man7.org/linux/man-pages/man7/capabilities.7.html
-> and
-> http://man7.org/linux/man-pages/man7/user_namespaces.7.html )
-> give some background - see section 'File capabilities' in
-> capabilities.7 .  The capabilties.7 update for namespaced file
-> capabilities is still under discussion - the latest commit is
-> at
-> https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/commit/?id=6442c03b6815eda1202def03cc1e4eb9a57830f1
-> with the resulting file at
-> https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/tree/man7/capabilities.7?id=6442c03b6815eda1202def03cc1e4eb9a57830f1
-> (check out maybe starting at line 935), and the email thread is at
-> http://www.spinics.net/lists/linux-man/msg12492.html
-> 
-> Finally, the original patch description is here:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/fs/xattr.c?h=v4.17-rc2&id=8db6c34f1dbc8e06aa016a9b829b06902c3e1340
-> 
-> thanks,
-> -serge
-
---
-Chuck Lever
+Thanks
+Tomas
