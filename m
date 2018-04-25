@@ -1,44 +1,33 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-qk0-f201.google.com ([209.85.220.201]:39672 "EHLO
-        mail-qk0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754303AbeDYN0s (ORCPT
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53860 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752414AbeDYLGI (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 25 Apr 2018 09:26:48 -0400
-Received: by mail-qk0-f201.google.com with SMTP id b202so5449820qkc.6
-        for <linux-integrity@vger.kernel.org>; Wed, 25 Apr 2018 06:26:48 -0700 (PDT)
+        Wed, 25 Apr 2018 07:06:08 -0400
+Date: Wed, 25 Apr 2018 13:06:00 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: stable@vger.kernel.org, Azhar Shaikh <azhar.shaikh@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: Re: [PATCH 0/3] v4.16 tpmdd backports
+Message-ID: <20180425110600.GA1996@kroah.com>
+References: <20180425104425.5803-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Date: Wed, 25 Apr 2018 15:26:41 +0200
-Message-Id: <20180425132641.106385-1-tweek@google.com>
-Subject: [PATCH v3 1/4] tpm: Add explicit endianness cast
-From: Thiebaud Weksteen <tweek@google.com>
-To: jarkko.sakkinen@linux.intel.com, nayna@linux.vnet.ibm.com,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tweek@google.com
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thiebaud Weksteen <tweek@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180425104425.5803-1-jarkko.sakkinen@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Signed-off-by: Thiebaud Weksteen <tweek@google.com>
----
- drivers/char/tpm/tpm_eventlog_of.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Wed, Apr 25, 2018 at 01:44:20PM +0300, Jarkko Sakkinen wrote:
+> "tpm: add retry logic" caused merge conflicts so I picked couple of
+> other fixes in order to get it apply cleanly.
 
-diff --git a/drivers/char/tpm/tpm_eventlog_of.c b/drivers/char/tpm/tpm_eventlog_of.c
-index 96fd5646f866..ea0f16f19d73 100644
---- a/drivers/char/tpm/tpm_eventlog_of.c
-+++ b/drivers/char/tpm/tpm_eventlog_of.c
-@@ -56,8 +56,8 @@ int tpm_read_log_of(struct tpm_chip *chip)
- 	 * but physical tpm needs the conversion.
- 	 */
- 	if (of_property_match_string(np, "compatible", "IBM,vtpm") < 0) {
--		size = be32_to_cpup(sizep);
--		base = be64_to_cpup(basep);
-+		size = be32_to_cpup((__force __be32 *)sizep);
-+		base = be64_to_cpup((__force __be64 *)basep);
- 	} else {
- 		size = *sizep;
- 		base = *basep;
--- 
-2.17.0.484.g0c8726318c-goog
+Are these only needed in 4.16.y?  Nothing earlier?
+
+thanks for the backports, I'll queue them up after this next 4.16.y
+kernel is released at the end of this week.
+
+greg k-h
