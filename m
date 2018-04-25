@@ -1,33 +1,42 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53860 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752414AbeDYLGI (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 25 Apr 2018 07:06:08 -0400
-Date: Wed, 25 Apr 2018 13:06:00 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: stable@vger.kernel.org, Azhar Shaikh <azhar.shaikh@intel.com>,
+Received: from mga02.intel.com ([134.134.136.20]:7844 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754402AbeDYKoj (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 25 Apr 2018 06:44:39 -0400
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: stable@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Azhar Shaikh <azhar.shaikh@intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>,
-        "open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org (open list:TPM DEVICE DRIVER),
+        linux-kernel@vger.kernel.org (open list),
         Tomas Winkler <tomas.winkler@intel.com>
-Subject: Re: [PATCH 0/3] v4.16 tpmdd backports
-Message-ID: <20180425110600.GA1996@kroah.com>
-References: <20180425104425.5803-1-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH 0/3] v4.16 tpmdd backports
+Date: Wed, 25 Apr 2018 13:44:20 +0300
+Message-Id: <20180425104425.5803-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180425104425.5803-1-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Apr 25, 2018 at 01:44:20PM +0300, Jarkko Sakkinen wrote:
-> "tpm: add retry logic" caused merge conflicts so I picked couple of
-> other fixes in order to get it apply cleanly.
+"tpm: add retry logic" caused merge conflicts so I picked couple of
+other fixes in order to get it apply cleanly.
 
-Are these only needed in 4.16.y?  Nothing earlier?
+James Bottomley (1):
+  tpm: add retry logic
 
-thanks for the backports, I'll queue them up after this next 4.16.y
-kernel is released at the end of this week.
+Tomas Winkler (1):
+  tpm: cmd_ready command can be issued only after granting locality
 
-greg k-h
+Winkler, Tomas (1):
+  tpm: tpm-interface: fix tpm_transmit/_cmd kdoc
+
+ drivers/char/tpm/tpm-interface.c | 131 ++++++++++++++++++++++++-------
+ drivers/char/tpm/tpm.h           |   1 +
+ drivers/char/tpm/tpm_crb.c       | 108 +++++++++++++++++--------
+ drivers/char/tpm/tpm_tis_core.c  |   4 +-
+ include/linux/tpm.h              |   2 +-
+ 5 files changed, 183 insertions(+), 63 deletions(-)
+
+-- 
+2.17.0
