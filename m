@@ -1,70 +1,59 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:47479 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751557AbeD0Jcx (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 27 Apr 2018 05:32:53 -0400
-Date: Fri, 27 Apr 2018 11:32:50 +0200
-From: Petr Vorel <pvorel@suse.cz>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: ltp@lists.linux.it, linux-integrity@vger.kernel.org
-Subject: Re: [RFC PATCH v3 00/10] Rewrite tests into new API + fixes
-Message-ID: <20180427093250.h5myocnvwgrfij34@dell5510>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20180419195503.7194-1-pvorel@suse.cz>
- <1524759504.3647.12.camel@linux.vnet.ibm.com>
+Received: from out01.mta.xmission.com ([166.70.13.231]:44685 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751279AbeD0AuH (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 26 Apr 2018 20:50:07 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: John Johansen <john.johansen@canonical.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, tycho@docker.com,
+        serge@hallyn.com, sunyuqiong1988@gmail.com, david.safford@ge.com,
+        mkayaalp@cs.binghamton.edu, James.Bottomley@HansenPartnership.com,
+        Yuqiong Sun <suny@us.ibm.com>,
+        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
+References: <1522159038-14175-1-git-send-email-stefanb@linux.vnet.ibm.com>
+        <1522159038-14175-2-git-send-email-stefanb@linux.vnet.ibm.com>
+        <87sh8lcecn.fsf@xmission.com>
+        <1523636702.3272.63.camel@linux.vnet.ibm.com>
+        <d8c30d7d-c679-9323-7a25-d3148e9b96c6@canonical.com>
+        <1524081472.3272.319.camel@linux.vnet.ibm.com>
+        <87wox4s282.fsf@xmission.com>
+        <8895cb9c-7b9e-2f82-e3d8-a15f5fc26e25@canonical.com>
+        <2103bbb9-3f2a-78f8-f7ad-28859659973f@linux.vnet.ibm.com>
+        <f84ae8af-fa5b-9f31-fbef-5a49f90dd45a@canonical.com>
+        <0d2b2635-d7fb-d240-7dd0-2a81014c58ba@linux.vnet.ibm.com>
+Date: Thu, 26 Apr 2018 19:49:59 -0500
+In-Reply-To: <0d2b2635-d7fb-d240-7dd0-2a81014c58ba@linux.vnet.ibm.com> (Stefan
+        Berger's message of "Thu, 26 Apr 2018 17:18:43 -0400")
+Message-ID: <87fu3hbhhk.fsf@xmission.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-In-Reply-To: <1524759504.3647.12.camel@linux.vnet.ibm.com>
+Content-Type: text/plain
+Subject: Re: [RFC PATCH v3 1/3] ima: extend clone() with IMA namespace support
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi,
+Stefan Berger <stefanb@linux.vnet.ibm.com> writes:
 
-> > * ima_measurements.sh
-> >   - don't require iversion for kernel >= 4.16
-> >   - avoid using tmpfs
+> On 04/19/2018 11:35 AM, John Johansen wrote:
 
-> This is working nicely!
-:).
+>> It sounds like its already decided, with ima and selinux going with an unshare file within their own fs.
+>>
+>> AppArmor went a different route already, splitting namespace creation (mkdir in the apparmorfs policy/namespace dir) and the task entering the namespace with a write apparmor's equiv of setexeccon.
+>>
+> I am supporting procfs entries for the IMA namespace spawned by writing a
+> boolean '1' into IMA's securityfs 'unshare' file. It would allow to use
+> setns(fd, 0), obviously with the 0 parameter. I think this is an important
+> function to support considering entering a set of namespace. I am just wondering
+> about the 0 parameter. We don't have a CLONE flag for it, so there's not other
+> way to support it then. Does it matter ?
 
+That should be fine.  We can pick a flag for setns at some point for
+IMA.  The setns function uses the flag field as an enumeration so any of
+the low 8 bits or a combination with overlapping bit is valid to setns.
 
-...
-> test: cmdline="ima_policy.sh"
-> contacts=""
-> analysis=exit
-> <<<test_output>>>
-> ima_policy 1 TINFO: verify that invalid policy isn't loaded
-> ima_policy 1 TPASS: didn't load invalid policy
-> ima_policy 2 TINFO: verify that policy file is not opened concurrently
-> and able to loaded multiple times
-> ima_policy 2 TFAIL: problem with loading policy (policy should be able
-> to load multiple times)
-
-> For now, could we change "problem with loading policy (policy should
-> be able to load multiple times)" to say, "problem loading or extending
-> policy (may require policy to be signed)"?
-Sure, thanks!
-
-
-> I'm also seeing, 
-
-> test: ima_tpm
-> <<<test_output>>>
-> ima_tpm 1 TINFO: verify boot aggregate
-> ima_tpm 1 TPASS: bios aggregate matches IMA boot aggregate
-> ima_tpm 2 TINFO: verify PCR values
-> ima_tpm 2 TINFO: evmctl version: evmctl 1.0
-> ima_tpm 2 TINFO: new PCRS path, evmctl >= 1.1 required
-> ima_tpm 2 TINFO: verify PCR (Process Control Register)
-> ima_tpm 2 TFAIL: failed to get PCR-10
-> ima_tpm 2 TPASS: aggregate PCR value matches real PCR value
-
-> It's unclear how the script could fail to get PCR-10, but pass the
-> following test.
-Thanks, fixed (wrong return).
-
-> Mimi
-
-
-Kind regards,
-Petr
+Eric
