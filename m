@@ -1,20 +1,20 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40226 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754805AbeEANsk (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59900 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755539AbeEANso (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 1 May 2018 09:48:40 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w41Djj4Z058658
-        for <linux-integrity@vger.kernel.org>; Tue, 1 May 2018 09:48:40 -0400
-Received: from e06smtp11.uk.ibm.com (e06smtp11.uk.ibm.com [195.75.94.107])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2hpp3k7613-1
+        Tue, 1 May 2018 09:48:44 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w41Djgek104002
+        for <linux-integrity@vger.kernel.org>; Tue, 1 May 2018 09:48:43 -0400
+Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2hpks14hrx-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 01 May 2018 09:48:39 -0400
+        for <linux-integrity@vger.kernel.org>; Tue, 01 May 2018 09:48:43 -0400
 Received: from localhost
-        by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Tue, 1 May 2018 14:48:37 +0100
+        Tue, 1 May 2018 14:48:41 +0100
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: Hans de Goede <hdegoede@redhat.com>,
@@ -25,64 +25,47 @@ Cc: Hans de Goede <hdegoede@redhat.com>,
         linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
         "Luis R . Rodriguez" <mcgrof@kernel.org>,
         "Luis R . Rodriguez" <mcgrof@suse.com>,
-        Kees Cook <keescook@chromium.org>,
         Matthew Garrett <mjg59@google.com>
-Subject: [PATCH 1/6] firmware: permit LSMs and IMA to fail firmware sysfs fallback loading
-Date: Tue,  1 May 2018 09:48:18 -0400
+Subject: [PATCH 2/6] ima: prevent sysfs fallback firmware loading
+Date: Tue,  1 May 2018 09:48:19 -0400
 In-Reply-To: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-Id: <1525182503-13849-2-git-send-email-zohar@linux.vnet.ibm.com>
+Message-Id: <1525182503-13849-3-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Add an LSM hook prior to allowing firmware sysfs fallback loading.
+With an IMA policy requiring signed firmware, this patch prevents
+the sysfs fallback method of loading firmware.
 
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Cc: Luis R. Rodriguez <mcgrof@suse.com>
 Cc: David Howells <dhowells@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
 Cc: Matthew Garrett <mjg59@google.com>
 ---
- drivers/base/firmware_loader/fallback.c | 7 +++++++
- include/linux/fs.h                      | 1 +
- 2 files changed, 8 insertions(+)
+ security/integrity/ima/ima_main.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
-index 31b5015b59fe..23d2af30474e 100644
---- a/drivers/base/firmware_loader/fallback.c
-+++ b/drivers/base/firmware_loader/fallback.c
-@@ -651,6 +651,8 @@ static bool fw_force_sysfs_fallback(unsigned int opt_flags)
- 
- static bool fw_run_sysfs_fallback(unsigned int opt_flags)
- {
-+	int ret;
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 754ece08e1c6..8759280dccf6 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -453,7 +453,17 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+ 		}
+ 		return 0;
+ 	}
 +
- 	if (fw_fallback_config.ignore_sysfs_fallback) {
- 		pr_info_once("Ignoring firmware sysfs fallback due to sysctl knob\n");
- 		return false;
-@@ -659,6 +661,11 @@ static bool fw_run_sysfs_fallback(unsigned int opt_flags)
- 	if ((opt_flags & FW_OPT_NOFALLBACK))
- 		return false;
- 
-+	/* Also permit LSMs and IMA to fail firmware sysfs fallback */
-+	ret = security_kernel_read_file(NULL, READING_FIRMWARE_FALLBACK);
-+	if (ret < 0)
-+		return ret;
++	if (read_id == READING_FIRMWARE_FALLBACK) {
++		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
++		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
++			pr_err("Prevent firmware sysfs fallback loading.\n");
++			return -EACCES;
++		}
++		return 0;
++	}
+ 	return 0;
 +
- 	return fw_force_sysfs_fallback(opt_flags);
  }
  
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 760d8da1b6c7..dc16a73c3d38 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2810,6 +2810,7 @@ extern int do_pipe_flags(int *, int);
- 	id(UNKNOWN, unknown)		\
- 	id(FIRMWARE, firmware)		\
- 	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
-+	id(FIRMWARE_FALLBACK, firmware)	\
- 	id(MODULE, kernel-module)		\
- 	id(KEXEC_IMAGE, kexec-image)		\
- 	id(KEXEC_INITRAMFS, kexec-initramfs)	\
+ static int read_idmap[READING_MAX_ID] = {
 -- 
 2.7.5
