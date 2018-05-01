@@ -1,47 +1,100 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:20976 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751920AbeEALto (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 1 May 2018 07:49:44 -0400
-Date: Tue, 1 May 2018 14:49:40 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Thiebaud Weksteen <tweek@google.com>
-Cc: nayna@linux.vnet.ibm.com, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] tpm: Add explicit endianness cast
-Message-ID: <20180501114940.GD20978@linux.intel.com>
-References: <20180425132641.106385-1-tweek@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180425132641.106385-1-tweek@google.com>
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46956 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753056AbeEAB4c (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 30 Apr 2018 21:56:32 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w411tLJU022556
+        for <linux-integrity@vger.kernel.org>; Mon, 30 Apr 2018 21:56:31 -0400
+Received: from e06smtp11.uk.ibm.com (e06smtp11.uk.ibm.com [195.75.94.107])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2hpc92de6x-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 30 Apr 2018 21:56:31 -0400
+Received: from localhost
+        by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Tue, 1 May 2018 02:56:29 +0100
+Subject: Re: [PATCH V2] EVM: Allow runtime modification of the set of
+ verified xattrs
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Matthew Garrett <mjg59@google.com>, linux-integrity@vger.kernel.org
+Date: Mon, 30 Apr 2018 21:56:24 -0400
+In-Reply-To: <20180427194155.41282-1-mjg59@google.com>
+References: <20180427194155.41282-1-mjg59@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1525139784.5669.26.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Apr 25, 2018 at 03:26:41PM +0200, Thiebaud Weksteen wrote:
-> Signed-off-by: Thiebaud Weksteen <tweek@google.com>
-> ---
->  drivers/char/tpm/tpm_eventlog_of.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_eventlog_of.c b/drivers/char/tpm/tpm_eventlog_of.c
-> index 96fd5646f866..ea0f16f19d73 100644
-> --- a/drivers/char/tpm/tpm_eventlog_of.c
-> +++ b/drivers/char/tpm/tpm_eventlog_of.c
-> @@ -56,8 +56,8 @@ int tpm_read_log_of(struct tpm_chip *chip)
->  	 * but physical tpm needs the conversion.
->  	 */
->  	if (of_property_match_string(np, "compatible", "IBM,vtpm") < 0) {
-> -		size = be32_to_cpup(sizep);
-> -		base = be64_to_cpup(basep);
-> +		size = be32_to_cpup((__force __be32 *)sizep);
-> +		base = be64_to_cpup((__force __be64 *)basep);
->  	} else {
->  		size = *sizep;
->  		base = *basep;
-> -- 
-> 2.17.0.484.g0c8726318c-goog
-> 
+On Fri, 2018-04-27 at 12:41 -0700, Matthew Garrett wrote:
 
-Repeal and replace, right (no change log)?
+> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+> index 9ea9c19a545c..86b1632d6b5b 100644
+> --- a/security/integrity/evm/evm_main.c
+> +++ b/security/integrity/evm/evm_main.c
+> @@ -35,7 +35,7 @@ static const char * const integrity_status_msg[] = {
+>  };
+>  int evm_hmac_attrs;
+> 
+> -char *evm_config_xattrnames[] = {
+> +char *evm_config_default_xattrnames[] = {
+>  #ifdef CONFIG_SECURITY_SELINUX
+>  	XATTR_NAME_SELINUX,
+>  #endif
+> @@ -57,6 +57,8 @@ char *evm_config_xattrnames[] = {
+>  	NULL
+>  };
+> 
+> +LIST_HEAD(evm_config_xattrnames);
+> +
+>  static int evm_fixmode;
+>  static int __init evm_set_fixmode(char *str)
+>  {
+> @@ -66,12 +68,30 @@ static int __init evm_set_fixmode(char *str)
+>  }
+>  __setup("evm=", evm_set_fixmode);
+> 
+> -static void __init evm_init_config(void)
+> +static int __init evm_init_config(void)
+>  {
+> +	struct xattr_list *tmp;
+> +	char **xattrname;
+> +
+> +	for (xattrname = evm_config_default_xattrnames; *xattrname != NULL;
+> +	     xattrname++) {
+> +		tmp = kmalloc(sizeof(struct xattr_list), GFP_KERNEL);
+> +		if (!tmp)
+> +			return -ENOMEM;
+> +		tmp->name = kstrdup(*xattrname, GFP_KERNEL);
+> +		if (!tmp->name) {
+> +			kfree(tmp);
+> +			return -ENOMEM;
+> +		}
+> +		list_add_tail(&tmp->list, &evm_config_xattrnames);
 
-/Jarkko
+If evm_config_xattrnames[] is defined as struct xattr_list, there's no
+need for allocating memory for the xattr_list and name.  Something
+like in ima_init_policy() would work.
+
+Could we break this patch up to simplify review?  The first patch
+would create and use the xattrname list.  The subsequent patch(es)
+would add the new functionality.
+
+thanks,
+
+Mimi
+
+> +	}
+> +
+>  #ifdef CONFIG_EVM_ATTR_FSUUID
+>  	evm_hmac_attrs |= EVM_ATTR_FSUUID;
+>  #endif
+>  	pr_info("HMAC attrs: 0x%x\n", evm_hmac_attrs);
+> +
+> +	return 0;
+>  }
+> 
+>  static bool evm_key_loaded(void)
+> 
