@@ -1,20 +1,20 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36812 "EHLO
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33402 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755117AbeEANss (ORCPT
+        by vger.kernel.org with ESMTP id S1755742AbeEANs4 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 1 May 2018 09:48:48 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w41Dlr4v047277
-        for <linux-integrity@vger.kernel.org>; Tue, 1 May 2018 09:48:48 -0400
+        Tue, 1 May 2018 09:48:56 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w41Djnub109490
+        for <linux-integrity@vger.kernel.org>; Tue, 1 May 2018 09:48:56 -0400
 Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2hpsdyg23w-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2hppyyx104-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 01 May 2018 09:48:47 -0400
+        for <linux-integrity@vger.kernel.org>; Tue, 01 May 2018 09:48:56 -0400
 Received: from localhost
         by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Tue, 1 May 2018 14:48:45 +0100
+        Tue, 1 May 2018 14:48:53 +0100
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: Hans de Goede <hdegoede@redhat.com>,
@@ -26,57 +26,57 @@ Cc: Hans de Goede <hdegoede@redhat.com>,
         "Luis R . Rodriguez" <mcgrof@kernel.org>,
         "Luis R . Rodriguez" <mcgrof@suse.com>,
         Kees Cook <keescook@chromium.org>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 3/6] firmware: differentiate between signed regulatory.db and other firmware
-Date: Tue,  1 May 2018 09:48:20 -0400
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Stephen Boyd <stephen.boyd@linaro.org>
+Subject: [RFC PATCH 6/6] ima: prevent loading firmware into a pre-allocated buffer
+Date: Tue,  1 May 2018 09:48:23 -0400
 In-Reply-To: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-Id: <1525182503-13849-4-git-send-email-zohar@linux.vnet.ibm.com>
+Message-Id: <1525182503-13849-7-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Allow LSMs and IMA to differentiate between signed regulatory.db and
-other firmware.
+Question: can the device access the pre-allocated buffer at any time?
+
+By allowing devices to request firmware be loaded directly into a
+pre-allocated buffer, will this allow the device access to the firmware
+before the kernel has verified the firmware signature?
+
+Is it dependent on the type of buffer allocated (eg. DMA)?  For example,
+qcom_mdt_load() -> qcom_scm_pas_init_image() -> dma_alloc_coherent().
+
+With an IMA policy requiring signed firmware, this patch would prevent
+loading firmware into a pre-allocated buffer.
 
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Cc: Luis R. Rodriguez <mcgrof@suse.com>
 Cc: David Howells <dhowells@redhat.com>
 Cc: Kees Cook <keescook@chromium.org>
-Cc: Seth Forshee <seth.forshee@canonical.com>
-Cc: Johannes Berg <johannes.berg@intel.com>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+Cc: Stephen Boyd <stephen.boyd@linaro.org>
 ---
- drivers/base/firmware_loader/main.c | 5 +++++
- include/linux/fs.h                  | 1 +
- 2 files changed, 6 insertions(+)
+ security/integrity/ima/ima_main.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-index eb34089e4299..d7cdf04a8681 100644
---- a/drivers/base/firmware_loader/main.c
-+++ b/drivers/base/firmware_loader/main.c
-@@ -318,6 +318,11 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv)
- 			break;
- 		}
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index eb9c273ab81d..3098131f77c4 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -454,6 +454,15 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+ 		return 0;
+ 	}
  
-+#ifdef CONFIG_CFG80211_REQUIRE_SIGNED_REGDB
-+		if ((strcmp(fw_priv->fw_name, "regulatory.db") == 0) ||
-+		    (strcmp(fw_priv->fw_name, "regulatory.db.p7s") == 0))
-+			id = READING_FIRMWARE_REGULATORY_DB;
-+#endif
- 		fw_priv->size = 0;
- 		rc = kernel_read_file_from_path(path, &fw_priv->data, &size,
- 						msize, id);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index dc16a73c3d38..d1153c2884b9 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2811,6 +2811,7 @@ extern int do_pipe_flags(int *, int);
- 	id(FIRMWARE, firmware)		\
- 	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
- 	id(FIRMWARE_FALLBACK, firmware)	\
-+	id(FIRMWARE_REGULATORY_DB, firmware)	\
- 	id(MODULE, kernel-module)		\
- 	id(KEXEC_IMAGE, kexec-image)		\
- 	id(KEXEC_INITRAMFS, kexec-initramfs)	\
++	if (read_id == READING_FIRMWARE_PREALLOC_BUFFER) {
++		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
++		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
++			pr_err("Prevent device from accessing firmware prior to verifying the firmware signature.\n");
++			return -EACCES;
++		}
++		return 0;
++	}
++
+ 	if (read_id == READING_FIRMWARE_FALLBACK) {
+ 		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
+ 		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
 -- 
 2.7.5
