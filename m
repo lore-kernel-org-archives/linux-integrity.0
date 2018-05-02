@@ -1,81 +1,59 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45344 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751874AbeECBnL (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46556 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751148AbeEBXKq (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 2 May 2018 21:43:11 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w431gZfm060348
-        for <linux-integrity@vger.kernel.org>; Wed, 2 May 2018 21:43:10 -0400
-Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2hqr509q9c-1
+        Wed, 2 May 2018 19:10:46 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w42NAdDa097990
+        for <linux-integrity@vger.kernel.org>; Wed, 2 May 2018 19:10:45 -0400
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2hqkdky3g2-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 02 May 2018 21:43:10 -0400
+        for <linux-integrity@vger.kernel.org>; Wed, 02 May 2018 19:10:41 -0400
 Received: from localhost
-        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Thu, 3 May 2018 02:43:08 +0100
-Subject: Re: [PATCH] evm: Don't update hmacs in user ns mounts
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        James Morris <james.l.morris@oracle.com>
-Date: Wed, 02 May 2018 21:43:03 -0400
-In-Reply-To: <87r2mtybhf.fsf@xmission.com>
-References: <87r2mtybhf.fsf@xmission.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1525311783.3238.19.camel@linux.vnet.ibm.com>
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <mkayaalp@linux.vnet.ibm.com>;
+        Wed, 2 May 2018 17:10:02 -0600
+From: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
+To: David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Keyrings <keyrings@vger.kernel.org>
+Cc: Linux Integrity <linux-integrity@vger.kernel.org>,
+        Linux Security <linux-security-module@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        George Wilson <gcwilson@us.ibm.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
+Subject: [PATCH v6 4/4] KEYS: Print insert-sys-cert information to stdout instead of stderr
+Date: Wed,  2 May 2018 19:08:11 -0400
+In-Reply-To: <20180502230811.2751-1-mkayaalp@linux.vnet.ibm.com>
+References: <20180502230811.2751-1-mkayaalp@linux.vnet.ibm.com>
+Message-Id: <20180502230811.2751-5-mkayaalp@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, 2018-05-02 at 16:49 -0500, Eric W. Biederman wrote:
-> From: Seth Forshee <seth.forshee@canonical.com>
-> Date: Fri, 22 Dec 2017 15:32:35 +0100
-> 
-> The kernel should not calculate new hmacs for mounts done by
-> non-root users. Update evm_calc_hmac_or_hash() to refuse to
-> calculate new hmacs for mounts for non-init user namespaces.
-> 
-> Cc: linux-integrity@vger.kernel.org
-> Cc: linux-security-module@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: James Morris <james.l.morris@oracle.com>
-> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Signed-off-by: Seth Forshee <seth.forshee@canonical.com>
-> Signed-off-by: Dongsu Park <dongsu@kinvolk.io>
-> Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
-> ---
-> 
-> Mimi this patch has been floating around for a while and it appears to
-> be the only piece missing from the vfs to make unprivileged mounts safe
-> (at least semantically).  Do you want to merge this through your integrity
-> tree or should merge this through my userns tree?
+Detailed INFO output should go to stdout instead of stderr.
 
-Matthew's EVM patches don't conflict with this change, so either way
-is fine.
+Signed-off-by: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
+---
+ scripts/insert-sys-cert.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Mimi
-
-> 
->  security/integrity/evm/evm_crypto.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> 
-> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-> index a46fba322340..facf9cdd577d 100644
-> --- a/security/integrity/evm/evm_crypto.c
-> +++ b/security/integrity/evm/evm_crypto.c
-> @@ -200,7 +200,8 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
->  	int size;
->  	bool ima_present = false;
-> 
-> -	if (!(inode->i_opflags & IOP_XATTR))
-> +	if (!(inode->i_opflags & IOP_XATTR) ||
-> +	    inode->i_sb->s_user_ns != &init_user_ns)
->  		return -EOPNOTSUPP;
-> 
->  	desc = init_desc(type);
+diff --git a/scripts/insert-sys-cert.c b/scripts/insert-sys-cert.c
+index a3bd7ea8a436..caa446fe91b8 100644
+--- a/scripts/insert-sys-cert.c
++++ b/scripts/insert-sys-cert.c
+@@ -32,7 +32,7 @@
+ #define USED_SYM  "system_extra_cert_used"
+ #define LSIZE_SYM "system_certificate_list_size"
+ 
+-#define info(format, args...) fprintf(stderr, "INFO:    " format, ## args)
++#define info(format, args...) fprintf(stdout, "INFO:    " format, ## args)
+ #define warn(format, args...) fprintf(stdout, "WARNING: " format, ## args)
+ #define  err(format, args...) fprintf(stderr, "ERROR:   " format, ## args)
+ 
+-- 
+2.17.0
