@@ -1,137 +1,57 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:4314 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750930AbeEBNcv (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 2 May 2018 09:32:51 -0400
-Date: Wed, 2 May 2018 16:32:46 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc: 'Jason Gunthorpe' <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "'linux-integrity@vger.kernel.org'" <linux-integrity@vger.kernel.org>,
-        "'linux-security-module@vger.kernel.org'"
-        <linux-security-module@vger.kernel.org>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tpm: tpm_crb: relinquish locality on error path.
-Message-ID: <20180502133246.GA6091@linux.intel.com>
-References: <20180407161236.22969-1-tomas.winkler@intel.com>
- <c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
- <4984305eae452b7a72b8a13aa20cecec420df580.camel@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
- <20180424160328.GA5119@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B94272F33@hasmsx108.ger.corp.intel.com>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:34171 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751064AbeEBItx (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 2 May 2018 04:49:53 -0400
+Received: by mail-it0-f66.google.com with SMTP id c5-v6so13527461itj.1
+        for <linux-integrity@vger.kernel.org>; Wed, 02 May 2018 01:49:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B94272F33@hasmsx108.ger.corp.intel.com>
+References: <20180425132641.106385-1-tweek@google.com> <20180501114940.GD20978@linux.intel.com>
+In-Reply-To: <20180501114940.GD20978@linux.intel.com>
+From: Thiebaud Weksteen <tweek@google.com>
+Date: Wed, 02 May 2018 08:49:41 +0000
+Message-ID: <CA+zpnLdasAFPKRXB=5SgiAi5=W08tgkbQTjO26V=PxjphJai=w@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] tpm: Add explicit endianness cast
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Nayna Jain <nayna@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Apr 24, 2018 at 08:04:01PM +0000, Winkler, Tomas wrote:
-> > Subject: Re: [PATCH] tpm: tpm_crb: relinquish locality on error path.
-> > 
-> > On Fri, Apr 20, 2018 at 01:19:12PM +0000, Winkler, Tomas wrote:
-> > > > > On Tue, 2018-04-10 at 09:00 +0000, Winkler, Tomas wrote:
-> > > > > > >
-> > > > > > > On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
-> > > > > > > > In crb_map_io() function, __crb_request_locality() is called
-> > > > > > > > prior to crb_cmd_ready(), but if one of the consecutive
-> > > > > > > > function fails the flow bails out instead of trying to relinquish
-> > locality.
-> > > > > > > > This patch adds goto jump to __crb_relinquish_locality() on
-> > > > > > > > the error path.
-> > > > > > > >
-> > > > > > > > Fixes: 888d867df441 (tpm: cmd_ready command can be issued
-> > > > > > > > only after granting
-> > > > > > > > locality)
-> > > > > > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > > > > > > > ---
-> > > > > > > >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
-> > > > > > > >  1 file changed, 7 insertions(+), 3 deletions(-)
-> > > > > > > >
-> > > > > > > > diff --git a/drivers/char/tpm/tpm_crb.c
-> > > > > > > > b/drivers/char/tpm/tpm_crb.c index
-> > > > > > > > 7f78482cd157..34fbc6cb097b
-> > > > > > > > 100644
-> > > > > > > > --- a/drivers/char/tpm/tpm_crb.c
-> > > > > > > > +++ b/drivers/char/tpm/tpm_crb.c
-> > > > > > > > @@ -511,8 +511,10 @@ static int crb_map_io(struct
-> > > > > > > > acpi_device *device, struct crb_priv *priv,
-> > > > > > > >
-> > > > > > > >  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf-
-> > > > > > > > >control_address,
-> > > > > > > >  				   sizeof(struct crb_regs_tail));
-> > > > > > > > -	if (IS_ERR(priv->regs_t))
-> > > > > > > > -		return PTR_ERR(priv->regs_t);
-> > > > > > > > +	if (IS_ERR(priv->regs_t)) {
-> > > > > > > > +		ret = PTR_ERR(priv->regs_t);
-> > > > > > > > +		goto out_relinquish_locality;
-> > > > > > > > +	}
-> > > > > > > >
-> > > > > > > >  	/*
-> > > > > > > >  	 * PTT HW bug w/a: wake up the device to access @@ -520,7
-> > > > > > > > +522,7
-> > > > > > >
-> > > > > > > @@
-> > > > > > > > static int crb_map_io(struct acpi_device *device, struct
-> > > > > > > > crb_priv *priv,
-> > > > > > > >  	 */
-> > > > > > > >  	ret = crb_cmd_ready(dev, priv);
-> > > > > > > >  	if (ret)
-> > > > > > > > -		return ret;
-> > > > > > > > +		goto out_relinquish_locality;
-> > > > > > > >
-> > > > > > > >  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
-> > > > > > > >  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
-> > > > > > > > @@ -565,6 +567,8 @@ static int crb_map_io(struct acpi_device
-> > > > > > > > *device, struct crb_priv *priv,
-> > > > > > > >
-> > > > > > > >  	crb_go_idle(dev, priv);
-> > > > > > > >
-> > > > > > > > +out_relinquish_locality:
-> > > > > > > > +
-> > > > > > > >  	__crb_relinquish_locality(dev, priv, 0);
-> > > > > > > >
-> > > > > > > >  	return ret;
-> > > > > > >
-> > > > > > > Thanks, please just call it before returning in the error path.
-> > > > > >
-> > > > > > Can you please elaborate why, isn't the centralized exiting of
-> > > > > > functions preferred kernel coding style?
-> > > > > > https://www.kernel.org/doc/html/v4.11/process/coding-style.html#
-> > > > > > cent
-> > > > > > ra
-> > > > > > lized-ex
-> > > > > > iting-of-functions
-> > > > >
-> > > > > You exit only from one location (not multiple) and not from a
-> > > > > nested context. Here you just add more complexity by doing this.
-> > > >
-> > > > Where is the complexity ? I see it as a standard way of undoing on exit.
-> > > > Tomas
-> > >
-> > > Jarkko, can you please respond.
-> > > Thanks
-> > > Tomas
-> > 
-> > I was away for Mon-Wed last week and did not work on TPM for Thu-Fri.
-> > 
-> > My earlier comment was incorrect as there are two locations to exit (not
-> > sure how I managed to overlook the patch that way).
-> > 
-> > Thus, I have only two very  minor requets:
-> > 
-> > * Remove the extra newline (the last line addition in the patch).
-> Okay
-> > * Use just label named out as we have only one exception handler.
-> Cannot do that, as the bail out is prior to cmd_ready request so there is no need for go_idle which is under out label.
-> > 
-> > I'll move on to testing, and if it it passes, I can do those updates myself.
-> Thanks,  I prefer to resend myself. 
-> 
-> Tomas
+On Tue, May 1, 2018 at 1:49 PM Jarkko Sakkinen <
+jarkko.sakkinen@linux.intel.com> wrote:
 
-Add my tested-by as it is cosmectic change, thanks.
+> On Wed, Apr 25, 2018 at 03:26:41PM +0200, Thiebaud Weksteen wrote:
+> > Signed-off-by: Thiebaud Weksteen <tweek@google.com>
+> > ---
+> >  drivers/char/tpm/tpm_eventlog_of.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/char/tpm/tpm_eventlog_of.c
+b/drivers/char/tpm/tpm_eventlog_of.c
+> > index 96fd5646f866..ea0f16f19d73 100644
+> > --- a/drivers/char/tpm/tpm_eventlog_of.c
+> > +++ b/drivers/char/tpm/tpm_eventlog_of.c
+> > @@ -56,8 +56,8 @@ int tpm_read_log_of(struct tpm_chip *chip)
+> >        * but physical tpm needs the conversion.
+> >        */
+> >       if (of_property_match_string(np, "compatible", "IBM,vtpm") < 0) {
+> > -             size = be32_to_cpup(sizep);
+> > -             base = be64_to_cpup(basep);
+> > +             size = be32_to_cpup((__force __be32 *)sizep);
+> > +             base = be64_to_cpup((__force __be64 *)basep);
+> >       } else {
+> >               size = *sizep;
+> >               base = *basep;
+> > --
+> > 2.17.0.484.g0c8726318c-goog
+> >
 
-/Jarkko
+> Repeal and replace, right (no change log)?
+
+Yep, that's right. Thanks.
+
+
+> /Jarkko
