@@ -1,79 +1,64 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39534 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751432AbeEBXIk (ORCPT
+Received: from out03.mta.xmission.com ([166.70.13.233]:41644 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751558AbeEBVvo (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 2 May 2018 19:08:40 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w42N4sGg084296
-        for <linux-integrity@vger.kernel.org>; Wed, 2 May 2018 19:08:39 -0400
-Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2hqkdky2hx-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 02 May 2018 19:08:38 -0400
-Received: from localhost
-        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <mkayaalp@linux.vnet.ibm.com>;
-        Wed, 2 May 2018 17:08:38 -0600
-From: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
-To: David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Keyrings <keyrings@vger.kernel.org>
-Cc: Linux Integrity <linux-integrity@vger.kernel.org>,
-        Linux Security <linux-security-module@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        George Wilson <gcwilson@us.ibm.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
-Subject: [PATCH v6 0/4] Certificate insertion support for x86 bzImages
-Date: Wed,  2 May 2018 19:08:07 -0400
-Message-Id: <20180502230811.2751-1-mkayaalp@linux.vnet.ibm.com>
+        Wed, 2 May 2018 17:51:44 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        James Morris <james.l.morris@oracle.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>
+Date: Wed, 02 May 2018 16:49:16 -0500
+Message-ID: <87r2mtybhf.fsf@xmission.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Subject: [PATCH] evm: Don't update hmacs in user ns mounts
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-These patches add support for modifying the reserved space for extra
-certificates in a compressed bzImage in x86. This allows separating the
-system keyring certificate from the kernel build process. After the kernel
-image is distributed, the insert-sys-cert script can be used to insert the
-certificate for x86.
+From: Seth Forshee <seth.forshee@canonical.com>
+Date: Fri, 22 Dec 2017 15:32:35 +0100
 
-Changes:
+The kernel should not calculate new hmacs for mounts done by
+non-root users. Update evm_calc_hmac_or_hash() to refuse to
+calculate new hmacs for mounts for non-init user namespaces.
 
-v6:
-* Removed libelf dependency (2/4)
+Cc: linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: James Morris <james.l.morris@oracle.com>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Signed-off-by: Seth Forshee <seth.forshee@canonical.com>
+Signed-off-by: Dongsu Park <dongsu@kinvolk.io>
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+---
 
-v5:
-* Added CRC fixing (3/4)
+Mimi this patch has been floating around for a while and it appears to
+be the only piece missing from the vfs to make unprivileged mounts safe
+(at least semantically).  Do you want to merge this through your integrity
+tree or should merge this through my userns tree?
 
-v4:
-* Applied checkpatch.pl suggestions (2/4, 3/4)
-* Cleaned up the commit messages (1/4, 2/4)
-* Added the build file to .gitignore (1/4)
+ security/integrity/evm/evm_crypto.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-v3:
-* Rewrote 1/4 to insert incompressible bytes are at build time. Previous
-solution required changes to <arch>/boot/Makefile's for modifying the
-vmlinux file after linking, and did not work well with cross compilation.
-* Added 2/4 for ELF class-independent processing of vmlinux file, in case
-the script was compiled for 64-bit and the kernel was compiled for 32-bit.
-* Reordered 3/4, added x86 bzImage boot version (>=2.08) verification.
 
-v2:
-* Rebased arch/boot/x86/Makefile patch (removed in v3)
-
-Mehmet Kayaalp (4):
-  KEYS: Insert incompressible bytes to reserve space in bzImage
-  KEYS: Add ELF class-independent certificate insertion support
-  KEYS: Support for inserting a certificate into x86 bzImage
-  KEYS: Print insert-sys-cert information to stdout instead of stderr
-
- certs/.gitignore            |   1 +
- certs/Makefile              |  21 +-
- certs/system_certificates.S |   2 +-
- scripts/insert-sys-cert.c   | 584 +++++++++++++++++++++++++++++-------
- 4 files changed, 488 insertions(+), 120 deletions(-)
-
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index a46fba322340..facf9cdd577d 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -200,7 +200,8 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ 	int size;
+ 	bool ima_present = false;
+ 
+-	if (!(inode->i_opflags & IOP_XATTR))
++	if (!(inode->i_opflags & IOP_XATTR) ||
++	    inode->i_sb->s_user_ns != &init_user_ns)
+ 		return -EOPNOTSUPP;
+ 
+ 	desc = init_desc(type);
 -- 
-2.17.0
+2.14.1
