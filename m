@@ -1,20 +1,20 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44714 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751261AbeEBXIl (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39534 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751432AbeEBXIk (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 2 May 2018 19:08:41 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w42N72T4108630
-        for <linux-integrity@vger.kernel.org>; Wed, 2 May 2018 19:08:41 -0400
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2hqjrc8jdu-1
+        Wed, 2 May 2018 19:08:40 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w42N4sGg084296
+        for <linux-integrity@vger.kernel.org>; Wed, 2 May 2018 19:08:39 -0400
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2hqkdky2hx-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 02 May 2018 19:08:41 -0400
+        for <linux-integrity@vger.kernel.org>; Wed, 02 May 2018 19:08:38 -0400
 Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <mkayaalp@linux.vnet.ibm.com>;
-        Wed, 2 May 2018 17:08:40 -0600
+        Wed, 2 May 2018 17:08:38 -0600
 From: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
 To: David Howells <dhowells@redhat.com>,
         David Woodhouse <dwmw2@infradead.org>,
@@ -27,98 +27,53 @@ Cc: Linux Integrity <linux-integrity@vger.kernel.org>,
         George Wilson <gcwilson@us.ibm.com>,
         Mike Rapoport <rppt@linux.vnet.ibm.com>,
         Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
-Subject: [PATCH v6 1/4] KEYS: Insert incompressible bytes to reserve space in bzImage
-Date: Wed,  2 May 2018 19:08:08 -0400
-In-Reply-To: <20180502230811.2751-1-mkayaalp@linux.vnet.ibm.com>
-References: <20180502230811.2751-1-mkayaalp@linux.vnet.ibm.com>
-Message-Id: <20180502230811.2751-2-mkayaalp@linux.vnet.ibm.com>
+Subject: [PATCH v6 0/4] Certificate insertion support for x86 bzImages
+Date: Wed,  2 May 2018 19:08:07 -0400
+Message-Id: <20180502230811.2751-1-mkayaalp@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Include a random filled binary in vmlinux at the space reserved with
-CONFIG_SYSTEM_EXTRA_CERTIFICATE. This results in an uncompressed reserved
-area inside the bzImage as well, so that it can be replaced with an actual
-certificate later (after the bzImage is distributed).
+These patches add support for modifying the reserved space for extra
+certificates in a compressed bzImage in x86. This allows separating the
+system keyring certificate from the kernel build process. After the kernel
+image is distributed, the insert-sys-cert script can be used to insert the
+certificate for x86.
 
-The bzImage contains a stripped ELF file with one section containing the
-compressed vmlinux. If the reserved space is initially filled with zeros,
-certificate insertion will cause a size increase in the compressed vmlinux.
-In that case, reconstructing the bzImage would require relocation. To avoid
-this situation, the reserved space is initially filled with random bytes.
-Since a certificate contains some compressible bytes, after insertion the
-vmlinux will hopefully be compressed to a smaller size.
+Changes:
 
-Signed-off-by: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
----
- certs/.gitignore            |  1 +
- certs/Makefile              | 21 ++++++++++++++++++---
- certs/system_certificates.S |  2 +-
- 3 files changed, 20 insertions(+), 4 deletions(-)
+v6:
+* Removed libelf dependency (2/4)
 
-diff --git a/certs/.gitignore b/certs/.gitignore
-index f51aea4a71ec..4ecc8dd7559d 100644
---- a/certs/.gitignore
-+++ b/certs/.gitignore
-@@ -2,3 +2,4 @@
- # Generated files
- #
- x509_certificate_list
-+extra_cert_placeholder
-diff --git a/certs/Makefile b/certs/Makefile
-index 5d0999b9e21b..a284c0c72ce5 100644
---- a/certs/Makefile
-+++ b/certs/Makefile
-@@ -16,7 +16,12 @@ ifeq ($(CONFIG_SYSTEM_TRUSTED_KEYRING),y)
- $(eval $(call config_filename,SYSTEM_TRUSTED_KEYS))
- 
- # GCC doesn't include .incbin files in -MD generated dependencies (PR#66871)
--$(obj)/system_certificates.o: $(obj)/x509_certificate_list
-+ifeq ($(CONFIG_SYSTEM_EXTRA_CERTIFICATE),y)
-+system_certs_incbin = $(obj)/x509_certificate_list $(obj)/extra_cert_placeholder
-+else
-+system_certs_incbin = $(obj)/x509_certificate_list
-+endif
-+$(obj)/system_certificates.o: $(system_certs_incbin)
- 
- # Cope with signing_key.x509 existing in $(srctree) not $(objtree)
- AFLAGS_system_certificates.o := -I$(srctree)
-@@ -24,12 +29,22 @@ AFLAGS_system_certificates.o := -I$(srctree)
- quiet_cmd_extract_certs  = EXTRACT_CERTS   $(patsubst "%",%,$(2))
-       cmd_extract_certs  = scripts/extract-cert $(2) $@ || ( rm $@; exit 1)
- 
--targets += x509_certificate_list
-+targets += $(system_certs_incbin)
- $(obj)/x509_certificate_list: scripts/extract-cert $(SYSTEM_TRUSTED_KEYS_SRCPREFIX)$(SYSTEM_TRUSTED_KEYS_FILENAME) FORCE
- 	$(call if_changed,extract_certs,$(SYSTEM_TRUSTED_KEYS_SRCPREFIX)$(CONFIG_SYSTEM_TRUSTED_KEYS))
-+
-+ifeq ($(CONFIG_SYSTEM_EXTRA_CERTIFICATE),y)
-+# Generate incompressible bytes. Use seed to make it reproducible
-+quiet_cmd_placeholder = EXTRA_CERT_PLACEHOLDER
-+      cmd_placeholder = perl -e 'srand(0); printf("%c", int(rand(256))) for (1..$(2))' > $@
-+
-+$(obj)/extra_cert_placeholder: FORCE
-+	$(call if_changed,placeholder,$(CONFIG_SYSTEM_EXTRA_CERTIFICATE_SIZE))
-+endif # CONFIG_SYSTEM_EXTRA_CERTIFICATE
-+
- endif # CONFIG_SYSTEM_TRUSTED_KEYRING
- 
--clean-files := x509_certificate_list .x509.list
-+clean-files := $(system_certs_incbin) .x509.list
- 
- ifeq ($(CONFIG_MODULE_SIG),y)
- ###############################################################################
-diff --git a/certs/system_certificates.S b/certs/system_certificates.S
-index 3918ff7235ed..e23de70c1a30 100644
---- a/certs/system_certificates.S
-+++ b/certs/system_certificates.S
-@@ -18,7 +18,7 @@ __cert_list_end:
- 	.globl VMLINUX_SYMBOL(system_extra_cert)
- 	.size system_extra_cert, CONFIG_SYSTEM_EXTRA_CERTIFICATE_SIZE
- VMLINUX_SYMBOL(system_extra_cert):
--	.fill CONFIG_SYSTEM_EXTRA_CERTIFICATE_SIZE, 1, 0
-+	.incbin "certs/extra_cert_placeholder"
- 
- 	.align 4
- 	.globl VMLINUX_SYMBOL(system_extra_cert_used)
+v5:
+* Added CRC fixing (3/4)
+
+v4:
+* Applied checkpatch.pl suggestions (2/4, 3/4)
+* Cleaned up the commit messages (1/4, 2/4)
+* Added the build file to .gitignore (1/4)
+
+v3:
+* Rewrote 1/4 to insert incompressible bytes are at build time. Previous
+solution required changes to <arch>/boot/Makefile's for modifying the
+vmlinux file after linking, and did not work well with cross compilation.
+* Added 2/4 for ELF class-independent processing of vmlinux file, in case
+the script was compiled for 64-bit and the kernel was compiled for 32-bit.
+* Reordered 3/4, added x86 bzImage boot version (>=2.08) verification.
+
+v2:
+* Rebased arch/boot/x86/Makefile patch (removed in v3)
+
+Mehmet Kayaalp (4):
+  KEYS: Insert incompressible bytes to reserve space in bzImage
+  KEYS: Add ELF class-independent certificate insertion support
+  KEYS: Support for inserting a certificate into x86 bzImage
+  KEYS: Print insert-sys-cert information to stdout instead of stderr
+
+ certs/.gitignore            |   1 +
+ certs/Makefile              |  21 +-
+ certs/system_certificates.S |   2 +-
+ scripts/insert-sys-cert.c   | 584 +++++++++++++++++++++++++++++-------
+ 4 files changed, 488 insertions(+), 120 deletions(-)
+
 -- 
 2.17.0
