@@ -1,64 +1,112 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from out03.mta.xmission.com ([166.70.13.233]:41644 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751558AbeEBVvo (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47424 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751871AbeEBPpQ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 2 May 2018 17:51:44 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        James Morris <james.l.morris@oracle.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>
-Date: Wed, 02 May 2018 16:49:16 -0500
-Message-ID: <87r2mtybhf.fsf@xmission.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Subject: [PATCH] evm: Don't update hmacs in user ns mounts
+        Wed, 2 May 2018 11:45:16 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w42Finmx069706
+        for <linux-integrity@vger.kernel.org>; Wed, 2 May 2018 11:45:15 -0400
+Received: from e06smtp11.uk.ibm.com (e06smtp11.uk.ibm.com [195.75.94.107])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2hqevgvfm6-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 02 May 2018 11:45:14 -0400
+Received: from localhost
+        by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Wed, 2 May 2018 16:45:11 +0100
+Subject: Re: [PATCH 2/3] kexec: call LSM hook for kexec_load syscall
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: David Howells <dhowells@redhat.com>,
+        Matthew Garrett <mjg59@google.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Date: Wed, 02 May 2018 11:45:04 -0400
+In-Reply-To: <87h8nqglpx.fsf@xmission.com>
+References: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
+         <1523572911-16363-3-git-send-email-zohar@linux.vnet.ibm.com>
+         <87h8nqglpx.fsf@xmission.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1525275904.5669.308.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-From: Seth Forshee <seth.forshee@canonical.com>
-Date: Fri, 22 Dec 2017 15:32:35 +0100
+On Wed, 2018-05-02 at 09:45 -0500, Eric W. Biederman wrote:
+> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+> 
+> > Allow LSMs and IMA to differentiate between the kexec_load and
+> > kexec_file_load syscalls by adding an "unnecessary" call to
+> > security_kernel_read_file() in kexec_load.  This would be similar to the
+> > existing init_module syscall calling security_kernel_read_file().
+> 
+> Given the reasonable desire to load a policy that ensures everything
+> has a signature I don't have fundamental objections.
+> 
+> security_kernel_read_file as a hook seems an odd choice.  At the very
+> least it has a bad name because there is no file reading going on here.
+> 
+> I am concerned that I don't see CONFIG_KEXEC_VERIFY_SIG being tested
+> anywhere.  Which means I could have a kernel compiled without that and I
+> would be allowed to use kexec_file_load without signature checking.
+> While kexec_load would be denied.
+> 
+> Am I missing something here?
 
-The kernel should not calculate new hmacs for mounts done by
-non-root users. Update evm_calc_hmac_or_hash() to refuse to
-calculate new hmacs for mounts for non-init user namespaces.
+The kexec_file_load() calls kernel_read_file_from_fd(), which in turn
+calls security_kernel_read_file().  So kexec_file_load and kexec_load
+syscall would be using the same method for enforcing signature
+verification.
 
-Cc: linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: James Morris <james.l.morris@oracle.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Signed-off-by: Seth Forshee <seth.forshee@canonical.com>
-Signed-off-by: Dongsu Park <dongsu@kinvolk.io>
-Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
----
+This is independent of the architecture specific method for verifying
+signatures.  The coordination between these two methods was included
+in the lockdown patch set, but is being removed, as well the gating of
+kexec_load syscall.  Instead of being based on the lockdown flag, I
+assume the coordination between the two methods will reappear based on
+a secure boot flag of some sort.
 
-Mimi this patch has been floating around for a while and it appears to
-be the only piece missing from the vfs to make unprivileged mounts safe
-(at least semantically).  Do you want to merge this through your integrity
-tree or should merge this through my userns tree?
+Mimi
 
- security/integrity/evm/evm_crypto.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index a46fba322340..facf9cdd577d 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -200,7 +200,8 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
- 	int size;
- 	bool ima_present = false;
- 
--	if (!(inode->i_opflags & IOP_XATTR))
-+	if (!(inode->i_opflags & IOP_XATTR) ||
-+	    inode->i_sb->s_user_ns != &init_user_ns)
- 		return -EOPNOTSUPP;
- 
- 	desc = init_desc(type);
--- 
-2.14.1
+> 
+> > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> > ---
+> >  kernel/kexec.c | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> >
+> > diff --git a/kernel/kexec.c b/kernel/kexec.c
+> > index aed8fb2564b3..d1386cfc6796 100644
+> > --- a/kernel/kexec.c
+> > +++ b/kernel/kexec.c
+> > @@ -11,6 +11,7 @@
+> >  #include <linux/capability.h>
+> >  #include <linux/mm.h>
+> >  #include <linux/file.h>
+> > +#include <linux/security.h>
+> >  #include <linux/kexec.h>
+> >  #include <linux/mutex.h>
+> >  #include <linux/list.h>
+> > @@ -195,11 +196,21 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
+> >  static inline int kexec_load_check(unsigned long nr_segments,
+> >  				   unsigned long flags)
+> >  {
+> > +	int result;
+> > +
+> >  	/* We only trust the superuser with rebooting the system. */
+> >  	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
+> >  		return -EPERM;
+> >  
+> >  	/*
+> > +	 * Allow LSMs and IMA to differentiate between kexec_load and
+> > +	 * kexec_file_load syscalls.
+> > +	 */
+> > +	result = security_kernel_read_file(NULL, READING_KEXEC_IMAGE);
+> > +	if (result < 0)
+> > +		return result;
+> > +
+> > +	/*
+> >  	 * Verify we have a legal set of flags
+> >  	 * This leaves us room for future extensions.
+> >  	 */
+> 
