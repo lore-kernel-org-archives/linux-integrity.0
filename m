@@ -1,102 +1,68 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from out02.mta.xmission.com ([166.70.13.232]:59403 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751111AbeECXD4 (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:32828 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751128AbeECWvQ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 3 May 2018 19:03:56 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Kees Cook <keescook@chromium.org>,
-        David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-References: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
-        <87r2mso5up.fsf@xmission.com>
-        <1525383075.3539.67.camel@linux.vnet.ibm.com>
-        <87d0yco1vy.fsf@xmission.com>
-        <1525384675.3539.89.camel@linux.vnet.ibm.com>
-Date: Thu, 03 May 2018 18:03:47 -0500
-In-Reply-To: <1525384675.3539.89.camel@linux.vnet.ibm.com> (Mimi Zohar's
-        message of "Thu, 03 May 2018 17:57:55 -0400")
-Message-ID: <87fu38jq98.fsf@xmission.com>
+        Thu, 3 May 2018 18:51:16 -0400
+Received: by mail-it0-f66.google.com with SMTP id t7-v6so3292504itf.0
+        for <linux-integrity@vger.kernel.org>; Thu, 03 May 2018 15:51:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
+ <87r2mso5up.fsf@xmission.com> <CACdnJuukT4SYLcDwi7+ObqbCDS4ZEAMpgz57OL3_eSevW0QuVg@mail.gmail.com>
+ <876044l7tr.fsf@xmission.com>
+In-Reply-To: <876044l7tr.fsf@xmission.com>
+From: Matthew Garrett <mjg59@google.com>
+Date: Thu, 03 May 2018 22:51:05 +0000
+Message-ID: <CACdnJut4R-BQCYcT5_OuFezf8046-HmvvdEP4g7=ADgAW+qdeA@mail.gmail.com>
 Subject: Re: [PATCH 0/3] kexec: limit kexec_load syscall
+To: ebiederm@xmission.com
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        kexec@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+On Thu, May 3, 2018 at 2:59 PM Eric W. Biederman <ebiederm@xmission.com>
+wrote:
 
-> On Thu, 2018-05-03 at 16:38 -0500, Eric W. Biederman wrote:
->> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
->> 
->> > [Cc'ing Kees and kernel-hardening]
->> >
->> > On Thu, 2018-05-03 at 15:13 -0500, Eric W. Biederman wrote:
->> >> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
->> >> 
->> >> > In environments that require the kexec kernel image to be signed, prevent
->> >> > using the kexec_load syscall.  In order for LSMs and IMA to differentiate
->> >> > between kexec_load and kexec_file_load syscalls, this patch set adds a
->> >> > call to security_kernel_read_file() in kexec_load_check().
->> >> 
->> >> Having thought about it some more this justification for these changes
->> >> does not work.  The functionality of kexec_load is already root-only.
->> >> So in environments that require the kernel image to be signed just don't
->> >> use kexec_load.  Possibly even compile kexec_load out to save space
->> >> because you will never need it.  You don't need a new security hook to
->> >> do any of that.  Userspace is a very fine mechanism for being the
->> >> instrument of policy.
->> >
->> > True, for those building their own kernel, they can disable the old
->> > syscalls.  The concern is not for those building their own kernels,
->> > but for those using stock kernels.  
->> >
->> > By adding an LSM hook here in the kexec_load syscall, as opposed to an
->> > IMA specific hook, other LSMs can piggy back on top of it.  Currently,
->> > both load_pin and SELinux are gating the kernel module syscalls based
->> > on security_kernel_read_file.
->> >
->> > If there was a similar option for the kernel image, I'm pretty sure
->> > other LSMs would use it.
->> >
->> > From an IMA perspective, there needs to be some method for only
->> > allowing signed code to be loaded, executed, etc. - kernel modules,
->> > kernel image/initramfs, firmware, policies.
->> 
->> What is the IMA perspective.  Why can't IMA trust appropriately
->> authorized userspace?
->
-> Suppose a system owner wants to define a system wide policy that
-> requires all code be signed - kernel modules, firmware, kexec image &
-> initramfs, executables, mmapped files, etc - without having to rebuild
-> the kernel.  Without a call in kexec_load that isn't possible.
+> Matthew Garrett <mjg59@google.com> writes:
+> > kexec_load gives root arbitrary power to modify the running kernel
+image,
+> > including the ability to disable enforcement of module signatures.
 
-Of course it is.  You just make it a requirement that before an
-executable will be signed it will be audited to see that it doesn't
-call sys_kexec_load.  Signing presumably means something.  So it should
-not be hard to enforce a policy like that on a specialty system call
-that most applications will never call.
+> No.  It does absolutely nothing to the running kernel image.
+> Combined with reboot(..., LINUX_REBOOT_CMD_KEXE, ...) it does allow
+> booting something different.  It is argubably a little more efficient
+> than writing to a file to direct the bootloader to boot something
+> different and then calling reboot.  But it is not fundamentally
+> different.
 
->> >> If you don't trust userspace that needs to be spelled out very clearly.
->> >> You need to talk about what your threat models are.
->> >> 
->> >> If the only justification is so that that we can't boot windows if
->> >> someone hacks into userspace it has my nack because that is another kind
->> >> of complete non-sense.
->> >
->> > The usecase is the ability to gate the kexec_load usage in stock
->> > kernels.
->> 
->> But kexec_load is already gated.  It requires CAP_SYS_BOOT.
->
-> It isn't a matter of kexec_load already being gated, but of wanting a
-> single place for defining a system wide policy, as described above.
+It absolutely does - https://mjg59.dreamwidth.org/28746.html gives an
+example. The payload just needs to return.
 
-Signing is only a tool to enforce a policy.  Signing by itself is not a
-policy.  Enforcing any quality controls in the signed executables should
-trivially prevent kexec_load from being used.
+> > Given
+> > that it weakens other security mechanisms that are designed to prevent
+root
+> > from disabling them, it makes sense to allow the imposition of an
+> > equivalent restriction.
 
-Eric
+> Say what.  You are saying a lot of words without any specifics.  Not a
+> specific threat mode.  Not which security mecahnisms you are worried
+> about weakening.  Not what classes of problems you are trying to defend
+> against.
+
+I have a kernel configured with module.sig_enforce enabled - root is unable
+to load kernel modules that are unsigned, and since sig_enforce is
+bool_enable_only, root is unable to flip that back. Any number of security
+models may be implemented with that assumption. However, root still has
+access to kexec_load(), and can therefore kexec into a dummy payload that
+flips that byte back to 0 and permits loading unsigned module code.
+
+There may well be other mechanisms that permit root to gain arbitrary
+ability to modify kernel code. My argument is that we should treat those as
+bugs, not use their existence as a justification for leaving open known
+cases.
