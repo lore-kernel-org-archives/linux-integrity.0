@@ -1,156 +1,219 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:44630 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751872AbeECGfP (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 3 May 2018 02:35:15 -0400
-Date: Thu, 3 May 2018 09:35:08 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc: 'Jason Gunthorpe' <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "'linux-integrity@vger.kernel.org'" <linux-integrity@vger.kernel.org>,
-        "'linux-security-module@vger.kernel.org'"
-        <linux-security-module@vger.kernel.org>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tpm: tpm_crb: relinquish locality on error path.
-Message-ID: <20180503063508.GA8702@linux.intel.com>
-References: <20180407161236.22969-1-tomas.winkler@intel.com>
- <c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
- <4984305eae452b7a72b8a13aa20cecec420df580.camel@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
- <20180424160328.GA5119@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B94272F33@hasmsx108.ger.corp.intel.com>
- <20180502133246.GA6091@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9427B083@hasmsx108.ger.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9427B083@hasmsx108.ger.corp.intel.com>
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46288 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751956AbeECDRS (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 2 May 2018 23:17:18 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w433Gar2061468
+        for <linux-integrity@vger.kernel.org>; Wed, 2 May 2018 23:17:18 -0400
+Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2hqn3ct8bj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 02 May 2018 23:17:17 -0400
+Received: from localhost
+        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Thu, 3 May 2018 04:17:15 +0100
+Subject: Re: [PATCH V3 2/2] EVM: Allow runtime modification of the set of
+ verified xattrs
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Matthew Garrett <mjg59@google.com>, linux-integrity@vger.kernel.org
+Date: Wed, 02 May 2018 23:17:10 -0400
+In-Reply-To: <20180501175124.192587-2-mjg59@google.com>
+References: <20180501175124.192587-1-mjg59@google.com>
+         <20180501175124.192587-2-mjg59@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1525317430.3238.58.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, May 02, 2018 at 01:35:47PM +0000, Winkler, Tomas wrote:
+On Tue, 2018-05-01 at 10:51 -0700, Matthew Garrett wrote:
+> Sites may wish to provide additional metadata alongside files in order
+> to make more fine-grained security decisions[1]. The security of this is
+> enhanced if this metadata is protected, something that EVM makes
+> possible. However, the kernel cannot know about the set of extended
+> attributes that local admins may wish to protect, and hardcoding this
+> policy in the kernel makes it difficult to change over time and less
+> convenient for distributions to enable.
 > 
+> This patch adds a new /sys/kernel/security/evm_xattrs node, which can be
+> read to obtain the current set of EVM-protected extended attributes or
+> written to in order to add new entries. Extending this list will not
+> change the validity of any existing signatures provided that the file
+> in question does not have any of the additional extended attributes -
+> missing xattrs are skipped when calculating the EVM hash.
 > 
-> > 
-> > On Tue, Apr 24, 2018 at 08:04:01PM +0000, Winkler, Tomas wrote:
-> > > > Subject: Re: [PATCH] tpm: tpm_crb: relinquish locality on error path.
-> > > >
-> > > > On Fri, Apr 20, 2018 at 01:19:12PM +0000, Winkler, Tomas wrote:
-> > > > > > > On Tue, 2018-04-10 at 09:00 +0000, Winkler, Tomas wrote:
-> > > > > > > > >
-> > > > > > > > > On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
-> > > > > > > > > > In crb_map_io() function, __crb_request_locality() is
-> > > > > > > > > > called prior to crb_cmd_ready(), but if one of the
-> > > > > > > > > > consecutive function fails the flow bails out instead of
-> > > > > > > > > > trying to relinquish
-> > > > locality.
-> > > > > > > > > > This patch adds goto jump to __crb_relinquish_locality()
-> > > > > > > > > > on the error path.
-> > > > > > > > > >
-> > > > > > > > > > Fixes: 888d867df441 (tpm: cmd_ready command can be
-> > > > > > > > > > issued only after granting
-> > > > > > > > > > locality)
-> > > > > > > > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > > > > > > > > > ---
-> > > > > > > > > >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
-> > > > > > > > > >  1 file changed, 7 insertions(+), 3 deletions(-)
-> > > > > > > > > >
-> > > > > > > > > > diff --git a/drivers/char/tpm/tpm_crb.c
-> > > > > > > > > > b/drivers/char/tpm/tpm_crb.c index
-> > > > > > > > > > 7f78482cd157..34fbc6cb097b
-> > > > > > > > > > 100644
-> > > > > > > > > > --- a/drivers/char/tpm/tpm_crb.c
-> > > > > > > > > > +++ b/drivers/char/tpm/tpm_crb.c
-> > > > > > > > > > @@ -511,8 +511,10 @@ static int crb_map_io(struct
-> > > > > > > > > > acpi_device *device, struct crb_priv *priv,
-> > > > > > > > > >
-> > > > > > > > > >  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf-
-> > > > > > > > > > >control_address,
-> > > > > > > > > >  				   sizeof(struct crb_regs_tail));
-> > > > > > > > > > -	if (IS_ERR(priv->regs_t))
-> > > > > > > > > > -		return PTR_ERR(priv->regs_t);
-> > > > > > > > > > +	if (IS_ERR(priv->regs_t)) {
-> > > > > > > > > > +		ret = PTR_ERR(priv->regs_t);
-> > > > > > > > > > +		goto out_relinquish_locality;
-> > > > > > > > > > +	}
-> > > > > > > > > >
-> > > > > > > > > >  	/*
-> > > > > > > > > >  	 * PTT HW bug w/a: wake up the device to access @@
-> > > > > > > > > > -520,7
-> > > > > > > > > > +522,7
-> > > > > > > > >
-> > > > > > > > > @@
-> > > > > > > > > > static int crb_map_io(struct acpi_device *device, struct
-> > > > > > > > > > crb_priv *priv,
-> > > > > > > > > >  	 */
-> > > > > > > > > >  	ret = crb_cmd_ready(dev, priv);
-> > > > > > > > > >  	if (ret)
-> > > > > > > > > > -		return ret;
-> > > > > > > > > > +		goto out_relinquish_locality;
-> > > > > > > > > >
-> > > > > > > > > >  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
-> > > > > > > > > >  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
-> > > > > > > > > > @@ -565,6 +567,8 @@ static int crb_map_io(struct
-> > > > > > > > > > acpi_device *device, struct crb_priv *priv,
-> > > > > > > > > >
-> > > > > > > > > >  	crb_go_idle(dev, priv);
-> > > > > > > > > >
-> > > > > > > > > > +out_relinquish_locality:
-> > > > > > > > > > +
-> > > > > > > > > >  	__crb_relinquish_locality(dev, priv, 0);
-> > > > > > > > > >
-> > > > > > > > > >  	return ret;
-> > > > > > > > >
-> > > > > > > > > Thanks, please just call it before returning in the error path.
-> > > > > > > >
-> > > > > > > > Can you please elaborate why, isn't the centralized exiting
-> > > > > > > > of functions preferred kernel coding style?
-> > > > > > > > https://www.kernel.org/doc/html/v4.11/process/coding-style.h
-> > > > > > > > tml#
-> > > > > > > > cent
-> > > > > > > > ra
-> > > > > > > > lized-ex
-> > > > > > > > iting-of-functions
-> > > > > > >
-> > > > > > > You exit only from one location (not multiple) and not from a
-> > > > > > > nested context. Here you just add more complexity by doing this.
-> > > > > >
-> > > > > > Where is the complexity ? I see it as a standard way of undoing on
-> > exit.
-> > > > > > Tomas
-> > > > >
-> > > > > Jarkko, can you please respond.
-> > > > > Thanks
-> > > > > Tomas
-> > > >
-> > > > I was away for Mon-Wed last week and did not work on TPM for Thu-Fri.
-> > > >
-> > > > My earlier comment was incorrect as there are two locations to exit
-> > > > (not sure how I managed to overlook the patch that way).
-> > > >
-> > > > Thus, I have only two very  minor requets:
-> > > >
-> > > > * Remove the extra newline (the last line addition in the patch).
-> > > Okay
-> > > > * Use just label named out as we have only one exception handler.
-> > > Cannot do that, as the bail out is prior to cmd_ready request so there is no
-> > need for go_idle which is under out label.
-> > > >
-> > > > I'll move on to testing, and if it it passes, I can do those updates myself.
-> > > Thanks,  I prefer to resend myself.
-> > >
-> > > Tomas
-> > 
-> > Add my tested-by as it is cosmectic change, thanks.
+> [1] For instance, a package manager could install information about the
+> package uploader in an additional extended attribute. Local LSM policy
+> could then be associated with that extended attribute in order to
+> restrict the privileges available to packages from less trusted
+> uploaders.
 > 
+> Signed-off-by: Matthew Garrett <mjg59@google.com>
+> ---
+>  Documentation/ABI/testing/evm      |  13 ++++
+>  security/integrity/evm/evm_secfs.c | 102 +++++++++++++++++++++++++++--
+>  2 files changed, 109 insertions(+), 6 deletions(-)
 > 
-> What change exactly? I had impression you've accepted the patch as is?
-> Thanks
-> Tomas
+> diff --git a/Documentation/ABI/testing/evm b/Documentation/ABI/testing/evm
+> index d12cb2eae9ee..bfe529eb26b2 100644
+> --- a/Documentation/ABI/testing/evm
+> +++ b/Documentation/ABI/testing/evm
+> @@ -57,3 +57,16 @@ Description:
+>  		dracut (via 97masterkey and 98integrity) and systemd (via
+>  		core/ima-setup) have support for loading keys at boot
+>  		time.
+> +
+> +What:		security/evm_xattrs
+> +Date:		April 2018
+> +Contact:	Matthew Garrett <mjg59@google.com>
+> +Description:
+> +		Shows the set of extended attributes used to calculate or
+> +		validate the EVM signature, and allows additional attributes
+> +		to be added at runtime. Adding additional extended attributes
+> +		will result in any existing signatures generated without the
+> +		additional attributes becoming invalid, and any signatures
+> +		generated after additional attributes are added will only be
+> +		valid if the same additional attributes are configured on
+> +		system boot.
 
-Hmm... maybe there is some misunderstandig but I thought you were
-going to make the updates above yourself and send a revised patch.
+This needs to be updated ...
 
-/Jarkko
+> diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
+> index feba03bbedae..3b371125d439 100644
+> --- a/security/integrity/evm/evm_secfs.c
+> +++ b/security/integrity/evm/evm_secfs.c
+> @@ -20,6 +20,7 @@
+>  #include "evm.h"
+> 
+>  static struct dentry *evm_init_tpm;
+> +static struct dentry *evm_xattrs;
+> 
+>  /**
+>   * evm_read_key - read() for <securityfs>/evm
+> @@ -107,13 +108,102 @@ static const struct file_operations evm_key_ops = {
+>  	.write		= evm_write_key,
+>  };
+> 
+> -int __init evm_init_secfs(void)
+> +/**
+> + * evm_read_xattrs - read() for <securityfs>/evm_xattrs
+> + *
+> + * @filp: file pointer, not actually used
+> + * @buf: where to put the result
+> + * @count: maximum to send along
+> + * @ppos: where to start
+> + *
+> + * Returns number of bytes read or error code, as appropriate
+> + */
+> +static ssize_t evm_read_xattrs(struct file *filp, char __user *buf,
+> +			       size_t count, loff_t *ppos)
+>  {
+> -	int error = 0;
+> +	char *temp;
+> +	int offset = 0;
+> +	ssize_t rc, size = 0;
+> +	struct xattr_list *xattr;
+> +
+> +	if (*ppos != 0)
+> +		return 0;
+> 
+> -	evm_init_tpm = securityfs_create_file("evm", S_IRUSR | S_IRGRP,
+> -					      NULL, NULL, &evm_key_ops);
+> +	list_for_each_entry(xattr, &evm_config_xattrnames, list)
+> +		size += strlen(xattr->name) + 1;
+> +
+> +	temp = kmalloc(size + 1, GFP_KERNEL);
+> +	if (!temp)
+> +		return -ENOMEM;
+> +
+> +	list_for_each_entry(xattr, &evm_config_xattrnames, list) {
+> +		sprintf(temp + offset, "%s\n", xattr->name);
+> +		offset += strlen(xattr->name) + 1;
+> +	}
+> +
+> +	rc = simple_read_from_buffer(buf, count, ppos, temp, strlen(temp));
+> +
+> +	return rc;
+> +}
+> +
+> +/**
+> + * evm_write_xattrs - write() for <securityfs>/evm_xattrs
+> + * @file: file pointer, not actually used
+> + * @buf: where to get the data from
+> + * @count: bytes sent
+> + * @ppos: where to start
+> + *
+> + * Returns number of bytes written or error code, as appropriate
+> + */
+> +static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
+> +				size_t count, loff_t *ppos)
+> +{
+> +	int len;
+> +	struct xattr_list *xattr;
+> +
+> +	if (!capable(CAP_SYS_ADMIN))
+> +		return -EPERM;
+> +
+> +	if (*ppos != 0)
+> +		return -EINVAL;
+
+Is there a maximum xattr name size?  Should there be?
+
+> +
+> +	xattr = kmalloc(sizeof(struct xattr_list), GFP_KERNEL);
+> +	if (!xattr)
+> +		return -ENOMEM;
+> +
+> +	xattr->name = memdup_user_nul(buf, count);
+> +	if (!xattr->name) {
+> +		kfree(xattr);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	/* Remove any trailing newline */
+> +	len = strlen(xattr->name);
+> +	if (xattr->name[len-1] == '\n')
+> +		xattr->name[len-1] = '\0';
+
+Shouldn't we somehow sanity check userspace provided strings, before
+adding them to the list of xattrs?  Perhaps limit the string to the
+upper and lower case letters?
+  
+> +
+> +	list_add_tail(&xattr->list, &evm_config_xattrnames);
+> +	return count;
+> +}
+> +
+> +static const struct file_operations evm_xattr_ops = {
+> +	.read		= evm_read_xattrs,
+> +	.write		= evm_write_xattrs,
+> +};
+> +
+> +int __init evm_init_secfs(void)
+> +{
+> +	evm_init_tpm = securityfs_create_file("evm", 0440, NULL, NULL,
+> +					      &evm_key_ops);
+>  	if (!evm_init_tpm || IS_ERR(evm_init_tpm))
+> -		error = -EFAULT;
+> -	return error;
+> +		return -EFAULT;
+> +
+> +	evm_xattrs = securityfs_create_file("evm_xattrs", 0440, NULL, NULL,
+> +					    &evm_xattr_ops);
+> +	if (!evm_xattrs || IS_ERR(evm_xattrs)) {
+> +		securityfs_remove(evm_init_tpm);
+> +		return -EFAULT;
+> +	}
+> +
+
+Do we really want this feature unconditionally enabled?  How often do
+you expect to add xattrs?  Is there ever a point where you would want
+to lock the list of xattrs from changing?
+
+Mimi
+
+> +	return 0;
+>  }
