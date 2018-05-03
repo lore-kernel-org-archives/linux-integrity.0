@@ -1,85 +1,102 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:33047 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751116AbeEDADB (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 3 May 2018 20:03:01 -0400
-Date: Fri, 4 May 2018 00:02:58 +0000
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Received: from out02.mta.xmission.com ([166.70.13.232]:59403 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751111AbeECXD4 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 3 May 2018 19:03:56 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
 To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Peter Jones <pjones@redhat.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
+Cc: Kees Cook <keescook@chromium.org>,
+        David Howells <dhowells@redhat.com>,
         Matthew Garrett <mjg59@google.com>,
-        Andres Rodriguez <andresx7@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 1/6] firmware: permit LSMs and IMA to fail firmware sysfs
- fallback loading
-Message-ID: <20180504000258.GP27853@wotan.suse.de>
-References: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
- <1525182503-13849-2-git-send-email-zohar@linux.vnet.ibm.com>
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+References: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
+        <87r2mso5up.fsf@xmission.com>
+        <1525383075.3539.67.camel@linux.vnet.ibm.com>
+        <87d0yco1vy.fsf@xmission.com>
+        <1525384675.3539.89.camel@linux.vnet.ibm.com>
+Date: Thu, 03 May 2018 18:03:47 -0500
+In-Reply-To: <1525384675.3539.89.camel@linux.vnet.ibm.com> (Mimi Zohar's
+        message of "Thu, 03 May 2018 17:57:55 -0400")
+Message-ID: <87fu38jq98.fsf@xmission.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1525182503-13849-2-git-send-email-zohar@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Subject: Re: [PATCH 0/3] kexec: limit kexec_load syscall
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-If you can add Andres Rodriguez <andresx7@gmail.com>, and Greg to your Cc list
-in the future patches that'd be appreciated.
+Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
 
-On Tue, May 01, 2018 at 09:48:18AM -0400, Mimi Zohar wrote:
-> Add an LSM hook prior to allowing firmware sysfs fallback loading.
-> 
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Luis R. Rodriguez <mcgrof@suse.com>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Matthew Garrett <mjg59@google.com>
-> ---
->  drivers/base/firmware_loader/fallback.c | 7 +++++++
->  include/linux/fs.h                      | 1 +
->  2 files changed, 8 insertions(+)
-> 
-> diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
-> index 31b5015b59fe..23d2af30474e 100644
-> --- a/drivers/base/firmware_loader/fallback.c
-> +++ b/drivers/base/firmware_loader/fallback.c
-> @@ -651,6 +651,8 @@ static bool fw_force_sysfs_fallback(unsigned int opt_flags)
->  
->  static bool fw_run_sysfs_fallback(unsigned int opt_flags)
->  {
-> +	int ret;
-> +
->  	if (fw_fallback_config.ignore_sysfs_fallback) {
->  		pr_info_once("Ignoring firmware sysfs fallback due to sysctl knob\n");
->  		return false;
-> @@ -659,6 +661,11 @@ static bool fw_run_sysfs_fallback(unsigned int opt_flags)
->  	if ((opt_flags & FW_OPT_NOFALLBACK))
->  		return false;
->  
-> +	/* Also permit LSMs and IMA to fail firmware sysfs fallback */
-> +	ret = security_kernel_read_file(NULL, READING_FIRMWARE_FALLBACK);
-> +	if (ret < 0)
-> +		return ret;
-> +
->  	return fw_force_sysfs_fallback(opt_flags);
->  }
->  
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 760d8da1b6c7..dc16a73c3d38 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2810,6 +2810,7 @@ extern int do_pipe_flags(int *, int);
->  	id(UNKNOWN, unknown)		\
->  	id(FIRMWARE, firmware)		\
->  	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
-> +	id(FIRMWARE_FALLBACK, firmware)	\
+> On Thu, 2018-05-03 at 16:38 -0500, Eric W. Biederman wrote:
+>> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+>> 
+>> > [Cc'ing Kees and kernel-hardening]
+>> >
+>> > On Thu, 2018-05-03 at 15:13 -0500, Eric W. Biederman wrote:
+>> >> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+>> >> 
+>> >> > In environments that require the kexec kernel image to be signed, prevent
+>> >> > using the kexec_load syscall.  In order for LSMs and IMA to differentiate
+>> >> > between kexec_load and kexec_file_load syscalls, this patch set adds a
+>> >> > call to security_kernel_read_file() in kexec_load_check().
+>> >> 
+>> >> Having thought about it some more this justification for these changes
+>> >> does not work.  The functionality of kexec_load is already root-only.
+>> >> So in environments that require the kernel image to be signed just don't
+>> >> use kexec_load.  Possibly even compile kexec_load out to save space
+>> >> because you will never need it.  You don't need a new security hook to
+>> >> do any of that.  Userspace is a very fine mechanism for being the
+>> >> instrument of policy.
+>> >
+>> > True, for those building their own kernel, they can disable the old
+>> > syscalls.  The concern is not for those building their own kernels,
+>> > but for those using stock kernels.  
+>> >
+>> > By adding an LSM hook here in the kexec_load syscall, as opposed to an
+>> > IMA specific hook, other LSMs can piggy back on top of it.  Currently,
+>> > both load_pin and SELinux are gating the kernel module syscalls based
+>> > on security_kernel_read_file.
+>> >
+>> > If there was a similar option for the kernel image, I'm pretty sure
+>> > other LSMs would use it.
+>> >
+>> > From an IMA perspective, there needs to be some method for only
+>> > allowing signed code to be loaded, executed, etc. - kernel modules,
+>> > kernel image/initramfs, firmware, policies.
+>> 
+>> What is the IMA perspective.  Why can't IMA trust appropriately
+>> authorized userspace?
+>
+> Suppose a system owner wants to define a system wide policy that
+> requires all code be signed - kernel modules, firmware, kexec image &
+> initramfs, executables, mmapped files, etc - without having to rebuild
+> the kernel.  Without a call in kexec_load that isn't possible.
 
-If you're going to add this perhaps FIRMWARE_FALLBACK_SYSFS as we may later
-get FIRMWARE_FALLBACK_EFI.
+Of course it is.  You just make it a requirement that before an
+executable will be signed it will be audited to see that it doesn't
+call sys_kexec_load.  Signing presumably means something.  So it should
+not be hard to enforce a policy like that on a specialty system call
+that most applications will never call.
 
-  Luis
+>> >> If you don't trust userspace that needs to be spelled out very clearly.
+>> >> You need to talk about what your threat models are.
+>> >> 
+>> >> If the only justification is so that that we can't boot windows if
+>> >> someone hacks into userspace it has my nack because that is another kind
+>> >> of complete non-sense.
+>> >
+>> > The usecase is the ability to gate the kexec_load usage in stock
+>> > kernels.
+>> 
+>> But kexec_load is already gated.  It requires CAP_SYS_BOOT.
+>
+> It isn't a matter of kexec_load already being gated, but of wanting a
+> single place for defining a system wide policy, as described above.
+
+Signing is only a tool to enforce a policy.  Signing by itself is not a
+policy.  Enforcing any quality controls in the signed executables should
+trivially prevent kexec_load from being used.
+
+Eric
