@@ -1,61 +1,85 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60146 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751178AbeECVmK (ORCPT
+Received: from out01.mta.xmission.com ([166.70.13.231]:46412 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751139AbeECVjG (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 3 May 2018 17:42:10 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w43LeCCT124670
-        for <linux-integrity@vger.kernel.org>; Thu, 3 May 2018 17:42:09 -0400
-Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2hr6s783ah-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 03 May 2018 17:42:09 -0400
-Received: from localhost
-        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Thu, 3 May 2018 22:42:07 +0100
-Subject: Re: [PATCH v6 0/4] Certificate insertion support for x86 bzImages
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: James Morris <jmorris@namei.org>,
-        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
-Cc: David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Keyrings <keyrings@vger.kernel.org>,
-        Linux Integrity <linux-integrity@vger.kernel.org>,
-        Linux Security <linux-security-module@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        George Wilson <gcwilson@us.ibm.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Patrick Callaghan <patrickc@us.ibm.com>
-Date: Thu, 03 May 2018 17:42:00 -0400
-In-Reply-To: <alpine.LRH.2.21.1805040311050.12843@namei.org>
-References: <20180502230811.2751-1-mkayaalp@linux.vnet.ibm.com>
-         <alpine.LRH.2.21.1805040311050.12843@namei.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1525383720.3539.76.camel@linux.vnet.ibm.com>
+        Thu, 3 May 2018 17:39:06 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Kees Cook <keescook@chromium.org>,
+        David Howells <dhowells@redhat.com>,
+        Matthew Garrett <mjg59@google.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+References: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
+        <87r2mso5up.fsf@xmission.com>
+        <1525383075.3539.67.camel@linux.vnet.ibm.com>
+Date: Thu, 03 May 2018 16:38:57 -0500
+In-Reply-To: <1525383075.3539.67.camel@linux.vnet.ibm.com> (Mimi Zohar's
+        message of "Thu, 03 May 2018 17:31:15 -0400")
+Message-ID: <87d0yco1vy.fsf@xmission.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Subject: Re: [PATCH 0/3] kexec: limit kexec_load syscall
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 2018-05-04 at 03:11 +1000, James Morris wrote:
-> On Wed, 2 May 2018, Mehmet Kayaalp wrote:
-> 
-> > These patches add support for modifying the reserved space for extra
-> > certificates in a compressed bzImage in x86. This allows separating the
-> > system keyring certificate from the kernel build process. After the kernel
-> > image is distributed, the insert-sys-cert script can be used to insert the
-> > certificate for x86.
-> 
-> Can you provide more explanation of how this is useful and who would use 
-> it?
+Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
 
-I'm involved in a number projects that rely on a kernel build group to
-actually build kernels for their systems.  Reserving memory for
-additional public keys, allows product groups to insert public keys
-post build.  Initially the product groups might insert development
-keys, but eventually they would insert the product's public key.
+> [Cc'ing Kees and kernel-hardening]
+>
+> On Thu, 2018-05-03 at 15:13 -0500, Eric W. Biederman wrote:
+>> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+>> 
+>> > In environments that require the kexec kernel image to be signed, prevent
+>> > using the kexec_load syscall.  In order for LSMs and IMA to differentiate
+>> > between kexec_load and kexec_file_load syscalls, this patch set adds a
+>> > call to security_kernel_read_file() in kexec_load_check().
+>> 
+>> Having thought about it some more this justification for these changes
+>> does not work.  The functionality of kexec_load is already root-only.
+>> So in environments that require the kernel image to be signed just don't
+>> use kexec_load.  Possibly even compile kexec_load out to save space
+>> because you will never need it.  You don't need a new security hook to
+>> do any of that.  Userspace is a very fine mechanism for being the
+>> instrument of policy.
+>
+> True, for those building their own kernel, they can disable the old
+> syscalls.  The concern is not for those building their own kernels,
+> but for those using stock kernels.  
+>
+> By adding an LSM hook here in the kexec_load syscall, as opposed to an
+> IMA specific hook, other LSMs can piggy back on top of it.  Currently,
+> both load_pin and SELinux are gating the kernel module syscalls based
+> on security_kernel_read_file.
+>
+> If there was a similar option for the kernel image, I'm pretty sure
+> other LSMs would use it.
+>
+> From an IMA perspective, there needs to be some method for only
+> allowing signed code to be loaded, executed, etc. - kernel modules,
+> kernel image/initramfs, firmware, policies.
 
-Mimi
+What is the IMA perspective.  Why can't IMA trust appropriately
+authorized userspace?
+
+>> If you don't trust userspace that needs to be spelled out very clearly.
+>> You need to talk about what your threat models are.
+>> 
+>> If the only justification is so that that we can't boot windows if
+>> someone hacks into userspace it has my nack because that is another kind
+>> of complete non-sense.
+>
+> The usecase is the ability to gate the kexec_load usage in stock
+> kernels.
+
+But kexec_load is already gated.  It requires CAP_SYS_BOOT.
+
+>> Given that you are not trusting userspace this changeset also probably
+>> needs to have the kernel-hardening list cc'd.  Because the only possible
+>> justification I can imagine for something like this is kernel-hardening.
+>
+> Sure, Cc'ing linux-hardening and Kees.
+>
+> Mimi
