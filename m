@@ -1,109 +1,54 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33968 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751074AbeECVHJ (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:51541 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751074AbeECUj7 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 3 May 2018 17:07:09 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w43L4alw094430
-        for <linux-integrity@vger.kernel.org>; Thu, 3 May 2018 17:07:09 -0400
-Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2hr6b40xmy-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 03 May 2018 17:07:08 -0400
-Received: from localhost
-        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Thu, 3 May 2018 22:07:06 +0100
-Subject: Re: [PATCH 2/3] kexec: call LSM hook for kexec_load syscall
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc: David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Date: Thu, 03 May 2018 17:06:59 -0400
-In-Reply-To: <87y3h0pu72.fsf@xmission.com>
-References: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
-         <1523572911-16363-3-git-send-email-zohar@linux.vnet.ibm.com>
-         <87h8nqglpx.fsf@xmission.com>
-                <1525275904.5669.308.camel@linux.vnet.ibm.com>
-         <87h8nospo5.fsf@xmission.com>
-         <6203b1e4-70c3-6d0e-60e0-56c6e8f72ec9@schaufler-ca.com>
-         <87y3h0pu72.fsf@xmission.com>
+        Thu, 3 May 2018 16:39:59 -0400
+Received: by mail-it0-f66.google.com with SMTP id n202-v6so877738ita.1
+        for <linux-integrity@vger.kernel.org>; Thu, 03 May 2018 13:39:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com> <87r2mso5up.fsf@xmission.com>
+In-Reply-To: <87r2mso5up.fsf@xmission.com>
+From: Matthew Garrett <mjg59@google.com>
+Date: Thu, 03 May 2018 20:39:48 +0000
+Message-ID: <CACdnJuukT4SYLcDwi7+ObqbCDS4ZEAMpgz57OL3_eSevW0QuVg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] kexec: limit kexec_load syscall
+To: ebiederm@xmission.com
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        kexec@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1525381619.3539.45.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, 2018-05-03 at 11:42 -0500, Eric W. Biederman wrote:
-> Casey Schaufler <casey@schaufler-ca.com> writes:
-> 
-> > On 5/3/2018 8:51 AM, Eric W. Biederman wrote:
-> >> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
-> >>
-> >>> On Wed, 2018-05-02 at 09:45 -0500, Eric W. Biederman wrote:
-> >>>> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
-> >>>>
-> >>>>> Allow LSMs and IMA to differentiate between the kexec_load and
-> >>>>> kexec_file_load syscalls by adding an "unnecessary" call to
-> >>>>> security_kernel_read_file() in kexec_load.  This would be similar to the
-> >>>>> existing init_module syscall calling security_kernel_read_file().
-> >>>> Given the reasonable desire to load a policy that ensures everything
-> >>>> has a signature I don't have fundamental objections.
-> >>>>
-> >>>> security_kernel_read_file as a hook seems an odd choice.  At the very
-> >>>> least it has a bad name because there is no file reading going on here.
-> >>>>
-> >>>> I am concerned that I don't see CONFIG_KEXEC_VERIFY_SIG being tested
-> >>>> anywhere.  Which means I could have a kernel compiled without that and I
-> >>>> would be allowed to use kexec_file_load without signature checking.
-> >>>> While kexec_load would be denied.
-> >>>>
-> >>>> Am I missing something here?
-> >>> The kexec_file_load() calls kernel_read_file_from_fd(), which in turn
-> >>> calls security_kernel_read_file().  So kexec_file_load and kexec_load
-> >>> syscall would be using the same method for enforcing signature
-> >>> verification.
-> >> Having looked at your patches and the kernel a little more I think
-> >> this should be a separate security hook that does not take a file
-> >> parameter.
-> >>
-> >> Right now every other security module assumes !file is init_module.
-> >> So I think this change has the potential to confuse other security
-> >> modules, with the result of unintended policy being applied.
-> >>
-> >> So just for good security module hygeine I think this needs a dedicated
-> >> kexec_load security hook.
-> >
-> > I would rather see the existing modules updated than a new
-> > hook added. Too many hooks spoil the broth. Two hooks with
-> > trivial differences just add to the clutter and make it harder
-> > for non-lsm developers to figure out what to use in their
-> > code.
-> 
-> These are not non-trivial differences.  There is absolutely nothing
-> file related about kexec_load.  Nor for init_module for that matter.
-> 
-> If something is called security_kernel_read_file I think it is wholly
-> appropriate for code that processes such a hook to assume file is
-> non-NULL.
-> 
-> When you have to dance a jig (which is what I see the security modules
-> doing) to figure out who is calling a lsm hook for what purpose I think
-> it is a maintenance problem waiting to happen and that the hook is badly
-> designed.
-> 
-> At this point I don't care what the lsm's do with the hooks but the
-> hooks need to make sense for people outside of the lsm's and something
-> about reading a file in a syscall that doesn't read files is complete
-> and utter nonsense.
+On Thu, May 3, 2018 at 1:13 PM Eric W. Biederman <ebiederm@xmission.com>
+wrote:
 
-Sure, we can define a wrapper around the security_kernel_read_file()
-hook, calling it security_non-fd_syscall() or even
-security_old_syscall().
+> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
 
-Mimi
+> > In environments that require the kexec kernel image to be signed,
+prevent
+> > using the kexec_load syscall.  In order for LSMs and IMA to
+differentiate
+> > between kexec_load and kexec_file_load syscalls, this patch set adds a
+> > call to security_kernel_read_file() in kexec_load_check().
+
+> Having thought about it some more this justification for these changes
+> does not work.  The functionality of kexec_load is already root-only.
+> So in environments that require the kernel image to be signed just don't
+> use kexec_load.  Possibly even compile kexec_load out to save space
+> because you will never need it.  You don't need a new security hook to
+> do any of that.  Userspace is a very fine mechanism for being the
+> instrument of policy.
+
+> If you don't trust userspace that needs to be spelled out very clearly.
+> You need to talk about what your threat models are.
+
+kexec_load gives root arbitrary power to modify the running kernel image,
+including the ability to disable enforcement of module signatures. Given
+that it weakens other security mechanisms that are designed to prevent root
+from disabling them, it makes sense to allow the imposition of an
+equivalent restriction.
