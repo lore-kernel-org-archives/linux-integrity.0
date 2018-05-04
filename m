@@ -1,104 +1,106 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33980 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751419AbeEDBUW (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55664 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750965AbeEDAgt (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 3 May 2018 21:20:22 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w441J7QA143260
-        for <linux-integrity@vger.kernel.org>; Thu, 3 May 2018 21:20:22 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2hr79dx72s-1
+        Thu, 3 May 2018 20:36:49 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w440ZWPH102110
+        for <linux-integrity@vger.kernel.org>; Thu, 3 May 2018 20:36:49 -0400
+Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2hrc3v1xsg-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 03 May 2018 21:20:21 -0400
+        for <linux-integrity@vger.kernel.org>; Thu, 03 May 2018 20:36:48 -0400
 Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <mkayaalp@linux.vnet.ibm.com>;
-        Thu, 3 May 2018 21:20:21 -0400
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH v6 0/4] Certificate insertion support for x86 bzImages
-From: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
-In-Reply-To: <1525383720.3539.76.camel@linux.vnet.ibm.com>
-Date: Thu, 3 May 2018 21:20:16 -0400
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Keyrings <keyrings@vger.kernel.org>,
-        Linux Integrity <linux-integrity@vger.kernel.org>,
-        Linux Security <linux-security-module@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        George Wilson <gcwilson@us.ibm.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Patrick Callaghan <patrickc@us.ibm.com>
-References: <20180502230811.2751-1-mkayaalp@linux.vnet.ibm.com>
- <alpine.LRH.2.21.1805040311050.12843@namei.org>
- <1525383720.3539.76.camel@linux.vnet.ibm.com>
-To: James Morris <jmorris@namei.org>
-Message-Id: <04EE0041-8DF1-4FF3-9C59-64ECF0182CC5@linux.vnet.ibm.com>
+        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Fri, 4 May 2018 01:36:46 +0100
+Subject: Re: [PATCH 1/6] firmware: permit LSMs and IMA to fail firmware
+ sysfs fallback loading
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: linux-integrity@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Peter Jones <pjones@redhat.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Andres Rodriguez <andresx7@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Thu, 03 May 2018 20:36:38 -0400
+In-Reply-To: <20180504000258.GP27853@wotan.suse.de>
+References: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
+         <1525182503-13849-2-git-send-email-zohar@linux.vnet.ibm.com>
+         <20180504000258.GP27853@wotan.suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1525394198.3539.143.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-
-> On May 3, 2018, at 5:42 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+On Fri, 2018-05-04 at 00:02 +0000, Luis R. Rodriguez wrote:
+> If you can add Andres Rodriguez <andresx7@gmail.com>, and Greg to your Cc list
+> in the future patches that'd be appreciated.
 > 
-> On Fri, 2018-05-04 at 03:11 +1000, James Morris wrote:
->> On Wed, 2 May 2018, Mehmet Kayaalp wrote:
->> 
->>> These patches add support for modifying the reserved space for extra
->>> certificates in a compressed bzImage in x86. This allows separating the
->>> system keyring certificate from the kernel build process. After the kernel
->>> image is distributed, the insert-sys-cert script can be used to insert the
->>> certificate for x86.
->> 
->> Can you provide more explanation of how this is useful and who would use 
->> it?
+> On Tue, May 01, 2018 at 09:48:18AM -0400, Mimi Zohar wrote:
+> > Add an LSM hook prior to allowing firmware sysfs fallback loading.
+> > 
+> > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> > Cc: Luis R. Rodriguez <mcgrof@suse.com>
+> > Cc: David Howells <dhowells@redhat.com>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Matthew Garrett <mjg59@google.com>
+> > ---
+> >  drivers/base/firmware_loader/fallback.c | 7 +++++++
+> >  include/linux/fs.h                      | 1 +
+> >  2 files changed, 8 insertions(+)
+> > 
+> > diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
+> > index 31b5015b59fe..23d2af30474e 100644
+> > --- a/drivers/base/firmware_loader/fallback.c
+> > +++ b/drivers/base/firmware_loader/fallback.c
+> > @@ -651,6 +651,8 @@ static bool fw_force_sysfs_fallback(unsigned int opt_flags)
+> >  
+> >  static bool fw_run_sysfs_fallback(unsigned int opt_flags)
+> >  {
+> > +	int ret;
+> > +
+> >  	if (fw_fallback_config.ignore_sysfs_fallback) {
+> >  		pr_info_once("Ignoring firmware sysfs fallback due to sysctl knob\n");
+> >  		return false;
+> > @@ -659,6 +661,11 @@ static bool fw_run_sysfs_fallback(unsigned int opt_flags)
+> >  	if ((opt_flags & FW_OPT_NOFALLBACK))
+> >  		return false;
+> >  
+> > +	/* Also permit LSMs and IMA to fail firmware sysfs fallback */
+> > +	ret = security_kernel_read_file(NULL, READING_FIRMWARE_FALLBACK);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> >  	return fw_force_sysfs_fallback(opt_flags);
+> >  }
+> >  
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index 760d8da1b6c7..dc16a73c3d38 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -2810,6 +2810,7 @@ extern int do_pipe_flags(int *, int);
+> >  	id(UNKNOWN, unknown)		\
+> >  	id(FIRMWARE, firmware)		\
+> >  	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
+> > +	id(FIRMWARE_FALLBACK, firmware)	\
 > 
-> I'm involved in a number projects that rely on a kernel build group to
-> actually build kernels for their systems.  Reserving memory for
-> additional public keys, allows product groups to insert public keys
-> post build.  Initially the product groups might insert development
-> keys, but eventually they would insert the product's public key.
-> 
-> Mimi
+> If you're going to add this perhaps FIRMWARE_FALLBACK_SYSFS as we may later
+> get FIRMWARE_FALLBACK_EFI.
 
-With CONFIG_SYSTEM_TRUSTED_KEYRING, we have a system keyring populated
-with keys that we trust. Initial keys are compiled-in:
--The module signing key, as specified by CONFIG_MODULE_SIG_KEY,
--Additional keys, as specified by CONFIG_SYSTEM_TRUSTED_KEYS.
+>From an IMA signature verification perspective, both are buffer based.
+ The file signature is stored as a security xattr.  Without a file
+descriptor, the kernel cannot verify the firmware signature.
 
-In userspace, we can add more keys to the system keyring, only if they can be
-verified by keys already in the keyring.
+I don't have a problem with defining another enumeration.  Perhaps
+other LSMs will want to be able to differentiate between sysfs and EFI
+fallback methods.
 
-In kernel or modules, we can bypass this restriction by using the
-KEY_ALLOC_BYPASS_RESTRICTION flag. As far as I can tell, only the compiled-in
-keys are loaded this way in the upstream kernel.
-
-Other asymmetric keyrings can specify the same restriction using the
-"builtin_trusted" option. Currently, CONFIG_INTEGRITY_TRUSTED_KEYRING creates
-".ima" and ".evm" keyrings with this restriction. As a result, in order to
-add a key to an integrity keyring, either that key needs to be compiled-in,
-or it must be signed with a key that is in the system keyring, which again
-needs to be compiled-in.
-
-If a user is not compiling their own kernel, and has no access to the module
-signing key (or any other compiled-in key), then how can they add their own
-keys to the integrity keyrings?
-
-This patchset allows the user to take the kernel from a distro, insert their 
-own key, sign the resulting image as required for their secure boot method,  
-and when booted, the system keyring will include their key, which can be used 
-to control the integrity keys.
-
-An alternative way is to allow the "secondary" trusted keyring to verify the 
-IMA keys with CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY, but 
-it is the same problem. Some distros carry patches that populate the 
-secondary keyring with UEFI keys during kernel initialization, which would 
-mean having access to a UEFI key (which is also needed with this patchset, 
-for signing the resulting image), would be enough to add integrity keys. But 
-that is much more permissive, since ANY key that goes into the secondary 
-keyring, coming from UEFI, could then be used to control the integrity keys. 
-
-Mehmet
+Mimi
