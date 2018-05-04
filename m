@@ -1,76 +1,65 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36370 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751735AbeEDUzR (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 4 May 2018 16:55:17 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
-        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
-        Linux Security Module list
-        <linux-security-module@vger.kernel.org>,
-        Integrity Measurement Architecture
-        <linux-integrity@vger.kernel.org>,
-        SElinux list <selinux@tycho.nsa.gov>
-Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH ghak81 RFC V1 0/5] audit: group task params
-Date: Fri,  4 May 2018 16:54:33 -0400
-Message-Id: <cover.1525466167.git.rgb@redhat.com>
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:40173 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751670AbeEDUTX (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 4 May 2018 16:19:23 -0400
+Received: by mail-wm0-f43.google.com with SMTP id j5-v6so6829269wme.5
+        for <linux-integrity@vger.kernel.org>; Fri, 04 May 2018 13:19:22 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAAi9uDvyzk1vnQVXkJxRCATy85g4nwMLJjqu6rr1YZn9NV_TYw@mail.gmail.com>
+References: <20180430125418.31344-1-david.bild@xaptum.com> <20180504130022.5231-3-david.bild@xaptum.com>
+ <20180504190638.ikqhdvcqccakzdjd@ziepe.ca> <CAAi9uDvyzk1vnQVXkJxRCATy85g4nwMLJjqu6rr1YZn9NV_TYw@mail.gmail.com>
+From: "David R. Bild" <david.bild@xaptum.com>
+Date: Fri, 4 May 2018 15:19:21 -0500
+Message-ID: <CAAi9uDuMyUt1sROZ--_QHM5rUjTMo2F7PHyCoEtuD=y35ezgtA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] usb: misc: xapea00x: perform platform
+ initialization of TPM
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-usb@vger.kernel.org, linux-integrity@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Group the audit parameters for each task into one structure.
-In particular, remove the loginuid and sessionid values and the audit
-context pointer from the task structure, replacing them with an audit
-task information structure to contain them.  Use access functions to
-access audit values.
+On Fri, May 4, 2018 at 2:56 PM, David R. Bild <david.bild@xaptum.com> wrote:
+> 2) The second reason is that the initialization done by the driver is
+> work that should be done by platform, before the kernel ever sees the
+> TPM.
+>
+> In particular, it sets the credentials for the platform hierarchy.
+> The platform hierarchy is essentially the "root" account of the TPM,
+> so it's critical that those credentials be set before the TPM is
+> exposed to user-space.  (The platform credentials aren't persisted in
+> the TPM and must be set by the platform on every boot.)  If the driver
+> registers the TPM before doing initialization, there's a chance that
+> something else could access the TPM before the platform credentials
+> get set.
 
-Note:  Use static allocation of the audit task information structure
-initially.  Dynamic allocation was considered and attempted, but isn't
-ready yet.  Static allocation has the limitation that future audit task
-information structure changes would cause a visible change to the rest
-of the kernel, whereas dynamic allocation would mostly hide any future
-changes.
+Setting the platform hierarchy password to a random discarded value
+(and the dictionary lockout reset) is really the only special work
+done here. The other steps (startup, self test, etc.) are done by the
+TPM subsystem if needed.
 
-The first four access normalization patches could stand alone.
+So easy option would be for the TPM subsystem to set the platform
+hierarchy password to a random value during device registration, if
+needed.  It could either
 
-Passes audit-testsuite.
+a) check if the platform hierarchy authorization is null and then
+always set a random password
 
-Richard Guy Briggs (5):
-  audit: normalize loginuid read access
-  audit: convert sessionid unset to a macro
-  audit: use inline function to get audit context
-  audit: use inline function to set audit context
-  audit: collect audit task parameters
+or
 
- MAINTAINERS                          |  2 +-
- include/linux/audit.h                | 30 ++++++++++---
- include/linux/audit_task.h           | 31 ++++++++++++++
- include/linux/sched.h                |  6 +--
- include/net/xfrm.h                   |  4 +-
- include/uapi/linux/audit.h           |  1 +
- init/init_task.c                     |  8 +++-
- kernel/audit.c                       |  4 +-
- kernel/audit_watch.c                 |  2 +-
- kernel/auditsc.c                     | 82 ++++++++++++++++++------------------
- kernel/fork.c                        |  2 +-
- net/bridge/netfilter/ebtables.c      |  2 +-
- net/core/dev.c                       |  2 +-
- net/netfilter/x_tables.c             |  2 +-
- net/netlabel/netlabel_user.c         |  2 +-
- security/integrity/ima/ima_api.c     |  2 +-
- security/integrity/integrity_audit.c |  2 +-
- security/lsm_audit.c                 |  2 +-
- security/selinux/hooks.c             |  4 +-
- security/selinux/selinuxfs.c         |  6 +--
- security/selinux/ss/services.c       | 12 +++---
- 21 files changed, 129 insertions(+), 79 deletions(-)
- create mode 100644 include/linux/audit_task.h
+b) take a flag when the device is registered indicating whether to do this.
 
--- 
-1.8.3.1
+This wouldn't require a significant change to the TPM subsystem
+internals and would let me drop nearly the entire second patch from
+this series.  (I think the dictionary lockout reset can be done via
+the already exported "tpm_send(...)" function.)
+
+Any thoughts on this approach?
+
+Best,
+David
