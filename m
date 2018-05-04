@@ -1,9 +1,9 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:33370 "EHLO mx2.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:33231 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751116AbeEDAHo (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 3 May 2018 20:07:44 -0400
-Date: Fri, 4 May 2018 00:07:43 +0000
+        id S1751133AbeEDAGC (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 3 May 2018 20:06:02 -0400
+Date: Fri, 4 May 2018 00:06:00 +0000
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
 To: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Cc: linux-integrity@vger.kernel.org,
@@ -13,77 +13,59 @@ Cc: linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
         "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andres Rodriguez <andresx7@gmail.com>
-Subject: Re: [PATCH 3/6] firmware: differentiate between signed regulatory.db
- and other firmware
-Message-ID: <20180504000743.GR27853@wotan.suse.de>
+        Matthew Garrett <mjg59@google.com>,
+        Andres Rodriguez <andresx7@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 2/6] ima: prevent sysfs fallback firmware loading
+Message-ID: <20180504000600.GQ27853@wotan.suse.de>
 References: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
- <1525182503-13849-4-git-send-email-zohar@linux.vnet.ibm.com>
+ <1525182503-13849-3-git-send-email-zohar@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1525182503-13849-4-git-send-email-zohar@linux.vnet.ibm.com>
+In-Reply-To: <1525182503-13849-3-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, May 01, 2018 at 09:48:20AM -0400, Mimi Zohar wrote:
-> Allow LSMs and IMA to differentiate between signed regulatory.db and
-> other firmware.
+On Tue, May 01, 2018 at 09:48:19AM -0400, Mimi Zohar wrote:
+> With an IMA policy requiring signed firmware, this patch prevents
+> the sysfs fallback method of loading firmware.
 > 
 > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 > Cc: Luis R. Rodriguez <mcgrof@suse.com>
 > Cc: David Howells <dhowells@redhat.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Seth Forshee <seth.forshee@canonical.com>
-> Cc: Johannes Berg <johannes.berg@intel.com>
+> Cc: Matthew Garrett <mjg59@google.com>
 > ---
->  drivers/base/firmware_loader/main.c | 5 +++++
->  include/linux/fs.h                  | 1 +
->  2 files changed, 6 insertions(+)
+>  security/integrity/ima/ima_main.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 > 
-> diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-> index eb34089e4299..d7cdf04a8681 100644
-> --- a/drivers/base/firmware_loader/main.c
-> +++ b/drivers/base/firmware_loader/main.c
-> @@ -318,6 +318,11 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv)
->  			break;
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 754ece08e1c6..8759280dccf6 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -453,7 +453,17 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
 >  		}
+>  		return 0;
+>  	}
+> +
+> +	if (read_id == READING_FIRMWARE_FALLBACK) {
+> +		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
+> +		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
+> +			pr_err("Prevent firmware sysfs fallback loading.\n");
+> +			return -EACCES;
+> +		}
+> +		return 0;
+> +	}
+>  	return 0;
+> +
+>  }
 >  
-> +#ifdef CONFIG_CFG80211_REQUIRE_SIGNED_REGDB
-> +		if ((strcmp(fw_priv->fw_name, "regulatory.db") == 0) ||
-> +		    (strcmp(fw_priv->fw_name, "regulatory.db.p7s") == 0))
-> +			id = READING_FIRMWARE_REGULATORY_DB;
-> +#endif
 
-Whoa, no way.
+Due to the lack of ability to appraise these calls, it has me wondering if having
+these drivers be wrapped into a their own kconfig may make sense, ie, they use
+a mechanism which IMA cannot possibly work with. Then at least some kernel
+builds can exist in which we know we can count on this run time to never
+happen. Thoughts?
 
->  		fw_priv->size = 0;
->  		rc = kernel_read_file_from_path(path, &fw_priv->data, &size,
->  						msize, id);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index dc16a73c3d38..d1153c2884b9 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2811,6 +2811,7 @@ extern int do_pipe_flags(int *, int);
->  	id(FIRMWARE, firmware)		\
->  	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
->  	id(FIRMWARE_FALLBACK, firmware)	\
-> +	id(FIRMWARE_REGULATORY_DB, firmware)	\
-
-Why could IMA not appriase these files? They are part of the standard path.
+See for instance use of CONFIG_PREVENT_FIRMWARE_BUILD.
 
   Luis
-
->  	id(MODULE, kernel-module)		\
->  	id(KEXEC_IMAGE, kexec-image)		\
->  	id(KEXEC_INITRAMFS, kexec-initramfs)	\
-> -- 
-> 2.7.5
-> 
-> 
-
--- 
-Do not panic
