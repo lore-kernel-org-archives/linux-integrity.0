@@ -1,63 +1,197 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:55800 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751520AbeEFPCe (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 6 May 2018 11:02:34 -0400
-Received: by mail-wm0-f68.google.com with SMTP id a8so10323616wmg.5
-        for <linux-integrity@vger.kernel.org>; Sun, 06 May 2018 08:02:33 -0700 (PDT)
-Date: Sun, 6 May 2018 09:02:29 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "David R. Bild" <david.bild@xaptum.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-usb@vger.kernel.org, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] usb: misc: xapea00x: perform platform
- initialization of TPM
-Message-ID: <20180506150229.jvbkvq7hlxbgmsgn@ziepe.ca>
-References: <20180430125418.31344-1-david.bild@xaptum.com>
- <20180504130022.5231-3-david.bild@xaptum.com>
- <20180504190638.ikqhdvcqccakzdjd@ziepe.ca>
- <CAAi9uDvyzk1vnQVXkJxRCATy85g4nwMLJjqu6rr1YZn9NV_TYw@mail.gmail.com>
- <CAAi9uDuMyUt1sROZ--_QHM5rUjTMo2F7PHyCoEtuD=y35ezgtA@mail.gmail.com>
+Received: from mga01.intel.com ([192.55.52.88]:30271 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750830AbeEEVH0 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 5 May 2018 17:07:26 -0400
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: 'Jason Gunthorpe' <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "'linux-integrity@vger.kernel.org'" <linux-integrity@vger.kernel.org>,
+        "'linux-security-module@vger.kernel.org'"
+        <linux-security-module@vger.kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+Date: Sat, 5 May 2018 21:07:21 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9427D284@hasmsx108.ger.corp.intel.com>
+References: <5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
+ <4984305eae452b7a72b8a13aa20cecec420df580.camel@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
+ <20180424160328.GA5119@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94272F33@hasmsx108.ger.corp.intel.com>
+ <20180502133246.GA6091@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9427B083@hasmsx108.ger.corp.intel.com>
+ <20180503063508.GA8702@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9427B9A6@hasmsx108.ger.corp.intel.com>
+ <20180504081634.GB6373@linux.intel.com>
+In-Reply-To: <20180504081634.GB6373@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAAi9uDuMyUt1sROZ--_QHM5rUjTMo2F7PHyCoEtuD=y35ezgtA@mail.gmail.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, May 04, 2018 at 03:19:21PM -0500, David R. Bild wrote:
-> On Fri, May 4, 2018 at 2:56 PM, David R. Bild <david.bild@xaptum.com> wrote:
-> > 2) The second reason is that the initialization done by the driver is
-> > work that should be done by platform, before the kernel ever sees the
-> > TPM.
+
+> 
+> On Thu, May 03, 2018 at 06:42:26AM +0000, Winkler, Tomas wrote:
 > >
-> > In particular, it sets the credentials for the platform hierarchy.
-> > The platform hierarchy is essentially the "root" account of the TPM,
-> > so it's critical that those credentials be set before the TPM is
-> > exposed to user-space.  (The platform credentials aren't persisted in
-> > the TPM and must be set by the platform on every boot.)  If the driver
-> > registers the TPM before doing initialization, there's a chance that
-> > something else could access the TPM before the platform credentials
-> > get set.
+> > > >
+> > > > >
+> > > > > On Tue, Apr 24, 2018 at 08:04:01PM +0000, Winkler, Tomas wrote:
+> > > > > > > Subject: Re: [PATCH] tpm: tpm_crb: relinquish locality on error
+> path.
+> > > > > > >
+> > > > > > > On Fri, Apr 20, 2018 at 01:19:12PM +0000, Winkler, Tomas wrote:
+> > > > > > > > > > On Tue, 2018-04-10 at 09:00 +0000, Winkler, Tomas wrote:
+> > > > > > > > > > > >
+> > > > > > > > > > > > On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
+> > > > > > > > > > > > > In crb_map_io() function,
+> > > > > > > > > > > > > __crb_request_locality() is called prior to
+> > > > > > > > > > > > > crb_cmd_ready(), but if one of the consecutive
+> > > > > > > > > > > > > function fails the flow bails out instead of
+> > > > > > > > > > > > > trying to relinquish
+> > > > > > > locality.
+> > > > > > > > > > > > > This patch adds goto jump to
+> > > > > > > > > > > > > __crb_relinquish_locality() on the error path.
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > Fixes: 888d867df441 (tpm: cmd_ready command can
+> > > > > > > > > > > > > be issued only after granting
+> > > > > > > > > > > > > locality)
+> > > > > > > > > > > > > Signed-off-by: Tomas Winkler
+> > > > > > > > > > > > > <tomas.winkler@intel.com>
+> > > > > > > > > > > > > ---
+> > > > > > > > > > > > >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
+> > > > > > > > > > > > >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > diff --git a/drivers/char/tpm/tpm_crb.c
+> > > > > > > > > > > > > b/drivers/char/tpm/tpm_crb.c index
+> > > > > > > > > > > > > 7f78482cd157..34fbc6cb097b
+> > > > > > > > > > > > > 100644
+> > > > > > > > > > > > > --- a/drivers/char/tpm/tpm_crb.c
+> > > > > > > > > > > > > +++ b/drivers/char/tpm/tpm_crb.c
+> > > > > > > > > > > > > @@ -511,8 +511,10 @@ static int
+> > > > > > > > > > > > > crb_map_io(struct acpi_device *device, struct
+> > > > > > > > > > > > > crb_priv *priv,
+> > > > > > > > > > > > >
+> > > > > > > > > > > > >  	priv->regs_t = crb_map_res(dev, priv, &io_res,
+> > > > > > > > > > > > > buf-
+> > > > > > > > > > > > > >control_address,
+> > > > > > > > > > > > >  				   sizeof(struct crb_regs_tail));
+> > > > > > > > > > > > > -	if (IS_ERR(priv->regs_t))
+> > > > > > > > > > > > > -		return PTR_ERR(priv->regs_t);
+> > > > > > > > > > > > > +	if (IS_ERR(priv->regs_t)) {
+> > > > > > > > > > > > > +		ret = PTR_ERR(priv->regs_t);
+> > > > > > > > > > > > > +		goto out_relinquish_locality;
+> > > > > > > > > > > > > +	}
+> > > > > > > > > > > > >
+> > > > > > > > > > > > >  	/*
+> > > > > > > > > > > > >  	 * PTT HW bug w/a: wake up the device to
+> > > > > > > > > > > > > access
+> > > @@
+> > > > > > > > > > > > > -520,7
+> > > > > > > > > > > > > +522,7
+> > > > > > > > > > > >
+> > > > > > > > > > > > @@
+> > > > > > > > > > > > > static int crb_map_io(struct acpi_device
+> > > > > > > > > > > > > *device, struct crb_priv *priv,
+> > > > > > > > > > > > >  	 */
+> > > > > > > > > > > > >  	ret = crb_cmd_ready(dev, priv);
+> > > > > > > > > > > > >  	if (ret)
+> > > > > > > > > > > > > -		return ret;
+> > > > > > > > > > > > > +		goto out_relinquish_locality;
+> > > > > > > > > > > > >
+> > > > > > > > > > > > >  	pa_high = ioread32(&priv->regs_t-
+> > > >ctrl_cmd_pa_high);
+> > > > > > > > > > > > >  	pa_low  =
+> > > > > > > > > > > > > ioread32(&priv->regs_t->ctrl_cmd_pa_low);
+> > > > > > > > > > > > > @@ -565,6 +567,8 @@ static int crb_map_io(struct
+> > > > > > > > > > > > > acpi_device *device, struct crb_priv *priv,
+> > > > > > > > > > > > >
+> > > > > > > > > > > > >  	crb_go_idle(dev, priv);
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > +out_relinquish_locality:
+> > > > > > > > > > > > > +
+> > > > > > > > > > > > >  	__crb_relinquish_locality(dev, priv, 0);
+> > > > > > > > > > > > >
+> > > > > > > > > > > > >  	return ret;
+> > > > > > > > > > > >
+> > > > > > > > > > > > Thanks, please just call it before returning in the error
+> path.
+> > > > > > > > > > >
+> > > > > > > > > > > Can you please elaborate why, isn't the centralized
+> > > > > > > > > > > exiting of functions preferred kernel coding style?
+> > > > > > > > > > > https://www.kernel.org/doc/html/v4.11/process/coding
+> > > > > > > > > > > -sty
+> > > > > > > > > > > le.h
+> > > > > > > > > > > tml#
+> > > > > > > > > > > cent
+> > > > > > > > > > > ra
+> > > > > > > > > > > lized-ex
+> > > > > > > > > > > iting-of-functions
+> > > > > > > > > >
+> > > > > > > > > > You exit only from one location (not multiple) and not
+> > > > > > > > > > from a nested context. Here you just add more
+> > > > > > > > > > complexity by
+> > > doing this.
+> > > > > > > > >
+> > > > > > > > > Where is the complexity ? I see it as a standard way of
+> > > > > > > > > undoing on
+> > > > > exit.
+> > > > > > > > > Tomas
+> > > > > > > >
+> > > > > > > > Jarkko, can you please respond.
+> > > > > > > > Thanks
+> > > > > > > > Tomas
+> > > > > > >
+> > > > > > > I was away for Mon-Wed last week and did not work on TPM for
+> > > > > > > Thu-
+> > > Fri.
+> > > > > > >
+> > > > > > > My earlier comment was incorrect as there are two locations
+> > > > > > > to exit (not sure how I managed to overlook the patch that way).
+> > > > > > >
+> > > > > > > Thus, I have only two very  minor requets:
+> > > > > > >
+> > > > > > > * Remove the extra newline (the last line addition in the patch).
+> > > > > > Okay
+> > > > > > > * Use just label named out as we have only one exception
+> handler.
+> > > > > > Cannot do that, as the bail out is prior to cmd_ready request
+> > > > > > so there is no
+> > > > > need for go_idle which is under out label.
+> > > > > > >
+> > > > > > > I'll move on to testing, and if it it passes, I can do those
+> > > > > > > updates
+> > > myself.
+> > > > > > Thanks,  I prefer to resend myself.
+> > > > > >
+> > > > > > Tomas
+> > > > >
+> > > > > Add my tested-by as it is cosmectic change, thanks.
+> > > >
+> > > >
+> > > > What change exactly? I had impression you've accepted the patch as is?
+> > > > Thanks
+> > > > Tomas
+> > >
+> > > Hmm... maybe there is some misunderstandig but I thought you were
+> > > going to make the updates above yourself and send a revised patch.
+> >
+> >
+> > Probably,  if I remember there were to mails going in asynchronous,
+> > I've received your tested-by, the second I've sent this answer, so I thought
+> you came to the conclusion that there is nothing to change in the patch
+> yourself.
+> > Frankly I've checked the patch and there are no even extra new lines in my
+> version unless it has scrambled on the way.
+> >
+> > Thanks
+> > Tomas
 > 
-> Setting the platform hierarchy password to a random discarded value
-> (and the dictionary lockout reset) is really the only special work
-> done here. The other steps (startup, self test, etc.) are done by the
-> TPM subsystem if needed.
-> 
-> So easy option would be for the TPM subsystem to set the platform
-> hierarchy password to a random value during device registration, if
-> needed.  It could either
+> The only thing was the label name. That is why I asked if I can change it by
+> myself instead of you having to send a follow up patch. Did you send a new
+> one? Did not find it from patchwork.
 
-This would probably make more sense, I'm not opposed at least
-
-> This wouldn't require a significant change to the TPM subsystem
-> internals and would let me drop nearly the entire second patch from
-> this series.  (I think the dictionary lockout reset can be done via
-> the already exported "tpm_send(...)" function.)
-
-Sounds like a much better approach to me.
-
-Jason
+There is already one 'out' label in that function, what would you prefer for this new label name?
+Thanks
+Tomas
