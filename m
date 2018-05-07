@@ -1,51 +1,58 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:56772 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754208AbeEHJPz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 8 May 2018 05:15:55 -0400
-Message-ID: <1525770559.24345.10.camel@suse.com>
-Subject: Re: [PATCH v3 1/2] usb: misc: xapea00x: add driver for Xaptum ENF
- Access Card
-From: Oliver Neukum <oneukum@suse.com>
-To: "David R. Bild" <david.bild@xaptum.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org, linux-usb@vger.kernel.org
-Date: Tue, 08 May 2018 11:09:19 +0200
-In-Reply-To: <CAAi9uDuhR+X37aedWjmrPssr4RjgzuJoJ4vL7md1fMsHq5ASJQ@mail.gmail.com>
-References: <20180504130022.5231-1-david.bild@xaptum.com>
-         <20180504130022.5231-2-david.bild@xaptum.com>
-         <1525687128.24345.3.camel@suse.com>
-         <CAAi9uDuhR+X37aedWjmrPssr4RjgzuJoJ4vL7md1fMsHq5ASJQ@mail.gmail.com>
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48004 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752832AbeEGVAa (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 7 May 2018 17:00:30 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w47KxRZv063425
+        for <linux-integrity@vger.kernel.org>; Mon, 7 May 2018 17:00:30 -0400
+Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2htsvcbqr8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 07 May 2018 17:00:29 -0400
+Received: from localhost
+        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Mon, 7 May 2018 22:00:27 +0100
+Subject: Re: [PATCH] ima: Reflect correct permissions for policy
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Petr Vorel <pvorel@suse.cz>, linux-integrity@vger.kernel.org
+Date: Mon, 07 May 2018 17:00:24 -0400
+In-Reply-To: <20180420132857.31332-1-pvorel@suse.cz>
+References: <20180420132857.31332-1-pvorel@suse.cz>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
+Message-Id: <1525726824.3551.13.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Am Montag, den 07.05.2018, 08:31 -0500 schrieb  David R. Bild :
-> > > +     spi_master->flags = 0;
-> > > +     spi_master->setup = xapea00x_spi_setup;
-> > > +     spi_master->transfer_one_message = xapea00x_spi_transfer_one_message;
-> > > +
-> > > +     retval = spi_register_master(spi_master);
-> > > +
-> > > +     if (retval)
-> > > +             goto free_spi;
-> > > +
-> > > +     dev->spi_master = spi_master;
-> > 
-> > Race condition.
-> > 
+On Fri, 2018-04-20 at 15:28 +0200, Petr Vorel wrote:
+> Kernel configured as CONFIG_IMA_READ_POLICY=y && CONFIG_IMA_WRITE_POLICY=n
+> keeps 0600 mode after loading policy. Remove write permission to state
+> that policy file no longer be written.
 > 
-> What race condition do you see?  (I appreciate the review, but need
-> some more specific help here.)
+> Signed-off-by: Petr Vorel <pvorel@suse.cz>
 
-Hi,
+Queued in the next-integrity branch.
 
-you have registered the master. So it is functional, but if any
-callback goes for dev->spi_master at that point, it will read an
-incorrect value.
+thanks,
 
-	HTH
-		Oliver
+Mimi
+> ---
+>  security/integrity/ima/ima_fs.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+> index fa540c0469da..c1265127d1b6 100644
+> --- a/security/integrity/ima/ima_fs.c
+> +++ b/security/integrity/ima/ima_fs.c
+> @@ -434,6 +434,8 @@ static int ima_release_policy(struct inode *inode, struct file *file)
+>  	ima_policy = NULL;
+>  #elif defined(CONFIG_IMA_WRITE_POLICY)
+>  	clear_bit(IMA_FS_BUSY, &ima_fs_flags);
+> +#elif defined(CONFIG_IMA_READ_POLICY)
+> +	inode->i_mode &= ~S_IWUSR;
+>  #endif
+>  	return 0;
+>  }
