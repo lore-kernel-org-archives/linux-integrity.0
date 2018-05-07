@@ -1,116 +1,163 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59766 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58056 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752813AbeEGQIB (ORCPT
+        by vger.kernel.org with ESMTP id S1752382AbeEGPlg (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 7 May 2018 12:08:01 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w47FsEIK005973
-        for <linux-integrity@vger.kernel.org>; Mon, 7 May 2018 12:08:00 -0400
-Received: from e06smtp13.uk.ibm.com (e06smtp13.uk.ibm.com [195.75.94.109])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2htq5cgghf-1
+        Mon, 7 May 2018 11:41:36 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w47FbFvx120112
+        for <linux-integrity@vger.kernel.org>; Mon, 7 May 2018 11:41:35 -0400
+Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2htr6j4c2k-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 07 May 2018 12:08:00 -0400
+        for <linux-integrity@vger.kernel.org>; Mon, 07 May 2018 11:41:35 -0400
 Received: from localhost
-        by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Mon, 7 May 2018 17:07:56 +0100
+        Mon, 7 May 2018 16:41:33 +0100
 From: Nayna Jain <nayna@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: zohar@linux.vnet.ibm.com, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
         jarkko.sakkinen@linux.intel.com, tpmdd@selhorst.net,
-        jgunthorpe@obsidianresearch.com, patrickc@us.ibm.com,
+        jgunthorpe@obsidianresearch.com,
         Nayna Jain <nayna@linux.vnet.ibm.com>
-Subject: [PATCH v3 2/2] tpm: reduce polling time to usecs for even finer granularity
-Date: Mon,  7 May 2018 12:07:33 -0400
-In-Reply-To: <20180507160733.8817-1-nayna@linux.vnet.ibm.com>
-References: <20180507160733.8817-1-nayna@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Message-Id: <20180507160733.8817-3-nayna@linux.vnet.ibm.com>
+Subject: [PATCH v2] tpm: check selftest status before retrying full selftest
+Date: Mon,  7 May 2018 21:09:41 +0530
+Message-Id: <20180507153941.4952-1-nayna@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-The TPM burstcount and status commands are supposed to return very
-quickly [2][3]. This patch further reduces the TPM poll sleep time to usecs
-in get_burstcount() and wait_for_tpm_stat() by calling usleep_range()
-directly.
+As per the TCG Specification[1][2], RC_COMMAND_CODE indicates that the TPM
+command is not implemented or not supported. When RC_COMMAND_CODE is
+returned in response to the partial selftest, this is not the case. TPM 2.0
+supports TPM2_GetTestResult[3], which can be used to check the selftest
+status before sending the full selftest command.
 
-After this change, performance on a system[1] with a TPM 1.2 with an 8 byte
-burstcount for 1000 extends improved from ~10.7 sec to ~7 sec.
+This patch implements the tpm2_get_selftest_result function to check the
+selftest status when partial selftest returns RC_COMMAND_CODE.
 
-[1] All tests are performed on an x86 based, locked down, single purpose
-closed system. It has Infineon TPM 1.2 using LPC Bus.
+This change results in finishing of the selftest much earlier compared to
+the existing case where full selftest is immediately sent to retry. The
+Pi's dmesg shows: the TPM selftest completed at 1.243864 secs compared
+with the previous timestamp of 1.939667 secs.
 
-[2] From the TCG Specification "TCG PC Client Specific TPM Interface
-Specification (TIS), Family 1.2":
+[1] As per the TCG Specification, Trusted Platform Module Library,
+Part 2 - Structures, Section 6.6.3 and Section 4.18:
 
-"NOTE : It takes roughly 330 ns per byte transfer on LPC. 256 bytes would
-take 84 us, which is a long time to stall the CPU. Chipsets may not be
-designed to post this much data to LPC; therefore, the CPU itself is
-stalled for much of this time. Sending 1 kB would take 350 us. Therefore,
-even if the TPM_STS_x.burstCount field is a high value, software SHOULD
-be interruptible during this period."
+"RC_COMMAND_CODE indicates the response code that is returned if the TPM is
+unmarshalling a value that it expects to be a TPM_CC and the input value is
+not in the table."
 
-[3] From the TCG Specification 2.0, "TCG PC Client Platform TPM Profile
-(PTP) Specification":
+[2] As per the TCG Specification, Trusted Platform Module Library,
+Part 2 - Commands, Section 5.2:
 
-"It takes roughly 330 ns per byte transfer on LPC. 256 bytes would take
-84 us. Chipsets may not be designed to post this much data to LPC;
-therefore, the CPU itself is stalled for much of this time. Sending 1 kB
-would take 350 us. Therefore, even if the TPM_STS_x.burstCount field is a
-high value, software should be interruptible during this period. For SPI,
-assuming 20MHz clock and 64-byte transfers, it would take about 120 usec
-to move 256B of data. Sending 1kB would take about 500 usec. If the
-transactions are done using 4 bytes at a time, then it would take about
-1 msec. to transfer 1kB of data."
+"The TPM shall successfully unmarshal a TPM_CC and verify that the command
+is implemented (TPM_RC_COMMAND_CODE)."
+
+[3] As per the TCG Specification, Trusted Platform Module Library,
+Part 2 - Commands, Section 10.4:
+
+"This command(TPM2_GetTestResult) returns manufacturer-specific information
+regarding the results of a self-test and an indication of the test status."
 
 Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Mimi Zohar <zohar@linux.vnet.ibm.com> (on Pi with TPM 2.0)
 ---
- drivers/char/tpm/tpm.h          | 4 +++-
- drivers/char/tpm/tpm_tis_core.c | 5 +++--
- 2 files changed, 6 insertions(+), 3 deletions(-)
+
+Changelog v2:
+* changed the subject and updated patch description
+* removed the logs
+
+ drivers/char/tpm/tpm.h      |  2 ++
+ drivers/char/tpm/tpm2-cmd.c | 48 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 50 insertions(+)
 
 diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index ca05828b6981..9824cccb2c76 100644
+index af3bb87d3ea1..1de4240b52c4 100644
 --- a/drivers/char/tpm/tpm.h
 +++ b/drivers/char/tpm/tpm.h
-@@ -54,7 +54,9 @@ enum tpm_timeout {
- 	TPM_TIMEOUT = 5,	/* msecs */
- 	TPM_TIMEOUT_RETRY = 100, /* msecs */
- 	TPM_TIMEOUT_RANGE_US = 300,	/* usecs */
--	TPM_TIMEOUT_POLL = 1	/* msecs */
-+	TPM_TIMEOUT_POLL = 1,	/* msecs */
-+	TPM_TIMEOUT_USECS_MIN = 100,      /* usecs */
-+	TPM_TIMEOUT_USECS_MAX = 500      /* usecs */
- };
+@@ -114,6 +114,7 @@ enum tpm2_return_codes {
+ 	TPM2_RC_FAILURE		= 0x0101,
+ 	TPM2_RC_DISABLED	= 0x0120,
+ 	TPM2_RC_COMMAND_CODE    = 0x0143,
++	TPM2_RC_NEEDS_TEST      = 0x0153,
+ 	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
+ 	TPM2_RC_REFERENCE_H0	= 0x0910,
+ 	TPM2_RC_RETRY		= 0x0922,
+@@ -144,6 +145,7 @@ enum tpm2_command_codes {
+ 	TPM2_CC_FLUSH_CONTEXT	= 0x0165,
+ 	TPM2_CC_GET_CAPABILITY	= 0x017A,
+ 	TPM2_CC_GET_RANDOM	= 0x017B,
++	TPM2_CC_GET_TEST_RESULT = 0x017C,
+ 	TPM2_CC_PCR_READ	= 0x017E,
+ 	TPM2_CC_PCR_EXTEND	= 0x0182,
+ 	TPM2_CC_LAST		= 0x018F,
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 96c77c8e7f40..4abba0ebe25b 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -825,6 +825,50 @@ unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+ EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
  
- /* TPM addresses */
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 493401f5fd39..b77a8dcfb822 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -84,7 +84,8 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
- 		}
- 	} else {
- 		do {
--			tpm_msleep(TPM_TIMEOUT_POLL);
-+			usleep_range(TPM_TIMEOUT_USECS_MIN,
-+					TPM_TIMEOUT_USECS_MAX);
- 			status = chip->ops->status(chip);
- 			if ((status & mask) == mask)
- 				return 0;
-@@ -228,7 +229,7 @@ static int get_burstcount(struct tpm_chip *chip)
- 		burstcnt = (value >> 8) & 0xFFFF;
- 		if (burstcnt)
- 			return burstcnt;
--		tpm_msleep(TPM_TIMEOUT_POLL);
-+		usleep_range(TPM_TIMEOUT_USECS_MIN, TPM_TIMEOUT_USECS_MAX);
- 	} while (time_before(jiffies, stop));
- 	return -EBUSY;
- }
+ /**
++ * tpm2_get_selftest_result() - get the status of self tests
++ *
++ * @chip: TPM chip to use
++ *
++ * Return: If error return rc, else return the result of the self tests.
++ * TPM_RC_NEEDS_TESTING: No self tests are done. Needs testing.
++ * TPM_RC_TESTING: Self tests are in progress.
++ * TPM_RC_SUCCESS: Self tests completed successfully.
++ * TPM_RC_FAILURE: Self tests completed failure.
++ *
++ * This function can be used to check the status of self tests on the TPM.
++ */
++static int tpm2_get_selftest_result(struct tpm_chip *chip)
++{
++	struct tpm_buf buf;
++	int rc;
++	int test_result;
++	uint16_t data_size;
++	int len;
++	const struct tpm_output_header *header;
++
++	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_TEST_RESULT);
++	if (rc)
++		return rc;
++
++	len = tpm_transmit(chip, NULL, buf.data, PAGE_SIZE, 0);
++	if (len <  0)
++		return len;
++
++	header = (struct tpm_output_header *)buf.data;
++
++	rc = be32_to_cpu(header->return_code);
++	if (rc)
++		return rc;
++
++	data_size = be16_to_cpup((__be16 *)&buf.data[TPM_HEADER_SIZE]);
++
++	test_result = be32_to_cpup((__be32 *)
++			(&buf.data[TPM_HEADER_SIZE + 2 + data_size]));
++
++	return test_result;
++}
++
++/**
+  * tpm2_do_selftest() - ensure that all self tests have passed
+  *
+  * @chip: TPM chip to use
+@@ -853,6 +897,10 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
+ 				      "attempting the self test");
+ 		tpm_buf_destroy(&buf);
+ 
++		/* Check the selftest status */
++		if (rc == TPM2_RC_COMMAND_CODE)
++			rc = tpm2_get_selftest_result(chip);
++
+ 		if (rc == TPM2_RC_TESTING)
+ 			rc = TPM2_RC_SUCCESS;
+ 		if (rc == TPM2_RC_INITIALIZE || rc == TPM2_RC_SUCCESS)
 -- 
-2.13.3
+2.13.6
