@@ -1,77 +1,133 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io0-f177.google.com ([209.85.223.177]:41289 "EHLO
-        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755905AbeEHVav (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 8 May 2018 17:30:51 -0400
-Received: by mail-io0-f177.google.com with SMTP id e12-v6so40277631iob.8
-        for <linux-integrity@vger.kernel.org>; Tue, 08 May 2018 14:30:51 -0700 (PDT)
+Received: from mx2.suse.de ([195.135.220.15]:46238 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754864AbeEHReI (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 8 May 2018 13:34:08 -0400
+Date: Tue, 8 May 2018 17:34:04 +0000
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Johannes Berg <johannes.berg@intel.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        linux-integrity@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Peter Jones <pjones@redhat.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andres Rodriguez <andresx7@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH 3/6] firmware: differentiate between signed regulatory.db
+ and other firmware
+Message-ID: <20180508173404.GG27853@wotan.suse.de>
+References: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
+ <1525182503-13849-4-git-send-email-zohar@linux.vnet.ibm.com>
+ <20180504000743.GR27853@wotan.suse.de>
+ <1525393466.3539.133.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
-References: <20180501175124.192587-1-mjg59@google.com> <20180501175124.192587-2-mjg59@google.com>
- <1525317430.3238.58.camel@linux.vnet.ibm.com>
-In-Reply-To: <1525317430.3238.58.camel@linux.vnet.ibm.com>
-From: Matthew Garrett <mjg59@google.com>
-Date: Tue, 08 May 2018 21:30:39 +0000
-Message-ID: <CACdnJuvUze0GSmQcnyFi_3vGEPoEgavrF9WhFoDpmHSni3FwEA@mail.gmail.com>
-Subject: Re: [PATCH V3 2/2] EVM: Allow runtime modification of the set of
- verified xattrs
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1525393466.3539.133.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, May 2, 2018 at 8:17 PM Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> On Tue, 2018-05-01 at 10:51 -0700, Matthew Garrett wrote:
-> > +             Shows the set of extended attributes used to calculate or
-> > +             validate the EVM signature, and allows additional
-attributes
-> > +             to be added at runtime. Adding additional extended
-attributes
-> > +             will result in any existing signatures generated without
-the
-> > +             additional attributes becoming invalid, and any signatures
-> > +             generated after additional attributes are added will only
-be
-> > +             valid if the same additional attributes are configured on
-> > +             system boot.
+On Thu, May 03, 2018 at 08:24:26PM -0400, Mimi Zohar wrote:
+> On Fri, 2018-05-04 at 00:07 +0000, Luis R. Rodriguez wrote:
+> > On Tue, May 01, 2018 at 09:48:20AM -0400, Mimi Zohar wrote:
+> > > Allow LSMs and IMA to differentiate between signed regulatory.db and
+> > > other firmware.
+> > > 
+> > > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> > > Cc: Luis R. Rodriguez <mcgrof@suse.com>
+> > > Cc: David Howells <dhowells@redhat.com>
+> > > Cc: Kees Cook <keescook@chromium.org>
+> > > Cc: Seth Forshee <seth.forshee@canonical.com>
+> > > Cc: Johannes Berg <johannes.berg@intel.com>
+> > > ---
+> > >  drivers/base/firmware_loader/main.c | 5 +++++
+> > >  include/linux/fs.h                  | 1 +
+> > >  2 files changed, 6 insertions(+)
+> > > 
+> > > diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+> > > index eb34089e4299..d7cdf04a8681 100644
+> > > --- a/drivers/base/firmware_loader/main.c
+> > > +++ b/drivers/base/firmware_loader/main.c
+> > > @@ -318,6 +318,11 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv)
+> > >  			break;
+> > >  		}
+> > >  
+> > > +#ifdef CONFIG_CFG80211_REQUIRE_SIGNED_REGDB
+> > > +		if ((strcmp(fw_priv->fw_name, "regulatory.db") == 0) ||
+> > > +		    (strcmp(fw_priv->fw_name, "regulatory.db.p7s") == 0))
+> > > +			id = READING_FIRMWARE_REGULATORY_DB;
+> > > +#endif
+> > 
+> > Whoa, no way.
+> 
+> There are two methods for the kernel to verify firmware signatures.
 
-> This needs to be updated ...
+Yes, but although CONFIG_CFG80211_REQUIRE_SIGNED_REGDB is its own kernel
+mechanism to verify firmware it uses the request_firmware*() API for
+regulatory.db and regulatory.db.p7s, and IMA already can appraise these two
+files since the firmware API is used.
 
-Yup.
+As such I see no reason to add a new ID for them at all.
 
-> > +     if (*ppos != 0)
-> > +             return -EINVAL;
+Its not providing an *alternative*, its providing an *extra* kernel measure.
+If anything CONFIG_CFG80211_REQUIRE_SIGNED_REGDB perhaps should be its own
+stacked LSM. I'd be open to see patches which set that out. May be a
+cleaner interface.
 
-> Is there a maximum xattr name size?  Should there be?
+> If both are enabled, do we require both signatures or is one enough.
 
-There is - I'll add a check.
+Good question. Considering it as a stacked LSM (although not implemented
+as one), I'd say its up to who enabled the Kconfig entries. If IMA and
+CONFIG_CFG80211_REQUIRE_SIGNED_REGDB are enabled then both. If someone enabled
+IMA though, then surely I agree that enabling
+CONFIG_CFG80211_REQUIRE_SIGNED_REGDB is stupid and redundant, but its up to the
+system integrator to decide.
 
-> > +     /* Remove any trailing newline */
-> > +     len = strlen(xattr->name);
-> > +     if (xattr->name[len-1] == '\n')
-> > +             xattr->name[len-1] = '\0';
+If we however want to make it clear that such things as
+CONFIG_CFG80211_REQUIRE_SIGNED_REGDB are not required when IMA is enabled we
+could just make the kconfig depend on !IMA or something? Or perhaps a new
+kconfig for IMA which if selected it means that drivers can opt to open code
+*further* kernel signature verification, even though IMA already is sufficient.
+Perhaps CONFIG_ENABLE_IMA_OVERLAPPING, and the driver depends on it?
 
-> Shouldn't we somehow sanity check userspace provided strings, before
-> adding them to the list of xattrs?  Perhaps limit the string to the
-> upper and lower case letters?
+> Assigning a different id for regdb signed firmware allows LSMs and IMA
+> to handle regdb files differently.
 
-As far as I can tell the VFS doesn't do that, and I wouldn't put it past
-someone to use UTF-8 at some point...
+That's not the main concern here, its the precedent we are setting here for
+any new kernel interface which open codes firmware signing on its own. What
+you are doing means other kernel users who open codes their own firmware
+signing may need to add yet-another reading ID. That doesn't either look
+well on code, and seems kind of silly from a coding perspective given
+the above, in which I clarify IMA still is doing its own appraisal on it.
 
-  > +     evm_xattrs = securityfs_create_file("evm_xattrs", 0440, NULL, NULL,
-> > +                                         &evm_xattr_ops);
-> > +     if (!evm_xattrs || IS_ERR(evm_xattrs)) {
-> > +             securityfs_remove(evm_init_tpm);
-> > +             return -EFAULT;
-> > +     }
-> > +
+> > >  		fw_priv->size = 0;
+> > >  		rc = kernel_read_file_from_path(path, &fw_priv->data, &size,
+> > >  						msize, id);
+> > > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > > index dc16a73c3d38..d1153c2884b9 100644
+> > > --- a/include/linux/fs.h
+> > > +++ b/include/linux/fs.h
+> > > @@ -2811,6 +2811,7 @@ extern int do_pipe_flags(int *, int);
+> > >  	id(FIRMWARE, firmware)		\
+> > >  	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
+> > >  	id(FIRMWARE_FALLBACK, firmware)	\
+> > > +	id(FIRMWARE_REGULATORY_DB, firmware)	\
+> > 
+> > Why could IMA not appriase these files? They are part of the standard path.
+> 
+> The subsequent patch attempts to verify the IMA-appraisal signature, but on
+> failure it falls back to allowing regdb signatures. 
+> For systems that only want to load firmware based on IMA-appraisal, then
+>regdb wouldn't be enabled.
 
-> Do we really want this feature unconditionally enabled?  How often do
-> you expect to add xattrs?  Is there ever a point where you would want
-> to lock the list of xattrs from changing?
+I think we can codify this a bit better, without a new ID.
 
-I think a config option would make sense here. Locking doesn't seem
-unreasonable, but I'm not sure what the threat model would really be -
-adding new xattrs would only result in additional signatures validating if
-they were signed with a trusted key in the first place.
+  Luis
