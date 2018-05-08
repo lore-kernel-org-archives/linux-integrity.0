@@ -1,15 +1,17 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-yw0-f201.google.com ([209.85.161.201]:45011 "EHLO
-        mail-yw0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755781AbeEHWkt (ORCPT
+Received: from mail-vk0-f73.google.com ([209.85.213.73]:42055 "EHLO
+        mail-vk0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932943AbeEHWlN (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 8 May 2018 18:40:49 -0400
-Received: by mail-yw0-f201.google.com with SMTP id d184-v6so9898513ywb.11
-        for <linux-integrity@vger.kernel.org>; Tue, 08 May 2018 15:40:49 -0700 (PDT)
+        Tue, 8 May 2018 18:41:13 -0400
+Received: by mail-vk0-f73.google.com with SMTP id g76-v6so27737219vki.9
+        for <linux-integrity@vger.kernel.org>; Tue, 08 May 2018 15:41:13 -0700 (PDT)
 MIME-Version: 1.0
-Date: Tue,  8 May 2018 15:40:44 -0700
-Message-Id: <20180508224044.140316-1-mjg59@google.com>
-Subject: [PATCH V3] EVM: Allow runtime modification of the set of verified xattrs
+Date: Tue,  8 May 2018 15:41:05 -0700
+In-Reply-To: <20180508224105.140831-1-mjg59@google.com>
+Message-Id: <20180508224105.140831-2-mjg59@google.com>
+References: <20180508224105.140831-1-mjg59@google.com>
+Subject: [PATCH V3 2/2] EVM: Allow runtime modification of the set of verified xattrs
 From: Matthew Garrett <mjg59@google.com>
 To: linux-integrity@vger.kernel.org
 Cc: zohar@linux.vnet.ibm.com, Matthew Garrett <mjg59@google.com>
