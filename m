@@ -1,110 +1,80 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:43104 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935226AbeEIP3B (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42430 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S935397AbeEIPab (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 9 May 2018 11:29:01 -0400
-Received: by mail-lf0-f67.google.com with SMTP id g12-v6so51556382lfb.10
-        for <linux-integrity@vger.kernel.org>; Wed, 09 May 2018 08:29:00 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <0e43c5135c197209b3189032d538244571e7443d.1525466167.git.rgb@redhat.com>
-References: <cover.1525466167.git.rgb@redhat.com> <0e43c5135c197209b3189032d538244571e7443d.1525466167.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 9 May 2018 11:28:58 -0400
-Message-ID: <CAHC9VhSbMaJ72jJnEivDd-M2UXDomexva8B-xsWXapTyeF0JVQ@mail.gmail.com>
-Subject: Re: [PATCH ghak81 RFC V1 3/5] audit: use inline function to get audit context
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
-        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
-        Linux Security Module list
-        <linux-security-module@vger.kernel.org>,
-        Integrity Measurement Architecture
-        <linux-integrity@vger.kernel.org>,
-        SElinux list <selinux@tycho.nsa.gov>,
-        Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        David Howells <dhowells@redhat.com>
+        Wed, 9 May 2018 11:30:31 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w49FIRWX117390
+        for <linux-integrity@vger.kernel.org>; Wed, 9 May 2018 11:30:31 -0400
+Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2hv34wte98-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 09 May 2018 11:30:30 -0400
+Received: from localhost
+        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Wed, 9 May 2018 16:30:29 +0100
+Subject: Re: [PATCH V3 2/2] EVM: Allow runtime modification of the set of
+ verified xattrs
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Matthew Garrett <mjg59@google.com>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>
+Date: Wed, 09 May 2018 11:00:05 -0400
+In-Reply-To: <CACdnJusHQvBk3rO1DqOr=XyeKZkmFqq+HM9HUO7whvUVG9yxYw@mail.gmail.com>
+References: <20180501175124.192587-1-mjg59@google.com>
+         <20180501175124.192587-2-mjg59@google.com>
+         <1525317430.3238.58.camel@linux.vnet.ibm.com>
+         <CACdnJuvUze0GSmQcnyFi_3vGEPoEgavrF9WhFoDpmHSni3FwEA@mail.gmail.com>
+         <1525815782.3551.86.camel@linux.vnet.ibm.com>
+         <CACdnJusHQvBk3rO1DqOr=XyeKZkmFqq+HM9HUO7whvUVG9yxYw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1525878005.3551.223.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, May 4, 2018 at 4:54 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> Recognizing that the audit context is an internal audit value, use an
-> access function to retrieve the audit context pointer for the task
-> rather than reaching directly into the task struct to get it.
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  include/linux/audit.h                | 16 ++++++++---
->  include/net/xfrm.h                   |  2 +-
->  kernel/audit.c                       |  4 +--
->  kernel/audit_watch.c                 |  2 +-
->  kernel/auditsc.c                     | 52 ++++++++++++++++++------------------
->  net/bridge/netfilter/ebtables.c      |  2 +-
->  net/core/dev.c                       |  2 +-
->  net/netfilter/x_tables.c             |  2 +-
->  net/netlabel/netlabel_user.c         |  2 +-
->  security/integrity/ima/ima_api.c     |  2 +-
->  security/integrity/integrity_audit.c |  2 +-
->  security/lsm_audit.c                 |  2 +-
->  security/selinux/hooks.c             |  4 +--
->  security/selinux/selinuxfs.c         |  6 ++---
->  security/selinux/ss/services.c       | 12 ++++-----
->  15 files changed, 60 insertions(+), 52 deletions(-)
->
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index 5f86f7c..93e4c61 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -235,26 +235,30 @@ extern void __audit_inode_child(struct inode *parent,
->  extern void __audit_seccomp(unsigned long syscall, long signr, int code);
->  extern void __audit_ptrace(struct task_struct *t);
->
-> +static inline struct audit_context *audit_context(struct task_struct *task)
-> +{
-> +       return task->audit_context;
-> +}
+On Tue, 2018-05-08 at 22:51 +0000, Matthew Garrett wrote:
+> On Tue, May 8, 2018 at 2:43 PM Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> 
+> > On Tue, 2018-05-08 at 21:30 +0000, Matthew Garrett wrote:
+> > > As far as I can tell the VFS doesn't do that, and I wouldn't put it past
+> > > someone to use UTF-8 at some point...
+> 
+> > The audit subsystem uses audit_log_untrustedstrings() to check for
+> > control characters.  I'm not sure what should be included, but not
+> > checking userspace strings doesn't sound right.
+> 
+> As far as I can tell it's legitimate for xattr names to include control
+> characters. I can't think of /why/ someone would do that, but...
+> 
+> > > I think a config option would make sense here. Locking doesn't seem
+> > > unreasonable, but I'm not sure what the threat model would really be -
+> > > adding new xattrs would only result in additional signatures validating
+> if
+> > > they were signed with a trusted key in the first place.
+> 
+> > Remember adding additional EVM xattrs isn't limited to just EVM
+> > signatures, but for the original EVM HMAC as well.  Did you want to
+> > limit it to the EVM portable & immutable signatures?
+> 
+> If you add entries and then signatures are created you'll end up with
+> signatures that won't validate on next boot until the same attributes are
+> added. That feels at worst like root being able to trigger a DoS, which
+> they'd be able to do by tampering with the signatures via the raw device
+> node anyway.
 
-Another case where I think I agree with everything here on principle,
-especially when one considers it in the larger context of the audit
-container ID work.  However, I think we might be able to somply this a
-bit by eliminating the parameter to the new audit_context() helper and
-making it always reference the current task_struct.  Based on this
-patch it would appear that this change would work for all callers
-except for audit_take_context() and __audit_syscall_entry(), both of
-which are contained within the core audit code and are enough of a
-special case that I think it is acceptable for them to access the
-context directly.  I'm trying to think of reasons why a non-audit
-kernel subsystem would ever need to access the audit context of a
-process other than current and I can't think of any ... removing the
-task_struct pointer might help prevent mistakes/abuse in the future.
+With a system with EVM HMAC enabled and an "ima_policy=appraise_tcb"
+policy, which appraises all executables and files owned by root, any
+new xattrs would cause the EVM HMAC to be recalculated immediately.
+ On boot, if any of these files are accessed prior to the additional
+xattrs are added, it could cause the system not to boot properly.
 
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index 6e3ceb9..a4bbdcc 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -836,7 +836,7 @@ static inline struct audit_context *audit_take_context(struct task_struct *tsk,
->                                                       int return_valid,
->                                                       long return_code)
->  {
-> -       struct audit_context *context = tsk->audit_context;
-> +       struct audit_context *context = audit_context(tsk);
->
->         if (!context)
->                 return NULL;
-> @@ -1510,7 +1510,7 @@ void __audit_syscall_entry(int major, unsigned long a1, unsigned long a2,
->                            unsigned long a3, unsigned long a4)
->  {
->         struct task_struct *tsk = current;
-> -       struct audit_context *context = tsk->audit_context;
-> +       struct audit_context *context = audit_context(tsk);
->         enum audit_state     state;
->
->         if (!audit_enabled || !context)
+True in both cases it is a DoS, but there is a difference between
+accessing the raw device and normal usage.
 
--- 
-paul moore
-www.paul-moore.com
+Adding support for additional xattr names is fine.  Making it a
+Kconfig option is required.  Being able to lock adding additional
+ xattr names should also be required.
+
+Mimi
