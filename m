@@ -1,80 +1,161 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42430 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S935397AbeEIPab (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:38275 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935399AbeEIPSx (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 9 May 2018 11:30:31 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w49FIRWX117390
-        for <linux-integrity@vger.kernel.org>; Wed, 9 May 2018 11:30:31 -0400
-Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2hv34wte98-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 09 May 2018 11:30:30 -0400
-Received: from localhost
-        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Wed, 9 May 2018 16:30:29 +0100
-Subject: Re: [PATCH V3 2/2] EVM: Allow runtime modification of the set of
- verified xattrs
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Matthew Garrett <mjg59@google.com>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>
-Date: Wed, 09 May 2018 11:00:05 -0400
-In-Reply-To: <CACdnJusHQvBk3rO1DqOr=XyeKZkmFqq+HM9HUO7whvUVG9yxYw@mail.gmail.com>
-References: <20180501175124.192587-1-mjg59@google.com>
-         <20180501175124.192587-2-mjg59@google.com>
-         <1525317430.3238.58.camel@linux.vnet.ibm.com>
-         <CACdnJuvUze0GSmQcnyFi_3vGEPoEgavrF9WhFoDpmHSni3FwEA@mail.gmail.com>
-         <1525815782.3551.86.camel@linux.vnet.ibm.com>
-         <CACdnJusHQvBk3rO1DqOr=XyeKZkmFqq+HM9HUO7whvUVG9yxYw@mail.gmail.com>
+        Wed, 9 May 2018 11:18:53 -0400
+Received: by mail-lf0-f68.google.com with SMTP id z142-v6so8235805lff.5
+        for <linux-integrity@vger.kernel.org>; Wed, 09 May 2018 08:18:52 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20180509013415.sohoc2jbofdqqw5v@madcap2.tricolour.ca>
+References: <cover.1525466167.git.rgb@redhat.com> <91fd13c7a66718dc827d299fa101883e5d0a864f.1525466167.git.rgb@redhat.com>
+ <20180509013415.sohoc2jbofdqqw5v@madcap2.tricolour.ca>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 9 May 2018 11:18:50 -0400
+Message-ID: <CAHC9VhSgDwAg5AOzyy7HV9pUiT+uVOVGB3i=1xsYBUn6Co7itQ@mail.gmail.com>
+Subject: Re: [PATCH ghak81 RFC V1 2/5] audit: convert sessionid unset to a macro
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
+        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
+        Linux Security Module list
+        <linux-security-module@vger.kernel.org>,
+        Integrity Measurement Architecture
+        <linux-integrity@vger.kernel.org>,
+        SElinux list <selinux@tycho.nsa.gov>,
+        David Howells <dhowells@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1525878005.3551.223.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, 2018-05-08 at 22:51 +0000, Matthew Garrett wrote:
-> On Tue, May 8, 2018 at 2:43 PM Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> 
-> > On Tue, 2018-05-08 at 21:30 +0000, Matthew Garrett wrote:
-> > > As far as I can tell the VFS doesn't do that, and I wouldn't put it past
-> > > someone to use UTF-8 at some point...
-> 
-> > The audit subsystem uses audit_log_untrustedstrings() to check for
-> > control characters.  I'm not sure what should be included, but not
-> > checking userspace strings doesn't sound right.
-> 
-> As far as I can tell it's legitimate for xattr names to include control
-> characters. I can't think of /why/ someone would do that, but...
-> 
-> > > I think a config option would make sense here. Locking doesn't seem
-> > > unreasonable, but I'm not sure what the threat model would really be -
-> > > adding new xattrs would only result in additional signatures validating
-> if
-> > > they were signed with a trusted key in the first place.
-> 
-> > Remember adding additional EVM xattrs isn't limited to just EVM
-> > signatures, but for the original EVM HMAC as well.  Did you want to
-> > limit it to the EVM portable & immutable signatures?
-> 
-> If you add entries and then signatures are created you'll end up with
-> signatures that won't validate on next boot until the same attributes are
-> added. That feels at worst like root being able to trigger a DoS, which
-> they'd be able to do by tampering with the signatures via the raw device
-> node anyway.
+On Tue, May 8, 2018 at 9:34 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2018-05-04 16:54, Richard Guy Briggs wrote:
+>> Use a macro, "AUDIT_SID_UNSET", to replace each instance of
+>> initialization and comparison to an audit session ID.
+>>
+>> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+>
+> There's a minor issue with this patch, adding a header include to
+> init/init_task.c in this patch and removing it from patch 5.  That'll be
+> in the next revision.
 
-With a system with EVM HMAC enabled and an "ima_policy=appraise_tcb"
-policy, which appraises all executables and files owned by root, any
-new xattrs would cause the EVM HMAC to be recalculated immediately.
- On boot, if any of these files are accessed prior to the additional
-xattrs are added, it could cause the system not to boot properly.
+Okay, thanks for the heads-up.  FWIW, this patch looks reasonable in
+principle; changing magic numbers to macros/constants is almost always
+a step in the right direction.
 
-True in both cases it is a DoS, but there is a difference between
-accessing the raw device and normal usage.
+> I have dynamic allocation working, so that has a good chance of
+> appearing  too.
 
-Adding support for additional xattr names is fine.  Making it a
-Kconfig option is required.  Being able to lock adding additional
- xattr names should also be required.
+I'll comment on that in your patch 0, I just want to get through the
+rest of the patches first.
 
-Mimi
+>> ---
+>>  include/linux/audit.h      | 2 +-
+>>  include/net/xfrm.h         | 2 +-
+>>  include/uapi/linux/audit.h | 1 +
+>>  init/init_task.c           | 2 +-
+>>  kernel/auditsc.c           | 4 ++--
+>>  5 files changed, 6 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/include/linux/audit.h b/include/linux/audit.h
+>> index 75d5b03..5f86f7c 100644
+>> --- a/include/linux/audit.h
+>> +++ b/include/linux/audit.h
+>> @@ -513,7 +513,7 @@ static inline kuid_t audit_get_loginuid(struct task_struct *tsk)
+>>  }
+>>  static inline unsigned int audit_get_sessionid(struct task_struct *tsk)
+>>  {
+>> -     return -1;
+>> +     return AUDIT_SID_UNSET;
+>>  }
+>>  static inline void audit_ipc_obj(struct kern_ipc_perm *ipcp)
+>>  { }
+>> diff --git a/include/net/xfrm.h b/include/net/xfrm.h
+>> index a872379..fcce8ee 100644
+>> --- a/include/net/xfrm.h
+>> +++ b/include/net/xfrm.h
+>> @@ -751,7 +751,7 @@ static inline void xfrm_audit_helper_usrinfo(bool task_valid,
+>>                                           audit_get_loginuid(current) :
+>>                                           INVALID_UID);
+>>       const unsigned int ses = task_valid ? audit_get_sessionid(current) :
+>> -             (unsigned int) -1;
+>> +             AUDIT_SID_UNSET;
+>>
+>>       audit_log_format(audit_buf, " auid=%u ses=%u", auid, ses);
+>>       audit_log_task_context(audit_buf);
+>> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+>> index 4e61a9e..04f9bd2 100644
+>> --- a/include/uapi/linux/audit.h
+>> +++ b/include/uapi/linux/audit.h
+>> @@ -465,6 +465,7 @@ struct audit_tty_status {
+>>  };
+>>
+>>  #define AUDIT_UID_UNSET (unsigned int)-1
+>> +#define AUDIT_SID_UNSET ((unsigned int)-1)
+>>
+>>  /* audit_rule_data supports filter rules with both integer and string
+>>   * fields.  It corresponds with AUDIT_ADD_RULE, AUDIT_DEL_RULE and
+>> diff --git a/init/init_task.c b/init/init_task.c
+>> index 3ac6e75..c788f91 100644
+>> --- a/init/init_task.c
+>> +++ b/init/init_task.c
+>> @@ -119,7 +119,7 @@ struct task_struct init_task
+>>       .thread_node    = LIST_HEAD_INIT(init_signals.thread_head),
+>>  #ifdef CONFIG_AUDITSYSCALL
+>>       .loginuid       = INVALID_UID,
+>> -     .sessionid      = (unsigned int)-1,
+>> +     .sessionid      = AUDIT_SID_UNSET,
+>>  #endif
+>>  #ifdef CONFIG_PERF_EVENTS
+>>       .perf_event_mutex = __MUTEX_INITIALIZER(init_task.perf_event_mutex),
+>> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+>> index f3817d0..6e3ceb9 100644
+>> --- a/kernel/auditsc.c
+>> +++ b/kernel/auditsc.c
+>> @@ -2050,7 +2050,7 @@ static void audit_log_set_loginuid(kuid_t koldloginuid, kuid_t kloginuid,
+>>  int audit_set_loginuid(kuid_t loginuid)
+>>  {
+>>       struct task_struct *task = current;
+>> -     unsigned int oldsessionid, sessionid = (unsigned int)-1;
+>> +     unsigned int oldsessionid, sessionid = AUDIT_SID_UNSET;
+>>       kuid_t oldloginuid;
+>>       int rc;
+>>
+>> @@ -2064,7 +2064,7 @@ int audit_set_loginuid(kuid_t loginuid)
+>>       /* are we setting or clearing? */
+>>       if (uid_valid(loginuid)) {
+>>               sessionid = (unsigned int)atomic_inc_return(&session_id);
+>> -             if (unlikely(sessionid == (unsigned int)-1))
+>> +             if (unlikely(sessionid == AUDIT_SID_UNSET))
+>>                       sessionid = (unsigned int)atomic_inc_return(&session_id);
+>>       }
+>>
+>> --
+>> 1.8.3.1
+>>
+>> --
+>> Linux-audit mailing list
+>> Linux-audit@redhat.com
+>> https://www.redhat.com/mailman/listinfo/linux-audit
+>
+> - RGB
+>
+> --
+> Richard Guy Briggs <rgb@redhat.com>
+> Sr. S/W Engineer, Kernel Security, Base Operating Systems
+> Remote, Ottawa, Red Hat Canada
+> IRC: rgb, SunRaycer
+> Voice: +1.647.777.2635, Internal: (81) 32635
+>
+> --
+> Linux-audit mailing list
+> Linux-audit@redhat.com
+> https://www.redhat.com/mailman/listinfo/linux-audit
+
+
+
+-- 
+paul moore
+www.paul-moore.com
