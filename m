@@ -1,31 +1,97 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io0-f175.google.com ([209.85.223.175]:43050 "EHLO
-        mail-io0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935304AbeEIRlE (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:33845 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965034AbeEIQZR (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 9 May 2018 13:41:04 -0400
-Received: by mail-io0-f175.google.com with SMTP id t23-v6so43605443ioc.10
-        for <linux-integrity@vger.kernel.org>; Wed, 09 May 2018 10:41:04 -0700 (PDT)
+        Wed, 9 May 2018 12:25:17 -0400
+Received: by mail-lf0-f65.google.com with SMTP id r25-v6so8046980lfd.1
+        for <linux-integrity@vger.kernel.org>; Wed, 09 May 2018 09:25:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180501175124.192587-1-mjg59@google.com> <20180501175124.192587-2-mjg59@google.com>
- <1525317430.3238.58.camel@linux.vnet.ibm.com> <CACdnJuvUze0GSmQcnyFi_3vGEPoEgavrF9WhFoDpmHSni3FwEA@mail.gmail.com>
- <1525815782.3551.86.camel@linux.vnet.ibm.com> <CACdnJusHQvBk3rO1DqOr=XyeKZkmFqq+HM9HUO7whvUVG9yxYw@mail.gmail.com>
- <1525878005.3551.223.camel@linux.vnet.ibm.com>
-In-Reply-To: <1525878005.3551.223.camel@linux.vnet.ibm.com>
-From: Matthew Garrett <mjg59@google.com>
-Date: Wed, 09 May 2018 17:40:53 +0000
-Message-ID: <CACdnJuuFO1e0T9oQwD7R6dC8Kod3k8mWipZ4xZQKC4U=oea3Aw@mail.gmail.com>
-Subject: Re: [PATCH V3 2/2] EVM: Allow runtime modification of the set of
- verified xattrs
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>
+In-Reply-To: <cover.1525466167.git.rgb@redhat.com>
+References: <cover.1525466167.git.rgb@redhat.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 9 May 2018 11:53:57 -0400
+Message-ID: <CAHC9VhRY-hhBb+Kg19Cfy87MSHseUO40j9PC8wsdmHQmcV0zDQ@mail.gmail.com>
+Subject: Re: [PATCH ghak81 RFC V1 0/5] audit: group task params
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
+        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
+        Linux Security Module list
+        <linux-security-module@vger.kernel.org>,
+        Integrity Measurement Architecture
+        <linux-integrity@vger.kernel.org>,
+        SElinux list <selinux@tycho.nsa.gov>,
+        Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        David Howells <dhowells@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, May 9, 2018 at 8:30 AM Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> Adding support for additional xattr names is fine.  Making it a
-> Kconfig option is required.  Being able to lock adding additional
->   xattr names should also be required.
+On Fri, May 4, 2018 at 4:54 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> Group the audit parameters for each task into one structure.
+> In particular, remove the loginuid and sessionid values and the audit
+> context pointer from the task structure, replacing them with an audit
+> task information structure to contain them.  Use access functions to
+> access audit values.
+>
+> Note:  Use static allocation of the audit task information structure
+> initially.  Dynamic allocation was considered and attempted, but isn't
+> ready yet.  Static allocation has the limitation that future audit task
+> information structure changes would cause a visible change to the rest
+> of the kernel, whereas dynamic allocation would mostly hide any future
+> changes.
+>
+> The first four access normalization patches could stand alone.
 
-Ok! I'll add that.
+I agree that the first four patches have some standalone value, and
+since we are currently at -rc4, did you want to post another patchset
+of just those four patches with feedback incorporated?  I imagine that
+should be quick work, and that way they aren't help up with any
+problems/discussion regarding the take_struct changes.
+
+> Passes audit-testsuite.
+>
+> Richard Guy Briggs (5):
+>   audit: normalize loginuid read access
+>   audit: convert sessionid unset to a macro
+>   audit: use inline function to get audit context
+>   audit: use inline function to set audit context
+>   audit: collect audit task parameters
+>
+>  MAINTAINERS                          |  2 +-
+>  include/linux/audit.h                | 30 ++++++++++---
+>  include/linux/audit_task.h           | 31 ++++++++++++++
+>  include/linux/sched.h                |  6 +--
+>  include/net/xfrm.h                   |  4 +-
+>  include/uapi/linux/audit.h           |  1 +
+>  init/init_task.c                     |  8 +++-
+>  kernel/audit.c                       |  4 +-
+>  kernel/audit_watch.c                 |  2 +-
+>  kernel/auditsc.c                     | 82 ++++++++++++++++++------------------
+>  kernel/fork.c                        |  2 +-
+>  net/bridge/netfilter/ebtables.c      |  2 +-
+>  net/core/dev.c                       |  2 +-
+>  net/netfilter/x_tables.c             |  2 +-
+>  net/netlabel/netlabel_user.c         |  2 +-
+>  security/integrity/ima/ima_api.c     |  2 +-
+>  security/integrity/integrity_audit.c |  2 +-
+>  security/lsm_audit.c                 |  2 +-
+>  security/selinux/hooks.c             |  4 +-
+>  security/selinux/selinuxfs.c         |  6 +--
+>  security/selinux/ss/services.c       | 12 +++---
+>  21 files changed, 129 insertions(+), 79 deletions(-)
+>  create mode 100644 include/linux/audit_task.h
+>
+> --
+> 1.8.3.1
+>
+
+
+
+-- 
+paul moore
+www.paul-moore.com
