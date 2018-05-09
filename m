@@ -1,115 +1,59 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:46757 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964829AbeEIPNt (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 9 May 2018 11:13:49 -0400
-Received: by mail-lf0-f65.google.com with SMTP id x7-v6so16480256lff.13
-        for <linux-integrity@vger.kernel.org>; Wed, 09 May 2018 08:13:48 -0700 (PDT)
+Received: from mx2.suse.de ([195.135.220.15]:38735 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934517AbeEIOvZ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 9 May 2018 10:51:25 -0400
+Date: Wed, 9 May 2018 16:51:22 +0200
+From: Petr Vorel <pvorel@suse.cz>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Thiebaud Weksteen <tweek@google.com>, nayna@linux.vnet.ibm.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ltp <ltp@lists.linux.it>
+Subject: Re: [PATCH v2 2/4] tpm: Move eventlog files to a subdirectory
+Message-ID: <20180509145121.z3jmvznojhi5mjiz@dell5510>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20180412101350.210547-1-tweek@google.com>
+ <20180412101350.210547-3-tweek@google.com>
+ <20180420053926.GB15364@linux.intel.com>
+ <1525725397.3551.10.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <611e9c85fca8bcdb24e6fb6da412773663c007b3.1525466167.git.rgb@redhat.com>
-References: <cover.1525466167.git.rgb@redhat.com> <611e9c85fca8bcdb24e6fb6da412773663c007b3.1525466167.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 9 May 2018 11:13:47 -0400
-Message-ID: <CAHC9VhQKYt0PC0L65pwFRte1D98R=2tUDGxMVpc8bbJsMncGpw@mail.gmail.com>
-Subject: Re: [PATCH ghak81 RFC V1 1/5] audit: normalize loginuid read access
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
-        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
-        Linux Security Module list
-        <linux-security-module@vger.kernel.org>,
-        Integrity Measurement Architecture
-        <linux-integrity@vger.kernel.org>,
-        SElinux list <selinux@tycho.nsa.gov>,
-        Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        David Howells <dhowells@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-2
+In-Reply-To: <1525725397.3551.10.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, May 4, 2018 at 4:54 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> Recognizing that the loginuid is an internal audit value, use an access
-> function to retrieve the audit loginuid value for the task rather than
-> reaching directly into the task struct to get it.
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  kernel/auditsc.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
->
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index 479c031..f3817d0 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -374,7 +374,7 @@ static int audit_field_compare(struct task_struct *tsk,
->         case AUDIT_COMPARE_EGID_TO_OBJ_GID:
->                 return audit_compare_gid(cred->egid, name, f, ctx);
->         case AUDIT_COMPARE_AUID_TO_OBJ_UID:
-> -               return audit_compare_uid(tsk->loginuid, name, f, ctx);
-> +               return audit_compare_uid(audit_get_loginuid(tsk), name, f, ctx);
->         case AUDIT_COMPARE_SUID_TO_OBJ_UID:
->                 return audit_compare_uid(cred->suid, name, f, ctx);
->         case AUDIT_COMPARE_SGID_TO_OBJ_GID:
-> @@ -385,7 +385,7 @@ static int audit_field_compare(struct task_struct *tsk,
->                 return audit_compare_gid(cred->fsgid, name, f, ctx);
->         /* uid comparisons */
->         case AUDIT_COMPARE_UID_TO_AUID:
-> -               return audit_uid_comparator(cred->uid, f->op, tsk->loginuid);
-> +               return audit_uid_comparator(cred->uid, f->op, audit_get_loginuid(tsk));
->         case AUDIT_COMPARE_UID_TO_EUID:
->                 return audit_uid_comparator(cred->uid, f->op, cred->euid);
->         case AUDIT_COMPARE_UID_TO_SUID:
-> @@ -394,11 +394,11 @@ static int audit_field_compare(struct task_struct *tsk,
->                 return audit_uid_comparator(cred->uid, f->op, cred->fsuid);
->         /* auid comparisons */
->         case AUDIT_COMPARE_AUID_TO_EUID:
-> -               return audit_uid_comparator(tsk->loginuid, f->op, cred->euid);
-> +               return audit_uid_comparator(audit_get_loginuid(tsk), f->op, cred->euid);
->         case AUDIT_COMPARE_AUID_TO_SUID:
-> -               return audit_uid_comparator(tsk->loginuid, f->op, cred->suid);
-> +               return audit_uid_comparator(audit_get_loginuid(tsk), f->op, cred->suid);
->         case AUDIT_COMPARE_AUID_TO_FSUID:
-> -               return audit_uid_comparator(tsk->loginuid, f->op, cred->fsuid);
-> +               return audit_uid_comparator(audit_get_loginuid(tsk), f->op, cred->fsuid);
->         /* euid comparisons */
->         case AUDIT_COMPARE_EUID_TO_SUID:
->                 return audit_uid_comparator(cred->euid, f->op, cred->suid);
-> @@ -611,7 +611,7 @@ static int audit_filter_rules(struct task_struct *tsk,
->                                 result = match_tree_refs(ctx, rule->tree);
->                         break;
->                 case AUDIT_LOGINUID:
-> -                       result = audit_uid_comparator(tsk->loginuid, f->op, f->uid);
-> +                       result = audit_uid_comparator(audit_get_loginuid(tsk), f->op, f->uid);
->                         break;
->                 case AUDIT_LOGINUID_SET:
->                         result = audit_comparator(audit_loginuid_set(tsk), f->op, f->val);
-> @@ -2287,8 +2287,8 @@ int audit_signal_info(int sig, struct task_struct *t)
->             (sig == SIGTERM || sig == SIGHUP ||
->              sig == SIGUSR1 || sig == SIGUSR2)) {
->                 audit_sig_pid = task_tgid_nr(tsk);
-> -               if (uid_valid(tsk->loginuid))
-> -                       audit_sig_uid = tsk->loginuid;
-> +               if (uid_valid(audit_get_loginuid(tsk)))
-> +                       audit_sig_uid = audit_get_loginuid(tsk);
+Hi Mimi,
 
-I realize this comment is a little silly given the nature of loginuid,
-but if we are going to abstract away loginuid accesses (which I think
-is good), we should probably access it once, store it in a local
-variable, perform the validity check on the local variable, then
-commit the local variable to audit_sig_uid.  I realize a TOCTOU
-problem is unlikely here, but with this new layer of abstraction it
-seems that some additional safety might be a good thing.
+> [Cc'ing Petr Vorel and the ltp mailing list]
 
->                 else
->                         audit_sig_uid = uid;
->                 security_task_getsecid(tsk, &audit_sig_sid);
-> --
-> 1.8.3.1
+> Hi Jarrko,
 
--- 
-paul moore
-www.paul-moore.com
+> On Fri, 2018-04-20 at 08:39 +0300, Jarkko Sakkinen wrote:
+> > On Thu, Apr 12, 2018 at 12:13:48PM +0200, Thiebaud Weksteen wrote:
+> > > Signed-off-by: Thiebaud Weksteen <tweek@google.com>
+> > > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
+> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
+> I just noticed this is queued in your next branch.
+
+> Petr Vorel has been updating the IMA LTP tests.  One of those IMA LTP
+> tests includes walking the TPM binary_runtime_measurements in order to
+> calculate the IMA boot-aggregate.  The IMA boot-aggregate is the first
+> measurement in the IMA measurement list.
+
+Did you meant that this commit ([2]) in linux-tpmdd/next changed location of
+binary_runtime_measurements in sysfs?
+
+IMHO these commits ([1], [2], [3]) just put source code into eventlog/ subdirectory:
+
+> Mimi
+
+Kind regards,
+Petr
+
+[1] 75d647f5de69 tpm: Move eventlog declarations to its own header
+[2] 9b01b5356629 tpm: Move shared eventlog functions to common.c
+[3] 0bfb23746052 tpm: Move eventlog files to a subdirectory
