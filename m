@@ -1,90 +1,179 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40888 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934641AbeEIMJl (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 9 May 2018 08:09:41 -0400
-Date: Wed, 9 May 2018 08:09:17 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: "Tobin C. Harding" <tobin@apporbit.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
-        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
-        Linux Security Module list
-        <linux-security-module@vger.kernel.org>,
-        Integrity Measurement Architecture
-        <linux-integrity@vger.kernel.org>,
-        SElinux list <selinux@tycho.nsa.gov>,
-        Eric Paris <eparis@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH ghak81 RFC V1 4/5] audit: use inline function to set
- audit context
-Message-ID: <20180509120917.xz3ggtloq523wqzh@madcap2.tricolour.ca>
-References: <cover.1525466167.git.rgb@redhat.com>
- <2f0566af8ccafdaf400a3d002cb4aef9b80e44cf.1525466167.git.rgb@redhat.com>
- <20180509020700.GE7517@eros>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180509020700.GE7517@eros>
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43886 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933941AbeEILaw (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 9 May 2018 07:30:52 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w49BTQmh019581
+        for <linux-integrity@vger.kernel.org>; Wed, 9 May 2018 07:30:52 -0400
+Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2huvudt931-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 09 May 2018 07:30:49 -0400
+Received: from localhost
+        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Wed, 9 May 2018 12:30:38 +0100
+Subject: Re: [PATCH 3/6] firmware: differentiate between signed
+ regulatory.db and other firmware
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Johannes Berg <johannes.berg@intel.com>
+Cc: linux-integrity@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Peter Jones <pjones@redhat.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andres Rodriguez <andresx7@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>
+Date: Wed, 09 May 2018 07:30:28 -0400
+In-Reply-To: <20180508173404.GG27853@wotan.suse.de>
+References: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
+         <1525182503-13849-4-git-send-email-zohar@linux.vnet.ibm.com>
+         <20180504000743.GR27853@wotan.suse.de>
+         <1525393466.3539.133.camel@linux.vnet.ibm.com>
+         <20180508173404.GG27853@wotan.suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1525865428.3551.175.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 2018-05-09 12:07, Tobin C. Harding wrote:
-> On Fri, May 04, 2018 at 04:54:37PM -0400, Richard Guy Briggs wrote:
-> > Recognizing that the audit context is an internal audit value, use an
-> > access function to set the audit context pointer for the task
-> > rather than reaching directly into the task struct to set it.
+On Tue, 2018-05-08 at 17:34 +0000, Luis R. Rodriguez wrote:
+> On Thu, May 03, 2018 at 08:24:26PM -0400, Mimi Zohar wrote:
+> > On Fri, 2018-05-04 at 00:07 +0000, Luis R. Rodriguez wrote:
+> > > On Tue, May 01, 2018 at 09:48:20AM -0400, Mimi Zohar wrote:
+> > > > Allow LSMs and IMA to differentiate between signed regulatory.db and
+> > > > other firmware.
+> > > > 
+> > > > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> > > > Cc: Luis R. Rodriguez <mcgrof@suse.com>
+> > > > Cc: David Howells <dhowells@redhat.com>
+> > > > Cc: Kees Cook <keescook@chromium.org>
+> > > > Cc: Seth Forshee <seth.forshee@canonical.com>
+> > > > Cc: Johannes Berg <johannes.berg@intel.com>
+> > > > ---
+> > > >  drivers/base/firmware_loader/main.c | 5 +++++
+> > > >  include/linux/fs.h                  | 1 +
+> > > >  2 files changed, 6 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+> > > > index eb34089e4299..d7cdf04a8681 100644
+> > > > --- a/drivers/base/firmware_loader/main.c
+> > > > +++ b/drivers/base/firmware_loader/main.c
+> > > > @@ -318,6 +318,11 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv)
+> > > >  			break;
+> > > >  		}
+> > > >  
+> > > > +#ifdef CONFIG_CFG80211_REQUIRE_SIGNED_REGDB
+> > > > +		if ((strcmp(fw_priv->fw_name, "regulatory.db") == 0) ||
+> > > > +		    (strcmp(fw_priv->fw_name, "regulatory.db.p7s") == 0))
+> > > > +			id = READING_FIRMWARE_REGULATORY_DB;
+> > > > +#endif
+> > > 
+> > > Whoa, no way.
 > > 
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  include/linux/audit.h | 8 ++++++++
-> >  kernel/auditsc.c      | 6 +++---
-> >  kernel/fork.c         | 2 +-
-> >  3 files changed, 12 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/include/linux/audit.h b/include/linux/audit.h
-> > index 93e4c61..dba0d45 100644
-> > --- a/include/linux/audit.h
-> > +++ b/include/linux/audit.h
-> > @@ -235,6 +235,10 @@ extern void __audit_inode_child(struct inode *parent,
-> >  extern void __audit_seccomp(unsigned long syscall, long signr, int code);
-> >  extern void __audit_ptrace(struct task_struct *t);
-> >  
-> > +static inline void audit_set_context(struct task_struct *task, struct audit_context *ctx)
-> > +{
-> > +	task->audit_context = ctx;
-> > +}
-> >  static inline struct audit_context *audit_context(struct task_struct *task)
-> >  {
-> >  	return task->audit_context;
-> > @@ -472,6 +476,10 @@ static inline bool audit_dummy_context(void)
-> >  {
-> >  	return true;
-> >  }
-> > +static inline void audit_set_context(struct task_struct *task, struct audit_context *ctx)
-> > +{
-> > +	task->audit_context = ctx;
-> > +}
+> > There are two methods for the kernel to verify firmware signatures.
 > 
-> If audit_context is an internal audit value why do we set it when
-> CONFIG_AUDITSYSCALL is not set?
+> Yes, but although CONFIG_CFG80211_REQUIRE_SIGNED_REGDB is its own kernel
+> mechanism to verify firmware it uses the request_firmware*() API for
+> regulatory.db and regulatory.db.p7s, and IMA already can appraise these two
+> files since the firmware API is used.
 
-Agreed, that is unnecessary, but harmless since it won't be called, or
-will be called with a value of NULL.  That has been fixed in my dynamic
-allocation patchset since not even the audit_task_info struct is
-available to assign the value.  It is now an empty function like the
-rest.
+IMA-appraisal can verify a signature stored as an xattr, but not a
+detached signature.  That support could be added, but isn't there
+today.  Today, a regulatory.db signature would have to be stored as an
+xattr. 
 
-> Tobin.
+> 
+> As such I see no reason to add a new ID for them at all.
+> K
+> Its not providing an *alternative*, its providing an *extra* kernel measure.
+> If anything CONFIG_CFG80211_REQUIRE_SIGNED_REGDB perhaps should be its own
+> stacked LSM. I'd be open to see patches which set that out. May be a
+> cleaner interface.
+> 
+> > If both are enabled, do we require both signatures or is one enough.
+> 
+> Good question. Considering it as a stacked LSM (although not implemented
+> as one), I'd say its up to who enabled the Kconfig entries. If IMA and
+> CONFIG_CFG80211_REQUIRE_SIGNED_REGDB are enabled then both. If someone enabled
+> IMA though, then surely I agree that enabling
+> CONFIG_CFG80211_REQUIRE_SIGNED_REGDB is stupid and redundant, but its up to the
+> system integrator to decide.
 
-- RGB
+Just because IMA-appraisal is enabled in the kernel doesn't mean that
+firmware signatures will be verified.  That is a run time policy
+decision.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+> 
+> If we however want to make it clear that such things as
+> CONFIG_CFG80211_REQUIRE_SIGNED_REGDB are not required when IMA is enabled we
+> could just make the kconfig depend on !IMA or something?  Or perhaps a new
+> kconfig for IMA which if selected it means that drivers can opt to open code
+> *further* kernel signature verification, even though IMA already is sufficient.
+> Perhaps CONFIG_ENABLE_IMA_OVERLAPPING, and the driver depends on it?
+
+The existing CONFIG_IMA_APPRAISE is not enough.  If there was a build
+time IMA config that translated into an IMA policy requiring firmware
+signature verification (eg. CONFIG_IMA_APPRAISE_FIRMWARE), this could
+be sorted out at build time.
+
+> 
+> > Assigning a different id for regdb signed firmware allows LSMs and IMA
+> > to handle regdb files differently.
+> 
+> That's not the main concern here, its the precedent we are setting here for
+> any new kernel interface which open codes firmware signing on its own. What
+> you are doing means other kernel users who open codes their own firmware
+> signing may need to add yet-another reading ID. That doesn't either look
+> well on code, and seems kind of silly from a coding perspective given
+> the above, in which I clarify IMA still is doing its own appraisal on it.
+
+Suppose,
+
+1. Either CONFIG_CFG80211_REQUIRE_SIGNED_REGDB or
+"CONFIG_IMA_APPRAISE_FIRMWARE" would be configured at build.
+
+2. If CONFIG_CFG80211_REQUIRE_SIGNED_REGDB is configured, not
+"CONFIG_IMA_APPRAISE_FIRMWARE", a custom IMA-policy rule that
+appraises the firmware signature could be defined.  In this case, both
+signature verification methods would be enforced.
+
+then READING_FIRMWARE_REGULATORY_DB would not be needed.
+
+Mimi
+
+> 
+> > > >  		fw_priv->size = 0;
+> > > >  		rc = kernel_read_file_from_path(path, &fw_priv->data, &size,
+> > > >  						msize, id);
+> > > > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > > > index dc16a73c3d38..d1153c2884b9 100644
+> > > > --- a/include/linux/fs.h
+> > > > +++ b/include/linux/fs.h
+> > > > @@ -2811,6 +2811,7 @@ extern int do_pipe_flags(int *, int);
+> > > >  	id(FIRMWARE, firmware)		\
+> > > >  	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
+> > > >  	id(FIRMWARE_FALLBACK, firmware)	\
+> > > > +	id(FIRMWARE_REGULATORY_DB, firmware)	\
+> > > 
+> > > Why could IMA not appriase these files? They are part of the standard path.
+> > 
+> > The subsequent patch attempts to verify the IMA-appraisal signature, but on
+> > failure it falls back to allowing regdb signatures. 
+> > For systems that only want to load firmware based on IMA-appraisal, then
+> >regdb wouldn't be enabled.
+> 
+> I think we can codify this a bit better, without a new ID.
+> 
+>   Luis
+> 
