@@ -1,43 +1,31 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:20787 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935523AbeEISzg (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 9 May 2018 14:55:36 -0400
-Subject: [PATCH] tpm: fix use after free in tpm2_load_context
-From: Tadeusz Struk <tadeusz.struk@intel.com>
-To: jarkko.sakkinen@linux.intel.com
-Cc: jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net, tadeusz.struk@intel.com
-Date: Wed, 09 May 2018 11:55:35 -0700
-Message-ID: <152589213590.23382.13567986597921947843.stgit@tstruk-mobl1.jf.intel.com>
+Received: from mail-io0-f175.google.com ([209.85.223.175]:43050 "EHLO
+        mail-io0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935304AbeEIRlE (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 9 May 2018 13:41:04 -0400
+Received: by mail-io0-f175.google.com with SMTP id t23-v6so43605443ioc.10
+        for <linux-integrity@vger.kernel.org>; Wed, 09 May 2018 10:41:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+References: <20180501175124.192587-1-mjg59@google.com> <20180501175124.192587-2-mjg59@google.com>
+ <1525317430.3238.58.camel@linux.vnet.ibm.com> <CACdnJuvUze0GSmQcnyFi_3vGEPoEgavrF9WhFoDpmHSni3FwEA@mail.gmail.com>
+ <1525815782.3551.86.camel@linux.vnet.ibm.com> <CACdnJusHQvBk3rO1DqOr=XyeKZkmFqq+HM9HUO7whvUVG9yxYw@mail.gmail.com>
+ <1525878005.3551.223.camel@linux.vnet.ibm.com>
+In-Reply-To: <1525878005.3551.223.camel@linux.vnet.ibm.com>
+From: Matthew Garrett <mjg59@google.com>
+Date: Wed, 09 May 2018 17:40:53 +0000
+Message-ID: <CACdnJuuFO1e0T9oQwD7R6dC8Kod3k8mWipZ4xZQKC4U=oea3Aw@mail.gmail.com>
+Subject: Re: [PATCH V3 2/2] EVM: Allow runtime modification of the set of
+ verified xattrs
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-If load context command returns with TPM2_RC_HANDLE or
-TPM2_RC_REFERENCE_H0 then we have use after free in
-line 114 and double free in 117.
+On Wed, May 9, 2018 at 8:30 AM Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> Adding support for additional xattr names is fine.  Making it a
+> Kconfig option is required.  Being able to lock adding additional
+>   xattr names should also be required.
 
-Fixes: 4d57856a21ed2 ("tpm2: add session handle context saving and restoring to the space code")
-
-Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
----
- drivers/char/tpm/tpm2-space.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-index 4e4014eabdb9..6122d3276f72 100644
---- a/drivers/char/tpm/tpm2-space.c
-+++ b/drivers/char/tpm/tpm2-space.c
-@@ -102,8 +102,9 @@ static int tpm2_load_context(struct tpm_chip *chip, u8 *buf,
- 		 * TPM_RC_REFERENCE_H0 means the session has been
- 		 * flushed outside the space
- 		 */
--		rc = -ENOENT;
-+		*handle = 0;
- 		tpm_buf_destroy(&tbuf);
-+		return -ENOENT;
- 	} else if (rc > 0) {
- 		dev_warn(&chip->dev, "%s: failed with a TPM error 0x%04X\n",
- 			 __func__, rc);
+Ok! I'll add that.
