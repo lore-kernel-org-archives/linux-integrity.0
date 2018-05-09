@@ -1,59 +1,42 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:38735 "EHLO mx2.suse.de"
+Received: from mga12.intel.com ([192.55.52.136]:48634 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934517AbeEIOvZ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 9 May 2018 10:51:25 -0400
-Date: Wed, 9 May 2018 16:51:22 +0200
-From: Petr Vorel <pvorel@suse.cz>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Thiebaud Weksteen <tweek@google.com>, nayna@linux.vnet.ibm.com,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ltp <ltp@lists.linux.it>
-Subject: Re: [PATCH v2 2/4] tpm: Move eventlog files to a subdirectory
-Message-ID: <20180509145121.z3jmvznojhi5mjiz@dell5510>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20180412101350.210547-1-tweek@google.com>
- <20180412101350.210547-3-tweek@google.com>
- <20180420053926.GB15364@linux.intel.com>
- <1525725397.3551.10.camel@linux.vnet.ibm.com>
+        id S932318AbeEIM00 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 9 May 2018 08:26:26 -0400
+Date: Wed, 9 May 2018 15:26:21 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc: 'Jason Gunthorpe' <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "'linux-integrity@vger.kernel.org'" <linux-integrity@vger.kernel.org>,
+        "'linux-security-module@vger.kernel.org'"
+        <linux-security-module@vger.kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+Message-ID: <20180509122621.GB8271@linux.intel.com>
+References: <5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
+ <20180424160328.GA5119@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94272F33@hasmsx108.ger.corp.intel.com>
+ <20180502133246.GA6091@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9427B083@hasmsx108.ger.corp.intel.com>
+ <20180503063508.GA8702@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9427B9A6@hasmsx108.ger.corp.intel.com>
+ <20180504081634.GB6373@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9427D284@hasmsx108.ger.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-In-Reply-To: <1525725397.3551.10.camel@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9427D284@hasmsx108.ger.corp.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Mimi,
+On Sat, May 05, 2018 at 09:07:21PM +0000, Winkler, Tomas wrote:
+> There is already one 'out' label in that function, what would you prefer for this new label name?
+> Thanks
+> Tomas
 
-> [Cc'ing Petr Vorel and the ltp mailing list]
+Aah, of course. My bad that I did not notice it but please just point
+me if I miss something obvious like that :-) I'll apply the patch
+today..
 
-> Hi Jarrko,
-
-> On Fri, 2018-04-20 at 08:39 +0300, Jarkko Sakkinen wrote:
-> > On Thu, Apr 12, 2018 at 12:13:48PM +0200, Thiebaud Weksteen wrote:
-> > > Signed-off-by: Thiebaud Weksteen <tweek@google.com>
-> > > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-
-> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-
-> I just noticed this is queued in your next branch.
-
-> Petr Vorel has been updating the IMA LTP tests.  One of those IMA LTP
-> tests includes walking the TPM binary_runtime_measurements in order to
-> calculate the IMA boot-aggregate.  The IMA boot-aggregate is the first
-> measurement in the IMA measurement list.
-
-Did you meant that this commit ([2]) in linux-tpmdd/next changed location of
-binary_runtime_measurements in sysfs?
-
-IMHO these commits ([1], [2], [3]) just put source code into eventlog/ subdirectory:
-
-> Mimi
-
-Kind regards,
-Petr
-
-[1] 75d647f5de69 tpm: Move eventlog declarations to its own header
-[2] 9b01b5356629 tpm: Move shared eventlog functions to common.c
-[3] 0bfb23746052 tpm: Move eventlog files to a subdirectory
+/Jarkko
