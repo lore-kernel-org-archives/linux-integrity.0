@@ -1,112 +1,112 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:44154 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S966102AbeEJOrf (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:34863 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966012AbeEJOlz (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 10 May 2018 10:47:35 -0400
-Message-ID: <1525963652.3258.4.camel@HansenPartnership.com>
+        Thu, 10 May 2018 10:41:55 -0400
+Received: by mail-wm0-f66.google.com with SMTP id o78-v6so4862532wmg.0
+        for <linux-integrity@vger.kernel.org>; Thu, 10 May 2018 07:41:54 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20180508105515.GB6132@linux.intel.com>
+References: <20180430125418.31344-1-david.bild@xaptum.com> <20180504130022.5231-3-david.bild@xaptum.com>
+ <20180504190638.ikqhdvcqccakzdjd@ziepe.ca> <CAAi9uDvyzk1vnQVXkJxRCATy85g4nwMLJjqu6rr1YZn9NV_TYw@mail.gmail.com>
+ <20180508105515.GB6132@linux.intel.com>
+From: "David R. Bild" <david.bild@xaptum.com>
+Date: Thu, 10 May 2018 09:41:53 -0500
+Message-ID: <CAAi9uDtt=U_7uSVrxBkC_-ZLobU9WiA4UxuN0pJk18b0Rhv+Lg@mail.gmail.com>
 Subject: Re: [PATCH v3 2/2] usb: misc: xapea00x: perform platform
  initialization of TPM
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: "David R. Bild" <david.bild@xaptum.com>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
         philip.b.tricca@intel.com, Jason Gunthorpe <jgg@ziepe.ca>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Peter Huewe <peterhuewe@gmx.de>, linux-usb@vger.kernel.org,
         linux-integrity@vger.kernel.org
-Date: Thu, 10 May 2018 07:47:32 -0700
-In-Reply-To: <CAAi9uDsLmW3K=1UYsmJKOc6hsXqcJXFHyO_scMan5u8d94D9=Q@mail.gmail.com>
-References: <20180430125418.31344-1-david.bild@xaptum.com>
-         <20180504130022.5231-3-david.bild@xaptum.com>
-         <20180504190638.ikqhdvcqccakzdjd@ziepe.ca>
-         <CAAi9uDvyzk1vnQVXkJxRCATy85g4nwMLJjqu6rr1YZn9NV_TYw@mail.gmail.com>
-         <20180508105515.GB6132@linux.intel.com>
-         <1525793148.3672.8.camel@HansenPartnership.com>
-         <CAAi9uDvgd5+d5fNbSGEeEVvdHLzwid6SqC0BVA3BPXkFWR4ooQ@mail.gmail.com>
-         <1525793785.3672.12.camel@HansenPartnership.com>
-         <CAAi9uDsLmW3K=1UYsmJKOc6hsXqcJXFHyO_scMan5u8d94D9=Q@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, 2018-05-10 at 09:25 -0500, David R. Bild wrote:
-> On Tue, May 8, 2018 at 10:36 AM, James Bottomley
-> <James.Bottomley@hansenpartnership.com> wrote:
-> > 
-> > On Tue, 2018-05-08 at 10:29 -0500, David R. Bild wrote:
-> > > On Tue, May 8, 2018 at 10:25 AM, James Bottomley
-> > > <James.Bottomley@hansenpartnership.com> wrote:
-> > > > 
-> > > > I don't see any reason to set an unreachable password for the
-> > > > platform hierarchy if the UEFI didn't.  If the desire is to
-> > > > disable the platform hierarchy, then it should be disabled, not
-> > > > have a random password set.
-> > > 
-> > > "Set random password and throw away the key" was my way of
-> > > disabling the platform hierarchy.  Is there a better way of doing
-> > > that?
-> > 
-> > Well, yes, use TPM2_HierarchyControl to set phEnable to CLEAR.
-> 
-> 
-> I'm not sure that will work for us.  Let me give a little more detail
-> about this card.
-> 
-> The TPM holds access credentials for connecting to the Xaptum
-> network. This approach enables secure, zero-touch provisioning for
-> IoT devices:  Xaptum pre-provisions the TPMs *before* they are
-> assembled onto a device PCB. The device is shipped directly from
-> factory to end customer. The first time it turns on, the TPM is used
-> to authenticate the Xaptum network. Using a TPM protects the
-> credentials from being copied or duplicated by someone in the
-> manufacturing chain.
+On Tue, May 8, 2018 at 5:55 AM, Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+> On Fri, May 04, 2018 at 02:56:25PM -0500, David R. Bild wrote:
+>> On Fri, May 4, 2018 at 2:06 PM, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>> >
+>> > On Fri, May 04, 2018 at 08:00:22AM -0500, David R. Bild wrote:
+>> > > Normally the system platform (i.e., BIOS/UEFI for x86) is responsible
+>> > > for performing initialization of the TPM.  For these modules, the host
+>> > > kernel is the platform, so we perform the initialization in the driver
+>> > > before registering the TPM with the kernel TPM subsystem.
+>> >
+>> > The tpm driver already does most of this stuff automatically, why
+>> > duplicate it there and why is it coded in a way that doesn't use the
+>> > existing TPM services to do it?
+>>
+>> I didn't want to have to duplicate all that functionality and was
+>> disappointed when that became the only option (due to the two reasons
+>> outlined below) for supporting existing kernels with an out-of-tree
+>> module.
+>>
+>> Bringing the module in-tree opens the option of reworking some of the
+>> TPM subsystem to support this use case.  I'm open to concrete
+>> suggestions on how to do so.
+>>
+>> 1) The first reason is that I don't think the necessary pieces are
+>> currently made available for reuse. I'd love to not repeat that code,
+>> but
+>>
+>> - some required structs and functions are declared in private headers
+>> (drivers/char/tpm/*.h instead of include/linux/tpm.h).
+>> - many of the required functions are not exported.
+>>
+>> If the TPM maintainers are open to more of the API being "public", I
+>> can look into preparing patches that export the necessary operations.
+>>
+>> 2) The second reason is that the initialization done by the driver is
+>> work that should be done by platform, before the kernel ever sees the
+>> TPM.
+>
+> This is too speculative to give any confirmitive promises. Do not fully
+> understand the reasoning. For example: why should I care about
+> out-of-tree modules?
 
-OK, so these are effectively DevId keys.  However, what makes you think
-knowing the platform auth allows you to duplicate the keys?  As long as
-you created them correctly (as in without duplication authority) then
-even knowing the platform authorization I can't get them out of your
-TPM.
+You shouldn't care about out-of-tree modules, per se.  But the same
+issues affect *in-tree* modules too.
 
-> These cards are designed for existing devices, like IoT gateways. You
-> can't add a TPM to an existing PCB, but you can plug in a mini PCI-e
-> card.
-> 
-> We provision the credentials (the DAA secret key, specifically) under
-> the platform hierarchy. The key can be used without platform
-> authorization, but not removed.  If we disable the platform hierarchy
-> entirely, I think the credentials will no longer be available for
-> use.
+Currently there is no way for an in-tree driver to accomplish all
+three of the following
 
-That's certainly true if you actually need to use the platform
-hierarchy.  Your initial emails on the subject did say you were
-disabling it though ...
+1) Disable the platform hierarchy (or set the platform auth password).
+2) Use the TPM subsystem to accomplish step 1 (as opposed to
+reimplementing startup, self-test, etc. which this driver currently
+does).
+3) Ensure that step 1 is done before the TPM is exposed to userspace
+as /dev/tpmX (to prevent a race with userspace for control of the
+platform hierarchy).
 
-> > > > I'd also say this is probably the job of early boot based on
-> > > > policy.
-> > > 
-> > > Agreed.  And since this card has no "early boot", the
-> > > driver/kernel need to do it.
-> > 
-> > Early boot means userspace. for a hot pluggable device, this would
-> > probably be something in udev if you follow the no-daemon model and
-> > the daemon could do it if you do follow the daemon model.
-> 
-> Could you expand on the udev approach?  I might not understand enough
-> about udev (or the coming TPM resource manager changes) to follow the
-> suggestion.
-> 
-> This seems unsafe to me.  There's a race between a malicious
-> userspace program and the daemon to set the platform
-> authorization.  If the malicious program wins, it can reset the TPM,
-> removing the credentials, and the device won't be able to connect to
-> the Xaptum network. (This is a liveness concern, not safety.  A
-> denial-of-service attack, essentially.)
+> I can look code changes but the text above contains
+> too many words to nail anything down. I'm confused.
 
-OK, I'm getting confused by your threat model.  I don't think knowing
-the platform auth I can obtain your keys.  However, I agree, I can
-definitely remove them.  However, setting platform auth doesn't solve
-this: I can execute a TPM2_Clear to regain the platform auth and if you
-disable this, I can't re-own the TPM at all.
+I see four possible resolutions:
 
-James
+1) Accept the code as is. No changes to the TPM subsystem. I do not
+like this option.
+
+2) Make more of the TPM driver API public (internally public) so that
+the driver can reuse that code instead of reimplementing.  Not ideal,
+as this could require major restructuring of the TPM code.
+
+3) Allow the driver to register the TPM with TPM driver, but not yet
+expose the TPM to userspace.  Let the driver do some additional work
+(like set the platform hierarchy password) and then explicitly inform
+the TPM driver that it is safe to expose the TPM to userspace.  This
+would be my preferred approach.
+
+4) The TPM driver (or daemon, perhaps. I don't under James's proposal
+yet) sets the platform password.  As you say, this is an intrusive
+change and only for a very specific use case right now. Perhaps not
+ideal.
+
+Do these make sense?
+
+Best,
+David
