@@ -1,24 +1,24 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:40961 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965892AbeEJO3Q (ORCPT
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:35283 "EHLO
+        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935667AbeEJOZF (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 10 May 2018 10:29:16 -0400
-Received: by mail-wr0-f196.google.com with SMTP id g21-v6so2221511wrb.8
-        for <linux-integrity@vger.kernel.org>; Thu, 10 May 2018 07:29:15 -0700 (PDT)
+        Thu, 10 May 2018 10:25:05 -0400
+Received: by mail-wm0-f47.google.com with SMTP id o78-v6so4763324wmg.0
+        for <linux-integrity@vger.kernel.org>; Thu, 10 May 2018 07:25:04 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180510014433.GM6190@linux.intel.com>
+In-Reply-To: <1525793785.3672.12.camel@HansenPartnership.com>
 References: <20180430125418.31344-1-david.bild@xaptum.com> <20180504130022.5231-3-david.bild@xaptum.com>
  <20180504190638.ikqhdvcqccakzdjd@ziepe.ca> <CAAi9uDvyzk1vnQVXkJxRCATy85g4nwMLJjqu6rr1YZn9NV_TYw@mail.gmail.com>
  <20180508105515.GB6132@linux.intel.com> <1525793148.3672.8.camel@HansenPartnership.com>
- <CAAi9uDvgd5+d5fNbSGEeEVvdHLzwid6SqC0BVA3BPXkFWR4ooQ@mail.gmail.com> <20180510014433.GM6190@linux.intel.com>
+ <CAAi9uDvgd5+d5fNbSGEeEVvdHLzwid6SqC0BVA3BPXkFWR4ooQ@mail.gmail.com> <1525793785.3672.12.camel@HansenPartnership.com>
 From: "David R. Bild" <david.bild@xaptum.com>
-Date: Thu, 10 May 2018 09:29:14 -0500
-Message-ID: <CAAi9uDvHLhTYsao0LJH4jTfxufiC7W61S+9=gWOqByMrHrU+0w@mail.gmail.com>
+Date: Thu, 10 May 2018 09:25:03 -0500
+Message-ID: <CAAi9uDsLmW3K=1UYsmJKOc6hsXqcJXFHyO_scMan5u8d94D9=Q@mail.gmail.com>
 Subject: Re: [PATCH v3 2/2] usb: misc: xapea00x: perform platform
  initialization of TPM
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         philip.b.tricca@intel.com, Jason Gunthorpe <jgg@ziepe.ca>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Peter Huewe <peterhuewe@gmx.de>, linux-usb@vger.kernel.org,
@@ -27,39 +27,66 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, May 9, 2018 at 8:44 PM, Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
-> On Tue, May 08, 2018 at 10:29:41AM -0500, David R. Bild wrote:
->> On Tue, May 8, 2018 at 10:25 AM, James Bottomley
->> <James.Bottomley@hansenpartnership.com> wrote:
->> >
->> > > On Fri, May 04, 2018 at 02:56:25PM -0500, David R. Bild wrote:
->> > [...]
->> > > > In particular, it sets the credentials for the platform hierarchy.
->> > > > The platform hierarchy is essentially the "root" account of the
->> > > > TPM, so it's critical that those credentials be set before the TPM
->> > > > is exposed to user-space.  (The platform credentials aren't
->> > > > persisted in the TPM and must be set by the platform on every
->> > > > boot.)  If the driver registers the TPM before doing
->> > > > initialization, there's a chance that something else could access
->> > > > the TPM before the platform credentials get set.
->> >
+On Tue, May 8, 2018 at 10:36 AM, James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
 >
-> Who is able to test these changes if we even consider pulling them?
+> On Tue, 2018-05-08 at 10:29 -0500, David R. Bild wrote:
+> > On Tue, May 8, 2018 at 10:25 AM, James Bottomley
+> > <James.Bottomley@hansenpartnership.com> wrote:
+> > >
+> > > I don't see any reason to set an unreachable password for the
+> > > platform
+> > > hierarchy if the UEFI didn't.  If the desire is to disable the
+> > > platform
+> > > hierarchy, then it should be disabled, not have a random password
+> > > set.
+> >
+> > "Set random password and throw away the key" was my way of disabling
+> > the platform hierarchy.  Is there a better way of doing that?
+>
+> Well, yes, use TPM2_HierarchyControl to set phEnable to CLEAR.
 
-I can send you and the other maintainers cards to test with. That's
-dead simple.  (With a USB-A plug, not mini PCI-e, so you can plug it
-into any computer.)
 
-They won't have the Xaptum credentials pre-provisioned, and will just
-function as normal TPMs.
+I'm not sure that will work for us.  Let me give a little more detail
+about this card.
 
-> I do not have such a card so it will be hard to accept also given
-> that it is more intrusive change than usual.
+The TPM holds access credentials for connecting to the Xaptum network.
+This approach enables secure, zero-touch provisioning for IoT devices:
+ Xaptum pre-provisions the TPMs *before* they are assembled onto a
+device PCB. The device is shipped directly from factory to end
+customer. The first time it turns on, the TPM is used to authenticate
+the Xaptum network. Using a TPM protects the credentials from being
+copied or duplicated by someone in the manufacturing chain.
 
-The current approach (the driver does all the initialization) requires
-no changes to the TPM driver.  Only someone who buys our card will
-ever run that code, so it doesn't impact anyone else.
+These cards are designed for existing devices, like IoT gateways. You
+can't add a TPM to an existing PCB, but you can plug in a mini PCI-e
+card.
+
+We provision the credentials (the DAA secret key, specifically) under
+the platform hierarchy. The key can be used without platform
+authorization, but not removed.  If we disable the platform hierarchy
+entirely, I think the credentials will no longer be available for use.
+
+> > > I'd also say this is probably the job of early boot based on
+> > > policy.
+> >
+> > Agreed.  And since this card has no "early boot", the driver/kernel
+> > need to do it.
+>
+> Early boot means userspace. for a hot pluggable device, this would
+> probably be something in udev if you follow the no-daemon model and the
+> daemon could do it if you do follow the daemon model.
+
+Could you expand on the udev approach?  I might not understand enough
+about udev (or the coming TPM resource manager changes) to follow the
+suggestion.
+
+This seems unsafe to me.  There's a race between a malicious userspace
+program and the daemon to set the platform authorization.  If the
+malicious program wins, it can reset the TPM, removing the
+credentials, and the device won't be able to connect to the Xaptum
+network. (This is a liveness concern, not safety.  A denial-of-service
+attack, essentially.)
 
 Best,
 David
