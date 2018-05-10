@@ -1,59 +1,73 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56646 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750805AbeEKBhB (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 10 May 2018 21:37:01 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4B1YnTT147428
-        for <linux-integrity@vger.kernel.org>; Thu, 10 May 2018 21:37:00 -0400
-Received: from e06smtp11.uk.ibm.com (e06smtp11.uk.ibm.com [195.75.94.107])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2hvvvga257-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 10 May 2018 21:37:00 -0400
-Received: from localhost
-        by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Fri, 11 May 2018 02:36:59 +0100
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: Eric Biederman <ebiederm@xmission.com>,
+Received: from mx2.suse.de ([195.135.220.15]:55582 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751438AbeEJX0n (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 10 May 2018 19:26:43 -0400
+Date: Thu, 10 May 2018 23:26:39 +0000
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Peter Jones <pjones@redhat.com>,
+        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
         David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-security-module@vger.kernel.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] kexec: limit kexec_load syscall 
-Date: Thu, 10 May 2018 21:36:45 -0400
-Message-Id: <1526002608-27474-1-git-send-email-zohar@linux.vnet.ibm.com>
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        linux-integrity@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andres Rodriguez <andresx7@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: [PATCH 3/6] firmware: differentiate between signed regulatory.db
+ and other firmware
+Message-ID: <20180510232639.GF27853@wotan.suse.de>
+References: <20180504000743.GR27853@wotan.suse.de>
+ <1525393466.3539.133.camel@linux.vnet.ibm.com>
+ <20180508173404.GG27853@wotan.suse.de>
+ <1525865428.3551.175.camel@linux.vnet.ibm.com>
+ <20180509191508.GR27853@wotan.suse.de>
+ <1525895838.3551.247.camel@linux.vnet.ibm.com>
+ <20180509212212.GX27853@wotan.suse.de>
+ <1525903617.3551.281.camel@linux.vnet.ibm.com>
+ <20180509234814.GY27853@wotan.suse.de>
+ <1525917658.3551.322.camel@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1525917658.3551.322.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-IMA-appraisal is mostly being used in the embedded or single purpose
-closed system environments.  In these environments, both the Kconfig
-options and the userspace tools can be modified appropriately to limit
-syscalls.  For stock kernels, userspace applications need to continue to
-work with older kernels as well as with newer kernels.
+On Wed, May 09, 2018 at 10:00:58PM -0400, Mimi Zohar wrote:
+> On Wed, 2018-05-09 at 23:48 +0000, Luis R. Rodriguez wrote:
+> > On Wed, May 09, 2018 at 06:06:57PM -0400, Mimi Zohar wrote:
+> 
+> > > > > Yes, writing regdb as a micro/mini LSM sounds reasonable.  The LSM
+> > > > > would differentiate between other firmware and the regulatory.db based
+> > > > > on the firmware's pathname.
+> > > > 
+> > > > If that is the only way then it would be silly to do the mini LSM as all
+> > > > calls would have to have the check. A special LSM hook for just the
+> > > > regulatory db also doesn't make much sense.
+> > > 
+> > > All calls to request_firmware() are already going through this LSM
+> > > hook.  I should have said, it would be based on both READING_FIRMWARE
+> > > and the firmware's pathname.
+> > 
+> > Yes, but it would still be a strcmp() computation added for all
+> > READING_FIRMWARE. In that sense, the current arrangement is only open coding the
+> > signature verification for the regulatory.db file.  One way to avoid this would
+> > be to add an LSM specific to the regulatory db
+> 
+> Casey already commented on this suggestion.
 
-In this environment, the customer needs the ability to define a system
-wide IMA runtime policy, such as requiring all kexec'ed images (or
-firmware) to be signed, without being dependent on either the Kconfig
-options or the userspace tools.
+Sorry but I must have missed this, can you send me the email or URL where he did that?
+I never got a copy of that email I think.
 
-This patch set allows the customer to define a policy which requires
-kexec'ed kernels to be signed.
-
-Mimi Zohar (3):
-  ima: based on the "secure_boot" policy limit syscalls
-  kexec: call LSM hook for kexec_load syscall
-  ima: based on policy require signed kexec kernel images
-
- include/linux/security.h            |  6 ++++++
- kernel/kexec.c                      | 11 +++++++++++
- security/integrity/ima/ima.h        |  1 +
- security/integrity/ima/ima_main.c   |  9 +++++++++
- security/integrity/ima/ima_policy.c | 27 ++++++++++++++++++++-------
- security/security.c                 |  6 ++++++
- 6 files changed, 53 insertions(+), 7 deletions(-)
-
--- 
-2.7.5
+  Luis
