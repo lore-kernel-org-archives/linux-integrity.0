@@ -1,166 +1,249 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from smtprelay0020.hostedemail.com ([216.40.44.20]:58598 "EHLO
+Received: from smtprelay0137.hostedemail.com ([216.40.44.137]:57978 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965033AbeEJPzW (ORCPT
+        by vger.kernel.org with ESMTP id S965033AbeEJPxO (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 10 May 2018 11:55:22 -0400
+        Thu, 10 May 2018 11:53:14 -0400
 From: Joe Perches <joe@perches.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>, linux-block@vger.kernel.org,
-        linux-crypto@vger.kernel.org, netdev@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-audit@redhat.com,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
         linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@tycho.nsa.gov
-Cc: dri-devel@lists.freedesktop.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH 00/18] Convert default pr_fmt from empty to KBUILD_MODNAME
-Date: Thu, 10 May 2018 08:45:26 -0700
-Message-Id: <cover.1525964381.git.joe@perches.com>
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 17/18] security: encrypted-keys: Remove pr_fmt duplicate logging prefixes
+Date: Thu, 10 May 2018 08:45:43 -0700
+Message-Id: <fd41a51e9258970fa0de06912884bfd673609581.1525964386.git.joe@perches.com>
+In-Reply-To: <cover.1525964381.git.joe@perches.com>
+References: <cover.1525964381.git.joe@perches.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-pr_<level> logging uses allow a prefix to be specified with a
-specific #define pr_fmt
+Converting pr_fmt from a simple define to use KBUILD_MODNAME added
+some duplicate logging prefixes to existing uses.
 
-The default of pr_fmt in printk.h is #define pr_fmt(fmt) fmt
-so no prefixing of logging output is generically done.
+Remove them.
 
-There are several output logging uses like dump_stack() that are
-unprefixed and should remain unprefixed.
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ security/keys/encrypted-keys/encrypted.c | 63 ++++++++++++++------------------
+ 1 file changed, 28 insertions(+), 35 deletions(-)
 
-This patch series attempts to convert the default #define of pr_fmt to
-KBUILD_MODNAME ": " fmt and as well update the various bits of the kernel
-that should _not_ be prefixed by adding #define pr_fmt(fmt) fmt to those
-compilation units that do not want output message prefixing.
-
-There are about 1200 uses of #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-that could be removed if the default is changed.
-
-A script that does this removal (and removes any blank lines that follow)
-for the linux-kernel tree is included below:
-
-$ git grep -P --name-only "define\s+pr_fmt\b" | \
-  grep -v include/linux/printk.h | \
-  xargs perl -i -e 'local $/; while (<>) {s/(\n)*[ \t]*#[ \t]*define[ \t]+pr_fmt[ \t]*\([ \t]*(\w+)[ \t]*\)[ \t]*KBUILD_MODNAME[ \t]*\": \"[ \t]*\2[ \t]*\n\s*/\1\n/; s/^\n//; print;}'
-
-This script should be run after this patch series is applied.
-
-The above script output diff is currently:
-
-1198 files changed, 70 insertions(+), 2241 deletions(-)
-
-Joe Perches (18):
-  kernel: Use pr_fmt
-  lib: Use pr_fmt
-  printk: Convert pr_fmt from blank define to KBUILD_MODNAME
-  x86: Remove pr_fmt duplicate logging prefixes
-  x86/mtrr: Rename main.c to mtrr.c and remove duplicate prefixes
-  net: Remove pr_fmt duplicate logging prefixes
-  blk-mq: Remove pr_fmt duplicate logging prefixes
-  random: Remove pr_fmt duplicate logging prefixes
-  ptp: Remove pr_fmt duplicate logging prefixes
-  efifb: Remove pr_fmt duplicate logging prefixes
-  proc: Remove pr_fmt duplicate logging prefixes
-  uprobes: Remove pr_fmt duplicate logging prefixes
-  printk: Remove pr_fmt duplicate logging prefixes
-  lib/mpi: Remove pr_fmt duplicate logging prefixes
-  security: Remove pr_fmt duplicate logging prefixes
-  aoe: Remove pr_fmt duplicate logging prefixes
-  security: encrypted-keys: Remove pr_fmt duplicate logging prefixes
-  rcu: Use pr_fmt to prefix "rcu: " to logging output
-
- arch/x86/events/amd/ibs.c                      |  2 +-
- arch/x86/kernel/cpu/mtrr/Makefile              |  2 +-
- arch/x86/kernel/cpu/mtrr/{main.c => mtrr.c}    | 33 ++++++-------
- arch/x86/kernel/e820.c                         | 32 ++++++------
- arch/x86/kernel/hpet.c                         |  5 +-
- arch/x86/kernel/uprobes.c                      |  4 +-
- arch/x86/mm/numa.c                             | 22 ++++-----
- block/blk-mq.c                                 |  9 ++--
- drivers/block/aoe/aoeblk.c                     | 29 ++++++-----
- drivers/block/aoe/aoechr.c                     | 11 ++---
- drivers/block/aoe/aoecmd.c                     | 34 ++++++-------
- drivers/block/aoe/aoedev.c                     | 19 +++-----
- drivers/block/aoe/aoemain.c                    |  6 +--
- drivers/block/aoe/aoenet.c                     | 19 +++-----
- drivers/char/hw_random/via-rng.c               | 10 ++--
- drivers/char/random.c                          | 16 +++---
- drivers/ptp/ptp_clock.c                        |  4 +-
- drivers/video/fbdev/efifb.c                    | 48 +++++++++---------
- fs/proc/root.c                                 |  6 +--
- include/linux/printk.h                         |  2 +-
- kernel/acct.c                                  |  2 +
- kernel/async.c                                 | 14 +++---
- kernel/audit_tree.c                            |  2 +-
- kernel/backtracetest.c                         |  8 +--
- kernel/crash_core.c                            | 29 ++++++-----
- kernel/events/uprobes.c                        |  3 +-
- kernel/exit.c                                  |  2 +
- kernel/hung_task.c                             | 13 +++--
- kernel/kprobes.c                               | 20 +++++---
- kernel/module.c                                | 59 +++++++++++------------
- kernel/panic.c                                 |  3 ++
- kernel/params.c                                | 13 +++--
- kernel/pid.c                                   |  2 +
- kernel/printk/printk.c                         |  2 +-
- kernel/profile.c                               |  2 +
- kernel/range.c                                 |  2 +-
- kernel/rcu/rcu_segcblist.c                     |  2 +
- kernel/rcu/rcuperf.c                           | 10 ++--
- kernel/rcu/rcutorture.c                        | 46 +++++++++---------
- kernel/rcu/srcutiny.c                          |  2 +
- kernel/rcu/srcutree.c                          |  5 +-
- kernel/rcu/tiny.c                              |  3 ++
- kernel/rcu/tree.c                              |  8 +--
- kernel/rcu/tree_plugin.h                       | 67 +++++++++++++++-----------
- kernel/rcu/update.c                            | 19 +++++---
- kernel/relay.c                                 |  5 +-
- kernel/seccomp.c                               |  4 +-
- kernel/signal.c                                | 10 ++--
- kernel/smpboot.c                               |  5 +-
- kernel/taskstats.c                             |  4 +-
- kernel/torture.c                               |  6 ++-
- kernel/tracepoint.c                            |  3 ++
- kernel/workqueue.c                             |  2 +
- lib/cpu_rmap.c                                 | 15 +++---
- lib/crc32test.c                                |  2 +
- lib/earlycpio.c                                |  5 +-
- lib/find_bit_benchmark.c                       |  2 +
- lib/kobject.c                                  | 36 +++++++-------
- lib/kobject_uevent.c                           | 27 +++++------
- lib/mpi/mpicoder.c                             | 10 ++--
- lib/nmi_backtrace.c                            |  3 ++
- lib/percpu_ida.c                               |  4 +-
- lib/percpu_test.c                              |  2 +
- lib/random32.c                                 | 10 ++--
- lib/stmp_device.c                              |  2 +
- lib/string.c                                   |  2 +
- lib/swiotlb.c                                  |  4 +-
- lib/test_debug_virtual.c                       |  2 +
- lib/test_rhashtable.c                          | 44 +++++++++--------
- lib/test_sort.c                                |  2 +
- lib/ubsan.c                                    | 61 ++++++++++++-----------
- net/ipv4/ipconfig.c                            | 59 ++++++++++-------------
- net/ipv4/ipmr.c                                |  2 +-
- net/ipv4/netfilter/nf_conntrack_l3proto_ipv4.c |  9 ++--
- net/ipv6/ip6mr.c                               |  2 +-
- net/ipv6/netfilter/nf_conntrack_l3proto_ipv6.c |  6 +--
- net/ipv6/netfilter/nf_defrag_ipv6_hooks.c      |  4 +-
- net/netfilter/nf_conntrack_helper.c            | 11 ++---
- net/netfilter/nf_conntrack_standalone.c        |  2 +-
- net/socket.c                                   |  2 +-
- security/keys/encrypted-keys/encrypted.c       | 63 +++++++++++-------------
- security/selinux/selinuxfs.c                   | 29 ++++++-----
- 82 files changed, 580 insertions(+), 532 deletions(-)
- rename arch/x86/kernel/cpu/mtrr/{main.c => mtrr.c} (96%)
-
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+index d92cbf9687c3..40a14d5c6ae5 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -84,8 +84,7 @@ static int aes_get_sizes(void)
+ 
+ 	tfm = crypto_alloc_skcipher(blkcipher_alg, 0, CRYPTO_ALG_ASYNC);
+ 	if (IS_ERR(tfm)) {
+-		pr_err("encrypted_key: failed to alloc_cipher (%ld)\n",
+-		       PTR_ERR(tfm));
++		pr_err("failed to alloc_cipher (%ld)\n", PTR_ERR(tfm));
+ 		return PTR_ERR(tfm);
+ 	}
+ 	ivsize = crypto_skcipher_ivsize(tfm);
+@@ -106,15 +105,14 @@ static int valid_ecryptfs_desc(const char *ecryptfs_desc)
+ 	int i;
+ 
+ 	if (strlen(ecryptfs_desc) != KEY_ECRYPTFS_DESC_LEN) {
+-		pr_err("encrypted_key: key description must be %d hexadecimal "
+-		       "characters long\n", KEY_ECRYPTFS_DESC_LEN);
++		pr_err("key description must be %d hexadecimal characters long\n",
++		       KEY_ECRYPTFS_DESC_LEN);
+ 		return -EINVAL;
+ 	}
+ 
+ 	for (i = 0; i < KEY_ECRYPTFS_DESC_LEN; i++) {
+ 		if (!isxdigit(ecryptfs_desc[i])) {
+-			pr_err("encrypted_key: key description must contain "
+-			       "only hexadecimal characters\n");
++			pr_err("key description must contain only hexadecimal characters\n");
+ 			return -EINVAL;
+ 		}
+ 	}
+@@ -180,7 +178,7 @@ static int datablob_parse(char *datablob, const char **format,
+ 
+ 	keyword = strsep(&datablob, " \t");
+ 	if (!keyword) {
+-		pr_info("encrypted_key: insufficient parameters specified\n");
++		pr_info("insufficient parameters specified\n");
+ 		return ret;
+ 	}
+ 	key_cmd = match_token(keyword, key_tokens, args);
+@@ -188,7 +186,7 @@ static int datablob_parse(char *datablob, const char **format,
+ 	/* Get optional format: default | ecryptfs */
+ 	p = strsep(&datablob, " \t");
+ 	if (!p) {
+-		pr_err("encrypted_key: insufficient parameters specified\n");
++		pr_err("insufficient parameters specified\n");
+ 		return ret;
+ 	}
+ 
+@@ -205,20 +203,20 @@ static int datablob_parse(char *datablob, const char **format,
+ 	}
+ 
+ 	if (!*master_desc) {
+-		pr_info("encrypted_key: master key parameter is missing\n");
++		pr_info("master key parameter is missing\n");
+ 		goto out;
+ 	}
+ 
+ 	if (valid_master_desc(*master_desc, NULL) < 0) {
+-		pr_info("encrypted_key: master key parameter \'%s\' "
+-			"is invalid\n", *master_desc);
++		pr_info("master key parameter \'%s\' is invalid\n",
++			*master_desc);
+ 		goto out;
+ 	}
+ 
+ 	if (decrypted_datalen) {
+ 		*decrypted_datalen = strsep(&datablob, " \t");
+ 		if (!*decrypted_datalen) {
+-			pr_info("encrypted_key: keylen parameter is missing\n");
++			pr_info("keylen parameter is missing\n");
+ 			goto out;
+ 		}
+ 	}
+@@ -226,37 +224,35 @@ static int datablob_parse(char *datablob, const char **format,
+ 	switch (key_cmd) {
+ 	case Opt_new:
+ 		if (!decrypted_datalen) {
+-			pr_info("encrypted_key: keyword \'%s\' not allowed "
+-				"when called from .update method\n", keyword);
++			pr_info("keyword \'%s\' not allowed when called from .update method\n",
++				keyword);
+ 			break;
+ 		}
+ 		ret = 0;
+ 		break;
+ 	case Opt_load:
+ 		if (!decrypted_datalen) {
+-			pr_info("encrypted_key: keyword \'%s\' not allowed "
+-				"when called from .update method\n", keyword);
++			pr_info("keyword \'%s\' not allowed when called from .update method\n",
++				keyword);
+ 			break;
+ 		}
+ 		*hex_encoded_iv = strsep(&datablob, " \t");
+ 		if (!*hex_encoded_iv) {
+-			pr_info("encrypted_key: hex blob is missing\n");
++			pr_info("hex blob is missing\n");
+ 			break;
+ 		}
+ 		ret = 0;
+ 		break;
+ 	case Opt_update:
+ 		if (decrypted_datalen) {
+-			pr_info("encrypted_key: keyword \'%s\' not allowed "
+-				"when called from .instantiate method\n",
++			pr_info("keyword \'%s\' not allowed when called from .instantiate method\n",
+ 				keyword);
+ 			break;
+ 		}
+ 		ret = 0;
+ 		break;
+ 	case Opt_err:
+-		pr_info("encrypted_key: keyword \'%s\' not recognized\n",
+-			keyword);
++		pr_info("keyword \'%s\' not recognized\n", keyword);
+ 		break;
+ 	}
+ out:
+@@ -344,7 +340,7 @@ static int calc_hmac(u8 *digest, const u8 *key, unsigned int keylen,
+ 
+ 	tfm = crypto_alloc_shash(hmac_alg, 0, CRYPTO_ALG_ASYNC);
+ 	if (IS_ERR(tfm)) {
+-		pr_err("encrypted_key: can't alloc %s transform: %ld\n",
++		pr_err("can't alloc %s transform: %ld\n",
+ 		       hmac_alg, PTR_ERR(tfm));
+ 		return PTR_ERR(tfm);
+ 	}
+@@ -395,22 +391,21 @@ static struct skcipher_request *init_skcipher_req(const u8 *key,
+ 
+ 	tfm = crypto_alloc_skcipher(blkcipher_alg, 0, CRYPTO_ALG_ASYNC);
+ 	if (IS_ERR(tfm)) {
+-		pr_err("encrypted_key: failed to load %s transform (%ld)\n",
++		pr_err("failed to load %s transform (%ld)\n",
+ 		       blkcipher_alg, PTR_ERR(tfm));
+ 		return ERR_CAST(tfm);
+ 	}
+ 
+ 	ret = crypto_skcipher_setkey(tfm, key, key_len);
+ 	if (ret < 0) {
+-		pr_err("encrypted_key: failed to setkey (%d)\n", ret);
++		pr_err("failed to setkey (%d)\n", ret);
+ 		crypto_free_skcipher(tfm);
+ 		return ERR_PTR(ret);
+ 	}
+ 
+ 	req = skcipher_request_alloc(tfm, GFP_KERNEL);
+ 	if (!req) {
+-		pr_err("encrypted_key: failed to allocate request for %s\n",
+-		       blkcipher_alg);
++		pr_err("failed to allocate request for %s\n", blkcipher_alg);
+ 		crypto_free_skcipher(tfm);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+@@ -441,11 +436,10 @@ static struct key *request_master_key(struct encrypted_key_payload *epayload,
+ 		int ret = PTR_ERR(mkey);
+ 
+ 		if (ret == -ENOTSUPP)
+-			pr_info("encrypted_key: key %s not supported",
++			pr_info("key %s not supported\n",
+ 				epayload->master_desc);
+ 		else
+-			pr_info("encrypted_key: key %s not found",
+-				epayload->master_desc);
++			pr_info("key %s not found\n", epayload->master_desc);
+ 		goto out;
+ 	}
+ 
+@@ -490,7 +484,7 @@ static int derived_key_encrypt(struct encrypted_key_payload *epayload,
+ 	skcipher_request_free(req);
+ 	crypto_free_skcipher(tfm);
+ 	if (ret < 0)
+-		pr_err("encrypted_key: failed to encrypt (%d)\n", ret);
++		pr_err("failed to encrypt (%d)\n", ret);
+ 	else
+ 		dump_encrypted_data(epayload, encrypted_datalen);
+ out:
+@@ -627,8 +621,7 @@ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
+ 	payload_datalen = decrypted_datalen;
+ 	if (format && !strcmp(format, key_format_ecryptfs)) {
+ 		if (dlen != ECRYPTFS_MAX_KEY_BYTES) {
+-			pr_err("encrypted_key: keylen for the ecryptfs format "
+-			       "must be equal to %d bytes\n",
++			pr_err("keylen for the ecryptfs format must be equal to %d bytes\n",
+ 			       ECRYPTFS_MAX_KEY_BYTES);
+ 			return ERR_PTR(-EINVAL);
+ 		}
+@@ -696,7 +689,7 @@ static int encrypted_key_decrypt(struct encrypted_key_payload *epayload,
+ 
+ 	ret = datablob_hmac_verify(epayload, format, master_key, master_keylen);
+ 	if (ret < 0) {
+-		pr_err("encrypted_key: bad hmac (%d)\n", ret);
++		pr_err("bad hmac (%d)\n", ret);
+ 		goto out;
+ 	}
+ 
+@@ -706,7 +699,7 @@ static int encrypted_key_decrypt(struct encrypted_key_payload *epayload,
+ 
+ 	ret = derived_key_decrypt(epayload, derived_key, sizeof derived_key);
+ 	if (ret < 0)
+-		pr_err("encrypted_key: failed to decrypt key (%d)\n", ret);
++		pr_err("failed to decrypt key (%d)\n", ret);
+ out:
+ 	up_read(&mkey->sem);
+ 	key_put(mkey);
+@@ -986,7 +979,7 @@ static int __init init_encrypted(void)
+ 
+ 	hash_tfm = crypto_alloc_shash(hash_alg, 0, CRYPTO_ALG_ASYNC);
+ 	if (IS_ERR(hash_tfm)) {
+-		pr_err("encrypted_key: can't allocate %s transform: %ld\n",
++		pr_err("can't allocate %s transform: %ld\n",
+ 		       hash_alg, PTR_ERR(hash_tfm));
+ 		return PTR_ERR(hash_tfm);
+ 	}
 -- 
 2.15.0
