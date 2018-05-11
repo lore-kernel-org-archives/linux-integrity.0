@@ -1,169 +1,130 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-yb0-f201.google.com ([209.85.213.201]:43404 "EHLO
-        mail-yb0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750762AbeEKXMo (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 11 May 2018 19:12:44 -0400
-Received: by mail-yb0-f201.google.com with SMTP id w78-v6so3985226ybe.10
-        for <linux-integrity@vger.kernel.org>; Fri, 11 May 2018 16:12:43 -0700 (PDT)
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45864 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750972AbeEKWSR (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 11 May 2018 18:18:17 -0400
+Date: Fri, 11 May 2018 18:17:52 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Linux Security Module list
+        <linux-security-module@vger.kernel.org>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
+        SElinux list <selinux@tycho.nsa.gov>,
+        Integrity Measurement Architecture
+        <linux-integrity@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH ghak81 RFC V1 1/5] audit: normalize loginuid read access
+Message-ID: <20180511221752.6xtcf2r4rkumrp4u@madcap2.tricolour.ca>
+References: <cover.1525466167.git.rgb@redhat.com>
+ <611e9c85fca8bcdb24e6fb6da412773663c007b3.1525466167.git.rgb@redhat.com>
+ <CAHC9VhQKYt0PC0L65pwFRte1D98R=2tUDGxMVpc8bbJsMncGpw@mail.gmail.com>
+ <20180510212114.pefeyw5cuqlmjewp@madcap2.tricolour.ca>
 MIME-Version: 1.0
-Date: Fri, 11 May 2018 16:12:34 -0700
-Message-Id: <20180511231236.5501-1-mjg59@google.com>
-Subject: [PATCH V5 1/3] integrity: Add an integrity directory in securityfs
-From: Matthew Garrett <mjg59@google.com>
-To: linux-integrity@vger.kernel.org
-Cc: zohar@linux.vnet.ibm.com, Matthew Garrett <mjg59@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180510212114.pefeyw5cuqlmjewp@madcap2.tricolour.ca>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-We want to add additional evm control nodes, and it'd be preferable not
-to clutter up the securityfs root directory any further. Create a new
-integrity directory, move the ima directory into it, create an evm
-directory for the evm attribute and add compatibility symlinks.
+On 2018-05-10 17:21, Richard Guy Briggs wrote:
+> On 2018-05-09 11:13, Paul Moore wrote:
+> > On Fri, May 4, 2018 at 4:54 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > Recognizing that the loginuid is an internal audit value, use an access
+> > > function to retrieve the audit loginuid value for the task rather than
+> > > reaching directly into the task struct to get it.
+> > >
+> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > ---
+> > >  kernel/auditsc.c | 16 ++++++++--------
+> > >  1 file changed, 8 insertions(+), 8 deletions(-)
+> > >
+> > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > > index 479c031..f3817d0 100644
+> > > --- a/kernel/auditsc.c
+> > > +++ b/kernel/auditsc.c
+> > > @@ -374,7 +374,7 @@ static int audit_field_compare(struct task_struct *tsk,
+> > >         case AUDIT_COMPARE_EGID_TO_OBJ_GID:
+> > >                 return audit_compare_gid(cred->egid, name, f, ctx);
+> > >         case AUDIT_COMPARE_AUID_TO_OBJ_UID:
+> > > -               return audit_compare_uid(tsk->loginuid, name, f, ctx);
+> > > +               return audit_compare_uid(audit_get_loginuid(tsk), name, f, ctx);
+> > >         case AUDIT_COMPARE_SUID_TO_OBJ_UID:
+> > >                 return audit_compare_uid(cred->suid, name, f, ctx);
+> > >         case AUDIT_COMPARE_SGID_TO_OBJ_GID:
+> > > @@ -385,7 +385,7 @@ static int audit_field_compare(struct task_struct *tsk,
+> > >                 return audit_compare_gid(cred->fsgid, name, f, ctx);
+> > >         /* uid comparisons */
+> > >         case AUDIT_COMPARE_UID_TO_AUID:
+> > > -               return audit_uid_comparator(cred->uid, f->op, tsk->loginuid);
+> > > +               return audit_uid_comparator(cred->uid, f->op, audit_get_loginuid(tsk));
+> > >         case AUDIT_COMPARE_UID_TO_EUID:
+> > >                 return audit_uid_comparator(cred->uid, f->op, cred->euid);
+> > >         case AUDIT_COMPARE_UID_TO_SUID:
+> > > @@ -394,11 +394,11 @@ static int audit_field_compare(struct task_struct *tsk,
+> > >                 return audit_uid_comparator(cred->uid, f->op, cred->fsuid);
+> > >         /* auid comparisons */
+> > >         case AUDIT_COMPARE_AUID_TO_EUID:
+> > > -               return audit_uid_comparator(tsk->loginuid, f->op, cred->euid);
+> > > +               return audit_uid_comparator(audit_get_loginuid(tsk), f->op, cred->euid);
+> > >         case AUDIT_COMPARE_AUID_TO_SUID:
+> > > -               return audit_uid_comparator(tsk->loginuid, f->op, cred->suid);
+> > > +               return audit_uid_comparator(audit_get_loginuid(tsk), f->op, cred->suid);
+> > >         case AUDIT_COMPARE_AUID_TO_FSUID:
+> > > -               return audit_uid_comparator(tsk->loginuid, f->op, cred->fsuid);
+> > > +               return audit_uid_comparator(audit_get_loginuid(tsk), f->op, cred->fsuid);
+> > >         /* euid comparisons */
+> > >         case AUDIT_COMPARE_EUID_TO_SUID:
+> > >                 return audit_uid_comparator(cred->euid, f->op, cred->suid);
+> > > @@ -611,7 +611,7 @@ static int audit_filter_rules(struct task_struct *tsk,
+> > >                                 result = match_tree_refs(ctx, rule->tree);
+> > >                         break;
+> > >                 case AUDIT_LOGINUID:
+> > > -                       result = audit_uid_comparator(tsk->loginuid, f->op, f->uid);
+> > > +                       result = audit_uid_comparator(audit_get_loginuid(tsk), f->op, f->uid);
+> > >                         break;
+> > >                 case AUDIT_LOGINUID_SET:
+> > >                         result = audit_comparator(audit_loginuid_set(tsk), f->op, f->val);
+> > > @@ -2287,8 +2287,8 @@ int audit_signal_info(int sig, struct task_struct *t)
+> > >             (sig == SIGTERM || sig == SIGHUP ||
+> > >              sig == SIGUSR1 || sig == SIGUSR2)) {
+> > >                 audit_sig_pid = task_tgid_nr(tsk);
+> > > -               if (uid_valid(tsk->loginuid))
+> > > -                       audit_sig_uid = tsk->loginuid;
+> > > +               if (uid_valid(audit_get_loginuid(tsk)))
+> > > +                       audit_sig_uid = audit_get_loginuid(tsk);
+> > 
+> > I realize this comment is a little silly given the nature of loginuid,
+> > but if we are going to abstract away loginuid accesses (which I think
+> > is good), we should probably access it once, store it in a local
+> > variable, perform the validity check on the local variable, then
+> > commit the local variable to audit_sig_uid.  I realize a TOCTOU
+> > problem is unlikely here, but with this new layer of abstraction it
+> > seems that some additional safety might be a good thing.
+> 
+> Ok, I'll just assign it to where it is going and check it there, holding
+> the audit_ctl_lock the whole time, since it should have been done
+> anyways for all of audit_sig_{pid,uid,sid} anyways to get a consistent
+> view from the AUDIT_SIGNAL_INFO fetch.
 
-Signed-off-by: Matthew Garrett <mjg59@google.com>
----
- security/integrity/evm/evm_secfs.c | 27 ++++++++++++++++++++++++---
- security/integrity/iint.c          | 18 ++++++++++++++++++
- security/integrity/ima/ima_fs.c    |  9 ++++++++-
- security/integrity/integrity.h     |  2 ++
- 4 files changed, 52 insertions(+), 4 deletions(-)
+Hmmm, holding audit_ctl_lock won't work because it could sleep trying to
+get the lock and the signal info is set in a context where sleeping
+isn't permitted.  I'll just use a local var...
 
-diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
-index feba03bbedae..e44380f0cb45 100644
---- a/security/integrity/evm/evm_secfs.c
-+++ b/security/integrity/evm/evm_secfs.c
-@@ -19,7 +19,9 @@
- #include <linux/module.h>
- #include "evm.h"
- 
-+static struct dentry *evm_dir;
- static struct dentry *evm_init_tpm;
-+static struct dentry *evm_symlink;
- 
- /**
-  * evm_read_key - read() for <securityfs>/evm
-@@ -111,9 +113,28 @@ int __init evm_init_secfs(void)
- {
- 	int error = 0;
- 
--	evm_init_tpm = securityfs_create_file("evm", S_IRUSR | S_IRGRP,
--					      NULL, NULL, &evm_key_ops);
--	if (!evm_init_tpm || IS_ERR(evm_init_tpm))
-+	evm_dir = securityfs_create_dir("evm", integrity_dir);
-+	if (!evm_dir || IS_ERR(evm_dir))
-+		return -EFAULT;
-+
-+	evm_init_tpm = securityfs_create_file("evm", 0660,
-+					      evm_dir, NULL, &evm_key_ops);
-+	if (!evm_init_tpm || IS_ERR(evm_init_tpm)) {
-+		error = -EFAULT;
-+		goto out;
-+	}
-+
-+	evm_symlink = securityfs_create_symlink("evm", NULL,
-+						"integrity/evm/evm", NULL);
-+	if (!evm_symlink || IS_ERR(evm_symlink)) {
- 		error = -EFAULT;
-+		goto out;
-+	}
-+
-+	return 0;
-+out:
-+	securityfs_remove(evm_symlink);
-+	securityfs_remove(evm_init_tpm);
-+	securityfs_remove(evm_dir);
- 	return error;
- }
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index f266e4b3b7d4..149faa81f6f0 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -21,12 +21,15 @@
- #include <linux/rbtree.h>
- #include <linux/file.h>
- #include <linux/uaccess.h>
-+#include <linux/security.h>
- #include "integrity.h"
- 
- static struct rb_root integrity_iint_tree = RB_ROOT;
- static DEFINE_RWLOCK(integrity_iint_lock);
- static struct kmem_cache *iint_cache __read_mostly;
- 
-+struct dentry *integrity_dir;
-+
- /*
-  * __integrity_iint_find - return the iint associated with an inode
-  */
-@@ -211,3 +214,18 @@ void __init integrity_load_keys(void)
- 	ima_load_x509();
- 	evm_load_x509();
- }
-+
-+static int __init integrity_fs_init(void)
-+{
-+	integrity_dir = securityfs_create_dir("integrity", NULL);
-+	if (IS_ERR(integrity_dir)) {
-+		pr_err("Unable to create integrity sysfs dir: %ld\n",
-+		       PTR_ERR(integrity_dir));
-+		integrity_dir = NULL;
-+		return PTR_ERR(integrity_dir);
-+	}
-+
-+	return 0;
-+}
-+
-+late_initcall(integrity_fs_init)
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index fa540c0469da..5153d7faea13 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -356,6 +356,7 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
- }
- 
- static struct dentry *ima_dir;
-+static struct dentry *ima_symlink;
- static struct dentry *binary_runtime_measurements;
- static struct dentry *ascii_runtime_measurements;
- static struct dentry *runtime_measurements_count;
-@@ -448,10 +449,15 @@ static const struct file_operations ima_measure_policy_ops = {
- 
- int __init ima_fs_init(void)
- {
--	ima_dir = securityfs_create_dir("ima", NULL);
-+	ima_dir = securityfs_create_dir("ima", integrity_dir);
- 	if (IS_ERR(ima_dir))
- 		return -1;
- 
-+	ima_symlink = securityfs_create_symlink("ima", NULL, "integrity/ima",
-+						NULL);
-+	if (IS_ERR(ima_symlink))
-+		goto out;
-+
- 	binary_runtime_measurements =
- 	    securityfs_create_file("binary_runtime_measurements",
- 				   S_IRUSR | S_IRGRP, ima_dir, NULL,
-@@ -491,6 +497,7 @@ int __init ima_fs_init(void)
- 	securityfs_remove(runtime_measurements_count);
- 	securityfs_remove(ascii_runtime_measurements);
- 	securityfs_remove(binary_runtime_measurements);
-+	securityfs_remove(ima_symlink);
- 	securityfs_remove(ima_dir);
- 	securityfs_remove(ima_policy);
- 	return -1;
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 5e58e02ba8dc..0bb372eed62a 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -143,6 +143,8 @@ int integrity_kernel_read(struct file *file, loff_t offset,
- #define INTEGRITY_KEYRING_MODULE	2
- #define INTEGRITY_KEYRING_MAX		3
- 
-+extern struct dentry *integrity_dir;
-+
- #ifdef CONFIG_INTEGRITY_SIGNATURE
- 
- int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
--- 
-2.17.0.441.gb46fe60e1d-goog
+> > >                 else
+> > >                         audit_sig_uid = uid;
+> > >                 security_task_getsecid(tsk, &audit_sig_sid);
+> 
+> > paul moore
+> 
+> - RGB
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
