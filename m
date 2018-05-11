@@ -1,95 +1,127 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60518 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44766 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750927AbeEKFAl (ORCPT
+        by vger.kernel.org with ESMTP id S1751828AbeEKEmE (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 11 May 2018 01:00:41 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4B4wn2j163302
-        for <linux-integrity@vger.kernel.org>; Fri, 11 May 2018 01:00:41 -0400
-Received: from e06smtp11.uk.ibm.com (e06smtp11.uk.ibm.com [195.75.94.107])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2hw1ugdkbn-1
+        Fri, 11 May 2018 00:42:04 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4B4dNij043018
+        for <linux-integrity@vger.kernel.org>; Fri, 11 May 2018 00:42:04 -0400
+Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2hw3m5hneb-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 11 May 2018 01:00:40 -0400
+        for <linux-integrity@vger.kernel.org>; Fri, 11 May 2018 00:42:03 -0400
 Received: from localhost
-        by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Fri, 11 May 2018 06:00:37 +0100
-Subject: Re: [PATCH 3/6] firmware: differentiate between signed
- regulatory.db and other firmware
+        Fri, 11 May 2018 05:42:02 +0100
+Subject: Re: [PATCH V4 2/2] EVM: Allow runtime modification of the set of
+ verified xattrs
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Matthew Garrett <mjg59@srcf.ucam.org>,
-        Peter Jones <pjones@redhat.com>,
-        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
-        David Howells <dhowells@redhat.com>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        linux-integrity@vger.kernel.org,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andres Rodriguez <andresx7@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Date: Fri, 11 May 2018 01:00:26 -0400
-In-Reply-To: <20180510232639.GF27853@wotan.suse.de>
-References: <20180504000743.GR27853@wotan.suse.de>
-         <1525393466.3539.133.camel@linux.vnet.ibm.com>
-         <20180508173404.GG27853@wotan.suse.de>
-         <1525865428.3551.175.camel@linux.vnet.ibm.com>
-         <20180509191508.GR27853@wotan.suse.de>
-         <1525895838.3551.247.camel@linux.vnet.ibm.com>
-         <20180509212212.GX27853@wotan.suse.de>
-         <1525903617.3551.281.camel@linux.vnet.ibm.com>
-         <20180509234814.GY27853@wotan.suse.de>
-         <1525917658.3551.322.camel@linux.vnet.ibm.com>
-         <20180510232639.GF27853@wotan.suse.de>
+To: Matthew Garrett <mjg59@google.com>, linux-integrity@vger.kernel.org
+Date: Fri, 11 May 2018 00:41:58 -0400
+In-Reply-To: <20180509202811.29875-2-mjg59@google.com>
+References: <20180509202811.29875-1-mjg59@google.com>
+         <20180509202811.29875-2-mjg59@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1526014826.3414.46.camel@linux.vnet.ibm.com>
+Message-Id: <1526013718.3414.32.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, 2018-05-10 at 23:26 +0000, Luis R. Rodriguez wrote:
-> On Wed, May 09, 2018 at 10:00:58PM -0400, Mimi Zohar wrote:
-> > On Wed, 2018-05-09 at 23:48 +0000, Luis R. Rodriguez wrote:
-> > > On Wed, May 09, 2018 at 06:06:57PM -0400, Mimi Zohar wrote:
-> > 
-> > > > > > Yes, writing regdb as a micro/mini LSM sounds reasonable.  The LSM
-> > > > > > would differentiate between other firmware and the regulatory.db based
-> > > > > > on the firmware's pathname.
-> > > > > 
-> > > > > If that is the only way then it would be silly to do the mini LSM as all
-> > > > > calls would have to have the check. A special LSM hook for just the
-> > > > > regulatory db also doesn't make much sense.
-> > > > 
-> > > > All calls to request_firmware() are already going through this LSM
-> > > > hook.  I should have said, it would be based on both READING_FIRMWARE
-> > > > and the firmware's pathname.
-> > > 
-> > > Yes, but it would still be a strcmp() computation added for all
-> > > READING_FIRMWARE. In that sense, the current arrangement is only open coding the
-> > > signature verification for the regulatory.db file.  One way to avoid this would
-> > > be to add an LSM specific to the regulatory db
-> > 
-> > Casey already commented on this suggestion.
-> 
-> Sorry but I must have missed this, can you send me the email or URL where he did that?
-> I never got a copy of that email I think.
+On Wed, 2018-05-09 at 13:28 -0700, Matthew Garrett wrote:
 
-My mistake.  I've posted similar patches for kexec_load and for the
-firmware sysfs fallback, both call security_kernel_read_file().
-Casey's comment was in regards to kexec_load[1], not for the sysfs
-fallback mode.  Here's the link to the most recent version of the
-kexec_load patches.[2]
+> +/**
+> + * evm_write_xattrs - write() for <securityfs>/evm_xattrs
+> + * @file: file pointer, not actually used
+> + * @buf: where to get the data from
+> + * @count: bytes sent
+> + * @ppos: where to start
+> + *
+> + * Returns number of bytes written or error code, as appropriate
+> + */
+> +static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
+> +				size_t count, loff_t *ppos)
+> +{
+> +	int len, err;
+> +	struct xattr_list *xattr, *tmp;
+> +
+> +	if (!capable(CAP_SYS_ADMIN) || evm_xattrs_locked)
+> +		return -EPERM;
+> +
+> +	if (*ppos != 0)
+> +		return -EINVAL;
+> +
+> +	if (count > XATTR_NAME_MAX)
+> +		return -E2BIG;
+> +
+> +	xattr = kmalloc(sizeof(struct xattr_list), GFP_KERNEL);
+> +	if (!xattr)
+> +		return -ENOMEM;
+> +
+> +	xattr->name = memdup_user_nul(buf, count);
 
-[1] http://kernsec.org/pipermail/linux-security-module-archive/2018-May/006690.html
-[2] http://kernsec.org/pipermail/linux-security-module-archive/2018-May/006854.html
+Up to now, the set of protected EVM xattrs was in the security domain.
+The current code permits any string in any domain.  If that is the
+intention, there needs to be an explanation of the security
+implications of this change at least in the patch description. 
+
+> +	if (IS_ERR(xattr->name)) {
+> +		err = PTR_ERR(xattr->name);
+> +		kfree(xattr);
+> +		return err;
+> +	}
+> +
+> +	/* Remove any trailing newline */
+> +	len = strlen(xattr->name);
+> +	if (xattr->name[len-1] == '\n')
+> +		xattr->name[len-1] = '\0';
+> +
+> +	if (strcmp(xattr->name, ".") == 0) {
+> +		evm_xattrs_locked = 1;
+> +		err = count;
+
+Please update the file mode bits of <securityfs>/evm_xattrs.
+
+> +		goto out;
+> +	}
+> +
+> +	/* Guard against races in evm_read_xattrs */
+> +	mutex_lock(&xattr_list_mutex);
+> +	list_for_each_entry(tmp, &evm_config_xattrnames, list) {
+> +		if (strcmp(xattr->name, tmp->name) == 0) {
+> +			err = -EEXIST;
+> +			mutex_unlock(&xattr_list_mutex);
+> +			goto out;
+> +		}
+> +	}
+> +	list_add_tail_rcu(&xattr->list, &evm_config_xattrnames);
+> +	mutex_unlock(&xattr_list_mutex);
+> +
+> +	return count;
+> +out:
+> +	kfree(xattr->name);
+> +	kfree(xattr);
+> +	return err;
+> +}
+> +
+> +static const struct file_operations evm_xattr_ops = {
+> +	.read		= evm_read_xattrs,
+> +	.write		= evm_write_xattrs,
+> +};
+> +
+> +static int evm_init_xattrs(void)
+> +{
+> +	evm_xattrs = securityfs_create_file("evm_xattrs", 0440, NULL, NULL,
+> +					    &evm_xattr_ops);
+
+The mode bits should reflect the status of the current status of
+evm_xattrs.  Initially it would be writeable, but later it might
+change to read-only.
+
+Should "evm_xattrs" be defined directly in the securityfs directory or
+in a subdirectory similar to ima?  It will be difficult later on to
+move "evm_xattrs" to a subdirectory once applications start
+reading/writing to it.  What would the subdirectory be called?
 
 Mimi
