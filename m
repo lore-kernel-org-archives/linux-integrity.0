@@ -1,51 +1,79 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36228 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45690 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751943AbeEKCYV (ORCPT
+        by vger.kernel.org with ESMTP id S1751647AbeEKBvy (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 10 May 2018 22:24:21 -0400
+        Thu, 10 May 2018 21:51:54 -0400
 Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4B2NoR0143224
-        for <linux-integrity@vger.kernel.org>; Thu, 10 May 2018 22:24:20 -0400
-Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2hw1ug92an-1
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4B1nXgx049442
+        for <linux-integrity@vger.kernel.org>; Thu, 10 May 2018 21:51:53 -0400
+Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2hw1ug82ay-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 10 May 2018 22:24:20 -0400
+        for <linux-integrity@vger.kernel.org>; Thu, 10 May 2018 21:51:53 -0400
 Received: from localhost
-        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Fri, 11 May 2018 03:24:19 +0100
-Subject: Re: [PATCH] ima: Remove unused variable ima_initialized
+        Fri, 11 May 2018 02:51:51 +0100
+Subject: Re: [PATCH v2 2/4] tpm: Move eventlog files to a subdirectory
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: James Morris <jmorris@namei.org>, Petr Vorel <pvorel@suse.cz>
-Cc: linux-integrity@vger.kernel.org
-Date: Thu, 10 May 2018 22:24:15 -0400
-In-Reply-To: <alpine.LRH.2.21.1805110406020.1003@namei.org>
-References: <20180510151548.7155-1-pvorel@suse.cz>
-         <alpine.LRH.2.21.1805110406020.1003@namei.org>
+To: Petr Vorel <pvorel@suse.cz>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Thiebaud Weksteen <tweek@google.com>, nayna@linux.vnet.ibm.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ltp <ltp@lists.linux.it>
+Date: Thu, 10 May 2018 21:51:47 -0400
+In-Reply-To: <20180509145121.z3jmvznojhi5mjiz@dell5510>
+References: <20180412101350.210547-1-tweek@google.com>
+         <20180412101350.210547-3-tweek@google.com>
+         <20180420053926.GB15364@linux.intel.com>
+         <1525725397.3551.10.camel@linux.vnet.ibm.com>
+         <20180509145121.z3jmvznojhi5mjiz@dell5510>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1526005455.3545.15.camel@linux.vnet.ibm.com>
+Message-Id: <1526003507.3545.4.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 2018-05-11 at 04:06 +1000, James Morris wrote:
-> On Thu, 10 May 2018, Petr Vorel wrote:
-
-Commit a756024 ("ima: added ima_policy_flag variable") replaced
-ima_initialized with ima_policy_flag, but didn't remove
-ima_initialized.  This patch removes it.
-
+On Wed, 2018-05-09 at 16:51 +0200, Petr Vorel wrote:
+> Hi Mimi,
 > 
-> > Signed-off-by: Petr Vorel <pvorel@suse.cz>
-> > ---
-> >  security/integrity/ima/ima.h      | 1 -
-> >  security/integrity/ima/ima_main.c | 7 ++-----
-> >  2 files changed, 2 insertions(+), 6 deletions(-)
+> > [Cc'ing Petr Vorel and the ltp mailing list]
 > 
+> > Hi Jarrko,
 > 
-> Reviewed-by: James Morris <james.morris@microsoft.com>
+> > On Fri, 2018-04-20 at 08:39 +0300, Jarkko Sakkinen wrote:
+> > > On Thu, Apr 12, 2018 at 12:13:48PM +0200, Thiebaud Weksteen wrote:
+> > > > Signed-off-by: Thiebaud Weksteen <tweek@google.com>
+> > > > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> 
+> > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> 
+> > I just noticed this is queued in your next branch.
+> 
+> > Petr Vorel has been updating the IMA LTP tests.  One of those IMA LTP
+> > tests includes walking the TPM binary_runtime_measurements in order to
+> > calculate the IMA boot-aggregate.  The IMA boot-aggregate is the first
+> > measurement in the IMA measurement list.
+> 
+> Did you meant that this commit ([2]) in linux-tpmdd/next changed location of
+> binary_runtime_measurements in sysfs?
+> 
+> IMHO these commits ([1], [2], [3]) just put source code into eventlog/ subdirectory:
 
-Thanks.
+I mistakenly thought the eventlog itself was being moved, not the
+source code.
+
+thanks,
 
 Mimi
+
+> 
+> Kind regards,
+> Petr
+> 
+> [1] 75d647f5de69 tpm: Move eventlog declarations to its own header
+> [2] 9b01b5356629 tpm: Move shared eventlog functions to common.c
+> [3] 0bfb23746052 tpm: Move eventlog files to a subdirectory
+> 
