@@ -1,103 +1,136 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55768 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54756 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752014AbeEKBhE (ORCPT
+        by vger.kernel.org with ESMTP id S1752111AbeEKBhG (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 10 May 2018 21:37:04 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4B1ZPkD113746
-        for <linux-integrity@vger.kernel.org>; Thu, 10 May 2018 21:37:03 -0400
+        Thu, 10 May 2018 21:37:06 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4B1Yne4124539
+        for <linux-integrity@vger.kernel.org>; Thu, 10 May 2018 21:37:05 -0400
 Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2hvx2wf7q3-1
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2hw036b1wa-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 10 May 2018 21:37:03 -0400
+        for <linux-integrity@vger.kernel.org>; Thu, 10 May 2018 21:37:05 -0400
 Received: from localhost
         by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Fri, 11 May 2018 02:37:02 +0100
+        Fri, 11 May 2018 02:37:03 +0100
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: Eric Biederman <ebiederm@xmission.com>,
         David Howells <dhowells@redhat.com>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
         linux-security-module@vger.kernel.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] ima: based on the "secure_boot" policy limit syscalls
-Date: Thu, 10 May 2018 21:36:46 -0400
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: [PATCH 2/3] kexec: call LSM hook for kexec_load syscall
+Date: Thu, 10 May 2018 21:36:47 -0400
 In-Reply-To: <1526002608-27474-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1526002608-27474-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-Id: <1526002608-27474-2-git-send-email-zohar@linux.vnet.ibm.com>
+Message-Id: <1526002608-27474-3-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-The builtin "secure_boot" policy adds IMA appraisal rules requiring kernel
-modules (finit_module syscall), direct firmware load, kexec kernel image
-(kexec_file_load syscall), and the IMA policy to be signed, but did not
-prevent the other syscalls/methods from working.  Loading an equivalent
-custom policy containing these same rules would have prevented the other
-syscalls/methods from working.
+In order for LSMs and IMA-appraisal to differentiate between the
+kexec_load and kexec_file_load_syscalls, an LSM call needs to be added
+to the original kexec_load syscall.  From a technical perspective there
+is no need for defining a new LSM hook, as the existing
+security_kernel_kexec_load() works just fine.  However, the name is
+confusing.  For this reason, instead of defining a new LSM hook, this
+patch defines security_kexec_load() as a wrapper for the existing LSM
+security_kernel_file_read() hook.
 
-This patch refactors the code to load custom policies, defining a new
-function named ima_appraise_flag().  The new function is called either
-when loading the builtin "secure_boot" or custom policies.
-
-Fixes: 503ceaef8e2e ("ima: define a set of appraisal rules requiring file signatures")
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
----
- security/integrity/ima/ima_policy.c | 25 ++++++++++++++++++-------
- 1 file changed, 18 insertions(+), 7 deletions(-)
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Matthew Garrett <mjg59@google.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 03cbba423e59..df3e45878a87 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -440,6 +440,17 @@ void ima_update_policy_flag(void)
- 		ima_policy_flag &= ~IMA_APPRAISE;
+Changelog v1:
+- Define and call security_kexec_load(), a wrapper for
+security_kernel_read_file().
+---
+ include/linux/security.h |  6 ++++++
+ kernel/kexec.c           | 11 +++++++++++
+ security/security.c      |  6 ++++++
+ 3 files changed, 23 insertions(+)
+
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 63030c85ee19..26f6d85903ed 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -323,6 +323,7 @@ int security_kernel_module_request(char *kmod_name);
+ int security_kernel_read_file(struct file *file, enum kernel_read_file_id id);
+ int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
+ 				   enum kernel_read_file_id id);
++int security_kexec_load(void);
+ int security_task_fix_setuid(struct cred *new, const struct cred *old,
+ 			     int flags);
+ int security_task_setpgid(struct task_struct *p, pid_t pgid);
+@@ -922,6 +923,11 @@ static inline int security_kernel_post_read_file(struct file *file,
+ 	return 0;
  }
  
-+static int ima_appraise_flag(enum ima_hooks func)
++static inline int security_kexec_load(void)
 +{
-+	if (func == MODULE_CHECK)
-+		return IMA_APPRAISE_MODULES;
-+	else if (func == FIRMWARE_CHECK)
-+		return IMA_APPRAISE_FIRMWARE;
-+	else if (func == POLICY_CHECK)
-+		return IMA_APPRAISE_POLICY;
 +	return 0;
 +}
 +
- /**
-  * ima_init_policy - initialize the default measure rules.
-  *
-@@ -478,9 +489,12 @@ void __init ima_init_policy(void)
- 	 * Insert the appraise rules requiring file signatures, prior to
- 	 * any other appraise rules.
- 	 */
--	for (i = 0; i < secure_boot_entries; i++)
-+	for (i = 0; i < secure_boot_entries; i++) {
- 		list_add_tail(&secure_boot_rules[i].list,
- 			      &ima_default_rules);
-+		temp_ima_appraise |=
-+		    ima_appraise_flag(secure_boot_rules[i].func);
-+	}
- 
- 	for (i = 0; i < appraise_entries; i++) {
- 		list_add_tail(&default_appraise_rules[i].list,
-@@ -934,12 +948,9 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 	}
- 	if (!result && (entry->action == UNKNOWN))
- 		result = -EINVAL;
--	else if (entry->func == MODULE_CHECK)
--		temp_ima_appraise |= IMA_APPRAISE_MODULES;
--	else if (entry->func == FIRMWARE_CHECK)
--		temp_ima_appraise |= IMA_APPRAISE_FIRMWARE;
--	else if (entry->func == POLICY_CHECK)
--		temp_ima_appraise |= IMA_APPRAISE_POLICY;
-+	else if (entry->action == APPRAISE)
-+		temp_ima_appraise |= ima_appraise_flag(entry->func);
+ static inline int security_task_fix_setuid(struct cred *new,
+ 					   const struct cred *old,
+ 					   int flags)
+diff --git a/kernel/kexec.c b/kernel/kexec.c
+index aed8fb2564b3..6b44b0e9a60b 100644
+--- a/kernel/kexec.c
++++ b/kernel/kexec.c
+@@ -11,6 +11,7 @@
+ #include <linux/capability.h>
+ #include <linux/mm.h>
+ #include <linux/file.h>
++#include <linux/security.h>
+ #include <linux/kexec.h>
+ #include <linux/mutex.h>
+ #include <linux/list.h>
+@@ -195,11 +196,21 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
+ static inline int kexec_load_check(unsigned long nr_segments,
+ 				   unsigned long flags)
+ {
++	int result;
 +
- 	audit_log_format(ab, "res=%d", !result);
- 	audit_log_end(ab);
- 	return result;
+ 	/* We only trust the superuser with rebooting the system. */
+ 	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
+ 		return -EPERM;
+ 
+ 	/*
++	 * Allow LSMs and IMA to differentiate between kexec_load and
++	 * kexec_file_load syscalls.
++	 */
++	result = security_kexec_load();
++	if (result < 0)
++		return result;
++
++	/*
+ 	 * Verify we have a legal set of flags
+ 	 * This leaves us room for future extensions.
+ 	 */
+diff --git a/security/security.c b/security/security.c
+index 68f46d849abe..0f3390000156 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1044,6 +1044,12 @@ int security_kernel_read_file(struct file *file, enum kernel_read_file_id id)
+ }
+ EXPORT_SYMBOL_GPL(security_kernel_read_file);
+ 
++int security_kexec_load()
++{
++	return security_kernel_read_file(NULL, READING_KEXEC_IMAGE);
++}
++EXPORT_SYMBOL_GPL(security_kexec_load);
++
+ int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
+ 				   enum kernel_read_file_id id)
+ {
 -- 
 2.7.5
