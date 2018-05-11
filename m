@@ -1,52 +1,51 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43874 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751857AbeEKEEO (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36228 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751943AbeEKCYV (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 11 May 2018 00:04:14 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4B3wm7x101884
-        for <linux-integrity@vger.kernel.org>; Fri, 11 May 2018 00:04:14 -0400
-Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2hw1qq486b-1
+        Thu, 10 May 2018 22:24:21 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4B2NoR0143224
+        for <linux-integrity@vger.kernel.org>; Thu, 10 May 2018 22:24:20 -0400
+Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2hw1ug92an-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 11 May 2018 00:04:13 -0400
+        for <linux-integrity@vger.kernel.org>; Thu, 10 May 2018 22:24:20 -0400
 Received: from localhost
-        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Fri, 11 May 2018 05:04:11 +0100
-Subject: Re: [PATCH V4 1/2] EVM: turn evm_config_xattrnames into a list
+        Fri, 11 May 2018 03:24:19 +0100
+Subject: Re: [PATCH] ima: Remove unused variable ima_initialized
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Matthew Garrett <mjg59@google.com>, linux-integrity@vger.kernel.org
-In-Reply-To: <20180509202811.29875-1-mjg59@google.com>
-References: <20180509202811.29875-1-mjg59@google.com>
+To: James Morris <jmorris@namei.org>, Petr Vorel <pvorel@suse.cz>
+Cc: linux-integrity@vger.kernel.org
+Date: Thu, 10 May 2018 22:24:15 -0400
+In-Reply-To: <alpine.LRH.2.21.1805110406020.1003@namei.org>
+References: <20180510151548.7155-1-pvorel@suse.cz>
+         <alpine.LRH.2.21.1805110406020.1003@namei.org>
 Content-Type: text/plain; charset="UTF-8"
-Date: Fri, 11 May 2018 00:03:24 -0400
 Mime-Version: 1.0
-Message-Id: <1526011404.3414.4.camel@linux.vnet.ibm.com>
+Message-Id: <1526005455.3545.15.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, 2018-05-09 at 13:28 -0700, Matthew Garrett wrote:
+On Fri, 2018-05-11 at 04:06 +1000, James Morris wrote:
+> On Thu, 10 May 2018, Petr Vorel wrote:
 
-> @@ -565,10 +588,11 @@ static int __init init_evm(void)
->   */
->  static int __init evm_display_config(void)
->  {
-> -	char **xattrname;
-> +	struct xattr_list *xattr;
-> +
-> +	list_for_each_entry(xattr, &evm_config_xattrnames, list)
-> +		pr_info("%s\n", xattr->name);
-> 
-> -	for (xattrname = evm_config_xattrnames; *xattrname != NULL; xattrname++)
-> -		pr_info("%s\n", *xattrname);
->  	return 0;
->  }
-> 
+Commit a756024 ("ima: added ima_policy_flag variable") replaced
+ima_initialized with ima_policy_flag, but didn't remove
+ima_initialized.  This patch removes it.
 
-The list is only created in init_evm(), which is initialized at
-late_initcall(), yet here we're displaying the list at
-pure_initcall().  None of the xattrs are being displayed.
+> 
+> > Signed-off-by: Petr Vorel <pvorel@suse.cz>
+> > ---
+> >  security/integrity/ima/ima.h      | 1 -
+> >  security/integrity/ima/ima_main.c | 7 ++-----
+> >  2 files changed, 2 insertions(+), 6 deletions(-)
+> 
+> 
+> Reviewed-by: James Morris <james.morris@microsoft.com>
+
+Thanks.
 
 Mimi
