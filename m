@@ -1,17 +1,17 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io0-f201.google.com ([209.85.223.201]:54313 "EHLO
-        mail-io0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750762AbeEKXMs (ORCPT
+Received: from mail-ua0-f201.google.com ([209.85.217.201]:52250 "EHLO
+        mail-ua0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750762AbeEKXMq (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 11 May 2018 19:12:48 -0400
-Received: by mail-io0-f201.google.com with SMTP id o194-v6so6924086iod.21
-        for <linux-integrity@vger.kernel.org>; Fri, 11 May 2018 16:12:48 -0700 (PDT)
+        Fri, 11 May 2018 19:12:46 -0400
+Received: by mail-ua0-f201.google.com with SMTP id v21-v6so5664399uav.19
+        for <linux-integrity@vger.kernel.org>; Fri, 11 May 2018 16:12:46 -0700 (PDT)
 MIME-Version: 1.0
-Date: Fri, 11 May 2018 16:12:36 -0700
+Date: Fri, 11 May 2018 16:12:35 -0700
 In-Reply-To: <20180511231236.5501-1-mjg59@google.com>
-Message-Id: <20180511231236.5501-3-mjg59@google.com>
+Message-Id: <20180511231236.5501-2-mjg59@google.com>
 References: <20180511231236.5501-1-mjg59@google.com>
-Subject: [PATCH V5 3/3] EVM: Allow runtime modification of the set of verified xattrs
+Subject: [PATCH V5 2/3] EVM: turn evm_config_xattrnames into a list
 From: Matthew Garrett <mjg59@google.com>
 To: linux-integrity@vger.kernel.org
 Cc: zohar@linux.vnet.ibm.com, Matthew Garrett <mjg59@google.com>
@@ -19,344 +19,244 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Sites may wish to provide additional metadata alongside files in order
-to make more fine-grained security decisions[1]. The security of this is
-enhanced if this metadata is protected, something that EVM makes
-possible. However, the kernel cannot know about the set of extended
-attributes that local admins may wish to protect, and hardcoding this
-policy in the kernel makes it difficult to change over time and less
-convenient for distributions to enable.
-
-This patch adds a new /sys/kernel/security/evm_xattrs node, which can be
-read to obtain the current set of EVM-protected extended attributes or
-written to in order to add new entries. Extending this list will not
-change the validity of any existing signatures provided that the file
-in question does not have any of the additional extended attributes -
-missing xattrs are skipped when calculating the EVM hash.
-
-[1] For instance, a package manager could install information about the
-package uploader in an additional extended attribute. Local LSM policy
-could then be associated with that extended attribute in order to
-restrict the privileges available to packages from less trusted
-uploaders.
+Use a list of xattrs rather than an array - this makes it easier to
+extend the list at runtime.
 
 Signed-off-by: Matthew Garrett <mjg59@google.com>
 ---
+ security/integrity/evm/evm.h        |  7 ++-
+ security/integrity/evm/evm_crypto.c | 10 ++--
+ security/integrity/evm/evm_main.c   | 79 +++++++++++++++++------------
+ 3 files changed, 57 insertions(+), 39 deletions(-)
 
-I think this covers the review comments.
-
- Documentation/ABI/testing/evm       |  13 +++
- include/uapi/linux/audit.h          |   1 +
- security/integrity/evm/Kconfig      |  11 ++
- security/integrity/evm/evm_crypto.c |   2 +-
- security/integrity/evm/evm_main.c   |   6 +-
- security/integrity/evm/evm_secfs.c  | 173 ++++++++++++++++++++++++++++
- 6 files changed, 202 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/ABI/testing/evm b/Documentation/ABI/testing/evm
-index d12cb2eae9ee..fa31df7fd30b 100644
---- a/Documentation/ABI/testing/evm
-+++ b/Documentation/ABI/testing/evm
-@@ -57,3 +57,16 @@ Description:
- 		dracut (via 97masterkey and 98integrity) and systemd (via
- 		core/ima-setup) have support for loading keys at boot
- 		time.
-+
-+What:		security/evm_xattrs
-+Date:		April 2018
-+Contact:	Matthew Garrett <mjg59@google.com>
-+Description:
-+		Shows the set of extended attributes used to calculate or
-+		validate the EVM signature, and allows additional attributes
-+		to be added at runtime. Any signatures generated after
-+		additional attributes are added (and on files posessing those
-+		additional attributes) will only be valid if the same
-+		additional attributes are configured on system boot. Writing
-+		a single period (.) will lock the xattr list from any further
-+		modification.
-diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index 4e61a9e05132..65d9293f1fb8 100644
---- a/include/uapi/linux/audit.h
-+++ b/include/uapi/linux/audit.h
-@@ -147,6 +147,7 @@
- #define AUDIT_INTEGRITY_HASH	    1803 /* Integrity HASH type */
- #define AUDIT_INTEGRITY_PCR	    1804 /* PCR invalidation msgs */
- #define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
-+#define AUDIT_INTEGRITY_EVM_XATTR   1806 /* New EVM-covered xattr */
+diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
+index 45c4a89c02ff..1257c3c24723 100644
+--- a/security/integrity/evm/evm.h
++++ b/security/integrity/evm/evm.h
+@@ -30,6 +30,11 @@
+ #define EVM_INIT_MASK (EVM_INIT_HMAC | EVM_INIT_X509 | EVM_SETUP_COMPLETE | \
+ 		       EVM_ALLOW_METADATA_WRITES)
  
- #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A REQUEST. */
- 
-diff --git a/security/integrity/evm/Kconfig b/security/integrity/evm/Kconfig
-index e825e0ae78e7..54adb3f9ad1d 100644
---- a/security/integrity/evm/Kconfig
-+++ b/security/integrity/evm/Kconfig
-@@ -42,6 +42,17 @@ config EVM_EXTRA_SMACK_XATTRS
- 	  additional info to the calculation, requires existing EVM
- 	  labeled file systems to be relabeled.
- 
-+config EVM_ADD_XATTRS
-+	bool "Add additional EVM extended attributes at runtime"
-+	depends on EVM
-+	default n
-+	help
-+	  Allow userland to provide additional xattrs for HMAC calculation.
++struct xattr_list {
++	struct list_head list;
++	char *name;
++};
 +
-+	  When this option is enabled, root can add additional xattrs to the
-+	  list used by EVM by writing them into
-+	  /sys/kernel/security/evm_xattrs.
-+
- config EVM_LOAD_X509
- 	bool "Load an X509 certificate onto the '.evm' trusted keyring"
- 	depends on EVM && INTEGRITY_TRUSTED_KEYRING
+ extern int evm_initialized;
+ 
+ #define EVM_ATTR_FSUUID		0x0001
+@@ -40,7 +45,7 @@ extern struct crypto_shash *hmac_tfm;
+ extern struct crypto_shash *hash_tfm;
+ 
+ /* List of EVM protected security xattrs */
+-extern char *evm_config_xattrnames[];
++extern struct list_head evm_config_xattrnames;
+ 
+ int evm_init_key(void);
+ int evm_update_evmxattr(struct dentry *dentry,
 diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index caeea20670cc..494da5fcc092 100644
+index a46fba322340..caeea20670cc 100644
 --- a/security/integrity/evm/evm_crypto.c
 +++ b/security/integrity/evm/evm_crypto.c
-@@ -208,7 +208,7 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+@@ -192,8 +192,8 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ 				char type, char *digest)
+ {
+ 	struct inode *inode = d_backing_inode(dentry);
++	struct xattr_list *xattr;
+ 	struct shash_desc *desc;
+-	char **xattrname;
+ 	size_t xattr_size = 0;
+ 	char *xattr_value = NULL;
+ 	int error;
+@@ -208,14 +208,14 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
  		return PTR_ERR(desc);
  
  	error = -ENODATA;
--	list_for_each_entry(xattr, &evm_config_xattrnames, list) {
-+	list_for_each_entry_rcu(xattr, &evm_config_xattrnames, list) {
+-	for (xattrname = evm_config_xattrnames; *xattrname != NULL; xattrname++) {
++	list_for_each_entry(xattr, &evm_config_xattrnames, list) {
  		bool is_ima = false;
  
- 		if (strcmp(xattr->name, XATTR_NAME_IMA) == 0)
+-		if (strcmp(*xattrname, XATTR_NAME_IMA) == 0)
++		if (strcmp(xattr->name, XATTR_NAME_IMA) == 0)
+ 			is_ima = true;
+ 
+ 		if ((req_xattr_name && req_xattr_value)
+-		    && !strcmp(*xattrname, req_xattr_name)) {
++		    && !strcmp(xattr->name, req_xattr_name)) {
+ 			error = 0;
+ 			crypto_shash_update(desc, (const u8 *)req_xattr_value,
+ 					     req_xattr_value_len);
+@@ -223,7 +223,7 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ 				ima_present = true;
+ 			continue;
+ 		}
+-		size = vfs_getxattr_alloc(dentry, *xattrname,
++		size = vfs_getxattr_alloc(dentry, xattr->name,
+ 					  &xattr_value, xattr_size, GFP_NOFS);
+ 		if (size == -ENOMEM) {
+ 			error = -ENOMEM;
 diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 09582d4fc4a8..f9eff5041e4c 100644
+index 9ea9c19a545c..09582d4fc4a8 100644
 --- a/security/integrity/evm/evm_main.c
 +++ b/security/integrity/evm/evm_main.c
-@@ -35,7 +35,7 @@ static const char * const integrity_status_msg[] = {
+@@ -35,28 +35,29 @@ static const char * const integrity_status_msg[] = {
  };
  int evm_hmac_attrs;
  
--static struct xattr_list evm_config_default_xattrnames[] __ro_after_init = {
-+static struct xattr_list evm_config_default_xattrnames[] = {
+-char *evm_config_xattrnames[] = {
++static struct xattr_list evm_config_default_xattrnames[] __ro_after_init = {
  #ifdef CONFIG_SECURITY_SELINUX
- 	{.name = XATTR_NAME_SELINUX},
+-	XATTR_NAME_SELINUX,
++	{.name = XATTR_NAME_SELINUX},
  #endif
-@@ -101,7 +101,7 @@ static int evm_find_protected_xattrs(struct dentry *dentry)
+ #ifdef CONFIG_SECURITY_SMACK
+-	XATTR_NAME_SMACK,
++	{.name = XATTR_NAME_SMACK},
+ #ifdef CONFIG_EVM_EXTRA_SMACK_XATTRS
+-	XATTR_NAME_SMACKEXEC,
+-	XATTR_NAME_SMACKTRANSMUTE,
+-	XATTR_NAME_SMACKMMAP,
++	{.name = XATTR_NAME_SMACKEXEC},
++	{.name = XATTR_NAME_SMACKTRANSMUTE},
++	{.name = XATTR_NAME_SMACKMMAP},
+ #endif
+ #endif
+ #ifdef CONFIG_SECURITY_APPARMOR
+-	XATTR_NAME_APPARMOR,
++	{.name = XATTR_NAME_APPARMOR},
+ #endif
+ #ifdef CONFIG_IMA_APPRAISE
+-	XATTR_NAME_IMA,
++	{.name = XATTR_NAME_IMA},
+ #endif
+-	XATTR_NAME_CAPS,
+-	NULL
++	{.name = XATTR_NAME_CAPS},
+ };
+ 
++LIST_HEAD(evm_config_xattrnames);
++
+ static int evm_fixmode;
+ static int __init evm_set_fixmode(char *str)
+ {
+@@ -68,6 +69,17 @@ __setup("evm=", evm_set_fixmode);
+ 
+ static void __init evm_init_config(void)
+ {
++	int i, xattrs;
++
++	xattrs = ARRAY_SIZE(evm_config_default_xattrnames);
++
++	pr_info("Initialising EVM extended attributes:\n");
++	for (i = 0; i < xattrs; i++) {
++		pr_info("%s\n", evm_config_default_xattrnames[i].name);
++		list_add_tail(&evm_config_default_xattrnames[i].list,
++			      &evm_config_xattrnames);
++	}
++
+ #ifdef CONFIG_EVM_ATTR_FSUUID
+ 	evm_hmac_attrs |= EVM_ATTR_FSUUID;
+ #endif
+@@ -82,15 +94,15 @@ static bool evm_key_loaded(void)
+ static int evm_find_protected_xattrs(struct dentry *dentry)
+ {
+ 	struct inode *inode = d_backing_inode(dentry);
+-	char **xattr;
++	struct xattr_list *xattr;
+ 	int error;
+ 	int count = 0;
+ 
  	if (!(inode->i_opflags & IOP_XATTR))
  		return -EOPNOTSUPP;
  
--	list_for_each_entry(xattr, &evm_config_xattrnames, list) {
-+	list_for_each_entry_rcu(xattr, &evm_config_xattrnames, list) {
- 		error = __vfs_getxattr(dentry, inode, xattr->name, NULL, 0);
+-	for (xattr = evm_config_xattrnames; *xattr != NULL; xattr++) {
+-		error = __vfs_getxattr(dentry, inode, *xattr, NULL, 0);
++	list_for_each_entry(xattr, &evm_config_xattrnames, list) {
++		error = __vfs_getxattr(dentry, inode, xattr->name, NULL, 0);
  		if (error < 0) {
  			if (error == -ENODATA)
-@@ -228,7 +228,7 @@ static int evm_protected_xattr(const char *req_xattr_name)
- 	struct xattr_list *xattr;
+ 				continue;
+@@ -211,24 +223,25 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+ 
+ static int evm_protected_xattr(const char *req_xattr_name)
+ {
+-	char **xattrname;
+ 	int namelen;
+ 	int found = 0;
++	struct xattr_list *xattr;
  
  	namelen = strlen(req_xattr_name);
--	list_for_each_entry(xattr, &evm_config_xattrnames, list) {
-+	list_for_each_entry_rcu(xattr, &evm_config_xattrnames, list) {
- 		if ((strlen(xattr->name) == namelen)
- 		    && (strncmp(req_xattr_name, xattr->name, namelen) == 0)) {
- 			found = 1;
-diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
-index e44380f0cb45..97e975d91241 100644
---- a/security/integrity/evm/evm_secfs.c
-+++ b/security/integrity/evm/evm_secfs.c
-@@ -15,14 +15,22 @@
- 
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
-+#include <linux/audit.h>
- #include <linux/uaccess.h>
- #include <linux/module.h>
-+#include <linux/mutex.h>
- #include "evm.h"
- 
- static struct dentry *evm_dir;
- static struct dentry *evm_init_tpm;
- static struct dentry *evm_symlink;
- 
-+#ifdef CONFIG_EVM_ADD_XATTRS
-+static struct dentry *evm_xattrs;
-+static DEFINE_MUTEX(xattr_list_mutex);
-+static int evm_xattrs_locked;
-+#endif
-+
- /**
-  * evm_read_key - read() for <securityfs>/evm
-  *
-@@ -109,6 +117,166 @@ static const struct file_operations evm_key_ops = {
- 	.write		= evm_write_key,
- };
- 
-+#ifdef CONFIG_EVM_ADD_XATTRS
-+/**
-+ * evm_read_xattrs - read() for <securityfs>/evm_xattrs
-+ *
-+ * @filp: file pointer, not actually used
-+ * @buf: where to put the result
-+ * @count: maximum to send along
-+ * @ppos: where to start
-+ *
-+ * Returns number of bytes read or error code, as appropriate
-+ */
-+static ssize_t evm_read_xattrs(struct file *filp, char __user *buf,
-+			       size_t count, loff_t *ppos)
-+{
-+	char *temp;
-+	int offset = 0;
-+	ssize_t rc, size = 0;
-+	struct xattr_list *xattr;
-+
-+	if (*ppos != 0)
-+		return 0;
-+
-+	rc = mutex_lock_interruptible(&xattr_list_mutex);
-+	if (rc)
-+		return -ERESTARTSYS;
-+
-+	list_for_each_entry(xattr, &evm_config_xattrnames, list)
-+		size += strlen(xattr->name) + 1;
-+
-+	temp = kmalloc(size + 1, GFP_KERNEL);
-+	if (!temp)
-+		return -ENOMEM;
-+
+-	for (xattrname = evm_config_xattrnames; *xattrname != NULL; xattrname++) {
+-		if ((strlen(*xattrname) == namelen)
+-		    && (strncmp(req_xattr_name, *xattrname, namelen) == 0)) {
 +	list_for_each_entry(xattr, &evm_config_xattrnames, list) {
-+		sprintf(temp + offset, "%s\n", xattr->name);
-+		offset += strlen(xattr->name) + 1;
-+	}
++		if ((strlen(xattr->name) == namelen)
++		    && (strncmp(req_xattr_name, xattr->name, namelen) == 0)) {
+ 			found = 1;
+ 			break;
+ 		}
+ 		if (strncmp(req_xattr_name,
+-			    *xattrname + XATTR_SECURITY_PREFIX_LEN,
++			    xattr->name + XATTR_SECURITY_PREFIX_LEN,
+ 			    strlen(req_xattr_name)) == 0) {
+ 			found = 1;
+ 			break;
+ 		}
+ 	}
 +
-+	mutex_unlock(&xattr_list_mutex);
-+	rc = simple_read_from_buffer(buf, count, ppos, temp, strlen(temp));
-+
-+	return rc;
-+}
-+
-+/**
-+ * evm_write_xattrs - write() for <securityfs>/evm_xattrs
-+ * @file: file pointer, not actually used
-+ * @buf: where to get the data from
-+ * @count: bytes sent
-+ * @ppos: where to start
-+ *
-+ * Returns number of bytes written or error code, as appropriate
-+ */
-+static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
-+				size_t count, loff_t *ppos)
-+{
-+	int len, err;
-+	struct xattr_list *xattr, *tmp;
-+	struct audit_buffer *ab;
-+	struct iattr newattrs;
-+	struct inode *inode;
-+
-+	if (!capable(CAP_SYS_ADMIN) || evm_xattrs_locked)
-+		return -EPERM;
-+
-+	if (*ppos != 0)
-+		return -EINVAL;
-+
-+	if (count > XATTR_NAME_MAX)
-+		return -E2BIG;
-+
-+	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_EVM_XATTR);
-+	if (IS_ERR(ab))
-+		return PTR_ERR(ab);
-+
-+	xattr = kmalloc(sizeof(struct xattr_list), GFP_KERNEL);
-+	if (!xattr) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+
-+	xattr->name = memdup_user_nul(buf, count);
-+	if (IS_ERR(xattr->name)) {
-+		err = PTR_ERR(xattr->name);
-+		xattr->name = NULL;
-+		goto out;
-+	}
-+
-+	/* Remove any trailing newline */
-+	len = strlen(xattr->name);
-+	if (xattr->name[len-1] == '\n')
-+		xattr->name[len-1] = '\0';
-+
-+	if (strcmp(xattr->name, ".") == 0) {
-+		evm_xattrs_locked = 1;
-+		inode = evm_xattrs->d_inode;
-+		inode_lock(inode);
-+		newattrs.ia_mode = S_IFREG | 0440;
-+		newattrs.ia_valid = ATTR_MODE;
-+		err = notify_change(evm_xattrs, &newattrs, NULL);
-+		inode_unlock(inode);
-+		audit_log_format(ab, "locked");
-+		if (!err)
-+			err = count;
-+		goto out;
-+	}
-+
-+	audit_log_format(ab, "xattr=");
-+	audit_log_untrustedstring(ab, xattr->name);
-+
-+	if (strncmp(xattr->name, XATTR_SECURITY_PREFIX,
-+		    XATTR_SECURITY_PREFIX_LEN) != 0) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	/* Guard against races in evm_read_xattrs */
-+	mutex_lock(&xattr_list_mutex);
-+	list_for_each_entry(tmp, &evm_config_xattrnames, list) {
-+		if (strcmp(xattr->name, tmp->name) == 0) {
-+			err = -EEXIST;
-+			mutex_unlock(&xattr_list_mutex);
-+			goto out;
-+		}
-+	}
-+	list_add_tail_rcu(&xattr->list, &evm_config_xattrnames);
-+	mutex_unlock(&xattr_list_mutex);
-+
-+	audit_log_format(ab, " res=0");
-+	audit_log_end(ab);
-+	return count;
-+out:
-+	audit_log_format(ab, " res=%d", err);
-+	audit_log_end(ab);
-+	kfree(xattr->name);
-+	kfree(xattr);
-+	return err;
-+}
-+
-+static const struct file_operations evm_xattr_ops = {
-+	.read		= evm_read_xattrs,
-+	.write		= evm_write_xattrs,
-+};
-+
-+static int evm_init_xattrs(void)
-+{
-+	evm_xattrs = securityfs_create_file("evm_xattrs", 0660, evm_dir, NULL,
-+					    &evm_xattr_ops);
-+	if (!evm_xattrs || IS_ERR(evm_xattrs))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+#else
-+static int evm_init_xattrs(void)
-+{
-+	return 0;
-+}
-+#endif
-+
- int __init evm_init_secfs(void)
+ 	return found;
+ }
+ 
+@@ -544,35 +557,35 @@ void __init evm_load_x509(void)
+ static int __init init_evm(void)
  {
- 	int error = 0;
-@@ -131,6 +299,11 @@ int __init evm_init_secfs(void)
- 		goto out;
+ 	int error;
++	struct list_head *pos, *q;
++	struct xattr_list *xattr;
+ 
+ 	evm_init_config();
+ 
+ 	error = integrity_init_keyring(INTEGRITY_KEYRING_EVM);
+ 	if (error)
+-		return error;
++		goto error;
+ 
+ 	error = evm_init_secfs();
+ 	if (error < 0) {
+ 		pr_info("Error registering secfs\n");
+-		return error;
++		goto error;
  	}
  
-+	if (evm_init_xattrs() != 0) {
-+		error = -EFAULT;
-+		goto out;
+-	return 0;
+-}
+-
+-/*
+- * evm_display_config - list the EVM protected security extended attributes
+- */
+-static int __init evm_display_config(void)
+-{
+-	char **xattrname;
++error:
++	if (error != 0) {
++		if (!list_empty(&evm_config_xattrnames)) {
++			list_for_each_safe(pos, q, &evm_config_xattrnames) {
++				xattr = list_entry(pos, struct xattr_list,
++						   list);
++				list_del(pos);
++			}
++		}
 +	}
-+
- 	return 0;
- out:
- 	securityfs_remove(evm_symlink);
+ 
+-	for (xattrname = evm_config_xattrnames; *xattrname != NULL; xattrname++)
+-		pr_info("%s\n", *xattrname);
+-	return 0;
++	return error;
+ }
+ 
+-pure_initcall(evm_display_config);
+ late_initcall(init_evm);
+ 
+ MODULE_DESCRIPTION("Extended Verification Module");
 -- 
 2.17.0.441.gb46fe60e1d-goog
