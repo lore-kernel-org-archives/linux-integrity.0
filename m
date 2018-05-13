@@ -1,36 +1,125 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:49650 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750949AbeEMIrA (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 13 May 2018 04:47:00 -0400
-Date: Sun, 13 May 2018 11:46:55 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "David R. Bild" <david.bild@xaptum.com>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
-        philip.b.tricca@intel.com, Jason Gunthorpe <jgg@ziepe.ca>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Huewe <peterhuewe@gmx.de>, linux-usb@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] usb: misc: xapea00x: perform platform
- initialization of TPM
-Message-ID: <20180513084655.GA19023@linux.intel.com>
-References: <20180430125418.31344-1-david.bild@xaptum.com>
- <20180504130022.5231-3-david.bild@xaptum.com>
- <20180504190638.ikqhdvcqccakzdjd@ziepe.ca>
- <CAAi9uDvyzk1vnQVXkJxRCATy85g4nwMLJjqu6rr1YZn9NV_TYw@mail.gmail.com>
- <20180508105515.GB6132@linux.intel.com>
- <CAAi9uDtt=U_7uSVrxBkC_-ZLobU9WiA4UxuN0pJk18b0Rhv+Lg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAAi9uDtt=U_7uSVrxBkC_-ZLobU9WiA4UxuN0pJk18b0Rhv+Lg@mail.gmail.com>
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57108 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751978AbeEMB7h (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 12 May 2018 21:59:37 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
+        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
+        Linux Security Module list
+        <linux-security-module@vger.kernel.org>,
+        Integrity Measurement Architecture
+        <linux-integrity@vger.kernel.org>,
+        SElinux list <selinux@tycho.nsa.gov>
+Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Richard Guy Briggs <rgb@redhat.com>
+Subject: [PATCH ghak81 RFC V2 2/5] audit: convert sessionid unset to a macro
+Date: Sat, 12 May 2018 21:58:19 -0400
+Message-Id: <d9b6713caf339af2346eacc1324280b180a519e1.1526173613.git.rgb@redhat.com>
+In-Reply-To: <cover.1526173613.git.rgb@redhat.com>
+References: <cover.1526173613.git.rgb@redhat.com>
+In-Reply-To: <cover.1526173613.git.rgb@redhat.com>
+References: <cover.1526173613.git.rgb@redhat.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, May 10, 2018 at 09:41:53AM -0500, David R. Bild wrote:
-> 2) Make more of the TPM driver API public (internally public) so that
-> the driver can reuse that code instead of reimplementing.  Not ideal,
-> as this could require major restructuring of the TPM code.
+Use a macro, "AUDIT_SID_UNSET", to replace each instance of
+initialization and comparison to an audit session ID.
 
-Can you open this up a bit? It depends what this means in practice.
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+---
+ include/linux/audit.h      | 2 +-
+ include/net/xfrm.h         | 2 +-
+ include/uapi/linux/audit.h | 1 +
+ init/init_task.c           | 3 ++-
+ kernel/auditsc.c           | 4 ++--
+ 5 files changed, 7 insertions(+), 5 deletions(-)
 
-/Jarkko
+diff --git a/include/linux/audit.h b/include/linux/audit.h
+index 75d5b03..5f86f7c 100644
+--- a/include/linux/audit.h
++++ b/include/linux/audit.h
+@@ -513,7 +513,7 @@ static inline kuid_t audit_get_loginuid(struct task_struct *tsk)
+ }
+ static inline unsigned int audit_get_sessionid(struct task_struct *tsk)
+ {
+-	return -1;
++	return AUDIT_SID_UNSET;
+ }
+ static inline void audit_ipc_obj(struct kern_ipc_perm *ipcp)
+ { }
+diff --git a/include/net/xfrm.h b/include/net/xfrm.h
+index a872379..fcce8ee 100644
+--- a/include/net/xfrm.h
++++ b/include/net/xfrm.h
+@@ -751,7 +751,7 @@ static inline void xfrm_audit_helper_usrinfo(bool task_valid,
+ 					    audit_get_loginuid(current) :
+ 					    INVALID_UID);
+ 	const unsigned int ses = task_valid ? audit_get_sessionid(current) :
+-		(unsigned int) -1;
++		AUDIT_SID_UNSET;
+ 
+ 	audit_log_format(audit_buf, " auid=%u ses=%u", auid, ses);
+ 	audit_log_task_context(audit_buf);
+diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+index 4e61a9e..04f9bd2 100644
+--- a/include/uapi/linux/audit.h
++++ b/include/uapi/linux/audit.h
+@@ -465,6 +465,7 @@ struct audit_tty_status {
+ };
+ 
+ #define AUDIT_UID_UNSET (unsigned int)-1
++#define AUDIT_SID_UNSET ((unsigned int)-1)
+ 
+ /* audit_rule_data supports filter rules with both integer and string
+  * fields.  It corresponds with AUDIT_ADD_RULE, AUDIT_DEL_RULE and
+diff --git a/init/init_task.c b/init/init_task.c
+index 3ac6e75..74f60ba 100644
+--- a/init/init_task.c
++++ b/init/init_task.c
+@@ -9,6 +9,7 @@
+ #include <linux/init.h>
+ #include <linux/fs.h>
+ #include <linux/mm.h>
++#include <linux/audit.h>
+ 
+ #include <asm/pgtable.h>
+ #include <linux/uaccess.h>
+@@ -119,7 +120,7 @@ struct task_struct init_task
+ 	.thread_node	= LIST_HEAD_INIT(init_signals.thread_head),
+ #ifdef CONFIG_AUDITSYSCALL
+ 	.loginuid	= INVALID_UID,
+-	.sessionid	= (unsigned int)-1,
++	.sessionid	= AUDIT_SID_UNSET,
+ #endif
+ #ifdef CONFIG_PERF_EVENTS
+ 	.perf_event_mutex = __MUTEX_INITIALIZER(init_task.perf_event_mutex),
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index 0d4e269..e157595 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -2050,7 +2050,7 @@ static void audit_log_set_loginuid(kuid_t koldloginuid, kuid_t kloginuid,
+ int audit_set_loginuid(kuid_t loginuid)
+ {
+ 	struct task_struct *task = current;
+-	unsigned int oldsessionid, sessionid = (unsigned int)-1;
++	unsigned int oldsessionid, sessionid = AUDIT_SID_UNSET;
+ 	kuid_t oldloginuid;
+ 	int rc;
+ 
+@@ -2064,7 +2064,7 @@ int audit_set_loginuid(kuid_t loginuid)
+ 	/* are we setting or clearing? */
+ 	if (uid_valid(loginuid)) {
+ 		sessionid = (unsigned int)atomic_inc_return(&session_id);
+-		if (unlikely(sessionid == (unsigned int)-1))
++		if (unlikely(sessionid == AUDIT_SID_UNSET))
+ 			sessionid = (unsigned int)atomic_inc_return(&session_id);
+ 	}
+ 
+-- 
+1.8.3.1
