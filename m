@@ -1,65 +1,58 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:44254 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752146AbeENVoD (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49952 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752383AbeENVCU (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 14 May 2018 17:44:03 -0400
-Received: by mail-lf0-f67.google.com with SMTP id h197-v6so20220370lfg.11
-        for <linux-integrity@vger.kernel.org>; Mon, 14 May 2018 14:44:02 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <baa29a694e352bd4fe8acd0f46f7baca1ad2c147.1526173613.git.rgb@redhat.com>
-References: <cover.1526173613.git.rgb@redhat.com> <baa29a694e352bd4fe8acd0f46f7baca1ad2c147.1526173613.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 14 May 2018 17:44:01 -0400
-Message-ID: <CAHC9VhQXr76FXPCe8vUWNwa2VshcPg1mZmMY7M30H1F6w30rFA@mail.gmail.com>
-Subject: Re: [PATCH ghak81 RFC V2 3/5] audit: use inline function to get audit context
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
-        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
-        Linux Security Module list
-        <linux-security-module@vger.kernel.org>,
-        Integrity Measurement Architecture
-        <linux-integrity@vger.kernel.org>,
-        SElinux list <selinux@tycho.nsa.gov>,
-        Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        David Howells <dhowells@redhat.com>
+        Mon, 14 May 2018 17:02:20 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4EKxFt8051427
+        for <linux-integrity@vger.kernel.org>; Mon, 14 May 2018 17:02:20 -0400
+Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2hye888umd-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 14 May 2018 17:02:19 -0400
+Received: from localhost
+        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Mon, 14 May 2018 22:02:17 +0100
+Subject: Re: [PATCH V5 3/3] EVM: Allow runtime modification of the set of
+ verified xattrs
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Matthew Garrett <mjg59@google.com>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>
+Date: Mon, 14 May 2018 17:02:14 -0400
+In-Reply-To: <CACdnJuvffE30wET24+KJ3KnBfM_mf88=DKU96wHmV+2BL+A2Hg@mail.gmail.com>
+References: <20180511231236.5501-1-mjg59@google.com>
+         <20180511231236.5501-3-mjg59@google.com>
+         <1526229700.3898.26.camel@linux.vnet.ibm.com>
+         <CACdnJuuve3OrJPvBYeRoTfaan022hi9p0dDbDbZJuKHCU4t3xA@mail.gmail.com>
+         <1526318354.3898.159.camel@linux.vnet.ibm.com>
+         <1526319342.3368.2.camel@linux.vnet.ibm.com>
+         <CACdnJusuhYBsOY_tg681hcE2fnHAfTvmEyFnE-ALO_BNBCKAzA@mail.gmail.com>
+         <CACdnJuvffE30wET24+KJ3KnBfM_mf88=DKU96wHmV+2BL+A2Hg@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1526331734.3937.3.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sat, May 12, 2018 at 9:58 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> Recognizing that the audit context is an internal audit value, use an
-> access function to retrieve the audit context pointer for the task
-> rather than reaching directly into the task struct to get it.
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  include/linux/audit.h                | 14 ++++++--
->  include/net/xfrm.h                   |  2 +-
->  kernel/audit.c                       |  6 ++--
->  kernel/audit_watch.c                 |  2 +-
->  kernel/auditsc.c                     | 64 +++++++++++++++++-------------------
->  net/bridge/netfilter/ebtables.c      |  2 +-
->  net/core/dev.c                       |  2 +-
->  net/netfilter/x_tables.c             |  2 +-
->  net/netlabel/netlabel_user.c         |  2 +-
->  security/integrity/ima/ima_api.c     |  2 +-
->  security/integrity/integrity_audit.c |  2 +-
->  security/lsm_audit.c                 |  2 +-
->  security/selinux/hooks.c             |  4 +--
->  security/selinux/selinuxfs.c         |  6 ++--
->  security/selinux/ss/services.c       | 12 +++----
->  15 files changed, 64 insertions(+), 60 deletions(-)
+On Mon, 2018-05-14 at 11:50 -0700, Matthew Garrett wrote:
+> On Mon, May 14, 2018 at 10:36 AM Matthew Garrett <mjg59@google.com> wrote:
+> 
+> > On Mon, May 14, 2018 at 10:35 AM Mimi Zohar <zohar@linux.vnet.ibm.com>
+> > wrote:
+> > > > # echo . > /sys/kernel/security/integrity/evm/evm_xattrs
+> > > > bash: echo: write error: Operation not permitted
+> 
+> > > I'm still seeing this message.
+> 
+> > Looking into it.
+> 
+> I can't reproduce this - the only way you should be getting EPERM is if the
+> list is already locked or if you don't have CAP_SYS_ADMIN.
 
-Merged, but there was some fuzz due to the missing 1/5 patch and a
-handfull of checkpatch.pl fixes.  Please take a look at the commit in
-the audit/next branch and if anything looks awry please send a patch
-to fix it.
+The call to notify_change() calls security_inode_setattr(), which is
+failing, because there is no security.evm xattr.  It's failing with
+-EPERM.
 
--- 
-paul moore
-www.paul-moore.com
+Mimi
