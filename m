@@ -1,183 +1,78 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:50656 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751954AbeENKl7 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 14 May 2018 06:41:59 -0400
-Date: Mon, 14 May 2018 13:41:53 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Nayna Jain <nayna@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        linux-security-module@vger.kernel.org,
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51764 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750750AbeENKli (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 14 May 2018 06:41:38 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4EAdHxV104609
+        for <linux-integrity@vger.kernel.org>; Mon, 14 May 2018 06:41:37 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2hy6jdx7x8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 14 May 2018 06:41:37 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
+        Mon, 14 May 2018 06:41:36 -0400
+Subject: Re: [PATCH v3 1/2] tpm: reduce poll sleep time in tpm_transmit()
+From: Nayna Jain <nayna@linux.vnet.ibm.com>
+To: J Freyensee <why2jjj.linux@gmail.com>,
+        linux-integrity@vger.kernel.org
+Cc: zohar@linux.vnet.ibm.com, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
-        tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com
-Subject: Re: [PATCH v2] tpm: check selftest status before retrying full
- selftest
-Message-ID: <20180514104153.GB8228@linux.intel.com>
-References: <20180507153941.4952-1-nayna@linux.vnet.ibm.com>
+        jarkko.sakkinen@linux.intel.com, tpmdd@selhorst.net,
+        jgunthorpe@obsidianresearch.com, patrickc@us.ibm.com
+References: <20180507160733.8817-1-nayna@linux.vnet.ibm.com>
+ <20180507160733.8817-2-nayna@linux.vnet.ibm.com>
+ <becb898c-b778-d104-5781-899599f536d4@gmail.com>
+ <107cd9f7-69a3-dbb8-1a61-541172832a0c@linux.vnet.ibm.com>
+Date: Mon, 14 May 2018 16:09:41 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180507153941.4952-1-nayna@linux.vnet.ibm.com>
+In-Reply-To: <107cd9f7-69a3-dbb8-1a61-541172832a0c@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Message-Id: <4896f0b6-70b7-77ad-1b33-f13890b6fec2@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, May 07, 2018 at 09:09:41PM +0530, Nayna Jain wrote:
-> As per the TCG Specification[1][2], RC_COMMAND_CODE indicates that the TPM
-> command is not implemented or not supported. When RC_COMMAND_CODE is
-> returned in response to the partial selftest, this is not the case. TPM 2.0
-> supports TPM2_GetTestResult[3], which can be used to check the selftest
-> status before sending the full selftest command.
-> 
-> This patch implements the tpm2_get_selftest_result function to check the
-> selftest status when partial selftest returns RC_COMMAND_CODE.
-
-Cosmetic: parentheses when referring to functions.
-
-> This change results in finishing of the selftest much earlier compared to
-> the existing case where full selftest is immediately sent to retry. The
-> Pi's dmesg shows: the TPM selftest completed at 1.243864 secs compared
-> with the previous timestamp of 1.939667 secs.
-> 
-> [1] As per the TCG Specification, Trusted Platform Module Library,
-> Part 2 - Structures, Section 6.6.3 and Section 4.18:
-> 
-> "RC_COMMAND_CODE indicates the response code that is returned if the TPM is
-> unmarshalling a value that it expects to be a TPM_CC and the input value is
-> not in the table."
-> 
-> [2] As per the TCG Specification, Trusted Platform Module Library,
-> Part 2 - Commands, Section 5.2:
-> 
-> "The TPM shall successfully unmarshal a TPM_CC and verify that the command
-> is implemented (TPM_RC_COMMAND_CODE)."
-> 
-> [3] As per the TCG Specification, Trusted Platform Module Library,
-> Part 2 - Commands, Section 10.4:
-> 
-> "This command(TPM2_GetTestResult) returns manufacturer-specific information
-> regarding the results of a self-test and an indication of the test status."
-> 
-> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-> Tested-by: Mimi Zohar <zohar@linux.vnet.ibm.com> (on Pi with TPM 2.0)
-> ---
-> 
-> Changelog v2:
-> * changed the subject and updated patch description
-> * removed the logs
-> 
->  drivers/char/tpm/tpm.h      |  2 ++
->  drivers/char/tpm/tpm2-cmd.c | 48 +++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 50 insertions(+)
-> 
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index af3bb87d3ea1..1de4240b52c4 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -114,6 +114,7 @@ enum tpm2_return_codes {
->  	TPM2_RC_FAILURE		= 0x0101,
->  	TPM2_RC_DISABLED	= 0x0120,
->  	TPM2_RC_COMMAND_CODE    = 0x0143,
-> +	TPM2_RC_NEEDS_TEST      = 0x0153,
->  	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
->  	TPM2_RC_REFERENCE_H0	= 0x0910,
->  	TPM2_RC_RETRY		= 0x0922,
-> @@ -144,6 +145,7 @@ enum tpm2_command_codes {
->  	TPM2_CC_FLUSH_CONTEXT	= 0x0165,
->  	TPM2_CC_GET_CAPABILITY	= 0x017A,
->  	TPM2_CC_GET_RANDOM	= 0x017B,
-> +	TPM2_CC_GET_TEST_RESULT = 0x017C,
->  	TPM2_CC_PCR_READ	= 0x017E,
->  	TPM2_CC_PCR_EXTEND	= 0x0182,
->  	TPM2_CC_LAST		= 0x018F,
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index 96c77c8e7f40..4abba0ebe25b 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -825,6 +825,50 @@ unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
->  EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
->  
->  /**
-> + * tpm2_get_selftest_result() - get the status of self tests
-> + *
-
-There should not be an empty line here.
-
-> + * @chip: TPM chip to use
-> + *
-> + * Return: If error return rc, else return the result of the self tests.
-> + * TPM_RC_NEEDS_TESTING: No self tests are done. Needs testing.
-> + * TPM_RC_TESTING: Self tests are in progress.
-> + * TPM_RC_SUCCESS: Self tests completed successfully.
-> + * TPM_RC_FAILURE: Self tests completed failure.
-> + *
-> + * This function can be used to check the status of self tests on the TPM.
-> + */
-
-Description should 
-
-Better to just have:
-
-Return:
-  TPM return code,
-  -errno otherwise
- 
-There is a lot of variance in return values but this is the format where
-I would like the code base to dilate to. Describing TPM return codes
-one by one is not very maintainable in the long run.
-
-See:
-https://www.kernel.org/doc/Documentation/kernel-doc-nano-HOWTO.txt
 
 
-> +static int tpm2_get_selftest_result(struct tpm_chip *chip)
-> +{
-> +	struct tpm_buf buf;
-> +	int rc;
-> +	int test_result;
-> +	uint16_t data_size;
-> +	int len;
-> +	const struct tpm_output_header *header;
-> +
-> +	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_TEST_RESULT);
-> +	if (rc)
-> +		return rc;
-> +
-> +	len = tpm_transmit(chip, NULL, buf.data, PAGE_SIZE, 0);
-> +	if (len <  0)
-> +		return len;
-> +
-> +	header = (struct tpm_output_header *)buf.data;
-> +
-> +	rc = be32_to_cpu(header->return_code);
-> +	if (rc)
-> +		return rc;
-> +
-> +	data_size = be16_to_cpup((__be16 *)&buf.data[TPM_HEADER_SIZE]);
-> +
-> +	test_result = be32_to_cpup((__be32 *)
-> +			(&buf.data[TPM_HEADER_SIZE + 2 + data_size]));
-> +
-> +	return test_result;
-> +}
-> +
-> +/**
->   * tpm2_do_selftest() - ensure that all self tests have passed
->   *
->   * @chip: TPM chip to use
-> @@ -853,6 +897,10 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
->  				      "attempting the self test");
->  		tpm_buf_destroy(&buf);
->  
-> +		/* Check the selftest status */
+On 05/10/2018 06:11 PM, Nayna Jain wrote:
+>
+>
+> On 05/08/2018 10:04 PM, J Freyensee wrote:
+>>
+>>>           do {
+>>> -            tpm_msleep(TPM_POLL_SLEEP);
+>>> +            tpm_msleep(TPM_TIMEOUT_POLL);
+>>>
+>> I'm just curious why it was decided to still use tpm_msleep() here 
+>> instead of usleep_range() which was used in the 2nd patch.
+>
+> TPM_TIMEOUT_POLL is in msec i.e. 1 msec and usleep_range() is used 
+> only when timeout is needed in usecs.
 
-What is the purpose of this comment eg what does it describe that isn't
-obvious?
+Just to add bit more details:
 
-> +		if (rc == TPM2_RC_COMMAND_CODE)
-> +			rc = tpm2_get_selftest_result(chip);
-> +
->  		if (rc == TPM2_RC_TESTING)
->  			rc = TPM2_RC_SUCCESS;
->  		if (rc == TPM2_RC_INITIALIZE || rc == TPM2_RC_SUCCESS)
-> -- 
-> 2.13.6
-> 
+usleep_range() is used in wait_for_tpm_stat() and get_burstcount() which 
+are expected to return quickly. tpm_transmit() is a generic function 
+used across all drivers and commands.
+Some of the commands (eg. hash, key generation) take longer compared to 
+other commands (eg. extend). The sleep time in tpm_transmit is reduced 
+but kept in msecs to balance between the smaller and longer commands.
+
+Thanks & Regards,
+     - Nayna
+
+>
+>>
+>> Otherwise,
+>>
+>> Acked-by: Jay Freyensee <why2jjj.linux@gmail.com>
+>
+> Thanks !!
+>
+> Thanks & Regards,
+>     - Nayna
+>
+>
