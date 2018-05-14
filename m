@@ -1,58 +1,138 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49952 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752383AbeENVCU (ORCPT
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:34375 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752000AbeENUP2 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 14 May 2018 17:02:20 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4EKxFt8051427
-        for <linux-integrity@vger.kernel.org>; Mon, 14 May 2018 17:02:20 -0400
-Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2hye888umd-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 14 May 2018 17:02:19 -0400
-Received: from localhost
-        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Mon, 14 May 2018 22:02:17 +0100
-Subject: Re: [PATCH V5 3/3] EVM: Allow runtime modification of the set of
- verified xattrs
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Matthew Garrett <mjg59@google.com>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>
-Date: Mon, 14 May 2018 17:02:14 -0400
-In-Reply-To: <CACdnJuvffE30wET24+KJ3KnBfM_mf88=DKU96wHmV+2BL+A2Hg@mail.gmail.com>
-References: <20180511231236.5501-1-mjg59@google.com>
-         <20180511231236.5501-3-mjg59@google.com>
-         <1526229700.3898.26.camel@linux.vnet.ibm.com>
-         <CACdnJuuve3OrJPvBYeRoTfaan022hi9p0dDbDbZJuKHCU4t3xA@mail.gmail.com>
-         <1526318354.3898.159.camel@linux.vnet.ibm.com>
-         <1526319342.3368.2.camel@linux.vnet.ibm.com>
-         <CACdnJusuhYBsOY_tg681hcE2fnHAfTvmEyFnE-ALO_BNBCKAzA@mail.gmail.com>
-         <CACdnJuvffE30wET24+KJ3KnBfM_mf88=DKU96wHmV+2BL+A2Hg@mail.gmail.com>
+        Mon, 14 May 2018 16:15:28 -0400
+Received: by mail-lf0-f67.google.com with SMTP id r25-v6so19929174lfd.1
+        for <linux-integrity@vger.kernel.org>; Mon, 14 May 2018 13:15:27 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <d9b6713caf339af2346eacc1324280b180a519e1.1526173613.git.rgb@redhat.com>
+References: <cover.1526173613.git.rgb@redhat.com> <d9b6713caf339af2346eacc1324280b180a519e1.1526173613.git.rgb@redhat.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 14 May 2018 16:15:26 -0400
+Message-ID: <CAHC9VhSfrmQ=-LhC-1QZGkMTUf2u971tE0k7sg5Tebx=2tRzpA@mail.gmail.com>
+Subject: Re: [PATCH ghak81 RFC V2 2/5] audit: convert sessionid unset to a macro
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
+        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
+        Linux Security Module list
+        <linux-security-module@vger.kernel.org>,
+        Integrity Measurement Architecture
+        <linux-integrity@vger.kernel.org>,
+        SElinux list <selinux@tycho.nsa.gov>,
+        Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        David Howells <dhowells@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1526331734.3937.3.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2018-05-14 at 11:50 -0700, Matthew Garrett wrote:
-> On Mon, May 14, 2018 at 10:36 AM Matthew Garrett <mjg59@google.com> wrote:
-> 
-> > On Mon, May 14, 2018 at 10:35 AM Mimi Zohar <zohar@linux.vnet.ibm.com>
-> > wrote:
-> > > > # echo . > /sys/kernel/security/integrity/evm/evm_xattrs
-> > > > bash: echo: write error: Operation not permitted
-> 
-> > > I'm still seeing this message.
-> 
-> > Looking into it.
-> 
-> I can't reproduce this - the only way you should be getting EPERM is if the
-> list is already locked or if you don't have CAP_SYS_ADMIN.
+On Sat, May 12, 2018 at 9:58 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> Use a macro, "AUDIT_SID_UNSET", to replace each instance of
+> initialization and comparison to an audit session ID.
+>
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  include/linux/audit.h      | 2 +-
+>  include/net/xfrm.h         | 2 +-
+>  include/uapi/linux/audit.h | 1 +
+>  init/init_task.c           | 3 ++-
+>  kernel/auditsc.c           | 4 ++--
+>  5 files changed, 7 insertions(+), 5 deletions(-)
 
-The call to notify_change() calls security_inode_setattr(), which is
-failing, because there is no security.evm xattr.  It's failing with
--EPERM.
+Merged, thanks.
 
-Mimi
+> diff --git a/include/linux/audit.h b/include/linux/audit.h
+> index 75d5b03..5f86f7c 100644
+> --- a/include/linux/audit.h
+> +++ b/include/linux/audit.h
+> @@ -513,7 +513,7 @@ static inline kuid_t audit_get_loginuid(struct task_struct *tsk)
+>  }
+>  static inline unsigned int audit_get_sessionid(struct task_struct *tsk)
+>  {
+> -       return -1;
+> +       return AUDIT_SID_UNSET;
+>  }
+>  static inline void audit_ipc_obj(struct kern_ipc_perm *ipcp)
+>  { }
+> diff --git a/include/net/xfrm.h b/include/net/xfrm.h
+> index a872379..fcce8ee 100644
+> --- a/include/net/xfrm.h
+> +++ b/include/net/xfrm.h
+> @@ -751,7 +751,7 @@ static inline void xfrm_audit_helper_usrinfo(bool task_valid,
+>                                             audit_get_loginuid(current) :
+>                                             INVALID_UID);
+>         const unsigned int ses = task_valid ? audit_get_sessionid(current) :
+> -               (unsigned int) -1;
+> +               AUDIT_SID_UNSET;
+>
+>         audit_log_format(audit_buf, " auid=%u ses=%u", auid, ses);
+>         audit_log_task_context(audit_buf);
+> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+> index 4e61a9e..04f9bd2 100644
+> --- a/include/uapi/linux/audit.h
+> +++ b/include/uapi/linux/audit.h
+> @@ -465,6 +465,7 @@ struct audit_tty_status {
+>  };
+>
+>  #define AUDIT_UID_UNSET (unsigned int)-1
+> +#define AUDIT_SID_UNSET ((unsigned int)-1)
+>
+>  /* audit_rule_data supports filter rules with both integer and string
+>   * fields.  It corresponds with AUDIT_ADD_RULE, AUDIT_DEL_RULE and
+> diff --git a/init/init_task.c b/init/init_task.c
+> index 3ac6e75..74f60ba 100644
+> --- a/init/init_task.c
+> +++ b/init/init_task.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/init.h>
+>  #include <linux/fs.h>
+>  #include <linux/mm.h>
+> +#include <linux/audit.h>
+>
+>  #include <asm/pgtable.h>
+>  #include <linux/uaccess.h>
+> @@ -119,7 +120,7 @@ struct task_struct init_task
+>         .thread_node    = LIST_HEAD_INIT(init_signals.thread_head),
+>  #ifdef CONFIG_AUDITSYSCALL
+>         .loginuid       = INVALID_UID,
+> -       .sessionid      = (unsigned int)-1,
+> +       .sessionid      = AUDIT_SID_UNSET,
+>  #endif
+>  #ifdef CONFIG_PERF_EVENTS
+>         .perf_event_mutex = __MUTEX_INITIALIZER(init_task.perf_event_mutex),
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index 0d4e269..e157595 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -2050,7 +2050,7 @@ static void audit_log_set_loginuid(kuid_t koldloginuid, kuid_t kloginuid,
+>  int audit_set_loginuid(kuid_t loginuid)
+>  {
+>         struct task_struct *task = current;
+> -       unsigned int oldsessionid, sessionid = (unsigned int)-1;
+> +       unsigned int oldsessionid, sessionid = AUDIT_SID_UNSET;
+>         kuid_t oldloginuid;
+>         int rc;
+>
+> @@ -2064,7 +2064,7 @@ int audit_set_loginuid(kuid_t loginuid)
+>         /* are we setting or clearing? */
+>         if (uid_valid(loginuid)) {
+>                 sessionid = (unsigned int)atomic_inc_return(&session_id);
+> -               if (unlikely(sessionid == (unsigned int)-1))
+> +               if (unlikely(sessionid == AUDIT_SID_UNSET))
+>                         sessionid = (unsigned int)atomic_inc_return(&session_id);
+>         }
+>
+> --
+> 1.8.3.1
+>
+
+
+
+-- 
+paul moore
+www.paul-moore.com
