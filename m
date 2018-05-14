@@ -1,71 +1,32 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52684 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752305AbeENLHN (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 14 May 2018 07:07:13 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4EB5cqX051650
-        for <linux-integrity@vger.kernel.org>; Mon, 14 May 2018 07:07:13 -0400
-Received: from e06smtp11.uk.ibm.com (e06smtp11.uk.ibm.com [195.75.94.107])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2hy5tgh49q-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 14 May 2018 07:07:11 -0400
-Received: from localhost
-        by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Mon, 14 May 2018 12:07:10 +0100
-Subject: Re: [PATCH V2] evm: Allow non-SHA1 digital signatures
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Matthew Garrett <mjg59@google.com>, linux-integrity@vger.kernel.org
-Cc: bauerman@linux.vnet.ibm.com
-Date: Mon, 14 May 2018 07:07:06 -0400
-In-Reply-To: <20180511183912.11636-1-mjg59@google.com>
-References: <20180511183912.11636-1-mjg59@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1526296026.3898.80.camel@linux.vnet.ibm.com>
+Received: from mga09.intel.com ([134.134.136.24]:2330 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752109AbeENK6r (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 14 May 2018 06:58:47 -0400
+Date: Mon, 14 May 2018 13:58:39 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Ji-Hun Kim <ji_hun.kim@samsung.com>
+Cc: peterhuewe@gmx.de, tweek@google.com, jgg@ziepe.ca, arnd@arndb.de,
+        gregkh@linuxfoundation.org, javierm@redhat.com,
+        sonnyrao@chromium.org, enric.balletbo@collabora.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 2/2] tpm: replace kmalloc() + memcpy() with kmemdup()
+Message-ID: <20180514105839.GH8228@linux.intel.com>
+References: <1525824757-21835-1-git-send-email-ji_hun.kim@samsung.com>
+ <CGME20180509001300epcas2p3971900d48408aef6a80f59b9480aac16@epcas2p3.samsung.com>
+ <1525824757-21835-2-git-send-email-ji_hun.kim@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1525824757-21835-2-git-send-email-ji_hun.kim@samsung.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 2018-05-11 at 11:39 -0700, Matthew Garrett wrote:
+On Wed, May 09, 2018 at 09:12:37AM +0900, Ji-Hun Kim wrote:
+> Use kmemdup rather than duplicating its implementation.
 > 
->  static int evm_is_immutable(struct dentry *dentry, struct inode *inode)
-> @@ -303,6 +305,7 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
->  {
->  	struct inode *inode = d_backing_inode(dentry);
->  	struct evm_ima_xattr_data xattr_data;
-> +	struct ima_digest_data *data;
->  	int rc = 0;
-> 
->  	/*
-> @@ -315,10 +318,16 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
->  	if (rc)
->  		return -EPERM;
-> 
-> +	data = kmalloc(sizeof(*data) + SHA1_DIGEST_SIZE, GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
+> Signed-off-by: Ji-Hun Kim <ji_hun.kim@samsung.com>
 
-Instead of allocating and freeing the buffer each time an HMAC is
-updated or verified, like before, why not define a new struct which is
-allocated on the stack both here and in evm_verify_hmac()?
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>
 
-> +
-> +	data->algo = HASH_ALGO_SHA1;
->  	rc = evm_calc_hmac(dentry, xattr_name, xattr_value,
-> -			   xattr_value_len, xattr_data.digest);
-> +			   xattr_value_len, data);
->  	if (rc == 0) {
->  		xattr_data.type = EVM_XATTR_HMAC;
-> +		memcpy(&xattr_data.digest, data->digest, SHA1_DIGEST_SIZE);
->  		rc = __vfs_setxattr_noperm(dentry, XATTR_NAME_EVM,
->  					   &xattr_data,
->  					   sizeof(xattr_data), 0);
-
-ima_fix_xattr() supports writing both the original IMA_XATTR_DIGEST
-format, which was sha1 based, and the new IMA_XATTR_DIGEST_NG format,
-which supports larger digests. It writes security.ima directly from
-ima_digest_data struct.  No need for copying it.
-
-Mimi
+/Jarkko
