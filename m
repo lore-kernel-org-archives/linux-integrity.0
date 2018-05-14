@@ -1,124 +1,45 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:44730 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751978AbeENTwF (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:50980 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751498AbeENTcE (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 14 May 2018 15:52:05 -0400
-Received: by mail-lf0-f68.google.com with SMTP id h197-v6so19810066lfg.11
-        for <linux-integrity@vger.kernel.org>; Mon, 14 May 2018 12:52:04 -0700 (PDT)
+        Mon, 14 May 2018 15:32:04 -0400
+Received: by mail-wm0-f66.google.com with SMTP id t11-v6so15498195wmt.0
+        for <linux-integrity@vger.kernel.org>; Mon, 14 May 2018 12:32:03 -0700 (PDT)
+Date: Mon, 14 May 2018 13:31:57 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "David R. Bild" <david.bild@xaptum.com>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        philip.b.tricca@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Huewe <peterhuewe@gmx.de>, linux-usb@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] usb: misc: xapea00x: perform platform
+ initialization of TPM
+Message-ID: <20180514193157.GA21531@ziepe.ca>
+References: <20180430125418.31344-1-david.bild@xaptum.com>
+ <20180504130022.5231-3-david.bild@xaptum.com>
+ <20180504190638.ikqhdvcqccakzdjd@ziepe.ca>
+ <CAAi9uDvyzk1vnQVXkJxRCATy85g4nwMLJjqu6rr1YZn9NV_TYw@mail.gmail.com>
+ <20180508105515.GB6132@linux.intel.com>
+ <CAAi9uDtt=U_7uSVrxBkC_-ZLobU9WiA4UxuN0pJk18b0Rhv+Lg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <33f131a40a50bd7532ed74ff51e3da920e9e8df5.1526173613.git.rgb@redhat.com>
-References: <cover.1526173613.git.rgb@redhat.com> <33f131a40a50bd7532ed74ff51e3da920e9e8df5.1526173613.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 14 May 2018 15:52:03 -0400
-Message-ID: <CAHC9VhSPY-49LppFRw9Vmupdw8b2ooMVzWmputdB0bKm3X0+FA@mail.gmail.com>
-Subject: Re: [PATCH ghak81 RFC V2 1/5] audit: normalize loginuid read access
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
-        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
-        Linux Security Module list
-        <linux-security-module@vger.kernel.org>,
-        Integrity Measurement Architecture
-        <linux-integrity@vger.kernel.org>,
-        SElinux list <selinux@tycho.nsa.gov>,
-        Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        David Howells <dhowells@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAAi9uDtt=U_7uSVrxBkC_-ZLobU9WiA4UxuN0pJk18b0Rhv+Lg@mail.gmail.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sat, May 12, 2018 at 9:58 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> Recognizing that the loginuid is an internal audit value, use an access
-> function to retrieve the audit loginuid value for the task rather than
-> reaching directly into the task struct to get it.
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  kernel/auditsc.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
->
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index 479c031..0d4e269 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -374,7 +374,7 @@ static int audit_field_compare(struct task_struct *tsk,
->         case AUDIT_COMPARE_EGID_TO_OBJ_GID:
->                 return audit_compare_gid(cred->egid, name, f, ctx);
->         case AUDIT_COMPARE_AUID_TO_OBJ_UID:
-> -               return audit_compare_uid(tsk->loginuid, name, f, ctx);
-> +               return audit_compare_uid(audit_get_loginuid(tsk), name, f, ctx);
->         case AUDIT_COMPARE_SUID_TO_OBJ_UID:
->                 return audit_compare_uid(cred->suid, name, f, ctx);
->         case AUDIT_COMPARE_SGID_TO_OBJ_GID:
-> @@ -385,7 +385,7 @@ static int audit_field_compare(struct task_struct *tsk,
->                 return audit_compare_gid(cred->fsgid, name, f, ctx);
->         /* uid comparisons */
->         case AUDIT_COMPARE_UID_TO_AUID:
-> -               return audit_uid_comparator(cred->uid, f->op, tsk->loginuid);
-> +               return audit_uid_comparator(cred->uid, f->op, audit_get_loginuid(tsk));
->         case AUDIT_COMPARE_UID_TO_EUID:
->                 return audit_uid_comparator(cred->uid, f->op, cred->euid);
->         case AUDIT_COMPARE_UID_TO_SUID:
-> @@ -394,11 +394,11 @@ static int audit_field_compare(struct task_struct *tsk,
->                 return audit_uid_comparator(cred->uid, f->op, cred->fsuid);
->         /* auid comparisons */
->         case AUDIT_COMPARE_AUID_TO_EUID:
-> -               return audit_uid_comparator(tsk->loginuid, f->op, cred->euid);
-> +               return audit_uid_comparator(audit_get_loginuid(tsk), f->op, cred->euid);
->         case AUDIT_COMPARE_AUID_TO_SUID:
-> -               return audit_uid_comparator(tsk->loginuid, f->op, cred->suid);
-> +               return audit_uid_comparator(audit_get_loginuid(tsk), f->op, cred->suid);
->         case AUDIT_COMPARE_AUID_TO_FSUID:
-> -               return audit_uid_comparator(tsk->loginuid, f->op, cred->fsuid);
-> +               return audit_uid_comparator(audit_get_loginuid(tsk), f->op, cred->fsuid);
->         /* euid comparisons */
->         case AUDIT_COMPARE_EUID_TO_SUID:
->                 return audit_uid_comparator(cred->euid, f->op, cred->suid);
-> @@ -611,7 +611,7 @@ static int audit_filter_rules(struct task_struct *tsk,
->                                 result = match_tree_refs(ctx, rule->tree);
->                         break;
->                 case AUDIT_LOGINUID:
-> -                       result = audit_uid_comparator(tsk->loginuid, f->op, f->uid);
-> +                       result = audit_uid_comparator(audit_get_loginuid(tsk), f->op, f->uid);
->                         break;
->                 case AUDIT_LOGINUID_SET:
->                         result = audit_comparator(audit_loginuid_set(tsk), f->op, f->val);
-> @@ -2281,14 +2281,14 @@ int audit_signal_info(int sig, struct task_struct *t)
->         struct audit_aux_data_pids *axp;
->         struct task_struct *tsk = current;
->         struct audit_context *ctx = tsk->audit_context;
-> -       kuid_t uid = current_uid(), t_uid = task_uid(t);
-> +       kuid_t uid = current_uid(), auid, t_uid = task_uid(t);
->
->         if (auditd_test_task(t) &&
->             (sig == SIGTERM || sig == SIGHUP ||
->              sig == SIGUSR1 || sig == SIGUSR2)) {
->                 audit_sig_pid = task_tgid_nr(tsk);
-> -               if (uid_valid(tsk->loginuid))
-> -                       audit_sig_uid = tsk->loginuid;
-> +               if (uid_valid(auid = audit_get_loginuid(tsk)))
-> +                       audit_sig_uid = auid;
->                 else
->                         audit_sig_uid = uid;
->                 security_task_getsecid(tsk, &audit_sig_sid);
+On Thu, May 10, 2018 at 09:41:53AM -0500, David R. Bild wrote:
 
-A gentle reminder that you should try to make you patches as
-"checkpatch clean" as possible (see scripts/checkpatch.pl).  There are
-several 80-char warnings, which aren't fatal, but the big no-no is
-below:
+> 3) Allow the driver to register the TPM with TPM driver, but not yet
+> expose the TPM to userspace.  Let the driver do some additional work
+> (like set the platform hierarchy password) and then explicitly inform
+> the TPM driver that it is safe to expose the TPM to userspace.  This
+> would be my preferred approach.
 
-  ERROR: do not use assignment in if condition
-  #72: FILE: kernel/auditsc.c:2290:
-  +               if (uid_valid(auid = audit_get_loginuid(tsk)))
+We already have this. The driver can setup enough to use the TPM
+framework to send commands before completing registration. We use it
+in startup timeouts and other flows today.
 
-... while I don't completely agree with everything checkpatch has to
-say, I definitely agree with checkpatch when it comes to assignments
-in if conditions.
-
--- 
-paul moore
-www.paul-moore.com
+Jason
