@@ -1,15 +1,15 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-oi0-f73.google.com ([209.85.218.73]:46150 "EHLO
-        mail-oi0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752989AbeEORxo (ORCPT
+Received: from mail-qk0-f202.google.com ([209.85.220.202]:45286 "EHLO
+        mail-qk0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752178AbeEORid (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 15 May 2018 13:53:44 -0400
-Received: by mail-oi0-f73.google.com with SMTP id 22-v6so716634oix.13
-        for <linux-integrity@vger.kernel.org>; Tue, 15 May 2018 10:53:44 -0700 (PDT)
+        Tue, 15 May 2018 13:38:33 -0400
+Received: by mail-qk0-f202.google.com with SMTP id z140-v6so870154qka.12
+        for <linux-integrity@vger.kernel.org>; Tue, 15 May 2018 10:38:33 -0700 (PDT)
 MIME-Version: 1.0
-Date: Tue, 15 May 2018 10:53:39 -0700
-Message-Id: <20180515175339.33338-1-mjg59@google.com>
-Subject: [PATCH V4] evm: Allow non-SHA1 digital signatures
+Date: Tue, 15 May 2018 10:38:26 -0700
+Message-Id: <20180515173826.21114-1-mjg59@google.com>
+Subject: [PATCH V6] EVM: Allow runtime modification of the set of verified xattrs
 From: Matthew Garrett <mjg59@google.com>
 To: linux-integrity@vger.kernel.org
 Cc: zohar@linux.vnet.ibm.com, Matthew Garrett <mjg59@google.com>
@@ -17,271 +17,346 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-SHA1 is reasonable in HMAC constructs, but it's desirable to be able to
-use stronger hashes in digital signatures. Modify the EVM crypto code so
-the hash type is imported from the digital signature and passed down to
-the hash calculation code, and return the digest size to higher layers
-for validation.
+Sites may wish to provide additional metadata alongside files in order
+to make more fine-grained security decisions[1]. The security of this is
+enhanced if this metadata is protected, something that EVM makes
+possible. However, the kernel cannot know about the set of extended
+attributes that local admins may wish to protect, and hardcoding this
+policy in the kernel makes it difficult to change over time and less
+convenient for distributions to enable.
+
+This patch adds a new /sys/kernel/security/integrity/evm/evm_xattrs node,
+which can be read to obtain the current set of EVM-protected extended
+attributes or written to in order to add new entries. Extending this list
+will not change the validity of any existing signatures provided that the
+file in question does not have any of the additional extended attributes -
+missing xattrs are skipped when calculating the EVM hash.
+
+[1] For instance, a package manager could install information about the
+package uploader in an additional extended attribute. Local LSM policy
+could then be associated with that extended attribute in order to
+restrict the privileges available to packages from less trusted
+uploaders.
 
 Signed-off-by: Matthew Garrett <mjg59@google.com>
 ---
- security/integrity/evm/evm.h        | 10 ++++-
- security/integrity/evm/evm_crypto.c | 59 +++++++++++++++--------------
- security/integrity/evm/evm_main.c   | 19 ++++++----
- 3 files changed, 51 insertions(+), 37 deletions(-)
 
-diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
-index 45c4a89c02ff..1ed117f360af 100644
---- a/security/integrity/evm/evm.h
-+++ b/security/integrity/evm/evm.h
-@@ -42,6 +42,11 @@ extern struct crypto_shash *hash_tfm;
- /* List of EVM protected security xattrs */
- extern char *evm_config_xattrnames[];
- 
-+struct evm_digest {
-+	struct ima_digest_data hdr;
-+	char digest[IMA_MAX_DIGEST_SIZE];
-+} __packed__;
+Calling simple_setattr() directly here - this should be safe, since
+there'd only be a different setattr() implementation if we'd passed one
+in in the first place.
+
+ Documentation/ABI/testing/evm       |  13 +++
+ include/uapi/linux/audit.h          |   1 +
+ security/integrity/evm/Kconfig      |  11 ++
+ security/integrity/evm/evm_crypto.c |   2 +-
+ security/integrity/evm/evm_main.c   |   6 +-
+ security/integrity/evm/evm_secfs.c  | 173 ++++++++++++++++++++++++++++
+ 6 files changed, 202 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/ABI/testing/evm b/Documentation/ABI/testing/evm
+index 1d47a1818136..aefad95f71e1 100644
+--- a/Documentation/ABI/testing/evm
++++ b/Documentation/ABI/testing/evm
+@@ -57,3 +57,16 @@ Description:
+ 		dracut (via 97masterkey and 98integrity) and systemd (via
+ 		core/ima-setup) have support for loading keys at boot
+ 		time.
 +
- int evm_init_key(void);
- int evm_update_evmxattr(struct dentry *dentry,
- 			const char *req_xattr_name,
-@@ -49,10 +54,11 @@ int evm_update_evmxattr(struct dentry *dentry,
- 			size_t req_xattr_value_len);
- int evm_calc_hmac(struct dentry *dentry, const char *req_xattr_name,
- 		  const char *req_xattr_value,
--		  size_t req_xattr_value_len, char *digest);
-+		  size_t req_xattr_value_len, struct evm_digest *data);
- int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
- 		  const char *req_xattr_value,
--		  size_t req_xattr_value_len, char type, char *digest);
-+		  size_t req_xattr_value_len, char type,
-+		  struct evm_digest *data);
- int evm_init_hmac(struct inode *inode, const struct xattr *xattr,
- 		  char *hmac_val);
- int evm_init_secfs(void);
++What:		security/integrity/evm/evm_xattrs
++Date:		April 2018
++Contact:	Matthew Garrett <mjg59@google.com>
++Description:
++		Shows the set of extended attributes used to calculate or
++		validate the EVM signature, and allows additional attributes
++		to be added at runtime. Any signatures generated after
++		additional attributes are added (and on files posessing those
++		additional attributes) will only be valid if the same
++		additional attributes are configured on system boot. Writing
++		a single period (.) will lock the xattr list from any further
++		modification.
+diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+index 4e61a9e05132..65d9293f1fb8 100644
+--- a/include/uapi/linux/audit.h
++++ b/include/uapi/linux/audit.h
+@@ -147,6 +147,7 @@
+ #define AUDIT_INTEGRITY_HASH	    1803 /* Integrity HASH type */
+ #define AUDIT_INTEGRITY_PCR	    1804 /* PCR invalidation msgs */
+ #define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
++#define AUDIT_INTEGRITY_EVM_XATTR   1806 /* New EVM-covered xattr */
+ 
+ #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A REQUEST. */
+ 
+diff --git a/security/integrity/evm/Kconfig b/security/integrity/evm/Kconfig
+index e825e0ae78e7..d593346d0bba 100644
+--- a/security/integrity/evm/Kconfig
++++ b/security/integrity/evm/Kconfig
+@@ -42,6 +42,17 @@ config EVM_EXTRA_SMACK_XATTRS
+ 	  additional info to the calculation, requires existing EVM
+ 	  labeled file systems to be relabeled.
+ 
++config EVM_ADD_XATTRS
++	bool "Add additional EVM extended attributes at runtime"
++	depends on EVM
++	default n
++	help
++	  Allow userland to provide additional xattrs for HMAC calculation.
++
++	  When this option is enabled, root can add additional xattrs to the
++	  list used by EVM by writing them into
++	  /sys/kernel/security/integrity/evm/evm_xattrs.
++
+ config EVM_LOAD_X509
+ 	bool "Load an X509 certificate onto the '.evm' trusted keyring"
+ 	depends on EVM && INTEGRITY_TRUSTED_KEYRING
 diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index a46fba322340..e266a3f0ec33 100644
+index caeea20670cc..494da5fcc092 100644
 --- a/security/integrity/evm/evm_crypto.c
 +++ b/security/integrity/evm/evm_crypto.c
-@@ -21,6 +21,7 @@
- #include <linux/evm.h>
- #include <keys/encrypted-type.h>
- #include <crypto/hash.h>
-+#include <crypto/hash_info.h>
- #include "evm.h"
+@@ -208,7 +208,7 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ 		return PTR_ERR(desc);
  
- #define EVMKEY "evm-key"
-@@ -28,8 +29,7 @@
- static unsigned char evmkey[MAX_KEY_SIZE];
- static int evmkey_len = MAX_KEY_SIZE;
+ 	error = -ENODATA;
+-	list_for_each_entry(xattr, &evm_config_xattrnames, list) {
++	list_for_each_entry_rcu(xattr, &evm_config_xattrnames, list) {
+ 		bool is_ima = false;
  
--struct crypto_shash *hmac_tfm;
--struct crypto_shash *hash_tfm;
-+static struct crypto_shash *evm_tfm[HASH_ALGO__LAST];
+ 		if (strcmp(xattr->name, XATTR_NAME_IMA) == 0)
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 09582d4fc4a8..f9eff5041e4c 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -35,7 +35,7 @@ static const char * const integrity_status_msg[] = {
+ };
+ int evm_hmac_attrs;
  
- static DEFINE_MUTEX(mutex);
- 
-@@ -37,9 +37,6 @@ static DEFINE_MUTEX(mutex);
- 
- static unsigned long evm_set_key_flags;
- 
--static char * const evm_hmac = "hmac(sha1)";
--static char * const evm_hash = "sha1";
--
- /**
-  * evm_set_key() - set EVM HMAC key from the kernel
-  * @key: pointer to a buffer with the key data
-@@ -74,10 +71,10 @@ int evm_set_key(void *key, size_t keylen)
- }
- EXPORT_SYMBOL_GPL(evm_set_key);
- 
--static struct shash_desc *init_desc(char type)
-+static struct shash_desc *init_desc(char type, uint8_t hash_algo)
- {
- 	long rc;
--	char *algo;
-+	const char *algo;
- 	struct crypto_shash **tfm;
- 	struct shash_desc *desc;
- 
-@@ -86,13 +83,11 @@ static struct shash_desc *init_desc(char type)
- 			pr_err_once("HMAC key is not set\n");
- 			return ERR_PTR(-ENOKEY);
- 		}
--		tfm = &hmac_tfm;
--		algo = evm_hmac;
--	} else {
--		tfm = &hash_tfm;
--		algo = evm_hash;
- 	}
- 
-+	tfm = &evm_tfm[hash_algo];
-+	algo = hash_algo_name[hash_algo];
-+
- 	if (*tfm == NULL) {
- 		mutex_lock(&mutex);
- 		if (*tfm)
-@@ -186,10 +181,10 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
-  * each xattr, but attempt to re-use the previously allocated memory.
-  */
- static int evm_calc_hmac_or_hash(struct dentry *dentry,
--				const char *req_xattr_name,
--				const char *req_xattr_value,
--				size_t req_xattr_value_len,
--				char type, char *digest)
-+				 const char *req_xattr_name,
-+				 const char *req_xattr_value,
-+				 size_t req_xattr_value_len,
-+				 uint8_t type, struct evm_digest *data)
- {
- 	struct inode *inode = d_backing_inode(dentry);
- 	struct shash_desc *desc;
-@@ -203,10 +198,17 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+-static struct xattr_list evm_config_default_xattrnames[] __ro_after_init = {
++static struct xattr_list evm_config_default_xattrnames[] = {
+ #ifdef CONFIG_SECURITY_SELINUX
+ 	{.name = XATTR_NAME_SELINUX},
+ #endif
+@@ -101,7 +101,7 @@ static int evm_find_protected_xattrs(struct dentry *dentry)
  	if (!(inode->i_opflags & IOP_XATTR))
  		return -EOPNOTSUPP;
  
--	desc = init_desc(type);
-+	desc = init_desc(type, data->hdr.algo);
- 	if (IS_ERR(desc))
- 		return PTR_ERR(desc);
+-	list_for_each_entry(xattr, &evm_config_xattrnames, list) {
++	list_for_each_entry_rcu(xattr, &evm_config_xattrnames, list) {
+ 		error = __vfs_getxattr(dentry, inode, xattr->name, NULL, 0);
+ 		if (error < 0) {
+ 			if (error == -ENODATA)
+@@ -228,7 +228,7 @@ static int evm_protected_xattr(const char *req_xattr_name)
+ 	struct xattr_list *xattr;
  
-+	/*
-+	 * HMACs are always SHA1, but signatures may be of varying sizes -
-+	 * make sure the caller knows how long the returned data is
-+	 */
-+	if (type != EVM_XATTR_HMAC)
-+		data->hdr.length = crypto_shash_digestsize(desc->tfm);
-+
- 	error = -ENODATA;
- 	for (xattrname = evm_config_xattrnames; *xattrname != NULL; xattrname++) {
- 		bool is_ima = false;
-@@ -238,7 +240,7 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
- 		if (is_ima)
- 			ima_present = true;
- 	}
--	hmac_add_misc(desc, inode, type, digest);
-+	hmac_add_misc(desc, inode, type, data->digest);
+ 	namelen = strlen(req_xattr_name);
+-	list_for_each_entry(xattr, &evm_config_xattrnames, list) {
++	list_for_each_entry_rcu(xattr, &evm_config_xattrnames, list) {
+ 		if ((strlen(xattr->name) == namelen)
+ 		    && (strncmp(req_xattr_name, xattr->name, namelen) == 0)) {
+ 			found = 1;
+diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
+index e44380f0cb45..a7a0a1acae99 100644
+--- a/security/integrity/evm/evm_secfs.c
++++ b/security/integrity/evm/evm_secfs.c
+@@ -15,14 +15,22 @@
  
- 	/* Portable EVM signatures must include an IMA hash */
- 	if (type == EVM_XATTR_PORTABLE_DIGSIG && !ima_present)
-@@ -251,18 +253,18 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
  
- int evm_calc_hmac(struct dentry *dentry, const char *req_xattr_name,
- 		  const char *req_xattr_value, size_t req_xattr_value_len,
--		  char *digest)
-+		  struct evm_digest *data)
- {
- 	return evm_calc_hmac_or_hash(dentry, req_xattr_name, req_xattr_value,
--			       req_xattr_value_len, EVM_XATTR_HMAC, digest);
-+		    req_xattr_value_len, EVM_XATTR_HMAC, data);
- }
- 
- int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
- 		  const char *req_xattr_value, size_t req_xattr_value_len,
--		  char type, char *digest)
-+		  char type, struct evm_digest *data)
- {
- 	return evm_calc_hmac_or_hash(dentry, req_xattr_name, req_xattr_value,
--				     req_xattr_value_len, type, digest);
-+		      req_xattr_value_len, type, data);
- }
- 
- static int evm_is_immutable(struct dentry *dentry, struct inode *inode)
-@@ -302,7 +304,7 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
- 			const char *xattr_value, size_t xattr_value_len)
- {
- 	struct inode *inode = d_backing_inode(dentry);
--	struct evm_ima_xattr_data xattr_data;
-+	struct evm_digest data;
- 	int rc = 0;
- 
- 	/*
-@@ -315,13 +317,14 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
- 	if (rc)
- 		return -EPERM;
- 
-+	data.hdr.algo = HASH_ALGO_SHA1;
- 	rc = evm_calc_hmac(dentry, xattr_name, xattr_value,
--			   xattr_value_len, xattr_data.digest);
-+			   xattr_value_len, &data);
- 	if (rc == 0) {
--		xattr_data.type = EVM_XATTR_HMAC;
-+		data.hdr.xattr.sha1.type = EVM_XATTR_HMAC;
- 		rc = __vfs_setxattr_noperm(dentry, XATTR_NAME_EVM,
--					   &xattr_data,
--					   sizeof(xattr_data), 0);
-+					   &data.hdr.xattr.data[1],
-+					   SHA1_DIGEST_SIZE + 1, 0);
- 	} else if (rc == -ENODATA && (inode->i_opflags & IOP_XATTR)) {
- 		rc = __vfs_removexattr(dentry, XATTR_NAME_EVM);
- 	}
-@@ -333,7 +336,7 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
- {
- 	struct shash_desc *desc;
- 
--	desc = init_desc(EVM_XATTR_HMAC);
-+	desc = init_desc(EVM_XATTR_HMAC, HASH_ALGO_SHA1);
- 	if (IS_ERR(desc)) {
- 		pr_info("init_desc failed\n");
- 		return PTR_ERR(desc);
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 9ea9c19a545c..88ea9c1962d6 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -25,6 +25,7 @@
- #include <linux/magic.h>
- 
- #include <crypto/hash.h>
-+#include <crypto/hash_info.h>
- #include <crypto/algapi.h>
++#include <linux/audit.h>
+ #include <linux/uaccess.h>
+ #include <linux/module.h>
++#include <linux/mutex.h>
  #include "evm.h"
  
-@@ -122,8 +123,9 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
- 					     struct integrity_iint_cache *iint)
- {
- 	struct evm_ima_xattr_data *xattr_data = NULL;
--	struct evm_ima_xattr_data calc;
-+	struct signature_v2_hdr *hdr;
- 	enum integrity_status evm_status = INTEGRITY_PASS;
-+	struct evm_digest digest;
- 	struct inode *inode;
- 	int rc, xattr_len;
+ static struct dentry *evm_dir;
+ static struct dentry *evm_init_tpm;
+ static struct dentry *evm_symlink;
  
-@@ -159,25 +161,28 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
- 			evm_status = INTEGRITY_FAIL;
- 			goto out;
- 		}
++#ifdef CONFIG_EVM_ADD_XATTRS
++static struct dentry *evm_xattrs;
++static DEFINE_MUTEX(xattr_list_mutex);
++static int evm_xattrs_locked;
++#endif
 +
-+		digest.hdr.algo = HASH_ALGO_SHA1;
- 		rc = evm_calc_hmac(dentry, xattr_name, xattr_value,
--				   xattr_value_len, calc.digest);
-+				   xattr_value_len, &digest);
- 		if (rc)
- 			break;
--		rc = crypto_memneq(xattr_data->digest, calc.digest,
--			    sizeof(calc.digest));
-+		rc = crypto_memneq(xattr_data->digest, digest.digest,
-+				   SHA1_DIGEST_SIZE);
- 		if (rc)
- 			rc = -EINVAL;
- 		break;
- 	case EVM_IMA_XATTR_DIGSIG:
- 	case EVM_XATTR_PORTABLE_DIGSIG:
-+		hdr = (struct signature_v2_hdr *)xattr_data;
-+		digest.hdr.algo = hdr->hash_algo;
- 		rc = evm_calc_hash(dentry, xattr_name, xattr_value,
--				   xattr_value_len, xattr_data->type,
--				   calc.digest);
-+				   xattr_value_len, xattr_data->type, &digest);
- 		if (rc)
- 			break;
- 		rc = integrity_digsig_verify(INTEGRITY_KEYRING_EVM,
- 					(const char *)xattr_data, xattr_len,
--					calc.digest, sizeof(calc.digest));
-+					digest.digest, digest.hdr.length);
- 		if (!rc) {
- 			inode = d_backing_inode(dentry);
+ /**
+  * evm_read_key - read() for <securityfs>/evm
+  *
+@@ -109,6 +117,166 @@ static const struct file_operations evm_key_ops = {
+ 	.write		= evm_write_key,
+ };
  
++#ifdef CONFIG_EVM_ADD_XATTRS
++/**
++ * evm_read_xattrs - read() for <securityfs>/evm_xattrs
++ *
++ * @filp: file pointer, not actually used
++ * @buf: where to put the result
++ * @count: maximum to send along
++ * @ppos: where to start
++ *
++ * Returns number of bytes read or error code, as appropriate
++ */
++static ssize_t evm_read_xattrs(struct file *filp, char __user *buf,
++			       size_t count, loff_t *ppos)
++{
++	char *temp;
++	int offset = 0;
++	ssize_t rc, size = 0;
++	struct xattr_list *xattr;
++
++	if (*ppos != 0)
++		return 0;
++
++	rc = mutex_lock_interruptible(&xattr_list_mutex);
++	if (rc)
++		return -ERESTARTSYS;
++
++	list_for_each_entry(xattr, &evm_config_xattrnames, list)
++		size += strlen(xattr->name) + 1;
++
++	temp = kmalloc(size + 1, GFP_KERNEL);
++	if (!temp)
++		return -ENOMEM;
++
++	list_for_each_entry(xattr, &evm_config_xattrnames, list) {
++		sprintf(temp + offset, "%s\n", xattr->name);
++		offset += strlen(xattr->name) + 1;
++	}
++
++	mutex_unlock(&xattr_list_mutex);
++	rc = simple_read_from_buffer(buf, count, ppos, temp, strlen(temp));
++
++	return rc;
++}
++
++/**
++ * evm_write_xattrs - write() for <securityfs>/evm_xattrs
++ * @file: file pointer, not actually used
++ * @buf: where to get the data from
++ * @count: bytes sent
++ * @ppos: where to start
++ *
++ * Returns number of bytes written or error code, as appropriate
++ */
++static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
++				size_t count, loff_t *ppos)
++{
++	int len, err;
++	struct xattr_list *xattr, *tmp;
++	struct audit_buffer *ab;
++	struct iattr newattrs;
++	struct inode *inode;
++
++	if (!capable(CAP_SYS_ADMIN) || evm_xattrs_locked)
++		return -EPERM;
++
++	if (*ppos != 0)
++		return -EINVAL;
++
++	if (count > XATTR_NAME_MAX)
++		return -E2BIG;
++
++	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_EVM_XATTR);
++	if (IS_ERR(ab))
++		return PTR_ERR(ab);
++
++	xattr = kmalloc(sizeof(struct xattr_list), GFP_KERNEL);
++	if (!xattr) {
++		err = -ENOMEM;
++		goto out;
++	}
++
++	xattr->name = memdup_user_nul(buf, count);
++	if (IS_ERR(xattr->name)) {
++		err = PTR_ERR(xattr->name);
++		xattr->name = NULL;
++		goto out;
++	}
++
++	/* Remove any trailing newline */
++	len = strlen(xattr->name);
++	if (xattr->name[len-1] == '\n')
++		xattr->name[len-1] = '\0';
++
++	if (strcmp(xattr->name, ".") == 0) {
++		evm_xattrs_locked = 1;
++		newattrs.ia_mode = S_IFREG | 0440;
++		newattrs.ia_valid = ATTR_MODE;
++		inode = evm_xattrs->d_inode;
++		inode_lock(inode);
++		err = simple_setattr(evm_xattrs, &newattrs);
++		inode_unlock(inode);
++		audit_log_format(ab, "locked");
++		if (!err)
++			err = count;
++		goto out;
++	}
++
++	audit_log_format(ab, "xattr=");
++	audit_log_untrustedstring(ab, xattr->name);
++
++	if (strncmp(xattr->name, XATTR_SECURITY_PREFIX,
++		    XATTR_SECURITY_PREFIX_LEN) != 0) {
++		err = -EINVAL;
++		goto out;
++	}
++
++	/* Guard against races in evm_read_xattrs */
++	mutex_lock(&xattr_list_mutex);
++	list_for_each_entry(tmp, &evm_config_xattrnames, list) {
++		if (strcmp(xattr->name, tmp->name) == 0) {
++			err = -EEXIST;
++			mutex_unlock(&xattr_list_mutex);
++			goto out;
++		}
++	}
++	list_add_tail_rcu(&xattr->list, &evm_config_xattrnames);
++	mutex_unlock(&xattr_list_mutex);
++
++	audit_log_format(ab, " res=0");
++	audit_log_end(ab);
++	return count;
++out:
++	audit_log_format(ab, " res=%d", err);
++	audit_log_end(ab);
++	kfree(xattr->name);
++	kfree(xattr);
++	return err;
++}
++
++static const struct file_operations evm_xattr_ops = {
++	.read		= evm_read_xattrs,
++	.write		= evm_write_xattrs,
++};
++
++static int evm_init_xattrs(void)
++{
++	evm_xattrs = securityfs_create_file("evm_xattrs", 0660, evm_dir, NULL,
++					    &evm_xattr_ops);
++	if (!evm_xattrs || IS_ERR(evm_xattrs))
++		return -EFAULT;
++
++	return 0;
++}
++#else
++static int evm_init_xattrs(void)
++{
++	return 0;
++}
++#endif
++
+ int __init evm_init_secfs(void)
+ {
+ 	int error = 0;
+@@ -131,6 +299,11 @@ int __init evm_init_secfs(void)
+ 		goto out;
+ 	}
+ 
++	if (evm_init_xattrs() != 0) {
++		error = -EFAULT;
++		goto out;
++	}
++
+ 	return 0;
+ out:
+ 	securityfs_remove(evm_symlink);
 -- 
 2.17.0.441.gb46fe60e1d-goog
