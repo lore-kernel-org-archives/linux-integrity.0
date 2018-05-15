@@ -1,117 +1,287 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44550 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752442AbeEPFv5 (ORCPT
+Received: from mail-oi0-f73.google.com ([209.85.218.73]:46150 "EHLO
+        mail-oi0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752989AbeEORxo (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 16 May 2018 01:51:57 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4G5nh2Z053009
-        for <linux-integrity@vger.kernel.org>; Wed, 16 May 2018 01:51:56 -0400
-Received: from e06smtp13.uk.ibm.com (e06smtp13.uk.ibm.com [195.75.94.109])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2j08sn4atc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 16 May 2018 01:51:56 -0400
-Received: from localhost
-        by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Wed, 16 May 2018 06:51:53 +0100
-From: Nayna Jain <nayna@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: zohar@linux.vnet.ibm.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
-        jarkko.sakkinen@linux.intel.com, tpmdd@selhorst.net,
-        jgunthorpe@obsidianresearch.com, patrickc@us.ibm.com,
-        Nayna Jain <nayna@linux.vnet.ibm.com>
-Subject: [PATCH v4 2/2] tpm: reduce polling time to usecs for even finer granularity
-Date: Wed, 16 May 2018 01:51:25 -0400
-In-Reply-To: <20180516055125.5685-1-nayna@linux.vnet.ibm.com>
-References: <20180516055125.5685-1-nayna@linux.vnet.ibm.com>
+        Tue, 15 May 2018 13:53:44 -0400
+Received: by mail-oi0-f73.google.com with SMTP id 22-v6so716634oix.13
+        for <linux-integrity@vger.kernel.org>; Tue, 15 May 2018 10:53:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Message-Id: <20180516055125.5685-3-nayna@linux.vnet.ibm.com>
+Date: Tue, 15 May 2018 10:53:39 -0700
+Message-Id: <20180515175339.33338-1-mjg59@google.com>
+Subject: [PATCH V4] evm: Allow non-SHA1 digital signatures
+From: Matthew Garrett <mjg59@google.com>
+To: linux-integrity@vger.kernel.org
+Cc: zohar@linux.vnet.ibm.com, Matthew Garrett <mjg59@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-The TPM burstcount and status commands are supposed to return very
-quickly [2][3]. This patch further reduces the TPM poll sleep time to usecs
-in get_burstcount() and wait_for_tpm_stat() by calling usleep_range()
-directly.
+SHA1 is reasonable in HMAC constructs, but it's desirable to be able to
+use stronger hashes in digital signatures. Modify the EVM crypto code so
+the hash type is imported from the digital signature and passed down to
+the hash calculation code, and return the digest size to higher layers
+for validation.
 
-After this change, performance on a system[1] with a TPM 1.2 with an 8 byte
-burstcount for 1000 extends improved from ~10.7 sec to ~7 sec.
-
-[1] All tests are performed on an x86 based, locked down, single purpose
-closed system. It has Infineon TPM 1.2 using LPC Bus.
-
-[2] From the TCG Specification "TCG PC Client Specific TPM Interface
-Specification (TIS), Family 1.2":
-
-"NOTE : It takes roughly 330 ns per byte transfer on LPC. 256 bytes would
-take 84 us, which is a long time to stall the CPU. Chipsets may not be
-designed to post this much data to LPC; therefore, the CPU itself is
-stalled for much of this time. Sending 1 kB would take 350 us. Therefore,
-even if the TPM_STS_x.burstCount field is a high value, software SHOULD
-be interruptible during this period."
-
-[3] From the TCG Specification 2.0, "TCG PC Client Platform TPM Profile
-(PTP) Specification":
-
-"It takes roughly 330 ns per byte transfer on LPC. 256 bytes would take
-84 us. Chipsets may not be designed to post this much data to LPC;
-therefore, the CPU itself is stalled for much of this time. Sending 1 kB
-would take 350 us. Therefore, even if the TPM_STS_x.burstCount field is a
-high value, software should be interruptible during this period. For SPI,
-assuming 20MHz clock and 64-byte transfers, it would take about 120 usec
-to move 256B of data. Sending 1kB would take about 500 usec. If the
-transactions are done using 4 bytes at a time, then it would take about
-1 msec. to transfer 1kB of data."
-
-Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Acked-by: Jay Freyensee <why2jjj.linux@gmail.com>
+Signed-off-by: Matthew Garrett <mjg59@google.com>
 ---
- drivers/char/tpm/tpm.h          | 4 +++-
- drivers/char/tpm/tpm_tis_core.c | 5 +++--
- 2 files changed, 6 insertions(+), 3 deletions(-)
+ security/integrity/evm/evm.h        | 10 ++++-
+ security/integrity/evm/evm_crypto.c | 59 +++++++++++++++--------------
+ security/integrity/evm/evm_main.c   | 19 ++++++----
+ 3 files changed, 51 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 7e797377e1eb..f0e4d290c347 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -54,7 +54,9 @@ enum tpm_timeout {
- 	TPM_TIMEOUT = 5,	/* msecs */
- 	TPM_TIMEOUT_RETRY = 100, /* msecs */
- 	TPM_TIMEOUT_RANGE_US = 300,	/* usecs */
--	TPM_TIMEOUT_POLL = 1	/* msecs */
-+	TPM_TIMEOUT_POLL = 1,	/* msecs */
-+	TPM_TIMEOUT_USECS_MIN = 100,      /* usecs */
-+	TPM_TIMEOUT_USECS_MAX = 500      /* usecs */
- };
+diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
+index 45c4a89c02ff..1ed117f360af 100644
+--- a/security/integrity/evm/evm.h
++++ b/security/integrity/evm/evm.h
+@@ -42,6 +42,11 @@ extern struct crypto_shash *hash_tfm;
+ /* List of EVM protected security xattrs */
+ extern char *evm_config_xattrnames[];
  
- /* TPM addresses */
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 021e6b68f2db..bbd8eed30e57 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -84,7 +84,8 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
- 		}
- 	} else {
- 		do {
--			tpm_msleep(TPM_TIMEOUT_POLL);
-+			usleep_range(TPM_TIMEOUT_USECS_MIN,
-+				     TPM_TIMEOUT_USECS_MAX);
- 			status = chip->ops->status(chip);
- 			if ((status & mask) == mask)
- 				return 0;
-@@ -226,7 +227,7 @@ static int get_burstcount(struct tpm_chip *chip)
- 		burstcnt = (value >> 8) & 0xFFFF;
- 		if (burstcnt)
- 			return burstcnt;
--		tpm_msleep(TPM_TIMEOUT_POLL);
-+		usleep_range(TPM_TIMEOUT_USECS_MIN, TPM_TIMEOUT_USECS_MAX);
- 	} while (time_before(jiffies, stop));
- 	return -EBUSY;
++struct evm_digest {
++	struct ima_digest_data hdr;
++	char digest[IMA_MAX_DIGEST_SIZE];
++} __packed__;
++
+ int evm_init_key(void);
+ int evm_update_evmxattr(struct dentry *dentry,
+ 			const char *req_xattr_name,
+@@ -49,10 +54,11 @@ int evm_update_evmxattr(struct dentry *dentry,
+ 			size_t req_xattr_value_len);
+ int evm_calc_hmac(struct dentry *dentry, const char *req_xattr_name,
+ 		  const char *req_xattr_value,
+-		  size_t req_xattr_value_len, char *digest);
++		  size_t req_xattr_value_len, struct evm_digest *data);
+ int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
+ 		  const char *req_xattr_value,
+-		  size_t req_xattr_value_len, char type, char *digest);
++		  size_t req_xattr_value_len, char type,
++		  struct evm_digest *data);
+ int evm_init_hmac(struct inode *inode, const struct xattr *xattr,
+ 		  char *hmac_val);
+ int evm_init_secfs(void);
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index a46fba322340..e266a3f0ec33 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -21,6 +21,7 @@
+ #include <linux/evm.h>
+ #include <keys/encrypted-type.h>
+ #include <crypto/hash.h>
++#include <crypto/hash_info.h>
+ #include "evm.h"
+ 
+ #define EVMKEY "evm-key"
+@@ -28,8 +29,7 @@
+ static unsigned char evmkey[MAX_KEY_SIZE];
+ static int evmkey_len = MAX_KEY_SIZE;
+ 
+-struct crypto_shash *hmac_tfm;
+-struct crypto_shash *hash_tfm;
++static struct crypto_shash *evm_tfm[HASH_ALGO__LAST];
+ 
+ static DEFINE_MUTEX(mutex);
+ 
+@@ -37,9 +37,6 @@ static DEFINE_MUTEX(mutex);
+ 
+ static unsigned long evm_set_key_flags;
+ 
+-static char * const evm_hmac = "hmac(sha1)";
+-static char * const evm_hash = "sha1";
+-
+ /**
+  * evm_set_key() - set EVM HMAC key from the kernel
+  * @key: pointer to a buffer with the key data
+@@ -74,10 +71,10 @@ int evm_set_key(void *key, size_t keylen)
  }
+ EXPORT_SYMBOL_GPL(evm_set_key);
+ 
+-static struct shash_desc *init_desc(char type)
++static struct shash_desc *init_desc(char type, uint8_t hash_algo)
+ {
+ 	long rc;
+-	char *algo;
++	const char *algo;
+ 	struct crypto_shash **tfm;
+ 	struct shash_desc *desc;
+ 
+@@ -86,13 +83,11 @@ static struct shash_desc *init_desc(char type)
+ 			pr_err_once("HMAC key is not set\n");
+ 			return ERR_PTR(-ENOKEY);
+ 		}
+-		tfm = &hmac_tfm;
+-		algo = evm_hmac;
+-	} else {
+-		tfm = &hash_tfm;
+-		algo = evm_hash;
+ 	}
+ 
++	tfm = &evm_tfm[hash_algo];
++	algo = hash_algo_name[hash_algo];
++
+ 	if (*tfm == NULL) {
+ 		mutex_lock(&mutex);
+ 		if (*tfm)
+@@ -186,10 +181,10 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
+  * each xattr, but attempt to re-use the previously allocated memory.
+  */
+ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+-				const char *req_xattr_name,
+-				const char *req_xattr_value,
+-				size_t req_xattr_value_len,
+-				char type, char *digest)
++				 const char *req_xattr_name,
++				 const char *req_xattr_value,
++				 size_t req_xattr_value_len,
++				 uint8_t type, struct evm_digest *data)
+ {
+ 	struct inode *inode = d_backing_inode(dentry);
+ 	struct shash_desc *desc;
+@@ -203,10 +198,17 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ 	if (!(inode->i_opflags & IOP_XATTR))
+ 		return -EOPNOTSUPP;
+ 
+-	desc = init_desc(type);
++	desc = init_desc(type, data->hdr.algo);
+ 	if (IS_ERR(desc))
+ 		return PTR_ERR(desc);
+ 
++	/*
++	 * HMACs are always SHA1, but signatures may be of varying sizes -
++	 * make sure the caller knows how long the returned data is
++	 */
++	if (type != EVM_XATTR_HMAC)
++		data->hdr.length = crypto_shash_digestsize(desc->tfm);
++
+ 	error = -ENODATA;
+ 	for (xattrname = evm_config_xattrnames; *xattrname != NULL; xattrname++) {
+ 		bool is_ima = false;
+@@ -238,7 +240,7 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ 		if (is_ima)
+ 			ima_present = true;
+ 	}
+-	hmac_add_misc(desc, inode, type, digest);
++	hmac_add_misc(desc, inode, type, data->digest);
+ 
+ 	/* Portable EVM signatures must include an IMA hash */
+ 	if (type == EVM_XATTR_PORTABLE_DIGSIG && !ima_present)
+@@ -251,18 +253,18 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ 
+ int evm_calc_hmac(struct dentry *dentry, const char *req_xattr_name,
+ 		  const char *req_xattr_value, size_t req_xattr_value_len,
+-		  char *digest)
++		  struct evm_digest *data)
+ {
+ 	return evm_calc_hmac_or_hash(dentry, req_xattr_name, req_xattr_value,
+-			       req_xattr_value_len, EVM_XATTR_HMAC, digest);
++		    req_xattr_value_len, EVM_XATTR_HMAC, data);
+ }
+ 
+ int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
+ 		  const char *req_xattr_value, size_t req_xattr_value_len,
+-		  char type, char *digest)
++		  char type, struct evm_digest *data)
+ {
+ 	return evm_calc_hmac_or_hash(dentry, req_xattr_name, req_xattr_value,
+-				     req_xattr_value_len, type, digest);
++		      req_xattr_value_len, type, data);
+ }
+ 
+ static int evm_is_immutable(struct dentry *dentry, struct inode *inode)
+@@ -302,7 +304,7 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
+ 			const char *xattr_value, size_t xattr_value_len)
+ {
+ 	struct inode *inode = d_backing_inode(dentry);
+-	struct evm_ima_xattr_data xattr_data;
++	struct evm_digest data;
+ 	int rc = 0;
+ 
+ 	/*
+@@ -315,13 +317,14 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
+ 	if (rc)
+ 		return -EPERM;
+ 
++	data.hdr.algo = HASH_ALGO_SHA1;
+ 	rc = evm_calc_hmac(dentry, xattr_name, xattr_value,
+-			   xattr_value_len, xattr_data.digest);
++			   xattr_value_len, &data);
+ 	if (rc == 0) {
+-		xattr_data.type = EVM_XATTR_HMAC;
++		data.hdr.xattr.sha1.type = EVM_XATTR_HMAC;
+ 		rc = __vfs_setxattr_noperm(dentry, XATTR_NAME_EVM,
+-					   &xattr_data,
+-					   sizeof(xattr_data), 0);
++					   &data.hdr.xattr.data[1],
++					   SHA1_DIGEST_SIZE + 1, 0);
+ 	} else if (rc == -ENODATA && (inode->i_opflags & IOP_XATTR)) {
+ 		rc = __vfs_removexattr(dentry, XATTR_NAME_EVM);
+ 	}
+@@ -333,7 +336,7 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
+ {
+ 	struct shash_desc *desc;
+ 
+-	desc = init_desc(EVM_XATTR_HMAC);
++	desc = init_desc(EVM_XATTR_HMAC, HASH_ALGO_SHA1);
+ 	if (IS_ERR(desc)) {
+ 		pr_info("init_desc failed\n");
+ 		return PTR_ERR(desc);
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 9ea9c19a545c..88ea9c1962d6 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -25,6 +25,7 @@
+ #include <linux/magic.h>
+ 
+ #include <crypto/hash.h>
++#include <crypto/hash_info.h>
+ #include <crypto/algapi.h>
+ #include "evm.h"
+ 
+@@ -122,8 +123,9 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+ 					     struct integrity_iint_cache *iint)
+ {
+ 	struct evm_ima_xattr_data *xattr_data = NULL;
+-	struct evm_ima_xattr_data calc;
++	struct signature_v2_hdr *hdr;
+ 	enum integrity_status evm_status = INTEGRITY_PASS;
++	struct evm_digest digest;
+ 	struct inode *inode;
+ 	int rc, xattr_len;
+ 
+@@ -159,25 +161,28 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+ 			evm_status = INTEGRITY_FAIL;
+ 			goto out;
+ 		}
++
++		digest.hdr.algo = HASH_ALGO_SHA1;
+ 		rc = evm_calc_hmac(dentry, xattr_name, xattr_value,
+-				   xattr_value_len, calc.digest);
++				   xattr_value_len, &digest);
+ 		if (rc)
+ 			break;
+-		rc = crypto_memneq(xattr_data->digest, calc.digest,
+-			    sizeof(calc.digest));
++		rc = crypto_memneq(xattr_data->digest, digest.digest,
++				   SHA1_DIGEST_SIZE);
+ 		if (rc)
+ 			rc = -EINVAL;
+ 		break;
+ 	case EVM_IMA_XATTR_DIGSIG:
+ 	case EVM_XATTR_PORTABLE_DIGSIG:
++		hdr = (struct signature_v2_hdr *)xattr_data;
++		digest.hdr.algo = hdr->hash_algo;
+ 		rc = evm_calc_hash(dentry, xattr_name, xattr_value,
+-				   xattr_value_len, xattr_data->type,
+-				   calc.digest);
++				   xattr_value_len, xattr_data->type, &digest);
+ 		if (rc)
+ 			break;
+ 		rc = integrity_digsig_verify(INTEGRITY_KEYRING_EVM,
+ 					(const char *)xattr_data, xattr_len,
+-					calc.digest, sizeof(calc.digest));
++					digest.digest, digest.hdr.length);
+ 		if (!rc) {
+ 			inode = d_backing_inode(dentry);
+ 
 -- 
-2.13.3
+2.17.0.441.gb46fe60e1d-goog
