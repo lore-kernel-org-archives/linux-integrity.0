@@ -1,95 +1,76 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34650 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43946 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752239AbeEONlP (ORCPT
+        by vger.kernel.org with ESMTP id S1752072AbeEOMoI (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 15 May 2018 09:41:15 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4FDdGeA019167
-        for <linux-integrity@vger.kernel.org>; Tue, 15 May 2018 09:41:14 -0400
-Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2hywun0axs-1
+        Tue, 15 May 2018 08:44:08 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4FCdwG0026794
+        for <linux-integrity@vger.kernel.org>; Tue, 15 May 2018 08:44:07 -0400
+Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2hyy9uhjaf-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 15 May 2018 09:41:14 -0400
+        for <linux-integrity@vger.kernel.org>; Tue, 15 May 2018 08:44:06 -0400
 Received: from localhost
-        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Tue, 15 May 2018 14:41:12 +0100
-Subject: Re: [RFC PATCH v4 3/5] ima: differentiate auditing policy rules
- from "audit" actions
+        Tue, 15 May 2018 13:44:04 +0100
+Subject: Re: [PATCH 3/6] firmware: differentiate between signed
+ regulatory.db and other firmware
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Cc: serge@hallyn.com, sunyuqiong1988@gmail.com, david.safford@ge.com,
-        mkayaalp@cs.binghamton.edu, James.Bottomley@HansenPartnership.com,
-        ebiederm@xmission.com, john.johansen@canonical.com
-Date: Tue, 15 May 2018 09:40:55 -0400
-In-Reply-To: <20180511144230.75384-4-stefanb@linux.vnet.ibm.com>
-References: <20180511144230.75384-1-stefanb@linux.vnet.ibm.com>
-         <20180511144230.75384-4-stefanb@linux.vnet.ibm.com>
+To: Josh Boyer <jwboyer@kernel.org>, mcgrof@kernel.org
+Cc: Harald Hoyer <harald@redhat.com>, Hannes Reinecke <hare@suse.de>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Casey Schaufler <casey@schaufler-ca.com>, ast@kernel.org,
+        David Miller <davem@davemloft.net>, jeyu@kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Peter Jones <pjones@redhat.com>, takahiro.akashi@linaro.org,
+        David Howells <dhowells@redhat.com>,
+        Linux Wireless <linux-wireless@vger.kernel.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        johannes.berg@intel.com, linux-integrity@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Greg KH <gregkh@linuxfoundation.org>, andresx7@gmail.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        luto@kernel.org, Justin Forbes <jforbes@redhat.com>,
+        Laura Abbott <labbott@redhat.com>
+Date: Tue, 15 May 2018 08:43:39 -0400
+In-Reply-To: <CA+5PVA7QU0k91zvoBTAFzG+unkh-=-s9Lhk3hn3eTJhHo4ovCQ@mail.gmail.com>
+References: <20180509212212.GX27853@wotan.suse.de>
+         <1525903617.3551.281.camel@linux.vnet.ibm.com>
+         <20180509234814.GY27853@wotan.suse.de>
+         <1525917658.3551.322.camel@linux.vnet.ibm.com>
+         <20180510232639.GF27853@wotan.suse.de>
+         <1526014826.3414.46.camel@linux.vnet.ibm.com>
+         <20180511215250.GJ27853@wotan.suse.de>
+         <1526302692.3898.145.camel@linux.vnet.ibm.com>
+         <20180514192853.GM27853@wotan.suse.de>
+         <1526349751.3937.78.camel@linux.vnet.ibm.com>
+         <20180515032656.GR27853@wotan.suse.de>
+         <CA+5PVA7QU0k91zvoBTAFzG+unkh-=-s9Lhk3hn3eTJhHo4ovCQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1526391655.3937.151.camel@linux.vnet.ibm.com>
+Message-Id: <1526388219.3937.137.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Stefan,
+On Tue, 2018-05-15 at 08:32 -0400, Josh Boyer wrote:
 
-On Fri, 2018-05-11 at 10:42 -0400, Stefan Berger wrote:
-> From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> 
-> The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
-> the IMA "audit" policy action.  This patch defines AUDIT_INTEGRITY_POLICY
-> to reflect the IMA policy rules.
-> 
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> One aspect that was always a concern to some is whether the firmware files
+> were modified directly to have the signature attached to them.  That may
+> run afoul of the "no modification" license that most blobs are shipped
+> under.  Does IMA have the signatures for the files stored in xattrs or in
+> some other detached manner?
 
-We do need to separate out auditing the IMA policy rules from the
-"IMA-audit" messages.  Based on the IMA policy rule aspect of the
-discussions [1],  I would really appreciate if you could work with
-Richard and Steve on the new IMA policy rule audit format.
-
-This change can be upstreamed independently of either the IMA
-namespacing or the audit containerid patch sets.  The sooner we make
-this change and upstream it, the better.
-
-[1] https://www.redhat.com/archives/linux-audit/2018-March/msg00092.html
-
-thanks,
+They're stored as xattrs.  RPM has support for including file
+signatures in the RPM header.
 
 Mimi
-
-> ---
->  include/uapi/linux/audit.h          | 3 ++-
->  security/integrity/ima/ima_policy.c | 2 +-
->  2 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> index 4e61a9e05132..8966e7ff1c4c 100644
-> --- a/include/uapi/linux/audit.h
-> +++ b/include/uapi/linux/audit.h
-> @@ -146,7 +146,8 @@
->  #define AUDIT_INTEGRITY_STATUS	    1802 /* Integrity enable status */
->  #define AUDIT_INTEGRITY_HASH	    1803 /* Integrity HASH type */
->  #define AUDIT_INTEGRITY_PCR	    1804 /* PCR invalidation msgs */
-> -#define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
-> +#define AUDIT_INTEGRITY_RULE	    1805 /* IMA "audit" action policy msgs  */
-> +#define AUDIT_INTEGRITY_POLICY	    1806 /* IMA policy rules */
-> 
->  #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A REQUEST. */
-> 
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index 915f5572c6ff..3a1412db02a3 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -619,7 +619,7 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->  	bool uid_token;
->  	int result = 0;
-> 
-> -	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_RULE);
-> +	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_POLICY);
-> 
->  	entry->uid = INVALID_UID;
->  	entry->fowner = INVALID_UID;
