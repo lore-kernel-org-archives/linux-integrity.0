@@ -1,25 +1,25 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43946 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752072AbeEOMoI (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 15 May 2018 08:44:08 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4FCdwG0026794
-        for <linux-integrity@vger.kernel.org>; Tue, 15 May 2018 08:44:07 -0400
-Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2hyy9uhjaf-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 15 May 2018 08:44:06 -0400
-Received: from localhost
-        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Tue, 15 May 2018 13:44:04 +0100
-Subject: Re: [PATCH 3/6] firmware: differentiate between signed
- regulatory.db and other firmware
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Josh Boyer <jwboyer@kernel.org>, mcgrof@kernel.org
-Cc: Harald Hoyer <harald@redhat.com>, Hannes Reinecke <hare@suse.de>,
+Received: from mail.kernel.org ([198.145.29.99]:57870 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752331AbeEOMdI (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 15 May 2018 08:33:08 -0400
+MIME-Version: 1.0
+References: <20180509212212.GX27853@wotan.suse.de> <1525903617.3551.281.camel@linux.vnet.ibm.com>
+ <20180509234814.GY27853@wotan.suse.de> <1525917658.3551.322.camel@linux.vnet.ibm.com>
+ <20180510232639.GF27853@wotan.suse.de> <1526014826.3414.46.camel@linux.vnet.ibm.com>
+ <20180511215250.GJ27853@wotan.suse.de> <1526302692.3898.145.camel@linux.vnet.ibm.com>
+ <20180514192853.GM27853@wotan.suse.de> <1526349751.3937.78.camel@linux.vnet.ibm.com>
+ <20180515032656.GR27853@wotan.suse.de>
+In-Reply-To: <20180515032656.GR27853@wotan.suse.de>
+From: Josh Boyer <jwboyer@kernel.org>
+Date: Tue, 15 May 2018 08:32:55 -0400
+Message-ID: <CA+5PVA7QU0k91zvoBTAFzG+unkh-=-s9Lhk3hn3eTJhHo4ovCQ@mail.gmail.com>
+Subject: Re: [PATCH 3/6] firmware: differentiate between signed regulatory.db
+ and other firmware
+To: mcgrof@kernel.org
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Harald Hoyer <harald@redhat.com>,
+        Hannes Reinecke <hare@suse.de>,
         Johannes Thumshirn <jthumshirn@suse.de>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
         Casey Schaufler <casey@schaufler-ca.com>, ast@kernel.org,
@@ -42,35 +42,82 @@ Cc: Harald Hoyer <harald@redhat.com>, Hannes Reinecke <hare@suse.de>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         luto@kernel.org, Justin Forbes <jforbes@redhat.com>,
         Laura Abbott <labbott@redhat.com>
-Date: Tue, 15 May 2018 08:43:39 -0400
-In-Reply-To: <CA+5PVA7QU0k91zvoBTAFzG+unkh-=-s9Lhk3hn3eTJhHo4ovCQ@mail.gmail.com>
-References: <20180509212212.GX27853@wotan.suse.de>
-         <1525903617.3551.281.camel@linux.vnet.ibm.com>
-         <20180509234814.GY27853@wotan.suse.de>
-         <1525917658.3551.322.camel@linux.vnet.ibm.com>
-         <20180510232639.GF27853@wotan.suse.de>
-         <1526014826.3414.46.camel@linux.vnet.ibm.com>
-         <20180511215250.GJ27853@wotan.suse.de>
-         <1526302692.3898.145.camel@linux.vnet.ibm.com>
-         <20180514192853.GM27853@wotan.suse.de>
-         <1526349751.3937.78.camel@linux.vnet.ibm.com>
-         <20180515032656.GR27853@wotan.suse.de>
-         <CA+5PVA7QU0k91zvoBTAFzG+unkh-=-s9Lhk3hn3eTJhHo4ovCQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1526388219.3937.137.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, 2018-05-15 at 08:32 -0400, Josh Boyer wrote:
+On Mon, May 14, 2018 at 11:27 PM Luis R. Rodriguez <mcgrof@kernel.org>
+wrote:
 
-> One aspect that was always a concern to some is whether the firmware files
-> were modified directly to have the signature attached to them.  That may
-> run afoul of the "no modification" license that most blobs are shipped
-> under.  Does IMA have the signatures for the files stored in xattrs or in
-> some other detached manner?
+> On Mon, May 14, 2018 at 10:02:31PM -0400, Mimi Zohar wrote:
+> > On Mon, 2018-05-14 at 19:28 +0000, Luis R. Rodriguez wrote:
+> > > > - CONFIG_IMA_APPRAISE is not fine enough grained.
+> > > >
+> > > > The CONFIG_IMA_APPRAISE_FIRMWARE will be a Kconfig option.  Similar
+> > > > Kconfig options will require kernel modules, kexec'ed image, and the
+> > > > IMA policy to be signed.
+> > >
+> > > Sure, it is still unclear to me if CONFIG_IMA_APPRAISE_FIRMWARE will
+be
+> > > doing firmware verification in userspace or in the kernel.
+> >
+> > The kernel is verifying signatures.
+> >
+> > > > There are a number of reasons that the kernel should be verifying
+> > > > firmware signatures (eg. requiring a specific version of the
+firmware,
+> > > > that was locally signed).
+> > >
+> > > Oh I agree, Linux enterprise distributions also have a strong reason
+to
+> > > have this, so that for instance we only trust and run vendor-approved
+> > > signed firmware. Otherwise the driver should reject the firmware.
+Every
+> > > now and then enterprise distros may run into cases were certain
+customers
+> > > may run oddball firmwares, and its unclear if we expect proper
+functionality
+> > > with that firmware. Having some form of firmware signing would help
+with
+> > > this pipeline, but this is currently dealt with at the packaging, and
+> > > noting other than logs ensures the driver is using an intended
+firmware.
+> > > But these needs *IMHO* have not been enough to push to generalize a
+kernel
+> > > firmware signing facility.
+> >
+> > In order for IMA-appraisal to verify firmware signatures, the
+> > signatures need to be distributed with the firmware.  Perhaps this
+> > will be enough of an incentive for distros to start including firmware
+> > signatures in the packages.
 
-They're stored as xattrs.  RPM has support for including file
-signatures in the RPM header.
+> Best to poke the maintainers about that... We have been sending mixed
+messages
+> about firmware signing over years now. Josh, heads up the new one is we
+can
+> do firmware signing through IMA future CONFIG_IMA_APPRAISE_FIRMWARE. I'll
+> bounce you a few emails related to this.
 
-Mimi
+> > > If CONFIG_IMA_APPRAISE_FIRMWARE is going to provide this
+functionality somehow
+> > > I'm happy to hear it.
+> >
+> > The functionality has been there since commit 5a9196d ("ima: add
+> > support for measuring and appraising firmware").  The
+> > security_kernel_fw_from_file() hook was later replaced with the
+> > generic security_kernel_read_file() hook.
+
+> Groovy, its unclear from the code on that commit how this is done, so I
+> suppose I need to study this a bit more. Josh, do you grok it?
+
+I haven't looked to be honest.  I don't do much in the way of kernel
+maintenance on the distro side any longer.  You already have David copied
+and I've added Justin Forbes and Laura Abbott to cover Fedora.
+
+One aspect that was always a concern to some is whether the firmware files
+were modified directly to have the signature attached to them.  That may
+run afoul of the "no modification" license that most blobs are shipped
+under.  Does IMA have the signatures for the files stored in xattrs or in
+some other detached manner?
+
+josh
