@@ -1,43 +1,70 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga05.intel.com ([192.55.52.43]:16201 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751510AbeEPOKm (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 16 May 2018 10:10:42 -0400
-Date: Wed, 16 May 2018 17:10:35 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Nayna Jain <nayna@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
-        tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com,
-        patrickc@us.ibm.com
-Subject: Re: [PATCH v4 1/2] tpm: reduce poll sleep time in tpm_transmit()
-Message-ID: <20180516141035.GA10304@linux.intel.com>
-References: <20180516055125.5685-1-nayna@linux.vnet.ibm.com>
- <20180516055125.5685-2-nayna@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180516055125.5685-2-nayna@linux.vnet.ibm.com>
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46412 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752146AbeEPL4r (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 16 May 2018 07:56:47 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
+        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
+        Linux Security Module list
+        <linux-security-module@vger.kernel.org>,
+        Integrity Measurement Architecture
+        <linux-integrity@vger.kernel.org>,
+        SElinux list <selinux@tycho.nsa.gov>
+Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Richard Guy Briggs <rgb@redhat.com>
+Subject: [PATCH ghak81 V3 0/3] audit: group task params
+Date: Wed, 16 May 2018 07:55:44 -0400
+Message-Id: <cover.1526430313.git.rgb@redhat.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, May 16, 2018 at 01:51:24AM -0400, Nayna Jain wrote:
-> tpm_try_transmit currently checks TPM status every 5 msecs between
-> send and recv. It does so in a loop for the maximum timeout as defined
-> in the TPM Interface Specification. However, the TPM may return before
-> 5 msecs. Thus the polling interval for each iteration can be reduced,
-> which improves overall performance. This patch changes the polling sleep
-> time from 5 msecs to 1 msec.
-> 
-> Additionally, this patch renames TPM_POLL_SLEEP to TPM_TIMEOUT_POLL and
-> moves it to tpm.h as an enum value.
-> 
-> After this change, performance on a system[1] with a TPM 1.2 with an 8 byte
-> burstcount for 1000 extends improved from ~14 sec to ~10.7 sec.
-> 
-> [1] All tests are performed on an x86 based, locked down, single purpose
-> closed system. It has Infineon TPM 1.2 using LPC Bus.
+Group the audit parameters for each task into one structure.
+In particular, remove the loginuid and sessionid values and the audit
+context pointer from the task structure, replacing them with an audit
+task information structure to contain them.  Use access functions to
+access audit values.
 
-Already applied previous version of this.
+Use dynamic allocation of the audit task information structure employing
+kmem_cache.  Static allocation has the limitation that future audit task
+information structure changes would cause a visible change to the rest
+of the kernel, whereas dynamic allocation would mostly hide any future
+changes.
 
-/Jarkko
+Passes audit-testsuite.
+
+Changelog:
+v3
+- drop patches 2, 3, 4 already merged.
+- fix for previous v2 patch 3 (seccomp get audit_context)
+- dynamic audit_task_info allocation from kmem_cache
+- fix assignment in if statement v2 patch 1 (normalize loginuid read)
+- fix a number of merge conflicts/checkpatch
+v2
+- p2/5: add audit header to init/init_task.c to quiet kbuildbot
+- audit_signal_info(): fetch loginuid once
+- remove task_struct from audit_context() param list
+- remove extra task_struct local vars
+- do nothing on request to set audit context when audit is disabled
+
+Richard Guy Briggs (3):
+  audit: use new audit_context access funciton for
+    seccomp_actions_logged
+  audit: normalize loginuid read access
+  audit: collect audit task parameters
+
+ include/linux/audit.h | 34 ++++++++++++++++-------
+ include/linux/sched.h |  5 +---
+ init/init_task.c      |  3 +-
+ init/main.c           |  2 ++
+ kernel/auditsc.c      | 77 ++++++++++++++++++++++++++++++++++++++-------------
+ kernel/fork.c         |  2 +-
+ 6 files changed, 87 insertions(+), 36 deletions(-)
+
+-- 
+1.8.3.1
