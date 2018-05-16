@@ -1,109 +1,316 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:4395 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751395AbeEQBxb (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 16 May 2018 21:53:31 -0400
-Date: Thu, 17 May 2018 09:43:16 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: kbuild-all@01.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
-        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
-        Linux Security Module list
-        <linux-security-module@vger.kernel.org>,
-        Integrity Measurement Architecture
-        <linux-integrity@vger.kernel.org>,
-        SElinux list <selinux@tycho.nsa.gov>,
-        Eric Paris <eparis@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: Re: [PATCH ghak81 V3 3/3] audit: collect audit task parameters
-Message-ID: <201805170921.vSuTk8UB%fengguang.wu@intel.com>
-References: <fbed63483b5206009ee43ae889b30d43051f386c.1526430313.git.rgb@redhat.com>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="AqsLC8rIMeq19msA"
-In-Reply-To: <fbed63483b5206009ee43ae889b30d43051f386c.1526430313.git.rgb@redhat.com>
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60862 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751626AbeEPWMW (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 16 May 2018 18:12:22 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4GLxIPB004379
+        for <linux-integrity@vger.kernel.org>; Wed, 16 May 2018 18:12:21 -0400
+Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2j0s2qb1ce-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 16 May 2018 18:12:21 -0400
+Received: from localhost
+        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Wed, 16 May 2018 23:12:19 +0100
+Subject: Re: [PATCH V4] evm: Allow non-SHA1 digital signatures
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Matthew Garrett <mjg59@google.com>, linux-integrity@vger.kernel.org
+Date: Wed, 16 May 2018 18:12:16 -0400
+In-Reply-To: <20180515175339.33338-1-mjg59@google.com>
+References: <20180515175339.33338-1-mjg59@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1526508736.3306.6.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Richard,
+On Tue, 2018-05-15 at 10:53 -0700, Matthew Garrett wrote:
+> SHA1 is reasonable in HMAC constructs, but it's desirable to be able to
+> use stronger hashes in digital signatures. Modify the EVM crypto code so
+> the hash type is imported from the digital signature and passed down to
+> the hash calculation code, and return the digest size to higher layers
+> for validation.
+> 
+> Signed-off-by: Matthew Garrett <mjg59@google.com>
 
-Thank you for the patch! Yet something to improve:
-
-[auto build test ERROR on next-20180516]
-[cannot apply to linus/master tip/sched/core v4.17-rc5 v4.17-rc4 v4.17-rc3 v4.17-rc5]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Richard-Guy-Briggs/audit-group-task-params/20180517-090703
-config: i386-tinyconfig (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
-
-All errors (new ones prefixed by >>):
-
-   kernel/fork.c: In function 'copy_process':
->> kernel/fork.c:1739:3: error: 'struct task_struct' has no member named 'audit'
-     p->audit = NULL;
-      ^~
-
-vim +1739 kernel/fork.c
-
-  1728	
-  1729		p->default_timer_slack_ns = current->timer_slack_ns;
-  1730	
-  1731		task_io_accounting_init(&p->ioac);
-  1732		acct_clear_integrals(p);
-  1733	
-  1734		posix_cpu_timers_init(p);
-  1735	
-  1736		p->start_time = ktime_get_ns();
-  1737		p->real_start_time = ktime_get_boot_ns();
-  1738		p->io_context = NULL;
-> 1739		p->audit = NULL;
-  1740		cgroup_fork(p);
-  1741	#ifdef CONFIG_NUMA
-  1742		p->mempolicy = mpol_dup(p->mempolicy);
-  1743		if (IS_ERR(p->mempolicy)) {
-  1744			retval = PTR_ERR(p->mempolicy);
-  1745			p->mempolicy = NULL;
-  1746			goto bad_fork_cleanup_threadgroup_lock;
-  1747		}
-  1748	#endif
-  1749	#ifdef CONFIG_CPUSETS
-  1750		p->cpuset_mem_spread_rotor = NUMA_NO_NODE;
-  1751		p->cpuset_slab_spread_rotor = NUMA_NO_NODE;
-  1752		seqcount_init(&p->mems_allowed_seq);
-  1753	#endif
-  1754	#ifdef CONFIG_TRACE_IRQFLAGS
-  1755		p->irq_events = 0;
-  1756		p->hardirqs_enabled = 0;
-  1757		p->hardirq_enable_ip = 0;
-  1758		p->hardirq_enable_event = 0;
-  1759		p->hardirq_disable_ip = _THIS_IP_;
-  1760		p->hardirq_disable_event = 0;
-  1761		p->softirqs_enabled = 1;
-  1762		p->softirq_enable_ip = _THIS_IP_;
-  1763		p->softirq_enable_event = 0;
-  1764		p->softirq_disable_ip = 0;
-  1765		p->softirq_disable_event = 0;
-  1766		p->hardirq_context = 0;
-  1767		p->softirq_context = 0;
-  1768	#endif
-  1769	
-  1770		p->pagefault_disabled = 0;
-  1771	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> ---
+>  security/integrity/evm/evm.h        | 10 ++++-
+>  security/integrity/evm/evm_crypto.c | 59 +++++++++++++++--------------
+>  security/integrity/evm/evm_main.c   | 19 ++++++----
+>  3 files changed, 51 insertions(+), 37 deletions(-)
+> 
+> diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
+> index 45c4a89c02ff..1ed117f360af 100644
+> --- a/security/integrity/evm/evm.h
+> +++ b/security/integrity/evm/evm.h
+> @@ -42,6 +42,11 @@ extern struct crypto_shash *hash_tfm;
+>  /* List of EVM protected security xattrs */
+>  extern char *evm_config_xattrnames[];
+> 
+> +struct evm_digest {
+> +	struct ima_digest_data hdr;
+> +	char digest[IMA_MAX_DIGEST_SIZE];
+> +} __packed__;
 
 
-    [ Part 2, Application/GZIP 6.5 KB. ]
-    [ Unable to print this part. ]
+security/integrity/evm/evm_crypto.o:(.bss+0x0): multiple definition of
+`__packed__'
+security/integrity/evm/evm_main.o:(.bss+0x20): first defined here
+security/integrity/evm/evm_secfs.o:(.bss+0x0): multiple definition of
+`__packed__'
+security/integrity/evm/evm_main.o:/home/mimi/src/kernel/linux-
+integrity/security/integrity/evm/evm_main.c:236: first defined here
+Makefile:1036: recipe for target 'vmlinux' failed
+make: *** [vmlinux] Error 1
+
+After removing it, the security.evm hmac's are not properly
+validating, preventing the EVM/IMA keys from loading.  You can imagine
+how far my system boots without the public keys.
+
+Mimi
+
+
+> +
+>  int evm_init_key(void);
+>  int evm_update_evmxattr(struct dentry *dentry,
+>  			const char *req_xattr_name,
+> @@ -49,10 +54,11 @@ int evm_update_evmxattr(struct dentry *dentry,
+>  			size_t req_xattr_value_len);
+>  int evm_calc_hmac(struct dentry *dentry, const char *req_xattr_name,
+>  		  const char *req_xattr_value,
+> -		  size_t req_xattr_value_len, char *digest);
+> +		  size_t req_xattr_value_len, struct evm_digest *data);
+>  int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
+>  		  const char *req_xattr_value,
+> -		  size_t req_xattr_value_len, char type, char *digest);
+> +		  size_t req_xattr_value_len, char type,
+> +		  struct evm_digest *data);
+>  int evm_init_hmac(struct inode *inode, const struct xattr *xattr,
+>  		  char *hmac_val);
+>  int evm_init_secfs(void);
+> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+> index a46fba322340..e266a3f0ec33 100644
+> --- a/security/integrity/evm/evm_crypto.c
+> +++ b/security/integrity/evm/evm_crypto.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/evm.h>
+>  #include <keys/encrypted-type.h>
+>  #include <crypto/hash.h>
+> +#include <crypto/hash_info.h>
+>  #include "evm.h"
+> 
+>  #define EVMKEY "evm-key"
+> @@ -28,8 +29,7 @@
+>  static unsigned char evmkey[MAX_KEY_SIZE];
+>  static int evmkey_len = MAX_KEY_SIZE;
+> 
+> -struct crypto_shash *hmac_tfm;
+> -struct crypto_shash *hash_tfm;
+> +static struct crypto_shash *evm_tfm[HASH_ALGO__LAST];
+> 
+>  static DEFINE_MUTEX(mutex);
+> 
+> @@ -37,9 +37,6 @@ static DEFINE_MUTEX(mutex);
+> 
+>  static unsigned long evm_set_key_flags;
+> 
+> -static char * const evm_hmac = "hmac(sha1)";
+> -static char * const evm_hash = "sha1";
+> -
+>  /**
+>   * evm_set_key() - set EVM HMAC key from the kernel
+>   * @key: pointer to a buffer with the key data
+> @@ -74,10 +71,10 @@ int evm_set_key(void *key, size_t keylen)
+>  }
+>  EXPORT_SYMBOL_GPL(evm_set_key);
+> 
+> -static struct shash_desc *init_desc(char type)
+> +static struct shash_desc *init_desc(char type, uint8_t hash_algo)
+>  {
+>  	long rc;
+> -	char *algo;
+> +	const char *algo;
+>  	struct crypto_shash **tfm;
+>  	struct shash_desc *desc;
+> 
+> @@ -86,13 +83,11 @@ static struct shash_desc *init_desc(char type)
+>  			pr_err_once("HMAC key is not set\n");
+>  			return ERR_PTR(-ENOKEY);
+>  		}
+> -		tfm = &hmac_tfm;
+> -		algo = evm_hmac;
+> -	} else {
+> -		tfm = &hash_tfm;
+> -		algo = evm_hash;
+>  	}
+> 
+> +	tfm = &evm_tfm[hash_algo];
+> +	algo = hash_algo_name[hash_algo];
+> +
+>  	if (*tfm == NULL) {
+>  		mutex_lock(&mutex);
+>  		if (*tfm)
+> @@ -186,10 +181,10 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
+>   * each xattr, but attempt to re-use the previously allocated memory.
+>   */
+>  static int evm_calc_hmac_or_hash(struct dentry *dentry,
+> -				const char *req_xattr_name,
+> -				const char *req_xattr_value,
+> -				size_t req_xattr_value_len,
+> -				char type, char *digest)
+> +				 const char *req_xattr_name,
+> +				 const char *req_xattr_value,
+> +				 size_t req_xattr_value_len,
+> +				 uint8_t type, struct evm_digest *data)
+>  {
+>  	struct inode *inode = d_backing_inode(dentry);
+>  	struct shash_desc *desc;
+> @@ -203,10 +198,17 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+>  	if (!(inode->i_opflags & IOP_XATTR))
+>  		return -EOPNOTSUPP;
+> 
+> -	desc = init_desc(type);
+> +	desc = init_desc(type, data->hdr.algo);
+>  	if (IS_ERR(desc))
+>  		return PTR_ERR(desc);
+> 
+> +	/*
+> +	 * HMACs are always SHA1, but signatures may be of varying sizes -
+> +	 * make sure the caller knows how long the returned data is
+> +	 */
+> +	if (type != EVM_XATTR_HMAC)
+> +		data->hdr.length = crypto_shash_digestsize(desc->tfm);
+> +
+>  	error = -ENODATA;
+>  	for (xattrname = evm_config_xattrnames; *xattrname != NULL; xattrname++) {
+>  		bool is_ima = false;
+> @@ -238,7 +240,7 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+>  		if (is_ima)
+>  			ima_present = true;
+>  	}
+> -	hmac_add_misc(desc, inode, type, digest);
+> +	hmac_add_misc(desc, inode, type, data->digest);
+> 
+>  	/* Portable EVM signatures must include an IMA hash */
+>  	if (type == EVM_XATTR_PORTABLE_DIGSIG && !ima_present)
+> @@ -251,18 +253,18 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+> 
+>  int evm_calc_hmac(struct dentry *dentry, const char *req_xattr_name,
+>  		  const char *req_xattr_value, size_t req_xattr_value_len,
+> -		  char *digest)
+> +		  struct evm_digest *data)
+>  {
+>  	return evm_calc_hmac_or_hash(dentry, req_xattr_name, req_xattr_value,
+> -			       req_xattr_value_len, EVM_XATTR_HMAC, digest);
+> +		    req_xattr_value_len, EVM_XATTR_HMAC, data);
+>  }
+> 
+>  int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
+>  		  const char *req_xattr_value, size_t req_xattr_value_len,
+> -		  char type, char *digest)
+> +		  char type, struct evm_digest *data)
+>  {
+>  	return evm_calc_hmac_or_hash(dentry, req_xattr_name, req_xattr_value,
+> -				     req_xattr_value_len, type, digest);
+> +		      req_xattr_value_len, type, data);
+>  }
+> 
+>  static int evm_is_immutable(struct dentry *dentry, struct inode *inode)
+> @@ -302,7 +304,7 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
+>  			const char *xattr_value, size_t xattr_value_len)
+>  {
+>  	struct inode *inode = d_backing_inode(dentry);
+> -	struct evm_ima_xattr_data xattr_data;
+> +	struct evm_digest data;
+>  	int rc = 0;
+> 
+>  	/*
+> @@ -315,13 +317,14 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
+>  	if (rc)
+>  		return -EPERM;
+> 
+> +	data.hdr.algo = HASH_ALGO_SHA1;
+>  	rc = evm_calc_hmac(dentry, xattr_name, xattr_value,
+> -			   xattr_value_len, xattr_data.digest);
+> +			   xattr_value_len, &data);
+>  	if (rc == 0) {
+> -		xattr_data.type = EVM_XATTR_HMAC;
+> +		data.hdr.xattr.sha1.type = EVM_XATTR_HMAC;
+>  		rc = __vfs_setxattr_noperm(dentry, XATTR_NAME_EVM,
+> -					   &xattr_data,
+> -					   sizeof(xattr_data), 0);
+> +					   &data.hdr.xattr.data[1],
+> +					   SHA1_DIGEST_SIZE + 1, 0);
+>  	} else if (rc == -ENODATA && (inode->i_opflags & IOP_XATTR)) {
+>  		rc = __vfs_removexattr(dentry, XATTR_NAME_EVM);
+>  	}
+> @@ -333,7 +336,7 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
+>  {
+>  	struct shash_desc *desc;
+> 
+> -	desc = init_desc(EVM_XATTR_HMAC);
+> +	desc = init_desc(EVM_XATTR_HMAC, HASH_ALGO_SHA1);
+>  	if (IS_ERR(desc)) {
+>  		pr_info("init_desc failed\n");
+>  		return PTR_ERR(desc);
+> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+> index 9ea9c19a545c..88ea9c1962d6 100644
+> --- a/security/integrity/evm/evm_main.c
+> +++ b/security/integrity/evm/evm_main.c
+> @@ -25,6 +25,7 @@
+>  #include <linux/magic.h>
+> 
+>  #include <crypto/hash.h>
+> +#include <crypto/hash_info.h>
+>  #include <crypto/algapi.h>
+>  #include "evm.h"
+> 
+> @@ -122,8 +123,9 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+>  					     struct integrity_iint_cache *iint)
+>  {
+>  	struct evm_ima_xattr_data *xattr_data = NULL;
+> -	struct evm_ima_xattr_data calc;
+> +	struct signature_v2_hdr *hdr;
+>  	enum integrity_status evm_status = INTEGRITY_PASS;
+> +	struct evm_digest digest;
+>  	struct inode *inode;
+>  	int rc, xattr_len;
+> 
+> @@ -159,25 +161,28 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+>  			evm_status = INTEGRITY_FAIL;
+>  			goto out;
+>  		}
+> +
+> +		digest.hdr.algo = HASH_ALGO_SHA1;
+>  		rc = evm_calc_hmac(dentry, xattr_name, xattr_value,
+> -				   xattr_value_len, calc.digest);
+> +				   xattr_value_len, &digest);
+>  		if (rc)
+>  			break;
+> -		rc = crypto_memneq(xattr_data->digest, calc.digest,
+> -			    sizeof(calc.digest));
+> +		rc = crypto_memneq(xattr_data->digest, digest.digest,
+> +				   SHA1_DIGEST_SIZE);
+>  		if (rc)
+>  			rc = -EINVAL;
+>  		break;
+>  	case EVM_IMA_XATTR_DIGSIG:
+>  	case EVM_XATTR_PORTABLE_DIGSIG:
+> +		hdr = (struct signature_v2_hdr *)xattr_data;
+> +		digest.hdr.algo = hdr->hash_algo;
+>  		rc = evm_calc_hash(dentry, xattr_name, xattr_value,
+> -				   xattr_value_len, xattr_data->type,
+> -				   calc.digest);
+> +				   xattr_value_len, xattr_data->type, &digest);
+>  		if (rc)
+>  			break;
+>  		rc = integrity_digsig_verify(INTEGRITY_KEYRING_EVM,
+>  					(const char *)xattr_data, xattr_len,
+> -					calc.digest, sizeof(calc.digest));
+> +					digest.digest, digest.hdr.length);
+>  		if (!rc) {
+>  			inode = d_backing_inode(dentry);
+> 
