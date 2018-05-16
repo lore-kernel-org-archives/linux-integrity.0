@@ -1,8 +1,8 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46412 "EHLO mx1.redhat.com"
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40420 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752146AbeEPL4r (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 16 May 2018 07:56:47 -0400
+        id S1752643AbeEPL4u (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 16 May 2018 07:56:50 -0400
 From: Richard Guy Briggs <rgb@redhat.com>
 To: Linux-Audit Mailing List <linux-audit@redhat.com>,
         LKML <linux-kernel@vger.kernel.org>,
@@ -18,53 +18,39 @@ Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>,
         Ingo Molnar <mingo@redhat.com>,
         David Howells <dhowells@redhat.com>,
         Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH ghak81 V3 0/3] audit: group task params
-Date: Wed, 16 May 2018 07:55:44 -0400
-Message-Id: <cover.1526430313.git.rgb@redhat.com>
+Subject: [PATCH ghak81 V3 1/3] audit: use new audit_context access funciton for seccomp_actions_logged
+Date: Wed, 16 May 2018 07:55:45 -0400
+Message-Id: <12a849e41468d761e0782c733e58db47d83b0d16.1526430313.git.rgb@redhat.com>
+In-Reply-To: <cover.1526430313.git.rgb@redhat.com>
+References: <cover.1526430313.git.rgb@redhat.com>
+In-Reply-To: <cover.1526430313.git.rgb@redhat.com>
+References: <cover.1526430313.git.rgb@redhat.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Group the audit parameters for each task into one structure.
-In particular, remove the loginuid and sessionid values and the audit
-context pointer from the task structure, replacing them with an audit
-task information structure to contain them.  Use access functions to
-access audit values.
+On the rebase of the following commit on the new seccomp actions_logged
+function, one audit_context access was missed.
 
-Use dynamic allocation of the audit task information structure employing
-kmem_cache.  Static allocation has the limitation that future audit task
-information structure changes would cause a visible change to the rest
-of the kernel, whereas dynamic allocation would mostly hide any future
-changes.
+commit cdfb6b341f0f2409aba24b84f3b4b2bba50be5c5
+("audit: use inline function to get audit context")
 
-Passes audit-testsuite.
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+---
+ kernel/auditsc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changelog:
-v3
-- drop patches 2, 3, 4 already merged.
-- fix for previous v2 patch 3 (seccomp get audit_context)
-- dynamic audit_task_info allocation from kmem_cache
-- fix assignment in if statement v2 patch 1 (normalize loginuid read)
-- fix a number of merge conflicts/checkpatch
-v2
-- p2/5: add audit header to init/init_task.c to quiet kbuildbot
-- audit_signal_info(): fetch loginuid once
-- remove task_struct from audit_context() param list
-- remove extra task_struct local vars
-- do nothing on request to set audit context when audit is disabled
-
-Richard Guy Briggs (3):
-  audit: use new audit_context access funciton for
-    seccomp_actions_logged
-  audit: normalize loginuid read access
-  audit: collect audit task parameters
-
- include/linux/audit.h | 34 ++++++++++++++++-------
- include/linux/sched.h |  5 +---
- init/init_task.c      |  3 +-
- init/main.c           |  2 ++
- kernel/auditsc.c      | 77 ++++++++++++++++++++++++++++++++++++++-------------
- kernel/fork.c         |  2 +-
- 6 files changed, 87 insertions(+), 36 deletions(-)
-
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index cbab0da..f3d3dc6 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -2497,7 +2497,7 @@ void audit_seccomp_actions_logged(const char *names, const char *old_names,
+ 	if (!audit_enabled)
+ 		return;
+ 
+-	ab = audit_log_start(current->audit_context, GFP_KERNEL,
++	ab = audit_log_start(audit_context(), GFP_KERNEL,
+ 			     AUDIT_CONFIG_CHANGE);
+ 	if (unlikely(!ab))
+ 		return;
 -- 
 1.8.3.1
