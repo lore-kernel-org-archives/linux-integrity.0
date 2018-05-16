@@ -1,20 +1,20 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43782 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51758 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751402AbeEPFvq (ORCPT
+        by vger.kernel.org with ESMTP id S1752162AbeEPFvu (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 16 May 2018 01:51:46 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4G5nhBJ147004
-        for <linux-integrity@vger.kernel.org>; Wed, 16 May 2018 01:51:45 -0400
-Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2j0ep08ce8-1
+        Wed, 16 May 2018 01:51:50 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4G5oGHK025270
+        for <linux-integrity@vger.kernel.org>; Wed, 16 May 2018 01:51:49 -0400
+Received: from e06smtp13.uk.ibm.com (e06smtp13.uk.ibm.com [195.75.94.109])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2j0dy2stww-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 16 May 2018 01:51:45 -0400
+        for <linux-integrity@vger.kernel.org>; Wed, 16 May 2018 01:51:49 -0400
 Received: from localhost
-        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Wed, 16 May 2018 06:51:43 +0100
+        Wed, 16 May 2018 06:51:47 +0100
 From: Nayna Jain <nayna@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: zohar@linux.vnet.ibm.com, linux-security-module@vger.kernel.org,
@@ -22,64 +22,102 @@ Cc: zohar@linux.vnet.ibm.com, linux-security-module@vger.kernel.org,
         jarkko.sakkinen@linux.intel.com, tpmdd@selhorst.net,
         jgunthorpe@obsidianresearch.com, patrickc@us.ibm.com,
         Nayna Jain <nayna@linux.vnet.ibm.com>
-Subject: [PATCH v4 0/2] tpm: improving granularity in poll sleep times
-Date: Wed, 16 May 2018 01:51:23 -0400
-Message-Id: <20180516055125.5685-1-nayna@linux.vnet.ibm.com>
+Subject: [PATCH v4 1/2] tpm: reduce poll sleep time in tpm_transmit()
+Date: Wed, 16 May 2018 01:51:24 -0400
+In-Reply-To: <20180516055125.5685-1-nayna@linux.vnet.ibm.com>
+References: <20180516055125.5685-1-nayna@linux.vnet.ibm.com>
+Message-Id: <20180516055125.5685-2-nayna@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-The existing TPM polling code sleeps in each loop iteration for time in
-msecs ranging from 1 msecs to 5 msecs. However, many of the TPM commands
-complete much faster, resulting in unnecessary delays.
+tpm_try_transmit currently checks TPM status every 5 msecs between
+send and recv. It does so in a loop for the maximum timeout as defined
+in the TPM Interface Specification. However, the TPM may return before
+5 msecs. Thus the polling interval for each iteration can be reduced,
+which improves overall performance. This patch changes the polling sleep
+time from 5 msecs to 1 msec.
 
-This set of patches identifies such iterations and optimizes the sleep
-time. The first patch replaces TPM_POLL_SLEEP with TPM_TIMEOUT_POLL and
-moves it from tpm_tis_core.c to tpm.h as an enum with value 1 msecs. The
-second patch further reduces the TPM poll sleep time in get_burstcount()
-and wait_for_tpm_stat() in tpm_tis_core.c by calling usleep_range()
-directly.
+Additionally, this patch renames TPM_POLL_SLEEP to TPM_TIMEOUT_POLL and
+moves it to tpm.h as an enum value.
 
-The change is only in the polling time, and the maximum timeout is still
-maintained the same. Thus, it should not affect the overall existing
-behavior.
+After this change, performance on a system[1] with a TPM 1.2 with an 8 byte
+burstcount for 1000 extends improved from ~14 sec to ~10.7 sec.
 
-Changelog:
+[1] All tests are performed on an x86 based, locked down, single purpose
+closed system. It has Infineon TPM 1.2 using LPC Bus.
 
-v4:
-tpm: reduce poll sleep time in tpm_transmit()
-* added Reviewed-by, Tested-by and Ack-by
-
-tpm: reduce polling time to usecs for even finer granularity
-* included Jarkko's feedback
-* added Ack-by
-
-v3:
-
-tpm: reduce poll sleep time in tpm_transmit()
-* added testing platform information
-* updated patch description for more clarity on reasoning
-
-tpm: reduce polling time to usecs for even finer granularity
-* added testing platform information
-* added Jarkko's and Mimi's Reviewed-by
-
-v2:
-
-tpm: reduce poll sleep time in tpm_transmit()
-* merged previously defined two patches into this.
-* updated patch description as per Jarkko's feedback
-
-tpm: reduce polling time to usecs for even finer granularity
-* directly use usleep_range with finer granularity less than 1msec
-
-Nayna Jain (2):
-  tpm: reduce poll sleep time in tpm_transmit()
-  tpm: reduce polling time to usecs for even finer granularity
-
+Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Acked-by: Jay Freyensee <why2jjj.linux@gmail.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
  drivers/char/tpm/tpm-interface.c |  2 +-
- drivers/char/tpm/tpm.h           |  5 ++++-
- drivers/char/tpm/tpm_tis_core.c  | 11 +++--------
- 3 files changed, 8 insertions(+), 10 deletions(-)
+ drivers/char/tpm/tpm.h           |  3 ++-
+ drivers/char/tpm/tpm_tis_core.c  | 10 ++--------
+ 3 files changed, 5 insertions(+), 10 deletions(-)
 
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 9e80a953d693..a676d8ad5992 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -470,7 +470,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 			goto out;
+ 		}
+ 
+-		tpm_msleep(TPM_TIMEOUT);
++		tpm_msleep(TPM_TIMEOUT_POLL);
+ 		rmb();
+ 	} while (time_before(jiffies, stop));
+ 
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index f895fba4e20d..7e797377e1eb 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -53,7 +53,8 @@ enum tpm_const {
+ enum tpm_timeout {
+ 	TPM_TIMEOUT = 5,	/* msecs */
+ 	TPM_TIMEOUT_RETRY = 100, /* msecs */
+-	TPM_TIMEOUT_RANGE_US = 300	/* usecs */
++	TPM_TIMEOUT_RANGE_US = 300,	/* usecs */
++	TPM_TIMEOUT_POLL = 1	/* msecs */
+ };
+ 
+ /* TPM addresses */
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index da074e3db19b..021e6b68f2db 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -31,12 +31,6 @@
+ #include "tpm.h"
+ #include "tpm_tis_core.h"
+ 
+-/* This is a polling delay to check for status and burstcount.
+- * As per ddwg input, expectation is that status check and burstcount
+- * check should return within few usecs.
+- */
+-#define TPM_POLL_SLEEP	1  /* msec */
+-
+ static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value);
+ 
+ static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+@@ -90,7 +84,7 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+ 		}
+ 	} else {
+ 		do {
+-			tpm_msleep(TPM_POLL_SLEEP);
++			tpm_msleep(TPM_TIMEOUT_POLL);
+ 			status = chip->ops->status(chip);
+ 			if ((status & mask) == mask)
+ 				return 0;
+@@ -232,7 +226,7 @@ static int get_burstcount(struct tpm_chip *chip)
+ 		burstcnt = (value >> 8) & 0xFFFF;
+ 		if (burstcnt)
+ 			return burstcnt;
+-		tpm_msleep(TPM_POLL_SLEEP);
++		tpm_msleep(TPM_TIMEOUT_POLL);
+ 	} while (time_before(jiffies, stop));
+ 	return -EBUSY;
+ }
 -- 
 2.13.3
