@@ -1,266 +1,226 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-qt0-f201.google.com ([209.85.216.201]:50154 "EHLO
-        mail-qt0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752030AbeEQWPX (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 17 May 2018 18:15:23 -0400
-Received: by mail-qt0-f201.google.com with SMTP id m15-v6so5065667qti.16
-        for <linux-integrity@vger.kernel.org>; Thu, 17 May 2018 15:15:23 -0700 (PDT)
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34572 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751914AbeEQVai (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 17 May 2018 17:30:38 -0400
+Date: Thu, 17 May 2018 17:30:01 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        containers@lists.linux-foundation.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, paul@paul-moore.com,
+        sgrubb@redhat.com
+Subject: Re: [PATCH] audit: add containerid support for IMA-audit
+Message-ID: <20180517213001.62caslkjwv575xgl@madcap2.tricolour.ca>
+References: <1520257393.10396.291.camel@linux.vnet.ibm.com>
+ <20180305135008.po6lheqnmkqqo6q4@madcap2.tricolour.ca>
+ <1520259854.10396.313.camel@linux.vnet.ibm.com>
+ <20180308112104.z67wohdvjqemy7wy@madcap2.tricolour.ca>
+ <efb6c164-febe-67bb-43a9-795476c4902f@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Date: Thu, 17 May 2018 15:09:38 -0700
-In-Reply-To: <1526508736.3306.6.camel@linux.vnet.ibm.com>
-Message-Id: <20180517220938.102953-1-mjg59@google.com>
-References: <1526508736.3306.6.camel@linux.vnet.ibm.com>
-Subject: Re: [PATCH V4] evm: Allow non-SHA1 digital signatures
-From: Matthew Garrett <mjg59@google.com>
-To: linux-integrity@vger.kernel.org
-Cc: zohar@linux.vnet.ibm.com, Matthew Garrett <mjg59@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <efb6c164-febe-67bb-43a9-795476c4902f@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Oh bother - I think I see what's wrong. Does this version work better?
-I'm afraid I only tested against signatures rather than HMACs, and I was
-generating a raw SHA1 rather than an HMAC :(
+On 2018-05-17 10:18, Stefan Berger wrote:
+> On 03/08/2018 06:21 AM, Richard Guy Briggs wrote:
+> > On 2018-03-05 09:24, Mimi Zohar wrote:
+> > > On Mon, 2018-03-05 at 08:50 -0500, Richard Guy Briggs wrote:
+> > > > On 2018-03-05 08:43, Mimi Zohar wrote:
+> > > > > Hi Richard,
+> > > > > 
+> > > > > This patch has been compiled, but not runtime tested.
+> > > > Ok, great, thank you.  I assume you are offering this patch to be
+> > > > included in this patchset?
+> > > Yes, thank you.
+> > > 
+> > > > I'll have a look to see where it fits in the
+> > > > IMA record.  It might be better if it were an AUDIT_CONTAINER_INFO
+> > > > auxiliary record, but I'll have a look at the circumstances of the
+> > > > event.
+> > I had a look at the context of this record to see if adding the contid
+> > field to it made sense.  I think the only records for which the contid
+> > field makes sense are the two newly proposed records, AUDIT_CONTAINER
+> > which introduces the container ID and the and AUDIT_CONTAINER_INFO which
+> > documents the presence of the container ID in a process event (or
+> > process-less network event).  All others should use the auxiliary record
+> > AUDIT_CONTAINER_INFO rather than include the contid field directly
+> > itself.  There are several reasons for this including record length, the
+> > ability to filter unwanted records, the difficulty of changing the order
+> > of or removing fields in the future.
+> > 
+> > Syscalls get this information automatically if the container ID is set
+> > for a task via the AUDIT_CONTAINER_INFO auxiliary record.  Generally a
+> > syscall event is one that uses the task's audit_context while a
+> > standalone event uses NULL or builds a local audit_context that is
+> > discarded immediately after the local use.
+> > 
+> > Looking at the two cases of AUDIT_INTEGRITY_RULE record generation, it
+> > appears that they should be split into two distinct audit record types.
+> > 
+> > The record created in ima_audit_measurement() is a syscall record that
+> > could possibly stand on its own since the subject attributes are
+> > present.  If it remains a syscall auxiliary record it will automatically
+> > have the AUDIT_CONTAINER_INFO record accompany it anyways.  If it is
+> > decided to detach it (which would save cpu/netlink/disk bandwidth but is
+> > not recommended due to not wanting to throw away any other syscall
+> > information or other involved records (PATH, CWD, etc...) then a local
+> > audit_context would be created for the AUDIT_INTEGRITY_RULE and
+> > AUDIT_CONTAINERID_INFO records only and immediately discarded.
+> 
+> What does 'detach it' mean? Does it mean we're not using
+> current->audit_context?
 
-diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
-index 45c4a89c02ff..a8289fbf2f0c 100644
---- a/security/integrity/evm/evm.h
-+++ b/security/integrity/evm/evm.h
-@@ -42,6 +42,11 @@ extern struct crypto_shash *hash_tfm;
- /* List of EVM protected security xattrs */
- extern char *evm_config_xattrnames[];
- 
-+struct evm_digest {
-+	struct ima_digest_data hdr;
-+	char digest[IMA_MAX_DIGEST_SIZE];
-+} __packed;
-+
- int evm_init_key(void);
- int evm_update_evmxattr(struct dentry *dentry,
- 			const char *req_xattr_name,
-@@ -49,10 +54,11 @@ int evm_update_evmxattr(struct dentry *dentry,
- 			size_t req_xattr_value_len);
- int evm_calc_hmac(struct dentry *dentry, const char *req_xattr_name,
- 		  const char *req_xattr_value,
--		  size_t req_xattr_value_len, char *digest);
-+		  size_t req_xattr_value_len, struct evm_digest *data);
- int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
- 		  const char *req_xattr_value,
--		  size_t req_xattr_value_len, char type, char *digest);
-+		  size_t req_xattr_value_len, char type,
-+		  struct evm_digest *data);
- int evm_init_hmac(struct inode *inode, const struct xattr *xattr,
- 		  char *hmac_val);
- int evm_init_secfs(void);
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index a46fba322340..eb87d40c62a5 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -21,6 +21,7 @@
- #include <linux/evm.h>
- #include <keys/encrypted-type.h>
- #include <crypto/hash.h>
-+#include <crypto/hash_info.h>
- #include "evm.h"
- 
- #define EVMKEY "evm-key"
-@@ -29,7 +30,7 @@ static unsigned char evmkey[MAX_KEY_SIZE];
- static int evmkey_len = MAX_KEY_SIZE;
- 
- struct crypto_shash *hmac_tfm;
--struct crypto_shash *hash_tfm;
-+static struct crypto_shash *evm_tfm[HASH_ALGO__LAST];
- 
- static DEFINE_MUTEX(mutex);
- 
-@@ -38,7 +39,6 @@ static DEFINE_MUTEX(mutex);
- static unsigned long evm_set_key_flags;
- 
- static char * const evm_hmac = "hmac(sha1)";
--static char * const evm_hash = "sha1";
- 
- /**
-  * evm_set_key() - set EVM HMAC key from the kernel
-@@ -74,10 +74,10 @@ int evm_set_key(void *key, size_t keylen)
- }
- EXPORT_SYMBOL_GPL(evm_set_key);
- 
--static struct shash_desc *init_desc(char type)
-+static struct shash_desc *init_desc(char type, uint8_t hash_algo)
- {
- 	long rc;
--	char *algo;
-+	const char *algo;
- 	struct crypto_shash **tfm;
- 	struct shash_desc *desc;
- 
-@@ -89,8 +89,8 @@ static struct shash_desc *init_desc(char type)
- 		tfm = &hmac_tfm;
- 		algo = evm_hmac;
- 	} else {
--		tfm = &hash_tfm;
--		algo = evm_hash;
-+		tfm = &evm_tfm[hash_algo];
-+		algo = hash_algo_name[hash_algo];
- 	}
- 
- 	if (*tfm == NULL) {
-@@ -186,10 +186,10 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
-  * each xattr, but attempt to re-use the previously allocated memory.
-  */
- static int evm_calc_hmac_or_hash(struct dentry *dentry,
--				const char *req_xattr_name,
--				const char *req_xattr_value,
--				size_t req_xattr_value_len,
--				char type, char *digest)
-+				 const char *req_xattr_name,
-+				 const char *req_xattr_value,
-+				 size_t req_xattr_value_len,
-+				 uint8_t type, struct evm_digest *data)
- {
- 	struct inode *inode = d_backing_inode(dentry);
- 	struct shash_desc *desc;
-@@ -203,10 +203,12 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
- 	if (!(inode->i_opflags & IOP_XATTR))
- 		return -EOPNOTSUPP;
- 
--	desc = init_desc(type);
-+	desc = init_desc(type, data->hdr.algo);
- 	if (IS_ERR(desc))
- 		return PTR_ERR(desc);
- 
-+	data->hdr.length = crypto_shash_digestsize(desc->tfm);
-+
- 	error = -ENODATA;
- 	for (xattrname = evm_config_xattrnames; *xattrname != NULL; xattrname++) {
- 		bool is_ima = false;
-@@ -238,7 +240,7 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
- 		if (is_ima)
- 			ima_present = true;
- 	}
--	hmac_add_misc(desc, inode, type, digest);
-+	hmac_add_misc(desc, inode, type, data->digest);
- 
- 	/* Portable EVM signatures must include an IMA hash */
- 	if (type == EVM_XATTR_PORTABLE_DIGSIG && !ima_present)
-@@ -251,18 +253,18 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
- 
- int evm_calc_hmac(struct dentry *dentry, const char *req_xattr_name,
- 		  const char *req_xattr_value, size_t req_xattr_value_len,
--		  char *digest)
-+		  struct evm_digest *data)
- {
- 	return evm_calc_hmac_or_hash(dentry, req_xattr_name, req_xattr_value,
--			       req_xattr_value_len, EVM_XATTR_HMAC, digest);
-+				    req_xattr_value_len, EVM_XATTR_HMAC, data);
- }
- 
- int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
- 		  const char *req_xattr_value, size_t req_xattr_value_len,
--		  char type, char *digest)
-+		  char type, struct evm_digest *data)
- {
- 	return evm_calc_hmac_or_hash(dentry, req_xattr_name, req_xattr_value,
--				     req_xattr_value_len, type, digest);
-+				     req_xattr_value_len, type, data);
- }
- 
- static int evm_is_immutable(struct dentry *dentry, struct inode *inode)
-@@ -302,7 +304,7 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
- 			const char *xattr_value, size_t xattr_value_len)
- {
- 	struct inode *inode = d_backing_inode(dentry);
--	struct evm_ima_xattr_data xattr_data;
-+	struct evm_digest data;
- 	int rc = 0;
- 
- 	/*
-@@ -315,13 +317,14 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
- 	if (rc)
- 		return -EPERM;
- 
-+	data.hdr.algo = HASH_ALGO_SHA1;
- 	rc = evm_calc_hmac(dentry, xattr_name, xattr_value,
--			   xattr_value_len, xattr_data.digest);
-+			   xattr_value_len, &data);
- 	if (rc == 0) {
--		xattr_data.type = EVM_XATTR_HMAC;
-+		data.hdr.xattr.sha1.type = EVM_XATTR_HMAC;
- 		rc = __vfs_setxattr_noperm(dentry, XATTR_NAME_EVM,
--					   &xattr_data,
--					   sizeof(xattr_data), 0);
-+					   &data.hdr.xattr.data[1],
-+					   SHA1_DIGEST_SIZE + 1, 0);
- 	} else if (rc == -ENODATA && (inode->i_opflags & IOP_XATTR)) {
- 		rc = __vfs_removexattr(dentry, XATTR_NAME_EVM);
- 	}
-@@ -333,7 +336,7 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
- {
- 	struct shash_desc *desc;
- 
--	desc = init_desc(EVM_XATTR_HMAC);
-+	desc = init_desc(EVM_XATTR_HMAC, HASH_ALGO_SHA1);
- 	if (IS_ERR(desc)) {
- 		pr_info("init_desc failed\n");
- 		return PTR_ERR(desc);
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 9ea9c19a545c..88ea9c1962d6 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -25,6 +25,7 @@
- #include <linux/magic.h>
- 
- #include <crypto/hash.h>
-+#include <crypto/hash_info.h>
- #include <crypto/algapi.h>
- #include "evm.h"
- 
-@@ -122,8 +123,9 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
- 					     struct integrity_iint_cache *iint)
- {
- 	struct evm_ima_xattr_data *xattr_data = NULL;
--	struct evm_ima_xattr_data calc;
-+	struct signature_v2_hdr *hdr;
- 	enum integrity_status evm_status = INTEGRITY_PASS;
-+	struct evm_digest digest;
- 	struct inode *inode;
- 	int rc, xattr_len;
- 
-@@ -159,25 +161,28 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
- 			evm_status = INTEGRITY_FAIL;
- 			goto out;
- 		}
-+
-+		digest.hdr.algo = HASH_ALGO_SHA1;
- 		rc = evm_calc_hmac(dentry, xattr_name, xattr_value,
--				   xattr_value_len, calc.digest);
-+				   xattr_value_len, &digest);
- 		if (rc)
- 			break;
--		rc = crypto_memneq(xattr_data->digest, calc.digest,
--			    sizeof(calc.digest));
-+		rc = crypto_memneq(xattr_data->digest, digest.digest,
-+				   SHA1_DIGEST_SIZE);
- 		if (rc)
- 			rc = -EINVAL;
- 		break;
- 	case EVM_IMA_XATTR_DIGSIG:
- 	case EVM_XATTR_PORTABLE_DIGSIG:
-+		hdr = (struct signature_v2_hdr *)xattr_data;
-+		digest.hdr.algo = hdr->hash_algo;
- 		rc = evm_calc_hash(dentry, xattr_name, xattr_value,
--				   xattr_value_len, xattr_data->type,
--				   calc.digest);
-+				   xattr_value_len, xattr_data->type, &digest);
- 		if (rc)
- 			break;
- 		rc = integrity_digsig_verify(INTEGRITY_KEYRING_EVM,
- 					(const char *)xattr_data, xattr_len,
--					calc.digest, sizeof(calc.digest));
-+					digest.digest, digest.hdr.length);
- 		if (!rc) {
- 			inode = d_backing_inode(dentry);
- 
--- 
-2.17.0.441.gb46fe60e1d-goog
+Exactly.
+
+> > The record created in ima_parse_rule() is not currently a syscall record
+> > since it is passed an audit_context of NULL and it has a very different
+> > format that does not include any subject attributes (except subj_*=).
+> > At first glance it appears this one should be a syscall accompanied
+> > auxiliary record.  Either way it should have an AUDIT_CONTAINER_INFO
+> 
+> Do you have an example (pointer) to the format for a 'syscall accompanied
+> auxiliary record'?
+
+Any that uses current->audit_context (or recently proposed
+audit_context() function) will be a syscall auxiliary record.  Well
+formed record formats are <fieldname>=<value> and named as listed:
+
+	https://github.com/linux-audit/audit-documentation/wiki/SPEC-Writing-Good-Events
+	https://github.com/linux-audit/audit-documentation/blob/master/specs/fields/field-dictionary.csv
+	
+> > auxiliary record either by being converted to a syscall auxiliary record
+> > by using current->audit_context rather than NULL when calling
+> > audit_log_start(), or creating a local audit_context and calling
+> 
+> ima_parse_rule() is invoked when setting a policy by writing it into
+> /sys/kernel/security/ima/policy. We unfortunately don't have the
+> current->audit_context in this case.
+
+Sure you do.  What process writes to that file?  That's the one we care
+about, unless it is somehow handed off to a queue and processed later in
+a different context.
+
+> > audit_log_container_info() then releasing the local context.  This
+> > version of the record has additional concerns covered here:
+> > https://github.com/linux-audit/audit-kernel/issues/52
+> 
+> Following the discussion there and the concern with breaking user space, how
+> can we split up the AUDIT_INTEGRITY_RULE that is used in
+> ima_audit_measurement() and ima_parse_rule(), without 'breaking user space'?
+
+Arguably userspace is already broken by this wildly diverging pair of
+formats for the same record.
+
+> A message produced by ima_parse_rule() looks like this here:
+> 
+> type=INTEGRITY_RULE msg=audit(1526566213.870:305): action="dont_measure"
+> fsmagic="0x9fa0" res=1
+> 
+> in contrast to that an INTEGRITY_PCR record type:
+> 
+> type=INTEGRITY_PCR msg=audit(1526566235.193:334): pid=1615 uid=0 auid=0
+> ses=2 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+> op="invalid_pcr" cause="open_writers" comm="scp"
+> name="/var/log/audit/audit.log" dev="dm-0" ino=1962625 res=1
+> 
+> Should some of the fields from INTEGRITY_PCR also appear in INTEGRITY_RULE?
+
+Not necessarily.  There are a number of records in the PCR record that
+would be redundant when connected to a syscall record, but removing them
+is discouraged to avoid breaking parsers that expect them.
+
+I don't see any need to touch the PCR record.
+
+> If so, which ones? We could probably refactor the current 
+> integrity_audit_message() and have ima_parse_rule() call into it to get
+> those fields as well. I suppose adding new fields to it wouldn't be
+> considered breaking user space?
+
+Changing the order of existing fields or inserting fields could break
+stuff and is strongly discouraged without a good reason, but appending
+fields is usually the right way to add information.
+
+There are exceptions, and in this case, I'd pick the "more standard" of
+the formats for AUDIT_INTEGRITY_RULE (ima_audit_measurement?) and stick
+with that, abandoning the other format, renaming the less standard
+version of the record (ima_parse_rule?) and perhpas adopting that
+abandonned format for the new record type while using
+current->audit_context.
+
+Does this help?
+
+>     Stefan
+> 
+> > Can you briefly describe the circumstances under which these two
+> > different identically-numbered records are produced as a first step
+> > towards splitting them into two distict records?
+> > 
+> > The four AUDIT_INTEGRITY _METADATA, _PCR, _DATA and _STATUS records
+> > appear to be already properly covered for AUDIT_CONTAINER_INFO records
+> > by being syscall auxiliary records.  The AUDIT_INTEGRITY_HASH record
+> > appears to be unused.
+> > 
+> > > > Can you suggest a procedure to test it?
+> > > Like IMA-measurement and IMA-appraisal, IMA-audit is enabled based on
+> > > policy. The example IMA policy, below, includes IMA-audit messages for
+> > > files executed. 'cat' the policy to /sys/kernel/security/ima/policy.
+> > > 
+> > > /etc/ima/ima-policy:
+> > > audit func=BPRM_CHECK
+> > > 
+> > > There's a FireEye blog titled "Extending Linux Executable Logging With
+> > > The Integrity Measurement Architecture"* that explains how to augment
+> > > their existing system security analytics with file hashes.
+> > > 
+> > > * https://www.fireeye.com/blog/threat-research/2016/11/extending_linux
+> > > _exec.html
+> > > 
+> > > 
+> > > Mimi
+> > > 
+> > > > > If the containerid is defined, include it in the IMA-audit record.
+> > > > > 
+> > > > > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> > > > > ---
+> > > > >   security/integrity/ima/ima_api.c | 3 +++
+> > > > >   1 file changed, 3 insertions(+)
+> > > > > 
+> > > > > diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+> > > > > index 33b4458cdbef..41d29a06f28f 100644
+> > > > > --- a/security/integrity/ima/ima_api.c
+> > > > > +++ b/security/integrity/ima/ima_api.c
+> > > > > @@ -335,6 +335,9 @@ void ima_audit_measurement(struct integrity_iint_cache *iint,
+> > > > >   	audit_log_untrustedstring(ab, algo_hash);
+> > > > >   	audit_log_task_info(ab, current);
+> > > > > +	if (audit_containerid_set(current))
+> > > > > +		audit_log_format(ab, " contid=%llu",
+> > > > > +				 audit_get_containerid(current));
+> > > > >   	audit_log_end(ab);
+> > > > >   	iint->flags |= IMA_AUDITED;
+> > > > > -- 
+> > > > > 2.7.5
+> > > > > 
+> > > > - RGB
+> > - RGB
+> > 
+> > --
+> > Richard Guy Briggs <rgb@redhat.com>
+> > Sr. S/W Engineer, Kernel Security, Base Operating Systems
+> > Remote, Ottawa, Red Hat Canada
+> > IRC: rgb, SunRaycer
+> > Voice: +1.647.777.2635, Internal: (81) 32635
+> > 
+> 
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
