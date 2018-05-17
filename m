@@ -1,226 +1,108 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34572 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751914AbeEQVai (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 17 May 2018 17:30:38 -0400
-Date: Thu, 17 May 2018 17:30:01 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44972 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752452AbeEQOtk (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 17 May 2018 10:49:40 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4HEixdA059978
+        for <linux-integrity@vger.kernel.org>; Thu, 17 May 2018 10:49:39 -0400
+Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2j1bapht0u-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 17 May 2018 10:49:38 -0400
+Received: from localhost
+        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Thu, 17 May 2018 15:49:37 +0100
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: linux-integrity@vger.kernel.org
 Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        containers@lists.linux-foundation.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, paul@paul-moore.com,
-        sgrubb@redhat.com
-Subject: Re: [PATCH] audit: add containerid support for IMA-audit
-Message-ID: <20180517213001.62caslkjwv575xgl@madcap2.tricolour.ca>
-References: <1520257393.10396.291.camel@linux.vnet.ibm.com>
- <20180305135008.po6lheqnmkqqo6q4@madcap2.tricolour.ca>
- <1520259854.10396.313.camel@linux.vnet.ibm.com>
- <20180308112104.z67wohdvjqemy7wy@madcap2.tricolour.ca>
- <efb6c164-febe-67bb-43a9-795476c4902f@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <efb6c164-febe-67bb-43a9-795476c4902f@linux.vnet.ibm.com>
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH v2 2/9] ima: fix updating the ima_appraise flag
+Date: Thu, 17 May 2018 10:48:43 -0400
+In-Reply-To: <1526568530-9144-1-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1526568530-9144-1-git-send-email-zohar@linux.vnet.ibm.com>
+Message-Id: <1526568530-9144-3-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 2018-05-17 10:18, Stefan Berger wrote:
-> On 03/08/2018 06:21 AM, Richard Guy Briggs wrote:
-> > On 2018-03-05 09:24, Mimi Zohar wrote:
-> > > On Mon, 2018-03-05 at 08:50 -0500, Richard Guy Briggs wrote:
-> > > > On 2018-03-05 08:43, Mimi Zohar wrote:
-> > > > > Hi Richard,
-> > > > > 
-> > > > > This patch has been compiled, but not runtime tested.
-> > > > Ok, great, thank you.  I assume you are offering this patch to be
-> > > > included in this patchset?
-> > > Yes, thank you.
-> > > 
-> > > > I'll have a look to see where it fits in the
-> > > > IMA record.  It might be better if it were an AUDIT_CONTAINER_INFO
-> > > > auxiliary record, but I'll have a look at the circumstances of the
-> > > > event.
-> > I had a look at the context of this record to see if adding the contid
-> > field to it made sense.  I think the only records for which the contid
-> > field makes sense are the two newly proposed records, AUDIT_CONTAINER
-> > which introduces the container ID and the and AUDIT_CONTAINER_INFO which
-> > documents the presence of the container ID in a process event (or
-> > process-less network event).  All others should use the auxiliary record
-> > AUDIT_CONTAINER_INFO rather than include the contid field directly
-> > itself.  There are several reasons for this including record length, the
-> > ability to filter unwanted records, the difficulty of changing the order
-> > of or removing fields in the future.
-> > 
-> > Syscalls get this information automatically if the container ID is set
-> > for a task via the AUDIT_CONTAINER_INFO auxiliary record.  Generally a
-> > syscall event is one that uses the task's audit_context while a
-> > standalone event uses NULL or builds a local audit_context that is
-> > discarded immediately after the local use.
-> > 
-> > Looking at the two cases of AUDIT_INTEGRITY_RULE record generation, it
-> > appears that they should be split into two distinct audit record types.
-> > 
-> > The record created in ima_audit_measurement() is a syscall record that
-> > could possibly stand on its own since the subject attributes are
-> > present.  If it remains a syscall auxiliary record it will automatically
-> > have the AUDIT_CONTAINER_INFO record accompany it anyways.  If it is
-> > decided to detach it (which would save cpu/netlink/disk bandwidth but is
-> > not recommended due to not wanting to throw away any other syscall
-> > information or other involved records (PATH, CWD, etc...) then a local
-> > audit_context would be created for the AUDIT_INTEGRITY_RULE and
-> > AUDIT_CONTAINERID_INFO records only and immediately discarded.
-> 
-> What does 'detach it' mean? Does it mean we're not using
-> current->audit_context?
+As IMA policy rules are added, a mask of the type of rule (eg. kexec
+kernel image, firmware, IMA policy) is updated.  Based on this mask,
+integrity decisions can be made quickly.
 
-Exactly.
+Unlike custom IMA policy rules, which replace the original builtin
+policy rules and update the mask, the builtin "secure_boot" policy
+rules were loaded, but did not update the mask.
 
-> > The record created in ima_parse_rule() is not currently a syscall record
-> > since it is passed an audit_context of NULL and it has a very different
-> > format that does not include any subject attributes (except subj_*=).
-> > At first glance it appears this one should be a syscall accompanied
-> > auxiliary record.  Either way it should have an AUDIT_CONTAINER_INFO
-> 
-> Do you have an example (pointer) to the format for a 'syscall accompanied
-> auxiliary record'?
+This patch refactors the code to load custom policies, defining a new
+function named ima_appraise_flag().  The new function is called either
+when loading the builtin "secure_boot" or custom policies.
 
-Any that uses current->audit_context (or recently proposed
-audit_context() function) will be a syscall auxiliary record.  Well
-formed record formats are <fieldname>=<value> and named as listed:
+Fixes: 503ceaef8e2e ("ima: define a set of appraisal rules requiring file signatures")
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+---
+ security/integrity/ima/ima_policy.c | 28 +++++++++++++++++++---------
+ 1 file changed, 19 insertions(+), 9 deletions(-)
 
-	https://github.com/linux-audit/audit-documentation/wiki/SPEC-Writing-Good-Events
-	https://github.com/linux-audit/audit-documentation/blob/master/specs/fields/field-dictionary.csv
-	
-> > auxiliary record either by being converted to a syscall auxiliary record
-> > by using current->audit_context rather than NULL when calling
-> > audit_log_start(), or creating a local audit_context and calling
-> 
-> ima_parse_rule() is invoked when setting a policy by writing it into
-> /sys/kernel/security/ima/policy. We unfortunately don't have the
-> current->audit_context in this case.
-
-Sure you do.  What process writes to that file?  That's the one we care
-about, unless it is somehow handed off to a queue and processed later in
-a different context.
-
-> > audit_log_container_info() then releasing the local context.  This
-> > version of the record has additional concerns covered here:
-> > https://github.com/linux-audit/audit-kernel/issues/52
-> 
-> Following the discussion there and the concern with breaking user space, how
-> can we split up the AUDIT_INTEGRITY_RULE that is used in
-> ima_audit_measurement() and ima_parse_rule(), without 'breaking user space'?
-
-Arguably userspace is already broken by this wildly diverging pair of
-formats for the same record.
-
-> A message produced by ima_parse_rule() looks like this here:
-> 
-> type=INTEGRITY_RULE msg=audit(1526566213.870:305): action="dont_measure"
-> fsmagic="0x9fa0" res=1
-> 
-> in contrast to that an INTEGRITY_PCR record type:
-> 
-> type=INTEGRITY_PCR msg=audit(1526566235.193:334): pid=1615 uid=0 auid=0
-> ses=2 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
-> op="invalid_pcr" cause="open_writers" comm="scp"
-> name="/var/log/audit/audit.log" dev="dm-0" ino=1962625 res=1
-> 
-> Should some of the fields from INTEGRITY_PCR also appear in INTEGRITY_RULE?
-
-Not necessarily.  There are a number of records in the PCR record that
-would be redundant when connected to a syscall record, but removing them
-is discouraged to avoid breaking parsers that expect them.
-
-I don't see any need to touch the PCR record.
-
-> If so, which ones? We could probably refactor the current 
-> integrity_audit_message() and have ima_parse_rule() call into it to get
-> those fields as well. I suppose adding new fields to it wouldn't be
-> considered breaking user space?
-
-Changing the order of existing fields or inserting fields could break
-stuff and is strongly discouraged without a good reason, but appending
-fields is usually the right way to add information.
-
-There are exceptions, and in this case, I'd pick the "more standard" of
-the formats for AUDIT_INTEGRITY_RULE (ima_audit_measurement?) and stick
-with that, abandoning the other format, renaming the less standard
-version of the record (ima_parse_rule?) and perhpas adopting that
-abandonned format for the new record type while using
-current->audit_context.
-
-Does this help?
-
->     Stefan
-> 
-> > Can you briefly describe the circumstances under which these two
-> > different identically-numbered records are produced as a first step
-> > towards splitting them into two distict records?
-> > 
-> > The four AUDIT_INTEGRITY _METADATA, _PCR, _DATA and _STATUS records
-> > appear to be already properly covered for AUDIT_CONTAINER_INFO records
-> > by being syscall auxiliary records.  The AUDIT_INTEGRITY_HASH record
-> > appears to be unused.
-> > 
-> > > > Can you suggest a procedure to test it?
-> > > Like IMA-measurement and IMA-appraisal, IMA-audit is enabled based on
-> > > policy. The example IMA policy, below, includes IMA-audit messages for
-> > > files executed. 'cat' the policy to /sys/kernel/security/ima/policy.
-> > > 
-> > > /etc/ima/ima-policy:
-> > > audit func=BPRM_CHECK
-> > > 
-> > > There's a FireEye blog titled "Extending Linux Executable Logging With
-> > > The Integrity Measurement Architecture"* that explains how to augment
-> > > their existing system security analytics with file hashes.
-> > > 
-> > > * https://www.fireeye.com/blog/threat-research/2016/11/extending_linux
-> > > _exec.html
-> > > 
-> > > 
-> > > Mimi
-> > > 
-> > > > > If the containerid is defined, include it in the IMA-audit record.
-> > > > > 
-> > > > > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> > > > > ---
-> > > > >   security/integrity/ima/ima_api.c | 3 +++
-> > > > >   1 file changed, 3 insertions(+)
-> > > > > 
-> > > > > diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-> > > > > index 33b4458cdbef..41d29a06f28f 100644
-> > > > > --- a/security/integrity/ima/ima_api.c
-> > > > > +++ b/security/integrity/ima/ima_api.c
-> > > > > @@ -335,6 +335,9 @@ void ima_audit_measurement(struct integrity_iint_cache *iint,
-> > > > >   	audit_log_untrustedstring(ab, algo_hash);
-> > > > >   	audit_log_task_info(ab, current);
-> > > > > +	if (audit_containerid_set(current))
-> > > > > +		audit_log_format(ab, " contid=%llu",
-> > > > > +				 audit_get_containerid(current));
-> > > > >   	audit_log_end(ab);
-> > > > >   	iint->flags |= IMA_AUDITED;
-> > > > > -- 
-> > > > > 2.7.5
-> > > > > 
-> > > > - RGB
-> > - RGB
-> > 
-> > --
-> > Richard Guy Briggs <rgb@redhat.com>
-> > Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> > Remote, Ottawa, Red Hat Canada
-> > IRC: rgb, SunRaycer
-> > Voice: +1.647.777.2635, Internal: (81) 32635
-> > 
-> 
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 03cbba423e59..8bbc18eb07eb 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -440,6 +440,17 @@ void ima_update_policy_flag(void)
+ 		ima_policy_flag &= ~IMA_APPRAISE;
+ }
+ 
++static int ima_appraise_flag(enum ima_hooks func)
++{
++	if (func == MODULE_CHECK)
++		return IMA_APPRAISE_MODULES;
++	else if (func == FIRMWARE_CHECK)
++		return IMA_APPRAISE_FIRMWARE;
++	else if (func == POLICY_CHECK)
++		return IMA_APPRAISE_POLICY;
++	return 0;
++}
++
+ /**
+  * ima_init_policy - initialize the default measure rules.
+  *
+@@ -478,9 +489,11 @@ void __init ima_init_policy(void)
+ 	 * Insert the appraise rules requiring file signatures, prior to
+ 	 * any other appraise rules.
+ 	 */
+-	for (i = 0; i < secure_boot_entries; i++)
+-		list_add_tail(&secure_boot_rules[i].list,
+-			      &ima_default_rules);
++	for (i = 0; i < secure_boot_entries; i++) {
++		list_add_tail(&secure_boot_rules[i].list, &ima_default_rules);
++		temp_ima_appraise |=
++		    ima_appraise_flag(secure_boot_rules[i].func);
++	}
+ 
+ 	for (i = 0; i < appraise_entries; i++) {
+ 		list_add_tail(&default_appraise_rules[i].list,
+@@ -934,12 +947,9 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 	}
+ 	if (!result && (entry->action == UNKNOWN))
+ 		result = -EINVAL;
+-	else if (entry->func == MODULE_CHECK)
+-		temp_ima_appraise |= IMA_APPRAISE_MODULES;
+-	else if (entry->func == FIRMWARE_CHECK)
+-		temp_ima_appraise |= IMA_APPRAISE_FIRMWARE;
+-	else if (entry->func == POLICY_CHECK)
+-		temp_ima_appraise |= IMA_APPRAISE_POLICY;
++	else if (entry->action == APPRAISE)
++		temp_ima_appraise |= ima_appraise_flag(entry->func);
++
+ 	audit_log_format(ab, "res=%d", !result);
+ 	audit_log_end(ab);
+ 	return result;
+-- 
+2.7.5
