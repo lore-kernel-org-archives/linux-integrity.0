@@ -1,99 +1,286 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50090 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752168AbeERQBD (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 18 May 2018 12:01:03 -0400
-Date: Fri, 18 May 2018 12:00:26 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        containers@lists.linux-foundation.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, paul@paul-moore.com,
-        sgrubb@redhat.com
-Subject: Re: [PATCH] audit: add containerid support for IMA-audit
-Message-ID: <20180518160026.i5cxkg4eggu2yqpz@madcap2.tricolour.ca>
-References: <20180305135008.po6lheqnmkqqo6q4@madcap2.tricolour.ca>
- <1520259854.10396.313.camel@linux.vnet.ibm.com>
- <20180308112104.z67wohdvjqemy7wy@madcap2.tricolour.ca>
- <efb6c164-febe-67bb-43a9-795476c4902f@linux.vnet.ibm.com>
- <20180517213001.62caslkjwv575xgl@madcap2.tricolour.ca>
- <86df5c2c-9db3-21b9-b91b-30a4f53f9504@linux.vnet.ibm.com>
- <1526647996.3632.164.camel@linux.vnet.ibm.com>
- <ef567d60-42f7-0a87-8597-1ef381e15be0@linux.vnet.ibm.com>
- <1526654395.3632.196.camel@linux.vnet.ibm.com>
- <1347e0c5-40c9-34a4-9c54-60bd2917b2d7@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1347e0c5-40c9-34a4-9c54-60bd2917b2d7@linux.vnet.ibm.com>
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49890 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751413AbeERQDv (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 18 May 2018 12:03:51 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4IFxwq6064590
+        for <linux-integrity@vger.kernel.org>; Fri, 18 May 2018 12:03:50 -0400
+Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2j20pg49kr-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 18 May 2018 12:03:50 -0400
+Received: from localhost
+        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Fri, 18 May 2018 17:03:48 +0100
+Subject: Re: [PATCH V4] evm: Allow non-SHA1 digital signatures
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Matthew Garrett <mjg59@google.com>, linux-integrity@vger.kernel.org
+Cc: "Wang,Junwen" <wangjunwen@baidu.com>
+Date: Fri, 18 May 2018 12:03:32 -0400
+In-Reply-To: <20180517220938.102953-1-mjg59@google.com>
+References: <1526508736.3306.6.camel@linux.vnet.ibm.com>
+         <20180517220938.102953-1-mjg59@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1526659412.3404.32.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 2018-05-18 10:52, Stefan Berger wrote:
-> On 05/18/2018 10:39 AM, Mimi Zohar wrote:
-> > On Fri, 2018-05-18 at 09:54 -0400, Stefan Berger wrote:
-> > > On 05/18/2018 08:53 AM, Mimi Zohar wrote:
-> > [..]
-> > 
-> > > > > > > If so, which ones? We could probably refactor the current
-> > > > > > > integrity_audit_message() and have ima_parse_rule() call into it to get
-> > > > > > > those fields as well. I suppose adding new fields to it wouldn't be
-> > > > > > > considered breaking user space?
-> > > > > > Changing the order of existing fields or inserting fields could break
-> > > > > > stuff and is strongly discouraged without a good reason, but appending
-> > > > > > fields is usually the right way to add information.
-> > > > > > 
-> > > > > > There are exceptions, and in this case, I'd pick the "more standard" of
-> > > > > > the formats for AUDIT_INTEGRITY_RULE (ima_audit_measurement?) and stick
-> > > > > > with that, abandoning the other format, renaming the less standard
-> > > > > > version of the record (ima_parse_rule?) and perhpas adopting that
-> > > > > > abandonned format for the new record type while using
-> > > > > > current->audit_context.
-> > > > This sounds right, other than "type=INTEGRITY_RULE" (1805) for
-> > > > ima_audit_measurement().  Could we rename type=1805 to be
-> > > So do we want to change both? I thought that what
-> > > ima_audit_measurement() produces looks ok but may not have a good name
-> > > for the 'type'. Now in this case I would not want to 'break user space'.
-> > > The only change I was going to make was to what ima_parse_rule() produces.
-> > The only change for now is separating the IMA policy rules from the
-> > IMA-audit messages.
-> > 
-> > Richard, when the containerid is appended to the IMA-audit messages,
-> > would we make the audit type name change then?
-> > 
-> > > > INTEGRITY_AUDIT or INTEGRITY_IMA_AUDIT?  The new type=1806 audit
-> > > > message could be named INTEGRITY_RULE or, if that would be confusing,
-> > > > INTEGRITY_POLICY_RULE.
-> > > For 1806, as we would use it in ima_parse_rule(), we could change that
-> > > in your patch to INTEGRITY_POLICY_RULE. IMA_POLICY_RULE may be better
-> > > for IMA to produce but that's inconsistent then.
-> > Ok
+On Thu, 2018-05-17 at 15:09 -0700, Matthew Garrett wrote:
+> Oh bother - I think I see what's wrong. Does this version work better?
+> I'm afraid I only tested against signatures rather than HMACs, and I was
+> generating a raw SHA1 rather than an HMAC :(
+
+That's a lot better!
+
+FYI, Wang Junwen reported a problem with enabling EVM with just the
+immutable and portable keys.  Without trusted keys enabled, SHA1 isn't
+being built into the kernel.  Loading the SHA1 kernel module fails.
+ Without knowing apriori which hash algorithms need to be builtin is a
+problem.
+
+Mimi
+
 > 
-> One other question is whether IMA's audit calls should all adhere to
-> CONFIG_INTEGRITY_AUDIT.
-
-If I understand your question correctly, then no, since each one is a
-different type of record, hence the half dozen IMA record types:
-#define AUDIT_INTEGRITY_DATA        1800 /* Data integrity verification */
-#define AUDIT_INTEGRITY_METADATA    1801 /* Metadata integrity verification */
-#define AUDIT_INTEGRITY_STATUS      1802 /* Integrity enable status */
-#define AUDIT_INTEGRITY_HASH        1803 /* Integrity HASH type */
-#define AUDIT_INTEGRITY_PCR         1804 /* PCR invalidation msgs */
-#define AUDIT_INTEGRITY_RULE        1805 /* policy rule */
-
-> Most do but those two that currently use
-> AUDIT_INTEGRITY_RULE do not. Should that be changed as well?
-
-As far as I can tell, all the other IMA audit record types are fine.
-
->     Stefan
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+> diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
+> index 45c4a89c02ff..a8289fbf2f0c 100644
+> --- a/security/integrity/evm/evm.h
+> +++ b/security/integrity/evm/evm.h
+> @@ -42,6 +42,11 @@ extern struct crypto_shash *hash_tfm;
+>  /* List of EVM protected security xattrs */
+>  extern char *evm_config_xattrnames[];
+> 
+> +struct evm_digest {
+> +	struct ima_digest_data hdr;
+> +	char digest[IMA_MAX_DIGEST_SIZE];
+> +} __packed;
+> +
+>  int evm_init_key(void);
+>  int evm_update_evmxattr(struct dentry *dentry,
+>  			const char *req_xattr_name,
+> @@ -49,10 +54,11 @@ int evm_update_evmxattr(struct dentry *dentry,
+>  			size_t req_xattr_value_len);
+>  int evm_calc_hmac(struct dentry *dentry, const char *req_xattr_name,
+>  		  const char *req_xattr_value,
+> -		  size_t req_xattr_value_len, char *digest);
+> +		  size_t req_xattr_value_len, struct evm_digest *data);
+>  int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
+>  		  const char *req_xattr_value,
+> -		  size_t req_xattr_value_len, char type, char *digest);
+> +		  size_t req_xattr_value_len, char type,
+> +		  struct evm_digest *data);
+>  int evm_init_hmac(struct inode *inode, const struct xattr *xattr,
+>  		  char *hmac_val);
+>  int evm_init_secfs(void);
+> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+> index a46fba322340..eb87d40c62a5 100644
+> --- a/security/integrity/evm/evm_crypto.c
+> +++ b/security/integrity/evm/evm_crypto.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/evm.h>
+>  #include <keys/encrypted-type.h>
+>  #include <crypto/hash.h>
+> +#include <crypto/hash_info.h>
+>  #include "evm.h"
+> 
+>  #define EVMKEY "evm-key"
+> @@ -29,7 +30,7 @@ static unsigned char evmkey[MAX_KEY_SIZE];
+>  static int evmkey_len = MAX_KEY_SIZE;
+> 
+>  struct crypto_shash *hmac_tfm;
+> -struct crypto_shash *hash_tfm;
+> +static struct crypto_shash *evm_tfm[HASH_ALGO__LAST];
+> 
+>  static DEFINE_MUTEX(mutex);
+> 
+> @@ -38,7 +39,6 @@ static DEFINE_MUTEX(mutex);
+>  static unsigned long evm_set_key_flags;
+> 
+>  static char * const evm_hmac = "hmac(sha1)";
+> -static char * const evm_hash = "sha1";
+> 
+>  /**
+>   * evm_set_key() - set EVM HMAC key from the kernel
+> @@ -74,10 +74,10 @@ int evm_set_key(void *key, size_t keylen)
+>  }
+>  EXPORT_SYMBOL_GPL(evm_set_key);
+> 
+> -static struct shash_desc *init_desc(char type)
+> +static struct shash_desc *init_desc(char type, uint8_t hash_algo)
+>  {
+>  	long rc;
+> -	char *algo;
+> +	const char *algo;
+>  	struct crypto_shash **tfm;
+>  	struct shash_desc *desc;
+> 
+> @@ -89,8 +89,8 @@ static struct shash_desc *init_desc(char type)
+>  		tfm = &hmac_tfm;
+>  		algo = evm_hmac;
+>  	} else {
+> -		tfm = &hash_tfm;
+> -		algo = evm_hash;
+> +		tfm = &evm_tfm[hash_algo];
+> +		algo = hash_algo_name[hash_algo];
+>  	}
+> 
+>  	if (*tfm == NULL) {
+> @@ -186,10 +186,10 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
+>   * each xattr, but attempt to re-use the previously allocated memory.
+>   */
+>  static int evm_calc_hmac_or_hash(struct dentry *dentry,
+> -				const char *req_xattr_name,
+> -				const char *req_xattr_value,
+> -				size_t req_xattr_value_len,
+> -				char type, char *digest)
+> +				 const char *req_xattr_name,
+> +				 const char *req_xattr_value,
+> +				 size_t req_xattr_value_len,
+> +				 uint8_t type, struct evm_digest *data)
+>  {
+>  	struct inode *inode = d_backing_inode(dentry);
+>  	struct shash_desc *desc;
+> @@ -203,10 +203,12 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+>  	if (!(inode->i_opflags & IOP_XATTR))
+>  		return -EOPNOTSUPP;
+> 
+> -	desc = init_desc(type);
+> +	desc = init_desc(type, data->hdr.algo);
+>  	if (IS_ERR(desc))
+>  		return PTR_ERR(desc);
+> 
+> +	data->hdr.length = crypto_shash_digestsize(desc->tfm);
+> +
+>  	error = -ENODATA;
+>  	for (xattrname = evm_config_xattrnames; *xattrname != NULL; xattrname++) {
+>  		bool is_ima = false;
+> @@ -238,7 +240,7 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+>  		if (is_ima)
+>  			ima_present = true;
+>  	}
+> -	hmac_add_misc(desc, inode, type, digest);
+> +	hmac_add_misc(desc, inode, type, data->digest);
+> 
+>  	/* Portable EVM signatures must include an IMA hash */
+>  	if (type == EVM_XATTR_PORTABLE_DIGSIG && !ima_present)
+> @@ -251,18 +253,18 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+> 
+>  int evm_calc_hmac(struct dentry *dentry, const char *req_xattr_name,
+>  		  const char *req_xattr_value, size_t req_xattr_value_len,
+> -		  char *digest)
+> +		  struct evm_digest *data)
+>  {
+>  	return evm_calc_hmac_or_hash(dentry, req_xattr_name, req_xattr_value,
+> -			       req_xattr_value_len, EVM_XATTR_HMAC, digest);
+> +				    req_xattr_value_len, EVM_XATTR_HMAC, data);
+>  }
+> 
+>  int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
+>  		  const char *req_xattr_value, size_t req_xattr_value_len,
+> -		  char type, char *digest)
+> +		  char type, struct evm_digest *data)
+>  {
+>  	return evm_calc_hmac_or_hash(dentry, req_xattr_name, req_xattr_value,
+> -				     req_xattr_value_len, type, digest);
+> +				     req_xattr_value_len, type, data);
+>  }
+> 
+>  static int evm_is_immutable(struct dentry *dentry, struct inode *inode)
+> @@ -302,7 +304,7 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
+>  			const char *xattr_value, size_t xattr_value_len)
+>  {
+>  	struct inode *inode = d_backing_inode(dentry);
+> -	struct evm_ima_xattr_data xattr_data;
+> +	struct evm_digest data;
+>  	int rc = 0;
+> 
+>  	/*
+> @@ -315,13 +317,14 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
+>  	if (rc)
+>  		return -EPERM;
+> 
+> +	data.hdr.algo = HASH_ALGO_SHA1;
+>  	rc = evm_calc_hmac(dentry, xattr_name, xattr_value,
+> -			   xattr_value_len, xattr_data.digest);
+> +			   xattr_value_len, &data);
+>  	if (rc == 0) {
+> -		xattr_data.type = EVM_XATTR_HMAC;
+> +		data.hdr.xattr.sha1.type = EVM_XATTR_HMAC;
+>  		rc = __vfs_setxattr_noperm(dentry, XATTR_NAME_EVM,
+> -					   &xattr_data,
+> -					   sizeof(xattr_data), 0);
+> +					   &data.hdr.xattr.data[1],
+> +					   SHA1_DIGEST_SIZE + 1, 0);
+>  	} else if (rc == -ENODATA && (inode->i_opflags & IOP_XATTR)) {
+>  		rc = __vfs_removexattr(dentry, XATTR_NAME_EVM);
+>  	}
+> @@ -333,7 +336,7 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
+>  {
+>  	struct shash_desc *desc;
+> 
+> -	desc = init_desc(EVM_XATTR_HMAC);
+> +	desc = init_desc(EVM_XATTR_HMAC, HASH_ALGO_SHA1);
+>  	if (IS_ERR(desc)) {
+>  		pr_info("init_desc failed\n");
+>  		return PTR_ERR(desc);
+> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+> index 9ea9c19a545c..88ea9c1962d6 100644
+> --- a/security/integrity/evm/evm_main.c
+> +++ b/security/integrity/evm/evm_main.c
+> @@ -25,6 +25,7 @@
+>  #include <linux/magic.h>
+> 
+>  #include <crypto/hash.h>
+> +#include <crypto/hash_info.h>
+>  #include <crypto/algapi.h>
+>  #include "evm.h"
+> 
+> @@ -122,8 +123,9 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+>  					     struct integrity_iint_cache *iint)
+>  {
+>  	struct evm_ima_xattr_data *xattr_data = NULL;
+> -	struct evm_ima_xattr_data calc;
+> +	struct signature_v2_hdr *hdr;
+>  	enum integrity_status evm_status = INTEGRITY_PASS;
+> +	struct evm_digest digest;
+>  	struct inode *inode;
+>  	int rc, xattr_len;
+> 
+> @@ -159,25 +161,28 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+>  			evm_status = INTEGRITY_FAIL;
+>  			goto out;
+>  		}
+> +
+> +		digest.hdr.algo = HASH_ALGO_SHA1;
+>  		rc = evm_calc_hmac(dentry, xattr_name, xattr_value,
+> -				   xattr_value_len, calc.digest);
+> +				   xattr_value_len, &digest);
+>  		if (rc)
+>  			break;
+> -		rc = crypto_memneq(xattr_data->digest, calc.digest,
+> -			    sizeof(calc.digest));
+> +		rc = crypto_memneq(xattr_data->digest, digest.digest,
+> +				   SHA1_DIGEST_SIZE);
+>  		if (rc)
+>  			rc = -EINVAL;
+>  		break;
+>  	case EVM_IMA_XATTR_DIGSIG:
+>  	case EVM_XATTR_PORTABLE_DIGSIG:
+> +		hdr = (struct signature_v2_hdr *)xattr_data;
+> +		digest.hdr.algo = hdr->hash_algo;
+>  		rc = evm_calc_hash(dentry, xattr_name, xattr_value,
+> -				   xattr_value_len, xattr_data->type,
+> -				   calc.digest);
+> +				   xattr_value_len, xattr_data->type, &digest);
+>  		if (rc)
+>  			break;
+>  		rc = integrity_digsig_verify(INTEGRITY_KEYRING_EVM,
+>  					(const char *)xattr_data, xattr_len,
+> -					calc.digest, sizeof(calc.digest));
+> +					digest.digest, digest.hdr.length);
+>  		if (!rc) {
+>  			inode = d_backing_inode(dentry);
+> 
