@@ -1,62 +1,105 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:50081 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750841AbeEROpp (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 18 May 2018 10:45:45 -0400
-Date: Fri, 18 May 2018 16:45:42 +0200
-From: Petr Vorel <pvorel@suse.cz>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org, Matthew Garrett <mjg59@google.com>
-Subject: Re: [PATCH] ima: Reflect correct permissions for policy
-Message-ID: <20180518144542.t2frtnjhiyttbeda@dell5510>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20180420132857.31332-1-pvorel@suse.cz>
- <1526506479.3254.8.camel@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1526506479.3254.8.camel@linux.vnet.ibm.com>
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48002 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752274AbeEROki (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 18 May 2018 10:40:38 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4IEeNCC048491
+        for <linux-integrity@vger.kernel.org>; Fri, 18 May 2018 10:40:38 -0400
+Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2j1xba7h52-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 18 May 2018 10:40:29 -0400
+Received: from localhost
+        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Fri, 18 May 2018 15:40:11 +0100
+Subject: Re: [PATCH] audit: add containerid support for IMA-audit
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Richard Guy Briggs <rgb@redhat.com>
+Cc: containers@lists.linux-foundation.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, paul@paul-moore.com,
+        sgrubb@redhat.com
+Date: Fri, 18 May 2018 10:39:55 -0400
+In-Reply-To: <ef567d60-42f7-0a87-8597-1ef381e15be0@linux.vnet.ibm.com>
+References: <1520257393.10396.291.camel@linux.vnet.ibm.com>
+         <20180305135008.po6lheqnmkqqo6q4@madcap2.tricolour.ca>
+         <1520259854.10396.313.camel@linux.vnet.ibm.com>
+         <20180308112104.z67wohdvjqemy7wy@madcap2.tricolour.ca>
+         <efb6c164-febe-67bb-43a9-795476c4902f@linux.vnet.ibm.com>
+         <20180517213001.62caslkjwv575xgl@madcap2.tricolour.ca>
+         <86df5c2c-9db3-21b9-b91b-30a4f53f9504@linux.vnet.ibm.com>
+         <1526647996.3632.164.camel@linux.vnet.ibm.com>
+         <ef567d60-42f7-0a87-8597-1ef381e15be0@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1526654395.3632.196.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Mimi, Matthew,
+On Fri, 2018-05-18 at 09:54 -0400, Stefan Berger wrote:
+> On 05/18/2018 08:53 AM, Mimi Zohar wrote:
 
-> Hi Peter,
+[..]
 
-> On Fri, 2018-04-20 at 15:28 +0200, Petr Vorel wrote:
-> > Kernel configured as CONFIG_IMA_READ_POLICY=y && CONFIG_IMA_WRITE_POLICY=n
-> > keeps 0600 mode after loading policy. Remove write permission to state
-> > that policy file no longer be written.
+> >>>> If so, which ones? We could probably refactor the current
+> >>>> integrity_audit_message() and have ima_parse_rule() call into it to get
+> >>>> those fields as well. I suppose adding new fields to it wouldn't be
+> >>>> considered breaking user space?
+> >>> Changing the order of existing fields or inserting fields could break
+> >>> stuff and is strongly discouraged without a good reason, but appending
+> >>> fields is usually the right way to add information.
+> >>>
+> >>> There are exceptions, and in this case, I'd pick the "more standard" of
+> >>> the formats for AUDIT_INTEGRITY_RULE (ima_audit_measurement?) and stick
+> >>> with that, abandoning the other format, renaming the less standard
+> >>> version of the record (ima_parse_rule?) and perhpas adopting that
+> >>> abandonned format for the new record type while using
+> >>> current->audit_context.
+> > This sounds right, other than "type=INTEGRITY_RULE" (1805) for
+> > ima_audit_measurement().  Could we rename type=1805 to be
+> 
+> So do we want to change both? I thought that what 
+> ima_audit_measurement() produces looks ok but may not have a good name 
+> for the 'type'. Now in this case I would not want to 'break user space'.
+> The only change I was going to make was to what ima_parse_rule() produces.
 
-> > Signed-off-by: Petr Vorel <pvorel@suse.cz>
-> > ---
-> >  security/integrity/ima/ima_fs.c | 2 ++
-> >  1 file changed, 2 insertions(+)
+The only change for now is separating the IMA policy rules from the
+IMA-audit messages.
 
-> > diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-> > index fa540c0469da..c1265127d1b6 100644
-> > --- a/security/integrity/ima/ima_fs.c
-> > +++ b/security/integrity/ima/ima_fs.c
-> > @@ -434,6 +434,8 @@ static int ima_release_policy(struct inode *inode, struct file *file)
-> >  	ima_policy = NULL;
-> >  #elif defined(CONFIG_IMA_WRITE_POLICY)
-> >  	clear_bit(IMA_FS_BUSY, &ima_fs_flags);
-> > +#elif defined(CONFIG_IMA_READ_POLICY)
-> > +	inode->i_mode &= ~S_IWUSR;
-> >  #endif
-> >  	return 0;
-> >  }
+Richard, when the containerid is appended to the IMA-audit messages,
+would we make the audit type name change then?
 
-> Thinking about this again, do we need to take the i_rwsem lock and
-> call simple_setattr() as Matthew did in "EVM: Allow runtime
-> modification of the set of verified xattrs"?
+> 
+> > INTEGRITY_AUDIT or INTEGRITY_IMA_AUDIT?  The new type=1806 audit
+> > message could be named INTEGRITY_RULE or, if that would be confusing,
+> > INTEGRITY_POLICY_RULE.
+> 
+> For 1806, as we would use it in ima_parse_rule(), we could change that 
+> in your patch to INTEGRITY_POLICY_RULE. IMA_POLICY_RULE may be better 
+> for IMA to produce but that's inconsistent then.
 
-Not really sure, I didn't know that EVM is supposed to be used also for sysfs.
-Matthew, does it make sense to you?
+Ok
 
-> thanks,
+> 
+> >
+> >> 1806 would be in sync with INTEGRITY_RULE now for process related info.
+> >> If this looks good, I'll remove the dependency on your local context
+> >> creation and post the series.
+> >>
+> >> The justification for the change is that the INTEGRITY_RULE, as produced
+> >> by ima_parse_rule(), is broken.
+> > Post which series?  The IMA namespacing patch set?  This change should
+> > be upstreamed independently of IMA namespacing.
+> 
+> Without Richard's local context patch it may just be one or two patches.
 
-> Mimi
+Richard, if we separate the ima_parse_rules() audit messages, changing
+the audit rule number now, without the call to audit_log_task_info(),
+would adding the call later be breaking userspace?
 
-
-Kind regards,
-Petr
+Mimi
