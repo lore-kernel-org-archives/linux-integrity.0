@@ -1,63 +1,145 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7718 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752992AbeEUMJ0 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 21 May 2018 08:09:26 -0400
-From: Yisheng Xie <xieyisheng1@huawei.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Yisheng Xie <xieyisheng1@huawei.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>
-Subject: [PATCH 25/33] ima: use match_string() helper
-Date: Mon, 21 May 2018 19:58:02 +0800
-Message-ID: <1526903890-35761-26-git-send-email-xieyisheng1@huawei.com>
-In-Reply-To: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
-References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
+Received: from mx1.redhat.com ([209.132.183.28]:47470 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751747AbeERWjr (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 18 May 2018 18:39:47 -0400
+Date: Fri, 18 May 2018 15:39:47 -0700
+From: Jerry Snitselaar <jsnitsel@redhat.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 3/4] tpm: migrate tpm2_get_tpm_pt() to use struct
+ tpm_buf
+Message-ID: <20180518223947.s3x2lkexyjemcnfa@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+References: <20180326121406.14548-1-jarkko.sakkinen@linux.intel.com>
+ <20180326121406.14548-4-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii; format=flowed
+In-Reply-To: <20180326121406.14548-4-jarkko.sakkinen@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-match_string() returns the index of an array for a matching string,
-which can be used intead of open coded variant.
+On Mon Mar 26 18, Jarkko Sakkinen wrote:
+>In order to make struct tpm_buf the first class object for constructing TPM
+>commands, migrate tpm2_get_tpm_pt() to use it.
+>
+>Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
-Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
----
- security/integrity/ima/ima_main.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 74d0bd7..f807093 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -61,14 +61,11 @@ static int __init hash_setup(char *str)
- 		goto out;
- 	}
- 
--	for (i = 0; i < HASH_ALGO__LAST; i++) {
--		if (strcmp(str, hash_algo_name[i]) == 0) {
--			ima_hash_algo = i;
--			break;
--		}
--	}
--	if (i == HASH_ALGO__LAST)
-+	i = match_string(hash_algo_name, HASH_ALGO__LAST, str);
-+	if (i < 0)
- 		return 1;
-+
-+	ima_hash_algo = i;
- out:
- 	hash_setup_done = 1;
- 	return 1;
--- 
-1.7.12.4
+>---
+> drivers/char/tpm/tpm2-cmd.c | 63 +++++++++++++++++----------------------------
+> 1 file changed, 23 insertions(+), 40 deletions(-)
+>
+>diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+>index 7bffd0fd1dca..b3b52f9eb65f 100644
+>--- a/drivers/char/tpm/tpm2-cmd.c
+>+++ b/drivers/char/tpm/tpm2-cmd.c
+>@@ -27,20 +27,6 @@ enum tpm2_session_attributes {
+> 	TPM2_SA_CONTINUE_SESSION	= BIT(0),
+> };
+>
+>-struct tpm2_get_tpm_pt_in {
+>-	__be32	cap_id;
+>-	__be32	property_id;
+>-	__be32	property_cnt;
+>-} __packed;
+>-
+>-struct tpm2_get_tpm_pt_out {
+>-	u8	more_data;
+>-	__be32	subcap_id;
+>-	__be32	property_cnt;
+>-	__be32	property_id;
+>-	__be32	value;
+>-} __packed;
+>-
+> struct tpm2_get_random_in {
+> 	__be16	size;
+> } __packed;
+>@@ -51,8 +37,6 @@ struct tpm2_get_random_out {
+> } __packed;
+>
+> union tpm2_cmd_params {
+>-	struct	tpm2_get_tpm_pt_in	get_tpm_pt_in;
+>-	struct	tpm2_get_tpm_pt_out	get_tpm_pt_out;
+> 	struct	tpm2_get_random_in	getrandom_in;
+> 	struct	tpm2_get_random_out	getrandom_out;
+> };
+>@@ -379,19 +363,6 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *out, size_t max)
+> 	return total ? total : -EIO;
+> }
+>
+>-#define TPM2_GET_TPM_PT_IN_SIZE \
+>-	(sizeof(struct tpm_input_header) + \
+>-	 sizeof(struct tpm2_get_tpm_pt_in))
+>-
+>-#define TPM2_GET_TPM_PT_OUT_BODY_SIZE \
+>-	 sizeof(struct tpm2_get_tpm_pt_out)
+>-
+>-static const struct tpm_input_header tpm2_get_tpm_pt_header = {
+>-	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
+>-	.length = cpu_to_be32(TPM2_GET_TPM_PT_IN_SIZE),
+>-	.ordinal = cpu_to_be32(TPM2_CC_GET_CAPABILITY)
+>-};
+>-
+> /**
+>  * tpm2_flush_context_cmd() - execute a TPM2_FlushContext command
+>  * @chip: TPM chip to use
+>@@ -725,6 +696,14 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
+> 	return rc;
+> }
+>
+>+struct tpm2_get_cap_out {
+>+	u8 more_data;
+>+	__be32 subcap_id;
+>+	__be32 property_cnt;
+>+	__be32 property_id;
+>+	__be32 value;
+>+} __packed;
+>+
+> /**
+>  * tpm2_get_tpm_pt() - get value of a TPM_CAP_TPM_PROPERTIES type property
+>  * @chip:		TPM chip to use.
+>@@ -737,19 +716,23 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
+> ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,  u32 *value,
+> 			const char *desc)
+> {
+>-	struct tpm2_cmd cmd;
+>+	struct tpm2_get_cap_out *out;
+>+	struct tpm_buf buf;
+> 	int rc;
+>
+>-	cmd.header.in = tpm2_get_tpm_pt_header;
+>-	cmd.params.get_tpm_pt_in.cap_id = cpu_to_be32(TPM2_CAP_TPM_PROPERTIES);
+>-	cmd.params.get_tpm_pt_in.property_id = cpu_to_be32(property_id);
+>-	cmd.params.get_tpm_pt_in.property_cnt = cpu_to_be32(1);
+>-
+>-	rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd),
+>-			      TPM2_GET_TPM_PT_OUT_BODY_SIZE, 0, desc);
+>-	if (!rc)
+>-		*value = be32_to_cpu(cmd.params.get_tpm_pt_out.value);
+>-
+>+	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_CAPABILITY);
+>+	if (rc)
+>+		return rc;
+>+	tpm_buf_append_u32(&buf, TPM2_CAP_TPM_PROPERTIES);
+>+	tpm_buf_append_u32(&buf, property_id);
+>+	tpm_buf_append_u32(&buf, 1);
+>+	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0, NULL);
+>+	if (!rc) {
+>+		out = (struct tpm2_get_cap_out *)
+>+			&buf.data[TPM_HEADER_SIZE];
+>+		*value = be32_to_cpu(out->value);
+>+	}
+>+	tpm_buf_destroy(&buf);
+> 	return rc;
+> }
+> EXPORT_SYMBOL_GPL(tpm2_get_tpm_pt);
+>-- 
+>2.15.1
+>
