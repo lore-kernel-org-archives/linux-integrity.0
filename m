@@ -1,107 +1,50 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44960 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752605AbeERQvF (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 18 May 2018 12:51:05 -0400
-Date: Fri, 18 May 2018 12:50:28 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
+Received: from lan.nucleusys.com ([92.247.61.126]:57094 "EHLO
+        zztop.nucleusys.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751980AbeERQeX (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 18 May 2018 12:34:23 -0400
+Date: Fri, 18 May 2018 18:58:03 +0300
+From: Petko Manolov <petkan@nucleusys.com>
 To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        containers@lists.linux-foundation.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, paul@paul-moore.com,
-        sgrubb@redhat.com
-Subject: Re: [PATCH] audit: add containerid support for IMA-audit
-Message-ID: <20180518165028.qjcuubxrqmsfg4vb@madcap2.tricolour.ca>
-References: <1520259854.10396.313.camel@linux.vnet.ibm.com>
- <20180308112104.z67wohdvjqemy7wy@madcap2.tricolour.ca>
- <efb6c164-febe-67bb-43a9-795476c4902f@linux.vnet.ibm.com>
- <20180517213001.62caslkjwv575xgl@madcap2.tricolour.ca>
- <86df5c2c-9db3-21b9-b91b-30a4f53f9504@linux.vnet.ibm.com>
- <1526647996.3632.164.camel@linux.vnet.ibm.com>
- <ef567d60-42f7-0a87-8597-1ef381e15be0@linux.vnet.ibm.com>
- <1526654395.3632.196.camel@linux.vnet.ibm.com>
- <20180518155659.porewd6moctumkys@madcap2.tricolour.ca>
- <1526661264.3404.55.camel@linux.vnet.ibm.com>
+Cc: "Mark D. Baushke" <mdb@juniper.net>,
+        Petko Manolov <petkan@mip-labs.com>,
+        linux-integrity@vger.kernel.org
+Subject: Re: Cleaning up IMA
+Message-ID: <20180518155803.GB4816@carbon>
+References: <1526580423.3632.17.camel@linux.vnet.ibm.com>
+ <92E32D97-B60A-4D75-AC9F-594F95E432B1@juniper.net>
+ <1526651759.3632.172.camel@linux.vnet.ibm.com>
+ <9298.1526652376@eng-mail01.juniper.net>
+ <1526657654.3404.17.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1526661264.3404.55.camel@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1526657654.3404.17.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 2018-05-18 12:34, Mimi Zohar wrote:
-> On Fri, 2018-05-18 at 11:56 -0400, Richard Guy Briggs wrote:
-> > On 2018-05-18 10:39, Mimi Zohar wrote:
-> > > On Fri, 2018-05-18 at 09:54 -0400, Stefan Berger wrote:
-> > > > On 05/18/2018 08:53 AM, Mimi Zohar wrote:
-> > > 
-> > > [..]
-> > > 
-> > > > >>>> If so, which ones? We could probably refactor the current
-> > > > >>>> integrity_audit_message() and have ima_parse_rule() call into it to get
-> > > > >>>> those fields as well. I suppose adding new fields to it wouldn't be
-> > > > >>>> considered breaking user space?
-> > > > >>> Changing the order of existing fields or inserting fields could break
-> > > > >>> stuff and is strongly discouraged without a good reason, but appending
-> > > > >>> fields is usually the right way to add information.
-> > > > >>>
-> > > > >>> There are exceptions, and in this case, I'd pick the "more standard" of
-> > > > >>> the formats for AUDIT_INTEGRITY_RULE (ima_audit_measurement?) and stick
-> > > > >>> with that, abandoning the other format, renaming the less standard
-> > > > >>> version of the record (ima_parse_rule?) and perhpas adopting that
-> > > > >>> abandonned format for the new record type while using
-> > > > >>> current->audit_context.
-> > > > > This sounds right, other than "type=INTEGRITY_RULE" (1805) for
-> > > > > ima_audit_measurement().  Could we rename type=1805 to be
-> > > > 
-> > > > So do we want to change both? I thought that what 
-> > > > ima_audit_measurement() produces looks ok but may not have a good name 
-> > > > for the 'type'. Now in this case I would not want to 'break user space'.
-> > > > The only change I was going to make was to what ima_parse_rule() produces.
-> > > 
-> > > The only change for now is separating the IMA policy rules from the
-> > > IMA-audit messages.
-> > > 
-> > > Richard, when the containerid is appended to the IMA-audit messages,
-> > > would we make the audit type name change then?
+On 18-05-18 11:34:14, Mimi Zohar wrote:
+> On Fri, 2018-05-18 at 07:06 -0700, Mark D. Baushke wrote:
+> > Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
 > > 
-> > No, go ahead and make the change now.  I'm expecting that the
-> > containerid record will just be another auxiliary record and should not
-> > affect you folks.
+> > > On Fri, 2018-05-18 at 13:44 +0000, Mark Baushke wrote:
+> > > > Hi Mimi,
+> > > > 
+> > > > I see that Petko has already provide the answer and an updated patch.
+> > > > 
+> > > > I was off-line most of yesterday, and am only now catching up on email.
+> > > > 
+> > > > To confirm, yes, we are still using the ima_update_policy() code.
 > 
-> To summarize, we need to disambiguate the 1805, as both
-> ima_parse_rule() and ima_audit_measurement() are using the same number
-> with different formats.  The main usage of 1805 that we are aware of
-> is ima_audit_measurement().  Yet the "type=" name for
-> ima_audit_measurement() should be INTEGRITY_IMA_AUDIT, not
-> INTEGRITY_RULE.
-> 
-> option 1: breaks both uses
-> 1805 - INTEGRITY_IMA_AUDIT - ima_audit_measurement()
-> 1806 - INTEGRITY_POLICY_RULE - ima_parse_rule()
-> 
-> option 2: breaks the most common usage
-> 1805 - INTEGRITY_RULE - ima_parse_rule()
-> 1806 - INTEGRITY_IMA_AUDIT - ima_audit_measurement()
-> 
-> option 3: leaves the most common usage with the wrong name, and breaks
-> the other less common usage
-> 1805 - INTEGRITY_RULE - ima_audit_measurement()
-> 1806 - INTEGRITY_POLICY_RULE - ima_parse_rule()
-> 
-> So option 3 is the best option?
+> Updating the policy wasn't the question. It was about using the IMA blacklist, 
+> as opposed to the system blacklist.
 
-Yes, I think so, but option 2 I would be willing to consider.  I'd like
-to get Paul and Steve's opinions on this.
+The system-wide blacklist is populated at build time only.  This means that you 
+need kernel change if you want to revoke a certificate, which is sub-optimal.  
+To be useful for us it should be able to accept imports at run-time.
 
-> Mimi
+Until the system-wide blacklist keyring doesn't have this functionality i 
+suggest that we keep .ima_blacklist around.
 
-- RGB
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+		Petko
