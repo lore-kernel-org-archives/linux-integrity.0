@@ -1,22 +1,21 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58248 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751296AbeERGdo (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43796 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751907AbeERGbB (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 18 May 2018 02:33:44 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4I6Trsg021269
-        for <linux-integrity@vger.kernel.org>; Fri, 18 May 2018 02:33:44 -0400
-Received: from e37.co.us.ibm.com (e37.co.us.ibm.com [32.97.110.158])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2j1rmhamwd-1
+        Fri, 18 May 2018 02:31:01 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4I6TZdN121333
+        for <linux-integrity@vger.kernel.org>; Fri, 18 May 2018 02:31:01 -0400
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2j1qk7c1uu-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 18 May 2018 02:33:43 -0400
+        for <linux-integrity@vger.kernel.org>; Fri, 18 May 2018 02:31:00 -0400
 Received: from localhost
-        by e37.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Fri, 18 May 2018 00:33:42 -0600
-Subject: Re: [PATCH v4 3/4] tpm: migrate tpm2_get_tpm_pt() to use struct
- tpm_buf
+        Fri, 18 May 2018 00:31:00 -0600
+Subject: Re: [PATCH v4 1/4] tpm: migrate tpm2_shutdown() to use struct tpm_buf
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         linux-integrity@vger.kernel.org
 Cc: linux-security-module@vger.kernel.org,
@@ -25,13 +24,13 @@ Cc: linux-security-module@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         open list <linux-kernel@vger.kernel.org>
 References: <20180326121406.14548-1-jarkko.sakkinen@linux.intel.com>
- <20180326121406.14548-4-jarkko.sakkinen@linux.intel.com>
+ <20180326121406.14548-2-jarkko.sakkinen@linux.intel.com>
 From: Nayna Jain <nayna@linux.vnet.ibm.com>
-Date: Fri, 18 May 2018 12:01:46 +0530
+Date: Fri, 18 May 2018 11:59:03 +0530
 MIME-Version: 1.0
-In-Reply-To: <20180326121406.14548-4-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20180326121406.14548-2-jarkko.sakkinen@linux.intel.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Message-Id: <95828353-43e1-0a02-ea54-544b709584b9@linux.vnet.ibm.com>
+Message-Id: <ec8f1102-e096-e39e-b6a7-4d335401c088@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
@@ -39,121 +38,104 @@ List-ID: <linux-integrity.vger.kernel.org>
 
 On 03/26/2018 05:44 PM, Jarkko Sakkinen wrote:
 > In order to make struct tpm_buf the first class object for constructing TPM
-> commands, migrate tpm2_get_tpm_pt() to use it.
+> commands, migrate tpm2_shutdown() to use it. In addition, removed the klog
+> entry when tpm_transmit_cmd() fails because tpm_tansmit_cmd() already
+> prints an error message.
 >
 > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
 Reviewed-by: Nayna Jain<nayna@linux.vnet.ibm.com>
 Tested-by: Nayna Jain<nayna@linux.vnet.ibm.com>
 
-
-Thanks & Regards,
-    - Nayna
-
 > ---
->   drivers/char/tpm/tpm2-cmd.c | 63 +++++++++++++++++----------------------------
->   1 file changed, 23 insertions(+), 40 deletions(-)
+>   drivers/char/tpm/tpm2-cmd.c | 44 ++++++++++++--------------------------------
+>   1 file changed, 12 insertions(+), 32 deletions(-)
 >
 > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index 7bffd0fd1dca..b3b52f9eb65f 100644
+> index 96c77c8e7f40..7665661d9230 100644
 > --- a/drivers/char/tpm/tpm2-cmd.c
 > +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -27,20 +27,6 @@ enum tpm2_session_attributes {
+> @@ -27,10 +27,6 @@ enum tpm2_session_attributes {
 >   	TPM2_SA_CONTINUE_SESSION	= BIT(0),
 >   };
 >
-> -struct tpm2_get_tpm_pt_in {
-> -	__be32	cap_id;
-> -	__be32	property_id;
-> -	__be32	property_cnt;
+> -struct tpm2_startup_in {
+> -	__be16	startup_type;
 > -} __packed;
 > -
-> -struct tpm2_get_tpm_pt_out {
-> -	u8	more_data;
-> -	__be32	subcap_id;
-> -	__be32	property_cnt;
-> -	__be32	property_id;
-> -	__be32	value;
-> -} __packed;
-> -
->   struct tpm2_get_random_in {
->   	__be16	size;
->   } __packed;
-> @@ -51,8 +37,6 @@ struct tpm2_get_random_out {
+>   struct tpm2_get_tpm_pt_in {
+>   	__be32	cap_id;
+>   	__be32	property_id;
+> @@ -55,7 +51,6 @@ struct tpm2_get_random_out {
 >   } __packed;
 >
 >   union tpm2_cmd_params {
-> -	struct	tpm2_get_tpm_pt_in	get_tpm_pt_in;
-> -	struct	tpm2_get_tpm_pt_out	get_tpm_pt_out;
+> -	struct	tpm2_startup_in		startup_in;
+>   	struct	tpm2_get_tpm_pt_in	get_tpm_pt_in;
+>   	struct	tpm2_get_tpm_pt_out	get_tpm_pt_out;
 >   	struct	tpm2_get_random_in	getrandom_in;
->   	struct	tpm2_get_random_out	getrandom_out;
->   };
-> @@ -379,19 +363,6 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *out, size_t max)
->   	return total ? total : -EIO;
->   }
+> @@ -412,11 +407,8 @@ void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
+>   	int rc;
 >
-> -#define TPM2_GET_TPM_PT_IN_SIZE \
+>   	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_FLUSH_CONTEXT);
+> -	if (rc) {
+> -		dev_warn(&chip->dev, "0x%08x was not flushed, out of memory\n",
+> -			 handle);
+> +	if (rc)
+>   		return;
+> -	}
+>
+>   	tpm_buf_append_u32(&buf, handle);
+>
+> @@ -762,40 +754,28 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,  u32 *value,
+>   }
+>   EXPORT_SYMBOL_GPL(tpm2_get_tpm_pt);
+>
+> -#define TPM2_SHUTDOWN_IN_SIZE \
 > -	(sizeof(struct tpm_input_header) + \
-> -	 sizeof(struct tpm2_get_tpm_pt_in))
+> -	 sizeof(struct tpm2_startup_in))
 > -
-> -#define TPM2_GET_TPM_PT_OUT_BODY_SIZE \
-> -	 sizeof(struct tpm2_get_tpm_pt_out)
-> -
-> -static const struct tpm_input_header tpm2_get_tpm_pt_header = {
+> -static const struct tpm_input_header tpm2_shutdown_header = {
 > -	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
-> -	.length = cpu_to_be32(TPM2_GET_TPM_PT_IN_SIZE),
-> -	.ordinal = cpu_to_be32(TPM2_CC_GET_CAPABILITY)
+> -	.length = cpu_to_be32(TPM2_SHUTDOWN_IN_SIZE),
+> -	.ordinal = cpu_to_be32(TPM2_CC_SHUTDOWN)
 > -};
 > -
 >   /**
->    * tpm2_flush_context_cmd() - execute a TPM2_FlushContext command
->    * @chip: TPM chip to use
-> @@ -725,6 +696,14 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
->   	return rc;
->   }
->
-> +struct tpm2_get_cap_out {
-> +	u8 more_data;
-> +	__be32 subcap_id;
-> +	__be32 property_cnt;
-> +	__be32 property_id;
-> +	__be32 value;
-> +} __packed;
-> +
->   /**
->    * tpm2_get_tpm_pt() - get value of a TPM_CAP_TPM_PROPERTIES type property
+>    * tpm2_shutdown() - send shutdown command to the TPM chip
+>    *
+> + * In places where shutdown command is sent there's no much we can do except
+> + * print the error code on a system failure.
+> + *
 >    * @chip:		TPM chip to use.
-> @@ -737,19 +716,23 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
->   ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,  u32 *value,
->   			const char *desc)
+>    * @shutdown_type:	shutdown type. The value is either
+>    *			TPM_SU_CLEAR or TPM_SU_STATE.
+>    */
+>   void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
 >   {
 > -	struct tpm2_cmd cmd;
-> +	struct tpm2_get_cap_out *out;
 > +	struct tpm_buf buf;
 >   	int rc;
 >
-> -	cmd.header.in = tpm2_get_tpm_pt_header;
-> -	cmd.params.get_tpm_pt_in.cap_id = cpu_to_be32(TPM2_CAP_TPM_PROPERTIES);
-> -	cmd.params.get_tpm_pt_in.property_id = cpu_to_be32(property_id);
-> -	cmd.params.get_tpm_pt_in.property_cnt = cpu_to_be32(1);
+> -	cmd.header.in = tpm2_shutdown_header;
+> -	cmd.params.startup_in.startup_type = cpu_to_be16(shutdown_type);
 > -
-> -	rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd),
-> -			      TPM2_GET_TPM_PT_OUT_BODY_SIZE, 0, desc);
-> -	if (!rc)
-> -		*value = be32_to_cpu(cmd.params.get_tpm_pt_out.value);
+> -	rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd), 0, 0,
+> -			      "stopping the TPM");
 > -
-> +	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_CAPABILITY);
+> -	/* In places where shutdown command is sent there's no much we can do
+> -	 * except print the error code on a system failure.
+> -	 */
+> -	if (rc < 0 && rc != -EPIPE)
+> -		dev_warn(&chip->dev, "transmit returned %d while stopping the TPM",
+> -			 rc);
+> +	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_SHUTDOWN);
 > +	if (rc)
-> +		return rc;
-> +	tpm_buf_append_u32(&buf, TPM2_CAP_TPM_PROPERTIES);
-> +	tpm_buf_append_u32(&buf, property_id);
-> +	tpm_buf_append_u32(&buf, 1);
-> +	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0, NULL);
-> +	if (!rc) {
-> +		out = (struct tpm2_get_cap_out *)
-> +			&buf.data[TPM_HEADER_SIZE];
-> +		*value = be32_to_cpu(out->value);
-> +	}
+> +		return;
+> +	tpm_buf_append_u16(&buf, shutdown_type);
+> +	tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
+> +			 "stopping the TPM");
 > +	tpm_buf_destroy(&buf);
->   	return rc;
 >   }
->   EXPORT_SYMBOL_GPL(tpm2_get_tpm_pt);
+>
+>   /*
