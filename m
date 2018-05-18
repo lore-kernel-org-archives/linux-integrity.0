@@ -1,80 +1,123 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from out03.mta.xmission.com ([166.70.13.233]:48325 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751698AbeERDhe (ORCPT
+Received: from sonic306-28.consmr.mail.ne1.yahoo.com ([66.163.189.90]:33121
+        "EHLO sonic306-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752448AbeERAYm (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 17 May 2018 23:37:34 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
+        Thu, 17 May 2018 20:24:42 -0400
+Subject: Re: [PATCH v2 3/9] security: define security_kernel_read_blob()
+ wrapper
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
         "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
         kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Kees Cook <keescook@chromium.org>
 References: <1526568530-9144-1-git-send-email-zohar@linux.vnet.ibm.com>
-        <1526568530-9144-4-git-send-email-zohar@linux.vnet.ibm.com>
-        <74c096ca-1ad1-799e-df3d-7b1b099333a7@schaufler-ca.com>
-Date: Thu, 17 May 2018 22:37:23 -0500
-In-Reply-To: <74c096ca-1ad1-799e-df3d-7b1b099333a7@schaufler-ca.com> (Casey
-        Schaufler's message of "Thu, 17 May 2018 17:24:36 -0700")
-Message-ID: <87y3ghhbws.fsf@xmission.com>
+ <1526568530-9144-4-git-send-email-zohar@linux.vnet.ibm.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <74c096ca-1ad1-799e-df3d-7b1b099333a7@schaufler-ca.com>
+Date: Thu, 17 May 2018 17:24:36 -0700
 MIME-Version: 1.0
-Content-Type: text/plain
-Subject: Re: [PATCH v2 3/9] security: define security_kernel_read_blob() wrapper
+In-Reply-To: <1526568530-9144-4-git-send-email-zohar@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Casey Schaufler <casey@schaufler-ca.com> writes:
-
-> On 5/17/2018 7:48 AM, Mimi Zohar wrote:
->> In order for LSMs and IMA-appraisal to differentiate between the original
->> and new syscalls (eg. kexec, kernel modules, firmware), both the original
->> and new syscalls must call an LSM hook.
->>
->> Commit 2e72d51b4ac3 ("security: introduce kernel_module_from_file hook")
->> introduced calling security_kernel_module_from_file() in both the original
->> and new syscalls.  Commit a1db74209483 ("module: replace
->> copy_module_from_fd with kernel version") replaced these LSM calls with
->> security_kernel_read_file().
->>
->> Commit e40ba6d56b41 ("firmware: replace call to fw_read_file_contents()
->> with kernel version") and commit b804defe4297  ("kexec: replace call to
->> copy_file_from_fd() with kernel version") replaced their own version of
->> reading a file from the kernel with the generic
->> kernel_read_file_from_path/fd() versions, which call the pre and post
->> security_kernel_read_file LSM hooks.
->>
->> Missing are LSM calls in the original kexec syscall and firmware sysfs
->> fallback method.  From a technical perspective there is no justification
->> for defining a new LSM hook, as the existing security_kernel_read_file()
->> works just fine.  The original syscalls, however, do not read a file, so
->> the security hook name is inappropriate.  Instead of defining a new LSM
->> hook, this patch defines security_kernel_read_blob() as a wrapper for
->> the existing LSM security_kernel_file_read() hook.
+On 5/17/2018 7:48 AM, Mimi Zohar wrote:
+> In order for LSMs and IMA-appraisal to differentiate between the original
+> and new syscalls (eg. kexec, kernel modules, firmware), both the original
+> and new syscalls must call an LSM hook.
 >
-> What a marvelous opportunity to bikeshed!
+> Commit 2e72d51b4ac3 ("security: introduce kernel_module_from_file hook")
+> introduced calling security_kernel_module_from_file() in both the original
+> and new syscalls.  Commit a1db74209483 ("module: replace
+> copy_module_from_fd with kernel version") replaced these LSM calls with
+> security_kernel_read_file().
 >
-> I really dislike adding another security_ interface just because
-> the name isn't quite right. Especially a wrapper, which is just
-> code and execution overhead. Why not change security_kernel_read_file()
-> to security_kernel_read_blob() everywhere and be done?
+> Commit e40ba6d56b41 ("firmware: replace call to fw_read_file_contents()
+> with kernel version") and commit b804defe4297  ("kexec: replace call to
+> copy_file_from_fd() with kernel version") replaced their own version of
+> reading a file from the kernel with the generic
+> kernel_read_file_from_path/fd() versions, which call the pre and post
+> security_kernel_read_file LSM hooks.
+>
+> Missing are LSM calls in the original kexec syscall and firmware sysfs
+> fallback method.  From a technical perspective there is no justification
+> for defining a new LSM hook, as the existing security_kernel_read_file()
+> works just fine.  The original syscalls, however, do not read a file, so
+> the security hook name is inappropriate.  Instead of defining a new LSM
+> hook, this patch defines security_kernel_read_blob() as a wrapper for
+> the existing LSM security_kernel_file_read() hook.
 
-Nacked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+What a marvelous opportunity to bikeshed!
 
-Nack on this sharing nonsense.  These two interfaces do not share any
-code in their implementations other than the if statement to distinguish
-between the two cases.
+I really dislike adding another security_ interface just because
+the name isn't quite right. Especially a wrapper, which is just
+code and execution overhead. Why not change security_kernel_read_file()
+to security_kernel_read_blob() everywhere and be done?
 
-Casey you are wrong.  We need something different here.
-
-Mimi a wrapper does not cut it.   The code is not shared.  Despite using
-a single function call today.
-
-If we want comprehensible and maintainable code in the security modules
-we need to split these two pieces of functionality apart.
-
-Eric
+>
+> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Cc: Eric Biederman <ebiederm@xmission.com>
+> Cc: Luis R. Rodriguez <mcgrof@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Casey Schaufler <casey@schaufler-ca.com>
+>
+> Changelog v2:
+> - Define a generic wrapper named security_kernel_read_blob() for
+> security_kernel_read_file().
+>
+> Changelog v1:
+> - Define and call security_kexec_load(), a wrapper for
+> security_kernel_read_file().
+> ---
+>  include/linux/security.h | 6 ++++++
+>  security/security.c      | 6 ++++++
+>  2 files changed, 12 insertions(+)
+>
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 63030c85ee19..4db1967a688b 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -323,6 +323,7 @@ int security_kernel_module_request(char *kmod_name);
+>  int security_kernel_read_file(struct file *file, enum kernel_read_file_id id);
+>  int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
+>  				   enum kernel_read_file_id id);
+> +int security_kernel_read_blob(enum kernel_read_file_id id);
+>  int security_task_fix_setuid(struct cred *new, const struct cred *old,
+>  			     int flags);
+>  int security_task_setpgid(struct task_struct *p, pid_t pgid);
+> @@ -922,6 +923,11 @@ static inline int security_kernel_post_read_file(struct file *file,
+>  	return 0;
+>  }
+>  
+> +static inline int security_kernel_read_blob(enum kernel_read_file_id id)
+> +{
+> +	return 0;
+> +}
+> +
+>  static inline int security_task_fix_setuid(struct cred *new,
+>  					   const struct cred *old,
+>  					   int flags)
+> diff --git a/security/security.c b/security/security.c
+> index 68f46d849abe..8f199b2bf4a2 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1044,6 +1044,12 @@ int security_kernel_read_file(struct file *file, enum kernel_read_file_id id)
+>  }
+>  EXPORT_SYMBOL_GPL(security_kernel_read_file);
+>  
+> +int security_kernel_read_blob(enum kernel_read_file_id id)
+> +{
+> +	return security_kernel_read_file(NULL, id);
+> +}
+> +EXPORT_SYMBOL_GPL(security_kernel_read_blob);
+> +
+>  int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
+>  				   enum kernel_read_file_id id)
+>  {
