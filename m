@@ -1,130 +1,82 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:58690 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751700AbeERWad (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 18 May 2018 18:30:33 -0400
-Date: Fri, 18 May 2018 15:30:32 -0700
-From: Jerry Snitselaar <jsnitsel@redhat.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: linux-integrity@vger.kernel.org,
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41726 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751545AbeERRzy (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 18 May 2018 13:55:54 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4IHhZOP124214
+        for <linux-integrity@vger.kernel.org>; Fri, 18 May 2018 13:55:53 -0400
+Received: from e06smtp11.uk.ibm.com (e06smtp11.uk.ibm.com [195.75.94.107])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2j236fh691-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 18 May 2018 13:55:53 -0400
+Received: from localhost
+        by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Fri, 18 May 2018 18:55:51 +0100
+Subject: Re: [PATCH v2 3/9] security: define security_kernel_read_blob()
+ wrapper
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: James Morris <jmorris@namei.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>,
+        linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/4] tpm: migrate tpm2_shutdown() to use struct tpm_buf
-Message-ID: <20180518223032.ihszdef5wesj5nie@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-References: <20180326121406.14548-1-jarkko.sakkinen@linux.intel.com>
- <20180326121406.14548-2-jarkko.sakkinen@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-In-Reply-To: <20180326121406.14548-2-jarkko.sakkinen@linux.intel.com>
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kees Cook <keescook@chromium.org>
+Date: Fri, 18 May 2018 13:55:33 -0400
+In-Reply-To: <alpine.LRH.2.21.1805190303100.26396@namei.org>
+References: <1526568530-9144-1-git-send-email-zohar@linux.vnet.ibm.com>
+         <1526568530-9144-4-git-send-email-zohar@linux.vnet.ibm.com>
+         <74c096ca-1ad1-799e-df3d-7b1b099333a7@schaufler-ca.com>
+         <87y3ghhbws.fsf@xmission.com>
+         <alpine.LRH.2.21.1805190303100.26396@namei.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1526666133.3404.67.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon Mar 26 18, Jarkko Sakkinen wrote:
->In order to make struct tpm_buf the first class object for constructing TPM
->commands, migrate tpm2_shutdown() to use it. In addition, removed the klog
->entry when tpm_transmit_cmd() fails because tpm_tansmit_cmd() already
->prints an error message.
->
->Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+On Sat, 2018-05-19 at 03:13 +1000, James Morris wrote:
+> On Thu, 17 May 2018, Eric W. Biederman wrote:
+> 
+> > Nacked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> > 
+> > Nack on this sharing nonsense.  These two interfaces do not share any
+> > code in their implementations other than the if statement to distinguish
+> > between the two cases.
+> 
+> Hmm, it's not even doing that.
+> 
+> There's already an if(!file && read_id == X) { } check and this is another 
+> one being added.
+> 
+> > If we want comprehensible and maintainable code in the security modules
+> > we need to split these two pieces of functionality apart.
+> 
+> All ima_read is doing in both the old and new case is checking if there's 
+> no file then if it's a certain operation, returning an error.
+> 
+> To echo Eric and Casey's suggestions, how about changing the name of the 
+> hook to security_kernel_read_data() ?
 
-Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+Thanks, James.  Somehow I missed this option.  Renaming the existing
+hook, would be the easiest solution.  Eric, are you in agreement with
+James' naming suggestion/solution?
 
->---
-> drivers/char/tpm/tpm2-cmd.c | 44 ++++++++++++--------------------------------
-> 1 file changed, 12 insertions(+), 32 deletions(-)
->
->diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
->index 96c77c8e7f40..7665661d9230 100644
->--- a/drivers/char/tpm/tpm2-cmd.c
->+++ b/drivers/char/tpm/tpm2-cmd.c
->@@ -27,10 +27,6 @@ enum tpm2_session_attributes {
-> 	TPM2_SA_CONTINUE_SESSION	= BIT(0),
-> };
->
->-struct tpm2_startup_in {
->-	__be16	startup_type;
->-} __packed;
->-
-> struct tpm2_get_tpm_pt_in {
-> 	__be32	cap_id;
-> 	__be32	property_id;
->@@ -55,7 +51,6 @@ struct tpm2_get_random_out {
-> } __packed;
->
-> union tpm2_cmd_params {
->-	struct	tpm2_startup_in		startup_in;
-> 	struct	tpm2_get_tpm_pt_in	get_tpm_pt_in;
-> 	struct	tpm2_get_tpm_pt_out	get_tpm_pt_out;
-> 	struct	tpm2_get_random_in	getrandom_in;
->@@ -412,11 +407,8 @@ void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
-> 	int rc;
->
-> 	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_FLUSH_CONTEXT);
->-	if (rc) {
->-		dev_warn(&chip->dev, "0x%08x was not flushed, out of memory\n",
->-			 handle);
->+	if (rc)
-> 		return;
->-	}
->
-> 	tpm_buf_append_u32(&buf, handle);
->
->@@ -762,40 +754,28 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,  u32 *value,
-> }
-> EXPORT_SYMBOL_GPL(tpm2_get_tpm_pt);
->
->-#define TPM2_SHUTDOWN_IN_SIZE \
->-	(sizeof(struct tpm_input_header) + \
->-	 sizeof(struct tpm2_startup_in))
->-
->-static const struct tpm_input_header tpm2_shutdown_header = {
->-	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
->-	.length = cpu_to_be32(TPM2_SHUTDOWN_IN_SIZE),
->-	.ordinal = cpu_to_be32(TPM2_CC_SHUTDOWN)
->-};
->-
-> /**
->  * tpm2_shutdown() - send shutdown command to the TPM chip
->  *
->+ * In places where shutdown command is sent there's no much we can do except
->+ * print the error code on a system failure.
->+ *
->  * @chip:		TPM chip to use.
->  * @shutdown_type:	shutdown type. The value is either
->  *			TPM_SU_CLEAR or TPM_SU_STATE.
->  */
-> void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
-> {
->-	struct tpm2_cmd cmd;
->+	struct tpm_buf buf;
-> 	int rc;
->
->-	cmd.header.in = tpm2_shutdown_header;
->-	cmd.params.startup_in.startup_type = cpu_to_be16(shutdown_type);
->-
->-	rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd), 0, 0,
->-			      "stopping the TPM");
->-
->-	/* In places where shutdown command is sent there's no much we can do
->-	 * except print the error code on a system failure.
->-	 */
->-	if (rc < 0 && rc != -EPIPE)
->-		dev_warn(&chip->dev, "transmit returned %d while stopping the TPM",
->-			 rc);
->+	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_SHUTDOWN);
->+	if (rc)
->+		return;
->+	tpm_buf_append_u16(&buf, shutdown_type);
->+	tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
->+			 "stopping the TPM");
->+	tpm_buf_destroy(&buf);
-> }
->
-> /*
->-- 
->2.15.1
->
+> Then ima_read_file() can be changed to ima_read_data(), and then instead 
+> of two if (!file && read_id == X) checks, have:
+> 
+> 	if (!file) {
+> 		switch (read_id) {
+> 		}
+> 	}
+> 
+> 
+> 
+> 
