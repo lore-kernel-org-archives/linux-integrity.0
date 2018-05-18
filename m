@@ -1,296 +1,107 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46176 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752467AbeERQuC (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 18 May 2018 12:50:02 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4IGnOhf005839
-        for <linux-integrity@vger.kernel.org>; Fri, 18 May 2018 12:50:01 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2j209ay6ck-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 18 May 2018 12:50:01 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Fri, 18 May 2018 12:50:00 -0400
-Subject: Re: [PATCH] audit: add containerid support for IMA-audit
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44960 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752605AbeERQvF (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 18 May 2018 12:51:05 -0400
+Date: Fri, 18 May 2018 12:50:28 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Stefan Berger <stefanb@linux.vnet.ibm.com>,
         containers@lists.linux-foundation.org,
         Linux-Audit Mailing List <linux-audit@redhat.com>,
         linux-integrity <linux-integrity@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>, paul@paul-moore.com,
         sgrubb@redhat.com
-References: <1520257393.10396.291.camel@linux.vnet.ibm.com>
- <20180305135008.po6lheqnmkqqo6q4@madcap2.tricolour.ca>
- <1520259854.10396.313.camel@linux.vnet.ibm.com>
+Subject: Re: [PATCH] audit: add containerid support for IMA-audit
+Message-ID: <20180518165028.qjcuubxrqmsfg4vb@madcap2.tricolour.ca>
+References: <1520259854.10396.313.camel@linux.vnet.ibm.com>
  <20180308112104.z67wohdvjqemy7wy@madcap2.tricolour.ca>
  <efb6c164-febe-67bb-43a9-795476c4902f@linux.vnet.ibm.com>
  <20180517213001.62caslkjwv575xgl@madcap2.tricolour.ca>
  <86df5c2c-9db3-21b9-b91b-30a4f53f9504@linux.vnet.ibm.com>
- <20180518154553.dy53m3os7aql3urd@madcap2.tricolour.ca>
-From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Date: Fri, 18 May 2018 12:49:53 -0400
+ <1526647996.3632.164.camel@linux.vnet.ibm.com>
+ <ef567d60-42f7-0a87-8597-1ef381e15be0@linux.vnet.ibm.com>
+ <1526654395.3632.196.camel@linux.vnet.ibm.com>
+ <20180518155659.porewd6moctumkys@madcap2.tricolour.ca>
+ <1526661264.3404.55.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180518154553.dy53m3os7aql3urd@madcap2.tricolour.ca>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Message-Id: <7fdca0e0-19d5-1f08-8aa2-f295ad3a86de@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1526661264.3404.55.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 05/18/2018 11:45 AM, Richard Guy Briggs wrote:
-> On 2018-05-18 07:49, Stefan Berger wrote:
->> On 05/17/2018 05:30 PM, Richard Guy Briggs wrote:
->>> On 2018-05-17 10:18, Stefan Berger wrote:
->>>> On 03/08/2018 06:21 AM, Richard Guy Briggs wrote:
->>>>> On 2018-03-05 09:24, Mimi Zohar wrote:
->>>>>> On Mon, 2018-03-05 at 08:50 -0500, Richard Guy Briggs wrote:
->>>>>>> On 2018-03-05 08:43, Mimi Zohar wrote:
->>>>>>>> Hi Richard,
->>>>>>>>
->>>>>>>> This patch has been compiled, but not runtime tested.
->>>>>>> Ok, great, thank you.  I assume you are offering this patch to be
->>>>>>> included in this patchset?
->>>>>> Yes, thank you.
->>>>>>
->>>>>>> I'll have a look to see where it fits in the
->>>>>>> IMA record.  It might be better if it were an AUDIT_CONTAINER_INFO
->>>>>>> auxiliary record, but I'll have a look at the circumstances of the
->>>>>>> event.
->>>>> I had a look at the context of this record to see if adding the contid
->>>>> field to it made sense.  I think the only records for which the contid
->>>>> field makes sense are the two newly proposed records, AUDIT_CONTAINER
->>>>> which introduces the container ID and the and AUDIT_CONTAINER_INFO which
->>>>> documents the presence of the container ID in a process event (or
->>>>> process-less network event).  All others should use the auxiliary record
->>>>> AUDIT_CONTAINER_INFO rather than include the contid field directly
->>>>> itself.  There are several reasons for this including record length, the
->>>>> ability to filter unwanted records, the difficulty of changing the order
->>>>> of or removing fields in the future.
->>>>>
->>>>> Syscalls get this information automatically if the container ID is set
->>>>> for a task via the AUDIT_CONTAINER_INFO auxiliary record.  Generally a
->>>>> syscall event is one that uses the task's audit_context while a
->>>>> standalone event uses NULL or builds a local audit_context that is
->>>>> discarded immediately after the local use.
->>>>>
->>>>> Looking at the two cases of AUDIT_INTEGRITY_RULE record generation, it
->>>>> appears that they should be split into two distinct audit record types.
->>>>>
->>>>> The record created in ima_audit_measurement() is a syscall record that
->>>>> could possibly stand on its own since the subject attributes are
->>>>> present.  If it remains a syscall auxiliary record it will automatically
->>>>> have the AUDIT_CONTAINER_INFO record accompany it anyways.  If it is
->>>>> decided to detach it (which would save cpu/netlink/disk bandwidth but is
->>>>> not recommended due to not wanting to throw away any other syscall
->>>>> information or other involved records (PATH, CWD, etc...) then a local
->>>>> audit_context would be created for the AUDIT_INTEGRITY_RULE and
->>>>> AUDIT_CONTAINERID_INFO records only and immediately discarded.
->>>> What does 'detach it' mean? Does it mean we're not using
->>>> current->audit_context?
->>> Exactly.
->>>
->>>>> The record created in ima_parse_rule() is not currently a syscall record
->>>>> since it is passed an audit_context of NULL and it has a very different
->>>>> format that does not include any subject attributes (except subj_*=).
->>>>> At first glance it appears this one should be a syscall accompanied
->>>>> auxiliary record.  Either way it should have an AUDIT_CONTAINER_INFO
->>>> Do you have an example (pointer) to the format for a 'syscall accompanied
->>>> auxiliary record'?
->>> Any that uses current->audit_context (or recently proposed
->>> audit_context() function) will be a syscall auxiliary record.  Well
->>> formed record formats are <fieldname>=<value> and named as listed:
->>>
->>> 	https://github.com/linux-audit/audit-documentation/wiki/SPEC-Writing-Good-Events
->>> 	https://github.com/linux-audit/audit-documentation/blob/master/specs/fields/field-dictionary.csv
->>> 	
->>>>> auxiliary record either by being converted to a syscall auxiliary record
->>>>> by using current->audit_context rather than NULL when calling
->>>>> audit_log_start(), or creating a local audit_context and calling
->>>> ima_parse_rule() is invoked when setting a policy by writing it into
->>>> /sys/kernel/security/ima/policy. We unfortunately don't have the
->>>> current->audit_context in this case.
->>> Sure you do.  What process writes to that file?  That's the one we care
->>> about, unless it is somehow handed off to a queue and processed later in
->>> a different context.
->> I just printk'd it again. current->audit_context is NULL in this case.
-> Oops, that sounds like some of the netfilter empty table
-> initializations, whereas usually rules have a user actor.
+On 2018-05-18 12:34, Mimi Zohar wrote:
+> On Fri, 2018-05-18 at 11:56 -0400, Richard Guy Briggs wrote:
+> > On 2018-05-18 10:39, Mimi Zohar wrote:
+> > > On Fri, 2018-05-18 at 09:54 -0400, Stefan Berger wrote:
+> > > > On 05/18/2018 08:53 AM, Mimi Zohar wrote:
+> > > 
+> > > [..]
+> > > 
+> > > > >>>> If so, which ones? We could probably refactor the current
+> > > > >>>> integrity_audit_message() and have ima_parse_rule() call into it to get
+> > > > >>>> those fields as well. I suppose adding new fields to it wouldn't be
+> > > > >>>> considered breaking user space?
+> > > > >>> Changing the order of existing fields or inserting fields could break
+> > > > >>> stuff and is strongly discouraged without a good reason, but appending
+> > > > >>> fields is usually the right way to add information.
+> > > > >>>
+> > > > >>> There are exceptions, and in this case, I'd pick the "more standard" of
+> > > > >>> the formats for AUDIT_INTEGRITY_RULE (ima_audit_measurement?) and stick
+> > > > >>> with that, abandoning the other format, renaming the less standard
+> > > > >>> version of the record (ima_parse_rule?) and perhpas adopting that
+> > > > >>> abandonned format for the new record type while using
+> > > > >>> current->audit_context.
+> > > > > This sounds right, other than "type=INTEGRITY_RULE" (1805) for
+> > > > > ima_audit_measurement().  Could we rename type=1805 to be
+> > > > 
+> > > > So do we want to change both? I thought that what 
+> > > > ima_audit_measurement() produces looks ok but may not have a good name 
+> > > > for the 'type'. Now in this case I would not want to 'break user space'.
+> > > > The only change I was going to make was to what ima_parse_rule() produces.
+> > > 
+> > > The only change for now is separating the IMA policy rules from the
+> > > IMA-audit messages.
+> > > 
+> > > Richard, when the containerid is appended to the IMA-audit messages,
+> > > would we make the audit type name change then?
+> > 
+> > No, go ahead and make the change now.  I'm expecting that the
+> > containerid record will just be another auxiliary record and should not
+> > affect you folks.
+> 
+> To summarize, we need to disambiguate the 1805, as both
+> ima_parse_rule() and ima_audit_measurement() are using the same number
+> with different formats.  The main usage of 1805 that we are aware of
+> is ima_audit_measurement().  Yet the "type=" name for
+> ima_audit_measurement() should be INTEGRITY_IMA_AUDIT, not
+> INTEGRITY_RULE.
+> 
+> option 1: breaks both uses
+> 1805 - INTEGRITY_IMA_AUDIT - ima_audit_measurement()
+> 1806 - INTEGRITY_POLICY_RULE - ima_parse_rule()
+> 
+> option 2: breaks the most common usage
+> 1805 - INTEGRITY_RULE - ima_parse_rule()
+> 1806 - INTEGRITY_IMA_AUDIT - ima_audit_measurement()
+> 
+> option 3: leaves the most common usage with the wrong name, and breaks
+> the other less common usage
+> 1805 - INTEGRITY_RULE - ima_audit_measurement()
+> 1806 - INTEGRITY_POLICY_RULE - ima_parse_rule()
+> 
+> So option 3 is the best option?
 
+Yes, I think so, but option 2 I would be willing to consider.  I'd like
+to get Paul and Steve's opinions on this.
 
-So it's a bug elsewhere not a 'feature?'
+> Mimi
 
+- RGB
 
->
->>>>> audit_log_container_info() then releasing the local context.  This
->>>>> version of the record has additional concerns covered here:
->>>>> https://github.com/linux-audit/audit-kernel/issues/52
->>>> Following the discussion there and the concern with breaking user space, how
->>>> can we split up the AUDIT_INTEGRITY_RULE that is used in
->>>> ima_audit_measurement() and ima_parse_rule(), without 'breaking user space'?
->>> Arguably userspace is already broken by this wildly diverging pair of
->>> formats for the same record.
->>>
->>>> A message produced by ima_parse_rule() looks like this here:
->>>>
->>>> type=INTEGRITY_RULE msg=audit(1526566213.870:305): action="dont_measure"
->>>> fsmagic="0x9fa0" res=1
->>>>
->>>> in contrast to that an INTEGRITY_PCR record type:
->>>>
->>>> type=INTEGRITY_PCR msg=audit(1526566235.193:334): pid=1615 uid=0 auid=0
->>>> ses=2 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
->>>> op="invalid_pcr" cause="open_writers" comm="scp"
->>>> name="/var/log/audit/audit.log" dev="dm-0" ino=1962625 res=1
->>>>
->>>> Should some of the fields from INTEGRITY_PCR also appear in INTEGRITY_RULE?
->>> Not necessarily.  There are a number of records in the PCR record that
->>> would be redundant when connected to a syscall record, but removing them
->>> is discouraged to avoid breaking parsers that expect them.
->>>
->>> I don't see any need to touch the PCR record.
->> I wasn't going to touch the PCR record.
->>
->>
->>>> If so, which ones? We could probably refactor the current
->>>> integrity_audit_message() and have ima_parse_rule() call into it to get
->>>> those fields as well. I suppose adding new fields to it wouldn't be
->>>> considered breaking user space?
->>> Changing the order of existing fields or inserting fields could break
->>> stuff and is strongly discouraged without a good reason, but appending
->>> fields is usually the right way to add information.
->>>
->>> There are exceptions, and in this case, I'd pick the "more standard" of
->>> the formats for AUDIT_INTEGRITY_RULE (ima_audit_measurement?) and stick
->>> with that, abandoning the other format, renaming the less standard
->>> version of the record (ima_parse_rule?) and perhpas adopting that
->>> abandonned format for the new record type while using
->>> current->audit_context.
->> Since current->audit_context is NULL I built on your patch, but I am not
->> sure whether it is justifyable to use that before your container id series
->> is applied.
->>
->> This is what ima_parse_rule() produces now after having it call
->> audit_log_task_info() as well and by introducing 1806 for ima_parse_rule()
->> only ( https://lkml.org/lkml/2018/5/11/386 ):
->>
->> type=UNKNOWN[1806] msg=audit(1526643702.328:304): action="dont_measure"
->> fsmagic="0x9fa0" res=1 ppid=1563 pid=1595 auid=0 uid=0 gid=0 euid=0 suid=0
->> fsuid=0 egid=0 sgid=0 fsgid=0 tty=tty2 ses=2 comm="cat" exe="/usr/bin/cat"
->> subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
->>
->> [before: type=INTEGRITY_RULE msg=audit(1526566213.870:305):
->> action="dont_measure" fsmagic="0x9fa0" res=1]
-> Since this appears to be a a user action, use current->audit_context
-> to make it a syscall auxiliary record rather than adding all these
-> redundant fields.
-
-Sure, once we have a non-NULL pointer in current->audit_context I'd do that.
-
->
->> For comparison the INTEGRITY_RULE:
->>
->> type=INTEGRITY_RULE msg=audit(1526642504.074:331): file="/usr/bin/ssh" hash="sha256:4abc2558424b9ca61c34af43169d9b9e174d7825bf60c9c76be377549081db5b"
->> ppid=1623 pid=1624 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0
->> fsgid=0 tty=tty2 ses=2 comm="scp" exe="/usr/bin/scp"
->> subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
->>
->>
->> 1806 would be in sync with INTEGRITY_RULE now for process related info. If
->> this looks good, I'll remove the dependency on your local context creation
->> and post the series.
-> What would be the macro name for 1806?
-
-I currently work with AUDIT_INTEGRITY_POLICY_RULE.
-
-
->
->> The justification for the change is that the INTEGRITY_RULE, as produced by
->> ima_parse_rule(), is broken.
->>
->>      Stefan
->>
->>
->>> Does this help?
->>>
->>>>       Stefan
->>>>
->>>>> Can you briefly describe the circumstances under which these two
->>>>> different identically-numbered records are produced as a first step
->>>>> towards splitting them into two distict records?
->>>>>
->>>>> The four AUDIT_INTEGRITY _METADATA, _PCR, _DATA and _STATUS records
->>>>> appear to be already properly covered for AUDIT_CONTAINER_INFO records
->>>>> by being syscall auxiliary records.  The AUDIT_INTEGRITY_HASH record
->>>>> appears to be unused.
->>>>>
->>>>>>> Can you suggest a procedure to test it?
->>>>>> Like IMA-measurement and IMA-appraisal, IMA-audit is enabled based on
->>>>>> policy. The example IMA policy, below, includes IMA-audit messages for
->>>>>> files executed. 'cat' the policy to /sys/kernel/security/ima/policy.
->>>>>>
->>>>>> /etc/ima/ima-policy:
->>>>>> audit func=BPRM_CHECK
->>>>>>
->>>>>> There's a FireEye blog titled "Extending Linux Executable Logging With
->>>>>> The Integrity Measurement Architecture"* that explains how to augment
->>>>>> their existing system security analytics with file hashes.
->>>>>>
->>>>>> * https://www.fireeye.com/blog/threat-research/2016/11/extending_linux
->>>>>> _exec.html
->>>>>>
->>>>>>
->>>>>> Mimi
->>>>>>
->>>>>>>> If the containerid is defined, include it in the IMA-audit record.
->>>>>>>>
->>>>>>>> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
->>>>>>>> ---
->>>>>>>>     security/integrity/ima/ima_api.c | 3 +++
->>>>>>>>     1 file changed, 3 insertions(+)
->>>>>>>>
->>>>>>>> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
->>>>>>>> index 33b4458cdbef..41d29a06f28f 100644
->>>>>>>> --- a/security/integrity/ima/ima_api.c
->>>>>>>> +++ b/security/integrity/ima/ima_api.c
->>>>>>>> @@ -335,6 +335,9 @@ void ima_audit_measurement(struct integrity_iint_cache *iint,
->>>>>>>>     	audit_log_untrustedstring(ab, algo_hash);
->>>>>>>>     	audit_log_task_info(ab, current);
->>>>>>>> +	if (audit_containerid_set(current))
->>>>>>>> +		audit_log_format(ab, " contid=%llu",
->>>>>>>> +				 audit_get_containerid(current));
->>>>>>>>     	audit_log_end(ab);
->>>>>>>>     	iint->flags |= IMA_AUDITED;
->>>>>>>> -- 
->>>>>>>> 2.7.5
->>>>>>>>
->>>>>>> - RGB
->>>>> - RGB
->>>>>
->>>>> --
->>>>> Richard Guy Briggs <rgb@redhat.com>
->>>>> Sr. S/W Engineer, Kernel Security, Base Operating Systems
->>>>> Remote, Ottawa, Red Hat Canada
->>>>> IRC: rgb, SunRaycer
->>>>> Voice: +1.647.777.2635, Internal: (81) 32635
->>>>>
->>> - RGB
->>>
->>> --
->>> Richard Guy Briggs <rgb@redhat.com>
->>> Sr. S/W Engineer, Kernel Security, Base Operating Systems
->>> Remote, Ottawa, Red Hat Canada
->>> IRC: rgb, SunRaycer
->>> Voice: +1.647.777.2635, Internal: (81) 32635
->>>
-> - RGB
->
-> --
-> Richard Guy Briggs <rgb@redhat.com>
-> Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> Remote, Ottawa, Red Hat Canada
-> IRC: rgb, SunRaycer
-> Voice: +1.647.777.2635, Internal: (81) 32635
->
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
