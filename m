@@ -1,70 +1,63 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60888 "EHLO mx1.redhat.com"
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7718 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753077AbeEUQ62 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 21 May 2018 12:58:28 -0400
-From: Steve Grubb <sgrubb@redhat.com>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc: Richard Guy Briggs <rgb@redhat.com>,
+        id S1752992AbeEUMJ0 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 21 May 2018 08:09:26 -0400
+From: Yisheng Xie <xieyisheng1@huawei.com>
+To: <linux-kernel@vger.kernel.org>
+CC: Yisheng Xie <xieyisheng1@huawei.com>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        containers@lists.linux-foundation.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, paul@paul-moore.com
-Subject: Re: [PATCH] audit: add containerid support for IMA-audit
-Date: Mon, 21 May 2018 12:58:28 -0400
-Message-ID: <2397631.78oLu0QVqb@x2>
-In-Reply-To: <efb6c164-febe-67bb-43a9-795476c4902f@linux.vnet.ibm.com>
-References: <1520257393.10396.291.camel@linux.vnet.ibm.com> <20180308112104.z67wohdvjqemy7wy@madcap2.tricolour.ca> <efb6c164-febe-67bb-43a9-795476c4902f@linux.vnet.ibm.com>
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>
+Subject: [PATCH 25/33] ima: use match_string() helper
+Date: Mon, 21 May 2018 19:58:02 +0800
+Message-ID: <1526903890-35761-26-git-send-email-xieyisheng1@huawei.com>
+In-Reply-To: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
+References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thursday, May 17, 2018 10:18:13 AM EDT Stefan Berger wrote:
-> > audit_log_container_info() then releasing the local context.  This
-> > version of the record has additional concerns covered here:
-> > https://github.com/linux-audit/audit-kernel/issues/52
-> 
-> Following the discussion there and the concern with breaking user space,
-> how can we split up the AUDIT_INTEGRITY_RULE that is used in
-> ima_audit_measurement() and ima_parse_rule(), without 'breaking user
-> space'?
-> 
-> A message produced by ima_parse_rule() looks like this here:
-> 
-> type=INTEGRITY_RULE msg=audit(1526566213.870:305): action="dont_measure"
-> fsmagic="0x9fa0" res=1
+match_string() returns the index of an array for a matching string,
+which can be used intead of open coded variant.
 
-Why is action and fsmagic being logged as untrusted strings? Untrusted 
-strings are used when an unprivileged user can affect the contents of the 
-field such as creating a file with space or special characters in the name.
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+---
+ security/integrity/ima/ima_main.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-Also, subject and object information is missing. Who loaded this rule?
-
-> in contrast to that an INTEGRITY_PCR record type:
-> 
-> type=INTEGRITY_PCR msg=audit(1526566235.193:334): pid=1615 uid=0 auid=0
-> ses=2 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
-> op="invalid_pcr" cause="open_writers" comm="scp"
-> name="/var/log/audit/audit.log" dev="dm-0" ino=1962625 res=1
-
-Why is op & cause being logged as an untrusted string? This also has 
-incomplete subject information.
-
-> Should some of the fields from INTEGRITY_PCR also appear in
-> INTEGRITY_RULE? If so, which ones? 
-
-pid, uid, auid, tty, session, subj, comm, exe, res.  <- these are required to 
-be searchable
-
-> We could probably refactor the current  integrity_audit_message() and have
-> ima_parse_rule() call into it to get those fields as well. I suppose adding
-> new fields to it wouldn't be considered breaking user space?
-
-The audit user space utilities pretty much expects those fields in that order 
-for any IMA originating events. You can add things like op or cause before 
-that. The reason why you can do that is those additional fields are not 
-required to be searchable by common criteria.
-
--Steve
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 74d0bd7..f807093 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -61,14 +61,11 @@ static int __init hash_setup(char *str)
+ 		goto out;
+ 	}
+ 
+-	for (i = 0; i < HASH_ALGO__LAST; i++) {
+-		if (strcmp(str, hash_algo_name[i]) == 0) {
+-			ima_hash_algo = i;
+-			break;
+-		}
+-	}
+-	if (i == HASH_ALGO__LAST)
++	i = match_string(hash_algo_name, HASH_ALGO__LAST, str);
++	if (i < 0)
+ 		return 1;
++
++	ima_hash_algo = i;
+ out:
+ 	hash_setup_done = 1;
+ 	return 1;
+-- 
+1.7.12.4
