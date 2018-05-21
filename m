@@ -1,78 +1,152 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from aserp2130.oracle.com ([141.146.126.79]:54848 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751255AbeEUW2O (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54038 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754596AbeEUV5h (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 21 May 2018 18:28:14 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w4LMHEg7148512
-        for <linux-integrity@vger.kernel.org>; Mon, 21 May 2018 22:28:11 GMT
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2130.oracle.com with ESMTP id 2j29eyedy2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-integrity@vger.kernel.org>; Mon, 21 May 2018 22:28:11 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w4LMSAnT010659
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-integrity@vger.kernel.org>; Mon, 21 May 2018 22:28:11 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w4LMSAOP020409
-        for <linux-integrity@vger.kernel.org>; Mon, 21 May 2018 22:28:10 GMT
-From: Chuck Lever <chuck.lever@oracle.com>
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Enabling EVM on NFS mounts
-Message-Id: <729C6BCE-D60D-4687-8DD0-52E1EF35E535@oracle.com>
-Date: Mon, 21 May 2018 15:28:09 -0700
-To: linux-integrity@vger.kernel.org
+        Mon, 21 May 2018 17:57:37 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4LLmst3126433
+        for <linux-integrity@vger.kernel.org>; Mon, 21 May 2018 17:57:36 -0400
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2j44mfbwaf-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 21 May 2018 17:57:36 -0400
+Received: from localhost
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
+        Mon, 21 May 2018 15:57:35 -0600
+Subject: Re: [PATCH] audit: add containerid support for IMA-audit
+To: Steve Grubb <sgrubb@redhat.com>
+Cc: Richard Guy Briggs <rgb@redhat.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        containers@lists.linux-foundation.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, paul@paul-moore.com
+References: <1520257393.10396.291.camel@linux.vnet.ibm.com>
+ <2397631.78oLu0QVqb@x2>
+ <21646a72-e782-e33a-9e75-5cc98b241f36@linux.vnet.ibm.com>
+ <4015765.rtofcNpGHU@x2>
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Date: Mon, 21 May 2018 17:57:29 -0400
+MIME-Version: 1.0
+In-Reply-To: <4015765.rtofcNpGHU@x2>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Message-Id: <e140278a-1494-ec74-f8bb-7fbac676306e@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-I'm in the middle of rewriting
+On 05/21/2018 02:30 PM, Steve Grubb wrote:
+> Hello Stefan,
+>
+> On Monday, May 21, 2018 1:53:04 PM EDT Stefan Berger wrote:
+>> On 05/21/2018 12:58 PM, Steve Grubb wrote:
+>>> On Thursday, May 17, 2018 10:18:13 AM EDT Stefan Berger wrote:
+>>>>> audit_log_container_info() then releasing the local context.  This
+>>>>> version of the record has additional concerns covered here:
+>>>>> https://github.com/linux-audit/audit-kernel/issues/52
+>>>> Following the discussion there and the concern with breaking user space,
+>>>> how can we split up the AUDIT_INTEGRITY_RULE that is used in
+>>>> ima_audit_measurement() and ima_parse_rule(), without 'breaking user
+>>>> space'?
+>>>>
+>>>> A message produced by ima_parse_rule() looks like this here:
+>>>>
+>>>> type=INTEGRITY_RULE msg=audit(1526566213.870:305): action="dont_measure"
+>>>> fsmagic="0x9fa0" res=1
+>>> Why is action and fsmagic being logged as untrusted strings? Untrusted
+>>> strings are used when an unprivileged user can affect the contents of the
+>>> field such as creating a file with space or special characters in the
+>>> name.
+>>>
+>>> Also, subject and object information is missing. Who loaded this rule?
+>>>
+>>>> in contrast to that an INTEGRITY_PCR record type:
+>>>>
+>>>> type=INTEGRITY_PCR msg=audit(1526566235.193:334): pid=1615 uid=0 auid=0
+>>>> ses=2 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+>>>> op="invalid_pcr" cause="open_writers" comm="scp"
+>>>> name="/var/log/audit/audit.log" dev="dm-0" ino=1962625 res=1
+>>> Why is op & cause being logged as an untrusted string? This also has
+>>> incomplete subject information.
+>> It's calling audit_log_string() in both cases:
+>>
+>> https://elixir.bootlin.com/linux/latest/source/security/integrity/integrity
+>> _audit.c#L48
+> I see. Looking things over, I see that it seems like it should do the right
+> thing. But the original purpose for this function is here:
+>
+> https://elixir.bootlin.com/linux/latest/source/kernel/audit.c#L1944
+>
+> This is where it is logging an untrusted string and has to decide to encode
+> it or just place it in quotes. If it has quotes, that means it's an untrusted
+> string but has no control characters in it. I think you want to use
+> audit_log_format() for any string that is trustworthy.
 
-https://datatracker.ietf.org/doc/draft-cel-nfsv4-linux-seclabel-xtensions/
+Replacing all occurrences (in IMA) of audit_log_string() with 
+audit_log_format().
+>
+>
+> As an aside, I wonder why audit_log_string() is in the API when it is a
+> helper to audit_log_untrustedstring() ?  Without understanding the rules of
+> untrusted strings, it can't be used correctly without re-inventing
+> audit_log_untrustedstring() by hand.
+>
+>
+>>>> Should some of the fields from INTEGRITY_PCR also appear in
+>>>> INTEGRITY_RULE? If so, which ones?
+>>> pid, uid, auid, tty, session, subj, comm, exe, res.  <- these are
+>>> required to be searchable
+>>>
+>>>> We could probably refactor the current  integrity_audit_message() and
+>>>> have ima_parse_rule() call into it to get those fields as well. I
+>>>> suppose adding new fields to it wouldn't be considered breaking user
+>>>> space?
+>>> The audit user space utilities pretty much expects those fields in that
+>>> order for any IMA originating events. You can add things like op or
+>>> cause before
+>> We will call into audit_log_task, which will put the parameters into
+>> correct order:
+>>
+>> auid uid gid ses subj pid comm exe
+> I'm telling you what the correct order is.  :-)  A long time ago, the IMA
 
-which was recently rejected by the nfsv4 Working Group for
-plausible and fixable reasons. They like the idea, but my
-proposal for using NFSv4 security labels is not workable
-even as an experiment.
+:-) Thanks. Was getting confused.
 
-As I compose a fresh Internet-Draft I'm trying to understand
-what an EVM HMAC covers, and I found this:
+> system had audit events with the order I'm mentioning. For example, here's
+> one from a log I collected back in 2013:
+>
+> type=INTEGRITY_PCR msg=audit(1327409021.813:21): pid=1 uid=0 auid=4294967295
+> ses=4294967295 subj=kernel op="add_template_measure" cause="hash_added"
+> comm="init" name="01parse-kernel.sh" dev=rootfs ino=5413 res=0
+>
+> it was missing "tty" and "exe", but the order is as I mentioned. The
+> expectation is that INTEGRITY events maintain this established order across
+> all events.
 
-http://linux-ima.sourceforge.net/evmctl.1.html
+I am *appending* exe= and tty= now:
 
-> EVM protects file metadata by including following attributes into HMAC and signature calculation: inode number, inode generation, UID, GID, file mode, security.selinux, security.SMACK64, security.ima, security.capability.
-
-> EVM HMAC and signature may also include additional file and file system attributes. Currently supported additional attributes are filesystem UUID and extra SMACK extended attributes.
-
-
-The computation of the IMA HMAC is straightforward, but it
-appears that the EVM HMAC is evolving, and not all of the
-input items would necessarily be visible to remote EVM
-consumers.
-
-Is there any way an NFS client would be able to tell exactly
-what attributes were used to compute an EVM hash, and what
-should it do if the whole input set is not available for
-verification?
-
-Amongst the security. xattrs, I believe only security.selinux
-is currently exposed via NFS. Thus an NFS client EVM would
-see only that particular xattr and not others by which it can
-compute or verify the EVM hash.
-
-Does the inclusion here of "security.capability" mean that NFS
-support for EVM and for file capabilities are inseparable? Is
-the content of security.capability in a binary or human-readable
-format?
-
-Filesystem attributes such as a UUID, type, or disk label might
-not be visible to NFS clients.
-
-Would there be any reason to protect ACLs with the EVM hash?
+type=INTEGRITY_PCR msg=audit(1526939047.809:305): pid=1609 uid=0 auid=0 
+ses=2 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 
+op="invalid_pcr" cause="open_writers" comm="ssh" 
+name="/var/lib/sss/mc/passwd" dev="dm-0" ino=1962679 res=1 
+exe="/usr/bin/ssh" tty=tty2
 
 
---
-Chuck Lever
+    Stefan
+
+
+>
+> Thanks,
+> -Steve
+>
+>
+>> https://elixir.bootlin.com/linux/latest/source/kernel/auditsc.c#L2433
+>>
+>>> that. The reason why you can do that is those additional fields are not
+>>> required to be searchable by common criteria.
+>>>
+>>> -Steve
+>
+>
+>
