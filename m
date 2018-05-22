@@ -1,75 +1,70 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35626 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751432AbeEVOJa (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 22 May 2018 10:09:30 -0400
-From: Steve Grubb <sgrubb@redhat.com>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc: Richard Guy Briggs <rgb@redhat.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        containers@lists.linux-foundation.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, paul@paul-moore.com
-Subject: Re: [PATCH] audit: add containerid support for IMA-audit
-Date: Tue, 22 May 2018 10:09:29 -0400
-Message-ID: <1705289.eIvaqvarKh@x2>
-In-Reply-To: <e140278a-1494-ec74-f8bb-7fbac676306e@linux.vnet.ibm.com>
-References: <1520257393.10396.291.camel@linux.vnet.ibm.com> <4015765.rtofcNpGHU@x2> <e140278a-1494-ec74-f8bb-7fbac676306e@linux.vnet.ibm.com>
+Received: from lan.nucleusys.com ([92.247.61.126]:57674 "EHLO
+        zztop.nucleusys.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751196AbeEVOG7 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 22 May 2018 10:06:59 -0400
+Date: Tue, 22 May 2018 17:06:55 +0300
+From: Petko Manolov <petkan@nucleusys.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Linux Integrity <linux-integrity@vger.kernel.org>
+Subject: [PATCH] IMA: use list_splice_tail_init_rcu() instead of its open
+ coded variant
+Message-ID: <20180522140655.GA5794@carbon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Monday, May 21, 2018 5:57:29 PM EDT Stefan Berger wrote:
-> >>>> Should some of the fields from INTEGRITY_PCR also appear in
-> >>>> INTEGRITY_RULE? If so, which ones?
-> >>> 
-> >>> pid, uid, auid, tty, session, subj, comm, exe, res.  <- these are
-> >>> required to be searchable
-> >>> 
-> >>>> We could probably refactor the current  integrity_audit_message() and
-> >>>> have ima_parse_rule() call into it to get those fields as well. I
-> >>>> suppose adding new fields to it wouldn't be considered breaking user
-> >>>> space?
-> >>> 
-> >>> The audit user space utilities pretty much expects those fields in that
-> >>> order for any IMA originating events. You can add things like op or
-> >>> cause before
-> >> 
-> >> We will call into audit_log_task, which will put the parameters into
-> >> correct order:
-> >> 
-> >> auid uid gid ses subj pid comm exe
-> > 
-> > I'm telling you what the correct order is.  :-)  A long time ago, the IMA
-> 
->  Thanks. Was getting confused.
-> 
-> > system had audit events with the order I'm mentioning. For example,
-> > here's one from a log I collected back in 2013:
-> > 
-> > type=INTEGRITY_PCR msg=audit(1327409021.813:21): pid=1 uid=0
-> > auid=4294967295 ses=4294967295 subj=kernel op="add_template_measure"
-> > cause="hash_added" comm="init" name="01parse-kernel.sh" dev=rootfs
-> > ino=5413 res=0
-> > 
-> > it was missing "tty" and "exe", but the order is as I mentioned. The
-> > expectation is that INTEGRITY events maintain this established order
-> > across all events.
-> 
-> I am *appending* exe= and tty= now:
-> 
-> type=INTEGRITY_PCR msg=audit(1526939047.809:305): pid=1609 uid=0 auid=0
-> ses=2 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
-> op="invalid_pcr" cause="open_writers" comm="ssh"
-> name="/var/lib/sss/mc/passwd" dev="dm-0" ino=1962679 res=1
-> exe="/usr/bin/ssh" tty=tty2
+	Hi Mimi,
 
-It is safe to put them where they belong. The tools currently skip over tty 
-and exe if they would be present. So, nothing would get messed up. Its very 
-simple to add an "if" statement to check for these new fields and collect 
-them for searching. Also, "res" is traditionally the last field in any event.
+Please review and consider this patch for mainlining if it looks OK to you.  
+I've tested it on v4.17.0-rc6 and seems to be working fine.
 
-Thanks,
--Steve
+
+		Petko
+
+
+---
+>From e5cb36d4470cf64af2087fba4615ee8539385c98 Mon Sep 17 00:00:00 2001
+From: Petko Manolov <petko.manolov@konsulko.com>
+Date: Fri, 18 May 2018 14:10:57 +0300
+Subject: [PATCH] Replace the open coded version with
+ list_splice_tail_init_rcu()
+
+Signed-off-by: Petko Manolov <petko.manolov@konsulko.com>
+---
+ security/integrity/ima/ima_policy.c | 17 ++---------------
+ 1 file changed, 2 insertions(+), 15 deletions(-)
+
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index d89bebf85421..722466f843ef 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -509,22 +509,9 @@ int ima_check_policy(void)
+  */
+ void ima_update_policy(void)
+ {
+-	struct list_head *first, *last, *policy;
++	struct list_head *policy = &ima_policy_rules;
+ 
+-	/* append current policy with the new rules */
+-	first = (&ima_temp_rules)->next;
+-	last = (&ima_temp_rules)->prev;
+-	policy = &ima_policy_rules;
+-
+-	synchronize_rcu();
+-
+-	last->next = policy;
+-	rcu_assign_pointer(list_next_rcu(policy->prev), first);
+-	first->prev = policy->prev;
+-	policy->prev = last;
+-
+-	/* prepare for the next policy rules addition */
+-	INIT_LIST_HEAD(&ima_temp_rules);
++	list_splice_tail_init_rcu(&ima_temp_rules, policy, synchronize_rcu);
+ 
+ 	if (ima_rules != policy) {
+ 		ima_policy_flag = 0;
+-- 
+2.11.0
