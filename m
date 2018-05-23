@@ -1,43 +1,77 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:49589 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933287AbeEWR5M (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 23 May 2018 13:57:12 -0400
-Subject: Re: [PATCH] tpm: fix race condition in tpm_common_write()
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <152701036671.19968.17347263774570787595.stgit@tstruk-mobl1.jf.intel.com>
- <20180523132318.GE363@linux.intel.com>
-From: Tadeusz Struk <tadeusz.struk@intel.com>
-Message-ID: <fb9c3d0c-d6fe-25ee-6452-92ade053c75a@intel.com>
-Date: Wed, 23 May 2018 10:57:07 -0700
-MIME-Version: 1.0
-In-Reply-To: <20180523132318.GE363@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40852 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932646AbeEWPiD (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 23 May 2018 11:38:03 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4NFTveC134545
+        for <linux-integrity@vger.kernel.org>; Wed, 23 May 2018 11:38:03 -0400
+Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2j5852hsfm-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 23 May 2018 11:38:02 -0400
+Received: from localhost
+        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Wed, 23 May 2018 16:38:00 +0100
+Subject: Re: [PATCH] IMA: use list_splice_tail_init_rcu() instead of its
+ open coded variant
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Petko Manolov <petkan@nucleusys.com>
+Cc: Linux Integrity <linux-integrity@vger.kernel.org>
+Date: Wed, 23 May 2018 11:37:56 -0400
+In-Reply-To: <20180522140655.GA5794@carbon>
+References: <20180522140655.GA5794@carbon>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1527089876.3364.5.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 05/23/2018 06:23 AM, Jarkko Sakkinen wrote:
-> Ouch o_O Do you have a fixes tag for this one?
+Hi Petko,
+
+On Tue, 2018-05-22 at 17:06 +0300, Petko Manolov wrote:
+
+The patch description is missing.  Is the following ok?
+
+Use list_splice_tail_init_rcu() to extend the existing custom IMA
+policy with additional IMA policy rules.
+
+Mimi
+
 > 
-
-This one is quite tricky.
-The original bug was introduced by abce9ac292e13 (tpm: Propagate error from tpm_transmit to fix a timeout hang)
-and the code back then was in drivers/char/tpm/tpm-interface.c file
-
-Then there were two other commits that moved the code around:
-afdba32e2a9ea (tpm: Pull everything related to /dev/tpmX into tpm-dev.c)
-which moved it from drivers/char/tpm/tpm-interface.c into drivers/char/tpm/tpm-dev.c
-
-and last one, ecb38e2f521b0 (tpm: split out tpm-dev.c into tpm-dev.c and tpm-common-dev.c)
-which moved it from drivers/char/tpm/tpm-dev.c into tpm-common-dev.c
-
-I have no idea how to tag it. Maybe we can use:
-Fixes: ecb38e2f521b0 ("tpm: split out tpm-dev.c into tpm-dev.c and tpm-common-dev.c")
-
-And then it probably needs to be back ported manually all the way back to abce9ac292e13.
-
-Thanks,
--- 
-Tadeusz
+> Signed-off-by: Petko Manolov <petko.manolov@konsulko.com>
+> ---
+>  security/integrity/ima/ima_policy.c | 17 ++---------------
+>  1 file changed, 2 insertions(+), 15 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index d89bebf85421..722466f843ef 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -509,22 +509,9 @@ int ima_check_policy(void)
+>   */
+>  void ima_update_policy(void)
+>  {
+> -	struct list_head *first, *last, *policy;
+> +	struct list_head *policy = &ima_policy_rules;
+> 
+> -	/* append current policy with the new rules */
+> -	first = (&ima_temp_rules)->next;
+> -	last = (&ima_temp_rules)->prev;
+> -	policy = &ima_policy_rules;
+> -
+> -	synchronize_rcu();
+> -
+> -	last->next = policy;
+> -	rcu_assign_pointer(list_next_rcu(policy->prev), first);
+> -	first->prev = policy->prev;
+> -	policy->prev = last;
+> -
+> -	/* prepare for the next policy rules addition */
+> -	INIT_LIST_HEAD(&ima_temp_rules);
+> +	list_splice_tail_init_rcu(&ima_temp_rules, policy, synchronize_rcu);
+> 
+>  	if (ima_rules != policy) {
+>  		ima_policy_flag = 0;
