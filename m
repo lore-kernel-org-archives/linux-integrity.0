@@ -1,20 +1,20 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35276 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753588AbeEWAZs (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44574 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753714AbeEWA0Y (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 22 May 2018 20:25:48 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4N0K5DR050122
-        for <linux-integrity@vger.kernel.org>; Tue, 22 May 2018 20:25:48 -0400
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2j4ueuvrpg-1
+        Tue, 22 May 2018 20:26:24 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4N0KSbn104734
+        for <linux-integrity@vger.kernel.org>; Tue, 22 May 2018 20:26:23 -0400
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2j4qqveey9-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 22 May 2018 20:25:47 -0400
+        for <linux-integrity@vger.kernel.org>; Tue, 22 May 2018 20:26:23 -0400
 Received: from localhost
-        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Tue, 22 May 2018 18:25:47 -0600
+        Tue, 22 May 2018 18:26:22 -0600
 From: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
@@ -31,187 +31,36 @@ Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         "David S. Miller" <davem@davemloft.net>,
         "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
         Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [PATCH v7 02/14] PKCS#7: Refactor verify_pkcs7_signature() and add pkcs7_get_message_sig()
-Date: Tue, 22 May 2018 21:12:41 -0300
+Subject: [PATCH v7 07/14] integrity: Select CONFIG_KEYS instead of depending on it
+Date: Tue, 22 May 2018 21:12:46 -0300
 In-Reply-To: <20180523001253.15247-1-bauerman@linux.ibm.com>
 References: <20180523001253.15247-1-bauerman@linux.ibm.com>
-Message-Id: <20180523001253.15247-3-bauerman@linux.ibm.com>
+Message-Id: <20180523001253.15247-8-bauerman@linux.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-IMA will need to verify a PKCS#7 which has already been parsed. For this
-reason, factor out the code which does that from verify_pkcs7_signature()
-into a new function which takes a struct pkcs7_message instead of a data
-buffer.
-
-In addition, IMA will need to know the key that signed a given PKCS#7
-message, so add pkcs7_get_message_sig().
+This avoids a dependency cycle in soon-to-be-introduced
+CONFIG_IMA_APPRAISE_MODSIG: it will select CONFIG_MODULE_SIG_FORMAT
+which in turn selects CONFIG_KEYS. Kconfig then complains that
+CONFIG_INTEGRITY_SIGNATURE depends on CONFIG_KEYS.
 
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 ---
- certs/system_keyring.c                | 61 ++++++++++++++++++++++++++---------
- crypto/asymmetric_keys/pkcs7_parser.c | 16 +++++++++
- include/crypto/pkcs7.h                |  2 ++
- include/linux/verification.h          | 10 ++++++
- 4 files changed, 73 insertions(+), 16 deletions(-)
+ security/integrity/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-index 6251d1b27f0c..7ddc8b7a3062 100644
---- a/certs/system_keyring.c
-+++ b/certs/system_keyring.c
-@@ -190,33 +190,27 @@ late_initcall(load_system_certificate_list);
- #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
+diff --git a/security/integrity/Kconfig b/security/integrity/Kconfig
+index da9565891738..0d642e0317c7 100644
+--- a/security/integrity/Kconfig
++++ b/security/integrity/Kconfig
+@@ -17,8 +17,8 @@ if INTEGRITY
  
- /**
-- * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
-+ * verify_pkcs7_message_sig - Verify a PKCS#7-based signature on system data.
-  * @data: The data to be verified (NULL if expecting internal data).
-  * @len: Size of @data.
-- * @raw_pkcs7: The PKCS#7 message that is the signature.
-- * @pkcs7_len: The size of @raw_pkcs7.
-+ * @pkcs7: The PKCS#7 message that is the signature.
-  * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
-  *					(void *)1UL for all trusted keys).
-  * @usage: The use to which the key is being put.
-  * @view_content: Callback to gain access to content.
-  * @ctx: Context for callback.
-  */
--int verify_pkcs7_signature(const void *data, size_t len,
--			   const void *raw_pkcs7, size_t pkcs7_len,
--			   struct key *trusted_keys,
--			   enum key_being_used_for usage,
--			   int (*view_content)(void *ctx,
--					       const void *data, size_t len,
--					       size_t asn1hdrlen),
--			   void *ctx)
-+int verify_pkcs7_message_sig(const void *data, size_t len,
-+			     struct pkcs7_message *pkcs7,
-+			     struct key *trusted_keys,
-+			     enum key_being_used_for usage,
-+			     int (*view_content)(void *ctx,
-+						 const void *data, size_t len,
-+						 size_t asn1hdrlen),
-+			     void *ctx)
- {
--	struct pkcs7_message *pkcs7;
- 	int ret;
- 
--	pkcs7 = pkcs7_parse_message(raw_pkcs7, pkcs7_len);
--	if (IS_ERR(pkcs7))
--		return PTR_ERR(pkcs7);
--
- 	/* The data should be detached - so we need to supply it. */
- 	if (data && pkcs7_supply_detached_data(pkcs7, data, len) < 0) {
- 		pr_err("PKCS#7 signature with non-detached data\n");
-@@ -258,6 +252,41 @@ int verify_pkcs7_signature(const void *data, size_t len,
- 	}
- 
- error:
-+	pr_devel("<==%s() = %d\n", __func__, ret);
-+	return ret;
-+}
-+
-+/**
-+ * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
-+ * @data: The data to be verified (NULL if expecting internal data).
-+ * @len: Size of @data.
-+ * @raw_pkcs7: The PKCS#7 message that is the signature.
-+ * @pkcs7_len: The size of @raw_pkcs7.
-+ * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
-+ *					(void *)1UL for all trusted keys).
-+ * @usage: The use to which the key is being put.
-+ * @view_content: Callback to gain access to content.
-+ * @ctx: Context for callback.
-+ */
-+int verify_pkcs7_signature(const void *data, size_t len,
-+			   const void *raw_pkcs7, size_t pkcs7_len,
-+			   struct key *trusted_keys,
-+			   enum key_being_used_for usage,
-+			   int (*view_content)(void *ctx,
-+					       const void *data, size_t len,
-+					       size_t asn1hdrlen),
-+			   void *ctx)
-+{
-+	struct pkcs7_message *pkcs7;
-+	int ret;
-+
-+	pkcs7 = pkcs7_parse_message(raw_pkcs7, pkcs7_len);
-+	if (IS_ERR(pkcs7))
-+		return PTR_ERR(pkcs7);
-+
-+	ret = verify_pkcs7_message_sig(data, len, pkcs7, trusted_keys, usage,
-+				       view_content, ctx);
-+
- 	pkcs7_free_message(pkcs7);
- 	pr_devel("<==%s() = %d\n", __func__, ret);
- 	return ret;
-diff --git a/crypto/asymmetric_keys/pkcs7_parser.c b/crypto/asymmetric_keys/pkcs7_parser.c
-index 0f134162cef4..4c7a00734e03 100644
---- a/crypto/asymmetric_keys/pkcs7_parser.c
-+++ b/crypto/asymmetric_keys/pkcs7_parser.c
-@@ -683,3 +683,19 @@ int pkcs7_note_signed_info(void *context, size_t hdrlen,
- 		return -ENOMEM;
- 	return 0;
- }
-+
-+/**
-+ * pkcs7_get_message_sig - get signature in @pkcs7
-+ */
-+const struct public_key_signature *pkcs7_get_message_sig(
-+					const struct pkcs7_message *pkcs7)
-+{
-+	/*
-+	 * This function doesn't support messages with more than one signature,
-+	 * so don't return anything in that case.
-+	 */
-+	if (pkcs7->signed_infos == NULL || pkcs7->signed_infos->next != NULL)
-+		return NULL;
-+
-+	return pkcs7->signed_infos->sig;
-+}
-diff --git a/include/crypto/pkcs7.h b/include/crypto/pkcs7.h
-index 583f199400a3..6f51d0cb6d12 100644
---- a/include/crypto/pkcs7.h
-+++ b/include/crypto/pkcs7.h
-@@ -28,6 +28,8 @@ extern void pkcs7_free_message(struct pkcs7_message *pkcs7);
- extern int pkcs7_get_content_data(const struct pkcs7_message *pkcs7,
- 				  const void **_data, size_t *_datalen,
- 				  size_t *_headerlen);
-+extern const struct public_key_signature *pkcs7_get_message_sig(
-+					const struct pkcs7_message *pkcs7);
- 
- /*
-  * pkcs7_trust.c
-diff --git a/include/linux/verification.h b/include/linux/verification.h
-index a10549a6c7cd..f04dac2728ec 100644
---- a/include/linux/verification.h
-+++ b/include/linux/verification.h
-@@ -29,6 +29,7 @@ extern const char *const key_being_used_for[NR__KEY_BEING_USED_FOR];
- #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
- 
- struct key;
-+struct pkcs7_message;
- 
- extern int verify_pkcs7_signature(const void *data, size_t len,
- 				  const void *raw_pkcs7, size_t pkcs7_len,
-@@ -38,6 +39,15 @@ extern int verify_pkcs7_signature(const void *data, size_t len,
- 						      const void *data, size_t len,
- 						      size_t asn1hdrlen),
- 				  void *ctx);
-+extern int verify_pkcs7_message_sig(const void *data, size_t len,
-+				    struct pkcs7_message *pkcs7,
-+				    struct key *trusted_keys,
-+				    enum key_being_used_for usage,
-+				    int (*view_content)(void *ctx,
-+							const void *data,
-+							size_t len,
-+							size_t asn1hdrlen),
-+				    void *ctx);
- 
- #ifdef CONFIG_SIGNED_PE_FILE_VERIFICATION
- extern int verify_pefile_signature(const void *pebuf, unsigned pelen,
+ config INTEGRITY_SIGNATURE
+ 	bool "Digital signature verification using multiple keyrings"
+-	depends on KEYS
+ 	default n
++	select KEYS
+ 	select SIGNATURE
+ 	help
+ 	  This option enables digital signature verification support
