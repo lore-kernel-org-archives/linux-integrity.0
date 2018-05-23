@@ -1,20 +1,20 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47864 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753643AbeEWAZ4 (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52782 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753755AbeEWA0a (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 22 May 2018 20:25:56 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4N0KHjN046724
-        for <linux-integrity@vger.kernel.org>; Tue, 22 May 2018 20:25:56 -0400
-Received: from e37.co.us.ibm.com (e37.co.us.ibm.com [32.97.110.158])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2j4vpva7cw-1
+        Tue, 22 May 2018 20:26:30 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4N0KLfI004696
+        for <linux-integrity@vger.kernel.org>; Tue, 22 May 2018 20:26:29 -0400
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2j4q6egrv9-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 22 May 2018 20:25:55 -0400
+        for <linux-integrity@vger.kernel.org>; Tue, 22 May 2018 20:26:29 -0400
 Received: from localhost
-        by e37.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Tue, 22 May 2018 18:25:54 -0600
+        Tue, 22 May 2018 18:26:28 -0600
 From: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
@@ -31,86 +31,84 @@ Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         "David S. Miller" <davem@davemloft.net>,
         "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
         Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [PATCH v7 03/14] PKCS#7: Introduce pkcs7_get_digest()
-Date: Tue, 22 May 2018 21:12:42 -0300
+Subject: [PATCH v7 08/14] ima: Introduce is_signed()
+Date: Tue, 22 May 2018 21:12:47 -0300
 In-Reply-To: <20180523001253.15247-1-bauerman@linux.ibm.com>
 References: <20180523001253.15247-1-bauerman@linux.ibm.com>
-Message-Id: <20180523001253.15247-4-bauerman@linux.ibm.com>
+Message-Id: <20180523001253.15247-9-bauerman@linux.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-IMA will need to access the digest of the PKCS7 message (as calculated by
-the kernel) before the signature is verified, so introduce
-pkcs7_get_digest() for that purpose.
+With the introduction of another IMA signature type (modsig), some places
+will need to check for both of them. It is cleaner to do that if there's a
+helper function to tell whether an xattr_value represents an IMA
+signature.
 
-Also, modify pkcs7_digest() to detect when the digest was already
-calculated so that it doesn't have to do redundant work. Verifying that
-sinfo->sig->digest isn't NULL is sufficient because both places which
-allocate sinfo->sig (pkcs7_parse_message() and pkcs7_note_signed_info())
-use kzalloc() so sig->digest is always initialized to zero.
-
+Suggested-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>
 ---
- crypto/asymmetric_keys/pkcs7_verify.c | 25 +++++++++++++++++++++++++
- include/crypto/pkcs7.h                |  3 +++
- 2 files changed, 28 insertions(+)
+ security/integrity/ima/ima.h              | 5 +++++
+ security/integrity/ima/ima_appraise.c     | 7 +++----
+ security/integrity/ima/ima_template_lib.c | 2 +-
+ 3 files changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/crypto/asymmetric_keys/pkcs7_verify.c b/crypto/asymmetric_keys/pkcs7_verify.c
-index 97c77f66b20d..e61f121bfc87 100644
---- a/crypto/asymmetric_keys/pkcs7_verify.c
-+++ b/crypto/asymmetric_keys/pkcs7_verify.c
-@@ -33,6 +33,10 @@ static int pkcs7_digest(struct pkcs7_message *pkcs7,
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 354bb5716ce3..43d4aaf31f7a 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -154,6 +154,11 @@ unsigned long ima_get_binary_runtime_size(void);
+ int ima_init_template(void);
+ void ima_init_template_list(void);
  
- 	kenter(",%u,%s", sinfo->index, sinfo->sig->hash_algo);
- 
-+	/* The digest was calculated already. */
-+	if (sig->digest)
-+		return 0;
-+
- 	if (!sinfo->sig->hash_algo)
- 		return -ENOPKG;
- 
-@@ -122,6 +126,27 @@ static int pkcs7_digest(struct pkcs7_message *pkcs7,
- 	return ret;
- }
- 
-+int pkcs7_get_digest(struct pkcs7_message *pkcs7, const u8 **buf, u8 *len)
++static inline bool is_signed(const struct evm_ima_xattr_data *xattr_value)
 +{
-+	struct pkcs7_signed_info *sinfo = pkcs7->signed_infos;
-+	int ret;
-+
-+	/*
-+	 * This function doesn't support messages with more than one signature.
-+	 */
-+	if (sinfo == NULL || sinfo->next != NULL)
-+		return -EBADMSG;
-+
-+	ret = pkcs7_digest(pkcs7, sinfo);
-+	if (ret)
-+		return ret;
-+
-+	*buf = sinfo->sig->digest;
-+	*len = sinfo->sig->digest_size;
-+
-+	return 0;
++	return xattr_value && xattr_value->type == EVM_IMA_XATTR_DIGSIG;
 +}
 +
  /*
-  * Find the key (X.509 certificate) to use to verify a PKCS#7 message.  PKCS#7
-  * uses the issuer's name and the issuing certificate serial number for
-diff --git a/include/crypto/pkcs7.h b/include/crypto/pkcs7.h
-index 6f51d0cb6d12..cfaea9c37f4a 100644
---- a/include/crypto/pkcs7.h
-+++ b/include/crypto/pkcs7.h
-@@ -46,4 +46,7 @@ extern int pkcs7_verify(struct pkcs7_message *pkcs7,
- extern int pkcs7_supply_detached_data(struct pkcs7_message *pkcs7,
- 				      const void *data, size_t datalen);
+  * used to protect h_table and sha_table
+  */
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index a6b2995b7d0b..bcbbd8f86fe1 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -325,15 +325,14 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 	} else if (status != INTEGRITY_PASS) {
+ 		/* Fix mode, but don't replace file signatures. */
+ 		if ((ima_appraise & IMA_APPRAISE_FIX) &&
+-		    (!xattr_value ||
+-		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
++		    !is_signed(xattr_value)) {
+ 			if (!ima_fix_xattr(dentry, iint))
+ 				status = INTEGRITY_PASS;
+ 		}
  
-+extern int pkcs7_get_digest(struct pkcs7_message *pkcs7, const u8 **buf,
-+			    u8 *len);
-+
- #endif /* _CRYPTO_PKCS7_H */
+ 		/* Permit new files with file signatures, but without data. */
+ 		if (inode->i_size == 0 && iint->flags & IMA_NEW_FILE &&
+-		    xattr_value && xattr_value->type == EVM_IMA_XATTR_DIGSIG) {
++		    is_signed(xattr_value)) {
+ 			status = INTEGRITY_PASS;
+ 		}
+ 
+@@ -448,7 +447,7 @@ int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+ 		if (!xattr_value_len || (xvalue->type >= IMA_XATTR_LAST))
+ 			return -EINVAL;
+ 		ima_reset_appraise_flags(d_backing_inode(dentry),
+-			xvalue->type == EVM_IMA_XATTR_DIGSIG);
++					 is_signed(xvalue));
+ 		result = 0;
+ 	}
+ 	return result;
+diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+index 43752002c222..300912914b17 100644
+--- a/security/integrity/ima/ima_template_lib.c
++++ b/security/integrity/ima/ima_template_lib.c
+@@ -382,7 +382,7 @@ int ima_eventsig_init(struct ima_event_data *event_data,
+ {
+ 	struct evm_ima_xattr_data *xattr_value = event_data->xattr_value;
+ 
+-	if ((!xattr_value) || (xattr_value->type != EVM_IMA_XATTR_DIGSIG))
++	if (!is_signed(xattr_value))
+ 		return 0;
+ 
+ 	return ima_write_template_field_data(xattr_value, event_data->xattr_len,
