@@ -1,33 +1,47 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:5076 "EHLO mga06.intel.com"
+Received: from mga09.intel.com ([134.134.136.24]:27584 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932845AbeEWNXV (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 23 May 2018 09:23:21 -0400
-Date: Wed, 23 May 2018 16:23:18 +0300
+        id S932932AbeEWNQT (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 23 May 2018 09:16:19 -0400
+Date: Wed, 23 May 2018 16:16:16 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Tadeusz Struk <tadeusz.struk@intel.com>
-Cc: jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] tpm: fix race condition in tpm_common_write()
-Message-ID: <20180523132318.GE363@linux.intel.com>
-References: <152701036671.19968.17347263774570787595.stgit@tstruk-mobl1.jf.intel.com>
+To: "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] tpm: separate cmd_ready/go_idle from runtime_pm
+Message-ID: <20180523131616.GD363@linux.intel.com>
+References: <20180516194600.28189-1-tomas.winkler@intel.com>
+ <20180522091732.GA5228@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9D89D350@hasmsx109.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <152701036671.19968.17347263774570787595.stgit@tstruk-mobl1.jf.intel.com>
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D89D350@hasmsx109.ger.corp.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, May 22, 2018 at 10:32:46AM -0700, Tadeusz Struk wrote:
-> There is a race condition in tpm_common_write function allowing two
-> threads on the same /dev/tpm<N>, or two different applications on
-> the same /dev/tpmrm<N> to overwrite eachother requests/responses.
+On Tue, May 22, 2018 at 09:27:46AM +0000, Winkler, Tomas wrote:
+> > 
+> > On Wed, May 16, 2018 at 10:46:00PM +0300, Tomas Winkler wrote:
+> > > New wrappers are added tpm_cmd_ready() and tpm_go_idle() wrappers to
+> > > streamline tpm_try_transmit code. TPM_TRANSMIT_UNLOCKED flag is
+> > abused
+> > > to resolve tpm spaces recursive calls to tpm_transmit().
+> > 
+> > This looks good and all but I don't think we want to abuse anything in the
+> > driver code, do we?
 > 
-> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+> It's not abuse just the flag UNLOCKED is not really named correctly 
+> I think this has to be backported so wanted to do less invasive change.
 
-Ouch o_O Do you have a fixes tag for this one?
+It should be renamed anyway and possible merge conflicts are not hard to
+sort out in this change. Can you rename it as SPACE?
 
-Thank you.
-
-Reviewed-by: Jarkko Sakkien <jarkko.sakkinen@linux.intel.com>
+Right, and even without rename this will probably cause merge conflicts
+at least in v4.4 an v4.9 since in-kernel RM landed in v4.12, so not much
+gain not do the rename :-)
 
 /Jarkko
