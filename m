@@ -1,77 +1,76 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40852 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932646AbeEWPiD (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60296 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933199AbeEWOmu (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 23 May 2018 11:38:03 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4NFTveC134545
-        for <linux-integrity@vger.kernel.org>; Wed, 23 May 2018 11:38:03 -0400
-Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2j5852hsfm-1
+        Wed, 23 May 2018 10:42:50 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4NEdDI4031529
+        for <linux-integrity@vger.kernel.org>; Wed, 23 May 2018 10:42:50 -0400
+Received: from e06smtp13.uk.ibm.com (e06smtp13.uk.ibm.com [195.75.94.109])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2j58rvdnae-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 23 May 2018 11:38:02 -0400
+        for <linux-integrity@vger.kernel.org>; Wed, 23 May 2018 10:42:49 -0400
 Received: from localhost
-        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Wed, 23 May 2018 16:38:00 +0100
-Subject: Re: [PATCH] IMA: use list_splice_tail_init_rcu() instead of its
- open coded variant
+        Wed, 23 May 2018 15:42:47 +0100
+Subject: Re: [PATCH 25/33] ima: use match_string() helper
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Petko Manolov <petkan@nucleusys.com>
-Cc: Linux Integrity <linux-integrity@vger.kernel.org>
-Date: Wed, 23 May 2018 11:37:56 -0400
-In-Reply-To: <20180522140655.GA5794@carbon>
-References: <20180522140655.GA5794@carbon>
+To: Yisheng Xie <xieyisheng1@huawei.com>, linux-kernel@vger.kernel.org
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Date: Wed, 23 May 2018 10:42:43 -0400
+In-Reply-To: <1526903890-35761-26-git-send-email-xieyisheng1@huawei.com>
+References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
+         <1526903890-35761-26-git-send-email-xieyisheng1@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1527089876.3364.5.camel@linux.vnet.ibm.com>
+Message-Id: <1527086563.4168.0.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Petko,
-
-On Tue, 2018-05-22 at 17:06 +0300, Petko Manolov wrote:
-
-The patch description is missing.  Is the following ok?
-
-Use list_splice_tail_init_rcu() to extend the existing custom IMA
-policy with additional IMA policy rules.
-
-Mimi
-
+On Mon, 2018-05-21 at 19:58 +0800, Yisheng Xie wrote:
+> match_string() returns the index of an array for a matching string,
+> which can be used intead of open coded variant.
 > 
-> Signed-off-by: Petko Manolov <petko.manolov@konsulko.com>
+> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: linux-integrity@vger.kernel.org
+> Cc: linux-security-module@vger.kernel.org
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+
+Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+
 > ---
->  security/integrity/ima/ima_policy.c | 17 ++---------------
->  1 file changed, 2 insertions(+), 15 deletions(-)
+>  security/integrity/ima/ima_main.c | 11 ++++-------
+>  1 file changed, 4 insertions(+), 7 deletions(-)
 > 
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index d89bebf85421..722466f843ef 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -509,22 +509,9 @@ int ima_check_policy(void)
->   */
->  void ima_update_policy(void)
->  {
-> -	struct list_head *first, *last, *policy;
-> +	struct list_head *policy = &ima_policy_rules;
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 74d0bd7..f807093 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -61,14 +61,11 @@ static int __init hash_setup(char *str)
+>  		goto out;
+>  	}
 > 
-> -	/* append current policy with the new rules */
-> -	first = (&ima_temp_rules)->next;
-> -	last = (&ima_temp_rules)->prev;
-> -	policy = &ima_policy_rules;
-> -
-> -	synchronize_rcu();
-> -
-> -	last->next = policy;
-> -	rcu_assign_pointer(list_next_rcu(policy->prev), first);
-> -	first->prev = policy->prev;
-> -	policy->prev = last;
-> -
-> -	/* prepare for the next policy rules addition */
-> -	INIT_LIST_HEAD(&ima_temp_rules);
-> +	list_splice_tail_init_rcu(&ima_temp_rules, policy, synchronize_rcu);
-> 
->  	if (ima_rules != policy) {
->  		ima_policy_flag = 0;
+> -	for (i = 0; i < HASH_ALGO__LAST; i++) {
+> -		if (strcmp(str, hash_algo_name[i]) == 0) {
+> -			ima_hash_algo = i;
+> -			break;
+> -		}
+> -	}
+> -	if (i == HASH_ALGO__LAST)
+> +	i = match_string(hash_algo_name, HASH_ALGO__LAST, str);
+> +	if (i < 0)
+>  		return 1;
+> +
+> +	ima_hash_algo = i;
+>  out:
+>  	hash_setup_done = 1;
+>  	return 1;
