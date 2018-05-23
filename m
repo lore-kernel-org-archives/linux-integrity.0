@@ -1,20 +1,20 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50456 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753782AbeEWA0i (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37060 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753676AbeEWA0J (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 22 May 2018 20:26:38 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4N0KYxl109127
-        for <linux-integrity@vger.kernel.org>; Tue, 22 May 2018 20:26:38 -0400
-Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2j4qhj7kug-1
+        Tue, 22 May 2018 20:26:09 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4N0K4Ks049959
+        for <linux-integrity@vger.kernel.org>; Tue, 22 May 2018 20:26:08 -0400
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2j4ueuvs15-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 22 May 2018 20:26:37 -0400
+        for <linux-integrity@vger.kernel.org>; Tue, 22 May 2018 20:26:08 -0400
 Received: from localhost
-        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Tue, 22 May 2018 18:26:37 -0600
+        Tue, 22 May 2018 18:26:07 -0600
 From: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
@@ -31,62 +31,100 @@ Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         "David S. Miller" <davem@davemloft.net>,
         "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
         Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [PATCH v7 09/14] ima: Export func_tokens
-Date: Tue, 22 May 2018 21:12:48 -0300
+Subject: [PATCH v7 05/14] integrity: Introduce integrity_keyring_from_id()
+Date: Tue, 22 May 2018 21:12:44 -0300
 In-Reply-To: <20180523001253.15247-1-bauerman@linux.ibm.com>
 References: <20180523001253.15247-1-bauerman@linux.ibm.com>
-Message-Id: <20180523001253.15247-10-bauerman@linux.ibm.com>
+Message-Id: <20180523001253.15247-6-bauerman@linux.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-ima_read_modsig() will need it so that it can show an error message.
+IMA will need to obtain the keyring used to verify file signatures so that
+it can verify the module-style signature appended to files.
 
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 ---
- security/integrity/ima/ima.h        |  2 ++
- security/integrity/ima/ima_policy.c | 12 ++++++------
- 2 files changed, 8 insertions(+), 6 deletions(-)
+ security/integrity/digsig.c    | 28 +++++++++++++++++++++-------
+ security/integrity/integrity.h |  6 ++++++
+ 2 files changed, 27 insertions(+), 7 deletions(-)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 43d4aaf31f7a..567be3c6568c 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -195,6 +195,8 @@ enum ima_hooks {
- 	__ima_hooks(__ima_hook_enumify)
- };
+diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+index 9bb0a7f2863e..2a60151af0c5 100644
+--- a/security/integrity/digsig.c
++++ b/security/integrity/digsig.c
+@@ -49,11 +49,10 @@ static bool init_keyring __initdata;
+ #define restrict_link_to_ima restrict_link_by_builtin_trusted
+ #endif
  
-+extern const char *const func_tokens[];
-+
- /* LIM API function definitions */
- int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
- 		   int mask, enum ima_hooks func, int *pcr);
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 8bbc18eb07eb..d454949493c6 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -1021,6 +1021,12 @@ void ima_delete_rules(void)
- 	}
- }
- 
-+#define __ima_hook_stringify(str)	(#str),
-+
-+const char *const func_tokens[] = {
-+	__ima_hooks(__ima_hook_stringify)
-+};
-+
- #ifdef	CONFIG_IMA_READ_POLICY
- enum {
- 	mask_exec = 0, mask_write, mask_read, mask_append
-@@ -1033,12 +1039,6 @@ static const char *const mask_tokens[] = {
- 	"MAY_APPEND"
- };
- 
--#define __ima_hook_stringify(str)	(#str),
--
--static const char *const func_tokens[] = {
--	__ima_hooks(__ima_hook_stringify)
--};
--
- void *ima_policy_start(struct seq_file *m, loff_t *pos)
+-int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+-			    const char *digest, int digestlen)
++struct key *integrity_keyring_from_id(const unsigned int id)
  {
- 	loff_t l = *pos;
+-	if (id >= INTEGRITY_KEYRING_MAX || siglen < 2)
+-		return -EINVAL;
++	if (id >= INTEGRITY_KEYRING_MAX)
++		return ERR_PTR(-EINVAL);
+ 
+ 	if (!keyring[id]) {
+ 		keyring[id] =
+@@ -62,17 +61,32 @@ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+ 			int err = PTR_ERR(keyring[id]);
+ 			pr_err("no %s keyring: %d\n", keyring_name[id], err);
+ 			keyring[id] = NULL;
+-			return err;
++			return ERR_PTR(err);
+ 		}
+ 	}
+ 
++	return keyring[id];
++}
++
++int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
++			    const char *digest, int digestlen)
++{
++	struct key *keyring;
++
++	if (siglen < 2)
++		return -EINVAL;
++
++	keyring = integrity_keyring_from_id(id);
++	if (IS_ERR(keyring))
++		return PTR_ERR(keyring);
++
+ 	switch (sig[1]) {
+ 	case 1:
+ 		/* v1 API expect signature without xattr type */
+-		return digsig_verify(keyring[id], sig + 1, siglen - 1,
++		return digsig_verify(keyring, sig + 1, siglen - 1,
+ 				     digest, digestlen);
+ 	case 2:
+-		return asymmetric_verify(keyring[id], sig, siglen,
++		return asymmetric_verify(keyring, sig, siglen,
+ 					 digest, digestlen);
+ 	}
+ 
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index 714fe2e135c7..d4f676906442 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -152,6 +152,7 @@ extern struct dentry *integrity_dir;
+ 
+ #ifdef CONFIG_INTEGRITY_SIGNATURE
+ 
++struct key *integrity_keyring_from_id(const unsigned int id);
+ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+ 			    const char *digest, int digestlen);
+ 
+@@ -159,6 +160,11 @@ int __init integrity_init_keyring(const unsigned int id);
+ int __init integrity_load_x509(const unsigned int id, const char *path);
+ #else
+ 
++static inline struct key *integrity_keyring_from_id(const unsigned int id)
++{
++	return ERR_PTR(-EINVAL);
++}
++
+ static inline int integrity_digsig_verify(const unsigned int id,
+ 					  const char *sig, int siglen,
+ 					  const char *digest, int digestlen)
