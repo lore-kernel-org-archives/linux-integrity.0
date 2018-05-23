@@ -1,43 +1,35 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:26526 "EHLO mga09.intel.com"
+Received: from namei.org ([65.99.196.166]:36820 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932848AbeEWMzD (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 23 May 2018 08:55:03 -0400
-Date: Wed, 23 May 2018 15:55:00 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: James Morris <jmorris@namei.org>
-Cc: linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Subject: Re: [GIT PULL] tpmdd updates for v4.18
-Message-ID: <20180523125500.GA363@linux.intel.com>
-References: <20180518070851.GA11123@linux.intel.com>
- <alpine.LRH.2.21.1805190341500.26396@namei.org>
+        id S932070AbeEWMi5 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 23 May 2018 08:38:57 -0400
+Date: Wed, 23 May 2018 22:38:54 +1000 (AEST)
+From: James Morris <jmorris@namei.org>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+cc: linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Subject: Re: [GIT PULL]  linux-integrity for Linux 4.18
+In-Reply-To: <1527022241.3789.35.camel@linux.vnet.ibm.com>
+Message-ID: <alpine.LRH.2.21.1805232236510.30688@namei.org>
+References: <1527022241.3789.35.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <alpine.LRH.2.21.1805190341500.26396@namei.org>
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sat, May 19, 2018 at 03:42:40AM +1000, James Morris wrote:
-> On Fri, 18 May 2018, Jarkko Sakkinen wrote:
-> 
-> > The following changes since commit 5859cdf55063943192f316b3d6c673fd6fcbee46:
-> > 
-> >   smack: provide socketpair callback (2018-05-04 12:48:54 -0700)
-> > 
-> > are available in the Git repository at:
-> > 
-> >   git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20180518
-> > 
-> > for you to fetch changes up to 424eaf910c329ab06ad03a527ef45dcf6a328f00:
-> > 
-> >   tpm: reduce polling time to usecs for even finer granularity (2018-05-18 10:00:01 +0300)
-> 
-> Pulled to
-> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-tpm
-> and next-testing
- 
-Awesome, thank you!
+On Tue, 22 May 2018, Mimi Zohar wrote:
 
-/Jarkko
+> Hi James,
+> 
+> 
+> This pull request adds run time support for specifying additional security xattrs
+> included in the security.evm HMAC/signature, some code clean up and bug fixes.
+
+Pulled to
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-integrity 
+and next-testing
+
+
+-- 
+James Morris
+<jmorris@namei.org>
