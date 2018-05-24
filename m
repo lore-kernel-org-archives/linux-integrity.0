@@ -1,20 +1,20 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55862 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56050 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1033066AbeEXLKq (ORCPT
+        by vger.kernel.org with ESMTP id S1032946AbeEXLKl (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 24 May 2018 07:10:46 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4OAxmD2092761
-        for <linux-integrity@vger.kernel.org>; Thu, 24 May 2018 07:10:46 -0400
-Received: from e06smtp13.uk.ibm.com (e06smtp13.uk.ibm.com [195.75.94.109])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2j5tycktjf-1
+        Thu, 24 May 2018 07:10:41 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4OB0bqs061049
+        for <linux-integrity@vger.kernel.org>; Thu, 24 May 2018 07:10:41 -0400
+Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2j5su4xg2w-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 24 May 2018 07:10:45 -0400
+        for <linux-integrity@vger.kernel.org>; Thu, 24 May 2018 07:10:40 -0400
 Received: from localhost
-        by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Thu, 24 May 2018 12:10:42 +0100
+        Thu, 24 May 2018 12:10:27 +0100
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -24,183 +24,195 @@ Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Eric Biederman <ebiederm@xmission.com>,
         kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH v3 6/7] ima: add build time policy
-Date: Thu, 24 May 2018 07:09:35 -0400
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: [PATCH v3 1/7] security: rename security_kernel_read_file() hook
+Date: Thu, 24 May 2018 07:09:30 -0400
 In-Reply-To: <1527160176-29269-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1527160176-29269-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-Id: <1527160176-29269-7-git-send-email-zohar@linux.vnet.ibm.com>
+Message-Id: <1527160176-29269-2-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-IMA by default does not measure, appraise or audit files, but can be
-enabled at runtime by specifying a builtin policy on the boot command line
-or by loading a custom policy.
+In order for LSMs and IMA-appraisal to differentiate between the original
+and new syscalls (eg. kexec, kernel modules, firmware), both the original
+and new syscalls must call an LSM hook.
 
-This patch defines a build time policy, which verifies kernel modules,
-firmware, kexec image, and/or the IMA policy signatures.  This build time
-policy is automatically enabled at runtime.  The build time policy rules
-persist after loading a custom policy.
+Commit 2e72d51b4ac3 ("security: introduce kernel_module_from_file hook")
+introduced calling security_kernel_module_from_file() in both the original
+and new syscalls.  Commit a1db74209483 ("module: replace
+copy_module_from_fd with kernel version") replaced these LSM calls with
+security_kernel_read_file().
+
+Commit e40ba6d56b41 ("firmware: replace call to fw_read_file_contents()
+with kernel version") and commit b804defe4297  ("kexec: replace call to
+copy_file_from_fd() with kernel version") replaced their own version of
+reading a file from the kernel with the generic
+kernel_read_file_from_path/fd() versions, which call the pre and post
+security_kernel_read_file LSM hooks.
+
+Missing are LSM calls in the original kexec syscall and firmware sysfs
+fallback method.  Instead of defining a new LSM hook or wrapper for
+security_kernel_read_file(), this patch renames the original
+security_kernel_read_file() hook to security_kernel_read_data(), and
+updates LSM usage of the hook (eg. loadpin, init_module, IMA).
 
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
----
- security/integrity/ima/Kconfig      | 58 +++++++++++++++++++++++++++++++++++++
- security/integrity/ima/ima_policy.c | 46 +++++++++++++++++++++++++++--
- 2 files changed, 101 insertions(+), 3 deletions(-)
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Luis R. Rodriguez <mcgrof@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
 
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 6a8f67714c83..004919d9bf09 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -156,6 +156,64 @@ config IMA_APPRAISE
- 	  <http://linux-ima.sourceforge.net>
- 	  If unsure, say N.
+Changelog v3:
+- Rename security_kernel_read_file to security_kernel_read_data().
+
+Changelog v2:
+- Define a generic wrapper named security_kernel_read_blob() for
+security_kernel_read_file().
+
+Changelog v1:
+- Define and call security_kexec_load(), a wrapper for
+security_kernel_read_file().
+---
+ fs/exec.c                         | 2 +-
+ include/linux/ima.h               | 4 ++--
+ include/linux/security.h          | 4 ++--
+ kernel/module.c                   | 2 +-
+ security/integrity/ima/ima_main.c | 4 ++--
+ security/loadpin/loadpin.c        | 2 +-
+ security/security.c               | 6 +++---
+ 7 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/fs/exec.c b/fs/exec.c
+index 183059c427b9..0c832b4c6a22 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -904,7 +904,7 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+ 	if (ret)
+ 		return ret;
  
-+config IMA_APPRAISE_BUILD_POLICY
-+	bool "IMA build time configured policy rules"
-+	depends on IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
-+	default n
-+	help
-+	  This option defines an IMA appraisal policy at build time, which
-+	  is enforced at run time without having to specify a builtin
-+	  policy name on the boot command line.  The build time appraisal
-+	  policy rules persist after loading a custom policy.
-+
-+	  Depending on the rules configured, this policy may require kernel
-+	  modules, firmware, the kexec kernel image, and/or the IMA policy
-+	  to be signed.  Unsigned files might prevent the system from
-+	  booting or applications from working properly.
-+
-+config IMA_APPRAISE_REQUIRE_FIRMWARE_SIGS
-+	bool "Appraise firmware signatures"
-+	depends on IMA_APPRAISE_BUILD_POLICY
-+	default n
-+	help
-+	  This option defines a policy requiring all firmware to be signed,
-+	  including the regulatory.db.  If both this option and
-+	  CFG80211_REQUIRE_SIGNED_REGDB are enabled, then both signature
-+	  verification methods are necessary.
-+
-+config IMA_APPRAISE_REQUIRE_KEXEC_SIGS
-+	bool "Appraise kexec kernel image signatures"
-+	depends on IMA_APPRAISE_BUILD_POLICY
-+	default n
-+	help
-+	  Enabling this rule will require all kexec'ed kernel images to
-+	  be signed and verified by a public key on the trusted IMA
-+	  keyring.
-+
-+	  Kernel image signatures can not be verified by the original
-+	  kexec_load syscall.  Enabling this rule will prevent its
-+	  usage.
-+
-+config IMA_APPRAISE_REQUIRE_MODULE_SIGS
-+	bool "Appraise kernel modules signatures"
-+	depends on IMA_APPRAISE_BUILD_POLICY
-+	default n
-+	help
-+	  Enabling this rule will require all kernel modules to be signed
-+	  and verified by a public key on the trusted IMA keyring.
-+
-+	  Kernel module signatures can only be verified by IMA-appraisal,
-+	  via the finit_module syscall. Enabling this rule will prevent
-+	  the usage of the init_module syscall.
-+
-+config IMA_APPRAISE_REQUIRE_POLICY_SIGS
-+	bool "Appraise IMA policy signature"
-+	depends on IMA_APPRAISE_BUILD_POLICY
-+	default n
-+	help
-+	  Enabling this rule will require the IMA policy to be signed and
-+	  and verified by a key on the trusted IMA keyring.
-+
- config IMA_APPRAISE_BOOTPARAM
- 	bool "ima_appraise boot parameter"
- 	depends on IMA_APPRAISE
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index c27f6993b07a..3c0bc8a1a88e 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -49,6 +49,7 @@
+-	ret = security_kernel_read_file(file, id);
++	ret = security_kernel_read_data(file, id);
+ 	if (ret)
+ 		goto out;
  
- int ima_policy_flag;
- static int temp_ima_appraise;
-+static int build_ima_appraise __ro_after_init;
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 0e4647e0eb60..423aaf88f8c6 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -19,7 +19,7 @@ extern int ima_bprm_check(struct linux_binprm *bprm);
+ extern int ima_file_check(struct file *file, int mask, int opened);
+ extern void ima_file_free(struct file *file);
+ extern int ima_file_mmap(struct file *file, unsigned long prot);
+-extern int ima_read_file(struct file *file, enum kernel_read_file_id id);
++extern int ima_read_data(struct file *file, enum kernel_read_file_id id);
+ extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 			      enum kernel_read_file_id id);
+ extern void ima_post_path_mknod(struct dentry *dentry);
+@@ -49,7 +49,7 @@ static inline int ima_file_mmap(struct file *file, unsigned long prot)
+ 	return 0;
+ }
  
- #define MAX_LSM_RULES 6
- enum lsm_rule_types { LSM_OBJ_USER, LSM_OBJ_ROLE, LSM_OBJ_TYPE,
-@@ -162,6 +163,25 @@ static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
- #endif
+-static inline int ima_read_file(struct file *file, enum kernel_read_file_id id)
++static inline int ima_read_data(struct file *file, enum kernel_read_file_id id)
+ {
+ 	return 0;
+ }
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 63030c85ee19..836a9081b2f3 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -320,7 +320,7 @@ void security_cred_getsecid(const struct cred *c, u32 *secid);
+ int security_kernel_act_as(struct cred *new, u32 secid);
+ int security_kernel_create_files_as(struct cred *new, struct inode *inode);
+ int security_kernel_module_request(char *kmod_name);
+-int security_kernel_read_file(struct file *file, enum kernel_read_file_id id);
++int security_kernel_read_data(struct file *file, enum kernel_read_file_id id);
+ int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
+ 				   enum kernel_read_file_id id);
+ int security_task_fix_setuid(struct cred *new, const struct cred *old,
+@@ -909,7 +909,7 @@ static inline int security_kernel_module_request(char *kmod_name)
+ 	return 0;
+ }
+ 
+-static inline int security_kernel_read_file(struct file *file,
++static inline int security_kernel_read_data(struct file *file,
+ 					    enum kernel_read_file_id id)
+ {
+ 	return 0;
+diff --git a/kernel/module.c b/kernel/module.c
+index ce8066b88178..cb84a0b7fbe9 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -2879,7 +2879,7 @@ static int copy_module_from_user(const void __user *umod, unsigned long len,
+ 	if (info->len < sizeof(*(info->hdr)))
+ 		return -ENOEXEC;
+ 
+-	err = security_kernel_read_file(NULL, READING_MODULE);
++	err = security_kernel_read_data(NULL, READING_MODULE);
+ 	if (err)
+ 		return err;
+ 
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 83f84928ad76..eeb7075868db 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -420,7 +420,7 @@ void ima_post_path_mknod(struct dentry *dentry)
+ }
+ 
+ /**
+- * ima_read_file - pre-measure/appraise hook decision based on policy
++ * ima_read_data - pre-measure/appraise hook decision based on policy
+  * @file: pointer to the file to be measured/appraised/audit
+  * @read_id: caller identifier
+  *
+@@ -430,7 +430,7 @@ void ima_post_path_mknod(struct dentry *dentry)
+  *
+  * For permission return 0, otherwise return -EACCES.
+  */
+-int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
++int ima_read_data(struct file *file, enum kernel_read_file_id read_id)
+ {
+ 	bool sig_enforce = is_module_sig_enforced();
+ 
+diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
+index 5fa191252c8f..8d7db638fdeb 100644
+--- a/security/loadpin/loadpin.c
++++ b/security/loadpin/loadpin.c
+@@ -175,7 +175,7 @@ static int loadpin_read_file(struct file *file, enum kernel_read_file_id id)
+ 
+ static struct security_hook_list loadpin_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(sb_free_security, loadpin_sb_free_security),
+-	LSM_HOOK_INIT(kernel_read_file, loadpin_read_file),
++	LSM_HOOK_INIT(kernel_read_data, loadpin_read_file),
  };
  
-+static struct ima_rule_entry build_appraise_rules[] __ro_after_init = {
-+#ifdef CONFIG_IMA_APPRAISE_REQUIRE_MODULE_SIGS
-+	{.action = APPRAISE, .func = MODULE_CHECK,
-+	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
-+#endif
-+#ifdef CONFIG_IMA_APPRAISE_REQUIRE_FIRMWARE_SIGS
-+	{.action = APPRAISE, .func = FIRMWARE_CHECK,
-+	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
-+#endif
-+#ifdef CONFIG_IMA_APPRAISE_REQUIRE_KEXEC_SIGS
-+	{.action = APPRAISE, .func = KEXEC_KERNEL_CHECK,
-+	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
-+#endif
-+#ifdef CONFIG_IMA_APPRAISE_REQUIRE_POLICY_SIGS
-+	{.action = APPRAISE, .func = POLICY_CHECK,
-+	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
-+#endif
-+};
-+
- static struct ima_rule_entry secure_boot_rules[] __ro_after_init = {
- 	{.action = APPRAISE, .func = MODULE_CHECK,
- 	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
-@@ -435,7 +455,7 @@ void ima_update_policy_flag(void)
- 			ima_policy_flag |= entry->action;
- 	}
- 
--	ima_appraise |= temp_ima_appraise;
-+	ima_appraise |= (build_ima_appraise | temp_ima_appraise);
- 	if (!ima_appraise)
- 		ima_policy_flag &= ~IMA_APPRAISE;
+ void __init loadpin_add_hooks(void)
+diff --git a/security/security.c b/security/security.c
+index 68f46d849abe..fc7a2bcf3177 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1033,16 +1033,16 @@ int security_kernel_module_request(char *kmod_name)
+ 	return call_int_hook(kernel_module_request, 0, kmod_name);
  }
-@@ -488,8 +508,8 @@ void __init ima_init_policy(void)
- 	}
  
- 	/*
--	 * Insert the appraise rules requiring file signatures, prior to
--	 * any other appraise rules.
-+	 * Insert the builtin "secure_boot" policy rules requiring file
-+	 * signatures, prior to any other appraise rules.
- 	 */
- 	for (i = 0; i < secure_boot_entries; i++) {
- 		list_add_tail(&secure_boot_rules[i].list, &ima_default_rules);
-@@ -497,6 +517,26 @@ void __init ima_init_policy(void)
- 		    ima_appraise_flag(secure_boot_rules[i].func);
- 	}
+-int security_kernel_read_file(struct file *file, enum kernel_read_file_id id)
++int security_kernel_read_data(struct file *file, enum kernel_read_file_id id)
+ {
+ 	int ret;
  
-+	/*
-+	 * Insert the build time appraise rules requiring file signatures
-+	 * for both the initial and custom policies, prior to other appraise
-+	 * rules.
-+	 */
-+	for (i = 0; i < ARRAY_SIZE(build_appraise_rules); i++) {
-+		struct ima_rule_entry *entry;
-+
-+		if (!secure_boot_entries)
-+			list_add_tail(&build_appraise_rules[i].list,
-+				      &ima_default_rules);
-+
-+		entry = kmemdup(&build_appraise_rules[i], sizeof(*entry),
-+				GFP_KERNEL);
-+		if (entry)
-+			list_add_tail(&entry->list, &ima_policy_rules);
-+		build_ima_appraise |=
-+			ima_appraise_flag(build_appraise_rules[i].func);
-+	}
-+
- 	for (i = 0; i < appraise_entries; i++) {
- 		list_add_tail(&default_appraise_rules[i].list,
- 			      &ima_default_rules);
+ 	ret = call_int_hook(kernel_read_file, 0, file, id);
+ 	if (ret)
+ 		return ret;
+-	return ima_read_file(file, id);
++	return ima_read_data(file, id);
+ }
+-EXPORT_SYMBOL_GPL(security_kernel_read_file);
++EXPORT_SYMBOL_GPL(security_kernel_read_data);
+ 
+ int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
+ 				   enum kernel_read_file_id id)
 -- 
 2.7.5
