@@ -1,63 +1,54 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42848 "EHLO
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43164 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S968817AbeEXULR (ORCPT
+        by vger.kernel.org with ESMTP id S968725AbeEXULN (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 24 May 2018 16:11:17 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4OK4Fgi145157
-        for <linux-integrity@vger.kernel.org>; Thu, 24 May 2018 16:11:17 -0400
+        Thu, 24 May 2018 16:11:13 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4OK4EeR049729
+        for <linux-integrity@vger.kernel.org>; Thu, 24 May 2018 16:11:13 -0400
 Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2j61p9xbkt-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2j60rq9ep1-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 24 May 2018 16:11:16 -0400
+        for <linux-integrity@vger.kernel.org>; Thu, 24 May 2018 16:11:12 -0400
 Received: from localhost
         by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Thu, 24 May 2018 16:11:15 -0400
+        Thu, 24 May 2018 16:11:11 -0400
 From: Stefan Berger <stefanb@linux.vnet.ibm.com>
 To: zohar@linux.vnet.ibm.com, sgrubb@redhat.com
 Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-audit@redhat.com, Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: [PATCH 4/8] audit: Allow others to call audit_log_d_path_exe()
-Date: Thu, 24 May 2018 16:11:01 -0400
+Subject: [PATCH 1/8] ima: Call audit_log_string() rather than logging it untrusted
+Date: Thu, 24 May 2018 16:10:58 -0400
 In-Reply-To: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
 References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
-Message-Id: <20180524201105.3179904-5-stefanb@linux.vnet.ibm.com>
+Message-Id: <20180524201105.3179904-2-stefanb@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Add the prototype for audit_log_d_path_exe() so that it can be
-called by IMA later in this series.
+The parameters passed to this logging function are all provided by
+a privileged user and therefore we can call audit_log_string()
+rather than audit_log_untrustedstring().
 
 Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Suggested-by: Steve Grubb <sgrubb@redhat.com>
 ---
- include/linux/audit.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ security/integrity/ima/ima_policy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index 2deb76c74d10..65eca0795308 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -144,6 +144,8 @@ extern void		    audit_log_untrustedstring(struct audit_buffer *ab,
- extern void		    audit_log_d_path(struct audit_buffer *ab,
- 					     const char *prefix,
- 					     const struct path *path);
-+extern void		    audit_log_d_path_exe(struct audit_buffer *ab,
-+						 struct mm_struct *mm);
- extern void		    audit_log_key(struct audit_buffer *ab,
- 					  char *key);
- extern void		    audit_log_link_denied(const char *operation);
-@@ -192,6 +194,9 @@ static inline void audit_log_d_path(struct audit_buffer *ab,
- 				    const char *prefix,
- 				    const struct path *path)
- { }
-+static inline void audit_log_d_path_exe(struct audit_buffer *ab,
-+					struct mm_struct *mm)
-+{}
- static inline void audit_log_key(struct audit_buffer *ab, char *key)
- { }
- static inline void audit_log_link_denied(const char *string)
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index d89bebf85421..a823f11a3e6b 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -615,7 +615,7 @@ static void ima_log_string_op(struct audit_buffer *ab, char *key, char *value,
+ 		audit_log_format(ab, "%s<", key);
+ 	else
+ 		audit_log_format(ab, "%s=", key);
+-	audit_log_untrustedstring(ab, value);
++	audit_log_string(ab, value);
+ 	audit_log_format(ab, " ");
+ }
+ static void ima_log_string(struct audit_buffer *ab, char *key, char *value)
 -- 
 2.13.6
