@@ -1,12 +1,12 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from out01.mta.xmission.com ([166.70.13.231]:45986 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967823AbeEYTv2 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 25 May 2018 15:51:28 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: James Morris <jmorris@namei.org>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+Received: from namei.org ([65.99.196.166]:37118 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965729AbeEYPoS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 25 May 2018 11:44:18 -0400
+Date: Sat, 26 May 2018 01:41:52 +1000 (AEST)
+From: James Morris <jmorris@namei.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
@@ -16,47 +16,28 @@ Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Kees Cook <keescook@chromium.org>,
         Casey Schaufler <casey@schaufler-ca.com>
-References: <1527160176-29269-1-git-send-email-zohar@linux.vnet.ibm.com>
-        <1527160176-29269-2-git-send-email-zohar@linux.vnet.ibm.com>
-        <87po1k2304.fsf@xmission.com>
-        <alpine.LRH.2.21.1805260139030.11624@namei.org>
-Date: Fri, 25 May 2018 14:51:00 -0500
-In-Reply-To: <alpine.LRH.2.21.1805260139030.11624@namei.org> (James Morris's
-        message of "Sat, 26 May 2018 01:41:52 +1000 (AEST)")
-Message-ID: <871sdzy0nv.fsf@xmission.com>
+Subject: Re: [PATCH v3 1/7] security: rename security_kernel_read_file()
+ hook
+In-Reply-To: <87po1k2304.fsf@xmission.com>
+Message-ID: <alpine.LRH.2.21.1805260139030.11624@namei.org>
+References: <1527160176-29269-1-git-send-email-zohar@linux.vnet.ibm.com>        <1527160176-29269-2-git-send-email-zohar@linux.vnet.ibm.com> <87po1k2304.fsf@xmission.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Subject: Re: [PATCH v3 1/7] security: rename security_kernel_read_file() hook
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-James Morris <jmorris@namei.org> writes:
+On Thu, 24 May 2018, Eric W. Biederman wrote:
 
-> On Thu, 24 May 2018, Eric W. Biederman wrote:
->
->> Below is where I suggest you start on sorting out these security hooks.
->> - Adding a security_kernel_arg to catch when you want to allow/deny the
->>   use of an argument to a syscall.  What security_kernel_file_read and
->>   security_kernel_file_post_read have been abused for.
->
-> NAK. This abstraction is too semantically weak.
->
-> LSM hooks need to map to stronger semantics so we can reason about what 
-> the hook and the policy is supposed to be mediating.
+> Below is where I suggest you start on sorting out these security hooks.
+> - Adding a security_kernel_arg to catch when you want to allow/deny the
+>   use of an argument to a syscall.  What security_kernel_file_read and
+>   security_kernel_file_post_read have been abused for.
 
-I will take that as an extremely weak nack as all I did was expose the
-existing code and what the code is currently doing.  I don't see how you
-can NAK what is already being merged and used.
+NAK. This abstraction is too semantically weak.
 
-I will be happy to see a better proposal.
+LSM hooks need to map to stronger semantics so we can reason about what 
+the hook and the policy is supposed to be mediating.
 
-The best I can see is to take each and every syscall that my patch
-is calling syscall_kernel_arg and make it it's own hook without an
-enumeration.  I did not see any real duplication between the cases in my
-enumeration so I don't think that will be a problem.  Maybe a bit of a
-challenge for loadpin but otherwise not.
-
-Thank you in this for understanding why I am having problems with the
-current hook.
-
-Eric
+-- 
+James Morris
+<jmorris@namei.org>
