@@ -1,67 +1,62 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40460 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S967879AbeEYUXJ (ORCPT
+Received: from out01.mta.xmission.com ([166.70.13.231]:45986 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967823AbeEYTv2 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 25 May 2018 16:23:09 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4PKEBiU051519
-        for <linux-integrity@vger.kernel.org>; Fri, 25 May 2018 16:23:09 -0400
-Received: from e37.co.us.ibm.com (e37.co.us.ibm.com [32.97.110.158])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2j6mgh3wn4-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 25 May 2018 16:23:08 -0400
-Received: from localhost
-        by e37.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <kgold@linux.vnet.ibm.com>;
-        Fri, 25 May 2018 14:23:06 -0600
-Subject: Re: [PATCH v3 2/2] usb: misc: xapea00x: perform platform
- initialization of TPM
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "David R. Bild" <david.bild@xaptum.com>
-Cc: linux-usb@vger.kernel.org, linux-integrity@vger.kernel.org
-References: <20180430125418.31344-1-david.bild@xaptum.com>
- <20180504130022.5231-3-david.bild@xaptum.com>
- <20180504190638.ikqhdvcqccakzdjd@ziepe.ca>
- <CAAi9uDvyzk1vnQVXkJxRCATy85g4nwMLJjqu6rr1YZn9NV_TYw@mail.gmail.com>
- <20180508105515.GB6132@linux.intel.com>
- <1525793148.3672.8.camel@HansenPartnership.com>
- <CAAi9uDvgd5+d5fNbSGEeEVvdHLzwid6SqC0BVA3BPXkFWR4ooQ@mail.gmail.com>
- <1525793785.3672.12.camel@HansenPartnership.com>
-From: Ken Goldman <kgold@linux.vnet.ibm.com>
-Date: Fri, 25 May 2018 16:23:00 -0400
+        Fri, 25 May 2018 15:51:28 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: James Morris <jmorris@namei.org>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <1527160176-29269-1-git-send-email-zohar@linux.vnet.ibm.com>
+        <1527160176-29269-2-git-send-email-zohar@linux.vnet.ibm.com>
+        <87po1k2304.fsf@xmission.com>
+        <alpine.LRH.2.21.1805260139030.11624@namei.org>
+Date: Fri, 25 May 2018 14:51:00 -0500
+In-Reply-To: <alpine.LRH.2.21.1805260139030.11624@namei.org> (James Morris's
+        message of "Sat, 26 May 2018 01:41:52 +1000 (AEST)")
+Message-ID: <871sdzy0nv.fsf@xmission.com>
 MIME-Version: 1.0
-In-Reply-To: <1525793785.3672.12.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Message-Id: <89b5ac56-3d59-e264-c4a6-469b83ef8dea@linux.vnet.ibm.com>
+Content-Type: text/plain
+Subject: Re: [PATCH v3 1/7] security: rename security_kernel_read_file() hook
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 5/8/2018 11:36 AM, James Bottomley wrote:
-> On Tue, 2018-05-08 at 10:29 -0500, David R. Bild wrote:
->> On Tue, May 8, 2018 at 10:25 AM, James Bottomley
+James Morris <jmorris@namei.org> writes:
 
->>>
->>> I don't see any reason to set an unreachable password for the
->>> platform
->>> hierarchy if the UEFI didn't.  If the desire is to disable the
->>> platform
->>> hierarchy, then it should be disabled, not have a random password
->>> set.
->>
->> "Set random password and throw away the key" was my way of disabling
->> the platform hierarchy.  Is there a better way of doing that?
-> 
-> Well, yes, use TPM2_HierarchyControl to set phEnable to CLEAR.
+> On Thu, 24 May 2018, Eric W. Biederman wrote:
+>
+>> Below is where I suggest you start on sorting out these security hooks.
+>> - Adding a security_kernel_arg to catch when you want to allow/deny the
+>>   use of an argument to a syscall.  What security_kernel_file_read and
+>>   security_kernel_file_post_read have been abused for.
+>
+> NAK. This abstraction is too semantically weak.
+>
+> LSM hooks need to map to stronger semantics so we can reason about what 
+> the hook and the policy is supposed to be mediating.
 
-There is a huge difference between the two.
+I will take that as an extremely weak nack as all I did was expose the
+existing code and what the code is currently doing.  I don't see how you
+can NAK what is already being merged and used.
 
-"Set a random password" is the recommended approach.  This just
-prohibits using the platform authorization - a good idea.
+I will be happy to see a better proposal.
 
-phEnable CLEAR disables the hierarchy, preventing it from being used
-at all.  A basic problem would be that the EK certificates could not be
-read.
+The best I can see is to take each and every syscall that my patch
+is calling syscall_kernel_arg and make it it's own hook without an
+enumeration.  I did not see any real duplication between the cases in my
+enumeration so I don't think that will be a problem.  Maybe a bit of a
+challenge for loadpin but otherwise not.
 
-There are likely to be other issues, like not being able to do a field 
-upgrade post-OS,
+Thank you in this for understanding why I am having problems with the
+current hook.
+
+Eric
