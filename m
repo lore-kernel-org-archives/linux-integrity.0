@@ -1,59 +1,144 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:37060 "EHLO mail.kernel.org"
+Received: from mx1.redhat.com ([209.132.183.28]:60178 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163161AbeE1Kqx (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 28 May 2018 06:46:53 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        James Morris <james.morris@microsoft.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 128/496] integrity/security: fix digsig.c build error with header file
-Date: Mon, 28 May 2018 11:58:33 +0200
-Message-Id: <20180528100325.320727936@linuxfoundation.org>
-In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
-References: <20180528100319.498712256@linuxfoundation.org>
+        id S932102AbeE1JBs (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 28 May 2018 05:01:48 -0400
+Date: Mon, 28 May 2018 02:01:47 -0700
+From: Jerry Snitselaar <jsnitsel@redhat.com>
+To: Laurent Bigonville <bigon@debian.org>
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH] tpm_tis: verify locality released before returning from
+ release_locality
+Message-ID: <20180528090147.yjuup2jved7geumv@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+References: <20180505195453.10431-1-jsnitsel@redhat.com>
+ <20180505200315.x7jt33j7psizmfyi@cantor>
+ <bcac4481-108a-4598-6524-041879be7c06@debian.org>
+ <06d7794e-125b-85da-72af-c386d999341c@debian.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+In-Reply-To: <06d7794e-125b-85da-72af-c386d999341c@debian.org>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Mon May 28 18, Laurent Bigonville wrote:
+>Hello,
+>
+>Top posting, sorry.
+>
+>I don't know if I did it well to include the "Tested-by" tag because I 
+>don't see that the patch has landed in linus branch already.
+>
+>And as far as I understand, this will not be in the upcoming 4.17 
+>release as we are already late in the cycle?
+>
+>Kind regards,
+>
+>Laurent Bigonville
+>
 
-------------------
+It should go into his branch during the merge window for 4.18.
 
-From: Randy Dunlap <rdunlap@infradead.org>
-
-[ Upstream commit 120f3b11ef88fc38ce1d0ff9c9a4b37860ad3140 ]
-
-security/integrity/digsig.c has build errors on some $ARCH due to a
-missing header file, so add it.
-
-  security/integrity/digsig.c:146:2: error: implicit declaration of function 'vfree' [-Werror=implicit-function-declaration]
-
-Reported-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org
-Link: http://kisskb.ellerman.id.au/kisskb/head/13396/
-Signed-off-by: James Morris <james.morris@microsoft.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- security/integrity/digsig.c |    1 +
- 1 file changed, 1 insertion(+)
-
---- a/security/integrity/digsig.c
-+++ b/security/integrity/digsig.c
-@@ -18,6 +18,7 @@
- #include <linux/cred.h>
- #include <linux/key-type.h>
- #include <linux/digsig.h>
-+#include <linux/vmalloc.h>
- #include <crypto/public_key.h>
- #include <keys/system_keyring.h>
- 
+>
+>Le 11/05/18 a 21:02, Laurent Bigonville a ecrit :
+>>Le 05/05/18 a 22:03, Jerry Snitselaar a ecrit :
+>>>On Sat May 05 18, Jerry Snitselaar wrote:
+>>>>For certain tpm chips releasing locality can take long enough that a
+>>>>subsequent call to request_locality will see the locality as being
+>>>>active when the access register is read in check_locality. So check
+>>>>that the locality has been released before returning from
+>>>>release_locality.
+>>>>
+>>>>Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>>>>Cc: Peter Huewe <peterhuewe@gmx.de>
+>>>>Cc: Jason Gunthorpe <jgg@ziepe.ca>
+>>>>Reported-by: Laurent Bigonville <bigon@debian.org>
+>>>>Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+>>Tested-by: Laurent Bigonville <bigon@debian.org>
+>>>>---
+>>>>drivers/char/tpm/tpm_tis_core.c | 47 
+>>>>++++++++++++++++++++++++++++++++++++++++-
+>>>>1 file changed, 46 insertions(+), 1 deletion(-)
+>>>>
+>>>>diff --git a/drivers/char/tpm/tpm_tis_core.c 
+>>>>b/drivers/char/tpm/tpm_tis_core.c
+>>>>index 5a1f47b43947..d547cd309dbd 100644
+>>>>--- a/drivers/char/tpm/tpm_tis_core.c
+>>>>+++ b/drivers/char/tpm/tpm_tis_core.c
+>>>>@@ -143,13 +143,58 @@ static bool check_locality(struct tpm_chip 
+>>>>*chip, int l)
+>>>>    return false;
+>>>>}
+>>>>
+>>>>+static bool locality_inactive(struct tpm_chip *chip, int l)
+>>>>+{
+>>>>+    struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+>>>>+    int rc;
+>>>>+    u8 access;
+>>>>+
+>>>>+    rc = tpm_tis_read8(priv, TPM_ACCESS(l), &access);
+>>>>+    if (rc < 0)
+>>>>+        return false;
+>>>>+
+>>>>+    if ((access & (TPM_ACCESS_VALID | TPM_ACCESS_ACTIVE_LOCALITY))
+>>>>+        == TPM_ACCESS_VALID)
+>>>>+        return true;
+>>>>+
+>>>>+    return false;
+>>>>+}
+>>>>+
+>>>>static int release_locality(struct tpm_chip *chip, int l)
+>>>>{
+>>>>    struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+>>>>+    unsigned long stop, timeout;
+>>>>+    long rc;
+>>>>
+>>>>    tpm_tis_write8(priv, TPM_ACCESS(l), TPM_ACCESS_ACTIVE_LOCALITY);
+>>>>
+>>>>-    return 0;
+>>>>+    stop = jiffies + chip->timeout_a;
+>>>>+
+>>>>+    if (chip->flags & TPM_CHIP_FLAG_IRQ) {
+>>>>+again:
+>>>>+        timeout = stop - jiffies;
+>>>>+        if ((long)timeout <= 0)
+>>>>+            return -1;
+>>>>+
+>>>>+        rc = wait_event_interruptible_timeout(priv->int_queue,
+>>>>+                              (locality_inactive(chip, l)),
+>>>>+                              timeout);
+>>>>+
+>>>>+        if (rc > 0)
+>>>>+            return 0;
+>>>>+
+>>>>+        if (rc == -ERESTARTSYS && freezing(current)) {
+>>>>+            clear_thread_flag(TIF_SIGPENDING);
+>>>>+            goto again;
+>>>>+        }
+>>>>+    } else {
+>>>>+        do {
+>>>>+            if (locality_inactive(chip, l))
+>>>>+                return 0;
+>>>>+            tpm_msleep(TPM_TIMEOUT);
+>>>>+        } while (time_before(jiffies, stop));
+>>>>+    }
+>>>>+    return -1;
+>>>>}
+>>>>
+>>>>static int request_locality(struct tpm_chip *chip, int l)
+>>>>-- 
+>>>>2.15.0
+>>>>
+>>>
+>>>Laurent,
+>>>
+>>>Can you try this patch with your system since it is the one
+>>>that has exhibited the problem so far. I've tested on a
+>>>tpm2.0 and tpm1.2 system here.
+>>>
+>>>Regards,
+>>>Jerry
+>>
+>
