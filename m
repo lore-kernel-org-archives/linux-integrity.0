@@ -1,8 +1,8 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:52198 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:37060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161494AbeE1KcS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 28 May 2018 06:32:18 -0400
+        id S1163161AbeE1Kqx (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 28 May 2018 06:46:53 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -12,17 +12,17 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-integrity@vger.kernel.org,
         James Morris <james.morris@microsoft.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 135/329] integrity/security: fix digsig.c build error with header file
-Date: Mon, 28 May 2018 12:01:04 +0200
-Message-Id: <20180528100253.889752821@linuxfoundation.org>
-In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
-References: <20180528100241.796630982@linuxfoundation.org>
+Subject: [PATCH 4.14 128/496] integrity/security: fix digsig.c build error with header file
+Date: Mon, 28 May 2018 11:58:33 +0200
+Message-Id: <20180528100325.320727936@linuxfoundation.org>
+In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
+References: <20180528100319.498712256@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
