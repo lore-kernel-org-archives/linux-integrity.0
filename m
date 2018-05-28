@@ -1,70 +1,59 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from userp2120.oracle.com ([156.151.31.85]:46842 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932288AbeE2JFL (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 29 May 2018 05:05:11 -0400
-Date: Tue, 29 May 2018 12:05:04 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Matthew Garrett <mjg59@google.com>,
+Received: from mail.kernel.org ([198.145.29.99]:52198 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1161494AbeE1KcS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 28 May 2018 06:32:18 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Randy Dunlap <rdunlap@infradead.org>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
         linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] EVM: Fix null dereference on xattr when xattr fails to
- allocate
-Message-ID: <20180529090504.6dpdadjyjxo45nu2@mwanda>
-References: <20180527225510.25612-1-colin.king@canonical.com>
+        James Morris <james.morris@microsoft.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 135/329] integrity/security: fix digsig.c build error with header file
+Date: Mon, 28 May 2018 12:01:04 +0200
+Message-Id: <20180528100253.889752821@linuxfoundation.org>
+In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
+References: <20180528100241.796630982@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180527225510.25612-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Not really related to this patch except I was looking at the function:
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-security/integrity/evm/evm_secfs.c
-   191          ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_EVM_XATTR);
-   192          if (IS_ERR(ab))
-   193                  return PTR_ERR(ab);
-   194  
-   195          xattr = kmalloc(sizeof(struct xattr_list), GFP_KERNEL);
-   196          if (!xattr) {
-   197                  err = -ENOMEM;
-   198                  goto out;
-   199          }
-   200  
-   201          xattr->name = memdup_user_nul(buf, count);
-   202          if (IS_ERR(xattr->name)) {
-   203                  err = PTR_ERR(xattr->name);
-   204                  xattr->name = NULL;
-   205                  goto out;
-   206          }
-   207  
-   208          /* Remove any trailing newline */
-   209          len = strlen(xattr->name);
-   210          if (xattr->name[len-1] == '\n')
+------------------
 
-strlen() could be zero, leading to a read underflow here.
+From: Randy Dunlap <rdunlap@infradead.org>
 
-   211                  xattr->name[len-1] = '\0';
-   212  
-   213          if (strcmp(xattr->name, ".") == 0) {
-   214                  evm_xattrs_locked = 1;
-   215                  newattrs.ia_mode = S_IFREG | 0440;
-   216                  newattrs.ia_valid = ATTR_MODE;
-   217                  inode = evm_xattrs->d_inode;
-   218                  inode_lock(inode);
-   219                  err = simple_setattr(evm_xattrs, &newattrs);
-   220                  inode_unlock(inode);
-   221                  audit_log_format(ab, "locked");
-   222                  if (!err)
-   223                          err = count;
-   224                  goto out;
-   225          }
+[ Upstream commit 120f3b11ef88fc38ce1d0ff9c9a4b37860ad3140 ]
 
-regards,
-dan carpenter
+security/integrity/digsig.c has build errors on some $ARCH due to a
+missing header file, so add it.
+
+  security/integrity/digsig.c:146:2: error: implicit declaration of function 'vfree' [-Werror=implicit-function-declaration]
+
+Reported-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org
+Link: http://kisskb.ellerman.id.au/kisskb/head/13396/
+Signed-off-by: James Morris <james.morris@microsoft.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ security/integrity/digsig.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/security/integrity/digsig.c
++++ b/security/integrity/digsig.c
+@@ -18,6 +18,7 @@
+ #include <linux/cred.h>
+ #include <linux/key-type.h>
+ #include <linux/digsig.h>
++#include <linux/vmalloc.h>
+ #include <crypto/public_key.h>
+ #include <keys/system_keyring.h>
+ 
