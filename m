@@ -1,20 +1,20 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57286 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965868AbeE2SCj (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43466 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S965813AbeE2SCe (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 29 May 2018 14:02:39 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4THsXJD072060
-        for <linux-integrity@vger.kernel.org>; Tue, 29 May 2018 14:02:38 -0400
+        Tue, 29 May 2018 14:02:34 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4THsau5109204
+        for <linux-integrity@vger.kernel.org>; Tue, 29 May 2018 14:02:33 -0400
 Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2j9955yy8q-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2j9ahnkg5b-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 29 May 2018 14:02:38 -0400
+        for <linux-integrity@vger.kernel.org>; Tue, 29 May 2018 14:02:31 -0400
 Received: from localhost
         by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Tue, 29 May 2018 19:02:32 +0100
+        Tue, 29 May 2018 19:02:27 +0100
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -24,153 +24,183 @@ Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Eric Biederman <ebiederm@xmission.com>,
         kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeff Vander Stoep <jeffv@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PATCH v4 8/8] module: replace the existing LSM hook in init_module
-Date: Tue, 29 May 2018 14:02:00 -0400
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH v4 6/8] ima: add build time policy
+Date: Tue, 29 May 2018 14:01:58 -0400
 In-Reply-To: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-Id: <1527616920-5415-9-git-send-email-zohar@linux.vnet.ibm.com>
+Message-Id: <1527616920-5415-7-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Both the init_module and finit_module syscalls call either directly
-or indirectly the security_kernel_read_file LSM hook.  This patch
-replaces the direct call in init_module with a call to the new
-security_kernel_load_data hook and makes the corresponding changes in
-SELinux and IMA.
+IMA by default does not measure, appraise or audit files, but can be
+enabled at runtime by specifying a builtin policy on the boot command line
+or by loading a custom policy.
+
+This patch defines a build time policy, which verifies kernel modules,
+firmware, kexec image, and/or the IMA policy signatures.  This build time
+policy is automatically enabled at runtime and persists after loading a
+custom policy.
 
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Jeff Vander Stoep <jeffv@google.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>
 ---
- kernel/module.c                   |  2 +-
- security/integrity/ima/ima_main.c | 24 ++++++++++--------------
- security/selinux/hooks.c          | 26 ++++++++++++++++++++------
- 3 files changed, 31 insertions(+), 21 deletions(-)
+ security/integrity/ima/Kconfig      | 58 +++++++++++++++++++++++++++++++++++++
+ security/integrity/ima/ima_policy.c | 46 +++++++++++++++++++++++++++--
+ 2 files changed, 101 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/module.c b/kernel/module.c
-index ce8066b88178..b97c642b5b4d 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2879,7 +2879,7 @@ static int copy_module_from_user(const void __user *umod, unsigned long len,
- 	if (info->len < sizeof(*(info->hdr)))
- 		return -ENOEXEC;
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index 6a8f67714c83..004919d9bf09 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -156,6 +156,64 @@ config IMA_APPRAISE
+ 	  <http://linux-ima.sourceforge.net>
+ 	  If unsure, say N.
  
--	err = security_kernel_read_file(NULL, READING_MODULE);
-+	err = security_kernel_load_data(LOADING_MODULE);
- 	if (err)
- 		return err;
++config IMA_APPRAISE_BUILD_POLICY
++	bool "IMA build time configured policy rules"
++	depends on IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
++	default n
++	help
++	  This option defines an IMA appraisal policy at build time, which
++	  is enforced at run time without having to specify a builtin
++	  policy name on the boot command line.  The build time appraisal
++	  policy rules persist after loading a custom policy.
++
++	  Depending on the rules configured, this policy may require kernel
++	  modules, firmware, the kexec kernel image, and/or the IMA policy
++	  to be signed.  Unsigned files might prevent the system from
++	  booting or applications from working properly.
++
++config IMA_APPRAISE_REQUIRE_FIRMWARE_SIGS
++	bool "Appraise firmware signatures"
++	depends on IMA_APPRAISE_BUILD_POLICY
++	default n
++	help
++	  This option defines a policy requiring all firmware to be signed,
++	  including the regulatory.db.  If both this option and
++	  CFG80211_REQUIRE_SIGNED_REGDB are enabled, then both signature
++	  verification methods are necessary.
++
++config IMA_APPRAISE_REQUIRE_KEXEC_SIGS
++	bool "Appraise kexec kernel image signatures"
++	depends on IMA_APPRAISE_BUILD_POLICY
++	default n
++	help
++	  Enabling this rule will require all kexec'ed kernel images to
++	  be signed and verified by a public key on the trusted IMA
++	  keyring.
++
++	  Kernel image signatures can not be verified by the original
++	  kexec_load syscall.  Enabling this rule will prevent its
++	  usage.
++
++config IMA_APPRAISE_REQUIRE_MODULE_SIGS
++	bool "Appraise kernel modules signatures"
++	depends on IMA_APPRAISE_BUILD_POLICY
++	default n
++	help
++	  Enabling this rule will require all kernel modules to be signed
++	  and verified by a public key on the trusted IMA keyring.
++
++	  Kernel module signatures can only be verified by IMA-appraisal,
++	  via the finit_module syscall. Enabling this rule will prevent
++	  the usage of the init_module syscall.
++
++config IMA_APPRAISE_REQUIRE_POLICY_SIGS
++	bool "Appraise IMA policy signature"
++	depends on IMA_APPRAISE_BUILD_POLICY
++	default n
++	help
++	  Enabling this rule will require the IMA policy to be signed and
++	  and verified by a key on the trusted IMA keyring.
++
+ config IMA_APPRAISE_BOOTPARAM
+ 	bool "ima_appraise boot parameter"
+ 	depends on IMA_APPRAISE
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index c27f6993b07a..3c0bc8a1a88e 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -49,6 +49,7 @@
  
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 3dae605a1604..0ff1d8152f6e 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -441,17 +441,6 @@ static int read_idmap[READING_MAX_ID] = {
-  */
- int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
- {
--	bool sig_enforce = is_module_sig_enforced();
--
--	if (!file && read_id == READING_MODULE) {
--		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES) &&
--		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
--			pr_err("impossible to appraise a module without a file descriptor. sig_enforce kernel parameter might help\n");
--			return -EACCES;	/* INTEGRITY_UNKNOWN */
--		}
--		return 0;	/* We rely on module signature checking */
--	}
--
- 	if (read_id == READING_FIRMWARE_PREALLOC_BUFFER) {
- 		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
- 		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
-@@ -490,9 +479,6 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
- 		return 0;
+ int ima_policy_flag;
+ static int temp_ima_appraise;
++static int build_ima_appraise __ro_after_init;
+ 
+ #define MAX_LSM_RULES 6
+ enum lsm_rule_types { LSM_OBJ_USER, LSM_OBJ_ROLE, LSM_OBJ_TYPE,
+@@ -162,6 +163,25 @@ static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
+ #endif
+ };
+ 
++static struct ima_rule_entry build_appraise_rules[] __ro_after_init = {
++#ifdef CONFIG_IMA_APPRAISE_REQUIRE_MODULE_SIGS
++	{.action = APPRAISE, .func = MODULE_CHECK,
++	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
++#endif
++#ifdef CONFIG_IMA_APPRAISE_REQUIRE_FIRMWARE_SIGS
++	{.action = APPRAISE, .func = FIRMWARE_CHECK,
++	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
++#endif
++#ifdef CONFIG_IMA_APPRAISE_REQUIRE_KEXEC_SIGS
++	{.action = APPRAISE, .func = KEXEC_KERNEL_CHECK,
++	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
++#endif
++#ifdef CONFIG_IMA_APPRAISE_REQUIRE_POLICY_SIGS
++	{.action = APPRAISE, .func = POLICY_CHECK,
++	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
++#endif
++};
++
+ static struct ima_rule_entry secure_boot_rules[] __ro_after_init = {
+ 	{.action = APPRAISE, .func = MODULE_CHECK,
+ 	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
+@@ -435,7 +455,7 @@ void ima_update_policy_flag(void)
+ 			ima_policy_flag |= entry->action;
  	}
  
--	if (!file && read_id == READING_MODULE) /* MODULE_SIG_FORCE enabled */
--		return 0;
--
- 	/* permit signed certs */
- 	if (!file && read_id == READING_X509_CERTIFICATE)
- 		return 0;
-@@ -521,6 +507,8 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
-  */
- int ima_load_data(enum kernel_load_data_id id)
- {
-+	bool sig_enforce;
-+
- 	if ((ima_appraise & IMA_APPRAISE_ENFORCE) != IMA_APPRAISE_ENFORCE)
- 		return 0;
- 
-@@ -536,6 +524,14 @@ int ima_load_data(enum kernel_load_data_id id)
- 			pr_err("Prevent firmware sysfs fallback loading.\n");
- 			return -EACCES;	/* INTEGRITY_UNKNOWN */
- 		}
-+		break;
-+	case LOADING_MODULE:
-+		sig_enforce = is_module_sig_enforced();
-+
-+		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES)) {
-+			pr_err("impossible to appraise a module without a file descriptor. sig_enforce kernel parameter might help\n");
-+			return -EACCES;	/* INTEGRITY_UNKNOWN */
-+		}
- 	default:
- 		break;
- 	}
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 02ebd1585eaf..e02186470fc5 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -4018,12 +4018,6 @@ static int selinux_kernel_module_from_file(struct file *file)
- 	u32 sid = current_sid();
- 	int rc;
- 
--	/* init_module */
--	if (file == NULL)
--		return avc_has_perm(&selinux_state,
--				    sid, sid, SECCLASS_SYSTEM,
--					SYSTEM__MODULE_LOAD, NULL);
--
- 	/* finit_module */
- 
- 	ad.type = LSM_AUDIT_DATA_FILE;
-@@ -4043,6 +4037,25 @@ static int selinux_kernel_module_from_file(struct file *file)
- 				SYSTEM__MODULE_LOAD, &ad);
+-	ima_appraise |= temp_ima_appraise;
++	ima_appraise |= (build_ima_appraise | temp_ima_appraise);
+ 	if (!ima_appraise)
+ 		ima_policy_flag &= ~IMA_APPRAISE;
  }
+@@ -488,8 +508,8 @@ void __init ima_init_policy(void)
+ 	}
  
-+static int selinux_kernel_load_data(enum kernel_load_data_id id)
-+{
-+	u32 sid;
-+	int rc = 0;
+ 	/*
+-	 * Insert the appraise rules requiring file signatures, prior to
+-	 * any other appraise rules.
++	 * Insert the builtin "secure_boot" policy rules requiring file
++	 * signatures, prior to any other appraise rules.
+ 	 */
+ 	for (i = 0; i < secure_boot_entries; i++) {
+ 		list_add_tail(&secure_boot_rules[i].list, &ima_default_rules);
+@@ -497,6 +517,26 @@ void __init ima_init_policy(void)
+ 		    ima_appraise_flag(secure_boot_rules[i].func);
+ 	}
+ 
++	/*
++	 * Insert the build time appraise rules requiring file signatures
++	 * for both the initial and custom policies, prior to other appraise
++	 * rules.
++	 */
++	for (i = 0; i < ARRAY_SIZE(build_appraise_rules); i++) {
++		struct ima_rule_entry *entry;
 +
-+	switch (id) {
-+	case LOADING_MODULE:
-+		sid = current_sid();
++		if (!secure_boot_entries)
++			list_add_tail(&build_appraise_rules[i].list,
++				      &ima_default_rules);
 +
-+		/* init_module */
-+		return avc_has_perm(&selinux_state, sid, sid, SECCLASS_SYSTEM,
-+				    SYSTEM__MODULE_LOAD, NULL);
-+	default:
-+		break;
++		entry = kmemdup(&build_appraise_rules[i], sizeof(*entry),
++				GFP_KERNEL);
++		if (entry)
++			list_add_tail(&entry->list, &ima_policy_rules);
++		build_ima_appraise |=
++			ima_appraise_flag(build_appraise_rules[i].func);
 +	}
 +
-+	return rc;
-+}
-+
- static int selinux_kernel_read_file(struct file *file,
- 				    enum kernel_read_file_id id)
- {
-@@ -6950,6 +6963,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(kernel_act_as, selinux_kernel_act_as),
- 	LSM_HOOK_INIT(kernel_create_files_as, selinux_kernel_create_files_as),
- 	LSM_HOOK_INIT(kernel_module_request, selinux_kernel_module_request),
-+	LSM_HOOK_INIT(kernel_load_data, selinux_kernel_load_data),
- 	LSM_HOOK_INIT(kernel_read_file, selinux_kernel_read_file),
- 	LSM_HOOK_INIT(task_setpgid, selinux_task_setpgid),
- 	LSM_HOOK_INIT(task_getpgid, selinux_task_getpgid),
+ 	for (i = 0; i < appraise_entries; i++) {
+ 		list_add_tail(&default_appraise_rules[i].list,
+ 			      &ima_default_rules);
 -- 
 2.7.5
