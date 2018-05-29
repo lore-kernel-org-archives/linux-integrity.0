@@ -1,42 +1,82 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:53214 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965658AbeE2S0c (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52980 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S965785AbeE2SC1 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 29 May 2018 14:26:32 -0400
-Received: by mail-it0-f66.google.com with SMTP id y189-v6so19631611itb.2
-        for <linux-integrity@vger.kernel.org>; Tue, 29 May 2018 11:26:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <1526508736.3306.6.camel@linux.vnet.ibm.com> <20180517220938.102953-1-mjg59@google.com>
- <1526659412.3404.32.camel@linux.vnet.ibm.com>
-In-Reply-To: <1526659412.3404.32.camel@linux.vnet.ibm.com>
-From: Matthew Garrett <mjg59@google.com>
-Date: Tue, 29 May 2018 11:26:20 -0700
-Message-ID: <CACdnJuvd8Y9N1Bds474BXiikc5R8c41gaHGpJEUO2z_vkXG-XQ@mail.gmail.com>
-Subject: Re: [PATCH V4] evm: Allow non-SHA1 digital signatures
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>,
-        wangjunwen@baidu.com
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 29 May 2018 14:02:27 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4THsYVT072088
+        for <linux-integrity@vger.kernel.org>; Tue, 29 May 2018 14:02:27 -0400
+Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2j9955yxwa-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 29 May 2018 14:02:25 -0400
+Received: from localhost
+        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Tue, 29 May 2018 19:02:22 +0100
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH v4 4/8] firmware: add call to LSM hook before firmware sysfs fallback
+Date: Tue, 29 May 2018 14:01:56 -0400
+In-Reply-To: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
+Message-Id: <1527616920-5415-5-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, May 18, 2018 at 9:03 AM Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+Add an LSM hook prior to allowing firmware sysfs fallback loading.
 
-> On Thu, 2018-05-17 at 15:09 -0700, Matthew Garrett wrote:
-> > Oh bother - I think I see what's wrong. Does this version work better?
-> > I'm afraid I only tested against signatures rather than HMACs, and I was
-> > generating a raw SHA1 rather than an HMAC :(
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Luis R. Rodriguez <mcgrof@suse.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>
 
-> That's a lot better!
+Changelog v4:
+- call new LSM security_kernel_arg hook
 
-> FYI, Wang Junwen reported a problem with enabling EVM with just the
-> immutable and portable keys.  Without trusted keys enabled, SHA1 isn't
-> being built into the kernel.  Loading the SHA1 kernel module fails.
->   Without knowing apriori which hash algorithms need to be builtin is a
-> problem.
+Changelog v2:
+- call security_kernel_read_blob()
+- rename the READING_FIRMWARE_FALLBACK kernel_read_file_id enumeration to
+READING_FIRMWARE_FALLBACK_SYSFS.
+---
+ drivers/base/firmware_loader/fallback.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-It looks like Kconfig is selecting CRYPTO_SHA1 when EVM is enabled, and
-since that's a bool it should be forcing it to be built-in? I can't see a
-good way of extending that generally, unfortunately. Is the problem with
-loading the module that you're enforcing an IMA policy before loading it?
+diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
+index 358354148dec..2443bda81631 100644
+--- a/drivers/base/firmware_loader/fallback.c
++++ b/drivers/base/firmware_loader/fallback.c
+@@ -651,6 +651,8 @@ static bool fw_force_sysfs_fallback(unsigned int opt_flags)
+ 
+ static bool fw_run_sysfs_fallback(unsigned int opt_flags)
+ {
++	int ret;
++
+ 	if (fw_fallback_config.ignore_sysfs_fallback) {
+ 		pr_info_once("Ignoring firmware sysfs fallback due to sysctl knob\n");
+ 		return false;
+@@ -659,6 +661,11 @@ static bool fw_run_sysfs_fallback(unsigned int opt_flags)
+ 	if ((opt_flags & FW_OPT_NOFALLBACK))
+ 		return false;
+ 
++	/* Also permit LSMs and IMA to fail firmware sysfs fallback */
++	ret = security_kernel_load_data(LOADING_FIRMWARE);
++	if (ret < 0)
++		return ret;
++
+ 	return fw_force_sysfs_fallback(opt_flags);
+ }
+ 
+-- 
+2.7.5
