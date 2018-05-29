@@ -1,119 +1,93 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37030 "EHLO mx1.redhat.com"
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55142 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S966946AbeE2Vc0 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 29 May 2018 17:32:26 -0400
+        id S966989AbeE2VaI (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 29 May 2018 17:30:08 -0400
 From: Steve Grubb <sgrubb@redhat.com>
 To: Stefan Berger <stefanb@linux.vnet.ibm.com>
 Cc: zohar@linux.vnet.ibm.com, linux-integrity@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-audit@redhat.com
-Subject: Re: [PATCH 6/8] integrity: Factor out common part of integrity_audit_msg()
-Date: Tue, 29 May 2018 17:32:22 -0400
-Message-ID: <2600105.j2Wzuo56oP@x2>
-In-Reply-To: <20180524201105.3179904-7-stefanb@linux.vnet.ibm.com>
-References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com> <20180524201105.3179904-7-stefanb@linux.vnet.ibm.com>
+Subject: Re: [PATCH 8/8] ima: Differentiate auditing policy rules from "audit" actions
+Date: Tue, 29 May 2018 17:30:06 -0400
+Message-ID: <1569841.KfYyxMilWs@x2>
+In-Reply-To: <20180524201105.3179904-9-stefanb@linux.vnet.ibm.com>
+References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com> <20180524201105.3179904-9-stefanb@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thursday, May 24, 2018 4:11:03 PM EDT Stefan Berger wrote:
-> Factor out a common part of integrity_audit_msg() that others
-> can also call.
+Hello,
 
-After all of these changes, do you mind sending an example event for testing/
-review?
+
+On Thursday, May 24, 2018 4:11:05 PM EDT Stefan Berger wrote:
+> The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
+> the IMA "audit" policy action.  This patch defines
+> AUDIT_INTEGRITY_POLICY_RULE to reflect the IMA policy rules.
+> 
+> With this change we now call integrity_audit_msg_common() to get
+> common integrity auditing fields. This now produces the following
+> record when parsing an IMA policy rule:
+> 
+> type=UNKNOWN[1806] msg=audit(1527004216.690:311): action=dont_measure \
+>   fsmagic=0x9fa0 pid=1613 uid=0 auid=0 ses=2 \
+>   subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
+>   op=policy_update cause=parse_rule comm="echo" exe="/usr/bin/echo" \
+>   tty=tty2 res=1
+
+Since this is a new event, do you mind moving the tty field to be between 
+auid= and ses=  ?   That is the more natural place for it. 
+
+Also, it might be more natural for the op= and cause= fields to be before the 
+pid= portion. This doesn't matter as much to me because those are not 
+searchable fields and they are skipped right over. But moving the tty field 
+is the main comment from me.
 
 Thanks,
 -Steve
 
 > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
 > ---
->  security/integrity/integrity.h       | 16 ++++++++++++++++
->  security/integrity/integrity_audit.c | 24 ++++++++++++++++--------
->  2 files changed, 32 insertions(+), 8 deletions(-)
+>  include/uapi/linux/audit.h          | 3 ++-
+>  security/integrity/ima/ima_policy.c | 5 +++--
+>  2 files changed, 5 insertions(+), 3 deletions(-)
 > 
-> diff --git a/security/integrity/integrity.h
-> b/security/integrity/integrity.h index 5e58e02ba8dc..9f2924cafa53 100644
-> --- a/security/integrity/integrity.h
-> +++ b/security/integrity/integrity.h
-> @@ -15,6 +15,7 @@
->  #include <linux/integrity.h>
->  #include <crypto/sha.h>
->  #include <linux/key.h>
-> +#include <linux/audit.h>
+> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+> index 4e61a9e05132..776e0abd35cf 100644
+> --- a/include/uapi/linux/audit.h
+> +++ b/include/uapi/linux/audit.h
+> @@ -146,7 +146,8 @@
+>  #define AUDIT_INTEGRITY_STATUS	    1802 /* Integrity enable status */
+>  #define AUDIT_INTEGRITY_HASH	    1803 /* Integrity HASH type */
+>  #define AUDIT_INTEGRITY_PCR	    1804 /* PCR invalidation msgs */
+> -#define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
+> +#define AUDIT_INTEGRITY_RULE	    1805 /* IMA "audit" action policy msgs 
+> */ +#define AUDIT_INTEGRITY_POLICY_RULE 1806 /* IMA policy rules */
 > 
->  /* iint action cache flags */
->  #define IMA_MEASURE		0x00000001
-> @@ -197,6 +198,11 @@ static inline void evm_load_x509(void)
->  void integrity_audit_msg(int audit_msgno, struct inode *inode,
->  			 const unsigned char *fname, const char *op,
->  			 const char *cause, int result, int info);
-> +
-> +void integrity_audit_msg_common(struct audit_buffer *ab, struct inode
-> *inode, +				const unsigned char *fname, const char *op,
-> +				const char *cause, int result);
-> +
->  #else
->  static inline void integrity_audit_msg(int audit_msgno, struct inode
-> *inode, const unsigned char *fname,
-> @@ -204,4 +210,14 @@ static inline void integrity_audit_msg(int
-> audit_msgno, struct inode *inode, int result, int info)
->  {
->  }
-> +
-> +static inline void integrity_audit_msg_common(struct audit_buffer *ab,
-> +					      struct inode *inode,
-> +					      const unsigned char *fname,
-> +					      const char *op,
-> +					      const char *cause,
-> +					      int result)
-> +{
-> +}
-> +
->  #endif
-> diff --git a/security/integrity/integrity_audit.c
-> b/security/integrity/integrity_audit.c index 8d25d3c4dcca..8f80b7c042a7
+>  #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A 
+REQUEST. */
+> 
+> diff --git a/security/integrity/ima/ima_policy.c
+> b/security/integrity/ima/ima_policy.c index 3aed25a7178a..a8ae47a386b4
 > 100644
-> --- a/security/integrity/integrity_audit.c
-> +++ b/security/integrity/integrity_audit.c
-> @@ -28,17 +28,12 @@ static int __init integrity_audit_setup(char *str)
->  }
->  __setup("integrity_audit=", integrity_audit_setup);
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -634,7 +634,7 @@ static int ima_parse_rule(char *rule, struct
+> ima_rule_entry *entry) int result = 0;
 > 
-> -void integrity_audit_msg(int audit_msgno, struct inode *inode,
-> -			 const unsigned char *fname, const char *op,
-> -			 const char *cause, int result, int audit_info)
-> +void integrity_audit_msg_common(struct audit_buffer *ab, struct inode
-> *inode, +				const unsigned char *fname, const char *op,
-> +				const char *cause, int result)
->  {
-> -	struct audit_buffer *ab;
->  	char name[TASK_COMM_LEN];
+>  	ab = integrity_audit_log_start(NULL, GFP_KERNEL,
+> -				       AUDIT_INTEGRITY_RULE);
+> +				       AUDIT_INTEGRITY_POLICY_RULE);
 > 
-> -	if (!integrity_audit_info && audit_info == 1)	/* Skip info messages */
-> -		return;
-> -
-> -	ab = audit_log_start(current->audit_context, GFP_KERNEL, audit_msgno);
->  	audit_log_format(ab, "pid=%d uid=%u auid=%u ses=%u",
->  			 task_pid_nr(current),
->  			 from_kuid(&init_user_ns, current_cred()->uid),
-> @@ -59,5 +54,18 @@ void integrity_audit_msg(int audit_msgno, struct inode
-> *inode, audit_log_d_path_exe(ab, current->mm);
->  	audit_log_tty(ab, current);
->  	audit_log_format(ab, " res=%d", !result);
-> +}
-> +
-> +void integrity_audit_msg(int audit_msgno, struct inode *inode,
-> +			 const unsigned char *fname, const char *op,
-> +			 const char *cause, int result, int audit_info)
-> +{
-> +	struct audit_buffer *ab;
-> +
-> +	if (!integrity_audit_info && audit_info == 1)	/* Skip info messages */
-> +		return;
-> +
-> +	ab = audit_log_start(current->audit_context, GFP_KERNEL, audit_msgno);
-> +	integrity_audit_msg_common(ab, inode, fname, op, cause, result);
+>  	entry->uid = INVALID_UID;
+>  	entry->fowner = INVALID_UID;
+> @@ -926,7 +926,8 @@ static int ima_parse_rule(char *rule, struct
+> ima_rule_entry *entry) temp_ima_appraise |= IMA_APPRAISE_FIRMWARE;
+>  	else if (entry->func == POLICY_CHECK)
+>  		temp_ima_appraise |= IMA_APPRAISE_POLICY;
+> -	audit_log_format(ab, "res=%d", !result);
+> +	integrity_audit_msg_common(ab, NULL, NULL,
+> +				   "policy_update", "parse_rule", result);
 >  	audit_log_end(ab);
+>  	return result;
 >  }
