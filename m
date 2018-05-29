@@ -1,20 +1,20 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36419 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:32295 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965720AbeE2SCe (ORCPT
+        by vger.kernel.org with ESMTP id S965500AbeE2SCQ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 29 May 2018 14:02:34 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4THt58G095878
-        for <linux-integrity@vger.kernel.org>; Tue, 29 May 2018 14:02:33 -0400
-Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2j98gesdav-1
+        Tue, 29 May 2018 14:02:16 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4THsYpl138195
+        for <linux-integrity@vger.kernel.org>; Tue, 29 May 2018 14:02:15 -0400
+Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2j9b1c9wt7-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 29 May 2018 14:02:32 -0400
+        for <linux-integrity@vger.kernel.org>; Tue, 29 May 2018 14:02:14 -0400
 Received: from localhost
-        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Tue, 29 May 2018 19:02:30 +0100
+        Tue, 29 May 2018 19:02:12 +0100
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -24,103 +24,92 @@ Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Eric Biederman <ebiederm@xmission.com>,
         kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Luis R . Rodriguez" <mcgrof@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [RFC PATCH v4 7/8] ima: based on policy prevent loading firmware (pre-allocated buffer)
-Date: Tue, 29 May 2018 14:01:59 -0400
-In-Reply-To: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-Id: <1527616920-5415-8-git-send-email-zohar@linux.vnet.ibm.com>
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH v4 0/8] kexec/firmware: support system wide policy requiring signatures
+Date: Tue, 29 May 2018 14:01:52 -0400
+Message-Id: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Some systems are memory constrained but they need to load very large
-firmwares.  The firmware subsystem allows drivers to request this
-firmware be loaded from the filesystem, but this requires that the
-entire firmware be loaded into kernel memory first before it's provided
-to the driver.  This can lead to a situation where we map the firmware
-twice, once to load the firmware into kernel memory and once to copy the
-firmware into the final resting place.
+Instead of adding the security_kernel_read_file LSM hook - or defining a
+wrapper for security_kernel_read_file LSM hook and adding it, or
+renaming the existing hook to security_kernel_read_data() and adding it
+- in places where the kernel isn't reading a file, this version of the
+patch set defines a new LSM hook named security_kernel_load_data().
 
-To resolve this problem, commit a098ecd2fa7d ("firmware: support loading
-into a pre-allocated buffer") introduced request_firmware_into_buf() API
-that allows drivers to request firmware be loaded directly into a
-pre-allocated buffer.  The QCOM_MDT_LOADER calls dma_alloc_coherent() to
-allocate this buffer.  According to Documentation/DMA-API.txt,
+The new LSM hook does not replace the existing security_kernel_read_file
+LSM hook, which is still needed, but defines a new LSM hook allowing
+LSMs and IMA-appraisal the opportunity to fail loading userspace
+provided file/data.
 
-     Consistent memory is memory for which a write by either the
-     device or the processor can immediately be read by the processor
-     or device without having to worry about caching effects.  (You
-     may however need to make sure to flush the processor's write
-     buffers before telling devices to read that memory.)
+The only difference between the two LSM hooks is the LSM hook name and a
+file descriptor.  Whether this is cause enough for requiring a new LSM
+hook, is left to the security community.
 
-Devices using pre-allocated DMA memory run the risk of the firmware
-being accessible by the device prior to the kernel's firmware signature
-verification has completed.
-
-Loading firmware already calls the security_kernel_read_file LSM hook.
-With an IMA policy requiring signed firmware, this patch prevents
-loading firmware into a pre-allocated buffer.
-
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Luis R. Rodriguez <mcgrof@suse.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Serge E. Hallyn <serge@hallyn.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
 ---
- security/integrity/ima/ima_main.c | 26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 4a87f78098c8..3dae605a1604 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -419,6 +419,15 @@ void ima_post_path_mknod(struct dentry *dentry)
- 		iint->flags |= IMA_NEW_FILE;
- }
- 
-+static int read_idmap[READING_MAX_ID] = {
-+	[READING_FIRMWARE] = FIRMWARE_CHECK,
-+	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
-+	[READING_MODULE] = MODULE_CHECK,
-+	[READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
-+	[READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
-+	[READING_POLICY] = POLICY_CHECK
-+};
-+
- /**
-  * ima_read_file - pre-measure/appraise hook decision based on policy
-  * @file: pointer to the file to be measured/appraised/audit
-@@ -442,18 +451,17 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
- 		}
- 		return 0;	/* We rely on module signature checking */
- 	}
-+
-+	if (read_id == READING_FIRMWARE_PREALLOC_BUFFER) {
-+		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
-+		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
-+			pr_err("Prevent device from accessing firmware prior to verifying the firmware signature.\n");
-+			return -EACCES;
-+		}
-+	}
- 	return 0;
- }
- 
--static int read_idmap[READING_MAX_ID] = {
--	[READING_FIRMWARE] = FIRMWARE_CHECK,
--	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
--	[READING_MODULE] = MODULE_CHECK,
--	[READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
--	[READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
--	[READING_POLICY] = POLICY_CHECK
--};
--
- /**
-  * ima_post_read_file - in memory collect/appraise/audit measurement
-  * @file: pointer to the file to be measured/appraised/audit
+IMA-appraisal is mostly being used in the embedded or single purpose
+closed system environments.  In these environments, both the Kconfig
+options and the userspace tools can be modified appropriately to limit
+syscalls.  For stock kernels, userspace applications need to continue to
+work with older kernels as well as with newer kernels.
+
+In this environment, the customer needs the ability to define a system
+wide IMA policy, such as requiring all kexec'ed images, firmware, kernel
+modules to be signed, without being dependent on either the Kconfig
+options or the userspace tools.[1]
+
+This patch set allows the customer to define a policy which requires
+the kexec'ed kernel images, firmware, and/or kernel modules to be
+signed.
+
+In addition, this patch set includes the ability to configure a build
+time IMA policy, which is automatically loaded at run time without
+needing to specify it on the boot command line and persists after
+loading a custom kernel policy.
+
+[1] kexec-tools suupports the new syscall based on a flag (-s).
+
+Changelog v4:
+- Define a new LSM hook named security_kernel_load_data().
+- Define kernel_load_data_id enumeration.
+- Replace the existing LSM hook in init_module syscall.
+
+Changelog v3:
+Based on James' feedback:
+- Renamed security_kernel_read_file() to security_kernel_read_data().
+- Defined new kernel_load_data_id enumeration.
+- Cleaned up ima_read_data(), replacing if's with switch.
+
+Changelog v2:
+- combined "kexec: limit kexec_load syscall" and "firmware: kernel
+signature verification" patch sets.
+- add support for build time policy.
+- defined generic security_kernel_read_blob() wrapper for
+  security_kernel_read_file(). Suggested by Luis.
+
+Mimi Zohar (8):
+  security: define new LSM hook named security_kernel_load_data
+  kexec: add call to LSM hook in original kexec_load syscall
+  ima: based on policy require signed kexec kernel images
+  firmware: add call to LSM hook before firmware sysfs fallback
+  ima: based on policy require signed firmware (sysfs fallback)
+  ima: add build time policy
+  ima: based on policy prevent loading firmware (pre-allocated buffer)
+  module: replace the existing LSM hook in init_module
+
+ drivers/base/firmware_loader/fallback.c |  7 +++
+ include/linux/ima.h                     |  7 +++
+ include/linux/lsm_hooks.h               |  6 +++
+ include/linux/security.h                | 33 ++++++++++++++
+ kernel/kexec.c                          |  8 ++++
+ kernel/module.c                         |  2 +-
+ security/integrity/ima/Kconfig          | 58 ++++++++++++++++++++++++
+ security/integrity/ima/ima.h            |  1 +
+ security/integrity/ima/ima_main.c       | 79 ++++++++++++++++++++++++---------
+ security/integrity/ima/ima_policy.c     | 48 ++++++++++++++++++--
+ security/security.c                     | 10 +++++
+ security/selinux/hooks.c                | 26 ++++++++---
+ 12 files changed, 255 insertions(+), 30 deletions(-)
 -- 
 2.7.5
