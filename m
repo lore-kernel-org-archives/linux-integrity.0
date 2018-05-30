@@ -1,92 +1,70 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34794 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752089AbeE3MuW (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 30 May 2018 08:50:22 -0400
-Date: Wed, 30 May 2018 08:49:20 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:32890 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753529AbeE3MR4 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 30 May 2018 08:17:56 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4UCBiKJ000561
+        for <linux-integrity@vger.kernel.org>; Wed, 30 May 2018 08:17:56 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2j9s35fg6k-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 30 May 2018 08:17:55 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
+        Wed, 30 May 2018 08:17:54 -0400
+Subject: Re: [PATCH 5/8] integrity: Add exe= and tty= before res= to integrity
+ audits
+To: Paul Moore <paul@paul-moore.com>
 Cc: zohar@linux.vnet.ibm.com, sgrubb@redhat.com,
         linux-integrity@vger.kernel.org, linux-audit@redhat.com,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/8] ima: Differentiate auditing policy rules from
- "audit" actions
-Message-ID: <20180530124920.g5agxm75x4i6pw6n@madcap2.tricolour.ca>
 References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
- <20180524201105.3179904-9-stefanb@linux.vnet.ibm.com>
+ <20180524201105.3179904-6-stefanb@linux.vnet.ibm.com>
+ <CAHC9VhQTFPwz5tpL133DQuXDbZR4P7zy4m3hb4nwm9OSf4RNgQ@mail.gmail.com>
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Date: Wed, 30 May 2018 08:17:49 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180524201105.3179904-9-stefanb@linux.vnet.ibm.com>
+In-Reply-To: <CAHC9VhQTFPwz5tpL133DQuXDbZR4P7zy4m3hb4nwm9OSf4RNgQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Message-Id: <0c9616fe-b404-eeed-1cba-c920c31694fd@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 2018-05-24 16:11, Stefan Berger wrote:
-> The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
-> the IMA "audit" policy action.  This patch defines
-> AUDIT_INTEGRITY_POLICY_RULE to reflect the IMA policy rules.
-> 
-> With this change we now call integrity_audit_msg_common() to get
-> common integrity auditing fields. This now produces the following
-> record when parsing an IMA policy rule:
-> 
-> type=UNKNOWN[1806] msg=audit(1527004216.690:311): action=dont_measure \
->   fsmagic=0x9fa0 pid=1613 uid=0 auid=0 ses=2 \
->   subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
->   op=policy_update cause=parse_rule comm="echo" exe="/usr/bin/echo" \
->   tty=tty2 res=1
-> 
-> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> ---
->  include/uapi/linux/audit.h          | 3 ++-
->  security/integrity/ima/ima_policy.c | 5 +++--
->  2 files changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> index 4e61a9e05132..776e0abd35cf 100644
-> --- a/include/uapi/linux/audit.h
-> +++ b/include/uapi/linux/audit.h
-> @@ -146,7 +146,8 @@
->  #define AUDIT_INTEGRITY_STATUS	    1802 /* Integrity enable status */
->  #define AUDIT_INTEGRITY_HASH	    1803 /* Integrity HASH type */
->  #define AUDIT_INTEGRITY_PCR	    1804 /* PCR invalidation msgs */
-> -#define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
-> +#define AUDIT_INTEGRITY_RULE	    1805 /* IMA "audit" action policy msgs  */
-> +#define AUDIT_INTEGRITY_POLICY_RULE 1806 /* IMA policy rules */
->  
->  #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A REQUEST. */
->  
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index 3aed25a7178a..a8ae47a386b4 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -634,7 +634,7 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->  	int result = 0;
->  
->  	ab = integrity_audit_log_start(NULL, GFP_KERNEL,
-> -				       AUDIT_INTEGRITY_RULE);
-> +				       AUDIT_INTEGRITY_POLICY_RULE);
+On 05/29/2018 05:19 PM, Paul Moore wrote:
+> On Thu, May 24, 2018 at 4:11 PM, Stefan Berger
+> <stefanb@linux.vnet.ibm.com> wrote:
+>> Use the new public audit functions to add the exe= and tty=
+>> parts to the integrity audit records. We place them before
+>> res=.
+>>
+>> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+>> Suggested-by: Steve Grubb <sgrubb@redhat.com>
+>> ---
+>>   security/integrity/integrity_audit.c | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/security/integrity/integrity_audit.c b/security/integrity/integrity_audit.c
+>> index db30763d5525..8d25d3c4dcca 100644
+>> --- a/security/integrity/integrity_audit.c
+>> +++ b/security/integrity/integrity_audit.c
+>> @@ -56,6 +56,8 @@ void integrity_audit_msg(int audit_msgno, struct inode *inode,
+>>                  audit_log_untrustedstring(ab, inode->i_sb->s_id);
+>>                  audit_log_format(ab, " ino=%lu", inode->i_ino);
+>>          }
+>> +       audit_log_d_path_exe(ab, current->mm);
+>> +       audit_log_tty(ab, current);
+> NACK
+>
+> Please add the new fields to the end of the audit record, thank you.
 
-Is it possible to connect this record to a syscall by replacing the
-first parameter (NULL) by current->context?
+I put it there since Steve said '"res" is traditionally the last field 
+in any event' (https://lkml.org/lkml/2018/5/22/539). I don't mind 
+breaking with this tradition...
 
->  	entry->uid = INVALID_UID;
->  	entry->fowner = INVALID_UID;
-> @@ -926,7 +926,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->  		temp_ima_appraise |= IMA_APPRAISE_FIRMWARE;
->  	else if (entry->func == POLICY_CHECK)
->  		temp_ima_appraise |= IMA_APPRAISE_POLICY;
-> -	audit_log_format(ab, "res=%d", !result);
-> +	integrity_audit_msg_common(ab, NULL, NULL,
-> +				   "policy_update", "parse_rule", result);
->  	audit_log_end(ab);
->  	return result;
->  }
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+>
+>>          audit_log_format(ab, " res=%d", !result);
+>>          audit_log_end(ab);
+>>   }
