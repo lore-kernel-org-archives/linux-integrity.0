@@ -1,86 +1,118 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga17.intel.com ([192.55.52.151]:61694 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932408AbeE3Xh6 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 30 May 2018 19:37:58 -0400
-Date: Thu, 31 May 2018 02:37:52 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tpm: separate cmd_ready/go_idle from runtime_pm
-Message-ID: <20180530233752.GA31296@linux.intel.com>
-References: <20180516194600.28189-1-tomas.winkler@intel.com>
- <20180522091732.GA5228@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D89D350@hasmsx109.ger.corp.intel.com>
- <20180523131616.GD363@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D8A1269@hasmsx109.ger.corp.intel.com>
- <20180530105034.GA14905@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D940DC6@hasmsx108.ger.corp.intel.com>
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51956 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932471AbeE3XfS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 30 May 2018 19:35:18 -0400
+Date: Wed, 30 May 2018 19:34:13 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: Paul Moore <paul@paul-moore.com>, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-audit@redhat.com
+Subject: Re: [PATCH 8/8] ima: Differentiate auditing policy rules from
+ "audit" actions
+Message-ID: <20180530233413.xz5bs3zb4jwmddpi@madcap2.tricolour.ca>
+References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
+ <20180524201105.3179904-9-stefanb@linux.vnet.ibm.com>
+ <20180530124920.g5agxm75x4i6pw6n@madcap2.tricolour.ca>
+ <35894dae-c9c6-aa65-da99-c0283d459878@linux.vnet.ibm.com>
+ <CAHC9VhSnubpfY6=RF9ZHQS0js18xor2nF=REfd=ZKTxV-wabiA@mail.gmail.com>
+ <85a2ad4d-6406-ad64-f440-7ab8289ceb2e@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D940DC6@hasmsx108.ger.corp.intel.com>
+In-Reply-To: <85a2ad4d-6406-ad64-f440-7ab8289ceb2e@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, May 30, 2018 at 10:52:28AM +0000, Winkler, Tomas wrote:
-> > 
-> > On Wed, May 23, 2018 at 01:48:17PM +0000, Winkler, Tomas wrote:
-> > >
-> > > > On Tue, May 22, 2018 at 09:27:46AM +0000, Winkler, Tomas wrote:
-> > > > > >
-> > > > > > On Wed, May 16, 2018 at 10:46:00PM +0300, Tomas Winkler wrote:
-> > > > > > > New wrappers are added tpm_cmd_ready() and tpm_go_idle()
-> > > > wrappers
-> > > > > > > to streamline tpm_try_transmit code. TPM_TRANSMIT_UNLOCKED
-> > > > > > > flag
-> > > > is
-> > > > > > abused
-> > > > > > > to resolve tpm spaces recursive calls to tpm_transmit().
-> > > > > >
-> > > > > > This looks good and all but I don't think we want to abuse
-> > > > > > anything in the driver code, do we?
-> > > > >
-> > > > > It's not abuse just the flag UNLOCKED is not really named
-> > > > > correctly I think this has to be backported so wanted to do less invasive
-> > change.
-> > > >
-> > > > It should be renamed anyway and possible merge conflicts are not
-> > > > hard to sort out in this change. Can you rename it as SPACE?
-> > >
-> > > Not sure, I believe UNLOCKED is still better name than SPACE, I'm not
-> > > sure this is Do you also want to remove TPM_TRANSMIT_RAW?
-> > > clk_enable is handling its own anti recursion counter 'data-
-> > >clkrun_enabled'
-> > > but it should be all handled under one flag I guess.
-> > >
-> > > > Right, and even without rename this will probably cause merge
-> > > > conflicts at least in v4.4 an v4.9 since in-kernel RM landed in
-> > > > v4.12, so not much gain not do the rename :-)
-> > >
-> > > I belive we should do minimal change and the big cleanup after that.
-> > > Not sure, I believe UNLOCKED is still better name than SPACE even it wasn't
-> > the original intention.
-> > > No the SPACE is the issue, but any recursion call into tpm_transmit. A
-> > > bigger change is needed and rename to SPACE would be just another
-> > intermediat change.
-> > >
-> > > Please reconsider.
-> > >
-> > > Thanks
-> > > Tomas
-> > 
-> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+On 2018-05-30 17:38, Stefan Berger wrote:
+> On 05/30/2018 05:22 PM, Paul Moore wrote:
+> > On Wed, May 30, 2018 at 9:08 AM, Stefan Berger
+> > <stefanb@linux.vnet.ibm.com> wrote:
+> > > On 05/30/2018 08:49 AM, Richard Guy Briggs wrote:
+> > > > On 2018-05-24 16:11, Stefan Berger wrote:
+> > > > > The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
+> > > > > the IMA "audit" policy action.  This patch defines
+> > > > > AUDIT_INTEGRITY_POLICY_RULE to reflect the IMA policy rules.
+> > > > > 
+> > > > > With this change we now call integrity_audit_msg_common() to get
+> > > > > common integrity auditing fields. This now produces the following
+> > > > > record when parsing an IMA policy rule:
+> > > > > 
+> > > > > type=UNKNOWN[1806] msg=audit(1527004216.690:311): action=dont_measure \
+> > > > >     fsmagic=0x9fa0 pid=1613 uid=0 auid=0 ses=2 \
+> > > > >     subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
+> > > > >     op=policy_update cause=parse_rule comm="echo" exe="/usr/bin/echo" \
+> > > > >     tty=tty2 res=1
+> > > > > 
+> > > > > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> > > > > ---
+> > > > >    include/uapi/linux/audit.h          | 3 ++-
+> > > > >    security/integrity/ima/ima_policy.c | 5 +++--
+> > > > >    2 files changed, 5 insertions(+), 3 deletions(-)
+> > > > > 
+> > > > > diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+> > > > > index 4e61a9e05132..776e0abd35cf 100644
+> > > > > --- a/include/uapi/linux/audit.h
+> > > > > +++ b/include/uapi/linux/audit.h
+> > > > > @@ -146,7 +146,8 @@
+> > > > >    #define AUDIT_INTEGRITY_STATUS            1802 /* Integrity enable
+> > > > > status */
+> > > > >    #define AUDIT_INTEGRITY_HASH      1803 /* Integrity HASH type */
+> > > > >    #define AUDIT_INTEGRITY_PCR       1804 /* PCR invalidation msgs */
+> > > > > -#define AUDIT_INTEGRITY_RULE       1805 /* policy rule */
+> > > > > +#define AUDIT_INTEGRITY_RULE       1805 /* IMA "audit" action policy
+> > > > > msgs  */
+> > > > > +#define AUDIT_INTEGRITY_POLICY_RULE 1806 /* IMA policy rules */
+> > > > >      #define AUDIT_KERNEL                2000    /* Asynchronous audit
+> > > > > record. NOT A REQUEST. */
+> > > > >    diff --git a/security/integrity/ima/ima_policy.c
+> > > > > b/security/integrity/ima/ima_policy.c
+> > > > > index 3aed25a7178a..a8ae47a386b4 100644
+> > > > > --- a/security/integrity/ima/ima_policy.c
+> > > > > +++ b/security/integrity/ima/ima_policy.c
+> > > > > @@ -634,7 +634,7 @@ static int ima_parse_rule(char *rule, struct
+> > > > > ima_rule_entry *entry)
+> > > > >          int result = 0;
+> > > > >          ab = integrity_audit_log_start(NULL, GFP_KERNEL,
+> > > > > -                                      AUDIT_INTEGRITY_RULE);
+> > > > > +                                      AUDIT_INTEGRITY_POLICY_RULE);
+> > > > Is it possible to connect this record to a syscall by replacing the
+> > > > first parameter (NULL) by current->context?
+> > We're likely going to need to "associate" this record (audit speak for
+> > making the first parameter non-NULL) with others for the audit
+> > container ID work.  If you do it now, Richard's patches will likely
+> > get a few lines smaller and that will surely make him a bit happier :)
 > 
+> Richard is also introducing a local context that we can then create and use
+> instead of the NULL. Can we not use that then?
+
+That is for records for which there is no syscall or user associated.
+
+In fact there is another recent change that would be better to use than
+current->audit_context, which is the function audit_context().
+See commit cdfb6b3 ("audit: use inline function to get audit context").
+
+> Steven seems to say: "We don't want to add syscall records to everything.
+> That messes up schemas and existing code. The integrity events are 1 record
+> in size and should stay that way. This saves disk space and improves
+> readability."
 > 
-> Does it mean you're Okay with the patch now?
-> Thanks
-> Tomas
+> > > We would have to fix current->context in this case since it is NULL. We get
+> > > to this location by root cat'ing a policy or writing a policy filename into
+> > > /sys/kernel/security/ima/policy.
+> > Perhaps I'm missing something, but current in this case should point
+> > to the process which is writing to the policy file, yes?
+> 
+> Yes, but current->context is NULL for some reason.
 
-The change looks good but I'll have to test it.
+Is it always this way?  If it isn't, which it should not be, we should
+find out why.  Well, we should find out why this is NULL anyways, since
+it shouldn't be.
 
-/Jarkko
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
