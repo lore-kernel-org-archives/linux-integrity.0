@@ -1,98 +1,41 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33338 "EHLO
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57722 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753169AbeE3NFA (ORCPT
+        by vger.kernel.org with ESMTP id S1752995AbeE3NEs (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 30 May 2018 09:05:00 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4UCuNiS083054
-        for <linux-integrity@vger.kernel.org>; Wed, 30 May 2018 09:05:00 -0400
-Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2j9vdarex4-1
+        Wed, 30 May 2018 09:04:48 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4UCuUY7094883
+        for <linux-integrity@vger.kernel.org>; Wed, 30 May 2018 09:04:48 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2j9snwg9f8-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 30 May 2018 09:04:59 -0400
+        for <linux-integrity@vger.kernel.org>; Wed, 30 May 2018 09:04:47 -0400
 Received: from localhost
-        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Wed, 30 May 2018 14:04:56 +0100
-Subject: Re: [PATCH 5/8] integrity: Add exe= and tty= before res= to
- integrity audits
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Paul Moore <paul@paul-moore.com>, Steve Grubb <sgrubb@redhat.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org, linux-audit@redhat.com,
-        linux-kernel@vger.kernel.org
-Date: Wed, 30 May 2018 09:04:40 -0400
-In-Reply-To: <1527634686.3534.27.camel@linux.vnet.ibm.com>
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
+        Wed, 30 May 2018 09:04:46 -0400
+Subject: Re: [PATCH 6/8] integrity: Factor out common part of
+ integrity_audit_msg()
+To: Steve Grubb <sgrubb@redhat.com>
+Cc: zohar@linux.vnet.ibm.com, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-audit@redhat.com
 References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
-         <20180524201105.3179904-6-stefanb@linux.vnet.ibm.com>
-         <CAHC9VhQTFPwz5tpL133DQuXDbZR4P7zy4m3hb4nwm9OSf4RNgQ@mail.gmail.com>
-         <4331521.GQBdaJNAj6@x2>
-         <CAHC9VhRp82u4puDt82E0G4ax4tb9301U7XK6+0ZT1rrP-ZgaRw@mail.gmail.com>
-         <1527634686.3534.27.camel@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1527685480.3534.54.camel@linux.vnet.ibm.com>
+ <20180524201105.3179904-7-stefanb@linux.vnet.ibm.com> <2600105.j2Wzuo56oP@x2>
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Date: Wed, 30 May 2018 09:04:41 -0400
+MIME-Version: 1.0
+In-Reply-To: <2600105.j2Wzuo56oP@x2>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Message-Id: <6184c964-9dbb-1f0a-2db7-27a6f2b2bba7@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, 2018-05-29 at 18:58 -0400, Mimi Zohar wrote:
-> On Tue, 2018-05-29 at 17:47 -0400, Paul Moore wrote:
-> > On Tue, May 29, 2018 at 5:35 PM, Steve Grubb <sgrubb@redhat.com> wrote:
-> > > On Tuesday, May 29, 2018 5:19:39 PM EDT Paul Moore wrote:
-> > >> On Thu, May 24, 2018 at 4:11 PM, Stefan Berger
-> > >>
-> > >> <stefanb@linux.vnet.ibm.com> wrote:
-> > >> > Use the new public audit functions to add the exe= and tty=
-> > >> > parts to the integrity audit records. We place them before
-> > >> > res=.
-> > >> >
-> > >> > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> > >> > Suggested-by: Steve Grubb <sgrubb@redhat.com>
-> > >> > ---
-> > >> >
-> > >> >  security/integrity/integrity_audit.c | 2 ++
-> > >> >  1 file changed, 2 insertions(+)
-> > >> >
-> > >> > diff --git a/security/integrity/integrity_audit.c
-> > >> > b/security/integrity/integrity_audit.c index db30763d5525..8d25d3c4dcca
-> > >> > 100644
-> > >> > --- a/security/integrity/integrity_audit.c
-> > >> > +++ b/security/integrity/integrity_audit.c
-> > >> > @@ -56,6 +56,8 @@ void integrity_audit_msg(int audit_msgno, struct inode
-> > >> > *inode,>
-> > >> >                 audit_log_untrustedstring(ab, inode->i_sb->s_id);
-> > >> >                 audit_log_format(ab, " ino=%lu", inode->i_ino);
-> > >> >
-> > >> >         }
-> > >> >
-> > >> > +       audit_log_d_path_exe(ab, current->mm);
-> > >> > +       audit_log_tty(ab, current);
-> > >>
-> > >> NACK
-> > >>
-> > >> Please add the new fields to the end of the audit record, thank you.
-> > >
-> > > Let's see what an example event looks like before NACK'ing this. Way back in
-> > > 2013 the IMA events were good. I think this is repairing the event after some
-> > > drift.
-> > 
-> > Can you reference a specific commit, or point in time during 2013?
-> > Looking at the git log quickly, if I go back to commit d726d8d719b6
-> > ("integrity: move integrity_audit_msg()") from March 18, 2013 (the
-> > commit that created integrity_audit.c) the field ordering appears to
-> > be the same as it today.
-> > 
-> > My NACK still stands.
-> 
-> There hasn't been any changes up to now.  This patch set refactors
-> integrity_audit_msg(), creating integrity_audit_msg_common(), which
-> will be called from both ima_audit_measurement() and
-> ima_parse_rule().
+On 05/29/2018 05:32 PM, Steve Grubb wrote:
+> On Thursday, May 24, 2018 4:11:03 PM EDT Stefan Berger wrote:
+>> Factor out a common part of integrity_audit_msg() that others
+>> can also call.
+> After all of these changes, do you mind sending an example event for testing/
+> review?
 
-That should have been "from integrity_audit_msg() and
-ima_parse_rule()", not ima_audit_measurement().
-
-> Previously the audit record generated by ima_parse_rule() did not
-> include this info.  The change in this patch will affect both the
-> existing and the new INTEGRITY_AUDIT_POLICY_RULE audit records.
+Adding example to 5/8 since this patch here doesn't change any records.
