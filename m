@@ -1,103 +1,53 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58618 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932170AbeE3TyV (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42678 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932185AbeE3Tq4 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 30 May 2018 15:54:21 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4UJs9SA051206
-        for <linux-integrity@vger.kernel.org>; Wed, 30 May 2018 15:54:20 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ja0dvxnbw-1
+        Wed, 30 May 2018 15:46:56 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4UJhhS8062013
+        for <linux-integrity@vger.kernel.org>; Wed, 30 May 2018 15:46:56 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ja0ddxb6v-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 30 May 2018 15:54:20 -0400
+        for <linux-integrity@vger.kernel.org>; Wed, 30 May 2018 15:46:53 -0400
 Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Wed, 30 May 2018 15:54:20 -0400
-Subject: Re: [PATCH 8/8] ima: Differentiate auditing policy rules from "audit"
- actions
-To: Steve Grubb <sgrubb@redhat.com>
-Cc: Paul Moore <paul@paul-moore.com>, zohar@linux.vnet.ibm.com,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-audit@redhat.com
+        Wed, 30 May 2018 15:46:52 -0400
+Subject: Re: [PATCH 3/8] audit: Implement audit_log_tty()
+To: Paul Moore <paul@paul-moore.com>
+Cc: zohar@linux.vnet.ibm.com, sgrubb@redhat.com,
+        linux-integrity@vger.kernel.org, linux-audit@redhat.com,
+        linux-kernel@vger.kernel.org
 References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
- <15281606.YptaXzsEVL@x2>
- <00f66ee1-7494-8249-f148-688616deca0c@linux.vnet.ibm.com>
- <3607733.4k8ofLVAdP@x2>
+ <20180524201105.3179904-4-stefanb@linux.vnet.ibm.com>
+ <CAHC9VhRjYhSgd_YCmgaOU_MEKuNKbHvPCVotmxyZRzSc2E6-Wg@mail.gmail.com>
 From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Date: Wed, 30 May 2018 15:54:16 -0400
+Date: Wed, 30 May 2018 15:46:49 -0400
 MIME-Version: 1.0
-In-Reply-To: <3607733.4k8ofLVAdP@x2>
+In-Reply-To: <CAHC9VhRjYhSgd_YCmgaOU_MEKuNKbHvPCVotmxyZRzSc2E6-Wg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Message-Id: <1160afb4-4184-b30c-5f67-c21536b5f7d3@linux.vnet.ibm.com>
+Message-Id: <38d49beb-a5dd-29de-3e4b-3dde67fdc28d@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 05/30/2018 12:27 PM, Steve Grubb wrote:
-> On Wednesday, May 30, 2018 11:25:05 AM EDT Stefan Berger wrote:
->> On 05/30/2018 11:15 AM, Steve Grubb wrote:
->>> On Wednesday, May 30, 2018 9:54:00 AM EDT Stefan Berger wrote:
->>>> On 05/29/2018 05:30 PM, Steve Grubb wrote:
->>>>> Hello,
->>>>>
->>>>> On Thursday, May 24, 2018 4:11:05 PM EDT Stefan Berger wrote:
->>>>>> The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
->>>>>> the IMA "audit" policy action.  This patch defines
->>>>>> AUDIT_INTEGRITY_POLICY_RULE to reflect the IMA policy rules.
->>>>>>
->>>>>> With this change we now call integrity_audit_msg_common() to get
->>>>>> common integrity auditing fields. This now produces the following
->>>>>> record when parsing an IMA policy rule:
->>>>>>
->>>>>> type=UNKNOWN[1806] msg=audit(1527004216.690:311): action=dont_measure
->>>>>> \
->>>>>>
->>>>>> fsmagic=0x9fa0 pid=1613 uid=0 auid=0 ses=2 \
->>>>>> subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
->>>>>> op=policy_update cause=parse_rule comm="echo" exe="/usr/bin/echo" \
->>>>>> tty=tty2 res=1
->>>>> Since this is a new event, do you mind moving the tty field to be
->>>>> between
->>>>> auid= and ses=  ?   That is the more natural place for it.
->>>> 6/8 refactors the code so that the integrity audit records produced by
->>>> IMA follow one format in terms of ordering of the fields, with fields
->>>> like inode optional, though, and AUDIT_INTEGRITY_RULE in the end being
->>>> the only one with a different format. Do we really want to change that
->>>> order just for 1806?
->>>>
->>>> 5/8 now produces the following:
->>>>
->>>> type=INTEGRITY_PCR msg=audit(1527685075.941:502): pid=2431 \
->>>> uid=0 auid=1000 ses=5 \
->>>> subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
->>>> op=invalid_pcr cause=open_writers comm="grep" \
->>>> name="/var/log/audit/audit.log" dev="dm-0" ino=1962494 \
->>>> exe="/usr/bin/grep" tty=pts0 res=1
->>>>
->>>> Comparing the two:
->>>>
->>>> 1806:          action, fsmagic, pid, uid, auid, ses, subj, op, cause,
->>>> comm,    exe, tty, res
->>>> INTEGRITY_PCR:                  pid, uid, auid, ses, subj, op, cause,
->>>> comm, name, dev, ino, exe, tty, res
->>> OK. I guess go with it as is. It passes testing.
->> What about the position of 'res' field relative to the two new fields
->> 'exe' and 'tty'?
-> res (results) is always the last field for every event. We have no events
-> where it is not the last field. I'd prefer to go with it as is. The events
-> pass my testing the way they are.
->
->> Do we want to keep them as shown or strictly append the
->> two new fields 'exe' and 'tty'?
-> I'd prefer the first option to keep things as expected.
->
->> Paul seems to request that they appear after 'res'.
-> I'd rather see them dropped, as useful as they could be, than to malform the
-> events.
+On 05/29/2018 05:07 PM, Paul Moore wrote:
+> On Thu, May 24, 2018 at 4:11 PM, Stefan Berger
+> <stefanb@linux.vnet.ibm.com> wrote:
+>>
+>> +void audit_log_tty(struct audit_buffer *ab, struct task_struct *tsk)
+>> +{
+>> +       struct tty_struct *tty = audit_get_tty(tsk);
+>> +
+>> +       audit_log_format(ab, " tty=%s", tty ? tty_name(tty) : "(none)");
+>> +       audit_put_tty(tty);
+>> +}
+> Perhaps I missed it, but your IMA patches only ever call this to log
+> current's tty, yes?  If so, I would prefer if we dropped the
+> task_struct argument and always had audit_log_tty() use current.
 
-Paul NACK'ed them since he wanted to have them added to the end. You 
-seem to say it's ok to add them before 'res'. Not sure whether to drop 
-them now since we are 'at it.'
+Done.
 
-    Stefan
+
+>
