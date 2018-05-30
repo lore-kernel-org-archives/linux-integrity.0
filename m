@@ -1,94 +1,73 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:42489 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753275AbeE3VQA (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:38130 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932065AbeE3VOd (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 30 May 2018 17:16:00 -0400
-Received: by mail-lf0-f67.google.com with SMTP id v135-v6so6479398lfa.9
-        for <linux-integrity@vger.kernel.org>; Wed, 30 May 2018 14:15:59 -0700 (PDT)
+        Wed, 30 May 2018 17:14:33 -0400
+Received: by mail-lf0-f66.google.com with SMTP id z142-v6so6467623lff.5
+        for <linux-integrity@vger.kernel.org>; Wed, 30 May 2018 14:14:33 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1527685480.3534.54.camel@linux.vnet.ibm.com>
+In-Reply-To: <0c9616fe-b404-eeed-1cba-c920c31694fd@linux.vnet.ibm.com>
 References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
  <20180524201105.3179904-6-stefanb@linux.vnet.ibm.com> <CAHC9VhQTFPwz5tpL133DQuXDbZR4P7zy4m3hb4nwm9OSf4RNgQ@mail.gmail.com>
- <4331521.GQBdaJNAj6@x2> <CAHC9VhRp82u4puDt82E0G4ax4tb9301U7XK6+0ZT1rrP-ZgaRw@mail.gmail.com>
- <1527634686.3534.27.camel@linux.vnet.ibm.com> <1527685480.3534.54.camel@linux.vnet.ibm.com>
+ <0c9616fe-b404-eeed-1cba-c920c31694fd@linux.vnet.ibm.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 30 May 2018 17:15:58 -0400
-Message-ID: <CAHC9VhRNoB+B46QkRSbc9CwRRdgTHw1sLQ+ccipvqk1PVUw70g@mail.gmail.com>
+Date: Wed, 30 May 2018 17:14:31 -0400
+Message-ID: <CAHC9VhQsRLPcXm7aesGw4XqWSQMH5znnURCrQHH1w5+tfDjYCA@mail.gmail.com>
 Subject: Re: [PATCH 5/8] integrity: Add exe= and tty= before res= to integrity audits
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Steve Grubb <sgrubb@redhat.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: zohar@linux.vnet.ibm.com, sgrubb@redhat.com,
         linux-integrity@vger.kernel.org, linux-audit@redhat.com,
         linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, May 30, 2018 at 9:04 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> On Tue, 2018-05-29 at 18:58 -0400, Mimi Zohar wrote:
->> On Tue, 2018-05-29 at 17:47 -0400, Paul Moore wrote:
->> > On Tue, May 29, 2018 at 5:35 PM, Steve Grubb <sgrubb@redhat.com> wrote:
->> > > On Tuesday, May 29, 2018 5:19:39 PM EDT Paul Moore wrote:
->> > >> On Thu, May 24, 2018 at 4:11 PM, Stefan Berger
->> > >>
->> > >> <stefanb@linux.vnet.ibm.com> wrote:
->> > >> > Use the new public audit functions to add the exe= and tty=
->> > >> > parts to the integrity audit records. We place them before
->> > >> > res=.
->> > >> >
->> > >> > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
->> > >> > Suggested-by: Steve Grubb <sgrubb@redhat.com>
->> > >> > ---
->> > >> >
->> > >> >  security/integrity/integrity_audit.c | 2 ++
->> > >> >  1 file changed, 2 insertions(+)
->> > >> >
->> > >> > diff --git a/security/integrity/integrity_audit.c
->> > >> > b/security/integrity/integrity_audit.c index db30763d5525..8d25d3c4dcca
->> > >> > 100644
->> > >> > --- a/security/integrity/integrity_audit.c
->> > >> > +++ b/security/integrity/integrity_audit.c
->> > >> > @@ -56,6 +56,8 @@ void integrity_audit_msg(int audit_msgno, struct inode
->> > >> > *inode,>
->> > >> >                 audit_log_untrustedstring(ab, inode->i_sb->s_id);
->> > >> >                 audit_log_format(ab, " ino=%lu", inode->i_ino);
->> > >> >
->> > >> >         }
->> > >> >
->> > >> > +       audit_log_d_path_exe(ab, current->mm);
->> > >> > +       audit_log_tty(ab, current);
->> > >>
->> > >> NACK
->> > >>
->> > >> Please add the new fields to the end of the audit record, thank you.
->> > >
->> > > Let's see what an example event looks like before NACK'ing this. Way back in
->> > > 2013 the IMA events were good. I think this is repairing the event after some
->> > > drift.
->> >
->> > Can you reference a specific commit, or point in time during 2013?
->> > Looking at the git log quickly, if I go back to commit d726d8d719b6
->> > ("integrity: move integrity_audit_msg()") from March 18, 2013 (the
->> > commit that created integrity_audit.c) the field ordering appears to
->> > be the same as it today.
->> >
->> > My NACK still stands.
+On Wed, May 30, 2018 at 8:17 AM, Stefan Berger
+<stefanb@linux.vnet.ibm.com> wrote:
+> On 05/29/2018 05:19 PM, Paul Moore wrote:
 >>
->> There hasn't been any changes up to now.  This patch set refactors
->> integrity_audit_msg(), creating integrity_audit_msg_common(), which
->> will be called from both ima_audit_measurement() and
->> ima_parse_rule().
+>> On Thu, May 24, 2018 at 4:11 PM, Stefan Berger
+>> <stefanb@linux.vnet.ibm.com> wrote:
+>>>
+>>> Use the new public audit functions to add the exe= and tty=
+>>> parts to the integrity audit records. We place them before
+>>> res=.
+>>>
+>>> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+>>> Suggested-by: Steve Grubb <sgrubb@redhat.com>
+>>> ---
+>>>   security/integrity/integrity_audit.c | 2 ++
+>>>   1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/security/integrity/integrity_audit.c
+>>> b/security/integrity/integrity_audit.c
+>>> index db30763d5525..8d25d3c4dcca 100644
+>>> --- a/security/integrity/integrity_audit.c
+>>> +++ b/security/integrity/integrity_audit.c
+>>> @@ -56,6 +56,8 @@ void integrity_audit_msg(int audit_msgno, struct inode
+>>> *inode,
+>>>                  audit_log_untrustedstring(ab, inode->i_sb->s_id);
+>>>                  audit_log_format(ab, " ino=%lu", inode->i_ino);
+>>>          }
+>>> +       audit_log_d_path_exe(ab, current->mm);
+>>> +       audit_log_tty(ab, current);
+>>
+>> NACK
+>>
+>> Please add the new fields to the end of the audit record, thank you.
 >
-> That should have been "from integrity_audit_msg() and
-> ima_parse_rule()", not ima_audit_measurement().
+> I put it there since Steve said '"res" is traditionally the last field in
+> any event' (https://lkml.org/lkml/2018/5/22/539). I don't mind breaking with
+> this tradition...
 
-No worries, the important part is that the record format really hasn't
-changed from 2013 as far as I can tell.
+Unfortunately Steve and I don't see eye-to-eye on everything, and this
+is perhaps one of the more prominent issues.
 
->> Previously the audit record generated by ima_parse_rule() did not
->> include this info.  The change in this patch will affect both the
->> existing and the new INTEGRITY_AUDIT_POLICY_RULE audit records.
+I'll save you several years of arguments, on and off-list, and simply
+say that the "safe" option, and the only option I'm likely to ACK,
+would be to add new fields at the end of existing records.  We have
+made exceptions in the past, but those were pretty extreme cases.
 
 -- 
 paul moore
