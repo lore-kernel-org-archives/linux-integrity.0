@@ -1,113 +1,98 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34758 "EHLO
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33338 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752121AbeE3NIy (ORCPT
+        by vger.kernel.org with ESMTP id S1753169AbeE3NFA (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 30 May 2018 09:08:54 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4UD7RLe102033
-        for <linux-integrity@vger.kernel.org>; Wed, 30 May 2018 09:08:53 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2j9vdb0p69-1
+        Wed, 30 May 2018 09:05:00 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4UCuNiS083054
+        for <linux-integrity@vger.kernel.org>; Wed, 30 May 2018 09:05:00 -0400
+Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2j9vdarex4-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 30 May 2018 09:08:53 -0400
+        for <linux-integrity@vger.kernel.org>; Wed, 30 May 2018 09:04:59 -0400
 Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Wed, 30 May 2018 09:08:51 -0400
-Subject: Re: [PATCH 8/8] ima: Differentiate auditing policy rules from "audit"
- actions
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: zohar@linux.vnet.ibm.com, sgrubb@redhat.com,
-        linux-integrity@vger.kernel.org, linux-audit@redhat.com,
+        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Wed, 30 May 2018 14:04:56 +0100
+Subject: Re: [PATCH 5/8] integrity: Add exe= and tty= before res= to
+ integrity audits
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Paul Moore <paul@paul-moore.com>, Steve Grubb <sgrubb@redhat.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org, linux-audit@redhat.com,
         linux-kernel@vger.kernel.org
+Date: Wed, 30 May 2018 09:04:40 -0400
+In-Reply-To: <1527634686.3534.27.camel@linux.vnet.ibm.com>
 References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
- <20180524201105.3179904-9-stefanb@linux.vnet.ibm.com>
- <20180530124920.g5agxm75x4i6pw6n@madcap2.tricolour.ca>
-From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Date: Wed, 30 May 2018 09:08:47 -0400
-MIME-Version: 1.0
-In-Reply-To: <20180530124920.g5agxm75x4i6pw6n@madcap2.tricolour.ca>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Message-Id: <35894dae-c9c6-aa65-da99-c0283d459878@linux.vnet.ibm.com>
+         <20180524201105.3179904-6-stefanb@linux.vnet.ibm.com>
+         <CAHC9VhQTFPwz5tpL133DQuXDbZR4P7zy4m3hb4nwm9OSf4RNgQ@mail.gmail.com>
+         <4331521.GQBdaJNAj6@x2>
+         <CAHC9VhRp82u4puDt82E0G4ax4tb9301U7XK6+0ZT1rrP-ZgaRw@mail.gmail.com>
+         <1527634686.3534.27.camel@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1527685480.3534.54.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 05/30/2018 08:49 AM, Richard Guy Briggs wrote:
-> On 2018-05-24 16:11, Stefan Berger wrote:
->> The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
->> the IMA "audit" policy action.  This patch defines
->> AUDIT_INTEGRITY_POLICY_RULE to reflect the IMA policy rules.
->>
->> With this change we now call integrity_audit_msg_common() to get
->> common integrity auditing fields. This now produces the following
->> record when parsing an IMA policy rule:
->>
->> type=UNKNOWN[1806] msg=audit(1527004216.690:311): action=dont_measure \
->>    fsmagic=0x9fa0 pid=1613 uid=0 auid=0 ses=2 \
->>    subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
->>    op=policy_update cause=parse_rule comm="echo" exe="/usr/bin/echo" \
->>    tty=tty2 res=1
->>
->> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
->> ---
->>   include/uapi/linux/audit.h          | 3 ++-
->>   security/integrity/ima/ima_policy.c | 5 +++--
->>   2 files changed, 5 insertions(+), 3 deletions(-)
->>
->> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
->> index 4e61a9e05132..776e0abd35cf 100644
->> --- a/include/uapi/linux/audit.h
->> +++ b/include/uapi/linux/audit.h
->> @@ -146,7 +146,8 @@
->>   #define AUDIT_INTEGRITY_STATUS	    1802 /* Integrity enable status */
->>   #define AUDIT_INTEGRITY_HASH	    1803 /* Integrity HASH type */
->>   #define AUDIT_INTEGRITY_PCR	    1804 /* PCR invalidation msgs */
->> -#define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
->> +#define AUDIT_INTEGRITY_RULE	    1805 /* IMA "audit" action policy msgs  */
->> +#define AUDIT_INTEGRITY_POLICY_RULE 1806 /* IMA policy rules */
->>   
->>   #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A REQUEST. */
->>   
->> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
->> index 3aed25a7178a..a8ae47a386b4 100644
->> --- a/security/integrity/ima/ima_policy.c
->> +++ b/security/integrity/ima/ima_policy.c
->> @@ -634,7 +634,7 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->>   	int result = 0;
->>   
->>   	ab = integrity_audit_log_start(NULL, GFP_KERNEL,
->> -				       AUDIT_INTEGRITY_RULE);
->> +				       AUDIT_INTEGRITY_POLICY_RULE);
-> Is it possible to connect this record to a syscall by replacing the
-> first parameter (NULL) by current->context?
+On Tue, 2018-05-29 at 18:58 -0400, Mimi Zohar wrote:
+> On Tue, 2018-05-29 at 17:47 -0400, Paul Moore wrote:
+> > On Tue, May 29, 2018 at 5:35 PM, Steve Grubb <sgrubb@redhat.com> wrote:
+> > > On Tuesday, May 29, 2018 5:19:39 PM EDT Paul Moore wrote:
+> > >> On Thu, May 24, 2018 at 4:11 PM, Stefan Berger
+> > >>
+> > >> <stefanb@linux.vnet.ibm.com> wrote:
+> > >> > Use the new public audit functions to add the exe= and tty=
+> > >> > parts to the integrity audit records. We place them before
+> > >> > res=.
+> > >> >
+> > >> > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> > >> > Suggested-by: Steve Grubb <sgrubb@redhat.com>
+> > >> > ---
+> > >> >
+> > >> >  security/integrity/integrity_audit.c | 2 ++
+> > >> >  1 file changed, 2 insertions(+)
+> > >> >
+> > >> > diff --git a/security/integrity/integrity_audit.c
+> > >> > b/security/integrity/integrity_audit.c index db30763d5525..8d25d3c4dcca
+> > >> > 100644
+> > >> > --- a/security/integrity/integrity_audit.c
+> > >> > +++ b/security/integrity/integrity_audit.c
+> > >> > @@ -56,6 +56,8 @@ void integrity_audit_msg(int audit_msgno, struct inode
+> > >> > *inode,>
+> > >> >                 audit_log_untrustedstring(ab, inode->i_sb->s_id);
+> > >> >                 audit_log_format(ab, " ino=%lu", inode->i_ino);
+> > >> >
+> > >> >         }
+> > >> >
+> > >> > +       audit_log_d_path_exe(ab, current->mm);
+> > >> > +       audit_log_tty(ab, current);
+> > >>
+> > >> NACK
+> > >>
+> > >> Please add the new fields to the end of the audit record, thank you.
+> > >
+> > > Let's see what an example event looks like before NACK'ing this. Way back in
+> > > 2013 the IMA events were good. I think this is repairing the event after some
+> > > drift.
+> > 
+> > Can you reference a specific commit, or point in time during 2013?
+> > Looking at the git log quickly, if I go back to commit d726d8d719b6
+> > ("integrity: move integrity_audit_msg()") from March 18, 2013 (the
+> > commit that created integrity_audit.c) the field ordering appears to
+> > be the same as it today.
+> > 
+> > My NACK still stands.
+> 
+> There hasn't been any changes up to now.  This patch set refactors
+> integrity_audit_msg(), creating integrity_audit_msg_common(), which
+> will be called from both ima_audit_measurement() and
+> ima_parse_rule().
 
-We would have to fix current->context in this case since it is NULL. We 
-get to this location by root cat'ing a policy or writing a policy 
-filename into /sys/kernel/security/ima/policy.
+That should have been "from integrity_audit_msg() and
+ima_parse_rule()", not ima_audit_measurement().
 
-
-
-
->
->>   	entry->uid = INVALID_UID;
->>   	entry->fowner = INVALID_UID;
->> @@ -926,7 +926,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->>   		temp_ima_appraise |= IMA_APPRAISE_FIRMWARE;
->>   	else if (entry->func == POLICY_CHECK)
->>   		temp_ima_appraise |= IMA_APPRAISE_POLICY;
->> -	audit_log_format(ab, "res=%d", !result);
->> +	integrity_audit_msg_common(ab, NULL, NULL,
->> +				   "policy_update", "parse_rule", result);
->>   	audit_log_end(ab);
->>   	return result;
->>   }
-> - RGB
->
-> --
-> Richard Guy Briggs <rgb@redhat.com>
-> Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> Remote, Ottawa, Red Hat Canada
-> IRC: rgb, SunRaycer
-> Voice: +1.647.777.2635, Internal: (81) 32635
->
+> Previously the audit record generated by ima_parse_rule() did not
+> include this info.  The change in this patch will affect both the
+> existing and the new INTEGRITY_AUDIT_POLICY_RULE audit records.
