@@ -1,53 +1,36 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42678 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932185AbeE3Tq4 (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:51170 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753556AbeE3S36 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 30 May 2018 15:46:56 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4UJhhS8062013
-        for <linux-integrity@vger.kernel.org>; Wed, 30 May 2018 15:46:56 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ja0ddxb6v-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 30 May 2018 15:46:53 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Wed, 30 May 2018 15:46:52 -0400
-Subject: Re: [PATCH 3/8] audit: Implement audit_log_tty()
-To: Paul Moore <paul@paul-moore.com>
-Cc: zohar@linux.vnet.ibm.com, sgrubb@redhat.com,
-        linux-integrity@vger.kernel.org, linux-audit@redhat.com,
-        linux-kernel@vger.kernel.org
-References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
- <20180524201105.3179904-4-stefanb@linux.vnet.ibm.com>
- <CAHC9VhRjYhSgd_YCmgaOU_MEKuNKbHvPCVotmxyZRzSc2E6-Wg@mail.gmail.com>
-From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Date: Wed, 30 May 2018 15:46:49 -0400
+        Wed, 30 May 2018 14:29:58 -0400
+Received: by mail-it0-f66.google.com with SMTP id p3-v6so24387759itc.0
+        for <linux-integrity@vger.kernel.org>; Wed, 30 May 2018 11:29:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhRjYhSgd_YCmgaOU_MEKuNKbHvPCVotmxyZRzSc2E6-Wg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Message-Id: <38d49beb-a5dd-29de-3e4b-3dde67fdc28d@linux.vnet.ibm.com>
+References: <1526508736.3306.6.camel@linux.vnet.ibm.com> <20180517220938.102953-1-mjg59@google.com>
+ <1526659412.3404.32.camel@linux.vnet.ibm.com> <CACdnJuvd8Y9N1Bds474BXiikc5R8c41gaHGpJEUO2z_vkXG-XQ@mail.gmail.com>
+ <15252CF8C1B4384C8CE16D7D55C66479011414E7BF@BC-MAIL-M04.internal.baidu.com>
+In-Reply-To: <15252CF8C1B4384C8CE16D7D55C66479011414E7BF@BC-MAIL-M04.internal.baidu.com>
+From: Matthew Garrett <mjg59@google.com>
+Date: Wed, 30 May 2018 11:29:45 -0700
+Message-ID: <CACdnJus+5Xog03Z1VYdw_8dx64Wg2zzh1b2bL-FDt0O9+p_eGQ@mail.gmail.com>
+Subject: Re: [PATCH V4] evm: Allow non-SHA1 digital signatures
+To: wangjunwen@baidu.com
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 05/29/2018 05:07 PM, Paul Moore wrote:
-> On Thu, May 24, 2018 at 4:11 PM, Stefan Berger
-> <stefanb@linux.vnet.ibm.com> wrote:
->>
->> +void audit_log_tty(struct audit_buffer *ab, struct task_struct *tsk)
->> +{
->> +       struct tty_struct *tty = audit_get_tty(tsk);
->> +
->> +       audit_log_format(ab, " tty=%s", tty ? tty_name(tty) : "(none)");
->> +       audit_put_tty(tty);
->> +}
-> Perhaps I missed it, but your IMA patches only ever call this to log
-> current's tty, yes?  If so, I would prefer if we dropped the
-> task_struct argument and always had audit_log_tty() use current.
+On Tue, May 29, 2018 at 11:25 PM Wang,Junwen <wangjunwen@baidu.com> wrote:
+> if we need fix this problem
+> 1. load the hash algorithm at initial time instead of runtime
+> OR
+> 2. avoid the crypto_alloc_shash try to load modules in init_desc
 
-Done.
-
-
->
+The outcome here is presumably going to be failure regardless - if
+appraisal is required and the hash module is unavailable, failing to load
+the module won't result in deadlock but will result in an unusable machine?
+I think the only way this can work is to ensure the crypto modules are
+available before a policy is enabled, but let me look to see if there's a
+way to at least make the failure clean and more debuggable.
