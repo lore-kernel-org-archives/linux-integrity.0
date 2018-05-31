@@ -1,104 +1,141 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from userp2120.oracle.com ([156.151.31.85]:42564 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755729AbeEaRJj (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41734 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755417AbeEaPr5 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 31 May 2018 13:09:39 -0400
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: Enabling EVM on NFS mounts
-From: Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <729C6BCE-D60D-4687-8DD0-52E1EF35E535@oracle.com>
-Date: Thu, 31 May 2018 13:09:35 -0400
-Cc: Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Message-Id: <B2F3310F-541B-4A07-9142-C66424DD5EAF@oracle.com>
-References: <729C6BCE-D60D-4687-8DD0-52E1EF35E535@oracle.com>
-To: linux-integrity@vger.kernel.org
+        Thu, 31 May 2018 11:47:57 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w4VFiF0d126669
+        for <linux-integrity@vger.kernel.org>; Thu, 31 May 2018 11:47:56 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jahmjq6ef-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 31 May 2018 11:47:55 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Thu, 31 May 2018 16:47:54 +0100
+Subject: Re: [PATCH V6] EVM: Allow runtime modification of the set of
+ verified xattrs
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Matthew Garrett <mjg59@google.com>, linux-integrity@vger.kernel.org
+Cc: Steve Grubb <sgrubb@redhat.com>, Paul Moore <paul@paul-moore.com>
+Date: Thu, 31 May 2018 11:47:38 -0400
+In-Reply-To: <20180515173826.21114-1-mjg59@google.com>
+References: <20180515173826.21114-1-mjg59@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1527781658.3427.25.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
+Hi Matthew,
 
-> On May 21, 2018, at 6:28 PM, Chuck Lever <chuck.lever@oracle.com> wrote:
-> 
-> I'm in the middle of rewriting
-> 
-> https://datatracker.ietf.org/doc/draft-cel-nfsv4-linux-seclabel-xtensions/
-> 
-> which was recently rejected by the nfsv4 Working Group for
-> plausible and fixable reasons. They like the idea, but my
-> proposal for using NFSv4 security labels is not workable
-> even as an experiment.
-> 
-> As I compose a fresh Internet-Draft I'm trying to understand
-> what an EVM HMAC covers, and I found this:
-> 
-> http://linux-ima.sourceforge.net/evmctl.1.html
-> 
->> EVM protects file metadata by including following attributes into HMAC and signature calculation: inode number, inode generation, UID, GID, file mode, security.selinux, security.SMACK64, security.ima, security.capability.
-> 
->> EVM HMAC and signature may also include additional file and file system attributes. Currently supported additional attributes are filesystem UUID and extra SMACK extended attributes.
-> 
-> 
-> The computation of the IMA HMAC is straightforward, but it
-> appears that the EVM HMAC is evolving, and not all of the
-> input items would necessarily be visible to remote EVM
-> consumers.
-> 
-> Is there any way an NFS client would be able to tell exactly
-> what attributes were used to compute an EVM hash, and what
-> should it do if the whole input set is not available for
-> verification?
-> 
-> Amongst the security. xattrs, I believe only security.selinux
-> is currently exposed via NFS. Thus an NFS client EVM would
-> see only that particular xattr and not others by which it can
-> compute or verify the EVM hash.
-> 
-> Does the inclusion here of "security.capability" mean that NFS
-> support for EVM and for file capabilities are inseparable? Is
-> the content of security.capability in a binary or human-readable
-> format?
-> 
-> Filesystem attributes such as a UUID, type, or disk label might
-> not be visible to NFS clients.
-> 
-> Would there be any reason to protect ACLs with the EVM hash?
+On Tue, 2018-05-15 at 10:38 -0700, Matthew Garrett wrote:
 
-I've submitted a replacement document for 
+Based on the "IMA: work on audit records produced by IMA" discussion,
+should this new audit record be adding the task info by calling
+"audit_log_task_info(ab, current);" too?
 
-https://datatracker.ietf.org/doc/draft-cel-nfsv4-linux-seclabel-xtensions/
+Could you provide Steve with an example of the audit rule?
 
-Please see:
+thanks!
 
-https://datatracker.ietf.org/doc/draft-ietf-nfsv4-integrity-measurement/
+Mimi
 
-The following changes have been made since linux-seclabel-xtensions:
+[...]
 
-- The original personal draft has been promoted to a Working Group
-document. There were no objections from members of the WG to
-taking this work. The WG will meet at IETF 102 in July and I
-intend to discuss this work with them at that time.
-
-- Support for Linux file capabilities has been removed. I plan to
-submit a separate Internet-Draft that specifies capabilities
-support, once nfsv4-integrity-measurement is under way.
-
-- The use of NFSv4 Security Labels has been replaced with new
-OPTIONAL fattr4 attributes. The document includes an XDR definition
-of the new attributes. The document is now organized like RFC 8275.
-
-- To address the issues I raised earlier in this thread, support has
-been added for EVM HMAC hashes covering optional extended attributes.
-The server advertises a per-filesystem list of which optional
-attributes are included in EVM HMAC hashes.
-
-- The discussion is more sensitive to servers that support storing
-hashes but do not permit native access to them (ie., non-Linux
-NFSv4.2 server implementations).
-
-- The Security Considerations section has been expanded.
-
-
---
-Chuck Lever
+> +/**
+> + * evm_write_xattrs - write() for <securityfs>/evm_xattrs
+> + * @file: file pointer, not actually used
+> + * @buf: where to get the data from
+> + * @count: bytes sent
+> + * @ppos: where to start
+> + *
+> + * Returns number of bytes written or error code, as appropriate
+> + */
+> +static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
+> +				size_t count, loff_t *ppos)
+> +{
+> +	int len, err;
+> +	struct xattr_list *xattr, *tmp;
+> +	struct audit_buffer *ab;
+> +	struct iattr newattrs;
+> +	struct inode *inode;
+> +
+> +	if (!capable(CAP_SYS_ADMIN) || evm_xattrs_locked)
+> +		return -EPERM;
+> +
+> +	if (*ppos != 0)
+> +		return -EINVAL;
+> +
+> +	if (count > XATTR_NAME_MAX)
+> +		return -E2BIG;
+> +
+> +	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_EVM_XATTR);
+> +	if (IS_ERR(ab))
+> +		return PTR_ERR(ab);
+> +
+> +	xattr = kmalloc(sizeof(struct xattr_list), GFP_KERNEL);
+> +	if (!xattr) {
+> +		err = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	xattr->name = memdup_user_nul(buf, count);
+> +	if (IS_ERR(xattr->name)) {
+> +		err = PTR_ERR(xattr->name);
+> +		xattr->name = NULL;
+> +		goto out;
+> +	}
+> +
+> +	/* Remove any trailing newline */
+> +	len = strlen(xattr->name);
+> +	if (xattr->name[len-1] == '\n')
+> +		xattr->name[len-1] = '\0';
+> +
+> +	if (strcmp(xattr->name, ".") == 0) {
+> +		evm_xattrs_locked = 1;
+> +		newattrs.ia_mode = S_IFREG | 0440;
+> +		newattrs.ia_valid = ATTR_MODE;
+> +		inode = evm_xattrs->d_inode;
+> +		inode_lock(inode);
+> +		err = simple_setattr(evm_xattrs, &newattrs);
+> +		inode_unlock(inode);
+> +		audit_log_format(ab, "locked");
+> +		if (!err)
+> +			err = count;
+> +		goto out;
+> +	}
+> +
+> +	audit_log_format(ab, "xattr=");
+> +	audit_log_untrustedstring(ab, xattr->name);
+> +
+> +	if (strncmp(xattr->name, XATTR_SECURITY_PREFIX,
+> +		    XATTR_SECURITY_PREFIX_LEN) != 0) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	/* Guard against races in evm_read_xattrs */
+> +	mutex_lock(&xattr_list_mutex);
+> +	list_for_each_entry(tmp, &evm_config_xattrnames, list) {
+> +		if (strcmp(xattr->name, tmp->name) == 0) {
+> +			err = -EEXIST;
+> +			mutex_unlock(&xattr_list_mutex);
+> +			goto out;
+> +		}
+> +	}
+> +	list_add_tail_rcu(&xattr->list, &evm_config_xattrnames);
+> +	mutex_unlock(&xattr_list_mutex);
+> +
+> +	audit_log_format(ab, " res=0");
+> +	audit_log_end(ab);
+> +	return count;
+> +out:
+> +	audit_log_format(ab, " res=%d", err);
+> +	audit_log_end(ab);
+> +	kfree(xattr->name);
+> +	kfree(xattr);
+> +	return err;
+> +}
