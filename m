@@ -1,39 +1,33 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from orcrist.hmeau.com ([104.223.48.154]:59072 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751381AbeFBPy1 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 2 Jun 2018 11:54:27 -0400
-Date: Sat, 2 Jun 2018 23:54:18 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Matthew Garrett <mjg59@google.com>
-Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        linux-crypto@vger.kernel.org, davem@davemloft.net
-Subject: Re: [PATCH 1/2] evm: Don't deadlock if a crypto algorithm is
- unavailable
-Message-ID: <20180602155418.nsumhiicugt26747@gondor.apana.org.au>
-References: <20180601230244.138560-1-mjg59@google.com>
+Received: from mga02.intel.com ([134.134.136.20]:48594 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750740AbeFBMcy (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 2 Jun 2018 08:32:54 -0400
+Date: Sat, 2 Jun 2018 15:32:49 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: James Morris <jmorris@namei.org>
+Cc: Tadeusz Struk <tadeusz.struk@intel.com>, jgg@ziepe.ca,
+        linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v2] tpm: fix race condition in tpm_common_write()
+Message-ID: <20180602123249.GA2939@linux.intel.com>
+References: <152702503883.25871.17829919385428251068.stgit@tstruk-mobl1.jf.intel.com>
+ <20180523135003.GG363@linux.intel.com>
+ <20180530171315.GA23184@linux.intel.com>
+ <20180530205438.GA27912@linux.intel.com>
+ <alpine.LRH.2.21.1805310954060.15212@namei.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180601230244.138560-1-mjg59@google.com>
+In-Reply-To: <alpine.LRH.2.21.1805310954060.15212@namei.org>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Jun 01, 2018 at 04:02:43PM -0700, Matthew Garrett wrote:
-> Trying to instantiate a non-existent crypto algorithm will cause the
-> kernel to trigger a module load. If EVM appraisal is enabled, this will
-> in turn trigger appraisal of the module, which will fail because the
-> crypto algorithm isn't available. Add a CRYPTO_NOLOAD flag and skip
-> module loading if it's set, and add that flag in the EVM case.
+On Thu, May 31, 2018 at 09:55:00AM +1000, James Morris wrote:
+> On Wed, 30 May 2018, Jarkko Sakkinen wrote:
 > 
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
+> > Should I make a follow up PR for 4.18 with only this fix included?
+> 
+> What about for current -rc?
 
-I don't get it.  Without your patch it will fail because the
-EVM appraisal fails.  With your patch it will fail because there
-is no algorithm registered.  So what's the difference?
+I think so. I will do it.
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+/Jarkko
