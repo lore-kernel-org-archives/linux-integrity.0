@@ -1,78 +1,35 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from h2.hallyn.com ([78.46.35.8]:56624 "EHLO mail.hallyn.com"
+Received: from mga17.intel.com ([192.55.52.151]:64606 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751093AbeFDUAM (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 4 Jun 2018 16:00:12 -0400
-Date: Mon, 4 Jun 2018 15:00:11 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v4 2/8] kexec: add call to LSM hook in original
- kexec_load syscall
-Message-ID: <20180604200011.GC14454@mail.hallyn.com>
-References: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
- <1527616920-5415-3-git-send-email-zohar@linux.vnet.ibm.com>
+        id S1750915AbeFDTz5 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 4 Jun 2018 15:55:57 -0400
+Date: Mon, 4 Jun 2018 22:55:54 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Tadeusz Struk <tadeusz.struk@intel.com>
+Cc: jgg@ziepe.ca, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH] tpm: add support for nonblocking operation
+Message-ID: <20180604195554.GD2691@linux.intel.com>
+References: <152780934926.32219.7291994735609525171.stgit@tstruk-mobl1.jf.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1527616920-5415-3-git-send-email-zohar@linux.vnet.ibm.com>
+In-Reply-To: <152780934926.32219.7291994735609525171.stgit@tstruk-mobl1.jf.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Quoting Mimi Zohar (zohar@linux.vnet.ibm.com):
-> In order for LSMs and IMA-appraisal to differentiate between kexec_load
-> and kexec_file_load syscalls, both the original and new syscalls must
-> call an LSM hook.  This patch adds a call to security_kernel_load_data()
-> in the original kexec_load syscall.
-> 
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Eric Biederman <ebiederm@xmission.com>
+On Thu, May 31, 2018 at 04:29:09PM -0700, Tadeusz Struk wrote:
+> The TCG SAPI specification [1] defines a set of functions, which allows
+> applications to use the TPM device in either blocking or non-blocking fashion.
+> Each command defined by the specification has a corresponding
+> Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
+> together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
+> mode of operation. Currently the driver supports only blocking calls, which
+> doesn't allow asynchronous operation. This patch changes it and adds support
+> for nonblocking write and a new poll function to enable applications using
+> the API as designed by the spec.
+> The new functionality can be tested using standard TPM tools implemented
+> in [2], with modified TCTI from [3].
 
-Acked-by: Serge Hallyn <serge@hallyn.com>
+I would need some statistics before I have interest to take these
+changes in any form eg use case where this matters in the end.
 
-> Cc: Luis R. Rodriguez <mcgrof@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: David Howells <dhowells@redhat.com>
-> ---
->  kernel/kexec.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/kernel/kexec.c b/kernel/kexec.c
-> index aed8fb2564b3..68559808fdfa 100644
-> --- a/kernel/kexec.c
-> +++ b/kernel/kexec.c
-> @@ -11,6 +11,7 @@
->  #include <linux/capability.h>
->  #include <linux/mm.h>
->  #include <linux/file.h>
-> +#include <linux/security.h>
->  #include <linux/kexec.h>
->  #include <linux/mutex.h>
->  #include <linux/list.h>
-> @@ -195,10 +196,17 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
->  static inline int kexec_load_check(unsigned long nr_segments,
->  				   unsigned long flags)
->  {
-> +	int result;
-> +
->  	/* We only trust the superuser with rebooting the system. */
->  	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
->  		return -EPERM;
->  
-> +	/* Permit LSMs and IMA to fail the kexec */
-> +	result = security_kernel_load_data(LOADING_KEXEC_IMAGE);
-> +	if (result < 0)
-> +		return result;
-> +
->  	/*
->  	 * Verify we have a legal set of flags
->  	 * This leaves us room for future extensions.
-> -- 
-> 2.7.5
+/Jarkko
