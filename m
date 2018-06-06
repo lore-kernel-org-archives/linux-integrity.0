@@ -1,194 +1,277 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:39563 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752618AbeFFWGI (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 6 Jun 2018 18:06:08 -0400
-Date: Thu, 7 Jun 2018 00:06:05 +0200
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Kees Cook <keescook@chromium.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kexec Mailing List <kexec@lists.infradead.org>,
-        Andres Rodriguez <andresx7@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Rik van Riel <riel@redhat.com>
-Subject: Re: [RFC PATCH v4 7/8] ima: based on policy prevent loading firmware
- (pre-allocated buffer)
-Message-ID: <20180606220605.GJ4511@wotan.suse.de>
-References: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
- <1527616920-5415-8-git-send-email-zohar@linux.vnet.ibm.com>
- <20180601191545.GP4511@wotan.suse.de>
- <20180601192545.GR4511@wotan.suse.de>
- <CAGXu5jKkg_=iHGgrED4qB4TCFJaWgLkLp61RHgJ6UEhAj89GwQ@mail.gmail.com>
- <CAKv+Gu9=8s2b-W6a4hHwxhJfFPGuBm5kwsxE_hx98fDUfMUkvQ@mail.gmail.com>
+Received: from mail-io0-f202.google.com ([209.85.223.202]:52640 "EHLO
+        mail-io0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752360AbeFFV5W (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 6 Jun 2018 17:57:22 -0400
+Received: by mail-io0-f202.google.com with SMTP id n21-v6so5868878iob.19
+        for <linux-integrity@vger.kernel.org>; Wed, 06 Jun 2018 14:57:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAKv+Gu9=8s2b-W6a4hHwxhJfFPGuBm5kwsxE_hx98fDUfMUkvQ@mail.gmail.com>
+Date: Wed,  6 Jun 2018 14:57:12 -0700
+In-Reply-To: <20180606215712.121747-1-mjg59@google.com>
+Message-Id: <20180606215712.121747-2-mjg59@google.com>
+References: <20180606215712.121747-1-mjg59@google.com>
+Subject: [PATCH V2 2/2] evm: Allow non-SHA1 digital signatures
+From: Matthew Garrett <mjg59@google.com>
+To: linux-integrity@vger.kernel.org
+Cc: zohar@linux.vnet.ibm.com, linux-crypto@vger.kernel.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        Matthew Garrett <mjg59@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Jun 06, 2018 at 08:20:17AM +0200, Ard Biesheuvel wrote:
-> On 6 June 2018 at 00:37, Kees Cook <keescook@chromium.org> wrote:
-> > On Fri, Jun 1, 2018 at 12:25 PM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
-> >> On Fri, Jun 01, 2018 at 09:15:45PM +0200, Luis R. Rodriguez wrote:
-> >>> On Tue, May 29, 2018 at 02:01:59PM -0400, Mimi Zohar wrote:
-> >>> > Some systems are memory constrained but they need to load very large
-> >>> > firmwares.  The firmware subsystem allows drivers to request this
-> >>> > firmware be loaded from the filesystem, but this requires that the
-> >>> > entire firmware be loaded into kernel memory first before it's provided
-> >>> > to the driver.  This can lead to a situation where we map the firmware
-> >>> > twice, once to load the firmware into kernel memory and once to copy the
-> >>> > firmware into the final resting place.
-> >>> >
-> >>> > To resolve this problem, commit a098ecd2fa7d ("firmware: support loading
-> >>> > into a pre-allocated buffer") introduced request_firmware_into_buf() API
-> >>> > that allows drivers to request firmware be loaded directly into a
-> >>> > pre-allocated buffer.  The QCOM_MDT_LOADER calls dma_alloc_coherent() to
-> >>> > allocate this buffer.  According to Documentation/DMA-API.txt,
-> >>> >
-> >>> >      Consistent memory is memory for which a write by either the
-> >>> >      device or the processor can immediately be read by the processor
-> >>> >      or device without having to worry about caching effects.  (You
-> >>> >      may however need to make sure to flush the processor's write
-> >>> >      buffers before telling devices to read that memory.)
-> >>> >
-> >>> > Devices using pre-allocated DMA memory run the risk of the firmware
-> >>> > being accessible by the device prior to the kernel's firmware signature
-> >>> > verification has completed.
-> >>>
-> >>> Indeed. And since its DMA memory we have *no idea* what can happen in
-> >>> terms of consumption of this firmware from hardware, when it would start
-> >>> consuming it in particular.
-> >>>
-> >>> If the device has its own hardware firmware verification mechanism this is
-> >>> completely obscure to us, but it may however suffice certain security policies.
-> >>>
-> >>> The problem here lies in the conflicting security policies of the kernel wanting
-> >>> to not give away firmware until its complete and the current inability to enable
-> >>> us to have platforms suggest they trust hardware won't do something stupid.
-> >>> This becomes an issue since the semantics of the firmware API preallocated
-> >>> buffer do not require currently allow the kernel to inform LSMs of the fact
-> >>> that a buffer is DMA memory or not, and a way for certain platforms then
-> >>> to say that such use is fine for specific devices.
-> >>>
-> >>> Given a pointer can we determine if a piece of memory is DMA or not?
-> >>
-> >> FWIW
-> >>
-> >> Vlastimil suggests page_zone() or virt_to_page() may be able to.
-> >
-> > I don't see a PAGEFLAG for DMA, but I do see ZONE_DMA for
-> > page_zone()... So maybe something like
-> >
-> > struct page *page;
-> >
-> > page = virt_to_page(address);
-> > if (!page)
-> >    fail closed...
-> > if (page_zone(page) == ZONE_DMA)
-> >     handle dma case...
-> > else
-> >     non-dma
-> >
-> > But I've CCed Laura and Rik, who I always lean on when I have these
-> > kinds of page questions...
-> >
-> 
-> That is not going to help. In general, DMA can access any memory in
-> the system (unless a IOMMU is actively preventing that).
-> 
-> The streaming DMA API allows you to map()/unmap() arbitrary pieces of
-> memory for DMA, regardless of how they were allocated. (Some drivers
-> were even doing DMA from the stack at some point, but this broke
-> vmapped stacks so most of these cases have been fixed) Uploading
-> firmware to a device does not require a coherent (as opposed to
-> streaming) mapping for DMA, and so it is perfectly reasonable for a
-> driver to use the streaming API to map the firmware image (wherever it
-> is in memory) and map it.
+SHA1 is reasonable in HMAC constructs, but it's desirable to be able to
+use stronger hashes in digital signatures. Modify the EVM crypto code so
+the hash type is imported from the digital signature and passed down to
+the hash calculation code, and return the digest size to higher layers
+for validation.
 
-This is useful thanks!
+Signed-off-by: Matthew Garrett <mjg59@google.com>
+---
+ security/integrity/evm/evm.h        | 10 ++++--
+ security/integrity/evm/evm_crypto.c | 47 +++++++++++++++--------------
+ security/integrity/evm/evm_main.c   | 19 +++++++-----
+ 3 files changed, 45 insertions(+), 31 deletions(-)
 
-But let's keep in mind that this isn't about whether or not this should be
-done. This is about informing security layers to make a choice to decide
-whether or not what a solution is doing is banana crazy or not.
-
-> However, the DMA API does impose some ordering. Mapping memory for DMA
-> gives you a DMA address (which may be different from the physical
-> address [depending on the platform]), and this DMA address is what
-> gets programmed into the device, not the virtual or physical address.
-> That means you can be reasonably confident that the device will not be
-> able to consume what is in this memory before it has been mapped for
-> DMA.
-
-Again, not for coherent DMA. By *definition* the device *and* processor has
-immediate access to data written *immediately* when dma_alloc_coherent() is
-used. And that is what was used on the qcom drivers last we checked. The call
-sequence is:
-
-qcom_mdt_load() -> qcom_scm_pas_init_image() -> dma_alloc_coherent()
-
-> Also, the DMA api explicitly forbids touching memory mapped for
-> streaming DMA: the device owns it at this point, and so the CPU should
-> refrain from accessing it.
-
-Wonderful. I note you said *should*. And again, its up to LSMs to decide
-if that is not good enough.
-
-> So the question is, why is QCOM_MDT_LOADER using a coherent DMA
-> mapping?
-
-Right and the qcom driver makes it very difficult to decipher and verify.
-*And* when folks were poked about this during patch review it was clearly
-stated that the READING ID should annotate DMA if it was DMA so LSMs
-could be informed.
-
-> That does not make any sense purely for moving firmware into
-> the device, and it is indeed a security hazard if we are trying to
-> perform a signature check before the device is cleared for reading it.
-
-:)
-
-> Note that qcom_scm_pas_init_image() is documented as
-> 
->         /*
->          * During the scm call memory protection will be enabled for the meta
->          * data blob, so make sure it's physically contiguous, 4K aligned and
->          * non-cachable to avoid XPU violations.
->          */
-> 
-> and dma_alloc_coherent() happens to give them that. Whether the DMA
-> mapping is actually used is a different matter: the code is a bit
-> complex, but it calls into the secure world to set up the region.
-
-Again, it doesn't matter whether they think its OK, that's fine, it is just
-up to the LSMs to then decide on their own if this is pure crap.
-
-> If this is the only counterexample,
-
-The problem is this is the *only* user of request_firmware_into_buf()!
-
-> I wouldn't worry about it too much
-> (QCOM have elaborate SoC management layers in the secure world), and
-> simply mandate that only streaming DMA be used for firmware loading,
-> and that the firmware signature verification is performed before the
-> memory is mapped for DMA.
-
-Again, it doesn't matter what they *think*. LSMs want the ability to
-decide as well and its fair for them to want to differentiate coherent
-DMA and say this is not reasonably trustworthy.
-
-  Luis
-
+diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
+index 45c4a89c02ff..a8289fbf2f0c 100644
+--- a/security/integrity/evm/evm.h
++++ b/security/integrity/evm/evm.h
+@@ -42,6 +42,11 @@ extern struct crypto_shash *hash_tfm;
+ /* List of EVM protected security xattrs */
+ extern char *evm_config_xattrnames[];
+ 
++struct evm_digest {
++	struct ima_digest_data hdr;
++	char digest[IMA_MAX_DIGEST_SIZE];
++} __packed;
++
+ int evm_init_key(void);
+ int evm_update_evmxattr(struct dentry *dentry,
+ 			const char *req_xattr_name,
+@@ -49,10 +54,11 @@ int evm_update_evmxattr(struct dentry *dentry,
+ 			size_t req_xattr_value_len);
+ int evm_calc_hmac(struct dentry *dentry, const char *req_xattr_name,
+ 		  const char *req_xattr_value,
+-		  size_t req_xattr_value_len, char *digest);
++		  size_t req_xattr_value_len, struct evm_digest *data);
+ int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
+ 		  const char *req_xattr_value,
+-		  size_t req_xattr_value_len, char type, char *digest);
++		  size_t req_xattr_value_len, char type,
++		  struct evm_digest *data);
+ int evm_init_hmac(struct inode *inode, const struct xattr *xattr,
+ 		  char *hmac_val);
+ int evm_init_secfs(void);
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index ccafc9468611..ff8687232a1a 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -21,6 +21,7 @@
+ #include <linux/evm.h>
+ #include <keys/encrypted-type.h>
+ #include <crypto/hash.h>
++#include <crypto/hash_info.h>
+ #include "evm.h"
+ 
+ #define EVMKEY "evm-key"
+@@ -29,7 +30,7 @@ static unsigned char evmkey[MAX_KEY_SIZE];
+ static int evmkey_len = MAX_KEY_SIZE;
+ 
+ struct crypto_shash *hmac_tfm;
+-struct crypto_shash *hash_tfm;
++static struct crypto_shash *evm_tfm[HASH_ALGO__LAST];
+ 
+ static DEFINE_MUTEX(mutex);
+ 
+@@ -38,7 +39,6 @@ static DEFINE_MUTEX(mutex);
+ static unsigned long evm_set_key_flags;
+ 
+ static char * const evm_hmac = "hmac(sha1)";
+-static char * const evm_hash = "sha1";
+ 
+ /**
+  * evm_set_key() - set EVM HMAC key from the kernel
+@@ -74,10 +74,10 @@ int evm_set_key(void *key, size_t keylen)
+ }
+ EXPORT_SYMBOL_GPL(evm_set_key);
+ 
+-static struct shash_desc *init_desc(char type)
++static struct shash_desc *init_desc(char type, uint8_t hash_algo)
+ {
+ 	long rc;
+-	char *algo;
++	const char *algo;
+ 	struct crypto_shash **tfm;
+ 	struct shash_desc *desc;
+ 
+@@ -89,8 +89,8 @@ static struct shash_desc *init_desc(char type)
+ 		tfm = &hmac_tfm;
+ 		algo = evm_hmac;
+ 	} else {
+-		tfm = &hash_tfm;
+-		algo = evm_hash;
++		tfm = &evm_tfm[hash_algo];
++		algo = hash_algo_name[hash_algo];
+ 	}
+ 
+ 	if (*tfm == NULL) {
+@@ -187,10 +187,10 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
+  * each xattr, but attempt to re-use the previously allocated memory.
+  */
+ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+-				const char *req_xattr_name,
+-				const char *req_xattr_value,
+-				size_t req_xattr_value_len,
+-				char type, char *digest)
++				 const char *req_xattr_name,
++				 const char *req_xattr_value,
++				 size_t req_xattr_value_len,
++				 uint8_t type, struct evm_digest *data)
+ {
+ 	struct inode *inode = d_backing_inode(dentry);
+ 	struct shash_desc *desc;
+@@ -204,10 +204,12 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ 	if (!(inode->i_opflags & IOP_XATTR))
+ 		return -EOPNOTSUPP;
+ 
+-	desc = init_desc(type);
++	desc = init_desc(type, data->hdr.algo);
+ 	if (IS_ERR(desc))
+ 		return PTR_ERR(desc);
+ 
++	data->hdr.length = crypto_shash_digestsize(desc->tfm);
++
+ 	error = -ENODATA;
+ 	for (xattrname = evm_config_xattrnames; *xattrname != NULL; xattrname++) {
+ 		bool is_ima = false;
+@@ -239,7 +241,7 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ 		if (is_ima)
+ 			ima_present = true;
+ 	}
+-	hmac_add_misc(desc, inode, type, digest);
++	hmac_add_misc(desc, inode, type, data->digest);
+ 
+ 	/* Portable EVM signatures must include an IMA hash */
+ 	if (type == EVM_XATTR_PORTABLE_DIGSIG && !ima_present)
+@@ -252,18 +254,18 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ 
+ int evm_calc_hmac(struct dentry *dentry, const char *req_xattr_name,
+ 		  const char *req_xattr_value, size_t req_xattr_value_len,
+-		  char *digest)
++		  struct evm_digest *data)
+ {
+ 	return evm_calc_hmac_or_hash(dentry, req_xattr_name, req_xattr_value,
+-			       req_xattr_value_len, EVM_XATTR_HMAC, digest);
++				    req_xattr_value_len, EVM_XATTR_HMAC, data);
+ }
+ 
+ int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
+ 		  const char *req_xattr_value, size_t req_xattr_value_len,
+-		  char type, char *digest)
++		  char type, struct evm_digest *data)
+ {
+ 	return evm_calc_hmac_or_hash(dentry, req_xattr_name, req_xattr_value,
+-				     req_xattr_value_len, type, digest);
++				     req_xattr_value_len, type, data);
+ }
+ 
+ static int evm_is_immutable(struct dentry *dentry, struct inode *inode)
+@@ -303,7 +305,7 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
+ 			const char *xattr_value, size_t xattr_value_len)
+ {
+ 	struct inode *inode = d_backing_inode(dentry);
+-	struct evm_ima_xattr_data xattr_data;
++	struct evm_digest data;
+ 	int rc = 0;
+ 
+ 	/*
+@@ -316,13 +318,14 @@ int evm_update_evmxattr(struct dentry *dentry, const char *xattr_name,
+ 	if (rc)
+ 		return -EPERM;
+ 
++	data.hdr.algo = HASH_ALGO_SHA1;
+ 	rc = evm_calc_hmac(dentry, xattr_name, xattr_value,
+-			   xattr_value_len, xattr_data.digest);
++			   xattr_value_len, &data);
+ 	if (rc == 0) {
+-		xattr_data.type = EVM_XATTR_HMAC;
++		data.hdr.xattr.sha1.type = EVM_XATTR_HMAC;
+ 		rc = __vfs_setxattr_noperm(dentry, XATTR_NAME_EVM,
+-					   &xattr_data,
+-					   sizeof(xattr_data), 0);
++					   &data.hdr.xattr.data[1],
++					   SHA1_DIGEST_SIZE + 1, 0);
+ 	} else if (rc == -ENODATA && (inode->i_opflags & IOP_XATTR)) {
+ 		rc = __vfs_removexattr(dentry, XATTR_NAME_EVM);
+ 	}
+@@ -334,7 +337,7 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
+ {
+ 	struct shash_desc *desc;
+ 
+-	desc = init_desc(EVM_XATTR_HMAC);
++	desc = init_desc(EVM_XATTR_HMAC, HASH_ALGO_SHA1);
+ 	if (IS_ERR(desc)) {
+ 		pr_info("init_desc failed\n");
+ 		return PTR_ERR(desc);
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 9ea9c19a545c..88ea9c1962d6 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -25,6 +25,7 @@
+ #include <linux/magic.h>
+ 
+ #include <crypto/hash.h>
++#include <crypto/hash_info.h>
+ #include <crypto/algapi.h>
+ #include "evm.h"
+ 
+@@ -122,8 +123,9 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+ 					     struct integrity_iint_cache *iint)
+ {
+ 	struct evm_ima_xattr_data *xattr_data = NULL;
+-	struct evm_ima_xattr_data calc;
++	struct signature_v2_hdr *hdr;
+ 	enum integrity_status evm_status = INTEGRITY_PASS;
++	struct evm_digest digest;
+ 	struct inode *inode;
+ 	int rc, xattr_len;
+ 
+@@ -159,25 +161,28 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+ 			evm_status = INTEGRITY_FAIL;
+ 			goto out;
+ 		}
++
++		digest.hdr.algo = HASH_ALGO_SHA1;
+ 		rc = evm_calc_hmac(dentry, xattr_name, xattr_value,
+-				   xattr_value_len, calc.digest);
++				   xattr_value_len, &digest);
+ 		if (rc)
+ 			break;
+-		rc = crypto_memneq(xattr_data->digest, calc.digest,
+-			    sizeof(calc.digest));
++		rc = crypto_memneq(xattr_data->digest, digest.digest,
++				   SHA1_DIGEST_SIZE);
+ 		if (rc)
+ 			rc = -EINVAL;
+ 		break;
+ 	case EVM_IMA_XATTR_DIGSIG:
+ 	case EVM_XATTR_PORTABLE_DIGSIG:
++		hdr = (struct signature_v2_hdr *)xattr_data;
++		digest.hdr.algo = hdr->hash_algo;
+ 		rc = evm_calc_hash(dentry, xattr_name, xattr_value,
+-				   xattr_value_len, xattr_data->type,
+-				   calc.digest);
++				   xattr_value_len, xattr_data->type, &digest);
+ 		if (rc)
+ 			break;
+ 		rc = integrity_digsig_verify(INTEGRITY_KEYRING_EVM,
+ 					(const char *)xattr_data, xattr_len,
+-					calc.digest, sizeof(calc.digest));
++					digest.digest, digest.hdr.length);
+ 		if (!rc) {
+ 			inode = d_backing_inode(dentry);
+ 
 -- 
-Do not panic
+2.17.1.1185.g55be947832-goog
