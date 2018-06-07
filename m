@@ -1,19 +1,19 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga12.intel.com ([192.55.52.136]:14337 "EHLO mga12.intel.com"
+Received: from mga14.intel.com ([192.55.52.115]:6023 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751491AbeFGLDz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 7 Jun 2018 07:03:55 -0400
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>,
+        id S1753166AbeFGKYg (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 7 Jun 2018 06:24:36 -0400
+Date: Thu, 7 Jun 2018 13:24:33 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
         "Usyskin, Alexander" <alexander.usyskin@intel.com>,
         "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
         "linux-security-module@vger.kernel.org"
         <linux-security-module@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] tpm: separate cmd_ready/go_idle from runtime_pm
-Date: Thu, 7 Jun 2018 11:03:50 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D9477DD@hasmsx108.ger.corp.intel.com>
+Subject: Re: [PATCH] tpm: separate cmd_ready/go_idle from runtime_pm
+Message-ID: <20180607102433.GA16506@linux.intel.com>
 References: <20180516194600.28189-1-tomas.winkler@intel.com>
  <20180522091732.GA5228@linux.intel.com>
  <5B8DA87D05A7694D9FA63FD143655C1B9D89D350@hasmsx109.ger.corp.intel.com>
@@ -23,105 +23,77 @@ References: <20180516194600.28189-1-tomas.winkler@intel.com>
  <5B8DA87D05A7694D9FA63FD143655C1B9D940DC6@hasmsx108.ger.corp.intel.com>
  <20180530233752.GA31296@linux.intel.com>
  <5B8DA87D05A7694D9FA63FD143655C1B9D945893@hasmsx108.ger.corp.intel.com>
- <20180607102433.GA16506@linux.intel.com>
-In-Reply-To: <20180607102433.GA16506@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D945893@hasmsx108.ger.corp.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-
-
-> -----Original Message-----
-> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
-> Sent: Thursday, June 07, 2018 13:25
-> To: Winkler, Tomas <tomas.winkler@intel.com>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>; Usyskin, Alexander
-> <alexander.usyskin@intel.com>; linux-integrity@vger.kernel.org; linux-
-> security-module@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH] tpm: separate cmd_ready/go_idle from runtime_pm
-> 
-> On Wed, Jun 06, 2018 at 11:01:42AM +0000, Winkler, Tomas wrote:
-> > >
-> > > On Wed, May 30, 2018 at 10:52:28AM +0000, Winkler, Tomas wrote:
+On Wed, Jun 06, 2018 at 11:01:42AM +0000, Winkler, Tomas wrote:
+> > 
+> > On Wed, May 30, 2018 at 10:52:28AM +0000, Winkler, Tomas wrote:
+> > > >
+> > > > On Wed, May 23, 2018 at 01:48:17PM +0000, Winkler, Tomas wrote:
 > > > > >
-> > > > > On Wed, May 23, 2018 at 01:48:17PM +0000, Winkler, Tomas wrote:
-> > > > > >
-> > > > > > > On Tue, May 22, 2018 at 09:27:46AM +0000, Winkler, Tomas
-> wrote:
-> > > > > > > > >
-> > > > > > > > > On Wed, May 16, 2018 at 10:46:00PM +0300, Tomas Winkler
-> > > wrote:
-> > > > > > > > > > New wrappers are added tpm_cmd_ready() and
-> > > > > > > > > > tpm_go_idle()
-> > > > > > > wrappers
-> > > > > > > > > > to streamline tpm_try_transmit code.
-> > > TPM_TRANSMIT_UNLOCKED
-> > > > > > > > > > flag
-> > > > > > > is
-> > > > > > > > > abused
-> > > > > > > > > > to resolve tpm spaces recursive calls to tpm_transmit().
-> > > > > > > > >
-> > > > > > > > > This looks good and all but I don't think we want to
-> > > > > > > > > abuse anything in the driver code, do we?
+> > > > > > On Tue, May 22, 2018 at 09:27:46AM +0000, Winkler, Tomas wrote:
 > > > > > > > >
-> > > > > > > > It's not abuse just the flag UNLOCKED is not really named
-> > > > > > > > correctly I think this has to be backported so wanted to
-> > > > > > > > do less invasive
-> > > > > change.
+> > > > > > > > On Wed, May 16, 2018 at 10:46:00PM +0300, Tomas Winkler
+> > wrote:
+> > > > > > > > > New wrappers are added tpm_cmd_ready() and tpm_go_idle()
+> > > > > > wrappers
+> > > > > > > > > to streamline tpm_try_transmit code.
+> > TPM_TRANSMIT_UNLOCKED
+> > > > > > > > > flag
+> > > > > > is
+> > > > > > > > abused
+> > > > > > > > > to resolve tpm spaces recursive calls to tpm_transmit().
+> > > > > > > >
+> > > > > > > > This looks good and all but I don't think we want to abuse
+> > > > > > > > anything in the driver code, do we?
 > > > > > > >
-> > > > > > > It should be renamed anyway and possible merge conflicts are
-> > > > > > > not hard to sort out in this change. Can you rename it as SPACE?
+> > > > > > > It's not abuse just the flag UNLOCKED is not really named
+> > > > > > > correctly I think this has to be backported so wanted to do
+> > > > > > > less invasive
+> > > > change.
 > > > > > >
-> > > > > > Not sure, I believe UNLOCKED is still better name than SPACE,
-> > > > > >I'm not  sure this is Do you also want to remove
-> TPM_TRANSMIT_RAW?
-> > > > > > clk_enable is handling its own anti recursion counter 'data-
-> > > > > >clkrun_enabled'
-> > > > > > but it should be all handled under one flag I guess.
-> > > > > >
-> > > > > > > Right, and even without rename this will probably cause
-> > > > > > > merge conflicts at least in v4.4 an v4.9 since in-kernel RM
-> > > > > > > landed in v4.12, so not much gain not do the rename :-)
-> > > > > >
-> > > > > > I belive we should do minimal change and the big cleanup after
-> that.
-> > > > > > Not sure, I believe UNLOCKED is still better name than SPACE
-> > > > > > even it wasn't
-> > > > > the original intention.
-> > > > > > No the SPACE is the issue, but any recursion call into
-> > > > > > tpm_transmit. A bigger change is needed and rename to SPACE
-> > > > > > would be just another
-> > > > > intermediat change.
-> > > > > >
-> > > > > > Please reconsider.
-> > > > > >
-> > > > > > Thanks
-> > > > > > Tomas
+> > > > > > It should be renamed anyway and possible merge conflicts are not
+> > > > > > hard to sort out in this change. Can you rename it as SPACE?
 > > > > >
-> > > > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > > > Not sure, I believe UNLOCKED is still better name than SPACE, I'm
+> > > > >not  sure this is Do you also want to remove TPM_TRANSMIT_RAW?
+> > > > > clk_enable is handling its own anti recursion counter 'data-
+> > > > >clkrun_enabled'
+> > > > > but it should be all handled under one flag I guess.
+> > > > >
+> > > > > > Right, and even without rename this will probably cause merge
+> > > > > > conflicts at least in v4.4 an v4.9 since in-kernel RM landed in
+> > > > > > v4.12, so not much gain not do the rename :-)
+> > > > >
+> > > > > I belive we should do minimal change and the big cleanup after that.
+> > > > > Not sure, I believe UNLOCKED is still better name than SPACE even
+> > > > > it wasn't
+> > > > the original intention.
+> > > > > No the SPACE is the issue, but any recursion call into
+> > > > > tpm_transmit. A bigger change is needed and rename to SPACE would
+> > > > > be just another
+> > > > intermediat change.
+> > > > >
+> > > > > Please reconsider.
+> > > > >
+> > > > > Thanks
+> > > > > Tomas
 > > > >
-> > > >
-> > > > Does it mean you're Okay with the patch now?
-> > > > Thanks
-> > > > Tomas
+> > > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > > >
-> > > The change looks good but I'll have to test it.
-> > Any updates?
-> > Thanks
-> 
-> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > >
+> > > Does it mean you're Okay with the patch now?
+> > > Thanks
+> > > Tomas
+> > 
+> > The change looks good but I'll have to test it.
+> Any updates?
+> Thanks
 
-I've just realized we have issue in tpm_unseal_trusted() 
-As TPM_TRANSMIT_UNLOCKED is used really just in 'locking' sense of the flow, it's not nested.
-Any of testing flows doesn't covers it. It's used only from by security/keys/trusted.c only
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Then I don't have a short fix for this issue. Will use TPM_TRANSMIT_RAW,
- maybe calling it TPM_TRANSMIT_NESTED.  
-
-Thanks
-Tomas
-
-
-> 
-> /Jarkko
+/Jarkko
