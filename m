@@ -1,53 +1,38 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:43403 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752627AbeFHTgV (ORCPT
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:36132 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751141AbeFHPu0 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 8 Jun 2018 15:36:21 -0400
-Received: by mail-ot0-f196.google.com with SMTP id i19-v6so16991426otk.10
-        for <linux-integrity@vger.kernel.org>; Fri, 08 Jun 2018 12:36:21 -0700 (PDT)
-Subject: Re: [PATCH] tpm: add support for nonblocking operation
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Tadeusz Struk <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org
-References: <152780934926.32219.7291994735609525171.stgit@tstruk-mobl1.jf.intel.com>
- <20180604195554.GD2691@linux.intel.com>
-From: flihp <flihp@twobit.us>
-Message-ID: <f270fec0-cd79-0119-b84d-3af23bc3b150@twobit.us>
-Date: Fri, 8 Jun 2018 12:36:18 -0700
+        Fri, 8 Jun 2018 11:50:26 -0400
+Received: by mail-pl0-f67.google.com with SMTP id a7-v6so6047783plp.3
+        for <linux-integrity@vger.kernel.org>; Fri, 08 Jun 2018 08:50:26 -0700 (PDT)
+Date: Fri, 8 Jun 2018 09:50:23 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>,
+        linux-integrity@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] tpm_tis_spi: Pass the SPI IRQ down to the driver
+Message-ID: <20180608155023.GA12577@ziepe.ca>
+References: <20180608070209.14769-1-linus.walleij@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180604195554.GD2691@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180608070209.14769-1-linus.walleij@linaro.org>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 06/04/2018 12:55 PM, Jarkko Sakkinen wrote:
-> On Thu, May 31, 2018 at 04:29:09PM -0700, Tadeusz Struk wrote:
->> The TCG SAPI specification [1] defines a set of functions, which allows
->> applications to use the TPM device in either blocking or non-blocking fashion.
->> Each command defined by the specification has a corresponding
->> Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
->> together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
->> mode of operation. Currently the driver supports only blocking calls, which
->> doesn't allow asynchronous operation. This patch changes it and adds support
->> for nonblocking write and a new poll function to enable applications using
->> the API as designed by the spec.
->> The new functionality can be tested using standard TPM tools implemented
->> in [2], with modified TCTI from [3].
+On Fri, Jun 08, 2018 at 09:02:09AM +0200, Linus Walleij wrote:
+> An SPI TPM device managed directly on an embedded board using
+> the SPI bus and some GPIO or similar line as IRQ handler will
+> pass the IRQn from the TPM device associated with the SPI
+> device. This is already handled by the SPI core, so make sure
+> to pass this down to the core as well.
 > 
-> I would need some statistics before I have interest to take these
-> changes in any form eg use case where this matters in the end.
+> (The TPM core habit of using -1 to signal no IRQ is dubious
+> (as IRQ 0 is NO_IRQ) but I do not want to mess with that
+> semantic in this patch.)
 
-The use cases motivating this feature are the same ones that motivated
-the non-blocking behavior of other kernel interfaces (files, sockets and
-other hardware) that has the potential to block threads in a process. By
-implementing this same behavior in the TPM driver our goal is to enable
-use of the TPM in programming languages / frameworks implementing an
-"event-driven" model. There are a lot of them out there but since the
-TSS2 APIs are currently limited to C our example code is in glib / GSource.
+Unless something has changed, there is no cross-arch constant called
+NO_IRQ, and the few arches that do define it, tend to use -1..
 
-Hopefully this is sufficient but if it isn't it would help us to get
-additional details on what you're looking for.
-
-Thanks,
-Philip
+Jason
