@@ -1,66 +1,56 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:39613 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751088AbeFHHJM (ORCPT
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:38600 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751178AbeFHHLv (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 8 Jun 2018 03:09:12 -0400
-Received: by mail-lf0-f65.google.com with SMTP id t134-v6so18463895lff.6
-        for <linux-integrity@vger.kernel.org>; Fri, 08 Jun 2018 00:09:11 -0700 (PDT)
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Peter Huewe <peterhuewe@gmx.de>,
+        Fri, 8 Jun 2018 03:11:51 -0400
+Received: by mail-pl0-f66.google.com with SMTP id b14-v6so7756107pls.5
+        for <linux-integrity@vger.kernel.org>; Fri, 08 Jun 2018 00:11:51 -0700 (PDT)
+From: Louis Collard <louiscollard@chromium.org>
+To: linux-integrity@vger.kernel.org
+Cc: Peter Huewe <peterhuewe@gmx.de>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-integrity@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH] tpm_tis_spi: Pass the SPI IRQ down to the driver
-Date: Fri,  8 Jun 2018 09:09:07 +0200
-Message-Id: <20180608070907.15185-1-linus.walleij@linaro.org>
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, apronin@chromium.org
+Subject: [PATCH] tpm: Allow tpm_tis drivers to set hwrng quality.
+Date: Fri,  8 Jun 2018 15:11:46 +0800
+Message-Id: <20180608071146.110567-1-louiscollard@chromium.org>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-An SPI TPM device managed directly on an embedded board using
-the SPI bus and some GPIO or similar line as IRQ handler will
-pass the IRQn from the TPM device associated with the SPI
-device. This is already handled by the SPI core, so make sure
-to pass this down to the core as well.
+Adds plumbing required for drivers based on tpm_tis to set hwrng quality.
 
-(The TPM core habit of using -1 to signal no IRQ is dubious
-(as IRQ 0 is NO_IRQ) but I do not want to mess with that
-semantic in this patch.)
-
-Cc: Mark Brown <broonie@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Louis Collard <louiscollard@chromium.org>
 ---
- drivers/char/tpm/tpm_tis_spi.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/char/tpm/tpm_tis_core.c | 2 ++
+ drivers/char/tpm/tpm_tis_core.h | 1 +
+ 2 files changed, 3 insertions(+)
 
-diff --git a/drivers/char/tpm/tpm_tis_spi.c b/drivers/char/tpm/tpm_tis_spi.c
-index 424ff2fde1f2..9914f6973463 100644
---- a/drivers/char/tpm/tpm_tis_spi.c
-+++ b/drivers/char/tpm/tpm_tis_spi.c
-@@ -199,6 +199,7 @@ static const struct tpm_tis_phy_ops tpm_spi_phy_ops = {
- static int tpm_tis_spi_probe(struct spi_device *dev)
- {
- 	struct tpm_tis_spi_phy *phy;
-+	int irq;
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 8b46aaa9e049..d2345d9fd7b5 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -875,6 +875,8 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+ 	chip->acpi_dev_handle = acpi_dev_handle;
+ #endif
  
- 	phy = devm_kzalloc(&dev->dev, sizeof(struct tpm_tis_spi_phy),
- 			   GFP_KERNEL);
-@@ -211,7 +212,13 @@ static int tpm_tis_spi_probe(struct spi_device *dev)
- 	if (!phy->iobuf)
- 		return -ENOMEM;
- 
--	return tpm_tis_core_init(&dev->dev, &phy->priv, -1, &tpm_spi_phy_ops,
-+	/* If the SPI device has an IRQ then use that */
-+	if (dev->irq > 0)
-+		irq = dev->irq;
-+	else
-+		irq = -1;
++	chip->hwrng.quality = priv->rng_quality;
 +
-+	return tpm_tis_core_init(&dev->dev, &phy->priv, irq, &tpm_spi_phy_ops,
- 				 NULL);
- }
+ 	/* Maximum timeouts */
+ 	chip->timeout_a = msecs_to_jiffies(TIS_TIMEOUT_A_MAX);
+ 	chip->timeout_b = msecs_to_jiffies(TIS_TIMEOUT_B_MAX);
+diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
+index f6e1dbe212a7..f48125f1e6e0 100644
+--- a/drivers/char/tpm/tpm_tis_core.h
++++ b/drivers/char/tpm/tpm_tis_core.h
+@@ -99,6 +99,7 @@ struct tpm_tis_data {
+ 	wait_queue_head_t int_queue;
+ 	wait_queue_head_t read_queue;
+ 	const struct tpm_tis_phy_ops *phy_ops;
++	unsigned short rng_quality;
+ };
  
+ struct tpm_tis_phy_ops {
 -- 
-2.17.0
+2.13.5
