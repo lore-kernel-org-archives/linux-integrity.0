@@ -1,60 +1,75 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:55421 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934958AbeFLCxs (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Jun 2018 22:53:48 -0400
-Date: Tue, 12 Jun 2018 10:53:25 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Tadeusz Struk <tadeusz.struk@intel.com>
-Cc: kbuild-all@01.org, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
-        linux-integrity@vger.kernel.org, tadeusz.struk@intel.com,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] tpm: add support for nonblocking operation
-Message-ID: <201806120803.W0vjfLEH%fengguang.wu@intel.com>
-References: <152876282414.19591.7972634639749417028.stgit@tstruk-mobl1.jf.intel.com>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="OXfL5xGRrasGEqWY"
-In-Reply-To: <152876282414.19591.7972634639749417028.stgit@tstruk-mobl1.jf.intel.com>
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:37966 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934724AbeFLBng (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 11 Jun 2018 21:43:36 -0400
+Message-ID: <1528767814.3572.25.camel@HansenPartnership.com>
+Subject: Re: [PATCH] tpm: add support for nonblocking operation
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: flihp <flihp@twobit.us>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org
+Date: Mon, 11 Jun 2018 18:43:34 -0700
+In-Reply-To: <f270fec0-cd79-0119-b84d-3af23bc3b150@twobit.us>
+References: <152780934926.32219.7291994735609525171.stgit@tstruk-mobl1.jf.intel.com>
+         <20180604195554.GD2691@linux.intel.com>
+         <f270fec0-cd79-0119-b84d-3af23bc3b150@twobit.us>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Tadeusz,
+On Fri, 2018-06-08 at 12:36 -0700, flihp wrote:
+> On 06/04/2018 12:55 PM, Jarkko Sakkinen wrote:
+> > On Thu, May 31, 2018 at 04:29:09PM -0700, Tadeusz Struk wrote:
+> > > The TCG SAPI specification [1] defines a set of functions, which
+> > > allows applications to use the TPM device in either blocking or
+> > > non-blocking fashion. Each command defined by the specification
+> > > has a corresponding Tss2_Sys_<COMMAND>_Prepare() and
+> > > Tss2_Sys_<COMMAND>_Complete() call, which together with
+> > > Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
+> > > mode of operation. Currently the driver supports only blocking
+> > > calls, which doesn't allow asynchronous operation. This patch
+> > > changes it and adds support for nonblocking write and a new poll
+> > > function to enable applications using the API as designed by the
+> > > spec. The new functionality can be tested using standard TPM
+> > > tools implemented in [2], with modified TCTI from [3].
+> > 
+> > I would need some statistics before I have interest to take these
+> > changes in any form eg use case where this matters in the end.
+> 
+> The use cases motivating this feature are the same ones that
+> motivated the non-blocking behavior of other kernel interfaces
+> (files, sockets and other hardware) that has the potential to block
+> threads in a process. By implementing this same behavior in the TPM
+> driver our goal is to enable use of the TPM in programming languages
+> / frameworks implementing an "event-driven" model. There are a lot of
+> them out there but since the TSS2 APIs are currently limited to C our
+> example code is in glib / GSource.
 
-Thank you for the patch! Yet something to improve:
+But the TPM isn't like any of those resources, which can handle
+multiple outstanding requests at once and get more efficient
+utilisation doing so: it *is* single threaded in operation.  Meaning if
+it's occupied doing something when you make your request, you wait
+until it's finished up before your request goes through.  This means
+that even for modern webby languages, the single worker thread
+producer/consumer queue model is the best way of handling it because
+it's the model that most closely corresponds to actual operation.  That
+model just works today with the worker thread owning the open tpmrm
+device.
 
-[auto build test ERROR on char-misc/char-misc-testing]
-[also build test ERROR on next-20180608]
-[cannot apply to v4.17]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+I mean some of the actual devices are polled rather than interrupt
+driven to give those watching some idea of how primitive our control
+bus is.
 
-url:    https://github.com/0day-ci/linux/commits/Tadeusz-Struk/tpm-add-ptr-to-the-tpm_space-struct-to-file_priv/20180612-082203
-config: i386-randconfig-x008-201823 (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
+> Hopefully this is sufficient but if it isn't it would help us to get
+> additional details on what you're looking for.
 
-All error/warnings (new ones prefixed by >>):
+OK, so I still don't see an actual use case for having poll, but on the
+other hand the patches look simple enough so I don't see them adding
+unmaintainable complexity either; on that measure, I'm OK with this as
+long as you support it.
 
->> drivers/char//tpm/tpm-dev-common.c:223:1: warning: data definition has no type or storage class
-    __exitcall(tpm_dev_common_exit);
-    ^~~~~~~~~~
->> drivers/char//tpm/tpm-dev-common.c:223:1: error: type defaults to 'int' in declaration of '__exitcall' [-Werror=implicit-int]
->> drivers/char//tpm/tpm-dev-common.c:223:1: warning: parameter names (without types) in function declaration
-   drivers/char//tpm/tpm-dev-common.c:215:20: warning: 'tpm_dev_common_exit' defined but not used [-Wunused-function]
-    static void __exit tpm_dev_common_exit(void)
-                       ^~~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-vim +223 drivers/char//tpm/tpm-dev-common.c
-
-   222	
- > 223	__exitcall(tpm_dev_common_exit);
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-
-
-    [ Part 2, Application/GZIP 28 KB. ]
-    [ Unable to print this part. ]
+James
