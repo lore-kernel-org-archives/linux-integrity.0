@@ -1,58 +1,45 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:42366 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932985AbeFLVM0 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 12 Jun 2018 17:12:26 -0400
-Received: by mail-lf0-f68.google.com with SMTP id v135-v6so581502lfa.9
-        for <linux-integrity@vger.kernel.org>; Tue, 12 Jun 2018 14:12:25 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.1806130631400.13763@namei.org>
-References: <1e91f8e10ce76d3208239b6b5899aab76d1543ff.1528743633.git.joe@perches.com>
- <fcac609a-08a8-b3ab-a69e-2e65e2ad63e9@schaufler-ca.com> <alpine.LRH.2.21.1806130631400.13763@namei.org>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 12 Jun 2018 17:12:23 -0400
-Message-ID: <CAHC9VhTpsYDT5+CjdtiBmLMDEKV9fmGv+DyXVtUuja9d4i2ecg@mail.gmail.com>
-Subject: Re: [-next PATCH] security: use octal not symbolic permissions
-To: James Morris <jmorris@namei.org>, Joe Perches <joe@perches.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>,
+Received: from namei.org ([65.99.196.166]:59300 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754302AbeFLUdL (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 12 Jun 2018 16:33:11 -0400
+Date: Wed, 13 Jun 2018 06:32:34 +1000 (AEST)
+From: James Morris <jmorris@namei.org>
+To: Casey Schaufler <casey@schaufler-ca.com>
+cc: Joe Perches <joe@perches.com>,
         John Johansen <john.johansen@canonical.com>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Paul Moore <paul@paul-moore.com>,
         Stephen Smalley <sds@tycho.nsa.gov>,
         Eric Paris <eparis@parisplace.org>,
         Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
         selinux@tycho.nsa.gov
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [-next PATCH] security: use octal not symbolic permissions
+In-Reply-To: <fcac609a-08a8-b3ab-a69e-2e65e2ad63e9@schaufler-ca.com>
+Message-ID: <alpine.LRH.2.21.1806130631400.13763@namei.org>
+References: <1e91f8e10ce76d3208239b6b5899aab76d1543ff.1528743633.git.joe@perches.com> <fcac609a-08a8-b3ab-a69e-2e65e2ad63e9@schaufler-ca.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Jun 12, 2018 at 4:32 PM, James Morris <jmorris@namei.org> wrote:
-> On Mon, 11 Jun 2018, Casey Schaufler wrote:
->
->> If you want to break this up by security module I would take
->> the Smack part as soon as James does the tree update. If James
->> wants to take the whole thing at once you can add my:
->>
->> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
->>
->> for the Smack changes.
->
-> It's probably simplest for me to take them as one patch.
+On Mon, 11 Jun 2018, Casey Schaufler wrote:
 
-I would prefer if the SELinux changes were split into a separate
-patch.  I'm guessing John would probably want the same for the
-AppArmor patches, but take his work for it, not mine.
+> If you want to break this up by security module I would take
+> the Smack part as soon as James does the tree update. If James
+> wants to take the whole thing at once you can add my:
+> 
+> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> 
+> for the Smack changes.
 
-Joe, in general I really appreciate the fixes you send, but these
-patches that cross a lot of subsystem boundaries (this isn't the first
-one that does this) causes unnecessary conflicts in -next and during
-the merge window.  Could you split your patches up from now on please?
+It's probably simplest for me to take them as one patch.
 
 -- 
-paul moore
-www.paul-moore.com
+James Morris
+<jmorris@namei.org>
