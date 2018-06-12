@@ -1,45 +1,422 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from namei.org ([65.99.196.166]:59300 "EHLO namei.org"
+Received: from mga17.intel.com ([192.55.52.151]:42926 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754302AbeFLUdL (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 12 Jun 2018 16:33:11 -0400
-Date: Wed, 13 Jun 2018 06:32:34 +1000 (AEST)
-From: James Morris <jmorris@namei.org>
-To: Casey Schaufler <casey@schaufler-ca.com>
-cc: Joe Perches <joe@perches.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        selinux@tycho.nsa.gov
-Subject: Re: [-next PATCH] security: use octal not symbolic permissions
-In-Reply-To: <fcac609a-08a8-b3ab-a69e-2e65e2ad63e9@schaufler-ca.com>
-Message-ID: <alpine.LRH.2.21.1806130631400.13763@namei.org>
-References: <1e91f8e10ce76d3208239b6b5899aab76d1543ff.1528743633.git.joe@perches.com> <fcac609a-08a8-b3ab-a69e-2e65e2ad63e9@schaufler-ca.com>
+        id S933448AbeFLR6h (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 12 Jun 2018 13:58:37 -0400
+Subject: [PATCH v3 2/2] tpm: add support for nonblocking operation
+From: Tadeusz Struk <tadeusz.struk@intel.com>
+To: jarkko.sakkinen@linux.intel.com
+Cc: jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        tadeusz.struk@intel.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Tue, 12 Jun 2018 10:58:36 -0700
+Message-ID: <152882631679.30206.9516257862583104447.stgit@tstruk-mobl1.jf.intel.com>
+In-Reply-To: <152882630662.30206.8805136953394285180.stgit@tstruk-mobl1.jf.intel.com>
+References: <152882630662.30206.8805136953394285180.stgit@tstruk-mobl1.jf.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 11 Jun 2018, Casey Schaufler wrote:
+Currently the TPM driver only supports blocking calls, which doesn't allow
+asynchronous IO operations to the TPM hardware.
+This patch changes it and adds support for nonblocking write and a new poll
+function to enable applications, which want to take advantage of this.
 
-> If you want to break this up by security module I would take
-> the Smack part as soon as James does the tree update. If James
-> wants to take the whole thing at once you can add my:
-> 
-> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-> 
-> for the Smack changes.
+Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+---
+ drivers/char/tpm/tpm-dev-common.c |  146 +++++++++++++++++++++++++++----------
+ drivers/char/tpm/tpm-dev.c        |   16 +++-
+ drivers/char/tpm/tpm-dev.h        |   16 +++-
+ drivers/char/tpm/tpm-interface.c  |    1 
+ drivers/char/tpm/tpm.h            |    1 
+ drivers/char/tpm/tpmrm-dev.c      |   19 ++++-
+ 6 files changed, 146 insertions(+), 53 deletions(-)
 
-It's probably simplest for me to take them as one patch.
-
--- 
-James Morris
-<jmorris@namei.org>
+diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+index f0c033b69b62..f57c000fd84a 100644
+--- a/drivers/char/tpm/tpm-dev-common.c
++++ b/drivers/char/tpm/tpm-dev-common.c
+@@ -17,11 +17,35 @@
+  * License.
+  *
+  */
++#include <linux/poll.h>
++#include <linux/sched/signal.h>
+ #include <linux/slab.h>
+ #include <linux/uaccess.h>
++#include <linux/workqueue.h>
+ #include "tpm.h"
+ #include "tpm-dev.h"
+ 
++static struct workqueue_struct *tpm_dev_wq;
++static DEFINE_MUTEX(tpm_dev_wq_lock);
++
++static void tpm_async_work(struct work_struct *work)
++{
++	struct file_priv *priv =
++			container_of(work, struct file_priv, async_work);
++	ssize_t ret;
++
++	ret = tpm_transmit(priv->chip, priv->space, priv->data_buffer,
++			   sizeof(priv->data_buffer), 0);
++
++	tpm_put_ops(priv->chip);
++	if (ret > 0) {
++		priv->data_pending = ret;
++		mod_timer(&priv->user_read_timer, jiffies + (120 * HZ));
++	}
++	mutex_unlock(&priv->buffer_mutex);
++	wake_up_interruptible(&priv->async_wait);
++}
++
+ static void user_reader_timeout(struct timer_list *t)
+ {
+ 	struct file_priv *priv = from_timer(priv, t, user_read_timer);
+@@ -29,30 +53,44 @@ static void user_reader_timeout(struct timer_list *t)
+ 	pr_warn("TPM user space timeout is deprecated (pid=%d)\n",
+ 		task_tgid_nr(current));
+ 
+-	schedule_work(&priv->work);
++	schedule_work(&priv->timeout_work);
+ }
+ 
+-static void timeout_work(struct work_struct *work)
++static void tpm_timeout_work(struct work_struct *work)
+ {
+-	struct file_priv *priv = container_of(work, struct file_priv, work);
++	struct file_priv *priv = container_of(work, struct file_priv,
++					      timeout_work);
+ 
+ 	mutex_lock(&priv->buffer_mutex);
+ 	priv->data_pending = 0;
+ 	memset(priv->data_buffer, 0, sizeof(priv->data_buffer));
+ 	mutex_unlock(&priv->buffer_mutex);
++	wake_up_interruptible(&priv->async_wait);
+ }
+ 
+-void tpm_common_open(struct file *file, struct tpm_chip *chip,
+-		     struct file_priv *priv, struct tpm_space *space)
++int tpm_common_open(struct file *file, struct tpm_chip *chip,
++		    struct file_priv *priv, struct tpm_space *space)
+ {
+ 	priv->chip = chip;
+ 	priv->space = space;
+ 
+ 	mutex_init(&priv->buffer_mutex);
+ 	timer_setup(&priv->user_read_timer, user_reader_timeout, 0);
+-	INIT_WORK(&priv->work, timeout_work);
+-
++	INIT_WORK(&priv->timeout_work, tpm_timeout_work);
++	INIT_WORK(&priv->async_work, tpm_async_work);
++	init_waitqueue_head(&priv->async_wait);
+ 	file->private_data = priv;
++	mutex_lock(&tpm_dev_wq_lock);
++	if (!tpm_dev_wq) {
++		tpm_dev_wq = alloc_workqueue("tpm_dev_wq", WQ_MEM_RECLAIM, 0);
++		if (!tpm_dev_wq) {
++			mutex_unlock(&tpm_dev_wq_lock);
++			return -ENOMEM;
++		}
++	}
++
++	mutex_unlock(&tpm_dev_wq_lock);
++	return 0;
+ }
+ 
+ ssize_t tpm_common_read(struct file *file, char __user *buf,
+@@ -63,15 +101,17 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
+ 	int rc;
+ 
+ 	del_singleshot_timer_sync(&priv->user_read_timer);
+-	flush_work(&priv->work);
++	flush_work(&priv->timeout_work);
+ 	mutex_lock(&priv->buffer_mutex);
+ 
+ 	if (priv->data_pending) {
+ 		ret_size = min_t(ssize_t, size, priv->data_pending);
+-		rc = copy_to_user(buf, priv->data_buffer, ret_size);
+-		memset(priv->data_buffer, 0, priv->data_pending);
+-		if (rc)
+-			ret_size = -EFAULT;
++		if (ret_size > 0) {
++			rc = copy_to_user(buf, priv->data_buffer, ret_size);
++			memset(priv->data_buffer, 0, priv->data_pending);
++			if (rc)
++				ret_size = -EFAULT;
++		}
+ 
+ 		priv->data_pending = 0;
+ 	}
+@@ -84,10 +124,9 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+ 			 size_t size, loff_t *off)
+ {
+ 	struct file_priv *priv = file->private_data;
+-	size_t in_size = size;
+-	ssize_t out_size;
++	int ret = 0;
+ 
+-	if (in_size > TPM_BUFSIZE)
++	if (size > TPM_BUFSIZE)
+ 		return -E2BIG;
+ 
+ 	mutex_lock(&priv->buffer_mutex);
+@@ -97,20 +136,19 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+ 	 * buffered writes from blocking here.
+ 	 */
+ 	if (priv->data_pending != 0) {
+-		mutex_unlock(&priv->buffer_mutex);
+-		return -EBUSY;
++		ret = -EBUSY;
++		goto out;
+ 	}
+ 
+-	if (copy_from_user
+-	    (priv->data_buffer, (void __user *) buf, in_size)) {
+-		mutex_unlock(&priv->buffer_mutex);
+-		return -EFAULT;
++	if (copy_from_user(priv->data_buffer, buf, size)) {
++		ret = -EFAULT;
++		goto out;
+ 	}
+ 
+-	if (in_size < 6 ||
+-	    in_size < be32_to_cpu(*((__be32 *) (priv->data_buffer + 2)))) {
+-		mutex_unlock(&priv->buffer_mutex);
+-		return -EINVAL;
++	if (size < 6 ||
++	    size < be32_to_cpu(*((__be32 *)(priv->data_buffer + 2)))) {
++		ret = -EINVAL;
++		goto out;
+ 	}
+ 
+ 	/* atomic tpm command send and result receive. We only hold the ops
+@@ -118,25 +156,48 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+ 	 * the char dev is held open.
+ 	 */
+ 	if (tpm_try_get_ops(priv->chip)) {
+-		mutex_unlock(&priv->buffer_mutex);
+-		return -EPIPE;
++		ret = -EPIPE;
++		goto out;
+ 	}
+-	out_size = tpm_transmit(priv->chip, priv->space, priv->data_buffer,
+-				sizeof(priv->data_buffer), 0);
+ 
+-	tpm_put_ops(priv->chip);
+-	if (out_size < 0) {
+-		mutex_unlock(&priv->buffer_mutex);
+-		return out_size;
++	/*
++	 * If in nonblocking mode schedule an async job to send
++	 * the command return the size.
++	 * In case of error the err code will be returned in
++	 * the subsequent read call.
++	 */
++	if (file->f_flags & O_NONBLOCK) {
++		queue_work(tpm_dev_wq, &priv->async_work);
++		return size;
+ 	}
+ 
+-	priv->data_pending = out_size;
++	ret = tpm_transmit(priv->chip, priv->space, priv->data_buffer,
++			   sizeof(priv->data_buffer), 0);
++	tpm_put_ops(priv->chip);
++
++	if (ret > 0) {
++		priv->data_pending = ret;
++		mod_timer(&priv->user_read_timer, jiffies + (120 * HZ));
++		ret = size;
++	}
++out:
+ 	mutex_unlock(&priv->buffer_mutex);
++	return ret;
++}
+ 
+-	/* Set a timeout by which the reader must come claim the result */
+-	mod_timer(&priv->user_read_timer, jiffies + (120 * HZ));
++__poll_t tpm_common_poll(struct file *file, poll_table *wait)
++{
++	struct file_priv *priv = file->private_data;
++	__poll_t mask = 0;
+ 
+-	return in_size;
++	poll_wait(file, &priv->async_wait, wait);
++
++	if (priv->data_pending)
++		mask = EPOLLIN | EPOLLRDNORM;
++	else
++		mask = EPOLLOUT | EPOLLWRNORM;
++
++	return mask;
+ }
+ 
+ /*
+@@ -144,8 +205,17 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+  */
+ void tpm_common_release(struct file *file, struct file_priv *priv)
+ {
++	flush_work(&priv->async_work);
+ 	del_singleshot_timer_sync(&priv->user_read_timer);
+-	flush_work(&priv->work);
++	flush_work(&priv->timeout_work);
+ 	file->private_data = NULL;
+ 	priv->data_pending = 0;
+ }
++
++void __exit tpm_dev_common_exit(void)
++{
++	if (tpm_dev_wq) {
++		destroy_workqueue(tpm_dev_wq);
++		tpm_dev_wq = NULL;
++	}
++}
+diff --git a/drivers/char/tpm/tpm-dev.c b/drivers/char/tpm/tpm-dev.c
+index 98b9630c3a36..1e353a4f4b7e 100644
+--- a/drivers/char/tpm/tpm-dev.c
++++ b/drivers/char/tpm/tpm-dev.c
+@@ -24,6 +24,7 @@ static int tpm_open(struct inode *inode, struct file *file)
+ {
+ 	struct tpm_chip *chip;
+ 	struct file_priv *priv;
++	int rc = -ENOMEM;
+ 
+ 	chip = container_of(inode->i_cdev, struct tpm_chip, cdev);
+ 
+@@ -37,15 +38,21 @@ static int tpm_open(struct inode *inode, struct file *file)
+ 
+ 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+ 	if (priv == NULL)
+-		goto out;
++		goto out_clear;
+ 
+-	tpm_common_open(file, chip, priv, NULL);
++	rc = tpm_common_open(file, chip, priv, NULL);
++	if (rc)
++		goto out_free;
+ 
+ 	return 0;
+ 
+- out:
++out_free:
++	kfree(priv);
++
++out_clear:
+ 	clear_bit(0, &chip->is_open);
+-	return -ENOMEM;
++
++	return rc;
+ }
+ 
+ /*
+@@ -68,5 +75,6 @@ const struct file_operations tpm_fops = {
+ 	.open = tpm_open,
+ 	.read = tpm_common_read,
+ 	.write = tpm_common_write,
++	.poll = tpm_common_poll,
+ 	.release = tpm_release,
+ };
+diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
+index 4048677bbd78..fa49c885a2cb 100644
+--- a/drivers/char/tpm/tpm-dev.h
++++ b/drivers/char/tpm/tpm-dev.h
+@@ -2,28 +2,32 @@
+ #ifndef _TPM_DEV_H
+ #define _TPM_DEV_H
+ 
++#include <linux/poll.h>
+ #include "tpm.h"
+ 
+ struct file_priv {
+ 	struct tpm_chip *chip;
+ 	struct tpm_space *space;
+ 
+-	/* Data passed to and from the tpm via the read/write calls */
+-	size_t data_pending;
++	/* Holds the amount of data passed or an error code from async op */
++	ssize_t data_pending;
+ 	struct mutex buffer_mutex;
+ 
+ 	struct timer_list user_read_timer;      /* user needs to claim result */
+-	struct work_struct work;
++	struct work_struct timeout_work;
++	struct work_struct async_work;
++	wait_queue_head_t async_wait;
+ 
+ 	u8 data_buffer[TPM_BUFSIZE];
+ };
+ 
+-void tpm_common_open(struct file *file, struct tpm_chip *chip,
+-		     struct file_priv *priv, struct tpm_space *space);
++int tpm_common_open(struct file *file, struct tpm_chip *chip,
++		    struct file_priv *priv, struct tpm_space *space);
+ ssize_t tpm_common_read(struct file *file, char __user *buf,
+ 			size_t size, loff_t *off);
+ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+ 			 size_t size, loff_t *off);
+-void tpm_common_release(struct file *file, struct file_priv *priv);
++__poll_t tpm_common_poll(struct file *file, poll_table *wait);
+ 
++void tpm_common_release(struct file *file, struct file_priv *priv);
+ #endif
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index e32f6e85dc6d..5fb29d58ca34 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -1398,6 +1398,7 @@ static void __exit tpm_exit(void)
+ 	class_destroy(tpm_class);
+ 	class_destroy(tpmrm_class);
+ 	unregister_chrdev_region(tpm_devt, 2*TPM_NUM_DEVICES);
++	tpm_dev_common_exit();
+ }
+ 
+ subsys_initcall(tpm_init);
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 4426649e431c..45d6f1eda680 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -595,4 +595,5 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+ 
+ int tpm_bios_log_setup(struct tpm_chip *chip);
+ void tpm_bios_log_teardown(struct tpm_chip *chip);
++void tpm_dev_common_exit(void);
+ #endif
+diff --git a/drivers/char/tpm/tpmrm-dev.c b/drivers/char/tpm/tpmrm-dev.c
+index 96006c6b9696..f131c97c1577 100644
+--- a/drivers/char/tpm/tpmrm-dev.c
++++ b/drivers/char/tpm/tpmrm-dev.c
+@@ -23,14 +23,22 @@ static int tpmrm_open(struct inode *inode, struct file *file)
+ 		return -ENOMEM;
+ 
+ 	rc = tpm2_init_space(&priv->space);
+-	if (rc) {
+-		kfree(priv);
+-		return -ENOMEM;
+-	}
++	if (rc)
++		goto out_free;
+ 
+-	tpm_common_open(file, chip, &priv->priv, &priv->space);
++	rc = tpm_common_open(file, chip, &priv->priv, &priv->space);
++	if (rc)
++		goto out_del_space;
+ 
+ 	return 0;
++
++out_del_space:
++	tpm2_del_space(chip, &priv->space);
++
++out_free:
++	kfree(priv);
++
++	return rc;
+ }
+ 
+ static int tpmrm_release(struct inode *inode, struct file *file)
+@@ -51,5 +59,6 @@ const struct file_operations tpmrm_fops = {
+ 	.open = tpmrm_open,
+ 	.read = tpm_common_read,
+ 	.write = tpm_common_write,
++	.poll = tpm_common_poll,
+ 	.release = tpmrm_release,
+ };
