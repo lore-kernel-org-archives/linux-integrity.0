@@ -1,63 +1,37 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:30990 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933378AbeFLR61 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 12 Jun 2018 13:58:27 -0400
-Subject: [PATCH v3 0/2] tpm: add support for nonblocking operation
-From: Tadeusz Struk <tadeusz.struk@intel.com>
-To: jarkko.sakkinen@linux.intel.com
-Cc: jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        tadeusz.struk@intel.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Tue, 12 Jun 2018 10:58:26 -0700
-Message-ID: <152882630662.30206.8805136953394285180.stgit@tstruk-mobl1.jf.intel.com>
+Received: from mail-io0-f193.google.com ([209.85.223.193]:46449 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933850AbeFLRn3 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 12 Jun 2018 13:43:29 -0400
+Received: by mail-io0-f193.google.com with SMTP id d22-v6so329949iof.13
+        for <linux-integrity@vger.kernel.org>; Tue, 12 Jun 2018 10:43:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+References: <20180608215743.224253-1-mjg59@google.com> <20180608215743.224253-2-mjg59@google.com>
+In-Reply-To: <20180608215743.224253-2-mjg59@google.com>
+From: Matthew Garrett <mjg59@google.com>
+Date: Tue, 12 Jun 2018 10:43:16 -0700
+Message-ID: <CACdnJuuop-rosGXBqkLZrMszuxhy-JeQGKrj7aFJNSe4NWBNog@mail.gmail.com>
+Subject: Re: [PATCH V3 1/2] evm: Don't deadlock if a crypto algorithm is unavailable
+To: linux-integrity <linux-integrity@vger.kernel.org>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-crypto@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-The TCG SAPI specification [1] defines a set of functions, which allows
-applications to use the TPM device in either blocking or non-blocking fashion.
-Each command defined by the specification has a corresponding
-Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
-together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
-mode of operation. Currently the TPM driver supports only blocking calls,
-which doesn't allow asynchronous IO operations.
-This patch changes it and adds support for nonblocking write and a new poll
-function to enable applications, which want to take advantage of this feature.
-The new functionality can be tested using standard TPM tools implemented
-in [2], together with modified TCTI from [3].
+On Fri, Jun 8, 2018 at 2:57 PM Matthew Garrett <mjg59@google.com> wrote:
+>
+> When EVM attempts to appraise a file signed with a crypto algorithm the
+> kernel doesn't have support for, it will cause the kernel to trigger a
+> module load. If the EVM policy includes appraisal of kernel modules this
+> will in turn call back into EVM - since EVM is holding a lock until the
+> crypto initialisation is complete, this triggers a deadlock. Add a
+> CRYPTO_NOLOAD flag and skip module loading if it's set, and add that flag
+> in the EVM case in order to fail gracefully with an error message
+> instead of deadlocking.
 
-[1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
-[2] https://github.com/tpm2-software/tpm2-tools
-[3] https://github.com/tstruk/tpm2-tss/tree/async
+Hi Herbert,
 
----
-Changes in v3:
-- Fixed problem reported by 0-dey kbuild test robot around __exitcall.
-  It complained because there is a module_exit() in another file already.
-
-Changes in v2:
-- Split the change into two separate patches. First patch adds a pointer
-  to the space to the struct file_priv to have access to it from the async job.
-  This is to avoid memory allocations on every write call. Now everything
-  what's needed is in the file_priv struct.
-- Renamed the 'work' member of the timer to avoid confusion.
-  Now there are 'timeout_work' and 'async_work'.
-- Removed the global wait queue and moved it to file_priv.
-- Only creating the work queue when the first file is opened.
-
-Tadeusz Struk (2):
-      tpm: add ptr to the tpm_space struct to file_priv
-      tpm: add support for nonblocking operation
-
- drivers/char/tpm/tpm-dev-common.c |  150 +++++++++++++++++++++++++++----------
- drivers/char/tpm/tpm-dev.c        |   22 +++--
- drivers/char/tpm/tpm-dev.h        |   19 +++--
- drivers/char/tpm/tpm-interface.c  |    1 
- drivers/char/tpm/tpm.h            |    1 
- drivers/char/tpm/tpmrm-dev.c      |   31 ++++----
- 6 files changed, 152 insertions(+), 72 deletions(-)
-
---
-TS
+Does this explain the problem sufficiently?
