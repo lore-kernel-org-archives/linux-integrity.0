@@ -1,30 +1,45 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:54923 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755072AbeFNTmk (ORCPT
+Received: from smtprelay0132.hostedemail.com ([216.40.44.132]:40469 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S935682AbeFMXtv (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 14 Jun 2018 15:42:40 -0400
-Received: by mail-it0-f66.google.com with SMTP id 76-v6so9827499itx.4
-        for <linux-integrity@vger.kernel.org>; Thu, 14 Jun 2018 12:42:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180417225601.6965-1-mjg59@google.com> <1528897302.3880.1.camel@linux.vnet.ibm.com>
-In-Reply-To: <1528897302.3880.1.camel@linux.vnet.ibm.com>
-From: Matthew Garrett <mjg59@google.com>
-Date: Thu, 14 Jun 2018 12:42:27 -0700
-Message-ID: <CACdnJuvkE48YbO51OLpbkWRX2N6aHVZ5gxrY3FRPb9grNFVzHw@mail.gmail.com>
-Subject: Re: [USER] [PATCH 1/2] Remove hardcoding of SHA1 in EVM signatures
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 13 Jun 2018 19:49:51 -0400
+Message-ID: <85d6e86b7829b42e69feab8e8dbe93a30b5fa4f1.camel@perches.com>
+Subject: Re: [-next PATCH] security: use octal not symbolic permissions
+From: Joe Perches <joe@perches.com>
+To: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: John Johansen <john.johansen@canonical.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        selinux@tycho.nsa.gov
+Date: Wed, 13 Jun 2018 16:49:47 -0700
+In-Reply-To: <20180613151921.GA27375@mail.hallyn.com>
+References: <1e91f8e10ce76d3208239b6b5899aab76d1543ff.1528743633.git.joe@perches.com>
+         <20180613151921.GA27375@mail.hallyn.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Jun 13, 2018 at 6:42 AM Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
->
-> On Tue, 2018-04-17 at 15:56 -0700, Matthew Garrett wrote:
-> > -     err = !HMAC_Init_ex(pctx, evmkey, sizeof(evmkey), EVP_sha1(), NULL);
-> > +     md = EVP_get_digestbyname(params.hash_algo);
->
-> HMAC is still limited to sha1.
+On Wed, 2018-06-13 at 10:19 -0500, Serge E. Hallyn wrote:
+> Using octal and not symbolic permissions is preferred by many as more
+> > readable.
+> > 
+> > see: https://lkml.org/lkml/2016/8/2/1945
+> 
+> Heh, well see also https://lkml.org/lkml/2016/8/2/2062 .
 
-Yes, let me revert that hunk and I'll resend.
+We all love Al.
+
+I did reply then too.
+
+cheers, Joe
