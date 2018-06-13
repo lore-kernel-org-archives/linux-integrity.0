@@ -1,43 +1,72 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from orcrist.hmeau.com ([104.223.48.154]:53500 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754377AbeFMG2d (ORCPT
+Received: from smtprelay0192.hostedemail.com ([216.40.44.192]:38751 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934895AbeFMA3T (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 13 Jun 2018 02:28:33 -0400
-Date: Wed, 13 Jun 2018 14:28:24 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Matthew Garrett <mjg59@google.com>
-Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        linux-crypto@vger.kernel.org, davem@davemloft.net
-Subject: Re: [PATCH V2 1/2] evm: Don't deadlock if a crypto algorithm is
- unavailable
-Message-ID: <20180613062824.3h5dgsbsfkml7zs4@gondor.apana.org.au>
-References: <20180606215712.121747-1-mjg59@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180606215712.121747-1-mjg59@google.com>
+        Tue, 12 Jun 2018 20:29:19 -0400
+Message-ID: <3d890108a942b6a3fb9a5326501174af270707dc.camel@perches.com>
+Subject: Re: [-next PATCH] security: use octal not symbolic permissions
+From: Joe Perches <joe@perches.com>
+To: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>
+Cc: Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        selinux@tycho.nsa.gov
+Date: Tue, 12 Jun 2018 17:29:14 -0700
+In-Reply-To: <CAHC9VhTpsYDT5+CjdtiBmLMDEKV9fmGv+DyXVtUuja9d4i2ecg@mail.gmail.com>
+References: <1e91f8e10ce76d3208239b6b5899aab76d1543ff.1528743633.git.joe@perches.com>
+         <fcac609a-08a8-b3ab-a69e-2e65e2ad63e9@schaufler-ca.com>
+         <alpine.LRH.2.21.1806130631400.13763@namei.org>
+         <CAHC9VhTpsYDT5+CjdtiBmLMDEKV9fmGv+DyXVtUuja9d4i2ecg@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Jun 06, 2018 at 02:57:11PM -0700, Matthew Garrett wrote:
-> When EVM attempts to appraise a file signed with a crypto algorithm the
-> kernel doesn't have support for, it will cause the kernel to trigger a
-> module load. If the EVM policy includes appraisal of kernel modules this
-> will in turn call back into EVM - since EVM is holding a lock until the
-> crypto initialisation is complete, this triggers a deadlock. Add a
-> CRYPTO_NOLOAD flag and skip module loading if it's set, and add that flag
-> in the EVM case in order to fail gracefully with an error message
-> instead of deadlocking.
+On Tue, 2018-06-12 at 17:12 -0400, Paul Moore wrote:
+> On Tue, Jun 12, 2018 at 4:32 PM, James Morris <jmorris@namei.org> wrote:
+> > On Mon, 11 Jun 2018, Casey Schaufler wrote:
+> > 
+> > > If you want to break this up by security module I would take
+> > > the Smack part as soon as James does the tree update. If James
+> > > wants to take the whole thing at once you can add my:
+> > > 
+> > > Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> > > 
+> > > for the Smack changes.
+> > 
+> > It's probably simplest for me to take them as one patch.
 > 
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
-> ---
->  crypto/api.c                        | 2 +-
->  include/linux/crypto.h              | 5 +++++
->  security/integrity/evm/evm_crypto.c | 3 ++-
->  3 files changed, 8 insertions(+), 2 deletions(-)
+> I would prefer if the SELinux changes were split into a separate
+> patch.  I'm guessing John would probably want the same for the
+> AppArmor patches, but take his work for it, not mine.
+> 
+> Joe, in general I really appreciate the fixes you send, but these
+> patches that cross a lot of subsystem boundaries (this isn't the first
+> one that does this) causes unnecessary conflicts in -next and during
+> the merge window.  Could you split your patches up from now on please?
 
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Sorry. No.  Merge conflicts are inherent in this system.
+
+There is just no good way to do this as sending a set
+of per subsystem patches guarantees partial application
+of the entire set.
+
+The nominal best way is for a script to be run and
+applied at the top level rather than sending a patch
+at all.
+
+If you prefer, each sub-subsystem maintainer, at
+whatever granularity desired, could apply the patch
+to the appropriate subsystem by using
+"git am --include=<subsystem_path>".
+
+cheers, Joe
