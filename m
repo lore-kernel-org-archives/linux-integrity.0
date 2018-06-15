@@ -1,9 +1,9 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-db5eur01on0133.outbound.protection.outlook.com ([104.47.2.133]:10720
+Received: from mail-db5eur01on0094.outbound.protection.outlook.com ([104.47.2.94]:38179
         "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S936211AbeFOKPy (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 15 Jun 2018 06:15:54 -0400
+        id S965683AbeFOKQF (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 15 Jun 2018 06:16:05 -0400
 From: Peter Rosin <peda@axentia.se>
 To: linux-kernel@vger.kernel.org
 Cc: Peter Rosin <peda@axentia.se>, Peter Huewe <peterhuewe@gmx.de>,
@@ -41,9 +41,9 @@ Cc: Peter Rosin <peda@axentia.se>, Peter Huewe <peterhuewe@gmx.de>,
         linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
         linux-media@vger.kernel.org
-Subject: [PATCH 05/11] media: af9013: switch to i2c_lock_segment
-Date: Fri, 15 Jun 2018 12:15:00 +0200
-Message-Id: <20180615101506.8012-6-peda@axentia.se>
+Subject: [PATCH 08/11] media: tda1004x: switch to i2c_lock_segment
+Date: Fri, 15 Jun 2018 12:15:03 +0200
+Message-Id: <20180615101506.8012-9-peda@axentia.se>
 In-Reply-To: <20180615101506.8012-1-peda@axentia.se>
 References: <20180615101506.8012-1-peda@axentia.se>
 MIME-Version: 1.0
@@ -58,38 +58,38 @@ the two locking variants are equivalent.
 
 Signed-off-by: Peter Rosin <peda@axentia.se>
 ---
- drivers/media/dvb-frontends/af9013.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/media/dvb-frontends/tda1004x.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/af9013.c b/drivers/media/dvb-frontends/af9013.c
-index 482bce49819a..a504697ff557 100644
---- a/drivers/media/dvb-frontends/af9013.c
-+++ b/drivers/media/dvb-frontends/af9013.c
-@@ -1312,10 +1312,10 @@ static int af9013_wregs(struct i2c_client *client, u8 cmd, u16 reg,
- 	memcpy(&buf[3], val, len);
+diff --git a/drivers/media/dvb-frontends/tda1004x.c b/drivers/media/dvb-frontends/tda1004x.c
+index 58e3beff5adc..1e5c183cdd86 100644
+--- a/drivers/media/dvb-frontends/tda1004x.c
++++ b/drivers/media/dvb-frontends/tda1004x.c
+@@ -329,7 +329,7 @@ static int tda1004x_do_upload(struct tda1004x_state *state,
+ 	tda1004x_write_byteI(state, dspCodeCounterReg, 0);
+ 	fw_msg.addr = state->config->demod_address;
  
- 	if (lock)
--		i2c_lock_adapter(client->adapter);
-+		i2c_lock_segment(client->adapter);
- 	ret = __i2c_transfer(client->adapter, msg, 1);
- 	if (lock)
--		i2c_unlock_adapter(client->adapter);
-+		i2c_unlock_segment(client->adapter);
- 	if (ret < 0) {
- 		goto err;
- 	} else if (ret != 1) {
-@@ -1353,10 +1353,10 @@ static int af9013_rregs(struct i2c_client *client, u8 cmd, u16 reg,
- 	buf[2] = cmd;
+-	i2c_lock_adapter(state->i2c);
++	i2c_lock_segment(state->i2c);
+ 	buf[0] = dspCodeInReg;
+ 	while (pos != len) {
+ 		// work out how much to send this time
+@@ -342,14 +342,14 @@ static int tda1004x_do_upload(struct tda1004x_state *state,
+ 		fw_msg.len = tx_size + 1;
+ 		if (__i2c_transfer(state->i2c, &fw_msg, 1) != 1) {
+ 			printk(KERN_ERR "tda1004x: Error during firmware upload\n");
+-			i2c_unlock_adapter(state->i2c);
++			i2c_unlock_segment(state->i2c);
+ 			return -EIO;
+ 		}
+ 		pos += tx_size;
  
- 	if (lock)
--		i2c_lock_adapter(client->adapter);
-+		i2c_lock_segment(client->adapter);
- 	ret = __i2c_transfer(client->adapter, msg, 2);
- 	if (lock)
--		i2c_unlock_adapter(client->adapter);
-+		i2c_unlock_segment(client->adapter);
- 	if (ret < 0) {
- 		goto err;
- 	} else if (ret != 2) {
+ 		dprintk("%s: fw_pos=0x%x\n", __func__, pos);
+ 	}
+-	i2c_unlock_adapter(state->i2c);
++	i2c_unlock_segment(state->i2c);
+ 
+ 	/* give the DSP a chance to settle 03/10/05 Hac */
+ 	msleep(100);
 -- 
 2.11.0
