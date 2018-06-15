@@ -1,83 +1,57 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:48248 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933664AbeFRLFL (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 18 Jun 2018 07:05:11 -0400
-Date: Mon, 18 Jun 2018 20:05:03 +0900
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Haavard Skinnemoen <hskinnemoen@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Antti Palosaari <crope@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Krufky <mkrufky@linuxtv.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-integrity@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH 01/11] i2c: add helpers for locking the I2C segment
-Message-ID: <20180618110502.cb5s24srp4frahm6@ninjato>
-References: <20180615101506.8012-1-peda@axentia.se>
- <20180615101506.8012-2-peda@axentia.se>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kyrdsz3663p2mr6a"
-In-Reply-To: <20180615101506.8012-2-peda@axentia.se>
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45028 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S965639AbeFOPUd (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 15 Jun 2018 11:20:33 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5FFJOQE077590
+        for <linux-integrity@vger.kernel.org>; Fri, 15 Jun 2018 11:20:32 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jmf59jnet-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 15 Jun 2018 11:20:31 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Fri, 15 Jun 2018 16:20:29 +0100
+Subject: Re: [integrity:next-integrity-queued 22/22]
+ security/integrity/evm/evm_crypto.c:93: undefined reference to
+ `hash_algo_name'
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: kbuild test robot <lkp@intel.com>,
+        Matthew Garrett <mjg59@google.com>
+Cc: kbuild-all@01.org,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Date: Fri, 15 Jun 2018 11:20:25 -0400
+In-Reply-To: <1529060150.3740.79.camel@linux.vnet.ibm.com>
+References: <201806140958.6pTSK5nT%fengguang.wu@intel.com>
+         <1529060150.3740.79.camel@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1529076025.3740.89.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
+On Fri, 2018-06-15 at 06:55 -0400, Mimi Zohar wrote:
+> On Thu, 2018-06-14 at 09:07 +0800, kbuild test robot wrote:
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity-queued
+> > head:   6497009f11c75bae55a3329dedcd3eeb8e282eaf
+> > commit: 6497009f11c75bae55a3329dedcd3eeb8e282eaf [22/22] evm: Allow non-SHA1 digital signatures
+> > config: x86_64-randconfig-ws0-06140615 (attached as .config)
+> > compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
+> > reproduce:
+> >         git checkout 6497009f11c75bae55a3329dedcd3eeb8e282eaf
+> >         # save the attached .config to linux build tree
+> >         make ARCH=x86_64 
+> > 
+> > All errors (new ones prefixed by >>):
+> >    security/integrity/evm/evm_crypto.o: In function `init_desc':
+> > >> security/integrity/evm/evm_crypto.c:93: undefined reference to `hash_algo_name'
+> > 
+> > vim +93 security/integrity/evm/evm_crypto.c
+> 
+> Thanks!  Removing the hash.h include should fix it.  (commit updated.)
 
-> +static inline void
-> +i2c_lock_segment(struct i2c_adapter *adapter)
-> +{
-> +	i2c_lock_bus(adapter, I2C_LOCK_SEGMENT);
-> +}
-> +
-> +static inline int
-> +i2c_trylock_segment(struct i2c_adapter *adapter)
-> +{
-> +	return i2c_trylock_bus(adapter, I2C_LOCK_SEGMENT);
-> +}
-> +
-> +static inline void
-> +i2c_unlock_segment(struct i2c_adapter *adapter)
-> +{
-> +	i2c_unlock_bus(adapter, I2C_LOCK_SEGMENT);
-> +}
-
-I wonder if i2c_lock_segment() and i2c_lock_root_adapter() are really
-more readable and convenient than i2c_lock_bus() with the flag. I think
-the flags have speaking names, too.
-
-Is that an idea to remove these functions altogether and start using
-i2c_lock_bus()?
-
-
-
-    [ Part 2, Application/PGP-SIGNATURE (Name: "signature.asc") 849 bytes. ]
-    [ Unable to print this part. ]
+Reverting this change and selecting CRYPTO_HASH_INFO instead.
