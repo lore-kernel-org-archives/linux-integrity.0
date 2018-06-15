@@ -2,8 +2,8 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 Received: from mail-db5eur01on0094.outbound.protection.outlook.com ([104.47.2.94]:38179
         "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965662AbeFOKQB (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 15 Jun 2018 06:16:01 -0400
+        id S936215AbeFOKP6 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 15 Jun 2018 06:15:58 -0400
 From: Peter Rosin <peda@axentia.se>
 To: linux-kernel@vger.kernel.org
 Cc: Peter Rosin <peda@axentia.se>, Peter Huewe <peterhuewe@gmx.de>,
@@ -41,9 +41,9 @@ Cc: Peter Rosin <peda@axentia.se>, Peter Huewe <peterhuewe@gmx.de>,
         linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
         linux-media@vger.kernel.org
-Subject: [PATCH 07/11] media: rtl2830: switch to i2c_lock_segment
-Date: Fri, 15 Jun 2018 12:15:02 +0200
-Message-Id: <20180615101506.8012-8-peda@axentia.se>
+Subject: [PATCH 06/11] media: drxk_hard: switch to i2c_lock_segment
+Date: Fri, 15 Jun 2018 12:15:01 +0200
+Message-Id: <20180615101506.8012-7-peda@axentia.se>
 In-Reply-To: <20180615101506.8012-1-peda@axentia.se>
 References: <20180615101506.8012-1-peda@axentia.se>
 MIME-Version: 1.0
@@ -58,47 +58,29 @@ the two locking variants are equivalent.
 
 Signed-off-by: Peter Rosin <peda@axentia.se>
 ---
- drivers/media/dvb-frontends/rtl2830.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/media/dvb-frontends/drxk_hard.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/rtl2830.c b/drivers/media/dvb-frontends/rtl2830.c
-index 7bbfe11d11ed..85a8a9c4d020 100644
---- a/drivers/media/dvb-frontends/rtl2830.c
-+++ b/drivers/media/dvb-frontends/rtl2830.c
-@@ -24,9 +24,9 @@ static int rtl2830_bulk_write(struct i2c_client *client, unsigned int reg,
- 	struct rtl2830_dev *dev = i2c_get_clientdata(client);
- 	int ret;
+diff --git a/drivers/media/dvb-frontends/drxk_hard.c b/drivers/media/dvb-frontends/drxk_hard.c
+index 5a26ad93be10..10e6bb158712 100644
+--- a/drivers/media/dvb-frontends/drxk_hard.c
++++ b/drivers/media/dvb-frontends/drxk_hard.c
+@@ -213,7 +213,7 @@ static inline u32 log10times100(u32 value)
  
--	i2c_lock_adapter(client->adapter);
-+	i2c_lock_segment(client->adapter);
- 	ret = regmap_bulk_write(dev->regmap, reg, val, val_count);
--	i2c_unlock_adapter(client->adapter);
-+	i2c_unlock_segment(client->adapter);
- 	return ret;
- }
+ static int drxk_i2c_lock(struct drxk_state *state)
+ {
+-	i2c_lock_adapter(state->i2c);
++	i2c_lock_segment(state->i2c);
+ 	state->drxk_i2c_exclusive_lock = true;
  
-@@ -36,9 +36,9 @@ static int rtl2830_update_bits(struct i2c_client *client, unsigned int reg,
- 	struct rtl2830_dev *dev = i2c_get_clientdata(client);
- 	int ret;
+ 	return 0;
+@@ -224,7 +224,7 @@ static void drxk_i2c_unlock(struct drxk_state *state)
+ 	if (!state->drxk_i2c_exclusive_lock)
+ 		return;
  
--	i2c_lock_adapter(client->adapter);
-+	i2c_lock_segment(client->adapter);
- 	ret = regmap_update_bits(dev->regmap, reg, mask, val);
--	i2c_unlock_adapter(client->adapter);
-+	i2c_unlock_segment(client->adapter);
- 	return ret;
- }
- 
-@@ -48,9 +48,9 @@ static int rtl2830_bulk_read(struct i2c_client *client, unsigned int reg,
- 	struct rtl2830_dev *dev = i2c_get_clientdata(client);
- 	int ret;
- 
--	i2c_lock_adapter(client->adapter);
-+	i2c_lock_segment(client->adapter);
- 	ret = regmap_bulk_read(dev->regmap, reg, val, val_count);
--	i2c_unlock_adapter(client->adapter);
-+	i2c_unlock_segment(client->adapter);
- 	return ret;
+-	i2c_unlock_adapter(state->i2c);
++	i2c_unlock_segment(state->i2c);
+ 	state->drxk_i2c_exclusive_lock = false;
  }
  
 -- 
