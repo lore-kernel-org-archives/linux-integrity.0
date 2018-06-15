@@ -1,55 +1,105 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54866 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965631AbeFOK4I (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 15 Jun 2018 06:56:08 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5FAs8Ls092388
-        for <linux-integrity@vger.kernel.org>; Fri, 15 Jun 2018 06:56:08 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jm99dxwn1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 15 Jun 2018 06:56:08 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Fri, 15 Jun 2018 11:56:06 +0100
-Subject: Re: [integrity:next-integrity-queued 22/22]
- security/integrity/evm/evm_crypto.c:93: undefined reference to
- `hash_algo_name'
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: kbuild test robot <lkp@intel.com>,
-        Matthew Garrett <mjg59@google.com>
-Cc: kbuild-all@01.org,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Date: Fri, 15 Jun 2018 06:55:50 -0400
-In-Reply-To: <201806140958.6pTSK5nT%fengguang.wu@intel.com>
-References: <201806140958.6pTSK5nT%fengguang.wu@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1529060150.3740.79.camel@linux.vnet.ibm.com>
+Received: from mail-db5eur01on0122.outbound.protection.outlook.com ([104.47.2.122]:4422
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965553AbeFOKPo (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 15 Jun 2018 06:15:44 -0400
+From: Peter Rosin <peda@axentia.se>
+To: linux-kernel@vger.kernel.org
+Cc: Peter Rosin <peda@axentia.se>, Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Haavard Skinnemoen <hskinnemoen@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Antti Palosaari <crope@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Krufky <mkrufky@linuxtv.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-integrity@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-media@vger.kernel.org
+Subject: [PATCH 02/11] tpm/tpm_i2c_infineon: switch to i2c_lock_segment
+Date: Fri, 15 Jun 2018 12:14:57 +0200
+Message-Id: <20180615101506.8012-3-peda@axentia.se>
+In-Reply-To: <20180615101506.8012-1-peda@axentia.se>
+References: <20180615101506.8012-1-peda@axentia.se>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, 2018-06-14 at 09:07 +0800, kbuild test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity-queued
-> head:   6497009f11c75bae55a3329dedcd3eeb8e282eaf
-> commit: 6497009f11c75bae55a3329dedcd3eeb8e282eaf [22/22] evm: Allow non-SHA1 digital signatures
-> config: x86_64-randconfig-ws0-06140615 (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-> reproduce:
->         git checkout 6497009f11c75bae55a3329dedcd3eeb8e282eaf
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
-> 
-> All errors (new ones prefixed by >>):
->    security/integrity/evm/evm_crypto.o: In function `init_desc':
-> >> security/integrity/evm/evm_crypto.c:93: undefined reference to `hash_algo_name'
-> 
-> vim +93 security/integrity/evm/evm_crypto.c
+Locking the root adapter for __i2c_transfer will deadlock if the
+device sits behind a mux-locked I2C mux. Switch to the finer-grained
+i2c_lock_segment. If the device does not sit behind a mux-locked mux,
+the two locking variants are equivalent.
 
-Thanks!  Removing the hash.h include should fix it.  (commit updated.)
+Signed-off-by: Peter Rosin <peda@axentia.se>
+---
+ drivers/char/tpm/tpm_i2c_infineon.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Mimi
+diff --git a/drivers/char/tpm/tpm_i2c_infineon.c b/drivers/char/tpm/tpm_i2c_infineon.c
+index 6116cd05e228..b2889405b4fa 100644
+--- a/drivers/char/tpm/tpm_i2c_infineon.c
++++ b/drivers/char/tpm/tpm_i2c_infineon.c
+@@ -117,7 +117,7 @@ static int iic_tpm_read(u8 addr, u8 *buffer, size_t len)
+ 	/* Lock the adapter for the duration of the whole sequence. */
+ 	if (!tpm_dev.client->adapter->algo->master_xfer)
+ 		return -EOPNOTSUPP;
+-	i2c_lock_adapter(tpm_dev.client->adapter);
++	i2c_lock_segment(tpm_dev.client->adapter);
+ 
+ 	if (tpm_dev.chip_type == SLB9645) {
+ 		/* use a combined read for newer chips
+@@ -192,7 +192,7 @@ static int iic_tpm_read(u8 addr, u8 *buffer, size_t len)
+ 	}
+ 
+ out:
+-	i2c_unlock_adapter(tpm_dev.client->adapter);
++	i2c_unlock_segment(tpm_dev.client->adapter);
+ 	/* take care of 'guard time' */
+ 	usleep_range(SLEEP_DURATION_LOW, SLEEP_DURATION_HI);
+ 
+@@ -224,7 +224,7 @@ static int iic_tpm_write_generic(u8 addr, u8 *buffer, size_t len,
+ 
+ 	if (!tpm_dev.client->adapter->algo->master_xfer)
+ 		return -EOPNOTSUPP;
+-	i2c_lock_adapter(tpm_dev.client->adapter);
++	i2c_lock_segment(tpm_dev.client->adapter);
+ 
+ 	/* prepend the 'register address' to the buffer */
+ 	tpm_dev.buf[0] = addr;
+@@ -243,7 +243,7 @@ static int iic_tpm_write_generic(u8 addr, u8 *buffer, size_t len,
+ 		usleep_range(sleep_low, sleep_hi);
+ 	}
+ 
+-	i2c_unlock_adapter(tpm_dev.client->adapter);
++	i2c_unlock_segment(tpm_dev.client->adapter);
+ 	/* take care of 'guard time' */
+ 	usleep_range(SLEEP_DURATION_LOW, SLEEP_DURATION_HI);
+ 
+-- 
+2.11.0
