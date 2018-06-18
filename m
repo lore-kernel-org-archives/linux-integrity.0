@@ -1,36 +1,46 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:35998 "EHLO mga01.intel.com"
+Received: from mga05.intel.com ([192.55.52.43]:7641 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935546AbeFRSI4 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 18 Jun 2018 14:08:56 -0400
-Date: Mon, 18 Jun 2018 21:08:52 +0300
+        id S935531AbeFRSHS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 18 Jun 2018 14:07:18 -0400
+Date: Mon, 18 Jun 2018 21:07:12 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-integrity@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] tpm_tis_spi: Pass the SPI IRQ down to the driver
-Message-ID: <20180618180852.GC20697@linux.intel.com>
-References: <20180608070907.15185-1-linus.walleij@linaro.org>
+To: Louis Collard <louiscollard@chromium.org>
+Cc: linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, apronin@chromium.org
+Subject: Re: [PATCH] tpm: Add module parameter for hwrng quality.
+Message-ID: <20180618180712.GB20697@linux.intel.com>
+References: <20180608065438.110109-1-louiscollard@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180608070907.15185-1-linus.walleij@linaro.org>
+In-Reply-To: <20180608065438.110109-1-louiscollard@chromium.org>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Jun 08, 2018 at 09:09:07AM +0200, Linus Walleij wrote:
-> An SPI TPM device managed directly on an embedded board using
-> the SPI bus and some GPIO or similar line as IRQ handler will
-> pass the IRQn from the TPM device associated with the SPI
-> device. This is already handled by the SPI core, so make sure
-> to pass this down to the core as well.
+On Fri, Jun 08, 2018 at 02:54:38PM +0800, Louis Collard wrote:
+> It is now possible for drivers to easily specify a hwrng quality, however
+> most do not currently do this, and in cases where they do, it may be
+> desirable to override the driver-specified value with a user-specified
+> one. This patch adds a parameter to set or override the hwrng quality.
 > 
-> (The TPM core habit of using -1 to signal no IRQ is dubious
-> (as IRQ 0 is NO_IRQ) but I do not want to mess with that
-> semantic in this patch.)
+> Signed-off-by: Louis Collard <louiscollard@chromium.org>
+> ---
+>  drivers/char/tpm/tpm-chip.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> Cc: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+> index 0a62c19937b6..4def49cfc634 100644
+> --- a/drivers/char/tpm/tpm-chip.c
+> +++ b/drivers/char/tpm/tpm-chip.c
+> @@ -33,6 +33,11 @@
+>  DEFINE_IDR(dev_nums_idr);
+>  static DEFINE_MUTEX(idr_lock);
+>  
+> +static short override_rng_quality = -1;
+> +module_param(override_rng_quality, short, 0644);
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Should this be 600 i.e. not to leak this information?
 
 /Jarkko
