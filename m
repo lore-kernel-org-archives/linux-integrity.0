@@ -1,11 +1,11 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-eopbgr80134.outbound.protection.outlook.com ([40.107.8.134]:65248
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933337AbeFRLc7 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 18 Jun 2018 07:32:59 -0400
-Subject: Re: [PATCH 01/11] i2c: add helpers for locking the I2C segment
-To: Wolfram Sang <wsa@the-dreams.de>
+Received: from sauhun.de ([88.99.104.3]:48294 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933895AbeFRLGS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 18 Jun 2018 07:06:18 -0400
+Date: Mon, 18 Jun 2018 20:06:11 +0900
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Peter Rosin <peda@axentia.se>
 Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
@@ -40,54 +40,28 @@ Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
         linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
         linux-media@vger.kernel.org
+Subject: Re: [PATCH 00/11] Split i2c_lock_adapter into i2c_lock_root and
+ i2c_lock_segment
+Message-ID: <20180618110610.cwvkke6klc46kzvz@ninjato>
 References: <20180615101506.8012-1-peda@axentia.se>
- <20180615101506.8012-2-peda@axentia.se>
- <20180618110502.cb5s24srp4frahm6@ninjato>
-From: Peter Rosin <peda@axentia.se>
-Message-ID: <b860025e-3d4b-f333-80b4-3831dd969757@axentia.se>
-Date: Mon, 18 Jun 2018 13:32:47 +0200
 MIME-Version: 1.0
-In-Reply-To: <20180618110502.cb5s24srp4frahm6@ninjato>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="m2cccclcdv7g6rv4"
+In-Reply-To: <20180615101506.8012-1-peda@axentia.se>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 2018-06-18 13:05, Wolfram Sang wrote:
-> 
->> +static inline void
->> +i2c_lock_segment(struct i2c_adapter *adapter)
->> +{
->> +	i2c_lock_bus(adapter, I2C_LOCK_SEGMENT);
->> +}
->> +
->> +static inline int
->> +i2c_trylock_segment(struct i2c_adapter *adapter)
->> +{
->> +	return i2c_trylock_bus(adapter, I2C_LOCK_SEGMENT);
->> +}
->> +
->> +static inline void
->> +i2c_unlock_segment(struct i2c_adapter *adapter)
->> +{
->> +	i2c_unlock_bus(adapter, I2C_LOCK_SEGMENT);
->> +}
-> 
-> I wonder if i2c_lock_segment() and i2c_lock_root_adapter() are really
-> more readable and convenient than i2c_lock_bus() with the flag. I think
-> the flags have speaking names, too.
-> 
-> Is that an idea to remove these functions altogether and start using
-> i2c_lock_bus()?
 
-That would be fine with me. I don't have a strong opinion and agree that
-both are readable enough...
+> I suggest that Wolfram takes this series through the I2C tree
+> and creates an immutable branch for the other subsystems. The
 
-It would make for a reduction of the number of lines so that's nice, but
-the macro in drivers/i2c/busses/i2c-gpio.c (patch 11) would not fit in
-the current \-width (or whatever you'd call that line of backslashes to
-the right in a multi-line macro).
+I'd prefer this, too. Are the other subsystem maintainers fine with
+that?
 
-Does anyone have a strong opinion?
+I am very positive on the series. I just have one comment which I just
+posted. It looks good in general.
 
-Cheers,
-Peter
+
+
+    [ Part 2, Application/PGP-SIGNATURE (Name: "signature.asc") 849 bytes. ]
+    [ Unable to print this part. ]
