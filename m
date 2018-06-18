@@ -1,48 +1,82 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:36524 "EHLO mx2.suse.de"
+Received: from sauhun.de ([88.99.104.3]:48592 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934674AbeFRO4a (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 18 Jun 2018 10:56:30 -0400
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 1FBADADD1
-        for <linux-integrity@vger.kernel.org>; Mon, 18 Jun 2018 14:56:29 +0000 (UTC)
-Date: Mon, 18 Jun 2018 16:56:28 +0200
-From: Matthias Gerstner <mgerstner@suse.de>
-To: linux-integrity@vger.kernel.org
-Subject: IMA: Deadlock in ima_appraise_measurement when /bin/kmod carries a
- digsig in security.evm
-Message-ID: <20180618145628.GD8123@f195.suse.de>
+        id S932870AbeFRLyx (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 18 Jun 2018 07:54:53 -0400
+Date: Mon, 18 Jun 2018 20:54:46 +0900
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Haavard Skinnemoen <hskinnemoen@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Antti Palosaari <crope@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Krufky <mkrufky@linuxtv.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-integrity@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-media@vger.kernel.org
+Subject: Re: [PATCH 01/11] i2c: add helpers for locking the I2C segment
+Message-ID: <20180618115444.pgjmfntp767zuvmw@ninjato>
+References: <20180615101506.8012-1-peda@axentia.se>
+ <20180615101506.8012-2-peda@axentia.se>
+ <20180618110502.cb5s24srp4frahm6@ninjato>
+ <b860025e-3d4b-f333-80b4-3831dd969757@axentia.se>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tNQTSEo8WG/FKZ8E"
+        protocol="application/pgp-signature"; boundary="odyilowjkqhfymya"
+In-Reply-To: <b860025e-3d4b-f333-80b4-3831dd969757@axentia.se>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hello,
 
-I came across a deadlock issue when /bin/kmod carries a digital
-signature in security.evm.
+> > I wonder if i2c_lock_segment() and i2c_lock_root_adapter() are really
+> > more readable and convenient than i2c_lock_bus() with the flag. I think
+> > the flags have speaking names, too.
+> > 
+> > Is that an idea to remove these functions altogether and start using
+> > i2c_lock_bus()?
+> 
+> That would be fine with me. I don't have a strong opinion and agree that
+> both are readable enough...
+> 
+> It would make for a reduction of the number of lines so that's nice, but
+> the macro in drivers/i2c/busses/i2c-gpio.c (patch 11) would not fit in
+> the current \-width (or whatever you'd call that line of backslashes to
+> the right in a multi-line macro).
+> 
+> Does anyone have a strong opinion?
 
-There was a patch suggested on the old linux-ima-devel mailing list here
-<https://sourceforge.net/p/linux-ima/mailman/message/35628097/>, but it
-seems not to have made it into the official tree.
+I have a strong opinion on making i2c.h less bloated. And yes, less
+number of lines is nice, too. I think that surely pays off the
+whitespace exception.
 
-Can anybody tell me what the status of this patch is?
+Thanks!
 
-Thank you
-
-Matthias
-
--- 
-Matthias Gerstner <matthias.gerstner@suse.de>
-Dipl.-Wirtsch.-Inf. (FH), Security Engineer
-https://www.suse.com/security
-Telefon: +49 911 740 53 290
-GPG Key ID: 0x14C405C971923553
-
-SUSE Linux GmbH
-GF: Felix Imendorffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nuernberg)
 
 
     [ Part 2, Application/PGP-SIGNATURE (Name: "signature.asc") 849 bytes. ]
