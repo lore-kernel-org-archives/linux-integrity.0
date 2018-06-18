@@ -1,9 +1,9 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:48294 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:48248 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933895AbeFRLGS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 18 Jun 2018 07:06:18 -0400
-Date: Mon, 18 Jun 2018 20:06:11 +0900
+        id S933664AbeFRLFL (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 18 Jun 2018 07:05:11 -0400
+Date: Mon, 18 Jun 2018 20:05:03 +0900
 From: Wolfram Sang <wsa@the-dreams.de>
 To: Peter Rosin <peda@axentia.se>
 Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
@@ -40,26 +40,42 @@ Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
         linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
         linux-media@vger.kernel.org
-Subject: Re: [PATCH 00/11] Split i2c_lock_adapter into i2c_lock_root and
- i2c_lock_segment
-Message-ID: <20180618110610.cwvkke6klc46kzvz@ninjato>
+Subject: Re: [PATCH 01/11] i2c: add helpers for locking the I2C segment
+Message-ID: <20180618110502.cb5s24srp4frahm6@ninjato>
 References: <20180615101506.8012-1-peda@axentia.se>
+ <20180615101506.8012-2-peda@axentia.se>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="m2cccclcdv7g6rv4"
-In-Reply-To: <20180615101506.8012-1-peda@axentia.se>
+        protocol="application/pgp-signature"; boundary="kyrdsz3663p2mr6a"
+In-Reply-To: <20180615101506.8012-2-peda@axentia.se>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
 
-> I suggest that Wolfram takes this series through the I2C tree
-> and creates an immutable branch for the other subsystems. The
+> +static inline void
+> +i2c_lock_segment(struct i2c_adapter *adapter)
+> +{
+> +	i2c_lock_bus(adapter, I2C_LOCK_SEGMENT);
+> +}
+> +
+> +static inline int
+> +i2c_trylock_segment(struct i2c_adapter *adapter)
+> +{
+> +	return i2c_trylock_bus(adapter, I2C_LOCK_SEGMENT);
+> +}
+> +
+> +static inline void
+> +i2c_unlock_segment(struct i2c_adapter *adapter)
+> +{
+> +	i2c_unlock_bus(adapter, I2C_LOCK_SEGMENT);
+> +}
 
-I'd prefer this, too. Are the other subsystem maintainers fine with
-that?
+I wonder if i2c_lock_segment() and i2c_lock_root_adapter() are really
+more readable and convenient than i2c_lock_bus() with the flag. I think
+the flags have speaking names, too.
 
-I am very positive on the series. I just have one comment which I just
-posted. It looks good in general.
+Is that an idea to remove these functions altogether and start using
+i2c_lock_bus()?
 
 
 
