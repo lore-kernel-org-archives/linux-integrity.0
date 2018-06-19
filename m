@@ -1,64 +1,56 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga12.intel.com ([192.55.52.136]:9811 "EHLO mga12.intel.com"
+Received: from mga17.intel.com ([192.55.52.151]:62950 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937770AbeFSM4i (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 19 Jun 2018 08:56:38 -0400
-Date: Tue, 19 Jun 2018 15:56:18 +0300
+        id S937796AbeFSMxz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 19 Jun 2018 08:53:55 -0400
+Date: Tue, 19 Jun 2018 15:53:49 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Haavard Skinnemoen <hskinnemoen@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Antti Palosaari <crope@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Krufky <mkrufky@linuxtv.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-integrity@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH 02/11] tpm/tpm_i2c_infineon: switch to i2c_lock_segment
-Message-ID: <20180619125618.GB5609@linux.intel.com>
-References: <20180615101506.8012-1-peda@axentia.se>
- <20180615101506.8012-3-peda@axentia.se>
+To: Ricardo Schwarzmeier <Ricardo.Schwarzmeier@infineon.com>
+Cc: linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+        arnd@arndb.de, gregkh@linuxfoundation.org
+Subject: Re: [PATCH] tpm: Return the actual size when receiving an
+ unsupported command
+Message-ID: <20180619125349.GA5609@linux.intel.com>
+References: <20180615121821.23376-1-Ricardo.Schwarzmeier@infineon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180615101506.8012-3-peda@axentia.se>
+In-Reply-To: <20180615121821.23376-1-Ricardo.Schwarzmeier@infineon.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Jun 15, 2018 at 12:14:57PM +0200, Peter Rosin wrote:
-> Locking the root adapter for __i2c_transfer will deadlock if the
-> device sits behind a mux-locked I2C mux. Switch to the finer-grained
-> i2c_lock_segment. If the device does not sit behind a mux-locked mux,
-> the two locking variants are equivalent.
+On Fri, Jun 15, 2018 at 02:18:21PM +0200, Ricardo Schwarzmeier wrote:
+> The command size is computed for the header anyway.
+> It can as well indicate the correct number of bytes to read from the driver.
 > 
-> Signed-off-by: Peter Rosin <peda@axentia.se>
+> Signed-off-by: Ricardo Schwarzmeier <Ricardo.Schwarzmeier@infineon.com>
+> ---
+>  drivers/char/tpm/tpm-interface.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index e32f6e85dc6d..0923e81505a5 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -423,7 +423,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+>  		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
+>  		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
+>  						  TSS2_RESMGR_TPM_RC_LAYER);
+> -		return bufsiz;
+> +		return header->length;
+>  	}
+>  
+>  	if (bufsiz > TPM_BUFSIZE)
+> -- 
+> 2.17.1
+> 
 
-Can you quickly explain (or give a reference) the difference with these
-functions? Not an expert in this area. Thanks.
+Isn't this a regression (just came from one week leave might be
+overlooking something)? Should always return either error or response
+length. If so, please add the fixes tag.
+
+And please send to linux-integrity and CC to linux-integrity and
+linux-kernel.
+
+Thanks anyway.
 
 /Jarkko
