@@ -1,51 +1,88 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44872 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751677AbeFSWVW (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 19 Jun 2018 18:21:22 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5JM9Mas040207
-        for <linux-integrity@vger.kernel.org>; Tue, 19 Jun 2018 18:21:21 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jq71h04tk-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 19 Jun 2018 18:21:21 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Tue, 19 Jun 2018 23:21:19 +0100
-Subject: Re: IMA: Deadlock in ima_appraise_measurement when /bin/kmod
- carries a digsig in security.evm
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Matthias Gerstner <mgerstner@suse.de>,
-        linux-integrity@vger.kernel.org
-Date: Tue, 19 Jun 2018 18:21:15 -0400
-In-Reply-To: <20180618145628.GD8123@f195.suse.de>
-References: <20180618145628.GD8123@f195.suse.de>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1529446875.3269.6.camel@linux.vnet.ibm.com>
+Received: from mail-eopbgr50127.outbound.protection.outlook.com ([40.107.5.127]:55107
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1756803AbeFSVaE (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 19 Jun 2018 17:30:04 -0400
+Subject: Re: [PATCH 01/11] i2c: add helpers for locking the I2C segment
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Haavard Skinnemoen <hskinnemoen@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Antti Palosaari <crope@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Krufky <mkrufky@linuxtv.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-integrity@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-media@vger.kernel.org
+References: <20180615101506.8012-1-peda@axentia.se>
+ <20180615101506.8012-2-peda@axentia.se>
+ <20180618110502.cb5s24srp4frahm6@ninjato>
+ <b860025e-3d4b-f333-80b4-3831dd969757@axentia.se>
+ <20180618115444.pgjmfntp767zuvmw@ninjato>
+From: Peter Rosin <peda@axentia.se>
+Message-ID: <4a721b58-d718-68c0-cca5-23b5b21ef100@axentia.se>
+Date: Tue, 19 Jun 2018 23:29:51 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180618115444.pgjmfntp767zuvmw@ninjato>
+Content-Type: text/plain; charset=windows-1252
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Matthias,
-
-On Mon, 2018-06-18 at 16:56 +0200, Matthias Gerstner wrote:
-> Hello,
+On 2018-06-18 13:54, Wolfram Sang wrote:
 > 
-> I came across a deadlock issue when /bin/kmod carries a digital
-> signature in security.evm.
+>>> I wonder if i2c_lock_segment() and i2c_lock_root_adapter() are really
+>>> more readable and convenient than i2c_lock_bus() with the flag. I think
+>>> the flags have speaking names, too.
+>>>
+>>> Is that an idea to remove these functions altogether and start using
+>>> i2c_lock_bus()?
+>>
+>> That would be fine with me. I don't have a strong opinion and agree that
+>> both are readable enough...
+>>
+>> It would make for a reduction of the number of lines so that's nice, but
+>> the macro in drivers/i2c/busses/i2c-gpio.c (patch 11) would not fit in
+>> the current \-width (or whatever you'd call that line of backslashes to
+>> the right in a multi-line macro).
+>>
+>> Does anyone have a strong opinion?
 > 
-> There was a patch suggested on the old linux-ima-devel mailing list here
-> <https://sourceforge.net/p/linux-ima/mailman/message/35628097/>, but it
-> seems not to have made it into the official tree.
-> 
-> Can anybody tell me what the status of this patch is?
+> I have a strong opinion on making i2c.h less bloated. And yes, less
+> number of lines is nice, too. I think that surely pays off the
+> whitespace exception.
 
-Somehow I missed it.  A more generic patch is currently queued, which
-should resolve this problem as well.  Please try commit fdc33c29b022
-("evm: Don't deadlock if a crypto algorithm is unavailable") in the
-next-integrity-queued branch.
+Ok, I have rebased onto v4.18-rc1, killed the i2c-tegra hunk and converted
+i2c_lock_root(foo) over to i2c_lock_bus(foo, I2C_LOCK_ROOT_ADAPTER) and
+i2c_lock_segment(foo) over to i2c_lock_bus(foo, I2C_LOCK_SEGMENT). And I
+of course killed a bunch of locking helpers in i2c.h.
 
-Mimi
+I doing build tests now, will post a v2 in the morning.
+
+Cheers,
+Peter
