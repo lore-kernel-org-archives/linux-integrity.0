@@ -1,11 +1,12 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-eopbgr50127.outbound.protection.outlook.com ([40.107.5.127]:55107
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756803AbeFSVaE (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 19 Jun 2018 17:30:04 -0400
-Subject: Re: [PATCH 01/11] i2c: add helpers for locking the I2C segment
-To: Wolfram Sang <wsa@the-dreams.de>
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:33462 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967134AbeFSSkF (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 19 Jun 2018 14:40:05 -0400
+Date: Tue, 19 Jun 2018 11:40:00 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Peter Rosin <peda@axentia.se>
 Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
@@ -25,12 +26,12 @@ Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
         Laxman Dewangan <ldewangan@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
         Jonathan Cameron <jic23@kernel.org>,
         Hartmut Knaack <knaack.h@gmx.de>,
         Lars-Peter Clausen <lars@metafoo.de>,
         Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Antti Palosaari <crope@iki.fi>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Michael Krufky <mkrufky@linuxtv.org>,
@@ -40,49 +41,60 @@ Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
         linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
         linux-media@vger.kernel.org
+Subject: Re: [PATCH 04/11] input: rohm_bu21023: switch to i2c_lock_segment
+Message-ID: <20180619184000.GJ71788@dtor-ws>
 References: <20180615101506.8012-1-peda@axentia.se>
- <20180615101506.8012-2-peda@axentia.se>
- <20180618110502.cb5s24srp4frahm6@ninjato>
- <b860025e-3d4b-f333-80b4-3831dd969757@axentia.se>
- <20180618115444.pgjmfntp767zuvmw@ninjato>
-From: Peter Rosin <peda@axentia.se>
-Message-ID: <4a721b58-d718-68c0-cca5-23b5b21ef100@axentia.se>
-Date: Tue, 19 Jun 2018 23:29:51 +0200
+ <20180615101506.8012-5-peda@axentia.se>
 MIME-Version: 1.0
-In-Reply-To: <20180618115444.pgjmfntp767zuvmw@ninjato>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180615101506.8012-5-peda@axentia.se>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 2018-06-18 13:54, Wolfram Sang wrote:
+On Fri, Jun 15, 2018 at 12:14:59PM +0200, Peter Rosin wrote:
+> Locking the root adapter for __i2c_transfer will deadlock if the
+> device sits behind a mux-locked I2C mux. Switch to the finer-grained
+> i2c_lock_segment. If the device does not sit behind a mux-locked mux,
+> the two locking variants are equivalent.
 > 
->>> I wonder if i2c_lock_segment() and i2c_lock_root_adapter() are really
->>> more readable and convenient than i2c_lock_bus() with the flag. I think
->>> the flags have speaking names, too.
->>>
->>> Is that an idea to remove these functions altogether and start using
->>> i2c_lock_bus()?
->>
->> That would be fine with me. I don't have a strong opinion and agree that
->> both are readable enough...
->>
->> It would make for a reduction of the number of lines so that's nice, but
->> the macro in drivers/i2c/busses/i2c-gpio.c (patch 11) would not fit in
->> the current \-width (or whatever you'd call that line of backslashes to
->> the right in a multi-line macro).
->>
->> Does anyone have a strong opinion?
+> Signed-off-by: Peter Rosin <peda@axentia.se>
+
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+
+I'm OK with it going through Wolfram's tree; I do not think I'd need an
+immutable branch for this even...
+
+> ---
+>  drivers/input/touchscreen/rohm_bu21023.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> I have a strong opinion on making i2c.h less bloated. And yes, less
-> number of lines is nice, too. I think that surely pays off the
-> whitespace exception.
+> diff --git a/drivers/input/touchscreen/rohm_bu21023.c b/drivers/input/touchscreen/rohm_bu21023.c
+> index bda0500c9b57..22d79db07234 100644
+> --- a/drivers/input/touchscreen/rohm_bu21023.c
+> +++ b/drivers/input/touchscreen/rohm_bu21023.c
+> @@ -304,7 +304,7 @@ static int rohm_i2c_burst_read(struct i2c_client *client, u8 start, void *buf,
+>  	msg[1].len = len;
+>  	msg[1].buf = buf;
+>  
+> -	i2c_lock_adapter(adap);
+> +	i2c_lock_segment(adap);
+>  
+>  	for (i = 0; i < 2; i++) {
+>  		if (__i2c_transfer(adap, &msg[i], 1) < 0) {
+> @@ -313,7 +313,7 @@ static int rohm_i2c_burst_read(struct i2c_client *client, u8 start, void *buf,
+>  		}
+>  	}
+>  
+> -	i2c_unlock_adapter(adap);
+> +	i2c_unlock_segment(adap);
+>  
+>  	return ret;
+>  }
+> -- 
+> 2.11.0
+> 
 
-Ok, I have rebased onto v4.18-rc1, killed the i2c-tegra hunk and converted
-i2c_lock_root(foo) over to i2c_lock_bus(foo, I2C_LOCK_ROOT_ADAPTER) and
-i2c_lock_segment(foo) over to i2c_lock_bus(foo, I2C_LOCK_SEGMENT). And I
-of course killed a bunch of locking helpers in i2c.h.
+Thanks.
 
-I doing build tests now, will post a v2 in the morning.
-
-Cheers,
-Peter
+-- 
+Dmitry
