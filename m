@@ -1,11 +1,11 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-eopbgr10120.outbound.protection.outlook.com ([40.107.1.120]:22368
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965740AbeFSNGK (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 19 Jun 2018 09:06:10 -0400
-Subject: Re: [PATCH 02/11] tpm/tpm_i2c_infineon: switch to i2c_lock_segment
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Received: from mga12.intel.com ([192.55.52.136]:9811 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S937770AbeFSM4i (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 19 Jun 2018 08:56:38 -0400
+Date: Tue, 19 Jun 2018 15:56:18 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Peter Rosin <peda@axentia.se>
 Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
         Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -40,33 +40,25 @@ Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
         linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
         linux-media@vger.kernel.org
+Subject: Re: [PATCH 02/11] tpm/tpm_i2c_infineon: switch to i2c_lock_segment
+Message-ID: <20180619125618.GB5609@linux.intel.com>
 References: <20180615101506.8012-1-peda@axentia.se>
  <20180615101506.8012-3-peda@axentia.se>
- <20180619125618.GB5609@linux.intel.com>
-From: Peter Rosin <peda@axentia.se>
-Message-ID: <eb583028-dfcb-7f1b-c2a1-236ad4c5c2b5@axentia.se>
-Date: Tue, 19 Jun 2018 15:05:50 +0200
 MIME-Version: 1.0
-In-Reply-To: <20180619125618.GB5609@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180615101506.8012-3-peda@axentia.se>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 2018-06-19 14:56, Jarkko Sakkinen wrote:
-> On Fri, Jun 15, 2018 at 12:14:57PM +0200, Peter Rosin wrote:
->> Locking the root adapter for __i2c_transfer will deadlock if the
->> device sits behind a mux-locked I2C mux. Switch to the finer-grained
->> i2c_lock_segment. If the device does not sit behind a mux-locked mux,
->> the two locking variants are equivalent.
->>
->> Signed-off-by: Peter Rosin <peda@axentia.se>
+On Fri, Jun 15, 2018 at 12:14:57PM +0200, Peter Rosin wrote:
+> Locking the root adapter for __i2c_transfer will deadlock if the
+> device sits behind a mux-locked I2C mux. Switch to the finer-grained
+> i2c_lock_segment. If the device does not sit behind a mux-locked mux,
+> the two locking variants are equivalent.
 > 
-> Can you quickly explain (or give a reference) the difference with these
-> functions? Not an expert in this area. Thanks.
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 
-There are some words in the cover letter. If you need more, there's
-always Documentation/i2c/i2c-topology. Hope that helps, otherwise I'll
-try to explain better...
+Can you quickly explain (or give a reference) the difference with these
+functions? Not an expert in this area. Thanks.
 
-Cheers,
-Peter
+/Jarkko
