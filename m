@@ -1,120 +1,98 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37710 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933420AbeFTUmt (ORCPT
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:35018 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932570AbeFTU2J (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 20 Jun 2018 16:42:49 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5KKemOC012905
-        for <linux-integrity@vger.kernel.org>; Wed, 20 Jun 2018 16:42:49 -0400
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jqswvau74-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 20 Jun 2018 16:42:48 -0400
-Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Wed, 20 Jun 2018 14:42:48 -0600
-From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
-        zohar@linux.vnet.ibm.com
-Cc: jgg@ziepe.ca, linux-kernel@vger.kernel.org,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: [PATCH v2 4/4] ima: Get rid of ima_used_chip and use ima_tpm_chip != NULL instead
-Date: Wed, 20 Jun 2018 16:42:36 -0400
-In-Reply-To: <20180620204236.1572523-1-stefanb@linux.vnet.ibm.com>
-References: <20180620204236.1572523-1-stefanb@linux.vnet.ibm.com>
-Message-Id: <20180620204236.1572523-5-stefanb@linux.vnet.ibm.com>
+        Wed, 20 Jun 2018 16:28:09 -0400
+Date: Wed, 20 Jun 2018 13:28:05 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Haavard Skinnemoen <hskinnemoen@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Antti Palosaari <crope@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Krufky <mkrufky@linuxtv.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-integrity@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v2 03/10] input: rohm_bu21023: switch to
+ i2c_lock_bus(..., I2C_LOCK_SEGMENT)
+Message-ID: <20180620202805.GB75925@dtor-ws>
+References: <20180620051803.12206-1-peda@axentia.se>
+ <20180620051803.12206-4-peda@axentia.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180620051803.12206-4-peda@axentia.se>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Get rid of ima_used_chip and use ima_tpm_chip variable instead for
-determining whether to use the TPM chip.
+On Wed, Jun 20, 2018 at 07:17:56AM +0200, Peter Rosin wrote:
+> Locking the root adapter for __i2c_transfer will deadlock if the
+> device sits behind a mux-locked I2C mux. Switch to the finer-grained
+> i2c_lock_bus with the I2C_LOCK_SEGMENT flag. If the device does not
+> sit behind a mux-locked mux, the two locking variants are equivalent.
+> 
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 
-Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
----
- security/integrity/ima/ima.h        | 1 -
- security/integrity/ima/ima_crypto.c | 2 +-
- security/integrity/ima/ima_init.c   | 7 ++-----
- security/integrity/ima/ima_queue.c  | 2 +-
- 4 files changed, 4 insertions(+), 8 deletions(-)
+Still
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 53a88d578ca5..18491c0e9b97 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -54,7 +54,6 @@ enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
- extern int ima_policy_flag;
- 
- /* set during initialization */
--extern int ima_used_chip;
- extern int ima_hash_algo;
- extern int ima_appraise;
- extern struct rw_semaphore ima_tpm_chip_lock;
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index da7715240476..bc6ad6b3243a 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -635,7 +635,7 @@ static void __init ima_pcrread(int idx, u8 *pcr)
- 
- 	down_read(&ima_tpm_chip_lock);
- 
--	if (!ima_used_chip)
-+	if (!ima_tpm_chip)
- 		goto out;
- 
- 	result = tpm_pcr_read(ima_tpm_chip, idx, pcr);
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index 24db06c4f463..84fba44c4415 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -27,7 +27,6 @@
- 
- /* name for boot aggregate entry */
- static const char *boot_aggregate_name = "boot_aggregate";
--int ima_used_chip;
- struct rw_semaphore ima_tpm_chip_lock = __RWSEM_INITIALIZER(ima_tpm_chip_lock);
- struct tpm_chip *ima_tpm_chip;
- 
-@@ -67,7 +66,7 @@ static int __init ima_add_boot_aggregate(void)
- 	iint->ima_hash->algo = HASH_ALGO_SHA1;
- 	iint->ima_hash->length = SHA1_DIGEST_SIZE;
- 
--	if (ima_used_chip) {
-+	if (ima_tpm_chip) {
- 		result = ima_calc_boot_aggregate(&hash.hdr);
- 		if (result < 0) {
- 			audit_cause = "hashing_error";
-@@ -114,7 +113,6 @@ static int ima_shutdown(struct notifier_block *this, unsigned long action,
- 	if (ima_tpm_chip) {
- 		tpm_chip_put(ima_tpm_chip);
- 		ima_tpm_chip = NULL;
--		ima_used_chip = 0;
- 	}
- 	up_write(&ima_tpm_chip_lock);
- 	return NOTIFY_DONE;
-@@ -133,8 +131,7 @@ int __init ima_init(void)
- 
- 	ima_tpm_chip = tpm_chip_find();
- 
--	ima_used_chip = (ima_tpm_chip != NULL);
--	if (!ima_used_chip)
-+	if (!ima_tpm_chip)
- 		pr_info("No TPM chip found, activating TPM-bypass!\n");
- 
- 	rc = integrity_init_keyring(INTEGRITY_KEYRING_IMA);
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index 6c9427939a28..591ff3d76fe6 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -143,7 +143,7 @@ static int ima_pcr_extend(const u8 *hash, int pcr)
- 	int result = 0;
- 
- 	down_read(&ima_tpm_chip_lock);
--	if (!ima_used_chip)
-+	if (!ima_tpm_chip)
- 		goto out;
- 
- 	result = tpm_pcr_extend(ima_tpm_chip, pcr, hash);
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+
+Feel free to merge through I2C tree.
+
+> ---
+>  drivers/input/touchscreen/rohm_bu21023.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/input/touchscreen/rohm_bu21023.c b/drivers/input/touchscreen/rohm_bu21023.c
+> index bda0500c9b57..714affdd742f 100644
+> --- a/drivers/input/touchscreen/rohm_bu21023.c
+> +++ b/drivers/input/touchscreen/rohm_bu21023.c
+> @@ -304,7 +304,7 @@ static int rohm_i2c_burst_read(struct i2c_client *client, u8 start, void *buf,
+>  	msg[1].len = len;
+>  	msg[1].buf = buf;
+>  
+> -	i2c_lock_adapter(adap);
+> +	i2c_lock_bus(adap, I2C_LOCK_SEGMENT);
+>  
+>  	for (i = 0; i < 2; i++) {
+>  		if (__i2c_transfer(adap, &msg[i], 1) < 0) {
+> @@ -313,7 +313,7 @@ static int rohm_i2c_burst_read(struct i2c_client *client, u8 start, void *buf,
+>  		}
+>  	}
+>  
+> -	i2c_unlock_adapter(adap);
+> +	i2c_unlock_bus(adap, I2C_LOCK_SEGMENT);
+>  
+>  	return ret;
+>  }
+> -- 
+> 2.11.0
+> 
+
+Thanks.
+
 -- 
-2.13.6
+Dmitry
