@@ -1,9 +1,9 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-he1eur01on0104.outbound.protection.outlook.com ([104.47.0.104]:19840
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+Received: from mail-ve1eur01on0114.outbound.protection.outlook.com ([104.47.1.114]:17318
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932269AbeFTFTD (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 20 Jun 2018 01:19:03 -0400
+        id S1753879AbeFTFSj (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 20 Jun 2018 01:18:39 -0400
 From: Peter Rosin <peda@axentia.se>
 To: linux-kernel@vger.kernel.org
 Cc: Peter Rosin <peda@axentia.se>, Peter Huewe <peterhuewe@gmx.de>,
@@ -37,9 +37,9 @@ Cc: Peter Rosin <peda@axentia.se>, Peter Huewe <peterhuewe@gmx.de>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org,
         linux-input@vger.kernel.org, linux-media@vger.kernel.org
-Subject: [PATCH v2 09/10] mfd: 88pm860x-i2c: switch to i2c_lock_bus(..., I2C_LOCK_SEGMENT)
-Date: Wed, 20 Jun 2018 07:18:02 +0200
-Message-Id: <20180620051803.12206-10-peda@axentia.se>
+Subject: [PATCH v2 04/10] media: af9013: switch to i2c_lock_bus(..., I2C_LOCK_SEGMENT)
+Date: Wed, 20 Jun 2018 07:17:57 +0200
+Message-Id: <20180620051803.12206-5-peda@axentia.se>
 In-Reply-To: <20180620051803.12206-1-peda@axentia.se>
 References: <20180620051803.12206-1-peda@axentia.se>
 MIME-Version: 1.0
@@ -54,46 +54,38 @@ sit behind a mux-locked mux, the two locking variants are equivalent.
 
 Signed-off-by: Peter Rosin <peda@axentia.se>
 ---
- drivers/mfd/88pm860x-i2c.c | 8 ++++----
+ drivers/media/dvb-frontends/af9013.c | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mfd/88pm860x-i2c.c b/drivers/mfd/88pm860x-i2c.c
-index 84e313107233..7b9052ea7413 100644
---- a/drivers/mfd/88pm860x-i2c.c
-+++ b/drivers/mfd/88pm860x-i2c.c
-@@ -146,14 +146,14 @@ int pm860x_page_reg_write(struct i2c_client *i2c, int reg,
- 	unsigned char zero;
- 	int ret;
+diff --git a/drivers/media/dvb-frontends/af9013.c b/drivers/media/dvb-frontends/af9013.c
+index 482bce49819a..99361c113bca 100644
+--- a/drivers/media/dvb-frontends/af9013.c
++++ b/drivers/media/dvb-frontends/af9013.c
+@@ -1312,10 +1312,10 @@ static int af9013_wregs(struct i2c_client *client, u8 cmd, u16 reg,
+ 	memcpy(&buf[3], val, len);
  
--	i2c_lock_adapter(i2c->adapter);
-+	i2c_lock_bus(i2c->adapter, I2C_LOCK_SEGMENT);
- 	read_device(i2c, 0xFA, 0, &zero);
- 	read_device(i2c, 0xFB, 0, &zero);
- 	read_device(i2c, 0xFF, 0, &zero);
- 	ret = write_device(i2c, reg, 1, &data);
- 	read_device(i2c, 0xFE, 0, &zero);
- 	read_device(i2c, 0xFC, 0, &zero);
--	i2c_unlock_adapter(i2c->adapter);
-+	i2c_unlock_bus(i2c->adapter, I2C_LOCK_SEGMENT);
- 	return ret;
- }
- EXPORT_SYMBOL(pm860x_page_reg_write);
-@@ -164,14 +164,14 @@ int pm860x_page_bulk_read(struct i2c_client *i2c, int reg,
- 	unsigned char zero = 0;
- 	int ret;
+ 	if (lock)
+-		i2c_lock_adapter(client->adapter);
++		i2c_lock_bus(client->adapter, I2C_LOCK_SEGMENT);
+ 	ret = __i2c_transfer(client->adapter, msg, 1);
+ 	if (lock)
+-		i2c_unlock_adapter(client->adapter);
++		i2c_unlock_bus(client->adapter, I2C_LOCK_SEGMENT);
+ 	if (ret < 0) {
+ 		goto err;
+ 	} else if (ret != 1) {
+@@ -1353,10 +1353,10 @@ static int af9013_rregs(struct i2c_client *client, u8 cmd, u16 reg,
+ 	buf[2] = cmd;
  
--	i2c_lock_adapter(i2c->adapter);
-+	i2c_lock_bus(i2c->adapter, I2C_LOCK_SEGMENT);
- 	read_device(i2c, 0xfa, 0, &zero);
- 	read_device(i2c, 0xfb, 0, &zero);
- 	read_device(i2c, 0xff, 0, &zero);
- 	ret = read_device(i2c, reg, count, buf);
- 	read_device(i2c, 0xFE, 0, &zero);
- 	read_device(i2c, 0xFC, 0, &zero);
--	i2c_unlock_adapter(i2c->adapter);
-+	i2c_unlock_bus(i2c->adapter, I2C_LOCK_SEGMENT);
- 	return ret;
- }
- EXPORT_SYMBOL(pm860x_page_bulk_read);
+ 	if (lock)
+-		i2c_lock_adapter(client->adapter);
++		i2c_lock_bus(client->adapter, I2C_LOCK_SEGMENT);
+ 	ret = __i2c_transfer(client->adapter, msg, 2);
+ 	if (lock)
+-		i2c_unlock_adapter(client->adapter);
++		i2c_unlock_bus(client->adapter, I2C_LOCK_SEGMENT);
+ 	if (ret < 0) {
+ 		goto err;
+ 	} else if (ret != 2) {
 -- 
 2.11.0
