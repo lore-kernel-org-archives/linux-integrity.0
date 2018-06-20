@@ -1,92 +1,54 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51846 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49350 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754407AbeFTQUC (ORCPT
+        by vger.kernel.org with ESMTP id S1754335AbeFTQT6 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 20 Jun 2018 12:20:02 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5KGECxE029694
-        for <linux-integrity@vger.kernel.org>; Wed, 20 Jun 2018 12:20:01 -0400
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jqsmnt0a1-1
+        Wed, 20 Jun 2018 12:19:58 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5KGFwHm074549
+        for <linux-integrity@vger.kernel.org>; Wed, 20 Jun 2018 12:19:58 -0400
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jqsvfhb0b-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 20 Jun 2018 12:20:01 -0400
+        for <linux-integrity@vger.kernel.org>; Wed, 20 Jun 2018 12:19:57 -0400
 Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Wed, 20 Jun 2018 10:20:00 -0600
+        Wed, 20 Jun 2018 10:19:57 -0600
 From: Stefan Berger <stefanb@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
         zohar@linux.vnet.ibm.com
 Cc: jgg@ziepe.ca, linux-kernel@vger.kernel.org,
         Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: [PATCH 2/6] tpm: Get additional kref with every call to tpm_try_get_ops()
-Date: Wed, 20 Jun 2018 12:19:44 -0400
-In-Reply-To: <20180620161948.1464255-1-stefanb@linux.vnet.ibm.com>
-References: <20180620161948.1464255-1-stefanb@linux.vnet.ibm.com>
-Message-Id: <20180620161948.1464255-3-stefanb@linux.vnet.ibm.com>
+Subject: [PATCH 0/6] Have IMA find and use a tpm_chip until system shutdown
+Date: Wed, 20 Jun 2018 12:19:42 -0400
+Message-Id: <20180620161948.1464255-1-stefanb@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Get a reference to the TPM chip on every call to tpm_try_get_ops()
-and release the reference in tpm_put_ops().
+This series of patches converts IMA's usage of the tpm_chip to find a TPM
+chip initially and use it until the machine is shut down. To do this we need
+to introduce a kref for the tpm_chip that IMA and all other users of a
+tpm_chip hold onto until they don't need the TPM chip anymore.
 
-Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
----
- drivers/char/tpm/tpm-chip.c | 5 ++++-
- include/linux/tpm.h         | 4 ++++
- 2 files changed, 8 insertions(+), 1 deletion(-)
+    Stefan
 
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index a933676194a4..23b667c730f6 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -58,6 +58,8 @@ int tpm_try_get_ops(struct tpm_chip *chip)
- 	if (!chip->ops)
- 		goto out_lock;
- 
-+	kref_get(&chip->kref);
-+
- 	return 0;
- out_lock:
- 	up_read(&chip->ops_sem);
-@@ -77,6 +79,7 @@ void tpm_put_ops(struct tpm_chip *chip)
- {
- 	up_read(&chip->ops_sem);
- 	put_device(&chip->dev);
-+	tpm_chip_put(chip);
- }
- EXPORT_SYMBOL_GPL(tpm_put_ops);
- 
-@@ -129,7 +132,7 @@ static void tpm_chip_free(struct kref *kref)
- 	kfree(chip);
- }
- 
--static void tpm_chip_put(struct tpm_chip *chip)
-+void tpm_chip_put(struct tpm_chip *chip)
- {
- 	if (chip)
- 		kref_put(&chip->kref, tpm_chip_free);
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 06639fb6ab85..cdb3ecdfc933 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -61,6 +61,7 @@ extern int tpm_seal_trusted(struct tpm_chip *chip,
- extern int tpm_unseal_trusted(struct tpm_chip *chip,
- 			      struct trusted_key_payload *payload,
- 			      struct trusted_key_options *options);
-+extern void tpm_chip_put(struct tpm_chip *chip);
- #else
- static inline int tpm_is_tpm2(struct tpm_chip *chip)
- {
-@@ -96,5 +97,8 @@ static inline int tpm_unseal_trusted(struct tpm_chip *chip,
- {
- 	return -ENODEV;
- }
-+static inline void tpm_chip_put(struct tpm_chip *chip)
-+{
-+}
- #endif
- #endif
+Stefan Berger (6):
+  tpm: Introduce a kref for the tpm_chip
+  tpm: Get additional kref with every call to tpm_try_get_ops()
+  tpm: Implement tpm_chip_find() for other subsystems to call
+  ima: Implement ima_shutdown and register it as a reboot_notifier
+  ima: Use tpm_chip_find() and access TPM functions using it
+  ima: Get rid of ima_used_chip and use ima_tpm_chip != NULL instead
+
+ drivers/char/tpm/tpm-chip.c         | 54 +++++++++++++++++++++++++++++++++----
+ drivers/char/tpm/tpm.h              |  1 +
+ include/linux/tpm.h                 |  9 +++++++
+ security/integrity/ima/ima.h        |  4 ++-
+ security/integrity/ima/ima_crypto.c | 14 +++++++---
+ security/integrity/ima/ima_init.c   | 36 ++++++++++++++++++-------
+ security/integrity/ima/ima_queue.c  |  9 ++++---
+ 7 files changed, 105 insertions(+), 22 deletions(-)
+
 -- 
 2.13.6
