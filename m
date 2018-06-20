@@ -1,120 +1,164 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43868 "EHLO
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34298 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754427AbeFTQUM (ORCPT
+        by vger.kernel.org with ESMTP id S1754463AbeFTQUI (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 20 Jun 2018 12:20:12 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5KGFsbX141457
-        for <linux-integrity@vger.kernel.org>; Wed, 20 Jun 2018 12:20:09 -0400
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jqt7n89m0-1
+        Wed, 20 Jun 2018 12:20:08 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5KGEiQ9047893
+        for <linux-integrity@vger.kernel.org>; Wed, 20 Jun 2018 12:20:07 -0400
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jqr5xpn2a-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 20 Jun 2018 12:20:09 -0400
+        for <linux-integrity@vger.kernel.org>; Wed, 20 Jun 2018 12:20:07 -0400
 Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Wed, 20 Jun 2018 10:20:07 -0600
+        Wed, 20 Jun 2018 10:20:06 -0600
 From: Stefan Berger <stefanb@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
         zohar@linux.vnet.ibm.com
 Cc: jgg@ziepe.ca, linux-kernel@vger.kernel.org,
         Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: [PATCH 6/6] ima: Get rid of ima_used_chip and use ima_tpm_chip != NULL instead
-Date: Wed, 20 Jun 2018 12:19:48 -0400
+Subject: [PATCH 5/6] ima: Use tpm_chip_find() and access TPM functions using it
+Date: Wed, 20 Jun 2018 12:19:47 -0400
 In-Reply-To: <20180620161948.1464255-1-stefanb@linux.vnet.ibm.com>
 References: <20180620161948.1464255-1-stefanb@linux.vnet.ibm.com>
-Message-Id: <20180620161948.1464255-7-stefanb@linux.vnet.ibm.com>
+Message-Id: <20180620161948.1464255-6-stefanb@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Get rid of ima_used_chip and use ima_tpm_chip variable instead for
-determining whether to use the TPM chip.
+Rather than accessing the TPM functions using a NULL pointer, which
+causes a lookup for a suitable chip every time, get a hold of a tpm_chip
+and access the TPM functions using this chip. We call the tpm_chip
+ima_tpm_chip and protect it, once initialization is done, using a
+rw_semaphore ima_tpm_chip_lock.
+
+Use ima_shutdown to release the tpm_chip.
 
 Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
 ---
- security/integrity/ima/ima.h        | 1 -
- security/integrity/ima/ima_crypto.c | 2 +-
- security/integrity/ima/ima_init.c   | 7 ++-----
- security/integrity/ima/ima_queue.c  | 2 +-
- 4 files changed, 4 insertions(+), 8 deletions(-)
+ security/integrity/ima/ima.h        |  3 +++
+ security/integrity/ima/ima_crypto.c | 12 ++++++++++--
+ security/integrity/ima/ima_init.c   | 19 ++++++++++++-------
+ security/integrity/ima/ima_queue.c  |  7 +++++--
+ 4 files changed, 30 insertions(+), 11 deletions(-)
 
 diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 53a88d578ca5..18491c0e9b97 100644
+index 354bb5716ce3..53a88d578ca5 100644
 --- a/security/integrity/ima/ima.h
 +++ b/security/integrity/ima/ima.h
-@@ -54,7 +54,6 @@ enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
- extern int ima_policy_flag;
+@@ -24,6 +24,7 @@
+ #include <linux/hash.h>
+ #include <linux/tpm.h>
+ #include <linux/audit.h>
++#include <linux/rwsem.h>
+ #include <crypto/hash_info.h>
  
- /* set during initialization */
--extern int ima_used_chip;
+ #include "../integrity.h"
+@@ -56,6 +57,8 @@ extern int ima_policy_flag;
+ extern int ima_used_chip;
  extern int ima_hash_algo;
  extern int ima_appraise;
- extern struct rw_semaphore ima_tpm_chip_lock;
++extern struct rw_semaphore ima_tpm_chip_lock;
++extern struct tpm_chip *ima_tpm_chip;
+ 
+ /* IMA event related data */
+ struct ima_event_data {
 diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index da7715240476..bc6ad6b3243a 100644
+index 4e085a17124f..da7715240476 100644
 --- a/security/integrity/ima/ima_crypto.c
 +++ b/security/integrity/ima/ima_crypto.c
-@@ -635,7 +635,7 @@ static void __init ima_pcrread(int idx, u8 *pcr)
+@@ -631,10 +631,18 @@ int ima_calc_buffer_hash(const void *buf, loff_t len,
  
- 	down_read(&ima_tpm_chip_lock);
+ static void __init ima_pcrread(int idx, u8 *pcr)
+ {
++	int result = 0;
++
++	down_read(&ima_tpm_chip_lock);
++
+ 	if (!ima_used_chip)
+-		return;
++		goto out;
++
++	result = tpm_pcr_read(ima_tpm_chip, idx, pcr);
++out:
++	up_read(&ima_tpm_chip_lock);
  
--	if (!ima_used_chip)
-+	if (!ima_tpm_chip)
- 		goto out;
+-	if (tpm_pcr_read(NULL, idx, pcr) != 0)
++	if (result != 0)
+ 		pr_err("Error Communicating to TPM chip\n");
+ }
  
- 	result = tpm_pcr_read(ima_tpm_chip, idx, pcr);
 diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index 24db06c4f463..84fba44c4415 100644
+index 8a5258eb32b6..24db06c4f463 100644
 --- a/security/integrity/ima/ima_init.c
 +++ b/security/integrity/ima/ima_init.c
-@@ -27,7 +27,6 @@
- 
+@@ -28,6 +28,8 @@
  /* name for boot aggregate entry */
  static const char *boot_aggregate_name = "boot_aggregate";
--int ima_used_chip;
- struct rw_semaphore ima_tpm_chip_lock = __RWSEM_INITIALIZER(ima_tpm_chip_lock);
- struct tpm_chip *ima_tpm_chip;
+ int ima_used_chip;
++struct rw_semaphore ima_tpm_chip_lock = __RWSEM_INITIALIZER(ima_tpm_chip_lock);
++struct tpm_chip *ima_tpm_chip;
  
-@@ -67,7 +66,7 @@ static int __init ima_add_boot_aggregate(void)
- 	iint->ima_hash->algo = HASH_ALGO_SHA1;
- 	iint->ima_hash->length = SHA1_DIGEST_SIZE;
- 
--	if (ima_used_chip) {
+ /* Add the boot aggregate to the IMA measurement list and extend
+  * the PCR register.
+@@ -108,6 +110,13 @@ void __init ima_load_x509(void)
+ static int ima_shutdown(struct notifier_block *this, unsigned long action,
+ 			void *data)
+ {
++	down_write(&ima_tpm_chip_lock);
 +	if (ima_tpm_chip) {
- 		result = ima_calc_boot_aggregate(&hash.hdr);
- 		if (result < 0) {
- 			audit_cause = "hashing_error";
-@@ -114,7 +113,6 @@ static int ima_shutdown(struct notifier_block *this, unsigned long action,
- 	if (ima_tpm_chip) {
- 		tpm_chip_put(ima_tpm_chip);
- 		ima_tpm_chip = NULL;
--		ima_used_chip = 0;
- 	}
- 	up_write(&ima_tpm_chip_lock);
++		tpm_chip_put(ima_tpm_chip);
++		ima_tpm_chip = NULL;
++		ima_used_chip = 0;
++	}
++	up_write(&ima_tpm_chip_lock);
  	return NOTIFY_DONE;
-@@ -133,8 +131,7 @@ int __init ima_init(void)
+ }
  
- 	ima_tpm_chip = tpm_chip_find();
+@@ -118,19 +127,15 @@ static struct notifier_block ima_reboot_notifier = {
  
--	ima_used_chip = (ima_tpm_chip != NULL);
--	if (!ima_used_chip)
-+	if (!ima_tpm_chip)
- 		pr_info("No TPM chip found, activating TPM-bypass!\n");
+ int __init ima_init(void)
+ {
+-	u8 pcr_i[TPM_DIGEST_SIZE];
+ 	int rc;
+ 
+ 	register_reboot_notifier(&ima_reboot_notifier);
+ 
+-	ima_used_chip = 0;
+-	rc = tpm_pcr_read(NULL, 0, pcr_i);
+-	if (rc == 0)
+-		ima_used_chip = 1;
++	ima_tpm_chip = tpm_chip_find();
+ 
++	ima_used_chip = (ima_tpm_chip != NULL);
+ 	if (!ima_used_chip)
+-		pr_info("No TPM chip found, activating TPM-bypass! (rc=%d)\n",
+-			rc);
++		pr_info("No TPM chip found, activating TPM-bypass!\n");
  
  	rc = integrity_init_keyring(INTEGRITY_KEYRING_IMA);
+ 	if (rc)
 diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index 6c9427939a28..591ff3d76fe6 100644
+index 418f35e38015..6c9427939a28 100644
 --- a/security/integrity/ima/ima_queue.c
 +++ b/security/integrity/ima/ima_queue.c
-@@ -143,7 +143,7 @@ static int ima_pcr_extend(const u8 *hash, int pcr)
+@@ -142,10 +142,13 @@ static int ima_pcr_extend(const u8 *hash, int pcr)
+ {
  	int result = 0;
  
- 	down_read(&ima_tpm_chip_lock);
--	if (!ima_used_chip)
-+	if (!ima_tpm_chip)
- 		goto out;
++	down_read(&ima_tpm_chip_lock);
+ 	if (!ima_used_chip)
+-		return result;
++		goto out;
  
- 	result = tpm_pcr_extend(ima_tpm_chip, pcr, hash);
+-	result = tpm_pcr_extend(NULL, pcr, hash);
++	result = tpm_pcr_extend(ima_tpm_chip, pcr, hash);
++out:
++	up_read(&ima_tpm_chip_lock);
+ 	if (result != 0)
+ 		pr_err("Error Communicating to TPM chip, result: %d\n", result);
+ 	return result;
 -- 
 2.13.6
