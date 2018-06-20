@@ -1,91 +1,63 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-ve1eur01on0114.outbound.protection.outlook.com ([104.47.1.114]:17318
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753879AbeFTFSj (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 20 Jun 2018 01:18:39 -0400
-From: Peter Rosin <peda@axentia.se>
-To: linux-kernel@vger.kernel.org
-Cc: Peter Rosin <peda@axentia.se>, Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Haavard Skinnemoen <hskinnemoen@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Antti Palosaari <crope@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Krufky <mkrufky@linuxtv.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-integrity@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-media@vger.kernel.org
-Subject: [PATCH v2 04/10] media: af9013: switch to i2c_lock_bus(..., I2C_LOCK_SEGMENT)
-Date: Wed, 20 Jun 2018 07:17:57 +0200
-Message-Id: <20180620051803.12206-5-peda@axentia.se>
-In-Reply-To: <20180620051803.12206-1-peda@axentia.se>
-References: <20180620051803.12206-1-peda@axentia.se>
+Received: from mga06.intel.com ([134.134.136.31]:10813 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751337AbeFTApf (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 19 Jun 2018 20:45:35 -0400
+Subject: Re: [PATCH v3 0/2] tpm: add support for nonblocking operation
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, philip.b.tricca@intel.com,
+        James.Bottomley@HansenPartnership.com,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>
+References: <152882630662.30206.8805136953394285180.stgit@tstruk-mobl1.jf.intel.com>
+ <20180619131046.GC5609@linux.intel.com>
+From: Tadeusz Struk <tadeusz.struk@intel.com>
+Message-ID: <e402d3d0-d9de-35a9-d434-d472d8f68e62@intel.com>
+Date: Tue, 19 Jun 2018 17:45:35 -0700
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180619131046.GC5609@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Locking the root adapter for __i2c_transfer will deadlock if the
-device sits behind a mux-locked I2C mux. Switch to the finer-grained
-i2c_lock_bus with the I2C_LOCK_SEGMENT flag. If the device does not
-sit behind a mux-locked mux, the two locking variants are equivalent.
+On 06/19/2018 06:10 AM, Jarkko Sakkinen wrote:
+> On Tue, Jun 12, 2018 at 10:58:26AM -0700, Tadeusz Struk wrote:
+>> The TCG SAPI specification [1] defines a set of functions, which allows
+>> applications to use the TPM device in either blocking or non-blocking fashion.
+>> Each command defined by the specification has a corresponding
+>> Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
+>> together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
+>> mode of operation. Currently the TPM driver supports only blocking calls,
+>> which doesn't allow asynchronous IO operations.
+>> This patch changes it and adds support for nonblocking write and a new poll
+>> function to enable applications, which want to take advantage of this feature.
+>> The new functionality can be tested using standard TPM tools implemented
+>> in [2], together with modified TCTI from [3].
+>>
+>> [1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
+>> [2] https://github.com/tpm2-software/tpm2-tools
+>> [3] https://github.com/tstruk/tpm2-tss/tree/async
+> 
+> For me the value is still a bit questionable. The benchmark looks a bit
+> flakky to give much figures how this would work with real world workloads.
+> 
+> I read James response and I also have to question why not just a worker
+> thread in user space? TPM does only one command at a time anyways.
+> 
+> Cannot take this in before I know that user space will (1) adapt to
+> this and (2) gain value compared to a worker thread.
+> 
+Hi Jarkko,
+Thanks for reviewing the patch.
+There are applications/frameworks where a worker thread is not an option.
+Take for example the IoT use-cases and frameworks like IoT.js, or "Node.js for IoT".
+They are all single threaded, event-driven frameworks, using non-blocking I/O as the base of their processing model.
+Similarly embedded applications, which are basically just a single threaded event loop, quite often don't use threads because of resources constrains.
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
----
- drivers/media/dvb-frontends/af9013.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+If your concern is that user space will not adopt to this, I can say that TSS library [1] is currently blocked on this feature, and we can not enable some of the use-cases mentioned above because of this.
 
-diff --git a/drivers/media/dvb-frontends/af9013.c b/drivers/media/dvb-frontends/af9013.c
-index 482bce49819a..99361c113bca 100644
---- a/drivers/media/dvb-frontends/af9013.c
-+++ b/drivers/media/dvb-frontends/af9013.c
-@@ -1312,10 +1312,10 @@ static int af9013_wregs(struct i2c_client *client, u8 cmd, u16 reg,
- 	memcpy(&buf[3], val, len);
- 
- 	if (lock)
--		i2c_lock_adapter(client->adapter);
-+		i2c_lock_bus(client->adapter, I2C_LOCK_SEGMENT);
- 	ret = __i2c_transfer(client->adapter, msg, 1);
- 	if (lock)
--		i2c_unlock_adapter(client->adapter);
-+		i2c_unlock_bus(client->adapter, I2C_LOCK_SEGMENT);
- 	if (ret < 0) {
- 		goto err;
- 	} else if (ret != 1) {
-@@ -1353,10 +1353,10 @@ static int af9013_rregs(struct i2c_client *client, u8 cmd, u16 reg,
- 	buf[2] = cmd;
- 
- 	if (lock)
--		i2c_lock_adapter(client->adapter);
-+		i2c_lock_bus(client->adapter, I2C_LOCK_SEGMENT);
- 	ret = __i2c_transfer(client->adapter, msg, 2);
- 	if (lock)
--		i2c_unlock_adapter(client->adapter);
-+		i2c_unlock_bus(client->adapter, I2C_LOCK_SEGMENT);
- 	if (ret < 0) {
- 		goto err;
- 	} else if (ret != 2) {
--- 
-2.11.0
+Thanks,
+Tadeusz
+
+[1] https://github.com/tpm2-software/tpm2-tss
