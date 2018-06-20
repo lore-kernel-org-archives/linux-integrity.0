@@ -1,103 +1,92 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33364 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51846 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754417AbeFTQUD (ORCPT
+        by vger.kernel.org with ESMTP id S1754407AbeFTQUC (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 20 Jun 2018 12:20:03 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5KGEBg6082985
-        for <linux-integrity@vger.kernel.org>; Wed, 20 Jun 2018 12:20:03 -0400
-Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jqsbntqyd-1
+        Wed, 20 Jun 2018 12:20:02 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5KGECxE029694
+        for <linux-integrity@vger.kernel.org>; Wed, 20 Jun 2018 12:20:01 -0400
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jqsmnt0a1-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 20 Jun 2018 12:20:02 -0400
+        for <linux-integrity@vger.kernel.org>; Wed, 20 Jun 2018 12:20:01 -0400
 Received: from localhost
-        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Wed, 20 Jun 2018 10:20:02 -0600
+        Wed, 20 Jun 2018 10:20:00 -0600
 From: Stefan Berger <stefanb@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
         zohar@linux.vnet.ibm.com
 Cc: jgg@ziepe.ca, linux-kernel@vger.kernel.org,
         Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: [PATCH 3/6] tpm: Implement tpm_chip_find() for other subsystems to call
-Date: Wed, 20 Jun 2018 12:19:45 -0400
+Subject: [PATCH 2/6] tpm: Get additional kref with every call to tpm_try_get_ops()
+Date: Wed, 20 Jun 2018 12:19:44 -0400
 In-Reply-To: <20180620161948.1464255-1-stefanb@linux.vnet.ibm.com>
 References: <20180620161948.1464255-1-stefanb@linux.vnet.ibm.com>
-Message-Id: <20180620161948.1464255-4-stefanb@linux.vnet.ibm.com>
+Message-Id: <20180620161948.1464255-3-stefanb@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Implement tpm_chip_find() for other subsystems to find a TPM chip and
-get a reference to that chip. Once done with using the chip, the reference
-is released using tpm_chip_put().
+Get a reference to the TPM chip on every call to tpm_try_get_ops()
+and release the reference in tpm_put_ops().
 
 Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
 ---
- drivers/char/tpm/tpm-chip.c | 27 +++++++++++++++++++++++++++
- include/linux/tpm.h         |  5 +++++
- 2 files changed, 32 insertions(+)
+ drivers/char/tpm/tpm-chip.c | 5 ++++-
+ include/linux/tpm.h         | 4 ++++
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 23b667c730f6..b04064291dab 100644
+index a933676194a4..23b667c730f6 100644
 --- a/drivers/char/tpm/tpm-chip.c
 +++ b/drivers/char/tpm/tpm-chip.c
-@@ -84,6 +84,33 @@ void tpm_put_ops(struct tpm_chip *chip)
+@@ -58,6 +58,8 @@ int tpm_try_get_ops(struct tpm_chip *chip)
+ 	if (!chip->ops)
+ 		goto out_lock;
+ 
++	kref_get(&chip->kref);
++
+ 	return 0;
+ out_lock:
+ 	up_read(&chip->ops_sem);
+@@ -77,6 +79,7 @@ void tpm_put_ops(struct tpm_chip *chip)
+ {
+ 	up_read(&chip->ops_sem);
+ 	put_device(&chip->dev);
++	tpm_chip_put(chip);
+ }
  EXPORT_SYMBOL_GPL(tpm_put_ops);
  
- /**
-+ * tpm_chip_find() - find a TPM chip and get a reference to it
-+ */
-+struct tpm_chip *tpm_chip_find(void)
-+{
-+	struct tpm_chip *chip, *res = NULL;
-+	int chip_num = 0;
-+	int chip_prev;
-+
-+	mutex_lock(&idr_lock);
-+
-+	do {
-+		chip_prev = chip_num;
-+		chip = idr_get_next(&dev_nums_idr, &chip_num);
-+		if (chip) {
-+			kref_get(&chip->kref);
-+			res = chip;
-+			break;
-+		}
-+	} while (chip_prev != chip_num);
-+
-+	mutex_unlock(&idr_lock);
-+
-+	return res;
-+}
-+EXPORT_SYMBOL_GPL(tpm_chip_find);
-+
-+/**
-  * tpm_chip_find_get() - find and reserve a TPM chip
-  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-  *
+@@ -129,7 +132,7 @@ static void tpm_chip_free(struct kref *kref)
+ 	kfree(chip);
+ }
+ 
+-static void tpm_chip_put(struct tpm_chip *chip)
++void tpm_chip_put(struct tpm_chip *chip)
+ {
+ 	if (chip)
+ 		kref_put(&chip->kref, tpm_chip_free);
 diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index cdb3ecdfc933..f0d1abcaf4af 100644
+index 06639fb6ab85..cdb3ecdfc933 100644
 --- a/include/linux/tpm.h
 +++ b/include/linux/tpm.h
 @@ -61,6 +61,7 @@ extern int tpm_seal_trusted(struct tpm_chip *chip,
  extern int tpm_unseal_trusted(struct tpm_chip *chip,
  			      struct trusted_key_payload *payload,
  			      struct trusted_key_options *options);
-+extern struct tpm_chip *tpm_chip_find(void);
- extern void tpm_chip_put(struct tpm_chip *chip);
++extern void tpm_chip_put(struct tpm_chip *chip);
  #else
  static inline int tpm_is_tpm2(struct tpm_chip *chip)
-@@ -97,6 +98,10 @@ static inline int tpm_unseal_trusted(struct tpm_chip *chip,
+ {
+@@ -96,5 +97,8 @@ static inline int tpm_unseal_trusted(struct tpm_chip *chip,
  {
  	return -ENODEV;
  }
-+static inline struct tpm_chip *tpm_chip_find(void)
++static inline void tpm_chip_put(struct tpm_chip *chip)
 +{
-+	return NULL;
 +}
- static inline void tpm_chip_put(struct tpm_chip *chip)
- {
- }
+ #endif
+ #endif
 -- 
 2.13.6
