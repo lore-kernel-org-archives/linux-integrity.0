@@ -1,9 +1,9 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-he1eur01on0117.outbound.protection.outlook.com ([104.47.0.117]:35376
+Received: from mail-he1eur01on0138.outbound.protection.outlook.com ([104.47.0.138]:45380
         "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932299AbeFTFTI (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 20 Jun 2018 01:19:08 -0400
+        id S932149AbeFTFSz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 20 Jun 2018 01:18:55 -0400
 From: Peter Rosin <peda@axentia.se>
 To: linux-kernel@vger.kernel.org
 Cc: Peter Rosin <peda@axentia.se>, Peter Huewe <peterhuewe@gmx.de>,
@@ -37,9 +37,9 @@ Cc: Peter Rosin <peda@axentia.se>, Peter Huewe <peterhuewe@gmx.de>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org,
         linux-input@vger.kernel.org, linux-media@vger.kernel.org
-Subject: [PATCH v2 10/10] i2c: remove i2c_lock_adapter and use i2c_lock_bus directly
-Date: Wed, 20 Jun 2018 07:18:03 +0200
-Message-Id: <20180620051803.12206-11-peda@axentia.se>
+Subject: [PATCH v2 07/10] media: tda1004x: switch to i2c_lock_bus(..., I2C_LOCK_SEGMENT)
+Date: Wed, 20 Jun 2018 07:18:00 +0200
+Message-Id: <20180620051803.12206-8-peda@axentia.se>
 In-Reply-To: <20180620051803.12206-1-peda@axentia.se>
 References: <20180620051803.12206-1-peda@axentia.se>
 MIME-Version: 1.0
@@ -47,261 +47,45 @@ Content-Type: text/plain
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-The i2c_lock_adapter name is ambiguous since it is unclear if it
-refers to the root adapter or the adapter you name in the argument.
-The natural interpretation is the adapter you name in the argument,
-but there are historical reasons for that not being the case; it
-in fact locks the root adapter. Just remove the function and force
-users to spell out the I2C_LOCK_ROOT_ADAPTER name to indicate what
-is really going on. Also remove i2c_unlock_adapter, of course.
-
-This patch was generated with
-
-git grep -l 'i2c_\(un\)\?lock_adapter' \
-| xargs sed -i 's/i2c_\(un\)\?lock_adapter(\([^)]*\))/'\
-'i2c_\1lock_bus(\2, I2C_LOCK_ROOT_ADAPTER)/g'
-
-followed by white-space touch-up.
+Locking the root adapter for __i2c_transfer will deadlock if the
+device sits behind a mux-locked I2C mux. Switch to the finer-grained
+i2c_lock_bus with the I2C_LOCK_SEGMENT flag. If the device does not
+sit behind a mux-locked mux, the two locking variants are equivalent.
 
 Signed-off-by: Peter Rosin <peda@axentia.se>
 ---
- drivers/i2c/busses/i2c-brcmstb.c   |  8 ++++----
- drivers/i2c/busses/i2c-davinci.c   |  4 ++--
- drivers/i2c/busses/i2c-gpio.c      | 40 +++++++++++++++++++-------------------
- drivers/i2c/busses/i2c-s3c2410.c   |  4 ++--
- drivers/i2c/busses/i2c-sprd.c      |  8 ++++----
- drivers/i2c/i2c-core-slave.c       |  8 ++++----
- drivers/iio/temperature/mlx90614.c |  4 ++--
- include/linux/i2c.h                | 12 ------------
- 8 files changed, 38 insertions(+), 50 deletions(-)
+ drivers/media/dvb-frontends/tda1004x.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-brcmstb.c b/drivers/i2c/busses/i2c-brcmstb.c
-index 78792b4d6437..826d32049996 100644
---- a/drivers/i2c/busses/i2c-brcmstb.c
-+++ b/drivers/i2c/busses/i2c-brcmstb.c
-@@ -689,9 +689,9 @@ static int brcmstb_i2c_suspend(struct device *dev)
- {
- 	struct brcmstb_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+diff --git a/drivers/media/dvb-frontends/tda1004x.c b/drivers/media/dvb-frontends/tda1004x.c
+index 7dcfb4a4b2d0..9d3261bf5090 100644
+--- a/drivers/media/dvb-frontends/tda1004x.c
++++ b/drivers/media/dvb-frontends/tda1004x.c
+@@ -329,7 +329,7 @@ static int tda1004x_do_upload(struct tda1004x_state *state,
+ 	tda1004x_write_byteI(state, dspCodeCounterReg, 0);
+ 	fw_msg.addr = state->config->demod_address;
  
--	i2c_lock_adapter(&i2c_dev->adapter);
-+	i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
- 	i2c_dev->is_suspended = true;
--	i2c_unlock_adapter(&i2c_dev->adapter);
-+	i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+-	i2c_lock_adapter(state->i2c);
++	i2c_lock_bus(state->i2c, I2C_LOCK_SEGMENT);
+ 	buf[0] = dspCodeInReg;
+ 	while (pos != len) {
+ 		// work out how much to send this time
+@@ -342,14 +342,14 @@ static int tda1004x_do_upload(struct tda1004x_state *state,
+ 		fw_msg.len = tx_size + 1;
+ 		if (__i2c_transfer(state->i2c, &fw_msg, 1) != 1) {
+ 			printk(KERN_ERR "tda1004x: Error during firmware upload\n");
+-			i2c_unlock_adapter(state->i2c);
++			i2c_unlock_bus(state->i2c, I2C_LOCK_SEGMENT);
+ 			return -EIO;
+ 		}
+ 		pos += tx_size;
  
- 	return 0;
- }
-@@ -700,10 +700,10 @@ static int brcmstb_i2c_resume(struct device *dev)
- {
- 	struct brcmstb_i2c_dev *i2c_dev = dev_get_drvdata(dev);
- 
--	i2c_lock_adapter(&i2c_dev->adapter);
-+	i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
- 	brcmstb_i2c_set_bsc_reg_defaults(i2c_dev);
- 	i2c_dev->is_suspended = false;
--	i2c_unlock_adapter(&i2c_dev->adapter);
-+	i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
- 
- 	return 0;
- }
-diff --git a/drivers/i2c/busses/i2c-davinci.c b/drivers/i2c/busses/i2c-davinci.c
-index 75d6ab177055..d945a2654c2f 100644
---- a/drivers/i2c/busses/i2c-davinci.c
-+++ b/drivers/i2c/busses/i2c-davinci.c
-@@ -714,14 +714,14 @@ static int i2c_davinci_cpufreq_transition(struct notifier_block *nb,
- 
- 	dev = container_of(nb, struct davinci_i2c_dev, freq_transition);
- 
--	i2c_lock_adapter(&dev->adapter);
-+	i2c_lock_bus(&dev->adapter, I2C_LOCK_ROOT_ADAPTER);
- 	if (val == CPUFREQ_PRECHANGE) {
- 		davinci_i2c_reset_ctrl(dev, 0);
- 	} else if (val == CPUFREQ_POSTCHANGE) {
- 		i2c_davinci_calc_clk_dividers(dev);
- 		davinci_i2c_reset_ctrl(dev, 1);
+ 		dprintk("%s: fw_pos=0x%x\n", __func__, pos);
  	}
--	i2c_unlock_adapter(&dev->adapter);
-+	i2c_unlock_bus(&dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+-	i2c_unlock_adapter(state->i2c);
++	i2c_unlock_bus(state->i2c, I2C_LOCK_SEGMENT);
  
- 	return 0;
- }
-diff --git a/drivers/i2c/busses/i2c-gpio.c b/drivers/i2c/busses/i2c-gpio.c
-index 005e6e0330c2..9d63337efa82 100644
---- a/drivers/i2c/busses/i2c-gpio.c
-+++ b/drivers/i2c/busses/i2c-gpio.c
-@@ -78,24 +78,24 @@ static struct dentry *i2c_gpio_debug_dir;
- #define getscl(bd)	((bd)->getscl((bd)->data))
- 
- #define WIRE_ATTRIBUTE(wire) \
--static int fops_##wire##_get(void *data, u64 *val)	\
--{							\
--	struct i2c_gpio_private_data *priv = data;	\
--							\
--	i2c_lock_adapter(&priv->adap);			\
--	*val = get##wire(&priv->bit_data);		\
--	i2c_unlock_adapter(&priv->adap);		\
--	return 0;					\
--}							\
--static int fops_##wire##_set(void *data, u64 val)	\
--{							\
--	struct i2c_gpio_private_data *priv = data;	\
--							\
--	i2c_lock_adapter(&priv->adap);			\
--	set##wire(&priv->bit_data, val);		\
--	i2c_unlock_adapter(&priv->adap);		\
--	return 0;					\
--}							\
-+static int fops_##wire##_get(void *data, u64 *val)		\
-+{								\
-+	struct i2c_gpio_private_data *priv = data;		\
-+								\
-+	i2c_lock_bus(&priv->adap, I2C_LOCK_ROOT_ADAPTER);	\
-+	*val = get##wire(&priv->bit_data);			\
-+	i2c_unlock_bus(&priv->adap, I2C_LOCK_ROOT_ADAPTER);	\
-+	return 0;						\
-+}								\
-+static int fops_##wire##_set(void *data, u64 val)		\
-+{								\
-+	struct i2c_gpio_private_data *priv = data;		\
-+								\
-+	i2c_lock_bus(&priv->adap, I2C_LOCK_ROOT_ADAPTER);	\
-+	set##wire(&priv->bit_data, val);			\
-+	i2c_unlock_bus(&priv->adap, I2C_LOCK_ROOT_ADAPTER);	\
-+	return 0;						\
-+}								\
- DEFINE_DEBUGFS_ATTRIBUTE(fops_##wire, fops_##wire##_get, fops_##wire##_set, "%llu\n")
- 
- WIRE_ATTRIBUTE(scl);
-@@ -113,7 +113,7 @@ static int fops_incomplete_transfer_set(void *data, u64 addr)
- 	/* ADDR (7 bit) + RD (1 bit) + SDA hi (1 bit) */
- 	pattern = (addr << 2) | 3;
- 
--	i2c_lock_adapter(&priv->adap);
-+	i2c_lock_bus(&priv->adap, I2C_LOCK_ROOT_ADAPTER);
- 
- 	/* START condition */
- 	setsda(bit_data, 0);
-@@ -129,7 +129,7 @@ static int fops_incomplete_transfer_set(void *data, u64 addr)
- 		udelay(bit_data->udelay);
- 	}
- 
--	i2c_unlock_adapter(&priv->adap);
-+	i2c_unlock_bus(&priv->adap, I2C_LOCK_ROOT_ADAPTER);
- 
- 	return 0;
- }
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 9fe2b6951895..2f2e28d60ef5 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -919,9 +919,9 @@ static int s3c24xx_i2c_cpufreq_transition(struct notifier_block *nb,
- 
- 	if ((val == CPUFREQ_POSTCHANGE && delta_f < 0) ||
- 	    (val == CPUFREQ_PRECHANGE && delta_f > 0)) {
--		i2c_lock_adapter(&i2c->adap);
-+		i2c_lock_bus(&i2c->adap, I2C_LOCK_ROOT_ADAPTER);
- 		ret = s3c24xx_i2c_clockrate(i2c, &got);
--		i2c_unlock_adapter(&i2c->adap);
-+		i2c_unlock_bus(&i2c->adap, I2C_LOCK_ROOT_ADAPTER);
- 
- 		if (ret < 0)
- 			dev_err(i2c->dev, "cannot find frequency (%d)\n", ret);
-diff --git a/drivers/i2c/busses/i2c-sprd.c b/drivers/i2c/busses/i2c-sprd.c
-index 4053259bccb8..a94e724f51dc 100644
---- a/drivers/i2c/busses/i2c-sprd.c
-+++ b/drivers/i2c/busses/i2c-sprd.c
-@@ -590,9 +590,9 @@ static int __maybe_unused sprd_i2c_suspend_noirq(struct device *pdev)
- {
- 	struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
- 
--	i2c_lock_adapter(&i2c_dev->adap);
-+	i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
- 	i2c_dev->is_suspended = true;
--	i2c_unlock_adapter(&i2c_dev->adap);
-+	i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
- 
- 	return pm_runtime_force_suspend(pdev);
- }
-@@ -601,9 +601,9 @@ static int __maybe_unused sprd_i2c_resume_noirq(struct device *pdev)
- {
- 	struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
- 
--	i2c_lock_adapter(&i2c_dev->adap);
-+	i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
- 	i2c_dev->is_suspended = false;
--	i2c_unlock_adapter(&i2c_dev->adap);
-+	i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
- 
- 	return pm_runtime_force_resume(pdev);
- }
-diff --git a/drivers/i2c/i2c-core-slave.c b/drivers/i2c/i2c-core-slave.c
-index 4a78c65e9971..47a9f70a24a9 100644
---- a/drivers/i2c/i2c-core-slave.c
-+++ b/drivers/i2c/i2c-core-slave.c
-@@ -47,9 +47,9 @@ int i2c_slave_register(struct i2c_client *client, i2c_slave_cb_t slave_cb)
- 
- 	client->slave_cb = slave_cb;
- 
--	i2c_lock_adapter(client->adapter);
-+	i2c_lock_bus(client->adapter, I2C_LOCK_ROOT_ADAPTER);
- 	ret = client->adapter->algo->reg_slave(client);
--	i2c_unlock_adapter(client->adapter);
-+	i2c_unlock_bus(client->adapter, I2C_LOCK_ROOT_ADAPTER);
- 
- 	if (ret) {
- 		client->slave_cb = NULL;
-@@ -69,9 +69,9 @@ int i2c_slave_unregister(struct i2c_client *client)
- 		return -EOPNOTSUPP;
- 	}
- 
--	i2c_lock_adapter(client->adapter);
-+	i2c_lock_bus(client->adapter, I2C_LOCK_ROOT_ADAPTER);
- 	ret = client->adapter->algo->unreg_slave(client);
--	i2c_unlock_adapter(client->adapter);
-+	i2c_unlock_bus(client->adapter, I2C_LOCK_ROOT_ADAPTER);
- 
- 	if (ret == 0)
- 		client->slave_cb = NULL;
-diff --git a/drivers/iio/temperature/mlx90614.c b/drivers/iio/temperature/mlx90614.c
-index d619e8634a00..13a4cec64ea8 100644
---- a/drivers/iio/temperature/mlx90614.c
-+++ b/drivers/iio/temperature/mlx90614.c
-@@ -433,11 +433,11 @@ static int mlx90614_wakeup(struct mlx90614_data *data)
- 
- 	dev_dbg(&data->client->dev, "Requesting wake-up");
- 
--	i2c_lock_adapter(data->client->adapter);
-+	i2c_lock_bus(data->client->adapter, I2C_LOCK_ROOT_ADAPTER);
- 	gpiod_direction_output(data->wakeup_gpio, 0);
- 	msleep(MLX90614_TIMING_WAKEUP);
- 	gpiod_direction_input(data->wakeup_gpio);
--	i2c_unlock_adapter(data->client->adapter);
-+	i2c_unlock_bus(data->client->adapter, I2C_LOCK_ROOT_ADAPTER);
- 
- 	data->ready_timestamp = jiffies +
- 			msecs_to_jiffies(MLX90614_TIMING_STARTUP);
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index 254cd34eeae2..795e3a860afe 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -754,18 +754,6 @@ i2c_unlock_bus(struct i2c_adapter *adapter, unsigned int flags)
- 	adapter->lock_ops->unlock_bus(adapter, flags);
- }
- 
--static inline void
--i2c_lock_adapter(struct i2c_adapter *adapter)
--{
--	i2c_lock_bus(adapter, I2C_LOCK_ROOT_ADAPTER);
--}
--
--static inline void
--i2c_unlock_adapter(struct i2c_adapter *adapter)
--{
--	i2c_unlock_bus(adapter, I2C_LOCK_ROOT_ADAPTER);
--}
--
- /*flags for the client struct: */
- #define I2C_CLIENT_PEC		0x04	/* Use Packet Error Checking */
- #define I2C_CLIENT_TEN		0x10	/* we have a ten bit chip address */
+ 	/* give the DSP a chance to settle 03/10/05 Hac */
+ 	msleep(100);
 -- 
 2.11.0
