@@ -1,103 +1,77 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36002 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:18229 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754360AbeFTQT7 (ORCPT
+        by vger.kernel.org with ESMTP id S1754442AbeFTQUG (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 20 Jun 2018 12:19:59 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5KGG0Fa007127
-        for <linux-integrity@vger.kernel.org>; Wed, 20 Jun 2018 12:19:59 -0400
-Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jqqveqrr1-1
+        Wed, 20 Jun 2018 12:20:06 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5KGEEgA083239
+        for <linux-integrity@vger.kernel.org>; Wed, 20 Jun 2018 12:20:05 -0400
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jqsbntr19-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 20 Jun 2018 12:19:59 -0400
+        for <linux-integrity@vger.kernel.org>; Wed, 20 Jun 2018 12:20:05 -0400
 Received: from localhost
-        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Wed, 20 Jun 2018 10:19:58 -0600
+        Wed, 20 Jun 2018 10:20:04 -0600
 From: Stefan Berger <stefanb@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
         zohar@linux.vnet.ibm.com
 Cc: jgg@ziepe.ca, linux-kernel@vger.kernel.org,
         Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: [PATCH 1/6] tpm: Introduce a kref for the tpm_chip
-Date: Wed, 20 Jun 2018 12:19:43 -0400
+Subject: [PATCH 4/6] ima: Implement ima_shutdown and register it as a reboot_notifier
+Date: Wed, 20 Jun 2018 12:19:46 -0400
 In-Reply-To: <20180620161948.1464255-1-stefanb@linux.vnet.ibm.com>
 References: <20180620161948.1464255-1-stefanb@linux.vnet.ibm.com>
-Message-Id: <20180620161948.1464255-2-stefanb@linux.vnet.ibm.com>
+Message-Id: <20180620161948.1464255-5-stefanb@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Introduce a kref for the tpm_chip that we initialize when the tpm_chip has
-been allocated and release before the tpm_chip is to be freed.
+Implement ima_shutdown so that we can release the tpm_chip before
+devices are shut down. Register it as a low-priority reboot_notifier.
 
 Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
 ---
- drivers/char/tpm/tpm-chip.c | 24 +++++++++++++++++++-----
- drivers/char/tpm/tpm.h      |  1 +
- 2 files changed, 20 insertions(+), 5 deletions(-)
+ security/integrity/ima/ima_init.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 0a62c19937b6..a933676194a4 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -119,8 +119,24 @@ struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip)
- 	return res;
- }
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index 29b72cd2502e..8a5258eb32b6 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -21,6 +21,7 @@
+ #include <linux/scatterlist.h>
+ #include <linux/slab.h>
+ #include <linux/err.h>
++#include <linux/reboot.h>
  
-+static void tpm_chip_free(struct kref *kref)
+ #include "ima.h"
+ 
+@@ -104,11 +105,24 @@ void __init ima_load_x509(void)
+ }
+ #endif
+ 
++static int ima_shutdown(struct notifier_block *this, unsigned long action,
++			void *data)
 +{
-+	struct tpm_chip *chip = container_of(kref, struct tpm_chip, kref);
-+
-+	kfree(chip->log.bios_event_log);
-+	kfree(chip->work_space.context_buf);
-+	kfree(chip->work_space.session_buf);
-+	kfree(chip);
++	return NOTIFY_DONE;
 +}
 +
-+static void tpm_chip_put(struct tpm_chip *chip)
-+{
-+	if (chip)
-+		kref_put(&chip->kref, tpm_chip_free);
-+}
++static struct notifier_block ima_reboot_notifier = {
++	.notifier_call = ima_shutdown,
++	.priority = 0,
++};
 +
- /**
-- * tpm_dev_release() - free chip memory and the device number
-+ * tpm_dev_release() - free the device number and release reference to chip
-  * @dev: the character device for the TPM chip
-  *
-  * This is used as the release function for the character device.
-@@ -133,10 +149,7 @@ static void tpm_dev_release(struct device *dev)
- 	idr_remove(&dev_nums_idr, chip->dev_num);
- 	mutex_unlock(&idr_lock);
+ int __init ima_init(void)
+ {
+ 	u8 pcr_i[TPM_DIGEST_SIZE];
+ 	int rc;
  
--	kfree(chip->log.bios_event_log);
--	kfree(chip->work_space.context_buf);
--	kfree(chip->work_space.session_buf);
--	kfree(chip);
-+	tpm_chip_put(chip);
- }
- 
- static void tpm_devs_release(struct device *dev)
-@@ -195,6 +208,7 @@ struct tpm_chip *tpm_chip_alloc(struct device *pdev,
- 
- 	mutex_init(&chip->tpm_mutex);
- 	init_rwsem(&chip->ops_sem);
-+	kref_init(&chip->kref);
- 
- 	chip->ops = ops;
- 
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 7f2d0f489e9c..098d7dcc04a4 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -211,6 +211,7 @@ struct tpm_chip {
- 	struct cdev cdev;
- 	struct cdev cdevs;
- 
-+	struct kref kref;
- 	/* A driver callback under ops cannot be run unless ops_sem is held
- 	 * (sometimes implicitly, eg for the sysfs code). ops becomes null
- 	 * when the driver is unregistered, see tpm_try_get_ops.
++	register_reboot_notifier(&ima_reboot_notifier);
++
+ 	ima_used_chip = 0;
+ 	rc = tpm_pcr_read(NULL, 0, pcr_i);
+ 	if (rc == 0)
 -- 
 2.13.6
