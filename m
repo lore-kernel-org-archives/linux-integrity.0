@@ -1,98 +1,107 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:35018 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932570AbeFTU2J (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59936 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754881AbeFTTen (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 20 Jun 2018 16:28:09 -0400
-Date: Wed, 20 Jun 2018 13:28:05 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Haavard Skinnemoen <hskinnemoen@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Antti Palosaari <crope@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Krufky <mkrufky@linuxtv.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-integrity@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v2 03/10] input: rohm_bu21023: switch to
- i2c_lock_bus(..., I2C_LOCK_SEGMENT)
-Message-ID: <20180620202805.GB75925@dtor-ws>
-References: <20180620051803.12206-1-peda@axentia.se>
- <20180620051803.12206-4-peda@axentia.se>
+        Wed, 20 Jun 2018 15:34:43 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5KJSu2o121916
+        for <linux-integrity@vger.kernel.org>; Wed, 20 Jun 2018 15:34:42 -0400
+Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jqsmp1b8r-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 20 Jun 2018 15:34:42 -0400
+Received: from localhost
+        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
+        Wed, 20 Jun 2018 13:34:41 -0600
+Subject: Re: [PATCH 1/6] tpm: Introduce a kref for the tpm_chip
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
+        zohar@linux.vnet.ibm.com, linux-kernel@vger.kernel.org
+References: <20180620161948.1464255-1-stefanb@linux.vnet.ibm.com>
+ <20180620161948.1464255-2-stefanb@linux.vnet.ibm.com>
+ <20180620183854.GC27445@ziepe.ca>
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Date: Wed, 20 Jun 2018 15:34:36 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180620051803.12206-4-peda@axentia.se>
+In-Reply-To: <20180620183854.GC27445@ziepe.ca>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Message-Id: <0d37dbe0-d0f4-da13-ffa4-4f00d3542390@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Jun 20, 2018 at 07:17:56AM +0200, Peter Rosin wrote:
-> Locking the root adapter for __i2c_transfer will deadlock if the
-> device sits behind a mux-locked I2C mux. Switch to the finer-grained
-> i2c_lock_bus with the I2C_LOCK_SEGMENT flag. If the device does not
-> sit behind a mux-locked mux, the two locking variants are equivalent.
-> 
-> Signed-off-by: Peter Rosin <peda@axentia.se>
+On 06/20/2018 02:38 PM, Jason Gunthorpe wrote:
+> On Wed, Jun 20, 2018 at 12:19:43PM -0400, Stefan Berger wrote:
+>> Introduce a kref for the tpm_chip that we initialize when the tpm_chip has
+>> been allocated and release before the tpm_chip is to be freed.
+>>
+>> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+>>   drivers/char/tpm/tpm-chip.c | 24 +++++++++++++++++++-----
+>>   drivers/char/tpm/tpm.h      |  1 +
+>>   2 files changed, 20 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+>> index 0a62c19937b6..a933676194a4 100644
+>> +++ b/drivers/char/tpm/tpm-chip.c
+>> @@ -119,8 +119,24 @@ struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip)
+>>   	return res;
+>>   }
+>>   
+>> +static void tpm_chip_free(struct kref *kref)
+>> +{
+>> +	struct tpm_chip *chip = container_of(kref, struct tpm_chip, kref);
+>> +
+>> +	kfree(chip->log.bios_event_log);
+>> +	kfree(chip->work_space.context_buf);
+>> +	kfree(chip->work_space.session_buf);
+>> +	kfree(chip);
+>> +}
+>> +
+>> +static void tpm_chip_put(struct tpm_chip *chip)
+>> +{
+>> +	if (chip)
+>> +		kref_put(&chip->kref, tpm_chip_free);
+>> +}
+>> +
+>>   /**
+>> - * tpm_dev_release() - free chip memory and the device number
+>> + * tpm_dev_release() - free the device number and release reference to chip
+>>    * @dev: the character device for the TPM chip
+>>    *
+>>    * This is used as the release function for the character device.
+>> @@ -133,10 +149,7 @@ static void tpm_dev_release(struct device *dev)
+>>   	idr_remove(&dev_nums_idr, chip->dev_num);
+>>   	mutex_unlock(&idr_lock);
+>>   
+>> -	kfree(chip->log.bios_event_log);
+>> -	kfree(chip->work_space.context_buf);
+>> -	kfree(chip->work_space.session_buf);
+>> -	kfree(chip);
+>> +	tpm_chip_put(chip);
+>>   }
+>>   static void tpm_devs_release(struct device *dev)
+>> @@ -195,6 +208,7 @@ struct tpm_chip *tpm_chip_alloc(struct device *pdev,
+>>   
+>>   	mutex_init(&chip->tpm_mutex);
+>>   	init_rwsem(&chip->ops_sem);
+>> +	kref_init(&chip->kref);
+>>   
+>>   	chip->ops = ops;
+>>   
+>> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+>> index 7f2d0f489e9c..098d7dcc04a4 100644
+>> +++ b/drivers/char/tpm/tpm.h
+>> @@ -211,6 +211,7 @@ struct tpm_chip {
+>>   	struct cdev cdev;
+>>   	struct cdev cdevs;
+>>   
+>> +	struct kref kref;
+> NAK, there is already a kref in struct device, that one must be used.
 
-Still
+Right. Should make it simpler...
 
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Feel free to merge through I2C tree.
-
-> ---
->  drivers/input/touchscreen/rohm_bu21023.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/input/touchscreen/rohm_bu21023.c b/drivers/input/touchscreen/rohm_bu21023.c
-> index bda0500c9b57..714affdd742f 100644
-> --- a/drivers/input/touchscreen/rohm_bu21023.c
-> +++ b/drivers/input/touchscreen/rohm_bu21023.c
-> @@ -304,7 +304,7 @@ static int rohm_i2c_burst_read(struct i2c_client *client, u8 start, void *buf,
->  	msg[1].len = len;
->  	msg[1].buf = buf;
->  
-> -	i2c_lock_adapter(adap);
-> +	i2c_lock_bus(adap, I2C_LOCK_SEGMENT);
->  
->  	for (i = 0; i < 2; i++) {
->  		if (__i2c_transfer(adap, &msg[i], 1) < 0) {
-> @@ -313,7 +313,7 @@ static int rohm_i2c_burst_read(struct i2c_client *client, u8 start, void *buf,
->  		}
->  	}
->  
-> -	i2c_unlock_adapter(adap);
-> +	i2c_unlock_bus(adap, I2C_LOCK_SEGMENT);
->  
->  	return ret;
->  }
-> -- 
-> 2.11.0
-> 
-
-Thanks.
-
--- 
-Dmitry
+>
+> Jason
+>
