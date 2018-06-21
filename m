@@ -1,86 +1,237 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36524 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753970AbeFUTG0 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 21 Jun 2018 15:06:26 -0400
-Received: by mail-wm0-f68.google.com with SMTP id v131-v6so8074109wma.1
-        for <linux-integrity@vger.kernel.org>; Thu, 21 Jun 2018 12:06:25 -0700 (PDT)
-Date: Thu, 21 Jun 2018 13:06:20 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] tpm: Implement tpm_chip_find() and tpm_chip_put()
- for other subsystems
-Message-ID: <20180621190620.GE19270@ziepe.ca>
-References: <20180620204236.1572523-1-stefanb@linux.vnet.ibm.com>
- <20180620204236.1572523-2-stefanb@linux.vnet.ibm.com>
- <20180621171518.GI11859@linux.intel.com>
- <95b2970f-b71b-4cfc-c188-7ae7e8cb94c5@linux.vnet.ibm.com>
- <20180621175601.GC19270@ziepe.ca>
- <743f606f-b3eb-6917-33bb-5b080f76fe3f@linux.vnet.ibm.com>
+Received: from mga17.intel.com ([192.55.52.151]:46011 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752650AbeFUSk4 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 21 Jun 2018 14:40:56 -0400
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: Jason Gunthorpe <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [PATCH v6] tpm: separate cmd_ready/go_idle from runtime_pm
+Date: Thu, 21 Jun 2018 18:40:50 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D9516CE@hasmsx108.ger.corp.intel.com>
+References: <20180607212040.30989-1-tomas.winkler@intel.com>
+ <20180618180406.GA20697@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9D94EA09@hasmsx108.ger.corp.intel.com>
+ <20180621161958.GA11859@linux.intel.com>
+In-Reply-To: <20180621161958.GA11859@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <743f606f-b3eb-6917-33bb-5b080f76fe3f@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Jun 21, 2018 at 02:19:44PM -0400, Stefan Berger wrote:
-> On 06/21/2018 01:56 PM, Jason Gunthorpe wrote:
-> >On Thu, Jun 21, 2018 at 01:45:03PM -0400, Stefan Berger wrote:
-> >>On 06/21/2018 01:15 PM, Jarkko Sakkinen wrote:
-> >>>On Wed, Jun 20, 2018 at 04:42:33PM -0400, Stefan Berger wrote:
-> >>>>Implement tpm_chip_find() for other subsystems to find a TPM chip and
-> >>>>get a reference to that chip. Once done with using the chip, the reference
-> >>>>is released using tpm_chip_put().
-> >>>>
-> >>>>Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> >>>You should sort this out in a way that we don't end up with duplicate
-> >>>functions.
-> >>Do you want me to create a function *like* tpm_chip_find_get() that takes an
-> >>additional parameter whether to get the ops semaphore and have that function
-> >>called by the existing tpm_chip_find_get() and the new tpm_chip_find(). The
-> >>latter would then not get the ops semphore. I didn't want to do this since
-> >>one time the function returns with a lock held and the other time not.
-> >Another option, and I haven't looked, is to revise the callers of
-> >tpm_chip_find_get to not require it to hold the ops semaphore for
-> >them.
-> 
-> We have tpm_chip_unregister calling tpm_del_char_device to set the ops to
-> NULL once a chip is unregistered. All existing callers, if they pass in a
-> tpm_chip != NULL, currently fail if the ops are NULL. (If they pass in
-> tpm_chip = NULL, they shouldn't find a chip once ops are null and it has
-> been removed from the IDR). I wouldn't change that since IMA will call in
-> with a tpm_chip != NULL and we want to protect the ops. All existing code
-> within the tpm subsystem does seem to call tpm_chip_find_get() with a NULL
-> pointer, though. Also trusted keys seems to pass in a NULL pointer every
-> time.
-> 
-> >
-> >Either by giving them an API to do it, or revising the TPM entry
-> >points to do it.
-> >
-> >I didn't look, but how did the ops semaphore get grabbed in your
-> >revised patches? They do grab it, right?
-> 
-> The revised patches do not touch the existing code much but will call
-> tpm_chip_find_get() and get that semaphore every time before the ops are
-> used. IMA is the only caller of tpm_chip_find() that now gets an additional
-> reference to the tpm_chip and these APIs get called like this from IMA:
-> 
-> ima init: chip = tpm_chip_find()
-> 
-> ima::tpm: tpm_chip_find_get(chip) ... tpm_put_ops(chip)
-> 
-> ima::tpm: tpm_chip_find_get(chip) ... tpm_put_ops(chip)
-> 
-> [repeat]
-> 
-> ima shutdown: tpm_chip_put(chip)
 
-Maybe just change tpm_chip_find_get() into tpm_get_ops(chip) and
-convert all callers?
+> 
+> On Mon, Jun 18, 2018 at 07:24:39PM +0000, Winkler, Tomas wrote:
+> > >
+> > > On Fri, Jun 08, 2018 at 12:20:40AM +0300, Tomas Winkler wrote:
+> > > > We cannot use go_idle cmd_ready commands via runtime_pm handles
+> as
+> > > > with the introduction of localities this is no longer an optional
+> > > > feature, while runtime pm can be not enabled.
+> > > > Though cmd_ready/go_idle provides a power saving, it's also a part
+> > > > of
+> > > > TPM2 protocol and should be called explicitly.
+> > > > This patch exposes cmd_read/go_idle via tpm class ops and removes
+> > > > runtime pm support as it is not used by any driver.
+> > > >
+> > > > A new tpm transmit flag is added TPM_TRANSMIT_NESTED, which
+> > > > implies TPM_TRANSMIT_UNLOCKED and TPM_TRANSMIT_RAW. Both
+> are
+> > > > needed
+> > > to resolve
+> > > > tpm spaces and locality request recursive calls to tpm_transmit().
+> > > >
+> > > > New wrappers are added tpm_cmd_ready() and tpm_go_idle() to
+> > > streamline
+> > > > tpm_try_transmit code.
+> > > >
+> > > > tpm_crb no longer needs own power saving functions and can drop
+> > > > using tpm_pm_suspend/resume.
+> > > >
+> > > > This patch cannot be really separated from the locality fix.
+> > > > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only
+> > > > after granting locality)
+> > > >
+> > > >
+> > > > Cc: stable@vger.kernel.org
+> > > > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only
+> > > > after granting locality)
+> > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > > > ---
+> > > > V2-3:resent
+> > > > V4: 1. Use tpm_pm_suspend/resume in tpm_crb
+> > > >     2. Drop cmd_ready/go_idle around tpm_chip_register, as there is no
+> > > >        usage counter like in runtime_pm.
+> > > > V5: 1. add tpm_cmd_ready and tpm_go_idle wrappers.
+> > > >     2. Abuse TPM_TRANSMIT_UNLOCKED flag to resolve tpm space
+> > > >        recursion.
+> > > > V6: 1. Add new flags TPM_TRANSMIT_NESTED which implies
+> > > >        TPM_TRANSMIT_UNLOCKED and TPM_TRANSMIT_RAW, as not all
+> > > >        unlocked flows are recursive i.e. tpm2_unseal_trusted.
+> > > >
+> > > >  drivers/char/tpm/tpm-interface.c  |  51 +++++++++++++++----
+> > > >  drivers/char/tpm/tpm.h            |  13 ++++-
+> > > >  drivers/char/tpm/tpm2-space.c     |  12 ++---
+> > > >  drivers/char/tpm/tpm_crb.c        | 101 ++++++++++----------------------------
+> > > >  drivers/char/tpm/tpm_vtpm_proxy.c |   2 +-
+> > > >  include/linux/tpm.h               |   2 +
+> > > >  6 files changed, 88 insertions(+), 93 deletions(-)
+> > > >
+> > > > diff --git a/drivers/char/tpm/tpm-interface.c
+> > > > b/drivers/char/tpm/tpm-interface.c
+> > > > index e32f6e85dc6d..1abd8261651b 100644
+> > > > --- a/drivers/char/tpm/tpm-interface.c
+> > > > +++ b/drivers/char/tpm/tpm-interface.c
+> > > > @@ -29,7 +29,6 @@
+> > > >  #include <linux/mutex.h>
+> > > >  #include <linux/spinlock.h>
+> > > >  #include <linux/freezer.h>
+> > > > -#include <linux/pm_runtime.h>
+> > > >  #include <linux/tpm_eventlog.h>
+> > > >
+> > > >  #include "tpm.h"
+> > > > @@ -369,10 +368,13 @@ static int tpm_validate_command(struct
+> > > tpm_chip *chip,
+> > > >  	return -EINVAL;
+> > > >  }
+> > > >
+> > > > -static int tpm_request_locality(struct tpm_chip *chip)
+> > > > +static int tpm_request_locality(struct tpm_chip *chip, unsigned
+> > > > +int
+> > > > +flags)
+> > > >  {
+> > > >  	int rc;
+> > > >
+> > > > +	if (flags & __TPM_TRANSMIT_RAW)
+> > > > +		return 0;
+> > > > +
+> > > >  	if (!chip->ops->request_locality)
+> > > >  		return 0;
+> > > >
+> > > > @@ -385,10 +387,13 @@ static int tpm_request_locality(struct
+> > > > tpm_chip
+> > > *chip)
+> > > >  	return 0;
+> > > >  }
+> > > >
+> > > > -static void tpm_relinquish_locality(struct tpm_chip *chip)
+> > > > +static void tpm_relinquish_locality(struct tpm_chip *chip,
+> > > > +unsigned int flags)
+> > > >  {
+> > > >  	int rc;
+> > > >
+> > > > +	if (flags & __TPM_TRANSMIT_RAW)
+> > > > +		return;
+> > > > +
+> > > >  	if (!chip->ops->relinquish_locality)
+> > > >  		return;
+> > > >
+> > > > @@ -399,6 +404,28 @@ static void tpm_relinquish_locality(struct
+> > > tpm_chip *chip)
+> > > >  	chip->locality = -1;
+> > > >  }
+> > > >
+> > > > +static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags) {
+> > > > +	if (flags & __TPM_TRANSMIT_RAW)
+> > > > +		return 0;
+> > > > +
+> > > > +	if (!chip->ops->cmd_ready)
+> > > > +		return 0;
+> > > > +
+> > > > +	return chip->ops->cmd_ready(chip); }
+> > > > +
+> > > > +static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags) {
+> > > > +	if (flags & __TPM_TRANSMIT_RAW)
+> > > > +		return 0;
+> > > > +
+> > > > +	if (!chip->ops->go_idle)
+> > > > +		return 0;
+> > > > +
+> > > > +	return chip->ops->go_idle(chip); }
+> > > > +
+> > > >  static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+> > > >  				struct tpm_space *space,
+> > > >  				u8 *buf, size_t bufsiz,
+> > > > @@ -449,14 +476,15 @@ static ssize_t tpm_try_transmit(struct
+> > > > tpm_chip
+> > > *chip,
+> > > >  	/* Store the decision as chip->locality will be changed. */
+> > > >  	need_locality = chip->locality == -1;
+> > > >
+> > > > -	if (!(flags & TPM_TRANSMIT_RAW) && need_locality) {
+> > > > -		rc = tpm_request_locality(chip);
+> > > > +	if (need_locality) {
+> > > > +		rc = tpm_request_locality(chip, flags);
+> > > >  		if (rc < 0)
+> > > >  			goto out_no_locality;
+> > > >  	}
+> > > >
+> > > > -	if (chip->dev.parent)
+> > > > -		pm_runtime_get_sync(chip->dev.parent);
+> > > > +	rc = tpm_cmd_ready(chip, flags);
+> > > > +	if (rc)
+> > > > +		goto out;
+> > > >
+> > > >  	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+> > > >  	if (rc)
+> > > > @@ -516,13 +544,16 @@ static ssize_t tpm_try_transmit(struct
+> > > > tpm_chip
+> > > *chip,
+> > > >  	}
+> > > >
+> > > >  	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+> > > > +	if (rc)
+> > > > +		dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
+> > > >
+> > > >  out:
+> > > > -	if (chip->dev.parent)
+> > > > -		pm_runtime_put_sync(chip->dev.parent);
+> > > > +	rc = tpm_go_idle(chip, flags);
+> > > > +	if (rc)
+> > > > +		goto out;
+> > > >
+> > > >  	if (need_locality)
+> > > > -		tpm_relinquish_locality(chip);
+> > > > +		tpm_relinquish_locality(chip, flags);
+> > > >
+> > > >  out_no_locality:
+> > > >  	if (chip->ops->clk_enable != NULL) diff --git
+> > > > a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h index
+> > > > 4426649e431c..beb0a763016c 100644
+> > > > --- a/drivers/char/tpm/tpm.h
+> > > > +++ b/drivers/char/tpm/tpm.h
+> > > > @@ -511,9 +511,18 @@ extern const struct file_operations tpm_fops;
+> > > > extern const struct file_operations tpmrm_fops;  extern struct idr
+> > > > dev_nums_idr;
+> > > >
+> > > > +/**
+> > > > + * enum tpm_transmit_flags
+> > > > + *
+> > > > + * @TPM_TRANSMIT_UNLOCKED: used to lock sequence of
+> tpm_transmit
+> > > calls.
+> > > > + * @__TPM_TRANSMIT_RAW: prevent recursive calls into setup steps
+> > > > + *                    (go idle, locality,..). Don't use directly.
+> > > > + * @TPM_TRANSMIT_NESTED: Use from nested tpm_transmit calls  */
+> > > >  enum tpm_transmit_flags {
+> > > > -	TPM_TRANSMIT_UNLOCKED	= BIT(0),
+> > > > -	TPM_TRANSMIT_RAW	= BIT(1),
+> > > > +	TPM_TRANSMIT_UNLOCKED   = BIT(0),
+> > > > +	__TPM_TRANSMIT_RAW      = BIT(1),
+> > >
+> > > NAK for the naming convention.
+> >
+> > What do you suggest
+> > Tomas
+> 
+> Just keeping the same name.
+I just wanted to make sure that 'RAW' not used in the api directly, it will break the flow, do have any suggestion to make it obvious.
 
-Jason
+Thanks
+Tomas
