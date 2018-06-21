@@ -1,56 +1,50 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42824 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932856AbeFURpI (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 21 Jun 2018 13:45:08 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5LHZiJQ127050
-        for <linux-integrity@vger.kernel.org>; Thu, 21 Jun 2018 13:45:08 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jregvwtrs-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 21 Jun 2018 13:45:08 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Thu, 21 Jun 2018 13:45:07 -0400
-Subject: Re: [PATCH v2 1/4] tpm: Implement tpm_chip_find() and tpm_chip_put()
- for other subsystems
+Received: from mga18.intel.com ([134.134.136.126]:31255 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932621AbeFURga (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 21 Jun 2018 13:36:30 -0400
+Subject: Re: [PATCH v3 0/2] tpm: add support for nonblocking operation
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        jgg@ziepe.ca, linux-kernel@vger.kernel.org
-References: <20180620204236.1572523-1-stefanb@linux.vnet.ibm.com>
- <20180620204236.1572523-2-stefanb@linux.vnet.ibm.com>
- <20180621171518.GI11859@linux.intel.com>
-From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Date: Thu, 21 Jun 2018 13:45:03 -0400
+Cc: jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, philip.b.tricca@intel.com,
+        James.Bottomley@HansenPartnership.com,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>
+References: <152882630662.30206.8805136953394285180.stgit@tstruk-mobl1.jf.intel.com>
+ <20180619131046.GC5609@linux.intel.com>
+ <e402d3d0-d9de-35a9-d434-d472d8f68e62@intel.com>
+ <20180621171746.GJ11859@linux.intel.com>
+From: Tadeusz Struk <tadeusz.struk@intel.com>
+Message-ID: <fff9a2ae-6f18-2401-f65b-d53f1506bbdf@intel.com>
+Date: Thu, 21 Jun 2018 10:36:20 -0700
 MIME-Version: 1.0
-In-Reply-To: <20180621171518.GI11859@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Message-Id: <95b2970f-b71b-4cfc-c188-7ae7e8cb94c5@linux.vnet.ibm.com>
+In-Reply-To: <20180621171746.GJ11859@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 06/21/2018 01:15 PM, Jarkko Sakkinen wrote:
-> On Wed, Jun 20, 2018 at 04:42:33PM -0400, Stefan Berger wrote:
->> Implement tpm_chip_find() for other subsystems to find a TPM chip and
->> get a reference to that chip. Once done with using the chip, the reference
->> is released using tpm_chip_put().
+On 06/21/2018 10:17 AM, Jarkko Sakkinen wrote:
+> On Tue, Jun 19, 2018 at 05:45:35PM -0700, Tadeusz Struk wrote:
+>> Hi Jarkko,
+>> Thanks for reviewing the patch.
+>> There are applications/frameworks where a worker thread is not an option.
+>> Take for example the IoT use-cases and frameworks like IoT.js, or "Node.js for IoT".
+>> They are all single threaded, event-driven frameworks, using non-blocking I/O as the base of their processing model.
+>> Similarly embedded applications, which are basically just a single threaded event loop, quite often don't use threads because of resources constrains.
 >>
->> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> You should sort this out in a way that we don't end up with duplicate
-> functions.
+>> If your concern is that user space will not adopt to this, I can say that TSS library [1] is currently blocked on this feature, and we can not enable some of the use-cases mentioned above because of this.
+>>
+>> Thanks,
+>> Tadeusz
+>>
+>> [1] https://github.com/tpm2-software/tpm2-tss
+> 
+> I put this into "mathematical" terms. TPM is by nature is blocking. It
+> does not scale this way so you are essentially just simulating
+> non-blocking behaviour.
+> 
 
-Do you want me to create a function *like* tpm_chip_find_get() that 
-takes an additional parameter whether to get the ops semaphore and have 
-that function called by the existing tpm_chip_find_get() and the new 
-tpm_chip_find(). The latter would then not get the ops semphore. I 
-didn't want to do this since one time the function returns with a lock 
-held and the other time not.
-
-   Stefan
-
->
-> /Jarkko
->
+That is correct, and this is exactly why we need this.
+Thanks,
+-- 
+Tadeusz
