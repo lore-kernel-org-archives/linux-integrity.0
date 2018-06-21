@@ -1,31 +1,37 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga12.intel.com ([192.55.52.136]:57895 "EHLO mga12.intel.com"
+Received: from mga05.intel.com ([192.55.52.43]:34411 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933391AbeFUQsX (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 21 Jun 2018 12:48:23 -0400
-Date: Thu, 21 Jun 2018 19:48:19 +0300
+        id S933287AbeFUQVO (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 21 Jun 2018 12:21:14 -0400
+Date: Thu, 21 Jun 2018 19:21:01 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Ricardo Schwarzmeier <Ricardo.Schwarzmeier@infineon.com>
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
-        gregkh@linuxfoundation.org
-Subject: Re: [PATCH v2] tpm: Return the actual size when receiving an
- unsupported command
-Message-ID: <20180621164819.GE11859@linux.intel.com>
-References: <20180620095507.682-1-Ricardo.Schwarzmeier@infineon.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Louis Collard <louiscollard@chromium.org>,
+        linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, apronin@chromium.org
+Subject: Re: [PATCH] tpm: Add module parameter for hwrng quality.
+Message-ID: <20180621162101.GB11859@linux.intel.com>
+References: <20180608065438.110109-1-louiscollard@chromium.org>
+ <20180618180712.GB20697@linux.intel.com>
+ <20180618193306.GF6805@ziepe.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180620095507.682-1-Ricardo.Schwarzmeier@infineon.com>
+In-Reply-To: <20180618193306.GF6805@ziepe.ca>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Jun 20, 2018 at 11:55:07AM +0200, Ricardo Schwarzmeier wrote:
-> The command size is computed for the header anyway.
-> It can as well indicate the correct number of bytes to read from the driver.
-> Fixes: 095531f891e6 ("tpm: return a TPM_RC_COMMAND_CODE response if command is not implemented")
+On Mon, Jun 18, 2018 at 01:33:06PM -0600, Jason Gunthorpe wrote:
+> > > +module_param(override_rng_quality, short, 0644);
+> > 
+> > Should this be 600 i.e. not to leak this information?
 > 
-> Signed-off-by: Ricardo Schwarzmeier <Ricardo.Schwarzmeier@infineon.com>
+> There is a real push these days against adding module parameters, and
+> apparently, IMA can't function with TPM as a module.
+> 
+> Are you sure this shouldn't be done in some other way?
 
-Can you fix the kbuild error and send v3? Otherwise, LGMT.
+Maybe a sysfs file would be a better choice for this?
 
 /Jarkko
