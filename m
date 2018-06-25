@@ -1,115 +1,64 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40788 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932193AbeFYKnW (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 25 Jun 2018 06:43:22 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5PAfNEN016129
-        for <linux-integrity@vger.kernel.org>; Mon, 25 Jun 2018 06:43:21 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jtw7kmeaj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 25 Jun 2018 06:43:21 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Mon, 25 Jun 2018 06:43:20 -0400
-From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
-        zohar@linux.vnet.ibm.com
-Cc: jgg@ziepe.ca, linux-kernel@vger.kernel.org,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: [PATCH v4 4/5] ima: Use tpm_default_chip() and call TPM functions with a tpm_chip
-Date: Mon, 25 Jun 2018 06:43:11 -0400
-In-Reply-To: <20180625104312.2213278-1-stefanb@linux.vnet.ibm.com>
-References: <20180625104312.2213278-1-stefanb@linux.vnet.ibm.com>
-Message-Id: <20180625104312.2213278-5-stefanb@linux.vnet.ibm.com>
+Received: from mga11.intel.com ([192.55.52.93]:61150 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755164AbeFYKZD (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 25 Jun 2018 06:25:03 -0400
+Date: Mon, 25 Jun 2018 13:24:54 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Haavard Skinnemoen <hskinnemoen@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Antti Palosaari <crope@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Krufky <mkrufky@linuxtv.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-integrity@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v2 01/10] tpm/tpm_i2c_infineon: switch to
+ i2c_lock_bus(..., I2C_LOCK_SEGMENT)
+Message-ID: <20180625102454.GA3845@linux.intel.com>
+References: <20180620051803.12206-1-peda@axentia.se>
+ <20180620051803.12206-2-peda@axentia.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180620051803.12206-2-peda@axentia.se>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Rather than accessing the TPM functions by passing a NULL pointer for
-the tpm_chip, which causes a lookup for a suitable chip every time, get a
-hold of a tpm_chip and access the TPM functions using it.
+On Wed, Jun 20, 2018 at 07:17:54AM +0200, Peter Rosin wrote:
+> Locking the root adapter for __i2c_transfer will deadlock if the
+> device sits behind a mux-locked I2C mux. Switch to the finer-grained
+> i2c_lock_bus with the I2C_LOCK_SEGMENT flag. If the device does not
+> sit behind a mux-locked mux, the two locking variants are equivalent.
+> 
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 
-Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
----
- security/integrity/ima/ima.h        |  1 +
- security/integrity/ima/ima_crypto.c |  2 +-
- security/integrity/ima/ima_init.c   | 11 ++++-------
- security/integrity/ima/ima_queue.c  |  2 +-
- 4 files changed, 7 insertions(+), 9 deletions(-)
+Studied enough so that I can give
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 354bb5716ce3..35409461a3f2 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -56,6 +56,7 @@ extern int ima_policy_flag;
- extern int ima_used_chip;
- extern int ima_hash_algo;
- extern int ima_appraise;
-+extern struct tpm_chip *ima_tpm_chip;
- 
- /* IMA event related data */
- struct ima_event_data {
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index 4e085a17124f..88082f35adb2 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -634,7 +634,7 @@ static void __init ima_pcrread(int idx, u8 *pcr)
- 	if (!ima_used_chip)
- 		return;
- 
--	if (tpm_pcr_read(NULL, idx, pcr) != 0)
-+	if (tpm_pcr_read(ima_tpm_chip, idx, pcr) != 0)
- 		pr_err("Error Communicating to TPM chip\n");
- }
- 
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index 29b72cd2502e..1437ed3dbccc 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -27,6 +27,7 @@
- /* name for boot aggregate entry */
- static const char *boot_aggregate_name = "boot_aggregate";
- int ima_used_chip;
-+struct tpm_chip *ima_tpm_chip;
- 
- /* Add the boot aggregate to the IMA measurement list and extend
-  * the PCR register.
-@@ -106,17 +107,13 @@ void __init ima_load_x509(void)
- 
- int __init ima_init(void)
- {
--	u8 pcr_i[TPM_DIGEST_SIZE];
- 	int rc;
- 
--	ima_used_chip = 0;
--	rc = tpm_pcr_read(NULL, 0, pcr_i);
--	if (rc == 0)
--		ima_used_chip = 1;
-+	ima_tpm_chip = tpm_default_chip();
- 
-+	ima_used_chip = ima_tpm_chip != NULL;
- 	if (!ima_used_chip)
--		pr_info("No TPM chip found, activating TPM-bypass! (rc=%d)\n",
--			rc);
-+		pr_info("No TPM chip found, activating TPM-bypass!\n");
- 
- 	rc = integrity_init_keyring(INTEGRITY_KEYRING_IMA);
- 	if (rc)
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index 418f35e38015..c6303fa19a49 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -145,7 +145,7 @@ static int ima_pcr_extend(const u8 *hash, int pcr)
- 	if (!ima_used_chip)
- 		return result;
- 
--	result = tpm_pcr_extend(NULL, pcr, hash);
-+	result = tpm_pcr_extend(ima_tpm_chip, pcr, hash);
- 	if (result != 0)
- 		pr_err("Error Communicating to TPM chip, result: %d\n", result);
- 	return result;
--- 
-2.17.1
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
+Do not have hardware to test this, however.
+
+/Jarkko
