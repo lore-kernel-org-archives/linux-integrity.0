@@ -1,79 +1,31 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:9181 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965824AbeFZOL2 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Jun 2018 10:11:28 -0400
-Subject: Re: [PATCH v2 10/10] i2c: remove i2c_lock_adapter and use
- i2c_lock_bus directly
-To: Peter Rosin <peda@axentia.se>, <linux-kernel@vger.kernel.org>
-CC: Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Haavard Skinnemoen <hskinnemoen@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Antti Palosaari <crope@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Krufky <mkrufky@linuxtv.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        <linux-integrity@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <linux-media@vger.kernel.org>
-References: <20180620051803.12206-1-peda@axentia.se>
- <20180620051803.12206-11-peda@axentia.se>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <4e0545e3-fee9-cf29-bae1-e442347e3cb8@ti.com>
-Date: Tue, 26 Jun 2018 19:39:43 +0530
-MIME-Version: 1.0
-In-Reply-To: <20180620051803.12206-11-peda@axentia.se>
-Content-Type: text/plain; charset="utf-8"
+Received: from mga04.intel.com ([192.55.52.120]:55590 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935385AbeFZNY1 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 26 Jun 2018 09:24:27 -0400
+Message-ID: <cb41279d3c92e3aa00f46bf18bb9bdbf30be2ef6.camel@linux.intel.com>
+Subject: Re: [PATCH v5 3/5] tpm: Convert tpm_find_get_ops() to use
+ tpm_default_chip()
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com
+Cc: jgg@ziepe.ca, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Date: Tue, 26 Jun 2018 16:24:22 +0300
+In-Reply-To: <20180626110619.2362791-4-stefanb@linux.vnet.ibm.com>
+References: <20180626110619.2362791-1-stefanb@linux.vnet.ibm.com>
+         <20180626110619.2362791-4-stefanb@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wednesday 20 June 2018 10:48 AM, Peter Rosin wrote:
-> The i2c_lock_adapter name is ambiguous since it is unclear if it
-> refers to the root adapter or the adapter you name in the argument.
-> The natural interpretation is the adapter you name in the argument,
-> but there are historical reasons for that not being the case; it
-> in fact locks the root adapter. Just remove the function and force
-> users to spell out the I2C_LOCK_ROOT_ADAPTER name to indicate what
-> is really going on. Also remove i2c_unlock_adapter, of course.
+On Tue, 2018-06-26 at 07:06 -0400, Stefan Berger wrote:
+> Convert tpm_find_get_ops() to use tpm_default_chip() in case no chip
+> is passed in.
 > 
-> This patch was generated with
-> 
-> git grep -l 'i2c_\(un\)\?lock_adapter' \
-> | xargs sed -i 's/i2c_\(un\)\?lock_adapter(\([^)]*\))/'\
-> 'i2c_\1lock_bus(\2, I2C_LOCK_ROOT_ADAPTER)/g'
-> 
-> followed by white-space touch-up.
-> 
-> Signed-off-by: Peter Rosin <peda@axentia.se>
-> ---
->  drivers/i2c/busses/i2c-brcmstb.c   |  8 ++++----
->  drivers/i2c/busses/i2c-davinci.c   |  4 ++--
+> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
 
-On DM644x and DA850 EVMs applying this series does not seem to break I2C
-functionality. So:
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Tested-by: Sekhar Nori <nsekhar@ti.com>
-
-Thanks,
-Sekhar
+/Jarkko
