@@ -1,73 +1,74 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45460 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934398AbeFZLGZ (ORCPT
+Received: from smtp11.infineon.com ([217.10.52.105]:57886 "EHLO
+        smtp11.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933509AbeFZKRk (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Jun 2018 07:06:25 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QB4AYL019099
-        for <linux-integrity@vger.kernel.org>; Tue, 26 Jun 2018 07:06:24 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jukvs95ku-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 26 Jun 2018 07:06:24 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Tue, 26 Jun 2018 07:06:24 -0400
-From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
-        zohar@linux.vnet.ibm.com
-Cc: jgg@ziepe.ca, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: [PATCH v5 0/5] Have IMA find and use a tpm_chip until system shutdown
-Date: Tue, 26 Jun 2018 07:06:14 -0400
-Message-Id: <20180626110619.2362791-1-stefanb@linux.vnet.ibm.com>
+        Tue, 26 Jun 2018 06:17:40 -0400
+Subject: Re: [PATCH v2 01/10] tpm/tpm_i2c_infineon: switch to
+ i2c_lock_bus(..., I2C_LOCK_SEGMENT)
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Rosin <peda@axentia.se>
+CC: <linux-kernel@vger.kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Haavard Skinnemoen <hskinnemoen@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Antti Palosaari <crope@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Krufky <mkrufky@linuxtv.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        <linux-integrity@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-input@vger.kernel.org>, <linux-media@vger.kernel.org>
+References: <20180620051803.12206-1-peda@axentia.se>
+ <20180620051803.12206-2-peda@axentia.se>
+ <20180625102454.GA3845@linux.intel.com>
+From: Alexander Steffen <Alexander.Steffen@infineon.com>
+Message-ID: <7703d6a2-b22c-104c-7390-b5143a504725@infineon.com>
+Date: Tue, 26 Jun 2018 12:07:21 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180625102454.GA3845@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-This series of patches converts IMA's usage of the tpm_chip to find a TPM
-chip initially and use it until the machine is shut down. To do this we need
-to introduce a kref for the tpm_chip that IMA and all other users of a
-tpm_chip hold onto until they don't need the TPM chip anymore.
+On 25.06.2018 12:24, Jarkko Sakkinen wrote:
+> On Wed, Jun 20, 2018 at 07:17:54AM +0200, Peter Rosin wrote:
+>> Locking the root adapter for __i2c_transfer will deadlock if the
+>> device sits behind a mux-locked I2C mux. Switch to the finer-grained
+>> i2c_lock_bus with the I2C_LOCK_SEGMENT flag. If the device does not
+>> sit behind a mux-locked mux, the two locking variants are equivalent.
+>>
+>> Signed-off-by: Peter Rosin <peda@axentia.se>
+> 
+> Studied enough so that I can give
+> 
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> 
+> Do not have hardware to test this, however.
 
-    Stefan
+I don't have a mux-locked I2C mux either, but at least I can confirm 
+that this change did not break my existing test setup (SLB9635/SLB9645 
+on Raspberry Pi 2B).
 
-v4->v5:
-  - repost with fixed changelog and posted to linux-security-module
+Tested-by: Alexander Steffen <Alexander.Steffen@infineon.com>
 
-v3->v4:
-  - followed Jason's suggestions:
-    - extended docs of tpm_find_get_ops()
-    - calling new function tpm_default_chip()
-    - new patch 3 that uses tpm_default_chip() in tpm_find_get_ops()
-
-v2->v3:
-  - renaming tpm_chip_find_get() to tpm_get_ops()
-  - IMA does not lock access to ima_tpm_chip anymore
-  - IMA does not have a reboot notifier to release the chip anymore
-
-v1->v2:
-  - use the kref of the device via get_device()/put_device()
-
-
-Stefan Berger (5):
-  tpm: rename tpm_chip_find_get() to tpm_find_get_ops()
-  tpm: Implement tpm_default_chip() to find a TPM chip
-  tpm: Convert tpm_find_get_ops() to use tpm_default_chip()
-  ima: Use tpm_default_chip() and call TPM functions with a tpm_chip
-  ima: Get rid of ima_used_chip and use ima_tpm_chip != NULL instead
-
- drivers/char/tpm/tpm-chip.c         | 68 +++++++++++++++++++----------
- drivers/char/tpm/tpm-interface.c    | 14 +++---
- drivers/char/tpm/tpm.h              |  2 +-
- include/linux/tpm.h                 |  5 +++
- security/integrity/ima/ima.h        |  2 +-
- security/integrity/ima/ima_crypto.c |  4 +-
- security/integrity/ima/ima_init.c   | 16 +++----
- security/integrity/ima/ima_queue.c  |  4 +-
- 8 files changed, 69 insertions(+), 46 deletions(-)
-
--- 
-2.17.1
+Alexander
