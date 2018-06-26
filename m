@@ -1,18 +1,18 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39064 "EHLO
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39072 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754953AbeFZTat (ORCPT
+        by vger.kernel.org with ESMTP id S1754965AbeFZTat (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Tue, 26 Jun 2018 15:30:49 -0400
 Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QJTTpr109114
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QJTSMR109032
         for <linux-integrity@vger.kernel.org>; Tue, 26 Jun 2018 15:30:49 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jutw9hy6q-1
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jutw9hy6x-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-integrity@vger.kernel.org>; Tue, 26 Jun 2018 15:30:49 -0400
 Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
         Tue, 26 Jun 2018 15:30:47 -0400
 From: Stefan Berger <stefanb@linux.vnet.ibm.com>
@@ -21,67 +21,164 @@ To: linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
 Cc: jgg@ziepe.ca, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, dhowells@redhat.com,
         keyrings@vger.kernel.org,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Stefan Berger <stefanb@liux.vnet.ibm.com>
-Subject: [PATCH 1/2] tpm: Implement public tpm_put_chip() to release reference to chip
-Date: Tue, 26 Jun 2018 15:30:39 -0400
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Subject: [PATCH 2/2] KEYS: trusted: Find tpm_chip and use it until module shutdown
+Date: Tue, 26 Jun 2018 15:30:40 -0400
 In-Reply-To: <20180626193040.2509798-1-stefanb@linux.vnet.ibm.com>
 References: <20180626193040.2509798-1-stefanb@linux.vnet.ibm.com>
-Message-Id: <20180626193040.2509798-2-stefanb@linux.vnet.ibm.com>
+Message-Id: <20180626193040.2509798-3-stefanb@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Some subsystems that got a hold of a TPM chip through tpm_default_chip()
-need a way to release the reference to the TPM chip when they shut down.
-The tpm_put_chip() function enables this.
+Use tpm_default_chip() to find the system's default TPM chip and
+use it as the tpm_chip parameter for all TPM operations. Release
+the tpm_chip when the module is shut down.
 
-Signed-off-by: Stefan Berger <stefanb@liux.vnet.ibm.com>
+Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
 ---
- drivers/char/tpm/tpm-chip.c | 10 ++++++++++
- include/linux/tpm.h         |  4 ++++
- 2 files changed, 14 insertions(+)
+ security/keys/trusted.c | 41 ++++++++++++++++++++++++++++-------------
+ 1 file changed, 28 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 46caadca916a..c744289d82e0 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -80,6 +80,16 @@ void tpm_put_ops(struct tpm_chip *chip)
- }
- EXPORT_SYMBOL_GPL(tpm_put_ops);
+diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+index 423776682025..06d863caea43 100644
+--- a/security/keys/trusted.c
++++ b/security/keys/trusted.c
+@@ -42,6 +42,7 @@ struct sdesc {
  
-+/**
-+ * tpm_put_chip() - Releae a ref to the tpm_chip
-+ * @chip: Chip to put
-+ */
-+void tpm_put_chip(struct tpm_chip *chip)
-+{
-+	put_device(&chip->dev);
-+}
-+EXPORT_SYMBOL_GPL(tpm_put_chip);
-+
- /**
-  * tpm_default_chip() - find a TPM chip and get a reference to it
-  */
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index e0e51c49a0e6..889dafe739e1 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -62,6 +62,7 @@ extern int tpm_unseal_trusted(struct tpm_chip *chip,
- 			      struct trusted_key_payload *payload,
- 			      struct trusted_key_options *options);
- extern struct tpm_chip *tpm_default_chip(void);
-+extern void tpm_put_chip(struct tpm_chip *chip);
- #else
- static inline int tpm_is_tpm2(struct tpm_chip *chip)
+ static struct crypto_shash *hashalg;
+ static struct crypto_shash *hmacalg;
++static struct tpm_chip *tpm_chip;
+ 
+ static struct sdesc *init_sdesc(struct crypto_shash *alg)
  {
-@@ -101,5 +102,8 @@ static inline struct tpm_chip *tpm_default_chip(void)
- {
- 	return NULL;
+@@ -360,7 +361,7 @@ static int trusted_tpm_send(unsigned char *cmd, size_t buflen)
+ 	int rc;
+ 
+ 	dump_tpm_buf(cmd);
+-	rc = tpm_send(NULL, cmd, buflen);
++	rc = tpm_send(tpm_chip, cmd, buflen);
+ 	dump_tpm_buf(cmd);
+ 	if (rc > 0)
+ 		/* Can't return positive return codes values to keyctl */
+@@ -381,10 +382,10 @@ static int pcrlock(const int pcrnum)
+ 
+ 	if (!capable(CAP_SYS_ADMIN))
+ 		return -EPERM;
+-	ret = tpm_get_random(NULL, hash, SHA1_DIGEST_SIZE);
++	ret = tpm_get_random(tpm_chip, hash, SHA1_DIGEST_SIZE);
+ 	if (ret != SHA1_DIGEST_SIZE)
+ 		return ret;
+-	return tpm_pcr_extend(NULL, pcrnum, hash) ? -EINVAL : 0;
++	return tpm_pcr_extend(tpm_chip, pcrnum, hash) ? -EINVAL : 0;
  }
-+static inline void tpm_put_chip(struct tpm_chip *chip)
-+{
-+}
- #endif
- #endif
+ 
+ /*
+@@ -397,7 +398,7 @@ static int osap(struct tpm_buf *tb, struct osapsess *s,
+ 	unsigned char ononce[TPM_NONCE_SIZE];
+ 	int ret;
+ 
+-	ret = tpm_get_random(NULL, ononce, TPM_NONCE_SIZE);
++	ret = tpm_get_random(tpm_chip, ononce, TPM_NONCE_SIZE);
+ 	if (ret != TPM_NONCE_SIZE)
+ 		return ret;
+ 
+@@ -492,7 +493,7 @@ static int tpm_seal(struct tpm_buf *tb, uint16_t keytype,
+ 	if (ret < 0)
+ 		goto out;
+ 
+-	ret = tpm_get_random(NULL, td->nonceodd, TPM_NONCE_SIZE);
++	ret = tpm_get_random(tpm_chip, td->nonceodd, TPM_NONCE_SIZE);
+ 	if (ret != TPM_NONCE_SIZE)
+ 		goto out;
+ 	ordinal = htonl(TPM_ORD_SEAL);
+@@ -602,7 +603,7 @@ static int tpm_unseal(struct tpm_buf *tb,
+ 
+ 	ordinal = htonl(TPM_ORD_UNSEAL);
+ 	keyhndl = htonl(SRKHANDLE);
+-	ret = tpm_get_random(NULL, nonceodd, TPM_NONCE_SIZE);
++	ret = tpm_get_random(tpm_chip, nonceodd, TPM_NONCE_SIZE);
+ 	if (ret != TPM_NONCE_SIZE) {
+ 		pr_info("trusted_key: tpm_get_random failed (%d)\n", ret);
+ 		return ret;
+@@ -747,7 +748,7 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
+ 	int i;
+ 	int tpm2;
+ 
+-	tpm2 = tpm_is_tpm2(NULL);
++	tpm2 = tpm_is_tpm2(tpm_chip);
+ 	if (tpm2 < 0)
+ 		return tpm2;
+ 
+@@ -916,7 +917,7 @@ static struct trusted_key_options *trusted_options_alloc(void)
+ 	struct trusted_key_options *options;
+ 	int tpm2;
+ 
+-	tpm2 = tpm_is_tpm2(NULL);
++	tpm2 = tpm_is_tpm2(tpm_chip);
+ 	if (tpm2 < 0)
+ 		return NULL;
+ 
+@@ -966,7 +967,7 @@ static int trusted_instantiate(struct key *key,
+ 	size_t key_len;
+ 	int tpm2;
+ 
+-	tpm2 = tpm_is_tpm2(NULL);
++	tpm2 = tpm_is_tpm2(tpm_chip);
+ 	if (tpm2 < 0)
+ 		return tpm2;
+ 
+@@ -1007,7 +1008,7 @@ static int trusted_instantiate(struct key *key,
+ 	switch (key_cmd) {
+ 	case Opt_load:
+ 		if (tpm2)
+-			ret = tpm_unseal_trusted(NULL, payload, options);
++			ret = tpm_unseal_trusted(tpm_chip, payload, options);
+ 		else
+ 			ret = key_unseal(payload, options);
+ 		dump_payload(payload);
+@@ -1017,13 +1018,13 @@ static int trusted_instantiate(struct key *key,
+ 		break;
+ 	case Opt_new:
+ 		key_len = payload->key_len;
+-		ret = tpm_get_random(NULL, payload->key, key_len);
++		ret = tpm_get_random(tpm_chip, payload->key, key_len);
+ 		if (ret != key_len) {
+ 			pr_info("trusted_key: key_create failed (%d)\n", ret);
+ 			goto out;
+ 		}
+ 		if (tpm2)
+-			ret = tpm_seal_trusted(NULL, payload, options);
++			ret = tpm_seal_trusted(tpm_chip, payload, options);
+ 		else
+ 			ret = key_seal(payload, options);
+ 		if (ret < 0)
+@@ -1226,12 +1227,26 @@ static int __init init_trusted(void)
+ 		return ret;
+ 	ret = register_key_type(&key_type_trusted);
+ 	if (ret < 0)
+-		trusted_shash_release();
++		goto exit_shash_release;
++	tpm_chip = tpm_default_chip();
++	if (!tpm_chip) {
++		ret = -ENODEV;
++		goto exit_unregister;
++	}
++	return 0;
++
++exit_unregister:
++	unregister_key_type(&key_type_trusted);
++
++exit_shash_release:
++	trusted_shash_release();
+ 	return ret;
+ }
+ 
+ static void __exit cleanup_trusted(void)
+ {
++	if (tpm_chip)
++		tpm_put_chip(tpm_chip);
+ 	trusted_shash_release();
+ 	unregister_key_type(&key_type_trusted);
+ }
 -- 
 2.17.1
