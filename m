@@ -1,104 +1,79 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33658 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754761AbeFZTJn (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40764 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754746AbeFZTJk (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Jun 2018 15:09:43 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QJ8bO4144603
-        for <linux-integrity@vger.kernel.org>; Tue, 26 Jun 2018 15:09:42 -0400
-Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2juu5ugpp5-1
+        Tue, 26 Jun 2018 15:09:40 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QJ936r019181
+        for <linux-integrity@vger.kernel.org>; Tue, 26 Jun 2018 15:09:39 -0400
+Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2juuc781tw-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 26 Jun 2018 15:09:42 -0400
+        for <linux-integrity@vger.kernel.org>; Tue, 26 Jun 2018 15:09:39 -0400
 Received: from localhost
-        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Tue, 26 Jun 2018 13:09:42 -0600
+        Tue, 26 Jun 2018 13:09:38 -0600
 From: Stefan Berger <stefanb@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
         zohar@linux.vnet.ibm.com
 Cc: jgg@ziepe.ca, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: [PATCH v7 2/5] tpm: Implement tpm_default_chip() to find a TPM chip
-Date: Tue, 26 Jun 2018 15:09:30 -0400
-In-Reply-To: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
-References: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
-Message-Id: <20180626190933.2508821-3-stefanb@linux.vnet.ibm.com>
+Subject: [PATCH v7 0/5] Have IMA find and use a tpm_chip until system shutdown
+Date: Tue, 26 Jun 2018 15:09:28 -0400
+Message-Id: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Implement tpm_default_chip() to find the first TPM chip and return it to
-the caller while increasing the reference count on its device. This
-function can be used by other subsystems, such as IMA, to find the system's
-default TPM chip and use it for all subsequent TPM operations.
+This series of patches converts IMA's usage of the tpm_chip to find a TPM
+chip initially and use it until the machine is shut down. To do this we need
+to introduce a kref for the tpm_chip that IMA and all other users of a
+tpm_chip hold onto until they don't need the TPM chip anymore.
 
-Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
----
- drivers/char/tpm/tpm-chip.c | 27 +++++++++++++++++++++++++++
- include/linux/tpm.h         |  5 +++++
- 2 files changed, 32 insertions(+)
+    Stefan
 
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 242b716aed5e..f551061262c9 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -80,6 +80,33 @@ void tpm_put_ops(struct tpm_chip *chip)
- }
- EXPORT_SYMBOL_GPL(tpm_put_ops);
- 
-+/**
-+ * tpm_default_chip() - find a TPM chip and get a reference to it
-+ */
-+struct tpm_chip *tpm_default_chip(void)
-+{
-+	struct tpm_chip *chip, *res = NULL;
-+	int chip_num = 0;
-+	int chip_prev;
-+
-+	mutex_lock(&idr_lock);
-+
-+	do {
-+		chip_prev = chip_num;
-+		chip = idr_get_next(&dev_nums_idr, &chip_num);
-+		if (chip) {
-+			get_device(&chip->dev);
-+			res = chip;
-+			break;
-+		}
-+	} while (chip_prev != chip_num);
-+
-+	mutex_unlock(&idr_lock);
-+
-+	return res;
-+}
-+EXPORT_SYMBOL_GPL(tpm_default_chip);
-+
- /**
-  * tpm_find_get_ops() - find and reserve a TPM chip
-  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 06639fb6ab85..e0e51c49a0e6 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -61,6 +61,7 @@ extern int tpm_seal_trusted(struct tpm_chip *chip,
- extern int tpm_unseal_trusted(struct tpm_chip *chip,
- 			      struct trusted_key_payload *payload,
- 			      struct trusted_key_options *options);
-+extern struct tpm_chip *tpm_default_chip(void);
- #else
- static inline int tpm_is_tpm2(struct tpm_chip *chip)
- {
-@@ -96,5 +97,9 @@ static inline int tpm_unseal_trusted(struct tpm_chip *chip,
- {
- 	return -ENODEV;
- }
-+static inline struct tpm_chip *tpm_default_chip(void)
-+{
-+	return NULL;
-+}
- #endif
- #endif
+v6->v7:
+  - fixed `if (!rc)` in patch 3 to `if (rc)` (detected while converting trusted
+    keys)
+
+v5->v6:
+  - more verbose patch description in patch 2
+
+v4->v5:
+  - repost with fixed changelog and posted to linux-security-module
+
+v3->v4:
+  - followed Jason's suggestions:
+    - extended docs of tpm_find_get_ops()
+    - calling new function tpm_default_chip()
+    - new patch 3 that uses tpm_default_chip() in tpm_find_get_ops()
+
+v2->v3:
+  - renaming tpm_chip_find_get() to tpm_get_ops()
+  - IMA does not lock access to ima_tpm_chip anymore
+  - IMA does not have a reboot notifier to release the chip anymore
+
+v1->v2:
+  - use the kref of the device via get_device()/put_device()
+
+Stefan Berger (5):
+  tpm: rename tpm_chip_find_get() to tpm_find_get_ops()
+  tpm: Implement tpm_default_chip() to find a TPM chip
+  tpm: Convert tpm_find_get_ops() to use tpm_default_chip()
+  ima: Use tpm_default_chip() and call TPM functions with a tpm_chip
+  ima: Get rid of ima_used_chip and use ima_tpm_chip != NULL instead
+
+ drivers/char/tpm/tpm-chip.c         | 68 +++++++++++++++++++----------
+ drivers/char/tpm/tpm-interface.c    | 14 +++---
+ drivers/char/tpm/tpm.h              |  2 +-
+ include/linux/tpm.h                 |  5 +++
+ security/integrity/ima/ima.h        |  2 +-
+ security/integrity/ima/ima_crypto.c |  4 +-
+ security/integrity/ima/ima_init.c   | 16 +++----
+ security/integrity/ima/ima_queue.c  |  4 +-
+ 8 files changed, 69 insertions(+), 46 deletions(-)
+
 -- 
 2.17.1
