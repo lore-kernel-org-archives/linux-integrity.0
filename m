@@ -1,81 +1,44 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:15442 "EHLO mga09.intel.com"
+Received: from mga18.intel.com ([134.134.136.126]:46179 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932246AbeFZIWj (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Jun 2018 04:22:39 -0400
-Message-ID: <c0fe8a7c2f2bd02e5bf240c78e0e320b99c0f2b7.camel@linux.intel.com>
-Subject: Re: [PATCH v7] tpm: separate cmd_ready/go_idle from runtime_pm
+        id S932722AbeFZIVs (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 26 Jun 2018 04:21:48 -0400
+Message-ID: <cfa499cd0a663517d17ede0206ad98a2b0d350e9.camel@linux.intel.com>
+Subject: Re: [PATCH v4 0/5] Have IMA find and use a tpm_chip until system
+ shutdown
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "Winkler, Tomas" <tomas.winkler@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Date: Tue, 26 Jun 2018 11:22:31 +0300
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D953997@hasmsx108.ger.corp.intel.com>
-References: <20180624205202.6597-1-tomas.winkler@intel.com>
-         <19b4282d625e04bb391f497419283a191bca610d.camel@linux.intel.com>
-         <5B8DA87D05A7694D9FA63FD143655C1B9D953997@hasmsx108.ger.corp.intel.com>
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com
+Cc: jgg@ziepe.ca, linux-kernel@vger.kernel.org
+Date: Tue, 26 Jun 2018 11:21:26 +0300
+In-Reply-To: <165d1f1ba8219da81390b064aaf6787ee263fe12.camel@linux.intel.com>
+References: <20180625104312.2213278-1-stefanb@linux.vnet.ibm.com>
+         <7233579b5bf09fbea65e8132fb31fc9f6af59bad.camel@linux.intel.com>
+         <165d1f1ba8219da81390b064aaf6787ee263fe12.camel@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2018-06-25 at 18:50 +0000, Winkler, Tomas wrote:
-> > 
-> > On Sun, 2018-06-24 at 23:52 +0300, Tomas Winkler wrote:
-> > > Fix tpm ptt initialization error:
-> > > tpm tpm0: A TPM error (378) occurred get tpm pcr allocation.
+On Tue, 2018-06-26 at 11:20 +0300, Jarkko Sakkinen wrote:
+> On Tue, 2018-06-26 at 11:19 +0300, Jarkko Sakkinen wrote:
+> > On Mon, 2018-06-25 at 06:43 -0400, Stefan Berger wrote:
+> > > This series of patches converts IMA's usage of the tpm_chip to find a TPM
+> > > chip initially and use it until the machine is shut down. To do this we
+> > > need
+> > > to introduce a kref for the tpm_chip that IMA and all other users of a
+> > > tpm_chip hold onto until they don't need the TPM chip anymore.
 > > > 
-> > > We cannot use go_idle cmd_ready commands via runtime_pm handles as
-> > > with the introduction of localities this is no longer an optional
-> > > feature, while runtime pm can be not enabled.
-> > > Though cmd_ready/go_idle provides a power saving, it's also a part of
-> > > TPM2 protocol and should be called explicitly.
-> > > This patch exposes cmd_read/go_idle via tpm class ops and removes
-> > > runtime pm support as it is not used by any driver.
+> > >     Stefan
 > > > 
-> > > A new tpm transmit flag is added TPM_TRANSMIT_NESTED, which implies
-> > > TPM_TRANSMIT_UNLOCKED and TPM_TRANSMIT_RAW. Both are needed
+> > > v3->v4:
+> > >   - followed Jason's suggestions
 > > 
-> > to resolve
-> > > tpm spaces and locality request recursive calls to tpm_transmit().
-> > > 
-> > > New wrappers are added tpm_cmd_ready() and tpm_go_idle() to
-> > 
-> > streamline
-> > > tpm_try_transmit code.
-> > > 
-> > > tpm_crb no longer needs own power saving functions and can drop using
-> > > tpm_pm_suspend/resume.
-> > > 
-> > > This patch cannot be really separated from the locality fix.
-> > > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after
-> > > granting
-> > > locality)
-> > > 
-> > > Cc: stable@vger.kernel.org
-> > > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after
-> > > granting
-> > > locality)
-> > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > 
-> > Please:
-> > 
-> > 1. Remove NESTED.
-> > 2. Where you need call RAW | UNLOCKED.
-> > 3. Do not add __ prefix.
-> > 
-> > Should be simple changes to do.
+> > "Jason's suggestions" means nothing.
 > 
-> It simple to change, but first you've already agreed on NESTED, second I would
-> appreciate some reasoning behind your requests.
-> There is a logic behind this why RAW is hidden, it's because it always hast be
-> coupled with UNLOCKED, and hence NESTED convers both, it gives cleaner API.
+> Please fix the change log for the next version.
 
->From my side this is NAK.
+You should probably resend this version as also linu-security-module
+is missing. NAK because of that.
 
 /Jarkko
