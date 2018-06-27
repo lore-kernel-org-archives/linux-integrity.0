@@ -1,59 +1,47 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:38613 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751128AbeF0GLr (ORCPT
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:36147 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752144AbeF0GKA (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 27 Jun 2018 02:11:47 -0400
-Received: by mail-ot0-f193.google.com with SMTP id w22-v6so959175otk.5
-        for <linux-integrity@vger.kernel.org>; Tue, 26 Jun 2018 23:11:46 -0700 (PDT)
+        Wed, 27 Jun 2018 02:10:00 -0400
+Received: by mail-oi0-f66.google.com with SMTP id r16-v6so281907oie.3
+        for <linux-integrity@vger.kernel.org>; Tue, 26 Jun 2018 23:10:00 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180621162101.GB11859@linux.intel.com>
-References: <20180608065438.110109-1-louiscollard@chromium.org>
- <20180618180712.GB20697@linux.intel.com> <20180618193306.GF6805@ziepe.ca> <20180621162101.GB11859@linux.intel.com>
+In-Reply-To: <CAKNRAJW-7BUCRwiUneW+pDU4k4jXY6S5XNxAJCmQnE9AkP2ooA@mail.gmail.com>
+References: <20180608071146.110567-1-louiscollard@chromium.org>
+ <20180618180943.GD20697@linux.intel.com> <CAKNRAJW-7BUCRwiUneW+pDU4k4jXY6S5XNxAJCmQnE9AkP2ooA@mail.gmail.com>
 From: Louis Collard <louiscollard@chromium.org>
-Date: Wed, 27 Jun 2018 14:11:45 +0800
-Message-ID: <CAKNRAJVJD5b388iwhoOBVC5V-x=wV2YTZHJ+mRrBWv3H-pbNFg@mail.gmail.com>
-Subject: Re: [PATCH] tpm: Add module parameter for hwrng quality.
+Date: Wed, 27 Jun 2018 14:09:59 +0800
+Message-ID: <CAKNRAJU98YMzATxHR9grC7sdXxmv-cscrSZJOqKk+Laf1nV=Mg@mail.gmail.com>
+Subject: Re: [PATCH] tpm: Allow tpm_tis drivers to set hwrng quality.
 To: linux-integrity@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Thanks for all the replies, let me add some background around the
-motivation for this change.
+Hi sorry I'm not sure I understand; I based the change on linux-next
+master, let me know if I should be using something else. The change is
+not dependent on https://patchwork.kernel.org/patch/10453893/
 
-On some systems we have seen large delays in boot time, due to
-blocking on a call to getrandom() before the entropy pool has been
-initialized. On these systems the usual sources of entropy are not
-sufficient to initialize the pool in any kind of reasonable time -
-delays of minutes have been observed; the most common workaround is to
-mash the keyboard for a bit ;)
-
-Setting a non-zero quality score causes the hwrng to be used as a
-source of entropy for the pool, the pool is therefore initialized
-early during boot, and no delay is observed.
-
-I don't believe that the quality score is used anywhere else, so I
-don't think setting it should impact anything other than how the
-entropy pool is populated.
-
-It's my understanding that to be useful in the above situation, the
-parameter needs to be set on the kernel command line, so I'm not sure
-if a sysfs file would work.
-
-On Fri, Jun 22, 2018 at 12:21 AM, Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
-> On Mon, Jun 18, 2018 at 01:33:06PM -0600, Jason Gunthorpe wrote:
->> > > +module_param(override_rng_quality, short, 0644);
+On Wed, Jun 27, 2018 at 1:28 PM, Louis Collard
+<louiscollard@chromium.org> wrote:
+> Hi sorry I'm not sure I understand; I based the change on linux-next master,
+> let me know if I should be using something else. The change is not dependent
+> on https://patchwork.kernel.org/patch/10453893/
+>
+> On Tue, Jun 19, 2018 at 2:09 AM, Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+>>
+>> On Fri, Jun 08, 2018 at 03:11:46PM +0800, Louis Collard wrote:
+>> > Adds plumbing required for drivers based on tpm_tis to set hwrng
+>> > quality.
 >> >
->> > Should this be 600 i.e. not to leak this information?
+>> > Signed-off-by: Louis Collard <louiscollard@chromium.org>
 >>
->> There is a real push these days against adding module parameters, and
->> apparently, IMA can't function with TPM as a module.
+>> NAK because this not connected to the current GIT tree (should probably
+>> make a patch set?).
 >>
->> Are you sure this shouldn't be done in some other way?
+>> /Jarkko
 >
-> Maybe a sysfs file would be a better choice for this?
 >
-> /Jarkko
