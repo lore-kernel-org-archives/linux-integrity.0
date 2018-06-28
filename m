@@ -1,59 +1,70 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:43291 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934613AbeF2INR (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33604 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751750AbeF1V1z (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 29 Jun 2018 04:13:17 -0400
-Received: by mail-pg0-f67.google.com with SMTP id a14-v6so3655844pgw.10
-        for <linux-integrity@vger.kernel.org>; Fri, 29 Jun 2018 01:13:17 -0700 (PDT)
-From: Louis Collard <louiscollard@chromium.org>
-To: linux-integrity@vger.kernel.org
-Cc: Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, apronin@chromium.org
-Subject: [PATCH v2] tpm: Allow tpm_tis drivers to set hwrng quality.
-Date: Fri, 29 Jun 2018 16:12:58 +0800
-Message-Id: <20180629081258.155228-1-louiscollard@chromium.org>
+        Thu, 28 Jun 2018 17:27:55 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5SLO0Sv011994
+        for <linux-integrity@vger.kernel.org>; Thu, 28 Jun 2018 17:27:54 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jw7b48njy-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 28 Jun 2018 17:27:54 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Thu, 28 Jun 2018 22:27:52 +0100
+Subject: Re: [PATCH] integrity: prevent deadlock during digsig verification.
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Mikhail Kurinnoi <viewizard@viewizard.com>
+Cc: Matthias Gerstner <mgerstner@suse.de>,
+        linux-integrity@vger.kernel.org
+Date: Thu, 28 Jun 2018 17:27:47 -0400
+In-Reply-To: <20180628235051.10151b04@totoro>
+References: <20180627163342.3e1d6333@totoro>
+         <20180628163900.GD8003@f195.suse.de>
+         <1530213278.3366.47.camel@linux.vnet.ibm.com>
+         <20180628235051.10151b04@totoro>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1530221267.3366.69.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Adds plumbing required for drivers based on tpm_tis to set hwrng quality.
+On Thu, 2018-06-28 at 23:50 +0300, Mikhail Kurinnoi wrote:
+> ? Thu, 28 Jun 2018 15:14:38 -0400
+> Mimi Zohar <zohar@linux.vnet.ibm.com> ?????:
+> 
+> > On Thu, 2018-06-28 at 18:39 +0200, Matthias Gerstner wrote:
+> > > Hi,
+> > >   
+> > > > In this patch, I propose add an exception for
+> > > > "crypto-pkcs1pad(rsa,*)" module requests only in case of enabled
+> > > > integrity asymmetric keys support.  
+> > > 
+> > > I have tested the patch in my test setup and it looks good. No
+> > > deadlocks so far.  
+> > 
+> > I really wish we didn't have to do a string compare "crypto-
+> > pkcs1pad(rsa" each and every time.  Is the check once per crypto
+> > algorithm?
+> 
+> As I understood, it check once per crypto algorithm:
+> 
+> "crypto_alloc_tfm() will first attempt to locate an already loaded
+> algorithm.
+> ...
+> If that fails it will send a query to any loaded crypto manager to
+> construct an algorithm on the fly.
+> A refcount is grabbed on the algorithm which is then associated with
+> the new transform."
+> 
+> https://github.com/torvalds/linux/blob/a97d8efd9d350bd9c6cf13689c7cc09049b42acd/crypto/api.c#L515
 
-Signed-off-by: Louis Collard <louiscollard@chromium.org>
----
-Changes since v1:
-- based on (hopefully!) correct git tree
+After having loaded "all" the crypto algorithms, we wouldn't need to
+ever do the string compare again.  As this isn't on a critical path,
+nor is it likely for all crypto algorithms to be loaded, it probably
+doesn't make sense to address it.
 
- drivers/char/tpm/tpm_tis_core.c | 2 ++
- drivers/char/tpm/tpm_tis_core.h | 1 +
- 2 files changed, 3 insertions(+)
-
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 8b46aaa9e049..d2345d9fd7b5 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -875,6 +875,8 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
- 	chip->acpi_dev_handle = acpi_dev_handle;
- #endif
- 
-+	chip->hwrng.quality = priv->rng_quality;
-+
- 	/* Maximum timeouts */
- 	chip->timeout_a = msecs_to_jiffies(TIS_TIMEOUT_A_MAX);
- 	chip->timeout_b = msecs_to_jiffies(TIS_TIMEOUT_B_MAX);
-diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
-index f6e1dbe212a7..f48125f1e6e0 100644
---- a/drivers/char/tpm/tpm_tis_core.h
-+++ b/drivers/char/tpm/tpm_tis_core.h
-@@ -99,6 +99,7 @@ struct tpm_tis_data {
- 	wait_queue_head_t int_queue;
- 	wait_queue_head_t read_queue;
- 	const struct tpm_tis_phy_ops *phy_ops;
-+	unsigned short rng_quality;
- };
- 
- struct tpm_tis_phy_ops {
--- 
-2.13.5
+Mimi
