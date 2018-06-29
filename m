@@ -1,31 +1,33 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:45470 "EHLO mga07.intel.com"
+Received: from mga06.intel.com ([134.134.136.31]:38966 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755206AbeF2MNP (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 29 Jun 2018 08:13:15 -0400
-Message-ID: <285d705b92b2f3a9351ac31b2e25ad36cb47204a.camel@linux.intel.com>
-Subject: Re: [PATCH v7 0/5] Have IMA find and use a tpm_chip until system
- shutdown
+        id S932331AbeF2LgX (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 29 Jun 2018 07:36:23 -0400
+Message-ID: <d6ffc33cc0870a097fc261e78b4bb3b4eed47f52.camel@linux.intel.com>
+Subject: Re: [PATCH v7 2/5] tpm: Implement tpm_default_chip() to find a TPM
+ chip
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: Stefan Berger <stefanb@linux.vnet.ibm.com>,
         linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com
 Cc: jgg@ziepe.ca, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Date: Fri, 29 Jun 2018 15:13:09 +0300
-In-Reply-To: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
+Date: Fri, 29 Jun 2018 14:36:17 +0300
+In-Reply-To: <20180626190933.2508821-3-stefanb@linux.vnet.ibm.com>
 References: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
+         <20180626190933.2508821-3-stefanb@linux.vnet.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
 On Tue, 2018-06-26 at 15:09 -0400, Stefan Berger wrote:
-> This series of patches converts IMA's usage of the tpm_chip to find a TPM
-> chip initially and use it until the machine is shut down. To do this we need
-> to introduce a kref for the tpm_chip that IMA and all other users of a
-> tpm_chip hold onto until they don't need the TPM chip anymore.
+> Implement tpm_default_chip() to find the first TPM chip and return it to
+> the caller while increasing the reference count on its device. This
+> function can be used by other subsystems, such as IMA, to find the system's
+> default TPM chip and use it for all subsequent TPM operations.
+> 
+> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
 
-All the TPM patches are now in my tree and I just updated also the
-next branch so they should be soon available also in linux-next.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
 /Jarkko
