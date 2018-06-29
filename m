@@ -1,32 +1,29 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:62441 "EHLO mga11.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:24959 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752683AbeF2Ljm (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 29 Jun 2018 07:39:42 -0400
-Message-ID: <7dddd668a1b45670a52b04daf6c612c947dde0a6.camel@linux.intel.com>
-Subject: Re: [PATCH v7 3/5] tpm: Convert tpm_find_get_ops() to use
- tpm_default_chip()
+        id S1752776AbeF2LdD (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 29 Jun 2018 07:33:03 -0400
+Date: Fri, 29 Jun 2018 14:32:54 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com
-Cc: jgg@ziepe.ca, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date: Fri, 29 Jun 2018 14:39:37 +0300
-In-Reply-To: <20180626190933.2508821-4-stefanb@linux.vnet.ibm.com>
-References: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
-         <20180626190933.2508821-4-stefanb@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+To: Louis Collard <louiscollard@chromium.org>
+Cc: linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, apronin@chromium.org
+Subject: Re: [PATCH v2] tpm: Allow tpm_tis drivers to set hwrng quality.
+Message-ID: <20180629113254.GB10894@linux.intel.com>
+References: <20180629081355.155317-1-louiscollard@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180629081355.155317-1-louiscollard@chromium.org>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, 2018-06-26 at 15:09 -0400, Stefan Berger wrote:
-> Convert tpm_find_get_ops() to use tpm_default_chip() in case no chip
-> is passed in.
+On Fri, Jun 29, 2018 at 04:13:55PM +0800, Louis Collard wrote:
+> Adds plumbing required for drivers based on tpm_tis to set hwrng quality.
 > 
-> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Signed-off-by: Louis Collard <louiscollard@chromium.org>
 
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
 /Jarkko
