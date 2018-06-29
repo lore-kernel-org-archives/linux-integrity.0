@@ -1,14 +1,11 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:56295 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932999AbeF2SJ7 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 29 Jun 2018 14:09:59 -0400
-Received: by mail-wm0-f65.google.com with SMTP id v16-v6so3065302wmv.5
-        for <linux-integrity@vger.kernel.org>; Fri, 29 Jun 2018 11:09:59 -0700 (PDT)
-Date: Fri, 29 Jun 2018 12:09:53 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Received: from mga04.intel.com ([192.55.52.120]:58229 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750965AbeF2RsA (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 29 Jun 2018 13:48:00 -0400
+Date: Fri, 29 Jun 2018 20:47:43 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
 Cc: linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Peter Huewe <peterhuewe@gmx.de>, Arnd Bergmann <arnd@arndb.de>,
@@ -18,36 +15,28 @@ Cc: linux-integrity@vger.kernel.org,
         Stefan Berger <stefanb@linux.vnet.ibm.com>,
         open list <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH] tpm: require to compile as part of the kernel
-Message-ID: <20180629180953.GG379@ziepe.ca>
+Message-ID: <20180629174743.GC4060@linux.intel.com>
 References: <20180629151005.10899-1-jarkko.sakkinen@linux.intel.com>
  <20180629153141.GE379@ziepe.ca>
- <20180629174743.GC4060@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180629174743.GC4060@linux.intel.com>
+In-Reply-To: <20180629153141.GE379@ziepe.ca>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Jun 29, 2018 at 08:47:43PM +0300, Jarkko Sakkinen wrote:
-> On Fri, Jun 29, 2018 at 09:31:41AM -0600, Jason Gunthorpe wrote:
-> > > -#if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
-> > > -
-> > > +#if defined(CONFIG_TCG_TPM)
-> > 
-> > Huh. This new version is certainly right
+On Fri, Jun 29, 2018 at 09:31:41AM -0600, Jason Gunthorpe wrote:
+> > -#if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
+> > -
+> > +#if defined(CONFIG_TCG_TPM)
 > 
-> Hmm...
-> 
-> If the option is kept as tristate, shouldn't this be actually:
-> 
-> #if defined(CONFIG_TCG_TPM) && !defined(CONFIG_TCG_TPM_MODULE)
-> 
-> ?
+> Huh. This new version is certainly right
 
-Er, yes, it should be writte as
+Hmm...
 
-#if IS_ENABLED(CONFIG_TCG_TPM)
+If the option is kept as tristate, shouldn't this be actually:
 
-these days
+#if defined(CONFIG_TCG_TPM) && !defined(CONFIG_TCG_TPM_MODULE)
 
-Jason
+?
+
+/Jarkko
