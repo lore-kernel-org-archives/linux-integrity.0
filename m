@@ -1,67 +1,47 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga05.intel.com ([192.55.52.43]:54018 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752260AbeF2Mah (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 29 Jun 2018 08:30:37 -0400
-Date: Fri, 29 Jun 2018 15:30:30 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Tomas Winkler <tomas.winkler@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
-        Struk@linux.intel.com, Tadeusz <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v8] tpm: separate cmd_ready/go_idle from runtime_pm
-Message-ID: <20180629123029.GA21735@linux.intel.com>
-References: <20180628151333.14368-1-tomas.winkler@intel.com>
- <53d76dcd02c69f207a2831f9ede55b867c7438b6.camel@linux.intel.com>
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59774 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755311AbeF2M1X (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 29 Jun 2018 08:27:23 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5TCIxOL021761
+        for <linux-integrity@vger.kernel.org>; Fri, 29 Jun 2018 08:27:23 -0400
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jwhptg1e4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 29 Jun 2018 08:27:23 -0400
+Received: from localhost
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
+        Fri, 29 Jun 2018 06:27:22 -0600
+Subject: Re: [PATCH v7 0/5] Have IMA find and use a tpm_chip until system
+ shutdown
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com
+Cc: jgg@ziepe.ca, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
+ <285d705b92b2f3a9351ac31b2e25ad36cb47204a.camel@linux.intel.com>
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Date: Fri, 29 Jun 2018 08:27:16 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <53d76dcd02c69f207a2831f9ede55b867c7438b6.camel@linux.intel.com>
+In-Reply-To: <285d705b92b2f3a9351ac31b2e25ad36cb47204a.camel@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Message-Id: <70d1e3ae-eebd-9ffc-5c28-79bf0e295bda@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Jun 29, 2018 at 01:35:52PM +0300, Jarkko Sakkinen wrote:
-> On Thu, 2018-06-28 at 18:13 +0300, Tomas Winkler wrote:
-> > Fix tpm ptt initialization error:
-> > tpm tpm0: A TPM error (378) occurred get tpm pcr allocation.
-> > 
-> > We cannot use go_idle cmd_ready commands via runtime_pm handles
-> > as with the introduction of localities this is no longer an optional
-> > feature, while runtime pm can be not enabled.
-> > Though cmd_ready/go_idle provides a power saving, it's also a part of
-> > TPM2 protocol and should be called explicitly.
-> > This patch exposes cmd_read/go_idle via tpm class ops and removes
-> > runtime pm support as it is not used by any driver.
-> > 
-> > When calling from nested context always use both flags:
-> > TPM_TRANSMIT_UNLOCKED and TPM_TRANSMIT_RAW. Both are needed to resolve
-> > tpm spaces and locality request recursive calls to tpm_transmit().
-> > TPM_TRANSMIT_RAW should never be used standalone as it will fail
-> > on double locking. While TPM_TRANSMIT_UNLOCKED standalone should be
-> > called from non-recursive locked contexts.
-> > 
-> > New wrappers are added tpm_cmd_ready() and tpm_go_idle() to
-> > streamline tpm_try_transmit code.
-> > 
-> > tpm_crb no longer needs own power saving functions and can drop using
-> > tpm_pm_suspend/resume.
-> > 
-> > This patch cannot be really separated from the locality fix.
-> > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after granting
-> > locality)
-> > 
-> > 
-> > Cc: stable@vger.kernel.org
-> > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after granting
-> > locality)
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> 
-> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+On 06/29/2018 08:13 AM, Jarkko Sakkinen wrote:
+> On Tue, 2018-06-26 at 15:09 -0400, Stefan Berger wrote:
+>> This series of patches converts IMA's usage of the tpm_chip to find a TPM
+>> chip initially and use it until the machine is shut down. To do this we need
+>> to introduce a kref for the tpm_chip that IMA and all other users of a
+>> tpm_chip hold onto until they don't need the TPM chip anymore.
+> All the TPM patches are now in my tree and I just updated also the
+> next branch so they should be soon available also in linux-next.
+Thanks.
 
-Noticed that your author field is malformed (Should be "Tomas Winkler"
-instead of "Winkler, Tomas") but I'll fix that.
-
-/Jarkko
+   Stefan
+> /Jarkko
+>
