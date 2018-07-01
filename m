@@ -1,66 +1,62 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52110 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35944 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752520AbeGAU20 (ORCPT
+        by vger.kernel.org with ESMTP id S1752536AbeGAU2r (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 1 Jul 2018 16:28:26 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w61KNvme103157
-        for <linux-integrity@vger.kernel.org>; Sun, 1 Jul 2018 16:28:26 -0400
+        Sun, 1 Jul 2018 16:28:47 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w61KSj7m121241
+        for <linux-integrity@vger.kernel.org>; Sun, 1 Jul 2018 16:28:46 -0400
 Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jxq3dbag0-1
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jxq3h35n3-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Sun, 01 Jul 2018 16:28:26 -0400
+        for <linux-integrity@vger.kernel.org>; Sun, 01 Jul 2018 16:28:46 -0400
 Received: from localhost
         by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Sun, 1 Jul 2018 21:28:24 +0100
-Subject: Re: [USER] [PATCH 2/2] Add security.apparmor to the set of extended
- attributes used by EVM
+        Sun, 1 Jul 2018 21:28:41 +0100
+Subject: Re: [PATCH] ima-evm-utils: check the return code from
+ tpm_pcr_read() in ima_measurement()
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Matthew Garrett <mjg59@google.com>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>
-Date: Sun, 01 Jul 2018 16:28:09 -0400
-In-Reply-To: <1529008884.3740.61.camel@linux.vnet.ibm.com>
-References: <20180417225601.6965-1-mjg59@google.com>
-         <20180417225601.6965-2-mjg59@google.com>
-         <1528846954.3874.16.camel@linux.vnet.ibm.com>
-         <CACdnJuvyY3qQms+xxvWoLpcXC8aE0efnKJo37fWDWtyG3fUhhQ@mail.gmail.com>
-         <1529008884.3740.61.camel@linux.vnet.ibm.com>
+To: George Wilson <gcwilson@linux.ibm.com>,
+        linux-integrity@vger.kernel.org
+Date: Sun, 01 Jul 2018 16:28:27 -0400
+In-Reply-To: <20180626162718.4916-1-gcwilson@linux.ibm.com>
+References: <20180626162718.4916-1-gcwilson@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1530476889.3388.16.camel@linux.vnet.ibm.com>
+Message-Id: <1530476907.3388.17.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, 2018-06-14 at 16:41 -0400, Mimi Zohar wrote:
-> On Thu, 2018-06-14 at 12:43 -0700, Matthew Garrett wrote:
-> > On Tue, Jun 12, 2018 at 4:42 PM Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> > >
-> > > On Tue, 2018-04-17 at 15:56 -0700, Matthew Garrett wrote:
-> > > > The kernel is taking security.apparmor into account when validating EVM,
-> > > > so evmctl should be doing the same.
-> > > >
-> > > > Signed-off-by: Matthew Garrett <mjg59@google.com>
-> > >
-> > > The XATTR_NAME_APPARMOR is dependent on the version of
-> > > "/usr/include/linux/xattr.h".  Without it defined, evmctl fails to
-> > > build.
-> > 
-> > Hmm, true. Is it reasonable to just hardcode it rather than using the define?
+Hi George,
+
+On Tue, 2018-06-26 at 10:27 -0600, George Wilson wrote:
+> Don't log garbage when neither /sys/class/tpm/tpm0/device/pcrs nor
+> /sys/class/misc/tpm0/device/pcrs can be read and exit nicely with a
+> value of 1.
 > 
-> I'm not sure how difficult it would be to tie the package name/version
-> to a specific kernel release.  Commit 096b85464832 ("EVM: Include
-> security.apparmor in EVM measurements") was upstreamed in linux-4.15.
+> Signed-off-by: George Wilson <gcwilson@linux.ibm.com>
 
-Instead, I've made the following change and pushed it out to master.
-
-+#ifndef XATTR_APPAARMOR_SUFFIX
-+#define XATTR_APPARMOR_SUFFIX "apparmor"
-+#define XATTR_NAME_APPARMOR XATTR_SECURITY_PREFIX XATTR_APPARMOR_SUFFIX
-+#endif
-+
-
-thanks,
+Thanks, this patch has been pushed to master.
 
 Mimi
+
+> ---
+>  src/evmctl.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/src/evmctl.c b/src/evmctl.c
+> index 2ffee78..a5c6221 100644
+> --- a/src/evmctl.c
+> +++ b/src/evmctl.c
+> @@ -1514,7 +1514,8 @@ static int ima_measurement(const char *file)
+>  		log_info("PCRAgg %.2d: ", i);
+>  		log_dump(pcr[i], SHA_DIGEST_LENGTH);
+> 
+> -		tpm_pcr_read(i, hwpcr, sizeof(hwpcr));
+> +		if (tpm_pcr_read(i, hwpcr, sizeof(hwpcr)))
+> +			exit(1);
+>  		log_info("HW PCR-%d: ", i);
+>  		log_dump(hwpcr, sizeof(hwpcr));
+> 
