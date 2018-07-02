@@ -1,64 +1,181 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:31768 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753973AbeGCJgd (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 3 Jul 2018 05:36:33 -0400
-Date: Tue, 3 Jul 2018 17:35:56 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: kbuild-all@01.org, linux-integrity@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-security-module@vger.kernel.org,
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:41552 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753099AbeGBSpr (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 2 Jul 2018 14:45:47 -0400
+Subject: Re: [PATCH v5 1/8] security: define new LSM hook named
+ security_kernel_load_data
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
         "Luis R . Rodriguez" <mcgrof@kernel.org>,
         Eric Biederman <ebiederm@xmission.com>,
         kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeff Vander Stoep <jeffv@google.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v5 8/8] module: replace the existing LSM hook in
- init_module
-Message-ID: <201807031757.qpz6yHPo%fengguang.wu@intel.com>
-References: <1530542283-26145-9-git-send-email-zohar@linux.vnet.ibm.com>
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
+ <1530542283-26145-2-git-send-email-zohar@linux.vnet.ibm.com>
+From: J Freyensee <why2jjj.linux@gmail.com>
+Message-ID: <64f467a5-e907-ee3e-495b-b2c731715037@gmail.com>
+Date: Mon, 2 Jul 2018 11:45:44 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1530542283-26145-9-git-send-email-zohar@linux.vnet.ibm.com>
+In-Reply-To: <1530542283-26145-2-git-send-email-zohar@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Mimi,
-
-I love your patch! Perhaps something to improve:
-
-[auto build test WARNING on integrity/next-integrity]
-[also build test WARNING on v4.18-rc3 next-20180702]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Mimi-Zohar/kexec-firmware-support-system-wide-policy-requiring-signatures/20180703-011114
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
 
 
-sparse warnings: (new ones prefixed by >>)
+On 7/2/18 7:37 AM, Mimi Zohar wrote:
+> Differentiate between the kernel reading a file from the kernel loading
+> data provided by userspace.  This patch defines a new LSM hook named
+> security_kernel_load_data.
 
->> security/loadpin/loadpin.c:178:40: sparse: mixing different enum types
-   security/loadpin/loadpin.c:178:40:     int enum kernel_load_data_id  versus
-   security/loadpin/loadpin.c:178:40:     int enum kernel_read_file_id
+If this patch series is re-done, can we tweak the description here 
+please?  From what I understood of the code in this patch, I'd tweak it as:
 
-vim +178 security/loadpin/loadpin.c
+"Differentiate between the kernel reading a file specified by userspace 
+and the kernel loading a block of data provided by userspace.  This 
+patch defines a new LSM hook named security_kernel_load_data()."
 
-   175	
-   176	static int loadpin_load_data(enum kernel_load_data_id id)
-   177	{
- > 178		return loadpin_read_file(NULL, id);
-   179	}
-   180	
+ From the description, I got a tad confused if the the kernel reading a file was also provided by userspace (I know it may be 2nd-nature to people on this list, I'm still learning this kernel module).
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Thanks,
+Jay
+
+> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Cc: Eric Biederman <ebiederm@xmission.com>
+> Cc: Luis R. Rodriguez <mcgrof@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Casey Schaufler <casey@schaufler-ca.com>
+> Acked-by: Serge Hallyn <serge@hallyn.com>
+>
+> ---
+> Changelog v5:
+> - Share the kernel_load_data_id and kernel_read_file_id values,
+> simplifying Loadpin's and other LSMs calling one LSM hook from the
+> other.
+>
+> Changelog v4:
+> - Define new LSM hook named security_kernel_load_data.
+>
+> Changelog v3:
+> - Rename security_kernel_read_file to security_kernel_read_data().
+>
+> Changelog v2:
+> - Define a generic wrapper named security_kernel_read_blob() for
+> security_kernel_read_file().
+>
+> Changelog v1:
+> - Define and call security_kexec_load(), a wrapper for
+> security_kernel_read_file().
+>
+>   include/linux/lsm_hooks.h |  6 ++++++
+>   include/linux/security.h  | 27 +++++++++++++++++++++++++++
+>   security/security.c       |  5 +++++
+>   3 files changed, 38 insertions(+)
+>
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 8f1131c8dd54..a08bc2587b96 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -576,6 +576,10 @@
+>    *	userspace to load a kernel module with the given name.
+>    *	@kmod_name name of the module requested by the kernel
+>    *	Return 0 if successful.
+> + * @kernel_load_data:
+> + *	Load data provided by userspace.
+> + *	@id kernel load data identifier
+> + *	Return 0 if permission is granted.
+>    * @kernel_read_file:
+>    *	Read a file specified by userspace.
+>    *	@file contains the file structure pointing to the file being read
+> @@ -1582,6 +1586,7 @@ union security_list_options {
+>   	int (*kernel_act_as)(struct cred *new, u32 secid);
+>   	int (*kernel_create_files_as)(struct cred *new, struct inode *inode);
+>   	int (*kernel_module_request)(char *kmod_name);
+> +	int (*kernel_load_data)(enum kernel_load_data_id id);
+>   	int (*kernel_read_file)(struct file *file, enum kernel_read_file_id id);
+>   	int (*kernel_post_read_file)(struct file *file, char *buf, loff_t size,
+>   				     enum kernel_read_file_id id);
+> @@ -1872,6 +1877,7 @@ struct security_hook_heads {
+>   	struct hlist_head cred_getsecid;
+>   	struct hlist_head kernel_act_as;
+>   	struct hlist_head kernel_create_files_as;
+> +	struct hlist_head kernel_load_data;
+>   	struct hlist_head kernel_read_file;
+>   	struct hlist_head kernel_post_read_file;
+>   	struct hlist_head kernel_module_request;
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 63030c85ee19..3410acfe139c 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -159,6 +159,27 @@ extern int mmap_min_addr_handler(struct ctl_table *table, int write,
+>   typedef int (*initxattrs) (struct inode *inode,
+>   			   const struct xattr *xattr_array, void *fs_data);
+>   
+> +
+> +/* Keep the kernel_load_data_id enum in sync with kernel_read_file_id */
+> +#define __data_id_enumify(ENUM, dummy) LOADING_ ## ENUM,
+> +#define __data_id_stringify(dummy, str) #str,
+> +
+> +enum kernel_load_data_id {
+> +	__kernel_read_file_id(__data_id_enumify)
+> +};
+> +
+> +static const char * const kernel_load_data_str[] = {
+> +	__kernel_read_file_id(__data_id_stringify)
+> +};
+> +
+> +static inline const char *kernel_load_data_id_str(enum kernel_load_data_id id)
+> +{
+> +	if ((unsigned)id >= LOADING_MAX_ID)
+> +		return kernel_load_data_str[LOADING_UNKNOWN];
+> +
+> +	return kernel_load_data_str[id];
+> +}
+> +
+>   #ifdef CONFIG_SECURITY
+>   
+>   struct security_mnt_opts {
+> @@ -320,6 +341,7 @@ void security_cred_getsecid(const struct cred *c, u32 *secid);
+>   int security_kernel_act_as(struct cred *new, u32 secid);
+>   int security_kernel_create_files_as(struct cred *new, struct inode *inode);
+>   int security_kernel_module_request(char *kmod_name);
+> +int security_kernel_load_data(enum kernel_load_data_id id);
+>   int security_kernel_read_file(struct file *file, enum kernel_read_file_id id);
+>   int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
+>   				   enum kernel_read_file_id id);
+> @@ -909,6 +931,11 @@ static inline int security_kernel_module_request(char *kmod_name)
+>   	return 0;
+>   }
+>   
+> +static inline int security_kernel_load_data(enum kernel_load_data_id id)
+> +{
+> +	return 0;
+> +}
+> +
+>   static inline int security_kernel_read_file(struct file *file,
+>   					    enum kernel_read_file_id id)
+>   {
+> diff --git a/security/security.c b/security/security.c
+> index e7d76a8000a5..05fe5b1932d7 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1061,6 +1061,11 @@ int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
+>   }
+>   EXPORT_SYMBOL_GPL(security_kernel_post_read_file);
+>   
+> +int security_kernel_load_data(enum kernel_load_data_id id)
+> +{
+> +	return call_int_hook(kernel_load_data, 0, id);
+> +}
+> +
+>   int security_task_fix_setuid(struct cred *new, const struct cred *old,
+>   			     int flags)
+>   {
