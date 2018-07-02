@@ -1,128 +1,175 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39646 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54022 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752174AbeGBPMC (ORCPT
+        by vger.kernel.org with ESMTP id S1752214AbeGBOiz (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 2 Jul 2018 11:12:02 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62FAk1s104061
-        for <linux-integrity@vger.kernel.org>; Mon, 2 Jul 2018 11:12:01 -0400
+        Mon, 2 Jul 2018 10:38:55 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62Ecgrn052949
+        for <linux-integrity@vger.kernel.org>; Mon, 2 Jul 2018 10:38:54 -0400
 Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jym8fp2vv-1
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jyksax1kf-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 02 Jul 2018 11:12:01 -0400
+        for <linux-integrity@vger.kernel.org>; Mon, 02 Jul 2018 10:38:54 -0400
 Received: from localhost
         by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Mon, 2 Jul 2018 16:11:59 +0100
-Subject: Re: [PATCH v7 5/5] ima: Get rid of ima_used_chip and use
- ima_tpm_chip != NULL instead
+        Mon, 2 Jul 2018 15:38:52 +0100
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com
-Cc: linux-kernel@vger.kernel.org
-Date: Mon, 02 Jul 2018 11:11:44 -0400
-In-Reply-To: <20180626190933.2508821-6-stefanb@linux.vnet.ibm.com>
-References: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
-         <20180626190933.2508821-6-stefanb@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1530544304.3709.40.camel@linux.vnet.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: [PATCH v5 1/8] security: define new LSM hook named security_kernel_load_data
+Date: Mon,  2 Jul 2018 10:37:56 -0400
+In-Reply-To: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
+Message-Id: <1530542283-26145-2-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Stefan,
+Differentiate between the kernel reading a file from the kernel loading
+data provided by userspace.  This patch defines a new LSM hook named
+security_kernel_load_data.
 
-On Tue, 2018-06-26 at 15:09 -0400, Stefan Berger wrote:
-> Get rid of ima_used_chip and use ima_tpm_chip variable instead for
-> determining whether to use the TPM chip.
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Luis R. Rodriguez <mcgrof@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Acked-by: Serge Hallyn <serge@hallyn.com>
 
-I don't see a need for separating this change from the previous patch.
-Could you squash this patch with the previous one?
+---
+Changelog v5:
+- Share the kernel_load_data_id and kernel_read_file_id values,
+simplifying Loadpin's and other LSMs calling one LSM hook from the
+other.
 
-As Jarkko has already queued the TPM patches, there's no need for
-posting them.  Posting just this one IMA patch is fine.
+Changelog v4:
+- Define new LSM hook named security_kernel_load_data.
 
-thanks!
+Changelog v3:
+- Rename security_kernel_read_file to security_kernel_read_data().
 
-Mimi
+Changelog v2:
+- Define a generic wrapper named security_kernel_read_blob() for
+security_kernel_read_file().
 
-> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  security/integrity/ima/ima.h        | 1 -
->  security/integrity/ima/ima_crypto.c | 2 +-
->  security/integrity/ima/ima_init.c   | 7 ++-----
->  security/integrity/ima/ima_queue.c  | 2 +-
->  4 files changed, 4 insertions(+), 8 deletions(-)
-> 
-> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> index 35409461a3f2..2ab1affffa36 100644
-> --- a/security/integrity/ima/ima.h
-> +++ b/security/integrity/ima/ima.h
-> @@ -53,7 +53,6 @@ enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
->  extern int ima_policy_flag;
-> 
->  /* set during initialization */
-> -extern int ima_used_chip;
->  extern int ima_hash_algo;
->  extern int ima_appraise;
->  extern struct tpm_chip *ima_tpm_chip;
-> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-> index 88082f35adb2..7e7e7e7c250a 100644
-> --- a/security/integrity/ima/ima_crypto.c
-> +++ b/security/integrity/ima/ima_crypto.c
-> @@ -631,7 +631,7 @@ int ima_calc_buffer_hash(const void *buf, loff_t len,
-> 
->  static void __init ima_pcrread(int idx, u8 *pcr)
->  {
-> -	if (!ima_used_chip)
-> +	if (!ima_tpm_chip)
->  		return;
-> 
->  	if (tpm_pcr_read(ima_tpm_chip, idx, pcr) != 0)
-> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-> index 1437ed3dbccc..faac9ecaa0ae 100644
-> --- a/security/integrity/ima/ima_init.c
-> +++ b/security/integrity/ima/ima_init.c
-> @@ -26,7 +26,6 @@
-> 
->  /* name for boot aggregate entry */
->  static const char *boot_aggregate_name = "boot_aggregate";
-> -int ima_used_chip;
->  struct tpm_chip *ima_tpm_chip;
-> 
->  /* Add the boot aggregate to the IMA measurement list and extend
-> @@ -65,7 +64,7 @@ static int __init ima_add_boot_aggregate(void)
->  	iint->ima_hash->algo = HASH_ALGO_SHA1;
->  	iint->ima_hash->length = SHA1_DIGEST_SIZE;
-> 
-> -	if (ima_used_chip) {
-> +	if (ima_tpm_chip) {
->  		result = ima_calc_boot_aggregate(&hash.hdr);
->  		if (result < 0) {
->  			audit_cause = "hashing_error";
-> @@ -110,9 +109,7 @@ int __init ima_init(void)
->  	int rc;
-> 
->  	ima_tpm_chip = tpm_default_chip();
-> -
-> -	ima_used_chip = ima_tpm_chip != NULL;
-> -	if (!ima_used_chip)
-> +	if (!ima_tpm_chip)
->  		pr_info("No TPM chip found, activating TPM-bypass!\n");
-> 
->  	rc = integrity_init_keyring(INTEGRITY_KEYRING_IMA);
-> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-> index c6303fa19a49..b186819bd5aa 100644
-> --- a/security/integrity/ima/ima_queue.c
-> +++ b/security/integrity/ima/ima_queue.c
-> @@ -142,7 +142,7 @@ static int ima_pcr_extend(const u8 *hash, int pcr)
->  {
->  	int result = 0;
-> 
-> -	if (!ima_used_chip)
-> +	if (!ima_tpm_chip)
->  		return result;
-> 
->  	result = tpm_pcr_extend(ima_tpm_chip, pcr, hash);
+Changelog v1:
+- Define and call security_kexec_load(), a wrapper for
+security_kernel_read_file().
+
+ include/linux/lsm_hooks.h |  6 ++++++
+ include/linux/security.h  | 27 +++++++++++++++++++++++++++
+ security/security.c       |  5 +++++
+ 3 files changed, 38 insertions(+)
+
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 8f1131c8dd54..a08bc2587b96 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -576,6 +576,10 @@
+  *	userspace to load a kernel module with the given name.
+  *	@kmod_name name of the module requested by the kernel
+  *	Return 0 if successful.
++ * @kernel_load_data:
++ *	Load data provided by userspace.
++ *	@id kernel load data identifier
++ *	Return 0 if permission is granted.
+  * @kernel_read_file:
+  *	Read a file specified by userspace.
+  *	@file contains the file structure pointing to the file being read
+@@ -1582,6 +1586,7 @@ union security_list_options {
+ 	int (*kernel_act_as)(struct cred *new, u32 secid);
+ 	int (*kernel_create_files_as)(struct cred *new, struct inode *inode);
+ 	int (*kernel_module_request)(char *kmod_name);
++	int (*kernel_load_data)(enum kernel_load_data_id id);
+ 	int (*kernel_read_file)(struct file *file, enum kernel_read_file_id id);
+ 	int (*kernel_post_read_file)(struct file *file, char *buf, loff_t size,
+ 				     enum kernel_read_file_id id);
+@@ -1872,6 +1877,7 @@ struct security_hook_heads {
+ 	struct hlist_head cred_getsecid;
+ 	struct hlist_head kernel_act_as;
+ 	struct hlist_head kernel_create_files_as;
++	struct hlist_head kernel_load_data;
+ 	struct hlist_head kernel_read_file;
+ 	struct hlist_head kernel_post_read_file;
+ 	struct hlist_head kernel_module_request;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 63030c85ee19..3410acfe139c 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -159,6 +159,27 @@ extern int mmap_min_addr_handler(struct ctl_table *table, int write,
+ typedef int (*initxattrs) (struct inode *inode,
+ 			   const struct xattr *xattr_array, void *fs_data);
+ 
++
++/* Keep the kernel_load_data_id enum in sync with kernel_read_file_id */
++#define __data_id_enumify(ENUM, dummy) LOADING_ ## ENUM,
++#define __data_id_stringify(dummy, str) #str,
++
++enum kernel_load_data_id {
++	__kernel_read_file_id(__data_id_enumify)
++};
++
++static const char * const kernel_load_data_str[] = {
++	__kernel_read_file_id(__data_id_stringify)
++};
++
++static inline const char *kernel_load_data_id_str(enum kernel_load_data_id id)
++{
++	if ((unsigned)id >= LOADING_MAX_ID)
++		return kernel_load_data_str[LOADING_UNKNOWN];
++
++	return kernel_load_data_str[id];
++}
++
+ #ifdef CONFIG_SECURITY
+ 
+ struct security_mnt_opts {
+@@ -320,6 +341,7 @@ void security_cred_getsecid(const struct cred *c, u32 *secid);
+ int security_kernel_act_as(struct cred *new, u32 secid);
+ int security_kernel_create_files_as(struct cred *new, struct inode *inode);
+ int security_kernel_module_request(char *kmod_name);
++int security_kernel_load_data(enum kernel_load_data_id id);
+ int security_kernel_read_file(struct file *file, enum kernel_read_file_id id);
+ int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
+ 				   enum kernel_read_file_id id);
+@@ -909,6 +931,11 @@ static inline int security_kernel_module_request(char *kmod_name)
+ 	return 0;
+ }
+ 
++static inline int security_kernel_load_data(enum kernel_load_data_id id)
++{
++	return 0;
++}
++
+ static inline int security_kernel_read_file(struct file *file,
+ 					    enum kernel_read_file_id id)
+ {
+diff --git a/security/security.c b/security/security.c
+index e7d76a8000a5..05fe5b1932d7 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1061,6 +1061,11 @@ int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
+ }
+ EXPORT_SYMBOL_GPL(security_kernel_post_read_file);
+ 
++int security_kernel_load_data(enum kernel_load_data_id id)
++{
++	return call_int_hook(kernel_load_data, 0, id);
++}
++
+ int security_task_fix_setuid(struct cred *new, const struct cred *old,
+ 			     int flags)
+ {
+-- 
+2.7.5
