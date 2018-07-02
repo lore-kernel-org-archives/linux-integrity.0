@@ -1,20 +1,20 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54022 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41872 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752214AbeGBOiz (ORCPT
+        by vger.kernel.org with ESMTP id S1752672AbeGBOjM (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 2 Jul 2018 10:38:55 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62Ecgrn052949
-        for <linux-integrity@vger.kernel.org>; Mon, 2 Jul 2018 10:38:54 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jyksax1kf-1
+        Mon, 2 Jul 2018 10:39:12 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62Ecelr130616
+        for <linux-integrity@vger.kernel.org>; Mon, 2 Jul 2018 10:39:11 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jyjrtgdyh-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 02 Jul 2018 10:38:54 -0400
+        for <linux-integrity@vger.kernel.org>; Mon, 02 Jul 2018 10:39:11 -0400
 Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Mon, 2 Jul 2018 15:38:52 +0100
+        Mon, 2 Jul 2018 15:39:09 +0100
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -25,151 +25,99 @@ Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
         kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
         Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PATCH v5 1/8] security: define new LSM hook named security_kernel_load_data
-Date: Mon,  2 Jul 2018 10:37:56 -0400
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v5 7/8] ima: based on policy warn about loading firmware (pre-allocated buffer)
+Date: Mon,  2 Jul 2018 10:38:02 -0400
 In-Reply-To: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
-Message-Id: <1530542283-26145-2-git-send-email-zohar@linux.vnet.ibm.com>
+Message-Id: <1530542283-26145-8-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Differentiate between the kernel reading a file from the kernel loading
-data provided by userspace.  This patch defines a new LSM hook named
-security_kernel_load_data.
+Some systems are memory constrained but they need to load very large
+firmwares.  The firmware subsystem allows drivers to request this
+firmware be loaded from the filesystem, but this requires that the
+entire firmware be loaded into kernel memory first before it's provided
+to the driver.  This can lead to a situation where we map the firmware
+twice, once to load the firmware into kernel memory and once to copy the
+firmware into the final resting place.
+
+To resolve this problem, commit a098ecd2fa7d ("firmware: support loading
+into a pre-allocated buffer") introduced request_firmware_into_buf() API
+that allows drivers to request firmware be loaded directly into a
+pre-allocated buffer. (Based on the mailing list discussions, calling
+dma_alloc_coherent() is unnecessary and confusing.)
+
+(Very broken/buggy) devices using pre-allocated memory run the risk of
+the firmware being accessible to the device prior to the completion of
+IMA's signature verification.  For the time being, this patch emits a
+warning, but does not prevent the loading of the firmware.
 
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Luis R. Rodriguez <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
+Cc: Luis R. Rodriguez <mcgrof@suse.com>
 Cc: David Howells <dhowells@redhat.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-Acked-by: Serge Hallyn <serge@hallyn.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
 
 ---
 Changelog v5:
-- Share the kernel_load_data_id and kernel_read_file_id values,
-simplifying Loadpin's and other LSMs calling one LSM hook from the
-other.
+- Instead of preventing loading firmware from a pre-allocate buffer,
+emit a warning.
 
-Changelog v4:
-- Define new LSM hook named security_kernel_load_data.
+ security/integrity/ima/ima_main.c | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
 
-Changelog v3:
-- Rename security_kernel_read_file to security_kernel_read_data().
-
-Changelog v2:
-- Define a generic wrapper named security_kernel_read_blob() for
-security_kernel_read_file().
-
-Changelog v1:
-- Define and call security_kexec_load(), a wrapper for
-security_kernel_read_file().
-
- include/linux/lsm_hooks.h |  6 ++++++
- include/linux/security.h  | 27 +++++++++++++++++++++++++++
- security/security.c       |  5 +++++
- 3 files changed, 38 insertions(+)
-
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 8f1131c8dd54..a08bc2587b96 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -576,6 +576,10 @@
-  *	userspace to load a kernel module with the given name.
-  *	@kmod_name name of the module requested by the kernel
-  *	Return 0 if successful.
-+ * @kernel_load_data:
-+ *	Load data provided by userspace.
-+ *	@id kernel load data identifier
-+ *	Return 0 if permission is granted.
-  * @kernel_read_file:
-  *	Read a file specified by userspace.
-  *	@file contains the file structure pointing to the file being read
-@@ -1582,6 +1586,7 @@ union security_list_options {
- 	int (*kernel_act_as)(struct cred *new, u32 secid);
- 	int (*kernel_create_files_as)(struct cred *new, struct inode *inode);
- 	int (*kernel_module_request)(char *kmod_name);
-+	int (*kernel_load_data)(enum kernel_load_data_id id);
- 	int (*kernel_read_file)(struct file *file, enum kernel_read_file_id id);
- 	int (*kernel_post_read_file)(struct file *file, char *buf, loff_t size,
- 				     enum kernel_read_file_id id);
-@@ -1872,6 +1877,7 @@ struct security_hook_heads {
- 	struct hlist_head cred_getsecid;
- 	struct hlist_head kernel_act_as;
- 	struct hlist_head kernel_create_files_as;
-+	struct hlist_head kernel_load_data;
- 	struct hlist_head kernel_read_file;
- 	struct hlist_head kernel_post_read_file;
- 	struct hlist_head kernel_module_request;
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 63030c85ee19..3410acfe139c 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -159,6 +159,27 @@ extern int mmap_min_addr_handler(struct ctl_table *table, int write,
- typedef int (*initxattrs) (struct inode *inode,
- 			   const struct xattr *xattr_array, void *fs_data);
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index e467664965e7..7da123d980ea 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -416,6 +416,15 @@ void ima_post_path_mknod(struct dentry *dentry)
+ 		iint->flags |= IMA_NEW_FILE;
+ }
  
-+
-+/* Keep the kernel_load_data_id enum in sync with kernel_read_file_id */
-+#define __data_id_enumify(ENUM, dummy) LOADING_ ## ENUM,
-+#define __data_id_stringify(dummy, str) #str,
-+
-+enum kernel_load_data_id {
-+	__kernel_read_file_id(__data_id_enumify)
++static int read_idmap[READING_MAX_ID] = {
++	[READING_FIRMWARE] = FIRMWARE_CHECK,
++	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
++	[READING_MODULE] = MODULE_CHECK,
++	[READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
++	[READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
++	[READING_POLICY] = POLICY_CHECK
 +};
 +
-+static const char * const kernel_load_data_str[] = {
-+	__kernel_read_file_id(__data_id_stringify)
-+};
+ /**
+  * ima_read_file - pre-measure/appraise hook decision based on policy
+  * @file: pointer to the file to be measured/appraised/audit
+@@ -439,18 +448,16 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+ 		}
+ 		return 0;	/* We rely on module signature checking */
+ 	}
 +
-+static inline const char *kernel_load_data_id_str(enum kernel_load_data_id id)
-+{
-+	if ((unsigned)id >= LOADING_MAX_ID)
-+		return kernel_load_data_str[LOADING_UNKNOWN];
-+
-+	return kernel_load_data_str[id];
-+}
-+
- #ifdef CONFIG_SECURITY
- 
- struct security_mnt_opts {
-@@ -320,6 +341,7 @@ void security_cred_getsecid(const struct cred *c, u32 *secid);
- int security_kernel_act_as(struct cred *new, u32 secid);
- int security_kernel_create_files_as(struct cred *new, struct inode *inode);
- int security_kernel_module_request(char *kmod_name);
-+int security_kernel_load_data(enum kernel_load_data_id id);
- int security_kernel_read_file(struct file *file, enum kernel_read_file_id id);
- int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
- 				   enum kernel_read_file_id id);
-@@ -909,6 +931,11 @@ static inline int security_kernel_module_request(char *kmod_name)
++	if (read_id == READING_FIRMWARE_PREALLOC_BUFFER) {
++		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
++		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
++			pr_warn("device might be able to access firmware prior to signature verification completion.\n");
++		}
++	}
  	return 0;
  }
  
-+static inline int security_kernel_load_data(enum kernel_load_data_id id)
-+{
-+	return 0;
-+}
-+
- static inline int security_kernel_read_file(struct file *file,
- 					    enum kernel_read_file_id id)
- {
-diff --git a/security/security.c b/security/security.c
-index e7d76a8000a5..05fe5b1932d7 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1061,6 +1061,11 @@ int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
- }
- EXPORT_SYMBOL_GPL(security_kernel_post_read_file);
- 
-+int security_kernel_load_data(enum kernel_load_data_id id)
-+{
-+	return call_int_hook(kernel_load_data, 0, id);
-+}
-+
- int security_task_fix_setuid(struct cred *new, const struct cred *old,
- 			     int flags)
- {
+-static int read_idmap[READING_MAX_ID] = {
+-	[READING_FIRMWARE] = FIRMWARE_CHECK,
+-	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
+-	[READING_MODULE] = MODULE_CHECK,
+-	[READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
+-	[READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
+-	[READING_POLICY] = POLICY_CHECK
+-};
+-
+ /**
+  * ima_post_read_file - in memory collect/appraise/audit measurement
+  * @file: pointer to the file to be measured/appraised/audit
 -- 
 2.7.5
