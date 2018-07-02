@@ -1,48 +1,138 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33302 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51296 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752326AbeGBPZY (ORCPT
+        by vger.kernel.org with ESMTP id S1752566AbeGBPZC (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 2 Jul 2018 11:25:24 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62FOR0q016959
-        for <linux-integrity@vger.kernel.org>; Mon, 2 Jul 2018 11:25:24 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jykvgfptd-1
+        Mon, 2 Jul 2018 11:25:02 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62FOXlX151238
+        for <linux-integrity@vger.kernel.org>; Mon, 2 Jul 2018 11:25:02 -0400
+Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jym8fpjds-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 02 Jul 2018 11:25:23 -0400
+        for <linux-integrity@vger.kernel.org>; Mon, 02 Jul 2018 11:25:02 -0400
 Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Mon, 2 Jul 2018 11:25:23 -0400
-Subject: Re: [PATCH v7 5/5] ima: Get rid of ima_used_chip and use ima_tpm_chip
- != NULL instead
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com
-Cc: linux-kernel@vger.kernel.org
-References: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
- <20180626190933.2508821-6-stefanb@linux.vnet.ibm.com>
- <1530544304.3709.40.camel@linux.vnet.ibm.com>
+        Mon, 2 Jul 2018 09:25:01 -0600
 From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Date: Mon, 2 Jul 2018 11:25:20 -0400
-MIME-Version: 1.0
-In-Reply-To: <1530544304.3709.40.camel@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Message-Id: <b5fe7a69-ae53-70de-b8eb-bd7cb81fb15c@linux.vnet.ibm.com>
+To: linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
+        zohar@linux.vnet.ibm.com
+Cc: jgg@ziepe.ca, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Subject: [PATCH] ima: Use tpm_default_chip() and call TPM functions with a tpm_chip
+Date: Mon,  2 Jul 2018 11:24:49 -0400
+Message-Id: <20180702152449.3219288-1-stefanb@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 07/02/2018 11:11 AM, Mimi Zohar wrote:
-> Hi Stefan,
->
-> On Tue, 2018-06-26 at 15:09 -0400, Stefan Berger wrote:
->> Get rid of ima_used_chip and use ima_tpm_chip variable instead for
->> determining whether to use the TPM chip.
-> I don't see a need for separating this change from the previous patch.
-> Could you squash this patch with the previous one?
->
-> As Jarkko has already queued the TPM patches, there's no need for
-> posting them.  Posting just this one IMA patch is fine.
->
-> thanks!
-Posted
+Rather than accessing the TPM functions by passing a NULL pointer for
+the tpm_chip, which causes a lookup for a suitable chip every time, get a
+hold of a tpm_chip and access the TPM functions using it. Also get rid of
+the ima_used_chip variable and use the new ima_tpm_chip variable instead
+for determining whether to call TPM functions.
+
+Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ security/integrity/ima/ima.h        |  2 +-
+ security/integrity/ima/ima_crypto.c |  4 ++--
+ security/integrity/ima/ima_init.c   | 16 +++++-----------
+ security/integrity/ima/ima_queue.c  |  4 ++--
+ 4 files changed, 10 insertions(+), 16 deletions(-)
+
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 354bb5716ce3..2ab1affffa36 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -53,9 +53,9 @@ enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
+ extern int ima_policy_flag;
+ 
+ /* set during initialization */
+-extern int ima_used_chip;
+ extern int ima_hash_algo;
+ extern int ima_appraise;
++extern struct tpm_chip *ima_tpm_chip;
+ 
+ /* IMA event related data */
+ struct ima_event_data {
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index 4e085a17124f..7e7e7e7c250a 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -631,10 +631,10 @@ int ima_calc_buffer_hash(const void *buf, loff_t len,
+ 
+ static void __init ima_pcrread(int idx, u8 *pcr)
+ {
+-	if (!ima_used_chip)
++	if (!ima_tpm_chip)
+ 		return;
+ 
+-	if (tpm_pcr_read(NULL, idx, pcr) != 0)
++	if (tpm_pcr_read(ima_tpm_chip, idx, pcr) != 0)
+ 		pr_err("Error Communicating to TPM chip\n");
+ }
+ 
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index 29b72cd2502e..faac9ecaa0ae 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -26,7 +26,7 @@
+ 
+ /* name for boot aggregate entry */
+ static const char *boot_aggregate_name = "boot_aggregate";
+-int ima_used_chip;
++struct tpm_chip *ima_tpm_chip;
+ 
+ /* Add the boot aggregate to the IMA measurement list and extend
+  * the PCR register.
+@@ -64,7 +64,7 @@ static int __init ima_add_boot_aggregate(void)
+ 	iint->ima_hash->algo = HASH_ALGO_SHA1;
+ 	iint->ima_hash->length = SHA1_DIGEST_SIZE;
+ 
+-	if (ima_used_chip) {
++	if (ima_tpm_chip) {
+ 		result = ima_calc_boot_aggregate(&hash.hdr);
+ 		if (result < 0) {
+ 			audit_cause = "hashing_error";
+@@ -106,17 +106,11 @@ void __init ima_load_x509(void)
+ 
+ int __init ima_init(void)
+ {
+-	u8 pcr_i[TPM_DIGEST_SIZE];
+ 	int rc;
+ 
+-	ima_used_chip = 0;
+-	rc = tpm_pcr_read(NULL, 0, pcr_i);
+-	if (rc == 0)
+-		ima_used_chip = 1;
+-
+-	if (!ima_used_chip)
+-		pr_info("No TPM chip found, activating TPM-bypass! (rc=%d)\n",
+-			rc);
++	ima_tpm_chip = tpm_default_chip();
++	if (!ima_tpm_chip)
++		pr_info("No TPM chip found, activating TPM-bypass!\n");
+ 
+ 	rc = integrity_init_keyring(INTEGRITY_KEYRING_IMA);
+ 	if (rc)
+diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+index 418f35e38015..b186819bd5aa 100644
+--- a/security/integrity/ima/ima_queue.c
++++ b/security/integrity/ima/ima_queue.c
+@@ -142,10 +142,10 @@ static int ima_pcr_extend(const u8 *hash, int pcr)
+ {
+ 	int result = 0;
+ 
+-	if (!ima_used_chip)
++	if (!ima_tpm_chip)
+ 		return result;
+ 
+-	result = tpm_pcr_extend(NULL, pcr, hash);
++	result = tpm_pcr_extend(ima_tpm_chip, pcr, hash);
+ 	if (result != 0)
+ 		pr_err("Error Communicating to TPM chip, result: %d\n", result);
+ 	return result;
+-- 
+2.17.1
