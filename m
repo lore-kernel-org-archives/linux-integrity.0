@@ -1,176 +1,150 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:40259 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753124AbeGBSbO (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56248 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753049AbeGBRAq (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 2 Jul 2018 14:31:14 -0400
-Subject: Re: [PATCH v5 3/8] ima: based on policy require signed kexec kernel
- images
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kees Cook <keescook@chromium.org>
-References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
- <1530542283-26145-4-git-send-email-zohar@linux.vnet.ibm.com>
-From: J Freyensee <why2jjj.linux@gmail.com>
-Message-ID: <840dae63-5a90-1327-437e-1ed92e165754@gmail.com>
-Date: Mon, 2 Jul 2018 11:31:09 -0700
-MIME-Version: 1.0
-In-Reply-To: <1530542283-26145-4-git-send-email-zohar@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Mon, 2 Jul 2018 13:00:46 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62GwniI045654
+        for <linux-integrity@vger.kernel.org>; Mon, 2 Jul 2018 13:00:46 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jyqk8he7v-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 02 Jul 2018 13:00:46 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Mon, 2 Jul 2018 18:00:43 +0100
+Subject: Re: [PATCH] ima: Use tpm_default_chip() and call TPM functions with
+ a tpm_chip
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com
+Cc: jgg@ziepe.ca, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Date: Mon, 02 Jul 2018 13:00:39 -0400
+In-Reply-To: <20180702152449.3219288-1-stefanb@linux.vnet.ibm.com>
+References: <20180702152449.3219288-1-stefanb@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1530550839.3709.46.camel@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
+On Mon, 2018-07-02 at 11:24 -0400, Stefan Berger wrote:
+> Rather than accessing the TPM functions by passing a NULL pointer for
+> the tpm_chip, which causes a lookup for a suitable chip every time, get a
+> hold of a tpm_chip and access the TPM functions using it. Also get rid of
+> the ima_used_chip variable and use the new ima_tpm_chip variable instead
+> for determining whether to call TPM functions.
+> 
+> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+
+Jarkko, would you mind staging this patch with the rest of the patch
+set?
+
+Mimi
 
 
-On 7/2/18 7:37 AM, Mimi Zohar wrote:
-> The original kexec_load syscall can not verify file signatures, nor can
-> the kexec image be measured.  Based on policy, deny the kexec_load
-> syscall.
-
-
-Curiosity question: I thought kexec_load() syscall was used to load a 
-crashdump?  If this is true, how would this work if kexec_load() is 
-being denied?  I don't think I'd want to be hindered in cases where I'm 
-trying to diagnose a crash.
-
-Thanks,
-Jay
-
-
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Eric Biederman <ebiederm@xmission.com>
-> Cc: Luis R. Rodriguez <mcgrof@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: David Howells <dhowells@redhat.com>
->
 > ---
-> Changelog v3:
-> - use switch/case
->
->   include/linux/ima.h                 |  7 +++++++
->   security/integrity/ima/ima.h        |  1 +
->   security/integrity/ima/ima_main.c   | 27 +++++++++++++++++++++++++++
->   security/integrity/ima/ima_policy.c |  2 ++
->   security/security.c                 |  7 ++++++-
->   5 files changed, 43 insertions(+), 1 deletion(-)
->
-> diff --git a/include/linux/ima.h b/include/linux/ima.h
-> index 0e4647e0eb60..84806b54b50a 100644
-> --- a/include/linux/ima.h
-> +++ b/include/linux/ima.h
-> @@ -11,6 +11,7 @@
->   #define _LINUX_IMA_H
->   
->   #include <linux/fs.h>
-> +#include <linux/security.h>
->   #include <linux/kexec.h>
->   struct linux_binprm;
->   
-> @@ -19,6 +20,7 @@ extern int ima_bprm_check(struct linux_binprm *bprm);
->   extern int ima_file_check(struct file *file, int mask, int opened);
->   extern void ima_file_free(struct file *file);
->   extern int ima_file_mmap(struct file *file, unsigned long prot);
-> +extern int ima_load_data(enum kernel_load_data_id id);
->   extern int ima_read_file(struct file *file, enum kernel_read_file_id id);
->   extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
->   			      enum kernel_read_file_id id);
-> @@ -49,6 +51,11 @@ static inline int ima_file_mmap(struct file *file, unsigned long prot)
->   	return 0;
->   }
->   
-> +static inline int ima_load_data(enum kernel_load_data_id id)
-> +{
-> +	return 0;
-> +}
-> +
->   static inline int ima_read_file(struct file *file, enum kernel_read_file_id id)
->   {
->   	return 0;
+>  security/integrity/ima/ima.h        |  2 +-
+>  security/integrity/ima/ima_crypto.c |  4 ++--
+>  security/integrity/ima/ima_init.c   | 16 +++++-----------
+>  security/integrity/ima/ima_queue.c  |  4 ++--
+>  4 files changed, 10 insertions(+), 16 deletions(-)
+> 
 > diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> index 2ab1affffa36..588e4813370c 100644
+> index 354bb5716ce3..2ab1affffa36 100644
 > --- a/security/integrity/ima/ima.h
 > +++ b/security/integrity/ima/ima.h
-> @@ -232,6 +232,7 @@ int ima_policy_show(struct seq_file *m, void *v);
->   #define IMA_APPRAISE_MODULES	0x08
->   #define IMA_APPRAISE_FIRMWARE	0x10
->   #define IMA_APPRAISE_POLICY	0x20
-> +#define IMA_APPRAISE_KEXEC	0x40
->   
->   #ifdef CONFIG_IMA_APPRAISE
->   int ima_appraise_measurement(enum ima_hooks func,
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index dca44cf7838e..71fecfef0939 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -496,6 +496,33 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
->   				   MAY_READ, func, 0);
->   }
->   
-> +/**
-> + * ima_load_data - appraise decision based on policy
-> + * @id: kernel load data caller identifier
-> + *
-> + * Callers of this LSM hook can not measure, appraise, or audit the
-> + * data provided by userspace.  Enforce policy rules requring a file
-> + * signature (eg. kexec'ed kernel image).
-> + *
-> + * For permission return 0, otherwise return -EACCES.
-> + */
-> +int ima_load_data(enum kernel_load_data_id id)
-> +{
-> +	if ((ima_appraise & IMA_APPRAISE_ENFORCE) != IMA_APPRAISE_ENFORCE)
-> +		return 0;
-> +
-> +	switch (id) {
-> +	case LOADING_KEXEC_IMAGE:
-> +		if (ima_appraise & IMA_APPRAISE_KEXEC) {
-> +			pr_err("impossible to appraise a kernel image without a file descriptor; try using kexec_file_load syscall.\n");
-> +			return -EACCES;	/* INTEGRITY_UNKNOWN */
-> +		}
-> +	default:
-> +		break;
-> +	}
-> +	return 0;
-> +}
-> +
->   static int __init init_ima(void)
->   {
->   	int error;
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index 7f4a4de7e831..ebfb389b79df 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -448,6 +448,8 @@ static int ima_appraise_flag(enum ima_hooks func)
->   		return IMA_APPRAISE_FIRMWARE;
->   	else if (func == POLICY_CHECK)
->   		return IMA_APPRAISE_POLICY;
-> +	else if (func == KEXEC_KERNEL_CHECK)
-> +		return IMA_APPRAISE_KEXEC;
->   	return 0;
->   }
->   
-> diff --git a/security/security.c b/security/security.c
-> index 05fe5b1932d7..7b870df0a335 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1063,7 +1063,12 @@ EXPORT_SYMBOL_GPL(security_kernel_post_read_file);
->   
->   int security_kernel_load_data(enum kernel_load_data_id id)
->   {
-> -	return call_int_hook(kernel_load_data, 0, id);
-> +	int ret;
-> +
-> +	ret = call_int_hook(kernel_load_data, 0, id);
-> +	if (ret)
-> +		return ret;
-> +	return ima_load_data(id);
->   }
->   
->   int security_task_fix_setuid(struct cred *new, const struct cred *old,
+> @@ -53,9 +53,9 @@ enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
+>  extern int ima_policy_flag;
+> 
+>  /* set during initialization */
+> -extern int ima_used_chip;
+>  extern int ima_hash_algo;
+>  extern int ima_appraise;
+> +extern struct tpm_chip *ima_tpm_chip;
+> 
+>  /* IMA event related data */
+>  struct ima_event_data {
+> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+> index 4e085a17124f..7e7e7e7c250a 100644
+> --- a/security/integrity/ima/ima_crypto.c
+> +++ b/security/integrity/ima/ima_crypto.c
+> @@ -631,10 +631,10 @@ int ima_calc_buffer_hash(const void *buf, loff_t len,
+> 
+>  static void __init ima_pcrread(int idx, u8 *pcr)
+>  {
+> -	if (!ima_used_chip)
+> +	if (!ima_tpm_chip)
+>  		return;
+> 
+> -	if (tpm_pcr_read(NULL, idx, pcr) != 0)
+> +	if (tpm_pcr_read(ima_tpm_chip, idx, pcr) != 0)
+>  		pr_err("Error Communicating to TPM chip\n");
+>  }
+> 
+> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+> index 29b72cd2502e..faac9ecaa0ae 100644
+> --- a/security/integrity/ima/ima_init.c
+> +++ b/security/integrity/ima/ima_init.c
+> @@ -26,7 +26,7 @@
+> 
+>  /* name for boot aggregate entry */
+>  static const char *boot_aggregate_name = "boot_aggregate";
+> -int ima_used_chip;
+> +struct tpm_chip *ima_tpm_chip;
+> 
+>  /* Add the boot aggregate to the IMA measurement list and extend
+>   * the PCR register.
+> @@ -64,7 +64,7 @@ static int __init ima_add_boot_aggregate(void)
+>  	iint->ima_hash->algo = HASH_ALGO_SHA1;
+>  	iint->ima_hash->length = SHA1_DIGEST_SIZE;
+> 
+> -	if (ima_used_chip) {
+> +	if (ima_tpm_chip) {
+>  		result = ima_calc_boot_aggregate(&hash.hdr);
+>  		if (result < 0) {
+>  			audit_cause = "hashing_error";
+> @@ -106,17 +106,11 @@ void __init ima_load_x509(void)
+> 
+>  int __init ima_init(void)
+>  {
+> -	u8 pcr_i[TPM_DIGEST_SIZE];
+>  	int rc;
+> 
+> -	ima_used_chip = 0;
+> -	rc = tpm_pcr_read(NULL, 0, pcr_i);
+> -	if (rc == 0)
+> -		ima_used_chip = 1;
+> -
+> -	if (!ima_used_chip)
+> -		pr_info("No TPM chip found, activating TPM-bypass! (rc=%d)\n",
+> -			rc);
+> +	ima_tpm_chip = tpm_default_chip();
+> +	if (!ima_tpm_chip)
+> +		pr_info("No TPM chip found, activating TPM-bypass!\n");
+> 
+>  	rc = integrity_init_keyring(INTEGRITY_KEYRING_IMA);
+>  	if (rc)
+> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+> index 418f35e38015..b186819bd5aa 100644
+> --- a/security/integrity/ima/ima_queue.c
+> +++ b/security/integrity/ima/ima_queue.c
+> @@ -142,10 +142,10 @@ static int ima_pcr_extend(const u8 *hash, int pcr)
+>  {
+>  	int result = 0;
+> 
+> -	if (!ima_used_chip)
+> +	if (!ima_tpm_chip)
+>  		return result;
+> 
+> -	result = tpm_pcr_extend(NULL, pcr, hash);
+> +	result = tpm_pcr_extend(ima_tpm_chip, pcr, hash);
+>  	if (result != 0)
+>  		pr_err("Error Communicating to TPM chip, result: %d\n", result);
+>  	return result;
