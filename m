@@ -1,42 +1,185 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga12.intel.com ([192.55.52.136]:31614 "EHLO mga12.intel.com"
+Received: from mga06.intel.com ([134.134.136.31]:8710 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932392AbeGCQcN (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 3 Jul 2018 12:32:13 -0400
-Message-ID: <1a5b3d6cddba2d8bc74e5025a628aee7867a8987.camel@linux.intel.com>
-Subject: Re: [PATCH] ima: Use tpm_default_chip() and call TPM functions with
- a tpm_chip
+        id S1752905AbeGCPYl (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 3 Jul 2018 11:24:41 -0400
+Message-ID: <edf4aeaab76713579016cb009a0e632d7417c5f8.camel@linux.intel.com>
+Subject: Re: [PATCH 2/2] KEYS: trusted: Find tpm_chip and use it until
+ module shutdown
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        jejb@linux.vnet.ibm.com
 Cc: jgg@ziepe.ca, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date: Tue, 03 Jul 2018 19:32:07 +0300
-In-Reply-To: <1530550839.3709.46.camel@linux.vnet.ibm.com>
-References: <20180702152449.3219288-1-stefanb@linux.vnet.ibm.com>
-         <1530550839.3709.46.camel@linux.vnet.ibm.com>
+        linux-security-module@vger.kernel.org, dhowells@redhat.com,
+        keyrings@vger.kernel.org
+Date: Tue, 03 Jul 2018 18:24:34 +0300
+In-Reply-To: <20180626193040.2509798-3-stefanb@linux.vnet.ibm.com>
+References: <20180626193040.2509798-1-stefanb@linux.vnet.ibm.com>
+         <20180626193040.2509798-3-stefanb@linux.vnet.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2018-07-02 at 13:00 -0400, Mimi Zohar wrote:
-> On Mon, 2018-07-02 at 11:24 -0400, Stefan Berger wrote:
-> > Rather than accessing the TPM functions by passing a NULL pointer for
-> > the tpm_chip, which causes a lookup for a suitable chip every time, get a
-> > hold of a tpm_chip and access the TPM functions using it. Also get rid of
-> > the ima_used_chip variable and use the new ima_tpm_chip variable instead
-> > for determining whether to call TPM functions.
-> > 
-> > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> > Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+On Tue, 2018-06-26 at 15:30 -0400, Stefan Berger wrote:
+> Use tpm_default_chip() to find the system's default TPM chip and
+> use it as the tpm_chip parameter for all TPM operations. Release
+> the tpm_chip when the module is shut down.
 > 
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> ---
+>  security/keys/trusted.c | 41 ++++++++++++++++++++++++++++-------------
+>  1 file changed, 28 insertions(+), 13 deletions(-)
 > 
-> Jarkko, would you mind staging this patch with the rest of the patch
-> set?
+> diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+> index 423776682025..06d863caea43 100644
+> --- a/security/keys/trusted.c
+> +++ b/security/keys/trusted.c
+> @@ -42,6 +42,7 @@ struct sdesc {
+>  
+>  static struct crypto_shash *hashalg;
+>  static struct crypto_shash *hmacalg;
+> +static struct tpm_chip *tpm_chip;
+>  
+>  static struct sdesc *init_sdesc(struct crypto_shash *alg)
+>  {
+> @@ -360,7 +361,7 @@ static int trusted_tpm_send(unsigned char *cmd, size_t
+> buflen)
+>  	int rc;
+>  
+>  	dump_tpm_buf(cmd);
+> -	rc = tpm_send(NULL, cmd, buflen);
+> +	rc = tpm_send(tpm_chip, cmd, buflen);
+>  	dump_tpm_buf(cmd);
+>  	if (rc > 0)
+>  		/* Can't return positive return codes values to keyctl */
+> @@ -381,10 +382,10 @@ static int pcrlock(const int pcrnum)
+>  
+>  	if (!capable(CAP_SYS_ADMIN))
+>  		return -EPERM;
+> -	ret = tpm_get_random(NULL, hash, SHA1_DIGEST_SIZE);
+> +	ret = tpm_get_random(tpm_chip, hash, SHA1_DIGEST_SIZE);
+>  	if (ret != SHA1_DIGEST_SIZE)
+>  		return ret;
+> -	return tpm_pcr_extend(NULL, pcrnum, hash) ? -EINVAL : 0;
+> +	return tpm_pcr_extend(tpm_chip, pcrnum, hash) ? -EINVAL : 0;
+>  }
+>  
+>  /*
+> @@ -397,7 +398,7 @@ static int osap(struct tpm_buf *tb, struct osapsess *s,
+>  	unsigned char ononce[TPM_NONCE_SIZE];
+>  	int ret;
+>  
+> -	ret = tpm_get_random(NULL, ononce, TPM_NONCE_SIZE);
+> +	ret = tpm_get_random(tpm_chip, ononce, TPM_NONCE_SIZE);
+>  	if (ret != TPM_NONCE_SIZE)
+>  		return ret;
+>  
+> @@ -492,7 +493,7 @@ static int tpm_seal(struct tpm_buf *tb, uint16_t keytype,
+>  	if (ret < 0)
+>  		goto out;
+>  
+> -	ret = tpm_get_random(NULL, td->nonceodd, TPM_NONCE_SIZE);
+> +	ret = tpm_get_random(tpm_chip, td->nonceodd, TPM_NONCE_SIZE);
+>  	if (ret != TPM_NONCE_SIZE)
+>  		goto out;
+>  	ordinal = htonl(TPM_ORD_SEAL);
+> @@ -602,7 +603,7 @@ static int tpm_unseal(struct tpm_buf *tb,
+>  
+>  	ordinal = htonl(TPM_ORD_UNSEAL);
+>  	keyhndl = htonl(SRKHANDLE);
+> -	ret = tpm_get_random(NULL, nonceodd, TPM_NONCE_SIZE);
+> +	ret = tpm_get_random(tpm_chip, nonceodd, TPM_NONCE_SIZE);
+>  	if (ret != TPM_NONCE_SIZE) {
+>  		pr_info("trusted_key: tpm_get_random failed (%d)\n", ret);
+>  		return ret;
+> @@ -747,7 +748,7 @@ static int getoptions(char *c, struct trusted_key_payload
+> *pay,
+>  	int i;
+>  	int tpm2;
+>  
+> -	tpm2 = tpm_is_tpm2(NULL);
+> +	tpm2 = tpm_is_tpm2(tpm_chip);
+>  	if (tpm2 < 0)
+>  		return tpm2;
+>  
+> @@ -916,7 +917,7 @@ static struct trusted_key_options
+> *trusted_options_alloc(void)
+>  	struct trusted_key_options *options;
+>  	int tpm2;
+>  
+> -	tpm2 = tpm_is_tpm2(NULL);
+> +	tpm2 = tpm_is_tpm2(tpm_chip);
+>  	if (tpm2 < 0)
+>  		return NULL;
+>  
+> @@ -966,7 +967,7 @@ static int trusted_instantiate(struct key *key,
+>  	size_t key_len;
+>  	int tpm2;
+>  
+> -	tpm2 = tpm_is_tpm2(NULL);
+> +	tpm2 = tpm_is_tpm2(tpm_chip);
+>  	if (tpm2 < 0)
+>  		return tpm2;
+>  
+> @@ -1007,7 +1008,7 @@ static int trusted_instantiate(struct key *key,
+>  	switch (key_cmd) {
+>  	case Opt_load:
+>  		if (tpm2)
+> -			ret = tpm_unseal_trusted(NULL, payload, options);
+> +			ret = tpm_unseal_trusted(tpm_chip, payload, options);
+>  		else
+>  			ret = key_unseal(payload, options);
+>  		dump_payload(payload);
+> @@ -1017,13 +1018,13 @@ static int trusted_instantiate(struct key *key,
+>  		break;
+>  	case Opt_new:
+>  		key_len = payload->key_len;
+> -		ret = tpm_get_random(NULL, payload->key, key_len);
+> +		ret = tpm_get_random(tpm_chip, payload->key, key_len);
+>  		if (ret != key_len) {
+>  			pr_info("trusted_key: key_create failed (%d)\n",
+> ret);
+>  			goto out;
+>  		}
+>  		if (tpm2)
+> -			ret = tpm_seal_trusted(NULL, payload, options);
+> +			ret = tpm_seal_trusted(tpm_chip, payload, options);
+>  		else
+>  			ret = key_seal(payload, options);
+>  		if (ret < 0)
+> @@ -1226,12 +1227,26 @@ static int __init init_trusted(void)
+>  		return ret;
+>  	ret = register_key_type(&key_type_trusted);
+>  	if (ret < 0)
+> -		trusted_shash_release();
+> +		goto exit_shash_release;
+> +	tpm_chip = tpm_default_chip();
+> +	if (!tpm_chip) {
+> +		ret = -ENODEV;
+> +		goto exit_unregister;
+> +	}
+> +	return 0;
+> +
+> +exit_unregister:
+> +	unregister_key_type(&key_type_trusted);
+> +
+> +exit_shash_release:
+> +	trusted_shash_release();
+>  	return ret;
+>  }
+>  
+>  static void __exit cleanup_trusted(void)
+>  {
+> +	if (tpm_chip)
+> +		tpm_put_chip(tpm_chip);
+>  	trusted_shash_release();
+>  	unregister_key_type(&key_type_trusted);
+>  }
 
-Yes, sure, I can do that. Any additional tag?
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
+Is James maintaining this now? Have not seen his feedback yet...
 
 /Jarkko
