@@ -1,49 +1,42 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:3709 "EHLO mga09.intel.com"
+Received: from mga12.intel.com ([192.55.52.136]:31614 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933961AbeGCQvI (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 3 Jul 2018 12:51:08 -0400
-Date: Tue, 3 Jul 2018 19:51:02 +0300
+        id S932392AbeGCQcN (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 3 Jul 2018 12:32:13 -0400
+Message-ID: <1a5b3d6cddba2d8bc74e5025a628aee7867a8987.camel@linux.intel.com>
+Subject: Re: [PATCH] ima: Use tpm_default_chip() and call TPM functions with
+ a tpm_chip
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: James Bottomley <jejb@linux.vnet.ibm.com>
-Cc: Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        jgg@ziepe.ca, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, dhowells@redhat.com,
-        keyrings@vger.kernel.org
-Subject: Re: [PATCH 2/2] KEYS: trusted: Find tpm_chip and use it until module
- shutdown
-Message-ID: <20180703165102.GB19800@linux.intel.com>
-References: <20180626193040.2509798-1-stefanb@linux.vnet.ibm.com>
- <20180626193040.2509798-3-stefanb@linux.vnet.ibm.com>
- <edf4aeaab76713579016cb009a0e632d7417c5f8.camel@linux.intel.com>
- <1530631615.3142.6.camel@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1530631615.3142.6.camel@linux.vnet.ibm.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc: jgg@ziepe.ca, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Date: Tue, 03 Jul 2018 19:32:07 +0300
+In-Reply-To: <1530550839.3709.46.camel@linux.vnet.ibm.com>
+References: <20180702152449.3219288-1-stefanb@linux.vnet.ibm.com>
+         <1530550839.3709.46.camel@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Jul 03, 2018 at 08:26:55AM -0700, James Bottomley wrote:
-> On Tue, 2018-07-03 at 18:24 +0300, Jarkko Sakkinen wrote:
-> [...]
+On Mon, 2018-07-02 at 13:00 -0400, Mimi Zohar wrote:
+> On Mon, 2018-07-02 at 11:24 -0400, Stefan Berger wrote:
+> > Rather than accessing the TPM functions by passing a NULL pointer for
+> > the tpm_chip, which causes a lookup for a suitable chip every time, get a
+> > hold of a tpm_chip and access the TPM functions using it. Also get rid of
+> > the ima_used_chip variable and use the new ima_tpm_chip variable instead
+> > for determining whether to call TPM functions.
 > > 
-> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > 
-> > Is James maintaining this now? Have not seen his feedback yet...
+> > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> > Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > 
-> Hey, I thought we both were ...
+> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 > 
-> However, it looks fine to me
-> 
-> Reviewed-by: James E.J. Bottomley <jejb@linux.vnet.ibm.com>
-> 
-> James
+> Jarkko, would you mind staging this patch with the rest of the patch
+> set?
 
-OK, I was not sure how that discussion went. I could add myself as
-co-maintainer to MAINTAINERS because I anyway need to go through
-all of these.
-
-If anyone does not vote against, I'll send a patch.
+Yes, sure, I can do that. Any additional tag?
 
 /Jarkko
