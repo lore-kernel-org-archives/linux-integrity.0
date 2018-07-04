@@ -1,17 +1,21 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:22812 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752567AbeGDROQ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 4 Jul 2018 13:14:16 -0400
-Date: Wed, 4 Jul 2018 20:13:57 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35613 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752611AbeGDOnw (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 4 Jul 2018 10:43:52 -0400
+Received: by mail-wm0-f66.google.com with SMTP id v3-v6so2485926wmh.0
+        for <linux-integrity@vger.kernel.org>; Wed, 04 Jul 2018 07:43:51 -0700 (PDT)
+Date: Wed, 4 Jul 2018 08:43:44 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
 To: Shirish S <shirish.s@amd.com>
 Cc: linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         open list <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH] tpm: Fix NULL pointer dereference in tpm_transmit()
-Message-ID: <20180704171357.GB6724@linux.intel.com>
+Message-ID: <20180704144344.GA30037@ziepe.ca>
 References: <1530695020-21888-1-git-send-email-shirish.s@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -56,45 +60,7 @@ On Wed, Jul 04, 2018 at 02:33:40PM +0530, Shirish S wrote:
 > ? idr_replace_ext+0x92/0xb6
 > tpm_chip_unregister+0xaa/0xdb
 > cr50_i2c_shutdown+0x1e/0x41
-> device_shutdown+0x157/0x193
-> kernel_power_off+0x35/0x6e
-> SYSC_reboot+0x120/0x1a3
-> ? do_writepages+0x36/0x6e
-> ? do_writepages+0x36/0x6e
-> ? sync_inodes_one_sb+0x17/0x17
-> ? _raw_spin_unlock+0xe/0x20
-> ? iput+0x87/0x1bd
-> do_syscall_64+0x64/0x72
-> entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-> 
-> Signed-off-by: Shirish S <shirish.s@amd.com>
-> ---
->  drivers/char/tpm/tpm-interface.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index e32f6e8..b14d196 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -411,6 +411,14 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
->  	unsigned long stop;
->  	bool need_locality;
->  
-> +	/* chip->ops is made NULL in tpm_class_shutdown()
-> +	 * This case is hit when tpm_chip_unregister() is called post
-> +	 * tpm_class_shutdown(), hence exit early and return
-> +	 * transmit operation not permitted
-> +	 */
-> +	if (!chip->ops)
-> +		return -EPERM;
-> +
->  	rc = tpm_validate_command(chip, space, buf, bufsiz);
->  	if (rc == -EINVAL)
->  		return rc;
-> -- 
-> 2.7.4
-> 
 
-What is cr50 anyway?
+It makes no sense to call something like tpm_unregister from shutdown.
 
-/Jarkko
+Jason
