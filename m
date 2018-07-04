@@ -1,75 +1,78 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:40406 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753288AbeGDHEg (ORCPT
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:40466 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753608AbeGDGyU (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 4 Jul 2018 03:04:36 -0400
-Received: by mail-wm0-f65.google.com with SMTP id z13-v6so4511879wma.5
-        for <linux-integrity@vger.kernel.org>; Wed, 04 Jul 2018 00:04:36 -0700 (PDT)
-Date: Wed, 4 Jul 2018 08:04:32 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Haavard Skinnemoen <hskinnemoen@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Antti Palosaari <crope@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Krufky <mkrufky@linuxtv.org>,
-        linux-integrity@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v2 09/10] mfd: 88pm860x-i2c: switch to i2c_lock_bus(...,
- I2C_LOCK_SEGMENT)
-Message-ID: <20180704070432.GF20176@dell>
-References: <20180620051803.12206-1-peda@axentia.se>
- <20180620051803.12206-10-peda@axentia.se>
+        Wed, 4 Jul 2018 02:54:20 -0400
+Received: by mail-oi0-f67.google.com with SMTP id w126-v6so8742998oie.7
+        for <linux-integrity@vger.kernel.org>; Tue, 03 Jul 2018 23:54:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20180620051803.12206-10-peda@axentia.se>
+In-Reply-To: <CAAi9uDuxS7G+DaHskGJXnvigsdzXrW64J6zy-dgQCXJvv8be3g@mail.gmail.com>
+References: <20180608065438.110109-1-louiscollard@chromium.org>
+ <20180618180712.GB20697@linux.intel.com> <20180618193306.GF6805@ziepe.ca>
+ <20180621162101.GB11859@linux.intel.com> <CAKNRAJVJD5b388iwhoOBVC5V-x=wV2YTZHJ+mRrBWv3H-pbNFg@mail.gmail.com>
+ <CAAi9uDuxS7G+DaHskGJXnvigsdzXrW64J6zy-dgQCXJvv8be3g@mail.gmail.com>
+From: Louis Collard <louiscollard@chromium.org>
+Date: Wed, 4 Jul 2018 14:54:18 +0800
+Message-ID: <CAKNRAJV8Jb=n=cZTmkAUVLwYv5778ykACd7ZUhYA7rfa0Wu3zw@mail.gmail.com>
+Subject: Re: [PATCH] tpm: Add module parameter for hwrng quality.
+To: "David R. Bild" <david.bild@xaptum.com>
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, 20 Jun 2018, Peter Rosin wrote:
+On Fri, Jun 29, 2018 at 9:03 PM, David R. Bild <david.bild@xaptum.com> wrote:
+> On Wed, Jun 27, 2018 at 1:11 AM, Louis Collard
+> <louiscollard@chromium.org> wrote:
+>>
+>> On some systems we have seen large delays in boot time, due to
+>> blocking on a call to getrandom() before the entropy pool has been
+>> initialized. On these systems the usual sources of entropy are not
+>> sufficient to initialize the pool in any kind of reasonable time -
+>> delays of minutes have been observed; the most common workaround is to
+>> mash the keyboard for a bit ;)
+>>
+>> Setting a non-zero quality score causes the hwrng to be used as a
+>> source of entropy for the pool, the pool is therefore initialized
+>> early during boot, and no delay is observed.
+>>
+>
+> We have the same issue on our embedded devices and thus carry patches
+> in our tree that set the quality.  This would be a welcome change.
 
-> Locking the root adapter for __i2c_transfer will deadlock if the
-> device sits behind a mux-locked I2C mux. Switch to the finer-grained
-> i2c_lock_bus with the I2C_LOCK_SEGMENT flag. If the device does not
-> sit behind a mux-locked mux, the two locking variants are equivalent.
-> 
-> Signed-off-by: Peter Rosin <peda@axentia.se>
-> ---
->  drivers/mfd/88pm860x-i2c.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+Glad to hear this!
 
-If Wolfram is happy with this, then I am.
+>
+> As a point of clarification (and correct me if I'm wrong), the TPM is
+> always ready used to seed the rng. It just doesn't update the entropy
+> pool estimate.
 
-Since this file sees few changes - please merge through the I2C tree.
+Good point.
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+>
+> So, perhaps the default value for the TPM hwrng quality should be
+> non-zero (in addition to the module param that lets users override
+> it)?
 
--- 
-Lee Jones [???]
-Linaro Services Technical Lead
-Linaro.org | Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+That makes sense to me, however I can imagine that some users would
+prefer to not have the TPM enabled as an ongoing source of entropy by
+default.
+
+Following on from your previous point - perhaps we can just make a
+small change to how the initial seeding is done: maybe we can replace
+the call to crng_slow_load (via add_early_randomness and
+add_device_randomness) with a call (indirectly) to crng_fast_load. (We
+might also need to increase the amount of data read at this point.)
+
+This would update crng_init_cnt and crng_init, and calls to getrandom
+[without GRND_RANDOM] would not block.
+
+This obviously doesn't solve the issue if there are blocking calls on
+boot that are querying random rather than urandom; I don't believe
+that would be a problem for our use case though.
+
+Thoughts?
+
+Thanks,
+Louis
