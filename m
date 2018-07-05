@@ -1,114 +1,58 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:11858 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753259AbeGEPVt (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 5 Jul 2018 11:21:49 -0400
-Date: Thu, 5 Jul 2018 18:21:43 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "S, Shirish" <sshankar@amd.com>
-Cc: Shirish S <shirish.s@amd.com>, linux-integrity@vger.kernel.org,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tpm: Fix NULL pointer dereference in tpm_transmit()
-Message-ID: <20180705152143.GA10001@linux.intel.com>
-References: <1530695020-21888-1-git-send-email-shirish.s@amd.com>
- <20180704171357.GB6724@linux.intel.com>
- <edc9b7ba-9b76-7708-31c9-b02a703c848a@amd.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <edc9b7ba-9b76-7708-31c9-b02a703c848a@amd.com>
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35014 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754043AbeGEPQ4 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 5 Jul 2018 11:16:56 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w65F9THI177370
+        for <linux-integrity@vger.kernel.org>; Thu, 5 Jul 2018 11:16:55 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k1kexy4d6-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 05 Jul 2018 11:16:55 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 5 Jul 2018 16:16:53 +0100
+Subject: Re: ima: why IMA_APPRAISE_DIRECTORIES patch is not mainlined
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: rishi gupta <gupt21@gmail.com>, zohar@linux.vnet.ibm.com,
+        dmitry.kasatkin@gmail.com
+Cc: linux-integrity@vger.kernel.org,
+        Dave Chinner <david@fromorbit.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>
+Date: Thu, 05 Jul 2018 11:16:38 -0400
+In-Reply-To: <CALUj-gtOL3wDoo=QC68zhnwOsnfBistA_X97WzWAu6_v5T-xWQ@mail.gmail.com>
+References: <CALUj-gtOL3wDoo=QC68zhnwOsnfBistA_X97WzWAu6_v5T-xWQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1530803798.3773.112.camel@linux.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Jul 05, 2018 at 09:29:34AM +0530, S, Shirish wrote:
-> 
-> 
-> On 7/4/2018 10:43 PM, Jarkko Sakkinen wrote:
-> > On Wed, Jul 04, 2018 at 02:33:40PM +0530, Shirish S wrote:
-> > > During system shutdown,
-> > > tpm_class_shutdown() when called with TPM_CHIP_FLAG_TPM2
-> > > flag set, makes chip->ops NULL.
-> > > 
-> > > However tpm_chip_unregister() called later in shutdown
-> > > sequence tries to access chip->ops in tpm_try_transmit()
-> > > leading the NULL pointer dereference.
-> > > 
-> > > This patch fixes this issue.
-> > > Below is the trace for reference:
-> > > 
-> > > BUG: unable to handle kernel NULL pointer dereference at
-> > > 0000000000000048
-> > > IP: tpm_transmit+0x267/0x565
-> > > PGD 0 P4D 0
-> > > Oops: 0000 [#1] PREEMPT SMP NOPTI
-> > > ...
-> > > task: ffff937c847fe580 task.stack: ffffa79f80b04000
-> > > RIP: 0010:tpm_transmit+0x267/0x565
-> > > RSP: 0018:ffffa79f80b07c08 EFLAGS: 00010286
-> > > RAX: 0000000000000000 RBX: ffff937ca9bc8000 RCX: ffff937c847fe580
-> > > RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffffffff98e3cd40
-> > > RBP: ffffa79f80b07c88 R08: 000000000001fff4 R09: 0000000000000000
-> > > R10: 0000000000000000 R11: 0000000000000000 R12: ffffa79f80b07cd4
-> > > R13: 000000000000008c R14: ffffffffffffffc3 R15: 0000000000000000
-> > > FS:  00007ef31f747740(0000) GS:ffff937caed00000(0000)
-> > > knlGS:0000000000000000
-> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > CR2: 0000000000000048 CR3: 00000001243d2000 CR4: 00000000001406e0
-> > > Call Trace:
-> > > tpm_transmit_cmd+0x25/0x70
-> > > tpm2_shutdown+0x69/0xa3
-> > > ? __radix_tree_replace+0xd9/0x120
-> > > ? idr_replace_ext+0x92/0xb6
-> > > tpm_chip_unregister+0xaa/0xdb
-> > > cr50_i2c_shutdown+0x1e/0x41
-> > > device_shutdown+0x157/0x193
-> > > kernel_power_off+0x35/0x6e
-> > > SYSC_reboot+0x120/0x1a3
-> > > ? do_writepages+0x36/0x6e
-> > > ? do_writepages+0x36/0x6e
-> > > ? sync_inodes_one_sb+0x17/0x17
-> > > ? _raw_spin_unlock+0xe/0x20
-> > > ? iput+0x87/0x1bd
-> > > do_syscall_64+0x64/0x72
-> > > entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-> > > 
-> > > Signed-off-by: Shirish S <shirish.s@amd.com>
-> > > ---
-> > >   drivers/char/tpm/tpm-interface.c | 8 ++++++++
-> > >   1 file changed, 8 insertions(+)
-> > > 
-> > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> > > index e32f6e8..b14d196 100644
-> > > --- a/drivers/char/tpm/tpm-interface.c
-> > > +++ b/drivers/char/tpm/tpm-interface.c
-> > > @@ -411,6 +411,14 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
-> > >   	unsigned long stop;
-> > >   	bool need_locality;
-> > > +	/* chip->ops is made NULL in tpm_class_shutdown()
-> > > +	 * This case is hit when tpm_chip_unregister() is called post
-> > > +	 * tpm_class_shutdown(), hence exit early and return
-> > > +	 * transmit operation not permitted
-> > > +	 */
-> > > +	if (!chip->ops)
-> > > +		return -EPERM;
-> > > +
-> > >   	rc = tpm_validate_command(chip, space, buf, bufsiz);
-> > >   	if (rc == -EINVAL)
-> > >   		return rc;
-> > > -- 
-> > > 2.7.4
-> > > 
-> > What is cr50 anyway?
-> Please ignore this patch, i realised the cr50 is not yet upstreamed.
-> Hence the issue lies in in cr50 and not tpm driver.
-> Thanks.
-> Regards,
-> Shirish S
+[CC'ing Dave Chinner, Ted Tso]
 
-tpm_chip_unregister() in supposed to be called only in removal/detach
-sequence so the root cause for the NULL pointer deref is the driver, not
-the existing TPM stack.
+Hi Rishi,
 
-/Jarkko
+On Thu, 2018-07-05 at 16:08 +0530, rishi gupta wrote:
+> Hi Dmitry and security team members,
+> 
+> I am willing to take directory protection ima patch in a commercial
+> product, but observed that it has not been mainlined. Is there any reason
+> for not mainlining it. Are there any better options for protecting
+> directory using IMA/EVM or some other security schemes.
+> 
+> https://lwn.net/Articles/512364/
+> https://kernel.googlesource.com/pub/scm/linux/kernel/git/kasatkin/linux-digsig/+/ima-dir-experimental/security/integrity/ima/ima_dir.c
+
+The main purpose of the IMA-directory patch set is to protect file
+names from offline attack.  Dmitry's patch set protects file names at
+the immediate directory level, but does not extend up to the root
+directory.  I brought up the topic of protecting file names at
+LSF/MM[1].  Others in the community are aware of the problem and need
+to be involved in the discussions as to how to address it.
+
+[1] https://lwn.net/Articles/753276/
+
+Mimi
