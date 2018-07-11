@@ -1,97 +1,108 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56402 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732403AbeGLUOk (ORCPT
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40549 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732522AbeGKVM5 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 12 Jul 2018 16:14:40 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6CJwn5H088014
-        for <linux-integrity@vger.kernel.org>; Thu, 12 Jul 2018 16:03:35 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k6cu7hxrj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 12 Jul 2018 16:03:34 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 12 Jul 2018 21:03:32 +0100
-Subject: Re: [PATCH v5 7/8] ima: based on policy warn about loading firmware
- (pre-allocated buffer)
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kexec Mailing List <kexec@lists.infradead.org>,
-        Andres Rodriguez <andresx7@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Luis R . Rodriguez" <mcgrof@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Date: Thu, 12 Jul 2018 16:03:13 -0400
-In-Reply-To: <CAKv+Gu_C0H9LoqeC3PkKhaKr0TQys=1TcYFNG-JUivnN_YgBKQ@mail.gmail.com>
-References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
-         <1530542283-26145-8-git-send-email-zohar@linux.vnet.ibm.com>
-         <CAKv+Gu-nky1yX59TL2FNQ-0q7Sy399t2WpVWSy7jqYpQY4Fxjw@mail.gmail.com>
-         <1531165294.3332.40.camel@linux.ibm.com>
-         <CAKv+Gu-knHeBRGqo+2pb3X9cCjwovEykoXUf=DZyP7aJpoS60A@mail.gmail.com>
-         <CAKv+Gu8qjzh_Tta=n9C+cfXO29e_5RcLqfQSpvR5r7QmqzHbEg@mail.gmail.com>
-         <20180710191951.GF1731@minitux>
-         <CAKv+Gu_C0H9LoqeC3PkKhaKr0TQys=1TcYFNG-JUivnN_YgBKQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1531425793.3568.275.camel@linux.ibm.com>
+        Wed, 11 Jul 2018 17:12:57 -0400
+Received: by mail-wr1-f65.google.com with SMTP id t6-v6so19508650wrn.7
+        for <linux-integrity@vger.kernel.org>; Wed, 11 Jul 2018 14:06:45 -0700 (PDT)
+Date: Wed, 11 Jul 2018 15:06:40 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Peter Huewe <peterhuewe@gmx.de>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        linux-integrity@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Thorsten Leemhuis <regressions@leemhuis.info>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>
+Subject: Re: [PATCH] tpm.h: increase poll timings to fix tpm_tis regression
+Message-ID: <20180711210640.GI23935@ziepe.ca>
+References: <1531328689.3260.8.camel@HansenPartnership.com>
+ <1531329074.3260.9.camel@HansenPartnership.com>
+ <20180711182120.GF23935@ziepe.ca>
+ <1531336133.3260.16.camel@HansenPartnership.com>
+ <20180711200101.GH23935@ziepe.ca>
+ <1531341545.3260.24.camel@HansenPartnership.com>
+ <EA1F52B6-C56D-4910-A88A-9C0FC0F6E1FE@gmx.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <EA1F52B6-C56D-4910-A88A-9C0FC0F6E1FE@gmx.de>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, 2018-07-11 at 08:24 +0200, Ard Biesheuvel wrote:
-> On 10 July 2018 at 21:19, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
-
-> > Tbh the only case I can think of where there would be a "race condition"
-> > here is if we have a device that is polling the last byte of a
-> > predefined firmware memory area for the firmware loader to read some
-> > specific data into it. In cases where the firmware request is followed
-> > by some explicit signalling to the device (or a power on sequence) I'm
-> > unable to see the issue discussed here.
+On Wed, Jul 11, 2018 at 10:51:40PM +0200, Peter Huewe wrote:
+> 
+> 
+> Am 11. Juli 2018 22:39:05 MESZ schrieb James Bottomley <James.Bottomley@HansenPartnership.com>:
+> >On Wed, 2018-07-11 at 14:01 -0600, Jason Gunthorpe wrote:
+> >> On Wed, Jul 11, 2018 at 12:08:53PM -0700, James Bottomley wrote:
+> >> > On Wed, 2018-07-11 at 12:21 -0600, Jason Gunthorpe wrote:
+> >> > > On Wed, Jul 11, 2018 at 10:11:14AM -0700, James Bottomley wrote:
+> >> > > > tpm_tis regressed recently to the point where the TPM being
+> >> > > > driven
+> >> > > > by
+> >> > > > it falls off the bus and cannot be contacted after some hours
+> >> > > > of
+> >> > > > use.
+> >> > > > This is the failure trace:
+> >> > > > 
+> >> > > > jejb@jarvis:~> dmesg|grep tpm
+> >> > > > [    3.282605] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE,
+> >> > > > rev-id 
+> >> > > > 2)
+> >> > > > [14566.626614] tpm tpm0: Operation Timed out
+> >> > > > [14566.626621] tpm tpm0: tpm2_load_context: failed with a
+> >> > > > system
+> >> > > > error -62
+> >> > > > [14568.626607] tpm tpm0: tpm_try_transmit: tpm_send: error -62
+> >> > > > [14570.626594] tpm tpm0: tpm_try_transmit: tpm_send: error -62
+> >> > > > [14570.626605] tpm tpm0: tpm2_load_context: failed with a
+> >> > > > system
+> >> > > > error -62
+> >> > > > [14572.626526] tpm tpm0: tpm_try_transmit: tpm_send: error -62
+> >> > > > [14577.710441] tpm tpm0: tpm_try_transmit: tpm_send: error -62
+> >> > > > ...
+> >> > > > 
+> >> > > > The problem is caused by a change that caused us to poke the
+> >> > > > TPM
+> >> > > > far
+> >> > > > more often to see if it's ready.  Apparently something about
+> >> > > > the
+> >> > > > bus
+> >> > > > its on and the TPM means that it crashes or falls off the bus
+> >> > > > if
+> >> > > > you
+> >> > > > poke it too often and once this happens, only a reboot will
+> >> > > > recover
+> >> > > > it.
+> >> > > 
+> >> > > I wonder if something about triggering ETIME even once breaks the
+> >> > > driver so it can't talk to the chip at all thereafter..
+> >> > > 
+> >> > > Ie it doesn't abort the command properly and becomes desynced
+> >> > > with the TIS execution protocol.
+> >> > 
+> >> > Yes, I wondered about this, but I don't understand the bus protocol
+> >> > well enough.  The tpm-interface:tpm_try_transmit() which throws the
+> >> > first ETIME says after we get that we send chip->ops->cancel()
+> >> > which tpm_tis simply translates to tpm_tis_ready() which also times
+> >> > out.  Is there a bigger hammer I can hit it with?
+> >> 
+> >> I don't remember off hand.. But this is, IMHO, a better guess than
+> >> the firmware crashes from reading the status register..
+> >
+> >Oh, actually, I think the bus crashes or wedges, not the TPM.  I just
+> >don't have any tools to probe the LPC.
 > >
 > 
-> I agree. But the latter part is platform specific, and so it requires
-> some degree of trust in the driver author on the part of the IMA
-> routines that request_firmware() is called at an appropriate time.
+> I doubt that your fTPM is actually attached to LPC.
+> And usually if lpc  wedges it takes down your pc with it (from my experience)
 
-Exactly.  Qualcomm could be using the pre-allocated buffer
-appropriately, but that doesn't guarantee how it will be used in the
-future.
+Yes, agree. Very, very unlikely LPC crashed or wedged.
 
-> The point I am trying to make in this thread is that there are cases
-> where it makes no sense for the kernel to reason about these things,
-> given that higher privilege levels such as the TrustZone secure world
-> own the kernel's execution context entirely already, and given that
-> masters that are not behind an IOMMU can read and write all of memory
-> all of the time anyway.
+You could try reading the ID numbers register (eg the source of this
+data 'device-id 0xFE rev-id 2').
 
-> The bottom line is that reality does not respect the layering that IMA
-> assumes, and so the only meaningful way to treat some of the use cases
-> is simply to ignore them entirely. So we should still perform all the
-> checks, but we will have to live with the limited utility of doing so
-> in some scenarios (and not print nasty warnings to the kernel log for
-> such cases)
+That should be on the HW side of the FIFO bridge and if it returs the
+same values as boot the bus is not broken, no matter what the bus is.
 
-You have convinced me that the warning shouldn't be emitted in either
-the non IOMMU or in the IOMMU case, assuming the buffer has not been
-DMA mapped.
-
-The remaining concern is using the same buffer mapped to multiple
-devices or re-using the same buffer to load multiple firmware blobs.
-I'm not sure how easy that would be to detect.
-
-I need to stage the rest of the patch set to be upstreamed.  Could we
-just add a comment in the code reflecting this discussion?
-
-Mimi
+Jason
