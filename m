@@ -1,47 +1,124 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from szxga07-in.huawei.com ([45.249.212.35]:47305 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732562AbeGKNYO (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 11 Jul 2018 09:24:14 -0400
-From: Wei Yongjun <weiyongjun1@huawei.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Matthew Garrett <mjg59@google.com>
-CC: Wei Yongjun <weiyongjun1@huawei.com>,
-        <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] EVM: fix return value check in evm_write_xattrs()
-Date: Wed, 11 Jul 2018 13:28:40 +0000
-Message-ID: <1531315720-4191-1-git-send-email-weiyongjun1@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
+Received: from mail-it0-f68.google.com ([209.85.214.68]:39297 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726306AbeGKG1W (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 11 Jul 2018 02:27:22 -0400
+Received: by mail-it0-f68.google.com with SMTP id p185-v6so1964232itp.4
+        for <linux-integrity@vger.kernel.org>; Tue, 10 Jul 2018 23:24:42 -0700 (PDT)
 MIME-Version: 1.0
+In-Reply-To: <20180710191951.GF1731@minitux>
+References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
+ <1530542283-26145-8-git-send-email-zohar@linux.vnet.ibm.com>
+ <CAKv+Gu-nky1yX59TL2FNQ-0q7Sy399t2WpVWSy7jqYpQY4Fxjw@mail.gmail.com>
+ <1531165294.3332.40.camel@linux.ibm.com> <CAKv+Gu-knHeBRGqo+2pb3X9cCjwovEykoXUf=DZyP7aJpoS60A@mail.gmail.com>
+ <CAKv+Gu8qjzh_Tta=n9C+cfXO29e_5RcLqfQSpvR5r7QmqzHbEg@mail.gmail.com> <20180710191951.GF1731@minitux>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Wed, 11 Jul 2018 08:24:41 +0200
+Message-ID: <CAKv+Gu_C0H9LoqeC3PkKhaKr0TQys=1TcYFNG-JUivnN_YgBKQ@mail.gmail.com>
+Subject: Re: [PATCH v5 7/8] ima: based on policy warn about loading firmware
+ (pre-allocated buffer)
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Mimi Zohar <zohar@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kexec Mailing List <kexec@lists.infradead.org>,
+        Andres Rodriguez <andresx7@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-In case of error, the function audit_log_start() returns NULL pointer
-not ERR_PTR(). The IS_ERR() test in the return value check should be
-replaced with NULL test.
+On 10 July 2018 at 21:19, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
+> On Mon 09 Jul 23:56 PDT 2018, Ard Biesheuvel wrote:
+>
+>> On 10 July 2018 at 08:51, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>> > On 9 July 2018 at 21:41, Mimi Zohar <zohar@linux.ibm.com> wrote:
+>> >> On Mon, 2018-07-02 at 17:30 +0200, Ard Biesheuvel wrote:
+>> >>> On 2 July 2018 at 16:38, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> [..]
+>> > So to summarize again: in my opinion, using a single buffer is not a
+>> > problem as long as the validation completes before the DMA map is
+>> > performed. This will provide the expected guarantees on systems with
+>> > IOMMUs, and will not complicate matters on systems where there is no
+>> > point in obsessing about this anyway given that devices can access all
+>> > of memory whenever they want to.
+>> >
+>> > As for the Qualcomm case: dma_alloc_coherent() is not needed here but
+>> > simply ends up being used because it was already wired up in the
+>> > qualcomm specific secure world API, which amounts to doing syscalls
+>> > into a higher privilege level than the one the kernel itself runs at.
+>
+> As I said before, the dma_alloc_coherent() referred to in this
+> discussion holds parameters for the Trustzone call, i.e. it will hold
+> the address to the buffer that the firmware was loaded into - it won't
+> hold any data that comes from the actual firmware.
+>
 
-Fixes: fa516b66a1bf ("EVM: Allow runtime modification of the set of verified xattrs")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- security/integrity/evm/evm_secfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Ah yes, I forgot that detail. Thanks for reminding me.
 
-diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
-index 637eb99..77de71b 100644
---- a/security/integrity/evm/evm_secfs.c
-+++ b/security/integrity/evm/evm_secfs.c
-@@ -193,8 +193,8 @@ static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
- 		return -E2BIG;
- 
- 	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_EVM_XATTR);
--	if (IS_ERR(ab))
--		return PTR_ERR(ab);
-+	if (!ab)
-+		return -ENOMEM;
- 
- 	xattr = kmalloc(sizeof(struct xattr_list), GFP_KERNEL);
- 	if (!xattr) {
+>> > So again, reasoning about whether the secure world will look at your
+>> > data before you checked the sig is rather pointless, and adding
+>> > special cases to the IMA api to cater for this use case seems like a
+>> > waste of engineering and review effort to me.
+>
+> Forgive me if I'm missing something in the implementation here, but
+> aren't the IMA checks done before request_firmware*() returns?
+>
+
+The issue under discussion is whether calling request_firmware() to
+load firmware into a buffer that may be readable by the device while
+the IMA checks are in progress constitutes a security hazard.
+
+>> > If we have to do
+>> > something to tie up this loose end, let's try switching it to the
+>> > streaming DMA api instead.
+>> >
+>>
+>> Forgot to mention: the Qualcomm case is about passing data to the CPU
+>> running at another privilege level, so IOMMU vs !IOMMU is not a factor
+>> here.
+>
+> Further more, all scenarios we've look at so far is completely
+> sequential, so if the firmware request fails we won't invoke the
+> Trustzone operation that would consume the memory or we won't turn on
+> the power to the CPU that would execute the firmware.
+>
+>
+> Tbh the only case I can think of where there would be a "race condition"
+> here is if we have a device that is polling the last byte of a
+> predefined firmware memory area for the firmware loader to read some
+> specific data into it. In cases where the firmware request is followed
+> by some explicit signalling to the device (or a power on sequence) I'm
+> unable to see the issue discussed here.
+>
+
+I agree. But the latter part is platform specific, and so it requires
+some degree of trust in the driver author on the part of the IMA
+routines that request_firmware() is called at an appropriate time.
+
+The point I am trying to make in this thread is that there are cases
+where it makes no sense for the kernel to reason about these things,
+given that higher privilege levels such as the TrustZone secure world
+own the kernel's execution context entirely already, and given that
+masters that are not behind an IOMMU can read and write all of memory
+all of the time anyway.
+
+The bottom line is that reality does not respect the layering that IMA
+assumes, and so the only meaningful way to treat some of the use cases
+is simply to ignore them entirely. So we should still perform all the
+checks, but we will have to live with the limited utility of doing so
+in some scenarios (and not print nasty warnings to the kernel log for
+such cases)
+
+-- 
+Ard.
