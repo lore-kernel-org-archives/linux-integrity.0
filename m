@@ -1,106 +1,79 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:59974 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733084AbeGLVkT (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 12 Jul 2018 17:40:19 -0400
-Date: Thu, 12 Jul 2018 23:28:51 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:41156 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732633AbeGLUqS (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 12 Jul 2018 16:46:18 -0400
+Received: by mail-pf0-f194.google.com with SMTP id c21-v6so16648854pfn.8
+        for <linux-integrity@vger.kernel.org>; Thu, 12 Jul 2018 13:35:06 -0700 (PDT)
+Date: Thu, 12 Jul 2018 13:37:46 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kexec Mailing List <kexec@lists.infradead.org>,
+        Andres Rodriguez <andresx7@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Haavard Skinnemoen <hskinnemoen@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Antti Palosaari <crope@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Krufky <mkrufky@linuxtv.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-integrity@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v2 00/10] Split i2c_lock_adapter into i2c_lock_root and
- i2c_lock_segment
-Message-ID: <20180712212850.axi3rrfwivqymqh5@ninjato>
-References: <20180620051803.12206-1-peda@axentia.se>
- <20180626023735.xj7aqhvw7ta2lq6s@ninjato>
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v5 7/8] ima: based on policy warn about loading firmware
+ (pre-allocated buffer)
+Message-ID: <20180712203746.GG545@tuxbook-pro>
+References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
+ <1530542283-26145-8-git-send-email-zohar@linux.vnet.ibm.com>
+ <CAKv+Gu-nky1yX59TL2FNQ-0q7Sy399t2WpVWSy7jqYpQY4Fxjw@mail.gmail.com>
+ <1531165294.3332.40.camel@linux.ibm.com>
+ <CAKv+Gu-knHeBRGqo+2pb3X9cCjwovEykoXUf=DZyP7aJpoS60A@mail.gmail.com>
+ <CAKv+Gu8qjzh_Tta=n9C+cfXO29e_5RcLqfQSpvR5r7QmqzHbEg@mail.gmail.com>
+ <20180710191951.GF1731@minitux>
+ <CAKv+Gu_C0H9LoqeC3PkKhaKr0TQys=1TcYFNG-JUivnN_YgBKQ@mail.gmail.com>
+ <1531425793.3568.275.camel@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="x66e45tdlj2g4bta"
-In-Reply-To: <20180626023735.xj7aqhvw7ta2lq6s@ninjato>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1531425793.3568.275.camel@linux.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Jun 26, 2018 at 11:37:36AM +0900, Wolfram Sang wrote:
-> On Wed, Jun 20, 2018 at 07:17:53AM +0200, Peter Rosin wrote:
-> > Hi!
-> > 
-> > With the introduction of mux-locked I2C muxes, the concept of
-> > locking only a segment of the I2C adapter tree was added. At the
-> > time, I did not want to cause a lot of extra churn, so left most
-> > users of i2c_lock_adapter alone and apparently didn't think enough
-> > about it; they simply continued to lock the whole adapter tree.
-> > However, i2c_lock_adapter is in fact wrong for almost every caller
-> > (there is naturally an exception) that is itself not a driver for
-> > a root adapter. What normal drivers generally want is to only
-> > lock the segment of the adapter tree that their device sits on.
-> > 
-> > In fact, if a device sits behind a mux-locked I2C mux, and its
-> > driver calls i2c_lock_adapter followed by an unlocked I2C transfer,
-> > things will deadlock (since even a mux-locked I2C adapter will lock
-> > its parent at some point). If the device is not sitting behind a
-> > mux-locked I2C mux (i.e. either directly on the root adapter or
-> > behind a (chain of) parent-locked I2C muxes) the root/segment
-> > distinction is of no consequence; the root adapter is locked either
-> > way.
-> > 
-> > Mux-locked I2C muxes are probably not that common, and putting any
-> > of the affected devices behind one is probably even rarer, which
-> > is why we have not seen any deadlocks. At least not that I know
-> > of...
-> > 
-> > Since silently changing the semantics of i2c_lock_adapter might
-> > be quite a surprise, especially for out-of-tree users, this series
-> > instead removes the function and forces all users to explicitly
-> > name I2C_LOCK_SEGMENT or I2C_LOCK_ROOT_ADAPTER in a call to
-> > i2c_lock_bus, as suggested by Wolfram. Yes, users will be a teensy
-> > bit more wordy, but open-coding I2C locking from random drivers
-> > should be avoided, so it's perhaps a good thing if it doesn't look
-> > too neat?
-> > 
-> > I suggest that Wolfram takes this series through the I2C tree and
-> > creates an immutable branch for the other subsystems. The series
-> > is based on v4.18-r1.
+On Thu 12 Jul 13:03 PDT 2018, Mimi Zohar wrote:
+
+> On Wed, 2018-07-11 at 08:24 +0200, Ard Biesheuvel wrote:
+> > On 10 July 2018 at 21:19, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
 > 
-> Applied to a seperate branch named "i2c/precise-locking-names" which I
-> will merge into for-next, so it will get proper testing already. Once we
-> get the missing acks from media, MFD, and IIO maintainers, I will merge
-> it into for-4.19.
+> > > Tbh the only case I can think of where there would be a "race condition"
+> > > here is if we have a device that is polling the last byte of a
+> > > predefined firmware memory area for the firmware loader to read some
+> > > specific data into it. In cases where the firmware request is followed
+> > > by some explicit signalling to the device (or a power on sequence) I'm
+> > > unable to see the issue discussed here.
+> > >
+> > 
+> > I agree. But the latter part is platform specific, and so it requires
+> > some degree of trust in the driver author on the part of the IMA
+> > routines that request_firmware() is called at an appropriate time.
+> 
+> Exactly.  Qualcomm could be using the pre-allocated buffer
+> appropriately, but that doesn't guarantee how it will be used in the
+> future.
+> 
 
-Ping for media related acks.
+Agreed.
 
-Thanks,
+But a device that starts operate on the firmware memory before it's
+fully loaded (and verified) will likely hit other nasty issues. Using a
+traditional request_firmware() and memcpy() or simply mapping the buffer
+into the remote piecemeal would have the same issue.
 
-   Wolfram
+So I think that regardless of using IMA, if you don't have the ability
+to control your device's view of the entire firmware buffer atomically
+you must write your device drivers accordingly.
 
-
-
-    [ Part 2, Application/PGP-SIGNATURE (Name: "signature.asc") 849 bytes. ]
-    [ Unable to print this part. ]
+Regards,
+Bjorn
