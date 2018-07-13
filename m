@@ -1,58 +1,80 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:50965 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726618AbeGNQpx (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38622 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732562AbeGMSWF (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 14 Jul 2018 12:45:53 -0400
-From: Colin King <colin.king@canonical.com>
-To: James Bottomley <jejb@linux.vnet.ibm.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] keys: trusted: remove redundant variable keyhndl
-Date: Sat, 14 Jul 2018 17:26:11 +0100
-Message-Id: <20180714162611.8381-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+        Fri, 13 Jul 2018 14:22:05 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6DI4D59113281
+        for <linux-integrity@vger.kernel.org>; Fri, 13 Jul 2018 14:06:22 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k70gf9395-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 13 Jul 2018 14:06:22 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Fri, 13 Jul 2018 19:06:20 +0100
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH v6 2/8] kexec: add call to LSM hook in original kexec_load syscall
+Date: Fri, 13 Jul 2018 14:05:57 -0400
+In-Reply-To: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com>
+Message-Id: <1531505163-20227-3-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+In order for LSMs and IMA-appraisal to differentiate between kexec_load
+and kexec_file_load syscalls, both the original and new syscalls must
+call an LSM hook.  This patch adds a call to security_kernel_load_data()
+in the original kexec_load syscall.
 
-Variable keyhndl is being assigned but is never used hence it is
-redundant and can be removed.
-
-Cleans up clang warning:
-warning: variable 'keyhndl' set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Kees Cook <keescook@chromium.org>
+Acked-by: Serge Hallyn <serge@hallyn.com>
 ---
- security/keys/trusted.c | 2 --
- 1 file changed, 2 deletions(-)
+ kernel/kexec.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/security/keys/trusted.c b/security/keys/trusted.c
-index b69d3b1777c2..0400c1a00467 100644
---- a/security/keys/trusted.c
-+++ b/security/keys/trusted.c
-@@ -585,7 +585,6 @@ static int tpm_unseal(struct tpm_buf *tb,
- 	uint32_t authhandle2 = 0;
- 	unsigned char cont = 0;
- 	uint32_t ordinal;
--	uint32_t keyhndl;
- 	int ret;
+diff --git a/kernel/kexec.c b/kernel/kexec.c
+index aed8fb2564b3..68559808fdfa 100644
+--- a/kernel/kexec.c
++++ b/kernel/kexec.c
+@@ -11,6 +11,7 @@
+ #include <linux/capability.h>
+ #include <linux/mm.h>
+ #include <linux/file.h>
++#include <linux/security.h>
+ #include <linux/kexec.h>
+ #include <linux/mutex.h>
+ #include <linux/list.h>
+@@ -195,10 +196,17 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
+ static inline int kexec_load_check(unsigned long nr_segments,
+ 				   unsigned long flags)
+ {
++	int result;
++
+ 	/* We only trust the superuser with rebooting the system. */
+ 	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
+ 		return -EPERM;
  
- 	/* sessions for unsealing key and data */
-@@ -601,7 +600,6 @@ static int tpm_unseal(struct tpm_buf *tb,
- 	}
- 
- 	ordinal = htonl(TPM_ORD_UNSEAL);
--	keyhndl = htonl(SRKHANDLE);
- 	ret = tpm_get_random(NULL, nonceodd, TPM_NONCE_SIZE);
- 	if (ret != TPM_NONCE_SIZE) {
- 		pr_info("trusted_key: tpm_get_random failed (%d)\n", ret);
++	/* Permit LSMs and IMA to fail the kexec */
++	result = security_kernel_load_data(LOADING_KEXEC_IMAGE);
++	if (result < 0)
++		return result;
++
+ 	/*
+ 	 * Verify we have a legal set of flags
+ 	 * This leaves us room for future extensions.
 -- 
-2.17.1
+2.7.5
