@@ -1,48 +1,58 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:34666 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731950AbeGOCet (ORCPT
+Received: from youngberry.canonical.com ([91.189.89.112]:50965 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726618AbeGNQpx (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 14 Jul 2018 22:34:49 -0400
-Received: by mail-yw0-f194.google.com with SMTP id j68-v6so13106059ywg.1
-        for <linux-integrity@vger.kernel.org>; Sat, 14 Jul 2018 19:13:41 -0700 (PDT)
+        Sat, 14 Jul 2018 12:45:53 -0400
+From: Colin King <colin.king@canonical.com>
+To: James Bottomley <jejb@linux.vnet.ibm.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] keys: trusted: remove redundant variable keyhndl
+Date: Sat, 14 Jul 2018 17:26:11 +0100
+Message-Id: <20180714162611.8381-1-colin.king@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <1531505163-20227-2-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com> <1531505163-20227-2-git-send-email-zohar@linux.vnet.ibm.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Sat, 14 Jul 2018 19:13:39 -0700
-Message-ID: <CAGXu5jKU-cdYCQePZAr_eEUEsaK92kABFF=UowhaO6yuWVXEVA@mail.gmail.com>
-Subject: Re: [PATCH v6 1/8] security: define new LSM hook named security_kernel_load_data
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kexec Mailing List <kexec@lists.infradead.org>,
-        Andres Rodriguez <andresx7@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Jul 13, 2018 at 11:05 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> Differentiate between the kernel reading a file specified by userspace
-> from the kernel loading a buffer containing data provided by userspace.
-> This patch defines a new LSM hook named security_kernel_load_data().
->
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Eric Biederman <ebiederm@xmission.com>
-> Cc: Luis R. Rodriguez <mcgrof@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
-> Acked-by: Serge Hallyn <serge@hallyn.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Kees Cook <keescook@chromium.org>
+Variable keyhndl is being assigned but is never used hence it is
+redundant and can be removed.
 
--Kees
+Cleans up clang warning:
+warning: variable 'keyhndl' set but not used [-Wunused-but-set-variable]
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ security/keys/trusted.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+index b69d3b1777c2..0400c1a00467 100644
+--- a/security/keys/trusted.c
++++ b/security/keys/trusted.c
+@@ -585,7 +585,6 @@ static int tpm_unseal(struct tpm_buf *tb,
+ 	uint32_t authhandle2 = 0;
+ 	unsigned char cont = 0;
+ 	uint32_t ordinal;
+-	uint32_t keyhndl;
+ 	int ret;
+ 
+ 	/* sessions for unsealing key and data */
+@@ -601,7 +600,6 @@ static int tpm_unseal(struct tpm_buf *tb,
+ 	}
+ 
+ 	ordinal = htonl(TPM_ORD_UNSEAL);
+-	keyhndl = htonl(SRKHANDLE);
+ 	ret = tpm_get_random(NULL, nonceodd, TPM_NONCE_SIZE);
+ 	if (ret != TPM_NONCE_SIZE) {
+ 		pr_info("trusted_key: tpm_get_random failed (%d)\n", ret);
 -- 
-Kees Cook
-Pixel Security
+2.17.1
