@@ -1,64 +1,65 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:14276 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728061AbeGPSCm (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 16 Jul 2018 14:02:42 -0400
-Date: Mon, 16 Jul 2018 20:34:11 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: flihp <flihp@twobit.us>
-Cc: Tadeusz Struk <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org
-Subject: Re: [PATCH] tpm: add support for nonblocking operation
-Message-ID: <20180716173411.GA5780@linux.intel.com>
-References: <152780934926.32219.7291994735609525171.stgit@tstruk-mobl1.jf.intel.com>
- <20180604195554.GD2691@linux.intel.com>
- <f270fec0-cd79-0119-b84d-3af23bc3b150@twobit.us>
- <20180618182517.GF20697@linux.intel.com>
- <f52e541e-123e-0849-2cc7-8baf7fa39616@twobit.us>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <f52e541e-123e-0849-2cc7-8baf7fa39616@twobit.us>
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35602 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727405AbeGPOUW (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 16 Jul 2018 10:20:22 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6GDn0xM141151
+        for <linux-integrity@vger.kernel.org>; Mon, 16 Jul 2018 09:52:48 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k8vbegrsw-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 16 Jul 2018 09:52:48 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 16 Jul 2018 14:52:46 +0100
+Subject: Re: [PATCH v6 7/8] module: replace the existing LSM hook in
+ init_module
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Kees Cook <keescook@chromium.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kexec Mailing List <kexec@lists.infradead.org>,
+        Andres Rodriguez <andresx7@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jeff Vander Stoep <jeffv@google.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Date: Mon, 16 Jul 2018 09:52:28 -0400
+In-Reply-To: <CAGXu5j+RvX+CKMP5PWjAPmDpvO4N+t1JQ3C5zr3F-y-T-AH_ng@mail.gmail.com>
+References: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com>
+         <1531505163-20227-8-git-send-email-zohar@linux.vnet.ibm.com>
+         <CAGXu5j+RvX+CKMP5PWjAPmDpvO4N+t1JQ3C5zr3F-y-T-AH_ng@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1531749148.3380.2.camel@linux.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Jul 05, 2018 at 04:15:06PM -0700, flihp wrote:
-> Thanks for reviewing the patch Jarkko. While you're doing that I took
-> some time to hack up code to demonstrate the utility of supporting this
-> feature. The code can be found here:
+On Sat, 2018-07-14 at 19:30 -0700, Kees Cook wrote:
+> On Fri, Jul 13, 2018 at 11:06 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> > Both the init_module and finit_module syscalls call either directly
+> > or indirectly the security_kernel_read_file LSM hook.  This patch
+> > replaces the direct call in init_module with a call to the new
+> > security_kernel_load_data hook and makes the corresponding changes
+> > in SELinux, LoadPin, and IMA.
+> >
+> > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> > Cc: Jeff Vander Stoep <jeffv@google.com>
+> > Cc: Casey Schaufler <casey@schaufler-ca.com>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Acked-by: Jessica Yu <jeyu@kernel.org>
+> > Acked-by: Paul Moore <paul@paul-moore.com>
 > 
-> https://github.com/flihp/glib-tss2-async-example
+> Acked-by: Kees Cook <keescook@chromium.org>
 > 
-> In short, the example application `glib-tss2-event` uses a glib main
-> event loop to create an RSA 2048 primary key in the TPM2 NULL hierarchy
-> while using a glib timer event to time the operation. A GSource object
-> is used to generate an event when the FD underlying the tss2 function
-> call has data ready. While the application waits for an event indicating
-> that the CreatePrimary operation is complete, it counts timer events
-> that occur every 100ms. Once the CreatePrimary operation completes the
-> number of timer events that occurred is used to make a rough calculation
-> of the elapsed time. This value is then printed to the console.
-> 
-> This takes ~300 lines of C code and requires no management or
-> synchronization of threads. The glib GMainContext is "just a poll()
-> loop" according to the glib documentation here:
-> 
-> https://developer.gnome.org/programming-guidelines/stable/main-contexts.html.en
-> 
-> and so supporting 'poll' is the easiest way to integrate with glib /
-> gtk+. This is true of any other event system that relies on 'poll'
-> instead of worker threads.
-> 
-> I've tested this against the userspace resource management daemon (which
-> supports 'poll') as well as the kernel interface using Tadeusz's patch
-> currently under review here. If / when this gets merged feel free to add
-> a "tested-by" line for myself:
-> Tested-by: Philip Tricca <philip.b.tricca@intel.com>
+> Thanks!
 
-I see the value now. I'll test this at early August when I'm back from
-my leave.
+Thank you for reviewing/ack'ing all the patches, not just this one.
 
-Noticed now that the whole patch should be reposted because CC is missing
-linux-kernel and linux-security-module (maybe with a link to your test
-application in the cover letter).
-
-/Jarkko
+Mimi
