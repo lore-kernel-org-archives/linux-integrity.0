@@ -1,88 +1,74 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:28092 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727575AbeGSQgU (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 19 Jul 2018 12:36:20 -0400
-Subject: [PATCH] tpm: add support for partial reads
-From: Tadeusz Struk <tadeusz.struk@intel.com>
-To: jarkko.sakkinen@linux.intel.com
-Cc: jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tadeusz.struk@intel.com
-Date: Thu, 19 Jul 2018 08:52:32 -0700
-Message-ID: <153201555276.20155.1352499992826895966.stgit@tstruk-mobl1.jf.intel.com>
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:32970 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731324AbeGRDSs (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 17 Jul 2018 23:18:48 -0400
+Received: by mail-wr1-f65.google.com with SMTP id g6-v6so3052781wrp.0
+        for <linux-integrity@vger.kernel.org>; Tue, 17 Jul 2018 19:43:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <CAKNRAJV8Jb=n=cZTmkAUVLwYv5778ykACd7ZUhYA7rfa0Wu3zw@mail.gmail.com>
+References: <20180608065438.110109-1-louiscollard@chromium.org>
+ <20180618180712.GB20697@linux.intel.com> <20180618193306.GF6805@ziepe.ca>
+ <20180621162101.GB11859@linux.intel.com> <CAKNRAJVJD5b388iwhoOBVC5V-x=wV2YTZHJ+mRrBWv3H-pbNFg@mail.gmail.com>
+ <CAAi9uDuxS7G+DaHskGJXnvigsdzXrW64J6zy-dgQCXJvv8be3g@mail.gmail.com> <CAKNRAJV8Jb=n=cZTmkAUVLwYv5778ykACd7ZUhYA7rfa0Wu3zw@mail.gmail.com>
+From: "David R. Bild" <david.bild@xaptum.com>
+Date: Tue, 17 Jul 2018 22:43:12 -0400
+Message-ID: <CAAi9uDt063WYqNSX9dSCtRybd2a2Ad-0q2s8xvOst6qq3O4wPg@mail.gmail.com>
+Subject: Re: [PATCH] tpm: Add module parameter for hwrng quality.
+To: Louis Collard <louiscollard@chromium.org>
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Currently to read a response from the TPM device an application needs
-provide "big enough" buffer for the whole response and read it in one go.
-The application doesn't know how big the response it beforehand so it
-always needs to maintain a 4K buffer and read the max (4K).
-In case if the user of the TSS library doesn't provide big enough buffer
-the TCTI spec says that the library should set the required size and return
-TSS2_TCTI_RC_INSUFFICIENT_BUFFER error code so that the application could
-allocate a bigger buffer and call receive again.
-To make it possible in the TSS library this requires being able to do
-partial reads from the driver.
-The library would read the header first to get the actual size of the
-response from the header and then read the rest of the response.
-This patch adds support for partial reads.
+On Wed, Jul 4, 2018 at 2:54 AM, Louis Collard <louiscollard@chromium.org> wrote:
+> On Fri, Jun 29, 2018 at 9:03 PM, David R. Bild <david.bild@xaptum.com> wrote:
+>> As a point of clarification (and correct me if I'm wrong), the TPM is
+>> always ready used to seed the rng. It just doesn't update the entropy
+>> pool estimate.
+>
+> Good point.
+>
+>>
+>> So, perhaps the default value for the TPM hwrng quality should be
+>> non-zero (in addition to the module param that lets users override
+>> it)?
+>
+> That makes sense to me, however I can imagine that some users would
+> prefer to not have the TPM enabled as an ongoing source of entropy by
+> default.
 
-The usecase is implemented in this TSS commit:
-https://github.com/tpm2-software/tpm2-tss/commit/ce982f67a67dc08e24683d30b05800648d8a264c
+Fair enough.
 
-Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
----
- drivers/char/tpm/tpm-dev-common.c |   32 +++++++++++++++++++++++---------
- 1 file changed, 23 insertions(+), 9 deletions(-)
+> Following on from your previous point - perhaps we can just make a
+> small change to how the initial seeding is done: maybe we can replace
+> the call to crng_slow_load (via add_early_randomness and
+> add_device_randomness) with a call (indirectly) to crng_fast_load. (We
+> might also need to increase the amount of data read at this point.)
+>
+> This would update crng_init_cnt and crng_init, and calls to getrandom
+> [without GRND_RANDOM] would not block.
 
-diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-index 3f2089f75c30..f5b614984dbc 100644
---- a/drivers/char/tpm/tpm-dev-common.c
-+++ b/drivers/char/tpm/tpm-dev-common.c
-@@ -99,20 +99,34 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
- 	ssize_t ret_size = 0;
- 	int rc;
- 
--	del_singleshot_timer_sync(&priv->user_read_timer);
--	flush_work(&priv->timeout_work);
- 	mutex_lock(&priv->buffer_mutex);
- 
- 	if (priv->data_pending) {
--		ret_size = min_t(ssize_t, size, priv->data_pending);
--		if (ret_size > 0) {
--			rc = copy_to_user(buf, priv->data_buffer, ret_size);
--			memset(priv->data_buffer, 0, priv->data_pending);
--			if (rc)
--				ret_size = -EFAULT;
-+		ret_size = min_t(ssize_t, size + *off, priv->data_pending);
-+		if (ret_size <= 0) {
-+			ret_size = 0;
-+			priv->data_pending = 0;
-+			*off = 0;
-+			goto out;
- 		}
- 
--		priv->data_pending = 0;
-+		rc = copy_to_user(buf, priv->data_buffer + *off, ret_size);
-+		if (rc) {
-+			memset(priv->data_buffer, 0, priv->data_pending);
-+			ret_size = -EFAULT;
-+			priv->data_pending = 0;
-+			*off = 0;
-+		} else {
-+			memset(priv->data_buffer + *off, 0, ret_size);
-+			priv->data_pending -= ret_size;
-+			*off += ret_size;
-+		}
-+	}
-+out:
-+	if (!priv->data_pending) {
-+		del_singleshot_timer_sync(&priv->user_read_timer);
-+		flush_work(&priv->timeout_work);
-+		*off = 0;
- 	}
- 
- 	mutex_unlock(&priv->buffer_mutex);
+Interesting.
+
+add_hwgenereator_randomness() will call crng_fast_load(), regardless
+of entropy estimate/quality, if crng_init is 0.  So initializing
+crng_init from the hwrng, regardless of quality, is already the
+intent.
+
+But hw_random only calls add_hwgenerator_randomness() if
+current_quality > 0, via the hwrng_fillfn() kthread.
+
+All that to say, I agree.  add_early_randomness() should (indirectly)
+call crng_fast_load(), like add_hwgenerator_randomness() does.
+
+> This obviously doesn't solve the issue if there are blocking calls on
+> boot that are querying random rather than urandom; I don't believe
+> that would be a problem for our use case though.
+>
+
+It wouldn't be a problem for our use case either.
+
+Best,
+David
