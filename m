@@ -1,188 +1,56 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from inva021.nxp.com ([92.121.34.21]:60408 "EHLO inva021.nxp.com"
+Received: from mga11.intel.com ([192.55.52.93]:3671 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726555AbeGTGvE (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 20 Jul 2018 02:51:04 -0400
-From: Udit Agarwal <udit.agarwal@nxp.com>
-To: dhowells@redhat.com, zohar@linux.vnet.ibm.com, jmorris@namei.org,
-        serge@hallyn.com, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: sahil.malhotra@nxp.com, Udit Agarwal <udit.agarwal@nxp.com>
-Subject: [PATCH 2/2] encrypted_keys: Adds support for secure key-type as master key.
-Date: Fri, 20 Jul 2018 11:16:56 +0530
-Message-Id: <20180720054656.29143-2-udit.agarwal@nxp.com>
-In-Reply-To: <20180720054656.29143-1-udit.agarwal@nxp.com>
-References: <20180720054656.29143-1-udit.agarwal@nxp.com>
+        id S1727523AbeGSVqQ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 19 Jul 2018 17:46:16 -0400
+Subject: Re: [PATCH] tpm: add support for partial reads
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        jarkko.sakkinen@linux.intel.com
+Cc: jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <153201555276.20155.1352499992826895966.stgit@tstruk-mobl1.jf.intel.com>
+ <1532020750.5396.4.camel@HansenPartnership.com>
+ <421c4b75-9e9d-7045-adad-797fd112898a@intel.com>
+ <1532026030.3198.2.camel@HansenPartnership.com>
+ <e8c17a40-7e5e-61e9-7088-32817766b614@intel.com>
+ <1532029979.3198.4.camel@HansenPartnership.com>
+ <0b9f0bb5-6620-0499-6680-5ec595167f23@intel.com>
+ <1532032049.3061.1.camel@HansenPartnership.com>
+From: Tadeusz Struk <tadeusz.struk@intel.com>
+Message-ID: <0e9d3267-b9f4-2f56-9470-36931ae8f685@intel.com>
+Date: Thu, 19 Jul 2018 14:01:16 -0700
+MIME-Version: 1.0
+In-Reply-To: <1532032049.3061.1.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Encrypted keys can use secure key-type as master key along with
-trusted/user keys.
+On 07/19/2018 01:27 PM, James Bottomley wrote:
+> On Thu, 2018-07-19 at 13:12 -0700, Tadeusz Struk wrote:
+>> On 07/19/2018 12:52 PM, James Bottomley wrote:
+>>> The ABI break is the error case as I outlined above.  We can't
+>>> assume everyone uses the current interface without getting an error
+>>> and one error and your hosed is a nasty failure case to change the
+>>> interface to. 
+>>
+>> Well, if there is a broken application out there that doesn't work
+>> today it will not work after this change neither.
+> 
+> It doesn't have to be broken ... it could be using EFAULT to probe the
+> buffer size for instance.  That's the point of not breaking the ABI:
+> you don't second guess what applications are doing.
+> 
 
-Secure key as master key uses, secure key type payload derieved
-using CAAM hardware.
+Looking at the existing implementation again:
+https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git/tree/drivers/char/tpm/tpm-dev-common.c?h=next-tpm#n56
 
-Signed-off-by: Udit Agarwal <udit.agarwal@nxp.com>
-Reviewed-by: Sahil Malhotra <sahil.malhotra@nxp.com>
----
- MAINTAINERS                                   |  1 +
- security/keys/encrypted-keys/Makefile         |  2 +
- security/keys/encrypted-keys/encrypted.c      | 13 ++++++-
- security/keys/encrypted-keys/encrypted.h      | 13 +++++++
- .../keys/encrypted-keys/masterkey_secure.c    | 37 +++++++++++++++++++
- 5 files changed, 64 insertions(+), 2 deletions(-)
- create mode 100644 security/keys/encrypted-keys/masterkey_secure.c
+EFAULT is returned only if the copy_to_user() fails.
+So today, if an application wants read 1 byte of a response, and provides
+1 byte buffer for it, then only 1 byte of the response will be copied,
+no error code will be returned, and the rest of the response will be gone.
+I don't really see how and why would anyone use EFAULT err to probe for
+the buffer size. That would really be a broken application.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 654be2ee4b0a..847254eec22a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7949,6 +7949,7 @@ F:	include/keys/secure-type.h
- F:	security/keys/secure_key.c
- F:	security/keys/securekey_desc.c
- F:	security/keys/securekey_desc.h
-+F:	security/keys/encrypted-keys/masterkey_secure.c
- 
- KEYS/KEYRINGS:
- M:	David Howells <dhowells@redhat.com>
-diff --git a/security/keys/encrypted-keys/Makefile b/security/keys/encrypted-keys/Makefile
-index 7a44dce6f69d..df2b906b7d24 100644
---- a/security/keys/encrypted-keys/Makefile
-+++ b/security/keys/encrypted-keys/Makefile
-@@ -7,5 +7,7 @@ obj-$(CONFIG_ENCRYPTED_KEYS) += encrypted-keys.o
- 
- encrypted-keys-y := encrypted.o ecryptfs_format.o
- masterkey-$(CONFIG_TRUSTED_KEYS) := masterkey_trusted.o
-+masterkey-$(CONFIG_SECURE_KEYS) := masterkey_secure.o
- masterkey-$(CONFIG_TRUSTED_KEYS)-$(CONFIG_ENCRYPTED_KEYS) := masterkey_trusted.o
-+masterkey-$(CONFIG_SECURE_KEYS)-$(CONFIG_ENCRYPTED_KEYS) := masterkey_secure.o
- encrypted-keys-y += $(masterkey-y) $(masterkey-m-m)
-diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-index d92cbf9687c3..258b38094705 100644
---- a/security/keys/encrypted-keys/encrypted.c
-+++ b/security/keys/encrypted-keys/encrypted.c
-@@ -39,6 +39,7 @@
- #include "ecryptfs_format.h"
- 
- static const char KEY_TRUSTED_PREFIX[] = "trusted:";
-+static const char KEY_SECURE_PREFIX[] = "secure:";
- static const char KEY_USER_PREFIX[] = "user:";
- static const char hash_alg[] = "sha256";
- static const char hmac_alg[] = "hmac(sha256)";
-@@ -49,6 +50,7 @@ static unsigned int ivsize;
- static int blksize;
- 
- #define KEY_TRUSTED_PREFIX_LEN (sizeof (KEY_TRUSTED_PREFIX) - 1)
-+#define KEY_SECURE_PREFIX_LEN (sizeof(KEY_SECURE_PREFIX) - 1)
- #define KEY_USER_PREFIX_LEN (sizeof (KEY_USER_PREFIX) - 1)
- #define KEY_ECRYPTFS_DESC_LEN 16
- #define HASH_SIZE SHA256_DIGEST_SIZE
-@@ -125,7 +127,7 @@ static int valid_ecryptfs_desc(const char *ecryptfs_desc)
- /*
-  * valid_master_desc - verify the 'key-type:desc' of a new/updated master-key
-  *
-- * key-type:= "trusted:" | "user:"
-+ * key-type:= "trusted:" | "user:" | "secure:"
-  * desc:= master-key description
-  *
-  * Verify that 'key-type' is valid and that 'desc' exists. On key update,
-@@ -140,6 +142,8 @@ static int valid_master_desc(const char *new_desc, const char *orig_desc)
- 
- 	if (!strncmp(new_desc, KEY_TRUSTED_PREFIX, KEY_TRUSTED_PREFIX_LEN))
- 		prefix_len = KEY_TRUSTED_PREFIX_LEN;
-+	else if (!strncmp(new_desc, KEY_SECURE_PREFIX, KEY_SECURE_PREFIX_LEN))
-+		prefix_len = KEY_SECURE_PREFIX_LEN;
- 	else if (!strncmp(new_desc, KEY_USER_PREFIX, KEY_USER_PREFIX_LEN))
- 		prefix_len = KEY_USER_PREFIX_LEN;
- 	else
-@@ -358,7 +362,7 @@ static int calc_hmac(u8 *digest, const u8 *key, unsigned int keylen,
- 
- enum derived_key_type { ENC_KEY, AUTH_KEY };
- 
--/* Derive authentication/encryption key from trusted key */
-+/* Derive authentication/encryption key from trusted/secure key */
- static int get_derived_key(u8 *derived_key, enum derived_key_type key_type,
- 			   const u8 *master_key, size_t master_keylen)
- {
-@@ -429,6 +433,11 @@ static struct key *request_master_key(struct encrypted_key_payload *epayload,
- 		mkey = request_trusted_key(epayload->master_desc +
- 					   KEY_TRUSTED_PREFIX_LEN,
- 					   master_key, master_keylen);
-+	} else if (!strncmp(epayload->master_desc, KEY_SECURE_PREFIX,
-+			    KEY_SECURE_PREFIX_LEN)) {
-+		mkey = request_secure_key(epayload->master_desc +
-+					  KEY_SECURE_PREFIX_LEN,
-+					  master_key, master_keylen);
- 	} else if (!strncmp(epayload->master_desc, KEY_USER_PREFIX,
- 			    KEY_USER_PREFIX_LEN)) {
- 		mkey = request_user_key(epayload->master_desc +
-diff --git a/security/keys/encrypted-keys/encrypted.h b/security/keys/encrypted-keys/encrypted.h
-index 1809995db452..f1cb73611e77 100644
---- a/security/keys/encrypted-keys/encrypted.h
-+++ b/security/keys/encrypted-keys/encrypted.h
-@@ -16,6 +16,19 @@ static inline struct key *request_trusted_key(const char *trusted_desc,
- }
- #endif
- 
-+#if defined(CONFIG_SECURE_KEYS)
-+extern struct key *request_secure_key(const char *secure_desc,
-+				      const u8 **master_key,
-+				      size_t *master_keylen);
-+#else
-+static inline struct key *request_secure_key(const char *secure_desc,
-+					     const u8 **master_key,
-+					     size_t *master_keylen)
-+{
-+	return ERR_PTR(-EOPNOTSUPP);
-+}
-+#endif
-+
- #if ENCRYPTED_DEBUG
- static inline void dump_master_key(const u8 *master_key, size_t master_keylen)
- {
-diff --git a/security/keys/encrypted-keys/masterkey_secure.c b/security/keys/encrypted-keys/masterkey_secure.c
-new file mode 100644
-index 000000000000..87068c966111
---- /dev/null
-+++ b/security/keys/encrypted-keys/masterkey_secure.c
-@@ -0,0 +1,37 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 NXP.
-+ *
-+ */
-+
-+#include <linux/uaccess.h>
-+#include <linux/module.h>
-+#include <linux/err.h>
-+#include <keys/secure-type.h>
-+#include <keys/encrypted-type.h>
-+#include "encrypted.h"
-+
-+/*
-+ * request_secure_key - request the secure key
-+ *
-+ * Secure keys and their blobs are derived from CAAM hardware.
-+ * Userspace manages secure  key-type data, but key data is not
-+ * visible in plain form. It is presented as blobs.
-+ */
-+struct key *request_secure_key(const char *secure_desc,
-+				const u8 **master_key, size_t *master_keylen)
-+{
-+	struct secure_key_payload *spayload;
-+	struct key *skey;
-+
-+	skey = request_key(&key_type_secure, secure_desc, NULL);
-+	if (IS_ERR(skey))
-+		goto error;
-+
-+	down_read(&skey->sem);
-+	spayload = skey->payload.data[0];
-+	*master_key = spayload->key;
-+	*master_keylen = spayload->key_len;
-+error:
-+	return skey;
-+}
+Thanks,
 -- 
-2.17.1
+Tadeusz
