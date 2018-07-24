@@ -1,42 +1,62 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from namei.org ([65.99.196.166]:40380 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388415AbeGXTy3 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 24 Jul 2018 15:54:29 -0400
-Date: Wed, 25 Jul 2018 04:46:40 +1000 (AEST)
-From: James Morris <jmorris@namei.org>
-To: Mimi Zohar <zohar@linux.ibm.com>
-cc: linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Subject: Re: [GIT PULL]  linux-integrity patches for 4.19
-In-Reply-To: <alpine.LRH.2.21.1807250445390.10717@namei.org>
-Message-ID: <alpine.LRH.2.21.1807250446280.10717@namei.org>
-References: <1532430023.4127.10.camel@linux.ibm.com> <alpine.LRH.2.21.1807250445390.10717@namei.org>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="1665246916-553496164-1532458000=:10717"
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45882 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388309AbeGXOll (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 24 Jul 2018 10:41:41 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6ODTKBJ061904
+        for <linux-integrity@vger.kernel.org>; Tue, 24 Jul 2018 09:35:09 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ke34ndxcr-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 24 Jul 2018 09:35:09 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 24 Jul 2018 14:35:07 +0100
+Subject: Re: [PATCH 1/2] security/keys/secure_key: Adds the secure key
+ support based on CAAM.
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Udit Agarwal <udit.agarwal@nxp.com>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Sahil Malhotra <sahil.malhotra@nxp.com>,
+        Ruchika Gupta <ruchika.gupta@nxp.com>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>
+Date: Tue, 24 Jul 2018 09:34:50 -0400
+In-Reply-To: <AM5PR0401MB2660B8C1DD5ED9989239EF009E550@AM5PR0401MB2660.eurprd04.prod.outlook.com>
+References: <20180720054656.29143-1-udit.agarwal@nxp.com>
+         <1532302451.6206.22.camel@linux.ibm.com>
+         <AM5PR0401MB2660B8C1DD5ED9989239EF009E550@AM5PR0401MB2660.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1532439290.3277.52.camel@linux.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, 25 Jul 2018, James Morris wrote:
+On Tue, 2018-07-24 at 12:31 +0000, Udit Agarwal wrote:
+> Yes the secure keys and CAAM are correlated. Secure keys depends on
+> NXP CAAM crypto HW accelerator.  Secure key is a random data of
+> length X (passed using keyctl command) & derived using CAAM. Blob of
+> this data is also created using CAAM. Only blob is visible to user
+> space.
 
-> On Tue, 24 Jul 2018, Mimi Zohar wrote:
-> 
-> > Hi James,
-> > 
-> > This pull request adds support for EVM signatures based on larger
-> > digests, contains a new audit record AUDIT_INTEGRITY_POLICY_RULE to
-> > differentiate the IMA policy rules from the IMA-audit messages,
-> > addresses two deadlocks due to either loading or searching for crypto
-> > algorithms, and cleans up the audit messages.
-> > 
-> > New to 4.19, but not included in this pull request, is support for a
-> > build time IMA policy.  Build time IMA policy rules are automatically
-> > enabled on boot and persist after loading a custom policy.
-> > 
-> 
-> merged
+The term "secure keys" is really generic.  What makes the "secure
+keys" secure?  We introduced "trusted keys", because TPM 1.2 didn't
+support symmetric keys.  We shouldn't just duplicate "trusted keys"
+for different HW, but improve upon it (eg. symmetric keys never leave
+the device).
 
+The new key type should define generic methods, which are implemented
+for NXP CAAM rypto HW accelerator as an example.
 
--- 
-James Morris
-<jmorris@namei.org>
+Mimi
