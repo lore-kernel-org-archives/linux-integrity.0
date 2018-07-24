@@ -1,98 +1,53 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60204 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388251AbeGXMGf (ORCPT
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45871 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388248AbeGXDJ6 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 24 Jul 2018 08:06:35 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6OAwrZb143705
-        for <linux-integrity@vger.kernel.org>; Tue, 24 Jul 2018 07:00:41 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ke0r65vnm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 24 Jul 2018 07:00:41 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 24 Jul 2018 12:00:39 +0100
-Subject: [GIT PULL]  linux-integrity patches for 4.19
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: James Morris <jmorris@namei.org>
-Cc: linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Date: Tue, 24 Jul 2018 07:00:23 -0400
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1532430023.4127.10.camel@linux.ibm.com>
+        Mon, 23 Jul 2018 23:09:58 -0400
+Received: by mail-pf1-f196.google.com with SMTP id i26-v6so462993pfo.12
+        for <linux-integrity@vger.kernel.org>; Mon, 23 Jul 2018 19:05:56 -0700 (PDT)
+Date: Mon, 23 Jul 2018 20:05:54 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Tadeusz Struk <tadeusz.struk@intel.com>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: add support for partial reads
+Message-ID: <20180724020554.GL532@ziepe.ca>
+References: <153201555276.20155.1352499992826895966.stgit@tstruk-mobl1.jf.intel.com>
+ <20180723201956.GB26824@linux.intel.com>
+ <fb053916-f6e8-3266-14d7-128e062b6a92@intel.com>
+ <1532380412.4112.22.camel@HansenPartnership.com>
+ <7441b5ef-18d8-13aa-ef4d-40fe684c9218@intel.com>
+ <20180723215620.GH532@ziepe.ca>
+ <dabf6cf5-e62c-721f-9f19-18da34d52ec1@intel.com>
+ <20180723220822.GJ532@ziepe.ca>
+ <ee0f0ccf-f757-a7d4-bf55-316f81fb490b@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <ee0f0ccf-f757-a7d4-bf55-316f81fb490b@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi James,
+On Mon, Jul 23, 2018 at 04:42:38PM -0700, Tadeusz Struk wrote:
+> On 07/23/2018 03:08 PM, Jason Gunthorpe wrote:
+> > On Mon, Jul 23, 2018 at 03:00:20PM -0700, Tadeusz Struk wrote:
+> >> On 07/23/2018 02:56 PM, Jason Gunthorpe wrote:
+> >>> The proposed patch doesn't clear the data_pending if the entire buffer
+> >>> is not consumed, so of course it is ABI breaking, that really isn't OK.
+> >> The data_pending will be cleared by the timeout handler if the user doesn't
+> >> read the response fully before the timeout expires. The is the same situation
+> >> if the user would not read the response at all.
+> > That causes write() to fail with EBUSY
+> > 
+> > NAK from me on breaking the ABI like this
+> 
+> What if we introduce this new behavior only for the non-blocking mode
+> as James suggested? Or do you have some other suggestions?
 
-This pull request adds support for EVM signatures based on larger
-digests, contains a new audit record AUDIT_INTEGRITY_POLICY_RULE to
-differentiate the IMA policy rules from the IMA-audit messages,
-addresses two deadlocks due to either loading or searching for crypto
-algorithms, and cleans up the audit messages.
+I think you should do it entirely in userspace.
 
-New to 4.19, but not included in this pull request, is support for a
-build time IMA policy.  Build time IMA policy rules are automatically
-enabled on boot and persist after loading a custom policy.
+But something sensible linked to O_NONBLOCK could be OK.
 
-Mimi
-
-The following changes since commit
-87ea58433208d17295e200d56be5e2a4fe4ce7d6:
-
-  security: check for kstrdup() failure in lsm_append() (2018-07-17
-21:27:06 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-
-integrity.git next-integrity
-
-for you to fetch changes up to
-3dd0f18c70d94ca2432c78c5735744429f071b0b:
-
-  EVM: fix return value check in evm_write_xattrs() (2018-07-22
-14:49:11 -0400)
-
-----------------------------------------------------------------
-Matthew Garrett (2):
-      evm: Don't deadlock if a crypto algorithm is unavailable
-      evm: Allow non-SHA1 digital signatures
-
-Mikhail Kurinnoi (1):
-      integrity: prevent deadlock during digsig verification.
-
-Stefan Berger (4):
-      ima: Call audit_log_string() rather than logging it untrusted
-      ima: Use audit_log_format() rather than audit_log_string()
-      ima: Do not audit if CONFIG_INTEGRITY_AUDIT is not set
-      ima: Differentiate auditing policy rules from "audit" actions
-
-Sudeep Holla (1):
-      integrity: silence warning when CONFIG_SECURITYFS is not enabled
-
-Wei Yongjun (1):
-      EVM: fix return value check in evm_write_xattrs()
-
- crypto/api.c                           |  2 +-
- include/linux/crypto.h                 |  5 ++++
- include/linux/integrity.h              | 13 +++++++++
- include/uapi/linux/audit.h             |  1 +
- security/integrity/digsig_asymmetric.c | 23 ++++++++++++++++
- security/integrity/evm/Kconfig         |  1 +
- security/integrity/evm/evm.h           | 10 +++++--
- security/integrity/evm/evm_crypto.c    | 50 ++++++++++++++++++-------
----------
- security/integrity/evm/evm_main.c      | 19 ++++++++-----
- security/integrity/evm/evm_secfs.c     |  4 +--
- security/integrity/iint.c              |  9 ++++--
- security/integrity/ima/Kconfig         |  1 +
- security/integrity/ima/ima_policy.c    |  9 ++++--
- security/integrity/integrity.h         | 15 ++++++++++
- security/integrity/integrity_audit.c   |  6 +---
- security/security.c                    |  7 ++++-
- 16 files changed, 128 insertions(+), 47 deletions(-)
+Jason
