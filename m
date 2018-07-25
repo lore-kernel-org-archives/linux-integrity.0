@@ -1,20 +1,20 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57986 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731853AbeGZAqV (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54858 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731647AbeGZAqK (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 25 Jul 2018 20:46:21 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6PNTSnR020598
-        for <linux-integrity@vger.kernel.org>; Wed, 25 Jul 2018 19:32:23 -0400
+        Wed, 25 Jul 2018 20:46:10 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6PNTP7t146651
+        for <linux-integrity@vger.kernel.org>; Wed, 25 Jul 2018 19:32:12 -0400
 Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kexu6gntg-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kf2bjh1vc-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 25 Jul 2018 19:32:22 -0400
+        for <linux-integrity@vger.kernel.org>; Wed, 25 Jul 2018 19:32:12 -0400
 Received: from localhost
         by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <erichte@linux.vnet.ibm.com>;
-        Thu, 26 Jul 2018 00:32:20 +0100
+        Thu, 26 Jul 2018 00:32:10 +0100
 From: Eric Richter <erichte@linux.vnet.ibm.com>
 To: linux-integrity <linux-integrity@vger.kernel.org>
 Cc: linux-security-module <linux-security-module@vger.kernel.org>,
@@ -23,128 +23,199 @@ Cc: linux-security-module <linux-security-module@vger.kernel.org>,
         David Howells <dhowells@redhat.com>,
         Seth Forshee <seth.forshee@canonical.com>,
         Justin Forbes <jforbes@redhat.com>,
-        Eric Richter <erichte@linux.vnet.ibm.com>
-Subject: [PATCH 4/4] x86/ima: define arch_get_ima_policy() for x86
-Date: Wed, 25 Jul 2018 18:32:00 -0500
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Subject: [PATCH 1/4] ima: add support for arch specific policies
+Date: Wed, 25 Jul 2018 18:31:57 -0500
 In-Reply-To: <20180725233200.761-1-erichte@linux.vnet.ibm.com>
 References: <20180725233200.761-1-erichte@linux.vnet.ibm.com>
-Message-Id: <20180725233200.761-5-erichte@linux.vnet.ibm.com>
+Message-Id: <20180725233200.761-2-erichte@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-This patch implements an example arch-specific IMA policy for x86 to enable
-measurement and appraisal of any kernel images loaded for kexec, and
-disables the kexec_load syscall.
+From: Nayna Jain <nayna@linux.vnet.ibm.com>
 
-To avoid conflicting with the existing CONFIG_KERNEL_VERIFY_SIG option, the
-policy only "appraises" the target image on kexec_load. Without this, the
-target kexec image would have to be verified by both the above option as
-well as by IMA appraisal.
+Builtin IMA policies can be enabled on the boot command line, and
+replaced with a custom policy, normally during early boot in the
+initramfs.  Build time IMA policy rules were recently added.  These
+rules are automatically enabled on boot and persist after loading a
+custom policy.
 
-Since signature verification for kexec_load is not possible via appraisal
-(or VERIFY_SIG), this results in a failure and thus effectively prevents
-the kexec_load syscall from succeeding when set.
+There is a need for yet another type of policy, an architecture specific
+policy, which is derived at runtime during kernel boot, based on the
+runtime secure boot flags.  Like the build time policy rules, these
+rules persist after loading a custom policy.
 
-Signed-off-by: Eric Richter <erichte@linux.vnet.ibm.com>
+This patch adds support for loading an architecture specific IMA
+policy.
+
+Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+- Defined function to convert the arch policy strings to an array of
+ima_entry_rules.  The memory can then be freed after loading a custom
+policy.
+- Rename ima_get_arch_policy to arch_get_ima_policy.
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- arch/x86/kernel/Makefile       |  2 ++
- arch/x86/kernel/ima_arch.c     | 27 +++++++++++++++++++++++++++
- include/linux/ima.h            |  8 ++++++++
- security/integrity/ima/Kconfig |  8 ++++++++
- 4 files changed, 45 insertions(+)
- create mode 100644 arch/x86/kernel/ima_arch.c
+ include/linux/ima.h                 |  5 ++
+ security/integrity/ima/ima_policy.c | 95 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 100 insertions(+)
 
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 02d6f5cf4e7..f3e1d76ed9b 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -149,3 +149,5 @@ ifeq ($(CONFIG_X86_64),y)
- 	obj-$(CONFIG_MMCONF_FAM10H)	+= mmconf-fam10h_64.o
- 	obj-y				+= vsmp_64.o
- endif
-+
-+obj-$(CONFIG_IMA_ARCH_POLICY) += ima_arch.o
-diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
-new file mode 100644
-index 00000000000..5eb10e29db0
---- /dev/null
-+++ b/arch/x86/kernel/ima_arch.c
-@@ -0,0 +1,27 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Copyright (C) 2018 IBM Corporation
-+ */
-+#include <linux/efi.h>
-+#include <linux/ima.h>
-+
-+extern struct boot_params boot_params;
-+
-+/* arch rules for audit and user mode */
-+static const char * const sb_arch_rules[] = {
-+#ifdef CONFIG_KEXEC_VERIFY_SIG
-+	"appraise func=KEXEC_ORIG_KERNEL_CHECK appraise_type=imasig",
-+#else
-+	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
-+#endif /* CONFIG_KEXEC_VERIFY_SIG */
-+	"measure func=KEXEC_KERNEL_CHECK",
-+	NULL
-+};
-+
-+const char * const *arch_get_ima_policy(void)
-+{
-+	if (efi_enabled(EFI_BOOT) &&
-+	    (boot_params.secure_boot == efi_secureboot_mode_enabled))
-+		return sb_arch_rules;
-+	return NULL;
-+}
 diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 7fd272f0b1f..495fa290b14 100644
+index 84806b54b50..7fd272f0b1f 100644
 --- a/include/linux/ima.h
 +++ b/include/linux/ima.h
-@@ -30,10 +30,14 @@ extern void ima_post_path_mknod(struct dentry *dentry);
+@@ -30,6 +30,11 @@ extern void ima_post_path_mknod(struct dentry *dentry);
  extern void ima_add_kexec_buffer(struct kimage *image);
  #endif
- 
-+#if defined(CONFIG_IMA_ARCH_POLICY) && defined(CONFIG_X86)
-+extern const char * const *arch_get_ima_policy(void);
-+#else
- static inline const char * const *arch_get_ima_policy(void)
- {
- 	return NULL;
- }
-+#endif
- 
- #else
- static inline int ima_bprm_check(struct linux_binprm *bprm)
-@@ -77,6 +81,10 @@ static inline void ima_post_path_mknod(struct dentry *dentry)
- 	return;
- }
  
 +static inline const char * const *arch_get_ima_policy(void)
 +{
 +	return NULL;
 +}
- #endif /* CONFIG_IMA */
- 
- #ifndef CONFIG_IMA_KEXEC
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 13b446328dd..18de132bbda 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -157,6 +157,14 @@ config IMA_APPRAISE
- 	  <http://linux-ima.sourceforge.net>
- 	  If unsure, say N.
- 
-+config IMA_ARCH_POLICY
-+	bool "Enable loading an IMA architecture specific policy"
-+	depends on IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
-+	default n
-+	help
-+	  This option enables loading an IMA architecture specific policy
-+	  based on run time secure boot flags.
 +
- config IMA_APPRAISE_BUILD_POLICY
- 	bool "IMA build time configured policy rules"
- 	depends on IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
+ #else
+ static inline int ima_bprm_check(struct linux_binprm *bprm)
+ {
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 8c9499867c9..b47db4d7fea 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -20,6 +20,7 @@
+ #include <linux/rculist.h>
+ #include <linux/genhd.h>
+ #include <linux/seq_file.h>
++#include <linux/ima.h>
+ 
+ #include "ima.h"
+ 
+@@ -193,6 +194,10 @@ static struct ima_rule_entry secure_boot_rules[] __ro_after_init = {
+ 	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
+ };
+ 
++/* An array of architecture specific rules */
++struct ima_rule_entry **arch_policy_rules __ro_after_init;
++struct ima_rule_entry *arch_policy_entry __ro_after_init;
++
+ static LIST_HEAD(ima_default_rules);
+ static LIST_HEAD(ima_policy_rules);
+ static LIST_HEAD(ima_temp_rules);
+@@ -473,6 +478,59 @@ static int ima_appraise_flag(enum ima_hooks func)
+ 	return 0;
+ }
+ 
++static int ima_parse_rule(char *rule, struct ima_rule_entry *entry);
++
++/*
++ * ima_init_arch_policy - convert arch policy strings to rules
++ *
++ * Return number of arch specific rules.
++ */
++static int __init ima_init_arch_policy(void)
++{
++	const char * const *arch_rules;
++	const char * const *rules;
++	int arch_entries = 0;
++	int i = 0;
++
++	arch_rules = arch_get_ima_policy();
++	if (!arch_rules) {
++		pr_info("No architecture policy rules.\n");
++		return arch_entries;
++	}
++
++	/* Get number of rules */
++	for (rules = arch_rules; *rules != NULL; rules++)
++		arch_entries++;
++
++	arch_policy_rules = kcalloc(arch_entries + 1,
++				    sizeof(*arch_policy_rules), GFP_KERNEL);
++	if (!arch_policy_rules)
++		return 0;
++
++	arch_policy_entry = kcalloc(arch_entries + 1,
++				    sizeof(*arch_policy_entry), GFP_KERNEL);
++
++	/* Convert arch policy string rules to struct ima_rule_entry format */
++	for (rules = arch_rules, i = 0; *rules != NULL; rules++) {
++		char rule[255];
++		int result;
++
++		result = strlcpy(rule, *rules, sizeof(rule));
++
++		INIT_LIST_HEAD(&arch_policy_entry[i].list);
++		result = ima_parse_rule(rule, &arch_policy_entry[i]);
++		if (result) {
++			pr_warn("Skipping unknown architecture policy rule: %s\n", rule);
++			memset(&arch_policy_entry[i], 0,
++			       sizeof(*arch_policy_entry));
++			continue;
++		}
++		arch_policy_rules[i] = &arch_policy_entry[i];
++		i++;
++	}
++	return i;
++}
++
+ /**
+  * ima_init_policy - initialize the default measure rules.
+  *
+@@ -482,6 +540,7 @@ static int ima_appraise_flag(enum ima_hooks func)
+ void __init ima_init_policy(void)
+ {
+ 	int i, measure_entries, appraise_entries, secure_boot_entries;
++	int arch_policy_entries;
+ 
+ 	/* if !ima_policy set entries = 0 so we load NO default rules */
+ 	measure_entries = ima_policy ? ARRAY_SIZE(dont_measure_rules) : 0;
+@@ -507,6 +566,33 @@ void __init ima_init_policy(void)
+ 		break;
+ 	}
+ 
++	/*
++	 * Based on runtime secure boot flags, insert arch specific measurement
++	 * and appraise rules requiring file signatures for both the initial
++	 * and custom policies, prior to other appraise rules.
++	 * (Highest priority)
++	 */
++	arch_policy_entries = ima_init_arch_policy();
++	if (arch_policy_entries > 0)
++		pr_info("Adding %d architecture policy rules.\n", arch_policy_entries);
++	for (i = 0; i < arch_policy_entries; i++) {
++		struct ima_rule_entry *entry;
++
++		list_add_tail(&arch_policy_rules[i]->list, &ima_default_rules);
++
++		entry = kmemdup(&arch_policy_entry[i], sizeof(*entry),
++				GFP_KERNEL);
++		if (!entry) {
++			WARN_ONCE(true, "Failed adding architecture rules to custom policy\n");
++			continue;
++		}
++
++		INIT_LIST_HEAD(&entry->list);
++		list_add_tail(&entry->list, &ima_policy_rules);
++		if (entry->action == APPRAISE)
++			build_ima_appraise |= ima_appraise_flag(entry->func);
++	}
++
+ 	/*
+ 	 * Insert the builtin "secure_boot" policy rules requiring file
+ 	 * signatures, prior to any other appraise rules.
+@@ -576,6 +662,15 @@ void ima_update_policy(void)
+ 	if (ima_rules != policy) {
+ 		ima_policy_flag = 0;
+ 		ima_rules = policy;
++
++		/*
++		 * IMA architecture specific policy rules are specified
++		 * as strings and converted to an array of ima_entry_rules
++		 * on boot.  After loading a custom policy, free the
++		 * architecture specific rules stored as an array.
++		 */
++		kfree(arch_policy_rules);
++		kfree(arch_policy_entry);
+ 	}
+ 	ima_update_policy_flag();
+ }
 -- 
 2.14.4
