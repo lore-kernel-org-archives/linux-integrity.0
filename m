@@ -1,57 +1,118 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:17105 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389093AbeG1DuP (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 27 Jul 2018 23:50:15 -0400
-Date: Sat, 28 Jul 2018 10:24:41 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Eric Richter <erichte@linux.vnet.ibm.com>
-Cc: kbuild-all@01.org,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37674 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731815AbeGZAqP (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 25 Jul 2018 20:46:15 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6PNTQPW133165
+        for <linux-integrity@vger.kernel.org>; Wed, 25 Jul 2018 19:32:16 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kex69sh97-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 25 Jul 2018 19:32:15 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <erichte@linux.vnet.ibm.com>;
+        Thu, 26 Jul 2018 00:32:13 +0100
+From: Eric Richter <erichte@linux.vnet.ibm.com>
+To: linux-integrity <linux-integrity@vger.kernel.org>
+Cc: linux-security-module <linux-security-module@vger.kernel.org>,
         linux-efi <linux-efi@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         David Howells <dhowells@redhat.com>,
         Seth Forshee <seth.forshee@canonical.com>,
         Justin Forbes <jforbes@redhat.com>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Subject: Re: [PATCH 1/4] ima: add support for arch specific policies
-Message-ID: <201807281011.3IfKWpyx%fengguang.wu@intel.com>
-References: <20180725233200.761-2-erichte@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180725233200.761-2-erichte@linux.vnet.ibm.com>
+        Nayna Jain <nayna@linux.vnet.ibm.com>
+Subject: [PATCH 2/4] ima: add support for external setting of ima_appraise
+Date: Wed, 25 Jul 2018 18:31:58 -0500
+In-Reply-To: <20180725233200.761-1-erichte@linux.vnet.ibm.com>
+References: <20180725233200.761-1-erichte@linux.vnet.ibm.com>
+Message-Id: <20180725233200.761-3-erichte@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Nayna,
+From: Nayna Jain <nayna@linux.vnet.ibm.com>
 
-Thank you for the patch! Perhaps something to improve:
+The "ima_appraise" mode defaults to enforcing, unless configured to
+allow the boot command line "ima_appraise" option. This patch allows
+the "ima_appraise" mode to be defined based on the arch setting.
 
-[auto build test WARNING on integrity/next-integrity]
-[also build test WARNING on next-20180727]
-[cannot apply to v4.18-rc6]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Eric-Richter/ima-add-support-for-arch-specific-policies/20180728-072442
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> security/integrity/ima/ima_policy.c:198:23: sparse: symbol 'arch_policy_rules' was not declared. Should it be static?
->> security/integrity/ima/ima_policy.c:199:23: sparse: symbol 'arch_policy_entry' was not declared. Should it be static?
-   include/linux/slab.h:631:13: sparse: undefined identifier '__builtin_mul_overflow'
-   include/linux/slab.h:631:13: sparse: not a function <noident>
-   include/linux/slab.h:631:13: sparse: call with no type!
-
-Please review and possibly fold the followup patch.
-
+Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ security/integrity/ima/ima.h          |  5 +++++
+ security/integrity/ima/ima_appraise.c | 11 +++++++++--
+ security/integrity/ima/ima_policy.c   |  5 ++++-
+ 3 files changed, 18 insertions(+), 3 deletions(-)
+
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 588e4813370..6e5fa7c4280 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -248,6 +248,7 @@ enum hash_algo ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value,
+ 				 int xattr_len);
+ int ima_read_xattr(struct dentry *dentry,
+ 		   struct evm_ima_xattr_data **xattr_value);
++void set_ima_appraise(char *str);
+ 
+ #else
+ static inline int ima_appraise_measurement(enum ima_hooks func,
+@@ -290,6 +291,10 @@ static inline int ima_read_xattr(struct dentry *dentry,
+ 	return 0;
+ }
+ 
++static inline void set_ima_appraise(char *str)
++{
++}
++
+ #endif /* CONFIG_IMA_APPRAISE */
+ 
+ /* LSM based policy rules require audit */
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 8bd7a0733e5..e061613bcb8 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -18,15 +18,22 @@
+ 
+ #include "ima.h"
+ 
+-static int __init default_appraise_setup(char *str)
++void set_ima_appraise(char *str)
+ {
+-#ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
+ 	if (strncmp(str, "off", 3) == 0)
+ 		ima_appraise = 0;
+ 	else if (strncmp(str, "log", 3) == 0)
+ 		ima_appraise = IMA_APPRAISE_LOG;
+ 	else if (strncmp(str, "fix", 3) == 0)
+ 		ima_appraise = IMA_APPRAISE_FIX;
++	else if (strncmp(str, "enforce", 7) == 0)
++		ima_appraise = IMA_APPRAISE_ENFORCE;
++}
++
++static int __init default_appraise_setup(char *str)
++{
++#ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
++	set_ima_appraise(str);
+ #endif
+ 	return 1;
+ }
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index b47db4d7fea..402e5bd1093 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -573,8 +573,11 @@ void __init ima_init_policy(void)
+ 	 * (Highest priority)
+ 	 */
+ 	arch_policy_entries = ima_init_arch_policy();
+-	if (arch_policy_entries > 0)
++	if (arch_policy_entries > 0) {
+ 		pr_info("Adding %d architecture policy rules.\n", arch_policy_entries);
++		set_ima_appraise("enforce");
++	}
++
+ 	for (i = 0; i < arch_policy_entries; i++) {
+ 		struct ima_rule_entry *entry;
+ 
+-- 
+2.14.4
