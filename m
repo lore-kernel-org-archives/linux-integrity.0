@@ -1,74 +1,59 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36224 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726636AbeHBSGe (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 2 Aug 2018 14:06:34 -0400
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20180723111432.26830-1-udit.agarwal@nxp.com>
-References: <20180723111432.26830-1-udit.agarwal@nxp.com>
-To: Udit Agarwal <udit.agarwal@nxp.com>
-Cc: dhowells@redhat.com, zohar@linux.vnet.ibm.com, jmorris@namei.org,
-        serge@hallyn.com, denkenz@gmail.com,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sahil.malhotra@nxp.com,
-        ruchika.gupta@nxp.com, horia.geanta@nxp.com, aymen.sghaier@nxp.com
-Subject: Re: [PATCH v2 1/2] security/keys/secure_key: Adds the secure key support based on CAAM.
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Date: Thu, 02 Aug 2018 17:14:41 +0100
-Message-ID: <8060.1533226481@warthog.procyon.org.uk>
+Received: from aserp2130.oracle.com ([141.146.126.79]:41244 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726876AbeG3TwT (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 30 Jul 2018 15:52:19 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6UIEHtx017533
+        for <linux-integrity@vger.kernel.org>; Mon, 30 Jul 2018 18:16:05 GMT
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2kge0cwvv9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-integrity@vger.kernel.org>; Mon, 30 Jul 2018 18:16:05 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6UIG54b027696
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-integrity@vger.kernel.org>; Mon, 30 Jul 2018 18:16:05 GMT
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6UIG5Wi012845
+        for <linux-integrity@vger.kernel.org>; Mon, 30 Jul 2018 18:16:05 GMT
+From: Chuck Lever <chuck.lever@oracle.com>
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: update on IMA on NFS
+Message-Id: <1FDC76D1-6F2F-446D-9A96-E65606ED8C7B@oracle.com>
+Date: Mon, 30 Jul 2018 14:16:03 -0400
+To: linux-integrity@vger.kernel.org
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Udit Agarwal <udit.agarwal@nxp.com> wrote:
+I gave a 15 minute presentation on IMA on NFS during the nfsv4 Working Group
+meeting at IETF 102 a couple of weeks ago. Meeting material is here:
 
-> +==========
-> +Secure Key
-> +==========
-> +
-> +Secure key is the new type added to kernel key ring service.
-> +Secure key is a symmetric type key of minimum length 32 bytes
-> +and with maximum possible length to be 128 bytes. It is produced
-> +in kernel using the CAAM crypto engine. Userspace can only see
-> +the blob for the corresponding key. All the blobs are displayed
-> +or loaded in hex ascii.
+  https://datatracker.ietf.org/meeting/102/session/nfsv4
 
-To echo Mimi, this sounds suspiciously like it should have a generic
-interface, not one that's specifically tied to one piece of hardware -
-particularly if it's named with generic "secure".
+The latest draft describing Integrity Measurement on NFS is here:
 
-Can you convert this into a "symmetric" type and make the backend pluggable?
+  https://datatracker.ietf.org/doc/draft-ietf-nfsv4-integrity-measurement/
 
-> +	keyctl add secure <name> "new <keylen>" <ring>
-> +	keyctl load secure <name> "load <hex_blob>" <ring>
-> +	keyctl print <key_id>
+Comments, questions, or corrections to my understanding are welcome.
 
-There isn't a "keyctl load" that I recall.  Did you mean "keyctl add"?
 
-I wonder if it makes sense to actually add "create" and "load" interfaces for
-asymmetric and symmetric key types to aid in key management, e.g.:
+The largest issue with the proposal remains how to construct a normative
+Internet standard for IMA on NFS without a published standard for IMA itself.
+I've been asked to inquire with the IMA community whether there is any
+interest in or a plan for creating a standard around IMA on local filesystems?
 
-	keyctl create symmetric.caam foo_munging_key len=128 @s
-	keyctl load symmetric.caam foo_munging_key id=xxx @s
-	keyctl create asymmetric.tpm foo_signing_key "rsa len=4096" @s
-	keyctl load asymmetric.tpm foo_signing_key id=xxx @s
 
-Note the subtype extension added to the type.  This is something I've been
-meaning to add to add_key() and request_key().  It means that we don't have to
-try and divine the nature of the key from the payload, but can leave the
-payload as just the data if data is needed.
+Next, as I move forward with a prototype of IMA on NFS, I'd like to better
+understand the considerations for how an NFS server should authorize read
+access to file and attribute hashes, and how it should authorize updates to
+these hashes. Is there writing or code I can look at in local file systems
+that can give me insight about what kind of protection an NFS server needs
+to provide for this metadata?
 
-This might look something like:
 
-	key = keyctl_create(const char *type, const char *desc,
-			    const char *data, key_serial_t keyring);
-	key = keyctl_load(const char *type, const char *desc,
-			  const char *id, key_serial_t keyring);
-
-There would probably need to be a way to query the ID of a created key also,
-so that you can then pass that ID back to the loader.
-
-	keyctl_get_id(key_serial_t key, char *buf, size_t buf_size);
-
-David
+--
+Chuck Lever
