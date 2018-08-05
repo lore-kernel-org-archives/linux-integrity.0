@@ -1,18 +1,18 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:44588 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726271AbeHEKTs (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:39258 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726166AbeHEJ3d (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 5 Aug 2018 06:19:48 -0400
-Received: by mail-io0-f195.google.com with SMTP id q19-v6so8472524ioh.11
-        for <linux-integrity@vger.kernel.org>; Sun, 05 Aug 2018 01:16:04 -0700 (PDT)
+        Sun, 5 Aug 2018 05:29:33 -0400
+Received: by mail-it0-f65.google.com with SMTP id g141-v6so14052580ita.4
+        for <linux-integrity@vger.kernel.org>; Sun, 05 Aug 2018 00:25:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180805032119.20485-2-jlee@suse.com>
-References: <20180805032119.20485-1-jlee@suse.com> <20180805032119.20485-2-jlee@suse.com>
+In-Reply-To: <20180805032119.20485-1-jlee@suse.com>
+References: <20180805032119.20485-1-jlee@suse.com>
 From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Sun, 5 Aug 2018 10:16:03 +0200
-Message-ID: <CAKv+Gu-zMbPQe6UtrDxoOX6Csfu9xturNVs2rrhd7c=NRzghVg@mail.gmail.com>
-Subject: Re: [PATCH 1/6] x86/KASLR: make getting random long number function public
+Date: Sun, 5 Aug 2018 09:25:56 +0200
+Message-ID: <CAKv+Gu81vEGNggcWv1NyPJsMeK0HRi_DanH2+Z_4metoNG=txA@mail.gmail.com>
+Subject: Re: [PATCH 0/6][RFC] Add EFI secure key to key retention service
 To: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-efi <linux-efi@vger.kernel.org>,
@@ -33,10 +33,36 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
+Hello Chun,yi,
+
 On 5 August 2018 at 05:21, Lee, Chun-Yi <joeyli.kernel@gmail.com> wrote:
-> Separating the functions for getting random long number from KASLR
-> to x86 library, then it can be used to generate random long for
-> EFI root key.
+> When secure boot is enabled, only signed EFI binary can access
+> EFI boot service variable before ExitBootService. Which means that
+> the EFI boot service variable is secure.
+>
+
+No it, isn't, and this is a very dangerous assumption to make.
+
+'Secure' means different things to different people. 'Secure boot' is
+a misnomer, since it is too vague: it should be called 'authenticated
+boot', and the catch is that authentication using public-key crypto
+does not involve secrets at all. The UEFI variable store was not
+designed with confidentiality in mind, and assuming [given the
+reputation of EFI on the implementation side] that you can use it to
+keep secrets is rather unwise imho.
+
+> This patch set add functions to EFI boot stub to generate a 512-bit
+> random number that it can be used as a root key for encryption and
+> authentication. This root key will be kept in EFI boot service variable.
+> EFI boot stub will read and transfer ERK (efi root key) to kernel.
+>
+> At runtime, the ERK can be used to encrypted/authentication other
+> random number to generate EFI secure key. The EFI secure key can be
+> a new master key type for encrypted key. It's useful for hibernation
+> or evm.
+>
+> Here is the proof of concept for using EFI secure key in hibernation:
+>   https://github.com/joeyli/linux-s4sign/commit/6311e97038974bc5de8121769fb4d34470009566
 >
 > Cc: Kees Cook <keescook@chromium.org>
 > Cc: Thomas Gleixner <tglx@linutronix.de>
@@ -51,273 +77,42 @@ On 5 August 2018 at 05:21, Lee, Chun-Yi <joeyli.kernel@gmail.com> wrote:
 > Cc: David Howells <dhowells@redhat.com>
 > Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
 > Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
-
-Not my call to make perhaps, but i'm nacking it anyway.
-
-Playing games with counters and other low entropy inputs may have been
-acceptable for kaslr on x86 when it was first introduced, but using it
-to generate symmetric keys is really out of the question.
-
-On modern x86, i suppose rdrand is a given, and these days we have
-EFI_RNG_PROTOCOL as well (and an open source UEFI driver for ChasoKey,
-btw - perhaps we should try and get MS to sign that?), although I'm
-not sure whether any x86 support this out of the box now.
-
-BTW using low entropy inputs on top of rdrand or EFI_RNG_PROTOCOL is
-fine, if you're paranoid, but if you have neither of those, you should
-really fail the call.
-
-
-> ---
->  arch/x86/boot/compressed/kaslr.c | 21 -------------
->  arch/x86/boot/compressed/misc.c  | 17 ++++++++++
->  arch/x86/boot/compressed/misc.h  |  6 ++++
->  arch/x86/lib/kaslr.c             | 61 ++---------------------------------
->  arch/x86/lib/random.c            | 68 ++++++++++++++++++++++++++++++++++++++++
->  5 files changed, 93 insertions(+), 80 deletions(-)
+>
+> Lee, Chun-Yi (6):
+>   x86/KASLR: make getting random long number function public
+>   efi: the function transfers status to string
+>   efi: generate efi root key in EFI boot stub
+>   key: add EFI secure key type
+>   key: add EFI secure key as a master key type
+>   key: enforce the secure boot checking when loading efi root key
+>
+>  Documentation/admin-guide/kernel-parameters.txt |   6 +
+>  arch/x86/boot/compressed/Makefile               |   1 +
+>  arch/x86/boot/compressed/cpuflags.c             |   2 +-
+>  arch/x86/boot/compressed/eboot.c                |   2 +
+>  arch/x86/boot/compressed/efi_root_key.c         | 212 +++++++
+>  arch/x86/boot/compressed/kaslr.c                |  21 -
+>  arch/x86/boot/compressed/misc.c                 |  17 +
+>  arch/x86/boot/compressed/misc.h                 |  12 +-
+>  arch/x86/include/asm/efi.h                      |  13 +
+>  arch/x86/include/uapi/asm/bootparam.h           |   1 +
+>  arch/x86/kernel/setup.c                         |   3 +
+>  arch/x86/lib/kaslr.c                            |  61 +-
+>  arch/x86/lib/random.c                           |  68 +++
+>  drivers/firmware/efi/Kconfig                    |  31 +
+>  drivers/firmware/efi/Makefile                   |   1 +
+>  drivers/firmware/efi/efi-secure-key.c           | 748 ++++++++++++++++++++++++
+>  include/keys/efi-type.h                         |  57 ++
+>  include/linux/efi.h                             |  40 ++
+>  include/linux/kernel.h                          |   3 +-
+>  kernel/panic.c                                  |   1 +
+>  security/keys/encrypted-keys/encrypted.c        |  10 +
+>  21 files changed, 1226 insertions(+), 84 deletions(-)
+>  create mode 100644 arch/x86/boot/compressed/efi_root_key.c
 >  create mode 100644 arch/x86/lib/random.c
+>  create mode 100644 drivers/firmware/efi/efi-secure-key.c
+>  create mode 100644 include/keys/efi-type.h
 >
-> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
-> index b87a7582853d..0f40d2178ebc 100644
-> --- a/arch/x86/boot/compressed/kaslr.c
-> +++ b/arch/x86/boot/compressed/kaslr.c
-> @@ -33,13 +33,11 @@
->  #include "error.h"
->  #include "../string.h"
->
-> -#include <generated/compile.h>
->  #include <linux/module.h>
->  #include <linux/uts.h>
->  #include <linux/utsname.h>
->  #include <linux/ctype.h>
->  #include <linux/efi.h>
-> -#include <generated/utsrelease.h>
->  #include <asm/efi.h>
->
->  /* Macros used by the included decompressor code below. */
-> @@ -57,25 +55,6 @@ extern unsigned long get_cmd_line_ptr(void);
->  /* Used by PAGE_KERN* macros: */
->  pteval_t __default_kernel_pte_mask __read_mostly = ~0;
->
-> -/* Simplified build-specific string for starting entropy. */
-> -static const char build_str[] = UTS_RELEASE " (" LINUX_COMPILE_BY "@"
-> -               LINUX_COMPILE_HOST ") (" LINUX_COMPILER ") " UTS_VERSION;
-> -
-> -static unsigned long rotate_xor(unsigned long hash, const void *area,
-> -                               size_t size)
-> -{
-> -       size_t i;
-> -       unsigned long *ptr = (unsigned long *)area;
-> -
-> -       for (i = 0; i < size / sizeof(hash); i++) {
-> -               /* Rotate by odd number of bits and XOR. */
-> -               hash = (hash << ((sizeof(hash) * 8) - 7)) | (hash >> 7);
-> -               hash ^= ptr[i];
-> -       }
-> -
-> -       return hash;
-> -}
-> -
->  /* Attempt to create a simple but unpredictable starting entropy. */
->  static unsigned long get_boot_seed(void)
->  {
-> diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
-> index 8dd1d5ccae58..eb0ab9cad4e4 100644
-> --- a/arch/x86/boot/compressed/misc.c
-> +++ b/arch/x86/boot/compressed/misc.c
-> @@ -426,3 +426,20 @@ void fortify_panic(const char *name)
->  {
->         error("detected buffer overflow");
->  }
-> +
-> +#if CONFIG_RANDOMIZE_BASE
-> +unsigned long rotate_xor(unsigned long hash, const void *area,
-> +                       size_t size)
-> +{
-> +       size_t i;
-> +       unsigned long *ptr = (unsigned long *)area;
-> +
-> +       for (i = 0; i < size / sizeof(hash); i++) {
-> +               /* Rotate by odd number of bits and XOR. */
-> +               hash = (hash << ((sizeof(hash) * 8) - 7)) | (hash >> 7);
-> +               hash ^= ptr[i];
-> +       }
-> +
-> +       return hash;
-> +}
-> +#endif
-> diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
-> index a423bdb42686..957f327ad83c 100644
-> --- a/arch/x86/boot/compressed/misc.h
-> +++ b/arch/x86/boot/compressed/misc.h
-> @@ -70,6 +70,8 @@ int cmdline_find_option_bool(const char *option);
->
->
->  #if CONFIG_RANDOMIZE_BASE
-> +#include <generated/compile.h>
-> +#include <generated/utsrelease.h>
->  /* kaslr.c */
->  void choose_random_location(unsigned long input,
->                             unsigned long input_size,
-> @@ -78,6 +80,10 @@ void choose_random_location(unsigned long input,
->                             unsigned long *virt_addr);
->  /* cpuflags.c */
->  bool has_cpuflag(int flag);
-> +/* Simplified build-specific string for starting entropy. */
-> +static const char build_str[] = UTS_RELEASE " (" LINUX_COMPILE_BY "@"
-> +               LINUX_COMPILE_HOST ") (" LINUX_COMPILER ") " UTS_VERSION;
-> +unsigned long rotate_xor(unsigned long hash, const void *area, size_t size);
->  #else
->  static inline void choose_random_location(unsigned long input,
->                                           unsigned long input_size,
-> diff --git a/arch/x86/lib/kaslr.c b/arch/x86/lib/kaslr.c
-> index 79778ab200e4..29ed9bfde5a5 100644
-> --- a/arch/x86/lib/kaslr.c
-> +++ b/arch/x86/lib/kaslr.c
-> @@ -26,67 +26,10 @@
->  #define get_boot_seed() kaslr_offset()
->  #endif
->
-> -#define I8254_PORT_CONTROL     0x43
-> -#define I8254_PORT_COUNTER0    0x40
-> -#define I8254_CMD_READBACK     0xC0
-> -#define I8254_SELECT_COUNTER0  0x02
-> -#define I8254_STATUS_NOTREADY  0x40
-> -static inline u16 i8254(void)
-> -{
-> -       u16 status, timer;
-> -
-> -       do {
-> -               outb(I8254_PORT_CONTROL,
-> -                    I8254_CMD_READBACK | I8254_SELECT_COUNTER0);
-> -               status = inb(I8254_PORT_COUNTER0);
-> -               timer  = inb(I8254_PORT_COUNTER0);
-> -               timer |= inb(I8254_PORT_COUNTER0) << 8;
-> -       } while (status & I8254_STATUS_NOTREADY);
-> -
-> -       return timer;
-> -}
-> +#include "random.c"
->
->  unsigned long kaslr_get_random_long(const char *purpose)
->  {
-> -#ifdef CONFIG_X86_64
-> -       const unsigned long mix_const = 0x5d6008cbf3848dd3UL;
-> -#else
-> -       const unsigned long mix_const = 0x3f39e593UL;
-> -#endif
-> -       unsigned long raw, random = get_boot_seed();
-> -       bool use_i8254 = true;
-> -
-> -       debug_putstr(purpose);
->         debug_putstr(" KASLR using");
-> -
-> -       if (has_cpuflag(X86_FEATURE_RDRAND)) {
-> -               debug_putstr(" RDRAND");
-> -               if (rdrand_long(&raw)) {
-> -                       random ^= raw;
-> -                       use_i8254 = false;
-> -               }
-> -       }
-> -
-> -       if (has_cpuflag(X86_FEATURE_TSC)) {
-> -               debug_putstr(" RDTSC");
-> -               raw = rdtsc();
-> -
-> -               random ^= raw;
-> -               use_i8254 = false;
-> -       }
-> -
-> -       if (use_i8254) {
-> -               debug_putstr(" i8254");
-> -               random ^= i8254();
-> -       }
-> -
-> -       /* Circular multiply for better bit diffusion */
-> -       asm(_ASM_MUL "%3"
-> -           : "=a" (random), "=d" (raw)
-> -           : "a" (random), "rm" (mix_const));
-> -       random += raw;
-> -
-> -       debug_putstr("...\n");
-> -
-> -       return random;
-> +       return get_random_long(purpose);
->  }
-> diff --git a/arch/x86/lib/random.c b/arch/x86/lib/random.c
-> new file mode 100644
-> index 000000000000..f2fe6a784c98
-> --- /dev/null
-> +++ b/arch/x86/lib/random.c
-> @@ -0,0 +1,68 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <asm/io.h>
-> +#include <asm/archrandom.h>
-> +
-> +#define I8254_PORT_CONTROL     0x43
-> +#define I8254_PORT_COUNTER0    0x40
-> +#define I8254_CMD_READBACK     0xC0
-> +#define I8254_SELECT_COUNTER0  0x02
-> +#define I8254_STATUS_NOTREADY  0x40
-> +static inline u16 i8254(void)
-> +{
-> +       u16 status, timer;
-> +
-> +       do {
-> +               outb(I8254_PORT_CONTROL,
-> +                    I8254_CMD_READBACK | I8254_SELECT_COUNTER0);
-> +               status = inb(I8254_PORT_COUNTER0);
-> +               timer  = inb(I8254_PORT_COUNTER0);
-> +               timer |= inb(I8254_PORT_COUNTER0) << 8;
-> +       } while (status & I8254_STATUS_NOTREADY);
-> +
-> +       return timer;
-> +}
-> +
-> +static unsigned long get_random_long(const char *purpose)
-> +{
-> +#ifdef CONFIG_X86_64
-> +       const unsigned long mix_const = 0x5d6008cbf3848dd3UL;
-> +#else
-> +       const unsigned long mix_const = 0x3f39e593UL;
-> +#endif
-> +       unsigned long raw, random = get_boot_seed();
-> +       bool use_i8254 = true;
-> +
-> +       debug_putstr(purpose);
-> +
-> +       if (has_cpuflag(X86_FEATURE_RDRAND)) {
-> +               debug_putstr(" RDRAND");
-> +               if (rdrand_long(&raw)) {
-> +                       random ^= raw;
-> +                       use_i8254 = false;
-> +               }
-> +       }
-> +
-> +       if (has_cpuflag(X86_FEATURE_TSC)) {
-> +               debug_putstr(" RDTSC");
-> +               raw = rdtsc();
-> +
-> +               random ^= raw;
-> +               use_i8254 = false;
-> +       }
-> +
-> +       if (use_i8254) {
-> +               debug_putstr(" i8254");
-> +               random ^= i8254();
-> +       }
-> +
-> +       /* Circular multiply for better bit diffusion */
-> +       asm(_ASM_MUL "%3"
-> +           : "=a" (random), "=d" (raw)
-> +           : "a" (random), "rm" (mix_const));
-> +       random += raw;
-> +
-> +       debug_putstr("...\n");
-> +
-> +       return random;
-> +}
 > --
 > 2.13.6
 >
