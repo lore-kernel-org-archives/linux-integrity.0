@@ -1,27 +1,20 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:34002 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726666AbeHEVFp (ORCPT
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:55608 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726362AbeHETwu (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 5 Aug 2018 17:05:45 -0400
-Received: by mail-it0-f68.google.com with SMTP id d70-v6so10356562ith.1
-        for <linux-integrity@vger.kernel.org>; Sun, 05 Aug 2018 12:00:14 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <20180805163139.GB27062@linux-l9pv.suse>
-References: <20180805032119.20485-1-jlee@suse.com> <CAKv+Gu81vEGNggcWv1NyPJsMeK0HRi_DanH2+Z_4metoNG=txA@mail.gmail.com>
- <20180805163139.GB27062@linux-l9pv.suse>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Sun, 5 Aug 2018 21:00:13 +0200
-Message-ID: <CAKv+Gu8eW3Q0DhXN38qZ1nDJz8Hz7wJcWvLRSW3xm1qVt54AaA@mail.gmail.com>
+        Sun, 5 Aug 2018 15:52:50 -0400
+Message-ID: <1533491246.4087.1.camel@HansenPartnership.com>
 Subject: Re: [PATCH 0/6][RFC] Add EFI secure key to key retention service
-To: joeyli <jlee@suse.com>
-Cc: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-efi <linux-efi@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
         keyrings@vger.kernel.org,
         linux-integrity <linux-integrity@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
+        "Lee, Chun-Yi" <jlee@suse.com>, Kees Cook <keescook@chromium.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>,
@@ -31,55 +24,63 @@ Cc: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
         Ryan Chen <yu.chen.surf@gmail.com>,
         David Howells <dhowells@redhat.com>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>
+Date: Sun, 05 Aug 2018 10:47:26 -0700
+In-Reply-To: <CAKv+Gu81vEGNggcWv1NyPJsMeK0HRi_DanH2+Z_4metoNG=txA@mail.gmail.com>
+References: <20180805032119.20485-1-jlee@suse.com>
+         <CAKv+Gu81vEGNggcWv1NyPJsMeK0HRi_DanH2+Z_4metoNG=txA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 5 August 2018 at 18:31, joeyli <jlee@suse.com> wrote:
-> On Sun, Aug 05, 2018 at 09:25:56AM +0200, Ard Biesheuvel wrote:
->> Hello Chun,yi,
->>
->> On 5 August 2018 at 05:21, Lee, Chun-Yi <joeyli.kernel@gmail.com> wrote:
->> > When secure boot is enabled, only signed EFI binary can access
->> > EFI boot service variable before ExitBootService. Which means that
->> > the EFI boot service variable is secure.
->> >
->>
->> No it, isn't, and this is a very dangerous assumption to make.
->>
->> 'Secure' means different things to different people. 'Secure boot' is
->> a misnomer, since it is too vague: it should be called 'authenticated
->> boot', and the catch is that authentication using public-key crypto
->> does not involve secrets at all. The UEFI variable store was not
->> designed with confidentiality in mind, and assuming [given the
->> reputation of EFI on the implementation side] that you can use it to
->> keep secrets is rather unwise imho.
->>
->
-> I agreed with you. Especially I can't refute the part of EFI
-> implementation, manufacturers can not be fully trusted.
->
-> I am thinking a case... Some machines provide setup mode. If user
-> earses all manufacturer's reloaded keys and only enrolls their own
-> key. Which means that user fully controls the authentication
-> environment. Then the EFI boot service varible can be trusted by
-> the user.
+On Sun, 2018-08-05 at 09:25 +0200, Ard Biesheuvel wrote:
+> Hello Chun,yi,
+> 
+> On 5 August 2018 at 05:21, Lee, Chun-Yi <joeyli.kernel@gmail.com>
+> wrote:
+> > When secure boot is enabled, only signed EFI binary can access
+> > EFI boot service variable before ExitBootService. Which means that
+> > the EFI boot service variable is secure.
+> > 
+> 
+> No it, isn't, and this is a very dangerous assumption to make.
+> 
+> 'Secure' means different things to different people. 'Secure boot' is
+> a misnomer, since it is too vague: it should be called 'authenticated
+> boot', and the catch is that authentication using public-key crypto
+> does not involve secrets at all.
 
-This has nothing to do with trust but everything to do with confidentiality.
+Hang on, let's not throw the baby out with the bathwater here.
 
-*Nothing* in the UEFI variable store stack has been designed or
-implemented with confidentiality in mind. The contents of EFI
-variables are readable in the clear from the SPI flash. Code that
-handles variable store reads may leave unsanitized buffers behind. We
-have efivarfs that needs to be modified to hide 'secret' variables,
-but also, to kzfree() every allocation that is used in handling
-varstore access etc etc.
+The design of "secure boot" is to create a boot time environment where
+only trusted code may execute.  We rely on this trust guarantee when we
+pivot from the EFI to the MoK root of trust in shim.
 
+The reason we in Linux trust this guarantee is that it pertains to the
+boot environment only, so any violation would allow Windows boot to be
+compromised as well and we trust Microsoft's Business interests in
+securing windows far enough to think this would be dealt with very
+severely and it's an outcome the ODMs (who also add secure boot keys)
+are worried enough about to be very careful.
 
+The rub (and this is where I'm agreeing with Ard) is that any use case
+we come up with where a violation wouldn't cause a problem in windows
+is a use case where we cannot rely on the guarantee because Microsoft
+no longer has a strong business interest in policing it.  This, for
+instance, is why we don't populate the Linux trusted keyrings with the
+secure boot keys (we may trust them in the boot environment where
+compromise would be shared with windows but we can't trust them in the
+Linux OS environment where it wouldn't).  So this means we have to be
+very careful coming up with uses for secure boot that aren't strictly
+rooted in the guarantee as enforced by the business interests of
+Microsoft and the ODMs.
 
-> But this case is too strict for normal user.
->
-> Thanks for your review and comments. I will think more about your
-> suggestions.
->
-> Joey Lee
+>  The UEFI variable store was not designed with confidentiality in
+> mind, and assuming [given the reputation of EFI on the implementation
+> side] that you can use it to keep secrets is rather unwise imho.
+
+Agree completely here: Microsoft doesn't use UEFI variables for
+confidentiality, so we shouldn't either.  If you want confidentiality,
+use a TPM (like Microsoft does for the bitlocker key).
+
+James
