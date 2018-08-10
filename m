@@ -1,74 +1,56 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:14467 "EHLO mga06.intel.com"
+Received: from mga07.intel.com ([134.134.136.100]:23011 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725754AbeHKAQb (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 10 Aug 2018 20:16:31 -0400
-Date: Sat, 11 Aug 2018 00:44:48 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Harlan Lieberman-Berg <harlan@dds.mil>
-Cc: Peter Huewe <peterhuewe@gmx.de>, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: Fwd: PROBLEM: tpm_cpg can't request region with AMD/Dell fTPM
-Message-ID: <20180810214433.GA15044@linux.intel.com>
-References: <CAO-sURTngN_mnpJp9rvutpDfz80Nq4K8JOH4fnZG2NaTafkx+g@mail.gmail.com>
- <CAO-sURTs1dc_5iY+b34Jqj4hxZFdUj9LZxTWhDdvqM8AbEqMAw@mail.gmail.com>
- <20180810165735.GT4692@linux.intel.com>
+        id S1726982AbeHJVqD (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 10 Aug 2018 17:46:03 -0400
+Subject: Re: [PATCH v4 2/2] tpm: add support for nonblocking operation
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <153367365951.18015.11320230309813817454.stgit@tstruk-mobl1.jf.intel.com>
+ <153367366969.18015.14742040525393494830.stgit@tstruk-mobl1.jf.intel.com>
+ <20180810174320.GV4692@linux.intel.com>
+ <ad02d89f-31d3-7d9f-4580-daf759c8d837@intel.com>
+ <1533926908.3143.6.camel@HansenPartnership.com>
+ <f49367fa-5af0-695e-342f-03a4bdcf35f2@intel.com>
+ <1533927647.3143.7.camel@HansenPartnership.com>
+From: Tadeusz Struk <tadeusz.struk@intel.com>
+Message-ID: <468c5651-6883-b6f1-64a4-6c6c2cade6de@intel.com>
+Date: Fri, 10 Aug 2018 12:14:32 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180810165735.GT4692@linux.intel.com>
+In-Reply-To: <1533927647.3143.7.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Aug 10, 2018 at 07:57:35PM +0300, Jarkko Sakkinen wrote:
-> On Tue, Aug 07, 2018 at 02:43:10PM -0400, Harlan Lieberman-Berg wrote:
-> > (Resending as it seems to have been spamfiltered out from the ml;
-> > sorry Peter, Jarkko for the duplicate)
+On 08/10/2018 12:00 PM, James Bottomley wrote:
+> On Fri, 2018-08-10 at 11:56 -0700, Tadeusz Struk wrote:
+>> On 08/10/2018 11:48 AM, James Bottomley wrote:
+>>> On Fri, 2018-08-10 at 11:21 -0700, Tadeusz Struk wrote:
+>>>> and the feedback I got from Jason was:
+>>>>
+>>>> "I wonder if it is worth creating this when the first file is
+>>>> opened.. Lots of systems have TPMs but few use the userspace.."
+>>>>
+>>>> so I changed this to allocate the WQ on first open. I think it
+>>>> makes sense, but I leave it to you to decide.
+>>>
+>>> If the reason is to not create a wq unless it's needed, shouldn't
+>>> the condition actually be first open with flag O_NONBLOCK?
+>>>
+>>
+>> Not really because one can do:
+>>
+>> int fd = open("/dev/tpm0", O_RDWR);
+>> fcntl(fd, F_SETFL, O_NONBLOCK);
 > 
-> I came on Monday from four week leave and have been basically been
-> catching up with my emails :-) I'll look into this next week with
-> time.
+> so move the condition to first need to queue ...
+> 
 
-The error message is saying that someone else has reserved the resource
-(-EBUSY).
-
-This looks odd:
-
-e78bf000-e7bbefff : ACPI Non-volatile Storage
-  e7bb6000-e7bb9fff : MSFT0101:00
-  e7bba000-e7bbdfff : MSFT0101:00
-
-Why would be TPM registers mapped inside ACPI NV?
-
-I would *guess* that what is happening is that perhaps drivers/acpi/nvs.c
-maps the address space. This looks like a firmware bug, and such that we
-cannot do anything about it.
-
-I'm having a weird issue with the ACPI tables:
-
-$ acpixtract acpidump.txt
-
-Intel ACPI Component Architecture
-ACPI Binary Table Extraction Utility version 20180105
-Copyright (c) 2000 - 2018 Intel Corporation
-
-  DSDT -   31048 bytes written (0x00007948) - dsdt.dat
-  SSDT -     349 bytes written (0x0000015D) - ssdt1.dat
-  SSDT -   18086 bytes written (0x000046A6) - ssdt2.dat
-  SSDT -    5225 bytes written (0x00001469) - ssdt3.dat
-  SSDT -    1082 bytes written (0x0000043A) - ssdt4.dat
-  SSDT -    1017 bytes written (0x000003F9) - ssdt5.dat
-  SSDT -    5369 bytes written (0x000014F9) - ssdt6.dat
-
-$ iasl -d *.dat   
-
-Intel ACPI Component Architecture
-ASL+ Optimizing Compiler/Disassembler version 20180105
-Copyright (c) 2000 - 2018 Intel Corporation
-
-Input file dsdt.dat, Length 0x7948 (31048) bytes
-Table [DSDT] is too long for file - needs: 0x815D, remaining in file: 0x7948
-Could not get ACPI tables from dsdt.dat, AE_BAD_HEADER
-
-This has not happened to me before.
-
-/Jarkko
+That would work, even though this is not how this is usually done.
+The first open looks like the sweet spot between module init
+and first need to queue.
+Thanks,
+-- 
+Tadeusz
