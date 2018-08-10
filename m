@@ -1,37 +1,51 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:58576 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726420AbeHJVTe (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 10 Aug 2018 17:19:34 -0400
-Message-ID: <1533926908.3143.6.camel@HansenPartnership.com>
-Subject: Re: [PATCH v4 2/2] tpm: add support for nonblocking operation
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Tadeusz Struk <tadeusz.struk@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Received: from mga01.intel.com ([192.55.52.88]:50006 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726420AbeHJVOk (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 10 Aug 2018 17:14:40 -0400
+Date: Fri, 10 Aug 2018 21:43:31 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Tadeusz Struk <tadeusz.struk@intel.com>
 Cc: flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 10 Aug 2018 11:48:28 -0700
-In-Reply-To: <ad02d89f-31d3-7d9f-4580-daf759c8d837@intel.com>
+Subject: Re: [PATCH v4 1/2] tpm: add ptr to the tpm_space struct to file_priv
+Message-ID: <20180810184331.GA5294@linux.intel.com>
 References: <153367365951.18015.11320230309813817454.stgit@tstruk-mobl1.jf.intel.com>
-         <153367366969.18015.14742040525393494830.stgit@tstruk-mobl1.jf.intel.com>
-         <20180810174320.GV4692@linux.intel.com>
-         <ad02d89f-31d3-7d9f-4580-daf759c8d837@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+ <153367366462.18015.12915462188877575543.stgit@tstruk-mobl1.jf.intel.com>
+ <20180810172700.GU4692@linux.intel.com>
+ <2bacb3d8-3897-e147-252f-c49de9e7806b@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <2bacb3d8-3897-e147-252f-c49de9e7806b@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 2018-08-10 at 11:21 -0700, Tadeusz Struk wrote:
-> and the feedback I got from Jason was:
+On Fri, Aug 10, 2018 at 11:05:17AM -0700, Tadeusz Struk wrote:
+> On 08/10/2018 10:27 AM, Jarkko Sakkinen wrote:
+> > On Tue, Aug 07, 2018 at 01:27:44PM -0700, Tadeusz Struk wrote:
+> >> Add a ptr to struct tpm_space to the file_priv to have an easy
+> >> access to it in the async job without the need to allocate memory.
+> >> This also allows to consolidate of the write operations for
+> >> the two interfaces.
+> > 
+> > I think the 2nd premise should be the priority and the first premise should
+> > be removed as it is not needed in any possible way to justify the
+> > change.
 > 
-> "I wonder if it is worth creating this when the first file is
-> opened.. Lots of systems have TPMs but few use the userspace.."
-> 
-> so I changed this to allocate the WQ on first open. I think it makes
-> sense, but I leave it to you to decide.
+> Jarkko,
+> The main reason why the pointer to tpm_space struct was added to the
+> file_priv was to have access to space in the async job when it is enqueued
+> via the /dev/tpm<N> interface. Currently it is only available in tpmrm_priv.
+> Otherwise I would need to introduce yet another struct what would consist of
+> a ptr file_priv and a ptr to tpm_space and allocate it on every enqueue.
+> Much easier was to to it this way. The consolidation was only a side effect
+> of this so I think the description is correct.
+> Thanks,
+> -- 
+> Tadeusz
 
-If the reason is to not create a wq unless it's needed, shouldn't the
-condition actually be first open with flag O_NONBLOCK?
+The less dependencies a commit has more easy it is for me pick up. Here
+the consodilation is enough to accept the commit but with the current
+commit message I cannot apply it without accepting the whole patch set.
 
-James
+/Jarkko
