@@ -1,93 +1,76 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga17.intel.com ([192.55.52.151]:55729 "EHLO mga17.intel.com"
+Received: from mga04.intel.com ([192.55.52.120]:1991 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728540AbeHMXQg (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 13 Aug 2018 19:16:36 -0400
-Subject: [PATCH v5 0/2] tpm: add support for nonblocking operation
-From: Tadeusz Struk <tadeusz.struk@intel.com>
-To: jarkko.sakkinen@linux.intel.com
+        id S1727549AbeHLNRj (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 12 Aug 2018 09:17:39 -0400
+Date: Sun, 12 Aug 2018 13:39:55 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Tadeusz Struk <tadeusz.struk@intel.com>
 Cc: flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tadeusz.struk@intel.com
-Date: Mon, 13 Aug 2018 13:32:48 -0700
-Message-ID: <153419236870.8189.15489652816512817246.stgit@tstruk-mobl1.jf.intel.com>
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] tpm: add support for nonblocking operation
+Message-ID: <20180812103955.GA4813@linux.intel.com>
+References: <153367365951.18015.11320230309813817454.stgit@tstruk-mobl1.jf.intel.com>
+ <153367366969.18015.14742040525393494830.stgit@tstruk-mobl1.jf.intel.com>
+ <20180810174320.GV4692@linux.intel.com>
+ <ad02d89f-31d3-7d9f-4580-daf759c8d837@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <ad02d89f-31d3-7d9f-4580-daf759c8d837@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-The TCG SAPI specification [1] defines a set of functions, which allow
-applications to use the TPM device in either blocking or non-blocking fashion.
-Each command defined by the specification has a corresponding
-Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
-together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
-mode of operation. Currently the TPM driver supports only blocking calls,
-which doesn't allow asynchronous IO operations.
-This patch changes it and adds support for nonblocking write and a new poll
-function to enable applications, which want to take advantage of this feature.
-The new functionality can be tested using standard TPM tools implemented
-in [2], together with modified TCTI from [3], and an example application
-by Philip Tricca [4]. Here is a short description from Philip:
+On Fri, Aug 10, 2018 at 11:21:14AM -0700, Tadeusz Struk wrote:
+> On 08/10/2018 10:43 AM, Jarkko Sakkinen wrote:
+> >> +static struct workqueue_struct *tpm_dev_wq;
+> > A naming contradiction with tpm_common_read() and tpm_common_write(). To
+> > sort that up I would suggest adding a commit to the patch set that
+> > renames these functions as tpm_dev_common_read() and
+> > tpm_dev_common_write() and use the name tpm_common_dev_wq here.
+> > 
+> 
+> Currently we have: tpm_open(), tpm_write(), tpm_release() in tpm-dev.c
+> tpmrm_open(), tpmrm_read(), tpmrm_write(), tpmrm_release() in tpmrm-dev.c
+> tpm_common_open(), tpm_common_read(), tpm_common_write(), tpm_common_release() in tpm-dev-common.c
+> 
+> I think that's pretty consistent. Do you want me to rename all of them to tpm_dev_*()?
+> I don't see any value in doing this. What about if I just rename: 
+> tpm_dev_wq_lock to tpm_common_wq_lock, and tpm_dev_wq to tpm_common_wq?
 
-"The example application `glib-tss2-event` uses a glib main event loop
-to create an RSA 2048 primary key in the TPM2 NULL hierarchy while
-using a glib timer event to time the operation. A GSource object is
-used to generate an event when the FD underlying the tss2 function
-call has data ready. While the application waits for an event indicating
-that the CreatePrimary operation is complete, it counts timer events
-that occur every 100ms. Once the CreatePrimary operation completes the
-number of timer events that occurred is used to make a rough calculation
-of the elapsed time. This value is then printed to the console.
-This takes ~300 lines of C code and requires no management or
-synchronization of threads. The glib GMainContext is "just a poll()
-loop" according to the glib documentation here:
+That is good enough. At least it is consistent.
 
-https://developer.gnome.org/programming-guidelines/stable/main-contexts.html.en
+> >> +static DEFINE_MUTEX(tpm_dev_wq_lock);
+> > This is an unacceptable way to do it, Rather add:
+> > 
+> > int __init  tpm_dev_common_init(void)
+> > {
+> > 	tpm_dev_common_wq = alloc_workqueue("tpm_dev_wq", WQ_MEM_RECLAIM, 0);
+> > 	if (!tpm_dev_common_wq)
+> > 		return -ENOMEM;
+> > 
+> > 	return 0;
+> > }
+> > 
+> > and call this in the driver initialization.
+> > 
+> That was the way it was implemented in v1 https://patchwork.kernel.org/patch/10442125/
+> 
+> See: static int __init tpm_dev_common_init(void)
+> 
+> and the feedback I got from Jason was:
+> 
+> "I wonder if it is worth creating this when the first file is
+> opened.. Lots of systems have TPMs but few use the userspace.."
+> 
+> so I changed this to allocate the WQ on first open. I think it makes sense,
+> but I leave it to you to decide.
 
-and so supporting 'poll' is the easiest way to integrate with glib /
-gtk+. This is true of any other event system that relies on 'poll'
-instead of worker threads."
+Without a question I would go with tpm_common_init() for stability (one
+less point of failure in open) and simplicity (no need for a locking
+scheme).
 
-[1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
-[2] https://github.com/tpm2-software/tpm2-tools
-[3] https://github.com/tstruk/tpm2-tss/tree/async
-[4] https://github.com/flihp/glib-tss2-async-example
+> Tadeusz,
+> -- 
+> Tadeusz
 
----
-Changes in v5:
-- Changed the workqueue allocation time back from the first user interface
-  open to module init.
-
-Changes in v4:
-- Changed the way buffer_mutex is handled in nonblocking mode so that
-  it is not held when write() returns to user space.
-
-Changes in v3:
-- Fixed problem reported by 0-dey kbuild test robot around __exitcall.
-  It complained because there is a module_exit() in another file already.
-- Added info on example application from Philip
-
-Changes in v2:
-- Split the change into two separate patches. First patch adds a pointer
-  to the space to the struct file_priv to have access to it from the async job.
-  This is to avoid memory allocations on every write call. Now everything
-  what's needed is in the file_priv struct.
-- Renamed the 'work' member of the timer to avoid confusion.
-  Now there are 'timeout_work' and 'async_work'.
-- Removed the global wait queue and moved it to file_priv.
-- Only creating the work queue when the first file is opened.
-
-Tadeusz Struk (2):
-      tpm: add ptr to the tpm_space struct to file_priv
-      tpm: add support for nonblocking operation
-
- drivers/char/tpm/tpm-dev-common.c |  150 +++++++++++++++++++++++++++----------
- drivers/char/tpm/tpm-dev.c        |   22 +++--
- drivers/char/tpm/tpm-dev.h        |   19 +++--
- drivers/char/tpm/tpm-interface.c  |    1 
- drivers/char/tpm/tpm.h            |    1 
- drivers/char/tpm/tpmrm-dev.c      |   31 ++++----
- 6 files changed, 152 insertions(+), 72 deletions(-)
-
---
-TS
+/Jarkko
