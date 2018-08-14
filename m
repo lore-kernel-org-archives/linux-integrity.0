@@ -1,248 +1,181 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42676 "EHLO
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39512 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728819AbeHNUyT (ORCPT
+        by vger.kernel.org with ESMTP id S1728618AbeHNUyb (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 14 Aug 2018 16:54:19 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7EI4A4B086816
-        for <linux-integrity@vger.kernel.org>; Tue, 14 Aug 2018 14:06:00 -0400
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kv2854nft-1
+        Tue, 14 Aug 2018 16:54:31 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7EI49Ja013855
+        for <linux-integrity@vger.kernel.org>; Tue, 14 Aug 2018 14:06:12 -0400
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kv3cshqe1-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 14 Aug 2018 14:05:59 -0400
+        for <linux-integrity@vger.kernel.org>; Tue, 14 Aug 2018 14:06:12 -0400
 Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <davidj@linux.ibm.com>;
-        Tue, 14 Aug 2018 12:05:58 -0600
+        Tue, 14 Aug 2018 12:06:08 -0600
 From: David Jacobson <davidj@linux.ibm.com>
 To: linux-integrity <linux-integrity@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>
 Cc: David Jacobson <david@davidej.com>, Petr Vorel <pvorel@suze.cz>,
         David Jacobson <davidj@linux.ibm.com>
-Subject: [PATCH 2/7] evmtest: test appraisal on policy loading with signature
-Date: Tue, 14 Aug 2018 14:05:46 -0400
+Subject: [PATCH 7/7] emvtest: Add ability to run all tests
+Date: Tue, 14 Aug 2018 14:05:51 -0400
 In-Reply-To: <20180814180551.28311-1-davidj@linux.ibm.com>
 References: <20180814180551.28311-1-davidj@linux.ibm.com>
-Message-Id: <20180814180551.28311-2-davidj@linux.ibm.com>
+Message-Id: <20180814180551.28311-7-davidj@linux.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-IMA can be configured to require signatures on policies before loading
-them. This test verifies that IMA correctly validates signatures, and
-rejects policies that lack signatures or have been signed by an
-unauthorized party (i.e. certificate is not on the appropriate keyring).
+evmtest tests functionality of different IMA-Appraisal policies.
 
-This test requires root privileges in order to write to securityfs
-files.
+To simplify testing, this patch defines an evmtest config file.  This
+allows for running all tests at once, rather than invoking each test
+individually. Variables can be set once rather than specifying
+parameters at runtime on the command line.
 
 Signed-off-by: David Jacobson <davidj@linux.ibm.com>
 ---
- evmtest/Makefile.am                          |  4 +-
- evmtest/files/Notes                          | 25 ++++++
- evmtest/files/bad_privkey_ima.pem            | 16 ++++
- evmtest/files/policies/signed_policy         |  2 +
- evmtest/files/policies/unknown_signed_policy |  1 +
- evmtest/files/policies/unsigned_policy       |  1 +
- evmtest/functions/r_policy_sig.sh            | 93 ++++++++++++++++++++
- 7 files changed, 141 insertions(+), 1 deletion(-)
- create mode 100644 evmtest/files/Notes
- create mode 100644 evmtest/files/bad_privkey_ima.pem
- create mode 100644 evmtest/files/policies/signed_policy
- create mode 100644 evmtest/files/policies/unknown_signed_policy
- create mode 100644 evmtest/files/policies/unsigned_policy
- create mode 100755 evmtest/functions/r_policy_sig.sh
+ evmtest/README       | 19 +++++++++++++++--
+ evmtest/evmtest      | 51 +++++++++++++++++++++++++++++++++++++++++++-
+ evmtest/example.conf | 14 ++++++++++++
+ 3 files changed, 81 insertions(+), 3 deletions(-)
+ create mode 100644 evmtest/example.conf
 
-diff --git a/evmtest/Makefile.am b/evmtest/Makefile.am
-index 388ead1..b537e78 100644
---- a/evmtest/Makefile.am
-+++ b/evmtest/Makefile.am
-@@ -14,9 +14,11 @@ evmtest.1:
- install:
- 	install -m 755 evmtest $(bindir)
- 	install -d $(datarootdir)/evmtest/files/
-+	install -d $(datarootdir)/evmtest/files/policies
- 	install -d $(datarootdir)/evmtest/functions/
--	install -D $$(find ./files/ -not -type d)  $(datarootdir)/evmtest/files/
-+	install -D $$(find ./files/ -not -type d -not -path "./files/policies/*")  $(datarootdir)/evmtest/files/
- 	install -D ./functions/* $(datarootdir)/evmtest/functions/
-+	install -D ./files/policies/* $(datarootdir)/evmtest/files/policies/
- 	cp evmtest.1 $(datarootdir)/man/man1
- 	mandb -q
+diff --git a/evmtest/README b/evmtest/README
+index ac0c175..6f1c5c8 100644
+--- a/evmtest/README
++++ b/evmtest/README
+@@ -20,8 +20,8 @@ used to check a kernel's configuration and validate compatibility with IMA.
+ COMMANDS
+ --------
  
-diff --git a/evmtest/files/Notes b/evmtest/files/Notes
+- runtest <test name> - Run a specific test
+- runall <configuration> - Run all tests
++ runtest <test name> 	 - Run a specific test
++ runall  <configuration> - Run all tests
+ 
+ OPTIONS
+ -------
+@@ -34,7 +34,21 @@ OPTIONS
+  --vm				Validate compatibility with a virtual machine
+ 
+ 
++CONFIGURATION FILE
++------------------
++
++The `example.conf` provides a skeleton configuration file, where the only
++variable that *must* be defined is `IMA_KEY`.
++
++* `IMA_KEY` - The private key for the certificate on the IMA Trusted Keyring
+ 
++* `KBUILD_DIR` - Should point to a kernel build tree. If not provided, the test
++will use `/lib/modules/$(uname -r)/build`.
++
++* `KERN_IMAGE` - Should point towards an unsigned kernel image. If not provided,
++the test will attempt to use the running kernel.
++
++* `VERBOSE` - If set to 1, will add -v to all tests run
+ 
+ BACKGROUND
+ ----------
+@@ -42,6 +56,7 @@ The Linux kernel needs to be configured properly with a key embedded into the
+ kernel and loaded onto the `.builtin_trusted_keys` keyring at boot in order to
+ run evmtest.
+ 
++
+ === 1. Confirming the kernel is properly configured with IMA enabled.
+ 
+ A number of Kconfig options need to be configured to enable IMA and permit
+diff --git a/evmtest/evmtest b/evmtest/evmtest
+index dfe39a9..74c829c 100755
+--- a/evmtest/evmtest
++++ b/evmtest/evmtest
+@@ -17,7 +17,7 @@ fi
+ 
+ source $EVMDIR/files/common.sh
+ usage (){
+-	echo "Usage: evmtest [[runtest] <test_name>] [options]"
++	echo "Usage: evmtest [[runtest|runall] <test_name|config>] [options]"
+ 	echo ""
+ 	echo "Tests may be called directly by cd'ing to the evmtest directory:"
+ 	echo "$ cd $EVMDIR/functions"
+@@ -69,6 +69,55 @@ elif [[ "$1" == "runtest" ]]; then
+ 		runtest $@
+ 		exit $?
+ 	fi
++elif [[ "$1" == "runall" ]]; then
++	if [[ -z $2 || ! -e $2 ]]; then
++		echo "evmtest runall <config file>"
++		echo "[!] Please provide a config file"
++		exit 1
++	fi
++	source $2 # Load in config
++	if [[ $VERBOSE -eq 1 ]]; then
++		V="-v"
++	fi
++
++	# Key is not optional
++	if [[ -z $IMA_KEY ]]; then
++		echo "[*] Please correct your config file"
++		exit 1
++	fi
++
++	EVMTEST_require_root
++	FAIL=0
++	echo "[*] Running tests..."
++	# 1
++	$EVMDIR/functions/r_env_validate.sh -r $V
++
++	# 2
++	if [[ -z $KERN_IMAGE ]]; then
++		$EVMDIR/functions/r_kexec_sig.sh -k $IMA_KEY $V
++	else
++		$EVMDIR/functions/r_kexec_sig.sh -k $IMA_KEY -i $KERN_IMAGE $V
++	fi
++	FAIL=$((FAIL+$?))
++	# 3
++	if [[ -z $KBUILD_DIR ]]; then
++		$EVMDIR/functions/r_kmod_sig.sh -k $IMA_KEY $V
++	else
++		$EVMDIR/functions/r_kmod_sig.sh -b $KBUILD_DIR -k $IMA_KEY $V
++	fi
++	FAIL=$((FAIL+$?))
++	# 4
++	$EVMDIR/functions/r_policy_sig.sh -k $IMA_KEY $V
++	FAIL=$((FAIL+$?))
++	# 5
++	$EVMDIR/functions/r_validate_boot_record.sh $V
++	FAIL=$((FAIL+$?))
++	# 6
++	$EVMDIR/functions/r_xattr_preserve.sh $V
++	FAIL=$((FAIL+$?))
++	echo "..."
++	echo "[*] TESTS PASSED: $((6-FAIL))"
++	echo "[*] TESTS FAILED: $FAIL"
+ else
+ 	usage
+ fi
+diff --git a/evmtest/example.conf b/evmtest/example.conf
 new file mode 100644
-index 0000000..6b75263
+index 0000000..fd1c8fe
 --- /dev/null
-+++ b/evmtest/files/Notes
-@@ -0,0 +1,25 @@
-+This file contains a description of the contents of this directory.
++++ b/evmtest/example.conf
+@@ -0,0 +1,14 @@
++# This is an example config file
++# There are three variables that can be set when using evmtest runall
 +
-+1. bad_privkey_ima.pem
-+
-+This file was generated such that its corresponding public key could be placed
-+on the IMA Trusted Keyring, however, it has not. Therefore, any policy (or file)
-+signed by this key cannot be verified, and is untrusted.
-+
-+2. basic_mod.ko
-+
-+This is a kernel module that logs (to dmesg) the syscall that was used to load
-+it.
-+
-+3. common.sh
-+
-+This file contains useful functions and variables for evmtest scripts.
-+
-+4. load_policy.sh
-+
-+This is a script to load policies. The first time this is called, it will
-+replace the existing policy. Subsequent calls will append the running policy.
-+
-+5. policies/
-+
-+This is a directory that contains IMA policies with self explanatory names.
-diff --git a/evmtest/files/bad_privkey_ima.pem b/evmtest/files/bad_privkey_ima.pem
-new file mode 100644
-index 0000000..dcc0e24
---- /dev/null
-+++ b/evmtest/files/bad_privkey_ima.pem
-@@ -0,0 +1,16 @@
-+-----BEGIN PRIVATE KEY-----
-+MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAMOnki6OKMHExpH1
-+IWgUlPWWSbsDpW1lpqXMj0/ZWo9xU5W2xZC53TVArUGOImQ5PcMNkw1VcHhKbFKO
-+jYT0gEE0Sv+VbePiEnhUheFOWUxNNFE3DVQaOpBN0OzsUCSGX9RKIIwkIAwJkvWA
-+MHzR4ZPQGGM9hMJKhEvlTG4PP96LAgMBAAECgYBKVKVCrptpUhqmZNx2MCuPSbNl
-+KzNz5kRzhM2FZmvzRvicTj2siBA0JQgteZQzQ1PlgIi3bhg2ev/ANYwqUMFQWZv9
-+zm5d4P7Zsdyle15MDTSrQIaroeb1nbfNvaB0L4D4Inv0p6ksyIFp7TR5MLVenC5k
-+bxfESVWVPDseiAFKUQJBAPQ/x3LmnT0RiMeX6quCGAON7DGpV5KFwL97luWO6vH+
-+qZ2W1/J0UxTbruv7rA+tj3ZXpdNOxfmq+JStY0jrJV0CQQDNEUqomnA183rX0dv8
-+MWyOPmX0Z9SMSTRvflNRW85Bzbosq68uLTq3qOBj+td9zUlopsLpJlfF0Vc+moff
-+uq0HAkEAi/Sz47oTZXfTqZL6TBZ6jibXrck8PeBYhyBZYebX55ymMn/J88sGBFCx
-+VdVbTYyFRSmKAqADv0FhuUf1OUZMnQJAOayjUsgcxw+zfP+I32UHIvppslOBc/Mi
-+zDi7Niab2+YAdo/StSoDWaQld/kUok0aWFSOfQRLq1c1MmZD0KiwAQJANY0LopqG
-+pxACc4/QawxtBoV1a8j5Zui8LZPRtKwjkA30Nq8fOufzMuBeJIlLap45uD1xC7St
-+bsPWG5+uz18e5w==
-+-----END PRIVATE KEY-----
-diff --git a/evmtest/files/policies/signed_policy b/evmtest/files/policies/signed_policy
-new file mode 100644
-index 0000000..87828f0
---- /dev/null
-+++ b/evmtest/files/policies/signed_policy
-@@ -0,0 +1,2 @@
-+measure func=POLICY_CHECK
-+appraise func=POLICY_CHECK appraise_type=imasig
-diff --git a/evmtest/files/policies/unknown_signed_policy b/evmtest/files/policies/unknown_signed_policy
-new file mode 100644
-index 0000000..1f8f8f4
---- /dev/null
-+++ b/evmtest/files/policies/unknown_signed_policy
-@@ -0,0 +1 @@
-+audit func=POLICY_CHECK
-diff --git a/evmtest/files/policies/unsigned_policy b/evmtest/files/policies/unsigned_policy
-new file mode 100644
-index 0000000..1f8f8f4
---- /dev/null
-+++ b/evmtest/files/policies/unsigned_policy
-@@ -0,0 +1 @@
-+audit func=POLICY_CHECK
-diff --git a/evmtest/functions/r_policy_sig.sh b/evmtest/functions/r_policy_sig.sh
-new file mode 100755
-index 0000000..7462c0a
---- /dev/null
-+++ b/evmtest/functions/r_policy_sig.sh
-@@ -0,0 +1,93 @@
-+#!/bin/bash
-+TEST="r_policy_sig"
-+# Author: David Jacobson <davidj@linux.ibm.com>
-+
-+ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )/.."
-+source $ROOT/files/common.sh
-+
++#Set this to 1 for verbose output
 +VERBOSE=0
-+POLICY_LOAD=$ROOT/files/load_policy.sh
-+# This test validates that IMA measures and appraises policies.
-+usage() {
-+	echo ""
-+	echo "policy_sig -k <key> [-vh]"
-+	echo ""
-+	echo "  This test must be run as root"
-+	echo ""
-+	echo "  This test verifies that IMA prevents the loading of unsigned"
-+	echo "	policies"
-+	echo ""
-+	echo "  -k,--key    	The key for the certificate on the IMA keyring"
-+	echo "  -h,--help       Display this help message"
-+	echo "  -v,--verbose    Verbose logging"
-+}
++# Path to the private key for the IMA Trusted Keyring
++# This is required
++IMA_KEY=/path/to/your/ima_key
 +
-+TEMP=`getopt -o 'k:hv' -l 'key:,help,verbose' -n 'r_policy_sig' -- "$@"`
-+eval set -- "$TEMP"
++# If this is not provided, tests will run but attempt to copy the running kernel
++KERN_IMAGE=/path/to/unsigned/kernel_image
 +
-+while true ; do
-+	case "$1" in
-+	-h|--help) usage; exit 0; shift;;
-+	-k|--key) IMA_KEY=$2; shift 2;;
-+	-v|--verbose) VERBOSE=1; shift;;
-+	--) shift; break;;
-+	*) echo "[*] Unrecognized option $1"; exit 1 ;;
-+	esac
-+done
-+
-+if [[ -z $IMA_KEY ]]; then
-+	usage
-+	exit 1
-+fi
-+
-+EVMTEST_require_root
-+
-+begin
-+v_out "Attempting to read current policy..."
-+cat $EVMTEST_SECFS/ima/policy &>> /dev/null # Don't need to output it
-+
-+if [[ $? != 0 ]]; then
-+	fail "Could not read running policy - did you run env_validate?"
-+fi
-+v_out "Policy is readable"
-+
-+v_out "Signing policy with provided key..."
-+evmctl ima_sign -f $ROOT/files/policies/signed_policy -k $IMA_KEY
-+if [[ $? != 0 ]]; then
-+	fail "Failed to sign policy - check key file"
-+fi
-+
-+v_out "Loading policy..."
-+$POLICY_LOAD signed_policy &>> /dev/null
-+if [[ $? != 0 ]]; then
-+	fail "Failed to write policy - did you run env_validate?"
-+fi
-+v_out "Loaded"
-+
-+v_out "Attempting to load unsigned policy..."
-+$POLICY_LOAD unsigned_policy &>> /dev/null
-+if [[ $? != 1 ]]; then
-+	fail "Failed to reject unsigned policy"
-+fi
-+
-+v_out "IMA Blocked unsigned policy"
-+
-+v_out "Signing policy with invalid key..."
-+evmctl ima_sign -f $ROOT/files/policies/unknown_signed_policy \
-+	-k $ROOT/files/bad_privkey_ima.pem &>> /dev/null
-+v_out "Attempting to load policy signed by invalid key..."
-+$POLICY_LOAD unknown_signed_policy &>> /dev/null
-+
-+if [[ $? != 1 ]]; then
-+	fail "Failed to reject policy signed by unknown key"
-+fi
-+
-+v_out "IMA blocked policy signed by unknown key"
-+
-+v_out "Removing security.ima attribute from policies..."
-+setfattr -x security.ima $ROOT/files/policies/unsigned_policy &>> /dev/null
-+setfattr -x security.ima $ROOT/files/policies/unknown_signed_policy \
-+	&>> /dev/null
-+v_out "Done"
-+
-+passed
++# If this is not defined, tests will try to find build tree
++KBUILD_DIR=/path/to/kernel/build/tree
 -- 
 2.17.1
