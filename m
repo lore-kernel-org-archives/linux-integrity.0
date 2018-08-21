@@ -1,17 +1,17 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53978 "EHLO mx1.redhat.com"
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59578 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727031AbeHUTUD (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 21 Aug 2018 15:20:03 -0400
-Subject: [PATCH 22/23] TPMLIB: Provide call for TPM_FlushSpecific
+        id S1727031AbeHUTT5 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 21 Aug 2018 15:19:57 -0400
+Subject: [PATCH 21/23] TPMLIB: Implement call to TPM_LoadKey2
 From: David Howells <dhowells@redhat.com>
 To: denkenz@gmail.com, jarkko.sakkinen@linux.intel.com,
         jejb@linux.vnet.ibm.com
 Cc: keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
         tpmdd-devel@lists.sourceforge.net,
         linux-security-module@vger.kernel.org
-Date: Tue, 21 Aug 2018 16:59:18 +0100
-Message-ID: <153486715863.13066.9507446322086735862.stgit@warthog.procyon.org.uk>
+Date: Tue, 21 Aug 2018 16:59:11 +0100
+Message-ID: <153486715192.13066.16960521772592007978.stgit@warthog.procyon.org.uk>
 In-Reply-To: <153486700916.13066.12870860668352070081.stgit@warthog.procyon.org.uk>
 References: <153486700916.13066.12870860668352070081.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
@@ -19,98 +19,145 @@ Content-Type: text/plain; charset="utf-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
+Implement a function to invoke TPM_LoadKey2
 
+Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- drivers/char/tpm/tpm-library.c |   31 +++++++++++++++++++++++++++++++
- include/linux/tpm.h            |   17 +++++++++++++++++
- include/linux/tpm_command.h    |    1 +
- 3 files changed, 49 insertions(+)
+ drivers/char/tpm/tpm-library.c |   93 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/tpm.h            |    7 +++
+ include/linux/tpm_command.h    |    1 
+ 3 files changed, 101 insertions(+)
 
 diff --git a/drivers/char/tpm/tpm-library.c b/drivers/char/tpm/tpm-library.c
-index d279243ccc00..27e993f0b0b7 100644
+index 3413abeb3635..d279243ccc00 100644
 --- a/drivers/char/tpm/tpm-library.c
 +++ b/drivers/char/tpm/tpm-library.c
-@@ -1110,6 +1110,37 @@ out:
+@@ -1017,6 +1017,99 @@ out:
  }
- EXPORT_SYMBOL_GPL(tpm_load_key2);
+ EXPORT_SYMBOL_GPL(tpm_create_wrap_key);
  
 +/**
-+ * tpm_flush_specific - Tell the TPM to discard a handle and associated resources
++ * tpm_load_key2 - Load a key and decrypt it
 + * @chip: The chip to use
-+ * @handle: The handle to discard
-+ * @handle_type: The type of handle
++ * @tb: Large scratch buffer for I/O
++ * @parent_type: Type of entity attached to @parent_handle
++ * @parent_handle: TPM-resident key used to encrypt
++ * @parent_auth: Parent authorisation HMAC key
++ * @wrapped_key: The wrapped key
++ * @_key_handle: The TPM's handle on the key
++ *
++ * Have the TPM decrypt a key and load it into its memory.  The TPM then
++ * returns a handle to the key that we can use in other operations.
++ *
++ * AUTH1 is used for sealing key.
 + */
-+int tpm_flush_specific(struct tpm_chip *chip,
-+		       uint32_t handle, enum tpm_resource_type handle_type)
++int tpm_load_key2(struct tpm_chip *chip,
++		  enum tpm_entity_type parent_type,
++		  uint32_t parent_handle,
++		  const unsigned char *parent_auth,
++		  const struct tpm_wrapped_key *wrapped_key,
++		  uint32_t *_key_handle)
 +{
++	struct tpm_osapsess sess;
++	struct tpm_digests *td;
 +	struct tpm_buf *tb;
++	unsigned char cont;
++	__be32 ordinal_be;
 +	int ret;
 +
++	kenter("");
++
 +	/* alloc some work space */
-+	tb = kmalloc(sizeof(*tb), GFP_KERNEL);
++	tb = kmalloc(sizeof(*tb) + sizeof(*td), GFP_KERNEL);
 +	if (!tb)
 +		return -ENOMEM;
++	td = (void *)tb + sizeof(*tb);
++
++	/* Get the encryption session */
++	ret = tpm_create_osap(chip, tb, &sess,
++			      parent_auth, parent_type, parent_handle);
++	if (ret < 0)
++		goto out;
++	dump_sess(&sess);
++
++	/* Set up the parameters we will be sending */
++	ret = tpm_gen_odd_nonce(chip, &td->ononce);
++	if (ret < 0)
++		goto out;
++
++	/* calculate authorization HMAC value */
++	ordinal_be = cpu_to_be32(TPM_ORD_LOADKEY2);
++	cont = 0;
++	ret = TSS_authhmac(td->pubauth, sess.secret, SHA1_DIGEST_SIZE,
++			   &sess.enonce, &td->ononce, cont,
++			   /* 1S */ sizeof(__be32), &ordinal_be,
++			   /* 2S */ wrapped_key->data_len, wrapped_key->data,
++			   0, NULL);
++	if (ret < 0)
++		goto out;
 +
 +	/* build and send the TPM request packet */
 +	INIT_BUF(tb);
-+	store16(tb, TPM_TAG_RQU_COMMAND);
-+	store32(tb, TPM_DATA_OFFSET + 8);
-+	store32(tb, TPM_ORD_FLUSHSPECIFIC);
-+	store32(tb, handle);
-+	store32(tb, handle_type);
++	store16(tb, TPM_TAG_RQU_AUTH1_COMMAND);
++	store32(tb, TPM_DATA_OFFSET + 4 + wrapped_key->data_len + 45);
++	store32(tb, TPM_ORD_LOADKEY2);
++	store32(tb, parent_handle);
++	store_s(tb, wrapped_key->data, wrapped_key->data_len);
++	store32(tb, sess.handle);
++	store_s(tb, td->ononce.data, TPM_NONCE_SIZE);
++	store_8(tb, cont);
++	store_s(tb, td->pubauth, SHA1_DIGEST_SIZE);
 +
-+	ret = tpm_send_dump(chip, tb, "flushing handle");
++	ret = tpm_send_dump(chip, tb, "loading key");
++	if (ret < 0)
++		goto out;
++
++	/* Check the HMAC in the response */
++	ret = TSS_checkhmac1(tb, ordinal_be, &td->ononce,
++			     sess.secret, SHA1_DIGEST_SIZE,
++			     0, NULL);
++	if (ret < 0)
++		goto out;
++
++	*_key_handle = LOAD32(tb);
++	ret = 0;
++
++out:
 +	kfree(tb);
++	kleave(" = %d [%08x]", ret, *_key_handle);
 +	return ret;
 +}
-+EXPORT_SYMBOL_GPL(tpm_flush_specific);
++EXPORT_SYMBOL_GPL(tpm_load_key2);
 +
  /**
   * tpm_library_use - Tell the TPM library we want to make use of it
   *
 diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 2be0decff93b..753ffd3799a1 100644
+index 0bc954ac8266..2be0decff93b 100644
 --- a/include/linux/tpm.h
 +++ b/include/linux/tpm.h
-@@ -109,6 +109,19 @@ enum tpm_entity_type {
- 	TPM_ET_RESERVED_HANDLE		= 0x40,
- };
- 
-+enum tpm_resource_type {
-+	TPM_RT_KEY			= 0x00000001,
-+	TPM_RT_AUTH			= 0x00000002,
-+	TPM_RT_HASH			= 0x00000003,
-+	TPM_RT_TRANS			= 0x00000004,
-+	TPM_RT_CONTEXT			= 0x00000005,
-+	TPM_RT_COUNTER			= 0x00000006,
-+	TPM_RT_DELEGATE			= 0x00000007,
-+	TPM_RT_DAA_TPM			= 0x00000008,
-+	TPM_RT_DAA_V0			= 0x00000009,
-+	TPM_RT_DAA_V1			= 0x0000000a,
-+};
-+
- struct tpm_buf {
- 	unsigned short len;
- 	unsigned short offset;
-@@ -154,4 +167,8 @@ extern int tpm_load_key2(struct tpm_chip *chip,
- 			 const struct tpm_wrapped_key *wrapped_key,
- 			 uint32_t *_key_handle);
- 
-+extern int tpm_flush_specific(struct tpm_chip *chip,
-+			      uint32_t handle,
-+			      enum tpm_resource_type handle_type);
+@@ -147,4 +147,11 @@ extern int tpm_create_wrap_key(struct tpm_chip *chip,
+ 			       const unsigned char *usage_auth,
+ 			       const unsigned char *migration_auth,
+ 			       struct tpm_wrapped_key **_wrapped_key);
++extern int tpm_load_key2(struct tpm_chip *chip,
++			 enum tpm_entity_type parent_type,
++			 uint32_t parent_handle,
++			 const unsigned char *parent_auth,
++			 const struct tpm_wrapped_key *wrapped_key,
++			 uint32_t *_key_handle);
 +
  #endif
 diff --git a/include/linux/tpm_command.h b/include/linux/tpm_command.h
-index 211d4ce75f67..8b52447bbee3 100644
+index 0417a3db7e8f..211d4ce75f67 100644
 --- a/include/linux/tpm_command.h
 +++ b/include/linux/tpm_command.h
-@@ -30,6 +30,7 @@ enum tpm_ordinal {
- 	TPM_ORD_READPUBEK		= 124,
- 	TPM_ORD_SAVESTATE		= 152,
- 	TPM_ORD_STARTUP			= 153,
-+	TPM_ORD_FLUSHSPECIFIC		= 186,
- };
- 
- /* Other constants */
+@@ -23,6 +23,7 @@ enum tpm_ordinal {
+ 	TPM_ORD_SEAL			= 23,
+ 	TPM_ORD_UNSEAL			= 24,
+ 	TPM_ORD_CREATEWRAPKEY		= 31,
++	TPM_ORD_LOADKEY2		= 65,
+ 	TPM_ORD_GET_RANDOM		= 70,
+ 	TPM_ORD_CONTINUE_SELFTEST	= 83,
+ 	TPM_ORD_GET_CAP			= 101,
