@@ -1,49 +1,31 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40176 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728698AbeHVOq0 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 22 Aug 2018 10:46:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58126 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726730AbeHUV47 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 21 Aug 2018 17:56:59 -0400
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20180821183108.GC25543@ziepe.ca>
+References: <20180821183108.GC25543@ziepe.ca> <153486700916.13066.12870860668352070081.stgit@warthog.procyon.org.uk> <153486703636.13066.16209594327379341518.stgit@warthog.procyon.org.uk>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: dhowells@redhat.com, denkenz@gmail.com,
+        jarkko.sakkinen@linux.intel.com, jejb@linux.vnet.ibm.com,
+        keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 04/23] TPM: Expose struct tpm_chip and related find_get and put functions
 MIME-Version: 1.0
-References: <20180814180551.28311-1-davidj@linux.ibm.com> <alpine.LRH.2.21.1808150427590.25735@namei.org>
-In-Reply-To: <alpine.LRH.2.21.1808150427590.25735@namei.org>
-From: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Date: Wed, 22 Aug 2018 14:21:43 +0300
-Message-ID: <CACE9dm8NbQK-1ATWNLAQA2GnE0Eguidghr0V2dcZW7+NN+w7OA@mail.gmail.com>
-Subject: Re: [PATCH 1/7] evmtest: Regression testing Integrity Subsystem
-To: James Morris <jmorris@namei.org>
-Cc: davidj@linux.ibm.com,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, david@davidej.com, pvorel@suze.cz
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Date: Tue, 21 Aug 2018 19:35:41 +0100
+Message-ID: <1508.1534876541@warthog.procyon.org.uk>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi,
+Jason Gunthorpe <jgg@ziepe.ca> wrote:
 
-I will have a look to patches.
+> I think this is already in the kernel .. Stephen did it.
 
-Thanks,
-Dmitry
+As I said in the cover: one or two of these patches may already be upstream.
 
-On Tue, Aug 14, 2018 at 9:34 PM James Morris <jmorris@namei.org> wrote:
->
-> On Tue, 14 Aug 2018, David Jacobson wrote:
->
-> > This patchset introduces evmtest -- a stand alone tool for regression
-> > testing IMA.
->
-> Nice!
->
-> I usually run the SELinux testsuite as a general sanity check of LSM
-> before pushing to Linus, and I'll also run this once it's merged.
->
-> --
-> James Morris
-> <jmorris@namei.org>
+It's the state of the branch I had four years ago.
 
-
-
--- 
-Thanks,
-Dmitry
+David
