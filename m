@@ -1,69 +1,42 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35396 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726826AbeHUVw4 (ORCPT
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:46692 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726861AbeHUVwZ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 21 Aug 2018 17:52:56 -0400
-Received: by mail-pf1-f193.google.com with SMTP id p12-v6so8909523pfh.2
-        for <linux-integrity@vger.kernel.org>; Tue, 21 Aug 2018 11:31:41 -0700 (PDT)
-Date: Tue, 21 Aug 2018 12:31:40 -0600
+        Tue, 21 Aug 2018 17:52:25 -0400
+Received: by mail-pl0-f67.google.com with SMTP id a4-v6so5684478plm.13
+        for <linux-integrity@vger.kernel.org>; Tue, 21 Aug 2018 11:31:10 -0700 (PDT)
+Date: Tue, 21 Aug 2018 12:31:08 -0600
 From: Jason Gunthorpe <jgg@ziepe.ca>
 To: David Howells <dhowells@redhat.com>
 Cc: denkenz@gmail.com, jarkko.sakkinen@linux.intel.com,
         jejb@linux.vnet.ibm.com, keyrings@vger.kernel.org,
         linux-integrity@vger.kernel.org, tpmdd-devel@lists.sourceforge.net,
         linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 02/23] TPM: Provide a facility for a userspace TPM
- emulator
-Message-ID: <20180821183140.GD25543@ziepe.ca>
+Subject: Re: [PATCH 04/23] TPM: Expose struct tpm_chip and related find_get
+ and put functions
+Message-ID: <20180821183108.GC25543@ziepe.ca>
 References: <153486700916.13066.12870860668352070081.stgit@warthog.procyon.org.uk>
- <153486702302.13066.15889029286852815542.stgit@warthog.procyon.org.uk>
+ <153486703636.13066.16209594327379341518.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <153486702302.13066.15889029286852815542.stgit@warthog.procyon.org.uk>
+In-Reply-To: <153486703636.13066.16209594327379341518.stgit@warthog.procyon.org.uk>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Aug 21, 2018 at 04:57:03PM +0100, David Howells wrote:
-> Provide a misc device file (/dev/tpm_emul) by which a userspace TPM emulator
-> can set up a virtual TPM device under the control of the TPM frontend.  The
-> way this works is:
-> 
->  (1) The emulator opens /dev/tpm_emul which is provided by the tpm_user
->      driver.
-> 
->  (2) tpm_user registers a TPM device and the tpm driver creates a /dev/tpmN
->      misc device for the trousers package and suchlike to access.
-> 
->  (3) The emulator sits in read() on the emulator device waiting for a command
->      to come through.
-> 
->  (4) tpm_user passes requests from /dev/tpmN to the emulator's read() call.
-> 
->  (5) The emulator processes the request.
-> 
->  (6) The emulator either write()'s the reply or calls ioctl(fd,0,0) to cancel
->      the command.
-> 
->  (7) The emulator goes back to read() to wait for the next command.
-> 
->  (8) tpm_user passes the reply back to the tpm driver which passes it back to
->      /dev/tpmN.
-> 
-> When the emulator closes /dev/tpm_emul, the TPM driver is unregistered and the
-> /dev/tpmN misc device is then removed.  Any outstanding requests are aborted
-> and -EIO will be returned from then on.  Multiple TPMs can be registered.
+On Tue, Aug 21, 2018 at 04:57:16PM +0100, David Howells wrote:
+> Expose struct tpm_chip and related find_get and put functions so that
+> TPM-using code can make sure it uses the same TPM for any related set of
+> operations.
 > 
 > Signed-off-by: David Howells <dhowells@redhat.com>
 > ---
-> 
->  drivers/char/tpm/Kconfig         |   13 +
->  drivers/char/tpm/Makefile        |    1 
->  drivers/char/tpm/tpm_user_emul.c |  672 ++++++++++++++++++++++++++++++++++++++
->  include/linux/wait.h             |   11 +
->  4 files changed, 697 insertions(+)
->  create mode 100644 drivers/char/tpm/tpm_user_emul.c
 
-This looks to duplicate the vtpm stuff...
+>  drivers/char/tpm/tpm-interface.c |   19 ++++++++++++++++---
+>  drivers/char/tpm/tpm.h           |    5 -----
+>  include/linux/tpm.h              |   10 ++++++++++
+>  3 files changed, 26 insertions(+), 8 deletions(-)
+
+I think this is already in the kernel .. Stephen did it.
 
 Jason
