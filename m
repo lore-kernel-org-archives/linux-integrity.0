@@ -1,56 +1,49 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:35021 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728057AbeHVQkb (ORCPT
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:40176 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728698AbeHVOq0 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 22 Aug 2018 12:40:31 -0400
-Received: by mail-io0-f196.google.com with SMTP id w11-v6so1387577iob.2
-        for <linux-integrity@vger.kernel.org>; Wed, 22 Aug 2018 06:15:39 -0700 (PDT)
+        Wed, 22 Aug 2018 10:46:26 -0400
 MIME-Version: 1.0
-From: john HA <john.352618@gmail.com>
-Date: Wed, 22 Aug 2018 18:45:38 +0530
-Message-ID: <CAO1V6Wrd196kcUiGJYvh9c1b_AmVfhya4hjogxJiyq3WOAoXyQ@mail.gmail.com>
-Subject: Excluding UBI partition not working
-To: linux-integrity@vger.kernel.org
+References: <20180814180551.28311-1-davidj@linux.ibm.com> <alpine.LRH.2.21.1808150427590.25735@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1808150427590.25735@namei.org>
+From: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Date: Wed, 22 Aug 2018 14:21:43 +0300
+Message-ID: <CACE9dm8NbQK-1ATWNLAQA2GnE0Eguidghr0V2dcZW7+NN+w7OA@mail.gmail.com>
+Subject: Re: [PATCH 1/7] evmtest: Regression testing Integrity Subsystem
+To: James Morris <jmorris@namei.org>
+Cc: davidj@linux.ibm.com,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, david@davidej.com, pvorel@suze.cz
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi Team,
+Hi,
 
-I am writing IMA policy and want to exclude 2 partitions from
-appraisal and include 1 partition in appraisal. Policy mentioned below
-is not appraising even the partition which I have explicitly marked
-for appraisal. I am able to execute unsigned binary freely, no
-violation log, no permission denied etc occurs.
+I will have a look to patches.
 
-dont_measure fsuuid=6266EDB3-0E1B-4D2F-BC75-6CFB7C94E2EF
-dont_appraise fsuuid=6266EDB3-0E1B-4D2F-BC75-6CFB7C94E2EF
-dont_measure fsuuid=0404D3D8-81E1-4280-9035-175A607C3B0A
-dont_appraise fsuuid=0404D3D8-81E1-4280-9035-175A607C3B0A
-measure fsuuid=E62368C8-C03E-4003-8F42-C08E4DC8FEAC func=BPRM_CHECK
-appraise fsuuid=E62368C8-C03E-4003-8F42-C08E4DC8FEAC func=BPRM_CHECK
-appraise_type=imasig
-measure fsuuid=E62368C8-C03E-4003-8F42-C08E4DC8FEAC func=FILE_MMAP
-appraise fsuuid=E62368C8-C03E-4003-8F42-C08E4DC8FEAC func=FILE_MMAP
-appraise_type=imasig
-measure fsuuid=E62368C8-C03E-4003-8F42-C08E4DC8FEAC func=MODULE_CHECK
-appraise fsuuid=E62368C8-C03E-4003-8F42-C08E4DC8FEAC func=MODULE_CHECK
-appraise_type=imasig
-measure fsuuid=E62368C8-C03E-4003-8F42-C08E4DC8FEAC func=FIRMWARE_CHECK
-appraise fsuuid=E62368C8-C03E-4003-8F42-C08E4DC8FEAC
-func=FIRMWARE_CHECK appraise_type=imasig
+Thanks,
+Dmitry
 
-If I changed the policy given below, than appraisal works in all 3 partition.
+On Tue, Aug 14, 2018 at 9:34 PM James Morris <jmorris@namei.org> wrote:
+>
+> On Tue, 14 Aug 2018, David Jacobson wrote:
+>
+> > This patchset introduces evmtest -- a stand alone tool for regression
+> > testing IMA.
+>
+> Nice!
+>
+> I usually run the SELinux testsuite as a general sanity check of LSM
+> before pushing to Linus, and I'll also run this once it's merged.
+>
+> --
+> James Morris
+> <jmorris@namei.org>
 
-appraise func=BPRM_CHECK appraise_type=imasig
-appraise func=FILE_MMAP appraise_type=imasig
-appraise func=MODULE_CHECK appraise_type=imasig
-appraise func=FIRMWARE_CHECK appraise_type=imasig
 
-My end goal is: Partition 1 every file (executable/non-executable)
-must be appraised. Partition 2,3 nothing should be appraised at all.
 
-What am I doing wrong. Any help please.
-
--John
+-- 
+Thanks,
+Dmitry
