@@ -1,47 +1,45 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:38820 "EHLO mga06.intel.com"
+Received: from mga07.intel.com ([134.134.136.100]:23804 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726969AbeHXLZ5 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 24 Aug 2018 07:25:57 -0400
-Date: Fri, 24 Aug 2018 10:52:27 +0300
+        id S1726338AbeHXLPt (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 24 Aug 2018 07:15:49 -0400
+Date: Fri, 24 Aug 2018 10:42:21 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: David Howells <dhowells@redhat.com>
 Cc: denkenz@gmail.com, jejb@linux.vnet.ibm.com,
         keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
         tpmdd-devel@lists.sourceforge.net,
         linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 08/23] TPMLIB: Break TPM bits out of
- security/keys/trusted.c
-Message-ID: <20180824075227.GG3584@linux.intel.com>
+Subject: Re: [PATCH 05/23] TPM: Use struct tpm_chip rather than chip number
+ as interface parameter
+Message-ID: <20180824074221.GF3584@linux.intel.com>
 References: <153486700916.13066.12870860668352070081.stgit@warthog.procyon.org.uk>
- <153486706322.13066.3105842100625841410.stgit@warthog.procyon.org.uk>
+ <153486704294.13066.8818198038331415342.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <153486706322.13066.3105842100625841410.stgit@warthog.procyon.org.uk>
+In-Reply-To: <153486704294.13066.8818198038331415342.stgit@warthog.procyon.org.uk>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Aug 21, 2018 at 04:57:43PM +0100, David Howells wrote:
-> Break the TPM bits out of security/keys/trusted.c into their own call wrapper
-> library.
+On Tue, Aug 21, 2018 at 04:57:22PM +0100, David Howells wrote:
+> Use struct tpm_chip rather than chip number as interface parameter for most
+> interface functions.  This allows the client to be sure about the consistency
+> of what device it uses.
 > 
 > Signed-off-by: David Howells <dhowells@redhat.com>
+> ---
+> 
+>  drivers/char/tpm/tpm-interface.c    |   76 ++++++++-------------------------
+>  drivers/char/tpm/tpm-sysfs.c        |    2 -
+>  include/linux/tpm.h                 |   16 ++++---
+>  security/integrity/ima/ima.h        |    2 -
+>  security/integrity/ima/ima_crypto.c |    4 +-
+>  security/integrity/ima/ima_init.c   |   19 +++++---
+>  security/integrity/ima/ima_queue.c  |    4 +-
+>  security/keys/trusted.c             |   80 ++++++++++++++++++++++-------------
+>  8 files changed, 96 insertions(+), 107 deletions(-)
 
-I think the very first steps that we should take would be to make TPM
-subsystem to use struct tpm_buf internally for everything and convert
-tpm_send() to take tpm_buf instead of a raw buffer.
-
-For TPM 2.0 the subsystem already uses tpm_buf. I remember Tomas Winkler
-working on to do the same for TPM 1.x.
-
-After that it would make sense to convert TPM 1.x to use struct tpm_buf to
-construct commands.
-
-After all of this is done it is possible to evaluate these changes.
-
-BTW right now there is call wrapper interface provided by the TPM
-subsystem for TPM 2.0 trusted keys. Not sure if this has been the
-right design choice. TPM 1.x and TPM 2.0 trusted keys implementations
-live in different subsystems ATM, which at least somewhat wrong.
+Should be split at least to three patches and TPM side is
+already in the upstream.
 
 /Jarkko
