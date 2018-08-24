@@ -1,33 +1,55 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52416 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726492AbeHXNHB (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 24 Aug 2018 09:07:01 -0400
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20180824084930.GA10266@linux.intel.com>
-References: <20180824084930.GA10266@linux.intel.com> <153486700916.13066.12870860668352070081.stgit@warthog.procyon.org.uk> <153486706322.13066.3105842100625841410.stgit@warthog.procyon.org.uk> <20180824075227.GG3584@linux.intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: dhowells@redhat.com, denkenz@gmail.com, jejb@linux.vnet.ibm.com,
+Received: from mga18.intel.com ([134.134.136.126]:62713 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726325AbeHXMXX (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 24 Aug 2018 08:23:23 -0400
+Date: Fri, 24 Aug 2018 11:49:30 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: David Howells <dhowells@redhat.com>
+Cc: denkenz@gmail.com, jejb@linux.vnet.ibm.com,
         keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
         tpmdd-devel@lists.sourceforge.net,
         linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 08/23] TPMLIB: Break TPM bits out of security/keys/trusted.c
+Subject: Re: [PATCH 08/23] TPMLIB: Break TPM bits out of
+ security/keys/trusted.c
+Message-ID: <20180824084930.GA10266@linux.intel.com>
+References: <153486700916.13066.12870860668352070081.stgit@warthog.procyon.org.uk>
+ <153486706322.13066.3105842100625841410.stgit@warthog.procyon.org.uk>
+ <20180824075227.GG3584@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Date: Fri, 24 Aug 2018 10:33:10 +0100
-Message-ID: <25340.1535103190@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180824075227.GG3584@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
+On Fri, Aug 24, 2018 at 10:52:27AM +0300, Jarkko Sakkinen wrote:
+> On Tue, Aug 21, 2018 at 04:57:43PM +0100, David Howells wrote:
+> > Break the TPM bits out of security/keys/trusted.c into their own call wrapper
+> > library.
+> > 
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> 
+> I think the very first steps that we should take would be to make TPM
+> subsystem to use struct tpm_buf internally for everything and convert
+> tpm_send() to take tpm_buf instead of a raw buffer.
+> 
+> For TPM 2.0 the subsystem already uses tpm_buf. I remember Tomas Winkler
+> working on to do the same for TPM 1.x.
+> 
+> After that it would make sense to convert TPM 1.x to use struct tpm_buf to
+> construct commands.
+> 
+> After all of this is done it is possible to evaluate these changes.
+> 
+> BTW right now there is call wrapper interface provided by the TPM
+> subsystem for TPM 2.0 trusted keys. Not sure if this has been the
+> right design choice. TPM 1.x and TPM 2.0 trusted keys implementations
+> live in different subsystems ATM, which at least somewhat wrong.
 
-> I could rebase them and make a patch set out of them when I have time.
+Tomas' patches are scattered here:
 
-Thanks.  I'm not going to do anything further with this until after the merge
-window anyway.
+https://patchwork.kernel.org/patch/10261169/
 
-And thanks for taking the time to look through the patches.  I just dumped the
-entire patchset on you rather than weeding out the duplicate/obsolete patches
-as I don't have time just now to port them to linus/master.
+I could rebase them and make a patch set out of them when I have time.
 
-David
+/Jarkko
