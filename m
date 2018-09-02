@@ -1,64 +1,81 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga17.intel.com ([192.55.52.151]:19822 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725762AbeICF2L (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 3 Sep 2018 01:28:11 -0400
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: linux-integrity@vger.kernel.org
-Cc: Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-security-module@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        stable@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] tpm: fix response size validation in tpm_get_random()
-Date: Mon,  3 Sep 2018 04:10:04 +0300
-Message-Id: <20180903011004.12161-1-jarkko.sakkinen@linux.intel.com>
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:38310 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725914AbeIBGt7 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 2 Sep 2018 02:49:59 -0400
+Received: by mail-lf1-f65.google.com with SMTP id i7-v6so12693782lfh.5
+        for <linux-integrity@vger.kernel.org>; Sat, 01 Sep 2018 19:35:56 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20180825041647.GA726@sol.localdomain>
+References: <20180824161642.1144-1-ebiggers@kernel.org> <20180824161642.1144-3-ebiggers@kernel.org>
+ <2f2382c3-e5e9-f0da-dc89-42dfc7b2b636@huawei.com> <20180825041647.GA726@sol.localdomain>
+From: Olof Johansson <olof@lixom.net>
+Date: Sat, 1 Sep 2018 19:35:53 -0700
+Message-ID: <CAOesGMhGfesVQHHMpqW5r7gMOZccX4RsZZex6y-kfkmuA6K0ow@mail.gmail.com>
+Subject: Re: [RFC PATCH 02/10] fs-verity: add data verification hooks for ->readpages()
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Gao Xiang <gaoxiang25@huawei.com>, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fscrypt@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Victor Hsieh <victorhsieh@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-When checking whether the response is large enough to be able to contain
-the received random bytes in tpm_get_random() and tpm2_get_random(),
-they fail to take account the header size, which should be added to the
-minimum size. This commit fixes this issue.
+Hi,
 
-Cc: stable@vger.kernel.org
-Fixes: c659af78eb7b ("tpm: Check size of response before accessing data")
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- drivers/char/tpm/tpm-interface.c | 3 ++-
- drivers/char/tpm/tpm2-cmd.c      | 4 +++-
- 2 files changed, 5 insertions(+), 2 deletions(-)
+On Fri, Aug 24, 2018 at 9:16 PM, Eric Biggers <ebiggers@kernel.org> wrote:
+> Hi Gao,
+>
+> On Sat, Aug 25, 2018 at 10:29:26AM +0800, Gao Xiang wrote:
+>> Hi,
+>>
+>> At last, I hope filesystems could select the on-disk position of hash tree and 'struct fsverity_descriptor'
+>> rather than fixed in the end of verity files...I think if fs-verity preparing such support and interfaces could be better.....hmmm... :(
+>
+> In theory it would be a much cleaner design to store verity metadata separately
+> from the data.  But the Merkle tree can be very large.  For example, a 1 GB file
+> using SHA-512 would have a 16.6 MB Merkle tree.  So the Merkle tree can't be an
+> extended attribute, since the xattrs API requires xattrs to be small (<= 64 KB),
+> and most filesystems further limit xattr sizes in their on-disk format to as
+> little as 4 KB.  Furthermore, even if both of these limits were to be increased,
+> the xattrs functions (both the syscalls, and the internal functions that
+> filesystems have) are all based around getting/setting the entire xattr value.
+>
+> Also when used with fscrypt, we want the Merkle tree and fsverity_descriptor to
+> be encrypted, so they doesn't leak plaintext hashes.  And we want the Merkle
+> tree to be paged into memory, just like the file contents, to take advantage of
+> the usual Linux memory management.
+>
+> What we really need is *streams*, like NTFS has.  But the filesystems we're
+> targetting don't support streams, nor does the Linux syscall interface have any
+> API for accessing streams, nor does the VFS support them.
+>
+> Adding streams support to all those things would be a huge multi-year effort,
+> controversial, and almost certainly not worth it just for fs-verity.
+>
+> So simply storing the verity metadata past i_size seems like the best solution
+> for now.
+>
+> That being said, in the future we could pretty easily swap out the calls to
+> read_mapping_page() with something else if a particular filesystem wanted to
+> store the metadata somewhere else.  We actually even originally had a function
+> ->read_metadata_page() in the filesystem's fsverity_operations, but it turned
+> out to be unnecessary and I replaced it with directly calling
+> read_mapping_page(), but it could be changed back at any time.
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 1a803b0cf980..318a7078b2ba 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -1321,7 +1321,8 @@ int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
- 		}
- 
- 		rlength = be32_to_cpu(tpm_cmd.header.out.length);
--		if (rlength < offsetof(struct tpm_getrandom_out, rng_data) +
-+		if (rlength < TPM_HEADER_SIZE +
-+			      offsetof(struct tpm_getrandom_out, rng_data) +
- 			      recd) {
- 			total = -EFAULT;
- 			break;
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index c31b490bd41d..3acf4fd4e5a5 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -329,7 +329,9 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
- 			&buf.data[TPM_HEADER_SIZE];
- 		recd = min_t(u32, be16_to_cpu(out->size), num_bytes);
- 		if (tpm_buf_length(&buf) <
--		    offsetof(struct tpm2_get_random_out, buffer) + recd) {
-+		    TPM_HEADER_SIZE +
-+		    offsetof(struct tpm2_get_random_out, buffer) +
-+		    recd) {
- 			err = -EFAULT;
- 			goto out;
- 		}
--- 
-2.17.1
+What about an xattr not to hold the Merkle tree, but to contain a
+suitable reference to a file/inode+offset that contains it (+ toplevel
+hash for said tree/file or the descriptor/struct)?
+
+If you also expose said file in the directory structure, things such
+as backups might be easier to handle. For where the tree is appended
+to the file, you could self-reference.
+
+
+-Olof
