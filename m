@@ -1,28 +1,47 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:36830 "EHLO
-        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727341AbeIEAac (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 4 Sep 2018 20:30:32 -0400
-Received: by mail-wm0-f42.google.com with SMTP id j192-v6so5512137wmj.1
-        for <linux-integrity@vger.kernel.org>; Tue, 04 Sep 2018 13:03:52 -0700 (PDT)
-MIME-Version: 1.0
-From: Martin Galvan <omgalvan.86@gmail.com>
-Date: Tue, 4 Sep 2018 17:03:40 -0300
-Message-ID: <CAN19L9E-_L-jmme8k1tLO+cKYMvGyMpspgpF1SZQOta6WwVyDw@mail.gmail.com>
-Subject: caps file showing wrong TCG version?
-To: linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+Received: from mout.gmx.net ([212.227.15.15]:60379 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728334AbeIDAFo (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 3 Sep 2018 20:05:44 -0400
+From: Peter Huewe <peterhuewe@gmx.de>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <peterhuewe@gmx.de>
+Subject: [PATCH] tpm: Make SECURITYFS a weak dependency
+Date: Mon,  3 Sep 2018 21:51:51 +0200
+Message-Id: <20180903195151.7576-1-peterhuewe@gmx.de>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi all,
+While having SECURITYFS enabled for the tpm subsystem is beneficial in
+most cases, it is not strictly necessary to have it enabled at all.
+Especially on platforms without any boot firmware integration of the TPM
+(e.g. raspberry pi) it does not add any value for the tpm subsystem,
+as there is no eventlog present.
 
-I have an Infineon SLB 9665 TPM chip, which according to
-https://www.infineon.com/dgdl/Infineon-OPTIGA_TPM-PB-v10_15-EN.pdf?fileId=5546d46145da30e80145efa2f0b96a8e
-uses TPM 2.0. However, /sys/class/tpm/tpm0/device/tpm/tpm0/caps is
-showing "TCG version: 1.2". I'm aware that the versioning scheme using
-by the TCG is a bit confusing (e.g. 1.2 is the "Main" spec, while 2.0
-is a "library" spec), but I'm wondering whether this is correct.
+By turning it from 'select' to 'imply' it still gets selected per
+default, but enables users who want to save some kb of ram by turning
+SECURITYFS off.
 
-Thanks
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+ drivers/char/tpm/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+index 18c81cbe4704..536e55d3919f 100644
+--- a/drivers/char/tpm/Kconfig
++++ b/drivers/char/tpm/Kconfig
+@@ -5,7 +5,7 @@
+ menuconfig TCG_TPM
+ 	tristate "TPM Hardware Support"
+ 	depends on HAS_IOMEM
+-	select SECURITYFS
++	imply SECURITYFS
+ 	select CRYPTO
+ 	select CRYPTO_HASH_INFO
+ 	---help---
+-- 
+2.16.4
