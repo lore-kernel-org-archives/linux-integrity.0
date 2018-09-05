@@ -1,80 +1,55 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58746 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726189AbeIERqW (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 5 Sep 2018 13:46:22 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w85DEFuv039375
-        for <linux-integrity@vger.kernel.org>; Wed, 5 Sep 2018 09:16:07 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2maf6m262d-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 05 Sep 2018 09:16:06 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Wed, 5 Sep 2018 09:16:06 -0400
-Subject: Re: [PATCH] tpm: fix response size validation in tpm_get_random()
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org, stable@vger.kernel.org,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20180903011004.12161-1-jarkko.sakkinen@linux.intel.com>
-From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Date: Wed, 5 Sep 2018 09:16:01 -0400
+Received: from mga02.intel.com ([134.134.136.20]:55557 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725868AbeIEP6l (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 5 Sep 2018 11:58:41 -0400
+Date: Wed, 5 Sep 2018 14:28:47 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Peter Huewe <peterhuewe@gmx.de>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] tpm: Make SECURITYFS a weak dependency
+Message-ID: <20180905112847.GC9696@linux.intel.com>
+References: <20180903195151.7576-1-peterhuewe@gmx.de>
 MIME-Version: 1.0
-In-Reply-To: <20180903011004.12161-1-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Message-Id: <b3fdb8d4-0e50-389b-86e1-d74761ca325e@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180903195151.7576-1-peterhuewe@gmx.de>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 09/02/2018 09:10 PM, Jarkko Sakkinen wrote:
-> When checking whether the response is large enough to be able to contain
-> the received random bytes in tpm_get_random() and tpm2_get_random(),
-> they fail to take account the header size, which should be added to the
-> minimum size. This commit fixes this issue.
->
-> Cc: stable@vger.kernel.org
-> Fixes: c659af78eb7b ("tpm: Check size of response before accessing data")
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+On Mon, Sep 03, 2018 at 09:51:51PM +0200, Peter Huewe wrote:
+> While having SECURITYFS enabled for the tpm subsystem is beneficial in
+> most cases, it is not strictly necessary to have it enabled at all.
+> Especially on platforms without any boot firmware integration of the TPM
+> (e.g. raspberry pi) it does not add any value for the tpm subsystem,
+> as there is no eventlog present.
+> 
+> By turning it from 'select' to 'imply' it still gets selected per
+> default, but enables users who want to save some kb of ram by turning
+> SECURITYFS off.
+> 
+> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
 > ---
->   drivers/char/tpm/tpm-interface.c | 3 ++-
->   drivers/char/tpm/tpm2-cmd.c      | 4 +++-
->   2 files changed, 5 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 1a803b0cf980..318a7078b2ba 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -1321,7 +1321,8 @@ int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
->   		}
->
->   		rlength = be32_to_cpu(tpm_cmd.header.out.length);
-> -		if (rlength < offsetof(struct tpm_getrandom_out, rng_data) +
-> +		if (rlength < TPM_HEADER_SIZE +
-> +			      offsetof(struct tpm_getrandom_out, rng_data) +
->   			      recd) {
->   			total = -EFAULT;
->   			break;
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index c31b490bd41d..3acf4fd4e5a5 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -329,7 +329,9 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
->   			&buf.data[TPM_HEADER_SIZE];
->   		recd = min_t(u32, be16_to_cpu(out->size), num_bytes);
->   		if (tpm_buf_length(&buf) <
-> -		    offsetof(struct tpm2_get_random_out, buffer) + recd) {
-> +		    TPM_HEADER_SIZE +
-> +		    offsetof(struct tpm2_get_random_out, buffer) +
-> +		    recd) {
->   			err = -EFAULT;
->   			goto out;
->   		}
+>  drivers/char/tpm/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+> index 18c81cbe4704..536e55d3919f 100644
+> --- a/drivers/char/tpm/Kconfig
+> +++ b/drivers/char/tpm/Kconfig
+> @@ -5,7 +5,7 @@
+>  menuconfig TCG_TPM
+>  	tristate "TPM Hardware Support"
+>  	depends on HAS_IOMEM
+> -	select SECURITYFS
+> +	imply SECURITYFS
+>  	select CRYPTO
+>  	select CRYPTO_HASH_INFO
+>  	---help---
+> -- 
+> 2.16.4
+> 
 
-Reviewed-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
+/Jarkko
