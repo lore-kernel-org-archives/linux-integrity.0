@@ -1,46 +1,45 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:32773 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728459AbeIGS3J (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 7 Sep 2018 14:29:09 -0400
-Received: by mail-wm0-f48.google.com with SMTP id r1-v6so17001431wmh.0
-        for <linux-integrity@vger.kernel.org>; Fri, 07 Sep 2018 06:48:06 -0700 (PDT)
+Received: from mga12.intel.com ([192.55.52.136]:50889 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726436AbeIFOhu (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 6 Sep 2018 10:37:50 -0400
+Date: Thu, 6 Sep 2018 13:02:43 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Martin Galvan <omgalvan.86@gmail.com>
+Cc: jgg@ziepe.ca, linux-integrity@vger.kernel.org
+Subject: Re: caps file showing wrong TCG version?
+Message-ID: <20180906100243.GB27302@linux.intel.com>
+References: <CAN19L9E-_L-jmme8k1tLO+cKYMvGyMpspgpF1SZQOta6WwVyDw@mail.gmail.com>
+ <CAN19L9Ev=qYH-+BjZPcPJExML_zZBtSSV8cvz3iOA46L72AQhg@mail.gmail.com>
+ <20180904213304.GD350@ziepe.ca>
+ <CAN19L9GnjOR6QCZp7M=v+PnBUS2WmbPzoDX9vHVunrdB_yQOUA@mail.gmail.com>
+ <20180905173223.GC11368@linux.intel.com>
+ <CAN19L9GiTJnzWMPXLpkRWW2WSAvZx2-x0Co=Tf=V_-dUf4q3OQ@mail.gmail.com>
 MIME-Version: 1.0
-From: Martin Galvan <omgalvan.86@gmail.com>
-Date: Fri, 7 Sep 2018 10:47:53 -0300
-Message-ID: <CAN19L9ERiU2sgxnR7=7smpbb_zQPg-r-+YoAZ0EuGX4yKx66OQ@mail.gmail.com>
-Subject: tpm2_dump_capability not working on latest Ubuntu
-To: linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <CAN19L9GiTJnzWMPXLpkRWW2WSAvZx2-x0Co=Tf=V_-dUf4q3OQ@mail.gmail.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi all,
+On Wed, Sep 05, 2018 at 02:35:12PM -0300, Martin Galvan wrote:
+> El mie., 5 sept. 2018 a las 14:32, Jarkko Sakkinen
+> (<jarkko.sakkinen@linux.intel.com>) escribio:
+> > Those files do not make sense because you can get the same information
+> > by talking to /dev/tpm0.
+> 
+> Wouldn't that require using a lower-level interface, though? IIRC one
+> of the reasons of tpm2-tools' existence is to provide a user-friendly
+> way to do this. I was hoping there would be some way to do this
+> without having to install tpm2-tools.
 
-I have an Infineon SLB9665 chip, which supports TPM 2.0. I'm trying to
-do a capability dump, and am always getting the same error:
+Would be trivial to write utilities that talk raw TPM 2.0 protocol and
+give you equivalent information.
 
-# tpm2_dump_capability -c "properties-fixed"
-Failed to initialize tcti context: 0x1
+Some sample code from my smoke tests:
 
-(I guess it would be good to use tpm2_error_str there)
+  https://github.com/jsakkine-intel/tpm2-scripts
 
-I'm running Ubuntu 18.04. I'm aware that tpm2_dump_capability was
-renamed to tpm2_getcap in version 3, but the tpm2-tools package that
-comes with Ubuntu 18.04 seems to be version 2.1.0 according to
-https://packages.ubuntu.com/bionic/tpm2-tools. Doing
-tpm2_dump_capability -v doesn't show anything useful:
+I would write such utilities in raw C though but as you can see it is
+not rocket science.
 
-# tpm2_dump_capability -v
-tpm2_dump_capability, version
-
-I have the tpm2-resourcemgr daemon running, though I had to enable it
-manually, because when I installed the package I noticed the
-following:
-
-Setting up libsapi-utils (1.0-1) ...
-tpm2-resourcemgr.service is a disabled or a static unit, not starting it.
-
-Does anyone know why this is happening? Other tools like Infineon's
-eltt2 seem to work fine.
+/Jarkko
