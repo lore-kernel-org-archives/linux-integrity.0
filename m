@@ -1,55 +1,23 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:38084 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726032AbeIGVbU (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 7 Sep 2018 17:31:20 -0400
-From: Ignaz Forster <iforster@suse.de>
-Subject: PROBLEM: IMA xattrs not written on overlayfs
-To: miklos@szeredi.hu, linux-unionfs@vger.kernel.org,
-        zohar@linux.vnet.ibm.com, linux-integrity@vger.kernel.org
-Message-ID: <81a0a75d-bd4e-25ef-b41b-adb65ac6dee8@suse.de>
-Date: Fri, 7 Sep 2018 18:49:32 +0200
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:39103 "EHLO
+        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727752AbeIGUYT (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 7 Sep 2018 16:24:19 -0400
+Received: by mail-wm0-f50.google.com with SMTP id q8-v6so15130435wmq.4
+        for <linux-integrity@vger.kernel.org>; Fri, 07 Sep 2018 08:42:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+References: <CAN19L9ERiU2sgxnR7=7smpbb_zQPg-r-+YoAZ0EuGX4yKx66OQ@mail.gmail.com>
+ <57E30E4C-786F-4273-BBAD-EEBEFE30A72F@gmx.de>
+In-Reply-To: <57E30E4C-786F-4273-BBAD-EEBEFE30A72F@gmx.de>
+From: Martin Galvan <omgalvan.86@gmail.com>
+Date: Fri, 7 Sep 2018 12:42:39 -0300
+Message-ID: <CAN19L9HG9g9M=cTz4NbVL4rrr3hdVxpvt7i9QvSVsoP_atzvgw@mail.gmail.com>
+Subject: Re: tpm2_dump_capability not working on latest Ubuntu
+To: peterhuewe@gmx.de
+Cc: linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hi,
-
-I'm currently experimenting with IMA / EVM on overlayfs, however those 
-don't seem to work together very well.
-
-With kernel 4.18 it was possible to at least partially use IMA. As long 
-as the O_TRUNC attribute was not set during a copy_up operation 
-everything seemed to work so far.
-
-Now when applying the changes from 
-https://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git/tag/?h=ovl-update-4.19 
-(or using kernel 4.19-rc2) every file contents modification or creation 
-of a new file will fail, probably because the inode reported by 
-overlayfs does not match the physical inode number any more (and thus 
-the IMA hashes won't be generated).
-
-
-A small example for reproduction (on a system with IMA appraisal):
-# OVERLAYFS_TEST_DIR=`mktemp -d`
-# mkdir "${OVERLAYFS_TEST_DIR}/upper"
-# mkdir "${OVERLAYFS_TEST_DIR}/work"
-# mount -t overlay -o lowerdir=/etc,upperdir="${OVERLAYFS_TEST_DIR} 
-/upper",workdir="${OVERLAYFS_TEST_DIR}/work" overlay /etc
-#
-# rm -f /etc/test.txt
-# echo Test > /etc/test.txt
-# cat /etc/test.txt
-cat: /etc/test.txt: Permission denied
-# ls -s /etc/test.txt
-4 /etc/test.txt # <- The contents are there
-# getfattr -m . -d /etc/test.txt
-# # <- The hash isn't
-
-
-After some debugging I'm not sure on how to continue from here. My 
-assumption is that overlayfs will have to be modified, however I fail to 
-see where to start.
-
-Ignaz
+Thanks Peter, I'll ask there.
