@@ -1,183 +1,79 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:48686 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726107AbeIHBFu (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:05:50 -0400
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-integrity@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Subject: [PATCH] security/integrity: constify some read-only data
-Date: Fri,  7 Sep 2018 13:22:23 -0700
-Message-Id: <20180907202223.216959-1-ebiggers@kernel.org>
-MIME-Version: 1.0
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43106 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726614AbeIGX2R (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 7 Sep 2018 19:28:17 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w87IhtUm031811
+        for <linux-integrity@vger.kernel.org>; Fri, 7 Sep 2018 14:46:02 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mbtxgsk1s-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 07 Sep 2018 14:46:02 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 7 Sep 2018 19:45:59 +0100
+Subject: Re: PROBLEM: IMA xattrs not written on overlayfs
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Ignaz Forster <iforster@suse.de>, miklos@szeredi.hu,
+        linux-unionfs@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        linux-integrity@vger.kernel.org
+Date: Fri, 07 Sep 2018 14:45:54 -0400
+In-Reply-To: <81a0a75d-bd4e-25ef-b41b-adb65ac6dee8@suse.de>
+References: <81a0a75d-bd4e-25ef-b41b-adb65ac6dee8@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1536345954.3792.173.camel@linux.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-From: Eric Biggers <ebiggers@google.com>
+On Fri, 2018-09-07 at 18:49 +0200, Ignaz Forster wrote:
+> Hi,
+> 
+> I'm currently experimenting with IMA / EVM on overlayfs, however those 
+> don't seem to work together very well.
+> 
+> With kernel 4.18 it was possible to at least partially use IMA. As long 
+> as the O_TRUNC attribute was not set during a copy_up operation 
+> everything seemed to work so far.
+> 
+> Now when applying the changes from 
+> https://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git/tag/?h=ovl-update-4.19 
+> (or using kernel 4.19-rc2) every file contents modification or creation 
+> of a new file will fail, probably because the inode reported by 
+> overlayfs does not match the physical inode number any more (and thus 
+> the IMA hashes won't be generated).
+> 
+> 
+> A small example for reproduction (on a system with IMA appraisal):
+> # OVERLAYFS_TEST_DIR=`mktemp -d`
+> # mkdir "${OVERLAYFS_TEST_DIR}/upper"
+> # mkdir "${OVERLAYFS_TEST_DIR}/work"
+> # mount -t overlay -o lowerdir=/etc,upperdir="${OVERLAYFS_TEST_DIR} 
+> /upper",workdir="${OVERLAYFS_TEST_DIR}/work" overlay /etc
+> #
+> # rm -f /etc/test.txt
+> # echo Test > /etc/test.txt
+> # cat /etc/test.txt
+> cat: /etc/test.txt: Permission denied
+> # ls -s /etc/test.txt
+> 4 /etc/test.txt # <- The contents are there
+> # getfattr -m . -d /etc/test.txt
+> # # <- The hash isn't
+> 
 
-Constify some static data that is never modified,
-so that it is placed in .rodata.
+Thank you for providing the example.  Also on a linux-4.18.0-rcX test
+kernel, the file hash isn't being written out either.  The builtin
+"appraise_tcb" policy (eg. specified as "ima_policy=appraise_tcb" on
+the boot command) has a tmpfs dont_appraise rule.
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- security/integrity/digsig.c           |  2 +-
- security/integrity/evm/evm_crypto.c   |  4 ++--
- security/integrity/ima/ima.h          |  2 +-
- security/integrity/ima/ima_api.c      |  3 ++-
- security/integrity/ima/ima_fs.c       |  3 ++-
- security/integrity/ima/ima_init.c     |  2 +-
- security/integrity/ima/ima_main.c     |  2 +-
- security/integrity/ima/ima_template.c | 11 ++++++-----
- 8 files changed, 16 insertions(+), 13 deletions(-)
+> After some debugging I'm not sure on how to continue from here. My 
+> assumption is that overlayfs will have to be modified, however I fail to 
+> see where to start.
 
-diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-index 9bb0a7f2863e..879396fa3be0 100644
---- a/security/integrity/digsig.c
-+++ b/security/integrity/digsig.c
-@@ -26,7 +26,7 @@
- 
- static struct key *keyring[INTEGRITY_KEYRING_MAX];
- 
--static const char *keyring_name[INTEGRITY_KEYRING_MAX] = {
-+static const char * const keyring_name[INTEGRITY_KEYRING_MAX] = {
- #ifndef CONFIG_INTEGRITY_TRUSTED_KEYRING
- 	"_evm",
- 	"_ima",
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index 8a3905bb02c7..8c25f949ebdb 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -27,7 +27,7 @@
- #define EVMKEY "evm-key"
- #define MAX_KEY_SIZE 128
- static unsigned char evmkey[MAX_KEY_SIZE];
--static int evmkey_len = MAX_KEY_SIZE;
-+static const int evmkey_len = MAX_KEY_SIZE;
- 
- struct crypto_shash *hmac_tfm;
- static struct crypto_shash *evm_tfm[HASH_ALGO__LAST];
-@@ -38,7 +38,7 @@ static DEFINE_MUTEX(mutex);
- 
- static unsigned long evm_set_key_flags;
- 
--static char * const evm_hmac = "hmac(sha1)";
-+static const char evm_hmac[] = "hmac(sha1)";
- 
- /**
-  * evm_set_key() - set EVM HMAC key from the kernel
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 67db9d9454ca..cc12f3449a72 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -88,7 +88,7 @@ struct ima_template_desc {
- 	char *name;
- 	char *fmt;
- 	int num_fields;
--	struct ima_template_field **fields;
-+	const struct ima_template_field **fields;
- };
- 
- struct ima_template_entry {
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index a02c5acfd403..99dd1d53fc35 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -51,7 +51,8 @@ int ima_alloc_init_template(struct ima_event_data *event_data,
- 
- 	(*entry)->template_desc = template_desc;
- 	for (i = 0; i < template_desc->num_fields; i++) {
--		struct ima_template_field *field = template_desc->fields[i];
-+		const struct ima_template_field *field =
-+			template_desc->fields[i];
- 		u32 len;
- 
- 		result = field->field_init(event_data,
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index ae9d5c766a3c..fe0ede883557 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -179,7 +179,8 @@ int ima_measurements_show(struct seq_file *m, void *v)
- 	/* 6th:  template specific data */
- 	for (i = 0; i < e->template_desc->num_fields; i++) {
- 		enum ima_show_type show = IMA_SHOW_BINARY;
--		struct ima_template_field *field = e->template_desc->fields[i];
-+		const struct ima_template_field *field =
-+			e->template_desc->fields[i];
- 
- 		if (is_ima_template && strcmp(field->field_id, "d") == 0)
- 			show = IMA_SHOW_BINARY_NO_FIELD_LEN;
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index faac9ecaa0ae..59d834219cd6 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -25,7 +25,7 @@
- #include "ima.h"
- 
- /* name for boot aggregate entry */
--static const char *boot_aggregate_name = "boot_aggregate";
-+static const char boot_aggregate_name[] = "boot_aggregate";
- struct tpm_chip *ima_tpm_chip;
- 
- /* Add the boot aggregate to the IMA measurement list and extend
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 2d31921fbda4..1b88d58e1325 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -440,7 +440,7 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
- 	return 0;
- }
- 
--static int read_idmap[READING_MAX_ID] = {
-+static const int read_idmap[READING_MAX_ID] = {
- 	[READING_FIRMWARE] = FIRMWARE_CHECK,
- 	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
- 	[READING_MODULE] = MODULE_CHECK,
-diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
-index 30db39b23804..b631b8bc7624 100644
---- a/security/integrity/ima/ima_template.c
-+++ b/security/integrity/ima/ima_template.c
-@@ -32,7 +32,7 @@ static struct ima_template_desc builtin_templates[] = {
- static LIST_HEAD(defined_templates);
- static DEFINE_SPINLOCK(template_list);
- 
--static struct ima_template_field supported_fields[] = {
-+static const struct ima_template_field supported_fields[] = {
- 	{.field_id = "d", .field_init = ima_eventdigest_init,
- 	 .field_show = ima_show_template_digest},
- 	{.field_id = "n", .field_init = ima_eventname_init,
-@@ -49,7 +49,7 @@ static struct ima_template_field supported_fields[] = {
- static struct ima_template_desc *ima_template;
- static struct ima_template_desc *lookup_template_desc(const char *name);
- static int template_desc_init_fields(const char *template_fmt,
--				     struct ima_template_field ***fields,
-+				     const struct ima_template_field ***fields,
- 				     int *num_fields);
- 
- static int __init ima_template_setup(char *str)
-@@ -125,7 +125,8 @@ static struct ima_template_desc *lookup_template_desc(const char *name)
- 	return found ? template_desc : NULL;
- }
- 
--static struct ima_template_field *lookup_template_field(const char *field_id)
-+static const struct ima_template_field *
-+lookup_template_field(const char *field_id)
- {
- 	int i;
- 
-@@ -153,11 +154,11 @@ static int template_fmt_size(const char *template_fmt)
- }
- 
- static int template_desc_init_fields(const char *template_fmt,
--				     struct ima_template_field ***fields,
-+				     const struct ima_template_field ***fields,
- 				     int *num_fields)
- {
- 	const char *template_fmt_ptr;
--	struct ima_template_field *found_fields[IMA_TEMPLATE_NUM_FIELDS_MAX];
-+	const struct ima_template_field *found_fields[IMA_TEMPLATE_NUM_FIELDS_MAX];
- 	int template_num_fields;
- 	int i, len;
- 
--- 
-2.19.0.rc2.392.g5ba43deb5a-goog
+Please make sure that you're comparing the results based on using the
+same IMA policy.
+
+Mimi
