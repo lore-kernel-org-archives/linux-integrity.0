@@ -1,97 +1,48 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:49560 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727705AbeIJWN2 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 10 Sep 2018 18:13:28 -0400
-Subject: [PATCH v6 0/2] tpm: add support for nonblocking operation
-From: Tadeusz Struk <tadeusz.struk@intel.com>
-To: jarkko.sakkinen@linux.intel.com
-Cc: flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tadeusz.struk@intel.com
-Date: Mon, 10 Sep 2018 10:18:22 -0700
-Message-ID: <153659990230.2284.5511495299744743989.stgit@tstruk-mobl1.jf.intel.com>
+Received: from mx2.suse.de ([195.135.220.15]:38674 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726081AbeIJOLA (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 10 Sep 2018 10:11:00 -0400
+Subject: Re: PROBLEM: IMA xattrs not written on overlayfs
+To: Mimi Zohar <zohar@linux.ibm.com>, miklos@szeredi.hu,
+        linux-unionfs@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        linux-integrity@vger.kernel.org
+References: <81a0a75d-bd4e-25ef-b41b-adb65ac6dee8@suse.de>
+ <1536345954.3792.173.camel@linux.ibm.com>
+From: Ignaz Forster <iforster@suse.de>
+Message-ID: <e74f411a-d3fa-6f10-9ac6-d070f7d50220@suse.de>
+Date: Mon, 10 Sep 2018 11:17:54 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <1536345954.3792.173.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-The TCG SAPI specification [1] defines a set of functions, which allow
-applications to use the TPM device in either blocking or non-blocking fashion.
-Each command defined by the specification has a corresponding
-Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
-together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
-mode of operation. Currently the TPM driver supports only blocking calls,
-which doesn't allow asynchronous IO operations.
-This patch changes it and adds support for nonblocking write and a new poll
-function to enable applications, which want to take advantage of this feature.
-The new functionality can be tested using standard TPM tools implemented
-in [2], together with modified TCTI from [3], and an example application
-by Philip Tricca [4]. Here is a short description from Philip:
+Am 07.09.18 um 20:45 schrieb Mimi Zohar:
+>> A small example for reproduction (on a system with IMA appraisal):
+>> # OVERLAYFS_TEST_DIR=`mktemp -d`
+>> # mkdir "${OVERLAYFS_TEST_DIR}/upper"
+>> # mkdir "${OVERLAYFS_TEST_DIR}/work"
+>> # mount -t overlay -o lowerdir=/etc,upperdir="${OVERLAYFS_TEST_DIR}
+>> /upper",workdir="${OVERLAYFS_TEST_DIR}/work" overlay /etc
+>> #
+>> # rm -f /etc/test.txt
+>> # echo Test > /etc/test.txt
+>> # cat /etc/test.txt
+>> cat: /etc/test.txt: Permission denied
+>> # ls -s /etc/test.txt
+>> 4 /etc/test.txt # <- The contents are there
+>> # getfattr -m . -d /etc/test.txt
+>> # # <- The hash isn't
+>>
+> 
+> Thank you for providing the example.  Also on a linux-4.18.0-rcX test
+> kernel, the file hash isn't being written out either.  The builtin
+> "appraise_tcb" policy (eg. specified as "ima_policy=appraise_tcb" on
+> the boot command) has a tmpfs dont_appraise rule.
 
-"The example application `glib-tss2-event` uses a glib main event loop
-to create an RSA 2048 primary key in the TPM2 NULL hierarchy while
-using a glib timer event to time the operation. A GSource object is
-used to generate an event when the FD underlying the tss2 function
-call has data ready. While the application waits for an event indicating
-that the CreatePrimary operation is complete, it counts timer events
-that occur every 100ms. Once the CreatePrimary operation completes the
-number of timer events that occurred is used to make a rough calculation
-of the elapsed time. This value is then printed to the console.
-This takes ~300 lines of C code and requires no management or
-synchronization of threads. The glib GMainContext is "just a poll()
-loop" according to the glib documentation here:
+Putting the mount point into /tmp may have been a bad example, however 
+at least on my system /tmp is mounted from a btrfs subvolume. Same with 
+/var, which I'm using for my personal tests.
 
-https://developer.gnome.org/programming-guidelines/stable/main-contexts.html.en
-
-and so supporting 'poll' is the easiest way to integrate with glib /
-gtk+. This is true of any other event system that relies on 'poll'
-instead of worker threads."
-
-[1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
-[2] https://github.com/tpm2-software/tpm2-tools
-[3] https://github.com/tstruk/tpm2-tss/tree/async
-[4] https://github.com/flihp/glib-tss2-async-example
-
----
-Changes in v6:
-- Changed commit message in the first patch to more specific.
-- Chenged labels names in tpm-interface.c
-
-Changes in v5:
-- Changed the workqueue allocation time back from the first user interface
-  open to module init.
-
-Changes in v4:
-- Changed the way buffer_mutex is handled in nonblocking mode so that
-  it is not held when write() returns to user space.
-
-Changes in v3:
-- Fixed problem reported by 0-dey kbuild test robot around __exitcall.
-  It complained because there is a module_exit() in another file already.
-- Added info on example application from Philip
-
-Changes in v2:
-- Split the change into two separate patches. First patch adds a pointer
-  to the space to the struct file_priv to have access to it from the async job.
-  This is to avoid memory allocations on every write call. Now everything
-  what's needed is in the file_priv struct.
-- Renamed the 'work' member of the timer to avoid confusion.
-  Now there are 'timeout_work' and 'async_work'.
-- Removed the global wait queue and moved it to file_priv.
-- Only creating the work queue when the first file is opened.
-
-Tadeusz Struk (2):
-      tpm: add ptr to the tpm_space struct to file_priv
-      tpm: add support for nonblocking operation
-
- drivers/char/tpm/tpm-dev-common.c |  150 +++++++++++++++++++++++++++----------
- drivers/char/tpm/tpm-dev.c        |   22 +++--
- drivers/char/tpm/tpm-dev.h        |   19 +++--
- drivers/char/tpm/tpm-interface.c  |    1 
- drivers/char/tpm/tpm.h            |    1 
- drivers/char/tpm/tpmrm-dev.c      |   31 ++++----
- 6 files changed, 152 insertions(+), 72 deletions(-)
-
---
-TS
+Ignaz
