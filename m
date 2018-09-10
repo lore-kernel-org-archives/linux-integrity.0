@@ -1,44 +1,32 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:56251 "EHLO mga18.intel.com"
+Received: from mga04.intel.com ([192.55.52.120]:50166 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726603AbeIJXic (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 10 Sep 2018 19:38:32 -0400
-Date: Mon, 10 Sep 2018 21:42:44 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Roberto Sassu <roberto.sassu@huawei.com>
-Cc: linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] tpm: retrieve digest size of unknown algorithms
- from TPM
-Message-ID: <20180910184244.GC20225@linux.intel.com>
-References: <20180905114202.7757-1-roberto.sassu@huawei.com>
+        id S1727764AbeIJWSo (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 10 Sep 2018 18:18:44 -0400
+Subject: Re: [PATCH v5 0/2] tpm: add support for nonblocking operation
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <153419236870.8189.15489652816512817246.stgit@tstruk-mobl1.jf.intel.com>
+ <20180831085711.GC12908@linux.intel.com>
+ <20180831085825.GD12908@linux.intel.com>
+From: Tadeusz Struk <tadeusz.struk@intel.com>
+Message-ID: <67bab063-e24d-461c-dacb-5c9458ef9784@intel.com>
+Date: Mon, 10 Sep 2018 10:23:14 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180905114202.7757-1-roberto.sassu@huawei.com>
+In-Reply-To: <20180831085825.GD12908@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Sep 05, 2018 at 01:41:59PM +0200, Roberto Sassu wrote:
-> The TPM driver currently relies on the crypto subsystem to determine the
-> digest size of supported TPM algorithms. In the future, TPM vendors might
-> implement new algorithms in their chips, and those algorithms might not
-> be supported by the crypto subsystem.
-> 
-> Usually, vendors provide patches for the new hardware, and likely
-> the crypto subsystem will be updated before the new algorithm is
-> introduced. However, old kernels might be updated later, after patches
-> are included in the mainline kernel. This would leave the opportunity
-> for attackers to misuse PCRs, as PCR banks with an unknown algorithm
-> are not extended.
-> 
-> This patch set provides a long term solution for this issue. If a TPM
-> algorithm is not known by the crypto subsystem, the TPM driver retrieves
-> the digest size from the TPM with a PCR read. All the PCR banks are
-> extended, even if the algorithm is not yet supported by the crypto
-> subsystem.
+On 08/31/2018 01:58 AM, Jarkko Sakkinen wrote:
+> Just the change to the commit message. Mislooked patchwork, the typo was
+> in my response :-) I'll do recheck for 2/2. Check those comments before
+> v6 if there is anything else.
 
-I'm sorry. I missed this before checking through the mails. In future,
-please add me either to to-field so that they arrive to my inbox and
-do not get filtered to linux-integrity folder, which I go through with
-time at most once a week.
-
-/Jarkko
+Hi,
+I have done the changes you requested and ran the "checkpatch.pl --strict"
+on it and it says that "no obvious style problems and is ready for submission".
+Thanks,
+-- 
+Tadeusz
