@@ -1,114 +1,91 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40388 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47176 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728226AbeINNQf (ORCPT
+        by vger.kernel.org with ESMTP id S1728150AbeINNQZ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 14 Sep 2018 09:16:35 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8E7xBD0094268
-        for <linux-integrity@vger.kernel.org>; Fri, 14 Sep 2018 04:03:17 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mg7e9m0k8-1
+        Fri, 14 Sep 2018 09:16:25 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8E7xLa2141511
+        for <linux-integrity@vger.kernel.org>; Fri, 14 Sep 2018 04:03:06 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mg70xw9v7-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 14 Sep 2018 04:03:16 -0400
+        for <linux-integrity@vger.kernel.org>; Fri, 14 Sep 2018 04:03:06 -0400
 Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Fri, 14 Sep 2018 09:03:14 +0100
+        Fri, 14 Sep 2018 09:03:04 +0100
 From: Nayna Jain <nayna@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
         linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
         dhowells@redhat.com, jforbes@redhat.com,
         Nayna Jain <nayna@linux.vnet.ibm.com>
-Subject: [PATCH v2 5/6] ima: add support for external setting of ima_appraise
-Date: Fri, 14 Sep 2018 13:30:04 +0530
+Subject: [PATCH v2 2/6] ima: prevent kexec_load syscall based on runtime secureboot flag
+Date: Fri, 14 Sep 2018 13:30:01 +0530
 In-Reply-To: <20180914080005.6138-1-nayna@linux.vnet.ibm.com>
 References: <20180914080005.6138-1-nayna@linux.vnet.ibm.com>
-Message-Id: <20180914080005.6138-6-nayna@linux.vnet.ibm.com>
+Message-Id: <20180914080005.6138-3-nayna@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-The "ima_appraise" mode defaults to enforcing, unless configured to allow
-the boot command line "ima_appraise" option. This patch explicitly sets the
-"ima_appraise" mode for the arch specific policy setting.
+When CONFIG_KEXEC_VERIFY_SIG is enabled, the kexec_file_load syscall
+requires the kexec'd kernel image to be signed. Distros are concerned
+about totally disabling the kexec_load syscall. As a compromise, the
+kexec_load syscall will only be disabled when CONFIG_KEXEC_VERIFY_SIG
+is configured and the system is booted with secureboot enabled.
+
+This patch disables the kexec_load syscall only for systems booted with
+secureboot enabled.
 
 Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
 ---
- security/integrity/ima/ima.h          |  5 +++++
- security/integrity/ima/ima_appraise.c | 11 +++++++++--
- security/integrity/ima/ima_policy.c   |  5 ++++-
- 3 files changed, 18 insertions(+), 3 deletions(-)
+ security/integrity/ima/ima_main.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 588e4813370c..6e5fa7c42809 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -248,6 +248,7 @@ enum hash_algo ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value,
- 				 int xattr_len);
- int ima_read_xattr(struct dentry *dentry,
- 		   struct evm_ima_xattr_data **xattr_value);
-+void set_ima_appraise(char *str);
- 
- #else
- static inline int ima_appraise_measurement(enum ima_hooks func,
-@@ -290,6 +291,10 @@ static inline int ima_read_xattr(struct dentry *dentry,
- 	return 0;
- }
- 
-+static inline void set_ima_appraise(char *str)
-+{
-+}
-+
- #endif /* CONFIG_IMA_APPRAISE */
- 
- /* LSM based policy rules require audit */
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 8bd7a0733e51..e061613bcb87 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -18,15 +18,22 @@
- 
- #include "ima.h"
- 
--static int __init default_appraise_setup(char *str)
-+void set_ima_appraise(char *str)
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index dce0a8a217bb..bdb6e5563d05 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -505,20 +505,24 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+  */
+ int ima_load_data(enum kernel_load_data_id id)
  {
--#ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
- 	if (strncmp(str, "off", 3) == 0)
- 		ima_appraise = 0;
- 	else if (strncmp(str, "log", 3) == 0)
- 		ima_appraise = IMA_APPRAISE_LOG;
- 	else if (strncmp(str, "fix", 3) == 0)
- 		ima_appraise = IMA_APPRAISE_FIX;
-+	else if (strncmp(str, "enforce", 7) == 0)
-+		ima_appraise = IMA_APPRAISE_ENFORCE;
-+}
-+
-+static int __init default_appraise_setup(char *str)
-+{
-+#ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
-+	set_ima_appraise(str);
- #endif
- 	return 1;
- }
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 23f3aa214016..c574841bcc9a 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -585,9 +585,12 @@ void __init ima_init_policy(void)
- 	arch_entries = ima_init_arch_policy();
- 	if (!arch_entries)
- 		pr_info("No architecture policies found\n");
--	else
-+	else {
- 		add_rules(arch_policy_entry, arch_entries,
- 			  IMA_DEFAULT_POLICY | IMA_CUSTOM_POLICY);
-+		if (temp_ima_appraise)
-+			set_ima_appraise("enforce");
-+	}
+-	bool sig_enforce;
++	bool ima_enforce, sig_enforce;
  
- 	/*
- 	 * Insert the builtin "secure_boot" policy rules requiring file
+-	if ((ima_appraise & IMA_APPRAISE_ENFORCE) != IMA_APPRAISE_ENFORCE)
+-		return 0;
++	ima_enforce =
++		(ima_appraise & IMA_APPRAISE_ENFORCE) == IMA_APPRAISE_ENFORCE;
+ 
+ 	switch (id) {
+ 	case LOADING_KEXEC_IMAGE:
+-		if (ima_appraise & IMA_APPRAISE_KEXEC) {
++#ifdef CONFIG_KEXEC_VERIFY_SIG
++		if (arch_ima_get_secureboot())
++			return -EACCES;
++#endif
++		if (ima_enforce && (ima_appraise & IMA_APPRAISE_KEXEC)) {
+ 			pr_err("impossible to appraise a kernel image without a file descriptor; try using kexec_file_load syscall.\n");
+ 			return -EACCES;	/* INTEGRITY_UNKNOWN */
+ 		}
+ 		break;
+ 	case LOADING_FIRMWARE:
+-		if (ima_appraise & IMA_APPRAISE_FIRMWARE) {
++		if (ima_enforce && (ima_appraise & IMA_APPRAISE_FIRMWARE)) {
+ 			pr_err("Prevent firmware sysfs fallback loading.\n");
+ 			return -EACCES;	/* INTEGRITY_UNKNOWN */
+ 		}
+@@ -526,7 +530,8 @@ int ima_load_data(enum kernel_load_data_id id)
+ 	case LOADING_MODULE:
+ 		sig_enforce = is_module_sig_enforced();
+ 
+-		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES)) {
++		if (ima_enforce && (!sig_enforce
++				    && (ima_appraise & IMA_APPRAISE_MODULES))) {
+ 			pr_err("impossible to appraise a module without a file descriptor. sig_enforce kernel parameter might help\n");
+ 			return -EACCES;	/* INTEGRITY_UNKNOWN */
+ 		}
 -- 
 2.13.6
