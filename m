@@ -1,67 +1,114 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:43733 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727013AbeINS37 (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40388 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728226AbeINNQf (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 14 Sep 2018 14:29:59 -0400
-Message-Id: <1536930930.1003187.1508104496.6465C44D@webmail.messagingengine.com>
-From: Colin Walters <walters@verbum.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Victor Hsieh <victorhsieh@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-In-Reply-To: <20180825044852.GB726@sol.localdomain>
-Date: Fri, 14 Sep 2018 09:15:30 -0400
-References: <20180824161642.1144-1-ebiggers@kernel.org>
- <20180824161642.1144-2-ebiggers@kernel.org>
- <1535132549.2855027.1485213752.129E3334@webmail.messagingengine.com>
- <20180825044852.GB726@sol.localdomain>
-Subject: Re: [RFC PATCH 01/10] fs-verity: add setup code, UAPI, and Kconfig
+        Fri, 14 Sep 2018 09:16:35 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8E7xBD0094268
+        for <linux-integrity@vger.kernel.org>; Fri, 14 Sep 2018 04:03:17 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mg7e9m0k8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 14 Sep 2018 04:03:16 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
+        Fri, 14 Sep 2018 09:03:14 +0100
+From: Nayna Jain <nayna@linux.vnet.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dhowells@redhat.com, jforbes@redhat.com,
+        Nayna Jain <nayna@linux.vnet.ibm.com>
+Subject: [PATCH v2 5/6] ima: add support for external setting of ima_appraise
+Date: Fri, 14 Sep 2018 13:30:04 +0530
+In-Reply-To: <20180914080005.6138-1-nayna@linux.vnet.ibm.com>
+References: <20180914080005.6138-1-nayna@linux.vnet.ibm.com>
+Message-Id: <20180914080005.6138-6-nayna@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sat, Aug 25, 2018, at 12:48 AM, Eric Biggers wrote:
->
-> As Ted pointed out, only truncates are denied on fs-verity files, not other
-> metadata changes like chmod().
-> 
-> Think of it this way: the purpose of fs-verity is *not* to make files immutable.
-> It's to hash them.
+The "ima_appraise" mode defaults to enforcing, unless configured to allow
+the boot command line "ima_appraise" option. This patch explicitly sets the
+"ima_appraise" mode for the arch specific policy setting.
 
-Sorry for my unfamiliarity with Android internals but - in earlier discussion
-I believe it was mentioned that APK (zip files?) that are being targeted here, right?
+Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+---
+ security/integrity/ima/ima.h          |  5 +++++
+ security/integrity/ima/ima_appraise.c | 11 +++++++++--
+ security/integrity/ima/ima_policy.c   |  5 ++++-
+ 3 files changed, 18 insertions(+), 3 deletions(-)
 
-Now AIUI, Zip files have an internal header that contains e.g. the size and
-indexes into the internal files.  So if someone added random data to the end
-of a zip file, nothing is going to end up actually reading it.
-
-However, there are file formats that use the size of the file reported by stat();
-at least OSTree does this with serializing GVariant.  I'm sure there are others -
-I'd imagine at least some things parsing ELF do this?
-In such a case, we really want to deny appending to the file as well.
-
-Unless there's some mechanism to deny applications reading not-verified
-data?
-
-And "hidden" data after fs-verity protected files would be a nice place
-for persistent malware to hide.
-
-Does anyone know of a use case for appending to a fs-verity file?
-
-The slides here:
-https://events.linuxfoundation.org/wp-content/uploads/2017/11/fs-verify_Mike-Halcrow_Eric-Biggers.pdf
-even say "File becomes read-only!"
-
-If not, then here's a strawman: Require that at FS_IOC_ENABLE_VERITY time
-the file does not have any +w bits set (and I guess no ACLs that do so...
-that may get ugly).  
-
-I think that would make it easier to later factor out a "_CONTENTS_IMMUTABLE"
-flag.
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 588e4813370c..6e5fa7c42809 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -248,6 +248,7 @@ enum hash_algo ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value,
+ 				 int xattr_len);
+ int ima_read_xattr(struct dentry *dentry,
+ 		   struct evm_ima_xattr_data **xattr_value);
++void set_ima_appraise(char *str);
+ 
+ #else
+ static inline int ima_appraise_measurement(enum ima_hooks func,
+@@ -290,6 +291,10 @@ static inline int ima_read_xattr(struct dentry *dentry,
+ 	return 0;
+ }
+ 
++static inline void set_ima_appraise(char *str)
++{
++}
++
+ #endif /* CONFIG_IMA_APPRAISE */
+ 
+ /* LSM based policy rules require audit */
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 8bd7a0733e51..e061613bcb87 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -18,15 +18,22 @@
+ 
+ #include "ima.h"
+ 
+-static int __init default_appraise_setup(char *str)
++void set_ima_appraise(char *str)
+ {
+-#ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
+ 	if (strncmp(str, "off", 3) == 0)
+ 		ima_appraise = 0;
+ 	else if (strncmp(str, "log", 3) == 0)
+ 		ima_appraise = IMA_APPRAISE_LOG;
+ 	else if (strncmp(str, "fix", 3) == 0)
+ 		ima_appraise = IMA_APPRAISE_FIX;
++	else if (strncmp(str, "enforce", 7) == 0)
++		ima_appraise = IMA_APPRAISE_ENFORCE;
++}
++
++static int __init default_appraise_setup(char *str)
++{
++#ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
++	set_ima_appraise(str);
+ #endif
+ 	return 1;
+ }
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 23f3aa214016..c574841bcc9a 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -585,9 +585,12 @@ void __init ima_init_policy(void)
+ 	arch_entries = ima_init_arch_policy();
+ 	if (!arch_entries)
+ 		pr_info("No architecture policies found\n");
+-	else
++	else {
+ 		add_rules(arch_policy_entry, arch_entries,
+ 			  IMA_DEFAULT_POLICY | IMA_CUSTOM_POLICY);
++		if (temp_ima_appraise)
++			set_ima_appraise("enforce");
++	}
+ 
+ 	/*
+ 	 * Insert the builtin "secure_boot" policy rules requiring file
+-- 
+2.13.6
