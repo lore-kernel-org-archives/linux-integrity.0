@@ -1,60 +1,48 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:53593 "EHLO mga02.intel.com"
+Received: from imap.thunk.org ([74.207.234.97]:36346 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728155AbeIPRaK (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 16 Sep 2018 13:30:10 -0400
-Date: Sun, 16 Sep 2018 15:03:49 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Tadeusz Struk <tadeusz.struk@intel.com>
-Cc: flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/2] tpm: add support for nonblocking operation
-Message-ID: <20180916120349.GB5040@linux.intel.com>
-References: <153659990230.2284.5511495299744743989.stgit@tstruk-mobl1.jf.intel.com>
+        id S1727065AbeIOUqc (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 15 Sep 2018 16:46:32 -0400
+Date: Sat, 15 Sep 2018 11:27:03 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Colin Walters <walters@verbum.org>, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Victor Hsieh <victorhsieh@google.com>
+Subject: Re: [RFC PATCH 01/10] fs-verity: add setup code, UAPI, and Kconfig
+Message-ID: <20180915152703.GA9979@thunk.org>
+References: <20180824161642.1144-1-ebiggers@kernel.org>
+ <20180824161642.1144-2-ebiggers@kernel.org>
+ <1535132549.2855027.1485213752.129E3334@webmail.messagingengine.com>
+ <20180825044852.GB726@sol.localdomain>
+ <1536930930.1003187.1508104496.6465C44D@webmail.messagingengine.com>
+ <20180914162142.GA734@sol.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <153659990230.2284.5511495299744743989.stgit@tstruk-mobl1.jf.intel.com>
+In-Reply-To: <20180914162142.GA734@sol.localdomain>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Sep 10, 2018 at 10:18:22AM -0700, Tadeusz Struk wrote:
-> The TCG SAPI specification [1] defines a set of functions, which allow
-> applications to use the TPM device in either blocking or non-blocking fashion.
-> Each command defined by the specification has a corresponding
-> Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
-> together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
-> mode of operation. Currently the TPM driver supports only blocking calls,
-> which doesn't allow asynchronous IO operations.
-> This patch changes it and adds support for nonblocking write and a new poll
-> function to enable applications, which want to take advantage of this feature.
-> The new functionality can be tested using standard TPM tools implemented
-> in [2], together with modified TCTI from [3], and an example application
-> by Philip Tricca [4]. Here is a short description from Philip:
+On Fri, Sep 14, 2018 at 09:21:43AM -0700, Eric Biggers wrote:
+> > 
+> > Now AIUI, Zip files have an internal header that contains e.g. the size and
+> > indexes into the internal files.  So if someone added random data to the end
+> > of a zip file, nothing is going to end up actually reading it.
 > 
-> "The example application `glib-tss2-event` uses a glib main event loop
-> to create an RSA 2048 primary key in the TPM2 NULL hierarchy while
-> using a glib timer event to time the operation. A GSource object is
-> used to generate an event when the FD underlying the tss2 function
-> call has data ready. While the application waits for an event indicating
-> that the CreatePrimary operation is complete, it counts timer events
-> that occur every 100ms. Once the CreatePrimary operation completes the
-> number of timer events that occurred is used to make a rough calculation
-> of the elapsed time. This value is then printed to the console.
-> This takes ~300 lines of C code and requires no management or
-> synchronization of threads. The glib GMainContext is "just a poll()
-> loop" according to the glib documentation here:
-> 
-> https://developer.gnome.org/programming-guidelines/stable/main-contexts.html.en
-> 
-> and so supporting 'poll' is the easiest way to integrate with glib /
-> gtk+. This is true of any other event system that relies on 'poll'
-> instead of worker threads."
-> 
-> [1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
-> [2] https://github.com/tpm2-software/tpm2-tools
-> [3] https://github.com/tstruk/tpm2-tss/tree/async
-> [4] https://github.com/flihp/glib-tss2-async-example
+> After the verity bit is enabled, the verity metadata is not visible to
+> userspace.  Yes, that means i_size is adjusted too.  Also all contents
+> modifications are denied, including appends.
 
-I tried to test this but I get 404 from https://github.com/tstruk/tpm2-tss/tree/async
+One of this reasons why this is important is that ZIP files *also*
+have an central directory at the end.  And in the case of the APK
+files, there is an in-band signature block which is located at at the
+end of the last file and the central directory, which can be located
+by starting at the end of the file, finding the length of the central
+directory, and then backing up to find the signature block.
 
-/Jarkko
+    	 	       	    		- Ted
