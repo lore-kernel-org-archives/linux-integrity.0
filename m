@@ -1,32 +1,42 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:59587 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728559AbeIRCpc (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 17 Sep 2018 22:45:32 -0400
-Date: Tue, 18 Sep 2018 00:16:22 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Roberto Sassu <roberto.sassu@huawei.com>
-Cc: linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] tpm: retrieve digest size of unknown algorithms
- with PCR read
-Message-ID: <20180917211622.GC6716@linux.intel.com>
-References: <20180905114202.7757-1-roberto.sassu@huawei.com>
- <20180905114202.7757-4-roberto.sassu@huawei.com>
- <20180916123749.GF5040@linux.intel.com>
- <322eb81b-3f3e-e37e-5fb0-a37aad3d06d7@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <322eb81b-3f3e-e37e-5fb0-a37aad3d06d7@huawei.com>
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:60668 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727021AbeIQUNM (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 17 Sep 2018 16:13:12 -0400
+Message-ID: <1537195532.4198.11.camel@HansenPartnership.com>
+Subject: Re: Question about the TPM driver
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Martin Galvan <omgalvan.86@gmail.com>,
+        jarkko.sakkinen@linux.intel.com
+Cc: linux-integrity@vger.kernel.org
+Date: Mon, 17 Sep 2018 07:45:32 -0700
+In-Reply-To: <CAN19L9HFSkPfrRjDKZZiNXW+rXpV89v9ua1p_r4qmO8pQHfKiA@mail.gmail.com>
+References: <CAN19L9EEYK+OpJSCw+nNv7fCjkS5eQeAXfy=51nfk=fBZne-BA@mail.gmail.com>
+         <20180916191605.GB7473@linux.intel.com>
+         <CAN19L9HFSkPfrRjDKZZiNXW+rXpV89v9ua1p_r4qmO8pQHfKiA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Sep 17, 2018 at 12:02:56PM +0200, Roberto Sassu wrote:
-> This code has the same behavior of tpm2_get_pcr_allocation(). If some
-> banks are not used, set the algorithm of the first unused to
-> TPM_ALG_ERROR.
+On Mon, 2018-09-17 at 10:32 -0300, Martin Galvan wrote:
+> El dom., 16 sept. 2018 a las 16:16, Jarkko Sakkinen
+> (<jarkko.sakkinen@linux.intel.com>) escribio:
+> > I understand your concerns but without a concrete workload there is
+> > no
+> > problem with this behavior.
+> 
+> IMHO it's a bit excessive to allocate 4k to end up storing than 100
+> bytes. Beyond that, it's a pretty big gotcha for someone who's
+> writing software which talks to the driver :)
 
-My point is that maybe it would sense to use zero for that in order
-to make code a bit simpler.
+It's what we do in the kernel, which is one of our most memory
+constrained environments.
 
-/Jarkko
+You have to remember that sub page size buffers aren't always managed
+the best at any level (they usually fragment the heap) so even in a
+constrained memory environment, a 4k buffer (4k aligned) is usually
+preferable.
+
+James
