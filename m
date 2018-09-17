@@ -1,72 +1,90 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from userp2130.oracle.com ([156.151.31.86]:43802 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728874AbeIREWf (ORCPT
+Received: from aserp2120.oracle.com ([141.146.126.78]:55484 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728202AbeIRDxh (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:22:35 -0400
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-To: peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, jgross@suse.com, dunlapg@umich.edu,
+        Mon, 17 Sep 2018 23:53:37 -0400
+Subject: Re: [PATCH v2] tpm: Restore functionality to xen vtpm driver.
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        jgross@suse.com, dunlapg@umich.edu,
         "Dr. Greg Wettstein" <greg@wind.enjellic.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        stable@vger.kernel.org
-Subject: [PATCH v3] tpm: Restore functionality to xen vtpm driver.
-Date: Mon, 17 Sep 2018 18:53:33 -0400
-Message-Id: <20180917225333.10426-1-boris.ostrovsky@oracle.com>
+        "Dr . Greg Wettstein" <greg@enjellic.com>, stable@vger.kernel.org
+References: <20180913212551.2435-1-boris.ostrovsky@oracle.com>
+ <20180916192510.GF7473@linux.intel.com>
+ <b82c4603-1a60-16ec-14b6-81251e114b75@oracle.com>
+ <20180917211900.GD6716@linux.intel.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <5d63093d-620d-80d5-1138-0332a210d61f@oracle.com>
+Date: Mon, 17 Sep 2018 18:25:29 -0400
+MIME-Version: 1.0
+In-Reply-To: <20180917211900.GD6716@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-From: "Dr. Greg Wettstein" <greg@wind.enjellic.com>
+On 9/17/18 5:19 PM, Jarkko Sakkinen wrote:
+> On Mon, Sep 17, 2018 at 09:54:37AM -0400, Boris Ostrovsky wrote:
+>> On 9/16/18 3:25 PM, Jarkko Sakkinen wrote:
+>>> On Thu, Sep 13, 2018 at 05:25:51PM -0400, Boris Ostrovsky wrote:
+>>>> From: "Dr. Greg Wettstein" <greg@wind.enjellic.com>
+>>>>
+>>>> Functionality of the xen-tpmfront driver was lost secondary to
+>>>> the introduction of xenbus multi-page support in commit ccc9d90a9a8b
+>>>> ("xenbus_client: Extend interface to support multi-page ring").
+>>>>
+>>>> In this commit a pointer to the shared page address was being
+>>>> passed to the xenbus_grant_ring() function rather then the
+>>>> address of the shared page itself.  This resulted in a situation
+>>> I'm sorry but I'm far from being expert with Xen and this sentence
+>>> confuses me so maybe could open it up a bit.
+>>>
+>>> For me "shared page address" and "address of the shared page" are
+>>> the same thing. What am I missing? I mean just different forms in
+>>> english to describe the exact same thing...
+>> xenbus_grant_ring() takes as an argument address of the ring shared
+>> between two guests. What Greg was trying to describe was the fact that
+>> existing code instead passes address of location where this address is
+>> stored (i.e. somewhat similar to difference between pointer and pointer
+>> to a pointer).
+> Just to understand this bug better why did not the wrong version
+> cause any undefined behavior? Sounds like a fatal bug. Does this
+> cause crashes?
 
-Functionality of the xen-tpmfront driver was lost secondary to
-the introduction of xenbus multi-page support in commit ccc9d90a9a8b
-("xenbus_client: Extend interface to support multi-page ring").
+AFAIK, no, no crashes. I haven't tested this myself (and I believe
+relatively few people use this functionality, which explains why this
+has not been fixed for so long) but I don't think it will necessarily
+crash. It's just that the frontend driver will be reading from wrong
+location, causing TPM not to function properly.
 
-In this commit pointer to location of where the shared page address
-is stored was being passed to the xenbus_grant_ring() function rather
-then the address of the shared page itself. This resulted in a situation
-where the driver would attach to the vtpm-stubdom but any attempt
-to send a command to the stub domain would timeout.
+Or maybe the frontend is writing but then I believe the write would
+occur into tpm_private, and so will corrupt it. But the protocol will
+fail right after this anyway.
 
-A diagnostic finding for this regression is the following error
-message being generated when the xen-tpmfront driver probes for a
-device:
 
-<3>vtpm vtpm-0: tpm_transmit: tpm_send: error -62
 
-<3>vtpm vtpm-0: A TPM error (-62) occurred attempting to determine
-the timeouts
+>
+>> Would this be better:
+>>
+>> "In this commit pointer to location of the where the shared page address
+>> is stored was being passed to the xenbus_grant_ring() function rather
+>> then the
+>> address of the shared page itself."
+> Yes, definitely!
 
-This fix is relevant to all kernels from 4.1 forward which is the
-release in which multi-page xenbus support was introduced.
+OK, I'll send it shortly.
 
-Daniel De Graaf formulated the fix by code inspection after the
-regression point was located.
 
-Fixes: ccc9d90a9a8b ("xenbus_client: Extend interface to support multi-page ring")
-Signed-off-by: Dr. Greg Wettstein <greg@enjellic.com>
+Thanks.
+-boris
 
-[boris: Updated commit message, added Fixes tag]
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: stable@vger.kernel.org # v4.1+
----
- drivers/char/tpm/xen-tpmfront.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
-index 911475d36800..b150f87f38f5 100644
---- a/drivers/char/tpm/xen-tpmfront.c
-+++ b/drivers/char/tpm/xen-tpmfront.c
-@@ -264,7 +264,7 @@ static int setup_ring(struct xenbus_device *dev, struct tpm_private *priv)
- 		return -ENOMEM;
- 	}
- 
--	rv = xenbus_grant_ring(dev, &priv->shr, 1, &gref);
-+	rv = xenbus_grant_ring(dev, priv->shr, 1, &gref);
- 	if (rv < 0)
- 		return rv;
- 
--- 
-2.17.1
+>
+>> Or please suggest a better alternative, I'll be happy to amend the
+>> commit message.
+> Thank you.
+>
+>> Thanks.
+>> -boris
+> /Jarkko
