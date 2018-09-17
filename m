@@ -1,90 +1,103 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from aserp2120.oracle.com ([141.146.126.78]:55484 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728202AbeIRDxh (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 17 Sep 2018 23:53:37 -0400
-Subject: Re: [PATCH v2] tpm: Restore functionality to xen vtpm driver.
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        jgross@suse.com, dunlapg@umich.edu,
-        "Dr. Greg Wettstein" <greg@wind.enjellic.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>, stable@vger.kernel.org
-References: <20180913212551.2435-1-boris.ostrovsky@oracle.com>
- <20180916192510.GF7473@linux.intel.com>
- <b82c4603-1a60-16ec-14b6-81251e114b75@oracle.com>
- <20180917211900.GD6716@linux.intel.com>
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Message-ID: <5d63093d-620d-80d5-1138-0332a210d61f@oracle.com>
-Date: Mon, 17 Sep 2018 18:25:29 -0400
+Received: from mga18.intel.com ([134.134.136.126]:38446 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726844AbeIRC44 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 17 Sep 2018 22:56:56 -0400
+Date: Tue, 18 Sep 2018 00:27:35 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Tadeusz Struk <tadeusz.struk@intel.com>
+Cc: flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/2] tpm: add support for nonblocking operation
+Message-ID: <20180917212735.GA9368@linux.intel.com>
+References: <153659990230.2284.5511495299744743989.stgit@tstruk-mobl1.jf.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180917211900.GD6716@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <153659990230.2284.5511495299744743989.stgit@tstruk-mobl1.jf.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 9/17/18 5:19 PM, Jarkko Sakkinen wrote:
-> On Mon, Sep 17, 2018 at 09:54:37AM -0400, Boris Ostrovsky wrote:
->> On 9/16/18 3:25 PM, Jarkko Sakkinen wrote:
->>> On Thu, Sep 13, 2018 at 05:25:51PM -0400, Boris Ostrovsky wrote:
->>>> From: "Dr. Greg Wettstein" <greg@wind.enjellic.com>
->>>>
->>>> Functionality of the xen-tpmfront driver was lost secondary to
->>>> the introduction of xenbus multi-page support in commit ccc9d90a9a8b
->>>> ("xenbus_client: Extend interface to support multi-page ring").
->>>>
->>>> In this commit a pointer to the shared page address was being
->>>> passed to the xenbus_grant_ring() function rather then the
->>>> address of the shared page itself.  This resulted in a situation
->>> I'm sorry but I'm far from being expert with Xen and this sentence
->>> confuses me so maybe could open it up a bit.
->>>
->>> For me "shared page address" and "address of the shared page" are
->>> the same thing. What am I missing? I mean just different forms in
->>> english to describe the exact same thing...
->> xenbus_grant_ring() takes as an argument address of the ring shared
->> between two guests. What Greg was trying to describe was the fact that
->> existing code instead passes address of location where this address is
->> stored (i.e. somewhat similar to difference between pointer and pointer
->> to a pointer).
-> Just to understand this bug better why did not the wrong version
-> cause any undefined behavior? Sounds like a fatal bug. Does this
-> cause crashes?
+On Mon, Sep 10, 2018 at 10:18:22AM -0700, Tadeusz Struk wrote:
+> The TCG SAPI specification [1] defines a set of functions, which allow
+> applications to use the TPM device in either blocking or non-blocking fashion.
+> Each command defined by the specification has a corresponding
+> Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
+> together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
+> mode of operation. Currently the TPM driver supports only blocking calls,
+> which doesn't allow asynchronous IO operations.
+> This patch changes it and adds support for nonblocking write and a new poll
+> function to enable applications, which want to take advantage of this feature.
+> The new functionality can be tested using standard TPM tools implemented
+> in [2], together with modified TCTI from [3], and an example application
+> by Philip Tricca [4]. Here is a short description from Philip:
+> 
+> "The example application `glib-tss2-event` uses a glib main event loop
+> to create an RSA 2048 primary key in the TPM2 NULL hierarchy while
+> using a glib timer event to time the operation. A GSource object is
+> used to generate an event when the FD underlying the tss2 function
+> call has data ready. While the application waits for an event indicating
+> that the CreatePrimary operation is complete, it counts timer events
+> that occur every 100ms. Once the CreatePrimary operation completes the
+> number of timer events that occurred is used to make a rough calculation
+> of the elapsed time. This value is then printed to the console.
+> This takes ~300 lines of C code and requires no management or
+> synchronization of threads. The glib GMainContext is "just a poll()
+> loop" according to the glib documentation here:
+> 
+> https://developer.gnome.org/programming-guidelines/stable/main-contexts.html.en
+> 
+> and so supporting 'poll' is the easiest way to integrate with glib /
+> gtk+. This is true of any other event system that relies on 'poll'
+> instead of worker threads."
+> 
+> [1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
+> [2] https://github.com/tpm2-software/tpm2-tools
+> [3] https://github.com/tstruk/tpm2-tss/tree/async
+> [4] https://github.com/flihp/glib-tss2-async-example
+> 
+> ---
+> Changes in v6:
+> - Changed commit message in the first patch to more specific.
+> - Chenged labels names in tpm-interface.c
+> 
+> Changes in v5:
+> - Changed the workqueue allocation time back from the first user interface
+>   open to module init.
+> 
+> Changes in v4:
+> - Changed the way buffer_mutex is handled in nonblocking mode so that
+>   it is not held when write() returns to user space.
+> 
+> Changes in v3:
+> - Fixed problem reported by 0-dey kbuild test robot around __exitcall.
+>   It complained because there is a module_exit() in another file already.
+> - Added info on example application from Philip
+> 
+> Changes in v2:
+> - Split the change into two separate patches. First patch adds a pointer
+>   to the space to the struct file_priv to have access to it from the async job.
+>   This is to avoid memory allocations on every write call. Now everything
+>   what's needed is in the file_priv struct.
+> - Renamed the 'work' member of the timer to avoid confusion.
+>   Now there are 'timeout_work' and 'async_work'.
+> - Removed the global wait queue and moved it to file_priv.
+> - Only creating the work queue when the first file is opened.
+> 
+> Tadeusz Struk (2):
+>       tpm: add ptr to the tpm_space struct to file_priv
+>       tpm: add support for nonblocking operation
+> 
+>  drivers/char/tpm/tpm-dev-common.c |  150 +++++++++++++++++++++++++++----------
+>  drivers/char/tpm/tpm-dev.c        |   22 +++--
+>  drivers/char/tpm/tpm-dev.h        |   19 +++--
+>  drivers/char/tpm/tpm-interface.c  |    1 
+>  drivers/char/tpm/tpm.h            |    1 
+>  drivers/char/tpm/tpmrm-dev.c      |   31 ++++----
+>  6 files changed, 152 insertions(+), 72 deletions(-)
+> 
+> --
+> TS
 
-AFAIK, no, no crashes. I haven't tested this myself (and I believe
-relatively few people use this functionality, which explains why this
-has not been fixed for so long) but I don't think it will necessarily
-crash. It's just that the frontend driver will be reading from wrong
-location, causing TPM not to function properly.
+Patches have been merged.
 
-Or maybe the frontend is writing but then I believe the write would
-occur into tpm_private, and so will corrupt it. But the protocol will
-fail right after this anyway.
-
-
-
->
->> Would this be better:
->>
->> "In this commit pointer to location of the where the shared page address
->> is stored was being passed to the xenbus_grant_ring() function rather
->> then the
->> address of the shared page itself."
-> Yes, definitely!
-
-OK, I'll send it shortly.
-
-
-Thanks.
--boris
-
-
->
->> Or please suggest a better alternative, I'll be happy to amend the
->> commit message.
-> Thank you.
->
->> Thanks.
->> -boris
-> /Jarkko
+/Jarkko
