@@ -1,50 +1,72 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from imap.newtech.fi ([83.150.94.195]:34920 "EHLO mail.newtech.fi"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726759AbeIRMen (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 18 Sep 2018 08:34:43 -0400
-From: Dag Nygren <dag@newtech.fi>
-To: xen-devel@lists.xenproject.org
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        jgross@suse.com, "Dr . Greg Wettstein" <greg@enjellic.com>,
-        dunlapg@umich.edu, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, jgg@ziepe.ca,
-        "Dr. Greg Wettstein" <greg@wind.enjellic.com>, peterhuewe@gmx.de,
-        linux-integrity@vger.kernel.org
-Subject: Re: [Xen-devel] [PATCH v2] tpm: Restore functionality to xen vtpm driver.
-Date: Tue, 18 Sep 2018 09:54:47 +0300
-Message-ID: <6898808.CzJHl40L0f@eseries.newtech.fi>
-In-Reply-To: <5d63093d-620d-80d5-1138-0332a210d61f@oracle.com>
-References: <20180913212551.2435-1-boris.ostrovsky@oracle.com> <20180917211900.GD6716@linux.intel.com> <5d63093d-620d-80d5-1138-0332a210d61f@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Received: from userp2130.oracle.com ([156.151.31.86]:43802 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728874AbeIREWf (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 18 Sep 2018 00:22:35 -0400
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+To: peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, jgross@suse.com, dunlapg@umich.edu,
+        "Dr. Greg Wettstein" <greg@wind.enjellic.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        stable@vger.kernel.org
+Subject: [PATCH v3] tpm: Restore functionality to xen vtpm driver.
+Date: Mon, 17 Sep 2018 18:53:33 -0400
+Message-Id: <20180917225333.10426-1-boris.ostrovsky@oracle.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On tisdag 18 september 2018 kl. 01:25:29 EEST Boris Ostrovsky wrote:
-> On 9/17/18 5:19 PM, Jarkko Sakkinen wrote:
+From: "Dr. Greg Wettstein" <greg@wind.enjellic.com>
 
-> > Just to understand this bug better why did not the wrong version
-> > cause any undefined behavior? Sounds like a fatal bug. Does this
-> > cause crashes?
-> 
-> AFAIK, no, no crashes. I haven't tested this myself (and I believe
-> relatively few people use this functionality, which explains why this
-> has not been fixed for so long) but I don't think it will necessarily
-> crash. It's just that the frontend driver will be reading from wrong
-> location, causing TPM not to function properly.
+Functionality of the xen-tpmfront driver was lost secondary to
+the introduction of xenbus multi-page support in commit ccc9d90a9a8b
+("xenbus_client: Extend interface to support multi-page ring").
 
-I bumped my head into this last week and spent most of the
-week trying to figure out why the vtpm did not respond.
-Finally found the email from the guy that dirscovered and fixed
-it. Did the fix and rescompiled. Now it seems to be working
-fine. The patch is surprisingly 2 years old!!
-I will be very pleased to see it go in to the
-official kernel!
+In this commit pointer to location of where the shared page address
+is stored was being passed to the xenbus_grant_ring() function rather
+then the address of the shared page itself. This resulted in a situation
+where the driver would attach to the vtpm-stubdom but any attempt
+to send a command to the stub domain would timeout.
 
-But no crash. Just a timeout when trying to communicate with
-the vtpm-engine.
+A diagnostic finding for this regression is the following error
+message being generated when the xen-tpmfront driver probes for a
+device:
 
-Best
-Dag
+<3>vtpm vtpm-0: tpm_transmit: tpm_send: error -62
+
+<3>vtpm vtpm-0: A TPM error (-62) occurred attempting to determine
+the timeouts
+
+This fix is relevant to all kernels from 4.1 forward which is the
+release in which multi-page xenbus support was introduced.
+
+Daniel De Graaf formulated the fix by code inspection after the
+regression point was located.
+
+Fixes: ccc9d90a9a8b ("xenbus_client: Extend interface to support multi-page ring")
+Signed-off-by: Dr. Greg Wettstein <greg@enjellic.com>
+
+[boris: Updated commit message, added Fixes tag]
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: stable@vger.kernel.org # v4.1+
+---
+ drivers/char/tpm/xen-tpmfront.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
+index 911475d36800..b150f87f38f5 100644
+--- a/drivers/char/tpm/xen-tpmfront.c
++++ b/drivers/char/tpm/xen-tpmfront.c
+@@ -264,7 +264,7 @@ static int setup_ring(struct xenbus_device *dev, struct tpm_private *priv)
+ 		return -ENOMEM;
+ 	}
+ 
+-	rv = xenbus_grant_ring(dev, &priv->shr, 1, &gref);
++	rv = xenbus_grant_ring(dev, priv->shr, 1, &gref);
+ 	if (rv < 0)
+ 		return rv;
+ 
+-- 
+2.17.1
