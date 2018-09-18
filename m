@@ -1,47 +1,197 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:58503 "EHLO mga11.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:59396 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730026AbeISA2s (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 18 Sep 2018 20:28:48 -0400
-Date: Tue, 18 Sep 2018 21:54:33 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Roberto Sassu <roberto.sassu@huawei.com>
-Cc: linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] tpm: retrieve digest size of unknown algorithms
- with PCR read
-Message-ID: <20180918185433.GA9177@linux.intel.com>
-References: <20180905114202.7757-1-roberto.sassu@huawei.com>
- <20180905114202.7757-4-roberto.sassu@huawei.com>
- <20180916123749.GF5040@linux.intel.com>
- <322eb81b-3f3e-e37e-5fb0-a37aad3d06d7@huawei.com>
- <20180917211622.GC6716@linux.intel.com>
- <8621eb6d-b252-4fb3-cb67-294f0aafb54c@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <8621eb6d-b252-4fb3-cb67-294f0aafb54c@huawei.com>
+        id S1729279AbeIRPKM (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 18 Sep 2018 11:10:12 -0400
+From: Tomas Winkler <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH v3 08/20] tpm: factor out tpm1_get_random into tpm1-cmd.c
+Date: Tue, 18 Sep 2018 12:34:47 +0300
+Message-Id: <20180918093459.19165-9-tomas.winkler@intel.com>
+In-Reply-To: <20180918093459.19165-1-tomas.winkler@intel.com>
+References: <20180918093459.19165-1-tomas.winkler@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Sep 18, 2018 at 09:14:43AM +0200, Roberto Sassu wrote:
-> On 9/17/2018 11:16 PM, Jarkko Sakkinen wrote:
-> > On Mon, Sep 17, 2018 at 12:02:56PM +0200, Roberto Sassu wrote:
-> > > This code has the same behavior of tpm2_get_pcr_allocation(). If some
-> > > banks are not used, set the algorithm of the first unused to
-> > > TPM_ALG_ERROR.
-> > 
-> > My point is that maybe it would sense to use zero for that in order
-> > to make code a bit simpler.
-> 
-> Wouldn't be better to compare data with the same type? Since the alg_id
-> structure member stores an algorithm, it should be fine to compare its
-> value with an algorithm.
-> 
-> No problem to change that, but probably I should modify also
-> tpm_pcr_extend().
-> 
-> Roberto
+Factor out get random implementation from tpm-interface.c
+into tpm1_get_random function in tpm1-cmd.c.
+No functional changes.
 
-Please do.
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+---
+V2-V3: Rebase
 
-/Jarkko
+ drivers/char/tpm/tpm-interface.c | 58 +++++-----------------------------------
+ drivers/char/tpm/tpm.h           |  1 +
+ drivers/char/tpm/tpm1-cmd.c      | 55 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 63 insertions(+), 51 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 59ca0cdda811..c15957fef08f 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -801,14 +801,6 @@ int tpm_pm_resume(struct device *dev)
+ }
+ EXPORT_SYMBOL_GPL(tpm_pm_resume);
+ 
+-#define TPM_ORD_GET_RANDOM 70
+-#define TPM_GETRANDOM_RESULT_SIZE	18
+-static const struct tpm_input_header tpm_getrandom_header = {
+-	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+-	.length = cpu_to_be32(14),
+-	.ordinal = cpu_to_be32(TPM_ORD_GET_RANDOM)
+-};
+-
+ /**
+  * tpm_get_random() - get random bytes from the TPM's RNG
+  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
+@@ -819,58 +811,22 @@ static const struct tpm_input_header tpm_getrandom_header = {
+  */
+ int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
+ {
+-	struct tpm_cmd_t tpm_cmd;
+-	u32 recd, num_bytes = min_t(u32, max, TPM_MAX_RNG_DATA), rlength;
+-	int err, total = 0, retries = 5;
+-	u8 *dest = out;
++	int rc;
+ 
+-	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
++	if (!out || max > TPM_MAX_RNG_DATA)
+ 		return -EINVAL;
+ 
+ 	chip = tpm_find_get_ops(chip);
+ 	if (!chip)
+ 		return -ENODEV;
+ 
+-	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+-		err = tpm2_get_random(chip, out, max);
+-		tpm_put_ops(chip);
+-		return err;
+-	}
+-
+-	do {
+-		tpm_cmd.header.in = tpm_getrandom_header;
+-		tpm_cmd.params.getrandom_in.num_bytes = cpu_to_be32(num_bytes);
+-
+-		err = tpm_transmit_cmd(chip, NULL, &tpm_cmd,
+-				       TPM_GETRANDOM_RESULT_SIZE + num_bytes,
+-				       offsetof(struct tpm_getrandom_out,
+-						rng_data),
+-				       0, "attempting get random");
+-		if (err)
+-			break;
+-
+-		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
+-		if (recd > num_bytes) {
+-			total = -EFAULT;
+-			break;
+-		}
+-
+-		rlength = be32_to_cpu(tpm_cmd.header.out.length);
+-		if (rlength < TPM_HEADER_SIZE +
+-			      offsetof(struct tpm_getrandom_out, rng_data) +
+-			      recd) {
+-			total = -EFAULT;
+-			break;
+-		}
+-		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
+-
+-		dest += recd;
+-		total += recd;
+-		num_bytes -= recd;
+-	} while (retries-- && total < max);
++	if (chip->flags & TPM_CHIP_FLAG_TPM2)
++		rc = tpm2_get_random(chip, out, max);
++	else
++		rc = tpm1_get_random(chip, out, max);
+ 
+ 	tpm_put_ops(chip);
+-	return total ? total : -EIO;
++	return rc;
+ }
+ EXPORT_SYMBOL_GPL(tpm_get_random);
+ 
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 1c1980c79c30..496a56156e77 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -551,6 +551,7 @@ int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+ 		    const char *log_msg);
+ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+ 		    const char *desc, size_t min_cap_length);
++int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max);
+ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+ int tpm_pm_suspend(struct device *dev);
+ int tpm_pm_resume(struct device *dev);
+diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+index 8aa3e3cfed71..e7e0528e2e06 100644
+--- a/drivers/char/tpm/tpm1-cmd.c
++++ b/drivers/char/tpm/tpm1-cmd.c
+@@ -470,3 +470,58 @@ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+ 	return rc;
+ }
+ EXPORT_SYMBOL_GPL(tpm1_getcap);
++
++#define TPM_ORD_GET_RANDOM 70
++#define TPM_GETRANDOM_RESULT_SIZE	18
++static const struct tpm_input_header tpm_getrandom_header = {
++	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
++	.length = cpu_to_be32(14),
++	.ordinal = cpu_to_be32(TPM_ORD_GET_RANDOM)
++};
++
++int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max)
++{
++	struct tpm_cmd_t tpm_cmd;
++	u32 recd;
++	u32 num_bytes = min_t(u32, max, TPM_MAX_RNG_DATA);
++	u32 rlength;
++	int err, total = 0, retries = 5;
++	u8 *dest = out;
++
++	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
++		return -EINVAL;
++
++	do {
++		tpm_cmd.header.in = tpm_getrandom_header;
++		tpm_cmd.params.getrandom_in.num_bytes = cpu_to_be32(num_bytes);
++
++		err = tpm_transmit_cmd(chip, NULL, &tpm_cmd,
++				       TPM_GETRANDOM_RESULT_SIZE + num_bytes,
++				       offsetof(struct tpm_getrandom_out,
++						rng_data),
++				       0, "attempting get random");
++		if (err)
++			break;
++
++		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
++		if (recd > num_bytes) {
++			total = -EFAULT;
++			break;
++		}
++
++		rlength = be32_to_cpu(tpm_cmd.header.out.length);
++		if (rlength < TPM_HEADER_SIZE +
++			      offsetof(struct tpm_getrandom_out, rng_data) +
++			      recd) {
++			total = -EFAULT;
++			break;
++		}
++		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
++
++		dest += recd;
++		total += recd;
++		num_bytes -= recd;
++	} while (retries-- && (size_t)total < max);
++
++	return total ? total : -EIO;
++}
+-- 
+2.14.4
