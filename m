@@ -1,80 +1,47 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:56520 "EHLO mga18.intel.com"
+Received: from mga11.intel.com ([192.55.52.93]:58503 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727140AbeISAff (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 18 Sep 2018 20:35:35 -0400
-Date: Tue, 18 Sep 2018 21:59:52 +0300
+        id S1730026AbeISA2s (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 18 Sep 2018 20:28:48 -0400
+Date: Tue, 18 Sep 2018 21:54:33 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        jgross@suse.com, dunlapg@umich.edu,
-        "Dr. Greg Wettstein" <greg@wind.enjellic.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v3] tpm: Restore functionality to xen vtpm driver.
-Message-ID: <20180918185952.GA26508@linux.intel.com>
-References: <20180917225333.10426-1-boris.ostrovsky@oracle.com>
+To: Roberto Sassu <roberto.sassu@huawei.com>
+Cc: linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] tpm: retrieve digest size of unknown algorithms
+ with PCR read
+Message-ID: <20180918185433.GA9177@linux.intel.com>
+References: <20180905114202.7757-1-roberto.sassu@huawei.com>
+ <20180905114202.7757-4-roberto.sassu@huawei.com>
+ <20180916123749.GF5040@linux.intel.com>
+ <322eb81b-3f3e-e37e-5fb0-a37aad3d06d7@huawei.com>
+ <20180917211622.GC6716@linux.intel.com>
+ <8621eb6d-b252-4fb3-cb67-294f0aafb54c@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180917225333.10426-1-boris.ostrovsky@oracle.com>
+In-Reply-To: <8621eb6d-b252-4fb3-cb67-294f0aafb54c@huawei.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Sep 17, 2018 at 06:53:33PM -0400, Boris Ostrovsky wrote:
-> From: "Dr. Greg Wettstein" <greg@wind.enjellic.com>
+On Tue, Sep 18, 2018 at 09:14:43AM +0200, Roberto Sassu wrote:
+> On 9/17/2018 11:16 PM, Jarkko Sakkinen wrote:
+> > On Mon, Sep 17, 2018 at 12:02:56PM +0200, Roberto Sassu wrote:
+> > > This code has the same behavior of tpm2_get_pcr_allocation(). If some
+> > > banks are not used, set the algorithm of the first unused to
+> > > TPM_ALG_ERROR.
+> > 
+> > My point is that maybe it would sense to use zero for that in order
+> > to make code a bit simpler.
 > 
-> Functionality of the xen-tpmfront driver was lost secondary to
-> the introduction of xenbus multi-page support in commit ccc9d90a9a8b
-> ("xenbus_client: Extend interface to support multi-page ring").
+> Wouldn't be better to compare data with the same type? Since the alg_id
+> structure member stores an algorithm, it should be fine to compare its
+> value with an algorithm.
 > 
-> In this commit pointer to location of where the shared page address
-> is stored was being passed to the xenbus_grant_ring() function rather
-> then the address of the shared page itself. This resulted in a situation
-> where the driver would attach to the vtpm-stubdom but any attempt
-> to send a command to the stub domain would timeout.
+> No problem to change that, but probably I should modify also
+> tpm_pcr_extend().
 > 
-> A diagnostic finding for this regression is the following error
-> message being generated when the xen-tpmfront driver probes for a
-> device:
-> 
-> <3>vtpm vtpm-0: tpm_transmit: tpm_send: error -62
-> 
-> <3>vtpm vtpm-0: A TPM error (-62) occurred attempting to determine
-> the timeouts
-> 
-> This fix is relevant to all kernels from 4.1 forward which is the
-> release in which multi-page xenbus support was introduced.
-> 
-> Daniel De Graaf formulated the fix by code inspection after the
-> regression point was located.
-> 
-> Fixes: ccc9d90a9a8b ("xenbus_client: Extend interface to support multi-page ring")
-> Signed-off-by: Dr. Greg Wettstein <greg@enjellic.com>
-> 
-> [boris: Updated commit message, added Fixes tag]
-> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-> Cc: stable@vger.kernel.org # v4.1+
-> ---
->  drivers/char/tpm/xen-tpmfront.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
-> index 911475d36800..b150f87f38f5 100644
-> --- a/drivers/char/tpm/xen-tpmfront.c
-> +++ b/drivers/char/tpm/xen-tpmfront.c
-> @@ -264,7 +264,7 @@ static int setup_ring(struct xenbus_device *dev, struct tpm_private *priv)
->  		return -ENOMEM;
->  	}
->  
-> -	rv = xenbus_grant_ring(dev, &priv->shr, 1, &gref);
-> +	rv = xenbus_grant_ring(dev, priv->shr, 1, &gref);
->  	if (rv < 0)
->  		return rv;
->  
-> -- 
-> 2.17.1
-> 
+> Roberto
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Please do.
 
 /Jarkko
