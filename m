@@ -1,117 +1,80 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33474 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730756AbeISNfE (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 19 Sep 2018 09:35:04 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8J7s6DX046237
-        for <linux-integrity@vger.kernel.org>; Wed, 19 Sep 2018 03:58:19 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mkgknvr2m-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 19 Sep 2018 03:58:19 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Wed, 19 Sep 2018 08:58:17 +0100
-From: Nayna Jain <nayna@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dhowells@redhat.com, jforbes@redhat.com,
-        Nayna Jain <nayna@linux.vnet.ibm.com>
-Subject: [PATCH v3 0/6] Add support for architecture specific IMA policies 
-Date: Wed, 19 Sep 2018 13:25:16 +0530
-Message-Id: <20180919075522.7684-1-nayna@linux.vnet.ibm.com>
+Received: from mga18.intel.com ([134.134.136.126]:56520 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727140AbeISAff (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 18 Sep 2018 20:35:35 -0400
+Date: Tue, 18 Sep 2018 21:59:52 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        jgross@suse.com, dunlapg@umich.edu,
+        "Dr. Greg Wettstein" <greg@wind.enjellic.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v3] tpm: Restore functionality to xen vtpm driver.
+Message-ID: <20180918185952.GA26508@linux.intel.com>
+References: <20180917225333.10426-1-boris.ostrovsky@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180917225333.10426-1-boris.ostrovsky@oracle.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-The architecture specific policy, introduced in this patch set, permits
-different architectures to define IMA policy rules based on kernel
-configuration and system runtime information.
+On Mon, Sep 17, 2018 at 06:53:33PM -0400, Boris Ostrovsky wrote:
+> From: "Dr. Greg Wettstein" <greg@wind.enjellic.com>
+> 
+> Functionality of the xen-tpmfront driver was lost secondary to
+> the introduction of xenbus multi-page support in commit ccc9d90a9a8b
+> ("xenbus_client: Extend interface to support multi-page ring").
+> 
+> In this commit pointer to location of where the shared page address
+> is stored was being passed to the xenbus_grant_ring() function rather
+> then the address of the shared page itself. This resulted in a situation
+> where the driver would attach to the vtpm-stubdom but any attempt
+> to send a command to the stub domain would timeout.
+> 
+> A diagnostic finding for this regression is the following error
+> message being generated when the xen-tpmfront driver probes for a
+> device:
+> 
+> <3>vtpm vtpm-0: tpm_transmit: tpm_send: error -62
+> 
+> <3>vtpm vtpm-0: A TPM error (-62) occurred attempting to determine
+> the timeouts
+> 
+> This fix is relevant to all kernels from 4.1 forward which is the
+> release in which multi-page xenbus support was introduced.
+> 
+> Daniel De Graaf formulated the fix by code inspection after the
+> regression point was located.
+> 
+> Fixes: ccc9d90a9a8b ("xenbus_client: Extend interface to support multi-page ring")
+> Signed-off-by: Dr. Greg Wettstein <greg@enjellic.com>
+> 
+> [boris: Updated commit message, added Fixes tag]
+> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> Cc: stable@vger.kernel.org # v4.1+
+> ---
+>  drivers/char/tpm/xen-tpmfront.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
+> index 911475d36800..b150f87f38f5 100644
+> --- a/drivers/char/tpm/xen-tpmfront.c
+> +++ b/drivers/char/tpm/xen-tpmfront.c
+> @@ -264,7 +264,7 @@ static int setup_ring(struct xenbus_device *dev, struct tpm_private *priv)
+>  		return -ENOMEM;
+>  	}
+>  
+> -	rv = xenbus_grant_ring(dev, &priv->shr, 1, &gref);
+> +	rv = xenbus_grant_ring(dev, priv->shr, 1, &gref);
+>  	if (rv < 0)
+>  		return rv;
+>  
+> -- 
+> 2.17.1
+> 
 
-For example, on x86, there are two methods of verifying the kexec'ed kernel
-image signature - CONFIG_KEXEC_VERIFY_SIG and IMA appraisal policy
-KEXEC_KERNEL_CHECK. CONFIG_KEXEC_VERIFY_SIG enforces the kexec_file_load
-syscall to verify file signatures, but does not prevent the kexec_load
-syscall. The IMA KEXEC_KERNEL_CHECK policy rule verifies the kexec'ed
-kernel image, loaded via the kexec_file_load syscall, is validly signed and
-prevents loading a kernel image via the kexec_load syscall. When secure
-boot is enabled, the kexec'ed kernel image needs to be signed and the
-signature verified. In this environment, either method of verifying the
-kexec'ed kernel image is acceptable, as long as the kexec_load syscall is
-disabled.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-The previous version of this patchset introduced a new IMA policy rule to
-disable the kexec_load syscall, when CONFIG_KEXEC_VERIFY_SIG was enabled,
-however that is removed from this version by introducing a different
-mechanism.
-
-The patchset defines an arch_ima_get_secureboot() function to retrieve the
-secureboot state of the system. If secureboot is enabled and
-CONFIG_KEXEC_VERIFY_SIG is configured, it denies permission to kexec_load
-syscall.
-
-To support architecture specific policies, a new function
-arch_get_ima_policy() is defined. This patch set defines IMA
-KERNEL_KEXEC_POLICY rules for x86 only if CONFIG_KEXEC_VERIFY_SIG is
-disabled and secure boot is enabled.
-
-This patch set includes a patch, which refactors ima_init_policy() to
-remove code duplication.
-
-Changelog:
-
-v3:
-* x86/ima: define arch_ima_get_secureboot
-	- Edited subject line, added x86.
-
-* x86/ima: define arch_get_ima_policy() for x86
-	- Fixed the error reported by kbuild test robot. The error was
-	appearing when CONFIG_X86 is enabled, but CONFIG_IMA_ARCH_POLICY
-	is disabled.
-
-v2:
-* ima: define arch_ima_get_secureboot
-	- New Patch - to retrieve secureboot state of the system
-* ima: prevent kexec_load syscall based on runtime secureboot flag
-	- New Patch - disables kexec_load if KEXEC_VERIFY_SIG is
-	  configured and secureboot is enabled
-* ima: refactor ima_init_policy()
-	- New Patch - cleans up the code duplication in
-	  ima_init_policy(), adds new function add_rules()
-* ima: add support for arch specific policies
-	- modified ima_init_arch_policy() and ima_init_policy() to
-	  use add_rules() from previous patch.
-* ima: add support for external setting of ima_appraise
-	- sets ima_appraise flag explicitly for arch_specific setting
-* ima: add support for KEXEC_ORIG_KERNEL_CHECK
-	- deleted the patch based on Seth's feedback
-* x86/ima: define arch_get_ima_policy() for x86
-	- removes the policy KEXEC_ORIG_KERNEL_CHECK based on
-	  Seth's feedback.
-
-Eric Richter (1):
-  x86/ima: define arch_get_ima_policy() for x86
-
-Nayna Jain (5):
-  x86/ima: define arch_ima_get_secureboot
-  ima: prevent kexec_load syscall based on runtime secureboot flag
-  ima: refactor ima_init_policy()
-  ima: add support for arch specific policies
-  ima: add support for external setting of ima_appraise
-
- arch/x86/kernel/Makefile              |   2 +
- arch/x86/kernel/ima_arch.c            |  35 +++++++
- include/linux/ima.h                   |  18 ++++
- security/integrity/ima/Kconfig        |   8 ++
- security/integrity/ima/ima.h          |   5 +
- security/integrity/ima/ima_appraise.c |  11 ++-
- security/integrity/ima/ima_main.c     |  17 ++--
- security/integrity/ima/ima_policy.c   | 167 +++++++++++++++++++++++++---------
- 8 files changed, 214 insertions(+), 49 deletions(-)
- create mode 100644 arch/x86/kernel/ima_arch.c
-
--- 
-2.13.6
+/Jarkko
