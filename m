@@ -1,9 +1,9 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:64024 "EHLO mga02.intel.com"
+Received: from mga11.intel.com ([192.55.52.93]:5074 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732192AbeISVAt (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 19 Sep 2018 17:00:49 -0400
-Date: Wed, 19 Sep 2018 18:22:19 +0300
+        id S1731221AbeISVDG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 19 Sep 2018 17:03:06 -0400
+Date: Wed, 19 Sep 2018 18:24:34 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: Tomas Winkler <tomas.winkler@intel.com>
 Cc: Jason Gunthorpe <jgg@ziepe.ca>,
@@ -11,32 +11,28 @@ Cc: Jason Gunthorpe <jgg@ziepe.ca>,
         Tadeusz Struk <tadeusz.struk@intel.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 18/20] tpm: use u32 instead of int for pcr index
-Message-ID: <20180919152219.GK31076@linux.intel.com>
+Subject: Re: [PATCH v3 20/20] tpm1: reimplement tpm1_continue_selftest()
+ using tpm_buf
+Message-ID: <20180919152434.GM31076@linux.intel.com>
 References: <20180918093459.19165-1-tomas.winkler@intel.com>
- <20180918093459.19165-19-tomas.winkler@intel.com>
+ <20180918093459.19165-21-tomas.winkler@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180918093459.19165-19-tomas.winkler@intel.com>
+In-Reply-To: <20180918093459.19165-21-tomas.winkler@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Sep 18, 2018 at 12:34:57PM +0300, Tomas Winkler wrote:
-> TPM pcr indices cannot be negative, also the tpm
-> commands accept u32 number as a pcr index.
-> 
-> 1. Adjust the API to use u32 instead of int in all pcr related
-> functions.
-
-NAK.
-
-> 2. Rename tpm1_pcr_read_dev to tpm1_pcr_read() to match
-> the counterpart tpm2_pcr_read()
-
-I would accept this a separate commit (and it should be a separate).
-
-> 3. Remove redundant constants in tpm1_pcr_extend() function.
+On Tue, Sep 18, 2018 at 12:34:59PM +0300, Tomas Winkler wrote:
+> Reimplement tpm1_continue_selftest() using tpm_buf structure.
+> This is the last command using the old tpm_cmd_t structure
+> and now the structure can be removed.
 > 
 > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+
+Minor rant: the last sentence should state simply that as there
+are no other fields in tpm_cmd_t can be removed. The rationale
+is that the patch set ceases to exist after it is accepted. It
+is a temporary item, not something that should be referred in
+the commit log.
 
 /Jarkko
