@@ -1,9 +1,9 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:45333 "EHLO mga14.intel.com"
+Received: from mga09.intel.com ([134.134.136.24]:61655 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731665AbeISUhQ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 19 Sep 2018 16:37:16 -0400
-Date: Wed, 19 Sep 2018 17:58:51 +0300
+        id S1727675AbeISTrM (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 19 Sep 2018 15:47:12 -0400
+Date: Wed, 19 Sep 2018 17:09:02 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: Tomas Winkler <tomas.winkler@intel.com>
 Cc: Jason Gunthorpe <jgg@ziepe.ca>,
@@ -11,26 +11,29 @@ Cc: Jason Gunthorpe <jgg@ziepe.ca>,
         Tadeusz Struk <tadeusz.struk@intel.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 12/20] tpm: move pcr extend code to tpm2-cmd.c
-Message-ID: <20180919145851.GB31076@linux.intel.com>
+Subject: Re: [PATCH v3 07/20] tpm: move tpm_getcap to tpm1-cmd.c
+Message-ID: <20180919140902.GB27854@linux.intel.com>
 References: <20180918093459.19165-1-tomas.winkler@intel.com>
- <20180918093459.19165-13-tomas.winkler@intel.com>
+ <20180918093459.19165-8-tomas.winkler@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180918093459.19165-13-tomas.winkler@intel.com>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180918093459.19165-8-tomas.winkler@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Sep 18, 2018 at 12:34:51PM +0300, Tomas Winkler wrote:
-> Add tpm2_pcr_extend() function to tpm2-cmd.c with signature required
-> by tpm-interface.c. It wraps the original open code
-> implementation. The original original tpm2_pcr_extend() function
-> is renamed and made static, called only from new tpm2_pcr_extend()
+On Tue, Sep 18, 2018 at 12:34:46PM +0300, Tomas Winkler wrote:
+> 1. Move tpm_getcap to tpm1-cmd. Rename the function to tpm1_getcap.
+> 2. Remove unused tpm_getcap_header with unused constant
+> as this functionality is already implemented using tpm_buf construct.
 > 
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> Fixes warning:
+> drivers/char/tpm/tpm-interface.c:452:38: warning: 'tpm_getcap_header' defined but not used [-Wunused-const-variable=]
+>  static const struct tpm_input_header tpm_getcap_header = {
+>                                       ^~~~~~~~~~~~~~~~~
+> 3. Drop unused TPM_DIGEST_SIZE. It's already defined in
+> include/linux/tpm.h
 
-The change is OK. The last sentence in the commit message needs to
-be fixed.
-
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
 /Jarkko
