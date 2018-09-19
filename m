@@ -1,9 +1,9 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:61655 "EHLO mga09.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:5523 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727675AbeISTrM (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 19 Sep 2018 15:47:12 -0400
-Date: Wed, 19 Sep 2018 17:09:02 +0300
+        id S1730876AbeISToy (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 19 Sep 2018 15:44:54 -0400
+Date: Wed, 19 Sep 2018 17:06:34 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: Tomas Winkler <tomas.winkler@intel.com>
 Cc: Jason Gunthorpe <jgg@ziepe.ca>,
@@ -11,29 +11,29 @@ Cc: Jason Gunthorpe <jgg@ziepe.ca>,
         Tadeusz Struk <tadeusz.struk@intel.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 07/20] tpm: move tpm_getcap to tpm1-cmd.c
-Message-ID: <20180919140902.GB27854@linux.intel.com>
+Subject: Re: [PATCH v3 06/20] tpm: move tpm1_pcr_extend to tpm1-cmd.c
+Message-ID: <20180919140634.GA27854@linux.intel.com>
 References: <20180918093459.19165-1-tomas.winkler@intel.com>
- <20180918093459.19165-8-tomas.winkler@intel.com>
+ <20180918093459.19165-7-tomas.winkler@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20180918093459.19165-8-tomas.winkler@intel.com>
+In-Reply-To: <20180918093459.19165-7-tomas.winkler@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, Sep 18, 2018 at 12:34:46PM +0300, Tomas Winkler wrote:
-> 1. Move tpm_getcap to tpm1-cmd. Rename the function to tpm1_getcap.
-> 2. Remove unused tpm_getcap_header with unused constant
-> as this functionality is already implemented using tpm_buf construct.
+On Tue, Sep 18, 2018 at 12:34:45PM +0300, Tomas Winkler wrote:
+> Move tpm1_pcr_extend to tpm1-cmd.c and remove
+> unused pcrextend_header structure.
 > 
 > Fixes warning:
-> drivers/char/tpm/tpm-interface.c:452:38: warning: 'tpm_getcap_header' defined but not used [-Wunused-const-variable=]
->  static const struct tpm_input_header tpm_getcap_header = {
->                                       ^~~~~~~~~~~~~~~~~
-> 3. Drop unused TPM_DIGEST_SIZE. It's already defined in
-> include/linux/tpm.h
+> drivers/char/tpm/tpm-interface.c:609:38: warning: 'pcrextend_header' defined but not used [-Wunused-const-variable=]
+>  static const struct tpm_input_header pcrextend_header = {
+>                                       ^~~~~~~~~~~~~~~~
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 
 Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
+Can someone with a working IMA environment to test it? Don't have one
+right now (should probably setup).
 
 /Jarkko
