@@ -1,199 +1,52 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:4646 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390244AbeIUTvQ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 21 Sep 2018 15:51:16 -0400
-From: Tomas Winkler <tomas.winkler@intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37328 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727554AbeIUTtc (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 21 Sep 2018 15:49:32 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8LE0N5v033670
+        for <linux-integrity@vger.kernel.org>; Fri, 21 Sep 2018 10:00:31 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mn1xd082d-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 21 Sep 2018 10:00:29 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 21 Sep 2018 15:00:05 +0100
+Subject: Re: [PATCH v2, RESEND 2/3] tpm: modify tpm_pcr_read() definition to
+ pass TPM hash algorithms
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huawei.com>,
+        jarkko.sakkinen@linux.intel.com
+Cc: linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH v4 08/21] tpm: factor out tpm1_get_random into tpm1-cmd.c
-Date: Fri, 21 Sep 2018 16:58:07 +0300
-Message-Id: <20180921135820.20549-9-tomas.winkler@intel.com>
-In-Reply-To: <20180921135820.20549-1-tomas.winkler@intel.com>
-References: <20180921135820.20549-1-tomas.winkler@intel.com>
+        linux-kernel@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>
+Date: Fri, 21 Sep 2018 09:59:49 -0400
+In-Reply-To: <411432db-ea57-a537-05d3-0b53008bef27@huawei.com>
+References: <20180917093820.20500-1-roberto.sassu@huawei.com>
+         <20180917093820.20500-3-roberto.sassu@huawei.com>
+         <411432db-ea57-a537-05d3-0b53008bef27@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1537538389.3830.336.camel@linux.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Factor out get random implementation from tpm-interface.c
-into tpm1_get_random function in tpm1-cmd.c.
-No functional changes.
+On Fri, 2018-09-21 at 12:24 +0200, Roberto Sassu wrote:
+> On 9/17/2018 11:38 AM, Roberto Sassu wrote:
+> > Currently the TPM driver allows other kernel subsystems to read only the
+> > SHA1 PCR bank. This patch modifies the parameters of tpm_pcr_read() and
+> > tpm2_pcr_read() to pass an array of tpm_digest structures, which contains
+> > the desired hash algorithms. Initially, the array size is limited to 1.
+> 
+> Jarkko, is this patch ok?
+> 
+> Mimi, I wait for your review of the IMA part.
 
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-Reviewed-by: Jarkko Sakkine <jarkko.sakkinen@linux.intel.com>
----
-V2-V3: Rebase
-V4: Resend
+Yes, I know.  I've been on vacation and am hoping to review your, Eric
+Bigger's and Nayna's patches soon.  Sorry for the delay!
 
- drivers/char/tpm/tpm-interface.c | 58 +++++-----------------------------------
- drivers/char/tpm/tpm.h           |  1 +
- drivers/char/tpm/tpm1-cmd.c      | 55 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 63 insertions(+), 51 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 153fee46bec0..4d5742d07e8d 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -811,14 +811,6 @@ int tpm_pm_resume(struct device *dev)
- }
- EXPORT_SYMBOL_GPL(tpm_pm_resume);
- 
--#define TPM_ORD_GET_RANDOM 70
--#define TPM_GETRANDOM_RESULT_SIZE	18
--static const struct tpm_input_header tpm_getrandom_header = {
--	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
--	.length = cpu_to_be32(14),
--	.ordinal = cpu_to_be32(TPM_ORD_GET_RANDOM)
--};
--
- /**
-  * tpm_get_random() - get random bytes from the TPM's RNG
-  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-@@ -829,58 +821,22 @@ static const struct tpm_input_header tpm_getrandom_header = {
-  */
- int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
- {
--	struct tpm_cmd_t tpm_cmd;
--	u32 recd, num_bytes = min_t(u32, max, TPM_MAX_RNG_DATA), rlength;
--	int err, total = 0, retries = 5;
--	u8 *dest = out;
-+	int rc;
- 
--	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
-+	if (!out || max > TPM_MAX_RNG_DATA)
- 		return -EINVAL;
- 
- 	chip = tpm_find_get_ops(chip);
- 	if (!chip)
- 		return -ENODEV;
- 
--	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
--		err = tpm2_get_random(chip, out, max);
--		tpm_put_ops(chip);
--		return err;
--	}
--
--	do {
--		tpm_cmd.header.in = tpm_getrandom_header;
--		tpm_cmd.params.getrandom_in.num_bytes = cpu_to_be32(num_bytes);
--
--		err = tpm_transmit_cmd(chip, NULL, &tpm_cmd,
--				       TPM_GETRANDOM_RESULT_SIZE + num_bytes,
--				       offsetof(struct tpm_getrandom_out,
--						rng_data),
--				       0, "attempting get random");
--		if (err)
--			break;
--
--		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
--		if (recd > num_bytes) {
--			total = -EFAULT;
--			break;
--		}
--
--		rlength = be32_to_cpu(tpm_cmd.header.out.length);
--		if (rlength < TPM_HEADER_SIZE +
--			      offsetof(struct tpm_getrandom_out, rng_data) +
--			      recd) {
--			total = -EFAULT;
--			break;
--		}
--		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
--
--		dest += recd;
--		total += recd;
--		num_bytes -= recd;
--	} while (retries-- && total < max);
-+	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-+		rc = tpm2_get_random(chip, out, max);
-+	else
-+		rc = tpm1_get_random(chip, out, max);
- 
- 	tpm_put_ops(chip);
--	return total ? total : -EIO;
-+	return rc;
- }
- EXPORT_SYMBOL_GPL(tpm_get_random);
- 
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 1c1980c79c30..496a56156e77 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -551,6 +551,7 @@ int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
- 		    const char *log_msg);
- ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
- 		    const char *desc, size_t min_cap_length);
-+int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max);
- unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
- int tpm_pm_suspend(struct device *dev);
- int tpm_pm_resume(struct device *dev);
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 7191bc155d2b..49e34168671c 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -470,3 +470,58 @@ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
- 	return rc;
- }
- EXPORT_SYMBOL_GPL(tpm1_getcap);
-+
-+#define TPM_ORD_GET_RANDOM 70
-+#define TPM_GETRANDOM_RESULT_SIZE	18
-+static const struct tpm_input_header tpm_getrandom_header = {
-+	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
-+	.length = cpu_to_be32(14),
-+	.ordinal = cpu_to_be32(TPM_ORD_GET_RANDOM)
-+};
-+
-+int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max)
-+{
-+	struct tpm_cmd_t tpm_cmd;
-+	u32 recd;
-+	u32 num_bytes = min_t(u32, max, TPM_MAX_RNG_DATA);
-+	u32 rlength;
-+	int err, total = 0, retries = 5;
-+	u8 *dest = out;
-+
-+	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
-+		return -EINVAL;
-+
-+	do {
-+		tpm_cmd.header.in = tpm_getrandom_header;
-+		tpm_cmd.params.getrandom_in.num_bytes = cpu_to_be32(num_bytes);
-+
-+		err = tpm_transmit_cmd(chip, NULL, &tpm_cmd,
-+				       TPM_GETRANDOM_RESULT_SIZE + num_bytes,
-+				       offsetof(struct tpm_getrandom_out,
-+						rng_data),
-+				       0, "attempting get random");
-+		if (err)
-+			break;
-+
-+		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
-+		if (recd > num_bytes) {
-+			total = -EFAULT;
-+			break;
-+		}
-+
-+		rlength = be32_to_cpu(tpm_cmd.header.out.length);
-+		if (rlength < TPM_HEADER_SIZE +
-+			      offsetof(struct tpm_getrandom_out, rng_data) +
-+			      recd) {
-+			total = -EFAULT;
-+			break;
-+		}
-+		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
-+
-+		dest += recd;
-+		total += recd;
-+		num_bytes -= recd;
-+	} while (retries-- && (size_t)total < max);
-+
-+	return total ? total : -EIO;
-+}
--- 
-2.14.4
+Mimi
