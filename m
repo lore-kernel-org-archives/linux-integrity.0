@@ -1,129 +1,199 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47800 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732114AbeIVAcy (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 21 Sep 2018 20:32:54 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8LIYEeL054103
-        for <linux-integrity@vger.kernel.org>; Fri, 21 Sep 2018 14:42:45 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mn3jt69yb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 21 Sep 2018 14:42:45 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 21 Sep 2018 19:42:41 +0100
-Subject: Re: [PATCH] security/integrity: remove unnecessary 'init_keyring'
- variable
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Eric Biggers <ebiggers@kernel.org>,
+Received: from mga18.intel.com ([134.134.136.126]:4646 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390244AbeIUTvQ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 21 Sep 2018 15:51:16 -0400
+From: Tomas Winkler <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
         linux-integrity@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Date: Fri, 21 Sep 2018 14:42:38 -0400
-In-Reply-To: <20180907202515.217716-1-ebiggers@kernel.org>
-References: <20180907202515.217716-1-ebiggers@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1537555358.3830.345.camel@linux.ibm.com>
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH v4 08/21] tpm: factor out tpm1_get_random into tpm1-cmd.c
+Date: Fri, 21 Sep 2018 16:58:07 +0300
+Message-Id: <20180921135820.20549-9-tomas.winkler@intel.com>
+In-Reply-To: <20180921135820.20549-1-tomas.winkler@intel.com>
+References: <20180921135820.20549-1-tomas.winkler@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 2018-09-07 at 13:25 -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> The 'init_keyring' variable actually just gave the value of
-> CONFIG_INTEGRITY_TRUSTED_KEYRING.  We should check the config option
-> directly instead.  No change in behavior; this just simplifies the code.
+Factor out get random implementation from tpm-interface.c
+into tpm1_get_random function in tpm1-cmd.c.
+No functional changes.
 
-We try to minimize as much as possible "ifdefs" in C code.  This
-change is moving in the wrong direction.
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Reviewed-by: Jarkko Sakkine <jarkko.sakkinen@linux.intel.com>
+---
+V2-V3: Rebase
+V4: Resend
 
-Mimi
+ drivers/char/tpm/tpm-interface.c | 58 +++++-----------------------------------
+ drivers/char/tpm/tpm.h           |  1 +
+ drivers/char/tpm/tpm1-cmd.c      | 55 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 63 insertions(+), 51 deletions(-)
 
-> 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->  security/integrity/digsig.c    | 11 ++---------
->  security/integrity/integrity.h |  9 +++++----
->  2 files changed, 7 insertions(+), 13 deletions(-)
-> 
-> diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-> index 879396fa3be0..9e6adbd1ad42 100644
-> --- a/security/integrity/digsig.c
-> +++ b/security/integrity/digsig.c
-> @@ -37,12 +37,6 @@ static const char * const keyring_name[INTEGRITY_KEYRING_MAX] = {
->  	"_module",
->  };
-> 
-> -#ifdef CONFIG_INTEGRITY_TRUSTED_KEYRING
-> -static bool init_keyring __initdata = true;
-> -#else
-> -static bool init_keyring __initdata;
-> -#endif
-> -
->  #ifdef CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY
->  #define restrict_link_to_ima restrict_link_by_builtin_and_secondary_trusted
->  #else
-> @@ -79,15 +73,13 @@ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
->  	return -EOPNOTSUPP;
->  }
-> 
-> +#ifdef CONFIG_INTEGRITY_TRUSTED_KEYRING
->  int __init integrity_init_keyring(const unsigned int id)
->  {
->  	const struct cred *cred = current_cred();
->  	struct key_restriction *restriction;
->  	int err = 0;
-> 
-> -	if (!init_keyring)
-> -		return 0;
-> -
->  	restriction = kzalloc(sizeof(struct key_restriction), GFP_KERNEL);
->  	if (!restriction)
->  		return -ENOMEM;
-> @@ -109,6 +101,7 @@ int __init integrity_init_keyring(const unsigned int id)
->  	}
->  	return err;
->  }
-> +#endif /* CONFIG_INTEGRITY_TRUSTED_KEYRING */
-> 
->  int __init integrity_load_x509(const unsigned int id, const char *path)
->  {
-> diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-> index e60473b13a8d..37ab908cfb6e 100644
-> --- a/security/integrity/integrity.h
-> +++ b/security/integrity/integrity.h
-> @@ -147,26 +147,27 @@ int integrity_kernel_read(struct file *file, loff_t offset,
->  extern struct dentry *integrity_dir;
-> 
->  #ifdef CONFIG_INTEGRITY_SIGNATURE
-> -
->  int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
->  			    const char *digest, int digestlen);
-> 
-> -int __init integrity_init_keyring(const unsigned int id);
->  int __init integrity_load_x509(const unsigned int id, const char *path);
->  #else
-> -
->  static inline int integrity_digsig_verify(const unsigned int id,
->  					  const char *sig, int siglen,
->  					  const char *digest, int digestlen)
->  {
->  	return -EOPNOTSUPP;
->  }
-> +#endif /* CONFIG_INTEGRITY_SIGNATURE */
-> 
-> +#ifdef CONFIG_INTEGRITY_TRUSTED_KEYRING
-> +int __init integrity_init_keyring(const unsigned int id);
-> +#else
->  static inline int integrity_init_keyring(const unsigned int id)
->  {
->  	return 0;
->  }
-> -#endif /* CONFIG_INTEGRITY_SIGNATURE */
-> +#endif
-> 
->  #ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
->  int asymmetric_verify(struct key *keyring, const char *sig,
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 153fee46bec0..4d5742d07e8d 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -811,14 +811,6 @@ int tpm_pm_resume(struct device *dev)
+ }
+ EXPORT_SYMBOL_GPL(tpm_pm_resume);
+ 
+-#define TPM_ORD_GET_RANDOM 70
+-#define TPM_GETRANDOM_RESULT_SIZE	18
+-static const struct tpm_input_header tpm_getrandom_header = {
+-	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+-	.length = cpu_to_be32(14),
+-	.ordinal = cpu_to_be32(TPM_ORD_GET_RANDOM)
+-};
+-
+ /**
+  * tpm_get_random() - get random bytes from the TPM's RNG
+  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
+@@ -829,58 +821,22 @@ static const struct tpm_input_header tpm_getrandom_header = {
+  */
+ int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
+ {
+-	struct tpm_cmd_t tpm_cmd;
+-	u32 recd, num_bytes = min_t(u32, max, TPM_MAX_RNG_DATA), rlength;
+-	int err, total = 0, retries = 5;
+-	u8 *dest = out;
++	int rc;
+ 
+-	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
++	if (!out || max > TPM_MAX_RNG_DATA)
+ 		return -EINVAL;
+ 
+ 	chip = tpm_find_get_ops(chip);
+ 	if (!chip)
+ 		return -ENODEV;
+ 
+-	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+-		err = tpm2_get_random(chip, out, max);
+-		tpm_put_ops(chip);
+-		return err;
+-	}
+-
+-	do {
+-		tpm_cmd.header.in = tpm_getrandom_header;
+-		tpm_cmd.params.getrandom_in.num_bytes = cpu_to_be32(num_bytes);
+-
+-		err = tpm_transmit_cmd(chip, NULL, &tpm_cmd,
+-				       TPM_GETRANDOM_RESULT_SIZE + num_bytes,
+-				       offsetof(struct tpm_getrandom_out,
+-						rng_data),
+-				       0, "attempting get random");
+-		if (err)
+-			break;
+-
+-		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
+-		if (recd > num_bytes) {
+-			total = -EFAULT;
+-			break;
+-		}
+-
+-		rlength = be32_to_cpu(tpm_cmd.header.out.length);
+-		if (rlength < TPM_HEADER_SIZE +
+-			      offsetof(struct tpm_getrandom_out, rng_data) +
+-			      recd) {
+-			total = -EFAULT;
+-			break;
+-		}
+-		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
+-
+-		dest += recd;
+-		total += recd;
+-		num_bytes -= recd;
+-	} while (retries-- && total < max);
++	if (chip->flags & TPM_CHIP_FLAG_TPM2)
++		rc = tpm2_get_random(chip, out, max);
++	else
++		rc = tpm1_get_random(chip, out, max);
+ 
+ 	tpm_put_ops(chip);
+-	return total ? total : -EIO;
++	return rc;
+ }
+ EXPORT_SYMBOL_GPL(tpm_get_random);
+ 
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 1c1980c79c30..496a56156e77 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -551,6 +551,7 @@ int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+ 		    const char *log_msg);
+ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+ 		    const char *desc, size_t min_cap_length);
++int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max);
+ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+ int tpm_pm_suspend(struct device *dev);
+ int tpm_pm_resume(struct device *dev);
+diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+index 7191bc155d2b..49e34168671c 100644
+--- a/drivers/char/tpm/tpm1-cmd.c
++++ b/drivers/char/tpm/tpm1-cmd.c
+@@ -470,3 +470,58 @@ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+ 	return rc;
+ }
+ EXPORT_SYMBOL_GPL(tpm1_getcap);
++
++#define TPM_ORD_GET_RANDOM 70
++#define TPM_GETRANDOM_RESULT_SIZE	18
++static const struct tpm_input_header tpm_getrandom_header = {
++	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
++	.length = cpu_to_be32(14),
++	.ordinal = cpu_to_be32(TPM_ORD_GET_RANDOM)
++};
++
++int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max)
++{
++	struct tpm_cmd_t tpm_cmd;
++	u32 recd;
++	u32 num_bytes = min_t(u32, max, TPM_MAX_RNG_DATA);
++	u32 rlength;
++	int err, total = 0, retries = 5;
++	u8 *dest = out;
++
++	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
++		return -EINVAL;
++
++	do {
++		tpm_cmd.header.in = tpm_getrandom_header;
++		tpm_cmd.params.getrandom_in.num_bytes = cpu_to_be32(num_bytes);
++
++		err = tpm_transmit_cmd(chip, NULL, &tpm_cmd,
++				       TPM_GETRANDOM_RESULT_SIZE + num_bytes,
++				       offsetof(struct tpm_getrandom_out,
++						rng_data),
++				       0, "attempting get random");
++		if (err)
++			break;
++
++		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
++		if (recd > num_bytes) {
++			total = -EFAULT;
++			break;
++		}
++
++		rlength = be32_to_cpu(tpm_cmd.header.out.length);
++		if (rlength < TPM_HEADER_SIZE +
++			      offsetof(struct tpm_getrandom_out, rng_data) +
++			      recd) {
++			total = -EFAULT;
++			break;
++		}
++		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
++
++		dest += recd;
++		total += recd;
++		num_bytes -= recd;
++	} while (retries-- && (size_t)total < max);
++
++	return total ? total : -EIO;
++}
+-- 
+2.14.4
