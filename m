@@ -1,96 +1,39 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37870 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726167AbeIXRPN (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:15:13 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8OB9AwT110144
-        for <linux-integrity@vger.kernel.org>; Mon, 24 Sep 2018 07:13:39 -0400
-Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mpxadsf17-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 24 Sep 2018 07:13:38 -0400
-Received: from localhost
-        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Mon, 24 Sep 2018 05:13:37 -0600
-Subject: Re: [PATCH v3 3/6] ima: refactor ima_init_policy()
-To: Dan Carpenter <dan.carpenter@oracle.com>, kbuild@01.org
-Cc: kbuild-all@01.org, linux-integrity@vger.kernel.org,
-        zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dhowells@redhat.com, jforbes@redhat.com
-References: <20180921083429.c7sikis5bzxdifny@mwanda>
-From: Nayna Jain <nayna@linux.vnet.ibm.com>
-Date: Mon, 24 Sep 2018 16:40:39 +0530
+Received: from mga12.intel.com ([192.55.52.136]:46678 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391400AbeIVDrw (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 21 Sep 2018 23:47:52 -0400
+Date: Sat, 22 Sep 2018 00:57:01 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Roberto Sassu <roberto.sassu@huawei.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2, RESEND 2/3] tpm: modify tpm_pcr_read() definition to
+ pass TPM hash algorithms
+Message-ID: <20180921215701.GA23799@linux.intel.com>
+References: <20180917093820.20500-1-roberto.sassu@huawei.com>
+ <20180917093820.20500-3-roberto.sassu@huawei.com>
+ <411432db-ea57-a537-05d3-0b53008bef27@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20180921083429.c7sikis5bzxdifny@mwanda>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Message-Id: <83d87b89-d1df-5e13-23d9-1ee2e8c9a75f@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <411432db-ea57-a537-05d3-0b53008bef27@huawei.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
+On Fri, Sep 21, 2018 at 12:24:15PM +0200, Roberto Sassu wrote:
+> On 9/17/2018 11:38 AM, Roberto Sassu wrote:
+> > Currently the TPM driver allows other kernel subsystems to read only the
+> > SHA1 PCR bank. This patch modifies the parameters of tpm_pcr_read() and
+> > tpm2_pcr_read() to pass an array of tpm_digest structures, which contains
+> > the desired hash algorithms. Initially, the array size is limited to 1.
+> 
+> Jarkko, is this patch ok?
+> 
+> Mimi, I wait for your review of the IMA part.
+> 
+> Roberto
 
+Oops, just bumped into these. Have to check next week. Please add me to
+either to- or cc-field in the future.
 
-On 09/21/2018 02:04 PM, Dan Carpenter wrote:
-> Hi Nayna,
->
-> Thank you for the patch! Perhaps something to improve:
->
-> url:    https://github.com/0day-ci/linux/commits/Nayna-Jain/Add-support-for-architecture-specific-IMA-policies/20180920-035110
->
-> smatch warnings:
-> security/integrity/ima/ima_policy.c:489 add_rules() warn: should this be a bitwise op?
->
-> # https://github.com/0day-ci/linux/commit/84a2e186f940ebc6c34e6d276e55f665167a5bb8
-> git remote add linux-review https://github.com/0day-ci/linux
-> git remote update linux-review
-> git checkout 84a2e186f940ebc6c34e6d276e55f665167a5bb8
-> vim +489 security/integrity/ima/ima_policy.c
->
-> 6f0911a6 Mimi Zohar 2018-04-12  477
-> 84a2e186 Nayna Jain 2018-09-19  478  static void add_rules(struct ima_rule_entry *entries, int count,
-> 84a2e186 Nayna Jain 2018-09-19  479  		      enum policy_rule_list file)
-> 84a2e186 Nayna Jain 2018-09-19  480  {
-> 84a2e186 Nayna Jain 2018-09-19  481  	int i = 0;
-> 84a2e186 Nayna Jain 2018-09-19  482
-> 84a2e186 Nayna Jain 2018-09-19  483  	for (i = 0; i < count; i++) {
-> 84a2e186 Nayna Jain 2018-09-19  484  		struct ima_rule_entry *entry;
-> 84a2e186 Nayna Jain 2018-09-19  485
-> 84a2e186 Nayna Jain 2018-09-19  486  		if (file && IMA_DEFAULT_POLICY)
->                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 84a2e186 Nayna Jain 2018-09-19  487  			list_add_tail(&entries[i].list, &ima_default_rules);
-> 84a2e186 Nayna Jain 2018-09-19  488
-> 84a2e186 Nayna Jain 2018-09-19 @489  		if (file && IMA_CUSTOM_POLICY) {
->                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^
->
-> It does look like it should be "if (file & IMA_CUSTOM_POLICY) {" but I
-> haven't looked at the context besides what's here in this email.
-Thanks Dan for noticing this. Yes, I will fix it and post the v4 version.
-
-Thanks & Regards,
-     - Nayna
-
-
->
-> 84a2e186 Nayna Jain 2018-09-19  490  			entry = kmemdup(&entries[i], sizeof(*entry),
-> 84a2e186 Nayna Jain 2018-09-19  491  					GFP_KERNEL);
-> 84a2e186 Nayna Jain 2018-09-19  492  			if (!entry)
-> 84a2e186 Nayna Jain 2018-09-19  493  				continue;
-> 84a2e186 Nayna Jain 2018-09-19  494
-> 84a2e186 Nayna Jain 2018-09-19  495  			INIT_LIST_HEAD(&entry->list);
-> 84a2e186 Nayna Jain 2018-09-19  496  			list_add_tail(&entry->list, &ima_policy_rules);
-> 84a2e186 Nayna Jain 2018-09-19  497  		}
-> 84a2e186 Nayna Jain 2018-09-19  498  		if (entries[i].action == APPRAISE)
-> 84a2e186 Nayna Jain 2018-09-19  499  			temp_ima_appraise |= ima_appraise_flag(entries[i].func);
-> 84a2e186 Nayna Jain 2018-09-19  500  		if (entries[i].func == POLICY_CHECK)
-> 84a2e186 Nayna Jain 2018-09-19  501  			temp_ima_appraise |= IMA_APPRAISE_POLICY;
-> 84a2e186 Nayna Jain 2018-09-19  502  	}
-> 84a2e186 Nayna Jain 2018-09-19  503  }
-> 84a2e186 Nayna Jain 2018-09-19  504
->
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
->
+/Jarkko
