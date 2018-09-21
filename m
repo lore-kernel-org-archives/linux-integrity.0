@@ -1,8 +1,8 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
 Received: from mga18.intel.com ([134.134.136.126]:4682 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389657AbeIUTvZ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 21 Sep 2018 15:51:25 -0400
+        id S2390445AbeIUTvc (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 21 Sep 2018 15:51:32 -0400
 From: Tomas Winkler <tomas.winkler@intel.com>
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
@@ -12,46 +12,120 @@ Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH v4 14/21] tpm: tpm-interface.c drop unused macros
-Date: Fri, 21 Sep 2018 16:58:13 +0300
-Message-Id: <20180921135820.20549-15-tomas.winkler@intel.com>
+Subject: [PATCH v4 17/21] tpm1: implement tpm1_pcr_read_dev() using tpm_buf structure
+Date: Fri, 21 Sep 2018 16:58:16 +0300
+Message-Id: <20180921135820.20549-18-tomas.winkler@intel.com>
 In-Reply-To: <20180921135820.20549-1-tomas.winkler@intel.com>
 References: <20180921135820.20549-1-tomas.winkler@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-The commit:
-"tpm_tis: further simplify calculation of ordinal duration"
-left unused macros, we can drop them now.
+Implement tpm1_pcr_read_dev() using tpm_buf and remove
+now unneeded structures from tpm.h
 
-Fixes compilation warnings:
-tpm-interface.c:37:0: warning: macro "TPM_PROTECTED_COMMAND" is not used [-Wunused-macros]
-tpm-interface.c:36:0: warning: macro "TSC_MAX_ORDINAL" is not used [-Wunused-macros]
-tpm-interface.c:38:0: warning: macro "TPM_CONNECTION_COMMAND" is not used [-Wunused-macros]
-
-Fixes: f72864300139 ("tpm_tis: further simplify calculation of ordinal duration")
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
 V3: New in the series.
-V4: Fix the commit message.
+V4: Resend.
 
- drivers/char/tpm/tpm-interface.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/char/tpm/tpm.h      | 18 ++----------------
+ drivers/char/tpm/tpm1-cmd.c | 38 +++++++++++++++++++++-----------------
+ 2 files changed, 23 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 6cd3aed1e190..d7059fc72c51 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -33,10 +33,6 @@
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index d6eca81a011a..d0402aa122ec 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -382,13 +382,10 @@ typedef union {
+ 	struct	tpm_output_header out;
+ } tpm_cmd_header;
  
- #include "tpm.h"
+-struct tpm_pcrread_out {
+-	u8	pcr_result[TPM_DIGEST_SIZE];
++struct tpm_cmd_t {
++	tpm_cmd_header	header;
+ } __packed;
  
--#define TSC_MAX_ORDINAL 12
--#define TPM_PROTECTED_COMMAND 0x00
--#define TPM_CONNECTION_COMMAND 0x40
+-struct tpm_pcrread_in {
+-	__be32	pcr_idx;
+-} __packed;
+ 
+ /* 128 bytes is an arbitrary cap. This could be as large as TPM_BUFSIZE - 18
+  * bytes, but 128 is still a relatively large number of random bytes and
+@@ -396,17 +393,6 @@ struct tpm_pcrread_in {
+  * compiler warnings about stack frame size. */
+ #define TPM_MAX_RNG_DATA	128
+ 
+-typedef union {
+-	struct	tpm_pcrread_in	pcrread_in;
+-	struct	tpm_pcrread_out	pcrread_out;
+-} tpm_cmd_params;
 -
- /*
-  * Bug workaround - some TPM's don't flush the most
-  * recently changed pcr on suspend, so force the flush
+-struct tpm_cmd_t {
+-	tpm_cmd_header	header;
+-	tpm_cmd_params	params;
+-} __packed;
+-
+-
+ /* A string buffer type for constructing TPM commands. This is based on the
+  * ideas of string buffer code in security/keys/trusted.h but is heap based
+  * in order to keep the stack usage minimal.
+diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+index 72e469ff2630..8fd67be2d44a 100644
+--- a/drivers/char/tpm/tpm1-cmd.c
++++ b/drivers/char/tpm/tpm1-cmd.c
+@@ -573,29 +573,33 @@ int tpm1_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
+ 	return rc;
+ }
+ 
+-#define TPM_ORDINAL_PCRREAD 21
+-#define READ_PCR_RESULT_SIZE 30
+-#define READ_PCR_RESULT_BODY_SIZE 20
+-static const struct tpm_input_header pcrread_header = {
+-	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+-	.length = cpu_to_be32(14),
+-	.ordinal = cpu_to_be32(TPM_ORDINAL_PCRREAD)
+-};
+-
++#define TPM_ORD_PCRREAD 21
+ int tpm1_pcr_read_dev(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
+ {
++	struct tpm_buf buf;
+ 	int rc;
+-	struct tpm_cmd_t cmd;
+ 
+-	cmd.header.in = pcrread_header;
+-	cmd.params.pcrread_in.pcr_idx = cpu_to_be32(pcr_idx);
+-	rc = tpm_transmit_cmd(chip, NULL, &cmd, READ_PCR_RESULT_SIZE,
+-			      READ_PCR_RESULT_BODY_SIZE, 0,
++	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCRREAD);
++	if (rc)
++		return rc;
++
++	tpm_buf_append_u32(&buf, pcr_idx);
++
++	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
++			      TPM_DIGEST_SIZE, 0,
+ 			      "attempting to read a pcr value");
++	if (rc)
++		goto out;
+ 
+-	if (rc == 0)
+-		memcpy(res_buf, cmd.params.pcrread_out.pcr_result,
+-		       TPM_DIGEST_SIZE);
++	if (tpm_buf_length(&buf) < TPM_DIGEST_SIZE) {
++		rc = -EFAULT;
++		goto out;
++	}
++
++	memcpy(res_buf, &buf.data[TPM_HEADER_SIZE], TPM_DIGEST_SIZE);
++
++out:
++	tpm_buf_destroy(&buf);
+ 	return rc;
+ }
+ 
 -- 
 2.14.4
