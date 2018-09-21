@@ -1,76 +1,75 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:4585 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728184AbeIUTuw (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 21 Sep 2018 15:50:52 -0400
-From: Tomas Winkler <tomas.winkler@intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH v4 00/21] tpm: separate tpm 1.x and tpm 2.x commands
-Date: Fri, 21 Sep 2018 16:57:59 +0300
-Message-Id: <20180921135820.20549-1-tomas.winkler@intel.com>
+Received: from userp2130.oracle.com ([156.151.31.86]:51566 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727795AbeIUOWd (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 21 Sep 2018 10:22:33 -0400
+Date: Fri, 21 Sep 2018 11:34:29 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: kbuild@01.org, Nayna Jain <nayna@linux.vnet.ibm.com>
+Cc: kbuild-all@01.org, linux-integrity@vger.kernel.org,
+        zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dhowells@redhat.com, jforbes@redhat.com,
+        Nayna Jain <nayna@linux.vnet.ibm.com>
+Subject: Re: [PATCH v3 3/6] ima: refactor ima_init_policy()
+Message-ID: <20180921083429.c7sikis5bzxdifny@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180919075522.7684-4-nayna@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-This patch series provides initial separation of tpm 1.x and tpm 2.x
-commands, in foresight that the tpm 1.x chips will eventually phase out
-and can be compiled out for modern systems.
- A new file is added tpm1-cmd.c that contains tpm 1.x specific commands.
-In addition, tpm 1.x commands are now implemented using tpm_buf
-structure and instead of tpm_cmd_t construct. The latter is now removed.
+Hi Nayna,
 
-Note: my tpm 1.x HW availability is limited hence some more testing is needed.
+Thank you for the patch! Perhaps something to improve:
 
-This series also contains two trivial cleanups and addition of new
-commands by TCG spec 1.36, now supported on new Intet's platforms.
+url:    https://github.com/0day-ci/linux/commits/Nayna-Jain/Add-support-for-architecture-specific-IMA-policies/20180920-035110
 
+smatch warnings:
+security/integrity/ima/ima_policy.c:489 add_rules() warn: should this be a bitwise op?
 
-Tomas Winkler (21):
-  tpm2: add new tpm2 commands according to TCG 1.36
-  tpm: sort objects in the Makefile
-  tpm: factor out tpm 1.x duration calculation to tpm1-cmd.c
-  tpm: add tpm_calc_ordinal_duration() wrapper
-  tpm: factor out tpm_get_timeouts()
-  tpm: move tpm1_pcr_extend to tpm1-cmd.c
-  tpm: move tpm_getcap to tpm1-cmd.c
-  tpm: factor out tpm1_get_random into tpm1-cmd.c
-  tpm: move tpm 1.x selftest code from tpm-interface.c tpm1-cmd.c
-  tpm: factor out tpm 1.x pm suspend flow into tpm1-cmd.c
-  tpm: factor out tpm_startup function
-  tpm: move pcr extend code to tpm2-cmd.c
-  tpm: add tpm_auto_startup() into tpm-interface.c
-  tpm: tpm-interface.c drop unused macros
-  tpm: tpm-space.c remove unneeded semicolon
-  tpm: tpm1: rewrite tpm1_get_random() using tpm_buf structure
-  tpm1: implement tpm1_pcr_read_dev() using tpm_buf structure
-  tmp1: rename tpm1_pcr_read_dev to tpm1_pcr_read().
-  tpm1: reimplement SAVESTATE using tpm_buf
-  tpm1: reimplement tpm1_continue_selftest() using tpm_buf
-  tpm: use u32 instead of int for PCR index
+# https://github.com/0day-ci/linux/commit/84a2e186f940ebc6c34e6d276e55f665167a5bb8
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout 84a2e186f940ebc6c34e6d276e55f665167a5bb8
+vim +489 security/integrity/ima/ima_policy.c
 
- drivers/char/tpm/Makefile            |  16 +-
- drivers/char/tpm/st33zp24/st33zp24.c |   2 +-
- drivers/char/tpm/tpm-chip.c          |  11 +-
- drivers/char/tpm/tpm-interface.c     | 841 +++--------------------------------
- drivers/char/tpm/tpm-sysfs.c         |  52 +--
- drivers/char/tpm/tpm.h               |  98 ++--
- drivers/char/tpm/tpm1-cmd.c          | 781 ++++++++++++++++++++++++++++++++
- drivers/char/tpm/tpm2-cmd.c          | 339 +++++++-------
- drivers/char/tpm/tpm2-space.c        |   2 +-
- drivers/char/tpm/tpm_i2c_nuvoton.c   |  10 +-
- drivers/char/tpm/tpm_tis_core.c      |  10 +-
- include/linux/tpm.h                  |  11 +-
- security/integrity/ima/ima_crypto.c  |   5 +-
- 13 files changed, 1117 insertions(+), 1061 deletions(-)
- create mode 100644 drivers/char/tpm/tpm1-cmd.c
+6f0911a6 Mimi Zohar 2018-04-12  477  
+84a2e186 Nayna Jain 2018-09-19  478  static void add_rules(struct ima_rule_entry *entries, int count,
+84a2e186 Nayna Jain 2018-09-19  479  		      enum policy_rule_list file)
+84a2e186 Nayna Jain 2018-09-19  480  {
+84a2e186 Nayna Jain 2018-09-19  481  	int i = 0;
+84a2e186 Nayna Jain 2018-09-19  482  
+84a2e186 Nayna Jain 2018-09-19  483  	for (i = 0; i < count; i++) {
+84a2e186 Nayna Jain 2018-09-19  484  		struct ima_rule_entry *entry;
+84a2e186 Nayna Jain 2018-09-19  485  
+84a2e186 Nayna Jain 2018-09-19  486  		if (file && IMA_DEFAULT_POLICY)
+                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+84a2e186 Nayna Jain 2018-09-19  487  			list_add_tail(&entries[i].list, &ima_default_rules);
+84a2e186 Nayna Jain 2018-09-19  488  
+84a2e186 Nayna Jain 2018-09-19 @489  		if (file && IMA_CUSTOM_POLICY) {
+                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^
 
--- 
-2.14.4
+It does look like it should be "if (file & IMA_CUSTOM_POLICY) {" but I
+haven't looked at the context besides what's here in this email.
+
+84a2e186 Nayna Jain 2018-09-19  490  			entry = kmemdup(&entries[i], sizeof(*entry),
+84a2e186 Nayna Jain 2018-09-19  491  					GFP_KERNEL);
+84a2e186 Nayna Jain 2018-09-19  492  			if (!entry)
+84a2e186 Nayna Jain 2018-09-19  493  				continue;
+84a2e186 Nayna Jain 2018-09-19  494  
+84a2e186 Nayna Jain 2018-09-19  495  			INIT_LIST_HEAD(&entry->list);
+84a2e186 Nayna Jain 2018-09-19  496  			list_add_tail(&entry->list, &ima_policy_rules);
+84a2e186 Nayna Jain 2018-09-19  497  		}
+84a2e186 Nayna Jain 2018-09-19  498  		if (entries[i].action == APPRAISE)
+84a2e186 Nayna Jain 2018-09-19  499  			temp_ima_appraise |= ima_appraise_flag(entries[i].func);
+84a2e186 Nayna Jain 2018-09-19  500  		if (entries[i].func == POLICY_CHECK)
+84a2e186 Nayna Jain 2018-09-19  501  			temp_ima_appraise |= IMA_APPRAISE_POLICY;
+84a2e186 Nayna Jain 2018-09-19  502  	}
+84a2e186 Nayna Jain 2018-09-19  503  }
+84a2e186 Nayna Jain 2018-09-19  504  
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
