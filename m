@@ -1,8 +1,8 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:4646 "EHLO mga18.intel.com"
+Received: from mga18.intel.com ([134.134.136.126]:4635 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728184AbeIUTvO (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 21 Sep 2018 15:51:14 -0400
+        id S2390241AbeIUTvQ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 21 Sep 2018 15:51:16 -0400
 From: Tomas Winkler <tomas.winkler@intel.com>
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
@@ -12,340 +12,324 @@ Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH v4 05/21] tpm: factor out tpm_get_timeouts()
-Date: Fri, 21 Sep 2018 16:58:04 +0300
-Message-Id: <20180921135820.20549-6-tomas.winkler@intel.com>
+Subject: [PATCH v4 07/21] tpm: move tpm_getcap to tpm1-cmd.c
+Date: Fri, 21 Sep 2018 16:58:06 +0300
+Message-Id: <20180921135820.20549-8-tomas.winkler@intel.com>
 In-Reply-To: <20180921135820.20549-1-tomas.winkler@intel.com>
 References: <20180921135820.20549-1-tomas.winkler@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Factor out tpm_get_timeouts() into tpm2_get_timeouts()
-and tpm1_get_timeouts()
+1. Move tpm_getcap to tpm1-cmd. Rename the function to tpm1_getcap.
+2. Remove unused tpm_getcap_header with unused constant
+as this functionality is already implemented using tpm_buf construct.
+
+Fixes warning:
+drivers/char/tpm/tpm-interface.c:452:38: warning: 'tpm_getcap_header' defined but not used [-Wunused-const-variable=]
+ static const struct tpm_input_header tpm_getcap_header = {
+                                      ^~~~~~~~~~~~~~~~~
+3. Drop unused TPM_DIGEST_SIZE. It's already defined in
+include/linux/tpm.h
 
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
-V2-V3: Rebase.
-V4: Fix the commit message.
+V2-V3: Rebase
+V4: Resend
 
- drivers/char/tpm/tpm-interface.c | 127 ++-------------------------------------
- drivers/char/tpm/tpm.h           |   5 +-
- drivers/char/tpm/tpm1-cmd.c      | 107 +++++++++++++++++++++++++++++++++
- drivers/char/tpm/tpm2-cmd.c      |  22 +++++++
- 4 files changed, 137 insertions(+), 124 deletions(-)
+ drivers/char/tpm/tpm-interface.c | 47 +-----------------------------------
+ drivers/char/tpm/tpm-sysfs.c     | 48 ++++++++++++++++++-------------------
+ drivers/char/tpm/tpm.h           |  4 ++--
+ drivers/char/tpm/tpm1-cmd.c      | 51 +++++++++++++++++++++++++++++++++-------
+ drivers/char/tpm/tpm_tis_core.c  |  2 +-
+ 5 files changed, 71 insertions(+), 81 deletions(-)
 
 diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index a7529844c60e..bd8942e56aa7 100644
+index 163c4da23320..153fee46bec0 100644
 --- a/drivers/char/tpm/tpm-interface.c
 +++ b/drivers/char/tpm/tpm-interface.c
-@@ -502,132 +502,13 @@ EXPORT_SYMBOL_GPL(tpm_getcap);
+@@ -454,52 +454,6 @@ int tpm_startup(struct tpm_chip *chip)
+ 	return rc;
+ }
  
- int tpm_get_timeouts(struct tpm_chip *chip)
- {
--	cap_t cap;
--	unsigned long timeout_old[4], timeout_chip[4], timeout_eff[4];
--	ssize_t rc;
+-#define TPM_DIGEST_SIZE 20
+-#define TPM_RET_CODE_IDX 6
+-#define TPM_INTERNAL_RESULT_SIZE 200
+-#define TPM_ORD_GET_CAP 101
+-#define TPM_ORD_GET_RANDOM 70
 -
- 	if (chip->flags & TPM_CHIP_FLAG_HAVE_TIMEOUTS)
- 		return 0;
- 
--	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
--		/* Fixed timeouts for TPM2 */
--		chip->timeout_a = msecs_to_jiffies(TPM2_TIMEOUT_A);
--		chip->timeout_b = msecs_to_jiffies(TPM2_TIMEOUT_B);
--		chip->timeout_c = msecs_to_jiffies(TPM2_TIMEOUT_C);
--		chip->timeout_d = msecs_to_jiffies(TPM2_TIMEOUT_D);
--		chip->duration[TPM_SHORT] =
--		    msecs_to_jiffies(TPM2_DURATION_SHORT);
--		chip->duration[TPM_MEDIUM] =
--		    msecs_to_jiffies(TPM2_DURATION_MEDIUM);
--		chip->duration[TPM_LONG] =
--		    msecs_to_jiffies(TPM2_DURATION_LONG);
--		chip->duration[TPM_LONG_LONG] =
--		    msecs_to_jiffies(TPM2_DURATION_LONG_LONG);
+-static const struct tpm_input_header tpm_getcap_header = {
+-	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+-	.length = cpu_to_be32(22),
+-	.ordinal = cpu_to_be32(TPM_ORD_GET_CAP)
+-};
 -
--		chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
--		return 0;
--	}
+-ssize_t tpm_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+-		   const char *desc, size_t min_cap_length)
+-{
+-	struct tpm_buf buf;
+-	int rc;
 -
--	rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, NULL,
--			sizeof(cap.timeout));
--	if (rc == TPM_ERR_INVALID_POSTINIT) {
--		if (tpm_startup(chip))
--			return rc;
--
--		rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap,
--				"attempting to determine the timeouts",
--				sizeof(cap.timeout));
--	}
--
--	if (rc) {
--		dev_err(&chip->dev,
--			"A TPM error (%zd) occurred attempting to determine the timeouts\n",
--			rc);
--		return rc;
--	}
--
--	timeout_old[0] = jiffies_to_usecs(chip->timeout_a);
--	timeout_old[1] = jiffies_to_usecs(chip->timeout_b);
--	timeout_old[2] = jiffies_to_usecs(chip->timeout_c);
--	timeout_old[3] = jiffies_to_usecs(chip->timeout_d);
--	timeout_chip[0] = be32_to_cpu(cap.timeout.a);
--	timeout_chip[1] = be32_to_cpu(cap.timeout.b);
--	timeout_chip[2] = be32_to_cpu(cap.timeout.c);
--	timeout_chip[3] = be32_to_cpu(cap.timeout.d);
--	memcpy(timeout_eff, timeout_chip, sizeof(timeout_eff));
--
--	/*
--	 * Provide ability for vendor overrides of timeout values in case
--	 * of misreporting.
--	 */
--	if (chip->ops->update_timeouts != NULL)
--		chip->timeout_adjusted =
--			chip->ops->update_timeouts(chip, timeout_eff);
--
--	if (!chip->timeout_adjusted) {
--		/* Restore default if chip reported 0 */
--		int i;
--
--		for (i = 0; i < ARRAY_SIZE(timeout_eff); i++) {
--			if (timeout_eff[i])
--				continue;
--
--			timeout_eff[i] = timeout_old[i];
--			chip->timeout_adjusted = true;
--		}
--
--		if (timeout_eff[0] != 0 && timeout_eff[0] < 1000) {
--			/* timeouts in msec rather usec */
--			for (i = 0; i != ARRAY_SIZE(timeout_eff); i++)
--				timeout_eff[i] *= 1000;
--			chip->timeout_adjusted = true;
--		}
--	}
--
--	/* Report adjusted timeouts */
--	if (chip->timeout_adjusted) {
--		dev_info(&chip->dev,
--			 HW_ERR "Adjusting reported timeouts: A %lu->%luus B %lu->%luus C %lu->%luus D %lu->%luus\n",
--			 timeout_chip[0], timeout_eff[0],
--			 timeout_chip[1], timeout_eff[1],
--			 timeout_chip[2], timeout_eff[2],
--			 timeout_chip[3], timeout_eff[3]);
--	}
--
--	chip->timeout_a = usecs_to_jiffies(timeout_eff[0]);
--	chip->timeout_b = usecs_to_jiffies(timeout_eff[1]);
--	chip->timeout_c = usecs_to_jiffies(timeout_eff[2]);
--	chip->timeout_d = usecs_to_jiffies(timeout_eff[3]);
--
--	rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_DURATION, &cap,
--			"attempting to determine the durations",
--			sizeof(cap.duration));
+-	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_GET_CAP);
 -	if (rc)
 -		return rc;
 -
--	chip->duration[TPM_SHORT] =
--		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_short));
--	chip->duration[TPM_MEDIUM] =
--		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_medium));
--	chip->duration[TPM_LONG] =
--		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_long));
--	chip->duration[TPM_LONG_LONG] = 0; /* not used under 1.2 */
+-	if (subcap_id == TPM_CAP_VERSION_1_1 ||
+-	    subcap_id == TPM_CAP_VERSION_1_2) {
+-		tpm_buf_append_u32(&buf, subcap_id);
+-		tpm_buf_append_u32(&buf, 0);
+-	} else {
+-		if (subcap_id == TPM_CAP_FLAG_PERM ||
+-		    subcap_id == TPM_CAP_FLAG_VOL)
+-			tpm_buf_append_u32(&buf, TPM_CAP_FLAG);
+-		else
+-			tpm_buf_append_u32(&buf, TPM_CAP_PROP);
 -
--	/* The Broadcom BCM0102 chipset in a Dell Latitude D820 gets the above
--	 * value wrong and apparently reports msecs rather than usecs. So we
--	 * fix up the resulting too-small TPM_SHORT value to make things work.
--	 * We also scale the TPM_MEDIUM and -_LONG values by 1000.
--	 */
--	if (chip->duration[TPM_SHORT] < (HZ / 100)) {
--		chip->duration[TPM_SHORT] = HZ;
--		chip->duration[TPM_MEDIUM] *= 1000;
--		chip->duration[TPM_LONG] *= 1000;
--		chip->duration_adjusted = true;
--		dev_info(&chip->dev, "Adjusting TPM timeout parameters.");
+-		tpm_buf_append_u32(&buf, 4);
+-		tpm_buf_append_u32(&buf, subcap_id);
 -	}
+-	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
+-			      min_cap_length, 0, desc);
+-	if (!rc)
+-		*cap = *(cap_t *)&buf.data[TPM_HEADER_SIZE + 4];
 -
--	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
--	return 0;
-+	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-+		return tpm2_get_timeouts(chip);
-+	else
-+		return tpm1_get_timeouts(chip);
+-	tpm_buf_destroy(&buf);
+-	return rc;
+-}
+-EXPORT_SYMBOL_GPL(tpm_getcap);
+-
+ int tpm_get_timeouts(struct tpm_chip *chip)
+ {
+ 	if (chip->flags & TPM_CHIP_FLAG_HAVE_TIMEOUTS)
+@@ -857,6 +811,7 @@ int tpm_pm_resume(struct device *dev)
  }
- EXPORT_SYMBOL_GPL(tpm_get_timeouts);
+ EXPORT_SYMBOL_GPL(tpm_pm_resume);
  
++#define TPM_ORD_GET_RANDOM 70
+ #define TPM_GETRANDOM_RESULT_SIZE	18
+ static const struct tpm_input_header tpm_getrandom_header = {
+ 	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
+index 83a77a445538..008515314ae3 100644
+--- a/drivers/char/tpm/tpm-sysfs.c
++++ b/drivers/char/tpm/tpm-sysfs.c
+@@ -106,9 +106,9 @@ static ssize_t pcrs_show(struct device *dev, struct device_attribute *attr,
+ 	char *str = buf;
+ 	struct tpm_chip *chip = to_tpm_chip(dev);
+ 
+-	rc = tpm_getcap(chip, TPM_CAP_PROP_PCR, &cap,
+-			"attempting to determine the number of PCRS",
+-			sizeof(cap.num_pcrs));
++	rc = tpm1_getcap(chip, TPM_CAP_PROP_PCR, &cap,
++			 "attempting to determine the number of PCRS",
++			 sizeof(cap.num_pcrs));
+ 	if (rc)
+ 		return 0;
+ 
+@@ -132,9 +132,9 @@ static ssize_t enabled_show(struct device *dev, struct device_attribute *attr,
+ 	cap_t cap;
+ 	ssize_t rc;
+ 
+-	rc = tpm_getcap(to_tpm_chip(dev), TPM_CAP_FLAG_PERM, &cap,
+-			"attempting to determine the permanent enabled state",
+-			sizeof(cap.perm_flags));
++	rc = tpm1_getcap(to_tpm_chip(dev), TPM_CAP_FLAG_PERM, &cap,
++			 "attempting to determine the permanent enabled state",
++			 sizeof(cap.perm_flags));
+ 	if (rc)
+ 		return 0;
+ 
+@@ -149,9 +149,9 @@ static ssize_t active_show(struct device *dev, struct device_attribute *attr,
+ 	cap_t cap;
+ 	ssize_t rc;
+ 
+-	rc = tpm_getcap(to_tpm_chip(dev), TPM_CAP_FLAG_PERM, &cap,
+-			"attempting to determine the permanent active state",
+-			sizeof(cap.perm_flags));
++	rc = tpm1_getcap(to_tpm_chip(dev), TPM_CAP_FLAG_PERM, &cap,
++			 "attempting to determine the permanent active state",
++			 sizeof(cap.perm_flags));
+ 	if (rc)
+ 		return 0;
+ 
+@@ -166,9 +166,9 @@ static ssize_t owned_show(struct device *dev, struct device_attribute *attr,
+ 	cap_t cap;
+ 	ssize_t rc;
+ 
+-	rc = tpm_getcap(to_tpm_chip(dev), TPM_CAP_PROP_OWNER, &cap,
+-			"attempting to determine the owner state",
+-			sizeof(cap.owned));
++	rc = tpm1_getcap(to_tpm_chip(dev), TPM_CAP_PROP_OWNER, &cap,
++			 "attempting to determine the owner state",
++			 sizeof(cap.owned));
+ 	if (rc)
+ 		return 0;
+ 
+@@ -183,9 +183,9 @@ static ssize_t temp_deactivated_show(struct device *dev,
+ 	cap_t cap;
+ 	ssize_t rc;
+ 
+-	rc = tpm_getcap(to_tpm_chip(dev), TPM_CAP_FLAG_VOL, &cap,
+-			"attempting to determine the temporary state",
+-			sizeof(cap.stclear_flags));
++	rc = tpm1_getcap(to_tpm_chip(dev), TPM_CAP_FLAG_VOL, &cap,
++			 "attempting to determine the temporary state",
++			 sizeof(cap.stclear_flags));
+ 	if (rc)
+ 		return 0;
+ 
+@@ -202,18 +202,18 @@ static ssize_t caps_show(struct device *dev, struct device_attribute *attr,
+ 	ssize_t rc;
+ 	char *str = buf;
+ 
+-	rc = tpm_getcap(chip, TPM_CAP_PROP_MANUFACTURER, &cap,
+-			"attempting to determine the manufacturer",
+-			sizeof(cap.manufacturer_id));
++	rc = tpm1_getcap(chip, TPM_CAP_PROP_MANUFACTURER, &cap,
++			 "attempting to determine the manufacturer",
++			 sizeof(cap.manufacturer_id));
+ 	if (rc)
+ 		return 0;
+ 	str += sprintf(str, "Manufacturer: 0x%x\n",
+ 		       be32_to_cpu(cap.manufacturer_id));
+ 
+ 	/* Try to get a TPM version 1.2 TPM_CAP_VERSION_INFO */
+-	rc = tpm_getcap(chip, TPM_CAP_VERSION_1_2, &cap,
+-			"attempting to determine the 1.2 version",
+-			sizeof(cap.tpm_version_1_2));
++	rc = tpm1_getcap(chip, TPM_CAP_VERSION_1_2, &cap,
++			 "attempting to determine the 1.2 version",
++			 sizeof(cap.tpm_version_1_2));
+ 	if (!rc) {
+ 		str += sprintf(str,
+ 			       "TCG version: %d.%d\nFirmware version: %d.%d\n",
+@@ -223,9 +223,9 @@ static ssize_t caps_show(struct device *dev, struct device_attribute *attr,
+ 			       cap.tpm_version_1_2.revMinor);
+ 	} else {
+ 		/* Otherwise just use TPM_STRUCT_VER */
+-		rc = tpm_getcap(chip, TPM_CAP_VERSION_1_1, &cap,
+-				"attempting to determine the 1.1 version",
+-				sizeof(cap.tpm_version));
++		rc = tpm1_getcap(chip, TPM_CAP_VERSION_1_1, &cap,
++				 "attempting to determine the 1.1 version",
++				 sizeof(cap.tpm_version));
+ 		if (rc)
+ 			return 0;
+ 		str += sprintf(str,
 diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 73511cd89bef..a97d72fcda5b 100644
+index 3fb268f43955..1c1980c79c30 100644
 --- a/drivers/char/tpm/tpm.h
 +++ b/drivers/char/tpm/tpm.h
-@@ -544,8 +544,10 @@ int tpm_startup(struct tpm_chip *chip);
- ssize_t tpm_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
- 		   const char *desc, size_t min_cap_length);
+@@ -541,8 +541,6 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+ 			 size_t min_rsp_body_length, unsigned int flags,
+ 			 const char *desc);
+ int tpm_startup(struct tpm_chip *chip);
+-ssize_t tpm_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+-		   const char *desc, size_t min_cap_length);
  int tpm_get_timeouts(struct tpm_chip *);
--int tpm1_auto_startup(struct tpm_chip *chip);
  int tpm_do_selftest(struct tpm_chip *chip);
-+
-+int tpm1_auto_startup(struct tpm_chip *chip);
-+int tpm1_get_timeouts(struct tpm_chip *chip);
+ 
+@@ -551,6 +549,8 @@ int tpm1_get_timeouts(struct tpm_chip *chip);
  unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+ int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+ 		    const char *log_msg);
++ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
++		    const char *desc, size_t min_cap_length);
  unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
  int tpm_pm_suspend(struct device *dev);
-@@ -585,6 +587,7 @@ static inline u32 tpm2_rc_value(u32 rc)
- 	return (rc & BIT(7)) ? rc & 0xff : rc;
- }
- 
-+int tpm2_get_timeouts(struct tpm_chip *chip);
- int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
- int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
- 		    struct tpm2_digest *digests);
+ int tpm_pm_resume(struct device *dev);
 diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index f8d85fda3b9b..12974aa4ea3e 100644
+index 2cf13d92653c..7191bc155d2b 100644
 --- a/drivers/char/tpm/tpm1-cmd.c
 +++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -307,3 +307,110 @@ unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
- 	else
- 		return duration;
+@@ -314,15 +314,15 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
+ 	unsigned long timeout_old[4], timeout_chip[4], timeout_eff[4];
+ 	ssize_t rc;
+ 
+-	rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, NULL,
+-			sizeof(cap.timeout));
++	rc = tpm1_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, NULL,
++			 sizeof(cap.timeout));
+ 	if (rc == TPM_ERR_INVALID_POSTINIT) {
+ 		if (tpm_startup(chip))
+ 			return rc;
+ 
+-		rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap,
+-				"attempting to determine the timeouts",
+-				sizeof(cap.timeout));
++		rc = tpm1_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap,
++				 "attempting to determine the timeouts",
++				 sizeof(cap.timeout));
+ 	}
+ 
+ 	if (rc) {
+@@ -384,9 +384,9 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
+ 	chip->timeout_c = usecs_to_jiffies(timeout_eff[2]);
+ 	chip->timeout_d = usecs_to_jiffies(timeout_eff[3]);
+ 
+-	rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_DURATION, &cap,
+-			"attempting to determine the durations",
+-			sizeof(cap.duration));
++	rc = tpm1_getcap(chip, TPM_CAP_PROP_TIS_DURATION, &cap,
++			 "attempting to determine the durations",
++			  sizeof(cap.duration));
+ 	if (rc)
+ 		return rc;
+ 
+@@ -435,3 +435,38 @@ int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+ 	tpm_buf_destroy(&buf);
+ 	return rc;
  }
 +
-+int tpm1_get_timeouts(struct tpm_chip *chip)
++#define TPM_ORD_GET_CAP 101
++ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
++		    const char *desc, size_t min_cap_length)
 +{
-+	cap_t cap;
-+	unsigned long timeout_old[4], timeout_chip[4], timeout_eff[4];
-+	ssize_t rc;
++	struct tpm_buf buf;
++	int rc;
 +
-+	rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, NULL,
-+			sizeof(cap.timeout));
-+	if (rc == TPM_ERR_INVALID_POSTINIT) {
-+		if (tpm_startup(chip))
-+			return rc;
-+
-+		rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap,
-+				"attempting to determine the timeouts",
-+				sizeof(cap.timeout));
-+	}
-+
-+	if (rc) {
-+		dev_err(&chip->dev,
-+			"A TPM error (%zd) occurred attempting to determine the timeouts\n",
-+			rc);
-+		return rc;
-+	}
-+
-+	timeout_old[0] = jiffies_to_usecs(chip->timeout_a);
-+	timeout_old[1] = jiffies_to_usecs(chip->timeout_b);
-+	timeout_old[2] = jiffies_to_usecs(chip->timeout_c);
-+	timeout_old[3] = jiffies_to_usecs(chip->timeout_d);
-+	timeout_chip[0] = be32_to_cpu(cap.timeout.a);
-+	timeout_chip[1] = be32_to_cpu(cap.timeout.b);
-+	timeout_chip[2] = be32_to_cpu(cap.timeout.c);
-+	timeout_chip[3] = be32_to_cpu(cap.timeout.d);
-+	memcpy(timeout_eff, timeout_chip, sizeof(timeout_eff));
-+
-+	/*
-+	 * Provide ability for vendor overrides of timeout values in case
-+	 * of misreporting.
-+	 */
-+	if (chip->ops->update_timeouts)
-+		chip->timeout_adjusted =
-+			chip->ops->update_timeouts(chip, timeout_eff);
-+
-+	if (!chip->timeout_adjusted) {
-+		/* Restore default if chip reported 0 */
-+		unsigned int i;
-+
-+		for (i = 0; i < ARRAY_SIZE(timeout_eff); i++) {
-+			if (timeout_eff[i])
-+				continue;
-+
-+			timeout_eff[i] = timeout_old[i];
-+			chip->timeout_adjusted = true;
-+		}
-+
-+		if (timeout_eff[0] != 0 && timeout_eff[0] < 1000) {
-+			/* timeouts in msec rather usec */
-+			for (i = 0; i != ARRAY_SIZE(timeout_eff); i++)
-+				timeout_eff[i] *= 1000;
-+			chip->timeout_adjusted = true;
-+		}
-+	}
-+
-+	/* Report adjusted timeouts */
-+	if (chip->timeout_adjusted) {
-+		dev_info(&chip->dev, HW_ERR "Adjusting reported timeouts: A %lu->%luus B %lu->%luus C %lu->%luus D %lu->%luus\n",
-+			 timeout_chip[0], timeout_eff[0],
-+			 timeout_chip[1], timeout_eff[1],
-+			 timeout_chip[2], timeout_eff[2],
-+			 timeout_chip[3], timeout_eff[3]);
-+	}
-+
-+	chip->timeout_a = usecs_to_jiffies(timeout_eff[0]);
-+	chip->timeout_b = usecs_to_jiffies(timeout_eff[1]);
-+	chip->timeout_c = usecs_to_jiffies(timeout_eff[2]);
-+	chip->timeout_d = usecs_to_jiffies(timeout_eff[3]);
-+
-+	rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_DURATION, &cap,
-+			"attempting to determine the durations",
-+			sizeof(cap.duration));
++	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_GET_CAP);
 +	if (rc)
 +		return rc;
 +
-+	chip->duration[TPM_SHORT] =
-+		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_short));
-+	chip->duration[TPM_MEDIUM] =
-+		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_medium));
-+	chip->duration[TPM_LONG] =
-+		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_long));
-+	chip->duration[TPM_LONG_LONG] = 0; /* not used under 1.2 */
++	if (subcap_id == TPM_CAP_VERSION_1_1 ||
++	    subcap_id == TPM_CAP_VERSION_1_2) {
++		tpm_buf_append_u32(&buf, subcap_id);
++		tpm_buf_append_u32(&buf, 0);
++	} else {
++		if (subcap_id == TPM_CAP_FLAG_PERM ||
++		    subcap_id == TPM_CAP_FLAG_VOL)
++			tpm_buf_append_u32(&buf, TPM_CAP_FLAG);
++		else
++			tpm_buf_append_u32(&buf, TPM_CAP_PROP);
 +
-+	/* The Broadcom BCM0102 chipset in a Dell Latitude D820 gets the above
-+	 * value wrong and apparently reports msecs rather than usecs. So we
-+	 * fix up the resulting too-small TPM_SHORT value to make things work.
-+	 * We also scale the TPM_MEDIUM and -_LONG values by 1000.
-+	 */
-+	if (chip->duration[TPM_SHORT] < (HZ / 100)) {
-+		chip->duration[TPM_SHORT] = HZ;
-+		chip->duration[TPM_MEDIUM] *= 1000;
-+		chip->duration[TPM_LONG] *= 1000;
-+		chip->duration_adjusted = true;
-+		dev_info(&chip->dev, "Adjusting TPM timeout parameters.");
++		tpm_buf_append_u32(&buf, 4);
++		tpm_buf_append_u32(&buf, subcap_id);
 +	}
++	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
++			      min_cap_length, 0, desc);
++	if (!rc)
++		*cap = *(cap_t *)&buf.data[TPM_HEADER_SIZE + 4];
 +
-+	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
-+	return 0;
++	tpm_buf_destroy(&buf);
++	return rc;
 +}
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 238755b8fb01..65ce463a6f92 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -40,6 +40,28 @@ static struct tpm2_hash tpm2_hash_map[] = {
- 	{HASH_ALGO_SM3_256, TPM2_ALG_SM3_256},
- };
++EXPORT_SYMBOL_GPL(tpm1_getcap);
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index f9e73d0f9386..ced01ec146b5 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -664,7 +664,7 @@ static int tpm_tis_gen_interrupt(struct tpm_chip *chip)
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+ 		return tpm2_get_tpm_pt(chip, 0x100, &cap2, desc);
+ 	else
+-		return tpm_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, desc,
++		return tpm1_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, desc,
+ 				  0);
+ }
  
-+int tpm2_get_timeouts(struct tpm_chip *chip)
-+{
-+	/* Fixed timeouts for TPM2 */
-+	chip->timeout_a = msecs_to_jiffies(TPM2_TIMEOUT_A);
-+	chip->timeout_b = msecs_to_jiffies(TPM2_TIMEOUT_B);
-+	chip->timeout_c = msecs_to_jiffies(TPM2_TIMEOUT_C);
-+	chip->timeout_d = msecs_to_jiffies(TPM2_TIMEOUT_D);
-+
-+	/* PTP spec timeouts */
-+	chip->duration[TPM_SHORT] = msecs_to_jiffies(TPM2_DURATION_SHORT);
-+	chip->duration[TPM_MEDIUM] = msecs_to_jiffies(TPM2_DURATION_MEDIUM);
-+	chip->duration[TPM_LONG] = msecs_to_jiffies(TPM2_DURATION_LONG);
-+
-+	/* Key creation commands long timeouts */
-+	chip->duration[TPM_LONG_LONG] =
-+		msecs_to_jiffies(TPM2_DURATION_LONG_LONG);
-+
-+	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
-+
-+	return 0;
-+}
-+
- /**
-  * tpm2_ordinal_duration_index() - returns an index to the chip duration
-  * table (enum tpm_duration), that describes the maximum amount of
 -- 
 2.14.4
