@@ -1,53 +1,38 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45268 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391179AbeIVAwd (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 21 Sep 2018 20:52:33 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8LIx7te002941
-        for <linux-integrity@vger.kernel.org>; Fri, 21 Sep 2018 15:02:20 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mn2w990gu-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 21 Sep 2018 15:02:20 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 21 Sep 2018 20:02:18 +0100
-Subject: Re: [PATCH] security/integrity: remove unnecessary 'init_keyring'
- variable
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Eric Biggers <ebiggers@kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:51650 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391156AbeIVAor (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 21 Sep 2018 20:44:47 -0400
+Date: Fri, 21 Sep 2018 11:54:34 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Mimi Zohar <zohar@linux.ibm.com>
 Cc: linux-integrity@vger.kernel.org,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Date: Fri, 21 Sep 2018 15:02:14 -0400
-In-Reply-To: <20180921185433.GA255965@gmail.com>
+Subject: Re: [PATCH] security/integrity: remove unnecessary 'init_keyring'
+ variable
+Message-ID: <20180921185433.GA255965@gmail.com>
 References: <20180907202515.217716-1-ebiggers@kernel.org>
-         <1537555358.3830.345.camel@linux.ibm.com>
-         <20180921185433.GA255965@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1537556534.3830.353.camel@linux.ibm.com>
+ <1537555358.3830.345.camel@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1537555358.3830.345.camel@linux.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 2018-09-21 at 11:54 -0700, Eric Biggers wrote:
-> On Fri, Sep 21, 2018 at 02:42:38PM -0400, Mimi Zohar wrote:
-> > On Fri, 2018-09-07 at 13:25 -0700, Eric Biggers wrote:
-> > > From: Eric Biggers <ebiggers@google.com>
-> > > 
-> > > The 'init_keyring' variable actually just gave the value of
-> > > CONFIG_INTEGRITY_TRUSTED_KEYRING.  We should check the config option
-> > > directly instead.  No change in behavior; this just simplifies the code.
+On Fri, Sep 21, 2018 at 02:42:38PM -0400, Mimi Zohar wrote:
+> On Fri, 2018-09-07 at 13:25 -0700, Eric Biggers wrote:
+> > From: Eric Biggers <ebiggers@google.com>
 > > 
-> > We try to minimize as much as possible "ifdefs" in C code.  This
-> > change is moving in the wrong direction.
+> > The 'init_keyring' variable actually just gave the value of
+> > CONFIG_INTEGRITY_TRUSTED_KEYRING.  We should check the config option
+> > directly instead.  No change in behavior; this just simplifies the code.
 > 
-> So your preferred approach is to store the values of Kconfig options in
-> variables?  That defeats much of the point of having Kconfig options...
+> We try to minimize as much as possible "ifdefs" in C code.  This
+> change is moving in the wrong direction.
+> 
+> Mimi
 
-No, I prefer using "ifdefs" in include files, not C code, and defining
-stub functions.
+So your preferred approach is to store the values of Kconfig options in
+variables?  That defeats much of the point of having Kconfig options...
 
-Mimi
+- Eric
