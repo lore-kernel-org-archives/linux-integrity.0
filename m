@@ -1,64 +1,114 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:4131 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726915AbeIZUXM (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38462 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728251AbeIZSiS (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 26 Sep 2018 16:23:12 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8QE4HEb069994
-        for <linux-integrity@vger.kernel.org>; Wed, 26 Sep 2018 10:10:03 -0400
+        Wed, 26 Sep 2018 14:38:18 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8QCOgnQ071443
+        for <linux-integrity@vger.kernel.org>; Wed, 26 Sep 2018 08:25:33 -0400
 Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mr9gvep89-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mr7rx7c5x-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 26 Sep 2018 10:10:02 -0400
+        for <linux-integrity@vger.kernel.org>; Wed, 26 Sep 2018 08:25:33 -0400
 Received: from localhost
         by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 26 Sep 2018 15:10:01 +0100
-Subject: Re: EXTERNAL: [PATCH v2 2/3] tpm: modify tpm_pcr_read() definition
- to pass TPM hash algorithms
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huawei.com>,
-        Jeremy Boone <Jeremy.Boone@nccgroup.trust>
-Cc: "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Date: Wed, 26 Sep 2018 10:09:46 -0400
-In-Reply-To: <e1d77563-81fd-36f0-648f-3325969b05af@huawei.com>
-References: <20180905114202.7757-1-roberto.sassu@huawei.com>
-         <20180905114202.7757-3-roberto.sassu@huawei.com>
-         <F275EFAF-C940-4E44-8164-2819503DB334@nccgroup.trust>
-         <e1d77563-81fd-36f0-648f-3325969b05af@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1537970986.4124.3.camel@linux.ibm.com>
+        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
+        Wed, 26 Sep 2018 13:25:30 +0100
+From: Nayna Jain <nayna@linux.vnet.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dhowells@redhat.com, jforbes@redhat.com,
+        Nayna Jain <nayna@linux.vnet.ibm.com>
+Subject: [PATCH v4 5/6] ima: add support for external setting of ima_appraise
+Date: Wed, 26 Sep 2018 17:52:09 +0530
+In-Reply-To: <20180926122210.14642-1-nayna@linux.vnet.ibm.com>
+References: <20180926122210.14642-1-nayna@linux.vnet.ibm.com>
+Message-Id: <20180926122210.14642-6-nayna@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, 2018-09-05 at 17:03 +0200, Roberto Sassu wrote:
-> On 9/5/2018 3:43 PM, Jeremy Boone wrote:
-> > Some comments on tpm2_pcr_read below.
-> > 
-> > The tpm2_pcr_read function uses TPM2_ST_NO_SESSIONS. This means
-> that the response payload is not integrity protected with an HMAC.
-> If there is a man-in-the-middle sitting on the serial bus that
-> connects the TPM peripheral to the processor, they can tamper with
-> the response parameters.
-> > 
-> > In your changes to tpm2_pcr_read, the memcpy is now become a
-> variable-length operation, instead of just copying a fixed number of
-> bytes. If the MITM modifies the response field out->digest_size
-> before it is received by the driver, they can make it a very large
-> value, forcing a buffer overflow of the out->digest array.
-> > 
-> > Adding a session to the PCR Read command seems like overkill in
-> this case. I wouldn't recommend that as a solution here.  So to fix
-> this I would suggest simply checking the digest size before the
-> memcpy.
-> 
-> Hi Jeremy
-> 
-> ok, thanks.
+The "ima_appraise" mode defaults to enforcing, unless configured to allow
+the boot command line "ima_appraise" option. This patch explicitly sets the
+"ima_appraise" mode for the arch specific policy setting.
 
-The hash digest size checking should be based on the size stored in
-the active_bank_info, either in 3/3 or as a separate patch.
+Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+---
+ security/integrity/ima/ima.h          |  5 +++++
+ security/integrity/ima/ima_appraise.c | 11 +++++++++--
+ security/integrity/ima/ima_policy.c   |  5 ++++-
+ 3 files changed, 18 insertions(+), 3 deletions(-)
 
-Mimi
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 588e4813370c..6e5fa7c42809 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -248,6 +248,7 @@ enum hash_algo ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value,
+ 				 int xattr_len);
+ int ima_read_xattr(struct dentry *dentry,
+ 		   struct evm_ima_xattr_data **xattr_value);
++void set_ima_appraise(char *str);
+ 
+ #else
+ static inline int ima_appraise_measurement(enum ima_hooks func,
+@@ -290,6 +291,10 @@ static inline int ima_read_xattr(struct dentry *dentry,
+ 	return 0;
+ }
+ 
++static inline void set_ima_appraise(char *str)
++{
++}
++
+ #endif /* CONFIG_IMA_APPRAISE */
+ 
+ /* LSM based policy rules require audit */
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 8bd7a0733e51..e061613bcb87 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -18,15 +18,22 @@
+ 
+ #include "ima.h"
+ 
+-static int __init default_appraise_setup(char *str)
++void set_ima_appraise(char *str)
+ {
+-#ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
+ 	if (strncmp(str, "off", 3) == 0)
+ 		ima_appraise = 0;
+ 	else if (strncmp(str, "log", 3) == 0)
+ 		ima_appraise = IMA_APPRAISE_LOG;
+ 	else if (strncmp(str, "fix", 3) == 0)
+ 		ima_appraise = IMA_APPRAISE_FIX;
++	else if (strncmp(str, "enforce", 7) == 0)
++		ima_appraise = IMA_APPRAISE_ENFORCE;
++}
++
++static int __init default_appraise_setup(char *str)
++{
++#ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
++	set_ima_appraise(str);
+ #endif
+ 	return 1;
+ }
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 5fb4b0c123a3..410fee31b162 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -585,9 +585,12 @@ void __init ima_init_policy(void)
+ 	arch_entries = ima_init_arch_policy();
+ 	if (!arch_entries)
+ 		pr_info("No architecture policies found\n");
+-	else
++	else {
+ 		add_rules(arch_policy_entry, arch_entries,
+ 			  IMA_DEFAULT_POLICY | IMA_CUSTOM_POLICY);
++		if (temp_ima_appraise)
++			set_ima_appraise("enforce");
++	}
+ 
+ 	/*
+ 	 * Insert the builtin "secure_boot" policy rules requiring file
+-- 
+2.13.6
