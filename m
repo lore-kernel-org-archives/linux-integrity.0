@@ -1,103 +1,119 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58804 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727435AbeIZSiD (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36246 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728253AbeIZSiV (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 26 Sep 2018 14:38:03 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8QCOh56113377
-        for <linux-integrity@vger.kernel.org>; Wed, 26 Sep 2018 08:25:18 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mr9huhtdm-1
+        Wed, 26 Sep 2018 14:38:21 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8QCOlut070399
+        for <linux-integrity@vger.kernel.org>; Wed, 26 Sep 2018 08:25:35 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mr9303d40-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 26 Sep 2018 08:25:17 -0400
+        for <linux-integrity@vger.kernel.org>; Wed, 26 Sep 2018 08:25:35 -0400
 Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Wed, 26 Sep 2018 13:25:15 +0100
+        Wed, 26 Sep 2018 13:25:33 +0100
 From: Nayna Jain <nayna@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
         linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
         dhowells@redhat.com, jforbes@redhat.com,
+        Eric Richter <erichte@linux.vnet.ibm.com>,
         Nayna Jain <nayna@linux.vnet.ibm.com>
-Subject: [PATCH v4 1/6] x86/ima: define arch_ima_get_secureboot
-Date: Wed, 26 Sep 2018 17:52:05 +0530
+Subject: [PATCH v4 6/6] x86/ima: define arch_get_ima_policy() for x86
+Date: Wed, 26 Sep 2018 17:52:10 +0530
 In-Reply-To: <20180926122210.14642-1-nayna@linux.vnet.ibm.com>
 References: <20180926122210.14642-1-nayna@linux.vnet.ibm.com>
-Message-Id: <20180926122210.14642-2-nayna@linux.vnet.ibm.com>
+Message-Id: <20180926122210.14642-7-nayna@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Distros are concerned about totally disabling the kexec_load syscall.
-As a compromise, the kexec_load syscall will only be disabled when
-CONFIG_KEXEC_VERIFY_SIG is configured and the system is booted with
-secureboot enabled.
+From: Eric Richter <erichte@linux.vnet.ibm.com>
 
-This patch defines the new arch specific function called
-arch_ima_get_secureboot() to retrieve the secureboot state of the system.
+This patch implements an example arch-specific IMA policy for x86 to
+enable measurement and appraisal of any kernel image loaded for kexec,
+when CONFIG_KEXEC_VERIFY_SIG is not enabled.
 
+For systems with CONFIG_KEXEC_VERIFY_SIG enabled, only the measurement
+rule is enabled, not the IMA-appraisal rule.
+
+Signed-off-by: Eric Richter <erichte@linux.vnet.ibm.com>
+- Removed the policy KEXEC_ORIG_KERNEL_CHECK which was defined to
+  disable the kexec_load syscall.
+- arch_get_ima_policy() uses arch_ima_get_secureboot() to get secureboot
+  state
 Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-Suggested-by: Seth Forshee <seth.forshee@canonical.com>
 ---
- arch/x86/kernel/Makefile   |  2 ++
- arch/x86/kernel/ima_arch.c | 17 +++++++++++++++++
- include/linux/ima.h        |  9 +++++++++
- 3 files changed, 28 insertions(+)
- create mode 100644 arch/x86/kernel/ima_arch.c
+ arch/x86/kernel/ima_arch.c     | 18 ++++++++++++++++++
+ include/linux/ima.h            |  4 ++++
+ security/integrity/ima/Kconfig |  8 ++++++++
+ 3 files changed, 30 insertions(+)
 
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 02d6f5cf4e70..f32406e51424 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -149,3 +149,5 @@ ifeq ($(CONFIG_X86_64),y)
- 	obj-$(CONFIG_MMCONF_FAM10H)	+= mmconf-fam10h_64.o
- 	obj-y				+= vsmp_64.o
- endif
-+
-+obj-$(CONFIG_IMA)			+= ima_arch.o
 diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
-new file mode 100644
-index 000000000000..bb5a88d2b271
---- /dev/null
+index bb5a88d2b271..245976e49a55 100644
+--- a/arch/x86/kernel/ima_arch.c
 +++ b/arch/x86/kernel/ima_arch.c
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Copyright (C) 2018 IBM Corporation
-+ */
-+#include <linux/efi.h>
-+#include <linux/ima.h>
+@@ -15,3 +15,21 @@ bool arch_ima_get_secureboot(void)
+ 	else
+ 		return false;
+ }
 +
-+extern struct boot_params boot_params;
++/* arch rules for audit and user mode */
++static const char * const sb_arch_rules[] = {
++#ifndef CONFIG_KEXEC_VERIFY_SIG
++	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
++#endif /* CONFIG_KEXEC_VERIFY_SIG */
++	"measure func=KEXEC_KERNEL_CHECK",
++	NULL
++};
 +
-+bool arch_ima_get_secureboot(void)
++#ifdef CONFIG_IMA_ARCH_POLICY
++const char * const *arch_get_ima_policy(void)
 +{
-+	if (efi_enabled(EFI_BOOT) &&
-+		(boot_params.secure_boot == efi_secureboot_mode_enabled))
-+		return true;
-+	else
-+		return false;
-+}
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 84806b54b50a..4852255aa4f4 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -30,6 +30,15 @@ extern void ima_post_path_mknod(struct dentry *dentry);
- extern void ima_add_kexec_buffer(struct kimage *image);
- #endif
- 
-+#ifdef CONFIG_X86
-+extern bool arch_ima_get_secureboot(void);
-+#else
-+static inline bool arch_ima_get_secureboot(void)
-+{
-+	return false;
++	if (arch_ima_get_secureboot())
++		return sb_arch_rules;
++	return NULL;
 +}
 +#endif
-+
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 350fa957f8a6..dabd3abdf671 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -39,10 +39,14 @@ static inline bool arch_ima_get_secureboot(void)
+ }
+ #endif
+ 
++#if defined(CONFIG_X86) && defined(CONFIG_IMA_ARCH_POLICY)
++extern const char * const *arch_get_ima_policy(void);
++#else
+ static inline const char * const *arch_get_ima_policy(void)
+ {
+ 	return NULL;
+ }
++#endif
+ 
  #else
  static inline int ima_bprm_check(struct linux_binprm *bprm)
- {
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index 13b446328dda..97609a76aa14 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -157,6 +157,14 @@ config IMA_APPRAISE
+ 	  <http://linux-ima.sourceforge.net>
+ 	  If unsure, say N.
+ 
++config IMA_ARCH_POLICY
++        bool "Enable loading an IMA architecture specific policy"
++        depends on KEXEC_VERIFY_SIG || IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
++        default n
++        help
++          This option enables loading an IMA architecture specific policy
++          based on run time secure boot flags.
++
+ config IMA_APPRAISE_BUILD_POLICY
+ 	bool "IMA build time configured policy rules"
+ 	depends on IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
 -- 
 2.13.6
