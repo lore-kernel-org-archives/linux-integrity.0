@@ -1,122 +1,57 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46924 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727139AbeIZSh5 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 26 Sep 2018 14:37:57 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8QCOkoT077100
-        for <linux-integrity@vger.kernel.org>; Wed, 26 Sep 2018 08:25:11 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mr8k7w5qe-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 26 Sep 2018 08:25:11 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Wed, 26 Sep 2018 13:25:09 +0100
-From: Nayna Jain <nayna@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dhowells@redhat.com, jforbes@redhat.com,
-        Nayna Jain <nayna@linux.vnet.ibm.com>
-Subject: [PATCH v4 0/6] Add support for architecture specific IMA policies 
-Date: Wed, 26 Sep 2018 17:52:04 +0530
-Message-Id: <20180926122210.14642-1-nayna@linux.vnet.ibm.com>
+Received: from mga12.intel.com ([192.55.52.136]:20160 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726915AbeIZQrp (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 26 Sep 2018 12:47:45 -0400
+Date: Wed, 26 Sep 2018 13:35:21 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Louis Collard <louiscollard@chromium.org>
+Cc: linux-integrity@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, apronin@chromium.org,
+        Jason Gunthorpe <jgg@ziepe.ca>, david.bild@xaptum.com
+Subject: Re: [PATCH] Allow hwrng to initialize crng.
+Message-ID: <20180926103521.GB4885@linux.intel.com>
+References: <20180926032455.224600-1-louiscollard@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180926032455.224600-1-louiscollard@chromium.org>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-The architecture specific policy, introduced in this patch set, permits
-different architectures to define IMA policy rules based on kernel
-configuration and system runtime information.
+On Wed, Sep 26, 2018 at 11:24:55AM +0800, Louis Collard wrote:
+> Some systems, for example embedded systems, do not generate
+> enough entropy on boot through interrupts, and boot may be blocked for
+> several minutes waiting for a call to getrandom to complete.
+> 
+> Currently, random data is read from a hwrng when it is registered,
+> and is loaded into primary_crng. This data is treated in the same
+> way as data that is device-specific but otherwise unchanging, and
+> so primary_crng cannot become initialized with the data from the
+> hwrng.
+> 
+> This change causes the data initially read from the hwrng to be
+> treated the same as subsequent data that is read from the hwrng if
+> it's quality score is non-zero.
+> 
+> The implications of this are:
+> 
+> The data read from hwrng can cause primary_crng to become
+> initialized, therefore avoiding problems of getrandom blocking
+> on boot.
+> 
+> Calls to getrandom (with GRND_RANDOM) may be using entropy
+> exclusively (or in practise, almost exclusively) from the hwrng.
+> 
+> Regarding the latter point; this behavior is the same as if a
+> user specified a quality score of 1 (bit of entropy per 1024 bits)
+> so hopefully this is not too scary a change to make.
+> 
+> This change is the result of the discussion here:
+> https://patchwork.kernel.org/patch/10453893/
+> 
+> Signed-off-by: Louis Collard <louiscollard@chromium.org>
 
-For example, on x86, there are two methods of verifying the kexec'ed kernel
-image signature - CONFIG_KEXEC_VERIFY_SIG and IMA appraisal policy
-KEXEC_KERNEL_CHECK. CONFIG_KEXEC_VERIFY_SIG enforces the kexec_file_load
-syscall to verify file signatures, but does not prevent the kexec_load
-syscall. The IMA KEXEC_KERNEL_CHECK policy rule verifies the kexec'ed
-kernel image, loaded via the kexec_file_load syscall, is validly signed and
-prevents loading a kernel image via the kexec_load syscall. When secure
-boot is enabled, the kexec'ed kernel image needs to be signed and the
-signature verified. In this environment, either method of verifying the
-kexec'ed kernel image is acceptable, as long as the kexec_load syscall is
-disabled.
+Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-The previous version of this patchset introduced a new IMA policy rule to
-disable the kexec_load syscall, when CONFIG_KEXEC_VERIFY_SIG was enabled,
-however that is removed from this version by introducing a different
-mechanism.
-
-The patchset defines an arch_ima_get_secureboot() function to retrieve the
-secureboot state of the system. If secureboot is enabled and
-CONFIG_KEXEC_VERIFY_SIG is configured, it denies permission to kexec_load
-syscall.
-
-To support architecture specific policies, a new function
-arch_get_ima_policy() is defined. This patch set defines IMA
-KERNEL_KEXEC_POLICY rules for x86 only if CONFIG_KEXEC_VERIFY_SIG is
-disabled and secure boot is enabled.
-
-This patch set includes a patch, which refactors ima_init_policy() to
-remove code duplication.
-
-Changelog:
-
-v4:
-* ima: refactor ima_init_policy()
-	- Fixed the issue reported by Dan Carpenter. Replaced logical
-	operator (&&) with bitwise operator (&).
-
-v3:
-* x86/ima: define arch_ima_get_secureboot
-	- Edited subject line, added x86.
-
-* x86/ima: define arch_get_ima_policy() for x86
-	- Fixed the error reported by kbuild test robot. The error was
-	appearing when CONFIG_X86 is enabled, but CONFIG_IMA_ARCH_POLICY
-	is disabled.
-
-v2:
-* ima: define arch_ima_get_secureboot
-	- New Patch - to retrieve secureboot state of the system
-* ima: prevent kexec_load syscall based on runtime secureboot flag
-	- New Patch - disables kexec_load if KEXEC_VERIFY_SIG is
-	  configured and secureboot is enabled
-* ima: refactor ima_init_policy()
-	- New Patch - cleans up the code duplication in
-	  ima_init_policy(), adds new function add_rules()
-* ima: add support for arch specific policies
-	- modified ima_init_arch_policy() and ima_init_policy() to
-	  use add_rules() from previous patch.
-* ima: add support for external setting of ima_appraise
-	- sets ima_appraise flag explicitly for arch_specific setting
-* ima: add support for KEXEC_ORIG_KERNEL_CHECK
-	- deleted the patch based on Seth's feedback
-* x86/ima: define arch_get_ima_policy() for x86
-	- removes the policy KEXEC_ORIG_KERNEL_CHECK based on
-	  Seth's feedback.
-
-Eric Richter (1):
-  x86/ima: define arch_get_ima_policy() for x86
-
-Nayna Jain (5):
-  x86/ima: define arch_ima_get_secureboot
-  ima: prevent kexec_load syscall based on runtime secureboot flag
-  ima: refactor ima_init_policy()
-  ima: add support for arch specific policies
-  ima: add support for external setting of ima_appraise
-
- arch/x86/kernel/Makefile              |   2 +
- arch/x86/kernel/ima_arch.c            |  35 +++++++
- include/linux/ima.h                   |  18 ++++
- security/integrity/ima/Kconfig        |   8 ++
- security/integrity/ima/ima.h          |   5 +
- security/integrity/ima/ima_appraise.c |  11 ++-
- security/integrity/ima/ima_main.c     |  17 ++--
- security/integrity/ima/ima_policy.c   | 167 +++++++++++++++++++++++++---------
- 8 files changed, 214 insertions(+), 49 deletions(-)
- create mode 100644 arch/x86/kernel/ima_arch.c
-
--- 
-2.13.6
+/Jarkko
