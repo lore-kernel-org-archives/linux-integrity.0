@@ -1,184 +1,122 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53610 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726987AbeIZSiK (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46924 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727139AbeIZSh5 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 26 Sep 2018 14:38:10 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8QCOhWD043072
-        for <linux-integrity@vger.kernel.org>; Wed, 26 Sep 2018 08:25:25 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mr9hx1u0f-1
+        Wed, 26 Sep 2018 14:37:57 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8QCOkoT077100
+        for <linux-integrity@vger.kernel.org>; Wed, 26 Sep 2018 08:25:11 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mr8k7w5qe-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 26 Sep 2018 08:25:24 -0400
+        for <linux-integrity@vger.kernel.org>; Wed, 26 Sep 2018 08:25:11 -0400
 Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Wed, 26 Sep 2018 13:25:22 +0100
+        Wed, 26 Sep 2018 13:25:09 +0100
 From: Nayna Jain <nayna@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
         linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
         dhowells@redhat.com, jforbes@redhat.com,
         Nayna Jain <nayna@linux.vnet.ibm.com>
-Subject: [PATCH v4 3/6] ima: refactor ima_init_policy()
-Date: Wed, 26 Sep 2018 17:52:07 +0530
-In-Reply-To: <20180926122210.14642-1-nayna@linux.vnet.ibm.com>
-References: <20180926122210.14642-1-nayna@linux.vnet.ibm.com>
-Message-Id: <20180926122210.14642-4-nayna@linux.vnet.ibm.com>
+Subject: [PATCH v4 0/6] Add support for architecture specific IMA policies 
+Date: Wed, 26 Sep 2018 17:52:04 +0530
+Message-Id: <20180926122210.14642-1-nayna@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-This patch removes the code duplication in ima_init_policy() by defining
-a new function named add_rules().
+The architecture specific policy, introduced in this patch set, permits
+different architectures to define IMA policy rules based on kernel
+configuration and system runtime information.
 
-Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
----
- security/integrity/ima/ima_policy.c | 98 +++++++++++++++++++++----------------
- 1 file changed, 57 insertions(+), 41 deletions(-)
+For example, on x86, there are two methods of verifying the kexec'ed kernel
+image signature - CONFIG_KEXEC_VERIFY_SIG and IMA appraisal policy
+KEXEC_KERNEL_CHECK. CONFIG_KEXEC_VERIFY_SIG enforces the kexec_file_load
+syscall to verify file signatures, but does not prevent the kexec_load
+syscall. The IMA KEXEC_KERNEL_CHECK policy rule verifies the kexec'ed
+kernel image, loaded via the kexec_file_load syscall, is validly signed and
+prevents loading a kernel image via the kexec_load syscall. When secure
+boot is enabled, the kexec'ed kernel image needs to be signed and the
+signature verified. In this environment, either method of verifying the
+kexec'ed kernel image is acceptable, as long as the kexec_load syscall is
+disabled.
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 8c9499867c91..d5b327320d3a 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -58,6 +58,8 @@ enum lsm_rule_types { LSM_OBJ_USER, LSM_OBJ_ROLE, LSM_OBJ_TYPE,
- 
- enum policy_types { ORIGINAL_TCB = 1, DEFAULT_TCB };
- 
-+enum policy_rule_list { IMA_DEFAULT_POLICY = 1, IMA_CUSTOM_POLICY };
-+
- struct ima_rule_entry {
- 	struct list_head list;
- 	int action;
-@@ -473,6 +475,33 @@ static int ima_appraise_flag(enum ima_hooks func)
- 	return 0;
- }
- 
-+static void add_rules(struct ima_rule_entry *entries, int count,
-+		      enum policy_rule_list file)
-+{
-+	int i = 0;
-+
-+	for (i = 0; i < count; i++) {
-+		struct ima_rule_entry *entry;
-+
-+		if (file & IMA_DEFAULT_POLICY)
-+			list_add_tail(&entries[i].list, &ima_default_rules);
-+
-+		if (file & IMA_CUSTOM_POLICY) {
-+			entry = kmemdup(&entries[i], sizeof(*entry),
-+					GFP_KERNEL);
-+			if (!entry)
-+				continue;
-+
-+			INIT_LIST_HEAD(&entry->list);
-+			list_add_tail(&entry->list, &ima_policy_rules);
-+		}
-+		if (entries[i].action == APPRAISE)
-+			temp_ima_appraise |= ima_appraise_flag(entries[i].func);
-+		if (entries[i].func == POLICY_CHECK)
-+			temp_ima_appraise |= IMA_APPRAISE_POLICY;
-+	}
-+}
-+
- /**
-  * ima_init_policy - initialize the default measure rules.
-  *
-@@ -481,28 +510,23 @@ static int ima_appraise_flag(enum ima_hooks func)
-  */
- void __init ima_init_policy(void)
- {
--	int i, measure_entries, appraise_entries, secure_boot_entries;
--
--	/* if !ima_policy set entries = 0 so we load NO default rules */
--	measure_entries = ima_policy ? ARRAY_SIZE(dont_measure_rules) : 0;
--	appraise_entries = ima_use_appraise_tcb ?
--			 ARRAY_SIZE(default_appraise_rules) : 0;
--	secure_boot_entries = ima_use_secure_boot ?
--			ARRAY_SIZE(secure_boot_rules) : 0;
-+	int build_appraise_entries;
- 
--	for (i = 0; i < measure_entries; i++)
--		list_add_tail(&dont_measure_rules[i].list, &ima_default_rules);
-+	/* if !ima_policy, we load NO default rules */
-+	if (ima_policy)
-+		add_rules(dont_measure_rules, ARRAY_SIZE(dont_measure_rules),
-+			  IMA_DEFAULT_POLICY);
- 
- 	switch (ima_policy) {
- 	case ORIGINAL_TCB:
--		for (i = 0; i < ARRAY_SIZE(original_measurement_rules); i++)
--			list_add_tail(&original_measurement_rules[i].list,
--				      &ima_default_rules);
-+		add_rules(original_measurement_rules,
-+			  ARRAY_SIZE(original_measurement_rules),
-+			  IMA_DEFAULT_POLICY);
- 		break;
- 	case DEFAULT_TCB:
--		for (i = 0; i < ARRAY_SIZE(default_measurement_rules); i++)
--			list_add_tail(&default_measurement_rules[i].list,
--				      &ima_default_rules);
-+		add_rules(default_measurement_rules,
-+			  ARRAY_SIZE(default_measurement_rules),
-+			  IMA_DEFAULT_POLICY);
- 	default:
- 		break;
- 	}
-@@ -511,38 +535,30 @@ void __init ima_init_policy(void)
- 	 * Insert the builtin "secure_boot" policy rules requiring file
- 	 * signatures, prior to any other appraise rules.
- 	 */
--	for (i = 0; i < secure_boot_entries; i++) {
--		list_add_tail(&secure_boot_rules[i].list, &ima_default_rules);
--		temp_ima_appraise |=
--		    ima_appraise_flag(secure_boot_rules[i].func);
--	}
-+	if (ima_use_secure_boot)
-+		add_rules(secure_boot_rules, ARRAY_SIZE(secure_boot_rules),
-+			  IMA_DEFAULT_POLICY);
- 
- 	/*
- 	 * Insert the build time appraise rules requiring file signatures
- 	 * for both the initial and custom policies, prior to other appraise
--	 * rules.
-+	 * rules. As the secure boot rules includes all of the build time
-+	 * rules, include either one or the other set of rules, but not both.
- 	 */
--	for (i = 0; i < ARRAY_SIZE(build_appraise_rules); i++) {
--		struct ima_rule_entry *entry;
--
--		if (!secure_boot_entries)
--			list_add_tail(&build_appraise_rules[i].list,
--				      &ima_default_rules);
--
--		entry = kmemdup(&build_appraise_rules[i], sizeof(*entry),
--				GFP_KERNEL);
--		if (entry)
--			list_add_tail(&entry->list, &ima_policy_rules);
--		build_ima_appraise |=
--			ima_appraise_flag(build_appraise_rules[i].func);
-+	build_appraise_entries = ARRAY_SIZE(build_appraise_rules);
-+	if (build_appraise_entries) {
-+		if (ima_use_secure_boot)
-+			add_rules(build_appraise_rules, build_appraise_entries,
-+				  IMA_CUSTOM_POLICY);
-+		else
-+			add_rules(build_appraise_rules, build_appraise_entries,
-+				  IMA_DEFAULT_POLICY | IMA_CUSTOM_POLICY);
- 	}
- 
--	for (i = 0; i < appraise_entries; i++) {
--		list_add_tail(&default_appraise_rules[i].list,
--			      &ima_default_rules);
--		if (default_appraise_rules[i].func == POLICY_CHECK)
--			temp_ima_appraise |= IMA_APPRAISE_POLICY;
--	}
-+	if (ima_use_appraise_tcb)
-+		add_rules(default_appraise_rules,
-+			  ARRAY_SIZE(default_appraise_rules),
-+			  IMA_DEFAULT_POLICY);
- 
- 	ima_rules = &ima_default_rules;
- 	ima_update_policy_flag();
+The previous version of this patchset introduced a new IMA policy rule to
+disable the kexec_load syscall, when CONFIG_KEXEC_VERIFY_SIG was enabled,
+however that is removed from this version by introducing a different
+mechanism.
+
+The patchset defines an arch_ima_get_secureboot() function to retrieve the
+secureboot state of the system. If secureboot is enabled and
+CONFIG_KEXEC_VERIFY_SIG is configured, it denies permission to kexec_load
+syscall.
+
+To support architecture specific policies, a new function
+arch_get_ima_policy() is defined. This patch set defines IMA
+KERNEL_KEXEC_POLICY rules for x86 only if CONFIG_KEXEC_VERIFY_SIG is
+disabled and secure boot is enabled.
+
+This patch set includes a patch, which refactors ima_init_policy() to
+remove code duplication.
+
+Changelog:
+
+v4:
+* ima: refactor ima_init_policy()
+	- Fixed the issue reported by Dan Carpenter. Replaced logical
+	operator (&&) with bitwise operator (&).
+
+v3:
+* x86/ima: define arch_ima_get_secureboot
+	- Edited subject line, added x86.
+
+* x86/ima: define arch_get_ima_policy() for x86
+	- Fixed the error reported by kbuild test robot. The error was
+	appearing when CONFIG_X86 is enabled, but CONFIG_IMA_ARCH_POLICY
+	is disabled.
+
+v2:
+* ima: define arch_ima_get_secureboot
+	- New Patch - to retrieve secureboot state of the system
+* ima: prevent kexec_load syscall based on runtime secureboot flag
+	- New Patch - disables kexec_load if KEXEC_VERIFY_SIG is
+	  configured and secureboot is enabled
+* ima: refactor ima_init_policy()
+	- New Patch - cleans up the code duplication in
+	  ima_init_policy(), adds new function add_rules()
+* ima: add support for arch specific policies
+	- modified ima_init_arch_policy() and ima_init_policy() to
+	  use add_rules() from previous patch.
+* ima: add support for external setting of ima_appraise
+	- sets ima_appraise flag explicitly for arch_specific setting
+* ima: add support for KEXEC_ORIG_KERNEL_CHECK
+	- deleted the patch based on Seth's feedback
+* x86/ima: define arch_get_ima_policy() for x86
+	- removes the policy KEXEC_ORIG_KERNEL_CHECK based on
+	  Seth's feedback.
+
+Eric Richter (1):
+  x86/ima: define arch_get_ima_policy() for x86
+
+Nayna Jain (5):
+  x86/ima: define arch_ima_get_secureboot
+  ima: prevent kexec_load syscall based on runtime secureboot flag
+  ima: refactor ima_init_policy()
+  ima: add support for arch specific policies
+  ima: add support for external setting of ima_appraise
+
+ arch/x86/kernel/Makefile              |   2 +
+ arch/x86/kernel/ima_arch.c            |  35 +++++++
+ include/linux/ima.h                   |  18 ++++
+ security/integrity/ima/Kconfig        |   8 ++
+ security/integrity/ima/ima.h          |   5 +
+ security/integrity/ima/ima_appraise.c |  11 ++-
+ security/integrity/ima/ima_main.c     |  17 ++--
+ security/integrity/ima/ima_policy.c   | 167 +++++++++++++++++++++++++---------
+ 8 files changed, 214 insertions(+), 49 deletions(-)
+ create mode 100644 arch/x86/kernel/ima_arch.c
+
 -- 
 2.13.6
