@@ -1,194 +1,102 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39284 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727169AbeI0SfK (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56156 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726817AbeI0Rvp (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 27 Sep 2018 14:35:10 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8RCGFRG089166
-        for <linux-integrity@vger.kernel.org>; Thu, 27 Sep 2018 08:17:08 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mrxt7gwrk-1
+        Thu, 27 Sep 2018 13:51:45 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8RBRV2M009718
+        for <linux-integrity@vger.kernel.org>; Thu, 27 Sep 2018 07:33:54 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mrwhj2762-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 27 Sep 2018 08:17:07 -0400
+        for <linux-integrity@vger.kernel.org>; Thu, 27 Sep 2018 07:33:54 -0400
 Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 27 Sep 2018 13:17:05 +0100
-Subject: Re: [PATCH v4 3/6] ima: refactor ima_init_policy()
+        Thu, 27 Sep 2018 12:33:51 +0100
+Subject: Re: [PATCH v4 2/6] ima: prevent kexec_load syscall based on runtime
+ secureboot flag
 From: Mimi Zohar <zohar@linux.ibm.com>
 To: Nayna Jain <nayna@linux.vnet.ibm.com>,
         linux-integrity@vger.kernel.org
 Cc: linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
         linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        jforbes@redhat.com
-Date: Thu, 27 Sep 2018 08:16:48 -0400
-In-Reply-To: <20180926122210.14642-4-nayna@linux.vnet.ibm.com>
+        jforbes@redhat.com, Seth Forshee <seth.forshee@canonical.com>,
+        kexec <kexec@lists.infradead.org>
+Date: Thu, 27 Sep 2018 07:33:35 -0400
+In-Reply-To: <20180926122210.14642-3-nayna@linux.vnet.ibm.com>
 References: <20180926122210.14642-1-nayna@linux.vnet.ibm.com>
-         <20180926122210.14642-4-nayna@linux.vnet.ibm.com>
+         <20180926122210.14642-3-nayna@linux.vnet.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1538050608.3459.83.camel@linux.ibm.com>
+Message-Id: <1538048015.3459.76.camel@linux.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
+[Cc'ing the kexec mailing list, and Seth]
+
 On Wed, 2018-09-26 at 17:52 +0530, Nayna Jain wrote:
-> This patch removes the code duplication in ima_init_policy() by defining
-> a new function named add_rules().
+> When CONFIG_KEXEC_VERIFY_SIG is enabled, the kexec_file_load syscall
+> requires the kexec'd kernel image to be signed. Distros are concerned
+> about totally disabling the kexec_load syscall. As a compromise, the
+> kexec_load syscall will only be disabled when CONFIG_KEXEC_VERIFY_SIG
+> is configured and the system is booted with secureboot enabled.
+> 
+> This patch disables the kexec_load syscall only for systems booted with
+> secureboot enabled.
+> 
+> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
 
-Thanks!  The patch looks good, but let's expand on this just a bit.
-
-Rules can be added to the initial IMA policy, the custom policy or
-both, based on a mask (IMA_DEFAULT_POLICY, IMA_CUSTOM_POLICY).
+Nice!
 
 Mimi
 
-> 
-> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
 > ---
->  security/integrity/ima/ima_policy.c | 98 +++++++++++++++++++++----------------
->  1 file changed, 57 insertions(+), 41 deletions(-)
+>  security/integrity/ima/ima_main.c | 17 +++++++++++------
+>  1 file changed, 11 insertions(+), 6 deletions(-)
 > 
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index 8c9499867c91..d5b327320d3a 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -58,6 +58,8 @@ enum lsm_rule_types { LSM_OBJ_USER, LSM_OBJ_ROLE, LSM_OBJ_TYPE,
->  
->  enum policy_types { ORIGINAL_TCB = 1, DEFAULT_TCB };
->  
-> +enum policy_rule_list { IMA_DEFAULT_POLICY = 1, IMA_CUSTOM_POLICY };
-> +
->  struct ima_rule_entry {
->  	struct list_head list;
->  	int action;
-> @@ -473,6 +475,33 @@ static int ima_appraise_flag(enum ima_hooks func)
->  	return 0;
->  }
->  
-> +static void add_rules(struct ima_rule_entry *entries, int count,
-> +		      enum policy_rule_list file)
-> +{
-> +	int i = 0;
-> +
-> +	for (i = 0; i < count; i++) {
-> +		struct ima_rule_entry *entry;
-> +
-> +		if (file & IMA_DEFAULT_POLICY)
-> +			list_add_tail(&entries[i].list, &ima_default_rules);
-> +
-> +		if (file & IMA_CUSTOM_POLICY) {
-> +			entry = kmemdup(&entries[i], sizeof(*entry),
-> +					GFP_KERNEL);
-> +			if (!entry)
-> +				continue;
-> +
-> +			INIT_LIST_HEAD(&entry->list);
-> +			list_add_tail(&entry->list, &ima_policy_rules);
-> +		}
-> +		if (entries[i].action == APPRAISE)
-> +			temp_ima_appraise |= ima_appraise_flag(entries[i].func);
-> +		if (entries[i].func == POLICY_CHECK)
-> +			temp_ima_appraise |= IMA_APPRAISE_POLICY;
-> +	}
-> +}
-> +
->  /**
->   * ima_init_policy - initialize the default measure rules.
->   *
-> @@ -481,28 +510,23 @@ static int ima_appraise_flag(enum ima_hooks func)
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index dce0a8a217bb..bdb6e5563d05 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -505,20 +505,24 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
 >   */
->  void __init ima_init_policy(void)
+>  int ima_load_data(enum kernel_load_data_id id)
 >  {
-> -	int i, measure_entries, appraise_entries, secure_boot_entries;
-> -
-> -	/* if !ima_policy set entries = 0 so we load NO default rules */
-> -	measure_entries = ima_policy ? ARRAY_SIZE(dont_measure_rules) : 0;
-> -	appraise_entries = ima_use_appraise_tcb ?
-> -			 ARRAY_SIZE(default_appraise_rules) : 0;
-> -	secure_boot_entries = ima_use_secure_boot ?
-> -			ARRAY_SIZE(secure_boot_rules) : 0;
-> +	int build_appraise_entries;
+> -	bool sig_enforce;
+> +	bool ima_enforce, sig_enforce;
 >  
-> -	for (i = 0; i < measure_entries; i++)
-> -		list_add_tail(&dont_measure_rules[i].list, &ima_default_rules);
-> +	/* if !ima_policy, we load NO default rules */
-> +	if (ima_policy)
-> +		add_rules(dont_measure_rules, ARRAY_SIZE(dont_measure_rules),
-> +			  IMA_DEFAULT_POLICY);
+> -	if ((ima_appraise & IMA_APPRAISE_ENFORCE) != IMA_APPRAISE_ENFORCE)
+> -		return 0;
+> +	ima_enforce =
+> +		(ima_appraise & IMA_APPRAISE_ENFORCE) == IMA_APPRAISE_ENFORCE;
 >  
->  	switch (ima_policy) {
->  	case ORIGINAL_TCB:
-> -		for (i = 0; i < ARRAY_SIZE(original_measurement_rules); i++)
-> -			list_add_tail(&original_measurement_rules[i].list,
-> -				      &ima_default_rules);
-> +		add_rules(original_measurement_rules,
-> +			  ARRAY_SIZE(original_measurement_rules),
-> +			  IMA_DEFAULT_POLICY);
+>  	switch (id) {
+>  	case LOADING_KEXEC_IMAGE:
+> -		if (ima_appraise & IMA_APPRAISE_KEXEC) {
+> +#ifdef CONFIG_KEXEC_VERIFY_SIG
+> +		if (arch_ima_get_secureboot())
+> +			return -EACCES;
+> +#endif
+> +		if (ima_enforce && (ima_appraise & IMA_APPRAISE_KEXEC)) {
+>  			pr_err("impossible to appraise a kernel image without a file descriptor; try using kexec_file_load syscall.\n");
+>  			return -EACCES;	/* INTEGRITY_UNKNOWN */
+>  		}
 >  		break;
->  	case DEFAULT_TCB:
-> -		for (i = 0; i < ARRAY_SIZE(default_measurement_rules); i++)
-> -			list_add_tail(&default_measurement_rules[i].list,
-> -				      &ima_default_rules);
-> +		add_rules(default_measurement_rules,
-> +			  ARRAY_SIZE(default_measurement_rules),
-> +			  IMA_DEFAULT_POLICY);
->  	default:
->  		break;
->  	}
-> @@ -511,38 +535,30 @@ void __init ima_init_policy(void)
->  	 * Insert the builtin "secure_boot" policy rules requiring file
->  	 * signatures, prior to any other appraise rules.
->  	 */
-> -	for (i = 0; i < secure_boot_entries; i++) {
-> -		list_add_tail(&secure_boot_rules[i].list, &ima_default_rules);
-> -		temp_ima_appraise |=
-> -		    ima_appraise_flag(secure_boot_rules[i].func);
-> -	}
-> +	if (ima_use_secure_boot)
-> +		add_rules(secure_boot_rules, ARRAY_SIZE(secure_boot_rules),
-> +			  IMA_DEFAULT_POLICY);
+>  	case LOADING_FIRMWARE:
+> -		if (ima_appraise & IMA_APPRAISE_FIRMWARE) {
+> +		if (ima_enforce && (ima_appraise & IMA_APPRAISE_FIRMWARE)) {
+>  			pr_err("Prevent firmware sysfs fallback loading.\n");
+>  			return -EACCES;	/* INTEGRITY_UNKNOWN */
+>  		}
+> @@ -526,7 +530,8 @@ int ima_load_data(enum kernel_load_data_id id)
+>  	case LOADING_MODULE:
+>  		sig_enforce = is_module_sig_enforced();
 >  
->  	/*
->  	 * Insert the build time appraise rules requiring file signatures
->  	 * for both the initial and custom policies, prior to other appraise
-> -	 * rules.
-> +	 * rules. As the secure boot rules includes all of the build time
-> +	 * rules, include either one or the other set of rules, but not both.
->  	 */
-> -	for (i = 0; i < ARRAY_SIZE(build_appraise_rules); i++) {
-> -		struct ima_rule_entry *entry;
-> -
-> -		if (!secure_boot_entries)
-> -			list_add_tail(&build_appraise_rules[i].list,
-> -				      &ima_default_rules);
-> -
-> -		entry = kmemdup(&build_appraise_rules[i], sizeof(*entry),
-> -				GFP_KERNEL);
-> -		if (entry)
-> -			list_add_tail(&entry->list, &ima_policy_rules);
-> -		build_ima_appraise |=
-> -			ima_appraise_flag(build_appraise_rules[i].func);
-> +	build_appraise_entries = ARRAY_SIZE(build_appraise_rules);
-> +	if (build_appraise_entries) {
-> +		if (ima_use_secure_boot)
-> +			add_rules(build_appraise_rules, build_appraise_entries,
-> +				  IMA_CUSTOM_POLICY);
-> +		else
-> +			add_rules(build_appraise_rules, build_appraise_entries,
-> +				  IMA_DEFAULT_POLICY | IMA_CUSTOM_POLICY);
->  	}
->  
-> -	for (i = 0; i < appraise_entries; i++) {
-> -		list_add_tail(&default_appraise_rules[i].list,
-> -			      &ima_default_rules);
-> -		if (default_appraise_rules[i].func == POLICY_CHECK)
-> -			temp_ima_appraise |= IMA_APPRAISE_POLICY;
-> -	}
-> +	if (ima_use_appraise_tcb)
-> +		add_rules(default_appraise_rules,
-> +			  ARRAY_SIZE(default_appraise_rules),
-> +			  IMA_DEFAULT_POLICY);
->  
->  	ima_rules = &ima_default_rules;
->  	ima_update_policy_flag();
+> -		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES)) {
+> +		if (ima_enforce && (!sig_enforce
+> +				    && (ima_appraise & IMA_APPRAISE_MODULES))) {
+>  			pr_err("impossible to appraise a module without a file descriptor. sig_enforce kernel parameter might help\n");
+>  			return -EACCES;	/* INTEGRITY_UNKNOWN */
+>  		}
