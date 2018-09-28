@@ -1,8 +1,8 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
 Received: from mga11.intel.com ([192.55.52.93]:9469 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726870AbeI2FBM (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 29 Sep 2018 01:01:12 -0400
+        id S1726564AbeI2FBX (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 29 Sep 2018 01:01:23 -0400
 From: Tomas Winkler <tomas.winkler@intel.com>
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
@@ -13,38 +13,88 @@ Cc: Nayna Jain <nayna@linux.vnet.ibm.com>,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH v5 15/21] tpm: tpm-space.c remove unneeded semicolon
-Date: Sat, 29 Sep 2018 01:30:29 +0300
-Message-Id: <20180928223035.14471-16-tomas.winkler@intel.com>
+Subject: [PATCH v5 19/21] tpm1: reimplement SAVESTATE using tpm_buf
+Date: Sat, 29 Sep 2018 01:30:33 +0300
+Message-Id: <20180928223035.14471-20-tomas.winkler@intel.com>
 In-Reply-To: <20180928223035.14471-1-tomas.winkler@intel.com>
 References: <20180928223035.14471-1-tomas.winkler@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Remove unneeded semicolon in tpm2_map_response_header()
+In tpm1_pm_suspend() function reimplement,
+TPM_ORD_SAVESTATE comamnd using tpm_buf.
 
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
-
 V3: New in the series.
-V4-V5: Resend.
+V4-V5: Resend
 
- drivers/char/tpm/tpm2-space.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/char/tpm/tpm1-cmd.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-index d2e101b32482..dcdfde3c253e 100644
---- a/drivers/char/tpm/tpm2-space.c
-+++ b/drivers/char/tpm/tpm2-space.c
-@@ -373,7 +373,7 @@ static int tpm2_map_response_header(struct tpm_chip *chip, u32 cc, u8 *rsp,
- 		dev_err(&chip->dev, "%s: unknown handle 0x%08X\n",
- 			__func__, phandle);
- 		break;
--	};
-+	}
+diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+index 05b772477bac..d418a27a75e0 100644
+--- a/drivers/char/tpm/tpm1-cmd.c
++++ b/drivers/char/tpm/tpm1-cmd.c
+@@ -718,12 +718,6 @@ int tpm1_auto_startup(struct tpm_chip *chip)
+ }
  
- 	return 0;
- out_no_slots:
+ #define TPM_ORD_SAVESTATE 152
+-#define SAVESTATE_RESULT_SIZE 10
+-static const struct tpm_input_header savestate_header = {
+-	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+-	.length = cpu_to_be32(10),
+-	.ordinal = cpu_to_be32(TPM_ORD_SAVESTATE)
+-};
+ 
+ /**
+  * tpm1_pm_suspend() - pm suspend handler
+@@ -739,18 +733,22 @@ static const struct tpm_input_header savestate_header = {
+ int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr)
+ {
+ 	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
+-	struct tpm_cmd_t cmd;
+-	int rc, try;
++	struct tpm_buf buf;
++	unsigned int try;
++	int rc;
++
+ 
+ 	/* for buggy tpm, flush pcrs with extend to selected dummy */
+ 	if (tpm_suspend_pcr)
+ 		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, dummy_hash,
+ 				     "extending dummy pcr before suspend");
+ 
++	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_SAVESTATE);
++	if (rc)
++		return rc;
+ 	/* now do the actual savestate */
+ 	for (try = 0; try < TPM_RETRY; try++) {
+-		cmd.header.in = savestate_header;
+-		rc = tpm_transmit_cmd(chip, NULL, &cmd, SAVESTATE_RESULT_SIZE,
++		rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
+ 				      0, 0, NULL);
+ 
+ 		/*
+@@ -766,6 +764,8 @@ int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr)
+ 		if (rc != TPM_WARN_RETRY)
+ 			break;
+ 		tpm_msleep(TPM_TIMEOUT_RETRY);
++
++		tpm_buf_reset(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_SAVESTATE);
+ 	}
+ 
+ 	if (rc)
+@@ -775,6 +775,8 @@ int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr)
+ 		dev_warn(&chip->dev, "TPM savestate took %dms\n",
+ 			 try * TPM_TIMEOUT_RETRY);
+ 
++	tpm_buf_destroy(&buf);
++
+ 	return rc;
+ }
+ 
 -- 
 2.14.4
