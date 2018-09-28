@@ -1,8 +1,8 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:9469 "EHLO mga11.intel.com"
+Received: from mga09.intel.com ([134.134.136.24]:17973 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727551AbeI2FBE (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 29 Sep 2018 01:01:04 -0400
+        id S1725938AbeI2FAe (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 29 Sep 2018 01:00:34 -0400
 From: Tomas Winkler <tomas.winkler@intel.com>
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
@@ -13,176 +13,346 @@ Cc: Nayna Jain <nayna@linux.vnet.ibm.com>,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
-Date: Sat, 29 Sep 2018 01:30:26 +0300
-Message-Id: <20180928223035.14471-13-tomas.winkler@intel.com>
+Subject: [PATCH v5 01/21] tpm2: add new tpm2 commands according to TCG 1.36
+Date: Sat, 29 Sep 2018 01:30:15 +0300
+Message-Id: <20180928223035.14471-2-tomas.winkler@intel.com>
 In-Reply-To: <20180928223035.14471-1-tomas.winkler@intel.com>
 References: <20180928223035.14471-1-tomas.winkler@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Add tpm2_pcr_extend() function to tpm2-cmd.c with signature required
-by tpm-interface.c. It wraps the original open code
-implementation. The original original tpm2_pcr_extend() function
-is renamed to __tpm2_pcr_extend() and made static, it is called
-only from new tpm2_pcr_extend().
-
-Fix warnings in __tpm2_pcr_extend()
-tpm2-cmd.c:251:16: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
-tpm2-cmd.c:252:17: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+1. TPM2_CC_LAST has moved from 182 to 193
+2. Convert tpm2_ordinal_duration from an array into a switch statement,
+   as there are not so many commands that require special duration
+   relative to a number of commands, the switch statement function
+   is called tpm2_ordinal_duration_index().
+3. Fix kdoc comments for tpm2_calc_ordinal_duration().
 
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
-V3: Fix the commit message.
-V4: 1. Fix the kdoc.
-    2. Fix the commit message.
-    3. Fix compilation warnings.
-V5: A small fix in the kdoc.
 
- drivers/char/tpm/tpm-interface.c | 24 +++++----------------
- drivers/char/tpm/tpm.h           |  3 +--
- drivers/char/tpm/tpm1-cmd.c      |  2 +-
- drivers/char/tpm/tpm2-cmd.c      | 46 +++++++++++++++++++++++++++++++---------
- 4 files changed, 43 insertions(+), 32 deletions(-)
+V2-V3: Rebase.
+V4: 1. Fix kdoc
+    2. Rename tpm2_ordinal_duration() to tpm2_ordinal_duration_index()
+    3. Move the two functions close to each other in the file.
+V5: Adjust the kdoc to the new standard.
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index d33060511a27..1ea83a3f1b02 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -491,31 +491,17 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
- int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
- {
- 	int rc;
--	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
--	u32 count = 0;
--	int i;
- 
- 	chip = tpm_find_get_ops(chip);
- 	if (!chip)
- 		return -ENODEV;
- 
--	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
--		memset(digest_list, 0, sizeof(digest_list));
--
--		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
--			    chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
--			digest_list[i].alg_id = chip->active_banks[i];
--			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
--			count++;
--		}
--
--		rc = tpm2_pcr_extend(chip, pcr_idx, count, digest_list);
--		tpm_put_ops(chip);
--		return rc;
--	}
-+	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-+		rc = tpm2_pcr_extend(chip, pcr_idx, hash);
-+	else
-+		rc = tpm1_pcr_extend(chip, pcr_idx, hash,
-+				     "attempting extend a PCR value");
- 
--	rc = tpm1_pcr_extend(chip, pcr_idx, hash,
--			     "attempting extend a PCR value");
- 	tpm_put_ops(chip);
- 	return rc;
- }
+ drivers/char/tpm/tpm.h      |  41 +++++---
+ drivers/char/tpm/tpm2-cmd.c | 241 +++++++++++++++++---------------------------
+ 2 files changed, 118 insertions(+), 164 deletions(-)
+
 diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index fa88102a0cab..f0963a0a8acd 100644
+index f20dc8ece348..0f08518b525d 100644
 --- a/drivers/char/tpm/tpm.h
 +++ b/drivers/char/tpm/tpm.h
-@@ -592,8 +592,7 @@ static inline u32 tpm2_rc_value(u32 rc)
+@@ -134,22 +134,31 @@ enum tpm2_algorithms {
+ };
  
- int tpm2_get_timeouts(struct tpm_chip *chip);
- int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
--int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
--		    struct tpm2_digest *digests);
-+int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash);
- int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
- void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
- 			    unsigned int flags);
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 5b2e743a3e51..8a84db315676 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -312,7 +312,7 @@ unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
- #define TPM_ST_CLEAR 1
+ enum tpm2_command_codes {
+-	TPM2_CC_FIRST		= 0x011F,
+-	TPM2_CC_CREATE_PRIMARY  = 0x0131,
+-	TPM2_CC_SELF_TEST	= 0x0143,
+-	TPM2_CC_STARTUP		= 0x0144,
+-	TPM2_CC_SHUTDOWN	= 0x0145,
+-	TPM2_CC_CREATE		= 0x0153,
+-	TPM2_CC_LOAD		= 0x0157,
+-	TPM2_CC_UNSEAL		= 0x015E,
+-	TPM2_CC_CONTEXT_LOAD	= 0x0161,
+-	TPM2_CC_CONTEXT_SAVE	= 0x0162,
+-	TPM2_CC_FLUSH_CONTEXT	= 0x0165,
+-	TPM2_CC_GET_CAPABILITY	= 0x017A,
+-	TPM2_CC_GET_RANDOM	= 0x017B,
+-	TPM2_CC_PCR_READ	= 0x017E,
+-	TPM2_CC_PCR_EXTEND	= 0x0182,
+-	TPM2_CC_LAST		= 0x018F,
++	TPM2_CC_FIRST		        = 0x011F,
++	TPM2_CC_HIERARCHY_CONTROL       = 0x0121,
++	TPM2_CC_HIERARCHY_CHANGE_AUTH   = 0x0129,
++	TPM2_CC_CREATE_PRIMARY          = 0x0131,
++	TPM2_CC_SEQUENCE_COMPLETE       = 0x013E,
++	TPM2_CC_SELF_TEST	        = 0x0143,
++	TPM2_CC_STARTUP		        = 0x0144,
++	TPM2_CC_SHUTDOWN	        = 0x0145,
++	TPM2_CC_NV_READ                 = 0x014E,
++	TPM2_CC_CREATE		        = 0x0153,
++	TPM2_CC_LOAD		        = 0x0157,
++	TPM2_CC_SEQUENCE_UPDATE         = 0x015C,
++	TPM2_CC_UNSEAL		        = 0x015E,
++	TPM2_CC_CONTEXT_LOAD	        = 0x0161,
++	TPM2_CC_CONTEXT_SAVE	        = 0x0162,
++	TPM2_CC_FLUSH_CONTEXT	        = 0x0165,
++	TPM2_CC_VERIFY_SIGNATURE        = 0x0177,
++	TPM2_CC_GET_CAPABILITY	        = 0x017A,
++	TPM2_CC_GET_RANDOM	        = 0x017B,
++	TPM2_CC_PCR_READ	        = 0x017E,
++	TPM2_CC_PCR_EXTEND	        = 0x0182,
++	TPM2_CC_EVENT_SEQUENCE_COMPLETE = 0x0185,
++	TPM2_CC_HASH_SEQUENCE_START     = 0x0186,
++	TPM2_CC_CREATE_LOADED           = 0x0191,
++	TPM2_CC_LAST		        = 0x0193, /* Spec 1.36 */
+ };
  
- /**
-- * tpm_startup - turn on the TPM
-+ * tpm_startup() - turn on the TPM
-  * @chip: TPM chip to use
-  *
-  * Normally the firmware should start the TPM. This function is provided as a
+ enum tpm2_permanent_handles {
 diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index a3d39360620f..2b705b00db78 100644
+index 3acf4fd4e5a5..f08478c78bf7 100644
 --- a/drivers/char/tpm/tpm2-cmd.c
 +++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -216,23 +216,21 @@ struct tpm2_null_auth_area {
- } __packed;
+@@ -40,129 +40,100 @@ static struct tpm2_hash tpm2_hash_map[] = {
+ 	{HASH_ALGO_SM3_256, TPM2_ALG_SM3_256},
+ };
  
- /**
-- * tpm2_pcr_extend() - extend a PCR value
-- *
-- * @chip:	TPM chip to use.
-- * @pcr_idx:	index of the PCR.
-- * @count:	number of digests passed.
-- * @digests:	list of pcr banks and corresponding digest values to extend.
-+ * __tpm2_pcr_extend() - extend a PCR value
-+ * @chip:       TPM chip to use.
-+ * @pcr_idx:    index of the PCR.
-+ * @count:      number of digests passed.
-+ * @digests:    list of pcr banks and corresponding digest values to extend.
-  *
-  * Return: Same as with tpm_transmit_cmd.
-  */
--int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
--		    struct tpm2_digest *digests)
-+static int __tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
-+			     struct tpm2_digest *digests)
- {
- 	struct tpm_buf buf;
- 	struct tpm2_null_auth_area auth_area;
-+	u32 i, j;
- 	int rc;
--	int i;
--	int j;
- 
- 	if (count > ARRAY_SIZE(chip->active_banks))
- 		return -EINVAL;
-@@ -272,6 +270,34 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
- 	return rc;
- }
- 
+-/*
+- * Array with one entry per ordinal defining the maximum amount
+- * of time the chip could take to return the result. The values
+- * of the SHORT, MEDIUM, and LONG durations are taken from the
+- * PC Client Profile (PTP) specification.
+- * LONG_LONG is for commands that generates keys which empirically
+- * takes longer time on some systems.
 +/**
-+ * tpm2_pcr_extend() - extend a PCR value
-+ * @chip:       TPM chip to use.
-+ * @pcr_idx:    index of the PCR to extend.
-+ * @hash:       the hash of a measurement.
++ * tpm2_ordinal_duration_index() - returns an index to the chip duration table
++ * @ordinal: TPM command ordinal.
 + *
-+ * Return: Same as with tpm_transmit_cmd.
-+ */
-+int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
++ * The function returns an index to the chip duration table
++ * (enum tpm_duration), that describes the maximum amount of
++ * time the chip could take to return the result for a  particular ordinal.
++ *
++ * The values of the MEDIUM, and LONG durations are taken
++ * from the PC Client Profile (PTP) specification (750, 2000 msec)
++ *
++ * LONG_LONG is for commands that generates keys which empirically takes
++ * a longer time on some systems.
++ *
++ * Return:
++ * * TPM_MEDIUM
++ * * TPM_LONG,
++ * * TPM_LONG_LONG
++ * * TPM_UNDEFINED.
+  */
+-static const u8 tpm2_ordinal_duration[TPM2_CC_LAST - TPM2_CC_FIRST + 1] = {
+-	TPM_UNDEFINED,		/* 11F */
+-	TPM_UNDEFINED,		/* 120 */
+-	TPM_LONG,		/* 121 */
+-	TPM_UNDEFINED,		/* 122 */
+-	TPM_UNDEFINED,		/* 123 */
+-	TPM_UNDEFINED,		/* 124 */
+-	TPM_UNDEFINED,		/* 125 */
+-	TPM_UNDEFINED,		/* 126 */
+-	TPM_UNDEFINED,		/* 127 */
+-	TPM_UNDEFINED,		/* 128 */
+-	TPM_LONG,		/* 129 */
+-	TPM_UNDEFINED,		/* 12a */
+-	TPM_UNDEFINED,		/* 12b */
+-	TPM_UNDEFINED,		/* 12c */
+-	TPM_UNDEFINED,		/* 12d */
+-	TPM_UNDEFINED,		/* 12e */
+-	TPM_UNDEFINED,		/* 12f */
+-	TPM_UNDEFINED,		/* 130 */
+-	TPM_LONG_LONG,		/* 131 */
+-	TPM_UNDEFINED,		/* 132 */
+-	TPM_UNDEFINED,		/* 133 */
+-	TPM_UNDEFINED,		/* 134 */
+-	TPM_UNDEFINED,		/* 135 */
+-	TPM_UNDEFINED,		/* 136 */
+-	TPM_UNDEFINED,		/* 137 */
+-	TPM_UNDEFINED,		/* 138 */
+-	TPM_UNDEFINED,		/* 139 */
+-	TPM_UNDEFINED,		/* 13a */
+-	TPM_UNDEFINED,		/* 13b */
+-	TPM_UNDEFINED,		/* 13c */
+-	TPM_UNDEFINED,		/* 13d */
+-	TPM_MEDIUM,		/* 13e */
+-	TPM_UNDEFINED,		/* 13f */
+-	TPM_UNDEFINED,		/* 140 */
+-	TPM_UNDEFINED,		/* 141 */
+-	TPM_UNDEFINED,		/* 142 */
+-	TPM_LONG,		/* 143 */
+-	TPM_MEDIUM,		/* 144 */
+-	TPM_UNDEFINED,		/* 145 */
+-	TPM_UNDEFINED,		/* 146 */
+-	TPM_UNDEFINED,		/* 147 */
+-	TPM_UNDEFINED,		/* 148 */
+-	TPM_UNDEFINED,		/* 149 */
+-	TPM_UNDEFINED,		/* 14a */
+-	TPM_UNDEFINED,		/* 14b */
+-	TPM_UNDEFINED,		/* 14c */
+-	TPM_UNDEFINED,		/* 14d */
+-	TPM_LONG,		/* 14e */
+-	TPM_UNDEFINED,		/* 14f */
+-	TPM_UNDEFINED,		/* 150 */
+-	TPM_UNDEFINED,		/* 151 */
+-	TPM_UNDEFINED,		/* 152 */
+-	TPM_LONG_LONG,		/* 153 */
+-	TPM_UNDEFINED,		/* 154 */
+-	TPM_UNDEFINED,		/* 155 */
+-	TPM_UNDEFINED,		/* 156 */
+-	TPM_UNDEFINED,		/* 157 */
+-	TPM_UNDEFINED,		/* 158 */
+-	TPM_UNDEFINED,		/* 159 */
+-	TPM_UNDEFINED,		/* 15a */
+-	TPM_UNDEFINED,		/* 15b */
+-	TPM_MEDIUM,		/* 15c */
+-	TPM_UNDEFINED,		/* 15d */
+-	TPM_UNDEFINED,		/* 15e */
+-	TPM_UNDEFINED,		/* 15f */
+-	TPM_UNDEFINED,		/* 160 */
+-	TPM_UNDEFINED,		/* 161 */
+-	TPM_UNDEFINED,		/* 162 */
+-	TPM_UNDEFINED,		/* 163 */
+-	TPM_UNDEFINED,		/* 164 */
+-	TPM_UNDEFINED,		/* 165 */
+-	TPM_UNDEFINED,		/* 166 */
+-	TPM_UNDEFINED,		/* 167 */
+-	TPM_UNDEFINED,		/* 168 */
+-	TPM_UNDEFINED,		/* 169 */
+-	TPM_UNDEFINED,		/* 16a */
+-	TPM_UNDEFINED,		/* 16b */
+-	TPM_UNDEFINED,		/* 16c */
+-	TPM_UNDEFINED,		/* 16d */
+-	TPM_UNDEFINED,		/* 16e */
+-	TPM_UNDEFINED,		/* 16f */
+-	TPM_UNDEFINED,		/* 170 */
+-	TPM_UNDEFINED,		/* 171 */
+-	TPM_UNDEFINED,		/* 172 */
+-	TPM_UNDEFINED,		/* 173 */
+-	TPM_UNDEFINED,		/* 174 */
+-	TPM_UNDEFINED,		/* 175 */
+-	TPM_UNDEFINED,		/* 176 */
+-	TPM_LONG,		/* 177 */
+-	TPM_UNDEFINED,		/* 178 */
+-	TPM_UNDEFINED,		/* 179 */
+-	TPM_MEDIUM,		/* 17a */
+-	TPM_LONG,		/* 17b */
+-	TPM_UNDEFINED,		/* 17c */
+-	TPM_UNDEFINED,		/* 17d */
+-	TPM_UNDEFINED,		/* 17e */
+-	TPM_UNDEFINED,		/* 17f */
+-	TPM_UNDEFINED,		/* 180 */
+-	TPM_UNDEFINED,		/* 181 */
+-	TPM_MEDIUM,		/* 182 */
+-	TPM_UNDEFINED,		/* 183 */
+-	TPM_UNDEFINED,		/* 184 */
+-	TPM_MEDIUM,		/* 185 */
+-	TPM_MEDIUM,		/* 186 */
+-	TPM_UNDEFINED,		/* 187 */
+-	TPM_UNDEFINED,		/* 188 */
+-	TPM_UNDEFINED,		/* 189 */
+-	TPM_UNDEFINED,		/* 18a */
+-	TPM_UNDEFINED,		/* 18b */
+-	TPM_UNDEFINED,		/* 18c */
+-	TPM_UNDEFINED,		/* 18d */
+-	TPM_UNDEFINED,		/* 18e */
+-	TPM_UNDEFINED		/* 18f */
+-};
++static u8 tpm2_ordinal_duration_index(u32 ordinal)
 +{
-+	int rc;
-+	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
-+	u32 count = 0;
-+	unsigned int i;
++	switch (ordinal) {
++	/* Startup */
++	case TPM2_CC_STARTUP:                 /* 144 */
++		return TPM_MEDIUM;
 +
-+	memset(digest_list, 0, sizeof(digest_list));
-+	for (i = 0; i < ARRAY_SIZE(chip->active_banks); i++) {
-+		if (chip->active_banks[i] == TPM2_ALG_ERROR)
-+			break;
-+		digest_list[i].alg_id = chip->active_banks[i];
-+		memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
-+		count++;
++	case TPM2_CC_SELF_TEST:               /* 143 */
++		return TPM_LONG;
++
++	case TPM2_CC_GET_RANDOM:              /* 17B */
++		return TPM_LONG;
++
++	case TPM2_CC_SEQUENCE_UPDATE:         /* 15C */
++		return TPM_MEDIUM;
++	case TPM2_CC_SEQUENCE_COMPLETE:       /* 13E */
++		return TPM_MEDIUM;
++	case TPM2_CC_EVENT_SEQUENCE_COMPLETE: /* 185 */
++		return TPM_MEDIUM;
++	case TPM2_CC_HASH_SEQUENCE_START:     /* 186 */
++		return TPM_MEDIUM;
++
++	case TPM2_CC_VERIFY_SIGNATURE:        /* 177 */
++		return TPM_LONG;
++
++	case TPM2_CC_PCR_EXTEND:              /* 182 */
++		return TPM_MEDIUM;
++
++	case TPM2_CC_HIERARCHY_CONTROL:       /* 121 */
++		return TPM_LONG;
++	case TPM2_CC_HIERARCHY_CHANGE_AUTH:   /* 129 */
++		return TPM_LONG;
++
++	case TPM2_CC_GET_CAPABILITY:          /* 17A */
++		return TPM_MEDIUM;
++
++	case TPM2_CC_NV_READ:                 /* 14E */
++		return TPM_LONG;
++
++	case TPM2_CC_CREATE_PRIMARY:          /* 131 */
++		return TPM_LONG_LONG;
++	case TPM2_CC_CREATE:                  /* 153 */
++		return TPM_LONG_LONG;
++	case TPM2_CC_CREATE_LOADED:           /* 191 */
++		return TPM_LONG_LONG;
++
++	default:
++		return TPM_UNDEFINED;
 +	}
-+
-+	rc = __tpm2_pcr_extend(chip, pcr_idx, count, digest_list);
-+	return rc;
 +}
 +
++/**
++ * tpm2_calc_ordinal_duration() - calculate the maximum command duration
++ * @chip:    TPM chip to use.
++ * @ordinal: TPM command ordinal.
++ *
++ * The function returns the maximum amount of time the chip could take
++ * to return the result for a particular ordinal in jiffies.
++ *
++ * Return: A maximal duration time for an ordinal in jiffies.
++ */
++unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
++{
++	unsigned int index;
++
++	index = tpm2_ordinal_duration_index(ordinal);
++
++	if (index != TPM_UNDEFINED)
++		return chip->duration[index];
++	else
++		return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
++}
++EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
++
  
- struct tpm2_get_random_out {
- 	__be16 size;
+ struct tpm2_pcr_read_out {
+ 	__be32	update_cnt;
+@@ -748,32 +719,6 @@ void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
+ 	tpm_buf_destroy(&buf);
+ }
+ 
+-/*
+- * tpm2_calc_ordinal_duration() - maximum duration for a command
+- *
+- * @chip:	TPM chip to use.
+- * @ordinal:	command code number.
+- *
+- * Return: maximum duration for a command
+- */
+-unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+-{
+-	int index = TPM_UNDEFINED;
+-	int duration = 0;
+-
+-	if (ordinal >= TPM2_CC_FIRST && ordinal <= TPM2_CC_LAST)
+-		index = tpm2_ordinal_duration[ordinal - TPM2_CC_FIRST];
+-
+-	if (index != TPM_UNDEFINED)
+-		duration = chip->duration[index];
+-
+-	if (duration <= 0)
+-		duration = msecs_to_jiffies(TPM2_DURATION_DEFAULT);
+-
+-	return duration;
+-}
+-EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
+-
+ /**
+  * tpm2_do_selftest() - ensure that all self tests have passed
+  *
 -- 
 2.14.4
