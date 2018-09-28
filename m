@@ -1,8 +1,8 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
 Received: from mga11.intel.com ([192.55.52.93]:9469 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726564AbeI2FBX (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 29 Sep 2018 01:01:23 -0400
+        id S1726564AbeI2FBR (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 29 Sep 2018 01:01:17 -0400
 From: Tomas Winkler <tomas.winkler@intel.com>
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
@@ -13,86 +13,118 @@ Cc: Nayna Jain <nayna@linux.vnet.ibm.com>,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH v5 19/21] tpm1: reimplement SAVESTATE using tpm_buf
-Date: Sat, 29 Sep 2018 01:30:33 +0300
-Message-Id: <20180928223035.14471-20-tomas.winkler@intel.com>
+Subject: [PATCH v5 17/21] tpm1: implement tpm1_pcr_read_dev() using tpm_buf structure
+Date: Sat, 29 Sep 2018 01:30:31 +0300
+Message-Id: <20180928223035.14471-18-tomas.winkler@intel.com>
 In-Reply-To: <20180928223035.14471-1-tomas.winkler@intel.com>
 References: <20180928223035.14471-1-tomas.winkler@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-In tpm1_pm_suspend() function reimplement,
-TPM_ORD_SAVESTATE comamnd using tpm_buf.
+Implement tpm1_pcr_read_dev() using tpm_buf and remove
+now unneeded structures from tpm.h
 
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
+
 V3: New in the series.
-V4-V5: Resend
+V4-V5: Resend.
+ drivers/char/tpm/tpm.h      | 18 ++----------------
+ drivers/char/tpm/tpm1-cmd.c | 38 +++++++++++++++++++++-----------------
+ 2 files changed, 23 insertions(+), 33 deletions(-)
 
- drivers/char/tpm/tpm1-cmd.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
-
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index d6eca81a011a..d0402aa122ec 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -382,13 +382,10 @@ typedef union {
+ 	struct	tpm_output_header out;
+ } tpm_cmd_header;
+ 
+-struct tpm_pcrread_out {
+-	u8	pcr_result[TPM_DIGEST_SIZE];
++struct tpm_cmd_t {
++	tpm_cmd_header	header;
+ } __packed;
+ 
+-struct tpm_pcrread_in {
+-	__be32	pcr_idx;
+-} __packed;
+ 
+ /* 128 bytes is an arbitrary cap. This could be as large as TPM_BUFSIZE - 18
+  * bytes, but 128 is still a relatively large number of random bytes and
+@@ -396,17 +393,6 @@ struct tpm_pcrread_in {
+  * compiler warnings about stack frame size. */
+ #define TPM_MAX_RNG_DATA	128
+ 
+-typedef union {
+-	struct	tpm_pcrread_in	pcrread_in;
+-	struct	tpm_pcrread_out	pcrread_out;
+-} tpm_cmd_params;
+-
+-struct tpm_cmd_t {
+-	tpm_cmd_header	header;
+-	tpm_cmd_params	params;
+-} __packed;
+-
+-
+ /* A string buffer type for constructing TPM commands. This is based on the
+  * ideas of string buffer code in security/keys/trusted.h but is heap based
+  * in order to keep the stack usage minimal.
 diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 05b772477bac..d418a27a75e0 100644
+index b5c4fa158c30..d30f336518f6 100644
 --- a/drivers/char/tpm/tpm1-cmd.c
 +++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -718,12 +718,6 @@ int tpm1_auto_startup(struct tpm_chip *chip)
+@@ -571,29 +571,33 @@ int tpm1_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
+ 	return rc;
  }
  
- #define TPM_ORD_SAVESTATE 152
--#define SAVESTATE_RESULT_SIZE 10
--static const struct tpm_input_header savestate_header = {
+-#define TPM_ORDINAL_PCRREAD 21
+-#define READ_PCR_RESULT_SIZE 30
+-#define READ_PCR_RESULT_BODY_SIZE 20
+-static const struct tpm_input_header pcrread_header = {
 -	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
--	.length = cpu_to_be32(10),
--	.ordinal = cpu_to_be32(TPM_ORD_SAVESTATE)
+-	.length = cpu_to_be32(14),
+-	.ordinal = cpu_to_be32(TPM_ORDINAL_PCRREAD)
 -};
- 
- /**
-  * tpm1_pm_suspend() - pm suspend handler
-@@ -739,18 +733,22 @@ static const struct tpm_input_header savestate_header = {
- int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr)
+-
++#define TPM_ORD_PCRREAD 21
+ int tpm1_pcr_read_dev(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
  {
- 	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
--	struct tpm_cmd_t cmd;
--	int rc, try;
 +	struct tpm_buf buf;
-+	unsigned int try;
-+	int rc;
-+
+ 	int rc;
+-	struct tpm_cmd_t cmd;
  
- 	/* for buggy tpm, flush pcrs with extend to selected dummy */
- 	if (tpm_suspend_pcr)
- 		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, dummy_hash,
- 				     "extending dummy pcr before suspend");
- 
-+	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_SAVESTATE);
+-	cmd.header.in = pcrread_header;
+-	cmd.params.pcrread_in.pcr_idx = cpu_to_be32(pcr_idx);
+-	rc = tpm_transmit_cmd(chip, NULL, &cmd, READ_PCR_RESULT_SIZE,
+-			      READ_PCR_RESULT_BODY_SIZE, 0,
++	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCRREAD);
 +	if (rc)
 +		return rc;
- 	/* now do the actual savestate */
- 	for (try = 0; try < TPM_RETRY; try++) {
--		cmd.header.in = savestate_header;
--		rc = tpm_transmit_cmd(chip, NULL, &cmd, SAVESTATE_RESULT_SIZE,
-+		rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
- 				      0, 0, NULL);
- 
- 		/*
-@@ -766,6 +764,8 @@ int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr)
- 		if (rc != TPM_WARN_RETRY)
- 			break;
- 		tpm_msleep(TPM_TIMEOUT_RETRY);
 +
-+		tpm_buf_reset(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_SAVESTATE);
- 	}
++	tpm_buf_append_u32(&buf, pcr_idx);
++
++	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
++			      TPM_DIGEST_SIZE, 0,
+ 			      "attempting to read a pcr value");
++	if (rc)
++		goto out;
  
- 	if (rc)
-@@ -775,6 +775,8 @@ int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr)
- 		dev_warn(&chip->dev, "TPM savestate took %dms\n",
- 			 try * TPM_TIMEOUT_RETRY);
- 
+-	if (rc == 0)
+-		memcpy(res_buf, cmd.params.pcrread_out.pcr_result,
+-		       TPM_DIGEST_SIZE);
++	if (tpm_buf_length(&buf) < TPM_DIGEST_SIZE) {
++		rc = -EFAULT;
++		goto out;
++	}
++
++	memcpy(res_buf, &buf.data[TPM_HEADER_SIZE], TPM_DIGEST_SIZE);
++
++out:
 +	tpm_buf_destroy(&buf);
-+
  	return rc;
  }
  
