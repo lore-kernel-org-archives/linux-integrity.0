@@ -1,67 +1,86 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:17973 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725938AbeI2FAh (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 29 Sep 2018 01:00:37 -0400
-From: Tomas Winkler <tomas.winkler@intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH v5 02/21] tpm: sort objects in the Makefile
-Date: Sat, 29 Sep 2018 01:30:16 +0300
-Message-Id: <20180928223035.14471-3-tomas.winkler@intel.com>
-In-Reply-To: <20180928223035.14471-1-tomas.winkler@intel.com>
-References: <20180928223035.14471-1-tomas.winkler@intel.com>
+Received: from mx2.suse.de ([195.135.220.15]:39512 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727132AbeI2CC6 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 28 Sep 2018 22:02:58 -0400
+From: Fabian Vogt <fvogt@suse.de>
+To: Ignaz Forster <iforster@suse.de>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, miklos@szeredi.hu,
+        linux-unionfs@vger.kernel.org, linux-integrity@vger.kernel.org
+Subject: Re: PROBLEM: IMA xattrs not written on overlayfs
+Date: Fri, 28 Sep 2018 21:37:40 +0200
+Message-ID: <2170726.hUdX192fWn@linux-e202.suse.de>
+In-Reply-To: <0e1ba67f-3091-2d56-a464-07e1a8251e5e@suse.de>
+References: <81a0a75d-bd4e-25ef-b41b-adb65ac6dee8@suse.de> <1538153671.3713.4.camel@linux.ibm.com> <0e1ba67f-3091-2d56-a464-07e1a8251e5e@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Make the tpm Makefile a bit more in order by putting
-objects in one column.
+Hi,
 
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
-V2: 1. back to tpm-y notation
-    2. Partially sort files alphanumerically.
-V3: Rebase
-V4: Remove redunant sentence in commit message.
-V5: Resend
+I'm the other person Ignaz refers to when he wrote "we".
 
- drivers/char/tpm/Makefile | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+Am Freitag, 28. September 2018, 20:24:47 CEST schrieb Ignaz Forster:
+> Am 28.09.18 um 18:54 schrieb Mimi Zohar:
+> > On Mon, 2018-09-10 at 11:17 +0200, Ignaz Forster wrote:
+> >> Am 07.09.18 um 20:45 schrieb Mimi Zohar:
+> >>>> A small example for reproduction (on a system with IMA appraisal):
+> >>>> # OVERLAYFS_TEST_DIR=`mktemp -d`
+> >>>> # mkdir "${OVERLAYFS_TEST_DIR}/upper"
+> >>>> # mkdir "${OVERLAYFS_TEST_DIR}/work"
+> >>>> # mount -t overlay -o lowerdir=/etc,upperdir="${OVERLAYFS_TEST_DIR}
+> >>>> /upper",workdir="${OVERLAYFS_TEST_DIR}/work" overlay /etc
+> >>>> #
+> >>>> # rm -f /etc/test.txt
+> >>>> # echo Test > /etc/test.txt
+> >>>> # cat /etc/test.txt
+> >>>> cat: /etc/test.txt: Permission denied
+> >>>> # ls -s /etc/test.txt
+> >>>> 4 /etc/test.txt # <- The contents are there
+> >>>> # getfattr -m . -d /etc/test.txt
+> >>>> # # <- The hash isn't
+> >>>>
+> > The file size is still 0, when ima_check_last_writer() calls
+> > ima_update_xattr(), which tries to calculate the file hash and write
+> > it out an security.ima.
+> 
+> We found out that when forcibly setting the read flag in 
+> ovl_open_realfile as seen in the attached patch the IMA attributes will 
+> be set correctly again. It seems IMA cannot read the file contents and 
+> thus cannot create the hash any more.
 
-diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
-index 4e9c33ca1f8f..efc785053627 100644
---- a/drivers/char/tpm/Makefile
-+++ b/drivers/char/tpm/Makefile
-@@ -3,9 +3,18 @@
- # Makefile for the kernel tpm device drivers.
- #
- obj-$(CONFIG_TCG_TPM) += tpm.o
--tpm-y := tpm-interface.o tpm-dev.o tpm-sysfs.o tpm-chip.o tpm2-cmd.o \
--	 tpm-dev-common.o tpmrm-dev.o eventlog/common.o eventlog/tpm1.o \
--	 eventlog/tpm2.o tpm2-space.o
-+tpm-y := tpm-chip.o
-+tpm-y += tpm-dev-common.o
-+tpm-y += tpm-dev.o
-+tpm-y += tpm-interface.o
-+tpm-y += tpm2-cmd.o
-+tpm-y += tpmrm-dev.o
-+tpm-y += tpm2-space.o
-+tpm-y += tpm-sysfs.o
-+tpm-y += eventlog/common.o
-+tpm-y += eventlog/tpm1.o
-+tpm-y += eventlog/tpm2.o
-+
- tpm-$(CONFIG_ACPI) += tpm_ppi.o eventlog/acpi.o
- tpm-$(CONFIG_EFI) += eventlog/efi.o
- tpm-$(CONFIG_OF) += eventlog/of.o
--- 
-2.14.4
+In ima_crypto.c, ima_calc_file_hash_{atfm,tfm} we can find this hack (?),
+which allows to read even through a WRONLY file:
+
+        if (!(file->f_mode & FMODE_READ)) {
+                file->f_mode |= FMODE_READ;
+                read = 1;
+        }
+
+        integrity_kernel_read(file, ...);
+
+        if (read)
+                file->f_mode &= ~FMODE_READ;
+
+In overlayfs since 4.19, it has a private struct file* for the internal filp
+pointing to either lower or upper, which is not affected by this change to
+the overlayfs' file's f_mode. Thus we get -EBADF back from
+integrity_kernel_read -> ... -> ovl_read_iter -> vfs_iter_read.
+That was not visible in any logs as IMA ignores -EBADF returned from
+ima_calc_file_hash.
+
+Before 4.19, overlayfs used d_real so there was no layer between
+integrity_kernel_read and the real filp which means that the f_mode toggle in
+ima had the desired effect.
+
+> This is obviously not ready for production, but the best I currently have.
+
+A better alternative for this is to set FMODE_READ temporarily in the private
+filp during the call to vfs_iter_read in ovl_read_iter but IIRC we tried that
+once and it was not enough. Maybe the test was just incomplete though.
+
+Thanks,
+Fabian
+
+> Ignaz
