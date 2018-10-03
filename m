@@ -1,108 +1,83 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io1-f65.google.com ([209.85.166.65]:35635 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726209AbeJDFZe (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 4 Oct 2018 01:25:34 -0400
-Received: by mail-io1-f65.google.com with SMTP id w11-v6so6389172iob.2
-        for <linux-integrity@vger.kernel.org>; Wed, 03 Oct 2018 15:35:13 -0700 (PDT)
+Received: from mga18.intel.com ([134.134.136.126]:4900 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725723AbeJDFRO (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 4 Oct 2018 01:17:14 -0400
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: Jason Gunthorpe <jgg@ziepe.ca>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "roberto.sassu@huawei.com" <roberto.sassu@huawei.com>
+Subject: RE: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
+Date: Wed, 3 Oct 2018 22:24:09 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D9E5343@hasmsx109.ger.corp.intel.com>
+References: <20180928223035.14471-1-tomas.winkler@intel.com>
+ <20180928223035.14471-13-tomas.winkler@intel.com>
+ <20181002005208.GH23753@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9D9DFAA5@hasmsx109.ger.corp.intel.com>
+ <20181003120141.GA7969@linux.intel.com>
+In-Reply-To: <20181003120141.GA7969@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-In-Reply-To: <1538601501.3702.217.camel@linux.ibm.com>
-References: <81a0a75d-bd4e-25ef-b41b-adb65ac6dee8@suse.de> <1538153671.3713.4.camel@linux.ibm.com>
- <0e1ba67f-3091-2d56-a464-07e1a8251e5e@suse.de> <2170726.hUdX192fWn@linux-e202.suse.de>
- <CAJfpegtk=OD6GVVOOtBT4Lto9x73vnSGdTMrzK-uTvStE6KxWw@mail.gmail.com> <1538601501.3702.217.camel@linux.ibm.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 4 Oct 2018 00:35:12 +0200
-Message-ID: <CAJfpegt52N==WoSQt_GMwZnOPyoV38j3r8vL95Ds0-NakVFueg@mail.gmail.com>
-Subject: Re: PROBLEM: IMA xattrs not written on overlayfs
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Fabian Vogt <fvogt@suse.de>, Ignaz Forster <iforster@suse.de>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Oct 3, 2018 at 11:18 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> Hi Miklos,
->
-> On Mon, 2018-10-01 at 11:05 +0200, Miklos Szeredi wrote:
->> On Fri, Sep 28, 2018 at 9:37 PM, Fabian Vogt <fvogt@suse.de> wrote:
->> > Hi,
->> >
->> > I'm the other person Ignaz refers to when he wrote "we".
->> >
->> > Am Freitag, 28. September 2018, 20:24:47 CEST schrieb Ignaz Forster:
->> >> Am 28.09.18 um 18:54 schrieb Mimi Zohar:
->> >> > On Mon, 2018-09-10 at 11:17 +0200, Ignaz Forster wrote:
->> >> >> Am 07.09.18 um 20:45 schrieb Mimi Zohar:
->> >> >>>> A small example for reproduction (on a system with IMA appraisal):
->> >> >>>> # OVERLAYFS_TEST_DIR=`mktemp -d`
->> >> >>>> # mkdir "${OVERLAYFS_TEST_DIR}/upper"
->> >> >>>> # mkdir "${OVERLAYFS_TEST_DIR}/work"
->> >> >>>> # mount -t overlay -o lowerdir=/etc,upperdir="${OVERLAYFS_TEST_DIR}
->> >> >>>> /upper",workdir="${OVERLAYFS_TEST_DIR}/work" overlay /etc
->> >> >>>> #
->> >> >>>> # rm -f /etc/test.txt
->> >> >>>> # echo Test > /etc/test.txt
->> >> >>>> # cat /etc/test.txt
->> >> >>>> cat: /etc/test.txt: Permission denied
->> >> >>>> # ls -s /etc/test.txt
->> >> >>>> 4 /etc/test.txt # <- The contents are there
->> >> >>>> # getfattr -m . -d /etc/test.txt
->> >> >>>> # # <- The hash isn't
->> >> >>>>
->> >> > The file size is still 0, when ima_check_last_writer() calls
->> >> > ima_update_xattr(), which tries to calculate the file hash and write
->> >> > it out an security.ima.
->> >>
->> >> We found out that when forcibly setting the read flag in
->> >> ovl_open_realfile as seen in the attached patch the IMA attributes will
->> >> be set correctly again. It seems IMA cannot read the file contents and
->> >> thus cannot create the hash any more.
->> >
->> > In ima_crypto.c, ima_calc_file_hash_{atfm,tfm} we can find this hack (?),
->> > which allows to read even through a WRONLY file:
->> >
->> >         if (!(file->f_mode & FMODE_READ)) {
->> >                 file->f_mode |= FMODE_READ;
->> >                 read = 1;
->> >         }
->> >
->> >         integrity_kernel_read(file, ...);
->> >
->> >         if (read)
->> >                 file->f_mode &= ~FMODE_READ;
->>
->> It's not just a hack, it's a security hole: what prevents a read(2) on
->> that file from userspace exploiting the window while the f_mode is
->> changed?
->
-> IMA calculates the file hash either on the last write close (__fput)
-> or when verifying the file hash on file open.  The discussion here is
-> about calculating the file hash on __fput.  Before the file can be
-> read, the IMA file hash or signature would have to be verified first
-> on file open.
->
-> Unless I'm missing something, which is totally possible, I'm not sure
-> there is a problem.
-
-Right, if it's done from last fput() then it's at least not a security hole.
-
-This hack may work for some filesystems, but as you noticed, it won't
-work for overlayfs.  And  if probably won't work for a number of other
-filesystems as well: the fs can assume that f_mode & FMODE_READ will
-remain off if it was off at open time.
-
-The proper way to handle it generally is to open a separate instance
-of the same file from IMA with O_RDONLY and use that to calculate the
-hash.   There's really no point in reusing the same file and hacking
-the f_mode bits.
-
-Thanks,
-Miklos
 
 
->
-> Mimi
->
+> -----Original Message-----
+> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
+> Sent: Wednesday, October 03, 2018 15:02
+> To: Winkler, Tomas <tomas.winkler@intel.com>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>; Nayna Jain
+> <nayna@linux.vnet.ibm.com>; Usyskin, Alexander
+> <alexander.usyskin@intel.com>; Struk, Tadeusz <tadeusz.struk@intel.com>;
+> linux-integrity@vger.kernel.org; linux-security-module@vger.kernel.org;
+> linux-kernel@vger.kernel.org; roberto.sassu@huawei.com
+> Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
+> 
+> On Tue, Oct 02, 2018 at 04:58:25AM +0000, Winkler, Tomas wrote:
+> >
+> >
+> > >
+> > > On Sat, Sep 29, 2018 at 01:30:26AM +0300, Tomas Winkler wrote:
+> > > > Add tpm2_pcr_extend() function to tpm2-cmd.c with signature
+> > > > required by tpm-interface.c. It wraps the original open code
+> implementation.
+> > > > The original original tpm2_pcr_extend() function is renamed to
+> > > > __tpm2_pcr_extend() and made static, it is called only from new
+> > > > tpm2_pcr_extend().
+> > > >
+> > > > Fix warnings in __tpm2_pcr_extend()
+> > > > tpm2-cmd.c:251:16: warning: comparison between signed and unsigned
+> > > > integer expressions [-Wsign-compare]
+> > > > tpm2-cmd.c:252:17: warning: comparison between signed and unsigned
+> > > > integer expressions [-Wsign-compare]
+> > > >
+> > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > >
+> > > We do not want the signature change, especially because as we are
+> > > working on getting Roberto's changes in and also because it has
+> > > absolutely a zero gain. Who cares if those functions take different
+> parameters? I don't.
+> >
+> > Yes, we do care this series tries to have a clean cut between 1.x  and 2.x
+> specs. Please, let's finish one transformation and then move to another.
+> > I understand that Roberto will have to rebase anyhow, if this series goes in
+> first, if this is hard I can do it myself, it's trivial.
+> >
+> > Tomas
+> 
+> I'm happy to tune this minor stuff.
+What minor stuff?  This patch is just okay, let's change the API in next round.
+
+ I'll wait for Nayna to test the one patch
+> and make those adjustments :-) Would not make sense to roll another series
+> for these changes.
+I agree 
+Tomas
