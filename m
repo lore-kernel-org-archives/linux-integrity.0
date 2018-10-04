@@ -1,10 +1,10 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2096 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727369AbeJDVDj (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 4 Oct 2018 17:03:39 -0400
-Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
-To: "Winkler, Tomas" <tomas.winkler@intel.com>,
+Received: from mga12.intel.com ([192.55.52.136]:54179 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727264AbeJDUjh (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 4 Oct 2018 16:39:37 -0400
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Roberto Sassu <roberto.sassu@huawei.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 CC: Jason Gunthorpe <jgg@ziepe.ca>,
         Nayna Jain <nayna@linux.vnet.ibm.com>,
@@ -14,6 +14,9 @@ CC: Jason Gunthorpe <jgg@ziepe.ca>,
         "linux-security-module@vger.kernel.org"
         <linux-security-module@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
+Date: Thu, 4 Oct 2018 13:46:00 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D9E6E47@hasmsx109.ger.corp.intel.com>
 References: <20180928223035.14471-1-tomas.winkler@intel.com>
  <20180928223035.14471-13-tomas.winkler@intel.com>
  <20181002005208.GH23753@linux.intel.com>
@@ -23,119 +26,106 @@ References: <20180928223035.14471-1-tomas.winkler@intel.com>
  <20181004113502.GA12498@linux.intel.com>
  <5B8DA87D05A7694D9FA63FD143655C1B9D9E6D00@hasmsx109.ger.corp.intel.com>
  <19c26db0-cde9-da70-1b02-7e37ca188b45@huawei.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D9E6E47@hasmsx109.ger.corp.intel.com>
-From: Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <1851e1d3-edc8-613d-00c3-dd3847f3ecd2@huawei.com>
-Date: Thu, 4 Oct 2018 16:10:07 +0200
+In-Reply-To: <19c26db0-cde9-da70-1b02-7e37ca188b45@huawei.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D9E6E47@hasmsx109.ger.corp.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 10/4/2018 3:46 PM, Winkler, Tomas wrote:
->>
->> On 10/4/2018 1:45 PM, Winkler, Tomas wrote:
->>>
->>>
->>>> -----Original Message-----
->>>> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
->>>> Sent: Thursday, October 04, 2018 14:35
->>>> To: Winkler, Tomas <tomas.winkler@intel.com>
->>>> Cc: Jason Gunthorpe <jgg@ziepe.ca>; Nayna Jain
->>>> <nayna@linux.vnet.ibm.com>; Usyskin, Alexander
->>>> <alexander.usyskin@intel.com>; Struk, Tadeusz
->>>> <tadeusz.struk@intel.com>; linux-integrity@vger.kernel.org;
->>>> linux-security-module@vger.kernel.org;
->>>> linux-kernel@vger.kernel.org; roberto.sassu@huawei.com
->>>> Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
->>>>
->>>> On Wed, Oct 03, 2018 at 10:24:09PM +0000, Winkler, Tomas wrote:
->>>>>
->>>>>
->>>>>> -----Original Message-----
->>>>>> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
->>>>>> Sent: Wednesday, October 03, 2018 15:02
->>>>>> To: Winkler, Tomas <tomas.winkler@intel.com>
->>>>>> Cc: Jason Gunthorpe <jgg@ziepe.ca>; Nayna Jain
->>>>>> <nayna@linux.vnet.ibm.com>; Usyskin, Alexander
->>>>>> <alexander.usyskin@intel.com>; Struk, Tadeusz
->>>>>> <tadeusz.struk@intel.com>; linux-integrity@vger.kernel.org;
->>>>>> linux-security-module@vger.kernel.org;
->>>>>> linux-kernel@vger.kernel.org; roberto.sassu@huawei.com
->>>>>> Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to
->>>>>> tpm2-cmd.c
->>>>>>
->>>>>> On Tue, Oct 02, 2018 at 04:58:25AM +0000, Winkler, Tomas wrote:
->>>>>>>
->>>>>>>
->>>>>>>>
->>>>>>>> On Sat, Sep 29, 2018 at 01:30:26AM +0300, Tomas Winkler wrote:
->>>>>>>>> Add tpm2_pcr_extend() function to tpm2-cmd.c with signature
->>>>>>>>> required by tpm-interface.c. It wraps the original open code
->>>>>> implementation.
->>>>>>>>> The original original tpm2_pcr_extend() function is renamed to
->>>>>>>>> __tpm2_pcr_extend() and made static, it is called only from new
->>>>>>>>> tpm2_pcr_extend().
->>>>>>>>>
->>>>>>>>> Fix warnings in __tpm2_pcr_extend()
->>>>>>>>> tpm2-cmd.c:251:16: warning: comparison between signed and
->>>>>>>>> unsigned integer expressions [-Wsign-compare]
->>>>>>>>> tpm2-cmd.c:252:17: warning: comparison between signed and
->>>>>>>>> unsigned integer expressions [-Wsign-compare]
->>>>>>>>>
->>>>>>>>> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
->>>>>>>>
->>>>>>>> We do not want the signature change, especially because as we are
->>>>>>>> working on getting Roberto's changes in and also because it has
->>>>>>>> absolutely a zero gain. Who cares if those functions take
->>>>>>>> different
->>>>>> parameters? I don't.
->>>>>>>
->>>>>>> Yes, we do care this series tries to have a clean cut between 1.x
->>>>>>> and 2.x
->>>>>> specs. Please, let's finish one transformation and then move to
->> another.
->>>>>>> I understand that Roberto will have to rebase anyhow, if this
->>>>>>> series goes in
->>>>>> first, if this is hard I can do it myself, it's trivial.
->>>>>>>
->>>>>>> Tomas
->>>>>>
->>>>>> I'm happy to tune this minor stuff.
->>>>> What minor stuff?  This patch is just okay, let's change the API in
->>>>> next
->>>> round.
->>>>
->>>> The patch is not okay because it does a completely unnecessary API
->> change.
->>>
->>> There is no API change, in that sense.
->>> The exported API is in tpm-interface.c int tpm_pcr_extend(struct
->>> tpm_chip *chip, int pcr_idx, const u8 *hash) that is used is outside
->>> of the tpm reminds the same, only the open coded implementation of
->> tpm2_pcr_extned has moved to tpm2-cmd.c, This code is not called out of
->> tpm module.
->>> Please review the code again.
->>
->> Hi Tomas
->>
->> I will update tpm_pcr_extend() by replacing the array of u8 with an array of
->> tpm2_digest structures, so that the caller can provide multiple digests with
->> one call. The array of tpm2_digest structures will be passed to
->> tpm2_pcr_extend(). Please, don't modify the parameters of
->> tpm2_pcr_extend().
 > 
-> What about tpm1_pcr_extend/read()?
+> On 10/4/2018 1:45 PM, Winkler, Tomas wrote:
+> >
+> >
+> >> -----Original Message-----
+> >> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
+> >> Sent: Thursday, October 04, 2018 14:35
+> >> To: Winkler, Tomas <tomas.winkler@intel.com>
+> >> Cc: Jason Gunthorpe <jgg@ziepe.ca>; Nayna Jain
+> >> <nayna@linux.vnet.ibm.com>; Usyskin, Alexander
+> >> <alexander.usyskin@intel.com>; Struk, Tadeusz
+> >> <tadeusz.struk@intel.com>; linux-integrity@vger.kernel.org;
+> >> linux-security-module@vger.kernel.org;
+> >> linux-kernel@vger.kernel.org; roberto.sassu@huawei.com
+> >> Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
+> >>
+> >> On Wed, Oct 03, 2018 at 10:24:09PM +0000, Winkler, Tomas wrote:
+> >>>
+> >>>
+> >>>> -----Original Message-----
+> >>>> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
+> >>>> Sent: Wednesday, October 03, 2018 15:02
+> >>>> To: Winkler, Tomas <tomas.winkler@intel.com>
+> >>>> Cc: Jason Gunthorpe <jgg@ziepe.ca>; Nayna Jain
+> >>>> <nayna@linux.vnet.ibm.com>; Usyskin, Alexander
+> >>>> <alexander.usyskin@intel.com>; Struk, Tadeusz
+> >>>> <tadeusz.struk@intel.com>; linux-integrity@vger.kernel.org;
+> >>>> linux-security-module@vger.kernel.org;
+> >>>> linux-kernel@vger.kernel.org; roberto.sassu@huawei.com
+> >>>> Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to
+> >>>> tpm2-cmd.c
+> >>>>
+> >>>> On Tue, Oct 02, 2018 at 04:58:25AM +0000, Winkler, Tomas wrote:
+> >>>>>
+> >>>>>
+> >>>>>>
+> >>>>>> On Sat, Sep 29, 2018 at 01:30:26AM +0300, Tomas Winkler wrote:
+> >>>>>>> Add tpm2_pcr_extend() function to tpm2-cmd.c with signature
+> >>>>>>> required by tpm-interface.c. It wraps the original open code
+> >>>> implementation.
+> >>>>>>> The original original tpm2_pcr_extend() function is renamed to
+> >>>>>>> __tpm2_pcr_extend() and made static, it is called only from new
+> >>>>>>> tpm2_pcr_extend().
+> >>>>>>>
+> >>>>>>> Fix warnings in __tpm2_pcr_extend()
+> >>>>>>> tpm2-cmd.c:251:16: warning: comparison between signed and
+> >>>>>>> unsigned integer expressions [-Wsign-compare]
+> >>>>>>> tpm2-cmd.c:252:17: warning: comparison between signed and
+> >>>>>>> unsigned integer expressions [-Wsign-compare]
+> >>>>>>>
+> >>>>>>> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> >>>>>>
+> >>>>>> We do not want the signature change, especially because as we are
+> >>>>>> working on getting Roberto's changes in and also because it has
+> >>>>>> absolutely a zero gain. Who cares if those functions take
+> >>>>>> different
+> >>>> parameters? I don't.
+> >>>>>
+> >>>>> Yes, we do care this series tries to have a clean cut between 1.x
+> >>>>> and 2.x
+> >>>> specs. Please, let's finish one transformation and then move to
+> another.
+> >>>>> I understand that Roberto will have to rebase anyhow, if this
+> >>>>> series goes in
+> >>>> first, if this is hard I can do it myself, it's trivial.
+> >>>>>
+> >>>>> Tomas
+> >>>>
+> >>>> I'm happy to tune this minor stuff.
+> >>> What minor stuff?  This patch is just okay, let's change the API in
+> >>> next
+> >> round.
+> >>
+> >> The patch is not okay because it does a completely unnecessary API
+> change.
+> >
+> > There is no API change, in that sense.
+> > The exported API is in tpm-interface.c int tpm_pcr_extend(struct
+> > tpm_chip *chip, int pcr_idx, const u8 *hash) that is used is outside
+> > of the tpm reminds the same, only the open coded implementation of
+> tpm2_pcr_extned has moved to tpm2-cmd.c, This code is not called out of
+> tpm module.
+> > Please review the code again.
+> 
+> Hi Tomas
+> 
+> I will update tpm_pcr_extend() by replacing the array of u8 with an array of
+> tpm2_digest structures, so that the caller can provide multiple digests with
+> one call. The array of tpm2_digest structures will be passed to
+> tpm2_pcr_extend(). Please, don't modify the parameters of
+> tpm2_pcr_extend().
 
-tpm_pcr_extend/read() would pass to them the array of u8 from the
-tpm2_digest structure. Check this patch:
+What about tpm1_pcr_extend/read()? 
 
-[PATCH v2 2/3] tpm: modify tpm_pcr_read() definition to pass TPM hash
-algorithms
-
-Roberto
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+Thanks
+Tomas 
+ 
