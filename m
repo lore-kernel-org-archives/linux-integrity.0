@@ -1,84 +1,55 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:21439 "EHLO mga07.intel.com"
+Received: from mail.kernel.org ([198.145.29.99]:50280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727278AbeJDS2B (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 4 Oct 2018 14:28:01 -0400
-Date: Thu, 4 Oct 2018 14:35:02 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "roberto.sassu@huawei.com" <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
-Message-ID: <20181004113502.GA12498@linux.intel.com>
-References: <20180928223035.14471-1-tomas.winkler@intel.com>
- <20180928223035.14471-13-tomas.winkler@intel.com>
- <20181002005208.GH23753@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D9DFAA5@hasmsx109.ger.corp.intel.com>
- <20181003120141.GA7969@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D9E5343@hasmsx109.ger.corp.intel.com>
+        id S1726270AbeJDHHk (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 4 Oct 2018 03:07:40 -0400
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-integrity@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Subject: [PATCH v2] security/integrity: remove unnecessary 'init_keyring' variable
+Date: Wed,  3 Oct 2018 17:15:44 -0700
+Message-Id: <20181004001544.161035-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D9E5343@hasmsx109.ger.corp.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Wed, Oct 03, 2018 at 10:24:09PM +0000, Winkler, Tomas wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
-> > Sent: Wednesday, October 03, 2018 15:02
-> > To: Winkler, Tomas <tomas.winkler@intel.com>
-> > Cc: Jason Gunthorpe <jgg@ziepe.ca>; Nayna Jain
-> > <nayna@linux.vnet.ibm.com>; Usyskin, Alexander
-> > <alexander.usyskin@intel.com>; Struk, Tadeusz <tadeusz.struk@intel.com>;
-> > linux-integrity@vger.kernel.org; linux-security-module@vger.kernel.org;
-> > linux-kernel@vger.kernel.org; roberto.sassu@huawei.com
-> > Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
-> > 
-> > On Tue, Oct 02, 2018 at 04:58:25AM +0000, Winkler, Tomas wrote:
-> > >
-> > >
-> > > >
-> > > > On Sat, Sep 29, 2018 at 01:30:26AM +0300, Tomas Winkler wrote:
-> > > > > Add tpm2_pcr_extend() function to tpm2-cmd.c with signature
-> > > > > required by tpm-interface.c. It wraps the original open code
-> > implementation.
-> > > > > The original original tpm2_pcr_extend() function is renamed to
-> > > > > __tpm2_pcr_extend() and made static, it is called only from new
-> > > > > tpm2_pcr_extend().
-> > > > >
-> > > > > Fix warnings in __tpm2_pcr_extend()
-> > > > > tpm2-cmd.c:251:16: warning: comparison between signed and unsigned
-> > > > > integer expressions [-Wsign-compare]
-> > > > > tpm2-cmd.c:252:17: warning: comparison between signed and unsigned
-> > > > > integer expressions [-Wsign-compare]
-> > > > >
-> > > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > > >
-> > > > We do not want the signature change, especially because as we are
-> > > > working on getting Roberto's changes in and also because it has
-> > > > absolutely a zero gain. Who cares if those functions take different
-> > parameters? I don't.
-> > >
-> > > Yes, we do care this series tries to have a clean cut between 1.x  and 2.x
-> > specs. Please, let's finish one transformation and then move to another.
-> > > I understand that Roberto will have to rebase anyhow, if this series goes in
-> > first, if this is hard I can do it myself, it's trivial.
-> > >
-> > > Tomas
-> > 
-> > I'm happy to tune this minor stuff.
-> What minor stuff?  This patch is just okay, let's change the API in next round.
+From: Eric Biggers <ebiggers@google.com>
 
-The patch is not okay because it does a completely unnecessary API
-change.
+The 'init_keyring' variable actually just gave the value of
+CONFIG_INTEGRITY_TRUSTED_KEYRING.  We should check the config option
+directly instead.  No change in behavior; this just simplifies the code.
 
-/Jarkko
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ security/integrity/digsig.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+index 9bb0a7f2863e3..22110fa5ea3ab 100644
+--- a/security/integrity/digsig.c
++++ b/security/integrity/digsig.c
+@@ -37,12 +37,6 @@ static const char *keyring_name[INTEGRITY_KEYRING_MAX] = {
+ 	"_module",
+ };
+ 
+-#ifdef CONFIG_INTEGRITY_TRUSTED_KEYRING
+-static bool init_keyring __initdata = true;
+-#else
+-static bool init_keyring __initdata;
+-#endif
+-
+ #ifdef CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY
+ #define restrict_link_to_ima restrict_link_by_builtin_and_secondary_trusted
+ #else
+@@ -85,7 +79,7 @@ int __init integrity_init_keyring(const unsigned int id)
+ 	struct key_restriction *restriction;
+ 	int err = 0;
+ 
+-	if (!init_keyring)
++	if (!IS_ENABLED(CONFIG_INTEGRITY_TRUSTED_KEYRING))
+ 		return 0;
+ 
+ 	restriction = kzalloc(sizeof(struct key_restriction), GFP_KERNEL);
+-- 
+2.19.0.605.g01d371f741-goog
