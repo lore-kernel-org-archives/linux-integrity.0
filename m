@@ -1,202 +1,75 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37212 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727572AbeJERc0 (ORCPT
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:45743 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726073AbeJEImd (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 5 Oct 2018 13:32:26 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w95ATOos042536
-        for <linux-integrity@vger.kernel.org>; Fri, 5 Oct 2018 06:34:14 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mx4mq4w7k-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 05 Oct 2018 06:34:14 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 5 Oct 2018 11:34:11 +0100
-Subject: Re: PROBLEM: IMA xattrs not written on overlayfs
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Fabian Vogt <fvogt@suse.de>,
-        Ignaz Forster <iforster@suse.de>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Date: Fri, 05 Oct 2018 06:33:55 -0400
-In-Reply-To: <20181005025733.fjlz34pph2hzcsxd@merlin>
-References: <81a0a75d-bd4e-25ef-b41b-adb65ac6dee8@suse.de>
-         <1538153671.3713.4.camel@linux.ibm.com>
-         <0e1ba67f-3091-2d56-a464-07e1a8251e5e@suse.de>
-         <2170726.hUdX192fWn@linux-e202.suse.de>
-         <CAJfpegtk=OD6GVVOOtBT4Lto9x73vnSGdTMrzK-uTvStE6KxWw@mail.gmail.com>
-         <1538601501.3702.217.camel@linux.ibm.com>
-         <CAJfpegt52N==WoSQt_GMwZnOPyoV38j3r8vL95Ds0-NakVFueg@mail.gmail.com>
-         <1538668350.3702.348.camel@linux.ibm.com>
-         <20181005025733.fjlz34pph2hzcsxd@merlin>
+        Fri, 5 Oct 2018 04:42:33 -0400
+Received: by mail-oi1-f195.google.com with SMTP id e17-v6so9127540oig.12
+        for <linux-integrity@vger.kernel.org>; Thu, 04 Oct 2018 18:46:08 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180926032455.224600-1-louiscollard@chromium.org> <20180926103521.GB4885@linux.intel.com>
+In-Reply-To: <20180926103521.GB4885@linux.intel.com>
+From: Louis Collard <louiscollard@chromium.org>
+Date: Fri, 5 Oct 2018 09:45:57 +0800
+Message-ID: <CAKNRAJVibJ0VnxbEiWR_8_q3FzKHT+Q9etcnqJ8Fny40p_cx8g@mail.gmail.com>
+Subject: Re: [PATCH] Allow hwrng to initialize crng.
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: linux-integrity@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Andrey Pronin <apronin@chromium.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "David R. Bild" <david.bild@xaptum.com>,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Michael Buesch <m@bues.ch>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Gary R Hook <gary.hook@amd.com>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1538735635.3702.423.camel@linux.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, 2018-10-04 at 21:57 -0500, Goldwyn Rodrigues wrote:
-> On 11:52 04/10, Mimi Zohar wrote:
-> > On Thu, 2018-10-04 at 00:35 +0200, Miklos Szeredi wrote:
-> > 
-> > > Right, if it's done from last fput() then it's at least not a security hole.
-> > > 
-> > > This hack may work for some filesystems, but as you noticed, it won't
-> > > work for overlayfs.  And  if probably won't work for a number of other
-> > > filesystems as well: the fs can assume that f_mode & FMODE_READ will
-> > > remain off if it was off at open time.
-> > > 
-> > > The proper way to handle it generally is to open a separate instance
-> > > of the same file from IMA with O_RDONLY and use that to calculate the
-> > > hash.   There's really no point in reusing the same file and hacking
-> > > the f_mode bits.
-> > 
-> > Is there an appropriate low level kernel call for creating a new file
-> > descriptor that would be appropriate?  dentry_open(), like the call in
-> > file_clone_open(), has a lot of overhead, including the LSM calls.
-> >  Calculating the file hash always needs to work.
-> > 
-> 
-> Mimi,
-> 
-> I have formulated a patch which is working for me on overlayfs. I am
-> using dentry_open(), which I agree may have overhead. While this
-> opens up the possibility of using it for files opened with O_DIRECT
-> which may end up getting the file into pagecache.
-> 
-> Subject: [PATCH] Open new file instance O_RDONLY to calculate hash
-> 
-> Using the open struct file to calculate the hash does not work
-> with overlayfs, because the real struct file is hidden behind the
-> overlays struct file. So, any file->f_mode manipulations are not
-> reflected on the real struct file. So, open the file again, read and
-> calculate the hash.
-> 
-> As a byproduct, we can remove all instance of f_mode manipulations
-> and can work with O_DIRECT as well.
-> 
-> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+On Wed, Sep 26, 2018 at 6:35 PM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Wed, Sep 26, 2018 at 11:24:55AM +0800, Louis Collard wrote:
+> > Some systems, for example embedded systems, do not generate
+> > enough entropy on boot through interrupts, and boot may be blocked for
+> > several minutes waiting for a call to getrandom to complete.
+> >
+> > Currently, random data is read from a hwrng when it is registered,
+> > and is loaded into primary_crng. This data is treated in the same
+> > way as data that is device-specific but otherwise unchanging, and
+> > so primary_crng cannot become initialized with the data from the
+> > hwrng.
+> >
+> > This change causes the data initially read from the hwrng to be
+> > treated the same as subsequent data that is read from the hwrng if
+> > it's quality score is non-zero.
+> >
+> > The implications of this are:
+> >
+> > The data read from hwrng can cause primary_crng to become
+> > initialized, therefore avoiding problems of getrandom blocking
+> > on boot.
+> >
+> > Calls to getrandom (with GRND_RANDOM) may be using entropy
+> > exclusively (or in practise, almost exclusively) from the hwrng.
+> >
+> > Regarding the latter point; this behavior is the same as if a
+> > user specified a quality score of 1 (bit of entropy per 1024 bits)
+> > so hopefully this is not too scary a change to make.
+> >
+> > This change is the result of the discussion here:
+> > https://patchwork.kernel.org/patch/10453893/
+> >
+> > Signed-off-by: Louis Collard <louiscollard@chromium.org>
+>
+> Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>
+> /Jarkko
 
-By "overhead", I didn't mean it from a performance perspective, but
-was concerned about the dentry_open() failing.  If "dentry_open" fails
-for any reason, the file hash will not be re-calculated, causing
-future file opens to fail.  Missing is the test for dentry_open()
-failure.
+Thanks!
 
-By removing the "read" check, re-opening the file is now for all
-files, not just those opened without "read".  From a testing
-perspective, it will catch problems faster, but ...
-
-I've had a patch queued that removes the O_DIRECT test, but haven't
-had a chance to test it on ALL filesystems.  I would probably re-open
-the file with the original flags, plus read, as much as possible.
- 
-Mimi
-
-
-> 
-> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-> index 7e7e7e7c250a..87e5fedc2162 100644
-> --- a/security/integrity/ima/ima_crypto.c
-> +++ b/security/integrity/ima/ima_crypto.c
-> @@ -210,7 +210,7 @@ static int ima_calc_file_hash_atfm(struct file *file,
->  {
->  	loff_t i_size, offset;
->  	char *rbuf[2] = { NULL, };
-> -	int rc, read = 0, rbuf_len, active = 0, ahash_rc = 0;
-> +	int rc, rbuf_len, active = 0, ahash_rc = 0;
->  	struct ahash_request *req;
->  	struct scatterlist sg[1];
->  	struct crypto_wait wait;
-> @@ -257,11 +257,6 @@ static int ima_calc_file_hash_atfm(struct file *file,
->  					  &rbuf_size[1], 0);
->  	}
->  
-> -	if (!(file->f_mode & FMODE_READ)) {
-> -		file->f_mode |= FMODE_READ;
-> -		read = 1;
-> -	}
-> -
->  	for (offset = 0; offset < i_size; offset += rbuf_len) {
->  		if (!rbuf[1] && offset) {
->  			/* Not using two buffers, and it is not the first
-> @@ -300,8 +295,6 @@ static int ima_calc_file_hash_atfm(struct file *file,
->  	/* wait for the last update request to complete */
->  	rc = ahash_wait(ahash_rc, &wait);
->  out3:
-> -	if (read)
-> -		file->f_mode &= ~FMODE_READ;
->  	ima_free_pages(rbuf[0], rbuf_size[0]);
->  	ima_free_pages(rbuf[1], rbuf_size[1]);
->  out2:
-> @@ -336,7 +329,7 @@ static int ima_calc_file_hash_tfm(struct file *file,
->  {
->  	loff_t i_size, offset = 0;
->  	char *rbuf;
-> -	int rc, read = 0;
-> +	int rc;
->  	SHASH_DESC_ON_STACK(shash, tfm);
->  
->  	shash->tfm = tfm;
-> @@ -357,11 +350,6 @@ static int ima_calc_file_hash_tfm(struct file *file,
->  	if (!rbuf)
->  		return -ENOMEM;
->  
-> -	if (!(file->f_mode & FMODE_READ)) {
-> -		file->f_mode |= FMODE_READ;
-> -		read = 1;
-> -	}
-> -
->  	while (offset < i_size) {
->  		int rbuf_len;
->  
-> @@ -378,8 +366,6 @@ static int ima_calc_file_hash_tfm(struct file *file,
->  		if (rc)
->  			break;
->  	}
-> -	if (read)
-> -		file->f_mode &= ~FMODE_READ;
->  	kfree(rbuf);
->  out:
->  	if (!rc)
-> @@ -420,26 +406,21 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
->  {
->  	loff_t i_size;
->  	int rc;
-> +	struct file *f = dentry_open(&file->f_path, O_LARGEFILE | O_RDONLY,
-> +			current_cred());
->  
-> -	/*
-> -	 * For consistency, fail file's opened with the O_DIRECT flag on
-> -	 * filesystems mounted with/without DAX option.
-> -	 */
-> -	if (file->f_flags & O_DIRECT) {
-> -		hash->length = hash_digest_size[ima_hash_algo];
-> -		hash->algo = ima_hash_algo;
-> -		return -EINVAL;
-> -	}
-> -
-> -	i_size = i_size_read(file_inode(file));
-> +	i_size = i_size_read(file_inode(f));
->  
->  	if (ima_ahash_minsize && i_size >= ima_ahash_minsize) {
-> -		rc = ima_calc_file_ahash(file, hash);
-> +		rc = ima_calc_file_ahash(f, hash);
->  		if (!rc)
-> -			return 0;
-> +			goto out;
->  	}
->  
-> -	return ima_calc_file_shash(file, hash);
-> +	rc = ima_calc_file_shash(f, hash);
-> +out:
-> +	fput(f);
-> +	return rc;
->  }
->  
->  /*
-> 
+Adding a few people I think I should have included previously - I'm
+new to this process so apologies for any missteps; please let me know
+if there is anything else I can / should be doing!
