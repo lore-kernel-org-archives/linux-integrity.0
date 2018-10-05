@@ -2,130 +2,199 @@ Return-Path: <SRS0=SAWj=MR=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B27C00449
-	for <linux-integrity@archiver.kernel.org>; Fri,  5 Oct 2018 17:30:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B487BC00449
+	for <linux-integrity@archiver.kernel.org>; Fri,  5 Oct 2018 17:47:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24FE021473
-	for <linux-integrity@archiver.kernel.org>; Fri,  5 Oct 2018 17:30:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24FE021473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 57A062084D
+	for <linux-integrity@archiver.kernel.org>; Fri,  5 Oct 2018 17:47:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57A062084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728118AbeJFA36 (ORCPT
+        id S1728139AbeJFArh (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 5 Oct 2018 20:29:58 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59136 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727958AbeJFA36 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 5 Oct 2018 20:29:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 04751B018;
-        Fri,  5 Oct 2018 17:30:13 +0000 (UTC)
-Date:   Fri, 5 Oct 2018 12:30:11 -0500
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, Fabian Vogt <fvogt@suse.de>,
-        Ignaz Forster <iforster@suse.de>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Subject: Re: PROBLEM: IMA xattrs not written on overlayfs
-Message-ID: <20181005173011.ia2wk4zszzev3gng@merlin>
-References: <81a0a75d-bd4e-25ef-b41b-adb65ac6dee8@suse.de>
- <1538153671.3713.4.camel@linux.ibm.com>
- <0e1ba67f-3091-2d56-a464-07e1a8251e5e@suse.de>
- <2170726.hUdX192fWn@linux-e202.suse.de>
- <CAJfpegtk=OD6GVVOOtBT4Lto9x73vnSGdTMrzK-uTvStE6KxWw@mail.gmail.com>
- <1538601501.3702.217.camel@linux.ibm.com>
- <CAJfpegt52N==WoSQt_GMwZnOPyoV38j3r8vL95Ds0-NakVFueg@mail.gmail.com>
- <1538668350.3702.348.camel@linux.ibm.com>
- <20181005025733.fjlz34pph2hzcsxd@merlin>
- <1538735635.3702.423.camel@linux.ibm.com>
+        Fri, 5 Oct 2018 20:47:37 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36966 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727966AbeJFArh (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 5 Oct 2018 20:47:37 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w95Hil2r096459
+        for <linux-integrity@vger.kernel.org>; Fri, 5 Oct 2018 13:47:51 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mxcjcr908-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 05 Oct 2018 13:47:50 -0400
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
+        Fri, 5 Oct 2018 13:47:49 -0400
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 5 Oct 2018 13:47:46 -0400
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w95HljZN28704842
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 5 Oct 2018 17:47:45 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 941F9112061;
+        Fri,  5 Oct 2018 13:47:08 -0400 (EDT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A9960112063;
+        Fri,  5 Oct 2018 13:47:05 -0400 (EDT)
+Received: from [9.124.221.60] (unknown [9.124.221.60])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  5 Oct 2018 13:47:05 -0400 (EDT)
+Subject: Re: [PATCH v4 5/6] ima: add support for external setting of
+ ima_appraise
+To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        jforbes@redhat.com
+References: <20180926122210.14642-1-nayna@linux.vnet.ibm.com>
+ <20180926122210.14642-6-nayna@linux.vnet.ibm.com>
+ <1538054412.3459.105.camel@linux.ibm.com>
+From:   Nayna Jain <nayna@linux.vnet.ibm.com>
+Date:   Fri, 5 Oct 2018 23:14:44 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <1538054412.3459.105.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1538735635.3702.423.camel@linux.ibm.com>
-User-Agent: NeoMutt/20180323
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18100517-0064-0000-0000-0000035ABB7B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009825; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000267; SDB=6.01098325; UDB=6.00568080; IPR=6.00878365;
+ MB=3.00023631; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-05 17:47:48
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18100517-0065-0000-0000-00003AE1585C
+Message-Id: <0c0c392b-e5c8-d875-4526-01ff6ff32a81@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-05_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810050175
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
-Message-ID: <20181005173011.xumNmgAK_xbCSov8jXA6Wpswu4CpR6bZZk1NIoShUAE@z>
+Message-ID: <20181005174444.repbXrt60GkH7DsuyNRJaE95wJJf-RO_nZB8YOgme-Q@z>
 
-On  6:33 05/10, Mimi Zohar wrote:
-> On Thu, 2018-10-04 at 21:57 -0500, Goldwyn Rodrigues wrote:
-> > On 11:52 04/10, Mimi Zohar wrote:
-> > > On Thu, 2018-10-04 at 00:35 +0200, Miklos Szeredi wrote:
-> > > 
-> > > > Right, if it's done from last fput() then it's at least not a security hole.
-> > > > 
-> > > > This hack may work for some filesystems, but as you noticed, it won't
-> > > > work for overlayfs.  And  if probably won't work for a number of other
-> > > > filesystems as well: the fs can assume that f_mode & FMODE_READ will
-> > > > remain off if it was off at open time.
-> > > > 
-> > > > The proper way to handle it generally is to open a separate instance
-> > > > of the same file from IMA with O_RDONLY and use that to calculate the
-> > > > hash.   There's really no point in reusing the same file and hacking
-> > > > the f_mode bits.
-> > > 
-> > > Is there an appropriate low level kernel call for creating a new file
-> > > descriptor that would be appropriate?  dentry_open(), like the call in
-> > > file_clone_open(), has a lot of overhead, including the LSM calls.
-> > >  Calculating the file hash always needs to work.
-> > > 
-> > 
-> > Mimi,
-> > 
-> > I have formulated a patch which is working for me on overlayfs. I am
-> > using dentry_open(), which I agree may have overhead. While this
-> > opens up the possibility of using it for files opened with O_DIRECT
-> > which may end up getting the file into pagecache.
-> > 
-> > Subject: [PATCH] Open new file instance O_RDONLY to calculate hash
-> > 
-> > Using the open struct file to calculate the hash does not work
-> > with overlayfs, because the real struct file is hidden behind the
-> > overlays struct file. So, any file->f_mode manipulations are not
-> > reflected on the real struct file. So, open the file again, read and
-> > calculate the hash.
-> > 
-> > As a byproduct, we can remove all instance of f_mode manipulations
-> > and can work with O_DIRECT as well.
-> > 
-> > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> 
-> By "overhead", I didn't mean it from a performance perspective, but
-> was concerned about the dentry_open() failing.  If "dentry_open" fails
-> for any reason, the file hash will not be re-calculated, causing
-> future file opens to fail.  Missing is the test for dentry_open()
-> failure.
 
-Yes, I realized that after sending the patch. I added the check.
 
-> 
-> By removing the "read" check, re-opening the file is now for all
-> files, not just those opened without "read".  From a testing
-> perspective, it will catch problems faster, but ...
+On 09/27/2018 06:50 PM, Mimi Zohar wrote:
+> Hi Nayna,
+>
+> On Wed, 2018-09-26 at 17:52 +0530, Nayna Jain wrote:
+>> The "ima_appraise" mode defaults to enforcing, unless configured to allow
+>> the boot command line "ima_appraise" option. This patch explicitly sets the
+>> "ima_appraise" mode for the arch specific policy setting.
+> Eventually this patch might be needed if/when we need to differentiate
+> between different secure boot modes.
+>
+> Only if CONFIG_IMA_APPRAISE_BOOTPARAM is enabled, can the IMA appraise
+> mode be modified on the boot command line. Â Instead of this patch, how
+> about making the ability to change the IMA appraise mode also
+> dependent on CONFIG_IMA_ARCH_POLICY not being enabled?
 
-Okay. Modified to open a new file only if we don't have read
-permissions...
+Yes, I did this change. I also included other feedback and posted as v5 
+version.
 
-> 
-> I've had a patch queued that removes the O_DIRECT test, but haven't
-> had a chance to test it on ALL filesystems.  I would probably re-open
-> the file with the original flags, plus read, as much as possible.
+Thanks Mimi for all the feedback.
 
-Okay, I have kept the O_DIRECT for now.
+Thanks & Regards,
+ Â Â Â  - Nayna
 
-I will send the updated patch after some more testing.
 
-Thanks,
+>
+> Mimi
+>
+>> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+>> ---
+>>   security/integrity/ima/ima.h          |  5 +++++
+>>   security/integrity/ima/ima_appraise.c | 11 +++++++++--
+>>   security/integrity/ima/ima_policy.c   |  5 ++++-
+>>   3 files changed, 18 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+>> index 588e4813370c..6e5fa7c42809 100644
+>> --- a/security/integrity/ima/ima.h
+>> +++ b/security/integrity/ima/ima.h
+>> @@ -248,6 +248,7 @@ enum hash_algo ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value,
+>>   				 int xattr_len);
+>>   int ima_read_xattr(struct dentry *dentry,
+>>   		   struct evm_ima_xattr_data **xattr_value);
+>> +void set_ima_appraise(char *str);
+>>   
+>>   #else
+>>   static inline int ima_appraise_measurement(enum ima_hooks func,
+>> @@ -290,6 +291,10 @@ static inline int ima_read_xattr(struct dentry *dentry,
+>>   	return 0;
+>>   }
+>>   
+>> +static inline void set_ima_appraise(char *str)
+>> +{
+>> +}
+>> +
+>>   #endif /* CONFIG_IMA_APPRAISE */
+>>   
+>>   /* LSM based policy rules require audit */
+>> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+>> index 8bd7a0733e51..e061613bcb87 100644
+>> --- a/security/integrity/ima/ima_appraise.c
+>> +++ b/security/integrity/ima/ima_appraise.c
+>> @@ -18,15 +18,22 @@
+>>   
+>>   #include "ima.h"
+>>   
+>> -static int __init default_appraise_setup(char *str)
+>> +void set_ima_appraise(char *str)
+>>   {
+>> -#ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
+>>   	if (strncmp(str, "off", 3) == 0)
+>>   		ima_appraise = 0;
+>>   	else if (strncmp(str, "log", 3) == 0)
+>>   		ima_appraise = IMA_APPRAISE_LOG;
+>>   	else if (strncmp(str, "fix", 3) == 0)
+>>   		ima_appraise = IMA_APPRAISE_FIX;
+>> +	else if (strncmp(str, "enforce", 7) == 0)
+>> +		ima_appraise = IMA_APPRAISE_ENFORCE;
+>> +}
+>> +
+>> +static int __init default_appraise_setup(char *str)
+>> +{
+>> +#ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
+>> +	set_ima_appraise(str);
+>>   #endif
+>>   	return 1;
+>>   }
+>> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+>> index 5fb4b0c123a3..410fee31b162 100644
+>> --- a/security/integrity/ima/ima_policy.c
+>> +++ b/security/integrity/ima/ima_policy.c
+>> @@ -585,9 +585,12 @@ void __init ima_init_policy(void)
+>>   	arch_entries = ima_init_arch_policy();
+>>   	if (!arch_entries)
+>>   		pr_info("No architecture policies found\n");
+>> -	else
+>> +	else {
+>>   		add_rules(arch_policy_entry, arch_entries,
+>>   			  IMA_DEFAULT_POLICY | IMA_CUSTOM_POLICY);
+>> +		if (temp_ima_appraise)
+>> +			set_ima_appraise("enforce");
+>> +	}
+>>   
+>>   	/*
+>>   	 * Insert the builtin "secure_boot" policy rules requiring file
 
--- 
-Goldwyn
