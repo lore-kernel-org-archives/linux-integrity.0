@@ -1,135 +1,44 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:36746 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725952AbeJFEmx (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 6 Oct 2018 00:42:53 -0400
-Date: Fri, 5 Oct 2018 16:42:13 -0500
-From: Goldwyn Rodrigues <rgoldwyn@suse.de>
-To: zohar@linux.ibm.com
-Cc: linux-integrity@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        iforster@suse.de, fvogt@suse.de, miklos@szeredi.hu
-Subject: [PATCH] Open a new file instance if no read permissions on files
-Message-ID: <20181005214213.ickkfgu5a7tzzenk@merlin>
+Received: from mail-it1-f171.google.com ([209.85.166.171]:36483 "EHLO
+        mail-it1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728341AbeJFCZd (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 5 Oct 2018 22:25:33 -0400
+Received: by mail-it1-f171.google.com with SMTP id c85-v6so4285822itd.1
+        for <linux-integrity@vger.kernel.org>; Fri, 05 Oct 2018 12:25:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+References: <20181004203007.217320-1-mjg59@google.com> <1538736566.3702.436.camel@linux.ibm.com>
+ <CACdnJusoTGYAZgK3eTEew=HtUpuY4ra_6eQyGa4WWxjZPagXjQ@mail.gmail.com> <1538763521.3541.31.camel@linux.ibm.com>
+In-Reply-To: <1538763521.3541.31.camel@linux.ibm.com>
+From: Matthew Garrett <mjg59@google.com>
+Date: Fri, 5 Oct 2018 12:25:13 -0700
+Message-ID: <CACdnJusqSSXhLHQUAeQz-s_fgvfKGNe_4Ws17T0GuCZGiVXPhA@mail.gmail.com>
+Subject: Re: Allow FUSE filesystems to provide out-of-band hashes to IMA
+To: zohar@linux.ibm.com
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, miklos@szeredi.hu,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Open a new file instance as opposed to changing file->f_mode when
-the file is not readable.
+On Fri, Oct 5, 2018 at 11:18 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> Right, the correct behavior should be not to trust FUSE filesystems,
+> but since we don't break userspace there is the
+> "ima_policy=fail_securely" boot command line option.
 
-This is done to accomodate overlayfs stacked file operations change. The
-real struct file is hidden behind the overlays struct file. So, any
-file->f_mode manipulations are not reflected on the real struct file.
-Open the file again, read andcalculate the hash.
+There seem to be two scenarios:
 
-Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+1) You trust FUSE mounts, perhaps because you have some other policy
+in place to ensure that only trusted binaries can mount stuff. In this
+scenario you already trust that the filesystem will give you
+consistent results when you read data from it - it seems reasonable to
+also trust it to give you back an accurate hash if you ask for one.
+2) You don't trust FUSE mounts, in which case you pass
+ima_policy=fail_securely. This patch doesn't change that behaviour.
 
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index 7e7e7e7c250a..3848cf208792 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -210,7 +210,7 @@ static int ima_calc_file_hash_atfm(struct file *file,
- {
- 	loff_t i_size, offset;
- 	char *rbuf[2] = { NULL, };
--	int rc, read = 0, rbuf_len, active = 0, ahash_rc = 0;
-+	int rc, rbuf_len, active = 0, ahash_rc = 0;
- 	struct ahash_request *req;
- 	struct scatterlist sg[1];
- 	struct crypto_wait wait;
-@@ -257,11 +257,6 @@ static int ima_calc_file_hash_atfm(struct file *file,
- 					  &rbuf_size[1], 0);
- 	}
- 
--	if (!(file->f_mode & FMODE_READ)) {
--		file->f_mode |= FMODE_READ;
--		read = 1;
--	}
--
- 	for (offset = 0; offset < i_size; offset += rbuf_len) {
- 		if (!rbuf[1] && offset) {
- 			/* Not using two buffers, and it is not the first
-@@ -300,8 +295,6 @@ static int ima_calc_file_hash_atfm(struct file *file,
- 	/* wait for the last update request to complete */
- 	rc = ahash_wait(ahash_rc, &wait);
- out3:
--	if (read)
--		file->f_mode &= ~FMODE_READ;
- 	ima_free_pages(rbuf[0], rbuf_size[0]);
- 	ima_free_pages(rbuf[1], rbuf_size[1]);
- out2:
-@@ -336,7 +329,7 @@ static int ima_calc_file_hash_tfm(struct file *file,
- {
- 	loff_t i_size, offset = 0;
- 	char *rbuf;
--	int rc, read = 0;
-+	int rc;
- 	SHASH_DESC_ON_STACK(shash, tfm);
- 
- 	shash->tfm = tfm;
-@@ -357,11 +350,6 @@ static int ima_calc_file_hash_tfm(struct file *file,
- 	if (!rbuf)
- 		return -ENOMEM;
- 
--	if (!(file->f_mode & FMODE_READ)) {
--		file->f_mode |= FMODE_READ;
--		read = 1;
--	}
--
- 	while (offset < i_size) {
- 		int rbuf_len;
- 
-@@ -378,8 +366,6 @@ static int ima_calc_file_hash_tfm(struct file *file,
- 		if (rc)
- 			break;
- 	}
--	if (read)
--		file->f_mode &= ~FMODE_READ;
- 	kfree(rbuf);
- out:
- 	if (!rc)
-@@ -419,7 +405,7 @@ static int ima_calc_file_shash(struct file *file, struct ima_digest_data *hash)
- int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
- {
- 	loff_t i_size;
--	int rc;
-+	int read = 0, rc;
- 
- 	/*
- 	 * For consistency, fail file's opened with the O_DIRECT flag on
-@@ -431,15 +417,29 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
- 		return -EINVAL;
- 	}
- 
-+	if (!(file->f_mode & FMODE_READ)) {
-+		struct file *f;
-+		int flags = file->f_flags & ~(O_WRONLY | O_APPEND | O_TRUNC | O_CREAT | O_NOCTTY | O_EXCL);
-+		f = dentry_open(&file->f_path, flags, file->f_cred);
-+		if (IS_ERR(f))
-+			return PTR_ERR(f);
-+		read = 1;
-+		file = f;
-+	}
-+
- 	i_size = i_size_read(file_inode(file));
- 
- 	if (ima_ahash_minsize && i_size >= ima_ahash_minsize) {
- 		rc = ima_calc_file_ahash(file, hash);
- 		if (!rc)
--			return 0;
-+			goto out;
- 	}
- 
--	return ima_calc_file_shash(file, hash);
-+	rc = ima_calc_file_shash(file, hash);
-+out:
-+	if (read)
-+		fput(file);
-+	return rc;
- }
- 
- /*
-
--- 
-Goldwyn
+I agree that using FUSE in general is incompatible with IMA's goals,
+but it's possible to configure systems where you can ensure that only
+trustworthy code is involved. In that scenario this patch improves
+performance without compromising security.
