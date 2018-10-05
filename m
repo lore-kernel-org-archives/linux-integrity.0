@@ -1,106 +1,102 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52712 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728877AbeJFAnS (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 5 Oct 2018 20:43:18 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w95HdO9l114100
-        for <linux-integrity@vger.kernel.org>; Fri, 5 Oct 2018 13:43:33 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mx9wr85np-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 05 Oct 2018 13:43:32 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Fri, 5 Oct 2018 18:43:31 +0100
-From: Nayna Jain <nayna@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dhowells@redhat.com, jforbes@redhat.com,
-        seth.forshee@canonical.com, kexec@lists.infradead.org,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH v5 1/5] x86/ima: define arch_ima_get_secureboot
-Date: Fri,  5 Oct 2018 23:10:11 +0530
-In-Reply-To: <20181005174015.21939-1-nayna@linux.vnet.ibm.com>
-References: <20181005174015.21939-1-nayna@linux.vnet.ibm.com>
-Message-Id: <20181005174015.21939-2-nayna@linux.vnet.ibm.com>
+Received: from mx2.suse.de ([195.135.220.15]:59136 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727958AbeJFA36 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 5 Oct 2018 20:29:58 -0400
+Date: Fri, 5 Oct 2018 12:30:11 -0500
+From: Goldwyn Rodrigues <rgoldwyn@suse.de>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Fabian Vogt <fvogt@suse.de>,
+        Ignaz Forster <iforster@suse.de>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Subject: Re: PROBLEM: IMA xattrs not written on overlayfs
+Message-ID: <20181005173011.ia2wk4zszzev3gng@merlin>
+References: <81a0a75d-bd4e-25ef-b41b-adb65ac6dee8@suse.de>
+ <1538153671.3713.4.camel@linux.ibm.com>
+ <0e1ba67f-3091-2d56-a464-07e1a8251e5e@suse.de>
+ <2170726.hUdX192fWn@linux-e202.suse.de>
+ <CAJfpegtk=OD6GVVOOtBT4Lto9x73vnSGdTMrzK-uTvStE6KxWw@mail.gmail.com>
+ <1538601501.3702.217.camel@linux.ibm.com>
+ <CAJfpegt52N==WoSQt_GMwZnOPyoV38j3r8vL95Ds0-NakVFueg@mail.gmail.com>
+ <1538668350.3702.348.camel@linux.ibm.com>
+ <20181005025733.fjlz34pph2hzcsxd@merlin>
+ <1538735635.3702.423.camel@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1538735635.3702.423.camel@linux.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-From: Nayna Jain <nayna@linux.ibm.com>
+On  6:33 05/10, Mimi Zohar wrote:
+> On Thu, 2018-10-04 at 21:57 -0500, Goldwyn Rodrigues wrote:
+> > On 11:52 04/10, Mimi Zohar wrote:
+> > > On Thu, 2018-10-04 at 00:35 +0200, Miklos Szeredi wrote:
+> > > 
+> > > > Right, if it's done from last fput() then it's at least not a security hole.
+> > > > 
+> > > > This hack may work for some filesystems, but as you noticed, it won't
+> > > > work for overlayfs.  And  if probably won't work for a number of other
+> > > > filesystems as well: the fs can assume that f_mode & FMODE_READ will
+> > > > remain off if it was off at open time.
+> > > > 
+> > > > The proper way to handle it generally is to open a separate instance
+> > > > of the same file from IMA with O_RDONLY and use that to calculate the
+> > > > hash.   There's really no point in reusing the same file and hacking
+> > > > the f_mode bits.
+> > > 
+> > > Is there an appropriate low level kernel call for creating a new file
+> > > descriptor that would be appropriate?  dentry_open(), like the call in
+> > > file_clone_open(), has a lot of overhead, including the LSM calls.
+> > >  Calculating the file hash always needs to work.
+> > > 
+> > 
+> > Mimi,
+> > 
+> > I have formulated a patch which is working for me on overlayfs. I am
+> > using dentry_open(), which I agree may have overhead. While this
+> > opens up the possibility of using it for files opened with O_DIRECT
+> > which may end up getting the file into pagecache.
+> > 
+> > Subject: [PATCH] Open new file instance O_RDONLY to calculate hash
+> > 
+> > Using the open struct file to calculate the hash does not work
+> > with overlayfs, because the real struct file is hidden behind the
+> > overlays struct file. So, any file->f_mode manipulations are not
+> > reflected on the real struct file. So, open the file again, read and
+> > calculate the hash.
+> > 
+> > As a byproduct, we can remove all instance of f_mode manipulations
+> > and can work with O_DIRECT as well.
+> > 
+> > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> 
+> By "overhead", I didn't mean it from a performance perspective, but
+> was concerned about the dentry_open() failing.  If "dentry_open" fails
+> for any reason, the file hash will not be re-calculated, causing
+> future file opens to fail.  Missing is the test for dentry_open()
+> failure.
 
-Distros are concerned about totally disabling the kexec_load syscall.
-As a compromise, the kexec_load syscall will only be disabled when
-CONFIG_KEXEC_VERIFY_SIG is configured and the system is booted with
-secureboot enabled.
+Yes, I realized that after sending the patch. I added the check.
 
-This patch defines the new arch specific function called
-arch_ima_get_secureboot() to retrieve the secureboot state of the system.
+> 
+> By removing the "read" check, re-opening the file is now for all
+> files, not just those opened without "read".  From a testing
+> perspective, it will catch problems faster, but ...
 
-Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-Suggested-by: Seth Forshee <seth.forshee@canonical.com>
----
- arch/x86/kernel/Makefile   |  2 ++
- arch/x86/kernel/ima_arch.c | 17 +++++++++++++++++
- include/linux/ima.h        |  9 +++++++++
- 3 files changed, 28 insertions(+)
- create mode 100644 arch/x86/kernel/ima_arch.c
+Okay. Modified to open a new file only if we don't have read
+permissions...
 
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 02d6f5cf4e70..f32406e51424 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -149,3 +149,5 @@ ifeq ($(CONFIG_X86_64),y)
- 	obj-$(CONFIG_MMCONF_FAM10H)	+= mmconf-fam10h_64.o
- 	obj-y				+= vsmp_64.o
- endif
-+
-+obj-$(CONFIG_IMA)			+= ima_arch.o
-diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
-new file mode 100644
-index 000000000000..bb5a88d2b271
---- /dev/null
-+++ b/arch/x86/kernel/ima_arch.c
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Copyright (C) 2018 IBM Corporation
-+ */
-+#include <linux/efi.h>
-+#include <linux/ima.h>
-+
-+extern struct boot_params boot_params;
-+
-+bool arch_ima_get_secureboot(void)
-+{
-+	if (efi_enabled(EFI_BOOT) &&
-+		(boot_params.secure_boot == efi_secureboot_mode_enabled))
-+		return true;
-+	else
-+		return false;
-+}
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 84806b54b50a..4852255aa4f4 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -30,6 +30,15 @@ extern void ima_post_path_mknod(struct dentry *dentry);
- extern void ima_add_kexec_buffer(struct kimage *image);
- #endif
- 
-+#ifdef CONFIG_X86
-+extern bool arch_ima_get_secureboot(void);
-+#else
-+static inline bool arch_ima_get_secureboot(void)
-+{
-+	return false;
-+}
-+#endif
-+
- #else
- static inline int ima_bprm_check(struct linux_binprm *bprm)
- {
+> 
+> I've had a patch queued that removes the O_DIRECT test, but haven't
+> had a chance to test it on ALL filesystems.  I would probably re-open
+> the file with the original flags, plus read, as much as possible.
+
+Okay, I have kept the O_DIRECT for now.
+
+I will send the updated patch after some more testing.
+
+Thanks,
+
 -- 
-2.13.6
+Goldwyn
