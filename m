@@ -1,79 +1,81 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42362 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726771AbeJHSb7 (ORCPT
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:40874 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726450AbeJGP3V (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 8 Oct 2018 14:31:59 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w98BJL44058224
-        for <linux-integrity@vger.kernel.org>; Mon, 8 Oct 2018 07:20:44 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n05up98vk-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 08 Oct 2018 07:20:43 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 8 Oct 2018 12:20:41 +0100
-Subject: Re: [PATCH v5 0/6] Add support for architecture specific IMA
- policies
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Sun, 7 Oct 2018 11:29:21 -0400
+MIME-Version: 1.0
+References: <81a0a75d-bd4e-25ef-b41b-adb65ac6dee8@suse.de> <1538153671.3713.4.camel@linux.ibm.com>
+ <0e1ba67f-3091-2d56-a464-07e1a8251e5e@suse.de> <2170726.hUdX192fWn@linux-e202.suse.de>
+ <CAJfpegtk=OD6GVVOOtBT4Lto9x73vnSGdTMrzK-uTvStE6KxWw@mail.gmail.com>
+ <1538601501.3702.217.camel@linux.ibm.com> <CAJfpegt52N==WoSQt_GMwZnOPyoV38j3r8vL95Ds0-NakVFueg@mail.gmail.com>
+ <1538668350.3702.348.camel@linux.ibm.com> <20181005025733.fjlz34pph2hzcsxd@merlin>
+ <1538735635.3702.423.camel@linux.ibm.com>
+In-Reply-To: <1538735635.3702.423.camel@linux.ibm.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sun, 7 Oct 2018 11:22:40 +0300
+Message-ID: <CAOQ4uxhdMD0EtjOw-T7iAVnLgE5EMjgLOF+GYGP039QA6dKH7w@mail.gmail.com>
+Subject: Re: PROBLEM: IMA xattrs not written on overlayfs
+To: zohar@linux.ibm.com
+Cc: Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        Miklos Szeredi <miklos@szeredi.hu>, fvogt@suse.de,
+        iforster@suse.de, overlayfs <linux-unionfs@vger.kernel.org>,
         linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        jforbes@redhat.com, seth.forshee@canonical.com,
-        kexec@lists.infradead.org, Nayna Jain <nayna@linux.ibm.com>
-Date: Mon, 08 Oct 2018 07:20:25 -0400
-In-Reply-To: <20181005174015.21939-1-nayna@linux.vnet.ibm.com>
-References: <20181005174015.21939-1-nayna@linux.vnet.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1538997625.15382.87.camel@linux.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 2018-10-05 at 23:10 +0530, Nayna Jain wrote:
-> From: Nayna Jain <nayna@linux.ibm.com>
-> 
-> The architecture specific policy, introduced in this patch set, permits
-> different architectures to define IMA policy rules based on kernel
-> configuration and system runtime information.
-> 
-> For example, on x86, there are two methods of verifying the kexec'ed kernel
-> image signature - CONFIG_KEXEC_VERIFY_SIG and IMA appraisal policy
-> KEXEC_KERNEL_CHECK. CONFIG_KEXEC_VERIFY_SIG enforces the kexec_file_load
-> syscall to verify file signatures, but does not prevent the kexec_load
-> syscall. The IMA KEXEC_KERNEL_CHECK policy rule verifies the kexec'ed
-> kernel image, loaded via the kexec_file_load syscall, is validly signed and
-> prevents loading a kernel image via the kexec_load syscall. When secure
-> boot is enabled, the kexec'ed kernel image needs to be signed and the
-> signature verified. In this environment, either method of verifying the
-> kexec'ed kernel image is acceptable, as long as the kexec_load syscall is
-> disabled.
-> 
-> The previous version of this patchset introduced a new IMA policy rule to
-> disable the kexec_load syscall, when CONFIG_KEXEC_VERIFY_SIG was enabled,
-> however that is removed from this version by introducing a different
-> mechanism, as described below.
-> 
-> The patchset defines an arch_ima_get_secureboot() function to retrieve the
-> secureboot state of the system. If secureboot is enabled and
-> CONFIG_KEXEC_VERIFY_SIG is configured, it denies permission to kexec_load
-> syscall.
-> 
-> To support architecture specific policies, a new function
-> arch_get_ima_policy() is defined. This patch set defines IMA
-> KERNEL_KEXEC_POLICY rules for x86 *only* if CONFIG_KEXEC_VERIFY_SIG is
-> disabled and secure boot is enabled.
-> 
-> This patch set includes a patch, which refactors ima_init_policy() to
-> remove code duplication.
+On Fri, Oct 5, 2018 at 1:34 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>
+> On Thu, 2018-10-04 at 21:57 -0500, Goldwyn Rodrigues wrote:
+> > On 11:52 04/10, Mimi Zohar wrote:
+> > > On Thu, 2018-10-04 at 00:35 +0200, Miklos Szeredi wrote:
+> > >
+> > > > Right, if it's done from last fput() then it's at least not a security hole.
+> > > >
+> > > > This hack may work for some filesystems, but as you noticed, it won't
+> > > > work for overlayfs.  And  if probably won't work for a number of other
+> > > > filesystems as well: the fs can assume that f_mode & FMODE_READ will
+> > > > remain off if it was off at open time.
+> > > >
+> > > > The proper way to handle it generally is to open a separate instance
+> > > > of the same file from IMA with O_RDONLY and use that to calculate the
+> > > > hash.   There's really no point in reusing the same file and hacking
+> > > > the f_mode bits.
+> > >
+> > > Is there an appropriate low level kernel call for creating a new file
+> > > descriptor that would be appropriate?  dentry_open(), like the call in
+> > > file_clone_open(), has a lot of overhead, including the LSM calls.
+> > >  Calculating the file hash always needs to work.
+> > >
+> >
+> > Mimi,
+> >
+> > I have formulated a patch which is working for me on overlayfs. I am
+> > using dentry_open(), which I agree may have overhead. While this
+> > opens up the possibility of using it for files opened with O_DIRECT
+> > which may end up getting the file into pagecache.
+> >
+> > Subject: [PATCH] Open new file instance O_RDONLY to calculate hash
+> >
+> > Using the open struct file to calculate the hash does not work
+> > with overlayfs, because the real struct file is hidden behind the
+> > overlays struct file. So, any file->f_mode manipulations are not
+> > reflected on the real struct file. So, open the file again, read and
+> > calculate the hash.
+> >
+> > As a byproduct, we can remove all instance of f_mode manipulations
+> > and can work with O_DIRECT as well.
+> >
+> > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+>
+> By "overhead", I didn't mean it from a performance perspective, but
+> was concerned about the dentry_open() failing.  If "dentry_open" fails
+> for any reason, the file hash will not be re-calculated, causing
+> future file opens to fail.
 
-Other than a couple of #ifdef's in .c files, which should be converted
-to use IS_ENABLED(<config-option>), the patch set is looking really
-good.
+open_with_fake_path() looks like a better fit here.
+Skips irrelevant security checks and less likely to fail.
 
-thanks!
-
-Mimi
+Thanks,
+Amir.
