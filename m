@@ -5,137 +5,126 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3CE2C65C20
-	for <linux-integrity@archiver.kernel.org>; Mon,  8 Oct 2018 11:43:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8867AC65C20
+	for <linux-integrity@archiver.kernel.org>; Mon,  8 Oct 2018 13:28:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F9F920858
-	for <linux-integrity@archiver.kernel.org>; Mon,  8 Oct 2018 11:43:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F9F920858
+	by mail.kernel.org (Postfix) with ESMTP id 5839520858
+	for <linux-integrity@archiver.kernel.org>; Mon,  8 Oct 2018 13:28:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5839520858
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbeJHSy4 (ORCPT
+        id S1726198AbeJHUkA (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 8 Oct 2018 14:54:56 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57912 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726689AbeJHSy4 (ORCPT
+        Mon, 8 Oct 2018 16:40:00 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42418 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726128AbeJHUkA (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 8 Oct 2018 14:54:56 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w98BdX5B130158
-        for <linux-integrity@vger.kernel.org>; Mon, 8 Oct 2018 07:43:36 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n05upa6t4-1
+        Mon, 8 Oct 2018 16:40:00 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w98DO7C5063797
+        for <linux-integrity@vger.kernel.org>; Mon, 8 Oct 2018 09:28:15 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2n06w3kdkb-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 08 Oct 2018 07:43:35 -0400
+        for <linux-integrity@vger.kernel.org>; Mon, 08 Oct 2018 09:28:15 -0400
 Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 8 Oct 2018 12:43:33 +0100
+        Mon, 8 Oct 2018 14:28:14 +0100
 Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 8 Oct 2018 12:43:31 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w98BhUhZ58064922
+        Mon, 8 Oct 2018 14:28:12 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w98DSB7G22675570
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 8 Oct 2018 11:43:30 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ABB1EAE045;
-        Mon,  8 Oct 2018 14:42:16 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3A1C1AE057;
-        Mon,  8 Oct 2018 14:42:16 +0100 (BST)
+        Mon, 8 Oct 2018 13:28:11 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0594E4203F;
+        Mon,  8 Oct 2018 16:27:49 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0E68342041;
+        Mon,  8 Oct 2018 16:27:48 +0100 (BST)
 Received: from localhost.localdomain (unknown [9.80.101.74])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  8 Oct 2018 14:42:16 +0100 (BST)
-Subject: Re: ima_template and ima_template_format - supported and legal
- values
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  8 Oct 2018 16:27:47 +0100 (BST)
+Subject: Re: [PATCH] Open a new file instance if no read permissions on files
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Ken Goldman <kgold@linux.vnet.ibm.com>,
-        Linux Integrity <linux-integrity@vger.kernel.org>
-Date:   Mon, 08 Oct 2018 07:43:19 -0400
-In-Reply-To: <e762dedd-17b6-6cb1-837a-4e181f330ca1@linux.vnet.ibm.com>
-References: <e762dedd-17b6-6cb1-837a-4e181f330ca1@linux.vnet.ibm.com>
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc:     linux-integrity@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        iforster@suse.de, fvogt@suse.de, miklos@szeredi.hu
+Date:   Mon, 08 Oct 2018 09:27:59 -0400
+In-Reply-To: <20181008121455.za53z7kgfizgtiv7@merlin>
+References: <20181005214213.ickkfgu5a7tzzenk@merlin>
+         <1538874061.4914.16.camel@linux.ibm.com>
+         <20181008121455.za53z7kgfizgtiv7@merlin>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 18100811-4275-0000-0000-000002C681AA
+x-cbid: 18100813-0008-0000-0000-0000027C82B5
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18100811-4276-0000-0000-000037D1A784
-Message-Id: <1538998999.15382.102.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-08_03:,,
+x-cbparentid: 18100813-0009-0000-0000-000021E5B930
+Message-Id: <1539005279.15382.119.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-08_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810080116
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810080131
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
-Message-ID: <20181008114319.la5rfElJnm2C4KSkIsuKoNXbS2vhlRwcLKKo2c-WNW0@z>
+Message-ID: <20181008132759.ut-f1FrgvAIFjHUTxsPermO-HCbUN0ZVfua6BgChXvA@z>
 
-On Fri, 2018-10-05 at 18:53 -0400, Ken Goldman wrote:
-> I have two questions.
+On Mon, 2018-10-08 at 07:14 -0500, Goldwyn Rodrigues wrote:
+
 > 
-> I'm writing an informal specification for the IMA event log.
+> > >  
+> > > +	if (!(file->f_mode & FMODE_READ)) {
+> > > +		struct file *f;
+> > 
+> > I would define "struct file *f = file" above, at the beginning of
+> > function, and "free(f)" below, without modifying "file".
 > 
-> I'd like to include a chart noting which kernel version first supported 
-> various options.  I.e. the IMA templates (ima, ima-ng, ima-sig), and the
-> ima_template_format directive and its various values.
+> I suppose you mean fput(f).
 
-All of this information is readily available in the git repo.  There's
-a commit number associated with every line of code.  Use "git blame
-<pathname>" to associate a line of code with a specific commit number.
+yes
 
-[1] Commit 3323eec921ef ("integrity: IMA as an integrity service
-provider")
-[2] Commit c2426d2ad502 ("ima: added support for new kernel cmdline
-parameter ima_template_fmt")
-[3] Commit 3ce1217d6cd5 ("ima: define template fields library and new
-helpers")
-[4] Commit bcbc9b0cf6d8 ("ima: extend the measurement list to include
-the file signature")
-[5] Commit 4d7aeee73f53 ("ima: define new template ima-ng and template
-fields d-ng and n-ng")
+> Okay, if it makes code more understandable.
 
-To determine when a commit was upstreamed, add linux-stable as a
-remote branch and execute "git branch -r --contains <commit number>".
- In this case, all of the existing template fields and template
-formats were upstreamed in Linux 3.13.
-
-linux-2.6:  ima			[1]
-linux-3.13: ima-ng		[2, 5]
-linux-3.13:
-ima-sig		[4]
-		
-linux-3.13: 'n', 'd'		[3]
-linux-3.13: 'n-ng', 'd-ng'	[5]
-linux-3.13: 'sig'		[4]
-
-
-> I'm writing a library of useful IMA event log parsing functions.
+Thanks
 > 
-> Are all format combinations legal?  It's not enough to look at today's 
-> code, because the code can change.
+> > 
+> > > +		int flags = file->f_flags & ~(O_WRONLY | O_APPEND | O_TRUNC | O_CREAT | O_NOCTTY | O_EXCL);
+> > 
+> > Doesn't O_RDONLY need to be added?
 > 
-> For example, ima_template_format="sig" doesn't make sense, because
-> it's a signature over a missing file data hash, but it's accepted.
-> The log it creates is odd, though, with just two entries.
+> No. O_RDONLY is zero. But I think I should add it for readability. The
+> compiler will optimize it eventually.
+> 
+> > Please fix the line length.
+> > 
+> > 
+> > > +		f = dentry_open(&file->f_path, flags, file->f_cred);
+> > > +		if (IS_ERR(f))
+> > > +			return PTR_ERR(f);
 
-The parser should be able to handle all custom templates, whether or
-not it makes sense.  Leaving out the digest (d, d-ng) or the filename
-(n, n-ng) also doesn't make sense.  Deciding whether the measurement
-list makes sense and/or addressing other measurement list issues, is
-left up to userspace applications, such as the attestation server.
-
-Please note that although the old 'd' digest or the 'n' filename
-fields are defined, their use should be limited to the 'ima' template.
+It's late in the release cycle to be making this change.  Would it
+make sense for now to fallback to modifying the original file
+descriptor on failure and emit a message?
 
 Mimi
+
+
+> > > +		read = 1;
+> > > +		file = f;
+> > 
+> > With the above change, no need to modify "file".
+> 
 
