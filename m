@@ -1,154 +1,67 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:41890 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726647AbeJIWaB (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 9 Oct 2018 18:30:01 -0400
-Date: Tue, 9 Oct 2018 10:12:33 -0500
-From: Goldwyn Rodrigues <rgoldwyn@suse.de>
-To: zohar@linux.ibm.com
-Cc: linux-integrity@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        iforster@suse.de, fvogt@suse.de, miklos@szeredi.hu
-Subject: [PATCH v2] Open a new file instance if no read permissions
-Message-ID: <20181009151233.lxgm5c73epofi6r3@merlin>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33844 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725892AbeJIFyp (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 9 Oct 2018 01:54:45 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w98MY9aH005288
+        for <linux-integrity@vger.kernel.org>; Mon, 8 Oct 2018 18:40:40 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2n0cefyvqj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 08 Oct 2018 18:40:39 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 8 Oct 2018 23:40:37 +0100
+Subject: Re: Allow FUSE filesystems to provide out-of-band hashes to IMA
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Matthew Garrett <mjg59@google.com>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, miklos@szeredi.hu,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Date: Mon, 08 Oct 2018 18:40:32 -0400
+In-Reply-To: <CACdnJutwqyKwimcxAY4XNKv2fcyyg7aTJkoKY+XT-XnWLeU4aA@mail.gmail.com>
+References: <20181004203007.217320-1-mjg59@google.com>
+         <1538736566.3702.436.camel@linux.ibm.com>
+         <CACdnJusoTGYAZgK3eTEew=HtUpuY4ra_6eQyGa4WWxjZPagXjQ@mail.gmail.com>
+         <1538763521.3541.31.camel@linux.ibm.com>
+         <CACdnJusqSSXhLHQUAeQz-s_fgvfKGNe_4Ws17T0GuCZGiVXPhA@mail.gmail.com>
+         <1538997900.15382.90.camel@linux.ibm.com>
+         <CACdnJutwqyKwimcxAY4XNKv2fcyyg7aTJkoKY+XT-XnWLeU4aA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1539038432.15382.181.camel@linux.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Open a new file instance as opposed to changing file->f_mode when
-the file is not readable. This is done to accomodate
-overlayfs stacked file operations change. The real struct file is hidden
-behind the overlays struct file. So, any file->f_mode manipulations are
-not reflected on the real struct file. Open the file again in read mode
-if original file cannot be read, read and calculate the hash.
+On Mon, 2018-10-08 at 13:19 -0700, Matthew Garrett wrote:
+> On Mon, Oct 8, 2018 at 4:25 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > On Fri, 2018-10-05 at 12:25 -0700, Matthew Garrett wrote:
 
-Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > > I agree that using FUSE in general is incompatible with IMA's goals,
+> > > but it's possible to configure systems where you can ensure that only
+> > > trustworthy code is involved. In that scenario this patch improves
+> > > performance without compromising security.
+> >
+> > If you trust a FUSE filesystem to not only behave properly, but also
+> > to return file hashes, what is the value of measuring/appraising the
+> > files?  Define a custom policy that doesn't measure/appraise files on
+> > FUSE filesystems.
+> 
+> We trust that the filesystem will return us accurate binaries and
+> hashes, but we don't the binaries themselves may not be trustworthy -
+> we want the same level of audit trail associated with their execution
+> that we'd have for something run off local disk. We could certainly
+> rearchitect our filesystems to generate audit events themselves, but
+> we'd be duplicating functionality that already exists in the kernel.
 
-Changes since v1:
- - Open new file only if read permission don't exist
- - Warning message if dentry_open() fails
+I'm really not comfortable with the FUSE filesystem calculating the
+file hash being used by IMA.  Adding FUSE i_version support would have
+been better, instead of returning the actual file hash.  Based on a
+mount option and the i_version, the kernel could then decide whether
+or not to limit re-calculating the file hash.
 
-
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index 7e7e7e7c250a..f6030cb470e6 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -210,7 +210,7 @@ static int ima_calc_file_hash_atfm(struct file *file,
- {
- 	loff_t i_size, offset;
- 	char *rbuf[2] = { NULL, };
--	int rc, read = 0, rbuf_len, active = 0, ahash_rc = 0;
-+	int rc, rbuf_len, active = 0, ahash_rc = 0;
- 	struct ahash_request *req;
- 	struct scatterlist sg[1];
- 	struct crypto_wait wait;
-@@ -257,11 +257,6 @@ static int ima_calc_file_hash_atfm(struct file *file,
- 					  &rbuf_size[1], 0);
- 	}
- 
--	if (!(file->f_mode & FMODE_READ)) {
--		file->f_mode |= FMODE_READ;
--		read = 1;
--	}
--
- 	for (offset = 0; offset < i_size; offset += rbuf_len) {
- 		if (!rbuf[1] && offset) {
- 			/* Not using two buffers, and it is not the first
-@@ -300,8 +295,6 @@ static int ima_calc_file_hash_atfm(struct file *file,
- 	/* wait for the last update request to complete */
- 	rc = ahash_wait(ahash_rc, &wait);
- out3:
--	if (read)
--		file->f_mode &= ~FMODE_READ;
- 	ima_free_pages(rbuf[0], rbuf_size[0]);
- 	ima_free_pages(rbuf[1], rbuf_size[1]);
- out2:
-@@ -336,7 +329,7 @@ static int ima_calc_file_hash_tfm(struct file *file,
- {
- 	loff_t i_size, offset = 0;
- 	char *rbuf;
--	int rc, read = 0;
-+	int rc;
- 	SHASH_DESC_ON_STACK(shash, tfm);
- 
- 	shash->tfm = tfm;
-@@ -357,11 +350,6 @@ static int ima_calc_file_hash_tfm(struct file *file,
- 	if (!rbuf)
- 		return -ENOMEM;
- 
--	if (!(file->f_mode & FMODE_READ)) {
--		file->f_mode |= FMODE_READ;
--		read = 1;
--	}
--
- 	while (offset < i_size) {
- 		int rbuf_len;
- 
-@@ -378,8 +366,6 @@ static int ima_calc_file_hash_tfm(struct file *file,
- 		if (rc)
- 			break;
- 	}
--	if (read)
--		file->f_mode &= ~FMODE_READ;
- 	kfree(rbuf);
- out:
- 	if (!rc)
-@@ -420,6 +406,8 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
- {
- 	loff_t i_size;
- 	int rc;
-+	struct file *f = file;
-+	bool new_file_instance = false, modified_flags = false;
- 
- 	/*
- 	 * For consistency, fail file's opened with the O_DIRECT flag on
-@@ -431,15 +419,42 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
- 		return -EINVAL;
- 	}
- 
--	i_size = i_size_read(file_inode(file));
-+	/* Open a new file instance in O_RDONLY if we cannot read */
-+	if (!(file->f_mode & FMODE_READ)) {
-+		int flags = file->f_flags & ~(O_WRONLY | O_APPEND |
-+				O_TRUNC | O_CREAT | O_NOCTTY | O_EXCL);
-+		flags |= O_RDONLY;
-+		f = dentry_open(&file->f_path, flags, file->f_cred);
-+		if (IS_ERR(f)) {
-+			/* 
-+			 * Cannot open the file again, lets
-+			 * modify f_flags of original and
-+			 * continue
-+			 */
-+			pr_info_ratelimited("Unable to reopen file for reading.\n");
-+			f = file;
-+			f->f_flags |= FMODE_READ;
-+			modified_flags = true;
-+		} else {
-+			new_file_instance = true;
-+		}
-+	}
-+
-+	i_size = i_size_read(file_inode(f));
- 
- 	if (ima_ahash_minsize && i_size >= ima_ahash_minsize) {
--		rc = ima_calc_file_ahash(file, hash);
-+		rc = ima_calc_file_ahash(f, hash);
- 		if (!rc)
--			return 0;
-+			goto out;
- 	}
- 
--	return ima_calc_file_shash(file, hash);
-+	rc = ima_calc_file_shash(f, hash);
-+out:
-+	if (new_file_instance)
-+		fput(f);
-+	else if (modified_flags)
-+		f->f_flags &= ~FMODE_READ;
-+	return rc;
- }
- 
- /*
-
--- 
-Goldwyn
+Mimi
