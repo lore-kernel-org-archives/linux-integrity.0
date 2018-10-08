@@ -1,78 +1,100 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42418 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53860 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726128AbeJHUkA (ORCPT
+        by vger.kernel.org with ESMTP id S1725893AbeJHUGM (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 8 Oct 2018 16:40:00 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w98DO7C5063797
-        for <linux-integrity@vger.kernel.org>; Mon, 8 Oct 2018 09:28:15 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2n06w3kdkb-1
+        Mon, 8 Oct 2018 16:06:12 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w98CjYZX115541
+        for <linux-integrity@vger.kernel.org>; Mon, 8 Oct 2018 08:54:36 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2n06at3r65-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 08 Oct 2018 09:28:15 -0400
+        for <linux-integrity@vger.kernel.org>; Mon, 08 Oct 2018 08:54:35 -0400
 Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 8 Oct 2018 14:28:14 +0100
-Subject: Re: [PATCH] Open a new file instance if no read permissions on files
+        Mon, 8 Oct 2018 13:54:34 +0100
+Subject: Re: PROBLEM: IMA xattrs not written on overlayfs
 From: Mimi Zohar <zohar@linux.ibm.com>
-To: Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc: linux-integrity@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        iforster@suse.de, fvogt@suse.de, miklos@szeredi.hu
-Date: Mon, 08 Oct 2018 09:27:59 -0400
-In-Reply-To: <20181008121455.za53z7kgfizgtiv7@merlin>
-References: <20181005214213.ickkfgu5a7tzzenk@merlin>
-         <1538874061.4914.16.camel@linux.ibm.com>
-         <20181008121455.za53z7kgfizgtiv7@merlin>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        Miklos Szeredi <miklos@szeredi.hu>, fvogt@suse.de,
+        iforster@suse.de, overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-integrity@vger.kernel.org
+Date: Mon, 08 Oct 2018 08:54:19 -0400
+In-Reply-To: <CAOQ4uxhdMD0EtjOw-T7iAVnLgE5EMjgLOF+GYGP039QA6dKH7w@mail.gmail.com>
+References: <81a0a75d-bd4e-25ef-b41b-adb65ac6dee8@suse.de>
+         <1538153671.3713.4.camel@linux.ibm.com>
+         <0e1ba67f-3091-2d56-a464-07e1a8251e5e@suse.de>
+         <2170726.hUdX192fWn@linux-e202.suse.de>
+         <CAJfpegtk=OD6GVVOOtBT4Lto9x73vnSGdTMrzK-uTvStE6KxWw@mail.gmail.com>
+         <1538601501.3702.217.camel@linux.ibm.com>
+         <CAJfpegt52N==WoSQt_GMwZnOPyoV38j3r8vL95Ds0-NakVFueg@mail.gmail.com>
+         <1538668350.3702.348.camel@linux.ibm.com>
+         <20181005025733.fjlz34pph2hzcsxd@merlin>
+         <1538735635.3702.423.camel@linux.ibm.com>
+         <CAOQ4uxhdMD0EtjOw-T7iAVnLgE5EMjgLOF+GYGP039QA6dKH7w@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Message-Id: <1539005279.15382.119.camel@linux.ibm.com>
+Message-Id: <1539003259.15382.110.camel@linux.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, 2018-10-08 at 07:14 -0500, Goldwyn Rodrigues wrote:
-
+On Sun, 2018-10-07 at 11:22 +0300, Amir Goldstein wrote:
+> On Fri, Oct 5, 2018 at 1:34 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> >
+> > On Thu, 2018-10-04 at 21:57 -0500, Goldwyn Rodrigues wrote:
+> > > On 11:52 04/10, Mimi Zohar wrote:
+> > > > On Thu, 2018-10-04 at 00:35 +0200, Miklos Szeredi wrote:
+> > > >
+> > > > > Right, if it's done from last fput() then it's at least not a security hole.
+> > > > >
+> > > > > This hack may work for some filesystems, but as you noticed, it won't
+> > > > > work for overlayfs.  And  if probably won't work for a number of other
+> > > > > filesystems as well: the fs can assume that f_mode & FMODE_READ will
+> > > > > remain off if it was off at open time.
+> > > > >
+> > > > > The proper way to handle it generally is to open a separate instance
+> > > > > of the same file from IMA with O_RDONLY and use that to calculate the
+> > > > > hash.   There's really no point in reusing the same file and hacking
+> > > > > the f_mode bits.
+> > > >
+> > > > Is there an appropriate low level kernel call for creating a new file
+> > > > descriptor that would be appropriate?  dentry_open(), like the call in
+> > > > file_clone_open(), has a lot of overhead, including the LSM calls.
+> > > >  Calculating the file hash always needs to work.
+> > > >
+> > >
+> > > Mimi,
+> > >
+> > > I have formulated a patch which is working for me on overlayfs. I am
+> > > using dentry_open(), which I agree may have overhead. While this
+> > > opens up the possibility of using it for files opened with O_DIRECT
+> > > which may end up getting the file into pagecache.
+> > >
+> > > Subject: [PATCH] Open new file instance O_RDONLY to calculate hash
+> > >
+> > > Using the open struct file to calculate the hash does not work
+> > > with overlayfs, because the real struct file is hidden behind the
+> > > overlays struct file. So, any file->f_mode manipulations are not
+> > > reflected on the real struct file. So, open the file again, read and
+> > > calculate the hash.
+> > >
+> > > As a byproduct, we can remove all instance of f_mode manipulations
+> > > and can work with O_DIRECT as well.
+> > >
+> > > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> >
+> > By "overhead", I didn't mean it from a performance perspective, but
+> > was concerned about the dentry_open() failing.  If "dentry_open" fails
+> > for any reason, the file hash will not be re-calculated, causing
+> > future file opens to fail.
 > 
-> > >  
-> > > +	if (!(file->f_mode & FMODE_READ)) {
-> > > +		struct file *f;
-> > 
-> > I would define "struct file *f = file" above, at the beginning of
-> > function, and "free(f)" below, without modifying "file".
-> 
-> I suppose you mean fput(f).
+> open_with_fake_path() looks like a better fit here.
+> Skips irrelevant security checks and less likely to fail.
 
-yes
-
-> Okay, if it makes code more understandable.
-
-Thanks
-> 
-> > 
-> > > +		int flags = file->f_flags & ~(O_WRONLY | O_APPEND | O_TRUNC | O_CREAT | O_NOCTTY | O_EXCL);
-> > 
-> > Doesn't O_RDONLY need to be added?
-> 
-> No. O_RDONLY is zero. But I think I should add it for readability. The
-> compiler will optimize it eventually.
-> 
-> > Please fix the line length.
-> > 
-> > 
-> > > +		f = dentry_open(&file->f_path, flags, file->f_cred);
-> > > +		if (IS_ERR(f))
-> > > +			return PTR_ERR(f);
-
-It's late in the release cycle to be making this change.  Would it
-make sense for now to fallback to modifying the original file
-descriptor on failure and emit a message?
+It skips the "cred" checking, but everything else seems to be the same
+including the security_ checks.
 
 Mimi
-
-
-> > > +		read = 1;
-> > > +		file = f;
-> > 
-> > With the above change, no need to modify "file".
-> 
