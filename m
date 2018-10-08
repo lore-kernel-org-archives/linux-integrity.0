@@ -1,200 +1,130 @@
-Return-Path: <SRS0=SAWj=MR=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=CrZS=MU=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B487BC00449
-	for <linux-integrity@archiver.kernel.org>; Fri,  5 Oct 2018 17:47:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0087C65C20
+	for <linux-integrity@archiver.kernel.org>; Mon,  8 Oct 2018 11:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57A062084D
-	for <linux-integrity@archiver.kernel.org>; Fri,  5 Oct 2018 17:47:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57A062084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8FC332085B
+	for <linux-integrity@archiver.kernel.org>; Mon,  8 Oct 2018 11:25:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FC332085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728139AbeJFArh (ORCPT
+        id S1726612AbeJHSgg (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 5 Oct 2018 20:47:37 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36966 "EHLO
+        Mon, 8 Oct 2018 14:36:36 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43966 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727966AbeJFArh (ORCPT
+        by vger.kernel.org with ESMTP id S1726656AbeJHSgg (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 5 Oct 2018 20:47:37 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w95Hil2r096459
-        for <linux-integrity@vger.kernel.org>; Fri, 5 Oct 2018 13:47:51 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mxcjcr908-1
+        Mon, 8 Oct 2018 14:36:36 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w98BJQ1Z038892
+        for <linux-integrity@vger.kernel.org>; Mon, 8 Oct 2018 07:25:19 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2n031r3g08-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 05 Oct 2018 13:47:50 -0400
+        for <linux-integrity@vger.kernel.org>; Mon, 08 Oct 2018 07:25:18 -0400
 Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Fri, 5 Oct 2018 13:47:49 -0400
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 8 Oct 2018 12:25:16 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 5 Oct 2018 13:47:46 -0400
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w95HljZN28704842
+        Mon, 8 Oct 2018 12:25:13 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w98BPCXX62914746
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 5 Oct 2018 17:47:45 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 941F9112061;
-        Fri,  5 Oct 2018 13:47:08 -0400 (EDT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A9960112063;
-        Fri,  5 Oct 2018 13:47:05 -0400 (EDT)
-Received: from [9.124.221.60] (unknown [9.124.221.60])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri,  5 Oct 2018 13:47:05 -0400 (EDT)
-Subject: Re: [PATCH v4 5/6] ima: add support for external setting of
- ima_appraise
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        jforbes@redhat.com
-References: <20180926122210.14642-1-nayna@linux.vnet.ibm.com>
- <20180926122210.14642-6-nayna@linux.vnet.ibm.com>
- <1538054412.3459.105.camel@linux.ibm.com>
-From:   Nayna Jain <nayna@linux.vnet.ibm.com>
-Date:   Fri, 5 Oct 2018 23:14:44 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <1538054412.3459.105.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Mon, 8 Oct 2018 11:25:12 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 88798A405B;
+        Mon,  8 Oct 2018 14:24:46 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AB984A4040;
+        Mon,  8 Oct 2018 14:24:45 +0100 (BST)
+Received: from localhost.localdomain (unknown [9.80.101.74])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  8 Oct 2018 14:24:45 +0100 (BST)
+Subject: Re: Allow FUSE filesystems to provide out-of-band hashes to IMA
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Matthew Garrett <mjg59@google.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, miklos@szeredi.hu,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Date:   Mon, 08 Oct 2018 07:25:00 -0400
+In-Reply-To: <CACdnJusqSSXhLHQUAeQz-s_fgvfKGNe_4Ws17T0GuCZGiVXPhA@mail.gmail.com>
+References: <20181004203007.217320-1-mjg59@google.com>
+         <1538736566.3702.436.camel@linux.ibm.com>
+         <CACdnJusoTGYAZgK3eTEew=HtUpuY4ra_6eQyGa4WWxjZPagXjQ@mail.gmail.com>
+         <1538763521.3541.31.camel@linux.ibm.com>
+         <CACdnJusqSSXhLHQUAeQz-s_fgvfKGNe_4Ws17T0GuCZGiVXPhA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 X-TM-AS-GCONF: 00
-x-cbid: 18100517-0064-0000-0000-0000035ABB7B
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009825; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000267; SDB=6.01098325; UDB=6.00568080; IPR=6.00878365;
- MB=3.00023631; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-05 17:47:48
+x-cbid: 18100811-0020-0000-0000-000002D10486
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18100517-0065-0000-0000-00003AE1585C
-Message-Id: <0c0c392b-e5c8-d875-4526-01ff6ff32a81@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-05_09:,,
+x-cbparentid: 18100811-0021-0000-0000-0000211F67FB
+Message-Id: <1538997900.15382.90.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-08_03:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810050175
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810080113
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
-Message-ID: <20181005174444.repbXrt60GkH7DsuyNRJaE95wJJf-RO_nZB8YOgme-Q@z>
+Message-ID: <20181008112500.ALspUKJQWzOTkXU7ycHaCNhllW70ZrC5eZQ6wvEQp8o@z>
 
+On Fri, 2018-10-05 at 12:25 -0700, Matthew Garrett wrote:
+> On Fri, Oct 5, 2018 at 11:18 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > Right, the correct behavior should be not to trust FUSE filesystems,
+> > but since we don't break userspace there is the
+> > "ima_policy=fail_securely" boot command line option.
+> 
+> There seem to be two scenarios:
+> 
+> 1) You trust FUSE mounts, perhaps because you have some other policy
+> in place to ensure that only trusted binaries can mount stuff. In this
+> scenario you already trust that the filesystem will give you
+> consistent results when you read data from it - 
 
+In the trusted mount scenario, we trust the data should not change
+between calculating the file hash and reading the file data, making it
+similar to other local filesystems.  Unlike other local filesystems,
+however, we can't detect when the file changes.  For this reason we
+need to re-calculate the file hash to measure/appraise the file each
+time.
 
-On 09/27/2018 06:50 PM, Mimi Zohar wrote:
-> Hi Nayna,
->
-> On Wed, 2018-09-26 at 17:52 +0530, Nayna Jain wrote:
->> The "ima_appraise" mode defaults to enforcing, unless configured to allow
->> the boot command line "ima_appraise" option. This patch explicitly sets the
->> "ima_appraise" mode for the arch specific policy setting.
-> Eventually this patch might be needed if/when we need to differentiate
-> between different secure boot modes.
->
-> Only if CONFIG_IMA_APPRAISE_BOOTPARAM is enabled, can the IMA appraise
-> mode be modified on the boot command line.  Instead of this patch, how
-> about making the ability to change the IMA appraise mode also
-> dependent on CONFIG_IMA_ARCH_POLICY not being enabled?
+> it seems reasonable to
+> also trust it to give you back an accurate hash if you ask for one.
 
-Yes, I did this change. I also included other feedback and posted as v5 
-version.
+Going from trusting the filesystem to behave properly, to trusting the
+file hash that the filesystem provides is a major leap.  We don't do
+this today for any local filesystem.
 
-Thanks Mimi for all the feedback.
+> 2) You don't trust FUSE mounts, in which case you pass
+> ima_policy=fail_securely. This patch doesn't change that behaviour.
+> 
+> I agree that using FUSE in general is incompatible with IMA's goals,
+> but it's possible to configure systems where you can ensure that only
+> trustworthy code is involved. In that scenario this patch improves
+> performance without compromising security.
 
-Thanks & Regards,
-     - Nayna
+If you trust a FUSE filesystem to not only behave properly, but also
+to return file hashes, what is the value of measuring/appraising the
+files?  Define a custom policy that doesn't measure/appraise files on
+FUSE filesystems.
 
-
->
-> Mimi
->
->> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
->> ---
->>   security/integrity/ima/ima.h          |  5 +++++
->>   security/integrity/ima/ima_appraise.c | 11 +++++++++--
->>   security/integrity/ima/ima_policy.c   |  5 ++++-
->>   3 files changed, 18 insertions(+), 3 deletions(-)
->>
->> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
->> index 588e4813370c..6e5fa7c42809 100644
->> --- a/security/integrity/ima/ima.h
->> +++ b/security/integrity/ima/ima.h
->> @@ -248,6 +248,7 @@ enum hash_algo ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value,
->>   				 int xattr_len);
->>   int ima_read_xattr(struct dentry *dentry,
->>   		   struct evm_ima_xattr_data **xattr_value);
->> +void set_ima_appraise(char *str);
->>   
->>   #else
->>   static inline int ima_appraise_measurement(enum ima_hooks func,
->> @@ -290,6 +291,10 @@ static inline int ima_read_xattr(struct dentry *dentry,
->>   	return 0;
->>   }
->>   
->> +static inline void set_ima_appraise(char *str)
->> +{
->> +}
->> +
->>   #endif /* CONFIG_IMA_APPRAISE */
->>   
->>   /* LSM based policy rules require audit */
->> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
->> index 8bd7a0733e51..e061613bcb87 100644
->> --- a/security/integrity/ima/ima_appraise.c
->> +++ b/security/integrity/ima/ima_appraise.c
->> @@ -18,15 +18,22 @@
->>   
->>   #include "ima.h"
->>   
->> -static int __init default_appraise_setup(char *str)
->> +void set_ima_appraise(char *str)
->>   {
->> -#ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
->>   	if (strncmp(str, "off", 3) == 0)
->>   		ima_appraise = 0;
->>   	else if (strncmp(str, "log", 3) == 0)
->>   		ima_appraise = IMA_APPRAISE_LOG;
->>   	else if (strncmp(str, "fix", 3) == 0)
->>   		ima_appraise = IMA_APPRAISE_FIX;
->> +	else if (strncmp(str, "enforce", 7) == 0)
->> +		ima_appraise = IMA_APPRAISE_ENFORCE;
->> +}
->> +
->> +static int __init default_appraise_setup(char *str)
->> +{
->> +#ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
->> +	set_ima_appraise(str);
->>   #endif
->>   	return 1;
->>   }
->> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
->> index 5fb4b0c123a3..410fee31b162 100644
->> --- a/security/integrity/ima/ima_policy.c
->> +++ b/security/integrity/ima/ima_policy.c
->> @@ -585,9 +585,12 @@ void __init ima_init_policy(void)
->>   	arch_entries = ima_init_arch_policy();
->>   	if (!arch_entries)
->>   		pr_info("No architecture policies found\n");
->> -	else
->> +	else {
->>   		add_rules(arch_policy_entry, arch_entries,
->>   			  IMA_DEFAULT_POLICY | IMA_CUSTOM_POLICY);
->> +		if (temp_ima_appraise)
->> +			set_ima_appraise("enforce");
->> +	}
->>   
->>   	/*
->>   	 * Insert the builtin "secure_boot" policy rules requiring file
+Mimi
 
