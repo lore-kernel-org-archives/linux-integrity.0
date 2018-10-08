@@ -1,100 +1,164 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53860 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725893AbeJHUGM (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 8 Oct 2018 16:06:12 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w98CjYZX115541
-        for <linux-integrity@vger.kernel.org>; Mon, 8 Oct 2018 08:54:36 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2n06at3r65-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 08 Oct 2018 08:54:35 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 8 Oct 2018 13:54:34 +0100
-Subject: Re: PROBLEM: IMA xattrs not written on overlayfs
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        Miklos Szeredi <miklos@szeredi.hu>, fvogt@suse.de,
-        iforster@suse.de, overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-integrity@vger.kernel.org
-Date: Mon, 08 Oct 2018 08:54:19 -0400
-In-Reply-To: <CAOQ4uxhdMD0EtjOw-T7iAVnLgE5EMjgLOF+GYGP039QA6dKH7w@mail.gmail.com>
-References: <81a0a75d-bd4e-25ef-b41b-adb65ac6dee8@suse.de>
-         <1538153671.3713.4.camel@linux.ibm.com>
-         <0e1ba67f-3091-2d56-a464-07e1a8251e5e@suse.de>
-         <2170726.hUdX192fWn@linux-e202.suse.de>
-         <CAJfpegtk=OD6GVVOOtBT4Lto9x73vnSGdTMrzK-uTvStE6KxWw@mail.gmail.com>
-         <1538601501.3702.217.camel@linux.ibm.com>
-         <CAJfpegt52N==WoSQt_GMwZnOPyoV38j3r8vL95Ds0-NakVFueg@mail.gmail.com>
-         <1538668350.3702.348.camel@linux.ibm.com>
-         <20181005025733.fjlz34pph2hzcsxd@merlin>
-         <1538735635.3702.423.camel@linux.ibm.com>
-         <CAOQ4uxhdMD0EtjOw-T7iAVnLgE5EMjgLOF+GYGP039QA6dKH7w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1539003259.15382.110.camel@linux.ibm.com>
+Received: from mx2.suse.de ([195.135.220.15]:55260 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725857AbeJHT00 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 8 Oct 2018 15:26:26 -0400
+Date: Mon, 8 Oct 2018 07:14:55 -0500
+From: Goldwyn Rodrigues <rgoldwyn@suse.de>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: linux-integrity@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        iforster@suse.de, fvogt@suse.de, miklos@szeredi.hu
+Subject: Re: [PATCH] Open a new file instance if no read permissions on files
+Message-ID: <20181008121455.za53z7kgfizgtiv7@merlin>
+References: <20181005214213.ickkfgu5a7tzzenk@merlin>
+ <1538874061.4914.16.camel@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1538874061.4914.16.camel@linux.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Sun, 2018-10-07 at 11:22 +0300, Amir Goldstein wrote:
-> On Fri, Oct 5, 2018 at 1:34 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >
-> > On Thu, 2018-10-04 at 21:57 -0500, Goldwyn Rodrigues wrote:
-> > > On 11:52 04/10, Mimi Zohar wrote:
-> > > > On Thu, 2018-10-04 at 00:35 +0200, Miklos Szeredi wrote:
-> > > >
-> > > > > Right, if it's done from last fput() then it's at least not a security hole.
-> > > > >
-> > > > > This hack may work for some filesystems, but as you noticed, it won't
-> > > > > work for overlayfs.  And  if probably won't work for a number of other
-> > > > > filesystems as well: the fs can assume that f_mode & FMODE_READ will
-> > > > > remain off if it was off at open time.
-> > > > >
-> > > > > The proper way to handle it generally is to open a separate instance
-> > > > > of the same file from IMA with O_RDONLY and use that to calculate the
-> > > > > hash.   There's really no point in reusing the same file and hacking
-> > > > > the f_mode bits.
-> > > >
-> > > > Is there an appropriate low level kernel call for creating a new file
-> > > > descriptor that would be appropriate?  dentry_open(), like the call in
-> > > > file_clone_open(), has a lot of overhead, including the LSM calls.
-> > > >  Calculating the file hash always needs to work.
-> > > >
-> > >
-> > > Mimi,
-> > >
-> > > I have formulated a patch which is working for me on overlayfs. I am
-> > > using dentry_open(), which I agree may have overhead. While this
-> > > opens up the possibility of using it for files opened with O_DIRECT
-> > > which may end up getting the file into pagecache.
-> > >
-> > > Subject: [PATCH] Open new file instance O_RDONLY to calculate hash
-> > >
-> > > Using the open struct file to calculate the hash does not work
-> > > with overlayfs, because the real struct file is hidden behind the
-> > > overlays struct file. So, any file->f_mode manipulations are not
-> > > reflected on the real struct file. So, open the file again, read and
-> > > calculate the hash.
-> > >
-> > > As a byproduct, we can remove all instance of f_mode manipulations
-> > > and can work with O_DIRECT as well.
-> > >
-> > > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> >
-> > By "overhead", I didn't mean it from a performance perspective, but
-> > was concerned about the dentry_open() failing.  If "dentry_open" fails
-> > for any reason, the file hash will not be re-calculated, causing
-> > future file opens to fail.
+On 21:01 06/10, Mimi Zohar wrote:
+> On Fri, 2018-10-05 at 16:42 -0500, Goldwyn Rodrigues wrote:
+> > Open a new file instance as opposed to changing file->f_mode when
+> > the file is not readable.
+> > 
+> > This is done to accomodate overlayfs stacked file operations change. The
+> > real struct file is hidden behind the overlays struct file. So, any
+> > file->f_mode manipulations are not reflected on the real struct file.
+> > Open the file again, read andcalculate the hash.
+> > 
+> > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > 
+> > diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+> > index 7e7e7e7c250a..3848cf208792 100644
+> > --- a/security/integrity/ima/ima_crypto.c
+> > +++ b/security/integrity/ima/ima_crypto.c
+> > @@ -210,7 +210,7 @@ static int ima_calc_file_hash_atfm(struct file *file,
+> >  {
+> >  	loff_t i_size, offset;
+> >  	char *rbuf[2] = { NULL, };
+> > -	int rc, read = 0, rbuf_len, active = 0, ahash_rc = 0;
+> > +	int rc, rbuf_len, active = 0, ahash_rc = 0;
+> >  	struct ahash_request *req;
+> >  	struct scatterlist sg[1];
+> >  	struct crypto_wait wait;
+> > @@ -257,11 +257,6 @@ static int ima_calc_file_hash_atfm(struct file *file,
+> >  					  &rbuf_size[1], 0);
+> >  	}
+> >  
+> > -	if (!(file->f_mode & FMODE_READ)) {
+> > -		file->f_mode |= FMODE_READ;
+> > -		read = 1;
+> > -	}
+> > -
+> >  	for (offset = 0; offset < i_size; offset += rbuf_len) {
+> >  		if (!rbuf[1] && offset) {
+> >  			/* Not using two buffers, and it is not the first
+> > @@ -300,8 +295,6 @@ static int ima_calc_file_hash_atfm(struct file *file,
+> >  	/* wait for the last update request to complete */
+> >  	rc = ahash_wait(ahash_rc, &wait);
+> >  out3:
+> > -	if (read)
+> > -		file->f_mode &= ~FMODE_READ;
+> >  	ima_free_pages(rbuf[0], rbuf_size[0]);
+> >  	ima_free_pages(rbuf[1], rbuf_size[1]);
+> >  out2:
+> > @@ -336,7 +329,7 @@ static int ima_calc_file_hash_tfm(struct file *file,
+> >  {
+> >  	loff_t i_size, offset = 0;
+> >  	char *rbuf;
+> > -	int rc, read = 0;
+> > +	int rc;
+> >  	SHASH_DESC_ON_STACK(shash, tfm);
+> >  
+> >  	shash->tfm = tfm;
+> > @@ -357,11 +350,6 @@ static int ima_calc_file_hash_tfm(struct file *file,
+> >  	if (!rbuf)
+> >  		return -ENOMEM;
+> >  
+> > -	if (!(file->f_mode & FMODE_READ)) {
+> > -		file->f_mode |= FMODE_READ;
+> > -		read = 1;
+> > -	}
+> > -
+> >  	while (offset < i_size) {
+> >  		int rbuf_len;
+> >  
+> > @@ -378,8 +366,6 @@ static int ima_calc_file_hash_tfm(struct file *file,
+> >  		if (rc)
+> >  			break;
+> >  	}
+> > -	if (read)
+> > -		file->f_mode &= ~FMODE_READ;
+> >  	kfree(rbuf);
+> >  out:
+> >  	if (!rc)
+> > @@ -419,7 +405,7 @@ static int ima_calc_file_shash(struct file *file, struct ima_digest_data *hash)
+> >  int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+> >  {
+> >  	loff_t i_size;
+> > -	int rc;
+> > +	int read = 0, rc;
+> >  
+> >  	/*
+> >  	 * For consistency, fail file's opened with the O_DIRECT flag on
+> > @@ -431,15 +417,29 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+> >  		return -EINVAL;
+> >  	}
+> >  
+> > +	if (!(file->f_mode & FMODE_READ)) {
+> > +		struct file *f;
 > 
-> open_with_fake_path() looks like a better fit here.
-> Skips irrelevant security checks and less likely to fail.
+> I would define "struct file *f = file" above, at the beginning of
+> function, and "free(f)" below, without modifying "file".
 
-It skips the "cred" checking, but everything else seems to be the same
-including the security_ checks.
+I suppose you mean fput(f).
+Okay, if it makes code more understandable.
 
-Mimi
+> 
+> > +		int flags = file->f_flags & ~(O_WRONLY | O_APPEND | O_TRUNC | O_CREAT | O_NOCTTY | O_EXCL);
+> 
+> Doesn't O_RDONLY need to be added?
+
+No. O_RDONLY is zero. But I think I should add it for readability. The
+compiler will optimize it eventually.
+
+> Please fix the line length.
+> 
+> 
+> > +		f = dentry_open(&file->f_path, flags, file->f_cred);
+> > +		if (IS_ERR(f))
+> > +			return PTR_ERR(f);
+> > +		read = 1;
+> > +		file = f;
+> 
+> With the above change, no need to modify "file".
+> 
+> Mimi
+> 
+> > +	}
+> > +
+> >  	i_size = i_size_read(file_inode(file));
+> >  
+> >  	if (ima_ahash_minsize && i_size >= ima_ahash_minsize) {
+> >  		rc = ima_calc_file_ahash(file, hash);
+> >  		if (!rc)
+> > -			return 0;
+> > +			goto out;
+> >  	}
+> >  
+> > -	return ima_calc_file_shash(file, hash);
+> > +	rc = ima_calc_file_shash(file, hash);
+> > +out:
+> > +	if (read)
+> > +		fput(file);
+> > +	return rc;
+> >  }
+> >  
+> >  /*
+> > 
+> 
+
+-- 
+Goldwyn
