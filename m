@@ -1,20 +1,20 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47724 "EHLO
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43448 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726496AbeJJAwm (ORCPT
+        by vger.kernel.org with ESMTP id S1727040AbeJJAwS (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 9 Oct 2018 20:52:42 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w99HTcDF053173
-        for <linux-integrity@vger.kernel.org>; Tue, 9 Oct 2018 13:34:39 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2n0wtw90ee-1
+        Tue, 9 Oct 2018 20:52:18 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w99HTZra018428
+        for <linux-integrity@vger.kernel.org>; Tue, 9 Oct 2018 13:34:15 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2n0ywhtcdf-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 09 Oct 2018 13:34:38 -0400
+        for <linux-integrity@vger.kernel.org>; Tue, 09 Oct 2018 13:34:14 -0400
 Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Tue, 9 Oct 2018 18:34:36 +0100
+        Tue, 9 Oct 2018 18:34:13 +0100
 From: Nayna Jain <nayna@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
@@ -22,38 +22,26 @@ Cc: zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
         dhowells@redhat.com, jforbes@redhat.com,
         seth.forshee@canonical.com, pjones@redhat.com, vgoyal@redhat.com,
         dyoung@redhat.com, ebiederm@xmission.com,
-        kexec@lists.infradead.org, Eric Richter <erichte@linux.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH v6 5/5] x86/ima: define arch_get_ima_policy() for x86
-Date: Tue,  9 Oct 2018 23:00:37 +0530
+        kexec@lists.infradead.org, Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH v6 2/5] ima: prevent kexec_load syscall based on runtime secureboot flag
+Date: Tue,  9 Oct 2018 23:00:34 +0530
 In-Reply-To: <20181009173037.32630-1-nayna@linux.vnet.ibm.com>
 References: <20181009173037.32630-1-nayna@linux.vnet.ibm.com>
-Message-Id: <20181009173037.32630-6-nayna@linux.vnet.ibm.com>
+Message-Id: <20181009173037.32630-3-nayna@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-From: Eric Richter <erichte@linux.ibm.com>
+From: Nayna Jain <nayna@linux.ibm.com>
 
-On x86, there are two methods of verifying a kexec'ed kernel image
-signature being loaded via the kexec_file_load syscall - an architecture
-specific implementaton or a IMA KEXEC_KERNEL_CHECK appraisal rule. Neither
-of these methods verify the kexec'ed kernel image signature being loaded
-via the kexec_load syscall.
+When CONFIG_KEXEC_VERIFY_SIG is enabled, the kexec_file_load syscall
+requires the kexec'd kernel image to be signed. Distros are concerned
+about totally disabling the kexec_load syscall. As a compromise, the
+kexec_load syscall will only be disabled when CONFIG_KEXEC_VERIFY_SIG
+is configured and the system is booted with secureboot enabled.
 
-Secure boot enabled systems require kexec images to be signed. Therefore,
-this patch loads an IMA KEXEC_KERNEL_CHECK policy rule on secure boot
-enabled systems not configured with CONFIG_KEXEC_VERIFY_SIG enabled.
+This patch disables the kexec_load syscall only for systems booted with
+secureboot enabled.
 
-When IMA_APPRAISE_BOOTPARAM is configured, different IMA appraise modes
-(eg. fix, log) can be specified on the boot command line, allowing unsigned
-or invalidly signed kernel images to be kexec'ed. This patch permits
-enabling IMA_APPRAISE_BOOTPARAM or IMA_ARCH_POLICY, but not both.
-
-Signed-off-by: Eric Richter <erichte@linux.ibm.com>
-- Removed the policy KEXEC_ORIG_KERNEL_CHECK which was defined to
-  disable the kexec_load syscall.
-- arch_get_ima_policy() uses arch_ima_get_secureboot() to get secureboot
-  state
 Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
 Cc: David Howells <dhowells@redhat.com>
 Cc: Eric Biederman <ebiederm@xmission.com>
@@ -61,86 +49,52 @@ Cc: Peter Jones <pjones@redhat.com>
 Cc: Vivek Goyal <vgoyal@redhat.com>
 Cc: Dave Young <dyoung@redhat.com>
 ---
- arch/x86/kernel/ima_arch.c     | 16 ++++++++++++++++
- include/linux/ima.h            |  3 ++-
- security/integrity/ima/Kconfig | 10 +++++++++-
- 3 files changed, 27 insertions(+), 2 deletions(-)
+ security/integrity/ima/ima_main.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
-index bb5a88d2b271..6c248616ee57 100644
---- a/arch/x86/kernel/ima_arch.c
-+++ b/arch/x86/kernel/ima_arch.c
-@@ -15,3 +15,19 @@ bool arch_ima_get_secureboot(void)
- 	else
- 		return false;
- }
-+
-+/* secureboot arch rules */
-+static const char * const sb_arch_rules[] = {
-+#if !IS_ENABLED(CONFIG_KEXEC_VERIFY_SIG)
-+	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
-+#endif /* CONFIG_KEXEC_VERIFY_SIG */
-+	"measure func=KEXEC_KERNEL_CHECK",
-+	NULL
-+};
-+
-+const char * const *arch_get_ima_policy(void)
-+{
-+	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot())
-+		return sb_arch_rules;
-+	return NULL;
-+}
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 350fa957f8a6..dca3a96db4cd 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -32,17 +32,18 @@ extern void ima_add_kexec_buffer(struct kimage *image);
- 
- #ifdef CONFIG_X86
- extern bool arch_ima_get_secureboot(void);
-+extern const char * const *arch_get_ima_policy(void);
- #else
- static inline bool arch_ima_get_secureboot(void)
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index dce0a8a217bb..9031c99e37a6 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -505,20 +505,24 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+  */
+ int ima_load_data(enum kernel_load_data_id id)
  {
- 	return false;
- }
--#endif
+-	bool sig_enforce;
++	bool ima_enforce, sig_enforce;
  
- static inline const char * const *arch_get_ima_policy(void)
- {
- 	return NULL;
- }
-+#endif
+-	if ((ima_appraise & IMA_APPRAISE_ENFORCE) != IMA_APPRAISE_ENFORCE)
+-		return 0;
++	ima_enforce =
++		(ima_appraise & IMA_APPRAISE_ENFORCE) == IMA_APPRAISE_ENFORCE;
  
- #else
- static inline int ima_bprm_check(struct linux_binprm *bprm)
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 13b446328dda..a18f8c6d13b5 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -157,6 +157,14 @@ config IMA_APPRAISE
- 	  <http://linux-ima.sourceforge.net>
- 	  If unsure, say N.
- 
-+config IMA_ARCH_POLICY
-+        bool "Enable loading an IMA architecture specific policy"
-+        depends on KEXEC_VERIFY_SIG || IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
-+        default n
-+        help
-+          This option enables loading an IMA architecture specific policy
-+          based on run time secure boot flags.
+ 	switch (id) {
+ 	case LOADING_KEXEC_IMAGE:
+-		if (ima_appraise & IMA_APPRAISE_KEXEC) {
++		if (IS_ENABLED(CONFIG_KEXEC_VERIFY_SIG)
++		    && arch_ima_get_secureboot())
++			return -EACCES;
 +
- config IMA_APPRAISE_BUILD_POLICY
- 	bool "IMA build time configured policy rules"
- 	depends on IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
-@@ -217,7 +225,7 @@ config IMA_APPRAISE_REQUIRE_POLICY_SIGS
++		if (ima_enforce && (ima_appraise & IMA_APPRAISE_KEXEC)) {
+ 			pr_err("impossible to appraise a kernel image without a file descriptor; try using kexec_file_load syscall.\n");
+ 			return -EACCES;	/* INTEGRITY_UNKNOWN */
+ 		}
+ 		break;
+ 	case LOADING_FIRMWARE:
+-		if (ima_appraise & IMA_APPRAISE_FIRMWARE) {
++		if (ima_enforce && (ima_appraise & IMA_APPRAISE_FIRMWARE)) {
+ 			pr_err("Prevent firmware sysfs fallback loading.\n");
+ 			return -EACCES;	/* INTEGRITY_UNKNOWN */
+ 		}
+@@ -526,7 +530,8 @@ int ima_load_data(enum kernel_load_data_id id)
+ 	case LOADING_MODULE:
+ 		sig_enforce = is_module_sig_enforced();
  
- config IMA_APPRAISE_BOOTPARAM
- 	bool "ima_appraise boot parameter"
--	depends on IMA_APPRAISE
-+	depends on IMA_APPRAISE && !IMA_ARCH_POLICY
- 	default y
- 	help
- 	  This option enables the different "ima_appraise=" modes
+-		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES)) {
++		if (ima_enforce && (!sig_enforce
++				    && (ima_appraise & IMA_APPRAISE_MODULES))) {
+ 			pr_err("impossible to appraise a module without a file descriptor. sig_enforce kernel parameter might help\n");
+ 			return -EACCES;	/* INTEGRITY_UNKNOWN */
+ 		}
 -- 
 2.13.6
