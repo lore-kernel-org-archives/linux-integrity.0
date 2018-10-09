@@ -1,112 +1,49 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41302 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726468AbeJJAwK (ORCPT
+Received: from mail-it1-f181.google.com ([209.85.166.181]:38401 "EHLO
+        mail-it1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726434AbeJJAjj (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 9 Oct 2018 20:52:10 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w99HU8lP080562
-        for <linux-integrity@vger.kernel.org>; Tue, 9 Oct 2018 13:34:06 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2n0xcvf0yt-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 09 Oct 2018 13:34:06 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Tue, 9 Oct 2018 18:34:04 +0100
-From: Nayna Jain <nayna@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dhowells@redhat.com, jforbes@redhat.com,
-        seth.forshee@canonical.com, pjones@redhat.com, vgoyal@redhat.com,
-        dyoung@redhat.com, ebiederm@xmission.com,
-        kexec@lists.infradead.org, Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH v6 1/5] x86/ima: define arch_ima_get_secureboot
-Date: Tue,  9 Oct 2018 23:00:33 +0530
-In-Reply-To: <20181009173037.32630-1-nayna@linux.vnet.ibm.com>
-References: <20181009173037.32630-1-nayna@linux.vnet.ibm.com>
-Message-Id: <20181009173037.32630-2-nayna@linux.vnet.ibm.com>
+        Tue, 9 Oct 2018 20:39:39 -0400
+Received: by mail-it1-f181.google.com with SMTP id i76-v6so3879977ita.3
+        for <linux-integrity@vger.kernel.org>; Tue, 09 Oct 2018 10:21:40 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181004203007.217320-1-mjg59@google.com> <1538736566.3702.436.camel@linux.ibm.com>
+ <CACdnJusoTGYAZgK3eTEew=HtUpuY4ra_6eQyGa4WWxjZPagXjQ@mail.gmail.com>
+ <1538763521.3541.31.camel@linux.ibm.com> <CACdnJusqSSXhLHQUAeQz-s_fgvfKGNe_4Ws17T0GuCZGiVXPhA@mail.gmail.com>
+ <1538997900.15382.90.camel@linux.ibm.com> <CACdnJutwqyKwimcxAY4XNKv2fcyyg7aTJkoKY+XT-XnWLeU4aA@mail.gmail.com>
+ <1539038432.15382.181.camel@linux.ibm.com>
+In-Reply-To: <1539038432.15382.181.camel@linux.ibm.com>
+From: Matthew Garrett <mjg59@google.com>
+Date: Tue, 9 Oct 2018 10:21:27 -0700
+Message-ID: <CACdnJuszN9KRujTpGLWH2XCbotxMrLf+5nrr4P5K3yO7BBxWJw@mail.gmail.com>
+Subject: Re: Allow FUSE filesystems to provide out-of-band hashes to IMA
+To: zohar@linux.ibm.com
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, miklos@szeredi.hu,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-From: Nayna Jain <nayna@linux.ibm.com>
+On Mon, Oct 8, 2018 at 3:40 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>
+> On Mon, 2018-10-08 at 13:19 -0700, Matthew Garrett wrote:
+> > We trust that the filesystem will return us accurate binaries and
+> > hashes, but we don't the binaries themselves may not be trustworthy -
+> > we want the same level of audit trail associated with their execution
+> > that we'd have for something run off local disk. We could certainly
+> > rearchitect our filesystems to generate audit events themselves, but
+> > we'd be duplicating functionality that already exists in the kernel.
+>
+> I'm really not comfortable with the FUSE filesystem calculating the
+> file hash being used by IMA.  Adding FUSE i_version support would have
+> been better, instead of returning the actual file hash.  Based on a
+> mount option and the i_version, the kernel could then decide whether
+> or not to limit re-calculating the file hash.
 
-Distros are concerned about totally disabling the kexec_load syscall.
-As a compromise, the kexec_load syscall will only be disabled when
-CONFIG_KEXEC_VERIFY_SIG is configured and the system is booted with
-secureboot enabled.
-
-This patch defines the new arch specific function called
-arch_ima_get_secureboot() to retrieve the secureboot state of the system.
-
-Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-Suggested-by: Seth Forshee <seth.forshee@canonical.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Peter Jones <pjones@redhat.com>
-Cc: Vivek Goyal <vgoyal@redhat.com>
-Cc: Dave Young <dyoung@redhat.com>
----
- arch/x86/kernel/Makefile   |  2 ++
- arch/x86/kernel/ima_arch.c | 17 +++++++++++++++++
- include/linux/ima.h        |  9 +++++++++
- 3 files changed, 28 insertions(+)
- create mode 100644 arch/x86/kernel/ima_arch.c
-
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 02d6f5cf4e70..f32406e51424 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -149,3 +149,5 @@ ifeq ($(CONFIG_X86_64),y)
- 	obj-$(CONFIG_MMCONF_FAM10H)	+= mmconf-fam10h_64.o
- 	obj-y				+= vsmp_64.o
- endif
-+
-+obj-$(CONFIG_IMA)			+= ima_arch.o
-diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
-new file mode 100644
-index 000000000000..bb5a88d2b271
---- /dev/null
-+++ b/arch/x86/kernel/ima_arch.c
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Copyright (C) 2018 IBM Corporation
-+ */
-+#include <linux/efi.h>
-+#include <linux/ima.h>
-+
-+extern struct boot_params boot_params;
-+
-+bool arch_ima_get_secureboot(void)
-+{
-+	if (efi_enabled(EFI_BOOT) &&
-+		(boot_params.secure_boot == efi_secureboot_mode_enabled))
-+		return true;
-+	else
-+		return false;
-+}
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 84806b54b50a..4852255aa4f4 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -30,6 +30,15 @@ extern void ima_post_path_mknod(struct dentry *dentry);
- extern void ima_add_kexec_buffer(struct kimage *image);
- #endif
- 
-+#ifdef CONFIG_X86
-+extern bool arch_ima_get_secureboot(void);
-+#else
-+static inline bool arch_ima_get_secureboot(void)
-+{
-+	return false;
-+}
-+#endif
-+
- #else
- static inline int ima_bprm_check(struct linux_binprm *bprm)
- {
--- 
-2.13.6
+Well, there's a performance benefit as well - reading 500MB
+executables over the network is time consuming and otherwise mostly
+unnecessary. Given two solutions that have the same properties in
+terms of which components we need to trust, why not pick the one
+that's faster?
