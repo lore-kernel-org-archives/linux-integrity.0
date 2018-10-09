@@ -1,49 +1,59 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-it1-f181.google.com ([209.85.166.181]:38401 "EHLO
-        mail-it1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726434AbeJJAjj (ORCPT
+Received: from userp2130.oracle.com ([156.151.31.86]:45508 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbeJIXP5 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 9 Oct 2018 20:39:39 -0400
-Received: by mail-it1-f181.google.com with SMTP id i76-v6so3879977ita.3
-        for <linux-integrity@vger.kernel.org>; Tue, 09 Oct 2018 10:21:40 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181004203007.217320-1-mjg59@google.com> <1538736566.3702.436.camel@linux.ibm.com>
- <CACdnJusoTGYAZgK3eTEew=HtUpuY4ra_6eQyGa4WWxjZPagXjQ@mail.gmail.com>
- <1538763521.3541.31.camel@linux.ibm.com> <CACdnJusqSSXhLHQUAeQz-s_fgvfKGNe_4Ws17T0GuCZGiVXPhA@mail.gmail.com>
- <1538997900.15382.90.camel@linux.ibm.com> <CACdnJutwqyKwimcxAY4XNKv2fcyyg7aTJkoKY+XT-XnWLeU4aA@mail.gmail.com>
- <1539038432.15382.181.camel@linux.ibm.com>
-In-Reply-To: <1539038432.15382.181.camel@linux.ibm.com>
-From: Matthew Garrett <mjg59@google.com>
-Date: Tue, 9 Oct 2018 10:21:27 -0700
-Message-ID: <CACdnJuszN9KRujTpGLWH2XCbotxMrLf+5nrr4P5K3yO7BBxWJw@mail.gmail.com>
-Subject: Re: Allow FUSE filesystems to provide out-of-band hashes to IMA
-To: zohar@linux.ibm.com
-Cc: linux-integrity <linux-integrity@vger.kernel.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 9 Oct 2018 19:15:57 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w99FsWwh080839
+        for <linux-integrity@vger.kernel.org>; Tue, 9 Oct 2018 15:58:21 GMT
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2mxmftpfe4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-integrity@vger.kernel.org>; Tue, 09 Oct 2018 15:58:21 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w99FwKu2025632
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-integrity@vger.kernel.org>; Tue, 9 Oct 2018 15:58:20 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w99FwJ1M001177
+        for <linux-integrity@vger.kernel.org>; Tue, 9 Oct 2018 15:58:20 GMT
+From: Chuck Lever <chuck.lever@oracle.com>
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: LPC 2018
+Message-Id: <9808035C-5AE5-4594-BDBF-A51544231608@oracle.com>
+Date: Tue, 9 Oct 2018 11:58:18 -0400
+To: linux-integrity@vger.kernel.org
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Oct 8, 2018 at 3:40 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
->
-> On Mon, 2018-10-08 at 13:19 -0700, Matthew Garrett wrote:
-> > We trust that the filesystem will return us accurate binaries and
-> > hashes, but we don't the binaries themselves may not be trustworthy -
-> > we want the same level of audit trail associated with their execution
-> > that we'd have for something run off local disk. We could certainly
-> > rearchitect our filesystems to generate audit events themselves, but
-> > we'd be duplicating functionality that already exists in the kernel.
->
-> I'm really not comfortable with the FUSE filesystem calculating the
-> file hash being used by IMA.  Adding FUSE i_version support would have
-> been better, instead of returning the actual file hash.  Based on a
-> mount option and the i_version, the kernel could then decide whether
-> or not to limit re-calculating the file hash.
+I'm planning to attend LPC next month. I'm interested in discussing
+IMA on distributed file systems in particular with anyone here who
+might also attend. I expect it would be a narrow topic, so a birds
+of a feather is probably appropriate, but hallway track could work
+too.
 
-Well, there's a performance benefit as well - reading 500MB
-executables over the network is time consuming and otherwise mostly
-unnecessary. Given two solutions that have the same properties in
-terms of which components we need to trust, why not pick the one
-that's faster?
+I especially would like to discuss the on-disk format of IMA
+metadata, and how the IMA module behaves when it encounters metadata
+it does not recognize (or how you do on-disk format versioning).
+
+I'm still working on an Internet Draft that specifies how to enable
+IMA on NFS files. The biggest challenge has been the lack of IMA
+spec. The current revision of the Draft describes the requirements
+in generic terms, and cites the IMA wiki/white paper only as an
+Informative reference. I believe this will be adequate.
+
+I've also dropped EVM support for now. Two concerns:
+- NFS does not expose some file attributes that EVM protects
+- The format of some file attributes might not be the same on all
+  client OSes.
+
+More to talk about in person, I hope.
+
+https://datatracker.ietf.org/doc/draft-ietf-nfsv4-integrity-measurement/
+
+
+--
+Chuck Lever
