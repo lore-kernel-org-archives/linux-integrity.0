@@ -1,73 +1,55 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36639 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726781AbeJJFay (ORCPT
+Received: from mail-it1-f182.google.com ([209.85.166.182]:51527 "EHLO
+        mail-it1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726445AbeJJEvW (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 10 Oct 2018 01:30:54 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f18-v6so1497586pgv.3
-        for <linux-integrity@vger.kernel.org>; Tue, 09 Oct 2018 15:11:51 -0700 (PDT)
+        Wed, 10 Oct 2018 00:51:22 -0400
+Received: by mail-it1-f182.google.com with SMTP id 74-v6so5032630itw.1
+        for <linux-integrity@vger.kernel.org>; Tue, 09 Oct 2018 14:32:27 -0700 (PDT)
 MIME-Version: 1.0
-From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Tue, 9 Oct 2018 15:11:39 -0700
-Message-ID: <CAKwvOdkqtfAyDdxkac=NtfSiskiGyOhN1PPzkxBYpR_JEBTRbw@mail.gmail.com>
-Subject: undefined behavior (-Wvarargs) in security/keys/trusted.c#TSS_authhmac()
-To: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        zohar@linux.vnet.ibm.com, dhowells@redhat.com, jmorris@namei.org,
-        serge@hallyn.com
-Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Eric Biggers <ebiggers@google.com>
+References: <20181004203007.217320-1-mjg59@google.com> <1538736566.3702.436.camel@linux.ibm.com>
+ <CACdnJusoTGYAZgK3eTEew=HtUpuY4ra_6eQyGa4WWxjZPagXjQ@mail.gmail.com>
+ <1538763521.3541.31.camel@linux.ibm.com> <CACdnJusqSSXhLHQUAeQz-s_fgvfKGNe_4Ws17T0GuCZGiVXPhA@mail.gmail.com>
+ <1538997900.15382.90.camel@linux.ibm.com> <CACdnJutwqyKwimcxAY4XNKv2fcyyg7aTJkoKY+XT-XnWLeU4aA@mail.gmail.com>
+ <1539038432.15382.181.camel@linux.ibm.com> <CACdnJuszN9KRujTpGLWH2XCbotxMrLf+5nrr4P5K3yO7BBxWJw@mail.gmail.com>
+ <1539108259.15382.221.camel@linux.ibm.com> <CACdnJus_N41kbJ9SdWSi-q3b-=Z7RRnfGSU1sXnKfdBmFL5j4A@mail.gmail.com>
+ <1539118367.15382.247.camel@linux.ibm.com>
+In-Reply-To: <1539118367.15382.247.camel@linux.ibm.com>
+From: Matthew Garrett <mjg59@google.com>
+Date: Tue, 9 Oct 2018 14:32:15 -0700
+Message-ID: <CACdnJusJ83MH+e7N4qXwS9iMTFLVoQzZrW=zNBHaTwr+LLHL8g@mail.gmail.com>
+Subject: Re: Allow FUSE filesystems to provide out-of-band hashes to IMA
+To: zohar@linux.ibm.com
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, miklos@szeredi.hu,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        chuck.lever@oracle.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Hello,
-I noticed that compiling with
-CONFIG_TCG_TPM=y
-CONFIG_HW_RANDOM_TPM=y
-and Clang produced the warning:
+On Tue, Oct 9, 2018 at 1:52 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>
+> > The performance hit is more noticeable over remote filesystems, but we
+> > have large binaries that take several seconds to hash even on local
+> > filesystems. Would it be helpful to try to define the assumptions that
+> > IMA makes in terms of whether or not it produces trustworthy results?
+> > It feels like it's be easier to talk about this if we have a more
+> > formal set of conditions to take into consideration.
+>
+> [Cc'ing Chuck Lever]
+>
+> Integrity of files on remote filesystems should probably be discussed
+> in the context of fs-verity, not FUSE filesystems.
 
-  CC      security/keys/trusted.o
-security/keys/trusted.c:146:17: warning: passing an object that
-undergoes default
-      argument promotion to 'va_start' has undefined behavior [-Wvarargs]
-        va_start(argp, h3);
-                       ^
-security/keys/trusted.c:126:37: note: parameter of type 'unsigned
-char' is declared here
-unsigned char *h2, unsigned char h3, ...)
-                               ^
+Hm. We /could/ fake up fs-verity style behaviour, but we're not
+talking about files that are expected to be immutable so it would seem
+like there might be mismatched semantics there.
 
-Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
-standards explicitly call this out as undefined behavior:
+> Do you want to continue the discussion here or perhaps as an LSS-EU
+> BoF?
 
-The parameter parmN is the identifier of the rightmost parameter in
-the variable parameter list in the function definition (the one just
-before the ...). If the parameter parmN is declared with ... or with a
-type that is not compatible with the type that results after
-application of the default argument promotions, the behavior is
-undefined.
-
-So if I understand my C promotion/conversion rules correctly, unsigned
-char would be promoted to int?
-
-We had a few ideas for possible fixes in:
-https://github.com/ClangBuiltLinux/linux/issues/41
-
-Do the maintainers have feedback on these suggestions or a more appropriate fix?
-
-Note: https://www.gnu.org/software/libc/manual/html_node/Calling-Variadics.html
-and `man 3 va_start` mention more about promotions, but just for
-va_arg, not va_start. But the standard seems explicit about parmN
-which is passed to va_start.
-
-https://www.eskimo.com/~scs/cclass/int/sx11c.html is also an
-interesting read on the subject, which states: `Finally, for vaguely
-related reasons, the last fixed argument (the one whose name is passed
-as the second argument to the va_start() macro) should not be of type
-char, short int, or float, either.`
--- 
-Thanks,
-~Nick Desaulniers
+This is something that's causing us pain at the moment, so if there's
+any chance we can reach a resolution over the next couple of weeks
+then I'd like to continue discussing it :)
