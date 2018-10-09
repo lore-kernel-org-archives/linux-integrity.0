@@ -1,59 +1,154 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from userp2130.oracle.com ([156.151.31.86]:45508 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbeJIXP5 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 9 Oct 2018 19:15:57 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w99FsWwh080839
-        for <linux-integrity@vger.kernel.org>; Tue, 9 Oct 2018 15:58:21 GMT
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2mxmftpfe4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-integrity@vger.kernel.org>; Tue, 09 Oct 2018 15:58:21 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w99FwKu2025632
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-integrity@vger.kernel.org>; Tue, 9 Oct 2018 15:58:20 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w99FwJ1M001177
-        for <linux-integrity@vger.kernel.org>; Tue, 9 Oct 2018 15:58:20 GMT
-From: Chuck Lever <chuck.lever@oracle.com>
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: LPC 2018
-Message-Id: <9808035C-5AE5-4594-BDBF-A51544231608@oracle.com>
-Date: Tue, 9 Oct 2018 11:58:18 -0400
-To: linux-integrity@vger.kernel.org
+Received: from mx2.suse.de ([195.135.220.15]:41890 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726647AbeJIWaB (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 9 Oct 2018 18:30:01 -0400
+Date: Tue, 9 Oct 2018 10:12:33 -0500
+From: Goldwyn Rodrigues <rgoldwyn@suse.de>
+To: zohar@linux.ibm.com
+Cc: linux-integrity@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        iforster@suse.de, fvogt@suse.de, miklos@szeredi.hu
+Subject: [PATCH v2] Open a new file instance if no read permissions
+Message-ID: <20181009151233.lxgm5c73epofi6r3@merlin>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-I'm planning to attend LPC next month. I'm interested in discussing
-IMA on distributed file systems in particular with anyone here who
-might also attend. I expect it would be a narrow topic, so a birds
-of a feather is probably appropriate, but hallway track could work
-too.
+Open a new file instance as opposed to changing file->f_mode when
+the file is not readable. This is done to accomodate
+overlayfs stacked file operations change. The real struct file is hidden
+behind the overlays struct file. So, any file->f_mode manipulations are
+not reflected on the real struct file. Open the file again in read mode
+if original file cannot be read, read and calculate the hash.
 
-I especially would like to discuss the on-disk format of IMA
-metadata, and how the IMA module behaves when it encounters metadata
-it does not recognize (or how you do on-disk format versioning).
+Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-I'm still working on an Internet Draft that specifies how to enable
-IMA on NFS files. The biggest challenge has been the lack of IMA
-spec. The current revision of the Draft describes the requirements
-in generic terms, and cites the IMA wiki/white paper only as an
-Informative reference. I believe this will be adequate.
-
-I've also dropped EVM support for now. Two concerns:
-- NFS does not expose some file attributes that EVM protects
-- The format of some file attributes might not be the same on all
-  client OSes.
-
-More to talk about in person, I hope.
-
-https://datatracker.ietf.org/doc/draft-ietf-nfsv4-integrity-measurement/
+Changes since v1:
+ - Open new file only if read permission don't exist
+ - Warning message if dentry_open() fails
 
 
---
-Chuck Lever
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index 7e7e7e7c250a..f6030cb470e6 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -210,7 +210,7 @@ static int ima_calc_file_hash_atfm(struct file *file,
+ {
+ 	loff_t i_size, offset;
+ 	char *rbuf[2] = { NULL, };
+-	int rc, read = 0, rbuf_len, active = 0, ahash_rc = 0;
++	int rc, rbuf_len, active = 0, ahash_rc = 0;
+ 	struct ahash_request *req;
+ 	struct scatterlist sg[1];
+ 	struct crypto_wait wait;
+@@ -257,11 +257,6 @@ static int ima_calc_file_hash_atfm(struct file *file,
+ 					  &rbuf_size[1], 0);
+ 	}
+ 
+-	if (!(file->f_mode & FMODE_READ)) {
+-		file->f_mode |= FMODE_READ;
+-		read = 1;
+-	}
+-
+ 	for (offset = 0; offset < i_size; offset += rbuf_len) {
+ 		if (!rbuf[1] && offset) {
+ 			/* Not using two buffers, and it is not the first
+@@ -300,8 +295,6 @@ static int ima_calc_file_hash_atfm(struct file *file,
+ 	/* wait for the last update request to complete */
+ 	rc = ahash_wait(ahash_rc, &wait);
+ out3:
+-	if (read)
+-		file->f_mode &= ~FMODE_READ;
+ 	ima_free_pages(rbuf[0], rbuf_size[0]);
+ 	ima_free_pages(rbuf[1], rbuf_size[1]);
+ out2:
+@@ -336,7 +329,7 @@ static int ima_calc_file_hash_tfm(struct file *file,
+ {
+ 	loff_t i_size, offset = 0;
+ 	char *rbuf;
+-	int rc, read = 0;
++	int rc;
+ 	SHASH_DESC_ON_STACK(shash, tfm);
+ 
+ 	shash->tfm = tfm;
+@@ -357,11 +350,6 @@ static int ima_calc_file_hash_tfm(struct file *file,
+ 	if (!rbuf)
+ 		return -ENOMEM;
+ 
+-	if (!(file->f_mode & FMODE_READ)) {
+-		file->f_mode |= FMODE_READ;
+-		read = 1;
+-	}
+-
+ 	while (offset < i_size) {
+ 		int rbuf_len;
+ 
+@@ -378,8 +366,6 @@ static int ima_calc_file_hash_tfm(struct file *file,
+ 		if (rc)
+ 			break;
+ 	}
+-	if (read)
+-		file->f_mode &= ~FMODE_READ;
+ 	kfree(rbuf);
+ out:
+ 	if (!rc)
+@@ -420,6 +406,8 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+ {
+ 	loff_t i_size;
+ 	int rc;
++	struct file *f = file;
++	bool new_file_instance = false, modified_flags = false;
+ 
+ 	/*
+ 	 * For consistency, fail file's opened with the O_DIRECT flag on
+@@ -431,15 +419,42 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+ 		return -EINVAL;
+ 	}
+ 
+-	i_size = i_size_read(file_inode(file));
++	/* Open a new file instance in O_RDONLY if we cannot read */
++	if (!(file->f_mode & FMODE_READ)) {
++		int flags = file->f_flags & ~(O_WRONLY | O_APPEND |
++				O_TRUNC | O_CREAT | O_NOCTTY | O_EXCL);
++		flags |= O_RDONLY;
++		f = dentry_open(&file->f_path, flags, file->f_cred);
++		if (IS_ERR(f)) {
++			/* 
++			 * Cannot open the file again, lets
++			 * modify f_flags of original and
++			 * continue
++			 */
++			pr_info_ratelimited("Unable to reopen file for reading.\n");
++			f = file;
++			f->f_flags |= FMODE_READ;
++			modified_flags = true;
++		} else {
++			new_file_instance = true;
++		}
++	}
++
++	i_size = i_size_read(file_inode(f));
+ 
+ 	if (ima_ahash_minsize && i_size >= ima_ahash_minsize) {
+-		rc = ima_calc_file_ahash(file, hash);
++		rc = ima_calc_file_ahash(f, hash);
+ 		if (!rc)
+-			return 0;
++			goto out;
+ 	}
+ 
+-	return ima_calc_file_shash(file, hash);
++	rc = ima_calc_file_shash(f, hash);
++out:
++	if (new_file_instance)
++		fput(f);
++	else if (modified_flags)
++		f->f_flags &= ~FMODE_READ;
++	return rc;
+ }
+ 
+ /*
+
+-- 
+Goldwyn
