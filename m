@@ -1,53 +1,64 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43666 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726235AbeJKWp0 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 11 Oct 2018 18:45:26 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9BFEkcF040750
-        for <linux-integrity@vger.kernel.org>; Thu, 11 Oct 2018 11:17:49 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n2743ebt5-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 11 Oct 2018 11:17:45 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <kgold@linux.vnet.ibm.com>;
-        Thu, 11 Oct 2018 11:17:41 -0400
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9BFHdbZ27131984
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
-        for <linux-integrity@vger.kernel.org>; Thu, 11 Oct 2018 15:17:39 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 71ACF112065
-        for <linux-integrity@vger.kernel.org>; Thu, 11 Oct 2018 11:17:00 -0400 (EDT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6AB76112069
-        for <linux-integrity@vger.kernel.org>; Thu, 11 Oct 2018 11:17:00 -0400 (EDT)
-Received: from [9.2.202.77] (unknown [9.2.202.77])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP
-        for <linux-integrity@vger.kernel.org>; Thu, 11 Oct 2018 11:17:00 -0400 (EDT)
-Subject: Re: Question about the TPM driver
-To: linux-integrity@vger.kernel.org
-References: <CAN19L9EEYK+OpJSCw+nNv7fCjkS5eQeAXfy=51nfk=fBZne-BA@mail.gmail.com>
- <1536848529.3436.2.camel@HansenPartnership.com>
-From: Ken Goldman <kgold@linux.vnet.ibm.com>
-Date: Thu, 11 Oct 2018 11:17:53 -0400
+Received: from mga06.intel.com ([134.134.136.31]:21241 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727160AbeJKUzO (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 11 Oct 2018 16:55:14 -0400
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+CC: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Peter Huewe <peterhuewe@gmx.de>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] tpm: fix unused-value issues in tpm_try_transmit
+Date: Thu, 11 Oct 2018 13:27:58 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D9EEC12@hasmsx109.ger.corp.intel.com>
+References: <20181010133817.GA11485@embeddedor.com>
+ <20181010140638.GA3894@ziepe.ca> <20181011120140.GA15767@linux.intel.com>
+In-Reply-To: <20181011120140.GA15767@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-In-Reply-To: <1536848529.3436.2.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Message-Id: <7174cf56-57f2-c545-ab85-9d9c1d3253b2@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 9/13/2018 10:22 AM, James Bottomley wrote:
 > 
-> Exact buffer size hasn't been thought to be an issue since you know
-> that any response will fit into MAX_RESPONSE_SIZE which the current
-> implementation defines to be 4096.
+> On Wed, Oct 10, 2018 at 08:06:38AM -0600, Jason Gunthorpe wrote:
+> > On Wed, Oct 10, 2018 at 03:38:17PM +0200, Gustavo A. R. Silva wrote:
+> > > Currently, there are some values assigned to variable *rc*, which
+> > > are never actually used in any computation, because such variable is
+> > > updated at line 550, before they can be used:
+> > >
+> > > 549out:
+> > > 550        rc = tpm_go_idle(chip, flags);
+> > > 551        if (rc)
+> > > 552                goto out;
+> > >
+> > > Fix this by removing such assignments.
+> >
+> > Should this be done by not quashing rc during the error unwind rather
+> > than dropping the errors?
+> 
+> Yeah.`
+> 
+> Wondering if tpm_go_idle() should simply be a void-function i.e. issue just a
+> warning inside (disclaimer: did not revisit its code when writing this).
 
-If a caller wishes to optimize, TPM 2.0 has these two getcapabilities.
+We did have rather a long discussion about it when it was merged.
+There are two flows that may crash 
+rc = tpm2_commit_space()
 
-TPM_PT_MAX_COMMAND_SIZE - the maximum value for commandSize in a command
-TPM_PT_MAX_RESPONSE_SIZE - the maximum value for responseSize in a response
+but you still can need to 
+
+rc  = go_idle()  
+
+which also may crash which may override the previous value. 
+
+Frankly the second one is fatal, the stack will go out of sync.
+We may do void here as the stack will crash in a subsequent command. 
+
+The 'goto out' is quite a  bug, probably caused by code movement.
+
+
+Thanks
+Tomas
