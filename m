@@ -1,64 +1,65 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:38120 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726036AbeJKXas (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 11 Oct 2018 19:30:48 -0400
+Received: from mail.hallyn.com ([178.63.66.53]:43208 "EHLO mail"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728517AbeJKX0E (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 11 Oct 2018 19:26:04 -0400
+Date: Thu, 11 Oct 2018 15:48:47 +0000
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Monty Wiseman <montywiseman32@gmail.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+        linux-integrity@vger.kernel.org
+Subject: Re: LPC 2018
+Message-ID: <20181011154847.GA5978@mail.hallyn.com>
+References: <9808035C-5AE5-4594-BDBF-A51544231608@oracle.com>
+ <dfe11979-1afd-1554-fcaa-ebf39e32397d@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKwvOdkqtfAyDdxkac=NtfSiskiGyOhN1PPzkxBYpR_JEBTRbw@mail.gmail.com>
-References: <CAKwvOdkqtfAyDdxkac=NtfSiskiGyOhN1PPzkxBYpR_JEBTRbw@mail.gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 11 Oct 2018 18:02:56 +0200
-Message-ID: <CAK8P3a3PjfQHKb_Chmn6RDyLV7+xE=s_AAFdt+fNshohdD7Ztw@mail.gmail.com>
-Subject: Re: undefined behavior (-Wvarargs) in security/keys/trusted.c#TSS_authhmac()
-To: Nick Desaulniers <ndesaulniers@google.com>
-Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        zohar@linux.vnet.ibm.com, dhowells@redhat.com, jmorris@namei.org,
-        serge@hallyn.com, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Eric Biggers <ebiggers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <dfe11979-1afd-1554-fcaa-ebf39e32397d@gmail.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On 10/10/18, Nick Desaulniers <ndesaulniers@google.com> wrote:
-> Hello,
-> I noticed that compiling with
-> CONFIG_TCG_TPM=y
-> CONFIG_HW_RANDOM_TPM=y
-> and Clang produced the warning:
->
->   CC      security/keys/trusted.o
-> security/keys/trusted.c:146:17: warning: passing an object that
-> undergoes default
->       argument promotion to 'va_start' has undefined behavior [-Wvarargs]
->         va_start(argp, h3);
->                        ^
-> security/keys/trusted.c:126:37: note: parameter of type 'unsigned
-> char' is declared here
-> unsigned char *h2, unsigned char h3, ...)
->                                ^
->
-> Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
-> standards explicitly call this out as undefined behavior:
->
-> The parameter parmN is the identifier of the rightmost parameter in
-> the variable parameter list in the function definition (the one just
-> before the ...). If the parameter parmN is declared with ... or with a
-> type that is not compatible with the type that results after
-> application of the default argument promotions, the behavior is
-> undefined.
->
-> So if I understand my C promotion/conversion rules correctly, unsigned
-> char would be promoted to int?
->
-> We had a few ideas for possible fixes in:
-> https://github.com/ClangBuiltLinux/linux/issues/41
+Would be awesome if some meeting notes could be sent to this list after
+the fact :)
 
-I arrived at a similar patch as the one cited there, but it broke again
-after an 'extern' declaration was added in include/keys/trusted.h,
-so that has to be patched as well now.
+thanks,
+-serge
 
-       Arnd
+Quoting Monty Wiseman (montywiseman32@gmail.com):
+> I'll be there and am interested. I'm co-chair of the TCG Infrastructure
+> working group which is defining
+> an Event log format for firmware and IMA.
+> 
+> 
+> On 10/09/2018 11:58 AM, Chuck Lever wrote:
+> > I'm planning to attend LPC next month. I'm interested in discussing
+> > IMA on distributed file systems in particular with anyone here who
+> > might also attend. I expect it would be a narrow topic, so a birds
+> > of a feather is probably appropriate, but hallway track could work
+> > too.
+> > 
+> > I especially would like to discuss the on-disk format of IMA
+> > metadata, and how the IMA module behaves when it encounters metadata
+> > it does not recognize (or how you do on-disk format versioning).
+> > 
+> > I'm still working on an Internet Draft that specifies how to enable
+> > IMA on NFS files. The biggest challenge has been the lack of IMA
+> > spec. The current revision of the Draft describes the requirements
+> > in generic terms, and cites the IMA wiki/white paper only as an
+> > Informative reference. I believe this will be adequate.
+> > 
+> > I've also dropped EVM support for now. Two concerns:
+> > - NFS does not expose some file attributes that EVM protects
+> > - The format of some file attributes might not be the same on all
+> >    client OSes.
+> > 
+> > More to talk about in person, I hope.
+> > 
+> > https://datatracker.ietf.org/doc/draft-ietf-nfsv4-integrity-measurement/
+> > 
+> > 
+> > --
+> > Chuck Lever
+> > 
+> > 
+> > 
+> 
