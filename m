@@ -1,120 +1,53 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60798 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727785AbeJKWuP (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43666 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726235AbeJKWp0 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 11 Oct 2018 18:50:15 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9BFLZC8128228
-        for <linux-integrity@vger.kernel.org>; Thu, 11 Oct 2018 11:22:36 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n289j2uy3-1
+        Thu, 11 Oct 2018 18:45:26 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9BFEkcF040750
+        for <linux-integrity@vger.kernel.org>; Thu, 11 Oct 2018 11:17:49 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2n2743ebt5-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 11 Oct 2018 11:22:35 -0400
+        for <linux-integrity@vger.kernel.org>; Thu, 11 Oct 2018 11:17:45 -0400
 Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 11 Oct 2018 16:22:33 +0100
-Subject: Re: [PATCH 1/3] VFS: Add a call to obtain a file's hash
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Matthew Garrett <mjg59@google.com>, linux-integrity@vger.kernel.org
-Cc: zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
-        miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-        viro@zeniv.linux.org.uk
-Date: Thu, 11 Oct 2018 11:22:17 -0400
-In-Reply-To: <20181004203007.217320-2-mjg59@google.com>
-References: <20181004203007.217320-1-mjg59@google.com>
-         <20181004203007.217320-2-mjg59@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Message-Id: <1539271337.11939.78.camel@linux.ibm.com>
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <kgold@linux.vnet.ibm.com>;
+        Thu, 11 Oct 2018 11:17:41 -0400
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9BFHdbZ27131984
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
+        for <linux-integrity@vger.kernel.org>; Thu, 11 Oct 2018 15:17:39 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 71ACF112065
+        for <linux-integrity@vger.kernel.org>; Thu, 11 Oct 2018 11:17:00 -0400 (EDT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6AB76112069
+        for <linux-integrity@vger.kernel.org>; Thu, 11 Oct 2018 11:17:00 -0400 (EDT)
+Received: from [9.2.202.77] (unknown [9.2.202.77])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP
+        for <linux-integrity@vger.kernel.org>; Thu, 11 Oct 2018 11:17:00 -0400 (EDT)
+Subject: Re: Question about the TPM driver
+To: linux-integrity@vger.kernel.org
+References: <CAN19L9EEYK+OpJSCw+nNv7fCjkS5eQeAXfy=51nfk=fBZne-BA@mail.gmail.com>
+ <1536848529.3436.2.camel@HansenPartnership.com>
+From: Ken Goldman <kgold@linux.vnet.ibm.com>
+Date: Thu, 11 Oct 2018 11:17:53 -0400
+MIME-Version: 1.0
+In-Reply-To: <1536848529.3436.2.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Message-Id: <7174cf56-57f2-c545-ab85-9d9c1d3253b2@linux.vnet.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, 2018-10-04 at 13:30 -0700, Matthew Garrett wrote:
-> IMA wants to know what the hash of a file is, and currently does so by
-> reading the entire file and generating the hash. Some filesystems may
-> have the ability to store the hash in a secure manner resistant to
-> offline attacks (eg, filesystem-level file signing), and in that case
-> it's a performance win for IMA to be able to use that rather than having
-> to re-hash everything. This patch simply adds VFS-level support for
-> calling down to filesystems.
+On 9/13/2018 10:22 AM, James Bottomley wrote:
+> 
+> Exact buffer size hasn't been thought to be an issue since you know
+> that any response will fit into MAX_RESPONSE_SIZE which the current
+> implementation defines to be 4096.
 
-This patch description starts out saying that IMA needs the file hash
-without explaining why.  Without that explanation, simply extracting
-the file hash included in the file signature might sound plausible,
-but kind of defeats the purpose of IMA.
+If a caller wishes to optimize, TPM 2.0 has these two getcapabilities.
 
-Mimi
-
-
-> 
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
-> ---
->  fs/read_write.c    | 24 ++++++++++++++++++++++++
->  include/linux/fs.h |  6 +++++-
->  2 files changed, 29 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/read_write.c b/fs/read_write.c
-> index 39b4a21dd933..9ba3ce4bb838 100644
-> --- a/fs/read_write.c
-> +++ b/fs/read_write.c
-> @@ -2081,3 +2081,27 @@ int vfs_dedupe_file_range(struct file *file, struct file_dedupe_range *same)
->  	return ret;
->  }
->  EXPORT_SYMBOL(vfs_dedupe_file_range);
-> +
-> +/**
-> + * vfs_gethash - obtain a file's hash
-> + * @file:	file structure in question
-> + * @hash_algo:	the hash algorithm requested
-> + * @buf:	buffer to return the hash in
-> + * @size:	size allocated for the buffer by the caller
-> + *
-> + * This function allows filesystems that support securely storing the hash
-> + * of a file to return it rather than forcing the kernel to recalculate it.
-> + * Filesystems that cannot provide guarantees about the hash being resistant
-> + * to offline attack should not implement this functionality.
-> + *
-> + * Returns 0 on success, -EOPNOTSUPP if the filesystem doesn't support it.
-> + */
-> +int vfs_get_hash(struct file *file, enum hash_algo hash, uint8_t *buf,
-> +		 size_t size)
-> +{
-> +	if (!file->f_op->get_hash)
-> +		return -EOPNOTSUPP;
-> +
-> +	return file->f_op->get_hash(file, hash, buf, size);
-> +}
-> +EXPORT_SYMBOL(vfs_get_hash);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 6c0b4a1c22ff..540316cfd461 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -40,6 +40,7 @@
-> 
->  #include <asm/byteorder.h>
->  #include <uapi/linux/fs.h>
-> +#include <uapi/linux/hash_info.h>
-> 
->  struct backing_dev_info;
->  struct bdi_writeback;
-> @@ -1764,6 +1765,8 @@ struct file_operations {
->  	int (*dedupe_file_range)(struct file *, loff_t, struct file *, loff_t,
->  			u64);
->  	int (*fadvise)(struct file *, loff_t, loff_t, int);
-> +	int (*get_hash)(struct file *, enum hash_algo hash, uint8_t *buf,
-> +			size_t size);
->  } __randomize_layout;
-> 
->  struct inode_operations {
-> @@ -1838,7 +1841,8 @@ extern int vfs_dedupe_file_range(struct file *file,
->  extern int vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
->  				     struct file *dst_file, loff_t dst_pos,
->  				     u64 len);
-> -
-> +extern int vfs_get_hash(struct file *file, enum hash_algo hash, uint8_t *buf,
-> +			size_t size);
-> 
->  struct super_operations {
->     	struct inode *(*alloc_inode)(struct super_block *sb);
+TPM_PT_MAX_COMMAND_SIZE - the maximum value for commandSize in a command
+TPM_PT_MAX_RESPONSE_SIZE - the maximum value for responseSize in a response
