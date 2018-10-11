@@ -1,51 +1,75 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:45818 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726040AbeJLDqz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 11 Oct 2018 23:46:55 -0400
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-To: "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-        "jgg@ziepe.ca" <jgg@ziepe.ca>,
-        "nayna@linux.ibm.com" <nayna@linux.ibm.com>
-CC: "nayna@linux.vnet.ibm.com" <nayna@linux.vnet.ibm.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 05/21] tpm: factor out tpm_get_timeouts()
-Date: Thu, 11 Oct 2018 20:16:34 +0000
-Message-ID: <1539288758.1669.15.camel@intel.com>
-References: <20180928223035.14471-1-tomas.winkler@intel.com>
-         <20180928223035.14471-6-tomas.winkler@intel.com>
-         <b6b0fb96-e955-bf86-9bac-e6acee1e33e0@linux.ibm.com>
-In-Reply-To: <b6b0fb96-e955-bf86-9bac-e6acee1e33e0@linux.ibm.com>
-Content-Type: text/plain; charset="utf-8"
+Received: from mail-qk1-f171.google.com ([209.85.222.171]:35878 "EHLO
+        mail-qk1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726040AbeJLDSA (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 11 Oct 2018 23:18:00 -0400
+Received: by mail-qk1-f171.google.com with SMTP id a85-v6so6266801qkg.3
+        for <linux-integrity@vger.kernel.org>; Thu, 11 Oct 2018 12:49:16 -0700 (PDT)
+Subject: Re: LPC 2018
+To: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+        linux-integrity@vger.kernel.org
+References: <9808035C-5AE5-4594-BDBF-A51544231608@oracle.com>
+ <dfe11979-1afd-1554-fcaa-ebf39e32397d@gmail.com>
+ <20181011154847.GA5978@mail.hallyn.com>
+From: Monty Wiseman <montywiseman32@gmail.com>
+Message-ID: <3839043b-5541-369e-1179-c3c8c1dbfb07@gmail.com>
+Date: Thu, 11 Oct 2018 15:49:13 -0400
 MIME-Version: 1.0
+In-Reply-To: <20181011154847.GA5978@mail.hallyn.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, 2018-10-11 at 22:30 +0530, Nayna Jain wrote:
-> 
-> On 09/29/2018 04:00 AM, Tomas Winkler wrote:
-> > 
-> > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> > index 73511cd89bef..a97d72fcda5b 100644
-> > --- a/drivers/char/tpm/tpm.h
-> > +++ b/drivers/char/tpm/tpm.h
-> > @@ -544,8 +544,10 @@ int tpm_startup(struct tpm_chip *chip);
-> >   ssize_t tpm_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
-> >   		   const char *desc, size_t min_cap_length);
-> >   int tpm_get_timeouts(struct tpm_chip *);
-> > -int tpm1_auto_startup(struct tpm_chip *chip);
-> >   int tpm_do_selftest(struct tpm_chip *chip);
-> > +
-> > +int tpm1_auto_startup(struct tpm_chip *chip);
-> 
-> What is different in this tpm1_auto_startup(...) and the original one ?
-> 
-> Is this needed ?
-Looks like an amending  hiccup, will fix.
-Thanks
-Tomas
+Sorry, I misread. I'll not be at LPC. I'll be at the Embedded Linux and 
+LSS week of Oct 22
+
+Monty
+
+
+On 10/11/2018 11:48 AM, Serge E. Hallyn wrote:
+> Would be awesome if some meeting notes could be sent to this list after
+> the fact :)
+>
+> thanks,
+> -serge
+>
+> Quoting Monty Wiseman (montywiseman32@gmail.com):
+>> I'll be there and am interested. I'm co-chair of the TCG Infrastructure
+>> working group which is defining
+>> an Event log format for firmware and IMA.
+>>
+>>
+>> On 10/09/2018 11:58 AM, Chuck Lever wrote:
+>>> I'm planning to attend LPC next month. I'm interested in discussing
+>>> IMA on distributed file systems in particular with anyone here who
+>>> might also attend. I expect it would be a narrow topic, so a birds
+>>> of a feather is probably appropriate, but hallway track could work
+>>> too.
+>>>
+>>> I especially would like to discuss the on-disk format of IMA
+>>> metadata, and how the IMA module behaves when it encounters metadata
+>>> it does not recognize (or how you do on-disk format versioning).
+>>>
+>>> I'm still working on an Internet Draft that specifies how to enable
+>>> IMA on NFS files. The biggest challenge has been the lack of IMA
+>>> spec. The current revision of the Draft describes the requirements
+>>> in generic terms, and cites the IMA wiki/white paper only as an
+>>> Informative reference. I believe this will be adequate.
+>>>
+>>> I've also dropped EVM support for now. Two concerns:
+>>> - NFS does not expose some file attributes that EVM protects
+>>> - The format of some file attributes might not be the same on all
+>>>     client OSes.
+>>>
+>>> More to talk about in person, I hope.
+>>>
+>>> https://datatracker.ietf.org/doc/draft-ietf-nfsv4-integrity-measurement/
+>>>
+>>>
+>>> --
+>>> Chuck Lever
+>>>
+>>>
+>>>
