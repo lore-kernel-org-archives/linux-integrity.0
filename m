@@ -1,47 +1,51 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-it1-f196.google.com ([209.85.166.196]:54790 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbeJLD7H (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 11 Oct 2018 23:59:07 -0400
-Received: by mail-it1-f196.google.com with SMTP id l191-v6so15546969ita.4
-        for <linux-integrity@vger.kernel.org>; Thu, 11 Oct 2018 13:30:14 -0700 (PDT)
+Received: from mga14.intel.com ([192.55.52.115]:45818 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726040AbeJLDqz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 11 Oct 2018 23:46:55 -0400
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
+        "jgg@ziepe.ca" <jgg@ziepe.ca>,
+        "nayna@linux.ibm.com" <nayna@linux.ibm.com>
+CC: "nayna@linux.vnet.ibm.com" <nayna@linux.vnet.ibm.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 05/21] tpm: factor out tpm_get_timeouts()
+Date: Thu, 11 Oct 2018 20:16:34 +0000
+Message-ID: <1539288758.1669.15.camel@intel.com>
+References: <20180928223035.14471-1-tomas.winkler@intel.com>
+         <20180928223035.14471-6-tomas.winkler@intel.com>
+         <b6b0fb96-e955-bf86-9bac-e6acee1e33e0@linux.ibm.com>
+In-Reply-To: <b6b0fb96-e955-bf86-9bac-e6acee1e33e0@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20181004203007.217320-1-mjg59@google.com> <20181004203007.217320-3-mjg59@google.com>
- <1539271386.11939.79.camel@linux.ibm.com>
-In-Reply-To: <1539271386.11939.79.camel@linux.ibm.com>
-From: Matthew Garrett <mjg59@google.com>
-Date: Thu, 11 Oct 2018 13:30:01 -0700
-Message-ID: <CACdnJuvGp_3hs16kL1Vg9eXL4i=T=bXw9i5_7KTT0F+J4p9y4A@mail.gmail.com>
-Subject: Re: [PATCH 2/3] IMA: Make use of filesystem-provided hashes
-To: zohar@linux.ibm.com
-Cc: linux-integrity <linux-integrity@vger.kernel.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Oct 11, 2018 at 8:23 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
->
-> On Thu, 2018-10-04 at 13:30 -0700, Matthew Garrett wrote:
-> > Some filesystems may be able to provide hashes in an out of band manner,
-> > and allowing them to do so is a performance win. This is especially true
-> > of FUSE-based filesystems where otherwise we recalculate the hash on
-> > every measurement. Make use of this by default, but provide a parameter
-> > to force recalculation rather than trusting the filesystem.
-> >
-> > Signed-off-by: Matthew Garrett <mjg59@google.com>
->
-> Support for not calculating the file hash would need to be finer
-> grained than this, probably on a per mount basis.  The default should
-> be for IMA to always calculate the file hash, unless explicitly told
-> not to.
-
-Ok, should this just be part of the IMA policy?
-
-> IMA should never skip the file hash calculation if the filesystem is
-> an untrusted mount (eg. SB_I_UNTRUSTED_MOUNTER).
-
-Ok.
+On Thu, 2018-10-11 at 22:30 +0530, Nayna Jain wrote:
+> 
+> On 09/29/2018 04:00 AM, Tomas Winkler wrote:
+> > 
+> > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> > index 73511cd89bef..a97d72fcda5b 100644
+> > --- a/drivers/char/tpm/tpm.h
+> > +++ b/drivers/char/tpm/tpm.h
+> > @@ -544,8 +544,10 @@ int tpm_startup(struct tpm_chip *chip);
+> >   ssize_t tpm_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+> >   		   const char *desc, size_t min_cap_length);
+> >   int tpm_get_timeouts(struct tpm_chip *);
+> > -int tpm1_auto_startup(struct tpm_chip *chip);
+> >   int tpm_do_selftest(struct tpm_chip *chip);
+> > +
+> > +int tpm1_auto_startup(struct tpm_chip *chip);
+> 
+> What is different in this tpm1_auto_startup(...) and the original one ?
+> 
+> Is this needed ?
+Looks like an amending  hiccup, will fix.
+Thanks
+Tomas
