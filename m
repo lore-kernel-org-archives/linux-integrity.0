@@ -1,93 +1,215 @@
-Return-Path: <SRS0=seDi=MX=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=9/2W=MY=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE80C6780C
-	for <linux-integrity@archiver.kernel.org>; Thu, 11 Oct 2018 20:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C64C43441
+	for <linux-integrity@archiver.kernel.org>; Fri, 12 Oct 2018 09:34:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6915F20659
-	for <linux-integrity@archiver.kernel.org>; Thu, 11 Oct 2018 20:18:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6915F20659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4727520868
+	for <linux-integrity@archiver.kernel.org>; Fri, 12 Oct 2018 09:34:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4727520868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726649AbeJLDqz (ORCPT
+        id S1728149AbeJLRGG (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 11 Oct 2018 23:46:55 -0400
-Received: from mga14.intel.com ([192.55.52.115]:45818 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726040AbeJLDqz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 11 Oct 2018 23:46:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 13:18:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,369,1534834800"; 
-   d="scan'208";a="87648430"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by FMSMGA003.fm.intel.com with ESMTP; 11 Oct 2018 13:16:37 -0700
-Received: from fmsmsx111.amr.corp.intel.com (10.18.116.5) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Thu, 11 Oct 2018 13:16:37 -0700
-Received: from lcsmsx154.ger.corp.intel.com (10.186.165.229) by
- fmsmsx111.amr.corp.intel.com (10.18.116.5) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Thu, 11 Oct 2018 13:16:37 -0700
-Received: from HASMSX109.ger.corp.intel.com ([169.254.3.28]) by
- LCSMSX154.ger.corp.intel.com ([169.254.7.171]) with mapi id 14.03.0319.002;
- Thu, 11 Oct 2018 23:16:35 +0300
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-        "jgg@ziepe.ca" <jgg@ziepe.ca>,
-        "nayna@linux.ibm.com" <nayna@linux.ibm.com>
-CC:     "nayna@linux.vnet.ibm.com" <nayna@linux.vnet.ibm.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 05/21] tpm: factor out tpm_get_timeouts()
-Thread-Topic: [PATCH v5 05/21] tpm: factor out tpm_get_timeouts()
-Thread-Index: AQHUYYSyyO4neXOPJkShTukQAENgj6UaSC8A
-Date:   Thu, 11 Oct 2018 20:16:34 +0000
-Message-ID: <1539288758.1669.15.camel@intel.com>
+        Fri, 12 Oct 2018 13:06:06 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47200 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728138AbeJLRGG (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 12 Oct 2018 13:06:06 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9C9YVMi107857
+        for <linux-integrity@vger.kernel.org>; Fri, 12 Oct 2018 05:34:32 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2n2pugdhww-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 12 Oct 2018 05:34:32 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <nayna@linux.ibm.com>;
+        Fri, 12 Oct 2018 05:34:32 -0400
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 12 Oct 2018 05:34:29 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9C9YSFF26083500
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 12 Oct 2018 09:34:28 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D4BE0B2066;
+        Fri, 12 Oct 2018 05:32:27 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A1A3DB205F;
+        Fri, 12 Oct 2018 05:32:25 -0400 (EDT)
+Received: from [9.124.31.41] (unknown [9.124.31.41])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 12 Oct 2018 05:32:25 -0400 (EDT)
+Subject: Re: [PATCH v5 06/21] tpm: move tpm1_pcr_extend to tpm1-cmd.c
+To:     Tomas Winkler <tomas.winkler@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20180928223035.14471-1-tomas.winkler@intel.com>
-         <20180928223035.14471-6-tomas.winkler@intel.com>
-         <b6b0fb96-e955-bf86-9bac-e6acee1e33e0@linux.ibm.com>
-In-Reply-To: <b6b0fb96-e955-bf86-9bac-e6acee1e33e0@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.12.91.48]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7170666EBE35A04F83AA91DFB1F6557A@intel.com>
-Content-Transfer-Encoding: base64
+ <20180928223035.14471-7-tomas.winkler@intel.com>
+From:   Nayna Jain <nayna@linux.ibm.com>
+Date:   Fri, 12 Oct 2018 15:01:24 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
+In-Reply-To: <20180928223035.14471-7-tomas.winkler@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18101209-0068-0000-0000-0000034C11D8
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009865; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01101513; UDB=6.00569998; IPR=6.00881558;
+ MB=3.00023726; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-12 09:34:31
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18101209-0069-0000-0000-0000460B88D7
+Message-Id: <24b611f6-8080-3f99-56e5-818bd16ef4f8@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-12_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810120097
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
-Message-ID: <20181011201634.dUzkAw5C1-ZNez9gE_O2jmiYTMHFbLtDJNGD3KD6ttI@z>
+Message-ID: <20181012093124.J-8AIQ2Qx71NrgCsl5GuwNXW0YFlkhYFnX49yKg1fZQ@z>
 
-T24gVGh1LCAyMDE4LTEwLTExIGF0IDIyOjMwICswNTMwLCBOYXluYSBKYWluIHdyb3RlOg0KPiAN
-Cj4gT24gMDkvMjkvMjAxOCAwNDowMCBBTSwgVG9tYXMgV2lua2xlciB3cm90ZToNCj4gPiANCj4g
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jaGFyL3RwbS90cG0uaCBiL2RyaXZlcnMvY2hhci90cG0v
-dHBtLmgNCj4gPiBpbmRleCA3MzUxMWNkODliZWYuLmE5N2Q3MmZjZGE1YiAxMDA2NDQNCj4gPiAt
-LS0gYS9kcml2ZXJzL2NoYXIvdHBtL3RwbS5oDQo+ID4gKysrIGIvZHJpdmVycy9jaGFyL3RwbS90
-cG0uaA0KPiA+IEBAIC01NDQsOCArNTQ0LDEwIEBAIGludCB0cG1fc3RhcnR1cChzdHJ1Y3QgdHBt
-X2NoaXAgKmNoaXApOw0KPiA+ICAgc3NpemVfdCB0cG1fZ2V0Y2FwKHN0cnVjdCB0cG1fY2hpcCAq
-Y2hpcCwgdTMyIHN1YmNhcF9pZCwgY2FwX3QgKmNhcCwNCj4gPiAgIAkJICAgY29uc3QgY2hhciAq
-ZGVzYywgc2l6ZV90IG1pbl9jYXBfbGVuZ3RoKTsNCj4gPiAgIGludCB0cG1fZ2V0X3RpbWVvdXRz
-KHN0cnVjdCB0cG1fY2hpcCAqKTsNCj4gPiAtaW50IHRwbTFfYXV0b19zdGFydHVwKHN0cnVjdCB0
-cG1fY2hpcCAqY2hpcCk7DQo+ID4gICBpbnQgdHBtX2RvX3NlbGZ0ZXN0KHN0cnVjdCB0cG1fY2hp
-cCAqY2hpcCk7DQo+ID4gKw0KPiA+ICtpbnQgdHBtMV9hdXRvX3N0YXJ0dXAoc3RydWN0IHRwbV9j
-aGlwICpjaGlwKTsNCj4gDQo+IFdoYXQgaXMgZGlmZmVyZW50IGluIHRoaXMgdHBtMV9hdXRvX3N0
-YXJ0dXAoLi4uKSBhbmQgdGhlIG9yaWdpbmFsIG9uZSA/DQo+IA0KPiBJcyB0aGlzIG5lZWRlZCA/
-DQpMb29rcyBsaWtlIGFuIGFtZW5kaW5nICBoaWNjdXAsIHdpbGwgZml4Lg0KVGhhbmtzDQpUb21h
-cw0K
+
+
+On 09/29/2018 04:00 AM, Tomas Winkler wrote:
+> Move tpm1_pcr_extend to tpm1-cmd.c and remove
+> unused pcrextend_header structure and
+> EXTEND_PCR_RESULT_SIZE and EXTEND_PCR_RESULT_BODY_SIZE
+> defines.
+>
+> Fixes warning:
+> drivers/char/tpm/tpm-interface.c:609:38: warning: ‘pcrextend_header’ defined but not used [-Wunused-const-variable=]
+>   static const struct tpm_input_header pcrextend_header = {
+>                                        ^~~~~~~~~~~~~~~~
+>
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>
+> V2-V3: Rebase
+> V4: Remove defines.
+> V5: Resend.
+>
+>   drivers/char/tpm/tpm-interface.c | 28 ----------------------------
+>   drivers/char/tpm/tpm.h           |  2 ++
+>   drivers/char/tpm/tpm1-cmd.c      | 21 +++++++++++++++++++++
+>   3 files changed, 23 insertions(+), 28 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 1fa0300f3829..ac73e6ac3d83 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -614,34 +614,6 @@ int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
+>   }
+>   EXPORT_SYMBOL_GPL(tpm_pcr_read);
+>
+> -#define TPM_ORD_PCR_EXTEND 20
+> -#define EXTEND_PCR_RESULT_SIZE 34
+> -#define EXTEND_PCR_RESULT_BODY_SIZE 20
+> -static const struct tpm_input_header pcrextend_header = {
+> -	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+> -	.length = cpu_to_be32(34),
+> -	.ordinal = cpu_to_be32(TPM_ORD_PCR_EXTEND)
+> -};
+> -
+> -static int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+> -			   char *log_msg)
+> -{
+> -	struct tpm_buf buf;
+> -	int rc;
+> -
+> -	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
+> -	if (rc)
+> -		return rc;
+> -
+> -	tpm_buf_append_u32(&buf, pcr_idx);
+> -	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
+> -
+> -	rc = tpm_transmit_cmd(chip, NULL, buf.data, EXTEND_PCR_RESULT_SIZE,
+> -			      EXTEND_PCR_RESULT_BODY_SIZE, 0, log_msg);
+> -	tpm_buf_destroy(&buf);
+> -	return rc;
+> -}
+> -
+>   /**
+>    * tpm_pcr_extend - extend a PCR value in SHA1 bank.
+>    * @chip:	a &struct tpm_chip instance, %NULL for the default chip
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index a97d72fcda5b..3fb268f43955 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -549,6 +549,8 @@ int tpm_do_selftest(struct tpm_chip *chip);
+>   int tpm1_auto_startup(struct tpm_chip *chip);
+>   int tpm1_get_timeouts(struct tpm_chip *chip);
+>   unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+> +int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+> +		    const char *log_msg);
+>   unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+>   int tpm_pm_suspend(struct device *dev);
+>   int tpm_pm_resume(struct device *dev);
+> diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+> index 978946748ea3..ec242397e6dc 100644
+> --- a/drivers/char/tpm/tpm1-cmd.c
+> +++ b/drivers/char/tpm/tpm1-cmd.c
+> @@ -413,3 +413,24 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
+>   	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
+>   	return 0;
+>   }
+> +
+> +#define TPM_ORD_PCR_EXTEND 20
+> +int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+> +		    const char *log_msg)
+> +{
+> +	struct tpm_buf buf;
+> +	int rc;
+> +
+> +	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
+> +	if (rc)
+> +		return rc;
+> +
+> +	tpm_buf_append_u32(&buf, pcr_idx);
+> +	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
+> +
+> +	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
+> +			      TPM_DIGEST_SIZE, 0, log_msg);
+> +
+> +	tpm_buf_destroy(&buf);
+> +	return rc;
+> +}
+
+
+Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
+Tested-by: Nayna Jain <nayna@linux.ibm.com>
+
+Sorry for bit delay in testing.
+
+Thanks & Regards,
+    - Nayna
+
+
+
+
