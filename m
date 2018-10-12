@@ -1,24 +1,22 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43165 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727078AbeJMAsc (ORCPT
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43752 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726665AbeJMAj0 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 12 Oct 2018 20:48:32 -0400
-Received: by mail-pl1-f196.google.com with SMTP id 30-v6so6213970plb.10
-        for <linux-integrity@vger.kernel.org>; Fri, 12 Oct 2018 10:15:04 -0700 (PDT)
+        Fri, 12 Oct 2018 20:39:26 -0400
+Received: by mail-pg1-f196.google.com with SMTP id 80-v6so6114622pgh.10
+        for <linux-integrity@vger.kernel.org>; Fri, 12 Oct 2018 10:06:00 -0700 (PDT)
 MIME-Version: 1.0
 References: <1539274203.2623.56.camel@linux.vnet.ibm.com> <20181011203126.15338-1-ndesaulniers@google.com>
  <f83893d2-ed9b-613f-2768-1a975d28fe8b@gmail.com> <1539356751.2656.5.camel@linux.ibm.com>
- <fc23168b-7275-bae0-6039-04e261b3cbad@gmail.com> <1539357759.2656.7.camel@linux.ibm.com>
- <16de2bb3-815a-f534-4618-af854c906017@gmail.com> <1539359181.2656.13.camel@linux.ibm.com>
- <da2a675f-bd2d-a1f3-6a67-5579e75bdb76@gmail.com> <1539360075.2656.18.camel@linux.ibm.com>
-In-Reply-To: <1539360075.2656.18.camel@linux.ibm.com>
+ <fc23168b-7275-bae0-6039-04e261b3cbad@gmail.com>
+In-Reply-To: <fc23168b-7275-bae0-6039-04e261b3cbad@gmail.com>
 From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Fri, 12 Oct 2018 10:14:52 -0700
-Message-ID: <CAKwvOdnejRka4hP66zCGS+MSXx_z335qZUTU8J0UbEq-boRYjQ@mail.gmail.com>
+Date: Fri, 12 Oct 2018 10:05:48 -0700
+Message-ID: <CAKwvOdmStDm3Lz=W7XjmB7f7ihe4hLOmaBRLOrStbkBMRKwdjA@mail.gmail.com>
 Subject: Re: [PATCH] KEYS: trusted: fix -Wvarags warning
-To: jejb@linux.ibm.com
-Cc: denkenz@gmail.com, dhowells@redhat.com,
+To: denkenz@gmail.com
+Cc: jejb@linux.ibm.com, dhowells@redhat.com,
         Nathan Chancellor <natechancellor@gmail.com>,
         Eric Biggers <ebiggers@google.com>, zohar@linux.vnet.ibm.com,
         jmorris@namei.org, serge@hallyn.com,
@@ -29,49 +27,38 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, Oct 12, 2018 at 9:01 AM James Bottomley <jejb@linux.ibm.com> wrote:
+On Fri, Oct 12, 2018 at 8:14 AM Denis Kenzior <denkenz@gmail.com> wrote:
 >
-> On Fri, 2018-10-12 at 10:53 -0500, Denis Kenzior wrote:
-> > Hi James,
-> >
-> > > >   From the links provided in the patch it seems that one cannot
-> > > > pass char/float/short to va_start().  Fair enough.  So if we make
-> > > > h3 an unsigned int, the issue goes away, no?
-> > >
-> > > For the current version of clang, yes.  However, if we're fixing
-> > > this for good a char * pointer is the only guaranteed thing because
-> > > it mirrors current use in printf.
-> > >
-> >
-> > All right.  I guess I wasn't aware that non-printf like variadic
-> > functions are now considered harmful or of the impending crusade
-> > against them :)
+> Hi James,
 >
-> It's not, it's just a maintainer issue: The original problem is because
-> we coded for gcc specifically; it doesn't complain and does the right
-> thing, so everyone was happy.  Now Clang comes along and is unhappy
-> with this, so the question a good maintainer should ask is "how do I
-> fix this so it never comes back again?", not "what's the easiest
-> bandaid to get both Clang and gcc to work?" because the latter is how
-> we got here in the first place.
+> >> So can't we simply use 'bool' or uint32 as the type for h3 instead
+> >> of re-ordering everything
+> >
+> > The problem is the standard is ambiguious.  The only thing that's
+> > guaranteed to work for all time is a char *.  If you want to keep the
+> > order, what I'd suggest is inserting a dummy pointer argument which is
+> > always expected to be NULL between the h3 and the varargs.
+>
+> So maybe I'm misunderstanding something, but the issue seems to be that
+> unsigned char is promoted to 'unsigned char *' by Clang and probably
+> unsigned int or int by gcc.
 
-Clang is simply pointing out that this is explicitly undefined
-behavior by the C90 spec.  As such, not only may the implementation be
-different between compilers, but it is free to change between versions
-of the same compiler (I haven't witnessed such a case yet in my
-limited career, but I would never say never when it comes to relying
-on undefined behavior).
+No. This is extremely well defined behavior in C.  In C, integral
+types are NEVER promoted to pointer to integer types, only to larger
+integral types through rules more complicated than the correct flags
+to pass to `tar`.
+https://xkcd.com/1168/
 
 >
-> James
+> So instead of having unsigned char h3, can't we simply have bool h3 or
+> unsigned int h3?
+
+int is the default argument promotion. Proposed:
+https://github.com/ClangBuiltLinux/linux/issues/41#issuecomment-428365339
+
 >
-> > But in the context of this patch, can we please use something less
-> > invasive than changing all the arguments around?  Promoting h3 to a
-> > bool (if possible) or int/unsigned int would get my vote.
-> >
-> > Regards,
-> > -Denis
-> >
+> Regards,
+> -Denis
 >
 
 
