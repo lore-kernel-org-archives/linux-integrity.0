@@ -1,41 +1,54 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-io1-f65.google.com ([209.85.166.65]:43313 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726420AbeJMCFn (ORCPT
+Received: from mail-it1-f196.google.com ([209.85.166.196]:51729 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725854AbeJMBAf (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 12 Oct 2018 22:05:43 -0400
-Received: by mail-io1-f65.google.com with SMTP id y10-v6so9903417ioa.10
-        for <linux-integrity@vger.kernel.org>; Fri, 12 Oct 2018 11:31:54 -0700 (PDT)
+        Fri, 12 Oct 2018 21:00:35 -0400
+Subject: Re: [PATCH] KEYS: trusted: fix -Wvarags warning
+To: Nick Desaulniers <ndesaulniers@google.com>
+Cc: jejb@linux.ibm.com, dhowells@redhat.com,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Eric Biggers <ebiggers@google.com>, zohar@linux.vnet.ibm.com,
+        jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1539274203.2623.56.camel@linux.vnet.ibm.com>
+ <20181011203126.15338-1-ndesaulniers@google.com>
+ <f83893d2-ed9b-613f-2768-1a975d28fe8b@gmail.com>
+ <1539356751.2656.5.camel@linux.ibm.com>
+ <fc23168b-7275-bae0-6039-04e261b3cbad@gmail.com>
+ <CAKwvOdmStDm3Lz=W7XjmB7f7ihe4hLOmaBRLOrStbkBMRKwdjA@mail.gmail.com>
+From: Denis Kenzior <denkenz@gmail.com>
+Message-ID: <80837c90-0425-aadd-38d7-c3c866d29a0a@gmail.com>
+Date: Fri, 12 Oct 2018 12:27:00 -0500
 MIME-Version: 1.0
-References: <20181004203007.217320-1-mjg59@google.com> <20181004203007.217320-3-mjg59@google.com>
- <1539271386.11939.79.camel@linux.ibm.com> <CACdnJuvGp_3hs16kL1Vg9eXL4i=T=bXw9i5_7KTT0F+J4p9y4A@mail.gmail.com>
- <1539298987.11939.136.camel@linux.ibm.com>
-In-Reply-To: <1539298987.11939.136.camel@linux.ibm.com>
-From: Matthew Garrett <mjg59@google.com>
-Date: Fri, 12 Oct 2018 11:31:42 -0700
-Message-ID: <CACdnJuvrATdx2giEvddU38SMKp2oj1XjHqEbs88fuUOekHyDLw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] IMA: Make use of filesystem-provided hashes
-To: zohar@linux.ibm.com
-Cc: linux-integrity <linux-integrity@vger.kernel.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAKwvOdmStDm3Lz=W7XjmB7f7ihe4hLOmaBRLOrStbkBMRKwdjA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Oct 11, 2018 at 4:03 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> On Thu, 2018-10-11 at 13:30 -0700, Matthew Garrett wrote:
+Hi Nick,
 
-> > Ok, should this just be part of the IMA policy?
->
-> How would you be able to differentiate between different FUSE
-> filesystems for example?
+>> So maybe I'm misunderstanding something, but the issue seems to be that
+>> unsigned char is promoted to 'unsigned char *' by Clang and probably
+>> unsigned int or int by gcc.
+> 
+> No. This is extremely well defined behavior in C.  In C, integral
+> types are NEVER promoted to pointer to integer types, only to larger
+> integral types through rules more complicated than the correct flags
+> to pass to `tar`.
+> https://xkcd.com/1168/
+> 
 
-There's a couple of ways. We could extend the filesystem type matching
-logic to also check the subtype - you'd then need to enforce that at
-the LSM level in order to protect against untrusted filesystems
-spoofing the filesystem type. Alternatively, we could add an
-additional policy match type for mount point and iterate through
-s_mounts on the superblock - if any match, we could define the policy
-there?
+Ah right.  Thanks for the correction.  So looks like bool won't work for 
+the same reasons.  But unsigned int should work right?  But then again 
+this is a boolean value and if we want to be paranoid we can simply 
+tweak the 'c = h3' assignment to be something like:
+
+c = !!h3;
+
+So in the end, I'm happy with int or unsigned int.
+
+Regards,
+-Denis
