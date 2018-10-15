@@ -1,70 +1,63 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:28519 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726273AbeJOS0m (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 15 Oct 2018 14:26:42 -0400
-Date: Mon, 15 Oct 2018 13:41:56 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Peter Huewe <peterhuewe@gmx.de>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:23571 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726319AbeJORK3 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 15 Oct 2018 13:10:29 -0400
+From: David Laight <David.Laight@ACULAB.COM>
+To: "'ndesaulniers@google.com'" <ndesaulniers@google.com>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "dhowells@redhat.com" <dhowells@redhat.com>
+CC: "natechancellor@gmail.com" <natechancellor@gmail.com>,
+        "ebiggers@google.com" <ebiggers@google.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
         "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tpm: fix unused-value issues in tpm_try_transmit
-Message-ID: <20181015104156.GA13408@linux.intel.com>
-References: <20181010133817.GA11485@embeddedor.com>
- <20181010140638.GA3894@ziepe.ca>
- <20181011120140.GA15767@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D9EEC12@hasmsx109.ger.corp.intel.com>
+Subject: RE: [PATCH] KEYS: trusted: fix -Wvarags warning
+Date: Mon, 15 Oct 2018 09:26:02 +0000
+Message-ID: <0180360cfcb5458d8ff099744e8884d4@AcuMS.aculab.com>
+References: <1539274203.2623.56.camel@linux.vnet.ibm.com>
+ <20181011203126.15338-1-ndesaulniers@google.com>
+In-Reply-To: <20181011203126.15338-1-ndesaulniers@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D9EEC12@hasmsx109.ger.corp.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Thu, Oct 11, 2018 at 01:27:58PM +0000, Winkler, Tomas wrote:
-> > 
-> > On Wed, Oct 10, 2018 at 08:06:38AM -0600, Jason Gunthorpe wrote:
-> > > On Wed, Oct 10, 2018 at 03:38:17PM +0200, Gustavo A. R. Silva wrote:
-> > > > Currently, there are some values assigned to variable *rc*, which
-> > > > are never actually used in any computation, because such variable is
-> > > > updated at line 550, before they can be used:
-> > > >
-> > > > 549out:
-> > > > 550        rc = tpm_go_idle(chip, flags);
-> > > > 551        if (rc)
-> > > > 552                goto out;
-> > > >
-> > > > Fix this by removing such assignments.
-> > >
-> > > Should this be done by not quashing rc during the error unwind rather
-> > > than dropping the errors?
-> > 
-> > Yeah.`
-> > 
-> > Wondering if tpm_go_idle() should simply be a void-function i.e. issue just a
-> > warning inside (disclaimer: did not revisit its code when writing this).
+From: ndesaulniers@google.com
+> Sent: 11 October 2018 21:31
+...
+> by swapping h2 and h3.
 > 
-> We did have rather a long discussion about it when it was merged.
-> There are two flows that may crash 
-> rc = tpm2_commit_space()
-> 
-> but you still can need to 
-> 
-> rc  = go_idle()  
-> 
-> which also may crash which may override the previous value. 
-> 
-> Frankly the second one is fatal, the stack will go out of sync.
-> We may do void here as the stack will crash in a subsequent command. 
-> 
-> The 'goto out' is quite a  bug, probably caused by code movement.
+> security/keys/trusted.c:146:17: warning: passing an object that
+> undergoes default
+>       argument promotion to 'va_start' has undefined behavior [-Wvarargs]
+>         va_start(argp, h3);
+>                        ^
+> security/keys/trusted.c:126:37: note: parameter of type 'unsigned
+> char' is declared here
+> unsigned char *h2, unsigned char h3, ...)
+>                                ^
+> Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
+> standards explicitly call this out as undefined behavior:
 
-I just looked at the code properly and noticed that there is a regression
-caused by 627448e85c76 ("tpm: separate cmd_ready/go_idle from
-runtime_pm") i.e. when tpm_go_idle() fails it loops back and retries
-tpm_go_idle().
+I guess that problems arise when all the arguments are stacked
+and va_start/va_arg use naive pointer manipulation.
+In that case &h3 might be 4n+3 aligned so va_arg() will access
+misaligned stack locations.
 
-/Jarkko
+I doubt any modern compilers (where va_start and va_arg are builtins)
+will get this 'wrong' even when all arguments are stacked.
+
+Seems clang is being over cautious.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
