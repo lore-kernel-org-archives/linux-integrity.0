@@ -3,115 +3,92 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58490C070C3
-	for <linux-integrity@archiver.kernel.org>; Mon, 15 Oct 2018 01:38:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 102B0C7112A
+	for <linux-integrity@archiver.kernel.org>; Mon, 15 Oct 2018 09:26:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1748520659
-	for <linux-integrity@archiver.kernel.org>; Mon, 15 Oct 2018 01:38:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1748520659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id ED5CA2054F
+	for <linux-integrity@archiver.kernel.org>; Mon, 15 Oct 2018 09:26:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED5CA2054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726186AbeJOJVh (ORCPT
+        id S1726614AbeJORK3 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 15 Oct 2018 05:21:37 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58982 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726467AbeJOJVg (ORCPT
+        Mon, 15 Oct 2018 13:10:29 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:23571 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726319AbeJORK3 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 15 Oct 2018 05:21:36 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9F1Y3hE134249
-        for <linux-integrity@vger.kernel.org>; Sun, 14 Oct 2018 21:38:35 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n4fe7350v-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Sun, 14 Oct 2018 21:38:35 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 15 Oct 2018 02:38:33 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 15 Oct 2018 02:38:30 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9F1cTRY5833148
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 15 Oct 2018 01:38:29 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 80F634C04E;
-        Mon, 15 Oct 2018 04:38:03 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AB3C24C040;
-        Mon, 15 Oct 2018 04:38:02 +0100 (BST)
-Received: from localhost.localdomain (unknown [9.80.101.196])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 15 Oct 2018 04:38:02 +0100 (BST)
-Subject: Re: [PATCH 2/3] IMA: Make use of filesystem-provided hashes
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Matthew Garrett <mjg59@google.com>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Date:   Sun, 14 Oct 2018 21:38:17 -0400
-In-Reply-To: <CACdnJuvrATdx2giEvddU38SMKp2oj1XjHqEbs88fuUOekHyDLw@mail.gmail.com>
-References: <20181004203007.217320-1-mjg59@google.com>
-         <20181004203007.217320-3-mjg59@google.com>
-         <1539271386.11939.79.camel@linux.ibm.com>
-         <CACdnJuvGp_3hs16kL1Vg9eXL4i=T=bXw9i5_7KTT0F+J4p9y4A@mail.gmail.com>
-         <1539298987.11939.136.camel@linux.ibm.com>
-         <CACdnJuvrATdx2giEvddU38SMKp2oj1XjHqEbs88fuUOekHyDLw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18101501-0028-0000-0000-0000030756CC
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101501-0029-0000-0000-000023C25A63
-Message-Id: <1539567497.11939.198.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-15_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810150013
+        Mon, 15 Oct 2018 13:10:29 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-145-TY_yltWpMzSa0j3fDrgy7w-1; Mon, 15 Oct 2018 10:26:00 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 15 Oct 2018 10:26:02 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 15 Oct 2018 10:26:02 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     "'ndesaulniers@google.com'" <ndesaulniers@google.com>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "dhowells@redhat.com" <dhowells@redhat.com>
+CC:     "natechancellor@gmail.com" <natechancellor@gmail.com>,
+        "ebiggers@google.com" <ebiggers@google.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] KEYS: trusted: fix -Wvarags warning
+Thread-Topic: [PATCH] KEYS: trusted: fix -Wvarags warning
+Thread-Index: AQHUYaFtz6yVKVwaakuhVxq6kXztuKUgDL3Q
+Date:   Mon, 15 Oct 2018 09:26:02 +0000
+Message-ID: <0180360cfcb5458d8ff099744e8884d4@AcuMS.aculab.com>
+References: <1539274203.2623.56.camel@linux.vnet.ibm.com>
+ <20181011203126.15338-1-ndesaulniers@google.com>
+In-Reply-To: <20181011203126.15338-1-ndesaulniers@google.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-MC-Unique: TY_yltWpMzSa0j3fDrgy7w-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
-Message-ID: <20181015013817.VybDwe1LpgI4Z0QNm47cdibjbsZF7LdT9dRRzJhYPtM@z>
+Message-ID: <20181015092602.lI4hBvr-AVjCfM6TjoszcxHkJ3xKRBFKV0YjswEZv08@z>
 
-On Fri, 2018-10-12 at 11:31 -0700, Matthew Garrett wrote:
-> On Thu, Oct 11, 2018 at 4:03 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > On Thu, 2018-10-11 at 13:30 -0700, Matthew Garrett wrote:
-> 
-> > > Ok, should this just be part of the IMA policy?
-> >
-> > How would you be able to differentiate between different FUSE
-> > filesystems for example?
-> 
-> There's a couple of ways. We could extend the filesystem type matching
-> logic to also check the subtype - you'd then need to enforce that at
-> the LSM level in order to protect against untrusted filesystems
-> spoofing the filesystem type. Alternatively, we could add an
-> additional policy match type for mount point and iterate through
-> s_mounts on the superblock - if any match, we could define the policy
-> there?
-
-The first method differentiates between different subtypes of FUSE
-filesystems, while the second method allows differentiating between
-the same type and subtype on different mount points.  Both criteria
-are needed, but instead of the second method based on a mount point,
-perhaps based instead on a mount flag?
-
-Trusted mount of permitted filesystem type and subtype, that is
-mounted with the defined mount flag. 
-
-Mimi
+RnJvbTogbmRlc2F1bG5pZXJzQGdvb2dsZS5jb20NCj4gU2VudDogMTEgT2N0b2JlciAyMDE4IDIx
+OjMxDQouLi4NCj4gYnkgc3dhcHBpbmcgaDIgYW5kIGgzLg0KPiANCj4gc2VjdXJpdHkva2V5cy90
+cnVzdGVkLmM6MTQ2OjE3OiB3YXJuaW5nOiBwYXNzaW5nIGFuIG9iamVjdCB0aGF0DQo+IHVuZGVy
+Z29lcyBkZWZhdWx0DQo+ICAgICAgIGFyZ3VtZW50IHByb21vdGlvbiB0byAndmFfc3RhcnQnIGhh
+cyB1bmRlZmluZWQgYmVoYXZpb3IgWy1XdmFyYXJnc10NCj4gICAgICAgICB2YV9zdGFydChhcmdw
+LCBoMyk7DQo+ICAgICAgICAgICAgICAgICAgICAgICAgXg0KPiBzZWN1cml0eS9rZXlzL3RydXN0
+ZWQuYzoxMjY6Mzc6IG5vdGU6IHBhcmFtZXRlciBvZiB0eXBlICd1bnNpZ25lZA0KPiBjaGFyJyBp
+cyBkZWNsYXJlZCBoZXJlDQo+IHVuc2lnbmVkIGNoYXIgKmgyLCB1bnNpZ25lZCBjaGFyIGgzLCAu
+Li4pDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBeDQo+IFNwZWNpZmljYWxseSwg
+aXQgc2VlbXMgdGhhdCBib3RoIHRoZSBDOTAgKDQuOC4xLjEpIGFuZCBDMTEgKDcuMTYuMS40KQ0K
+PiBzdGFuZGFyZHMgZXhwbGljaXRseSBjYWxsIHRoaXMgb3V0IGFzIHVuZGVmaW5lZCBiZWhhdmlv
+cjoNCg0KSSBndWVzcyB0aGF0IHByb2JsZW1zIGFyaXNlIHdoZW4gYWxsIHRoZSBhcmd1bWVudHMg
+YXJlIHN0YWNrZWQNCmFuZCB2YV9zdGFydC92YV9hcmcgdXNlIG5haXZlIHBvaW50ZXIgbWFuaXB1
+bGF0aW9uLg0KSW4gdGhhdCBjYXNlICZoMyBtaWdodCBiZSA0biszIGFsaWduZWQgc28gdmFfYXJn
+KCkgd2lsbCBhY2Nlc3MNCm1pc2FsaWduZWQgc3RhY2sgbG9jYXRpb25zLg0KDQpJIGRvdWJ0IGFu
+eSBtb2Rlcm4gY29tcGlsZXJzICh3aGVyZSB2YV9zdGFydCBhbmQgdmFfYXJnIGFyZSBidWlsdGlu
+cykNCndpbGwgZ2V0IHRoaXMgJ3dyb25nJyBldmVuIHdoZW4gYWxsIGFyZ3VtZW50cyBhcmUgc3Rh
+Y2tlZC4NCg0KU2VlbXMgY2xhbmcgaXMgYmVpbmcgb3ZlciBjYXV0aW91cy4NCg0KCURhdmlkDQoN
+Ci0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJt
+LCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChX
+YWxlcykNCg==
 
