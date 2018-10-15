@@ -1,53 +1,36 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38615 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727148AbeJPNan (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 16 Oct 2018 09:30:43 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 193-v6so21758489wme.3
-        for <linux-integrity@vger.kernel.org>; Mon, 15 Oct 2018 22:41:58 -0700 (PDT)
-Date: Mon, 15 Oct 2018 23:41:55 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Tomas Winkler <tomas.winkler@intel.com>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm: tpm_try_transmit() ignore value of go_to_idle()
-Message-ID: <20181016054155.GA18664@ziepe.ca>
-References: <20181015111434.7777-1-tomas.winkler@intel.com>
+Received: from namei.org ([65.99.196.166]:44272 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726836AbeJPGea (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 16 Oct 2018 02:34:30 -0400
+Date: Tue, 16 Oct 2018 09:46:59 +1100 (AEDT)
+From: James Morris <jmorris@namei.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+cc: Matthew Garrett <mjg59@google.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        montywiseman32@gmail.com, serge@hallyn.com, chuck.lever@oracle.com,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: LPC 2018
+In-Reply-To: <1539642523.2867.44.camel@HansenPartnership.com>
+Message-ID: <alpine.LRH.2.21.1810160946210.2779@namei.org>
+References: <9808035C-5AE5-4594-BDBF-A51544231608@oracle.com>         <dfe11979-1afd-1554-fcaa-ebf39e32397d@gmail.com>         <20181011154847.GA5978@mail.hallyn.com>         <3839043b-5541-369e-1179-c3c8c1dbfb07@gmail.com>         <1539296304.3108.54.camel@HansenPartnership.com>
+         <alpine.DEB.2.21.1810151652360.28121@jsakkine-mobl1>         <CACdnJutMR=6OH=DtnAGXkFU+PNae_ONxcQGA7QLPJ9jsBd8j=w@mail.gmail.com>         <alpine.LRH.2.21.1810160833560.14147@namei.org> <1539642523.2867.44.camel@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20181015111434.7777-1-tomas.winkler@intel.com>
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Mon, Oct 15, 2018 at 02:14:34PM +0300, Tomas Winkler wrote:
-> Ignore the return value of go_to_idle() in tpm_try_transmit().
-> Once it may shadow the return value of actual tpm operation,
-> second the consequent command will fail as well and the error
-> will be caought anyway.
-> Last fix wrong goto, that jumped back instead of forward.
-> 
-> Fixes: 627448e85c76 ("tpm: separate cmd_ready/go_idle from runtime_pm")
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
->  drivers/char/tpm/tpm-interface.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 129f640424b7..f69c711bf74a 100644
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -547,9 +547,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
->  		dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
->  
->  out:
-> -	rc = tpm_go_idle(chip, flags);
-> -	if (rc)
-> -		goto out;
-> +	(void)tpm_go_idle(chip, flags);
+On Mon, 15 Oct 2018, James Bottomley wrote:
 
-We don't really use this style in the kernel, AFAIK.
+> > What about a TPM BoF at LSS
+> 
+> I'm only at LinuxCon/KS, so I'm leaving on Thursday.  I think you have
+> a Wednesday overlap, though, so Wednesday would work.
 
-Jason
+LSS is Thurs+Fri, but we may have a quorum for Weds.
+
+
+-- 
+James Morris
+<jmorris@namei.org>
