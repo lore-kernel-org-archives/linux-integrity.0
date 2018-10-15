@@ -1,63 +1,65 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:23571 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726319AbeJORK3 (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58982 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726467AbeJOJVg (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 15 Oct 2018 13:10:29 -0400
-From: David Laight <David.Laight@ACULAB.COM>
-To: "'ndesaulniers@google.com'" <ndesaulniers@google.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "dhowells@redhat.com" <dhowells@redhat.com>
-CC: "natechancellor@gmail.com" <natechancellor@gmail.com>,
-        "ebiggers@google.com" <ebiggers@google.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] KEYS: trusted: fix -Wvarags warning
-Date: Mon, 15 Oct 2018 09:26:02 +0000
-Message-ID: <0180360cfcb5458d8ff099744e8884d4@AcuMS.aculab.com>
-References: <1539274203.2623.56.camel@linux.vnet.ibm.com>
- <20181011203126.15338-1-ndesaulniers@google.com>
-In-Reply-To: <20181011203126.15338-1-ndesaulniers@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Mon, 15 Oct 2018 05:21:36 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9F1Y3hE134249
+        for <linux-integrity@vger.kernel.org>; Sun, 14 Oct 2018 21:38:35 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2n4fe7350v-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Sun, 14 Oct 2018 21:38:35 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 15 Oct 2018 02:38:33 +0100
+Subject: Re: [PATCH 2/3] IMA: Make use of filesystem-provided hashes
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Matthew Garrett <mjg59@google.com>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, miklos@szeredi.hu,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Date: Sun, 14 Oct 2018 21:38:17 -0400
+In-Reply-To: <CACdnJuvrATdx2giEvddU38SMKp2oj1XjHqEbs88fuUOekHyDLw@mail.gmail.com>
+References: <20181004203007.217320-1-mjg59@google.com>
+         <20181004203007.217320-3-mjg59@google.com>
+         <1539271386.11939.79.camel@linux.ibm.com>
+         <CACdnJuvGp_3hs16kL1Vg9eXL4i=T=bXw9i5_7KTT0F+J4p9y4A@mail.gmail.com>
+         <1539298987.11939.136.camel@linux.ibm.com>
+         <CACdnJuvrATdx2giEvddU38SMKp2oj1XjHqEbs88fuUOekHyDLw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-Id: <1539567497.11939.198.camel@linux.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-From: ndesaulniers@google.com
-> Sent: 11 October 2018 21:31
-...
-> by swapping h2 and h3.
+On Fri, 2018-10-12 at 11:31 -0700, Matthew Garrett wrote:
+> On Thu, Oct 11, 2018 at 4:03 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > On Thu, 2018-10-11 at 13:30 -0700, Matthew Garrett wrote:
 > 
-> security/keys/trusted.c:146:17: warning: passing an object that
-> undergoes default
->       argument promotion to 'va_start' has undefined behavior [-Wvarargs]
->         va_start(argp, h3);
->                        ^
-> security/keys/trusted.c:126:37: note: parameter of type 'unsigned
-> char' is declared here
-> unsigned char *h2, unsigned char h3, ...)
->                                ^
-> Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
-> standards explicitly call this out as undefined behavior:
+> > > Ok, should this just be part of the IMA policy?
+> >
+> > How would you be able to differentiate between different FUSE
+> > filesystems for example?
+> 
+> There's a couple of ways. We could extend the filesystem type matching
+> logic to also check the subtype - you'd then need to enforce that at
+> the LSM level in order to protect against untrusted filesystems
+> spoofing the filesystem type. Alternatively, we could add an
+> additional policy match type for mount point and iterate through
+> s_mounts on the superblock - if any match, we could define the policy
+> there?
 
-I guess that problems arise when all the arguments are stacked
-and va_start/va_arg use naive pointer manipulation.
-In that case &h3 might be 4n+3 aligned so va_arg() will access
-misaligned stack locations.
+The first method differentiates between different subtypes of FUSE
+filesystems, while the second method allows differentiating between
+the same type and subtype on different mount points.  Both criteria
+are needed, but instead of the second method based on a mount point,
+perhaps based instead on a mount flag?
 
-I doubt any modern compilers (where va_start and va_arg are builtins)
-will get this 'wrong' even when all arguments are stacked.
+Trusted mount of permitted filesystem type and subtype, that is
+mounted with the defined mount flag. 
 
-Seems clang is being over cautious.
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+Mimi
