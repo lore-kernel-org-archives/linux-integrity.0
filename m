@@ -1,215 +1,117 @@
-Return-Path: <SRS0=9/2W=MY=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=6Zy9=M3=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C64C43441
-	for <linux-integrity@archiver.kernel.org>; Fri, 12 Oct 2018 09:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58490C070C3
+	for <linux-integrity@archiver.kernel.org>; Mon, 15 Oct 2018 01:38:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4727520868
-	for <linux-integrity@archiver.kernel.org>; Fri, 12 Oct 2018 09:34:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4727520868
+	by mail.kernel.org (Postfix) with ESMTP id 1748520659
+	for <linux-integrity@archiver.kernel.org>; Mon, 15 Oct 2018 01:38:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1748520659
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728149AbeJLRGG (ORCPT
+        id S1726186AbeJOJVh (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 12 Oct 2018 13:06:06 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47200 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728138AbeJLRGG (ORCPT
+        Mon, 15 Oct 2018 05:21:37 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58982 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726467AbeJOJVg (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 12 Oct 2018 13:06:06 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9C9YVMi107857
-        for <linux-integrity@vger.kernel.org>; Fri, 12 Oct 2018 05:34:32 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n2pugdhww-1
+        Mon, 15 Oct 2018 05:21:36 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9F1Y3hE134249
+        for <linux-integrity@vger.kernel.org>; Sun, 14 Oct 2018 21:38:35 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2n4fe7350v-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 12 Oct 2018 05:34:32 -0400
+        for <linux-integrity@vger.kernel.org>; Sun, 14 Oct 2018 21:38:35 -0400
 Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.ibm.com>;
-        Fri, 12 Oct 2018 05:34:32 -0400
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 15 Oct 2018 02:38:33 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 12 Oct 2018 05:34:29 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9C9YSFF26083500
+        Mon, 15 Oct 2018 02:38:30 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9F1cTRY5833148
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 12 Oct 2018 09:34:28 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D4BE0B2066;
-        Fri, 12 Oct 2018 05:32:27 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A1A3DB205F;
-        Fri, 12 Oct 2018 05:32:25 -0400 (EDT)
-Received: from [9.124.31.41] (unknown [9.124.31.41])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 12 Oct 2018 05:32:25 -0400 (EDT)
-Subject: Re: [PATCH v5 06/21] tpm: move tpm1_pcr_extend to tpm1-cmd.c
-To:     Tomas Winkler <tomas.winkler@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180928223035.14471-1-tomas.winkler@intel.com>
- <20180928223035.14471-7-tomas.winkler@intel.com>
-From:   Nayna Jain <nayna@linux.ibm.com>
-Date:   Fri, 12 Oct 2018 15:01:24 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <20180928223035.14471-7-tomas.winkler@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Mon, 15 Oct 2018 01:38:29 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 80F634C04E;
+        Mon, 15 Oct 2018 04:38:03 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AB3C24C040;
+        Mon, 15 Oct 2018 04:38:02 +0100 (BST)
+Received: from localhost.localdomain (unknown [9.80.101.196])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 15 Oct 2018 04:38:02 +0100 (BST)
+Subject: Re: [PATCH 2/3] IMA: Make use of filesystem-provided hashes
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Matthew Garrett <mjg59@google.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, miklos@szeredi.hu,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Date:   Sun, 14 Oct 2018 21:38:17 -0400
+In-Reply-To: <CACdnJuvrATdx2giEvddU38SMKp2oj1XjHqEbs88fuUOekHyDLw@mail.gmail.com>
+References: <20181004203007.217320-1-mjg59@google.com>
+         <20181004203007.217320-3-mjg59@google.com>
+         <1539271386.11939.79.camel@linux.ibm.com>
+         <CACdnJuvGp_3hs16kL1Vg9eXL4i=T=bXw9i5_7KTT0F+J4p9y4A@mail.gmail.com>
+         <1539298987.11939.136.camel@linux.ibm.com>
+         <CACdnJuvrATdx2giEvddU38SMKp2oj1XjHqEbs88fuUOekHyDLw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 X-TM-AS-GCONF: 00
-x-cbid: 18101209-0068-0000-0000-0000034C11D8
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009865; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01101513; UDB=6.00569998; IPR=6.00881558;
- MB=3.00023726; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-12 09:34:31
+x-cbid: 18101501-0028-0000-0000-0000030756CC
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101209-0069-0000-0000-0000460B88D7
-Message-Id: <24b611f6-8080-3f99-56e5-818bd16ef4f8@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-12_08:,,
+x-cbparentid: 18101501-0029-0000-0000-000023C25A63
+Message-Id: <1539567497.11939.198.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-15_01:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810120097
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810150013
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
-Message-ID: <20181012093124.J-8AIQ2Qx71NrgCsl5GuwNXW0YFlkhYFnX49yKg1fZQ@z>
+Message-ID: <20181015013817.VybDwe1LpgI4Z0QNm47cdibjbsZF7LdT9dRRzJhYPtM@z>
 
+On Fri, 2018-10-12 at 11:31 -0700, Matthew Garrett wrote:
+> On Thu, Oct 11, 2018 at 4:03 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > On Thu, 2018-10-11 at 13:30 -0700, Matthew Garrett wrote:
+> 
+> > > Ok, should this just be part of the IMA policy?
+> >
+> > How would you be able to differentiate between different FUSE
+> > filesystems for example?
+> 
+> There's a couple of ways. We could extend the filesystem type matching
+> logic to also check the subtype - you'd then need to enforce that at
+> the LSM level in order to protect against untrusted filesystems
+> spoofing the filesystem type. Alternatively, we could add an
+> additional policy match type for mount point and iterate through
+> s_mounts on the superblock - if any match, we could define the policy
+> there?
 
+The first method differentiates between different subtypes of FUSE
+filesystems, while the second method allows differentiating between
+the same type and subtype on different mount points.  Both criteria
+are needed, but instead of the second method based on a mount point,
+perhaps based instead on a mount flag?
 
-On 09/29/2018 04:00 AM, Tomas Winkler wrote:
-> Move tpm1_pcr_extend to tpm1-cmd.c and remove
-> unused pcrextend_header structure and
-> EXTEND_PCR_RESULT_SIZE and EXTEND_PCR_RESULT_BODY_SIZE
-> defines.
->
-> Fixes warning:
-> drivers/char/tpm/tpm-interface.c:609:38: warning: ‘pcrextend_header’ defined but not used [-Wunused-const-variable=]
->   static const struct tpm_input_header pcrextend_header = {
->                                        ^~~~~~~~~~~~~~~~
->
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->
-> V2-V3: Rebase
-> V4: Remove defines.
-> V5: Resend.
->
->   drivers/char/tpm/tpm-interface.c | 28 ----------------------------
->   drivers/char/tpm/tpm.h           |  2 ++
->   drivers/char/tpm/tpm1-cmd.c      | 21 +++++++++++++++++++++
->   3 files changed, 23 insertions(+), 28 deletions(-)
->
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 1fa0300f3829..ac73e6ac3d83 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -614,34 +614,6 @@ int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
->   }
->   EXPORT_SYMBOL_GPL(tpm_pcr_read);
->
-> -#define TPM_ORD_PCR_EXTEND 20
-> -#define EXTEND_PCR_RESULT_SIZE 34
-> -#define EXTEND_PCR_RESULT_BODY_SIZE 20
-> -static const struct tpm_input_header pcrextend_header = {
-> -	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
-> -	.length = cpu_to_be32(34),
-> -	.ordinal = cpu_to_be32(TPM_ORD_PCR_EXTEND)
-> -};
-> -
-> -static int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
-> -			   char *log_msg)
-> -{
-> -	struct tpm_buf buf;
-> -	int rc;
-> -
-> -	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
-> -	if (rc)
-> -		return rc;
-> -
-> -	tpm_buf_append_u32(&buf, pcr_idx);
-> -	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
-> -
-> -	rc = tpm_transmit_cmd(chip, NULL, buf.data, EXTEND_PCR_RESULT_SIZE,
-> -			      EXTEND_PCR_RESULT_BODY_SIZE, 0, log_msg);
-> -	tpm_buf_destroy(&buf);
-> -	return rc;
-> -}
-> -
->   /**
->    * tpm_pcr_extend - extend a PCR value in SHA1 bank.
->    * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index a97d72fcda5b..3fb268f43955 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -549,6 +549,8 @@ int tpm_do_selftest(struct tpm_chip *chip);
->   int tpm1_auto_startup(struct tpm_chip *chip);
->   int tpm1_get_timeouts(struct tpm_chip *chip);
->   unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
-> +int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
-> +		    const char *log_msg);
->   unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
->   int tpm_pm_suspend(struct device *dev);
->   int tpm_pm_resume(struct device *dev);
-> diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-> index 978946748ea3..ec242397e6dc 100644
-> --- a/drivers/char/tpm/tpm1-cmd.c
-> +++ b/drivers/char/tpm/tpm1-cmd.c
-> @@ -413,3 +413,24 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
->   	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
->   	return 0;
->   }
-> +
-> +#define TPM_ORD_PCR_EXTEND 20
-> +int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
-> +		    const char *log_msg)
-> +{
-> +	struct tpm_buf buf;
-> +	int rc;
-> +
-> +	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
-> +	if (rc)
-> +		return rc;
-> +
-> +	tpm_buf_append_u32(&buf, pcr_idx);
-> +	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
-> +
-> +	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
-> +			      TPM_DIGEST_SIZE, 0, log_msg);
-> +
-> +	tpm_buf_destroy(&buf);
-> +	return rc;
-> +}
+Trusted mount of permitted filesystem type and subtype, that is
+mounted with the defined mount flag. 
 
-
-Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
-Tested-by: Nayna Jain <nayna@linux.ibm.com>
-
-Sorry for bit delay in testing.
-
-Thanks & Regards,
-    - Nayna
-
-
-
+Mimi
 
