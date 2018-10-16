@@ -1,52 +1,78 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:38772 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727061AbeJPXZh (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 16 Oct 2018 19:25:37 -0400
-Message-ID: <1539704075.2805.24.camel@HansenPartnership.com>
-Subject: Re: LPC 2018
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>
-Cc: Matthew Garrett <mjg59@google.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        montywiseman32@gmail.com, serge@hallyn.com, chuck.lever@oracle.com,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Date: Tue, 16 Oct 2018 08:34:35 -0700
-In-Reply-To: <1539691005.11939.258.camel@linux.ibm.com>
-References: <9808035C-5AE5-4594-BDBF-A51544231608@oracle.com>
-         <dfe11979-1afd-1554-fcaa-ebf39e32397d@gmail.com>
-         <20181011154847.GA5978@mail.hallyn.com>
-         <3839043b-5541-369e-1179-c3c8c1dbfb07@gmail.com>
-         <1539296304.3108.54.camel@HansenPartnership.com>
-         <alpine.DEB.2.21.1810151652360.28121@jsakkine-mobl1>
-         <CACdnJutMR=6OH=DtnAGXkFU+PNae_ONxcQGA7QLPJ9jsBd8j=w@mail.gmail.com>
-         <alpine.LRH.2.21.1810160833560.14147@namei.org>
-         <1539642523.2867.44.camel@HansenPartnership.com>
-         <alpine.LRH.2.21.1810160946210.2779@namei.org>
-         <1539691005.11939.258.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mga11.intel.com ([192.55.52.93]:28953 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727002AbeJPVb7 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 16 Oct 2018 17:31:59 -0400
+From: Tomas Winkler <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Tomas Winkler <tomas.winkler@intel.com>, stable@vger.kernel.org
+Subject: [PATCH] tpm: tpm_try_transmit() refactor error flow.
+Date: Tue, 16 Oct 2018 16:37:16 +0300
+Message-Id: <20181016133716.17842-1-tomas.winkler@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Tue, 2018-10-16 at 07:56 -0400, Mimi Zohar wrote:
-> On Tue, 2018-10-16 at 09:46 +1100, James Morris wrote:
-> > On Mon, 15 Oct 2018, James Bottomley wrote:
-> > 
-> > > > What about a TPM BoF at LSS
-> > > 
-> > > I'm only at LinuxCon/KS, so I'm leaving on Thursday.  I think you
-> > > have a Wednesday overlap, though, so Wednesday would work.
-> > 
-> > LSS is Thurs+Fri, but we may have a quorum for Weds.
-> 
-> Some of us are arriving Wed.  Perhaps try scheduling it later in the
-> day Wed.
+First, rename out_no_locality to out_locality for bailing out on
+both tpm_cmd_ready() and tpm_request_locality() failure.
+Second, ignore the return value of go_to_idle() as  it may override
+the return value of the actual tpm operation, the go_to_idle() error
+will be caught on any consequent command.
+Last, fix the wrong 'goto out', that jumped back instead of forward.
 
-Oh, I thought LSS was three days: Wed-Fri with the Wed talks being open
-to all LinuxCon attendees ... I even made a note to go to some of them.
- Did that get killed?
+Cc: stable@vger.kernel.org
+Fixes: 627448e85c76 ("tpm: separate cmd_ready/go_idle from runtime_pm")
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+---
+ drivers/char/tpm/tpm-interface.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-James
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 129f640424b7..95db630dd722 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -477,13 +477,15 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 
+ 	if (need_locality) {
+ 		rc = tpm_request_locality(chip, flags);
+-		if (rc < 0)
+-			goto out_no_locality;
++		if (rc < 0) {
++			need_locality = false;
++			goto out_locality;
++		}
+ 	}
+ 
+ 	rc = tpm_cmd_ready(chip, flags);
+ 	if (rc)
+-		goto out;
++		goto out_locality;
+ 
+ 	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+ 	if (rc)
+@@ -547,14 +549,13 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 		dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
+ 
+ out:
+-	rc = tpm_go_idle(chip, flags);
+-	if (rc)
+-		goto out;
++	/* may fail but do not override previous error value in rc */
++	tpm_go_idle(chip, flags);
+ 
++out_locality:
+ 	if (need_locality)
+ 		tpm_relinquish_locality(chip, flags);
+ 
+-out_no_locality:
+ 	if (chip->ops->clk_enable != NULL)
+ 		chip->ops->clk_enable(chip, false);
+ 
+-- 
+2.14.4
