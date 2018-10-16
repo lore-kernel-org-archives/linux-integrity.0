@@ -5,106 +5,125 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5010CC04EBD
-	for <linux-integrity@archiver.kernel.org>; Tue, 16 Oct 2018 11:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB11EC169D4
+	for <linux-integrity@archiver.kernel.org>; Tue, 16 Oct 2018 13:16:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F2E920869
-	for <linux-integrity@archiver.kernel.org>; Tue, 16 Oct 2018 11:57:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F2E920869
+	by mail.kernel.org (Postfix) with ESMTP id BDE402098A
+	for <linux-integrity@archiver.kernel.org>; Tue, 16 Oct 2018 13:16:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDE402098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727006AbeJPTrM (ORCPT
+        id S1727123AbeJPVHX (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 16 Oct 2018 15:47:12 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37206 "EHLO
+        Tue, 16 Oct 2018 17:07:23 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:17052 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727002AbeJPTrL (ORCPT
+        by vger.kernel.org with ESMTP id S1727003AbeJPVHW (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 16 Oct 2018 15:47:11 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9GBsj1S119481
-        for <linux-integrity@vger.kernel.org>; Tue, 16 Oct 2018 07:57:03 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n5edhu7nr-1
+        Tue, 16 Oct 2018 17:07:22 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9GDEIxT144689
+        for <linux-integrity@vger.kernel.org>; Tue, 16 Oct 2018 09:16:54 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2n5fvpk0mg-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 16 Oct 2018 07:57:03 -0400
+        for <linux-integrity@vger.kernel.org>; Tue, 16 Oct 2018 09:16:54 -0400
 Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 16 Oct 2018 12:57:01 +0100
+        Tue, 16 Oct 2018 14:16:52 +0100
 Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 16 Oct 2018 12:56:58 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9GBuvis4325800
+        Tue, 16 Oct 2018 14:16:49 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9GDGmEQ5570886
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 16 Oct 2018 11:56:57 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4D63F11C05C;
-        Tue, 16 Oct 2018 14:56:27 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1A6DB11C066;
-        Tue, 16 Oct 2018 14:56:26 +0100 (BST)
+        Tue, 16 Oct 2018 13:16:48 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 12990AE055;
+        Tue, 16 Oct 2018 13:16:48 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 37D80AE045;
+        Tue, 16 Oct 2018 13:16:47 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.80.87.57])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 16 Oct 2018 14:56:25 +0100 (BST)
-Subject: Re: LPC 2018
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 16 Oct 2018 13:16:47 +0000 (GMT)
+Subject: Re: [PATCH 2/3] IMA: Make use of filesystem-provided hashes
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     James Morris <jmorris@namei.org>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Matthew Garrett <mjg59@google.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        montywiseman32@gmail.com, serge@hallyn.com, chuck.lever@oracle.com,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Date:   Tue, 16 Oct 2018 07:56:45 -0400
-In-Reply-To: <alpine.LRH.2.21.1810160946210.2779@namei.org>
-References: <9808035C-5AE5-4594-BDBF-A51544231608@oracle.com>
-         <dfe11979-1afd-1554-fcaa-ebf39e32397d@gmail.com>
-         <20181011154847.GA5978@mail.hallyn.com>
-         <3839043b-5541-369e-1179-c3c8c1dbfb07@gmail.com>
-         <1539296304.3108.54.camel@HansenPartnership.com>
-         <alpine.DEB.2.21.1810151652360.28121@jsakkine-mobl1>
-         <CACdnJutMR=6OH=DtnAGXkFU+PNae_ONxcQGA7QLPJ9jsBd8j=w@mail.gmail.com>
-         <alpine.LRH.2.21.1810160833560.14147@namei.org>
-         <1539642523.2867.44.camel@HansenPartnership.com>
-         <alpine.LRH.2.21.1810160946210.2779@namei.org>
+To:     Matthew Garrett <mjg59@google.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, miklos@szeredi.hu,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Date:   Tue, 16 Oct 2018 09:16:36 -0400
+In-Reply-To: <CACdnJuvWaVXcRcDBPtZCWrJsWX8-rXRbc3bWjtrx=8-4m0uetQ@mail.gmail.com>
+References: <20181004203007.217320-1-mjg59@google.com>
+         <20181004203007.217320-3-mjg59@google.com>
+         <1539271386.11939.79.camel@linux.ibm.com>
+         <CACdnJuvGp_3hs16kL1Vg9eXL4i=T=bXw9i5_7KTT0F+J4p9y4A@mail.gmail.com>
+         <1539298987.11939.136.camel@linux.ibm.com>
+         <CACdnJuvrATdx2giEvddU38SMKp2oj1XjHqEbs88fuUOekHyDLw@mail.gmail.com>
+         <1539567497.11939.198.camel@linux.ibm.com>
+         <CACdnJuvWaVXcRcDBPtZCWrJsWX8-rXRbc3bWjtrx=8-4m0uetQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 18101611-0016-0000-0000-00000213B05D
+x-cbid: 18101613-0008-0000-0000-00000280382C
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101611-0017-0000-0000-0000326B42D0
-Message-Id: <1539691005.11939.258.camel@linux.ibm.com>
+x-cbparentid: 18101613-0009-0000-0000-000021E99866
+Message-Id: <1539695796.11939.273.camel@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-16_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810160103
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810160113
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
-Message-ID: <20181016115645.tvgBpJK4eafiu0qjNzKkWMOyO9qd0hY4VlLny5vGy98@z>
+Message-ID: <20181016131636.bde6LyCQ5TozlpZMPigPsQpzRP2YkoBRjPOPN6jgg48@z>
 
-On Tue, 2018-10-16 at 09:46 +1100, James Morris wrote:
-> On Mon, 15 Oct 2018, James Bottomley wrote:
+On Mon, 2018-10-15 at 11:46 -0700, Matthew Garrett wrote:
+> On Sun, Oct 14, 2018 at 6:38 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > On Fri, 2018-10-12 at 11:31 -0700, Matthew Garrett wrote:
+> > > There's a couple of ways. We could extend the filesystem type matching
+> > > logic to also check the subtype - you'd then need to enforce that at
+> > > the LSM level in order to protect against untrusted filesystems
+> > > spoofing the filesystem type. Alternatively, we could add an
+> > > additional policy match type for mount point and iterate through
+> > > s_mounts on the superblock - if any match, we could define the policy
+> > > there?
+> >
+> > The first method differentiates between different subtypes of FUSE
+> > filesystems, while the second method allows differentiating between
+> > the same type and subtype on different mount points.  Both criteria
+> > are needed, but instead of the second method based on a mount point,
+> > perhaps based instead on a mount flag?
 > 
-> > > What about a TPM BoF at LSS
-> > 
-> > I'm only at LinuxCon/KS, so I'm leaving on Thursday.  I think you have
-> > a Wednesday overlap, though, so Wednesday would work.
-> 
-> LSS is Thurs+Fri, but we may have a quorum for Weds.
+> Patch 3 already requires that the allow_gethash option be passed for
+> this to work - I can restrict that to CAP_SYS_ADMIN?
 
-Some of us are arriving Wed.  Perhaps try scheduling it later in the
-day Wed.
+In the case of FUSE filesystems, using "gethash" should be limited to
+trusted mounts, not fileystems mounted with SB_I_UNTRUSTED_MOUNTER.
+ So requiring CAP_SYS_ADMIN seems unnecessary.  The difference in the
+approaches is that root has CAP_SYS_ADMIN, while providing a mount
+flag requires intention.
+
+> 
+> > Trusted mount of permitted filesystem type and subtype, that is
+> > mounted with the defined mount flag.
+> 
+> Ok, I'll write up a patch that allows policy matching of filesystem
+> subtype as well as type and try to get that posted this week so we can
+> discuss it in Edinburgh?
+
+Sounds good.  Hopefully I'll have time to review it before Edinburgh.
 
 Mimi
 
