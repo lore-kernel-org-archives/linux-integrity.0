@@ -1,38 +1,52 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:44285 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727159AbeJQAkP (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 16 Oct 2018 20:40:15 -0400
-Date: Tue, 16 Oct 2018 19:48:51 +0300 (EEST)
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Nayna Jain <nayna@linux.ibm.com>
-cc: Tomas Winkler <tomas.winkler@intel.com>,
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:38772 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727061AbeJPXZh (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 16 Oct 2018 19:25:37 -0400
+Message-ID: <1539704075.2805.24.camel@HansenPartnership.com>
+Subject: Re: LPC 2018
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>
+Cc: Matthew Garrett <mjg59@google.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 06/21] tpm: move tpm1_pcr_extend to tpm1-cmd.c
-In-Reply-To: <24b611f6-8080-3f99-56e5-818bd16ef4f8@linux.ibm.com>
-Message-ID: <alpine.DEB.2.21.1810161947370.11306@jsakkine-mobl1>
-References: <20180928223035.14471-1-tomas.winkler@intel.com> <20180928223035.14471-7-tomas.winkler@intel.com> <24b611f6-8080-3f99-56e5-818bd16ef4f8@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+        montywiseman32@gmail.com, serge@hallyn.com, chuck.lever@oracle.com,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Date: Tue, 16 Oct 2018 08:34:35 -0700
+In-Reply-To: <1539691005.11939.258.camel@linux.ibm.com>
+References: <9808035C-5AE5-4594-BDBF-A51544231608@oracle.com>
+         <dfe11979-1afd-1554-fcaa-ebf39e32397d@gmail.com>
+         <20181011154847.GA5978@mail.hallyn.com>
+         <3839043b-5541-369e-1179-c3c8c1dbfb07@gmail.com>
+         <1539296304.3108.54.camel@HansenPartnership.com>
+         <alpine.DEB.2.21.1810151652360.28121@jsakkine-mobl1>
+         <CACdnJutMR=6OH=DtnAGXkFU+PNae_ONxcQGA7QLPJ9jsBd8j=w@mail.gmail.com>
+         <alpine.LRH.2.21.1810160833560.14147@namei.org>
+         <1539642523.2867.44.camel@HansenPartnership.com>
+         <alpine.LRH.2.21.1810160946210.2779@namei.org>
+         <1539691005.11939.258.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-On Fri, 12 Oct 2018, Nayna Jain wrote:
-> Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
-> Tested-by: Nayna Jain <nayna@linux.ibm.com>
->
-> Sorry for bit delay in testing.
->
-> Thanks & Regards,
->   - Nayna
+On Tue, 2018-10-16 at 07:56 -0400, Mimi Zohar wrote:
+> On Tue, 2018-10-16 at 09:46 +1100, James Morris wrote:
+> > On Mon, 15 Oct 2018, James Bottomley wrote:
+> > 
+> > > > What about a TPM BoF at LSS
+> > > 
+> > > I'm only at LinuxCon/KS, so I'm leaving on Thursday.  I think you
+> > > have a Wednesday overlap, though, so Wednesday would work.
+> > 
+> > LSS is Thurs+Fri, but we may have a quorum for Weds.
+> 
+> Some of us are arriving Wed.  Perhaps try scheduling it later in the
+> day Wed.
 
-Thank you. This is a big refactoring so your effort is highly
-appreciated :-)
+Oh, I thought LSS was three days: Wed-Fri with the Wed talks being open
+to all LinuxCon attendees ... I even made a note to go to some of them.
+ Did that get killed?
 
-/Jarkko
+James
