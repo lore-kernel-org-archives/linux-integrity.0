@@ -1,8 +1,8 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:4079 "EHLO mga18.intel.com"
+Received: from mga11.intel.com ([192.55.52.93]:48122 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727080AbeJQOok (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 17 Oct 2018 10:44:40 -0400
+        id S1727570AbeJQOpK (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 17 Oct 2018 10:45:10 -0400
 From: Tomas Winkler <tomas.winkler@intel.com>
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
@@ -13,120 +13,121 @@ Cc: Nayna Jain <nayna@linux.vnet.ibm.com>,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH v6 06/20] tpm: move tpm1_pcr_extend to tpm1-cmd.c
-Date: Wed, 17 Oct 2018 09:45:59 +0300
-Message-Id: <20181017064613.19746-7-tomas.winkler@intel.com>
+Subject: [PATCH v6 16/20] tpm1: implement tpm1_pcr_read_dev() using tpm_buf structure
+Date: Wed, 17 Oct 2018 09:46:09 +0300
+Message-Id: <20181017064613.19746-17-tomas.winkler@intel.com>
 In-Reply-To: <20181017064613.19746-1-tomas.winkler@intel.com>
 References: <20181017064613.19746-1-tomas.winkler@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-Move tpm1_pcr_extend to tpm1-cmd.c and remove
-unused pcrextend_header structure and
-EXTEND_PCR_RESULT_SIZE and EXTEND_PCR_RESULT_BODY_SIZE
-defines.
+Implement tpm1_pcr_read_dev() using tpm_buf and remove
+now unneeded structures from tpm.h
 
-Fixes warning:
-drivers/char/tpm/tpm-interface.c:609:38: warning: 'pcrextend_header' defined but not used [-Wunused-const-variable=]
- static const struct tpm_input_header pcrextend_header = {
-                                      ^~~~~~~~~~~~~~~~
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
-Tested-by: Nayna Jain <nayna@linux.ibm.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
-V2-V3: Rebase
-V4: Remove defines.
-V5: Resend
-V6: Add Tested-by:
 
- drivers/char/tpm/tpm-interface.c | 28 ----------------------------
- drivers/char/tpm/tpm.h           |  2 ++
- drivers/char/tpm/tpm1-cmd.c      | 21 +++++++++++++++++++++
- 3 files changed, 23 insertions(+), 28 deletions(-)
+V3: New in the series.
+V4-V6: Resend.
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 20f5c15584e4..177795b408ff 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -615,34 +615,6 @@ int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
- }
- EXPORT_SYMBOL_GPL(tpm_pcr_read);
- 
--#define TPM_ORD_PCR_EXTEND 20
--#define EXTEND_PCR_RESULT_SIZE 34
--#define EXTEND_PCR_RESULT_BODY_SIZE 20
--static const struct tpm_input_header pcrextend_header = {
--	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
--	.length = cpu_to_be32(34),
--	.ordinal = cpu_to_be32(TPM_ORD_PCR_EXTEND)
--};
--
--static int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
--			   char *log_msg)
--{
--	struct tpm_buf buf;
--	int rc;
--
--	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
--	if (rc)
--		return rc;
--
--	tpm_buf_append_u32(&buf, pcr_idx);
--	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
--
--	rc = tpm_transmit_cmd(chip, NULL, buf.data, EXTEND_PCR_RESULT_SIZE,
--			      EXTEND_PCR_RESULT_BODY_SIZE, 0, log_msg);
--	tpm_buf_destroy(&buf);
--	return rc;
--}
--
- /**
-  * tpm_pcr_extend - extend a PCR value in SHA1 bank.
-  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
+ drivers/char/tpm/tpm.h      | 18 ++----------------
+ drivers/char/tpm/tpm1-cmd.c | 38 +++++++++++++++++++++-----------------
+ 2 files changed, 23 insertions(+), 33 deletions(-)
+
 diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 4ea51bbdbfae..221b6dcd15a1 100644
+index 6895f183396b..51d147675b1f 100644
 --- a/drivers/char/tpm/tpm.h
 +++ b/drivers/char/tpm/tpm.h
-@@ -549,6 +549,8 @@ int tpm_do_selftest(struct tpm_chip *chip);
+@@ -382,13 +382,10 @@ typedef union {
+ 	struct	tpm_output_header out;
+ } tpm_cmd_header;
  
- int tpm1_get_timeouts(struct tpm_chip *chip);
- unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
-+int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
-+		    const char *log_msg);
- unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
- int tpm_pm_suspend(struct device *dev);
- int tpm_pm_resume(struct device *dev);
+-struct tpm_pcrread_out {
+-	u8	pcr_result[TPM_DIGEST_SIZE];
++struct tpm_cmd_t {
++	tpm_cmd_header	header;
+ } __packed;
+ 
+-struct tpm_pcrread_in {
+-	__be32	pcr_idx;
+-} __packed;
+ 
+ /* 128 bytes is an arbitrary cap. This could be as large as TPM_BUFSIZE - 18
+  * bytes, but 128 is still a relatively large number of random bytes and
+@@ -396,17 +393,6 @@ struct tpm_pcrread_in {
+  * compiler warnings about stack frame size. */
+ #define TPM_MAX_RNG_DATA	128
+ 
+-typedef union {
+-	struct	tpm_pcrread_in	pcrread_in;
+-	struct	tpm_pcrread_out	pcrread_out;
+-} tpm_cmd_params;
+-
+-struct tpm_cmd_t {
+-	tpm_cmd_header	header;
+-	tpm_cmd_params	params;
+-} __packed;
+-
+-
+ /* A string buffer type for constructing TPM commands. This is based on the
+  * ideas of string buffer code in security/keys/trusted.h but is heap based
+  * in order to keep the stack usage minimal.
 diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 978946748ea3..ec242397e6dc 100644
+index b5c4fa158c30..d30f336518f6 100644
 --- a/drivers/char/tpm/tpm1-cmd.c
 +++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -413,3 +413,24 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
- 	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
- 	return 0;
+@@ -571,29 +571,33 @@ int tpm1_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
+ 	return rc;
  }
-+
-+#define TPM_ORD_PCR_EXTEND 20
-+int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
-+		    const char *log_msg)
-+{
+ 
+-#define TPM_ORDINAL_PCRREAD 21
+-#define READ_PCR_RESULT_SIZE 30
+-#define READ_PCR_RESULT_BODY_SIZE 20
+-static const struct tpm_input_header pcrread_header = {
+-	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+-	.length = cpu_to_be32(14),
+-	.ordinal = cpu_to_be32(TPM_ORDINAL_PCRREAD)
+-};
+-
++#define TPM_ORD_PCRREAD 21
+ int tpm1_pcr_read_dev(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
+ {
 +	struct tpm_buf buf;
-+	int rc;
-+
-+	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
+ 	int rc;
+-	struct tpm_cmd_t cmd;
+ 
+-	cmd.header.in = pcrread_header;
+-	cmd.params.pcrread_in.pcr_idx = cpu_to_be32(pcr_idx);
+-	rc = tpm_transmit_cmd(chip, NULL, &cmd, READ_PCR_RESULT_SIZE,
+-			      READ_PCR_RESULT_BODY_SIZE, 0,
++	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCRREAD);
 +	if (rc)
 +		return rc;
 +
 +	tpm_buf_append_u32(&buf, pcr_idx);
-+	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
 +
 +	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
-+			      TPM_DIGEST_SIZE, 0, log_msg);
++			      TPM_DIGEST_SIZE, 0,
+ 			      "attempting to read a pcr value");
++	if (rc)
++		goto out;
+ 
+-	if (rc == 0)
+-		memcpy(res_buf, cmd.params.pcrread_out.pcr_result,
+-		       TPM_DIGEST_SIZE);
++	if (tpm_buf_length(&buf) < TPM_DIGEST_SIZE) {
++		rc = -EFAULT;
++		goto out;
++	}
 +
++	memcpy(res_buf, &buf.data[TPM_HEADER_SIZE], TPM_DIGEST_SIZE);
++
++out:
 +	tpm_buf_destroy(&buf);
-+	return rc;
-+}
+ 	return rc;
+ }
+ 
 -- 
 2.14.4
