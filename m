@@ -1,83 +1,72 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45891 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728972AbeH3SnF (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 30 Aug 2018 14:43:05 -0400
-Received: by mail-wr1-f67.google.com with SMTP id 20-v6so8289827wrb.12
-        for <linux-integrity@vger.kernel.org>; Thu, 30 Aug 2018 07:40:37 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Hans de Goede <hdegoede@redhat.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>,
+Received: from mga01.intel.com ([192.55.52.88]:5574 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726954AbeJQUUA (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 17 Oct 2018 16:20:00 -0400
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Nayna Jain <nayna@linux.ibm.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org
-Subject: [PATCH] tpm: suppress transmit cmd error logs when TPM 1.2 is disabled/deactivated
-Date: Thu, 30 Aug 2018 16:40:05 +0200
-Message-Id: <20180830144005.6768-1-javierm@redhat.com>
+        Jason Gunthorpe <jgg@ziepe.ca>
+CC: Nayna Jain <nayna@linux.vnet.ibm.com>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v6 03/20] tpm: factor out tpm 1.x duration calculation
+ to tpm1-cmd.c
+Date: Wed, 17 Oct 2018 12:24:28 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D9F4691@hasmsx109.ger.corp.intel.com>
+References: <20181017064613.19746-1-tomas.winkler@intel.com>
+ <20181017064613.19746-4-tomas.winkler@intel.com>
+ <05fea3e6-91a3-b508-83c0-d8f06d6bbd5c@linux.ibm.com>
+In-Reply-To: <05fea3e6-91a3-b508-83c0-d8f06d6bbd5c@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-For TPM 1.2 chips the system setup utility allows to set the TPM device in
-one of the following states:
+> 
+> 
+> 
+> On 10/17/2018 12:15 PM, Tomas Winkler wrote:
+> > diff --git a/drivers/char/tpm/tpm_i2c_nuvoton.c
+> > b/drivers/char/tpm/tpm_i2c_nuvoton.c
+> > index caa86b19c76d..5d20e98b844f 100644
+> > --- a/drivers/char/tpm/tpm_i2c_nuvoton.c
+> > +++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
+> > @@ -370,6 +370,7 @@ static int i2c_nuvoton_send(struct tpm_chip *chip,
+> u8 *buf, size_t len)
+> >   	struct i2c_client *client = to_i2c_client(dev);
+> >   	u32 ordinal;
+> >   	size_t count = 0;
+> > +	unsigned long duration;
+> >   	int burst_count, bytes2write, retries, rc = -EIO;
+> >
+> >   	for (retries = 0; retries < TPM_RETRY; retries++) { @@ -455,12
+> > +456,11 @@ static int i2c_nuvoton_send(struct tpm_chip *chip, u8 *buf,
+> size_t len)
+> >   		return rc;
+> >   	}
+> >   	ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
+> > -	rc = i2c_nuvoton_wait_for_data_avail(chip,
+> > -					     tpm_calc_ordinal_duration(chip,
+> > -								       ordinal),
+> > -					     &priv->read_queue);
+> > +	duration = tpm1_calc_ordinal_duration(chip, ordinal);
+> 
+> 
+> This version of the patch didn't address my previous comment - "The original
+> code in the nuvoton driver does not differentiate between TPM 1.2 and TPM
+> 2.0 as it does in tpm_tis_core.c.
+> Before making any changes, I would first fix it, so that it could easily be
+> backported. Only then do the refactoring."
 
-  * Active: Security chip is functional
-  * Inactive: Security chip is visible, but is not functional
-  * Disabled: Security chip is hidden and is not functional
+This patch doesn't change the original behavior, just change the name of the function,  so there is no regression.
+I would suggest there is another bug in those drivers/devices that is orthogonal to this refactoring and should not block this from merging.
+According to what you say  it can call just tpm_calc_oridnal_duration() instead of tpm1_calc_ordinal_duration(chip, ordinal),
+but I prefer that someone that has those devices will do that change on top of this series as  I cannot test it.
 
-When choosing the "Inactive" state, the TPM 1.2 device is enumerated and
-registered, but sending TPM commands fail with either TPM_DEACTIVATED or
-TPM_DISABLED depending if the firmware deactivated or disabled the TPM.
-
-Since these TPM 1.2 error codes don't have special treatment, inactivating
-the TPM leads to a very noisy kernel log buffer that shows messages like
-the following:
-
-  tpm_tis 00:05: 1.2 TPM (device-id 0x0, rev-id 78)
-  tpm tpm0: A TPM error (6) occurred attempting to read a pcr value
-  tpm tpm0: TPM is disabled/deactivated (0x6)
-  tpm tpm0: A TPM error (6) occurred attempting get random
-  tpm tpm0: A TPM error (6) occurred attempting to read a pcr value
-  ima: No TPM chip found, activating TPM-bypass! (rc=6)
-  tpm tpm0: A TPM error (6) occurred attempting get random
-  tpm tpm0: A TPM error (6) occurred attempting get random
-  tpm tpm0: A TPM error (6) occurred attempting get random
-  tpm tpm0: A TPM error (6) occurred attempting get random
-
-Let's just suppress error log messages for the TPM_{DEACTIVATED,DISABLED}
-return codes, since this is expected when the TPM 1.2 is set to Inactive.
-
-In that case the kernel log is cleaner and less confusing for users, i.e:
-
-  tpm_tis 00:05: 1.2 TPM (device-id 0x0, rev-id 78)
-  tpm tpm0: TPM is disabled/deactivated (0x6)
-  ima: No TPM chip found, activating TPM-bypass! (rc=6)
-
-Reported-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-
----
-
- drivers/char/tpm/tpm-interface.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 1a803b0cf98..9f61106502a 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -663,7 +663,8 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
- 		return len;
- 
- 	err = be32_to_cpu(header->return_code);
--	if (err != 0 && desc)
-+	if (err != 0 && err != TPM_ERR_DISABLED && err != TPM_ERR_DEACTIVATED
-+	    && desc)
- 		dev_err(&chip->dev, "A TPM error (%d) occurred %s\n", err,
- 			desc);
- 	if (err)
--- 
-2.17.1
+Thanks
+Tomas
