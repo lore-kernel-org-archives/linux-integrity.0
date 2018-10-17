@@ -1,8 +1,8 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
 Received: from mga11.intel.com ([192.55.52.93]:48122 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727570AbeJQOpP (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 17 Oct 2018 10:45:15 -0400
+        id S1727570AbeJQOpS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 17 Oct 2018 10:45:18 -0400
 From: Tomas Winkler <tomas.winkler@intel.com>
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
@@ -13,85 +13,91 @@ Cc: Nayna Jain <nayna@linux.vnet.ibm.com>,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH v6 18/20] tpm1: reimplement SAVESTATE using tpm_buf
-Date: Wed, 17 Oct 2018 09:46:11 +0300
-Message-Id: <20181017064613.19746-19-tomas.winkler@intel.com>
+Subject: [PATCH v6 19/20] tpm1: reimplement tpm1_continue_selftest() using tpm_buf
+Date: Wed, 17 Oct 2018 09:46:12 +0300
+Message-Id: <20181017064613.19746-20-tomas.winkler@intel.com>
 In-Reply-To: <20181017064613.19746-1-tomas.winkler@intel.com>
 References: <20181017064613.19746-1-tomas.winkler@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-In tpm1_pm_suspend() function reimplement,
-TPM_ORD_SAVESTATE comamnd using tpm_buf.
+Reimplement tpm1_continue_selftest() using tpm_buf structure.
+This is the last command using the old tpm_cmd_t structure
+and now the structure can be removed.
 
+Cc: Nayna Jain <nayna@linux.vnet.ibm.com>
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
 
 V3: New in the series.
-V4-V6: Resend
+V4: Resend.
+V5: Fix &buf.data -> buf.data in tpm1_continue_selftest()
+V6: Rebase.
 
- drivers/char/tpm/tpm1-cmd.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ drivers/char/tpm/tpm.h      |  9 ---------
+ drivers/char/tpm/tpm1-cmd.c | 21 ++++++++++-----------
+ 2 files changed, 10 insertions(+), 20 deletions(-)
 
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index bf2ef1eeda50..e0778d19da98 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -377,15 +377,6 @@ enum tpm_sub_capabilities {
+ 	TPM_CAP_PROP_TIS_DURATION = 0x120,
+ };
+ 
+-typedef union {
+-	struct	tpm_input_header in;
+-	struct	tpm_output_header out;
+-} tpm_cmd_header;
+-
+-struct tpm_cmd_t {
+-	tpm_cmd_header	header;
+-} __packed;
+-
+ 
+ /* 128 bytes is an arbitrary cap. This could be as large as TPM_BUFSIZE - 18
+  * bytes, but 128 is still a relatively large number of random bytes and
 diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 05b772477bac..d418a27a75e0 100644
+index d418a27a75e0..6b04648f8184 100644
 --- a/drivers/char/tpm/tpm1-cmd.c
 +++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -718,12 +718,6 @@ int tpm1_auto_startup(struct tpm_chip *chip)
+@@ -602,15 +602,8 @@ int tpm1_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
  }
  
- #define TPM_ORD_SAVESTATE 152
--#define SAVESTATE_RESULT_SIZE 10
--static const struct tpm_input_header savestate_header = {
+ #define TPM_ORD_CONTINUE_SELFTEST 83
+-#define CONTINUE_SELFTEST_RESULT_SIZE 10
+-static const struct tpm_input_header continue_selftest_header = {
 -	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
 -	.length = cpu_to_be32(10),
--	.ordinal = cpu_to_be32(TPM_ORD_SAVESTATE)
+-	.ordinal = cpu_to_be32(TPM_ORD_CONTINUE_SELFTEST),
 -};
- 
+-
  /**
-  * tpm1_pm_suspend() - pm suspend handler
-@@ -739,18 +733,22 @@ static const struct tpm_input_header savestate_header = {
- int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr)
+- * tpm_continue_selftest -- run TPM's selftest
++ * tpm_continue_selftest() - run TPM's selftest
+  * @chip: TPM chip to use
+  *
+  * Returns 0 on success, < 0 in case of fatal error or a value > 0 representing
+@@ -618,12 +611,18 @@ static const struct tpm_input_header continue_selftest_header = {
+  */
+ static int tpm1_continue_selftest(struct tpm_chip *chip)
  {
- 	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
--	struct tpm_cmd_t cmd;
--	int rc, try;
 +	struct tpm_buf buf;
-+	unsigned int try;
-+	int rc;
-+
+ 	int rc;
+-	struct tpm_cmd_t cmd;
  
- 	/* for buggy tpm, flush pcrs with extend to selected dummy */
- 	if (tpm_suspend_pcr)
- 		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, dummy_hash,
- 				     "extending dummy pcr before suspend");
- 
-+	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_SAVESTATE);
+-	cmd.header.in = continue_selftest_header;
+-	rc = tpm_transmit_cmd(chip, NULL, &cmd, CONTINUE_SELFTEST_RESULT_SIZE,
++	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_CONTINUE_SELFTEST);
 +	if (rc)
 +		return rc;
- 	/* now do the actual savestate */
- 	for (try = 0; try < TPM_RETRY; try++) {
--		cmd.header.in = savestate_header;
--		rc = tpm_transmit_cmd(chip, NULL, &cmd, SAVESTATE_RESULT_SIZE,
-+		rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
- 				      0, 0, NULL);
- 
- 		/*
-@@ -766,6 +764,8 @@ int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr)
- 		if (rc != TPM_WARN_RETRY)
- 			break;
- 		tpm_msleep(TPM_TIMEOUT_RETRY);
 +
-+		tpm_buf_reset(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_SAVESTATE);
- 	}
- 
- 	if (rc)
-@@ -775,6 +775,8 @@ int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr)
- 		dev_warn(&chip->dev, "TPM savestate took %dms\n",
- 			 try * TPM_TIMEOUT_RETRY);
- 
++	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
+ 			      0, 0, "continue selftest");
++
 +	tpm_buf_destroy(&buf);
 +
  	return rc;
