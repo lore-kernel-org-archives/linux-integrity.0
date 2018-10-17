@@ -1,8 +1,8 @@
 Return-Path: <linux-integrity-owner@vger.kernel.org>
 Received: from mga18.intel.com ([134.134.136.126]:4116 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727570AbeJQOpE (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 17 Oct 2018 10:45:04 -0400
+        id S1727570AbeJQOo4 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 17 Oct 2018 10:44:56 -0400
 From: Tomas Winkler <tomas.winkler@intel.com>
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
@@ -13,181 +13,89 @@ Cc: Nayna Jain <nayna@linux.vnet.ibm.com>,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH v6 15/20] tpm: tpm1: rewrite tpm1_get_random() using tpm_buf structure
-Date: Wed, 17 Oct 2018 09:46:08 +0300
-Message-Id: <20181017064613.19746-16-tomas.winkler@intel.com>
+Subject: [PATCH v6 12/20] tpm: add tpm_auto_startup() into tpm-interface.c
+Date: Wed, 17 Oct 2018 09:46:05 +0300
+Message-Id: <20181017064613.19746-13-tomas.winkler@intel.com>
 In-Reply-To: <20181017064613.19746-1-tomas.winkler@intel.com>
 References: <20181017064613.19746-1-tomas.winkler@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 List-ID: <linux-integrity.vger.kernel.org>
 
-1. Use tpm_buf in tpm1_get_random()
-2. Fix comment in tpm_get_random() so it is clear that
-the function is expected to return number of random bytes.
+Add wrapper tpm_auto_startup() to tpm-interface.c
+instead of open coded decision between TPM 1.x and TPM 2.x
+in tpm-chip.c
 
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
-
 V3: New in the series.
-V4: Resend.
-V5: A small adjustment in the kdoc.
-V6: Rebase.
+V4: Fix the commit message.
+V5-V6: Resend.
 
- drivers/char/tpm/tpm-interface.c |  2 +-
- drivers/char/tpm/tpm.h           | 11 ------
- drivers/char/tpm/tpm1-cmd.c      | 84 +++++++++++++++++++++++-----------------
- 3 files changed, 49 insertions(+), 48 deletions(-)
+ drivers/char/tpm/tpm-chip.c      | 11 +++--------
+ drivers/char/tpm/tpm-interface.c | 15 +++++++++++++++
+ drivers/char/tpm/tpm.h           |  1 +
+ 3 files changed, 19 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index ba50554e34d3..8e1d2bc2df82 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -601,7 +601,7 @@ EXPORT_SYMBOL_GPL(tpm_pm_resume);
-  * @out:	destination buffer for the random bytes
-  * @max:	the max number of bytes to write to @out
-  *
-- * Return: same as with tpm_transmit_cmd()
-+ * Return: number of random bytes read or a negative error value.
-  */
- int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
+diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+index 46caadca916a..32db84683c40 100644
+--- a/drivers/char/tpm/tpm-chip.c
++++ b/drivers/char/tpm/tpm-chip.c
+@@ -451,14 +451,9 @@ int tpm_chip_register(struct tpm_chip *chip)
  {
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index daca1d0190b1..6895f183396b 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -396,20 +396,9 @@ struct tpm_pcrread_in {
-  * compiler warnings about stack frame size. */
- #define TPM_MAX_RNG_DATA	128
+ 	int rc;
  
--struct tpm_getrandom_out {
--	__be32 rng_data_len;
--	u8     rng_data[TPM_MAX_RNG_DATA];
--} __packed;
--
--struct tpm_getrandom_in {
--	__be32 num_bytes;
--} __packed;
--
- typedef union {
- 	struct	tpm_pcrread_in	pcrread_in;
- 	struct	tpm_pcrread_out	pcrread_out;
--	struct	tpm_getrandom_in getrandom_in;
--	struct	tpm_getrandom_out getrandom_out;
- } tpm_cmd_params;
- 
- struct tpm_cmd_t {
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 8a84db315676..b5c4fa158c30 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -505,58 +505,70 @@ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
- EXPORT_SYMBOL_GPL(tpm1_getcap);
- 
- #define TPM_ORD_GET_RANDOM 70
--#define TPM_GETRANDOM_RESULT_SIZE	18
--static const struct tpm_input_header tpm_getrandom_header = {
--	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
--	.length = cpu_to_be32(14),
--	.ordinal = cpu_to_be32(TPM_ORD_GET_RANDOM)
--};
-+struct tpm1_get_random_out {
-+	__be32 rng_data_len;
-+	u8 rng_data[TPM_MAX_RNG_DATA];
-+} __packed;
- 
--int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max)
-+/**
-+ * tpm1_get_random() - get random bytes from the TPM's RNG
-+ * @chip:	a &struct tpm_chip instance
-+ * @dest:	destination buffer for the random bytes
-+ * @max:	the maximum number of bytes to write to @dest
-+ *
-+ * Return:
-+ * *  number of bytes read
-+ * * -errno or a TPM return code otherwise
-+ */
-+int tpm1_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
- {
--	struct tpm_cmd_t tpm_cmd;
-+	struct tpm1_get_random_out *out;
-+	u32 num_bytes =  min_t(u32, max, TPM_MAX_RNG_DATA);
-+	struct tpm_buf buf;
-+	u32 total = 0;
-+	int retries = 5;
- 	u32 recd;
--	u32 num_bytes = min_t(u32, max, TPM_MAX_RNG_DATA);
--	u32 rlength;
--	int err, total = 0, retries = 5;
--	u8 *dest = out;
-+	int rc;
- 
--	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
--		return -EINVAL;
-+	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_GET_RANDOM);
+-	if (chip->ops->flags & TPM_OPS_AUTO_STARTUP) {
+-		if (chip->flags & TPM_CHIP_FLAG_TPM2)
+-			rc = tpm2_auto_startup(chip);
+-		else
+-			rc = tpm1_auto_startup(chip);
+-		if (rc)
+-			return rc;
+-	}
++	rc = tpm_auto_startup(chip);
 +	if (rc)
 +		return rc;
  
- 	do {
--		tpm_cmd.header.in = tpm_getrandom_header;
--		tpm_cmd.params.getrandom_in.num_bytes = cpu_to_be32(num_bytes);
--
--		err = tpm_transmit_cmd(chip, NULL, &tpm_cmd,
--				       TPM_GETRANDOM_RESULT_SIZE + num_bytes,
--				       offsetof(struct tpm_getrandom_out,
--						rng_data),
--				       0, "attempting get random");
--		if (err)
--			break;
-+		tpm_buf_append_u32(&buf, num_bytes);
-+
-+		rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
-+				      sizeof(out->rng_data_len), 0,
-+				      "attempting get random");
-+		if (rc)
-+			goto out;
+ 	tpm_sysfs_add_device(chip);
  
--		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
-+		out = (struct tpm1_get_random_out *)&buf.data[TPM_HEADER_SIZE];
-+
-+		recd = be32_to_cpu(out->rng_data_len);
- 		if (recd > num_bytes) {
--			total = -EFAULT;
--			break;
-+			rc = -EFAULT;
-+			goto out;
- 		}
- 
--		rlength = be32_to_cpu(tpm_cmd.header.out.length);
--		if (rlength < TPM_HEADER_SIZE +
--			      offsetof(struct tpm_getrandom_out, rng_data) +
--			      recd) {
--			total = -EFAULT;
--			break;
-+		if (tpm_buf_length(&buf) < TPM_HEADER_SIZE +
-+					   sizeof(out->rng_data_len) + recd) {
-+			rc = -EFAULT;
-+			goto out;
- 		}
--		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
-+		memcpy(dest, out->rng_data, recd);
- 
- 		dest += recd;
- 		total += recd;
- 		num_bytes -= recd;
--	} while (retries-- && (size_t)total < max);
- 
--	return total ? total : -EIO;
-+		tpm_buf_reset(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_GET_RANDOM);
-+	} while (retries-- && total < max);
-+
-+	rc = total ? (int)total : -EIO;
-+out:
-+	tpm_buf_destroy(&buf);
-+	return rc;
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 54b81700561b..69e007a198ce 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -545,6 +545,21 @@ int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen)
  }
+ EXPORT_SYMBOL_GPL(tpm_send);
  
- #define TPM_ORDINAL_PCRREAD 21
++int tpm_auto_startup(struct tpm_chip *chip)
++{
++	int rc;
++
++	if (!(chip->ops->flags & TPM_OPS_AUTO_STARTUP))
++		return 0;
++
++	if (chip->flags & TPM_CHIP_FLAG_TPM2)
++		rc = tpm2_auto_startup(chip);
++	else
++		rc = tpm1_auto_startup(chip);
++
++	return rc;
++}
++
+ /*
+  * We are about to suspend. Save the TPM state
+  * so that it can be restored.
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 2eb73f6966c3..daca1d0190b1 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -541,6 +541,7 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+ 			 size_t min_rsp_body_length, unsigned int flags,
+ 			 const char *desc);
+ int tpm_get_timeouts(struct tpm_chip *);
++int tpm_auto_startup(struct tpm_chip *chip);
+ 
+ int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr);
+ int tpm1_auto_startup(struct tpm_chip *chip);
 -- 
 2.14.4
