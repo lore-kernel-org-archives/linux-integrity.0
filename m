@@ -2,104 +2,154 @@ Return-Path: <SRS0=p4l6=M7=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F600ECDE3D
-	for <linux-integrity@archiver.kernel.org>; Fri, 19 Oct 2018 07:30:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F9EECDE43
+	for <linux-integrity@archiver.kernel.org>; Fri, 19 Oct 2018 10:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1086721470
-	for <linux-integrity@archiver.kernel.org>; Fri, 19 Oct 2018 07:30:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1086721470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C69CD21470
+	for <linux-integrity@archiver.kernel.org>; Fri, 19 Oct 2018 10:18:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C69CD21470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbeJSPfq (ORCPT
+        id S1726960AbeJSSXc (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 19 Oct 2018 11:35:46 -0400
-Received: from mga01.intel.com ([192.55.52.88]:1924 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726340AbeJSPfq (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 19 Oct 2018 11:35:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Oct 2018 00:30:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,399,1534834800"; 
-   d="scan'208";a="242572382"
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by orsmga004.jf.intel.com with ESMTP; 19 Oct 2018 00:30:54 -0700
-Received: from hasmsx107.ger.corp.intel.com (10.184.198.27) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Fri, 19 Oct 2018 00:30:54 -0700
-Received: from HASMSX109.ger.corp.intel.com ([169.254.3.28]) by
- hasmsx107.ger.corp.intel.com ([169.254.2.223]) with mapi id 14.03.0319.002;
- Fri, 19 Oct 2018 10:30:51 +0300
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-        "jgg@ziepe.ca" <jgg@ziepe.ca>,
-        "nayna@linux.ibm.com" <nayna@linux.ibm.com>
-CC:     "nayna@linux.vnet.ibm.com" <nayna@linux.vnet.ibm.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tpm: tpm_i2c_nuvoton: use correct command duration for
- TPM 2.x
-Thread-Topic: [PATCH] tpm: tpm_i2c_nuvoton: use correct command duration for
- TPM 2.x
-Thread-Index: AQHUZ2btLmkTCCBG+k+DpgFokEiphqUl+QmA
-Date:   Fri, 19 Oct 2018 07:30:50 +0000
-Message-ID: <1539933995.19334.9.camel@intel.com>
-References: <20181017163223.25141-1-tomas.winkler@intel.com>
-         <6e12d4b6-cb84-3be5-8a62-6868be43d43d@linux.ibm.com>
-In-Reply-To: <6e12d4b6-cb84-3be5-8a62-6868be43d43d@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.12.91.48]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <87AC378C383C2C49A85DEC6491EE7FF0@intel.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Fri, 19 Oct 2018 14:23:32 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34722 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726867AbeJSSXc (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 19 Oct 2018 14:23:32 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9JAFRXP109337
+        for <linux-integrity@vger.kernel.org>; Fri, 19 Oct 2018 06:18:05 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2n7dbvr4b4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 19 Oct 2018 06:18:05 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Fri, 19 Oct 2018 06:18:04 -0400
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 19 Oct 2018 06:18:02 -0400
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9JAI1ko32047104
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 19 Oct 2018 10:18:01 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 037BDAE066;
+        Fri, 19 Oct 2018 10:18:01 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DDA40AE064;
+        Fri, 19 Oct 2018 10:18:00 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.47.158.153])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 19 Oct 2018 10:18:00 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.ibm.com>
+To:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org
+Cc:     zohar@linux.ibm.com, jejb@linux.ibm.com,
+        Alexander.Levin@microsoft.com, jsnitsel@redhat.com,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH] docs: Extend trusted keys documentation for TPM 2.0
+Date:   Fri, 19 Oct 2018 06:17:58 -0400
+X-Mailer: git-send-email 2.17.2
+X-TM-AS-GCONF: 00
+x-cbid: 18101910-0040-0000-0000-0000048339E8
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009899; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01104879; UDB=6.00572019; IPR=6.00884930;
+ MB=3.00023821; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-19 10:18:03
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18101910-0041-0000-0000-0000088B5176
+Message-Id: <20181019101758.1569-1-stefanb@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-18_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810190094
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-T24gRnJpLCAyMDE4LTEwLTE5IGF0IDEwOjE0ICswNTMwLCBOYXluYSBKYWluIHdyb3RlOg0KPiAN
-Cj4gT24gMTAvMTcvMjAxOCAxMDowMiBQTSwgVG9tYXMgV2lua2xlciB3cm90ZToNCj4gPiBkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9jaGFyL3RwbS90cG1faTJjX251dm90b24uYyBiL2RyaXZlcnMvY2hh
-ci90cG0vdHBtX2kyY19udXZvdG9uLmMNCj4gPiBpbmRleCBjYWE4NmIxOWM3NmQuLmY3NGY0NTFi
-YWY2YSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2NoYXIvdHBtL3RwbV9pMmNfbnV2b3Rvbi5j
-DQo+ID4gKysrIGIvZHJpdmVycy9jaGFyL3RwbS90cG1faTJjX251dm90b24uYw0KPiA+IEBAIC0z
-NjksNiArMzY5LDcgQEAgc3RhdGljIGludCBpMmNfbnV2b3Rvbl9zZW5kKHN0cnVjdCB0cG1fY2hp
-cCAqY2hpcCwgdTggKmJ1Ziwgc2l6ZV90IGxlbikNCj4gPiAgIAlzdHJ1Y3QgZGV2aWNlICpkZXYg
-PSBjaGlwLT5kZXYucGFyZW50Ow0KPiA+ICAgCXN0cnVjdCBpMmNfY2xpZW50ICpjbGllbnQgPSB0
-b19pMmNfY2xpZW50KGRldik7DQo+ID4gICAJdTMyIG9yZGluYWw7DQo+ID4gKwl1bnNpZ25lZCBs
-b25nIGR1cmF0aW9uOw0KPiA+ICAgCXNpemVfdCBjb3VudCA9IDA7DQo+ID4gICAJaW50IGJ1cnN0
-X2NvdW50LCBieXRlczJ3cml0ZSwgcmV0cmllcywgcmMgPSAtRUlPOw0KPiA+IA0KPiA+IEBAIC00
-NTUsMTAgKzQ1NiwxMiBAQCBzdGF0aWMgaW50IGkyY19udXZvdG9uX3NlbmQoc3RydWN0IHRwbV9j
-aGlwICpjaGlwLCB1OCAqYnVmLCBzaXplX3QgbGVuKQ0KPiA+ICAgCQlyZXR1cm4gcmM7DQo+ID4g
-ICAJfQ0KPiA+ICAgCW9yZGluYWwgPSBiZTMyX3RvX2NwdSgqKChfX2JlMzIgKikgKGJ1ZiArIDYp
-KSk7DQo+ID4gLQlyYyA9IGkyY19udXZvdG9uX3dhaXRfZm9yX2RhdGFfYXZhaWwoY2hpcCwNCj4g
-PiAtCQkJCQkgICAgIHRwbV9jYWxjX29yZGluYWxfZHVyYXRpb24oY2hpcCwNCj4gPiAtCQkJCQkJ
-CQkgICAgICAgb3JkaW5hbCksDQo+ID4gLQkJCQkJICAgICAmcHJpdi0+cmVhZF9xdWV1ZSk7DQo+
-ID4gKwlpZiAoY2hpcC0+ZmxhZ3MgJiBUUE1fQ0hJUF9GTEFHX1RQTTIpDQo+ID4gKwkJZHVyYXRp
-b24gPSB0cG0yX2NhbGNfb3JkaW5hbF9kdXJhdGlvbihjaGlwLCBvcmRpbmFsKTsNCj4gPiArCWVs
-c2UNCj4gPiArCQlkdXJhdGlvbiA9IHRwbV9jYWxjX29yZGluYWxfZHVyYXRpb24oY2hpcCwgb3Jk
-aW5hbCk7DQo+ID4gKw0KPiA+ICsJcmMgPSBpMmNfbnV2b3Rvbl93YWl0X2Zvcl9kYXRhX2F2YWls
-KGNoaXAsIGR1cmF0aW9uLCAmcHJpdi0+cmVhZF9xdWV1ZSk7DQo+ID4gICAJaWYgKHJjKSB7DQo+
-ID4gICAJCWRldl9lcnIoZGV2LCAiJXMoKSB0aW1lb3V0IGNvbW1hbmQgZHVyYXRpb25cbiIsIF9f
-ZnVuY19fKTsNCj4gPiAgIAkJaTJjX251dm90b25fcmVhZHkoY2hpcCk7DQo+IA0KPiBJIG9ubHkg
-aGF2ZSBOdXZvdG9uIFRQTSAyLjAsIHRlc3RlZCBmb3IgdGhhdC4NCj4gDQo+IFJldmlld2VkLWJ5
-OiBOYXluYSBKYWluIDxuYXluYUBsaW51eC5pYm0uY29tPg0KPiBUZXN0ZWQtYnk6IE5heW5hIEph
-aW4gPG5heW5hQGxpbnV4LmlibS5jb20+IChGb3IgVFBNIDIuMCkNCg0KVGhhdCdzIHdoYXQgd2Ug
-bmVlZGVkIGFzIFRQTSAxLjIgc2hvdWxkIGJlIHVuY2hhbmdlZC4NClJlYWxseSBhcHByZWNpYXRl
-IHRoZSBxdWljayByZXNwb25zZS4gSSB3aWxsIHJlYmFzZSB0aGUgc2VyaWVzIG9uIHRvIG9mDQp0
-aGlzIHBhdGNoLiANCg0KVGhhbmtzDQpUb21hcw0K
+Extend the documentation for trusted keys with documentation for how to
+set up a key for a TPM 2.0 so it can be used with a TPM 2.0 as well.
+
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+ .../security/keys/trusted-encrypted.rst       | 31 ++++++++++++++++++-
+ 1 file changed, 30 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
+index 3bb24e09a332..6ec6bb2ac497 100644
+--- a/Documentation/security/keys/trusted-encrypted.rst
++++ b/Documentation/security/keys/trusted-encrypted.rst
+@@ -18,10 +18,33 @@ integrity verifications match.  A loaded Trusted Key can be updated with new
+ when the kernel and initramfs are updated.  The same key can have many saved
+ blobs under different PCR values, so multiple boots are easily supported.
+ 
++TPM 1.2
++-------
++
+ By default, trusted keys are sealed under the SRK, which has the default
+ authorization value (20 zeros).  This can be set at takeownership time with the
+ trouser's utility: "tpm_takeownership -u -z".
+ 
++TPM 2.0
++-------
++
++The user must first create a storage key and make it persistent, so the key is
++available after reboot. This can be done using the following commands.
++
++With the IBM TSS 2 stack::
++
++  #> tsscreateprimary -hi o -st
++  Handle 80000000
++  #> tssevictcontrol -hi o -ho 80000000 -hp 81000001
++
++Or with the Intel TSS 2 stack::
++
++  #> tpm2_createprimary --hierarchy o -G rsa2048 -o key.ctxt
++  [...]
++  handle: 0x800000FF
++  #> tpm2_evictcontrol -c key.ctxt -p 0x81000001
++  persistentHandle: 0x81000001
++
+ Usage::
+ 
+     keyctl add trusted name "new keylen [options]" ring
+@@ -30,7 +53,9 @@ Usage::
+     keyctl print keyid
+ 
+     options:
+-       keyhandle=    ascii hex value of sealing key default 0x40000000 (SRK)
++       keyhandle=    ascii hex value of sealing key
++                       TPM 1.2: default 0x40000000 (SRK)
++                       TPM 2.0: no default; must be passed every time
+        keyauth=	     ascii hex auth for sealing key default 0x00...i
+                      (40 ascii zeros)
+        blobauth=     ascii hex auth for sealed data default 0x00...
+@@ -84,6 +109,10 @@ Examples of trusted and encrypted key usage:
+ 
+ Create and save a trusted key named "kmk" of length 32 bytes::
+ 
++Note: When using a TPM 2.0 with a persistent key with handle 0x81000001,
++append 'keyhandle=0x81000001' to statements between quotes, such as
++"new 32 keyhandle=0x81000001".
++
+     $ keyctl add trusted kmk "new 32" @u
+     440502848
+ 
+-- 
+2.17.2
+
