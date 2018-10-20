@@ -5,129 +5,133 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60AD7ECDE43
-	for <linux-integrity@archiver.kernel.org>; Sat, 20 Oct 2018 01:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA4E8C67863
+	for <linux-integrity@archiver.kernel.org>; Sat, 20 Oct 2018 18:26:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CA56214C2
-	for <linux-integrity@archiver.kernel.org>; Sat, 20 Oct 2018 01:20:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CA56214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 630C22154C
+	for <linux-integrity@archiver.kernel.org>; Sat, 20 Oct 2018 18:26:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 630C22154C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726513AbeJTJ2f (ORCPT
+        id S1727423AbeJUChp (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 20 Oct 2018 05:28:35 -0400
-Received: from mga09.intel.com ([134.134.136.24]:62331 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726502AbeJTJ2e (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 20 Oct 2018 05:28:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Oct 2018 18:19:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,402,1534834800"; 
-   d="scan'208";a="82661379"
-Received: from kskibin-mobl.ger.corp.intel.com ([10.249.254.29])
-  by orsmga007.jf.intel.com with ESMTP; 19 Oct 2018 18:19:55 -0700
-Date:   Sat, 20 Oct 2018 04:19:53 +0300 (EEST)
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-X-Sender: jsakkine@jsakkine-mobl1
-To:     Tomas Winkler <tomas.winkler@intel.com>
-cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 00/21] tpm: separate tpm 1.x and tpm 2.x commands
-In-Reply-To: <20181019182307.17745-1-tomas.winkler@intel.com>
-Message-ID: <alpine.DEB.2.21.1810200419110.9963@jsakkine-mobl1>
-References: <20181019182307.17745-1-tomas.winkler@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sat, 20 Oct 2018 22:37:45 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48418 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727350AbeJUCho (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 20 Oct 2018 22:37:44 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9KIOKtu144789
+        for <linux-integrity@vger.kernel.org>; Sat, 20 Oct 2018 14:26:26 -0400
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2n7x0d3nt1-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Sat, 20 Oct 2018 14:26:26 -0400
+Received: from localhost
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <nayna@linux.ibm.com>;
+        Sat, 20 Oct 2018 12:26:26 -0600
+Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
+        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 20 Oct 2018 12:26:21 -0600
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9KIQKVG63701050
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 20 Oct 2018 11:26:20 -0700
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 855B37805E;
+        Sat, 20 Oct 2018 18:26:20 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4889278064;
+        Sat, 20 Oct 2018 18:26:16 +0000 (GMT)
+Received: from [9.77.200.130] (unknown [9.77.200.130])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Sat, 20 Oct 2018 18:26:15 +0000 (GMT)
+Subject: Re: LPC 2018
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Cc:     James Morris <jmorris@namei.org>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Matthew Garrett <mjg59@google.com>, montywiseman32@gmail.com,
+        serge@hallyn.com, chuck.lever@oracle.com,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+References: <9808035C-5AE5-4594-BDBF-A51544231608@oracle.com>
+ <dfe11979-1afd-1554-fcaa-ebf39e32397d@gmail.com>
+ <20181011154847.GA5978@mail.hallyn.com>
+ <3839043b-5541-369e-1179-c3c8c1dbfb07@gmail.com>
+ <1539296304.3108.54.camel@HansenPartnership.com>
+ <alpine.DEB.2.21.1810151652360.28121@jsakkine-mobl1>
+ <CACdnJutMR=6OH=DtnAGXkFU+PNae_ONxcQGA7QLPJ9jsBd8j=w@mail.gmail.com>
+ <alpine.LRH.2.21.1810160833560.14147@namei.org>
+ <1539642523.2867.44.camel@HansenPartnership.com>
+ <alpine.LRH.2.21.1810160946210.2779@namei.org>
+ <1539691005.11939.258.camel@linux.ibm.com>
+ <alpine.DEB.2.21.1810180301090.5022@jsakkine-mobl1>
+From:   Nayna Jain <nayna@linux.ibm.com>
+Date:   Sat, 20 Oct 2018 23:53:09 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+In-Reply-To: <alpine.DEB.2.21.1810180301090.5022@jsakkine-mobl1>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18102018-0020-0000-0000-00000E7D057B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009908; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01105522; UDB=6.00572405; IPR=6.00885572;
+ MB=3.00023840; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-20 18:26:24
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18102018-0021-0000-0000-00006371A600
+Message-Id: <7831fac7-40ba-a3e8-61c8-166a54cfe515@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-20_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810200173
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, 19 Oct 2018, Tomas Winkler wrote:
-> This patch series provides initial separation of tpm 1.x and tpm 2.x
-> commands, in foresight that the tpm 1.x chips will eventually phase out
-> and can be compiled out for modern systems.
-> A new file is added tpm1-cmd.c that contains tpm 1.x specific commands.
-> In addition, tpm 1.x commands are now implemented using tpm_buf
-> structure and instead of tpm_cmd_t construct. The latter is now removed.
->
-> Note: my tpm 1.x HW availability is limited hence some more testing is needed.
->
-> This series also contains two trivial cleanups and addition of new
-> commands by TCG spec 1.36, now supported on new Intet's platforms.
->
-> V6: 1. Dropping tpm: move pcr extend code to tpm2-cmd.c and rebasing code over that change
->    2. Trivial fixes in kdoc and header
-> V7: 1. Add backportable patch for nuvoton duration calculation
->    2. Rebase durations patches over it.
->    3. Fix notorious typo tmp->tpm
->
->
-> Tomas Winkler (21):
->  tpm: tpm_i2c_nuvoton: use correct command duration for TPM 2.x
->  tpm2: add new tpm2 commands according to TCG 1.36
->  tpm: sort objects in the Makefile
->  tpm: factor out tpm 1.x duration calculation to tpm1-cmd.c
->  tpm: add tpm_calc_ordinal_duration() wrapper
->  tpm: factor out tpm_get_timeouts()
->  tpm: move tpm1_pcr_extend to tpm1-cmd.c
->  tpm: move tpm_getcap to tpm1-cmd.c
->  tpm: factor out tpm1_get_random into tpm1-cmd.c
->  tpm: move tpm 1.x selftest code from tpm-interface.c tpm1-cmd.c
->  tpm: factor out tpm 1.x pm suspend flow into tpm1-cmd.c
->  tpm: factor out tpm_startup function
->  tpm: add tpm_auto_startup() into tpm-interface.c
->  tpm: tpm-interface.c drop unused macros
->  tpm: tpm-space.c remove unneeded semicolon
->  tpm: tpm1: rewrite tpm1_get_random() using tpm_buf structure
->  tpm1: implement tpm1_pcr_read_dev() using tpm_buf structure
->  tpm1: rename tpm1_pcr_read_dev to tpm1_pcr_read()
->  tpm1: reimplement SAVESTATE using tpm_buf
->  tpm1: reimplement tpm1_continue_selftest() using tpm_buf
->  tpm: use u32 instead of int for PCR index
->
-> drivers/char/tpm/Makefile            |  16 +-
-> drivers/char/tpm/st33zp24/st33zp24.c |   2 +-
-> drivers/char/tpm/tpm-chip.c          |  11 +-
-> drivers/char/tpm/tpm-interface.c     | 817 +++--------------------------------
-> drivers/char/tpm/tpm-sysfs.c         |  52 +--
-> drivers/char/tpm/tpm.h               |  97 ++---
-> drivers/char/tpm/tpm1-cmd.c          | 781 +++++++++++++++++++++++++++++++++
-> drivers/char/tpm/tpm2-cmd.c          | 301 +++++++------
-> drivers/char/tpm/tpm2-space.c        |   2 +-
-> drivers/char/tpm/tpm_i2c_nuvoton.c   |  11 +-
-> drivers/char/tpm/tpm_tis_core.c      |  10 +-
-> include/linux/tpm.h                  |  11 +-
-> security/integrity/ima/ima_crypto.c  |   5 +-
-> 13 files changed, 1082 insertions(+), 1034 deletions(-)
-> create mode 100644 drivers/char/tpm/tpm1-cmd.c
->
-> -- 
-> 2.14.4
->
->
 
-Starts to look reosonable:
 
-https://patchwork.kernel.org/project/linux-integrity/list/?series=33257
+On 10/18/2018 05:35 AM, Jarkko Sakkinen wrote:
+> On Tue, 16 Oct 2018, Mimi Zohar wrote:
+>> On Tue, 2018-10-16 at 09:46 +1100, James Morris wrote:
+>>> On Mon, 15 Oct 2018, James Bottomley wrote:
+>>>
+>>>>> What about a TPM BoF at LSS
+>>>>
+>>>> I'm only at LinuxCon/KS, so I'm leaving on Thursday.  I think you have
+>>>> a Wednesday overlap, though, so Wednesday would work.
+>>>
+>>> LSS is Thurs+Fri, but we may have a quorum for Weds.
+>>
+>> Some of us are arriving Wed.  Perhaps try scheduling it later in the
+>> day Wed.
+>>
+>> Mimi
+>
+> Yeah, could be possible (also arriving that day). Do not really care if
+> we talk about the same stuff that I want to talk in my presentation
+> (namely channel encryption). I was thinking to talk about it as an 
+> introduction to the topic but this way around I could summarize the
+> BoF.
+>
+> I hope the time is late as possible though on Wed.
+>
+> /Jarkko
 
-This is the list of patches (assuming that I didn't miss anything) that
-still need tested-by tags:
+Do we have a time finalized to meet on Wednesday ? I will also be joining.
 
-- tpm: factor out tpm1_get_random into tpm1-cmd.c
-- tpm: factor out tpm 1.x pm suspend flow into tpm1-cmd.c
-- tpm1: rename tpm1_pcr_read_dev to tpm1_pcr_read()
-   (the subsystem tag is wrong in this, just noticed, should be 'tpm:')
-- tpm: use u32 instead of int for PCR index
+Thanks & Regards,
+     - Nayna
 
-/Jarkko
