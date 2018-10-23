@@ -4,34 +4,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC1EC46475
-	for <linux-integrity@archiver.kernel.org>; Tue, 23 Oct 2018 18:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA43C7112C
+	for <linux-integrity@archiver.kernel.org>; Tue, 23 Oct 2018 18:55:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD9E920665
-	for <linux-integrity@archiver.kernel.org>; Tue, 23 Oct 2018 18:45:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD9E920665
+	by mail.kernel.org (Postfix) with ESMTP id B08BF2082B
+	for <linux-integrity@archiver.kernel.org>; Tue, 23 Oct 2018 18:55:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B08BF2082B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728553AbeJXDJj (ORCPT
+        id S1729201AbeJXDTr (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:09:39 -0400
-Received: from mga02.intel.com ([134.134.136.20]:6501 "EHLO mga02.intel.com"
+        Tue, 23 Oct 2018 23:19:47 -0400
+Received: from mga14.intel.com ([192.55.52.115]:12103 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727829AbeJXDJj (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:09:39 -0400
+        id S1727829AbeJXDTq (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 23 Oct 2018 23:19:46 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:45:04 -0700
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:55:09 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,417,1534834800"; 
-   d="scan'208";a="100049983"
+   d="scan'208";a="100052295"
 Received: from pwolsza-mobl1.ger.corp.intel.com ([10.249.254.37])
-  by fmsmga004.fm.intel.com with ESMTP; 23 Oct 2018 11:45:00 -0700
-Date:   Tue, 23 Oct 2018 21:44:57 +0300 (EEST)
+  by fmsmga004.fm.intel.com with ESMTP; 23 Oct 2018 11:55:05 -0700
+Date:   Tue, 23 Oct 2018 21:55:03 +0300 (EEST)
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 X-X-Sender: jsakkine@jsakkine-mobl1
 To:     Tomas Winkler <tomas.winkler@intel.com>
@@ -44,7 +44,7 @@ cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v7 21/21] tpm: use u32 instead of int for PCR index
 In-Reply-To: <20181019182307.17745-22-tomas.winkler@intel.com>
-Message-ID: <alpine.DEB.2.21.1810232144440.3433@jsakkine-mobl1>
+Message-ID: <alpine.DEB.2.21.1810232154130.8524@jsakkine-mobl1>
 References: <20181019182307.17745-1-tomas.winkler@intel.com> <20181019182307.17745-22-tomas.winkler@intel.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
@@ -65,6 +65,7 @@ On Fri, 19 Oct 2018, Tomas Winkler wrote:
 >
 > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > ---
 > V3: New in the series.
 > V4: Separate unrelated change to another patches.
@@ -280,6 +281,6 @@ On Fri, 19 Oct 2018, Tomas Winkler wrote:
 > 	shash->tfm = tfm;
 >
 
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+All commits have been now applied.
 
 /Jarkko
