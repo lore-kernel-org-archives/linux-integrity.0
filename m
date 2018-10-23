@@ -2,132 +2,107 @@ Return-Path: <SRS0=MMpd=ND=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30875C46475
-	for <linux-integrity@archiver.kernel.org>; Tue, 23 Oct 2018 13:31:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F9FDC46475
+	for <linux-integrity@archiver.kernel.org>; Tue, 23 Oct 2018 13:35:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7EAD20665
-	for <linux-integrity@archiver.kernel.org>; Tue, 23 Oct 2018 13:31:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="IUZ28944"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7EAD20665
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	by mail.kernel.org (Postfix) with ESMTP id 44A97207DD
+	for <linux-integrity@archiver.kernel.org>; Tue, 23 Oct 2018 13:35:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44A97207DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbeJWVyk (ORCPT
+        id S1726970AbeJWV7D convert rfc822-to-8bit (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 23 Oct 2018 17:54:40 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:35814 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726953AbeJWVyk (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 23 Oct 2018 17:54:40 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 6BCF78EE0FC;
-        Tue, 23 Oct 2018 06:31:11 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id uitMdJ3dop2d; Tue, 23 Oct 2018 06:31:11 -0700 (PDT)
-Received: from [10.101.217.208] (unknown [185.7.230.214])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 7C51F8EE0D5;
-        Tue, 23 Oct 2018 06:31:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1540301471;
-        bh=NfpDCr4oTIAoUXsSGACHnzYwYaOb7cuFDCZd7DglAdc=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=IUZ28944wdiR52kdsun0uBFH8O8d752eLsp2Gv//PwSA8sOlhjK10tahaQPXCcb1z
-         zorLVHJwrdgT7rQHqBNb7m0Xl2/aLEM7HMpBl4QoxizVkjuul9zct0j1NKzG9qKS4n
-         wUuw9hCjD9cCkDjqf8ctQ8K16doF9UreYtu5+ek0=
-Message-ID: <1540301465.2787.4.camel@HansenPartnership.com>
-Subject: Re: LPC 2018
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
-        Matthew Garrett <mjg59@google.com>, montywiseman32@gmail.com,
-        serge@hallyn.com, chuck.lever@oracle.com,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Date:   Tue, 23 Oct 2018 14:31:05 +0100
-In-Reply-To: <alpine.DEB.2.21.1810231616200.19836@jsakkine-mobl1>
-References: <9808035C-5AE5-4594-BDBF-A51544231608@oracle.com>
-         <dfe11979-1afd-1554-fcaa-ebf39e32397d@gmail.com>
-         <20181011154847.GA5978@mail.hallyn.com>
-         <3839043b-5541-369e-1179-c3c8c1dbfb07@gmail.com>
-         <1539296304.3108.54.camel@HansenPartnership.com>
-         <alpine.DEB.2.21.1810151652360.28121@jsakkine-mobl1>
-         <CACdnJutMR=6OH=DtnAGXkFU+PNae_ONxcQGA7QLPJ9jsBd8j=w@mail.gmail.com>
-         <alpine.LRH.2.21.1810160833560.14147@namei.org>
-         <1539642523.2867.44.camel@HansenPartnership.com>
-         <alpine.LRH.2.21.1810160946210.2779@namei.org>
-         <1539691005.11939.258.camel@linux.ibm.com>
-         <alpine.DEB.2.21.1810180301090.5022@jsakkine-mobl1>
-         <7831fac7-40ba-a3e8-61c8-166a54cfe515@linux.ibm.com>
-         <alpine.DEB.2.21.1810231616200.19836@jsakkine-mobl1>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 23 Oct 2018 17:59:03 -0400
+Received: from mga07.intel.com ([134.134.136.100]:48155 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726277AbeJWV7D (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 23 Oct 2018 17:59:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 06:35:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,416,1534834800"; 
+   d="scan'208";a="83757902"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by orsmga008.jf.intel.com with ESMTP; 23 Oct 2018 06:35:33 -0700
+Received: from fmsmsx122.amr.corp.intel.com (10.18.125.37) by
+ fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Tue, 23 Oct 2018 06:35:33 -0700
+Received: from lcsmsx154.ger.corp.intel.com (10.186.165.229) by
+ fmsmsx122.amr.corp.intel.com (10.18.125.37) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Tue, 23 Oct 2018 06:35:33 -0700
+Received: from HASMSX109.ger.corp.intel.com ([169.254.3.28]) by
+ LCSMSX154.ger.corp.intel.com ([169.254.7.171]) with mapi id 14.03.0319.002;
+ Tue, 23 Oct 2018 16:35:30 +0300
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v7 00/21] tpm: separate tpm 1.x and tpm 2.x commands
+Thread-Topic: [PATCH v7 00/21] tpm: separate tpm 1.x and tpm 2.x commands
+Thread-Index: AQHUaBMHlZfugjzXrESpNofEmU+hxKUrgomggAEftwCAADej4A==
+Date:   Tue, 23 Oct 2018 13:35:29 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D9FB5B2@hasmsx109.ger.corp.intel.com>
+References: <20181019182307.17745-1-tomas.winkler@intel.com>
+ <alpine.DEB.2.21.1810200419110.9963@jsakkine-mobl1>
+ <5B8DA87D05A7694D9FA63FD143655C1B9D9FA974@hasmsx109.ger.corp.intel.com>
+ <alpine.DEB.2.21.1810231612030.19836@jsakkine-mobl1>
+In-Reply-To: <alpine.DEB.2.21.1810231612030.19836@jsakkine-mobl1>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTBjZTllNmYtY2YxZC00ZTNiLWFlY2EtYWJjM2JiNzA0NjRkIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoic2NDaWF5bFl2aVNUdEZMXC9rZTR5RUxwa1JvYWR4OHRRTUx5SzBac2JnakY0dVYycXpBRHBHcUxIYVdlbkpZTlMifQ==
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.252.19.114]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2018-10-23 at 16:16 +0300, Jarkko Sakkinen wrote:
 > 
-> On Sat, 20 Oct 2018, Nayna Jain wrote:
+> On Mon, 22 Oct 2018, Winkler, Tomas wrote:
+> >> This is the list of patches (assuming that I didn't miss anything)
+> >> that still need tested-by tags:
+> >
+> > Those are just code movements, we are running them form months on our
+> > systems.
 > 
-> > 
-> > 
-> > On 10/18/2018 05:35 AM, Jarkko Sakkinen wrote:
-> > > On Tue, 16 Oct 2018, Mimi Zohar wrote:
-> > > > On Tue, 2018-10-16 at 09:46 +1100, James Morris wrote:
-> > > > > On Mon, 15 Oct 2018, James Bottomley wrote:
-> > > > > 
-> > > > > > > What about a TPM BoF at LSS
-> > > > > > 
-> > > > > > I'm only at LinuxCon/KS, so I'm leaving on Thursday.  I
-> > > > > > think you have a Wednesday overlap, though, so Wednesday
-> > > > > > would work.
-> > > > > 
-> > > > > LSS is Thurs+Fri, but we may have a quorum for Weds.
-> > > > 
-> > > > Some of us are arriving Wed.  Perhaps try scheduling it later
-> > > > in the day Wed.
-> > > > 
-> > > > Mimi
-> > > 
-> > > Yeah, could be possible (also arriving that day). Do not really
-> > > care if we talk about the same stuff that I want to talk in my
-> > > presentation (namely channel encryption). I was thinking to talk
-> > > about it as an introduction to the topic but this way around I
-> > > could summarize the BoF.
-> > > 
-> > > I hope the time is late as possible though on Wed.
-> > > 
-> > > /Jarkko
-> > 
-> > Do we have a time finalized to meet on Wednesday ? I will also be
-> > joining.
-> > 
-> > Thanks & Regards,
-> >     - Nayna
-> > 
-> > 
+> I'm not sure what point you are trying to make. You cannot give tested-by by
+> yourself to yourself you know. By saying that you are just saying things. It is
+> not any form of peer testing.
+No, you are exposed to that code base as well, after all you are working @intel.
 > 
-> How can I join given that I have only ticket to LSS not to the
-> summit?
+> >> - tpm: factor out tpm1_get_random into tpm1-cmd.c
+> >> - tpm: factor out tpm 1.x pm suspend flow into tpm1-cmd.c
+> >> - tpm1: rename tpm1_pcr_read_dev to tpm1_pcr_read()
+> >>    (the subsystem tag is wrong in this, just noticed, should be
+> >> 'tpm:')
+> > When have you established this requirement I missed that and it cannot
+> > be deduced from the git history.
+> 
+> Which requirement?
 
-According to Angela, the badges aren't a problem (they'll let you in)
-and I can have the the conference staff get us a room up to about 9pm
-tomorrow (although we'll have to start after the regular sessions end
-at 6pm).
+The requirement that the  subsystem prefix should be 'tpm:' 
 
-However, we need to pick a time so they can allocate us the room.
 
-James
+Thanks
+Tomas
+
