@@ -3,317 +3,429 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D91C46475
-	for <linux-integrity@archiver.kernel.org>; Tue, 23 Oct 2018 18:56:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E03EC46475
+	for <linux-integrity@archiver.kernel.org>; Tue, 23 Oct 2018 19:12:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A8E520813
-	for <linux-integrity@archiver.kernel.org>; Tue, 23 Oct 2018 18:56:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A8E520813
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2967F2081B
+	for <linux-integrity@archiver.kernel.org>; Tue, 23 Oct 2018 19:12:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2967F2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728609AbeJXDVG convert rfc822-to-8bit (ORCPT
+        id S1728857AbeJXDhd (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:21:06 -0400
-Received: from mga11.intel.com ([192.55.52.93]:8280 "EHLO mga11.intel.com"
+        Tue, 23 Oct 2018 23:37:33 -0400
+Received: from mga11.intel.com ([192.55.52.93]:9725 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728575AbeJXDVF (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:21:05 -0400
+        id S1728385AbeJXDhc (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 23 Oct 2018 23:37:32 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:56:27 -0700
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 12:12:49 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,417,1534834800"; 
-   d="scan'208";a="90655938"
-Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
-  by FMSMGA003.fm.intel.com with ESMTP; 23 Oct 2018 11:56:27 -0700
-Received: from lcsmsx153.ger.corp.intel.com (10.186.165.228) by
- fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Tue, 23 Oct 2018 11:56:27 -0700
-Received: from HASMSX109.ger.corp.intel.com ([169.254.3.28]) by
- LCSMSX153.ger.corp.intel.com ([169.254.8.212]) with mapi id 14.03.0319.002;
- Tue, 23 Oct 2018 21:56:24 +0300
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v7 21/21] tpm: use u32 instead of int for PCR index
-Thread-Topic: [PATCH v7 21/21] tpm: use u32 instead of int for PCR index
-Thread-Index: AQHUawHnIN5RhfIfM0i8KmmwsGrk/aUtLgFw
-Date:   Tue, 23 Oct 2018 18:56:24 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D9FB7DC@hasmsx109.ger.corp.intel.com>
-References: <20181019182307.17745-1-tomas.winkler@intel.com>
- <20181019182307.17745-22-tomas.winkler@intel.com>
- <alpine.DEB.2.21.1810232154130.8524@jsakkine-mobl1>
-In-Reply-To: <alpine.DEB.2.21.1810232154130.8524@jsakkine-mobl1>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiM2Q4MTA4ODUtMmY5My00MDQ3LThiZmMtNjE2ZTk1ODUzODc3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiWGZvQjZqeGtIRmdLQnVcLzdId25lN1l1VTIzcklEZE03OHlpTkR6N2VyWURBUHMrZWdSQ1psQVR2bmk4VHFvRTUifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.252.19.114]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+   d="scan'208";a="80341520"
+Received: from pwolsza-mobl1.ger.corp.intel.com ([10.249.254.37])
+  by fmsmga007.fm.intel.com with ESMTP; 23 Oct 2018 12:12:46 -0700
+Date:   Tue, 23 Oct 2018 22:12:44 +0300 (EEST)
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-X-Sender: jsakkine@jsakkine-mobl1
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+cc:     linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: Re: [PATCH v4 1/7] tpm-buf: create new functions for handling TPM
+ buffers
+In-Reply-To: <1540193734.3202.9.camel@HansenPartnership.com>
+Message-ID: <alpine.DEB.2.21.1810232156470.8524@jsakkine-mobl1>
+References: <1540193596.3202.7.camel@HansenPartnership.com> <1540193734.3202.9.camel@HansenPartnership.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-> 
-> On Fri, 19 Oct 2018, Tomas Winkler wrote:
-> > The TPM specs defines PCR index as a positive number, and there is no
-> > reason to use a signed number. It is also a possible security issue as
-> > currently no functions check for a negative index, which may become a
-> > large number when converted to u32.
-> >
-> > Adjust the API to use u32 instead of int in all PCR related functions.
-> >
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > ---
-> > V3: New in the series.
-> > V4: Separate unrelated change to another patches.
-> > V5: Fix the commit message.
-> > V6: Rebased.
-> > V7: Resend.
-> >
-> > drivers/char/tpm/tpm-interface.c    |  6 +++---
-> > drivers/char/tpm/tpm-sysfs.c        |  2 +-
-> > drivers/char/tpm/tpm.h              | 10 +++++-----
-> > drivers/char/tpm/tpm1-cmd.c         |  6 +++---
-> > drivers/char/tpm/tpm2-cmd.c         |  5 ++---
-> > include/linux/tpm.h                 | 11 +++++++----
-> > security/integrity/ima/ima_crypto.c |  5 +++--
-> > 7 files changed, 24 insertions(+), 21 deletions(-)
-> >
-> > diff --git a/drivers/char/tpm/tpm-interface.c
-> > b/drivers/char/tpm/tpm-interface.c
-> > index acd647476ae1..d9439f9abe78 100644
-> > --- a/drivers/char/tpm/tpm-interface.c
-> > +++ b/drivers/char/tpm/tpm-interface.c
-> > @@ -38,7 +38,7 @@
-> >  * recently changed pcr on suspend, so force the flush
-> >  * with an extend to the selected _unused_ non-volatile pcr.
-> >  */
-> > -static int tpm_suspend_pcr;
-> > +static u32 tpm_suspend_pcr;
-> > module_param_named(suspend_pcr, tpm_suspend_pcr, uint, 0644);
-> > MODULE_PARM_DESC(suspend_pcr,
-> > 		 "PCR to use for dummy writes to facilitate flush on
-> suspend."); @@
-> > -455,7 +455,7 @@ EXPORT_SYMBOL_GPL(tpm_is_tpm2);
-> >  *
-> >  * Return: same as with tpm_transmit_cmd()  */ -int
-> > tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
-> > +int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
-> > {
-> > 	int rc;
-> >
-> > @@ -485,7 +485,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
-> >  *
-> >  * Return: same as with tpm_transmit_cmd()  */ -int
-> > tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
-> > +int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8
-> > +*hash)
-> > {
-> > 	int rc;
-> > 	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
-> > diff --git a/drivers/char/tpm/tpm-sysfs.c
-> > b/drivers/char/tpm/tpm-sysfs.c index 96fc7433c57d..b88e08ec2c59 100644
-> > --- a/drivers/char/tpm/tpm-sysfs.c
-> > +++ b/drivers/char/tpm/tpm-sysfs.c
-> > @@ -102,7 +102,7 @@ static ssize_t pcrs_show(struct device *dev, struct
-> device_attribute *attr,
-> > 	cap_t cap;
-> > 	u8 digest[TPM_DIGEST_SIZE];
-> > 	ssize_t rc;
-> > -	int i, j, num_pcrs;
-> > +	u32 i, j, num_pcrs;
-> > 	char *str = buf;
-> > 	struct tpm_chip *chip = to_tpm_chip(dev);
-> >
-> > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h index
-> > e0778d19da98..f27d1f38a93d 100644
-> > --- a/drivers/char/tpm/tpm.h
-> > +++ b/drivers/char/tpm/tpm.h
-> > @@ -509,14 +509,14 @@ ssize_t tpm_transmit_cmd(struct tpm_chip
-> *chip,
-> > struct tpm_space *space, int tpm_get_timeouts(struct tpm_chip *); int
-> > tpm_auto_startup(struct tpm_chip *chip);
-> >
-> > -int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr);
-> > +int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr);
-> > int tpm1_auto_startup(struct tpm_chip *chip); int
-> > tpm1_do_selftest(struct tpm_chip *chip); int tpm1_get_timeouts(struct
-> > tpm_chip *chip); unsigned long tpm1_calc_ordinal_duration(struct
-> > tpm_chip *chip, u32 ordinal); -int tpm1_pcr_extend(struct tpm_chip
-> > *chip, int pcr_idx, const u8 *hash,
-> > +int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8
-> > +*hash,
-> > 		    const char *log_msg);
-> > -int tpm1_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
-> > +int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
-> > ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
-> > 		    const char *desc, size_t min_cap_length); int
-> > tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max); @@ -558,8
-> > +558,8 @@ static inline u32 tpm2_rc_value(u32 rc) }
-> >
-> > int tpm2_get_timeouts(struct tpm_chip *chip); -int
-> > tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf); -int
-> > tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
-> > +int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
-> > +int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
-> > 		    struct tpm2_digest *digests);
-> > int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max); void
-> > tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle, diff --git
-> > a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c index
-> > 6b04648f8184..6f306338953b 100644
-> > --- a/drivers/char/tpm/tpm1-cmd.c
-> > +++ b/drivers/char/tpm/tpm1-cmd.c
-> > @@ -449,7 +449,7 @@ int tpm1_get_timeouts(struct tpm_chip *chip) }
-> >
-> > #define TPM_ORD_PCR_EXTEND 20
-> > -int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8
-> > *hash,
-> > +int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8
-> > +*hash,
-> > 		    const char *log_msg)
-> > {
-> > 	struct tpm_buf buf;
-> > @@ -572,7 +572,7 @@ int tpm1_get_random(struct tpm_chip *chip, u8
-> > *dest, size_t max) }
-> >
-> > #define TPM_ORD_PCRREAD 21
-> > -int tpm1_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
-> > +int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
-> > {
-> > 	struct tpm_buf buf;
-> > 	int rc;
-> > @@ -729,7 +729,7 @@ int tpm1_auto_startup(struct tpm_chip *chip)
-> >  * * 0 on success,
-> >  * * < 0 on error.
-> >  */
-> > -int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr)
-> > +int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
-> > {
-> > 	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
-> > 	struct tpm_buf buf;
-> > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> > index 6ca4fc0a0d6f..ae86fb0218ab 100644
-> > --- a/drivers/char/tpm/tpm2-cmd.c
-> > +++ b/drivers/char/tpm/tpm2-cmd.c
-> > @@ -175,7 +175,7 @@ struct tpm2_pcr_read_out {
-> >  *
-> >  * Return: Same as with tpm_transmit_cmd.
-> >  */
-> > -int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
-> > +int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
-> > {
-> > 	int rc;
-> > 	struct tpm_buf buf;
-> > @@ -225,7 +225,7 @@ struct tpm2_null_auth_area {
-> >  *
-> >  * Return: Same as with tpm_transmit_cmd.
-> >  */
-> > -int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
-> > +int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
-> > 		    struct tpm2_digest *digests)
-> > {
-> > 	struct tpm_buf buf;
-> > @@ -272,7 +272,6 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int
-> pcr_idx, u32 count,
-> > 	return rc;
-> > }
-> >
-> > -
-> > struct tpm2_get_random_out {
-> > 	__be16 size;
-> > 	u8 buffer[TPM_MAX_RNG_DATA];
-> > diff --git a/include/linux/tpm.h b/include/linux/tpm.h index
-> > 4609b94142d4..b49a55cf775f 100644
-> > --- a/include/linux/tpm.h
-> > +++ b/include/linux/tpm.h
-> > @@ -53,8 +53,8 @@ struct tpm_class_ops { #if defined(CONFIG_TCG_TPM)
-> > || defined(CONFIG_TCG_TPM_MODULE)
-> >
-> > extern int tpm_is_tpm2(struct tpm_chip *chip); -extern int
-> > tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf); -extern
-> > int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8
-> > *hash);
-> > +extern int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8
-> > +*res_buf); extern int tpm_pcr_extend(struct tpm_chip *chip, u32
-> > +pcr_idx, const u8 *hash);
-> > extern int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen);
-> > extern int tpm_get_random(struct tpm_chip *chip, u8 *data, size_t
-> > max); extern int tpm_seal_trusted(struct tpm_chip *chip, @@ -69,15
-> > +69,18 @@ static inline int tpm_is_tpm2(struct tpm_chip *chip) {
-> > 	return -ENODEV;
-> > }
-> > -static inline int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8
-> > *res_buf)
-> > +
-> > +static inline int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8
-> > +*res_buf)
-> > {
-> > 	return -ENODEV;
-> > }
-> > -static inline int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx,
-> > +
-> > +static inline int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
-> > 				 const u8 *hash)
-> > {
-> > 	return -ENODEV;
-> > }
-> > +
-> > static inline int tpm_send(struct tpm_chip *chip, void *cmd, size_t
-> > buflen) {
-> > 	return -ENODEV;
-> > diff --git a/security/integrity/ima/ima_crypto.c
-> > b/security/integrity/ima/ima_crypto.c
-> > index 7e7e7e7c250a..959d9edc113a 100644
-> > --- a/security/integrity/ima/ima_crypto.c
-> > +++ b/security/integrity/ima/ima_crypto.c
-> > @@ -629,7 +629,7 @@ int ima_calc_buffer_hash(const void *buf, loff_t
-> len,
-> > 	return calc_buffer_shash(buf, len, hash); }
-> >
-> > -static void __init ima_pcrread(int idx, u8 *pcr)
-> > +static void __init ima_pcrread(u32 idx, u8 *pcr)
-> > {
-> > 	if (!ima_tpm_chip)
-> > 		return;
-> > @@ -645,7 +645,8 @@ static int __init ima_calc_boot_aggregate_tfm(char
-> *digest,
-> > 					      struct crypto_shash *tfm)
-> > {
-> > 	u8 pcr_i[TPM_DIGEST_SIZE];
-> > -	int rc, i;
-> > +	int rc;
-> > +	u32 i;
-> > 	SHASH_DESC_ON_STACK(shash, tfm);
-> >
-> > 	shash->tfm = tfm;
-> >
-> 
-> All commits have been now applied.
-> 
-Appreciated.
-Thanks
-Tomas
+On Mon, 22 Oct 2018, James Bottomley wrote:
+> This separates out the old tpm_buf_... handling functions from static
+> inlines into tpm.h and makes them their own tpm-buf.c file.  It also
+> adds handling for tpm2b structures and also incremental pointer
+> advancing parsers.
 
+Nitpicking: when my SGX patch set has been reviewed one of the comments
+has been that commit messages should be in imperative form e.g.
+
+"Separate out the old tpm_buf handling functions from static inlines
+into tpm.h and make them their..."
+
+> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+>
+> ---
+>
+> v2: added this patch to separate out the API changes
+> v3: added tpm_buf_reset_cmd()
+> v4: renamed tpm_buf_reset_cmd() to tpm_buf_reset()
+> ---
+> drivers/char/tpm/Makefile  |   2 +-
+> drivers/char/tpm/tpm-buf.c | 191 +++++++++++++++++++++++++++++++++++++++++++++
+> drivers/char/tpm/tpm.h     |  96 ++++-------------------
+> 3 files changed, 208 insertions(+), 81 deletions(-)
+> create mode 100644 drivers/char/tpm/tpm-buf.c
+>
+> diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
+> index 3655258bee73..65d165cce530 100644
+> --- a/drivers/char/tpm/Makefile
+> +++ b/drivers/char/tpm/Makefile
+> @@ -5,7 +5,7 @@
+> obj-$(CONFIG_TCG_TPM) += tpm.o
+> tpm-y := tpm-interface.o tpm-dev.o tpm-sysfs.o tpm-chip.o tpm2-cmd.o \
+> 	 tpm-dev-common.o tpmrm-dev.o eventlog/common.o eventlog/tpm1.o \
+> -	 eventlog/tpm2.o tpm2-space.o
+> +	 eventlog/tpm2.o tpm2-space.o tpm-buf.o
+> tpm-$(CONFIG_ACPI) += tpm_ppi.o eventlog/acpi.o
+> tpm-$(CONFIG_EFI) += eventlog/efi.o
+> tpm-$(CONFIG_OF) += eventlog/of.o
+> diff --git a/drivers/char/tpm/tpm-buf.c b/drivers/char/tpm/tpm-buf.c
+> new file mode 100644
+> index 000000000000..faa22bb09d99
+> --- /dev/null
+> +++ b/drivers/char/tpm/tpm-buf.c
+> @@ -0,0 +1,191 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * Handing for tpm2b structures to facilitate the building of commands
+> + */
+> +
+> +#include "tpm.h"
+> +
+> +#include <linux/module.h>
+> +
+> +#include <asm/unaligned.h>
+> +
+> +static int __tpm_buf_init(struct tpm_buf *buf)
+> +{
+> +	buf->data_page = alloc_page(GFP_HIGHUSER);
+> +	if (!buf->data_page)
+> +		return -ENOMEM;
+> +
+> +	buf->flags = 0;
+> +	buf->data = kmap(buf->data_page);
+> +
+> +	return 0;
+> +}
+> +
+> +void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal)
+> +{
+> +	struct tpm_input_header *head;
+> +
+> +	head = (struct tpm_input_header *) buf->data;
+> +
+> +	head->tag = cpu_to_be16(tag);
+> +	head->length = cpu_to_be32(sizeof(*head));
+> +	head->ordinal = cpu_to_be32(ordinal);
+> +}
+> +EXPORT_SYMBOL_GPL(tpm_buf_reset);
+> +
+> +int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal)
+> +{
+> +	int rc;
+> +
+> +	rc = __tpm_buf_init(buf);
+> +	if (rc)
+> +		return rc;
+> +
+> +	tpm_buf_reset(buf, tag, ordinal);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(tpm_buf_init);
+> +
+> +int tpm_buf_init_2b(struct tpm_buf *buf)
+> +{
+> +	struct tpm_input_header *head;
+> +	int rc;
+> +
+> +	rc = __tpm_buf_init(buf);
+> +	if (rc)
+> +		return rc;
+> +
+> +	head = (struct tpm_input_header *) buf->data;
+> +
+> +	head->length = cpu_to_be32(sizeof(*head));
+> +
+> +	buf->flags = TPM_BUF_2B;
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(tpm_buf_init_2b);
+> +
+> +void tpm_buf_destroy(struct tpm_buf *buf)
+> +{
+> +	kunmap(buf->data_page);
+> +	__free_page(buf->data_page);
+> +}
+> +EXPORT_SYMBOL_GPL(tpm_buf_destroy);
+> +
+> +static void *tpm_buf_data(struct tpm_buf *buf)
+> +{
+> +	if (buf->flags & TPM_BUF_2B)
+> +		return buf->data + TPM_HEADER_SIZE;
+> +	return buf->data;
+> +}
+> +
+> +u32 tpm_buf_length(struct tpm_buf *buf)
+> +{
+> +	struct tpm_input_header *head = (struct tpm_input_header *)buf->data;
+> +	u32 len;
+> +
+> +	len = be32_to_cpu(head->length);
+> +	if (buf->flags & TPM_BUF_2B)
+> +		len -= sizeof(*head);
+> +	return len;
+> +}
+> +EXPORT_SYMBOL_GPL(tpm_buf_length);
+> +
+> +u16 tpm_buf_tag(struct tpm_buf *buf)
+> +{
+> +	struct tpm_input_header *head = (struct tpm_input_header *)buf->data;
+> +
+> +	return be16_to_cpu(head->tag);
+> +}
+> +EXPORT_SYMBOL_GPL(tpm_buf_tag);
+> +
+> +void tpm_buf_append(struct tpm_buf *buf,
+> +		    const unsigned char *new_data,
+> +		    unsigned int new_len)
+> +{
+> +	struct tpm_input_header *head = (struct tpm_input_header *) buf->data;
+> +	u32 len = be32_to_cpu(head->length);
+> +
+> +	/* Return silently if overflow has already happened. */
+> +	if (buf->flags & TPM_BUF_OVERFLOW)
+> +		return;
+> +
+> +	if ((len + new_len) > PAGE_SIZE) {
+> +		WARN(1, "tpm_buf: overflow\n");
+> +		buf->flags |= TPM_BUF_OVERFLOW;
+> +		return;
+> +	}
+> +
+> +	memcpy(&buf->data[len], new_data, new_len);
+> +	head->length = cpu_to_be32(len + new_len);
+> +}
+> +EXPORT_SYMBOL_GPL(tpm_buf_append);
+> +
+> +void tpm_buf_append_u8(struct tpm_buf *buf, const u8 value)
+> +{
+> +	tpm_buf_append(buf, &value, 1);
+> +}
+> +EXPORT_SYMBOL_GPL(tpm_buf_append_u8);
+> +
+> +void tpm_buf_append_u16(struct tpm_buf *buf, const u16 value)
+> +{
+> +	__be16 value2 = cpu_to_be16(value);
+> +
+> +	tpm_buf_append(buf, (u8 *) &value2, 2);
+> +}
+> +EXPORT_SYMBOL_GPL(tpm_buf_append_u16);
+> +
+> +void tpm_buf_append_u32(struct tpm_buf *buf, const u32 value)
+> +{
+> +	__be32 value2 = cpu_to_be32(value);
+> +
+> +	tpm_buf_append(buf, (u8 *) &value2, 4);
+> +}
+> +EXPORT_SYMBOL_GPL(tpm_buf_append_u32);
+> +
+> +static void tpm_buf_reset_int(struct tpm_buf *buf)
+> +{
+> +	struct tpm_input_header *head;
+> +
+> +	head = (struct tpm_input_header *)buf->data;
+> +	head->length = cpu_to_be32(sizeof(*head));
+> +}
+> +
+> +void tpm_buf_append_2b(struct tpm_buf *buf, struct tpm_buf *tpm2b)
+> +{
+> +	u16 len = tpm_buf_length(tpm2b);
+> +
+> +	tpm_buf_append_u16(buf, len);
+> +	tpm_buf_append(buf, tpm_buf_data(tpm2b), len);
+> +	/* clear the buf for reuse */
+> +	tpm_buf_reset_int(tpm2b);
+> +}
+> +EXPORT_SYMBOL_GPL(tpm_buf_append_2b);
+
+I think it would be more clean to rename tpm_buf_reset_int() as
+tpm_buf_reset_2b() and call it outside tpm_buf_append_2b(). Easier
+to understand later on in the call site what is going on.
+
+> +
+> +/* functions for unmarshalling data and moving the cursor */
+> +u8 tpm_get_inc_u8(const u8 **ptr)
+> +{
+> +	return *((*ptr)++);
+> +}
+> +EXPORT_SYMBOL_GPL(tpm_get_inc_u8);
+> +
+> +u16 tpm_get_inc_u16(const u8 **ptr)
+> +{
+> +	u16 val;
+> +
+> +	val = get_unaligned_be16(*ptr);
+> +	*ptr += sizeof(val);
+> +	return val;
+> +}
+> +EXPORT_SYMBOL_GPL(tpm_get_inc_u16);
+> +
+> +u32 tpm_get_inc_u32(const u8 **ptr)
+> +{
+> +	u32 val;
+> +
+> +	val = get_unaligned_be32(*ptr);
+> +	*ptr += sizeof(val);
+> +	return val;
+> +}
+> +EXPORT_SYMBOL_GPL(tpm_get_inc_u32);
+
+These tpm_get_ functions should be first of all documented and I would
+use tpm_buf_ prefix also in these simply because they are used in
+conjuction with that stuff. Maybe we could call the parameter simply as
+'iter' as that is what it is? These definitely should be in their own
+commit.
+
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index f3501d05264f..d73701e36eba 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -416,6 +416,7 @@ struct tpm_cmd_t {
+>
+> enum tpm_buf_flags {
+> 	TPM_BUF_OVERFLOW	= BIT(0),
+> +	TPM_BUF_2B		= BIT(1),
+> };
+>
+> struct tpm_buf {
+> @@ -424,86 +425,21 @@ struct tpm_buf {
+> 	u8 *data;
+> };
+>
+> -static inline void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal)
+> -{
+> -	struct tpm_input_header *head;
+> -	head = (struct tpm_input_header *)buf->data;
+> -	head->tag = cpu_to_be16(tag);
+> -	head->length = cpu_to_be32(sizeof(*head));
+> -	head->ordinal = cpu_to_be32(ordinal);
+> -}
+> -
+> -static inline int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal)
+> -{
+> -	buf->data_page = alloc_page(GFP_HIGHUSER);
+> -	if (!buf->data_page)
+> -		return -ENOMEM;
+> -
+> -	buf->flags = 0;
+> -	buf->data = kmap(buf->data_page);
+> -	tpm_buf_reset(buf, tag, ordinal);
+> -	return 0;
+> -}
+> -
+> -static inline void tpm_buf_destroy(struct tpm_buf *buf)
+> -{
+> -	kunmap(buf->data_page);
+> -	__free_page(buf->data_page);
+> -}
+> -
+> -static inline u32 tpm_buf_length(struct tpm_buf *buf)
+> -{
+> -	struct tpm_input_header *head = (struct tpm_input_header *) buf->data;
+> -
+> -	return be32_to_cpu(head->length);
+> -}
+> -
+> -static inline u16 tpm_buf_tag(struct tpm_buf *buf)
+> -{
+> -	struct tpm_input_header *head = (struct tpm_input_header *) buf->data;
+> -
+> -	return be16_to_cpu(head->tag);
+> -}
+> -
+> -static inline void tpm_buf_append(struct tpm_buf *buf,
+> -				  const unsigned char *new_data,
+> -				  unsigned int new_len)
+> -{
+> -	struct tpm_input_header *head = (struct tpm_input_header *) buf->data;
+> -	u32 len = tpm_buf_length(buf);
+> -
+> -	/* Return silently if overflow has already happened. */
+> -	if (buf->flags & TPM_BUF_OVERFLOW)
+> -		return;
+> -
+> -	if ((len + new_len) > PAGE_SIZE) {
+> -		WARN(1, "tpm_buf: overflow\n");
+> -		buf->flags |= TPM_BUF_OVERFLOW;
+> -		return;
+> -	}
+> -
+> -	memcpy(&buf->data[len], new_data, new_len);
+> -	head->length = cpu_to_be32(len + new_len);
+> -}
+> -
+> -static inline void tpm_buf_append_u8(struct tpm_buf *buf, const u8 value)
+> -{
+> -	tpm_buf_append(buf, &value, 1);
+> -}
+> -
+> -static inline void tpm_buf_append_u16(struct tpm_buf *buf, const u16 value)
+> -{
+> -	__be16 value2 = cpu_to_be16(value);
+> -
+> -	tpm_buf_append(buf, (u8 *) &value2, 2);
+> -}
+> -
+> -static inline void tpm_buf_append_u32(struct tpm_buf *buf, const u32 value)
+> -{
+> -	__be32 value2 = cpu_to_be32(value);
+> -
+> -	tpm_buf_append(buf, (u8 *) &value2, 4);
+> -}
+> +int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal);
+> +void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal);
+> +int tpm_buf_init_2b(struct tpm_buf *buf);
+> +void tpm_buf_destroy(struct tpm_buf *buf);
+> +u32 tpm_buf_length(struct tpm_buf *buf);
+> +void tpm_buf_append(struct tpm_buf *buf, const unsigned char *new_data,
+> +		    unsigned int new_len);
+> +void tpm_buf_append_u8(struct tpm_buf *buf, const u8 value);
+> +void tpm_buf_append_u16(struct tpm_buf *buf, const u16 value);
+> +void tpm_buf_append_u32(struct tpm_buf *buf, const u32 value);
+> +void tpm_buf_append_2b(struct tpm_buf *buf, struct tpm_buf *tpm2b);
+> +
+> +u8 tpm_get_inc_u8(const u8 **ptr);
+> +u16 tpm_get_inc_u16(const u8 **ptr);
+> +u32 tpm_get_inc_u32(const u8 **ptr);
+>
+> extern struct class *tpm_class;
+> extern struct class *tpmrm_class;
+> -- 
+> 2.16.4
+>
+>
+
+Please, split this into three commits:
+
+1. Move tpm-buf functions to tpm-buf.c.
+2. Extensions to the buffer construction (i.e. TPM2B).
+3. The parsing code.
+
+Then we can see clearly what is going on and properly evaluate these
+changes.
+
+/Jarkko
