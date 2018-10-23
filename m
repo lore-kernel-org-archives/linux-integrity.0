@@ -5,60 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 308E9C7112C
-	for <linux-integrity@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D10C46475
+	for <linux-integrity@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB1C52075D
-	for <linux-integrity@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95CA82075D
+	for <linux-integrity@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IYU37E3G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB1C52075D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZaGL7O9Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95CA82075D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728699AbeJXGBN (ORCPT
+        id S1729270AbeJXGBi (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 24 Oct 2018 02:01:13 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:41128 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728491AbeJXGBN (ORCPT
+        Wed, 24 Oct 2018 02:01:38 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:46974 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729227AbeJXGBg (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 24 Oct 2018 02:01:13 -0400
-Received: by mail-lf1-f67.google.com with SMTP id c16so2330434lfj.8;
-        Tue, 23 Oct 2018 14:35:59 -0700 (PDT)
+        Wed, 24 Oct 2018 02:01:36 -0400
+Received: by mail-lj1-f196.google.com with SMTP id x3-v6so2784065lji.13;
+        Tue, 23 Oct 2018 14:36:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
-        bh=zu6YpzsO3OPxEg4tClPcjQ9+ceDNkNmVTbJmyduztxw=;
-        b=IYU37E3Goc1gepM+z7hog9RH6DIyAowZ3kap0+WnwznOQYEPQmswmAxSGL4JWRQEyS
-         CVrhUhp6EhYzB/yceyWg6J016IiEWahMGlmmJJMR8SB9NsCkUaysR15IMkJiU9XU5A4x
-         MYbPNGz5r322XE/6vXeNUMLtZBrdp5hnW7p6Gu6ioi4MnKP5t0mRajj05ORcpQyv+vrY
-         Z6ynoOqJzxtr0/3c7DGuoeWYCgLGwyy1UvRU4MZvg/8f07ITGGyeJcCceomGyRisd/Gm
-         odqfJ5zXkKMEu4gInslFJueixysz3Std4Mztz2zYPYKLbOawgJ0QCO9GrluxawhCBR6S
-         qfuQ==
+        bh=9FjWk819tI8q4Of5/GPMym38mMpreAR6lAKVVURm4+E=;
+        b=ZaGL7O9QhY2jV9QlUoGEx2RYYKVeDm+Qn8Dz7gfcUqyv0drW9KAQdyhAtBl5ScwmJ4
+         nDiWn/GV5yOAQihkjSTJnjT2aokUhrXlMJohwEiUETROgzQo7qqJsHjUCafOBfQvdMxH
+         YHQR1GLLP/maXsuxnk63Cxq9HpqVTBMK2NI2bv900uXuZmBGqH51It6uGOsLJE2fWYfG
+         6pkXXBdjXQw5c81MPcYkUp/W2Fchea7WoyQOXNAdP3rX0RjytwLNxw0tBso2VK3Bnzzp
+         +nDYJl8GRYYpT918e/BGp+3Qu4x67MFTUlCnXST536vZQUhX2hfdmUDtAqW8JAyluAPO
+         vifw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:reply-to;
-        bh=zu6YpzsO3OPxEg4tClPcjQ9+ceDNkNmVTbJmyduztxw=;
-        b=crftDCqQwhJ+0wIzD2LLL7RmapJSlutlzFJ1oBrFX42OUkPTfTs9sl0IIMIt4jLIKU
-         9pSA9Y8WNekCPvSEt9rIBpP9eJhoFrctByxsQ4O9J+3ILVS2hmtj3qzaqwUCZ34crpkH
-         xIMDxowFGdIlfc6yVXn7i/amNiNzKCNBemwmj++evZY1IMEl2izpBjYI0Fzl6zkvXVCl
-         Z4z844S4CGH42VV3HH11UEFL+/Ysbyenkpoumg3M6iIOxN1oJFgPJZxM98E1vAn9r8UK
-         /g1DkbPMo0fF0+/ytJv8ukrDgq0EmsAEpQisVhJlGWCf+cuvY4FPikik2iLjz7E59wAm
-         mGvg==
-X-Gm-Message-State: ABuFfojuUOw8daixpmtVrKz1fJUULBo9vKZ3CVZ1jzMmdnsSF7u1HoXw
-        4wZiIQEdWVIYXVIrzrYPHiM=
-X-Google-Smtp-Source: ACcGV60Pq7KtfnwIP2lKFjHQF4lR+JAvWyiJuqcEsOhPvZE+obfCKGmgt17NFjnFkz3993bVkhoNew==
-X-Received: by 2002:a19:690d:: with SMTP id e13mr9045976lfc.84.1540330558395;
-        Tue, 23 Oct 2018 14:35:58 -0700 (PDT)
+        bh=9FjWk819tI8q4Of5/GPMym38mMpreAR6lAKVVURm4+E=;
+        b=bY01P2bAWn0trm+tChkWO6aSu01j1D7IH0E8gneMnPED1+VkmoGysCKBCa3K43+Td8
+         jibpC/qXWh7GhsUDoSCSmYZ63t7K5AKzzwJ6vE3SX0YRzN90fT0l6OBbOpU0FunQyYb1
+         2utR9mJ2TqI1udO57e6po+qIiA53DD2zGm42NQbe9Sa+tpKflULswrrF6MC2oS7IecJq
+         9MRJcS2jqk+VotYqZ5z9ek07pJ4QrHbv3cNGnlMYUO1GLpJvaglcRQqLEuvBAvP90INh
+         OCdyV9IYTHq4MyQO5NTDFbN9HJbChPdUYKpafSl8LjJpRrQhHUtNLmygnJT+aVgFS32+
+         n55w==
+X-Gm-Message-State: ABuFfoixGhCl3E9m3ySPsv68ZLR2f5wRgIMYK+zwyGRaqTz22V7J4n37
+        TYXGy9tZ+mtFi8yu0/wFv5s=
+X-Google-Smtp-Source: AJdET5fStpo5iwjElaH4GwCWOgDJjeaJxYFI38XhqKxAW7VjqnSm921zQaz+uFEKHN4MgpOPwJPDsA==
+X-Received: by 2002:a2e:9f17:: with SMTP id u23-v6mr15051827ljk.53.1540330582091;
+        Tue, 23 Oct 2018 14:36:22 -0700 (PDT)
 Received: from localhost.localdomain (91-159-62-169.elisa-laajakaista.fi. [91.159.62.169])
-        by smtp.gmail.com with ESMTPSA id y127-v6sm377950lfc.13.2018.10.23.14.35.57
+        by smtp.gmail.com with ESMTPSA id y127-v6sm377950lfc.13.2018.10.23.14.36.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 14:35:57 -0700 (PDT)
+        Tue, 23 Oct 2018 14:36:21 -0700 (PDT)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -73,15 +73,11 @@ To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
 Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Laura Abbott <labbott@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 01/17] prmem: linker section for static write rare
-Date:   Wed, 24 Oct 2018 00:34:48 +0300
-Message-Id: <20181023213504.28905-2-igor.stoppa@huawei.com>
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH 17/17] prmem: ima: turn the measurements list write rare
+Date:   Wed, 24 Oct 2018 00:35:04 +0300
+Message-Id: <20181023213504.28905-18-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181023213504.28905-1-igor.stoppa@huawei.com>
 References: <20181023213504.28905-1-igor.stoppa@huawei.com>
@@ -91,96 +87,424 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Introduce a section and a label for statically allocated write rare
-data.
+The measurement list is moved to write rare memory, including
+related data structures.
 
-The label is named "__write_rare_after_init".
-As the name implies, after the init phase is completed, this section
-will be modifiable only by invoking write rare functions.
-
-NOTE:
-this needs rework, because the current write-rare mechanism works
-only on x86_64 and not arm64, due to arm64 mappings.
+Various boilerplate linux data structures and related functions are
+replaced by their write-rare counterpart.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
-CC: Arnd Bergmann <arnd@arndb.de>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Kate Stewart <kstewart@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Philippe Ombredanne <pombredanne@nexb.com>
-CC: linux-arch@vger.kernel.org
+CC: Mimi Zohar <zohar@linux.vnet.ibm.com>
+CC: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+CC: James Morris <jmorris@namei.org>
+CC: "Serge E. Hallyn" <serge@hallyn.com>
+CC: linux-integrity@vger.kernel.org
 CC: linux-kernel@vger.kernel.org
 ---
- include/asm-generic/vmlinux.lds.h | 20 ++++++++++++++++++++
- include/linux/cache.h             | 17 +++++++++++++++++
- 2 files changed, 37 insertions(+)
+ security/integrity/ima/ima.h              | 18 ++++++++------
+ security/integrity/ima/ima_api.c          | 29 +++++++++++++----------
+ security/integrity/ima/ima_fs.c           | 12 +++++-----
+ security/integrity/ima/ima_main.c         |  6 +++++
+ security/integrity/ima/ima_queue.c        | 28 +++++++++++++---------
+ security/integrity/ima/ima_template.c     | 14 ++++++-----
+ security/integrity/ima/ima_template_lib.c | 14 +++++++----
+ 7 files changed, 74 insertions(+), 47 deletions(-)
 
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index d7701d466b60..fd40a15e3b24 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -300,6 +300,25 @@
- 	. = __start_init_task + THREAD_SIZE;				\
- 	__end_init_task = .;
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 67db9d9454ca..5f5959753bf5 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -24,6 +24,8 @@
+ #include <linux/hash.h>
+ #include <linux/tpm.h>
+ #include <linux/audit.h>
++#include <linux/prlist.h>
++#include <linux/pratomic-long.h>
+ #include <crypto/hash_info.h>
  
-+/*
-+ * Allow architectures to handle wr_after_init data on their
-+ * own by defining an empty WR_AFTER_INIT_DATA.
-+ * However, it's important that pages containing WR_RARE data do not
-+ * hold anything else, to avoid both accidentally unprotecting something
-+ * that is supposed to stay read-only all the time and also to protect
-+ * something else that is supposed to be writeable all the time.
-+ */
-+#ifndef WR_AFTER_INIT_DATA
-+#define WR_AFTER_INIT_DATA(align)					\
-+	. = ALIGN(PAGE_SIZE);						\
-+	__start_wr_after_init = .;					\
-+	. = ALIGN(align);						\
-+	*(.data..wr_after_init)						\
-+	. = ALIGN(PAGE_SIZE);						\
-+	__end_wr_after_init = .;					\
-+	. = ALIGN(align);
-+#endif
+ #include "../integrity.h"
+@@ -84,7 +86,7 @@ struct ima_template_field {
+ 
+ /* IMA template descriptor definition */
+ struct ima_template_desc {
+-	struct list_head list;
++	union prlist_head list;
+ 	char *name;
+ 	char *fmt;
+ 	int num_fields;
+@@ -100,11 +102,13 @@ struct ima_template_entry {
+ };
+ 
+ struct ima_queue_entry {
+-	struct hlist_node hnext;	/* place in hash collision list */
+-	struct list_head later;		/* place in ima_measurements list */
++	union prhlist_node hnext;	/* place in hash collision list */
++	union prlist_head later;	/* place in ima_measurements list */
+ 	struct ima_template_entry *entry;
+ };
+-extern struct list_head ima_measurements;	/* list of all measurements */
 +
++/* list of all measurements */
++extern union prlist_head ima_measurements __wr_after_init;
+ 
+ /* Some details preceding the binary serialized measurement list */
+ struct ima_kexec_hdr {
+@@ -160,9 +164,9 @@ void ima_init_template_list(void);
+ extern spinlock_t ima_queue_lock;
+ 
+ struct ima_h_table {
+-	atomic_long_t len;	/* number of stored measurements in the list */
+-	atomic_long_t violations;
+-	struct hlist_head queue[IMA_MEASURE_HTABLE_SIZE];
++	struct pratomic_long_t len;	/* # of measurements in the list */
++	struct pratomic_long_t violations;
++	union prhlist_head queue[IMA_MEASURE_HTABLE_SIZE];
+ };
+ extern struct ima_h_table ima_htable;
+ 
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index a02c5acfd403..4fc28c2478b0 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -19,9 +19,12 @@
+ #include <linux/xattr.h>
+ #include <linux/evm.h>
+ #include <linux/iversion.h>
++#include <linux/prmemextra.h>
++#include <linux/pratomic-long.h>
+ 
+ #include "ima.h"
+ 
++extern struct pmalloc_pool ima_pool;
  /*
-  * Allow architectures to handle ro_after_init data on their
-  * own by defining an empty RO_AFTER_INIT_DATA.
-@@ -320,6 +339,7 @@
- 		__start_rodata = .;					\
- 		*(.rodata) *(.rodata.*)					\
- 		RO_AFTER_INIT_DATA	/* Read only after init */	\
-+		WR_AFTER_INIT_DATA(align) /* wr after init */	\
- 		KEEP(*(__vermagic))	/* Kernel version magic */	\
- 		. = ALIGN(8);						\
- 		__start___tracepoints_ptrs = .;				\
-diff --git a/include/linux/cache.h b/include/linux/cache.h
-index 750621e41d1c..9a7e7134b887 100644
---- a/include/linux/cache.h
-+++ b/include/linux/cache.h
-@@ -31,6 +31,23 @@
- #define __ro_after_init __attribute__((__section__(".data..ro_after_init")))
+  * ima_free_template_entry - free an existing template entry
+  */
+@@ -29,10 +32,10 @@ void ima_free_template_entry(struct ima_template_entry *entry)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < entry->template_desc->num_fields; i++)
+-		kfree(entry->template_data[i].data);
++//	for (i = 0; i < entry->template_desc->num_fields; i++)
++//		kfree(entry->template_data[i].data);
+ 
+-	kfree(entry);
++//	kfree(entry);
+ }
+ 
+ /*
+@@ -44,12 +47,13 @@ int ima_alloc_init_template(struct ima_event_data *event_data,
+ 	struct ima_template_desc *template_desc = ima_template_desc_current();
+ 	int i, result = 0;
+ 
+-	*entry = kzalloc(sizeof(**entry) + template_desc->num_fields *
+-			 sizeof(struct ima_field_data), GFP_NOFS);
++	*entry = pzalloc(&ima_pool,
++			 sizeof(**entry) + template_desc->num_fields *
++			 sizeof(struct ima_field_data));
+ 	if (!*entry)
+ 		return -ENOMEM;
+ 
+-	(*entry)->template_desc = template_desc;
++	wr_ptr(&((*entry)->template_desc), template_desc);
+ 	for (i = 0; i < template_desc->num_fields; i++) {
+ 		struct ima_template_field *field = template_desc->fields[i];
+ 		u32 len;
+@@ -59,9 +63,10 @@ int ima_alloc_init_template(struct ima_event_data *event_data,
+ 		if (result != 0)
+ 			goto out;
+ 
+-		len = (*entry)->template_data[i].len;
+-		(*entry)->template_data_len += sizeof(len);
+-		(*entry)->template_data_len += len;
++		len = (*entry)->template_data_len + sizeof(len) +
++			(*entry)->template_data[i].len;
++		wr_memcpy(&(*entry)->template_data_len, &len,
++			  sizeof(len));
+ 	}
+ 	return 0;
+ out:
+@@ -113,9 +118,9 @@ int ima_store_template(struct ima_template_entry *entry,
+ 					    audit_cause, result, 0);
+ 			return result;
+ 		}
+-		memcpy(entry->digest, hash.hdr.digest, hash.hdr.length);
++		wr_memcpy(entry->digest, hash.hdr.digest, hash.hdr.length);
+ 	}
+-	entry->pcr = pcr;
++	wr_int(&entry->pcr, pcr);
+ 	result = ima_add_template_entry(entry, violation, op, inode, filename);
+ 	return result;
+ }
+@@ -139,7 +144,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+ 	int result;
+ 
+ 	/* can overflow, only indicator */
+-	atomic_long_inc(&ima_htable.violations);
++	pratomic_long_inc(&ima_htable.violations);
+ 
+ 	result = ima_alloc_init_template(&event_data, &entry);
+ 	if (result < 0) {
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index ae9d5c766a3c..ab20da1161c7 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -57,7 +57,8 @@ static ssize_t ima_show_htable_violations(struct file *filp,
+ 					  char __user *buf,
+ 					  size_t count, loff_t *ppos)
+ {
+-	return ima_show_htable_value(buf, count, ppos, &ima_htable.violations);
++	return ima_show_htable_value(buf, count, ppos,
++				     &ima_htable.violations.l);
+ }
+ 
+ static const struct file_operations ima_htable_violations_ops = {
+@@ -69,8 +70,7 @@ static ssize_t ima_show_measurements_count(struct file *filp,
+ 					   char __user *buf,
+ 					   size_t count, loff_t *ppos)
+ {
+-	return ima_show_htable_value(buf, count, ppos, &ima_htable.len);
+-
++	return ima_show_htable_value(buf, count, ppos, &ima_htable.len.l);
+ }
+ 
+ static const struct file_operations ima_measurements_count_ops = {
+@@ -86,7 +86,7 @@ static void *ima_measurements_start(struct seq_file *m, loff_t *pos)
+ 
+ 	/* we need a lock since pos could point beyond last element */
+ 	rcu_read_lock();
+-	list_for_each_entry_rcu(qe, &ima_measurements, later) {
++	list_for_each_entry_rcu(qe, &ima_measurements.list, later.list) {
+ 		if (!l--) {
+ 			rcu_read_unlock();
+ 			return qe;
+@@ -303,7 +303,7 @@ static ssize_t ima_read_policy(char *path)
+ 		size -= rc;
+ 	}
+ 
+-	vfree(data);
++//	vfree(data);
+ 	if (rc < 0)
+ 		return rc;
+ 	else if (size)
+@@ -350,7 +350,7 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
+ 	}
+ 	mutex_unlock(&ima_write_mutex);
+ out_free:
+-	kfree(data);
++//	kfree(data);
+ out:
+ 	if (result < 0)
+ 		valid_policy = 0;
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 2d31921fbda4..d52e59006781 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -29,6 +29,7 @@
+ #include <linux/ima.h>
+ #include <linux/iversion.h>
+ #include <linux/fs.h>
++#include <linux/prlist.h>
+ 
+ #include "ima.h"
+ 
+@@ -536,10 +537,15 @@ int ima_load_data(enum kernel_load_data_id id)
+ 	return 0;
+ }
+ 
++struct pmalloc_pool ima_pool;
++
++#define IMA_POOL_ALLOC_CHUNK (16 * PAGE_SIZE)
+ static int __init init_ima(void)
+ {
+ 	int error;
+ 
++	pmalloc_init_custom_pool(&ima_pool, IMA_POOL_ALLOC_CHUNK, 3,
++				 PMALLOC_MODE_START_WR);
+ 	ima_init_template_list();
+ 	hash_setup(CONFIG_IMA_DEFAULT_HASH);
+ 	error = ima_init();
+diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+index b186819bd5aa..444c47b745d8 100644
+--- a/security/integrity/ima/ima_queue.c
++++ b/security/integrity/ima/ima_queue.c
+@@ -24,11 +24,14 @@
+ #include <linux/module.h>
+ #include <linux/rculist.h>
+ #include <linux/slab.h>
++#include <linux/prmemextra.h>
++#include <linux/prlist.h>
++#include <linux/pratomic-long.h>
+ #include "ima.h"
+ 
+ #define AUDIT_CAUSE_LEN_MAX 32
+ 
+-LIST_HEAD(ima_measurements);	/* list of all measurements */
++PRLIST_HEAD(ima_measurements);	/* list of all measurements */
+ #ifdef CONFIG_IMA_KEXEC
+ static unsigned long binary_runtime_size;
+ #else
+@@ -36,9 +39,9 @@ static unsigned long binary_runtime_size = ULONG_MAX;
  #endif
  
-+/*
-+ * __wr_after_init is used to mark objects that cannot be modified
-+ * directly after init (i.e. after mark_rodata_ro() has been called).
-+ * These objects become effectively read-only, from the perspective of
-+ * performing a direct write, like a variable assignment.
-+ * However, they can be altered through a dedicated function.
-+ * It is intended for those objects which are occasionally modified after
-+ * init, however they are modified so seldomly, that the extra cost from
-+ * the indirect modification is either negligible or worth paying, for the
-+ * sake of the protection gained.
-+ */
-+#ifndef __wr_after_init
-+#define __wr_after_init \
-+		__attribute__((__section__(".data..wr_after_init")))
-+#endif
+ /* key: inode (before secure-hashing a file) */
+-struct ima_h_table ima_htable = {
+-	.len = ATOMIC_LONG_INIT(0),
+-	.violations = ATOMIC_LONG_INIT(0),
++struct ima_h_table ima_htable __wr_after_init = {
++	.len = PRATOMIC_LONG_INIT(0),
++	.violations = PRATOMIC_LONG_INIT(0),
+ 	.queue[0 ... IMA_MEASURE_HTABLE_SIZE - 1] = HLIST_HEAD_INIT
+ };
+ 
+@@ -58,7 +61,7 @@ static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
+ 
+ 	key = ima_hash_key(digest_value);
+ 	rcu_read_lock();
+-	hlist_for_each_entry_rcu(qe, &ima_htable.queue[key], hnext) {
++	hlist_for_each_entry_rcu(qe, &ima_htable.queue[key], hnext.node) {
+ 		rc = memcmp(qe->entry->digest, digest_value, TPM_DIGEST_SIZE);
+ 		if ((rc == 0) && (qe->entry->pcr == pcr)) {
+ 			ret = qe;
+@@ -87,6 +90,8 @@ static int get_binary_runtime_size(struct ima_template_entry *entry)
+ 	return size;
+ }
+ 
++extern struct pmalloc_pool ima_pool;
 +
+ /* ima_add_template_entry helper function:
+  * - Add template entry to the measurement list and hash table, for
+  *   all entries except those carried across kexec.
+@@ -99,20 +104,21 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
+ 	struct ima_queue_entry *qe;
+ 	unsigned int key;
+ 
+-	qe = kmalloc(sizeof(*qe), GFP_KERNEL);
++	qe = pmalloc(&ima_pool, sizeof(*qe));
+ 	if (qe == NULL) {
+ 		pr_err("OUT OF MEMORY ERROR creating queue entry\n");
+ 		return -ENOMEM;
+ 	}
+-	qe->entry = entry;
++	wr_ptr(&qe->entry, entry);
++	INIT_PRLIST_HEAD(&qe->later);
++	prlist_add_tail_rcu(&qe->later, &ima_measurements);
 +
- #ifndef ____cacheline_aligned
- #define ____cacheline_aligned __attribute__((__aligned__(SMP_CACHE_BYTES)))
- #endif
+ 
+-	INIT_LIST_HEAD(&qe->later);
+-	list_add_tail_rcu(&qe->later, &ima_measurements);
++	pratomic_long_inc(&ima_htable.len);
+ 
+-	atomic_long_inc(&ima_htable.len);
+ 	if (update_htable) {
+ 		key = ima_hash_key(entry->digest);
+-		hlist_add_head_rcu(&qe->hnext, &ima_htable.queue[key]);
++		prhlist_add_head_rcu(&qe->hnext, &ima_htable.queue[key]);
+ 	}
+ 
+ 	if (binary_runtime_size != ULONG_MAX) {
+diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+index 30db39b23804..40ae57a17d89 100644
+--- a/security/integrity/ima/ima_template.c
++++ b/security/integrity/ima/ima_template.c
+@@ -22,14 +22,15 @@
+ enum header_fields { HDR_PCR, HDR_DIGEST, HDR_TEMPLATE_NAME,
+ 		     HDR_TEMPLATE_DATA, HDR__LAST };
+ 
+-static struct ima_template_desc builtin_templates[] = {
++static struct ima_template_desc builtin_templates[] __wr_after_init = {
+ 	{.name = IMA_TEMPLATE_IMA_NAME, .fmt = IMA_TEMPLATE_IMA_FMT},
+ 	{.name = "ima-ng", .fmt = "d-ng|n-ng"},
+ 	{.name = "ima-sig", .fmt = "d-ng|n-ng|sig"},
+ 	{.name = "", .fmt = ""},	/* placeholder for a custom format */
+ };
+ 
+-static LIST_HEAD(defined_templates);
++static PRLIST_HEAD(defined_templates);
++
+ static DEFINE_SPINLOCK(template_list);
+ 
+ static struct ima_template_field supported_fields[] = {
+@@ -114,7 +115,8 @@ static struct ima_template_desc *lookup_template_desc(const char *name)
+ 	int found = 0;
+ 
+ 	rcu_read_lock();
+-	list_for_each_entry_rcu(template_desc, &defined_templates, list) {
++	list_for_each_entry_rcu(template_desc, &defined_templates.list,
++				list.list) {
+ 		if ((strcmp(template_desc->name, name) == 0) ||
+ 		    (strcmp(template_desc->fmt, name) == 0)) {
+ 			found = 1;
+@@ -207,12 +209,12 @@ void ima_init_template_list(void)
+ {
+ 	int i;
+ 
+-	if (!list_empty(&defined_templates))
++	if (!list_empty(&defined_templates.list))
+ 		return;
+ 
+ 	spin_lock(&template_list);
+ 	for (i = 0; i < ARRAY_SIZE(builtin_templates); i++) {
+-		list_add_tail_rcu(&builtin_templates[i].list,
++		prlist_add_tail_rcu(&builtin_templates[i].list,
+ 				  &defined_templates);
+ 	}
+ 	spin_unlock(&template_list);
+@@ -266,7 +268,7 @@ static struct ima_template_desc *restore_template_fmt(char *template_name)
+ 		goto out;
+ 
+ 	spin_lock(&template_list);
+-	list_add_tail_rcu(&template_desc->list, &defined_templates);
++	prlist_add_tail_rcu(&template_desc->list, &defined_templates);
+ 	spin_unlock(&template_list);
+ out:
+ 	return template_desc;
+diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+index 43752002c222..a6d10eabf0e5 100644
+--- a/security/integrity/ima/ima_template_lib.c
++++ b/security/integrity/ima/ima_template_lib.c
+@@ -15,8 +15,12 @@
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
++#include <linux/printk.h>
++#include <linux/prmemextra.h>
+ #include "ima_template_lib.h"
+ 
++extern struct pmalloc_pool ima_pool;
++
+ static bool ima_template_hash_algo_allowed(u8 algo)
+ {
+ 	if (algo == HASH_ALGO_SHA1 || algo == HASH_ALGO_MD5)
+@@ -42,11 +46,11 @@ static int ima_write_template_field_data(const void *data, const u32 datalen,
+ 	if (datafmt == DATA_FMT_STRING)
+ 		buflen = datalen + 1;
+ 
+-	buf = kzalloc(buflen, GFP_KERNEL);
++	buf = pzalloc(&ima_pool, buflen);
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
+-	memcpy(buf, data, datalen);
++	wr_memcpy(buf, data, datalen);
+ 
+ 	/*
+ 	 * Replace all space characters with underscore for event names and
+@@ -58,11 +62,11 @@ static int ima_write_template_field_data(const void *data, const u32 datalen,
+ 	if (datafmt == DATA_FMT_STRING) {
+ 		for (buf_ptr = buf; buf_ptr - buf < datalen; buf_ptr++)
+ 			if (*buf_ptr == ' ')
+-				*buf_ptr = '_';
++				wr_char(buf_ptr, '_');
+ 	}
+ 
+-	field_data->data = buf;
+-	field_data->len = buflen;
++	wr_ptr(&field_data->data, buf);
++	wr_memcpy(&field_data->len, &buflen, sizeof(buflen));
+ 	return 0;
+ }
+ 
 -- 
 2.17.1
 
