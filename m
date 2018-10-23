@@ -2,170 +2,254 @@ Return-Path: <SRS0=MMpd=ND=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7F53C004D3
-	for <linux-integrity@archiver.kernel.org>; Tue, 23 Oct 2018 00:00:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1168C67863
+	for <linux-integrity@archiver.kernel.org>; Tue, 23 Oct 2018 07:01:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D320320672
-	for <linux-integrity@archiver.kernel.org>; Tue, 23 Oct 2018 00:00:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9338F2080A
+	for <linux-integrity@archiver.kernel.org>; Tue, 23 Oct 2018 07:01:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nWwU7inQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D320320672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="teTiHpF9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9338F2080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725883AbeJWIVn (ORCPT
+        id S1727582AbeJWPXl (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 23 Oct 2018 04:21:43 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55612 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbeJWIVn (ORCPT
+        Tue, 23 Oct 2018 11:23:41 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:60816 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726885AbeJWPXl (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 23 Oct 2018 04:21:43 -0400
-Received: by mail-wm1-f68.google.com with SMTP id x6-v6so644733wmc.5;
-        Mon, 22 Oct 2018 17:00:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=EMozjLO2AkOaduQqwXZYBsZUrZ1QZa9lUM/qe262pPc=;
-        b=nWwU7inQfPiJmcM8Fr+mCGTSXIPKbYXB9z9BKS/jAWRH8Bzz5A6ofcgud8YrkVwpWp
-         eHR5MqVZaPaQmlpw+nvj2UuRzqkOnjE2iOgcuqpy8SrgUonvQRxlgn3hU/skVmyjqsmu
-         agkxtCmvaDaJu40phb0iEV5E6ggIAjatGHHfWGnii1Kicg/JjUyQqgaGtUsGd1Z+w3r6
-         WvAHdqPA7HW4bUEtx3MnbG0ZU+DBwinoA1XzmCIs4+Au3cZ3FxulbvFM09qn1c+0/0hJ
-         Zw8KNtZrJt/T/qW6VQQ88RQQWWZNb8RPClIgqQwq5S0gFsu9O7mwEGDs9FP27L6TMzEY
-         uKGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EMozjLO2AkOaduQqwXZYBsZUrZ1QZa9lUM/qe262pPc=;
-        b=eRKuCGv0xQ4n6xdJBCxjsvk/i1lS0ru7tOzAQzberdawO1ED6qSrWc3zLX4CfaMwCr
-         57sVTDTCkgzj5zxS9o8uC1L9s62s2B0cEuU/gqdlzhjzoS+2jhWQ4Xtta+Z9j0Aa40XQ
-         CzuX2r5ctZpaMPW4Fnwmyfsia6FobUd1F42bCxQ3e2KyedG9YvcNPp/jp1gydxQ+BrXu
-         sdv9+XUV2a9lKZb7oQy3rOvvbv/gwSxVEXMm+VIKlPRVtRK8gaLdHx2okZ0A+bemhGH/
-         DQnky1JNtFtmaVxRj3REhiCr1T+ijQmI6X0oyyYD00FoHvHKy/JbGW75sUcYlRTQYz07
-         MOHw==
-X-Gm-Message-State: AGRZ1gLwiGWAdYuU1y7Ovmux/xlBqVMfqPcJAGX7PL2b7/HzhlNm0Ixi
-        WAHN+mbMjhvHzzoJiRN7eKw=
-X-Google-Smtp-Source: ACcGV61XyEuOu5vVXkIvuaWNF4lQFHSAdzjHcmTZar5ECOyIcocFXxVC2c5krCVcQEAcJnLJlH2KAw==
-X-Received: by 2002:a1c:85d0:: with SMTP id h199-v6mr17714382wmd.127.1540252855135;
-        Mon, 22 Oct 2018 17:00:55 -0700 (PDT)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id x12-v6sm2482547wmd.32.2018.10.22.17.00.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Oct 2018 17:00:54 -0700 (PDT)
-Date:   Mon, 22 Oct 2018 17:00:51 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     ndesaulniers@google.com
-Cc:     dhowells@redhat.com, jejb@linux.vnet.ibm.com,
-        David.Laight@aculab.com, denkenz@gmail.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2] [PATCH] KEYS: trusted: fix -Wvarags warning
-Message-ID: <20181023000051.GA17367@flashbox>
-References: <0147a993d4a94426afa469a8dcc4e5d7@AcuMS.aculab.com>
- <20181022234357.82217-1-ndesaulniers@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181022234357.82217-1-ndesaulniers@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 23 Oct 2018 11:23:41 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id EB1E88EE0FC;
+        Tue, 23 Oct 2018 00:01:35 -0700 (PDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 5FkLeGnmimQB; Tue, 23 Oct 2018 00:01:35 -0700 (PDT)
+Received: from [172.20.48.127] (unknown [62.232.21.219])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 4199F8EE0BA;
+        Tue, 23 Oct 2018 00:01:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1540278095;
+        bh=hEXcPTvHm3pRmqSVsdhdAxYm4gi/AxO4SmFhxi2UbKs=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=teTiHpF9M2BWVgIWmjNLcsuPptQkCKzyjWIV5nAOwfHy5bguYoIOpqwD6M7skhGll
+         G9ZZzjvmzmS3VlPGTXYDuSYBK9PqxO1VQeTc1whgng580wawsvK4zBOR9JP0z+XPBw
+         9iJc3l+RaypiNtdq32lyYARTU09x4VXEocMuk3Eo=
+Message-ID: <1540278091.3347.9.camel@HansenPartnership.com>
+Subject: Re: [PATCH v4 2/7] tpm2-sessions: Add full HMAC and encrypt/decrypt
+ session handling
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Date:   Tue, 23 Oct 2018 08:01:31 +0100
+In-Reply-To: <CAKv+Gu-gYLY1vmtgFC0MTkBfsAkPz658ELaGW78MbD=6ROrLFQ@mail.gmail.com>
+References: <1540193596.3202.7.camel@HansenPartnership.com>
+         <1540193787.3202.10.camel@HansenPartnership.com>
+         <CAKv+Gu-gYLY1vmtgFC0MTkBfsAkPz658ELaGW78MbD=6ROrLFQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 04:43:57PM -0700, ndesaulniers@google.com wrote:
-> Fixes the warning reported by Clang:
-> security/keys/trusted.c:146:17: warning: passing an object that
-> undergoes default
->       argument promotion to 'va_start' has undefined behavior [-Wvarargs]
->         va_start(argp, h3);
->                        ^
-> security/keys/trusted.c:126:37: note: parameter of type 'unsigned
-> char' is declared here
-> unsigned char *h2, unsigned char h3, ...)
->                                ^
-> Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
-> standards explicitly call this out as undefined behavior:
+On Mon, 2018-10-22 at 19:19 -0300, Ard Biesheuvel wrote:
+[...]
+> > +static void hmac_init(struct shash_desc *desc, u8 *key, int
+> > keylen)
+> > +{
+> > +       u8 pad[SHA256_BLOCK_SIZE];
+> > +       int i;
+> > +
+> > +       desc->tfm = sha256_hash;
+> > +       desc->flags = CRYPTO_TFM_REQ_MAY_SLEEP;
 > 
-> The parameter parmN is the identifier of the rightmost parameter in
-> the variable parameter list in the function definition (the one just
-> before the ...). If the parameter parmN is declared with ... or with a
-> type that is not compatible with the type that results after
-> application of the default argument promotions, the behavior is
-> undefined.
-> 
-> Link: https://github.com/ClangBuiltLinux/linux/issues/41
-> Link: https://www.eskimo.com/~scs/cclass/int/sx11c.html
-> Suggested-by: David Laight <David.Laight@aculab.com>
-> Suggested-by: Denis Kenzior <denkenz@gmail.com>
-> Suggested-by: James Bottomley <jejb@linux.vnet.ibm.com>
-> Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
-> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> I don't think this actually does anything in the shash API
+> implementation, so you can drop this.
 
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+OK, I find crypto somewhat hard to follow.  There were bits I had to
+understand, like when I wrote the CFB implementation or when I fixed
+the ECDH scatterlist handling, but I've got to confess, in time
+honoured tradition I simply copied this from EVM crypto without
+actually digging into the code to understand why.
 
-> ---
-> v1 -> v2:
-> * Don't reorder args, just use default function promotion type
-> of unsigned int.
-> * Add !! boolean cast as per Denis in
-> https://lkml.org/lkml/2018/10/12/838.
-> * Tested with gcc-8 and clang-8.
-> 
->  include/keys/trusted.h  | 2 +-
->  security/keys/trusted.c | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/keys/trusted.h b/include/keys/trusted.h
-> index adbcb6817826..0071298b9b28 100644
-> --- a/include/keys/trusted.h
-> +++ b/include/keys/trusted.h
-> @@ -38,7 +38,7 @@ enum {
->  
->  int TSS_authhmac(unsigned char *digest, const unsigned char *key,
->  			unsigned int keylen, unsigned char *h1,
-> -			unsigned char *h2, unsigned char h3, ...);
-> +			unsigned char *h2, unsigned int h3, ...);
->  int TSS_checkhmac1(unsigned char *buffer,
->  			  const uint32_t command,
->  			  const unsigned char *ononce,
-> diff --git a/security/keys/trusted.c b/security/keys/trusted.c
-> index ff6789365a12..335ce6d1cf6b 100644
-> --- a/security/keys/trusted.c
-> +++ b/security/keys/trusted.c
-> @@ -123,7 +123,7 @@ static int TSS_rawhmac(unsigned char *digest, const unsigned char *key,
->   */
->  int TSS_authhmac(unsigned char *digest, const unsigned char *key,
->  			unsigned int keylen, unsigned char *h1,
-> -			unsigned char *h2, unsigned char h3, ...)
-> +			unsigned char *h2, unsigned int h3, ...)
->  {
->  	unsigned char paramdigest[SHA1_DIGEST_SIZE];
->  	struct sdesc *sdesc;
-> @@ -139,7 +139,7 @@ int TSS_authhmac(unsigned char *digest, const unsigned char *key,
->  		return PTR_ERR(sdesc);
->  	}
->  
-> -	c = h3;
-> +	c = !!h3;
->  	ret = crypto_shash_init(&sdesc->shash);
->  	if (ret < 0)
->  		goto out;
-> -- 
-> 2.19.1.568.g152ad8e336-goog
-> 
+>  However, I take it this means that hmac_init() is never called in
+> contexts where sleeping is not allowed? For the relevance of that,
+> please see below.
 
-Thank you for the fix!
-Nathan
+Right, these routines are always called as an adjunct to a TPM
+operation and TPM operations can sleep, so we must at least have kernel
+thread context.
+
+[...]
+> > +       /* encrypt before HMAC */
+> > +       if (auth->attrs & TPM2_SA_DECRYPT) {
+> > +               struct scatterlist sg[1];
+> > +               u16 len;
+> > +               SKCIPHER_REQUEST_ON_STACK(req, auth->aes);
+> > +
+> > +               skcipher_request_set_tfm(req, auth->aes);
+> > +               skcipher_request_set_callback(req,
+> > CRYPTO_TFM_REQ_MAY_SLEEP,
+> > +                                             NULL, NULL);
+> > +
+> 
+> Your crypto_alloc_skcipher() call [further down] does not mask out
+> CRYPTO_ALG_ASYNC, and so it permits asynchronous implementations to
+> be selected. Your generic cfb template only permits synchronous
+> implementations, since it wraps the cipher directly (which is always
+> synchronous). However, we have support in the tree for some
+> accelerators that implement cfb(aes), and those will return
+> -EINPROGRESS when invoking crypto_skcipher_en/decrypt(req), which you
+> are not set up to handle.
+> 
+> So the simple solution is to call 'crypto_alloc_skcipher("cfb(aes)",
+> 0, CRYPTO_ALG_ASYNC)' below instead.
+> 
+> However, I would prefer it if we permit asynchronous skciphers here.
+> The reason is that, on a given platform, the accelerator may be the
+> only truly time invariant AES implementation that is available, and
+> since we are dealing with the TPM, a bit of paranoia does not hurt.
+> It also makes it easier to implement it as a [time invariant] SIMD
+> based asynchronous skcipher, which are simpler than synchronous ones
+> since they don't require a non-SIMD fallback path for calls from
+> contexts where the SIMD unit may not be used.
+> 
+> I have already implemented cfb(aes) for arm64/NEON. I will post the
+> patch after the merge window closes.
+> 
+> > +               /* need key and IV */
+> > +               KDFa(auth->session_key, SHA256_DIGEST_SIZE
+> > +                    + auth->passphraselen, "CFB", auth->our_nonce,
+> > +                    auth->tpm_nonce, AES_KEYBYTES +
+> > AES_BLOCK_SIZE,
+> > +                    auth->scratch);
+> > +               crypto_skcipher_setkey(auth->aes, auth->scratch,
+> > AES_KEYBYTES);
+> > +               len = tpm_get_inc_u16(&p);
+> > +               sg_init_one(sg, p, len);
+> > +               skcipher_request_set_crypt(req, sg, sg, len,
+> > +                                          auth->scratch +
+> > AES_KEYBYTES);
+> > +               crypto_skcipher_encrypt(req);
+> 
+> So please consider replacing this with something like.
+> 
+> DECLARE_CRYPTO_WAIT(wait); [further up]
+> skcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP,
+>                               crypto_req_done, &wait);
+> crypto_wait_req(crypto_skcipher_encrypt(req), &wait);
+
+Sure, I can do this ... the crypto skcipher handling was also cut and
+paste, but I forget where from this time.  So what I think you're
+asking for is below as the incremental diff?  I've tested this out and
+it all works fine in my session testing environment (and on my real
+laptop) ... although since I'm fully sync, I won't really have tested
+the -EINPROGRESS do the wait case.
+
+James
+
+---
+
+diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
+index 422c3ec64f8c..bbd3e8580954 100644
+--- a/drivers/char/tpm/tpm2-sessions.c
++++ b/drivers/char/tpm/tpm2-sessions.c
+@@ -165,7 +165,6 @@ static void hmac_init(struct shash_desc *desc, u8 *key, int keylen)
+ 	int i;
+ 
+ 	desc->tfm = sha256_hash;
+-	desc->flags = CRYPTO_TFM_REQ_MAY_SLEEP;
+ 	crypto_shash_init(desc);
+ 	for (i = 0; i < sizeof(pad); i++) {
+ 		if (i < keylen)
+@@ -244,7 +243,6 @@ static void KDFe(u8 z[EC_PT_SZ], const char *str, u8 *pt_u, u8 *pt_v,
+ 	__be32 c = cpu_to_be32(1);
+ 
+ 	desc->tfm = sha256_hash;
+-	desc->flags = CRYPTO_TFM_REQ_MAY_SLEEP;
+ 
+ 	crypto_shash_init(desc);
+ 	/* counter (BE) */
+@@ -445,7 +443,6 @@ void tpm_buf_fill_hmac_session(struct tpm_buf *buf, struct tpm2_auth *auth)
+ 	auth->ordinal = head->ordinal;
+ 
+ 	desc->tfm = sha256_hash;
+-	desc->flags = CRYPTO_TFM_REQ_MAY_SLEEP;
+ 
+ 	cc = be32_to_cpu(head->ordinal);
+ 
+@@ -514,10 +511,11 @@ void tpm_buf_fill_hmac_session(struct tpm_buf *buf, struct tpm2_auth *auth)
+ 		struct scatterlist sg[1];
+ 		u16 len;
+ 		SKCIPHER_REQUEST_ON_STACK(req, auth->aes);
++		DECLARE_CRYPTO_WAIT(wait);
+ 
+ 		skcipher_request_set_tfm(req, auth->aes);
+ 		skcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP,
+-					      NULL, NULL);
++					      crypto_req_done, &wait);
+ 
+ 		/* need key and IV */
+ 		KDFa(auth->session_key, SHA256_DIGEST_SIZE
+@@ -529,7 +527,7 @@ void tpm_buf_fill_hmac_session(struct tpm_buf *buf, struct tpm2_auth *auth)
+ 		sg_init_one(sg, p, len);
+ 		skcipher_request_set_crypt(req, sg, sg, len,
+ 					   auth->scratch + AES_KEYBYTES);
+-		crypto_skcipher_encrypt(req);
++		crypto_wait_req(crypto_skcipher_encrypt(req), &wait);
+ 		/* reset p to beginning of parameters for HMAC */
+ 		p -= 2;
+ 	}
+@@ -755,7 +753,6 @@ int tpm_buf_check_hmac_response(struct tpm_buf *buf, struct tpm2_auth *auth,
+ 	 * with rphash
+ 	 */
+ 	desc->tfm = sha256_hash;
+-	desc->flags = CRYPTO_TFM_REQ_MAY_SLEEP;
+ 	crypto_shash_init(desc);
+ 	/* yes, I know this is now zero, but it's what the standard says */
+ 	crypto_shash_update(desc, (u8 *)&head->return_code,
+@@ -786,10 +783,11 @@ int tpm_buf_check_hmac_response(struct tpm_buf *buf, struct tpm2_auth *auth,
+ 	if (auth->attrs & TPM2_SA_ENCRYPT) {
+ 		struct scatterlist sg[1];
+ 		SKCIPHER_REQUEST_ON_STACK(req, auth->aes);
++		DECLARE_CRYPTO_WAIT(wait);
+ 
+ 		skcipher_request_set_tfm(req, auth->aes);
+ 		skcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP,
+-					      NULL, NULL);
++					      crypto_req_done, &wait);
+ 
+ 		/* need key and IV */
+ 		KDFa(auth->session_key, SHA256_DIGEST_SIZE
+@@ -801,7 +799,7 @@ int tpm_buf_check_hmac_response(struct tpm_buf *buf, struct tpm2_auth *auth,
+ 		sg_init_one(sg, p, len);
+ 		skcipher_request_set_crypt(req, sg, sg, len,
+ 					   auth->scratch + AES_KEYBYTES);
+-		crypto_skcipher_decrypt(req);
++		crypto_wait_req(crypto_skcipher_decrypt(req), &wait);
+ 	}
+ 
+  out:
+@@ -965,7 +963,6 @@ static int parse_create_primary(struct tpm_chip *chip, u8 *data)
+ 	tmp = resp;
+ 	/* now we have the public area, compute the name of the object */
+ 	desc->tfm = sha256_hash;
+-	desc->flags = CRYPTO_TFM_REQ_MAY_SLEEP;
+ 	put_unaligned_be16(TPM2_ALG_SHA256, chip->tpmkeyname);
+ 	crypto_shash_init(desc);
+ 	crypto_shash_update(desc, resp, len);
