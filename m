@@ -2,142 +2,168 @@ Return-Path: <SRS0=CR94=NE=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC9BC004D3
-	for <linux-integrity@archiver.kernel.org>; Wed, 24 Oct 2018 14:42:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F89EC67863
+	for <linux-integrity@archiver.kernel.org>; Wed, 24 Oct 2018 14:56:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B664B20824
-	for <linux-integrity@archiver.kernel.org>; Wed, 24 Oct 2018 14:42:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1EDB2075D
+	for <linux-integrity@archiver.kernel.org>; Wed, 24 Oct 2018 14:56:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NH/MZqeE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B664B20824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="yCoKAAuP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1EDB2075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726696AbeJXXLL (ORCPT
+        id S1727143AbeJXXYm (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 24 Oct 2018 19:11:11 -0400
-Received: from mail-wr1-f41.google.com ([209.85.221.41]:41996 "EHLO
-        mail-wr1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726457AbeJXXLL (ORCPT
+        Wed, 24 Oct 2018 19:24:42 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:45580 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727135AbeJXXYm (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 24 Oct 2018 19:11:11 -0400
-Received: by mail-wr1-f41.google.com with SMTP id y15-v6so1505844wru.9
-        for <linux-integrity@vger.kernel.org>; Wed, 24 Oct 2018 07:42:48 -0700 (PDT)
+        Wed, 24 Oct 2018 19:24:42 -0400
+Received: by mail-qk1-f194.google.com with SMTP id m8-v6so3440377qka.12
+        for <linux-integrity@vger.kernel.org>; Wed, 24 Oct 2018 07:56:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=hGH9ddefoC/qMX88z9zeEfIRO6qjxQAzowclTxkgyQM=;
-        b=NH/MZqeE1zIuYGkxIz4XZGquEiZOZha44daL89LFgAU7K5jmKN3RIwnCbyvUafhxJU
-         zwdVlJeyXyBfqyKX76q+TRmy2CQhOP/yaeKAycHQ8oRpHsvvHA9qsTH3TDMEgUHBAGLJ
-         nJBgcABUpD2hSGCz5Vk/pcjdY0SM4gIkSJg2ah+vyblDj49qV85F8nF/7euUzPzgehIi
-         9HHBjB15IVoKY3xsYtVNvoPlAktOTmI9crYNgMUgSO9kDe60bNCCc0zeFHRraSZh0VHZ
-         LDSzZFSUG5ikhf93ERh9FAd/w/0nww0+Mhb/zCmFoZt1iIXWur+W7rYIdBofa+FrD3EG
-         8YZQ==
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qZ2514qk1H7lrT6V2q7uwHgptwI/uC+DgUUVl41xFxM=;
+        b=yCoKAAuPKizyRRLcbeJ4eLSHRX33vdSWumR/8HFlQem5CnxmTYc2hglr1JtGYrc/KB
+         OvOW9R3RqwQjOh1V59ockJlflL4/agZNKHdnOcHGNQOKRtS9l61sUj1ZmWR/BNdmSr/w
+         kUzcD0WFwIvI8nI8kWkLuMk9WND0liCRLaeJ0vxK5QEN5dDOyA2EX8mEyaM5d4n9TLG2
+         FfkKWaQzRCX9u/87dXy7Kyk+3n/+Om/vkQ8mCaRciHxMUUEUnhs3fQJHYGiiOb5rr+Ob
+         XvuiqzUZW1jQe/UZ394W1QZDgkdTrxZfhKRoCkTtwtu5VjW8kqPf22XQ0I5TlLGZoKWH
+         TInw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=hGH9ddefoC/qMX88z9zeEfIRO6qjxQAzowclTxkgyQM=;
-        b=FqO1aMfbMdXy0z6U+z6HmxhXeKBFfBrSNXmgF5mUKDGIcCRIPOPmWPWVy4qvvfSjGm
-         cus3CAbJTYpQK1W/67/KUGNOIuRMPbgPu1uCZP1JHldHnFfyEvIKaPDvwP1qKkLacH2T
-         N+y58KRIHZviQza+Kub6K6XfQRO+dC0KZg72zOUxif2WRBh+/Zm05xC5odZ1eMGYlqaZ
-         srp/yppmSAVUZ29fMmBlLy/KLldl0WNCirda6kJ8JVqavxE8Cxr0fMpHkTT/tybFKinm
-         bSl8FLS4PYwhA+5MzTLGZHrfyP1OALEn9iGjSIo+CoxB6N18QErZDVjPlJpDmuq8hDUx
-         a4/A==
-X-Gm-Message-State: AGRZ1gKyKekhFKH87gH8dA1XtJncTldvJFl9/znB+k6vPW+YuyZi9nb7
-        oaZJkFdyL1OVV/zfs+Aru44=
-X-Google-Smtp-Source: AJdET5f+4uSngW9piF9/Q0+jinU1lA49kbhAKAF4oMFqxwhlDlCG6oozDgWUpI/HCDnrQEZOaMvluQ==
-X-Received: by 2002:adf:9d8d:: with SMTP id p13-v6mr76940wre.12.1540392167165;
-        Wed, 24 Oct 2018 07:42:47 -0700 (PDT)
-Received: from [10.0.2.15] ([167.98.65.38])
-        by smtp.gmail.com with ESMTPSA id l5-v6sm3521592wrt.43.2018.10.24.07.42.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 07:42:46 -0700 (PDT)
-Subject: Re: LSS-EU BoF(s) (renamed from LPC 2018)
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Cc:     James Morris <jmorris@namei.org>,
-        Matthew Garrett <mjg59@google.com>, serge@hallyn.com,
-        chuck.lever@oracle.com,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-References: <9808035C-5AE5-4594-BDBF-A51544231608@oracle.com>
- <dfe11979-1afd-1554-fcaa-ebf39e32397d@gmail.com>
- <20181011154847.GA5978@mail.hallyn.com>
- <3839043b-5541-369e-1179-c3c8c1dbfb07@gmail.com>
- <1539296304.3108.54.camel@HansenPartnership.com>
- <alpine.DEB.2.21.1810151652360.28121@jsakkine-mobl1>
- <CACdnJutMR=6OH=DtnAGXkFU+PNae_ONxcQGA7QLPJ9jsBd8j=w@mail.gmail.com>
- <alpine.LRH.2.21.1810160833560.14147@namei.org>
- <1539642523.2867.44.camel@HansenPartnership.com>
- <alpine.LRH.2.21.1810160946210.2779@namei.org>
- <1539691005.11939.258.camel@linux.ibm.com>
- <alpine.DEB.2.21.1810180301090.5022@jsakkine-mobl1>
- <7831fac7-40ba-a3e8-61c8-166a54cfe515@linux.ibm.com>
- <alpine.DEB.2.21.1810231616200.19836@jsakkine-mobl1>
- <1540301465.2787.4.camel@HansenPartnership.com>
- <1540301816.5583.187.camel@linux.ibm.com>
-From:   Monty Wiseman <montywiseman32@gmail.com>
-Message-ID: <305bc8a7-876f-f1d3-9076-1a5b9c3daca3@gmail.com>
-Date:   Wed, 24 Oct 2018 10:42:52 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qZ2514qk1H7lrT6V2q7uwHgptwI/uC+DgUUVl41xFxM=;
+        b=k7y8RlwDP7eArBPbpaan7dB+S0AckplWMzcmPBH7YhAIUkezsgQVOW1rvlSr/tCNFP
+         em2ZV0NMjBoaj1YeOtZMBrgYVRlNP7xfO1WxwVLditHUg/cDAMVBSBF5teo2423Ap+Kr
+         K3Ar+2rCs7qImhvLbMq55sx0rMTxNbqGN9zfUcyGLgSG8ye0ZJoTXAd9aTBZpGFvES5w
+         RbjwdZ1ZaX08AouMXn+ZimrqoSmfek1a1FrNQ9bcAhxJfOZowtV4eZU9XsKKyPHI2fLN
+         Ml5IX08xFdtxHwF95d5x8NG68wAWRhhUTXTNwoVItwiyRKQoDmOuZFBUM2NSgGSaNPla
+         XWwg==
+X-Gm-Message-State: AGRZ1gKBPTsVuX2HyDETOA5V0f+gYJrrvCKkx+Qt0anqc4tyF3AdPmGM
+        2UEc/qW+Eg4fKMeoanveJSI+Xg==
+X-Google-Smtp-Source: AJdET5e99wyv4PKWEz3r3V7UFK7qWXI3xrDG/D67w1jWqdNZ+/ujU1pdTkq7DJAH8eq9uZPMIQ5sNw==
+X-Received: by 2002:ac8:27d0:: with SMTP id x16-v6mr2695782qtx.61.1540392975547;
+        Wed, 24 Oct 2018 07:56:15 -0700 (PDT)
+Received: from cisco ([192.241.255.151])
+        by smtp.gmail.com with ESMTPSA id v5-v6sm2732998qkc.75.2018.10.24.07.56.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 24 Oct 2018 07:56:14 -0700 (PDT)
+Date:   Wed, 24 Oct 2018 15:56:06 +0100
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Igor Stoppa <igor.stoppa@gmail.com>
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        igor stoppa <igor.stoppa@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        rostedt <rostedt@goodmis.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 14/17] prmem: llist, hlist, both plain and rcu
+Message-ID: <20181024145606.GA9019@cisco>
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-15-igor.stoppa@huawei.com>
+ <1634210774.446.1540381072927.JavaMail.zimbra@efficios.com>
+ <243a8ff2-889c-089f-a1ff-c882933ca5c3@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1540301816.5583.187.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <243a8ff2-889c-089f-a1ff-c882933ca5c3@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+On Wed, Oct 24, 2018 at 05:03:01PM +0300, Igor Stoppa wrote:
+> On 24/10/18 14:37, Mathieu Desnoyers wrote:
+> > Also, is it the right approach to duplicate existing APIs, or should we
+> > rather hook into page fault handlers and let the kernel do those "shadow"
+> > mappings under the hood ?
+> 
+> This question is probably a good candidate for the small Q&A section I have
+> in the 00/17.
+> 
+> 
+> > Adding a new GFP flags for dynamic allocation, and a macro mapping to
+> > a section attribute might suffice for allocation or definition of such
+> > mostly-read-only/seldom-updated data.
+> 
+> I think what you are proposing makes sense from a pure hardening standpoint.
+> From a more defensive one, I'd rather minimise the chances of giving a free
+> pass to an attacker.
+> 
+> Maybe there is a better implementation of this, than what I have in mind.
+> But, based on my current understanding of what you are describing, there
+> would be few issues:
+> 
+> 1) where would the pool go? The pool is a way to manage multiple vmas and
+> express common property they share. Even before a vma is associated to the
+> pool.
+> 
+> 2) there would be more code that can seamlessly deal with both protected and
+> regular data. Based on what? Some parameter, I suppose.
+> That parameter would be the new target.
+> If the code is "duplicated", as you say, the actual differences are baked in
+> at compile time. The "duplication" would also allow to have always inlined
+> functions for write-rare and leave more freedom to the compiler for their
+> non-protected version.
+> 
+> Besides, I think the separate wr version also makes it very clear, to the
+> user of the API, that there will be a price to pay, in terms of performance.
+> The more seamlessly alternative might make this price less obvious.
 
-On 10/23/18 9:36 AM, Mimi Zohar wrote:
-> On Tue, 2018-10-23 at 14:31 +0100, James Bottomley wrote:
->> On Tue, 2018-10-23 at 16:16 +0300, Jarkko Sakkinen wrote:
->>> How can I join given that I have only ticket to LSS not to the
->>> summit?
->> According to Angela, the badges aren't a problem (they'll let you in)
->> and I can have the the conference staff get us a room up to about 9pm
->> tomorrow (although we'll have to start after the regular sessions end
->> at 6pm).
->>
->> However, we need to pick a time so they can allocate us the room.
-> Ok, let's try and define an agenda of what needs to be discussed. The
-> original discussion started out by Chuck wanting to get together and
-> discuss IMA on distributed filesystems at LPC, and Monty chiming in
-> about IMA format.
->
-> It seems the discussion has diverged and is now about having a TPM BoF
-> the evening before LSS-EU, for those not staying for LSS. Let's try
-> and put together an agenda.  Do we need/want another BoF for IMA?
->   Should that be Thurs evening?
+What about something in the middle, where we move list to list_impl.h,
+and add a few macros where you have list_set_prev() in prlist now, so
+we could do,
 
-There are 2 high level topics. While they are related they can happen 
-independently.
+// prlist.h
 
-1> Changing the TPM driver's tpm_pcr_extend interface to support 
-algorithm agility for IMA (and other kernel services)
+#define list_set_next(head, next) wr_ptr(&head->next, next)
+#define list_set_prev(head, prev) wr_ptr(&head->prev, prev)
 
-2> Changes to IMA
+#include <linux/list_impl.h>
 
-I believe all the stakeholders for #1 will be here through Friday. If 
-that's the case, let's move that topic to Thursday PM and focus tonight 
-(Wednesday) on IMA. I'll let others break that topic down further if 
-necessary.
+// list.h
 
-Monty
+#define list_set_next(next) (head->next = next)
+#define list_set_next(prev) (head->prev = prev)
 
->
-> Mimi
->
+#include <linux/list_impl.h>
+
+I wonder then if you can get rid of some of the type punning too? It's
+not clear exactly why that's necessary from the series, but perhaps
+I'm missing something obvious :)
+
+I also wonder how much the actual differences being baked in at
+compile time makes. Most (all?) of this code is inlined.
+
+Cheers,
+
+Tycho
