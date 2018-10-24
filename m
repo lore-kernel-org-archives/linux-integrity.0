@@ -2,102 +2,113 @@ Return-Path: <SRS0=CR94=NE=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D03AC67863
-	for <linux-integrity@archiver.kernel.org>; Wed, 24 Oct 2018 09:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6A87C004D3
+	for <linux-integrity@archiver.kernel.org>; Wed, 24 Oct 2018 09:18:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7F9A20824
-	for <linux-integrity@archiver.kernel.org>; Wed, 24 Oct 2018 09:01:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7F9A20824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6D82D2075D
+	for <linux-integrity@archiver.kernel.org>; Wed, 24 Oct 2018 09:18:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DpYK948W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D82D2075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727654AbeJXR2o convert rfc822-to-8bit (ORCPT
+        id S1727534AbeJXRpX (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 24 Oct 2018 13:28:44 -0400
-Received: from mga06.intel.com ([134.134.136.31]:47079 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727626AbeJXR2n (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 24 Oct 2018 13:28:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 02:01:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,419,1534834800"; 
-   d="scan'208";a="90811378"
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by FMSMGA003.fm.intel.com with ESMTP; 24 Oct 2018 02:01:28 -0700
-Received: from fmsmsx153.amr.corp.intel.com (10.18.125.6) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 24 Oct 2018 02:01:28 -0700
-Received: from hasmsx111.ger.corp.intel.com (10.184.198.39) by
- FMSMSX153.amr.corp.intel.com (10.18.125.6) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 24 Oct 2018 02:01:27 -0700
-Received: from HASMSX109.ger.corp.intel.com ([169.254.3.28]) by
- HASMSX111.ger.corp.intel.com ([169.254.5.194]) with mapi id 14.03.0319.002;
- Wed, 24 Oct 2018 12:01:26 +0300
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH] tpm: tpm_try_transmit() refactor error flow.
-Thread-Topic: [PATCH] tpm: tpm_try_transmit() refactor error flow.
-Thread-Index: AQHUZneRpMm4aXcqcE6txCcRpwrMbKUkg60wgAKFoACAAbSoMIAD6zIAgAA5PtCAAQ4lAIAAMqtQ
-Date:   Wed, 24 Oct 2018 09:01:25 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D9FC1E7@hasmsx109.ger.corp.intel.com>
-References: <20181016133716.17842-1-tomas.winkler@intel.com>
- <alpine.DEB.2.21.1810180309430.5022@jsakkine-mobl1>
- <5B8DA87D05A7694D9FA63FD143655C1B9D9F5512@hasmsx109.ger.corp.intel.com>
- <alpine.DEB.2.21.1810200230200.9963@jsakkine-mobl1>
- <5B8DA87D05A7694D9FA63FD143655C1B9D9F85F5@hasmsx109.ger.corp.intel.com>
- <alpine.DEB.2.21.1810231618280.19836@jsakkine-mobl1>
- <5B8DA87D05A7694D9FA63FD143655C1B9D9FB5D1@hasmsx109.ger.corp.intel.com>
- <alpine.DEB.2.21.1810241150580.3525@jsakkine-mobl1>
-In-Reply-To: <alpine.DEB.2.21.1810241150580.3525@jsakkine-mobl1>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZmVhNzdkOTgtMTRiMi00NzhmLTkxMzQtMWQwNDU5M2E5ODY2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiWGFKUkV5eEtQNlVhYXdXczQxaFQ3SkVTZjA1K1E4UkMrYXh3bXUzbjRqU0M0S0szcWRPMjNvSEVUaURcLzdGMWIifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.252.19.114]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Wed, 24 Oct 2018 13:45:23 -0400
+Received: from mail-lj1-f172.google.com ([209.85.208.172]:36301 "EHLO
+        mail-lj1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726256AbeJXRpW (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 24 Oct 2018 13:45:22 -0400
+Received: by mail-lj1-f172.google.com with SMTP id s15-v6so4072332lji.3
+        for <linux-integrity@vger.kernel.org>; Wed, 24 Oct 2018 02:18:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IbtUFzosXnaCbK1pDBNZqtmkcUtkbnGp/C8rAohlQz0=;
+        b=DpYK948W/f7FqVCftv7895ko/lDm3g3uGYoD9b9nyzL/ZF/Uiikohx/si7MpEduugd
+         /yhJIL9Ok15/tRtIIH4e5Q76hcG+/gP0GEKAsx978NrOljXQ2cuow34XHjnjIZzk6UYL
+         Aqq0ldGme8xzks/RTP902K22h96VrXQKTSb65sRuhFyO+ulBJ+I5soQvt/jw7q4g8xRd
+         bSKWJkJVOlWjhpdu4EH4B3v/90CdNa3RO6rrS4oWge18bxljDjChUQS9yEcJlJXLiItG
+         Fj+Y2kN2dJYStXdp3xk5nyg1kjTtcEijg83P7ec40ziyOPewCoOoxHVwbhcUqjVQU07k
+         H6Gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IbtUFzosXnaCbK1pDBNZqtmkcUtkbnGp/C8rAohlQz0=;
+        b=WMokPq9OvJ6hRAOaeO+rYvxMlyKf7fzj73GuFe/20ZqBHZNV9EGq4sO5gOWmH1uwgk
+         bj7Y6+RhNcTjtNmVLxri3H/qaRe4JN1Kop6vg9J+afswnxFLOTeQfllz8dpw/J4ty2Xz
+         /tO8Dnh12P3B++dKAH3pMZcOXcY/zkaVkppT3I/aGyxoI/DHvqFoVpdtRv3+fzaT/Txd
+         5MYiAkyy9gFiOFbjK+QhOCjtNHEsCT90kR5kWsaF+4tnsUMF/3v9w4/7EiU7iWHtcPGi
+         qpkQjgpSdTmlq6VjROv7R//PglJH73kAIjArd5LJz0RVXSBRiETDC+hXeEXkbn32zQT1
+         NYXQ==
+X-Gm-Message-State: AGRZ1gKjpNzMmLO4s9CP4sU1bjHr30qQfkt8ZBiuI/VUW4f4oZ9uJOmT
+        qRt0txKnqD3LXkwastG4gGCQguFgTjsM0PeP/Dc=
+X-Google-Smtp-Source: AJdET5exmwX2QPf+08ZSj8MNY3m6VUsE4vXQxrX56E3OuKTLFkMwtJIhV9oiG+2M051gzD3CrQ7JM2mE9s4GOwNVWd0=
+X-Received: by 2002:a2e:2b46:: with SMTP id q67-v6mr1175431lje.126.1540372682218;
+ Wed, 24 Oct 2018 02:18:02 -0700 (PDT)
 MIME-Version: 1.0
+References: <alpine.LRH.2.21.1810160946210.2779@namei.org> <9808035C-5AE5-4594-BDBF-A51544231608@oracle.com>
+ <dfe11979-1afd-1554-fcaa-ebf39e32397d@gmail.com> <20181011154847.GA5978@mail.hallyn.com>
+ <3839043b-5541-369e-1179-c3c8c1dbfb07@gmail.com> <1539296304.3108.54.camel@HansenPartnership.com>
+ <alpine.DEB.2.21.1810151652360.28121@jsakkine-mobl1> <CACdnJutMR=6OH=DtnAGXkFU+PNae_ONxcQGA7QLPJ9jsBd8j=w@mail.gmail.com>
+ <alpine.LRH.2.21.1810160833560.14147@namei.org> <1539642523.2867.44.camel@HansenPartnership.com>
+ <1369.1540301956@warthog.procyon.org.uk> <alpine.DEB.2.21.1810241144410.3525@jsakkine-mobl1>
+ <1540371542.3008.29.camel@HansenPartnership.com>
+In-Reply-To: <1540371542.3008.29.camel@HansenPartnership.com>
+From:   Monty Wiseman <montywiseman32@gmail.com>
+Date:   Wed, 24 Oct 2018 10:17:57 +0100
+Message-ID: <CAMHw8A44V71x-_DHpYzyW1zav-OiT_Rxo9OdDM_V-2TmWAaFtw@mail.gmail.com>
+Subject: Re: LPC 2018
+To:     James.Bottomley@hansenpartnership.com
+Cc:     jarkko.sakkinen@linux.intel.com, dhowells@redhat.com,
+        jmorris@namei.org, mjg59@google.com,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        linux-integrity@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-> 
-> On Tue, 23 Oct 2018, Winkler, Tomas wrote:
-> > To  the  out  label we jump after we are  done with locality and cmd
-> > read() before we jump to locality 'locality'.  We will need to add
-> > another variable to check If cmd_ready() was called or not in order to
-> > get rid of the extran label, it's not internally tracked so far.
-> 
-> I think this is fine.
-> 
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> 
-> I tested this by assigning rc error code instead of requesting locality in
-> addition of testig unchanged code.
-> 
-Great
-Thanks
-Tomas 
+David Safford doesn't arrive until tonight (Wednesday but I don't know
+what time) so I think some of this will need to extend to Thursday.
+I'll send him a private message just in case.
+On Wed, Oct 24, 2018 at 9:59 AM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+>
+> On Wed, 2018-10-24 at 11:45 +0300, Jarkko Sakkinen wrote:
+> > On Tue, 23 Oct 2018, David Howells wrote:
+> > > James Morris <jmorris@namei.org> wrote:
+> > >
+> > > > > I'm only at LinuxCon/KS, so I'm leaving on Thursday.  I think
+> > > > > you have
+> > > > > a Wednesday overlap, though, so Wednesday would work.
+> > > >
+> > > > LSS is Thurs+Fri, but we may have a quorum for Weds.
+> > >
+> > > I'm getting to Edinburgh tomorrow, so I wouldn't be available
+> > > before 3pm.
+> > >
+> > > Btw, will there be networking available to be used during speaking?
+> > >
+> > > David
+> > >
+> >
+> > Just arrived to the airport. Pick a time. For me any time after 3PM
+> > should work.
+>
+> OK, let's say 18:00 in the Moffat room level -2 of the convention
+> centre.
+>
+> James
+>
