@@ -3,150 +3,126 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 234F4ECDE46
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Oct 2018 15:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91A1DC46475
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Oct 2018 16:43:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEB492075D
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Oct 2018 15:56:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEB492075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BD5F2083E
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Oct 2018 16:43:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BD5F2083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727408AbeJZAaM (ORCPT
+        id S1727576AbeJZBR1 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 25 Oct 2018 20:30:12 -0400
-Received: from mga11.intel.com ([192.55.52.93]:7014 "EHLO mga11.intel.com"
+        Thu, 25 Oct 2018 21:17:27 -0400
+Received: from mga12.intel.com ([192.55.52.136]:13580 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727350AbeJZAaM (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 25 Oct 2018 20:30:12 -0400
+        id S1727564AbeJZBR1 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 25 Oct 2018 21:17:27 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2018 08:56:50 -0700
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2018 09:43:52 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,424,1534834800"; 
-   d="scan'208";a="244333282"
-Received: from mstribae-mobl.ger.corp.intel.com ([10.249.254.38])
-  by orsmga004.jf.intel.com with ESMTP; 25 Oct 2018 08:56:46 -0700
-Date:   Thu, 25 Oct 2018 16:56:45 +0100 (IST)
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-X-Sender: jsakkine@jsakkine-mobl1
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: Re: [PATCH v4 2/7] tpm2-sessions: Add full HMAC and encrypt/decrypt
- session handling
-In-Reply-To: <1540373514.3008.45.camel@HansenPartnership.com>
-Message-ID: <alpine.DEB.2.21.1810251643080.4065@jsakkine-mobl1>
-References: <1540193596.3202.7.camel@HansenPartnership.com>  <1540193787.3202.10.camel@HansenPartnership.com>  <alpine.DEB.2.21.1810232239140.8524@jsakkine-mobl1> <1540373514.3008.45.camel@HansenPartnership.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+   d="scan'208";a="102648104"
+Received: from ray.jf.intel.com (HELO [10.7.201.18]) ([10.7.201.18])
+  by orsmga001.jf.intel.com with ESMTP; 25 Oct 2018 09:43:52 -0700
+Subject: Re: [PATCH 06/17] prmem: test cases for memory protection
+To:     Igor Stoppa <igor.stoppa@gmail.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-7-igor.stoppa@huawei.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <0175ca6a-40d1-0fde-350c-891488432ecb@intel.com>
+Date:   Thu, 25 Oct 2018 09:43:52 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+In-Reply-To: <20181023213504.28905-7-igor.stoppa@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, 24 Oct 2018, James Bottomley wrote:
->>> +static void KDFa(u8 *key, int keylen, const char *label, u8 *u,
->>> +		 u8 *v, int bytes, u8 *out)
->>
->> Should this be in lower case? I would rename it as tpm_kdfa().
->
-> This one is defined as KDFa() in the standards and it's not TPM
-> specific (although some standards refer to it as KDFA).  I'm not averse
-> to making them tpm_kdfe() and tpm_kdfa() but I was hoping that one day
-> the crypto subsystem would need them and we could move them in there
-> because KDFs are the new shiny in crypto primitives (TLS 1.2 started
-> using them, for instance).
+> +static bool is_address_protected(void *p)
+> +{
+> +	struct page *page;
+> +	struct vmap_area *area;
+> +
+> +	if (unlikely(!is_vmalloc_addr(p)))
+> +		return false;
+> +	page = vmalloc_to_page(p);
+> +	if (unlikely(!page))
+> +		return false;
+> +	wmb(); /* Flush changes to the page table - is it needed? */
 
-I care more about tracing and debugging than naming and having 'tpm_' in
-front of every TPM function makes tracing a lean process. AFAIK using
-upper case letters is against kernel coding conventions. I'm not sure
-why this would make an exception on that.
+No.
 
->> Why doesn't it matter here?
->
-> Because, as the comment says, it eventually gets overwritten by running
-> ecdh to derive the two co-ordinates.  (pointers to these two
-> uninitialized areas are passed into the ecdh destination sg list).
-
-Oh, I just misunderstood the comment. Wouldn't it be easier to say that
-the data is initialized later?
-
->>> +	buf_len = crypto_ecdh_key_len(&p);
->>> +	if (sizeof(encoded_key) < buf_len) {
->>> +		dev_err(&chip->dev, "salt buffer too small needs
->>> %d\n",
->>> +			buf_len);
->>> +		goto out;
->>> +	}
->>
->> In what situation this can happen? Can sizeof(encoded_key) >=
->> buf_len?
->
-> Yes, but only if someone is trying to crack your ecdh.  One of the
-> security issues in ecdh is if someone makes a very specific point
-> choice (usually in the cofactor space) that has a very short period,
-> the attacker can guess the input to KDFe.  In this case if TPM genie
-> provided a specially crafted attack EC point, we'd detect it here
-> because the resulting buffer would be too short.
-
-Right. Thank you for the explanation. Here some kind of comment might
-not be a bad idea...
-
->> In general this function should have a clear explanation what it does
->> and maybe less these one character variables but instead variables
->> with more documenting names. Explain in high level what algorithms
->> are used and how the salt is calculated.
->
-> I'll try, but this is a rather complex function.
-
-Understood. I do not expect perfection here and we can improve
-documetation later on.
-
-For anyone wanting to review James' patches and w/o much experience on
-EC, I recommend reading this article:
-
-https://arstechnica.com/information-technology/2013/10/a-relatively-easy-to-understand-primer-on-elliptic-curve-cryptography/
-
-I read it few years ago and refreshed my memory few days ago by
-re-reading it.
-
->
->>> +
->>> +/**
->>> + * tpm_buf_append_hmac_session() append a TPM session element
->>> + * @buf: The buffer to be appended
->>> + * @auth: the auth structure allocated by
->>> tpm2_start_auth_session()
->>> + * @attributes: The session attributes
->>> + * @passphrase: The session authority (NULL if none)
->>> + * @passphraselen: The length of the session authority (0 if none)
->>
->> The alignment.
->
-> the alignment of what?
-
-We generally have parameter descriptions tab-aligned.
-
->> Why there would be trailing zeros?
->
-> Because TPM 1.2 mandated zero padded fixed size passphrases so the TPM
-> 2.0 standard specifies a way of converting these to variable size
-> strings by eliminating the zero padding.
-
-Ok.
-
-> James
-
-I'm also looking forward for the CONTEXT_GAP patch based on the
-yesterdays discussion. We do want it and I was stupid not to take it
-couple years ago :-) Thanks.
-
-/Jarkko
+The rest of this is just pretty verbose and seems to have been very
+heavily copied and pasted.  I guess that's OK for test code, though.
