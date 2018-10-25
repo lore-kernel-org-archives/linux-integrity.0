@@ -2,205 +2,106 @@ Return-Path: <SRS0=GfCd=NF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E308FECDE46
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Oct 2018 08:11:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9FC0ECDE46
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Oct 2018 15:39:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DEDE205F4
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Oct 2018 08:11:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="0Eu/5A5z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DEDE205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	by mail.kernel.org (Postfix) with ESMTP id BBDE120848
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Oct 2018 15:39:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBDE120848
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbeJYQnV (ORCPT
+        id S1727439AbeJZANL (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 25 Oct 2018 12:43:21 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37545 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727319AbeJYQnV (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 25 Oct 2018 12:43:21 -0400
-Received: by mail-wm1-f67.google.com with SMTP id p2-v6so524420wmc.2
-        for <linux-integrity@vger.kernel.org>; Thu, 25 Oct 2018 01:11:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4GvxGFKzNAUdnVvq5ALjFaJxTeQT6fedOqXQs6Nl+Cs=;
-        b=0Eu/5A5zGVIqdsitCio+oF2mJA+TBdgWEeL0O6Tb32pQvr8keCU0kESbHDtBJFEMa6
-         8/Mf736AJdLDtBGSSNJstj6VmcYxUnc/VxVrTx4yEomBqlxV2DJeWrgf4nD2csvKYY5V
-         vXplcRsNkc6XAvIL+EknLrLNuCO22RmruDzOt3apa3R8/qSvZq/dBn53kMKYPx3Qv0dw
-         ImvWH+CyWFE68PaL442YwHk5cW9KtCSYb7Zx5HembqySvGqenFooU4MAH+wfraTfrfNl
-         bksX22FEYpjB0+xxFpHzjHZirQCJHrORqLoWJYvISvvVwIZTnCuVeRDPVXj4M8XXEP5V
-         VzCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4GvxGFKzNAUdnVvq5ALjFaJxTeQT6fedOqXQs6Nl+Cs=;
-        b=PJy3dN4N1Pg+fi3iP4WzUCQhkdOykp4vl1Bkj/p2rUU0HCC+XVK7Di9eelFGUV1yZN
-         EHsJlwN/67n6dSxsddVDqsvoV8gbqMBWUqPT2/QkGgibUn7DQQZiKFycvsWzwbjBpJLp
-         RQ1dgcWrZJPcYQpWZx3qHXBOxBnM3OlNm/3CN5UkuVy7iDsObq9GvQ8lZl65ghnmdS42
-         mtaKuBMo1zvbx2t//2ChU8ouwy5K1U0pHbYmy3WqGg5dJ88w00CHkBOnOlugsbMntgfl
-         BCYTa7H/kGUnsUknvGrVuoDtX5OA2Mgygq3R7DcKhvI7DI8IMqIka2D0An70MCH3/hxg
-         ic/g==
-X-Gm-Message-State: AGRZ1gIbjE41r0+Jn8cCsKMgD+7uutc0JVadaG5xB0fmhEhk9YEyJyeB
-        QuIcSEx5EhUx1NiuSZigNZTaYA==
-X-Google-Smtp-Source: AJdET5dFHkVDiy1ovSxuYbIwgFzfIouC5CvV3hBvDt3kd8x5/xqf1PQy16RA4en0CsgCZfvHGlhCBA==
-X-Received: by 2002:a1c:9901:: with SMTP id b1-v6mr723909wme.15.1540455100460;
-        Thu, 25 Oct 2018 01:11:40 -0700 (PDT)
-Received: from cisco ([173.38.220.34])
-        by smtp.gmail.com with ESMTPSA id q77-v6sm420220wmd.33.2018.10.25.01.11.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 01:11:39 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 09:11:30 +0100
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Igor Stoppa <igor.stoppa@gmail.com>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        kernel-hardening@lists.openwall.com,
+        Thu, 25 Oct 2018 20:13:11 -0400
+Received: from mga03.intel.com ([134.134.136.65]:59978 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727367AbeJZANL (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 25 Oct 2018 20:13:11 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2018 08:39:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,424,1534834800"; 
+   d="scan'208";a="85550354"
+Received: from mstribae-mobl.ger.corp.intel.com ([10.249.254.38])
+  by orsmga006.jf.intel.com with ESMTP; 25 Oct 2018 08:39:48 -0700
+Date:   Thu, 25 Oct 2018 16:39:47 +0100 (IST)
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-X-Sender: jsakkine@jsakkine-mobl1
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Ken Goldman <kgold@linux.ibm.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        igor stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        rostedt <rostedt@goodmis.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 14/17] prmem: llist, hlist, both plain and rcu
-Message-ID: <20181025081130.GA31945@cisco>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-15-igor.stoppa@huawei.com>
- <1634210774.446.1540381072927.JavaMail.zimbra@efficios.com>
- <243a8ff2-889c-089f-a1ff-c882933ca5c3@gmail.com>
- <20181024145606.GA9019@cisco>
- <d630474b-73a5-c6ae-2141-49c1184381b2@gmail.com>
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: Re: [PATCH v4 0/7] add integrity and security to TPM2 transactions
+In-Reply-To: <1540366876.3008.11.camel@HansenPartnership.com>
+Message-ID: <alpine.DEB.2.21.1810251638090.4065@jsakkine-mobl1>
+References: <1540193596.3202.7.camel@HansenPartnership.com>          <a8a69222-94fb-7406-d9b2-207079727eb8@linux.ibm.com>  <1540217887.3012.14.camel@HansenPartnership.com>  <alpine.DEB.2.21.1810240307080.8524@jsakkine-mobl1>
+ <1540366876.3008.11.camel@HansenPartnership.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d630474b-73a5-c6ae-2141-49c1184381b2@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 01:52:11AM +0300, Igor Stoppa wrote:
-> On 24/10/2018 17:56, Tycho Andersen wrote:
-> > On Wed, Oct 24, 2018 at 05:03:01PM +0300, Igor Stoppa wrote:
-> > > On 24/10/18 14:37, Mathieu Desnoyers wrote:
-> > > > Also, is it the right approach to duplicate existing APIs, or should we
-> > > > rather hook into page fault handlers and let the kernel do those "shadow"
-> > > > mappings under the hood ?
-> > > 
-> > > This question is probably a good candidate for the small Q&A section I have
-> > > in the 00/17.
-> > > 
-> > > 
-> > > > Adding a new GFP flags for dynamic allocation, and a macro mapping to
-> > > > a section attribute might suffice for allocation or definition of such
-> > > > mostly-read-only/seldom-updated data.
-> > > 
-> > > I think what you are proposing makes sense from a pure hardening standpoint.
-> > >  From a more defensive one, I'd rather minimise the chances of giving a free
-> > > pass to an attacker.
-> > > 
-> > > Maybe there is a better implementation of this, than what I have in mind.
-> > > But, based on my current understanding of what you are describing, there
-> > > would be few issues:
-> > > 
-> > > 1) where would the pool go? The pool is a way to manage multiple vmas and
-> > > express common property they share. Even before a vma is associated to the
-> > > pool.
-> > > 
-> > > 2) there would be more code that can seamlessly deal with both protected and
-> > > regular data. Based on what? Some parameter, I suppose.
-> > > That parameter would be the new target.
-> > > If the code is "duplicated", as you say, the actual differences are baked in
-> > > at compile time. The "duplication" would also allow to have always inlined
-> > > functions for write-rare and leave more freedom to the compiler for their
-> > > non-protected version.
-> > > 
-> > > Besides, I think the separate wr version also makes it very clear, to the
-> > > user of the API, that there will be a price to pay, in terms of performance.
-> > > The more seamlessly alternative might make this price less obvious.
-> > 
-> > What about something in the middle, where we move list to list_impl.h,
-> > and add a few macros where you have list_set_prev() in prlist now, so
-> > we could do,
-> > 
-> > // prlist.h
-> > 
-> > #define list_set_next(head, next) wr_ptr(&head->next, next)
-> > #define list_set_prev(head, prev) wr_ptr(&head->prev, prev)
-> > 
-> > #include <linux/list_impl.h>
-> > 
-> > // list.h
-> > 
-> > #define list_set_next(next) (head->next = next)
-> > #define list_set_next(prev) (head->prev = prev)
-> > 
-> > #include <linux/list_impl.h>
-> > 
-> > I wonder then if you can get rid of some of the type punning too? It's
-> > not clear exactly why that's necessary from the series, but perhaps
-> > I'm missing something obvious :)
-> 
-> nothing obvious, probably there is only half a reference in the slides I
-> linked-to in the cover letter :-)
-> 
-> So far I have minimized the number of "intrinsic" write rare functions,
-> mostly because I would want first to reach an agreement on the
-> implementation of the core write-rare.
-> 
-> However, once that is done, it might be good to convert also the prlists to
-> be "intrinsics". A list node is 2 pointers.
-> If that was the alignment, i.e. __align(sizeof(list_head)), it might be
-> possible to speed up a lot the list handling even as write rare.
-> 
-> Taking as example the insertion operation, it would be probably sufficient,
-> in most cases, to have only two remappings:
-> - one covering the page with the latest two nodes
-> - one covering the page with the list head
-> 
-> That is 2 vs 8 remappings, and a good deal of memory barriers less.
-> 
-> This would be incompatible with what you are proposing, yet it would be
-> justifiable, I think, because it would provide better performance to prlist,
-> potentially widening its adoption, where performance is a concern.
+On Wed, 24 Oct 2018, James Bottomley wrote:
+> On Wed, 2018-10-24 at 03:13 +0300, Jarkko Sakkinen wrote:
+>> On Mon, 22 Oct 2018, James Bottomley wrote:
+>>> On Mon, 2018-10-22 at 09:53 -0400, Ken Goldman wrote:
+>>>> On 10/22/2018 3:33 AM, James Bottomley wrote:
+>>>>> By now, everybody knows we have a problem with the TPM2_RS_PW
+>>>>> easy button on TPM2 in that transactions on the TPM bus can be
+>>>>> intercepted and altered.  The way to fix this is to use real
+>>>>> sessions for HMAC capabilities to ensure integrity and to use
+>>>>> parameter and response encryption to ensure confidentiality of
+>>>>> the data flowing over the TPM bus.
+>>>>
+>>>> Does this design assume that there was at time zero no
+>>>> monitoring? This would permit some shared secret to be
+>>>> established.
+>>>>
+>>>> Or does it assume that the interception may have been present
+>>>> from the first boot?  If so, how is the first shared secret
+>>>> established. Salting using the EK is the usual method, but this
+>>>> requires walking the  EK certificate chain and embedding the TPM
+>>>> vendor CA certificates in the  kernel.
+>>>
+>>> The design establishes the shared secret at start of day using an
+>>> EC derived key from the null seed.  This can obviously be spoofed
+>>> by a TPM Genie running before the system was rebooted.  However,
+>>> the computed key name is exposed to user space and TPM2_Certify
+>>> will fail when userspace checks the null seed so you will know
+>>> after the fact whether the communication channel established on
+>>> boot was secure or not.
+>>>
+>>> It is possible to use either the EPS or SPS if we pass in the
+>>> public points as kernel parameters but this is getting rather
+>>> complicated for casual users.
+>>
+>> Where was the code that exposes it to the user space?
+>
+> It's patch 6/7.  It exposes the null ec primary name in sysfs:
+>
+> jejb@jarvis~> cat /sys/class/tpm0/tpm/null_name
+> 000ba4fa35ecfbf7c85e5407d07edc27f6a522c8b1a011bcb68c60b27baf21f9d9ec
+>
+> The key certification gives you back a signed copy of the name which
+> you can verify against this.
+>
+> James
 
-I guess the writes to these are rare, right? So perhaps it's not such
-a big deal :)
+I missed 6/7, sorry.
 
-> > I also wonder how much the actual differences being baked in at
-> > compile time makes. Most (all?) of this code is inlined.
-> 
-> If the inlined function expects to receive a prlist_head *, instead of a
-> list_head *, doesn't it help turning runtime bugs into buildtime bugs?
+Do you have an example user space program for doing the verification
+by using this file?
 
-In principle it's not a bug to use the prmem helpers where the regular
-ones would do, it's just slower (assuming the types are the same). But
-mostly, it's a way to avoid actually copying and pasting most of the
-implementations of most of the data structures. I see some other
-replies in the thread already, but this seems not so good to me.
-
-Tycho
+/Jarkko
