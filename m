@@ -2,101 +2,113 @@ Return-Path: <SRS0=GfCd=NF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A45ECDE46
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Oct 2018 02:13:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B98BC46475
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Oct 2018 07:14:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87BB920834
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Oct 2018 02:13:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MpvEJuN1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87BB920834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 49C1E20834
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Oct 2018 07:14:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49C1E20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbeJYKnr (ORCPT
+        id S1726686AbeJYPqN (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 25 Oct 2018 06:43:47 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52712 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726310AbeJYKnr (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 25 Oct 2018 06:43:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=oU5/CK9xGDIgltwfC3V0IqOYEgJuBBis/7+8VPbSTvQ=; b=MpvEJuN11TH+rsgGY6vyr99kk
-        aEK5Ee76J1j9PyKkPlhqks3GARhDZjJzsWixZxAUxtFCGjskx8kvwcc3kSnsrMgSsg8NpuDLYj+EA
-        yX92413ZHV/360q8L/Kjii/G+EgFtQX024dSozwXmVTUqaBYYohBepEfhGTL3/IKB47E8oZ0y9GRf
-        udFSpCIyni+w7i0iy+PN0ngZi2jLK6qSvaH6AgdS77MBHRS0wOUAWz903Cxcg2A9RYBy/h7LPei1d
-        N5Vss13mSAUo9YhYSlQMbLTTdhLTI18xvl0wBKPuRJVyomVykNaFNYBIRgcImn3B7zYzTcob+4ErF
-        zJO0hqxLA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gFV91-0001vU-PP; Thu, 25 Oct 2018 02:13:07 +0000
-Date:   Wed, 24 Oct 2018 19:13:07 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Igor Stoppa <igor.stoppa@gmail.com>
-Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Chinner <david@fromorbit.com>,
+        Thu, 25 Oct 2018 11:46:13 -0400
+Received: from mga01.intel.com ([192.55.52.88]:23987 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726678AbeJYPqN (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 25 Oct 2018 11:46:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2018 00:14:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,423,1534834800"; 
+   d="scan'208";a="84015098"
+Received: from sakethyx-mobl2.gar.corp.intel.com ([10.249.254.29])
+  by orsmga007.jf.intel.com with ESMTP; 25 Oct 2018 00:14:41 -0700
+Date:   Thu, 25 Oct 2018 09:14:39 +0200 (CEST)
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-X-Sender: jsakkine@jsakkine-mobl1
+To:     Monty Wiseman <montywiseman32@gmail.com>
+cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
         James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, igor.stoppa@huawei.com,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/17] prmem: struct page: track vmap_area
-Message-ID: <20181025021307.GH25444@bombadil.infradead.org>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-9-igor.stoppa@huawei.com>
- <20181024031200.GC25444@bombadil.infradead.org>
- <ffb887e1-2029-42d5-3a97-54546e4d28d8@gmail.com>
+        Matthew Garrett <mjg59@google.com>, serge@hallyn.com,
+        chuck.lever@oracle.com,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: LSS-EU BoF(s) (renamed from LPC 2018)
+In-Reply-To: <305bc8a7-876f-f1d3-9076-1a5b9c3daca3@gmail.com>
+Message-ID: <alpine.DEB.2.21.1810250913220.3636@jsakkine-mobl1>
+References: <9808035C-5AE5-4594-BDBF-A51544231608@oracle.com> <dfe11979-1afd-1554-fcaa-ebf39e32397d@gmail.com> <20181011154847.GA5978@mail.hallyn.com> <3839043b-5541-369e-1179-c3c8c1dbfb07@gmail.com> <1539296304.3108.54.camel@HansenPartnership.com>
+ <alpine.DEB.2.21.1810151652360.28121@jsakkine-mobl1> <CACdnJutMR=6OH=DtnAGXkFU+PNae_ONxcQGA7QLPJ9jsBd8j=w@mail.gmail.com> <alpine.LRH.2.21.1810160833560.14147@namei.org> <1539642523.2867.44.camel@HansenPartnership.com> <alpine.LRH.2.21.1810160946210.2779@namei.org>
+ <1539691005.11939.258.camel@linux.ibm.com> <alpine.DEB.2.21.1810180301090.5022@jsakkine-mobl1> <7831fac7-40ba-a3e8-61c8-166a54cfe515@linux.ibm.com> <alpine.DEB.2.21.1810231616200.19836@jsakkine-mobl1> <1540301465.2787.4.camel@HansenPartnership.com>
+ <1540301816.5583.187.camel@linux.ibm.com> <305bc8a7-876f-f1d3-9076-1a5b9c3daca3@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ffb887e1-2029-42d5-3a97-54546e4d28d8@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: multipart/mixed; boundary="8323329-393910550-1540451685=:3636"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 02:01:02AM +0300, Igor Stoppa wrote:
-> > > @@ -1747,6 +1750,10 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
-> > >   	if (!addr)
-> > >   		return NULL;
-> > > +	va = __find_vmap_area((unsigned long)addr);
-> > > +	for (i = 0; i < va->vm->nr_pages; i++)
-> > > +		va->vm->pages[i]->area = va;
-> > 
-> > I don't like it that you're calling this for _every_ vmalloc() caller
-> > when most of them will never use this.  Perhaps have page->va be initially
-> > NULL and then cache the lookup in it when it's accessed for the first time.
-> > 
-> 
-> If __find_vmap_area() was part of the API, this loop could be left out from
-> __vmalloc_node_range() and the user of the allocation could initialize the
-> field, if needed.
-> 
-> What is the reason for keeping __find_vmap_area() private?
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Well, for one, you're walking the rbtree without holding the spinlock,
-so you're going to get crashes.  I don't see why we shouldn't export
-find_vmap_area() though.
+--8323329-393910550-1540451685=:3636
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8BIT
 
-Another way we could approach this is to embed the vmap_area in the
-vm_struct.  It'd require a bit of juggling of the alloc/free paths in
-vmalloc, but it might be worthwhile.
+On Wed, 24 Oct 2018, Monty Wiseman wrote:
+> On 10/23/18 9:36 AM, Mimi Zohar wrote:
+>> On Tue, 2018-10-23 at 14:31 +0100, James Bottomley wrote:
+>>> On Tue, 2018-10-23 at 16:16 +0300, Jarkko Sakkinen wrote:
+>>>> How can I join given that I have only ticket to LSS not to the
+>>>> summit?
+>>> According to Angela, the badges aren't a problem (they'll let you in)
+>>> and I can have the the conference staff get us a room up to about 9pm
+>>> tomorrow (although we'll have to start after the regular sessions end
+>>> at 6pm).
+>>> 
+>>> However, we need to pick a time so they can allocate us the room.
+>> Ok, let's try and define an agenda of what needs to be discussed. The
+>> original discussion started out by Chuck wanting to get together and
+>> discuss IMA on distributed filesystems at LPC, and Monty chiming in
+>> about IMA format.
+>> 
+>> It seems the discussion has diverged and is now about having a TPM BoF
+>> the evening before LSS-EU, for those not staying for LSS. Let's try
+>> and put together an agenda.  Do we need/want another BoF for IMA?
+>>   Should that be Thurs evening?
+>
+> There are 2 high level topics. While they are related they can happen 
+> independently.
+>
+> 1> Changing the TPM driver's tpm_pcr_extend interface to support algorithm 
+> agility for IMA (and other kernel services)
+>
+> 2> Changes to IMA
+>
+> I believe all the stakeholders for #1 will be here through Friday. If that's 
+> the case, let's move that topic to Thursday PM and focus tonight (Wednesday) 
+> on IMA. I'll let others break that topic down further if necessary.
+>
+> Monty
+>
+>> 
+>> Mimi
+>> 
+>
+
+I might come today little late to get my slides done (at the time of
+the first coffee break). Does anyone happpen to have USB-C display
+adapter? I forgot take my own with.
+
+/Jarkko
+--8323329-393910550-1540451685=:3636--
