@@ -1,119 +1,267 @@
-Return-Path: <SRS0=GfCd=NF=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=Wd89=NG=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 317F8ECDE46
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Oct 2018 19:34:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8E5C6786E
+	for <linux-integrity@archiver.kernel.org>; Fri, 26 Oct 2018 09:31:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E43FC20824
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Oct 2018 19:34:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E43FC20824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 55C582082D
+	for <linux-integrity@archiver.kernel.org>; Fri, 26 Oct 2018 09:31:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="En36dcy4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55C582082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725867AbeJZEIo (ORCPT
+        id S1726149AbeJZSHu (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 26 Oct 2018 00:08:44 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53168 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725784AbeJZEIo (ORCPT
+        Fri, 26 Oct 2018 14:07:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55232 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726128AbeJZSHu (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 26 Oct 2018 00:08:44 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9PJK3m8096170
-        for <linux-integrity@vger.kernel.org>; Thu, 25 Oct 2018 15:34:38 -0400
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nbkj99k57-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 25 Oct 2018 15:34:37 -0400
-Received: from localhost
-        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <kgold@linux.ibm.com>;
-        Thu, 25 Oct 2018 13:34:37 -0600
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 25 Oct 2018 13:34:34 -0600
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9PJYXgn26673330
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 25 Oct 2018 19:34:33 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7D20FBE04F;
-        Thu, 25 Oct 2018 19:34:33 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3074DBE054;
-        Thu, 25 Oct 2018 19:34:31 +0000 (GMT)
-Received: from [9.2.202.77] (unknown [9.2.202.77])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 25 Oct 2018 19:34:30 +0000 (GMT)
-Subject: Re: Proposed change to tpm driver tpm_pcr_extend
-To:     Monty Wiseman <montywiseman32@gmail.com>,
+        Fri, 26 Oct 2018 14:07:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=jskPvXFFGZLMDOKxc8rFi/4kpUPza1Mn9g43J/u/YFg=; b=En36dcy4WG6tjkYwtjuXXLYbb
+        7z4df4MuAAbuSclsnKYANPtkP88LdamyK/S++NTyE6Mdv8lbqoCBTFlCrbJt1FpEjlPoPC2VYH5WX
+        PYfLC+S9NeYqTK8gFzFwvVzVMle6wbzmiSAUmiaqhRh1Ob4hY9C1aDykSCgc8QUAtL4+J4lSJqkAk
+        KsTh6JZesjgRAggpQpUXfbMIuaxGkVga+rgDMzxNZUsZTP6xBLpEGqeMjgM0L3lKgGWvwVEc8RstT
+        KGNpkoTgbRAX97/vDbkN6nJFcZM7JTRPZo908difULT7fYLSvImx8mjyRAfBtwHDt/bxL+OmbSyt+
+        JCySPNZlA==;
+Received: from [167.98.65.38] (helo=worktop)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gFySd-0000cT-5N; Fri, 26 Oct 2018 09:31:19 +0000
+Received: by worktop (Postfix, from userid 1000)
+        id 98BEB6E07BE; Fri, 26 Oct 2018 11:26:09 +0200 (CEST)
+Date:   Fri, 26 Oct 2018 11:26:09 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Igor Stoppa <igor.stoppa@gmail.com>
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        kernel-hardening@lists.openwall.com,
         linux-integrity@vger.kernel.org,
-        "David (GE Global Research, US)" <david.safford@ge.com>
-References: <CAMHw8A4VfDf9s9RsYKhc0-fp7=twepsG0t-cwZe-rYWHubF1SA@mail.gmail.com>
-From:   Ken Goldman <kgold@linux.ibm.com>
-Date:   Thu, 25 Oct 2018 15:34:40 -0400
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        linux-security-module@vger.kernel.org, igor.stoppa@huawei.com,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/17] prmem: documentation
+Message-ID: <20181026092609.GB3159@worktop.c.hoisthospitality.com>
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-11-igor.stoppa@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMHw8A4VfDf9s9RsYKhc0-fp7=twepsG0t-cwZe-rYWHubF1SA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18102519-0004-0000-0000-000014A477E4
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009934; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01107905; UDB=6.00573853; IPR=6.00887988;
- MB=3.00023909; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-25 19:34:35
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18102519-0005-0000-0000-0000894858C0
-Message-Id: <442debb9-e9bf-ad41-22cf-3de1b5f9db8a@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-25_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810250159
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181023213504.28905-11-igor.stoppa@huawei.com>
+User-Agent: Mutt/1.5.22.1 (2013-10-16)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 10/24/2018 5:35 AM, Monty Wiseman wrote:
-> Option C:
-> This is a viable option and may actully be what the caller wants. There actually
-> is no rule the all banks must be extended. In fact when "sealing", the
-> caller lists
+Jon,
 
-Doesn't not extending a bank open the platform to attack?  Even
-if one caller is sealing to one bank, other applications may use a 
-different bank.  If that bank was no extended, the caller could extend 
-counterfeit measurements and subvert an application.
+So the below document is a prime example for why I think RST sucks. As a
+text document readability is greatly diminished by all the markup
+nonsense.
 
-IMHO, for PCRs that are doing software measurements, the rule should be 
-that all allocated banks should be extended.
+This stuff should not become write-only content like html and other
+gunk. The actual text file is still the primary means of reading this.
 
-> the pcr banks they want to seal to. (While is it technically possible
-> to provide the
-> TPM2_PolicyPCR a mix of banks I don't believe this practical as only
-> one expected hash
-> is provided as input. We should consider this option.
+> diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
+> index 26b735cefb93..1a90fa878d8d 100644
+> --- a/Documentation/core-api/index.rst
+> +++ b/Documentation/core-api/index.rst
+> @@ -31,6 +31,7 @@ Core utilities
+>     gfp_mask-from-fs-io
+>     timekeeping
+>     boot-time-mm
+> +   prmem
+>  
+>  Interfaces for kernel debugging
+>  ===============================
+> diff --git a/Documentation/core-api/prmem.rst b/Documentation/core-api/prmem.rst
+> new file mode 100644
+> index 000000000000..16d7edfe327a
+> --- /dev/null
+> +++ b/Documentation/core-api/prmem.rst
+> @@ -0,0 +1,172 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +.. _prmem:
+> +
+> +Memory Protection
+> +=================
+> +
+> +:Date: October 2018
+> +:Author: Igor Stoppa <igor.stoppa@huawei.com>
+> +
+> +Foreword
+> +--------
+> +- In a typical system using some sort of RAM as execution environment,
+> +  **all** memory is initially writable.
+> +
+> +- It must be initialized with the appropriate content, be it code or data.
+> +
+> +- Said content typically undergoes modifications, i.e. relocations or
+> +  relocation-induced changes.
+> +
+> +- The present document doesn't address such transient.
+> +
+> +- Kernel code is protected at system level and, unlike data, it doesn't
+> +  require special attention.
 
-I'm nearly sure that one can run TPM2_PolicyPCR with multiple banks.
+What does this even mean?
 
-1 - The input parameter pcrDigest is optional.  It permits the caller
-to check for correct PCRs early in the policy process.  For example,
-it could avoid an unnecessary digital signature or password prompt.
+> +Protection mechanism
+> +--------------------
+> +
+> +- When available, the MMU can write protect memory pages that would be
+> +  otherwise writable.
 
-That's why policies should be constructed with policypcr before terms 
-that require external input.
+Again; what does this really want to say?
 
-2 - The spec Part 1 describes the pcrDigest calculation, and I
-don't see anything that mandates only one bank.
+> +- The protection has page-level granularity.
 
+I don't think Linux supports non-paging MMUs.
+
+> +- An attempt to overwrite a protected page will trigger an exception.
+> +- **Write protected data must go exclusively to write protected pages**
+> +- **Writable data must go exclusively to writable pages**
+
+WTH is with all those ** ?
+
+> +Available protections for kernel data
+> +-------------------------------------
+> +
+> +- **constant**
+> +   Labelled as **const**, the data is never supposed to be altered.
+> +   It is statically allocated - if it has any memory footprint at all.
+> +   The compiler can even optimize it away, where possible, by replacing
+> +   references to a **const** with its actual value.
+> +
+> +- **read only after init**
+> +   By tagging an otherwise ordinary statically allocated variable with
+> +   **__ro_after_init**, it is placed in a special segment that will
+> +   become write protected, at the end of the kernel init phase.
+> +   The compiler has no notion of this restriction and it will treat any
+> +   write operation on such variable as legal. However, assignments that
+> +   are attempted after the write protection is in place, will cause
+> +   exceptions.
+> +
+> +- **write rare after init**
+> +   This can be seen as variant of read only after init, which uses the
+> +   tag **__wr_after_init**. It is also limited to statically allocated
+> +   memory. It is still possible to alter this type of variables, after
+> +   the kernel init phase is complete, however it can be done exclusively
+> +   with special functions, instead of the assignment operator. Using the
+> +   assignment operator after conclusion of the init phase will still
+> +   trigger an exception. It is not possible to transition a certain
+> +   variable from __wr_ater_init to a permanent read-only status, at
+> +   runtime.
+> +
+> +- **dynamically allocated write-rare / read-only**
+> +   After defining a pool, memory can be obtained through it, primarily
+> +   through the **pmalloc()** allocator. The exact writability state of the
+> +   memory obtained from **pmalloc()** and friends can be configured when
+> +   creating the pool. At any point it is possible to transition to a less
+> +   permissive write status the memory currently associated to the pool.
+> +   Once memory has become read-only, it the only valid operation, beside
+> +   reading, is to released it, by destroying the pool it belongs to.
+
+Can we ditch all the ** nonsense and put whitespace in there? More paragraphs
+and whitespace are more good.
+
+Also, I really don't like how you differentiate between static and
+dynamic wr.
+
+> +Protecting dynamically allocated memory
+> +---------------------------------------
+> +
+> +When dealing with dynamically allocated memory, three options are
+> + available for configuring its writability state:
+> +
+> +- **Options selected when creating a pool**
+> +   When creating the pool, it is possible to choose one of the following:
+> +    - **PMALLOC_MODE_RO**
+> +       - Writability at allocation time: *WRITABLE*
+> +       - Writability at protection time: *NONE*
+> +    - **PMALLOC_MODE_WR**
+> +       - Writability at allocation time: *WRITABLE*
+> +       - Writability at protection time: *WRITE-RARE*
+> +    - **PMALLOC_MODE_AUTO_RO**
+> +       - Writability at allocation time:
+> +           - the latest allocation: *WRITABLE*
+> +           - every other allocation: *NONE*
+> +       - Writability at protection time: *NONE*
+> +    - **PMALLOC_MODE_AUTO_WR**
+> +       - Writability at allocation time:
+> +           - the latest allocation: *WRITABLE*
+> +           - every other allocation: *WRITE-RARE*
+> +       - Writability at protection time: *WRITE-RARE*
+> +    - **PMALLOC_MODE_START_WR**
+> +       - Writability at allocation time: *WRITE-RARE*
+> +       - Writability at protection time: *WRITE-RARE*
+
+That's just unreadable gibberish from here. Also what?
+
+We already have RO, why do you need more RO?
+
+> +
+> +   **Remarks:**
+> +    - The "AUTO" modes perform automatic protection of the content, whenever
+> +       the current vmap_area is used up and a new one is allocated.
+> +        - At that point, the vmap_area being phased out is protected.
+> +        - The size of the vmap_area depends on various parameters.
+> +        - It might not be possible to know for sure *when* certain data will
+> +          be protected.
+
+Surely that is a problem?
+
+> +        - The functionality is provided as tradeoff between hardening and speed.
+
+Which you fail to explain.
+
+> +        - Its usefulness depends on the specific use case at hand
+
+How about you write sensible text inside the option descriptions
+instead?
+
+This is not a presentation; less bullets, more content.
+
+> +- Not only the pmalloc memory must be protected, but also any reference to
+> +  it that might become the target for an attack. The attack would replace
+> +  a reference to the protected memory with a reference to some other,
+> +  unprotected, memory.
+
+I still don't really understand the whole write-rare thing; how does it
+really help? If we can write in kernel memory, we can write to
+page-tables too.
+
+And I don't think this document even begins to explain _why_ you're
+doing any of this. How does it help?
+
+> +- The users of rare write must take care of ensuring the atomicity of the
+> +  action, respect to the way they use the data being altered; for example,
+> +  take a lock before making a copy of the value to modify (if it's
+> +  relevant), then alter it, issue the call to rare write and finally
+> +  release the lock. Some special scenario might be exempt from the need
+> +  for locking, but in general rare-write must be treated as an operation
+> +  that can incur into races.
+
+What?!
