@@ -7,64 +7,63 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D3C9C2BC61
-	for <linux-integrity@archiver.kernel.org>; Tue, 30 Oct 2018 21:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35721ECDE44
+	for <linux-integrity@archiver.kernel.org>; Tue, 30 Oct 2018 21:55:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FE8D2081B
-	for <linux-integrity@archiver.kernel.org>; Tue, 30 Oct 2018 21:49:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED5AC2082B
+	for <linux-integrity@archiver.kernel.org>; Tue, 30 Oct 2018 21:55:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pTqlyTCC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FE8D2081B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bMZOk7UY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED5AC2082B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726174AbeJaGo1 (ORCPT
+        id S1727840AbeJaGvD (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 31 Oct 2018 02:44:27 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42037 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726099AbeJaGo1 (ORCPT
+        Wed, 31 Oct 2018 02:51:03 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:35560 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725743AbeJaGvC (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 31 Oct 2018 02:44:27 -0400
-Received: by mail-lj1-f193.google.com with SMTP id f3-v6so12890549ljk.9;
-        Tue, 30 Oct 2018 14:49:14 -0700 (PDT)
+        Wed, 31 Oct 2018 02:51:02 -0400
+Received: by mail-lf1-f66.google.com with SMTP id d7-v6so10118277lfi.2;
+        Tue, 30 Oct 2018 14:55:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9gl8AdXDJcsEfO/u8owGMVyrsCHiw9dEED9FVNch6HM=;
-        b=pTqlyTCCU/6bvOxMU6QtG2SA9sIfzQHw9qTJo5CaRuX0xs2vWdyTXez8LSeKMM0H2j
-         sLiGaY5YGwGn3JSSEHf5rMRsYKnWSVlDEwEwb1wxJOaj4Md1+on/x8/PFk7reg2Z8fPK
-         65LWJp8LBMjItp5MHR6l+2cB9o8weBkiGojpQ69aGGqKvYCepfL8JqrWwCk57iYstySD
-         pRe7S4ahdibjQtn+VzAX98Ut1VtOJEQmYV/kw6Kqfc9zhEGwRARllJMMHEYTdBqop2xH
-         nt6jgPuJGnAv6vtt7FWImGeaqHYz8cqhqkkOouI9MILSpxSDrIf0Ut4oZznMKLS7Ql7x
-         qsCA==
+        bh=sB1PU5Z96Q9I4jKKu4z3PUkeLmdLtuGz5xQW423nXzA=;
+        b=bMZOk7UYCN9+LHGeXp9Wm7t+q5kaiSJ9JHKuYoehE4bEGKkMeiP5hYbxjznDIeK5j1
+         C51vyjeBsEkxI8yCBfFq1Lwk00mSLhfPDKM0kBEj3VZegdA7L8PPLqp0UOZxSkj1BlnP
+         onFRMexdgleMxnWWFtdG1CJ3Mv9rVbhboPiKBXCX+1+4cVqlom1XKU16UsLVbNTVOXT0
+         i6GwAmJHDBYTRXld69VmUugUAgLmQW1iG+l5NzaHUaQWIz/Zgadti1PkbfGsFl+ND39E
+         v+fyIVaGtVLuqaa0Q5upef7crZwN2L+dzhlwozoXigcIcbIqtU4gmTNxKTzdG8V3pAOz
+         yVHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=9gl8AdXDJcsEfO/u8owGMVyrsCHiw9dEED9FVNch6HM=;
-        b=eJwsmgHLG3XFHrKXs+BcYs4l5toKIL5solTIEn6xvJryGUIasKIQqpMjMgQusayHr/
-         7wZ4Uj2g9/0AeU4hfFj0fADtXSNN67pUXkg+mbmsNTuAXM9zwO18BSj+AAKNW/ULZhBo
-         Ggb+U0Z+Huwd1qLEEnyeKwsq4YHOJm5ZkHIDFZvnWfx7Y15+fEzTNcZn0i0KXyGszNW9
-         DpwG7Bjv78p1wzFhzGnnZ8JL6Fkpm70oJKlKo4d476Zo2/xH9H8wq3K0++NRjZIWSv04
-         kSPTHlmQ6A8BXgFTO9HhSBQZFX/WdnSur2qUguDxIE0OHGlr6IoG5uAyGCjosoeqEYDD
-         J4kQ==
-X-Gm-Message-State: AGRZ1gJzLmmMyroN/8mMbu3cqrIEs4rTTinDCYwoHZEN+83GkvmIyzq4
-        ywYvH5YUoWdvr75PaZpvJZI=
-X-Google-Smtp-Source: AJdET5fRN09Ty4enu79g9N6X54IF4aOEztg6fkfApsZkEetRpSHHkt6mp0ZfqNyrB6UU2xh+HBr1ow==
-X-Received: by 2002:a2e:4218:: with SMTP id p24-v6mr283408lja.58.1540936154022;
-        Tue, 30 Oct 2018 14:49:14 -0700 (PDT)
+        bh=sB1PU5Z96Q9I4jKKu4z3PUkeLmdLtuGz5xQW423nXzA=;
+        b=PC0fwKhyvPkrYYoEJNod/8yof/8mI/mBIJvCJ7Blb/Nnqasq50DHMu+TQS6oGv1EE/
+         8z4teXtkhyOa17rWhM529mdaFACoJ0s2uEW5qsPliiVl6dngpQ4qovZ7NkbMHAi1ZRVm
+         /ksmKv1Qiqty1g8jRHCfse0wZS6g/IqVd6j3xRcvKKrRNVUKV+Na7Ghum4vn9MV8XBU3
+         QxXSi55QpWg7cuSmRR70jBcYXLmbfPY34Uw7A8YQ+92wS9y4+E0exvHNXsFrGsfIISN0
+         HlW9/P35vWMAizBx1+tGnBWyuoYfxvMSbuKpDnPdMxnnNbFcI1lx96NuxoS0IYa9kG9p
+         ykgQ==
+X-Gm-Message-State: AGRZ1gJSkXvPncE/UFY9RWLlM09fY8nhhOc1ZWGDSxHjhOXGWDlPfwgp
+        /jwGw2fx6j6Ri6o/vBc/0gM=
+X-Google-Smtp-Source: AJdET5eZl5Gs7Dk738yvN1ykyAbdzzg/vey7h/m2jkDeAxT1Ws1rqeGCKPuMWFkCmy/wpNjEpkWRIQ==
+X-Received: by 2002:a19:6f0a:: with SMTP id k10mr236020lfc.119.1540936548844;
+        Tue, 30 Oct 2018 14:55:48 -0700 (PDT)
 Received: from [192.168.10.160] (91-159-62-242.elisa-laajakaista.fi. [91.159.62.242])
-        by smtp.gmail.com with ESMTPSA id t6-v6sm3631523ljd.2.2018.10.30.14.49.12
+        by smtp.gmail.com with ESMTPSA id d24-v6sm3797656lfj.64.2018.10.30.14.55.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 14:49:13 -0700 (PDT)
+        Tue, 30 Oct 2018 14:55:48 -0700 (PDT)
 Subject: Re: [PATCH 10/17] prmem: documentation
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Tycho Andersen <tycho@tycho.ws>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Kees Cook <keescook@chromium.org>,
+To:     Matthew Wilcox <willy@infradead.org>,
+        Andy Lutomirski <luto@amacapital.net>
+Cc:     nadav.amit@gmail.com, Kees Cook <keescook@chromium.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dave Chinner <david@fromorbit.com>,
@@ -82,74 +81,64 @@ Cc:     Tycho Andersen <tycho@tycho.ws>,
         "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-References: <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
+References: <20181023213504.28905-11-igor.stoppa@huawei.com>
+ <20181026092609.GB3159@worktop.c.hoisthospitality.com>
+ <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
  <20181028183126.GB744@hirez.programming.kicks-ass.net>
  <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
  <20181030152641.GE8177@hirez.programming.kicks-ass.net>
  <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
  <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
- <20181030175814.GB10491@bombadil.infradead.org> <20181030182841.GE7343@cisco>
- <20181030192021.GC10491@bombadil.infradead.org>
- <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
- <20181030213557.GE10491@bombadil.infradead.org>
+ <20181030175814.GB10491@bombadil.infradead.org>
+ <28C8CD2A-BDC0-49A5-854E-1E18968528B8@amacapital.net>
+ <20181030212551.GD10491@bombadil.infradead.org>
 From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <1245ce5b-5c36-7b5e-6bd7-b7bfeb3848b5@gmail.com>
-Date:   Tue, 30 Oct 2018 23:49:12 +0200
+Message-ID: <a62a1fed-252b-f4c8-8abb-0e4468f50fe8@gmail.com>
+Date:   Tue, 30 Oct 2018 23:55:46 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181030213557.GE10491@bombadil.infradead.org>
+In-Reply-To: <20181030212551.GD10491@bombadil.infradead.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 30/10/2018 23:35, Matthew Wilcox wrote:
-> On Tue, Oct 30, 2018 at 10:43:14PM +0200, Igor Stoppa wrote:
 
 
->> Would it be possible to do the same here?
+On 30/10/2018 23:25, Matthew Wilcox wrote:
+> On Tue, Oct 30, 2018 at 11:51:17AM -0700, Andy Lutomirski wrote:
+>> Finally, one issue: rare_alloc() is going to utterly suck
+>> performance-wise due to the global IPI when the region gets zapped out
+>> of the direct map or otherwise made RO.  This is the same issue that
+>> makes all existing XPO efforts so painful. We need to either optimize
+>> the crap out of it somehow or we need to make sure it’s not called
+>> except during rare events like device enumeration.
 > 
-> What Andy is proposing effectively puts all rare allocations into
-> one pool.  Although I suppose it could be generalised to multiple pools
-> ... one mm_struct per pool.  Andy, what do you think to doing that?
-
-The reason to have pools is that, continuing the SELinux example, it 
-supports reloading the policyDB.
-
-In this case it seems to me that it would be faster to drop the entire 
-pool in one go, and create a new one when re-initializing the rules.
-
-Or maybe the pool could be flushed, without destroying the metadata.
-One more reason for having pools is to assign certain property to the 
-pool and then rely on it to be applied to every subsequent allocation.
-
-I've also been wondering if pools can be expected to have some well 
-defined property.
-
-One might be that they do not need to be created on the fly.
-The number of pools should be known at compilation time.
-At least the meta-data could be static, but I do not know how this would 
-work with modules.
-
->>> but we'd probably wrap it in list_for_each_rare_entry(), just to be nicer.
->>
->> This seems suspiciously close to the duplication of kernel interfaces that I
->> was roasted for :-)
+> Batching operations is kind of the whole point of the VM ;-)  Either
+> this rare memory gets used a lot, in which case we'll want to create slab
+> caches for it, make it a MM zone and the whole nine yeards, or it's not
+> used very much in which case it doesn't matter that performance sucks.
 > 
-> Can you not see the difference between adding one syntactic sugar function
-> and duplicating the entire infrastructure?
+> For now, I'd suggest allocating 2MB chunks as needed, and having a
+> shrinker to hand back any unused pieces.
 
-And list_add()? or any of the other list related functions?
-Don't they end up receiving a similar treatment?
+One of the prime candidates for this sort of protection is IMA.
+In the IMA case, there are ever-growing lists which are populated when 
+accessing files.
+It's something that ends up on the critical path of any usual 
+performance critical use case, when accessing files for the first time, 
+like at boot/application startup.
 
-I might have misunderstood your proposal, but it seems to me that they 
-too will need the same type of pairs rare_modify/rare_protect. No?
+Also the SELinux AVC is based on lists. It uses an object cache, but it 
+is still something that grows and is on the critical path of evaluating 
+the callbacks from the LSM hooks. A lot of them.
 
-And same for hlist, including the _rcu variants.
+These are the main two reasons, so far, for me advocating an 
+optimization of the write-rare version of the (h)list.
 
 --
 igor
