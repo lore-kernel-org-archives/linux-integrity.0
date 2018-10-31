@@ -2,49 +2,70 @@ Return-Path: <SRS0=WjJM=NL=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38277C0044C
-	for <linux-integrity@archiver.kernel.org>; Wed, 31 Oct 2018 21:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35C40C0044C
+	for <linux-integrity@archiver.kernel.org>; Wed, 31 Oct 2018 22:57:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDD9E2064C
-	for <linux-integrity@archiver.kernel.org>; Wed, 31 Oct 2018 21:01:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE8AB20821
+	for <linux-integrity@archiver.kernel.org>; Wed, 31 Oct 2018 22:57:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="r+gKVQiB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDD9E2064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="YOA5bkN4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE8AB20821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728451AbeKAGAp (ORCPT
+        id S1726134AbeKAH5c (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 1 Nov 2018 02:00:45 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:44108 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726127AbeKAGAp (ORCPT
+        Thu, 1 Nov 2018 03:57:32 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35180 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725946AbeKAH5b (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 1 Nov 2018 02:00:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=n9e9jx5bhT7iQOS4/AYUEiXPtLoQRDuZXOe6A2RZAow=; b=r+gKVQiBGZuRlTYYn0pqnPPZx
-        w/uYbpzWqFEmKqO1lW1UDk4pwqHcTlkYOwrTom7IgA8qgZBKle+fe34Wlq6PlSguoF9RDPmq7zeRS
-        8Ab4CTH7M/LBH2kZCZb2FT0iD7vmeqIhwnK9v3r9k8pEwcE7nGf56wYCEMVkVN/GgHagIJZMV+ocE
-        FaARVd5/5jIlTD5iqJZ3wU6G2Dn2JAMdS3Sbtdilc8hJwQd5FhqHsSW01ci5V1bi8WgGn+XvGtEMg
-        9uKedkCdXFCuT/Qlu6D7ErBAUWZj/tb8/ZslR3FSo6LnS9l4bLJZINJTVte/Su89aqSRcCZTHSZSx
-        rY9hJ/9TA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHxbO-0006zU-6J; Wed, 31 Oct 2018 21:00:34 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3FE712029F887; Wed, 31 Oct 2018 22:00:32 +0100 (CET)
-Date:   Wed, 31 Oct 2018 22:00:32 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andy Lutomirski <luto@amacapital.net>
+        Thu, 1 Nov 2018 03:57:31 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 32-v6so8082966pgu.2
+        for <linux-integrity@vger.kernel.org>; Wed, 31 Oct 2018 15:57:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=n0Ec4UIkmIFaXdLaKx8d10v+kEQ/S8QwTFP4Ju9+XIM=;
+        b=YOA5bkN4RBQmzFnIYByHkp6ApHC29nw5jt7DSYyz2rmzovtX6LoYVVrBsAyhm250g6
+         g25SGJ1WbLfFylxWP7IR8TvL48zvGlJx1YdejaY7RJvXS0J+p93K7VDdpyk7LZJ9Zi9f
+         idY2BvWApYnVDGfRqS28tEEIZioehsCcZ80zKqN2pEqvmh+BYk2xaSy6YrodA5fhB/Gs
+         s1yQbfe99H99aEHvkgzeDpP7bhoLLdcAAuZ8sP7oW0CI8eDNaY6BTBPsQi+AShz61zd1
+         fUTJGJcAUGVHvpEPNMO3LhoeD+VYbuNuQ+Z6+rPs19wRHJBCpb671D309/zvYe1C4Ylq
+         DD+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=n0Ec4UIkmIFaXdLaKx8d10v+kEQ/S8QwTFP4Ju9+XIM=;
+        b=rUw6b/EWjZFF3JAxq6BhwYLJysX9rcv6XFhWkhvyL/JcgrcPQaXaVVEf5cE2K8b9C7
+         xNrufS3EL4hxMhu75UVjzpVAahAbGr/v8cDhow7ek/5U5s+DyFxC3cPj1ya8Zs30p7FF
+         PJRLo/UyIbeu+hQ/kGeUqUTAwf8ijzDAGKuIg25wKc3L9PN4swZNIUK+oyK+2Sdz274k
+         G+LcCCo1zkzIu7eccHJSQP5xWcex95sudsjmrSPRZkwaMo7mSPgeVK7xzPvv0MNeL9jD
+         /l42Af81vyMCI4cPuobfhdOzIgzsLk3H+jZeDGDJiffsglHdlN8gt+Av22DBqalBGj5j
+         JReg==
+X-Gm-Message-State: AGRZ1gLfcVs+wfbu68ehHHRk4QhLuFpx94s2lbjxUDItBZRKyHVJDDaT
+        CA4QIAaISFZmTZNR9FVXfDXRMA==
+X-Google-Smtp-Source: AJdET5dWTy0pFnmr36sgi8cH9jkzz159M9xJRRtFv0PrhiMDAJml9j8FBUi/1aEY1PP6YuCYTjcW+w==
+X-Received: by 2002:a62:4784:: with SMTP id p4-v6mr5136341pfi.257.1541026643529;
+        Wed, 31 Oct 2018 15:57:23 -0700 (PDT)
+Received: from ?IPv6:2601:646:c200:7429:3d1b:ef7:2c4c:5b1? ([2601:646:c200:7429:3d1b:ef7:2c4c:5b1])
+        by smtp.gmail.com with ESMTPSA id m19-v6sm27298910pgv.93.2018.10.31.15.57.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Oct 2018 15:57:22 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 10/17] prmem: documentation
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16A404)
+In-Reply-To: <20181031210032.GA3159@hirez.programming.kicks-ass.net>
+Date:   Wed, 31 Oct 2018 15:57:21 -0700
 Cc:     Matthew Wilcox <willy@infradead.org>,
         Igor Stoppa <igor.stoppa@gmail.com>,
         Tycho Andersen <tycho@tycho.ws>,
@@ -65,53 +86,50 @@ Cc:     Matthew Wilcox <willy@infradead.org>,
         "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 10/17] prmem: documentation
-Message-ID: <20181031210032.GA3159@hirez.programming.kicks-ass.net>
-References: <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
- <20181030175814.GB10491@bombadil.infradead.org>
- <20181030182841.GE7343@cisco>
- <20181030192021.GC10491@bombadil.infradead.org>
- <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
- <20181030213557.GE10491@bombadil.infradead.org>
- <CALCETrW1FcT88u0QY9k_PMOeZj0G8H6KNb5Bnreo-12NvmmCEQ@mail.gmail.com>
- <20181031100237.GN744@hirez.programming.kicks-ass.net>
- <659CFC78-22BF-492B-B2E4-B8E89AA08446@amacapital.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <659CFC78-22BF-492B-B2E4-B8E89AA08446@amacapital.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <2E29C35B-3F98-473D-A874-0D9B9B15B399@amacapital.net>
+References: <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com> <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net> <20181030175814.GB10491@bombadil.infradead.org> <20181030182841.GE7343@cisco> <20181030192021.GC10491@bombadil.infradead.org> <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com> <20181030213557.GE10491@bombadil.infradead.org> <CALCETrW1FcT88u0QY9k_PMOeZj0G8H6KNb5Bnreo-12NvmmCEQ@mail.gmail.com> <20181031100237.GN744@hirez.programming.kicks-ass.net> <659CFC78-22BF-492B-B2E4-B8E89AA08446@amacapital.net> <20181031210032.GA3159@hirez.programming.kicks-ass.net>
+To:     Peter Zijlstra <peterz@infradead.org>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 01:36:48PM -0700, Andy Lutomirski wrote:
-> 
-> > On Oct 31, 2018, at 3:02 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> > 
-> >> On Tue, Oct 30, 2018 at 09:41:13PM -0700, Andy Lutomirski wrote:
-> >> To clarify some of this thread, I think that the fact that rare_write
-> >> uses an mm_struct and alias mappings under the hood should be
-> >> completely invisible to users of the API.  No one should ever be
-> >> handed a writable pointer to rare_write memory (except perhaps during
-> >> bootup or when initializing a large complex data structure that will
-> >> be rare_write but isn't yet, e.g. the policy db).
-> > 
-> > Being able to use pointers would make it far easier to do atomics and
-> > other things though.
-> 
-> This stuff is called *rare* write for a reason. Do we really want to
-> allow atomics beyond just store-release?  Taking a big lock and then
-> writing in the right order should cover everything, no?
 
-Ah, so no. That naming is very misleading.
 
-We modify page-tables a _lot_. The point is that only a few sanctioned
-sites are allowed writing to it, not everybody.
+> On Oct 31, 2018, at 2:00 PM, Peter Zijlstra <peterz@infradead.org> wrote:
+>=20
+>> On Wed, Oct 31, 2018 at 01:36:48PM -0700, Andy Lutomirski wrote:
+>>=20
+>>>> On Oct 31, 2018, at 3:02 AM, Peter Zijlstra <peterz@infradead.org> wrot=
+e:
+>>>>=20
+>>>> On Tue, Oct 30, 2018 at 09:41:13PM -0700, Andy Lutomirski wrote:
+>>>> To clarify some of this thread, I think that the fact that rare_write
+>>>> uses an mm_struct and alias mappings under the hood should be
+>>>> completely invisible to users of the API.  No one should ever be
+>>>> handed a writable pointer to rare_write memory (except perhaps during
+>>>> bootup or when initializing a large complex data structure that will
+>>>> be rare_write but isn't yet, e.g. the policy db).
+>>>=20
+>>> Being able to use pointers would make it far easier to do atomics and
+>>> other things though.
+>>=20
+>> This stuff is called *rare* write for a reason. Do we really want to
+>> allow atomics beyond just store-release?  Taking a big lock and then
+>> writing in the right order should cover everything, no?
+>=20
+> Ah, so no. That naming is very misleading.
+>=20
+> We modify page-tables a _lot_. The point is that only a few sanctioned
+> sites are allowed writing to it, not everybody.
+>=20
+> I _think_ the use-case for atomics is updating the reference counts of
+> objects that are in this write-rare domain. But I'm not entirely clear
+> on that myself either. I just really want to avoid duplicating that
+> stuff.
 
-I _think_ the use-case for atomics is updating the reference counts of
-objects that are in this write-rare domain. But I'm not entirely clear
-on that myself either. I just really want to avoid duplicating that
-stuff.
+Sounds nuts. Doing a rare-write is many hundreds of cycles at best. Using th=
+at for a reference count sounds wacky.
+
+Can we see a *real* use case before we over complicate the API?=
