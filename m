@@ -6,110 +6,107 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70417C0044C
-	for <linux-integrity@archiver.kernel.org>; Wed, 31 Oct 2018 09:11:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CA08ECDE44
+	for <linux-integrity@archiver.kernel.org>; Wed, 31 Oct 2018 09:19:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C98220838
-	for <linux-integrity@archiver.kernel.org>; Wed, 31 Oct 2018 09:11:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20B7020838
+	for <linux-integrity@archiver.kernel.org>; Wed, 31 Oct 2018 09:19:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OpJ8Bz2g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C98220838
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kzi+2D/u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20B7020838
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727624AbeJaSId (ORCPT
+        id S1727875AbeJaSQv (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 31 Oct 2018 14:08:33 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:34670 "EHLO
+        Wed, 31 Oct 2018 14:16:51 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:34784 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727436AbeJaSId (ORCPT
+        with ESMTP id S1726054AbeJaSQv (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 31 Oct 2018 14:08:33 -0400
+        Wed, 31 Oct 2018 14:16:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=HFdRiotsZPgF4qiPJpcnOuxOYwo8hghVuCSCnAayKTw=; b=OpJ8Bz2gJW3qCAIynQBZGmexu
-        Fcn33YPpIhvE1K5OI5oXO77d6nT9ZQ7/O0xbMY2H30bDFuYK9ijwHJdomKxvDqSg4gJLxi2ryNS90
-        nK7fcfjxiVK57QdqeR61VMpBapsMrYpBnyDrwan/bTP0lgn29vUiT9Xb4DGgalwDCt56MgGMOBvMB
-        MIDPAO1eyfvFAljBuMXLk9czrEbIJFbUkiPTx4omJxkcFeizNVMXlI1Dt6iR2ZZ5O8K9bh8dYuTXM
-        JbBKEFUImT+Hbk+6utvPvtzg4N7lDFeeaa/4YE+IRKy0yWf1CYdPr2MF8ixCnx4tFpyJpH4GAiX+K
-        Tw5X/2xnA==;
+         bh=fVhXZWXj81sT/c2mZE0H4mJ1k8z+LPDjNU9EBM9zVvU=; b=kzi+2D/uyQhcVvTbEufaP92gn
+        nyDe5p2eDCiO4FJ1nv9mXiBFr4+Vhifg605AxkPfkblc1H1mSQoK8vMeruUP3pWZLoFjCdV2D5r3C
+        6Z/4WYmD74tckX8XvozBI0epdKJ27Tg1xvCKwI4iEE61plq+4eJf27iO8jL13jAt9IEPEw1ZxbBpo
+        KtPV3DmNlIHr8ZzdiYrXjL1GwYHfUUalZEV2bpe/59qZx/IV4gr6XuvQyTWvWRB6eyZVIYjolcQwq
+        33QzbBQh58hAxV5a/L2T8iLrfKE31Vqabllhz9w0kI8SVNmuNLKamKfs21WjbcyJP7y7dYRyApjHi
+        jVfTTfo/Q==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHmWY-0002Og-Fg; Wed, 31 Oct 2018 09:10:50 +0000
+        id 1gHmeS-0002R2-PK; Wed, 31 Oct 2018 09:19:01 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id CC84D2029FA14; Wed, 31 Oct 2018 10:10:48 +0100 (CET)
-Date:   Wed, 31 Oct 2018 10:10:48 +0100
+        id 4A63A2029FA14; Wed, 31 Oct 2018 10:18:59 +0100 (CET)
+Date:   Wed, 31 Oct 2018 10:18:59 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andy Lutomirski <luto@amacapital.net>,
         Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
+        Igor Stoppa <igor.stoppa@gmail.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dave Chinner <david@fromorbit.com>,
         James Morris <jmorris@namei.org>,
         Michal Hocko <mhocko@kernel.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, igor.stoppa@huawei.com,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Laura Abbott <labbott@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 16/17] prmem: pratomic-long
-Message-ID: <20181031091048.GH744@hirez.programming.kicks-ass.net>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-17-igor.stoppa@huawei.com>
- <20181025001312.GA3159@worktop.c.hoisthospitality.com>
- <806bfff0-8d62-9918-480d-ec791b93841e@gmail.com>
- <20181030155841.GF8177@hirez.programming.kicks-ass.net>
- <20181030162815.GB20827@arm.com>
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 10/17] prmem: documentation
+Message-ID: <20181031091859.GI744@hirez.programming.kicks-ass.net>
+References: <20181023213504.28905-11-igor.stoppa@huawei.com>
+ <20181026092609.GB3159@worktop.c.hoisthospitality.com>
+ <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
+ <20181028183126.GB744@hirez.programming.kicks-ass.net>
+ <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
+ <20181030152641.GE8177@hirez.programming.kicks-ass.net>
+ <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
+ <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
+ <20181030175814.GB10491@bombadil.infradead.org>
+ <d5b57049-419b-3bbb-dc8d-97e4024965df@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181030162815.GB20827@arm.com>
+In-Reply-To: <d5b57049-419b-3bbb-dc8d-97e4024965df@intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 04:28:16PM +0000, Will Deacon wrote:
-> On Tue, Oct 30, 2018 at 04:58:41PM +0100, Peter Zijlstra wrote:
-> > Like mentioned elsewhere; if you do write_enable() + write_disable()
-> > thingies, it all becomes:
-> > 
-> > 	write_enable();
-> > 	atomic_foo(&bar);
-> > 	write_disable();
-> > 
-> > No magic gunk infested duplication at all. Of course, ideally you'd then
-> > teach objtool about this (or a GCC plugin I suppose) to ensure any
-> > enable reached a disable.
+On Tue, Oct 30, 2018 at 11:03:51AM -0700, Dave Hansen wrote:
+> On 10/30/18 10:58 AM, Matthew Wilcox wrote:
+> > Does this satisfy Igor's requirements?  We wouldn't be able to
+> > copy_to/from_user() while rare_mm was active.  I think that's a feature
+> > though!  It certainly satisfies my interests (kernel code be able to
+> > mark things as dynamically-allocated-and-read-only-after-initialisation)
 > 
-> Isn't the issue here that we don't want to change the page tables for the
-> mapping of &bar, but instead want to create a temporary writable alias
-> at a random virtual address?
+> It has to be more than copy_to/from_user(), though, I think.
 > 
-> So you'd want:
-> 
-> 	wbar = write_enable(&bar);
-> 	atomic_foo(wbar);
-> 	write_disable(wbar);
-> 
-> which is probably better expressed as a map/unmap API. I suspect this
-> would also be the only way to do things for cmpxchg() loops, where you
-> want to create the mapping outside of the loop to minimise your time in
-> the critical section.
+> rare_modify(q) either has to preempt_disable(), or we need to teach the
+> context-switching code when and how to switch in/out of the rare_mm.
+> preempt_disable() would also keep us from sleeping.
 
-Ah, so I was thikning that the altnerative mm would have stuff in the
-same location, just RW instead of RO.
+Yes, I think we want to have preempt disable at the very least. We could
+indeed make the context switch code smart and teach is about this state,
+but I think allowing preemption in such section is a bad idea. We want
+to keep these sections short and simple (and bounded), such that they
+can be analyzed for correctness.
 
-But yes, if we, like Andy suggets, use the userspace address range for
-the aliases, then we need to do as you suggest.
+Once you allow preemption, things tend to grow large and complex.
 
+Ideally we'd even disabled interrupts over this, to further limit what
+code runs in the rare_mm context. NMIs need special care anyway.
