@@ -2,146 +2,110 @@ Return-Path: <SRS0=DPN/=NM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D3AECDE46
-	for <linux-integrity@archiver.kernel.org>; Thu,  1 Nov 2018 16:52:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 846D4C6786F
+	for <linux-integrity@archiver.kernel.org>; Thu,  1 Nov 2018 17:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05E2820820
-	for <linux-integrity@archiver.kernel.org>; Thu,  1 Nov 2018 16:52:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05E2820820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B1BF2064C
+	for <linux-integrity@archiver.kernel.org>; Thu,  1 Nov 2018 17:08:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nRyiJF6t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B1BF2064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726033AbeKBB4P (ORCPT
+        id S1727231AbeKBCMd (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 1 Nov 2018 21:56:15 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55820 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727565AbeKBB4O (ORCPT
+        Thu, 1 Nov 2018 22:12:33 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:54836 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbeKBCMd (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 1 Nov 2018 21:56:14 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA1GmrDF083181
-        for <linux-integrity@vger.kernel.org>; Thu, 1 Nov 2018 12:52:27 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ng2xm74hd-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 01 Nov 2018 12:52:27 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 1 Nov 2018 16:52:25 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 1 Nov 2018 16:52:23 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA1GqMfa52166768
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 1 Nov 2018 16:52:22 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2BBCD4C044;
-        Thu,  1 Nov 2018 16:52:22 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2B65A4C058;
-        Thu,  1 Nov 2018 16:52:21 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.105.26])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  1 Nov 2018 16:52:21 +0000 (GMT)
-Subject: Re: [PATCH v3 5/5] tpm: ensure that output of PCR read contains the
- correct digest size
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        jarkko.sakkinen@linux.intel.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Date:   Thu, 01 Nov 2018 12:52:10 -0400
-In-Reply-To: <20181030154711.2782-6-roberto.sassu@huawei.com>
-References: <20181030154711.2782-1-roberto.sassu@huawei.com>
-         <20181030154711.2782-6-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18110116-0016-0000-0000-0000021DB450
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110116-0017-0000-0000-00003275E5CE
-Message-Id: <1541091130.4035.41.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-01_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811010143
+        Thu, 1 Nov 2018 22:12:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=jSislqE+AJGzdIO99eirTTUGxDTH9V/LGpGloAJW35M=; b=nRyiJF6tEzjAixqDn2meRKEED
+        lO5z+OQNvMn+JOexJIrYS17meAWxSJRNr7iK5D4iB1FDqRg0DY3C3cPB3XrKJxkvS2PLp8PnpPExn
+        x1E/YLbvw153MFd3L0tGkOC4bplwgrhmr8QvZc9N4ZF1OqJwmXZ84I6fEI5JBKAQ7c+YAvEqP5M5t
+        7AnQZYuad0vLe6eIAc3CNSMmvVxTiLecDSEeRRcg48oi556JJIUs5jiQMkVJQ+8qWEhKk4j83CO3J
+        YB9G7Z+4SUBkJ1hmw0sJsQiPG9tEeqEsQpstZGGEsw2bnMZGpmQn5ZJYaD7ZaRu4L9nHZymD2+kju
+        RFFMAgk7g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gIGS3-0005l6-Lt; Thu, 01 Nov 2018 17:08:12 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 702D72029F9FF; Thu,  1 Nov 2018 18:08:09 +0100 (CET)
+Date:   Thu, 1 Nov 2018 18:08:09 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Igor Stoppa <igor.stoppa@gmail.com>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Kees Cook <keescook@chromium.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 10/17] prmem: documentation
+Message-ID: <20181101170809.GG3178@hirez.programming.kicks-ass.net>
+References: <20181030175814.GB10491@bombadil.infradead.org>
+ <20181030182841.GE7343@cisco>
+ <20181030192021.GC10491@bombadil.infradead.org>
+ <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
+ <20181030213557.GE10491@bombadil.infradead.org>
+ <CALCETrW1FcT88u0QY9k_PMOeZj0G8H6KNb5Bnreo-12NvmmCEQ@mail.gmail.com>
+ <20181031100237.GN744@hirez.programming.kicks-ass.net>
+ <659CFC78-22BF-492B-B2E4-B8E89AA08446@amacapital.net>
+ <20181031210032.GA3159@hirez.programming.kicks-ass.net>
+ <2E29C35B-3F98-473D-A874-0D9B9B15B399@amacapital.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2E29C35B-3F98-473D-A874-0D9B9B15B399@amacapital.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2018-10-30 at 16:47 +0100, Roberto Sassu wrote:
-> This patch ensures that the digest size returned by the TPM during a PCR
-> read matches the size of the algorithm passed as argument to
-> tpm2_pcr_read(). The check is performed after information about the PCR
-> banks has been retrieved.
+On Wed, Oct 31, 2018 at 03:57:21PM -0700, Andy Lutomirski wrote:
+> > On Oct 31, 2018, at 2:00 PM, Peter Zijlstra <peterz@infradead.org> wrote:
+> >> On Wed, Oct 31, 2018 at 01:36:48PM -0700, Andy Lutomirski wrote:
+
+> >> This stuff is called *rare* write for a reason. Do we really want to
+> >> allow atomics beyond just store-release?  Taking a big lock and then
+> >> writing in the right order should cover everything, no?
+> > 
+> > Ah, so no. That naming is very misleading.
+> > 
+> > We modify page-tables a _lot_. The point is that only a few sanctioned
+> > sites are allowed writing to it, not everybody.
+> > 
+> > I _think_ the use-case for atomics is updating the reference counts of
+> > objects that are in this write-rare domain. But I'm not entirely clear
+> > on that myself either. I just really want to avoid duplicating that
+> > stuff.
 > 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  drivers/char/tpm/tpm2-cmd.c | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index 8e821e7b4674..477dcc30fc53 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -187,15 +187,28 @@ struct tpm2_pcr_read_out {
->  int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx,
->  		  struct tpm_digest *digest_struct, u16 *digest_size_ptr)
->  {
-> +	int i;
->  	int rc;
->  	struct tpm_buf buf;
->  	struct tpm2_pcr_read_out *out;
->  	u8 pcr_select[TPM2_PCR_SELECT_MIN] = {0};
->  	u16 digest_size;
-> +	u16 expected_digest_size = 0;
->  
->  	if (pcr_idx >= TPM2_PLATFORM_PCR)
->  		return -EINVAL;
->  
-> +	if (!digest_size_ptr) {
-> +		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
-> +		     chip->active_banks[i].alg_id != digest_struct->alg_id; i++)
-> +			;
-> +
-> +		if (i == ARRAY_SIZE(chip->active_banks))
-> +			return -EINVAL;
-> +
-> +		expected_digest_size = chip->active_banks[i].digest_size;
-> +	}
-> +
->  	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_PCR_READ);
->  	if (rc)
->  		return rc;
-> @@ -215,7 +228,8 @@ int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx,
->  
->  	out = (struct tpm2_pcr_read_out *)&buf.data[TPM_HEADER_SIZE];
->  	digest_size = be16_to_cpu(out->digest_size);
-> -	if (digest_size > sizeof(digest_struct->digest)) {
-> +	if ((digest_size_ptr && digest_size > sizeof(digest_struct->digest)) ||
+> Sounds nuts. Doing a rare-write is many hundreds of cycles at best.
 
-The returned digest size should never be larger than the structure
-field.  The digest_size_ptr test is unnecessary.
-
-Mimi
-
-> +	    (!digest_size_ptr && digest_size != expected_digest_size)) {
->  		rc = -EINVAL;
->  		goto out;
->  	}
+Yes, which is why I'm somewhat sceptical of the whole endeavour.
 
