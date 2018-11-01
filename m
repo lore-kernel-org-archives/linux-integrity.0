@@ -2,152 +2,146 @@ Return-Path: <SRS0=DPN/=NM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63568C6786F
-	for <linux-integrity@archiver.kernel.org>; Thu,  1 Nov 2018 16:32:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D3AECDE46
+	for <linux-integrity@archiver.kernel.org>; Thu,  1 Nov 2018 16:52:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26ECF20820
-	for <linux-integrity@archiver.kernel.org>; Thu,  1 Nov 2018 16:32:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AATcQtgw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26ECF20820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 05E2820820
+	for <linux-integrity@archiver.kernel.org>; Thu,  1 Nov 2018 16:52:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05E2820820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728888AbeKBBfu (ORCPT
+        id S1726033AbeKBB4P (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 1 Nov 2018 21:35:50 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34468 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728372AbeKBBfu (ORCPT
+        Thu, 1 Nov 2018 21:56:15 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55820 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727565AbeKBB4O (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 1 Nov 2018 21:35:50 -0400
-Received: by mail-pf1-f195.google.com with SMTP id f78-v6so9598297pfe.1;
-        Thu, 01 Nov 2018 09:32:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=nX6+O2gcmN+wf5wYI35jSqSfPHK0o+mAaMNAqvcu52I=;
-        b=AATcQtgw4OgBirkGwvnev1NHDLu20mOrNOBTk3mtc8rtBaSE7Rb1gc9g+oGWLVauTy
-         bC5LUZf64mIdb5FT1gqpKHTxXhQeTaaGUOmhyGfJzfWQ9nOMLPfSQgWKQ5chJEls2bNz
-         x6cTy4F0mA4fiKKhEFX16FkS/1U7a+pZPPfCD6pk0h+VxN0Uv+L2a015nfDLvpUJlTRO
-         pbVyzv/j4vNsdLtGTsq9DtZJ/IQN5ub2PnGDUqhO4NxSYNoA8kvkcPiJ3/Mf6e+zdUEw
-         VoHNbDZbexpieUNxDjQrya2xUCNW4zhk5nbE3zqXsoMnz/PQ14UmKipJQGaHrzIMFAFp
-         6Clg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=nX6+O2gcmN+wf5wYI35jSqSfPHK0o+mAaMNAqvcu52I=;
-        b=j6VIoGe9nXMOC8jnzLO51R5Av0NYSe0D0xLZ3AitxamzyyP23m88jiBwLEMkQcN7+0
-         oUpkGvuDbKdmqWKjR7CXYJfjBHx5OdMRR5NAhrKGKIblsufZ2KpaXLp8gLi5ZvEE1F/q
-         Id0p2MDJ6fcls53ECB54En3TmceiBtvZxebrZbc2VHP5sTWXnPxbvjqk2L2S1L2tbQ5r
-         Krfw8CZAaFQuerYLeNwTOmwAX8776FjPsWqqVZZjKq4wsWOu/J/RqsYNXBEM2CIy99+p
-         C5dmMeJj8JIAZTkirbWwUuBOHdhymUs+2y/1qS8+/hwz+RECcivsy6iis6t8RLz0tDxK
-         AKfA==
-X-Gm-Message-State: AGRZ1gLdHnbS0K5GYzXyVGCrm3GGbmixQULP72xcz+NaWMPLXSr+Nqbn
-        nxU74/qV/hCYSjdZRMbU54k=
-X-Google-Smtp-Source: AJdET5fgJblcobbtWN43vziOs7OA7inJWEFOO1N2KO5+PVOr8+1H0QPwzWqA786ws/jd50RrRywtsg==
-X-Received: by 2002:a63:e918:: with SMTP id i24-v6mr7767635pgh.64.1541089928101;
-        Thu, 01 Nov 2018 09:32:08 -0700 (PDT)
-Received: from [172.20.5.66] (rrcs-24-227-212-35.sw.biz.rr.com. [24.227.212.35])
-        by smtp.gmail.com with ESMTPSA id d67-v6sm9436155pfg.2.2018.11.01.09.32.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 09:32:06 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: [PATCH 10/17] prmem: documentation
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <20181031090835.GG744@hirez.programming.kicks-ass.net>
-Date:   Thu, 1 Nov 2018 11:31:59 -0500
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Igor Stoppa <igor.stoppa@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <59E8A6FB-9762-499F-89AC-D85E1498BE38@gmail.com>
-References: <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
- <20181028183126.GB744@hirez.programming.kicks-ass.net>
- <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
- <20181030152641.GE8177@hirez.programming.kicks-ass.net>
- <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
- <20181030175814.GB10491@bombadil.infradead.org>
- <28C8CD2A-BDC0-49A5-854E-1E18968528B8@amacapital.net>
- <CAC99157-7A9B-4AC6-BA41-EAA7A99FE53D@gmail.com>
- <20181031090835.GG744@hirez.programming.kicks-ass.net>
-To:     Peter Zijlstra <peterz@infradead.org>
-X-Mailer: Apple Mail (2.3445.9.1)
+        Thu, 1 Nov 2018 21:56:14 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA1GmrDF083181
+        for <linux-integrity@vger.kernel.org>; Thu, 1 Nov 2018 12:52:27 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ng2xm74hd-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 01 Nov 2018 12:52:27 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 1 Nov 2018 16:52:25 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 1 Nov 2018 16:52:23 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA1GqMfa52166768
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 1 Nov 2018 16:52:22 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2BBCD4C044;
+        Thu,  1 Nov 2018 16:52:22 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2B65A4C058;
+        Thu,  1 Nov 2018 16:52:21 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.105.26])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  1 Nov 2018 16:52:21 +0000 (GMT)
+Subject: Re: [PATCH v3 5/5] tpm: ensure that output of PCR read contains the
+ correct digest size
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        jarkko.sakkinen@linux.intel.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Date:   Thu, 01 Nov 2018 12:52:10 -0400
+In-Reply-To: <20181030154711.2782-6-roberto.sassu@huawei.com>
+References: <20181030154711.2782-1-roberto.sassu@huawei.com>
+         <20181030154711.2782-6-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18110116-0016-0000-0000-0000021DB450
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110116-0017-0000-0000-00003275E5CE
+Message-Id: <1541091130.4035.41.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-01_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811010143
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Peter Zijlstra
-Sent: October 31, 2018 at 9:08:35 AM GMT
-> To: Nadav Amit <nadav.amit@gmail.com>
-> Cc: Andy Lutomirski <luto@amacapital.net>, Matthew Wilcox =
-<willy@infradead.org>, Kees Cook <keescook@chromium.org>, Igor Stoppa =
-<igor.stoppa@gmail.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>, Dave =
-Chinner <david@fromorbit.com>, James Morris <jmorris@namei.org>, Michal =
-Hocko <mhocko@kernel.org>, Kernel Hardening =
-<kernel-hardening@lists.openwall.com>, linux-integrity =
-<linux-integrity@vger.kernel.org>, linux-security-module =
-<linux-security-module@vger.kernel.org>, Igor Stoppa =
-<igor.stoppa@huawei.com>, Dave Hansen <dave.hansen@linux.intel.com>, =
-Jonathan Corbet <corbet@lwn.net>, Laura Abbott <labbott@redhat.com>, =
-Randy Dunlap <rdunlap@infradead.org>, Mike Rapoport =
-<rppt@linux.vnet.ibm.com>, open list:DOCUMENTATION =
-<linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Thomas =
-Gleixner <tglx@linutronix.de>
-> Subject: Re: [PATCH 10/17] prmem: documentation
->=20
->=20
-> On Tue, Oct 30, 2018 at 04:18:39PM -0700, Nadav Amit wrote:
->>> Nadav, want to resubmit your series? IIRC the only thing wrong with =
-it was
->>> that it was a big change and we wanted a simpler fix to backport. =
-But
->>> that=E2=80=99s all done now, and I, at least, rather liked your =
-code. :)
->>=20
->> I guess since it was based on your ideas=E2=80=A6
->>=20
->> Anyhow, the only open issue that I have with v2 is Peter=E2=80=99s =
-wish that I would
->> make kgdb use of poke_text() less disgusting. I still don=E2=80=99t =
-know exactly
->> how to deal with it.
->>=20
->> Perhaps it (fixing kgdb) can be postponed? In that case I can just =
-resend
->> v2.
->=20
-> Oh man, I completely forgot about kgdb :/
->=20
-> Also, would it be possible to entirely remove that kmap fallback path?
+On Tue, 2018-10-30 at 16:47 +0100, Roberto Sassu wrote:
+> This patch ensures that the digest size returned by the TPM during a PCR
+> read matches the size of the algorithm passed as argument to
+> tpm2_pcr_read(). The check is performed after information about the PCR
+> banks has been retrieved.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  drivers/char/tpm/tpm2-cmd.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index 8e821e7b4674..477dcc30fc53 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -187,15 +187,28 @@ struct tpm2_pcr_read_out {
+>  int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx,
+>  		  struct tpm_digest *digest_struct, u16 *digest_size_ptr)
+>  {
+> +	int i;
+>  	int rc;
+>  	struct tpm_buf buf;
+>  	struct tpm2_pcr_read_out *out;
+>  	u8 pcr_select[TPM2_PCR_SELECT_MIN] = {0};
+>  	u16 digest_size;
+> +	u16 expected_digest_size = 0;
+>  
+>  	if (pcr_idx >= TPM2_PLATFORM_PCR)
+>  		return -EINVAL;
+>  
+> +	if (!digest_size_ptr) {
+> +		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
+> +		     chip->active_banks[i].alg_id != digest_struct->alg_id; i++)
+> +			;
+> +
+> +		if (i == ARRAY_SIZE(chip->active_banks))
+> +			return -EINVAL;
+> +
+> +		expected_digest_size = chip->active_banks[i].digest_size;
+> +	}
+> +
+>  	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_PCR_READ);
+>  	if (rc)
+>  		return rc;
+> @@ -215,7 +228,8 @@ int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx,
+>  
+>  	out = (struct tpm2_pcr_read_out *)&buf.data[TPM_HEADER_SIZE];
+>  	digest_size = be16_to_cpu(out->digest_size);
+> -	if (digest_size > sizeof(digest_struct->digest)) {
+> +	if ((digest_size_ptr && digest_size > sizeof(digest_struct->digest)) ||
 
-Let me see what I can do about it.=
+The returned digest size should never be larger than the structure
+field.  The digest_size_ptr test is unnecessary.
+
+Mimi
+
+> +	    (!digest_size_ptr && digest_size != expected_digest_size)) {
+>  		rc = -EINVAL;
+>  		goto out;
+>  	}
+
