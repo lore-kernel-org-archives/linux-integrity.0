@@ -4,38 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C68ECDE46
-	for <linux-integrity@archiver.kernel.org>; Thu,  1 Nov 2018 22:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E58C6786F
+	for <linux-integrity@archiver.kernel.org>; Thu,  1 Nov 2018 22:54:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4BBA21104
-	for <linux-integrity@archiver.kernel.org>; Thu,  1 Nov 2018 22:54:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA1C620657
+	for <linux-integrity@archiver.kernel.org>; Thu,  1 Nov 2018 22:54:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hAPcJtF3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4BBA21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gH/A4o03"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA1C620657
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728081AbeKBH7R (ORCPT
+        id S1728229AbeKBH7T (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 2 Nov 2018 03:59:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52158 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 03:59:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52184 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728072AbeKBH7R (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        id S1728113AbeKBH7R (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
         Fri, 2 Nov 2018 03:59:17 -0400
 Received: from ebiggers-linuxstation.kir.corp.google.com (unknown [104.132.51.88])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFBAE2084C;
-        Thu,  1 Nov 2018 22:54:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0738D2085A;
+        Thu,  1 Nov 2018 22:54:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541112857;
-        bh=b3QHRP8YQqlEGz0tStooS8qoUx6+xZnHbUaWpaBLfuw=;
+        s=default; t=1541112858;
+        bh=TUEwmUl1dUMxTUx3pF7JGkgR9zZ14j2UdpFPtX2Jriw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hAPcJtF3Hzy88pY/EPlY6QG8e40f21qSv7o1jvok3nWI9vAt/Rj8d+2k+a+B0CsgH
-         rlUcL0W5z23YgF2OikvUnIkvArKLODb54l4L+LK6kWfSkF5j+sbWfIaBMEZYWjywtq
-         Gy/Jwi5EajAGtsDvBxJbL7/S9lmiIpY7qL7QtFS4=
+        b=gH/A4o030rLxerL58+AHPganbY+6S5cWg/UtyH/aTdvVooVKRbTPamC0PpmAKnxVe
+         DCmAzMtiOUhLQzHn8kuDUUKogDSKIMUH45/rK/I2F1a3k8ydQuxdvRRiwd4KGDBg4S
+         cY7ThmVSef7AkbDl7wi4RvMdcDZWCHNyu/XYL17U=
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-fscrypt@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
@@ -45,9 +45,9 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         Jaegeuk Kim <jaegeuk@kernel.org>,
         Victor Hsieh <victorhsieh@google.com>,
         Chandan Rajendra <chandan@linux.vnet.ibm.com>
-Subject: [PATCH v2 05/12] fs-verity: implement FS_IOC_ENABLE_VERITY ioctl
-Date:   Thu,  1 Nov 2018 15:52:23 -0700
-Message-Id: <20181101225230.88058-6-ebiggers@kernel.org>
+Subject: [PATCH v2 11/12] ext4: add fs-verity read support
+Date:   Thu,  1 Nov 2018 15:52:29 -0700
+Message-Id: <20181101225230.88058-12-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
 In-Reply-To: <20181101225230.88058-1-ebiggers@kernel.org>
 References: <20181101225230.88058-1-ebiggers@kernel.org>
@@ -60,182 +60,351 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-Add a function for filesystems to call to implement the
-FS_IOC_ENABLE_VERITY ioctl.  This ioctl enables fs-verity on a file,
-after userspace has appended verity metadata to it.
+Make ext4_mpage_readpages() verify data as it is read from fs-verity
+files, using the helper functions from fs/verity/.
 
-This ioctl is documented in Documentation/filesystem/fsverity.rst;
-see there for more information.
+To be compatible with fscrypt, like in the corresponding f2fs patch this
+required refactoring the decryption workflow into a generic "post-read
+processing" workflow, which can do decryption, verification, or both.
 
+Co-developed-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/verity/Makefile       |   2 +-
- fs/verity/ioctl.c        | 117 +++++++++++++++++++++++++++++++++++++++
- include/linux/fsverity.h |  11 ++++
- 3 files changed, 129 insertions(+), 1 deletion(-)
- create mode 100644 fs/verity/ioctl.c
+ fs/ext4/ext4.h     |   2 +
+ fs/ext4/inode.c    |   3 +
+ fs/ext4/readpage.c | 209 ++++++++++++++++++++++++++++++++++++++-------
+ fs/ext4/super.c    |   9 +-
+ 4 files changed, 191 insertions(+), 32 deletions(-)
 
-diff --git a/fs/verity/Makefile b/fs/verity/Makefile
-index a6c7cefb61ab7..6450925e3a8b7 100644
---- a/fs/verity/Makefile
-+++ b/fs/verity/Makefile
-@@ -1,3 +1,3 @@
- obj-$(CONFIG_FS_VERITY)	+= fsverity.o
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index e5475a629ed80..80957f9d3cbef 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -3101,6 +3101,8 @@ static inline void ext4_set_de_type(struct super_block *sb,
+ extern int ext4_mpage_readpages(struct address_space *mapping,
+ 				struct list_head *pages, struct page *page,
+ 				unsigned nr_pages, bool is_readahead);
++extern int __init ext4_init_post_read_processing(void);
++extern void ext4_exit_post_read_processing(void);
  
--fsverity-y := hash_algs.o setup.o verify.o
-+fsverity-y := hash_algs.o ioctl.o setup.o verify.o
-diff --git a/fs/verity/ioctl.c b/fs/verity/ioctl.c
-new file mode 100644
-index 0000000000000..c5f0022cb3bef
---- /dev/null
-+++ b/fs/verity/ioctl.c
-@@ -0,0 +1,117 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * fs/verity/ioctl.c: fs-verity ioctls
-+ *
-+ * Copyright 2018 Google LLC
-+ *
-+ * Originally written by Jaegeuk Kim and Michael Halcrow;
-+ * heavily rewritten by Eric Biggers.
-+ */
+ /* symlink.c */
+ extern const struct inode_operations ext4_encrypted_symlink_inode_operations;
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index c624c83bbad26..d7019f5dca6f1 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3884,6 +3884,9 @@ static ssize_t ext4_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 		return 0;
+ #endif
+ 
++	if (ext4_verity_inode(inode))
++		return 0;
 +
-+#include "fsverity_private.h"
+ 	/*
+ 	 * If we are doing data journalling we don't support O_DIRECT
+ 	 */
+diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+index f461d75ac049f..d3dd1ff745db8 100644
+--- a/fs/ext4/readpage.c
++++ b/fs/ext4/readpage.c
+@@ -47,6 +47,11 @@
+ 
+ #include "ext4.h"
+ 
++#define NUM_PREALLOC_POST_READ_CTXS	128
 +
-+#include <linux/mm.h>
-+#include <linux/mount.h>
-+#include <linux/uaccess.h>
++static struct kmem_cache *bio_post_read_ctx_cache;
++static mempool_t *bio_post_read_ctx_pool;
 +
-+/**
-+ * fsverity_ioctl_enable - enable fs-verity on a file
-+ *
-+ * Enable fs-verity on a file.  Verity metadata must have already been appended
-+ * to the file.  See Documentation/filesystems/fsverity.rst, section
-+ * 'FS_IOC_ENABLE_VERITY' for details.
-+ *
-+ * Return: 0 on success, -errno on failure
-+ */
-+int fsverity_ioctl_enable(struct file *filp, const void __user *arg)
+ static inline bool ext4_bio_encrypted(struct bio *bio)
+ {
+ #ifdef CONFIG_EXT4_FS_ENCRYPTION
+@@ -56,6 +61,124 @@ static inline bool ext4_bio_encrypted(struct bio *bio)
+ #endif
+ }
+ 
++/* postprocessing steps for read bios */
++enum bio_post_read_step {
++	STEP_INITIAL = 0,
++	STEP_DECRYPT,
++	STEP_VERITY,
++};
++
++struct bio_post_read_ctx {
++	struct bio *bio;
++	struct work_struct work;
++	unsigned int cur_step;
++	unsigned int enabled_steps;
++};
++
++static void __read_end_io(struct bio *bio)
 +{
-+	struct inode *inode = file_inode(filp);
-+	struct fsverity_info *vi;
-+	int err;
++	struct page *page;
++	struct bio_vec *bv;
++	int i;
 +
-+	err = inode_permission(inode, MAY_WRITE);
-+	if (err)
-+		return err;
++	bio_for_each_segment_all(bv, bio, i) {
++		page = bv->bv_page;
 +
-+	if (IS_APPEND(inode))
-+		return -EPERM;
-+
-+	if (arg) /* argument is reserved */
-+		return -EINVAL;
-+
-+	if (S_ISDIR(inode->i_mode))
-+		return -EISDIR;
-+
-+	if (!S_ISREG(inode->i_mode))
-+		return -EINVAL;
-+
-+	err = mnt_want_write_file(filp);
-+	if (err)
-+		goto out;
-+
-+	/*
-+	 * Temporarily lock out writers via writable file descriptors or
-+	 * truncate().  This should stabilize the contents of the file as well
-+	 * as its size.  Note that at the end of this ioctl we will unlock
-+	 * writers, but at that point the verity bit will be set (if the ioctl
-+	 * succeeded), preventing future writers.
-+	 */
-+	err = deny_write_access(filp);
-+	if (err) /* -ETXTBSY */
-+		goto out_drop_write;
-+
-+	/*
-+	 * fsync so that the verity bit can't be persisted to disk prior to the
-+	 * data, causing verification errors after a crash.
-+	 */
-+	err = vfs_fsync(filp, 1);
-+	if (err)
-+		goto out_allow_write;
-+
-+	/* Serialize concurrent use of this ioctl on the same inode */
-+	inode_lock(inode);
-+
-+	if (get_fsverity_info(inode)) { /* fs-verity already enabled? */
-+		err = -EEXIST;
-+		goto out_unlock;
++		/* PG_error was set if any post_read step failed */
++		if (bio->bi_status || PageError(page)) {
++			ClearPageUptodate(page);
++			SetPageError(page);
++		} else {
++			SetPageUptodate(page);
++		}
++		unlock_page(page);
 +	}
-+
-+	/* Validate the verity metadata */
-+	vi = create_fsverity_info(inode, true);
-+	if (IS_ERR(vi)) {
-+		err = PTR_ERR(vi);
-+		if (err == -EINVAL) /* distinguish "invalid metadata" case */
-+			err = -EBADMSG;
-+		goto out_unlock;
-+	}
-+
-+	/*
-+	 * Ask the filesystem to mark the file as a verity file, e.g. by setting
-+	 * the verity bit in the inode.
-+	 */
-+	err = inode->i_sb->s_vop->set_verity(inode, vi->data_i_size);
-+	if (err)
-+		goto out_free_vi;
-+
-+	/* Invalidate all cached pages, forcing re-verification */
-+	truncate_inode_pages(inode->i_mapping, 0);
-+
-+	/*
-+	 * Set ->i_verity_info, unless another task managed to do it already
-+	 * between ->set_verity() and here.
-+	 */
-+	if (set_fsverity_info(inode, vi))
-+		vi = NULL;
-+	err = 0;
-+out_free_vi:
-+	free_fsverity_info(vi);
-+out_unlock:
-+	inode_unlock(inode);
-+out_allow_write:
-+	allow_write_access(filp);
-+out_drop_write:
-+	mnt_drop_write_file(filp);
-+out:
-+	return err;
-+}
-+EXPORT_SYMBOL_GPL(fsverity_ioctl_enable);
-diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index 15478fe7d55aa..5de50b52ccc70 100644
---- a/include/linux/fsverity.h
-+++ b/include/linux/fsverity.h
-@@ -21,6 +21,9 @@ struct fsverity_operations {
- 
- #if __FS_HAS_VERITY
- 
-+/* ioctl.c */
-+extern int fsverity_ioctl_enable(struct file *filp, const void __user *arg);
-+
- /* setup.c */
- extern int fsverity_file_open(struct inode *inode, struct file *filp);
- extern int fsverity_prepare_setattr(struct dentry *dentry, struct iattr *attr);
-@@ -40,6 +43,14 @@ static inline bool fsverity_check_hole(struct inode *inode, struct page *page)
- 
- #else /* !__FS_HAS_VERITY */
- 
-+/* ioctl.c */
-+
-+static inline int fsverity_ioctl_enable(struct file *filp,
-+					const void __user *arg)
-+{
-+	return -EOPNOTSUPP;
++	if (bio->bi_private)
++		mempool_free(bio->bi_private, bio_post_read_ctx_pool);
++	bio_put(bio);
 +}
 +
- /* setup.c */
++static void bio_post_read_processing(struct bio_post_read_ctx *ctx);
++
++static void decrypt_work(struct work_struct *work)
++{
++	struct bio_post_read_ctx *ctx =
++		container_of(work, struct bio_post_read_ctx, work);
++
++	fscrypt_decrypt_bio(ctx->bio);
++
++	bio_post_read_processing(ctx);
++}
++
++static void verity_work(struct work_struct *work)
++{
++	struct bio_post_read_ctx *ctx =
++		container_of(work, struct bio_post_read_ctx, work);
++
++	fsverity_verify_bio(ctx->bio);
++
++	bio_post_read_processing(ctx);
++}
++
++static void bio_post_read_processing(struct bio_post_read_ctx *ctx)
++{
++	/*
++	 * We use different work queues for decryption and for verity because
++	 * verity may require reading metadata pages that need decryption, and
++	 * we shouldn't recurse to the same workqueue.
++	 */
++	switch (++ctx->cur_step) {
++	case STEP_DECRYPT:
++		if (ctx->enabled_steps & (1 << STEP_DECRYPT)) {
++			INIT_WORK(&ctx->work, decrypt_work);
++			fscrypt_enqueue_decrypt_work(&ctx->work);
++			return;
++		}
++		ctx->cur_step++;
++		/* fall-through */
++	case STEP_VERITY:
++		if (ctx->enabled_steps & (1 << STEP_VERITY)) {
++			INIT_WORK(&ctx->work, verity_work);
++			fsverity_enqueue_verify_work(&ctx->work);
++			return;
++		}
++		ctx->cur_step++;
++		/* fall-through */
++	default:
++		__read_end_io(ctx->bio);
++	}
++}
++
++static struct bio_post_read_ctx *get_bio_post_read_ctx(struct inode *inode,
++						       struct bio *bio,
++						       pgoff_t index)
++{
++	unsigned int post_read_steps = 0;
++	struct bio_post_read_ctx *ctx = NULL;
++
++	if (ext4_encrypted_inode(inode) && S_ISREG(inode->i_mode))
++		post_read_steps |= 1 << STEP_DECRYPT;
++#ifdef CONFIG_EXT4_FS_VERITY
++	if (inode->i_verity_info != NULL &&
++	    (index < ((i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT)))
++		post_read_steps |= 1 << STEP_VERITY;
++#endif
++	if (post_read_steps) {
++		ctx = mempool_alloc(bio_post_read_ctx_pool, GFP_NOFS);
++		if (!ctx)
++			return ERR_PTR(-ENOMEM);
++		ctx->bio = bio;
++		ctx->enabled_steps = post_read_steps;
++		bio->bi_private = ctx;
++	}
++	return ctx;
++}
++
++static bool bio_post_read_required(struct bio *bio)
++{
++	return bio->bi_private && !bio->bi_status;
++}
++
+ /*
+  * I/O completion handler for multipage BIOs.
+  *
+@@ -70,30 +193,31 @@ static inline bool ext4_bio_encrypted(struct bio *bio)
+  */
+ static void mpage_end_io(struct bio *bio)
+ {
+-	struct bio_vec *bv;
+-	int i;
++	if (bio_post_read_required(bio)) {
++		struct bio_post_read_ctx *ctx = bio->bi_private;
  
- static inline int fsverity_file_open(struct inode *inode, struct file *filp)
+-	if (ext4_bio_encrypted(bio)) {
+-		if (bio->bi_status) {
+-			fscrypt_release_ctx(bio->bi_private);
+-		} else {
+-			fscrypt_enqueue_decrypt_bio(bio->bi_private, bio);
+-			return;
+-		}
++		ctx->cur_step = STEP_INITIAL;
++		bio_post_read_processing(ctx);
++		return;
+ 	}
+-	bio_for_each_segment_all(bv, bio, i) {
+-		struct page *page = bv->bv_page;
++	__read_end_io(bio);
++}
+ 
+-		if (!bio->bi_status) {
+-			SetPageUptodate(page);
+-		} else {
+-			ClearPageUptodate(page);
+-			SetPageError(page);
+-		}
+-		unlock_page(page);
++static inline loff_t ext4_readpage_limit(struct inode *inode)
++{
++#ifdef CONFIG_EXT4_FS_VERITY
++	if (ext4_verity_inode(inode)) {
++		if (inode->i_verity_info)
++			/* limit to end of metadata region */
++			return fsverity_full_i_size(inode);
++		/*
++		 * fsverity_info is currently being set up and no user reads are
++		 * allowed yet.  It's easiest to just not enforce a limit yet.
++		 */
++		return inode->i_sb->s_maxbytes;
+ 	}
+-
+-	bio_put(bio);
++#endif
++	return i_size_read(inode);
+ }
+ 
+ int ext4_mpage_readpages(struct address_space *mapping,
+@@ -140,7 +264,8 @@ int ext4_mpage_readpages(struct address_space *mapping,
+ 
+ 		block_in_file = (sector_t)page->index << (PAGE_SHIFT - blkbits);
+ 		last_block = block_in_file + nr_pages * blocks_per_page;
+-		last_block_in_file = (i_size_read(inode) + blocksize - 1) >> blkbits;
++		last_block_in_file = (ext4_readpage_limit(inode) +
++				      blocksize - 1) >> blkbits;
+ 		if (last_block > last_block_in_file)
+ 			last_block = last_block_in_file;
+ 		page_block = 0;
+@@ -217,6 +342,8 @@ int ext4_mpage_readpages(struct address_space *mapping,
+ 			zero_user_segment(page, first_hole << blkbits,
+ 					  PAGE_SIZE);
+ 			if (first_hole == 0) {
++				if (!fsverity_check_hole(inode, page))
++					goto set_error_page;
+ 				SetPageUptodate(page);
+ 				unlock_page(page);
+ 				goto next_page;
+@@ -240,19 +367,15 @@ int ext4_mpage_readpages(struct address_space *mapping,
+ 			bio = NULL;
+ 		}
+ 		if (bio == NULL) {
+-			struct fscrypt_ctx *ctx = NULL;
++			struct bio_post_read_ctx *ctx;
+ 
+-			if (ext4_encrypted_inode(inode) &&
+-			    S_ISREG(inode->i_mode)) {
+-				ctx = fscrypt_get_ctx(inode, GFP_NOFS);
+-				if (IS_ERR(ctx))
+-					goto set_error_page;
+-			}
+ 			bio = bio_alloc(GFP_KERNEL,
+ 				min_t(int, nr_pages, BIO_MAX_PAGES));
+-			if (!bio) {
+-				if (ctx)
+-					fscrypt_release_ctx(ctx);
++			if (!bio)
++				goto set_error_page;
++			ctx = get_bio_post_read_ctx(inode, bio, page->index);
++			if (IS_ERR(ctx)) {
++				bio_put(bio);
+ 				goto set_error_page;
+ 			}
+ 			bio_set_dev(bio, bdev);
+@@ -293,3 +416,27 @@ int ext4_mpage_readpages(struct address_space *mapping,
+ 		submit_bio(bio);
+ 	return 0;
+ }
++
++int __init ext4_init_post_read_processing(void)
++{
++	bio_post_read_ctx_cache = KMEM_CACHE(bio_post_read_ctx, 0);
++	if (!bio_post_read_ctx_cache)
++		goto fail;
++	bio_post_read_ctx_pool =
++		mempool_create_slab_pool(NUM_PREALLOC_POST_READ_CTXS,
++					 bio_post_read_ctx_cache);
++	if (!bio_post_read_ctx_pool)
++		goto fail_free_cache;
++	return 0;
++
++fail_free_cache:
++	kmem_cache_destroy(bio_post_read_ctx_cache);
++fail:
++	return -ENOMEM;
++}
++
++void ext4_exit_post_read_processing(void)
++{
++	mempool_destroy(bio_post_read_ctx_pool);
++	kmem_cache_destroy(bio_post_read_ctx_cache);
++}
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index c4a66b64ea604..fb4e060f28ecb 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -6070,6 +6070,10 @@ static int __init ext4_init_fs(void)
+ 		return err;
+ 
+ 	err = ext4_init_pending();
++	if (err)
++		goto out7;
++
++	err = ext4_init_post_read_processing();
+ 	if (err)
+ 		goto out6;
+ 
+@@ -6111,8 +6115,10 @@ static int __init ext4_init_fs(void)
+ out4:
+ 	ext4_exit_pageio();
+ out5:
+-	ext4_exit_pending();
++	ext4_exit_post_read_processing();
+ out6:
++	ext4_exit_pending();
++out7:
+ 	ext4_exit_es();
+ 
+ 	return err;
+@@ -6129,6 +6135,7 @@ static void __exit ext4_exit_fs(void)
+ 	ext4_exit_sysfs();
+ 	ext4_exit_system_zone();
+ 	ext4_exit_pageio();
++	ext4_exit_post_read_processing();
+ 	ext4_exit_es();
+ 	ext4_exit_pending();
+ }
 -- 
 2.19.1.568.g152ad8e336-goog
 
