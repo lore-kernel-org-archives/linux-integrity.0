@@ -2,110 +2,117 @@ Return-Path: <SRS0=DPN/=NM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 846D4C6786F
-	for <linux-integrity@archiver.kernel.org>; Thu,  1 Nov 2018 17:08:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA620C6786F
+	for <linux-integrity@archiver.kernel.org>; Thu,  1 Nov 2018 22:54:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B1BF2064C
-	for <linux-integrity@archiver.kernel.org>; Thu,  1 Nov 2018 17:08:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 891BF2082E
+	for <linux-integrity@archiver.kernel.org>; Thu,  1 Nov 2018 22:54:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nRyiJF6t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B1BF2064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q+BRq6OC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 891BF2082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbeKBCMd (ORCPT
+        id S1728151AbeKBH7R (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 1 Nov 2018 22:12:33 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:54836 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725843AbeKBCMd (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 1 Nov 2018 22:12:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jSislqE+AJGzdIO99eirTTUGxDTH9V/LGpGloAJW35M=; b=nRyiJF6tEzjAixqDn2meRKEED
-        lO5z+OQNvMn+JOexJIrYS17meAWxSJRNr7iK5D4iB1FDqRg0DY3C3cPB3XrKJxkvS2PLp8PnpPExn
-        x1E/YLbvw153MFd3L0tGkOC4bplwgrhmr8QvZc9N4ZF1OqJwmXZ84I6fEI5JBKAQ7c+YAvEqP5M5t
-        7AnQZYuad0vLe6eIAc3CNSMmvVxTiLecDSEeRRcg48oi556JJIUs5jiQMkVJQ+8qWEhKk4j83CO3J
-        YB9G7Z+4SUBkJ1hmw0sJsQiPG9tEeqEsQpstZGGEsw2bnMZGpmQn5ZJYaD7ZaRu4L9nHZymD2+kju
-        RFFMAgk7g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gIGS3-0005l6-Lt; Thu, 01 Nov 2018 17:08:12 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 702D72029F9FF; Thu,  1 Nov 2018 18:08:09 +0100 (CET)
-Date:   Thu, 1 Nov 2018 18:08:09 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Igor Stoppa <igor.stoppa@gmail.com>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Kees Cook <keescook@chromium.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 10/17] prmem: documentation
-Message-ID: <20181101170809.GG3178@hirez.programming.kicks-ass.net>
-References: <20181030175814.GB10491@bombadil.infradead.org>
- <20181030182841.GE7343@cisco>
- <20181030192021.GC10491@bombadil.infradead.org>
- <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
- <20181030213557.GE10491@bombadil.infradead.org>
- <CALCETrW1FcT88u0QY9k_PMOeZj0G8H6KNb5Bnreo-12NvmmCEQ@mail.gmail.com>
- <20181031100237.GN744@hirez.programming.kicks-ass.net>
- <659CFC78-22BF-492B-B2E4-B8E89AA08446@amacapital.net>
- <20181031210032.GA3159@hirez.programming.kicks-ass.net>
- <2E29C35B-3F98-473D-A874-0D9B9B15B399@amacapital.net>
+        Fri, 2 Nov 2018 03:59:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52162 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728081AbeKBH7Q (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 2 Nov 2018 03:59:16 -0400
+Received: from ebiggers-linuxstation.kir.corp.google.com (unknown [104.132.51.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E98F20866;
+        Thu,  1 Nov 2018 22:54:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541112857;
+        bh=GU3tCBUJ8zIG8Ivryy6fFaMUuIw2pxPwqQtzuo7iW/0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Q+BRq6OCbxF+9/cLhbFrN9807OQMQGG0XKP3YOqwngFsWbePmDcwMzbYNTqkXuhIl
+         GeDN+KeB/AVZv5hkZ+6HTG+rWbEzXE5oLCUWOLN/8nIThRruGayC29einhihCvchzZ
+         ynM8mya8E8+xSdI6kDAgniGI8k3jiW3mybxTwwGg=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fscrypt@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>
+Subject: [PATCH v2 07/12] fs-verity: add SHA-512 support
+Date:   Thu,  1 Nov 2018 15:52:25 -0700
+Message-Id: <20181101225230.88058-8-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
+In-Reply-To: <20181101225230.88058-1-ebiggers@kernel.org>
+References: <20181101225230.88058-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2E29C35B-3F98-473D-A874-0D9B9B15B399@amacapital.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 03:57:21PM -0700, Andy Lutomirski wrote:
-> > On Oct 31, 2018, at 2:00 PM, Peter Zijlstra <peterz@infradead.org> wrote:
-> >> On Wed, Oct 31, 2018 at 01:36:48PM -0700, Andy Lutomirski wrote:
+From: Eric Biggers <ebiggers@google.com>
 
-> >> This stuff is called *rare* write for a reason. Do we really want to
-> >> allow atomics beyond just store-release?  Taking a big lock and then
-> >> writing in the right order should cover everything, no?
-> > 
-> > Ah, so no. That naming is very misleading.
-> > 
-> > We modify page-tables a _lot_. The point is that only a few sanctioned
-> > sites are allowed writing to it, not everybody.
-> > 
-> > I _think_ the use-case for atomics is updating the reference counts of
-> > objects that are in this write-rare domain. But I'm not entirely clear
-> > on that myself either. I just really want to avoid duplicating that
-> > stuff.
-> 
-> Sounds nuts. Doing a rare-write is many hundreds of cycles at best.
+Add SHA-512 support to fs-verity.  This is primarily a demonstration of
+the (small) changes needed to support a new hash algorithm; it's
+anticipated that most users will still prefer SHA-256 due to the smaller
+space required to store the hashes, though some may prefer SHA-512.
 
-Yes, which is why I'm somewhat sceptical of the whole endeavour.
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/verity/fsverity_private.h  | 2 +-
+ fs/verity/hash_algs.c         | 5 +++++
+ include/uapi/linux/fsverity.h | 1 +
+ 3 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
+index dfdbac3874d74..c3a261a598557 100644
+--- a/fs/verity/fsverity_private.h
++++ b/fs/verity/fsverity_private.h
+@@ -30,7 +30,7 @@
+  * Largest digest size among all hash algorithms supported by fs-verity.  This
+  * can be increased if needed.
+  */
+-#define FS_VERITY_MAX_DIGEST_SIZE	SHA256_DIGEST_SIZE
++#define FS_VERITY_MAX_DIGEST_SIZE	SHA512_DIGEST_SIZE
+ 
+ /* A hash algorithm supported by fs-verity */
+ struct fsverity_hash_alg {
+diff --git a/fs/verity/hash_algs.c b/fs/verity/hash_algs.c
+index 9c19c9553f120..3174a0c08785d 100644
+--- a/fs/verity/hash_algs.c
++++ b/fs/verity/hash_algs.c
+@@ -18,6 +18,11 @@ struct fsverity_hash_alg fsverity_hash_algs[] = {
+ 		.digest_size = 32,
+ 		.cryptographic = true,
+ 	},
++	[FS_VERITY_ALG_SHA512] = {
++		.name = "sha512",
++		.digest_size = 64,
++		.cryptographic = true,
++	},
+ };
+ 
+ /*
+diff --git a/include/uapi/linux/fsverity.h b/include/uapi/linux/fsverity.h
+index 55b9f32676220..67ed830ae2ece 100644
+--- a/include/uapi/linux/fsverity.h
++++ b/include/uapi/linux/fsverity.h
+@@ -28,6 +28,7 @@ struct fsverity_digest {
+ 
+ /* Supported hash algorithms */
+ #define FS_VERITY_ALG_SHA256	1
++#define FS_VERITY_ALG_SHA512	2
+ 
+ /* Metadata stored near the end of verity files, after the Merkle tree */
+ /* This structure is 64 bytes long */
+-- 
+2.19.1.568.g152ad8e336-goog
 
