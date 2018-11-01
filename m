@@ -2,140 +2,99 @@ Return-Path: <SRS0=DPN/=NM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BB5C0044C
-	for <linux-integrity@archiver.kernel.org>; Thu,  1 Nov 2018 03:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB33FC0044C
+	for <linux-integrity@archiver.kernel.org>; Thu,  1 Nov 2018 08:22:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FF7220821
-	for <linux-integrity@archiver.kernel.org>; Thu,  1 Nov 2018 03:36:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cnTIdqoV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FF7220821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 73D202081B
+	for <linux-integrity@archiver.kernel.org>; Thu,  1 Nov 2018 08:22:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73D202081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbeKAMhU (ORCPT
+        id S1727822AbeKARX7 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 1 Nov 2018 08:37:20 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:34560 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726840AbeKAMhU (ORCPT
+        Thu, 1 Nov 2018 13:23:59 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:57034 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727774AbeKARX7 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 1 Nov 2018 08:37:20 -0400
-Received: by mail-yw1-f65.google.com with SMTP id v199-v6so7394181ywg.1
-        for <linux-integrity@vger.kernel.org>; Wed, 31 Oct 2018 20:36:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=zamWPB7Zrsbk1HU+g6DyYhjI1LOLXffcsrjOS1cfmoc=;
-        b=cnTIdqoVbcehNhb9FKMitRDNdejZO0Uh4fHM64GEX5NlGgV/K5FQMWArwEJN8bWFnU
-         yjVdKN2oGs+Fl4ZFjEZR0f48ZsnrB0TnFnAapbuRW3YuhENboxof8QwfUdgneZQ6xT0n
-         mPwb4THqjBtZ6Wm7eNfxvBNDmeQla1kSlCmV8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=zamWPB7Zrsbk1HU+g6DyYhjI1LOLXffcsrjOS1cfmoc=;
-        b=KNKE2kR0xVpVhF2l0YhYMtvGi5pUXZrwTXz3BTdWXRVXlw0lJB37qA3VWT9f6CgL24
-         3Le4it4ZaXupQcYSUjXl5GsRywu9GPXhe/WRzaI3wqjZhiLNqjqfe7QeeIBtjNrvfUKC
-         vpTfPDIJU/pvL7l7m3IH8ZLYVNWMXs9rm2iAhS+Jsa0LNguZXkRCfbJ9F41HRaFuZyxR
-         QOtZDVsSrpHGAkwkFchP1OqyHUz3Vnicn2hoJMTB4vYOhrDEaErksTCQIZXjZ6NzskrW
-         Ba6AEZvjnkTJRc3StWjIh9ptCk669T6hzC4MBPaDUoLsYTlXPi1YmbvCz++YCgz2iGmN
-         aS8Q==
-X-Gm-Message-State: AGRZ1gKLRk9jaPugqMPtV9QlnMbvGUzOgWDDDKx/vny4eKEHeSr9Q7GU
-        pTeRUpvs2Jx231VPTaKCqSJ9kZYBgnw=
-X-Google-Smtp-Source: AJdET5dIL5yLukELbh+iNWxDYxR/vPE17v6Y4H9Jkc8dLNjwQPsHmhG1qSyNMq87Wtu7tFgk+7a3zw==
-X-Received: by 2002:a81:6c12:: with SMTP id h18-v6mr5836829ywc.116.1541043372282;
-        Wed, 31 Oct 2018 20:36:12 -0700 (PDT)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
-        by smtp.gmail.com with ESMTPSA id i189-v6sm5594645ywb.23.2018.10.31.20.36.11
-        for <linux-integrity@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 20:36:12 -0700 (PDT)
-Received: by mail-yb1-f169.google.com with SMTP id k132-v6so7584461ybc.2
-        for <linux-integrity@vger.kernel.org>; Wed, 31 Oct 2018 20:36:11 -0700 (PDT)
-X-Received: by 2002:a25:7643:: with SMTP id r64-v6mr5969887ybc.403.1541042915047;
- Wed, 31 Oct 2018 20:28:35 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Wed, 31 Oct 2018 20:28:33
- -0700 (PDT)
-In-Reply-To: <20181031091048.GH744@hirez.programming.kicks-ass.net>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-17-igor.stoppa@huawei.com> <20181025001312.GA3159@worktop.c.hoisthospitality.com>
- <806bfff0-8d62-9918-480d-ec791b93841e@gmail.com> <20181030155841.GF8177@hirez.programming.kicks-ass.net>
- <20181030162815.GB20827@arm.com> <20181031091048.GH744@hirez.programming.kicks-ass.net>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 31 Oct 2018 20:28:33 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jKmhoSsOTqDJmr3ijwDAh57Bfq3KVE+AjrBdLXjPz83+g@mail.gmail.com>
-Message-ID: <CAGXu5jKmhoSsOTqDJmr3ijwDAh57Bfq3KVE+AjrBdLXjPz83+g@mail.gmail.com>
-Subject: Re: [PATCH 16/17] prmem: pratomic-long
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Igor Stoppa <igor.stoppa@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Thu, 1 Nov 2018 13:23:59 -0400
+Received: from p5492fe24.dip0.t-ipconnect.de ([84.146.254.36] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gI8ER-0000Qm-3H; Thu, 01 Nov 2018 09:21:35 +0100
+Date:   Thu, 1 Nov 2018 09:21:34 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Igor Stoppa <igor.stoppa@gmail.com>
+cc:     Andy Lutomirski <luto@amacapital.net>,
+        Peter Zijlstra <peterz@infradead.org>,
         Matthew Wilcox <willy@infradead.org>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Kees Cook <keescook@chromium.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dave Chinner <david@fromorbit.com>,
         James Morris <jmorris@namei.org>,
         Michal Hocko <mhocko@kernel.org>,
         Kernel Hardening <kernel-hardening@lists.openwall.com>,
         linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
         Igor Stoppa <igor.stoppa@huawei.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Laura Abbott <labbott@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arch <linux-arch@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 10/17] prmem: documentation
+In-Reply-To: <8675e9d8-0ef0-7515-a894-097d4be25b73@gmail.com>
+Message-ID: <alpine.DEB.2.21.1811010909480.1642@nanos.tec.linutronix.de>
+References: <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com> <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net> <20181030175814.GB10491@bombadil.infradead.org> <20181030182841.GE7343@cisco> <20181030192021.GC10491@bombadil.infradead.org>
+ <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com> <20181030213557.GE10491@bombadil.infradead.org> <CALCETrW1FcT88u0QY9k_PMOeZj0G8H6KNb5Bnreo-12NvmmCEQ@mail.gmail.com> <20181031100237.GN744@hirez.programming.kicks-ass.net> <659CFC78-22BF-492B-B2E4-B8E89AA08446@amacapital.net>
+ <20181031210032.GA3159@hirez.programming.kicks-ass.net> <2E29C35B-3F98-473D-A874-0D9B9B15B399@amacapital.net> <4124995b-4363-9b37-19b1-1879bf04978b@gmail.com> <CALCETrWCvAfyfBWgcmhy8TGByiX3ZXXSOkLtZFdM385fDqYJVw@mail.gmail.com>
+ <8675e9d8-0ef0-7515-a894-097d4be25b73@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 2:10 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> On Tue, Oct 30, 2018 at 04:28:16PM +0000, Will Deacon wrote:
->> On Tue, Oct 30, 2018 at 04:58:41PM +0100, Peter Zijlstra wrote:
->> > Like mentioned elsewhere; if you do write_enable() + write_disable()
->> > thingies, it all becomes:
->> >
->> >     write_enable();
->> >     atomic_foo(&bar);
->> >     write_disable();
->> >
->> > No magic gunk infested duplication at all. Of course, ideally you'd then
->> > teach objtool about this (or a GCC plugin I suppose) to ensure any
->> > enable reached a disable.
->>
->> Isn't the issue here that we don't want to change the page tables for the
->> mapping of &bar, but instead want to create a temporary writable alias
->> at a random virtual address?
->>
->> So you'd want:
->>
->>       wbar = write_enable(&bar);
->>       atomic_foo(wbar);
->>       write_disable(wbar);
->>
->> which is probably better expressed as a map/unmap API. I suspect this
->> would also be the only way to do things for cmpxchg() loops, where you
->> want to create the mapping outside of the loop to minimise your time in
->> the critical section.
->
-> Ah, so I was thikning that the altnerative mm would have stuff in the
-> same location, just RW instead of RO.
+Igor,
 
-I was hoping for the same location too. That allows use to use a gcc
-plugin to mark, say, function pointer tables, as read-only, and
-annotate their rare updates with write_rare() without any
-recalculation.
+On Thu, 1 Nov 2018, Igor Stoppa wrote:
+> On 01/11/2018 01:19, Andy Lutomirski wrote:
+> 
+> > ISTM you don't need that atomic operation -- you could take a spinlock
+> > and then just add one directly to the variable.
+> 
+> It was my intention to provide a 1:1 conversion of existing code, as it should
+> be easier to verify the correctness of the conversion, as long as there isn't
+> any significant degradation in performance.
+> 
+> The rework could be done afterward.
 
--Kees
+Please don't go there. The usual approach is to
 
--- 
-Kees Cook
+  1) Rework existing code in a way that the new functionality can be added
+     with minimal effort afterwards and without creating API horrors.
+
+  2) Verify correctness of the rework
+
+  3) Add the new functionality
+  
+That avoids creation of odd functionality and APIs in the first place, so
+they won't be used in other places and does not leave half cleaned up code
+around which will stick for a long time.
+
+Thanks,
+
+	tglx
