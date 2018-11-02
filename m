@@ -1,506 +1,245 @@
-Return-Path: <SRS0=DPN/=NM=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=7jzz=NN=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD8AFC0044C
-	for <linux-integrity@archiver.kernel.org>; Thu,  1 Nov 2018 22:55:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35CB1C32789
+	for <linux-integrity@archiver.kernel.org>; Fri,  2 Nov 2018 09:40:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A82B20657
-	for <linux-integrity@archiver.kernel.org>; Thu,  1 Nov 2018 22:55:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fV8WOVrg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A82B20657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D6C9E20831
+	for <linux-integrity@archiver.kernel.org>; Fri,  2 Nov 2018 09:40:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6C9E20831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbeKBIAn (ORCPT
+        id S1726248AbeKBSrZ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 2 Nov 2018 04:00:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52130 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728027AbeKBH7Q (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 2 Nov 2018 03:59:16 -0400
-Received: from ebiggers-linuxstation.kir.corp.google.com (unknown [104.132.51.88])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C541A20848;
-        Thu,  1 Nov 2018 22:54:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541112856;
-        bh=W1m7Bgf2hZhfyKrMZQZ7gDJSPg/+1UByIHYrJNU12ko=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fV8WOVrgXmwhyMdb/JcLlyTnDoWB74jt3NMy2GPELFyCzDEh5kDUeCvfz2YtPIQGm
-         KCy8017oCHYdVSZAIwuutAt6o2IvYgBWujD/+Wye7il4zlCJo0vLtfEV5Ms8lLLLcf
-         u2UOtaQRh2MZL1Kvfb7NnWqKNoDPjHR2nsL3jq88=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fscrypt@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
+        Fri, 2 Nov 2018 14:47:25 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46468 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726099AbeKBSrZ (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 2 Nov 2018 14:47:25 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA29cgvM059666
+        for <linux-integrity@vger.kernel.org>; Fri, 2 Nov 2018 05:40:50 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ngm3186uk-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 02 Nov 2018 05:40:50 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <chandan@linux.vnet.ibm.com>;
+        Fri, 2 Nov 2018 09:40:48 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 2 Nov 2018 09:40:43 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA29egMk54657266
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 2 Nov 2018 09:40:43 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D0DD34203F;
+        Fri,  2 Nov 2018 09:40:42 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 83F9042041;
+        Fri,  2 Nov 2018 09:40:42 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.72.2])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  2 Nov 2018 09:40:42 +0000 (GMT)
+From:   Chandan Rajendra <chandan@linux.vnet.ibm.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Theodore Y . Ts'o" <tytso@mit.edu>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
-        Victor Hsieh <victorhsieh@google.com>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>
-Subject: [PATCH v2 04/12] fs-verity: add data verification hooks for ->readpages()
-Date:   Thu,  1 Nov 2018 15:52:22 -0700
-Message-Id: <20181101225230.88058-5-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
-In-Reply-To: <20181101225230.88058-1-ebiggers@kernel.org>
-References: <20181101225230.88058-1-ebiggers@kernel.org>
+        Victor Hsieh <victorhsieh@google.com>
+Subject: Re: [PATCH v2 10/12] ext4: add basic fs-verity support
+Date:   Fri, 02 Nov 2018 15:13:14 +0530
+In-Reply-To: <20181101225230.88058-11-ebiggers@kernel.org>
+References: <20181101225230.88058-1-ebiggers@kernel.org> <20181101225230.88058-11-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-TM-AS-GCONF: 00
+x-cbid: 18110209-0028-0000-0000-00000311ADE1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110209-0029-0000-0000-000023CDE735
+Message-Id: <2168901.PE78DCQIza@localhost.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-02_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811020091
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On Friday, November 2, 2018 4:22:28 AM IST Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Add basic fs-verity support to ext4.  fs-verity is a filesystem feature
+> that enables transparent integrity protection and authentication of
+> read-only files.  It uses a dm-verity like mechanism at the file level:
+> a Merkle tree is used to verify any block in the file in log(filesize)
+> time.  It is implemented mainly by helper functions in fs/verity/.
+> See Documentation/filesystems/fsverity.rst for details.
+> 
+> This patch adds everything except the data verification hooks that will
+> needed in ->readpages().
+> 
+> On ext4, enabling fs-verity on a file requires that the filesystem has
+> the 'verity' feature, e.g. that it was formatted with
+> 'mkfs.ext4 -O verity' or had 'tune2fs -O verity' run on it.
+> This requires e2fsprogs 1.44.4-2 or later.
+> 
+> In ext4, we choose to retain the fs-verity metadata past the end of the
+> file rather than trying to move it into an external inode xattr, since
+> in practice keeping the metadata in-line actually results in the
+> simplest and most efficient implementation.  One non-obvious advantage
+> of keeping the verity metadata in-line is that when fs-verity is
+> combined with fscrypt, the verity metadata naturally gets encrypted too;
+> this is actually necessary because it contains hashes of the plaintext.
+> 
+> We also choose to keep the on-disk i_size equal to the original file
+> size, in order to make the 'verity' feature a RO_COMPAT feature.  Thus,
+> ext4 has to find the fsverity_footer by looking in the last extent.
+> 
+> Co-developed-by: Theodore Ts'o <tytso@mit.edu>
+> Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  fs/ext4/Kconfig | 20 +++++++++++
+>  fs/ext4/ext4.h  | 20 ++++++++++-
+>  fs/ext4/file.c  |  6 ++++
+>  fs/ext4/inode.c |  8 +++++
+>  fs/ext4/ioctl.c | 12 +++++++
+>  fs/ext4/super.c | 91 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  fs/ext4/sysfs.c |  6 ++++
+>  7 files changed, 162 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/ext4/Kconfig b/fs/ext4/Kconfig
+> index a453cc87082b5..5a76125ac0f8a 100644
+> --- a/fs/ext4/Kconfig
+> +++ b/fs/ext4/Kconfig
+> @@ -111,6 +111,26 @@ config EXT4_FS_ENCRYPTION
+>  	default y
+>  	depends on EXT4_ENCRYPTION
+> 
+> +config EXT4_FS_VERITY
+> +	bool "Ext4 Verity"
+> +	depends on EXT4_FS
+> +	select FS_VERITY
+> +	help
+> +	  This option enables fs-verity for ext4.  fs-verity is the
+> +	  dm-verity mechanism implemented at the file level.  Userspace
+> +	  can append a Merkle tree (hash tree) to a file, then enable
+> +	  fs-verity on the file.  ext4 will then transparently verify
+> +	  any data read from the file against the Merkle tree.  The file
+> +	  is also made read-only.
+> +
+> +	  This serves as an integrity check, but the availability of the
+> +	  Merkle tree root hash also allows efficiently supporting
+> +	  various use cases where normally the whole file would need to
+> +	  be hashed at once, such as auditing and authenticity
+> +	  verification (appraisal).
+> +
+> +	  If unsure, say N.
+> +
+>  config EXT4_DEBUG
+>  	bool "EXT4 debugging support"
+>  	depends on EXT4_FS
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 12f90d48ba613..e5475a629ed80 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -43,6 +43,9 @@
+>  #define __FS_HAS_ENCRYPTION IS_ENABLED(CONFIG_EXT4_FS_ENCRYPTION)
+>  #include <linux/fscrypt.h>
+> 
+> +#define __FS_HAS_VERITY IS_ENABLED(CONFIG_EXT4_FS_VERITY)
+> +#include <linux/fsverity.h>
+> +
+>  #include <linux/compiler.h>
+> 
+>  /* Until this gets included into linux/compiler-gcc.h */
+> @@ -405,6 +408,7 @@ struct flex_groups {
+>  #define EXT4_TOPDIR_FL			0x00020000 /* Top of directory hierarchies*/
+>  #define EXT4_HUGE_FILE_FL               0x00040000 /* Set to each huge file */
+>  #define EXT4_EXTENTS_FL			0x00080000 /* Inode uses extents */
+> +#define EXT4_VERITY_FL			0x00100000 /* Verity protected inode */
+>  #define EXT4_EA_INODE_FL	        0x00200000 /* Inode used for large EA */
+>  #define EXT4_EOFBLOCKS_FL		0x00400000 /* Blocks allocated beyond EOF */
+>  #define EXT4_INLINE_DATA_FL		0x10000000 /* Inode has inline data. */
+> @@ -472,6 +476,7 @@ enum {
+>  	EXT4_INODE_TOPDIR	= 17,	/* Top of directory hierarchies*/
+>  	EXT4_INODE_HUGE_FILE	= 18,	/* Set to each huge file */
+>  	EXT4_INODE_EXTENTS	= 19,	/* Inode uses extents */
+> +	EXT4_INODE_VERITY	= 20,	/* Verity protected inode */
+>  	EXT4_INODE_EA_INODE	= 21,	/* Inode used for large EA */
+>  	EXT4_INODE_EOFBLOCKS	= 22,	/* Blocks allocated beyond EOF */
+>  	EXT4_INODE_INLINE_DATA	= 28,	/* Data in inode. */
+> @@ -517,6 +522,7 @@ static inline void ext4_check_flag_values(void)
+>  	CHECK_FLAG_VALUE(TOPDIR);
+>  	CHECK_FLAG_VALUE(HUGE_FILE);
+>  	CHECK_FLAG_VALUE(EXTENTS);
+> +	CHECK_FLAG_VALUE(VERITY);
+>  	CHECK_FLAG_VALUE(EA_INODE);
+>  	CHECK_FLAG_VALUE(EOFBLOCKS);
+>  	CHECK_FLAG_VALUE(INLINE_DATA);
+> @@ -1654,6 +1660,7 @@ static inline void ext4_clear_state_flags(struct ext4_inode_info *ei)
+>  #define EXT4_FEATURE_RO_COMPAT_METADATA_CSUM	0x0400
+>  #define EXT4_FEATURE_RO_COMPAT_READONLY		0x1000
+>  #define EXT4_FEATURE_RO_COMPAT_PROJECT		0x2000
+> +#define EXT4_FEATURE_RO_COMPAT_VERITY		0x8000
+> 
+>  #define EXT4_FEATURE_INCOMPAT_COMPRESSION	0x0001
+>  #define EXT4_FEATURE_INCOMPAT_FILETYPE		0x0002
+> @@ -1742,6 +1749,7 @@ EXT4_FEATURE_RO_COMPAT_FUNCS(bigalloc,		BIGALLOC)
+>  EXT4_FEATURE_RO_COMPAT_FUNCS(metadata_csum,	METADATA_CSUM)
+>  EXT4_FEATURE_RO_COMPAT_FUNCS(readonly,		READONLY)
+>  EXT4_FEATURE_RO_COMPAT_FUNCS(project,		PROJECT)
+> +EXT4_FEATURE_RO_COMPAT_FUNCS(verity,		VERITY)
+> 
+>  EXT4_FEATURE_INCOMPAT_FUNCS(compression,	COMPRESSION)
+>  EXT4_FEATURE_INCOMPAT_FUNCS(filetype,		FILETYPE)
+> @@ -1797,7 +1805,8 @@ EXT4_FEATURE_INCOMPAT_FUNCS(encrypt,		ENCRYPT)
+>  					 EXT4_FEATURE_RO_COMPAT_BIGALLOC |\
+>  					 EXT4_FEATURE_RO_COMPAT_METADATA_CSUM|\
+>  					 EXT4_FEATURE_RO_COMPAT_QUOTA |\
+> -					 EXT4_FEATURE_RO_COMPAT_PROJECT)
+> +					 EXT4_FEATURE_RO_COMPAT_PROJECT |\
+> +					 EXT4_FEATURE_RO_COMPAT_VERITY)
+> 
+>  #define EXTN_FEATURE_FUNCS(ver) \
+>  static inline bool ext4_has_unknown_ext##ver##_compat_features(struct super_block *sb) \
+> @@ -2293,6 +2302,15 @@ static inline bool ext4_encrypted_inode(struct inode *inode)
+>  	return ext4_test_inode_flag(inode, EXT4_INODE_ENCRYPT);
+>  }
+> 
+> +static inline bool ext4_verity_inode(struct inode *inode)
+> +{
+> +#ifdef CONFIG_EXT4_FS_VERITY
+> +	return ext4_test_inode_flag(inode, EXT4_INODE_VERITY);
+> +#else
+> +	return false;
+> +#endif
+> +}
+> +
 
-Add functions that verify data pages that have been read from a
-fs-verity file, against that file's Merkle tree.  These will be called
-from filesystems' ->readpage() and ->readpages() methods.
+Hi Eric,
 
-Since data verification can block, a workqueue is provided for these
-methods to enqueue verification work from their bio completion callback.
+Can you please explain as to why we check for the presence of
+EXT4_INODE_VERITY flag only when fsverity is enabled during kernel build?
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/verity/Makefile           |   2 +-
- fs/verity/fsverity_private.h |   3 +
- fs/verity/setup.c            |  26 ++-
- fs/verity/verify.c           | 298 +++++++++++++++++++++++++++++++++++
- include/linux/fsverity.h     |  33 ++++
- 5 files changed, 360 insertions(+), 2 deletions(-)
- create mode 100644 fs/verity/verify.c
-
-diff --git a/fs/verity/Makefile b/fs/verity/Makefile
-index 39e123805c827..a6c7cefb61ab7 100644
---- a/fs/verity/Makefile
-+++ b/fs/verity/Makefile
-@@ -1,3 +1,3 @@
- obj-$(CONFIG_FS_VERITY)	+= fsverity.o
- 
--fsverity-y := hash_algs.o setup.o
-+fsverity-y := hash_algs.o setup.o verify.o
-diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
-index acc29825a0ed7..dfdbac3874d74 100644
---- a/fs/verity/fsverity_private.h
-+++ b/fs/verity/fsverity_private.h
-@@ -95,4 +95,7 @@ static inline bool set_fsverity_info(struct inode *inode,
- 	return cmpxchg_release(&inode->i_verity_info, NULL, vi) == NULL;
- }
- 
-+/* verify.c */
-+extern struct workqueue_struct *fsverity_read_workqueue;
-+
- #endif /* _FSVERITY_PRIVATE_H */
-diff --git a/fs/verity/setup.c b/fs/verity/setup.c
-index 925970fbe084d..184bdc96abe51 100644
---- a/fs/verity/setup.c
-+++ b/fs/verity/setup.c
-@@ -801,18 +801,42 @@ EXPORT_SYMBOL_GPL(fsverity_full_i_size);
- 
- static int __init fsverity_module_init(void)
- {
-+	int err;
-+
-+	/*
-+	 * Use an unbound workqueue to allow bios to be verified in parallel
-+	 * even when they happen to complete on the same CPU.  This sacrifices
-+	 * locality, but it's worthwhile since hashing is CPU-intensive.
-+	 *
-+	 * Also use a high-priority workqueue to prioritize verification work,
-+	 * which blocks reads from completing, over regular application tasks.
-+	 */
-+	err = -ENOMEM;
-+	fsverity_read_workqueue = alloc_workqueue("fsverity_read_queue",
-+						  WQ_UNBOUND | WQ_HIGHPRI,
-+						  num_online_cpus());
-+	if (!fsverity_read_workqueue)
-+		goto error;
-+
-+	err = -ENOMEM;
- 	fsverity_info_cachep = KMEM_CACHE(fsverity_info, SLAB_RECLAIM_ACCOUNT);
- 	if (!fsverity_info_cachep)
--		return -ENOMEM;
-+		goto error_free_workqueue;
- 
- 	fsverity_check_hash_algs();
- 
- 	pr_debug("Initialized fs-verity\n");
- 	return 0;
-+
-+error_free_workqueue:
-+	destroy_workqueue(fsverity_read_workqueue);
-+error:
-+	return err;
- }
- 
- static void __exit fsverity_module_exit(void)
- {
-+	destroy_workqueue(fsverity_read_workqueue);
- 	kmem_cache_destroy(fsverity_info_cachep);
- 	fsverity_exit_hash_algs();
- }
-diff --git a/fs/verity/verify.c b/fs/verity/verify.c
-new file mode 100644
-index 0000000000000..e308f22475e8d
---- /dev/null
-+++ b/fs/verity/verify.c
-@@ -0,0 +1,298 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * fs/verity/verify.c: fs-verity data verification functions,
-+ *		       i.e. hooks for ->readpages()
-+ *
-+ * Copyright 2018 Google LLC
-+ *
-+ * Originally written by Jaegeuk Kim and Michael Halcrow;
-+ * heavily rewritten by Eric Biggers.
-+ */
-+
-+#include "fsverity_private.h"
-+
-+#include <crypto/hash.h>
-+#include <linux/bio.h>
-+#include <linux/pagemap.h>
-+#include <linux/ratelimit.h>
-+#include <linux/scatterlist.h>
-+
-+struct workqueue_struct *fsverity_read_workqueue;
-+
-+/**
-+ * hash_at_level() - compute the location of the block's hash at the given level
-+ *
-+ * @vi:		(in) the file's verity info
-+ * @dindex:	(in) the index of the data block being verified
-+ * @level:	(in) the level of hash we want (0 is leaf level)
-+ * @hindex:	(out) the index of the hash block containing the wanted hash
-+ * @hoffset:	(out) the byte offset to the wanted hash within the hash block
-+ */
-+static void hash_at_level(const struct fsverity_info *vi, pgoff_t dindex,
-+			  unsigned int level, pgoff_t *hindex,
-+			  unsigned int *hoffset)
-+{
-+	pgoff_t position;
-+
-+	/* Offset of the hash within the level's region, in hashes */
-+	position = dindex >> (level * vi->log_arity);
-+
-+	/* Index of the hash block in the tree overall */
-+	*hindex = vi->hash_lvl_region_idx[level] + (position >> vi->log_arity);
-+
-+	/* Offset of the wanted hash (in bytes) within the hash block */
-+	*hoffset = (position & ((1 << vi->log_arity) - 1)) <<
-+		   (vi->block_bits - vi->log_arity);
-+}
-+
-+/* Extract a hash from a hash page */
-+static void extract_hash(struct page *hpage, unsigned int hoffset,
-+			 unsigned int hsize, u8 *out)
-+{
-+	void *virt = kmap_atomic(hpage);
-+
-+	memcpy(out, virt + hoffset, hsize);
-+	kunmap_atomic(virt);
-+}
-+
-+static int fsverity_hash_page(const struct fsverity_info *vi,
-+			      struct ahash_request *req,
-+			      struct page *page, u8 *out)
-+{
-+	struct scatterlist sg;
-+	DECLARE_CRYPTO_WAIT(wait);
-+	int err;
-+
-+	sg_init_table(&sg, 1);
-+	sg_set_page(&sg, page, PAGE_SIZE, 0);
-+
-+	ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP |
-+				   CRYPTO_TFM_REQ_MAY_BACKLOG,
-+				   crypto_req_done, &wait);
-+	ahash_request_set_crypt(req, &sg, out, PAGE_SIZE);
-+
-+	err = crypto_ahash_import(req, vi->hashstate);
-+	if (err)
-+		return err;
-+
-+	return crypto_wait_req(crypto_ahash_finup(req), &wait);
-+}
-+
-+static inline int compare_hashes(const u8 *want_hash, const u8 *real_hash,
-+				 int digest_size, struct inode *inode,
-+				 pgoff_t index, int level, const char *algname)
-+{
-+	if (memcmp(want_hash, real_hash, digest_size) == 0)
-+		return 0;
-+
-+	pr_warn_ratelimited("VERIFICATION FAILURE!  ino=%lu, index=%lu, level=%d, want_hash=%s:%*phN, real_hash=%s:%*phN\n",
-+			    inode->i_ino, index, level,
-+			    algname, digest_size, want_hash,
-+			    algname, digest_size, real_hash);
-+	return -EBADMSG;
-+}
-+
-+/*
-+ * Verify a single data page against the file's Merkle tree.
-+ *
-+ * In principle, we need to verify the entire path to the root node.  But as an
-+ * optimization, we cache the hash pages in the file's page cache, similar to
-+ * data pages.  Therefore, we can stop verifying as soon as a verified hash page
-+ * is seen while ascending the tree.
-+ *
-+ * Note that unlike data pages, hash pages are marked Uptodate *before* they are
-+ * verified; instead, the Checked bit is set on hash pages that have been
-+ * verified.  Multiple tasks may race to verify a hash page and mark it Checked,
-+ * but it doesn't matter.  The use of the Checked bit also implies that the hash
-+ * block size must equal PAGE_SIZE (for now).
-+ */
-+static bool verify_page(struct inode *inode, const struct fsverity_info *vi,
-+			struct ahash_request *req, struct page *data_page)
-+{
-+	pgoff_t index = data_page->index;
-+	int level = 0;
-+	u8 _want_hash[FS_VERITY_MAX_DIGEST_SIZE];
-+	const u8 *want_hash = NULL;
-+	u8 real_hash[FS_VERITY_MAX_DIGEST_SIZE];
-+	struct page *hpages[FS_VERITY_MAX_LEVELS];
-+	unsigned int hoffsets[FS_VERITY_MAX_LEVELS];
-+	int err;
-+
-+	/* The page must not be unlocked until verification has completed. */
-+	if (WARN_ON_ONCE(!PageLocked(data_page)))
-+		return false;
-+
-+	/*
-+	 * Filesystems shouldn't ask to verify pages beyond the end of the
-+	 * original data (e.g. pages of the Merkle tree itself, if it's stored
-+	 * beyond EOF), but to be safe check for it here too.
-+	 */
-+	if (index >= (vi->data_i_size + PAGE_SIZE - 1) >> PAGE_SHIFT) {
-+		pr_debug("Page %lu is beyond data region\n", index);
-+		return true;
-+	}
-+
-+	pr_debug_ratelimited("Verifying data page %lu...\n", index);
-+
-+	/*
-+	 * Starting at the leaves, ascend the tree saving hash pages along the
-+	 * way until we find a verified hash page, indicated by PageChecked; or
-+	 * until we reach the root.
-+	 */
-+	for (level = 0; level < vi->depth; level++) {
-+		pgoff_t hindex;
-+		unsigned int hoffset;
-+		struct page *hpage;
-+
-+		hash_at_level(vi, index, level, &hindex, &hoffset);
-+
-+		pr_debug_ratelimited("Level %d: hindex=%lu, hoffset=%u\n",
-+				     level, hindex, hoffset);
-+
-+		hpage = fsverity_read_metadata_page(inode, hindex);
-+		if (IS_ERR(hpage)) {
-+			err = PTR_ERR(hpage);
-+			goto out;
-+		}
-+
-+		if (PageChecked(hpage)) {
-+			extract_hash(hpage, hoffset, vi->hash_alg->digest_size,
-+				     _want_hash);
-+			want_hash = _want_hash;
-+			put_page(hpage);
-+			pr_debug_ratelimited("Hash page already checked, want %s:%*phN\n",
-+					     vi->hash_alg->name,
-+					     vi->hash_alg->digest_size,
-+					     want_hash);
-+			break;
-+		}
-+		pr_debug_ratelimited("Hash page not yet checked\n");
-+		hpages[level] = hpage;
-+		hoffsets[level] = hoffset;
-+	}
-+
-+	if (!want_hash) {
-+		want_hash = vi->root_hash;
-+		pr_debug("Want root hash: %s:%*phN\n", vi->hash_alg->name,
-+			 vi->hash_alg->digest_size, want_hash);
-+	}
-+
-+	/* Descend the tree verifying hash pages */
-+	for (; level > 0; level--) {
-+		struct page *hpage = hpages[level - 1];
-+		unsigned int hoffset = hoffsets[level - 1];
-+
-+		err = fsverity_hash_page(vi, req, hpage, real_hash);
-+		if (err)
-+			goto out;
-+		err = compare_hashes(want_hash, real_hash,
-+				     vi->hash_alg->digest_size,
-+				     inode, index, level - 1,
-+				     vi->hash_alg->name);
-+		if (err)
-+			goto out;
-+		SetPageChecked(hpage);
-+		extract_hash(hpage, hoffset, vi->hash_alg->digest_size,
-+			     _want_hash);
-+		want_hash = _want_hash;
-+		put_page(hpage);
-+		pr_debug("Verified hash page at level %d, now want %s:%*phN\n",
-+			 level - 1, vi->hash_alg->name,
-+			 vi->hash_alg->digest_size, want_hash);
-+	}
-+
-+	/* Finally, verify the data page */
-+	err = fsverity_hash_page(vi, req, data_page, real_hash);
-+	if (err)
-+		goto out;
-+	err = compare_hashes(want_hash, real_hash, vi->hash_alg->digest_size,
-+			     inode, index, -1, vi->hash_alg->name);
-+out:
-+	for (; level > 0; level--)
-+		put_page(hpages[level - 1]);
-+	if (err) {
-+		pr_warn_ratelimited("Error verifying page; ino=%lu, index=%lu (err=%d)\n",
-+				    inode->i_ino, data_page->index, err);
-+		return false;
-+	}
-+	return true;
-+}
-+
-+/**
-+ * fsverity_verify_page - verify a data page
-+ *
-+ * Verify a page that has just been read from a file against that file's Merkle
-+ * tree.  The page is assumed to be a pagecache page.
-+ *
-+ * Return: true if the page is valid, else false.
-+ */
-+bool fsverity_verify_page(struct page *data_page)
-+{
-+	struct inode *inode = data_page->mapping->host;
-+	const struct fsverity_info *vi = get_fsverity_info(inode);
-+	struct ahash_request *req;
-+	bool valid;
-+
-+	req = ahash_request_alloc(vi->hash_alg->tfm, GFP_KERNEL);
-+	if (unlikely(!req))
-+		return false;
-+
-+	valid = verify_page(inode, vi, req, data_page);
-+
-+	ahash_request_free(req);
-+
-+	return valid;
-+}
-+EXPORT_SYMBOL_GPL(fsverity_verify_page);
-+
-+#ifdef CONFIG_BLOCK
-+/**
-+ * fsverity_verify_bio - verify a 'read' bio that has just completed
-+ *
-+ * Verify a set of pages that have just been read from a file against that
-+ * file's Merkle tree.  The pages are assumed to be pagecache pages.  Pages that
-+ * fail verification are set to the Error state.  Verification is skipped for
-+ * pages already in the Error state, e.g. due to fscrypt decryption failure.
-+ *
-+ * This is a helper function for filesystems that issue bios to read data
-+ * directly into the page cache.  Filesystems that work differently should call
-+ * fsverity_verify_page() on each page instead.  fsverity_verify_page() is also
-+ * needed on holes!
-+ */
-+void fsverity_verify_bio(struct bio *bio)
-+{
-+	struct inode *inode = bio_first_page_all(bio)->mapping->host;
-+	const struct fsverity_info *vi = get_fsverity_info(inode);
-+	struct ahash_request *req;
-+	struct bio_vec *bv;
-+	int i;
-+
-+	req = ahash_request_alloc(vi->hash_alg->tfm, GFP_KERNEL);
-+	if (unlikely(!req)) {
-+		bio_for_each_segment_all(bv, bio, i)
-+			SetPageError(bv->bv_page);
-+		return;
-+	}
-+
-+	bio_for_each_segment_all(bv, bio, i) {
-+		struct page *page = bv->bv_page;
-+
-+		if (!PageError(page) && !verify_page(inode, vi, req, page))
-+			SetPageError(page);
-+	}
-+
-+	ahash_request_free(req);
-+}
-+EXPORT_SYMBOL_GPL(fsverity_verify_bio);
-+#endif /* CONFIG_BLOCK */
-+
-+/**
-+ * fsverity_enqueue_verify_work - enqueue work on the fs-verity workqueue
-+ *
-+ * Enqueue verification work for asynchronous processing.
-+ */
-+void fsverity_enqueue_verify_work(struct work_struct *work)
-+{
-+	queue_work(fsverity_read_workqueue, work);
-+}
-+EXPORT_SYMBOL_GPL(fsverity_enqueue_verify_work);
-diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index c9422a579c160..15478fe7d55aa 100644
---- a/include/linux/fsverity.h
-+++ b/include/linux/fsverity.h
-@@ -28,6 +28,16 @@ extern int fsverity_prepare_getattr(struct inode *inode);
- extern void fsverity_cleanup_inode(struct inode *inode);
- extern loff_t fsverity_full_i_size(const struct inode *inode);
- 
-+/* verify.c */
-+extern bool fsverity_verify_page(struct page *page);
-+extern void fsverity_verify_bio(struct bio *bio);
-+extern void fsverity_enqueue_verify_work(struct work_struct *work);
-+
-+static inline bool fsverity_check_hole(struct inode *inode, struct page *page)
-+{
-+	return inode->i_verity_info == NULL || fsverity_verify_page(page);
-+}
-+
- #else /* !__FS_HAS_VERITY */
- 
- /* setup.c */
-@@ -57,6 +67,29 @@ static inline loff_t fsverity_full_i_size(const struct inode *inode)
- 	return i_size_read(inode);
- }
- 
-+/* verify.c */
-+
-+static inline bool fsverity_verify_page(struct page *page)
-+{
-+	WARN_ON(1);
-+	return false;
-+}
-+
-+static inline void fsverity_verify_bio(struct bio *bio)
-+{
-+	WARN_ON(1);
-+}
-+
-+static inline void fsverity_enqueue_verify_work(struct work_struct *work)
-+{
-+	WARN_ON(1);
-+}
-+
-+static inline bool fsverity_check_hole(struct inode *inode, struct page *page)
-+{
-+	return true;
-+}
-+
- #endif	/* !__FS_HAS_VERITY */
- 
- #endif	/* _LINUX_FSVERITY_H */
 -- 
-2.19.1.568.g152ad8e336-goog
+chandan
 
