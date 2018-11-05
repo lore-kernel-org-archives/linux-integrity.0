@@ -2,85 +2,91 @@ Return-Path: <SRS0=C0Ci=NQ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FB08C46475
-	for <linux-integrity@archiver.kernel.org>; Mon,  5 Nov 2018 16:57:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA924C0044C
+	for <linux-integrity@archiver.kernel.org>; Mon,  5 Nov 2018 17:10:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2689E2081D
-	for <linux-integrity@archiver.kernel.org>; Mon,  5 Nov 2018 16:57:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="li8gwx07"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2689E2081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8B7B520866
+	for <linux-integrity@archiver.kernel.org>; Mon,  5 Nov 2018 17:10:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B7B520866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387498AbeKFCR6 (ORCPT
+        id S1729945AbeKFCa6 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 5 Nov 2018 21:17:58 -0500
-Received: from mail-io1-f48.google.com ([209.85.166.48]:35046 "EHLO
-        mail-io1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387776AbeKFCRz (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 5 Nov 2018 21:17:55 -0500
-Received: by mail-io1-f48.google.com with SMTP id 79-v6so7017715iou.2;
-        Mon, 05 Nov 2018 08:57:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GhMZ5QwgCRzjvi5pZmc/QFkuLseDWK9Exg7+7ZsKiQ8=;
-        b=li8gwx07sGdWZa8Ia4HF4+vloQlT2OBVZlcSvETJgUxZJUMOJ/n7RKPYHTY1dV347y
-         dCJWtLiMlid+Vrq3H8elmd44yHDa4pjgeA799Y3vFuDJ8rCN2GQWgiODRv04FZ8Fzgz5
-         ClRQn+rS4WbwQlUCiNJ3xwveZHThfcyVxg1ElwmKDzYt74ETPIrpJ0b+ccdz9w8poXLE
-         +92hBOHKeG9rhJ9MjKnLHy3zfsx8nQuca0iCbyCiVkNZcDzDV8T65XXkKQVPjov68+y5
-         eX03v0q4bn0q0I3pIsKEF/VCXo/zlOWnfX+GzQSd6SJ3pPEw8fOgymDm+oFh714DFv7p
-         8+iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GhMZ5QwgCRzjvi5pZmc/QFkuLseDWK9Exg7+7ZsKiQ8=;
-        b=GOkVdPw8o43+OZDSecQXwR+3I7ng+4Q76N0L8946CmVvfJJ5CI5qfv2fqjgWk0IdQ/
-         deH4iF2jcQFNKNRcXDAq6oh5xWUofbR4ZMS4dT7IuY4BnI2rNZJtba/4TuqX1HYaoPS1
-         vtaX+elKP+M9lo+9tkybu75TY8vIa01AdXtjWNWk4gf22YpRB8Ml4ckDOnTmkUONPfhE
-         OQ1120ooe6hoDylqFoD88jgwhDgRaANWoaDEinilUrT+35YlgvBwYap8WksO/qE2EKQO
-         towqO23GmnD4dNTyDAkoWQSgV1OPKyW62TCukFXHEEn5831ZP10Jrg8XMOS3pNNKKpgd
-         ZFvg==
-X-Gm-Message-State: AGRZ1gLpZ4TxV+rHRnJ2zkLCOOAbznRZ3su9r+jbtp5DbYb7dd2M6EsJ
-        uNcD3+3LNdVyu8D6PPgzeazWjJycl7V73w8u+p0=
-X-Google-Smtp-Source: AJdET5cHn1diG4YsRW9e/HYSkbbHwyZBMk7xQ8+jqVqcbjtIf3wL2xaB+dDT1zD+yzC5blDpU31O3BHHcmnIySVKxEY=
-X-Received: by 2002:a6b:8f12:: with SMTP id r18-v6mr18936306iod.56.1541437040482;
- Mon, 05 Nov 2018 08:57:20 -0800 (PST)
+        Mon, 5 Nov 2018 21:30:58 -0500
+Received: from mga12.intel.com ([192.55.52.136]:60340 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729733AbeKFCa5 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 5 Nov 2018 21:30:57 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 09:10:19 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
+   d="scan'208";a="271538325"
+Received: from wenjiewa-mobl2.ccr.corp.intel.com (HELO localhost) ([10.249.254.60])
+  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2018 09:10:16 -0800
+Date:   Mon, 5 Nov 2018 19:10:14 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v3 4/5] tpm: retrieve digest size of unknown algorithms
+ with PCR read
+Message-ID: <20181105171014.GA4502@linux.intel.com>
+References: <20181030154711.2782-1-roberto.sassu@huawei.com>
+ <20181030154711.2782-5-roberto.sassu@huawei.com>
+ <1541088173.4035.26.camel@linux.ibm.com>
+ <3034c896-788b-50f9-23cb-f4b2cd6363e6@huawei.com>
+ <20181105120147.GA7621@linux.intel.com>
 MIME-Version: 1.0
-References: <20181019101758.1569-1-stefanb@linux.ibm.com>
-In-Reply-To: <20181019101758.1569-1-stefanb@linux.ibm.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 5 Nov 2018 08:57:09 -0800
-Message-ID: <CAA9_cmfk5O74Hsek9sBRCg=B4+adC7hO4dkUXMw9mNHZ_dfrCw@mail.gmail.com>
-Subject: Re: [PATCH] docs: Extend trusted keys documentation for TPM 2.0
-To:     stefanb@linux.ibm.com
-Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        zohar@linux.ibm.com, jejb@linux.ibm.com,
-        Alexander.Levin@microsoft.com, jsnitsel@redhat.com,
-        James Morris <jmorris@namei.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181105120147.GA7621@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 3:19 AM Stefan Berger <stefanb@linux.ibm.com> wrote:
->
-> Extend the documentation for trusted keys with documentation for how to
-> set up a key for a TPM 2.0 so it can be used with a TPM 2.0 as well.
->
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+On Mon, Nov 05, 2018 at 02:01:47PM +0200, Jarkko Sakkinen wrote:
+> On Mon, Nov 05, 2018 at 10:47:19AM +0100, Roberto Sassu wrote:
+> > > Commit 1db15344f874 ("tpm: implement TPM 2.0 capability to get active
+> > > PCR banks") defined active_banks[7].  Subsequently, commit
+> > > 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware event
+> > > log") defined TPM2_PCR_ACTIVE_BANKS as 3.  I'm not sure which is the
+> > > correct value, but the number of active_banks should not be hard coded
+> > > here.
+> > 
+> > Jarkko, should I change the value of TPM2_PCR_ACTIVE_BANKS, or set the
+> > size of the active_banks array to TPM2_PCR_ACTIVE_BANKS?
+> 
+> Hi, sorry I missed your patch set. Please add me either to 'To' or 'Cc'
+> field of the email if you want a quick response.
+> 
+> I think the implementation is flakky in both places and should be fixed
+> before doing any other changes. Thanks James for pointing out these
+> commits.
+> 
+> What you need to do is to create a prequel commit that reads the number
+> of banks to a variable e.g.
+> 
+>   unsigned int nr_active_banks;
+> 
+> and allocate 'active_banks' dynamically and change the places that
+> James pointed out. I guess it is OK to have a commit with two 'Fixes'
+> tags.
 
-Thanks for the updates:
+Oops sorry Roberto! I had already reviewed this version :-) Apologies.
 
-Acked-by: Dan Williams <dan.j.williams@intel.com>
+/Jarkko
+
