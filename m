@@ -2,99 +2,152 @@ Return-Path: <SRS0=C0Ci=NQ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE74AC0044C
-	for <linux-integrity@archiver.kernel.org>; Mon,  5 Nov 2018 17:13:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB93C0044C
+	for <linux-integrity@archiver.kernel.org>; Mon,  5 Nov 2018 20:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B11320862
-	for <linux-integrity@archiver.kernel.org>; Mon,  5 Nov 2018 17:13:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B11320862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A76472081C
+	for <linux-integrity@archiver.kernel.org>; Mon,  5 Nov 2018 20:42:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A76472081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387420AbeKFCeS (ORCPT
+        id S1730174AbeKFGDr (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 5 Nov 2018 21:34:18 -0500
-Received: from mga06.intel.com ([134.134.136.31]:14534 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729775AbeKFCeS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 5 Nov 2018 21:34:18 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 09:13:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
-   d="scan'208";a="271539054"
-Received: from wenjiewa-mobl2.ccr.corp.intel.com (HELO localhost) ([10.249.254.60])
-  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2018 09:13:35 -0800
-Date:   Mon, 5 Nov 2018 19:13:34 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v3 4/5] tpm: retrieve digest size of unknown algorithms
- with PCR read
-Message-ID: <20181105171334.GB4502@linux.intel.com>
-References: <20181030154711.2782-1-roberto.sassu@huawei.com>
- <20181030154711.2782-5-roberto.sassu@huawei.com>
- <1541088173.4035.26.camel@linux.ibm.com>
- <3034c896-788b-50f9-23cb-f4b2cd6363e6@huawei.com>
- <20181105120147.GA7621@linux.intel.com>
- <3b198ce9-9e2e-5290-bd40-e9a62da1f50d@huawei.com>
+        Tue, 6 Nov 2018 01:03:47 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:47059 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbeKFGDr (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 6 Nov 2018 01:03:47 -0500
+Received: by mail-qk1-f193.google.com with SMTP id q1so17066659qkf.13
+        for <linux-integrity@vger.kernel.org>; Mon, 05 Nov 2018 12:42:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=iQEet/EtCgZb43MJS3yHnoNwAZwN35U8MBKnqNMR3Js=;
+        b=scPgEzDQI9GyB4ZDBHq0glZZ5Jm3W9vrecUbbH5JI9BoBIn6hXRvdLyQqIlKMcflny
+         canRVvMfpwn7ouam3liSmlhC6WY7+kCRyqc0tOMkJ19JwpmZIZ1dO+5IqYuZZXSH8dCu
+         qBimq52ohbV+RTMf63HOEc2qPShkjJHAI0I25af4u60m4Ydm6zrFyRHAjG9Ud3AQLAs0
+         RBQzIZ4LzcpMWRWHNd1cHZMKLllSD4r/9fio+1v5Y6S0kqjqrqXmHh0tBhj7SvIcBrmD
+         5k8apayiS087BM04FRw/98ov/eBITIgRYKZ2QTIw33VaUFatrL/xxNx7+bbNPQOPjRZK
+         k/kA==
+X-Gm-Message-State: AGRZ1gJBdJTwgJd+EXiCB9Ebf2WbGBui1iGgNcDwRq2s5jDxrf+Vi99q
+        Fs9rwR69vTy7+4+JYy6kz9fmmw==
+X-Google-Smtp-Source: AJdET5c79Nb3gzrnEEvJ1LolaNqGsHReOHbvyHDp1SeZSDWbkm1zVAHZj4M8OIqNHP+mGQOYpeJaDQ==
+X-Received: by 2002:a37:c891:: with SMTP id t17mr21478836qkl.31.1541450537811;
+        Mon, 05 Nov 2018 12:42:17 -0800 (PST)
+Received: from localhost (ip72-223-3-97.ph.ph.cox.net. [72.223.3.97])
+        by smtp.gmail.com with ESMTPSA id j67-v6sm9874398qtb.38.2018.11.05.12.42.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 05 Nov 2018 12:42:17 -0800 (PST)
+Date:   Mon, 5 Nov 2018 13:42:15 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        zohar@linux.ibm.com, jejb@linux.ibm.com,
+        Alexander.Levin@microsoft.com, jmorris@namei.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: Extend trusted keys documentation for TPM 2.0
+Message-ID: <20181105204215.hw6vme5epxcc3nch@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+Mail-Followup-To: Stefan Berger <stefanb@linux.ibm.com>,
+        keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        zohar@linux.ibm.com, jejb@linux.ibm.com,
+        Alexander.Levin@microsoft.com, jmorris@namei.org,
+        linux-kernel@vger.kernel.org
+References: <20181019101758.1569-1-stefanb@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3b198ce9-9e2e-5290-bd40-e9a62da1f50d@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181019101758.1569-1-stefanb@linux.ibm.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 02:09:12PM +0100, Roberto Sassu wrote:
-> On 11/5/2018 1:01 PM, Jarkko Sakkinen wrote:
-> > On Mon, Nov 05, 2018 at 10:47:19AM +0100, Roberto Sassu wrote:
-> > > > Commit 1db15344f874 ("tpm: implement TPM 2.0 capability to get active
-> > > > PCR banks") defined active_banks[7].  Subsequently, commit
-> > > > 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware event
-> > > > log") defined TPM2_PCR_ACTIVE_BANKS as 3.  I'm not sure which is the
-> > > > correct value, but the number of active_banks should not be hard coded
-> > > > here.
-> > > 
-> > > Jarkko, should I change the value of TPM2_PCR_ACTIVE_BANKS, or set the
-> > > size of the active_banks array to TPM2_PCR_ACTIVE_BANKS?
-> > 
-> > Hi, sorry I missed your patch set. Please add me either to 'To' or 'Cc'
-> > field of the email if you want a quick response.
-> > 
-> > I think the implementation is flakky in both places and should be fixed
-> > before doing any other changes. Thanks James for pointing out these
-> > commits.
-> > 
-> > What you need to do is to create a prequel commit that reads the number
-> > of banks to a variable e.g.
-> > 
-> >    unsigned int nr_active_banks;
-> > 
-> > and allocate 'active_banks' dynamically and change the places that
-> > James pointed out. I guess it is OK to have a commit with two 'Fixes'
-> > tags.
-> 
-> Ok, then I can remove patch 1/5 if nr_active_banks is included in the
-> tpm_chip structure.
-> 
-> Roberto
+On Fri Oct 19 18, Stefan Berger wrote:
+>Extend the documentation for trusted keys with documentation for how to
+>set up a key for a TPM 2.0 so it can be used with a TPM 2.0 as well.
+>
+>Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+>Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+>---
+> .../security/keys/trusted-encrypted.rst       | 31 ++++++++++++++++++-
+> 1 file changed, 30 insertions(+), 1 deletion(-)
+>
+>diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
+>index 3bb24e09a332..6ec6bb2ac497 100644
+>--- a/Documentation/security/keys/trusted-encrypted.rst
+>+++ b/Documentation/security/keys/trusted-encrypted.rst
+>@@ -18,10 +18,33 @@ integrity verifications match.  A loaded Trusted Key can be updated with new
+> when the kernel and initramfs are updated.  The same key can have many saved
+> blobs under different PCR values, so multiple boots are easily supported.
+>
+>+TPM 1.2
+>+-------
+>+
+> By default, trusted keys are sealed under the SRK, which has the default
+> authorization value (20 zeros).  This can be set at takeownership time with the
+> trouser's utility: "tpm_takeownership -u -z".
+>
+>+TPM 2.0
+>+-------
+>+
+>+The user must first create a storage key and make it persistent, so the key is
+>+available after reboot. This can be done using the following commands.
+>+
+>+With the IBM TSS 2 stack::
+>+
+>+  #> tsscreateprimary -hi o -st
+>+  Handle 80000000
+>+  #> tssevictcontrol -hi o -ho 80000000 -hp 81000001
+>+
+>+Or with the Intel TSS 2 stack::
+>+
+>+  #> tpm2_createprimary --hierarchy o -G rsa2048 -o key.ctxt
+>+  [...]
+>+  handle: 0x800000FF
+>+  #> tpm2_evictcontrol -c key.ctxt -p 0x81000001
+>+  persistentHandle: 0x81000001
+>+
 
-Yeah, I think it would be appropriate to have two fixes tags albeit it
-is arguable whether those are regressions (probably not, I guess
-inconsistency would be a better word) but I don't think they need to be
-cc'd to stable@vger.kernel.org.
+Is that the correct option for tpm2_evictcontrol? What I'm seeing
+in the versions I have is -S or -persistent= for specifying the persistent handle.
 
-/Jarkko
+Other than that looks good to me.
+
+> Usage::
+>
+>     keyctl add trusted name "new keylen [options]" ring
+>@@ -30,7 +53,9 @@ Usage::
+>     keyctl print keyid
+>
+>     options:
+>-       keyhandle=    ascii hex value of sealing key default 0x40000000 (SRK)
+>+       keyhandle=    ascii hex value of sealing key
+>+                       TPM 1.2: default 0x40000000 (SRK)
+>+                       TPM 2.0: no default; must be passed every time
+>        keyauth=	     ascii hex auth for sealing key default 0x00...i
+>                      (40 ascii zeros)
+>        blobauth=     ascii hex auth for sealed data default 0x00...
+>@@ -84,6 +109,10 @@ Examples of trusted and encrypted key usage:
+>
+> Create and save a trusted key named "kmk" of length 32 bytes::
+>
+>+Note: When using a TPM 2.0 with a persistent key with handle 0x81000001,
+>+append 'keyhandle=0x81000001' to statements between quotes, such as
+>+"new 32 keyhandle=0x81000001".
+>+
+>     $ keyctl add trusted kmk "new 32" @u
+>     440502848
+>
+>-- 
+>2.17.2
+>
