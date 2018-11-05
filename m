@@ -2,86 +2,115 @@ Return-Path: <SRS0=C0Ci=NQ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E87ACC46475
-	for <linux-integrity@archiver.kernel.org>; Mon,  5 Nov 2018 12:02:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30DC6C0044C
+	for <linux-integrity@archiver.kernel.org>; Mon,  5 Nov 2018 12:48:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA98920825
-	for <linux-integrity@archiver.kernel.org>; Mon,  5 Nov 2018 12:02:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA98920825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CF30D20862
+	for <linux-integrity@archiver.kernel.org>; Mon,  5 Nov 2018 12:48:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF30D20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729375AbeKEVVP (ORCPT
+        id S1729675AbeKEWI2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:21:15 -0500
-Received: from mga05.intel.com ([192.55.52.43]:65046 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727814AbeKEVVP (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:21:15 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 04:01:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,467,1534834800"; 
-   d="scan'208";a="97719248"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.180])
-  by orsmga003.jf.intel.com with ESMTP; 05 Nov 2018 04:01:48 -0800
-Date:   Mon, 5 Nov 2018 14:01:47 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v3 4/5] tpm: retrieve digest size of unknown algorithms
- with PCR read
-Message-ID: <20181105120147.GA7621@linux.intel.com>
-References: <20181030154711.2782-1-roberto.sassu@huawei.com>
- <20181030154711.2782-5-roberto.sassu@huawei.com>
- <1541088173.4035.26.camel@linux.ibm.com>
- <3034c896-788b-50f9-23cb-f4b2cd6363e6@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3034c896-788b-50f9-23cb-f4b2cd6363e6@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 5 Nov 2018 17:08:28 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48592 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727337AbeKEWI2 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 5 Nov 2018 17:08:28 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA5CicXx093732
+        for <linux-integrity@vger.kernel.org>; Mon, 5 Nov 2018 07:48:51 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2njjx4s334-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 05 Nov 2018 07:48:51 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 5 Nov 2018 12:48:49 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 5 Nov 2018 12:48:46 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA5Cmjiq5439964
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 5 Nov 2018 12:48:45 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B2D8BAE055;
+        Mon,  5 Nov 2018 12:48:45 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A0E08AE045;
+        Mon,  5 Nov 2018 12:48:44 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.105.137])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  5 Nov 2018 12:48:44 +0000 (GMT)
+Subject: Re: [PATCH v2 0/2] crypto: streebog - add Streebog hash function
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Vitaly Chikunov <vt@altlinux.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Date:   Mon, 05 Nov 2018 07:48:33 -0500
+In-Reply-To: <20181103055145.ndvxd7nbnoqtwrk5@sole.flsd.net>
+References: <20181010121254.12220-1-vt@altlinux.org>
+         <20181012061659.mextetc3v7urqkzx@gondor.apana.org.au>
+         <20181012064105.bchujbwoaszrcu3l@sole.flsd.net>
+         <20181017060851.r5mxvpq3l2ycvpio@gondor.apana.org.au>
+         <20181103055145.ndvxd7nbnoqtwrk5@sole.flsd.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18110512-0012-0000-0000-000002C39034
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110512-0013-0000-0000-000020F7CEBD
+Message-Id: <1541422113.21115.44.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-05_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811050118
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 10:47:19AM +0100, Roberto Sassu wrote:
-> > Commit 1db15344f874 ("tpm: implement TPM 2.0 capability to get active
-> > PCR banks") defined active_banks[7].  Subsequently, commit
-> > 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware event
-> > log") defined TPM2_PCR_ACTIVE_BANKS as 3.  I'm not sure which is the
-> > correct value, but the number of active_banks should not be hard coded
-> > here.
+On Sat, 2018-11-03 at 08:51 +0300, Vitaly Chikunov wrote:
+> Herbert,
 > 
-> Jarkko, should I change the value of TPM2_PCR_ACTIVE_BANKS, or set the
-> size of the active_banks array to TPM2_PCR_ACTIVE_BANKS?
+> On Wed, Oct 17, 2018 at 02:08:51PM +0800, Herbert Xu wrote:
+> > On Fri, Oct 12, 2018 at 09:41:05AM +0300, Vitaly Chikunov wrote:
+> > >
+> > > It is the first part of attempts to add to the Integrity subsystem
+> > > ability of verifying file and module signatures by Russian GOST
+> > > algorithms.
+> > 
+> > It would be better if these patches are posted together.  That
+> > way we don't end up with a situation where the algorithm goes into
+> > the kernel but the ultimate user is rejected.
+> 
+> IMA does not need any particular patching inside of their subtree to
+> support new hash, because it is using any hash registered in Hash Info
+> which is still under crypto subtree. I added appropriate patch into v3
+> which is already posted a week ago, and tested it to work correctly with
+> ima_appraise=fix.
 
-Hi, sorry I missed your patch set. Please add me either to 'To' or 'Cc'
-field of the email if you want a quick response.
+That's true, but the target subsystem should be made aware of the new
+usage.
 
-I think the implementation is flakky in both places and should be fixed
-before doing any other changes. Thanks James for pointing out these
-commits.
+Thanks, Herbert.
 
-What you need to do is to create a prequel commit that reads the number
-of banks to a variable e.g.
+Mimi
 
-  unsigned int nr_active_banks;
-
-and allocate 'active_banks' dynamically and change the places that
-James pointed out. I guess it is OK to have a commit with two 'Fixes'
-tags.
-
-/Jarkko
