@@ -1,350 +1,148 @@
-Return-Path: <SRS0=C0Ci=NQ=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=LxfL=NR=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BCEDC46464
-	for <linux-integrity@archiver.kernel.org>; Mon,  5 Nov 2018 22:36:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A8B5C0044C
+	for <linux-integrity@archiver.kernel.org>; Tue,  6 Nov 2018 01:11:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D43A12085B
-	for <linux-integrity@archiver.kernel.org>; Mon,  5 Nov 2018 22:36:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D43A12085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 20DA020862
+	for <linux-integrity@archiver.kernel.org>; Tue,  6 Nov 2018 01:11:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sj+RPstk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20DA020862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387983AbeKFH6H (ORCPT
+        id S1726424AbeKFKeS (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 6 Nov 2018 02:58:07 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34086 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388210AbeKFH6H (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 6 Nov 2018 02:58:07 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA5MYTSM045991
-        for <linux-integrity@vger.kernel.org>; Mon, 5 Nov 2018 17:36:10 -0500
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2njugqgem9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 05 Nov 2018 17:36:09 -0500
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Mon, 5 Nov 2018 22:36:08 -0000
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 5 Nov 2018 22:36:05 -0000
-Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA5Ma4Ar53805060
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 5 Nov 2018 22:36:04 GMT
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 48A21124053;
-        Mon,  5 Nov 2018 22:36:04 +0000 (GMT)
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 105C7124058;
-        Mon,  5 Nov 2018 22:36:04 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon,  5 Nov 2018 22:36:04 +0000 (GMT)
-Subject: Re: [PATCH v3 08/16] tpm: move tpm_validate_commmand() to
- tpm2-space.c
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20181105014552.20262-1-jarkko.sakkinen@linux.intel.com>
- <20181105014552.20262-9-jarkko.sakkinen@linux.intel.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Date:   Mon, 5 Nov 2018 17:36:03 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 6 Nov 2018 05:34:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51612 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725839AbeKFKeS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 6 Nov 2018 05:34:18 -0500
+Received: from gmail.com (unknown [104.132.51.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 493F220827;
+        Tue,  6 Nov 2018 01:11:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541466704;
+        bh=cCvde4mKtTYp6cFeR9OTOyZLx0Kiw5MeLBD3osta8is=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sj+RPstkFPGwGKvQKb+7TqBTGOi9I6SmNSFr6ILjvQWUMBfrG6Zn8ltdcZKmlbmdu
+         ahCTiRWkHF4gV9uAuKY/HI6Lgte0XcvCox6ltzRx0lMEAoWrQFEvstGzB5BbgTv7K0
+         FM11WUzplhc2XohEd019qSf6Xy+gQXd+ZU9lZi9c=
+Date:   Mon, 5 Nov 2018 17:11:42 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Andreas Dilger <adilger@dilger.ca>
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>
+Subject: Re: [PATCH v2 10/12] ext4: add basic fs-verity support
+Message-ID: <20181106011141.GA28490@gmail.com>
+References: <20181101225230.88058-1-ebiggers@kernel.org>
+ <20181101225230.88058-11-ebiggers@kernel.org>
+ <F1AB58DE-E8D8-449C-B07C-4868B181F5E9@dilger.ca>
 MIME-Version: 1.0
-In-Reply-To: <20181105014552.20262-9-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 18110522-0060-0000-0000-000002CDBEEF
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009993; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01113201; UDB=6.00577041; IPR=6.00893301;
- MB=3.00024037; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-05 22:36:08
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110522-0061-0000-0000-0000471967DC
-Message-Id: <4d71e3e5-67b6-d9b3-0561-a1221b5d6bbf@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-05_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811050199
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <F1AB58DE-E8D8-449C-B07C-4868B181F5E9@dilger.ca>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 11/4/18 8:45 PM, Jarkko Sakkinen wrote:
-> Move tpm_validate_command() to tpm2-space.c and make it part of the
-> tpm2_prepare_space() flow. Make cc resolution as part of the TPM space
-> functionality in order to detach it from rest of the tpm_transmit()
-> flow.
->
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->   drivers/char/tpm/tpm-interface.c | 72 +++++++-------------------------
->   drivers/char/tpm/tpm.h           |  9 ++--
->   drivers/char/tpm/tpm2-space.c    | 54 +++++++++++++++++++++---
->   3 files changed, 68 insertions(+), 67 deletions(-)
->
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 422e3bb0bd3d..3bf0c51b7b4f 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -62,47 +62,6 @@ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
->   }
->   EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
->
-> -static int tpm_validate_command(struct tpm_chip *chip,
-> -				 struct tpm_space *space,
-> -				 const u8 *cmd,
-> -				 size_t len)
-> -{
-> -	const struct tpm_input_header *header = (const void *)cmd;
-> -	int i;
-> -	u32 cc;
-> -	u32 attrs;
-> -	unsigned int nr_handles;
-> -
-> -	if (len < TPM_HEADER_SIZE)
-> -		return -EINVAL;
-> -
-> -	if (!space)
-> -		return 0;
-> -
-> -	if (chip->flags & TPM_CHIP_FLAG_TPM2 && chip->nr_commands) {
-> -		cc = be32_to_cpu(header->ordinal);
-> -
-> -		i = tpm2_find_cc(chip, cc);
-> -		if (i < 0) {
-> -			dev_dbg(&chip->dev, "0x%04X is an invalid command\n",
-> -				cc);
-> -			return -EOPNOTSUPP;
-> -		}
-> -
-> -		attrs = chip->cc_attrs_tbl[i];
-> -		nr_handles =
-> -			4 * ((attrs >> TPM2_CC_ATTR_CHANDLES) & GENMASK(2, 0));
-> -		if (len < TPM_HEADER_SIZE + 4 * nr_handles)
-> -			goto err_len;
-> -	}
-> -
-> -	return 0;
-> -err_len:
-> -	dev_dbg(&chip->dev,
-> -		"%s: insufficient command length %zu", __func__, len);
-> -	return -EINVAL;
-> -}
-> -
->   static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
->   {
->   	int rc;
-> @@ -172,20 +131,8 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
->   	u32 count, ordinal;
->   	unsigned long stop;
->
-> -	rc = tpm_validate_command(chip, space, buf, bufsiz);
-> -	if (rc == -EINVAL)
-> -		return rc;
-> -	/*
-> -	 * If the command is not implemented by the TPM, synthesize a
-> -	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
-> -	 */
-> -	if (rc == -EOPNOTSUPP) {
-> -		header->length = cpu_to_be32(sizeof(*header));
-> -		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
-> -		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
-> -						  TSS2_RESMGR_TPM_RC_LAYER);
-> -		return sizeof(*header);
-> -	}
-> +	if (bufsiz < TPM_HEADER_SIZE)
-> +		return -EINVAL;
->
->   	if (bufsiz > TPM_BUFSIZE)
->   		bufsiz = TPM_BUFSIZE;
-> @@ -200,7 +147,18 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
->   		return -E2BIG;
->   	}
->
-> -	rc = tpm2_prepare_space(chip, space, ordinal, buf);
-> +	rc = tpm2_prepare_space(chip, space, buf, bufsiz);
-> +	/*
-> +	 * If the command is not implemented by the TPM, synthesize a
-> +	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
-> +	 */
-> +	if (rc == -EOPNOTSUPP) {
-> +		header->length = cpu_to_be32(sizeof(*header));
-> +		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
-> +		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
-> +						  TSS2_RESMGR_TPM_RC_LAYER);
-> +		return sizeof(*header);
-> +	}
->   	if (rc)
->   		return rc;
->
-> @@ -251,7 +209,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
->   	if (rc)
->   		tpm2_flush_space(chip);
->   	else
-> -		rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
-> +		rc = tpm2_commit_space(chip, space, buf, &len);
->
->   	return rc ? rc : len;
->   }
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index 229ac42b644e..8503dd261897 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -264,6 +264,7 @@ struct tpm_chip {
->   #endif /* CONFIG_ACPI */
->
->   	struct tpm_space work_space;
-> +	u32 last_cc;
->   	u32 nr_commands;
->   	u32 *cc_attrs_tbl;
->
-> @@ -580,10 +581,10 @@ int tpm2_find_cc(struct tpm_chip *chip, u32 cc);
->   int tpm2_init_space(struct tpm_space *space);
->   void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space);
->   void tpm2_flush_space(struct tpm_chip *chip);
-> -int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
-> -		       u8 *cmd);
-> -int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
-> -		      u32 cc, u8 *buf, size_t *bufsiz);
-> +int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u8 *cmd,
-> +		       size_t cmdsiz);
-> +int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space, u8 *buf,
-> +		       size_t *bufsiz);
->
->   int tpm_bios_log_setup(struct tpm_chip *chip);
->   void tpm_bios_log_teardown(struct tpm_chip *chip);
-> diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-> index 3d5f9577e5de..20c295fadd50 100644
-> --- a/drivers/char/tpm/tpm2-space.c
-> +++ b/drivers/char/tpm/tpm2-space.c
-> @@ -264,14 +264,55 @@ static int tpm2_map_command(struct tpm_chip *chip, u32 cc, u8 *cmd)
->   	return 0;
->   }
->
-> -int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
-> -		       u8 *cmd)
-> +static int tpm_validate_command(struct tpm_chip *chip, struct tpm_space *space,
-> +				const u8 *cmd, size_t len)
+Hi Andreas,
 
+On Mon, Nov 05, 2018 at 02:05:24PM -0700, Andreas Dilger wrote:
+> On Nov 1, 2018, at 4:52 PM, Eric Biggers <ebiggers@kernel.org> wrote:
+> > 
+> > From: Eric Biggers <ebiggers@google.com>
+> > 
+> > Add basic fs-verity support to ext4.  fs-verity is a filesystem feature
+> > that enables transparent integrity protection and authentication of
+> > read-only files.  It uses a dm-verity like mechanism at the file level:
+> > a Merkle tree is used to verify any block in the file in log(filesize)
+> > time.  It is implemented mainly by helper functions in fs/verity/.
+> > See Documentation/filesystems/fsverity.rst for details.
+> > 
+> > This patch adds everything except the data verification hooks that will
+> > needed in ->readpages().
+> > 
+> > On ext4, enabling fs-verity on a file requires that the filesystem has
+> > the 'verity' feature, e.g. that it was formatted with
+> > 'mkfs.ext4 -O verity' or had 'tune2fs -O verity' run on it.
+> > This requires e2fsprogs 1.44.4-2 or later.
+> > 
+> > In ext4, we choose to retain the fs-verity metadata past the end of the
+> > file rather than trying to move it into an external inode xattr, since
+> > in practice keeping the metadata in-line actually results in the
+> > simplest and most efficient implementation.  One non-obvious advantage
+> > of keeping the verity metadata in-line is that when fs-verity is
+> > combined with fscrypt, the verity metadata naturally gets encrypted too;
+> > this is actually necessary because it contains hashes of the plaintext.
+> 
+> On the plus side, this means that the verity data will automatically be
+> invalidated if the file is truncated or extended, but on the negative side
+> it means that the verity Merkle tree needs to be recalculated for the
+> entire file if e.g. the file is appended to.
+> 
+> I guess the current implementation will generate the Merkle tree in
+> userspace, but at some point it might be useful to generate it on-the-fly
+> to have proper data integrity from the time of write (e.g. like ZFS)
+> rather than only allowing it to be stored after the entire file is written?
+> 
+> Storing the Merkle tree in a large xattr inode would allow this to change
+> in the future rather than being stuck with the current implementation.  We
+> could encrypt the xattr data just as easily as the file data (which should
+> be done anyway even for non-verity files to avoid leaking data), and having
+> the verity attr keyed to the inode version/size/mime(?) would ensure the
+> kernel knows it is stale if the inode is modified.
+> 
+> I'm not going to stand on my head and block this implementation, I just
+> thought it is worthwhile to raise these issues now rather than after it
+> is a fait accompli.
+> 
 
-Nit: len -> cmdsiz (like below)
+That would actually be the least of the problems for adding write support.
+Adding write support would require at least:
 
+- A way to maintain consistency between the data and hashes, including all
+  levels of hashes, since corruption after a crash (especially of potentially
+  the entire file!) is unacceptable.  The main options for solving this are data
+  journalling, copy-on-write, and log-structured volume.  But it's very hard to
+  retrofit existing filesystems with new consistency mechanisms.  Data
+  journalling can always be used, but is very slow.
 
-> +{
-> +	const struct tpm_input_header *header = (const void *)cmd;
-> +	int i;
-> +	u32 cc;
-> +	u32 attrs;
-> +	unsigned int nr_handles;
-> +
-> +	if (len < TPM_HEADER_SIZE)
-> +		return -EINVAL;
-> +
-> +	if (chip->nr_commands) {
-> +		cc = be32_to_cpu(header->ordinal);
-> +
-> +		i = tpm2_find_cc(chip, cc);
-> +		if (i < 0) {
-> +			dev_dbg(&chip->dev, "0x%04X is an invalid command\n",
-> +				cc);
-> +			return -EOPNOTSUPP;
-> +		}
-> +
-> +		attrs = chip->cc_attrs_tbl[i];
-> +		nr_handles =
-> +			4 * ((attrs >> TPM2_CC_ATTR_CHANDLES) & GENMASK(2, 0));
-> +		if (len < TPM_HEADER_SIZE + 4 * nr_handles)
-> +			goto err_len;
-> +	}
-> +
-> +	return cc;
-> +err_len:
-> +	dev_dbg(&chip->dev, "%s: insufficient command length %zu", __func__,
-> +		len);
-> +	return -EINVAL;
-> +}
-> +
-> +int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u8 *cmd,
-> +		       size_t cmdsiz)
->   {
->   	int rc;
-> +	int cc;
->
->   	if (!space)
->   		return 0;
->
-> +	cc = tpm_validate_command(chip, space, cmd, cmdsiz);
-> +	if (cc < 0)
-> +		return cc;
-> +
->   	memcpy(&chip->work_space.context_tbl, &space->context_tbl,
->   	       sizeof(space->context_tbl));
->   	memcpy(&chip->work_space.session_tbl, &space->session_tbl,
-> @@ -291,6 +332,7 @@ int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
->   		return rc;
->   	}
->
-> +	chip->last_cc = cc;
->   	return 0;
->   }
->
-> @@ -489,8 +531,8 @@ static int tpm2_save_space(struct tpm_chip *chip)
->   	return 0;
->   }
->
-> -int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
-> -		      u32 cc, u8 *buf, size_t *bufsiz)
-> +int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space, u8 *buf,
-> +		      size_t *bufsiz)
->   {
->   	struct tpm_output_header *header = (void *)buf;
->   	int rc;
-> @@ -498,13 +540,13 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
->   	if (!space)
->   		return 0;
->
-> -	rc = tpm2_map_response_header(chip, cc, buf, *bufsiz);
-> +	rc = tpm2_map_response_header(chip, chip->last_cc, buf, *bufsiz);
->   	if (rc) {
->   		tpm2_flush_space(chip);
->   		goto out;
->   	}
->
-> -	rc = tpm2_map_response_body(chip, cc, buf, *bufsiz);
-> +	rc = tpm2_map_response_body(chip, chip->last_cc, buf, *bufsiz);
->   	if (rc) {
->   		tpm2_flush_space(chip);
->   		goto out;
+- An on-disk format that allows dynamically growing/shrinking each level of the
+  Merkle tree; or, using a different authenticated dictionary structure, such as
+  an authenticated skiplist rather than a Merkle tree.  This would drastically
+  increase the complexity over a regular Merkle tree.
 
-Rest looks good.
+Compare it to dm-verity vs. dm-integrity.  dm-verity is read-only and very
+simple; the kernel just uses a Merkle tree that is generated by userspace.
+On the other hand, dm-integrity supports writes but is slow, much more complex,
+and doesn't even actually do full-device authentication since it authenticates
+each sector independently, i.e. there is no Merkle tree.
 
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+I don't think it would make sense for the same device-mapper target to support
+these quite different use cases.  And the same general concepts apply at the
+filesystem level; for these reasons and others (note that per-block checksums
+like btrfs and ZFS wouldn't need a Merkle tree), write support is very
+intentionally outside the scope of fs-verity.
 
+So I think any arguments for doing things differently in fs-verity need to be
+made in the context of read-only files.
+
+Thanks,
+
+Eric
