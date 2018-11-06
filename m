@@ -2,263 +2,107 @@ Return-Path: <SRS0=LxfL=NR=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55385C32789
-	for <linux-integrity@archiver.kernel.org>; Tue,  6 Nov 2018 06:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1303EC46464
+	for <linux-integrity@archiver.kernel.org>; Tue,  6 Nov 2018 15:05:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1EF120862
-	for <linux-integrity@archiver.kernel.org>; Tue,  6 Nov 2018 06:50:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1EF120862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id D82E22086A
+	for <linux-integrity@archiver.kernel.org>; Tue,  6 Nov 2018 15:05:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D82E22086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387424AbeKFQN5 (ORCPT
+        id S2387848AbeKGAbY (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 6 Nov 2018 11:13:57 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38098 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387505AbeKFQN5 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 6 Nov 2018 11:13:57 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA66iNo4044736
-        for <linux-integrity@vger.kernel.org>; Tue, 6 Nov 2018 01:50:13 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nk0g52hx4-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 06 Nov 2018 01:50:12 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <chandan@linux.vnet.ibm.com>;
-        Tue, 6 Nov 2018 06:50:10 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 6 Nov 2018 06:50:07 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA66o6wt4391178
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 6 Nov 2018 06:50:06 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1C9CAA4053;
-        Tue,  6 Nov 2018 06:50:06 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CB8BBA4055;
-        Tue,  6 Nov 2018 06:50:05 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.69.98])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  6 Nov 2018 06:50:05 +0000 (GMT)
-From:   Chandan Rajendra <chandan@linux.vnet.ibm.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Victor Hsieh <victorhsieh@google.com>
-Subject: Re: [PATCH v2 10/12] ext4: add basic fs-verity support
-Date:   Tue, 06 Nov 2018 12:22:39 +0530
-In-Reply-To: <20181106012503.GB28490@gmail.com>
-References: <20181101225230.88058-1-ebiggers@kernel.org> <2168901.PE78DCQIza@localhost.localdomain> <20181106012503.GB28490@gmail.com>
+        Tue, 6 Nov 2018 19:31:24 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32714 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387593AbeKGAbY (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 6 Nov 2018 19:31:24 -0500
+Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id BBB034F3D9EA2;
+        Tue,  6 Nov 2018 15:05:42 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.153)
+ by smtpsuk.huawei.com (10.201.108.35) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Tue, 6 Nov 2018 15:05:35 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v4 0/6] tpm: retrieve digest size of unknown algorithms from TPM
+Date:   Tue, 6 Nov 2018 16:01:53 +0100
+Message-ID: <20181106150159.1136-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-TM-AS-GCONF: 00
-x-cbid: 18110606-4275-0000-0000-000002D9FEDB
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110606-4276-0000-0000-000037E7196B
-Message-Id: <3113392.yxf3e5PHVf@localhost.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-06_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811060059
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.153]
+X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tuesday, November 6, 2018 6:55:03 AM IST Eric Biggers wrote:
-> Hi Chandan,
-> 
-> On Fri, Nov 02, 2018 at 03:13:14PM +0530, Chandan Rajendra wrote:
-> > On Friday, November 2, 2018 4:22:28 AM IST Eric Biggers wrote:
-> > > From: Eric Biggers <ebiggers@google.com>
-> > > 
-> > > Add basic fs-verity support to ext4.  fs-verity is a filesystem feature
-> > > that enables transparent integrity protection and authentication of
-> > > read-only files.  It uses a dm-verity like mechanism at the file level:
-> > > a Merkle tree is used to verify any block in the file in log(filesize)
-> > > time.  It is implemented mainly by helper functions in fs/verity/.
-> > > See Documentation/filesystems/fsverity.rst for details.
-> > > 
-> > > This patch adds everything except the data verification hooks that will
-> > > needed in ->readpages().
-> > > 
-> > > On ext4, enabling fs-verity on a file requires that the filesystem has
-> > > the 'verity' feature, e.g. that it was formatted with
-> > > 'mkfs.ext4 -O verity' or had 'tune2fs -O verity' run on it.
-> > > This requires e2fsprogs 1.44.4-2 or later.
-> > > 
-> > > In ext4, we choose to retain the fs-verity metadata past the end of the
-> > > file rather than trying to move it into an external inode xattr, since
-> > > in practice keeping the metadata in-line actually results in the
-> > > simplest and most efficient implementation.  One non-obvious advantage
-> > > of keeping the verity metadata in-line is that when fs-verity is
-> > > combined with fscrypt, the verity metadata naturally gets encrypted too;
-> > > this is actually necessary because it contains hashes of the plaintext.
-> > > 
-> > > We also choose to keep the on-disk i_size equal to the original file
-> > > size, in order to make the 'verity' feature a RO_COMPAT feature.  Thus,
-> > > ext4 has to find the fsverity_footer by looking in the last extent.
-> > > 
-> > > Co-developed-by: Theodore Ts'o <tytso@mit.edu>
-> > > Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-> > > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> > > ---
-> > >  fs/ext4/Kconfig | 20 +++++++++++
-> > >  fs/ext4/ext4.h  | 20 ++++++++++-
-> > >  fs/ext4/file.c  |  6 ++++
-> > >  fs/ext4/inode.c |  8 +++++
-> > >  fs/ext4/ioctl.c | 12 +++++++
-> > >  fs/ext4/super.c | 91 +++++++++++++++++++++++++++++++++++++++++++++++++
-> > >  fs/ext4/sysfs.c |  6 ++++
-> > >  7 files changed, 162 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/fs/ext4/Kconfig b/fs/ext4/Kconfig
-> > > index a453cc87082b5..5a76125ac0f8a 100644
-> > > --- a/fs/ext4/Kconfig
-> > > +++ b/fs/ext4/Kconfig
-> > > @@ -111,6 +111,26 @@ config EXT4_FS_ENCRYPTION
-> > >  	default y
-> > >  	depends on EXT4_ENCRYPTION
-> > > 
-> > > +config EXT4_FS_VERITY
-> > > +	bool "Ext4 Verity"
-> > > +	depends on EXT4_FS
-> > > +	select FS_VERITY
-> > > +	help
-> > > +	  This option enables fs-verity for ext4.  fs-verity is the
-> > > +	  dm-verity mechanism implemented at the file level.  Userspace
-> > > +	  can append a Merkle tree (hash tree) to a file, then enable
-> > > +	  fs-verity on the file.  ext4 will then transparently verify
-> > > +	  any data read from the file against the Merkle tree.  The file
-> > > +	  is also made read-only.
-> > > +
-> > > +	  This serves as an integrity check, but the availability of the
-> > > +	  Merkle tree root hash also allows efficiently supporting
-> > > +	  various use cases where normally the whole file would need to
-> > > +	  be hashed at once, such as auditing and authenticity
-> > > +	  verification (appraisal).
-> > > +
-> > > +	  If unsure, say N.
-> > > +
-> > >  config EXT4_DEBUG
-> > >  	bool "EXT4 debugging support"
-> > >  	depends on EXT4_FS
-> > > diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> > > index 12f90d48ba613..e5475a629ed80 100644
-> > > --- a/fs/ext4/ext4.h
-> > > +++ b/fs/ext4/ext4.h
-> > > @@ -43,6 +43,9 @@
-> > >  #define __FS_HAS_ENCRYPTION IS_ENABLED(CONFIG_EXT4_FS_ENCRYPTION)
-> > >  #include <linux/fscrypt.h>
-> > > 
-> > > +#define __FS_HAS_VERITY IS_ENABLED(CONFIG_EXT4_FS_VERITY)
-> > > +#include <linux/fsverity.h>
-> > > +
-> > >  #include <linux/compiler.h>
-> > > 
-> > >  /* Until this gets included into linux/compiler-gcc.h */
-> > > @@ -405,6 +408,7 @@ struct flex_groups {
-> > >  #define EXT4_TOPDIR_FL			0x00020000 /* Top of directory hierarchies*/
-> > >  #define EXT4_HUGE_FILE_FL               0x00040000 /* Set to each huge file */
-> > >  #define EXT4_EXTENTS_FL			0x00080000 /* Inode uses extents */
-> > > +#define EXT4_VERITY_FL			0x00100000 /* Verity protected inode */
-> > >  #define EXT4_EA_INODE_FL	        0x00200000 /* Inode used for large EA */
-> > >  #define EXT4_EOFBLOCKS_FL		0x00400000 /* Blocks allocated beyond EOF */
-> > >  #define EXT4_INLINE_DATA_FL		0x10000000 /* Inode has inline data. */
-> > > @@ -472,6 +476,7 @@ enum {
-> > >  	EXT4_INODE_TOPDIR	= 17,	/* Top of directory hierarchies*/
-> > >  	EXT4_INODE_HUGE_FILE	= 18,	/* Set to each huge file */
-> > >  	EXT4_INODE_EXTENTS	= 19,	/* Inode uses extents */
-> > > +	EXT4_INODE_VERITY	= 20,	/* Verity protected inode */
-> > >  	EXT4_INODE_EA_INODE	= 21,	/* Inode used for large EA */
-> > >  	EXT4_INODE_EOFBLOCKS	= 22,	/* Blocks allocated beyond EOF */
-> > >  	EXT4_INODE_INLINE_DATA	= 28,	/* Data in inode. */
-> > > @@ -517,6 +522,7 @@ static inline void ext4_check_flag_values(void)
-> > >  	CHECK_FLAG_VALUE(TOPDIR);
-> > >  	CHECK_FLAG_VALUE(HUGE_FILE);
-> > >  	CHECK_FLAG_VALUE(EXTENTS);
-> > > +	CHECK_FLAG_VALUE(VERITY);
-> > >  	CHECK_FLAG_VALUE(EA_INODE);
-> > >  	CHECK_FLAG_VALUE(EOFBLOCKS);
-> > >  	CHECK_FLAG_VALUE(INLINE_DATA);
-> > > @@ -1654,6 +1660,7 @@ static inline void ext4_clear_state_flags(struct ext4_inode_info *ei)
-> > >  #define EXT4_FEATURE_RO_COMPAT_METADATA_CSUM	0x0400
-> > >  #define EXT4_FEATURE_RO_COMPAT_READONLY		0x1000
-> > >  #define EXT4_FEATURE_RO_COMPAT_PROJECT		0x2000
-> > > +#define EXT4_FEATURE_RO_COMPAT_VERITY		0x8000
-> > > 
-> > >  #define EXT4_FEATURE_INCOMPAT_COMPRESSION	0x0001
-> > >  #define EXT4_FEATURE_INCOMPAT_FILETYPE		0x0002
-> > > @@ -1742,6 +1749,7 @@ EXT4_FEATURE_RO_COMPAT_FUNCS(bigalloc,		BIGALLOC)
-> > >  EXT4_FEATURE_RO_COMPAT_FUNCS(metadata_csum,	METADATA_CSUM)
-> > >  EXT4_FEATURE_RO_COMPAT_FUNCS(readonly,		READONLY)
-> > >  EXT4_FEATURE_RO_COMPAT_FUNCS(project,		PROJECT)
-> > > +EXT4_FEATURE_RO_COMPAT_FUNCS(verity,		VERITY)
-> > > 
-> > >  EXT4_FEATURE_INCOMPAT_FUNCS(compression,	COMPRESSION)
-> > >  EXT4_FEATURE_INCOMPAT_FUNCS(filetype,		FILETYPE)
-> > > @@ -1797,7 +1805,8 @@ EXT4_FEATURE_INCOMPAT_FUNCS(encrypt,		ENCRYPT)
-> > >  					 EXT4_FEATURE_RO_COMPAT_BIGALLOC |\
-> > >  					 EXT4_FEATURE_RO_COMPAT_METADATA_CSUM|\
-> > >  					 EXT4_FEATURE_RO_COMPAT_QUOTA |\
-> > > -					 EXT4_FEATURE_RO_COMPAT_PROJECT)
-> > > +					 EXT4_FEATURE_RO_COMPAT_PROJECT |\
-> > > +					 EXT4_FEATURE_RO_COMPAT_VERITY)
-> > > 
-> > >  #define EXTN_FEATURE_FUNCS(ver) \
-> > >  static inline bool ext4_has_unknown_ext##ver##_compat_features(struct super_block *sb) \
-> > > @@ -2293,6 +2302,15 @@ static inline bool ext4_encrypted_inode(struct inode *inode)
-> > >  	return ext4_test_inode_flag(inode, EXT4_INODE_ENCRYPT);
-> > >  }
-> > > 
-> > > +static inline bool ext4_verity_inode(struct inode *inode)
-> > > +{
-> > > +#ifdef CONFIG_EXT4_FS_VERITY
-> > > +	return ext4_test_inode_flag(inode, EXT4_INODE_VERITY);
-> > > +#else
-> > > +	return false;
-> > > +#endif
-> > > +}
-> > > +
-> > 
-> > Hi Eric,
-> > 
-> > Can you please explain as to why we check for the presence of
-> > EXT4_INODE_VERITY flag only when fsverity is enabled during kernel build?
-> > 
-> 
-> Good question, this might not be the best approach actually; I think this was
-> originally copied from the f2fs version.  It does reduce the overhead introduced
-> by the fs-verity changes in the !CONFIG_EXT4_FS_VERITY case.  But it will allow
-> opening verity files, even for writing which will corrupt them.
-> 
-> Probably we should make ext4_verity_inode() work regardless of
-> CONFIG_EXT4_FS_VERITY, so open(), truncate(), etc. will fail with EOPNOTSUPP on
-> verity files when !CONFIG_EXT4_FS_VERITY, like how ext4 encryption works.
-> 
+The TPM driver currently relies on the crypto subsystem to determine the
+digest size of supported TPM algorithms. In the future, TPM vendors might
+implement new algorithms in their chips, and those algorithms might not
+be supported by the crypto subsystem.
 
-Yes, I agree with what you say. I have followed the above explained logic when
-implementing S_VERITY and IS_VERITY() for Ext4 and will extend that to F2FS as 
-well.
+Usually, vendors provide patches for the new hardware, and likely
+the crypto subsystem will be updated before the new algorithm is
+introduced. However, old kernels might be updated later, after patches
+are included in the mainline kernel. This would leave the opportunity
+for attackers to misuse PCRs, as PCR banks with an unknown algorithm
+are not extended.
+
+This patch set provides a long term solution for this issue. If a TPM
+algorithm is not known by the crypto subsystem, the TPM driver retrieves
+the digest size from the TPM with a PCR read. All the PCR banks are
+extended, even if the algorithm is not yet supported by the crypto
+subsystem.
+
+PCR bank information (TPM algorithm ID, digest size, crypto subsystem ID)
+is stored in the tpm_chip structure and available for users of the TPM
+driver.
+
+Changelog
+
+v3:
+- remove end marker change
+- replace active_banks static array with pointer to dynamic array
+- remove TPM2_ACTIVE_PCR_BANKS
+
+v2:
+- change the end marker of the active_banks array
+- check digest size from output of PCR read command
+- remove count parameter from tpm_pcr_read() and tpm2_pcr_read()
+
+v1:
+- modify definition of tpm_pcr_read()
+- move hash algorithms and definition of tpm2_digest to include/linux/tpm.h
+
+Roberto Sassu (6):
+  tpm: dynamically allocate active_banks array
+  tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
+  tpm: rename and export tpm2_digest and tpm2_algorithms
+  tpm: modify tpm_pcr_read() definition to pass a TPM hash algorithm
+  tpm: retrieve digest size of unknown algorithms with PCR read
+  tpm: ensure that the output of PCR read contains the correct digest
+    size
+
+ drivers/char/tpm/tpm-chip.c         |   1 +
+ drivers/char/tpm/tpm-interface.c    |  34 +++++---
+ drivers/char/tpm/tpm.h              |  19 ++---
+ drivers/char/tpm/tpm2-cmd.c         | 115 ++++++++++++++++++++--------
+ include/linux/tpm.h                 |  30 +++++++-
+ include/linux/tpm_eventlog.h        |  12 +--
+ security/integrity/ima/ima_crypto.c |  10 +--
+ 7 files changed, 145 insertions(+), 76 deletions(-)
 
 -- 
-chandan
+2.17.1
 
