@@ -2,149 +2,124 @@ Return-Path: <SRS0=LxfL=NR=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A68C32789
-	for <linux-integrity@archiver.kernel.org>; Tue,  6 Nov 2018 16:46:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE9EAC32789
+	for <linux-integrity@archiver.kernel.org>; Tue,  6 Nov 2018 17:37:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C2092085B
-	for <linux-integrity@archiver.kernel.org>; Tue,  6 Nov 2018 16:46:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C2092085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A18AB20881
+	for <linux-integrity@archiver.kernel.org>; Tue,  6 Nov 2018 17:37:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A18AB20881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389400AbeKGCMK (ORCPT
+        id S2389372AbeKGDDS (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 6 Nov 2018 21:12:10 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:39474 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389241AbeKGCMJ (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 6 Nov 2018 21:12:09 -0500
-Received: by mail-qk1-f196.google.com with SMTP id e4so18819739qkh.6
-        for <linux-integrity@vger.kernel.org>; Tue, 06 Nov 2018 08:46:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=mSE/CnPe+apf4nMSIKLe+8JhfT5FCMvi4o2vYS4TSPs=;
-        b=MY521y1kn0w25P0GlGnPpwGclb7GecGsGT5Tc8p31A5WSQFQCCOIzrh+NOTBTJ/NPG
-         62x+opkXpqid1gRxeWxlWCgAYckOJSz2FcspGRXbetMOPHP7AmzULt/xXhov7Ez4OYaA
-         GN+IMXdF4BfxjcmuKnSfK3K1nyyJmHvli/fWwEQhf4VM6aGAkEVQKNByk7DLPaHVd8dT
-         /UkJMU8KF6yYYDOCoydKfKAx2Xh/GvFySshdzwcft9dlzptyHvPX3HA5o8cXkXD5SUEp
-         9iZJSmF/bYi4ZX22t/4w1gDTLywepBbrP/+039LqS73uFnKGXOSfltErZetW5PrKcmUw
-         cZZA==
-X-Gm-Message-State: AGRZ1gI5rWOZj0cZsVdw0DmSvugf2zLOvmJNLkpLs40O8xSL7iUCJ9CM
-        AHMtRfrs083OiPM5M4UKe2ga0Q==
-X-Google-Smtp-Source: AJdET5d/YweaZXdpbK/QOjoP74919o1FYfXk3fZLvd5ruvQnPq09AYOq38X4mLqJlfeSSE0cFh7IuQ==
-X-Received: by 2002:ae9:e901:: with SMTP id x1mr24167785qkf.332.1541522765700;
-        Tue, 06 Nov 2018 08:46:05 -0800 (PST)
-Received: from localhost (ip72-223-3-97.ph.ph.cox.net. [72.223.3.97])
-        by smtp.gmail.com with ESMTPSA id f19sm6308289qkh.20.2018.11.06.08.46.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 06 Nov 2018 08:46:05 -0800 (PST)
-Date:   Tue, 6 Nov 2018 09:46:03 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        zohar@linux.ibm.com, jejb@linux.ibm.com,
-        Alexander.Levin@microsoft.com, jmorris@namei.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs: Extend trusted keys documentation for TPM 2.0
-Message-ID: <20181106164603.w46wspmdj5e4slwe@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Stefan Berger <stefanb@linux.ibm.com>,
-        keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        zohar@linux.ibm.com, jejb@linux.ibm.com,
-        Alexander.Levin@microsoft.com, jmorris@namei.org,
-        linux-kernel@vger.kernel.org
-References: <20181019101758.1569-1-stefanb@linux.ibm.com>
+        Tue, 6 Nov 2018 22:03:18 -0500
+Received: from mga07.intel.com ([134.134.136.100]:51946 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389275AbeKGDDS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 6 Nov 2018 22:03:18 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 09:37:01 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,472,1534834800"; 
+   d="scan'208";a="247464728"
+Received: from wenjiewa-mobl2.ccr.corp.intel.com (HELO localhost) ([10.249.254.60])
+  by orsmga004.jf.intel.com with ESMTP; 06 Nov 2018 09:36:56 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Microchip
+        (AT91) SoC support), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4 00/17] Remove nested TPM operations
+Date:   Tue,  6 Nov 2018 19:36:32 +0200
+Message-Id: <20181106173652.31020-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20181019101758.1569-1-stefanb@linux.ibm.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri Oct 19 18, Stefan Berger wrote:
->Extend the documentation for trusted keys with documentation for how to
->set up a key for a TPM 2.0 so it can be used with a TPM 2.0 as well.
->
->Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
->Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+[was Detach TPM space code out of the tpm_transmit() flow but the scope
+ expanded a bit.]
 
-Acked-by: Jerry Snitselaar <jsnitsel@redhat.com>
+Make the changes necessary to detach TPM space code and TPM activation
+code out of the tpm_transmit() flow because of both of these can cause
+nested tpm_transmit() calls. The nesteds calls make the whole flow hard
+to maintain, and thus, it is better to just fix things now before this
+turns into a bigger mess.
 
->---
-> .../security/keys/trusted-encrypted.rst       | 31 ++++++++++++++++++-
-> 1 file changed, 30 insertions(+), 1 deletion(-)
->
->diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
->index 3bb24e09a332..6ec6bb2ac497 100644
->--- a/Documentation/security/keys/trusted-encrypted.rst
->+++ b/Documentation/security/keys/trusted-encrypted.rst
->@@ -18,10 +18,33 @@ integrity verifications match.  A loaded Trusted Key can be updated with new
-> when the kernel and initramfs are updated.  The same key can have many saved
-> blobs under different PCR values, so multiple boots are easily supported.
->
->+TPM 1.2
->+-------
->+
-> By default, trusted keys are sealed under the SRK, which has the default
-> authorization value (20 zeros).  This can be set at takeownership time with the
-> trouser's utility: "tpm_takeownership -u -z".
->
->+TPM 2.0
->+-------
->+
->+The user must first create a storage key and make it persistent, so the key is
->+available after reboot. This can be done using the following commands.
->+
->+With the IBM TSS 2 stack::
->+
->+  #> tsscreateprimary -hi o -st
->+  Handle 80000000
->+  #> tssevictcontrol -hi o -ho 80000000 -hp 81000001
->+
->+Or with the Intel TSS 2 stack::
->+
->+  #> tpm2_createprimary --hierarchy o -G rsa2048 -o key.ctxt
->+  [...]
->+  handle: 0x800000FF
->+  #> tpm2_evictcontrol -c key.ctxt -p 0x81000001
->+  persistentHandle: 0x81000001
->+
-> Usage::
->
->     keyctl add trusted name "new keylen [options]" ring
->@@ -30,7 +53,9 @@ Usage::
->     keyctl print keyid
->
->     options:
->-       keyhandle=    ascii hex value of sealing key default 0x40000000 (SRK)
->+       keyhandle=    ascii hex value of sealing key
->+                       TPM 1.2: default 0x40000000 (SRK)
->+                       TPM 2.0: no default; must be passed every time
->        keyauth=	     ascii hex auth for sealing key default 0x00...i
->                      (40 ascii zeros)
->        blobauth=     ascii hex auth for sealed data default 0x00...
->@@ -84,6 +109,10 @@ Examples of trusted and encrypted key usage:
->
-> Create and save a trusted key named "kmk" of length 32 bytes::
->
->+Note: When using a TPM 2.0 with a persistent key with handle 0x81000001,
->+append 'keyhandle=0x81000001' to statements between quotes, such as
->+"new 32 keyhandle=0x81000001".
->+
->     $ keyctl add trusted kmk "new 32" @u
->     440502848
->
->-- 
->2.17.2
->
+The commits are available in a branch called 'nested' in
+
+git://git.infradead.org/users/jjs/linux-tpmdd.git
+
+v4:
+* Return 0 from pcrs_show() when tpm1_pcr_read() fails.
+* Fix error handling flow in tpm_try_transmit().
+* Replace struct tpm_input_header and struct tpm_output_header with
+  struct tpm_header.
+
+v3:
+* Encapsulate power gating code to tpm_chip_start() and tpm_chip_stop().
+* Move TPM power gating code and locking to tpm_try_get_ops() and
+  tpm_put_ops().
+* Call power gating code directly in tpm_chip_register() and
+  tpm2_del_space().
+
+v2:
+* Print tpm2_commit_space() error inside tpm2_commit_space()
+* Error code was not printed when recv() callback failed. It is
+  fixed in this version.
+* Added a patch that removes @space from tpm_transmit().
+* Fixed a regression in earlier series. Forgot to amend the change
+  from the staging area that renames NESTED to UNLOCKED in tpm2-space.c.
+
+Jarkko Sakkinen (17):
+  tpm: use tpm_buf in tpm_transmit_cmd() as the IO parameter
+  tpm: fix invalid return value in pubek_show()
+  tpm: return 0 from pcrs_show() when tpm1_pcr_read() fails
+  tpm: call tpm2_flush_space() on error in tpm_try_transmit()
+  tpm: print tpm2_commit_space() error inside tpm2_commit_space()
+  tpm: clean up tpm_try_transmit() error handling flow
+  tpm: declare struct tpm_header
+  tpm: access command header through struct in  tpm_try_transmit()
+  tpm: move tpm_validate_commmand() to tpm2-space.c
+  tpm: encapsulate tpm_dev_transmit()
+  tpm: move TPM space code out of tpm_transmit()
+  tpm: remove @space from tpm_transmit()
+  tpm: use tpm_try_get_ops() in tpm-sysfs.c.
+  tpm: remove TPM_TRANSMIT_UNLOCKED flag
+  tpm: introduce tpm_chip_start() and tpm_chip_stop()
+  tpm: take TPM chip power gating out of tpm_transmit()
+  tpm: remove @flags from tpm_transmit()
+
+ drivers/char/tpm/tpm-chip.c       | 105 +++++++++++-
+ drivers/char/tpm/tpm-dev-common.c |  45 ++++-
+ drivers/char/tpm/tpm-interface.c  | 267 ++++++------------------------
+ drivers/char/tpm/tpm-sysfs.c      | 138 +++++++++------
+ drivers/char/tpm/tpm.h            |  64 +++----
+ drivers/char/tpm/tpm1-cmd.c       |  28 +---
+ drivers/char/tpm/tpm2-cmd.c       |  72 +++-----
+ drivers/char/tpm/tpm2-space.c     |  93 ++++++++---
+ drivers/char/tpm/tpm_i2c_atmel.c  |   5 +-
+ drivers/char/tpm/tpm_vtpm_proxy.c |  12 +-
+ drivers/char/tpm/xen-tpmfront.c   |   2 +-
+ 11 files changed, 406 insertions(+), 425 deletions(-)
+
+-- 
+2.19.1
+
