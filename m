@@ -4,151 +4,260 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44BF2C32789
-	for <linux-integrity@archiver.kernel.org>; Wed,  7 Nov 2018 00:53:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88BF0C0044C
+	for <linux-integrity@archiver.kernel.org>; Wed,  7 Nov 2018 06:17:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 095762086B
-	for <linux-integrity@archiver.kernel.org>; Wed,  7 Nov 2018 00:53:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 095762086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4EE93204FD
+	for <linux-integrity@archiver.kernel.org>; Wed,  7 Nov 2018 06:17:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EE93204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388411AbeKGKVb (ORCPT
+        id S1726353AbeKGPqq (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 7 Nov 2018 05:21:31 -0500
-Received: from mga02.intel.com ([134.134.136.20]:49678 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388174AbeKGKVb (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 7 Nov 2018 05:21:31 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 16:53:31 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,473,1534834800"; 
-   d="scan'208";a="87228430"
-Received: from orsmsx102.amr.corp.intel.com ([10.22.225.129])
-  by orsmga007.jf.intel.com with ESMTP; 06 Nov 2018 16:53:31 -0800
-Received: from orsmsx101.amr.corp.intel.com ([169.254.8.174]) by
- ORSMSX102.amr.corp.intel.com ([169.254.3.81]) with mapi id 14.03.0415.000;
- Tue, 6 Nov 2018 16:53:31 -0800
-From:   "Roberts, William C" <william.c.roberts@intel.com>
-To:     Joshua Lock <joshua.g.lock@linux.intel.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "Alexander.Levin@microsoft.com" <Alexander.Levin@microsoft.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] docs: Extend trusted keys documentation for TPM 2.0
-Thread-Topic: [PATCH] docs: Extend trusted keys documentation for TPM 2.0
-Thread-Index: AQHUdenxzBU/KTVxKkS71zvOm1NWzqVDcgEAgAAKFBA=
-Date:   Wed, 7 Nov 2018 00:53:30 +0000
-Message-ID: <476DC76E7D1DF2438D32BFADF679FC5649C7AF69@ORSMSX101.amr.corp.intel.com>
-References: <20181019101758.1569-1-stefanb@linux.ibm.com>
-         <20181105204215.hw6vme5epxcc3nch@cantor>
-         <20181106160058.5ov7yhzq6mbrg6yn@cantor>
- <6c4576c012fca40a08e6db394b4c3620a2879aa8.camel@linux.intel.com>
-In-Reply-To: <6c4576c012fca40a08e6db394b4c3620a2879aa8.camel@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.140]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 7 Nov 2018 10:46:46 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53870 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726516AbeKGPqq (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 7 Nov 2018 10:46:46 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA76EUnX118545
+        for <linux-integrity@vger.kernel.org>; Wed, 7 Nov 2018 01:17:51 -0500
+Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nkryhkdbp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 07 Nov 2018 01:17:50 -0500
+Received: from localhost
+        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <nayna@linux.ibm.com>;
+        Wed, 7 Nov 2018 06:17:50 -0000
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 7 Nov 2018 06:17:48 -0000
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA76Hllg19202132
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 7 Nov 2018 06:17:47 GMT
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 32FBF6A054;
+        Wed,  7 Nov 2018 06:17:47 +0000 (GMT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1CB8B6A04F;
+        Wed,  7 Nov 2018 06:17:45 +0000 (GMT)
+Received: from [9.124.31.41] (unknown [9.124.31.41])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed,  7 Nov 2018 06:17:44 +0000 (GMT)
+Subject: Re: [PATCH v4 1/6] tpm: dynamically allocate active_banks array
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        jarkko.sakkinen@linux.intel.com, zohar@linux.ibm.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+References: <20181106150159.1136-1-roberto.sassu@huawei.com>
+ <20181106150159.1136-2-roberto.sassu@huawei.com>
+From:   Nayna Jain <nayna@linux.ibm.com>
+Date:   Wed, 7 Nov 2018 11:44:27 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
+In-Reply-To: <20181106150159.1136-2-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18110706-0004-0000-0000-000014AE451B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010001; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01113835; UDB=6.00577421; IPR=6.00893935;
+ MB=3.00024054; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-07 06:17:49
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110706-0005-0000-0000-0000896D6A5F
+Message-Id: <98482eee-6e91-1666-1ce2-cfa94a33efc2@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-07_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811070057
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSm9zaHVhIExvY2sgW21h
-aWx0bzpqb3NodWEuZy5sb2NrQGxpbnV4LmludGVsLmNvbV0NCj4gU2VudDogVHVlc2RheSwgTm92
-ZW1iZXIgNiwgMjAxOCA4OjE1IEFNDQo+IFRvOiBKZXJyeSBTbml0c2VsYWFyIDxqc25pdHNlbEBy
-ZWRoYXQuY29tPjsgU3RlZmFuIEJlcmdlcg0KPiA8c3RlZmFuYkBsaW51eC5pYm0uY29tPjsga2V5
-cmluZ3NAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4gaW50ZWdyaXR5QHZnZXIua2VybmVsLm9y
-Zzsgem9oYXJAbGludXguaWJtLmNvbTsgamVqYkBsaW51eC5pYm0uY29tOw0KPiBBbGV4YW5kZXIu
-TGV2aW5AbWljcm9zb2Z0LmNvbTsgam1vcnJpc0BuYW1laS5vcmc7IGxpbnV4LQ0KPiBrZXJuZWxA
-dmdlci5rZXJuZWwub3JnDQo+IENjOiBSb2JlcnRzLCBXaWxsaWFtIEMgPHdpbGxpYW0uYy5yb2Jl
-cnRzQGludGVsLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSF0gZG9jczogRXh0ZW5kIHRydXN0
-ZWQga2V5cyBkb2N1bWVudGF0aW9uIGZvciBUUE0gMi4wDQo+IA0KPiBPbiBUdWUsIDIwMTgtMTEt
-MDYgYXQgMDk6MDAgLTA3MDAsIEplcnJ5IFNuaXRzZWxhYXIgd3JvdGU6DQo+ID4gT24gTW9uIE5v
-diAwNSAxOCwgSmVycnkgU25pdHNlbGFhciB3cm90ZToNCj4gPiA+IE9uIEZyaSBPY3QgMTkgMTgs
-IFN0ZWZhbiBCZXJnZXIgd3JvdGU6DQo+ID4gPiA+IEV4dGVuZCB0aGUgZG9jdW1lbnRhdGlvbiBm
-b3IgdHJ1c3RlZCBrZXlzIHdpdGggZG9jdW1lbnRhdGlvbiBmb3INCj4gPiA+ID4gaG93IHRvIHNl
-dCB1cCBhIGtleSBmb3IgYSBUUE0gMi4wIHNvIGl0IGNhbiBiZSB1c2VkIHdpdGggYSBUUE0gMi4w
-DQo+ID4gPiA+IGFzIHdlbGwuDQo+ID4gPiA+DQo+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IFN0ZWZh
-biBCZXJnZXIgPHN0ZWZhbmJAbGludXguaWJtLmNvbT4NCj4gPiA+ID4gUmV2aWV3ZWQtYnk6IE1p
-bWkgWm9oYXIgPHpvaGFyQGxpbnV4LmlibS5jb20+DQo+ID4gPiA+IC0tLQ0KPiA+ID4gPiAuLi4v
-c2VjdXJpdHkva2V5cy90cnVzdGVkLWVuY3J5cHRlZC5yc3QgICAgICAgfCAzMQ0KPiA+ID4gPiAr
-KysrKysrKysrKysrKysrKystDQo+ID4gPiA+IDEgZmlsZSBjaGFuZ2VkLCAzMCBpbnNlcnRpb25z
-KCspLCAxIGRlbGV0aW9uKC0pDQo+ID4gPiA+DQo+ID4gPiA+IGRpZmYgLS1naXQgYS9Eb2N1bWVu
-dGF0aW9uL3NlY3VyaXR5L2tleXMvdHJ1c3RlZC1lbmNyeXB0ZWQucnN0DQo+ID4gPiA+IGIvRG9j
-dW1lbnRhdGlvbi9zZWN1cml0eS9rZXlzL3RydXN0ZWQtZW5jcnlwdGVkLnJzdA0KPiA+ID4gPiBp
-bmRleCAzYmIyNGUwOWEzMzIuLjZlYzZiYjJhYzQ5NyAxMDA2NDQNCj4gPiA+ID4gLS0tIGEvRG9j
-dW1lbnRhdGlvbi9zZWN1cml0eS9rZXlzL3RydXN0ZWQtZW5jcnlwdGVkLnJzdA0KPiA+ID4gPiAr
-KysgYi9Eb2N1bWVudGF0aW9uL3NlY3VyaXR5L2tleXMvdHJ1c3RlZC1lbmNyeXB0ZWQucnN0DQo+
-ID4gPiA+IEBAIC0xOCwxMCArMTgsMzMgQEAgaW50ZWdyaXR5IHZlcmlmaWNhdGlvbnMgbWF0Y2gu
-ICBBIGxvYWRlZA0KPiA+ID4gPiBUcnVzdGVkIEtleSBjYW4gYmUgdXBkYXRlZCB3aXRoIG5ldyB3
-aGVuIHRoZSBrZXJuZWwgYW5kIGluaXRyYW1mcw0KPiA+ID4gPiBhcmUgdXBkYXRlZC4gIFRoZSBz
-YW1lIGtleSBjYW4gaGF2ZSBtYW55IHNhdmVkIGJsb2JzIHVuZGVyDQo+ID4gPiA+IGRpZmZlcmVu
-dCBQQ1IgdmFsdWVzLCBzbyBtdWx0aXBsZSBib290cyBhcmUgZWFzaWx5IHN1cHBvcnRlZC4NCj4g
-PiA+ID4NCj4gPiA+ID4gK1RQTSAxLjINCj4gPiA+ID4gKy0tLS0tLS0NCj4gPiA+ID4gKw0KPiA+
-ID4gPiBCeSBkZWZhdWx0LCB0cnVzdGVkIGtleXMgYXJlIHNlYWxlZCB1bmRlciB0aGUgU1JLLCB3
-aGljaCBoYXMgdGhlDQo+ID4gPiA+IGRlZmF1bHQgYXV0aG9yaXphdGlvbiB2YWx1ZSAoMjAgemVy
-b3MpLiAgVGhpcyBjYW4gYmUgc2V0IGF0DQo+ID4gPiA+IHRha2Vvd25lcnNoaXAgdGltZSB3aXRo
-IHRoZSB0cm91c2VyJ3MgdXRpbGl0eTogInRwbV90YWtlb3duZXJzaGlwDQo+ID4gPiA+IC11IC16
-Ii4NCj4gPiA+ID4NCj4gPiA+ID4gK1RQTSAyLjANCj4gPiA+ID4gKy0tLS0tLS0NCj4gPiA+ID4g
-Kw0KPiA+ID4gPiArVGhlIHVzZXIgbXVzdCBmaXJzdCBjcmVhdGUgYSBzdG9yYWdlIGtleSBhbmQg
-bWFrZSBpdCBwZXJzaXN0ZW50LA0KPiA+ID4gPiBzbyB0aGUga2V5IGlzDQo+ID4gPiA+ICthdmFp
-bGFibGUgYWZ0ZXIgcmVib290LiBUaGlzIGNhbiBiZSBkb25lIHVzaW5nIHRoZSBmb2xsb3dpbmcN
-Cj4gPiA+ID4gY29tbWFuZHMuDQo+ID4gPiA+ICsNCj4gPiA+ID4gK1dpdGggdGhlIElCTSBUU1Mg
-MiBzdGFjazo6DQo+ID4gPiA+ICsNCj4gPiA+ID4gKyAgIz4gdHNzY3JlYXRlcHJpbWFyeSAtaGkg
-byAtc3QNCj4gPiA+ID4gKyAgSGFuZGxlIDgwMDAwMDAwDQo+ID4gPiA+ICsgICM+IHRzc2V2aWN0
-Y29udHJvbCAtaGkgbyAtaG8gODAwMDAwMDAgLWhwIDgxMDAwMDAxDQo+ID4gPiA+ICsNCj4gPiA+
-ID4gK09yIHdpdGggdGhlIEludGVsIFRTUyAyIHN0YWNrOjoNCj4gPiA+ID4gKw0KPiA+ID4gPiAr
-ICAjPiB0cG0yX2NyZWF0ZXByaW1hcnkgLS1oaWVyYXJjaHkgbyAtRyByc2EyMDQ4IC1vIGtleS5j
-dHh0DQo+ID4gPiA+ICsgWy4uLl0NCj4gPiA+ID4gKyAgaGFuZGxlOiAweDgwMDAwMEZGDQo+ID4g
-PiA+ICsgICM+IHRwbTJfZXZpY3Rjb250cm9sIC1jIGtleS5jdHh0IC1wIDB4ODEwMDAwMDENCj4g
-PiA+ID4gKyAgcGVyc2lzdGVudEhhbmRsZTogMHg4MTAwMDAwMQ0KPiA+ID4gPiArDQo+ID4gPg0K
-PiA+ID4gSXMgdGhhdCB0aGUgY29ycmVjdCBvcHRpb24gZm9yIHRwbTJfZXZpY3Rjb250cm9sPyBX
-aGF0IEknbSBzZWVpbmcgaW4NCj4gPiA+IHRoZSB2ZXJzaW9ucyBJIGhhdmUgaXMgLVMgb3IgLXBl
-cnNpc3RlbnQ9IGZvciBzcGVjaWZ5aW5nIHRoZQ0KPiA+ID4gcGVyc2lzdGVudCBoYW5kbGUuDQo+
-ID4gPg0KPiA+ID4gT3RoZXIgdGhhbiB0aGF0IGxvb2tzIGdvb2QgdG8gbWUuDQo+ID4NCj4gPiBX
-aWxsaWFtLCBpcyB0aGUgYWJvdmUgY29ycmVjdD8NCj4gDQo+IFdlJ3JlIGNoYW5naW5nIHNvbWUg
-b2YgdGhlIG9wdGlvbnMgaW4gbWFzdGVyIGFoZWFkIG9mIG91ciBuZXh0IG1ham9yIHJlbGVhc2Us
-DQo+IHRoZSAtcC8tLXBlcnNpc3RlbnQgb3B0aW9uIGlzIGNvcnJlY3QgZm9yIHRoYXQgYnJhbmNo
-IGFuZCB0aGUgZXZlbnR1YWwgNC5YIHNlcmllcy4NCg0KTEdUTS4NCg0KQWxzbyBpZiB5b3Ugc3Bl
-Y2lmeSAtLWhlbHA9bm8tbWFuIGl0IHdpbGwgZHVtcCBhIHNob3J0IHN1bW1hcnkgdG8gc3Rkb3V0
-IChtYXN0ZXIgb25seSkgd2hpY2ggaXMgdXNlZnVsLg0KDQo+IA0KPiBSZWdhcmRzLA0KPiBKb3No
-dWENCj4gDQo+ID4gPg0KPiA+ID4gPiBVc2FnZTo6DQo+ID4gPiA+DQo+ID4gPiA+ICAgIGtleWN0
-bCBhZGQgdHJ1c3RlZCBuYW1lICJuZXcga2V5bGVuIFtvcHRpb25zXSIgcmluZyBAQCAtMzAsNw0K
-PiA+ID4gPiArNTMsOSBAQCBVc2FnZTo6DQo+ID4gPiA+ICAgIGtleWN0bCBwcmludCBrZXlpZA0K
-PiA+ID4gPg0KPiA+ID4gPiAgICBvcHRpb25zOg0KPiA+ID4gPiAtICAgICAgIGtleWhhbmRsZT0g
-ICAgYXNjaWkgaGV4IHZhbHVlIG9mIHNlYWxpbmcga2V5IGRlZmF1bHQNCj4gPiA+ID4gMHg0MDAw
-MDAwMCAoU1JLKQ0KPiA+ID4gPiArICAgICAgIGtleWhhbmRsZT0gICAgYXNjaWkgaGV4IHZhbHVl
-IG9mIHNlYWxpbmcga2V5DQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIFRQTSAxLjI6
-IGRlZmF1bHQgMHg0MDAwMDAwMCAoU1JLKQ0KPiA+ID4gPiArICAgICAgICAgICAgICAgICAgICAg
-ICBUUE0gMi4wOiBubyBkZWZhdWx0OyBtdXN0IGJlIHBhc3NlZCBldmVyeQ0KPiA+ID4gPiB0aW1l
-DQo+ID4gPiA+ICAgICAgIGtleWF1dGg9CSAgICAgYXNjaWkgaGV4IGF1dGggZm9yIHNlYWxpbmcg
-a2V5IGRlZmF1bHQNCj4gPiA+ID4gMHgwMC4uLmkNCj4gPiA+ID4gICAgICAgICAgICAgICAgICAg
-ICAoNDAgYXNjaWkgemVyb3MpDQo+ID4gPiA+ICAgICAgIGJsb2JhdXRoPSAgICAgYXNjaWkgaGV4
-IGF1dGggZm9yIHNlYWxlZCBkYXRhIGRlZmF1bHQNCj4gPiA+ID4gMHgwMC4uLg0KPiA+ID4gPiBA
-QCAtODQsNiArMTA5LDEwIEBAIEV4YW1wbGVzIG9mIHRydXN0ZWQgYW5kIGVuY3J5cHRlZCBrZXkg
-dXNhZ2U6DQo+ID4gPiA+DQo+ID4gPiA+IENyZWF0ZSBhbmQgc2F2ZSBhIHRydXN0ZWQga2V5IG5h
-bWVkICJrbWsiIG9mIGxlbmd0aCAzMiBieXRlczo6DQo+ID4gPiA+DQo+ID4gPiA+ICtOb3RlOiBX
-aGVuIHVzaW5nIGEgVFBNIDIuMCB3aXRoIGEgcGVyc2lzdGVudCBrZXkgd2l0aCBoYW5kbGUNCj4g
-PiA+ID4gMHg4MTAwMDAwMSwNCj4gPiA+ID4gK2FwcGVuZCAna2V5aGFuZGxlPTB4ODEwMDAwMDEn
-IHRvIHN0YXRlbWVudHMgYmV0d2VlbiBxdW90ZXMsIHN1Y2gNCj4gPiA+ID4gYXMNCj4gPiA+ID4g
-KyJuZXcgMzIga2V5aGFuZGxlPTB4ODEwMDAwMDEiLg0KPiA+ID4gPiArDQo+ID4gPiA+ICAgICQg
-a2V5Y3RsIGFkZCB0cnVzdGVkIGttayAibmV3IDMyIiBAdQ0KPiA+ID4gPiAgICA0NDA1MDI4NDgN
-Cj4gPiA+ID4NCj4gPiA+ID4gLS0NCj4gPiA+ID4gMi4xNy4yDQo+ID4gPiA+DQoNCg==
+
+
+On 11/06/2018 08:31 PM, Roberto Sassu wrote:
+> This patch removes the hard-coded limit of the active_banks array size.
+
+
+The hard-coded limit in static array active_banks[] represents the 
+maximum possible banks.
+A TPM might have three banks, but only one bank may be active.
+
+To confirm my understanding, is the idea for this patch is to 
+dynamically identify the number of possible banks or the number of 
+active banks ?
+
+
+> It stores in the tpm_chip structure the number of active PCR banks,
+> determined in tpm2_get_pcr_allocation(), and replaces the static array
+> with a pointer to a dynamically allocated array.
+>
+> As a consequence of the introduction of nr_active_banks, tpm_pcr_extend()
+> does not check anymore if the algorithm stored in tpm_chip is equal to
+> zero. The active_banks array always contains valid algorithms.
+>
+> Fixes: 1db15344f874 ("tpm: implement TPM 2.0 capability to get active
+> PCR banks")
+>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>   drivers/char/tpm/tpm-chip.c      |  1 +
+>   drivers/char/tpm/tpm-interface.c | 19 ++++++++++++-------
+>   drivers/char/tpm/tpm.h           |  3 ++-
+>   drivers/char/tpm/tpm2-cmd.c      | 17 ++++++++---------
+>   4 files changed, 23 insertions(+), 17 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+> index 46caadca916a..2a9e8b744436 100644
+> --- a/drivers/char/tpm/tpm-chip.c
+> +++ b/drivers/char/tpm/tpm-chip.c
+> @@ -160,6 +160,7 @@ static void tpm_dev_release(struct device *dev)
+>   	kfree(chip->log.bios_event_log);
+>   	kfree(chip->work_space.context_buf);
+>   	kfree(chip->work_space.session_buf);
+> +	kfree(chip->active_banks);
+>   	kfree(chip);
+>   }
+>
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 1a803b0cf980..ba7ca6b3e664 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -1039,8 +1039,7 @@ static int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+>   int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
+>   {
+>   	int rc;
+> -	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
+> -	u32 count = 0;
+> +	struct tpm2_digest *digest_list;
+>   	int i;
+>
+>   	chip = tpm_find_get_ops(chip);
+> @@ -1048,16 +1047,22 @@ int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
+>   		return -ENODEV;
+>
+>   	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> -		memset(digest_list, 0, sizeof(digest_list));
+> +		digest_list = kmalloc_array(chip->nr_active_banks,
+> +					    sizeof(*digest_list), GFP_KERNEL);
+> +		if (!digest_list)
+> +			return -ENOMEM;
+>
+> -		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
+> -			    chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
+> +		memset(digest_list, 0,
+> +		       chip->nr_active_banks * sizeof(*digest_list));
+> +
+> +		for (i = 0; i < chip->nr_active_banks; i++) {
+>   			digest_list[i].alg_id = chip->active_banks[i];
+>   			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
+> -			count++;
+>   		}
+>
+> -		rc = tpm2_pcr_extend(chip, pcr_idx, count, digest_list);
+> +		rc = tpm2_pcr_extend(chip, pcr_idx, chip->nr_active_banks,
+> +				     digest_list);
+> +		kfree(digest_list);
+>   		tpm_put_ops(chip);
+>   		return rc;
+>   	}
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index f3501d05264f..98368c3a6ff7 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -248,7 +248,8 @@ struct tpm_chip {
+>   	const struct attribute_group *groups[3];
+>   	unsigned int groups_cnt;
+>
+> -	u16 active_banks[7];
+> +	u32 nr_active_banks;
+> +	u16 *active_banks;
+>   #ifdef CONFIG_ACPI
+>   	acpi_handle acpi_dev_handle;
+>   	char ppi_version[TPM_PPI_VERSION_LEN + 1];
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index c31b490bd41d..533089cede07 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -242,7 +242,7 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+>   	int i;
+>   	int j;
+>
+> -	if (count > ARRAY_SIZE(chip->active_banks))
+> +	if (count > chip->nr_active_banks)
+>   		return -EINVAL;
+>
+>   	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
+> @@ -859,7 +859,6 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+>   	void *marker;
+>   	void *end;
+>   	void *pcr_select_offset;
+> -	unsigned int count;
+>   	u32 sizeof_pcr_selection;
+>   	u32 rsp_len;
+>   	int rc;
+> @@ -878,11 +877,14 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+>   	if (rc)
+>   		goto out;
+>
+> -	count = be32_to_cpup(
+> +	chip->nr_active_banks = be32_to_cpup(
+>   		(__be32 *)&buf.data[TPM_HEADER_SIZE + 5]);
+
+
+As per my understanding, the count in the TPML_PCR_SELECTION represent 
+the number of possible banks and not the number of active banks.
+TCG Structures Spec for TPM 2.0 - Table 102 mentions this as explanation 
+of #TPM_RC_SIZE.
+
+Thanks & Regards,
+     - Nayna
+
+
+>
+> -	if (count > ARRAY_SIZE(chip->active_banks)) {
+> -		rc = -ENODEV;
+> +	chip->active_banks = kmalloc_array(chip->nr_active_banks,
+> +					   sizeof(*chip->active_banks),
+> +					   GFP_KERNEL);
+> +	if (!chip->active_banks) {
+> +		rc = -ENOMEM;
+>   		goto out;
+>   	}
+>
+> @@ -891,7 +893,7 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+>   	rsp_len = be32_to_cpup((__be32 *)&buf.data[2]);
+>   	end = &buf.data[rsp_len];
+>
+> -	for (i = 0; i < count; i++) {
+> +	for (i = 0; i < chip->nr_active_banks; i++) {
+>   		pcr_select_offset = marker +
+>   			offsetof(struct tpm2_pcr_selection, size_of_select);
+>   		if (pcr_select_offset >= end) {
+> @@ -908,9 +910,6 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+>   	}
+>
+>   out:
+> -	if (i < ARRAY_SIZE(chip->active_banks))
+> -		chip->active_banks[i] = TPM2_ALG_ERROR;
+> -
+>   	tpm_buf_destroy(&buf);
+>
+>   	return rc;
+
