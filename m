@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC0C4ECDE4C
-	for <linux-integrity@archiver.kernel.org>; Thu,  8 Nov 2018 15:00:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D425CECDE47
+	for <linux-integrity@archiver.kernel.org>; Thu,  8 Nov 2018 15:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B72452081D
-	for <linux-integrity@archiver.kernel.org>; Thu,  8 Nov 2018 15:00:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B72452081D
+	by mail.kernel.org (Postfix) with ESMTP id A53322081D
+	for <linux-integrity@archiver.kernel.org>; Thu,  8 Nov 2018 15:02:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A53322081D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbeKIAf5 (ORCPT
+        id S1726417AbeKIAiW (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 8 Nov 2018 19:35:57 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47406 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726421AbeKIAf4 (ORCPT
+        Thu, 8 Nov 2018 19:38:22 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60936 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726672AbeKIAiW (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 8 Nov 2018 19:35:56 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA8ExP6Y104802
-        for <linux-integrity@vger.kernel.org>; Thu, 8 Nov 2018 10:00:03 -0500
+        Thu, 8 Nov 2018 19:38:22 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA8ExOEj056014
+        for <linux-integrity@vger.kernel.org>; Thu, 8 Nov 2018 10:02:27 -0500
 Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nmpqh227p-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nmnxf4js0-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 08 Nov 2018 10:00:01 -0500
+        for <linux-integrity@vger.kernel.org>; Thu, 08 Nov 2018 10:02:27 -0500
 Received: from localhost
         by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Thu, 8 Nov 2018 15:00:01 -0000
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        Thu, 8 Nov 2018 14:52:21 -0000
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
         by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 8 Nov 2018 14:59:57 -0000
+        Thu, 8 Nov 2018 14:52:16 -0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA8ExuXL46137436
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA8EqFQf20381832
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 8 Nov 2018 14:59:56 GMT
+        Thu, 8 Nov 2018 14:52:15 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0E8E2B2064;
-        Thu,  8 Nov 2018 14:59:56 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id B22A2B2065;
+        Thu,  8 Nov 2018 14:52:15 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ED8A9B205F;
-        Thu,  8 Nov 2018 14:59:55 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 2D657B205F;
+        Thu,  8 Nov 2018 14:52:15 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  8 Nov 2018 14:59:55 +0000 (GMT)
-Subject: Re: [PATCH v5 06/17] tpm: clean up tpm_try_transmit() error handling
- flow
+        Thu,  8 Nov 2018 14:52:15 +0000 (GMT)
+Subject: Re: [PATCH v5 03/17] tpm: return 0 from pcrs_show() when
+ tpm1_pcr_read() fails
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -66,25 +66,25 @@ Cc:     linux-security-module@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         open list <linux-kernel@vger.kernel.org>
 References: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
- <20181108141541.12832-7-jarkko.sakkinen@linux.intel.com>
+ <20181108141541.12832-4-jarkko.sakkinen@linux.intel.com>
 From:   Stefan Berger <stefanb@linux.ibm.com>
-Date:   Thu, 8 Nov 2018 09:59:55 -0500
+Date:   Thu, 8 Nov 2018 09:52:14 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20181108141541.12832-7-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181108141541.12832-4-jarkko.sakkinen@linux.intel.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-MW
 X-TM-AS-GCONF: 00
-x-cbid: 18110814-0040-0000-0000-0000048F2079
+x-cbid: 18110814-0040-0000-0000-0000048F1F75
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010008; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000269; SDB=6.01114488; UDB=6.00577119; IPR=6.00894587;
- MB=3.00024076; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-08 14:59:59
+ PH=3.00000004; SC=3.00000268; SDB=6.01114485; UDB=6.00577119; IPR=6.00894584;
+ MB=3.00024075; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-08 14:52:19
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110814-0041-0000-0000-0000089826B4
-Message-Id: <8eb47b50-d94f-b7dd-f500-83640d88f427@linux.ibm.com>
+x-cbparentid: 18110814-0041-0000-0000-0000089825AC
+Message-Id: <cfc87ece-d69f-3e14-d2bc-c3a9f350b48b@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-08_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -98,131 +98,51 @@ List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
 On 11/8/18 9:15 AM, Jarkko Sakkinen wrote:
-> Move locking, locality handling and power management to tpm_transmit()
-> in order to simplify the flow.
+> Do not print partial list of PCRs when tpm1_pcr_read() fails but instead
+> return 0 from pcrs_show(). This is consistent behavior with other sysfs
+> functions.
 >
 > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-
 
 Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 
 
 > ---
->   drivers/char/tpm/tpm-interface.c | 71 ++++++++++++++++----------------
->   1 file changed, 35 insertions(+), 36 deletions(-)
+>   drivers/char/tpm/tpm-sysfs.c | 13 ++++++-------
+>   1 file changed, 6 insertions(+), 7 deletions(-)
 >
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 7ffb16edab6f..28d48799b044 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -171,7 +171,6 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
->   	ssize_t len = 0;
->   	u32 count, ordinal;
->   	unsigned long stop;
-> -	bool need_locality;
+> diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
+> index 7ed7eb6f906a..928d4e839bb7 100644
+> --- a/drivers/char/tpm/tpm-sysfs.c
+> +++ b/drivers/char/tpm/tpm-sysfs.c
+> @@ -100,22 +100,21 @@ static ssize_t pcrs_show(struct device *dev, struct device_attribute *attr,
+>   {
+>   	cap_t cap;
+>   	u8 digest[TPM_DIGEST_SIZE];
+> -	ssize_t rc;
+>   	u32 i, j, num_pcrs;
+>   	char *str = buf;
+>   	struct tpm_chip *chip = to_tpm_chip(dev);
 >
->   	rc = tpm_validate_command(chip, space, buf, bufsiz);
->   	if (rc == -EINVAL)
-> @@ -201,30 +200,9 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
->   		return -E2BIG;
->   	}
->
-> -	if (!(flags & TPM_TRANSMIT_UNLOCKED) && !(flags & TPM_TRANSMIT_NESTED))
-> -		mutex_lock(&chip->tpm_mutex);
-> -
-> -	if (chip->ops->clk_enable != NULL)
-> -		chip->ops->clk_enable(chip, true);
-> -
-> -	/* Store the decision as chip->locality will be changed. */
-> -	need_locality = chip->locality == -1;
-> -
-> -	if (need_locality) {
-> -		rc = tpm_request_locality(chip, flags);
-> -		if (rc < 0) {
-> -			need_locality = false;
-> -			goto out_locality;
-> -		}
-> -	}
-> -
-> -	rc = tpm_cmd_ready(chip, flags);
+> -	rc = tpm1_getcap(chip, TPM_CAP_PROP_PCR, &cap,
+> -			 "attempting to determine the number of PCRS",
+> -			 sizeof(cap.num_pcrs));
 > -	if (rc)
-> -		goto out_locality;
-> -
->   	rc = tpm2_prepare_space(chip, space, ordinal, buf);
->   	if (rc)
-> -		goto out_idle;
-> +		return rc;
+> +	if (tpm1_getcap(chip, TPM_CAP_PROP_PCR, &cap,
+> +			"attempting to determine the number of PCRS",
+> +			sizeof(cap.num_pcrs)))
+>   		return 0;
 >
->   	rc = chip->ops->send(chip, buf, count);
->   	if (rc < 0) {
-> @@ -273,19 +251,6 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
->   	else
->   		rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
->
-> -out_idle:
-> -	/* may fail but do not override previous error value in rc */
-> -	tpm_go_idle(chip, flags);
-> -
-> -out_locality:
-> -	if (need_locality)
-> -		tpm_relinquish_locality(chip, flags);
-> -
-> -	if (chip->ops->clk_enable != NULL)
-> -		chip->ops->clk_enable(chip, false);
-> -
-> -	if (!(flags & TPM_TRANSMIT_UNLOCKED) && !(flags & TPM_TRANSMIT_NESTED))
-> -		mutex_unlock(&chip->tpm_mutex);
->   	return rc ? rc : len;
->   }
->
-> @@ -315,6 +280,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
->   	/* space for header and handles */
->   	u8 save[TPM_HEADER_SIZE + 3*sizeof(u32)];
->   	unsigned int delay_msec = TPM2_DURATION_SHORT;
-> +	bool has_locality = false;
->   	u32 rc = 0;
->   	ssize_t ret;
->   	const size_t save_size = min(space ? sizeof(save) : TPM_HEADER_SIZE,
-> @@ -330,7 +296,40 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
->   	memcpy(save, buf, save_size);
->
->   	for (;;) {
-> +		if (!(flags & TPM_TRANSMIT_UNLOCKED) &&
-> +		    !(flags & TPM_TRANSMIT_NESTED))
-> +			mutex_lock(&chip->tpm_mutex);
-> +
-> +		if (chip->ops->clk_enable != NULL)
-> +			chip->ops->clk_enable(chip, true);
-> +
-> +		if (chip->locality == -1) {
-> +			ret = tpm_request_locality(chip, flags);
-> +			if (ret)
-> +				goto out_locality;
-> +			has_locality = true;
-> +		}
-> +
-> +		ret = tpm_cmd_ready(chip, flags);
-> +		if (ret)
-> +			goto out_locality;
-> +
->   		ret = tpm_try_transmit(chip, space, buf, bufsiz, flags);
-> +
-> +		/* This may fail but do not override ret. */
-> +		tpm_go_idle(chip, flags);
-> +
-> +out_locality:
-> +		if (has_locality)
-> +			tpm_relinquish_locality(chip, flags);
-> +
-> +		if (chip->ops->clk_enable != NULL)
-> +			chip->ops->clk_enable(chip, false);
-> +
-> +		if (!(flags & TPM_TRANSMIT_UNLOCKED) &&
-> +		    !(flags & TPM_TRANSMIT_NESTED))
-> +			mutex_unlock(&chip->tpm_mutex);
-> +
->   		if (ret < 0)
+>   	num_pcrs = be32_to_cpu(cap.num_pcrs);
+>   	for (i = 0; i < num_pcrs; i++) {
+> -		rc = tpm1_pcr_read(chip, i, digest);
+> -		if (rc)
+> +		if (tpm1_pcr_read(chip, i, digest)) {
+> +			str = buf;
 >   			break;
->   		rc = be32_to_cpu(header->return_code);
+> +		}
+>   		str += sprintf(str, "PCR-%02d: ", i);
+>   		for (j = 0; j < TPM_DIGEST_SIZE; j++)
+>   			str += sprintf(str, "%02X ", digest[j]);
 
 
