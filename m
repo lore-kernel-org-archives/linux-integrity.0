@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 608C0ECDE47
-	for <linux-integrity@archiver.kernel.org>; Thu,  8 Nov 2018 14:48:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B95ECDE4B
+	for <linux-integrity@archiver.kernel.org>; Thu,  8 Nov 2018 14:52:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3403E2086C
-	for <linux-integrity@archiver.kernel.org>; Thu,  8 Nov 2018 14:48:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3403E2086C
+	by mail.kernel.org (Postfix) with ESMTP id 99BAF2081D
+	for <linux-integrity@archiver.kernel.org>; Thu,  8 Nov 2018 14:52:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99BAF2081D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbeKIAXk (ORCPT
+        id S1726927AbeKIA2b (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 8 Nov 2018 19:23:40 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32725 "EHLO huawei.com"
+        Thu, 8 Nov 2018 19:28:31 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32726 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726801AbeKIAXj (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 8 Nov 2018 19:23:39 -0500
+        id S1726469AbeKIA2b (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 8 Nov 2018 19:28:31 -0500
 Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id D10F05BF24125;
-        Thu,  8 Nov 2018 14:47:46 +0000 (GMT)
+        by Forcepoint Email with ESMTP id E4E47B166B2FB;
+        Thu,  8 Nov 2018 14:52:35 +0000 (GMT)
 Received: from [10.204.65.142] (10.204.65.142) by smtpsuk.huawei.com
  (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 8 Nov
- 2018 14:47:40 +0000
-Subject: Re: [PATCH v4 6/6] tpm: ensure that the output of PCR read contains
- the correct digest size
+ 2018 14:52:29 +0000
+Subject: Re: [PATCH v4 2/6] tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 CC:     <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
 References: <20181106150159.1136-1-roberto.sassu@huawei.com>
- <20181106150159.1136-7-roberto.sassu@huawei.com>
- <20181108140814.GF8922@linux.intel.com>
+ <20181106150159.1136-3-roberto.sassu@huawei.com>
+ <20181108140208.GC8922@linux.intel.com>
+ <20181108140318.GD8922@linux.intel.com>
 From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <353ac2d0-591f-f950-f3ad-18e6a4f6085c@huawei.com>
-Date:   Thu, 8 Nov 2018 15:47:39 +0100
+Message-ID: <624865ac-a410-00f0-43b7-5ee5bc324b1f@huawei.com>
+Date:   Thu, 8 Nov 2018 15:52:28 +0100
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181108140814.GF8922@linux.intel.com>
+In-Reply-To: <20181108140318.GD8922@linux.intel.com>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -54,84 +54,69 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 11/8/2018 3:08 PM, Jarkko Sakkinen wrote:
-> On Tue, Nov 06, 2018 at 04:01:59PM +0100, Roberto Sassu wrote:
->> This patch protects against data corruption that could happen in the bus,
->> by checking that that the digest size returned by the TPM during a PCR read
->> matches the size of the algorithm passed as argument to tpm2_pcr_read().
+On 11/8/2018 3:03 PM, Jarkko Sakkinen wrote:
+> On Thu, Nov 08, 2018 at 04:02:08PM +0200, Jarkko Sakkinen wrote:
+>> On Tue, Nov 06, 2018 at 04:01:55PM +0100, Roberto Sassu wrote:
+>>> tcg_efi_specid_event and tcg_pcr_event2 declaration contains static arrays
+>>> for a list of hash algorithms used for event logs and event log digests.
+>>> However, according to TCG EFI Protocol Specification, these arrays have
+>>> variable sizes and are not suitable for parsing events with type casting.
+>>>
+>>> Since declaring static arrays with hard-coded sizes does not help to parse
+>>> data after these arrays, this patch removes the declaration of
+>>> TPM2_ACTIVE_PCR_BANKS and sets the size of the arrays above to zero.
+>>>
+>>> Fixes: 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware
+>>> event log")
+>>>
+>>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>>> ---
+>>>   include/linux/tpm_eventlog.h | 5 ++---
+>>>   1 file changed, 2 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
+>>> index 20d9da77fc11..3d5d162f09cc 100644
+>>> --- a/include/linux/tpm_eventlog.h
+>>> +++ b/include/linux/tpm_eventlog.h
+>>> @@ -8,7 +8,6 @@
+>>>   #define TCG_EVENT_NAME_LEN_MAX	255
+>>>   #define MAX_TEXT_EVENT		1000	/* Max event string length */
+>>>   #define ACPI_TCPA_SIG		"TCPA"	/* 0x41504354 /'TCPA' */
+>>> -#define TPM2_ACTIVE_PCR_BANKS	3
+>>>   
+>>>   #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 0x1
+>>>   #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_2   0x2
+>>> @@ -90,7 +89,7 @@ struct tcg_efi_specid_event {
+>>>   	u8 spec_errata;
+>>>   	u8 uintnsize;
+>>>   	u32 num_algs;
+>>> -	struct tcg_efi_specid_event_algs digest_sizes[TPM2_ACTIVE_PCR_BANKS];
+>>> +	struct tcg_efi_specid_event_algs digest_sizes[0];
+>>>   	u8 vendor_info_size;
+>>>   	u8 vendor_info[0];
+>>>   } __packed;
+>>> @@ -117,7 +116,7 @@ struct tcg_pcr_event2 {
+>>>   	u32 pcr_idx;
+>>>   	u32 event_type;
+>>>   	u32 count;
+>>> -	struct tpm2_digest digests[TPM2_ACTIVE_PCR_BANKS];
+>>> +	struct tpm2_digest digests[0];
+>>>   	struct tcg_event_field event;
 >>
->> This check is performed after information about the PCR banks has been
->> retrieved.
->>
->> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->> ---
->>   drivers/char/tpm/tpm2-cmd.c | 16 +++++++++++++++-
->>   1 file changed, 15 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
->> index e2d5b84286a7..3b0b5b032901 100644
->> --- a/drivers/char/tpm/tpm2-cmd.c
->> +++ b/drivers/char/tpm/tpm2-cmd.c
->> @@ -187,15 +187,28 @@ struct tpm2_pcr_read_out {
->>   int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx,
->>   		  struct tpm_digest *digest_struct, u16 *digest_size_ptr)
->>   {
->> +	int i;
->>   	int rc;
->>   	struct tpm_buf buf;
->>   	struct tpm2_pcr_read_out *out;
->>   	u8 pcr_select[TPM2_PCR_SELECT_MIN] = {0};
->>   	u16 digest_size;
->> +	u16 expected_digest_size = 0;
->>   
->>   	if (pcr_idx >= TPM2_PLATFORM_PCR)
->>   		return -EINVAL;
->>   
->> +	if (!digest_size_ptr) {
->> +		for (i = 0; i < chip->nr_active_banks &&
->> +		     chip->active_banks[i].alg_id != digest_struct->alg_id; i++)
->> +			;
+>> Last two fields make sense at least without comment as they overlap.
 > 
-> Not sure if the semicolon should be in its own line.
-
-scripts/Lindent suggests:
-
-for (i = 0; i < chip->nr_active_banks &&
-      chip->active_banks[i].alg_id != digest_struct->alg_id;
-      i++) ;
-
-but this is not accepted by scripts/checkpatch.pl (there are no
-warnings/errors on the patch I sent).
-
-
->> +
->> +		if (i == chip->nr_active_banks)
->> +			return -EINVAL;
->> +
->> +		expected_digest_size = chip->active_banks[i].digest_size;
->> +	}
->> +
->>   	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_PCR_READ);
->>   	if (rc)
->>   		return rc;
->> @@ -215,7 +228,8 @@ int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx,
->>   
->>   	out = (struct tpm2_pcr_read_out *)&buf.data[TPM_HEADER_SIZE];
->>   	digest_size = be16_to_cpu(out->digest_size);
->> -	if (digest_size > sizeof(digest_struct->digest)) {
->> +	if (digest_size > sizeof(digest_struct->digest) ||
->> +	    (!digest_size_ptr && digest_size != expected_digest_size)) {
->>   		rc = -EINVAL;
->>   		goto out;
->>   	}
->> -- 
->> 2.17.1
->>
+> i.e. would be semantically equal to
 > 
-> Please add
-> 
-> Cc: stable@vger.kernel.org.
-> 
+> union {
+> 	struct tpm2_digest digests[0];
+> 	struct tcg_event_field event;
+> };
+
+I didn't understand. Should I add the union?
+
+Roberto
+
+
 > /Jarkko
 > 
 
