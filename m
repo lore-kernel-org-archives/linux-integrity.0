@@ -2,114 +2,145 @@ Return-Path: <SRS0=meRY=NU=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D769EC43441
-	for <linux-integrity@archiver.kernel.org>; Fri,  9 Nov 2018 06:00:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D684C43441
+	for <linux-integrity@archiver.kernel.org>; Fri,  9 Nov 2018 09:31:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97FD220825
-	for <linux-integrity@archiver.kernel.org>; Fri,  9 Nov 2018 06:00:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97FD220825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 28AED20840
+	for <linux-integrity@archiver.kernel.org>; Fri,  9 Nov 2018 09:31:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28AED20840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727518AbeKIPjO (ORCPT
+        id S1727532AbeKITL3 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 9 Nov 2018 10:39:14 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60454 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727485AbeKIPjO (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 9 Nov 2018 10:39:14 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA95xOt3134066
-        for <linux-integrity@vger.kernel.org>; Fri, 9 Nov 2018 01:00:14 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nmwmddm58-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 09 Nov 2018 01:00:14 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 9 Nov 2018 06:00:12 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 9 Nov 2018 06:00:09 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA9608tL65273986
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 9 Nov 2018 06:00:08 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DCB16A406B;
-        Fri,  9 Nov 2018 06:00:07 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 27BE7A4065;
-        Fri,  9 Nov 2018 06:00:07 +0000 (GMT)
-Received: from localhost.ibm.com (unknown [9.80.106.24])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  9 Nov 2018 06:00:07 +0000 (GMT)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH] KEYS: revert requiring signature "encoding"
-Date:   Fri,  9 Nov 2018 00:59:26 -0500
-X-Mailer: git-send-email 2.7.5
-X-TM-AS-GCONF: 00
-x-cbid: 18110906-0008-0000-0000-00000290013A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110906-0009-0000-0000-000021FA00F8
-Message-Id: <1541743166-5036-1-git-send-email-zohar@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-08_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811090056
+        Fri, 9 Nov 2018 14:11:29 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32728 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727519AbeKITL3 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 9 Nov 2018 14:11:29 -0500
+Received: from lhreml707-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 8002798090E86;
+        Fri,  9 Nov 2018 09:31:43 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.153)
+ by smtpsuk.huawei.com (10.201.108.48) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Fri, 9 Nov 2018 09:31:37 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>,
+        <nayna@linux.ibm.com>
+CC:     <linux-integrity@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        "Roberto Sassu" <roberto.sassu@huawei.com>
+Subject: [PATCH] Apply on top of: tpm: dynamically allocate active_banks array
+Date:   Fri, 9 Nov 2018 10:29:25 +0100
+Message-ID: <20181109092925.2908-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.153]
+X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Attempting to verify IMA signatures fail causing the system to hang.
-
-Fixes: commit 82f94f24475c ("KEYS: Provide software public key query
-       function [ver #2]")
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+This patch checks if a PCR bank is active (at least one bit in the
+pcr_select mask is set).
 ---
- crypto/asymmetric_keys/public_key.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ drivers/char/tpm/tpm2-cmd.c | 44 +++++++++++++++++++++++++++----------
+ 1 file changed, 32 insertions(+), 12 deletions(-)
 
-diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
-index f5d85b47fcc6..f90360122090 100644
---- a/crypto/asymmetric_keys/public_key.c
-+++ b/crypto/asymmetric_keys/public_key.c
-@@ -239,9 +239,17 @@ int public_key_verify_signature(const struct public_key *pkey,
- 	BUG_ON(!sig);
- 	BUG_ON(!sig->s);
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 533089cede07..eba8f8d00a09 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -854,15 +854,20 @@ struct tpm2_pcr_selection {
  
--	ret = software_key_determine_akcipher(sig->encoding,
--					      sig->hash_algo,
--					      pkey, alg_name);
-+	if (!sig->digest)
-+		return -ENOPKG;
+ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+ {
+-	struct tpm2_pcr_selection pcr_selection;
++	struct tpm2_pcr_selection *pcr_selection;
+ 	struct tpm_buf buf;
+ 	void *marker;
+ 	void *end;
+ 	void *pcr_select_offset;
+ 	u32 sizeof_pcr_selection;
++	u32 nr_possible_banks;
++	u32 nr_active_banks = 0;
++	u16 *possible_banks;
++	u16 hash_alg;
+ 	u32 rsp_len;
+ 	int rc;
+ 	int i = 0;
++	int j;
+ 
+ 	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_CAPABILITY);
+ 	if (rc)
+@@ -877,13 +882,12 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+ 	if (rc)
+ 		goto out;
+ 
+-	chip->nr_active_banks = be32_to_cpup(
++	nr_possible_banks = be32_to_cpup(
+ 		(__be32 *)&buf.data[TPM_HEADER_SIZE + 5]);
+ 
+-	chip->active_banks = kmalloc_array(chip->nr_active_banks,
+-					   sizeof(*chip->active_banks),
+-					   GFP_KERNEL);
+-	if (!chip->active_banks) {
++	possible_banks = kmalloc_array(nr_possible_banks,
++				       sizeof(*possible_banks), GFP_KERNEL);
++	if (!possible_banks) {
+ 		rc = -ENOMEM;
+ 		goto out;
+ 	}
+@@ -893,7 +897,7 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+ 	rsp_len = be32_to_cpup((__be32 *)&buf.data[2]);
+ 	end = &buf.data[rsp_len];
+ 
+-	for (i = 0; i < chip->nr_active_banks; i++) {
++	for (i = 0; i < nr_possible_banks; i++) {
+ 		pcr_select_offset = marker +
+ 			offsetof(struct tpm2_pcr_selection, size_of_select);
+ 		if (pcr_select_offset >= end) {
+@@ -901,14 +905,30 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+ 			break;
+ 		}
+ 
+-		memcpy(&pcr_selection, marker, sizeof(pcr_selection));
+-		chip->active_banks[i] = be16_to_cpu(pcr_selection.hash_alg);
+-		sizeof_pcr_selection = sizeof(pcr_selection.hash_alg) +
+-			sizeof(pcr_selection.size_of_select) +
+-			pcr_selection.size_of_select;
++		pcr_selection = (struct tpm2_pcr_selection *)marker;
++		hash_alg = be16_to_cpu(pcr_selection->hash_alg);
 +
-+	if (!(sig->encoding) && strcmp(pkey->pkey_algo, "rsa") == 0)
-+		ret = software_key_determine_akcipher("pkcs1",
-+						      sig->hash_algo,
-+						      pkey, alg_name);
-+	else
-+		ret = software_key_determine_akcipher(sig->encoding,
-+						      sig->hash_algo,
-+						      pkey, alg_name);
- 	if (ret < 0)
- 		return ret;
++		for (j = 0; j < pcr_selection->size_of_select; j++)
++			if (pcr_selection->pcr_select[j])
++				break;
++
++		if (j < pcr_selection->size_of_select)
++			possible_banks[nr_active_banks++] = hash_alg;
++
++		sizeof_pcr_selection = sizeof(pcr_selection->hash_alg) +
++			sizeof(pcr_selection->size_of_select) +
++			pcr_selection->size_of_select;
+ 		marker = marker + sizeof_pcr_selection;
+ 	}
+ 
++	chip->nr_active_banks = nr_active_banks;
++	chip->active_banks = kmemdup(possible_banks,
++				     nr_active_banks * sizeof(*possible_banks),
++				     GFP_KERNEL);
++	if (!chip->active_banks)
++		rc = -ENOMEM;
++
++	kfree(possible_banks);
+ out:
+ 	tpm_buf_destroy(&buf);
  
 -- 
-2.7.5
+2.17.1
 
