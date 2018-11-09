@@ -1,90 +1,115 @@
-Return-Path: <SRS0=coJ5=NT=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=meRY=NU=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D2F1C43441
-	for <linux-integrity@archiver.kernel.org>; Thu,  8 Nov 2018 23:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D769EC43441
+	for <linux-integrity@archiver.kernel.org>; Fri,  9 Nov 2018 06:00:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5C4920818
-	for <linux-integrity@archiver.kernel.org>; Thu,  8 Nov 2018 23:07:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5C4920818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 97FD220825
+	for <linux-integrity@archiver.kernel.org>; Fri,  9 Nov 2018 06:00:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97FD220825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726599AbeKIIpo (ORCPT
+        id S1727518AbeKIPjO (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 9 Nov 2018 03:45:44 -0500
-Received: from mga11.intel.com ([192.55.52.93]:27208 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725922AbeKIIpo (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 9 Nov 2018 03:45:44 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 15:07:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,481,1534834800"; 
-   d="scan'208";a="85059612"
-Received: from carstenv-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.134])
-  by fmsmga008.fm.intel.com with ESMTP; 08 Nov 2018 15:07:50 -0800
-Date:   Fri, 9 Nov 2018 01:07:49 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 09/17] tpm: move tpm_validate_commmand() to
- tpm2-space.c
-Message-ID: <20181108230749.GB8038@linux.intel.com>
-References: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
- <20181108141541.12832-10-jarkko.sakkinen@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9DA18589@hasmsx108.ger.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9DA18589@hasmsx108.ger.corp.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 9 Nov 2018 10:39:14 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60454 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727485AbeKIPjO (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 9 Nov 2018 10:39:14 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA95xOt3134066
+        for <linux-integrity@vger.kernel.org>; Fri, 9 Nov 2018 01:00:14 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nmwmddm58-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 09 Nov 2018 01:00:14 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 9 Nov 2018 06:00:12 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 9 Nov 2018 06:00:09 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA9608tL65273986
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 9 Nov 2018 06:00:08 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DCB16A406B;
+        Fri,  9 Nov 2018 06:00:07 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 27BE7A4065;
+        Fri,  9 Nov 2018 06:00:07 +0000 (GMT)
+Received: from localhost.ibm.com (unknown [9.80.106.24])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  9 Nov 2018 06:00:07 +0000 (GMT)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH] KEYS: revert requiring signature "encoding"
+Date:   Fri,  9 Nov 2018 00:59:26 -0500
+X-Mailer: git-send-email 2.7.5
+X-TM-AS-GCONF: 00
+x-cbid: 18110906-0008-0000-0000-00000290013A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110906-0009-0000-0000-000021FA00F8
+Message-Id: <1541743166-5036-1-git-send-email-zohar@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-08_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811090056
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 05:03:29PM +0000, Winkler, Tomas wrote:
-> You initialized cc under if only 
-> > +
-> > +		i = tpm2_find_cc(chip, cc);
-> > +		if (i < 0) {
-> > +			dev_dbg(&chip->dev, "0x%04X is an invalid
-> > command\n",
-> > +				cc);
-> > +			return -EOPNOTSUPP;
-> > +		}
-> > +
-> > +		attrs = chip->cc_attrs_tbl[i];
-> > +		nr_handles =
-> > +			4 * ((attrs >> TPM2_CC_ATTR_CHANDLES) &
-> > GENMASK(2, 0));
-> > +		if (len < TPM_HEADER_SIZE + 4 * nr_handles)
-> > +			goto err_len;
-> > +	}
-> > +
-> > +	return cc;
-> You can return uninitialized cc here.
+Attempting to verify IMA signatures fail causing the system to hang.
 
-Thanks, good catch.
+Fixes: commit 82f94f24475c ("KEYS: Provide software public key query
+       function [ver #2]")
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+ crypto/asymmetric_keys/public_key.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-/Jarkko
+diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
+index f5d85b47fcc6..f90360122090 100644
+--- a/crypto/asymmetric_keys/public_key.c
++++ b/crypto/asymmetric_keys/public_key.c
+@@ -239,9 +239,17 @@ int public_key_verify_signature(const struct public_key *pkey,
+ 	BUG_ON(!sig);
+ 	BUG_ON(!sig->s);
+ 
+-	ret = software_key_determine_akcipher(sig->encoding,
+-					      sig->hash_algo,
+-					      pkey, alg_name);
++	if (!sig->digest)
++		return -ENOPKG;
++
++	if (!(sig->encoding) && strcmp(pkey->pkey_algo, "rsa") == 0)
++		ret = software_key_determine_akcipher("pkcs1",
++						      sig->hash_algo,
++						      pkey, alg_name);
++	else
++		ret = software_key_determine_akcipher(sig->encoding,
++						      sig->hash_algo,
++						      pkey, alg_name);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-- 
+2.7.5
+
