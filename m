@@ -2,130 +2,101 @@ Return-Path: <SRS0=gFZG=NW=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_ADSP_ALL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB661C43441
-	for <linux-integrity@archiver.kernel.org>; Sun, 11 Nov 2018 18:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE01FC43441
+	for <linux-integrity@archiver.kernel.org>; Sun, 11 Nov 2018 18:50:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A346C214E0
-	for <linux-integrity@archiver.kernel.org>; Sun, 11 Nov 2018 18:33:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A346C214E0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F34F214DB
+	for <linux-integrity@archiver.kernel.org>; Sun, 11 Nov 2018 18:50:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F34F214DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mniewoehner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729397AbeKLEXL (ORCPT
+        id S1729463AbeKLEjh convert rfc822-to-8bit (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 11 Nov 2018 23:23:11 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48810 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726283AbeKLEXL (ORCPT
+        Sun, 11 Nov 2018 23:39:37 -0500
+Received: from sender-of-o53.zoho.com ([135.84.80.218]:21781 "EHLO
+        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729413AbeKLEjh (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 11 Nov 2018 23:23:11 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABISue2107245
-        for <linux-integrity@vger.kernel.org>; Sun, 11 Nov 2018 13:33:55 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2npdctyqhj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Sun, 11 Nov 2018 13:33:54 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Sun, 11 Nov 2018 18:33:52 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 11 Nov 2018 18:33:48 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABIXl2E6357490
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 11 Nov 2018 18:33:48 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DFA744C044;
-        Sun, 11 Nov 2018 18:33:47 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E09D34C040;
-        Sun, 11 Nov 2018 18:33:46 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.88.36])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 11 Nov 2018 18:33:46 +0000 (GMT)
+        Sun, 11 Nov 2018 23:39:37 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1541962208; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=YtyMnd0letGd52Ni0tD5x76/h0e7f8/H5wsp9Z/VwzwNfLZQuh4ZFNQgwNVYueThQ0b8a8Kkw2ZsQw4IBngqpOJAaBcfEyURTJ+QDRaCkxBidypzPoIWabnM6kO1meaXUygONkEef4ZY+58fAysdP+PR3SW9Vb+GLfJUA66OuoE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1541962208; h=Content-Type:Content-Transfer-Encoding:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=sAz7EJdTyRSsvQVPqXZuOgcvzMBL2HR4Upqo6kqrPAQ=; 
+        b=oWUsZTqRjFflTfceKrQCYKnINw4BT3kuFGVzLRE4pjf/KY1hYH/+bDUAJ2zL6u5vNQlKLfBwFmrFAI1U8VhJyknehKWK5skW+/0ATqFcx9y1ThgnRAhSbLq4RqeRHIAtPmFwGKLzGXK/9/leNupeyJnmJ7ZkjQhlV3Dz9o2kjwQ=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=mniewoehner.de;
+        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
+        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
+Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
+        with SMTPS id 1541962206767736.60132244995; Sun, 11 Nov 2018 10:50:06 -0800 (PST)
+Message-ID: <e8eb56fdab618770917fbe5b174328dc1240f934.camel@mniewoehner.de>
 Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>,
+From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
         peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
         arnd@arndb.de, linux-integrity@vger.kernel.org,
         linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Sun, 11 Nov 2018 13:33:36 -0500
-In-Reply-To: <776f384a81466642472beb4a34b10f26f1de88e9.camel@mniewoehner.de>
+In-Reply-To: <1541960689.3190.4.camel@HansenPartnership.com>
 References: <776f384a81466642472beb4a34b10f26f1de88e9.camel@mniewoehner.de>
+         <1541960689.3190.4.camel@HansenPartnership.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Date:   Sun, 11 Nov 2018 19:50:03 +0100
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18111118-0020-0000-0000-000002E65700
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111118-0021-0000-0000-000021355932
-Message-Id: <1541961216.3734.60.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811110176
+X-Mailer: Evolution 3.28.5 
+Content-Transfer-Encoding: 8BIT
+X-ZohoMailClient: External
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sun, 2018-11-11 at 18:55 +0100, Michael Niewöhner wrote:
-> Hi all,
-> 
-> Nuvoton NCPT650 does not work in TPM 2.0 mode with tpm_tis / tpm_i2c_nuvoton
-> while it works in TPM 1.2 mode (I can reflash it via UEFI setup).
-> Kernel version is 4.19.1
-> 
-> Kernel config:
-> 
-> $ cat .config | egrep 'TCG|TPM|CRB|_TIS'
-> CONFIG_TCG_TPM=y
-> CONFIG_HW_RANDOM_TPM=y
-> CONFIG_TCG_TIS_CORE=y
-> CONFIG_TCG_TIS=y
-> CONFIG_TCG_TIS_SPI=y
-> # CONFIG_TCG_TIS_I2C_ATMEL is not set
-> # CONFIG_TCG_TIS_I2C_INFINEON is not set
-> CONFIG_TCG_TIS_I2C_NUVOTON=y
-> # CONFIG_TCG_NSC is not set
-> # CONFIG_TCG_ATMEL is not set
-> # CONFIG_TCG_INFINEON is not set
-> CONFIG_TCG_CRB=y
-> # CONFIG_TCG_VTPM_PROXY is not set
-> # CONFIG_TCG_TIS_ST33ZP24_I2C is not set
-> # CONFIG_TCG_TIS_ST33ZP24_SPI is not set
-> 
-> 
-> TPM 1.2 mode dmesg:
-> 
-> $ dmesg | egrep -i tis\|tpm\|crb
-> [    3.210040] tpm_tis 00:0a: 1.2 TPM (device-id 0xFE, rev-id 2)
-> 
-> 
-> TPM 2.0 mode dmesg:
-> 
-> $ dmesg | egrep -i tis\|tpm\|crb
-> [    0.000000] efi:  ACPI
-> 2.0=0x9e457000  ACPI=0x9e457000  SMBIOS=0x9ec44000  SMBIOS
-> 3.0=0x9ec43000  TPMEventLog=0x9711f018 
-> [    0.003517] ACPI: TPM2 0x000000009E490ED8 000034 (v03 LENOVO TC-
-> S06   00001300 AMI  00000000)
-> [    4.071550] ima: No TPM chip found, activating TPM-bypass!
+Hi James,
 
-It's possible that eventually the TPM is initialized, but not in time
-for IMA.  Could you you check to see if the TPM is responding to
-userspace commands after boot?
+On Sun, 2018-11-11 at 10:24 -0800, James Bottomley wrote:
+> On Sun, 2018-11-11 at 18:55 +0100, Michael Niewöhner wrote:
+> > Hi all,
+> > 
+> > Nuvoton NCPT650 does not work in TPM 2.0 mode with tpm_tis /
+> > tpm_i2c_nuvoton while it works in TPM 1.2 mode (I can reflash it via
+> > UEFI setup). Kernel version is 4.19.1
+> 
+> Not that this helps you, but mine definitely works.  I've got an older
+> Dell XPS-13 with a Nuvoton 650 which is software switchable between 1.2
+> and 2.0.  This is what mine says
+> 
+> jejb@jarvis:~> dmesg|egrep -i tis\|tpm\|crb
+> [    0.000000] efi:  ACPI=0x79419000  ACPI
+> 2.0=0x79419000  SMBIOS=0xf0000  TPMEventLog=0x69db3018 
+> [    0.012797] ACPI: TPM2 0x0000000079446CC0 000034 (v03        Tpm2Tabl
+> 00000001 AMI  00000000)
+> [    2.035242] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
+> 
+> However, this makes me wonder about yours:
+> 
+> > [    0.003517] ACPI: TPM2 0x000000009E490ED8 000034 (v03 LENOVO TC-
+> > S06   00001300 AMI  00000000)
+> 
+> I thought the Lenovo "upgrade to 2.0" in fact disabled the external TPM
+> in favour of the Intel PTT (software TPM in the management engine). 
+> Since you apparently have the tpm_crb driver that should find the PTT
+> TPM, this might be one of the attachment bugs in the CRB driver ...
+> from your ACPI output it looks to be not specifying the Tpm2Tabl.
 
-Mimi
+Well, there are at least two implementations I know of:
+For my Lenovo X260 I can choose between Infineon TPM 1.2 or Intel PTT TPM 2.0
+This here is my ThinkStation P320 which can choose between PTT 1.2, PTT 2.0,
+Nuvoton 1.2 and 2.0. When switchting between 1.2 and 2.0 the Nuvoton gets
+reflashed with the appropriate firmware.
+
+> 
+> James
+> 
+
 
