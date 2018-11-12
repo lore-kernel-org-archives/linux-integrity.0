@@ -2,106 +2,131 @@ Return-Path: <SRS0=Mnqf=NX=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D22C43441
-	for <linux-integrity@archiver.kernel.org>; Mon, 12 Nov 2018 13:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 850C4C43441
+	for <linux-integrity@archiver.kernel.org>; Mon, 12 Nov 2018 14:22:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55CED223D0
-	for <linux-integrity@archiver.kernel.org>; Mon, 12 Nov 2018 13:59:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55CED223D0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 57101223D0
+	for <linux-integrity@archiver.kernel.org>; Mon, 12 Nov 2018 14:22:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57101223D0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727842AbeKLXw3 (ORCPT
+        id S1729496AbeKMAQN (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 12 Nov 2018 18:52:29 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39558 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727530AbeKLXw3 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 12 Nov 2018 18:52:29 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wACDngEY118024
-        for <linux-integrity@vger.kernel.org>; Mon, 12 Nov 2018 08:59:05 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nq82y7dr7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 12 Nov 2018 08:59:04 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 12 Nov 2018 13:59:03 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 12 Nov 2018 13:59:00 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wACDx0FV6160644
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 12 Nov 2018 13:59:00 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F06E2A405F;
-        Mon, 12 Nov 2018 13:58:59 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6044FA4054;
-        Mon, 12 Nov 2018 13:58:59 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.104.112])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 12 Nov 2018 13:58:59 +0000 (GMT)
-Subject: [GIT PULL] integrity fixes for v4.20-rc1
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     James Morris <jmorris@namei.org>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>
-Date:   Mon, 12 Nov 2018 08:58:48 -0500
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+        Mon, 12 Nov 2018 19:16:13 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32747 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729380AbeKMAQN (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 12 Nov 2018 19:16:13 -0500
+Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 532C14A254C41;
+        Mon, 12 Nov 2018 14:22:40 +0000 (GMT)
+Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
+ (10.201.108.36) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 12 Nov
+ 2018 14:22:36 +0000
+Subject: Re: [RFC][PATCH 08/12] KEYS: PGP-based public key signature
+ verification
+To:     David Howells <dhowells@redhat.com>
+CC:     <dwmw2@infradead.org>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>, <keyrings@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20181112102423.30415-9-roberto.sassu@huawei.com>
+ <20181112102423.30415-1-roberto.sassu@huawei.com>
+ <19985.1542026635@warthog.procyon.org.uk>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <e55a9f80-d2ea-f28f-06ab-3d99786096c4@huawei.com>
+Date:   Mon, 12 Nov 2018 15:22:31 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <19985.1542026635@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18111213-0008-0000-0000-000002918802
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111213-0009-0000-0000-000021FB93F2
-Message-Id: <1542031128.3769.117.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-12_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=885 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811120125
+X-Originating-IP: [10.204.65.144]
+X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi James,
+On 11/12/2018 1:43 PM, David Howells wrote:
+> Roberto Sassu <roberto.sassu@huawei.com> wrote:
+> 
+>> - switch from session to user keyring (Roberto Sassu)
+>> - search user keyring only if no keyring was provided, so that the
+>>    trustworthiness of the signature depends on the type of keyring
+>>    containing the key used for signature verification (Roberto Sassu)
+> 
+> Er.  No.  You should search the session keyring.  This may contain a link to
+> the user keyring (pam_keyinit emplaces one).
 
-Please pull this one patch and forward it to Linus for the next -rc
-release.
+Ok. Unfortunately, I was encountering some issues:
+---
+[   20.477851] BUG: sleeping function called from invalid context at 
+mm/slab.h:421
+[   20.486987] in_atomic(): 0, irqs_disabled(): 0, pid: 739, name: keyctl
+[   20.497393] 4 locks held by keyctl/739:
+[   20.500056]  #0: 00000000bd9d7a18 (key_types_sem){....}, at: 
+key_type_lookup+0x16/0x80
+[   20.503065]  #1: 000000009f5fc7ec (&type->lock_class){....}, at: 
+__key_link_begin+0x3f/0x100
+[   20.506062]  #2: 00000000cc8bdc61 (key_construction_mutex){....}, at: 
+__key_instantiate_and_link+0x30/0x150
+[   20.509335]  #3: 000000001dff342f (rcu_read_lock){....}, at: 
+pgp_verify_sig+0x57e/0x6a0
+[   20.511998] Preemption disabled at:
+[   20.512015] [<ffffffff818bc86f>] __mutex_lock+0x5f/0x940
+[   20.514885] CPU: 7 PID: 739 Comm: keyctl Not tainted 4.20.0-rc2+ #1138
+[   20.516911] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), 
+BIOS 1.10.2-1ubuntu1 04/01/2014
+[   20.519577] Call Trace:
+[   20.520384]  dump_stack+0x5c/0x7b
+[   20.521423]  ? __mutex_lock+0x5f/0x940
+[   20.523296]  ___might_sleep+0x12f/0x180
+[   20.524458]  __kmalloc+0x24c/0x300
+[   20.525505]  ? asymmetric_key_hex_to_key_id.part.8+0x30/0x80
+[   20.527181]  ? keyring_search_aux+0xbb/0xf0
+[   20.528430]  asymmetric_key_hex_to_key_id.part.8+0x30/0x80
+[   20.530025]  ? asymmetric_key_id_partial+0x40/0x40
+[   20.531422]  asymmetric_key_match_preparse+0x6b/0x90
+[   20.532868]  keyring_search+0x79/0xd0
+[   20.533938]  ? keyring_alloc+0x80/0x80
+[   20.535068]  pgp_verify_sig+0x5d1/0x6a0
+[   20.536212]  ? pgp_verify_sig+0x57e/0x6a0
+[   20.537389]  ? pgp_key_parse+0x2a0/0x2a0
+[   20.538565]  ? __mutex_lock+0x89/0x940
+[   20.539701]  ? pgp_test_instantiate+0xb9/0x150 [pgp_test]
+[   20.541276]  pgp_test_instantiate+0xb9/0x150 [pgp_test]
+---
 
-thanks!
+> You need to consider what it is that the patch trying to achieve.
 
-Mimi
+I understood that the purpose is to check PGP signatures with built-in
+keys or keys provided by the user. Since using the session keyring
+caused the issue I reported, I thought it was ok to use the user
+keyring.
 
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+Just a note: the original patches were relying on KEY_FLAG_TRUSTED to
+determine if a key is trusted; now the trustworthiness depends on the
+type of keyring passed to pgp_verify_sig(). I removed the additional key
+search in the user (session) keyring to prevent that signature
+verification is done with a key provided by the user even when the
+caller of pgp_verify_sig() expects that a trusted key is used. The
+search in the session keyring is done if the caller of pgp_verify_sig()
+sets the keyring pointer to NULL.
 
-  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+Roberto
 
-are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git integrity-fixes-v4.20-rc1
+> David
+> 
 
-for you to fetch changes up to 9002b9c8abcbaf0e8057144a665b136b1b4ffd85:
-
-  integrity: support new struct public_key_signature encoding field (2018-11-11 10:35:31 -0500)
-
-----------------------------------------------------------------
-Mimi Zohar (1):
-      integrity: support new struct public_key_signature encoding field
-
- security/integrity/digsig_asymmetric.c | 1 +
- 1 file changed, 1 insertion(+)
-
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
