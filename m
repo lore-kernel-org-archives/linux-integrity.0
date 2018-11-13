@@ -6,54 +6,58 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9132BC43441
-	for <linux-integrity@archiver.kernel.org>; Tue, 13 Nov 2018 10:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EE98C43441
+	for <linux-integrity@archiver.kernel.org>; Tue, 13 Nov 2018 11:12:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5727B2245E
-	for <linux-integrity@archiver.kernel.org>; Tue, 13 Nov 2018 10:50:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5727B2245E
+	by mail.kernel.org (Postfix) with ESMTP id 20D022245E
+	for <linux-integrity@archiver.kernel.org>; Tue, 13 Nov 2018 11:12:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20D022245E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732223AbeKMUsY (ORCPT
+        id S1732429AbeKMVJt (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 13 Nov 2018 15:48:24 -0500
-Received: from mga05.intel.com ([192.55.52.43]:31254 "EHLO mga05.intel.com"
+        Tue, 13 Nov 2018 16:09:49 -0500
+Received: from mga11.intel.com ([192.55.52.93]:14522 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732148AbeKMUsY (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 13 Nov 2018 15:48:24 -0500
+        id S1726581AbeKMVJt (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 13 Nov 2018 16:09:49 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 02:50:51 -0800
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 03:12:12 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,498,1534834800"; 
-   d="scan'208";a="105837169"
+   d="scan'208";a="95921696"
 Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.77])
-  by fmsmga004.fm.intel.com with ESMTP; 13 Nov 2018 02:50:47 -0800
-Date:   Tue, 13 Nov 2018 12:50:45 +0200
+  by FMSMGA003.fm.intel.com with ESMTP; 13 Nov 2018 03:12:05 -0800
+Date:   Tue, 13 Nov 2018 13:12:04 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Michael =?iso-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
-Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
-        linux-integrity@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
-Message-ID: <20181113105045.GC10434@linux.intel.com>
-References: <776f384a81466642472beb4a34b10f26f1de88e9.camel@mniewoehner.de>
- <1541960689.3190.4.camel@HansenPartnership.com>
- <e8eb56fdab618770917fbe5b174328dc1240f934.camel@mniewoehner.de>
- <1541962653.3190.7.camel@HansenPartnership.com>
- <7d8cc5ad4bb7548d283f363de6f24c90d5d0a2b2.camel@mniewoehner.de>
- <1541968191.3190.12.camel@HansenPartnership.com>
- <3243d0325b3ea5878d3f86b0ee4fec1498f21dc1.camel@mniewoehner.de>
- <660b0934bc16c8d195a2724f8be4ba8dfbe71134.camel@mniewoehner.de>
+To:     "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 16/17] tpm: take TPM chip power gating out of
+ tpm_transmit()
+Message-ID: <20181113111204.GD10434@linux.intel.com>
+References: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
+ <20181108141541.12832-17-jarkko.sakkinen@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DA18602@hasmsx108.ger.corp.intel.com>
+ <20181108230700.GA8038@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DA190F4@hasmsx108.ger.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <660b0934bc16c8d195a2724f8be4ba8dfbe71134.camel@mniewoehner.de>
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9DA190F4@hasmsx108.ger.corp.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
@@ -61,33 +65,32 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 10:11:33PM +0100, Michael Niewöhner wrote:
-> Very strange... When I pull the power cord, then replug and boot, I get these
-> dmesg messages:
-> [    0.000000] efi:  ACPI
-> 2.0=0x9ea78000  ACPI=0x9ea78000  SMBIOS=0x9f5e5000  SMBIOS
-> 3.0=0x9f5e4000  MPS=0xfca00  ESRT=0x9c06e918  MEMATTR=0x99cb9018  TPMEventLog=0x
-> 98d0c018 
-> [    0.001794] ACPI: TPM2 0x000000009EAB1F70 000034 (v03 LENOVO TC-
-> S06   00001260 AMI  00000000)
-> [    3.096587] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
-> [    3.105684] tpm tpm0: A TPM error (2314) occurred attempting the self test
-> 
-> After a reboot I get those "ima: ..." message again. Pulling the plug seems to
-> reset anything (the TPM).
-> 
-> The PTT TPM 2.0 shows exactly the same behaviour.
+On Fri, Nov 09, 2018 at 09:37:48PM +0000, Winkler, Tomas wrote:
+> > On Thu, Nov 08, 2018 at 06:38:59PM +0000, Winkler, Tomas wrote:
+> > > > Call tpm_chip_start() and tpm_chip_stop() in
+> > > >
+> > > > * tpm_try_get_ops() and tpm_put_ops()
+> > > > * tpm_chip_register()
+> > > > * tpm2_del_space()
+> > > >
+> > > > And remove these calls from tpm_transmit(). The core reason for this
+> > > > change is that in tpm_vtpm_proxy a locality change requires a
+> > > > virtual TPM command (a command made up just for that driver).
+> > > >
+> > > I don't think you can do that,  locality has to be request for each
+> > > command, as  for example tboot can request higher locality any time.
+> > 
+> > That could be a potential problem. How tboot intervention gets prevented
+> > without this patch?
+> As it was said, need to request locality and relinquish it for each
+> command, I believe thought this is not required for client platforms
+> only for servers. 
 
-The error in question is TPM_RC_TESTING i.e. TPM is still processing
-selftests in the background.
+And what I'm trying to under is why so.
 
-It is clearly a regression but unfortanely it is harmless and unrelated
-i.e. tpm2_do_selftest() should not print an error message because it
-is legit behavior.
-
-The function actually masks the whole error:
-
-	if (rc == TPM2_RC_TESTING)
-		rc = TPM2_RC_SUCCESS;
+If the intervention can happen at any time that would imply that even if
+you would request and relinquish locality for a single TPM command, the
+intervention could happen in the middle. That is why I'm asking why
+without this patch things are just fine.
 
 /Jarkko
