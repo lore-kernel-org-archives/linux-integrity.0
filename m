@@ -2,102 +2,66 @@ Return-Path: <SRS0=mv0F=NY=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E6A4C43441
-	for <linux-integrity@archiver.kernel.org>; Tue, 13 Nov 2018 09:49:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C53CC43441
+	for <linux-integrity@archiver.kernel.org>; Tue, 13 Nov 2018 10:28:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13BDA22507
-	for <linux-integrity@archiver.kernel.org>; Tue, 13 Nov 2018 09:49:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13BDA22507
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D1362087A
+	for <linux-integrity@archiver.kernel.org>; Tue, 13 Nov 2018 10:28:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D1362087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731657AbeKMTrC (ORCPT
+        id S1732146AbeKMU0T (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 13 Nov 2018 14:47:02 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32748 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731528AbeKMTrC (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 13 Nov 2018 14:47:02 -0500
-Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id A82E8395EE769;
-        Tue, 13 Nov 2018 09:49:39 +0000 (GMT)
-Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
- (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 13 Nov
- 2018 09:49:31 +0000
-Subject: Re: [PATCH] Apply on top of: tpm: dynamically allocate active_banks
- array
-To:     Nayna Jain <nayna@linux.ibm.com>,
-        <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>
-CC:     <linux-integrity@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        "Kenneth Goldman" <kgoldman@us.ibm.com>
-References: <20181109092925.2908-1-roberto.sassu@huawei.com>
- <1d2e39fe-4bfb-4644-d216-f962c168668e@linux.ibm.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <82565c56-d3a3-ac15-4345-7e19b90fabf1@huawei.com>
-Date:   Tue, 13 Nov 2018 10:49:31 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 13 Nov 2018 15:26:19 -0500
+Received: from mga04.intel.com ([192.55.52.120]:51480 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731276AbeKMU0T (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 13 Nov 2018 15:26:19 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 02:28:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,498,1534834800"; 
+   d="scan'208";a="90727876"
+Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.77])
+  by orsmga006.jf.intel.com with ESMTP; 13 Nov 2018 02:28:47 -0800
+Date:   Tue, 13 Nov 2018 12:28:46 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Michael =?iso-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
+        linux-integrity@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
+Message-ID: <20181113102846.GB10434@linux.intel.com>
+References: <776f384a81466642472beb4a34b10f26f1de88e9.camel@mniewoehner.de>
 MIME-Version: 1.0
-In-Reply-To: <1d2e39fe-4bfb-4644-d216-f962c168668e@linux.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.204.65.144]
-X-CFilter-Loop: Reflected
+In-Reply-To: <776f384a81466642472beb4a34b10f26f1de88e9.camel@mniewoehner.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 11/12/2018 7:09 PM, Nayna Jain wrote:
+On Sun, Nov 11, 2018 at 06:55:36PM +0100, Michael Niew�hner wrote:
+> Hi all,
 > 
-> 
-> On 11/09/2018 02:59 PM, Roberto Sassu wrote:
->> This patch checks if a PCR bank is active (at least one bit in the
->> pcr_select mask is set).
->> ---
->>   drivers/char/tpm/tpm2-cmd.c | 44 +++++++++++++++++++++++++++----------
->>   1 file changed, 32 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
->> index 533089cede07..eba8f8d00a09 100644
->> --- a/drivers/char/tpm/tpm2-cmd.c
->> +++ b/drivers/char/tpm/tpm2-cmd.c
->> @@ -854,15 +854,20 @@ struct tpm2_pcr_selection {
->>   static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
->>   {
->> -    struct tpm2_pcr_selection pcr_selection;
->> +    struct tpm2_pcr_selection *pcr_selection;
->>       struct tpm_buf buf;
->>       void *marker;
->>       void *end;
->>       void *pcr_select_offset;
->>       u32 sizeof_pcr_selection;
->> +    u32 nr_possible_banks;
->> +    u32 nr_active_banks = 0;
-> 
-> The TCG Spec uses the term "allocated" and not "active".  For 
-> consistency, I think we can also use the term "allocated". For example - 
-> nr_allocated_banks and *allocated_banks both here and in struct tpm_chip.
-> 
-> Sorry, it took me sometime to be clear on this else would have mentioned 
-> previously.
+> Nuvoton NCPT650 does not work in TPM 2.0 mode with tpm_tis / tpm_i2c_nuvoton
+> while it works in TPM 1.2 mode (I can reflash it via UEFI setup).
+> Kernel version is 4.19.1
 
-Thanks. Jarkko?
+Can you check what ACPI dump would show up [1]?
 
-Roberto
+[1] acpidump > acpidump.out
 
-
-> Thanks & Regards,
->      - Nayna
-> 
-> 
-> 
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+/Jarkko
