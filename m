@@ -2,193 +2,132 @@ Return-Path: <SRS0=mv0F=NY=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 073A0C169D4
-	for <linux-integrity@archiver.kernel.org>; Tue, 13 Nov 2018 18:36:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14046C43441
+	for <linux-integrity@archiver.kernel.org>; Tue, 13 Nov 2018 18:36:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA84A2175B
-	for <linux-integrity@archiver.kernel.org>; Tue, 13 Nov 2018 18:36:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="GQLveIUh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA84A2175B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id DA4522175B
+	for <linux-integrity@archiver.kernel.org>; Tue, 13 Nov 2018 18:36:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA4522175B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728334AbeKNEf1 (ORCPT
+        id S1727094AbeKNEfz (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 13 Nov 2018 23:35:27 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35053 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730519AbeKNEf0 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 13 Nov 2018 23:35:26 -0500
-Received: by mail-wm1-f66.google.com with SMTP id t15-v6so12472334wmt.0
-        for <linux-integrity@vger.kernel.org>; Tue, 13 Nov 2018 10:36:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=srCcrn9kPDYHv5RsnDuEY83gk928+k3hynyAdn3Y8Pg=;
-        b=GQLveIUhsI/F4IwjREUDGARnt4jT80vgXXupCkzLOkuOjm8n6t41/gD5IcV6nYZP5H
-         P29zYAXGAgiZsxBT5Gijp44woWXulSEs5pGGD1vz/1HXiU9FhXpVUDbeZxW9LtzgdyQx
-         A1Dc/leRlfri2uVYNzJcbmwIE/Mw+r/x+NIvr6VLXJpXDJfsOuQq2SS6cpOEeMaTbJ2j
-         hJIEOoJAA+5xGKRGulZqzCRhU7aP1J4hA96YlftbQROIImHPnFIf7S5WAbOBC5o45awB
-         mR0vsIxuw2EYCnkqV0rLYQwib7mER/ULglOCdCj8gTnMkr9eTqtXX9nmBiGrcAZpKz3u
-         /XJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=srCcrn9kPDYHv5RsnDuEY83gk928+k3hynyAdn3Y8Pg=;
-        b=dmew0OqpvUAc1lYWkICFABgyaHZsFp5xsQDVPb8Qiax9g8Jb8ojdXkmCe5CjshTq0u
-         dU4eY4R49fszPOgsmnoCtBcc7UJGur03FtXAmPGGG/sPwou4fCl9PME4gV89r2XVDmii
-         jrgseeer6sutPtWU8Whgv5N89mG7H4zEbP/c8BfTw7ln1p3ZPgdYtP7/6+LuQyKYOAJi
-         yWlkQoFRS0mbt1rYYEWcqITInmyWQN8JNQcZMka21ZQNF0ina3AEvjHIA7WomuoXjRUD
-         45VCMmNKcOSpr5ir9JdAwgY1hf/s4RXXMwsUCuJSbUYynY1TR+S9VlvGUt4yunhdmdQd
-         p5MQ==
-X-Gm-Message-State: AGRZ1gJhkpVMEfCOQeAkjRHQVl5m7W3iusj7luddNCurt37wZe3azwrI
-        Ym19fqn0cWZUqrD9vyvgfJ7fq8eN2EqdNaIPTk7Kpw==
-X-Google-Smtp-Source: AJdET5dDnWZD5TNYzUEvANWFD7cK3nVexWklKcLqa5BGCz6kLND1He95hc9PD9wjgi310VGjwblWHlkVqsZgsYt0mzE=
-X-Received: by 2002:a1c:2b45:: with SMTP id r66-v6mr4153457wmr.128.1542134164781;
- Tue, 13 Nov 2018 10:36:04 -0800 (PST)
+        Tue, 13 Nov 2018 23:35:55 -0500
+Received: from mga14.intel.com ([192.55.52.115]:18694 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726862AbeKNEfz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 13 Nov 2018 23:35:55 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 10:36:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,229,1539673200"; 
+   d="scan'208";a="108269701"
+Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.77])
+  by orsmga002.jf.intel.com with ESMTP; 13 Nov 2018 10:36:29 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Microchip
+        (AT91) SoC support), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v7 00/17] Removed nested TPM operations
+Date:   Tue, 13 Nov 2018 20:35:59 +0200
+Message-Id: <20181113183620.27447-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-11-igor.stoppa@huawei.com> <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
- <20181028183126.GB744@hirez.programming.kicks-ass.net> <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
- <20181030152641.GE8177@hirez.programming.kicks-ass.net> <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net> <6f60afc9-0fed-7f95-a11a-9a2eef33094c@gmail.com>
- <CALCETrXNckT9W288VXx-6inO5qYn-6dUPocKGcBT0GCO3xi3ZQ@mail.gmail.com> <17a007eb-43ea-e4da-b066-0d8c502f5f6e@huawei.com>
-In-Reply-To: <17a007eb-43ea-e4da-b066-0d8c502f5f6e@huawei.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Tue, 13 Nov 2018 10:35:53 -0800
-Message-ID: <CALCETrVaPTbgycjzSB0fLUeGL=j1srUh-cL0qsKn6fw6UQgj7Q@mail.gmail.com>
-Subject: Re: [PATCH 10/17] prmem: documentation
-To:     Igor Stoppa <igor.stoppa@huawei.com>
-Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 10:26 AM Igor Stoppa <igor.stoppa@huawei.com> wrote:
->
-> On 13/11/2018 19:16, Andy Lutomirski wrote:
->
-> > should be
-> > entirely abstracted away by an appropriate API, so neither SELinux nor
-> > IMA need to be aware that there's an mm_struct involved.
->
-> Yes, that is fine. In my proposal I was thinking about tying it to the
-> core/thread that performs the actual write.
->
-> The high level API could be something like:
->
-> wr_memcpy(void *src, void *dst, uint_t size)
->
-> >  It's also
-> > entirely possible that some architectures won't even use an mm_struct
-> > behind the scenes -- x86, for example, could have avoided it if there
-> > were a kernel equivalent of PKRU.  Sadly, there isn't.
->
-> The mm_struct - or whatever is the means to do the write on that
-> architecture - can be kept hidden from the API.
->
-> But the reason why I was proposing to have one mm_struct per writer is
-> that, iiuc, the secondary mapping is created in the secondary mm_struct
-> for each writer using it.
->
-> So the updating of IMA measurements would have, theoretically, also
-> write access to the SELinux AVC. Which I was trying to avoid.
-> And similarly any other write rare updater. Is this correct?
+[was Detach TPM space code out of the tpm_transmit() flow but the scope
+ expanded a bit.]
 
-If you call a wr_memcpy() function with the signature you suggested,
-then you can overwrite any memory of this type.  Having a different
-mm_struct under the hood makes no difference.  As far as I'm
-concerned, for *dynamically allocated* rare-writable memory, you might
-as well allocate all the paging structures at the same time, so the
-mm_struct will always contain the mappings.  If there are serious bugs
-in wr_memcpy() that cause it to write to the wrong place, we have
-bigger problems.
+Make the changes necessary to detach TPM space code and TPM activation
+code out of the tpm_transmit() flow because of both of these can cause
+nested tpm_transmit() calls. The nesteds calls make the whole flow hard
+to maintain, and thus, it is better to just fix things now before this
+turns into a bigger mess.
 
-I can imagine that we'd want a *typed* wr_memcpy()-like API some day,
-but that can wait for v2.  And it still doesn't obviously need
-multiple mm_structs.
+v7:
+*  Reorganize series so that more trivial and self-contained changes are
+   in the head.
 
->
-> >> 2) Iiuc, the purpose of the 2 pages being remapped is that the target of
-> >> the patch might spill across the page boundary, however if I deal with
-> >> the modification of generic data, I shouldn't (shouldn't I?) assume that
-> >> the data will not span across multiple pages.
-> >
-> > The reason for the particular architecture of text_poke() is to avoid
-> > memory allocation to get it working.  i think that prmem/rare_write
-> > should have each rare-writable kernel address map to a unique user
-> > address, possibly just by offsetting everything by a constant.  For
-> > rare_write, you don't actually need it to work as such until fairly
-> > late in boot, since the rare_writable data will just be writable early
-> > on.
->
-> Yes, that is true. I think it's safe to assume, from an attack pattern,
-> that as long as user space is not started, the system can be considered
-> ok. Even user-space code run from initrd should be ok, since it can be
-> bundled (and signed) as a single binary with the kernel.
->
-> Modules loaded from a regular filesystem are a bit more risky, because
-> an attack might inject a rogue key in the key-ring and use it to load
-> malicious modules.
+v6:
+* When tpm_validate_commmand() was moved to tpm2-space.c, the struct for
+  the TPM header was incorrectly declared as struct tpm_input_header.
+* Fix return value in tpm_validate_command().
 
-If a malicious module is loaded, the game is over.
+v5:
+* Add the missing rev's from Stefan Berger.
 
->
-> >> If the data spans across multiple pages, in unknown amount, I suppose
-> >> that I should not keep interrupts disabled for an unknown time, as it
-> >> would hurt preemption.
-> >>
-> >> What I thought, in my initial patch-set, was to iterate over each page
-> >> that must be written to, in a loop, re-enabling interrupts in-between
-> >> iterations, to give pending interrupts a chance to be served.
-> >>
-> >> This would mean that the data being written to would not be consistent,
-> >> but it's a problem that would have to be addressed anyways, since it can
-> >> be still read by other cores, while the write is ongoing.
-> >
-> > This probably makes sense, except that enabling and disabling
-> > interrupts means you also need to restore the original mm_struct (most
-> > likely), which is slow.  I don't think there's a generic way to check
-> > whether in interrupt is pending without turning interrupts on.
->
-> The only "excuse" I have is that write_rare is opt-in and is "rare".
-> Maybe the enabling/disabling of interrupts - and the consequent switch
-> of mm_struct - could be somehow tied to the latency configuration?
->
-> If preemption is disabled, the expectations on the system latency are
-> anyway more relaxed.
->
-> But I'm not sure how it would work against I/O.
+v4:
+* Return 0 from pcrs_show() when tpm1_pcr_read() fails.
+* Fix error handling flow in tpm_try_transmit().
+* Replace struct tpm_input_header and struct tpm_output_header with
+  struct tpm_header.
 
-I think it's entirely reasonable for the API to internally break up
-very large memcpys.
+v3:
+* Encapsulate power gating code to tpm_chip_start() and tpm_chip_stop().
+* Move TPM power gating code and locking to tpm_try_get_ops() and
+  tpm_put_ops().
+* Call power gating code directly in tpm_chip_register() and
+  tpm2_del_space().
+
+v2:
+* Print tpm2_commit_space() error inside tpm2_commit_space()
+* Error code was not printed when recv() callback failed. It is
+  fixed in this version.
+* Added a patch that removes @space from tpm_transmit().
+* Fixed a regression in earlier series. Forgot to amend the change
+  from the staging area that renames NESTED to UNLOCKED in tpm2-space.c.
+
+Jarkko Sakkinen (17):
+  tpm: use tpm_buf in tpm_transmit_cmd() as the IO parameter
+  tpm: fix invalid return value in pubek_show()
+  tpm: return 0 from pcrs_show() when tpm1_pcr_read() fails
+  tpm: print tpm2_commit_space() error inside tpm2_commit_space()
+  tpm: declare struct tpm_header
+  tpm: access command header through struct in tpm_try_transmit()
+  tpm: encapsulate tpm_dev_transmit()
+  tpm: call tpm2_flush_space() on error in tpm_try_transmit()
+  tpm: clean up tpm_try_transmit() error handling flow
+  tpm: move tpm_validate_commmand() to tpm2-space.c
+  tpm: move TPM space code out of tpm_transmit()
+  tpm: remove @space from tpm_transmit()
+  tpm: use tpm_try_get_ops() in tpm-sysfs.c.
+  tpm: remove TPM_TRANSMIT_UNLOCKED flag
+  tpm: introduce tpm_chip_start() and tpm_chip_stop()
+  tpm: take TPM chip power gating out of tpm_transmit()
+  tpm: remove @flags from tpm_transmit()
+
+ drivers/char/tpm/tpm-chip.c       | 105 +++++++++++-
+ drivers/char/tpm/tpm-dev-common.c |  45 ++++-
+ drivers/char/tpm/tpm-interface.c  | 267 ++++++------------------------
+ drivers/char/tpm/tpm-sysfs.c      | 138 +++++++++------
+ drivers/char/tpm/tpm.h            |  64 +++----
+ drivers/char/tpm/tpm1-cmd.c       |  28 +---
+ drivers/char/tpm/tpm2-cmd.c       |  72 +++-----
+ drivers/char/tpm/tpm2-space.c     |  93 ++++++++---
+ drivers/char/tpm/tpm_i2c_atmel.c  |   5 +-
+ drivers/char/tpm/tpm_vtpm_proxy.c |  12 +-
+ drivers/char/tpm/xen-tpmfront.c   |   2 +-
+ 11 files changed, 406 insertions(+), 425 deletions(-)
+
+-- 
+2.19.1
+
