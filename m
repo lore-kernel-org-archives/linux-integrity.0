@@ -3,34 +3,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5951C070C3
-	for <linux-integrity@archiver.kernel.org>; Fri, 16 Nov 2018 12:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88412C43610
+	for <linux-integrity@archiver.kernel.org>; Fri, 16 Nov 2018 12:40:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A92C72087C
-	for <linux-integrity@archiver.kernel.org>; Fri, 16 Nov 2018 12:40:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A92C72087C
+	by mail.kernel.org (Postfix) with ESMTP id 5BC1A208A3
+	for <linux-integrity@archiver.kernel.org>; Fri, 16 Nov 2018 12:40:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BC1A208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727997AbeKPWwZ (ORCPT
+        id S2389901AbeKPWwo (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 16 Nov 2018 17:52:25 -0500
-Received: from mga11.intel.com ([192.55.52.93]:9723 "EHLO mga11.intel.com"
+        Fri, 16 Nov 2018 17:52:44 -0500
+Received: from mga03.intel.com ([134.134.136.65]:58157 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727965AbeKPWwZ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 16 Nov 2018 17:52:25 -0500
+        id S1727965AbeKPWwn (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 16 Nov 2018 17:52:43 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 04:40:11 -0800
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 04:40:30 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,240,1539673200"; 
-   d="scan'208";a="86984089"
+   d="scan'208";a="86984139"
 Received: from unknown (HELO localhost) ([10.249.254.90])
-  by fmsmga008.fm.intel.com with ESMTP; 16 Nov 2018 04:40:07 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 16 Nov 2018 04:40:25 -0800
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -44,9 +44,9 @@ Cc:     linux-security-module@vger.kernel.org,
         Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v8 10/17] tpm: move tpm_validate_commmand() to tpm2-space.c
-Date:   Fri, 16 Nov 2018 14:38:34 +0200
-Message-Id: <20181116123845.15705-11-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v8 13/17] tpm: use tpm_try_get_ops() in tpm-sysfs.c.
+Date:   Fri, 16 Nov 2018 14:38:37 +0200
+Message-Id: <20181116123845.15705-14-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181116123845.15705-1-jarkko.sakkinen@linux.intel.com>
 References: <20181116123845.15705-1-jarkko.sakkinen@linux.intel.com>
@@ -57,248 +57,269 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Move tpm_validate_command() to tpm2-space.c and make it part of the
-tpm2_prepare_space() flow. Make cc resolution as part of the TPM space
-functionality in order to detach it from rest of the tpm_transmit()
-flow.
+Use tpm_try_get_ops() in tpm-sysfs.c so that we can consider moving
+other decorations (locking, localities, power management for example)
+inside it. This direction can be of course taken only after other call
+sites for tpm_transmit() have been treated in the same way.
 
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- drivers/char/tpm/tpm-interface.c | 72 +++++++-------------------------
- drivers/char/tpm/tpm.h           |  9 ++--
- drivers/char/tpm/tpm2-space.c    | 54 +++++++++++++++++++++---
- 3 files changed, 68 insertions(+), 67 deletions(-)
+ drivers/char/tpm/tpm-sysfs.c | 123 ++++++++++++++++++++++-------------
+ 1 file changed, 78 insertions(+), 45 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index f2280bf15339..a6ffd0960ae5 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -62,47 +62,6 @@ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
- }
- EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
+diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
+index 03e704f99ed6..3733491671ca 100644
+--- a/drivers/char/tpm/tpm-sysfs.c
++++ b/drivers/char/tpm/tpm-sysfs.c
+@@ -39,7 +39,6 @@ static ssize_t pubek_show(struct device *dev, struct device_attribute *attr,
+ {
+ 	struct tpm_buf tpm_buf;
+ 	struct tpm_readpubek_out *out;
+-	ssize_t rc;
+ 	int i;
+ 	char *str = buf;
+ 	struct tpm_chip *chip = to_tpm_chip(dev);
+@@ -47,17 +46,17 @@ static ssize_t pubek_show(struct device *dev, struct device_attribute *attr,
  
--static int tpm_validate_command(struct tpm_chip *chip,
--				 struct tpm_space *space,
--				 const u8 *cmd,
--				 size_t len)
--{
--	const struct tpm_header *header = (const void *)cmd;
--	int i;
--	u32 cc;
--	u32 attrs;
--	unsigned int nr_handles;
--
--	if (len < TPM_HEADER_SIZE)
--		return -EINVAL;
--
--	if (!space)
+ 	memset(&anti_replay, 0, sizeof(anti_replay));
+ 
+-	if (tpm_buf_init(&tpm_buf, TPM_TAG_RQU_COMMAND, TPM_ORD_READPUBEK))
++	if (tpm_try_get_ops(chip))
+ 		return 0;
+ 
++	if (tpm_buf_init(&tpm_buf, TPM_TAG_RQU_COMMAND, TPM_ORD_READPUBEK))
++		goto out_ops;
++
+ 	tpm_buf_append(&tpm_buf, anti_replay, sizeof(anti_replay));
+ 
+-	rc = tpm_transmit_cmd(chip, &tpm_buf, READ_PUBEK_RESULT_MIN_BODY_SIZE,
+-			      0, "attempting to read the PUBEK");
+-	if (rc) {
+-		tpm_buf_destroy(&tpm_buf);
 -		return 0;
--
--	if (chip->flags & TPM_CHIP_FLAG_TPM2 && chip->nr_commands) {
--		cc = be32_to_cpu(header->ordinal);
--
--		i = tpm2_find_cc(chip, cc);
--		if (i < 0) {
--			dev_dbg(&chip->dev, "0x%04X is an invalid command\n",
--				cc);
--			return -EOPNOTSUPP;
--		}
--
--		attrs = chip->cc_attrs_tbl[i];
--		nr_handles =
--			4 * ((attrs >> TPM2_CC_ATTR_CHANDLES) & GENMASK(2, 0));
--		if (len < TPM_HEADER_SIZE + 4 * nr_handles)
--			goto err_len;
 -	}
--
--	return 0;
--err_len:
--	dev_dbg(&chip->dev,
--		"%s: insufficient command length %zu", __func__, len);
--	return -EINVAL;
--}
--
- static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
- {
- 	int rc;
-@@ -172,20 +131,8 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
- 	u32 count, ordinal;
- 	unsigned long stop;
++	if (tpm_transmit_cmd(chip, &tpm_buf, READ_PUBEK_RESULT_MIN_BODY_SIZE,
++			      0, "attempting to read the PUBEK"))
++		goto out_buf;
  
--	rc = tpm_validate_command(chip, space, buf, bufsiz);
--	if (rc == -EINVAL)
--		return rc;
--	/*
--	 * If the command is not implemented by the TPM, synthesize a
--	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
--	 */
--	if (rc == -EOPNOTSUPP) {
--		header->length = cpu_to_be32(sizeof(*header));
--		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
--		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
--						  TSS2_RESMGR_TPM_RC_LAYER);
--		return sizeof(*header);
--	}
-+	if (bufsiz < TPM_HEADER_SIZE)
-+		return -EINVAL;
- 
- 	if (bufsiz > TPM_BUFSIZE)
- 		bufsiz = TPM_BUFSIZE;
-@@ -200,7 +147,18 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
- 		return -E2BIG;
+ 	out = (struct tpm_readpubek_out *)&tpm_buf.data[10];
+ 	str +=
+@@ -88,9 +87,11 @@ static ssize_t pubek_show(struct device *dev, struct device_attribute *attr,
+ 			str += sprintf(str, "\n");
  	}
  
--	rc = tpm2_prepare_space(chip, space, ordinal, buf);
-+	rc = tpm2_prepare_space(chip, space, buf, bufsiz);
-+	/*
-+	 * If the command is not implemented by the TPM, synthesize a
-+	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
-+	 */
-+	if (rc == -EOPNOTSUPP) {
-+		header->length = cpu_to_be32(sizeof(*header));
-+		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
-+		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
-+						  TSS2_RESMGR_TPM_RC_LAYER);
-+		return sizeof(*header);
-+	}
- 	if (rc)
- 		return rc;
- 
-@@ -249,7 +207,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
- 	if (rc)
- 		tpm2_flush_space(chip);
- 	else
--		rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
-+		rc = tpm2_commit_space(chip, space, buf, &len);
- 
- 	return rc ? rc : len;
+-	rc = str - buf;
++out_buf:
+ 	tpm_buf_destroy(&tpm_buf);
+-	return rc;
++out_ops:
++	tpm_put_ops(chip);
++	return str - buf;
  }
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 92638ec6ec97..68d78ebba032 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -264,6 +264,7 @@ struct tpm_chip {
- #endif /* CONFIG_ACPI */
+ static DEVICE_ATTR_RO(pubek);
  
- 	struct tpm_space work_space;
-+	u32 last_cc;
- 	u32 nr_commands;
- 	u32 *cc_attrs_tbl;
+@@ -103,10 +104,15 @@ static ssize_t pcrs_show(struct device *dev, struct device_attribute *attr,
+ 	char *str = buf;
+ 	struct tpm_chip *chip = to_tpm_chip(dev);
  
-@@ -577,10 +578,10 @@ int tpm2_find_cc(struct tpm_chip *chip, u32 cc);
- int tpm2_init_space(struct tpm_space *space);
- void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space);
- void tpm2_flush_space(struct tpm_chip *chip);
--int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
--		       u8 *cmd);
--int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
--		      u32 cc, u8 *buf, size_t *bufsiz);
-+int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u8 *cmd,
-+		       size_t cmdsiz);
-+int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space, u8 *buf,
-+		       size_t *bufsiz);
- 
- int tpm_bios_log_setup(struct tpm_chip *chip);
- void tpm_bios_log_teardown(struct tpm_chip *chip);
-diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-index 393d9aadadce..172c9f9d4c29 100644
---- a/drivers/char/tpm/tpm2-space.c
-+++ b/drivers/char/tpm/tpm2-space.c
-@@ -264,14 +264,55 @@ static int tpm2_map_command(struct tpm_chip *chip, u32 cc, u8 *cmd)
- 	return 0;
- }
- 
--int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
--		       u8 *cmd)
-+static int tpm_validate_command(struct tpm_chip *chip, struct tpm_space *space,
-+				const u8 *cmd, size_t len)
-+{
-+	const struct tpm_header *header = (const void *)cmd;
-+	int i;
-+	u32 cc;
-+	u32 attrs;
-+	unsigned int nr_handles;
++	if (tpm_try_get_ops(chip))
++		return 0;
 +
-+	if (len < TPM_HEADER_SIZE)
-+		return -EINVAL;
-+
-+	if (chip->nr_commands) {
-+		cc = be32_to_cpu(header->ordinal);
-+
-+		i = tpm2_find_cc(chip, cc);
-+		if (i < 0) {
-+			dev_dbg(&chip->dev, "0x%04X is an invalid command\n",
-+				cc);
-+			return -EOPNOTSUPP;
-+		}
-+
-+		attrs = chip->cc_attrs_tbl[i];
-+		nr_handles =
-+			4 * ((attrs >> TPM2_CC_ATTR_CHANDLES) & GENMASK(2, 0));
-+		if (len < TPM_HEADER_SIZE + 4 * nr_handles)
-+			goto err_len;
+ 	if (tpm1_getcap(chip, TPM_CAP_PROP_PCR, &cap,
+ 			"attempting to determine the number of PCRS",
+-			sizeof(cap.num_pcrs)))
++			sizeof(cap.num_pcrs))) {
++		tpm_put_ops(chip);
+ 		return 0;
 +	}
-+
-+	return 0;
-+err_len:
-+	dev_dbg(&chip->dev, "%s: insufficient command length %zu", __func__,
-+		len);
-+	return -EINVAL;
-+}
-+
-+int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u8 *cmd,
-+		       size_t cmdsiz)
+ 
+ 	num_pcrs = be32_to_cpu(cap.num_pcrs);
+ 	for (i = 0; i < num_pcrs; i++) {
+@@ -119,6 +125,7 @@ static ssize_t pcrs_show(struct device *dev, struct device_attribute *attr,
+ 			str += sprintf(str, "%02X ", digest[j]);
+ 		str += sprintf(str, "\n");
+ 	}
++	tpm_put_ops(chip);
+ 	return str - buf;
+ }
+ static DEVICE_ATTR_RO(pcrs);
+@@ -126,16 +133,21 @@ static DEVICE_ATTR_RO(pcrs);
+ static ssize_t enabled_show(struct device *dev, struct device_attribute *attr,
+ 		     char *buf)
  {
- 	int rc;
-+	int cc;
++	struct tpm_chip *chip = to_tpm_chip(dev);
++	ssize_t rc = 0;
+ 	cap_t cap;
+-	ssize_t rc;
  
- 	if (!space)
+-	rc = tpm1_getcap(to_tpm_chip(dev), TPM_CAP_FLAG_PERM, &cap,
+-			 "attempting to determine the permanent enabled state",
+-			 sizeof(cap.perm_flags));
+-	if (rc)
++	if (tpm_try_get_ops(chip))
  		return 0;
  
-+	cc = tpm_validate_command(chip, space, cmd, cmdsiz);
-+	if (cc < 0)
-+		return cc;
++	if (tpm1_getcap(chip, TPM_CAP_FLAG_PERM, &cap,
++			"attempting to determine the permanent enabled state",
++			sizeof(cap.perm_flags)))
++		goto out_ops;
 +
- 	memcpy(&chip->work_space.context_tbl, &space->context_tbl,
- 	       sizeof(space->context_tbl));
- 	memcpy(&chip->work_space.session_tbl, &space->session_tbl,
-@@ -291,6 +332,7 @@ int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
- 		return rc;
- 	}
- 
-+	chip->last_cc = cc;
- 	return 0;
+ 	rc = sprintf(buf, "%d\n", !cap.perm_flags.disable);
++out_ops:
++	tpm_put_ops(chip);
+ 	return rc;
  }
- 
-@@ -489,8 +531,8 @@ static int tpm2_save_space(struct tpm_chip *chip)
- 	return 0;
- }
- 
--int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
--		      u32 cc, u8 *buf, size_t *bufsiz)
-+int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space, u8 *buf,
-+		      size_t *bufsiz)
+ static DEVICE_ATTR_RO(enabled);
+@@ -143,16 +155,21 @@ static DEVICE_ATTR_RO(enabled);
+ static ssize_t active_show(struct device *dev, struct device_attribute *attr,
+ 		    char *buf)
  {
- 	struct tpm_header *header = (void *)buf;
- 	int rc;
-@@ -498,13 +540,13 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
- 	if (!space)
++	struct tpm_chip *chip = to_tpm_chip(dev);
++	ssize_t rc = 0;
+ 	cap_t cap;
+-	ssize_t rc;
+ 
+-	rc = tpm1_getcap(to_tpm_chip(dev), TPM_CAP_FLAG_PERM, &cap,
+-			 "attempting to determine the permanent active state",
+-			 sizeof(cap.perm_flags));
+-	if (rc)
++	if (tpm_try_get_ops(chip))
  		return 0;
  
--	rc = tpm2_map_response_header(chip, cc, buf, *bufsiz);
-+	rc = tpm2_map_response_header(chip, chip->last_cc, buf, *bufsiz);
- 	if (rc) {
- 		tpm2_flush_space(chip);
- 		goto out;
- 	}
++	if (tpm1_getcap(chip, TPM_CAP_FLAG_PERM, &cap,
++			"attempting to determine the permanent active state",
++			sizeof(cap.perm_flags)))
++		goto out_ops;
++
+ 	rc = sprintf(buf, "%d\n", !cap.perm_flags.deactivated);
++out_ops:
++	tpm_put_ops(chip);
+ 	return rc;
+ }
+ static DEVICE_ATTR_RO(active);
+@@ -160,16 +177,21 @@ static DEVICE_ATTR_RO(active);
+ static ssize_t owned_show(struct device *dev, struct device_attribute *attr,
+ 			  char *buf)
+ {
++	struct tpm_chip *chip = to_tpm_chip(dev);
++	ssize_t rc = 0;
+ 	cap_t cap;
+-	ssize_t rc;
  
--	rc = tpm2_map_response_body(chip, cc, buf, *bufsiz);
-+	rc = tpm2_map_response_body(chip, chip->last_cc, buf, *bufsiz);
- 	if (rc) {
- 		tpm2_flush_space(chip);
- 		goto out;
+-	rc = tpm1_getcap(to_tpm_chip(dev), TPM_CAP_PROP_OWNER, &cap,
+-			 "attempting to determine the owner state",
+-			 sizeof(cap.owned));
+-	if (rc)
++	if (tpm_try_get_ops(chip))
+ 		return 0;
+ 
++	if (tpm1_getcap(to_tpm_chip(dev), TPM_CAP_PROP_OWNER, &cap,
++			"attempting to determine the owner state",
++			sizeof(cap.owned)))
++		goto out_ops;
++
+ 	rc = sprintf(buf, "%d\n", cap.owned);
++out_ops:
++	tpm_put_ops(chip);
+ 	return rc;
+ }
+ static DEVICE_ATTR_RO(owned);
+@@ -177,16 +199,21 @@ static DEVICE_ATTR_RO(owned);
+ static ssize_t temp_deactivated_show(struct device *dev,
+ 				     struct device_attribute *attr, char *buf)
+ {
++	struct tpm_chip *chip = to_tpm_chip(dev);
++	ssize_t rc = 0;
+ 	cap_t cap;
+-	ssize_t rc;
+ 
+-	rc = tpm1_getcap(to_tpm_chip(dev), TPM_CAP_FLAG_VOL, &cap,
+-			 "attempting to determine the temporary state",
+-			 sizeof(cap.stclear_flags));
+-	if (rc)
++	if (tpm_try_get_ops(chip))
+ 		return 0;
+ 
++	if (tpm1_getcap(to_tpm_chip(dev), TPM_CAP_FLAG_VOL, &cap,
++			"attempting to determine the temporary state",
++			sizeof(cap.stclear_flags)))
++		goto out_ops;
++
+ 	rc = sprintf(buf, "%d\n", cap.stclear_flags.deactivated);
++out_ops:
++	tpm_put_ops(chip);
+ 	return rc;
+ }
+ static DEVICE_ATTR_RO(temp_deactivated);
+@@ -195,15 +222,18 @@ static ssize_t caps_show(struct device *dev, struct device_attribute *attr,
+ 			 char *buf)
+ {
+ 	struct tpm_chip *chip = to_tpm_chip(dev);
+-	cap_t cap;
+-	ssize_t rc;
++	ssize_t rc = 0;
+ 	char *str = buf;
++	cap_t cap;
+ 
+-	rc = tpm1_getcap(chip, TPM_CAP_PROP_MANUFACTURER, &cap,
+-			 "attempting to determine the manufacturer",
+-			 sizeof(cap.manufacturer_id));
+-	if (rc)
++	if (tpm_try_get_ops(chip))
+ 		return 0;
++
++	if (tpm1_getcap(chip, TPM_CAP_PROP_MANUFACTURER, &cap,
++			"attempting to determine the manufacturer",
++			sizeof(cap.manufacturer_id)))
++		goto out_ops;
++
+ 	str += sprintf(str, "Manufacturer: 0x%x\n",
+ 		       be32_to_cpu(cap.manufacturer_id));
+ 
+@@ -220,11 +250,10 @@ static ssize_t caps_show(struct device *dev, struct device_attribute *attr,
+ 			       cap.tpm_version_1_2.revMinor);
+ 	} else {
+ 		/* Otherwise just use TPM_STRUCT_VER */
+-		rc = tpm1_getcap(chip, TPM_CAP_VERSION_1_1, &cap,
+-				 "attempting to determine the 1.1 version",
+-				 sizeof(cap.tpm_version));
+-		if (rc)
+-			return 0;
++		if (tpm1_getcap(chip, TPM_CAP_VERSION_1_1, &cap,
++				"attempting to determine the 1.1 version",
++				sizeof(cap.tpm_version)))
++			goto out_ops;
+ 		str += sprintf(str,
+ 			       "TCG version: %d.%d\nFirmware version: %d.%d\n",
+ 			       cap.tpm_version.Major,
+@@ -232,8 +261,10 @@ static ssize_t caps_show(struct device *dev, struct device_attribute *attr,
+ 			       cap.tpm_version.revMajor,
+ 			       cap.tpm_version.revMinor);
+ 	}
+-
+-	return str - buf;
++	rc = str - buf;
++out_ops:
++	tpm_put_ops(chip);
++	return rc;
+ }
+ static DEVICE_ATTR_RO(caps);
+ 
+@@ -241,10 +272,12 @@ static ssize_t cancel_store(struct device *dev, struct device_attribute *attr,
+ 			    const char *buf, size_t count)
+ {
+ 	struct tpm_chip *chip = to_tpm_chip(dev);
+-	if (chip == NULL)
++
++	if (tpm_try_get_ops(chip))
+ 		return 0;
+ 
+ 	chip->ops->cancel(chip);
++	tpm_put_ops(chip);
+ 	return count;
+ }
+ static DEVICE_ATTR_WO(cancel);
 -- 
 2.19.1
 
