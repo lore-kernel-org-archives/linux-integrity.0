@@ -1,148 +1,80 @@
-Return-Path: <SRS0=iX3f=N4=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=Wgjq=N5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_ADSP_ALL,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4988BC43441
-	for <linux-integrity@archiver.kernel.org>; Sat, 17 Nov 2018 20:16:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4898DC43441
+	for <linux-integrity@archiver.kernel.org>; Sun, 18 Nov 2018 07:27:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9ECD2080D
-	for <linux-integrity@archiver.kernel.org>; Sat, 17 Nov 2018 20:16:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9ECD2080D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mniewoehner.de
+	by mail.kernel.org (Postfix) with ESMTP id 065FA20659
+	for <linux-integrity@archiver.kernel.org>; Sun, 18 Nov 2018 07:27:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 065FA20659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726025AbeKRGdt (ORCPT
+        id S1726077AbeKRRrW (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 18 Nov 2018 01:33:49 -0500
-Received: from sender-of-o53.zoho.com ([135.84.80.218]:21703 "EHLO
-        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725732AbeKRGdt (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 18 Nov 2018 01:33:49 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1542485738; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=c5wAj65ZHymBfCUwwXAUODUl7cbn2/KsfhGG+jEQi3euUt6hIfNwIfRjLWR/fOjH4MSJc1NOzS2ZuL+UuDts3t9m4H4iyWz+NxcuojVMlfjj733jT1BKuNPcX1JiM4KtcS3FWU/d8b+x1EZNKpIm2fkqVd/ECpq9H6TV1XIbEDg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1542485738; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=msrNFitDTuhne6hzcdz+5zKDQbarSW+zE6EKA7b+4K0=; 
-        b=jZMqeqe65HKyBkHxLYiuZa+ooMhQeF0bhkrJ4QMXJfPSO0ytQfrWNpUtRvyu598twtTR6PE6Q3ObmKBDeuZxuLpHyufXo/GJBvIeGIybPfqr3cqna0+WaPwIaRTg2UtEjBNuh6ElTcvMImHh8xrPXG+7Nc1Mp45Tw67OfZiI3yo=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=mniewoehner.de;
-        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
-        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
-Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
-        with SMTPS id 1542485736387545.3812507833644; Sat, 17 Nov 2018 12:15:36 -0800 (PST)
-Message-ID: <568ea3447a8116ef460d191bf3599e2761bca3a5.camel@mniewoehner.de>
-Subject: Re: [PATCH] Allow hwrng to initialize crng.
-From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
-To:     Louis Collard <louiscollard@chromium.org>
-Cc:     linux-integrity@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        apronin@chromium.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        david.bild@xaptum.com
-In-Reply-To: <20180926032455.224600-1-louiscollard@chromium.org>
-References: <20180926032455.224600-1-louiscollard@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Date:   Sat, 17 Nov 2018 21:15:32 +0100
-Mime-Version: 1.0
-X-Mailer: Evolution 3.28.5 
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+        Sun, 18 Nov 2018 12:47:22 -0500
+Received: from mga11.intel.com ([192.55.52.93]:45324 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725914AbeKRRrV (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 18 Nov 2018 12:47:21 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Nov 2018 23:27:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,247,1539673200"; 
+   d="scan'208";a="280923574"
+Received: from kaczmarx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.89])
+  by fmsmga005.fm.intel.com with ESMTP; 17 Nov 2018 23:27:47 -0800
+Date:   Sun, 18 Nov 2018 09:27:45 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v5 7/7] tpm: pass an array of tpm_bank_list structures to
+ tpm_pcr_extend()
+Message-ID: <20181118072745.GA5897@linux.intel.com>
+References: <20181114153108.12907-1-roberto.sassu@huawei.com>
+ <20181114153108.12907-8-roberto.sassu@huawei.com>
+ <20181116150352.GA3612@linux.intel.com>
+ <9c534ed1-7832-7a3b-3e69-5fcc25c565cc@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9c534ed1-7832-7a3b-3e69-5fcc25c565cc@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Louis,
+On Fri, Nov 16, 2018 at 04:55:36PM +0100, Roberto Sassu wrote:
+> On 11/16/2018 4:03 PM, Jarkko Sakkinen wrote:
+> > On Wed, Nov 14, 2018 at 04:31:08PM +0100, Roberto Sassu wrote:
+> > > Currently, tpm_pcr_extend() accepts as an input only a SHA1 digest.
+> > > 
+> > > This patch modifies the definition of tpm_pcr_extend() to allow other
+> > > kernel subsystems to pass a digest for each algorithm supported by the TPM.
+> > > All digests are processed by the TPM in one operation.
+> > > 
+> > > If a tpm_pcr_extend() caller provides a subset of the supported algorithms,
+> > > the TPM driver extends the remaining PCR banks with the first digest
+> > > passed as an argument to the function.
+> > 
+> > What is the legit use case for this?
+> 
+> A subset could be chosen for better performance, or when a TPM algorithm
+> is not supported by the crypto subsystem.
 
-On Wed, 2018-09-26 at 11:24 +0800, Louis Collard wrote:
-> Some systems, for example embedded systems, do not generate
-> enough entropy on boot through interrupts, and boot may be blocked for
-> several minutes waiting for a call to getrandom to complete.
-> 
-> Currently, random data is read from a hwrng when it is registered,
-> and is loaded into primary_crng. This data is treated in the same
-> way as data that is device-specific but otherwise unchanging, and
-> so primary_crng cannot become initialized with the data from the
-> hwrng.
-> 
-> This change causes the data initially read from the hwrng to be
-> treated the same as subsequent data that is read from the hwrng if
-> it's quality score is non-zero.
-> 
-> The implications of this are:
-> 
-> The data read from hwrng can cause primary_crng to become
-> initialized, therefore avoiding problems of getrandom blocking
-> on boot.
-> 
-> Calls to getrandom (with GRND_RANDOM) may be using entropy
-> exclusively (or in practise, almost exclusively) from the hwrng.
-> 
-> Regarding the latter point; this behavior is the same as if a
-> user specified a quality score of 1 (bit of entropy per 1024 bits)
-> so hopefully this is not too scary a change to make.
-> 
-> This change is the result of the discussion here:
-> https://patchwork.kernel.org/patch/10453893/
-> 
-> Signed-off-by: Louis Collard <louiscollard@chromium.org>
-> Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  drivers/char/hw_random/core.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/core.c
-> index aaf9e5afaad4..47f358aa0c3d 100644
-> --- a/drivers/char/hw_random/core.c
-> +++ b/drivers/char/hw_random/core.c
-> @@ -24,6 +24,7 @@
->  #include <linux/sched.h>
->  #include <linux/slab.h>
->  #include <linux/uaccess.h>
-> +#include <crypto/chacha20.h>
->  
->  #define RNG_MODULE_NAME		"hw_random"
->  
-> @@ -64,13 +65,17 @@ static size_t rng_buffer_size(void)
->  static void add_early_randomness(struct hwrng *rng)
->  {
->  	int bytes_read;
-> -	size_t size = min_t(size_t, 16, rng_buffer_size());
-> +	/* Read enough to initialize crng. */
-> +	size_t size = 2*CHACHA20_KEY_SIZE;
->  
->  	mutex_lock(&reading_mutex);
->  	bytes_read = rng_get_data(rng, rng_buffer, size, 1);
->  	mutex_unlock(&reading_mutex);
->  	if (bytes_read > 0)
-> -		add_device_randomness(rng_buffer, bytes_read);
-> +		/* Allow crng to become initialized, but do not add
-> +		 * entropy to the pool.
-> +		 */
-> +		add_hwgenerator_randomness(rng_buffer, bytes_read, 0);
->  }
->  
->  static inline void cleanup_rng(struct kref *kref)
+Doesn't extending a subset a security concern?
 
-I found your patch by chance, searching for a solution for crng init delay on my
-headless machine. Unfortunately it hardly makes any difference for me. With the
-patch the system hangs for about 80s instead of 120s until the "crng init done"
-message.In contrast, doing a `cat /dev/hwrng >/dev/random` or running rngd
-initializes the crng instantly.
-
-Isn't that delay the problem this patch tries to fix? Any idea what is wrong
-here?
-
-Thanks!
-
-Best regards
-Michael
-
-
+/Jarkko
