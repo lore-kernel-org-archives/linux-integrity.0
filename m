@@ -2,187 +2,134 @@ Return-Path: <SRS0=Wgjq=N5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_ADSP_ALL,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B99C43441
-	for <linux-integrity@archiver.kernel.org>; Sun, 18 Nov 2018 14:10:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C93A7C43441
+	for <linux-integrity@archiver.kernel.org>; Sun, 18 Nov 2018 19:51:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A43AF20815
-	for <linux-integrity@archiver.kernel.org>; Sun, 18 Nov 2018 14:10:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A43AF20815
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mniewoehner.de
+	by mail.kernel.org (Postfix) with ESMTP id 8FEB120817
+	for <linux-integrity@archiver.kernel.org>; Sun, 18 Nov 2018 19:51:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="UI1iMfCs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FEB120817
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbeKSAaz convert rfc822-to-8bit (ORCPT
+        id S1725904AbeKSGMR (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 18 Nov 2018 19:30:55 -0500
-Received: from sender-of-o53.zoho.com ([135.84.80.218]:21741 "EHLO
-        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726180AbeKSAaz (ORCPT
+        Mon, 19 Nov 2018 01:12:17 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39363 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725805AbeKSGMR (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 18 Nov 2018 19:30:55 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1542550213; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=IFtfim+G1L7XwABL+n9cnQ/shtL95QR0TfTzHRx7x0cud5pm+T7zePTsuj2W+coCt+AzCGyaoY9XIQaSbLKpoQ+gS5QUAmpw113cWmGW9YoHHArcQS0mOsRpDSQ6ACqVhrDncRu36NrjoJfqyLizj9NiMDN3yu4Xs+HPUSjTu9o=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1542550213; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=NXtbWNmpG8uvyT6Mad4CZ0zIk9MTL88p+iZGacEtSl8=; 
-        b=IOcj0Nnd0EloBO6fOQ598aRP9+n2BBF1h1S2pT/JCmMpg57uvCdQrlEnNDZGx6OAPkY/xy/vLhMaD+9yqhvM9w4DnsDNmLlLXiixZkbLicqV4PS6NQasBOSr53ZnSMki7IOcYTR9UZiWuQu+9avpVkJXGMyGFYj2vOWsct4r3Lg=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=mniewoehner.de;
-        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
-        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
-Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
-        with SMTPS id 1542550210855818.6736879055078; Sun, 18 Nov 2018 06:10:10 -0800 (PST)
-Message-ID: <467833cc47247a55595d72426f46eeac1406eb04.camel@mniewoehner.de>
-Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
-From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+        Mon, 19 Nov 2018 01:12:17 -0500
+Received: by mail-pf1-f193.google.com with SMTP id c72so9086376pfc.6
+        for <linux-integrity@vger.kernel.org>; Sun, 18 Nov 2018 11:51:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zryOOO3i4G0RZadk3n1mevBtzkULwPPOtthGH+PBm4I=;
+        b=UI1iMfCsIpKNUEaClrP4qxd6jGpkNrtTSvORNpl8ffq7HhsLpNZV2pWhvtEGrasle4
+         CvlX8PcVhFFpJ7MU0KJkuze7X8n+UR4PL8Sup2xfRBO5zYrslrkVMLqHAlWhMZwfWApG
+         L8jplictiZaVWuzjnCNzZolaYaMDX8zbzbn3nR55gHah0wtYzf0d8hay1QnJGc/oiSR3
+         XyGoLZu3zHg9+610HWp3pDWmaBhVph/sZN5qq4WYaaJrwEnUwLEVH9x5cric16LT9He4
+         wBMTm8ufWJUZ0TENc2+6G8dLpWS5enrAU/VVZ5/qdmpDm2n7aclUyJ61ezh7TRIJHnWw
+         6dJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zryOOO3i4G0RZadk3n1mevBtzkULwPPOtthGH+PBm4I=;
+        b=Ytx08ESpEeRoVJVtBjVSEyyRT6f27tnodprONequZn1kNlFFXbNBVvwln8MFn5/0yb
+         YtvWO3zP+1LEHetpyWKF11ieUl8crhbc6aqJo+koM7AB1P8Yr53zfIygd0Tq7Nw5BiSo
+         QOpGE1iA+sm3XrTew0/GG7rh1uCJYVPwsOQJFwTMd1Pu54Y+ug0GtCwYH8kwcFV1+hhu
+         vZxSFDiwc1D0PAQnRcjtvpaKVFeikO4KaaCOY/wItGRPugMbGxyNJQ7ynvR2xCs5OXtJ
+         a0gwKDB/+FV27KI0eBwLFU3y9zzPXDmWqfCqXUHGUxBMcQ5kye+RyEdmVQIskg73X37+
+         S9cQ==
+X-Gm-Message-State: AGRZ1gKfH9O8Xl6rfwFJHxM6WytE0+ge4BKLKv6hXigent9Q2YVtmoOK
+        bJlaE2V5yXqBpjymZUojzHEgLQ==
+X-Google-Smtp-Source: AJdET5cScuGLusCTrcjOlh+d6pQJq7oSLEBkBFsEWOUNHVsM43CU8rW9MP9i196MHHxaHKu5x3x9nQ==
+X-Received: by 2002:a63:1f4e:: with SMTP id q14mr16883743pgm.88.1542570666384;
+        Sun, 18 Nov 2018 11:51:06 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id s86-v6sm76663915pfa.137.2018.11.18.11.51.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 18 Nov 2018 11:51:05 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gOT60-0005sC-O6; Sun, 18 Nov 2018 12:51:04 -0700
+Date:   Sun, 18 Nov 2018 12:51:04 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
         James Bottomley <James.Bottomley@HansenPartnership.com>,
-        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
-        linux-integrity@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Nayna Jain <nayna@linux.ibm.com>
-In-Reply-To: <20181118081833.GH5897@linux.intel.com>
-References: <1541960689.3190.4.camel@HansenPartnership.com>
-         <e8eb56fdab618770917fbe5b174328dc1240f934.camel@mniewoehner.de>
-         <1541962653.3190.7.camel@HansenPartnership.com>
-         <7d8cc5ad4bb7548d283f363de6f24c90d5d0a2b2.camel@mniewoehner.de>
-         <1541968191.3190.12.camel@HansenPartnership.com>
-         <3243d0325b3ea5878d3f86b0ee4fec1498f21dc1.camel@mniewoehner.de>
-         <660b0934bc16c8d195a2724f8be4ba8dfbe71134.camel@mniewoehner.de>
-         <1541972556.3734.90.camel@linux.ibm.com>
-         <4f7cc7152f2266d8d0782889db2375d4c1c71987.camel@mniewoehner.de>
-         <b89c95a496a1512ee3069b6a69cf915906fe697a.camel@mniewoehner.de>
-         <20181118081833.GH5897@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Date:   Sun, 18 Nov 2018 15:10:06 +0100
-Mime-Version: 1.0
-X-Mailer: Evolution 3.28.5 
-Content-Transfer-Encoding: 8BIT
-X-ZohoMailClient: External
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v9 14/17] tpm: remove TPM_TRANSMIT_UNLOCKED flag
+Message-ID: <20181118195104.GA21938@ziepe.ca>
+References: <20181118124753.18613-1-jarkko.sakkinen@linux.intel.com>
+ <20181118124753.18613-15-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181118124753.18613-15-jarkko.sakkinen@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sun, 2018-11-18 at 10:18 +0200, Jarkko Sakkinen wrote:
-> On Fri, Nov 16, 2018 at 10:06:28PM +0100, Michael Niewöhner wrote:
-> > On Wed, 2018-11-14 at 21:46 +0100, Michael Niewöhner wrote:
-> > > Hi all,
-> > > 
-> > > I tried that patch mentioned by Mimi but it does not change anything for
-> > > me.
-> > > 
-> > > Then I did some more tests with different kernel configs and finally got
-> > > TPM
-> > > working by
-> > > a) compiling TPM as modules and rmmod tpm* and re-modprobe tpm_tis.
-> > > 
-> > > (initramfs) dmesg | grep -i tpm
-> > > [    0.000000] efi:  ACPI 2.0=0x9ea7e000 ACPI=0x9ea7e000 SMBIOS=0x9f5eb000
-> > > SMBIOS 3.0=0x9f5ea000 ESRT=0x9c07d918 MEMATTR=0x9bea3018
-> > > TPMEventLog=0x97cbb018
-> > > [    0.003793] ACPI: TPM2 0x000000009EAB7F70 000034 (v03 LENOVO TC-
-> > > S06   00001260 AMI 00000000)
-> > > (initramfs) rmmod tpm_crb tpm_tis tpm_tis_core tpm
-> > > (initramfs) modprobe tpm_tis
-> > > [   44.956905] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
-> > > 
-> > > b) compiling TPM-support in-kernel and manually bind the ACPI device
-> > > 
-> > > (initramfs) dmesg | grep -i tpm
-> > > [    0.000000] efi: ACPI 2.0=0x9ea7e000 ACPI=0x9ea7e000 SMBIOS=0x9f5eb000
-> > > SMBIOS
-> > > 3.0=0x9f5ea000 ESRT=0x9c07d918 MEMATTR=0x9bea3018 TPMEventLog=0x97cbb018
-> > > [    0.003546] ACPI: TPM2 0x000000009EAB7F70 000034 (v03 LENOVO TC-S06
-> > > 00001260
-> > > AMI 00000000)
-> > > (initramfs) echo MSFT0101:00 >/sys/bus/platform/drivers/tpm_tis/bind
-> > > [  233.076079] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
-> > > 
-> > > 
-> > > It seems to me, the kernel tries to enable the TPM to early...
-> > > 
-> > > 
-> > > Michael
-> > 
-> > Looks like the manual driver bind works more or less but e.g reading hwrng
-> > does
-> > not work...
-> > 
-> > # echo MSFT0101:00 >/sys/bus/platform/drivers/tpm_tis/bind
-> > [  148.293302] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
-> > # cat /sys/devices/virtual/misc/hw_random/rng_current
-> > tpm-rng-0
-> > # cat /dev/hwrng >/dev/null 
-> > cat: /dev/hwrng: Operation not permitted
+On Sun, Nov 18, 2018 at 02:47:47PM +0200, Jarkko Sakkinen wrote:
+> Added locking as part of tpm_try_get_ops() and tpm_put_ops() as they are
+> anyway used in most of the call sites except in tpmrm_release() where we
+> take the locks manually.
 > 
-> Can you check with trace-cmd start -p function -l 'tpm*'?
-> 
-> /Jarkko
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> ---
+>  drivers/char/tpm/tpm-chip.c       |  2 ++
+>  drivers/char/tpm/tpm-dev-common.c |  4 +---
+>  drivers/char/tpm/tpm-interface.c  |  8 --------
+>  drivers/char/tpm/tpm.h            |  8 ++------
+>  drivers/char/tpm/tpm2-cmd.c       | 13 ++++---------
+>  drivers/char/tpm/tpm2-space.c     | 15 ++++++---------
+>  6 files changed, 15 insertions(+), 35 deletions(-)
+ 
+> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+> index 32db84683c40..157505b0f755 100644
+> --- a/drivers/char/tpm/tpm-chip.c
+> +++ b/drivers/char/tpm/tpm-chip.c
+> @@ -58,6 +58,7 @@ int tpm_try_get_ops(struct tpm_chip *chip)
+>  	if (!chip->ops)
+>  		goto out_lock;
+>  
+> +	mutex_lock(&chip->tpm_mutex);
+>  	return 0;
 
+It really isn't appropriate for something called 'get' to be exclusive
+like this.. Call it tpm_try_lock_ops() ?
 
-Hi Jarko,
+> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+> index c7dc54930576..582caefcf19b 100644
+> --- a/drivers/char/tpm/tpm-dev-common.c
+> +++ b/drivers/char/tpm/tpm-dev-common.c
+> @@ -33,7 +33,6 @@ static ssize_t tpm_dev_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>  	struct tpm_header *header = (void *)buf;
+>  	ssize_t ret, len;
+>  
+> -	mutex_lock(&chip->tpm_mutex);
 
-what output do you need exactly?
+The now implicit locking should be tested for using lockdep calls in
+all places that assume the lock is held by the caller.
 
-root@debian:~# trace-cmd record -p function -l 'tpm*'
-  plugin 'function'
-Hit Ctrl^C to stop recording
-^CCPU0 data recorded at offset=0x464000
-    0 bytes in size
-CPU1 data recorded at offset=0x464000
-    0 bytes in size
-CPU2 data recorded at offset=0x464000
-    0 bytes in size
-CPU3 data recorded at offset=0x464000
-    4096 bytes in size
-CPU4 data recorded at offset=0x465000
-    4096 bytes in size
-CPU5 data recorded at offset=0x466000
-    0 bytes in size
-CPU6 data recorded at offset=0x466000
-    0 bytes in size
-CPU7 data recorded at offset=0x466000
-    0 bytes in size
-root@debian:~# trace-cmd report
-CPU 0 is empty
-CPU 1 is empty
-CPU 2 is empty
-CPU 5 is empty
-CPU 6 is empty
-CPU 7 is empty
-cpus=8
-             cat-3324  [003]   265.547715: function:             tpm_hwrng_read
-             cat-3324  [003]   265.547721: function:             tpm_get_random
-             cat-3324  [003]   265.547721:
-function:                tpm_find_get_ops
-             cat-3324  [003]   265.547721:
-function:                   tpm_try_get_ops
-             cat-3324  [003]   265.547721:
-function:                tpm2_get_random
-             cat-3324  [003]   265.547722:
-function:                   tpm_transmit_cmd
-             cat-3324  [003]   265.547722:
-function:                      tpm_transmit
-             cat-3324  [003]   265.547722:
-function:                         tpm_tis_clkrun_enable
-             cat-3324  [003]   265.547723:
-function:             tpm_tcg_read_bytes
-
-< snip ... many times the same lines: cat-3324 ... function: tpm_tcg_read_bytes
->
-
-             cat-3324  [004]   266.291087:
-function:             tpm_tcg_read_bytes
-             cat-3324  [004]   266.296347:
-function:             tpm_tis_clkrun_enable
-             cat-3324  [004]   266.296349: function:             tpm_put_ops
-
-Michael
-
-
+Jason
