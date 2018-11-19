@@ -2,98 +2,245 @@ Return-Path: <SRS0=Vrnv=N6=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB78DC43441
-	for <linux-integrity@archiver.kernel.org>; Mon, 19 Nov 2018 17:47:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D61C43441
+	for <linux-integrity@archiver.kernel.org>; Mon, 19 Nov 2018 18:55:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91FE72146D
-	for <linux-integrity@archiver.kernel.org>; Mon, 19 Nov 2018 17:47:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91FE72146D
+	by mail.kernel.org (Postfix) with ESMTP id 8CE5220659
+	for <linux-integrity@archiver.kernel.org>; Mon, 19 Nov 2018 18:55:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CE5220659
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388403AbeKTDJG (ORCPT
+        id S1725816AbeKTFUJ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:09:06 -0500
-Received: from mga14.intel.com ([192.55.52.115]:5595 "EHLO mga14.intel.com"
+        Tue, 20 Nov 2018 00:20:09 -0500
+Received: from mga06.intel.com ([134.134.136.31]:32253 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387555AbeKTDJE (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:09:04 -0500
+        id S1725770AbeKTFUJ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 20 Nov 2018 00:20:09 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 08:44:49 -0800
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 10:55:15 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,253,1539673200"; 
-   d="scan'208";a="109813190"
+   d="scan'208";a="109585298"
 Received: from tstruk-mobl1.jf.intel.com ([10.7.196.53])
-  by orsmga002.jf.intel.com with ESMTP; 19 Nov 2018 08:44:49 -0800
-Subject: Re: [PATCH v4 2/2] tpm: add support for partial reads
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <154239067364.2880.13752725056462237016.stgit@tstruk-mobl1.jf.intel.com>
- <154239071144.2924.17574189056250189697.stgit@tstruk-mobl1.jf.intel.com>
- <20181118074832.GG5897@linux.intel.com>
- <90072f09-6388-b1f7-387b-42f056f8893d@intel.com>
- <20181119135800.GE8755@linux.intel.com>
+  by orsmga001.jf.intel.com with ESMTP; 19 Nov 2018 10:55:15 -0800
+Subject: [PATCH v5] tpm: add support for partial reads
 From:   Tadeusz Struk <tadeusz.struk@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
- xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
- fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
- LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
- /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
- qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
- cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
- MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
- UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
- dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
- AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
- R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
- 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
- eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
- PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
- HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
- VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
- QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
- pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
- mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
- ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
- EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
- kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
-Message-ID: <b0efbbf8-6242-a48d-d984-b49d5fb20bb8@intel.com>
-Date:   Mon, 19 Nov 2018 08:44:49 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+To:     jarkko.sakkinen@linux.intel.com
+Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tadeusz.struk@intel.com
+Date:   Mon, 19 Nov 2018 10:55:15 -0800
+Message-ID: <154265371562.23494.10113870855345906523.stgit@tstruk-mobl1.jf.intel.com>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-In-Reply-To: <20181119135800.GE8755@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 11/19/18 5:58 AM, Jarkko Sakkinen wrote:
-> Please explain a scenario where "!ret_size" would no work given that
-> both size and partial_data have always positive value?
+Currently to read a response from the TPM device an application needs
+provide big enough buffer for the whole response and read it in one go.
+The application doesn't know how big the response it beforehand so it
+always needs to maintain a 4K buffer and read the max (4K).
+In case if the user of the TSS library doesn't provide big enough
+buffer the TCTI spec says that the library should set the required
+size and return TSS2_TCTI_RC_INSUFFICIENT_BUFFER error code so that the
+application could allocate a bigger buffer and call receive again.
+To make it possible in the TSS library, this requires being able to do
+partial reads from the driver.
+The library would read the 10 bytes header first to get the actual size
+of the response from the header, and then read the rest of the response.
 
-Right, I only looked at the one line above before responding.
-I'll change it to !ret_size
+This patch adds support for partial reads, i.e. the user can read the
+response in one or multiple reads, until the whole response is consumed.
+The user can also read only part of the response and ignore
+the rest by issuing a new write to send a new command.
 
-> 
-> I don't understand. In order to maintain backwards compatibility you can
-> send a new command at any time.
+Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+---
+The usecase is implemented in this TSS commit:
+https://github.com/tpm2-software/tpm2-tss/commit/ce982f67a67dc08e24683d30b05800648d8a264c
 
-No, currently it is not possible to send a new command until the previous
-response is consumed. -EBUSY is returned if one sends a new command before
-reading the previous response (or at least part of it). See:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/char/tpm/tpm-dev-common.c#n128
+Changes in v5:
+ - Merge the two patches back into one.
+ - Change variable 'partial_data' to a new flag 'response_read'.
+ - Update the logic around partial_data to reflect the new flag.
+ - Add a new variable response_length that keeps track of how much
+   of the response is left.
 
--- 
-Tadeusz
+Changes in v4:
+ - Use unsigned type for response_pending as it will never be negative.
+ - Rebased on top of name change data_pending to transmit_result patch.
+
+Changes in v3:
+ - Remove link to usecase implemented in TSS out of the commit message.
+ - Update the conddition in tpm_common_poll() to take into account
+   the partial_data also.
+
+Changes in v2:
+ - Allow writes after only partial response is consumed to maintain
+   backwords compatibility.
+---
+ drivers/char/tpm/tpm-dev-common.c |   51 +++++++++++++++++++++++++------------
+ drivers/char/tpm/tpm-dev.h        |    7 +++--
+ 2 files changed, 39 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+index 99b5133a9d05..344739223451 100644
+--- a/drivers/char/tpm/tpm-dev-common.c
++++ b/drivers/char/tpm/tpm-dev-common.c
+@@ -40,7 +40,7 @@ static void tpm_async_work(struct work_struct *work)
+ 
+ 	tpm_put_ops(priv->chip);
+ 	if (ret > 0) {
+-		priv->data_pending = ret;
++		priv->response_length = ret;
+ 		mod_timer(&priv->user_read_timer, jiffies + (120 * HZ));
+ 	}
+ 	mutex_unlock(&priv->buffer_mutex);
+@@ -63,7 +63,8 @@ static void tpm_timeout_work(struct work_struct *work)
+ 					      timeout_work);
+ 
+ 	mutex_lock(&priv->buffer_mutex);
+-	priv->data_pending = 0;
++	priv->response_read = true;
++	priv->response_length = 0;
+ 	memset(priv->data_buffer, 0, sizeof(priv->data_buffer));
+ 	mutex_unlock(&priv->buffer_mutex);
+ 	wake_up_interruptible(&priv->async_wait);
+@@ -74,6 +75,7 @@ void tpm_common_open(struct file *file, struct tpm_chip *chip,
+ {
+ 	priv->chip = chip;
+ 	priv->space = space;
++	priv->response_read = true;
+ 
+ 	mutex_init(&priv->buffer_mutex);
+ 	timer_setup(&priv->user_read_timer, user_reader_timeout, 0);
+@@ -90,22 +92,35 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
+ 	ssize_t ret_size = 0;
+ 	int rc;
+ 
+-	del_singleshot_timer_sync(&priv->user_read_timer);
+-	flush_work(&priv->timeout_work);
+ 	mutex_lock(&priv->buffer_mutex);
+ 
+-	if (priv->data_pending) {
+-		ret_size = min_t(ssize_t, size, priv->data_pending);
+-		if (ret_size > 0) {
+-			rc = copy_to_user(buf, priv->data_buffer, ret_size);
+-			memset(priv->data_buffer, 0, priv->data_pending);
+-			if (rc)
+-				ret_size = -EFAULT;
++	if (priv->response_length) {
++		priv->response_read = true;
++
++		ret_size = min_t(ssize_t, size, priv->response_length);
++		if (!ret_size) {
++			priv->response_length = 0;
++			goto out;
+ 		}
+ 
+-		priv->data_pending = 0;
++		rc = copy_to_user(buf, priv->data_buffer + *off, ret_size);
++		if (rc) {
++			memset(priv->data_buffer, 0, TPM_BUFSIZE);
++			priv->response_length = 0;
++			ret_size = -EFAULT;
++		} else {
++			memset(priv->data_buffer + *off, 0, ret_size);
++			priv->response_length -= ret_size;
++			*off += ret_size;
++		}
+ 	}
+ 
++out:
++	if (!priv->response_length) {
++		*off = 0;
++		del_singleshot_timer_sync(&priv->user_read_timer);
++		flush_work(&priv->timeout_work);
++	}
+ 	mutex_unlock(&priv->buffer_mutex);
+ 	return ret_size;
+ }
+@@ -125,7 +140,7 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+ 	 * tpm_read or a user_read_timer timeout. This also prevents split
+ 	 * buffered writes from blocking here.
+ 	 */
+-	if (priv->data_pending != 0 || priv->command_enqueued) {
++	if (!priv->response_read || priv->command_enqueued) {
+ 		ret = -EBUSY;
+ 		goto out;
+ 	}
+@@ -150,6 +165,10 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+ 		goto out;
+ 	}
+ 
++	priv->response_length = 0;
++	priv->response_read = false;
++	*off = 0;
++
+ 	/*
+ 	 * If in nonblocking mode schedule an async job to send
+ 	 * the command return the size.
+@@ -168,7 +187,7 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+ 	tpm_put_ops(priv->chip);
+ 
+ 	if (ret > 0) {
+-		priv->data_pending = ret;
++		priv->response_length = ret;
+ 		mod_timer(&priv->user_read_timer, jiffies + (120 * HZ));
+ 		ret = size;
+ 	}
+@@ -184,7 +203,7 @@ __poll_t tpm_common_poll(struct file *file, poll_table *wait)
+ 
+ 	poll_wait(file, &priv->async_wait, wait);
+ 
+-	if (priv->data_pending)
++	if (!priv->response_read || priv->response_length)
+ 		mask = EPOLLIN | EPOLLRDNORM;
+ 	else
+ 		mask = EPOLLOUT | EPOLLWRNORM;
+@@ -201,7 +220,7 @@ void tpm_common_release(struct file *file, struct file_priv *priv)
+ 	del_singleshot_timer_sync(&priv->user_read_timer);
+ 	flush_work(&priv->timeout_work);
+ 	file->private_data = NULL;
+-	priv->data_pending = 0;
++	priv->response_length = 0;
+ }
+ 
+ int __init tpm_dev_common_init(void)
+diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
+index a126b575cb8c..a744d9bec7b6 100644
+--- a/drivers/char/tpm/tpm-dev.h
++++ b/drivers/char/tpm/tpm-dev.h
+@@ -9,14 +9,15 @@ struct file_priv {
+ 	struct tpm_chip *chip;
+ 	struct tpm_space *space;
+ 
+-	/* Holds the amount of data passed or an error code from async op */
+-	ssize_t data_pending;
+ 	struct mutex buffer_mutex;
+-
+ 	struct timer_list user_read_timer;      /* user needs to claim result */
+ 	struct work_struct timeout_work;
+ 	struct work_struct async_work;
+ 	wait_queue_head_t async_wait;
++	/* Holds the resul of the last successful call to tpm_transmit() */
++	size_t response_length;
++	/* Becomes true when the response (or part of it) is consumed */
++	bool response_read;
+ 	bool command_enqueued;
+ 
+ 	u8 data_buffer[TPM_BUFSIZE];
+
