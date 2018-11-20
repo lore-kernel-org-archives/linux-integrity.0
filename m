@@ -2,89 +2,143 @@ Return-Path: <SRS0=q5cd=N7=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36FC9C43610
-	for <linux-integrity@archiver.kernel.org>; Tue, 20 Nov 2018 23:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E9DC43610
+	for <linux-integrity@archiver.kernel.org>; Tue, 20 Nov 2018 23:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5ECF21479
-	for <linux-integrity@archiver.kernel.org>; Tue, 20 Nov 2018 23:14:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5ECF21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 31EA320C01
+	for <linux-integrity@archiver.kernel.org>; Tue, 20 Nov 2018 23:39:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="e9UlUVZ1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31EA320C01
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725999AbeKUJpi (ORCPT
+        id S1726612AbeKUKKw (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 21 Nov 2018 04:45:38 -0500
-Received: from mga14.intel.com ([192.55.52.115]:24185 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725903AbeKUJpi (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 21 Nov 2018 04:45:38 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 15:13:59 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,258,1539673200"; 
-   d="scan'208";a="109963207"
-Received: from tstruk-mobl1.jf.intel.com ([10.7.196.53])
-  by orsmga001.jf.intel.com with ESMTP; 20 Nov 2018 15:13:59 -0800
-Subject: Re: [PATCH v5] tpm: add support for partial reads
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <154265371562.23494.10113870855345906523.stgit@tstruk-mobl1.jf.intel.com>
- <20181120124810.GB8813@linux.intel.com>
- <77b031b2-7fa2-f057-1e6a-70f0427ec6c4@intel.com>
- <20181120230759.GF8391@linux.intel.com>
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
- xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
- fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
- LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
- /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
- qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
- cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
- MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
- UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
- dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
- AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
- R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
- 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
- eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
- PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
- HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
- VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
- QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
- pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
- mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
- ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
- EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
- kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
-Message-ID: <affa9788-9d86-341f-28fb-66a8720ef697@intel.com>
-Date:   Tue, 20 Nov 2018 15:13:59 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 21 Nov 2018 05:10:52 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:32907 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726061AbeKUKKv (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 21 Nov 2018 05:10:51 -0500
+Received: by mail-pl1-f196.google.com with SMTP id z23so2603365plo.0
+        for <linux-integrity@vger.kernel.org>; Tue, 20 Nov 2018 15:39:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JoJDF4Jve8GOIQJZW7DaShOnnQbEYSLbl7K9ZWZew7Q=;
+        b=e9UlUVZ19QFserdXADsLheyDWNH2BTJchMpE1i9bRlMgorbF3Lp24U8TxOy00FGi6g
+         3zeRxC6jaiaBl8pBvm4ne9NDCu+UV4O6HZe7udwGDClu8bRluJ13G2D0393VZTsWKu+5
+         ByUa5DXDsK5pKvBOu8o/x7b45ILZJr5a75iIrXaNrSFlhGqqLzVSduw9Je/HGRiUC+Gs
+         JefFWpkTKr7ejUOP7JpI7+YFxlTVcRvVDrs53iuQnTIMKuPaqorAPB384quBjyzXtPKm
+         7Bo2vWSPZZaeCQ/BL4DmPUxw2CS+nIxrir1TNlvJ6CM8ESwixcazIR7mt4yk686+m8pV
+         n9Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JoJDF4Jve8GOIQJZW7DaShOnnQbEYSLbl7K9ZWZew7Q=;
+        b=rvXk6AtCPk1lrvYrf/PQhf9K+MPMBXSDWQzPvkUu4dIpYKPVnz8JR+2m5TXw5/XZlT
+         wZxjiMLaZ3rMTnoMpemOOwsc6NwUiOLviMlBidXKtuPySqW+m+foBvx1MrYQDxQ2h9AJ
+         TLyAhQqd5Jx8wm2y1lDLuNo+R6gQwOi4efYOATDDH9ZOTZc0tk2AVO6zkfjh5XLj0/cW
+         ZkBCrAahAYjgpgG9EiGUk+/ZHSJCmpl6CspX52mkiHmNwo9lukmKAl5Zc8wsE6L4QLyv
+         u3JGtX+MCIC5d0hWcPien2tjCBvf04iaJBDZWp7VOKb+K9BVA/KmZkFWmNtB+jo5Ksk+
+         clZg==
+X-Gm-Message-State: AA+aEWZJIEftFdAy3yOYocpxWgBNeSmxOhpAre4Gv+B/72QhVhfTjTWw
+        fagNAoM89kew/g544nnDvOC7BSjhnHM=
+X-Google-Smtp-Source: AFSGD/XNTiyBOKHy3zBme3Bu6RxMY5QNgunENzkMNb7q/0bHV4TErvP5t/hk3jXt2k98y0teCvjTtw==
+X-Received: by 2002:a17:902:20c6:: with SMTP id v6mr3793495plg.156.1542757146850;
+        Tue, 20 Nov 2018 15:39:06 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id y26-v6sm2990362pfi.123.2018.11.20.15.39.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 20 Nov 2018 15:39:05 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gPFbk-0003Ir-R6; Tue, 20 Nov 2018 16:39:04 -0700
+Date:   Tue, 20 Nov 2018 16:39:04 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        monty.wiseman@ge.com, Monty Wiseman <montywiseman32@gmail.com>,
+        Matthew Garrett <mjg59@google.com>
+Subject: Re: Documenting the proposal for TPM 2.0 security in the face of bus
+ interposer attacks
+Message-ID: <20181120233904.GF22023@ziepe.ca>
+References: <20181119211911.GH4890@ziepe.ca>
+ <1542663281.2910.44.camel@HansenPartnership.com>
+ <20181119214426.GK4890@ziepe.ca>
+ <1542666988.2910.49.camel@HansenPartnership.com>
+ <20181119230826.GN4890@ziepe.ca>
+ <1542675272.2910.63.camel@HansenPartnership.com>
+ <20181120030556.GP4890@ziepe.ca>
+ <1542734279.2814.23.camel@HansenPartnership.com>
+ <20181120213345.GC22023@ziepe.ca>
+ <1542753292.2814.45.camel@HansenPartnership.com>
 MIME-Version: 1.0
-In-Reply-To: <20181120230759.GF8391@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1542753292.2814.45.camel@HansenPartnership.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 11/20/18 3:07 PM, Jarkko Sakkinen wrote:
->>>> +	/* Holds the resul of the last successful call to tpm_transmit() */
->>> This comment is cruft.
->> Do you want me to remove it? This is the comment you proposed.
-> As I explained before it made sense before you made the remark that
-> it can only get positive values i.e. the length.
-> 
-So what do you want me to do with this one?
+On Tue, Nov 20, 2018 at 02:34:52PM -0800, James Bottomley wrote:
 
--- 
-Tadeusz
+> https://trustedcomputinggroup.org/resource/implementing-hardware-roots-of-trust/
+
+Notice none of their examples include 'prevent tampering with the
+hardware' all are focused on pure software attacks, which the TPM is
+excellent at preventing. The TPM was never supposed to prevent
+physical attacks against the HW for the PCR feature.
+
+The only HW guarentee it ever provided is to prevent theft of the
+private secrets, even with physical access.
+
+> > It doesn't need contact with the CPU. The basic flow would be to use
+> > the interposer on SPI or LPC to block the Nth PCR update, having
+> > determined that Nth comes from the BIOS and covers the
+> > bootloader.. The BIOS ignores the error, or can't tell the PCR update
+> > was corrupted. From there it is easy to see how to get into a hostile
+> > kernel and extend the PCRs to match a trusted kernel.
+> 
+> Right, but that's why I want to detect the error and shut down the TPM.
+
+Well, I think this is a lot of industry effort and still leaves open
+other fairly simple physical attacks, like wire-to-the-reset.
+
+I can always make an interposer that did wire-to-the-reset, I don't
+need to do complicated dynamic things with PCR extend commands.
+
+And the null key doesn't really protect against wire-to-the-reset, as
+the null key doesn't participate in the PCR extend. So
+unseal/seal/attest commands don't know if the TPM was booted
+authentically or via a wire-to-the-reset and a hostile kernel.
+
+Yes, it lets a trusted kernel detect a problem, but a threat model
+that includes an interposer and excludes a hostile kernel doesn't
+sound so interesting to me???
+
+Like I said at the start, the way the spec is written, PCR requires
+trusted HW. Without a TPM spec change we can't fix this basic
+assumption.
+
+A better mitigation to the interposer threat is for PCB manufactures
+to use BGA packages, blind vias and internal traces to physically deny
+easy access to the TPM bus and reset signal.
+
+The last TPM project I worked on took physical security into account
+when designing the PCB and TPM chip placement, others should do the
+same :)
+
+Jason
