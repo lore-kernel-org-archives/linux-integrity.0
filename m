@@ -2,123 +2,198 @@ Return-Path: <SRS0=6BzK=OE=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.9 required=3.0 tests=DKIM_ADSP_ALL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD595C04EBA
-	for <linux-integrity@archiver.kernel.org>; Sun, 25 Nov 2018 15:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED8A0C43441
+	for <linux-integrity@archiver.kernel.org>; Sun, 25 Nov 2018 20:06:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE3DD20870
-	for <linux-integrity@archiver.kernel.org>; Sun, 25 Nov 2018 15:19:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE3DD20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id B57E920850
+	for <linux-integrity@archiver.kernel.org>; Sun, 25 Nov 2018 20:06:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B57E920850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mniewoehner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726914AbeKZCKc (ORCPT
+        id S1726133AbeKZG6b convert rfc822-to-8bit (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 25 Nov 2018 21:10:32 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55202 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726879AbeKZCKb (ORCPT
+        Mon, 26 Nov 2018 01:58:31 -0500
+Received: from sender-of-o53.zoho.com ([135.84.80.218]:21751 "EHLO
+        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726145AbeKZG6a (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 25 Nov 2018 21:10:31 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAPFEVK3129305
-        for <linux-integrity@vger.kernel.org>; Sun, 25 Nov 2018 10:19:14 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nymnsf1xu-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Sun, 25 Nov 2018 10:19:14 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.ibm.com>;
-        Sun, 25 Nov 2018 15:19:12 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 25 Nov 2018 15:19:07 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAPFJ5Qj61669574
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 25 Nov 2018 15:19:05 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B24984C044;
-        Sun, 25 Nov 2018 15:19:05 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 414724C040;
-        Sun, 25 Nov 2018 15:19:02 +0000 (GMT)
-Received: from swastik.ibmuc.com (unknown [9.85.72.131])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 25 Nov 2018 15:19:01 +0000 (GMT)
-From:   Nayna Jain <nayna@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
-        dhowells@redhat.com, jforbes@redhat.com,
-        seth.forshee@canonical.com, kexec@lists.infradead.org,
-        keyrings@vger.kernel.org, vgoyal@redhat.com, ebiederm@xmission.com,
-        mpe@ellerman.id.au, Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH 7/7] ima: Support platform keyring for kernel appraisal
-Date:   Sun, 25 Nov 2018 20:45:00 +0530
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20181125151500.8298-1-nayna@linux.ibm.com>
-References: <20181125151500.8298-1-nayna@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18112515-0008-0000-0000-000002983C20
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112515-0009-0000-0000-0000220278E9
-Message-Id: <20181125151500.8298-8-nayna@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-25_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811250071
+        Mon, 26 Nov 2018 01:58:30 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1543176383; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=WllhGbaVZI2Z3zs255mkJ94SaRHsnC+C+lGa1k1aH5wcAb1ykVJVRrjPBsQSLKKph8pSig4IVJeMM3y553BSLpKtJ/2GEfjWikOUXzk9BIVlAtBiTV66bggYQTN1moseDDd56aECchB3aUyIVfgxvXjNeymHuC6JOJ+J6lbUOB4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1543176383; h=Content-Type:Content-Transfer-Encoding:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=oUoNsm0EYUsCbh/dvEkZPqMsdrgQT8RgvuXhyLc59os=; 
+        b=OTLWWtPwWYH6oaPMHeGMClVgnoqRkidBOMqWV4O0ewH0u25PgkSoKLxnha7OvGUGn11YPKVGOn/umbqvXmY0R2uxbNCoU91pjDn+fX3q7M+ylgwgo2VdeRcbs68n3vRN9vL6P+/YmOCiJ0iZIsxaPr+kWHe34Qs0v4s3lYOkauw=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=mniewoehner.de;
+        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
+        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
+Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
+        with SMTPS id 1543176378443176.67474882861723; Sun, 25 Nov 2018 12:06:18 -0800 (PST)
+Message-ID: <49ec628f42fa7833f6a75d4a8b15d64789c70bf7.camel@mniewoehner.de>
+Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
+From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
+        linux-integrity@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>
+In-Reply-To: <20181119134956.GD8755@linux.intel.com>
+References: <1541962653.3190.7.camel@HansenPartnership.com>
+         <7d8cc5ad4bb7548d283f363de6f24c90d5d0a2b2.camel@mniewoehner.de>
+         <1541968191.3190.12.camel@HansenPartnership.com>
+         <3243d0325b3ea5878d3f86b0ee4fec1498f21dc1.camel@mniewoehner.de>
+         <660b0934bc16c8d195a2724f8be4ba8dfbe71134.camel@mniewoehner.de>
+         <1541972556.3734.90.camel@linux.ibm.com>
+         <4f7cc7152f2266d8d0782889db2375d4c1c71987.camel@mniewoehner.de>
+         <b89c95a496a1512ee3069b6a69cf915906fe697a.camel@mniewoehner.de>
+         <20181118081833.GH5897@linux.intel.com>
+         <467833cc47247a55595d72426f46eeac1406eb04.camel@mniewoehner.de>
+         <20181119134956.GD8755@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Sun, 25 Nov 2018 21:06:14 +0100
+Mime-Version: 1.0
+X-Mailer: Evolution 3.28.5 
+Content-Transfer-Encoding: 8BIT
+X-ZohoMailClient: External
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On secure boot enabled systems, the bootloader verifies the kernel
-image and possibly the initramfs signatures based on a set of keys. A
-soft reboot(kexec) of the system, with the same kernel image and
-initramfs, requires access to the original keys to verify the
-signatures.
+Hi,
 
-This patch allows IMA-appraisal access to those original keys, now
-loaded on the platform keyring, needed for verifying the kernel image
-and initramfs signatures.
+On Mon, 2018-11-19 at 15:49 +0200, Jarkko Sakkinen wrote:
+> On Sun, Nov 18, 2018 at 03:10:06PM +0100, Michael Niewöhner wrote:
+> > On Sun, 2018-11-18 at 10:18 +0200, Jarkko Sakkinen wrote:
+> > > On Fri, Nov 16, 2018 at 10:06:28PM +0100, Michael Niewöhner wrote:
+> > > > On Wed, 2018-11-14 at 21:46 +0100, Michael Niewöhner wrote:
+> > > > > Hi all,
+> > > > > 
+> > > > > I tried that patch mentioned by Mimi but it does not change anything
+> > > > > for
+> > > > > me.
+> > > > > 
+> > > > > Then I did some more tests with different kernel configs and finally
+> > > > > got
+> > > > > TPM
+> > > > > working by
+> > > > > a) compiling TPM as modules and rmmod tpm* and re-modprobe tpm_tis.
+> > > > > 
+> > > > > (initramfs) dmesg | grep -i tpm
+> > > > > [    0.000000] efi:  ACPI 2.0=0x9ea7e000 ACPI=0x9ea7e000
+> > > > > SMBIOS=0x9f5eb000
+> > > > > SMBIOS 3.0=0x9f5ea000 ESRT=0x9c07d918 MEMATTR=0x9bea3018
+> > > > > TPMEventLog=0x97cbb018
+> > > > > [    0.003793] ACPI: TPM2 0x000000009EAB7F70 000034 (v03 LENOVO TC-
+> > > > > S06   00001260 AMI 00000000)
+> > > > > (initramfs) rmmod tpm_crb tpm_tis tpm_tis_core tpm
+> > > > > (initramfs) modprobe tpm_tis
+> > > > > [   44.956905] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
+> > > > > 
+> > > > > b) compiling TPM-support in-kernel and manually bind the ACPI device
+> > > > > 
+> > > > > (initramfs) dmesg | grep -i tpm
+> > > > > [    0.000000] efi: ACPI 2.0=0x9ea7e000 ACPI=0x9ea7e000
+> > > > > SMBIOS=0x9f5eb000
+> > > > > SMBIOS
+> > > > > 3.0=0x9f5ea000 ESRT=0x9c07d918 MEMATTR=0x9bea3018
+> > > > > TPMEventLog=0x97cbb018
+> > > > > [    0.003546] ACPI: TPM2 0x000000009EAB7F70 000034 (v03 LENOVO TC-S06
+> > > > > 00001260
+> > > > > AMI 00000000)
+> > > > > (initramfs) echo MSFT0101:00 >/sys/bus/platform/drivers/tpm_tis/bind
+> > > > > [  233.076079] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
+> > > > > 
+> > > > > 
+> > > > > It seems to me, the kernel tries to enable the TPM to early...
+> > > > > 
+> > > > > 
+> > > > > Michael
+> > > > 
+> > > > Looks like the manual driver bind works more or less but e.g reading
+> > > > hwrng
+> > > > does
+> > > > not work...
+> > > > 
+> > > > # echo MSFT0101:00 >/sys/bus/platform/drivers/tpm_tis/bind
+> > > > [  148.293302] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
+> > > > # cat /sys/devices/virtual/misc/hw_random/rng_current
+> > > > tpm-rng-0
+> > > > # cat /dev/hwrng >/dev/null 
+> > > > cat: /dev/hwrng: Operation not permitted
+> > > 
+> > > Can you check with trace-cmd start -p function -l 'tpm*'?
+> > > 
+> > > /Jarkko
+> > 
+> > 
+> > Hi Jarko,
+> > 
+> > what output do you need exactly?
+> 
+> TPM gets added with tpm_add_hwrng() and the callback that is called by
+> hwrng subsystem is tpm_hwrng_read().
+> 
+> Obviously the former gets called (can be seen from the sysfs file). Just
+> wondering if it ever reaches tpm_hwrng_read().
+> 
+> /Jarkko
 
-Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
----
- security/integrity/ima/ima_appraise.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+I wanted to be sure that there is no hardware failure so I tested the TPM in
+UEFI Shell using the tpm tools from github.com/fpmurphy/UEFI-Utilities-2016
 
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index deec1804a00a..9c13585e7d3e 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -294,7 +294,16 @@ int ima_appraise_measurement(enum ima_hooks func,
- 					     iint->ima_hash->length);
- 		if (rc == -EOPNOTSUPP) {
- 			status = INTEGRITY_UNKNOWN;
--		} else if (rc) {
-+			break;
-+		}
-+		if (rc && func == KEXEC_KERNEL_CHECK)
-+			rc = integrity_digsig_verify(
-+					INTEGRITY_KEYRING_PLATFORM,
-+					(const char *)xattr_value,
-+					xattr_len,
-+					iint->ima_hash->digest,
-+					iint->ima_hash->length);
-+		if (rc) {
- 			cause = "invalid-signature";
- 			status = INTEGRITY_FAIL;
- 		} else {
--- 
-2.13.6
+I can confirm that it is working there in both modes 1.2 and 2.0.
+
+
+FS0:\> ShowTPM2.efi
+
+           Signature : TPM2
+              Length : 52
+            Revision : 3
+            Checksum : 167
+              Oem ID : LENOVO
+        Oem Table ID : TC-S06  
+        Oem Revision : 4704
+          Creator ID : AMI 
+    Creator Revision : 0
+      Platform Class : 0
+Control Area Address : 0
+        Start Method : 6 (Memory mapped I/O)
+  Platform S.P. Size : 0
+
+FS0:\> ShowTCM20.efi
+          Structure Version: 1.1
+           Protocol Version: 1.1
+  Supported Hash Algorithms: SHA1 SHA256 
+Supported Event Log Formats: TCG_1.2 TCG_2 
+           TPM Present Flag: True
+       Maximum Command Size: 2048
+      Maximum Response Size: 2048
+             Manufactuer ID: NTC
+       Number of PCR Banks: 2
+
+FS0:\> ShowPCR20.efi
+
+Bank (Algorithm): TPM_ALG_SHA1 (0x0004)
+
+[00]  1E BB 2B E3 B7 10 3A 09 B5 CA EE B5 82 7C 12 42 CD 66 32 EC
+[01]  80 4E 8E 47 19 9D C7 31 4E B4 3C 4D C9 58 EF 6F 0B 6B 49 62
+[02]  B2 A8 3B 0E BF 2F 83 74 29 9A 5B 2B DF C3 1E A9 55 AD 72 36
+[03]  B2 A8 3B 0E BF 2F 83 74 29 9A 5B 2B DF C3 1E A9 55 AD 72 36
+....
+......
+
+
+
+Michael
+
 
