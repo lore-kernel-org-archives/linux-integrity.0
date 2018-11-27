@@ -1,89 +1,144 @@
-Return-Path: <SRS0=ex1J=OF=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=wgLp=OG=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F295C43441
-	for <linux-integrity@archiver.kernel.org>; Mon, 26 Nov 2018 21:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 771EBC43441
+	for <linux-integrity@archiver.kernel.org>; Tue, 27 Nov 2018 11:53:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ABC420817
-	for <linux-integrity@archiver.kernel.org>; Mon, 26 Nov 2018 21:13:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ABC420817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 46C1C2082F
+	for <linux-integrity@archiver.kernel.org>; Tue, 27 Nov 2018 11:53:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46C1C2082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727241AbeK0IIe (ORCPT
+        id S1728414AbeK0Wu4 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 27 Nov 2018 03:08:34 -0500
-Received: from mga11.intel.com ([192.55.52.93]:19191 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727107AbeK0IId (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 27 Nov 2018 03:08:33 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 13:13:09 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,283,1539673200"; 
-   d="scan'208";a="110469390"
-Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.24.8.61])
-  by fmsmga004.fm.intel.com with ESMTP; 26 Nov 2018 13:13:08 -0800
-Date:   Mon, 26 Nov 2018 13:13:09 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Michael =?iso-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
-        linux-integrity@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
-Message-ID: <20181126211309.GA868@linux.intel.com>
-References: <3243d0325b3ea5878d3f86b0ee4fec1498f21dc1.camel@mniewoehner.de>
- <660b0934bc16c8d195a2724f8be4ba8dfbe71134.camel@mniewoehner.de>
- <1541972556.3734.90.camel@linux.ibm.com>
- <4f7cc7152f2266d8d0782889db2375d4c1c71987.camel@mniewoehner.de>
- <b89c95a496a1512ee3069b6a69cf915906fe697a.camel@mniewoehner.de>
- <20181118081833.GH5897@linux.intel.com>
- <467833cc47247a55595d72426f46eeac1406eb04.camel@mniewoehner.de>
- <20181119134956.GD8755@linux.intel.com>
- <49ec628f42fa7833f6a75d4a8b15d64789c70bf7.camel@mniewoehner.de>
- <a4b30f21571d620db8d4ce311df5856f38b3d1a7.camel@mniewoehner.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+        Tue, 27 Nov 2018 17:50:56 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49376 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726494AbeK0Wu4 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 27 Nov 2018 17:50:56 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wARBhw43092091
+        for <linux-integrity@vger.kernel.org>; Tue, 27 Nov 2018 06:53:16 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p149bbcv3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 27 Nov 2018 06:53:16 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 27 Nov 2018 11:53:14 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 27 Nov 2018 11:53:12 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wARBrBPq3604926
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 27 Nov 2018 11:53:11 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7310DA4069;
+        Tue, 27 Nov 2018 11:53:11 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B0E04A4054;
+        Tue, 27 Nov 2018 11:53:10 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.104.65])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 27 Nov 2018 11:53:10 +0000 (GMT)
+Subject: Re: [PATCH 1/3] ima-avm-utils: Fix hash buffer overflow in
+ verify_evm
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Vitaly Chikunov <vt@altlinux.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org
+Date:   Tue, 27 Nov 2018 06:52:59 -0500
+In-Reply-To: <20181126043953.1126-1-vt@altlinux.org>
+References: <20181126043953.1126-1-vt@altlinux.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a4b30f21571d620db8d4ce311df5856f38b3d1a7.camel@mniewoehner.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+x-cbid: 18112711-0028-0000-0000-0000032229AF
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112711-0029-0000-0000-000023DE3237
+Message-Id: <1543319579.3902.129.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-27_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811270104
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 08:15:38PM +0100, Michael Niewöhner wrote:
-> Hi again,
+On Mon, 2018-11-26 at 07:39 +0300, Vitaly Chikunov wrote:
+> Commit ae1319eeabd6 ("Remove hardcoding of SHA1 in EVM signatures")
+> introduces overflow of 20 byte buffer on the stack while calculating evm
+> hash. Also, invalid hash length is passed to the underlying verification
+> function. This prevents any non-SHA1 hashes from being properly
+> validated using evmctl.
 > 
-> after some experiments I finally found a solution...
-> There seems to be a bug in TPM2.0 firmware version (1.3.1.0) included in Lenovos
-> UEFI image but they do not provide an update.
+> Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+
+Thanks! Â To prevent this sort of bug from recurring, it would be nice
+if the maximum digest size would be defined once and used.
+
+Mimi
+
+> ---
+>  src/evmctl.c | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
 > 
-> I have extracted the firmware version 1.3.2.8 from Dell's XPS15 TPM2.0 firmware
-> update and used this to replace the firmware in my Lenovo UEFI image.
-> After flashing this version via UEFI Setup the TPM2.0 gets detected and now is
-> fully working. WTF.
-
-That can be called as true craftmanship :-) Awesome work! Maybe you
-should even consider blogging this. Sounds interesting.
-
-> For anyone having the same problem: binwalk, uefi-firmware-parser, uefipatch and
-> flashrom are your friends ;-)
+> diff --git a/src/evmctl.c b/src/evmctl.c
+> index 1b46d58..94d7ab1 100644
+> --- a/src/evmctl.c
+> +++ b/src/evmctl.c
+> @@ -55,6 +55,7 @@
+>  #include <keyutils.h>
+>  #include <ctype.h>
+>  #include <termios.h>
+> +#include <assert.h>
 > 
-> Best regards
-> Michael
+>  #include <openssl/sha.h>
+>  #include <openssl/pem.h>
+> @@ -760,13 +761,15 @@ static int cmd_sign_evm(struct command *cmd)
+> 
+>  static int verify_evm(const char *file)
+>  {
+> -	unsigned char hash[20];
+> +	unsigned char hash[64];
+>  	unsigned char sig[1024];
+> +	int mdlen;
+>  	int len;
+> 
+> -	len = calc_evm_hash(file, hash);
+> -	if (len <= 1)
+> -		return len;
+> +	mdlen = calc_evm_hash(file, hash);
+> +	assert(mdlen <= sizeof(hash));
+> +	if (mdlen <= 1)
+> +		return mdlen;
+> 
+>  	len = lgetxattr(file, "security.evm", sig, sizeof(sig));
+>  	if (len < 0) {
+> @@ -779,7 +782,7 @@ static int verify_evm(const char *file)
+>  		return -1;
+>  	}
+> 
+> -	return verify_hash(file, hash, sizeof(hash), sig + 1, len - 1);
+> +	return verify_hash(file, hash, mdlen, sig + 1, len - 1);
+>  }
+> 
+>  static int cmd_verify_evm(struct command *cmd)
 
-/Jarkko
