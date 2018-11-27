@@ -2,124 +2,102 @@ Return-Path: <SRS0=wgLp=OG=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E35C8C43441
-	for <linux-integrity@archiver.kernel.org>; Tue, 27 Nov 2018 13:33:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62AF8C43441
+	for <linux-integrity@archiver.kernel.org>; Tue, 27 Nov 2018 14:06:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4FBA21104
-	for <linux-integrity@archiver.kernel.org>; Tue, 27 Nov 2018 13:33:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4FBA21104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2663C2086B
+	for <linux-integrity@archiver.kernel.org>; Tue, 27 Nov 2018 14:06:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PJ59JGiN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2663C2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727295AbeK1AbR (ORCPT
+        id S1726872AbeK1BEi (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 27 Nov 2018 19:31:17 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58702 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727350AbeK1AbR (ORCPT
+        Tue, 27 Nov 2018 20:04:38 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:42706 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726345AbeK1BEi (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 27 Nov 2018 19:31:17 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wARDPTJC046832
-        for <linux-integrity@vger.kernel.org>; Tue, 27 Nov 2018 08:33:20 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p157kvesr-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 27 Nov 2018 08:33:19 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 27 Nov 2018 13:33:17 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 27 Nov 2018 13:33:15 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wARDXEHt54722632
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 27 Nov 2018 13:33:14 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 668FCA405F;
-        Tue, 27 Nov 2018 13:33:14 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B08D4A4065;
-        Tue, 27 Nov 2018 13:33:13 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.104.65])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 27 Nov 2018 13:33:13 +0000 (GMT)
-Subject: Re: [PATCH 3/3] ima-evm-utils: Allow to use Streebog hash function
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Vitaly Chikunov <vt@altlinux.org>
-Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org
-Date:   Tue, 27 Nov 2018 08:33:03 -0500
-In-Reply-To: <20181127130812.ad3t3uflxkagttuf@sole.flsd.net>
-References: <20181126043953.1126-1-vt@altlinux.org>
-         <20181126043953.1126-3-vt@altlinux.org>
-         <1543319811.3902.134.camel@linux.ibm.com>
-         <20181127130812.ad3t3uflxkagttuf@sole.flsd.net>
+        Tue, 27 Nov 2018 20:04:38 -0500
+Received: by mail-yb1-f194.google.com with SMTP id o204-v6so9073083yba.9;
+        Tue, 27 Nov 2018 06:06:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uxiVmPz6+UL7mr13t1v3YX7feqjX1K0UCMHsRP3ABWM=;
+        b=PJ59JGiNJPUy9cD0ke09F1CREOxNBtA5ROt4522PoDI3n8v6LlPxmYNNUtgIsAHpjw
+         c9a82DgIrm/3Wa/v9940UvqkW4MD0mEXm90Bm4RxiOJfPH46qwekxh3tOHfHK0q1oxbZ
+         xdOxYA5HpG3p9My9tT+Ao8gbnjc/3eUYDvkyCTOjz0z2Ww0fP/yuAoRXZC+wee/O6Z6D
+         ImMWukfZHo9AhoPKHrbITc0I4Qo6RZrXsH+Jz7Ekspexij0rloYIlq87RhIPHYHT5nSJ
+         szpOq0ZL10hJLb55bYn/fqqoPM9SH3KDJzCSJ/q/keyjFwiP03ZawnHn97AfRO77cxdO
+         OXCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uxiVmPz6+UL7mr13t1v3YX7feqjX1K0UCMHsRP3ABWM=;
+        b=UJ6zeLddV3ZyaVLC8JREEAf3BeXLlAGmB8g1NW/Y9A3Ty4RBYtsGe8r910NwkXNBOX
+         XNVmL0LdGnfNTltLqJDRA2a+zqBsw2la+vfGlPYXTIJ5dQGpNHpYl9OHvr72LFFHI3sn
+         C7cRxngIP6teXecD5wNidrz90TPmM2zEEuJyWqTqX/b2YQTOS5SRoBPNxNz/TvTYzzmg
+         1O1XWm02pISDPrlj3QxnVrUc9IdRV3U3rhEHXL9HdQjlmkQ1xTkNMj+9f/pl4WFNq8tS
+         8fchVjrrGiNu1IuRTpKgpblIQXkGoN45AadNwv0v1Rqy+yZaYjYOK66JH2z6Pj+VC9ON
+         vReg==
+X-Gm-Message-State: AA+aEWb4JGXLngqORKGiiv+kQUak2AsXeoYcOk8VqMO/Pk1omkpPjHKP
+        tYf3IyKRP/jHo50nuWbbS16nHXbfUIzQRil+sxI=
+X-Google-Smtp-Source: AFSGD/UtFNPeviTTXsr1LxQM180Mz33xaQD0Ebdz5z9j6VDkZ/JGoEq9RNkpyxzw0vArUDDJ+hH2FK54aVTNqLRPjWs=
+X-Received: by 2002:a25:ff01:: with SMTP id c1-v6mr34253460ybe.325.1543327596359;
+ Tue, 27 Nov 2018 06:06:36 -0800 (PST)
+MIME-Version: 1.0
+References: <20181126163847.xy3acvltyeb75nb4@merlin> <1543320309.3902.137.camel@linux.ibm.com>
+In-Reply-To: <1543320309.3902.137.camel@linux.ibm.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 27 Nov 2018 16:06:25 +0200
+Message-ID: <CAOQ4uxj3s=17xB7Nkcav3cXZRQVFkiep0wqQXR9FG_NEE9onDg@mail.gmail.com>
+Subject: Re: [PATCH] IMA: Mask O_RDWR if FMODE_READ is set
+To:     zohar@linux.ibm.com
+Cc:     Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        syzbot+ae82084b07d0297e566b@syzkaller.appspotmail.com,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        syzkaller-bugs@googlegroups.com, linux-integrity@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18112713-4275-0000-0000-000002E7714E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112713-4276-0000-0000-000037F4AE76
-Message-Id: <1543325583.3902.170.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-27_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811270116
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2018-11-27 at 16:08 +0300, Vitaly Chikunov wrote:
+On Tue, Nov 27, 2018 at 2:05 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>
+> On Mon, 2018-11-26 at 10:38 -0600, Goldwyn Rodrigues wrote:
+> > A file can be opened with open(O_WRONLY | O_RDWR), so a FMORE_READ
+> > will not be set, and overlayfs will consider another copy_up() on the same
+> > file leading to a deadlock on mnt_want_write(). Fix it by masking
+> > O_RDWR while opening the file in read-only mode.
+>
+> Shouldn't the open itself fail if both O_WRONLY and O_RDWR are
+> specified?
+>
 
-> > hash_info.h is now included in kernel-headers package.
-> 
-> I think, first it should not be coincided with the new algo adding and
-> being follow-up patch (if any).
-> 
-> > Anyone using the hash_algo enumeration defined in hash_info.h, will
-> > probably also want to use an associated algorithm name.  It would make
-> > more sense to keep the hash_algo enumeration, hash_algo_name[], and
-> > perhaps the hash_digest_size[] together.  Maybe using macros to keep
-> > them in sync (eg. kernel_read_file_id/kernel_read_file_str).
-> 
-> On the first sight this sounds good, but...
-> 
-> It sounds like it will require patching kernel's hash_info.h, so it will
-> be not possible to transfer smoothly on the new scheme without breaking
-> some compatibility (of the newer ima-evm-utils with older kernels).  Also,
-> it is possible that ima-evm-utils is used on the older stable box (where some
-> reliable and stable build system run) which does not have such modification
-> and/or new algorithms in the kernel but willing to generate signatures.
-> 
-> So, I think code duplication between projects is good in this case.
+Well, open doesn't fail, so what can you do? prove that no app out there
+is using this bizarre flag combination and return -EINVAL?
+You can try...
 
-The sooner the kernel's hash_info.h is updated, the better.  For the
-time being, ima-evm-utils could define these definitions in a separate
-file that is/isn't included based on autotools/buildtime option.
+BTW, the freakish thing about O_WRONLY | O_RDWR, is that it actually
+translates to !f->f_mode & FMODE_READ && !f->f_mode & FMODE_WRITE:
+OPEN_FMODE(1|2) = (3+1) & 3 = 0
 
-> 
-> Some hash algorithms may be wished to be compatible with rsa pkcs1
-> signature scheme, which is also defined in kernel in
-> crypto/rsa-pkcs1pad.c and in ima-evm-utils in src/libimaevm.c so code
-> duplication and adding algorithms in both sources will happen anyway.
-> 
-> Thanks,
+It would make more sense if O_WRONLY | O_RDWR would have the
+same result as O_RDWR, which is exactly what happens with
+ACC_MODE(flags) in build_open_flags().
+build_open_flags() would be a good place to check and fix this abnormality.
 
-There might be multiple problems, but fixing one is better than not
-fixing either.
-
-Mimi
-
+Thanks,
+Amir.
