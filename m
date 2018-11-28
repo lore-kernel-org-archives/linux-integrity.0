@@ -2,116 +2,119 @@ Return-Path: <SRS0=r+VA=OH=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 886BDC43441
-	for <linux-integrity@archiver.kernel.org>; Wed, 28 Nov 2018 19:19:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B598C43441
+	for <linux-integrity@archiver.kernel.org>; Wed, 28 Nov 2018 20:06:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57ED320832
-	for <linux-integrity@archiver.kernel.org>; Wed, 28 Nov 2018 19:19:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57ED320832
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 17F0C2081C
+	for <linux-integrity@archiver.kernel.org>; Wed, 28 Nov 2018 20:06:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17F0C2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbeK2GWM (ORCPT
+        id S1726478AbeK2HJZ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 29 Nov 2018 01:22:12 -0500
-Received: from mga04.intel.com ([192.55.52.120]:10562 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725772AbeK2GWL (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 29 Nov 2018 01:22:11 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Nov 2018 11:19:30 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,291,1539673200"; 
-   d="scan'208";a="288293120"
-Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.24.8.96])
-  by fmsmga006.fm.intel.com with ESMTP; 28 Nov 2018 11:19:30 -0800
-Date:   Wed, 28 Nov 2018 11:19:29 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v5 6/7] tpm: ensure that the output of PCR read contains
- the correct digest size
-Message-ID: <20181128191929.GB9023@linux.intel.com>
-References: <20181114153108.12907-1-roberto.sassu@huawei.com>
- <20181114153108.12907-7-roberto.sassu@huawei.com>
- <20181116134153.GD4163@linux.intel.com>
- <05c7c936-da58-f386-0a43-69e96d6e18a8@huawei.com>
- <20181118073207.GC5897@linux.intel.com>
- <a259a629-def7-b538-2a54-8ca6bfbe772a@huawei.com>
- <20181119143357.GG8755@linux.intel.com>
- <ed2d769b-2917-7d8b-ff9c-16220fa17833@huawei.com>
- <20181119160702.GE13298@linux.intel.com>
- <d3102578-039e-519e-4ed1-f931f00b6846@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d3102578-039e-519e-4ed1-f931f00b6846@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 29 Nov 2018 02:09:25 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:50878 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725994AbeK2HJZ (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 29 Nov 2018 02:09:25 -0500
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 636A672CC59;
+        Wed, 28 Nov 2018 23:06:33 +0300 (MSK)
+Received: from beacon.altlinux.org (unknown [185.6.174.98])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 24A734A4A29;
+        Wed, 28 Nov 2018 23:06:33 +0300 (MSK)
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org
+Cc:     Vitaly Chikunov <vt@altlinux.org>,
+        Mikhail Efremov <sem@altlinux.org>
+Subject: [PATCH v2 1/7] ima-evm-utils: Fix hash buffer overflow in verify_evm and hmac_evm
+Date:   Wed, 28 Nov 2018 23:06:04 +0300
+Message-Id: <20181128200610.21214-1-vt@altlinux.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 09:40:37AM +0100, Roberto Sassu wrote:
-> On 11/19/2018 5:07 PM, Jarkko Sakkinen wrote:
-> > On Mon, Nov 19, 2018 at 04:09:34PM +0100, Roberto Sassu wrote:
-> > > On 11/19/2018 3:33 PM, Jarkko Sakkinen wrote:
-> > > > On Mon, Nov 19, 2018 at 09:14:00AM +0100, Roberto Sassu wrote:
-> > > > > On 11/18/2018 8:32 AM, Jarkko Sakkinen wrote:
-> > > > > > On Fri, Nov 16, 2018 at 05:06:48PM +0100, Roberto Sassu wrote:
-> > > > > > > On 11/16/2018 2:41 PM, Jarkko Sakkinen wrote:
-> > > > > > > > On Wed, Nov 14, 2018 at 04:31:07PM +0100, Roberto Sassu wrote:
-> > > > > > > > > This patch protects against data corruption that could happen in the bus,
-> > > > > > > > > by checking that that the digest size returned by the TPM during a PCR read
-> > > > > > > > > matches the size of the algorithm passed to tpm2_pcr_read().
-> > > > > > > > > 
-> > > > > > > > > This check is performed after information about the PCR banks has been
-> > > > > > > > > retrieved.
-> > > > > > > > > 
-> > > > > > > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > > > > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > > > > > > > Cc: stable@vger.kernel.org
-> > > > > > > > 
-> > > > > > > > Missing fixes tag.
-> > > > > > > 
-> > > > > > > Before this patch set, tpm2_pcr_extend() always copied 20 bytes from the
-> > > > > > > output sent by the TPM.
-> > > > > > > 
-> > > > > > > Roberto
-> > > > > > 
-> > > > > > Aah, right, of course. Well the patch set is ATM somewhat broken because
-> > > > > > this would require a fixes tag that points to a patch insdie the patch
-> > > > > > set.
-> > > > > > 
-> > > > > > Probably good way to fix the issue is to just merge this with the
-> > > > > > earlier commit.
-> > > > > 
-> > > > > Unfortunately, it is not possible. The exact digest size has been
-> > > > > introduced with patch 5/7.
-> > > > 
-> > > > I put this in simple terms: if I merge 5/7 the driver will be broken.
-> > > > Any commit in the patch set should not leave the tree in broken state.
-> > > 
-> > > Patch 6/7 does not fix patch 5/7. The check in patch 6/7 is not done for
-> > > the PCR read performed by patch 5/7, because the digest sizes are not
-> > > yet available.
-> > 
-> > Ah, right. Point taken :-)
-> 
-> Should I keep CC: stable@vger.kernel.org?
+Commit ae1319eeabd6 ("Remove hardcoding of SHA1 in EVM signatures")
+introduces overflow of 20 byte buffer on the stack while calculating
+hash. Also, invalid hash length is passed to the underlying verification
+function in verify_evm. This prevents any non-SHA1 hashes from being
+properly validated using evmctl.
 
-Nope, my bad, sorry.
+Cc: Mikhail Efremov <sem@altlinux.org>
+Fixes: ae1319eeabd6 ("Remove hardcoding of SHA1 in EVM signatures")
+Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+---
+Changes since v1:
+- Fix similar issue in hmac_evm
 
-/Jarkko
+ src/evmctl.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/src/evmctl.c b/src/evmctl.c
+index 1b46d58..f8035da 100644
+--- a/src/evmctl.c
++++ b/src/evmctl.c
+@@ -55,6 +55,7 @@
+ #include <keyutils.h>
+ #include <ctype.h>
+ #include <termios.h>
++#include <assert.h>
+ 
+ #include <openssl/sha.h>
+ #include <openssl/pem.h>
+@@ -760,13 +761,15 @@ static int cmd_sign_evm(struct command *cmd)
+ 
+ static int verify_evm(const char *file)
+ {
+-	unsigned char hash[20];
++	unsigned char hash[64];
+ 	unsigned char sig[1024];
++	int mdlen;
+ 	int len;
+ 
+-	len = calc_evm_hash(file, hash);
+-	if (len <= 1)
+-		return len;
++	mdlen = calc_evm_hash(file, hash);
++	assert(mdlen <= sizeof(hash));
++	if (mdlen <= 1)
++		return mdlen;
+ 
+ 	len = lgetxattr(file, "security.evm", sig, sizeof(sig));
+ 	if (len < 0) {
+@@ -779,7 +782,7 @@ static int verify_evm(const char *file)
+ 		return -1;
+ 	}
+ 
+-	return verify_hash(file, hash, sizeof(hash), sig + 1, len - 1);
++	return verify_hash(file, hash, mdlen, sig + 1, len - 1);
+ }
+ 
+ static int cmd_verify_evm(struct command *cmd)
+@@ -1135,11 +1138,12 @@ out:
+ 
+ static int hmac_evm(const char *file, const char *key)
+ {
+-	unsigned char hash[20];
++	unsigned char hash[64];
+ 	unsigned char sig[1024];
+ 	int len, err;
+ 
+ 	len = calc_evm_hmac(file, key, hash);
++	assert(len <= sizeof(hash));
+ 	if (len <= 1)
+ 		return len;
+ 
+-- 
+2.11.0
+
