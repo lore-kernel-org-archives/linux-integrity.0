@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE0FC43441
-	for <linux-integrity@archiver.kernel.org>; Wed, 28 Nov 2018 20:07:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A743C04EB8
+	for <linux-integrity@archiver.kernel.org>; Wed, 28 Nov 2018 20:07:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CF182081C
-	for <linux-integrity@archiver.kernel.org>; Wed, 28 Nov 2018 20:07:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CF182081C
+	by mail.kernel.org (Postfix) with ESMTP id 5C91820864
+	for <linux-integrity@archiver.kernel.org>; Wed, 28 Nov 2018 20:07:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C91820864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729239AbeK2HJw (ORCPT
+        id S1726478AbeK2HJz (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 29 Nov 2018 02:09:52 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:51350 "EHLO
+        Thu, 29 Nov 2018 02:09:55 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:51420 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727037AbeK2HJv (ORCPT
+        with ESMTP id S1728654AbeK2HJz (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 29 Nov 2018 02:09:51 -0500
+        Thu, 29 Nov 2018 02:09:55 -0500
 Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 98F8072CC59;
-        Wed, 28 Nov 2018 23:06:59 +0300 (MSK)
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 56A8672CC59;
+        Wed, 28 Nov 2018 23:07:05 +0300 (MSK)
 Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 7BA344A4A29;
-        Wed, 28 Nov 2018 23:06:59 +0300 (MSK)
+        by imap.altlinux.org (Postfix) with ESMTPSA id 0CA6E4A4A29;
+        Wed, 28 Nov 2018 23:07:05 +0300 (MSK)
 From:   Vitaly Chikunov <vt@altlinux.org>
 To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         linux-integrity@vger.kernel.org
 Cc:     Vitaly Chikunov <vt@altlinux.org>
-Subject: [PATCH v2 5/7] ima-evm-utils: Preload OpenSSL engine via '--engine' option
-Date:   Wed, 28 Nov 2018 23:06:08 +0300
-Message-Id: <20181128200610.21214-5-vt@altlinux.org>
+Subject: [PATCH v2 6/7] ima-evm-utils: Extract digest algorithms from hash_info.h
+Date:   Wed, 28 Nov 2018 23:06:09 +0300
+Message-Id: <20181128200610.21214-6-vt@altlinux.org>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181128200610.21214-1-vt@altlinux.org>
 References: <20181128200610.21214-1-vt@altlinux.org>
@@ -45,87 +45,220 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Another method of using GOST algorithms (and cryptographic accelerators)
-is via direct preloading of appropriate engine using '--engine' option.
+If configured with "--with-kernel-headers[=PATH]" try to extract hash
+algorithms from "hash_info.h" from the kernel source tree or
+kernel-headers package. (From the specified PATH or from the installed
+kernel.)
 
+This also introduces two algorithm lists, one is built-in and another is
+from the kernel source. (They should never contain conflicting algorithm
+IDs by their append-only nature.) If the digest is not found in the
+built-in list it will be searched in the list from kernel's
+"hash_info.h".
+
+This patch will allow evmctl to be just recompiled to work with digest
+algorithms introduced in the newer kernels.
+
+Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
 Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
 ---
 Changes since v1:
-- Code split from prevously combined patch.
-- More verbose OpenSSL error message.
+- New patch.
 
- src/evmctl.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ configure.ac      |  6 ++++++
+ src/Makefile.am   |  6 ++++++
+ src/hash_info.gen | 43 +++++++++++++++++++++++++++++++++++++++++++
+ src/libimaevm.c   | 44 +++++++++++++++++++++++++++++++++++++++++++-
+ 4 files changed, 98 insertions(+), 1 deletion(-)
+ create mode 100755 src/hash_info.gen
 
-diff --git a/src/evmctl.c b/src/evmctl.c
-index f4b2e7d..03b6132 100644
---- a/src/evmctl.c
-+++ b/src/evmctl.c
-@@ -62,6 +62,7 @@
- #include <openssl/hmac.h>
+diff --git a/configure.ac b/configure.ac
+index a5b4288..715babc 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -27,12 +27,18 @@ AC_HEADER_STDC
+ PKG_CHECK_MODULES(OPENSSL, [ openssl >= 0.9.8 ])
+ AC_SUBST(OPENSSL_CFLAGS)
+ AC_SUBST(OPENSSL_LIBS)
++AC_SUBST(KERNEL_HEADERS)
+ AC_CHECK_HEADER(unistd.h)
+ AC_CHECK_HEADERS(openssl/conf.h)
+ 
+ AC_CHECK_HEADERS(sys/xattr.h, , [AC_MSG_ERROR([sys/xattr.h header not found. You need the c-library development package.])])
+ AC_CHECK_HEADERS(keyutils.h, , [AC_MSG_ERROR([keyutils.h header not found. You need the libkeyutils development package.])])
+ 
++AC_ARG_WITH(kernel_headers, [AS_HELP_STRING([--with-kernel-headers[[=ARG]]],
++	    [specifies the Linux kernel-headers package location or kernel root directory you want to use])],
++	    [KERNEL_HEADERS="$withval"],
++	    [KERNEL_HEADERS=/lib/modules/$(uname -r)/source])
++
+ #debug support - yes for a while
+ PKG_ARG_ENABLE(debug, "yes", DEBUG, [Enable Debug support])
+ if test $pkg_cv_enable_debug = yes; then
+diff --git a/src/Makefile.am b/src/Makefile.am
+index deb18fb..d74fc6f 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -9,6 +9,11 @@ libimaevm_la_LIBADD =  $(OPENSSL_LIBS)
+ 
+ include_HEADERS = imaevm.h
+ 
++nodist_libimaevm_la_SOURCES = hash_info.h
++BUILT_SOURCES = hash_info.h
++hash_info.h: Makefile
++	./hash_info.gen $(KERNEL_HEADERS) >$@
++
+ bin_PROGRAMS = evmctl
+ 
+ evmctl_SOURCES = evmctl.c
+@@ -18,5 +23,6 @@ evmctl_LDADD =  $(OPENSSL_LIBS) -lkeyutils libimaevm.la
+ 
+ INCLUDES = -I$(top_srcdir) -include config.h
+ 
++CLEANFILES = hash_info.h
+ DISTCLEANFILES = @DISTCLEANFILES@
+ 
+diff --git a/src/hash_info.gen b/src/hash_info.gen
+new file mode 100755
+index 0000000..60fc750
+--- /dev/null
++++ b/src/hash_info.gen
+@@ -0,0 +1,43 @@
++#!/bin/sh
++#
++# Generate hash_info.h from kernel headers
++#
++# Copyright (C) 2018 <vt@altlinux.org>
++#
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2, or (at your option)
++# any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++
++KERNEL_HEADERS=$1
++HASH_INFO_H=uapi/linux/hash_info.h
++HASH_INFO=$KERNEL_HEADERS/include/$HASH_INFO_H
++
++# Allow to specify kernel-headers past include/
++if [ ! -e $HASH_INFO ]; then
++  HASH_INFO2=$KERNEL_HEADERS/$HASH_INFO_H
++  if [ -e $HASH_INFO2 ]; then
++    HASH_INFO=$HASH_INFO2
++  fi
++fi
++
++if [ ! -e $HASH_INFO ]; then
++  echo "/* $HASH_INFO is not found */"
++  HASH_INFO=/dev/null
++else
++  echo "/* $HASH_INFO is found */"
++fi
++
++echo "enum hash_algo {"
++grep HASH_ALGO_.*, $HASH_INFO
++printf "\tHASH_ALGO__LAST\n"
++echo "};"
++
++echo "const char *const hash_algo_name[HASH_ALGO__LAST] = {"
++sed -n 's/HASH_ALGO_\(.*\),/[HASH_ALGO_\1] = "\L\1\E",/p' $HASH_INFO
++echo "};"
+diff --git a/src/libimaevm.c b/src/libimaevm.c
+index 7b2b62c..cb4721b 100644
+--- a/src/libimaevm.c
++++ b/src/libimaevm.c
+@@ -50,6 +50,7 @@
+ #include <string.h>
+ #include <stdio.h>
+ #include <assert.h>
++#include <ctype.h>
+ 
+ #include <openssl/crypto.h>
+ #include <openssl/pem.h>
+@@ -58,6 +59,7 @@
  #include <openssl/err.h>
- #include <openssl/rsa.h>
-+#include <openssl/engine.h>
  
- #ifndef XATTR_APPAARMOR_SUFFIX
- #define XATTR_APPARMOR_SUFFIX "apparmor"
-@@ -1679,6 +1680,7 @@ static void usage(void)
- 		"      --selinux      use custom Selinux label for EVM\n"
- 		"      --caps         use custom Capabilities for EVM(unspecified: from FS, empty: do not use)\n"
- 		"      --list         measurement list verification\n"
-+		"      --engine e     preload OpenSSL engine e\n"
- 		"  -v                 increase verbosity level\n"
- 		"  -h, --help         display this help and exit\n"
- 		"\n");
-@@ -1731,6 +1733,7 @@ static struct option opts[] = {
- 	{"selinux", 1, 0, 136},
- 	{"caps", 2, 0, 137},
- 	{"list", 0, 0, 138},
-+	{"engine", 1, 0, 139},
- 	{"xattr-user", 0, 0, 140},
- 	{}
+ #include "imaevm.h"
++#include "hash_info.h"
  
-@@ -1773,6 +1776,7 @@ static char *get_password(void)
- int main(int argc, char *argv[])
+ const char *const pkey_hash_algo[PKEY_HASH__LAST] = {
+ 	[PKEY_HASH_MD4]		= "md4",
+@@ -153,6 +155,17 @@ void dump(const void *ptr, int len)
+ 	do_dump(stdout, ptr, len, true);
+ }
+ 
++const char *get_hash_algo_by_id(int algo)
++{
++	if (algo < PKEY_HASH__LAST)
++	    return pkey_hash_algo[algo];
++	if (algo < HASH_ALGO__LAST)
++	    return hash_algo_name[algo];
++
++	log_err("digest %d not found\n", algo);
++	return "unknown";
++}
++
+ int get_filesize(const char *filename)
  {
- 	int err = 0, c, lind;
-+	ENGINE *eng = NULL;
+ 	struct stat stats;
+@@ -528,15 +541,44 @@ int verify_hash_v2(const char *file, const unsigned char *hash, int size,
+ 	return 0;
+ }
  
- 	g_argv = argv;
- 	g_argc = argc;
-@@ -1883,6 +1887,18 @@ int main(int argc, char *argv[])
- 		case 138:
- 			measurement_list = 1;
- 			break;
-+		case 139: /* --engine e */
-+			eng = ENGINE_by_id(optarg);
-+			if (!eng) {
-+				log_err("engine %s isn't available\n", optarg);
-+				ERR_print_errors_fp(stderr);
-+			} else if (!ENGINE_init(eng)) {
-+				log_err("engine %s init failed\n", optarg);
-+				ERR_print_errors_fp(stderr);
-+				ENGINE_free(eng);
-+				eng = NULL;
-+			}
-+			break;
- 		case 140: /* --xattr-user */
- 			xattr_ima = "user.ima";
- 			xattr_evm = "user.evm";
-@@ -1913,6 +1929,13 @@ int main(int argc, char *argv[])
- 		}
- 	}
- 
-+	if (eng) {
-+		ENGINE_finish(eng);
-+		ENGINE_free(eng);
-+#if OPENSSL_API_COMPAT < 0x10100000L
-+		ENGINE_cleanup();
-+#endif
++/* compare algo names case insensitively and ignoring separators */
++static int algocmp(const char *a, const char *b)
++{
++	while (*a && *b) {
++		int cha, chb;
++
++		cha = tolower((unsigned char)*a++);
++		if (!isalnum(cha))
++			continue;
++		chb = tolower((unsigned char)*b++);
++		if (!isalnum(chb)) {
++			a--;
++			continue;
++		}
++		if (cha != chb)
++			return -1;
 +	}
- 	ERR_free_strings();
- 	EVP_cleanup();
- 	BIO_free(NULL);
++	return *a || *b;
++}
++
+ int get_hash_algo(const char *algo)
+ {
+ 	int i;
+ 
++	/* first iterate over builtin algorithms */
+ 	for (i = 0; i < PKEY_HASH__LAST; i++)
+ 		if (pkey_hash_algo[i] &&
+ 		    !strcmp(algo, pkey_hash_algo[i]))
+ 			return i;
+ 
++	/* iterate over algorithms provided by kernel-headers */
++	for (i = 0; i < HASH_ALGO__LAST; i++) {
++		if (hash_algo_name[i] &&
++		    !algocmp(algo, hash_algo_name[i]))
++			return i;
++	}
++
++	log_info("digest %s not found, fall back to sha1\n", algo);
+ 	return PKEY_HASH_SHA1;
+ }
+ 
+@@ -611,7 +653,7 @@ int ima_verify_signature(const char *file, unsigned char *sig, int siglen,
+ 		return -1;
+ 	}
+ 	/* Use hash algorithm as retrieved from signature */
+-	params.hash_algo = pkey_hash_algo[sig_hash_algo];
++	params.hash_algo = get_hash_algo_by_id(sig_hash_algo);
+ 
+ 	/*
+ 	 * Validate the signature based on the digest included in the
 -- 
 2.11.0
 
