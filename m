@@ -2,137 +2,101 @@ Return-Path: <SRS0=r+VA=OH=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_ADSP_ALL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8001C43441
-	for <linux-integrity@archiver.kernel.org>; Wed, 28 Nov 2018 12:17:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED0A7C43441
+	for <linux-integrity@archiver.kernel.org>; Wed, 28 Nov 2018 15:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CB9D20989
-	for <linux-integrity@archiver.kernel.org>; Wed, 28 Nov 2018 12:17:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CB9D20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 9D312208E7
+	for <linux-integrity@archiver.kernel.org>; Wed, 28 Nov 2018 15:05:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D312208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mniewoehner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728161AbeK1XTB (ORCPT
+        id S1727979AbeK2CHH convert rfc822-to-8bit (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 28 Nov 2018 18:19:01 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32787 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728126AbeK1XTA (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 28 Nov 2018 18:19:00 -0500
-Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id F07C594E01CCA;
-        Wed, 28 Nov 2018 12:17:28 +0000 (GMT)
-Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
- (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 28 Nov
- 2018 12:17:23 +0000
-Subject: Re: [PATCH v5 2/7] tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
-        <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
-References: <20181114153108.12907-1-roberto.sassu@huawei.com>
- <20181114153108.12907-3-roberto.sassu@huawei.com>
- <20181116133851.GB4163@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <1602133e-6a41-ea97-d985-6eca0831898d@huawei.com>
-Date:   Wed, 28 Nov 2018 13:17:22 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181116133851.GB4163@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.144]
-X-CFilter-Loop: Reflected
+        Wed, 28 Nov 2018 21:07:07 -0500
+Received: from sender-of-o53.zoho.com ([135.84.80.218]:21829 "EHLO
+        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727726AbeK2CHH (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 28 Nov 2018 21:07:07 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1543417502; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=Laog57IMqHfeffvYskbosUiIVAWPDXiYIyDvw+o+JCx8w1GDeKvN4pluQDuk0qNGVsHZk37PqfREFxsPmDWZl6Y5MpRGl2snh1pzRcXPqRqzyTeTV4CRGpzGxpJ40g+XNIeYbgxp4GN1iSo88ibjkK61fvp82VYMydJPRPXtrJg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1543417502; h=Content-Type:Content-Transfer-Encoding:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=l8x/5OqCiprqtsfIbvAaHRtgw0jxPjyrqwXv17ySFnA=; 
+        b=ZseBcJR24QYvKfZdT2lfQjGEoH+6c6GVTU38LW7K+RHiVd8VgGuVdIcls2GowUoBFxJSmZt14MzA8yTvqLewil2UhxVmwuvoDri454AAkbojHjfNpLrj132sJShoQ2DAfRZ03zyDQxoee0IlwPZO76R1iRmQPeXz0CRPbdRm8rI=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=mniewoehner.de;
+        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
+        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
+Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
+        with SMTPS id 1543417501103901.768367830963; Wed, 28 Nov 2018 07:05:01 -0800 (PST)
+Message-ID: <660e6a212c9048a6a9660722f2468406b70acb1c.camel@mniewoehner.de>
+Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
+From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+To:     Ken Goldman <kgold@linux.ibm.com>, linux-integrity@vger.kernel.org
+In-Reply-To: <010f0d36-66b1-0202-543b-d579db4b2d93@linux.ibm.com>
+References: <1541962653.3190.7.camel@HansenPartnership.com>
+         <7d8cc5ad4bb7548d283f363de6f24c90d5d0a2b2.camel@mniewoehner.de>
+         <1541968191.3190.12.camel@HansenPartnership.com>
+         <3243d0325b3ea5878d3f86b0ee4fec1498f21dc1.camel@mniewoehner.de>
+         <660b0934bc16c8d195a2724f8be4ba8dfbe71134.camel@mniewoehner.de>
+         <1541972556.3734.90.camel@linux.ibm.com>
+         <4f7cc7152f2266d8d0782889db2375d4c1c71987.camel@mniewoehner.de>
+         <b89c95a496a1512ee3069b6a69cf915906fe697a.camel@mniewoehner.de>
+         <20181118081833.GH5897@linux.intel.com>
+         <467833cc47247a55595d72426f46eeac1406eb04.camel@mniewoehner.de>
+         <20181119134956.GD8755@linux.intel.com>
+         <49ec628f42fa7833f6a75d4a8b15d64789c70bf7.camel@mniewoehner.de>
+         <a4b30f21571d620db8d4ce311df5856f38b3d1a7.camel@mniewoehner.de>
+         <010f0d36-66b1-0202-543b-d579db4b2d93@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Wed, 28 Nov 2018 16:04:58 +0100
+Mime-Version: 1.0
+X-Mailer: Evolution 3.28.5 
+Content-Transfer-Encoding: 8BIT
+X-ZohoMailClient: External
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 11/16/2018 2:38 PM, Jarkko Sakkinen wrote:
-> On Wed, Nov 14, 2018 at 04:31:03PM +0100, Roberto Sassu wrote:
->> tcg_efi_specid_event and tcg_pcr_event2 declaration contains static arrays
->> for a list of hash algorithms used for event logs and event log digests.
->>
->> However, according to TCG EFI Protocol Specification, these arrays have
->> variable sizes. Setting the array size to zero or 3 does not make any
->> difference, because the parser has to adjust the offset depending on the
->> actual array size to access structure members after the static arrays.
->>
->> Thus, this patch removes the declaration of TPM2_ACTIVE_PCR_BANKS and sets
->> the array size to zero.
->>
->> Fixes: 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware
->> event log")
->>
->> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->> ---
->>   include/linux/tpm_eventlog.h | 5 ++---
->>   1 file changed, 2 insertions(+), 3 deletions(-)
->>
->> diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
->> index 20d9da77fc11..3d5d162f09cc 100644
->> --- a/include/linux/tpm_eventlog.h
->> +++ b/include/linux/tpm_eventlog.h
->> @@ -8,7 +8,6 @@
->>   #define TCG_EVENT_NAME_LEN_MAX	255
->>   #define MAX_TEXT_EVENT		1000	/* Max event string length */
->>   #define ACPI_TCPA_SIG		"TCPA"	/* 0x41504354 /'TCPA' */
->> -#define TPM2_ACTIVE_PCR_BANKS	3
->>   
->>   #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 0x1
->>   #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_2   0x2
->> @@ -90,7 +89,7 @@ struct tcg_efi_specid_event {
->>   	u8 spec_errata;
->>   	u8 uintnsize;
->>   	u32 num_algs;
->> -	struct tcg_efi_specid_event_algs digest_sizes[TPM2_ACTIVE_PCR_BANKS];
->> +	struct tcg_efi_specid_event_algs digest_sizes[0];
->>   	u8 vendor_info_size;
->>   	u8 vendor_info[0];
->>   } __packed;
->> @@ -117,7 +116,7 @@ struct tcg_pcr_event2 {
->>   	u32 pcr_idx;
->>   	u32 event_type;
->>   	u32 count;
->> -	struct tpm2_digest digests[TPM2_ACTIVE_PCR_BANKS];
->> +	struct tpm2_digest digests[0];
->>   	struct tcg_event_field event;
->>   } __packed;
->>   
->> -- 
->> 2.17.1
->>
+On Tue, 2018-11-27 at 17:31 -0500, Ken Goldman wrote:
+> On 11/26/2018 2:15 PM, Michael Niewöhner wrote:
+> > Hi again,
+> > 
+> > after some experiments I finally found a solution...
+> > There seems to be a bug in TPM2.0 firmware version (1.3.1.0) included in
+> > Lenovos
+> > UEFI image but they do not provide an update.
+> > 
+> > I have extracted the firmware version 1.3.2.8 from Dell's XPS15 TPM2.0
+> > firmware
+> > update and used this to replace the firmware in my Lenovo UEFI image.
+> > After flashing this version via UEFI Setup the TPM2.0 gets detected and now
+> > is
+> > fully working. WTF.
+> > 
+> > For anyone having the same problem: binwalk, uefi-firmware-parser, uefipatch
+> > and
+> > flashrom are your friends ;-)
 > 
-> NAK for the same reason as last time.
-
-I added this comment to include/linux/tpm_eventlog.h:
-
-/*
-  * http://www.trustedcomputinggroup.org/tcg-efi-protocol-specification/
-  *
-  * Set the size of 'digest_sizes' and 'digests', members of 
-tcg_efi_specid_event
-  * and tcg_pcr_event2, to zero. Structures with variable-sized arrays 
-placed
-  * midway are not suitable for type casting.
-  */
-
-Is it ok?
-
-Thanks
-
-Roberto
-
-
-> /Jarkko
+> Just to make sure I understand it, do I have this right?
+> 
+> 1.3.2.8 is Nuvoton's TPM firmware.  It was embedded in Dell's firmware 
+> (UEFI?).  You extracted it from Dell and inserted it into Lenovo. 
+> (UEFI?).  Then you flashed the TPM firmware.
 > 
 
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+Exactly. The Lenovo UEFI Setup has the ability to switch between TPM1.2 and
+TPM2.0 by flashing the appropriate Firmware. Lenovo has v1.3.1.0 for TPM in
+their latest P320 UEFI image. I dumped the SPI flash rom, replaced the firmware
+with UEFIPatch and flashed the image back. Then I had to select TPM1.2 to be
+able to reflash TPM2.0 firmware as a second step.
+
+
