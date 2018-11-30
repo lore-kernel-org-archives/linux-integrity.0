@@ -3,54 +3,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B7B9C04EB8
-	for <linux-integrity@archiver.kernel.org>; Fri, 30 Nov 2018 22:18:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E554FC04EB8
+	for <linux-integrity@archiver.kernel.org>; Fri, 30 Nov 2018 23:35:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEC8220867
-	for <linux-integrity@archiver.kernel.org>; Fri, 30 Nov 2018 22:18:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEC8220867
+	by mail.kernel.org (Postfix) with ESMTP id B3C7C20867
+	for <linux-integrity@archiver.kernel.org>; Fri, 30 Nov 2018 23:35:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3C7C20867
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbeLAJ3a (ORCPT
+        id S1726788AbeLAKp7 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 1 Dec 2018 04:29:30 -0500
-Received: from mga02.intel.com ([134.134.136.20]:39004 "EHLO mga02.intel.com"
+        Sat, 1 Dec 2018 05:45:59 -0500
+Received: from mga17.intel.com ([192.55.52.151]:35265 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725867AbeLAJ3a (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 1 Dec 2018 04:29:30 -0500
-X-Amp-Result: UNSCANNABLE
+        id S1725867AbeLAKp6 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 1 Dec 2018 05:45:58 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 14:18:43 -0800
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 15:35:01 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,300,1539673200"; 
-   d="scan'208";a="294224132"
+   d="scan'208";a="294873275"
 Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.241.225.27])
-  by fmsmga006.fm.intel.com with ESMTP; 30 Nov 2018 14:18:42 -0800
-Date:   Fri, 30 Nov 2018 14:18:43 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 30 Nov 2018 15:35:01 -0800
+Date:   Fri, 30 Nov 2018 15:35:01 -0800
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v5 2/7] tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
-Message-ID: <20181130221843.GA26088@linux.intel.com>
-References: <20181114153108.12907-1-roberto.sassu@huawei.com>
- <20181114153108.12907-3-roberto.sassu@huawei.com>
- <20181116133851.GB4163@linux.intel.com>
- <1602133e-6a41-ea97-d985-6eca0831898d@huawei.com>
- <4a55ba02-87e6-9258-038e-e4c57f00f033@huawei.com>
- <20181130194149.GA18584@linux.intel.com>
- <20181130194527.GB18584@linux.intel.com>
+To:     linux-integrity@vger.kernel.org
+Subject: TPM legacy
+Message-ID: <20181130233501.GA32256@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181130194527.GB18584@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
@@ -58,24 +47,18 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 11:45:27AM -0800, Jarkko Sakkinen wrote:
-> On Fri, Nov 30, 2018 at 11:41:49AM -0800, Jarkko Sakkinen wrote:
-> > Even after looking at the spec the last field does not make sense as the
-> > event after digests and digests are not in union. It is just not right.
-> > 
-> > The comment does not fix that.
-> 
-> You should remove the last field and rename the struct as maybe
-> struct tcg_pcr_event2_head. If we ever need the very last field
-> we can create struct *_tail.
-> 
-> Not your fault but there is clear bug in the struct definition
-> that should be fixed in a commit of its own.
-> 
-> No new comments are needed.
+Hi
 
-I checked and did not find the field even used anywhere. Can you
-peer check this and then just remove it? And yeah maybe the struct
-should have _head suffix.
+Some things that came up at LSS.
+
+First, would it be time to drop 1.1b bits? What advantages this would
+bring? AFAIK Peter is a strong supporter of this.
+
+In the hall way discussions, I talked with Tomas Winkler that it would
+make sense to add CONFIG_TCG_TPM1 flag to completely leave out all TPM
+1.x bits from the kernel.
+
+TPM 1.x stuff is not exactly legacy but especially on IoT does not make
+sense to carry that code with.
 
 /Jarkko
