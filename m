@@ -2,74 +2,109 @@ Return-Path: <SRS0=ZzAI=OJ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3273DC04EB8
-	for <linux-integrity@archiver.kernel.org>; Fri, 30 Nov 2018 19:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 036FDC64EB4
+	for <linux-integrity@archiver.kernel.org>; Fri, 30 Nov 2018 20:04:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3B8C20834
-	for <linux-integrity@archiver.kernel.org>; Fri, 30 Nov 2018 19:45:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3B8C20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BD8252082F
+	for <linux-integrity@archiver.kernel.org>; Fri, 30 Nov 2018 20:04:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD8252082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725867AbeLAGzt (ORCPT
+        id S1726340AbeLAHOh (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 1 Dec 2018 01:55:49 -0500
-Received: from mga07.intel.com ([134.134.136.100]:35692 "EHLO mga07.intel.com"
+        Sat, 1 Dec 2018 02:14:37 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34236 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725749AbeLAGzt (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 1 Dec 2018 01:55:49 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 11:45:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,299,1539673200"; 
-   d="scan'208";a="114151013"
-Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.241.225.27])
-  by orsmga002.jf.intel.com with ESMTP; 30 Nov 2018 11:45:27 -0800
-Date:   Fri, 30 Nov 2018 11:45:27 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v5 2/7] tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
-Message-ID: <20181130194527.GB18584@linux.intel.com>
-References: <20181114153108.12907-1-roberto.sassu@huawei.com>
- <20181114153108.12907-3-roberto.sassu@huawei.com>
- <20181116133851.GB4163@linux.intel.com>
- <1602133e-6a41-ea97-d985-6eca0831898d@huawei.com>
- <4a55ba02-87e6-9258-038e-e4c57f00f033@huawei.com>
- <20181130194149.GA18584@linux.intel.com>
+        id S1725790AbeLAHOh (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 1 Dec 2018 02:14:37 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2B3D63081D04;
+        Fri, 30 Nov 2018 20:04:13 +0000 (UTC)
+Received: from localhost (ovpn-116-19.gru2.redhat.com [10.97.116.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AAB4F5D736;
+        Fri, 30 Nov 2018 20:04:12 +0000 (UTC)
+From:   "Bruno E. O. Meneguele" <bmeneg@redhat.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com
+Subject: [PATCH] libimaevm: get key description out of verbose condition
+Date:   Fri, 30 Nov 2018 18:04:11 -0200
+Message-Id: <20181130200411.19595-1-bmeneg@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181130194149.GA18584@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 30 Nov 2018 20:04:13 +0000 (UTC)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 11:41:49AM -0800, Jarkko Sakkinen wrote:
-> Even after looking at the spec the last field does not make sense as the
-> event after digests and digests are not in union. It is just not right.
-> 
-> The comment does not fix that.
+Key description in keyring is being filled with memory garbage during import
+process if the LOG_LEVEL is not satisfied (using '-vv').
 
-You should remove the last field and rename the struct as maybe
-struct tcg_pcr_event2_head. If we ever need the very last field
-we can create struct *_tail.
+Testing in kernels without trusted keyring support, and importing a v1 (RSA) key
+pair, the kernel fails to find the key since it looks for the key description,
+which is not found due to this issue:
 
-Not your fault but there is clear bug in the struct definition
-that should be fixed in a commit of its own.
+    "digsig: key not found, id: DD0558FEB7DDBD26"
 
-No new comments are needed.
+Looking at:
+    # keyctl show
+    Session Keyring
+     635748007 --alswrv      0     0  keyring: _ses
+     673181018 --alswrv      0 65534   \_ keyring: _uid.0
+     360651479 --alswrv      0     0       \_ keyring: _ima
+     499360916 --alswrv      0     0       |   \_ user: .N=
+     266933436 --alswrv      0     0       |   \_ user: B641632DA94DEE26
 
-/Jarkko
+Key id 499360916 and 266933436 are both the same key, but the first was added
+without '-vv' in the command line, while the second one was using it.
+
+Signed-off-by: Bruno E. O. Meneguele <bmeneg@redhat.com>
+---
+ src/libimaevm.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/src/libimaevm.c b/src/libimaevm.c
+index 6fa0ed4..b6f9b9f 100644
+--- a/src/libimaevm.c
++++ b/src/libimaevm.c
+@@ -672,12 +672,11 @@ void calc_keyid_v1(uint8_t *keyid, char *str, const unsigned char *pkey, int len
+ 	memcpy(keyid, sha1 + 12, 8);
+ 	log_debug("keyid: ");
+ 	log_debug_dump(keyid, 8);
++	id = __be64_to_cpup((__be64 *) keyid);
++	sprintf(str, "%llX", (unsigned long long)id);
+ 
+-	if (params.verbose > LOG_INFO) {
+-		id = __be64_to_cpup((__be64 *) keyid);
+-		sprintf(str, "%llX", (unsigned long long)id);
++	if (params.verbose > LOG_INFO)
+ 		log_info("keyid-v1: %s\n", str);
+-	}
+ }
+ 
+ void calc_keyid_v2(uint32_t *keyid, char *str, RSA *key)
+@@ -694,11 +693,10 @@ void calc_keyid_v2(uint32_t *keyid, char *str, RSA *key)
+ 	memcpy(keyid, sha1 + 16, 4);
+ 	log_debug("keyid: ");
+ 	log_debug_dump(keyid, 4);
++	sprintf(str, "%x", __be32_to_cpup(keyid));
+ 
+-	if (params.verbose > LOG_INFO) {
+-		sprintf(str, "%x", __be32_to_cpup(keyid));
++	if (params.verbose > LOG_INFO)
+ 		log_info("keyid: %s\n", str);
+-	}
+ 
+ 	free(pkey);
+ }
+-- 
+2.19.1
+
