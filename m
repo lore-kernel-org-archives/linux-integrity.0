@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29FF1C04EB8
-	for <linux-integrity@archiver.kernel.org>; Sun,  2 Dec 2018 23:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA763C04EB8
+	for <linux-integrity@archiver.kernel.org>; Sun,  2 Dec 2018 23:13:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF9C820834
-	for <linux-integrity@archiver.kernel.org>; Sun,  2 Dec 2018 23:08:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF9C820834
+	by mail.kernel.org (Postfix) with ESMTP id A49DB20892
+	for <linux-integrity@archiver.kernel.org>; Sun,  2 Dec 2018 23:13:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A49DB20892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725786AbeLBXIu (ORCPT
+        id S1725786AbeLBXN3 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 2 Dec 2018 18:08:50 -0500
-Received: from mga17.intel.com ([192.55.52.151]:34625 "EHLO mga17.intel.com"
+        Sun, 2 Dec 2018 18:13:29 -0500
+Received: from mga06.intel.com ([134.134.136.31]:14662 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725781AbeLBXIu (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 2 Dec 2018 18:08:50 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1725781AbeLBXN3 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 2 Dec 2018 18:13:29 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2018 15:08:48 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2018 15:13:27 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,308,1539673200"; 
-   d="scan'208";a="104104912"
+   d="scan'208";a="104105473"
 Received: from trhammer-mobl.amr.corp.intel.com (HELO localhost) ([10.254.49.188])
-  by fmsmga007.fm.intel.com with ESMTP; 02 Dec 2018 15:08:48 -0800
-Date:   Sun, 2 Dec 2018 15:08:47 -0800
+  by fmsmga007.fm.intel.com with ESMTP; 02 Dec 2018 15:13:27 -0800
+Date:   Sun, 2 Dec 2018 15:13:27 -0800
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
 Subject: Re: TPM legacy
-Message-ID: <20181202230847.GB6718@linux.intel.com>
+Message-ID: <20181202231327.GC6718@linux.intel.com>
 References: <20181130233501.GA32256@linux.intel.com>
  <1543764226.4216.205.camel@linux.ibm.com>
+ <1543775366.2732.24.camel@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1543764226.4216.205.camel@linux.ibm.com>
+In-Reply-To: <1543775366.2732.24.camel@HansenPartnership.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
@@ -52,30 +51,35 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sun, Dec 02, 2018 at 10:23:46AM -0500, Mimi Zohar wrote:
-> On Fri, 2018-11-30 at 15:35 -0800, Jarkko Sakkinen wrote:
-> > Hi
-> > 
-> > Some things that came up at LSS.
-> > 
-> > First, would it be time to drop 1.1b bits? What advantages this would
-> > bring? AFAIK Peter is a strong supporter of this.
-> > 
-> > In the hall way discussions, I talked with Tomas Winkler that it would
-> > make sense to add CONFIG_TCG_TPM1 flag to completely leave out all TPM
-> > 1.x bits from the kernel.
-> > 
-> > TPM 1.x stuff is not exactly legacy but especially on IoT does not make
-> > sense to carry that code with.
-> 
-> New systems might be shipping with only TPM 2.0, but it still needs to
-> be supported for existing systems, probably for quite a while.  Having
-> the option to build the kernel with TPM 1.2, TPM 2.0 or both, is
-> acceptable.
+On Sun, Dec 02, 2018 at 10:29:26AM -0800, James Bottomley wrote:
+> The distros won't thank you for yet another kconfig option. ,
+> especially one which could cause regressions if they choose the wrong
+> value. However, having a hidden one which could be activated by driver
+> might work ... on the other hand almost all the current drivers support
+> both 1.2 and 2.0 so they'd all need splitting.
 
-I guess it would be sufficient to just have an option to compile TPM 1.x
-out for starters as the real use case is devices with fTPM. Hard to see
-much benefit on supporting compiling TPM 2.0 support out. Obviously,
-TCG_TPM1 would be by default off.
+By default on (i.e. have TPM 1.x) and with a well thought documentation
+should not be too bad.
+
+> The other thing that should give us pause is this:
+> 
+> jejb@jarvis:~/git/linux/drivers/char/tpm> size tpm.o
+>    text	   data	    bss	    dec	    hex	
+> filename
+>   35247	   1120	     32	  36399	   8e2f	
+> tpm.o
+> 
+> Currently the combined tpm subsystem (without drivers) is less than 36k
+> of code, so is splitting it up valuable?  I think you're going to find
+> we have a reasonable abstraction of sharing, so taking out 1.x by
+> config will likely save less than 10k of code ... is that worth the
+> effort?
+
+It is not only a size question. All unused code is always potential
+attack surface. If the option is by default off and properly documented,
+it should be IMHO ok.
+
+It is fairly easy to do as TPM 1.x commands have been already put into
+their own file thanks to Tomas.
 
 /Jarkko
