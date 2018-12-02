@@ -2,149 +2,106 @@ Return-Path: <SRS0=SF38=OL=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C40C04EB8
-	for <linux-integrity@archiver.kernel.org>; Sun,  2 Dec 2018 16:18:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D6BC04EB8
+	for <linux-integrity@archiver.kernel.org>; Sun,  2 Dec 2018 18:29:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC5EC2081C
-	for <linux-integrity@archiver.kernel.org>; Sun,  2 Dec 2018 16:18:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC5EC2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9892320834
+	for <linux-integrity@archiver.kernel.org>; Sun,  2 Dec 2018 18:29:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="S4lNkI7X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9892320834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725901AbeLBQST (ORCPT
+        id S1725554AbeLBS3b (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 2 Dec 2018 11:18:19 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50854 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725894AbeLBQST (ORCPT
+        Sun, 2 Dec 2018 13:29:31 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:57530 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725535AbeLBS3a (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 2 Dec 2018 11:18:19 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB2G9FZM020642
-        for <linux-integrity@vger.kernel.org>; Sun, 2 Dec 2018 11:18:17 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p48hr9v21-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Sun, 02 Dec 2018 11:18:16 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Sun, 2 Dec 2018 16:18:14 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 2 Dec 2018 16:18:11 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB2GIA9M57475256
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 2 Dec 2018 16:18:10 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0A826A404D;
-        Sun,  2 Dec 2018 16:18:10 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 52B7FA4051;
-        Sun,  2 Dec 2018 16:18:09 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.106.63])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun,  2 Dec 2018 16:18:09 +0000 (GMT)
-Subject: Re: [PATCH] ima-evm-utils: libimaevm: get key description out of
- verbose condition
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     "Bruno E. O. Meneguele" <bmeneg@redhat.com>,
+        Sun, 2 Dec 2018 13:29:30 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 58F958EE1CB;
+        Sun,  2 Dec 2018 10:29:28 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id MeZ3DXNO47_v; Sun,  2 Dec 2018 10:29:28 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id D9EFD8EE0C9;
+        Sun,  2 Dec 2018 10:29:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1543775368;
+        bh=KtwzI26mnvvo3hyR/BYHrys7c++cizlyx0HLlPMdCM0=;
+        h=Subject:From:To:Date:In-Reply-To:References:From;
+        b=S4lNkI7XSBTDQiI/UWFWiojYTU5aioka9FzcdTKmNBhum8gFS0cam/7pwRXMzQz31
+         v1E8xkefaLrcUk1uhF9A5aoK8PthgLgofEv+5nu8M04neZ5ltrZIBbiblqDXPkRay4
+         PzjQuOVtAgB25VUViUkcBllQZ8wqxS4/hEHz4rYE=
+Message-ID: <1543775366.2732.24.camel@HansenPartnership.com>
+Subject: Re: TPM legacy
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         linux-integrity@vger.kernel.org
-Cc:     zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com
-Date:   Sun, 02 Dec 2018 11:17:58 -0500
-In-Reply-To: <20181130200547.20490-1-bmeneg@redhat.com>
-References: <20181130200547.20490-1-bmeneg@redhat.com>
+Date:   Sun, 02 Dec 2018 10:29:26 -0800
+In-Reply-To: <1543764226.4216.205.camel@linux.ibm.com>
+References: <20181130233501.GA32256@linux.intel.com>
+         <1543764226.4216.205.camel@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+X-Mailer: Evolution 3.26.6 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18120216-0028-0000-0000-00000324BFAB
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120216-0029-0000-0000-000023E0DA6D
-Message-Id: <1543767478.4216.206.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-02_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812020155
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, 2018-11-30 at 18:05 -0200, Bruno E. O. Meneguele wrote:
-> Key description in keyring is being filled with memory garbage during import
-> process if the LOG_LEVEL is not satisfied (using '-vv').
+On Sun, 2018-12-02 at 10:23 -0500, Mimi Zohar wrote:
+> On Fri, 2018-11-30 at 15:35 -0800, Jarkko Sakkinen wrote:
+> > Hi
+> > 
+> > Some things that came up at LSS.
+> > 
+> > First, would it be time to drop 1.1b bits? What advantages this
+> > would bring? AFAIK Peter is a strong supporter of this.
+> > 
+> > In the hall way discussions, I talked with Tomas Winkler that it
+> > would make sense to add CONFIG_TCG_TPM1 flag to completely leave
+> > out all TPM 1.x bits from the kernel.
+> > 
+> > TPM 1.x stuff is not exactly legacy but especially on IoT does not
+> > make sense to carry that code with.
 > 
-> Testing in kernels without trusted keyring support, and importing a v1 (RSA) key
-> pair, the kernel fails to find the key since it looks for the key description,
-> which is not found due to this issue:
-> 
->     "digsig: key not found, id: DD0558FEB7DDBD26"
-> 
-> Looking at:
->     # keyctl show
->     Session Keyring
->      635748007 --alswrv      0     0  keyring: _ses
->      673181018 --alswrv      0 65534   \_ keyring: _uid.0
->      360651479 --alswrv      0     0       \_ keyring: _ima
->      499360916 --alswrv      0     0       |   \_ user: .N=
->      266933436 --alswrv      0     0       |   \_ user: B641632DA94DEE26
-> 
-> Key id 499360916 and 266933436 are both the same key, but the first was added
-> without '-vv' in the command line, while the second one was using it.
-> 
-> Signed-off-by: Bruno E. O. Meneguele <bmeneg@redhat.com>
+> New systems might be shipping with only TPM 2.0, but it still needs
+> to be supported for existing systems, probably for quite a while.
+>  Having the option to build the kernel with TPM 1.2, TPM 2.0 or both,
+> is acceptable.
 
-Thanks!
+The distros won't thank you for yet another kconfig option. ,
+especially one which could cause regressions if they choose the wrong
+value. However, having a hidden one which could be activated by driver
+might work ... on the other hand almost all the current drivers support
+both 1.2 and 2.0 so they'd all need splitting.
 
-Mimi
+The other thing that should give us pause is this:
 
-> ---
->  src/libimaevm.c | 12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
-> 
-> diff --git a/src/libimaevm.c b/src/libimaevm.c
-> index 6fa0ed4..b6f9b9f 100644
-> --- a/src/libimaevm.c
-> +++ b/src/libimaevm.c
-> @@ -672,12 +672,11 @@ void calc_keyid_v1(uint8_t *keyid, char *str, const unsigned char *pkey, int len
->  	memcpy(keyid, sha1 + 12, 8);
->  	log_debug("keyid: ");
->  	log_debug_dump(keyid, 8);
-> +	id = __be64_to_cpup((__be64 *) keyid);
-> +	sprintf(str, "%llX", (unsigned long long)id);
-> 
-> -	if (params.verbose > LOG_INFO) {
-> -		id = __be64_to_cpup((__be64 *) keyid);
-> -		sprintf(str, "%llX", (unsigned long long)id);
-> +	if (params.verbose > LOG_INFO)
->  		log_info("keyid-v1: %s\n", str);
-> -	}
->  }
-> 
->  void calc_keyid_v2(uint32_t *keyid, char *str, RSA *key)
-> @@ -694,11 +693,10 @@ void calc_keyid_v2(uint32_t *keyid, char *str, RSA *key)
->  	memcpy(keyid, sha1 + 16, 4);
->  	log_debug("keyid: ");
->  	log_debug_dump(keyid, 4);
-> +	sprintf(str, "%x", __be32_to_cpup(keyid));
-> 
-> -	if (params.verbose > LOG_INFO) {
-> -		sprintf(str, "%x", __be32_to_cpup(keyid));
-> +	if (params.verbose > LOG_INFO)
->  		log_info("keyid: %s\n", str);
-> -	}
-> 
->  	free(pkey);
->  }
+jejb@jarvis:~/git/linux/drivers/char/tpm> size tpm.o
+   text	   data	    bss	    dec	    hex	
+filename
+  35247	   1120	     32	  36399	   8e2f	
+tpm.o
+
+Currently the combined tpm subsystem (without drivers) is less than 36k
+of code, so is splitting it up valuable?  I think you're going to find
+we have a reasonable abstraction of sharing, so taking out 1.x by
+config will likely save less than 10k of code ... is that worth the
+effort?
+
+James
 
