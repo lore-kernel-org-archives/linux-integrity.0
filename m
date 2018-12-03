@@ -1,85 +1,119 @@
-Return-Path: <SRS0=SF38=OL=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=dywO=OM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA763C04EB8
-	for <linux-integrity@archiver.kernel.org>; Sun,  2 Dec 2018 23:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FAF1C04EB9
+	for <linux-integrity@archiver.kernel.org>; Mon,  3 Dec 2018 03:35:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A49DB20892
-	for <linux-integrity@archiver.kernel.org>; Sun,  2 Dec 2018 23:13:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A49DB20892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DA56320892
+	for <linux-integrity@archiver.kernel.org>; Mon,  3 Dec 2018 03:35:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA56320892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725786AbeLBXN3 (ORCPT
+        id S1725870AbeLCDfb (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 2 Dec 2018 18:13:29 -0500
-Received: from mga06.intel.com ([134.134.136.31]:14662 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725781AbeLBXN3 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 2 Dec 2018 18:13:29 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2018 15:13:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,308,1539673200"; 
-   d="scan'208";a="104105473"
-Received: from trhammer-mobl.amr.corp.intel.com (HELO localhost) ([10.254.49.188])
-  by fmsmga007.fm.intel.com with ESMTP; 02 Dec 2018 15:13:27 -0800
-Date:   Sun, 2 Dec 2018 15:13:27 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Subject: Re: TPM legacy
-Message-ID: <20181202231327.GC6718@linux.intel.com>
-References: <20181130233501.GA32256@linux.intel.com>
- <1543764226.4216.205.camel@linux.ibm.com>
- <1543775366.2732.24.camel@HansenPartnership.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543775366.2732.24.camel@HansenPartnership.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Sun, 2 Dec 2018 22:35:31 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:54272 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725806AbeLCDfb (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 2 Dec 2018 22:35:31 -0500
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 9EDC272CA65;
+        Mon,  3 Dec 2018 06:35:25 +0300 (MSK)
+Received: from beacon.altlinux.org (unknown [185.6.174.98])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 8393B4A4A29;
+        Mon,  3 Dec 2018 06:35:25 +0300 (MSK)
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org
+Subject: [PATCH v3 1/7] ima-evm-utils: Fix hash buffer overflow in verify_evm and hmac_evm
+Date:   Mon,  3 Dec 2018 06:35:19 +0300
+Message-Id: <20181203033525.20431-1-vt@altlinux.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sun, Dec 02, 2018 at 10:29:26AM -0800, James Bottomley wrote:
-> The distros won't thank you for yet another kconfig option. ,
-> especially one which could cause regressions if they choose the wrong
-> value. However, having a hidden one which could be activated by driver
-> might work ... on the other hand almost all the current drivers support
-> both 1.2 and 2.0 so they'd all need splitting.
+Commit ae1319eeabd6 ("Remove hardcoding of SHA1 in EVM signatures")
+introduces overflow of 20 byte buffer on the stack while calculating
+hash. Also, invalid hash length is passed to the underlying verification
+function in verify_evm. This prevents any non-SHA1 hashes from being
+properly validated using evmctl.
 
-By default on (i.e. have TPM 1.x) and with a well thought documentation
-should not be too bad.
+Fixes: ae1319eeabd6 ("Remove hardcoding of SHA1 in EVM signatures")
+Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+---
+Changes since v1:
+- Fix similar issue in hmac_evm
+Changes since v2:
+- No changes.
 
-> The other thing that should give us pause is this:
-> 
-> jejb@jarvis:~/git/linux/drivers/char/tpm> size tpm.o
->    text	   data	    bss	    dec	    hex	
-> filename
->   35247	   1120	     32	  36399	   8e2f	
-> tpm.o
-> 
-> Currently the combined tpm subsystem (without drivers) is less than 36k
-> of code, so is splitting it up valuable?  I think you're going to find
-> we have a reasonable abstraction of sharing, so taking out 1.x by
-> config will likely save less than 10k of code ... is that worth the
-> effort?
+ src/evmctl.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-It is not only a size question. All unused code is always potential
-attack surface. If the option is by default off and properly documented,
-it should be IMHO ok.
+diff --git a/src/evmctl.c b/src/evmctl.c
+index 1b46d58..f8035da 100644
+--- a/src/evmctl.c
++++ b/src/evmctl.c
+@@ -55,6 +55,7 @@
+ #include <keyutils.h>
+ #include <ctype.h>
+ #include <termios.h>
++#include <assert.h>
+ 
+ #include <openssl/sha.h>
+ #include <openssl/pem.h>
+@@ -760,13 +761,15 @@ static int cmd_sign_evm(struct command *cmd)
+ 
+ static int verify_evm(const char *file)
+ {
+-	unsigned char hash[20];
++	unsigned char hash[64];
+ 	unsigned char sig[1024];
++	int mdlen;
+ 	int len;
+ 
+-	len = calc_evm_hash(file, hash);
+-	if (len <= 1)
+-		return len;
++	mdlen = calc_evm_hash(file, hash);
++	assert(mdlen <= sizeof(hash));
++	if (mdlen <= 1)
++		return mdlen;
+ 
+ 	len = lgetxattr(file, "security.evm", sig, sizeof(sig));
+ 	if (len < 0) {
+@@ -779,7 +782,7 @@ static int verify_evm(const char *file)
+ 		return -1;
+ 	}
+ 
+-	return verify_hash(file, hash, sizeof(hash), sig + 1, len - 1);
++	return verify_hash(file, hash, mdlen, sig + 1, len - 1);
+ }
+ 
+ static int cmd_verify_evm(struct command *cmd)
+@@ -1135,11 +1138,12 @@ out:
+ 
+ static int hmac_evm(const char *file, const char *key)
+ {
+-	unsigned char hash[20];
++	unsigned char hash[64];
+ 	unsigned char sig[1024];
+ 	int len, err;
+ 
+ 	len = calc_evm_hmac(file, key, hash);
++	assert(len <= sizeof(hash));
+ 	if (len <= 1)
+ 		return len;
+ 
+-- 
+2.11.0
 
-It is fairly easy to do as TPM 1.x commands have been already put into
-their own file thanks to Tomas.
-
-/Jarkko
