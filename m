@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7CEEC65BB0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABED7C64EB4
 	for <linux-integrity@archiver.kernel.org>; Mon,  3 Dec 2018 03:35:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A895B2147C
+	by mail.kernel.org (Postfix) with ESMTP id 7C98021473
 	for <linux-integrity@archiver.kernel.org>; Mon,  3 Dec 2018 03:35:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A895B2147C
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C98021473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725811AbeLCDfc (ORCPT
+        id S1725877AbeLCDfc (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
         Sun, 2 Dec 2018 22:35:32 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:54314 "EHLO
+Received: from vmicros1.altlinux.org ([194.107.17.57]:54284 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbeLCDfc (ORCPT
+        with ESMTP id S1725811AbeLCDfc (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Sun, 2 Dec 2018 22:35:32 -0500
 Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 7958772CC73;
-        Mon,  3 Dec 2018 06:35:26 +0300 (MSK)
+        by vmicros1.altlinux.org (Postfix) with ESMTP id DE1C572CC6C;
+        Mon,  3 Dec 2018 06:35:25 +0300 (MSK)
 Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 332384A4A29;
-        Mon,  3 Dec 2018 06:35:26 +0300 (MSK)
+        by imap.altlinux.org (Postfix) with ESMTPSA id A3ECC4A4AE7;
+        Mon,  3 Dec 2018 06:35:25 +0300 (MSK)
 From:   Vitaly Chikunov <vt@altlinux.org>
 To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         linux-integrity@vger.kernel.org
-Subject: [PATCH v3 5/7] ima-evm-utils: Preload OpenSSL engine via '--engine' option
-Date:   Mon,  3 Dec 2018 06:35:23 +0300
-Message-Id: <20181203033525.20431-5-vt@altlinux.org>
+Subject: [PATCH v3 2/7] ima-evm-utils: Define hash and sig buffer sizes and add asserts
+Date:   Mon,  3 Dec 2018 06:35:20 +0300
+Message-Id: <20181203033525.20431-2-vt@altlinux.org>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181203033525.20431-1-vt@altlinux.org>
 References: <20181203033525.20431-1-vt@altlinux.org>
@@ -44,115 +44,195 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Another method of using GOST algorithms (and cryptographic accelerators)
-is via direct preloading of appropriate engine using '--engine' option.
-For the gost-engine it should be '--engine gost'.
+To prevent hash and sig buffers size mismatch, define their maximum
+sizes and add sanity checking asserts.
 
-Usage example:
-
-1. Install gost-engine appropriately. (No need to edit openssl.cnf).
-
-2. Then GOST algorithms should work:
-
-  # cp /dev/null a
-  # evmctl -v ima_hash --engine gost -a streebog256 a
-  hash: 04123f539a213e97c802cc229d474c6aa32a825a360b2a933a949fd925208d9ce1bb
-
+Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
 Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
 ---
 Changes since v1:
-- Code split from prevously combined patch.
-- More verbose OpenSSL error message.
+- New patch.
 Changes since v2:
-- Update README.
-- Add example engine name to the --help.
-- Add usage example to description.
+- Add single comment line to sign_evm.
 
- README       |  1 +
- src/evmctl.c | 23 +++++++++++++++++++++++
- 2 files changed, 24 insertions(+)
+ src/evmctl.c    | 35 ++++++++++++++++++++++-------------
+ src/imaevm.h    |  3 +++
+ src/libimaevm.c |  4 +++-
+ 3 files changed, 28 insertions(+), 14 deletions(-)
 
-diff --git a/README b/README
-index 05cc2ff..3603ae8 100644
---- a/README
-+++ b/README
-@@ -58,6 +58,7 @@ OPTIONS
-       --smack        use extra SMACK xattrs for EVM
-       --m32          force EVM hmac/signature for 32 bit target system
-       --m64          force EVM hmac/signature for 64 bit target system
-+      --engine e     preload OpenSSL engine e (such as: gost)
-   -v                 increase verbosity level
-   -h, --help         display this help and exit
- 
 diff --git a/src/evmctl.c b/src/evmctl.c
-index 1f6dad5..0459798 100644
+index f8035da..f019a67 100644
 --- a/src/evmctl.c
 +++ b/src/evmctl.c
-@@ -62,6 +62,7 @@
- #include <openssl/hmac.h>
- #include <openssl/err.h>
- #include <openssl/rsa.h>
-+#include <openssl/engine.h>
+@@ -505,15 +505,17 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
  
- #ifndef XATTR_APPAARMOR_SUFFIX
- #define XATTR_APPARMOR_SUFFIX "apparmor"
-@@ -1680,6 +1681,7 @@ static void usage(void)
- 		"      --selinux      use custom Selinux label for EVM\n"
- 		"      --caps         use custom Capabilities for EVM(unspecified: from FS, empty: do not use)\n"
- 		"      --list         measurement list verification\n"
-+		"      --engine e     preload OpenSSL engine e (such as: gost)\n"
- 		"  -v                 increase verbosity level\n"
- 		"  -h, --help         display this help and exit\n"
- 		"\n");
-@@ -1732,6 +1734,7 @@ static struct option opts[] = {
- 	{"selinux", 1, 0, 136},
- 	{"caps", 2, 0, 137},
- 	{"list", 0, 0, 138},
-+	{"engine", 1, 0, 139},
- 	{"xattr-user", 0, 0, 140},
- 	{}
- 
-@@ -1774,6 +1777,7 @@ static char *get_password(void)
- int main(int argc, char *argv[])
+ static int sign_evm(const char *file, const char *key)
  {
- 	int err = 0, c, lind;
-+	ENGINE *eng = NULL;
+-	unsigned char hash[64];
+-	unsigned char sig[1024];
++	unsigned char hash[MAX_DIGEST_SIZE];
++	unsigned char sig[MAX_SIGNATURE_SIZE];
+ 	int len, err;
  
- 	g_argv = argv;
- 	g_argc = argc;
-@@ -1884,6 +1888,18 @@ int main(int argc, char *argv[])
- 		case 138:
- 			measurement_list = 1;
- 			break;
-+		case 139: /* --engine e */
-+			eng = ENGINE_by_id(optarg);
-+			if (!eng) {
-+				log_err("engine %s isn't available\n", optarg);
-+				ERR_print_errors_fp(stderr);
-+			} else if (!ENGINE_init(eng)) {
-+				log_err("engine %s init failed\n", optarg);
-+				ERR_print_errors_fp(stderr);
-+				ENGINE_free(eng);
-+				eng = NULL;
-+			}
-+			break;
- 		case 140: /* --xattr-user */
- 			xattr_ima = "user.ima";
- 			xattr_evm = "user.evm";
-@@ -1914,6 +1930,13 @@ int main(int argc, char *argv[])
- 		}
+ 	len = calc_evm_hash(file, hash);
++	assert(len <= sizeof(hash));
+ 	if (len <= 1)
+ 		return len;
+ 
+ 	len = sign_hash(params.hash_algo, hash, len, key, NULL, sig + 1);
++	assert(len < sizeof(sig));
+ 	if (len <= 1)
+ 		return len;
+ 
+@@ -543,7 +545,7 @@ static int sign_evm(const char *file, const char *key)
+ 
+ static int hash_ima(const char *file)
+ {
+-	unsigned char hash[66]; /* MAX hash size + 2 */
++	unsigned char hash[MAX_DIGEST_SIZE + 2]; /* +2 byte xattr header */
+ 	int len, err, offset;
+ 	int algo = get_hash_algo(params.hash_algo);
+ 
+@@ -557,6 +559,7 @@ static int hash_ima(const char *file)
  	}
  
-+	if (eng) {
-+		ENGINE_finish(eng);
-+		ENGINE_free(eng);
-+#if OPENSSL_API_COMPAT < 0x10100000L
-+		ENGINE_cleanup();
-+#endif
-+	}
- 	ERR_free_strings();
- 	EVP_cleanup();
- 	BIO_free(NULL);
+ 	len = ima_calc_hash(file, hash + offset);
++	assert(len + offset <= sizeof(hash));
+ 	if (len <= 1)
+ 		return len;
+ 
+@@ -581,15 +584,17 @@ static int hash_ima(const char *file)
+ 
+ static int sign_ima(const char *file, const char *key)
+ {
+-	unsigned char hash[64];
+-	unsigned char sig[1024];
++	unsigned char hash[MAX_DIGEST_SIZE];
++	unsigned char sig[MAX_SIGNATURE_SIZE];
+ 	int len, err;
+ 
+ 	len = ima_calc_hash(file, hash);
++	assert(len <= sizeof(hash));
+ 	if (len <= 1)
+ 		return len;
+ 
+ 	len = sign_hash(params.hash_algo, hash, len, key, NULL, sig + 1);
++	assert(len < sizeof(sig));
+ 	if (len <= 1)
+ 		return len;
+ 
+@@ -695,8 +700,8 @@ static int cmd_sign_hash(struct command *cmd)
+ 	int hashlen = 0;
+ 	size_t line_len;
+ 	ssize_t len;
+-	unsigned char hash[64];
+-	unsigned char sig[1024] = "\x03";
++	unsigned char hash[MAX_DIGEST_SIZE];
++	unsigned char sig[MAX_SIGNATURE_SIZE] = "\x03";
+ 	int siglen;
+ 
+ 	key = params.keyfile ? : "/etc/keys/privkey_evm.pem";
+@@ -711,9 +716,11 @@ static int cmd_sign_hash(struct command *cmd)
+ 		token = strpbrk(line, ", \t");
+ 		hashlen = token ? token - line : strlen(line);
+ 
+-		hex2bin(hash, line, hashlen);
++		assert(hashlen / 2 <= sizeof(hash));
++		hex2bin(hash, line, hashlen / 2);
+ 		siglen = sign_hash(params.hash_algo, hash, hashlen/2,
+ 				 key, NULL, sig + 1);
++		assert(siglen < sizeof(sig));
+ 		if (siglen <= 1)
+ 			return siglen;
+ 
+@@ -761,8 +768,8 @@ static int cmd_sign_evm(struct command *cmd)
+ 
+ static int verify_evm(const char *file)
+ {
+-	unsigned char hash[64];
+-	unsigned char sig[1024];
++	unsigned char hash[MAX_DIGEST_SIZE];
++	unsigned char sig[MAX_SIGNATURE_SIZE];
+ 	int mdlen;
+ 	int len;
+ 
+@@ -804,12 +811,13 @@ static int cmd_verify_evm(struct command *cmd)
+ 
+ static int verify_ima(const char *file)
+ {
+-	unsigned char sig[1024];
++	unsigned char sig[MAX_SIGNATURE_SIZE];
+ 	int len;
+ 
+ 	if (sigfile) {
+ 		void *tmp = file2bin(file, "sig", &len);
+ 
++		assert(len <= sizeof(sig));
+ 		memcpy(sig, tmp, len);
+ 		free(tmp);
+ 	} else {
+@@ -1138,8 +1146,8 @@ out:
+ 
+ static int hmac_evm(const char *file, const char *key)
+ {
+-	unsigned char hash[64];
+-	unsigned char sig[1024];
++	unsigned char hash[MAX_DIGEST_SIZE];
++	unsigned char sig[MAX_SIGNATURE_SIZE];
+ 	int len, err;
+ 
+ 	len = calc_evm_hmac(file, key, hash);
+@@ -1149,6 +1157,7 @@ static int hmac_evm(const char *file, const char *key)
+ 
+ 	log_info("hmac: ");
+ 	log_dump(hash, len);
++	assert(len < sizeof(sig));
+ 	memcpy(sig + 1, hash, len);
+ 
+ 	if (xattr) {
+diff --git a/src/imaevm.h b/src/imaevm.h
+index 1bafaad..2ebe7e7 100644
+--- a/src/imaevm.h
++++ b/src/imaevm.h
+@@ -75,6 +75,9 @@
+ #define	DATA_SIZE	4096
+ #define SHA1_HASH_LEN   20
+ 
++#define MAX_DIGEST_SIZE		64
++#define MAX_SIGNATURE_SIZE	1024
++
+ #define __packed __attribute__((packed))
+ 
+ enum evm_ima_xattr_type {
+diff --git a/src/libimaevm.c b/src/libimaevm.c
+index 6fa0ed4..80b61a2 100644
+--- a/src/libimaevm.c
++++ b/src/libimaevm.c
+@@ -49,6 +49,7 @@
+ #include <dirent.h>
+ #include <string.h>
+ #include <stdio.h>
++#include <assert.h>
+ 
+ #include <openssl/pem.h>
+ #include <openssl/evp.h>
+@@ -590,7 +591,7 @@ int verify_hash(const char *file, const unsigned char *hash, int size, unsigned
+ int ima_verify_signature(const char *file, unsigned char *sig, int siglen,
+ 			 unsigned char *digest, int digestlen)
+ {
+-	unsigned char hash[64];
++	unsigned char hash[MAX_DIGEST_SIZE];
+ 	int hashlen, sig_hash_algo;
+ 
+ 	if (sig[0] != 0x03) {
+@@ -614,6 +615,7 @@ int ima_verify_signature(const char *file, unsigned char *sig, int siglen,
+ 	    return verify_hash(file, digest, digestlen, sig + 1, siglen - 1);
+ 
+ 	hashlen = ima_calc_hash(file, hash);
++	assert(hashlen <= sizeof(hash));
+ 	if (hashlen <= 1)
+ 		return hashlen;
+ 
 -- 
 2.11.0
 
