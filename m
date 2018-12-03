@@ -2,162 +2,117 @@ Return-Path: <SRS0=dywO=OM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F4BC04EB9
-	for <linux-integrity@archiver.kernel.org>; Mon,  3 Dec 2018 13:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5EC2C04EB9
+	for <linux-integrity@archiver.kernel.org>; Mon,  3 Dec 2018 15:01:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8359320878
-	for <linux-integrity@archiver.kernel.org>; Mon,  3 Dec 2018 13:07:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8359320878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A4DAB20850
+	for <linux-integrity@archiver.kernel.org>; Mon,  3 Dec 2018 15:01:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4DAB20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725957AbeLCNIA (ORCPT
+        id S1726586AbeLCPBx convert rfc822-to-8bit (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 3 Dec 2018 08:08:00 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54886 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725830AbeLCNIA (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 3 Dec 2018 08:08:00 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB3D6uVG098949
-        for <linux-integrity@vger.kernel.org>; Mon, 3 Dec 2018 08:07:01 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2p54vy0m61-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 03 Dec 2018 08:06:56 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 3 Dec 2018 13:04:09 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 3 Dec 2018 13:04:08 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB3D47GQ55181496
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 3 Dec 2018 13:04:07 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1912342049;
-        Mon,  3 Dec 2018 13:04:07 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 70E3642042;
-        Mon,  3 Dec 2018 13:04:06 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.106.63])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  3 Dec 2018 13:04:06 +0000 (GMT)
-Subject: Re: [PATCH v3 1/7] ima-evm-utils: Fix hash buffer overflow in
- verify_evm and hmac_evm
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Vitaly Chikunov <vt@altlinux.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org
-Date:   Mon, 03 Dec 2018 08:03:55 -0500
-In-Reply-To: <20181203033525.20431-1-vt@altlinux.org>
-References: <20181203033525.20431-1-vt@altlinux.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18120313-0020-0000-0000-000002F15B1C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120313-0021-0000-0000-00002140CCED
-Message-Id: <1543842235.4216.221.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-03_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812030124
+        Mon, 3 Dec 2018 10:01:53 -0500
+Received: from mout.gmx.net ([212.227.15.15]:38171 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726598AbeLCPBx (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 3 Dec 2018 10:01:53 -0500
+Received: from [217.10.52.10] ([217.10.52.10]) by web-mail.gmx.net
+ (3c-app-gmx-bs70.server.lan [172.19.170.215]) (via HTTP); Mon, 3 Dec 2018
+ 16:01:38 +0100
+MIME-Version: 1.0
+Message-ID: <trinity-c862f498-65a2-43f4-a4b3-94cc4b8e1c66-1543849298447@3c-app-gmx-bs70>
+From:   "Peter Huewe" <PeterHuewe@gmx.de>
+To:     "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
+Cc:     "James Bottomley" <James.Bottomley@HansenPartnership.com>,
+        "Mimi Zohar" <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
+Subject: Aw: Re: TPM legacy
+Content-Type: text/plain; charset=UTF-8
+Date:   Mon, 3 Dec 2018 16:01:38 +0100
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <20181202231327.GC6718@linux.intel.com>
+References: <20181130233501.GA32256@linux.intel.com>
+ <1543764226.4216.205.camel@linux.ibm.com>
+ <1543775366.2732.24.camel@HansenPartnership.com>
+ <20181202231327.GC6718@linux.intel.com>
+Content-Transfer-Encoding: 8BIT
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:ggmxApkWuQjFU216dEC1tn0ODoDvqOlqTpxR6HL3BmB+Lv45tx61tOFGH/TiosIYmn2By
+ T0+UK1eadISUpiVk5fskbCaj7pnzrp4sKtaxqFyvdXF5nnYXBR76XfoqmWpEmIPGtL23vGAzRuOH
+ /j9b0QXan9p/m3MQvZeswOMEoBQuPsGZ/Lr4wBc9HwIE7Rr7Htr2Hk0kIEzBNBA7P4OalSZ62NLq
+ 5ywRh+/YsUofcVnr46cOtvgtdkIDdaH2PJhAIMY9/zscpF1zEQpPfIleWCmHKOUCCPSEs3nEgNtV
+ 2U=
+X-UI-Out-Filterresults: notjunk:1;V03:K0:zU3wn4MnM0A=:DzfEqlaGgENnaWHQD6pCZB
+ Wf98UD1t1/FVjolPv3HdbXOjax2FHlcGKG3K33s+vjGOvAYEiB4xJVwlsRrVKQsW4PFOgGYc+
+ LmflcaaQmTe6/He1ihwHYMoL6xVIXcwiiVCJZB+xZTrSkZeASFpfh+X40qFesI1vqPQ09/sCd
+ jkVOYQlJb7zaM1E51rsC1VjtO15hVhGJF2IIbZOjFzT2OX1fevawtmbJKK4SK7CTIF1b14RkS
+ /FKUm23rSRWq3GyFZkUk9MPjHMODEIa2wZuTJq5WHS3P55xQTYL6xVb5Z6gJ4JVjfUfa7e8NI
+ aMLj1LhWuKNrZ5CjoUll5EYSL0DixlJxygzyhKnPs16GKpnUK8c9TIXC1/mxeAvY1R8kmOyi8
+ a8ENJyMvkFn/7eAjAfVCt9bfEfU4J4BcbD2ffLX4ZNHuVI9gbwqfz1T1pvvS9256yEA2jQEFo
+ 5bKI3fTdjfEbWD4DZio61hFX4pMt9l6ah3aAubyl++2snCFXsOwLHTks2T8tThJA13ing8op3
+ D21Zwf1Xq0gsrIcAaAKGVCdArJE2CIFJTlQXMnGHPBAW5L0Lpq/mZGjFR22VPcFhYCyPkGqz1
+ CK2o0UhNvxyeE=
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, 2018-12-03 at 06:35 +0300, Vitaly Chikunov wrote:
-> Commit ae1319eeabd6 ("Remove hardcoding of SHA1 in EVM signatures")
-> introduces overflow of 20 byte buffer on the stack while calculating
-> hash. Also, invalid hash length is passed to the underlying verification
-> function in verify_evm. This prevents any non-SHA1 hashes from being
-> properly validated using evmctl.
+Hi,
+> Some things that came up at LSS.
 > 
-> Fixes: ae1319eeabd6 ("Remove hardcoding of SHA1 in EVM signatures")
-> Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+> First, would it be time to drop 1.1b bits? What advantages this would
+> bring? AFAIK Peter is a strong supporter of this.
 
-Thank you!  This patch set has now been applied and is in master.
+> In the hall way discussions, I talked with Tomas Winkler that it would
+> make sense to add CONFIG_TCG_TPM1 flag to completely leave out all TPM
+> 1.x bits from the kernel.
+> 
+> TPM 1.x stuff is not exactly legacy but especially on IoT does not make
+> sense to carry that code with.
 
-Mimi
+> It is not only a size question. All unused code is always potential
+> attack surface. If the option is by default off and properly documented,
+> it should be IMHO ok.
 
-> ---
-> Changes since v1:
-> - Fix similar issue in hmac_evm
-> Changes since v2:
-> - No changes.
-> 
->  src/evmctl.c | 16 ++++++++++------
->  1 file changed, 10 insertions(+), 6 deletions(-)
-> 
-> diff --git a/src/evmctl.c b/src/evmctl.c
-> index 1b46d58..f8035da 100644
-> --- a/src/evmctl.c
-> +++ b/src/evmctl.c
-> @@ -55,6 +55,7 @@
->  #include <keyutils.h>
->  #include <ctype.h>
->  #include <termios.h>
-> +#include <assert.h>
-> 
->  #include <openssl/sha.h>
->  #include <openssl/pem.h>
-> @@ -760,13 +761,15 @@ static int cmd_sign_evm(struct command *cmd)
-> 
->  static int verify_evm(const char *file)
->  {
-> -	unsigned char hash[20];
-> +	unsigned char hash[64];
->  	unsigned char sig[1024];
-> +	int mdlen;
->  	int len;
-> 
-> -	len = calc_evm_hash(file, hash);
-> -	if (len <= 1)
-> -		return len;
-> +	mdlen = calc_evm_hash(file, hash);
-> +	assert(mdlen <= sizeof(hash));
-> +	if (mdlen <= 1)
-> +		return mdlen;
-> 
->  	len = lgetxattr(file, "security.evm", sig, sizeof(sig));
->  	if (len < 0) {
-> @@ -779,7 +782,7 @@ static int verify_evm(const char *file)
->  		return -1;
->  	}
-> 
-> -	return verify_hash(file, hash, sizeof(hash), sig + 1, len - 1);
-> +	return verify_hash(file, hash, mdlen, sig + 1, len - 1);
->  }
-> 
->  static int cmd_verify_evm(struct command *cmd)
-> @@ -1135,11 +1138,12 @@ out:
-> 
->  static int hmac_evm(const char *file, const char *key)
->  {
-> -	unsigned char hash[20];
-> +	unsigned char hash[64];
->  	unsigned char sig[1024];
->  	int len, err;
-> 
->  	len = calc_evm_hmac(file, key, hash);
-> +	assert(len <= sizeof(hash));
->  	if (len <= 1)
->  		return len;
-> 
+We have to differentiate a few things here:
+There are 
+- TPM 1.1b (proprietary protocols),
+- TPM1.2 TIS based,
+- TPM1.2 TIS deviations (like i2c/spi)
+- TPM2.0 TIS/FIFO based,
+- TPM2.0 CRB based
 
+TPMs.
+
+
+The only thing I would want to get rid of are the *1.1b based* drivers - they are probably end of life since quite some time.
+The TIS driver&specification has been around since 2005 if not longer...
+Nobody has hardware or systems to test 1.1b devices anymore - and there your words are true - these are potential attack surfaces as they are unmaintained stuff.
+e.g. the tpm_atmel.c or tpm_nsc or tpm_infineon or the iTPM workarounds.
+
+By removing these, you can probably streamline all tis based tpm drivers (including the proprietary i2c/spi drivers as they are based on TIS)
+and architecture a cleaner interface.
+For tis based tpms, go left, for crb based tpms go right.
+Since TIS and FIFO are not really different, you save nothing by removing 1.2 support there.
+1.2 TPMs are still shipping in huge numbers and will follow us for the next XX years.
+So dropping or configuring out 1.2 is currently not an optoion and I would certainly nack any attempt at the moment.
+
+
+I don't think you would really save very much by factoring out the 1.2 commandset and at the moment it would confuse more than it would help.
+Especially if you think about systems were you can switch between 1.2 and 2.0 with a simple reboot.
+
+And the code size argument - we added a fullblown resource manager, thinking about adding encrypted sessions per default and are worried about a few bytes for the TPM1.2 commands???
+If we really think about size, you would have to restart from scratch - and not only think about code size but especially ram size, e.g. the 4k buffer we statically allocate....
+
+
+Thanks,
+Peter´
+
+p.s.: the opinion above is my own, not necessarily my employers.
