@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C7DC65BAF
-	for <linux-integrity@archiver.kernel.org>; Mon,  3 Dec 2018 03:35:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62CE3C65BAE
+	for <linux-integrity@archiver.kernel.org>; Mon,  3 Dec 2018 03:35:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D62A621473
-	for <linux-integrity@archiver.kernel.org>; Mon,  3 Dec 2018 03:35:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D62A621473
+	by mail.kernel.org (Postfix) with ESMTP id 2F7612145D
+	for <linux-integrity@archiver.kernel.org>; Mon,  3 Dec 2018 03:35:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F7612145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725847AbeLCDfc (ORCPT
+        id S1725833AbeLCDfe (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 2 Dec 2018 22:35:32 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:54292 "EHLO
+        Sun, 2 Dec 2018 22:35:34 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:54340 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725833AbeLCDfc (ORCPT
+        with ESMTP id S1725846AbeLCDfd (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 2 Dec 2018 22:35:32 -0500
+        Sun, 2 Dec 2018 22:35:33 -0500
 Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 0ACE672CC71;
+        by vmicros1.altlinux.org (Postfix) with ESMTP id DDA0B72CC75;
         Mon,  3 Dec 2018 06:35:26 +0300 (MSK)
 Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id E37D74A4A29;
-        Mon,  3 Dec 2018 06:35:25 +0300 (MSK)
+        by imap.altlinux.org (Postfix) with ESMTPSA id A146F4A4A29;
+        Mon,  3 Dec 2018 06:35:26 +0300 (MSK)
 From:   Vitaly Chikunov <vt@altlinux.org>
 To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         linux-integrity@vger.kernel.org
-Subject: [PATCH v3 3/7] ima-evm-utils: Define the '--xattr-user' option for testing
-Date:   Mon,  3 Dec 2018 06:35:21 +0300
-Message-Id: <20181203033525.20431-3-vt@altlinux.org>
+Subject: [PATCH v3 7/7] ima-evm-utils: Try to load digest by its alias
+Date:   Mon,  3 Dec 2018 06:35:25 +0300
+Message-Id: <20181203033525.20431-7-vt@altlinux.org>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181203033525.20431-1-vt@altlinux.org>
 References: <20181203033525.20431-1-vt@altlinux.org>
@@ -44,184 +44,143 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The IMA/EVM attributes are currently stored in the "security" namespace,
-which requires root privileges. Storing the ima/evm attributes in the
-"user" namespace, instead of the "security" namespace, would be useful
-for debugging and testing purposes, and because "--sigfile" does not
-work for evm signatures.
+For compatibility with older OpenSSL try to load digest by its alias if
+load by its proper name is failed.
+
+This is configured in pkey_hash_algo by mentioning loadable alias first in the
+comma separated list of algo names.
 
 Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
 ---
 Changes since v1:
-- No code changes. Only the description is reworded.
+- New patch.
 Changes since v2:
-- Update README.
+- No changes.
 
- README          |  1 +
- src/evmctl.c    | 33 +++++++++++++++++++++------------
- src/libimaevm.c |  2 +-
- 3 files changed, 23 insertions(+), 13 deletions(-)
+ src/imaevm.h    |  1 +
+ src/libimaevm.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 52 insertions(+), 4 deletions(-)
 
-diff --git a/README b/README
-index 4805564..05cc2ff 100644
---- a/README
-+++ b/README
-@@ -44,6 +44,7 @@ OPTIONS
-   -s, --imasig       make IMA signature
-   -d, --imahash      make IMA hash
-   -f, --sigfile      store IMA signature in .sig file instead of xattr
-+      --xattr-user   store xattrs in user namespace (for testing purposes)
-       --rsa          use RSA key type and signing scheme v1
-   -k, --key          path to signing key (default: /etc/keys/{privkey,pubkey}_evm.pem)
-   -o, --portable     generate portable EVM signatures
-diff --git a/src/evmctl.c b/src/evmctl.c
-index f019a67..f4df027 100644
---- a/src/evmctl.c
-+++ b/src/evmctl.c
-@@ -145,6 +145,9 @@ static int find(const char *path, int dts, find_cb_t func);
- struct command cmds[];
- static void print_usage(struct command *cmd);
+diff --git a/src/imaevm.h b/src/imaevm.h
+index c81bf21..795966a 100644
+--- a/src/imaevm.h
++++ b/src/imaevm.h
+@@ -75,6 +75,7 @@
+ #define	DATA_SIZE	4096
+ #define SHA1_HASH_LEN   20
  
-+static const char *xattr_ima = "security.ima";
-+static const char *xattr_evm = "security.evm";
-+
- static int bin2file(const char *file, const char *ext, const unsigned char *data, int len)
- {
- 	FILE *fp;
-@@ -533,7 +536,7 @@ static int sign_evm(const char *file, const char *key)
- 		dump(sig, len);
++#define MAX_DIGEST_NAME		32
+ #define MAX_DIGEST_SIZE		64
+ #define MAX_SIGNATURE_SIZE	1024
  
- 	if (xattr) {
--		err = lsetxattr(file, "security.evm", sig, len, 0);
-+		err = lsetxattr(file, xattr_evm, sig, len, 0);
- 		if (err < 0) {
- 			log_err("setxattr failed: %s\n", file);
- 			return err;
-@@ -572,7 +575,7 @@ static int hash_ima(const char *file)
- 		dump(hash, len);
- 
- 	if (xattr) {
--		err = lsetxattr(file, "security.ima", hash, len, 0);
-+		err = lsetxattr(file, xattr_ima, hash, len, 0);
- 		if (err < 0) {
- 			log_err("setxattr failed: %s\n", file);
- 			return err;
-@@ -609,7 +612,7 @@ static int sign_ima(const char *file, const char *key)
- 		bin2file(file, "sig", sig, len);
- 
- 	if (xattr) {
--		err = lsetxattr(file, "security.ima", sig, len, 0);
-+		err = lsetxattr(file, xattr_ima, sig, len, 0);
- 		if (err < 0) {
- 			log_err("setxattr failed: %s\n", file);
- 			return err;
-@@ -778,14 +781,14 @@ static int verify_evm(const char *file)
- 	if (mdlen <= 1)
- 		return mdlen;
- 
--	len = lgetxattr(file, "security.evm", sig, sizeof(sig));
-+	len = lgetxattr(file, xattr_evm, sig, sizeof(sig));
- 	if (len < 0) {
- 		log_err("getxattr failed: %s\n", file);
- 		return len;
- 	}
- 
- 	if (sig[0] != 0x03) {
--		log_err("security.evm has no signature\n");
-+		log_err("%s has no signature\n", xattr_evm);
- 		return -1;
- 	}
- 
-@@ -821,7 +824,7 @@ static int verify_ima(const char *file)
- 		memcpy(sig, tmp, len);
- 		free(tmp);
- 	} else {
--		len = lgetxattr(file, "security.ima", sig, sizeof(sig));
-+		len = lgetxattr(file, xattr_ima, sig, sizeof(sig));
- 		if (len < 0) {
- 			log_err("getxattr failed: %s\n", file);
- 			return len;
-@@ -964,7 +967,7 @@ static int setxattr_ima(const char *file, char *sig_file)
- 	if (!sig)
- 		return 0;
- 
--	err = lsetxattr(file, "security.ima", sig, len, 0);
-+	err = lsetxattr(file, xattr_ima, sig, len, 0);
- 	if (err < 0)
- 		log_err("setxattr failed: %s\n", file);
- 	free(sig);
-@@ -1162,7 +1165,7 @@ static int hmac_evm(const char *file, const char *key)
- 
- 	if (xattr) {
- 		sig[0] = EVM_XATTR_HMAC;
--		err = lsetxattr(file, "security.evm", sig, len + 1, 0);
-+		err = lsetxattr(file, xattr_evm, sig, len + 1, 0);
- 		if (err < 0) {
- 			log_err("setxattr failed: %s\n", file);
- 			return err;
-@@ -1218,9 +1221,9 @@ static int ima_fix(const char *path)
- 		}
- 		for (; size > 0; len++, size -= len, list += len) {
- 			len = strlen(list);
--			if (!strcmp(list, "security.ima"))
-+			if (!strcmp(list, xattr_ima))
- 				ima = 1;
--			else if (!strcmp(list, "security.evm"))
-+			else if (!strcmp(list, xattr_evm))
- 				evm = 1;
- 		}
- 		if (ima && evm)
-@@ -1297,8 +1300,8 @@ static int cmd_ima_fix(struct command *cmd)
- static int ima_clear(const char *path)
- {
- 	log_info("%s\n", path);
--	lremovexattr(path, "security.ima");
--	lremovexattr(path, "security.evm");
-+	lremovexattr(path, xattr_ima);
-+	lremovexattr(path, xattr_evm);
- 
- 	return 0;
- }
-@@ -1654,6 +1657,7 @@ static void usage(void)
- 		"  -s, --imasig       make IMA signature\n"
- 		"  -d, --imahash      make IMA hash\n"
- 		"  -f, --sigfile      store IMA signature in .sig file instead of xattr\n"
-+		"      --xattr-user   store xattrs in user namespace (for testing purposes)\n"
- 		"      --rsa          use RSA key type and signing scheme v1\n"
- 		"  -k, --key          path to signing key (default: /etc/keys/{privkey,pubkey}_evm.pem)\n"
- 		"  -o, --portable     generate portable EVM signatures\n"
-@@ -1728,6 +1732,7 @@ static struct option opts[] = {
- 	{"selinux", 1, 0, 136},
- 	{"caps", 2, 0, 137},
- 	{"list", 0, 0, 138},
-+	{"xattr-user", 0, 0, 140},
- 	{}
- 
- };
-@@ -1879,6 +1884,10 @@ int main(int argc, char *argv[])
- 		case 138:
- 			measurement_list = 1;
- 			break;
-+		case 140: /* --xattr-user */
-+			xattr_ima = "user.ima";
-+			xattr_evm = "user.evm";
-+			break;
- 		case '?':
- 			exit(1);
- 			break;
 diff --git a/src/libimaevm.c b/src/libimaevm.c
-index 80b61a2..34501ca 100644
+index cb4721b..7501303 100644
 --- a/src/libimaevm.c
 +++ b/src/libimaevm.c
-@@ -595,7 +595,7 @@ int ima_verify_signature(const char *file, unsigned char *sig, int siglen,
- 	int hashlen, sig_hash_algo;
+@@ -41,6 +41,7 @@
+ /* should we use logger instead for library? */
+ #define USE_FPRINTF
  
- 	if (sig[0] != 0x03) {
--		log_err("security.ima has no signature\n");
-+		log_err("xattr ima has no signature\n");
- 		return -1;
++#define _GNU_SOURCE
+ #include <sys/types.h>
+ #include <sys/param.h>
+ #include <sys/stat.h>
+@@ -56,6 +57,7 @@
+ #include <openssl/pem.h>
+ #include <openssl/evp.h>
+ #include <openssl/x509.h>
++#include <openssl/engine.h>
+ #include <openssl/err.h>
+ 
+ #include "imaevm.h"
+@@ -70,8 +72,8 @@ const char *const pkey_hash_algo[PKEY_HASH__LAST] = {
+ 	[PKEY_HASH_SHA384]	= "sha384",
+ 	[PKEY_HASH_SHA512]	= "sha512",
+ 	[PKEY_HASH_SHA224]	= "sha224",
+-	[PKEY_HASH_STREEBOG_256] = "streebog256",
+-	[PKEY_HASH_STREEBOG_512] = "streebog512",
++	[PKEY_HASH_STREEBOG_256] = "md_gost12_256,streebog256",
++	[PKEY_HASH_STREEBOG_512] = "md_gost12_512,streebog512",
+ };
+ 
+ /*
+@@ -284,6 +286,35 @@ static int add_dev_hash(struct stat *st, EVP_MD_CTX *ctx)
+ 	return !EVP_DigestUpdate(ctx, &dev, sizeof(dev));
+ }
+ 
++/* Call EVP_get_digestbyname with provided name and with alias,
++ * which is first name in the comma separated list of names
++ * in pkey_hash_algo.
++ */
++static const EVP_MD *get_digestbyname(const char *name)
++{
++	const EVP_MD *md;
++
++	md = EVP_get_digestbyname(params.hash_algo);
++	if (!md) {
++		char alias[MAX_DIGEST_NAME];
++		int len;
++		int algo_id;
++		const char *algo_alias;
++
++		/* try to get algo by its alias */
++		algo_id = get_hash_algo(params.hash_algo);
++		algo_alias = get_hash_algo_by_id(algo_id);
++		len = strchrnul(algo_alias, ',') - algo_alias;
++		if (len < sizeof(alias)) {
++			memcpy(alias, algo_alias, len);
++			alias[len] = '\0';
++			if (strcmp(params.hash_algo, alias))
++				md = EVP_get_digestbyname(alias);
++		}
++	}
++	return md;
++}
++
+ int ima_calc_hash(const char *file, uint8_t *hash)
+ {
+ 	const EVP_MD *md;
+@@ -305,7 +336,7 @@ int ima_calc_hash(const char *file, uint8_t *hash)
+ 		return err;
  	}
  
+-	md = EVP_get_digestbyname(params.hash_algo);
++	md = get_digestbyname(params.hash_algo);
+ 	if (!md) {
+ 		log_err("EVP_get_digestbyname(%s) failed\n", params.hash_algo);
+ 		return 1;
+@@ -561,6 +592,22 @@ static int algocmp(const char *a, const char *b)
+ 	return *a || *b;
+ }
+ 
++static int strmatch(const char *needle, const char *haystack)
++{
++	int len = strlen(needle);
++	const char *p = haystack;
++	const char *t;
++
++	for (t = strchrnul(p, ','); *p; p = t, t = strchrnul(p, ',')) {
++		if (t - p == len &&
++		    !strncmp(needle, p, len))
++			return 0;
++		if (!*t++)
++			break;
++	}
++	return 1;
++}
++
+ int get_hash_algo(const char *algo)
+ {
+ 	int i;
+@@ -568,7 +615,7 @@ int get_hash_algo(const char *algo)
+ 	/* first iterate over builtin algorithms */
+ 	for (i = 0; i < PKEY_HASH__LAST; i++)
+ 		if (pkey_hash_algo[i] &&
+-		    !strcmp(algo, pkey_hash_algo[i]))
++		    !strmatch(algo, pkey_hash_algo[i]))
+ 			return i;
+ 
+ 	/* iterate over algorithms provided by kernel-headers */
 -- 
 2.11.0
 
