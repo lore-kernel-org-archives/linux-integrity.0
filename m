@@ -3,56 +3,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6B4FC04EBF
-	for <linux-integrity@archiver.kernel.org>; Mon,  3 Dec 2018 17:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C741DC04EB9
+	for <linux-integrity@archiver.kernel.org>; Mon,  3 Dec 2018 17:55:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4A1520881
-	for <linux-integrity@archiver.kernel.org>; Mon,  3 Dec 2018 17:31:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4A1520881
+	by mail.kernel.org (Postfix) with ESMTP id 9CFDD20848
+	for <linux-integrity@archiver.kernel.org>; Mon,  3 Dec 2018 17:55:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CFDD20848
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbeLCRbb (ORCPT
+        id S1726917AbeLCRzP (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:31:31 -0500
-Received: from mga04.intel.com ([192.55.52.120]:18443 "EHLO mga04.intel.com"
+        Mon, 3 Dec 2018 12:55:15 -0500
+Received: from mga14.intel.com ([192.55.52.115]:23801 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725868AbeLCRba (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 3 Dec 2018 12:31:30 -0500
+        id S1726365AbeLCRzO (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 3 Dec 2018 12:55:14 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 09:31:24 -0800
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 09:55:10 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,311,1539673200"; 
-   d="scan'208";a="280564084"
+   d="scan'208";a="115679470"
 Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.24.10.74])
-  by orsmga005.jf.intel.com with ESMTP; 03 Dec 2018 09:31:24 -0800
-Date:   Mon, 3 Dec 2018 09:31:23 -0800
+  by FMSMGA003.fm.intel.com with ESMTP; 03 Dec 2018 09:55:10 -0800
+Date:   Mon, 3 Dec 2018 09:55:09 -0800
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v5 2/7] tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
-Message-ID: <20181203173123.GB8813@linux.intel.com>
-References: <20181114153108.12907-1-roberto.sassu@huawei.com>
- <20181114153108.12907-3-roberto.sassu@huawei.com>
- <20181116133851.GB4163@linux.intel.com>
- <1602133e-6a41-ea97-d985-6eca0831898d@huawei.com>
- <4a55ba02-87e6-9258-038e-e4c57f00f033@huawei.com>
- <20181130194149.GA18584@linux.intel.com>
- <20181130194527.GB18584@linux.intel.com>
- <95aa61ad-6319-8d9a-dc08-153d80402dfa@huawei.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Peter Huewe <PeterHuewe@gmx.de>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity@vger.kernel.org
+Subject: Re: Re: TPM legacy
+Message-ID: <20181203175509.GA10562@linux.intel.com>
+References: <20181130233501.GA32256@linux.intel.com>
+ <1543764226.4216.205.camel@linux.ibm.com>
+ <1543775366.2732.24.camel@HansenPartnership.com>
+ <20181202231327.GC6718@linux.intel.com>
+ <trinity-c862f498-65a2-43f4-a4b3-94cc4b8e1c66-1543849298447@3c-app-gmx-bs70>
+ <20181203172922.GA12237@ziepe.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <95aa61ad-6319-8d9a-dc08-153d80402dfa@huawei.com>
+In-Reply-To: <20181203172922.GA12237@ziepe.ca>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
@@ -60,24 +58,17 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Dec 03, 2018 at 10:59:10AM +0100, Roberto Sassu wrote:
-> On 11/30/2018 8:45 PM, Jarkko Sakkinen wrote:
-> > On Fri, Nov 30, 2018 at 11:41:49AM -0800, Jarkko Sakkinen wrote:
-> > > Even after looking at the spec the last field does not make sense as the
-> > > event after digests and digests are not in union. It is just not right.
-> > > 
-> > > The comment does not fix that.
-> > 
-> > You should remove the last field and rename the struct as maybe
-> > struct tcg_pcr_event2_head. If we ever need the very last field
-> > we can create struct *_tail.
-> > 
-> > Not your fault but there is clear bug in the struct definition
-> > that should be fixed in a commit of its own.
+On Mon, Dec 03, 2018 at 10:29:22AM -0700, Jason Gunthorpe wrote:
+> On Mon, Dec 03, 2018 at 04:01:38PM +0100, Peter Huewe wrote:
 > 
-> Given that I explain the problem in the new patch, I would also remove
-> TPM2_ACTIVE_PCR_BANKS in the same patch. Is it ok?
+> > The only thing I would want to get rid of are the *1.1b based*
+> > drivers - they are probably end of life since quite some time.  The
+> > TIS driver&specification has been around since 2005 if not longer...
+> 
+> I also wanted to do this, I feel like these drivers probably don't
+> work any more after all the churn in the past few years..
 
-Yes.
+I'm with you on this but yeah, better to do it now so that it gets
+maximum exposure in linux-next (i.e. would land to 4.22).
 
 /Jarkko
