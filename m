@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62CE3C65BAE
-	for <linux-integrity@archiver.kernel.org>; Mon,  3 Dec 2018 03:35:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2317C04EB9
+	for <linux-integrity@archiver.kernel.org>; Mon,  3 Dec 2018 03:35:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F7612145D
-	for <linux-integrity@archiver.kernel.org>; Mon,  3 Dec 2018 03:35:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F7612145D
+	by mail.kernel.org (Postfix) with ESMTP id 78F4D20892
+	for <linux-integrity@archiver.kernel.org>; Mon,  3 Dec 2018 03:35:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78F4D20892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725833AbeLCDfe (ORCPT
+        id S1725846AbeLCDff (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 2 Dec 2018 22:35:34 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:54340 "EHLO
+        Sun, 2 Dec 2018 22:35:35 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:54338 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725846AbeLCDfd (ORCPT
+        with ESMTP id S1725876AbeLCDff (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 2 Dec 2018 22:35:33 -0500
+        Sun, 2 Dec 2018 22:35:35 -0500
 Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id DDA0B72CC75;
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 9C0D172CC74;
         Mon,  3 Dec 2018 06:35:26 +0300 (MSK)
 Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id A146F4A4A29;
+        by imap.altlinux.org (Postfix) with ESMTPSA id 7E5734A4AE7;
         Mon,  3 Dec 2018 06:35:26 +0300 (MSK)
 From:   Vitaly Chikunov <vt@altlinux.org>
 To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         linux-integrity@vger.kernel.org
-Subject: [PATCH v3 7/7] ima-evm-utils: Try to load digest by its alias
-Date:   Mon,  3 Dec 2018 06:35:25 +0300
-Message-Id: <20181203033525.20431-7-vt@altlinux.org>
+Subject: [PATCH v3 6/7] ima-evm-utils: Extract digest algorithms from hash_info.h
+Date:   Mon,  3 Dec 2018 06:35:24 +0300
+Message-Id: <20181203033525.20431-6-vt@altlinux.org>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181203033525.20431-1-vt@altlinux.org>
 References: <20181203033525.20431-1-vt@altlinux.org>
@@ -44,143 +44,223 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-For compatibility with older OpenSSL try to load digest by its alias if
-load by its proper name is failed.
+If configured with "--with-kernel-headers=PATH" try to extract hash
+algorithms from "hash_info.h" from the kernel source tree or
+kernel-headers package located in the specified path. (Otherwise, it
+will be tried to get from the installed kernel.)
 
-This is configured in pkey_hash_algo by mentioning loadable alias first in the
-comma separated list of algo names.
+This also introduces two algorithm lists, one is built-in and another is
+from the kernel source. (They should never contain conflicting algorithm
+IDs by their append-only nature.) If the digest is not found in the
+built-in list it will be searched in the list from kernel's
+"hash_info.h".
 
+This patch will allow evmctl to be just recompiled to work with digest
+algorithms introduced in the newer kernels.
+
+Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
 Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
 ---
 Changes since v1:
 - New patch.
 Changes since v2:
-- No changes.
+- Update commit description.
+- Update description of --with-kernel-headers.
 
- src/imaevm.h    |  1 +
- src/libimaevm.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++++++----
- 2 files changed, 52 insertions(+), 4 deletions(-)
+ configure.ac      |  6 ++++++
+ src/Makefile.am   |  6 ++++++
+ src/hash_info.gen | 43 +++++++++++++++++++++++++++++++++++++++++++
+ src/libimaevm.c   | 44 +++++++++++++++++++++++++++++++++++++++++++-
+ 4 files changed, 98 insertions(+), 1 deletion(-)
+ create mode 100755 src/hash_info.gen
 
-diff --git a/src/imaevm.h b/src/imaevm.h
-index c81bf21..795966a 100644
---- a/src/imaevm.h
-+++ b/src/imaevm.h
-@@ -75,6 +75,7 @@
- #define	DATA_SIZE	4096
- #define SHA1_HASH_LEN   20
+diff --git a/configure.ac b/configure.ac
+index a5b4288..60f3684 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -27,12 +27,18 @@ AC_HEADER_STDC
+ PKG_CHECK_MODULES(OPENSSL, [ openssl >= 0.9.8 ])
+ AC_SUBST(OPENSSL_CFLAGS)
+ AC_SUBST(OPENSSL_LIBS)
++AC_SUBST(KERNEL_HEADERS)
+ AC_CHECK_HEADER(unistd.h)
+ AC_CHECK_HEADERS(openssl/conf.h)
  
-+#define MAX_DIGEST_NAME		32
- #define MAX_DIGEST_SIZE		64
- #define MAX_SIGNATURE_SIZE	1024
+ AC_CHECK_HEADERS(sys/xattr.h, , [AC_MSG_ERROR([sys/xattr.h header not found. You need the c-library development package.])])
+ AC_CHECK_HEADERS(keyutils.h, , [AC_MSG_ERROR([keyutils.h header not found. You need the libkeyutils development package.])])
  
++AC_ARG_WITH(kernel_headers, [AS_HELP_STRING([--with-kernel-headers=PATH],
++	    [specifies the Linux kernel-headers package location or kernel root directory you want to use])],
++	    [KERNEL_HEADERS="$withval"],
++	    [KERNEL_HEADERS=/lib/modules/$(uname -r)/source])
++
+ #debug support - yes for a while
+ PKG_ARG_ENABLE(debug, "yes", DEBUG, [Enable Debug support])
+ if test $pkg_cv_enable_debug = yes; then
+diff --git a/src/Makefile.am b/src/Makefile.am
+index deb18fb..d74fc6f 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -9,6 +9,11 @@ libimaevm_la_LIBADD =  $(OPENSSL_LIBS)
+ 
+ include_HEADERS = imaevm.h
+ 
++nodist_libimaevm_la_SOURCES = hash_info.h
++BUILT_SOURCES = hash_info.h
++hash_info.h: Makefile
++	./hash_info.gen $(KERNEL_HEADERS) >$@
++
+ bin_PROGRAMS = evmctl
+ 
+ evmctl_SOURCES = evmctl.c
+@@ -18,5 +23,6 @@ evmctl_LDADD =  $(OPENSSL_LIBS) -lkeyutils libimaevm.la
+ 
+ INCLUDES = -I$(top_srcdir) -include config.h
+ 
++CLEANFILES = hash_info.h
+ DISTCLEANFILES = @DISTCLEANFILES@
+ 
+diff --git a/src/hash_info.gen b/src/hash_info.gen
+new file mode 100755
+index 0000000..60fc750
+--- /dev/null
++++ b/src/hash_info.gen
+@@ -0,0 +1,43 @@
++#!/bin/sh
++#
++# Generate hash_info.h from kernel headers
++#
++# Copyright (C) 2018 <vt@altlinux.org>
++#
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2, or (at your option)
++# any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++
++KERNEL_HEADERS=$1
++HASH_INFO_H=uapi/linux/hash_info.h
++HASH_INFO=$KERNEL_HEADERS/include/$HASH_INFO_H
++
++# Allow to specify kernel-headers past include/
++if [ ! -e $HASH_INFO ]; then
++  HASH_INFO2=$KERNEL_HEADERS/$HASH_INFO_H
++  if [ -e $HASH_INFO2 ]; then
++    HASH_INFO=$HASH_INFO2
++  fi
++fi
++
++if [ ! -e $HASH_INFO ]; then
++  echo "/* $HASH_INFO is not found */"
++  HASH_INFO=/dev/null
++else
++  echo "/* $HASH_INFO is found */"
++fi
++
++echo "enum hash_algo {"
++grep HASH_ALGO_.*, $HASH_INFO
++printf "\tHASH_ALGO__LAST\n"
++echo "};"
++
++echo "const char *const hash_algo_name[HASH_ALGO__LAST] = {"
++sed -n 's/HASH_ALGO_\(.*\),/[HASH_ALGO_\1] = "\L\1\E",/p' $HASH_INFO
++echo "};"
 diff --git a/src/libimaevm.c b/src/libimaevm.c
-index cb4721b..7501303 100644
+index 7b2b62c..cb4721b 100644
 --- a/src/libimaevm.c
 +++ b/src/libimaevm.c
-@@ -41,6 +41,7 @@
- /* should we use logger instead for library? */
- #define USE_FPRINTF
+@@ -50,6 +50,7 @@
+ #include <string.h>
+ #include <stdio.h>
+ #include <assert.h>
++#include <ctype.h>
  
-+#define _GNU_SOURCE
- #include <sys/types.h>
- #include <sys/param.h>
- #include <sys/stat.h>
-@@ -56,6 +57,7 @@
+ #include <openssl/crypto.h>
  #include <openssl/pem.h>
- #include <openssl/evp.h>
- #include <openssl/x509.h>
-+#include <openssl/engine.h>
+@@ -58,6 +59,7 @@
  #include <openssl/err.h>
  
  #include "imaevm.h"
-@@ -70,8 +72,8 @@ const char *const pkey_hash_algo[PKEY_HASH__LAST] = {
- 	[PKEY_HASH_SHA384]	= "sha384",
- 	[PKEY_HASH_SHA512]	= "sha512",
- 	[PKEY_HASH_SHA224]	= "sha224",
--	[PKEY_HASH_STREEBOG_256] = "streebog256",
--	[PKEY_HASH_STREEBOG_512] = "streebog512",
-+	[PKEY_HASH_STREEBOG_256] = "md_gost12_256,streebog256",
-+	[PKEY_HASH_STREEBOG_512] = "md_gost12_512,streebog512",
- };
++#include "hash_info.h"
  
- /*
-@@ -284,6 +286,35 @@ static int add_dev_hash(struct stat *st, EVP_MD_CTX *ctx)
- 	return !EVP_DigestUpdate(ctx, &dev, sizeof(dev));
+ const char *const pkey_hash_algo[PKEY_HASH__LAST] = {
+ 	[PKEY_HASH_MD4]		= "md4",
+@@ -153,6 +155,17 @@ void dump(const void *ptr, int len)
+ 	do_dump(stdout, ptr, len, true);
  }
  
-+/* Call EVP_get_digestbyname with provided name and with alias,
-+ * which is first name in the comma separated list of names
-+ * in pkey_hash_algo.
-+ */
-+static const EVP_MD *get_digestbyname(const char *name)
++const char *get_hash_algo_by_id(int algo)
 +{
-+	const EVP_MD *md;
++	if (algo < PKEY_HASH__LAST)
++	    return pkey_hash_algo[algo];
++	if (algo < HASH_ALGO__LAST)
++	    return hash_algo_name[algo];
 +
-+	md = EVP_get_digestbyname(params.hash_algo);
-+	if (!md) {
-+		char alias[MAX_DIGEST_NAME];
-+		int len;
-+		int algo_id;
-+		const char *algo_alias;
-+
-+		/* try to get algo by its alias */
-+		algo_id = get_hash_algo(params.hash_algo);
-+		algo_alias = get_hash_algo_by_id(algo_id);
-+		len = strchrnul(algo_alias, ',') - algo_alias;
-+		if (len < sizeof(alias)) {
-+			memcpy(alias, algo_alias, len);
-+			alias[len] = '\0';
-+			if (strcmp(params.hash_algo, alias))
-+				md = EVP_get_digestbyname(alias);
-+		}
-+	}
-+	return md;
++	log_err("digest %d not found\n", algo);
++	return "unknown";
 +}
 +
- int ima_calc_hash(const char *file, uint8_t *hash)
+ int get_filesize(const char *filename)
  {
- 	const EVP_MD *md;
-@@ -305,7 +336,7 @@ int ima_calc_hash(const char *file, uint8_t *hash)
- 		return err;
- 	}
- 
--	md = EVP_get_digestbyname(params.hash_algo);
-+	md = get_digestbyname(params.hash_algo);
- 	if (!md) {
- 		log_err("EVP_get_digestbyname(%s) failed\n", params.hash_algo);
- 		return 1;
-@@ -561,6 +592,22 @@ static int algocmp(const char *a, const char *b)
- 	return *a || *b;
+ 	struct stat stats;
+@@ -528,15 +541,44 @@ int verify_hash_v2(const char *file, const unsigned char *hash, int size,
+ 	return 0;
  }
  
-+static int strmatch(const char *needle, const char *haystack)
++/* compare algo names case insensitively and ignoring separators */
++static int algocmp(const char *a, const char *b)
 +{
-+	int len = strlen(needle);
-+	const char *p = haystack;
-+	const char *t;
++	while (*a && *b) {
++		int cha, chb;
 +
-+	for (t = strchrnul(p, ','); *p; p = t, t = strchrnul(p, ',')) {
-+		if (t - p == len &&
-+		    !strncmp(needle, p, len))
-+			return 0;
-+		if (!*t++)
-+			break;
++		cha = tolower((unsigned char)*a++);
++		if (!isalnum(cha))
++			continue;
++		chb = tolower((unsigned char)*b++);
++		if (!isalnum(chb)) {
++			a--;
++			continue;
++		}
++		if (cha != chb)
++			return -1;
 +	}
-+	return 1;
++	return *a || *b;
 +}
 +
  int get_hash_algo(const char *algo)
  {
  	int i;
-@@ -568,7 +615,7 @@ int get_hash_algo(const char *algo)
- 	/* first iterate over builtin algorithms */
+ 
++	/* first iterate over builtin algorithms */
  	for (i = 0; i < PKEY_HASH__LAST; i++)
  		if (pkey_hash_algo[i] &&
--		    !strcmp(algo, pkey_hash_algo[i]))
-+		    !strmatch(algo, pkey_hash_algo[i]))
+ 		    !strcmp(algo, pkey_hash_algo[i]))
  			return i;
  
- 	/* iterate over algorithms provided by kernel-headers */
++	/* iterate over algorithms provided by kernel-headers */
++	for (i = 0; i < HASH_ALGO__LAST; i++) {
++		if (hash_algo_name[i] &&
++		    !algocmp(algo, hash_algo_name[i]))
++			return i;
++	}
++
++	log_info("digest %s not found, fall back to sha1\n", algo);
+ 	return PKEY_HASH_SHA1;
+ }
+ 
+@@ -611,7 +653,7 @@ int ima_verify_signature(const char *file, unsigned char *sig, int siglen,
+ 		return -1;
+ 	}
+ 	/* Use hash algorithm as retrieved from signature */
+-	params.hash_algo = pkey_hash_algo[sig_hash_algo];
++	params.hash_algo = get_hash_algo_by_id(sig_hash_algo);
+ 
+ 	/*
+ 	 * Validate the signature based on the digest included in the
 -- 
 2.11.0
 
