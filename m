@@ -2,178 +2,185 @@ Return-Path: <SRS0=lruq=ON=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA2FC04EB8
-	for <linux-integrity@archiver.kernel.org>; Tue,  4 Dec 2018 12:19:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A35FC04EB8
+	for <linux-integrity@archiver.kernel.org>; Tue,  4 Dec 2018 12:34:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93C2E2146D
-	for <linux-integrity@archiver.kernel.org>; Tue,  4 Dec 2018 12:19:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 372E42064A
+	for <linux-integrity@archiver.kernel.org>; Tue,  4 Dec 2018 12:34:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TPvhzGMm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93C2E2146D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EZNkAWZK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 372E42064A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726280AbeLDMSq (ORCPT
+        id S1725910AbeLDMej (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 4 Dec 2018 07:18:46 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42147 "EHLO
+        Tue, 4 Dec 2018 07:34:39 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46652 "EHLO
         mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725802AbeLDMSp (ORCPT
+        with ESMTP id S1725767AbeLDMej (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 4 Dec 2018 07:18:45 -0500
-Received: by mail-lj1-f195.google.com with SMTP id l15-v6so14687990lja.9;
-        Tue, 04 Dec 2018 04:18:42 -0800 (PST)
+        Tue, 4 Dec 2018 07:34:39 -0500
+Received: by mail-lj1-f195.google.com with SMTP id v15-v6so14705326ljh.13;
+        Tue, 04 Dec 2018 04:34:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
-         :mime-version:content-transfer-encoding;
-        bh=T87JHThg7UO8QeA5V6fJftPPsz9yV1R5uLnw0cNr6IE=;
-        b=TPvhzGMmuAy/Jp0MHlJaRrPY46SLLw9OCFu9x7y/7C3iLUWX6sx/58dG6VOnI9s+ii
-         elacBrNvCv7bx6l6EpThFnTO1lCV5SGekhd1Rar+rEZeAsjGZG1rQgPJNAlpCG71eM/v
-         g8HlTY1izmemrME/+NCDkGwZlyvNt7t/tAL+hhlDXceESY/ixa8cMheISX7krODoVRWi
-         ivJSQ6f77thNBnNHiBa+rk2q22S/tvNKKkKNiS7pFv0accHWmF67oZwooIUS14bReL7d
-         ZiT4VfsSj2pWQPKZc8Iz9bV2UxNpoteV0gCwF5BTUvU65TPJ5woU9c+oJ+7s3SUHY4hq
-         HekA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=p7t1Zylc680WxUHGy4zLyH8y54duQW2sGGC10lMzwVo=;
+        b=EZNkAWZK4JA1loBdbiD0csmzBNwSvmD2W7a31+CRQJEKDtPrwoPOglXgM+f+8g0PuJ
+         uWJY9d9Mfq1sVjOsCEogzpUtXbpHnLLPB0mHQ0tEp5nGLSYlpelisEJ/ymjMolMA9til
+         c5oECT5tivAcEx1/V1rMa2TU2BmkzAcWRHOkZb+sJh753oxBSapIrKe6FhnyYHYaaPfO
+         cNz32tHq1xZPzjOukSlJBjYS8YDtDH6/+f98kx8fbzidGErw1Y743MJ5leIruqixWddy
+         2W0URzHtXUmRZhhr95o6KwopaoiSY57cz3UpOnwFdQHiVv+FVMERRHqfsp0xysQWGxqn
+         SUKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:reply-to:mime-version:content-transfer-encoding;
-        bh=T87JHThg7UO8QeA5V6fJftPPsz9yV1R5uLnw0cNr6IE=;
-        b=gnGwFc5gyM0xnyy7TjW5PI4R49wi8fOGIDxWrbauWzxIR3PcoOK+xLyT9D3MFgOtbp
-         7ZwjQE2Mg0TqE+5izctHm2/XKoIriZvWP6vbyKo0+4wyxuIfptGUCRJWo67LtwUV1OBG
-         R175fNMiR2AVw1C/ElrP17hEcMyidT6fEyG7JmFL1gNaLKXWPt5RALFNmxzeNUFCZC6X
-         xuhOjjDn2o9t+eds4BcMDxHP1yfTwQaSzkuOy+WeavUPRV6WwP2S/b1xyCsRwln36NXx
-         XsHaas7wDl/+B283mQSprUED9tHeEayC84oJEE/ErNttrjY0aQAn6XC3T982UhgJ1G+H
-         vApw==
-X-Gm-Message-State: AA+aEWZ6NseDzl2JvOjJUwb4Dl/e3qD0rFrs7DsvrvjNnUApF8C33bEA
-        oa71clUtuqvXcM/4IktYwlc=
-X-Google-Smtp-Source: AFSGD/XfqQYN3wQyhBnGHV3cFZdJapmpbdPk784/DsTCfqnFrfRkG3qqaeqi2sFbGQh+z65PmwJTYA==
-X-Received: by 2002:a2e:12d0:: with SMTP id 77-v6mr1051581ljs.132.1543925921312;
-        Tue, 04 Dec 2018 04:18:41 -0800 (PST)
-Received: from localhost.localdomain (91-156-179-117.elisa-laajakaista.fi. [91.156.179.117])
-        by smtp.gmail.com with ESMTPSA id h3sm2899653lfj.25.2018.12.04.04.18.40
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=p7t1Zylc680WxUHGy4zLyH8y54duQW2sGGC10lMzwVo=;
+        b=Zyhs57BvoCXj1/Uq49Eb+BV/hjUoiEoe1WA97RMdOb5i9amdzMgKXY5QPl0i40brIS
+         vsQpKueHJ4yJ2lYwrwqYHnuoAo7o8nSGv18L9upKJEfF3Sw2IKYFL5dKkehPGwXruM0n
+         cft7izSxQQGR9/xVFC+E9PZmQrApVYxxT0A9CZJQxoi0gr3X8ZTclIuuv2KBgE6B99uG
+         OqLUDDLLSZNkmDmcLRstM0yd+y73BXb2kHEuCRyP4zALXBkBNNeeSPmU+nGrlFEMZC68
+         ukWes1lkxR2mpOpdXDkTn79Ju9RJbsSCNBsT1E0u5/HCH3WzxYBUvMqHCoo47s24jt1W
+         Z8DA==
+X-Gm-Message-State: AA+aEWaPxgb+GOLGWLy2wiNclKzrvY95c9ZhKDC+hj6AEIFoM8vOix0I
+        bBitKi09VsRrj/V5hWe5xQA=
+X-Google-Smtp-Source: AFSGD/V1zNhbWYNdoriRBLuDrZSKH3voip/q97HzGbOdQfwkZ9NlENpkNldkpGiMhqR9hJNIbnzwzQ==
+X-Received: by 2002:a2e:4819:: with SMTP id v25-v6mr13752395lja.2.1543926874397;
+        Tue, 04 Dec 2018 04:34:34 -0800 (PST)
+Received: from [192.168.10.160] (91-156-179-117.elisa-laajakaista.fi. [91.156.179.117])
+        by smtp.gmail.com with ESMTPSA id y24-v6sm3072205ljd.20.2018.12.04.04.34.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 04:18:40 -0800 (PST)
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
+        Tue, 04 Dec 2018 04:34:33 -0800 (PST)
+Subject: Re: [PATCH 10/17] prmem: documentation
 To:     Andy Lutomirski <luto@amacapital.net>,
-        Kees Cook <keescook@chromium.org>,
         Matthew Wilcox <willy@infradead.org>
-Cc:     igor.stoppa@huawei.com, Nadav Amit <nadav.amit@gmail.com>,
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
         Peter Zijlstra <peterz@infradead.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-integrity@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/6] __wr_after_init: linker section and label
-Date:   Tue,  4 Dec 2018 14:18:00 +0200
-Message-Id: <20181204121805.4621-2-igor.stoppa@huawei.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181204121805.4621-1-igor.stoppa@huawei.com>
-References: <20181204121805.4621-1-igor.stoppa@huawei.com>
-Reply-To: Igor Stoppa <igor.stoppa@gmail.com>
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <6f60afc9-0fed-7f95-a11a-9a2eef33094c@gmail.com>
+ <CALCETrXNckT9W288VXx-6inO5qYn-6dUPocKGcBT0GCO3xi3ZQ@mail.gmail.com>
+ <386C0CB1-C4B1-43E2-A754-DA8DBE4FB3CB@gmail.com>
+ <CALCETrWWcfLK4W3mn0bavzejmMBVKMX29aAUA3+VPQ8m9vmfhw@mail.gmail.com>
+ <9373ccf0-f51b-4bfa-2b16-e03ebf3c670d@huawei.com>
+ <2e52e103-15d0-0c26-275f-894dfd07e8ec@huawei.com>
+ <CALCETrV0sPgf4ZgG1joF_5hM-ycPsWM9DWGO=diQ_LQKin4VuA@mail.gmail.com>
+ <1166e55c-0c06-195c-a501-383b4055ea46@gmail.com>
+ <3BB9DE07-E0AE-43E2-99F1-E4AA774CD462@amacapital.net>
+ <5e10c8e4-aa71-1eea-b1ce-50d7d0a60e8c@gmail.com>
+ <20181122200416.GS3065@bombadil.infradead.org>
+ <CALCETrXB34QBcYk=k5DT1t4h7EezaPxbxM2S_h2nYk5Nv1c4_Q@mail.gmail.com>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <20ad363b-e78d-efcb-0a17-3ae2d3fbaa5f@gmail.com>
+Date:   Tue, 4 Dec 2018 14:34:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALCETrXB34QBcYk=k5DT1t4h7EezaPxbxM2S_h2nYk5Nv1c4_Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Introduce a section and a label for statically allocated write rare
-data. The label is named "__wr_after_init".
-As the name implies, after the init phase is completed, this section
-will be modifiable only by invoking write rare functions.
-The section must take up a set of full pages.
+Hello,
+apologies for the delayed answer.
+Please find my reply to both last mails in the thread, below.
 
-Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+On 22/11/2018 22:53, Andy Lutomirski wrote:
+> On Thu, Nov 22, 2018 at 12:04 PM Matthew Wilcox <willy@infradead.org> wrote:
+>>
+>> On Thu, Nov 22, 2018 at 09:27:02PM +0200, Igor Stoppa wrote:
+>>> I have studied the code involved with Nadav's patchset.
+>>> I am perplexed about these sentences you wrote.
+>>>
+>>> More to the point (to the best of my understanding):
+>>>
+>>> poking_init()
+>>> -------------
+>>>    1. it gets one random poking address and ensures to have at least 2
+>>>       consecutive PTEs from the same PMD
+>>>    2. it then proceeds to map/unmap an address from the first of the 2
+>>>       consecutive PTEs, so that, later on, there will be no need to
+>>>       allocate pages, which might fail, if poking from atomic context.
+>>>    3. at this point, the page tables are populated, for the address that
+>>>       was obtained at point 1, and this is ok, because the address is fixed
+>>>
+>>> write_rare
+>>> ----------
+>>>    4. it can happen on any available core / thread at any time, therefore
+>>>       each of them needs a different address
+>>
+>> No?  Each CPU has its own CR3 (eg each CPU might be running a different
+>> user task).  If you have _one_ address for each allocation, it may or
+>> may not be mapped on other CPUs at the same time -- you simply don't care.
 
-CC: Andy Lutomirski <luto@amacapital.net>
-CC: Nadav Amit <nadav.amit@gmail.com>
-CC: Matthew Wilcox <willy@infradead.org>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Kees Cook <keescook@chromium.org>
-CC: Dave Hansen <dave.hansen@linux.intel.com>
-CC: linux-integrity@vger.kernel.org
-CC: kernel-hardening@lists.openwall.com
-CC: linux-mm@kvack.org
-CC: linux-kernel@vger.kernel.org
----
- include/asm-generic/vmlinux.lds.h | 20 ++++++++++++++++++++
- include/linux/cache.h             | 17 +++++++++++++++++
- 2 files changed, 37 insertions(+)
+Yes, somehow I lost track of that aspect.
 
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index 3d7a6a9c2370..b711dbe6999f 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -311,6 +311,25 @@
- 	KEEP(*(__jump_table))						\
- 	__stop___jump_table = .;
- 
-+/*
-+ * Allow architectures to handle wr_after_init data on their
-+ * own by defining an empty WR_AFTER_INIT_DATA.
-+ * However, it's important that pages containing WR_RARE data do not
-+ * hold anything else, to avoid both accidentally unprotecting something
-+ * that is supposed to stay read-only all the time and also to protect
-+ * something else that is supposed to be writeable all the time.
-+ */
-+#ifndef WR_AFTER_INIT_DATA
-+#define WR_AFTER_INIT_DATA(align)					\
-+	. = ALIGN(PAGE_SIZE);						\
-+	__start_wr_after_init = .;					\
-+	. = ALIGN(align);						\
-+	*(.data..wr_after_init)						\
-+	. = ALIGN(PAGE_SIZE);						\
-+	__end_wr_after_init = .;					\
-+	. = ALIGN(align);
-+#endif
-+
- /*
-  * Allow architectures to handle ro_after_init data on their
-  * own by defining an empty RO_AFTER_INIT_DATA.
-@@ -332,6 +351,7 @@
- 		__start_rodata = .;					\
- 		*(.rodata) *(.rodata.*)					\
- 		RO_AFTER_INIT_DATA	/* Read only after init */	\
-+		WR_AFTER_INIT_DATA(align) /* wr after init */	\
- 		KEEP(*(__vermagic))	/* Kernel version magic */	\
- 		. = ALIGN(8);						\
- 		__start___tracepoints_ptrs = .;				\
-diff --git a/include/linux/cache.h b/include/linux/cache.h
-index 750621e41d1c..9a7e7134b887 100644
---- a/include/linux/cache.h
-+++ b/include/linux/cache.h
-@@ -31,6 +31,23 @@
- #define __ro_after_init __attribute__((__section__(".data..ro_after_init")))
- #endif
- 
-+/*
-+ * __wr_after_init is used to mark objects that cannot be modified
-+ * directly after init (i.e. after mark_rodata_ro() has been called).
-+ * These objects become effectively read-only, from the perspective of
-+ * performing a direct write, like a variable assignment.
-+ * However, they can be altered through a dedicated function.
-+ * It is intended for those objects which are occasionally modified after
-+ * init, however they are modified so seldomly, that the extra cost from
-+ * the indirect modification is either negligible or worth paying, for the
-+ * sake of the protection gained.
-+ */
-+#ifndef __wr_after_init
-+#define __wr_after_init \
-+		__attribute__((__section__(".data..wr_after_init")))
-+#endif
-+
-+
- #ifndef ____cacheline_aligned
- #define ____cacheline_aligned __attribute__((__aligned__(SMP_CACHE_BYTES)))
- #endif
--- 
-2.19.1
+>> The writable address can even be a simple formula to calculate from
+>> the read-only address, you don't have to allocate an address in the
+>> writable mapping space.
+>>
+> 
+> Agreed.  I suggest the formula:
+> 
+> writable_address = readable_address - rare_write_offset.  For
+> starters, rare_write_offset can just be a constant.  If we want to get
+> fancy later on, it can be randomized.
 
+ok, I hope I captured it here [1]
+
+> If we do it like this, then we don't need to modify any pagetables at
+> all when we do a rare write.  Instead we can set up the mapping at
+> boot or when we allocate the rare write space, and the actual rare
+> write code can just switch mms and do the write.
+
+I did it. I have little feeling about the actual amount of data 
+involved, but there is a (probably very remote) chance that the remap 
+wouldn't work, at least in the current implementation.
+
+It's a bit different from what I had in mind initially, since I was 
+thinking to have one single approach to both statically allocated memory 
+(is there a better way to describe it) and what is provided from the 
+allocator that would come next.
+
+As I wrote, I do not particularly like the way I implemented multiple 
+functionality vs remapping, but I couldn't figure out any better way to 
+do it, so eventually I kept this one, hoping to get some advice on how 
+to improve it.
+
+I did not provide yet an example, yet, but IMA has some flags that are 
+probably very suitable, since they depend on policy reloading, which can 
+happen multiple times, but could be used to disable it.
+
+[1] https://www.openwall.com/lists/kernel-hardening/2018/12/04/3
+
+--
+igor
