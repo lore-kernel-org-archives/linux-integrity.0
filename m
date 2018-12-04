@@ -8,58 +8,58 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26CFDC04EB8
-	for <linux-integrity@archiver.kernel.org>; Tue,  4 Dec 2018 12:19:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 235CBC04EBF
+	for <linux-integrity@archiver.kernel.org>; Tue,  4 Dec 2018 12:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6B4720851
-	for <linux-integrity@archiver.kernel.org>; Tue,  4 Dec 2018 12:19:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D915920851
+	for <linux-integrity@archiver.kernel.org>; Tue,  4 Dec 2018 12:19:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HRfrXCFQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6B4720851
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E3RY5vky"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D915920851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725801AbeLDMTG (ORCPT
+        id S1726313AbeLDMSu (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 4 Dec 2018 07:19:06 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46170 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726308AbeLDMSv (ORCPT
+        Tue, 4 Dec 2018 07:18:50 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33596 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbeLDMSt (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 4 Dec 2018 07:18:51 -0500
-Received: by mail-lj1-f195.google.com with SMTP id v15-v6so14662143ljh.13;
-        Tue, 04 Dec 2018 04:18:49 -0800 (PST)
+        Tue, 4 Dec 2018 07:18:49 -0500
+Received: by mail-lj1-f194.google.com with SMTP id v1-v6so14708135ljd.0;
+        Tue, 04 Dec 2018 04:18:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
          :mime-version:content-transfer-encoding;
-        bh=NVdqMmCKQZDysvXYUM4dpuRHk0CW6y96xz6tH9NdrSw=;
-        b=HRfrXCFQvzKgQhKYWkbS/im8+XnLQmGG8ccr5n3DY3AvBzv51R79u/dWJYuhk3Y/QB
-         5F3PX6ti+fzfyYUTTRkeMeP2Qkk/GOPZC3dVKjWeDjWxzfaNsQWYwv8PUBhakUjEMGpC
-         +3eyvJFkXoEIJcYl3HPC01uHhpdzkuhiE5IctH//w5KYZf8JD/Y7Gole7e9dz6kxhzmW
-         ZC9eXZteiMUUw1lsEK1t4DghxBzJd4NJHIq3xxVBIuqzUX0poFyAOWyUxaemqKC77wOK
-         Ydsd8ZfPrBokXf7ifOd5x8NzNp/7evrgARi/7ve5XNikMvobqmD29jlx6kR0upcm+wRp
-         8YMA==
+        bh=WBnbM87FYiZB144WHH+WIErpqzF5ZNVsWJfotUGC/To=;
+        b=E3RY5vkybSvPTIG8UuGMwEVOwkUplL0AFDj1MN9T0ROLaaMBhx3o6sL9qiBqK8cDpF
+         lHokL4Goz61X1sMwWX2rqe8g+i/xkU80XCiz6Keo5mY+N2QwkuztsW8I1TLYVZ36cJL0
+         cH3fN77tAZGhRIwFjGT/udN/UU2XaH/2piLYSuFcG9+mF0rVBDyJkSqRWN10wU0RGVLp
+         g/U3CKeZCh+PdGUKf8B7AMY64oqIvcBkpDi5JA5HxCI6tSjMn8oOG8MbP/CCJI23fOqP
+         OzTixarbLeKA4neW+891Bwfc31u1LhGzMb0feY22cbNyFQTUMEWbsqO2Kl8cBZC+/vvy
+         QAYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:reply-to:mime-version:content-transfer-encoding;
-        bh=NVdqMmCKQZDysvXYUM4dpuRHk0CW6y96xz6tH9NdrSw=;
-        b=hcmwnRcYAMEpKVc6dzPRQvqHlsjgKSkry0Rh/Ao44+/D9BLeI0LoBLZqBOb9RL7M2K
-         zmXucjApP4B0aTxwPaA+wjFEl1tZwWt2cgR/Sif3vY1YEyq5WF+kigyVZXMJEjo2AGe2
-         CeyM5huPdQFAVa0yK7PRNXuJt5HFuvv1X9CBJy7iIViJZXqGzzGWcx0xDYm+HgllTexZ
-         AUvUupSi9PbNKgwbT1zOAQAdQNneWV9GuVIpkTN10WEMvrSwQEuZlIeKKesvIhaH27FE
-         afgClq8S4aUrSM4fQJVf3nJ8LW5dvw8DIQ0CP99FQqhaQq7UksP8u1tGoabdcJbJOEmz
-         3K9Q==
-X-Gm-Message-State: AA+aEWao5hC5fdvzkVwHmm03GmXD2ZRkY0OWhJRAgbJ0OWpnp/2UsSjH
-        z1VAPltGfJmWAHbBQIi/68Q=
-X-Google-Smtp-Source: AFSGD/UPXTOGRAw/49T9676bvJ9/1gFe/zO9Lwr0qxwwIUQFs7TARHUmypZrYSVjqRzSte4x5ibGcg==
-X-Received: by 2002:a2e:9a16:: with SMTP id o22-v6mr3119346lji.112.1543925928237;
-        Tue, 04 Dec 2018 04:18:48 -0800 (PST)
+        bh=WBnbM87FYiZB144WHH+WIErpqzF5ZNVsWJfotUGC/To=;
+        b=tt48kyoff7pEIyg4FEPYKGDQ2vzW3/6CTRYpTsS7iSN2waDsDBTyPYo/TXSMOqflko
+         jtJFZi+yQuinUrstRazjnDM83Walk//lomVvw8xeVNsfbHUH0zotgm1yWV8FdMkdrSSg
+         vOJJIAKeGCST4belywHEMuvPuCGRu6UcaS9YtlWfBKK1xWJ7OMVaMk9hKpuEjdS0V5KH
+         /31zHs7Iz9Hhd+pXn2WZBF8UG4l3V30dbAAFy50hGe6Qgp1VcWA8a2YKvwTnCJjmLbkx
+         cnIgm47W/TGBcMFyIPzNWTbS0hLMnJMpgwsKGzOyI1WT6k4/jx+ScjIE/F7YaAAth6/2
+         Fihg==
+X-Gm-Message-State: AA+aEWYdSqZYoLzYIxye2nGkXoKy1hfffX63GJBL30MqJeGTtxlSKSsH
+        bEJQXpDvDjpjk6u93qTxehA=
+X-Google-Smtp-Source: AFSGD/Uz5k3knHQnWYcPn5vvfo8l7N0tmCpAv9nXtZVRKiyo8X/OPZgpu0935A98/eCYHI1LGa7rXQ==
+X-Received: by 2002:a2e:9957:: with SMTP id r23-v6mr12190962ljj.98.1543925925285;
+        Tue, 04 Dec 2018 04:18:45 -0800 (PST)
 Received: from localhost.localdomain (91-156-179-117.elisa-laajakaista.fi. [91.156.179.117])
-        by smtp.gmail.com with ESMTPSA id h3sm2899653lfj.25.2018.12.04.04.18.46
+        by smtp.gmail.com with ESMTPSA id h3sm2899653lfj.25.2018.12.04.04.18.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 04:18:47 -0800 (PST)
+        Tue, 04 Dec 2018 04:18:44 -0800 (PST)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 To:     Andy Lutomirski <luto@amacapital.net>,
@@ -71,9 +71,9 @@ Cc:     igor.stoppa@huawei.com, Nadav Amit <nadav.amit@gmail.com>,
         linux-integrity@vger.kernel.org,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] __wr_after_init: lkdtm test
-Date:   Tue,  4 Dec 2018 14:18:05 +0200
-Message-Id: <20181204121805.4621-7-igor.stoppa@huawei.com>
+Subject: [PATCH 4/6] rodata_test: add verification for __wr_after_init
+Date:   Tue,  4 Dec 2018 14:18:03 +0200
+Message-Id: <20181204121805.4621-5-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181204121805.4621-1-igor.stoppa@huawei.com>
 References: <20181204121805.4621-1-igor.stoppa@huawei.com>
@@ -85,8 +85,8 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Verify that trying to modify a variable with the __wr_after_init
-modifier wil lcause a crash.
+The write protection of the __wr_after_init data can be verified with the
+same methodology used for const data.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 
@@ -101,97 +101,43 @@ CC: kernel-hardening@lists.openwall.com
 CC: linux-mm@kvack.org
 CC: linux-kernel@vger.kernel.org
 ---
- drivers/misc/lkdtm/core.c  |  3 +++
- drivers/misc/lkdtm/lkdtm.h |  3 +++
- drivers/misc/lkdtm/perms.c | 29 +++++++++++++++++++++++++++++
- 3 files changed, 35 insertions(+)
+ mm/rodata_test.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
-index 2837dc77478e..73c34b17c433 100644
---- a/drivers/misc/lkdtm/core.c
-+++ b/drivers/misc/lkdtm/core.c
-@@ -155,6 +155,9 @@ static const struct crashtype crashtypes[] = {
- 	CRASHTYPE(ACCESS_USERSPACE),
- 	CRASHTYPE(WRITE_RO),
- 	CRASHTYPE(WRITE_RO_AFTER_INIT),
-+#ifdef CONFIG_PRMEM
-+	CRASHTYPE(WRITE_WR_AFTER_INIT),
-+#endif
- 	CRASHTYPE(WRITE_KERN),
- 	CRASHTYPE(REFCOUNT_INC_OVERFLOW),
- 	CRASHTYPE(REFCOUNT_ADD_OVERFLOW),
-diff --git a/drivers/misc/lkdtm/lkdtm.h b/drivers/misc/lkdtm/lkdtm.h
-index 3c6fd327e166..abba2f52ffa6 100644
---- a/drivers/misc/lkdtm/lkdtm.h
-+++ b/drivers/misc/lkdtm/lkdtm.h
-@@ -38,6 +38,9 @@ void lkdtm_READ_BUDDY_AFTER_FREE(void);
- void __init lkdtm_perms_init(void);
- void lkdtm_WRITE_RO(void);
- void lkdtm_WRITE_RO_AFTER_INIT(void);
-+#ifdef CONFIG_PRMEM
-+void lkdtm_WRITE_WR_AFTER_INIT(void);
-+#endif
- void lkdtm_WRITE_KERN(void);
- void lkdtm_EXEC_DATA(void);
- void lkdtm_EXEC_STACK(void);
-diff --git a/drivers/misc/lkdtm/perms.c b/drivers/misc/lkdtm/perms.c
-index 53b85c9d16b8..f681730aa652 100644
---- a/drivers/misc/lkdtm/perms.c
-+++ b/drivers/misc/lkdtm/perms.c
-@@ -9,6 +9,7 @@
- #include <linux/vmalloc.h>
- #include <linux/mman.h>
- #include <linux/uaccess.h>
-+#include <linux/prmem.h>
- #include <asm/cacheflush.h>
+diff --git a/mm/rodata_test.c b/mm/rodata_test.c
+index 3c1e515ca9b1..a98d088ad9cc 100644
+--- a/mm/rodata_test.c
++++ b/mm/rodata_test.c
+@@ -16,7 +16,19 @@
  
- /* Whether or not to fill the target memory area with do_nothing(). */
-@@ -27,6 +28,10 @@ static const unsigned long rodata = 0xAA55AA55;
- /* This is marked __ro_after_init, so it should ultimately be .rodata. */
- static unsigned long ro_after_init __ro_after_init = 0x55AA5500;
+ #define INIT_TEST_VAL 0xC3
  
-+/* This is marked __wr_after_init, so it should be in .rodata. */
-+static
-+unsigned long wr_after_init __wr_after_init = 0x55AA5500;
++/*
++ * Note: __ro_after_init data is, for every practical effect, equivalent to
++ * const data, since they are even write protected at the same time; there
++ * is no need for separate testing.
++ * __wr_after_init data, otoh, is altered also after the write protection
++ * takes place and it cannot be exploitable for altering more permanent
++ * data.
++ */
 +
- /*
-  * This just returns to the caller. It is designed to be copied into
-  * non-executable memory regions.
-@@ -104,6 +109,28 @@ void lkdtm_WRITE_RO_AFTER_INIT(void)
- 	*ptr ^= 0xabcd1234;
- }
+ static const int rodata_test_data = INIT_TEST_VAL;
++static int wr_after_init_test_data __wr_after_init = INIT_TEST_VAL;
++extern long __start_wr_after_init;
++extern long __end_wr_after_init;
  
-+#ifdef CONFIG_PRMEM
-+
-+void lkdtm_WRITE_WR_AFTER_INIT(void)
-+{
-+	unsigned long *ptr = &wr_after_init;
-+
-+	/*
-+	 * Verify we were written to during init. Since an Oops
-+	 * is considered a "success", a failure is to just skip the
-+	 * real test.
-+	 */
-+	if ((*ptr & 0xAA) != 0xAA) {
-+		pr_info("%p was NOT written during init!?\n", ptr);
-+		return;
-+	}
-+
-+	pr_info("attempting bad wr_after_init write at %p\n", ptr);
-+	*ptr ^= 0xabcd1234;
-+}
-+
-+#endif
-+
- void lkdtm_WRITE_KERN(void)
+ static bool test_data(char *data_type, const int *data,
+ 		      unsigned long start, unsigned long end)
+@@ -60,6 +72,9 @@ void rodata_test(void)
  {
- 	size_t size;
-@@ -200,4 +227,6 @@ void __init lkdtm_perms_init(void)
- 	/* Make sure we can write to __ro_after_init values during __init */
- 	ro_after_init |= 0xAA;
- 
-+	/* Make sure we can write to __wr_after_init during __init */
-+	wr_after_init |= 0xAA;
+ 	if (test_data("rodata", &rodata_test_data,
+ 		      (unsigned long)&__start_rodata,
+-		      (unsigned long)&__end_rodata))
++		      (unsigned long)&__end_rodata) &&
++	    test_data("wr after init data", &wr_after_init_test_data,
++		      (unsigned long)&__start_wr_after_init,
++		      (unsigned long)&__end_wr_after_init))
+ 		pr_info("all tests were successful\n");
  }
 -- 
 2.19.1
