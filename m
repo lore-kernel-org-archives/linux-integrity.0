@@ -2,63 +2,64 @@ Return-Path: <SRS0=lruq=ON=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A37C04EB8
-	for <linux-integrity@archiver.kernel.org>; Tue,  4 Dec 2018 12:18:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 779F6C04EB8
+	for <linux-integrity@archiver.kernel.org>; Tue,  4 Dec 2018 12:18:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43AB920660
-	for <linux-integrity@archiver.kernel.org>; Tue,  4 Dec 2018 12:18:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33E8E2146D
+	for <linux-integrity@archiver.kernel.org>; Tue,  4 Dec 2018 12:18:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dBmz8p6G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43AB920660
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nfKfgur+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33E8E2146D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725956AbeLDMSp (ORCPT
+        id S1726306AbeLDMSs (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 4 Dec 2018 07:18:45 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35028 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725770AbeLDMSo (ORCPT
+        Tue, 4 Dec 2018 07:18:48 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38225 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725770AbeLDMSs (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 4 Dec 2018 07:18:44 -0500
-Received: by mail-lf1-f66.google.com with SMTP id e26so11798255lfc.2;
-        Tue, 04 Dec 2018 04:18:41 -0800 (PST)
+        Tue, 4 Dec 2018 07:18:48 -0500
+Received: by mail-lj1-f196.google.com with SMTP id c19-v6so14695233lja.5;
+        Tue, 04 Dec 2018 04:18:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:reply-to:mime-version
-         :content-transfer-encoding;
-        bh=EKomztucFdGpdw25mVtPM/fFZFyL6QsN9atK4DfZDNk=;
-        b=dBmz8p6Gj1TniGyArDhrqTvxjff/YpIVbYvKz3HIM/22sCvHedrQGmmk93KLD+qDHq
-         n23SaJV5/fBzfBQgs88D8p15egV7O/OGgG3PZamjm9mf9uFyTYRShbbIFGwQj7zdoErI
-         TxhS97CQapHHQRQrRRD8HnQyBgl3ALg8DlXbxv7R/Qla3c4Ehb9clJVc+iVXcWX6d894
-         OKDhJTZNJx1IpqB6G0Iiuhc8AMPxxmVFRp65zYYznWwZqCWq5AOqi67TVWteuLyph3CP
-         YntSoTAydAuIzLJaJ9F8KIfnXmfqYuou3x56DprEE5TdzeDsnSOhMQ/s4p8lFD7znBpR
-         TucA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
+         :mime-version:content-transfer-encoding;
+        bh=mJMksY6rKhfNGrlxoC/9f5P6S8jnAMH+e8y1ppLmkig=;
+        b=nfKfgur+7NfxEvS1bNr5TrPQffifXufN2M74WYOVBCnHg6RWnRAHN6d1ot1S7MtTFS
+         eY6DtAA8gW2IZoeav6Xcc5AP95lgP/FMR2427gUjvvUKkZBBR3G5NhF+CkCWXT9Gsk4m
+         x9k9BzMQN2TNCkuYtBDF/xYteWxZNp/86VmbYls2v/jcsPvK2fqd5xzHOV5FAOWYnIGz
+         0WKvrgqSEpNV3438xLguGp0GrrkH6H+tCLK+45XnYElomR2jxOX8lvd5JR14KFSZLfYU
+         YE6/+wD2ec0YztQZ/xtRLG428m5WKqopIB+uMESIKB9u99CVaVDuMQM6y3xclCIqVPpn
+         PVQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :mime-version:content-transfer-encoding;
-        bh=EKomztucFdGpdw25mVtPM/fFZFyL6QsN9atK4DfZDNk=;
-        b=dBlmifdnMsqQSZdzKVskhrILBMExrX7iguT9m5hZItA/F7Qg0XsJAGx7y+5O2fOlwa
-         8vfDvG/FnR7ciCa0PpLLdtLkhFHAjmxe80lB1hTrCDBFc5nMwP5LJArXjDsvlVJoQeEQ
-         q9MA6OMGBHNC4Kor6gDmvW+7lN6s7YweIk7WtV7/e9ptM7We9TVtwyJlGA1XGKUBBzhh
-         pdRJvRVtGx+CnIvV48vpDD4C2borF2CtP+q5svFCXK2A26r0o7Sqsyfmh2Tyg3iuh09b
-         dHMJIrpDK56ycvBFLilHwcswJ5FymfCI4NJIz7KtRL7HN1C3iZ0ztYvpN7Ge0XcJI7/I
-         AqyA==
-X-Gm-Message-State: AA+aEWYnn/EAs41Oy5y0y6iPZP96Vmxzn9rvDavx6uZiPd5VKomJ/LLm
-        QhUwwigowbZP7vh9C3Fvf1Q=
-X-Google-Smtp-Source: AFSGD/W8gWphoUuoSjw5YUOeRczkQhI1FHNhM18fBvHXKNRhCUl79/Pygk/pqszc8KF1a/GsEa7y5g==
-X-Received: by 2002:a19:c396:: with SMTP id t144mr11305526lff.110.1543925920097;
-        Tue, 04 Dec 2018 04:18:40 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:reply-to:mime-version:content-transfer-encoding;
+        bh=mJMksY6rKhfNGrlxoC/9f5P6S8jnAMH+e8y1ppLmkig=;
+        b=SF3wnHVXqG7cDo1+o+KjBNaixcYQJ/QUk2pG4AiHwmx9p0GHyNP+TkGuGHujyo8DPF
+         TJlgi/pUoY1TLwQhrZbmo6y2zWeEq9ikimebl4gevlYGaS4nsXtnqYlvGJTpX2Y2VpUH
+         6FI51uVBjJBmipmbcO4dt3xd62Mqs1t+OVXnhsk3TN3wH6lb11O7pNLVtRn4+ypfYuJX
+         2SqgcP3T1lbR4ZLIxWtWfXGJ6/nP/XDJUoHNPjtjJar1bTQBR8kV0sWeChIdQVdUQs53
+         6xxiDnlXj8l6WuxUPTcV5KgQcXI2U5HxUzw0vUVRTJrhnsJuazv/KYFtTMFQWqOqAYO1
+         liRw==
+X-Gm-Message-State: AA+aEWZpN1OxCrxC16jfEDHvVD2IrHlO4Mfo+EIcHtNbOnZss9Ason8E
+        OE7uFEVuo/HxdEWWjvvH49Y=
+X-Google-Smtp-Source: AFSGD/WWQI8QGsQXXSTC5ZysrJ5U8vMjuWZFjwJ8suURld6RLcFQmBCHttm98abwWPkEAZpczf/7pA==
+X-Received: by 2002:a2e:63cd:: with SMTP id s74-v6mr12265480lje.117.1543925923947;
+        Tue, 04 Dec 2018 04:18:43 -0800 (PST)
 Received: from localhost.localdomain (91-156-179-117.elisa-laajakaista.fi. [91.156.179.117])
-        by smtp.gmail.com with ESMTPSA id h3sm2899653lfj.25.2018.12.04.04.18.38
+        by smtp.gmail.com with ESMTPSA id h3sm2899653lfj.25.2018.12.04.04.18.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 04:18:39 -0800 (PST)
+        Tue, 04 Dec 2018 04:18:43 -0800 (PST)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 To:     Andy Lutomirski <luto@amacapital.net>,
@@ -70,10 +71,12 @@ Cc:     igor.stoppa@huawei.com, Nadav Amit <nadav.amit@gmail.com>,
         linux-integrity@vger.kernel.org,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC v1 PATCH 0/6] hardening: statically allocated protected memory
-Date:   Tue,  4 Dec 2018 14:17:59 +0200
-Message-Id: <20181204121805.4621-1-igor.stoppa@huawei.com>
+Subject: [PATCH 3/6] rodata_test: refactor tests
+Date:   Tue,  4 Dec 2018 14:18:02 +0200
+Message-Id: <20181204121805.4621-4-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181204121805.4621-1-igor.stoppa@huawei.com>
+References: <20181204121805.4621-1-igor.stoppa@huawei.com>
 Reply-To: Igor Stoppa <igor.stoppa@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -82,55 +85,8 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-This patch-set is the first-cut implementation of write-rare memory
-protection, as previously agreed [1]
-Its purpose it to keep data write protected kernel data which is seldom
-modified.
-There is no read overhead, however writing requires special operations that
-are probably unsitable for often-changing data.
-The use is opt-in, by applying the modifier __wr_after_init to a variable
-declaration.
-
-As the name implies, the write protection kicks in only after init() is
-completed; before that moment, the data is modifiable in the usual way.
-
-Current Limitations:
-* supports only data which is allocated statically, at build time.
-* supports only x86_64
-* might not work for very large amount of data, since it relies on the
-  assumption that said data can be entirely remapped, at init.
-
-
-Some notes:
-- even if the code is only for x86_64, it is placed in the generic
-  locations, with the intention of extending it also to arm64
-- the current section used for collecting wr-after-init data might need to
-  be moved, to work with arm64 MMU
-- the functionality is in its own c and h files, for now, to ease the
-  introduction (and refactoring) of code dealing with dynamic allocation
-- recently some updated patches were posted for live-patch on arm64 [2],
-  they might help with adding arm64 support here
-- to avoid the risk of weakening __ro_after_init, __wr_after_init data is
-  in a separate set of pages, and any invocation will confirm that the
-  memory affected falls within this range.
-  I have modified rodata_test accordingly, to check als othis case.
-- to avoid replicating the code which does the change of mapping, there is
-  only one function performing multiple, selectable, operations, such as
-  memcpy(), memset(). I have added also rcu_assign_pointer() as further
-  example. But I'm not too fond of this implementation either. I just
-  couldn't think of any that I would like significantly better.
-- I have left out the patchset from Nadav that these patches depend on,
-  but it can be found here [3] (Should have I resubmitted it?)
-- I am not sure what is the correct form for giving proper credit wrt the
-  authoring of the wr_after_init mechanism, guidance would be appreciated
-- In an attempt to spam less people, I have curbed the list of recipients.
-  If I have omitted someone who should have been kept/added, please
-  add them to the thread.
-
-
-[1] https://www.openwall.com/lists/kernel-hardening/2018/11/22/8
-[2] https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1793199.html
-[3] https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1810245.html
+Refactor the test cases, in preparation for using them also for testing
+__wr_after_init memory.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 
@@ -144,31 +100,87 @@ CC: linux-integrity@vger.kernel.org
 CC: kernel-hardening@lists.openwall.com
 CC: linux-mm@kvack.org
 CC: linux-kernel@vger.kernel.org
+---
+ mm/rodata_test.c | 48 ++++++++++++++++++++++++++++--------------------
+ 1 file changed, 28 insertions(+), 20 deletions(-)
 
-
-
-Igor Stoppa (6):
-	[PATCH 1/6] __wr_after_init: linker section and label
-	[PATCH 2/6] __wr_after_init: write rare for static allocation
-	[PATCH 3/6] rodata_test: refactor tests
-	[PATCH 4/6] rodata_test: add verification for __wr_after_init
-	[PATCH 5/6] __wr_after_init: test write rare functionality
-	[PATCH 6/6] __wr_after_init: lkdtm test
-
-drivers/misc/lkdtm/core.c         |   3 +
-drivers/misc/lkdtm/lkdtm.h        |   3 +
-drivers/misc/lkdtm/perms.c        |  29 ++++++++
-include/asm-generic/vmlinux.lds.h |  20 ++++++
-include/linux/cache.h             |  17 +++++
-include/linux/prmem.h             | 134 +++++++++++++++++++++++++++++++++++++
-init/main.c                       |   2 +
-mm/Kconfig                        |   4 ++
-mm/Kconfig.debug                  |   9 +++
-mm/Makefile                       |   2 +
-mm/prmem.c                        | 124 ++++++++++++++++++++++++++++++++++
-mm/rodata_test.c                  |  63 ++++++++++++------
-mm/test_write_rare.c              | 135 ++++++++++++++++++++++++++++++++++++++
-13 files changed, 525 insertions(+), 20 deletions(-)
-
-
+diff --git a/mm/rodata_test.c b/mm/rodata_test.c
+index d908c8769b48..3c1e515ca9b1 100644
+--- a/mm/rodata_test.c
++++ b/mm/rodata_test.c
+@@ -14,44 +14,52 @@
+ #include <linux/uaccess.h>
+ #include <asm/sections.h>
+ 
+-static const int rodata_test_data = 0xC3;
++#define INIT_TEST_VAL 0xC3
+ 
+-void rodata_test(void)
++static const int rodata_test_data = INIT_TEST_VAL;
++
++static bool test_data(char *data_type, const int *data,
++		      unsigned long start, unsigned long end)
+ {
+-	unsigned long start, end;
+ 	int zero = 0;
+ 
+ 	/* test 1: read the value */
+ 	/* If this test fails, some previous testrun has clobbered the state */
+-	if (!rodata_test_data) {
+-		pr_err("test 1 fails (start data)\n");
+-		return;
++	if (*data != INIT_TEST_VAL) {
++		pr_err("%s: test 1 fails (init data value)\n", data_type);
++		return false;
+ 	}
+ 
+ 	/* test 2: write to the variable; this should fault */
+-	if (!probe_kernel_write((void *)&rodata_test_data,
+-				(void *)&zero, sizeof(zero))) {
+-		pr_err("test data was not read only\n");
+-		return;
++	if (!probe_kernel_write((void *)data, (void *)&zero, sizeof(zero))) {
++		pr_err("%s: test data was not read only\n", data_type);
++		return false;
+ 	}
+ 
+ 	/* test 3: check the value hasn't changed */
+-	if (rodata_test_data == zero) {
+-		pr_err("test data was changed\n");
+-		return;
++	if (*data != INIT_TEST_VAL) {
++		pr_err("%s: test data was changed\n", data_type);
++		return false;
+ 	}
+ 
+ 	/* test 4: check if the rodata section is PAGE_SIZE aligned */
+-	start = (unsigned long)__start_rodata;
+-	end = (unsigned long)__end_rodata;
+ 	if (start & (PAGE_SIZE - 1)) {
+-		pr_err("start of .rodata is not page size aligned\n");
+-		return;
++		pr_err("%s: start of data is not page size aligned\n",
++		       data_type);
++		return false;
+ 	}
+ 	if (end & (PAGE_SIZE - 1)) {
+-		pr_err("end of .rodata is not page size aligned\n");
+-		return;
++		pr_err("%s: end of data is not page size aligned\n",
++		       data_type);
++		return false;
+ 	}
++	return true;
++}
+ 
+-	pr_info("all tests were successful\n");
++void rodata_test(void)
++{
++	if (test_data("rodata", &rodata_test_data,
++		      (unsigned long)&__start_rodata,
++		      (unsigned long)&__end_rodata))
++		pr_info("all tests were successful\n");
+ }
+-- 
+2.19.1
 
