@@ -2,90 +2,160 @@ Return-Path: <SRS0=0pjP=OO=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.9 required=3.0 tests=DATE_IN_PAST_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A696EC04EB8
-	for <linux-integrity@archiver.kernel.org>; Wed,  5 Dec 2018 00:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D236C04EB9
+	for <linux-integrity@archiver.kernel.org>; Wed,  5 Dec 2018 08:52:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67B6020850
-	for <linux-integrity@archiver.kernel.org>; Wed,  5 Dec 2018 00:46:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67B6020850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5AC4E20850
+	for <linux-integrity@archiver.kernel.org>; Wed,  5 Dec 2018 08:52:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AC4E20850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726031AbeLEAqs (ORCPT
+        id S1727135AbeLEIwG (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 4 Dec 2018 19:46:48 -0500
-Received: from mga09.intel.com ([134.134.136.24]:24524 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725979AbeLEAqr (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 4 Dec 2018 19:46:47 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 16:46:46 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,316,1539673200"; 
-   d="scan'208";a="299366323"
-Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.24.8.183])
-  by fmsmga006.fm.intel.com with ESMTP; 04 Dec 2018 16:46:44 -0800
-Date:   Tue, 4 Dec 2018 16:46:43 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v6 6/7] tpm: ensure that the output of PCR read contains
- the correct digest size
-Message-ID: <20181205004643.GA26578@linux.intel.com>
-References: <20181204082138.24600-1-roberto.sassu@huawei.com>
- <20181204082138.24600-7-roberto.sassu@huawei.com>
- <20181205000910.GE1233@linux.intel.com>
+        Wed, 5 Dec 2018 03:52:06 -0500
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:46460 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726171AbeLEIwG (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 5 Dec 2018 03:52:06 -0500
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ 15.0.1156.6; Wed, 5 Dec 2018 00:52:03 -0800
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id C33B441280;
+        Wed,  5 Dec 2018 00:52:04 -0800 (PST)
+From:   Nadav Amit <namit@vmware.com>
+To:     Ingo Molnar <mingo@redhat.com>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, <linux_dti@icloud.com>,
+        <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        Nadav Amit <namit@vmware.com>
+Subject: [PATCH v7 00/14] x86/alternative: text_poke() enhancements
+Date:   Tue, 4 Dec 2018 17:33:54 -0800
+Message-ID: <20181205013408.47725-1-namit@vmware.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181205000910.GE1233@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 04:09:10PM -0800, Jarkko Sakkinen wrote:
-> On Tue, Dec 04, 2018 at 09:21:37AM +0100, Roberto Sassu wrote:
-> >  	out = (struct tpm2_pcr_read_out *)&buf.data[TPM_HEADER_SIZE];
-> >  	digest_size = be16_to_cpu(out->digest_size);
-> > -	if (digest_size > sizeof(digest->digest)) {
-> > +	if (digest_size > sizeof(digest->digest) ||
-> > +	    (!digest_size_ptr && digest_size != expected_digest_size)) {
-> >  		rc = -EINVAL;
-> >  		goto out;
-> >  	}
-> 
-> Just noticed this but you must squash 4-6 because applying only
-> previous commits will result a broken tree. It will be much bigger
-> commit but won't be broken.
-> 
-> I think you should also feed min_rsp_body_length as you should be
-> able to precalculate.
-> 
-> Last time I was asking why this isn't a bug fix. It is even for
-> the existing code. The existing code should have a bug fix that
-> checks that the received digest size so that it is the expected
-> SHA1 size before we can apply this commit.
+This patch-set addresses some issues that might affect the security and
+the correctness of code patching. It was originally small and mainly
+intended to remove the text-poking fixmap PTEs, which can cause PTEs
+cached in the TLB in remote cores for unbounded time.
 
-My bad. This is not the same deal as the code because in the old code we
-always copy a constant block. Here we use the variable as parameter for
-memcpy() so it is better to check the size. You can ignore the last
-paragraph completely. Sorry, had to double check this one.
+It was then suggested by tglx and Andy that patching of modules can be
+simpler by making module code non-executable during setup. This opened a
+can of worms, since it required changes of kprobe and ftrace. Ftrace, it
+turns out, patches the code using a homegrown mechanism, so it made
+sense to make it use text_poke_*() instead. And then, module unloading
+seemed fragile and susceptible for attacks, so it required some
+attention as well.
 
-There is no need to do any type of bug fix for the current tree.
+This whole story is to clarify two points: (a) this patch-set does *not*
+have a full threat-model in mind. It does harden security a bit by
+shortening the time-window in which writable executable mappings are
+set. Since it consolidates kernel code modifications, it may be used as
+a basis for some a future code integrity mechanism, a-la Microsoft's
+hypervisor enforced code integrity (HVCI). However, this patch-set does
+not provide HVCI-like security.
 
-Still 4-6 need to be squashed in order to not put purposely the tree
-into broken state.
+Which leads me to (b) - the patch-set is big "enough" IMHO. Indeed,
+there are open security issues in the kernel when it comes to W^X.  But
+some people would want to use Andy's temporary mm-struct for other uses.
+So additional security hardening may be left for future patches.
 
-/Jarko
+v6->v7:
+- Fix kprobes breakage [Rick Edgecombe]
+- Fix ftrace breakage [Rick Edgecombe]
+- Fix module unloading issues (setting X, race with patching)
+
+v5->v6:
+- Panic if anything goes wrong when poking [peterZ]
+
+v4->v5:
+- Fix Xen breakage [Damian Tometzki]
+- BUG_ON() when poking_mm initialization fails [peterZ]
+- Better comments on "x86/mm: temporary mm struct"
+- Cleaner removal of the custom poker
+
+v3->v4:
+- Setting modules as RO when loading [andy, tglx]
+- Adding text_poke_kgdb() to keep the text_mutex assertion [tglx]
+- Simpler logic to decide when to use early-poking [peterZ]
+- More cleanup
+
+v2->v3:
+- Remove the fallback path in text_poke() [peterZ]
+- poking_init() was broken due to the local variable poking_addr
+- Preallocate tables for the temporary-mm to avoid sleep-in-atomic
+- Prevent KASAN from yelling at text_poke()
+
+v1->v2:
+- Partial revert of 9222f606506c added to 1/6 [masami]
+- Added Masami's reviewed-by tag
+
+RFC->v1:
+- Added handling of error in get_locked_pte()
+- Remove lockdep assertion, clarify text_mutex use instead [masami]
+- Comment fix [peterz]
+- Removed remainders of text_poke return value [masami]
+- Use __weak for poking_init instead of macros [masami]
+- Simplify error handling in poking_init [masami]
+
+Andy Lutomirski (1):
+  x86/mm: temporary mm struct
+
+Nadav Amit (13):
+  Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
+  x86/jump_label: Use text_poke_early() during early init
+  fork: provide a function for copying init_mm
+  x86/alternative: initializing temporary mm for patching
+  x86/alternative: use temporary mm for text poking
+  x86/kgdb: avoid redundant comparison of patched code
+  x86/ftrace: Use text_poke_*() infrastructure
+  x86/kprobes: Instruction pages initialization enhancements
+  x86: avoid W^X being broken during modules loading
+  x86/jump-label: remove support for custom poker
+  x86/alternative: Remove the return value of text_poke_*()
+  module: Do not set nx for module memory before freeing
+  module: Prevent module removal racing with text_poke()
+
+ arch/x86/include/asm/fixmap.h        |   2 -
+ arch/x86/include/asm/mmu_context.h   |  32 +++++
+ arch/x86/include/asm/pgtable.h       |   3 +
+ arch/x86/include/asm/text-patching.h |   7 +-
+ arch/x86/kernel/alternative.c        | 197 ++++++++++++++++++++-------
+ arch/x86/kernel/ftrace.c             |  74 ++++------
+ arch/x86/kernel/jump_label.c         |  19 ++-
+ arch/x86/kernel/kgdb.c               |  25 +---
+ arch/x86/kernel/kprobes/core.c       |  24 +++-
+ arch/x86/kernel/module.c             |   2 +-
+ arch/x86/mm/init_64.c                |  35 +++++
+ arch/x86/xen/mmu_pv.c                |   2 -
+ include/linux/filter.h               |   6 +
+ include/linux/sched/task.h           |   1 +
+ init/main.c                          |   3 +
+ kernel/fork.c                        |  24 +++-
+ kernel/module.c                      |  50 +++++--
+ 17 files changed, 349 insertions(+), 157 deletions(-)
+
+-- 
+2.17.1
+
