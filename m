@@ -2,120 +2,111 @@ Return-Path: <SRS0=uN/y=OP=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A010C04EB9
-	for <linux-integrity@archiver.kernel.org>; Thu,  6 Dec 2018 08:18:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFCC0C6786C
+	for <linux-integrity@archiver.kernel.org>; Thu,  6 Dec 2018 09:45:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 533FD21479
-	for <linux-integrity@archiver.kernel.org>; Thu,  6 Dec 2018 08:18:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 533FD21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A542720989
+	for <linux-integrity@archiver.kernel.org>; Thu,  6 Dec 2018 09:45:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mKV5ebHo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A542720989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728144AbeLFIS3 (ORCPT
+        id S1728144AbeLFJpY (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 6 Dec 2018 03:18:29 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42848 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728764AbeLFIS2 (ORCPT
+        Thu, 6 Dec 2018 04:45:24 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:46828 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727763AbeLFJpY (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 6 Dec 2018 03:18:28 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB68G1Vx123089
-        for <linux-integrity@vger.kernel.org>; Thu, 6 Dec 2018 03:18:27 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p703t83hf-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 06 Dec 2018 03:18:26 -0500
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.ibm.com>;
-        Thu, 6 Dec 2018 08:18:25 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 6 Dec 2018 08:18:22 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB68ILjF18940126
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 6 Dec 2018 08:18:21 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1A208B205F;
-        Thu,  6 Dec 2018 08:18:21 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CDD99B2066;
-        Thu,  6 Dec 2018 08:18:18 +0000 (GMT)
-Received: from [9.124.31.41] (unknown [9.124.31.41])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  6 Dec 2018 08:18:18 +0000 (GMT)
-Subject: Re: [PATCH v6 4/7] tpm: modify tpm_pcr_read() definition to pass a
- TPM hash algorithm
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-References: <20181204082138.24600-1-roberto.sassu@huawei.com>
- <20181204082138.24600-5-roberto.sassu@huawei.com>
- <20181204234024.GC1233@linux.intel.com>
-From:   Nayna Jain <nayna@linux.ibm.com>
-Date:   Thu, 6 Dec 2018 13:44:58 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Thu, 6 Dec 2018 04:45:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+Oc9aPprVL/I8aoLjV3ntWcij0NK7R/RtAEC+ha4tto=; b=mKV5ebHo5lV4y9zyrU2euNCRc
+        wuSf9414bTPHTvA0KSNa5woZt/SBWRuEZyfuEzhbp9A1B1mWu2RWw4tSN9VU73LBfne/gpJ3TpiyY
+        SArF2D2WKFTw130pW9wTagCc4W4cr/qWcJPOFaBKmTD7VAQpVTbTfSnZz6tQnGTZjwqv4sYLyruZx
+        5GAxh2v7hI1SY7jTcslSXpM5uH/a7Yz+J1qqLJ2scxlQyzjWgsfSSbr1wePV2XmsNrIE0RDxOHk/L
+        8PRep4ct6P3rgzIaMLvn8ev+0AG0u7JzJ/MdZAgB1MLEM4DJukpyhRvgOHcioleL/dHuJFvVkDtUi
+        UGEa04UWQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gUqDG-0005JO-A1; Thu, 06 Dec 2018 09:44:54 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9054E2029F4C1; Thu,  6 Dec 2018 10:44:51 +0100 (CET)
+Date:   Thu, 6 Dec 2018 10:44:51 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/6] __wr_after_init: write rare for static allocation
+Message-ID: <20181206094451.GC13538@hirez.programming.kicks-ass.net>
+References: <20181204121805.4621-1-igor.stoppa@huawei.com>
+ <20181204121805.4621-3-igor.stoppa@huawei.com>
+ <CALCETrVvoui0vksdt0Y9rdGL5ipEn_FtSXVVUFdH03ZC93cy_A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181204234024.GC1233@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18120608-2213-0000-0000-000003258CA2
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010180; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01127715; UDB=6.00585774; IPR=6.00907847;
- MB=3.00024475; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-06 08:18:24
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120608-2214-0000-0000-00005C81385A
-Message-Id: <1e9f4b5a-c0fc-8be8-61f5-39166e948b01@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-06_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=974 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812060075
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrVvoui0vksdt0Y9rdGL5ipEn_FtSXVVUFdH03ZC93cy_A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+On Wed, Dec 05, 2018 at 03:13:56PM -0800, Andy Lutomirski wrote:
 
-On 12/05/2018 05:10 AM, Jarkko Sakkinen wrote:
-> On Tue, Dec 04, 2018 at 09:21:35AM +0100, Roberto Sassu wrote:
->> Currently the TPM driver allows other kernel subsystems to read only the
->> SHA1 PCR bank. This patch modifies the parameters of tpm_pcr_read() and
->> tpm2_pcr_read() to pass a tpm_digest structure, which contains the desired
->> hash algorithm. Also, since commit 125a22105410 ("tpm: React correctly to
->> RC_TESTING from TPM 2.0 self tests") removed the call to tpm2_pcr_read(),
->> the new parameter is expected to be always not NULL.
->>
->> Due to the API change, IMA functions have been modified.
->>
->> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->> Acked-by: Mimi Zohar <zohar@linux.ibm.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->
-> Mimi, Nayna, can you help with testing this (because of the IMA change)?
+> > +       if (op == WR_MEMCPY)
+> > +               memcpy((void *)wr_poking_addr, (void *)src, len);
+> > +       else if (op == WR_MEMSET)
+> > +               memset((u8 *)wr_poking_addr, (u8)src, len);
+> > +       else if (op == WR_RCU_ASSIGN_PTR)
+> > +               /* generic version of rcu_assign_pointer */
+> > +               smp_store_release((void **)wr_poking_addr,
+> > +                                 RCU_INITIALIZER((void **)src));
+> > +       kasan_enable_current();
+> 
+> Hmm.  I suspect this will explode quite badly on sane architectures
+> like s390.  (In my book, despite how weird s390 is, it has a vastly
+> nicer model of "user" memory than any other architecture I know
+> of...).  I think you should use copy_to_user(), etc, instead.  I'm not
+> entirely sure what the best smp_store_release() replacement is.
+> Making this change may also mean you can get rid of the
+> kasan_disable_current().
 
-Sure, I will try to do by end of my day tomorrow,
+If you make the MEMCPY one guarantee single-copy atomicity for native
+words then you're basically done.
 
-Thanks & Regards,
-     - Nayna
+smp_store_release() can be implemented with:
 
->
-> /Jarkko
->
+	smp_mb();
+	WRITE_ONCE();
 
+So if we make MEMCPY provide the WRITE_ONCE(), all we need is that
+barrier, which we can easily place at the call site and not overly
+complicate our interface with this.
+
+Because performance is down the drain already, an additional full
+memory barrier is peanuts here (and in fact already implied by the x86
+CR3 munging).
