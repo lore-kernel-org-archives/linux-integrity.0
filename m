@@ -6,107 +6,76 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFCC0C6786C
-	for <linux-integrity@archiver.kernel.org>; Thu,  6 Dec 2018 09:45:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92496C04EB9
+	for <linux-integrity@archiver.kernel.org>; Thu,  6 Dec 2018 09:57:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A542720989
-	for <linux-integrity@archiver.kernel.org>; Thu,  6 Dec 2018 09:45:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56E4720850
+	for <linux-integrity@archiver.kernel.org>; Thu,  6 Dec 2018 09:57:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mKV5ebHo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A542720989
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hR5Ub0E4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56E4720850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728144AbeLFJpY (ORCPT
+        id S1729127AbeLFJ5e (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 6 Dec 2018 04:45:24 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:46828 "EHLO
+        Thu, 6 Dec 2018 04:57:34 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:46902 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727763AbeLFJpY (ORCPT
+        with ESMTP id S1728144AbeLFJ5d (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 6 Dec 2018 04:45:24 -0500
+        Thu, 6 Dec 2018 04:57:33 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+Oc9aPprVL/I8aoLjV3ntWcij0NK7R/RtAEC+ha4tto=; b=mKV5ebHo5lV4y9zyrU2euNCRc
-        wuSf9414bTPHTvA0KSNa5woZt/SBWRuEZyfuEzhbp9A1B1mWu2RWw4tSN9VU73LBfne/gpJ3TpiyY
-        SArF2D2WKFTw130pW9wTagCc4W4cr/qWcJPOFaBKmTD7VAQpVTbTfSnZz6tQnGTZjwqv4sYLyruZx
-        5GAxh2v7hI1SY7jTcslSXpM5uH/a7Yz+J1qqLJ2scxlQyzjWgsfSSbr1wePV2XmsNrIE0RDxOHk/L
-        8PRep4ct6P3rgzIaMLvn8ev+0AG0u7JzJ/MdZAgB1MLEM4DJukpyhRvgOHcioleL/dHuJFvVkDtUi
-        UGEa04UWQ==;
+         bh=pphfmW7d0SKARFYi8RfqJI9+aTtVREWwtRPx6ZqaDk8=; b=hR5Ub0E4lm2kuUbuuX+YKzBiP
+        Dtuj+kdDan5VDeZ5y6FiBUHhqA+DWbQPhlSLPwth2VCOq50deoS1KMXl/xxe1nlGVaXqBJ6UlRjVx
+        Ctw/Ph99rEGP5fWmw3ddJyyaaWE6PL42ghSqdklytXLl1A6R1FV4LTG+5hmeUjMdQLLTnmrnwWHoJ
+        qLrX0wboFlsfRuhj/f8ytWyDSIVLvn7agsLdRBZtXeBOXpohqHjzOehbcnkIPJxgxsxVxJBDzdhBQ
+        wsK4+tvd++M6JzV2lIOSJ4gc+SDGeY/+EGIPlWZOLdpWmtjdsTO2gECbfPYQnirLRGNHm1wEQTB9C
+        amHynOdvQ==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gUqDG-0005JO-A1; Thu, 06 Dec 2018 09:44:54 +0000
+        id 1gUqPE-0005Mw-Ag; Thu, 06 Dec 2018 09:57:16 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9054E2029F4C1; Thu,  6 Dec 2018 10:44:51 +0100 (CET)
-Date:   Thu, 6 Dec 2018 10:44:51 +0100
+        id 1EC27200FBC3D; Thu,  6 Dec 2018 10:57:15 +0100 (CET)
+Date:   Thu, 6 Dec 2018 10:57:15 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
         Nadav Amit <nadav.amit@gmail.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/6] __wr_after_init: write rare for static allocation
-Message-ID: <20181206094451.GC13538@hirez.programming.kicks-ass.net>
-References: <20181204121805.4621-1-igor.stoppa@huawei.com>
- <20181204121805.4621-3-igor.stoppa@huawei.com>
- <CALCETrVvoui0vksdt0Y9rdGL5ipEn_FtSXVVUFdH03ZC93cy_A@mail.gmail.com>
+        linux_dti@icloud.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Rick P Edgecombe <rick.p.edgecombe@intel.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v7 13/14] module: Do not set nx for module memory before
+ freeing
+Message-ID: <20181206095715.GD13538@hirez.programming.kicks-ass.net>
+References: <20181205013408.47725-1-namit@vmware.com>
+ <20181205013408.47725-14-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrVvoui0vksdt0Y9rdGL5ipEn_FtSXVVUFdH03ZC93cy_A@mail.gmail.com>
+In-Reply-To: <20181205013408.47725-14-namit@vmware.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 03:13:56PM -0800, Andy Lutomirski wrote:
+On Tue, Dec 04, 2018 at 05:34:07PM -0800, Nadav Amit wrote:
 
-> > +       if (op == WR_MEMCPY)
-> > +               memcpy((void *)wr_poking_addr, (void *)src, len);
-> > +       else if (op == WR_MEMSET)
-> > +               memset((u8 *)wr_poking_addr, (u8)src, len);
-> > +       else if (op == WR_RCU_ASSIGN_PTR)
-> > +               /* generic version of rcu_assign_pointer */
-> > +               smp_store_release((void **)wr_poking_addr,
-> > +                                 RCU_INITIALIZER((void **)src));
-> > +       kasan_enable_current();
-> 
-> Hmm.  I suspect this will explode quite badly on sane architectures
-> like s390.  (In my book, despite how weird s390 is, it has a vastly
-> nicer model of "user" memory than any other architecture I know
-> of...).  I think you should use copy_to_user(), etc, instead.  I'm not
-> entirely sure what the best smp_store_release() replacement is.
-> Making this change may also mean you can get rid of the
-> kasan_disable_current().
+> So let's remove it. Andy suggested that the changes of the PTEs can be
+> avoided (excluding the direct-mapping alias), which is true. However,
+> in x86 it requires some cleanup of the contiguous page allocator, which
+> is outside of the scope of this patch-set.
 
-If you make the MEMCPY one guarantee single-copy atomicity for native
-words then you're basically done.
-
-smp_store_release() can be implemented with:
-
-	smp_mb();
-	WRITE_ONCE();
-
-So if we make MEMCPY provide the WRITE_ONCE(), all we need is that
-barrier, which we can easily place at the call site and not overly
-complicate our interface with this.
-
-Because performance is down the drain already, an additional full
-memory barrier is peanuts here (and in fact already implied by the x86
-CR3 munging).
+I think x86-cpa stands for change_page_attr() :-)
