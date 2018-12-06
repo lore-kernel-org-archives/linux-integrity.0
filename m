@@ -2,153 +2,133 @@ Return-Path: <SRS0=uN/y=OP=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29622C04EB9
-	for <linux-integrity@archiver.kernel.org>; Thu,  6 Dec 2018 13:09:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78237C04EB8
+	for <linux-integrity@archiver.kernel.org>; Thu,  6 Dec 2018 16:29:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E338E21479
-	for <linux-integrity@archiver.kernel.org>; Thu,  6 Dec 2018 13:09:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3251820661
+	for <linux-integrity@archiver.kernel.org>; Thu,  6 Dec 2018 16:29:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544101769;
-	bh=f1bDdZtr9VDioZCEqAt/67HERLJ0WUZkqRvMMmrNW1o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=fJKmLbN+phJLMXawPZNeODHDpB7ALT+WWFj49tohxrEz+Edytda2nwHwwEW0X7qPw
-	 0rFK0YRHHy+j9Lyv5ChVjSv5e3IMpAdET3P4hJ7q05RFDZQYLOrTgfXyUV3+wyGYke
-	 nSMvzahrgrgds0y70a9p0dPSXSP3hDrFaI9KsyfU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E338E21479
+	s=default; t=1544113743;
+	bh=bGd4KhxCSa8pGVe5YJ9fBJ6q8AOdrQl3RWYTF7S5kIs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=lJkOJJTX4Ph2nffcrLS/5AYZ8YOpLlhztUro4VfvrtsNF6x1kf2MSvg1ocxkdneTX
+	 8k3lWOAy+fRQ4D2O9/uR/3RamScGWpCGYc9EV484W5BeQOOXFk7NEkpgeSprG0SlTW
+	 JBj3/T9gpmA9HD1KERL4Wa7dWx7TksAgbzuXWhhQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3251820661
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729468AbeLFNJ2 (ORCPT
+        id S1725935AbeLFQ3C (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 6 Dec 2018 08:09:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45390 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729369AbeLFNJ2 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 6 Dec 2018 08:09:28 -0500
-Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F33120838;
-        Thu,  6 Dec 2018 13:09:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544101767;
-        bh=f1bDdZtr9VDioZCEqAt/67HERLJ0WUZkqRvMMmrNW1o=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=1A89uC6A8NndbXNSvzeYdVf8ddPOA/wq6ZGM1zzExAPJ8kR5EtVj3/D5xySCWJttj
-         2wqJj34wrSoGQxPo7VgyyFms+2mkYWLxiVPGL4fvVmdob+0bAyL474RRv7R4HZZ47Z
-         dpdUAMyX5wSHOKvGrYfS8xHwOl2wsQijmSIg+9bs=
-Date:   Thu, 6 Dec 2018 22:09:23 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
+        Thu, 6 Dec 2018 11:29:02 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37322 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725907AbeLFQ3C (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 6 Dec 2018 11:29:02 -0500
+Received: by mail-wm1-f68.google.com with SMTP id g67so1692743wmd.2;
+        Thu, 06 Dec 2018 08:29:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Xec3AbRr1ewYH1eTRNN7gm8e8fciqeRvXelwkD9Wghk=;
+        b=JJRgsAn4nIzv2GrnZSfxKeOfOg4wFt/aonskIS7bCRbaG4ODIpCdkjSVMSdLmSYCH1
+         viBWw+Uq52N6CtKXPw6+zBQTL64EIOCIOgYpIxCyBiqcyq9qFtBKSRJOzPiv2vLAPjen
+         IkWOhXeWUyGrBZ988n84ye+GcIpkTsbcEyoqLlMEj7rctcvDCzToubqSB2yp7q2HK4m7
+         9QXTTE8zRa1X3axlxK5cyMiPEj3PN3KoryA27EzY5u3yW43dbGwMkh8kSrDt/0jKgTAf
+         UQaZcWOt+BAdJk0U/2LGUIF7plP+tDRXa4amiiR2ck3jUuuj4VYpmiAcdW9O3Zlb3MkM
+         pnwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=Xec3AbRr1ewYH1eTRNN7gm8e8fciqeRvXelwkD9Wghk=;
+        b=GhZchcywbjr6lWXzS2HqHcwCgdjmuBn7hvOitigfo6cIzSk93lB4OPpTeFofBSKZW7
+         BWykT7UlFKj8cVNAbtLrciToIb30wRDN1ap/muqMAWDMAqiKcNqSX4LuRDRSUnm71PLs
+         eJ1vrPrNhlpB7ovn/dA/tg3hzd9dW2JdKeQyZIkRj3oLRK/RsupdcUlx0QYR40ZpSg6Y
+         q4camhEm2WmjNIlb9BhoLv5eg6yDch87Lzpu9tfwuPaumo8DlNZlY0u8JTOZLKM7iFBC
+         YVNUlhs7YLKCbCDf6WmAS+6oCFFw4GUsSk8LNhYq1oDECcHJS5OlKZ1XdVVjI4IsDqB0
+         yRfA==
+X-Gm-Message-State: AA+aEWZbG0PAqSCxRZB61oprxRtdVLf6SQXvMdHZzRlwenGT0otXg+L0
+        lsRBjbzSNyupKJL8UneeCbw=
+X-Google-Smtp-Source: AFSGD/UfNOSLjk5ZpLeUWpO0IgdYLw3Tivbmh8k3XJ4kNhvc6RFFR5MLAxzK2J0kQ93zvG7utfApwg==
+X-Received: by 2002:a1c:4108:: with SMTP id o8mr19618478wma.91.1544113740403;
+        Thu, 06 Dec 2018 08:29:00 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id 14sm1966746wmv.36.2018.12.06.08.28.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Dec 2018 08:28:59 -0800 (PST)
+Date:   Thu, 6 Dec 2018 17:28:57 +0100
+From:   Ingo Molnar <mingo@kernel.org>
 To:     Nadav Amit <namit@vmware.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, <linux-kernel@vger.kernel.org>,
-        <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Borislav Petkov <bp@alien8.de>,
         Andy Lutomirski <luto@kernel.org>,
-        Nadav Amit <nadav.amit@gmail.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, <linux_dti@icloud.com>,
-        <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v7 09/14] x86/kprobes: Instruction pages initialization
- enhancements
-Message-Id: <20181206220923.20e5b0593fa1a8038eb710fd@kernel.org>
-In-Reply-To: <20181205013408.47725-10-namit@vmware.com>
+        Peter Zijlstra <peterz@infradead.org>,
+        Damian Tometzki <linux_dti@icloud.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v7 08/14] x86/ftrace: Use text_poke_*() infrastructure
+Message-ID: <20181206162857.GA119243@gmail.com>
 References: <20181205013408.47725-1-namit@vmware.com>
-        <20181205013408.47725-10-namit@vmware.com>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+ <20181205013408.47725-9-namit@vmware.com>
+ <25B84F01-DB4C-4957-9703-769CCC9794BB@vmware.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <25B84F01-DB4C-4957-9703-769CCC9794BB@vmware.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 4 Dec 2018 17:34:03 -0800
-Nadav Amit <namit@vmware.com> wrote:
 
-> This patch is a preparatory patch for a following patch that makes
-> module allocated pages non-executable. The patch sets the page as
-> executable after allocation.
+* Nadav Amit <namit@vmware.com> wrote:
+
+> > On Dec 4, 2018, at 5:34 PM, Nadav Amit <namit@vmware.com> wrote:
+> > 
+> > A following patch is going to make module allocated memory
+> > non-executable. This requires to modify ftrace and make the memory
+> > executable again after it is configured.
+> > 
+> > In addition, this patch makes ftrace use the general text poking
+> > infrastructure instead ftrace's homegrown text patching. This provides
+> > the advantages of having slightly "safer" code patching and avoiding
+> > races with module removal or other mechanisms that patch the kernel
+> > code.
+> > 
+> > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > Signed-off-by: Nadav Amit <namit@vmware.com>
+> > ---
+> > arch/x86/kernel/ftrace.c | 74 +++++++++++++---------------------------
+> > 1 file changed, 23 insertions(+), 51 deletions(-)
 > 
-> In the future, we may get better protection of executables. For example,
-> by using hypercalls to request the hypervisor to protect VM executable
-> pages from modifications using nested page-tables. This would allow
-> us to ensure the executable has not changed between allocation and
-> its write-protection.
-
-Sounds interesting!
-
+> Steven Rostedt pointed that using text_poke() instead of
+> probe_kernel_write() would introduce considerable overheads. Running:
 > 
-> While at it, do some small cleanup of what appears to be unnecessary
-> masking.
-
-Looks good to me.
-
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-
-
-Thanks!
-
+>   # time { echo function > current_tracer; } 
 > 
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Signed-off-by: Nadav Amit <namit@vmware.com>
-> ---
->  arch/x86/kernel/kprobes/core.c | 24 ++++++++++++++++++++----
->  1 file changed, 20 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-> index c33b06f5faa4..ca0118d3b3e8 100644
-> --- a/arch/x86/kernel/kprobes/core.c
-> +++ b/arch/x86/kernel/kprobes/core.c
-> @@ -431,8 +431,20 @@ void *alloc_insn_page(void)
->  	void *page;
->  
->  	page = module_alloc(PAGE_SIZE);
-> -	if (page)
-> -		set_memory_ro((unsigned long)page & PAGE_MASK, 1);
-> +	if (page == NULL)
-> +		return NULL;
-> +
-> +	/*
-> +	 * First make the page read-only, and then only then make it executable
-> +	 * to prevent it from being W+X in between.
-> +	 */
-> +	set_memory_ro((unsigned long)page, 1);
-> +
-> +	/*
-> +	 * TODO: Once additional kernel code protection mechanisms are set, ensure
-> +	 * that the page was not maliciously altered and it is still zeroed.
-> +	 */
-> +	set_memory_x((unsigned long)page, 1);
->  
->  	return page;
->  }
-> @@ -440,8 +452,12 @@ void *alloc_insn_page(void)
->  /* Recover page to RW mode before releasing it */
->  void free_insn_page(void *page)
->  {
-> -	set_memory_nx((unsigned long)page & PAGE_MASK, 1);
-> -	set_memory_rw((unsigned long)page & PAGE_MASK, 1);
-> +	/*
-> +	 * First make the page non-executable, and then only then make it
-> +	 * writable to prevent it from being W+X in between.
-> +	 */
-> +	set_memory_nx((unsigned long)page, 1);
-> +	set_memory_rw((unsigned long)page, 1);
->  	module_memfree(page);
->  }
->  
-> -- 
-> 2.17.1
-> 
+> takes 0.24s without this patch and 0.7s with. I don’t know whether to
+> consider it “so bad”. Obviously we can introduce a batching mechanism and/or
+> do some micro-optimization (the latter will not buy us much though).
 
+This should definitely not regress, so can we try the batching approach?
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Thanks,
+
+	Ingo
