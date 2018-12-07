@@ -2,81 +2,102 @@ Return-Path: <SRS0=uMbN=OQ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7167FC04EB8
-	for <linux-integrity@archiver.kernel.org>; Fri,  7 Dec 2018 00:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9DEC07E85
+	for <linux-integrity@archiver.kernel.org>; Fri,  7 Dec 2018 14:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2359520700
-	for <linux-integrity@archiver.kernel.org>; Fri,  7 Dec 2018 00:00:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qnCDbvDI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2359520700
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 911E72146D
+	for <linux-integrity@archiver.kernel.org>; Fri,  7 Dec 2018 14:51:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 911E72146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726249AbeLGAA0 (ORCPT
+        id S1726054AbeLGOvt (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 6 Dec 2018 19:00:26 -0500
-Received: from mail-it1-f182.google.com ([209.85.166.182]:54494 "EHLO
-        mail-it1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726230AbeLGAA0 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 6 Dec 2018 19:00:26 -0500
-Received: by mail-it1-f182.google.com with SMTP id i145so4317648ita.4
-        for <linux-integrity@vger.kernel.org>; Thu, 06 Dec 2018 16:00:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MoFWjeepUpoCvO4xTb0Gn494hlZpYiOLnR/OC6FuKMc=;
-        b=qnCDbvDIQerdLreuAIgo5+lLQpqOp+jdN+YuO0eBAomqkSOwuUkBJZTODMqxT12P05
-         InMEpHH6DhWYS9E/2RfBJ1/rpuMCjDWzvth0fPyVVimp50wRZBAh1oyNrIhbt/ZeFUmj
-         FbtklN07koFTevyElw+rIvKlcxVWrGPDFVTjMnsRR0bSLlyNIzf0MYWlxevgLcpRROKi
-         Sx15cwdpP8YQ6NYTu3cEHaAJ6uvsw1PAUA6ZQAwT3rFfA5BCHtIuzePQ5sMtTc1cKEmi
-         1lnS7VwxgrevyiFdBuAYu7Ul4jATs31eSTmCISx9HoU5GyLGSisivpsDyt9mq/1HUoQD
-         Jhog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MoFWjeepUpoCvO4xTb0Gn494hlZpYiOLnR/OC6FuKMc=;
-        b=NuYu2HYzKdv/VUurSRUsHpsrBAc5e7uE/s+svQdtt1i0pAvv0vPbA5RVbdwnKWHxhH
-         brFh05Bi5Ie2ny4+AMDrXnEn3mLQS8iVOdowELd6KJJOXhOnnDIqm5QK66+n3viNrS/n
-         iMRXn09HEsutqDnQGr83b6JmOgGKZmHWyDiurUUoVv8Cit3o4ofDuVHvNByqgc3WQl6x
-         LfN3sJRy4t861gONEiMnj4tUJ4/hN4J62MsAvA9gOjgYhDuyfY9nYYPSyb8WQACB6xPk
-         yZfv6AuyjL0ZqTol9E8o9WQFtySPabj8n91+cOC1oECdZxDBm74BhglvMNqgh0yxO6z3
-         MWIQ==
-X-Gm-Message-State: AA+aEWZ3v/YzgAPmrVvTUSvMBTkPmKD3/8ImEOKZcNrJhd7S3VhGxywW
-        WTUBHx1qBa21FPQKxik8ELSxIlh507MXAH1vZ4eax1ljyFs=
-X-Google-Smtp-Source: AFSGD/VfsnsmYEOmt/gl5bHyQFMk02RUo7jjAQcNmBOAb8Yy5DxBFj7LFMZXeS2g5gwKcbIRlEJgLioRp91Z3J9i24s=
-X-Received: by 2002:a24:5d5:: with SMTP id 204mr410679itl.122.1544140825489;
- Thu, 06 Dec 2018 16:00:25 -0800 (PST)
+        Fri, 7 Dec 2018 09:51:49 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32805 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725998AbeLGOvt (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 7 Dec 2018 09:51:49 -0500
+Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 39907AA92CB43;
+        Fri,  7 Dec 2018 14:51:42 +0000 (GMT)
+Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
+ (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 7 Dec
+ 2018 14:51:38 +0000
+Subject: Re: [PATCH v6 4/7] tpm: modify tpm_pcr_read() definition to pass a
+ TPM hash algorithm
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     <david.safford@ge.com>, <monty.wiseman@ge.com>,
+        <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20181204082138.24600-1-roberto.sassu@huawei.com>
+ <20181204082138.24600-5-roberto.sassu@huawei.com>
+ <20181204234024.GC1233@linux.intel.com>
+ <1544041904.4017.8.camel@linux.ibm.com>
+ <1544125756.4017.70.camel@linux.ibm.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <2f6c0365-6c17-2da1-9f5b-3c8e5cc301b2@huawei.com>
+Date:   Fri, 7 Dec 2018 15:51:33 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <CAJCQCtTUOh-QQgyEXu1HvHNqqL1kUEkTV3-SaWYDAduQLBhs9Q@mail.gmail.com>
-In-Reply-To: <CAJCQCtTUOh-QQgyEXu1HvHNqqL1kUEkTV3-SaWYDAduQLBhs9Q@mail.gmail.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Thu, 6 Dec 2018 16:00:13 -0800
-Message-ID: <CACdnJutPhmizvz9mPT6-hHgXr8LjjAc0Pd9reJjgjRKL3K8Wbw@mail.gmail.com>
-Subject: Re: unrecognized TMP 2.0 hardware
-To:     chris@colorremedies.com
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1544125756.4017.70.camel@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.204.65.144]
+X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Dec 6, 2018 at 3:01 PM Chris Murphy <chris@colorremedies.com> wrote:
-> [    2.066860] tpm_crb MSFT0101:00: can't request region for resource
-> [mem 0x3af5b000-0x3af5b02f]
-> [    2.066916] tpm_crb: probe of MSFT0101:00 failed with error -16
-> [    2.324683] ima: No TPM chip found, activating TPM-bypass!
+On 12/6/2018 8:49 PM, Mimi Zohar wrote:
+> On Wed, 2018-12-05 at 15:31 -0500, Mimi Zohar wrote:
+>> On Tue, 2018-12-04 at 15:40 -0800, Jarkko Sakkinen wrote:
+>>> On Tue, Dec 04, 2018 at 09:21:35AM +0100, Roberto Sassu wrote:
+>>>> Currently the TPM driver allows other kernel subsystems to read only the
+>>>> SHA1 PCR bank. This patch modifies the parameters of tpm_pcr_read() and
+>>>> tpm2_pcr_read() to pass a tpm_digest structure, which contains the desired
+>>>> hash algorithm. Also, since commit 125a22105410 ("tpm: React correctly to
+>>>> RC_TESTING from TPM 2.0 self tests") removed the call to tpm2_pcr_read(),
+>>>> the new parameter is expected to be always not NULL.
+>>>>
+>>>> Due to the API change, IMA functions have been modified.
+>>>>
+>>>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>>>> Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+>>>
+>>> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>>>
+>>> Mimi, Nayna, can you help with testing this (because of the IMA change)?
+>>
+>> It's up & running and the measurement list verifies against the TPM
+>> PCR.  Although this system has two algorithms enabled, all of the PCRs
+>> are allocated for one algorithm and none for the other.  I'm still
+>> looking around for another system with PCR 10 enabled for multiple
+>> algorithms.
+> 
+> PCRs for sha1 and sha256 algorithms are being updated and the
+> measurement list verifies against the SHA1 PCR-10.
+> 
+> Roberto, have you added support in ima-evm-utils to validate the other
+> banks?
 
-Your firmware is marking the region as ACPI_NVS and the kernel refuses
-to allow a driver to allocate it. The "obvious" thing to do here is
-for the kernel to allow drivers to allocate ACPI_NVS regions (since
-Windows obviously works), but there's then some complexity over the
-special-cased NVS save/restore code over suspend/resume.
+I modified IMA LTP.
+
+Roberto
+
+
+> Mimi
+> 
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
