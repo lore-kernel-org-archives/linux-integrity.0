@@ -1,103 +1,149 @@
-Return-Path: <SRS0=uMbN=OQ=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=mmrv=OR=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9DEC07E85
-	for <linux-integrity@archiver.kernel.org>; Fri,  7 Dec 2018 14:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E98F2C64EB1
+	for <linux-integrity@archiver.kernel.org>; Sat,  8 Dec 2018 20:30:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 911E72146D
-	for <linux-integrity@archiver.kernel.org>; Fri,  7 Dec 2018 14:51:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 911E72146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id B3CB32082D
+	for <linux-integrity@archiver.kernel.org>; Sat,  8 Dec 2018 20:30:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3CB32082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726054AbeLGOvt (ORCPT
+        id S1726233AbeLHUam (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 7 Dec 2018 09:51:49 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32805 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725998AbeLGOvt (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 7 Dec 2018 09:51:49 -0500
-Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 39907AA92CB43;
-        Fri,  7 Dec 2018 14:51:42 +0000 (GMT)
-Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
- (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 7 Dec
- 2018 14:51:38 +0000
-Subject: Re: [PATCH v6 4/7] tpm: modify tpm_pcr_read() definition to pass a
- TPM hash algorithm
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <david.safford@ge.com>, <monty.wiseman@ge.com>,
-        <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
-References: <20181204082138.24600-1-roberto.sassu@huawei.com>
- <20181204082138.24600-5-roberto.sassu@huawei.com>
- <20181204234024.GC1233@linux.intel.com>
- <1544041904.4017.8.camel@linux.ibm.com>
- <1544125756.4017.70.camel@linux.ibm.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <2f6c0365-6c17-2da1-9f5b-3c8e5cc301b2@huawei.com>
-Date:   Fri, 7 Dec 2018 15:51:33 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <1544125756.4017.70.camel@linux.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.204.65.144]
-X-CFilter-Loop: Reflected
+        Sat, 8 Dec 2018 15:30:42 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38180 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726192AbeLHUal (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 8 Dec 2018 15:30:41 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB8KT8Br051339
+        for <linux-integrity@vger.kernel.org>; Sat, 8 Dec 2018 15:30:40 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2p8909vaw3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Sat, 08 Dec 2018 15:30:40 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <nayna@linux.ibm.com>;
+        Sat, 8 Dec 2018 20:30:38 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 8 Dec 2018 20:30:34 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB8KUW0859637816
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 8 Dec 2018 20:30:32 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 27CDD4C04E;
+        Sat,  8 Dec 2018 20:30:32 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BE13F4C044;
+        Sat,  8 Dec 2018 20:30:28 +0000 (GMT)
+Received: from swastik.ibmuc.com (unknown [9.85.68.82])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sat,  8 Dec 2018 20:30:28 +0000 (GMT)
+From:   Nayna Jain <nayna@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
+        dhowells@redhat.com, jforbes@redhat.com,
+        seth.forshee@canonical.com, kexec@lists.infradead.org,
+        keyrings@vger.kernel.org, vgoyal@redhat.com, ebiederm@xmission.com,
+        mpe@ellerman.id.au, Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH v2 0/7] add platform/firmware keys support for kernel verification by IMA 
+Date:   Sun,  9 Dec 2018 01:56:58 +0530
+X-Mailer: git-send-email 2.13.6
+X-TM-AS-GCONF: 00
+x-cbid: 18120820-0008-0000-0000-0000029EC54A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120820-0009-0000-0000-0000220934F5
+Message-Id: <20181208202705.18673-1-nayna@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-08_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812080192
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 12/6/2018 8:49 PM, Mimi Zohar wrote:
-> On Wed, 2018-12-05 at 15:31 -0500, Mimi Zohar wrote:
->> On Tue, 2018-12-04 at 15:40 -0800, Jarkko Sakkinen wrote:
->>> On Tue, Dec 04, 2018 at 09:21:35AM +0100, Roberto Sassu wrote:
->>>> Currently the TPM driver allows other kernel subsystems to read only the
->>>> SHA1 PCR bank. This patch modifies the parameters of tpm_pcr_read() and
->>>> tpm2_pcr_read() to pass a tpm_digest structure, which contains the desired
->>>> hash algorithm. Also, since commit 125a22105410 ("tpm: React correctly to
->>>> RC_TESTING from TPM 2.0 self tests") removed the call to tpm2_pcr_read(),
->>>> the new parameter is expected to be always not NULL.
->>>>
->>>> Due to the API change, IMA functions have been modified.
->>>>
->>>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->>>> Acked-by: Mimi Zohar <zohar@linux.ibm.com>
->>>
->>> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->>>
->>> Mimi, Nayna, can you help with testing this (because of the IMA change)?
->>
->> It's up & running and the measurement list verifies against the TPM
->> PCR.  Although this system has two algorithms enabled, all of the PCRs
->> are allocated for one algorithm and none for the other.  I'm still
->> looking around for another system with PCR 10 enabled for multiple
->> algorithms.
-> 
-> PCRs for sha1 and sha256 algorithms are being updated and the
-> measurement list verifies against the SHA1 PCR-10.
-> 
-> Roberto, have you added support in ima-evm-utils to validate the other
-> banks?
+On secure boot enabled systems, a verified kernel may need to kexec
+additional kernels. For example, it may be used as a bootloader needing
+to kexec a target kernel or it may need to kexec a crashdump kernel.
+In such cases, it may want to verify the signature of the next kernel
+image.
 
-I modified IMA LTP.
+It is possible that the new kernel image is signed with third party keys
+which are stored as platform or firmware keys in the 'db' variable. The
+kernel, however, can not directly verify these platform keys, and an
+administrator may therefore not want to trust them for arbitrary usage.
+In order to differentiate platform keys from other keys and provide the
+necessary separation of trust the kernel needs an additional keyring to
+store platform/firmware keys.
 
-Roberto
+The secure boot key database is expected to store the keys as EFI
+Signature List(ESL). The patch set uses David Howells and Josh Boyer's
+patch to access and parse the ESL to extract the certificates and load
+them onto the platform keyring.
 
+The last patch in this patch set adds support for IMA-appraisal to
+verify the kexec'ed kernel image based on keys stored in the platform
+keyring.
 
-> Mimi
-> 
+Changelog:
+
+v0:
+- The original patches loaded the certificates onto the secondary
+  trusted keyring. This patch set defines a new keyring named
+  ".platform" and adds the certificates to this new keyring  
+- removed CONFIG EFI_SIGNATURE_LIST_PARSER and LOAD_UEFI_KEYS
+- moved files from certs/ to security/integrity/platform_certs/
+
+v2:
+- fixed the checkpatch warnings and other formatting as suggested by
+  Mimi Zohar 
+- fixed coding style as suggested by Serge Hallyn in Patch "ima: Support
+  platform keyring for kernel appraisal"
+
+Dave Howells (2):
+  efi: Add EFI signature data types
+  efi: Add an EFI signature blob parser
+
+Josh Boyer (2):
+  efi: Import certificates from UEFI Secure Boot
+  efi: Allow the "db" UEFI variable to be suppressed
+
+Nayna Jain (3):
+  integrity: Define a trusted platform keyring
+  integrity: Load certs to the platform keyring
+  ima: Support platform keyring for kernel appraisal
+
+ include/linux/efi.h                                |  34 ++++
+ security/integrity/Kconfig                         |  11 ++
+ security/integrity/Makefile                        |   5 +
+ security/integrity/digsig.c                        | 115 ++++++++----
+ security/integrity/ima/ima_appraise.c              |  13 +-
+ security/integrity/integrity.h                     |  23 ++-
+ security/integrity/platform_certs/efi_parser.c     | 108 ++++++++++++
+ security/integrity/platform_certs/load_uefi.c      | 196 +++++++++++++++++++++
+ .../integrity/platform_certs/platform_keyring.c    |  62 +++++++
+ 9 files changed, 528 insertions(+), 39 deletions(-)
+ create mode 100644 security/integrity/platform_certs/efi_parser.c
+ create mode 100644 security/integrity/platform_certs/load_uefi.c
+ create mode 100644 security/integrity/platform_certs/platform_keyring.c
 
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+2.13.6
+
