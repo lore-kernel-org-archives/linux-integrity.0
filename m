@@ -2,106 +2,142 @@ Return-Path: <SRS0=bpc9=OS=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8740FC07E85
-	for <linux-integrity@archiver.kernel.org>; Sun,  9 Dec 2018 20:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB44C65BAF
+	for <linux-integrity@archiver.kernel.org>; Sun,  9 Dec 2018 20:37:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 503AE20661
-	for <linux-integrity@archiver.kernel.org>; Sun,  9 Dec 2018 20:33:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 503AE20661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 194302082F
+	for <linux-integrity@archiver.kernel.org>; Sun,  9 Dec 2018 20:37:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 194302082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726432AbeLIUdK (ORCPT
+        id S1726287AbeLIUhQ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 9 Dec 2018 15:33:10 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44302 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726250AbeLIUdK (ORCPT
+        Sun, 9 Dec 2018 15:37:16 -0500
+Received: from mail.windriver.com ([147.11.1.11]:32967 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726219AbeLIUhP (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 9 Dec 2018 15:33:10 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB9KSseS139935
-        for <linux-integrity@vger.kernel.org>; Sun, 9 Dec 2018 15:33:09 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p98m52kx3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Sun, 09 Dec 2018 15:33:09 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Sun, 9 Dec 2018 20:33:07 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 9 Dec 2018 20:33:04 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB9KX38B58064988
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 9 Dec 2018 20:33:03 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 157A64C040;
-        Sun,  9 Dec 2018 20:33:03 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0E0C14C046;
-        Sun,  9 Dec 2018 20:33:02 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.88.113])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun,  9 Dec 2018 20:33:01 +0000 (GMT)
-Subject: Re: [PATCH v6 4/7] tpm: modify tpm_pcr_read() definition to pass a
- TPM hash algorithm
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Date:   Sun, 09 Dec 2018 15:32:51 -0500
-In-Reply-To: <2f6c0365-6c17-2da1-9f5b-3c8e5cc301b2@huawei.com>
-References: <20181204082138.24600-1-roberto.sassu@huawei.com>
-         <20181204082138.24600-5-roberto.sassu@huawei.com>
-         <20181204234024.GC1233@linux.intel.com>
-         <1544041904.4017.8.camel@linux.ibm.com>
-         <1544125756.4017.70.camel@linux.ibm.com>
-         <2f6c0365-6c17-2da1-9f5b-3c8e5cc301b2@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18120920-0012-0000-0000-000002D6BDB8
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120920-0013-0000-0000-0000210C2DE6
-Message-Id: <1544387571.3794.17.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-09_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=874 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812090189
+        Sun, 9 Dec 2018 15:37:15 -0500
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id wB9Kal5H020405
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Sun, 9 Dec 2018 12:36:48 -0800 (PST)
+Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Sun, 9 Dec 2018
+ 12:36:47 -0800
+From:   Paul Gortmaker <paul.gortmaker@windriver.com>
+To:     <linux-security-module@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        David Howells <dhowells@redhat.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, <keyrings@vger.kernel.org>,
+        <linux-ima-devel@lists.sourceforge.net>,
+        <linux-integrity@vger.kernel.org>
+Subject: [PATCH 0/5] security: remove needless usage of module header
+Date:   Sun, 9 Dec 2018 15:36:28 -0500
+Message-ID: <1544387793-32309-1-git-send-email-paul.gortmaker@windriver.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, 2018-12-07 at 15:51 +0100, Roberto Sassu wrote:
-> On 12/6/2018 8:49 PM, Mimi Zohar wrote:
+The most important thing to note here, is these clean-ups make no
+changes to the object files or the final generated run-time.
 
-> > PCRs for sha1 and sha256 algorithms are being updated and the
-> > measurement list verifies against the SHA1 PCR-10.
-> > 
-> > Roberto, have you added support in ima-evm-utils to validate the other
-> > banks?
-> 
-> I modified IMA LTP.
+The work here represents a scan over the security dir, looking for files
+that have nothing to do with a modular use case, but are using modular
+infrastructure regardless.
 
-I'm not finding it.  Was the test for the current code, where the same
-value is being padded for different algorithms, or for walking the
-proposed hash agile format?
+We are trying to make driver code consistent with the Makefiles/Kconfigs
+that control them.  This means not using modular functions/macros for
+drivers that can never be built as a module.  This has been done in quite
+a lot of other mainline subsystem dirs already.
 
-Mimi
+Using modular infrastructure in non-modules might seem harmless, but some
+of the downfalls this leads to are:
+
+ (1) it is easy to accidentally write unused module_exit and remove code
+ (2) it can be misleading when reading the source, thinking it can be
+     modular when the Makefile and/or Kconfig prohibit it
+ (3) it requires the include of the module.h header file which in turn
+     includes nearly everything else, thus adding to CPP overhead.
+ (4) it gets copied/replicated into other drivers and spreads quickly.
+
+As a data point for #3 above, an empty C file that just includes the
+module.h header generates over 750kB of CPP output.  Repeating the same
+experiment with init.h and the result is less than 12kB; with export.h
+it is only about 1/2kB; with both it still is less than 12kB.
+
+We start with the simple ones - removing <linux/module.h> from where
+it simply isn't required.  Then we remove the no-op MODULE_ macros from
+non-modular files, in order to remove module.h from there as well.
+Overall, we get rid of about 28 instances of <linux/module.h> here.
+
+Build tested on v4.20-rc5 for allmodconfig on x86-64 and ARM-64.
+
+Paul.
+---
+
+Cc: David Howells <dhowells@redhat.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: John Johansen <john.johansen@canonical.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: keyrings@vger.kernel.org
+Cc: linux-ima-devel@lists.sourceforge.net
+Cc: linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+
+Paul Gortmaker (5):
+  security: audit and remove any unnecessary uses of module.h
+  keys: remove needless modular infrastructure from ecryptfs_format
+  security: fs: make inode explicitly non-modular
+  security: integrity: make evm_main explicitly non-modular
+  security: integrity: make ima_main explicitly non-modular
+
+ security/apparmor/apparmorfs.c                   | 2 +-
+ security/commoncap.c                             | 1 -
+ security/inode.c                                 | 6 ++----
+ security/integrity/evm/evm_crypto.c              | 2 +-
+ security/integrity/evm/evm_main.c                | 5 +----
+ security/integrity/evm/evm_posix_acl.c           | 1 -
+ security/integrity/evm/evm_secfs.c               | 2 +-
+ security/integrity/iint.c                        | 2 +-
+ security/integrity/ima/ima_api.c                 | 1 -
+ security/integrity/ima/ima_appraise.c            | 2 +-
+ security/integrity/ima/ima_fs.c                  | 2 +-
+ security/integrity/ima/ima_init.c                | 2 +-
+ security/integrity/ima/ima_main.c                | 7 +++----
+ security/integrity/ima/ima_policy.c              | 2 +-
+ security/integrity/ima/ima_queue.c               | 1 -
+ security/keys/encrypted-keys/ecryptfs_format.c   | 5 ++---
+ security/keys/encrypted-keys/masterkey_trusted.c | 1 -
+ security/keys/gc.c                               | 1 -
+ security/keys/key.c                              | 2 +-
+ security/keys/keyctl.c                           | 1 -
+ security/keys/keyring.c                          | 2 +-
+ security/keys/permission.c                       | 2 +-
+ security/keys/proc.c                             | 1 -
+ security/keys/process_keys.c                     | 1 -
+ security/keys/request_key.c                      | 2 +-
+ security/keys/request_key_auth.c                 | 1 -
+ security/keys/user_defined.c                     | 2 +-
+ security/security.c                              | 2 +-
+ 28 files changed, 22 insertions(+), 39 deletions(-)
+
+-- 
+2.7.4
 
