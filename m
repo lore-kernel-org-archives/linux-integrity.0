@@ -7,86 +7,79 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58A1FC07E85
-	for <linux-integrity@archiver.kernel.org>; Sun,  9 Dec 2018 22:09:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C24C67838
+	for <linux-integrity@archiver.kernel.org>; Sun,  9 Dec 2018 22:24:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 148CB20831
-	for <linux-integrity@archiver.kernel.org>; Sun,  9 Dec 2018 22:09:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BF5620661
+	for <linux-integrity@archiver.kernel.org>; Sun,  9 Dec 2018 22:24:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s+ZrJm6A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 148CB20831
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ttQSV/Ci"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BF5620661
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727943AbeLIWJu (ORCPT
+        id S1726478AbeLIWYF (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:09:50 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:44048 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727755AbeLIWJs (ORCPT
+        Sun, 9 Dec 2018 17:24:05 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33428 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728581AbeLIWXH (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:09:48 -0500
-Received: by mail-lf1-f65.google.com with SMTP id z13so6572018lfe.11;
-        Sun, 09 Dec 2018 14:09:46 -0800 (PST)
+        Sun, 9 Dec 2018 17:23:07 -0500
+Received: by mail-lf1-f67.google.com with SMTP id i26so6624305lfc.0;
+        Sun, 09 Dec 2018 14:23:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=n+Ya67k3G7QqpGQxiWdPuzLYWBm/bB4xDgItNbG3BA4=;
-        b=s+ZrJm6AVqooMLlRVcKD7boKVIim9Bxa9V9wfBgyMMwAW/FZt7Vnw5tLuq+CDP+MTf
-         wKIQDBEx8iH3Y9fyhRUeT7h3QcySPEVst7PeLoQP32zCiCRG4Wyzo0u1QHyh00DISC2b
-         M8iinQedR4kVPqq9pznWFiez9fwWBm1indpACtdPGY9dynBhULTUVoF68z9vceBHzIOf
-         ABvbvXRCdLK9vXM5znp34NmuNTSWSjHMi7tIbuT/L4CyIZhmBLwhkqfZ45bOKiGcwpxv
-         MBmp1r8HPnOmMTWCVzFRLpUKoEiHla8s1rgMK3kvrf4Lnob2dX3hkAFvaxbzI0upTAOb
-         qCGw==
+        bh=IcMz+xvQnh6MfG/Y0Fi4hdrivP7aU7J9YPwfdLT1MVI=;
+        b=ttQSV/CirS13Ui/6hqP6AI+Rj10Ci9UygCvmTAu9vT9dAemKSHmz2sv+KHyKCX7xDt
+         R113ttwfOsFQ+M9zBEX4nLTOUOq2NAKx7b/XOL/cHSeHmmBWDeLrh4yvHBYNYV5gjYe4
+         xbXCZGCyrkVgFHpz0HgGWW73eEFdukI2Jfv59jm7mJ8t0diXBOSG9Kq3f9E+XcYyR6AP
+         quXPgPOQYzG0872oTfAjWvO2ZWzsm0ExldIGrjTbHeahMH0DwblqVfhOW7L1TQ8P/wPk
+         vvn/vFkzHcE9vQItmPF3YL7uv3RtIXEAo83vvPvXQo37NMU2sNtChMQfQ6I8MVYBqUYf
+         IS/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=n+Ya67k3G7QqpGQxiWdPuzLYWBm/bB4xDgItNbG3BA4=;
-        b=oGyYWtxG0D4XYk6AKkjgOFwvNVc9/njLYv/vOA8tlXtE+rSuLWGRDBw9c7ICuw8soy
-         k6PgnN5L9KBXRh6R3goIPwlLeRzotLFiT0OTE7V+JjRupB8r2oZHjY5K7Koc6LJh/NI/
-         us8UO3cnQAvNOWAa+pVITob6DFcgs+nUHeFPXO6gYXGU5/iMH7PZo/hg3Dl8xb0Mahsr
-         ic/AjSaf8j9HO1jZrY2Qej/a1tm7q9c1KhZxEDlIxtiQdoxtxCqNgoi3x/Gqp+SXlG2R
-         t8tErkWthDfmQmNCze4EO4IdL9/xzqaji6lZ79a4pI7f0wjzSVoKnF2p3H0UeVVkjWMq
-         BrAA==
-X-Gm-Message-State: AA+aEWYTPCz9PpSOvTT/vGs2bI2CeQks7Xka8B5LSHIEizkgbgh7XSfS
-        +bgzfOk7SkLANM/OYR0s8B/UEaYD
-X-Google-Smtp-Source: AFSGD/VJSHW72t7Jf7Fe0T8/JuzJXUCSKXCIAaKjUyBlh0Xgl0BRHqSPF9E4eh9gGxA7ZWxRN7xi8g==
-X-Received: by 2002:a19:4bc9:: with SMTP id y192mr5260797lfa.49.1544393385301;
-        Sun, 09 Dec 2018 14:09:45 -0800 (PST)
+        bh=IcMz+xvQnh6MfG/Y0Fi4hdrivP7aU7J9YPwfdLT1MVI=;
+        b=V3NIaZ3onG+i00boL5Wrhn9lIqiDO0sD+1NbvMb1UkK7d13KnmM2Yt1R/NATdjmnt+
+         ONfYem1X9gbyOgkqnsjebcbYqXfs4lZqVLQv2eqJhpQ99EvUvUbePRKDlo1vRFUufTde
+         83xxZO63In3f3lH25Opjk3FRoVODYwxGefdyZNh6kdd1h//6Jju/tr0Brsdi8a2NR/mD
+         giIMkuHy+Hke1Wfx7tiBfAVlbc9GDCgky0rQVVCd8gwFGvRHl9IfCoQQq5a1IMeuQhml
+         yL+EEzrb8EQwm7jCPIcwPyv5oPFUxm/JxF3ze9S+/kQHEhfkonxipEmkAkopcEUdbqQo
+         ZhsA==
+X-Gm-Message-State: AA+aEWZut1CoXgF9SFySDbva/Tj79QByPb8UFaYBdKWtCRFns+wzWyNP
+        BTTVC0xtq5gEacuLx8z/QouvjZQexkE=
+X-Google-Smtp-Source: AFSGD/XCSsjCOyEJH/dnT/DbjgoX66Fafz0aiz41CLS8mt1eIt1a8yLRE+Wa/TN4mqvke2/q6nkdCA==
+X-Received: by 2002:a19:5a05:: with SMTP id o5mr5888553lfb.140.1544394184226;
+        Sun, 09 Dec 2018 14:23:04 -0800 (PST)
 Received: from [192.168.10.160] (91-159-62-226.elisa-laajakaista.fi. [91.159.62.226])
-        by smtp.gmail.com with ESMTPSA id s3-v6sm1826756lje.73.2018.12.09.14.09.40
+        by smtp.gmail.com with ESMTPSA id q11sm1774242lfc.92.2018.12.09.14.23.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 09 Dec 2018 14:09:44 -0800 (PST)
+        Sun, 09 Dec 2018 14:23:03 -0800 (PST)
 Subject: Re: [PATCH 2/6] __wr_after_init: write rare for static allocation
-To:     Andy Lutomirski <luto@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Kees Cook <keescook@chromium.org>, igor.stoppa@huawei.com,
         Nadav Amit <nadav.amit@gmail.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        linux-integrity@vger.kernel.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
 References: <20181204121805.4621-1-igor.stoppa@huawei.com>
  <20181204121805.4621-3-igor.stoppa@huawei.com>
- <CALCETrVvoui0vksdt0Y9rdGL5ipEn_FtSXVVUFdH03ZC93cy_A@mail.gmail.com>
+ <20181206044413.GB24603@bombadil.infradead.org>
 From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <8c4c45a5-a4c9-7094-002e-9b6006eb2f9e@gmail.com>
-Date:   Mon, 10 Dec 2018 00:09:40 +0200
+Message-ID: <8959c79b-dd9d-8b1f-87b6-e2c971aa2342@gmail.com>
+Date:   Mon, 10 Dec 2018 00:22:56 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <CALCETrVvoui0vksdt0Y9rdGL5ipEn_FtSXVVUFdH03ZC93cy_A@mail.gmail.com>
+In-Reply-To: <20181206044413.GB24603@bombadil.infradead.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -95,98 +88,59 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 06/12/2018 01:13, Andy Lutomirski wrote:
 
->> +       kasan_disable_current();
->> +       if (op == WR_MEMCPY)
->> +               memcpy((void *)wr_poking_addr, (void *)src, len);
->> +       else if (op == WR_MEMSET)
->> +               memset((u8 *)wr_poking_addr, (u8)src, len);
->> +       else if (op == WR_RCU_ASSIGN_PTR)
->> +               /* generic version of rcu_assign_pointer */
->> +               smp_store_release((void **)wr_poking_addr,
->> +                                 RCU_INITIALIZER((void **)src));
->> +       kasan_enable_current();
-> 
-> Hmm.  I suspect this will explode quite badly on sane architectures
-> like s390.  (In my book, despite how weird s390 is, it has a vastly
-> nicer model of "user" memory than any other architecture I know
-> of...).
 
-I see. I can try to setup also a qemu target for s390, for my tests.
-There seems to be a Debian image, to have a fully bootable system.
-
-> I think you should use copy_to_user(), etc, instead.
-
-I'm having troubles with the "etc" part: as far as I can see, there are 
-both generic and specific support for both copying and clearing 
-user-space memory from kernel, however I couldn't find something that 
-looks like a memset_user().
-
-I can of course roll my own, for example iterating copy_to_user() with 
-the support of a pre-allocated static buffer (1 page should be enough).
-
-But, before I go down this path, I wanted to confirm that there's really 
-nothing better that I could use.
-
-If that's really the case, the static buffer instance should be 
-replicated for each core, I think, since each core could be performing 
-its own memset_user() at the same time.
-
-Alternatively, I could do a loop of WRITE_ONCE(), however I'm not sure 
-how that would work with (lack-of) alignment and might require also a 
-preamble/epilogue to deal with unaligned data?
-
->  I'm not
-> entirely sure what the best smp_store_release() replacement is.
-> Making this change may also mean you can get rid of the
-> kasan_disable_current().
-> 
+On 06/12/2018 06:44, Matthew Wilcox wrote:
+> On Tue, Dec 04, 2018 at 02:18:01PM +0200, Igor Stoppa wrote:
+>> +void *__wr_op(unsigned long dst, unsigned long src, __kernel_size_t len,
+>> +	      enum wr_op_type op)
+>> +{
+>> +	temporary_mm_state_t prev;
+>> +	unsigned long flags;
+>> +	unsigned long offset;
+>> +	unsigned long wr_poking_addr;
 >> +
->> +       barrier(); /* XXX redundant? */
-> 
-> I think it's redundant.  If unuse_temporary_mm() allows earlier stores
-> to hit the wrong address space, then something is very very wrong, and
-> something is also very very wrong if the optimizer starts moving
-> stores across a function call that is most definitely a barrier.
-
-ok, thanks
-
+>> +	/* Confirm that the writable mapping exists. */
+>> +	BUG_ON(!wr_ready);
 >> +
->> +       unuse_temporary_mm(prev);
->> +       /* XXX make the verification optional? */
->> +       if (op == WR_MEMCPY)
->> +               BUG_ON(memcmp((void *)dst, (void *)src, len));
->> +       else if (op == WR_MEMSET)
->> +               BUG_ON(memtst((void *)dst, (u8)src, len));
->> +       else if (op == WR_RCU_ASSIGN_PTR)
->> +               BUG_ON(*(unsigned long *)dst != src);
+>> +	if (WARN_ONCE(op >= WR_OPS_NUMBER, "Invalid WR operation.") ||
+>> +	    WARN_ONCE(!is_wr_after_init(dst, len), "Invalid WR range."))
+>> +		return (void *)dst;
+>> +
+>> +	offset = dst - (unsigned long)&__start_wr_after_init;
+>> +	wr_poking_addr = wr_poking_base + offset;
+>> +	local_irq_save(flags);
 > 
-> Hmm.  If you allowed cmpxchg or even plain xchg, then these bug_ons
-> would be thoroughly buggy, but maybe they're okay.  But they should,
-> at most, be WARN_ON_ONCE(), 
+> Why not local_irq_disable()?  Do we have a use-case for wanting to access
+> this from interrupt context?
 
-I have to confess that I do not understand why Nadav's patchset was 
-required to use BUG_ON(), while here it's not correct, not even for 
-memcopy or memset .
+No, not that I can think of. It was "just in case", but I can remove it.
 
-Is it because it is single-threaded?
-Or is it because text_poke() is patching code, instead of data?
-I can turn to WARN_ON_ONCE(), but I'd like to understand the reason.
+>> +	/* XXX make the verification optional? */
+> 
+> Well, yes.  It seems like debug code to me.
 
-> given that you can trigger them by writing
-> the same addresses from two threads at once, and this isn't even
-> entirely obviously bogus given the presence of smp_store_release().
+Ok, I was not sure about this, because text_poke() does it as part of 
+its normal operations.
 
-True, however would it be reasonable to require the use of an explicit 
-writer lock, from the user?
+>> +	/* Randomize the poking address base*/
+>> +	wr_poking_base = TASK_UNMAPPED_BASE +
+>> +		(kaslr_get_random_long("Write Rare Poking") & PAGE_MASK) %
+>> +		(TASK_SIZE - (TASK_UNMAPPED_BASE + wr_range));
+> 
+> I don't think this is a great idea.  We want to use the same mm for both
+> static and dynamic wr memory, yes?  So we should have enough space for
+> all of ram, not splatter the static section all over the address space.
+> 
+> On x86-64 (4 level page tables), we have a 64TB space for all of physmem
+> and 128TB of user space, so we can place the base anywhere in a 64TB
+> range.
 
-This operation is not exactly fast and should happen seldom; I'm not 
-sure if it's worth supporting cmpxchg. The speedup would be minimal.
-
-I'd rather not implement the locking implicitly, even if it would be 
-possible to detect simultaneous writes, because it might lead to overall 
-inconsistent data.
+I was actually wondering about the dynamic part.
+It's still not clear to me if it's possible to write the code in a 
+sufficiently generic way that it could work on all 64 bit architectures.
+I'll start with x86-64 as you suggest.
 
 --
 igor
+
