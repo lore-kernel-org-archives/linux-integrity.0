@@ -3,107 +3,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 002A1C04EB8
-	for <linux-integrity@archiver.kernel.org>; Mon, 10 Dec 2018 16:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1CDFC04EB8
+	for <linux-integrity@archiver.kernel.org>; Mon, 10 Dec 2018 16:58:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C281C20821
-	for <linux-integrity@archiver.kernel.org>; Mon, 10 Dec 2018 16:32:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C281C20821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9271D2082F
+	for <linux-integrity@archiver.kernel.org>; Mon, 10 Dec 2018 16:58:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9271D2082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726649AbeLJQcg (ORCPT
+        id S1728018AbeLJQ6M (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 10 Dec 2018 11:32:36 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45962 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726209AbeLJQcg (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 10 Dec 2018 11:32:36 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBAGTwIj069101
-        for <linux-integrity@vger.kernel.org>; Mon, 10 Dec 2018 11:32:34 -0500
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p9tjgc5ad-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 10 Dec 2018 11:32:34 -0500
-Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <kgold@linux.ibm.com>;
-        Mon, 10 Dec 2018 16:32:33 -0000
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 10 Dec 2018 16:32:30 -0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBAGWUJW29294684
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Dec 2018 16:32:30 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E742AC605F;
-        Mon, 10 Dec 2018 16:32:29 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 953C0C605D;
-        Mon, 10 Dec 2018 16:32:29 +0000 (GMT)
-Received: from [9.2.202.70] (unknown [9.2.202.70])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 10 Dec 2018 16:32:29 +0000 (GMT)
-Subject: Re: Documenting the proposal for TPM 2.0 security in the face of bus
- interposer attacks
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <1542648844.2910.9.camel@HansenPartnership.com>
-From:   Ken Goldman <kgold@linux.ibm.com>
-Date:   Mon, 10 Dec 2018 11:33:04 -0500
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Mon, 10 Dec 2018 11:58:12 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47490 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727034AbeLJQ6M (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 10 Dec 2018 11:58:12 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4415280F7A;
+        Mon, 10 Dec 2018 16:58:11 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-244.rdu2.redhat.com [10.10.120.244])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 33BE1608E6;
+        Mon, 10 Dec 2018 16:58:09 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <e55a9f80-d2ea-f28f-06ab-3d99786096c4@huawei.com>
+References: <e55a9f80-d2ea-f28f-06ab-3d99786096c4@huawei.com> <20181112102423.30415-9-roberto.sassu@huawei.com> <20181112102423.30415-1-roberto.sassu@huawei.com> <19985.1542026635@warthog.procyon.org.uk>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     dhowells@redhat.com, dwmw2@infradead.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        silviu.vlasceanu@huawei.com
+Subject: Re: [RFC][PATCH 08/12] KEYS: PGP-based public key signature verification
 MIME-Version: 1.0
-In-Reply-To: <1542648844.2910.9.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18121016-8235-0000-0000-00000E368167
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010208; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01129798; UDB=6.00587025; IPR=6.00909932;
- MB=3.00024642; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-10 16:32:32
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121016-8236-0000-0000-000043A7A772
-Message-Id: <16c8baf7-e2a9-6e12-b736-a0e2384282ed@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-10_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812100148
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <17487.1544461088.1@warthog.procyon.org.uk>
+Date:   Mon, 10 Dec 2018 16:58:08 +0000
+Message-ID: <17488.1544461088@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 10 Dec 2018 16:58:11 +0000 (UTC)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 11/19/2018 12:34 PM, James Bottomley wrote:
+Roberto Sassu <roberto.sassu@huawei.com> wrote:
 
-> 2. At some point in time the attacker could reset the TPM, clearing
->     the PCRs and then send down their own measurements which would
->     effectively overwrite the boot time measurements the TPM has
->     already done.
-> [snip]
-> However, the second can only really be detected by relying
-> on some sort of mechanism for protection which would change over TPM
-> reset.
+> > You need to consider what it is that the patch trying to achieve.
+> 
+> I understood that the purpose is to check PGP signatures with built-in
+> keys or keys provided by the user. Since using the session keyring
+> caused the issue I reported, I thought it was ok to use the user
+> keyring.
+> 
+> Just a note: the original patches were relying on KEY_FLAG_TRUSTED to
+> determine if a key is trusted; now the trustworthiness depends on the
+> type of keyring passed to pgp_verify_sig(). I removed the additional key
+> search in the user (session) keyring to prevent that signature
+> verification is done with a key provided by the user even when the
+> caller of pgp_verify_sig() expects that a trusted key is used. The
+> search in the session keyring is done if the caller of pgp_verify_sig()
+> sets the keyring pointer to NULL.
 
-FYI: TPM 2.0 has a resetCount that can be used to detect, but not 
-protect against, this attack.
+Thinking about these patches further, as you point out, the way that trust is
+computed has changed.  There is no no KEY_FLAG_TRUSTED; rather, a key is
+assumed to be trusted if it's on a trusted keyring.
 
-> Every TPM comes shipped with a couple of X.509 certificates for the
-> primary endorsement key.  This document assumes that the Elliptic
-> Curve version of the certificate exists at 01C00002, but will work
-> equally well with the RSA certificate (at 01C00001).
+*Getting* it onto that trusted keyring is then the trick.  There are two ways:
 
-A nit.  The RSA cert is at 01c00002.  The ECC cert is at 01c0000a.
+ (1) A key can be loaded from a trusted source during boot (say a compiled in
+     set of keys).
 
+ (2) A key can be added to that keyring later, provided that the key is
+     verified by a key already in the ring and the ring hasn't been closed.
+
+What do we need to check PGP signatures?  Blobs or keys as well?
+
+Why does the user keyring need to be a fallback?  (I know the session keyring
+used to be a fallback when I first did these, but things have changed since
+then).
+
+Should we have a separate built-in keyring for PGP keys?  Actually, I suspect
+we should probably mark keys in some way with what they're permitted to be
+used for.
+
+David
