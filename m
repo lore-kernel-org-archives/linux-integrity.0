@@ -1,143 +1,123 @@
-Return-Path: <SRS0=bpc9=OS=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=npIO=OT=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E3D2C07E85
-	for <linux-integrity@archiver.kernel.org>; Sun,  9 Dec 2018 22:32:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A6A7C07E85
+	for <linux-integrity@archiver.kernel.org>; Mon, 10 Dec 2018 01:06:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BECDD2081F
-	for <linux-integrity@archiver.kernel.org>; Sun,  9 Dec 2018 22:32:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFF912064D
+	for <linux-integrity@archiver.kernel.org>; Mon, 10 Dec 2018 01:06:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E+nCmQhI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BECDD2081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="BFVkdtAc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFF912064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726310AbeLIWc0 (ORCPT
+        id S1726317AbeLJBGn (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:32:26 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:37621 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726304AbeLIWc0 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:32:26 -0500
-Received: by mail-lf1-f65.google.com with SMTP id p17so6630098lfh.4;
-        Sun, 09 Dec 2018 14:32:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aSbfvJCmqfAHFgKylE3VLr16VVPfdibM9zf2CTitOJM=;
-        b=E+nCmQhIR90wXfefO8VAiow2e+ZE4h5e7a9+Ojvj5ehWOC+O3j5fyoGILntutdpY9j
-         WxsyufQda/KjhthwOR3eQTjRqrPpTCCdC5508U64mVuUFVHAvjt1joLZDIvEft++jcxj
-         PKc3Oqcf4yczvNyDdyCwAxBXSVZVxTS9oSoqkC4+DFOQTyPXEsJWtqzX/l9e309Iv42l
-         4fu/wFvFQPZ66GK+glSu33qYxnUEA5lkkuBLBKxFWqU+7hF/fzGzsPgLxOTn6vIipj0x
-         52MayLG6Jtl09NsZ4IC20ClEmirN1Ovf0/+qW93H/kPWIeJvJI4wifLbGmXn7ee2QbMZ
-         SmfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=aSbfvJCmqfAHFgKylE3VLr16VVPfdibM9zf2CTitOJM=;
-        b=pQgWg+w3Svc60KlvRxdNtBIXER8fIMopUWUTOD6BMWGJYH9vtmmuqqt392RjUxznaq
-         c3NDBr4U8po0EraSMTwVbIyQvPTP9n4PGfQgeIpoGPcQwbGES2Kfn323bLGnoi3fZmeY
-         crqqRFut+9c4o4+9treeaXNvToS2p835MeUb7+XNNXkYhbUEGDcI9GBWS0x8KmsZ3Fi/
-         a1yjrmNkafhv8cXMOoJBWlj0eWxuLSGk2SSmkGk/OGlbHdrXmb9FjZMabZxlZ1gnYMcJ
-         poeCh6POQEUTh3rJGW4vpWW/0NUs8TlsL73jC4naA7BBrO5xBbStKOxoIJFrz8FP/nD0
-         O5bA==
-X-Gm-Message-State: AA+aEWY3ansIu6Zf4kT4LDpoRMvLXmhCY77ojF13kCyfsNvkpFHuKAUR
-        3dCSjNis2Bs2l8SuEtDDbPb49YADaHs=
-X-Google-Smtp-Source: AFSGD/WFKokiYX7TjyI9VrqlGnl+hh1Ja1bpLTqVArL0KU/M6D6yteT6DL1kBUR2K2oLdqf7OJLZBw==
-X-Received: by 2002:a19:c4cc:: with SMTP id u195mr5342648lff.141.1544394743398;
-        Sun, 09 Dec 2018 14:32:23 -0800 (PST)
-Received: from [192.168.10.160] (91-159-62-226.elisa-laajakaista.fi. [91.159.62.226])
-        by smtp.gmail.com with ESMTPSA id x29-v6sm1820387ljb.97.2018.12.09.14.32.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 09 Dec 2018 14:32:22 -0800 (PST)
-Subject: Re: [PATCH 2/6] __wr_after_init: write rare for static allocation
+        Sun, 9 Dec 2018 20:06:43 -0500
+Received: from mail-eopbgr760088.outbound.protection.outlook.com ([40.107.76.88]:15320
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726255AbeLJBGm (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 9 Dec 2018 20:06:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iNrA4eGlGX3LHmPNZedTTjxSt42II+phEoXoROiLYjg=;
+ b=BFVkdtAcdzoJrSDr1JzZz1i3wYNa2X5hue0XvHHyow92PU/X0zlo55xYjxjL6tLMZlarfSPYkx2pUazi25hR9cYdtyZw9TWXJ9y95exsGbg/H5B6Lsp+7vqs/WQtcYewkwyASm7YpLc7cVJS3qGxpO/3H0m4MoKdjlMwupnyoP8=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB4741.namprd05.prod.outlook.com (52.135.233.95) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.12; Mon, 10 Dec 2018 01:06:37 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::9155:fea7:9c0c:68c7]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::9155:fea7:9c0c:68c7%3]) with mapi id 15.20.1425.016; Mon, 10 Dec 2018
+ 01:06:36 +0000
+From:   Nadav Amit <namit@vmware.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Andy Lutomirski <luto@kernel.org>
-Cc:     linux-arch <linux-arch@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
+CC:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
         Dave Hansen <dave.hansen@linux.intel.com>,
+        Damian Tometzki <linux_dti@icloud.com>,
         linux-integrity <linux-integrity@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181204121805.4621-1-igor.stoppa@huawei.com>
- <20181204121805.4621-3-igor.stoppa@huawei.com>
- <CALCETrVvoui0vksdt0Y9rdGL5ipEn_FtSXVVUFdH03ZC93cy_A@mail.gmail.com>
- <20181206094451.GC13538@hirez.programming.kicks-ass.net>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <d9382720-3c39-5f10-afcd-dc17727fe4dc@gmail.com>
-Date:   Mon, 10 Dec 2018 00:32:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181206094451.GC13538@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        LSM List <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v7 00/14] x86/alternative: text_poke() enhancements
+Thread-Topic: [PATCH v7 00/14] x86/alternative: text_poke() enhancements
+Thread-Index: AQHUjHfNFAwJWv67fk2Sd9DXTZtwfqVxfPmAgAWzSIA=
+Date:   Mon, 10 Dec 2018 01:06:36 +0000
+Message-ID: <5CE7C382-F25F-49B3-A2A5-4E3EA0A221DF@vmware.com>
+References: <20181205013408.47725-1-namit@vmware.com>
+ <20181206100337.GF13538@hirez.programming.kicks-ass.net>
+In-Reply-To: <20181206100337.GF13538@hirez.programming.kicks-ass.net>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-originating-ip: [208.91.2.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB4741;20:f98VYs23fOhKn1Stn8KKEWZ7K31Lbs0lismEW3AQ5+oRJKgaC6XfkzRwzfyj8VeoUd2bEUg+03t9zAdejlHFiIwYsS/0rKMud5UmZSFwsuR8dLDVEDeo+uWnqx813GRkTbXY3BrPzwwE2nru2jZQ4Y/EfQ/nngciHWUuQ5BAPBc=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 9c26e210-7d74-4978-ab87-08d65e3bbbfc
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4741;
+x-ms-traffictypediagnostic: BYAPR05MB4741:
+x-microsoft-antispam-prvs: <BYAPR05MB4741E97FF65DC9EC942B6A97D0A50@BYAPR05MB4741.namprd05.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231455)(999002)(944501520)(52105112)(3002001)(93006095)(93001095)(10201501046)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BYAPR05MB4741;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4741;
+x-forefront-prvs: 08828D20BC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(136003)(376002)(396003)(346002)(199004)(189003)(102836004)(5660300001)(305945005)(81166006)(8676002)(7416002)(7736002)(8936002)(53546011)(68736007)(33656002)(81156014)(6506007)(99286004)(316002)(106356001)(110136005)(105586002)(54906003)(36756003)(76176011)(66066001)(186003)(6486002)(26005)(229853002)(6512007)(6436002)(6116002)(3846002)(71200400001)(71190400001)(97736004)(83716004)(82746002)(446003)(25786009)(11346002)(2616005)(86362001)(486006)(478600001)(476003)(256004)(14444005)(6246003)(4326008)(53936002)(2906002)(14454004)(39060400002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4741;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: uqx+Zvm4mFnVRxc/gVnazo0yhQS86srR+XtPgO0dyB1EWYrdQjYBY8pjFHfAqKNHCMemxTKIoFt9FOy7sy7jdXa3Nx+iIwrqCzT82NQwemEIgDrB1BVGLINCHZ0n+B9DFjhORLp03rax2PId3B9H90BSuAp/nTc5++Vg6lPFFdWU8M19V1yTw4mOGZNEHWF+/Q8ZXv39snNeM3C6Q/O2MBo6xO6S8QOCyX/oKFIhP5r6X82o2Q7uejMTc/CPXp81SAX0AOB/oPMDiB0hDvbppnz5kmGMUqGI+icUlkYRvMQFJ4hjjyVyBlDpOtrpEifG
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <924F07255CE10D4F9CDD7FF3667E505E@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c26e210-7d74-4978-ab87-08d65e3bbbfc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2018 01:06:36.3702
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4741
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+> On Dec 6, 2018, at 2:03 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+>=20
+> On Tue, Dec 04, 2018 at 05:33:54PM -0800, Nadav Amit wrote:
+>> Which leads me to (b) - the patch-set is big "enough" IMHO. Indeed,
+>> there are open security issues in the kernel when it comes to W^X.  But
+>> some people would want to use Andy's temporary mm-struct for other uses.
+>> So additional security hardening may be left for future patches.
+>=20
+> Yes, at the very least we should get the first 7 patches merged, since
+> they work and clean up the text poking irrespective of all that W^X
+> munging.
+>=20
+> (also, I think you lost my ACK)
 
+Sorry for that. I will add.
 
-On 06/12/2018 11:44, Peter Zijlstra wrote:
-> On Wed, Dec 05, 2018 at 03:13:56PM -0800, Andy Lutomirski wrote:
-> 
->>> +       if (op == WR_MEMCPY)
->>> +               memcpy((void *)wr_poking_addr, (void *)src, len);
->>> +       else if (op == WR_MEMSET)
->>> +               memset((u8 *)wr_poking_addr, (u8)src, len);
->>> +       else if (op == WR_RCU_ASSIGN_PTR)
->>> +               /* generic version of rcu_assign_pointer */
->>> +               smp_store_release((void **)wr_poking_addr,
->>> +                                 RCU_INITIALIZER((void **)src));
->>> +       kasan_enable_current();
->>
->> Hmm.  I suspect this will explode quite badly on sane architectures
->> like s390.  (In my book, despite how weird s390 is, it has a vastly
->> nicer model of "user" memory than any other architecture I know
->> of...).  I think you should use copy_to_user(), etc, instead.  I'm not
->> entirely sure what the best smp_store_release() replacement is.
->> Making this change may also mean you can get rid of the
->> kasan_disable_current().
-> 
-> If you make the MEMCPY one guarantee single-copy atomicity for native
-> words then you're basically done.
-> 
-> smp_store_release() can be implemented with:
-> 
-> 	smp_mb();
-> 	WRITE_ONCE();
-> 
-> So if we make MEMCPY provide the WRITE_ONCE(), all we need is that
-> barrier, which we can easily place at the call site and not overly
-> complicate our interface with this.
+But first, Thomas, Andy, are you ok with going with the first 7 patches?
 
-Ok, so the 3rd case (WR_RCU_ASSIGN_PTR) could be handled outside of this 
-function.
-But, since now memcpy() will be replaced by copy_to_user(), can I assume 
-that also copy_to_user() will be atomic, if the destination is properly 
-aligned? On x86_64 it seems yes, however it's not clear to me if this is 
-the outcome of an optimization or if I can expect it to be always true.
+IIRC, you are the one who asked to add the handling of modules, since it wa=
+s
+not clear whether some synchronization is needed after the poking (that is
+done w/memcpy in this early stage).
 
+I can add synchronization if needed until the rest of the series gets in.
 
---
-igor
