@@ -2,165 +2,108 @@ Return-Path: <SRS0=npIO=OT=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F47C04EB8
-	for <linux-integrity@archiver.kernel.org>; Mon, 10 Dec 2018 13:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 002A1C04EB8
+	for <linux-integrity@archiver.kernel.org>; Mon, 10 Dec 2018 16:32:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F04820855
-	for <linux-integrity@archiver.kernel.org>; Mon, 10 Dec 2018 13:45:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F04820855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id C281C20821
+	for <linux-integrity@archiver.kernel.org>; Mon, 10 Dec 2018 16:32:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C281C20821
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbeLJNpM (ORCPT
+        id S1726649AbeLJQcg (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 10 Dec 2018 08:45:12 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35030 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726305AbeLJNpM (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 10 Dec 2018 08:45:12 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 66CE3AC85;
-        Mon, 10 Dec 2018 13:45:09 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id DC23F1E13F8; Mon, 10 Dec 2018 14:45:08 +0100 (CET)
-Date:   Mon, 10 Dec 2018 14:45:08 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Nikolay Borisov <nborisov@suse.com>
-Cc:     linux-fsdevel@vger.kernel.org, jack@suse.cz,
-        linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        amir73il@gmail.com, jmorris@namei.org, jlayton@kernel.org,
-        tytso@mit.edu, linux-ext4@vger.kernel.org,
-        akpm@linux-foundation.org, adilger.kernel@dilger.ca
-Subject: Re: [PATCH v2] fs: Convert open-coded "is inode open for write" check
-Message-ID: <20181210134508.GK29289@quack2.suse.cz>
-References: <20181210131903.4528-1-nborisov@suse.com>
- <20181210132500.10864-1-nborisov@suse.com>
+        Mon, 10 Dec 2018 11:32:36 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45962 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726209AbeLJQcg (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 10 Dec 2018 11:32:36 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBAGTwIj069101
+        for <linux-integrity@vger.kernel.org>; Mon, 10 Dec 2018 11:32:34 -0500
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p9tjgc5ad-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 10 Dec 2018 11:32:34 -0500
+Received: from localhost
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <kgold@linux.ibm.com>;
+        Mon, 10 Dec 2018 16:32:33 -0000
+Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
+        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 10 Dec 2018 16:32:30 -0000
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBAGWUJW29294684
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Dec 2018 16:32:30 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E742AC605F;
+        Mon, 10 Dec 2018 16:32:29 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 953C0C605D;
+        Mon, 10 Dec 2018 16:32:29 +0000 (GMT)
+Received: from [9.2.202.70] (unknown [9.2.202.70])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 10 Dec 2018 16:32:29 +0000 (GMT)
+Subject: Re: Documenting the proposal for TPM 2.0 security in the face of bus
+ interposer attacks
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <1542648844.2910.9.camel@HansenPartnership.com>
+From:   Ken Goldman <kgold@linux.ibm.com>
+Date:   Mon, 10 Dec 2018 11:33:04 -0500
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181210132500.10864-1-nborisov@suse.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1542648844.2910.9.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18121016-8235-0000-0000-00000E368167
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010208; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01129798; UDB=6.00587025; IPR=6.00909932;
+ MB=3.00024642; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-10 16:32:32
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121016-8236-0000-0000-000043A7A772
+Message-Id: <16c8baf7-e2a9-6e12-b736-a0e2384282ed@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-10_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812100148
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon 10-12-18 15:25:00, Nikolay Borisov wrote:
-> There is a generic helper inode_is_open_for_write that could be used
-> when checking i_writecount. Use it instead of opencoding
-> if (i_writecount > 0) check.
-> 
-> Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-> ---
-> 
-> Changes v2: 
->  * This time actually compile-tested it, doh...
+On 11/19/2018 12:34 PM, James Bottomley wrote:
 
-You can add:
+> 2. At some point in time the attacker could reset the TPM, clearing
+>     the PCRs and then send down their own measurements which would
+>     effectively overwrite the boot time measurements the TPM has
+>     already done.
+> [snip]
+> However, the second can only really be detected by relying
+> on some sort of mechanism for protection which would change over TPM
+> reset.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+FYI: TPM 2.0 has a resetCount that can be used to detect, but not 
+protect against, this attack.
 
-for the fanotify and ext4 bits. But I think you may have better chances of
-getting this applied if you split the patch by subsystem - i.e., ext4,
-fanotify, security, locks - and let each maintainer merge the patch on his
-own...
+> Every TPM comes shipped with a couple of X.509 certificates for the
+> primary endorsement key.  This document assumes that the Elliptic
+> Curve version of the certificate exists at 01C00002, but will work
+> equally well with the RSA certificate (at 01C00001).
 
-								Honza
+A nit.  The RSA cert is at 01c00002.  The ECC cert is at 01c0000a.
 
-> 
-> 
->  fs/ext4/inode.c                    | 2 +-
->  fs/ext4/mballoc.c                  | 7 +++----
->  fs/locks.c                         | 2 +-
->  fs/notify/fanotify/fanotify_user.c | 2 +-
->  security/integrity/ima/ima_main.c  | 2 +-
->  5 files changed, 7 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 22a9d8159720..04e5bc0b5c8d 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -391,7 +391,7 @@ void ext4_da_update_reserve_space(struct inode *inode,
->  	 * inode's preallocations.
->  	 */
->  	if ((ei->i_reserved_data_blocks == 0) &&
-> -	    (atomic_read(&inode->i_writecount) == 0))
-> +	    !inode_is_open_for_write(inode))
->  		ext4_discard_preallocations(inode);
->  }
->  
-> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> index e2248083cdca..b811a9cb896e 100644
-> --- a/fs/ext4/mballoc.c
-> +++ b/fs/ext4/mballoc.c
-> @@ -4176,9 +4176,8 @@ static void ext4_mb_group_or_file(struct ext4_allocation_context *ac)
->  	isize = (i_size_read(ac->ac_inode) + ac->ac_sb->s_blocksize - 1)
->  		>> bsbits;
->  
-> -	if ((size == isize) &&
-> -	    !ext4_fs_is_busy(sbi) &&
-> -	    (atomic_read(&ac->ac_inode->i_writecount) == 0)) {
-> +	if ((size == isize) && !ext4_fs_is_busy(sbi)
-> +	    && !inode_is_open_for_write(ac->ac_inode)) {
->  		ac->ac_flags |= EXT4_MB_HINT_NOPREALLOC;
->  		return;
->  	}
-> @@ -4258,7 +4257,7 @@ ext4_mb_initialize_context(struct ext4_allocation_context *ac,
->  			(unsigned) ar->goal, ac->ac_flags, ac->ac_2order,
->  			(unsigned) ar->lleft, (unsigned) ar->pleft,
->  			(unsigned) ar->lright, (unsigned) ar->pright,
-> -			atomic_read(&ar->inode->i_writecount) ? "" : "non-");
-> +			inode_is_open_for_write(ar->inode) ? "" : "non-");
->  	return 0;
->  
->  }
-> diff --git a/fs/locks.c b/fs/locks.c
-> index 2ecb4db8c840..16ea7d89a67d 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -1646,7 +1646,7 @@ check_conflicting_open(const struct dentry *dentry, const long arg, int flags)
->  	if (flags & FL_LAYOUT)
->  		return 0;
->  
-> -	if ((arg == F_RDLCK) && (atomic_read(&inode->i_writecount) > 0))
-> +	if ((arg == F_RDLCK) && inode_is_open_for_write(inode))
->  		return -EAGAIN;
->  
->  	if ((arg == F_WRLCK) && ((d_count(dentry) > 1) ||
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> index e03be5071362..98b0769e4cf2 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -669,7 +669,7 @@ static int fanotify_add_inode_mark(struct fsnotify_group *group,
->  	 */
->  	if ((flags & FAN_MARK_IGNORED_MASK) &&
->  	    !(flags & FAN_MARK_IGNORED_SURV_MODIFY) &&
-> -	    (atomic_read(&inode->i_writecount) > 0))
-> +	    inode_is_open_for_write(inode))
->  		return 0;
->  
->  	return fanotify_add_mark(group, &inode->i_fsnotify_marks,
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 1b88d58e1325..05fbf8a2fa42 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -103,7 +103,7 @@ static void ima_rdwr_violation_check(struct file *file,
->  	} else {
->  		if (must_measure)
->  			set_bit(IMA_MUST_MEASURE, &iint->atomic_flags);
-> -		if ((atomic_read(&inode->i_writecount) > 0) && must_measure)
-> +		if (inode_is_open_for_write(inode) && must_measure)
->  			send_writers = true;
->  	}
->  
-> -- 
-> 2.17.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
