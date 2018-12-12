@@ -2,93 +2,114 @@ Return-Path: <SRS0=pbj0=OV=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B6A7C65BAF
-	for <linux-integrity@archiver.kernel.org>; Wed, 12 Dec 2018 18:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A5DBC65BAF
+	for <linux-integrity@archiver.kernel.org>; Wed, 12 Dec 2018 20:26:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26E5220851
-	for <linux-integrity@archiver.kernel.org>; Wed, 12 Dec 2018 18:32:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26E5220851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 45AA52086D
+	for <linux-integrity@archiver.kernel.org>; Wed, 12 Dec 2018 20:26:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544646374;
+	bh=tJdD70Iv59FFgTbDgLZ2y75NOxl8Hveziz4ZzwXBue0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=RG9Kh61i+LaAJTb/JjMphRXQNoQVoxQkShCtVdka+D/h8lCwTdU7aLGwbaYdJFSqY
+	 J9KZCwFMuHQRrMAZ9QvffRxCVeNhfcD7a/quVlaYdn7MWdCZhe7Ykt14oNRtHXceu6
+	 zgX8GY5dC8sytSwPUD3PHiBTql/sgYmHOO5g7qIs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45AA52086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727897AbeLLScL (ORCPT
+        id S1726294AbeLLU0N (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 12 Dec 2018 13:32:11 -0500
-Received: from mga01.intel.com ([192.55.52.88]:59089 "EHLO mga01.intel.com"
+        Wed, 12 Dec 2018 15:26:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727748AbeLLScL (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 12 Dec 2018 13:32:11 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 10:32:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,345,1539673200"; 
-   d="scan'208";a="101024909"
-Received: from hekner-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.170])
-  by orsmga008.jf.intel.com with ESMTP; 12 Dec 2018 10:32:06 -0800
-Date:   Wed, 12 Dec 2018 20:32:04 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: Re: [PATCH v6 1/7] tpm: dynamically allocate the allocated_banks
- array
-Message-ID: <20181212183204.GK6333@linux.intel.com>
-References: <20181204082138.24600-1-roberto.sassu@huawei.com>
- <20181204082138.24600-2-roberto.sassu@huawei.com>
- <20181204231848.GA1233@linux.intel.com>
- <9193bc05-8222-f0d6-9ad8-a2a7eaf1a34c@huawei.com>
+        id S1726247AbeLLU0N (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 12 Dec 2018 15:26:13 -0500
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 470EA20811;
+        Wed, 12 Dec 2018 20:26:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544646372;
+        bh=tJdD70Iv59FFgTbDgLZ2y75NOxl8Hveziz4ZzwXBue0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Sotxte3Dzf8+b3WvrI5litfcWZbSc9oQgzLXz7Q6j75h+7CBWAcOkMl8rCkyD9Kun
+         SeB4zji2F2W73TTfmUuwJ0VdTFRALToqBKkNSuEGetlz3qFIaeg9nPuzfeVhUQyKtf
+         KVlTvQd0KW0Y0nyT2+9glm7U0q4Sg1YxgP/zyb18=
+Date:   Wed, 12 Dec 2018 12:26:10 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
+Message-ID: <20181212202609.GA193967@gmail.com>
+References: <20181101225230.88058-1-ebiggers@kernel.org>
+ <20181101225230.88058-2-ebiggers@kernel.org>
+ <20181212091406.GA31723@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9193bc05-8222-f0d6-9ad8-a2a7eaf1a34c@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20181212091406.GA31723@infradead.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 06:56:33PM +0100, Roberto Sassu wrote:
-> 2 PCR selections
->     hash TPM_ALG_SHA1
->     TPMS_PCR_SELECTION length 3
->     ff ff ff
->     hash TPM_ALG_SHA256
->     TPMS_PCR_SELECTION length 3
->     00 00 00
+Hi Christoph,
+
+On Wed, Dec 12, 2018 at 01:14:06AM -0800, Christoph Hellwig wrote:
+> As this apparently got merged despite no proper reviews from VFS
+> level persons:
+
+fs-verity has been out for review since August, and Cc'ed to all relevant
+mailing lists including linux-fsdevel, linux-ext4, linux-f2fs-devel,
+linux-fscrypt, linux-integrity, and linux-kernel.  There are tests,
+documentation (since v2), and a userspace tool.  It's also been presented at
+multiple conferences, and has been covered by LWN multiple times.  If more
+people want to review it, then they should do so; there's nothing stopping them.
+
 > 
-> The pcr_select fields - "ff ff ff" and "00 00 00" - are bit masks for
-> the enabled PCRs. The SHA1 bank is enabled for all PCRs (0-23), while
-> the SHA256 bank is not enabled.
-
-Uh, thanks. Can you add a note to the commit message?
-
- 
-> > 
-> > /* Check that at least some of the PCRs have been allocated. This is
-> >   * required because CAP_PCRS ...
-> >   */
-> > if (memchr_inv(pcr_selection.pcr_select, 0, pcr_selection.size_of_select))
-> > 	nr_allocated_banks++;
-> > 
-> > [yeah, comment would be awesome about CAP_PCRS. Did not finish up the
-> > comment because I don't know the answer]
-> > 
-> > In addition, it would be consistent to call the local variable also
-> > nr_allocated_banks (not nr_alloc_banks).
+> NAK - the ioctl format that expects the verifycation hash in the file
+> data data with padding after the real data is simply not acceptable,
+> we can't just transform the data in the file itself based on a magic
+> calls like this.
 > 
-> Unfortunately, I exceed the limit of characters per line.
 
-Not sure what you mean?
+Can you elaborate on the actual problems you think the current solution has, and
+exactly what solution you'd prefer instead?  Keep in mind that (1) for large
+files the Merkle tree can be gigabytes long, (2) Linux doesn't have an API for
+file streams, and (3) when fs-verity is combined with fscrypt, it's important
+that the hashes be encrypted, so as to not leak information about the plaintext.
 
-/Jarkko
+> Also the core code should not depend on this as a storage format,
+> which is a rather bad idea.  In any modern file system you can
+> store data like this out of line in something like the attr fork
+> in XFS, or the attr items in btrfs.
+
+As explained in the documentation, the core code uses the "metadata after EOF"
+format for the API, but not necessarily the on-disk format.  I.e.,
+FS_IOC_ENABLE_VERITY requires it, but during the ioctl the filesystem can choose
+to move the metadata into a different location, such as a file stream.
+
+We'd just need to update fsverity_read_metadata_page() and
+compute_tree_depth_and_offsets() to call out to the filesystem's
+fsverity_operations to read a metadata page and get the offset of the first
+metadata page, respectively.  The rest of fs/verity/ will still work.  I'd be
+glad to add those two fsverity_operations now, though they're not needed for
+ext4 and f2fs, if it would help clarify things further.
+
+Thanks,
+
+- Eric
