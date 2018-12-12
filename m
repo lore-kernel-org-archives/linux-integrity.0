@@ -2,114 +2,315 @@ Return-Path: <SRS0=pbj0=OV=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A5DBC65BAF
-	for <linux-integrity@archiver.kernel.org>; Wed, 12 Dec 2018 20:26:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D518C67839
+	for <linux-integrity@archiver.kernel.org>; Wed, 12 Dec 2018 21:35:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45AA52086D
-	for <linux-integrity@archiver.kernel.org>; Wed, 12 Dec 2018 20:26:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544646374;
-	bh=tJdD70Iv59FFgTbDgLZ2y75NOxl8Hveziz4ZzwXBue0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=RG9Kh61i+LaAJTb/JjMphRXQNoQVoxQkShCtVdka+D/h8lCwTdU7aLGwbaYdJFSqY
-	 J9KZCwFMuHQRrMAZ9QvffRxCVeNhfcD7a/quVlaYdn7MWdCZhe7Ykt14oNRtHXceu6
-	 zgX8GY5dC8sytSwPUD3PHiBTql/sgYmHOO5g7qIs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45AA52086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 29E9820839
+	for <linux-integrity@archiver.kernel.org>; Wed, 12 Dec 2018 21:35:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29E9820839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726294AbeLLU0N (ORCPT
+        id S1726297AbeLLVfs (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 12 Dec 2018 15:26:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51886 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726247AbeLLU0N (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 12 Dec 2018 15:26:13 -0500
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 470EA20811;
-        Wed, 12 Dec 2018 20:26:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544646372;
-        bh=tJdD70Iv59FFgTbDgLZ2y75NOxl8Hveziz4ZzwXBue0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Sotxte3Dzf8+b3WvrI5litfcWZbSc9oQgzLXz7Q6j75h+7CBWAcOkMl8rCkyD9Kun
-         SeB4zji2F2W73TTfmUuwJ0VdTFRALToqBKkNSuEGetlz3qFIaeg9nPuzfeVhUQyKtf
-         KVlTvQd0KW0Y0nyT2+9glm7U0q4Sg1YxgP/zyb18=
-Date:   Wed, 12 Dec 2018 12:26:10 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Victor Hsieh <victorhsieh@google.com>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
-Message-ID: <20181212202609.GA193967@gmail.com>
-References: <20181101225230.88058-1-ebiggers@kernel.org>
- <20181101225230.88058-2-ebiggers@kernel.org>
- <20181212091406.GA31723@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181212091406.GA31723@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 12 Dec 2018 16:35:48 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37922 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726440AbeLLVfr (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 12 Dec 2018 16:35:47 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBCLYHa7025036
+        for <linux-integrity@vger.kernel.org>; Wed, 12 Dec 2018 16:35:46 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pb9exahgp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 12 Dec 2018 16:35:46 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <nayna@linux.ibm.com>;
+        Wed, 12 Dec 2018 21:35:43 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 12 Dec 2018 21:35:40 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBCLZcsS065980
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 12 Dec 2018 21:35:38 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B119F4204D;
+        Wed, 12 Dec 2018 21:35:38 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 33BCD4203F;
+        Wed, 12 Dec 2018 21:35:35 +0000 (GMT)
+Received: from swastik.ibmuc.com (unknown [9.85.69.250])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 12 Dec 2018 21:35:34 +0000 (GMT)
+From:   Nayna Jain <nayna@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
+        dhowells@redhat.com, jforbes@redhat.com,
+        seth.forshee@canonical.com, kexec@lists.infradead.org,
+        keyrings@vger.kernel.org, vgoyal@redhat.com, ebiederm@xmission.com,
+        mpe@ellerman.id.au, Josh Boyer <jwboyer@fedoraproject.org>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH v2a 5/7] efi: Import certificates from UEFI Secure Boot
+Date:   Thu, 13 Dec 2018 03:02:07 +0530
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20181208202705.18673-6-nayna@linux.ibm.com>
+References: <20181208202705.18673-6-nayna@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18121221-0016-0000-0000-00000235A344
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121221-0017-0000-0000-0000328DD927
+Message-Id: <20181212213207.12746-1-nayna@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812120184
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Christoph,
+From: Josh Boyer <jwboyer@fedoraproject.org>
 
-On Wed, Dec 12, 2018 at 01:14:06AM -0800, Christoph Hellwig wrote:
-> As this apparently got merged despite no proper reviews from VFS
-> level persons:
+Secure Boot stores a list of allowed certificates in the 'db' variable.
+This patch imports those certificates into the platform keyring. The shim
+UEFI bootloader has a similar certificate list stored in the 'MokListRT'
+variable. We import those as well.
 
-fs-verity has been out for review since August, and Cc'ed to all relevant
-mailing lists including linux-fsdevel, linux-ext4, linux-f2fs-devel,
-linux-fscrypt, linux-integrity, and linux-kernel.  There are tests,
-documentation (since v2), and a userspace tool.  It's also been presented at
-multiple conferences, and has been covered by LWN multiple times.  If more
-people want to review it, then they should do so; there's nothing stopping them.
+Secure Boot also maintains a list of disallowed certificates in the 'dbx'
+variable. We load those certificates into the system blacklist keyring
+and forbid any kernel signed with those from loading.
 
-> 
-> NAK - the ioctl format that expects the verifycation hash in the file
-> data data with padding after the real data is simply not acceptable,
-> we can't just transform the data in the file itself based on a magic
-> calls like this.
-> 
+[zohar@linux.ibm.com: dropped Josh's original patch description]
+Signed-off-by: Josh Boyer <jwboyer@fedoraproject.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+Acked-by: Serge Hallyn <serge@hallyn.com>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+Changelog:
 
-Can you elaborate on the actual problems you think the current solution has, and
-exactly what solution you'd prefer instead?  Keep in mind that (1) for large
-files the Merkle tree can be gigabytes long, (2) Linux doesn't have an API for
-file streams, and (3) when fs-verity is combined with fscrypt, it's important
-that the hashes be encrypted, so as to not leak information about the plaintext.
+v2a:
+- refactored uefi_blacklist_x509_tbs() and  uefi_blacklist_binary()
 
-> Also the core code should not depend on this as a storage format,
-> which is a rather bad idea.  In any modern file system you can
-> store data like this out of line in something like the attr fork
-> in XFS, or the attr items in btrfs.
+v2:
+- Fixed the checkpatch.pl warnings
 
-As explained in the documentation, the core code uses the "metadata after EOF"
-format for the API, but not necessarily the on-disk format.  I.e.,
-FS_IOC_ENABLE_VERITY requires it, but during the ioctl the filesystem can choose
-to move the metadata into a different location, such as a file stream.
+v0:
+- This patch replaces the loading of certificates onto the secondary
+  keyring with platform keyring
+- removed the CONFIG LOAD_UEFI_KEYS
+- moved the file load_uefi.o from certs to security/integrity/platform_certs
 
-We'd just need to update fsverity_read_metadata_page() and
-compute_tree_depth_and_offsets() to call out to the filesystem's
-fsverity_operations to read a metadata page and get the offset of the first
-metadata page, respectively.  The rest of fs/verity/ will still work.  I'd be
-glad to add those two fsverity_operations now, though they're not needed for
-ext4 and f2fs, if it would help clarify things further.
+ security/integrity/Makefile                   |   5 +-
+ security/integrity/platform_certs/load_uefi.c | 169 ++++++++++++++++++++++++++
+ 2 files changed, 173 insertions(+), 1 deletion(-)
+ create mode 100644 security/integrity/platform_certs/load_uefi.c
 
-Thanks,
+diff --git a/security/integrity/Makefile b/security/integrity/Makefile
+index 6ee9058866cd..86df9aba8c0f 100644
+--- a/security/integrity/Makefile
++++ b/security/integrity/Makefile
+@@ -10,7 +10,10 @@ integrity-$(CONFIG_INTEGRITY_AUDIT) += integrity_audit.o
+ integrity-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
+ integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
+ integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o \
+-						  platform_certs/efi_parser.o
++						  platform_certs/efi_parser.o \
++						  platform_certs/load_uefi.o
++obj-$(CONFIG_LOAD_UEFI_KEYS) += platform_certs/load_uefi.o
++$(obj)/load_uefi.o: KBUILD_CFLAGS += -fshort-wchar
+ 
+ subdir-$(CONFIG_IMA)			+= ima
+ obj-$(CONFIG_IMA)			+= ima/
+diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
+new file mode 100644
+index 000000000000..8ceafa58d98c
+--- /dev/null
++++ b/security/integrity/platform_certs/load_uefi.c
+@@ -0,0 +1,169 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/kernel.h>
++#include <linux/sched.h>
++#include <linux/cred.h>
++#include <linux/err.h>
++#include <linux/efi.h>
++#include <linux/slab.h>
++#include <keys/asymmetric-type.h>
++#include <keys/system_keyring.h>
++#include "../integrity.h"
++
++static efi_guid_t efi_cert_x509_guid __initdata = EFI_CERT_X509_GUID;
++static efi_guid_t efi_cert_x509_sha256_guid __initdata =
++	EFI_CERT_X509_SHA256_GUID;
++static efi_guid_t efi_cert_sha256_guid __initdata = EFI_CERT_SHA256_GUID;
++
++/*
++ * Get a certificate list blob from the named EFI variable.
++ */
++static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
++				  unsigned long *size)
++{
++	efi_status_t status;
++	unsigned long lsize = 4;
++	unsigned long tmpdb[4];
++	void *db;
++
++	status = efi.get_variable(name, guid, NULL, &lsize, &tmpdb);
++	if (status != EFI_BUFFER_TOO_SMALL) {
++		pr_err("Couldn't get size: 0x%lx\n", status);
++		return NULL;
++	}
++
++	db = kmalloc(lsize, GFP_KERNEL);
++	if (!db)
++		return NULL;
++
++	status = efi.get_variable(name, guid, NULL, &lsize, db);
++	if (status != EFI_SUCCESS) {
++		kfree(db);
++		pr_err("Error reading db var: 0x%lx\n", status);
++		return NULL;
++	}
++
++	*size = lsize;
++	return db;
++}
++
++/*
++ * Blacklist a hash.
++ */
++static __init void uefi_blacklist_hash(const char *source, const void *data,
++				       size_t len, const char *type,
++				       size_t type_len)
++{
++	char *hash, *p;
++
++	hash = kmalloc(type_len + len * 2 + 1, GFP_KERNEL);
++	if (!hash)
++		return;
++	p = memcpy(hash, type, type_len);
++	p += type_len;
++	bin2hex(p, data, len);
++	p += len * 2;
++	*p = 0;
++
++	mark_hash_blacklisted(hash);
++	kfree(hash);
++}
++
++/*
++ * Blacklist an X509 TBS hash.
++ */
++static __init void uefi_blacklist_x509_tbs(const char *source,
++					   const void *data, size_t len)
++{
++	uefi_blacklist_hash(source, data, len, "tbs:", 4);
++}
++
++/*
++ * Blacklist the hash of an executable.
++ */
++static __init void uefi_blacklist_binary(const char *source,
++					 const void *data, size_t len)
++{
++	uefi_blacklist_hash(source, data, len, "bin:", 4);
++}
++
++/*
++ * Return the appropriate handler for particular signature list types found in
++ * the UEFI db and MokListRT tables.
++ */
++static __init efi_element_handler_t get_handler_for_db(const efi_guid_t *
++						       sig_type)
++{
++	if (efi_guidcmp(*sig_type, efi_cert_x509_guid) == 0)
++		return add_to_platform_keyring;
++	return 0;
++}
++
++/*
++ * Return the appropriate handler for particular signature list types found in
++ * the UEFI dbx and MokListXRT tables.
++ */
++static __init efi_element_handler_t get_handler_for_dbx(const efi_guid_t *
++							sig_type)
++{
++	if (efi_guidcmp(*sig_type, efi_cert_x509_sha256_guid) == 0)
++		return uefi_blacklist_x509_tbs;
++	if (efi_guidcmp(*sig_type, efi_cert_sha256_guid) == 0)
++		return uefi_blacklist_binary;
++	return 0;
++}
++
++/*
++ * Load the certs contained in the UEFI databases
++ */
++static int __init load_uefi_certs(void)
++{
++	efi_guid_t secure_var = EFI_IMAGE_SECURITY_DATABASE_GUID;
++	efi_guid_t mok_var = EFI_SHIM_LOCK_GUID;
++	void *db = NULL, *dbx = NULL, *mok = NULL;
++	unsigned long dbsize = 0, dbxsize = 0, moksize = 0;
++	int rc = 0;
++
++	if (!efi.get_variable)
++		return false;
++
++	/* Get db, MokListRT, and dbx.  They might not exist, so it isn't
++	 * an error if we can't get them.
++	 */
++	db = get_cert_list(L"db", &secure_var, &dbsize);
++	if (!db) {
++		pr_err("Couldn't get UEFI db list\n");
++	} else {
++		rc = parse_efi_signature_list("UEFI:db",
++					      db, dbsize, get_handler_for_db);
++		if (rc)
++			pr_err("Couldn't parse db signatures: %d\n", rc);
++		kfree(db);
++	}
++
++	mok = get_cert_list(L"MokListRT", &mok_var, &moksize);
++	if (!mok) {
++		pr_info("Couldn't get UEFI MokListRT\n");
++	} else {
++		rc = parse_efi_signature_list("UEFI:MokListRT",
++					      mok, moksize, get_handler_for_db);
++		if (rc)
++			pr_err("Couldn't parse MokListRT signatures: %d\n", rc);
++		kfree(mok);
++	}
++
++	dbx = get_cert_list(L"dbx", &secure_var, &dbxsize);
++	if (!dbx) {
++		pr_info("Couldn't get UEFI dbx list\n");
++	} else {
++		rc = parse_efi_signature_list("UEFI:dbx",
++					      dbx, dbxsize,
++					      get_handler_for_dbx);
++		if (rc)
++			pr_err("Couldn't parse dbx signatures: %d\n", rc);
++		kfree(dbx);
++	}
++
++	return rc;
++}
++late_initcall(load_uefi_certs);
+-- 
+2.13.6
 
-- Eric
