@@ -2,95 +2,118 @@ Return-Path: <SRS0=vu0O=OW=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ECC1C65BAE
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 12:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43FC1C67839
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 12:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D854A20851
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 12:16:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wGhELrWh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D854A20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 1262020870
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 12:17:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1262020870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728948AbeLMMQ6 (ORCPT
+        id S1728961AbeLMMRP (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 13 Dec 2018 07:16:58 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:50527 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728941AbeLMMQ6 (ORCPT
+        Thu, 13 Dec 2018 07:17:15 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60088 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728949AbeLMMRP (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 13 Dec 2018 07:16:58 -0500
-Received: by mail-it1-f194.google.com with SMTP id z7so3344715iti.0
-        for <linux-integrity@vger.kernel.org>; Thu, 13 Dec 2018 04:16:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NBLOgNXEijWVpPtM+pKYlMGOOytqcpJuFmA65npmt9o=;
-        b=wGhELrWhL8KOvOsgrB/4xOOL/l1FSE/apeeGAhMKHMuSoEzHCTCK2PrpUHRRHjhqSq
-         V4+7QbccsaA0zVOdwSk7nJp6h840JqQ44Lg9RL5Ei0QfXJwPj6uvrXexRdBDmExPIFbY
-         e1FZshksMsh6n2RexHgEaw1LuXicJT88Z31Jwn+ixgmwP2NSUNVLH59hO+ZcsaX5AfWY
-         C9VYvwWFXJrsx8gwsqyRZkHiMCbRaeDDj3vYeiiX84mTgrtwPTXOIO9VKxaQ5Giuloyn
-         njR/HtC6/Tz0sBlfXs60orEknUkapwtp4xkzN6ayuAsH7Vfi1bX0uXHBM3jPP9F0zxlh
-         L52A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NBLOgNXEijWVpPtM+pKYlMGOOytqcpJuFmA65npmt9o=;
-        b=FuxxzwrZX0hQn9g5+Thaz+Yf2jCKmDFNBQJa9e7zGeizpbYFgk4wzFQ2DUwcokhZgf
-         IFJs0t7hRtMUybYny0QM0AKaY+lWAhUCi3JCdSiqrf+Zywibckc1Zg3qLtUHVsIcUfwb
-         0v90OnlSIb+BqRO7VhFMzK52KfdlZrZSoqxZ1Kp5fJMG90UxT8ZeSY3ECHITLmKvwWaq
-         7Eq9BQZS9JYqrGHBasi/c/CUygRqd2Up5Ty0nJRMNu4E2ZakTqNdwDs+q81wu4LbzXms
-         K3Z/Lixn/cPfrmE/77Yu8zK8/C3sMeBVy3UU5mxIn1B8VcJSHAZ0qGF5xys7KZ6ieFQZ
-         BddQ==
-X-Gm-Message-State: AA+aEWZn43g/br2yjt4QjJN50lwaVfI3nEyjWkGHNw7jO0TqKnGymWVQ
-        mYa17/tdBTHnumAP4Hg9nnwyM9QZWRTZTXUQoPDoMA==
-X-Google-Smtp-Source: AFSGD/V4aZYxIbOUnmPkTKiC6AMEhbQjZDq1rthfZJSt8QOYY8SPrZn+BuzfHNG7voiCCLFmaaNK9v2Q53k96eHwyNU=
-X-Received: by 2002:a24:f14d:: with SMTP id q13mr8720694iti.166.1544703417221;
- Thu, 13 Dec 2018 04:16:57 -0800 (PST)
-MIME-Version: 1.0
-References: <20181213115717.p7ncktng2ihxw5md@merlin> <20181213121000.GM2217@ZenIV.linux.org.uk>
-In-Reply-To: <20181213121000.GM2217@ZenIV.linux.org.uk>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 13 Dec 2018 13:16:45 +0100
-Message-ID: <CACT4Y+Y3Kv6LacRYzZbuNqOAMC7=z-oYUn5aQbN7j-R_JJq6RA@mail.gmail.com>
-Subject: Re: [PATCH] fs: Evaluate O_WRONLY | O_RDWR to O_RDWR
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        syzbot+ae82084b07d0297e566b@syzkaller.appspotmail.com,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        linux-integrity@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>
+        Thu, 13 Dec 2018 07:17:15 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBDC3p1x136473
+        for <linux-integrity@vger.kernel.org>; Thu, 13 Dec 2018 07:17:14 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pbkx5jec4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 13 Dec 2018 07:17:13 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 13 Dec 2018 12:17:11 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 13 Dec 2018 12:17:06 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBDCH5uI42336490
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 13 Dec 2018 12:17:05 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1C9C0A4067;
+        Thu, 13 Dec 2018 12:17:05 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ADF0DA405B;
+        Thu, 13 Dec 2018 12:17:02 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.105.18])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 13 Dec 2018 12:17:02 +0000 (GMT)
+Subject: Re: [RFC PATCH v1 0/5] Add support for O_MAYEXEC
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Florian Weimer <fweimer@redhat.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        Philippe =?ISO-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Date:   Thu, 13 Dec 2018 07:16:52 -0500
+In-Reply-To: <874lbhoef3.fsf@oldenburg2.str.redhat.com>
+References: <20181212081712.32347-1-mic@digikod.net>
+         <20181213030228.GM6830@bombadil.infradead.org>
+         <1544699060.6703.11.camel@linux.ibm.com>
+         <874lbhoef3.fsf@oldenburg2.str.redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18121312-0008-0000-0000-000002A0C48D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121312-0009-0000-0000-0000220B45C1
+Message-Id: <1544703412.6703.46.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-13_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=669 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812130110
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 1:10 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Thu, Dec 13, 2018 at 05:57:17AM -0600, Goldwyn Rodrigues wrote:
-> > A user can open(O_WRONLY | O_RDWR) and the options are valid.
-> > However, OPEN_FMODE() evaluates both FMODE_READ and FMODE_WRITE,
-> > as negative. We also need to protect the lower layers from this
-> > anomaly.
-> >
-> > Solve it by dropping O_WRONLY, so O_RDWR takes precedence.
->
-> Congratulations, you've broken fdutils...  Passing 3 in lower bits
-> of open() flags is *not* the same as O_RDWR; behaiviour is
-> different and deliberately chosen by existing userland code.
->
-> IOW, NAK.
+[Cc'ing linux-integrity]
 
-I am eager to hear what it means then.
+On Thu, 2018-12-13 at 12:26 +0100, Florian Weimer wrote:
+> * Mimi Zohar:
+> 
+> > The indication needs to be set during file open, before the open
+> > returns to the caller.  This is the point where ima_file_check()
+> > verifies the file's signature.  On failure, access to the file is
+> > denied.
+> 
+> Does this verification happen for open with O_PATH?
+
+Interesting!  According to the manpage, userspace cannot read/write to
+the file.  It looks like do_o_path() intentionally skips do_last(),
+with the call to ima_file_check().  If the file data isn't being
+accessed, does the file's integrity need to be verified?
+
+Mimi
+
