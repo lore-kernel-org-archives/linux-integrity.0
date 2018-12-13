@@ -2,84 +2,194 @@ Return-Path: <SRS0=vu0O=OW=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 438E5C65BAE
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 14:05:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D20BC67839
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 14:10:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12F9620879
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 14:05:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12F9620879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 1081F20880
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 14:10:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544710223;
+	bh=SSWtJydgAT1VIU1V2HZUv33F7SJctJF2ncli7OfWFOQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=FOm7G54gVEhE1xpmtN7t9t/fgLJxuPyLTJbZAT9DHFGJl5Gv7Mo6RhNOpWAvBrjLo
+	 RN1+dHknCf4FTJOswFqIop2O9+8va0DxPBfAIkCOpfZkQPN9+VgvXcxmyaDyp4FEbU
+	 FSRibHXvEyuEbsxL7xvUGT9hg31NPvsFDvpBznTU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1081F20880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728591AbeLMOF0 (ORCPT
+        id S1727968AbeLMOKW (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 13 Dec 2018 09:05:26 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42764 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728020AbeLMOF0 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 13 Dec 2018 09:05:26 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 362DCAEA3;
-        Thu, 13 Dec 2018 14:05:24 +0000 (UTC)
-Date:   Thu, 13 Dec 2018 08:05:21 -0600
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        syzbot+ae82084b07d0297e566b@syzkaller.appspotmail.com,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thu, 13 Dec 2018 09:10:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54102 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727720AbeLMOKW (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 13 Dec 2018 09:10:22 -0500
+Received: from linux-8ccs (p5DE45A67.dip0.t-ipconnect.de [93.228.90.103])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91FDA2086D;
+        Thu, 13 Dec 2018 14:10:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544710220;
+        bh=SSWtJydgAT1VIU1V2HZUv33F7SJctJF2ncli7OfWFOQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZOuhypgqy+brjCnFoNs8MojU6a/Cdy++6vjYA4O+gsdTIVA3QVy+arpdsjE8Iv7fi
+         IsMsa6H3WjdgvhGiUa2KDhzu7H65oNgpc0p4DaOkqr3gdTglYeaT889xP3tlydk5kD
+         8baQXkUowvIEmcLwHDGRpyie7Ui+h0GmJkHjMRAc=
+Date:   Thu, 13 Dec 2018 15:10:13 +0100
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
         linux-integrity@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>
-Subject: Re: [PATCH] fs: Evaluate O_WRONLY | O_RDWR to O_RDWR
-Message-ID: <20181213140521.f3wbfrnh3zwk24td@merlin>
-References: <20181213115717.p7ncktng2ihxw5md@merlin>
- <20181213121000.GM2217@ZenIV.linux.org.uk>
- <CACT4Y+Y3Kv6LacRYzZbuNqOAMC7=z-oYUn5aQbN7j-R_JJq6RA@mail.gmail.com>
- <20181213123444.GN2217@ZenIV.linux.org.uk>
+        linux-security-module@vger.kernel.org,
+        Rick P Edgecombe <rick.p.edgecombe@intel.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>
+Subject: Re: [PATCH v7 13/14] module: Do not set nx for module memory before
+ freeing
+Message-ID: <20181213141013.GA16819@linux-8ccs>
+References: <20181205013408.47725-1-namit@vmware.com>
+ <20181205013408.47725-14-namit@vmware.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20181213123444.GN2217@ZenIV.linux.org.uk>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20181205013408.47725-14-namit@vmware.com>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.22-default x86_64
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 12:34 13/12, Al Viro wrote:
-> On Thu, Dec 13, 2018 at 01:16:45PM +0100, Dmitry Vyukov wrote:
-> > On Thu, Dec 13, 2018 at 1:10 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > >
-> > > On Thu, Dec 13, 2018 at 05:57:17AM -0600, Goldwyn Rodrigues wrote:
-> > > > A user can open(O_WRONLY | O_RDWR) and the options are valid.
-> > > > However, OPEN_FMODE() evaluates both FMODE_READ and FMODE_WRITE,
-> > > > as negative. We also need to protect the lower layers from this
-> > > > anomaly.
-> > > >
-> > > > Solve it by dropping O_WRONLY, so O_RDWR takes precedence.
-> > >
-> > > Congratulations, you've broken fdutils...  Passing 3 in lower bits
-> > > of open() flags is *not* the same as O_RDWR; behaiviour is
-> > > different and deliberately chosen by existing userland code.
-> > >
-> > > IOW, NAK.
-> > 
-> > I am eager to hear what it means then.
-> 
-> Open for ioctls, basically.  No read/write allowed, no checks for
-> media writability, etc. done at open() time, both read and write
-> *permissions* required from device node.
-> 
-> Think of the things like formatting a floppy, for example...
++++ Nadav Amit [04/12/18 17:34 -0800]:
+>When module memory is about to be freed, there is no apparent reason to
+>make it (and its data) executable, but that's exactly what is done
+>today. This is not efficient and not secure.
+>
+>There are various theories why it was done, but none of them seem as
+>something that really require it today. nios2 uses kmalloc for module
+>memory, but anyhow it does not change the PTEs of the module memory.  In
+>x86, changing vmalloc'd memory mappings also modifies the direct mapping
+>alias, but the NX-bit is not modified in such way.
+>
+>So let's remove it. Andy suggested that the changes of the PTEs can be
+>avoided (excluding the direct-mapping alias), which is true. However,
+>in x86 it requires some cleanup of the contiguous page allocator, which
+>is outside of the scope of this patch-set.
+>
+>Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>
+>Cc: Will Deacon <will.deacon@arm.com>
+>Cc: Andy Lutomirski <luto@kernel.org>
+>Signed-off-by: Nadav Amit <namit@vmware.com>
 
-Sorry, I was not aware of the ioctl usage. Thanks.
+[ Thanks Andrea Parri for the cc ]
 
--- 
-Goldwyn
+Regarding the patch subject, don't you mean "Do not make module
+memory executable" or "Do not unset nx" instead of "Do not set nx"?
+Hm, these double negatives are confusing :-)
+
+I think this also needs to be done in the load_module() error path.
+See the bug_cleanup label. There, module_disable_{ro,nx}() are called
+before module deallocation.
+
+I am not sure why all this was made executable before freeing in the
+first place.  Tried to dig through the commit history and the first
+commit that introduced this behavior was 448694a1d50 ("module: undo
+module RONX protection correctly"). There, the behavior was changed
+from W+NX to W+X before releasing the module. But AFAIK from the
+changelog, there was no real technical reason behind it, it stemmed
+out of the complaint of code asymmetry :-/
+
+Jessica
+
+>---
+> kernel/module.c | 35 ++++++++++++++++++++++-------------
+> 1 file changed, 22 insertions(+), 13 deletions(-)
+>
+>diff --git a/kernel/module.c b/kernel/module.c
+>index 7cb207249437..57c5b23746e7 100644
+>--- a/kernel/module.c
+>+++ b/kernel/module.c
+>@@ -2027,20 +2027,29 @@ void set_all_modules_text_ro(void)
+> 	mutex_unlock(&module_mutex);
+> }
+>
+>-static void disable_ro_nx(const struct module_layout *layout)
+>+static void module_restore_mappings(const struct module_layout *layout)
+> {
+>-	if (rodata_enabled) {
+>-		frob_text(layout, set_memory_rw);
+>-		frob_rodata(layout, set_memory_rw);
+>-		frob_ro_after_init(layout, set_memory_rw);
+>-	}
+>-	frob_rodata(layout, set_memory_x);
+>-	frob_ro_after_init(layout, set_memory_x);
+>-	frob_writable_data(layout, set_memory_x);
+>+	/*
+>+	 * First, make the mappings of the code non-executable to prevent
+>+	 * transient W+X mappings from being set when the text is set as RW.
+>+	 */
+>+	frob_text(layout, set_memory_nx);
+>+
+>+	if (!rodata_enabled)
+>+		return;
+>+
+>+	/*
+>+	 * Second, set the memory as writable. Although the module memory is
+>+	 * about to be freed, these calls are required (at least on x86) to
+>+	 * restore the direct map to its "correct" state.
+>+	 */
+>+	frob_text(layout, set_memory_rw);
+>+	frob_rodata(layout, set_memory_rw);
+>+	frob_ro_after_init(layout, set_memory_rw);
+> }
+>
+> #else
+>-static void disable_ro_nx(const struct module_layout *layout) { }
+>+static void module_restore_mappings(const struct module_layout *layout) { }
+> static void module_enable_nx(const struct module *mod) { }
+> static void module_disable_nx(const struct module *mod) { }
+> #endif
+>@@ -2173,7 +2182,7 @@ static void free_module(struct module *mod)
+> 	mutex_unlock(&module_mutex);
+>
+> 	/* This may be empty, but that's OK */
+>-	disable_ro_nx(&mod->init_layout);
+>+	module_restore_mappings(&mod->init_layout);
+> 	module_arch_freeing_init(mod);
+> 	module_memfree(mod->init_layout.base);
+> 	kfree(mod->args);
+>@@ -2183,7 +2192,7 @@ static void free_module(struct module *mod)
+> 	lockdep_free_key_range(mod->core_layout.base, mod->core_layout.size);
+>
+> 	/* Finally, free the core (containing the module structure) */
+>-	disable_ro_nx(&mod->core_layout);
+>+	module_restore_mappings(&mod->core_layout);
+> 	module_memfree(mod->core_layout.base);
+> }
+>
+>@@ -3507,7 +3516,7 @@ static noinline int do_init_module(struct module *mod)
+> #endif
+> 	module_enable_ro(mod, true);
+> 	mod_tree_remove_init(mod);
+>-	disable_ro_nx(&mod->init_layout);
+>+	module_restore_mappings(&mod->init_layout);
+> 	module_arch_freeing_init(mod);
+> 	mod->init_layout.base = NULL;
+> 	mod->init_layout.size = 0;
+>-- 
+>2.17.1
+>
