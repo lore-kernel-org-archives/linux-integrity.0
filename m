@@ -2,87 +2,60 @@ Return-Path: <SRS0=vu0O=OW=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D495C65BAE
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 11:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A85C65BAE
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 12:10:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D30C520870
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 11:58:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D30C520870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 1180420880
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 12:10:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1180420880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728767AbeLML6P (ORCPT
+        id S1729106AbeLMMKF (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 13 Dec 2018 06:58:15 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:40572 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728733AbeLML6P (ORCPT
+        Thu, 13 Dec 2018 07:10:05 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:44368 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728767AbeLMMKF (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 13 Dec 2018 06:58:15 -0500
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 9910672CC6C;
-        Thu, 13 Dec 2018 14:58:12 +0300 (MSK)
-Received: from sole.flsd.net (sole.flsd.net [185.75.180.6])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 5D4174A4A14;
-        Thu, 13 Dec 2018 14:58:12 +0300 (MSK)
-Date:   Thu, 13 Dec 2018 14:58:12 +0300
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Tudor.Ambarus@microchip.com
-Cc:     dhowells@redhat.com, herbert@gondor.apana.org.au,
-        davem@davemloft.net, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Subject: Re: [RFC PATCH] akcipher: Introduce verify2 for public key algorithms
-Message-ID: <20181213115811.22ebsv6y6vqclfrz@sole.flsd.net>
-Mail-Followup-To: Tudor.Ambarus@microchip.com, dhowells@redhat.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-References: <20181211165938.1150-1-vt@altlinux.org>
- <b2e6060c-1e2a-c2c5-0484-715646d16201@microchip.com>
+        Thu, 13 Dec 2018 07:10:05 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.91 #2 (Red Hat Linux))
+        id 1gXPoX-0006BE-4Z; Thu, 13 Dec 2018 12:10:01 +0000
+Date:   Thu, 13 Dec 2018 12:10:01 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc:     linux-fsdevel@vger.kernel.org, amir73il@gmail.com,
+        zohar@linux.ibm.com,
+        syzbot+ae82084b07d0297e566b@syzkaller.appspotmail.com,
+        syzkaller-bugs@googlegroups.com, linux-integrity@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, dvyukov@google.com
+Subject: Re: [PATCH] fs: Evaluate O_WRONLY | O_RDWR to O_RDWR
+Message-ID: <20181213121000.GM2217@ZenIV.linux.org.uk>
+References: <20181213115717.p7ncktng2ihxw5md@merlin>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b2e6060c-1e2a-c2c5-0484-715646d16201@microchip.com>
-User-Agent: NeoMutt/20171215-106-ac61c7
+In-Reply-To: <20181213115717.p7ncktng2ihxw5md@merlin>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Tudor,
-
-On Thu, Dec 13, 2018 at 10:26:53AM +0000, Tudor.Ambarus@microchip.com wrote:
+On Thu, Dec 13, 2018 at 05:57:17AM -0600, Goldwyn Rodrigues wrote:
+> A user can open(O_WRONLY | O_RDWR) and the options are valid.
+> However, OPEN_FMODE() evaluates both FMODE_READ and FMODE_WRITE,
+> as negative. We also need to protect the lower layers from this
+> anomaly.
 > 
-> On 12/11/2018 06:59 PM, Vitaly Chikunov wrote:
-> > Current akcipher .verify() just decrypts signature to uncover message
-> > hash, which is then verified in upper level public_key_verify_signature
-> > by memcmp with the expected signature value, which is never passed into
-> > verify().
-> > 
-> > This approach is incompatible with ECDSA algorithms, because, to verify
-> 
-> I would love to have ECDSA in kernel but unfortunately it hasn't reached kernel
-> because there is no in-kernel user for it. Do we have an agreement that we will
-> add support for it? If not, who will benefit of these patches?
+> Solve it by dropping O_WRONLY, so O_RDWR takes precedence.
 
-I will post patchset for EC-RDSA support (which is slightly different from
-ECDSA, but is the same algorithm family). This is intended for use in IMA.
+Congratulations, you've broken fdutils...  Passing 3 in lower bits
+of open() flags is *not* the same as O_RDWR; behaiviour is
+different and deliberately chosen by existing userland code.
 
-Even though EC-RDSA is different from ECDSA it will require the same changes
-that I propose in these RFCs. Basically, after EC-RDSA is implemented and
-hooked into IMA it will be much easier to implement ECDSA.
-
-An additional use case is future possibility to implement other signature
-schemes out of tree, which is currently not possible because API is very
-RSA-centric.
-
-Thanks,
-
-> 
-> Thanks,
-> ta
+IOW, NAK.
