@@ -2,143 +2,91 @@ Return-Path: <SRS0=vu0O=OW=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B4BC67872
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 20:20:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E62CBC65BAE
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 20:22:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB47C20870
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 20:20:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB47C20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id AE8B120870
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 20:22:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mqBP98E7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE8B120870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727489AbeLMUUk (ORCPT
+        id S1727554AbeLMUWu (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 13 Dec 2018 15:20:40 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34854 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727417AbeLMUUk (ORCPT
+        Thu, 13 Dec 2018 15:22:50 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53152 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726408AbeLMUWu (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 13 Dec 2018 15:20:40 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBDKJ4rx133164
-        for <linux-integrity@vger.kernel.org>; Thu, 13 Dec 2018 15:20:39 -0500
-Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pbwg8tdkm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 13 Dec 2018 15:20:38 -0500
-Received: from localhost
-        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <kgold@linux.ibm.com>;
-        Thu, 13 Dec 2018 20:20:38 -0000
-Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
-        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 13 Dec 2018 20:20:35 -0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBDKKYQU27197522
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 13 Dec 2018 20:20:34 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 428C2C6057;
-        Thu, 13 Dec 2018 20:20:34 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F0B75C6055;
-        Thu, 13 Dec 2018 20:20:23 +0000 (GMT)
-Received: from [9.2.202.49] (unknown [9.2.202.49])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 13 Dec 2018 20:20:23 +0000 (GMT)
-Subject: Re: [PATCH v4 1/6] tpm: dynamically allocate active_banks array
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <20181106150159.1136-1-roberto.sassu@huawei.com>
- <20181106150159.1136-2-roberto.sassu@huawei.com>
- <98482eee-6e91-1666-1ce2-cfa94a33efc2@linux.ibm.com>
- <da2ef557-3041-a1ca-47cb-fd7ab92876aa@huawei.com>
-From:   Ken Goldman <kgold@linux.ibm.com>
-Date:   Thu, 13 Dec 2018 15:21:01 -0500
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Thu, 13 Dec 2018 15:22:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=lATmiD54zaGiCNJvHMHCxwMrMhP+1Ph5WForTo8SHb0=; b=mqBP98E7LiLv/9XyBtIGaO0R5
+        xbSHbhTFGaRbXgOLIgrnTC+rD2zoNGE0usX9M+NZo4CHNRJP/WVeBV13QuK94WxNVeqqIO/qOEArQ
+        rySS9qDtRVLWecThsIEi6vFmCr10uaj5eUH9/R5NttBEUfGMpvAw9+QZRnPDUrzYpx6x26wSP2oWw
+        naD9/PeT5A910EzPgpmbEYPcK2pvPhNzS9IOE80TaNcthWuwBHsuw7hLC1yjrH8m5aS53eeOvGUj4
+        C63UzVRMXQJe17FzYE8Mj8kCNKbqxtEtM6wLEinApCrgYOTNoRJK9r12d4nnlDd3Zg3qdUjWFRC6R
+        n0DvJhwiQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gXXVR-0002kx-CF; Thu, 13 Dec 2018 20:22:49 +0000
+Date:   Thu, 13 Dec 2018 12:22:49 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
+Message-ID: <20181213202249.GA3797@infradead.org>
+References: <20181101225230.88058-1-ebiggers@kernel.org>
+ <20181101225230.88058-2-ebiggers@kernel.org>
+ <20181212091406.GA31723@infradead.org>
+ <20181212202609.GA193967@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <da2ef557-3041-a1ca-47cb-fd7ab92876aa@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18121320-0036-0000-0000-00000A6A3314
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010220; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000271; SDB=6.01131314; UDB=6.00587932; IPR=6.00911446;
- MB=3.00024682; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-13 20:20:36
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121320-0037-0000-0000-000049F82CEB
-Message-Id: <47a8bee4-404a-9fff-f85c-0c323eaa6ad5@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-13_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812130174
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181212202609.GA193967@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 11/7/2018 4:41 AM, Roberto Sassu wrote:
-> On 11/7/2018 7:14 AM, Nayna Jain wrote:
+On Wed, Dec 12, 2018 at 12:26:10PM -0800, Eric Biggers wrote:
+> > As this apparently got merged despite no proper reviews from VFS
+> > level persons:
 > 
-> In the TPM Commands specification (section 30.2.1), I found:
-> 
-> TPM_CAP_PCRS – Returns the current allocation of PCR in a
-> TPML_PCR_SELECTION.
-> 
-> You mentioned:
-> 
-> #TPM_RC_SIZE response code when count is greater
-> than the possible number of banks
-> 
-> but TPML_PCR_SELECTION is provided by the TPM.
-> 
-> Roberto
-> 
-> 
-[snip]
->>
->>
->> As per my understanding, the count in the TPML_PCR_SELECTION represent 
->> the number of possible banks and not the number of active banks.
->> TCG Structures Spec for TPM 2.0 - Table 102 mentions this as 
->> explanation of #TPM_RC_SIZE.
+> fs-verity has been out for review since August, and Cc'ed to all relevant
+> mailing lists including linux-fsdevel, linux-ext4, linux-f2fs-devel,
+> linux-fscrypt, linux-integrity, and linux-kernel.  There are tests,
+> documentation (since v2), and a userspace tool.  It's also been presented at
+> multiple conferences, and has been covered by LWN multiple times.  If more
+> people want to review it, then they should do so; there's nothing stopping them.
 
-FYI: This was clarified in the TCG's TPM work group today.  TPM_CAP_PCRS 
-returns:
+But you did not got a review from someone like Al, Linus, Andrew or me,
+did you?
 
-The TPML_PCR_SELECTION must include a TPMS_PCR_SELECTION for each PCR 
-bank in which there is at least one allocated PCR. The 
-TPML_PCR_SELECTION may return a TPMS_PCR_SELECTION for each implemented 
-PCR bank.  The TPML_PCR_SELECTION may return a TPMS_PCR_SELECTION for 
-each implemented hash algorithm.
+> Can you elaborate on the actual problems you think the current solution has, and
+> exactly what solution you'd prefer instead?  Keep in mind that (1) for large
+> files the Merkle tree can be gigabytes long, (2) Linux doesn't have an API for
+> file streams, and (3) when fs-verity is combined with fscrypt, it's important
+> that the hashes be encrypted, so as to not leak information about the plaintext.
 
-Also:
-
-The TPM doesn't use the term "active banks"
-
-Allocated = a bank that has at least one PCR bit set in the selection 
-bitmap.
-
-Supported or implemented banks = the number of PCR banks that can be 
-allocated, based on the TPM hardware.
-
-Hash algorithms = The hash algorithms supported by the TPM
-
-For example, the TPM may support 3 hash algorithms and 2 PCR banks, and 
-have 1 bank allocated.
-
-
-
-
+Given that you alread use an ioctl as the interface what is the problem
+of passing this data through the ioctl?
