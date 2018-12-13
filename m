@@ -2,182 +2,105 @@ Return-Path: <SRS0=vu0O=OW=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99054C65BAE
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 04:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F34E8C67839
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 07:57:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5385A2080F
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 04:50:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="d+UUT341"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5385A2080F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id BF94D20879
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 07:57:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF94D20879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729274AbeLMEu1 (ORCPT
+        id S1726729AbeLMH5d (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:50:27 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:41234 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727426AbeLMEu0 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:50:26 -0500
-Received: by mail-ot1-f68.google.com with SMTP id u16so715116otk.8
-        for <linux-integrity@vger.kernel.org>; Wed, 12 Dec 2018 20:50:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=3Ei4zhiuJTQT4ckP9LIS4RtQhY7la856WNzxCgSqbEE=;
-        b=d+UUT341AxkPB/HtWo/SLAt7NR3mfWTWgFKEV5vH1TdNLDo0CUU4DQY4o/lPLnY1CM
-         K+8g97H7gz8aEnTzsGmWOjZLol9YTbZUkg2nzmFZFT58RVj9hY3sn1ts5SXI9EU9wdy8
-         IX5Kt6gs+mrkbFP8QDfehhjzxsC6wXx9V6MXU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=3Ei4zhiuJTQT4ckP9LIS4RtQhY7la856WNzxCgSqbEE=;
-        b=S6NEZtD2WQFDM6+/WIXiw7HMt4nFhClzbBpMg2JAHcjuIRSMeAJ3eMsb5kvAaMUmCH
-         s8obUJkAPbAbLw3XridkV5OUx3lDzwAlUWZk0bMCQKHfqWF+ewaBCbSbOlM6b5kH2K9B
-         08IrY8vVx6qnE5kLKU0zpNzoOjlnV2q4S7b+NTnwEuaackVxC4/ggM9HAqnnaxG3fNnD
-         4x+U4Tl07hUP6rrxu8IKdCDF9o1ljJMtgzo49cxtZ2rZTS3pmUD/NqD1nEXtw7jrbg18
-         hZpd+BSet1icebrWFX9Y6+0F5DLWMUbPLzaE/O8zsOLED2/OKfJ2Js6eAn5r1nYEIeRK
-         N1mg==
-X-Gm-Message-State: AA+aEWb3yyQNu57wGdCFnzB9/rBigCv7zfa1z0bp8mYYeVVS/DjU+Uar
-        A2sJygAXBavqL4eqpBq4s4k68qLl5KKRo/kbhFW8wYLU4Hg=
-X-Google-Smtp-Source: AFSGD/XRzZn6psTkodBupHe1UVBMjXGnHMSXvn3B+Z8uD54tiLqMOCJlnoiXC1MNjJBmbHNebFj6rDdgbsX480C/NZ4=
-X-Received: by 2002:a9d:5c88:: with SMTP id a8mr15232105oti.64.1544676625837;
- Wed, 12 Dec 2018 20:50:25 -0800 (PST)
+        Thu, 13 Dec 2018 02:57:33 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32808 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726500AbeLMH5d (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 13 Dec 2018 02:57:33 -0500
+Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 1779B5AF6435B;
+        Thu, 13 Dec 2018 07:57:30 +0000 (GMT)
+Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
+ (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 13 Dec
+ 2018 07:57:22 +0000
+Subject: Re: [PATCH v6 7/7] tpm: pass an array of tpm_bank_list structures to
+ tpm_pcr_extend()
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
+        <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20181204082138.24600-1-roberto.sassu@huawei.com>
+ <20181204082138.24600-8-roberto.sassu@huawei.com>
+ <20181205001417.GF1233@linux.intel.com>
+ <9d6e47d9-3b88-86f6-1b60-6652dfe8dc00@huawei.com>
+ <20181212182734.GH6333@linux.intel.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <ae012b83-af66-6dfe-6131-e08507c3372e@huawei.com>
+Date:   Thu, 13 Dec 2018 08:57:17 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <20180926032455.224600-1-louiscollard@chromium.org> <568ea3447a8116ef460d191bf3599e2761bca3a5.camel@mniewoehner.de>
-In-Reply-To: <568ea3447a8116ef460d191bf3599e2761bca3a5.camel@mniewoehner.de>
-From:   Louis Collard <louiscollard@chromium.org>
-Date:   Thu, 13 Dec 2018 12:50:15 +0800
-Message-ID: <CAKNRAJVF5bf7LgyxQRkRFq3ihm9TmbGO8=wCo8i8NWds2yr2bg@mail.gmail.com>
-Subject: Re: [PATCH] Allow hwrng to initialize crng.
-To:     linux@mniewoehner.de
-Cc:     linux-integrity@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andrey Pronin <apronin@chromium.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "David R. Bild" <david.bild@xaptum.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181212182734.GH6333@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.204.65.144]
+X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 4:15 AM Michael Niew=C3=B6hner <linux@mniewoehner.d=
-e> wrote:
->
-> Hi Louis,
->
-> On Wed, 2018-09-26 at 11:24 +0800, Louis Collard wrote:
-> > Some systems, for example embedded systems, do not generate
-> > enough entropy on boot through interrupts, and boot may be blocked for
-> > several minutes waiting for a call to getrandom to complete.
-> >
-> > Currently, random data is read from a hwrng when it is registered,
-> > and is loaded into primary_crng. This data is treated in the same
-> > way as data that is device-specific but otherwise unchanging, and
-> > so primary_crng cannot become initialized with the data from the
-> > hwrng.
-> >
-> > This change causes the data initially read from the hwrng to be
-> > treated the same as subsequent data that is read from the hwrng if
-> > it's quality score is non-zero.
-> >
-> > The implications of this are:
-> >
-> > The data read from hwrng can cause primary_crng to become
-> > initialized, therefore avoiding problems of getrandom blocking
-> > on boot.
-> >
-> > Calls to getrandom (with GRND_RANDOM) may be using entropy
-> > exclusively (or in practise, almost exclusively) from the hwrng.
-> >
-> > Regarding the latter point; this behavior is the same as if a
-> > user specified a quality score of 1 (bit of entropy per 1024 bits)
-> > so hopefully this is not too scary a change to make.
-> >
-> > This change is the result of the discussion here:
-> > https://patchwork.kernel.org/patch/10453893/
-> >
-> > Signed-off-by: Louis Collard <louiscollard@chromium.org>
-> > Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > ---
-> >  drivers/char/hw_random/core.c | 9 +++++++--
-> >  1 file changed, 7 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/cor=
-e.c
-> > index aaf9e5afaad4..47f358aa0c3d 100644
-> > --- a/drivers/char/hw_random/core.c
-> > +++ b/drivers/char/hw_random/core.c
-> > @@ -24,6 +24,7 @@
-> >  #include <linux/sched.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/uaccess.h>
-> > +#include <crypto/chacha20.h>
-> >
-> >  #define RNG_MODULE_NAME              "hw_random"
-> >
-> > @@ -64,13 +65,17 @@ static size_t rng_buffer_size(void)
-> >  static void add_early_randomness(struct hwrng *rng)
-> >  {
-> >       int bytes_read;
-> > -     size_t size =3D min_t(size_t, 16, rng_buffer_size());
-> > +     /* Read enough to initialize crng. */
-> > +     size_t size =3D 2*CHACHA20_KEY_SIZE;
-> >
-> >       mutex_lock(&reading_mutex);
-> >       bytes_read =3D rng_get_data(rng, rng_buffer, size, 1);
-> >       mutex_unlock(&reading_mutex);
-> >       if (bytes_read > 0)
-> > -             add_device_randomness(rng_buffer, bytes_read);
-> > +             /* Allow crng to become initialized, but do not add
-> > +              * entropy to the pool.
-> > +              */
-> > +             add_hwgenerator_randomness(rng_buffer, bytes_read, 0);
-> >  }
-> >
-> >  static inline void cleanup_rng(struct kref *kref)
->
-> I found your patch by chance, searching for a solution for crng init dela=
-y on my
-> headless machine. Unfortunately it hardly makes any difference for me. Wi=
-th the
-> patch the system hangs for about 80s instead of 120s until the "crng init=
- done"
-> message.In contrast, doing a `cat /dev/hwrng >/dev/random` or running rng=
-d
-> initializes the crng instantly.
->
-> Isn't that delay the problem this patch tries to fix? Any idea what is wr=
-ong
-> here?
->
-> Thanks!
->
-> Best regards
-> Michael
->
->
+On 12/12/2018 7:27 PM, Jarkko Sakkinen wrote:
+> On Thu, Dec 06, 2018 at 07:38:30PM +0100, Roberto Sassu wrote:
+>> On 12/5/2018 1:14 AM, Jarkko Sakkinen wrote:
+>>> On Tue, Dec 04, 2018 at 09:21:38AM +0100, Roberto Sassu wrote:
+>>>> The new tpm_bank_list structure has been preferred to the tpm_digest
+>>>> structure, to let the caller specify the size of the digest (which may be
+>>>> unknown to the TPM driver).
+>>>
+>>> Why is that? Didn't previous commit query these?
+>>
+>> Since the TPM driver pads/truncates the first digest passed by the
+>> caller to extend PCRs for which no digest was provided, it must know
+>> which amount of data it can use. It is possible that the algorithm of
+>> the first digest is unknown for the TPM driver, if the caller of
+>> tpm_pcr_extend() didn't check chip->allocated_banks.
+>>
+>> By requiring that the caller passes also the digest size, this problem
+>> does not arise. It seems reasonable to me to pass this information, as
+>> the caller calculated the digest and it should know the digest size.
+> 
+> OK. I noticed something other things that look to alarming:
+> 
+> 1. The function does not fail if alg_id is not found. This will go
+>     silent.
 
-Yes that is the problem this is trying to address. My guess would be
-rng_get_data() is not returning as much data as requested, so the
-delay is reduced but not eliminated. Looking at implementation of
-rng_get_data() it appears this could be caused by device support for
-read() vs data_read(). I don't have a good feel for whether looping to
-retrieve more data here would be acceptable, it is certainly a bigger
-change than currently proposed.
+It is intentional. If alg_id is not found, the PCR is extended with the
+first digest passed by the caller of tpm_pcr_extend(). If no digest was
+provided, the PCR is extended with 0s. This is done to prevent that
+PCRs in unused banks are extended later with fake measurements.
 
-Thanks,
-Louis
+
+> 2. The function does not fail if there is a mismatch with the digest
+>     sizes.
+
+The data passed by the caller of tpm_pcr_extend() is copied to
+dummy_hash, which has the maximum length. Then, tpm2_pcr_extend() takes
+from dummy_hash as many bytes as needed, depending on the current
+algorithm.
+
+Roberto
+
+
+> /Jarkko
+> 
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
