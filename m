@@ -2,350 +2,182 @@ Return-Path: <SRS0=vu0O=OW=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4FFFC67839
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 02:12:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99054C65BAE
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 04:50:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C40620851
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 02:12:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C40620851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5385A2080F
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 04:50:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="d+UUT341"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5385A2080F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726633AbeLMCMo (ORCPT
+        id S1729274AbeLMEu1 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 12 Dec 2018 21:12:44 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60266 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726604AbeLMCLD (ORCPT
+        Wed, 12 Dec 2018 23:50:27 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:41234 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727426AbeLMEu0 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 12 Dec 2018 21:11:03 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBD23jA4112233
-        for <linux-integrity@vger.kernel.org>; Wed, 12 Dec 2018 21:11:01 -0500
-Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pbbdj7geb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 12 Dec 2018 21:11:01 -0500
-Received: from localhost
-        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Thu, 13 Dec 2018 02:11:00 -0000
-Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
-        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 13 Dec 2018 02:10:54 -0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBD2Arjx19792050
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 13 Dec 2018 02:10:53 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D9351C6057;
-        Thu, 13 Dec 2018 02:10:52 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C5104C605B;
-        Thu, 13 Dec 2018 02:10:48 +0000 (GMT)
-Received: from morokweng.localdomain.com (unknown [9.80.227.60])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 13 Dec 2018 02:10:48 +0000 (GMT)
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [PATCH v9 01/14] MODSIGN: Export module signature definitions
-Date:   Thu, 13 Dec 2018 00:08:54 -0200
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20181213020907.13601-1-bauerman@linux.ibm.com>
-References: <20181213020907.13601-1-bauerman@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18121302-0020-0000-0000-00000E98FB52
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010217; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01130951; UDB=6.00587714; IPR=6.00911085;
- MB=3.00024674; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-13 02:10:58
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121302-0021-0000-0000-000064081C09
-Message-Id: <20181213020907.13601-2-bauerman@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812130017
+        Wed, 12 Dec 2018 23:50:26 -0500
+Received: by mail-ot1-f68.google.com with SMTP id u16so715116otk.8
+        for <linux-integrity@vger.kernel.org>; Wed, 12 Dec 2018 20:50:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=3Ei4zhiuJTQT4ckP9LIS4RtQhY7la856WNzxCgSqbEE=;
+        b=d+UUT341AxkPB/HtWo/SLAt7NR3mfWTWgFKEV5vH1TdNLDo0CUU4DQY4o/lPLnY1CM
+         K+8g97H7gz8aEnTzsGmWOjZLol9YTbZUkg2nzmFZFT58RVj9hY3sn1ts5SXI9EU9wdy8
+         IX5Kt6gs+mrkbFP8QDfehhjzxsC6wXx9V6MXU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=3Ei4zhiuJTQT4ckP9LIS4RtQhY7la856WNzxCgSqbEE=;
+        b=S6NEZtD2WQFDM6+/WIXiw7HMt4nFhClzbBpMg2JAHcjuIRSMeAJ3eMsb5kvAaMUmCH
+         s8obUJkAPbAbLw3XridkV5OUx3lDzwAlUWZk0bMCQKHfqWF+ewaBCbSbOlM6b5kH2K9B
+         08IrY8vVx6qnE5kLKU0zpNzoOjlnV2q4S7b+NTnwEuaackVxC4/ggM9HAqnnaxG3fNnD
+         4x+U4Tl07hUP6rrxu8IKdCDF9o1ljJMtgzo49cxtZ2rZTS3pmUD/NqD1nEXtw7jrbg18
+         hZpd+BSet1icebrWFX9Y6+0F5DLWMUbPLzaE/O8zsOLED2/OKfJ2Js6eAn5r1nYEIeRK
+         N1mg==
+X-Gm-Message-State: AA+aEWb3yyQNu57wGdCFnzB9/rBigCv7zfa1z0bp8mYYeVVS/DjU+Uar
+        A2sJygAXBavqL4eqpBq4s4k68qLl5KKRo/kbhFW8wYLU4Hg=
+X-Google-Smtp-Source: AFSGD/XRzZn6psTkodBupHe1UVBMjXGnHMSXvn3B+Z8uD54tiLqMOCJlnoiXC1MNjJBmbHNebFj6rDdgbsX480C/NZ4=
+X-Received: by 2002:a9d:5c88:: with SMTP id a8mr15232105oti.64.1544676625837;
+ Wed, 12 Dec 2018 20:50:25 -0800 (PST)
+MIME-Version: 1.0
+References: <20180926032455.224600-1-louiscollard@chromium.org> <568ea3447a8116ef460d191bf3599e2761bca3a5.camel@mniewoehner.de>
+In-Reply-To: <568ea3447a8116ef460d191bf3599e2761bca3a5.camel@mniewoehner.de>
+From:   Louis Collard <louiscollard@chromium.org>
+Date:   Thu, 13 Dec 2018 12:50:15 +0800
+Message-ID: <CAKNRAJVF5bf7LgyxQRkRFq3ihm9TmbGO8=wCo8i8NWds2yr2bg@mail.gmail.com>
+Subject: Re: [PATCH] Allow hwrng to initialize crng.
+To:     linux@mniewoehner.de
+Cc:     linux-integrity@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Andrey Pronin <apronin@chromium.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "David R. Bild" <david.bild@xaptum.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-IMA will use the module_signature format for append signatures, so export
-the relevant definitions and factor out the code which verifies that the
-appended signature trailer is valid.
+On Sun, Nov 18, 2018 at 4:15 AM Michael Niew=C3=B6hner <linux@mniewoehner.d=
+e> wrote:
+>
+> Hi Louis,
+>
+> On Wed, 2018-09-26 at 11:24 +0800, Louis Collard wrote:
+> > Some systems, for example embedded systems, do not generate
+> > enough entropy on boot through interrupts, and boot may be blocked for
+> > several minutes waiting for a call to getrandom to complete.
+> >
+> > Currently, random data is read from a hwrng when it is registered,
+> > and is loaded into primary_crng. This data is treated in the same
+> > way as data that is device-specific but otherwise unchanging, and
+> > so primary_crng cannot become initialized with the data from the
+> > hwrng.
+> >
+> > This change causes the data initially read from the hwrng to be
+> > treated the same as subsequent data that is read from the hwrng if
+> > it's quality score is non-zero.
+> >
+> > The implications of this are:
+> >
+> > The data read from hwrng can cause primary_crng to become
+> > initialized, therefore avoiding problems of getrandom blocking
+> > on boot.
+> >
+> > Calls to getrandom (with GRND_RANDOM) may be using entropy
+> > exclusively (or in practise, almost exclusively) from the hwrng.
+> >
+> > Regarding the latter point; this behavior is the same as if a
+> > user specified a quality score of 1 (bit of entropy per 1024 bits)
+> > so hopefully this is not too scary a change to make.
+> >
+> > This change is the result of the discussion here:
+> > https://patchwork.kernel.org/patch/10453893/
+> >
+> > Signed-off-by: Louis Collard <louiscollard@chromium.org>
+> > Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > ---
+> >  drivers/char/hw_random/core.c | 9 +++++++--
+> >  1 file changed, 7 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/cor=
+e.c
+> > index aaf9e5afaad4..47f358aa0c3d 100644
+> > --- a/drivers/char/hw_random/core.c
+> > +++ b/drivers/char/hw_random/core.c
+> > @@ -24,6 +24,7 @@
+> >  #include <linux/sched.h>
+> >  #include <linux/slab.h>
+> >  #include <linux/uaccess.h>
+> > +#include <crypto/chacha20.h>
+> >
+> >  #define RNG_MODULE_NAME              "hw_random"
+> >
+> > @@ -64,13 +65,17 @@ static size_t rng_buffer_size(void)
+> >  static void add_early_randomness(struct hwrng *rng)
+> >  {
+> >       int bytes_read;
+> > -     size_t size =3D min_t(size_t, 16, rng_buffer_size());
+> > +     /* Read enough to initialize crng. */
+> > +     size_t size =3D 2*CHACHA20_KEY_SIZE;
+> >
+> >       mutex_lock(&reading_mutex);
+> >       bytes_read =3D rng_get_data(rng, rng_buffer, size, 1);
+> >       mutex_unlock(&reading_mutex);
+> >       if (bytes_read > 0)
+> > -             add_device_randomness(rng_buffer, bytes_read);
+> > +             /* Allow crng to become initialized, but do not add
+> > +              * entropy to the pool.
+> > +              */
+> > +             add_hwgenerator_randomness(rng_buffer, bytes_read, 0);
+> >  }
+> >
+> >  static inline void cleanup_rng(struct kref *kref)
+>
+> I found your patch by chance, searching for a solution for crng init dela=
+y on my
+> headless machine. Unfortunately it hardly makes any difference for me. Wi=
+th the
+> patch the system hangs for about 80s instead of 120s until the "crng init=
+ done"
+> message.In contrast, doing a `cat /dev/hwrng >/dev/random` or running rng=
+d
+> initializes the crng instantly.
+>
+> Isn't that delay the problem this patch tries to fix? Any idea what is wr=
+ong
+> here?
+>
+> Thanks!
+>
+> Best regards
+> Michael
+>
+>
 
-Also, create a CONFIG_MODULE_SIG_FORMAT option so that IMA can select it
-and be able to use mod_check_sig() without having to depend on
-CONFIG_MODULE_SIG.
+Yes that is the problem this is trying to address. My guess would be
+rng_get_data() is not returning as much data as requested, so the
+delay is reduced but not eliminated. Looking at implementation of
+rng_get_data() it appears this could be caused by device support for
+read() vs data_read(). I don't have a good feel for whether looping to
+retrieve more data here would be acceptable, it is certainly a bigger
+change than currently proposed.
 
-Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Jessica Yu <jeyu@kernel.org>
----
- include/linux/module.h           |  3 --
- include/linux/module_signature.h | 47 ++++++++++++++++++
- init/Kconfig                     |  6 ++-
- kernel/Makefile                  |  2 +-
- kernel/module.c                  |  1 +
- kernel/module_signing.c          | 82 ++++++++++++++------------------
- 6 files changed, 91 insertions(+), 50 deletions(-)
-
-diff --git a/include/linux/module.h b/include/linux/module.h
-index fce6b4335e36..e49bbc5c66ef 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -25,9 +25,6 @@
- #include <linux/percpu.h>
- #include <asm/module.h>
- 
--/* In stripped ARM and x86-64 modules, ~ is surprisingly rare. */
--#define MODULE_SIG_STRING "~Module signature appended~\n"
--
- /* Not Yet Implemented */
- #define MODULE_SUPPORTED_DEVICE(name)
- 
-diff --git a/include/linux/module_signature.h b/include/linux/module_signature.h
-new file mode 100644
-index 000000000000..a3a629fc8c13
---- /dev/null
-+++ b/include/linux/module_signature.h
-@@ -0,0 +1,47 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Module signature handling.
-+ *
-+ * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ */
-+
-+#ifndef _LINUX_MODULE_SIGNATURE_H
-+#define _LINUX_MODULE_SIGNATURE_H
-+
-+/* In stripped ARM and x86-64 modules, ~ is surprisingly rare. */
-+#define MODULE_SIG_STRING "~Module signature appended~\n"
-+
-+enum pkey_id_type {
-+	PKEY_ID_PGP,		/* OpenPGP generated key ID */
-+	PKEY_ID_X509,		/* X.509 arbitrary subjectKeyIdentifier */
-+	PKEY_ID_PKCS7,		/* Signature in PKCS#7 message */
-+};
-+
-+/*
-+ * Module signature information block.
-+ *
-+ * The constituents of the signature section are, in order:
-+ *
-+ *	- Signer's name
-+ *	- Key identifier
-+ *	- Signature data
-+ *	- Information block
-+ */
-+struct module_signature {
-+	u8	algo;		/* Public-key crypto algorithm [0] */
-+	u8	hash;		/* Digest algorithm [0] */
-+	u8	id_type;	/* Key identifier type [PKEY_ID_PKCS7] */
-+	u8	signer_len;	/* Length of signer's name [0] */
-+	u8	key_id_len;	/* Length of key identifier [0] */
-+	u8	__pad[3];
-+	__be32	sig_len;	/* Length of signature data */
-+};
-+
-+struct load_info;
-+
-+int mod_check_sig(const struct module_signature *ms, size_t file_len,
-+		  const char *name);
-+int mod_verify_sig(const void *mod, struct load_info *info);
-+
-+#endif /* _LINUX_MODULE_SIGNATURE_H */
-diff --git a/init/Kconfig b/init/Kconfig
-index a4112e95724a..cd31593525ee 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1864,7 +1864,7 @@ config MODULE_SRCVERSION_ALL
- config MODULE_SIG
- 	bool "Module signature verification"
- 	depends on MODULES
--	select SYSTEM_DATA_VERIFICATION
-+	select MODULE_SIG_FORMAT
- 	help
- 	  Check modules for valid signatures upon load: the signature
- 	  is simply appended to the module. For more information see
-@@ -1879,6 +1879,10 @@ config MODULE_SIG
- 	  debuginfo strip done by some packagers (such as rpmbuild) and
- 	  inclusion into an initramfs that wants the module size reduced.
- 
-+config MODULE_SIG_FORMAT
-+	def_bool n
-+	select SYSTEM_DATA_VERIFICATION
-+
- config MODULE_SIG_FORCE
- 	bool "Require modules to be validly signed"
- 	depends on MODULE_SIG
-diff --git a/kernel/Makefile b/kernel/Makefile
-index 7343b3a9bff0..e56842571348 100644
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@ -59,7 +59,7 @@ obj-y += up.o
- endif
- obj-$(CONFIG_UID16) += uid16.o
- obj-$(CONFIG_MODULES) += module.o
--obj-$(CONFIG_MODULE_SIG) += module_signing.o
-+obj-$(CONFIG_MODULE_SIG_FORMAT) += module_signing.o
- obj-$(CONFIG_KALLSYMS) += kallsyms.o
- obj-$(CONFIG_BSD_PROCESS_ACCT) += acct.o
- obj-$(CONFIG_CRASH_CORE) += crash_core.o
-diff --git a/kernel/module.c b/kernel/module.c
-index 49a405891587..205c9eefd08d 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -19,6 +19,7 @@
- #include <linux/export.h>
- #include <linux/extable.h>
- #include <linux/moduleloader.h>
-+#include <linux/module_signature.h>
- #include <linux/trace_events.h>
- #include <linux/init.h>
- #include <linux/kallsyms.h>
-diff --git a/kernel/module_signing.c b/kernel/module_signing.c
-index f2075ce8e4b3..5624e59981b4 100644
---- a/kernel/module_signing.c
-+++ b/kernel/module_signing.c
-@@ -11,36 +11,44 @@
- 
- #include <linux/kernel.h>
- #include <linux/errno.h>
-+#include <linux/module_signature.h>
- #include <linux/string.h>
- #include <linux/verification.h>
- #include <crypto/public_key.h>
- #include "module-internal.h"
- 
--enum pkey_id_type {
--	PKEY_ID_PGP,		/* OpenPGP generated key ID */
--	PKEY_ID_X509,		/* X.509 arbitrary subjectKeyIdentifier */
--	PKEY_ID_PKCS7,		/* Signature in PKCS#7 message */
--};
--
--/*
-- * Module signature information block.
-+/**
-+ * mod_check_sig - check that the given signature is sane
-  *
-- * The constituents of the signature section are, in order:
-- *
-- *	- Signer's name
-- *	- Key identifier
-- *	- Signature data
-- *	- Information block
-+ * @ms:		Signature to check.
-+ * @file_len:	Size of the file to which @ms is appended.
-  */
--struct module_signature {
--	u8	algo;		/* Public-key crypto algorithm [0] */
--	u8	hash;		/* Digest algorithm [0] */
--	u8	id_type;	/* Key identifier type [PKEY_ID_PKCS7] */
--	u8	signer_len;	/* Length of signer's name [0] */
--	u8	key_id_len;	/* Length of key identifier [0] */
--	u8	__pad[3];
--	__be32	sig_len;	/* Length of signature data */
--};
-+int mod_check_sig(const struct module_signature *ms, size_t file_len,
-+		  const char *name)
-+{
-+	if (be32_to_cpu(ms->sig_len) >= file_len - sizeof(*ms))
-+		return -EBADMSG;
-+
-+	if (ms->id_type != PKEY_ID_PKCS7) {
-+		pr_err("%s: Module is not signed with expected PKCS#7 message\n",
-+		       name);
-+		return -ENOPKG;
-+	}
-+
-+	if (ms->algo != 0 ||
-+	    ms->hash != 0 ||
-+	    ms->signer_len != 0 ||
-+	    ms->key_id_len != 0 ||
-+	    ms->__pad[0] != 0 ||
-+	    ms->__pad[1] != 0 ||
-+	    ms->__pad[2] != 0) {
-+		pr_err("%s: PKCS#7 signature info has unexpected non-zero params\n",
-+		       name);
-+		return -EBADMSG;
-+	}
-+
-+	return 0;
-+}
- 
- /*
-  * Verify the signature on a module.
-@@ -49,6 +57,7 @@ int mod_verify_sig(const void *mod, struct load_info *info)
- {
- 	struct module_signature ms;
- 	size_t sig_len, modlen = info->len;
-+	int ret;
- 
- 	pr_devel("==>%s(,%zu)\n", __func__, modlen);
- 
-@@ -56,32 +65,15 @@ int mod_verify_sig(const void *mod, struct load_info *info)
- 		return -EBADMSG;
- 
- 	memcpy(&ms, mod + (modlen - sizeof(ms)), sizeof(ms));
--	modlen -= sizeof(ms);
-+
-+	ret = mod_check_sig(&ms, modlen, info->name);
-+	if (ret)
-+		return ret;
- 
- 	sig_len = be32_to_cpu(ms.sig_len);
--	if (sig_len >= modlen)
--		return -EBADMSG;
--	modlen -= sig_len;
-+	modlen -= sig_len + sizeof(ms);
- 	info->len = modlen;
- 
--	if (ms.id_type != PKEY_ID_PKCS7) {
--		pr_err("%s: Module is not signed with expected PKCS#7 message\n",
--		       info->name);
--		return -ENOPKG;
--	}
--
--	if (ms.algo != 0 ||
--	    ms.hash != 0 ||
--	    ms.signer_len != 0 ||
--	    ms.key_id_len != 0 ||
--	    ms.__pad[0] != 0 ||
--	    ms.__pad[1] != 0 ||
--	    ms.__pad[2] != 0) {
--		pr_err("%s: PKCS#7 signature info has unexpected non-zero params\n",
--		       info->name);
--		return -EBADMSG;
--	}
--
- 	return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
- 				      NULL, VERIFYING_MODULE_SIGNATURE,
- 				      NULL, NULL);
-
+Thanks,
+Louis
