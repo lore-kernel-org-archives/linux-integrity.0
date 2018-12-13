@@ -2,194 +2,154 @@ Return-Path: <SRS0=vu0O=OW=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D20BC67839
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 14:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2142FC65BAE
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 17:25:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1081F20880
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 14:10:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544710223;
-	bh=SSWtJydgAT1VIU1V2HZUv33F7SJctJF2ncli7OfWFOQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=FOm7G54gVEhE1xpmtN7t9t/fgLJxuPyLTJbZAT9DHFGJl5Gv7Mo6RhNOpWAvBrjLo
-	 RN1+dHknCf4FTJOswFqIop2O9+8va0DxPBfAIkCOpfZkQPN9+VgvXcxmyaDyp4FEbU
-	 FSRibHXvEyuEbsxL7xvUGT9hg31NPvsFDvpBznTU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1081F20880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D346520870
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 17:25:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="jI90+GCI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D346520870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbeLMOKW (ORCPT
+        id S1729549AbeLMRZS (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 13 Dec 2018 09:10:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54102 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727720AbeLMOKW (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 13 Dec 2018 09:10:22 -0500
-Received: from linux-8ccs (p5DE45A67.dip0.t-ipconnect.de [93.228.90.103])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91FDA2086D;
-        Thu, 13 Dec 2018 14:10:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544710220;
-        bh=SSWtJydgAT1VIU1V2HZUv33F7SJctJF2ncli7OfWFOQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZOuhypgqy+brjCnFoNs8MojU6a/Cdy++6vjYA4O+gsdTIVA3QVy+arpdsjE8Iv7fi
-         IsMsa6H3WjdgvhGiUa2KDhzu7H65oNgpc0p4DaOkqr3gdTglYeaT889xP3tlydk5kD
-         8baQXkUowvIEmcLwHDGRpyie7Ui+h0GmJkHjMRAc=
-Date:   Thu, 13 Dec 2018 15:10:13 +0100
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thu, 13 Dec 2018 12:25:18 -0500
+Received: from mail-eopbgr800080.outbound.protection.outlook.com ([40.107.80.80]:9680
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728123AbeLMRZS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 13 Dec 2018 12:25:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vy7dk4Ci33dsQMZmfe9GmrGmqU0oas8j4+wBEDAswfk=;
+ b=jI90+GCIkOu7x3VV2nxmKAAnM5+PFRYcjIHwWkUpYUkgQMLAm/sEfD9c2wvR0mQTf3SteY1pCkglYTTnH0PJtp6nMGIC0Yg5Nh4tW05CvmksNONTsJLjKVURvECKgrPf3YB08H2jhulAbbmwjFP/dpakdHvHxqTU3OF8Vmqh288=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB4504.namprd05.prod.outlook.com (52.135.203.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1446.9; Thu, 13 Dec 2018 17:25:12 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::9155:fea7:9c0c:68c7]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::9155:fea7:9c0c:68c7%4]) with mapi id 15.20.1446.006; Thu, 13 Dec 2018
+ 17:25:12 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Jessica Yu <jeyu@kernel.org>
+CC:     Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Borislav Petkov <bp@alien8.de>,
         Andy Lutomirski <luto@kernel.org>,
-        Nadav Amit <nadav.amit@gmail.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Damian Tometzki <linux_dti@icloud.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
         Rick P Edgecombe <rick.p.edgecombe@intel.com>,
         Will Deacon <will.deacon@arm.com>,
         Andrea Parri <andrea.parri@amarulasolutions.com>
 Subject: Re: [PATCH v7 13/14] module: Do not set nx for module memory before
  freeing
-Message-ID: <20181213141013.GA16819@linux-8ccs>
+Thread-Topic: [PATCH v7 13/14] module: Do not set nx for module memory before
+ freeing
+Thread-Index: AQHUjHgCm5HQo9wG+kmVhMEM5+sZ86V8wjGAgAA2eYA=
+Date:   Thu, 13 Dec 2018 17:25:12 +0000
+Message-ID: <634A88B1-B41C-466C-A98A-DB85065A4BA9@vmware.com>
 References: <20181205013408.47725-1-namit@vmware.com>
  <20181205013408.47725-14-namit@vmware.com>
+ <20181213141013.GA16819@linux-8ccs>
+In-Reply-To: <20181213141013.GA16819@linux-8ccs>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [208.91.2.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB4504;20:kDlNL5E3bOrL9R8FFlgmQcz+fJt5M6B/O91Da5w7N0mPkbgOzoCi1hv2FfDgI4mer+4EqmZG6tXQe+OiCvi1EYRfpieIEFjXv3sifkvi4+fWwjqM4hfpdLzUU9m0JSSW97gA2Sjr4aEnJmsxk2SstI5A63Q5z/yxYgLJcafrJjA=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 597c4f57-c881-4815-c722-08d6611ff09c
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4504;
+x-ms-traffictypediagnostic: BYAPR05MB4504:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-microsoft-antispam-prvs: <BYAPR05MB450426D4199C9064B25FA582D0A00@BYAPR05MB4504.namprd05.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3231475)(944501520)(52105112)(3002001)(148016)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BYAPR05MB4504;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4504;
+x-forefront-prvs: 088552DE73
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(39860400002)(136003)(396003)(376002)(54534003)(189003)(199004)(14454004)(25786009)(6506007)(966005)(76176011)(36756003)(102836004)(68736007)(5660300001)(99286004)(105586002)(106356001)(478600001)(33656002)(3846002)(4326008)(6116002)(53546011)(66066001)(39060400002)(6486002)(81156014)(81166006)(8676002)(229853002)(6436002)(305945005)(8936002)(7736002)(54906003)(7416002)(316002)(2906002)(6246003)(6916009)(53936002)(6512007)(6306002)(476003)(83716004)(11346002)(446003)(86362001)(186003)(2616005)(71190400001)(71200400001)(486006)(97736004)(26005)(82746002)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4504;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 0XrPyQsp+MmgJwLJEl4aIuImjgq8TAcpH2JID2OfagC80BXvUGxnwXs/owY9YnPlfiXRnbUFqDPJPI5rhz5GIqCif1chxuV3K36igLGrEK6JfueUF9eU5eHgvWNaBOjfXq0T7kqzRD3ubbGDqYE3NZetkIEK3SVQKLRRw9qQqPRy3kMzth1dXbIHZeb7WgUJKNJdD/n1UgrWxh7o3ROEjxcIT/jftXXQJltN+1ii4L3tMa7+B/b32CyU+DW6BsPf7pfQdBhzRMx4jDN73EivYWFmXZmJvi8vYrWVfdbF5hmgDd9xxoV4UwZcUD09Mrrs
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <24DC15464DCDEC438142E80136836914@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20181205013408.47725-14-namit@vmware.com>
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.22-default x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 597c4f57-c881-4815-c722-08d6611ff09c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 17:25:12.6299
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4504
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-+++ Nadav Amit [04/12/18 17:34 -0800]:
->When module memory is about to be freed, there is no apparent reason to
->make it (and its data) executable, but that's exactly what is done
->today. This is not efficient and not secure.
->
->There are various theories why it was done, but none of them seem as
->something that really require it today. nios2 uses kmalloc for module
->memory, but anyhow it does not change the PTEs of the module memory.  In
->x86, changing vmalloc'd memory mappings also modifies the direct mapping
->alias, but the NX-bit is not modified in such way.
->
->So let's remove it. Andy suggested that the changes of the PTEs can be
->avoided (excluding the direct-mapping alias), which is true. However,
->in x86 it requires some cleanup of the contiguous page allocator, which
->is outside of the scope of this patch-set.
->
->Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>
->Cc: Will Deacon <will.deacon@arm.com>
->Cc: Andy Lutomirski <luto@kernel.org>
->Signed-off-by: Nadav Amit <namit@vmware.com>
-
-[ Thanks Andrea Parri for the cc ]
-
-Regarding the patch subject, don't you mean "Do not make module
-memory executable" or "Do not unset nx" instead of "Do not set nx"?
-Hm, these double negatives are confusing :-)
-
-I think this also needs to be done in the load_module() error path.
-See the bug_cleanup label. There, module_disable_{ro,nx}() are called
-before module deallocation.
-
-I am not sure why all this was made executable before freeing in the
-first place.  Tried to dig through the commit history and the first
-commit that introduced this behavior was 448694a1d50 ("module: undo
-module RONX protection correctly"). There, the behavior was changed
-from W+NX to W+X before releasing the module. But AFAIK from the
-changelog, there was no real technical reason behind it, it stemmed
-out of the complaint of code asymmetry :-/
-
-Jessica
-
->---
-> kernel/module.c | 35 ++++++++++++++++++++++-------------
-> 1 file changed, 22 insertions(+), 13 deletions(-)
->
->diff --git a/kernel/module.c b/kernel/module.c
->index 7cb207249437..57c5b23746e7 100644
->--- a/kernel/module.c
->+++ b/kernel/module.c
->@@ -2027,20 +2027,29 @@ void set_all_modules_text_ro(void)
-> 	mutex_unlock(&module_mutex);
-> }
->
->-static void disable_ro_nx(const struct module_layout *layout)
->+static void module_restore_mappings(const struct module_layout *layout)
-> {
->-	if (rodata_enabled) {
->-		frob_text(layout, set_memory_rw);
->-		frob_rodata(layout, set_memory_rw);
->-		frob_ro_after_init(layout, set_memory_rw);
->-	}
->-	frob_rodata(layout, set_memory_x);
->-	frob_ro_after_init(layout, set_memory_x);
->-	frob_writable_data(layout, set_memory_x);
->+	/*
->+	 * First, make the mappings of the code non-executable to prevent
->+	 * transient W+X mappings from being set when the text is set as RW.
->+	 */
->+	frob_text(layout, set_memory_nx);
->+
->+	if (!rodata_enabled)
->+		return;
->+
->+	/*
->+	 * Second, set the memory as writable. Although the module memory is
->+	 * about to be freed, these calls are required (at least on x86) to
->+	 * restore the direct map to its "correct" state.
->+	 */
->+	frob_text(layout, set_memory_rw);
->+	frob_rodata(layout, set_memory_rw);
->+	frob_ro_after_init(layout, set_memory_rw);
-> }
->
-> #else
->-static void disable_ro_nx(const struct module_layout *layout) { }
->+static void module_restore_mappings(const struct module_layout *layout) { }
-> static void module_enable_nx(const struct module *mod) { }
-> static void module_disable_nx(const struct module *mod) { }
-> #endif
->@@ -2173,7 +2182,7 @@ static void free_module(struct module *mod)
-> 	mutex_unlock(&module_mutex);
->
-> 	/* This may be empty, but that's OK */
->-	disable_ro_nx(&mod->init_layout);
->+	module_restore_mappings(&mod->init_layout);
-> 	module_arch_freeing_init(mod);
-> 	module_memfree(mod->init_layout.base);
-> 	kfree(mod->args);
->@@ -2183,7 +2192,7 @@ static void free_module(struct module *mod)
-> 	lockdep_free_key_range(mod->core_layout.base, mod->core_layout.size);
->
-> 	/* Finally, free the core (containing the module structure) */
->-	disable_ro_nx(&mod->core_layout);
->+	module_restore_mappings(&mod->core_layout);
-> 	module_memfree(mod->core_layout.base);
-> }
->
->@@ -3507,7 +3516,7 @@ static noinline int do_init_module(struct module *mod)
-> #endif
-> 	module_enable_ro(mod, true);
-> 	mod_tree_remove_init(mod);
->-	disable_ro_nx(&mod->init_layout);
->+	module_restore_mappings(&mod->init_layout);
-> 	module_arch_freeing_init(mod);
-> 	mod->init_layout.base = NULL;
-> 	mod->init_layout.size = 0;
->-- 
->2.17.1
->
+PiBPbiBEZWMgMTMsIDIwMTgsIGF0IDY6MTAgQU0sIEplc3NpY2EgWXUgPGpleXVAa2VybmVsLm9y
+Zz4gd3JvdGU6DQo+IA0KPiArKysgTmFkYXYgQW1pdCBbMDQvMTIvMTggMTc6MzQgLTA4MDBdOg0K
+Pj4gV2hlbiBtb2R1bGUgbWVtb3J5IGlzIGFib3V0IHRvIGJlIGZyZWVkLCB0aGVyZSBpcyBubyBh
+cHBhcmVudCByZWFzb24gdG8NCj4+IG1ha2UgaXQgKGFuZCBpdHMgZGF0YSkgZXhlY3V0YWJsZSwg
+YnV0IHRoYXQncyBleGFjdGx5IHdoYXQgaXMgZG9uZQ0KPj4gdG9kYXkuIFRoaXMgaXMgbm90IGVm
+ZmljaWVudCBhbmQgbm90IHNlY3VyZS4NCj4+IA0KPj4gVGhlcmUgYXJlIHZhcmlvdXMgdGhlb3Jp
+ZXMgd2h5IGl0IHdhcyBkb25lLCBidXQgbm9uZSBvZiB0aGVtIHNlZW0gYXMNCj4+IHNvbWV0aGlu
+ZyB0aGF0IHJlYWxseSByZXF1aXJlIGl0IHRvZGF5LiBuaW9zMiB1c2VzIGttYWxsb2MgZm9yIG1v
+ZHVsZQ0KPj4gbWVtb3J5LCBidXQgYW55aG93IGl0IGRvZXMgbm90IGNoYW5nZSB0aGUgUFRFcyBv
+ZiB0aGUgbW9kdWxlIG1lbW9yeS4gIEluDQo+PiB4ODYsIGNoYW5naW5nIHZtYWxsb2MnZCBtZW1v
+cnkgbWFwcGluZ3MgYWxzbyBtb2RpZmllcyB0aGUgZGlyZWN0IG1hcHBpbmcNCj4+IGFsaWFzLCBi
+dXQgdGhlIE5YLWJpdCBpcyBub3QgbW9kaWZpZWQgaW4gc3VjaCB3YXkuDQo+PiANCj4+IFNvIGxl
+dCdzIHJlbW92ZSBpdC4gQW5keSBzdWdnZXN0ZWQgdGhhdCB0aGUgY2hhbmdlcyBvZiB0aGUgUFRF
+cyBjYW4gYmUNCj4+IGF2b2lkZWQgKGV4Y2x1ZGluZyB0aGUgZGlyZWN0LW1hcHBpbmcgYWxpYXMp
+LCB3aGljaCBpcyB0cnVlLiBIb3dldmVyLA0KPj4gaW4geDg2IGl0IHJlcXVpcmVzIHNvbWUgY2xl
+YW51cCBvZiB0aGUgY29udGlndW91cyBwYWdlIGFsbG9jYXRvciwgd2hpY2gNCj4+IGlzIG91dHNp
+ZGUgb2YgdGhlIHNjb3BlIG9mIHRoaXMgcGF0Y2gtc2V0Lg0KPj4gDQo+PiBDYzogUmljayBQIEVk
+Z2Vjb21iZSA8cmljay5wLmVkZ2Vjb21iZUBpbnRlbC5jb20+DQo+PiBDYzogV2lsbCBEZWFjb24g
+PHdpbGwuZGVhY29uQGFybS5jb20+DQo+PiBDYzogQW5keSBMdXRvbWlyc2tpIDxsdXRvQGtlcm5l
+bC5vcmc+DQo+PiBTaWduZWQtb2ZmLWJ5OiBOYWRhdiBBbWl0IDxuYW1pdEB2bXdhcmUuY29tPg0K
+PiANCj4gWyBUaGFua3MgQW5kcmVhIFBhcnJpIGZvciB0aGUgY2MgXQ0KPiANCj4gUmVnYXJkaW5n
+IHRoZSBwYXRjaCBzdWJqZWN0LCBkb24ndCB5b3UgbWVhbiAiRG8gbm90IG1ha2UgbW9kdWxlDQo+
+IG1lbW9yeSBleGVjdXRhYmxlIiBvciAiRG8gbm90IHVuc2V0IG54IiBpbnN0ZWFkIG9mICJEbyBu
+b3Qgc2V0IG54Ij8NCj4gSG0sIHRoZXNlIGRvdWJsZSBuZWdhdGl2ZXMgYXJlIGNvbmZ1c2luZyA6
+LSkNCg0KSSBndWVzcyBpdCBpcyBqdXN0IHBsYWluIHdyb25nIGluIHRoaXMgY2FzZeKApiA7LSkN
+Cg0KPiANCj4gSSB0aGluayB0aGlzIGFsc28gbmVlZHMgdG8gYmUgZG9uZSBpbiB0aGUgbG9hZF9t
+b2R1bGUoKSBlcnJvciBwYXRoLg0KPiBTZWUgdGhlIGJ1Z19jbGVhbnVwIGxhYmVsLiBUaGVyZSwg
+bW9kdWxlX2Rpc2FibGVfe3JvLG54fSgpIGFyZSBjYWxsZWQNCj4gYmVmb3JlIG1vZHVsZSBkZWFs
+bG9jYXRpb24uDQoNClllcywgSSBtaXNzZWQgdGhpcyBvbmUuIEkgdGhpbmsgUmljayBFZGdlY29t
+YmUgaGFzIGEgYmV0dGVyIHZlcnNpb24gb2YgdGhpcw0KcGF0Y2ggdGhhdCBhbHNvIHRha2VzIGNh
+cmUgb2YgdGhpcyBjYXNlIChzZWUNCmh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE4LzEyLzExLzE1
+NzMgKS4gSSB0aGluayBoZSB3aWxsIG1lcmdlIHRoZSByZXN0IG9mDQp0aGlzIHNlcmllcyAoYWx0
+aG91Z2ggSeKAmW0gc3RpbGwgd2FpdGluZyBmb3IgVGhvbWFzL0luZ28gdG8gdGVsbCBtZSB3aGF0
+4oCZcyBpdA0KZ29pbmcgdG8gYmUgd2l0aCB0aGUgZmlyc3QgcGF0Y2hlcykuDQoNCj4gSSBhbSBu
+b3Qgc3VyZSB3aHkgYWxsIHRoaXMgd2FzIG1hZGUgZXhlY3V0YWJsZSBiZWZvcmUgZnJlZWluZyBp
+biB0aGUNCj4gZmlyc3QgcGxhY2UuICBUcmllZCB0byBkaWcgdGhyb3VnaCB0aGUgY29tbWl0IGhp
+c3RvcnkgYW5kIHRoZSBmaXJzdA0KPiBjb21taXQgdGhhdCBpbnRyb2R1Y2VkIHRoaXMgYmVoYXZp
+b3Igd2FzIDQ0ODY5NGExZDUwICgibW9kdWxlOiB1bmRvDQo+IG1vZHVsZSBST05YIHByb3RlY3Rp
+b24gY29ycmVjdGx5IikuIFRoZXJlLCB0aGUgYmVoYXZpb3Igd2FzIGNoYW5nZWQNCj4gZnJvbSBX
+K05YIHRvIFcrWCBiZWZvcmUgcmVsZWFzaW5nIHRoZSBtb2R1bGUuIEJ1dCBBRkFJSyBmcm9tIHRo
+ZQ0KPiBjaGFuZ2Vsb2csIHRoZXJlIHdhcyBubyByZWFsIHRlY2huaWNhbCByZWFzb24gYmVoaW5k
+IGl0LCBpdCBzdGVtbWVkDQo+IG91dCBvZiB0aGUgY29tcGxhaW50IG9mIGNvZGUgYXN5bW1ldHJ5
+IDotLw0KDQpUaGFua3MgZm9yIGxvb2tpbmcgaW50byBpdC4gSSBnYXZlIHVwIGFmdGVyIEkgc2F3
+IGl0IHNob3VsZCBoYXZlIG5vDQphcmNoaXRlY3R1cmFsIHJlYXNvbiAob24geDg2KSBhbmQgY291
+bGQgbm90IHRoaW5rIGFib3V0IHN1Y2ggb25lIChvbiBhbnkNCmFyY2guLCBjZXJ0YWlubHkgZm9y
+IHRoZSBkYXRhKS4gQW55aG93LCB0aGF04oCZcyB3aGF0IGF1dG9tYXRpYyB0ZXN0aW5nIGFyZQ0K
+Zm9yLiBJZiB0aGlzIGlzIHdyb25nLCB0aGluZ3Mgc2hvdWxkIGNyYXNoIGFuZCBidXJuIHZlcnkg
+ZmFzdC4NCg0KDQo=
