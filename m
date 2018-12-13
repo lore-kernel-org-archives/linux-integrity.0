@@ -2,111 +2,139 @@ Return-Path: <SRS0=vu0O=OW=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1827AC67839
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 08:14:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C6AAC65BAE
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 10:32:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD79220849
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 08:14:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD79220849
+	by mail.kernel.org (Postfix) with ESMTP id 6BA0520811
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Dec 2018 10:32:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BA0520811
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbeLMIOc (ORCPT
+        id S1728502AbeLMKcn (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 13 Dec 2018 03:14:32 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32809 "EHLO huawei.com"
+        Thu, 13 Dec 2018 05:32:43 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32810 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726995AbeLMIOc (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 13 Dec 2018 03:14:32 -0500
-Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 467A8686D2701;
-        Thu, 13 Dec 2018 08:14:29 +0000 (GMT)
-Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
- (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 13 Dec
- 2018 08:14:24 +0000
-Subject: Re: [PATCH v6 1/7] tpm: dynamically allocate the allocated_banks
- array
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
-        <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
+        id S1728499AbeLMKcn (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 13 Dec 2018 05:32:43 -0500
+Received: from lhreml707-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id AFF53D9B1D27C;
+        Thu, 13 Dec 2018 10:32:35 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.153)
+ by smtpsuk.huawei.com (10.201.108.48) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Thu, 13 Dec 2018 10:32:28 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>,
+        <david.safford@ge.com>, <monty.wiseman@ge.com>
+CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-References: <20181204082138.24600-1-roberto.sassu@huawei.com>
- <20181204082138.24600-2-roberto.sassu@huawei.com>
- <20181204231848.GA1233@linux.intel.com>
- <9193bc05-8222-f0d6-9ad8-a2a7eaf1a34c@huawei.com>
- <20181212183204.GK6333@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <54e552fa-9f20-60e4-5ac9-38c567243737@huawei.com>
-Date:   Thu, 13 Dec 2018 09:14:23 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v7 0/5] tpm: retrieve digest size of unknown algorithms from TPM
+Date:   Thu, 13 Dec 2018 11:29:40 +0100
+Message-ID: <20181213102945.30946-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20181212183204.GK6333@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.144]
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.153]
 X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 12/12/2018 7:32 PM, Jarkko Sakkinen wrote:
-> On Thu, Dec 06, 2018 at 06:56:33PM +0100, Roberto Sassu wrote:
->> 2 PCR selections
->>      hash TPM_ALG_SHA1
->>      TPMS_PCR_SELECTION length 3
->>      ff ff ff
->>      hash TPM_ALG_SHA256
->>      TPMS_PCR_SELECTION length 3
->>      00 00 00
->>
->> The pcr_select fields - "ff ff ff" and "00 00 00" - are bit masks for
->> the enabled PCRs. The SHA1 bank is enabled for all PCRs (0-23), while
->> the SHA256 bank is not enabled.
-> 
-> Uh, thanks. Can you add a note to the commit message?
+Update
 
-Ok.
+This version of the patch set includes an additional patch (7/7) which
+modifies the definition of tpm_pcr_extend() and tpm2_pcr_extend(). The new
+patch has been included to facilitate the review of the changes to support
+TPM 2.0 crypto agility for reading/extending PCRs.
 
 
->>>
->>> /* Check that at least some of the PCRs have been allocated. This is
->>>    * required because CAP_PCRS ...
->>>    */
->>> if (memchr_inv(pcr_selection.pcr_select, 0, pcr_selection.size_of_select))
->>> 	nr_allocated_banks++;
->>>
->>> [yeah, comment would be awesome about CAP_PCRS. Did not finish up the
->>> comment because I don't know the answer]
->>>
->>> In addition, it would be consistent to call the local variable also
->>> nr_allocated_banks (not nr_alloc_banks).
->>
->> Unfortunately, I exceed the limit of characters per line.
-> 
-> Not sure what you mean?
+Original patch set description
 
----
--		chip->allocated_banks[nr_alloc_banks] = hash_alg;
-+		chip->allocated_banks[nr_alloc_banks].alg_id = hash_alg;
----
+The TPM driver currently relies on the crypto subsystem to determine the
+digest size of supported TPM algorithms. In the future, TPM vendors might
+implement new algorithms in their chips, and those algorithms might not
+be supported by the crypto subsystem.
 
-If I use nr_allocated_banks, the line above (see patch 5/7) exceeds the
-limit of 80 characters.
+Usually, vendors provide patches for the new hardware, and likely
+the crypto subsystem will be updated before the new algorithm is
+introduced. However, old kernels might be updated later, after patches
+are included in the mainline kernel. This would leave the opportunity
+for attackers to misuse PCRs, as PCR banks with an unknown algorithm
+are not extended.
 
-Roberto
+This patch set provides a long term solution for this issue. If a TPM
+algorithm is not known by the crypto subsystem, the TPM driver retrieves
+the digest size from the TPM with a PCR read. All the PCR banks are
+extended, even if the algorithm is not yet supported by the crypto
+subsystem.
 
+PCR bank information (TPM algorithm ID, digest size, crypto subsystem ID)
+is stored in the tpm_chip structure and available for users of the TPM
+driver.
 
-> /Jarkko
-> 
+Changelog
+
+v6:
+- squash patches 4-6
+- rename tpm_bank_list to tpm_extend_digest, extend_size and extend_data
+  members to size and data
+- add comment in tpm2_init_bank_info()
+
+v5:
+- rename digest_struct variable to digest
+- add _head suffix to tcg_efi_specid_event and tcg_pcr_event2
+- rename digest_size member of tpm_bank_list to extend_size
+- change type of alg_id member of tpm_bank_list from u8 to u16
+- add missing semi-colon in pcrlock()
+
+v4:
+- rename active_banks to allocated_banks
+- replace kmalloc_array() with kcalloc()
+- increment nr_allocated_banks if at least one PCR in the bank is selected
+- pass multiple digests to tpm_pcr_extend()
+
+v3:
+- remove end marker change
+- replace active_banks static array with pointer to dynamic array
+- remove TPM2_ACTIVE_PCR_BANKS
+
+v2:
+- change the end marker of the active_banks array
+- check digest size from output of PCR read command
+- remove count parameter from tpm_pcr_read() and tpm2_pcr_read()
+
+v1:
+- modify definition of tpm_pcr_read()
+- move hash algorithms and definition of tpm2_digest to include/linux/tpm.h
+
+Roberto Sassu (5):
+  tpm: dynamically allocate the allocated_banks array
+  tpm: add _head suffix to tcg_efi_specid_event and tcg_pcr_event2
+  tpm: rename and export tpm2_digest and tpm2_algorithms
+  tpm: retrieve digest size of unknown algorithms with PCR read
+  tpm: pass an array of tpm_extend_digest structures to tpm_pcr_extend()
+
+ drivers/char/tpm/eventlog/tpm2.c    |  12 +--
+ drivers/char/tpm/tpm-chip.c         |   1 +
+ drivers/char/tpm/tpm-interface.c    |  36 +++----
+ drivers/char/tpm/tpm.h              |  22 ++--
+ drivers/char/tpm/tpm1-cmd.c         |  25 ++++-
+ drivers/char/tpm/tpm2-cmd.c         | 157 +++++++++++++++++++++-------
+ include/linux/tpm.h                 |  43 +++++++-
+ include/linux/tpm_eventlog.h        |  19 +---
+ security/integrity/ima/ima_crypto.c |  10 +-
+ security/integrity/ima/ima_queue.c  |   5 +-
+ security/keys/trusted.c             |   5 +-
+ 11 files changed, 223 insertions(+), 112 deletions(-)
 
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+2.17.1
+
