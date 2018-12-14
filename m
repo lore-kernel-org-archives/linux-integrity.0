@@ -2,180 +2,170 @@ Return-Path: <SRS0=e5UK=OX=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36429C6786C
-	for <linux-integrity@archiver.kernel.org>; Fri, 14 Dec 2018 13:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2829EC43444
+	for <linux-integrity@archiver.kernel.org>; Fri, 14 Dec 2018 14:17:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06B4E208E7
-	for <linux-integrity@archiver.kernel.org>; Fri, 14 Dec 2018 13:21:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06B4E208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 318A420675
+	for <linux-integrity@archiver.kernel.org>; Fri, 14 Dec 2018 13:53:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729815AbeLNNVT (ORCPT
+        id S1729641AbeLNNxY (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 14 Dec 2018 08:21:19 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57508 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729641AbeLNNVT (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 14 Dec 2018 08:21:19 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 662CD356E7;
-        Fri, 14 Dec 2018 13:21:19 +0000 (UTC)
-Received: from rtux.redhat.com (unknown [10.33.36.42])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2D4F85D762;
-        Fri, 14 Dec 2018 13:21:18 +0000 (UTC)
-From:   Alexey Klimov <aklimov@redhat.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     jsnitsel@redhat.com, jarkko.sakkinen@linux.intel.com,
-        peterhuewe@gmx.de, jgg@ziepe.ca, aklimov@redhat.com
-Subject: [PATCH REVIEW 2/2] tpm_tis: override durations for STM tpm with firmware 1.2.8.28
-Date:   Fri, 14 Dec 2018 13:21:15 +0000
-Message-Id: <20181214132115.26223-2-aklimov@redhat.com>
-In-Reply-To: <20181214132115.26223-1-aklimov@redhat.com>
-References: <20181214132115.26223-1-aklimov@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 14 Dec 2018 13:21:19 +0000 (UTC)
+        Fri, 14 Dec 2018 08:53:24 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46210 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726554AbeLNNxY (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 14 Dec 2018 08:53:24 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBEDqaJw069873
+        for <linux-integrity@vger.kernel.org>; Fri, 14 Dec 2018 08:53:23 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pcca6vbub-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 14 Dec 2018 08:53:21 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 14 Dec 2018 13:52:48 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 14 Dec 2018 13:52:44 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBEDqhN133554598
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 14 Dec 2018 13:52:43 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B6E9D52063;
+        Fri, 14 Dec 2018 13:52:43 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.89.187])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 381DF52050;
+        Fri, 14 Dec 2018 13:52:43 +0000 (GMT)
+Subject: [GIT PULL] linux-integrity patches for Linux 4.21
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     James Morris <jmorris@namei.org>
+Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Date:   Fri, 14 Dec 2018 08:52:32 -0500
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18121413-0020-0000-0000-000002F6F72A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121413-0021-0000-0000-000021473050
+Message-Id: <1544795552.3879.7.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-14_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812140122
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-There was revealed a bug in the STM TPM chipset used in Dell R415s.
-Bug is observed so far only on chipset firmware 1.2.8.28
-(1.2 TPM, device-id 0x0, rev-id 78). After some number of
-operations chipset hangs and stays in inconsistent state:
+Hi James,
 
-tpm_tis 00:09: Operation Timed out
-tpm_tis 00:09: tpm_transmit: tpm_send: error -5
+In Linux 4.19, a new LSM hook named security_kernel_load_data was
+upstreamed, allowing LSMs and IMA to prevent the kexec_load
+syscall.  Different signature verification methods exist for verifying
+the kexec'ed kernel image.  This pull request adds additional support
+in IMA to prevent loading unsigned kernel images via the kexec_load
+syscall, independently of the IMA policy rules, based on the runtime
+"secure boot" flag.  An initial IMA kselftest is included.
 
-Durations returned by the chip are the same like on other
-firmware revisions but apparently with specifically 1.2.8.28 fw
-durations should be reset to 2 minutes to enable tpm chip work
-properly. No working way of updating firmware was found.
+In addition, this pull request defines a new, separate keyring named
+".platform" for storing the preboot/firmware keys needed for verifying
+the kexec'ed kernel image's signature and includes the associated IMA
+kexec usage of the ".platform" keyring.
 
-This patch adds implementation of ->update_durations method
-that matches only STM devices with specific firmware version.
+(David Howell's and Josh Boyer's patches for reading the
+preboot/firmware keys, which were previously posted for a different
+use case scenario, are included here.)
 
-Cc: Jerry Snitselaar <jsnitsel@redhat.com>
-Signed-off-by: Alexey Klimov <aklimov@redhat.com>
----
- drivers/char/tpm/tpm_tis_core.c | 90 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 90 insertions(+)
+Mimi
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index d2345d9fd7b5..e0bdca647460 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -514,6 +514,95 @@ static int tpm_tis_send(struct tpm_chip *chip, u8 *buf, size_t len)
- 	return rc;
- }
- 
-+struct tis_vendor_durations_override {
-+	u32 did_vid;
-+	struct tpm_version_t tpm_version;
-+	unsigned long durs[3];
-+};
-+
-+static
-+const struct tis_vendor_durations_override vendor_dur_overrides[] = {
-+	/* STMicroelectronics 0x104a */
-+	{ 0x0000104A,
-+	{ 1, 2, 8, 28 },
-+	{ (2 * 60 * HZ), (2 * 60 * HZ), (2 * 60 * HZ) } },
-+};
-+
-+static bool tpm_tis_update_durations(struct tpm_chip *chip,
-+					unsigned long *duration_cap)
-+{
-+	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
-+	u32 did_vid;
-+	int i, rc;
-+	cap_t cap;
-+
-+	if (chip->ops->clk_enable != NULL)
-+		chip->ops->clk_enable(chip, true);
-+
-+	rc = tpm_tis_read32(priv, TPM_DID_VID(0), &did_vid);
-+	if (rc < 0)
-+		goto out;
-+
-+	for (i = 0; i != ARRAY_SIZE(vendor_dur_overrides); i++) {
-+		if (vendor_dur_overrides[i].did_vid != did_vid)
-+			continue;
-+
-+		/* Try to get a TPM version 1.2 TPM_CAP_VERSION_INFO */
-+		rc = tpm_getcap(chip, TPM_CAP_VERSION_1_2, &cap,
-+			"attempting to determine the 1.2 version",
-+			sizeof(cap.tpm_version_1_2));
-+		if (!rc) {
-+			if ((cap.tpm_version_1_2.Major ==
-+				vendor_dur_overrides[i].tpm_version.Major) &&
-+				(cap.tpm_version_1_2.Minor ==
-+				vendor_dur_overrides[i].tpm_version.Minor) &&
-+				(cap.tpm_version_1_2.revMajor ==
-+				vendor_dur_overrides[i].tpm_version.revMajor) &&
-+				(cap.tpm_version_1_2.revMinor ==
-+				vendor_dur_overrides[i].tpm_version.revMinor)) {
-+
-+				memcpy(duration_cap,
-+					vendor_dur_overrides[i].durs,
-+					sizeof(vendor_dur_overrides[i].durs));
-+				rc = true;
-+				goto out;
-+			}
-+		} else {
-+			rc = tpm_getcap(chip, TPM_CAP_VERSION_1_1, &cap,
-+				"attempting to determine the 1.1 version",
-+				sizeof(cap.tpm_version));
-+			if (rc) {
-+				rc = false;
-+				goto out;
-+			}
-+			if ((cap.tpm_version.Major ==
-+				vendor_dur_overrides[i].tpm_version.Major) &&
-+				(cap.tpm_version.Minor ==
-+				vendor_dur_overrides[i].tpm_version.Minor) &&
-+				(cap.tpm_version.revMajor ==
-+				vendor_dur_overrides[i].tpm_version.revMajor) &&
-+				(cap.tpm_version.revMinor ==
-+				vendor_dur_overrides[i].tpm_version.revMinor)) {
-+
-+				memcpy(duration_cap,
-+					vendor_dur_overrides[i].durs,
-+					sizeof(vendor_dur_overrides[i].durs));
-+				rc = true;
-+				goto out;
-+			}
-+		}
-+	}
-+
-+	rc = false;
-+
-+out:
-+	if (chip->ops->clk_enable != NULL)
-+		chip->ops->clk_enable(chip, false);
-+
-+	return rc;
-+}
-+
-+
- struct tis_vendor_timeout_override {
- 	u32 did_vid;
- 	unsigned long timeout_us[4];
-@@ -847,6 +936,7 @@ static const struct tpm_class_ops tpm_tis = {
- 	.send = tpm_tis_send,
- 	.cancel = tpm_tis_ready,
- 	.update_timeouts = tpm_tis_update_timeouts,
-+	.update_durations = tpm_tis_update_durations,
- 	.req_complete_mask = TPM_STS_DATA_AVAIL | TPM_STS_VALID,
- 	.req_complete_val = TPM_STS_DATA_AVAIL | TPM_STS_VALID,
- 	.req_canceled = tpm_tis_req_canceled,
--- 
-2.14.4
+The following changes since commit 26b76320a8a550472bbb8f42257df83fcb8d8df6:
+
+  Merge tag 'v4.20-rc2' into next-general (2018-11-12 09:07:41 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
+
+for you to fetch changes up to eed9de3b4f47114f440980203ca27c5fab70f529:
+
+  ima: Use inode_is_open_for_write (2018-12-12 22:09:34 -0500)
+
+----------------------------------------------------------------
+Dave Howells (2):
+      efi: Add EFI signature data types
+      efi: Add an EFI signature blob parser
+
+Eric Richter (1):
+      x86/ima: define arch_get_ima_policy() for x86
+
+Josh Boyer (2):
+      efi: Import certificates from UEFI Secure Boot
+      efi: Allow the "db" UEFI variable to be suppressed
+
+Mimi Zohar (4):
+      integrity: support new struct public_key_signature encoding field
+      x86/ima: retry detecting secure boot mode
+      ima: don't measure/appraise files on efivarfs
+      selftests/ima: kexec_load syscall test
+
+Nayna Jain (7):
+      x86/ima: define arch_ima_get_secureboot
+      ima: prevent kexec_load syscall based on runtime secureboot flag
+      ima: refactor ima_init_policy()
+      ima: add support for arch specific policies
+      integrity: Define a trusted platform keyring
+      integrity: Load certs to the platform keyring
+      ima: Support platform keyring for kernel appraisal
+
+Nikolay Borisov (1):
+      ima: Use inode_is_open_for_write
+
+Stefan Berger (1):
+      docs: Extend trusted keys documentation for TPM 2.0
+
+ Documentation/security/keys/trusted-encrypted.rst  |  31 +++-
+ arch/x86/kernel/Makefile                           |   4 +
+ arch/x86/kernel/ima_arch.c                         |  75 ++++++++
+ include/linux/efi.h                                |  34 ++++
+ include/linux/ima.h                                |  15 ++
+ security/integrity/Kconfig                         |  11 ++
+ security/integrity/Makefile                        |   5 +
+ security/integrity/digsig.c                        | 110 ++++++++----
+ security/integrity/digsig_asymmetric.c             |   1 +
+ security/integrity/ima/Kconfig                     |  10 +-
+ security/integrity/ima/ima_appraise.c              |  14 +-
+ security/integrity/ima/ima_main.c                  |  21 ++-
+ security/integrity/ima/ima_policy.c                | 171 +++++++++++++-----
+ security/integrity/integrity.h                     |  23 ++-
+ security/integrity/platform_certs/efi_parser.c     | 108 ++++++++++++
+ security/integrity/platform_certs/load_uefi.c      | 194 +++++++++++++++++++++
+ .../integrity/platform_certs/platform_keyring.c    |  58 ++++++
+ tools/testing/selftests/Makefile                   |   1 +
+ tools/testing/selftests/ima/Makefile               |  11 ++
+ tools/testing/selftests/ima/config                 |   4 +
+ tools/testing/selftests/ima/test_kexec_load.sh     |  54 ++++++
+ 21 files changed, 863 insertions(+), 92 deletions(-)
+ create mode 100644 arch/x86/kernel/ima_arch.c
+ create mode 100644 security/integrity/platform_certs/efi_parser.c
+ create mode 100644 security/integrity/platform_certs/load_uefi.c
+ create mode 100644 security/integrity/platform_certs/platform_keyring.c
+ create mode 100644 tools/testing/selftests/ima/Makefile
+ create mode 100644 tools/testing/selftests/ima/config
+ create mode 100755 tools/testing/selftests/ima/test_kexec_load.sh
 
