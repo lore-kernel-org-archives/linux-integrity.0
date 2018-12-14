@@ -2,81 +2,107 @@ Return-Path: <SRS0=e5UK=OX=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD187C67839
-	for <linux-integrity@archiver.kernel.org>; Fri, 14 Dec 2018 07:59:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF3A2C67839
+	for <linux-integrity@archiver.kernel.org>; Fri, 14 Dec 2018 13:21:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A81C92080F
-	for <linux-integrity@archiver.kernel.org>; Fri, 14 Dec 2018 07:59:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A81C92080F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7C5D420C85
+	for <linux-integrity@archiver.kernel.org>; Fri, 14 Dec 2018 13:21:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C5D420C85
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-integrity-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbeLNH7C (ORCPT
+        id S1729728AbeLNNVS (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 14 Dec 2018 02:59:02 -0500
-Received: from mga18.intel.com ([134.134.136.126]:52359 "EHLO mga18.intel.com"
+        Fri, 14 Dec 2018 08:21:18 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45930 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726494AbeLNH7B (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 14 Dec 2018 02:59:01 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2018 23:59:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,352,1539673200"; 
-   d="scan'208";a="118296825"
-Received: from hekner-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.170])
-  by orsmga002.jf.intel.com with ESMTP; 13 Dec 2018 23:58:57 -0800
-Date:   Fri, 14 Dec 2018 09:58:52 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v6 7/7] tpm: pass an array of tpm_bank_list structures to
- tpm_pcr_extend()
-Message-ID: <20181214075852.GB1721@linux.intel.com>
-References: <20181204082138.24600-1-roberto.sassu@huawei.com>
- <20181204082138.24600-8-roberto.sassu@huawei.com>
- <20181205001417.GF1233@linux.intel.com>
- <9d6e47d9-3b88-86f6-1b60-6652dfe8dc00@huawei.com>
- <20181212182734.GH6333@linux.intel.com>
- <ae012b83-af66-6dfe-6131-e08507c3372e@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ae012b83-af66-6dfe-6131-e08507c3372e@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1729641AbeLNNVS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 14 Dec 2018 08:21:18 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E4AF23082138;
+        Fri, 14 Dec 2018 13:21:17 +0000 (UTC)
+Received: from rtux.redhat.com (unknown [10.33.36.42])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8113B5D717;
+        Fri, 14 Dec 2018 13:21:16 +0000 (UTC)
+From:   Alexey Klimov <aklimov@redhat.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     jsnitsel@redhat.com, jarkko.sakkinen@linux.intel.com,
+        peterhuewe@gmx.de, jgg@ziepe.ca, aklimov@redhat.com
+Subject: [PATCH REVIEW 1/2] tpm: provide a way to override the chip returned durations
+Date:   Fri, 14 Dec 2018 13:21:14 +0000
+Message-Id: <20181214132115.26223-1-aklimov@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 14 Dec 2018 13:21:18 +0000 (UTC)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 08:57:17AM +0100, Roberto Sassu wrote:
-> > 1. The function does not fail if alg_id is not found. This will go
-> >     silent.
-> 
-> It is intentional. If alg_id is not found, the PCR is extended with the
-> first digest passed by the caller of tpm_pcr_extend(). If no digest was
-> provided, the PCR is extended with 0s. This is done to prevent that
-> PCRs in unused banks are extended later with fake measurements.
-> 
-> 
-> > 2. The function does not fail if there is a mismatch with the digest
-> >     sizes.
-> 
-> The data passed by the caller of tpm_pcr_extend() is copied to
-> dummy_hash, which has the maximum length. Then, tpm2_pcr_extend() takes
-> from dummy_hash as many bytes as needed, depending on the current
-> algorithm.
+Patch adds method ->update_durations to override returned
+durations in case TPM chip misbehaves for TPM 1.2 drivers.
 
-I would suggest to document these corner cases to the function long
-description to make it easy and obvious to understand.
+Cc: Jerry Snitselaar <jsnitsel@redhat.com>
+Signed-off-by: Alexey Klimov <aklimov@redhat.com>
+---
+ drivers/char/tpm/tpm-interface.c | 18 ++++++++++++++++++
+ include/linux/tpm.h              |  2 ++
+ 2 files changed, 20 insertions(+)
 
-/Jarkko
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 129f640424b7..5cb90918938d 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -768,6 +768,7 @@ int tpm_get_timeouts(struct tpm_chip *chip)
+ {
+ 	cap_t cap;
+ 	unsigned long timeout_old[4], timeout_chip[4], timeout_eff[4];
++	unsigned long durations[3];
+ 	ssize_t rc;
+ 
+ 	if (chip->flags & TPM_CHIP_FLAG_HAVE_TIMEOUTS)
+@@ -877,6 +878,23 @@ int tpm_get_timeouts(struct tpm_chip *chip)
+ 		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_long));
+ 	chip->duration[TPM_LONG_LONG] = 0; /* not used under 1.2 */
+ 
++	/*
++	 * Provide ability for vendor overrides of duration values in case
++	 * of misreporting.
++	 */
++	if (chip->ops->update_durations != NULL)
++		chip->duration_adjusted =
++			chip->ops->update_durations(chip, durations);
++
++	/* Report and set adjusted timeouts */
++	if (chip->duration_adjusted) {
++
++		dev_info(&chip->dev, HW_ERR "Adjusting reported durations\n");
++		chip->duration[TPM_SHORT] = durations[0];
++		chip->duration[TPM_MEDIUM] = durations[1];
++		chip->duration[TPM_LONG] = durations[2];
++	}
++
+ 	/* The Broadcom BCM0102 chipset in a Dell Latitude D820 gets the above
+ 	 * value wrong and apparently reports msecs rather than usecs. So we
+ 	 * fix up the resulting too-small TPM_SHORT value to make things work.
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 4609b94142d4..d6018431b478 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -43,6 +43,8 @@ struct tpm_class_ops {
+ 	u8 (*status) (struct tpm_chip *chip);
+ 	bool (*update_timeouts)(struct tpm_chip *chip,
+ 				unsigned long *timeout_cap);
++	bool (*update_durations)(struct tpm_chip *chip,
++				unsigned long *durations_cap);
+ 	int (*go_idle)(struct tpm_chip *chip);
+ 	int (*cmd_ready)(struct tpm_chip *chip);
+ 	int (*request_locality)(struct tpm_chip *chip, int loc);
+-- 
+2.14.4
+
