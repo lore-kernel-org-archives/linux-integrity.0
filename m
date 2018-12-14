@@ -5,119 +5,123 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BABF7C43387
-	for <linux-integrity@archiver.kernel.org>; Fri, 14 Dec 2018 19:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7E0FC43387
+	for <linux-integrity@archiver.kernel.org>; Fri, 14 Dec 2018 19:19:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BBB3206C0
-	for <linux-integrity@archiver.kernel.org>; Fri, 14 Dec 2018 19:01:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4876B204FD
+	for <linux-integrity@archiver.kernel.org>; Fri, 14 Dec 2018 19:19:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730460AbeLNTBz (ORCPT
+        id S1730551AbeLNTTw (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 14 Dec 2018 14:01:55 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52458 "EHLO
+        Fri, 14 Dec 2018 14:19:52 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36678 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730123AbeLNTBy (ORCPT
+        by vger.kernel.org with ESMTP id S1730123AbeLNTTw (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 14 Dec 2018 14:01:54 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBEJ1HAI025357
-        for <linux-integrity@vger.kernel.org>; Fri, 14 Dec 2018 14:01:53 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pcja8r12k-1
+        Fri, 14 Dec 2018 14:19:52 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBEJDdCr058702
+        for <linux-integrity@vger.kernel.org>; Fri, 14 Dec 2018 14:19:50 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pcg7geetn-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 14 Dec 2018 14:01:52 -0500
+        for <linux-integrity@vger.kernel.org>; Fri, 14 Dec 2018 14:19:50 -0500
 Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 14 Dec 2018 19:01:51 -0000
+        Fri, 14 Dec 2018 19:19:49 -0000
 Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 14 Dec 2018 19:01:48 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBEJ1lMe60817586
+        Fri, 14 Dec 2018 19:19:46 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBEJJjUF45744144
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 14 Dec 2018 19:01:47 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CBA9EA404D;
-        Fri, 14 Dec 2018 19:01:47 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 108BAA4040;
-        Fri, 14 Dec 2018 19:01:47 +0000 (GMT)
+        Fri, 14 Dec 2018 19:19:45 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CC88FAE045;
+        Fri, 14 Dec 2018 19:19:45 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DFD84AE04D;
+        Fri, 14 Dec 2018 19:19:44 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.80.89.160])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 14 Dec 2018 19:01:46 +0000 (GMT)
-Subject: Re: Bug: Persisting O_TMPFILE with IMA
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 14 Dec 2018 19:19:44 +0000 (GMT)
+Subject: Re: linux-next: Tree for Dec 14 (security/integrity/ima/)
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Ignaz Forster <iforster@suse.de>, zohar@linux.vnet.ibm.com,
-        linux-integrity@vger.kernel.org
-Cc:     Goldwyn Rodrigues <rgoldwyn@suse.com>, Fabian Vogt <fvogt@suse.de>
-Date:   Fri, 14 Dec 2018 14:01:36 -0500
-In-Reply-To: <884653bf-2e25-b78f-2dc7-51c5a57d4b51@suse.de>
-References: <884653bf-2e25-b78f-2dc7-51c5a57d4b51@suse.de>
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org, James Morris <jmorris@namei.org>
+Date:   Fri, 14 Dec 2018 14:19:34 -0500
+In-Reply-To: <8205aafb-bbc1-2196-17d9-e70e9ac56c2e@infradead.org>
+References: <20181214181826.5775b958@canb.auug.org.au>
+         <8205aafb-bbc1-2196-17d9-e70e9ac56c2e@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 18121419-0016-0000-0000-00000236981E
+x-cbid: 18121419-4275-0000-0000-000002F0A4F0
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121419-0017-0000-0000-0000328ED93B
-Message-Id: <1544814096.3681.12.camel@linux.ibm.com>
+x-cbparentid: 18121419-4276-0000-0000-000037FDD67D
+Message-Id: <1544815174.3681.16.camel@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-14_11:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=924 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812140161
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812140163
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, 2018-12-14 at 19:11 +0100, Ignaz Forster wrote:
-> Hello,
-> 
-> persisting files opened with O_TMPFILE doesn't seem to work on IMA as 
-> expected: The IMA xattr won't be written. This makes it impossible to 
-> access the file later.
-> The following example application, based on the O_TMPFILE example from
-> 	man 2 open
-> will demonstrate this:
-> 
-> 
-> #include <fcntl.h>
-> #include <unistd.h>
-> #include <linux/limits.h>
-> #include <stdio.h>
-> 
-> int main(int argc, char *argv[]) {
-> 	char path[PATH_MAX];
-> 	int fd = open("/tmp", __O_TMPFILE | O_RDWR, S_IRUSR | S_IWUSR);
-> 	write(fd, "test", 4);
-> 	snprintf(path, PATH_MAX, "/proc/self/fd/%d", fd);
-> 	linkat(AT_FDCWD, path, AT_FDCWD, "/tmp/tmpfile_persisted.txt",
-> 			AT_SYMLINK_FOLLOW);
-> }
-> 
-> 
-> (/tmp should not be a tmpfs of course; change to paths to a supported 
-> file system if necessary.)
-> 
-> This was discovered when trying to understand why IMA is failing on 
-> overlayfs during truncated copy_up operations (see thread "PROBLEM: IMA 
-> xattrs not written on overlayfs" from September / October), though this 
-> is probably a different problem.
+[Cc'ing Paul Gortmaker]
 
-rootfs is a tmpfs filesystem.  Once CPIO supports xattrs, they can be
-included in the initramfs.
+On Fri, 2018-12-14 at 08:25 -0800, Randy Dunlap wrote:
+> On 12/13/18 11:18 PM, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20181213:
+> > 
+> 
+> on i386:
+> 
+>   CC      security/integrity/ima/ima_main.o
+> ../security/integrity/ima/ima_main.c: In function 'ima_load_data':
+> ../security/integrity/ima/ima_main.c:535:3: error: implicit declaration of function 'is_module_sig_enforced' [-Werror=implicit-function-declaration]
+>    sig_enforce = is_module_sig_enforced();
+>    ^
+> 
+> 
+> Needs:
 
-Remember the builtin policies - ima_policy=tcb|appraise_tcb - are
-there from boot.  They are meant to be replaced with finer grained
-policies based on LSM labels, once the LSMs are up and running.
+Commit 4f83d5ea643a ("security: integrity: make ima_main explicitly
+non-modular") just removed module.h.
 
-Feel free to replace the builtin IMA policy with one to your liking.
+Mimi 
 
-Mimi
+
+> 
+> ---
+>  security/integrity/ima/ima_main.c |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- linux-next-20181214.orig/security/integrity/ima/ima_main.c
+> +++ linux-next-20181214/security/integrity/ima/ima_main.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/init.h>
+>  #include <linux/file.h>
+>  #include <linux/binfmts.h>
+> +#include <linux/module.h>
+>  #include <linux/mount.h>
+>  #include <linux/mman.h>
+>  #include <linux/slab.h>
+> 
+> 
+> 
 
