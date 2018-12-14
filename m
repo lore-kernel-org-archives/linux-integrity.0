@@ -2,119 +2,133 @@ Return-Path: <SRS0=e5UK=OX=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06444C43387
-	for <linux-integrity@archiver.kernel.org>; Fri, 14 Dec 2018 20:27:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C01AC43387
+	for <linux-integrity@archiver.kernel.org>; Fri, 14 Dec 2018 22:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67DED2080F
-	for <linux-integrity@archiver.kernel.org>; Fri, 14 Dec 2018 20:27:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B44EE2086D
+	for <linux-integrity@archiver.kernel.org>; Fri, 14 Dec 2018 22:28:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730731AbeLNU1V (ORCPT
+        id S1730153AbeLNW2d (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 14 Dec 2018 15:27:21 -0500
-Received: from mail.windriver.com ([147.11.1.11]:56121 "EHLO
-        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730663AbeLNU1V (ORCPT
+        Fri, 14 Dec 2018 17:28:33 -0500
+Received: from mail1.windriver.com ([147.11.146.13]:33048 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729519AbeLNW2d (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 14 Dec 2018 15:27:21 -0500
+        Fri, 14 Dec 2018 17:28:33 -0500
 Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id wBEKQpDS027546
+        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id wBEMS32X002135
         (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Fri, 14 Dec 2018 12:26:51 -0800 (PST)
+        Fri, 14 Dec 2018 14:28:03 -0800 (PST)
 Received: from yow-pgortmak-d1.corp.ad.wrs.com (128.224.56.57) by
  ALA-HCA.corp.ad.wrs.com (147.11.189.40) with Microsoft SMTP Server id
- 14.3.408.0; Fri, 14 Dec 2018 12:26:51 -0800
+ 14.3.408.0; Fri, 14 Dec 2018 14:28:03 -0800
 Received: by yow-pgortmak-d1.corp.ad.wrs.com (Postfix, from userid 1000)        id
- D25572E0804; Fri, 14 Dec 2018 15:26:50 -0500 (EST)
-Date:   Fri, 14 Dec 2018 15:26:50 -0500
+ 8D95A2E0804; Fri, 14 Dec 2018 17:28:02 -0500 (EST)
+Date:   Fri, 14 Dec 2018 17:28:02 -0500
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>
 CC:     Randy Dunlap <rdunlap@infradead.org>,
         Stephen Rothwell <sfr@canb.auug.org.au>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         <linux-integrity@vger.kernel.org>, James Morris <jmorris@namei.org>
 Subject: Re: linux-next: Tree for Dec 14 (security/integrity/ima/)
-Message-ID: <20181214202650.GO11670@windriver.com>
+Message-ID: <20181214222802.GP11670@windriver.com>
 References: <20181214181826.5775b958@canb.auug.org.au>
  <8205aafb-bbc1-2196-17d9-e70e9ac56c2e@infradead.org>
  <1544815174.3681.16.camel@linux.ibm.com>
+ <20181214202650.GO11670@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1544815174.3681.16.camel@linux.ibm.com>
+In-Reply-To: <20181214202650.GO11670@windriver.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-[Re: linux-next: Tree for Dec 14 (security/integrity/ima/)] On 14/12/2018 (Fri 14:19) Mimi Zohar wrote:
+[Re: linux-next: Tree for Dec 14 (security/integrity/ima/)] On 14/12/2018 (Fri 15:26) Paul Gortmaker wrote:
 
-> [Cc'ing Paul Gortmaker]
+> [Re: linux-next: Tree for Dec 14 (security/integrity/ima/)] On 14/12/2018 (Fri 14:19) Mimi Zohar wrote:
 > 
-> On Fri, 2018-12-14 at 08:25 -0800, Randy Dunlap wrote:
-> > On 12/13/18 11:18 PM, Stephen Rothwell wrote:
-> > > Hi all,
+> > On Fri, 2018-12-14 at 08:25 -0800, Randy Dunlap wrote:
 > > > 
-> > > Changes since 20181213:
+> > > on i386:
 > > > 
-> > 
-> > on i386:
-> > 
-> >   CC      security/integrity/ima/ima_main.o
-> > ../security/integrity/ima/ima_main.c: In function 'ima_load_data':
-> > ../security/integrity/ima/ima_main.c:535:3: error: implicit declaration of function 'is_module_sig_enforced' [-Werror=implicit-function-declaration]
-> >    sig_enforce = is_module_sig_enforced();
-> >    ^
-> > 
-> > 
-> > Needs:
+> > >   CC      security/integrity/ima/ima_main.o
+> > > ../security/integrity/ima/ima_main.c: In function 'ima_load_data':
+> > > ../security/integrity/ima/ima_main.c:535:3: error: implicit declaration of function 'is_module_sig_enforced' [-Werror=implicit-function-declaration]
+> > >    sig_enforce = is_module_sig_enforced();
+> > >    ^
+
+[...]
+
+> > Commit 4f83d5ea643a ("security: integrity: make ima_main explicitly
+> > non-modular") just removed module.h.
 > 
-> Commit 4f83d5ea643a ("security: integrity: make ima_main explicitly
-> non-modular") just removed module.h.
+> Yes, unfortunately the security directory has additional confusion
+> because there is name space overlap between "module" as used in Linux
+> Security Module, and "module" as in "insmod foo.ko".  The ima_main
+> is not modular, but it does use modular infrastructure to load others.
+> 
+> Fortunately this was the final commit in the series, so it can be
+> removed or reverted as per maintainer's choice.  In the meantime, I'll
+> look into why my "allyesconfig" build testing didn't pick up on this,
+> so I can close that testing gap.
 
-Yes, unfortunately the security directory has additional confusion
-because there is name space overlap between "module" as used in Linux
-Security Module, and "module" as in "insmod foo.ko".  The ima_main
-is not modular, but it does use modular infrastructure to load others.
+I've confirmed that most .config result in an implicit header presence
+by looking at the CPP output.  Details below.
 
-Fortunately this was the final commit in the series, so it can be
-removed or reverted as per maintainer's choice.  In the meantime, I'll
-look into why my "allyesconfig" build testing didn't pick up on this,
-so I can close that testing gap.
+James, if your input branch to linux-next is strictly fast forward, here
+is a partial revert to fix up what Randy found that you can apply.
 
-Randy, if you were using one of your usual "randconfig" builds, maybe
-you can mail me the .config out of band - no need spamming the lists.
-
-Thanks, and sorry for the undetected fallout.
+Thanks for the report, and again - sorry for not detecting this myself.
 Paul.
 --
 
-> 
-> Mimi 
-> 
-> 
-> > 
-> > ---
-> >  security/integrity/ima/ima_main.c |    1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > --- linux-next-20181214.orig/security/integrity/ima/ima_main.c
-> > +++ linux-next-20181214/security/integrity/ima/ima_main.c
-> > @@ -24,6 +24,7 @@
-> >  #include <linux/init.h>
-> >  #include <linux/file.h>
-> >  #include <linux/binfmts.h>
-> > +#include <linux/module.h>
-> >  #include <linux/mount.h>
-> >  #include <linux/mman.h>
-> >  #include <linux/slab.h>
-> > 
-> > 
-> > 
-> 
+From 31081a8b46e84d64e2fbda8d0d82ba26d56cc468 Mon Sep 17 00:00:00 2001
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Date: Fri, 14 Dec 2018 16:48:07 -0500
+Subject: [PATCH] security: integrity: partial revert of make ima_main
+ explicitly non-modular
+
+In commit 4f83d5ea643a ("security: integrity: make ima_main explicitly
+non-modular") I'd removed <linux/module.h> after assuming that the
+function is_module_sig_enforced() was an LSM function and not a core
+kernel module function.
+
+Unfortunately the typical .config selections used in build testing
+provide an implicit <linux/module.h> presence, and so normal/typical
+build testing did not immediately reveal my incorrect assumption.
+
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: James Morris <james.l.morris@oracle.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-ima-devel@lists.sourceforge.net
+Cc: linux-security-module@vger.kernel.org
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index adaf96932237..616a88f95b92 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -21,7 +21,7 @@
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+-#include <linux/init.h>
++#include <linux/module.h>
+ #include <linux/file.h>
+ #include <linux/binfmts.h>
+ #include <linux/mount.h>
+-- 
+2.7.4
+
