@@ -2,217 +2,236 @@ Return-Path: <SRS0=MTCy=OY=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_ADSP_ALL,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACFA9C43387
-	for <linux-integrity@archiver.kernel.org>; Sat, 15 Dec 2018 11:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6870C43387
+	for <linux-integrity@archiver.kernel.org>; Sat, 15 Dec 2018 17:12:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CB27206A2
-	for <linux-integrity@archiver.kernel.org>; Sat, 15 Dec 2018 11:07:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97B9D206C2
+	for <linux-integrity@archiver.kernel.org>; Sat, 15 Dec 2018 17:12:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729192AbeLOLHh (ORCPT
+        id S1728203AbeLORME convert rfc822-to-8bit (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 15 Dec 2018 06:07:37 -0500
-Received: from mout.gmx.net ([212.227.17.20]:57709 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729671AbeLOLHg (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 15 Dec 2018 06:07:36 -0500
-Received: from pegasus6.linux ([188.194.7.253]) by mail.gmx.com (mrgmx103
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0M3R1g-1hOiPS3PhA-00r19F; Sat, 15
- Dec 2018 12:07:22 +0100
-Subject: Re: Bug: Persisting O_TMPFILE with IMA
-To:     Mimi Zohar <zohar@linux.ibm.com>, zohar@linux.vnet.ibm.com,
-        linux-integrity@vger.kernel.org
-Cc:     Goldwyn Rodrigues <rgoldwyn@suse.com>, Fabian Vogt <fvogt@suse.de>
-References: <884653bf-2e25-b78f-2dc7-51c5a57d4b51@suse.de>
- <1544814096.3681.12.camel@linux.ibm.com>
-From:   Ignaz Forster <ignaz.forster@gmx.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=ignaz.forster@gmx.de; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <8dd90198-00ef-a43f-194b-9c4dcfc2227a@gmx.de>
-Date:   Sat, 15 Dec 2018 12:07:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Firefox/52.0 SeaMonkey/2.49.4
-MIME-Version: 1.0
-In-Reply-To: <1544814096.3681.12.camel@linux.ibm.com>
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="s9yWgJEWuJulYoiovA33sVL10W67ZbKpL"
-X-Provags-ID: V03:K1:8rpahrjRFFb+j+DikQelQj+3jfFzz3uXanVBRXNFaKhOfvcsSaw
- GZ3/o1PQHAdc1XVSP0bqwgVIAu2zm8dIBjF+3YGE22GOGRcli4HHiF+aLyduWVEjePdui1Q
- +NTzlw3mLE0prYmOAdqE1PbTJe+oSOJuzoJ/YgcLKSH+lEnhC/ussNGadT4/vkbfA+AhHQB
- tLIWhZBVwanrp3u3hGQAA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:epMLc1MF2oM=:2ls4JGA99zOYsPpr2eU4qi
- GWpW12NWVIuOxMBppg8PJ1YozH6LYabOokaxgOf63A/qrKvVmXi7kJnS9M7eus4fM6i7pz909
- 6nCNzwPKYgSCnFQdrQfDHN6AxOZY93lN4SikgShqTe7UuebSA3HCAXJnF3jqP9cZJXXEqh/k9
- mcqoBng11amM0Wr9ZkrWT6ij/ERb5N9knxTqw9IzPxcNk8CGbJK59Bgiyvl0nSf9c6hEJHrQ8
- 13OnVST0o+8j/CsEWMNtYqxGYQghHXdM76uPSfRl1R841+jqsxlYv1XJ0lJx2PaN6zBbXTRjf
- AgBUsm9HBIclJbuvQaN1m9Zn6qzedtX21XnyhExYg9s5uvMVt/PRg24kJak+hvDmU93d/KJui
- myKmF6JbJBgN0J8+JMD+UdWZSEaa2qRl/m3Kju2iLoSk+5UfKK2IINVHMOiiUOSf173DNJH3g
- v6ysrHI6ejNG6rMh9wsskG6B330Nw+mLYNYWzf6uRAovxZ2sBqOfTSnDdukSlO/kIl6i5bOUg
- DhwS5U/6RaQ2f+kp6leHfBbGLEQjv/jAhEzdyNjX0l5SLfYztFuAAUprDPsTjTLyUZrjXynT/
- eC1OPVXf8sJg0E/E8Rc5tQf6ffUgASv16PNL5/qdInuQxOPw66sMj18dv3lmsS+lwwTzN94Sl
- 37+4tOQoqgB7LVt7vdn0QpYjkFM8M7v9Yi18vPLHnTdxlt3DkT4RJfkUBsAUrohLrLu8LidNQ
- Ndi8ktfTUn6SUX4+5lgkqDo4v1yR0rlZzc6h/cvVpHSTbTkF4kFIPA/RnOHEqV1e2T67hfCNi
- dgCtm65U0YFdldvlYLwczJOTyi8ebX8eBuFe/yWOG2GrLG7MydS4VxWgyLkM2MY+W3+9WDSxk
- 0LLQn3LsEO/0wKcw7uGNQoSo7xWRGQPVrXVlOOmKTqfvo9Su98AQfuXTtT54Fe
+        Sat, 15 Dec 2018 12:12:04 -0500
+Received: from sender-of-o53.zoho.com ([135.84.80.218]:21831 "EHLO
+        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726298AbeLORMD (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 15 Dec 2018 12:12:03 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1544893898; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=h3Ko5oTCaFix2V5B+/bkpHYx7ke7iQypFUP06mf8LGyHHHZR13TyqKjPJCdTM04RdLPogUdJdX8ZmymEGmhFUMyUuBhucILsC89cNn2Bnm9Ap/pNVN+zX73ogau82nRVSj1c7boAuzuGKb8eH5gMPHGekcLStwstTftHLN+9Bp8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1544893898; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=fFdsYoE7qk2pEEa1OEYNRLPLsD9zhhV0eRvgc1ycnxU=; 
+        b=Zq2yDvu3MtdBn+N2oynFpTUJhvJOD2vubrHzQAuRRufUIV+eJsoSSabSkHxtYv5e4fdQy0TPoLEzWOaWiVANENp6fG+vtXRqGrPSrVw9eu1Wdowe1uyIlc1i5lrqTI9w7VcGSQxIlSKcq57McILVttLGq79hSIOtGINDPXG4zNo=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=mniewoehner.de;
+        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
+        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
+Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
+        with SMTPS id 1544893895227384.15539478682865; Sat, 15 Dec 2018 09:11:35 -0800 (PST)
+Message-ID: <bc8a550472c42e010a70090c1b1bc87c7a26627d.camel@mniewoehner.de>
+Subject: Re: [PATCH] Allow hwrng to initialize crng.
+From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+To:     Louis Collard <louiscollard@chromium.org>
+Cc:     linux-integrity@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Andrey Pronin <apronin@chromium.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "David R. Bild" <david.bild@xaptum.com>
+In-Reply-To: <CAKNRAJVF5bf7LgyxQRkRFq3ihm9TmbGO8=wCo8i8NWds2yr2bg@mail.gmail.com>
+References: <20180926032455.224600-1-louiscollard@chromium.org>
+         <568ea3447a8116ef460d191bf3599e2761bca3a5.camel@mniewoehner.de>
+         <CAKNRAJVF5bf7LgyxQRkRFq3ihm9TmbGO8=wCo8i8NWds2yr2bg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Sat, 15 Dec 2018 18:11:31 +0100
+Mime-Version: 1.0
+X-Mailer: Evolution 3.28.5 
+Content-Transfer-Encoding: 8BIT
+X-ZohoMailClient: External
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---s9yWgJEWuJulYoiovA33sVL10W67ZbKpL
-Content-Type: multipart/mixed; boundary="GygjA9pkePLKC34MuIwMmMq8GpPd8eMwS";
- protected-headers="v1"
-From: Ignaz Forster <ignaz.forster@gmx.de>
-To: Mimi Zohar <zohar@linux.ibm.com>, zohar@linux.vnet.ibm.com,
- linux-integrity@vger.kernel.org
-Cc: Goldwyn Rodrigues <rgoldwyn@suse.com>, Fabian Vogt <fvogt@suse.de>
-Message-ID: <8dd90198-00ef-a43f-194b-9c4dcfc2227a@gmx.de>
-Subject: Re: Bug: Persisting O_TMPFILE with IMA
-References: <884653bf-2e25-b78f-2dc7-51c5a57d4b51@suse.de>
- <1544814096.3681.12.camel@linux.ibm.com>
-In-Reply-To: <1544814096.3681.12.camel@linux.ibm.com>
+On Thu, 2018-12-13 at 12:50 +0800, Louis Collard wrote:
+> On Sun, Nov 18, 2018 at 4:15 AM Michael Niewöhner <linux@mniewoehner.de>
+> wrote:
+> > 
+> > Hi Louis,
+> > 
+> > On Wed, 2018-09-26 at 11:24 +0800, Louis Collard wrote:
+> > > Some systems, for example embedded systems, do not generate
+> > > enough entropy on boot through interrupts, and boot may be blocked for
+> > > several minutes waiting for a call to getrandom to complete.
+> > > 
+> > > Currently, random data is read from a hwrng when it is registered,
+> > > and is loaded into primary_crng. This data is treated in the same
+> > > way as data that is device-specific but otherwise unchanging, and
+> > > so primary_crng cannot become initialized with the data from the
+> > > hwrng.
+> > > 
+> > > This change causes the data initially read from the hwrng to be
+> > > treated the same as subsequent data that is read from the hwrng if
+> > > it's quality score is non-zero.
+> > > 
+> > > The implications of this are:
+> > > 
+> > > The data read from hwrng can cause primary_crng to become
+> > > initialized, therefore avoiding problems of getrandom blocking
+> > > on boot.
+> > > 
+> > > Calls to getrandom (with GRND_RANDOM) may be using entropy
+> > > exclusively (or in practise, almost exclusively) from the hwrng.
+> > > 
+> > > Regarding the latter point; this behavior is the same as if a
+> > > user specified a quality score of 1 (bit of entropy per 1024 bits)
+> > > so hopefully this is not too scary a change to make.
+> > > 
+> > > This change is the result of the discussion here:
+> > > https://patchwork.kernel.org/patch/10453893/
+> > > 
+> > > Signed-off-by: Louis Collard <louiscollard@chromium.org>
+> > > Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > ---
+> > >  drivers/char/hw_random/core.c | 9 +++++++--
+> > >  1 file changed, 7 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/core.c
+> > > index aaf9e5afaad4..47f358aa0c3d 100644
+> > > --- a/drivers/char/hw_random/core.c
+> > > +++ b/drivers/char/hw_random/core.c
+> > > @@ -24,6 +24,7 @@
+> > >  #include <linux/sched.h>
+> > >  #include <linux/slab.h>
+> > >  #include <linux/uaccess.h>
+> > > +#include <crypto/chacha20.h>
+> > > 
+> > >  #define RNG_MODULE_NAME              "hw_random"
+> > > 
+> > > @@ -64,13 +65,17 @@ static size_t rng_buffer_size(void)
+> > >  static void add_early_randomness(struct hwrng *rng)
+> > >  {
+> > >       int bytes_read;
+> > > -     size_t size = min_t(size_t, 16, rng_buffer_size());
+> > > +     /* Read enough to initialize crng. */
+> > > +     size_t size = 2*CHACHA20_KEY_SIZE;
+> > > 
+> > >       mutex_lock(&reading_mutex);
+> > >       bytes_read = rng_get_data(rng, rng_buffer, size, 1);
+> > >       mutex_unlock(&reading_mutex);
+> > >       if (bytes_read > 0)
+> > > -             add_device_randomness(rng_buffer, bytes_read);
+> > > +             /* Allow crng to become initialized, but do not add
+> > > +              * entropy to the pool.
+> > > +              */
+> > > +             add_hwgenerator_randomness(rng_buffer, bytes_read, 0);
+> > >  }
+> > > 
+> > >  static inline void cleanup_rng(struct kref *kref)
+> > 
+> > I found your patch by chance, searching for a solution for crng init delay
+> > on my
+> > headless machine. Unfortunately it hardly makes any difference for me. With
+> > the
+> > patch the system hangs for about 80s instead of 120s until the "crng init
+> > done"
+> > message.In contrast, doing a `cat /dev/hwrng >/dev/random` or running rngd
+> > initializes the crng instantly.
+> > 
+> > Isn't that delay the problem this patch tries to fix? Any idea what is wrong
+> > here?
+> > 
+> > Thanks!
+> > 
+> > Best regards
+> > Michael
+> > 
+> > 
+> 
+> Yes that is the problem this is trying to address. My guess would be
+> rng_get_data() is not returning as much data as requested, so the
+> delay is reduced but not eliminated. Looking at implementation of
+> rng_get_data() it appears this could be caused by device support for
+> read() vs data_read(). I don't have a good feel for whether looping to
+> retrieve more data here would be acceptable, it is certainly a bigger
+> change than currently proposed.
+> 
+> Thanks,
+> Louis
 
---GygjA9pkePLKC34MuIwMmMq8GpPd8eMwS
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Hi Louis,
 
-Mimi Zohar schrieb am 14.12.2018 um 20:01 Uhr:
-> On Fri, 2018-12-14 at 19:11 +0100, Ignaz Forster wrote:
->> Hello,
->>
->> persisting files opened with O_TMPFILE doesn't seem to work on IMA as =
+that is what I thought first, too, but I was able to verify that 64 bytes are
+read as expected.
 
->> expected: The IMA xattr won't be written. This makes it impossible to =
+It seems this is exactly what David noticed in your discussion about the quality
+module parameter (https://patchwork.kernel.org/patch/10453893/#22130681):
 
->> access the file later.
->> The following example application, based on the O_TMPFILE example from=
+> Interesting.
+> 
+> add_hwgenereator_randomness() will call crng_fast_load(), regardless
+> of entropy estimate/quality, if crng_init is 0.  So initializing
+> crng_init from the hwrng, regardless of quality, is already the
+> intent.
+> 
+> But hw_random only calls add_hwgenerator_randomness() if
+> current_quality > 0, via the hwrng_fillfn() kthread.
+> 
+> All that to say, I agree.  add_early_randomness() should (indirectly)
+> call crng_fast_load(), like add_hwgenerator_randomness() does.
 
->> 	man 2 open
->> will demonstrate this:
->>
->>
->> #include <fcntl.h>
->> #include <unistd.h>
->> #include <linux/limits.h>
->> #include <stdio.h>
->>
->> int main(int argc, char *argv[]) {
->> 	char path[PATH_MAX];
->> 	int fd =3D open("/tmp", __O_TMPFILE | O_RDWR, S_IRUSR | S_IWUSR);
->> 	write(fd, "test", 4);
->> 	snprintf(path, PATH_MAX, "/proc/self/fd/%d", fd);
->> 	linkat(AT_FDCWD, path, AT_FDCWD, "/tmp/tmpfile_persisted.txt",
->> 			AT_SYMLINK_FOLLOW);
->> }
->>
->>
->> (/tmp should not be a tmpfs of course; change to paths to a supported =
-
->> file system if necessary.)
->>
->> This was discovered when trying to understand why IMA is failing on=20
->> overlayfs during truncated copy_up operations (see thread "PROBLEM: IM=
-A=20
->> xattrs not written on overlayfs" from September / October), though thi=
-s=20
->> is probably a different problem.
->=20
-> rootfs is a tmpfs filesystem. =C2=A0Once CPIO supports xattrs, they can=
- be
-> included in the initramfs.
->=20
-> Remember the builtin policies - ima_policy=3Dtcb|appraise_tcb - are
-> there from boot. =C2=A0They are meant to be replaced with finer grained=
-
-> policies based on LSM labels, once the LSMs are up and running.
->=20
-> Feel free to replace the builtin IMA policy with one to your liking.
-
-I'm not talking about the initrd or the early boot process here - the=20
-application will fail when compiling and executing it in a fully started =
-
-system. It will just open a temporary file without a name, write somethin=
-g=20
-into it and save it to "/tmp/tmpfile_persisted.txt", following the exampl=
-e=20
-for using O_TMPFILE in the open(2) manpage. No IMA hash will be generated=
-=20
-for the file, making the file inaccessible and thus breaking applications=
-=20
-relying on this feature of O_TMPFILE (though I assume that's not widely=20
-used yet).
-
-Ignaz
+When I set rng_quality=1024, the crng does get initialized more or less
+instantly.
 
 
---GygjA9pkePLKC34MuIwMmMq8GpPd8eMwS--
+dmesg with default rng_quality=0:
 
---s9yWgJEWuJulYoiovA33sVL10W67ZbKpL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+[    0.003831] ACPI: TPM2 0x000000009E0B7F70 000034 (v03 LENOVO TC-
+S06   00001260 AMI  00000000)
+[    0.161803] random: get_random_bytes called from start_kernel+0x8f/0x50e with
+crng_init=0
+[    3.590433] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
+[    3.644148] random: fast init done
+[   85.183006] random: crng init done
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEExhuDDPaobZOSSxz1uuuxltLcCxkFAlwU4GkACgkQuuuxltLc
-CxnDCRAApL4q+12j0TvREmOQdPqT6l+LPDPJY6ScNAMVSHA0SlIlC95zYwF0GqRT
-rZ8V59Z8LNREOILudWtDmHDjbNIKFC4IEh1TindvBlQKiIQv78Y3mwhQBG9Mdtey
-KSfoIau+GOcm0t++XQNgLe0CKilFB2/akI3Ay+aYUWTuPdSrUQjyEnsLzHww8Rgw
-lGh9IL9NBSYXs6yznB1gq6h8tdtBBWbVuUgjiOvXaprENPLwqEofJvBCFIh6Ymh4
-j/pSNzdshO8Y/Kig2BsnwhvPYWRP1zu6QYXpMVCFoao12u3b7vZYLSswe+pMMSJL
-KB4EsHKtZW8RRwXFw1+2NPRrJrtx0YEpnc/lvuLpRclW1RQo9MapOmrFI/iOjGyG
-/ghYcp30bdJkd+jDEXGHLhfebULVZB0JQgFtlotH+P+PeNik5xOlr4lbH+Jq3/2u
-h2LH/km0uHTRpUMGtY+ZrogD8E+5seJyZipGpe/RUtBPEP6ZsLdZXQbr2nxKSDX6
-yNh5Q0dR33oDILQJPSI5CWs1vk+KXtquXJBe44jpgDMqMK2+4xBgpOsB6AI6DmFY
-er4zCIvZe2ztsBV9Auq9OGwGaFmJMISLgyCkRC98XaSSMNjjt/MV8kZNHZJ54O+7
-Pkdnas7ZgxjqVob+Tn77dbrAtxdaLzvsg/Nq4jXXUVlH0cyMRKQ=
-=DLua
------END PGP SIGNATURE-----
+dmesg with rng_quality patch:
 
---s9yWgJEWuJulYoiovA33sVL10W67ZbKpL--
+[    0.003837] ACPI: TPM2 0x000000009E0B7F70 000034 (v03 LENOVO TC-
+S06   00001260 AMI  00000000)
+[    0.162136] random: get_random_bytes called from start_kernel+0x8f/0x50e with
+crng_init=0
+[    3.582675] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
+[    3.636408] random: fast init done
+[    3.650355] random: crng init done
+
+
+Test patch:
+
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index f08949a5f678..59e5a8753ba1 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -214,6 +214,8 @@ static int tpm_tis_init(struct device *dev, struct tpm_info
+*tpm_info)
+        if (itpm || is_itpm(ACPI_COMPANION(dev)))
+                phy->priv.flags |= TPM_TIS_ITPM_WORKAROUND;
+ 
++       priv->rng_quality = 1;
++
+        return tpm_tis_core_init(dev, &phy->priv, irq, &tpm_tcg,
+                                 ACPI_HANDLE(dev));
+ }
+
+
+
+Thanks
+Michael
+
+
