@@ -6,60 +6,60 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54261C43387
-	for <linux-integrity@archiver.kernel.org>; Mon, 17 Dec 2018 16:49:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44125C43387
+	for <linux-integrity@archiver.kernel.org>; Mon, 17 Dec 2018 16:52:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 242172146F
-	for <linux-integrity@archiver.kernel.org>; Mon, 17 Dec 2018 16:49:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13B3321473
+	for <linux-integrity@archiver.kernel.org>; Mon, 17 Dec 2018 16:52:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f4u4kDio"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fJnEZOwA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388055AbeLQQtv (ORCPT
+        id S2388317AbeLQQwc (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 17 Dec 2018 11:49:51 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37228 "EHLO
+        Mon, 17 Dec 2018 11:52:32 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:40584 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387905AbeLQQtu (ORCPT
+        with ESMTP id S2388298AbeLQQwc (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 17 Dec 2018 11:49:50 -0500
+        Mon, 17 Dec 2018 11:52:32 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        :References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ephnP2uxD3sfoSBpzxuLZ8x02KLkYXH7Ai7y7SaggtY=; b=f4u4kDio0JIz3bvbsoUJCa6nQ
-        HOpB6ttUsWyNrEIVlpEX7UvM7c8QtGoB4BdVYR5VePVWT+JTpHcSq4D2ShUtbCkvD0Im9iiAJHpW7
-        19GbNOjycSJ7HoO7OwQgbmJk3t5KssTkz9d2WDN/rugP6f9Rjn/UI6XECRT8L73uXeNLrYJMCR8W/
-        P486JPm/PD3YG1xIR+MTdTwtN5DYYsFxhnoDrseiWX4X31DRhHpHjZKv/xkxpmBo0hBH4sjWkkrLT
-        9lQC4bHWi6+8LukkGNouisCqPafVsrUlNNIUlnyCcStr6SlICYx9/3aqof0Syto+wRnmYkA+Q7KJs
-        c9wuvrpag==;
+         bh=OYL9WFygQ+hDPFIACis4Z/GLLsWAtobhaqY1c5uZH0Q=; b=fJnEZOwAVYuYbtbbBez3FOgQ0
+        VEyOl6gk/BCWvhmDyVgLNvS2Wt56lArUKiVT+Z/2K1ALfTjSnVaTWmx1FDdOj7S9HY81xrocwBf2/
+        cU1hdhSXN8eOQqCXhT82CMNpJAz55SLwH03VNmIMAgUZVa49OPctOUkx/nib3QmyxG0nP+rULuhZZ
+        d/zsO2IcXXcJScSHay9YmurdV/x51rTdRP+YGl1X3f+duZxxXyHpWqaRsNpsWc5wxPnutodbbCcIf
+        DK8Cu8IO5zGFFf0+oxjsEc9FQ4HTabnkl/MoJRqEKtFNfSh8PgT/+E6XKx2Wi4iW9sjb99pwq//uo
+        AnCttPnFw==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gYw5V-0005Sr-NK; Mon, 17 Dec 2018 16:49:49 +0000
-Date:   Mon, 17 Dec 2018 08:49:49 -0800
+        id 1gYw87-0007cy-GW; Mon, 17 Dec 2018 16:52:31 +0000
+Date:   Mon, 17 Dec 2018 08:52:31 -0800
 From:   Christoph Hellwig <hch@infradead.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Christoph Hellwig <hch@infradead.org>,
+        Eric Biggers <ebiggers@kernel.org>,
         linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
         Victor Hsieh <victorhsieh@google.com>,
         Chandan Rajendra <chandan@linux.vnet.ibm.com>,
         Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
-Message-ID: <20181217164949.GA18626@infradead.org>
+Message-ID: <20181217165231.GB18626@infradead.org>
 References: <20181101225230.88058-1-ebiggers@kernel.org>
  <20181101225230.88058-2-ebiggers@kernel.org>
  <20181212091406.GA31723@infradead.org>
  <20181212202609.GA193967@gmail.com>
  <20181213202249.GA3797@infradead.org>
- <20181214044802.GA681@sol.localdomain>
+ <20181214051722.GF20880@thunk.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181214044802.GA681@sol.localdomain>
+In-Reply-To: <20181214051722.GF20880@thunk.org>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-integrity-owner@vger.kernel.org
@@ -67,30 +67,27 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 08:48:03PM -0800, Eric Biggers wrote:
-> Sure, those specific people (modulo you just now) haven't responded to the
-> fs-verity patches yet.  But again, the patches have been out for review for
-> months.  Of course, we always prefer more reviews over fewer, and we strongly
-> encourage anyone interested to review fs-verity!  (The Documentation/ file may
-> be a good place to start.)  But ultimately we cannot force reviews, and as you
-> know kernel reviews can be very hard to come by.  Yet, people still need
-> fs-verity anyway; it isn't just some toy.  And we're committed to maintaining
-> it, similar to fscrypt.  The ext4 and f2fs maintainers are also satisfied with
-> the current approach to storing the verity metadata past EOF; in fact it was
-> even originally Ted's idea, I think.
+[FYI, your mail never made it to my inbox, although I found the copy
+in linux-fsdevel now]
 
-But you also can't force inclusion.  And Linus just recently complained
-about merging common code patches through trees for a specific fs
-without proper VFS ACKs.  And that was a for a case without userspace
-ABI implications, so we really need a much better review here.
+On Fri, Dec 14, 2018 at 12:17:22AM -0500, Theodore Y. Ts'o wrote:
+> I don't consider fs-verity to be part of core VFS, but rather a
+> library that happens to be used by ext4 and f2fs.  This is much like
+> fscrypt, which was originally an ext4-only thing, but the code was
+> always set up so it could be used by other file systems, and when f2fs
+> was interested in using it, we moved it to fs/crypto.  As such the
+> fscrypto code never got a review from Al, Andrew, or you, and when I
+> pushed it to Linus, he accepted the pull request.
 
-Including a VFS person ACK, CC to linux-abi and man pages for the
-interface.
+And as a result we are stuck with a pretty bad interface, so this is
+a very good example for how to not do thing!  Just because a user
+interface is only implemented by one or two file systems doesn't mean
+it should skip the userspace ABI review, because we tend to generalize
+them unless they are deeply specific to fs internals.
 
-> > Given that you alread use an ioctl as the interface what is the problem
-> > of passing this data through the ioctl?
-> 
-> Do you mean pass the verity metadata in a buffer?  That cannot work in general,
-> because it may be too large to fit into memory.
+> P.S.  And if you've purchased a Pixel 3 device, it's already using the
+> fsverity code, so it's quite well tested (and yes, we have xfstests).
 
-Have a pointer in the ioctl and do get_user_pages on it.
+And all kinds of other code that would never pass review, so that isn't
+really a good argument unfortunately :(  Note that I would want to buy
+a piece of hardware coming with google spyware preinstalled.
