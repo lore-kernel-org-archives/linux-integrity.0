@@ -2,62 +2,72 @@ Return-Path: <SRS0=ZD6g=O3=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD435C43387
-	for <linux-integrity@archiver.kernel.org>; Tue, 18 Dec 2018 19:23:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 210C5C43387
+	for <linux-integrity@archiver.kernel.org>; Tue, 18 Dec 2018 19:49:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95A8621841
-	for <linux-integrity@archiver.kernel.org>; Tue, 18 Dec 2018 19:23:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E96C721841
+	for <linux-integrity@archiver.kernel.org>; Tue, 18 Dec 2018 19:49:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726638AbeLRTXS (ORCPT
+        id S1727012AbeLRTtS (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 18 Dec 2018 14:23:18 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57494 "EHLO mx1.suse.de"
+        Tue, 18 Dec 2018 14:49:18 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33188 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726422AbeLRTXR (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 18 Dec 2018 14:23:17 -0500
+        id S1726451AbeLRTtS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 18 Dec 2018 14:49:18 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2A7D2B0C2;
-        Tue, 18 Dec 2018 19:23:16 +0000 (UTC)
-Subject: Re: [PATCH v2] ima: define ima_post_create_tmpfile() hook and add
- missing call
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Fabian Vogt <fvogt@suse.de>, Al Viro <viro@ZenIV.linux.org.uk>
-References: <1545158873.4206.86.camel@linux.ibm.com>
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 91F58AFB5;
+        Tue, 18 Dec 2018 19:49:16 +0000 (UTC)
 From:   Ignaz Forster <iforster@suse.de>
-Message-ID: <e0830c44-d93e-5c6e-ef85-a35631b6f3c5@suse.de>
-Date:   Tue, 18 Dec 2018 20:23:15 +0100
+Subject: EVM: Permission denied with overlayfs
+To:     Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-unionfs@vger.kernel.org
+Message-ID: <12c81a49-efca-d66c-2143-ae04ca248cce@suse.de>
+Date:   Tue, 18 Dec 2018 20:49:15 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <1545158873.4206.86.camel@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Am 18.12.18 um 19:47 schrieb Mimi Zohar:
-> If tmpfiles can be made persistent, then newly created tmpfiles need to
-> be treated like any other new files in policy.
-> 
-> This patch indicates which newly created tmpfiles are in policy, causing
-> the file hash to be calculated on __fput().
-> 
-> Reported-by: Ignaz Forster <ignaz.forster@gmx.de>
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Hi,
 
-Tested-by: Ignaz Forster <iforster@suse.com>
+as a follow up to my attempts to use overlayfs on an IMA protected 
+system[1] I've now tried to also enable EVM. From what I understand this 
+should - at least in theory - be possible: EVM will call 
+d_backing_inode(dentry), which I thought would get the inode of the 
+underlying file system[2], and use that for HMAC verification.
 
-Thanks a lot, the patch is working as expected.
+In practice simply trying to access an existing file will fail with 
+"Permission denied" already. In the corresponding audit log I can see 
+the file access (failed with "invalid-HMAC"), but with an inode number 
+unknown to me - stat returns a completely different number for the file 
+in the lower and target dir.
 
+For testing purposes I added a new hashing algorithm to 
+evm_ima_xattr_type which will not add the file system specific 
+attributes (inode number, generation, file system uuid) to the hash - 
+just like EVM_XATTR_PORTABLE_DIGSIG, but with the hashes generated by 
+the kernel. Files created with this signature can be read correctly, 
+though writing the files will still fail.
+
+Unfortunately I'm out of ideas what is happening here. If anybody wants 
+to have a look at this: Any help would be appreciated.
+
+Kind Regards,
 Ignaz
+
+[1] https://www.spinics.net/lists/linux-integrity/msg03593.html
+[2] https://www.kernel.org/doc/htmldocs/filesystems/API-d-backing-inode.html
