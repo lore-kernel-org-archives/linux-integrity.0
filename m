@@ -2,136 +2,119 @@ Return-Path: <SRS0=H3qb=O4=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D95C43387
-	for <linux-integrity@archiver.kernel.org>; Wed, 19 Dec 2018 22:11:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18156C43387
+	for <linux-integrity@archiver.kernel.org>; Wed, 19 Dec 2018 22:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 508E02133F
-	for <linux-integrity@archiver.kernel.org>; Wed, 19 Dec 2018 22:11:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D969E20874
+	for <linux-integrity@archiver.kernel.org>; Wed, 19 Dec 2018 22:50:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="effYkVUf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KvNK6CdX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729909AbeLSWLy (ORCPT
+        id S1728748AbeLSWuV (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 19 Dec 2018 17:11:54 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:55350 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729744AbeLSWLx (ORCPT
+        Wed, 19 Dec 2018 17:50:21 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42688 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728355AbeLSWuV (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 19 Dec 2018 17:11:53 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 08AC08EE1CB;
-        Wed, 19 Dec 2018 14:11:53 -0800 (PST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Ij8SjtPkiYyy; Wed, 19 Dec 2018 14:11:52 -0800 (PST)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 787908EE0D5;
-        Wed, 19 Dec 2018 14:11:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1545257512;
-        bh=4nnaA4UeeZcipUZB+eIlU/PCM8f47NXOY92VkgPcLoc=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=effYkVUf8+MhoLxwaGdVt/AqJCt4dKLmItSai/PMnCYS5v8oT6IbUWjc2xI1S1qX6
-         ACP3I0Ux0ILSUpaTnZiO00fEX9+xFPkcqYpcmWZMNwOhBrNCs37oiUVIPvhrR1B1Z3
-         1fNMCjxOYKNnkui0HR/V8ucrrbpw5pF6nabxQnsc=
-Message-ID: <1545257511.2916.46.camel@HansenPartnership.com>
-Subject: Re: EVM: Permission denied with overlayfs
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     zohar@linux.ibm.com, iforster@suse.de,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        linux-integrity@vger.kernel.org,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        overlayfs <linux-unionfs@vger.kernel.org>
-Date:   Wed, 19 Dec 2018 14:11:51 -0800
-In-Reply-To: <CAOQ4uxhDh3okp1nYgZXxG+2siChfT8Oq3ncH1FFhQW_zBCstzw@mail.gmail.com>
-References: <12c81a49-efca-d66c-2143-ae04ca248cce@suse.de>
-         <1545174031.4178.8.camel@linux.ibm.com>
-         <1545233975.3954.8.camel@linux.ibm.com>
-         <1545238601.2916.13.camel@HansenPartnership.com>
-         <1545243311.3954.22.camel@linux.ibm.com>
-         <1545248096.2916.26.camel@HansenPartnership.com>
-         <CAOQ4uxhDh3okp1nYgZXxG+2siChfT8Oq3ncH1FFhQW_zBCstzw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+        Wed, 19 Dec 2018 17:50:21 -0500
+Received: by mail-lj1-f194.google.com with SMTP id l15-v6so18828244lja.9;
+        Wed, 19 Dec 2018 14:50:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=lL6VuU05xhyZZNNjsDLIZB0TivGZQe3e6R0urwV27nc=;
+        b=KvNK6CdXLsyM/6Upw6RorgzC448kKDKTro0RKfuSdwzdxisa1b8Z1mxNBOypG/c4o2
+         7naXbC9MJKaEtLLK7gw3+XYZdN1FndRbB/G7vyrgsIWwxU94/Ul9ojU84c7X2AlSC2aV
+         Fdn6IU8gjEnttnQuoyRU1v9h5WndOX7XA+YtPF3zSaJQUI2sEiUsQczxN4PcHp3kZLCU
+         DrqEoLlWeonCVNNEmZdyoF8URbG/luEfkzYU9q3GRIdR/k3/wUO3vcMZLy7Tt2dQLMdK
+         3WuUyNDdwIog9l2YHhdGtExamWVtCXowuizQ9lqn3QVS0WZEdlQXbH8zeYJV2DdNTysB
+         anKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lL6VuU05xhyZZNNjsDLIZB0TivGZQe3e6R0urwV27nc=;
+        b=Tm7ErUGCU+EuO8/+XHFgxpBGMI8hWuSOD/t2Xd2ZYuAHYnXSOqdDF1xvDysyaY4dvu
+         QUpe0sC2OyMln+BM5MYeR39aiBW9Pj0uhpVrZTF+hQJxY5DB4V1B9y9vCwoJ+nloGlYJ
+         ZPC4yqq7KuSxo0lDEBTriZNeVDjPWinGOufavD0EvvWuRM0oEY6yFfhuWYbchz20nI7P
+         ABvV0IUV8JYcPB95Rfvif/CodwMErqW+uFpplFCEUvQTYBUMi1js9+E1xsHJJ7hru1W2
+         VGxpBnZKu4nB7ZcD1KJerXk69ICFHwmNVGbaol+cobpayrEKECd7x/3UWZ5Lp+rYFUgq
+         guoQ==
+X-Gm-Message-State: AA+aEWYm1ykjJwl+PbeG+HFvXK52WhPXAND1ba6cYMECY0DkGH8jQr+q
+        eqqCCavYNYZTra4Rmsmt9o4vZ884ihA=
+X-Google-Smtp-Source: AFSGD/W+aF0CzMAEbw0L4ujsDio5pqmdz8rplfxqdUnX55t16gKI9pqeN3fOqZvahbsqUH3wE5dM+w==
+X-Received: by 2002:a2e:9603:: with SMTP id v3-v6mr11660171ljh.15.1545259818062;
+        Wed, 19 Dec 2018 14:50:18 -0800 (PST)
+Received: from ?IPv6:2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2? (dmhwpt3bffxn8z3-j6k-4.rev.dnainternet.fi. [2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2])
+        by smtp.gmail.com with ESMTPSA id h203sm4063348lfe.44.2018.12.19.14.50.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Dec 2018 14:50:17 -0800 (PST)
+Subject: Re: [PATCH 2/6] __wr_after_init: write rare for static allocation
+To:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Andy Lutomirski <luto@kernel.org>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181204121805.4621-1-igor.stoppa@huawei.com>
+ <20181204121805.4621-3-igor.stoppa@huawei.com>
+ <CALCETrVvoui0vksdt0Y9rdGL5ipEn_FtSXVVUFdH03ZC93cy_A@mail.gmail.com>
+ <20181212104900.0af52c34@mschwideX1>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <cff2bb8d-bd61-c4a0-4e63-4de2133a7b38@gmail.com>
+Date:   Thu, 20 Dec 2018 00:50:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181212104900.0af52c34@mschwideX1>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, 2018-12-19 at 22:12 +0200, Amir Goldstein wrote:
-> On Wed, Dec 19, 2018 at 9:34 PM James Bottomley
-> <James.Bottomley@hansenpartnership.com> wrote:
-> > 
-> > On Wed, 2018-12-19 at 13:15 -0500, Mimi Zohar wrote:
-> > > On Wed, 2018-12-19 at 08:56 -0800, James Bottomley wrote:
-> > > > On Wed, 2018-12-19 at 10:39 -0500, Mimi Zohar wrote:
-> > > > > Confirmed, in linux-4.18.y d_backing_inode returns the real
-> > > > > i_ino, but newer kernels do not.
-> > > > 
-> > > > Just so we're clear, this isn't an issue with
-> > > > d_backing_inode(), which hasn't changed since its introduction
-> > > > in 2015 and which always returns dentry->d_inode (it was
-> > > > originally a helper for unionfs which got merged even though
-> > > > unionfs didn't, which makes it and the comment about
-> > > > upper/lower totally misleading).  The problem is that overlayfs
-> > > > has changed the inode it places into d_inode.
-> > > > 
-> > > > >   This is a problem for EVM as the i_ino is included in the
-> > > > > HMAC calculation.
-> > > > 
-> > > > Isn't the solution always to use portable signatures for
-> > > > containers? It's problematic to include inode and generation
-> > > > with an overlay because if you change the metadata it gets
-> > > > copied up => new inode number and generation on the upper
-> > > > filesystem but if we were always using the underlying inode
-> > > > number and generation, the signature would then be wrong on the
-> > > > copied up file.
-> > > > 
-> > > > At base, most container images are sets of tar files, which are
-> > > > not inode number preserving anyway, so even if we find a
-> > > > convoluted way to fix the above, the EVM signature has to be
-> > > > portable because otherwise its always wrong for container
-> > > > images.
-> > > 
-> > > Ignaz's use case was mutable files, not immutable files with file
-> > > signatures.
-> > 
-> > The word "mutable" is problematic in terms of overlays.  Only the
-> > upper layer is mutable, so if your EVM signed file is anywhere
-> > other than in the top layer it's technically immutable.  What you
-> > get when you mutate it is a copy up.  the VFS guarantee is that
-> > inode numbers are stable only for the current mount and may change
-> > on a remount.  Most disk backed filesystems have inode numbers
-> > encoded in their on disk inodes, which is why they have far more
-> > stability than the simple VFS requirement, but some filesystems
-> > can't have long term stable inode numbers.  We recognise this
-> > problem in EVM with so called "portable signatures" that don't
-> > include the inode number and generation.
-> > 
-> > I'm interested in discussing two points
-> > 
-> >    1. Can we actually come up with semantics where the EVM
-> > signature is
-> >       always valid for overlays?
+
+
+On 12/12/2018 11:49, Martin Schwidefsky wrote:
+> On Wed, 5 Dec 2018 15:13:56 -0800
+> Andy Lutomirski <luto@kernel.org> wrote:
+
+>> Hi s390 and powerpc people: it would be nice if this generic
+>> implementation *worked* on your architectures and that it will allow
+>> you to add some straightforward way to add a better arch-specific
+>> implementation if you think that would be better.
 > 
-> What you are looking for is a persistent and stable identifier for
-> the inode object. Such a property already exists for filesystems that
-> support NFS file handles.
+> As the code is right now I can guarantee that it will not work on s390.
 
-Well, that's really what I'm asking.  I know if we want container
-rather than content then filehandle is definitely the way to go for the
-same reasons that NFS transitioned away from inode numbers.  However,
-I'm asking the question what value is there in hashing a container
-identifier instead of the real file contents?
+OK, I have thrown the towel wrt developing at the same time for multiple 
+architectures.
 
-James
+ATM I'm oriented toward getting support for one (x86_64), leaving the 
+actual mechanism as architecture specific.
 
+Then I can add another one or two and see what makes sense to refactor.
+This approach should minimize the churning, overall.
+
+
+--
+igor
