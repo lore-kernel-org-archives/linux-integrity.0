@@ -4,42 +4,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05FF8C43387
-	for <linux-integrity@archiver.kernel.org>; Wed, 19 Dec 2018 07:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C2EAC43387
+	for <linux-integrity@archiver.kernel.org>; Wed, 19 Dec 2018 07:11:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C840421841
-	for <linux-integrity@archiver.kernel.org>; Wed, 19 Dec 2018 07:09:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A6C821852
+	for <linux-integrity@archiver.kernel.org>; Wed, 19 Dec 2018 07:11:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fzX09TCd"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FKUYdz2A"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727904AbeLSHJW (ORCPT
+        id S1728249AbeLSHLw (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 19 Dec 2018 02:09:22 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:35206 "EHLO
+        Wed, 19 Dec 2018 02:11:52 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:35420 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728051AbeLSHJR (ORCPT
+        with ESMTP id S1726716AbeLSHLv (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 19 Dec 2018 02:09:17 -0500
+        Wed, 19 Dec 2018 02:11:51 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/KC9DHMjwbOpXhQULiC+bGxJFMoZGP8G7cGQ95/QabA=; b=fzX09TCdB0RNQPNuytVszcw2o
-        xWE3VbUouxsxmIxZxo3vpW8mbznVEpBRKBFZcOewcZYd/VkwzaboqfyRXUTW8vfgQIaXJdrBk6bN6
-        9BJxOVZA2ybK3tuF0x9xh4KDqSRZnbCpz84l/HoexuiDoL6H9AS+u3IPiq39ZtEG3fUXQn/ExLgNM
-        YlG/9Xvq9k7YZtK39Q7lwKh2lJ792HzjtbR16QQqu7za3h4i93w9VXm/IxQ8npru46Pab7jbB7xJJ
-        AW0ivDlPKgEo/FwDVNtvG1Q6cji6gfBgoQILMd9cwVygsBOHnEwEfVfgQ7T1XKwasLfTrjWo6mzqP
-        lUizwtyCQ==;
+         bh=GbFsH92F8LYgPzCETeldoQ5SjmPUN4loEk5ARz1d5Lo=; b=FKUYdz2A7lD/wcAmN4VQB7ReZ
+        Lgl8H/8o3qxyTy4Qrd0kzjFNfZgwEW/4A17spUy06+j1ZmKiCMGm/JqEVzULLFNVD6YgyV6A/T/wC
+        fwJ14RzGklfd0d/VUx0k4aci1UnU9BMsLzEb6kvjWEKQqQ1Zf5xIb+E7pMp0xx6hs54HEmL8DbQHE
+        1KnXMPVGy4uoDSAMMFLpNVzxA6VH3qL69thOxAepoM9kB++VCMw9vauMuCiVtxdbYi/upISDr6vgt
+        2210gFBDEKBLzEst+J+w5wsWB+JVGqQlzfrwuOxPJT03+uI6708Oj4/J3MYcFl400o/mCRvvjJHF0
+        SyntpkbtA==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gZVym-0001Ic-2e; Wed, 19 Dec 2018 07:09:16 +0000
-Date:   Tue, 18 Dec 2018 23:09:15 -0800
+        id 1gZW1F-0002i2-MI; Wed, 19 Dec 2018 07:11:49 +0000
+Date:   Tue, 18 Dec 2018 23:11:49 -0800
 From:   Christoph Hellwig <hch@infradead.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
         linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -49,19 +50,18 @@ Cc:     Christoph Hellwig <hch@infradead.org>,
         Chandan Rajendra <chandan@linux.vnet.ibm.com>,
         Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
-Message-ID: <20181219070915.GA2628@infradead.org>
+Message-ID: <20181219071149.GB2628@infradead.org>
 References: <20181101225230.88058-1-ebiggers@kernel.org>
  <20181101225230.88058-2-ebiggers@kernel.org>
  <20181212091406.GA31723@infradead.org>
  <20181212202609.GA193967@gmail.com>
  <20181213202249.GA3797@infradead.org>
  <20181214044802.GA681@sol.localdomain>
- <20181217164949.GA18626@infradead.org>
- <20181217183205.GA141684@gmail.com>
+ <20181217200039.GD8111@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181217183205.GA141684@gmail.com>
+In-Reply-To: <20181217200039.GD8111@magnolia>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-integrity-owner@vger.kernel.org
@@ -69,14 +69,22 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 10:32:06AM -0800, Eric Biggers wrote:
-> I don't see how that helps.  The Merkle tree can still be too large to fit in
-> memory.  In the worst case, it might not even fit in the address space.  And I
-> don't see how get_user_pages() helps either over just copy_from_user(); what are
-> you proposing to do with the pages after getting them, exactly?
+On Mon, Dec 17, 2018 at 12:00:39PM -0800, Darrick J. Wong wrote:
+> FWIW, if I were (hypothetically) working on an xfs implementation, I
+> likely would have settled on passing a reference to a merkle tree
+> through a (fd, length) pair, because that allows us plenty of options
+> on the back end:
+> 
+> b) we could remap the tree into a new inode fork for merkle trees, or
+> a) remap it as posteof blocks like ext4/f2fs does, or
+> c) remap the blocks into the attribute fork as an (unusually large)
+> extended attribute value.
+>
+> If the merkle_fd isn't on the same filesystem as the fd we could at
+> least use generic_copy_file_range (i.e. page cache copying) to land the
+> merkle tree wherever we want.
 
-Write them out to a file system specific area on the media.  Note
-that get_user_pages is indeed not going to work if you run out of
-address space, but that seems like an odd use case.  Out of of memory
-is not an issue as we generally iterate over a small number of pages
-for each individual get_user_pages call.
+I think the fd would have to be on the same fs for this interface to
+make sense. But it could be an O_TMPFILE one.  And given that ext4
+already supports a variant of swapext this interface should also work
+with the existing ext4 on disk format.
