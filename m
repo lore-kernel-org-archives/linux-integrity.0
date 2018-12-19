@@ -2,84 +2,134 @@ Return-Path: <SRS0=H3qb=O4=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60235C43387
-	for <linux-integrity@archiver.kernel.org>; Wed, 19 Dec 2018 07:19:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27977C43387
+	for <linux-integrity@archiver.kernel.org>; Wed, 19 Dec 2018 15:39:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A85E21841
-	for <linux-integrity@archiver.kernel.org>; Wed, 19 Dec 2018 07:19:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aH+dHuuC"
+	by mail.kernel.org (Postfix) with ESMTP id 0159D2086C
+	for <linux-integrity@archiver.kernel.org>; Wed, 19 Dec 2018 15:39:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725290AbeLSHTQ (ORCPT
+        id S1730351AbeLSPjz (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 19 Dec 2018 02:19:16 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37090 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727159AbeLSHTQ (ORCPT
+        Wed, 19 Dec 2018 10:39:55 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48918 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730347AbeLSPjz (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 19 Dec 2018 02:19:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=evqe5dPHDIt+SHYPo3T6MulYSyrCpjE82y/Hm+ivgNI=; b=aH+dHuuCtnfTgHx5FCXFTmdoc
-        ZsoHqEK1stmdr1SvDj+HeA6rvliXeUp1qkSbM2vjXUv7IcItpOTNY66/VayMovSOznP7KiTHt+AKY
-        EW1hEmKH0+oVoMuAjQV3q81zVW1ShFrPenvg6/lpXMclEwKacW/xClpgLrezRvN46PJw4s0arrjrM
-        HCZVnho39z5ONFgZpagvPR0hoj8gp/aVi+Ng078gT3nmfjiSFKmI0oe0xXrLo5bh+cGpOH052AoEz
-        mHPaPmnFuVB3WUIyE30D3/rRQr0ET6+ve4Oks3rKB7rc4061ONG9cfyupcWfoWlfq3HKuSe2Qkegy
-        vj4VLiyuQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gZW8Q-0004v9-7e; Wed, 19 Dec 2018 07:19:14 +0000
-Date:   Tue, 18 Dec 2018 23:19:14 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>, ebiggers@kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Victor Hsieh <victorhsieh@google.com>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>
-Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
-Message-ID: <20181219071914.GA18852@infradead.org>
-References: <20181101225230.88058-1-ebiggers@kernel.org>
- <20181101225230.88058-2-ebiggers@kernel.org>
- <20181212091406.GA31723@infradead.org>
- <20181212202609.GA193967@gmail.com>
- <20181213202249.GA3797@infradead.org>
- <20181214044802.GA681@sol.localdomain>
- <20181217200039.GD8111@magnolia>
- <20181219071149.GB2628@infradead.org>
- <CAHk-=wiB8vGbje+NgNkMZupHsZ_cqg6YEBV+ZXSF4wnywFLRHQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiB8vGbje+NgNkMZupHsZ_cqg6YEBV+ZXSF4wnywFLRHQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Wed, 19 Dec 2018 10:39:55 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBJFcsNZ047370
+        for <linux-integrity@vger.kernel.org>; Wed, 19 Dec 2018 10:39:54 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pfrmrgr4p-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 19 Dec 2018 10:39:53 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 19 Dec 2018 15:39:51 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 19 Dec 2018 15:39:48 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBJFdl4162718196
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 19 Dec 2018 15:39:47 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6C8FDAE057;
+        Wed, 19 Dec 2018 15:39:47 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 930CFAE058;
+        Wed, 19 Dec 2018 15:39:46 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.89.181])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 19 Dec 2018 15:39:46 +0000 (GMT)
+Subject: Re: EVM: Permission denied with overlayfs
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Ignaz Forster <iforster@suse.de>,
+        Amir Goldstein <amir73il@gmail.com>
+Cc:     Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        linux-integrity@vger.kernel.org,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-unionfs@vger.kernel.org
+Date:   Wed, 19 Dec 2018 10:39:35 -0500
+In-Reply-To: <1545174031.4178.8.camel@linux.ibm.com>
+References: <12c81a49-efca-d66c-2143-ae04ca248cce@suse.de>
+         <1545174031.4178.8.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18121915-0016-0000-0000-00000238BFF4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121915-0017-0000-0000-0000329116AC
+Message-Id: <1545233975.3954.8.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-19_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812190131
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 11:16:08PM -0800, Linus Torvalds wrote:
-> On Tue, Dec 18, 2018, 23:11 Christoph Hellwig <hch@infradead.org wrote:
+On Tue, 2018-12-18 at 18:00 -0500, Mimi Zohar wrote:
+> Hi Ignaz,
 > 
-> >
-> > I think the fd would have to be on the same fs for this interface to
-> > make sense. But it could be an O_TMPFILE one.  And given that ext4
-> > already supports a variant of swapext this interface should also work
-> > with the existing ext4 on disk format.
-> >
+> On Tue, 2018-12-18 at 20:49 +0100, Ignaz Forster wrote:
+> > Hi,
+> > 
+> > as a follow up to my attempts to use overlayfs on an IMA protected 
+> > system[1] I've now tried to also enable EVM. From what I understand this 
+> > should - at least in theory - be possible: EVM will call 
+> > d_backing_inode(dentry), which I thought would get the inode of the 
+> > underlying file system[2], and use that for HMAC verification.
+> > 
+> > In practice simply trying to access an existing file will fail with 
+> > "Permission denied" already. In the corresponding audit log I can see 
+> > the file access (failed with "invalid-HMAC"), but with an inode number 
+> > unknown to me - stat returns a completely different number for the file 
+> > in the lower and target dir.
+> > 
+> > For testing purposes I added a new hashing algorithm to 
+> > evm_ima_xattr_type which will not add the file system specific 
+> > attributes (inode number, generation, file system uuid) to the hash - 
+> > just like EVM_XATTR_PORTABLE_DIGSIG, but with the hashes generated by 
+> > the kernel. Files created with this signature can be read correctly, 
+> > though writing the files will still fail.
+> > 
+> > Unfortunately I'm out of ideas what is happening here. If anybody wants 
+> > to have a look at this: Any help would be appreciated.
+> > 
+> > Kind Regards,
+> > Ignaz
+> > 
+> > [1] https://www.spinics.net/lists/linux-integrity/msg03593.html
+> > [2] https://www.kernel.org/doc/htmldocs/filesystems/API-d-backing-inode.html
+> > 
 > 
-> Why is the merkle tree not just an xattr of the file?
+> After creating a file on the overlay, I wasn't able to access it from
+> the overlay, but was able to access it from "upper".  Both "stat" and
+> "getfattr -m ^security" returned exactly the same things for both
+> pathnames.  However, the ino in the audit log was different.
+> 
+> After modifying evm_calc_hmac_or_hash(), replacing d_backing_inode()
+> with d_real_inode(), the hmac properly calculated for both the overlay
+> and the upper pathnames.
+> 
+> Something must have changed in d_backing_inode().
 
-Because it is too large for our awkward xattrs interface..
+Confirmed, in linux-4.18.y d_backing_inode returns the real i_ino, but
+newer kernels do not.  This is a problem for EVM as the i_ino is
+included in the HMAC calculation.
+
+Mimi
+
