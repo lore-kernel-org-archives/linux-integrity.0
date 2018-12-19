@@ -2,60 +2,61 @@ Return-Path: <SRS0=H3qb=O4=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9710BC43387
-	for <linux-integrity@archiver.kernel.org>; Wed, 19 Dec 2018 21:34:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E313DC43387
+	for <linux-integrity@archiver.kernel.org>; Wed, 19 Dec 2018 21:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5894B20879
-	for <linux-integrity@archiver.kernel.org>; Wed, 19 Dec 2018 21:34:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0CAD20989
+	for <linux-integrity@archiver.kernel.org>; Wed, 19 Dec 2018 21:34:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RqoruNp3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vGTkPcUF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728356AbeLSVeH (ORCPT
+        id S1728170AbeLSVe3 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 19 Dec 2018 16:34:07 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:37079 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726716AbeLSVeH (ORCPT
+        Wed, 19 Dec 2018 16:34:29 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36559 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730563AbeLSVe2 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 19 Dec 2018 16:34:07 -0500
-Received: by mail-lf1-f65.google.com with SMTP id y11so16166934lfj.4;
-        Wed, 19 Dec 2018 13:34:05 -0800 (PST)
+        Wed, 19 Dec 2018 16:34:28 -0500
+Received: by mail-lj1-f196.google.com with SMTP id g11-v6so18715735ljk.3;
+        Wed, 19 Dec 2018 13:34:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:reply-to:mime-version
-         :content-transfer-encoding;
-        bh=gao6Paz78Wv+S9Y48uFekujRhjWOk2WMhVie8VXtSvs=;
-        b=RqoruNp3Aj0t6Olz38BcPZUI2zTP1E3aLZSl4Kch+Ute9g4+3+9cUga3xAVw/dRDwa
-         fVc3kx65CAJWYrGhq4NvLMlBNq4Yar6HcDKKaztPllm+UFtnD4Nta+pTUin7yMfk4gh+
-         05BP+Em8ahLQvI4aYUrtuTZWX8f/y315R2JZEbkK7AqPcNSqMgrXOTjo15L+TVvg4EWL
-         ORSmEnxPIjZ7Q58QfP8TSRyyScu3ucKAVkvFtyeaAsG5fpy7C5QkSyY2vZw3OaYOXedX
-         5AVNKLiz/IlF8Dl7kl5hjJ+eXTs5Mc0tE8xdznnY/Jug1A6WIWsFOPRvkpz9TE6FJy4c
-         XOhw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
+         :mime-version:content-transfer-encoding;
+        bh=nF+ce+AsD/YO6oFhBzoP5bXERd0j3/JBWm1ePv97n+k=;
+        b=vGTkPcUFo/MMtKaWdBnUN7Wr0yJwxwfs21G27pnVV2k1BB2gRhB1bK7E0cHhYbqIgf
+         stDCnsHWMfyP+yrG6oDmTMF96qa/BaUh7n6LG+3tu8TfXBh5Wu8DfaY+PV6lNfvBRdKh
+         hNQbHgauq8nMJyjwqmvZjnwDRCxA5mLVfzWQ0bVZJe+zeth1/NOc5HzIGqpMFr/Qrlqx
+         aAsQZ/q+cAxCC45Usqy0Xty8HNLpuBvEXpaPgWZc396htU9HqMdTxdiPYyjkaNHn7myJ
+         xkIvhC2HOtkTyU5OhrA1C4U6i8nYCJDolSU8uTM4BXBZOybG0Kkmw2kFOsIZCZuoWSro
+         lNVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :mime-version:content-transfer-encoding;
-        bh=gao6Paz78Wv+S9Y48uFekujRhjWOk2WMhVie8VXtSvs=;
-        b=moiuFA6B6rxk42NDCgIfIHH3A0JNlv7IVYofa3BJcn15XSJSQtG3aBJGGohIctr/vb
-         nz4uWuJGeBXEhcB0biH6XIAxkZFHSRFkrCm0PWR8Rv5y/FrQqq7plrJxJvraZtnri74N
-         uqT0F4ltAAnORtFNRKVFIqXijwzM9e6cZxguZ4kAsQtTscLlhSqiKrPu4hXGQ+4AVe5r
-         8B41tb6Z/GynHnVIkB/KbPxfT24unkzzucFUUa7Ql/qqKh8bJiySxziNziCDcNIjKKgt
-         I+bmyd1FfZpMVvQcmpaCW4BTOy5N+gC+gJWVWF4PhxD518Ht3slgd77EE3Y1zfBBxnZY
-         S9Og==
-X-Gm-Message-State: AA+aEWYITTR+MaL1+DwFO/8XEDyLxcgLrgEaunWqXajIfSkH7Hb7NCCQ
-        I6dEFVRWn6CLpHB1+Rv5NI0=
-X-Google-Smtp-Source: AFSGD/U7kEXKUSbUtVkzDdx+CUSIjSN8XwOZn8JMB3LuNWtVD5/pHTGn0qTJ02elVdg7VFo1rt5ZeQ==
-X-Received: by 2002:a19:f204:: with SMTP id q4mr14260365lfh.133.1545255244431;
-        Wed, 19 Dec 2018 13:34:04 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:reply-to:mime-version:content-transfer-encoding;
+        bh=nF+ce+AsD/YO6oFhBzoP5bXERd0j3/JBWm1ePv97n+k=;
+        b=c29aAqG/aiES3wMGqW5NYipdcI5R5kxD6T6FW+vzOSJHLPilZou42iS6MTCTeKjopF
+         kVSUKreQU1Ug/TszktDUDKTXUdVdZfuup0QcbKz1dE0oi90+CsQqqVYWk5K4EDATjsdG
+         K8YIaRD/IVj/xAyYTNIFK0Wdn13OQFh6d/D2sJIAgiWtwxpwwBm1f3pIHt/v1vVw7O+d
+         ifRSY231NfW0eX7HLKbzdqz4Tl+L2MNHlPD7+PYz1/dMXVCFUyOquiYstTLShcmfcQeh
+         eR0hAa5TY1/fBdIjiliW5je0Yu+DzbNHY1lQr2vjh6F1vkA+VjFwHik8qkwwQv/NWaiz
+         l6uQ==
+X-Gm-Message-State: AA+aEWaa1ZK1K4lSqRJ2GussN/iloVyF7EswsnGx1OluY9u0V6zPInc/
+        6b4ctQO0hcFLsbAHMnGXw5g=
+X-Google-Smtp-Source: AFSGD/Wy2ENV+x3psGq5BTNSnjgWTYu45qYohRv5i5VPwG4fDvqlbGM3fM6N3dl/AyW8xTUnzykvyA==
+X-Received: by 2002:a2e:4601:: with SMTP id t1-v6mr15007443lja.111.1545255266361;
+        Wed, 19 Dec 2018 13:34:26 -0800 (PST)
 Received: from localhost.localdomain (dmhwpt3bffxn8z3-j6k-4.rev.dnainternet.fi. [2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2])
-        by smtp.gmail.com with ESMTPSA id v64sm3996867lfa.48.2018.12.19.13.34.02
+        by smtp.gmail.com with ESMTPSA id v64sm3996867lfa.48.2018.12.19.13.34.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Dec 2018 13:34:03 -0800 (PST)
+        Wed, 19 Dec 2018 13:34:25 -0800 (PST)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 To:     Andy Lutomirski <luto@amacapital.net>,
@@ -68,10 +69,12 @@ Cc:     igor.stoppa@huawei.com, Nadav Amit <nadav.amit@gmail.com>,
         linux-integrity@vger.kernel.org,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC v2 PATCH 0/12] hardening: statically allocated protected memory
-Date:   Wed, 19 Dec 2018 23:33:26 +0200
-Message-Id: <20181219213338.26619-1-igor.stoppa@huawei.com>
+Subject: [PATCH 12/12] x86_64: __clear_user as case of __memset_user
+Date:   Wed, 19 Dec 2018 23:33:38 +0200
+Message-Id: <20181219213338.26619-13-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181219213338.26619-1-igor.stoppa@huawei.com>
+References: <20181219213338.26619-1-igor.stoppa@huawei.com>
 Reply-To: Igor Stoppa <igor.stoppa@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -80,53 +83,13 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Patch-set implementing write-rare memory protection for statically
-allocated data.
-Its purpose it to keep data write protected kernel data which is seldom
-modified.
-There is no read overhead, however writing requires special operations that
-are probably unsitable for often-changing data.
-The use is opt-in, by applying the modifier __wr_after_init to a variable
-declaration.
+To avoid code duplication, re-use __memset_user(), when clearing
+user-space memory.
 
-As the name implies, the write protection kicks in only after init() is
-completed; before that moment, the data is modifiable in the usual way.
+The overhead should be minimal (2 extra register assignments) and
+outside of the writing loop.
 
-Current Limitations:
-* supports only data which is allocated statically, at build time.
-* supports only x86_64, other earchitectures need to provide own backend
-
-Some notes:
-- there is a part of generic code which is basically a NOP, but should
-  allow using unconditionally the write protection. It will automatically
-  default to non-protected functionality, if the specific architecture
-  doesn't support write-rare
-- to avoid the risk of weakening __ro_after_init, __wr_after_init data is
-  in a separate set of pages, and any invocation will confirm that the
-  memory affected falls within this range.
-  rodata_test is modified accordingly, to check also this case.
-- for now, the patchset addresses only x86_64, as each architecture seems
-  to have own way of dealing with user space. Once a few are implemented,
-  it should be more obvious what code can be refactored as common.
-- the memset_user() assembly function seems to work, but I'm not too sure
-  it's really ok
-- I've added a simple example: the protection of ima_policy_flags
-- the last patch is optional, but it seemed worth to do the refactoring
-
-Changelog:
-
-v1->v2
-
-* introduce cleaner split between generic and arch code
-* add x86_64 specific memset_user()
-* replace kernel-space memset() memcopy() with userspace counterpart
-* randomize the base address for the alternate map across the entire
-  available address range from user space (128TB - 64TB)
-* convert BUG() to WARN()
-* turn verification of written data into debugging option
-* wr_rcu_assign_pointer() as special case of wr_assign()
-* example with protection of ima_policy_flags
-* documentation
+Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 
 CC: Andy Lutomirski <luto@amacapital.net>
 CC: Nadav Amit <nadav.amit@gmail.com>
@@ -139,42 +102,50 @@ CC: linux-integrity@vger.kernel.org
 CC: kernel-hardening@lists.openwall.com
 CC: linux-mm@kvack.org
 CC: linux-kernel@vger.kernel.org
+---
+ arch/x86/lib/usercopy_64.c | 29 +----------------------------
+ 1 file changed, 1 insertion(+), 28 deletions(-)
 
-Igor Stoppa (12):
-	[PATCH 01/12] x86_64: memset_user()
-	[PATCH 02/12] __wr_after_init: linker section and label
-	[PATCH 03/12] __wr_after_init: generic header
-	[PATCH 04/12] __wr_after_init: x86_64: __wr_op
-	[PATCH 05/12] __wr_after_init: x86_64: debug writes
-	[PATCH 06/12] __wr_after_init: Documentation: self-protection
-	[PATCH 07/12] __wr_after_init: lkdtm test
-	[PATCH 08/12] rodata_test: refactor tests
-	[PATCH 09/12] rodata_test: add verification for __wr_after_init
-	[PATCH 10/12] __wr_after_init: test write rare functionality
-	[PATCH 11/12] IMA: turn ima_policy_flags into __wr_after_init
-	[PATCH 12/12] x86_64: __clear_user as case of __memset_user
-
-
-Documentation/security/self-protection.rst |  14 ++-
-arch/Kconfig                               |  15 +++
-arch/x86/Kconfig                           |   1 +
-arch/x86/include/asm/uaccess_64.h          |   6 +
-arch/x86/lib/usercopy_64.c                 |  41 +++++--
-arch/x86/mm/Makefile                       |   2 +
-arch/x86/mm/prmem.c                        | 127 +++++++++++++++++++++
-drivers/misc/lkdtm/core.c                  |   3 +
-drivers/misc/lkdtm/lkdtm.h                 |   3 +
-drivers/misc/lkdtm/perms.c                 |  29 +++++
-include/asm-generic/vmlinux.lds.h          |  25 +++++
-include/linux/cache.h                      |  21 ++++
-include/linux/prmem.h                      | 142 ++++++++++++++++++++++++
-init/main.c                                |   2 +
-mm/Kconfig.debug                           |  16 +++
-mm/Makefile                                |   1 +
-mm/rodata_test.c                           |  69 ++++++++----
-mm/test_write_rare.c                       | 135 ++++++++++++++++++++++
-security/integrity/ima/ima.h               |   3 +-
-security/integrity/ima/ima_init.c          |   5 +-
-security/integrity/ima/ima_policy.c        |   9 +-
-21 files changed, 629 insertions(+), 40 deletions(-)
+diff --git a/arch/x86/lib/usercopy_64.c b/arch/x86/lib/usercopy_64.c
+index 84f8f8a20b30..ab6aabb62055 100644
+--- a/arch/x86/lib/usercopy_64.c
++++ b/arch/x86/lib/usercopy_64.c
+@@ -69,34 +69,7 @@ EXPORT_SYMBOL(memset_user);
+ 
+ unsigned long __clear_user(void __user *addr, unsigned long size)
+ {
+-	long __d0;
+-	might_fault();
+-	/* no memory constraint because it doesn't change any memory gcc knows
+-	   about */
+-	stac();
+-	asm volatile(
+-		"	testq  %[size8],%[size8]\n"
+-		"	jz     4f\n"
+-		"0:	movq $0,(%[dst])\n"
+-		"	addq   $8,%[dst]\n"
+-		"	decl %%ecx ; jnz   0b\n"
+-		"4:	movq  %[size1],%%rcx\n"
+-		"	testl %%ecx,%%ecx\n"
+-		"	jz     2f\n"
+-		"1:	movb   $0,(%[dst])\n"
+-		"	incq   %[dst]\n"
+-		"	decl %%ecx ; jnz  1b\n"
+-		"2:\n"
+-		".section .fixup,\"ax\"\n"
+-		"3:	lea 0(%[size1],%[size8],8),%[size8]\n"
+-		"	jmp 2b\n"
+-		".previous\n"
+-		_ASM_EXTABLE_UA(0b, 3b)
+-		_ASM_EXTABLE_UA(1b, 2b)
+-		: [size8] "=&c"(size), [dst] "=&D" (__d0)
+-		: [size1] "r"(size & 7), "[size8]" (size / 8), "[dst]"(addr));
+-	clac();
+-	return size;
++	return __memset_user(addr, 0, size);
+ }
+ EXPORT_SYMBOL(__clear_user);
+ 
+-- 
+2.19.1
 
