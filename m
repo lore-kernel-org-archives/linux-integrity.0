@@ -2,165 +2,267 @@ Return-Path: <SRS0=gF99=O5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8656C43387
-	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 07:15:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0456C43387
+	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 14:55:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93F3C20815
-	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 07:15:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i2eFAQN8"
+	by mail.kernel.org (Postfix) with ESMTP id 6F9CA217D8
+	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 14:55:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730243AbeLTHPh (ORCPT
+        id S1730582AbeLTOzH (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 20 Dec 2018 02:15:37 -0500
-Received: from mail-yb1-f170.google.com ([209.85.219.170]:35854 "EHLO
-        mail-yb1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727644AbeLTHPh (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 20 Dec 2018 02:15:37 -0500
-Received: by mail-yb1-f170.google.com with SMTP id 64so293371ybe.3;
-        Wed, 19 Dec 2018 23:15:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FlkYvVnFu4T4kFRtq2MXrLxgjuAq0XxPOfD09KeMTKw=;
-        b=i2eFAQN83Ws5cIKjTLpXNpt1mhL25x5uNpFk77yfHQUJrbnvaOcgJtMVC1PKtwmtTM
-         l558VRrceaqk805RIGxd1+2lIzozpVe4O4/cp/iTcmFVcAD4R0gryNy2OBs25AevMFS2
-         H2cG30CBJdQHUnhTtrZ+sN1lVID19Sm3nopStrU1C48jks2Yt9I+RRaMShj3v4o7Wzi/
-         HlftCJgoep4KqpkYfPoB5Dl9T9mnpF6shXjaa+xgf61RialRxg5d8Lw5mT/RBGIrXCto
-         CkSfD18Wk4VBWk1FyoisDii4gzhMBpWA2hBwNaX6miiqM4k9b+5oKs0b/BPWNj7GTVAb
-         7RTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FlkYvVnFu4T4kFRtq2MXrLxgjuAq0XxPOfD09KeMTKw=;
-        b=HpevVlByf/kz6K11/jw/t017ExhmzhKxvCaeYqNCB3Lsj1IDrZymt0S27IC6XBWi2m
-         /1XcoBnl2wpDQimwfhO5yjzyK4TdxDvtgBs/cORzG5v1KzL7anP2QRzbmbfRPxfOxeXi
-         WWTeQCWGeh52xq12UBW2RT8c9vB5hNHIhxOiTDQAOrXo1dQi6OvIaQTzvGLoVhRhuiF0
-         p3zTH6SGDVTSMVPiEKReGl5nLlIhb1eeTQNIeYcLk9hGMmpGwZG3CKW9Eaoj6UzW6tRW
-         A0HFtw1v8E6B0cCj4xiIOoKqxz0o/1trtMdIWo4WHrE0+Gja8MAB27RyQvrKPY9jqwdk
-         SS0Q==
-X-Gm-Message-State: AA+aEWYfHRtaJZvR69ieGnqq3KY5D28b4AsC1IvN5JIUbgUsbIlnaZth
-        NfRPyuXKgpY2ZsaUN6FWHVhMPAfKroYZu9V+2xM=
-X-Google-Smtp-Source: AFSGD/UExp/ziPa8eeUsGIij7Qgvhu2e39jFpqraYDJDoV3Xv011FfZm3vXB67ebWPuQHED1qKvOkcDo37dXR4h7iBY=
-X-Received: by 2002:a25:c3c3:: with SMTP id t186mr15455389ybf.337.1545290135794;
- Wed, 19 Dec 2018 23:15:35 -0800 (PST)
-MIME-Version: 1.0
-References: <12c81a49-efca-d66c-2143-ae04ca248cce@suse.de> <1545174031.4178.8.camel@linux.ibm.com>
- <1545233975.3954.8.camel@linux.ibm.com> <CAOQ4uxgoMntXsxnsxtBOOPLDo3HgcYPWayuCuDzxEx2GJSMZtg@mail.gmail.com>
- <20181220034200.wfft5d543tje5zpy@merlin>
-In-Reply-To: <20181220034200.wfft5d543tje5zpy@merlin>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 20 Dec 2018 09:15:24 +0200
-Message-ID: <CAOQ4uxgOj=BzaFML2qk8CnNid7Nbm5ktNg8=mK-kcVXO1kQWcw@mail.gmail.com>
-Subject: Re: EVM: Permission denied with overlayfs
-To:     Goldwyn Rodrigues <rgoldwyn@suse.com>
-Cc:     zohar@linux.ibm.com, iforster@suse.de,
+        Thu, 20 Dec 2018 09:55:07 -0500
+Received: from mga04.intel.com ([192.55.52.120]:62203 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725778AbeLTOzG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 20 Dec 2018 09:55:06 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Dec 2018 06:55:05 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,377,1539673200"; 
+   d="scan'208";a="285293790"
+Received: from unknown (HELO localhost) ([10.249.254.232])
+  by orsmga005.jf.intel.com with ESMTP; 20 Dec 2018 06:55:01 -0800
+Date:   Thu, 20 Dec 2018 16:55:00 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
         linux-integrity@vger.kernel.org,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v7 1/5] tpm: dynamically allocate the allocated_banks
+ array
+Message-ID: <20181220145500.GA10652@linux.intel.com>
+References: <20181213102945.30946-1-roberto.sassu@huawei.com>
+ <20181213102945.30946-2-roberto.sassu@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181213102945.30946-2-roberto.sassu@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 5:42 AM Goldwyn Rodrigues <rgoldwyn@suse.com> wrote:
-...
-> If I understand it correctly, overlay performs copy_up using a temporary inode,
-> and finally copies the attributes to a "real" upper inode after the copy_up is
-> successful. However, integrity or ima gets control for calculation and
-> verification of the inode during the temporary phase which is not the same as
-> the final "upper" inode.
->
+On Thu, Dec 13, 2018 at 11:29:41AM +0100, Roberto Sassu wrote:
+> This patch renames active_banks (member of tpm_chip) to allocated_banks,
+> stores the number of allocated PCR banks in nr_allocated_banks (new member
+> of tpm_chip), and replaces the static array with a pointer to a dynamically
+> allocated array.
+> 
+> tpm2_get_pcr_allocation() determines if a PCR bank is allocated by checking
+> the mask in the TPML_PCR_SELECTION structure returned by the TPM for
+> TPM2_Get_Capability(). If a bank is not allocated, the TPM returns that
+> bank in TPML_PCR_SELECTION, with all bits in the mask set to zero. In this
+> case, the bank is not included in chip->allocated_banks, to avoid that TPM
+> driver users unnecessarily calculate a digest for that bank.
+> 
+> One PCR bank with algorithm set to SHA1 is always allocated for TPM 1.x.
+> 
+> As a consequence of the introduction of nr_allocated_banks,
+> tpm_pcr_extend() does not check anymore if the algorithm stored in tpm_chip
+> is equal to zero.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  drivers/char/tpm/tpm-chip.c      |  1 +
+>  drivers/char/tpm/tpm-interface.c | 18 +++++++++--------
+>  drivers/char/tpm/tpm.h           |  3 ++-
+>  drivers/char/tpm/tpm1-cmd.c      | 10 ++++++++++
+>  drivers/char/tpm/tpm2-cmd.c      | 34 ++++++++++++++++++++++----------
+>  5 files changed, 47 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+> index 32db84683c40..ce851c62bb68 100644
+> --- a/drivers/char/tpm/tpm-chip.c
+> +++ b/drivers/char/tpm/tpm-chip.c
+> @@ -160,6 +160,7 @@ static void tpm_dev_release(struct device *dev)
+>  	kfree(chip->log.bios_event_log);
+>  	kfree(chip->work_space.context_buf);
+>  	kfree(chip->work_space.session_buf);
+> +	kfree(chip->allocated_banks);
+>  	kfree(chip);
+>  }
+>  
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index d9439f9abe78..7b80919228be 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -488,8 +488,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
+>  int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
+>  {
+>  	int rc;
+> -	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
+> -	u32 count = 0;
+> +	struct tpm2_digest *digest_list;
+>  	int i;
+>  
+>  	chip = tpm_find_get_ops(chip);
+> @@ -497,16 +496,19 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
+>  		return -ENODEV;
+>  
+>  	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> -		memset(digest_list, 0, sizeof(digest_list));
+> +		digest_list = kcalloc(chip->nr_allocated_banks,
+> +				      sizeof(*digest_list), GFP_KERNEL);
+> +		if (!digest_list)
+> +			return -ENOMEM;
 
-No, that's not ow it works.
+You could preallocate digest list and place it to struct tpm_chip
+instead of doing it everytime tpm_pcr_extend() called.
 
-What happens is as follows:
+>  
+> -		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
+> -			    chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
+> -			digest_list[i].alg_id = chip->active_banks[i];
+> +		for (i = 0; i < chip->nr_allocated_banks; i++) {
+> +			digest_list[i].alg_id = chip->allocated_banks[i];
+>  			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
+> -			count++;
+>  		}
+>  
+> -		rc = tpm2_pcr_extend(chip, pcr_idx, count, digest_list);
+> +		rc = tpm2_pcr_extend(chip, pcr_idx, chip->nr_allocated_banks,
+> +				     digest_list);
+> +		kfree(digest_list);
+>  		tpm_put_ops(chip);
+>  		return rc;
+>  	}
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index f27d1f38a93d..6b94306ab7c5 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -257,7 +257,8 @@ struct tpm_chip {
+>  	const struct attribute_group *groups[3];
+>  	unsigned int groups_cnt;
+>  
+> -	u16 active_banks[7];
+> +	u32 nr_allocated_banks;
+> +	u16 *allocated_banks;
+>  #ifdef CONFIG_ACPI
+>  	acpi_handle acpi_dev_handle;
+>  	char ppi_version[TPM_PPI_VERSION_LEN + 1];
+> diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+> index 6f306338953b..0874743ca96d 100644
+> --- a/drivers/char/tpm/tpm1-cmd.c
+> +++ b/drivers/char/tpm/tpm1-cmd.c
+> @@ -709,6 +709,16 @@ int tpm1_auto_startup(struct tpm_chip *chip)
+>  		goto out;
+>  	}
+>  
+> +	chip->allocated_banks = kcalloc(1, sizeof(*chip->allocated_banks),
+> +					GFP_KERNEL);
+> +	if (!chip->allocated_banks) {
+> +		rc = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	chip->allocated_banks[0] = TPM2_ALG_SHA1;
+> +	chip->nr_allocated_banks = 1;
+> +
+>  	return rc;
+>  out:
+>  	if (rc > 0)
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index a6bec13afa69..245669a7aba5 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -234,7 +234,7 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+>  	int i;
+>  	int j;
+>  
+> -	if (count > ARRAY_SIZE(chip->active_banks))
+> +	if (count > chip->nr_allocated_banks)
+>  		return -EINVAL;
+>  
+>  	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
+> @@ -825,11 +825,14 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+>  	void *marker;
+>  	void *end;
+>  	void *pcr_select_offset;
+> -	unsigned int count;
+>  	u32 sizeof_pcr_selection;
+> +	u32 nr_possible_banks;
+> +	u32 nr_alloc_banks = 0;
+> +	u16 hash_alg;
+>  	u32 rsp_len;
+>  	int rc;
+>  	int i = 0;
+> +	int j;
+>  
+>  	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_CAPABILITY);
+>  	if (rc)
+> @@ -844,11 +847,14 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+>  	if (rc)
+>  		goto out;
+>  
+> -	count = be32_to_cpup(
+> +	nr_possible_banks = be32_to_cpup(
+>  		(__be32 *)&buf.data[TPM_HEADER_SIZE + 5]);
+>  
+> -	if (count > ARRAY_SIZE(chip->active_banks)) {
+> -		rc = -ENODEV;
+> +	chip->allocated_banks = kcalloc(nr_possible_banks,
+> +					sizeof(*chip->allocated_banks),
+> +					GFP_KERNEL);
+> +	if (!chip->allocated_banks) {
+> +		rc = -ENOMEM;
+>  		goto out;
+>  	}
+>  
+> @@ -857,7 +863,7 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+>  	rsp_len = be32_to_cpup((__be32 *)&buf.data[2]);
+>  	end = &buf.data[rsp_len];
+>  
+> -	for (i = 0; i < count; i++) {
+> +	for (i = 0; i < nr_possible_banks; i++) {
+>  		pcr_select_offset = marker +
+>  			offsetof(struct tpm2_pcr_selection, size_of_select);
+>  		if (pcr_select_offset >= end) {
+> @@ -866,17 +872,25 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+>  		}
+>  
+>  		memcpy(&pcr_selection, marker, sizeof(pcr_selection));
+> -		chip->active_banks[i] = be16_to_cpu(pcr_selection.hash_alg);
+> +		hash_alg = be16_to_cpu(pcr_selection.hash_alg);
+> +
+> +		for (j = 0; j < pcr_selection.size_of_select; j++)
+> +			if (pcr_selection.pcr_select[j])
+> +				break;
+> +
+> +		if (j < pcr_selection.size_of_select) {
+> +			chip->allocated_banks[nr_alloc_banks] = hash_alg;
+> +			nr_alloc_banks++;
+> +		}
 
-For brevity, let's discuss a file that was created in overlayfs, not
-lower and not copied up.
-The latter are just private cases that are less interesting to the
-problem at hand.
+The same comment as before: you should use memchr_inv() here.
 
-When changing metadata of an overlayfs file notify_change() will first be
-called on the overlay dentry and then on the real underlying dentry.
-See, overlayfs completely relies on underlying fs for anything persistent,
-so set_xattr on an overlay dentry will (most likely) forward the set_xattr
-values to underlying dentry.
+> +
+>  		sizeof_pcr_selection = sizeof(pcr_selection.hash_alg) +
+>  			sizeof(pcr_selection.size_of_select) +
+>  			pcr_selection.size_of_select;
+>  		marker = marker + sizeof_pcr_selection;
+>  	}
+>  
+> +	chip->nr_allocated_banks = nr_alloc_banks;
+>  out:
+> -	if (i < ARRAY_SIZE(chip->active_banks))
+> -		chip->active_banks[i] = TPM2_ALG_ERROR;
+> -
+>  	tpm_buf_destroy(&buf);
+>  
+>  	return rc;
+> -- 
+> 2.17.1
+> 
 
-So my guess is that on the first (outer) nofity_change() security.evm is
-calculated by overlayfs ino/generation and stored in real inode.
-On the nested notify_change() call for the underlying dentry, security.evm
-will be recalculated and stored (again) in the real inode.
-
-On the verify path ima_file_check() and friends used to be called once pre v4.19
-with an overlayfs file, whose file_inode/file_dentry is the real inode/dentry.
-With v4.19 stacked file operations, ima_file_check() and friends are
-called twice
-just like notify_change(), once for the overlayfs file and then for
-the underlying
-"real" file (the "real" file has overlayfs f_path and underlying
-file_inode/file_dentry).
-
-Now according to my understanding of the EVM feature, the metadata of the
-overlayfs wrapper object is utterly not interesting and measurements should only
-be made on objects representing files written to local storage that
-could be tampered with.
-Considering the fact that any access to overlayfs object, both set and
-get attributes
-will always access the underlying object and go through EVM verification,
-there needs to be no verification nor calculation of EVM signatures on
-the overlayfs
-wrapper object.
-
-IMO the right way to fix this would be by setting an SB_NOIMA flag on
-overlayfs and
-skip the IMA/EVM hooks for overlayfs file_inode/file_dentry.
-
-HOWEVER! you should take extra care to NOT access file->f_path->dentry
-in integrity check code, because this is the overlayfs dentry even for "real"
-files. AFAIKT, the only place where integrity code accesses file->f_path->dentry
-is in Goldwyn's recent fix to ima_calc_file_hash().
-                f = dentry_open(&file->f_path, flags, file->f_cred);
-returns an overlayfs file with an overlayfs file_inode/file_dentry
-even when called
-with the "real" file.
-It doesn't matter much in the context of ima_calc_file_hash(), because the inode
-size and data are always guarantied to be the same for overlayfs and underlying
-inode.
-You may want to consider using open_with_fake_path() instead of dentry_open().
-I think that is called for, but you definitely need an ACK from Al
-before doing that
-considering his harsh disclaimer [1].
-
-Thanks,
-Amir.
-
-[1] commit 2abc77af89e17582db9039293c8ac881c8c96d79
-Author: Al Viro <viro@zeniv.linux.org.uk>
-Date:   Thu Jul 12 11:18:42 2018 -0400
-
-    new helper: open_with_fake_path()
-
-    open a file by given inode, faking ->f_path.  Use with shitloads
-    of caution - at the very least you'd damn better make sure that
-    some dentry alias of that inode is pinned down by the path in
-    question.  Again, this is no general-purpose interface and I hope
-    it will eventually go away.  Right now overlayfs wants something
-    like that, but nothing else should.
-
-    Any out-of-tree code with bright idea of using this one *will*
-    eventually get hurt, with zero notice and great delight on my part.
-    I refuse to use EXPORT_SYMBOL_GPL(), especially in situations when
-    it's really EXPORT_SYMBOL_DONT_USE_IT(), but don't take that export
-    as "you are welcome to use it".
-
-    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+/Jarkko
