@@ -2,94 +2,114 @@ Return-Path: <SRS0=gF99=O5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF862C43612
-	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 18:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79065C43387
+	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 18:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 831EA218D9
-	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 18:01:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DDAC218F0
+	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 18:49:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HD0cJR8k"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388267AbeLTSBJ (ORCPT
+        id S2388449AbeLTStX (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 20 Dec 2018 13:01:09 -0500
-Received: from namei.org ([65.99.196.166]:52612 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729293AbeLTSBJ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 20 Dec 2018 13:01:09 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id wBKI0hEP029738;
-        Thu, 20 Dec 2018 18:00:43 GMT
-Date:   Fri, 21 Dec 2018 05:00:43 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Paul Gortmaker <paul.gortmaker@windriver.com>
-cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org
-Subject: Re: linux-next: Tree for Dec 14 (security/integrity/ima/)
-In-Reply-To: <20181214222802.GP11670@windriver.com>
-Message-ID: <alpine.LRH.2.21.1812210500010.29474@namei.org>
-References: <20181214181826.5775b958@canb.auug.org.au> <8205aafb-bbc1-2196-17d9-e70e9ac56c2e@infradead.org> <1544815174.3681.16.camel@linux.ibm.com> <20181214202650.GO11670@windriver.com> <20181214222802.GP11670@windriver.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Thu, 20 Dec 2018 13:49:23 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:50934 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728324AbeLTStX (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 20 Dec 2018 13:49:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=KKdRf1lwJWtkW/36xyZrlsowCIaciesNrJNkfZ3tciE=; b=HD0cJR8k0HJ+fvRGqpxIpCuBV
+        Fv36z4Vt8ShO8NFzBBtayIPjB9/TjWatGfFJaRKb9lICX04efXa4BN21EloFDDLCNGdIgqNudc6SX
+        RjMVsTOFDBzhTyN7V89mX0EkODnl8JolibRJCLyLbzhQXq6sDbWX1dPZFFPV5qavQkcjzzpKeWB1V
+        0chzDgEU37j22rDA4kwbbtHMlAO/vj0AY241MDyJMYdsyzhQVzma95xzZwc01OM2NKj0AKWT7iTIR
+        aSMPEYBCDGp1T1EV7jydjusAQi9aN/2Zb7nR5JlEuzl7mGPVop7fspeE5SFbOqFAtUtlzcH+5Mwk6
+        fJerPEiVw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ga3Nm-0003yK-6A; Thu, 20 Dec 2018 18:49:18 +0000
+Date:   Thu, 20 Dec 2018 10:49:18 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Igor Stoppa <igor.stoppa@gmail.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>, igor.stoppa@huawei.com,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-integrity@vger.kernel.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/12] __wr_after_init: x86_64: __wr_op
+Message-ID: <20181220184917.GY10600@bombadil.infradead.org>
+References: <20181219213338.26619-1-igor.stoppa@huawei.com>
+ <20181219213338.26619-5-igor.stoppa@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181219213338.26619-5-igor.stoppa@huawei.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, 14 Dec 2018, Paul Gortmaker wrote:
+On Wed, Dec 19, 2018 at 11:33:30PM +0200, Igor Stoppa wrote:
+> +void *__wr_op(unsigned long dst, unsigned long src, __kernel_size_t len,
+> +	      enum wr_op_type op)
+> +{
+> +	temporary_mm_state_t prev;
+> +	unsigned long offset;
+> +	unsigned long wr_poking_addr;
+> +
+> +	/* Confirm that the writable mapping exists. */
+> +	if (WARN_ONCE(!wr_ready, "No writable mapping available"))
+> +		return (void *)dst;
+> +
+> +	if (WARN_ONCE(op >= WR_OPS_NUMBER, "Invalid WR operation.") ||
+> +	    WARN_ONCE(!is_wr_after_init(dst, len), "Invalid WR range."))
+> +		return (void *)dst;
+> +
+> +	offset = dst - (unsigned long)&__start_wr_after_init;
+> +	wr_poking_addr = wr_poking_base + offset;
+> +	local_irq_disable();
+> +	prev = use_temporary_mm(wr_poking_mm);
+> +
+> +	if (op == WR_MEMCPY)
+> +		copy_to_user((void __user *)wr_poking_addr, (void *)src, len);
+> +	else if (op == WR_MEMSET)
+> +		memset_user((void __user *)wr_poking_addr, (u8)src, len);
+> +
+> +	unuse_temporary_mm(prev);
+> +	local_irq_enable();
+> +	return (void *)dst;
+> +}
 
-> >From 31081a8b46e84d64e2fbda8d0d82ba26d56cc468 Mon Sep 17 00:00:00 2001
-> From: Paul Gortmaker <paul.gortmaker@windriver.com>
-> Date: Fri, 14 Dec 2018 16:48:07 -0500
-> Subject: [PATCH] security: integrity: partial revert of make ima_main
->  explicitly non-modular
-> 
-> In commit 4f83d5ea643a ("security: integrity: make ima_main explicitly
-> non-modular") I'd removed <linux/module.h> after assuming that the
-> function is_module_sig_enforced() was an LSM function and not a core
-> kernel module function.
-> 
-> Unfortunately the typical .config selections used in build testing
-> provide an implicit <linux/module.h> presence, and so normal/typical
-> build testing did not immediately reveal my incorrect assumption.
-> 
-> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-> Cc: James Morris <james.l.morris@oracle.com>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: linux-ima-devel@lists.sourceforge.net
-> Cc: linux-security-module@vger.kernel.org
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> 
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index adaf96932237..616a88f95b92 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -21,7 +21,7 @@
->  
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->  
-> -#include <linux/init.h>
-> +#include <linux/module.h>
->  #include <linux/file.h>
->  #include <linux/binfmts.h>
->  #include <linux/mount.h>
-> 
+I think you're causing yourself more headaches by implementing this "op"
+function.  Here's some generic code:
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
-and next-testing
+void *wr_memcpy(void *dst, void *src, unsigned int len)
+{
+	wr_state_t wr_state;
+	void *wr_poking_addr = __wr_addr(dst);
 
+	local_irq_disable();
+	wr_enable(&wr_state);
+	__wr_memcpy(wr_poking_addr, src, len);
+	wr_disable(&wr_state);
+	local_irq_enable();
 
--- 
-James Morris
-<jmorris@namei.org>
+	return dst;
+}
+
+Now, x86 can define appropriate macros and functions to use the temporary_mm
+functionality, and other architectures can do what makes sense to them.
 
