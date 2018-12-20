@@ -2,132 +2,165 @@ Return-Path: <SRS0=gF99=O5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDEAFC43387
-	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 03:42:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8656C43387
+	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 07:15:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BDBE20866
-	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 03:42:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93F3C20815
+	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 07:15:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i2eFAQN8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728803AbeLTDmG (ORCPT
+        id S1730243AbeLTHPh (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 19 Dec 2018 22:42:06 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44576 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728061AbeLTDmG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 19 Dec 2018 22:42:06 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E9C3DAAAE;
-        Thu, 20 Dec 2018 03:42:03 +0000 (UTC)
-Date:   Wed, 19 Dec 2018 21:42:00 -0600
-From:   Goldwyn Rodrigues <rgoldwyn@suse.com>
-To:     Amir Goldstein <amir73il@gmail.com>
+        Thu, 20 Dec 2018 02:15:37 -0500
+Received: from mail-yb1-f170.google.com ([209.85.219.170]:35854 "EHLO
+        mail-yb1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727644AbeLTHPh (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 20 Dec 2018 02:15:37 -0500
+Received: by mail-yb1-f170.google.com with SMTP id 64so293371ybe.3;
+        Wed, 19 Dec 2018 23:15:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FlkYvVnFu4T4kFRtq2MXrLxgjuAq0XxPOfD09KeMTKw=;
+        b=i2eFAQN83Ws5cIKjTLpXNpt1mhL25x5uNpFk77yfHQUJrbnvaOcgJtMVC1PKtwmtTM
+         l558VRrceaqk805RIGxd1+2lIzozpVe4O4/cp/iTcmFVcAD4R0gryNy2OBs25AevMFS2
+         H2cG30CBJdQHUnhTtrZ+sN1lVID19Sm3nopStrU1C48jks2Yt9I+RRaMShj3v4o7Wzi/
+         HlftCJgoep4KqpkYfPoB5Dl9T9mnpF6shXjaa+xgf61RialRxg5d8Lw5mT/RBGIrXCto
+         CkSfD18Wk4VBWk1FyoisDii4gzhMBpWA2hBwNaX6miiqM4k9b+5oKs0b/BPWNj7GTVAb
+         7RTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FlkYvVnFu4T4kFRtq2MXrLxgjuAq0XxPOfD09KeMTKw=;
+        b=HpevVlByf/kz6K11/jw/t017ExhmzhKxvCaeYqNCB3Lsj1IDrZymt0S27IC6XBWi2m
+         /1XcoBnl2wpDQimwfhO5yjzyK4TdxDvtgBs/cORzG5v1KzL7anP2QRzbmbfRPxfOxeXi
+         WWTeQCWGeh52xq12UBW2RT8c9vB5hNHIhxOiTDQAOrXo1dQi6OvIaQTzvGLoVhRhuiF0
+         p3zTH6SGDVTSMVPiEKReGl5nLlIhb1eeTQNIeYcLk9hGMmpGwZG3CKW9Eaoj6UzW6tRW
+         A0HFtw1v8E6B0cCj4xiIOoKqxz0o/1trtMdIWo4WHrE0+Gja8MAB27RyQvrKPY9jqwdk
+         SS0Q==
+X-Gm-Message-State: AA+aEWYfHRtaJZvR69ieGnqq3KY5D28b4AsC1IvN5JIUbgUsbIlnaZth
+        NfRPyuXKgpY2ZsaUN6FWHVhMPAfKroYZu9V+2xM=
+X-Google-Smtp-Source: AFSGD/UExp/ziPa8eeUsGIij7Qgvhu2e39jFpqraYDJDoV3Xv011FfZm3vXB67ebWPuQHED1qKvOkcDo37dXR4h7iBY=
+X-Received: by 2002:a25:c3c3:: with SMTP id t186mr15455389ybf.337.1545290135794;
+ Wed, 19 Dec 2018 23:15:35 -0800 (PST)
+MIME-Version: 1.0
+References: <12c81a49-efca-d66c-2143-ae04ca248cce@suse.de> <1545174031.4178.8.camel@linux.ibm.com>
+ <1545233975.3954.8.camel@linux.ibm.com> <CAOQ4uxgoMntXsxnsxtBOOPLDo3HgcYPWayuCuDzxEx2GJSMZtg@mail.gmail.com>
+ <20181220034200.wfft5d543tje5zpy@merlin>
+In-Reply-To: <20181220034200.wfft5d543tje5zpy@merlin>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 20 Dec 2018 09:15:24 +0200
+Message-ID: <CAOQ4uxgOj=BzaFML2qk8CnNid7Nbm5ktNg8=mK-kcVXO1kQWcw@mail.gmail.com>
+Subject: Re: EVM: Permission denied with overlayfs
+To:     Goldwyn Rodrigues <rgoldwyn@suse.com>
 Cc:     zohar@linux.ibm.com, iforster@suse.de,
         linux-integrity@vger.kernel.org,
         Miklos Szeredi <miklos@szeredi.hu>,
-        overlayfs <linux-unionfs@vger.kernel.org>
-Subject: Re: EVM: Permission denied with overlayfs
-Message-ID: <20181220034200.wfft5d543tje5zpy@merlin>
-References: <12c81a49-efca-d66c-2143-ae04ca248cce@suse.de>
- <1545174031.4178.8.camel@linux.ibm.com>
- <1545233975.3954.8.camel@linux.ibm.com>
- <CAOQ4uxgoMntXsxnsxtBOOPLDo3HgcYPWayuCuDzxEx2GJSMZtg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgoMntXsxnsxtBOOPLDo3HgcYPWayuCuDzxEx2GJSMZtg@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 18:38 19/12, Amir Goldstein wrote:
-> On Wed, Dec 19, 2018 at 5:39 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >
-> > On Tue, 2018-12-18 at 18:00 -0500, Mimi Zohar wrote:
-> > > Hi Ignaz,
-> > >
-> > > On Tue, 2018-12-18 at 20:49 +0100, Ignaz Forster wrote:
-> > > > Hi,
-> > > >
-> > > > as a follow up to my attempts to use overlayfs on an IMA protected
-> > > > system[1] I've now tried to also enable EVM. From what I understand this
-> > > > should - at least in theory - be possible: EVM will call
-> > > > d_backing_inode(dentry), which I thought would get the inode of the
-> > > > underlying file system[2], and use that for HMAC verification.
-> > > >
-> > > > In practice simply trying to access an existing file will fail with
-> > > > "Permission denied" already. In the corresponding audit log I can see
-> > > > the file access (failed with "invalid-HMAC"), but with an inode number
-> > > > unknown to me - stat returns a completely different number for the file
-> > > > in the lower and target dir.
-> > > >
-> > > > For testing purposes I added a new hashing algorithm to
-> > > > evm_ima_xattr_type which will not add the file system specific
-> > > > attributes (inode number, generation, file system uuid) to the hash -
-> > > > just like EVM_XATTR_PORTABLE_DIGSIG, but with the hashes generated by
-> > > > the kernel. Files created with this signature can be read correctly,
-> > > > though writing the files will still fail.
-> > > >
-> > > > Unfortunately I'm out of ideas what is happening here. If anybody wants
-> > > > to have a look at this: Any help would be appreciated.
-> > > >
-> > > > Kind Regards,
-> > > > Ignaz
-> > > >
-> > > > [1] https://www.spinics.net/lists/linux-integrity/msg03593.html
-> > > > [2] https://www.kernel.org/doc/htmldocs/filesystems/API-d-backing-inode.html
-> > > >
-> > >
-> > > After creating a file on the overlay, I wasn't able to access it from
-> > > the overlay, but was able to access it from "upper".  Both "stat" and
-> > > "getfattr -m ^security" returned exactly the same things for both
-> > > pathnames.  However, the ino in the audit log was different.
-> > >
-> > > After modifying evm_calc_hmac_or_hash(), replacing d_backing_inode()
-> > > with d_real_inode(), the hmac properly calculated for both the overlay
-> > > and the upper pathnames.
-> > >
-> > > Something must have changed in d_backing_inode().
-> >
-> > Confirmed, in linux-4.18.y d_backing_inode returns the real i_ino, but
-> > newer kernels do not.  This is a problem for EVM as the i_ino is
-> > included in the HMAC calculation.
-> >
-> 
-> Hi Mimi,
-> 
-> v4.19 has a big change that removes many VFS hacks in favor of
-> overlayfs stacked file operations.
-> 
-> The major implication for VFS code is that file_inode(file) is now the overlayfs
-> inode and not the real inode. Therefore, file_dentry(file) is also the overlayfs
-> dentry and not the real dentry.
-> 
-> I am not sure how that change impacts EVM ?
-> FWIW, d_backing_inode(dentry) was never anything more than d_inode(dentry).
-> 
-> Can you please try to describe in more details for someone who has no clue what
-> EVM does how exactly the v4.19 change is manifested in the EVM use case.
-> 
-> AFAIKT, evm_calc_hmac_or_hash() would get the overlayfs dentry both in
-> v4.18 and v4.19 and therefore d_backing_inode(dentry) should be the
-> overlayfs inode in both kernels (?).
-> 
-> The value of overlayfs inode i_ino can be identical to i_ino of the real inode
-> under some conditions, but far from always and the value of overlayfs inode
-> i_generation is almost guaranteed to not match that of the real inode.
+On Thu, Dec 20, 2018 at 5:42 AM Goldwyn Rodrigues <rgoldwyn@suse.com> wrote:
+...
+> If I understand it correctly, overlay performs copy_up using a temporary inode,
+> and finally copies the attributes to a "real" upper inode after the copy_up is
+> successful. However, integrity or ima gets control for calculation and
+> verification of the inode during the temporary phase which is not the same as
+> the final "upper" inode.
+>
 
-If I understand it correctly, overlay performs copy_up using a temporary inode,
-and finally copies the attributes to a "real" upper inode after the copy_up is
-successful. However, integrity or ima gets control for calculation and
-verification of the inode during the temporary phase which is not the same as
-the final "upper" inode.
+No, that's not ow it works.
 
--- 
-Goldwyn
+What happens is as follows:
+
+For brevity, let's discuss a file that was created in overlayfs, not
+lower and not copied up.
+The latter are just private cases that are less interesting to the
+problem at hand.
+
+When changing metadata of an overlayfs file notify_change() will first be
+called on the overlay dentry and then on the real underlying dentry.
+See, overlayfs completely relies on underlying fs for anything persistent,
+so set_xattr on an overlay dentry will (most likely) forward the set_xattr
+values to underlying dentry.
+
+So my guess is that on the first (outer) nofity_change() security.evm is
+calculated by overlayfs ino/generation and stored in real inode.
+On the nested notify_change() call for the underlying dentry, security.evm
+will be recalculated and stored (again) in the real inode.
+
+On the verify path ima_file_check() and friends used to be called once pre v4.19
+with an overlayfs file, whose file_inode/file_dentry is the real inode/dentry.
+With v4.19 stacked file operations, ima_file_check() and friends are
+called twice
+just like notify_change(), once for the overlayfs file and then for
+the underlying
+"real" file (the "real" file has overlayfs f_path and underlying
+file_inode/file_dentry).
+
+Now according to my understanding of the EVM feature, the metadata of the
+overlayfs wrapper object is utterly not interesting and measurements should only
+be made on objects representing files written to local storage that
+could be tampered with.
+Considering the fact that any access to overlayfs object, both set and
+get attributes
+will always access the underlying object and go through EVM verification,
+there needs to be no verification nor calculation of EVM signatures on
+the overlayfs
+wrapper object.
+
+IMO the right way to fix this would be by setting an SB_NOIMA flag on
+overlayfs and
+skip the IMA/EVM hooks for overlayfs file_inode/file_dentry.
+
+HOWEVER! you should take extra care to NOT access file->f_path->dentry
+in integrity check code, because this is the overlayfs dentry even for "real"
+files. AFAIKT, the only place where integrity code accesses file->f_path->dentry
+is in Goldwyn's recent fix to ima_calc_file_hash().
+                f = dentry_open(&file->f_path, flags, file->f_cred);
+returns an overlayfs file with an overlayfs file_inode/file_dentry
+even when called
+with the "real" file.
+It doesn't matter much in the context of ima_calc_file_hash(), because the inode
+size and data are always guarantied to be the same for overlayfs and underlying
+inode.
+You may want to consider using open_with_fake_path() instead of dentry_open().
+I think that is called for, but you definitely need an ACK from Al
+before doing that
+considering his harsh disclaimer [1].
+
+Thanks,
+Amir.
+
+[1] commit 2abc77af89e17582db9039293c8ac881c8c96d79
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Thu Jul 12 11:18:42 2018 -0400
+
+    new helper: open_with_fake_path()
+
+    open a file by given inode, faking ->f_path.  Use with shitloads
+    of caution - at the very least you'd damn better make sure that
+    some dentry alias of that inode is pinned down by the path in
+    question.  Again, this is no general-purpose interface and I hope
+    it will eventually go away.  Right now overlayfs wants something
+    like that, but nothing else should.
+
+    Any out-of-tree code with bright idea of using this one *will*
+    eventually get hurt, with zero notice and great delight on my part.
+    I refuse to use EXPORT_SYMBOL_GPL(), especially in situations when
+    it's really EXPORT_SYMBOL_DONT_USE_IT(), but don't take that export
+    as "you are welcome to use it".
+
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
