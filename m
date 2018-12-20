@@ -2,267 +2,125 @@ Return-Path: <SRS0=gF99=O5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0456C43387
-	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 14:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4324C43387
+	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 14:55:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F9CA217D8
-	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 14:55:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7985E2186A
+	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 14:55:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730582AbeLTOzH (ORCPT
+        id S1725385AbeLTOzf (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 20 Dec 2018 09:55:07 -0500
-Received: from mga04.intel.com ([192.55.52.120]:62203 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725778AbeLTOzG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 20 Dec 2018 09:55:06 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Dec 2018 06:55:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,377,1539673200"; 
-   d="scan'208";a="285293790"
-Received: from unknown (HELO localhost) ([10.249.254.232])
-  by orsmga005.jf.intel.com with ESMTP; 20 Dec 2018 06:55:01 -0800
-Date:   Thu, 20 Dec 2018 16:55:00 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
+        Thu, 20 Dec 2018 09:55:35 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35290 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725778AbeLTOzf (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 20 Dec 2018 09:55:35 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBKErgC3118504
+        for <linux-integrity@vger.kernel.org>; Thu, 20 Dec 2018 09:55:33 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pgb5cemqd-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 20 Dec 2018 09:55:33 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 20 Dec 2018 14:55:31 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 20 Dec 2018 14:55:29 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBKEtSpd28442686
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 20 Dec 2018 14:55:28 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6022111C050;
+        Thu, 20 Dec 2018 14:55:28 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7388F11C04C;
+        Thu, 20 Dec 2018 14:55:27 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.105.65])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 20 Dec 2018 14:55:27 +0000 (GMT)
+Subject: Re: EVM: Permission denied with overlayfs
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Amir Goldstein <amir73il@gmail.com>
+Cc:     iforster@suse.de, Goldwyn Rodrigues <rgoldwyn@suse.com>,
         linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v7 1/5] tpm: dynamically allocate the allocated_banks
- array
-Message-ID: <20181220145500.GA10652@linux.intel.com>
-References: <20181213102945.30946-1-roberto.sassu@huawei.com>
- <20181213102945.30946-2-roberto.sassu@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181213102945.30946-2-roberto.sassu@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Miklos Szeredi <miklos@szeredi.hu>,
+        overlayfs <linux-unionfs@vger.kernel.org>
+Date:   Thu, 20 Dec 2018 09:55:16 -0500
+In-Reply-To: <1545257296.2916.42.camel@HansenPartnership.com>
+References: <12c81a49-efca-d66c-2143-ae04ca248cce@suse.de>
+         <1545174031.4178.8.camel@linux.ibm.com>
+         <1545233975.3954.8.camel@linux.ibm.com>
+         <1545238601.2916.13.camel@HansenPartnership.com>
+         <1545243311.3954.22.camel@linux.ibm.com>
+         <1545248096.2916.26.camel@HansenPartnership.com>
+         <CAOQ4uxhDh3okp1nYgZXxG+2siChfT8Oq3ncH1FFhQW_zBCstzw@mail.gmail.com>
+         <1545253341.3954.83.camel@linux.ibm.com>
+         <1545257296.2916.42.camel@HansenPartnership.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18122014-0028-0000-0000-0000032D432F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18122014-0029-0000-0000-000023E9A9D3
+Message-Id: <1545317716.4077.33.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-20_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812200123
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 11:29:41AM +0100, Roberto Sassu wrote:
-> This patch renames active_banks (member of tpm_chip) to allocated_banks,
-> stores the number of allocated PCR banks in nr_allocated_banks (new member
-> of tpm_chip), and replaces the static array with a pointer to a dynamically
-> allocated array.
-> 
-> tpm2_get_pcr_allocation() determines if a PCR bank is allocated by checking
-> the mask in the TPML_PCR_SELECTION structure returned by the TPM for
-> TPM2_Get_Capability(). If a bank is not allocated, the TPM returns that
-> bank in TPML_PCR_SELECTION, with all bits in the mask set to zero. In this
-> case, the bank is not included in chip->allocated_banks, to avoid that TPM
-> driver users unnecessarily calculate a digest for that bank.
-> 
-> One PCR bank with algorithm set to SHA1 is always allocated for TPM 1.x.
-> 
-> As a consequence of the introduction of nr_allocated_banks,
-> tpm_pcr_extend() does not check anymore if the algorithm stored in tpm_chip
-> is equal to zero.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  drivers/char/tpm/tpm-chip.c      |  1 +
->  drivers/char/tpm/tpm-interface.c | 18 +++++++++--------
->  drivers/char/tpm/tpm.h           |  3 ++-
->  drivers/char/tpm/tpm1-cmd.c      | 10 ++++++++++
->  drivers/char/tpm/tpm2-cmd.c      | 34 ++++++++++++++++++++++----------
->  5 files changed, 47 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-> index 32db84683c40..ce851c62bb68 100644
-> --- a/drivers/char/tpm/tpm-chip.c
-> +++ b/drivers/char/tpm/tpm-chip.c
-> @@ -160,6 +160,7 @@ static void tpm_dev_release(struct device *dev)
->  	kfree(chip->log.bios_event_log);
->  	kfree(chip->work_space.context_buf);
->  	kfree(chip->work_space.session_buf);
-> +	kfree(chip->allocated_banks);
->  	kfree(chip);
->  }
->  
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index d9439f9abe78..7b80919228be 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -488,8 +488,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
->  int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
->  {
->  	int rc;
-> -	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
-> -	u32 count = 0;
-> +	struct tpm2_digest *digest_list;
->  	int i;
->  
->  	chip = tpm_find_get_ops(chip);
-> @@ -497,16 +496,19 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
->  		return -ENODEV;
->  
->  	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-> -		memset(digest_list, 0, sizeof(digest_list));
-> +		digest_list = kcalloc(chip->nr_allocated_banks,
-> +				      sizeof(*digest_list), GFP_KERNEL);
-> +		if (!digest_list)
-> +			return -ENOMEM;
+On Wed, 2018-12-19 at 14:08 -0800, James Bottomley wrote:
 
-You could preallocate digest list and place it to struct tpm_chip
-instead of doing it everytime tpm_pcr_extend() called.
-
->  
-> -		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
-> -			    chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
-> -			digest_list[i].alg_id = chip->active_banks[i];
-> +		for (i = 0; i < chip->nr_allocated_banks; i++) {
-> +			digest_list[i].alg_id = chip->allocated_banks[i];
->  			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
-> -			count++;
->  		}
->  
-> -		rc = tpm2_pcr_extend(chip, pcr_idx, count, digest_list);
-> +		rc = tpm2_pcr_extend(chip, pcr_idx, chip->nr_allocated_banks,
-> +				     digest_list);
-> +		kfree(digest_list);
->  		tpm_put_ops(chip);
->  		return rc;
->  	}
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index f27d1f38a93d..6b94306ab7c5 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -257,7 +257,8 @@ struct tpm_chip {
->  	const struct attribute_group *groups[3];
->  	unsigned int groups_cnt;
->  
-> -	u16 active_banks[7];
-> +	u32 nr_allocated_banks;
-> +	u16 *allocated_banks;
->  #ifdef CONFIG_ACPI
->  	acpi_handle acpi_dev_handle;
->  	char ppi_version[TPM_PPI_VERSION_LEN + 1];
-> diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-> index 6f306338953b..0874743ca96d 100644
-> --- a/drivers/char/tpm/tpm1-cmd.c
-> +++ b/drivers/char/tpm/tpm1-cmd.c
-> @@ -709,6 +709,16 @@ int tpm1_auto_startup(struct tpm_chip *chip)
->  		goto out;
->  	}
->  
-> +	chip->allocated_banks = kcalloc(1, sizeof(*chip->allocated_banks),
-> +					GFP_KERNEL);
-> +	if (!chip->allocated_banks) {
-> +		rc = -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	chip->allocated_banks[0] = TPM2_ALG_SHA1;
-> +	chip->nr_allocated_banks = 1;
-> +
->  	return rc;
->  out:
->  	if (rc > 0)
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index a6bec13afa69..245669a7aba5 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -234,7 +234,7 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
->  	int i;
->  	int j;
->  
-> -	if (count > ARRAY_SIZE(chip->active_banks))
-> +	if (count > chip->nr_allocated_banks)
->  		return -EINVAL;
->  
->  	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
-> @@ -825,11 +825,14 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
->  	void *marker;
->  	void *end;
->  	void *pcr_select_offset;
-> -	unsigned int count;
->  	u32 sizeof_pcr_selection;
-> +	u32 nr_possible_banks;
-> +	u32 nr_alloc_banks = 0;
-> +	u16 hash_alg;
->  	u32 rsp_len;
->  	int rc;
->  	int i = 0;
-> +	int j;
->  
->  	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_CAPABILITY);
->  	if (rc)
-> @@ -844,11 +847,14 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
->  	if (rc)
->  		goto out;
->  
-> -	count = be32_to_cpup(
-> +	nr_possible_banks = be32_to_cpup(
->  		(__be32 *)&buf.data[TPM_HEADER_SIZE + 5]);
->  
-> -	if (count > ARRAY_SIZE(chip->active_banks)) {
-> -		rc = -ENODEV;
-> +	chip->allocated_banks = kcalloc(nr_possible_banks,
-> +					sizeof(*chip->allocated_banks),
-> +					GFP_KERNEL);
-> +	if (!chip->allocated_banks) {
-> +		rc = -ENOMEM;
->  		goto out;
->  	}
->  
-> @@ -857,7 +863,7 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
->  	rsp_len = be32_to_cpup((__be32 *)&buf.data[2]);
->  	end = &buf.data[rsp_len];
->  
-> -	for (i = 0; i < count; i++) {
-> +	for (i = 0; i < nr_possible_banks; i++) {
->  		pcr_select_offset = marker +
->  			offsetof(struct tpm2_pcr_selection, size_of_select);
->  		if (pcr_select_offset >= end) {
-> @@ -866,17 +872,25 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
->  		}
->  
->  		memcpy(&pcr_selection, marker, sizeof(pcr_selection));
-> -		chip->active_banks[i] = be16_to_cpu(pcr_selection.hash_alg);
-> +		hash_alg = be16_to_cpu(pcr_selection.hash_alg);
-> +
-> +		for (j = 0; j < pcr_selection.size_of_select; j++)
-> +			if (pcr_selection.pcr_select[j])
-> +				break;
-> +
-> +		if (j < pcr_selection.size_of_select) {
-> +			chip->allocated_banks[nr_alloc_banks] = hash_alg;
-> +			nr_alloc_banks++;
-> +		}
-
-The same comment as before: you should use memchr_inv() here.
-
-> +
->  		sizeof_pcr_selection = sizeof(pcr_selection.hash_alg) +
->  			sizeof(pcr_selection.size_of_select) +
->  			pcr_selection.size_of_select;
->  		marker = marker + sizeof_pcr_selection;
->  	}
->  
-> +	chip->nr_allocated_banks = nr_alloc_banks;
->  out:
-> -	if (i < ARRAY_SIZE(chip->active_banks))
-> -		chip->active_banks[i] = TPM2_ALG_ERROR;
-> -
->  	tpm_buf_destroy(&buf);
->  
->  	return rc;
-> -- 
-> 2.17.1
+> > For portable signatures, to bind the file metadata with the file 
+> > data, we've replaced the inode number and generation, with the
+> > "security.ima" xattr.  Do we want this requirement/limitation for
+> > overlays?
 > 
+> Well, that's my question, yes.  I think there's a reasonable case for
+> it, but I was wondering what value the inode number and generation
+> brings.  Is there some reason to bind the EVM signature to a more
+> mutable file container (which is what inum/generation provide) rather
+> than a hard hash of file content (which is what the ima xattr
+> provides)?
 
-/Jarkko
+As only files in the IMA policy are labeled with security.ima, to
+protect other files and directories, requires including the inode
+number, generation and the UUID.
+
+> > The existing EVM portable signature is an asymmetric algorithm based
+> > signature.  Would we define a "portable" HMAC?
+> 
+> Well, a signature is just an encryption of a hash.  Whether you do HMAC
+> with symmetric key or RSA/EC with an asymmetric one is more an
+> operational question.  HMAC is certainly much faster but EVM only has a
+> single hmac key which is problematic for the containers.  Without a use
+> case I can't really say.  Instinct tells me asymmetric is more suitable
+> to the container use case, but that's really just a guess.
+
+One of the differences between the EVM portable signature type and the
+original signature type is that the portable signatures aren't
+replaced with an HMAC.  They're considered portable & immutable.
+
+Adding kernel support for signing mutable files using an asymmetric
+key is going to blur the lines between mutable/immutable files.
+
+Mimi
+
