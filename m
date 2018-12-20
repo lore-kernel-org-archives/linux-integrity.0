@@ -2,55 +2,62 @@ Return-Path: <SRS0=gF99=O5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27083C43387
-	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 17:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87CDAC43387
+	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 17:47:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E658F20811
-	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 17:30:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50128218D3
+	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 17:47:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KcExMQRC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732379AbeLTRaR (ORCPT
+        id S2388142AbeLTRq5 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 20 Dec 2018 12:30:17 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38608 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728221AbeLTRaR (ORCPT
+        Thu, 20 Dec 2018 12:46:57 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41387 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388141AbeLTRq5 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 20 Dec 2018 12:30:17 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBKHTNJ0111055
-        for <linux-integrity@vger.kernel.org>; Thu, 20 Dec 2018 12:30:15 -0500
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pgdqf51xq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 20 Dec 2018 12:30:15 -0500
-Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Thu, 20 Dec 2018 17:30:14 -0000
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 20 Dec 2018 17:30:10 -0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBKHU9KM23855148
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 20 Dec 2018 17:30:09 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 422E5BE04F;
-        Thu, 20 Dec 2018 17:30:09 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 13D3BBE053;
-        Thu, 20 Dec 2018 17:30:05 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.80.210.228])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Thu, 20 Dec 2018 17:30:05 +0000 (GMT)
-References: <20181219213338.26619-1-igor.stoppa@huawei.com> <20181219213338.26619-12-igor.stoppa@huawei.com>
-User-agent: mu4e 1.0; emacs 26.1
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Igor Stoppa <igor.stoppa@gmail.com>
+        Thu, 20 Dec 2018 12:46:57 -0500
+Received: by mail-lj1-f195.google.com with SMTP id k15-v6so2331246ljc.8;
+        Thu, 20 Dec 2018 09:46:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=VZ4YzqOHpFWUQ0/pEHtv3BikubPB9YIuouKUxeGNxjU=;
+        b=KcExMQRCubA38XU0TFtFOUJr4xIBb3XdrLyip4uVnhMbBvO+VZ8g0jv0bf0PLPZdkz
+         w3Ei41Ly5dBFRJJJpmylyWo9oDVhZdUSMb2QORGmX/fFszpPAwJFvEiXCBYreoyNNz8n
+         8reY1Hh2O7bHQr0pxoWCVv0pjNo+XZ0x33QpVwKLYFrEerKy22HwGMvqXqXIJzNv9+tS
+         KRVATpVS+MJYTlma/cyezaqsQK/AiSEcFC/cEpR0U4o4f+3XCD3WmJP84sUzHsct44bH
+         THxhDe0BVtMwEfzzvltmR1HWvvbqxvcKFrBu9N0iLkr4VQ9Lohp+MODL6rOPeytgjc/L
+         zpyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=VZ4YzqOHpFWUQ0/pEHtv3BikubPB9YIuouKUxeGNxjU=;
+        b=jys39s3Q23U34lH3JEO39ybHwUs+8x94J3Oz33QPSd7UsAgG49LKaCQpUcJ79cvP/9
+         CHlLFjU17QT9aKvGhn5gmjiSe5Zk7G3govnu9GgrpAbgwGCfgCcduEQ6ekBLZkKL/JIK
+         uyafUPGIsEWxshpki5GwEPHUGS13sKFv93Eq2B2ySB4et7i4F0A1W6zMOV9VFTHoxpua
+         VJ/4j8JkBHKi1x5C8EG3umey2GP3tFWwqn1KEuD1KFNnYzzmJ11IQK5ocP9U33lOPNum
+         3BwzPiZGGLpqtQqaRz/+OwTSPGyKLD+7HAVkhto6asTwI0JlygRSNSzU9aObcXWvNnfA
+         +dIw==
+X-Gm-Message-State: AA+aEWbNY3WutKYdNL9DaRTDISfHOzo7z4zdyPkI7Ap0jZJ9fMcfdMF1
+        cUdpGsJCuIR9hfP6O0MXqChmYPQyVOo=
+X-Google-Smtp-Source: AFSGD/XQx/towY2jqYyqyNWePQFUqjXPcFtJAbZbjx2GTZvmk7Uw5B2Dfrb5qV923AOIXbjQUQA9rQ==
+X-Received: by 2002:a2e:974a:: with SMTP id f10-v6mr17756247ljj.61.1545328012899;
+        Thu, 20 Dec 2018 09:46:52 -0800 (PST)
+Received: from ?IPv6:2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2? (dmhwpt3bffxn8z3-j6k-4.rev.dnainternet.fi. [2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2])
+        by smtp.gmail.com with ESMTPSA id z7-v6sm4105645lji.42.2018.12.20.09.46.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Dec 2018 09:46:52 -0800 (PST)
+Subject: Re: [PATCH 04/12] __wr_after_init: x86_64: __wr_op
+To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
 Cc:     Andy Lutomirski <luto@amacapital.net>,
         Matthew Wilcox <willy@infradead.org>,
         Peter Zijlstra <peterz@infradead.org>,
@@ -61,71 +68,142 @@ Cc:     Andy Lutomirski <luto@amacapital.net>,
         linux-integrity@vger.kernel.org,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/12] IMA: turn ima_policy_flags into __wr_after_init
-In-reply-to: <20181219213338.26619-12-igor.stoppa@huawei.com>
-Date:   Thu, 20 Dec 2018 15:30:01 -0200
+References: <20181219213338.26619-1-igor.stoppa@huawei.com>
+ <20181219213338.26619-5-igor.stoppa@huawei.com>
+ <87r2ecunc2.fsf@morokweng.localdomain>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <31a2fc9c-440b-ba09-b4b6-6ecacce63e01@gmail.com>
+Date:   Thu, 20 Dec 2018 19:46:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 18122017-0012-0000-0000-000016ED72BA
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010256; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000272; SDB=6.01134559; UDB=6.00589903; IPR=6.00914732;
- MB=3.00024772; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-20 17:30:14
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18122017-0013-0000-0000-000055878A1D
-Message-Id: <87pntwumw6.fsf@morokweng.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-20_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=742 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812200142
+In-Reply-To: <87r2ecunc2.fsf@morokweng.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+Hi,
 
-Hello Igor,
+On 20/12/2018 19:20, Thiago Jung Bauermann wrote:
+> 
+> Hello Igor,
+> 
+>> +/*
+>> + * The following two variables are statically allocated by the linker
+>> + * script at the the boundaries of the memory region (rounded up to
+>> + * multiples of PAGE_SIZE) reserved for __wr_after_init.
+>> + */
+>> +extern long __start_wr_after_init;
+>> +extern long __end_wr_after_init;
+>> +
+>> +static inline bool is_wr_after_init(unsigned long ptr, __kernel_size_t size)
+>> +{
+>> +	unsigned long start = (unsigned long)&__start_wr_after_init;
+>> +	unsigned long end = (unsigned long)&__end_wr_after_init;
+>> +	unsigned long low = ptr;
+>> +	unsigned long high = ptr + size;
+>> +
+>> +	return likely(start <= low && low <= high && high <= end);
+>> +}
+>> +
+>> +void *__wr_op(unsigned long dst, unsigned long src, __kernel_size_t len,
+>> +	      enum wr_op_type op)
+>> +{
+>> +	temporary_mm_state_t prev;
+>> +	unsigned long offset;
+>> +	unsigned long wr_poking_addr;
+>> +
+>> +	/* Confirm that the writable mapping exists. */
+>> +	if (WARN_ONCE(!wr_ready, "No writable mapping available"))
+>> +		return (void *)dst;
+>> +
+>> +	if (WARN_ONCE(op >= WR_OPS_NUMBER, "Invalid WR operation.") ||
+>> +	    WARN_ONCE(!is_wr_after_init(dst, len), "Invalid WR range."))
+>> +		return (void *)dst;
+>> +
+>> +	offset = dst - (unsigned long)&__start_wr_after_init;
+>> +	wr_poking_addr = wr_poking_base + offset;
+>> +	local_irq_disable();
+>> +	prev = use_temporary_mm(wr_poking_mm);
+>> +
+>> +	if (op == WR_MEMCPY)
+>> +		copy_to_user((void __user *)wr_poking_addr, (void *)src, len);
+>> +	else if (op == WR_MEMSET)
+>> +		memset_user((void __user *)wr_poking_addr, (u8)src, len);
+>> +
+>> +	unuse_temporary_mm(prev);
+>> +	local_irq_enable();
+>> +	return (void *)dst;
+>> +}
+> 
+> There's a lot of casting back and forth between unsigned long and void *
+> (also in the previous patch). Is there a reason for that?
 
-Igor Stoppa <igor.stoppa@gmail.com> writes:
+The intention is to ensure that algebraic operations between addresses 
+are performed as intended, rather than gcc operating some incorrect 
+optimization, wrongly assuming that two addresses belong to the same object.
 
-> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-> index 59d834219cd6..5f4e13e671bf 100644
-> --- a/security/integrity/ima/ima_init.c
-> +++ b/security/integrity/ima/ima_init.c
-> @@ -21,6 +21,7 @@
->  #include <linux/scatterlist.h>
->  #include <linux/slab.h>
->  #include <linux/err.h>
-> +#include <linux/prmem.h>
->
->  #include "ima.h"
->
-> @@ -98,9 +99,9 @@ void __init ima_load_x509(void)
->  {
->  	int unset_flags = ima_policy_flag & IMA_APPRAISE;
->
-> -	ima_policy_flag &= ~unset_flags;
-> +	wr_assign(ima_policy_flag, ima_policy_flag & ~unset_flags);
->  	integrity_load_x509(INTEGRITY_KEYRING_IMA, CONFIG_IMA_X509_PATH);
-> -	ima_policy_flag |= unset_flags;
-> +	wr_assign(ima_policy_flag, ima_policy_flag | unset_flags);
->  }
->  #endif
+Said this, I can certainly have a further look at the code and see if I 
+can reduce the amount of casts. I do not like them either.
 
-In the cover letter, you said:
+But I'm not sure how much can be dropped: if I start from (void *), then 
+I have to cast them to unsigned long for the math.
 
-> As the name implies, the write protection kicks in only after init()
-> is completed; before that moment, the data is modifiable in the usual
-> way.
+And the xxx_user() operations require a (void __user *).
 
-Given that, is it still necessary or useful to use wr_assign() in a
-function marked with __init?
+> My impression
+> is that there would be less casts if variables holding addresses were
+> declared as void * in the first place. 
+
+It might save 1 or 2 casts. I'll do the count.
+
+> In that case, it wouldn't hurt to
+> have an additional argument in __rw_op() to carry the byte value for the
+> WR_MEMSET operation.
+
+Wouldn't it clobber one more register? Or can gcc figure out that it's 
+not used? __wr_op() is not inline.
+
+>> +
+>> +#define TB (1UL << 40)
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^spurious
+
+>> +
+>> +struct mm_struct *copy_init_mm(void);
+>> +void __init wr_poking_init(void)
+>> +{
+>> +	unsigned long start = (unsigned long)&__start_wr_after_init;
+>> +	unsigned long end = (unsigned long)&__end_wr_after_init;
+>> +	unsigned long i;
+>> +	unsigned long wr_range;
+>> +
+>> +	wr_poking_mm = copy_init_mm();
+>> +	if (WARN_ONCE(!wr_poking_mm, "No alternate mapping available."))
+>> +		return;
+>> +
+>> +	wr_range = round_up(end - start, PAGE_SIZE);
+>> +
+>> +	/* Randomize the poking address base*/
+>> +	wr_poking_base = TASK_UNMAPPED_BASE +
+>> +		(kaslr_get_random_long("Write Rare Poking") & PAGE_MASK) %
+>> +		(TASK_SIZE - (TASK_UNMAPPED_BASE + wr_range));
+>> +
+>> +	/*
+>> +	 * Place 64TB of kernel address space within 128TB of user address
+>> +	 * space, at a random page aligned offset.
+>> +	 */
+>> +	wr_poking_base = (((unsigned long)kaslr_get_random_long("WR Poke")) &
+>> +			  PAGE_MASK) % (64 * _BITUL(40));
+> 
+> You're setting wr_poking_base twice in a row? Is this an artifact from
+> rebase?
+
+Yes, the first is a leftover. Thanks for spotting it.
 
 --
-Thiago Jung Bauermann
-IBM Linux Technology Center
-
+igor
