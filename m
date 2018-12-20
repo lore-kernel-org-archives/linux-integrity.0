@@ -1,120 +1,133 @@
-Return-Path: <SRS0=H3qb=O4=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=gF99=O5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18156C43387
-	for <linux-integrity@archiver.kernel.org>; Wed, 19 Dec 2018 22:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDEAFC43387
+	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 03:42:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D969E20874
-	for <linux-integrity@archiver.kernel.org>; Wed, 19 Dec 2018 22:50:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KvNK6CdX"
+	by mail.kernel.org (Postfix) with ESMTP id 9BDBE20866
+	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 03:42:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728748AbeLSWuV (ORCPT
+        id S1728803AbeLTDmG (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 19 Dec 2018 17:50:21 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42688 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728355AbeLSWuV (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 19 Dec 2018 17:50:21 -0500
-Received: by mail-lj1-f194.google.com with SMTP id l15-v6so18828244lja.9;
-        Wed, 19 Dec 2018 14:50:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lL6VuU05xhyZZNNjsDLIZB0TivGZQe3e6R0urwV27nc=;
-        b=KvNK6CdXLsyM/6Upw6RorgzC448kKDKTro0RKfuSdwzdxisa1b8Z1mxNBOypG/c4o2
-         7naXbC9MJKaEtLLK7gw3+XYZdN1FndRbB/G7vyrgsIWwxU94/Ul9ojU84c7X2AlSC2aV
-         Fdn6IU8gjEnttnQuoyRU1v9h5WndOX7XA+YtPF3zSaJQUI2sEiUsQczxN4PcHp3kZLCU
-         DrqEoLlWeonCVNNEmZdyoF8URbG/luEfkzYU9q3GRIdR/k3/wUO3vcMZLy7Tt2dQLMdK
-         3WuUyNDdwIog9l2YHhdGtExamWVtCXowuizQ9lqn3QVS0WZEdlQXbH8zeYJV2DdNTysB
-         anKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lL6VuU05xhyZZNNjsDLIZB0TivGZQe3e6R0urwV27nc=;
-        b=Tm7ErUGCU+EuO8/+XHFgxpBGMI8hWuSOD/t2Xd2ZYuAHYnXSOqdDF1xvDysyaY4dvu
-         QUpe0sC2OyMln+BM5MYeR39aiBW9Pj0uhpVrZTF+hQJxY5DB4V1B9y9vCwoJ+nloGlYJ
-         ZPC4yqq7KuSxo0lDEBTriZNeVDjPWinGOufavD0EvvWuRM0oEY6yFfhuWYbchz20nI7P
-         ABvV0IUV8JYcPB95Rfvif/CodwMErqW+uFpplFCEUvQTYBUMi1js9+E1xsHJJ7hru1W2
-         VGxpBnZKu4nB7ZcD1KJerXk69ICFHwmNVGbaol+cobpayrEKECd7x/3UWZ5Lp+rYFUgq
-         guoQ==
-X-Gm-Message-State: AA+aEWYm1ykjJwl+PbeG+HFvXK52WhPXAND1ba6cYMECY0DkGH8jQr+q
-        eqqCCavYNYZTra4Rmsmt9o4vZ884ihA=
-X-Google-Smtp-Source: AFSGD/W+aF0CzMAEbw0L4ujsDio5pqmdz8rplfxqdUnX55t16gKI9pqeN3fOqZvahbsqUH3wE5dM+w==
-X-Received: by 2002:a2e:9603:: with SMTP id v3-v6mr11660171ljh.15.1545259818062;
-        Wed, 19 Dec 2018 14:50:18 -0800 (PST)
-Received: from ?IPv6:2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2? (dmhwpt3bffxn8z3-j6k-4.rev.dnainternet.fi. [2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2])
-        by smtp.gmail.com with ESMTPSA id h203sm4063348lfe.44.2018.12.19.14.50.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Dec 2018 14:50:17 -0800 (PST)
-Subject: Re: [PATCH 2/6] __wr_after_init: write rare for static allocation
-To:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Andy Lutomirski <luto@kernel.org>
-Cc:     linux-arch <linux-arch@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181204121805.4621-1-igor.stoppa@huawei.com>
- <20181204121805.4621-3-igor.stoppa@huawei.com>
- <CALCETrVvoui0vksdt0Y9rdGL5ipEn_FtSXVVUFdH03ZC93cy_A@mail.gmail.com>
- <20181212104900.0af52c34@mschwideX1>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <cff2bb8d-bd61-c4a0-4e63-4de2133a7b38@gmail.com>
-Date:   Thu, 20 Dec 2018 00:50:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 19 Dec 2018 22:42:06 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44576 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728061AbeLTDmG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 19 Dec 2018 22:42:06 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E9C3DAAAE;
+        Thu, 20 Dec 2018 03:42:03 +0000 (UTC)
+Date:   Wed, 19 Dec 2018 21:42:00 -0600
+From:   Goldwyn Rodrigues <rgoldwyn@suse.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     zohar@linux.ibm.com, iforster@suse.de,
+        linux-integrity@vger.kernel.org,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        overlayfs <linux-unionfs@vger.kernel.org>
+Subject: Re: EVM: Permission denied with overlayfs
+Message-ID: <20181220034200.wfft5d543tje5zpy@merlin>
+References: <12c81a49-efca-d66c-2143-ae04ca248cce@suse.de>
+ <1545174031.4178.8.camel@linux.ibm.com>
+ <1545233975.3954.8.camel@linux.ibm.com>
+ <CAOQ4uxgoMntXsxnsxtBOOPLDo3HgcYPWayuCuDzxEx2GJSMZtg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181212104900.0af52c34@mschwideX1>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxgoMntXsxnsxtBOOPLDo3HgcYPWayuCuDzxEx2GJSMZtg@mail.gmail.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-
-
-On 12/12/2018 11:49, Martin Schwidefsky wrote:
-> On Wed, 5 Dec 2018 15:13:56 -0800
-> Andy Lutomirski <luto@kernel.org> wrote:
-
->> Hi s390 and powerpc people: it would be nice if this generic
->> implementation *worked* on your architectures and that it will allow
->> you to add some straightforward way to add a better arch-specific
->> implementation if you think that would be better.
+On 18:38 19/12, Amir Goldstein wrote:
+> On Wed, Dec 19, 2018 at 5:39 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> >
+> > On Tue, 2018-12-18 at 18:00 -0500, Mimi Zohar wrote:
+> > > Hi Ignaz,
+> > >
+> > > On Tue, 2018-12-18 at 20:49 +0100, Ignaz Forster wrote:
+> > > > Hi,
+> > > >
+> > > > as a follow up to my attempts to use overlayfs on an IMA protected
+> > > > system[1] I've now tried to also enable EVM. From what I understand this
+> > > > should - at least in theory - be possible: EVM will call
+> > > > d_backing_inode(dentry), which I thought would get the inode of the
+> > > > underlying file system[2], and use that for HMAC verification.
+> > > >
+> > > > In practice simply trying to access an existing file will fail with
+> > > > "Permission denied" already. In the corresponding audit log I can see
+> > > > the file access (failed with "invalid-HMAC"), but with an inode number
+> > > > unknown to me - stat returns a completely different number for the file
+> > > > in the lower and target dir.
+> > > >
+> > > > For testing purposes I added a new hashing algorithm to
+> > > > evm_ima_xattr_type which will not add the file system specific
+> > > > attributes (inode number, generation, file system uuid) to the hash -
+> > > > just like EVM_XATTR_PORTABLE_DIGSIG, but with the hashes generated by
+> > > > the kernel. Files created with this signature can be read correctly,
+> > > > though writing the files will still fail.
+> > > >
+> > > > Unfortunately I'm out of ideas what is happening here. If anybody wants
+> > > > to have a look at this: Any help would be appreciated.
+> > > >
+> > > > Kind Regards,
+> > > > Ignaz
+> > > >
+> > > > [1] https://www.spinics.net/lists/linux-integrity/msg03593.html
+> > > > [2] https://www.kernel.org/doc/htmldocs/filesystems/API-d-backing-inode.html
+> > > >
+> > >
+> > > After creating a file on the overlay, I wasn't able to access it from
+> > > the overlay, but was able to access it from "upper".  Both "stat" and
+> > > "getfattr -m ^security" returned exactly the same things for both
+> > > pathnames.  However, the ino in the audit log was different.
+> > >
+> > > After modifying evm_calc_hmac_or_hash(), replacing d_backing_inode()
+> > > with d_real_inode(), the hmac properly calculated for both the overlay
+> > > and the upper pathnames.
+> > >
+> > > Something must have changed in d_backing_inode().
+> >
+> > Confirmed, in linux-4.18.y d_backing_inode returns the real i_ino, but
+> > newer kernels do not.  This is a problem for EVM as the i_ino is
+> > included in the HMAC calculation.
+> >
 > 
-> As the code is right now I can guarantee that it will not work on s390.
+> Hi Mimi,
+> 
+> v4.19 has a big change that removes many VFS hacks in favor of
+> overlayfs stacked file operations.
+> 
+> The major implication for VFS code is that file_inode(file) is now the overlayfs
+> inode and not the real inode. Therefore, file_dentry(file) is also the overlayfs
+> dentry and not the real dentry.
+> 
+> I am not sure how that change impacts EVM ?
+> FWIW, d_backing_inode(dentry) was never anything more than d_inode(dentry).
+> 
+> Can you please try to describe in more details for someone who has no clue what
+> EVM does how exactly the v4.19 change is manifested in the EVM use case.
+> 
+> AFAIKT, evm_calc_hmac_or_hash() would get the overlayfs dentry both in
+> v4.18 and v4.19 and therefore d_backing_inode(dentry) should be the
+> overlayfs inode in both kernels (?).
+> 
+> The value of overlayfs inode i_ino can be identical to i_ino of the real inode
+> under some conditions, but far from always and the value of overlayfs inode
+> i_generation is almost guaranteed to not match that of the real inode.
 
-OK, I have thrown the towel wrt developing at the same time for multiple 
-architectures.
+If I understand it correctly, overlay performs copy_up using a temporary inode,
+and finally copies the attributes to a "real" upper inode after the copy_up is
+successful. However, integrity or ima gets control for calculation and
+verification of the inode during the temporary phase which is not the same as
+the final "upper" inode.
 
-ATM I'm oriented toward getting support for one (x86_64), leaving the 
-actual mechanism as architecture specific.
-
-Then I can add another one or two and see what makes sense to refactor.
-This approach should minimize the churning, overall.
-
-
---
-igor
+-- 
+Goldwyn
