@@ -4,57 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E3C8C43387
-	for <linux-integrity@archiver.kernel.org>; Fri, 21 Dec 2018 18:15:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1907C43444
+	for <linux-integrity@archiver.kernel.org>; Fri, 21 Dec 2018 18:16:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E829C21906
-	for <linux-integrity@archiver.kernel.org>; Fri, 21 Dec 2018 18:15:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71C062192D
+	for <linux-integrity@archiver.kernel.org>; Fri, 21 Dec 2018 18:16:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TKdyKx/j"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HGWfQjb5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404337AbeLUSO6 (ORCPT
+        id S1727680AbeLUSQJ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 21 Dec 2018 13:14:58 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45676 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404321AbeLUSO5 (ORCPT
+        Fri, 21 Dec 2018 13:16:09 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36342 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404299AbeLUSOy (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 21 Dec 2018 13:14:57 -0500
-Received: by mail-lj1-f194.google.com with SMTP id s5-v6so5512010ljd.12;
-        Fri, 21 Dec 2018 10:14:54 -0800 (PST)
+        Fri, 21 Dec 2018 13:14:54 -0500
+Received: by mail-lf1-f66.google.com with SMTP id a16so4541703lfg.3;
+        Fri, 21 Dec 2018 10:14:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
          :mime-version:content-transfer-encoding;
-        bh=SN1YxRssqD/qbsJs6cWB56zoRuTrhLbtpCLtQvrTRuc=;
-        b=TKdyKx/jrCPmAFRDV+JRiJANdImKAj933DMPS306pGi86XGkwj+0veYOqtcDmcyrjO
-         vCfsX0EjPqV6JxEspMuCD7syOFu+fW7Ls0bgV1b4ZlTcTyIi5Oql5zNbSuc+80jK+/VX
-         DM/4H8lprBVKz14tLSiADp5ICDkz9mVWmG/oMRH2xA0HOSQ6dNu953TqUVZjoQMNoDru
-         8FUS4oIGexrnmUsUPtj5ID/wr0hQgkpGKK+v8UuNNqz65pIaMEGbkr9wNg/hB4jMcz59
-         55PPj9akWYr8I0WhAzAG2xKK3oAvQD03wecwMctx3PGb9u8gNaL91wY0bxv5f9mXqxAo
-         e80w==
+        bh=Us5fQxnqAuf6nDTBJO2Qb2w31hoygG1FpkEKlSmx1Kw=;
+        b=HGWfQjb5vbSEU703D7GDZF8gnrJ6CfP1TS1iPmRhSDLGjMliWP2OTU4t9dcTDDLFqv
+         eDAU+7nNdwfcfoz6oYXjJL+HmL0C7ymB9ShJsMj23VqimbB2jkRvrjm8zuQ48p+Nfr75
+         ZoN6joq84uIn/psO+3Xg9u/0iXRyuQynvLmv/HtqwPCYoNAWC5Faa76BZyDT9FID2Vfu
+         dqlkXt4qfXEYfLfc8I/aX6w3fTxt+HeG3t0yKQFDxfLBtruTGAPQ/XtAuVw0DefC7wLn
+         CshGs3iZ+b8H51siPqXn+F0ztDMm4FEfvmDc8DP/V0wU19fqjPIHsEMvhcM4ZSk9hHIX
+         btxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:reply-to:mime-version:content-transfer-encoding;
-        bh=SN1YxRssqD/qbsJs6cWB56zoRuTrhLbtpCLtQvrTRuc=;
-        b=Be4cQJkAqWx4oTdR6qmiYWqILp5n58RYvZAGwHu2RNFCTOpszc/CuP8JxAGm5F3DMR
-         K5THdBnYqoHGR4nFhQNXrpOqmx5hDTSoYrQCNfsBRCIWsbM4Z9QgDql1cjKHZi/VtEm0
-         hIbyJLBPBPksn4D+GQhY9r8auuU0D050UDltgE7xJKkDQ0qQ77sE8pgqAA+aH6fIqawX
-         CXJ8FaOXlvqtn3F3oj+NrQBnwomI3fkVtpMTuhwD95PuRlAS/cMapEOPqes5CKaoRiJE
-         gFxCOfRIOfm3UEU3c34EpiY/FeGrp5MtGwZCqsKKI3SumQJLYnrFB6lomDHl9oEwf3WA
-         1/+Q==
-X-Gm-Message-State: AJcUukfjPmpCgaS/eweNkpZb+dx62C8OF/RRUsszo4LF8aREk+1A0b78
-        nN+tvOaCses/L++hDRP1K88=
-X-Google-Smtp-Source: ALg8bN6yuIckmNbKpfr+n67Or7uaJ2oFluosJDTSIQkUgvEiIqLM5ThHxUlnxLGzEbhgxJM4/tnQfw==
-X-Received: by 2002:a2e:98c9:: with SMTP id s9-v6mr1937913ljj.166.1545416094071;
-        Fri, 21 Dec 2018 10:14:54 -0800 (PST)
+        bh=Us5fQxnqAuf6nDTBJO2Qb2w31hoygG1FpkEKlSmx1Kw=;
+        b=aji4ZXgOV/BzW43mkpRzDhztoN35R7QwrO9rLl+b10b7NbUKnN3xqR81t5WfECype5
+         ukBfo/IF+sx6rW+uPE5QNaHIjsBYEZtSy06Rzr32lgwyhziilu9kBYb9clqcWDXDelJ8
+         lfHK3glX95WaJgSz/lek7cm6NNkP+WKBycbs8gzuwqEqeAqVXpgRYE9DEe75FI/yrfJk
+         UgNIbmuXHgOwvOlEJ2BSeXiuNy1fRuCqjgqx6MJQ8CA4h1AWE0YZrjdihwHzplTEJkW8
+         eFlynkeSVZSXR0VbcI2DuGrP7KfQdYczsi7Bwpap017zoGSRZzIz1BH9hAWuPT5HXd0I
+         SsIw==
+X-Gm-Message-State: AA+aEWZJIbRtFoCRr4kjI8fLjBi4yOHnENejHXvZbD1qsRzL1U4USAxw
+        l1U3E6ziVXg4/df4WSIGDHA=
+X-Google-Smtp-Source: AFSGD/XRk3ffVjosi0KOa8ubOE0z0coXuuRA/SrFAZt3Qg8nlBRGeL4XEqjStoml5nY+Fgm+PFWoDQ==
+X-Received: by 2002:a19:1994:: with SMTP id 142mr2105273lfz.134.1545416091776;
+        Fri, 21 Dec 2018 10:14:51 -0800 (PST)
 Received: from localhost.localdomain (dmhwpt3bffxn8z3-j6k-4.rev.dnainternet.fi. [2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2])
-        by smtp.gmail.com with ESMTPSA id m63-v6sm5444564lje.81.2018.12.21.10.14.52
+        by smtp.gmail.com with ESMTPSA id m63-v6sm5444564lje.81.2018.12.21.10.14.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 10:14:53 -0800 (PST)
+        Fri, 21 Dec 2018 10:14:51 -0800 (PST)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 To:     Andy Lutomirski <luto@amacapital.net>,
@@ -69,9 +70,9 @@ Cc:     igor.stoppa@huawei.com, Nadav Amit <nadav.amit@gmail.com>,
         linux-integrity@vger.kernel.org,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 05/12] __wr_after_init: x86_64: __wr_op
-Date:   Fri, 21 Dec 2018 20:14:16 +0200
-Message-Id: <20181221181423.20455-6-igor.stoppa@huawei.com>
+Subject: [PATCH 04/12] __wr_after_init: debug writes
+Date:   Fri, 21 Dec 2018 20:14:15 +0200
+Message-Id: <20181221181423.20455-5-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181221181423.20455-1-igor.stoppa@huawei.com>
 References: <20181221181423.20455-1-igor.stoppa@huawei.com>
@@ -83,22 +84,8 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Architecture-specific implementation of the core write rare
-operation.
-
-The implementation is based on code from Andy Lutomirski and Nadav Amit
-for patching the text on x86 [here goes reference to commits, once merged]
-
-The modification of write protected data is done through an alternate
-mapping of the same pages, as writable.
-This mapping is persistent, but active only for a core that is
-performing a write rare operation. And only for the duration of said
-operation.
-Local interrupts are disabled, while the alternate mapping is active.
-
-In theory, it could introduce a non-predictable delay, in a preemptible
-system, however the amount of data to be altered is likely to be far
-smaller than a page.
+After each write operation, confirm that it was successful, otherwise
+generate a warning.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 
@@ -116,189 +103,50 @@ CC: kernel-hardening@lists.openwall.com
 CC: linux-mm@kvack.org
 CC: linux-kernel@vger.kernel.org
 ---
- arch/x86/Kconfig             |  1 +
- arch/x86/include/asm/prmem.h | 72 ++++++++++++++++++++++++++++++++++++
- arch/x86/mm/Makefile         |  2 +
- arch/x86/mm/prmem.c          | 69 ++++++++++++++++++++++++++++++++++
- 4 files changed, 144 insertions(+)
- create mode 100644 arch/x86/include/asm/prmem.h
- create mode 100644 arch/x86/mm/prmem.c
+ mm/Kconfig.debug | 8 ++++++++
+ mm/prmem.c       | 6 ++++++
+ 2 files changed, 14 insertions(+)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 8689e794a43c..e5e4fc4fa5c2 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -32,6 +32,7 @@ config X86_64
- 	select SWIOTLB
- 	select X86_DEV_DMA_OPS
- 	select ARCH_HAS_SYSCALL_WRAPPER
-+	select ARCH_HAS_PRMEM
- 
- #
- # Arch settings
-diff --git a/arch/x86/include/asm/prmem.h b/arch/x86/include/asm/prmem.h
-new file mode 100644
-index 000000000000..e1f09f881351
---- /dev/null
-+++ b/arch/x86/include/asm/prmem.h
-@@ -0,0 +1,72 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * prmem.h: Header for memory protection library
-+ *
-+ * (C) Copyright 2018 Huawei Technologies Co. Ltd.
-+ * Author: Igor Stoppa <igor.stoppa@huawei.com>
-+ *
-+ * Support for:
-+ * - statically allocated write rare data
-+ */
+diff --git a/mm/Kconfig.debug b/mm/Kconfig.debug
+index 9a7b8b049d04..b10305cfac3c 100644
+--- a/mm/Kconfig.debug
++++ b/mm/Kconfig.debug
+@@ -94,3 +94,11 @@ config DEBUG_RODATA_TEST
+     depends on STRICT_KERNEL_RWX
+     ---help---
+       This option enables a testcase for the setting rodata read-only.
 +
-+#ifndef _ASM_X86_PRMEM_H
-+#define _ASM_X86_PRMEM_H
-+
-+#include <linux/set_memory.h>
-+#include <linux/mm.h>
-+#include <linux/vmalloc.h>
-+#include <linux/string.h>
-+#include <linux/slab.h>
-+#include <linux/mutex.h>
-+#include <linux/compiler.h>
-+#include <linux/irqflags.h>
-+#include <linux/mmu_context.h>
-+
-+typedef temporary_mm_state_t wr_state_t;
-+
-+extern __ro_after_init struct mm_struct *wr_poking_mm;
-+extern __ro_after_init unsigned long wr_poking_base;
-+
-+static inline void *__wr_addr(void *addr)
-+{
-+	return (void *)(wr_poking_base + (unsigned long)addr);
-+}
-+
-+static inline void __wr_enable(wr_state_t *state)
-+{
-+	*state = use_temporary_mm(wr_poking_mm);
-+}
-+
-+static inline void __wr_disable(wr_state_t *state)
-+{
-+	unuse_temporary_mm(*state);
-+}
-+
-+
-+/**
-+ * __wr_memset() - sets len bytes of the destination p to the c value
-+ * @p: beginning of the memory to write to
-+ * @c: byte to replicate
-+ * @len: amount of bytes to copy
-+ *
-+ * Returns pointer to the destination
-+ */
-+static inline void *__wr_memset(void *p, int c, __kernel_size_t len)
-+{
-+	return (void *)memset_user((void __user *)p, (u8)c, len);
-+}
-+
-+/**
-+ * __wr_memcpy() - copyes size bytes from q to p
-+ * @p: beginning of the memory to write to
-+ * @q: beginning of the memory to read from
-+ * @size: amount of bytes to copy
-+ *
-+ * Returns pointer to the destination
-+ */
-+static inline void *__wr_memcpy(void *p, const void *q, __kernel_size_t size)
-+{
-+	return (void *)copy_to_user((void __user *)p, q, size);
-+}
-+
++config DEBUG_PRMEM
++    bool "Verify each write rare operation."
++    depends on PRMEM
++    default n
++    help
++      After any write rare operation, compares the data written with the
++      value provided by the caller.
+diff --git a/mm/prmem.c b/mm/prmem.c
+index e1c1be3a1171..51f6776e2515 100644
+--- a/mm/prmem.c
++++ b/mm/prmem.c
+@@ -61,6 +61,9 @@ void *wr_memcpy(void *p, const void *q, __kernel_size_t size)
+ 	__wr_enable(&wr_state);
+ 	__wr_memcpy(wr_poking_addr, q, size);
+ 	__wr_disable(&wr_state);
++#ifdef CONFIG_DEBUG_PRMEM
++	VM_WARN_ONCE(memcmp(p, q, size), "Failed %s()", __func__);
 +#endif
-diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
-index 4b101dd6e52f..66652de1e2c7 100644
---- a/arch/x86/mm/Makefile
-+++ b/arch/x86/mm/Makefile
-@@ -53,3 +53,5 @@ obj-$(CONFIG_PAGE_TABLE_ISOLATION)		+= pti.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_identity.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_boot.o
-+
-+obj-$(CONFIG_PRMEM)		+= prmem.o
-diff --git a/arch/x86/mm/prmem.c b/arch/x86/mm/prmem.c
-new file mode 100644
-index 000000000000..f4b36baa2f19
---- /dev/null
-+++ b/arch/x86/mm/prmem.c
-@@ -0,0 +1,69 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * prmem.c: Memory Protection Library
-+ *
-+ * (C) Copyright 2017-2018 Huawei Technologies Co. Ltd.
-+ * Author: Igor Stoppa <igor.stoppa@huawei.com>
-+ */
-+
-+#include <linux/mm.h>
-+#include <linux/string.h>
-+#include <linux/compiler.h>
-+#include <linux/slab.h>
-+#include <linux/rcupdate.h>
-+#include <linux/prmem.h>
-+
-+extern __ro_after_init bool wr_ready;
-+__ro_after_init struct mm_struct *wr_poking_mm;
-+__ro_after_init unsigned long wr_poking_base;
-+
-+/*
-+ * The following two variables are statically allocated by the linker
-+ * script at the the boundaries of the memory region (rounded up to
-+ * multiples of PAGE_SIZE) reserved for __wr_after_init.
-+ */
-+extern long __start_wr_after_init;
-+extern long __end_wr_after_init;
-+
-+struct mm_struct *copy_init_mm(void);
-+void __init wr_poking_init(void)
-+{
-+	unsigned long start = (unsigned long)&__start_wr_after_init;
-+	unsigned long end = (unsigned long)&__end_wr_after_init;
-+	unsigned long i;
-+
-+	wr_poking_mm = copy_init_mm();
-+	if (WARN_ONCE(!wr_poking_mm, "No alternate mapping available."))
-+		return;
-+
-+	/*
-+	 * Place 64TB of kernel address space within 128TB of user address
-+	 * space, at a random page aligned offset.
-+	 */
-+	wr_poking_base = (((unsigned long)kaslr_get_random_long("WR Poke")) &
-+			  PAGE_MASK) % (64 * _BITUL(40));
-+
-+	/* Create alternate mapping for the entire wr_after_init range. */
-+	for (i = start; i < end; i += PAGE_SIZE) {
-+		struct page *page;
-+		spinlock_t *ptl;
-+		pte_t pte;
-+		pte_t *ptep;
-+		unsigned long wr_poking_addr;
-+
-+		page = virt_to_page(i);
-+		if (WARN_ONCE(!page, "WR memory without physical page"))
-+			return;
-+		wr_poking_addr = i + wr_poking_base;
-+
-+		/* The lock is not needed, but avoids open-coding. */
-+		ptep = get_locked_pte(wr_poking_mm, wr_poking_addr, &ptl);
-+		if (WARN_ONCE(!ptep, "No pte for writable mapping"))
-+			return;
-+
-+		pte = mk_pte(page, PAGE_KERNEL);
-+		set_pte_at(wr_poking_mm, wr_poking_addr, ptep, pte);
-+		spin_unlock(ptl);
-+	}
-+	wr_ready = true;
-+}
+ 	local_irq_enable();
+ 	return p;
+ }
+@@ -92,6 +95,9 @@ void *wr_memset(void *p, int c, __kernel_size_t len)
+ 	__wr_enable(&wr_state);
+ 	__wr_memset(wr_poking_addr, c, len);
+ 	__wr_disable(&wr_state);
++#ifdef CONFIG_DEBUG_PRMEM
++	VM_WARN_ONCE(memtst(p, c, len), "Failed %s()", __func__);
++#endif
+ 	local_irq_enable();
+ 	return p;
+ }
 -- 
 2.19.1
 
