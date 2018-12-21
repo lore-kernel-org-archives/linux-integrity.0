@@ -3,198 +3,136 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07101C43444
-	for <linux-integrity@archiver.kernel.org>; Fri, 21 Dec 2018 19:08:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC9EC43387
+	for <linux-integrity@archiver.kernel.org>; Fri, 21 Dec 2018 19:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C74C62190A
-	for <linux-integrity@archiver.kernel.org>; Fri, 21 Dec 2018 19:08:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17B6021929
+	for <linux-integrity@archiver.kernel.org>; Fri, 21 Dec 2018 19:13:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="im/Mlm+c"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="a/KXPV7n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391539AbeLUTIA (ORCPT
+        id S2391558AbeLUTNe (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 21 Dec 2018 14:08:00 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33478 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389409AbeLUTIA (ORCPT
+        Fri, 21 Dec 2018 14:13:34 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43597 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391554AbeLUTN3 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 21 Dec 2018 14:08:00 -0500
-Received: by mail-lf1-f67.google.com with SMTP id i26so4655386lfc.0;
-        Fri, 21 Dec 2018 11:07:58 -0800 (PST)
+        Fri, 21 Dec 2018 14:13:29 -0500
+Received: by mail-lj1-f195.google.com with SMTP id q2-v6so5657961lji.10
+        for <linux-integrity@vger.kernel.org>; Fri, 21 Dec 2018 11:13:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jXFLTI8JHQDvVJR/RJzDh54rUI3Cr7wPyRKQV5m3vEg=;
-        b=im/Mlm+c2j/AxAaz7es2VdN9/H1+kt9/iAqdOYY9SotYhfR2ToDieyP46bdUC3Yl/O
-         3W64atjFM8q9HOs+wuAyewAzX7Y0y6e4dOK5BeWWII9jxvBRPqMeGSnypIpxmDx95sTT
-         QRc2T/nahGo1nT6u3PTXITy44drVil/FmR+csv4nouQzJawoJFaWnNQSnCotKUqViGBA
-         I390nT8mONQu15dxkpUSCHTrpi+Yflw9YJv/e4kbxrOQ4R03d0HvfK4MhW/dbN5rdTxN
-         YSzAEKVq1oKoYApV3QdNEY5wswtq+K8dvt1SuS4X0wN+Mz3QEafxAgxxQB3UNTBzOvxM
-         IjDQ==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=GoaAF/5YI5Z45IZvCYu5JL7bMo3j0XtljW+8zGPMK0s=;
+        b=a/KXPV7n0rvMsJnMnbJzEBym23mlzA+RFBmS6UI5Xw56BbHkyLfli0p+TgOAq9tDpm
+         FSJh8wHalcdAXf4r2n0okZfdsHaNnHuL3Tv+TqYO1LSXu3qkOLqW/WgVGI1OBD20u2Ip
+         u4DUX8tLzYgLqRkKDJvDE4Vjp3Wp6hOTk2bBE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jXFLTI8JHQDvVJR/RJzDh54rUI3Cr7wPyRKQV5m3vEg=;
-        b=LPfyJBjSBBqghKfCl99GVhkyUri0dusHj4E0WrSPuZ0ImItBQnCT4x3+LIUV4zL1I8
-         s2KoZlvMNtX5iAgkO8LfYSHaFKq0evok+MNs3TooyltFtbOKOJqW+8SnIHoU3taV/jlg
-         oOmySEJ/xdrxhEs1PxIcko1LUbNZ8AOMCMDtm+ADwjkEssucPoA74aoIdHZNrLbS223P
-         yZbf9KpVd8MBHWXufkr7A3yiA5Ijqm0hDBzoL4zfSpdG1QYV81Vb/BcOXTduSpY6WhFA
-         FTmvALjpcz8XQ4piz+stm/okC1dQaC77OPZND4GdgRnlyfKvevw7SVvucY3n1M66zVRE
-         LjbA==
-X-Gm-Message-State: AA+aEWbMGFOVpVh49JoM6Br35E0tA2khy1ysXhZ9Pj50FoJvVABlIx6o
-        TOtJmimd/EgjBTCicYOlPRQI4HqFPzs=
-X-Google-Smtp-Source: AFSGD/USLps/3VikByvmsmlxstgZZfuLrFey2O+zLKgZErnqAgraGUnZxyKIdeZmZ0F0e1Vtpl4USQ==
-X-Received: by 2002:a19:cfc6:: with SMTP id f189mr2249346lfg.102.1545419277138;
-        Fri, 21 Dec 2018 11:07:57 -0800 (PST)
-Received: from ?IPv6:2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2? (dmhwpt3bffxn8z3-j6k-4.rev.dnainternet.fi. [2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2])
-        by smtp.gmail.com with ESMTPSA id u11sm5046544lfb.85.2018.12.21.11.07.55
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=GoaAF/5YI5Z45IZvCYu5JL7bMo3j0XtljW+8zGPMK0s=;
+        b=X3q3ATL/Cq36nhnoSbUSd2J+Ybu3lLxvAgDigjPBYG1wpneRFiEwSdM0OmUi6tXgWv
+         WQ1tMPAC4r6GGneCTm2Aqxcfo2D/ZYsddhtb1YGm2bjFyPo/BezgoDEsRCvNxOzYKgPQ
+         poiGmfw4QUeWHxGiYDcp2IAFvhrzTANFOss4zhcxKtxVuo98Ojd9eIZ33dgN7oq7Uvz+
+         x2ivDYvqvQmofDTgdNAtAJhzcK6SXhI/nPAClWKVz/6zVhytdXgTlKr+1yMLuQ1fCX46
+         ZJJclZ9cpp3Dm5B7aG1o0IBgANr76qjJ/pIO2ELfYm1UDLr2BTWXX73hsZ1Wv6/AtA09
+         N3OA==
+X-Gm-Message-State: AJcUukc1tbcTgrEmU83TTg+Bzmqijbt10OUO8gfwhnW7UdRhVd/vXrW5
+        sHwrOjESG+lQZftu4+ZWg7LVFRXNpXM=
+X-Google-Smtp-Source: ALg8bN74mKcESFy3EL0WTBrzQzzGZR9NDzVZD6F0Plqcu25903YX+zbUkzh6ptT4q5PGOZMD+nkZDw==
+X-Received: by 2002:a2e:9957:: with SMTP id r23-v6mr2272600ljj.98.1545419606643;
+        Fri, 21 Dec 2018 11:13:26 -0800 (PST)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id p91sm5122123lfg.4.2018.12.21.11.13.23
+        for <linux-integrity@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 11:07:56 -0800 (PST)
-Subject: Re: [PATCH 03/12] __wr_after_init: generic functionality
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        igor.stoppa@huawei.com, Nadav Amit <nadav.amit@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
-        linux-integrity@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20181221181423.20455-1-igor.stoppa@huawei.com>
- <20181221181423.20455-4-igor.stoppa@huawei.com>
- <20181221184120.GG10600@bombadil.infradead.org>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <14487401-dec3-6a7d-a0b1-e369e93aa9c4@gmail.com>
-Date:   Fri, 21 Dec 2018 21:07:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 21 Dec 2018 11:13:24 -0800 (PST)
+Received: by mail-lj1-f171.google.com with SMTP id q2-v6so5657790lji.10
+        for <linux-integrity@vger.kernel.org>; Fri, 21 Dec 2018 11:13:23 -0800 (PST)
+X-Received: by 2002:a2e:2c02:: with SMTP id s2-v6mr2429758ljs.118.1545419603234;
+ Fri, 21 Dec 2018 11:13:23 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181221184120.GG10600@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181219071420.GC2628@infradead.org> <20181219021953.GD31274@dastard>
+ <20181219193005.GB6889@mit.edu> <20181219213552.GO6311@dastard>
+ <20181220220158.GC2360@mit.edu> <20181221070447.GA21687@infradead.org> <20181221154714.GA26547@mit.edu>
+In-Reply-To: <20181221154714.GA26547@mit.edu>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 21 Dec 2018 11:13:07 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgdzWgoPSuHeVcqmGE1hB3Gan72r2_AhtC14e60=z45yg@mail.gmail.com>
+Message-ID: <CAHk-=wgdzWgoPSuHeVcqmGE1hB3Gan72r2_AhtC14e60=z45yg@mail.gmail.com>
+Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-fscrypt@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+On Fri, Dec 21, 2018 at 7:47 AM Theodore Y. Ts'o <tytso@mit.edu> wrote:
+>
+> Linus --- we're going round and round, and I don't think this is
+> really a technical dispute at this point, but rather an aesthetics
+> one.
 
+Grr.
 
-On 21/12/2018 20:41, Matthew Wilcox wrote:
-> On Fri, Dec 21, 2018 at 08:14:14PM +0200, Igor Stoppa wrote:
->> +static inline int memtst(void *p, int c, __kernel_size_t len)
-> 
-> I don't understand why you're verifying that writes actually happen
-> in production code.  Sure, write lib/test_wrmem.c or something, but
-> verifying every single rare write seems like a mistake to me.
+So honestly, I personally *like* the model of "the file contains its
+own validation data" model. I think that's the right model, so that
+you can then basically just do "enable verification on this file, and
+verify that the root hash is this".
 
-This is actually something I wrote more as a stop-gap.
-I have the feeling there should be already something similar available.
-And probably I could not find it. Unless it's so trivial that it doesn't 
-deserve to become a function?
+So that part I like. I think the people who argue for "let's have a
+separate interface that writes the merkle tree data" are completely
+wrong.
 
-But if there is really no existing alternative, I can put it in a 
-separate file.
+HOWEVER.
 
-> 
->> +#ifndef CONFIG_PRMEM
-> 
-> So is this PRMEM or wr_mem?  It's not obvious that CONFIG_PRMEM controls
-> wrmem.
+I do agree that your particular model is pretty damn broken in lots of ways.
 
-In my mind (maybe still clinging to the old implementation), PRMEM is 
-the master toggle, for protected memory.
+Why is it filesystem specific? If the whole point is that the file
+itself has its own verification data (which I like), then I don't see
+why this is then documented as some filesystem-specific layout model.
+That's complete and utter garbage.
 
-Then there are various types and the first one being now implemented is 
-write rare after init (because ro after init already exists).
+In other words: either the model is that the file *itself* contains
+its own merkle tree that validates the file, or it isn't. You can't
+have it two ways. No silly "layout changes when you apply the hash"
+garbage. That's just crazy talk and invalidates the whole model.
 
-However, the same levels of protection should then follow for 
-dynamically allocated memory (ye old pmalloc).
+And honestly, I still think that it's very odd to add the merge data
+to the end, when the filesystem already supports xattrs. It would have
+made much more sense to just make one xattr contain the merkle tree
+validation data.
 
-PRMEM would then become the moniker for the whole shebang.
+So why is this sold as some unholy mess of "filesystem-specific" and
+"generic"? That part just annoys the hell out of me. Why isn't this
+sold as an *actual* generic model, where you just say "append the
+merkle tree to the file, then enable verity testing of the end result
+and validate the top-level hash".
 
->> +#define wr_assign(var, val)	((var) = (val))
-> 
-> The hamming distance between 'var' and 'val' is too small.  The convention
-> in the line immediately below (p and v) is much more readable.
+That kind of thing could be done with absolutely _zero_ per-filesystem
+code, and made 100% generic, and we'd just verify the merge data in
+readpages().
 
-ok, I'll fix it
+So what's the excuse for doing the crazy odd "let's just support one
+single filesystem" model?
 
->> +#define wr_rcu_assign_pointer(p, v)	rcu_assign_pointer(p, v)
->> +#define wr_assign(var, val) ({			\
->> +	typeof(var) tmp = (typeof(var))val;	\
->> +						\
->> +	wr_memcpy(&var, &tmp, sizeof(var));	\
->> +	var;					\
->> +})
-> 
-> Doesn't wr_memcpy return 'var' anyway?
-
-It should return the destination, which is &var.
-
-But I wanted to return the actual value of the assignment, val
-
-Like if I do  (a = 7)  it evaluates to 7,
-
-similarly wr_assign(a, 7) would also evaluate to 7
-
-The reason why i returned var instead of val is that it would allow to 
-detect any error.
-
->> +/**
->> + * wr_memcpy() - copyes size bytes from q to p
-> 
-> typo
-
-:-( thanks
-
->> + * @p: beginning of the memory to write to
->> + * @q: beginning of the memory to read from
->> + * @size: amount of bytes to copy
->> + *
->> + * Returns pointer to the destination
-> 
->> + * The architecture code must provide:
->> + *   void __wr_enable(wr_state_t *state)
->> + *   void *__wr_addr(void *addr)
->> + *   void *__wr_memcpy(void *p, const void *q, __kernel_size_t size)
->> + *   void __wr_disable(wr_state_t *state)
-> 
-> This section shouldn't be in the user documentation of wr_memcpy().
-
-ok
-
->> + */
->> +void *wr_memcpy(void *p, const void *q, __kernel_size_t size)
->> +{
->> +	wr_state_t wr_state;
->> +	void *wr_poking_addr = __wr_addr(p);
->> +
->> +	if (WARN_ONCE(!wr_ready, "No writable mapping available") ||
-> 
-> Surely not.  If somebody's called wr_memcpy() before wr_ready is set,
-> that means we can just call memcpy().
-
-
-What I was trying to catch is the case where, after a failed init, the 
-writable mapping doesn't exist. In that case wr_ready is also not set.
-
-The problem is that I just don't know what to do in a case where there 
-has been such a major error which prevents he creation of hte alternate 
-mapping.
-
-I understand that we still want to continue, to provide as much debug 
-info as possible, but I am at a loss about finding the saner course of 
-actions.
-
---
-igor
+                    Linus
