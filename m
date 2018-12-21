@@ -1,44 +1,46 @@
-Return-Path: <SRS0=gF99=O5=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=Hy7N=O6=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A36CC43387
-	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 22:02:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35351C43612
+	for <linux-integrity@archiver.kernel.org>; Fri, 21 Dec 2018 07:04:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4F1E21904
-	for <linux-integrity@archiver.kernel.org>; Thu, 20 Dec 2018 22:02:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 029FE218F0
+	for <linux-integrity@archiver.kernel.org>; Fri, 21 Dec 2018 07:04:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rERjj/vH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729401AbeLTWCD (ORCPT
+        id S1730946AbeLUHEw (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 20 Dec 2018 17:02:03 -0500
-Received: from dmz-mailsec-scanner-1.mit.edu ([18.9.25.12]:54262 "EHLO
-        dmz-mailsec-scanner-1.mit.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728086AbeLTWCD (ORCPT
+        Fri, 21 Dec 2018 02:04:52 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53308 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725372AbeLUHEw (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 20 Dec 2018 17:02:03 -0500
-X-AuditID: 1209190c-7ddff700000014b1-6f-5c1c1159f4d8
-Received: from mailhub-auth-3.mit.edu ( [18.9.21.43])
-        (using TLS with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by dmz-mailsec-scanner-1.mit.edu (Symantec Messaging Gateway) with SMTP id 39.1E.05297.9511C1C5; Thu, 20 Dec 2018 17:02:01 -0500 (EST)
-Received: from outgoing.mit.edu (OUTGOING-AUTH-1.MIT.EDU [18.9.28.11])
-        by mailhub-auth-3.mit.edu (8.14.7/8.9.2) with ESMTP id wBKM20Ws022553;
-        Thu, 20 Dec 2018 17:02:01 -0500
-Received: from callcc.thunk.org (guestnat-104-133-0-101.corp.google.com [104.133.0.101] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id wBKM1wB2009715
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 20 Dec 2018 17:01:59 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 7C3B77A45F6; Thu, 20 Dec 2018 17:01:58 -0500 (EST)
-Date:   Thu, 20 Dec 2018 17:01:58 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
+        Fri, 21 Dec 2018 02:04:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=BhjaUnK16zGKnRXNgkzTnJdVhtTx9utaISBIjymdBkg=; b=rERjj/vH4XYpJx6BWorgDV/97
+        4hP1N1YiTMm+aE4NL2Vaubli693TZUl6FWewFk0sOQOAuMXaHAUepRzh3WwmVNhnwcak9DPRSOSWU
+        AozAbbYB+dNolPb4e1Z95vb/U3KOl6iIUe1nIniQiQRN1UQSpV0+1LqlA3WgK+3vzAT8F+V5X4a17
+        YB1zuZo6Wix5gJ3+S5M8Veokso7ZzpPXYFHOxpjgvJrfPkNsx+CE70gStDRBmHr7TYsznvwHHhltt
+        A5vG/s6a7fyYYBwO201S2NB+idGiDOPovub9c1yXUWOukGZ+7IWmPYydf34HaptTRA59OyV0Zw4f4
+        Ss++AdUwg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gaErX-00074U-SD; Fri, 21 Dec 2018 07:04:47 +0000
+Date:   Thu, 20 Dec 2018 23:04:47 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
         Eric Biggers <ebiggers@kernel.org>,
         linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
@@ -49,81 +51,37 @@ Cc:     Christoph Hellwig <hch@infradead.org>,
         Chandan Rajendra <chandan@linux.vnet.ibm.com>,
         Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
-Message-ID: <20181220220158.GC2360@mit.edu>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Victor Hsieh <victorhsieh@google.com>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
+Message-ID: <20181221070447.GA21687@infradead.org>
 References: <20181219071420.GC2628@infradead.org>
  <20181219021953.GD31274@dastard>
  <20181219193005.GB6889@mit.edu>
  <20181219213552.GO6311@dastard>
+ <20181220220158.GC2360@mit.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181219213552.GO6311@dastard>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKKsWRmVeSWpSXmKPExsUixCmqrRspKBNjMHeKtkXPlIOsFnffb2e1
-        2HLsHqPF2j1/mC1OT1jEZPFk/Sxmi5nz7rBZXFrkbvFq3jcWiz17T7JYnDh3jN3i8q45bBb3
-        u7qYLR71vWW3OLL5CJsDv8epRRIeCzaVemxeoeWxaVUnm8eJGb9ZPB4c2szisXvBZyaPj09v
-        sXi07L/G5vF5k1wAVxSXTUpqTmZZapG+XQJXxoZnD1kKNvBWNO9YyNbAeIari5GDQ0LARGL/
-        vtguRi4OIYE1TBJPv/SxQTgbGSUWHtnH2MXICeS8YpJoPWELYRdJHN7ezQRiswioSjROager
-        YRPQkFjz9C8LiC0ioCYxadIOZpBBzAJbWCS+tfxnBkkICzhKLH70jglkM6+AtsTeVY4gYV6B
-        8ywSU5uUIRbPYJT4s7aRFSIhKHFy5hOwocwCWhI3/r0E62UWkJZY/o8DJMwpoCMx6eccZpCw
-        qICKxOcFAhMYhWYhaZ6FpHkWQvMCRuZVjLIpuVW6uYmZOcWpybrFyYl5ealFuoZ6uZkleqkp
-        pZsYwbEpybOD8cwbr0OMAhyMSjy8F7ZLxwixJpYVV+YeYpTkYFIS5bXnlokR4kvKT6nMSCzO
-        iC8qzUktPsQowcGsJMJbygKU401JrKxKLcqHSUlzsCiJ8/4WeRwtJJCeWJKanZpakFoEk5Xh
-        4FCS4NUXAGoULEpNT61Iy8wpQUgzcXCCDOcBGt7DDzK8uCAxtzgzHSJ/ilFRSpy3GiQhAJLI
-        KM2D6wWlzoxWhtRXjOJArwjzPgCp4gGmXbjuV0CDmYAG52xhAhlckoiQkmpgvOh82DK73Pf5
-        9iuTolvL82S/1syJfPOwYm3citnrFwQ4yV9rlCt28exfUb67886OrGXBzrkXjE2P/Hla1lyz
-        4AjzVKX/HAflryy62sc0RUt1pYIai+i7WX7HNX5dtKq/cv1V6+fTO0z2embr+Hq/lzD9tYDP
-        V39nd1RwRu1NE8aHsxP9XOo7lViKMxINtZiLihMBohg7mngDAAA=
+In-Reply-To: <20181220220158.GC2360@mit.edu>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 08:35:52AM +1100, Dave Chinner wrote:
-> 
-> The file has to be written before it has been protected, which means
-> it may very well have user space allocated beyond EOF before the
-> merkle tree needs to be written.
+On Thu, Dec 20, 2018 at 05:01:58PM -0500, Theodore Y. Ts'o wrote:
+> That's simply not true.  Number one, fsverity is not mandatory for all
+> file systems to implement.  If XFS doesn't want to implement fscrypt
+> or fsverity, it doesn't have to.  Number two, we're not *making* any
+> changes to the kernel code; nothing in mm/filemap.c, et. al.  So
+> saying that we are making changes that are impacted by /everyone/ just
+> doesn't make any sense.
 
-Sure, and every file system knows how to truncate a file.  This isn't
-hard.
+Ted, I think you know yourself this isn't true.  Whenever we added
+useful interface to one of the major file systems we had other pick
+it up, and that is a good thing because the last thing we need is
+fragmentation of interfaces.  And even if that wasn't the case I don't
+think we should take short cuts, because even if an interface was just
+for a file system or two it still needs to be properly desgined.
 
-> But whether or not fsverity is enabled on the filesystem, the fact
-> is that the kernel code now has to support storing and reading data
-> from beyond EOF. Every user, whether they are using fsverity or not,
-> is now exposed to that code and a filesystem that no longer
-> considers the user data region beyond EOF as write only.
-
-That's simply not true.  Number one, fsverity is not mandatory for all
-file systems to implement.  If XFS doesn't want to implement fscrypt
-or fsverity, it doesn't have to.  Number two, we're not *making* any
-changes to the kernel code; nothing in mm/filemap.c, et. al.  So
-saying that we are making changes that are impacted by /everyone/ just
-doesn't make any sense.
-
-> How filesystems store and retrieve merkle tree data should be a
-> filesystem internal detail. If how metadata is stored in th e
-> filesystem is defined by the userspace API or the kernel library
-> code that implements the verification feature, then it lacks the
-> necessary abstraction to be a generic Linux filesystem feature.
-> IOWs, it needs to be redesigned and reworked before we should
-> consider it for merging.
-
-I disagree with your aesthetics that the interface has to be
-completely isolated from the implementation.  If you don't want to
-call it a generic file system feature, fine.  It can just be something
-that f2fs and ext4 uses.
-
-					- Ted
+There is no reason to rush interfacs in, because everytime we have done
+that it has turned out to be a very bad idea in retrospective.
