@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C18CDC43387
-	for <linux-integrity@archiver.kernel.org>; Fri, 21 Dec 2018 18:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07101C43444
+	for <linux-integrity@archiver.kernel.org>; Fri, 21 Dec 2018 19:08:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CDF521927
-	for <linux-integrity@archiver.kernel.org>; Fri, 21 Dec 2018 18:46:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C74C62190A
+	for <linux-integrity@archiver.kernel.org>; Fri, 21 Dec 2018 19:08:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WNItTatU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="im/Mlm+c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387636AbeLUSqz (ORCPT
+        id S2391539AbeLUTIA (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 21 Dec 2018 13:46:55 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41442 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730799AbeLUSqy (ORCPT
+        Fri, 21 Dec 2018 14:08:00 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33478 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389409AbeLUTIA (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 21 Dec 2018 13:46:54 -0500
-Received: by mail-lj1-f195.google.com with SMTP id k15-v6so5598873ljc.8;
-        Fri, 21 Dec 2018 10:46:53 -0800 (PST)
+        Fri, 21 Dec 2018 14:08:00 -0500
+Received: by mail-lf1-f67.google.com with SMTP id i26so4655386lfc.0;
+        Fri, 21 Dec 2018 11:07:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9SN8LImLyDjwxI7cdHrCSZgKb9HBIBdcYlEOiHmK7PE=;
-        b=WNItTatUbUjMWZLEJMMSg0/NRVug8/MNTSdPXEK9cohyLfkFrWkLV+J1+EA9ZSwWZR
-         pL+zFN/R5toY+yIyorGQh8arn64pmvaVHUr1GPLLepfFief4pwZbUPm8KpqBBlFA8/ei
-         TltGCNeZz+mY25hIcZjIkIbjzBhH1JRt/xuBVya24svLR+dxlw5JDz9zXpqGKbUuXRMV
-         fom7J6vWysKI3ynEACs6aO6QJ1i5atpeXzeP6ru2kR90Xs8W70IgCXIPIwwdeGNMfe55
-         FI6YYe1J62ndW4Up3Np4x6t7iPXXQBZvvtYqToRDCDV+0sT2Jphcq3iDJZe+q/g4uuTq
-         EeyA==
+        bh=jXFLTI8JHQDvVJR/RJzDh54rUI3Cr7wPyRKQV5m3vEg=;
+        b=im/Mlm+c2j/AxAaz7es2VdN9/H1+kt9/iAqdOYY9SotYhfR2ToDieyP46bdUC3Yl/O
+         3W64atjFM8q9HOs+wuAyewAzX7Y0y6e4dOK5BeWWII9jxvBRPqMeGSnypIpxmDx95sTT
+         QRc2T/nahGo1nT6u3PTXITy44drVil/FmR+csv4nouQzJawoJFaWnNQSnCotKUqViGBA
+         I390nT8mONQu15dxkpUSCHTrpi+Yflw9YJv/e4kbxrOQ4R03d0HvfK4MhW/dbN5rdTxN
+         YSzAEKVq1oKoYApV3QdNEY5wswtq+K8dvt1SuS4X0wN+Mz3QEafxAgxxQB3UNTBzOvxM
+         IjDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=9SN8LImLyDjwxI7cdHrCSZgKb9HBIBdcYlEOiHmK7PE=;
-        b=QcLECearp9Pl1xASsEebR3AHXKhxjTWCbIVyP8LG4f7e7l/ezVpoarcFXSSka4TYLS
-         DpJlY+l/YwBdROIJQdG1Q4npwKFPFRCHzh5js3/HKOaAWLvm/XphBVORgDuM2+Gs8oEC
-         cRHyMQcq32P09E41OiR+Beig5h3OIcG0sye54xHC6iQBoPXyNYQ5KTm3w2seDnVQyh/5
-         AmU8fBp4a4DIEV+yizIDP9bBU0R3elMBn/MZ9GSwq3Yi783FAT2GbEfhEhBc9ljwsQEn
-         i/UbWdaWLLCCcOHQOVsmc8OOlQXhDAIRbYi3XweSSBNMvfTjQtes9XqANsqC3ekdC6qP
-         y/sA==
-X-Gm-Message-State: AJcUukeNz1fckaT0qOpPS7oe67agFW91gwHNQ/P6718K4clNsTYtoYO0
-        dL112M6EexUfhK979/eURz9zDf/JHCs=
-X-Google-Smtp-Source: ALg8bN5A7ixJIaEhK+HJ1WGLkJa9Mb4Im59RfMZDB3PQ0GgyBMakdY9zgvZFwFwnBVwrExsYnyCnjA==
-X-Received: by 2002:a2e:81a:: with SMTP id 26-v6mr2530570lji.14.1545418012645;
-        Fri, 21 Dec 2018 10:46:52 -0800 (PST)
+        bh=jXFLTI8JHQDvVJR/RJzDh54rUI3Cr7wPyRKQV5m3vEg=;
+        b=LPfyJBjSBBqghKfCl99GVhkyUri0dusHj4E0WrSPuZ0ImItBQnCT4x3+LIUV4zL1I8
+         s2KoZlvMNtX5iAgkO8LfYSHaFKq0evok+MNs3TooyltFtbOKOJqW+8SnIHoU3taV/jlg
+         oOmySEJ/xdrxhEs1PxIcko1LUbNZ8AOMCMDtm+ADwjkEssucPoA74aoIdHZNrLbS223P
+         yZbf9KpVd8MBHWXufkr7A3yiA5Ijqm0hDBzoL4zfSpdG1QYV81Vb/BcOXTduSpY6WhFA
+         FTmvALjpcz8XQ4piz+stm/okC1dQaC77OPZND4GdgRnlyfKvevw7SVvucY3n1M66zVRE
+         LjbA==
+X-Gm-Message-State: AA+aEWbMGFOVpVh49JoM6Br35E0tA2khy1ysXhZ9Pj50FoJvVABlIx6o
+        TOtJmimd/EgjBTCicYOlPRQI4HqFPzs=
+X-Google-Smtp-Source: AFSGD/USLps/3VikByvmsmlxstgZZfuLrFey2O+zLKgZErnqAgraGUnZxyKIdeZmZ0F0e1Vtpl4USQ==
+X-Received: by 2002:a19:cfc6:: with SMTP id f189mr2249346lfg.102.1545419277138;
+        Fri, 21 Dec 2018 11:07:57 -0800 (PST)
 Received: from ?IPv6:2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2? (dmhwpt3bffxn8z3-j6k-4.rev.dnainternet.fi. [2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2])
-        by smtp.gmail.com with ESMTPSA id v5-v6sm4847827lje.78.2018.12.21.10.46.50
+        by smtp.gmail.com with ESMTPSA id u11sm5046544lfb.85.2018.12.21.11.07.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 10:46:51 -0800 (PST)
-Subject: Re: [PATCH 01/12] x86_64: memset_user()
+        Fri, 21 Dec 2018 11:07:56 -0800 (PST)
+Subject: Re: [PATCH 03/12] __wr_after_init: generic functionality
 To:     Matthew Wilcox <willy@infradead.org>
 Cc:     Andy Lutomirski <luto@amacapital.net>,
         Peter Zijlstra <peterz@infradead.org>,
@@ -70,15 +70,15 @@ Cc:     Andy Lutomirski <luto@amacapital.net>,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
 References: <20181221181423.20455-1-igor.stoppa@huawei.com>
- <20181221181423.20455-2-igor.stoppa@huawei.com>
- <20181221182515.GF10600@bombadil.infradead.org>
+ <20181221181423.20455-4-igor.stoppa@huawei.com>
+ <20181221184120.GG10600@bombadil.infradead.org>
 From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <f2661969-a0d8-45e1-4334-c9b74d08f143@gmail.com>
-Date:   Fri, 21 Dec 2018 20:46:48 +0200
+Message-ID: <14487401-dec3-6a7d-a0b1-e369e93aa9c4@gmail.com>
+Date:   Fri, 21 Dec 2018 21:07:54 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181221182515.GF10600@bombadil.infradead.org>
+In-Reply-To: <20181221184120.GG10600@bombadil.infradead.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -89,25 +89,112 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 
 
-On 21/12/2018 20:25, Matthew Wilcox wrote:
-> On Fri, Dec 21, 2018 at 08:14:12PM +0200, Igor Stoppa wrote:
->> +unsigned long __memset_user(void __user *addr, int c, unsigned long size)
->> +{
->> +	long __d0;
->> +	unsigned long  pattern = 0;
->> +	int i;
->> +
->> +	for (i = 0; i < 8; i++)
->> +		pattern = (pattern << 8) | (0xFF & c);
+On 21/12/2018 20:41, Matthew Wilcox wrote:
+> On Fri, Dec 21, 2018 at 08:14:14PM +0200, Igor Stoppa wrote:
+>> +static inline int memtst(void *p, int c, __kernel_size_t len)
 > 
-> That's inefficient.
-> 
-> 	pattern = (unsigned char)c;
-> 	pattern |= pattern << 8;
-> 	pattern |= pattern << 16;
-> 	pattern |= pattern << 32;
+> I don't understand why you're verifying that writes actually happen
+> in production code.  Sure, write lib/test_wrmem.c or something, but
+> verifying every single rare write seems like a mistake to me.
 
-ok, thank you
+This is actually something I wrote more as a stop-gap.
+I have the feeling there should be already something similar available.
+And probably I could not find it. Unless it's so trivial that it doesn't 
+deserve to become a function?
+
+But if there is really no existing alternative, I can put it in a 
+separate file.
+
+> 
+>> +#ifndef CONFIG_PRMEM
+> 
+> So is this PRMEM or wr_mem?  It's not obvious that CONFIG_PRMEM controls
+> wrmem.
+
+In my mind (maybe still clinging to the old implementation), PRMEM is 
+the master toggle, for protected memory.
+
+Then there are various types and the first one being now implemented is 
+write rare after init (because ro after init already exists).
+
+However, the same levels of protection should then follow for 
+dynamically allocated memory (ye old pmalloc).
+
+PRMEM would then become the moniker for the whole shebang.
+
+>> +#define wr_assign(var, val)	((var) = (val))
+> 
+> The hamming distance between 'var' and 'val' is too small.  The convention
+> in the line immediately below (p and v) is much more readable.
+
+ok, I'll fix it
+
+>> +#define wr_rcu_assign_pointer(p, v)	rcu_assign_pointer(p, v)
+>> +#define wr_assign(var, val) ({			\
+>> +	typeof(var) tmp = (typeof(var))val;	\
+>> +						\
+>> +	wr_memcpy(&var, &tmp, sizeof(var));	\
+>> +	var;					\
+>> +})
+> 
+> Doesn't wr_memcpy return 'var' anyway?
+
+It should return the destination, which is &var.
+
+But I wanted to return the actual value of the assignment, val
+
+Like if I do  (a = 7)  it evaluates to 7,
+
+similarly wr_assign(a, 7) would also evaluate to 7
+
+The reason why i returned var instead of val is that it would allow to 
+detect any error.
+
+>> +/**
+>> + * wr_memcpy() - copyes size bytes from q to p
+> 
+> typo
+
+:-( thanks
+
+>> + * @p: beginning of the memory to write to
+>> + * @q: beginning of the memory to read from
+>> + * @size: amount of bytes to copy
+>> + *
+>> + * Returns pointer to the destination
+> 
+>> + * The architecture code must provide:
+>> + *   void __wr_enable(wr_state_t *state)
+>> + *   void *__wr_addr(void *addr)
+>> + *   void *__wr_memcpy(void *p, const void *q, __kernel_size_t size)
+>> + *   void __wr_disable(wr_state_t *state)
+> 
+> This section shouldn't be in the user documentation of wr_memcpy().
+
+ok
+
+>> + */
+>> +void *wr_memcpy(void *p, const void *q, __kernel_size_t size)
+>> +{
+>> +	wr_state_t wr_state;
+>> +	void *wr_poking_addr = __wr_addr(p);
+>> +
+>> +	if (WARN_ONCE(!wr_ready, "No writable mapping available") ||
+> 
+> Surely not.  If somebody's called wr_memcpy() before wr_ready is set,
+> that means we can just call memcpy().
+
+
+What I was trying to catch is the case where, after a failed init, the 
+writable mapping doesn't exist. In that case wr_ready is also not set.
+
+The problem is that I just don't know what to do in a case where there 
+has been such a major error which prevents he creation of hte alternate 
+mapping.
+
+I understand that we still want to continue, to provide as much debug 
+info as possible, but I am at a loss about finding the saner course of 
+actions.
 
 --
 igor
