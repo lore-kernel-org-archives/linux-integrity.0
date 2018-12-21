@@ -2,187 +2,125 @@ Return-Path: <SRS0=Hy7N=O6=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD885C43387
-	for <linux-integrity@archiver.kernel.org>; Fri, 21 Dec 2018 16:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27180C43387
+	for <linux-integrity@archiver.kernel.org>; Fri, 21 Dec 2018 16:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CF4C21924
-	for <linux-integrity@archiver.kernel.org>; Fri, 21 Dec 2018 16:11:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Gegr0KxV"
+	by mail.kernel.org (Postfix) with ESMTP id EBC522087F
+	for <linux-integrity@archiver.kernel.org>; Fri, 21 Dec 2018 16:28:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729103AbeLUQLx (ORCPT
+        id S2388610AbeLUQ2b (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 21 Dec 2018 11:11:53 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:60650 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727387AbeLUQLw (ORCPT
+        Fri, 21 Dec 2018 11:28:31 -0500
+Received: from dmz-mailsec-scanner-6.mit.edu ([18.7.68.35]:55450 "EHLO
+        dmz-mailsec-scanner-6.mit.edu" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731121AbeLUQ2b (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 21 Dec 2018 11:11:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=vErhfpBxubKBDMRUydyY8BRQTd9QafhudDOmkJWQNoo=; b=Gegr0KxVPyvu5SEM3AoLJveBX
-        ruVQKCzVTqwWPbu7heCxs/ALLv3e49K+Yu7jwc5j/LO0Wq7mB1Q3GxYOTiGEjfK3ubNSY22/JiucB
-        O0zu4GZZsiAyOhICFupoppPSz1FoySYm/3gQH51onoIJ9zuQffTDu6MunPELpd7rN4oFx0F4BrBcF
-        CPnFrk3V5zDcoNrt1rWuZgxl+WwxFuSF3O+RMO+NvNVqZmL9uIez+ecWyw6y7o9e+W7VP+Wt9xDfE
-        PI1NCfv3SRzcWWDflzdcISUY+Z5eFshLQT5C3oAHr5DBCuKO//mkXWJ/rAC0GAtZ8MAzDrhMdvywu
-        F/7hEM9yg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gaNOw-0004QW-VC; Fri, 21 Dec 2018 16:11:50 +0000
-Date:   Fri, 21 Dec 2018 08:11:50 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Fri, 21 Dec 2018 11:28:31 -0500
+X-AuditID: 12074423-8c3ff700000053bc-94-5c1d14aa08b6
+Received: from mailhub-auth-4.mit.edu ( [18.7.62.39])
+        (using TLS with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by dmz-mailsec-scanner-6.mit.edu (Symantec Messaging Gateway) with SMTP id 92.5D.21436.BA41D1C5; Fri, 21 Dec 2018 11:28:28 -0500 (EST)
+Received: from outgoing.mit.edu (OUTGOING-AUTH-1.MIT.EDU [18.9.28.11])
+        by mailhub-auth-4.mit.edu (8.14.7/8.9.2) with ESMTP id wBLGSOZ8023106;
+        Fri, 21 Dec 2018 11:28:25 -0500
+Received: from callcc.thunk.org (251.sub-174-192-22.myvzw.com [174.192.22.251])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id wBLGSFoJ012525
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 Dec 2018 11:28:19 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 4458F7A45FA; Fri, 21 Dec 2018 11:28:13 -0500 (EST)
+Date:   Fri, 21 Dec 2018 11:28:13 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
         Victor Hsieh <victorhsieh@google.com>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
-Message-ID: <20181221161150.GD10600@bombadil.infradead.org>
-References: <20181101225230.88058-1-ebiggers@kernel.org>
- <20181101225230.88058-2-ebiggers@kernel.org>
+Message-ID: <20181221162813.GB26547@mit.edu>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20181219071420.GC2628@infradead.org>
+ <20181219021953.GD31274@dastard>
+ <20181219193005.GB6889@mit.edu>
+ <20181219213552.GO6311@dastard>
+ <20181220220158.GC2360@mit.edu>
+ <20181221070447.GA21687@infradead.org>
+ <20181221154714.GA26547@mit.edu>
+ <20181221155354.GC10600@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181101225230.88058-2-ebiggers@kernel.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181221155354.GC10600@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0gUURTGuzPj7Lg4cl01b6sGbUVhaRkhE2gvCqciKKjAEmp0J3dxd7WZ
+        1dQKLEN0tbCobBddNo0etlq5Yj4rHy2+CEoxiawwLZTMQjRFi3bWfPx3zvf7vnPu5V4KV4x6
+        KCmtwcgLBk6nIuWEQrZ9XajdLzh2c5vDh8m/0eTB9I8982CqnB8BU94wizOdBSUYM/jYgjNm
+        6weSeVsSzYxYJwmmobGdYNpeO2VMd10RyXwymXBm4OqojGl1tJLMzFQRuROyHSWItVWmsI4H
+        IWxlWS7Jtt2eIdjPzQ6CrbeNY+yvofcEe/lFL8mOV648JD8uj1TzOm0qL2zafkqu+VBbiyd/
+        k6X9vFUFMsFd0gQ8KQS3otKuEZkJyCkFtGPImfcLn2ueAvSywvm/eYOhm333MSmigAIae1cN
+        pJqAa9GrpotunYTrkX3oD2ECFOXnqr9XbZGyOOwjULY11+33hbtQ6cAPt5+GG1HpYKF7AQ1/
+        E2hiuoyc21aDoczOO/9dPqjdPEhINQ5DUN/fYUzagMNAdP8vJcmeMBL9aOyRSbI/XIPGbbAA
+        KCxLwpYlYcti2AbwMhCs1meE6jmtTuTjQ8V4zmDghdCIML3WGMarUyqB+1X3rK4Bw1cPNANI
+        AZUXXTAZFKvw4FLFdH0zWEFhKn86b9olecclqdM1nKg5KaToeLEZIApX+dE5US5Gq7n0DF5I
+        mkeBFKEKoGf9vpxQwATOyCfyfDIvzNMgilIh2uYbHKvwEfgEPu20VmdcxBjlKQ33cg2vkjy0
+        mMzpRW3CHO8Aq5QB9F0JQAloUgwLWemXVrxcPjMCAlxX8aVJyeXl+sML6RHXYMw1WL5bOrVo
+        5BaRMhOkhx9uLIRO9dfi6IHuEPOOn2lwmblvgxUVrnMUpWYph6YuyCJawi+dLbXvtxzZpiSO
+        FMRvCeqP6bL51JzPE0rq4sIK84ee4r6dx1ZavI+Zz6X1nBGvd1w52JsdlWOrns1s2TeRW/GI
+        jdmbNT6QfPLJquv3jibW24utD0+UP7/Wr1IRooYLD8EFkfsHYox4f4ADAAA=
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 03:52:19PM -0700, Eric Biggers wrote:
-> +In the recommended configuration of SHA-256 and 4K blocks, 128 hash
-> +values fit in each block.  Thus, each level of the hash tree is 128
-> +times smaller than the previous, and for large files the Merkle tree's
-> +size converges to approximately 1/129 of the original file size.
+On Fri, Dec 21, 2018 at 07:53:54AM -0800, Matthew Wilcox wrote:
+> In contrast to "we'll just fix it up later" (which usually applies
+> to in-kernel interfaces), we have a policy of not breaking userspace,
+> so accepting this interface means setting it in stone.  We should get
+> it right.
 
-I think you mean 1/127, not 1/129.
+I'm not convinced it's a "fix", but my point is that if later on you
+want to add extra complexity transforming
 
-> +fsveritysetup format
-> +--------------------
-> +
-> +When enabling fs-verity on a file via the `FS_IOC_ENABLE_VERITY`_
-> +ioctl, the kernel requires that the verity metadata has been appended
-> +to the file contents.  Specifically, the file must be arranged as:
-> +
-> +#. Original file contents
-> +#. Zero-padding to next block boundary
-> +#. `Merkle tree`_
-> +#. `fs-verity descriptor`_
-> +#. fs-verity footer
-> +
-> +We call this file format the "fsveritysetup format".  It is not
-> +necessarily the on-disk format actually used by the filesystem, since
-> +the filesystem is free to move things around during the ioctl.
-> +However, the easiest way to implement fs-verity is to just keep this
-> +arrangement in-place, as ext4 and f2fs do; see `Filesystem support`_.
-> +
-> +Note that "block" here means the fs-verity block size, which is not
-> +necessarily the same as the filesystem's block size.  For example, on
-> +ext4, fs-verity can use 4K blocks on top of a filesystem formatted to
-> +use a 1K block size.
-> +
-> +The fs-verity footer is a structure of the following format::
-> +
-> +    struct fsverity_footer {
-> +            __le32 desc_reverse_offset;
-> +            __u8 magic[8];
-> +    };
-> +
-> +``desc_reverse_offset`` is the distance in bytes from the end of the
-> +fs-verity footer to the beginning of the fs-verity descriptor; this
-> +allows software to find the fs-verity descriptor.  ``magic`` is the
-> +ASCII bytes "FSVerity"; this allows software to quickly identify a
-> +file as being in the "fsveritysetup" format as well as find the
-> +fs-verity footer if zeroes have been appended.
-> +
-> +The kernel cannot handle fs-verity footers that cross a page boundary.
-> +Padding must be prepended as needed to meet this constaint.
+     ioctl(fd, FS_IOC_ENABLE_VERITY);
 
-I think this ioctl is the start of the disagreement.  How about this
-strawman:
+so it does the equivalent of
 
-verity_fd = ioctl(fd, FS_IOC_VERITY_FD);
-write(verity_fd, &merkle_tree);
-close(verity_fd);
+     ioctl(fd, FS_IOC_ENABLE_VERITY_NOW_WITH_EXTRA_USELESS_COMPLEXITY,
+	   fd, sizeof_data, sizeof_verity_data);
 
-At final close of that verity_fd, the filesystem behaves in the same way
-that it does on receipt of this FS_IOC_ENABLE_VERITY ioctl today.
+it adds essentially no complexity to provide this backwards
+compatibility.  But if we need to implement
+FS_IOC_ENABLE_VERITY_NOW_WITH_EXTRA_USELESS_COMPLEXITY *now*, we gain
+nothing, other than pushing back when fsverity lands upstream.  We'd
+have to provide that backwards compatibility interface anyway, since
+there are a lot of users for that existing interface.
 
-> +FS_IOC_MEASURE_VERITY
-> +---------------------
-> +
-> +The FS_IOC_MEASURE_VERITY ioctl retrieves the fs-verity measurement of
-> +a regular file.  This is a digest that cryptographically summarizes
-> +the file contents that are being enforced on reads.  The file must
-> +have fs-verity enabled.
-> +
-> +This ioctl takes in a pointer to a variable-length structure::
-> +
-> +    struct fsverity_digest {
-> +            __u16 digest_algorithm;
-> +            __u16 digest_size; /* input/output */
-> +            __u8 digest[];
-> +    };
-> +
-> +``digest_size`` is an input/output field.  On input, it must be
-> +initialized to the number of bytes allocated for the variable-length
-> +``digest`` field.
-> +
-> +On success, 0 is returned and the kernel fills in the structure as
-> +follows:
-> +
-> +- ``digest_algorithm`` will be the hash algorithm used for the file
-> +  measurement.  It will match the algorithm used in the Merkle tree,
-> +  e.g. FS_VERITY_ALG_SHA256.  See ``include/uapi/linux/fsverity.h``
-> +  for the list of possible values.
-> +- ``digest_size`` will be the size of the digest in bytes, e.g. 32
-> +  for SHA-256.  (This can be redundant with ``digest_algorithm``.)
-> +- ``digest`` will be the actual bytes of the digest.
-> +
-> +This ioctl is guaranteed to be very fast.  Due to fs-verity's use of a
-> +Merkle tree, its running time is independent of the file size.
-> +
-> +This ioctl can fail with the following errors:
-> +
-> +- ``EFAULT``: invalid buffer was specified
-> +- ``ENODATA``: the file is not a verity file
-> +- ``ENOTTY``: this type of filesystem does not implement fs-verity
-> +- ``EOPNOTSUPP``: the kernel was not configured with fs-verity support
-> +  for this filesystem, or the filesystem superblock has not had the
-> +  'verity' feature enabled on it.  (See `Filesystem support`_.)
-> +- ``EOVERFLOW``: the file measurement is longer than the specified
-> +  ``digest_size`` bytes.  Try providing a larger buffer.
+So why?
 
-Should this ioctl be better implemented as an xattr?
-
-> +- Direct I/O is not supported on verity files.  Attempts to use direct
-> +  I/O on such files will fall back to buffered I/O.
-
-That makes sense; the filesystem can't verify the data before presenting
-it to userspace if it's being copied directly into userspace.
-
-> +- DAX (Direct Access) is not supported on verity files.
-
-That makes less sense.  The kernel can check the checksum before
-copying the data to the user.  Is this simply a current limitation of
-the implementation?
-
-> +Thus, when ascending the tree reading hash pages, fs-verity can stop
-> +as soon as it finds an already-checked hash page.  This optimization,
-> +which is also used by dm-verity, results in excellent sequential read
-> +performance since usually the deepest needed hash page will already be
-> +cached and checked.  However, random reads perform worse.
-
-I think you mean "all but the deepest"?
+				- Ted
 
