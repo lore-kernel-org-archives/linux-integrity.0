@@ -2,126 +2,186 @@ Return-Path: <SRS0=7MnC=O7=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.2 required=3.0 tests=DKIM_ADSP_ALL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C7ABC43612
-	for <linux-integrity@archiver.kernel.org>; Sat, 22 Dec 2018 00:03:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 159EBC43387
+	for <linux-integrity@archiver.kernel.org>; Sat, 22 Dec 2018 17:32:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9DE12192C
-	for <linux-integrity@archiver.kernel.org>; Sat, 22 Dec 2018 00:03:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D09E821A47
+	for <linux-integrity@archiver.kernel.org>; Sat, 22 Dec 2018 17:32:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387485AbeLVAD2 (ORCPT
+        id S2391449AbeLVRcy convert rfc822-to-8bit (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 21 Dec 2018 19:03:28 -0500
-Received: from mga02.intel.com ([134.134.136.20]:43372 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387468AbeLVAD2 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 21 Dec 2018 19:03:28 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 16:03:26 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,383,1539673200"; 
-   d="scan'208";a="120346172"
-Received: from ncanderx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.238])
-  by FMSMGA003.fm.intel.com with ESMTP; 21 Dec 2018 16:03:22 -0800
-Date:   Sat, 22 Dec 2018 02:03:21 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
+        Sat, 22 Dec 2018 12:32:54 -0500
+Received: from sender-of-o53.zoho.com ([135.84.80.218]:21714 "EHLO
+        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391420AbeLVRcy (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 22 Dec 2018 12:32:54 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1545486440; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=Tqd7EJr38JljH2g3WeS8HRRT2WvFb5xOEyZc/6i0KfL/VU57RXFh2hmbNz8UlPVXNdcM1fj7TkQxthv0Cwh7dPRstBU5LDLIsooQTuyxZBuQO3HOlYdkhUzEFs1+ntYv6ZXpyy8N0uaFFTr7moy5SR/f0sYL2D+VJY73caiQblM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1545486440; h=Content-Type:Content-Transfer-Encoding:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=itqnhxWNrHLdnkkCsW3z0T5I1XolTMo/Y9SOGj0uSgw=; 
+        b=B84TzFQ7qB5PIn7REC/JconqntVmAqqEHRMlIIWthwsIrl5R0879vSoJXAjp+RFKaPTXBbwfDjwUSchC92NdoIwZxaX1JeehjeDGV25SZlIVlNnFRHchZADV5mSB5BatWpNVj+vVzhGjyYn1Ie8A4yN/L5OmtkIMdA7feGiL95Y=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=mniewoehner.de;
+        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
+        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
+Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
+        with SMTPS id 1545486437594444.0936340937685; Sat, 22 Dec 2018 05:47:17 -0800 (PST)
+Message-ID: <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
+Subject: Re: tpm_tis TPM2.0 not detected on cold boot
+From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
         linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v7 1/5] tpm: dynamically allocate the allocated_banks
- array
-Message-ID: <20181222000321.GB8954@linux.intel.com>
-References: <20181213102945.30946-1-roberto.sassu@huawei.com>
- <20181213102945.30946-2-roberto.sassu@huawei.com>
- <20181220145500.GA10652@linux.intel.com>
- <0900a894-e17b-edc8-fa30-db7d16665082@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0900a894-e17b-edc8-fa30-db7d16665082@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Ken Goldman <kgold@linux.ibm.com>
+In-Reply-To: <ef7e773b01a5e6153b84628f74fc67092a2f9b0e.camel@gmail.com>
+References: <ef7e773b01a5e6153b84628f74fc67092a2f9b0e.camel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Sat, 22 Dec 2018 14:47:13 +0100
+Mime-Version: 1.0
+X-Mailer: Evolution 3.28.5 
+Content-Transfer-Encoding: 8BIT
+X-ZohoMailClient: External
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 10:40:09AM +0100, Roberto Sassu wrote:
-> On 12/20/2018 3:55 PM, Jarkko Sakkinen wrote:
-> > On Thu, Dec 13, 2018 at 11:29:41AM +0100, Roberto Sassu wrote:
-> > > This patch renames active_banks (member of tpm_chip) to allocated_banks,
-> > > stores the number of allocated PCR banks in nr_allocated_banks (new member
-> > > of tpm_chip), and replaces the static array with a pointer to a dynamically
-> > > allocated array.
-> > > 
-> > > tpm2_get_pcr_allocation() determines if a PCR bank is allocated by checking
-> > > the mask in the TPML_PCR_SELECTION structure returned by the TPM for
-> > > TPM2_Get_Capability(). If a bank is not allocated, the TPM returns that
-> > > bank in TPML_PCR_SELECTION, with all bits in the mask set to zero. In this
-> > > case, the bank is not included in chip->allocated_banks, to avoid that TPM
-> > > driver users unnecessarily calculate a digest for that bank.
-> > > 
-> > > One PCR bank with algorithm set to SHA1 is always allocated for TPM 1.x.
-> > > 
-> > > As a consequence of the introduction of nr_allocated_banks,
-> > > tpm_pcr_extend() does not check anymore if the algorithm stored in tpm_chip
-> > > is equal to zero.
-> > > 
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > ---
-> > >   drivers/char/tpm/tpm-chip.c      |  1 +
-> > >   drivers/char/tpm/tpm-interface.c | 18 +++++++++--------
-> > >   drivers/char/tpm/tpm.h           |  3 ++-
-> > >   drivers/char/tpm/tpm1-cmd.c      | 10 ++++++++++
-> > >   drivers/char/tpm/tpm2-cmd.c      | 34 ++++++++++++++++++++++----------
-> > >   5 files changed, 47 insertions(+), 19 deletions(-)
-> > > 
-> > > diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-> > > index 32db84683c40..ce851c62bb68 100644
-> > > --- a/drivers/char/tpm/tpm-chip.c
-> > > +++ b/drivers/char/tpm/tpm-chip.c
-> > > @@ -160,6 +160,7 @@ static void tpm_dev_release(struct device *dev)
-> > >   	kfree(chip->log.bios_event_log);
-> > >   	kfree(chip->work_space.context_buf);
-> > >   	kfree(chip->work_space.session_buf);
-> > > +	kfree(chip->allocated_banks);
-> > >   	kfree(chip);
-> > >   }
-> > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> > > index d9439f9abe78..7b80919228be 100644
-> > > --- a/drivers/char/tpm/tpm-interface.c
-> > > +++ b/drivers/char/tpm/tpm-interface.c
-> > > @@ -488,8 +488,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
-> > >   int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
-> > >   {
-> > >   	int rc;
-> > > -	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
-> > > -	u32 count = 0;
-> > > +	struct tpm2_digest *digest_list;
-> > >   	int i;
-> > >   	chip = tpm_find_get_ops(chip);
-> > > @@ -497,16 +496,19 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
-> > >   		return -ENODEV;
-> > >   	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-> > > -		memset(digest_list, 0, sizeof(digest_list));
-> > > +		digest_list = kcalloc(chip->nr_allocated_banks,
-> > > +				      sizeof(*digest_list), GFP_KERNEL);
-> > > +		if (!digest_list)
-> > > +			return -ENOMEM;
-> > 
-> > You could preallocate digest list and place it to struct tpm_chip
-> > instead of doing it everytime tpm_pcr_extend() called.
+Hi all,
+
+On Sun, 2018-12-16 at 14:32 +0100, Michael Niewöhner wrote:
+> Hi again,
 > 
-> This part will be removed with patch 5/5.
+> after my UEFI firmware mod/hack to flash the newest available Nuvoton firmware
+> to the NCPT650 the selftest error went away. Since then the TPM worked without
+> any further problems, at least after warm reboots.
+> 
+> What I didn't notice before is that it does NOT work after a cold (re)boot.
+> There is no difference between Intel Firmware TPM and the Nuvoton TPM.
+> I can reproduce the error for both. I did not test TPM1.2 again.
+> 
+> dmesg warm (re)boot:
+> --------------------
+> > dmesg | grep -i tpm
+> 
+> [    0.000000] efi:  ACPI
+> 2.0=0x9e07e000  ACPI=0x9e07e000  SMBIOS=0x9ebeb000  SMBIOS
+> 3.0=0x9ebea000  MEMATTR=0x98fb2018  TPMEventLog=0x972bc018 
+> [    0.003368] ACPI: TPM2 0x000000009E0B7F70 000034 (v03 LENOVO TC-
+> S06   00001260 AMI  00000000)
+> [    3.610138] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
+> 
+> 
+> dmesg cold boot with tpm_tis.interrupts=0 tpm_tis.force=1:
+> ----------------------------------------------------------
+> > dmesg | grep -i tpm
+> 
+> [    0.000000] Command line: initrd=\initrd-test console=ttyS0,115200n8
+> break=premount tpm_tis.interrupts=0 tpm_tis.force=1
+> [    0.000000] efi:  ACPI
+> 2.0=0x9e07e000  ACPI=0x9e07e000  SMBIOS=0x9ebeb000  SMBIOS
+> 3.0=0x9ebea000  MEMATTR=0x98fb2018  TPMEventLog=0x972bb018 
+> [    0.003531] ACPI: TPM2 0x000000009E0B7F70 000034 (v03 LENOVO TC-
+> S06   00001260 AMI  00000000)
+> [    0.162005] Kernel command line: initrd=\initrd-test console=ttyS0,115200n8
+> break=premount tpm_tis.interrupts=0 tpm_tis.force=1
+> [    3.616806] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
+> [    3.683117] tpm_tis tpm_tis: can't request region for resource [mem
+> 0xfed40000-0xfed44fff]
+> [    3.691378] tpm_tis: probe of tpm_tis failed with error -16
+> [    4.572539] ima: Error Communicating to TPM chip
+> 
+> 
+> dmesg cold boot:
+> ----------------
+> > dmesg | grep -i tpm
+> 
+> [    0.000000] Command line: initrd=\initrd-test console=ttyS0,115200n8
+> break=premount
+> [    0.000000] efi:  ACPI
+> 2.0=0x9e07e000  ACPI=0x9e07e000  SMBIOS=0x9ebeb000  SMBIOS
+> 3.0=0x9ebea000  MEMATTR=0x98fb2298  TPMEventLog=0x972bb018 
+> [    0.003559] ACPI: TPM2 0x000000009E0B7F70 000034 (v03 LENOVO TC-
+> S06   00001260 AMI  00000000)
+> [    0.161958] Kernel command line: initrd=\initrd-test console=ttyS0,115200n8
+> break=premount
+> [    5.245801] ima: No TPM chip found, activating TPM-bypass!
+> 
+> 
+> Any ideas how to debug this?
+> 
+> Thanks
+> Michael
 
-Even if it did, it does not make this patch unbroken.
 
-/Jarkko
+I have been doing some more debugging - as far as I were able to. These are my
+results:
+
+Doing a cold boot I was getting "No TPM chip found" in most cases. I found out
+that the TPM will not be found if the bootloader (systemd-boot in my case) has a
+timeout value of 10 seconds. This was set for some other tests...
+
+When I remove the timeout and boot directly to the linux kernel, I get that
+"2314 TPM-self test error" since it has not finished, yet. The TPM is detected
+by IMA and works fine then.
+
+Some more tests showed that any delay before booting the kernel causes the TPM
+to not get detected. I tested, 10, 15, 20, 30, 60... seconds. Only in some very
+rare cases the TPM got detected.
+
+I wanted to know if the TPM is in an well initialized state at the time of that
+error. Since I was not able to get some test/debug kernel patches working I
+decided to try kexec. It turned out that the TPM is indeed correctly working and
+will be detected just fine by linux after kexec!
+
+Is there anyone having an idea what could be wrong here? I am willing to debug
+this but I have really no idea where to start :-(
+
+Best regards
+Michael
+
+----
+
+kexec test output:
+
+<...>
+(initramfs) dmesg | grep -i tpm
+[    0.000000] Command line: initrd=\initrd console=ttyS0,115200n8
+root=zfs:rpool/ROOT tpm.override_rng_quality=1024 quiet break=top
+[    0.000000] efi:  ACPI
+2.0=0x9ea7e000  ACPI=0x9ea7e000  SMBIOS=0x9f5eb000  SMBIOS
+3.0=0x9f5ea000  MPS=0xfca00  ESRT=0x9c07b118  MEMATTR=0x9982d018  TPMEventLog=0x
+98ace018 
+[    0.001310] ACPI: TPM2 0x000000009EAB7F70 000034 (v03 LENOVO TC-
+S06   00001260 AMI  00000000)
+[    0.159568] Kernel command line: initrd=\initrd console=ttyS0,115200n8
+root=zfs:rpool/ROOT quiet break=top
+[    1.376200] ima: No TPM chip found, activating TPM-bypass!
+
+/ # kexec -f --initrd=/initrd.img-4.19.9\+ --reuse-cmdline /vmlinuz-4.19.9\+
+[  890.632541] kexec_core: Starting new kernel
+<...>
+(initramfs) dmesg | grep -i tpm
+[    0.000000] Command line: initrd=\initrd console=ttyS0,115200n8
+root=zfs:rpool/ROOT tpm.override_rng_quality=1024 quiet break=top
+[    0.000000] efi:  ACPI
+2.0=0x9ea7e000  ACPI=0x9ea7e000  SMBIOS=0x9f5eb000  SMBIOS
+3.0=0x9f5ea000  MPS=0xfca00  ESRT=0x9c07b118  MEMATTR=0x9982d018  TPMEventLog=0x
+98ace018 
+[    0.001272] ACPI: TPM2 0x000000009EAB7F70 000034 (v03 LENOVO TC-
+S06   00001260 AMI  00000000)
+[    0.168244] Kernel command line: initrd=\initrd console=ttyS0,115200n8
+root=zfs:rpool/ROOT quiet break=top
+[    0.632922] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
+
+
