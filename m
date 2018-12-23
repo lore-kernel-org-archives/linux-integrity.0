@@ -1,112 +1,165 @@
-Return-Path: <SRS0=7MnC=O7=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=ssK9=PA=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 274A7C43387
-	for <linux-integrity@archiver.kernel.org>; Sat, 22 Dec 2018 22:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 300A2C43444
+	for <linux-integrity@archiver.kernel.org>; Sun, 23 Dec 2018 02:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E97BC21934
-	for <linux-integrity@archiver.kernel.org>; Sat, 22 Dec 2018 22:54:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA89F2192C
+	for <linux-integrity@archiver.kernel.org>; Sun, 23 Dec 2018 02:29:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vbrgR/yM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732898AbeLVWyN (ORCPT
+        id S2391298AbeLWC3G (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 22 Dec 2018 17:54:13 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41150 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725828AbeLVWyM (ORCPT
+        Sat, 22 Dec 2018 21:29:06 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46251 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389000AbeLWC3F (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 22 Dec 2018 17:54:12 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBMMmOdC113508
-        for <linux-integrity@vger.kernel.org>; Sat, 22 Dec 2018 17:54:11 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2phjae2jc8-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Sat, 22 Dec 2018 17:54:11 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Sat, 22 Dec 2018 22:54:09 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 22 Dec 2018 22:54:06 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBMMs5Bw60948554
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 22 Dec 2018 22:54:05 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E5D1A4C046;
-        Sat, 22 Dec 2018 22:54:04 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 830CD4C040;
-        Sat, 22 Dec 2018 22:54:03 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.106.35])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sat, 22 Dec 2018 22:54:03 +0000 (GMT)
-Subject: Re: tpm_tis TPM2.0 not detected on cold boot
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
+        Sat, 22 Dec 2018 21:29:05 -0500
+Received: by mail-lf1-f66.google.com with SMTP id f23so6391351lfc.13;
+        Sat, 22 Dec 2018 18:29:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YfYukEIvjpnj4jhj4j49e3JcsCxQDXDj8x9DO3JATjA=;
+        b=vbrgR/yMRyE1WX6zkgAeWduszzxCfICWMWhoIhfGLGdDjZVUJtHdAWv/UVyOOKOY4W
+         txFfBLXdUUiTPu+Tf3Img/LdZAS1TNHzCg3XUAU8ao129gR1BsTDUXVxaf6OD+oB6Ohq
+         fzf3B7r5EOo3iW1+7YMrBamXdbwdVjBGSIggIIzqCzXDa5PF03ZPgfiJsAY2N8QTYgQr
+         UKKRT02rUmC3KNL7Ti3i2k2rPHoz/WLbMAd9q0UkCwINLxf8YfvZlNvLQsNRB+jT6JsI
+         fLwkMF7F5nf/l7mfyja9XqN/gwYMa13dDNi3PvVPFjofwz0gYb7JMY1I7SlDcgWMiIPg
+         zvFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YfYukEIvjpnj4jhj4j49e3JcsCxQDXDj8x9DO3JATjA=;
+        b=Ewl9+mvdJTqFFJ+Km1Ac/yaYJzkBDb6UbL+rU8Xb0X9sPm1+KxApsVKvjr4KNSxvwA
+         1EZXGTapTD/XeyqMbLBzUb2sMV9Z4wDbMc6iUqiVSksg5iY6tVSGEdFj5NDxZPEcIgrR
+         iwBg1+mXQ5aua8heWS/nT5pBZyXwxeaTGOXLJegry4o9U8iT9BPI5j7dLpVvg54uS6Ik
+         VV5lReQk0GnPMNqcm3g1YwlpNHnffqHMDe0gSNsoftsjaM5w4LnD4yZINrYsnVOn3L+g
+         Zqer4ChOgogzFtRckbLHtvFAIqm47uEpQ8JjQyZfzIiKo5Xt/AkeHXSWccbobz+z7nOb
+         7hng==
+X-Gm-Message-State: AA+aEWYma0IngmiclI98xHti4jt6jXFzaCN8XVpd2P5sU3FcHsOi4p66
+        3FLFD3abxo0tEIuScBwbbArY3ozAuCmh7g==
+X-Google-Smtp-Source: AFSGD/XKMxhFWZUW0drxZbMwZdEZEIqOcVdIw6joBe/4yhmEBpyKtL/VYgk3lZVAIz44EXh8HWEplQ==
+X-Received: by 2002:a19:3b9c:: with SMTP id d28mr4497004lfl.30.1545532142626;
+        Sat, 22 Dec 2018 18:29:02 -0800 (PST)
+Received: from [192.168.10.160] (91-159-63-61.elisa-laajakaista.fi. [91.159.63.61])
+        by smtp.gmail.com with ESMTPSA id o72sm5711942lfg.33.2018.12.22.18.28.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 22 Dec 2018 18:29:01 -0800 (PST)
+Subject: Re: [PATCH 03/12] __wr_after_init: generic header
+To:     Matthew Wilcox <willy@infradead.org>,
+        Nadav Amit <nadav.amit@gmail.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>, igor.stoppa@huawei.com,
+        Kees Cook <keescook@chromium.org>,
         linux-integrity@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Ken Goldman <kgold@linux.ibm.com>
-Date:   Sat, 22 Dec 2018 17:53:52 -0500
-In-Reply-To: <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
-References: <ef7e773b01a5e6153b84628f74fc67092a2f9b0e.camel@gmail.com>
-         <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18122222-4275-0000-0000-000002F46558
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18122222-4276-0000-0000-0000380275FC
-Message-Id: <1545519232.3940.115.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-22_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=944 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812220207
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20181219213338.26619-1-igor.stoppa@huawei.com>
+ <20181219213338.26619-4-igor.stoppa@huawei.com>
+ <8474D7CA-E5FF-40B1-9428-855854CDDB5F@gmail.com>
+ <20181221194547.GI10600@bombadil.infradead.org>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <6562ebd3-e97d-41c4-261a-9f4b863118eb@gmail.com>
+Date:   Sun, 23 Dec 2018 04:28:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181221194547.GI10600@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sat, 2018-12-22 at 14:47 +0100, Michael Niewöhner wrote:
 
-> When I remove the timeout and boot directly to the linux kernel, I get that
-> "2314 TPM-self test error" since it has not finished, yet. The TPM is detected
-> by IMA and works fine then.
+
+On 21/12/2018 21:45, Matthew Wilcox wrote:
+> On Fri, Dec 21, 2018 at 11:38:16AM -0800, Nadav Amit wrote:
+>>> On Dec 19, 2018, at 1:33 PM, Igor Stoppa <igor.stoppa@gmail.com> wrote:
+>>>
+>>> +static inline void *wr_memset(void *p, int c, __kernel_size_t len)
+>>> +{
+>>> +	return __wr_op((unsigned long)p, (unsigned long)c, len, WR_MEMSET);
+>>> +}
+>>
+>> What do you think about doing something like:
+>>
+>> #define __wr          __attribute__((address_space(5)))
+>>
+>> And then make all the pointers to write-rarely memory to use this attribute?
+>> It might require more changes to the code, but can prevent bugs.
 > 
-> Some more tests showed that any delay before booting the kernel causes the TPM
-> to not get detected. I tested, 10, 15, 20, 30, 60... seconds. Only in some very
-> rare cases the TPM got detected.
-> 
-> I wanted to know if the TPM is in an well initialized state at the time of that
-> error. Since I was not able to get some test/debug kernel patches working I
-> decided to try kexec. It turned out that the TPM is indeed correctly working and
-> will be detected just fine by linux after kexec!
+> I like this idea.  It was something I was considering suggesting.
 
-No surprise here.  kexec would be the equivalent of a soft reboot.
+I have been thinking about this sort of problem, although from a bit 
+different angle:
 
-> 
-> Is there anyone having an idea what could be wrong here? I am willing to debug
-> this but I have really no idea where to start :-(
+1) enforcing alignment for pointers
+This can be implemented in similar way, by creating a multi-attribute 
+that would define section, address space, like said here, and alignment.
+However I'm not sure if it's possible to do anything to enforce the 
+alignment of a pointer field within a structure. I haven't had time to 
+look into this yet.
 
-A while ago, I was "playing" with a pi.  Commenting out
-tpm2_do_selftest() seemed to resolve a similar problem, but that was
-before James' patches.  I don't know if that would make a difference
-now.
+2) validation of the correctness of the actual value
+Inside the kernel code, a function is not supposed to sanitize its 
+arguments, as long as they come from some other trusted part of the 
+kernel, rather than say from userspace or from some HW interface.
+However,ROP/JOP should be considered.
 
-Mimi
+I am aware of various efforts to make it harder to exploit these 
+techniques, like signed pointers, CFI plugins, LTO.
 
+But they are not necessarily available on every platform and mostly, 
+afaik, they focus on specific type of attacks.
+
+
+LTO can help with global optimizations, for example inlining functions 
+across different objects.
+
+CFI can detect jumps in the middle of a function, rather than proper 
+function invocation, from its natural entry point.
+
+Signed pointers can prevent data-based attacks to the execution flow, 
+and they might have a role in preventing the attack I have in mind, but 
+they are not available on all platforms.
+
+What I'd like to do, is to verify, at runtime, that the pointer belongs 
+to the type that the receiving function is meant for.
+
+Ex: a legitimate __wr_after_init data must exist between 
+__start_wr_after_init and __end_wr_after_init
+
+That is easier and cleaner to test, imho.
+
+But dynamically allocated memory doesn't have any such constraint.
+If it was possible to introduce, for example, a flag to pass to vmalloc, 
+to get the vmap_area from within a specific address range, it would 
+reduce the attack surface.
+
+In the implementation I have right now, I'm using extra flags for the 
+pmalloc pages, which means the metadata is the new target for an attack.
+
+But with adding the constraint that a dynamically allocated protected 
+memory page must be within a range, then the attacker must change the 
+underlying PTE. And if a region of PTEs are all part of protected 
+memory, it is possible to make the PMD write rare.
+
+--
+igor
