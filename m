@@ -2,35 +2,41 @@ Return-Path: <SRS0=i0te=PL=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_ADSP_ALL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86327C43387
-	for <linux-integrity@archiver.kernel.org>; Thu,  3 Jan 2019 13:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA94C43387
+	for <linux-integrity@archiver.kernel.org>; Thu,  3 Jan 2019 13:38:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BEEE2073D
-	for <linux-integrity@archiver.kernel.org>; Thu,  3 Jan 2019 13:27:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CA72217D9
+	for <linux-integrity@archiver.kernel.org>; Thu,  3 Jan 2019 13:38:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730285AbfACN1n (ORCPT
+        id S1730158AbfACNii convert rfc822-to-8bit (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 3 Jan 2019 08:27:43 -0500
-Received: from mga18.intel.com ([134.134.136.126]:51986 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730229AbfACN1m (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 3 Jan 2019 08:27:42 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jan 2019 05:27:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,435,1539673200"; 
-   d="scan'208";a="105222390"
-Received: from tmuluk-mobl4.ger.corp.intel.com (HELO localhost) ([10.249.254.238])
-  by orsmga006.jf.intel.com with ESMTP; 03 Jan 2019 05:27:38 -0800
-Date:   Thu, 3 Jan 2019 15:27:37 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Michael =?iso-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+        Thu, 3 Jan 2019 08:38:38 -0500
+Received: from sender-of-o53.zoho.com ([135.84.80.218]:21757 "EHLO
+        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730102AbfACNii (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 3 Jan 2019 08:38:38 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1546522697; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=dR0+n8WIwuNQ7WzdfP1eTsWVgGEv8YzIT2x3jiyCAcRM5imd2zYi138IVczv26cSOEs5KLBCXsFItjfYGCVRl3u68+QxLUZMp6T3duCzfQCv7Bq43Ceq1ZvaFu3r6nVlzkHd1OuevYMRXXXfj/DUHbviv8gL6OdZUOzOVaRG2KQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1546522697; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=dvuEDzWO0WXxXzRD9kR72QfwNmGN+ZF5CdWEgJMFAHs=; 
+        b=oCSdRitnYXw9n0RpV0BIb8rm957OE3ArO/sUziX/eKPKupzK+nG+ryUAIj6u99erKF6LWHZy9FqaIwFSdJCpdJNO8kSHsaKWg56BEmCixQS1saAp+hjVL882hsCO+vr/J+JE6wmcy81hgWVg2uL3/MPbFL031uaPI8Tu7uEyaDo=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=mniewoehner.de;
+        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
+        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
+Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
+        with SMTPS id 1546522696206674.9908771612716; Thu, 3 Jan 2019 05:38:16 -0800 (PST)
+Message-ID: <6c1bf9815bfcb5d2bc0cfedfc49c7feda0173dc9.camel@mniewoehner.de>
+Subject: Re: tpm_tis TPM2.0 not detected on cold boot
+From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     Mimi Zohar <zohar@linux.ibm.com>,
         James Bottomley <James.Bottomley@HansenPartnership.com>,
         peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
@@ -38,49 +44,57 @@ Cc:     Mimi Zohar <zohar@linux.ibm.com>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         Nayna Jain <nayna@linux.ibm.com>,
         Ken Goldman <kgold@linux.ibm.com>
-Subject: Re: tpm_tis TPM2.0 not detected on cold boot
-Message-ID: <20190103132737.GD10491@linux.intel.com>
+In-Reply-To: <20190103132737.GD10491@linux.intel.com>
 References: <ef7e773b01a5e6153b84628f74fc67092a2f9b0e.camel@gmail.com>
- <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
- <1545519232.3940.115.camel@linux.ibm.com>
- <e7ec38d7cade9aa76384aa2781eab307d2cd5a7b.camel@mniewoehner.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e7ec38d7cade9aa76384aa2781eab307d2cd5a7b.camel@mniewoehner.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+         <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
+         <1545519232.3940.115.camel@linux.ibm.com>
+         <e7ec38d7cade9aa76384aa2781eab307d2cd5a7b.camel@mniewoehner.de>
+         <20190103132737.GD10491@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Thu, 03 Jan 2019 14:38:11 +0100
+Mime-Version: 1.0
+User-Agent: Evolution 3.30.3 
+Content-Transfer-Encoding: 8BIT
+X-ZohoMailClient: External
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sun, Dec 23, 2018 at 12:55:12PM +0100, Michael Niewöhner wrote:
-> There is another issue but I don't know if both are related. Maybe that's just a
-> timing issue...
+On Thu, 2019-01-03 at 15:27 +0200, Jarkko Sakkinen wrote:
+> On Sun, Dec 23, 2018 at 12:55:12PM +0100, Michael NiewÃ¶hner wrote:
+> > There is another issue but I don't know if both are related. Maybe that's
+> > just a
+> > timing issue...
+> > 
+> > root@debian:~# dd if=/dev/hwrng bs=1 count=1
+> > dd: error reading '/dev/hwrng': Operation not permitted
+> > 0+0 records in
+> > 0+0 records out
+> > 0 bytes copied, 0.755958 s, 0.0 kB/s
+> > root@debian:~# dd if=/dev/hwrng bs=1 count=1 | xxd; dd if=/dev/hwrng bs=1
+> > count=1 | xxd
+> > dd: error reading '/dev/hwrng': Operation not permitted
+> > 0+0 records in
+> > 0+0 records out
+> > 0 bytes copied, 0.755697 s, 0.0 kB/s
+> > 1+0 records in
+> > 1+0 records out
+> > 00000000: 52                                       R
+> > 1 byte copied, 0.0106268 s, 0.1 kB/s
+> > 
+> > 
+> > Michael
 > 
-> root@debian:~# dd if=/dev/hwrng bs=1 count=1
-> dd: error reading '/dev/hwrng': Operation not permitted
-> 0+0 records in
-> 0+0 records out
-> 0 bytes copied, 0.755958 s, 0.0 kB/s
-> root@debian:~# dd if=/dev/hwrng bs=1 count=1 | xxd; dd if=/dev/hwrng bs=1
-> count=1 | xxd
-> dd: error reading '/dev/hwrng': Operation not permitted
-> 0+0 records in
-> 0+0 records out
-> 0 bytes copied, 0.755697 s, 0.0 kB/s
-> 1+0 records in
-> 1+0 records out
-> 00000000: 52                                       R
-> 1 byte copied, 0.0106268 s, 0.1 kB/s
+> What does /sys/devices/virtual/misc/hw_random/rng_current show?
 > 
+> Did run commands as a sanity check on my laptop and seem to work.
 > 
-> Michael
+> /Jarkko
 
-What does /sys/devices/virtual/misc/hw_random/rng_current show?
+rng_current says "tpm-rng-0", which should be correct
 
-Did run commands as a sanity check on my laptop and seem to work.
 
-/Jarkko
+Michael
+
+
