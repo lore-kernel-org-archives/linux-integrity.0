@@ -1,108 +1,102 @@
-Return-Path: <SRS0=lCgM=PJ=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=i0te=PL=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_ADSP_ALL,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE85C43387
-	for <linux-integrity@archiver.kernel.org>; Tue,  1 Jan 2019 16:48:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C52EC43387
+	for <linux-integrity@archiver.kernel.org>; Thu,  3 Jan 2019 12:59:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE93521871
-	for <linux-integrity@archiver.kernel.org>; Tue,  1 Jan 2019 16:48:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AE58206C0
+	for <linux-integrity@archiver.kernel.org>; Thu,  3 Jan 2019 12:59:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728860AbfAAQsH convert rfc822-to-8bit (ORCPT
+        id S1727055AbfACM7I (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 1 Jan 2019 11:48:07 -0500
-Received: from sender-of-o53.zoho.com ([135.84.80.218]:21775 "EHLO
-        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728838AbfAAQsH (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 1 Jan 2019 11:48:07 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1546361267; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=RErHK0Ha/nF6vT4wl7AHcIf3q8r4TeYwgKc4kM9I1FTPlcSC+UYV9dI4VdcA3N++jLr3KDgj1k1F6n2pL5172jeAizsvG9h+nI+9beVMdmnAAxgflB085BHwt6eqQoERmGD9KHReerCfr9ZAosY4EbcvJzsmYargMdF/whCU/dk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1546361267; h=Content-Type:Content-Transfer-Encoding:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=UuX9reaX5WI8yKfjBOOKqmdJjhx+JD0KabMxNjbQv8I=; 
-        b=bIjS18VUgPSTQ37WLD5cvODIxQ/KTfC7StIRZzuG76ybxqq5DFCOUX+brOlEPDSDBwwajuyGuwXSTVaFuXu0TOWOlup9i2p6FbFE6G5e2c6MM9PVqr9C6BTnrpz8deMi8KHneyBUGeCGDIZ20txVp/4wfFHq1QQPVUU8Yq8Gi/o=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=mniewoehner.de;
-        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
-        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
-Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
-        with SMTPS id 1546361265826649.2616507766807; Tue, 1 Jan 2019 08:47:45 -0800 (PST)
-Message-ID: <a8b0d64a8b5a85750ca4db7cfb6295db30c3c1ea.camel@mniewoehner.de>
-Subject: Re: tpm_tis TPM2.0 not detected on cold boot
-From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
-        linux-integrity@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Ken Goldman <kgold@linux.ibm.com>
-In-Reply-To: <1546360701.4069.168.camel@linux.ibm.com>
-References: <ef7e773b01a5e6153b84628f74fc67092a2f9b0e.camel@gmail.com>
-         <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
-         <1545519232.3940.115.camel@linux.ibm.com>
-         <e7ec38d7cade9aa76384aa2781eab307d2cd5a7b.camel@mniewoehner.de>
-         <b75fd04643daf5aab5a1fc115e8fbfca9a381f8d.camel@mniewoehner.de>
-         <1546140837.4069.81.camel@linux.ibm.com>
-         <912668ea1d74f526f78f03f562fdaf17fc06f62c.camel@mniewoehner.de>
-         <1546291059.4069.158.camel@linux.ibm.com>
-         <0902784697eea3fc522e21a89cdecb745f12c83c.camel@mniewoehner.de>
-         <1546360701.4069.168.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Date:   Tue, 01 Jan 2019 17:47:41 +0100
-Mime-Version: 1.0
-User-Agent: Evolution 3.30.3 
-Content-Transfer-Encoding: 8BIT
-X-ZohoMailClient: External
+        Thu, 3 Jan 2019 07:59:08 -0500
+Received: from mga07.intel.com ([134.134.136.100]:58407 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727021AbfACM7I (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 3 Jan 2019 07:59:08 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jan 2019 04:59:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,434,1539673200"; 
+   d="scan'208";a="135008677"
+Received: from tmuluk-mobl4.ger.corp.intel.com (HELO localhost) ([10.249.254.238])
+  by fmsmga001.fm.intel.com with ESMTP; 03 Jan 2019 04:59:05 -0800
+Date:   Thu, 3 Jan 2019 14:59:04 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Tomas Winkler <tomas.winkler@intel.com>,
+        linux-integrity@vger.kernel.org
+Subject: Re: [PATCH] tpm: fix incorrect success returns from
+ tpm_try_transmit()
+Message-ID: <20190103125904.GA10491@linux.intel.com>
+References: <1546280851.3079.2.camel@HansenPartnership.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1546280851.3079.2.camel@HansenPartnership.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2019-01-01 at 11:38 -0500, Mimi Zohar wrote:
-> On Tue, 2019-01-01 at 17:15 +0100, Michael Niewöhner wrote:
-> > On Mon, 2018-12-31 at 16:17 -0500, Mimi Zohar wrote:
-> > > On Sun, 2018-12-30 at 14:22 +0100, Michael Niewöhner wrote:
-> > > 
-> > > > > difference is that on a cold boot, the TPM takes longer to initialize.
-> > > > 
-> > > > Well, as I said. Waiting for 10, 20 or even 60 seconds in the boot
-> > > > manager
-> > > > does
-> > > > not solve the problem. So the problem is NOT that the TPM takes longer
-> > > > to
-> > > > initialize. Even adding a delay of 20 seconds before TPM init does not
-> > > > solve
-> > > > that while that should be more than enough time.
-> > > 
-> > > The purpose of commenting out the TPM2 selftest was to minimize the
-> > > TPM initialization delay, so that the TPM is ready before IMA.  After
-> > > James' patch that wasn't needed anymore.
-> > > 
-> > > Looking back at this thread, I see you're using systemd-boot, not
-> > > grub2.  When you commented out the systemd-boot timeout, IMA found the
-> > > TPM.  The question is why isn't the TPM ready with the timeout before
-> > > IMA (like above)?  Has systemd-boot done the selftest?
-> > 
-> > I am not sure wether systemd-boot touches TPM at all but I get the same
-> > behaviour with syslinux-efi.
+On Mon, Dec 31, 2018 at 10:27:31AM -0800, James Bottomley wrote:
+> Ever since 627448e85c766 "tpm: separate cmd_ready/go_idle from
+> runtime_pm" we have been returning success from tpm_try_transmit()
+> even if an error occurred.  The reason is that the introduction of rc
+> = tpm_go_idle() at the end of processing overwrites the value of rc if
+> it contains an error code (mostly with success).  Fix this by writing
+> the return to a new variable rc1 instead.
 > 
-> From looking at the source code, it depends on whether systemd was
-> compiled with ENABLE_TPM enabled(eg. src/boot/efi/boot.c,
-> src/boot/efi/measure.c, src/boot/efi/stub.c).
-
-Debian build it with TPM enabled. I just checked syslinux-efi which does not do
-anything TPM-related.
-
+> Fixes: 627448e85c766 "tpm: separate cmd_ready/go_idle from runtime_pm"
+> Cc: stable@vger.kernel.org
+> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
 > 
-> Mimi
+> ---
 > 
+> Note: the goto out looks fishy as well.  The only go_idle implementor
+> is tpm_crb and that can return a timeout as -ETIME, so it looks like it
+> would then loop forever
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 129f640424b7..ac7ebab6140c 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -432,7 +432,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+>  				unsigned int flags)
+>  {
+>  	struct tpm_output_header *header = (void *)buf;
+> -	int rc;
+> +	int rc, rc1;
+>  	ssize_t len = 0;
+>  	u32 count, ordinal;
+>  	unsigned long stop;
+> @@ -547,8 +547,8 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+>  		dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
+>  
+>  out:
+> -	rc = tpm_go_idle(chip, flags);
+> -	if (rc)
+> +	rc1 = tpm_go_idle(chip, flags);
+> +	if (rc1)
+>  		goto out;
+>  
+>  	if (need_locality)
 
+Thanks James and sorry for latency (holiday season). Just a small
+suggestion. I would just:
 
+if (tpm_go_idle(chip, flags))
+	goto out;
+
+What do you think?
+
+/Jarkko
