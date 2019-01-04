@@ -2,375 +2,141 @@ Return-Path: <SRS0=DRhf=PM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.9 required=3.0 tests=DKIM_ADSP_ALL,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F00DC43387
-	for <linux-integrity@archiver.kernel.org>; Fri,  4 Jan 2019 18:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F9DFC43444
+	for <linux-integrity@archiver.kernel.org>; Fri,  4 Jan 2019 20:41:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0EA1218CD
-	for <linux-integrity@archiver.kernel.org>; Fri,  4 Jan 2019 18:26:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E3D8218D3
+	for <linux-integrity@archiver.kernel.org>; Fri,  4 Jan 2019 20:41:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IttU7/pD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728012AbfADS0n convert rfc822-to-8bit (ORCPT
+        id S1726050AbfADUlo (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 4 Jan 2019 13:26:43 -0500
-Received: from sender-of-o53.zoho.com ([135.84.80.218]:21798 "EHLO
-        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726323AbfADS0n (ORCPT
+        Fri, 4 Jan 2019 15:41:44 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:44225 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726009AbfADUlh (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 4 Jan 2019 13:26:43 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1546626376; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=B2GDIalsFbU7K1xugYtCM29mO9Ifu7E2f2lgSKBqO6SIOLB26lXZk0jWxKRf+TlOYKUB6XYk6LxIBMeZuMnDk1//DllQhemZevjx6Ol4FPxPleu6yMixmiwhEKlrewGcoqJ4QUK/+qGXIFEo6wZiW079oBq+4+CpKh/YxZNgu0I=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1546626376; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=VEhbb105S0DJ9J+3eM8W40H6pN5okbZtPbjx6+HzSF4=; 
-        b=MTFtICVC0/MB2otOB0ibH7Kqx+UShYiaQlNyEa1iL9eQPMZtE/CU4HXYjDPFFAw1K2W6yUOh1Sux21LDKJKIh+X4adyMTevPvJ3yKtIbcFg2E94Gy+AGLcamCEmpPRqx19mhaFEVE7T2cyX2ZenXz2h6Pm3pNwFf79BMVKh7oR0=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=mniewoehner.de;
-        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
-        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
-Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
-        with SMTPS id 1546626374351229.77047743195772; Fri, 4 Jan 2019 10:26:14 -0800 (PST)
-Message-ID: <29caf20bfb324e27646c710ddd24f18e6ec288ef.camel@mniewoehner.de>
-Subject: Re: tpm_tis TPM2.0 not detected on cold boot
-From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
+        Fri, 4 Jan 2019 15:41:37 -0500
+Received: by mail-vs1-f65.google.com with SMTP id z23so20157637vsj.11
+        for <linux-integrity@vger.kernel.org>; Fri, 04 Jan 2019 12:41:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=iYKZYw9pBbs+9M1bv1xHHmg2hwlGwpPr6KW4wutdFrE=;
+        b=IttU7/pDppjWUeGDwEevTCiWMCD6at5Wn5a61ygivQcrbCUb5THZTR4M2XvuD2IAeu
+         4tggkypMhz2mAe8NZCt6HYscdeddDLAwZYPvKUMxn5G1Pa/jJFlXYxmWzO+Z4Uvz048/
+         IEGh8EQx8i+DDTQ3QTpGzDz4e4p3094PqmekaIedFBTwVeIj5DpZrWF2GNUAoew1S6I2
+         TNkO70nI07rNN0417f6T7szhLDyI+yQbjwH1MftWjB8i/pzRpw1OkKQaX8wqGKgPZHxu
+         juyAsiQ+ucSXsrYTAaUbJxPl8QvQblrDfwBvY0ltgrAtCgcLgNeqzg8iUqYQgO/o75l0
+         n6Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=iYKZYw9pBbs+9M1bv1xHHmg2hwlGwpPr6KW4wutdFrE=;
+        b=Z4S1+UW6d13HXZIu6p4Otz3XOPfKbxyA0N8AGGzMQ7/ikxa0ZlRXwTUgeg0lhvmdwp
+         39Fbb5V07EtHHeCeOD3Mpo98aMki8JFAwTst0uYSSM36pm/cy72hfNaGewBdzYzHisXq
+         Oan3ObHq/zAsziXLyBfyQLJeE59aLhAI+cuYXMU5HXUHeaJp8MyA/SLNnqGNJLf/DTA3
+         cbHFmso3kmSyL4uXlNkgLFMgfQLinQLM2OLox383aw8bqzkRw88fLw7FBtx1+oYWfAqa
+         cmk9ROQTI0o627t65WylMpEgR0dJsoGtt9F2TqkXqwxQ790w30enXXmtnooeEwXRgaL6
+         0lHw==
+X-Gm-Message-State: AJcUukeK9I3fTUwxDwIouzdRtX3sPVp3aBBXxnY+nVPVcM1Wv+UWa3Za
+        61AiXFkGkdPyVNwTKSMKaxu8FWu7oYKoxijdVIGluw==
+X-Google-Smtp-Source: AFSGD/XTLTKwTXB+LqysC0tcuESde8OSg3gWakqcaTABLBlTWgLmo71793lxt8EbbftHWLh6dIwnsy7hvwlM6dmvpRU=
+X-Received: by 2002:a67:c104:: with SMTP id d4mr21961178vsj.171.1546634495753;
+ Fri, 04 Jan 2019 12:41:35 -0800 (PST)
+MIME-Version: 1.0
+References: <20181219071420.GC2628@infradead.org> <20181219021953.GD31274@dastard>
+ <20181219193005.GB6889@mit.edu> <20181219213552.GO6311@dastard>
+ <20181220220158.GC2360@mit.edu> <20181221070447.GA21687@infradead.org>
+ <20181221154714.GA26547@mit.edu> <CAHk-=wgdzWgoPSuHeVcqmGE1hB3Gan72r2_AhtC14e60=z45yg@mail.gmail.com>
+ <20181222041712.GC26547@mit.edu> <20181223041007.GL10600@bombadil.infradead.org>
+ <20181223044553.GG26547@mit.edu>
+In-Reply-To: <20181223044553.GG26547@mit.edu>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Fri, 4 Jan 2019 12:41:24 -0800
+Message-ID: <CAKOZuesHHSRCzQEtGEQbm7v7j53hAjkJq-8Pgcyk+M40o-ia0g@mail.gmail.com>
+Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-fscrypt@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
         linux-integrity@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Ken Goldman <kgold@linux.ibm.com>
-In-Reply-To: <5ee514be264361a8f1ed4a4ad823ad72dd7dce23.camel@mniewoehner.de>
-References: <ef7e773b01a5e6153b84628f74fc67092a2f9b0e.camel@gmail.com>
-         <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
-         <1545519232.3940.115.camel@linux.ibm.com>
-         <e7ec38d7cade9aa76384aa2781eab307d2cd5a7b.camel@mniewoehner.de>
-         <20190103132737.GD10491@linux.intel.com>
-         <6c1bf9815bfcb5d2bc0cfedfc49c7feda0173dc9.camel@mniewoehner.de>
-         <20190103150434.GC17015@linux.intel.com>
-         <5aa2fc082b6b0657574918b025005ad569da6412.camel@mniewoehner.de>
-         <c1f5f53cdaaaad6cc80c2b10172a69f0301d3e0e.camel@mniewoehner.de>
-         <5ee514be264361a8f1ed4a4ad823ad72dd7dce23.camel@mniewoehner.de>
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
-Date:   Fri, 04 Jan 2019 19:26:10 +0100
-Mime-Version: 1.0
-User-Agent: Evolution 3.30.3 
-Content-Transfer-Encoding: 8BIT
-X-ZohoMailClient: External
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, 2019-01-04 at 16:28 +0100, Michael Niewöhner wrote:
-> On Fri, 2019-01-04 at 12:58 +0100, Michael Niewöhner wrote:
-> > On Thu, 2019-01-03 at 16:47 +0100, Michael Niewöhner wrote:
-> > > On Thu, 2019-01-03 at 17:04 +0200, Jarkko Sakkinen wrote:
-> > > > On Thu, Jan 03, 2019 at 02:38:11PM +0100, Michael Niewöhner wrote:
-> > > > > On Thu, 2019-01-03 at 15:27 +0200, Jarkko Sakkinen wrote:
-> > > > > > On Sun, Dec 23, 2018 at 12:55:12PM +0100, Michael Niewöhner wrote:
-> > > > > > > There is another issue but I don't know if both are related. Maybe
-> > > > > > > that's
-> > > > > > > just a
-> > > > > > > timing issue...
-> > > > > > > 
-> > > > > > > root@debian:~# dd if=/dev/hwrng bs=1 count=1
-> > > > > > > dd: error reading '/dev/hwrng': Operation not permitted
-> > > > > > > 0+0 records in
-> > > > > > > 0+0 records out
-> > > > > > > 0 bytes copied, 0.755958 s, 0.0 kB/s
-> > > > > > > root@debian:~# dd if=/dev/hwrng bs=1 count=1 | xxd; dd
-> > > > > > > if=/dev/hwrng
-> > > > > > > bs=1
-> > > > > > > count=1 | xxd
-> > > > > > > dd: error reading '/dev/hwrng': Operation not permitted
-> > > > > > > 0+0 records in
-> > > > > > > 0+0 records out
-> > > > > > > 0 bytes copied, 0.755697 s, 0.0 kB/s
-> > > > > > > 1+0 records in
-> > > > > > > 1+0 records out
-> > > > > > > 00000000: 52                                       R
-> > > > > > > 1 byte copied, 0.0106268 s, 0.1 kB/s
-> > > > > > > 
-> > > > > > > 
-> > > > > > > Michael
-> > > > > > 
-> > > > > > What does /sys/devices/virtual/misc/hw_random/rng_current show?
-> > > > > > 
-> > > > > > Did run commands as a sanity check on my laptop and seem to work.
-> > > > > > 
-> > > > > > /Jarkko
-> > > > > 
-> > > > > rng_current says "tpm-rng-0", which should be correct
-> > > > 
-> > > > Is /dev/tpm0 accessible and usable?
-> > > > 
-> > > > /Jarkko
-> > > 
-> > > No, it does not seem to work:
-> > > 
-> > > root@debian:~# tpm_version                                     
-> > > Tspi_Context_Connect failed: 0x00003011 - layer=tsp, code=0011 (17),
-> > > Communication failure
-> > > root@debian:~# tcsd -f
-> > > TCSD TDDL ioctl: (25) Inappropriate ioctl for device
-> > > TCSD TDDL Falling back to Read/Write device support.
-> > > TCSD TDDL ERROR: write to device /dev/tpm0 failed: Operation not permitted
-> > > TCSD TCS ERROR: TCS GetCapability failed with result = 0x1087
-> > > root@debian:~# stat /dev/tpm0
-> > >   File: /dev/tpm0
-> > >   Size: 0         	Blocks: 0          IO Block: 4096   character
-> > > special
-> > > file
-> > > Device: 6h/6d	Inode: 1114        Links: 1     Device type: a,e0
-> > > Access: (0600/crw-------)  Uid: (  104/     tss)   Gid: (  112/     tss)
-> > > Access: 2019-01-03 16:39:20.627635333 +0100
-> > > Modify: 2019-01-03 16:39:20.627635333 +0100
-> > > Change: 2019-01-03 16:39:20.627635333 +0100
-> > >  Birth: -
-> > > 
-> > > Michael
-> > 
-> > I have done some more tests with tpm2-tests from 
-> > https://github.com/jethrogb/tpm2-utils.
-> > These are my results:
-> > 
-> > 
-> > (initramfs) ./tpm2-test /dev/tpm0 vendor_tpm_type
-> > Error on write(fd,(char*)&tpm_cmd,sizeof(tpm_cmd)): Operation not permitted
-> > 
-> > (initramfs) ./tpm2-test /dev/tpm0 vendor_tpm_type; ./tpm2-test /dev/tpm0
-> > vendor_
-> > tpm_type
-> > Error on write(fd,(char*)&tpm_cmd,sizeof(tpm_cmd)): Operation not permitted
-> > �   
-> > nitramfs) 
-> > 
-> > -> Same symptom like with dd if=/dev/tpm....
-> > 
-> > 
-> > Trying to read the firmware version:
-> > 
-> > (initramfs) (./tpm2-test /dev/tpm0 vendor_string_1; ./tpm2-test /dev/tpm0
-> > firmwa
-> > re_version_1;) 2>/dev/null | hexdump -C
-> > 00000000  80 01 00 00 00 1b 00 00  00 00 01 00 00 00 06
-> > 00  |................|
-> > 00000010  00 00 01 00 00 01 0b 00  01 00 03                 |...........|
-> > 0000001b
-> > 
-> > (initramfs) (./tpm2-test /dev/tpm0 vendor_string_1; ./tpm2-test /dev/tpm0
-> > firmwa
-> > re_version_2;) 2>/dev/null | hexdump -C
-> > 00000000  80 01 00 00 00 1b 00 00  00 00 01 00 00 00 06
-> > 00  |................|
-> > 00000010  00 00 01 00 00 01 0c 00  02 00 08                 |...........|
-> > 0000001b
-> > 
-> > -> This version numbers are correct, 1.3.2.8 indeed is the current flashed
-> > firmware.
-> > 
-> > 
-> > Get the vendor strings:
-> > 
-> > (initramfs) (./tpm2-test /dev/tpm0 vendor_string_1; ./tpm2-test /dev/tpm0
-> > vendor
-> > _string_1;) 2>/dev/null | xxd
-> > 00000000: 8001 0000 001b 0000 0000 0100 0000 0600  ................
-> > 00000010: 0000 0100 0001 0672 6c73 00              .......rls.
-> > (initramfs) (./tpm2-test /dev/tpm0 vendor_string_1; ./tpm2-test /dev/tpm0
-> > vendor
-> > _string_2;) 2>/dev/null | xxd
-> > 00000000: 8001 0000 001b 0000 0000 0100 0000 0600  ................
-> > 00000010: 0000 0100 0001 074e 5043 54              .......NPCT
-> > (initramfs) (./tpm2-test /dev/tpm0 vendor_string_1; ./tpm2-test /dev/tpm0
-> > vendor
-> > _string_3;) 2>/dev/null | xxd
-> > 00000000: 8001 0000 001b 0000 0000 0100 0000 0600  ................
-> > 00000010: 0000 0100 0001 0820 0000 00              ....... ...
-> > (initramfs) (./tpm2-test /dev/tpm0 vendor_string_1; ./tpm2-test /dev/tpm0
-> > vendor
-> > _string_4;) 2>/dev/null | xxd
-> > 00000000: 8001 0000 001b 0000 0000 0100 0000 0600  ................
-> > 00000010: 0000 0100 0001 0920 0000 00              ....... ...
-> > 
-> > Well, NPCT is correct...
-> > 
-> > 
-> > 
-> > Michael
-> 
-> Oh damn. I wasn not aware that trousers/tcsd does only support TPM<=1.2.
-> Instead of trousers I now tested tpm2-tools and tss2.
-> Guess what? Same symptoms... This is definitely some sort of timing issue...
-> 
-> 
-> root@debian:~# tpm2_nvlist 
-> ERROR:tcti:src/util/io.c:102:write_all() failed to write to fd 3: Operation
-> not
-> permitted 
-> ERROR:tcti:src/tss2-tcti/tcti-device.c:86:tcti_device_transmit() wrong number
-> of
-> bytes written. Expected 22, wrote 0. 
-> ERROR: GetCapability:Get NV Index list Error. TPM Error:0xa000a
-> ERROR: Unable to run tpm2_nvlist
-> root@debian:~# tpm2_nvlist; tpm2_nvlist
-> ERROR:tcti:src/util/io.c:102:write_all() failed to write to fd 3: Operation
-> not
-> permitted 
-> ERROR:tcti:src/tss2-tcti/tcti-device.c:86:tcti_device_transmit() wrong number
-> of
-> bytes written. Expected 22, wrote 0. 
-> ERROR: GetCapability:Get NV Index list Error. TPM Error:0xa000a
-> ERROR: Unable to run tpm2_nvlist
-> 0x1800001:
->   hash algorithm:
->     friendly: sha256
->     value: 0xB
->   attributes:
->     friendly:
-> authwrite|policydelete|writelocked|writedefine|authread|no_da|written|platform
-> cr
-> eate
->     value: 0x42C0462
->   size: 70
-> ........
-> 
-> root@debian:~# tpm2_pcrlist
-> ERROR:tcti:src/util/io.c:102:write_all() failed to write to fd 3: Operation
-> not
-> permitted 
-> ERROR:tcti:src/tss2-tcti/tcti-device.c:86:tcti_device_transmit() wrong number
-> of
-> bytes written. Expected 22, wrote 0. 
-> ERROR: GetCapability: Get PCR allocation status Error. TPM Error:0xa000a......
-> ERROR: Unable to run tpm2_pcrlist
-> root@debian:~# tpm2_pcrlist; tpm2_pcrlist 
-> sha1 :
->   0  : 1ebb2be3b7103a09b5caeeb5827c1242cd6632ec
->   1  : 425e833da73cb511150d6ffcf6fac64e9a6feb58
->   2  : b2a83b0ebf2f8374299a5b2bdfc31ea955ad7236
->   3  : b2a83b0ebf2f8374299a5b2bdfc31ea955ad7236
->   4  : d13c141b174afbb568773adf1f39940a2df47c7d
->   5  : 756a3647403ab141ec2c1ac7325854f4a93f6efd
-> ......
-> 
-> 
-> Michael
+On Sat, Dec 22, 2018 at 8:46 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
+>
+> On Sat, Dec 22, 2018 at 08:10:07PM -0800, Matthew Wilcox wrote:
+> > Pretty much every file format has the ability to put arbitrary blocks
+> > of information into a file somewhere the tools which don't know about
+> > it will skip it.  For example, ZIP "includes an extra field facility
+> > within file headers, which can be used to store extra data not defined
+> > by existing ZIP specifications, and which allow compliant archivers tha=
+t
+> > do not recognize the fields to safely skip them. Header IDs 0=E2=80=933=
+1 are
+> > reserved for use by PKWARE. The remaining IDs can be used by third-part=
+y
+> > vendors for proprietary usage. " (Wikipedia)
+> >
+> > ELF, PNG, PDF and many other formats have the ability to put data
+> > _somewhere_.  It might not be at the tail of the file, but there's
+> > somewhere to do it.
+> >
+> > (I appreciate this isn't what Linus is asking for, but I'm pointing out
+> > that this is by no means as intractable as you make it sound.)
+>
+> That design would require the fs-verity code to know the type of eacho
+> file, and where to find the in-band Merkle tree for each file type
+> that we wanted to support.  And if you wanted to use fs-verity to
+> protect a sudoers text configuration file (for example), we'd have to
+> teach sudo how to ignore the userspace visible Merkle tree.
 
+I'm pretty late to the game, but I just want to bring up one approach
+that I'm not sure people have previously considered. You can't put the
+verification blob in an xattr due to xattr size limits, but you *can*
+put a filename in an xattr. What if, at open time, fs-verity looked
+for a specially-named xattr attached to a file, resolved that name
+like a symlink target, opened the pointed-to file, and just used
+*that* as the authentication blob? It'd also be possible to teach
+unlink to delete the pointed-to file when the pointer file is deleted
+--- sort of like a simple and stupid kind of data fork.
 
-Some straces for working vs non-working calls (I removed lib loading, many
-identical lines etc. for better readability):
+For example, if you wanted to secure /usr/bin/emacs, you could set an
+security.fsverify.verification_file xattr (in the system namespace
+because the xattr has special semantics) to
+"/.verification-blobs/@usr@bin@emacs.hashtree" or something like that.
+Then, open(2) on /usr/bin/emacs would, internally to VFS, also open
+/.verification-blobs/@usr@bin@emacs.hashtree and read verification
+data from it, transparently to both users and the underlying
+filesystem. If someone deleted /usr/bin/emacs, VFS would automatically
+delete /.verification-blobs/@usr@bin@emacs.hashtree. If
+/.verification-blobs/@usr@bin@emacs.hashtree didn't exist at time of
+open(2) of /usr/bin/emacs, or couldn't be opened for whatever reason,
+the open(2) of /usr/bin/emacs would fail.
 
-> strace -f -o /tmp/dbg3 tpm2_pcrlist  # NON-WORKING
-execve("/usr/bin/tpm2_pcrlist", ["tpm2_pcrlist"], 0x7fff5eb48698 /* 11 vars */)
-= 0
-<...>
-openat(AT_FDCWD, "/dev/tpm0", O_RDWR|O_NONBLOCK) = 3
-write(3, "\200\1\0\0\0\26\0\0\1z\0\0\0\5\0\0\0\0\0\0\0\1", 22) = -1 EPERM
-(Operation not permitted)
-write(2, "ERROR:tcti:src/util/io.c:102:wri"..., 91) = 91
-write(2, "ERROR:tcti:src/tss2-tcti/tcti-de"..., 119) = 119
-write(2, "ERROR: ", 7)            = 7
-write(2, "GetCapability: Get PCR allocatio"..., 71) = 71
-write(2, "\n", 1)                 = 1
-write(2, "ERROR: ", 7)            = 7
-write(2, "Unable to run tpm2_pcrlist", 26) = 26
-write(2, "\n", 1)                 = 1
-close(3)                          = 0
-munmap(0x7f64f0ec9000, 24856)     = 0
-exit_group(1)                     = ?
-+++ exited with 1 +++
-
-> tpm2_pcrlist; strace -f -o /tmp/dbg4 tpm2_pcrlist  # WORKING
-execve("/usr/bin/tpm2_pcrlist", ["tpm2_pcrlist"], 0x7ffef20135f8 /* 11 vars */)
-= 0
-<...>
-openat(AT_FDCWD, "/dev/tpm0", O_RDWR|O_NONBLOCK) = 3
-write(3, "\200\1\0\0\0\26\0\0\1z\0\0\0\5\0\0\0\0\0\0\0\1", 22) = 22
-poll([{fd=3, events=POLLIN}], 1, -1) = 1 ([{fd=3, revents=POLLIN}])
-read(3,
-"\200\1\0\0\0\37\0\0\0\0\0\0\0\0\5\0\0\0\2\0\4\3\377\377\377\0\v\3\377\377\377",
-4096) = 31
-write(3, "\200\1\0\0\0\32\0\0\1~\0\0\0\2\0\4\3\377\377\377\0\v\3\377\377\377",
-26) = 26
-poll([{fd=3, events=POLLIN}], 1, -1) = 1 ([{fd=3, revents=POLLIN}])
-read(3,
-"\200\1\0\0\0\322\0\0\0\0\0\0\0F\0\0\0\2\0\4\3\377\0\0\0\v\3\0\0\0\0\0"...,
-4096) = 210
-write(3, "\200\1\0\0\0\32\0\0\1~\0\0\0\2\0\4\3\0\377\377\0\v\3\377\377\377", 26)
-= 26
-poll([{fd=3, events=POLLIN}], 1, -1) = 1 ([{fd=3, revents=POLLIN}])
-read(3,
-"\200\1\0\0\0\322\0\0\0\0\0\0\0F\0\0\0\2\0\4\3\0\377\0\0\v\3\0\0\0\0\0"...,
-4096) = 210
-<...>
-write(1, "sha1 :\n", 7)           = 7
-write(1, "  0  : 1ebb2be3b7103a09b5caeeb58"..., 48) = 48
-write(1, "  1  : d3ac8d9c97272d8ea1c8443dc"..., 48) = 48
-write(1, "  2  : b2a83b0ebf2f8374299a5b2bd"..., 48) = 48
-<...>
-write(1, "  23 : 0000000000000000000000000"..., 72) = 72
-close(3)                          = 0
-munmap(0x7f2bbebcf000, 24856)     = 0
-exit_group(0)                     = ?
-+++ exited with 0 +++
-
-
-> strace -f -o /tmp/dbg1 dd if=/dev/hwrng of=/dev/null bs=1 count=1  # NON-
-WORKING
-execve("/bin/dd", ["dd", "if=/dev/hwrng", "of=/dev/null", "bs=1", "count=1"],
-0x7ffd5cf74948 /* 11 vars */) = 0
-<...>
-openat(AT_FDCWD, "/dev/hwrng", O_RDONLY) = 3
-dup2(3, 0)                        = 0
-close(3)                          = 0
-lseek(0, 0, SEEK_CUR)             = 0
-openat(AT_FDCWD, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3
-dup2(3, 1)                        = 1
-close(3)                          = 0
-read(0, 0x555e67d1a000, 1)        = -1 EPERM (Operation not permitted)
-write(2, "dd: ", 4)               = 4
-write(2, "error reading '/dev/hwrng'", 26) = 26
-write(2, ": Operation not permitted", 25) = 25
-write(2, "\n", 1)                 = 1
-close(0)                          = 0
-close(1)                          = 0
-write(2, "0+0 records in\n0+0 records out\n", 31) = 31
-write(2, "0 bytes copied, 0.75088 s, 0.0 k"..., 35) = 35
-write(2, "\n", 1)                 = 1
-close(2)                          = 0
-exit_group(1)                     = ?
-+++ exited with 1 +++
-
-
-> dd if=/dev/hwrng of=/dev/null bs=1 count=1; tpm2_pcrlist; strace -f -o
-/tmp/dbg2 dd if=/dev/hwrng of=/dev/null bs=1 count=1  # WORKING
-execve("/bin/dd", ["dd", "if=/dev/hwrng", "of=/dev/null", "bs=1", "count=1"], 0x7ffd880f4cc8 /* 11 vars */) = 0
-<...>
-openat(AT_FDCWD, "/dev/hwrng", O_RDONLY) = 3
-dup2(3, 0)                        = 0
-close(3)                          = 0
-lseek(0, 0, SEEK_CUR)             = 0
-openat(AT_FDCWD, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3
-dup2(3, 1)                        = 1
-close(3)                          = 0
-read(0, "\242", 1)                = 1
-write(1, "\242", 1)               = 1
-close(0)                          = 0
-close(1)                          = 0
-write(2, "1+0 records in\n1+0 records out\n", 31) = 31
-write(2, "1 byte copied, 0.000110891 s, 9."..., 38) = 38
-write(2, "\n", 1)                 = 1
-close(2)                          = 0
-exit_group(0)                     = ?
-+++ exited with 0 +++
-
-
-Michael
-
-
+ISTM that a scheme like this would give you some of the advantages of
+jumbo xattrs, but with much less implementation complexity. If
+someone's proposed something like this before, sorry for the noise.
