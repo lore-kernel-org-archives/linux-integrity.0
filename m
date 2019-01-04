@@ -2,141 +2,69 @@ Return-Path: <SRS0=DRhf=PM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F9DFC43444
-	for <linux-integrity@archiver.kernel.org>; Fri,  4 Jan 2019 20:41:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B70BAC43387
+	for <linux-integrity@archiver.kernel.org>; Fri,  4 Jan 2019 21:09:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E3D8218D3
-	for <linux-integrity@archiver.kernel.org>; Fri,  4 Jan 2019 20:41:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IttU7/pD"
+	by mail.kernel.org (Postfix) with ESMTP id 8F036218E0
+	for <linux-integrity@archiver.kernel.org>; Fri,  4 Jan 2019 21:09:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726050AbfADUlo (ORCPT
+        id S1726097AbfADVJl (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 4 Jan 2019 15:41:44 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:44225 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726009AbfADUlh (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 4 Jan 2019 15:41:37 -0500
-Received: by mail-vs1-f65.google.com with SMTP id z23so20157637vsj.11
-        for <linux-integrity@vger.kernel.org>; Fri, 04 Jan 2019 12:41:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=iYKZYw9pBbs+9M1bv1xHHmg2hwlGwpPr6KW4wutdFrE=;
-        b=IttU7/pDppjWUeGDwEevTCiWMCD6at5Wn5a61ygivQcrbCUb5THZTR4M2XvuD2IAeu
-         4tggkypMhz2mAe8NZCt6HYscdeddDLAwZYPvKUMxn5G1Pa/jJFlXYxmWzO+Z4Uvz048/
-         IEGh8EQx8i+DDTQ3QTpGzDz4e4p3094PqmekaIedFBTwVeIj5DpZrWF2GNUAoew1S6I2
-         TNkO70nI07rNN0417f6T7szhLDyI+yQbjwH1MftWjB8i/pzRpw1OkKQaX8wqGKgPZHxu
-         juyAsiQ+ucSXsrYTAaUbJxPl8QvQblrDfwBvY0ltgrAtCgcLgNeqzg8iUqYQgO/o75l0
-         n6Og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=iYKZYw9pBbs+9M1bv1xHHmg2hwlGwpPr6KW4wutdFrE=;
-        b=Z4S1+UW6d13HXZIu6p4Otz3XOPfKbxyA0N8AGGzMQ7/ikxa0ZlRXwTUgeg0lhvmdwp
-         39Fbb5V07EtHHeCeOD3Mpo98aMki8JFAwTst0uYSSM36pm/cy72hfNaGewBdzYzHisXq
-         Oan3ObHq/zAsziXLyBfyQLJeE59aLhAI+cuYXMU5HXUHeaJp8MyA/SLNnqGNJLf/DTA3
-         cbHFmso3kmSyL4uXlNkgLFMgfQLinQLM2OLox383aw8bqzkRw88fLw7FBtx1+oYWfAqa
-         cmk9ROQTI0o627t65WylMpEgR0dJsoGtt9F2TqkXqwxQ790w30enXXmtnooeEwXRgaL6
-         0lHw==
-X-Gm-Message-State: AJcUukeK9I3fTUwxDwIouzdRtX3sPVp3aBBXxnY+nVPVcM1Wv+UWa3Za
-        61AiXFkGkdPyVNwTKSMKaxu8FWu7oYKoxijdVIGluw==
-X-Google-Smtp-Source: AFSGD/XTLTKwTXB+LqysC0tcuESde8OSg3gWakqcaTABLBlTWgLmo71793lxt8EbbftHWLh6dIwnsy7hvwlM6dmvpRU=
-X-Received: by 2002:a67:c104:: with SMTP id d4mr21961178vsj.171.1546634495753;
- Fri, 04 Jan 2019 12:41:35 -0800 (PST)
-MIME-Version: 1.0
-References: <20181219071420.GC2628@infradead.org> <20181219021953.GD31274@dastard>
- <20181219193005.GB6889@mit.edu> <20181219213552.GO6311@dastard>
- <20181220220158.GC2360@mit.edu> <20181221070447.GA21687@infradead.org>
- <20181221154714.GA26547@mit.edu> <CAHk-=wgdzWgoPSuHeVcqmGE1hB3Gan72r2_AhtC14e60=z45yg@mail.gmail.com>
- <20181222041712.GC26547@mit.edu> <20181223041007.GL10600@bombadil.infradead.org>
- <20181223044553.GG26547@mit.edu>
-In-Reply-To: <20181223044553.GG26547@mit.edu>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Fri, 4 Jan 2019 12:41:24 -0800
-Message-ID: <CAKOZuesHHSRCzQEtGEQbm7v7j53hAjkJq-8Pgcyk+M40o-ia0g@mail.gmail.com>
-Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        Fri, 4 Jan 2019 16:09:41 -0500
+Received: from mga05.intel.com ([192.55.52.43]:6772 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726074AbfADVJk (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 4 Jan 2019 16:09:40 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jan 2019 13:09:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,439,1539673200"; 
+   d="scan'208";a="133026728"
+Received: from mbakkere-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.235])
+  by fmsmga004.fm.intel.com with ESMTP; 04 Jan 2019 13:09:37 -0800
+Date:   Fri, 4 Jan 2019 23:09:36 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Joey Pabalinas <joeypabalinas@gmail.com>,
         linux-integrity@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Victor Hsieh <victorhsieh@google.com>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-security-module@vger.kernel.org,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH] selftests: add TPM 2.0 tests
+Message-ID: <20190104210936.GA6582@linux.intel.com>
+References: <20181127221059.25966-1-jarkko.sakkinen@linux.intel.com>
+ <20181127224900.fpbqujcsqwgxpwyq@gmail.com>
+ <20181127225307.3wc3gd7zmfauie6i@gmail.com>
+ <20181127231348.GB26051@linux.intel.com>
+ <20181205003342.GA20846@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181205003342.GA20846@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sat, Dec 22, 2018 at 8:46 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
->
-> On Sat, Dec 22, 2018 at 08:10:07PM -0800, Matthew Wilcox wrote:
-> > Pretty much every file format has the ability to put arbitrary blocks
-> > of information into a file somewhere the tools which don't know about
-> > it will skip it.  For example, ZIP "includes an extra field facility
-> > within file headers, which can be used to store extra data not defined
-> > by existing ZIP specifications, and which allow compliant archivers tha=
-t
-> > do not recognize the fields to safely skip them. Header IDs 0=E2=80=933=
-1 are
-> > reserved for use by PKWARE. The remaining IDs can be used by third-part=
-y
-> > vendors for proprietary usage. " (Wikipedia)
-> >
-> > ELF, PNG, PDF and many other formats have the ability to put data
-> > _somewhere_.  It might not be at the tail of the file, but there's
-> > somewhere to do it.
-> >
-> > (I appreciate this isn't what Linus is asking for, but I'm pointing out
-> > that this is by no means as intractable as you make it sound.)
->
-> That design would require the fs-verity code to know the type of eacho
-> file, and where to find the in-band Merkle tree for each file type
-> that we wanted to support.  And if you wanted to use fs-verity to
-> protect a sudoers text configuration file (for example), we'd have to
-> teach sudo how to ignore the userspace visible Merkle tree.
+On Tue, Dec 04, 2018 at 04:33:42PM -0800, Jarkko Sakkinen wrote:
+> On Tue, Nov 27, 2018 at 03:13:48PM -0800, Jarkko Sakkinen wrote:
+> > Thank you! Would be good to have these merged to the kernel tree so that
+> > one can include both functionality and test case when needed to the
+> > patch set.
+> 
+> Should I include this to v4.21 tpmdd PR?
 
-I'm pretty late to the game, but I just want to bring up one approach
-that I'm not sure people have previously considered. You can't put the
-verification blob in an xattr due to xattr size limits, but you *can*
-put a filename in an xattr. What if, at open time, fs-verity looked
-for a specially-named xattr attached to a file, resolved that name
-like a symlink target, opened the pointed-to file, and just used
-*that* as the authentication blob? It'd also be possible to teach
-unlink to delete the pointed-to file when the pointer file is deleted
---- sort of like a simple and stupid kind of data fork.
+Still bit puzzled how to move this forward...
 
-For example, if you wanted to secure /usr/bin/emacs, you could set an
-security.fsverify.verification_file xattr (in the system namespace
-because the xattr has special semantics) to
-"/.verification-blobs/@usr@bin@emacs.hashtree" or something like that.
-Then, open(2) on /usr/bin/emacs would, internally to VFS, also open
-/.verification-blobs/@usr@bin@emacs.hashtree and read verification
-data from it, transparently to both users and the underlying
-filesystem. If someone deleted /usr/bin/emacs, VFS would automatically
-delete /.verification-blobs/@usr@bin@emacs.hashtree. If
-/.verification-blobs/@usr@bin@emacs.hashtree didn't exist at time of
-open(2) of /usr/bin/emacs, or couldn't be opened for whatever reason,
-the open(2) of /usr/bin/emacs would fail.
-
-ISTM that a scheme like this would give you some of the advantages of
-jumbo xattrs, but with much less implementation complexity. If
-someone's proposed something like this before, sorry for the noise.
+/Jarkko
