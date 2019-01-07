@@ -2,102 +2,140 @@ Return-Path: <SRS0=ry+W=PP=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCBC0C43387
-	for <linux-integrity@archiver.kernel.org>; Mon,  7 Jan 2019 09:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC1D7C43387
+	for <linux-integrity@archiver.kernel.org>; Mon,  7 Jan 2019 10:06:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A37A4213A2
-	for <linux-integrity@archiver.kernel.org>; Mon,  7 Jan 2019 09:04:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0A4820854
+	for <linux-integrity@archiver.kernel.org>; Mon,  7 Jan 2019 10:06:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbfAGJEy (ORCPT
+        id S1726540AbfAGKGr (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 7 Jan 2019 04:04:54 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:48110 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726573AbfAGJEx (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 7 Jan 2019 04:04:53 -0500
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 6B3C072CC71;
-        Mon,  7 Jan 2019 12:04:50 +0300 (MSK)
-Received: from sole.flsd.net (sole.flsd.net [185.75.180.6])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 4114C4A4A14;
-        Mon,  7 Jan 2019 12:04:50 +0300 (MSK)
-Date:   Mon, 7 Jan 2019 12:04:49 +0300
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Stephan Mueller <smueller@chronox.de>
-Cc:     David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 4/4] crypto: Add EC-RDSA algorithm
-Message-ID: <20190107090449.d364ii24zervlsfq@sole.flsd.net>
-Mail-Followup-To: Stephan Mueller <smueller@chronox.de>,
-        David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190106133608.820-1-vt@altlinux.org>
- <1893001.R2IGJoHzOM@positron.chronox.de>
- <20190107080710.r4bh7gkqdysxmlnn@sole.flsd.net>
- <1714084.mfT8VG1pOj@tauon.chronox.de>
+        Mon, 7 Jan 2019 05:06:47 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32818 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726453AbfAGKGr (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 7 Jan 2019 05:06:47 -0500
+Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id EC413F9CFFC653B95D1C;
+        Mon,  7 Jan 2019 10:06:45 +0000 (GMT)
+Received: from [10.204.65.149] (10.204.65.149) by smtpsuk.huawei.com
+ (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 7 Jan
+ 2019 10:06:38 +0000
+Subject: Re: [PATCH v7 1/5] tpm: dynamically allocate the allocated_banks
+ array
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
+        <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20181213102945.30946-1-roberto.sassu@huawei.com>
+ <20181213102945.30946-2-roberto.sassu@huawei.com>
+ <20181220145500.GA10652@linux.intel.com>
+ <0900a894-e17b-edc8-fa30-db7d16665082@huawei.com>
+ <20181222000321.GB8954@linux.intel.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <7cc91a22-b09b-8bdc-c225-adff68e1f69e@huawei.com>
+Date:   Mon, 7 Jan 2019 11:06:33 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Disposition: inline
-In-Reply-To: <1714084.mfT8VG1pOj@tauon.chronox.de>
-User-Agent: NeoMutt/20171215-106-ac61c7
+In-Reply-To: <20181222000321.GB8954@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.204.65.149]
+X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Stephan,
-
-On Mon, Jan 07, 2019 at 09:31:40AM +0100, Stephan Mueller wrote:
-> Am Montag, 7. Januar 2019, 09:07:10 CET schrieb Vitaly Chikunov:
+On 12/22/2018 1:03 AM, Jarkko Sakkinen wrote:
+> On Fri, Dec 21, 2018 at 10:40:09AM +0100, Roberto Sassu wrote:
+>> On 12/20/2018 3:55 PM, Jarkko Sakkinen wrote:
+>>> On Thu, Dec 13, 2018 at 11:29:41AM +0100, Roberto Sassu wrote:
+>>>> This patch renames active_banks (member of tpm_chip) to allocated_banks,
+>>>> stores the number of allocated PCR banks in nr_allocated_banks (new member
+>>>> of tpm_chip), and replaces the static array with a pointer to a dynamically
+>>>> allocated array.
+>>>>
+>>>> tpm2_get_pcr_allocation() determines if a PCR bank is allocated by checking
+>>>> the mask in the TPML_PCR_SELECTION structure returned by the TPM for
+>>>> TPM2_Get_Capability(). If a bank is not allocated, the TPM returns that
+>>>> bank in TPML_PCR_SELECTION, with all bits in the mask set to zero. In this
+>>>> case, the bank is not included in chip->allocated_banks, to avoid that TPM
+>>>> driver users unnecessarily calculate a digest for that bank.
+>>>>
+>>>> One PCR bank with algorithm set to SHA1 is always allocated for TPM 1.x.
+>>>>
+>>>> As a consequence of the introduction of nr_allocated_banks,
+>>>> tpm_pcr_extend() does not check anymore if the algorithm stored in tpm_chip
+>>>> is equal to zero.
+>>>>
+>>>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>>>> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>>>> ---
+>>>>    drivers/char/tpm/tpm-chip.c      |  1 +
+>>>>    drivers/char/tpm/tpm-interface.c | 18 +++++++++--------
+>>>>    drivers/char/tpm/tpm.h           |  3 ++-
+>>>>    drivers/char/tpm/tpm1-cmd.c      | 10 ++++++++++
+>>>>    drivers/char/tpm/tpm2-cmd.c      | 34 ++++++++++++++++++++++----------
+>>>>    5 files changed, 47 insertions(+), 19 deletions(-)
+>>>>
+>>>> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+>>>> index 32db84683c40..ce851c62bb68 100644
+>>>> --- a/drivers/char/tpm/tpm-chip.c
+>>>> +++ b/drivers/char/tpm/tpm-chip.c
+>>>> @@ -160,6 +160,7 @@ static void tpm_dev_release(struct device *dev)
+>>>>    	kfree(chip->log.bios_event_log);
+>>>>    	kfree(chip->work_space.context_buf);
+>>>>    	kfree(chip->work_space.session_buf);
+>>>> +	kfree(chip->allocated_banks);
+>>>>    	kfree(chip);
+>>>>    }
+>>>> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+>>>> index d9439f9abe78..7b80919228be 100644
+>>>> --- a/drivers/char/tpm/tpm-interface.c
+>>>> +++ b/drivers/char/tpm/tpm-interface.c
+>>>> @@ -488,8 +488,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
+>>>>    int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
+>>>>    {
+>>>>    	int rc;
+>>>> -	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
+>>>> -	u32 count = 0;
+>>>> +	struct tpm2_digest *digest_list;
+>>>>    	int i;
+>>>>    	chip = tpm_find_get_ops(chip);
+>>>> @@ -497,16 +496,19 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
+>>>>    		return -ENODEV;
+>>>>    	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+>>>> -		memset(digest_list, 0, sizeof(digest_list));
+>>>> +		digest_list = kcalloc(chip->nr_allocated_banks,
+>>>> +				      sizeof(*digest_list), GFP_KERNEL);
+>>>> +		if (!digest_list)
+>>>> +			return -ENOMEM;
+>>>
+>>> You could preallocate digest list and place it to struct tpm_chip
+>>> instead of doing it everytime tpm_pcr_extend() called.
+>>
+>> This part will be removed with patch 5/5.
 > 
-> > > Why do you manually parse the ASN.1 structure instead of using the ASN.1
-> > > parser?
-> > 
-> > I am not sure this worth effort and will not be most degenerate use of
-> > asn1_ber_decoder, since 1) I only need to parse one type in each case:
-> > OCTET STRING string above code, and OIDs in below code; 2) this data is
-> > said to be in DER format, which asn1_ber_decoder can not enforce. Surely
-> > this will also produce more code and files.
+> Even if it did, it does not make this patch unbroken.
+
+Can two calls to tpm_pcr_extend() be executed at the same time?
+
+If yes, the digest list should be protected by a mutex.
+
+Roberto
+
+
+> /Jarkko
 > 
-> RSA public keys also only contain n and e in the ASN.1 structure for which the 
-> ASN.1 parser is used (see linux/crypto/rsapubkey.asn1).
 
-Yes I saw it, but at least there is two values (n and e), while EC-RDSA
-pub_key is just one OCTET STRING value (which internally is not defined
-to be ASN.1).
-
-> As ASN.1 parsing is always having security issues, I would rather suggest to
-> have this parsing implemented in one spot and not here and there.
-
-Yes. So I tried to parse it very carefully and strictly.
-
-> Regarding your comment (2), I am not sure I understand. Why do you say that 
-> the DER format cannot be parsed by the kernel's ASN.1 parser? For example, 
-
-It can, but DER is stricter than BER. For example, in DER 'OCTET STRING'
-length field should be encoded in just one byte if it's smaller than
-128, in BER it could be encoded in multiple encodings. This does not
-seem like a big deal, though. With BER decoder an improperly DER-encoded
-certificate could be successfully parsed.
-
-> when you generate RSA keys in DER format with, say, openssl, the kernel ASN.1 
-> parser will happily use them. Also, when I created my (not accepted) patch to 
-> load PQG domain parameters for DH using the ASN.1 parser, the PQG domain 
-> parameters created by openssl in DER format were processed well.
-> 
-> Ciao
-> Stephan
-> 
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
