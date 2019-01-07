@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFCFDC43387
-	for <linux-integrity@archiver.kernel.org>; Mon,  7 Jan 2019 02:26:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6722C43387
+	for <linux-integrity@archiver.kernel.org>; Mon,  7 Jan 2019 02:27:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8348F2085A
-	for <linux-integrity@archiver.kernel.org>; Mon,  7 Jan 2019 02:26:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95A3F2085A
+	for <linux-integrity@archiver.kernel.org>; Mon,  7 Jan 2019 02:27:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726383AbfAGC0w (ORCPT
+        id S1726383AbfAGC1D (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 6 Jan 2019 21:26:52 -0500
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:48213 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726270AbfAGC0w (ORCPT
+        Sun, 6 Jan 2019 21:27:03 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:52759 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726270AbfAGC1D (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 6 Jan 2019 21:26:52 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01353;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0THgoDmB_1546827991;
-Received: from localhost(mailfrom:zhang.jia@linux.alibaba.com fp:SMTPD_---0THgoDmB_1546827991)
+        Sun, 6 Jan 2019 21:27:03 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0THgn50s_1546827992;
+Received: from localhost(mailfrom:zhang.jia@linux.alibaba.com fp:SMTPD_---0THgn50s_1546827992)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 07 Jan 2019 10:26:32 +0800
+          Mon, 07 Jan 2019 10:26:33 +0800
 From:   Jia Zhang <zhang.jia@linux.alibaba.com>
 To:     zohar@linux.vnet.ibm.com, pvorel@suse.cz
 Cc:     linux-integrity@vger.kernel.org, ltp@lists.linux.it,
         zhang.jia@linux.alibaba.com
-Subject: [PATCH 2/6] ima/ima_boot_aggregate: Don't hard code the length of sha1 hash
-Date:   Mon,  7 Jan 2019 10:26:25 +0800
-Message-Id: <1546827989-43569-3-git-send-email-zhang.jia@linux.alibaba.com>
+Subject: [PATCH 4/6] ima: Code cleanup
+Date:   Mon,  7 Jan 2019 10:26:27 +0800
+Message-Id: <1546827989-43569-5-git-send-email-zhang.jia@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1546827989-43569-1-git-send-email-zhang.jia@linux.alibaba.com>
 References: <1546827989-43569-1-git-send-email-zhang.jia@linux.alibaba.com>
@@ -39,47 +39,49 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Instead, use SHA_DIGEST_LENGTH.
+- Don't use the legacy policy function name in policy files.
+- Use the variable IMA_POLICY instead of hard code path.
 
 Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
 ---
- testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ testcases/kernel/security/integrity/ima/policy/measure.policy         | 2 +-
+ testcases/kernel/security/integrity/ima/policy/measure.policy-invalid | 2 +-
+ testcases/kernel/security/integrity/ima/tests/ima_policy.sh           | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c b/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
-index d85d222..67be6a7 100644
---- a/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
-+++ b/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
-@@ -42,7 +42,7 @@ static void display_sha1_digest(unsigned char *pcr)
+diff --git a/testcases/kernel/security/integrity/ima/policy/measure.policy b/testcases/kernel/security/integrity/ima/policy/measure.policy
+index c68e722..9976ddf 100644
+--- a/testcases/kernel/security/integrity/ima/policy/measure.policy
++++ b/testcases/kernel/security/integrity/ima/policy/measure.policy
+@@ -13,4 +13,4 @@ dont_measure fsmagic=0x01021994
+ dont_measure fsmagic=0x73636673
+ measure func=FILE_MMAP mask=MAY_EXEC
+ measure func=BPRM_CHECK mask=MAY_EXEC
+-measure func=PATH_CHECK mask=MAY_READ uid=0
++measure func=FILE_CHECK mask=MAY_READ uid=0
+diff --git a/testcases/kernel/security/integrity/ima/policy/measure.policy-invalid b/testcases/kernel/security/integrity/ima/policy/measure.policy-invalid
+index e406757..04dff89 100644
+--- a/testcases/kernel/security/integrity/ima/policy/measure.policy-invalid
++++ b/testcases/kernel/security/integrity/ima/policy/measure.policy-invalid
+@@ -13,4 +13,4 @@ dont_measure fsmagic=0x01021994
+ dnt_measure fsmagic=0x73636673
+ measure func=FILE_MMAP mask=MAY_EXEC
+ measure func=BPRM_CHECK mask=MAY_EXEC
+-measure func=PATH_CHECK mask=MAY_READ uid=0
++measure func=FILE_CHECK mask=MAY_READ uid=0
+diff --git a/testcases/kernel/security/integrity/ima/tests/ima_policy.sh b/testcases/kernel/security/integrity/ima/tests/ima_policy.sh
+index 64aa8cb..a0c7869 100755
+--- a/testcases/kernel/security/integrity/ima/tests/ima_policy.sh
++++ b/testcases/kernel/security/integrity/ima/tests/ima_policy.sh
+@@ -28,7 +28,7 @@ check_policy_writable()
  {
- 	int i;
+ 	local err="IMA policy already loaded and kernel not configured to enable multiple writes to it (need CONFIG_IMA_WRITE_POLICY=y)"
  
--	for (i = 0; i < 20; i++)
-+	for (i = 0; i < SHA_DIGEST_LENGTH; i++)
- 		printf("%02x", *(pcr + i) & 0xff);
- 	printf("\n");
- }
-@@ -94,8 +94,9 @@ int main(int argc, char *argv[])
- 			display_sha1_digest(event.header.digest);
- 		}
- 		SHA1_Init(&c);
--		SHA1_Update(&c, pcr[event.header.pcr].digest, 20);
--		SHA1_Update(&c, event.header.digest, 20);
-+		SHA1_Update(&c, pcr[event.header.pcr].digest,
-+			    SHA_DIGEST_LENGTH);
-+		SHA1_Update(&c, event.header.digest, SHA_DIGEST_LENGTH);
- 		SHA1_Final(pcr[event.header.pcr].digest, &c);
- #if MAX_EVENT_DATA_SIZE < USHRT_MAX
- 		if (event.header.len > MAX_EVENT_DATA_SIZE) {
-@@ -116,7 +117,7 @@ int main(int argc, char *argv[])
- 			printf("PCR-%2.2x: ", i);
- 			display_sha1_digest(pcr[i].digest);
- 		}
--		SHA1_Update(&c, pcr[i].digest, 20);
-+		SHA1_Update(&c, pcr[i].digest, SHA_DIGEST_LENGTH);
- 	}
- 	SHA1_Final(boot_aggregate, &c);
- 
+-	[ -f /sys/kernel/security/ima/policy ] || tst_brk TCONF "$err"
++	[ -f $IMA_POLICY ] || tst_brk TCONF "$err"
+ 	# CONFIG_IMA_READ_POLICY
+ 	echo "" 2> log > $IMA_POLICY
+ 	grep -q "Device or resource busy" log && tst_brk TCONF "$err"
 -- 
 1.8.3.1
 
