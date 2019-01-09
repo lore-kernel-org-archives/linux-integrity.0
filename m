@@ -2,187 +2,229 @@ Return-Path: <SRS0=d4Rs=PR=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE36C43387
-	for <linux-integrity@archiver.kernel.org>; Wed,  9 Jan 2019 01:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E3FC43444
+	for <linux-integrity@archiver.kernel.org>; Wed,  9 Jan 2019 02:02:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2C6420883
-	for <linux-integrity@archiver.kernel.org>; Wed,  9 Jan 2019 01:49:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NzI2516V"
+	by mail.kernel.org (Postfix) with ESMTP id 1D3A6206BB
+	for <linux-integrity@archiver.kernel.org>; Wed,  9 Jan 2019 02:02:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729201AbfAIBtG (ORCPT
+        id S1729600AbfAICCy (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 8 Jan 2019 20:49:06 -0500
-Received: from mail-qk1-f201.google.com ([209.85.222.201]:39550 "EHLO
-        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729102AbfAIBtG (ORCPT
+        Tue, 8 Jan 2019 21:02:54 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:37387 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729380AbfAICCy (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 8 Jan 2019 20:49:06 -0500
-Received: by mail-qk1-f201.google.com with SMTP id d196so4862025qkb.6
-        for <linux-integrity@vger.kernel.org>; Tue, 08 Jan 2019 17:49:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=fmceAa53ADyVwcjwEGe3ntrNImDgoRPn1GmIc7NTZv8=;
-        b=NzI2516VT9pxylOPL0lN9XHDmFy8HP5szx3mWFhU/uwVA1MQTsidlmsKFJGy7XMDX9
-         G6GbTiIe2o9DmUIWr1xT6KJyU4TyokCGFEKeNAWcHMl03QvnhoFn6Am05xOmX7Xr7uYb
-         d+jZX3046aHbuxWBTUYRvwrLXrbAaOcBJy2f85ilNyQy4X0Niv0lwx3FPBeFywXdbtSO
-         bQqJMPBjsVcKDybe5z+GiNkPHkYXPDYq3gjR/gMc9dOyaQUMJEJDE12kLKkuWWxO0C0t
-         s13BLyqN1dYGfvWrgHiE1wW6wjo4KLLV/agdFYb21oGVmz5QIR9vlig/AnDLBqt/Yuqc
-         vRmA==
+        Tue, 8 Jan 2019 21:02:54 -0500
+Received: by mail-io1-f67.google.com with SMTP id g8so4828708iok.4
+        for <linux-integrity@vger.kernel.org>; Tue, 08 Jan 2019 18:02:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=fmceAa53ADyVwcjwEGe3ntrNImDgoRPn1GmIc7NTZv8=;
-        b=IbSrroSg9m7rqKUJdTxIWdSf4Wx4+xfgPS5Tiuj+Se/5cOXi4Pu3GShdDXKmu6oI4D
-         EFeaXkCG6lip0/RuZ4BlXZpKSf4KO5YQR/49koX5DoAVwrYratiaExYEtpLKGSX/SK1I
-         dpEk3j5dXYWe5nDQQCtFXbHRyO+24wwEgq6HjUNZOotCmOjc0N0XYmWyHIsNmNAvVhPe
-         fyVW5w/Zyp9CjnuDjQpkBcjT/7WMQUNCZu+fofP3kYyVBcbAr5gmKzLgMnTla6dZjzEl
-         LD5WqVV6+U6fNziLghIiBjnnA3UFlqKeBEVtWM7K/kUwDhTqSTj8XvKBqCrsl4Wsmkfj
-         XVqA==
-X-Gm-Message-State: AJcUukf7xVzyzzWqdp3G4fp3yflhB2j+zotGVqePhFAI9cCcVoua8EQN
-        G2EHDisS3xyKLcejhoVbVomhcM9gO1jUS3og0jfSE35wLj7Gz/9GQStTm4QHKJ7sW/TAe8m49dp
-        7szkXUVX63/CP6H3OJw4tJktn8ZSbLAAwRF1HaeAfpQ1DZ+EAxMrge9Yuj1y5dRMVrUBf7mcO1O
-        JFPNytz83y8gsnQaI9H9Y=
-X-Google-Smtp-Source: ALg8bN66qCcGAC3D2a0fxnCw9HaJXNajUR7r2nbuOwwX03o8vyWuXjzDHfQ0lKJtIh3EDRlGlrYGv9QDN5rPbV8gjo+gbw==
-X-Received: by 2002:ac8:2d46:: with SMTP id o6mr2859252qta.35.1546998545157;
- Tue, 08 Jan 2019 17:49:05 -0800 (PST)
-Date:   Tue,  8 Jan 2019 17:48:47 -0800
-In-Reply-To: <20190109014847.39980-1-matthewgarrett@google.com>
-Message-Id: <20190109014847.39980-6-matthewgarrett@google.com>
-Mime-Version: 1.0
-References: <20190109014847.39980-1-matthewgarrett@google.com>
-X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
-Subject: [PATCH 5/5] efi: Attempt to get the TCG2 event log in the boot stub
-From:   Matthew Garrett <matthewgarrett@google.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
-        Matthew Garrett <mjg59@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZzljEILvlpakQlXy+M1GQHzlPojI4ZdNWtszc0WhKLc=;
+        b=ciy0NIvfyfI3AWq9NZeL8kNbBtvihS20SBdvbqp+NoxSmyK6eR1mBioWvuCFMLkEz6
+         H6bAfAeQlNxPMXrq1vDokb02PwtjOi1dxYOdHM1HkQZSjn9jkLoOQfy5E6PbayCSZ0eQ
+         liEEQfgbzCKpEFj1ORUePQYu796JgKqzx2S0OY+tBf4BzfU6swdSZjYnCvnbVk/Pl3wB
+         SB5jRxzU+l9P0HyY2NxO800PBmDM8PvNATXsN1X57kkmpDYZWMnpnCglRXtrKsTNJC6n
+         DpDjoszoU+eJa7B4xDhqx9ZQREikOCfAkaUr+R/uwLZuxBmx1guCJKygTC/kuzBk3JrI
+         3/fA==
+X-Gm-Message-State: AJcUukds/m+YXCyt942V/Kakzinvg8+vr5SCH7kcJ+1+t3Y6cQNpJ96L
+        0LO/03eA65tJGLyjzFMf1dZylso/koYKvFmANtCEzg==
+X-Google-Smtp-Source: ALg8bN5JJFcEmV5GwPF0Et3f2grKdznSu8pH3S+zR4c5kN+wtR/ZGo9sVE6EEMwLm/Igt7HsQ4smI2vfZjWGLZz/7P8=
+X-Received: by 2002:a5d:8889:: with SMTP id d9mr2889441ioo.68.1546999372490;
+ Tue, 08 Jan 2019 18:02:52 -0800 (PST)
+MIME-Version: 1.0
+References: <20190108081247.2266-1-kasong@redhat.com> <20190108081247.2266-2-kasong@redhat.com>
+ <1546960680.19931.114.camel@linux.ibm.com> <20190109013356.GA2610@dhcp-128-65.nay.redhat.com>
+In-Reply-To: <20190109013356.GA2610@dhcp-128-65.nay.redhat.com>
+From:   Kairui Song <kasong@redhat.com>
+Date:   Wed, 9 Jan 2019 10:02:41 +0800
+Message-ID: <CACPcB9e_1aom8hb2Xqd6u-QUmh=y+cni3YxrM09Mro2q_A5-gw@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/1] KEYS, integrity: Link .platform keyring to .secondary_trusted_keys
+To:     Dave Young <dyoung@redhat.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>, dwmw2@infradead.org,
+        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
+        ebiggers@google.com, nayna@linux.ibm.com,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        kexec@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Matthew Garrett <mjg59@google.com>
+Thanks for the explanation Dave, my second thought is to let kexec use
+the platform keyring directly, that is let kexec verify the image with
+secondary/builtin keyring first then try platform keyring. And better
+to make platform keyring independent of integrity subsystem, so kexec
+could verify the image and don't depend on integrity. Any thought?
 
-Right now we only attempt to obtain the SHA1-only event log. The
-protocol also supports a crypto agile log format, which contains digests
-for all algorithms in use. Attempt to obtain this first, and fall back
-to obtaining the older format if the system doesn't support it. This is
-lightly complicated by the event sizes being variable (as we don't know
-in advance which algorithms are in use), and the interface giving us
-back a pointer to the start of the final entry rather than a pointer to
-the end of the log - as a result, we need to parse the final entry to
-figure out its length in order to know how much data to copy up to the
-OS.
+On Wed, Jan 9, 2019 at 9:34 AM Dave Young <dyoung@redhat.com> wrote:
+>
+> CC kexec list
+> On 01/08/19 at 10:18am, Mimi Zohar wrote:
+> > [Cc'ing the LSM and integrity mailing lists]
+> >
+> > Repeating my comment on PATCH 0/1 here with the expanded set of
+> > mailing lists.
+> >
+> > The builtin and secondary keyrings have a signature change of trust
+> > rooted in the signed kernel image.  Adding the pre-boot keys to the
+> > secondary keyring breaks that signature chain of trust.
+> >
+> > Please do NOT add the pre-boot "platform" keys to the secondary
+> > keyring.
+>
+> If we regard kexec as a bootloader, it sounds natural to use the
+> platform key to verify the signature with kexec_file_load syscall.
+>
+> It will be hard for user to manually sign a kernel and import the key
+> then to reuse kexec_file_load.
+>
+> I think we do not care if platform key can be added to secondary or not,
+> any suggestions how can kexec_file to use the platform key?
+>
+> >
+> > Mimi
+> >
+> >
+> > On Tue, 2019-01-08 at 16:12 +0800, Kairui Song wrote:
+> > > Currently kexec may need to verify the kerne image, and the kernel image
+> > > could be signed with third part keys which are provided by paltform or
+> > > firmware (eg. stored in MokListRT EFI variable). And the same time,
+> > > kexec_file_load will only verify the image agains .builtin_trusted_keys
+> > > or .secondary_trusted_keys according to configuration, but there is no
+> > > way for kexec_file_load to verify the image against any third part keys
+> > > mentioned above.
+> > >
+> > > In ea93102f3224 ('integrity: Define a trusted platform keyring') a
+> > > .platform keyring is introduced to store the keys provided by platform
+> > > or firmware. And with a few following commits including 15ea0e1e3e185
+> > > ('efi: Import certificates from UEFI Secure Boot'), now keys required to
+> > > verify the image is being imported to .paltform keyring, and later
+> > > IMA-appraisal could access the keyring and verify the image.
+> > >
+> > > This patch links the .platform keyring to .secondary_trusted_keys so
+> > > kexec_file_load could also leverage the .platform keyring to verify the
+> > > kernel image.
+> > >
+> > > Signed-off-by: Kairui Song <kasong@redhat.com>
+> > > ---
+> > >  certs/system_keyring.c          | 30 ++++++++++++++++++++++++++++++
+> > >  include/keys/platform_keyring.h | 12 ++++++++++++
+> > >  security/integrity/digsig.c     |  7 +++++++
+> > >  3 files changed, 49 insertions(+)
+> > >  create mode 100644 include/keys/platform_keyring.h
+> > >
+> > > diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+> > > index 81728717523d..dcef0259e149 100644
+> > > --- a/certs/system_keyring.c
+> > > +++ b/certs/system_keyring.c
+> > > @@ -18,12 +18,14 @@
+> > >  #include <linux/verification.h>
+> > >  #include <keys/asymmetric-type.h>
+> > >  #include <keys/system_keyring.h>
+> > > +#include <keys/platform_keyring.h>
+> > >  #include <crypto/pkcs7.h>
+> > >
+> > >  static struct key *builtin_trusted_keys;
+> > >  #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+> > >  static struct key *secondary_trusted_keys;
+> > >  #endif
+> > > +static struct key *platform_keys = NULL;
+> > >
+> > >  extern __initconst const u8 system_certificate_list[];
+> > >  extern __initconst const unsigned long system_certificate_list_size;
+> > > @@ -67,6 +69,12 @@ int restrict_link_by_builtin_and_secondary_trusted(
+> > >             /* Allow the builtin keyring to be added to the secondary */
+> > >             return 0;
+> > >
+> > > +   if (type == &key_type_keyring &&
+> > > +       dest_keyring == secondary_trusted_keys &&
+> > > +       payload == &platform_keys->payload)
+> > > +           /* Allow the platform keyring to be added to the secondary */
+> > > +           return 0;
+> > > +
+> > >     return restrict_link_by_signature(dest_keyring, type, payload,
+> > >                                       secondary_trusted_keys);
+> > >  }
+> > > @@ -188,6 +196,28 @@ static __init int load_system_certificate_list(void)
+> > >  }
+> > >  late_initcall(load_system_certificate_list);
+> > >
+> > > +#if defined(CONFIG_INTEGRITY_PLATFORM_KEYRING) && defined(CONFIG_SECONDARY_TRUSTED_KEYRING)
+> > > +
+> > > +/*
+> > > + * Link .platform keyring to .secondary_trusted_key keyring
+> > > + */
+> > > +static __init int load_platform_certificate_list(void)
+> > > +{
+> > > +   int ret = 0;
+> > > +   platform_keys = integrity_get_platform_keyring();
+> > > +   if (!platform_keys) {
+> > > +           return 0;
+> > > +   }
+> > > +   ret = key_link(secondary_trusted_keys, platform_keys);
+> > > +   if (ret < 0) {
+> > > +           pr_err("Failed to link platform keyring: %d", ret);
+> > > +   }
+> > > +   return 0;
+> > > +}
+> > > +late_initcall(load_platform_certificate_list);
+> > > +
+> > > +#endif
+> > > +
+> > >  #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
+> > >
+> > >  /**
+> > > diff --git a/include/keys/platform_keyring.h b/include/keys/platform_keyring.h
+> > > new file mode 100644
+> > > index 000000000000..4f92ed6c0b42
+> > > --- /dev/null
+> > > +++ b/include/keys/platform_keyring.h
+> > > @@ -0,0 +1,12 @@
+> > > +#ifndef _KEYS_PLATFORM_KEYRING_H
+> > > +#define _KEYS_PLATFORM_KEYRING_H
+> > > +
+> > > +#include <linux/key.h>
+> > > +
+> > > +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> > > +
+> > > +extern const struct key* __init integrity_get_platform_keyring(void);
+> > > +
+> > > +#endif /* CONFIG_INTEGRITY_PLATFORM_KEYRING */
+> > > +
+> > > +#endif /* _KEYS_SYSTEM_KEYRING_H */
+> > > diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+> > > index f45d6edecf99..397758d4f12d 100644
+> > > --- a/security/integrity/digsig.c
+> > > +++ b/security/integrity/digsig.c
+> > > @@ -176,3 +176,10 @@ int __init integrity_load_cert(const unsigned int id, const char *source,
+> > >     pr_info("Loading X.509 certificate: %s\n", source);
+> > >     return integrity_add_key(id, data, len, perm);
+> > >  }
+> > > +
+> > > +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> > > +struct key* __init integrity_get_platform_keyring(void)
+> > > +{
+> > > +   return keyring[INTEGRITY_KEYRING_PLATFORM];
+> > > +}
+> > > +#endif
+> >
+>
+> Thanks
+> Dave
 
-Signed-off-by: Matthew Garrett <mjg59@google.com>
----
- drivers/firmware/efi/libstub/tpm.c | 50 ++++++++++++++++++++----------
- 1 file changed, 33 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
-index a90b0b8fc69a..7d4a045aa2c4 100644
---- a/drivers/firmware/efi/libstub/tpm.c
-+++ b/drivers/firmware/efi/libstub/tpm.c
-@@ -59,7 +59,7 @@ void efi_enable_reset_attack_mitigation(efi_system_table_t *sys_table_arg)
- 
- #endif
- 
--static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
-+void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
- {
- 	efi_guid_t tcg2_guid = EFI_TCG2_PROTOCOL_GUID;
- 	efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
-@@ -69,6 +69,7 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
- 	unsigned long first_entry_addr, last_entry_addr;
- 	size_t log_size, last_entry_size;
- 	efi_bool_t truncated;
-+	int version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
- 	void *tcg2_protocol = NULL;
- 
- 	status = efi_call_early(locate_protocol, &tcg2_guid, NULL,
-@@ -76,14 +77,20 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
- 	if (status != EFI_SUCCESS)
- 		return;
- 
--	status = efi_call_proto(efi_tcg2_protocol, get_event_log, tcg2_protocol,
--				EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2,
--				&log_location, &log_last_entry, &truncated);
--	if (status != EFI_SUCCESS)
--		return;
-+	status = efi_call_proto(efi_tcg2_protocol, get_event_log,
-+				tcg2_protocol, version, &log_location,
-+				&log_last_entry, &truncated);
-+
-+	if (status != EFI_SUCCESS || !log_location) {
-+		version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
-+		status = efi_call_proto(efi_tcg2_protocol, get_event_log,
-+					tcg2_protocol, version, &log_location,
-+					&log_last_entry, &truncated);
-+		if (status != EFI_SUCCESS || !log_location)
-+			return;
-+
-+	}
- 
--	if (!log_location)
--		return;
- 	first_entry_addr = (unsigned long) log_location;
- 
- 	/*
-@@ -98,8 +105,23 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
- 		 * We need to calculate its size to deduce the full size of
- 		 * the logs.
- 		 */
--		last_entry_size = sizeof(struct tcpa_event) +
--			((struct tcpa_event *) last_entry_addr)->event_size;
-+		if (version == EFI_TCG2_EVENT_LOG_FORMAT_TCG_2) {
-+			/*
-+			 * The TCG2 log format has variable length entries,
-+			 * and the information to decode the hash algorithms
-+			 * back into a size is contained in the first entry -
-+			 * pass a pointer to the final entry (to calculate its
-+			 * size) and the first entry (so we know how long each
-+			 * digest is)
-+			 */
-+			last_entry_size =
-+				_calc_tpm2_event_size((void *)last_entry_addr,
-+						      (void *)log_location,
-+						      NULL, NULL);
-+		} else {
-+			last_entry_size = sizeof(struct tcpa_event) +
-+			   ((struct tcpa_event *) last_entry_addr)->event_size;
-+		}
- 		log_size = log_last_entry - log_location + last_entry_size;
- 	}
- 
-@@ -116,7 +138,7 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
- 
- 	memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
- 	log_tbl->size = log_size;
--	log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
-+	log_tbl->version = version;
- 	memcpy(log_tbl->log, (void *) first_entry_addr, log_size);
- 
- 	status = efi_call_early(install_configuration_table,
-@@ -128,9 +150,3 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
- err_free:
- 	efi_call_early(free_pool, log_tbl);
- }
--
--void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
--{
--	/* Only try to retrieve the logs in 1.2 format. */
--	efi_retrieve_tpm2_eventlog_1_2(sys_table_arg);
--}
+
 -- 
-2.20.1.97.g81188d93c3-goog
-
+Best Regards,
+Kairui Song
