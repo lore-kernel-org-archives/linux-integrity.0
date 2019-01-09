@@ -2,130 +2,100 @@ Return-Path: <SRS0=d4Rs=PR=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5B38C43387
-	for <linux-integrity@archiver.kernel.org>; Wed,  9 Jan 2019 19:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67EE0C43387
+	for <linux-integrity@archiver.kernel.org>; Wed,  9 Jan 2019 22:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB916206BA
-	for <linux-integrity@archiver.kernel.org>; Wed,  9 Jan 2019 19:22:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 355C520685
+	for <linux-integrity@archiver.kernel.org>; Wed,  9 Jan 2019 22:11:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728173AbfAITWm (ORCPT
+        id S1727261AbfAIWLM (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:22:42 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59756 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728176AbfAITWb (ORCPT
+        Wed, 9 Jan 2019 17:11:12 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42310 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726985AbfAIWLM (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 9 Jan 2019 14:22:31 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x09JENck042688
-        for <linux-integrity@vger.kernel.org>; Wed, 9 Jan 2019 14:22:31 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pwpxh09x7-1
+        Wed, 9 Jan 2019 17:11:12 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x09M9ler011132
+        for <linux-integrity@vger.kernel.org>; Wed, 9 Jan 2019 17:11:11 -0500
+Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pwrq820ae-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 09 Jan 2019 14:22:30 -0500
+        for <linux-integrity@vger.kernel.org>; Wed, 09 Jan 2019 17:11:11 -0500
 Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 9 Jan 2019 19:22:28 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
+        Wed, 9 Jan 2019 22:11:10 -0000
+Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
+        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 9 Jan 2019 19:22:24 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x09JMMx49633820
+        Wed, 9 Jan 2019 22:11:07 -0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x09MB6TT22479014
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 9 Jan 2019 19:22:22 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ABB85AE045;
-        Wed,  9 Jan 2019 19:22:22 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E8F84AE057;
-        Wed,  9 Jan 2019 19:21:31 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.105.240])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  9 Jan 2019 19:21:31 +0000 (GMT)
-Subject: Re: [RFC PATCH 1/2] integrity, KEYS: add a reference to platform
- keyring
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     dhowells@redhat.com, dwmw2@infradead.org,
-        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
-        jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
-        ebiggers@google.com, nayna@linux.ibm.com, dyoung@redhat.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org
-Date:   Wed, 09 Jan 2019 14:21:11 -0500
-In-Reply-To: <20190109164824.19708-2-kasong@redhat.com>
-References: <20190109164824.19708-1-kasong@redhat.com>
-         <20190109164824.19708-2-kasong@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 9 Jan 2019 22:11:06 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 460E0BE726;
+        Wed,  9 Jan 2019 22:11:06 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E3BDFBE71A;
+        Wed,  9 Jan 2019 22:11:05 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed,  9 Jan 2019 22:11:05 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
+To:     linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Subject: [PATCH 0/5] Extend TPM PPI interface to support revision 1.3
+Date:   Wed,  9 Jan 2019 17:10:58 -0500
+X-Mailer: git-send-email 2.17.2
 X-TM-AS-GCONF: 00
-x-cbid: 19010919-0028-0000-0000-00000336AB22
+x-cbid: 19010922-0036-0000-0000-00000A783D20
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010375; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000274; SDB=6.01144159; UDB=6.00595717; IPR=6.00924421;
+ MB=3.00025056; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-09 22:11:09
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010919-0029-0000-0000-000023F3BD09
-Message-Id: <1547061671.19931.239.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_10:,,
+x-cbparentid: 19010922-0037-0000-0000-00004A4858F6
+Message-Id: <20190109221103.1897677-1-stefanb@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_11:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901090157
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901090176
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, 2019-01-10 at 00:48 +0800, Kairui Song wrote:
-> Currently kexec_file_load will verify the kernel image being loaded
-> against .builtin_trusted_keys or .secondary_trusted_keys, but the
-> image could be signed with third part keys which will be provided by
-> platform or firmware and the keys won't be available in keyrings mentioned
-> above.
-> 
-> After commit ea93102f3224 ('integrity: Define a trusted platform keyring')
-> a .platform keyring is introduced to store the keys provided by platform
-> or firmware. And with a few following commits, now keys required to verify
-> the image is being imported to .platform keyring, but currently, only
-> IMA-appraisal could use the keyring and verify the image.
-> 
-> This patch exposes the .platform and makes other components, like
-> kexec_file_load, could use this .platform keyring to verify the
-> kernel image.
+This series of patches extends the TPM subsystem's PPI support to
+support TPM PPI revision 1.3 where more commands are supported (up to 101)
+and the TPM 2 command code '23' takes an additional parameter.
 
-The "platform" keyring was upstreamed in order to verify the kernel
-image being loaded by the kexec_file_load syscall.  The intentions of
-this patch description needs to be clearer.
+For the command code '23' see this document here on document page 39:
+https://trustedcomputinggroup.org/wp-content/uploads/Physical-Presence-Interface_1-30_0-52.pdf
 
-> 
-> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-> Signed-off-by: Kairui Song <kasong@redhat.com>
-> ---
->  certs/system_keyring.c        | 3 +++
->  include/keys/system_keyring.h | 5 +++++
->  security/integrity/digsig.c   | 4 ++++
->  3 files changed, 12 insertions(+)
-> 
-> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-> index 81728717523d..a61b95390b80 100644
-> --- a/certs/system_keyring.c
-> +++ b/certs/system_keyring.c
-> @@ -24,6 +24,9 @@ static struct key *builtin_trusted_keys;
->  #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
->  static struct key *secondary_trusted_keys;
->  #endif
-> +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
-> +struct key *platform_trusted_keys;
+   Stefan
 
-Please make it static.
+Stefan Berger (5):
+  tpm: ppi: pass function revision ID to tpm_eval_dsm()
+  tpm: ppi: rename TPM_PPI_REVISION_ID to TPM_PPI_REVISION_1
+  tpm: ppi: Display up to 101 operations as define for version 1.3
+  tpm: ppi: Possibly show command parameter if TPM PPI 1.3 is used
+  tpm: ppi: Enable submission of optional command parameter for PPI 1.3
 
-Mimi
+ drivers/char/tpm/tpm_ppi.c | 78 ++++++++++++++++++++++++++++----------
+ 1 file changed, 58 insertions(+), 20 deletions(-)
 
-> +#endif
+-- 
+2.17.1
 
