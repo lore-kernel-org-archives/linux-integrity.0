@@ -2,229 +2,145 @@ Return-Path: <SRS0=d4Rs=PR=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E3FC43444
-	for <linux-integrity@archiver.kernel.org>; Wed,  9 Jan 2019 02:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B67AC43387
+	for <linux-integrity@archiver.kernel.org>; Wed,  9 Jan 2019 14:08:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D3A6206BB
-	for <linux-integrity@archiver.kernel.org>; Wed,  9 Jan 2019 02:02:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74E2C206BB
+	for <linux-integrity@archiver.kernel.org>; Wed,  9 Jan 2019 14:08:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729600AbfAICCy (ORCPT
+        id S1730783AbfAIOH7 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 8 Jan 2019 21:02:54 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:37387 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729380AbfAICCy (ORCPT
+        Wed, 9 Jan 2019 09:07:59 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46658 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730419AbfAIOH6 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 8 Jan 2019 21:02:54 -0500
-Received: by mail-io1-f67.google.com with SMTP id g8so4828708iok.4
-        for <linux-integrity@vger.kernel.org>; Tue, 08 Jan 2019 18:02:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZzljEILvlpakQlXy+M1GQHzlPojI4ZdNWtszc0WhKLc=;
-        b=ciy0NIvfyfI3AWq9NZeL8kNbBtvihS20SBdvbqp+NoxSmyK6eR1mBioWvuCFMLkEz6
-         H6bAfAeQlNxPMXrq1vDokb02PwtjOi1dxYOdHM1HkQZSjn9jkLoOQfy5E6PbayCSZ0eQ
-         liEEQfgbzCKpEFj1ORUePQYu796JgKqzx2S0OY+tBf4BzfU6swdSZjYnCvnbVk/Pl3wB
-         SB5jRxzU+l9P0HyY2NxO800PBmDM8PvNATXsN1X57kkmpDYZWMnpnCglRXtrKsTNJC6n
-         DpDjoszoU+eJa7B4xDhqx9ZQREikOCfAkaUr+R/uwLZuxBmx1guCJKygTC/kuzBk3JrI
-         3/fA==
-X-Gm-Message-State: AJcUukds/m+YXCyt942V/Kakzinvg8+vr5SCH7kcJ+1+t3Y6cQNpJ96L
-        0LO/03eA65tJGLyjzFMf1dZylso/koYKvFmANtCEzg==
-X-Google-Smtp-Source: ALg8bN5JJFcEmV5GwPF0Et3f2grKdznSu8pH3S+zR4c5kN+wtR/ZGo9sVE6EEMwLm/Igt7HsQ4smI2vfZjWGLZz/7P8=
-X-Received: by 2002:a5d:8889:: with SMTP id d9mr2889441ioo.68.1546999372490;
- Tue, 08 Jan 2019 18:02:52 -0800 (PST)
-MIME-Version: 1.0
-References: <20190108081247.2266-1-kasong@redhat.com> <20190108081247.2266-2-kasong@redhat.com>
- <1546960680.19931.114.camel@linux.ibm.com> <20190109013356.GA2610@dhcp-128-65.nay.redhat.com>
-In-Reply-To: <20190109013356.GA2610@dhcp-128-65.nay.redhat.com>
-From:   Kairui Song <kasong@redhat.com>
-Date:   Wed, 9 Jan 2019 10:02:41 +0800
-Message-ID: <CACPcB9e_1aom8hb2Xqd6u-QUmh=y+cni3YxrM09Mro2q_A5-gw@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/1] KEYS, integrity: Link .platform keyring to .secondary_trusted_keys
+        Wed, 9 Jan 2019 09:07:58 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x09E4QhF189092
+        for <linux-integrity@vger.kernel.org>; Wed, 9 Jan 2019 09:07:57 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pwhvd1ww8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 09 Jan 2019 09:07:56 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 9 Jan 2019 14:07:55 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 9 Jan 2019 14:07:50 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x09E7mXN47448156
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 9 Jan 2019 14:07:48 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6FD32AE063;
+        Wed,  9 Jan 2019 14:07:48 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BC7DFAE05F;
+        Wed,  9 Jan 2019 14:07:46 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.106.104])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  9 Jan 2019 14:07:46 +0000 (GMT)
+Subject: Re: [RFC PATCH 1/1] KEYS, integrity: Link .platform keyring to
+ .secondary_trusted_keys
+From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     Dave Young <dyoung@redhat.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>, dwmw2@infradead.org,
+Cc:     Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org,
+        dhowells@redhat.com, dwmw2@infradead.org,
         jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
         jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
         ebiggers@google.com, nayna@linux.ibm.com,
         linux-security-module <linux-security-module@vger.kernel.org>,
         linux-integrity <linux-integrity@vger.kernel.org>,
         kexec@lists.infradead.org
+Date:   Wed, 09 Jan 2019 09:07:36 -0500
+In-Reply-To: <20190109013356.GA2610@dhcp-128-65.nay.redhat.com>
+References: <20190108081247.2266-1-kasong@redhat.com>
+         <20190108081247.2266-2-kasong@redhat.com>
+         <1546960680.19931.114.camel@linux.ibm.com>
+         <20190109013356.GA2610@dhcp-128-65.nay.redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19010914-0008-0000-0000-000002AE5E88
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010914-0009-0000-0000-0000221A60A4
+Message-Id: <1547042856.19931.229.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901090119
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Thanks for the explanation Dave, my second thought is to let kexec use
-the platform keyring directly, that is let kexec verify the image with
-secondary/builtin keyring first then try platform keyring. And better
-to make platform keyring independent of integrity subsystem, so kexec
-could verify the image and don't depend on integrity. Any thought?
-
-On Wed, Jan 9, 2019 at 9:34 AM Dave Young <dyoung@redhat.com> wrote:
->
+On Wed, 2019-01-09 at 09:33 +0800, Dave Young wrote:
 > CC kexec list
 > On 01/08/19 at 10:18am, Mimi Zohar wrote:
 > > [Cc'ing the LSM and integrity mailing lists]
-> >
+> > 
 > > Repeating my comment on PATCH 0/1 here with the expanded set of
 > > mailing lists.
-> >
+> > 
 > > The builtin and secondary keyrings have a signature change of trust
-> > rooted in the signed kernel image.  Adding the pre-boot keys to the
+> > rooted in the signed kernel image.  Adding the pre-boot keys to the
 > > secondary keyring breaks that signature chain of trust.
-> >
+> > 
 > > Please do NOT add the pre-boot "platform" keys to the secondary
 > > keyring.
->
+> 
 > If we regard kexec as a bootloader, it sounds natural to use the
 > platform key to verify the signature with kexec_file_load syscall.
->
+> 
 > It will be hard for user to manually sign a kernel and import the key
 > then to reuse kexec_file_load.
->
+
+This is really a generic topic, not limited to kexec, which should be
+discussed.  Let's defer this discussion for now.
+
+> 
 > I think we do not care if platform key can be added to secondary or not,
 > any suggestions how can kexec_file to use the platform key?
->
-> >
-> > Mimi
-> >
-> >
-> > On Tue, 2019-01-08 at 16:12 +0800, Kairui Song wrote:
-> > > Currently kexec may need to verify the kerne image, and the kernel image
-> > > could be signed with third part keys which are provided by paltform or
-> > > firmware (eg. stored in MokListRT EFI variable). And the same time,
-> > > kexec_file_load will only verify the image agains .builtin_trusted_keys
-> > > or .secondary_trusted_keys according to configuration, but there is no
-> > > way for kexec_file_load to verify the image against any third part keys
-> > > mentioned above.
-> > >
-> > > In ea93102f3224 ('integrity: Define a trusted platform keyring') a
-> > > .platform keyring is introduced to store the keys provided by platform
-> > > or firmware. And with a few following commits including 15ea0e1e3e185
-> > > ('efi: Import certificates from UEFI Secure Boot'), now keys required to
-> > > verify the image is being imported to .paltform keyring, and later
-> > > IMA-appraisal could access the keyring and verify the image.
-> > >
-> > > This patch links the .platform keyring to .secondary_trusted_keys so
-> > > kexec_file_load could also leverage the .platform keyring to verify the
-> > > kernel image.
-> > >
-> > > Signed-off-by: Kairui Song <kasong@redhat.com>
-> > > ---
-> > >  certs/system_keyring.c          | 30 ++++++++++++++++++++++++++++++
-> > >  include/keys/platform_keyring.h | 12 ++++++++++++
-> > >  security/integrity/digsig.c     |  7 +++++++
-> > >  3 files changed, 49 insertions(+)
-> > >  create mode 100644 include/keys/platform_keyring.h
-> > >
-> > > diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-> > > index 81728717523d..dcef0259e149 100644
-> > > --- a/certs/system_keyring.c
-> > > +++ b/certs/system_keyring.c
-> > > @@ -18,12 +18,14 @@
-> > >  #include <linux/verification.h>
-> > >  #include <keys/asymmetric-type.h>
-> > >  #include <keys/system_keyring.h>
-> > > +#include <keys/platform_keyring.h>
-> > >  #include <crypto/pkcs7.h>
-> > >
-> > >  static struct key *builtin_trusted_keys;
-> > >  #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
-> > >  static struct key *secondary_trusted_keys;
-> > >  #endif
-> > > +static struct key *platform_keys = NULL;
-> > >
-> > >  extern __initconst const u8 system_certificate_list[];
-> > >  extern __initconst const unsigned long system_certificate_list_size;
-> > > @@ -67,6 +69,12 @@ int restrict_link_by_builtin_and_secondary_trusted(
-> > >             /* Allow the builtin keyring to be added to the secondary */
-> > >             return 0;
-> > >
-> > > +   if (type == &key_type_keyring &&
-> > > +       dest_keyring == secondary_trusted_keys &&
-> > > +       payload == &platform_keys->payload)
-> > > +           /* Allow the platform keyring to be added to the secondary */
-> > > +           return 0;
-> > > +
-> > >     return restrict_link_by_signature(dest_keyring, type, payload,
-> > >                                       secondary_trusted_keys);
-> > >  }
-> > > @@ -188,6 +196,28 @@ static __init int load_system_certificate_list(void)
-> > >  }
-> > >  late_initcall(load_system_certificate_list);
-> > >
-> > > +#if defined(CONFIG_INTEGRITY_PLATFORM_KEYRING) && defined(CONFIG_SECONDARY_TRUSTED_KEYRING)
-> > > +
-> > > +/*
-> > > + * Link .platform keyring to .secondary_trusted_key keyring
-> > > + */
-> > > +static __init int load_platform_certificate_list(void)
-> > > +{
-> > > +   int ret = 0;
-> > > +   platform_keys = integrity_get_platform_keyring();
-> > > +   if (!platform_keys) {
-> > > +           return 0;
-> > > +   }
-> > > +   ret = key_link(secondary_trusted_keys, platform_keys);
-> > > +   if (ret < 0) {
-> > > +           pr_err("Failed to link platform keyring: %d", ret);
-> > > +   }
-> > > +   return 0;
-> > > +}
-> > > +late_initcall(load_platform_certificate_list);
-> > > +
-> > > +#endif
-> > > +
-> > >  #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
-> > >
-> > >  /**
-> > > diff --git a/include/keys/platform_keyring.h b/include/keys/platform_keyring.h
-> > > new file mode 100644
-> > > index 000000000000..4f92ed6c0b42
-> > > --- /dev/null
-> > > +++ b/include/keys/platform_keyring.h
-> > > @@ -0,0 +1,12 @@
-> > > +#ifndef _KEYS_PLATFORM_KEYRING_H
-> > > +#define _KEYS_PLATFORM_KEYRING_H
-> > > +
-> > > +#include <linux/key.h>
-> > > +
-> > > +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
-> > > +
-> > > +extern const struct key* __init integrity_get_platform_keyring(void);
-> > > +
-> > > +#endif /* CONFIG_INTEGRITY_PLATFORM_KEYRING */
-> > > +
-> > > +#endif /* _KEYS_SYSTEM_KEYRING_H */
+
+I assume the problem is accessing the keyring id.
+
+Instead of defining a function to return the keyring id, as below,
+define a function that sets a variable with the keyring id.
+ platform_keyring_init() would call that function to set the variable.
+
+Similar to builtin_trusted_keys and secondary_trusted_keys, define a
+variable named platform_trusted_keys.
+
+[snip]
+
 > > > diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
 > > > index f45d6edecf99..397758d4f12d 100644
 > > > --- a/security/integrity/digsig.c
 > > > +++ b/security/integrity/digsig.c
 > > > @@ -176,3 +176,10 @@ int __init integrity_load_cert(const unsigned int id, const char *source,
-> > >     pr_info("Loading X.509 certificate: %s\n", source);
-> > >     return integrity_add_key(id, data, len, perm);
+> > >  	pr_info("Loading X.509 certificate: %s\n", source);
+> > >  	return integrity_add_key(id, data, len, perm);
 > > >  }
 > > > +
 > > > +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
 > > > +struct key* __init integrity_get_platform_keyring(void)
 > > > +{
-> > > +   return keyring[INTEGRITY_KEYRING_PLATFORM];
+> > > +	return keyring[INTEGRITY_KEYRING_PLATFORM];
 > > > +}
 > > > +#endif
-> >
->
-> Thanks
-> Dave
 
+Mimi
 
-
--- 
-Best Regards,
-Kairui Song
