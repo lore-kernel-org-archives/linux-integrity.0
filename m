@@ -6,34 +6,34 @@ X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_ADSP_ALL,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E182C43444
-	for <linux-integrity@archiver.kernel.org>; Thu, 10 Jan 2019 18:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC392C43387
+	for <linux-integrity@archiver.kernel.org>; Thu, 10 Jan 2019 18:03:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DF87208E3
-	for <linux-integrity@archiver.kernel.org>; Thu, 10 Jan 2019 18:01:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9577206B7
+	for <linux-integrity@archiver.kernel.org>; Thu, 10 Jan 2019 18:03:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730773AbfAJSA4 convert rfc822-to-8bit (ORCPT
+        id S1730455AbfAJSDs convert rfc822-to-8bit (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 10 Jan 2019 13:00:56 -0500
-Received: from sender-of-o53.zoho.com ([135.84.80.218]:21840 "EHLO
+        Thu, 10 Jan 2019 13:03:48 -0500
+Received: from sender-of-o53.zoho.com ([135.84.80.218]:21844 "EHLO
         sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729480AbfAJSAz (ORCPT
+        with ESMTP id S1729882AbfAJSDs (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 10 Jan 2019 13:00:55 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1547143234; cv=none; 
+        Thu, 10 Jan 2019 13:03:48 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1547143414; cv=none; 
         d=zoho.com; s=zohoarc; 
-        b=Zr8qqRaZTYf+vaDNoyqcxCT+3sWnfarhI0eLTbYvNAObjutoFwGK2NmNCEL4Bu7okNm5wYUryvT+IxYmXMbxmtv3HGyBzhTvuSKAYkhZGlLniXqPJfTSgvA4bq9rZL5sw6N/C3+3Ku9K+gY+wd1rc3MMb1oc5g+E+wmfWlTxRVw=
+        b=DVtAxO5WSBtmXzJLx4Eojn1xzilIxH4TitwMkjRjLT9uOoBLDxaAUdPbGnSod+toWJKTsugi+4nYudWDyPcdvuH11ngtExXAWzO/j1ZEbFSPeISd6EL8del/jlCq1C1LLaW/JP9ENuZFzDrgJ4yVznRjYRNFNvBVcEk5wN/df+o=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1547143234; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=y7Ug1hh2YUjlfSyroPaXvQSS+T5lVCs5wbg4QTW3dmM=; 
-        b=dGc4zpunH6nYbkl7GLD4ILdPFc2eeq8nbZQ+0/gl7ph7n8xy6k3Sd4WOp2VJ/kAyhcOhsNKQAK4T5fdKwGHrS0P2PkRnyHW12QQGQnHr3qFZS89LbDeRrM0ZaI/tu0DOFIdHtNUko4G8HVqNPv4zmTXtmST3eDDrFdUYb1ZCNog=
+        t=1547143414; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=I4sIXm4byiLK7cWi4d+oOqh3fjuUZRa2fzgEc/PopCI=; 
+        b=CBG2acyGQ0v2zHfvw47I08p0xk9I/DYsT0OyPf0sM2k2Z1r3Nf7IizE29TEKZDCNUmDwmGGRCbafpQy0jX5SoCqTaPAxr+xD6CUNjIC4cCjtgzarxJTBOHQJOlr3fy6sTZWgSy6Y4YzGDLAmNju8CrImORel2WPX1XibJA98gI0=
 ARC-Authentication-Results: i=1; mx.zoho.com;
         dkim=pass  header.i=mniewoehner.de;
         spf=pass  smtp.mailfrom=linux@mniewoehner.de;
         dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
 Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
-        with SMTPS id 1547143233258132.69536931174787; Thu, 10 Jan 2019 10:00:33 -0800 (PST)
-Message-ID: <3245408721bf1480f24af08db668fa7e3e7c848b.camel@mniewoehner.de>
+        with SMTPS id 1547143412184265.1848318416826; Thu, 10 Jan 2019 10:03:32 -0800 (PST)
+Message-ID: <6a7c871bc6aeaa780114a937741f46223ca7e961.camel@mniewoehner.de>
 Subject: Re: tpm_tis TPM2.0 not detected on cold boot
 From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
@@ -44,7 +44,7 @@ Cc:     Mimi Zohar <zohar@linux.ibm.com>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         Nayna Jain <nayna@linux.ibm.com>,
         Ken Goldman <kgold@linux.ibm.com>
-In-Reply-To: <20190110171923.GC6589@linux.intel.com>
+In-Reply-To: <20190110172806.GD6589@linux.intel.com>
 References: <ef7e773b01a5e6153b84628f74fc67092a2f9b0e.camel@gmail.com>
          <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
          <1545519232.3940.115.camel@linux.ibm.com>
@@ -53,9 +53,11 @@ References: <ef7e773b01a5e6153b84628f74fc67092a2f9b0e.camel@gmail.com>
          <6c1bf9815bfcb5d2bc0cfedfc49c7feda0173dc9.camel@mniewoehner.de>
          <20190103150434.GC17015@linux.intel.com>
          <5aa2fc082b6b0657574918b025005ad569da6412.camel@mniewoehner.de>
-         <20190110171923.GC6589@linux.intel.com>
+         <c1f5f53cdaaaad6cc80c2b10172a69f0301d3e0e.camel@mniewoehner.de>
+         <5ee514be264361a8f1ed4a4ad823ad72dd7dce23.camel@mniewoehner.de>
+         <20190110172806.GD6589@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Date:   Thu, 10 Jan 2019 19:00:28 +0100
+Date:   Thu, 10 Jan 2019 19:03:28 +0100
 Mime-Version: 1.0
 User-Agent: Evolution 3.30.3 
 Content-Transfer-Encoding: 8BIT
@@ -65,77 +67,57 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, 2019-01-10 at 19:19 +0200, Jarkko Sakkinen wrote:
-> On Thu, Jan 03, 2019 at 04:47:31PM +0100, Michael Niewöhner wrote:
-> > On Thu, 2019-01-03 at 17:04 +0200, Jarkko Sakkinen wrote:
-> > > On Thu, Jan 03, 2019 at 02:38:11PM +0100, Michael Niewöhner wrote:
-> > > > On Thu, 2019-01-03 at 15:27 +0200, Jarkko Sakkinen wrote:
-> > > > > On Sun, Dec 23, 2018 at 12:55:12PM +0100, Michael Niewöhner wrote:
-> > > > > > There is another issue but I don't know if both are related. Maybe
-> > > > > > that's
-> > > > > > just a
-> > > > > > timing issue...
-> > > > > > 
-> > > > > > root@debian:~# dd if=/dev/hwrng bs=1 count=1
-> > > > > > dd: error reading '/dev/hwrng': Operation not permitted
-> > > > > > 0+0 records in
-> > > > > > 0+0 records out
-> > > > > > 0 bytes copied, 0.755958 s, 0.0 kB/s
-> > > > > > root@debian:~# dd if=/dev/hwrng bs=1 count=1 | xxd; dd if=/dev/hwrng
-> > > > > > bs=1
-> > > > > > count=1 | xxd
-> > > > > > dd: error reading '/dev/hwrng': Operation not permitted
-> > > > > > 0+0 records in
-> > > > > > 0+0 records out
-> > > > > > 0 bytes copied, 0.755697 s, 0.0 kB/s
-> > > > > > 1+0 records in
-> > > > > > 1+0 records out
-> > > > > > 00000000: 52                                       R
-> > > > > > 1 byte copied, 0.0106268 s, 0.1 kB/s
-> > > > > > 
-> > > > > > 
-> > > > > > Michael
-> > > > > 
-> > > > > What does /sys/devices/virtual/misc/hw_random/rng_current show?
-> > > > > 
-> > > > > Did run commands as a sanity check on my laptop and seem to work.
-> > > > > 
-> > > > > /Jarkko
-> > > > 
-> > > > rng_current says "tpm-rng-0", which should be correct
-> > > 
-> > > Is /dev/tpm0 accessible and usable?
-> > > 
-> > > /Jarkko
-> > 
-> > No, it does not seem to work:
-> > 
-> > root@debian:~# tpm_version                                     
-> > Tspi_Context_Connect failed: 0x00003011 - layer=tsp, code=0011 (17),
-> > Communication failure
-> > root@debian:~# tcsd -f
-> > TCSD TDDL ioctl: (25) Inappropriate ioctl for device
-> > TCSD TDDL Falling back to Read/Write device support.
-> > TCSD TDDL ERROR: write to device /dev/tpm0 failed: Operation not permitted
-> > TCSD TCS ERROR: TCS GetCapability failed with result = 0x1087
-> > root@debian:~# stat /dev/tpm0
-> >   File: /dev/tpm0
-> >   Size: 0         	Blocks: 0          IO Block: 4096   character special
-> > file
-> > Device: 6h/6d	Inode: 1114        Links: 1     Device type: a,e0
-> > Access: (0600/crw-------)  Uid: (  104/     tss)   Gid: (  112/     tss)
-> > Access: 2019-01-03 16:39:20.627635333 +0100
-> > Modify: 2019-01-03 16:39:20.627635333 +0100
-> > Change: 2019-01-03 16:39:20.627635333 +0100
-> >  Birth: -
+On Thu, 2019-01-10 at 19:28 +0200, Jarkko Sakkinen wrote:
+> On Fri, Jan 04, 2019 at 04:28:24PM +0100, Michael Niewöhner wrote:
+> > root@debian:~# tpm2_pcrlist
+> > ERROR:tcti:src/util/io.c:102:write_all() failed to write to fd 3: Operation
+> > not
+> > permitted 
+> > ERROR:tcti:src/tss2-tcti/tcti-device.c:86:tcti_device_transmit() wrong
+> > number of
+> > bytes written. Expected 22, wrote 0. 
+> > ERROR: GetCapability: Get PCR allocation status Error. TPM
+> > Error:0xa000a......
+> > ERROR: Unable to run tpm2_pcrlist
+> > root@debian:~# tpm2_pcrlist; tpm2_pcrlist 
+> > sha1 :
+> >   0  : 1ebb2be3b7103a09b5caeeb5827c1242cd6632ec
+> >   1  : 425e833da73cb511150d6ffcf6fac64e9a6feb58
+> >   2  : b2a83b0ebf2f8374299a5b2bdfc31ea955ad7236
+> >   3  : b2a83b0ebf2f8374299a5b2bdfc31ea955ad7236
+> >   4  : d13c141b174afbb568773adf1f39940a2df47c7d
+> >   5  : 756a3647403ab141ec2c1ac7325854f4a93f6efd
+> > ......
 > 
-> But those tools should not work because TrouSerS is for TPM 1.2.
+> So the sympton is that it from time to time works and time to time
+> fails.
+
+Not exactly. It only works on the second of two directly consecutive calls. 
+
 > 
+> Can't recall whether you had interrupts enabled or disabled for the
+> TPM chip (depending on whether you use IRQs or polling you'd have
+> to tweak the code from a different place), but you could tweak
+> directly the TPM2_DURATION_* constants in drivers/char/tpm/tpm.h:
+> 
+> enum tpm2_timeouts {
+> 	TPM2_TIMEOUT_A          =    750,
+> 	TPM2_TIMEOUT_B          =   2000,
+> 	TPM2_TIMEOUT_C          =    200,
+> 	TPM2_TIMEOUT_D          =     30,
+> 	TPM2_DURATION_SHORT     =     20,
+> 	TPM2_DURATION_MEDIUM    =    750,
+> 	TPM2_DURATION_LONG      =   2000,
+> 	TPM2_DURATION_LONG_LONG = 300000,
+> 	TPM2_DURATION_DEFAULT   = 120000,
+> };
+> 
+> Set SHORT, LONG and MEDIUM to lets say 3000 and lets see if that
+> makes a difference or not.
 > /Jarkko
 
 
-Right. I realized that too late... Have a look at my email from Fri, 04 Jan 2019
-19:26:10 +0100
+I have already tried this but there was not any difference.
 
 Michael
 
