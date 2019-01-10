@@ -2,68 +2,141 @@ Return-Path: <SRS0=Znl9=PS=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_ADSP_ALL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A268C43387
-	for <linux-integrity@archiver.kernel.org>; Thu, 10 Jan 2019 17:40:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E182C43444
+	for <linux-integrity@archiver.kernel.org>; Thu, 10 Jan 2019 18:01:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 227DC208E3
-	for <linux-integrity@archiver.kernel.org>; Thu, 10 Jan 2019 17:40:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DF87208E3
+	for <linux-integrity@archiver.kernel.org>; Thu, 10 Jan 2019 18:01:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729905AbfAJRkz (ORCPT
+        id S1730773AbfAJSA4 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:40:55 -0500
-Received: from mga05.intel.com ([192.55.52.43]:25300 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729827AbfAJRkz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:40:55 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 09:40:55 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,462,1539673200"; 
-   d="scan'208";a="113735969"
-Received: from vanderss-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.152])
-  by fmsmga007.fm.intel.com with ESMTP; 10 Jan 2019 09:40:52 -0800
-Date:   Thu, 10 Jan 2019 19:40:50 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca
-Subject: Re: Add support for the TCG2 event log on UEFI systems
-Message-ID: <20190110174050.GH6589@linux.intel.com>
-References: <20190109014847.39980-1-matthewgarrett@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190109014847.39980-1-matthewgarrett@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 10 Jan 2019 13:00:56 -0500
+Received: from sender-of-o53.zoho.com ([135.84.80.218]:21840 "EHLO
+        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729480AbfAJSAz (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 10 Jan 2019 13:00:55 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1547143234; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=Zr8qqRaZTYf+vaDNoyqcxCT+3sWnfarhI0eLTbYvNAObjutoFwGK2NmNCEL4Bu7okNm5wYUryvT+IxYmXMbxmtv3HGyBzhTvuSKAYkhZGlLniXqPJfTSgvA4bq9rZL5sw6N/C3+3Ku9K+gY+wd1rc3MMb1oc5g+E+wmfWlTxRVw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1547143234; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=y7Ug1hh2YUjlfSyroPaXvQSS+T5lVCs5wbg4QTW3dmM=; 
+        b=dGc4zpunH6nYbkl7GLD4ILdPFc2eeq8nbZQ+0/gl7ph7n8xy6k3Sd4WOp2VJ/kAyhcOhsNKQAK4T5fdKwGHrS0P2PkRnyHW12QQGQnHr3qFZS89LbDeRrM0ZaI/tu0DOFIdHtNUko4G8HVqNPv4zmTXtmST3eDDrFdUYb1ZCNog=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=mniewoehner.de;
+        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
+        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
+Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
+        with SMTPS id 1547143233258132.69536931174787; Thu, 10 Jan 2019 10:00:33 -0800 (PST)
+Message-ID: <3245408721bf1480f24af08db668fa7e3e7c848b.camel@mniewoehner.de>
+Subject: Re: tpm_tis TPM2.0 not detected on cold boot
+From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
+        linux-integrity@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Ken Goldman <kgold@linux.ibm.com>
+In-Reply-To: <20190110171923.GC6589@linux.intel.com>
+References: <ef7e773b01a5e6153b84628f74fc67092a2f9b0e.camel@gmail.com>
+         <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
+         <1545519232.3940.115.camel@linux.ibm.com>
+         <e7ec38d7cade9aa76384aa2781eab307d2cd5a7b.camel@mniewoehner.de>
+         <20190103132737.GD10491@linux.intel.com>
+         <6c1bf9815bfcb5d2bc0cfedfc49c7feda0173dc9.camel@mniewoehner.de>
+         <20190103150434.GC17015@linux.intel.com>
+         <5aa2fc082b6b0657574918b025005ad569da6412.camel@mniewoehner.de>
+         <20190110171923.GC6589@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Thu, 10 Jan 2019 19:00:28 +0100
+Mime-Version: 1.0
+User-Agent: Evolution 3.30.3 
+Content-Transfer-Encoding: 8BIT
+X-ZohoMailClient: External
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 05:48:42PM -0800, Matthew Garrett wrote:
-> There are several complexities associated with handling the crypto-agile
-> log format from TPM2 systems on UEFI platforms. The first is that each
-> log entry may be of variable length, necessitating parsing the log
-> in-kernel to determine its length. The second is that the log is kept in
-> boot services memory (which is reclaimed by the OS after
-> ExitBootServices() is called), but ExitBootServices() may introduce
-> additional log entries. These additional log entries are added to a
-> separate log which should then be merged into the initial log.
+On Thu, 2019-01-10 at 19:19 +0200, Jarkko Sakkinen wrote:
+> On Thu, Jan 03, 2019 at 04:47:31PM +0100, Michael Niewöhner wrote:
+> > On Thu, 2019-01-03 at 17:04 +0200, Jarkko Sakkinen wrote:
+> > > On Thu, Jan 03, 2019 at 02:38:11PM +0100, Michael Niewöhner wrote:
+> > > > On Thu, 2019-01-03 at 15:27 +0200, Jarkko Sakkinen wrote:
+> > > > > On Sun, Dec 23, 2018 at 12:55:12PM +0100, Michael Niewöhner wrote:
+> > > > > > There is another issue but I don't know if both are related. Maybe
+> > > > > > that's
+> > > > > > just a
+> > > > > > timing issue...
+> > > > > > 
+> > > > > > root@debian:~# dd if=/dev/hwrng bs=1 count=1
+> > > > > > dd: error reading '/dev/hwrng': Operation not permitted
+> > > > > > 0+0 records in
+> > > > > > 0+0 records out
+> > > > > > 0 bytes copied, 0.755958 s, 0.0 kB/s
+> > > > > > root@debian:~# dd if=/dev/hwrng bs=1 count=1 | xxd; dd if=/dev/hwrng
+> > > > > > bs=1
+> > > > > > count=1 | xxd
+> > > > > > dd: error reading '/dev/hwrng': Operation not permitted
+> > > > > > 0+0 records in
+> > > > > > 0+0 records out
+> > > > > > 0 bytes copied, 0.755697 s, 0.0 kB/s
+> > > > > > 1+0 records in
+> > > > > > 1+0 records out
+> > > > > > 00000000: 52                                       R
+> > > > > > 1 byte copied, 0.0106268 s, 0.1 kB/s
+> > > > > > 
+> > > > > > 
+> > > > > > Michael
+> > > > > 
+> > > > > What does /sys/devices/virtual/misc/hw_random/rng_current show?
+> > > > > 
+> > > > > Did run commands as a sanity check on my laptop and seem to work.
+> > > > > 
+> > > > > /Jarkko
+> > > > 
+> > > > rng_current says "tpm-rng-0", which should be correct
+> > > 
+> > > Is /dev/tpm0 accessible and usable?
+> > > 
+> > > /Jarkko
+> > 
+> > No, it does not seem to work:
+> > 
+> > root@debian:~# tpm_version                                     
+> > Tspi_Context_Connect failed: 0x00003011 - layer=tsp, code=0011 (17),
+> > Communication failure
+> > root@debian:~# tcsd -f
+> > TCSD TDDL ioctl: (25) Inappropriate ioctl for device
+> > TCSD TDDL Falling back to Read/Write device support.
+> > TCSD TDDL ERROR: write to device /dev/tpm0 failed: Operation not permitted
+> > TCSD TCS ERROR: TCS GetCapability failed with result = 0x1087
+> > root@debian:~# stat /dev/tpm0
+> >   File: /dev/tpm0
+> >   Size: 0         	Blocks: 0          IO Block: 4096   character special
+> > file
+> > Device: 6h/6d	Inode: 1114        Links: 1     Device type: a,e0
+> > Access: (0600/crw-------)  Uid: (  104/     tss)   Gid: (  112/     tss)
+> > Access: 2019-01-03 16:39:20.627635333 +0100
+> > Modify: 2019-01-03 16:39:20.627635333 +0100
+> > Change: 2019-01-03 16:39:20.627635333 +0100
+> >  Birth: -
 > 
-> This patchset makes the existing support for calculating TPM events more
-> general (in order to allow it to be used from the EFI boot stub), adds
-> support for copying up crypto agile logs from the boot environment to
-> the running kernel and adds support for merging the final events log
-> into the initial events log.
+> But those tools should not work because TrouSerS is for TPM 1.2.
+> 
+> /Jarkko
 
-With a brief look, looks really good. I'll probably don't have time
-to do a detailed review this week (still catching up after holidays).
 
-/Jarkko
+Right. I realized that too late... Have a look at my email from Fri, 04 Jan 2019
+19:26:10 +0100
+
+Michael
+
+
