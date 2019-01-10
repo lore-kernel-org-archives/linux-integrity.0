@@ -2,52 +2,44 @@ Return-Path: <SRS0=Znl9=PS=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5DA5C43387
-	for <linux-integrity@archiver.kernel.org>; Thu, 10 Jan 2019 17:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A268C43387
+	for <linux-integrity@archiver.kernel.org>; Thu, 10 Jan 2019 17:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FCD720675
-	for <linux-integrity@archiver.kernel.org>; Thu, 10 Jan 2019 17:38:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 227DC208E3
+	for <linux-integrity@archiver.kernel.org>; Thu, 10 Jan 2019 17:40:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730198AbfAJRix (ORCPT
+        id S1729905AbfAJRkz (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:38:53 -0500
-Received: from mga09.intel.com ([134.134.136.24]:7306 "EHLO mga09.intel.com"
+        Thu, 10 Jan 2019 12:40:55 -0500
+Received: from mga05.intel.com ([192.55.52.43]:25300 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729890AbfAJRix (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:38:53 -0500
-X-Amp-Result: UNSCANNABLE
+        id S1729827AbfAJRkz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 10 Jan 2019 12:40:55 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 09:38:51 -0800
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 09:40:55 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,462,1539673200"; 
-   d="scan'208";a="113735511"
+   d="scan'208";a="113735969"
 Received: from vanderss-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.152])
-  by fmsmga007.fm.intel.com with ESMTP; 10 Jan 2019 09:38:47 -0800
-Date:   Thu, 10 Jan 2019 19:38:45 +0200
+  by fmsmga007.fm.intel.com with ESMTP; 10 Jan 2019 09:40:52 -0800
+Date:   Thu, 10 Jan 2019 19:40:50 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v7 1/5] tpm: dynamically allocate the allocated_banks
- array
-Message-ID: <20190110173845.GG6589@linux.intel.com>
-References: <20181213102945.30946-1-roberto.sassu@huawei.com>
- <20181213102945.30946-2-roberto.sassu@huawei.com>
- <20181220145500.GA10652@linux.intel.com>
- <0900a894-e17b-edc8-fa30-db7d16665082@huawei.com>
- <20181222000321.GB8954@linux.intel.com>
- <7cc91a22-b09b-8bdc-c225-adff68e1f69e@huawei.com>
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca
+Subject: Re: Add support for the TCG2 event log on UEFI systems
+Message-ID: <20190110174050.GH6589@linux.intel.com>
+References: <20190109014847.39980-1-matthewgarrett@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7cc91a22-b09b-8bdc-c225-adff68e1f69e@huawei.com>
+In-Reply-To: <20190109014847.39980-1-matthewgarrett@google.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
@@ -55,84 +47,23 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 11:06:33AM +0100, Roberto Sassu wrote:
-> On 12/22/2018 1:03 AM, Jarkko Sakkinen wrote:
-> > On Fri, Dec 21, 2018 at 10:40:09AM +0100, Roberto Sassu wrote:
-> > > On 12/20/2018 3:55 PM, Jarkko Sakkinen wrote:
-> > > > On Thu, Dec 13, 2018 at 11:29:41AM +0100, Roberto Sassu wrote:
-> > > > > This patch renames active_banks (member of tpm_chip) to allocated_banks,
-> > > > > stores the number of allocated PCR banks in nr_allocated_banks (new member
-> > > > > of tpm_chip), and replaces the static array with a pointer to a dynamically
-> > > > > allocated array.
-> > > > > 
-> > > > > tpm2_get_pcr_allocation() determines if a PCR bank is allocated by checking
-> > > > > the mask in the TPML_PCR_SELECTION structure returned by the TPM for
-> > > > > TPM2_Get_Capability(). If a bank is not allocated, the TPM returns that
-> > > > > bank in TPML_PCR_SELECTION, with all bits in the mask set to zero. In this
-> > > > > case, the bank is not included in chip->allocated_banks, to avoid that TPM
-> > > > > driver users unnecessarily calculate a digest for that bank.
-> > > > > 
-> > > > > One PCR bank with algorithm set to SHA1 is always allocated for TPM 1.x.
-> > > > > 
-> > > > > As a consequence of the introduction of nr_allocated_banks,
-> > > > > tpm_pcr_extend() does not check anymore if the algorithm stored in tpm_chip
-> > > > > is equal to zero.
-> > > > > 
-> > > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > > > ---
-> > > > >    drivers/char/tpm/tpm-chip.c      |  1 +
-> > > > >    drivers/char/tpm/tpm-interface.c | 18 +++++++++--------
-> > > > >    drivers/char/tpm/tpm.h           |  3 ++-
-> > > > >    drivers/char/tpm/tpm1-cmd.c      | 10 ++++++++++
-> > > > >    drivers/char/tpm/tpm2-cmd.c      | 34 ++++++++++++++++++++++----------
-> > > > >    5 files changed, 47 insertions(+), 19 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-> > > > > index 32db84683c40..ce851c62bb68 100644
-> > > > > --- a/drivers/char/tpm/tpm-chip.c
-> > > > > +++ b/drivers/char/tpm/tpm-chip.c
-> > > > > @@ -160,6 +160,7 @@ static void tpm_dev_release(struct device *dev)
-> > > > >    	kfree(chip->log.bios_event_log);
-> > > > >    	kfree(chip->work_space.context_buf);
-> > > > >    	kfree(chip->work_space.session_buf);
-> > > > > +	kfree(chip->allocated_banks);
-> > > > >    	kfree(chip);
-> > > > >    }
-> > > > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> > > > > index d9439f9abe78..7b80919228be 100644
-> > > > > --- a/drivers/char/tpm/tpm-interface.c
-> > > > > +++ b/drivers/char/tpm/tpm-interface.c
-> > > > > @@ -488,8 +488,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
-> > > > >    int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
-> > > > >    {
-> > > > >    	int rc;
-> > > > > -	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
-> > > > > -	u32 count = 0;
-> > > > > +	struct tpm2_digest *digest_list;
-> > > > >    	int i;
-> > > > >    	chip = tpm_find_get_ops(chip);
-> > > > > @@ -497,16 +496,19 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
-> > > > >    		return -ENODEV;
-> > > > >    	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-> > > > > -		memset(digest_list, 0, sizeof(digest_list));
-> > > > > +		digest_list = kcalloc(chip->nr_allocated_banks,
-> > > > > +				      sizeof(*digest_list), GFP_KERNEL);
-> > > > > +		if (!digest_list)
-> > > > > +			return -ENOMEM;
-> > > > 
-> > > > You could preallocate digest list and place it to struct tpm_chip
-> > > > instead of doing it everytime tpm_pcr_extend() called.
-> > > 
-> > > This part will be removed with patch 5/5.
-> > 
-> > Even if it did, it does not make this patch unbroken.
+On Tue, Jan 08, 2019 at 05:48:42PM -0800, Matthew Garrett wrote:
+> There are several complexities associated with handling the crypto-agile
+> log format from TPM2 systems on UEFI platforms. The first is that each
+> log entry may be of variable length, necessitating parsing the log
+> in-kernel to determine its length. The second is that the log is kept in
+> boot services memory (which is reclaimed by the OS after
+> ExitBootServices() is called), but ExitBootServices() may introduce
+> additional log entries. These additional log entries are added to a
+> separate log which should then be merged into the initial log.
 > 
-> Can two calls to tpm_pcr_extend() be executed at the same time?
-> 
-> If yes, the digest list should be protected by a mutex.
+> This patchset makes the existing support for calculating TPM events more
+> general (in order to allow it to be used from the EFI boot stub), adds
+> support for copying up crypto agile logs from the boot environment to
+> the running kernel and adds support for merging the final events log
+> into the initial events log.
 
-Good question: the answer is no. Mutex locking is done inside the
-transmit flow ATM.
+With a brief look, looks really good. I'll probably don't have time
+to do a detailed review this week (still catching up after holidays).
 
 /Jarkko
