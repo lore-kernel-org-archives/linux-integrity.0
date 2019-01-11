@@ -2,151 +2,67 @@ Return-Path: <SRS0=OvNV=PT=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA2B8C43387
-	for <linux-integrity@archiver.kernel.org>; Fri, 11 Jan 2019 07:53:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 714E8C43387
+	for <linux-integrity@archiver.kernel.org>; Fri, 11 Jan 2019 08:30:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A34F920874
-	for <linux-integrity@archiver.kernel.org>; Fri, 11 Jan 2019 07:53:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C7B3214C6
+	for <linux-integrity@archiver.kernel.org>; Fri, 11 Jan 2019 08:30:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728942AbfAKHxP (ORCPT
+        id S1730076AbfAKIad (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 11 Jan 2019 02:53:15 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32820 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725805AbfAKHxP (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 11 Jan 2019 02:53:15 -0500
-Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id B8AEF1B1BBDEA273A450;
-        Fri, 11 Jan 2019 07:53:12 +0000 (GMT)
-Received: from [10.204.65.149] (10.204.65.149) by smtpsuk.huawei.com
- (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 11 Jan
- 2019 07:53:05 +0000
-Subject: Re: [PATCH v7 1/5] tpm: dynamically allocate the allocated_banks
- array
+        Fri, 11 Jan 2019 03:30:33 -0500
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:38804 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728127AbfAKIad (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 11 Jan 2019 03:30:33 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04391;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0TI-rBKI_1547195391;
+Received: from ali-6c96cfd98fb5.local(mailfrom:zhang.jia@linux.alibaba.com fp:SMTPD_---0TI-rBKI_1547195391)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 11 Jan 2019 16:29:52 +0800
+Subject: Re: [PATCH 1/2] tpm/eventlog/tpm1: Simplify walking over *pos
+ measurements
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
-        <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
-References: <20181213102945.30946-1-roberto.sassu@huawei.com>
- <20181213102945.30946-2-roberto.sassu@huawei.com>
- <20181220145500.GA10652@linux.intel.com>
- <0900a894-e17b-edc8-fa30-db7d16665082@huawei.com>
- <20181222000321.GB8954@linux.intel.com>
- <7cc91a22-b09b-8bdc-c225-adff68e1f69e@huawei.com>
- <20190110173845.GG6589@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <32ec194b-811e-fe83-3937-bb82ffad55a7@huawei.com>
-Date:   Fri, 11 Jan 2019 08:53:00 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, tweek@google.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1546759399-45360-1-git-send-email-zhang.jia@linux.alibaba.com>
+ <20190110173249.GE6589@linux.intel.com>
+From:   Jia Zhang <zhang.jia@linux.alibaba.com>
+Message-ID: <0fb3e7b8-5ce2-17d6-2e71-7cb5dbd1bdc2@linux.alibaba.com>
+Date:   Fri, 11 Jan 2019 16:29:51 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20190110173845.GG6589@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20190110173249.GE6589@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.149]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 1/10/2019 6:38 PM, Jarkko Sakkinen wrote:
-> On Mon, Jan 07, 2019 at 11:06:33AM +0100, Roberto Sassu wrote:
->> On 12/22/2018 1:03 AM, Jarkko Sakkinen wrote:
->>> On Fri, Dec 21, 2018 at 10:40:09AM +0100, Roberto Sassu wrote:
->>>> On 12/20/2018 3:55 PM, Jarkko Sakkinen wrote:
->>>>> On Thu, Dec 13, 2018 at 11:29:41AM +0100, Roberto Sassu wrote:
->>>>>> This patch renames active_banks (member of tpm_chip) to allocated_banks,
->>>>>> stores the number of allocated PCR banks in nr_allocated_banks (new member
->>>>>> of tpm_chip), and replaces the static array with a pointer to a dynamically
->>>>>> allocated array.
->>>>>>
->>>>>> tpm2_get_pcr_allocation() determines if a PCR bank is allocated by checking
->>>>>> the mask in the TPML_PCR_SELECTION structure returned by the TPM for
->>>>>> TPM2_Get_Capability(). If a bank is not allocated, the TPM returns that
->>>>>> bank in TPML_PCR_SELECTION, with all bits in the mask set to zero. In this
->>>>>> case, the bank is not included in chip->allocated_banks, to avoid that TPM
->>>>>> driver users unnecessarily calculate a digest for that bank.
->>>>>>
->>>>>> One PCR bank with algorithm set to SHA1 is always allocated for TPM 1.x.
->>>>>>
->>>>>> As a consequence of the introduction of nr_allocated_banks,
->>>>>> tpm_pcr_extend() does not check anymore if the algorithm stored in tpm_chip
->>>>>> is equal to zero.
->>>>>>
->>>>>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->>>>>> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->>>>>> ---
->>>>>>     drivers/char/tpm/tpm-chip.c      |  1 +
->>>>>>     drivers/char/tpm/tpm-interface.c | 18 +++++++++--------
->>>>>>     drivers/char/tpm/tpm.h           |  3 ++-
->>>>>>     drivers/char/tpm/tpm1-cmd.c      | 10 ++++++++++
->>>>>>     drivers/char/tpm/tpm2-cmd.c      | 34 ++++++++++++++++++++++----------
->>>>>>     5 files changed, 47 insertions(+), 19 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
->>>>>> index 32db84683c40..ce851c62bb68 100644
->>>>>> --- a/drivers/char/tpm/tpm-chip.c
->>>>>> +++ b/drivers/char/tpm/tpm-chip.c
->>>>>> @@ -160,6 +160,7 @@ static void tpm_dev_release(struct device *dev)
->>>>>>     	kfree(chip->log.bios_event_log);
->>>>>>     	kfree(chip->work_space.context_buf);
->>>>>>     	kfree(chip->work_space.session_buf);
->>>>>> +	kfree(chip->allocated_banks);
->>>>>>     	kfree(chip);
->>>>>>     }
->>>>>> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
->>>>>> index d9439f9abe78..7b80919228be 100644
->>>>>> --- a/drivers/char/tpm/tpm-interface.c
->>>>>> +++ b/drivers/char/tpm/tpm-interface.c
->>>>>> @@ -488,8 +488,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
->>>>>>     int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
->>>>>>     {
->>>>>>     	int rc;
->>>>>> -	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
->>>>>> -	u32 count = 0;
->>>>>> +	struct tpm2_digest *digest_list;
->>>>>>     	int i;
->>>>>>     	chip = tpm_find_get_ops(chip);
->>>>>> @@ -497,16 +496,19 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
->>>>>>     		return -ENODEV;
->>>>>>     	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
->>>>>> -		memset(digest_list, 0, sizeof(digest_list));
->>>>>> +		digest_list = kcalloc(chip->nr_allocated_banks,
->>>>>> +				      sizeof(*digest_list), GFP_KERNEL);
->>>>>> +		if (!digest_list)
->>>>>> +			return -ENOMEM;
->>>>>
->>>>> You could preallocate digest list and place it to struct tpm_chip
->>>>> instead of doing it everytime tpm_pcr_extend() called.
->>>>
->>>> This part will be removed with patch 5/5.
->>>
->>> Even if it did, it does not make this patch unbroken.
+
+
+On 2019/1/11 上午1:32, Jarkko Sakkinen wrote:
+> On Sun, Jan 06, 2019 at 03:23:18PM +0800, Jia Zhang wrote:
+>> The sanity check would be easier, especially for the first read
+>> of binary_bios_measurements from the beginning.
 >>
->> Can two calls to tpm_pcr_extend() be executed at the same time?
->>
->> If yes, the digest list should be protected by a mutex.
+>> Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
 > 
-> Good question: the answer is no. Mutex locking is done inside the
-> transmit flow ATM.
+> The cover letter is missing and commit messages do not describe
+> what kind of change the commit does.
 
-But data are copied before the mutex is locked. Can't a second call
-overwrite chip->preallocated_digest_list while the first call is still
-writing it?
+Thanks for the comments. I will send V2.
 
-Roberto
+Cheers,
+Jia
 
-
+> 
 > /Jarkko
 > 
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
