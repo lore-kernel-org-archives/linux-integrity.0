@@ -2,235 +2,146 @@ Return-Path: <SRS0=QOPP=PW=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C11C43387
-	for <linux-integrity@archiver.kernel.org>; Mon, 14 Jan 2019 19:39:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB6DC43387
+	for <linux-integrity@archiver.kernel.org>; Mon, 14 Jan 2019 19:51:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E3A1206B7
-	for <linux-integrity@archiver.kernel.org>; Mon, 14 Jan 2019 19:39:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82CDB20659
+	for <linux-integrity@archiver.kernel.org>; Mon, 14 Jan 2019 19:51:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726728AbfANTjo (ORCPT
+        id S1726808AbfANTvy (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 14 Jan 2019 14:39:44 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:42152 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726643AbfANTjo (ORCPT
+        Mon, 14 Jan 2019 14:51:54 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57054 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726745AbfANTvy (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 14 Jan 2019 14:39:44 -0500
-Received: by mail-qk1-f194.google.com with SMTP id 68so130310qke.9
-        for <linux-integrity@vger.kernel.org>; Mon, 14 Jan 2019 11:39:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tzt7soaLdEkDzFReT7bw9s/TgXujfQncxjL2DxsCxww=;
-        b=G5BBdxk2fCsunuIOkeEKeMa73LSWh2ZQZ1aBGsBg+uugiQg/CfkC+wFmqks1VTIjXc
-         FswYPwIXMFNvBoZorD86alRkRD3HxeEv7ZxY0LWbq4/bGUk9R+4DolOsoXG5RKA/uykk
-         37tTsZvGoD8y+npVsonTDsrVnag3E/O1riUSTZyF0Z/t+OZ8pjrEVpaTV85YiVRJETi8
-         YsCQFhvZY9Vg0JlHEmSTBGC6BTqJordLajPTakhVSEau8eAUUwqnEzCFOiFSi/kRdXQz
-         QgXMyt4I/nq2/qhbIwQgxpCyOT4uZhhUFfACTlmUFgYcCtYeBqB6as7LdMxV2ku5pkm4
-         FRIA==
-X-Gm-Message-State: AJcUukdfFdG2GFNPry0BAlGh5OUrMPJk9i8c/RQ0Tv/dHkoNTvNVsWk4
-        MORrFZQ6ftXCZhh8yLX3RlcXKA==
-X-Google-Smtp-Source: ALg8bN4DC+Xnv/9ueKmeYnxYMRhmU7hlLLvK2F33DQfVFPKoFbRMZiYejmgICj0+WYg04aa0sfcFgw==
-X-Received: by 2002:a37:9f92:: with SMTP id i140mr52742qke.131.1547494783164;
-        Mon, 14 Jan 2019 11:39:43 -0800 (PST)
-Received: from localhost (ip72-223-3-97.ph.ph.cox.net. [72.223.3.97])
-        by smtp.gmail.com with ESMTPSA id x202sm40964960qka.67.2019.01.14.11.39.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 11:39:42 -0800 (PST)
-Date:   Mon, 14 Jan 2019 12:39:40 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Alexey Klimov <aklimov@redhat.com>,
-        linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca
-Subject: Re: [PATCH REVIEW 2/2] tpm_tis: override durations for STM tpm with
- firmware 1.2.8.28
-Message-ID: <20190114193940.mylziev4xhidmazs@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-References: <20181214132115.26223-1-aklimov@redhat.com>
- <20181214132115.26223-2-aklimov@redhat.com>
- <20190103131453.GC10491@linux.intel.com>
+        Mon, 14 Jan 2019 14:51:54 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0EJn62Y187589
+        for <linux-integrity@vger.kernel.org>; Mon, 14 Jan 2019 14:51:52 -0500
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2q106h9vj4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 14 Jan 2019 14:51:52 -0500
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Mon, 14 Jan 2019 19:51:51 -0000
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 14 Jan 2019 19:51:49 -0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0EJpmaF22610058
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 14 Jan 2019 19:51:48 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7F930AE063;
+        Mon, 14 Jan 2019 19:51:48 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 45E18AE068;
+        Mon, 14 Jan 2019 19:51:48 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 14 Jan 2019 19:51:48 +0000 (GMT)
+Subject: Re: [PATCH 0/5] Extend TPM PPI interface to support revision 1.3
+To:     "Safford, David (GE Global Research)" <david.safford@ge.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>
+Cc:     "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190109221103.1897677-1-stefanb@linux.vnet.ibm.com>
+ <BCA04D5D9A3B764C9B7405BBA4D4A3C0151A3125@ALPMBAPA12.e2k.ad.ge.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Date:   Mon, 14 Jan 2019 14:51:48 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190103131453.GC10491@linux.intel.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <BCA04D5D9A3B764C9B7405BBA4D4A3C0151A3125@ALPMBAPA12.e2k.ad.ge.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 19011419-2213-0000-0000-0000033D4DCA
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010405; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000274; SDB=6.01146483; UDB=6.00597126; IPR=6.00926769;
+ MB=3.00025124; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-14 19:51:51
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011419-2214-0000-0000-00005CF88ED7
+Message-Id: <268c3238-b4fe-ef9f-d656-4d34479ec481@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-14_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901140152
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu Jan 03 19, Jarkko Sakkinen wrote:
->On Fri, Dec 14, 2018 at 01:21:15PM +0000, Alexey Klimov wrote:
->> There was revealed a bug in the STM TPM chipset used in Dell R415s.
->> Bug is observed so far only on chipset firmware 1.2.8.28
->> (1.2 TPM, device-id 0x0, rev-id 78). After some number of
->> operations chipset hangs and stays in inconsistent state:
+On 1/11/19 3:28 PM, Safford, David (GE Global Research) wrote:
+>> -----Original Message-----
+>> From: linux-integrity-owner@vger.kernel.org <linux-integrity-
+>> owner@vger.kernel.org> On Behalf Of Stefan Berger
+>> Sent: Wednesday, January 09, 2019 5:11 PM
+>> To: linux-integrity@vger.kernel.org; jarkko.sakkinen@linux.intel.com
+>> Cc: linux-security-module@vger.kernel.org; linux-kernel@vger.kernel.org;
+>> Stefan Berger <stefanb@linux.vnet.ibm.com>
+>> Subject: EXT: [PATCH 0/5] Extend TPM PPI interface to support revision 1.3
 >>
->> tpm_tis 00:09: Operation Timed out
->> tpm_tis 00:09: tpm_transmit: tpm_send: error -5
+>> This series of patches extends the TPM subsystem's PPI support to support
+>> TPM PPI revision 1.3 where more commands are supported (up to 101) and
+>> the TPM 2 command code '23' takes an additional parameter.
 >>
->> Durations returned by the chip are the same like on other
->> firmware revisions but apparently with specifically 1.2.8.28 fw
->> durations should be reset to 2 minutes to enable tpm chip work
->> properly. No working way of updating firmware was found.
+>> For the command code '23' see this document here on document page 39:
+>> https://trustedcomputinggroup.org/wp-content/uploads/Physical-
+>> Presence-Interface_1-30_0-52.pdf
 >>
->> This patch adds implementation of ->update_durations method
->> that matches only STM devices with specific firmware version.
->>
->> Cc: Jerry Snitselaar <jsnitsel@redhat.com>
->> Signed-off-by: Alexey Klimov <aklimov@redhat.com>
->> ---
->>  drivers/char/tpm/tpm_tis_core.c | 90 +++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 90 insertions(+)
->>
->> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
->> index d2345d9fd7b5..e0bdca647460 100644
->> --- a/drivers/char/tpm/tpm_tis_core.c
->> +++ b/drivers/char/tpm/tpm_tis_core.c
->> @@ -514,6 +514,95 @@ static int tpm_tis_send(struct tpm_chip *chip, u8 *buf, size_t len)
->>  	return rc;
->>  }
->>
->> +struct tis_vendor_durations_override {
->> +	u32 did_vid;
->> +	struct tpm_version_t tpm_version;
->> +	unsigned long durs[3];
->
->I would rather have just "unsigned long durations[3];".
->
->> +};
->> +
->> +static
->> +const struct tis_vendor_durations_override vendor_dur_overrides[] = {
->> +	/* STMicroelectronics 0x104a */
->> +	{ 0x0000104A,
->> +	{ 1, 2, 8, 28 },
->> +	{ (2 * 60 * HZ), (2 * 60 * HZ), (2 * 60 * HZ) } },
->> +};
->> +
->> +static bool tpm_tis_update_durations(struct tpm_chip *chip,
->> +					unsigned long *duration_cap)
->> +{
->> +	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
->> +	u32 did_vid;
->> +	int i, rc;
->> +	cap_t cap;
->> +
->> +	if (chip->ops->clk_enable != NULL)
->> +		chip->ops->clk_enable(chip, true);
->> +
->> +	rc = tpm_tis_read32(priv, TPM_DID_VID(0), &did_vid);
->> +	if (rc < 0)
->> +		goto out;
->> +
->> +	for (i = 0; i != ARRAY_SIZE(vendor_dur_overrides); i++) {
->> +		if (vendor_dur_overrides[i].did_vid != did_vid)
->> +			continue;
->> +
->> +		/* Try to get a TPM version 1.2 TPM_CAP_VERSION_INFO */
->> +		rc = tpm_getcap(chip, TPM_CAP_VERSION_1_2, &cap,
->> +			"attempting to determine the 1.2 version",
->> +			sizeof(cap.tpm_version_1_2));
->
->Not properly aligned.
->
->> +		if (!rc) {
->> +			if ((cap.tpm_version_1_2.Major ==
->> +				vendor_dur_overrides[i].tpm_version.Major) &&
->> +				(cap.tpm_version_1_2.Minor ==
->> +				vendor_dur_overrides[i].tpm_version.Minor) &&
->> +				(cap.tpm_version_1_2.revMajor ==
->> +				vendor_dur_overrides[i].tpm_version.revMajor) &&
->> +				(cap.tpm_version_1_2.revMinor ==
->> +				vendor_dur_overrides[i].tpm_version.revMinor)) {
->
->Same.
->
->> +
->> +				memcpy(duration_cap,
->> +					vendor_dur_overrides[i].durs,
->> +					sizeof(vendor_dur_overrides[i].durs));
->
->Same.
->
->> +				rc = true;
->> +				goto out;
->> +			}
->> +		} else {
->> +			rc = tpm_getcap(chip, TPM_CAP_VERSION_1_1, &cap,
->> +				"attempting to determine the 1.1 version",
->> +				sizeof(cap.tpm_version));
->
->Same.
->
->> +			if (rc) {
->> +				rc = false;
->> +				goto out;
->> +			}
->> +			if ((cap.tpm_version.Major ==
->> +				vendor_dur_overrides[i].tpm_version.Major) &&
->> +				(cap.tpm_version.Minor ==
->> +				vendor_dur_overrides[i].tpm_version.Minor) &&
->> +				(cap.tpm_version.revMajor ==
->> +				vendor_dur_overrides[i].tpm_version.revMajor) &&
->> +				(cap.tpm_version.revMinor ==
->> +				vendor_dur_overrides[i].tpm_version.revMinor)) {
->
->Same.
->
->> +
->> +				memcpy(duration_cap,
->> +					vendor_dur_overrides[i].durs,
->> +					sizeof(vendor_dur_overrides[i].durs));
->
->Same.
->
->> +				rc = true;
->> +				goto out;
->> +			}
->> +		}
->> +	}
->> +
->> +	rc = false;
->
->Shoud return proper rc instead of bool.
->
+>>     Stefan
+> You might mention that this is an important feature, as on at least some
+> systems, ppi function 23 is the only way to enable/disable PCR banks.
 
-Alexey was following the example of tpm_tis_update_timeouts() which
-returns true if the timeouts were updated, and otherwise returns
-false. The bool here makes sense to me, but what rc would you suggest
-in this case?
+'The only way' depends on how good or bad the firmware support for this 
+is. SeaBIOS will have a menu item that lets one toggle the activation of 
+the PCR banks in the firmware menu -- assuming my patch makes it 
+upstream :-)
 
-Regards,
-Jerry
 
->> +
->> +out:
->> +	if (chip->ops->clk_enable != NULL)
->> +		chip->ops->clk_enable(chip, false);
->> +
->> +	return rc;
->> +}
->> +
->> +
->>  struct tis_vendor_timeout_override {
->>  	u32 did_vid;
->>  	unsigned long timeout_us[4];
->> @@ -847,6 +936,7 @@ static const struct tpm_class_ops tpm_tis = {
->>  	.send = tpm_tis_send,
->>  	.cancel = tpm_tis_ready,
->>  	.update_timeouts = tpm_tis_update_timeouts,
->> +	.update_durations = tpm_tis_update_durations,
->>  	.req_complete_mask = TPM_STS_DATA_AVAIL | TPM_STS_VALID,
->>  	.req_complete_val = TPM_STS_DATA_AVAIL | TPM_STS_VALID,
->>  	.req_canceled = tpm_tis_req_canceled,
+>
+> I have tested this patch set on my HP Spectre laptop, and I am finally
+> able to turn the sha-1 bank on and off. Much appreciated!
+>
+> Tested-by: David Safford <david.safford@ge.com>
+
+
+Thanks.
+
+
+     Stefan
+
+
+>
+>> Stefan Berger (5):
+>>    tpm: ppi: pass function revision ID to tpm_eval_dsm()
+>>    tpm: ppi: rename TPM_PPI_REVISION_ID to TPM_PPI_REVISION_1
+>>    tpm: ppi: Display up to 101 operations as define for version 1.3
+>>    tpm: ppi: Possibly show command parameter if TPM PPI 1.3 is used
+>>    tpm: ppi: Enable submission of optional command parameter for PPI 1.3
+>>
+>>   drivers/char/tpm/tpm_ppi.c | 78 ++++++++++++++++++++++++++++--------
 >> --
->> 2.14.4
+>>   1 file changed, 58 insertions(+), 20 deletions(-)
 >>
->
->/Jarkko
+>> --
+>> 2.17.1
+
+
