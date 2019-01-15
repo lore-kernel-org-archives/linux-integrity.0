@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9391C43387
-	for <linux-integrity@archiver.kernel.org>; Tue, 15 Jan 2019 02:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76181C43387
+	for <linux-integrity@archiver.kernel.org>; Tue, 15 Jan 2019 02:16:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9102720659
-	for <linux-integrity@archiver.kernel.org>; Tue, 15 Jan 2019 02:16:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 474B120659
+	for <linux-integrity@archiver.kernel.org>; Tue, 15 Jan 2019 02:16:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727497AbfAOCQB (ORCPT
+        id S1727211AbfAOCQQ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 14 Jan 2019 21:16:01 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:56674 "EHLO
+        Mon, 14 Jan 2019 21:16:16 -0500
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:38159 "EHLO
         out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726886AbfAOCQB (ORCPT
+        by vger.kernel.org with ESMTP id S1726886AbfAOCQP (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 14 Jan 2019 21:16:01 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R301e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TIFN-Xc_1547518481;
-Received: from localhost(mailfrom:zhang.jia@linux.alibaba.com fp:SMTPD_---0TIFN-Xc_1547518481)
+        Mon, 14 Jan 2019 21:16:15 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TIG.4ZV_1547518480;
+Received: from localhost(mailfrom:zhang.jia@linux.alibaba.com fp:SMTPD_---0TIG.4ZV_1547518480)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 15 Jan 2019 10:14:42 +0800
+          Tue, 15 Jan 2019 10:14:40 +0800
 From:   Jia Zhang <zhang.jia@linux.alibaba.com>
 To:     zohar@linux.ibm.com, pvorel@suse.cz
 Cc:     linux-integrity@vger.kernel.org, ltp@lists.linux.it,
         zhang.jia@linux.alibaba.com
-Subject: [PATCH 4/6] ima: Code cleanup
-Date:   Tue, 15 Jan 2019 10:14:34 +0800
-Message-Id: <1547518476-34008-5-git-send-email-zhang.jia@linux.alibaba.com>
+Subject: [PATCH 1/6] ima/ima_boot_aggregate: Fix the definition of event log
+Date:   Tue, 15 Jan 2019 10:14:31 +0800
+Message-Id: <1547518476-34008-2-git-send-email-zhang.jia@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1547518476-34008-1-git-send-email-zhang.jia@linux.alibaba.com>
 References: <1547518476-34008-1-git-send-email-zhang.jia@linux.alibaba.com>
@@ -39,50 +39,37 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-- Change the legacy function name from PATH_CHECK to FILE_CHECK.
-- Use the variable IMA_POLICY instead of hard code path.
+According to [1], the structure of event log should be packed,
+and certain fields should be 32-bit unsigned integer. Fortunately,
+keeping natural alignment seems to make everything working as
+expected all the time.
+
+[1] page 17,18 @https://trustedcomputinggroup.org/wp-content/uploads/TCG_EFI_Protocol_1_22_Final-v05.pdf
 
 Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- testcases/kernel/security/integrity/ima/policy/measure.policy         | 2 +-
- testcases/kernel/security/integrity/ima/policy/measure.policy-invalid | 2 +-
- testcases/kernel/security/integrity/ima/tests/ima_policy.sh           | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/testcases/kernel/security/integrity/ima/policy/measure.policy b/testcases/kernel/security/integrity/ima/policy/measure.policy
-index c68e722..9976ddf 100644
---- a/testcases/kernel/security/integrity/ima/policy/measure.policy
-+++ b/testcases/kernel/security/integrity/ima/policy/measure.policy
-@@ -13,4 +13,4 @@ dont_measure fsmagic=0x01021994
- dont_measure fsmagic=0x73636673
- measure func=FILE_MMAP mask=MAY_EXEC
- measure func=BPRM_CHECK mask=MAY_EXEC
--measure func=PATH_CHECK mask=MAY_READ uid=0
-+measure func=FILE_CHECK mask=MAY_READ uid=0
-diff --git a/testcases/kernel/security/integrity/ima/policy/measure.policy-invalid b/testcases/kernel/security/integrity/ima/policy/measure.policy-invalid
-index e406757..04dff89 100644
---- a/testcases/kernel/security/integrity/ima/policy/measure.policy-invalid
-+++ b/testcases/kernel/security/integrity/ima/policy/measure.policy-invalid
-@@ -13,4 +13,4 @@ dont_measure fsmagic=0x01021994
- dnt_measure fsmagic=0x73636673
- measure func=FILE_MMAP mask=MAY_EXEC
- measure func=BPRM_CHECK mask=MAY_EXEC
--measure func=PATH_CHECK mask=MAY_READ uid=0
-+measure func=FILE_CHECK mask=MAY_READ uid=0
-diff --git a/testcases/kernel/security/integrity/ima/tests/ima_policy.sh b/testcases/kernel/security/integrity/ima/tests/ima_policy.sh
-index 64aa8cb..a0c7869 100755
---- a/testcases/kernel/security/integrity/ima/tests/ima_policy.sh
-+++ b/testcases/kernel/security/integrity/ima/tests/ima_policy.sh
-@@ -28,7 +28,7 @@ check_policy_writable()
- {
- 	local err="IMA policy already loaded and kernel not configured to enable multiple writes to it (need CONFIG_IMA_WRITE_POLICY=y)"
- 
--	[ -f /sys/kernel/security/ima/policy ] || tst_brk TCONF "$err"
-+	[ -f $IMA_POLICY ] || tst_brk TCONF "$err"
- 	# CONFIG_IMA_READ_POLICY
- 	echo "" 2> log > $IMA_POLICY
- 	grep -q "Device or resource busy" log && tst_brk TCONF "$err"
+diff --git a/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c b/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
+index f6e7be0..d85d222 100644
+--- a/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
++++ b/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
+@@ -53,10 +53,10 @@ int main(int argc, char *argv[])
+ 	struct {
+ 		struct {
+ 			u_int32_t pcr;
+-			int type;
+-			unsigned char digest[SHA_DIGEST_LENGTH];
+-			u_int16_t len;
+-		} header;
++			u_int32_t type;
++			u_int8_t digest[SHA_DIGEST_LENGTH];
++			u_int32_t len;
++		} header __attribute__ ((packed));
+ 		char *data;
+ 	} event;
+ 	struct {
 -- 
 1.8.3.1
 
