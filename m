@@ -2,116 +2,138 @@ Return-Path: <SRS0=v/7H=PX=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F03AEC43387
-	for <linux-integrity@archiver.kernel.org>; Tue, 15 Jan 2019 02:42:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F4EC43387
+	for <linux-integrity@archiver.kernel.org>; Tue, 15 Jan 2019 03:10:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C28AE20651
-	for <linux-integrity@archiver.kernel.org>; Tue, 15 Jan 2019 02:42:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BC6920659
+	for <linux-integrity@archiver.kernel.org>; Tue, 15 Jan 2019 03:10:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727578AbfAOCmy (ORCPT
+        id S1727406AbfAODKk (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 14 Jan 2019 21:42:54 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37092 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727200AbfAOCmy (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 14 Jan 2019 21:42:54 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D38D93DE03;
-        Tue, 15 Jan 2019 02:42:53 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-57.pek2.redhat.com [10.72.12.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3AF3B84ED;
-        Tue, 15 Jan 2019 02:42:47 +0000 (UTC)
-Date:   Tue, 15 Jan 2019 10:42:43 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org,
-        dhowells@redhat.com, dwmw2@infradead.org,
-        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
-        jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
-        ebiggers@google.com, nayna@linux.ibm.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org
+        Mon, 14 Jan 2019 22:10:40 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:37480 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726886AbfAODKk (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 14 Jan 2019 22:10:40 -0500
+Received: by mail-io1-f68.google.com with SMTP id g8so991218iok.4
+        for <linux-integrity@vger.kernel.org>; Mon, 14 Jan 2019 19:10:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uy3xsSEkdFItylJFlXuflVfudm2wfRKBNUCSc1wA8iY=;
+        b=b5AH0TFFbtWrF+MA54pM9/RBDkzOI4cQmK8ynqgp1SUrbiiZdQykFVl+Qf/3chMINR
+         J2+563PLFazbflrZteKbZKNTQ3YHXFkzHDnD4elohzVWnqtTPiN6B9INEAt7zfSFsqgv
+         cdMR9jw19Xx8+LRUCbWPim5ExNrbK/W1SM4AffkUZo3lcJeg/Ncq1PYnltOVkFw1QETP
+         itjbpKlcXvZWOYi2j//QQK5lHqSL29h99884QlMhRBFOVEr1dEI5FPr0syLJjn4CF7f6
+         AJtSlZgca/ECqDpeNf0Snunsj0un8u6C+ZMZpCCpgxNEDrn/lxGIgEBIqrxj0J47OdiN
+         72ug==
+X-Gm-Message-State: AJcUukequD5JBxiWic63VtlVFKHFgoIEru4koR8hyGUXFDPG2Q0TQhC0
+        TSAxIh3CMbRw8ioTQs8Y4M7Iq3R10lSiV8yBHHCKsQ==
+X-Google-Smtp-Source: ALg8bN4cJ7cvjpuC+kWOhjityi9IfExPxd6vaMwXU4FAZG5IdvT/3aDpFlcDMpJq0MJg+s2qarwVewxONVss1GsP0hw=
+X-Received: by 2002:a5e:de01:: with SMTP id e1mr892468iok.137.1547521838805;
+ Mon, 14 Jan 2019 19:10:38 -0800 (PST)
+MIME-Version: 1.0
+References: <20190109164824.19708-1-kasong@redhat.com> <20190109164824.19708-3-kasong@redhat.com>
+ <20190111134303.GA12760@dhcp-128-65.nay.redhat.com> <1547223220.19931.471.camel@linux.ibm.com>
+ <20190113013958.GA14019@dhcp-128-65.nay.redhat.com> <1547482251.4156.127.camel@linux.ibm.com>
+ <20190115024243.GA9199@dhcp-128-65.nay.redhat.com>
+In-Reply-To: <20190115024243.GA9199@dhcp-128-65.nay.redhat.com>
+From:   Kairui Song <kasong@redhat.com>
+Date:   Tue, 15 Jan 2019 11:10:27 +0800
+Message-ID: <CACPcB9etik_o1SbyROKdFYTkJfpGKbTx5oANFZEi7AAvBv3NXQ@mail.gmail.com>
 Subject: Re: [RFC PATCH 2/2] kexec, KEYS: Make use of platform keyring for
  signature verify
-Message-ID: <20190115024243.GA9199@dhcp-128-65.nay.redhat.com>
-References: <20190109164824.19708-1-kasong@redhat.com>
- <20190109164824.19708-3-kasong@redhat.com>
- <20190111134303.GA12760@dhcp-128-65.nay.redhat.com>
- <1547223220.19931.471.camel@linux.ibm.com>
- <20190113013958.GA14019@dhcp-128-65.nay.redhat.com>
- <1547482251.4156.127.camel@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1547482251.4156.127.camel@linux.ibm.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 15 Jan 2019 02:42:54 +0000 (UTC)
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
+        Eric Biggers <ebiggers@google.com>, nayna@linux.ibm.com,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        kexec@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 01/14/19 at 11:10am, Mimi Zohar wrote:
-> On Sun, 2019-01-13 at 09:39 +0800, Dave Young wrote:
-> > Hi,
-> > 
-> > On 01/11/19 at 11:13am, Mimi Zohar wrote:
-> > > On Fri, 2019-01-11 at 21:43 +0800, Dave Young wrote:
-> > > [snip]
-> > > 
-> > > > Personally I would like to see platform key separated from integrity.
-> > > > But for the kexec_file part I think it is good at least it works with
-> > > > this fix.
-> > > > 
-> > > > Acked-by: Dave Young <dyoung@redhat.com>
-> > > 
-> > > The original "platform" keyring patches that Nayna posted multiple
-> > > times were in the certs directory, but nobody commented/responded.  So
-> > > she reworked the patches, moving them to the integrity directory and
-> > > posted them (cc'ing the kexec mailing list).  It's a bit late to be
-> > > asking to move it, isn't it?
-> > 
-> > Hmm, apologize for being late,  I did not get chance to have a look the
-> > old series.  Since we have the needs now, it should be still fine
-> > 
-> > Maybe Kairui can check Nayna's old series, see if he can do something
-> > again?
-> 
-> Whether the platform keyring is defined in certs/ or in integrity/ the
-> keyring id needs to be accessible to the other, without making the
-> keyring id global.  Moving where the platform keyring is defined is
-> not the problem.
+On Tue, Jan 15, 2019 at 10:42 AM Dave Young <dyoung@redhat.com> wrote:
+>
+> On 01/14/19 at 11:10am, Mimi Zohar wrote:
+> > On Sun, 2019-01-13 at 09:39 +0800, Dave Young wrote:
+> > > Hi,
+> > >
+> > > On 01/11/19 at 11:13am, Mimi Zohar wrote:
+> > > > On Fri, 2019-01-11 at 21:43 +0800, Dave Young wrote:
+> > > > [snip]
+> > > >
+> > > > > Personally I would like to see platform key separated from integrity.
+> > > > > But for the kexec_file part I think it is good at least it works with
+> > > > > this fix.
+> > > > >
+> > > > > Acked-by: Dave Young <dyoung@redhat.com>
+> > > >
+> > > > The original "platform" keyring patches that Nayna posted multiple
+> > > > times were in the certs directory, but nobody commented/responded.  So
+> > > > she reworked the patches, moving them to the integrity directory and
+> > > > posted them (cc'ing the kexec mailing list).  It's a bit late to be
+> > > > asking to move it, isn't it?
+> > >
+> > > Hmm, apologize for being late,  I did not get chance to have a look the
+> > > old series.  Since we have the needs now, it should be still fine
+> > >
+> > > Maybe Kairui can check Nayna's old series, see if he can do something
+> > > again?
+> >
+> > Whether the platform keyring is defined in certs/ or in integrity/ the
+> > keyring id needs to be accessible to the other, without making the
+> > keyring id global.  Moving where the platform keyring is defined is
+> > not the problem.
+>
+> Agreed, but just feel kexec depends on IMA sounds not good.
+>
+> >
+> > Commit a210fd32a46b ("kexec: add call to LSM hook in original
+> > kexec_load syscall") introduced a new LSM hook.  Assuming
+> > CONFIG_KEXEC_VERIFY_SIG is enabled, with commit b5ca117365d9 ("ima:
+> > prevent kexec_load syscall based on runtime secureboot flag") we can
+> > now block the kexec_load syscall.  Without being able to block the
+> > kexec_load syscall, verifying the kexec image signature via the
+> > kexec_file_load syscall is kind of pointless.
+> >
+> > Unless you're planning on writing an LSM to prevent the kexec_load
+> > syscall, I assume you'll want to enable integrity anyway.
+>
+> User can disable kexec_load in kernel config, and only allow
+> kexec_file_load.  But yes, this can be improved separately in case no
+> IMA enabled.
+>
+> For the time being we can leave with it and fix like this series do.
+>
+> >
+> > Mimi
+> >
+>
+> Thanks
+> Dave
 
-Agreed, but just feel kexec depends on IMA sounds not good.
+Yes, for now, I think it's good to fix the problem by following this
+patch series and get kexec_file_load work with platform keyring first.
+Will adopt suggestion from Mimi in the previous reply and update the
+patch series.
 
-> 
-> Commit a210fd32a46b ("kexec: add call to LSM hook in original
-> kexec_load syscall") introduced a new LSM hook.  Assuming
-> CONFIG_KEXEC_VERIFY_SIG is enabled, with commit b5ca117365d9 ("ima:
-> prevent kexec_load syscall based on runtime secureboot flag") we can
-> now block the kexec_load syscall.  Without being able to block the
-> kexec_load syscall, verifying the kexec image signature via the
-> kexec_file_load syscall is kind of pointless.
-> 
-> Unless you're planning on writing an LSM to prevent the kexec_load
-> syscall, I assume you'll want to enable integrity anyway.
+For other remaining potential issues, kexec_load not being protected,
+it could be disabled by config, and the improvement may require more
+discussion. And issues like where the keyring is located, dependency
+to making the keyring available for more general use could be
+discussed later.
 
-User can disable kexec_load in kernel config, and only allow
-kexec_file_load.  But yes, this can be improved separately in case no
-IMA enabled.
-
-For the time being we can leave with it and fix like this series do.
-
-> 
-> Mimi
-> 
-
-Thanks
-Dave
+--
+Best Regards,
+Kairui Song
