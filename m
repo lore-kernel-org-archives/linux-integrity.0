@@ -2,141 +2,68 @@ Return-Path: <SRS0=v/7H=PX=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D17C43387
-	for <linux-integrity@archiver.kernel.org>; Tue, 15 Jan 2019 09:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA4FC43387
+	for <linux-integrity@archiver.kernel.org>; Tue, 15 Jan 2019 10:50:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF7972085A
-	for <linux-integrity@archiver.kernel.org>; Tue, 15 Jan 2019 09:47:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 856B820651
+	for <linux-integrity@archiver.kernel.org>; Tue, 15 Jan 2019 10:50:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728790AbfAOJq7 (ORCPT
+        id S1729004AbfAOKuJ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 15 Jan 2019 04:46:59 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53540 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727746AbfAOJq7 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 15 Jan 2019 04:46:59 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 12846811D8;
-        Tue, 15 Jan 2019 09:46:59 +0000 (UTC)
-Received: from kasong-desktop-nay-redhat-com.nay.redhat.com (unknown [10.66.128.41])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BF11819744;
-        Tue, 15 Jan 2019 09:46:52 +0000 (UTC)
-From:   Kairui Song <kasong@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     dhowells@redhat.com, dwmw2@infradead.org,
-        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
-        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
-        bauerman@linux.ibm.com, ebiggers@google.com, nayna@linux.ibm.com,
-        dyoung@redhat.com, linux-integrity@vger.kernel.org,
-        kexec@lists.infradead.org, Kairui Song <kasong@redhat.com>
-Subject: [RFC PATCH v2 2/2] kexec, KEYS: Make use of platform keyring for signature verify
-Date:   Tue, 15 Jan 2019 17:45:42 +0800
-Message-Id: <20190115094542.17129-3-kasong@redhat.com>
-In-Reply-To: <20190115094542.17129-1-kasong@redhat.com>
-References: <20190115094542.17129-1-kasong@redhat.com>
+        Tue, 15 Jan 2019 05:50:09 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43600 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728642AbfAOKuJ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 15 Jan 2019 05:50:09 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id ECEC1AD12;
+        Tue, 15 Jan 2019 10:50:07 +0000 (UTC)
+Date:   Tue, 15 Jan 2019 11:50:05 +0100
+From:   Petr Vorel <pvorel@suse.cz>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Jia Zhang <zhang.jia@linux.alibaba.com>, zohar@linux.vnet.ibm.com,
+        linux-integrity@vger.kernel.org, ltp@lists.linux.it
+Subject: Re: [PATCH 6/6] ima: Use ima tcb policy files for test
+Message-ID: <20190115105005.GA12143@dell5510>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <1546827989-43569-1-git-send-email-zhang.jia@linux.alibaba.com>
+ <1546827989-43569-7-git-send-email-zhang.jia@linux.alibaba.com>
+ <1547494342.4156.188.camel@linux.ibm.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-2
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 15 Jan 2019 09:46:59 +0000 (UTC)
+In-Reply-To: <1547494342.4156.188.camel@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-With KEXEC_BZIMAGE_VERIFY_SIG enabled, kexec_file_load will need to
-verify the kernel image. The image might be signed with third part keys,
-and the keys could be stored in firmware, then got loaded into the
-.platform keyring. Now we have a symbol .platform_trusted_keyring as the
-reference to .platform keyring, this patch makes use if it and allow
-kexec_file_load to verify the image against keys in .platform keyring.
+Hi Mimi, Jia,
 
-This commit adds a VERIFY_USE_PLATFORM_KEYRING similar to previous
-VERIFY_USE_SECONDARY_KEYRING indicating that verify_pkcs7_signature
-should verify the signature using platform keyring. Also, decrease
-the error message log level when verification failed with -ENOKEY,
-so that if called tried multiple time with different keyring it
-won't generate extra noises.
+> On Mon, 2019-01-07 at 10:26 +0800, Jia Zhang wrote:
+> > In order to make all tests running smoothly, the policy files should
+> > keep up with the default ima tcb policy.
 
-Signed-off-by: Kairui Song <kasong@redhat.com>
----
- arch/x86/kernel/kexec-bzimage64.c | 15 ++++++++++++---
- certs/system_keyring.c            | 11 ++++++++++-
- include/linux/verification.h      |  3 +++
- 3 files changed, 25 insertions(+), 4 deletions(-)
+> Keeping the policy rules in sync is a good idea, but some of the rules
+> might cause a regression with older kernels (eg. NSFS magic).  Not
+> including the rule, also poses a problem.
 
-diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-index 7d97e432cbbc..a06b04065bb1 100644
---- a/arch/x86/kernel/kexec-bzimage64.c
-+++ b/arch/x86/kernel/kexec-bzimage64.c
-@@ -534,9 +534,18 @@ static int bzImage64_cleanup(void *loader_data)
- #ifdef CONFIG_KEXEC_BZIMAGE_VERIFY_SIG
- static int bzImage64_verify_sig(const char *kernel, unsigned long kernel_len)
- {
--	return verify_pefile_signature(kernel, kernel_len,
--				       VERIFY_USE_SECONDARY_KEYRING,
--				       VERIFYING_KEXEC_PE_SIGNATURE);
-+	int ret;
-+	ret = verify_pefile_signature(kernel, kernel_len,
-+			VERIFY_USE_SECONDARY_KEYRING,
-+			VERIFYING_KEXEC_PE_SIGNATURE);
-+#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
-+	if (ret == -ENOKEY) {
-+		ret = verify_pefile_signature(kernel, kernel_len,
-+				VERIFY_USE_PLATFORM_KEYRING,
-+				VERIFYING_KEXEC_PE_SIGNATURE);
-+	}
-+#endif
-+	return ret;
- }
- #endif
- 
-diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-index 4690ef9cda8a..df2a09599bd8 100644
---- a/certs/system_keyring.c
-+++ b/certs/system_keyring.c
-@@ -239,12 +239,21 @@ int verify_pkcs7_signature(const void *data, size_t len,
- 		trusted_keys = secondary_trusted_keys;
- #else
- 		trusted_keys = builtin_trusted_keys;
-+#endif
-+#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
-+	} else if (trusted_keys == VERIFY_USE_PLATFORM_KEYRING) {
-+		trusted_keys = platform_trusted_keys;
-+		if (!trusted_keys) {
-+			ret = -ENOKEY;
-+			pr_devel("PKCS#7 platform keyring is not available\n");
-+			goto error;
-+		}
- #endif
- 	}
- 	ret = pkcs7_validate_trust(pkcs7, trusted_keys);
- 	if (ret < 0) {
- 		if (ret == -ENOKEY)
--			pr_err("PKCS#7 signature not signed with a trusted key\n");
-+			pr_devel("PKCS#7 signature not signed with a trusted key\n");
- 		goto error;
- 	}
- 
-diff --git a/include/linux/verification.h b/include/linux/verification.h
-index cfa4730d607a..dbd1686e9bc4 100644
---- a/include/linux/verification.h
-+++ b/include/linux/verification.h
-@@ -17,6 +17,9 @@
-  * should be used.
-  */
- #define VERIFY_USE_SECONDARY_KEYRING ((struct key *)1UL)
-+#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
-+#define VERIFY_USE_PLATFORM_KEYRING  ((struct key *)2UL)
-+#endif
- 
- /*
-  * The use to which an asymmetric key is being put.
--- 
-2.20.1
+Mimi, you added NSFS_MAGIC into policy in v4.2 (cd025f7f9410 "ima: do not
+measure or appraise the NSFS filesystem"), in the commit is Cc for 3.19, but
+it's not in origin/linux-3.19.y stable tree (v3.19.8). So regression could be
+from kernel <= 4.1.
 
+> The kernel headers package includes magic.h.  One solution would be to check whether a magic name is included in magic.h.
+Interesting approach, I like this approach. Policy would have to be generated on
+the fly, but that shouldn't be a problem.
+
+
+Kind regards,
+Petr
