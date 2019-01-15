@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DATE_IN_PAST_96_XX,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 773E1C33CB1
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jan 2020 06:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C082FC33CB1
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jan 2020 06:59:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54F9E2467D
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jan 2020 06:56:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 986D024679
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jan 2020 06:59:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726075AbgAOG4q (ORCPT
+        id S1729061AbgAOG74 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 15 Jan 2020 01:56:46 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:33272 "EHLO huawei.com"
+        Wed, 15 Jan 2020 01:59:56 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:36526 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725999AbgAOG4p (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 15 Jan 2020 01:56:45 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 334B16BF3492B0AC9DD4;
-        Wed, 15 Jan 2020 14:56:42 +0800 (CST)
-Received: from huawei.com (10.175.107.192) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Wed, 15 Jan 2020
- 14:56:34 +0800
+        id S1725999AbgAOG74 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 15 Jan 2020 01:59:56 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 4A87EEDC480447E6ECB5;
+        Wed, 15 Jan 2020 14:59:54 +0800 (CST)
+Received: from huawei.com (10.175.107.192) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Wed, 15 Jan 2020
+ 14:59:48 +0800
 From:   wanghongzhe <wanghongzhe@huawei.com>
 To:     <peterhuewe@gmx.de>
 CC:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <zhangchenfeng1@huawei.com>, <wanghongzhe@huawei.com>
 Subject: [PATCH] tpm:tpm_tis_spi: set cs_change = 0 when timesout
-Date:   Tue, 15 Jan 2019 14:56:39 +0800
-Message-ID: <1547535399-23039-1-git-send-email-wanghongzhe@huawei.com>
+Date:   Tue, 15 Jan 2019 14:59:52 +0800
+Message-ID: <1547535592-23118-1-git-send-email-wanghongzhe@huawei.com>
 X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
 Content-Type: text/plain
