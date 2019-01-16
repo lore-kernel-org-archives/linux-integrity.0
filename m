@@ -2,87 +2,52 @@ Return-Path: <SRS0=sWjp=PY=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C082C43387
-	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 02:59:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A79C43387
+	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 07:20:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 657C720675
-	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 02:59:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44BDD20840
+	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 07:20:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730775AbfAPC7u (ORCPT
+        id S1730243AbfAPHUH (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 15 Jan 2019 21:59:50 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:34421 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729852AbfAPC7u (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 15 Jan 2019 21:59:50 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R381e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01451;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TIKMQge_1547607466;
-Received: from localhost(mailfrom:zhang.jia@linux.alibaba.com fp:SMTPD_---0TIKMQge_1547607466)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 16 Jan 2019 10:57:47 +0800
-From:   Jia Zhang <zhang.jia@linux.alibaba.com>
-To:     pvorel@suse.cz, zohar@linux.ibm.com
-Cc:     linux-integrity@vger.kernel.org, ltp@lists.linux.it,
-        zhang.jia@linux.alibaba.com
-Subject: [PATCH v3 4/6] ima: Code cleanup
-Date:   Wed, 16 Jan 2019 10:57:39 +0800
-Message-Id: <1547607461-11233-5-git-send-email-zhang.jia@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1547607461-11233-1-git-send-email-zhang.jia@linux.alibaba.com>
+        Wed, 16 Jan 2019 02:20:07 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45050 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727247AbfAPHUH (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 16 Jan 2019 02:20:07 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7E4A0AEF3;
+        Wed, 16 Jan 2019 07:20:06 +0000 (UTC)
+Date:   Wed, 16 Jan 2019 08:20:04 +0100
+From:   Petr Vorel <pvorel@suse.cz>
+To:     Jia Zhang <zhang.jia@linux.alibaba.com>
+Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
+        ltp@lists.linux.it
+Subject: Re: [LTP][PATCH v3 0/6] LTP IMA fix bundle
+Message-ID: <20190116072004.GA10601@dell5510>
+Reply-To: Petr Vorel <pvorel@suse.cz>
 References: <1547607461-11233-1-git-send-email-zhang.jia@linux.alibaba.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547607461-11233-1-git-send-email-zhang.jia@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-- Change the legacy function name from PATH_CHECK to FILE_CHECK.
-- Use the variable IMA_POLICY instead of hard code path.
+Hi Jia, Mimi,
 
-Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
----
- testcases/kernel/security/integrity/ima/policy/measure.policy         | 2 +-
- testcases/kernel/security/integrity/ima/policy/measure.policy-invalid | 2 +-
- testcases/kernel/security/integrity/ima/tests/ima_policy.sh           | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+> Changelog since V2:
+> - Rework patch 6. Here is a quick diff against V2:
 
-diff --git a/testcases/kernel/security/integrity/ima/policy/measure.policy b/testcases/kernel/security/integrity/ima/policy/measure.policy
-index c68e722..9976ddf 100644
---- a/testcases/kernel/security/integrity/ima/policy/measure.policy
-+++ b/testcases/kernel/security/integrity/ima/policy/measure.policy
-@@ -13,4 +13,4 @@ dont_measure fsmagic=0x01021994
- dont_measure fsmagic=0x73636673
- measure func=FILE_MMAP mask=MAY_EXEC
- measure func=BPRM_CHECK mask=MAY_EXEC
--measure func=PATH_CHECK mask=MAY_READ uid=0
-+measure func=FILE_CHECK mask=MAY_READ uid=0
-diff --git a/testcases/kernel/security/integrity/ima/policy/measure.policy-invalid b/testcases/kernel/security/integrity/ima/policy/measure.policy-invalid
-index e406757..04dff89 100644
---- a/testcases/kernel/security/integrity/ima/policy/measure.policy-invalid
-+++ b/testcases/kernel/security/integrity/ima/policy/measure.policy-invalid
-@@ -13,4 +13,4 @@ dont_measure fsmagic=0x01021994
- dnt_measure fsmagic=0x73636673
- measure func=FILE_MMAP mask=MAY_EXEC
- measure func=BPRM_CHECK mask=MAY_EXEC
--measure func=PATH_CHECK mask=MAY_READ uid=0
-+measure func=FILE_CHECK mask=MAY_READ uid=0
-diff --git a/testcases/kernel/security/integrity/ima/tests/ima_policy.sh b/testcases/kernel/security/integrity/ima/tests/ima_policy.sh
-index 64aa8cb..a0c7869 100755
---- a/testcases/kernel/security/integrity/ima/tests/ima_policy.sh
-+++ b/testcases/kernel/security/integrity/ima/tests/ima_policy.sh
-@@ -28,7 +28,7 @@ check_policy_writable()
- {
- 	local err="IMA policy already loaded and kernel not configured to enable multiple writes to it (need CONFIG_IMA_WRITE_POLICY=y)"
- 
--	[ -f /sys/kernel/security/ima/policy ] || tst_brk TCONF "$err"
-+	[ -f $IMA_POLICY ] || tst_brk TCONF "$err"
- 	# CONFIG_IMA_READ_POLICY
- 	echo "" 2> log > $IMA_POLICY
- 	grep -q "Device or resource busy" log && tst_brk TCONF "$err"
--- 
-1.8.3.1
+LGTM, just waiting if Mimi reviews 1st and 6th commit.
 
+Kind regards,
+Petr
