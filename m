@@ -2,52 +2,89 @@ Return-Path: <SRS0=sWjp=PY=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A79C43387
-	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 07:20:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85E86C43387
+	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 10:17:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44BDD20840
-	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 07:20:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60DCB20840
+	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 10:17:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730243AbfAPHUH (ORCPT
+        id S2389496AbfAPKRc (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 16 Jan 2019 02:20:07 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45050 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727247AbfAPHUH (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 16 Jan 2019 02:20:07 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7E4A0AEF3;
-        Wed, 16 Jan 2019 07:20:06 +0000 (UTC)
-Date:   Wed, 16 Jan 2019 08:20:04 +0100
-From:   Petr Vorel <pvorel@suse.cz>
-To:     Jia Zhang <zhang.jia@linux.alibaba.com>
-Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
-        ltp@lists.linux.it
-Subject: Re: [LTP][PATCH v3 0/6] LTP IMA fix bundle
-Message-ID: <20190116072004.GA10601@dell5510>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <1547607461-11233-1-git-send-email-zhang.jia@linux.alibaba.com>
+        Wed, 16 Jan 2019 05:17:32 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50224 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732053AbfAPKRc (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 16 Jan 2019 05:17:32 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5AF296445E;
+        Wed, 16 Jan 2019 10:17:31 +0000 (UTC)
+Received: from kasong-desktop-nay-redhat-com.nay.redhat.com (unknown [10.66.128.41])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 33E4D6107F;
+        Wed, 16 Jan 2019 10:17:22 +0000 (UTC)
+From:   Kairui Song <kasong@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     dhowells@redhat.com, dwmw2@infradead.org,
+        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
+        bauerman@linux.ibm.com, ebiggers@google.com, nayna@linux.ibm.com,
+        dyoung@redhat.com, linux-integrity@vger.kernel.org,
+        kexec@lists.infradead.org, Kairui Song <kasong@redhat.com>
+Subject: [PATCH v3 0/2] let kexec_file_load use platform keyring to verify the kernel image
+Date:   Wed, 16 Jan 2019 18:16:52 +0800
+Message-Id: <20190116101654.7288-1-kasong@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547607461-11233-1-git-send-email-zhang.jia@linux.alibaba.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 16 Jan 2019 10:17:32 +0000 (UTC)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Jia, Mimi,
+This patch series adds a .platform_trusted_keys in system_keyring as the
+reference to .platform keyring in integrity subsystem, when platform
+keyring is being initialized it will be updated. So other component could
+use this keyring as well.
 
-> Changelog since V2:
-> - Rework patch 6. Here is a quick diff against V2:
+This patch series also let kexec_file_load use platform keyring as fall
+back if it failed to verify the image against secondary keyring, make it
+possible to load kernel signed by third part key if third party key is
+imported in the firmware.
 
-LGTM, just waiting if Mimi reviews 1st and 6th commit.
+After this patch kexec_file_load will be able to verify a signed PE
+bzImage using keys in platform keyring.
 
-Kind regards,
-Petr
+Tested in a VM with locally signed kernel with pesign and imported the
+cert to EFI's MokList variable.
+
+Kairui Song (2):
+  integrity, KEYS: add a reference to platform keyring
+  kexec, KEYS: Make use of platform keyring for signature verify
+
+Update from V2:
+  - Use IS_ENABLED in kexec_file_load to judge if platform_trusted_keys
+    should be used for verifying image as suggested by Mimi Zohar
+
+Update from V1:
+  - Make platform_trusted_keys static, and update commit message as suggested
+    by Mimi Zohar
+  - Always check if platform keyring is initialized before use it
+
+Kairui Song (2):
+  integrity, KEYS: add a reference to platform keyring
+  kexec, KEYS: Make use of platform keyring for signature verify
+
+ arch/x86/kernel/kexec-bzimage64.c | 13 ++++++++++---
+ certs/system_keyring.c            | 22 +++++++++++++++++++++-
+ include/keys/system_keyring.h     |  5 +++++
+ include/linux/verification.h      |  1 +
+ security/integrity/digsig.c       |  6 ++++++
+ 5 files changed, 43 insertions(+), 4 deletions(-)
+
+-- 
+2.20.1
