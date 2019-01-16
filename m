@@ -6,50 +6,48 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0937FC43387
-	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 16:15:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D0DDC43387
+	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 16:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE70020675
-	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 16:15:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D58D120651
+	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 16:19:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728340AbfAPQPY convert rfc822-to-8bit (ORCPT
+        id S1730994AbfAPQTO (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 16 Jan 2019 11:15:24 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37446 "EHLO mx1.redhat.com"
+        Wed, 16 Jan 2019 11:19:14 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41574 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728037AbfAPQPY (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 16 Jan 2019 11:15:24 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        id S1730514AbfAPQTO (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 16 Jan 2019 11:19:14 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A51264E937;
-        Wed, 16 Jan 2019 16:15:23 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0AC2F8E584;
+        Wed, 16 Jan 2019 16:19:14 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-244.rdu2.redhat.com [10.10.120.244])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4359C5C239;
-        Wed, 16 Jan 2019 16:15:20 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 66B9A600C8;
+        Wed, 16 Jan 2019 16:19:12 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
 From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20190107090449.d364ii24zervlsfq@sole.flsd.net>
-References: <20190107090449.d364ii24zervlsfq@sole.flsd.net> <20190106133608.820-1-vt@altlinux.org> <1893001.R2IGJoHzOM@positron.chronox.de> <20190107080710.r4bh7gkqdysxmlnn@sole.flsd.net> <1714084.mfT8VG1pOj@tauon.chronox.de>
+In-Reply-To: <20190106133608.820-3-vt@altlinux.org>
+References: <20190106133608.820-3-vt@altlinux.org> <20190106133608.820-1-vt@altlinux.org>
 To:     Vitaly Chikunov <vt@altlinux.org>
-Cc:     dhowells@redhat.com, Stephan Mueller <smueller@chronox.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+Cc:     dhowells@redhat.com, Herbert Xu <herbert@gondor.apana.org.au>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
         linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 4/4] crypto: Add EC-RDSA algorithm
+Subject: Re: [RFC PATCH 2/4] akcipher: Introduce verify2 for public key algorithms
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <21601.1547655320.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Wed, 16 Jan 2019 16:15:20 +0000
-Message-ID: <21602.1547655320@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 16 Jan 2019 16:15:24 +0000 (UTC)
+Content-ID: <21753.1547655551.1@warthog.procyon.org.uk>
+Date:   Wed, 16 Jan 2019 16:19:11 +0000
+Message-ID: <21754.1547655551@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 16 Jan 2019 16:19:14 +0000 (UTC)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
@@ -57,17 +55,14 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 Vitaly Chikunov <vt@altlinux.org> wrote:
 
-> > Regarding your comment (2), I am not sure I understand. Why do you say that 
-> > the DER format cannot be parsed by the kernel's ASN.1 parser? For example, 
-> 
-> It can, but DER is stricter than BER. For example, in DER 'OCTET STRING'
-> length field should be encoded in just one byte if it's smaller than
-> 128, in BER it could be encoded in multiple encodings. This does not
-> seem like a big deal, though. With BER decoder an improperly DER-encoded
-> certificate could be successfully parsed.
+> Current akcipher .verify() just decrypts signature to uncover message
+> hash, which is then verified in upper level public_key_verify_signature
+> by memcmp with the expected signature value, which is never passed into
+> verify().
 
-Whilst that is true, I don't think it's that big a deal.  DER is a subset of
-BER, so a BER decoder ought to be able to parse it.  Note that X.509 is
-supposed to be DER, but we use a BER decoder for that too.
+I think it would be better to make ->verify() take the data hash we've been
+given rather than returning the expected hash for the caller to compare.  That
+way the callers don't have to do two different things, depending on how the
+crypto algo works.
 
 David
