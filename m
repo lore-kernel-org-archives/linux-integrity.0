@@ -2,81 +2,74 @@ Return-Path: <SRS0=sWjp=PY=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B5EDC43387
-	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 02:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F5ABC43387
+	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 02:58:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB1DF20859
-	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 02:55:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C3CF20675
+	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 02:58:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730368AbfAPCzk (ORCPT
+        id S1727883AbfAPC6K (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 15 Jan 2019 21:55:40 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:52123 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727883AbfAPCzk (ORCPT
+        Tue, 15 Jan 2019 21:58:10 -0500
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:52058 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726863AbfAPC6K (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 15 Jan 2019 21:55:40 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01353;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0TIKMQ6E_1547607199;
-Received: from ali-6c96cfd98fb5.local(mailfrom:zhang.jia@linux.alibaba.com fp:SMTPD_---0TIKMQ6E_1547607199)
+        Tue, 15 Jan 2019 21:58:10 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R801e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TIKLIeS_1547607465;
+Received: from localhost(mailfrom:zhang.jia@linux.alibaba.com fp:SMTPD_---0TIKLIeS_1547607465)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 16 Jan 2019 10:53:20 +0800
-Subject: Re: [PATCH 6/6] ima/ima_violations: Temporarily remove the printk
- rate limit
-To:     Petr Vorel <pvorel@suse.cz>
-Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
-        ltp@lists.linux.it
-References: <1547518476-34008-1-git-send-email-zhang.jia@linux.alibaba.com>
- <1547518476-34008-7-git-send-email-zhang.jia@linux.alibaba.com>
- <20190115150759.GA2954@dell5510>
- <698e6865-d0af-f71e-d51e-c4791ef1a096@linux.alibaba.com>
- <20190115172401.GC2954@dell5510>
+          Wed, 16 Jan 2019 10:57:45 +0800
 From:   Jia Zhang <zhang.jia@linux.alibaba.com>
-Message-ID: <a4c87b61-33a4-cc8b-489e-023c74bfcc48@linux.alibaba.com>
-Date:   Wed, 16 Jan 2019 10:53:19 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20190115172401.GC2954@dell5510>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+To:     pvorel@suse.cz, zohar@linux.ibm.com
+Cc:     linux-integrity@vger.kernel.org, ltp@lists.linux.it,
+        zhang.jia@linux.alibaba.com
+Subject: [PATCH v3 1/6] ima/ima_boot_aggregate: Fix the definition of event log
+Date:   Wed, 16 Jan 2019 10:57:36 +0800
+Message-Id: <1547607461-11233-2-git-send-email-zhang.jia@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1547607461-11233-1-git-send-email-zhang.jia@linux.alibaba.com>
+References: <1547607461-11233-1-git-send-email-zhang.jia@linux.alibaba.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+According to [1], the structure of event log should be packed,
+and certain fields should be 32-bit unsigned integer. Fortunately,
+keeping natural alignment seems to make everything working as
+expected all the time.
 
+[1] page 17,18 @https://trustedcomputinggroup.org/wp-content/uploads/TCG_EFI_Protocol_1_22_Final-v05.pdf
 
-On 2019/1/16 上午1:24, Petr Vorel wrote:
-> Hi Jia,
-> 
->>>> +	reset_printk_ratelimit
->>> This should be called in cleanup function.
->>> Actually as it's called only once I'd put it into cleanup function.
-> 
->> I recognized that ima_setup.sh already defines a cleanup() so I cannot
->> define another cleanup function in ima_violations.sh. Do you mean moving
->> reset_printk_ratelimit into cleanup() defined in ima_setup.sh?
-> No. You can define redefine local cleanup function in ima_violations.sh after
-> loading ima_setup.sh and call ima_cleanup() in it.
-> 
-> + you can change setup in ima_setup.sh:
-> TST_CLEANUP="${TST_CLEANUP:-ima_cleanup}"
-> (see testcases/network/stress/ipsec/ipsec_lib.sh and testcases/network/stress/ipsec/ipsec_lib.sh and it's usage).
-> 
-> Cleanup of something defined in setup should be always in cleanup function and
-> not in any tests as it's called always after tst_brk() calls (some tests might
-> get skipped, so cleanup cannot be in them).
+Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
+---
+ testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Thanks for the comments. I will send V3 to address this.
+diff --git a/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c b/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
+index f6e7be0..d85d222 100644
+--- a/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
++++ b/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
+@@ -53,10 +53,10 @@ int main(int argc, char *argv[])
+ 	struct {
+ 		struct {
+ 			u_int32_t pcr;
+-			int type;
+-			unsigned char digest[SHA_DIGEST_LENGTH];
+-			u_int16_t len;
+-		} header;
++			u_int32_t type;
++			u_int8_t digest[SHA_DIGEST_LENGTH];
++			u_int32_t len;
++		} header __attribute__ ((packed));
+ 		char *data;
+ 	} event;
+ 	struct {
+-- 
+1.8.3.1
 
-Jia
-
-> 
-> Kind regards,
-> Petr
-> 
