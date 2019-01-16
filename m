@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F5ABC43387
-	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 02:58:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9386C43387
+	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 02:58:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C3CF20675
-	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 02:58:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F63820675
+	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 02:58:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727883AbfAPC6K (ORCPT
+        id S1728807AbfAPC60 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 15 Jan 2019 21:58:10 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:52058 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726863AbfAPC6K (ORCPT
+        Tue, 15 Jan 2019 21:58:26 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:52262 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726863AbfAPC60 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 15 Jan 2019 21:58:10 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R801e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TIKLIeS_1547607465;
-Received: from localhost(mailfrom:zhang.jia@linux.alibaba.com fp:SMTPD_---0TIKLIeS_1547607465)
+        Tue, 15 Jan 2019 21:58:26 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R731e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TIKYZgJ_1547607466;
+Received: from localhost(mailfrom:zhang.jia@linux.alibaba.com fp:SMTPD_---0TIKYZgJ_1547607466)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 16 Jan 2019 10:57:45 +0800
+          Wed, 16 Jan 2019 10:57:46 +0800
 From:   Jia Zhang <zhang.jia@linux.alibaba.com>
 To:     pvorel@suse.cz, zohar@linux.ibm.com
 Cc:     linux-integrity@vger.kernel.org, ltp@lists.linux.it,
         zhang.jia@linux.alibaba.com
-Subject: [PATCH v3 1/6] ima/ima_boot_aggregate: Fix the definition of event log
-Date:   Wed, 16 Jan 2019 10:57:36 +0800
-Message-Id: <1547607461-11233-2-git-send-email-zhang.jia@linux.alibaba.com>
+Subject: [PATCH v3 3/6] ima/ima_boot_aggregate: Fix extending PCRs beyond PCR 0-7
+Date:   Wed, 16 Jan 2019 10:57:38 +0800
+Message-Id: <1547607461-11233-4-git-send-email-zhang.jia@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1547607461-11233-1-git-send-email-zhang.jia@linux.alibaba.com>
 References: <1547607461-11233-1-git-send-email-zhang.jia@linux.alibaba.com>
@@ -39,37 +39,41 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-According to [1], the structure of event log should be packed,
-and certain fields should be 32-bit unsigned integer. Fortunately,
-keeping natural alignment seems to make everything working as
-expected all the time.
-
-[1] page 17,18 @https://trustedcomputinggroup.org/wp-content/uploads/TCG_EFI_Protocol_1_22_Final-v05.pdf
+The boot aggragate calculation should never touch PCRs beyond PCR 0-7,
+even a PCR extension really manipulates out-of-domain PCRs.
 
 Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ .../security/integrity/ima/src/ima_boot_aggregate.c       | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
 diff --git a/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c b/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
-index f6e7be0..d85d222 100644
+index 67be6a7..98893b9 100644
 --- a/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
 +++ b/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
-@@ -53,10 +53,10 @@ int main(int argc, char *argv[])
- 	struct {
- 		struct {
- 			u_int32_t pcr;
--			int type;
--			unsigned char digest[SHA_DIGEST_LENGTH];
--			u_int16_t len;
--		} header;
-+			u_int32_t type;
-+			u_int8_t digest[SHA_DIGEST_LENGTH];
-+			u_int32_t len;
-+		} header __attribute__ ((packed));
- 		char *data;
- 	} event;
- 	struct {
+@@ -93,11 +93,16 @@ int main(int argc, char *argv[])
+ 			printf("%03u ", event.header.pcr);
+ 			display_sha1_digest(event.header.digest);
+ 		}
+-		SHA1_Init(&c);
+-		SHA1_Update(&c, pcr[event.header.pcr].digest,
+-			    SHA_DIGEST_LENGTH);
+-		SHA1_Update(&c, event.header.digest, SHA_DIGEST_LENGTH);
+-		SHA1_Final(pcr[event.header.pcr].digest, &c);
++
++		if (event.header.pcr < NUM_PCRS) {
++			SHA1_Init(&c);
++			SHA1_Update(&c, pcr[event.header.pcr].digest,
++				    SHA_DIGEST_LENGTH);
++			SHA1_Update(&c, event.header.digest,
++				    SHA_DIGEST_LENGTH);
++			SHA1_Final(pcr[event.header.pcr].digest, &c);
++		}
++
+ #if MAX_EVENT_DATA_SIZE < USHRT_MAX
+ 		if (event.header.len > MAX_EVENT_DATA_SIZE) {
+ 			printf("Error event too long\n");
 -- 
 1.8.3.1
 
