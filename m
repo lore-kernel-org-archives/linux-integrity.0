@@ -2,67 +2,111 @@ Return-Path: <SRS0=sWjp=PY=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D0DDC43387
-	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 16:19:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90BD7C43387
+	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 17:39:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D58D120651
-	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 16:19:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AD962082F
+	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 17:39:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730994AbfAPQTO (ORCPT
+        id S1727463AbfAPRju (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 16 Jan 2019 11:19:14 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41574 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730514AbfAPQTO (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 16 Jan 2019 11:19:14 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0AC2F8E584;
-        Wed, 16 Jan 2019 16:19:14 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-244.rdu2.redhat.com [10.10.120.244])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 66B9A600C8;
-        Wed, 16 Jan 2019 16:19:12 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20190106133608.820-3-vt@altlinux.org>
-References: <20190106133608.820-3-vt@altlinux.org> <20190106133608.820-1-vt@altlinux.org>
-To:     Vitaly Chikunov <vt@altlinux.org>
-Cc:     dhowells@redhat.com, Herbert Xu <herbert@gondor.apana.org.au>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/4] akcipher: Introduce verify2 for public key algorithms
+        Wed, 16 Jan 2019 12:39:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60216 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726077AbfAPRjt (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 16 Jan 2019 12:39:49 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8E75CABB1;
+        Wed, 16 Jan 2019 17:39:48 +0000 (UTC)
+Date:   Wed, 16 Jan 2019 11:39:45 -0600
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     linux-unionfs@vger.kernel.org
+Cc:     zohar@linux.ibm.com, iforster@suse.de,
+        linux-integrity@vger.kernel.org
+Subject: [PATCH] ovl: IMA Call ima_post_mknod_path() on copy_up'd dentry
+Message-ID: <20190116173945.mmnwsw5bglk6yryj@merlin>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <21753.1547655551.1@warthog.procyon.org.uk>
-Date:   Wed, 16 Jan 2019 16:19:11 +0000
-Message-ID: <21754.1547655551@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 16 Jan 2019 16:19:14 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20180323
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Vitaly Chikunov <vt@altlinux.org> wrote:
+Since copy_up() happens when you are modifying a file on overlay,
+it is still a new file for the underlying filesystem. Mark it
+in IMA for re-evaluating as a new file.
 
-> Current akcipher .verify() just decrypts signature to uncover message
-> hash, which is then verified in upper level public_key_verify_signature
-> by memcmp with the expected signature value, which is never passed into
-> verify().
+Putting ima calls within overlayfs may not be the best method, but this is
+the only one which I thought would work.
 
-I think it would be better to make ->verify() take the data hash we've been
-given rather than returning the expected hash for the caller to compare.  That
-way the callers don't have to do two different things, depending on how the
-crypto algo works.
+Here is a test case:
+mount /dev/vdb /lower
+mount /dev/vdc /upper
+echo "Original contents" > /lower/existingfile.txt
+mount -t overlay overlay /mnt -o upperdir=/upper/upper,workdir=/upper/workdir,lowerdir=/lower
+echo "New contents" > /mnt/existingfile.txt
 
-David
+Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+---
+ fs/overlayfs/copy_up.c            | 8 ++++++++
+ security/integrity/ima/ima_main.c | 1 +
+ 2 files changed, 9 insertions(+)
+
+diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+index 9e62dcf06fc4..f3f7f65ce4d3 100644
+--- a/fs/overlayfs/copy_up.c
++++ b/fs/overlayfs/copy_up.c
+@@ -21,6 +21,7 @@
+ #include <linux/fdtable.h>
+ #include <linux/ratelimit.h>
+ #include <linux/exportfs.h>
++#include <linux/ima.h>
+ #include "overlayfs.h"
+ 
+ #define OVL_COPY_UP_CHUNK_SIZE (1 << 20)
+@@ -102,6 +103,11 @@ int ovl_copy_xattr(struct dentry *old, struct dentry *new)
+ 			goto retry;
+ 		}
+ 
++		if (!strcmp(name, XATTR_NAME_IMA)) {
++			ima_post_path_mknod(new);
++			continue;
++		}
++
+ 		error = security_inode_copy_up_xattr(name);
+ 		if (error < 0 && error != -EOPNOTSUPP)
+ 			break;
+@@ -485,6 +491,8 @@ static int ovl_copy_up_inode(struct ovl_copy_up_ctx *c, struct dentry *temp)
+ 		err = ovl_set_size(temp, &c->stat);
+ 	if (!err)
+ 		err = ovl_set_attr(temp, &c->stat);
++	if (!err)
++		ima_post_path_mknod(c->dentry);
+ 	inode_unlock(temp->d_inode);
+ 
+ 	return err;
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index dbd4c8decde0..2229ea2a0ba6 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -449,6 +449,7 @@ void ima_post_path_mknod(struct dentry *dentry)
+ 	/* needed for re-opening empty files */
+ 	iint->flags |= IMA_NEW_FILE;
+ }
++EXPORT_SYMBOL_GPL(ima_post_path_mknod);
+ 
+ /**
+  * ima_read_file - pre-measure/appraise hook decision based on policy
+-- 
+2.16.4
+
+
+-- 
+Goldwyn
