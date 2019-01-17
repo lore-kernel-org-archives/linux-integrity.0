@@ -3,58 +3,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D725C43387
-	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 20:27:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2606C43387
+	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 20:47:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08BCC20855
-	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 20:27:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5B2B20868
+	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 20:47:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547756864;
-	bh=2LN0b2pEyZcmNHx/q/HSwUHJ+OFapnXo/7ZJjzZgSMI=;
+	s=default; t=1547758074;
+	bh=n8JMekFCbtwr62FzDCJJoj5l06UUzHpxnzcg5AUI7TM=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=L47wdm5AMFwKBi8/Ae+bRxijPs67qgy0kf7vsIn3+0mSclEDmMSNogw+9gj/RVoT2
-	 YkyohfEsAnKhXHD988RD9idKfrYmgeAqr6UskKxigvZBZYpmlzru7gU5yyNNrW6co8
-	 J8dFG9pRIkyLVBOqqAyIPcomxaOiogSiN2RayUGI=
+	b=ZGEyFw92o2Tyv9niN1pDiRP951GMSimQSeYo+XPGu85GZQ96hW1migIcpIkeJT9/Y
+	 66RongugxiBW/wLSuzfKe3jLI1A216ce6q6b3Kol3VvFkiZTtYoctCTM91L1vvuZXN
+	 SNZ6RhdJ6TV51j4fDdPgfvXXryL6PeiRe18we3n0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729068AbfAQU1i (ORCPT
+        id S1726648AbfAQUrx (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 17 Jan 2019 15:27:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51730 "EHLO mail.kernel.org"
+        Thu, 17 Jan 2019 15:47:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728923AbfAQU1i (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 17 Jan 2019 15:27:38 -0500
+        id S1726159AbfAQUrw (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 17 Jan 2019 15:47:52 -0500
 Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB856214AE
-        for <linux-integrity@vger.kernel.org>; Thu, 17 Jan 2019 20:27:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 614722086D
+        for <linux-integrity@vger.kernel.org>; Thu, 17 Jan 2019 20:47:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547756857;
-        bh=2LN0b2pEyZcmNHx/q/HSwUHJ+OFapnXo/7ZJjzZgSMI=;
+        s=default; t=1547758070;
+        bh=n8JMekFCbtwr62FzDCJJoj5l06UUzHpxnzcg5AUI7TM=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=RjgICbmexgMdczEI5OACEtqWYrFZScAk3TNsnCWB7HAFfpUE/dnYOD+L8aqyDzp/q
-         pUtFUO04b/Vl2vnMVdXza76G1+kJ3pc0Ew2Rk0mGuspUf65uwViCECbO2YBJaY2cF+
-         RBjmsnXEXihbcDSpk0FhvmsWkLZrKxigmduW03e4=
-Received: by mail-wm1-f51.google.com with SMTP id a62so2439066wmh.4
-        for <linux-integrity@vger.kernel.org>; Thu, 17 Jan 2019 12:27:36 -0800 (PST)
-X-Gm-Message-State: AJcUukfoJPW+ENR03lgMZo3QA5F8pHMhZ+urg11Drwgd5tUn08OWKPlu
-        Iy1VvlRSPRu90NJqFGp3tRsqVF6zjErgOCSEOH/+gA==
-X-Google-Smtp-Source: ALg8bN7MSKOP0/21JXOjltlAAmBKYzTwE1r2D511kHfTY2hy/nHrEn3VjDvfVUH8+mN/r8cEPsv6UJSR9F8F17gwNbw=
-X-Received: by 2002:a7b:c7c7:: with SMTP id z7mr14010272wmk.74.1547756855114;
- Thu, 17 Jan 2019 12:27:35 -0800 (PST)
+        b=1v/yNJqBMgzweIaFgEWtP2lvGXeclrXJB1t0pXSbhZgFbyyQjphalnJPKjN1b7XGp
+         8qNqL7JXfylXL1R7pc0XXdlb1KZGx/cZBFV5Up9Dgj4W8zDq2uH0g8kHugPIVJxxv3
+         zqQmR8daNSixtMx2XuYELmKrlF860GrbRVCRB0Yo=
+Received: by mail-wm1-f51.google.com with SMTP id y8so2480007wmi.4
+        for <linux-integrity@vger.kernel.org>; Thu, 17 Jan 2019 12:47:50 -0800 (PST)
+X-Gm-Message-State: AJcUukfhDsUFb7zc60AOCR7utMR2VPfSbO8OD8o8izQM4bGbftnPx9Hy
+        m6MBPyAr1CNmz6PocFyqchKKods0Z6SUB96cO3RXeQ==
+X-Google-Smtp-Source: ALg8bN4vqTfkkxsexP5RbKOvuJorBZi95A0P8/TrT41r99XTtUzScb+36zH48d5duGJlj85urGEm4ZA5aAqFumiCqsY=
+X-Received: by 2002:a1c:b1d5:: with SMTP id a204mr13844935wmf.32.1547758068833;
+ Thu, 17 Jan 2019 12:47:48 -0800 (PST)
 MIME-Version: 1.0
-References: <20190117003259.23141-1-rick.p.edgecombe@intel.com> <20190117003259.23141-7-rick.p.edgecombe@intel.com>
-In-Reply-To: <20190117003259.23141-7-rick.p.edgecombe@intel.com>
+References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
+ <20190117003259.23141-7-rick.p.edgecombe@intel.com> <CALCETrUMAsXoZogEJg7ssv0CO56vzBV2C7VotmWcwNM7iH9Wqw@mail.gmail.com>
+In-Reply-To: <CALCETrUMAsXoZogEJg7ssv0CO56vzBV2C7VotmWcwNM7iH9Wqw@mail.gmail.com>
 From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 17 Jan 2019 12:27:23 -0800
-X-Gmail-Original-Message-ID: <CALCETrUMAsXoZogEJg7ssv0CO56vzBV2C7VotmWcwNM7iH9Wqw@mail.gmail.com>
-Message-ID: <CALCETrUMAsXoZogEJg7ssv0CO56vzBV2C7VotmWcwNM7iH9Wqw@mail.gmail.com>
+Date:   Thu, 17 Jan 2019 12:47:37 -0800
+X-Gmail-Original-Message-ID: <CALCETrXQ6uxzB3JvO14sEyMA21RcWCbwicL4nUdPBG8KAunxwg@mail.gmail.com>
+Message-ID: <CALCETrXQ6uxzB3JvO14sEyMA21RcWCbwicL4nUdPBG8KAunxwg@mail.gmail.com>
 Subject: Re: [PATCH 06/17] x86/alternative: use temporary mm for text poking
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
         LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
         "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -80,53 +82,60 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 4:33 PM Rick Edgecombe
-<rick.p.edgecombe@intel.com> wrote:
+On Thu, Jan 17, 2019 at 12:27 PM Andy Lutomirski <luto@kernel.org> wrote:
 >
-> From: Nadav Amit <namit@vmware.com>
+> On Wed, Jan 16, 2019 at 4:33 PM Rick Edgecombe
+> <rick.p.edgecombe@intel.com> wrote:
+> >
+> > From: Nadav Amit <namit@vmware.com>
+> >
+> > text_poke() can potentially compromise the security as it sets temporary
+> > PTEs in the fixmap. These PTEs might be used to rewrite the kernel code
+> > from other cores accidentally or maliciously, if an attacker gains the
+> > ability to write onto kernel memory.
 >
-> text_poke() can potentially compromise the security as it sets temporary
-> PTEs in the fixmap. These PTEs might be used to rewrite the kernel code
-> from other cores accidentally or maliciously, if an attacker gains the
-> ability to write onto kernel memory.
+> i think this may be sufficient, but barely.
+>
+> > +       pte_clear(poking_mm, poking_addr, ptep);
+> > +
+> > +       /*
+> > +        * __flush_tlb_one_user() performs a redundant TLB flush when PTI is on,
+> > +        * as it also flushes the corresponding "user" address spaces, which
+> > +        * does not exist.
+> > +        *
+> > +        * Poking, however, is already very inefficient since it does not try to
+> > +        * batch updates, so we ignore this problem for the time being.
+> > +        *
+> > +        * Since the PTEs do not exist in other kernel address-spaces, we do
+> > +        * not use __flush_tlb_one_kernel(), which when PTI is on would cause
+> > +        * more unwarranted TLB flushes.
+> > +        *
+> > +        * There is a slight anomaly here: the PTE is a supervisor-only and
+> > +        * (potentially) global and we use __flush_tlb_one_user() but this
+> > +        * should be fine.
+> > +        */
+> > +       __flush_tlb_one_user(poking_addr);
+> > +       if (cross_page_boundary) {
+> > +               pte_clear(poking_mm, poking_addr + PAGE_SIZE, ptep + 1);
+> > +               __flush_tlb_one_user(poking_addr + PAGE_SIZE);
+> > +       }
+>
+> In principle, another CPU could still have the old translation.  Your
+> mutex probably makes this impossible, but it makes me nervous.
+> Ideally you'd use flush_tlb_mm_range(), but I guess you can't do that
+> with IRQs off.  Hmm.  I think you should add an inc_mm_tlb_gen() here.
+> Arguably, if you did that, you could omit the flushes, but maybe
+> that's silly.
+>
+> If we start getting new users of use_temporary_mm(), we should give
+> some serious thought to the SMP semantics.
+>
+> Also, you're using PAGE_KERNEL.  Please tell me that the global bit
+> isn't set in there.
+>
 
-i think this may be sufficient, but barely.
-
-> +       pte_clear(poking_mm, poking_addr, ptep);
-> +
-> +       /*
-> +        * __flush_tlb_one_user() performs a redundant TLB flush when PTI is on,
-> +        * as it also flushes the corresponding "user" address spaces, which
-> +        * does not exist.
-> +        *
-> +        * Poking, however, is already very inefficient since it does not try to
-> +        * batch updates, so we ignore this problem for the time being.
-> +        *
-> +        * Since the PTEs do not exist in other kernel address-spaces, we do
-> +        * not use __flush_tlb_one_kernel(), which when PTI is on would cause
-> +        * more unwarranted TLB flushes.
-> +        *
-> +        * There is a slight anomaly here: the PTE is a supervisor-only and
-> +        * (potentially) global and we use __flush_tlb_one_user() but this
-> +        * should be fine.
-> +        */
-> +       __flush_tlb_one_user(poking_addr);
-> +       if (cross_page_boundary) {
-> +               pte_clear(poking_mm, poking_addr + PAGE_SIZE, ptep + 1);
-> +               __flush_tlb_one_user(poking_addr + PAGE_SIZE);
-> +       }
-
-In principle, another CPU could still have the old translation.  Your
-mutex probably makes this impossible, but it makes me nervous.
-Ideally you'd use flush_tlb_mm_range(), but I guess you can't do that
-with IRQs off.  Hmm.  I think you should add an inc_mm_tlb_gen() here.
-Arguably, if you did that, you could omit the flushes, but maybe
-that's silly.
-
-If we start getting new users of use_temporary_mm(), we should give
-some serious thought to the SMP semantics.
-
-Also, you're using PAGE_KERNEL.  Please tell me that the global bit
-isn't set in there.
+Much better solution: do unuse_temporary_mm() and *then*
+flush_tlb_mm_range().  This is entirely non-sketchy and should be just
+about optimal, too.
 
 --Andy
