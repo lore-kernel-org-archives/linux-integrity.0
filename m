@@ -2,290 +2,177 @@ Return-Path: <SRS0=OrKi=PZ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E95FC43387
-	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 23:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B84B9C43387
+	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 23:21:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF18C20851
-	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 23:14:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="FloHU6lt"
+	by mail.kernel.org (Postfix) with ESMTP id 8426220851
+	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 23:21:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbfAQXOf (ORCPT
+        id S1726744AbfAQXVH (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 17 Jan 2019 18:14:35 -0500
-Received: from mail-eopbgr770048.outbound.protection.outlook.com ([40.107.77.48]:49024
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725944AbfAQXOf (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 17 Jan 2019 18:14:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n1QSZIGvDBNA7RcEupusDQh5crQ5HZXAjEL0Y0ncRM8=;
- b=FloHU6ltzTsttWM7111vb3jmvca0bwgKnuNPsBLHeEr6Xv09zeZR7724xGDmB0d/nf0COJXPxmUkjYVH8hG5sY3j2N6uu865qbPm9QtcFcJJbqezyaIqBd+J4F2foqHIChzy+5uc5lZm4KNrxA4uP4z2paN+ZttFNYTBVaCDDE8=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB6181.namprd05.prod.outlook.com (20.178.55.86) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.8; Thu, 17 Jan 2019 23:14:31 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::35a9:ab4b:cc18:b732]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::35a9:ab4b:cc18:b732%2]) with mapi id 15.20.1537.018; Thu, 17 Jan 2019
- 23:14:31 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     "H. Peter Anvin" <hpa@zytor.com>
-CC:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [PATCH 01/17] Fix "x86/alternatives: Lockdep-enforce text_mutex
- in text_poke*()"
-Thread-Topic: [PATCH 01/17] Fix "x86/alternatives: Lockdep-enforce text_mutex
- in text_poke*()"
-Thread-Index: AQHUrfxOhBIE3CgBbEWQpABmYJlN26WzBO2AgADywwCAABdJAIAABZCAgAAESYA=
-Date:   Thu, 17 Jan 2019 23:14:31 +0000
-Message-ID: <BD3248B4-64A0-4654-A187-5FBE058CC7DF@vmware.com>
-References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
- <20190117003259.23141-2-rick.p.edgecombe@intel.com>
- <20190117154701.78aa8e9d0130716e0d9ac026@kernel.org>
- <F3B332DA-4637-4A3B-93F9-C7903C1D9FF9@zytor.com>
- <8817DE5F-BCF4-4F6A-A496-E0DB6889D86E@vmware.com>
- <F84CA28B-8BAA-468E-BA85-442E245871E5@zytor.com>
-In-Reply-To: <F84CA28B-8BAA-468E-BA85-442E245871E5@zytor.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [66.170.99.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR05MB6181;20:pcN1iqQu60uZDT/7GmZtSjCkPdCIuuvNoxFT8UvbF/22ZUL+ZmG5zPiMDt0nkIx0/IIizh1i6LwNo1fHWMPTAmH2lYvwAEr0VG6+0N5n6qTEc/LucLAc8aGaPk8hPWjMopSfaBm/56b2GkpfVZdd9ROUdcUNk6DkMpXRr5QXLKI=
-x-ms-office365-filtering-correlation-id: 1b875a3a-7d57-4f30-795e-08d67cd1893d
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB6181;
-x-ms-traffictypediagnostic: BYAPR05MB6181:
-x-microsoft-antispam-prvs: <BYAPR05MB618170AA941BA9B57E7313C1D0830@BYAPR05MB6181.namprd05.prod.outlook.com>
-x-forefront-prvs: 0920602B08
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(396003)(39860400002)(366004)(346002)(136003)(376002)(189003)(199004)(106356001)(3846002)(6306002)(105586002)(186003)(256004)(14444005)(6436002)(93886005)(66066001)(316002)(33656002)(8676002)(6916009)(2616005)(229853002)(476003)(25786009)(81166006)(5660300001)(68736007)(4326008)(478600001)(81156014)(8936002)(14454004)(53546011)(6486002)(11346002)(86362001)(36756003)(53936002)(39060400002)(82746002)(966005)(486006)(54906003)(6512007)(6246003)(102836004)(97736004)(26005)(76176011)(305945005)(71200400001)(71190400001)(83716004)(7736002)(7416002)(6116002)(6506007)(2906002)(446003)(99286004)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB6181;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 73WSzOcBjBkTGK7dX+GcBQZAOwZuSe13q3CNAMcPV09GB2irmATYcO04qiIAxe8ybGoju5ahywjlT1YTsXOx0C/s0X9H6KOs3JhmUNqCXAhdyFkD3XDjNnXQp1Q21bFQCklCewGhvj4u7NE3xvChO9+y4D+IS3ixKNI4xPyPNcyPwmCJpEb4VbHFGXCfGm0oSWfrJwG1iasfEYF8c/ac83WYHxYxd6iLUrUK/CkBD0X8JGSjvVRGxDIoB+iLHyB90lGP58Zh6Upuj4FUdyfJMciRi0mJ5m3GNhsDIPanvmHON1Nzq5N4SW+8nQe1SZfyhtyEzmhH0pZAaf3VV/9+MEZYWVA0wdIkGhBRETJ2dQovt3etjaVdLcYHqiTpEYRSIV8IZXRnT6gxI5U67suWBSt731WybxkxS90nwBUCGqM=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8BD28AF92DFE89469A57FF1E181F7D82@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b875a3a-7d57-4f30-795e-08d67cd1893d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jan 2019 23:14:31.0689
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB6181
+        Thu, 17 Jan 2019 18:21:07 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59432 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726062AbfAQXVH (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 17 Jan 2019 18:21:07 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0HNJk8v110512
+        for <linux-integrity@vger.kernel.org>; Thu, 17 Jan 2019 18:21:05 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2q2xuw9ebx-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 17 Jan 2019 18:21:05 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 17 Jan 2019 23:21:03 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 17 Jan 2019 23:20:59 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0HNKwRW10355110
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 17 Jan 2019 23:20:58 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4871552052;
+        Thu, 17 Jan 2019 23:20:58 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.91.54])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 90D9352050;
+        Thu, 17 Jan 2019 23:20:56 +0000 (GMT)
+Subject: Re: [PATCH v3 1/2] integrity, KEYS: add a reference to platform
+ keyring
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     dhowells@redhat.com, dwmw2@infradead.org,
+        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
+        ebiggers@google.com, nayna@linux.ibm.com, dyoung@redhat.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org
+Date:   Thu, 17 Jan 2019 18:20:45 -0500
+In-Reply-To: <20190116101654.7288-2-kasong@redhat.com>
+References: <20190116101654.7288-1-kasong@redhat.com>
+         <20190116101654.7288-2-kasong@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19011723-4275-0000-0000-00000300ADD7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011723-4276-0000-0000-0000380ED44B
+Message-Id: <1547767245.3931.56.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901170162
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-PiBPbiBKYW4gMTcsIDIwMTksIGF0IDI6NTkgUE0sIGhwYUB6eXRvci5jb20gd3JvdGU6DQo+IA0K
-PiBPbiBKYW51YXJ5IDE3LCAyMDE5IDI6Mzk6MTUgUE0gUFNULCBOYWRhdiBBbWl0IDxuYW1pdEB2
-bXdhcmUuY29tPiB3cm90ZToNCj4+PiBPbiBKYW4gMTcsIDIwMTksIGF0IDE6MTUgUE0sIGhwYUB6
-eXRvci5jb20gd3JvdGU6DQo+Pj4gDQo+Pj4gT24gSmFudWFyeSAxNiwgMjAxOSAxMDo0NzowMSBQ
-TSBQU1QsIE1hc2FtaSBIaXJhbWF0c3UNCj4+IDxtaGlyYW1hdEBrZXJuZWwub3JnPiB3cm90ZToN
-Cj4+Pj4gT24gV2VkLCAxNiBKYW4gMjAxOSAxNjozMjo0MyAtMDgwMA0KPj4+PiBSaWNrIEVkZ2Vj
-b21iZSA8cmljay5wLmVkZ2Vjb21iZUBpbnRlbC5jb20+IHdyb3RlOg0KPj4+PiANCj4+Pj4+IEZy
-b206IE5hZGF2IEFtaXQgPG5hbWl0QHZtd2FyZS5jb20+DQo+Pj4+PiANCj4+Pj4+IHRleHRfbXV0
-ZXggaXMgY3VycmVudGx5IGV4cGVjdGVkIHRvIGJlIGhlbGQgYmVmb3JlIHRleHRfcG9rZSgpIGlz
-DQo+Pj4+PiBjYWxsZWQsIGJ1dCB3ZSBrZ2RiIGRvZXMgbm90IHRha2UgdGhlIG11dGV4LCBhbmQg
-aW5zdGVhZA0KPj4gKnN1cHBvc2VkbHkqDQo+Pj4+PiBlbnN1cmVzIHRoZSBsb2NrIGlzIG5vdCB0
-YWtlbiBhbmQgd2lsbCBub3QgYmUgYWNxdWlyZWQgYnkgYW55IG90aGVyDQo+Pj4+IGNvcmUNCj4+
-Pj4+IHdoaWxlIHRleHRfcG9rZSgpIGlzIHJ1bm5pbmcuDQo+Pj4+PiANCj4+Pj4+IFRoZSByZWFz
-b24gZm9yIHRoZSAic3VwcG9zZWRseSIgY29tbWVudCBpcyB0aGF0IGl0IGlzIG5vdCBlbnRpcmVs
-eQ0KPj4+PiBjbGVhcg0KPj4+Pj4gdGhhdCB0aGlzIHdvdWxkIGJlIHRoZSBjYXNlIGlmIGdkYl9k
-b19yb3VuZHVwIGlzIHplcm8uDQo+Pj4+PiANCj4+Pj4+IFRoaXMgcGF0Y2ggY3JlYXRlcyB0d28g
-d3JhcHBlciBmdW5jdGlvbnMsIHRleHRfcG9rZSgpIGFuZA0KPj4+Pj4gdGV4dF9wb2tlX2tnZGIo
-KSB3aGljaCBkbyBvciBkbyBub3QgcnVuIHRoZSBsb2NrZGVwIGFzc2VydGlvbg0KPj4+Pj4gcmVz
-cGVjdGl2ZWx5Lg0KPj4+Pj4gDQo+Pj4+PiBXaGlsZSB3ZSBhcmUgYXQgaXQsIGNoYW5nZSB0aGUg
-cmV0dXJuIGNvZGUgb2YgdGV4dF9wb2tlKCkgdG8NCj4+Pj4gc29tZXRoaW5nDQo+Pj4+PiBtZWFu
-aW5nZnVsLiBPbmUgZGF5LCBjYWxsZXJzIG1pZ2h0IGFjdHVhbGx5IHJlc3BlY3QgaXQgYW5kIHRo
-ZQ0KPj4+PiBleGlzdGluZw0KPj4+Pj4gQlVHX09OKCkgd2hlbiBwYXRjaGluZyBmYWlscyBjb3Vs
-ZCBiZSByZW1vdmVkLiBGb3Iga2dkYiwgdGhlIHJldHVybg0KPj4+Pj4gdmFsdWUgY2FuIGFjdHVh
-bGx5IGJlIHVzZWQuDQo+Pj4+IA0KPj4+PiBMb29rcyBnb29kIHRvIG1lLg0KPj4+PiANCj4+Pj4g
-UmV2aWV3ZWQtYnk6IE1hc2FtaSBIaXJhbWF0c3UgPG1oaXJhbWF0QGtlcm5lbC5vcmc+DQo+Pj4+
-IA0KPj4+PiBUaGFuayB5b3UsDQo+Pj4+IA0KPj4+Pj4gQ2M6IEFuZHkgTHV0b21pcnNraSA8bHV0
-b0BrZXJuZWwub3JnPg0KPj4+Pj4gQ2M6IEtlZXMgQ29vayA8a2Vlc2Nvb2tAY2hyb21pdW0ub3Jn
-Pg0KPj4+Pj4gQ2M6IERhdmUgSGFuc2VuIDxkYXZlLmhhbnNlbkBpbnRlbC5jb20+DQo+Pj4+PiBD
-YzogTWFzYW1pIEhpcmFtYXRzdSA8bWhpcmFtYXRAa2VybmVsLm9yZz4NCj4+Pj4+IEZpeGVzOiA5
-MjIyZjYwNjUwNmMgKCJ4ODYvYWx0ZXJuYXRpdmVzOiBMb2NrZGVwLWVuZm9yY2UgdGV4dF9tdXRl
-eA0KPj4gaW4NCj4+Pj4gdGV4dF9wb2tlKigpIikNCj4+Pj4+IFN1Z2dlc3RlZC1ieTogUGV0ZXIg
-WmlqbHN0cmEgPHBldGVyekBpbmZyYWRlYWQub3JnPg0KPj4+Pj4gQWNrZWQtYnk6IEppcmkgS29z
-aW5hIDxqa29zaW5hQHN1c2UuY3o+DQo+Pj4+PiBTaWduZWQtb2ZmLWJ5OiBOYWRhdiBBbWl0IDxu
-YW1pdEB2bXdhcmUuY29tPg0KPj4+Pj4gU2lnbmVkLW9mZi1ieTogUmljayBFZGdlY29tYmUgPHJp
-Y2sucC5lZGdlY29tYmVAaW50ZWwuY29tPg0KPj4+Pj4gLS0tDQo+Pj4+PiBhcmNoL3g4Ni9pbmNs
-dWRlL2FzbS90ZXh0LXBhdGNoaW5nLmggfCAgMSArDQo+Pj4+PiBhcmNoL3g4Ni9rZXJuZWwvYWx0
-ZXJuYXRpdmUuYyAgICAgICAgfCA1Mg0KPj4+PiArKysrKysrKysrKysrKysrKysrKy0tLS0tLS0t
-DQo+Pj4+PiBhcmNoL3g4Ni9rZXJuZWwva2dkYi5jICAgICAgICAgICAgICAgfCAxMSArKystLS0N
-Cj4+Pj4+IDMgZmlsZXMgY2hhbmdlZCwgNDUgaW5zZXJ0aW9ucygrKSwgMTkgZGVsZXRpb25zKC0p
-DQo+Pj4+PiANCj4+Pj4+IGRpZmYgLS1naXQgYS9hcmNoL3g4Ni9pbmNsdWRlL2FzbS90ZXh0LXBh
-dGNoaW5nLmgNCj4+Pj4gYi9hcmNoL3g4Ni9pbmNsdWRlL2FzbS90ZXh0LXBhdGNoaW5nLmgNCj4+
-Pj4+IGluZGV4IGU4NWZmNjVjNDNjMy4uZjhmYzhlODZjZjAxIDEwMDY0NA0KPj4+Pj4gLS0tIGEv
-YXJjaC94ODYvaW5jbHVkZS9hc20vdGV4dC1wYXRjaGluZy5oDQo+Pj4+PiArKysgYi9hcmNoL3g4
-Ni9pbmNsdWRlL2FzbS90ZXh0LXBhdGNoaW5nLmgNCj4+Pj4+IEBAIC0zNSw2ICszNSw3IEBAIGV4
-dGVybiB2b2lkICp0ZXh0X3Bva2VfZWFybHkodm9pZCAqYWRkciwgY29uc3QNCj4+IHZvaWQNCj4+
-Pj4gKm9wY29kZSwgc2l6ZV90IGxlbik7DQo+Pj4+PiAqIGluY29uc2lzdGVudCBpbnN0cnVjdGlv
-biB3aGlsZSB5b3UgcGF0Y2guDQo+Pj4+PiAqLw0KPj4+Pj4gZXh0ZXJuIHZvaWQgKnRleHRfcG9r
-ZSh2b2lkICphZGRyLCBjb25zdCB2b2lkICpvcGNvZGUsIHNpemVfdCBsZW4pOw0KPj4+Pj4gK2V4
-dGVybiB2b2lkICp0ZXh0X3Bva2Vfa2dkYih2b2lkICphZGRyLCBjb25zdCB2b2lkICpvcGNvZGUs
-IHNpemVfdA0KPj4+PiBsZW4pOw0KPj4+Pj4gZXh0ZXJuIGludCBwb2tlX2ludDNfaGFuZGxlcihz
-dHJ1Y3QgcHRfcmVncyAqcmVncyk7DQo+Pj4+PiBleHRlcm4gdm9pZCAqdGV4dF9wb2tlX2JwKHZv
-aWQgKmFkZHIsIGNvbnN0IHZvaWQgKm9wY29kZSwgc2l6ZV90DQo+Pj4+IGxlbiwgdm9pZCAqaGFu
-ZGxlcik7DQo+Pj4+PiBleHRlcm4gaW50IGFmdGVyX2Jvb3RtZW07DQo+Pj4+PiBkaWZmIC0tZ2l0
-IGEvYXJjaC94ODYva2VybmVsL2FsdGVybmF0aXZlLmMNCj4+Pj4gYi9hcmNoL3g4Ni9rZXJuZWwv
-YWx0ZXJuYXRpdmUuYw0KPj4+Pj4gaW5kZXggZWJlYWM0ODdhMjBjLi5jNmEzYTEwYTJmZDUgMTAw
-NjQ0DQo+Pj4+PiAtLS0gYS9hcmNoL3g4Ni9rZXJuZWwvYWx0ZXJuYXRpdmUuYw0KPj4+Pj4gKysr
-IGIvYXJjaC94ODYva2VybmVsL2FsdGVybmF0aXZlLmMNCj4+Pj4+IEBAIC02NzgsMTggKzY3OCw3
-IEBAIHZvaWQgKl9faW5pdF9vcl9tb2R1bGUgdGV4dF9wb2tlX2Vhcmx5KHZvaWQNCj4+Pj4gKmFk
-ZHIsIGNvbnN0IHZvaWQgKm9wY29kZSwNCj4+Pj4+IHJldHVybiBhZGRyOw0KPj4+Pj4gfQ0KPj4+
-Pj4gDQo+Pj4+PiAtLyoqDQo+Pj4+PiAtICogdGV4dF9wb2tlIC0gVXBkYXRlIGluc3RydWN0aW9u
-cyBvbiBhIGxpdmUga2VybmVsDQo+Pj4+PiAtICogQGFkZHI6IGFkZHJlc3MgdG8gbW9kaWZ5DQo+
-Pj4+PiAtICogQG9wY29kZTogc291cmNlIG9mIHRoZSBjb3B5DQo+Pj4+PiAtICogQGxlbjogbGVu
-Z3RoIHRvIGNvcHkNCj4+Pj4+IC0gKg0KPj4+Pj4gLSAqIE9ubHkgYXRvbWljIHRleHQgcG9rZS9z
-ZXQgc2hvdWxkIGJlIGFsbG93ZWQgd2hlbiBub3QgZG9pbmcNCj4+IGVhcmx5DQo+Pj4+IHBhdGNo
-aW5nLg0KPj4+Pj4gLSAqIEl0IG1lYW5zIHRoZSBzaXplIG11c3QgYmUgd3JpdGFibGUgYXRvbWlj
-YWxseSBhbmQgdGhlIGFkZHJlc3MNCj4+Pj4gbXVzdCBiZSBhbGlnbmVkDQo+Pj4+PiAtICogaW4g
-YSB3YXkgdGhhdCBwZXJtaXRzIGFuIGF0b21pYyB3cml0ZS4gSXQgYWxzbyBtYWtlcyBzdXJlIHdl
-DQo+PiBmaXQNCj4+Pj4gb24gYSBzaW5nbGUNCj4+Pj4+IC0gKiBwYWdlLg0KPj4+Pj4gLSAqLw0K
-Pj4+Pj4gLXZvaWQgKnRleHRfcG9rZSh2b2lkICphZGRyLCBjb25zdCB2b2lkICpvcGNvZGUsIHNp
-emVfdCBsZW4pDQo+Pj4+PiArc3RhdGljIHZvaWQgKl9fdGV4dF9wb2tlKHZvaWQgKmFkZHIsIGNv
-bnN0IHZvaWQgKm9wY29kZSwgc2l6ZV90DQo+PiBsZW4pDQo+Pj4+PiB7DQo+Pj4+PiAJdW5zaWdu
-ZWQgbG9uZyBmbGFnczsNCj4+Pj4+IAljaGFyICp2YWRkcjsNCj4+Pj4+IEBAIC03MDIsOCArNjkx
-LDYgQEAgdm9pZCAqdGV4dF9wb2tlKHZvaWQgKmFkZHIsIGNvbnN0IHZvaWQgKm9wY29kZSwNCj4+
-Pj4gc2l6ZV90IGxlbikNCj4+Pj4+ICovDQo+Pj4+PiAJQlVHX09OKCFhZnRlcl9ib290bWVtKTsN
-Cj4+Pj4+IA0KPj4+Pj4gLQlsb2NrZGVwX2Fzc2VydF9oZWxkKCZ0ZXh0X211dGV4KTsNCj4+Pj4+
-IC0NCj4+Pj4+IAlpZiAoIWNvcmVfa2VybmVsX3RleHQoKHVuc2lnbmVkIGxvbmcpYWRkcikpIHsN
-Cj4+Pj4+IAkJcGFnZXNbMF0gPSB2bWFsbG9jX3RvX3BhZ2UoYWRkcik7DQo+Pj4+PiAJCXBhZ2Vz
-WzFdID0gdm1hbGxvY190b19wYWdlKGFkZHIgKyBQQUdFX1NJWkUpOw0KPj4+Pj4gQEAgLTczMiw2
-ICs3MTksNDMgQEAgdm9pZCAqdGV4dF9wb2tlKHZvaWQgKmFkZHIsIGNvbnN0IHZvaWQNCj4+ICpv
-cGNvZGUsDQo+Pj4+IHNpemVfdCBsZW4pDQo+Pj4+PiByZXR1cm4gYWRkcjsNCj4+Pj4+IH0NCj4+
-Pj4+IA0KPj4+Pj4gKy8qKg0KPj4+Pj4gKyAqIHRleHRfcG9rZSAtIFVwZGF0ZSBpbnN0cnVjdGlv
-bnMgb24gYSBsaXZlIGtlcm5lbA0KPj4+Pj4gKyAqIEBhZGRyOiBhZGRyZXNzIHRvIG1vZGlmeQ0K
-Pj4+Pj4gKyAqIEBvcGNvZGU6IHNvdXJjZSBvZiB0aGUgY29weQ0KPj4+Pj4gKyAqIEBsZW46IGxl
-bmd0aCB0byBjb3B5DQo+Pj4+PiArICoNCj4+Pj4+ICsgKiBPbmx5IGF0b21pYyB0ZXh0IHBva2Uv
-c2V0IHNob3VsZCBiZSBhbGxvd2VkIHdoZW4gbm90IGRvaW5nDQo+PiBlYXJseQ0KPj4+PiBwYXRj
-aGluZy4NCj4+Pj4+ICsgKiBJdCBtZWFucyB0aGUgc2l6ZSBtdXN0IGJlIHdyaXRhYmxlIGF0b21p
-Y2FsbHkgYW5kIHRoZSBhZGRyZXNzDQo+Pj4+IG11c3QgYmUgYWxpZ25lZA0KPj4+Pj4gKyAqIGlu
-IGEgd2F5IHRoYXQgcGVybWl0cyBhbiBhdG9taWMgd3JpdGUuIEl0IGFsc28gbWFrZXMgc3VyZSB3
-ZQ0KPj4gZml0DQo+Pj4+IG9uIGEgc2luZ2xlDQo+Pj4+PiArICogcGFnZS4NCj4+Pj4+ICsgKi8N
-Cj4+Pj4+ICt2b2lkICp0ZXh0X3Bva2Uodm9pZCAqYWRkciwgY29uc3Qgdm9pZCAqb3Bjb2RlLCBz
-aXplX3QgbGVuKQ0KPj4+Pj4gK3sNCj4+Pj4+ICsJbG9ja2RlcF9hc3NlcnRfaGVsZCgmdGV4dF9t
-dXRleCk7DQo+Pj4+PiArDQo+Pj4+PiArCXJldHVybiBfX3RleHRfcG9rZShhZGRyLCBvcGNvZGUs
-IGxlbik7DQo+Pj4+PiArfQ0KPj4+Pj4gKw0KPj4+Pj4gKy8qKg0KPj4+Pj4gKyAqIHRleHRfcG9r
-ZV9rZ2RiIC0gVXBkYXRlIGluc3RydWN0aW9ucyBvbiBhIGxpdmUga2VybmVsIGJ5IGtnZGINCj4+
-Pj4+ICsgKiBAYWRkcjogYWRkcmVzcyB0byBtb2RpZnkNCj4+Pj4+ICsgKiBAb3Bjb2RlOiBzb3Vy
-Y2Ugb2YgdGhlIGNvcHkNCj4+Pj4+ICsgKiBAbGVuOiBsZW5ndGggdG8gY29weQ0KPj4+Pj4gKyAq
-DQo+Pj4+PiArICogT25seSBhdG9taWMgdGV4dCBwb2tlL3NldCBzaG91bGQgYmUgYWxsb3dlZCB3
-aGVuIG5vdCBkb2luZw0KPj4gZWFybHkNCj4+Pj4gcGF0Y2hpbmcuDQo+Pj4+PiArICogSXQgbWVh
-bnMgdGhlIHNpemUgbXVzdCBiZSB3cml0YWJsZSBhdG9taWNhbGx5IGFuZCB0aGUgYWRkcmVzcw0K
-Pj4+PiBtdXN0IGJlIGFsaWduZWQNCj4+Pj4+ICsgKiBpbiBhIHdheSB0aGF0IHBlcm1pdHMgYW4g
-YXRvbWljIHdyaXRlLiBJdCBhbHNvIG1ha2VzIHN1cmUgd2UNCj4+IGZpdA0KPj4+PiBvbiBhIHNp
-bmdsZQ0KPj4+Pj4gKyAqIHBhZ2UuDQo+Pj4+PiArICoNCj4+Pj4+ICsgKiBDb250ZXh0OiBzaG91
-bGQgb25seSBiZSB1c2VkIGJ5IGtnZGIsIHdoaWNoIGVuc3VyZXMgbm8gb3RoZXINCj4+IGNvcmUN
-Cj4+Pj4gaXMgcnVubmluZywNCj4+Pj4+ICsgKgkgICAgZGVzcGl0ZSB0aGUgZmFjdCBpdCBkb2Vz
-IG5vdCBob2xkIHRoZSB0ZXh0X211dGV4Lg0KPj4+Pj4gKyAqLw0KPj4+Pj4gK3ZvaWQgKnRleHRf
-cG9rZV9rZ2RiKHZvaWQgKmFkZHIsIGNvbnN0IHZvaWQgKm9wY29kZSwgc2l6ZV90IGxlbikNCj4+
-Pj4+ICt7DQo+Pj4+PiArCXJldHVybiBfX3RleHRfcG9rZShhZGRyLCBvcGNvZGUsIGxlbik7DQo+
-Pj4+PiArfQ0KPj4+Pj4gKw0KPj4+Pj4gc3RhdGljIHZvaWQgZG9fc3luY19jb3JlKHZvaWQgKmlu
-Zm8pDQo+Pj4+PiB7DQo+Pj4+PiAJc3luY19jb3JlKCk7DQo+Pj4+PiBkaWZmIC0tZ2l0IGEvYXJj
-aC94ODYva2VybmVsL2tnZGIuYyBiL2FyY2gveDg2L2tlcm5lbC9rZ2RiLmMNCj4+Pj4+IGluZGV4
-IDVkYjA4NDI1MDYzZS4uMTQ2MTU0NGNiYThiIDEwMDY0NA0KPj4+Pj4gLS0tIGEvYXJjaC94ODYv
-a2VybmVsL2tnZGIuYw0KPj4+Pj4gKysrIGIvYXJjaC94ODYva2VybmVsL2tnZGIuYw0KPj4+Pj4g
-QEAgLTc1OCwxMyArNzU4LDEzIEBAIGludCBrZ2RiX2FyY2hfc2V0X2JyZWFrcG9pbnQoc3RydWN0
-IGtnZGJfYmtwdA0KPj4+PiAqYnB0KQ0KPj4+Pj4gaWYgKCFlcnIpDQo+Pj4+PiAJCXJldHVybiBl
-cnI7DQo+Pj4+PiAJLyoNCj4+Pj4+IC0JICogSXQgaXMgc2FmZSB0byBjYWxsIHRleHRfcG9rZSgp
-IGJlY2F1c2Ugbm9ybWFsIGtlcm5lbCBleGVjdXRpb24NCj4+Pj4+ICsJICogSXQgaXMgc2FmZSB0
-byBjYWxsIHRleHRfcG9rZV9rZ2RiKCkgYmVjYXVzZSBub3JtYWwga2VybmVsDQo+Pj4+IGV4ZWN1
-dGlvbg0KPj4+Pj4gKiBpcyBzdG9wcGVkIG9uIGFsbCBjb3Jlcywgc28gbG9uZyBhcyB0aGUgdGV4
-dF9tdXRleCBpcyBub3QNCj4+Pj4gbG9ja2VkLg0KPj4+Pj4gKi8NCj4+Pj4+IAlpZiAobXV0ZXhf
-aXNfbG9ja2VkKCZ0ZXh0X211dGV4KSkNCj4+Pj4+IAkJcmV0dXJuIC1FQlVTWTsNCj4+Pj4+IC0J
-dGV4dF9wb2tlKCh2b2lkICopYnB0LT5icHRfYWRkciwgYXJjaF9rZ2RiX29wcy5nZGJfYnB0X2lu
-c3RyLA0KPj4+Pj4gLQkJICBCUkVBS19JTlNUUl9TSVpFKTsNCj4+Pj4+ICsJdGV4dF9wb2tlX2tn
-ZGIoKHZvaWQgKilicHQtPmJwdF9hZGRyLA0KPj4gYXJjaF9rZ2RiX29wcy5nZGJfYnB0X2luc3Ry
-LA0KPj4+Pj4gKwkJICAgICAgIEJSRUFLX0lOU1RSX1NJWkUpOw0KPj4+Pj4gCWVyciA9IHByb2Jl
-X2tlcm5lbF9yZWFkKG9wYywgKGNoYXIgKilicHQtPmJwdF9hZGRyLA0KPj4+PiBCUkVBS19JTlNU
-Ul9TSVpFKTsNCj4+Pj4+IGlmIChlcnIpDQo+Pj4+PiAJCXJldHVybiBlcnI7DQo+Pj4+PiBAQCAt
-NzgzLDEyICs3ODMsMTMgQEAgaW50IGtnZGJfYXJjaF9yZW1vdmVfYnJlYWtwb2ludChzdHJ1Y3QN
-Cj4+Pj4ga2dkYl9ia3B0ICpicHQpDQo+Pj4+PiBpZiAoYnB0LT50eXBlICE9IEJQX1BPS0VfQlJF
-QUtQT0lOVCkNCj4+Pj4+IAkJZ290byBrbmxfd3JpdGU7DQo+Pj4+PiAJLyoNCj4+Pj4+IC0JICog
-SXQgaXMgc2FmZSB0byBjYWxsIHRleHRfcG9rZSgpIGJlY2F1c2Ugbm9ybWFsIGtlcm5lbCBleGVj
-dXRpb24NCj4+Pj4+ICsJICogSXQgaXMgc2FmZSB0byBjYWxsIHRleHRfcG9rZV9rZ2RiKCkgYmVj
-YXVzZSBub3JtYWwga2VybmVsDQo+Pj4+IGV4ZWN1dGlvbg0KPj4+Pj4gKiBpcyBzdG9wcGVkIG9u
-IGFsbCBjb3Jlcywgc28gbG9uZyBhcyB0aGUgdGV4dF9tdXRleCBpcyBub3QNCj4+Pj4gbG9ja2Vk
-Lg0KPj4+Pj4gKi8NCj4+Pj4+IAlpZiAobXV0ZXhfaXNfbG9ja2VkKCZ0ZXh0X211dGV4KSkNCj4+
-Pj4+IAkJZ290byBrbmxfd3JpdGU7DQo+Pj4+PiAtCXRleHRfcG9rZSgodm9pZCAqKWJwdC0+YnB0
-X2FkZHIsIGJwdC0+c2F2ZWRfaW5zdHIsDQo+Pj4+IEJSRUFLX0lOU1RSX1NJWkUpOw0KPj4+Pj4g
-Kwl0ZXh0X3Bva2Vfa2dkYigodm9pZCAqKWJwdC0+YnB0X2FkZHIsIGJwdC0+c2F2ZWRfaW5zdHIs
-DQo+Pj4+PiArCQkgICAgICAgQlJFQUtfSU5TVFJfU0laRSk7DQo+Pj4+PiAJZXJyID0gcHJvYmVf
-a2VybmVsX3JlYWQob3BjLCAoY2hhciAqKWJwdC0+YnB0X2FkZHIsDQo+Pj4+IEJSRUFLX0lOU1RS
-X1NJWkUpOw0KPj4+Pj4gaWYgKGVyciB8fCBtZW1jbXAob3BjLCBicHQtPnNhdmVkX2luc3RyLCBC
-UkVBS19JTlNUUl9TSVpFKSkNCj4+Pj4+IAkJZ290byBrbmxfd3JpdGU7DQo+Pj4+PiAtLSANCj4+
-Pj4+IDIuMTcuMQ0KPj4+IA0KPj4+IElmIHlvdSBhcmUgcmVvcmdhbml6aW5nIHRoaXMgY29kZSwg
-cGxlYXNlIGRvIHNvIHNvIHRoYXQgdGhlIGNhbGxlcg0KPj4gZG9lc27igJl0DQo+Pj4gaGF2ZSB0
-byB3b3JyeSBhYm91dCBpZiBpdCBzaG91bGQgY2FsbCB0ZXh0X3Bva2VfYnAoKSBvcg0KPj4gdGV4
-dF9wb2tlX2Vhcmx5KCkuDQo+Pj4gUmlnaHQgbm93IHRoZSBjYWxsZXIgaGFkIHRvIGtub3cgdGhh
-dCwgd2hpY2ggbWFrZXMgbm8gc2Vuc2UuDQo+PiANCj4+IERpZCB5b3UgbG9vayBhdCAiWzExLzE3
-XSB4ODYvanVtcC1sYWJlbDogcmVtb3ZlIHN1cHBvcnQgZm9yIGN1c3RvbQ0KPj4gcG9rZXLigJ0/
-DQo+PiANCj4+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL3BhdGNod29yay9wYXRjaC8xMDMyODU3
-Lw0KPj4gDQo+PiBJZiB0aGlzIGlzIG5vdCB3aGF0IHlvdSByZWdhcmQsIHBsZWFzZSBiZSBtb3Jl
-IGNvbmNyZXRlLg0KPj4gdGV4dF9wb2tlX2Vhcmx5KCkNCj4+IGlzIHN0aWxsIHVzZWQgZGlyZWN0
-bHkgb24gaW5pdCBhbmQgd2hpbGUgbW9kdWxlcyBhcmUgbG9hZGVkLCB3aGljaA0KPj4gbWlnaHQg
-bm90DQo+PiBiZSBncmVhdCwgYnV0IGlzIG91dHNpZGUgb2YgdGhlIHNjb3BlIG9mIHRoaXMgcGF0
-Y2gtc2V0Lg0KPiANCj4gSSBkb24ndCB0aGluayBpdCBpcyBvdXQgb2Ygc2NvcGUsIGFsdGhvdWdo
-IHRoYXQgcGF0Y2ggaXMgYSBodWdlIHN0ZXAgaW4gdGhlIHJpZ2h0IGRpcmVjdGlvbi4NCj4gDQo+
-IHRleHRfcG9rZV97ZWFybHksYnAsLi4ufSwgaG93ZXZlciwgc2hvdWxkIGJlIGZ1bGx5IGludGVy
-bmFsLCB0aGF0IGlzLCBzdGF0aWMgZnVuY3Rpb25zLCBhbmQgd2Ugc2hvdWxkIHByZXNlbnQgYSBz
-aW5nbGUgaW50ZXJmYWNlLCBwcmVmZXJhYmx5IGNhbGxlZCB0ZXh0X3Bva2UoKSwgdG8gdGhlIG91
-dHNpZGUgd29ybGQuDQo+IA0KPiBJIHRoaW5rIHdlIGhhdmUgdGhyZWUgc3ViY2FzZXM6DQo+IA0K
-PiAxLiBFYXJseSwgVVAsIG9yIHVuZGVyIHN0b3BfbWFjaGluZSgpOw0KPiAyLiBBdG9taWMgYW5k
-IGFsaWduZWQ7DQo+IDMuIEJyZWFrcG9pbnQuDQo+IA0KPiBNeSBwcm9wb3NlZCBhbGdvcml0aG0g
-c2hvdWxkIHJlbW92ZSB0aGUgbmVlZCBmb3IgYSBmaXh1cCB3aGljaCBzaG91bGQgaGVscCB0aGlz
-IGludGVyZmFjZSwgdG9vLg0KDQpUaGF04oCZcyBhbm90aGVyIHJlYXNvbiB3aHkgc3VjaCBjaGFu
-Z2UgbWlnaHQgYmUgZG9uZSBsYXRlciAoYWZ0ZXIgeW91cg0KY2hhbmdlcyBhcmUgbWVyZ2VkKS4g
-VGhlIG1haW4gcmVhc29uIGlzIHRoYXQgUmljayB3YXMga2luZCBlbm91Z2ggdG8NCmRlYWwgd2l0
-aCB0aGUgd2hvbGUgcGF0Y2gtc2V0Lg0KDQo+IFRoZSBzcGVjaWZpYyBhbGlnbm1lbnQgbmVlZGVk
-IGZvciAjMiBpcyBzdGFydGVkIGJ5IHRoZSBoYXJkd2FyZSBwZW9wbGUgdG8gYmUgbm90IGNyb3Nz
-aW5nIDE2IGJ5dGVzIChOT1QgYSBjYWNoZSBsaW5lKSBvbiBhbnkgQ1BVIHdlIHN1cHBvcnQgU01Q
-IG9uIGFuZCwgb2YgY291cnNlLCBiZWluZyBwb3NzaWJsZSB0byBkbyBhdG9taWNhbGx5IGRvIG9u
-IHRoZSBzcGVjaWZpYyBDUFUgKG5vdGUgdGhhdCB3ZSAqY2FuKiBkbyBhIHJlZHVuZGFudGx5IGxh
-cmdlIHN0b3JlIG9mIGV4aXN0aW5nIGJ5dGVzLCB3aGljaCBhZGRzIGZsZXhpYmlsaXR5LikNCj4g
-DQo+IFRvIHRoZSBiZXN0IG9mIG15IGtub3dsZWRnZSBhbnkgQ1BVIHN1cHBvcnRpbmcgU1NFIGNh
-biBkbyBhbiBhdG9taWMgKGZvciBvdXIgcHVycG9zZXMpIGFsaWduZWQgMTYtYnl0ZSBzdG9yZSB2
-aWEgTU9WQVBTOyBvZiBjb3Vyc2UgYW55IENQVSB3aXRoIGN4MTYgY2FuIGRvIGl0IHdpdGhvdXQg
-U1NFIHJlZ2lzdGVycy4gRm9yIG9sZGVyIENQVXMgd2UgbWF5IGJlIGxpbWl0ZWQgdG8gOC1ieXRl
-IHN0b3JlcyAoY3g4KSBvciBldmVuIDQtYnl0ZSBzdG9yZXMgYmVmb3JlIHdlIG5lZWQgdG8gdXNl
-IHRoZSBicmVha3BvaW50IGFsZ29yaXRobS4NCg0KU28gdGhlIGxhc3QgdGltZSB3ZSBoYWQgdGhp
-cyBkaXNjdXNzaW9uLCBJIGNvdWxkIG5vdCBiZSBjb252aW5jZWQgdGhhdA0KaHlwZXJ2aXNvcnMg
-KGUuZywgS1ZNKSwgd2hpY2ggZG8gbm90IGZvbGxvdyB0aGlzIHVuZG9jdW1lbnRlZCBiZWhhdmlv
-ciwNCndvdWxkIG5vdCBicmVhay4gSSBhbHNvIGRvbuKAmXQgcmVtZW1iZXIgYW4gb2ZmaWNpYWwg
-Y29uZmlybWF0aW9uIG9mIHRoaXMNCmJlaGF2aW9yIG9uIEludGVsIGFuZCBBTUQgQ1BVcy4NCg0K
+On Wed, 2019-01-16 at 18:16 +0800, Kairui Song wrote:
+> Currently when loading new kernel via kexec_file_load syscall, it is able
+> to verify the signed PE bzimage against .builtin_trusted_keys or
+> .secondary_trusted_keys. But the image could be signed with third part
+> keys which will be provided by platform or firmware as EFI variable (eg.
+> stored in MokListRT EFI variable), and the keys won't be available in
+> keyrings mentioned above.
+> 
+> After commit 9dc92c45177a ('integrity: Define a trusted platform keyring')
+> a .platform keyring is introduced to store the keys provided by platform
+> or firmware, this keyring is intended to be used for verifying kernel
+> images being loaded by kexec_file_load syscall. And with a few following
+> up commits, keys provided by firmware is being loaded into this keyring,
+> and IMA-appraisal is able to use the keyring to verify kernel images.
+> IMA is the currently the only user of that keyring.
+
+How about simply saying, Commit "...." introduced a platform keyring
+for storing preboot keys, used for verifying the kexec kernel image's
+signature.
+
+> This patch exposes the .platform, and makes it useable for other
+> components. For example, kexec_file_load could use this .platform
+> keyring to verify the kernel image's image.
+
+The above statement is too generic.  Please replace "and makes it 
+useable for other components" with " keyring, making it accessible for
+verifying a PE signed kernel image".
+
+> 
+> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+> Signed-off-by: Kairui Song <kasong@redhat.com>
+
+Reviewed/Tested-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>  certs/system_keyring.c        | 9 +++++++++
+>  include/keys/system_keyring.h | 5 +++++
+>  security/integrity/digsig.c   | 6 ++++++
+>  3 files changed, 20 insertions(+)
+> 
+> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+> index 81728717523d..4690ef9cda8a 100644
+> --- a/certs/system_keyring.c
+> +++ b/certs/system_keyring.c
+> @@ -24,6 +24,9 @@ static struct key *builtin_trusted_keys;
+>  #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+>  static struct key *secondary_trusted_keys;
+>  #endif
+> +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> +static struct key *platform_trusted_keys;
+> +#endif
+>  
+>  extern __initconst const u8 system_certificate_list[];
+>  extern __initconst const unsigned long system_certificate_list_size;
+> @@ -265,4 +268,10 @@ int verify_pkcs7_signature(const void *data, size_t len,
+>  }
+>  EXPORT_SYMBOL_GPL(verify_pkcs7_signature);
+>  
+> +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> +void __init set_platform_trusted_keys(struct key *keyring) {
+> +	platform_trusted_keys = keyring;
+> +}
+> +#endif
+> +
+>  #endif /* CONFIG_SYSTEM_DATA_VERIFICATION */
+> diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.h
+> index 359c2f936004..9e1b7849b6aa 100644
+> --- a/include/keys/system_keyring.h
+> +++ b/include/keys/system_keyring.h
+> @@ -61,5 +61,10 @@ static inline struct key *get_ima_blacklist_keyring(void)
+>  }
+>  #endif /* CONFIG_IMA_BLACKLIST_KEYRING */
+>  
+> +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> +
+> +extern void __init set_platform_trusted_keys(struct key* keyring);
+> +
+> +#endif /* CONFIG_INTEGRITY_PLATFORM_KEYRING */
+>  
+>  #endif /* _KEYS_SYSTEM_KEYRING_H */
+> diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+> index f45d6edecf99..bfabc2a8111d 100644
+> --- a/security/integrity/digsig.c
+> +++ b/security/integrity/digsig.c
+> @@ -89,6 +89,12 @@ static int __integrity_init_keyring(const unsigned int id, key_perm_t perm,
+>  		keyring[id] = NULL;
+>  	}
+>  
+> +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> +	if (id == INTEGRITY_KEYRING_PLATFORM) {
+> +		set_platform_trusted_keys(keyring[id]);
+> +	}
+> +#endif
+> +
+>  	return err;
+>  }
+>  
+
