@@ -1,134 +1,206 @@
-Return-Path: <SRS0=sWjp=PY=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=OrKi=PZ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 745C7C43387
-	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 22:52:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C92FC43387
+	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 00:34:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AE0220868
-	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jan 2019 22:52:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44238205C9
+	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 00:34:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728647AbfAPWwU (ORCPT
+        id S1728819AbfAQAdy (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 16 Jan 2019 17:52:20 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45952 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729372AbfAPWwT (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 16 Jan 2019 17:52:19 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0GMmhkY047583
-        for <linux-integrity@vger.kernel.org>; Wed, 16 Jan 2019 17:52:18 -0500
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2q29pts2x0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 16 Jan 2019 17:52:18 -0500
-Received: from localhost
-        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Wed, 16 Jan 2019 22:52:17 -0000
-Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
-        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 16 Jan 2019 22:52:13 -0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0GMqCsY20381776
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Jan 2019 22:52:12 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 78F1AC6061;
-        Wed, 16 Jan 2019 22:52:12 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7E9D7C606E;
-        Wed, 16 Jan 2019 22:52:09 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.80.211.227])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Wed, 16 Jan 2019 22:52:09 +0000 (GMT)
-References: <20190116213102.25268-1-jarkko.sakkinen@linux.intel.com>
-User-agent: mu4e 1.0; emacs 26.1
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wed, 16 Jan 2019 19:33:54 -0500
+Received: from mga05.intel.com ([192.55.52.43]:42209 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729898AbfAQAdx (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 16 Jan 2019 19:33:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 16:33:36 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,488,1539673200"; 
+   d="scan'208";a="292166022"
+Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.79])
+  by orsmga005.jf.intel.com with ESMTP; 16 Jan 2019 16:33:35 -0800
+From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
         linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Shuah Khan <shuah@kernel.org>,
-        Tadeusz Struk <tadeusz.struk@intel.com>
-Subject: Re: [PATCH,RESEND] selftests: add TPM 2.0 tests
-In-reply-to: <20190116213102.25268-1-jarkko.sakkinen@linux.intel.com>
-Date:   Wed, 16 Jan 2019 20:52:03 -0200
-MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 19011622-0004-0000-0000-000014D3F603
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010420; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000274; SDB=6.01147494; UDB=6.00597738; IPR=6.00927789;
- MB=3.00025163; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-16 22:52:16
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011622-0005-0000-0000-00008A3FFD2E
-Message-Id: <87r2dcqkq4.fsf@morokweng.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-16_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=778 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901160182
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Nadav Amit <namit@vmware.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>
+Subject: [PATCH 05/17] x86/alternative: initializing temporary mm for patching
+Date:   Wed, 16 Jan 2019 16:32:47 -0800
+Message-Id: <20190117003259.23141-6-rick.p.edgecombe@intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
+References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+From: Nadav Amit <namit@vmware.com>
 
-Hello,
+To prevent improper use of the PTEs that are used for text patching, we
+want to use a temporary mm struct. We initailize it by copying the init
+mm.
 
-Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> writes:
+The address that will be used for patching is taken from the lower area
+that is usually used for the task memory. Doing so prevents the need to
+frequently synchronize the temporary-mm (e.g., when BPF programs are
+installed), since different PGDs are used for the task memory.
 
-> Added the tests that I've been using for testing TPM 2.0 functionality
-> for long time but have out-of-tree so far residing in
->
-> https://github.com/jsakkine-intel/tpm2-scripts
->
-> Cc: Tadeusz Struk <tadeusz.struk@intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Acked-By: Joey Pabalinas <joeypabalinas@gmail.com>
-> ---
->  tools/testing/selftests/Makefile           |   1 +
->  tools/testing/selftests/tpm2/Makefile      |   3 +
->  tools/testing/selftests/tpm2/test_smoke.sh |   4 +
->  tools/testing/selftests/tpm2/test_space.sh |   4 +
->  tools/testing/selftests/tpm2/tpm2.py       | 696 +++++++++++++++++++++
->  tools/testing/selftests/tpm2/tpm2_tests.py | 227 +++++++
->  6 files changed, 935 insertions(+)
->  create mode 100644 tools/testing/selftests/tpm2/Makefile
->  create mode 100755 tools/testing/selftests/tpm2/test_smoke.sh
->  create mode 100755 tools/testing/selftests/tpm2/test_space.sh
->  create mode 100644 tools/testing/selftests/tpm2/tpm2.py
->  create mode 100644 tools/testing/selftests/tpm2/tpm2_tests.py
->
-> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-> index 1a2bd15c5b6e..e4556132cbc4 100644
-> --- a/tools/testing/selftests/Makefile
-> +++ b/tools/testing/selftests/Makefile
-> @@ -47,6 +47,7 @@ TARGETS += sysctl
->  ifneq (1, $(quicktest))
->  TARGETS += timers
->  endif
-> +TARGETS += tpm
+Finally, we randomize the address of the PTEs to harden against exploits
+that use these PTEs.
 
-This should be tpm2, right?
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Nadav Amit <namit@vmware.com>
+Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+---
+ arch/x86/include/asm/pgtable.h       |  3 +++
+ arch/x86/include/asm/text-patching.h |  2 ++
+ arch/x86/kernel/alternative.c        |  3 +++
+ arch/x86/mm/init_64.c                | 36 ++++++++++++++++++++++++++++
+ init/main.c                          |  3 +++
+ 5 files changed, 47 insertions(+)
 
->  TARGETS += user
->  TARGETS += vm
->  TARGETS += x86
-
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 40616e805292..e8f630d9a2ed 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -1021,6 +1021,9 @@ static inline void __meminit init_trampoline_default(void)
+ 	/* Default trampoline pgd value */
+ 	trampoline_pgd_entry = init_top_pgt[pgd_index(__PAGE_OFFSET)];
+ }
++
++void __init poking_init(void);
++
+ # ifdef CONFIG_RANDOMIZE_MEMORY
+ void __meminit init_trampoline(void);
+ # else
+diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
+index f8fc8e86cf01..a75eed841eed 100644
+--- a/arch/x86/include/asm/text-patching.h
++++ b/arch/x86/include/asm/text-patching.h
+@@ -39,5 +39,7 @@ extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
+ extern int poke_int3_handler(struct pt_regs *regs);
+ extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
+ extern int after_bootmem;
++extern __ro_after_init struct mm_struct *poking_mm;
++extern __ro_after_init unsigned long poking_addr;
+ 
+ #endif /* _ASM_X86_TEXT_PATCHING_H */
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index c6a3a10a2fd5..57fdde308bb6 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -678,6 +678,9 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
+ 	return addr;
+ }
+ 
++__ro_after_init struct mm_struct *poking_mm;
++__ro_after_init unsigned long poking_addr;
++
+ static void *__text_poke(void *addr, const void *opcode, size_t len)
+ {
+ 	unsigned long flags;
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index bccff68e3267..125c8c48aa24 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -53,6 +53,7 @@
+ #include <asm/init.h>
+ #include <asm/uv/uv.h>
+ #include <asm/setup.h>
++#include <asm/text-patching.h>
+ 
+ #include "mm_internal.h"
+ 
+@@ -1383,6 +1384,41 @@ unsigned long memory_block_size_bytes(void)
+ 	return memory_block_size_probed;
+ }
+ 
++/*
++ * Initialize an mm_struct to be used during poking and a pointer to be used
++ * during patching.
++ */
++void __init poking_init(void)
++{
++	spinlock_t *ptl;
++	pte_t *ptep;
++
++	poking_mm = copy_init_mm();
++	BUG_ON(!poking_mm);
++
++	/*
++	 * Randomize the poking address, but make sure that the following page
++	 * will be mapped at the same PMD. We need 2 pages, so find space for 3,
++	 * and adjust the address if the PMD ends after the first one.
++	 */
++	poking_addr = TASK_UNMAPPED_BASE;
++	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
++		poking_addr += (kaslr_get_random_long("Poking") & PAGE_MASK) %
++			(TASK_SIZE - TASK_UNMAPPED_BASE - 3 * PAGE_SIZE);
++
++	if (((poking_addr + PAGE_SIZE) & ~PMD_MASK) == 0)
++		poking_addr += PAGE_SIZE;
++
++	/*
++	 * We need to trigger the allocation of the page-tables that will be
++	 * needed for poking now. Later, poking may be performed in an atomic
++	 * section, which might cause allocation to fail.
++	 */
++	ptep = get_locked_pte(poking_mm, poking_addr, &ptl);
++	BUG_ON(!ptep);
++	pte_unmap_unlock(ptep, ptl);
++}
++
+ #ifdef CONFIG_SPARSEMEM_VMEMMAP
+ /*
+  * Initialise the sparsemem vmemmap using huge-pages at the PMD level.
+diff --git a/init/main.c b/init/main.c
+index e2e80ca3165a..f5947ba53bb4 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -496,6 +496,8 @@ void __init __weak thread_stack_cache_init(void)
+ 
+ void __init __weak mem_encrypt_init(void) { }
+ 
++void __init __weak poking_init(void) { }
++
+ bool initcall_debug;
+ core_param(initcall_debug, initcall_debug, bool, 0644);
+ 
+@@ -730,6 +732,7 @@ asmlinkage __visible void __init start_kernel(void)
+ 	taskstats_init_early();
+ 	delayacct_init();
+ 
++	poking_init();
+ 	check_bugs();
+ 
+ 	acpi_subsystem_init();
 -- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
+2.17.1
 
