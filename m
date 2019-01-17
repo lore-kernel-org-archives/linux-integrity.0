@@ -2,269 +2,169 @@ Return-Path: <SRS0=OrKi=PZ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05662C43387
-	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 21:17:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE9CC43612
+	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 21:34:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7A6F20855
-	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 21:17:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4761820855
+	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 21:34:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728648AbfAQVRL convert rfc822-to-8bit (ORCPT
+        id S1728802AbfAQVe0 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 17 Jan 2019 16:17:11 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:48793 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728436AbfAQVRK (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 17 Jan 2019 16:17:10 -0500
-Received: from wld62.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x0HLG1ZM901070
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Thu, 17 Jan 2019 13:16:01 -0800
-Date:   Thu, 17 Jan 2019 13:15:54 -0800
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20190117154701.78aa8e9d0130716e0d9ac026@kernel.org>
-References: <20190117003259.23141-1-rick.p.edgecombe@intel.com> <20190117003259.23141-2-rick.p.edgecombe@intel.com> <20190117154701.78aa8e9d0130716e0d9ac026@kernel.org>
+        Thu, 17 Jan 2019 16:34:26 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42674 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726821AbfAQVe0 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 17 Jan 2019 16:34:26 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DECBBAD05;
+        Thu, 17 Jan 2019 21:34:23 +0000 (UTC)
+Date:   Thu, 17 Jan 2019 15:34:21 -0600
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Ignaz Forster <iforster@suse.de>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Fabian Vogt <fvogt@suse.de>, Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: [PATCH v2] ima: define ima_post_create_tmpfile() hook and add
+ missing call
+Message-ID: <20190117213421.ggasuc263dpqh46c@merlin>
+References: <1545158873.4206.86.camel@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH 01/17] Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
-To:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>
-CC:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>
-From:   hpa@zytor.com
-Message-ID: <F3B332DA-4637-4A3B-93F9-C7903C1D9FF9@zytor.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1545158873.4206.86.camel@linux.ibm.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On January 16, 2019 10:47:01 PM PST, Masami Hiramatsu <mhiramat@kernel.org> wrote:
->On Wed, 16 Jan 2019 16:32:43 -0800
->Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
->
->> From: Nadav Amit <namit@vmware.com>
->> 
->> text_mutex is currently expected to be held before text_poke() is
->> called, but we kgdb does not take the mutex, and instead *supposedly*
->> ensures the lock is not taken and will not be acquired by any other
->core
->> while text_poke() is running.
->> 
->> The reason for the "supposedly" comment is that it is not entirely
->clear
->> that this would be the case if gdb_do_roundup is zero.
->> 
->> This patch creates two wrapper functions, text_poke() and
->> text_poke_kgdb() which do or do not run the lockdep assertion
->> respectively.
->> 
->> While we are at it, change the return code of text_poke() to
->something
->> meaningful. One day, callers might actually respect it and the
->existing
->> BUG_ON() when patching fails could be removed. For kgdb, the return
->> value can actually be used.
->
->Looks good to me.
->
->Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
->
->Thank you,
->
->> 
->> Cc: Andy Lutomirski <luto@kernel.org>
->> Cc: Kees Cook <keescook@chromium.org>
->> Cc: Dave Hansen <dave.hansen@intel.com>
->> Cc: Masami Hiramatsu <mhiramat@kernel.org>
->> Fixes: 9222f606506c ("x86/alternatives: Lockdep-enforce text_mutex in
->text_poke*()")
->> Suggested-by: Peter Zijlstra <peterz@infradead.org>
->> Acked-by: Jiri Kosina <jkosina@suse.cz>
->> Signed-off-by: Nadav Amit <namit@vmware.com>
->> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
->> ---
->>  arch/x86/include/asm/text-patching.h |  1 +
->>  arch/x86/kernel/alternative.c        | 52
->++++++++++++++++++++--------
->>  arch/x86/kernel/kgdb.c               | 11 +++---
->>  3 files changed, 45 insertions(+), 19 deletions(-)
->> 
->> diff --git a/arch/x86/include/asm/text-patching.h
->b/arch/x86/include/asm/text-patching.h
->> index e85ff65c43c3..f8fc8e86cf01 100644
->> --- a/arch/x86/include/asm/text-patching.h
->> +++ b/arch/x86/include/asm/text-patching.h
->> @@ -35,6 +35,7 @@ extern void *text_poke_early(void *addr, const void
->*opcode, size_t len);
->>   * inconsistent instruction while you patch.
->>   */
->>  extern void *text_poke(void *addr, const void *opcode, size_t len);
->> +extern void *text_poke_kgdb(void *addr, const void *opcode, size_t
->len);
->>  extern int poke_int3_handler(struct pt_regs *regs);
->>  extern void *text_poke_bp(void *addr, const void *opcode, size_t
->len, void *handler);
->>  extern int after_bootmem;
->> diff --git a/arch/x86/kernel/alternative.c
->b/arch/x86/kernel/alternative.c
->> index ebeac487a20c..c6a3a10a2fd5 100644
->> --- a/arch/x86/kernel/alternative.c
->> +++ b/arch/x86/kernel/alternative.c
->> @@ -678,18 +678,7 @@ void *__init_or_module text_poke_early(void
->*addr, const void *opcode,
->>  	return addr;
->>  }
->>  
->> -/**
->> - * text_poke - Update instructions on a live kernel
->> - * @addr: address to modify
->> - * @opcode: source of the copy
->> - * @len: length to copy
->> - *
->> - * Only atomic text poke/set should be allowed when not doing early
->patching.
->> - * It means the size must be writable atomically and the address
->must be aligned
->> - * in a way that permits an atomic write. It also makes sure we fit
->on a single
->> - * page.
->> - */
->> -void *text_poke(void *addr, const void *opcode, size_t len)
->> +static void *__text_poke(void *addr, const void *opcode, size_t len)
->>  {
->>  	unsigned long flags;
->>  	char *vaddr;
->> @@ -702,8 +691,6 @@ void *text_poke(void *addr, const void *opcode,
->size_t len)
->>  	 */
->>  	BUG_ON(!after_bootmem);
->>  
->> -	lockdep_assert_held(&text_mutex);
->> -
->>  	if (!core_kernel_text((unsigned long)addr)) {
->>  		pages[0] = vmalloc_to_page(addr);
->>  		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
->> @@ -732,6 +719,43 @@ void *text_poke(void *addr, const void *opcode,
->size_t len)
->>  	return addr;
->>  }
->>  
->> +/**
->> + * text_poke - Update instructions on a live kernel
->> + * @addr: address to modify
->> + * @opcode: source of the copy
->> + * @len: length to copy
->> + *
->> + * Only atomic text poke/set should be allowed when not doing early
->patching.
->> + * It means the size must be writable atomically and the address
->must be aligned
->> + * in a way that permits an atomic write. It also makes sure we fit
->on a single
->> + * page.
->> + */
->> +void *text_poke(void *addr, const void *opcode, size_t len)
->> +{
->> +	lockdep_assert_held(&text_mutex);
->> +
->> +	return __text_poke(addr, opcode, len);
->> +}
->> +
->> +/**
->> + * text_poke_kgdb - Update instructions on a live kernel by kgdb
->> + * @addr: address to modify
->> + * @opcode: source of the copy
->> + * @len: length to copy
->> + *
->> + * Only atomic text poke/set should be allowed when not doing early
->patching.
->> + * It means the size must be writable atomically and the address
->must be aligned
->> + * in a way that permits an atomic write. It also makes sure we fit
->on a single
->> + * page.
->> + *
->> + * Context: should only be used by kgdb, which ensures no other core
->is running,
->> + *	    despite the fact it does not hold the text_mutex.
->> + */
->> +void *text_poke_kgdb(void *addr, const void *opcode, size_t len)
->> +{
->> +	return __text_poke(addr, opcode, len);
->> +}
->> +
->>  static void do_sync_core(void *info)
->>  {
->>  	sync_core();
->> diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
->> index 5db08425063e..1461544cba8b 100644
->> --- a/arch/x86/kernel/kgdb.c
->> +++ b/arch/x86/kernel/kgdb.c
->> @@ -758,13 +758,13 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt
->*bpt)
->>  	if (!err)
->>  		return err;
->>  	/*
->> -	 * It is safe to call text_poke() because normal kernel execution
->> +	 * It is safe to call text_poke_kgdb() because normal kernel
->execution
->>  	 * is stopped on all cores, so long as the text_mutex is not
->locked.
->>  	 */
->>  	if (mutex_is_locked(&text_mutex))
->>  		return -EBUSY;
->> -	text_poke((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
->> -		  BREAK_INSTR_SIZE);
->> +	text_poke_kgdb((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
->> +		       BREAK_INSTR_SIZE);
->>  	err = probe_kernel_read(opc, (char *)bpt->bpt_addr,
->BREAK_INSTR_SIZE);
->>  	if (err)
->>  		return err;
->> @@ -783,12 +783,13 @@ int kgdb_arch_remove_breakpoint(struct
->kgdb_bkpt *bpt)
->>  	if (bpt->type != BP_POKE_BREAKPOINT)
->>  		goto knl_write;
->>  	/*
->> -	 * It is safe to call text_poke() because normal kernel execution
->> +	 * It is safe to call text_poke_kgdb() because normal kernel
->execution
->>  	 * is stopped on all cores, so long as the text_mutex is not
->locked.
->>  	 */
->>  	if (mutex_is_locked(&text_mutex))
->>  		goto knl_write;
->> -	text_poke((void *)bpt->bpt_addr, bpt->saved_instr,
->BREAK_INSTR_SIZE);
->> +	text_poke_kgdb((void *)bpt->bpt_addr, bpt->saved_instr,
->> +		       BREAK_INSTR_SIZE);
->>  	err = probe_kernel_read(opc, (char *)bpt->bpt_addr,
->BREAK_INSTR_SIZE);
->>  	if (err || memcmp(opc, bpt->saved_instr, BREAK_INSTR_SIZE))
->>  		goto knl_write;
->> -- 
->> 2.17.1
->> 
+On 13:47 18/12, Mimi Zohar wrote:
+> If tmpfiles can be made persistent, then newly created tmpfiles need to
+> be treated like any other new files in policy.
+> 
+> This patch indicates which newly created tmpfiles are in policy, causing
+> the file hash to be calculated on __fput().
 
-If you are reorganizing this code, please do so so that the caller doesn't have to worry about if it should call text_poke_bp() or text_poke_early(). Right now the caller had to know that, which makes no sense.
+Discussed in overlayfs, this would be better if we use this on inode
+and called from vfs_tmpfile() instead of do_tmpfile(). This will cover
+the overlayfs case which uses tmpfiles while performing copy_up().
+The patch is attached.
+
+Here is the updated patch which works for my cases.
+However, it is the the failure case after setting the IMA flags
+I am concerned about, though I don't think that should be as harmful.
+
+
+If tmpfiles can be made persistent, then newly created tmpfiles need to
+be treated like any other new files in policy.
+
+This patch indicates which newly created tmpfiles are in policy, causing
+the file hash to be calculated on __fput().
+
+Reported-by: Ignaz Forster <ignaz.forster@gmx.de>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+---
+ fs/namei.c                        |  1 +
+ include/linux/ima.h               |  6 ++++++
+ security/integrity/ima/ima_main.c | 35 +++++++++++++++++++++++++++++++++--
+ 3 files changed, 40 insertions(+), 2 deletions(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 914178cdbe94..373a7ec4b09d 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3462,6 +3462,7 @@ struct dentry *vfs_tmpfile(struct dentry *dentry, umode_t mode, int open_flag)
+ 		inode->i_state |= I_LINKABLE;
+ 		spin_unlock(&inode->i_lock);
+ 	}
++	ima_post_create_tmpfile(inode);
+ 	return child;
+ 
+ out_err:
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index b5e16b8c50b7..32b0c5bdcd99 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -18,6 +18,7 @@ struct linux_binprm;
+ #ifdef CONFIG_IMA
+ extern int ima_bprm_check(struct linux_binprm *bprm);
+ extern int ima_file_check(struct file *file, int mask);
++extern void ima_post_create_tmpfile(struct inode *inode);
+ extern void ima_file_free(struct file *file);
+ extern int ima_file_mmap(struct file *file, unsigned long prot);
+ extern int ima_load_data(enum kernel_load_data_id id);
+@@ -56,6 +57,11 @@ static inline int ima_file_check(struct file *file, int mask)
+ 	return 0;
+ }
+ 
++static inline void ima_post_create_tmpfile(struct inode *inode)
++{
++	return;
++}
++
+ static inline void ima_file_free(struct file *file)
+ {
+ 	return;
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 4ffac4f5c647..357edd140c09 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -396,6 +396,33 @@ int ima_file_check(struct file *file, int mask)
+ }
+ EXPORT_SYMBOL_GPL(ima_file_check);
+ 
++/**
++ * ima_post_create_tmpfile - mark newly created tmpfile as new
++ * @file : newly created tmpfile
++ *
++ * No measuring, appraising or auditing of newly created tmpfiles is needed.
++ * Skip calling process_measurement(), but indicate which newly, created
++ * tmpfiles are in policy.
++ */
++void ima_post_create_tmpfile(struct inode *inode)
++{
++	struct integrity_iint_cache *iint;
++	int must_appraise;
++
++	must_appraise = ima_must_appraise(inode, MAY_ACCESS, FILE_CHECK);
++	if (!must_appraise)
++		return;
++
++	/* Nothing to do if we can't allocate memory */
++	iint = integrity_inode_get(inode);
++	if (!iint)
++		return;
++
++	/* needed for writing the security xattrs */
++	set_bit(IMA_UPDATE_XATTR, &iint->atomic_flags);
++	iint->ima_file_status = INTEGRITY_PASS;
++}
++
+ /**
+  * ima_post_path_mknod - mark as a new inode
+  * @dentry: newly created dentry
+@@ -413,9 +440,13 @@ void ima_post_path_mknod(struct dentry *dentry)
+ 	if (!must_appraise)
+ 		return;
+ 
++	/* Nothing to do if we can't allocate memory */
+ 	iint = integrity_inode_get(inode);
+-	if (iint)
+-		iint->flags |= IMA_NEW_FILE;
++	if (!iint)
++		return;
++
++	/* needed for re-opening empty files */
++	iint->flags |= IMA_NEW_FILE;
+ }
+ 
+ /**
 -- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+2.16.4
