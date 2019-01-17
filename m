@@ -2,157 +2,250 @@ Return-Path: <SRS0=OrKi=PZ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5423C43387
-	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 02:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC19C43387
+	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 06:47:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96CE9206C2
-	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 02:35:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E897B20859
+	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 06:47:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547707633;
+	bh=gCpmQqbdxn+8V7beBVn7iRHhpg1Y8TScFIjHCPA6ZN4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=uhwSJRuCTF5/DMHlay3Tk1NE6ke0+GHON0Kl9D4Iaa3c6YSOy2iG+IApAOltxNDDT
+	 FSIqy8vCCzqFRBVv9aNwE8brZz0ETsU1xBCYd3AUTRoL9NePIrdlNVFrEP9ap8/GUF
+	 zkJi42k8BGkIIcWUoQCbn11SniM64L4O5eAU6XD4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbfAQCfe (ORCPT
+        id S1728428AbfAQGrH (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 16 Jan 2019 21:35:34 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:57156 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726109AbfAQCfd (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 16 Jan 2019 21:35:33 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04391;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0TIOZkKT_1547688773;
-Received: from ali-6c96cfd98fb5.local(mailfrom:zhang.jia@linux.alibaba.com fp:SMTPD_---0TIOZkKT_1547688773)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 17 Jan 2019 09:32:54 +0800
-Subject: Re: [PATCH 1/2] tpm/eventlog/tpm1: Simplify walking over *pos
- measurements
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, tweek@google.com,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1547197173-52826-1-git-send-email-zhang.jia@linux.alibaba.com>
- <1547197173-52826-2-git-send-email-zhang.jia@linux.alibaba.com>
- <20190116220952.GH25803@linux.intel.com>
-From:   Jia Zhang <zhang.jia@linux.alibaba.com>
-Message-ID: <8709dd61-2422-1c20-9937-d6003fa0354e@linux.alibaba.com>
-Date:   Thu, 17 Jan 2019 09:32:55 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20190116220952.GH25803@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Thu, 17 Jan 2019 01:47:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53114 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725982AbfAQGrH (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 17 Jan 2019 01:47:07 -0500
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C68C020657;
+        Thu, 17 Jan 2019 06:47:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547707626;
+        bh=gCpmQqbdxn+8V7beBVn7iRHhpg1Y8TScFIjHCPA6ZN4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=MTHROg80LWd+6i1gqsbtCeDX3Uq9zeRFWWtgAaAjgkmZNcU3cLru5Cqg7gC2EHWzn
+         U36wU+EiIyYXHMbo5Ig3krrYzvlcy0hcn0y4irriTTIF1Y8Y/QKuaXH0tF6Go7bFWz
+         W3E/svhv0QKGN6wHBtTepT9tXxqRJqlcgTnxEZRc=
+Date:   Thu, 17 Jan 2019 15:47:01 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Nadav Amit <namit@vmware.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH 01/17] Fix
+ "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
+Message-Id: <20190117154701.78aa8e9d0130716e0d9ac026@kernel.org>
+In-Reply-To: <20190117003259.23141-2-rick.p.edgecombe@intel.com>
+References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
+        <20190117003259.23141-2-rick.p.edgecombe@intel.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+On Wed, 16 Jan 2019 16:32:43 -0800
+Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
 
-
-On 2019/1/17 上午6:09, Jarkko Sakkinen wrote:
-> Please use "tpm:" tag for commits, not "tpm/eventlog/tpm1".
+> From: Nadav Amit <namit@vmware.com>
 > 
-> On Fri, Jan 11, 2019 at 04:59:32PM +0800, Jia Zhang wrote:
->> The responsibility of tpm1_bios_measurements_start() is to walk
->> over the first *pos measurements, ensuring the skipped and
->> to-be-read measurements are not out-of-boundary.
->>
->> Current logic is complicated a bit. Just employ a do-while loop
->> with necessary sanity check, and then get the goal.
->>
->> Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
+> text_mutex is currently expected to be held before text_poke() is
+> called, but we kgdb does not take the mutex, and instead *supposedly*
+> ensures the lock is not taken and will not be acquired by any other core
+> while text_poke() is running.
 > 
-> What does this fix? Even if the current logic is "complicated", it is
-> still a pretty simple functiion.
+> The reason for the "supposedly" comment is that it is not entirely clear
+> that this would be the case if gdb_do_roundup is zero.
+> 
+> This patch creates two wrapper functions, text_poke() and
+> text_poke_kgdb() which do or do not run the lockdep assertion
+> respectively.
+> 
+> While we are at it, change the return code of text_poke() to something
+> meaningful. One day, callers might actually respect it and the existing
+> BUG_ON() when patching fails could be removed. For kgdb, the return
+> value can actually be used.
 
+Looks good to me.
 
-OK. Let me point out the fix part. Here is the original implementation:
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
 
- 87         /* read over *pos measurements */
- 88         for (i = 0; i < *pos; i++) {
- 89                 event = addr;
- 90
- 91                 converted_event_size =
- 92                     do_endian_conversion(event->event_size);
- 93                 converted_event_type =
- 94                     do_endian_conversion(event->event_type);
- 95
- 96                 if ((addr + sizeof(struct tcpa_event)) < limit) {
- 97                         if ((converted_event_type == 0) &&
- 98                             (converted_event_size == 0))
- 99                                 return NULL;
-100                         addr += (sizeof(struct tcpa_event) +
-101                                  converted_event_size);
-102                 }
-103         }
-
-The problem (just ignore all off-by-1 issues) is that accessing to
-event_size and event_type is not pre-checked carefully. In the latter
-part of tpm1_bios_measurements_start() and
-tpm1_bios_measurements_next(), there is a fixed patter to do the sanity
-check like this:
-
-136         /* now check if current entry is valid */
-137         if ((v + sizeof(struct tcpa_event)) >= limit)
-138                 return NULL;
-
-So if we simply change this read-over chunk with sanity check like this:
-
-        /* read over *pos measurements */
-        for (i = 0; i < *pos; i++) {
-                event = addr;
-
-                if ((addr + sizeof(struct tcpa_event)) >= limit)
-                        return NULL;
-
-                converted_event_size =
-                    do_endian_conversion(event->event_size);
-                converted_event_type =
-                    do_endian_conversion(event->event_type);
-
-                if ((converted_event_type == 0) &&
-                    (converted_event_size == 0))
-                        return NULL;
-                addr += (sizeof(struct tcpa_event) +
-                         converted_event_size);
-        }
-
-We will get two highly similar code chunks in
-tpm1_bios_measurements_start(). Here is the latter part:
-
-106         /* now check if current entry is valid */
-107         if ((addr + sizeof(struct tcpa_event)) >= limit)
-108                 return NULL;
-109
-110         event = addr;
-111
-112         converted_event_size = do_endian_conversion(event->event_size);
-113         converted_event_type = do_endian_conversion(event->event_type);
-114
-115         if (((converted_event_type == 0) && (converted_event_size == 0))
-116             || ((addr + sizeof(struct tcpa_event) +
-converted_event_size)
-117                 >= limit))
-118                 return NULL;
-119
-120         return addr;
-
-So using a do while logic can simply merge them together and thus simply
-and optimize the logic of walking over *pos measurements.
-
-Sorry I admit my initial motivation is to fix up the sanity check
-problem. If you would like to accept the optimization part, I will split
-this patch.
-
-Jia
+Thank you,
 
 > 
-> Applying clean ups for fun has the side-effect of making backporting
-> more difficult. And swapping implementation randomly has the side-effect
-> of potentially introducing regressions. The current code might be messy
-> but it is still field tested.
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Fixes: 9222f606506c ("x86/alternatives: Lockdep-enforce text_mutex in text_poke*()")
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> Acked-by: Jiri Kosina <jkosina@suse.cz>
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+>  arch/x86/include/asm/text-patching.h |  1 +
+>  arch/x86/kernel/alternative.c        | 52 ++++++++++++++++++++--------
+>  arch/x86/kernel/kgdb.c               | 11 +++---
+>  3 files changed, 45 insertions(+), 19 deletions(-)
 > 
-> I'm sorry but I have to reject this patch.
+> diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
+> index e85ff65c43c3..f8fc8e86cf01 100644
+> --- a/arch/x86/include/asm/text-patching.h
+> +++ b/arch/x86/include/asm/text-patching.h
+> @@ -35,6 +35,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
+>   * inconsistent instruction while you patch.
+>   */
+>  extern void *text_poke(void *addr, const void *opcode, size_t len);
+> +extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
+>  extern int poke_int3_handler(struct pt_regs *regs);
+>  extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
+>  extern int after_bootmem;
+> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+> index ebeac487a20c..c6a3a10a2fd5 100644
+> --- a/arch/x86/kernel/alternative.c
+> +++ b/arch/x86/kernel/alternative.c
+> @@ -678,18 +678,7 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
+>  	return addr;
+>  }
+>  
+> -/**
+> - * text_poke - Update instructions on a live kernel
+> - * @addr: address to modify
+> - * @opcode: source of the copy
+> - * @len: length to copy
+> - *
+> - * Only atomic text poke/set should be allowed when not doing early patching.
+> - * It means the size must be writable atomically and the address must be aligned
+> - * in a way that permits an atomic write. It also makes sure we fit on a single
+> - * page.
+> - */
+> -void *text_poke(void *addr, const void *opcode, size_t len)
+> +static void *__text_poke(void *addr, const void *opcode, size_t len)
+>  {
+>  	unsigned long flags;
+>  	char *vaddr;
+> @@ -702,8 +691,6 @@ void *text_poke(void *addr, const void *opcode, size_t len)
+>  	 */
+>  	BUG_ON(!after_bootmem);
+>  
+> -	lockdep_assert_held(&text_mutex);
+> -
+>  	if (!core_kernel_text((unsigned long)addr)) {
+>  		pages[0] = vmalloc_to_page(addr);
+>  		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
+> @@ -732,6 +719,43 @@ void *text_poke(void *addr, const void *opcode, size_t len)
+>  	return addr;
+>  }
+>  
+> +/**
+> + * text_poke - Update instructions on a live kernel
+> + * @addr: address to modify
+> + * @opcode: source of the copy
+> + * @len: length to copy
+> + *
+> + * Only atomic text poke/set should be allowed when not doing early patching.
+> + * It means the size must be writable atomically and the address must be aligned
+> + * in a way that permits an atomic write. It also makes sure we fit on a single
+> + * page.
+> + */
+> +void *text_poke(void *addr, const void *opcode, size_t len)
+> +{
+> +	lockdep_assert_held(&text_mutex);
+> +
+> +	return __text_poke(addr, opcode, len);
+> +}
+> +
+> +/**
+> + * text_poke_kgdb - Update instructions on a live kernel by kgdb
+> + * @addr: address to modify
+> + * @opcode: source of the copy
+> + * @len: length to copy
+> + *
+> + * Only atomic text poke/set should be allowed when not doing early patching.
+> + * It means the size must be writable atomically and the address must be aligned
+> + * in a way that permits an atomic write. It also makes sure we fit on a single
+> + * page.
+> + *
+> + * Context: should only be used by kgdb, which ensures no other core is running,
+> + *	    despite the fact it does not hold the text_mutex.
+> + */
+> +void *text_poke_kgdb(void *addr, const void *opcode, size_t len)
+> +{
+> +	return __text_poke(addr, opcode, len);
+> +}
+> +
+>  static void do_sync_core(void *info)
+>  {
+>  	sync_core();
+> diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
+> index 5db08425063e..1461544cba8b 100644
+> --- a/arch/x86/kernel/kgdb.c
+> +++ b/arch/x86/kernel/kgdb.c
+> @@ -758,13 +758,13 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
+>  	if (!err)
+>  		return err;
+>  	/*
+> -	 * It is safe to call text_poke() because normal kernel execution
+> +	 * It is safe to call text_poke_kgdb() because normal kernel execution
+>  	 * is stopped on all cores, so long as the text_mutex is not locked.
+>  	 */
+>  	if (mutex_is_locked(&text_mutex))
+>  		return -EBUSY;
+> -	text_poke((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
+> -		  BREAK_INSTR_SIZE);
+> +	text_poke_kgdb((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
+> +		       BREAK_INSTR_SIZE);
+>  	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+>  	if (err)
+>  		return err;
+> @@ -783,12 +783,13 @@ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
+>  	if (bpt->type != BP_POKE_BREAKPOINT)
+>  		goto knl_write;
+>  	/*
+> -	 * It is safe to call text_poke() because normal kernel execution
+> +	 * It is safe to call text_poke_kgdb() because normal kernel execution
+>  	 * is stopped on all cores, so long as the text_mutex is not locked.
+>  	 */
+>  	if (mutex_is_locked(&text_mutex))
+>  		goto knl_write;
+> -	text_poke((void *)bpt->bpt_addr, bpt->saved_instr, BREAK_INSTR_SIZE);
+> +	text_poke_kgdb((void *)bpt->bpt_addr, bpt->saved_instr,
+> +		       BREAK_INSTR_SIZE);
+>  	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+>  	if (err || memcmp(opc, bpt->saved_instr, BREAK_INSTR_SIZE))
+>  		goto knl_write;
+> -- 
+> 2.17.1
 > 
-> /Jarkko
-> 
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
