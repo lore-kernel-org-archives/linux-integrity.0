@@ -2,32 +2,32 @@ Return-Path: <SRS0=OrKi=PZ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86950C43612
-	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 00:36:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03872C43387
+	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 00:36:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 570D120859
-	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 00:36:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C230B2077B
+	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 00:36:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726841AbfAQAfl (ORCPT
+        id S1725866AbfAQAgK (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 16 Jan 2019 19:35:41 -0500
-Received: from mga05.intel.com ([192.55.52.43]:42209 "EHLO mga05.intel.com"
+        Wed, 16 Jan 2019 19:36:10 -0500
+Received: from mga05.intel.com ([192.55.52.43]:42206 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729881AbfAQAdh (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 16 Jan 2019 19:33:37 -0500
+        id S1729776AbfAQAdg (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 16 Jan 2019 19:33:36 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
   by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 16:33:36 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,488,1539673200"; 
-   d="scan'208";a="292166012"
+   d="scan'208";a="292166007"
 Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.79])
-  by orsmga005.jf.intel.com with ESMTP; 16 Jan 2019 16:33:35 -0800
+  by orsmga005.jf.intel.com with ESMTP; 16 Jan 2019 16:33:34 -0800
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
 To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
@@ -41,62 +41,116 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH 02/17] x86/jump_label: Use text_poke_early() during early init
-Date:   Wed, 16 Jan 2019 16:32:44 -0800
-Message-Id: <20190117003259.23141-3-rick.p.edgecombe@intel.com>
+Subject: [PATCH 00/17] Merge text_poke fixes and executable lockdowns
+Date:   Wed, 16 Jan 2019 16:32:42 -0800
+Message-Id: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
-References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Nadav Amit <namit@vmware.com>
+This patchset improves several overlapping issues around stale TLB
+entries and W^X violations. It is combined from a slightly tweaked
+"x86/alternative: text_poke() enhancements v7" [1] and a next version of
+the "Don’t leave executable TLB entries to freed pages v2" [2]
+patchsets that were conflicting.
 
-There is no apparent reason not to use text_poke_early() while we are
-during early-init and we do not patch code that might be on the stack
-(i.e., we'll return to the middle of the patched code). This appears to
-be the case of jump-labels, so do so.
+The related issues that this fixes:
+1. Fixmap PTEs that are used for patching are available for access from
+   other cores and might be exploited. They are not even flushed from
+   the TLB in remote cores, so the risk is even higher. Address this
+   issue by introducing a temporary mm that is only used during
+   patching. Unfortunately, due to init ordering, fixmap is still used
+   during boot-time patching. Future patches can eliminate the need for
+   it.
+2. Missing lockdep assertion to ensure text_mutex is taken. It is
+   actually not always taken, so fix the instances that were found not
+   to take the lock (although they should be safe even without taking
+   the lock).
+3. Module_alloc returning memory that is RWX until a module is finished
+   loading.
+4. Sometimes when memory is freed via the module subsystem, an
+   executable permissioned TLB entry can remain to a freed page. If the
+   page is re-used to back an address that will receive data from
+   userspace, it can result in user data being mapped as executable in
+   the kernel. The root of this behavior is vfree lazily flushing the
+   TLB, but not lazily freeing the underlying pages.
 
-This is required for the next patches that would set a temporary mm for
-patching, which is initialized after some static-keys are
-enabled/disabled.
-
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Nadav Amit <namit@vmware.com>
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
----
- arch/x86/kernel/jump_label.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-index f99bd26bd3f1..e36cfec0f35e 100644
---- a/arch/x86/kernel/jump_label.c
-+++ b/arch/x86/kernel/jump_label.c
-@@ -50,7 +50,12 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
- 	jmp.offset = jump_entry_target(entry) -
- 		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
+The new changes from "Don’t leave executable TLB entries to freed pages
+v2":
+ - Add support for case of hibernate trying to save an unmapped page
+   on the directmap. (Ard Biesheuvel)
+ - No week arch breakout for vfree-ing special memory (Andy Lutomirski)
+ - Avoid changing deferred free code by moving modules init free to work
+   queue (Andy Lutomirski)
+ - Plug in new flag for kprobes and ftrace
+ - More arch generic names for set_pages functions (Ard Biesheuvel)
+ - Fix for TLB not always flushing the directmap (Nadav Amit)
  
--	if (early_boot_irqs_disabled)
-+	/*
-+	 * As long as we're UP and not yet marked RO, we can use
-+	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
-+	 * SYSTEM_SCHEDULING before going either.
-+	 */
-+	if (system_state == SYSTEM_BOOTING)
- 		poker = text_poke_early;
+New changes from from "x86/alternative: text_poke() enhancements v7"
+ - Fix build failure on CONFIG_RANDOMIZE_BASE=n (Rick)
+ - Remove text_poke usage from ftrace (Nadav)
  
- 	if (type == JUMP_LABEL_JMP) {
+[1] https://lkml.org/lkml/2018/12/5/200
+[2] https://lkml.org/lkml/2018/12/11/1571
+
+Andy Lutomirski (1):
+  x86/mm: temporary mm struct
+
+Nadav Amit (12):
+  Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
+  x86/jump_label: Use text_poke_early() during early init
+  fork: provide a function for copying init_mm
+  x86/alternative: initializing temporary mm for patching
+  x86/alternative: use temporary mm for text poking
+  x86/kgdb: avoid redundant comparison of patched code
+  x86/ftrace: set trampoline pages as executable
+  x86/kprobes: Instruction pages initialization enhancements
+  x86: avoid W^X being broken during modules loading
+  x86/jump-label: remove support for custom poker
+  x86/alternative: Remove the return value of text_poke_*()
+  module: Prevent module removal racing with text_poke()
+
+Rick Edgecombe (4):
+  Add set_alias_ function and x86 implementation
+  mm: Make hibernate handle unmapped pages
+  vmalloc: New flags for safe vfree on special perms
+  Plug in new special vfree flag
+
+ arch/Kconfig                         |   4 +
+ arch/x86/Kconfig                     |   1 +
+ arch/x86/include/asm/fixmap.h        |   2 -
+ arch/x86/include/asm/mmu_context.h   |  32 +++++
+ arch/x86/include/asm/pgtable.h       |   3 +
+ arch/x86/include/asm/set_memory.h    |   3 +
+ arch/x86/include/asm/text-patching.h |   7 +-
+ arch/x86/kernel/alternative.c        | 197 ++++++++++++++++++++-------
+ arch/x86/kernel/ftrace.c             |  15 +-
+ arch/x86/kernel/jump_label.c         |  19 ++-
+ arch/x86/kernel/kgdb.c               |  25 +---
+ arch/x86/kernel/kprobes/core.c       |  19 ++-
+ arch/x86/kernel/module.c             |   2 +-
+ arch/x86/mm/init_64.c                |  36 +++++
+ arch/x86/mm/pageattr.c               |  16 ++-
+ arch/x86/xen/mmu_pv.c                |   2 -
+ include/linux/filter.h               |  18 +--
+ include/linux/mm.h                   |  18 +--
+ include/linux/sched/task.h           |   1 +
+ include/linux/set_memory.h           |  10 ++
+ include/linux/vmalloc.h              |  13 ++
+ init/main.c                          |   3 +
+ kernel/bpf/core.c                    |   1 -
+ kernel/fork.c                        |  24 +++-
+ kernel/module.c                      |  87 ++++++------
+ mm/page_alloc.c                      |   6 +-
+ mm/vmalloc.c                         | 122 ++++++++++++++---
+ 27 files changed, 497 insertions(+), 189 deletions(-)
+
 -- 
 2.17.1
 
