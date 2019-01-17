@@ -2,98 +2,112 @@ Return-Path: <SRS0=OrKi=PZ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A86BC43387
-	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 08:21:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA00C43387
+	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 09:40:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04BA820657
-	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 08:21:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BCB72054F
+	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 09:40:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728743AbfAQIVk (ORCPT
+        id S1726811AbfAQJjz (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 17 Jan 2019 03:21:40 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:48010 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728722AbfAQIVk (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 17 Jan 2019 03:21:40 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D3CC279F4F8F9EBAEDAE;
-        Thu, 17 Jan 2019 16:21:36 +0800 (CST)
-Received: from [127.0.0.1] (10.177.31.96) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Thu, 17 Jan 2019
- 16:21:35 +0800
-Subject: Re: [PATCH -next] evm: remove set but not used variable 'xattr'
-To:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-References: <1544867636-59276-1-git-send-email-yuehaibing@huawei.com>
- <1544868370-83459-1-git-send-email-yuehaibing@huawei.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-From:   YueHaibing <yuehaibing@huawei.com>
-Message-ID: <9bdb64b6-501e-cd37-d4ab-a041ac25e738@huawei.com>
-Date:   Thu, 17 Jan 2019 16:21:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        Thu, 17 Jan 2019 04:39:55 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36834 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbfAQJjy (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 17 Jan 2019 04:39:54 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 27DBF807A7; Thu, 17 Jan 2019 10:39:46 +0100 (CET)
+Date:   Thu, 17 Jan 2019 10:39:50 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH 14/17] mm: Make hibernate handle unmapped pages
+Message-ID: <20190117093950.GA17930@amd>
+References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
+ <20190117003259.23141-15-rick.p.edgecombe@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1544868370-83459-1-git-send-email-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
+Content-Disposition: inline
+In-Reply-To: <20190117003259.23141-15-rick.p.edgecombe@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-ping...
 
-On 2018/12/15 18:06, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> security/integrity/evm/evm_main.c: In function 'init_evm':
-> security/integrity/evm/evm_main.c:566:21: warning:
->  variable 'xattr' set but not used [-Wunused-but-set-variable]
-> 
-> It never used since commit 21af76631476 ("EVM: turn evm_config_xattrnames
-> into a list")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  security/integrity/evm/evm_main.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-> index 5ecaa3d..b6d9f14 100644
-> --- a/security/integrity/evm/evm_main.c
-> +++ b/security/integrity/evm/evm_main.c
-> @@ -563,7 +563,6 @@ static int __init init_evm(void)
+--jRHKVT23PllUwdXP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> For architectures with CONFIG_ARCH_HAS_SET_ALIAS, pages can be unmapped
+> briefly on the directmap, even when CONFIG_DEBUG_PAGEALLOC is not configu=
+red.
+> So this changes kernel_map_pages and kernel_page_present to be defined wh=
+en
+> CONFIG_ARCH_HAS_SET_ALIAS is defined as well. It also changes places
+> (page_alloc.c) where those functions are assumed to only be implemented w=
+hen
+> CONFIG_DEBUG_PAGEALLOC is defined.
+
+Which architectures are that?
+
+Should this be merged to the patch where HAS_SET_ALIAS is introduced? We
+don't want broken hibernation in between....
+
+
+> -#ifdef CONFIG_DEBUG_PAGEALLOC
+>  extern bool _debug_pagealloc_enabled;
+> -extern void __kernel_map_pages(struct page *page, int numpages, int enab=
+le);
+> =20
+>  static inline bool debug_pagealloc_enabled(void)
 >  {
->  	int error;
->  	struct list_head *pos, *q;
-> -	struct xattr_list *xattr;
->  
->  	evm_init_config();
->  
-> @@ -580,11 +579,8 @@ static int __init init_evm(void)
->  error:
->  	if (error != 0) {
->  		if (!list_empty(&evm_config_xattrnames)) {
-> -			list_for_each_safe(pos, q, &evm_config_xattrnames) {
-> -				xattr = list_entry(pos, struct xattr_list,
-> -						   list);
-> +			list_for_each_safe(pos, q, &evm_config_xattrnames)
->  				list_del(pos);
-> -			}
->  		}
->  	}
-> 
-> 
-> 
-> 
-> .
-> 
+> -	return _debug_pagealloc_enabled;
+> +	return IS_ENABLED(CONFIG_DEBUG_PAGEALLOC) && _debug_pagealloc_enabled;
+>  }
 
+This will break build AFAICT. _debug_pagealloc_enabled variable does
+not exist in !CONFIG_DEBUG_PAGEALLOC case.
+
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--jRHKVT23PllUwdXP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlxATWYACgkQMOfwapXb+vLhEwCfboaaFJileFziF32t0acTiuuz
+dewAn0oneo6RWHmnu+B3dnprdMW4dCOy
+=4kpb
+-----END PGP SIGNATURE-----
+
+--jRHKVT23PllUwdXP--
