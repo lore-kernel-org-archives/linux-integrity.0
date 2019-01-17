@@ -2,121 +2,183 @@ Return-Path: <SRS0=OrKi=PZ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17052C43387
-	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 15:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B922C43387
+	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 17:41:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D101B20851
-	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 15:44:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bubrk7bN"
+	by mail.kernel.org (Postfix) with ESMTP id E362220856
+	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 17:41:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbfAQPoa (ORCPT
+        id S1728747AbfAQRln (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 17 Jan 2019 10:44:30 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:34375 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726821AbfAQPoa (ORCPT
+        Thu, 17 Jan 2019 12:41:43 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46202 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729135AbfAQRln (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 17 Jan 2019 10:44:30 -0500
-Received: by mail-yb1-f194.google.com with SMTP id w186so3174331ybg.1;
-        Thu, 17 Jan 2019 07:44:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MoMGxuClm0gTLNfv693oyborBxqFnhcoW5GmTGaSjC4=;
-        b=bubrk7bN5+PUe8hjt7dlIaca/cUxXs+Mf1pdV4TIB1GzbrJIj4/saosaPt20HVHUli
-         ovMSHTi0S+cWmjG5hF+0Qbh1cF2dEEAJW0eqBqO5oDI1MM/rvcAXXTN3qFDibHkzx7zw
-         qsx9tFtKMeLQEUikmVeXL8AQ1T1qnhJt41jyd2t7IFVCOoVQKgmh5A3PoEQp3AbUgvBG
-         lCVGnxDPay8SnnnHK8MtUjQduCoehEm1NdFSWbrVRQtih6VY39ZMRXJ64W+F2BbAxl5H
-         8ZSnViATx91NyxXfb1TfyIOPkl8b1eag1/+dIwsdt8pSay/6pSnEL2k9GUM23ME5Zhlp
-         Nb/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MoMGxuClm0gTLNfv693oyborBxqFnhcoW5GmTGaSjC4=;
-        b=botFlWT1vMSVRL1GvacuxYXDYUq9INI3lyeUz4ffPlgFszvIGYp1/9Jo8/ZjB1C6li
-         iwnAQ+Ow9LKUCNnWZQTf8A2RfJX2G9Tpiap7X5ZV4hOFivSxQ8f550hLU3z+lNazLj+5
-         Ikpep48CXe7/gTRa6aSedIXjnO2UpNkoHQ8+vZdG85+Aa0Pf9xHXJzegUr6r5EFKhSbO
-         pBWiMU+HXoQQNl0rwFyWS5iPknEh4uY+Ny7W0aW6rB26Y0MXhUrGtoEo/lr6Jvqw64Pk
-         I4xuRHn3kGHgzrCvX5S7JFxWooNIFHQKLz/HHbYpYCjfYfVPl3eK2ejo+4sM66S5cRpH
-         j48Q==
-X-Gm-Message-State: AJcUukdU6yY+aAyXIitEzKABkO15vf5HR090NP0hpg/jr/ZVkFSuZO8w
-        AMre1vncI/mHAq2kj0bEm+KEAHTZPuVrujS86cNusCEQ
-X-Google-Smtp-Source: ALg8bN6x2W2v4KalzHnJujJo+8UP/CojF+RAyIF6tZ9DDoGDm47G0WatnJjfoNqTElSohNOVRCcjAwH9qLtEUKtZ/i0=
-X-Received: by 2002:a25:7b43:: with SMTP id w64mr2501953ybc.397.1547739868942;
- Thu, 17 Jan 2019 07:44:28 -0800 (PST)
-MIME-Version: 1.0
-References: <20190116173945.mmnwsw5bglk6yryj@merlin> <CAOQ4uxgDi38dX0VLfHZ8R_fesN=0rBQB7Cw0ObRqy5fUqFepTQ@mail.gmail.com>
- <20190117150212.t4snb6jynran2dvn@merlin>
-In-Reply-To: <20190117150212.t4snb6jynran2dvn@merlin>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 17 Jan 2019 17:44:17 +0200
-Message-ID: <CAOQ4uxiO491WYPBAf1zZCfL-nzEz0kzPNRBcXr5MrexWNjZb7Q@mail.gmail.com>
-Subject: Re: [PATCH] ovl: IMA Call ima_post_mknod_path() on copy_up'd dentry
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc:     overlayfs <linux-unionfs@vger.kernel.org>, zohar@linux.ibm.com,
-        iforster@suse.de, linux-integrity@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 17 Jan 2019 12:41:43 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0HHY6Cu071639
+        for <linux-integrity@vger.kernel.org>; Thu, 17 Jan 2019 12:41:42 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q2x1v8r1j-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 17 Jan 2019 12:41:42 -0500
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Thu, 17 Jan 2019 17:41:41 -0000
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 17 Jan 2019 17:41:38 -0000
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0HHfbjf8060994
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Jan 2019 17:41:38 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D817A28059;
+        Thu, 17 Jan 2019 17:41:37 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C128428065;
+        Thu, 17 Jan 2019 17:41:37 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 17 Jan 2019 17:41:37 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v2 2/5] tpm: ppi: rename TPM_PPI_REVISION_ID to TPM_PPI_REVISION_ID_1
+Date:   Thu, 17 Jan 2019 12:41:32 -0500
+X-Mailer: git-send-email 2.17.2
+In-Reply-To: <20190117174135.2117937-1-stefanb@linux.ibm.com>
+References: <20190117174135.2117937-1-stefanb@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19011717-0052-0000-0000-0000037A06D1
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010425; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000275; SDB=6.01147865; UDB=6.00597964; IPR=6.00928163;
+ MB=3.00025175; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-17 17:41:40
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011717-0053-0000-0000-00005F80BC89
+Message-Id: <20190117174135.2117937-3-stefanb@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901170125
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 5:02 PM Goldwyn Rodrigues <rgoldwyn@suse.de> wrote:
->
-> On  8:57 17/01, Amir Goldstein wrote:
-> > On Thu, Jan 17, 2019 at 1:22 AM Goldwyn Rodrigues <rgoldwyn@suse.de> wrote:
-> > >
-> > > Since copy_up() happens when you are modifying a file on overlay,
-> > > it is still a new file for the underlying filesystem. Mark it
-> > > in IMA for re-evaluating as a new file.
-> > >
-> > > Putting ima calls within overlayfs may not be the best method, but this is
-> > > the only one which I thought would work.
-> > >
-> >
-> > Doesn't look right.
-> > Overlayfs creates the new inode with vfs_tmpfile() and I think that is
-> > where you should plug the IMA hook.
-> >
-> > > Here is a test case:
-> > > mount /dev/vdb /lower
-> > > mount /dev/vdc /upper
-> > > echo "Original contents" > /lower/existingfile.txt
-> > > mount -t overlay overlay /mnt -o upperdir=/upper/upper,workdir=/upper/workdir,lowerdir=/lower
-> > > echo "New contents" > /mnt/existingfile.txt
-> > >
-> >
-> > I bet you can reproduce that same issue without overlayfs
-> > by creating an O_TMPFILE from userspace.
-> >
-> > The ima_file_check() hook in do_last() does not cover the O_TMPFILE
-> > case.
-> >
->
-> The problem you mention was resolved by https://lkml.org/lkml/2018/12/18/809
-> which I have in my tree.
->
+TPM PPI 1.3 introduces a function revision 2 for some functions. So,
+rename the existing TPM_PPI_REVISION_ID to TPM_PPI_REVISION_ID_1.
 
-The proposed hook ima_post_create_tmpfile() inside do_tmpfile()
-takes a file argument, uses only file_inode() and sets IMA_NEW_FILE.
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+Tested-by: David Safford <david.safford@ge.com>
+---
+ drivers/char/tpm/tpm_ppi.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-Now because that hook does not get called from vfs_tmpfile()
-you want to add more ima hook inside overlayfs code after calling
-vfs_tmpfile().
+diff --git a/drivers/char/tpm/tpm_ppi.c b/drivers/char/tpm/tpm_ppi.c
+index 90b69aeadc99..88ecdae1df03 100644
+--- a/drivers/char/tpm/tpm_ppi.c
++++ b/drivers/char/tpm/tpm_ppi.c
+@@ -20,7 +20,7 @@
+ #include <linux/acpi.h>
+ #include "tpm.h"
+ 
+-#define TPM_PPI_REVISION_ID	1
++#define TPM_PPI_REVISION_ID_1	1
+ #define TPM_PPI_FN_VERSION	1
+ #define TPM_PPI_FN_SUBREQ	2
+ #define TPM_PPI_FN_GETREQ	3
+@@ -61,7 +61,7 @@ static ssize_t tpm_show_ppi_request(struct device *dev,
+ 	struct tpm_chip *chip = to_tpm_chip(dev);
+ 
+ 	obj = tpm_eval_dsm(chip->acpi_dev_handle, TPM_PPI_FN_GETREQ,
+-			   ACPI_TYPE_PACKAGE, NULL, TPM_PPI_REVISION_ID);
++			   ACPI_TYPE_PACKAGE, NULL, TPM_PPI_REVISION_ID_1);
+ 	if (!obj)
+ 		return -ENXIO;
+ 
+@@ -103,7 +103,7 @@ static ssize_t tpm_store_ppi_request(struct device *dev,
+ 	 * version 1.1
+ 	 */
+ 	if (acpi_check_dsm(chip->acpi_dev_handle, &tpm_ppi_guid,
+-			   TPM_PPI_REVISION_ID, 1 << TPM_PPI_FN_SUBREQ2))
++			   TPM_PPI_REVISION_ID_1, 1 << TPM_PPI_FN_SUBREQ2))
+ 		func = TPM_PPI_FN_SUBREQ2;
+ 
+ 	/*
+@@ -125,7 +125,7 @@ static ssize_t tpm_store_ppi_request(struct device *dev,
+ 	}
+ 
+ 	obj = tpm_eval_dsm(chip->acpi_dev_handle, func, ACPI_TYPE_INTEGER,
+-			   &argv4, TPM_PPI_REVISION_ID);
++			   &argv4, TPM_PPI_REVISION_ID_1);
+ 	if (!obj) {
+ 		return -ENXIO;
+ 	} else {
+@@ -169,7 +169,7 @@ static ssize_t tpm_show_ppi_transition_action(struct device *dev,
+ 	if (strcmp(chip->ppi_version, "1.2") < 0)
+ 		obj = &tmp;
+ 	obj = tpm_eval_dsm(chip->acpi_dev_handle, TPM_PPI_FN_GETACT,
+-			   ACPI_TYPE_INTEGER, obj, TPM_PPI_REVISION_ID);
++			   ACPI_TYPE_INTEGER, obj, TPM_PPI_REVISION_ID_1);
+ 	if (!obj) {
+ 		return -ENXIO;
+ 	} else {
+@@ -195,7 +195,7 @@ static ssize_t tpm_show_ppi_response(struct device *dev,
+ 	struct tpm_chip *chip = to_tpm_chip(dev);
+ 
+ 	obj = tpm_eval_dsm(chip->acpi_dev_handle, TPM_PPI_FN_GETRSP,
+-			   ACPI_TYPE_PACKAGE, NULL, TPM_PPI_REVISION_ID);
++			   ACPI_TYPE_PACKAGE, NULL, TPM_PPI_REVISION_ID_1);
+ 	if (!obj)
+ 		return -ENXIO;
+ 
+@@ -263,7 +263,7 @@ static ssize_t show_ppi_operations(acpi_handle dev_handle, char *buf, u32 start,
+ 		"User not required",
+ 	};
+ 
+-	if (!acpi_check_dsm(dev_handle, &tpm_ppi_guid, TPM_PPI_REVISION_ID,
++	if (!acpi_check_dsm(dev_handle, &tpm_ppi_guid, TPM_PPI_REVISION_ID_1,
+ 			    1 << TPM_PPI_FN_GETOPR))
+ 		return -EPERM;
+ 
+@@ -272,7 +272,7 @@ static ssize_t show_ppi_operations(acpi_handle dev_handle, char *buf, u32 start,
+ 		tmp.integer.value = i;
+ 		obj = tpm_eval_dsm(dev_handle, TPM_PPI_FN_GETOPR,
+ 				   ACPI_TYPE_INTEGER, &argv,
+-				   TPM_PPI_REVISION_ID);
++				   TPM_PPI_REVISION_ID_1);
+ 		if (!obj) {
+ 			return -ENOMEM;
+ 		} else {
+@@ -338,12 +338,13 @@ void tpm_add_ppi(struct tpm_chip *chip)
+ 		return;
+ 
+ 	if (!acpi_check_dsm(chip->acpi_dev_handle, &tpm_ppi_guid,
+-			    TPM_PPI_REVISION_ID, 1 << TPM_PPI_FN_VERSION))
++			    TPM_PPI_REVISION_ID_1, 1 << TPM_PPI_FN_VERSION))
+ 		return;
+ 
+ 	/* Cache PPI version string. */
+ 	obj = acpi_evaluate_dsm_typed(chip->acpi_dev_handle, &tpm_ppi_guid,
+-				      TPM_PPI_REVISION_ID, TPM_PPI_FN_VERSION,
++				      TPM_PPI_REVISION_ID_1,
++				      TPM_PPI_FN_VERSION,
+ 				      NULL, ACPI_TYPE_STRING);
+ 	if (obj) {
+ 		strlcpy(chip->ppi_version, obj->string.pointer,
+-- 
+2.13.6
 
-If you move the IMA hook inside vfs_tmpfile() and pass the dentry
-or inode, you will get the same result and you won't need to change
-overlayfs code.
-
-Is there a problem with that proposal?
-
-Thanks,
-Amir.
