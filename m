@@ -2,86 +2,128 @@ Return-Path: <SRS0=OrKi=PZ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A3FBC43387
-	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 07:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E349DC43387
+	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 07:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB22D20855
-	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 07:53:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABCD220856
+	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jan 2019 07:54:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547711668;
+	bh=cLP9keXKzq/STJJ9tRlQcp79axKCXQ+ZALqsEKW8f/s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=SCW8Uvo3l02SlH0stVKwyYLbrfPT7EVUtm/jIrz5XHnyt8DcdsTrlhqqJG9rB5bX+
+	 v7IMRrjubHlq2718LJp3i43xEYwoW//B/+9i07InxG0tvbokZ2DC87sdUs8w4zriCy
+	 lvOmqfv9I9GyebdxrK/5mS64biXbWtlLfV7llHU8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727905AbfAQHxa (ORCPT
+        id S1727953AbfAQHy2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 17 Jan 2019 02:53:30 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32824 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727272AbfAQHxa (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 17 Jan 2019 02:53:30 -0500
-Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 00A8DBB531BF47FB961F;
-        Thu, 17 Jan 2019 07:53:29 +0000 (GMT)
-Received: from [10.204.65.149] (10.204.65.149) by smtpsuk.huawei.com
- (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 17 Jan
- 2019 07:53:24 +0000
-Subject: Re: [PATCH 2/5] tpm: Fix event log types for TPM2
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Matthew Garrett <matthewgarrett@google.com>
-CC:     <linux-integrity@vger.kernel.org>, <peterhuewe@gmx.de>,
-        <jgg@ziepe.ca>, Matthew Garrett <mjg59@google.com>
-References: <20190109014847.39980-1-matthewgarrett@google.com>
- <20190109014847.39980-3-matthewgarrett@google.com>
- <20190116214227.GA25803@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <9f794f5f-e596-6b0d-563e-a6c7f16f9b6a@huawei.com>
-Date:   Thu, 17 Jan 2019 08:53:18 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20190116214227.GA25803@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+        Thu, 17 Jan 2019 02:54:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59278 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727910AbfAQHy2 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 17 Jan 2019 02:54:28 -0500
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50D1420851;
+        Thu, 17 Jan 2019 07:54:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547711667;
+        bh=cLP9keXKzq/STJJ9tRlQcp79axKCXQ+ZALqsEKW8f/s=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=JXwnKx5QBw8EpzdBL49P38f8BWGU3Wf5+pKVZ/yfrILgpobZtHIUuPodUl9Pfjxpu
+         C1Y2/iRtNlPDcSm6flBGNvYOyhVPaPtV3gbcXv7KcJJI4opgn1r3Ty3Y57Vxut/Q4n
+         6eGzscFlphc0FInZg2RxLKwpltZxF6TGXjv2pKVY=
+Date:   Thu, 17 Jan 2019 16:54:22 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Nadav Amit <namit@vmware.com>
+Subject: Re: [PATCH 17/17] module: Prevent module removal racing with
+ text_poke()
+Message-Id: <20190117165422.d33d1af83db8716e24960a3c@kernel.org>
+In-Reply-To: <20190117003259.23141-18-rick.p.edgecombe@intel.com>
+References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
+        <20190117003259.23141-18-rick.p.edgecombe@intel.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.149]
-X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 1/16/2019 10:42 PM, Jarkko Sakkinen wrote:
-> On Tue, Jan 08, 2019 at 05:48:44PM -0800, Matthew Garrett wrote:
->> From: Matthew Garrett <mjg59@google.com>
->>
->> These structs are defined as having variable length members, not fixed
->> size ones. Fix that up and rename them to more accurately describe the
->> only safe way they can be used, and fix the code that relied on having
->> fixed structures.
->>
->> Signed-off-by: Matthew Garrett <mjg59@google.com>
-> 
-> This collides with Roberto's work. How this must be worked out is to
-> first merge Roberto's patches and then this patch set should be aligned
-> with that baseline.
-> 
-> Roberto, are you ready to send soon an updated version? When you do,
-> please cc the patches to Matthew. Matthew, what you should do is to
-> review Roberto's patches and give him feedback so that his changes
-> will work for you. Right now the only "customer" is IMA.
+On Wed, 16 Jan 2019 16:32:59 -0800
+Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
 
-I will check your comment about patch 5/5 and reply.
-
-Roberto
-
-
-> So yeah, this how I would like to prioritize things. I'll hold on for
-> detailed review for your patches up until Roberto's patches have been
-> merged because there is just too much intersection.
+> From: Nadav Amit <namit@vmware.com>
 > 
-> /Jarkko
+> It seems dangerous to allow code modifications to take place
+> concurrently with module unloading. So take the text_mutex while the
+> memory of the module is freed.
+
+At that point, since the module itself is removed from module list,
+it seems no actual harm. Or would you have any concern?
+
+Thank you,
+
 > 
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+>  kernel/module.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/kernel/module.c b/kernel/module.c
+> index 1af5c8e19086..90cfc4988d98 100644
+> --- a/kernel/module.c
+> +++ b/kernel/module.c
+> @@ -64,6 +64,7 @@
+>  #include <linux/bsearch.h>
+>  #include <linux/dynamic_debug.h>
+>  #include <linux/audit.h>
+> +#include <linux/memory.h>
+>  #include <uapi/linux/module.h>
+>  #include "module-internal.h"
+>  
+> @@ -2157,6 +2158,9 @@ static void free_module(struct module *mod)
+>  	synchronize_rcu();
+>  	mutex_unlock(&module_mutex);
+>  
+> +	/* Protect against patching of the module while it is being removed */
+> +	mutex_lock(&text_mutex);
+> +
+>  	/* This may be empty, but that's OK */
+>  	module_arch_freeing_init(mod);
+>  	module_memfree(mod->init_layout.base);
+> @@ -2168,6 +2172,7 @@ static void free_module(struct module *mod)
+>  
+>  	/* Finally, free the core (containing the module structure) */
+>  	module_memfree(mod->core_layout.base);
+> +	mutex_unlock(&text_mutex);
+>  }
+>  
+>  void *__symbol_get(const char *symbol)
+> -- 
+> 2.17.1
+> 
+
 
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+Masami Hiramatsu <mhiramat@kernel.org>
