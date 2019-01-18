@@ -2,79 +2,140 @@ Return-Path: <SRS0=DQCd=P2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59522C43387
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 00:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52866C43387
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 01:08:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2054E20873
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 00:48:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="V6J6R/9t"
+	by mail.kernel.org (Postfix) with ESMTP id 28EE320883
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 01:08:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726081AbfARAsB (ORCPT
+        id S1726147AbfARBI1 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 17 Jan 2019 19:48:01 -0500
-Received: from sonic314-20.consmr.mail.bf2.yahoo.com ([74.6.132.194]:45089
-        "EHLO sonic314-20.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725981AbfARAsB (ORCPT
+        Thu, 17 Jan 2019 20:08:27 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38678 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725934AbfARBI1 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 17 Jan 2019 19:48:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1547772480; bh=1viDzkYj+hoJ0N/kuolSjmJeRO5coObOz8X8njet8ng=; h=To:Cc:From:Subject:Date:From:Subject; b=V6J6R/9tgecqS81MThdVH2OkD6Z1VuoY5+ymHREYOzNtxAkkR71rtZL5n2LtP1qEIKj1wNiGogx3HIN4QuRhifgefB1naWYP+unBZOVweOE7g2cFCmQaKs7ZxnNCyiIZwUy/twXP/+f2TbARSSm3eRVCrz7hVZfQXfsHQVoYF+6sbWKvLUq06kL8f5oU/yKSTlxZq2UnAGKjzjZE7xX8GBd1UPqgE1I0Jhs9mLzaWsYMUeaq/4ww7gXseMA0lv2Fg+hfWEYiMZJfQkeSjNczzLqIdwZklGlTd9b/j/LMyWSqRp8BnbK3PcKRoLY2jkEwxxOGH/EpdtmCQmBQ2/Bv1A==
-X-YMail-OSG: 9HqnDKcVM1mFap.f7b9Ifn0VVh4Cy.WZJlHONbWc9VH7VsuHEESQaxZec86WGHQ
- FLmk.yC.69T0WZokHUZs_wNSxmcCOKDnqF4JRExl9lbB48gm9ybu4wUMiBDO8.I4fu7T8Puk3TvJ
- xw6QZ_312Rm5Ls3jGW2sGmBp0bbyJw71nZ.aQNJbMGf7F_beBguk6yaS_4kcZ2D9CEuzNNzlJfxH
- Pu1jtftv2jW9G76j1ggA92ew23Q4m6KJIMAhzD_NQIELVnOr2psuCf4fTpoPUhH4tuDQmmgUAM7n
- XqyX2BpKq0WEJZv1thgB6ZRXiOvOQtZq84bvfmmjj7gEBS3ERS3gwKjzLdaZ4cYOyxxkUjNrInC2
- wMDOun2QEjY3o_ZQfUANUzwJOWUjP5buAf054l.sTm6Fbi6yu9XcNu9gqmKmq0seWe1E_gD1qbBK
- IvkDZy7tbWLNpBMQh6aRUKL3jdDweyQiNtxWcg2mpvjHgUbHLwYnYCPgYaK89WLYpiAM4IoGfF4I
- zq_9suj_p0U1LCjP_w2rnkURElMAZE4Q8AVnaF7CqnqjsyF4UytF_ri5ye7M2JYyoZVe3AEJAOpd
- 0I10tfW.SBaEhgJN_dJQexy68diJyp34dqV9GoG2.QstafwznSQ_ZJUQDATnsTc3PPjP5DTdLuPr
- GBdIVO.JmvhKmfDgLmRYOjildoqqnbcg2y_T2oXSrcVRfybrgPl_iC4nY9v3CNXsLBC55JTuHI1N
- _xIZUL.PfcGsv62xAuzaStAgKKA_1169B5xH20bA4Brm5PmcrVrcnTklCYTePDfQpwFOS9pBq2RN
- BuZQaGqj0eXrumcXJwKQSZ3Beaee6jQqqvzyhlZBa2iYAfkEaSByC2jKbGXshUFcEeCI3fK0XtTP
- pBv0OendiO.oyV4wQFn2kHqenf57XBZR3zcLczCUMOSKoTCwOvLUekkqjEqK0bc1P4ywCq85iOIN
- HITw4kL7wLieuHIXeYX5Xxw5gtNonjnYgav1htPcfMgAS8PEALQLW3.Zz6AyGbCm50WJgZtt7jrs
- iAYItj9dw98BNDXtAkMMI5sS.pVWO_ZKAM76lLTMRX9QO8TZof66YSbNwv9aAwFYI41xm.tc49th
- j6aNaaNjJyZyF0g9Stew-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.bf2.yahoo.com with HTTP; Fri, 18 Jan 2019 00:48:00 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.100]) ([67.169.65.224])
-          by smtp418.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 8f070f91114a6a50abd65d6bde1c0dcd;
-          Fri, 18 Jan 2019 00:47:58 +0000 (UTC)
-To:     linux-integrity <linux-integrity@vger.kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Cc:     LSM <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Subject: evm_inode_init_security and module stacking
-Message-ID: <f1a86814-716a-d02d-42ce-8ef64d680feb@schaufler-ca.com>
-Date:   Thu, 17 Jan 2019 16:47:57 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Thu, 17 Jan 2019 20:08:27 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0I17Hwg128739
+        for <linux-integrity@vger.kernel.org>; Thu, 17 Jan 2019 20:08:26 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2q34029psj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 17 Jan 2019 20:08:25 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 18 Jan 2019 01:08:23 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 18 Jan 2019 01:08:18 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0I18HQb2621796
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 18 Jan 2019 01:08:17 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 22D23A405E;
+        Fri, 18 Jan 2019 01:08:17 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2C8FAA4040;
+        Fri, 18 Jan 2019 01:08:15 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.91.118])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 18 Jan 2019 01:08:15 +0000 (GMT)
+Subject: Re: [PATCH v3 0/2] let kexec_file_load use platform keyring to
+ verify the kernel image
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org,
+        Dave Young <dyoung@redhat.com>
+Cc:     dhowells@redhat.com, dwmw2@infradead.org,
+        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
+        ebiggers@google.com, nayna@linux.ibm.com, dyoung@redhat.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org
+Date:   Thu, 17 Jan 2019 20:08:04 -0500
+In-Reply-To: <20190116101654.7288-1-kasong@redhat.com>
+References: <20190116101654.7288-1-kasong@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19011801-4275-0000-0000-00000300B4F5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011801-4276-0000-0000-0000380EDB78
+Message-Id: <1547773684.4026.10.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-18_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901180007
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-security_inode_init_security() currently calls at most one
-of selinux_inode_init_security() and smack_inode_init_security().
-It then sends the result to evm_inode_init_security to create
-the security.evm attribute. This isn't going to work on a system
-that has both SELinux and Smack.
+On Wed, 2019-01-16 at 18:16 +0800, Kairui Song wrote:
+> This patch series adds a .platform_trusted_keys in system_keyring as the
+> reference to .platform keyring in integrity subsystem, when platform
+> keyring is being initialized it will be updated. So other component could
+> use this keyring as well.
 
-I see two options:
-	- create security.evm with the information from all
-	  security modules that provide inode_init_security hooks
-	- create a separate attribute for each module,
-	  security.evm-selinux and security.evm-smack in the
-	  current case.
+Remove "other component could use ...".
+> 
+> This patch series also let kexec_file_load use platform keyring as fall
+> back if it failed to verify the image against secondary keyring, make it
+> possible to load kernel signed by third part key if third party key is
+> imported in the firmware.
 
-How would you like to have it work? I am agnostic, although the
-separate attributes would be easier for the infrastructure.
+This is the only reason for these patches.  Please remove "also".
+
+> 
+> After this patch kexec_file_load will be able to verify a signed PE
+> bzImage using keys in platform keyring.
+> 
+> Tested in a VM with locally signed kernel with pesign and imported the
+> cert to EFI's MokList variable.
+
+It's taken so long for me to review/test this patch set due to a
+regression in sanity_check_segment_list(), introduced somewhere
+between 4.20 and 5.0.0-rc1.  The sgement overlap test - "if ((mend >
+pstart) && (mstart < pend))" - fails, returning a -EINVAL.
+
+Is anyone else seeing this?
+
+Mimi
+
+
+> 
+> Kairui Song (2):
+>   integrity, KEYS: add a reference to platform keyring
+>   kexec, KEYS: Make use of platform keyring for signature verify
+> 
+> Update from V2:
+>   - Use IS_ENABLED in kexec_file_load to judge if platform_trusted_keys
+>     should be used for verifying image as suggested by Mimi Zohar
+> 
+> Update from V1:
+>   - Make platform_trusted_keys static, and update commit message as suggested
+>     by Mimi Zohar
+>   - Always check if platform keyring is initialized before use it
+> 
+> Kairui Song (2):
+>   integrity, KEYS: add a reference to platform keyring
+>   kexec, KEYS: Make use of platform keyring for signature verify
+> 
+>  arch/x86/kernel/kexec-bzimage64.c | 13 ++++++++++---
+>  certs/system_keyring.c            | 22 +++++++++++++++++++++-
+>  include/keys/system_keyring.h     |  5 +++++
+>  include/linux/verification.h      |  1 +
+>  security/integrity/digsig.c       |  6 ++++++
+>  5 files changed, 43 insertions(+), 4 deletions(-)
+> 
 
