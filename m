@@ -3,48 +3,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BD3AC43387
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 15:15:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A70C43387
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 15:18:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEAC52086D
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 15:15:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CA462086D
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 15:18:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727580AbfARPPs (ORCPT
+        id S1727448AbfARPSe (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 18 Jan 2019 10:15:48 -0500
-Received: from mga17.intel.com ([192.55.52.151]:37484 "EHLO mga17.intel.com"
+        Fri, 18 Jan 2019 10:18:34 -0500
+Received: from mga18.intel.com ([134.134.136.126]:3620 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727460AbfARPPs (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 18 Jan 2019 10:15:48 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1727524AbfARPSe (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 18 Jan 2019 10:18:34 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2019 07:15:47 -0800
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2019 07:18:33 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,491,1539673200"; 
-   d="scan'208";a="139411596"
+   d="scan'208";a="139412029"
 Received: from unknown (HELO localhost) ([10.249.254.249])
-  by fmsmga001.fm.intel.com with ESMTP; 18 Jan 2019 07:15:44 -0800
-Date:   Fri, 18 Jan 2019 17:15:41 +0200
+  by fmsmga001.fm.intel.com with ESMTP; 18 Jan 2019 07:18:30 -0800
+Date:   Fri, 18 Jan 2019 17:18:27 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     Matthew Garrett <matthewgarrett@google.com>,
-        linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-        Matthew Garrett <mjg59@google.com>
-Subject: Re: [PATCH 2/5] tpm: Fix event log types for TPM2
-Message-ID: <20190118151541.GJ4080@linux.intel.com>
-References: <20190109014847.39980-1-matthewgarrett@google.com>
- <20190109014847.39980-3-matthewgarrett@google.com>
- <20190116214227.GA25803@linux.intel.com>
- <9f794f5f-e596-6b0d-563e-a6c7f16f9b6a@huawei.com>
+To:     Jia Zhang <zhang.jia@linux.alibaba.com>
+Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, tweek@google.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] tpm/eventlog/tpm1: Simplify walking over *pos
+ measurements
+Message-ID: <20190118151827.GK4080@linux.intel.com>
+References: <1547197173-52826-1-git-send-email-zhang.jia@linux.alibaba.com>
+ <1547197173-52826-2-git-send-email-zhang.jia@linux.alibaba.com>
+ <20190116220952.GH25803@linux.intel.com>
+ <8709dd61-2422-1c20-9937-d6003fa0354e@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <9f794f5f-e596-6b0d-563e-a6c7f16f9b6a@huawei.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8709dd61-2422-1c20-9937-d6003fa0354e@linux.alibaba.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
@@ -52,29 +52,106 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 08:53:18AM +0100, Roberto Sassu wrote:
-> On 1/16/2019 10:42 PM, Jarkko Sakkinen wrote:
-> > On Tue, Jan 08, 2019 at 05:48:44PM -0800, Matthew Garrett wrote:
-> > > From: Matthew Garrett <mjg59@google.com>
-> > > 
-> > > These structs are defined as having variable length members, not fixed
-> > > size ones. Fix that up and rename them to more accurately describe the
-> > > only safe way they can be used, and fix the code that relied on having
-> > > fixed structures.
-> > > 
-> > > Signed-off-by: Matthew Garrett <mjg59@google.com>
-> > 
-> > This collides with Roberto's work. How this must be worked out is to
-> > first merge Roberto's patches and then this patch set should be aligned
-> > with that baseline.
-> > 
-> > Roberto, are you ready to send soon an updated version? When you do,
-> > please cc the patches to Matthew. Matthew, what you should do is to
-> > review Roberto's patches and give him feedback so that his changes
-> > will work for you. Right now the only "customer" is IMA.
+On Thu, Jan 17, 2019 at 09:32:55AM +0800, Jia Zhang wrote:
 > 
-> I will check your comment about patch 5/5 and reply.
+> 
+> On 2019/1/17 上午6:09, Jarkko Sakkinen wrote:
+> > Please use "tpm:" tag for commits, not "tpm/eventlog/tpm1".
+> > 
+> > On Fri, Jan 11, 2019 at 04:59:32PM +0800, Jia Zhang wrote:
+> >> The responsibility of tpm1_bios_measurements_start() is to walk
+> >> over the first *pos measurements, ensuring the skipped and
+> >> to-be-read measurements are not out-of-boundary.
+> >>
+> >> Current logic is complicated a bit. Just employ a do-while loop
+> >> with necessary sanity check, and then get the goal.
+> >>
+> >> Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
+> > 
+> > What does this fix? Even if the current logic is "complicated", it is
+> > still a pretty simple functiion.
+> 
+> 
+> OK. Let me point out the fix part. Here is the original implementation:
+> 
+>  87         /* read over *pos measurements */
+>  88         for (i = 0; i < *pos; i++) {
+>  89                 event = addr;
+>  90
+>  91                 converted_event_size =
+>  92                     do_endian_conversion(event->event_size);
+>  93                 converted_event_type =
+>  94                     do_endian_conversion(event->event_type);
+>  95
+>  96                 if ((addr + sizeof(struct tcpa_event)) < limit) {
+>  97                         if ((converted_event_type == 0) &&
+>  98                             (converted_event_size == 0))
+>  99                                 return NULL;
+> 100                         addr += (sizeof(struct tcpa_event) +
+> 101                                  converted_event_size);
+> 102                 }
+> 103         }
+> 
+> The problem (just ignore all off-by-1 issues) is that accessing to
+> event_size and event_type is not pre-checked carefully. In the latter
+> part of tpm1_bios_measurements_start() and
+> tpm1_bios_measurements_next(), there is a fixed patter to do the sanity
+> check like this:
+> 
+> 136         /* now check if current entry is valid */
+> 137         if ((v + sizeof(struct tcpa_event)) >= limit)
+> 138                 return NULL;
+> 
+> So if we simply change this read-over chunk with sanity check like this:
+> 
+>         /* read over *pos measurements */
+>         for (i = 0; i < *pos; i++) {
+>                 event = addr;
+> 
+>                 if ((addr + sizeof(struct tcpa_event)) >= limit)
+>                         return NULL;
+> 
+>                 converted_event_size =
+>                     do_endian_conversion(event->event_size);
+>                 converted_event_type =
+>                     do_endian_conversion(event->event_type);
+> 
+>                 if ((converted_event_type == 0) &&
+>                     (converted_event_size == 0))
+>                         return NULL;
+>                 addr += (sizeof(struct tcpa_event) +
+>                          converted_event_size);
+>         }
+> 
+> We will get two highly similar code chunks in
+> tpm1_bios_measurements_start(). Here is the latter part:
+> 
+> 106         /* now check if current entry is valid */
+> 107         if ((addr + sizeof(struct tcpa_event)) >= limit)
+> 108                 return NULL;
+> 109
+> 110         event = addr;
+> 111
+> 112         converted_event_size = do_endian_conversion(event->event_size);
+> 113         converted_event_type = do_endian_conversion(event->event_type);
+> 114
+> 115         if (((converted_event_type == 0) && (converted_event_size == 0))
+> 116             || ((addr + sizeof(struct tcpa_event) +
+> converted_event_size)
+> 117                 >= limit))
+> 118                 return NULL;
+> 119
+> 120         return addr;
+> 
+> So using a do while logic can simply merge them together and thus simply
+> and optimize the logic of walking over *pos measurements.
+> 
+> Sorry I admit my initial motivation is to fix up the sanity check
+> problem. If you would like to accept the optimization part, I will split
+> this patch.
 
-Great, thank you. And CC everything to Matthew.
+OK, got it now. I think I will apply this! Will take a while because
+of https://lkml.org/lkml/2019/1/18/485. Will not apply new patches
+before that is rooted.
 
 /Jarkko
