@@ -2,105 +2,64 @@ Return-Path: <SRS0=DQCd=P2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 639CDC43387
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 13:42:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF0A6C43387
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 14:26:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A4522086D
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 13:42:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 865CD20883
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 14:26:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbfARNmu (ORCPT
+        id S1727330AbfARO0F (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 18 Jan 2019 08:42:50 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:35298 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727020AbfARNmu (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 18 Jan 2019 08:42:50 -0500
-Received: by mail-io1-f67.google.com with SMTP id f4so10739329ion.2
-        for <linux-integrity@vger.kernel.org>; Fri, 18 Jan 2019 05:42:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=r1wVl6QPDlhM/57aEphiYxQWDYjyZOJOK+G0Wz63l3M=;
-        b=R8UGl2HS76Q7zgKGW6JRSqk2g3DBUMiF4jyn6YEvIrpEcAErpOt7aY/7mpJYNcnSmo
-         h/zAzFF0y/xt5Bed9SnalkW9J9vMTkPAifTaSeDnrCQ1L5aSMlgbAaI1Sua26crCJmeP
-         H0bmE49q3E1CHrezSUR3TZkqqwgRkVLpUd1/CRRK9HZdNdhal1kq/0lNRw+WTJqZqqDX
-         6pI4lF2pp1EicnpAr2MRkgDv6zE4wSh5l8jKqT5KVDf9i73ljXfI8YXbaQ+HDEJ1F0Oo
-         Zo7/ssOhMGOtMIBZYdbC4OE+VxgS8YEJU3fI0kIeB8XrqjZ4FxCW/yzQSkEgtA2BX6nE
-         XnNw==
-X-Gm-Message-State: AJcUukenikO4tFN73lpwvynAWOd1kfttxVEhkPufj+nmPCsorn61cKtJ
-        1BBeB1NggoXxDu5FjLoIlYUFjv96N8xxpFrmtB8MXg==
-X-Google-Smtp-Source: ALg8bN4NrWwqu+DDOiw4rnkBuJRXLm8zCZC1/SSir5wdWH7W7vkWFFFB4vPYtCUfTVk1eVaNNtHFnLEbgZw6oAl/v3Q=
-X-Received: by 2002:a6b:b502:: with SMTP id e2mr9475079iof.43.1547818969774;
- Fri, 18 Jan 2019 05:42:49 -0800 (PST)
+        Fri, 18 Jan 2019 09:26:05 -0500
+Received: from mga18.intel.com ([134.134.136.126]:64202 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727285AbfARO0F (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 18 Jan 2019 09:26:05 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2019 06:26:04 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,491,1539673200"; 
+   d="scan'208";a="311539442"
+Received: from unknown (HELO localhost) ([10.249.254.249])
+  by fmsmga006.fm.intel.com with ESMTP; 18 Jan 2019 06:26:02 -0800
+Date:   Fri, 18 Jan 2019 16:25:59 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: Getting weird TPM error after rebasing my tree to
+ security/next-general
+Message-ID: <20190118142559.GA4080@linux.intel.com>
 MIME-Version: 1.0
-References: <20190118091733.29940-1-kasong@redhat.com> <1547812432.3982.55.camel@linux.ibm.com>
- <20190118123437.GA30929@dhcp-128-65.nay.redhat.com> <20190118123745.GA31072@dhcp-128-65.nay.redhat.com>
-In-Reply-To: <20190118123745.GA31072@dhcp-128-65.nay.redhat.com>
-From:   Kairui Song <kasong@redhat.com>
-Date:   Fri, 18 Jan 2019 21:42:38 +0800
-Message-ID: <CACPcB9fiVUCfSBe05FOkKuMbzYnMjjKj50L3ydotSFSp5iL+kg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/2] let kexec_file_load use platform keyring to verify
- the kernel image
-To:     Dave Young <dyoung@redhat.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
-        jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
-        Eric Biggers <ebiggers@google.com>, nayna@linux.ibm.com,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        kexec@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 8:37 PM Dave Young <dyoung@redhat.com> wrote:
->
-> On 01/18/19 at 08:34pm, Dave Young wrote:
-> > On 01/18/19 at 06:53am, Mimi Zohar wrote:
-> > > On Fri, 2019-01-18 at 17:17 +0800, Kairui Song wrote:
-> > > > This patch series adds a .platform_trusted_keys in system_keyring as the
-> > > > reference to .platform keyring in integrity subsystem, when platform
-> > > > keyring is being initialized it will be updated. So other component could
-> > > > use this keyring as well.
-> > >
-> > > Kairui, when people review patches, the comments could be specific,
-> > > but are normally generic.  My review included a couple of generic
-> > > suggestions - not to use "#ifdef" in C code (eg. is_enabled), use the
-> > > term "preboot" keys, and remove any references to "other components".
-> > >
-> > > After all the wording suggestions I've made, you are still saying, "So
-> > > other components could use this keyring as well".  Really?!  How the
-> > > platform keyring will be used in the future, is up to you and others
-> > > to convince Linus.  At least for now, please limit its usage to
-> > > verifying the PE signed kernel image.  If this patch set needs to be
-> > > reposted, please remove all references to "other components".
-> > >
-> > > Dave/David, are you ok with Kairui's usage of "#ifdef's"?  Dave, you
-> > > Acked the original post.  Can I include it?  Can we get some
-> > > additional Ack's on these patches?
-> >
-> > It is better to update patch to use IS_ENABLED in patch 1/2 as well.
->
-> Hmm, not only for patch 1/2, patch 2/2 also need an update
->
-> > Other than that, for kexec part I'm fine with an ack.
-> >
-> > Thanks
-> > Dave
+I get this on a Geminilake NUC after rebasing my maintainer trees:
 
-Thanks for the review again, will update the patch using IS_ENABLED
-along with update the cover letter shortly.
+tpm tpm0: A TPM error (-1) occurred attempting the self test
 
--- 
-Best Regards,
-Kairui Song
+I checked the latest commit ID from drivers/char/tpm to make sure
+that I did not put anything broken to my last PR [1]. It works
+without issues.
+
+In addition [2] gives me an empty diff.
+
+Something outside of the TPM driver must have happened that breaks
+the driver. Any ideas?
+
+[1] commit 9488585b21bef0df1217e510c7134905d1d376a7
+[2] git diff 9488585b21bef0df1217e510c7134905d1d376a7 master drivers/char/tpm/
+
+/Jarkko
