@@ -2,123 +2,176 @@ Return-Path: <SRS0=DQCd=P2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EBC9C43387
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 14:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55665C43387
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 14:36:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35EFD2086D
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 14:29:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3113520855
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 14:36:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727527AbfARO3A (ORCPT
+        id S1727478AbfAROgH (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:29:00 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:40499 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727481AbfARO27 (ORCPT
+        Fri, 18 Jan 2019 09:36:07 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60118 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727342AbfAROgH (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 18 Jan 2019 09:28:59 -0500
-Received: by mail-it1-f196.google.com with SMTP id h193so5984607ita.5
-        for <linux-integrity@vger.kernel.org>; Fri, 18 Jan 2019 06:28:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MvFgysJBzGiczWPWcdKT/RXNvz0YrddNRHBzAmB0qEQ=;
-        b=ZEIISAokSW0grXF+1gcXUhINucek80xaV2pZiO/ACYSPrg8RIe8nYeJP6T6NBDAB10
-         5PcZdmOhdPoVMKpHQ/ETawDdrhqlBEP5g8+x20Nzh0k+bClKQddP1ihn2cVOeKu/vTc3
-         G10fP3uhj7DZptkuo6j911fS79tQizOpEmyny2tZ1IuiciqYGO46fcdc6pehOz7CV0su
-         /fSxSQTJvBLIxLB2KoAyUqS+dx4l6CisI0nkTEWjgWc1MOaUNetO6c1+KCcnJfRnZuD8
-         DUsQbtQmTA25SMXuXe5dIpQqiMKujg1vWWLBPAzNxR865ogV/ObCaN3F0K+Vzm7olKDL
-         SzKQ==
-X-Gm-Message-State: AJcUukcwkxR9gx1l3ZIoWte9BHTkc0gweikO0I3Wu1rhfH/6aEklr550
-        YKcjNPsasRNh22y0lcqpRCfJqDiz6jk9ghN8WWgTzQ==
-X-Google-Smtp-Source: ALg8bN7GIZBu+a+3AmqDZlySVbiFu9opRwVMYcWnX5qCdNl4HBvpTkIAJbWtG/4TRxPExTeW2TNwkd+YcJzDJ0K8ZVA=
-X-Received: by 2002:a02:45ca:: with SMTP id o71mr11157454jad.127.1547821738643;
- Fri, 18 Jan 2019 06:28:58 -0800 (PST)
+        Fri, 18 Jan 2019 09:36:07 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0IEa0YQ062029
+        for <linux-integrity@vger.kernel.org>; Fri, 18 Jan 2019 09:36:06 -0500
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q3fn23068-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 18 Jan 2019 09:36:04 -0500
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
+        Fri, 18 Jan 2019 14:35:36 -0000
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 18 Jan 2019 14:35:30 -0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0IEZTYZ22937790
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 18 Jan 2019 14:35:29 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5A485AE05F;
+        Fri, 18 Jan 2019 14:35:29 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C6428AE063;
+        Fri, 18 Jan 2019 14:35:27 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.85.136.27])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 18 Jan 2019 14:35:27 +0000 (GMT)
+Subject: Re: [PATCH v4 1/2] integrity, KEYS: add a reference to platform
+ keyring
+To:     Kairui Song <kasong@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        dwmw2@infradead.org, jwboyer@fedoraproject.org,
+        keyrings@vger.kernel.org, jmorris@namei.org, serge@hallyn.com,
+        zohar@linux.ibm.com, bauerman@linux.ibm.com, ebiggers@google.com,
+        nayna@linux.ibm.com, dyoung@redhat.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org
+References: <20190118091733.29940-1-kasong@redhat.com>
+ <20190118091733.29940-2-kasong@redhat.com>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+Date:   Fri, 18 Jan 2019 09:35:27 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20190118091733.29940-1-kasong@redhat.com> <1547812432.3982.55.camel@linux.ibm.com>
- <20190118123437.GA30929@dhcp-128-65.nay.redhat.com> <20190118123745.GA31072@dhcp-128-65.nay.redhat.com>
- <CACPcB9fiVUCfSBe05FOkKuMbzYnMjjKj50L3ydotSFSp5iL+kg@mail.gmail.com>
-In-Reply-To: <CACPcB9fiVUCfSBe05FOkKuMbzYnMjjKj50L3ydotSFSp5iL+kg@mail.gmail.com>
-From:   Kairui Song <kasong@redhat.com>
-Date:   Fri, 18 Jan 2019 22:28:47 +0800
-Message-ID: <CACPcB9egBRmP82-NKCRFyJ6b8=CNkn9fuCjCFw0m-VU_vk3z8A@mail.gmail.com>
-Subject: Re: [PATCH v4 0/2] let kexec_file_load use platform keyring to verify
- the kernel image
-To:     Dave Young <dyoung@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
-        jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
-        Eric Biggers <ebiggers@google.com>, nayna@linux.ibm.com,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        kexec@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190118091733.29940-2-kasong@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 19011814-0060-0000-0000-000002FBD6E9
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010430; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000275; SDB=6.01148278; UDB=6.00598214; IPR=6.00928581;
+ MB=3.00025187; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-18 14:35:34
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011814-0061-0000-0000-000047F882F3
+Message-Id: <3c7fa625-e77c-d6b4-35a4-8f8e9af60864@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-18_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901180105
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 9:42 PM Kairui Song <kasong@redhat.com> wrote:
->
-> On Fri, Jan 18, 2019 at 8:37 PM Dave Young <dyoung@redhat.com> wrote:
-> >
-> > On 01/18/19 at 08:34pm, Dave Young wrote:
-> > > On 01/18/19 at 06:53am, Mimi Zohar wrote:
-> > > > On Fri, 2019-01-18 at 17:17 +0800, Kairui Song wrote:
-> > > > > This patch series adds a .platform_trusted_keys in system_keyring as the
-> > > > > reference to .platform keyring in integrity subsystem, when platform
-> > > > > keyring is being initialized it will be updated. So other component could
-> > > > > use this keyring as well.
-> > > >
-> > > > Kairui, when people review patches, the comments could be specific,
-> > > > but are normally generic.  My review included a couple of generic
-> > > > suggestions - not to use "#ifdef" in C code (eg. is_enabled), use the
-> > > > term "preboot" keys, and remove any references to "other components".
-> > > >
-> > > > After all the wording suggestions I've made, you are still saying, "So
-> > > > other components could use this keyring as well".  Really?!  How the
-> > > > platform keyring will be used in the future, is up to you and others
-> > > > to convince Linus.  At least for now, please limit its usage to
-> > > > verifying the PE signed kernel image.  If this patch set needs to be
-> > > > reposted, please remove all references to "other components".
-> > > >
-> > > > Dave/David, are you ok with Kairui's usage of "#ifdef's"?  Dave, you
-> > > > Acked the original post.  Can I include it?  Can we get some
-> > > > additional Ack's on these patches?
-> > >
-> > > It is better to update patch to use IS_ENABLED in patch 1/2 as well.
-> >
-> > Hmm, not only for patch 1/2, patch 2/2 also need an update
-> >
-> > > Other than that, for kexec part I'm fine with an ack.
-> > >
-> > > Thanks
-> > > Dave
->
-> Thanks for the review again, will update the patch using IS_ENABLED
-> along with update the cover letter shortly.
->
-> --
-> Best Regards,
-> Kairui Song
 
-Hi, before I update it again, most part of the new
-platform_trusted_keyring related code is following how
-secondary_trusted_keyring is implemented (surrounded by ifdefs). I
-thought this could reduce unused code when the keyring is not enabled.
-Else, all ifdef could be simply removed, when platform_keyring is not
-enabled, the platform_trusted_keys will always be NULL, and
-verify_pkcs7_signature will simply return NOKEY if anyone try to use
-platform keyring.
 
-Any suggestions? Or I can just remove the ifdef in
-security/integrity/digsig.c and make set_platform_trusted_keys a
-inline empty function in system_keyring.h.
+On 01/18/2019 04:17 AM, Kairui Song wrote:
+> commit 9dc92c45177a ('integrity: Define a trusted platform keyring')
+> introduced a .platform keyring for storing preboot keys, used for
+> verifying kernel images' signature. Currently only IMA-appraisal is able
+> to use the keyring to verify kernel images that have their signature
+> stored in xattr.
+>
+> This patch exposes the .platform keyring, making it accessible for
+> verifying PE signed kernel images as well.
+>
+> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+> Signed-off-by: Kairui Song <kasong@redhat.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Tested-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>   certs/system_keyring.c        | 9 +++++++++
+>   include/keys/system_keyring.h | 5 +++++
+>   security/integrity/digsig.c   | 6 ++++++
+>   3 files changed, 20 insertions(+)
+>
+> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+> index 81728717523d..4690ef9cda8a 100644
+> --- a/certs/system_keyring.c
+> +++ b/certs/system_keyring.c
+> @@ -24,6 +24,9 @@ static struct key *builtin_trusted_keys;
+>   #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+>   static struct key *secondary_trusted_keys;
+>   #endif
+> +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> +static struct key *platform_trusted_keys;
+> +#endif
+>   
+>   extern __initconst const u8 system_certificate_list[];
+>   extern __initconst const unsigned long system_certificate_list_size;
+> @@ -265,4 +268,10 @@ int verify_pkcs7_signature(const void *data, size_t len,
+>   }
+>   EXPORT_SYMBOL_GPL(verify_pkcs7_signature);
+>   
+> +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> +void __init set_platform_trusted_keys(struct key *keyring) {
+> +	platform_trusted_keys = keyring;
+> +}
+> +#endif
+> +
+>   #endif /* CONFIG_SYSTEM_DATA_VERIFICATION */
+> diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.h
+> index 359c2f936004..9e1b7849b6aa 100644
+> --- a/include/keys/system_keyring.h
+> +++ b/include/keys/system_keyring.h
+> @@ -61,5 +61,10 @@ static inline struct key *get_ima_blacklist_keyring(void)
+>   }
+>   #endif /* CONFIG_IMA_BLACKLIST_KEYRING */
+>   
+> +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> +
+> +extern void __init set_platform_trusted_keys(struct key* keyring);
+> +
+> +#endif /* CONFIG_INTEGRITY_PLATFORM_KEYRING */
+>   
+>   #endif /* _KEYS_SYSTEM_KEYRING_H */
+> diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+> index f45d6edecf99..bfabc2a8111d 100644
+> --- a/security/integrity/digsig.c
+> +++ b/security/integrity/digsig.c
+> @@ -89,6 +89,12 @@ static int __integrity_init_keyring(const unsigned int id, key_perm_t perm,
+>   		keyring[id] = NULL;
+>   	}
+>   
+> +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> +	if (id == INTEGRITY_KEYRING_PLATFORM) {
 
--- 
-Best Regards,
-Kairui Song
+Shouldn't it also check that keyring[id] is not NULL ?
+
+Thanks & Regards,
+     - Nayna
+
+> +		set_platform_trusted_keys(keyring[id]);
+> +	}
+> +#endif
+> +
+>   	return err;
+>   }
+>   
+
