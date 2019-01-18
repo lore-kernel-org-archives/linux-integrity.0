@@ -2,134 +2,105 @@ Return-Path: <SRS0=DQCd=P2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79374C43387
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 13:32:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 639CDC43387
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 13:42:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 481D020883
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 13:32:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547818376;
-	bh=tpgEN9hei0cSu0QMQUqt+S7kCVpdIeY4bfLSCWtjoow=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=zfDmgavYkgCAFqMWTZOSrtQp5Z+EexNss8D+p6+oOkFt9kplE8CcTa5hT3s3uFNg5
-	 T1ye5qUabtz8oxMN9gURDgWj6Pya/jNEQkqSC1IQqqUM5/06whSO7sVOutXPwTIpuv
-	 ypqPg5/DXr9TXke50iuKoIivRyiMIfY4WEFm0aNA=
+	by mail.kernel.org (Postfix) with ESMTP id 3A4522086D
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 13:42:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726567AbfARNc4 (ORCPT
+        id S1727562AbfARNmu (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 18 Jan 2019 08:32:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52730 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726593AbfARNcz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 18 Jan 2019 08:32:55 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59DCD2087E;
-        Fri, 18 Jan 2019 13:32:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547818374;
-        bh=tpgEN9hei0cSu0QMQUqt+S7kCVpdIeY4bfLSCWtjoow=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fBVvlOZZ5mQwo37cY+fAmLunV89dmC5wJtpM+DIDjGgbZH9utKqAyiRKjZ5z2Fmv4
-         lrG7ZyTvrWVl02rdpJKgVpJahDqkSyn78MvC3Ro6P1HSYpL2gZ0C83mA6zyTWhO4DA
-         bbuj6objZP4Rb/Rgyu2ZeGlJtSkaY6ZUCMItmw4U=
-Date:   Fri, 18 Jan 2019 22:32:49 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Nadav Amit <nadav.amit@gmail.com>
-Cc:     "H. Peter Anvin" <hpa@zytor.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Damian Tometzki <linux_dti@icloud.com>,
+        Fri, 18 Jan 2019 08:42:50 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:35298 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727020AbfARNmu (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 18 Jan 2019 08:42:50 -0500
+Received: by mail-io1-f67.google.com with SMTP id f4so10739329ion.2
+        for <linux-integrity@vger.kernel.org>; Fri, 18 Jan 2019 05:42:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=r1wVl6QPDlhM/57aEphiYxQWDYjyZOJOK+G0Wz63l3M=;
+        b=R8UGl2HS76Q7zgKGW6JRSqk2g3DBUMiF4jyn6YEvIrpEcAErpOt7aY/7mpJYNcnSmo
+         h/zAzFF0y/xt5Bed9SnalkW9J9vMTkPAifTaSeDnrCQ1L5aSMlgbAaI1Sua26crCJmeP
+         H0bmE49q3E1CHrezSUR3TZkqqwgRkVLpUd1/CRRK9HZdNdhal1kq/0lNRw+WTJqZqqDX
+         6pI4lF2pp1EicnpAr2MRkgDv6zE4wSh5l8jKqT5KVDf9i73ljXfI8YXbaQ+HDEJ1F0Oo
+         Zo7/ssOhMGOtMIBZYdbC4OE+VxgS8YEJU3fI0kIeB8XrqjZ4FxCW/yzQSkEgtA2BX6nE
+         XnNw==
+X-Gm-Message-State: AJcUukenikO4tFN73lpwvynAWOd1kfttxVEhkPufj+nmPCsorn61cKtJ
+        1BBeB1NggoXxDu5FjLoIlYUFjv96N8xxpFrmtB8MXg==
+X-Google-Smtp-Source: ALg8bN4NrWwqu+DDOiw4rnkBuJRXLm8zCZC1/SSir5wdWH7W7vkWFFFB4vPYtCUfTVk1eVaNNtHFnLEbgZw6oAl/v3Q=
+X-Received: by 2002:a6b:b502:: with SMTP id e2mr9475079iof.43.1547818969774;
+ Fri, 18 Jan 2019 05:42:49 -0800 (PST)
+MIME-Version: 1.0
+References: <20190118091733.29940-1-kasong@redhat.com> <1547812432.3982.55.camel@linux.ibm.com>
+ <20190118123437.GA30929@dhcp-128-65.nay.redhat.com> <20190118123745.GA31072@dhcp-128-65.nay.redhat.com>
+In-Reply-To: <20190118123745.GA31072@dhcp-128-65.nay.redhat.com>
+From:   Kairui Song <kasong@redhat.com>
+Date:   Fri, 18 Jan 2019 21:42:38 +0800
+Message-ID: <CACPcB9fiVUCfSBe05FOkKuMbzYnMjjKj50L3ydotSFSp5iL+kg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/2] let kexec_file_load use platform keyring to verify
+ the kernel image
+To:     Dave Young <dyoung@redhat.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
+        Eric Biggers <ebiggers@google.com>, nayna@linux.ibm.com,
         linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        ard.biesheuvel@linaro.org, kristen@linux.intel.com,
-        deneen.t.dock@intel.com
-Subject: Re: [PATCH 17/17] module: Prevent module removal racing with
- text_poke()
-Message-Id: <20190118223249.94436b58fbf5f9592d92dfca@kernel.org>
-In-Reply-To: <69EA2C81-826F-46BA-8D80-241C39B0B70B@gmail.com>
-References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
-        <20190117003259.23141-18-rick.p.edgecombe@intel.com>
-        <20190117165422.d33d1af83db8716e24960a3c@kernel.org>
-        <e865e051-be79-adce-7275-72abf2173bdb@zytor.com>
-        <69EA2C81-826F-46BA-8D80-241C39B0B70B@gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-2022-JP
-Content-Transfer-Encoding: 7bit
+        kexec@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, 17 Jan 2019 17:15:27 -0800
-Nadav Amit <nadav.amit@gmail.com> wrote:
+On Fri, Jan 18, 2019 at 8:37 PM Dave Young <dyoung@redhat.com> wrote:
+>
+> On 01/18/19 at 08:34pm, Dave Young wrote:
+> > On 01/18/19 at 06:53am, Mimi Zohar wrote:
+> > > On Fri, 2019-01-18 at 17:17 +0800, Kairui Song wrote:
+> > > > This patch series adds a .platform_trusted_keys in system_keyring as the
+> > > > reference to .platform keyring in integrity subsystem, when platform
+> > > > keyring is being initialized it will be updated. So other component could
+> > > > use this keyring as well.
+> > >
+> > > Kairui, when people review patches, the comments could be specific,
+> > > but are normally generic.  My review included a couple of generic
+> > > suggestions - not to use "#ifdef" in C code (eg. is_enabled), use the
+> > > term "preboot" keys, and remove any references to "other components".
+> > >
+> > > After all the wording suggestions I've made, you are still saying, "So
+> > > other components could use this keyring as well".  Really?!  How the
+> > > platform keyring will be used in the future, is up to you and others
+> > > to convince Linus.  At least for now, please limit its usage to
+> > > verifying the PE signed kernel image.  If this patch set needs to be
+> > > reposted, please remove all references to "other components".
+> > >
+> > > Dave/David, are you ok with Kairui's usage of "#ifdef's"?  Dave, you
+> > > Acked the original post.  Can I include it?  Can we get some
+> > > additional Ack's on these patches?
+> >
+> > It is better to update patch to use IS_ENABLED in patch 1/2 as well.
+>
+> Hmm, not only for patch 1/2, patch 2/2 also need an update
+>
+> > Other than that, for kexec part I'm fine with an ack.
+> >
+> > Thanks
+> > Dave
 
-> > On Jan 17, 2019, at 3:58 PM, H. Peter Anvin <hpa@zytor.com> wrote:
-> > 
-> > On 1/16/19 11:54 PM, Masami Hiramatsu wrote:
-> >> On Wed, 16 Jan 2019 16:32:59 -0800
-> >> Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
-> >> 
-> >>> From: Nadav Amit <namit@vmware.com>
-> >>> 
-> >>> It seems dangerous to allow code modifications to take place
-> >>> concurrently with module unloading. So take the text_mutex while the
-> >>> memory of the module is freed.
-> >> 
-> >> At that point, since the module itself is removed from module list,
-> >> it seems no actual harm. Or would you have any concern?
-> > 
-> > The issue isn't the module list, but rather when it is safe to free the
-> > contents, so we don't clobber anything. We absolutely need to enforce
-> > that we can't text_poke() something that might have already been freed.
-> > 
-> > That being said, we *also* really would prefer to enforce that we can't
-> > text_poke() memory that doesn't actually contain code; as far as I can
-> > tell we don't currently do that check.
-> 
-> Yes, that what the mutex was supposed to achieve. It’s not supposed just
-> to check whether it is a code page, but also that it is the same code
-> page that you wanted to patch. 
-> 
-> > This, again, is a good use for a separate mm context. We can enforce
-> > that that context will only ever contain valid page mappings for actual
-> > code pages.
-> 
-> This will not tell you that you have the *right* code-page. The module
-> notifiers help to do so, since they synchronize the text poking with
-> the module removal.
-> 
-> > (Note: in my proposed algorithm, with a separate mm, replace INVLPG with
-> > switching CR3 if we have to do a rollback or roll forward in the
-> > breakpoint handler.)
-> 
-> I really need to read your patches more carefully to see what you mean.
-> 
-> Anyhow, so what do you prefer? I’m ok with either one:
-> 	1. Keep this patch
-> 	2. Remove this patch and change into a comment on text_poke()
-> 	3. Just drop the patch
-
-I would prefer 2. so at least we should add a comment to text_poke().
-
-Thank you,
-
+Thanks for the review again, will update the patch using IS_ENABLED
+along with update the cover letter shortly.
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Best Regards,
+Kairui Song
