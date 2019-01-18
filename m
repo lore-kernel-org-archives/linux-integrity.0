@@ -2,149 +2,96 @@ Return-Path: <SRS0=DQCd=P2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 694FEC43387
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 11:54:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B1E5C43387
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 12:07:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 445B320823
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 11:54:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEAAE2087E
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 12:07:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727018AbfARLyP (ORCPT
+        id S1726782AbfARMHm (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 18 Jan 2019 06:54:15 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40608 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726952AbfARLyO (ORCPT
+        Fri, 18 Jan 2019 07:07:42 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:40675 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727234AbfARMHm (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 18 Jan 2019 06:54:14 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0IBgudS135130
-        for <linux-integrity@vger.kernel.org>; Fri, 18 Jan 2019 06:54:13 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q3e5vranw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 18 Jan 2019 06:54:13 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 18 Jan 2019 11:54:10 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 18 Jan 2019 11:54:07 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0IBs56a59048022
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 18 Jan 2019 11:54:05 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6921642042;
-        Fri, 18 Jan 2019 11:54:05 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B9F8242045;
-        Fri, 18 Jan 2019 11:54:03 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.91.65])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 18 Jan 2019 11:54:03 +0000 (GMT)
-Subject: Re: [PATCH v4 0/2] let kexec_file_load use platform keyring to
- verify the kernel image
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     dhowells@redhat.com, dwmw2@infradead.org,
+        Fri, 18 Jan 2019 07:07:42 -0500
+Received: by mail-it1-f196.google.com with SMTP id h193so5449842ita.5
+        for <linux-integrity@vger.kernel.org>; Fri, 18 Jan 2019 04:07:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=efRhbMu40jc01doE6dk+XxasVG9OQ61RtTN2y4dxMGQ=;
+        b=rnkEHKrB5d8knxEKyt9YTeh7parBIKVh0QRuB7UuvGojzaG1nczlHLalmKk6QwGIdr
+         MFt9+jYLjC98fPVAnr2LvpEyd4bCFv/pNNcbQZC3SXN1P34tXIWbpeg1K8ZUx3sV/OQc
+         2Jcj44Pv11HkTp5HYztCBqZePfApP5cqTpH/0i2fSD0OURRgW15mTLSdA2jj4BwKuMPm
+         nWPIgo6HzJHjZ8AlzQTYXnrrZzrIlvULUzb1kAS0WhJSz9JAm04pw58JyPwBRyywrmcp
+         RW4w/nvy00G8bEZpHAy9hxrkPE00jVE5LrcRmig+RJCmQstkyeN0+a4QO0nDa2W8TEAK
+         /Msg==
+X-Gm-Message-State: AJcUukdAa4vAQjnNXJ12B5HeAI5P0FIK4Dak4k6pIiO0lpN/xh/mTn/C
+        O7EQF60dDqLGQSAGTwuXOfjwWu6sfDzHqWsmH44j2w==
+X-Google-Smtp-Source: ALg8bN5J65+Ihu7aY1kAKgQaZTBLwQP8ulIODQPgSeQYaurblGVCeTIyGO6GDKFds4RlkK7pIFec9pyqEmYV94riBWc=
+X-Received: by 2002:a24:4d05:: with SMTP id l5mr2029393itb.147.1547813261576;
+ Fri, 18 Jan 2019 04:07:41 -0800 (PST)
+MIME-Version: 1.0
+References: <20190118091733.29940-1-kasong@redhat.com> <1547812432.3982.55.camel@linux.ibm.com>
+In-Reply-To: <1547812432.3982.55.camel@linux.ibm.com>
+From:   Kairui Song <kasong@redhat.com>
+Date:   Fri, 18 Jan 2019 20:07:30 +0800
+Message-ID: <CACPcB9ffvpHbGdp5xz4R5cwXxERsVwzkQEKO9C50c+_hj+n_0g@mail.gmail.com>
+Subject: Re: [PATCH v4 0/2] let kexec_file_load use platform keyring to verify
+ the kernel image
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
         jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
         jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
-        ebiggers@google.com, nayna@linux.ibm.com, dyoung@redhat.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org
-Date:   Fri, 18 Jan 2019 06:53:52 -0500
-In-Reply-To: <20190118091733.29940-1-kasong@redhat.com>
-References: <20190118091733.29940-1-kasong@redhat.com>
+        Eric Biggers <ebiggers@google.com>, nayna@linux.ibm.com,
+        Dave Young <dyoung@redhat.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        kexec@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19011811-0008-0000-0000-000002B2C5B1
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011811-0009-0000-0000-0000221EE67C
-Message-Id: <1547812432.3982.55.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-18_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901180088
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, 2019-01-18 at 17:17 +0800, Kairui Song wrote:
-> This patch series adds a .platform_trusted_keys in system_keyring as the
-> reference to .platform keyring in integrity subsystem, when platform
-> keyring is being initialized it will be updated. So other component could
-> use this keyring as well.
+On Fri, Jan 18, 2019, 19:54 Mimi Zohar <zohar@linux.ibm.com wrote:
+>
+> On Fri, 2019-01-18 at 17:17 +0800, Kairui Song wrote:
+> > This patch series adds a .platform_trusted_keys in system_keyring as the
+> > reference to .platform keyring in integrity subsystem, when platform
+> > keyring is being initialized it will be updated. So other component could
+> > use this keyring as well.
+>
+> Kairui, when people review patches, the comments could be specific,
+> but are normally generic.  My review included a couple of generic
+> suggestions - not to use "#ifdef" in C code (eg. is_enabled), use the
+> term "preboot" keys, and remove any references to "other components".
+>
+> After all the wording suggestions I've made, you are still saying, "So
+> other components could use this keyring as well".  Really?!  How the
+> platform keyring will be used in the future, is up to you and others
+> to convince Linus.  At least for now, please limit its usage to
+> verifying the PE signed kernel image.  If this patch set needs to be
+> reposted, please remove all references to "other components".
+>
+> Dave/David, are you ok with Kairui's usage of "#ifdef's"?  Dave, you
+> Acked the original post.  Can I include it?  Can we get some
+> additional Ack's on these patches?
+>
+> thanks!
+>
+> Mimi
+>
 
-Kairui, when people review patches, the comments could be specific,
-but are normally generic.  My review included a couple of generic
-suggestions - not to use "#ifdef" in C code (eg. is_enabled), use the
-term "preboot" keys, and remove any references to "other components".
-
-After all the wording suggestions I've made, you are still saying, "So
-other components could use this keyring as well".  Really?!  How the
-platform keyring will be used in the future, is up to you and others
-to convince Linus.  At least for now, please limit its usage to
-verifying the PE signed kernel image.  If this patch set needs to be
-reposted, please remove all references to "other components".
-
-Dave/David, are you ok with Kairui's usage of "#ifdef's"?  Dave, you
-Acked the original post.  Can I include it?  Can we get some
-additional Ack's on these patches?
-
-thanks!
-
-Mimi
-
-
-> 
-> This patch series also let kexec_file_load use platform keyring as fall
-> back if it failed to verify the image against secondary keyring, make it
-> possible to load kernel signed by keys provides by firmware.
-> 
-> After this patch kexec_file_load will be able to verify a signed PE
-> bzImage using keys in platform keyring.
-> 
-> Tested in a VM with locally signed kernel with pesign and imported the
-> cert to EFI's MokList variable.
-> 
-> To test this patch series on latest kernel, you need to ensure this commit
-> is applied as there is an regression bug in sanity_check_segment_list():
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=993a110319a4a60aadbd02f6defdebe048f7773b
-> 
-> Update from V3:
->   - Tweak and simplify commit message as suggested by Mimi Zohar
-> 
-> Update from V2:
->   - Use IS_ENABLED in kexec_file_load to judge if platform_trusted_keys
->     should be used for verifying image as suggested by Mimi Zohar
-> 
-> Update from V1:
->   - Make platform_trusted_keys static, and update commit message as suggested
->     by Mimi Zohar
->   - Always check if platform keyring is initialized before use it
-> 
-> Kairui Song (2):
->   integrity, KEYS: add a reference to platform keyring
->   kexec, KEYS: Make use of platform keyring for signature verify
-> 
->  arch/x86/kernel/kexec-bzimage64.c | 13 ++++++++++---
->  certs/system_keyring.c            | 22 +++++++++++++++++++++-
->  include/keys/system_keyring.h     |  5 +++++
->  include/linux/verification.h      |  1 +
->  security/integrity/digsig.c       |  6 ++++++
->  5 files changed, 43 insertions(+), 4 deletions(-)
-> 
-
+Hi, Mimi, thanks for your feedback. My bad I reused the old cover
+letter without checking it carefully, hopefully, the commit messages
+should have a proper wording now. If the cover letter needs to be
+updated I can resend the patch, let me just hold a while before update
+again.
