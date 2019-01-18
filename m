@@ -2,166 +2,296 @@ Return-Path: <SRS0=DQCd=P2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F33C43387
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 15:02:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31141C43387
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 15:13:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD3272087E
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 15:02:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E84832086D
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 15:13:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727564AbfARPCF (ORCPT
+        id S1727415AbfARPNC (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 18 Jan 2019 10:02:05 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:34061 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727277AbfARPCF (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 18 Jan 2019 10:02:05 -0500
-Received: by mail-it1-f193.google.com with SMTP id x124so1226524itd.1
-        for <linux-integrity@vger.kernel.org>; Fri, 18 Jan 2019 07:02:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qpdAAlhA+pBh1vzs4xOSMuaE1OIhf/our8llKb6cg0g=;
-        b=dgbUBbS9NNzE43tyem49PGq89SPDmwDfAUPoPIKfrx4cEDBCKIsXArz6tz9fBzsphN
-         Hh7rgTB/h1tDUvDouovgHulY5+5feBbm4NS/dDiCVBTf8v9sH1jLnDs/VeOGveEJomzO
-         agdkJzlWMRmoXYV75KMKiJ3LgDDKCUemgOJI4HyLYOLAtok0t+hO2q92bp26lo4IMenn
-         eOoxLJM+ner0WIhfYPGA0FfzHl/ZNmfNVWOoQmueGbV7x4Duj56iU/T/I5BHD+BWJRC7
-         4ueItxhpAXw51RXxLpCTk3hJhHt/BORKIrkivejRo6d82hU18/1IiLxpaT2FxfCgvGfH
-         6rkA==
-X-Gm-Message-State: AJcUukdx9ETMm7RM1XaOzq/Bo/3xK/X7l9CwObKoYQlDbiaKTlgr77g3
-        MhrHO8i1JixTztq0b+YNptRs1swLa6xNAHfBMh/GqA==
-X-Google-Smtp-Source: ALg8bN40lcPsCJ4lqLw3U8S5LwSuJ7/U8dzNcTwNmoB7SnJ0QzwFJ+kBwmtpu4MD5iwyh5nxrMMPB4u5N2gHJdirNdc=
-X-Received: by 2002:a02:93c2:: with SMTP id z60mr10224649jah.51.1547823724112;
- Fri, 18 Jan 2019 07:02:04 -0800 (PST)
+        Fri, 18 Jan 2019 10:13:02 -0500
+Received: from mga17.intel.com ([192.55.52.151]:37283 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727406AbfARPNC (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 18 Jan 2019 10:13:02 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2019 07:13:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,491,1539673200"; 
+   d="scan'208";a="135782396"
+Received: from unknown (HELO localhost) ([10.249.254.249])
+  by fmsmga002.fm.intel.com with ESMTP; 18 Jan 2019 07:12:56 -0800
+Date:   Fri, 18 Jan 2019 17:12:53 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v7 5/5] tpm: pass an array of tpm_extend_digest
+ structures to tpm_pcr_extend()
+Message-ID: <20190118151253.GH4080@linux.intel.com>
+References: <20181213102945.30946-1-roberto.sassu@huawei.com>
+ <20181213102945.30946-6-roberto.sassu@huawei.com>
+ <20181220152122.GB10652@linux.intel.com>
+ <c6a3f3e4-bd9d-d060-9ee1-f84310857ba0@huawei.com>
 MIME-Version: 1.0
-References: <20190118091733.29940-1-kasong@redhat.com> <20190118091733.29940-2-kasong@redhat.com>
- <3c7fa625-e77c-d6b4-35a4-8f8e9af60864@linux.vnet.ibm.com>
-In-Reply-To: <3c7fa625-e77c-d6b4-35a4-8f8e9af60864@linux.vnet.ibm.com>
-From:   Kairui Song <kasong@redhat.com>
-Date:   Fri, 18 Jan 2019 23:01:52 +0800
-Message-ID: <CACPcB9dJ2L8k=jmT23Q72YHjsjzK79ywgU+ASLSe3tkQnosOCQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] integrity, KEYS: add a reference to platform keyring
-To:     Nayna <nayna@linux.vnet.ibm.com>
-Cc:     jwboyer@fedoraproject.org, Eric Biggers <ebiggers@google.com>,
-        Dave Young <dyoung@redhat.com>, nayna@linux.ibm.com,
-        kexec@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>, jmorris@namei.org,
-        David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>, bauerman@linux.ibm.com,
-        serge@hallyn.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c6a3f3e4-bd9d-d060-9ee1-f84310857ba0@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 10:36 PM Nayna <nayna@linux.vnet.ibm.com> wrote:
-> On 01/18/2019 04:17 AM, Kairui Song wrote:
-> > commit 9dc92c45177a ('integrity: Define a trusted platform keyring')
-> > introduced a .platform keyring for storing preboot keys, used for
-> > verifying kernel images' signature. Currently only IMA-appraisal is able
-> > to use the keyring to verify kernel images that have their signature
-> > stored in xattr.
-> >
-> > This patch exposes the .platform keyring, making it accessible for
-> > verifying PE signed kernel images as well.
-> >
-> > Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-> > Signed-off-by: Kairui Song <kasong@redhat.com>
-> > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> > Tested-by: Mimi Zohar <zohar@linux.ibm.com>
-> > ---
-> >   certs/system_keyring.c        | 9 +++++++++
-> >   include/keys/system_keyring.h | 5 +++++
-> >   security/integrity/digsig.c   | 6 ++++++
-> >   3 files changed, 20 insertions(+)
-> >
-> > diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-> > index 81728717523d..4690ef9cda8a 100644
-> > --- a/certs/system_keyring.c
-> > +++ b/certs/system_keyring.c
-> > @@ -24,6 +24,9 @@ static struct key *builtin_trusted_keys;
-> >   #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
-> >   static struct key *secondary_trusted_keys;
-> >   #endif
-> > +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
-> > +static struct key *platform_trusted_keys;
-> > +#endif
-> >
-> >   extern __initconst const u8 system_certificate_list[];
-> >   extern __initconst const unsigned long system_certificate_list_size;
-> > @@ -265,4 +268,10 @@ int verify_pkcs7_signature(const void *data, size_t len,
-> >   }
-> >   EXPORT_SYMBOL_GPL(verify_pkcs7_signature);
-> >
-> > +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
-> > +void __init set_platform_trusted_keys(struct key *keyring) {
-> > +     platform_trusted_keys = keyring;
-> > +}
-> > +#endif
-> > +
-> >   #endif /* CONFIG_SYSTEM_DATA_VERIFICATION */
-> > diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.h
-> > index 359c2f936004..9e1b7849b6aa 100644
-> > --- a/include/keys/system_keyring.h
-> > +++ b/include/keys/system_keyring.h
-> > @@ -61,5 +61,10 @@ static inline struct key *get_ima_blacklist_keyring(void)
-> >   }
-> >   #endif /* CONFIG_IMA_BLACKLIST_KEYRING */
-> >
-> > +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
-> > +
-> > +extern void __init set_platform_trusted_keys(struct key* keyring);
-> > +
-> > +#endif /* CONFIG_INTEGRITY_PLATFORM_KEYRING */
-> >
-> >   #endif /* _KEYS_SYSTEM_KEYRING_H */
-> > diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-> > index f45d6edecf99..bfabc2a8111d 100644
-> > --- a/security/integrity/digsig.c
-> > +++ b/security/integrity/digsig.c
-> > @@ -89,6 +89,12 @@ static int __integrity_init_keyring(const unsigned int id, key_perm_t perm,
-> >               keyring[id] = NULL;
-> >       }
-> >
-> > +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
-> > +     if (id == INTEGRITY_KEYRING_PLATFORM) {
->
-> Shouldn't it also check that keyring[id] is not NULL ?
+On Thu, Jan 17, 2019 at 08:59:00AM +0100, Roberto Sassu wrote:
+> On 12/20/2018 4:21 PM, Jarkko Sakkinen wrote:
+> > On Thu, Dec 13, 2018 at 11:29:45AM +0100, Roberto Sassu wrote:
+> > > Currently, tpm_pcr_extend() accepts as an input only a SHA1 digest.
+> > > 
+> > > This patch modifies the definition of tpm_pcr_extend() to allow other
+> > > kernel subsystems to pass a digest for each algorithm supported by the TPM.
+> > > All digests are processed by the TPM in one operation.
+> > > 
+> > > If a tpm_pcr_extend() caller provides a subset of the supported algorithms,
+> > > the TPM driver extends the remaining PCR banks with the first digest
+> > > passed as an argument to the function.
+> > > 
+> > > The new tpm_extend digest structure has been preferred to the tpm_digest
+> > > structure, to let the caller specify the size of the digest (which may be
+> > > unknown to the TPM driver).
+> > > 
+> > > Due to the API change, ima_pcr_extend() and pcrlock() have been modified.
+> > > 
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > ---
+> > >   drivers/char/tpm/tpm-interface.c   | 24 +++++---------------
+> > >   drivers/char/tpm/tpm.h             |  5 +++--
+> > >   drivers/char/tpm/tpm1-cmd.c        | 13 ++++++++---
+> > >   drivers/char/tpm/tpm2-cmd.c        | 35 +++++++++++++++++++++---------
+> > >   include/linux/tpm.h                | 13 ++++++++---
+> > >   security/integrity/ima/ima_queue.c |  5 ++++-
+> > >   security/keys/trusted.c            |  5 ++++-
+> > >   7 files changed, 62 insertions(+), 38 deletions(-)
+> > > 
+> > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> > > index eb7c79ca8a94..911fea19e408 100644
+> > > --- a/drivers/char/tpm/tpm-interface.c
+> > > +++ b/drivers/char/tpm/tpm-interface.c
+> > > @@ -478,42 +478,30 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
+> > >    * tpm_pcr_extend - extend a PCR value in SHA1 bank.
+> > >    * @chip:	a &struct tpm_chip instance, %NULL for the default chip
+> > >    * @pcr_idx:	the PCR to be retrieved
+> > > - * @hash:	the hash value used to extend the PCR value
+> > > + * @count:	number of tpm_extend_digest structures
+> > > + * @digests:	array of tpm_extend_digest structures used to extend PCRs
+> > >    *
+> > >    * Note: with TPM 2.0 extends also those banks for which no digest was
+> > >    * specified in order to prevent malicious use of those PCR banks.
+> > >    *
+> > >    * Return: same as with tpm_transmit_cmd()
+> > >    */
+> > > -int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
+> > > +int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+> > > +		   const struct tpm_extend_digest *digests)
+> > 
+> > Remove const. Document how @digests is used  like the special meaning
+> > of the first index. I faintly remember asking this last time.
+> > 
+> > >   {
+> > >   	int rc;
+> > > -	struct tpm_digest *digest_list;
+> > > -	int i;
+> > >   	chip = tpm_find_get_ops(chip);
+> > >   	if (!chip)
+> > >   		return -ENODEV;
+> > >   	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> > > -		digest_list = kcalloc(chip->nr_allocated_banks,
+> > > -				      sizeof(*digest_list), GFP_KERNEL);
+> > > -		if (!digest_list)
+> > > -			return -ENOMEM;
+> > > -
+> > > -		for (i = 0; i < chip->nr_allocated_banks; i++) {
+> > > -			digest_list[i].alg_id = chip->allocated_banks[i].alg_id;
+> > > -			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
+> > > -		}
+> > > -
+> > > -		rc = tpm2_pcr_extend(chip, pcr_idx, chip->nr_allocated_banks,
+> > > -				     digest_list);
+> > > -		kfree(digest_list);
+> > > +		rc = tpm2_pcr_extend(chip, pcr_idx, count, digests);
+> > >   		tpm_put_ops(chip);
+> > >   		return rc;
+> > >   	}
+> > > -	rc = tpm1_pcr_extend(chip, pcr_idx, hash,
+> > > +	rc = tpm1_pcr_extend(chip, pcr_idx, count, digests,
+> > >   			     "attempting extend a PCR value");
+> > 
+> > The validation is missing that the provided array has only one element
+> > and the algorithm is SHA1. Could be done also inside tpm1_pcr_extend()
+> > but what you are doing to that function does not make any sense so
+> > better to do it here.
+> > 
+> > >   	tpm_put_ops(chip);
+> > >   	return rc;
+> > > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> > > index 64d93d26087f..6b446504d2fe 100644
+> > > --- a/drivers/char/tpm/tpm.h
+> > > +++ b/drivers/char/tpm/tpm.h
+> > > @@ -504,7 +504,8 @@ int tpm1_auto_startup(struct tpm_chip *chip);
+> > >   int tpm1_do_selftest(struct tpm_chip *chip);
+> > >   int tpm1_get_timeouts(struct tpm_chip *chip);
+> > >   unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+> > > -int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
+> > > +int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+> > > +		    const struct tpm_extend_digest *digests,
+> > >   		    const char *log_msg);
+> > >   int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
+> > >   ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+> > > @@ -551,7 +552,7 @@ int tpm2_get_timeouts(struct tpm_chip *chip);
+> > >   int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
+> > >   		  struct tpm_digest *digest, u16 *digest_size_ptr);
+> > >   int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+> > > -		    struct tpm_digest *digests);
+> > > +		    const struct tpm_extend_digest *digests);
+> > >   int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
+> > >   void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
+> > >   			    unsigned int flags);
+> > > diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+> > > index 8b70a7f884a7..04ee10284b8c 100644
+> > > --- a/drivers/char/tpm/tpm1-cmd.c
+> > > +++ b/drivers/char/tpm/tpm1-cmd.c
+> > > @@ -449,12 +449,20 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
+> > >   }
+> > >   #define TPM_ORD_PCR_EXTEND 20
+> > > -int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
+> > > +int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+> > > +		    const struct tpm_extend_digest *digests,
+> > >   		    const char *log_msg)
+> > >   {
+> > >   	struct tpm_buf buf;
+> > > +	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
+> > > +	const u8 *hash;
+> > >   	int rc;
+> > > +	hash = dummy_hash;
+> > > +	if (count)
+> > > +		memcpy(dummy_hash, digests[0].data,
+> > > +		       min(digests[0].size, (u16)sizeof(dummy_hash)));
+> > > +
+> > 
+> > You copy memory from one place to another without any good reason to do
+> > so. My suggestion is just not to change tpm1_pcr_extend() at all.
+> > 
+> > >   	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
+> > >   	if (rc)
+> > >   		return rc;
+> > > @@ -743,7 +751,6 @@ int tpm1_auto_startup(struct tpm_chip *chip)
+> > >    */
+> > >   int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
+> > >   {
+> > > -	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
+> > >   	struct tpm_buf buf;
+> > >   	unsigned int try;
+> > >   	int rc;
+> > > @@ -751,7 +758,7 @@ int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
+> > >   	/* for buggy tpm, flush pcrs with extend to selected dummy */
+> > >   	if (tpm_suspend_pcr)
+> > > -		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, dummy_hash,
+> > > +		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, 0, NULL,
+> > >   				     "extending dummy pcr before suspend");
+> > >   	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_SAVESTATE);
+> > > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> > > index 6ce5173cf0e5..77b5808270c6 100644
+> > > --- a/drivers/char/tpm/tpm2-cmd.c
+> > > +++ b/drivers/char/tpm/tpm2-cmd.c
+> > > @@ -247,21 +247,22 @@ struct tpm2_null_auth_area {
+> > >    *
+> > >    * @chip:	TPM chip to use.
+> > >    * @pcr_idx:	index of the PCR.
+> > > - * @count:	number of digests passed.
+> > > - * @digests:	list of pcr banks and corresponding digest values to extend.
+> > > + * @count:	number of tpm_extend_digest passed.
+> > > + * @digests:	array of tpm_extend_digest with digest values to extend.
+> > >    *
+> > >    * Return: Same as with tpm_transmit_cmd.
+> > >    */
+> > 
+> > The documentation about @digests.
+> > 
+> > >   int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+> > > -		    struct tpm_digest *digests)
+> > > +		    const struct tpm_extend_digest *digests)
+> > >   {
+> > >   	struct tpm_buf buf;
+> > >   	struct tpm2_null_auth_area auth_area;
+> > > +	const struct tpm_extend_digest *digest;
+> > > +	u8 dummy_hash[SHA512_DIGEST_SIZE] = { 0 };
+> > > +	const u8 *hash;
+> > >   	int rc;
+> > >   	int i;
+> > > -
+> > > -	if (count > chip->nr_allocated_banks)
+> > > -		return -EINVAL;
+> > > +	int j;
+> > >   	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
+> > >   	if (rc)
+> > > @@ -277,11 +278,25 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+> > >   	tpm_buf_append_u32(&buf, sizeof(struct tpm2_null_auth_area));
+> > >   	tpm_buf_append(&buf, (const unsigned char *)&auth_area,
+> > >   		       sizeof(auth_area));
+> > > -	tpm_buf_append_u32(&buf, count);
+> > > +	tpm_buf_append_u32(&buf, chip->nr_allocated_banks);
+> > > +
+> > > +	if (count)
+> > > +		memcpy(dummy_hash, digests[0].data, digests[0].size);
+> > > +
+> > > +	for (i = 0; i < chip->nr_allocated_banks; i++) {
+> > > +		tpm_buf_append_u16(&buf, chip->allocated_banks[i].alg_id);
+> > > +
+> > > +		hash = dummy_hash;
+> > > +		for (j = 0; j < count; j++) {
+> > > +			digest = digests + j;
+> > > +
+> > > +			if (digest->alg_id == chip->allocated_banks[i].alg_id) {
+> > > +				hash = digest->data;
+> > > +				break;
+> > 
+> > I think the whole design is just wrong. I did re-read your response to
+> > v6 again and I'm very sorry, but I just don't get this. Caller has all
+> > the information (from struct tpm_chip) to give the correct data. This
+> > function should validate that data (check algorithm ID and that's it).
+> 
+> The question is if checking tpm->allocated_banks is a strict
+> requirement, or we can allow callers to use the algorithm they are
+> currently using, without further modifications.
 
-Good catch, if it's NULL then platform_trusted_keyring will be set to
-NULL as well, which will work just fine as in this case
-platform_trusted_keyring is still considered not initialized. I'll add
-a sanity check here to check err value just in case.
-Thanks for your suggestion!
+If you want to know what is available, you can use that array.
 
->
-> Thanks & Regards,
->      - Nayna
->
-> > +             set_platform_trusted_keys(keyring[id]);
-> > +     }
-> > +#endif
-> > +
-> >       return err;
-> >   }
-> >
->
->
-> _______________________________________________
-> kexec mailing list
-> kexec@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kexec
+> > Extending with the dummy hash should be done by the caller when
+> > preparing the array, not baked into this function. This kind of also
+> > makes obvious that we don't need this new struct. There should never be
+> > a local variable (whose size is BTW randomly chosen) called dummy_hash.
+> 
+> This means duplicating the code for each caller. Currently, this work is
+> done by the TPM driver.
 
+It is better than fix the usage pattern like this. Not only that, but
+this somewhat complicated behavior now completely undocumented in the
+function description.
 
+You are making strong assumptions how some other subsystem might use
+extend operation. I will rather accept redundancy and consider
+consolidation later when there are two clients. Rather keep the TPM
+provided function simple and stupid.
 
--- 
-Best Regards,
-Kairui Song
+/Jarkko
