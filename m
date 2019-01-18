@@ -2,91 +2,102 @@ Return-Path: <SRS0=DQCd=P2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F4DC43387
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 15:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF9F9C5ACD3
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 18:49:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CD5020850
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 15:35:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1B8F20850
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 18:49:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="rcBO7XyW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727580AbfARPfD (ORCPT
+        id S1728738AbfARStL (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 18 Jan 2019 10:35:03 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50158 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727481AbfARPfD (ORCPT
+        Fri, 18 Jan 2019 13:49:11 -0500
+Received: from sonic310-27.consmr.mail.gq1.yahoo.com ([98.137.69.153]:41881
+        "EHLO sonic310-27.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728695AbfARStL (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 18 Jan 2019 10:35:03 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0IFUfH6011869
-        for <linux-integrity@vger.kernel.org>; Fri, 18 Jan 2019 10:35:02 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q3fuwmm7a-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 18 Jan 2019 10:35:01 -0500
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Fri, 18 Jan 2019 15:35:00 -0000
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 18 Jan 2019 15:34:57 -0000
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0IFYuuc25297126
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 18 Jan 2019 15:34:56 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A0FE7112062;
-        Fri, 18 Jan 2019 15:34:56 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 56F09112064;
-        Fri, 18 Jan 2019 15:34:56 +0000 (GMT)
-Received: from swastik.ibm.com (unknown [9.85.136.27])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 18 Jan 2019 15:34:56 +0000 (GMT)
-To:     Dan.morav@nuvoton.com
-Cc:     linux-integrity@vger.kernel.org, gcwilson@us.ibm.com
-From:   Nayna <nayna@linux.vnet.ibm.com>
-Subject: device tree "compatible" string value for Nuvoton TPM 75xxx
-Date:   Fri, 18 Jan 2019 10:34:55 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 18 Jan 2019 13:49:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1547837350; bh=SN7Wup0I7RwIrPvBYe3S2icYrQXJiSR/7u+RkxAaQCk=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=rcBO7XyW8tTMCPnbejenqMWtzeMxFTTxS0X1bPJRg4A8mX2waVd0C34zz9pciFI6qatA6hSjYZVuq9sg/So8wLjCreUdF+oiGv5fe1Uu3ml8Xirn1i8PnlwLBqB0zrvY3LMN0BBcEcncHet6qYkn8d6ksrY9F9zT56NTbEuA/k4Syeq3Nh0SWkN87zhHTeVNJA1uE1hAYyyy88Y5oec8PMW+S4kzTVsdhfRQVrajuS7gCQdIniq6Ogi2MAavJ10sAoiJLvT3pIv1TevruLf7SijFIvVqcCyBEwxJPpSpsVLwozmOTnMagFscnNbSKQjnNDuQHjGY2RT5+hNecBMibg==
+X-YMail-OSG: yD_609MVM1kU5pyDL5lCD7aRkw_U88efooRMI2rCcFGtwatcWjrWofelULfdUts
+ Ndujngd1N_HggYt_D4UnSy7E6e3uMnoyRHFPhvKmfx2pGZZohtFmTl0VJAMrH1RSioJ6cO9dPkPl
+ z93ag.vPnumuSH6ukUqOfT9ffRs8dGbnXSW1Y17Ikri6PopjmqJdXit1JCx70f.ZAMMnP6Mv8UQ1
+ q1vCGc9Tlov6Is5fsgv33PgnrI6N7NinfWTinyxh0tQFUqp.N6zlgC2rOLpohOjj3vD.YrCHcdoW
+ fip8l_gToK1Qh2RvimzmKU33xvaa_cPA0lY8yDIfp1xBLwGVcM4kzwrX9HBSQ3nsYL5yvl914V2D
+ zk5TcBJ5oRsh.dEX4wEGu3P1UOBq0uVve4yXT9rqyIERZUGCi8h33V1vbZTCYe66l7snDBsiNdMn
+ RFHO8i_s6Yhc12j8cMBY6DOuG9EDxXX4jrEacE6VRyGeJFbZrhD1Fc1bg3mOGaOp4wEddLRR0w8P
+ DveKE7dIKvOyj0g3VGAvNh1nBwe52yO66P4LXCPRp3b1CBZs6JCO4LlT5dR4T5qluUH76Wx3oGC6
+ aD8NoKbLa_yj_dhqLHGPKN9_JOq5s9HxHeO3bfVWQW6NLeeX3A3BN.RcThzFA3K6QGxukfzrtv3w
+ hG5gjUToWgJZBw09KZOCNx1lhQd_WXobJqnT3RGkSD1ZfcaVcTgkPUU8fBXCIDR_uW5AeySOQbtP
+ 3GJgNLEwkf0gccmfkKJMjrVvNwTkWlLFKQb03CdR7G4HjqcT7J16VdWJIYCQoeIuuPHDwNegruFO
+ GM8WJl53cpTS7BrhZUVrBaoQQmTDEDsTvfXY27eSHwax9PIwY8yXJnTS.fIHbjLIYGW3n4vfe2o_
+ S.wD25aanqKagqMYl6SXJaedseaBS7tSfwatUPxUEZ5lYVxjz0LNqlOFGrpKhtkL6eAeMiohS7Xe
+ HgW_3iEEFtLgQMq3VozjugRZCFne46tqQcvtYm8dPcrWu63Fen5Db9QpPB.tR19AVqiFUCgE2MK2
+ 7Yst8NoMvSBj4_4pAvQd.LJX8VO9G07pLvAJBQC1uhaZrrOe.r434AjtS1UffpO2CZ.4Xt1wW9fZ
+ dmiTlfBTE30WnyfU4Llg-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.gq1.yahoo.com with HTTP; Fri, 18 Jan 2019 18:49:10 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.100]) ([67.169.65.224])
+          by smtp418.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 8392803232bc6167aeb0315bbbe35bf1;
+          Fri, 18 Jan 2019 18:49:07 +0000 (UTC)
+Subject: Re: evm_inode_init_security and module stacking
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Cc:     LSM <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <f1a86814-716a-d02d-42ce-8ef64d680feb@schaufler-ca.com>
+ <1547778689.3982.20.camel@linux.ibm.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <9e142269-fd2e-b62e-f3fc-687d400aefd1@schaufler-ca.com>
+Date:   Fri, 18 Jan 2019 10:49:07 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1547778689.3982.20.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 19011815-2213-0000-0000-0000033FDBE6
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010430; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000275; SDB=6.01148298; UDB=6.00598227; IPR=6.00928601;
- MB=3.00025188; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-18 15:34:58
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011815-2214-0000-0000-00005D05A139
-Message-Id: <63ed4dcb-a8ae-09ad-6793-8b1bb671d652@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-18_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=538 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901180111
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi,
+On 1/17/2019 6:31 PM, Mimi Zohar wrote:
+> On Thu, 2019-01-17 at 16:47 -0800, Casey Schaufler wrote:
+>> security_inode_init_security() currently calls at most one
+>> of selinux_inode_init_security() and smack_inode_init_security().
+>> It then sends the result to evm_inode_init_security to create
+>> the security.evm attribute. This isn't going to work on a system
+>> that has both SELinux and Smack.
+> Calculating security.evm based on multiple xattrs sounded really
+> familiar.  Looking back at the git log, 9d8f13ba3f48 ("security: new
+> security_inode_init_security API adds function callback") addressed
+> filesystems wanting to be able to write all the xattrs at the same
+> time and prepared for multiple LSM xattr support.
 
-Currently, the kernel supports "nuvoton,npct601" for Nuvoton TPM 2.
+Right. That provides for security.selinux, security.SMACK64
+and security.evm at the same time. What it doesn't help with
+is what goes into security.evm.
 
-I was wondering what will be the compatible string value for Nuvoton TPM 
-75xx models.
+>> I see two options:
+>> 	- create security.evm with the information from all
+>> 	  security modules that provide inode_init_security hooks
+>> 	- create a separate attribute for each module,
+>> 	  security.evm-selinux and security.evm-smack in the
+>> 	  current case.
+>>
+>> How would you like to have it work? I am agnostic, although the
+>> separate attributes would be easier for the infrastructure.
+> Having separate attributes for each LSM module would require re-
+> calculating the hmac for each one, any time any of the other file
+> metadata changed.  That doesn't sound like a good idea.
 
-Thanks & Regards,
+OK. So it sounds like I need to gather up data from all of the
+LSMs (e.g. security.selinux, security.SMACK64) and pass the combination
+to evm_inode_init_security(). Will that work? Will that provide the
+integrity sub-system what it needs?
 
-      - Nayna
-
+> Mimi
