@@ -2,147 +2,90 @@ Return-Path: <SRS0=DQCd=P2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B074DC43387
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 01:15:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C20C43387
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 01:35:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E80720657
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 01:15:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="epnDOoDP"
+	by mail.kernel.org (Postfix) with ESMTP id CF1EF20873
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 01:35:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726366AbfARBPc (ORCPT
+        id S1726823AbfARBfl (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 17 Jan 2019 20:15:32 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41584 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726351AbfARBPc (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 17 Jan 2019 20:15:32 -0500
-Received: by mail-pg1-f194.google.com with SMTP id m1so5228373pgq.8;
-        Thu, 17 Jan 2019 17:15:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=nfJ8xS7Q4/2eN93Hqyw2Vxt0we5DRJFkV8HYkEezqLo=;
-        b=epnDOoDPCYmQOrRqrJQDp6hqSyVOqA0OACC2E+Ypn35v71FNxBed0ZH8UKd8f1psrB
-         kJs41dfmRvph0F9K7JaapS1CHnzIy2vKVy9qkAUllNemr9yxSw8C6DunC3RMPtVKvwlR
-         LOUcswMxytdeBueSBzD9P3zQeg6E9vFeE7IXhdHzF98pMEvyF812GWg0Ji2Qhgu86q3R
-         apfvAxMV3yN41Y8OKaxw2fHOrIZBMQTkEg72xsNxSei7Pjwor+U9qnFFUH5nqhyesWHN
-         kkoMYn3Ji7E8+iDqmxNIFglZ+aX99ecIENnM9cTC8a6aNiLvGg2zZ4Vr4QvgYhw+2hLX
-         /yVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=nfJ8xS7Q4/2eN93Hqyw2Vxt0we5DRJFkV8HYkEezqLo=;
-        b=Kw+Gr65rTOFdDiaTLTXE8HHyaV/ntAtYKEFzuNG0qIAOgbq9RUFLWHfOXpQGyK+3h9
-         9b0Z1W2CwdwIB3Q32m9ytLMm/r7upYnkqyX8NON6N0m9RCNdetWHueUv9ttXu17Eo33Z
-         jVzOK5Nl2bzDHq8VvzlpmzexlvoxXnpIO6vD7puxFXUNNqpTPI1oviq3N9fC0lzHpnDO
-         86urxWipYRXvtVSm877kE9NN0+WZuV0QTA03T280fFaLPSU+jGAIRFceyxRgHDzF4Vnt
-         6Z3gAd8cMRRaT5gOZn3LoGJXd+ih47qyRP6Y1MTGYtV3iE3zoPhWH4VvOFB26stjpUph
-         mkhw==
-X-Gm-Message-State: AJcUukfQMnvtd5zS7KLn5mI3dI4j32L1SKzjFdBDwihM5w2Fx5dBPAcv
-        5ycUUBYMCxUFkgtcHR7L5o4=
-X-Google-Smtp-Source: ALg8bN5AQhFbL8A26bYpIKqbPXZPdnzW7UXtqw5Th4jK4eVuovdHK0vo/XXSzX+oHLDUBlskz3aYQA==
-X-Received: by 2002:a63:1204:: with SMTP id h4mr15579607pgl.51.1547774130020;
-        Thu, 17 Jan 2019 17:15:30 -0800 (PST)
-Received: from [10.33.115.182] ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id r6sm6866962pgk.91.2019.01.17.17.15.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 17:15:29 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH 17/17] module: Prevent module removal racing with
- text_poke()
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <e865e051-be79-adce-7275-72abf2173bdb@zytor.com>
-Date:   Thu, 17 Jan 2019 17:15:27 -0800
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        ard.biesheuvel@linaro.org, kristen@linux.intel.com,
-        deneen.t.dock@intel.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <69EA2C81-826F-46BA-8D80-241C39B0B70B@gmail.com>
-References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
- <20190117003259.23141-18-rick.p.edgecombe@intel.com>
- <20190117165422.d33d1af83db8716e24960a3c@kernel.org>
- <e865e051-be79-adce-7275-72abf2173bdb@zytor.com>
-To:     "H. Peter Anvin" <hpa@zytor.com>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Thu, 17 Jan 2019 20:35:41 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42224 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726329AbfARBfl (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 17 Jan 2019 20:35:41 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C205B23E6F4;
+        Fri, 18 Jan 2019 01:35:40 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-21.pek2.redhat.com [10.72.12.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5060B60BE5;
+        Fri, 18 Jan 2019 01:35:34 +0000 (UTC)
+Date:   Fri, 18 Jan 2019 09:35:30 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org,
+        dhowells@redhat.com, dwmw2@infradead.org,
+        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
+        ebiggers@google.com, nayna@linux.ibm.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org
+Subject: Re: [PATCH v3 0/2] let kexec_file_load use platform keyring to
+ verify the kernel image
+Message-ID: <20190118013530.GA2814@dhcp-128-65.nay.redhat.com>
+References: <20190116101654.7288-1-kasong@redhat.com>
+ <1547773684.4026.10.camel@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1547773684.4026.10.camel@linux.ibm.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 18 Jan 2019 01:35:41 +0000 (UTC)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-> On Jan 17, 2019, at 3:58 PM, H. Peter Anvin <hpa@zytor.com> wrote:
->=20
-> On 1/16/19 11:54 PM, Masami Hiramatsu wrote:
->> On Wed, 16 Jan 2019 16:32:59 -0800
->> Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
->>=20
->>> From: Nadav Amit <namit@vmware.com>
->>>=20
->>> It seems dangerous to allow code modifications to take place
->>> concurrently with module unloading. So take the text_mutex while the
->>> memory of the module is freed.
->>=20
->> At that point, since the module itself is removed from module list,
->> it seems no actual harm. Or would you have any concern?
->=20
-> The issue isn't the module list, but rather when it is safe to free =
-the
-> contents, so we don't clobber anything. We absolutely need to enforce
-> that we can't text_poke() something that might have already been =
-freed.
->=20
-> That being said, we *also* really would prefer to enforce that we =
-can't
-> text_poke() memory that doesn't actually contain code; as far as I can
-> tell we don't currently do that check.
+On 01/17/19 at 08:08pm, Mimi Zohar wrote:
+> On Wed, 2019-01-16 at 18:16 +0800, Kairui Song wrote:
+> > This patch series adds a .platform_trusted_keys in system_keyring as the
+> > reference to .platform keyring in integrity subsystem, when platform
+> > keyring is being initialized it will be updated. So other component could
+> > use this keyring as well.
+> 
+> Remove "other component could use ...".
+> > 
+> > This patch series also let kexec_file_load use platform keyring as fall
+> > back if it failed to verify the image against secondary keyring, make it
+> > possible to load kernel signed by third part key if third party key is
+> > imported in the firmware.
+> 
+> This is the only reason for these patches.  Please remove "also".
+> 
+> > 
+> > After this patch kexec_file_load will be able to verify a signed PE
+> > bzImage using keys in platform keyring.
+> > 
+> > Tested in a VM with locally signed kernel with pesign and imported the
+> > cert to EFI's MokList variable.
+> 
+> It's taken so long for me to review/test this patch set due to a
+> regression in sanity_check_segment_list(), introduced somewhere
+> between 4.20 and 5.0.0-rc1.  The sgement overlap test - "if ((mend >
+> pstart) && (mstart < pend))" - fails, returning a -EINVAL.
+> 
+> Is anyone else seeing this?
 
-Yes, that what the mutex was supposed to achieve. It=E2=80=99s not =
-supposed just
-to check whether it is a code page, but also that it is the same code
-page that you wanted to patch.=20
+Mimi, should be this issue?  I have sent a fix for that.
+https://lore.kernel.org/lkml/20181228011247.GA9999@dhcp-128-65.nay.redhat.com/
 
-> This, again, is a good use for a separate mm context. We can enforce
-> that that context will only ever contain valid page mappings for =
-actual
-> code pages.
-
-This will not tell you that you have the *right* code-page. The module
-notifiers help to do so, since they synchronize the text poking with
-the module removal.
-
-> (Note: in my proposed algorithm, with a separate mm, replace INVLPG =
-with
-> switching CR3 if we have to do a rollback or roll forward in the
-> breakpoint handler.)
-
-I really need to read your patches more carefully to see what you mean.
-
-Anyhow, so what do you prefer? I=E2=80=99m ok with either one:
-	1. Keep this patch
-	2. Remove this patch and change into a comment on text_poke()
-	3. Just drop the patch
-
+Thanks
+Dave
