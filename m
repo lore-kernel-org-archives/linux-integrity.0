@@ -1,88 +1,76 @@
-Return-Path: <SRS0=DQCd=P2=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=Hp9j=P3=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE53C1B0FD
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 22:09:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D902C61CE8
+	for <linux-integrity@archiver.kernel.org>; Sat, 19 Jan 2019 07:48:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83BE92087E
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jan 2019 22:09:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="k+RuwAME"
+	by mail.kernel.org (Postfix) with ESMTP id EB8C52086A
+	for <linux-integrity@archiver.kernel.org>; Sat, 19 Jan 2019 07:48:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729887AbfARWJU (ORCPT
+        id S1727496AbfASHsr (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 18 Jan 2019 17:09:20 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:45434 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729621AbfARWJU (ORCPT
+        Sat, 19 Jan 2019 02:48:47 -0500
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:50715 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726508AbfASHsr (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 18 Jan 2019 17:09:20 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 977638EE390;
-        Fri, 18 Jan 2019 14:09:19 -0800 (PST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id yXMzODEDbqr1; Fri, 18 Jan 2019 14:09:19 -0800 (PST)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 2E5248EE10C;
-        Fri, 18 Jan 2019 14:09:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1547849359;
-        bh=KKbZXUW2kwUrTYp4XwsTF1nUQhcuoNIwcAhN0k7ttN4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=k+RuwAMEcyCiHDaUjGmEl7T0MpaXK7KQbfL4y1azEFe12oNdW3u/5mvi2iTA7BFVG
-         fhb6BZFi8JTOMNDIOe9xe76rFN1BMsvogVWMhFHsfkPudw+/LJm/qjTVrnmwMKq2ID
-         7owa6QrnvDq6IYW8uL3wokQsniteS09yT4h0ztZU=
-Message-ID: <1547849358.2794.90.camel@HansenPartnership.com>
-Subject: Re: Getting weird TPM error after rebasing my tree to
- security/next-general
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Date:   Fri, 18 Jan 2019 14:09:18 -0800
-In-Reply-To: <20190118142559.GA4080@linux.intel.com>
-References: <20190118142559.GA4080@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sat, 19 Jan 2019 02:48:47 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0TIYS-NP_1547884121;
+Received: from ali-6c96cfd98fb5.local(mailfrom:zhang.jia@linux.alibaba.com fp:SMTPD_---0TIYS-NP_1547884121)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 19 Jan 2019 15:48:42 +0800
+Subject: Re: [PATCH 1/2] tpm/eventlog/tpm1: Simplify walking over *pos
+ measurements
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, tweek@google.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1547197173-52826-1-git-send-email-zhang.jia@linux.alibaba.com>
+ <1547197173-52826-2-git-send-email-zhang.jia@linux.alibaba.com>
+ <20190116220952.GH25803@linux.intel.com>
+ <8709dd61-2422-1c20-9937-d6003fa0354e@linux.alibaba.com>
+ <20190118151827.GK4080@linux.intel.com>
+From:   Jia Zhang <zhang.jia@linux.alibaba.com>
+Message-ID: <17ea25ab-9af8-87de-96e5-3dfdb24b12cb@linux.alibaba.com>
+Date:   Sat, 19 Jan 2019 15:48:44 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20190118151827.GK4080@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, 2019-01-18 at 16:25 +0200, Jarkko Sakkinen wrote:
-> I get this on a Geminilake NUC after rebasing my maintainer trees:
-> 
-> tpm tpm0: A TPM error (-1) occurred attempting the self test
-> 
-> I checked the latest commit ID from drivers/char/tpm to make sure
-> that I did not put anything broken to my last PR [1]. It works
-> without issues.
-> 
-> In addition [2] gives me an empty diff.
-> 
-> Something outside of the TPM driver must have happened that breaks
-> the driver. Any ideas?
-> 
-> [1] commit 9488585b21bef0df1217e510c7134905d1d376a7
-> [2] git diff 9488585b21bef0df1217e510c7134905d1d376a7 master
-> drivers/char/tpm/
 
-I'm afraid you're going to have to bisect to find the offending in-
-kernel commit, which is going to be painful since it seems to depend on
-physical hardware.  My first instinct is that we're getting a zero
-length read somewhere, but I still can't see anything in the merge
-window that would cause that behaviour.
 
-James
+On 2019/1/18 下午11:18, Jarkko Sakkinen wrote:
+> On Thu, Jan 17, 2019 at 09:32:55AM +0800, Jia Zhang wrote:
+>>
+>>
+>> On 2019/1/17 上午6:09, Jarkko Sakkinen wrote:
+>>> Please use "tpm:" tag for commits, not "tpm/eventlog/tpm1".
+>>>
 
+... snipped
+
+> 
+> OK, got it now. I think I will apply this! Will take a while because
+> of https://lkml.org/lkml/2019/1/18/485. Will not apply new patches
+> before that is rooted.
+
+No problem. Thanks for your reviews.
+
+Cheers,
+Jia
+
+> 
+> /Jarkko
+> 
