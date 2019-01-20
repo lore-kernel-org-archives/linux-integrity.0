@@ -2,84 +2,78 @@ Return-Path: <SRS0=Jbst=P4=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33434C7113D
-	for <linux-integrity@archiver.kernel.org>; Sun, 20 Jan 2019 16:04:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9181FA3729
+	for <linux-integrity@archiver.kernel.org>; Sun, 20 Jan 2019 16:04:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AF552085A
-	for <linux-integrity@archiver.kernel.org>; Sun, 20 Jan 2019 16:04:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C44172085A
+	for <linux-integrity@archiver.kernel.org>; Sun, 20 Jan 2019 16:04:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726197AbfATQEN (ORCPT
+        id S1726095AbfATQES (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 20 Jan 2019 11:04:13 -0500
-Received: from maillog.nuvoton.com ([202.39.227.15]:36992 "EHLO
-        maillog.nuvoton.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbfATQEN (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 20 Jan 2019 11:04:13 -0500
-X-Greylist: delayed 620 seconds by postgrey-1.27 at vger.kernel.org; Sun, 20 Jan 2019 11:04:12 EST
-Received: from NTHCCAS02.nuvoton.com (nthccas02.nuvoton.com [10.1.8.29])
-        by maillog.nuvoton.com (Postfix) with ESMTP id 419621C80612;
-        Sun, 20 Jan 2019 23:53:50 +0800 (CST)
-Received: from NTILML02.nuvoton.com (10.190.1.46) by NTHCCAS02.nuvoton.com
- (10.1.8.29) with Microsoft SMTP Server (TLS) id 15.0.1130.7; Sun, 20 Jan 2019
- 23:53:49 +0800
-Received: from NTILML02.nuvoton.com (10.190.1.47) by NTILML02.nuvoton.com
- (10.190.1.47) with Microsoft SMTP Server (TLS) id 15.0.1130.7; Sun, 20 Jan
- 2019 17:53:46 +0200
-Received: from NTILML02.nuvoton.com ([::1]) by NTILML02.nuvoton.com ([::1])
- with mapi id 15.00.1130.005; Sun, 20 Jan 2019 17:53:46 +0200
-From:   <Dan.Morav@nuvoton.com>
-To:     <nayna@linux.vnet.ibm.com>, <oshri.alkoby@nuvoton.com>,
-        <dana.cohen@nuvoton.com>
-CC:     <linux-integrity@vger.kernel.org>, <gcwilson@us.ibm.com>
-Subject: RE: device tree "compatible" string value for Nuvoton TPM 75xxx
-Thread-Topic: device tree "compatible" string value for Nuvoton TPM 75xxx
-Thread-Index: AQHUr0NnAtI+NFiTokGDUz1xZWqLqqW4UMeg
-Date:   Sun, 20 Jan 2019 15:53:46 +0000
-Message-ID: <42e1f00b059f464e9d906cece191ed0a@NTILML02.nuvoton.com>
-References: <63ed4dcb-a8ae-09ad-6793-8b1bb671d652@linux.vnet.ibm.com>
-In-Reply-To: <63ed4dcb-a8ae-09ad-6793-8b1bb671d652@linux.vnet.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.191.10.151]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Sun, 20 Jan 2019 11:04:18 -0500
+Received: from mga06.intel.com ([134.134.136.31]:58813 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725985AbfATQES (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 20 Jan 2019 11:04:18 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2019 08:04:17 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,499,1539673200"; 
+   d="scan'208";a="127235859"
+Received: from smartikx-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.254.134])
+  by FMSMGA003.fm.intel.com with ESMTP; 20 Jan 2019 08:04:15 -0800
+Date:   Sun, 20 Jan 2019 18:04:13 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Getting weird TPM error after rebasing my tree to
+ security/next-general
+Message-ID: <20190120160413.GB30478@linux.intel.com>
+References: <20190118142559.GA4080@linux.intel.com>
+ <1547849358.2794.90.camel@HansenPartnership.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547849358.2794.90.camel@HansenPartnership.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-SGksDQoNCkkndmUgYWRkZWQgT3Nocmkgd2hvIGhhcyBiZWVuIHdvcmtpbmcgb24gdGhlIGRyaXZl
-ciwgYW5kIERhbmEgd2hvIGlzIHRoZSBUUE0gYXBwbGljYXRpb25zIGZvciBmb2xsb3cgdXAuDQpJ
-J2Qgc3VnZ2VzdCAibnBjdDc1eCIgdG8gY29udGludWUgd2l0aCB0aGUgc2FtZSBsaW5lLg0KDQpS
-ZWdhcmRzLA0KRGFuLg0KDQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogTmF5bmEg
-PG5heW5hQGxpbnV4LnZuZXQuaWJtLmNvbT4NClNlbnQ6IEZyaWRheSwgMTggSmFudWFyeSwgMjAx
-OSAxNzozNQ0KVG86IElTMzAgRGFuIE1vcmF2IDxEYW4uTW9yYXZAbnV2b3Rvbi5jb20+DQpDYzog
-bGludXgtaW50ZWdyaXR5QHZnZXIua2VybmVsLm9yZzsgZ2N3aWxzb25AdXMuaWJtLmNvbQ0KU3Vi
-amVjdDogZGV2aWNlIHRyZWUgImNvbXBhdGlibGUiIHN0cmluZyB2YWx1ZSBmb3IgTnV2b3RvbiBU
-UE0gNzV4eHgNCg0KSGksDQoNCkN1cnJlbnRseSwgdGhlIGtlcm5lbCBzdXBwb3J0cyAibnV2b3Rv
-bixucGN0NjAxIiBmb3IgTnV2b3RvbiBUUE0gMi4NCg0KSSB3YXMgd29uZGVyaW5nIHdoYXQgd2ls
-bCBiZSB0aGUgY29tcGF0aWJsZSBzdHJpbmcgdmFsdWUgZm9yIE51dm90b24gVFBNIDc1eHggbW9k
-ZWxzLg0KDQpUaGFua3MgJiBSZWdhcmRzLA0KDQogICAgICAtIE5heW5hDQoNCg0KDQo9PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09DQpUaGUgcHJpdmlsZWdlZCBjb25maWRlbnRpYWwg
-aW5mb3JtYXRpb24gY29udGFpbmVkIGluIHRoaXMgZW1haWwgaXMgaW50ZW5kZWQgZm9yIHVzZSBv
-bmx5IGJ5IHRoZSBhZGRyZXNzZWVzIGFzIGluZGljYXRlZCBieSB0aGUgb3JpZ2luYWwgc2VuZGVy
-IG9mIHRoaXMgZW1haWwuIElmIHlvdSBhcmUgbm90IHRoZSBhZGRyZXNzZWUgaW5kaWNhdGVkIGlu
-IHRoaXMgZW1haWwgb3IgYXJlIG5vdCByZXNwb25zaWJsZSBmb3IgZGVsaXZlcnkgb2YgdGhlIGVt
-YWlsIHRvIHN1Y2ggYSBwZXJzb24sIHBsZWFzZSBraW5kbHkgcmVwbHkgdG8gdGhlIHNlbmRlciBp
-bmRpY2F0aW5nIHRoaXMgZmFjdCBhbmQgZGVsZXRlIGFsbCBjb3BpZXMgb2YgaXQgZnJvbSB5b3Vy
-IGNvbXB1dGVyIGFuZCBuZXR3b3JrIHNlcnZlciBpbW1lZGlhdGVseS4gWW91ciBjb29wZXJhdGlv
-biBpcyBoaWdobHkgYXBwcmVjaWF0ZWQuIEl0IGlzIGFkdmlzZWQgdGhhdCBhbnkgdW5hdXRob3Jp
-emVkIHVzZSBvZiBjb25maWRlbnRpYWwgaW5mb3JtYXRpb24gb2YgTnV2b3RvbiBpcyBzdHJpY3Rs
-eSBwcm9oaWJpdGVkOyBhbmQgYW55IGluZm9ybWF0aW9uIGluIHRoaXMgZW1haWwgaXJyZWxldmFu
-dCB0byB0aGUgb2ZmaWNpYWwgYnVzaW5lc3Mgb2YgTnV2b3RvbiBzaGFsbCBiZSBkZWVtZWQgYXMg
-bmVpdGhlciBnaXZlbiBub3IgZW5kb3JzZWQgYnkgTnV2b3Rvbi4NCg==
+On Fri, Jan 18, 2019 at 02:09:18PM -0800, James Bottomley wrote:
+> On Fri, 2019-01-18 at 16:25 +0200, Jarkko Sakkinen wrote:
+> > I get this on a Geminilake NUC after rebasing my maintainer trees:
+> > 
+> > tpm tpm0: A TPM error (-1) occurred attempting the self test
+> > 
+> > I checked the latest commit ID from drivers/char/tpm to make sure
+> > that I did not put anything broken to my last PR [1]. It works
+> > without issues.
+> > 
+> > In addition [2] gives me an empty diff.
+> > 
+> > Something outside of the TPM driver must have happened that breaks
+> > the driver. Any ideas?
+> > 
+> > [1] commit 9488585b21bef0df1217e510c7134905d1d376a7
+> > [2] git diff 9488585b21bef0df1217e510c7134905d1d376a7 master
+> > drivers/char/tpm/
+> 
+> I'm afraid you're going to have to bisect to find the offending in-
+> kernel commit, which is going to be painful since it seems to depend on
+> physical hardware.  My first instinct is that we're getting a zero
+> length read somewhere, but I still can't see anything in the merge
+> window that would cause that behaviour.
+
+Yeah, I've started to bisect it (still 9 rounds to go).
+
+/Jarkko
