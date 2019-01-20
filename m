@@ -2,128 +2,115 @@ Return-Path: <SRS0=Jbst=P4=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47146C7113C
-	for <linux-integrity@archiver.kernel.org>; Sun, 20 Jan 2019 16:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A35B9C26641
+	for <linux-integrity@archiver.kernel.org>; Sun, 20 Jan 2019 18:13:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1078E2085A
-	for <linux-integrity@archiver.kernel.org>; Sun, 20 Jan 2019 16:42:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EA2B2085A
+	for <linux-integrity@archiver.kernel.org>; Sun, 20 Jan 2019 18:13:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726325AbfATQma (ORCPT
+        id S1727285AbfATSNT (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 20 Jan 2019 11:42:30 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54854 "EHLO
+        Sun, 20 Jan 2019 13:13:19 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44612 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726519AbfATQma (ORCPT
+        by vger.kernel.org with ESMTP id S1727197AbfATSNT (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 20 Jan 2019 11:42:30 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0KGe4ED031645
-        for <linux-integrity@vger.kernel.org>; Sun, 20 Jan 2019 11:42:29 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q4j2qqm7e-1
+        Sun, 20 Jan 2019 13:13:19 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0KI3ehQ126710
+        for <linux-integrity@vger.kernel.org>; Sun, 20 Jan 2019 13:13:18 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q4hqcbcxw-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Sun, 20 Jan 2019 11:42:29 -0500
+        for <linux-integrity@vger.kernel.org>; Sun, 20 Jan 2019 13:13:18 -0500
 Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Sun, 20 Jan 2019 16:42:26 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Sun, 20 Jan 2019 18:13:16 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 20 Jan 2019 16:42:24 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0KGgNL77405872
+        Sun, 20 Jan 2019 18:13:14 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0KIDDvZ63963208
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 20 Jan 2019 16:42:23 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BAAE1AE053;
-        Sun, 20 Jan 2019 16:42:23 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E8317AE051;
-        Sun, 20 Jan 2019 16:42:22 +0000 (GMT)
+        Sun, 20 Jan 2019 18:13:13 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 69BE24C040;
+        Sun, 20 Jan 2019 18:13:13 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 83D1E4C046;
+        Sun, 20 Jan 2019 18:13:12 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.80.91.65])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 20 Jan 2019 16:42:22 +0000 (GMT)
-Subject: Re: evm_inode_init_security and module stacking
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun, 20 Jan 2019 18:13:12 +0000 (GMT)
+Subject: Re: [PATCH v3 1/6] ima/ima_boot_aggregate: Fix the definition of
+ event log
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Cc:     LSM <linux-security-module@vger.kernel.org>
-Date:   Sun, 20 Jan 2019 11:42:11 -0500
-In-Reply-To: <9e142269-fd2e-b62e-f3fc-687d400aefd1@schaufler-ca.com>
-References: <f1a86814-716a-d02d-42ce-8ef64d680feb@schaufler-ca.com>
-         <1547778689.3982.20.camel@linux.ibm.com>
-         <9e142269-fd2e-b62e-f3fc-687d400aefd1@schaufler-ca.com>
+To:     Jia Zhang <zhang.jia@linux.alibaba.com>, pvorel@suse.cz
+Cc:     linux-integrity@vger.kernel.org, ltp@lists.linux.it
+Date:   Sun, 20 Jan 2019 13:13:01 -0500
+In-Reply-To: <1547607461-11233-2-git-send-email-zhang.jia@linux.alibaba.com>
+References: <1547607461-11233-1-git-send-email-zhang.jia@linux.alibaba.com>
+         <1547607461-11233-2-git-send-email-zhang.jia@linux.alibaba.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-x-cbid: 19012016-0020-0000-0000-00000308F8BA
+x-cbid: 19012018-4275-0000-0000-00000301B8C3
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012016-0021-0000-0000-0000215A2464
-Message-Id: <1548002531.3982.202.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-20_11:,,
+x-cbparentid: 19012018-4276-0000-0000-0000380FE3AD
+Message-Id: <1548007981.3982.207.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-20_12:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=741 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901200135
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901200147
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, 2019-01-18 at 10:49 -0800, Casey Schaufler wrote:
-> On 1/17/2019 6:31 PM, Mimi Zohar wrote:
-> > On Thu, 2019-01-17 at 16:47 -0800, Casey Schaufler wrote:
-> >> security_inode_init_security() currently calls at most one
-> >> of selinux_inode_init_security() and smack_inode_init_security().
-> >> It then sends the result to evm_inode_init_security to create
-> >> the security.evm attribute. This isn't going to work on a system
-> >> that has both SELinux and Smack.
-> > Calculating security.evm based on multiple xattrs sounded really
-> > familiar.  Looking back at the git log, 9d8f13ba3f48 ("security: new
-> > security_inode_init_security API adds function callback") addressed
-> > filesystems wanting to be able to write all the xattrs at the same
-> > time and prepared for multiple LSM xattr support.
+On Wed, 2019-01-16 at 10:57 +0800, Jia Zhang wrote:
+> According to [1], the structure of event log should be packed,
+> and certain fields should be 32-bit unsigned integer. Fortunately,
+> keeping natural alignment seems to make everything working as
+> expected all the time.
 > 
-> Right. That provides for security.selinux, security.SMACK64
-> and security.evm at the same time. What it doesn't help with
-> is what goes into security.evm.
+> [1] page 17,18 @https://trustedcomputinggroup.org/wp-content/uploads/TCG_EFI_Protocol_1_22_Final-v05.pdf
 > 
-> >> I see two options:
-> >> 	- create security.evm with the information from all
-> >> 	  security modules that provide inode_init_security hooks
-> >> 	- create a separate attribute for each module,
-> >> 	  security.evm-selinux and security.evm-smack in the
-> >> 	  current case.
-> >>
-> >> How would you like to have it work? I am agnostic, although the
-> >> separate attributes would be easier for the infrastructure.
-> > Having separate attributes for each LSM module would require re-
-> > calculating the hmac for each one, any time any of the other file
-> > metadata changed.  That doesn't sound like a good idea.
+> Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
+
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+
+> ---
+>  testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> OK. So it sounds like I need to gather up data from all of the
-> LSMs (e.g. security.selinux, security.SMACK64) and pass the combination
-> to evm_inode_init_security(). Will that work? Will that provide the
-> integrity sub-system what it needs?
-
-Casey, as far as I'm aware only real root, currently, is allowed to
-write the security xattr domain.  If we assume real root is labeling
-the filesystem with both LSM xattrs, there shouldn't be a problem.
- I'm not sure how this is going to work from a namespacing/container
-perspective, which I assume is the impetus for LSM module stacking.
-
-I haven't been following Smack.  Have you added Smack xattr support or
-thought about it in the context of "containers"?  Are you planning on
-appending the info to the existing security.SMACK64 label or having
-separate xattrs for each "container"?
-
-Mimi
+> diff --git a/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c b/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
+> index f6e7be0..d85d222 100644
+> --- a/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
+> +++ b/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
+> @@ -53,10 +53,10 @@ int main(int argc, char *argv[])
+>  	struct {
+>  		struct {
+>  			u_int32_t pcr;
+> -			int type;
+> -			unsigned char digest[SHA_DIGEST_LENGTH];
+> -			u_int16_t len;
+> -		} header;
+> +			u_int32_t type;
+> +			u_int8_t digest[SHA_DIGEST_LENGTH];
+> +			u_int32_t len;
+> +		} header __attribute__ ((packed));
+>  		char *data;
+>  	} event;
+>  	struct {
 
