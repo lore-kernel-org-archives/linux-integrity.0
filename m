@@ -3,63 +3,83 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B439C636A2
-	for <linux-integrity@archiver.kernel.org>; Sun, 20 Jan 2019 14:59:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33434C7113D
+	for <linux-integrity@archiver.kernel.org>; Sun, 20 Jan 2019 16:04:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4867F20861
-	for <linux-integrity@archiver.kernel.org>; Sun, 20 Jan 2019 14:59:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AF552085A
+	for <linux-integrity@archiver.kernel.org>; Sun, 20 Jan 2019 16:04:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730591AbfATO7X (ORCPT
+        id S1726197AbfATQEN (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 20 Jan 2019 09:59:23 -0500
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:47781 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730579AbfATO7W (ORCPT
+        Sun, 20 Jan 2019 11:04:13 -0500
+Received: from maillog.nuvoton.com ([202.39.227.15]:36992 "EHLO
+        maillog.nuvoton.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfATQEN (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 20 Jan 2019 09:59:22 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01406;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0TIdTHIt_1547996355;
-Received: from 192.168.78.200(mailfrom:zhang.jia@linux.alibaba.com fp:SMTPD_---0TIdTHIt_1547996355)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sun, 20 Jan 2019 22:59:16 +0800
-Subject: Re: [LTP][PATCH v3 0/6] LTP IMA fix bundle
-To:     Petr Vorel <pvorel@suse.cz>
-Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
-        ltp@lists.linux.it
-References: <1547607461-11233-1-git-send-email-zhang.jia@linux.alibaba.com>
- <20190116072004.GA10601@dell5510>
-From:   Jia Zhang <zhang.jia@linux.alibaba.com>
-Message-ID: <8ef3d1f2-7dbc-2dd5-051b-7f5074682c07@linux.alibaba.com>
-Date:   Sun, 20 Jan 2019 22:59:14 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20190116072004.GA10601@dell5510>
-Content-Type: text/plain; charset=utf-8
+        Sun, 20 Jan 2019 11:04:13 -0500
+X-Greylist: delayed 620 seconds by postgrey-1.27 at vger.kernel.org; Sun, 20 Jan 2019 11:04:12 EST
+Received: from NTHCCAS02.nuvoton.com (nthccas02.nuvoton.com [10.1.8.29])
+        by maillog.nuvoton.com (Postfix) with ESMTP id 419621C80612;
+        Sun, 20 Jan 2019 23:53:50 +0800 (CST)
+Received: from NTILML02.nuvoton.com (10.190.1.46) by NTHCCAS02.nuvoton.com
+ (10.1.8.29) with Microsoft SMTP Server (TLS) id 15.0.1130.7; Sun, 20 Jan 2019
+ 23:53:49 +0800
+Received: from NTILML02.nuvoton.com (10.190.1.47) by NTILML02.nuvoton.com
+ (10.190.1.47) with Microsoft SMTP Server (TLS) id 15.0.1130.7; Sun, 20 Jan
+ 2019 17:53:46 +0200
+Received: from NTILML02.nuvoton.com ([::1]) by NTILML02.nuvoton.com ([::1])
+ with mapi id 15.00.1130.005; Sun, 20 Jan 2019 17:53:46 +0200
+From:   <Dan.Morav@nuvoton.com>
+To:     <nayna@linux.vnet.ibm.com>, <oshri.alkoby@nuvoton.com>,
+        <dana.cohen@nuvoton.com>
+CC:     <linux-integrity@vger.kernel.org>, <gcwilson@us.ibm.com>
+Subject: RE: device tree "compatible" string value for Nuvoton TPM 75xxx
+Thread-Topic: device tree "compatible" string value for Nuvoton TPM 75xxx
+Thread-Index: AQHUr0NnAtI+NFiTokGDUz1xZWqLqqW4UMeg
+Date:   Sun, 20 Jan 2019 15:53:46 +0000
+Message-ID: <42e1f00b059f464e9d906cece191ed0a@NTILML02.nuvoton.com>
+References: <63ed4dcb-a8ae-09ad-6793-8b1bb671d652@linux.vnet.ibm.com>
+In-Reply-To: <63ed4dcb-a8ae-09ad-6793-8b1bb671d652@linux.vnet.ibm.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.191.10.151]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Mini,
-
-Could you help to take a look at this V3 patch series?
-
-Thanks,
-Jia
-
-On 2019/1/16 下午3:20, Petr Vorel wrote:
-> Hi Jia, Mimi,
-> 
->> Changelog since V2:
->> - Rework patch 6. Here is a quick diff against V2:
-> 
-> LGTM, just waiting if Mimi reviews 1st and 6th commit.
-> 
-> Kind regards,
-> Petr
-> 
+SGksDQoNCkkndmUgYWRkZWQgT3Nocmkgd2hvIGhhcyBiZWVuIHdvcmtpbmcgb24gdGhlIGRyaXZl
+ciwgYW5kIERhbmEgd2hvIGlzIHRoZSBUUE0gYXBwbGljYXRpb25zIGZvciBmb2xsb3cgdXAuDQpJ
+J2Qgc3VnZ2VzdCAibnBjdDc1eCIgdG8gY29udGludWUgd2l0aCB0aGUgc2FtZSBsaW5lLg0KDQpS
+ZWdhcmRzLA0KRGFuLg0KDQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogTmF5bmEg
+PG5heW5hQGxpbnV4LnZuZXQuaWJtLmNvbT4NClNlbnQ6IEZyaWRheSwgMTggSmFudWFyeSwgMjAx
+OSAxNzozNQ0KVG86IElTMzAgRGFuIE1vcmF2IDxEYW4uTW9yYXZAbnV2b3Rvbi5jb20+DQpDYzog
+bGludXgtaW50ZWdyaXR5QHZnZXIua2VybmVsLm9yZzsgZ2N3aWxzb25AdXMuaWJtLmNvbQ0KU3Vi
+amVjdDogZGV2aWNlIHRyZWUgImNvbXBhdGlibGUiIHN0cmluZyB2YWx1ZSBmb3IgTnV2b3RvbiBU
+UE0gNzV4eHgNCg0KSGksDQoNCkN1cnJlbnRseSwgdGhlIGtlcm5lbCBzdXBwb3J0cyAibnV2b3Rv
+bixucGN0NjAxIiBmb3IgTnV2b3RvbiBUUE0gMi4NCg0KSSB3YXMgd29uZGVyaW5nIHdoYXQgd2ls
+bCBiZSB0aGUgY29tcGF0aWJsZSBzdHJpbmcgdmFsdWUgZm9yIE51dm90b24gVFBNIDc1eHggbW9k
+ZWxzLg0KDQpUaGFua3MgJiBSZWdhcmRzLA0KDQogICAgICAtIE5heW5hDQoNCg0KDQo9PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09DQpUaGUgcHJpdmlsZWdlZCBjb25maWRlbnRpYWwg
+aW5mb3JtYXRpb24gY29udGFpbmVkIGluIHRoaXMgZW1haWwgaXMgaW50ZW5kZWQgZm9yIHVzZSBv
+bmx5IGJ5IHRoZSBhZGRyZXNzZWVzIGFzIGluZGljYXRlZCBieSB0aGUgb3JpZ2luYWwgc2VuZGVy
+IG9mIHRoaXMgZW1haWwuIElmIHlvdSBhcmUgbm90IHRoZSBhZGRyZXNzZWUgaW5kaWNhdGVkIGlu
+IHRoaXMgZW1haWwgb3IgYXJlIG5vdCByZXNwb25zaWJsZSBmb3IgZGVsaXZlcnkgb2YgdGhlIGVt
+YWlsIHRvIHN1Y2ggYSBwZXJzb24sIHBsZWFzZSBraW5kbHkgcmVwbHkgdG8gdGhlIHNlbmRlciBp
+bmRpY2F0aW5nIHRoaXMgZmFjdCBhbmQgZGVsZXRlIGFsbCBjb3BpZXMgb2YgaXQgZnJvbSB5b3Vy
+IGNvbXB1dGVyIGFuZCBuZXR3b3JrIHNlcnZlciBpbW1lZGlhdGVseS4gWW91ciBjb29wZXJhdGlv
+biBpcyBoaWdobHkgYXBwcmVjaWF0ZWQuIEl0IGlzIGFkdmlzZWQgdGhhdCBhbnkgdW5hdXRob3Jp
+emVkIHVzZSBvZiBjb25maWRlbnRpYWwgaW5mb3JtYXRpb24gb2YgTnV2b3RvbiBpcyBzdHJpY3Rs
+eSBwcm9oaWJpdGVkOyBhbmQgYW55IGluZm9ybWF0aW9uIGluIHRoaXMgZW1haWwgaXJyZWxldmFu
+dCB0byB0aGUgb2ZmaWNpYWwgYnVzaW5lc3Mgb2YgTnV2b3RvbiBzaGFsbCBiZSBkZWVtZWQgYXMg
+bmVpdGhlciBnaXZlbiBub3IgZW5kb3JzZWQgYnkgTnV2b3Rvbi4NCg==
