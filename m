@@ -2,155 +2,132 @@ Return-Path: <SRS0=Jbst=P4=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1BB9C26641
-	for <linux-integrity@archiver.kernel.org>; Sun, 20 Jan 2019 18:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF5DC26641
+	for <linux-integrity@archiver.kernel.org>; Sun, 20 Jan 2019 18:56:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B66C32084F
-	for <linux-integrity@archiver.kernel.org>; Sun, 20 Jan 2019 18:39:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90BCD20880
+	for <linux-integrity@archiver.kernel.org>; Sun, 20 Jan 2019 18:56:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="BLWB6Zvq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbfATSjN (ORCPT
+        id S1727777AbfATS4n (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 20 Jan 2019 13:39:13 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53082 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726541AbfATSjN (ORCPT
+        Sun, 20 Jan 2019 13:56:43 -0500
+Received: from sonic304-55.consmr.mail.gq1.yahoo.com ([98.137.68.237]:34279
+        "EHLO sonic304-55.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727776AbfATS4m (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 20 Jan 2019 13:39:13 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0KIcaD6037075
-        for <linux-integrity@vger.kernel.org>; Sun, 20 Jan 2019 13:39:12 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q4hqcc3cp-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Sun, 20 Jan 2019 13:39:11 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Sun, 20 Jan 2019 18:39:09 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 20 Jan 2019 18:39:07 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0KId66S1901034
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 20 Jan 2019 18:39:06 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 673905204F;
-        Sun, 20 Jan 2019 18:39:06 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.91.65])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id BF3B75204E;
-        Sun, 20 Jan 2019 18:39:05 +0000 (GMT)
-Subject: Re: [PATCH v3 6/6] ima/ima_violations: Temporarily remove the
- printk rate limit
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jia Zhang <zhang.jia@linux.alibaba.com>, pvorel@suse.cz
-Cc:     linux-integrity@vger.kernel.org, ltp@lists.linux.it
-Date:   Sun, 20 Jan 2019 13:38:54 -0500
-In-Reply-To: <1547607461-11233-7-git-send-email-zhang.jia@linux.alibaba.com>
-References: <1547607461-11233-1-git-send-email-zhang.jia@linux.alibaba.com>
-         <1547607461-11233-7-git-send-email-zhang.jia@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+        Sun, 20 Jan 2019 13:56:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1548010601; bh=D9wNj/GPuY6bT9EMRCSjGIjB0X14TBM2LuAfBBfFkxI=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=BLWB6ZvqN+0AIp0Z3LjKT4zlt9GOHG72sO2PG399bvgqlYFil8AElNqhEMWyHuskpMRXeLMFCpzwNSTO3V4yTMRY85gGGtUmhvrVJ18mTzZY5sancF78sW5xHC1xsvGQbZ3BFCVbKKy/S2vdxq8vO0mt727ksr07voTihPhSAq+RYbCTDSHJZEimAOn+2SjKyiY+vgjq0T07oYItY+lIOkLDKHC2nNyAYAyHCrxGR73+4UGyMJi4em1idhk78aH77vJK1TZJ6CvTEqtHW7vd/a8eKspNvNDCrztG6MP49PWmHLxs+16jC40k1hOHg+/audTKQKECdNRUy+SIZ+zIuw==
+X-YMail-OSG: fxol4EsVM1ls2w7CH0iCQmtvXCDpSGJa4dSsZkYhAluU4ysIWCt2dU47FogaI2s
+ r751DIIQR6eDDN266CWRXWLArvMSQR.f.r9sD5SQniz6s62FnGXFALYLytXZrB8GRnwi2uoR5LcB
+ __IdUV7.KoWR8qJASBRwLqa4GrGICNuIlJsEa5u35SG0f28Uzo8XDK7vi.YSCnoLeGDhEYKKc1kM
+ EBfEgNuRfvO8_SJM4d.Nw5XCN_5_HvlT4xsEjc.LrMPUjcEQCzw.juux8Ds.VrF6byj1kULlk365
+ QMpknJex5u76cyliKTMiVwBh5OE4R4EySGNDx3fCsmXjoZqK1B3emF5s0Fj45OOIF9YdB0EyiR_Y
+ eaqfiGVf32A702s8eYNCjbedZ9kT9Otn_DK.IlBhQmvJz6Sa7HBkYEq7l_QAVe3WPe8EbBfq93J0
+ rgbLqG2CK7wHS6Rj8x7FtlUgrpz00d8iNSCIRnSOkv6hBXzHzgx90guk00tN25IEZ44jC0ncMaz5
+ yw.dH_.LBnAChfjstXSEcdu5wowxW78x4vVoFvzDNPfwcH.N.g18EzR2aoKEG8YLHVVG4FbnioHV
+ nWntB_S2Dfy8zvCy0riVUocUKCUtdYcsrJMWf5cM2m43xMk7DK.TbK7ADRNC6QQcx3Mehz0M_ZgO
+ hgxVLuhqY7bRpKTHeNqNJqr5dDJyhXZOSjPSBQQ3EA16L7xQqqU4KpN337omRVYdjsxtZPugfYlS
+ zXwHOiYmv3q9RcVgZkWFxKcdk_xivFhRY_ESkdY_rxacs1jWEJbwreEOKdiPaJJ9WpB3Pfm47nM0
+ k3O6cMCJ9QYxAswGYP33.tzBmU8lL1hEz0omlWohx8eASrAYDNs138lbVNo8.E_q1ri8pLRNOrij
+ R5.VT5EWl8OKEkv35PhyvtODMYWW96vvtr0tGG3seDXQjRLgvcILG8anSf141k8ysVM8f41GcdOF
+ mviSuWji3642uHCvaN6.gWnASrH2FMFfUod8kPvkJwe6TK73x.u8Vl75.B3JWkpirxLU2mX88n5M
+ ejxxfekTHpFkgD_r4oaDz1fI9Gyc8dnc_8_YgvWUEkEs6ei.JK2Z76wep1YYrEkY.LcR6bZ7n8L1
+ Ri5dYm7dMpDcoobVvZRR.VqvxBy8iCMeubxkxEf0XiYAHGCss
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.gq1.yahoo.com with HTTP; Sun, 20 Jan 2019 18:56:41 +0000
+Received: from 118-92-255-155.dsl.dyn.ihug.co.nz (EHLO [192.168.1.152]) ([118.92.255.155])
+          by smtp422.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 187a983805853565a354274ab5e4a5d8;
+          Sun, 20 Jan 2019 18:54:41 +0000 (UTC)
+Subject: Re: evm_inode_init_security and module stacking
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Cc:     LSM <linux-security-module@vger.kernel.org>
+References: <f1a86814-716a-d02d-42ce-8ef64d680feb@schaufler-ca.com>
+ <1547778689.3982.20.camel@linux.ibm.com>
+ <9e142269-fd2e-b62e-f3fc-687d400aefd1@schaufler-ca.com>
+ <1548002531.3982.202.camel@linux.ibm.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <f9b450c1-740f-3b77-510c-7e0404986035@schaufler-ca.com>
+Date:   Sun, 20 Jan 2019 10:54:38 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <1548002531.3982.202.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19012018-4275-0000-0000-00000301B9E8
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012018-4276-0000-0000-0000380FE4D5
-Message-Id: <1548009534.3982.216.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-20_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901200152
+Content-Language: en-US
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, 2019-01-16 at 10:57 +0800, Jia Zhang wrote:
-> The output frequency of audit log is limited by printk_ratelimit()
-> in kernel if auditd not used. Thus, the test cases heavily depending
-> on searching certain keywords in log file may fail if the matching
-> patterns are exactly suppressed by printk_ratelimit().
-> 
-> In order to fix such a sort of failure, just temporarily remove the
-> printk rate limit, and restore its original setting when doing
-> cleanup.
-> 
-> Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
+On 1/20/2019 8:42 AM, Mimi Zohar wrote:
+> On Fri, 2019-01-18 at 10:49 -0800, Casey Schaufler wrote:
+>> On 1/17/2019 6:31 PM, Mimi Zohar wrote:
+>>> On Thu, 2019-01-17 at 16:47 -0800, Casey Schaufler wrote:
+>>>> security_inode_init_security() currently calls at most one
+>>>> of selinux_inode_init_security() and smack_inode_init_security().
+>>>> It then sends the result to evm_inode_init_security to create
+>>>> the security.evm attribute. This isn't going to work on a system
+>>>> that has both SELinux and Smack.
+>>> Calculating security.evm based on multiple xattrs sounded really
+>>> familiar.  Looking back at the git log, 9d8f13ba3f48 ("security: new
+>>> security_inode_init_security API adds function callback") addressed
+>>> filesystems wanting to be able to write all the xattrs at the same
+>>> time and prepared for multiple LSM xattr support.
+>> Right. That provides for security.selinux, security.SMACK64
+>> and security.evm at the same time. What it doesn't help with
+>> is what goes into security.evm.
+>>
+>>>> I see two options:
+>>>> 	- create security.evm with the information from all
+>>>> 	  security modules that provide inode_init_security hooks
+>>>> 	- create a separate attribute for each module,
+>>>> 	  security.evm-selinux and security.evm-smack in the
+>>>> 	  current case.
+>>>>
+>>>> How would you like to have it work? I am agnostic, although the
+>>>> separate attributes would be easier for the infrastructure.
+>>> Having separate attributes for each LSM module would require re-
+>>> calculating the hmac for each one, any time any of the other file
+>>> metadata changed.  That doesn't sound like a good idea.
+>> OK. So it sounds like I need to gather up data from all of the
+>> LSMs (e.g. security.selinux, security.SMACK64) and pass the combination
+>> to evm_inode_init_security(). Will that work? Will that provide the
+>> integrity sub-system what it needs?
+> Casey, as far as I'm aware only real root, currently, is allowed to
+> write the security xattr domain.  If we assume real root is labeling
+> the filesystem with both LSM xattrs, there shouldn't be a problem.
 
-Thanks, I wasn't aware of the sysctl.  If the message isn't in
-/var/log/messages or /var/log/audit/audit.log, do we now need to also
-check journalctl?
+evm_inode_init_security() will get passed the concatenation of
+security.selinux and security.SMACK64 then. That's easy enough.
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+>  I'm not sure how this is going to work from a namespacing/container
+> perspective, which I assume is the impetus for LSM module stacking.
 
-> ---
->  .../kernel/security/integrity/ima/tests/ima_setup.sh      |  2 +-
->  .../kernel/security/integrity/ima/tests/ima_violations.sh | 15 +++++++++++++++
->  2 files changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-> index 6dfb4d2..fe60981 100644
-> --- a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-> +++ b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-> @@ -20,7 +20,7 @@
->  TST_TESTFUNC="test"
->  TST_SETUP_CALLER="$TST_SETUP"
->  TST_SETUP="ima_setup"
-> -TST_CLEANUP="ima_cleanup"
-> +TST_CLEANUP="${TST_CLEANUP:-ima_cleanup}"
->  TST_NEEDS_TMPDIR=1
->  TST_NEEDS_ROOT=1
->  
-> diff --git a/testcases/kernel/security/integrity/ima/tests/ima_violations.sh b/testcases/kernel/security/integrity/ima/tests/ima_violations.sh
-> index f3f40d4..74223c2 100755
-> --- a/testcases/kernel/security/integrity/ima/tests/ima_violations.sh
-> +++ b/testcases/kernel/security/integrity/ima/tests/ima_violations.sh
-> @@ -20,6 +20,7 @@
->  # Test whether ToMToU and open_writer violations invalidatethe PCR and are logged.
->  
->  TST_SETUP="setup"
-> +TST_CLEANUP="cleanup"
->  TST_CNT=3
->  TST_NEEDS_DEVICE=1
->  
-> @@ -31,15 +32,29 @@ setup()
->  	FILE="test.txt"
->  	IMA_VIOLATIONS="$SECURITYFS/ima/violations"
->  	LOG="/var/log/messages"
-> +	PRINTK_RATE_LIMIT="0"
->  
->  	if status_daemon auditd; then
->  		LOG="/var/log/audit/audit.log"
-> +	else
-> +		tst_check_cmds sysctl
-> +
-> +		PRINTK_RATE_LIMIT=`sysctl -n kernel.printk_ratelimit`
-> +		sysctl -wq kernel.printk_ratelimit=0
->  	fi
->  	[ -f "$LOG" ] || \
->  		tst_brk TBROK "log $LOG does not exist (bug in detection?)"
->  	tst_res TINFO "using log $LOG"
->  }
->  
-> +cleanup()
-> +{
-> +	[ "$PRINTK_RATE_LIMIT" != "0" ] && \
-> +		sysctl -wq kernel.printk_ratelimit=$PRINTK_RATE_LIMIT
-> +
-> +	ima_cleanup
-> +}
-> +
->  open_file_read()
->  {
->  	exec 3< $FILE || exit 1
+It's one of the use cases. New LSMs that want to use blobs, including
+Landlock and SARA, are also important. I even know someone who wants
+to use Smack and AppArmor in a complimentary fashon.
 
+> I haven't been following Smack.  Have you added Smack xattr support or
+> thought about it in the context of "containers"?  Are you planning on
+> appending the info to the existing security.SMACK64 label or having
+> separate xattrs for each "container"?
+
+Samsung had a pretty complete implementation for Smack
+"namespaces", but they decided on a different technical
+approach to their problem. No one has picked it back up.
+It used a label aliasing mechanism, very much like what
+user namespaces do for UIDs. All attributes saved to disk
+are native. The mapping only exists for the life of the
+namespace.
+
+>
+> Mimi
+>
+>
