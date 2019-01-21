@@ -2,136 +2,127 @@ Return-Path: <SRS0=c8Vu=P5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7333C65C17
-	for <linux-integrity@archiver.kernel.org>; Mon, 21 Jan 2019 10:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63955C282F6
+	for <linux-integrity@archiver.kernel.org>; Mon, 21 Jan 2019 10:03:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EEE420663
-	for <linux-integrity@archiver.kernel.org>; Mon, 21 Jan 2019 10:00:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C87320663
+	for <linux-integrity@archiver.kernel.org>; Mon, 21 Jan 2019 10:03:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728278AbfAUKAT (ORCPT
+        id S1727709AbfAUKD4 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 21 Jan 2019 05:00:19 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46450 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727619AbfAUKAT (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 21 Jan 2019 05:00:19 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A679AC07F991;
-        Mon, 21 Jan 2019 10:00:18 +0000 (UTC)
-Received: from kasong-desktop-nay-redhat-com.nay.redhat.com (unknown [10.66.128.41])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DA22D60123;
-        Mon, 21 Jan 2019 10:00:13 +0000 (UTC)
-From:   Kairui Song <kasong@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     dhowells@redhat.com, dwmw2@infradead.org,
-        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
-        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
-        bauerman@linux.ibm.com, ebiggers@google.com, nayna@linux.ibm.com,
-        dyoung@redhat.com, linux-integrity@vger.kernel.org,
-        kexec@lists.infradead.org, Kairui Song <kasong@redhat.com>
-Subject: [PATCH v5 2/2] kexec, KEYS: Make use of platform keyring for signature verify
-Date:   Mon, 21 Jan 2019 17:59:29 +0800
-Message-Id: <20190121095929.26915-3-kasong@redhat.com>
-In-Reply-To: <20190121095929.26915-1-kasong@redhat.com>
-References: <20190121095929.26915-1-kasong@redhat.com>
+        Mon, 21 Jan 2019 05:03:56 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:39559 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726214AbfAUKDz (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 21 Jan 2019 05:03:55 -0500
+Received: by mail-it1-f195.google.com with SMTP id a6so14359910itl.4
+        for <linux-integrity@vger.kernel.org>; Mon, 21 Jan 2019 02:03:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XEeqscVWGCdHpZMcDyZcIsfpiPlWBKev6BzxbsJ0S6I=;
+        b=CI4HmyfD+CvoVgaxtl6nKFXVClZVDvVFuN7oC9u46blhK5IU5FODEe31/y+7gSH7Iu
+         344X6r4TXgddjbjLmkLQphBfqiZexJahxtZXQCYW5DzwUXNKUa6YTRjIyv9F85ctfVji
+         VIkzRTnsNJwCKfE6bGLSmTMIKbK1H6Jf9D1qzbxuCIdbRRh/I4atZ+zKGrnonZtW6nDb
+         0ZnEmEehblL3yo0DfCZnEGQwghJ/P4oFTHvQZfdwPmtUCPSV0cs89JZPSgq4exc4+yIi
+         StaFmv7U4wKrmDYmKbRkQEtjEuU6L3nrXeGWcGlucka/sQ4EZRBdufb2RQIu0dgr8ZYJ
+         3fyQ==
+X-Gm-Message-State: AJcUukd/To3XiFLe2aBpzKiVbcE/R/7kneQpQxWiTHYLuJ/sSfFskFds
+        Pz90ONfdpA3W/yTJA6MEyvuqZA75HjQ74DeKMPDZoQ==
+X-Google-Smtp-Source: ALg8bN6wXdAWFfIKDeG2VhzwmmF3lttG/N0MUFQwkaiDPpr5NHUQco47PUqBVWfeJ7oAfY1a2ap4vAZ41YHJbEkLaww=
+X-Received: by 2002:a24:ce42:: with SMTP id v63mr16205179itg.136.1548065034597;
+ Mon, 21 Jan 2019 02:03:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 21 Jan 2019 10:00:18 +0000 (UTC)
+References: <20190121095929.26915-1-kasong@redhat.com>
+In-Reply-To: <20190121095929.26915-1-kasong@redhat.com>
+From:   Kairui Song <kasong@redhat.com>
+Date:   Mon, 21 Jan 2019 18:03:43 +0800
+Message-ID: <CACPcB9c2eJ=Wm8Tb6afgyoAQ5TWuGbuqGXq1i9cN8pRFCwXGrw@mail.gmail.com>
+Subject: Re: [PATCH v5 0/2] let kexec_file_load use platform keyring to verify
+ the kernel image
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
+        Eric Biggers <ebiggers@google.com>, nayna@linux.ibm.com,
+        Dave Young <dyoung@redhat.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        kexec@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-This patch let kexec_file_load makes use of .platform keyring as fall
-back if it failed to verify a PE signed image against secondary or
-builtin key ring, make it possible to verify kernel image signed with
-preboot keys as well.
+On Mon, Jan 21, 2019 at 6:00 PM Kairui Song <kasong@redhat.com> wrote:
+>
+> This patch series adds a .platform_trusted_keys in system_keyring as the
+> reference to .platform keyring in integrity subsystem, when platform
+> keyring is being initialized it will be updated, so it will be
+> accessable for verifying PE signed kernel image.
+>
+> This patch series let kexec_file_load use platform keyring as fall
+> back if it failed to verify the image against secondary keyring,
+> so the actually PE signature verify process will use keys provides
+> by firmware.
+>
+> After this patch kexec_file_load will be able to verify a signed PE
+> bzImage using keys in platform keyring.
+>
+> Tested in a VM with locally signed kernel with pesign and imported the
+> cert to EFI's MokList variable.
+>
+> To test this patch series on latest kernel, you need to ensure this commit
+> is applied as there is an regression bug in sanity_check_segment_list():
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=993a110319a4a60aadbd02f6defdebe048f7773b
+>
+> Update from V4:
+>   - Drop ifdef in security/integrity/digsig.c to make code clearer
+>   - Fix a potential issue, set_platform_trusted_keys should not be
+>     called when keyring initialization failed
+>
+> Update from V3:
+>   - Tweak and simplify commit message as suggested by Mimi Zohar
+>
+> Update from V2:
+>   - Use IS_ENABLED in kexec_file_load to judge if platform_trusted_keys
+>     should be used for verifying image as suggested by Mimi Zohar
+>
+> Update from V1:
+>   - Make platform_trusted_keys static, and update commit message as suggested
+>     by Mimi Zohar
+>   - Always check if platform keyring is initialized before use it
+>
+> Kairui Song (2):
+>   integrity, KEYS: add a reference to platform keyring
+>   kexec, KEYS: Make use of platform keyring for signature verify
+>
+>  arch/x86/kernel/kexec-bzimage64.c | 13 ++++++++++---
+>  certs/system_keyring.c            | 22 +++++++++++++++++++++-
+>  include/keys/system_keyring.h     |  9 +++++++++
+>  include/linux/verification.h      |  1 +
+>  security/integrity/digsig.c       |  3 +++
+>  5 files changed, 44 insertions(+), 4 deletions(-)
+>
+> --
+> 2.20.1
+>
 
-This commit adds a VERIFY_USE_PLATFORM_KEYRING similar to previous
-VERIFY_USE_SECONDARY_KEYRING indicating that verify_pkcs7_signature
-should verify the signature using platform keyring. Also, decrease
-the error message log level when verification failed with -ENOKEY,
-so that if called tried multiple time with different keyring it
-won't generate extra noises.
+Hi Mimi,
 
-Signed-off-by: Kairui Song <kasong@redhat.com>
----
- arch/x86/kernel/kexec-bzimage64.c | 13 ++++++++++---
- certs/system_keyring.c            | 13 ++++++++++++-
- include/linux/verification.h      |  1 +
- 3 files changed, 23 insertions(+), 4 deletions(-)
+I've updated the patch series again and as the code changed a bit I
+didn't include previous Reviewd-by / Tested-by, it worked with no
+problem, could you help have a review again? Thank you.
 
-diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-index 7d97e432cbbc..2c007abd3d40 100644
---- a/arch/x86/kernel/kexec-bzimage64.c
-+++ b/arch/x86/kernel/kexec-bzimage64.c
-@@ -534,9 +534,16 @@ static int bzImage64_cleanup(void *loader_data)
- #ifdef CONFIG_KEXEC_BZIMAGE_VERIFY_SIG
- static int bzImage64_verify_sig(const char *kernel, unsigned long kernel_len)
- {
--	return verify_pefile_signature(kernel, kernel_len,
--				       VERIFY_USE_SECONDARY_KEYRING,
--				       VERIFYING_KEXEC_PE_SIGNATURE);
-+	int ret;
-+	ret = verify_pefile_signature(kernel, kernel_len,
-+				      VERIFY_USE_SECONDARY_KEYRING,
-+				      VERIFYING_KEXEC_PE_SIGNATURE);
-+	if (ret == -ENOKEY && IS_ENABLED(CONFIG_INTEGRITY_PLATFORM_KEYRING)) {
-+		ret = verify_pefile_signature(kernel, kernel_len,
-+					      VERIFY_USE_PLATFORM_KEYRING,
-+					      VERIFYING_KEXEC_PE_SIGNATURE);
-+	}
-+	return ret;
- }
- #endif
- 
-diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-index 4690ef9cda8a..7085c286f4bd 100644
---- a/certs/system_keyring.c
-+++ b/certs/system_keyring.c
-@@ -240,11 +240,22 @@ int verify_pkcs7_signature(const void *data, size_t len,
- #else
- 		trusted_keys = builtin_trusted_keys;
- #endif
-+	} else if (trusted_keys == VERIFY_USE_PLATFORM_KEYRING) {
-+#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
-+		trusted_keys = platform_trusted_keys;
-+#else
-+		trusted_keys = NULL;
-+#endif
-+		if (!trusted_keys) {
-+			ret = -ENOKEY;
-+			pr_devel("PKCS#7 platform keyring is not available\n");
-+			goto error;
-+		}
- 	}
- 	ret = pkcs7_validate_trust(pkcs7, trusted_keys);
- 	if (ret < 0) {
- 		if (ret == -ENOKEY)
--			pr_err("PKCS#7 signature not signed with a trusted key\n");
-+			pr_devel("PKCS#7 signature not signed with a trusted key\n");
- 		goto error;
- 	}
- 
-diff --git a/include/linux/verification.h b/include/linux/verification.h
-index cfa4730d607a..018fb5f13d44 100644
---- a/include/linux/verification.h
-+++ b/include/linux/verification.h
-@@ -17,6 +17,7 @@
-  * should be used.
-  */
- #define VERIFY_USE_SECONDARY_KEYRING ((struct key *)1UL)
-+#define VERIFY_USE_PLATFORM_KEYRING  ((struct key *)2UL)
- 
- /*
-  * The use to which an asymmetric key is being put.
 -- 
-2.20.1
-
+Best Regards,
+Kairui Song
