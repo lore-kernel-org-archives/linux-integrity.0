@@ -2,79 +2,93 @@ Return-Path: <SRS0=c8Vu=P5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 078FEC2F3A0
-	for <linux-integrity@archiver.kernel.org>; Mon, 21 Jan 2019 12:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C715C2F3A0
+	for <linux-integrity@archiver.kernel.org>; Mon, 21 Jan 2019 14:15:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB3AB20861
-	for <linux-integrity@archiver.kernel.org>; Mon, 21 Jan 2019 12:37:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0212920861
+	for <linux-integrity@archiver.kernel.org>; Mon, 21 Jan 2019 14:15:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728531AbfAUMhp (ORCPT
+        id S1730874AbfAUNvr convert rfc822-to-8bit (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 21 Jan 2019 07:37:45 -0500
-Received: from mga04.intel.com ([192.55.52.120]:25806 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728163AbfAUMhp (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 21 Jan 2019 07:37:45 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2019 04:37:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,503,1539673200"; 
-   d="scan'208";a="127658307"
-Received: from vkunnari-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.163])
-  by orsmga002.jf.intel.com with ESMTP; 21 Jan 2019 04:37:40 -0800
-Date:   Mon, 21 Jan 2019 14:37:39 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        Matthew Garrett <matthewgarrett@google.com>
-Subject: Re: [PATCH v7 5/5] tpm: pass an array of tpm_extend_digest
- structures to tpm_pcr_extend()
-Message-ID: <20190121123739.GD9423@linux.intel.com>
-References: <20181213102945.30946-1-roberto.sassu@huawei.com>
- <20181213102945.30946-6-roberto.sassu@huawei.com>
- <20181220152122.GB10652@linux.intel.com>
- <c6a3f3e4-bd9d-d060-9ee1-f84310857ba0@huawei.com>
- <20190118151253.GH4080@linux.intel.com>
- <de1cd369-c06c-0107-80cc-fe3967799849@huawei.com>
+        Mon, 21 Jan 2019 08:51:47 -0500
+Received: from maillog.nuvoton.com ([202.39.227.15]:37520 "EHLO
+        maillog.nuvoton.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729771AbfAUNvq (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:51:46 -0500
+Received: from NTHCCAS02.nuvoton.com (nthccas02.nuvoton.com [10.1.8.29])
+        by maillog.nuvoton.com (Postfix) with ESMTP id 71CE71C80508;
+        Mon, 21 Jan 2019 21:51:44 +0800 (CST)
+Received: from NTILML02.nuvoton.com (10.190.1.46) by NTHCCAS02.nuvoton.com
+ (10.1.8.29) with Microsoft SMTP Server (TLS) id 15.0.1130.7; Mon, 21 Jan 2019
+ 21:51:43 +0800
+Received: from NTILML02.nuvoton.com (10.190.1.46) by NTILML02.nuvoton.com
+ (10.190.1.46) with Microsoft SMTP Server (TLS) id 15.0.1130.7; Mon, 21 Jan
+ 2019 15:51:41 +0200
+Received: from NTILML02.nuvoton.com ([::1]) by NTILML02.nuvoton.com ([::1])
+ with mapi id 15.00.1130.005; Mon, 21 Jan 2019 15:51:41 +0200
+From:   <Dan.Morav@nuvoton.com>
+To:     <jgg@ziepe.ca>
+CC:     <nayna@linux.vnet.ibm.com>, <oshri.alkoby@nuvoton.com>,
+        <dana.cohen@nuvoton.com>, <linux-integrity@vger.kernel.org>,
+        <gcwilson@us.ibm.com>
+Subject: RE: device tree "compatible" string value for Nuvoton TPM 75xxx
+Thread-Topic: device tree "compatible" string value for Nuvoton TPM 75xxx
+Thread-Index: AQHUr0NnAtI+NFiTokGDUz1xZWqLqqW4UMeggACQpgCAAOD0kA==
+Date:   Mon, 21 Jan 2019 13:51:40 +0000
+Message-ID: <3e423306bfd14125a18f81f6b7bac136@NTILML02.nuvoton.com>
+References: <63ed4dcb-a8ae-09ad-6793-8b1bb671d652@linux.vnet.ibm.com>
+ <42e1f00b059f464e9d906cece191ed0a@NTILML02.nuvoton.com>
+ <20190121022640.GD18017@ziepe.ca>
+In-Reply-To: <20190121022640.GD18017@ziepe.ca>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.191.10.151]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <de1cd369-c06c-0107-80cc-fe3967799849@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 10:58:22AM +0100, Roberto Sassu wrote:
-> Agreed, there should be a clear division.
-> 
-> 1) The caller shouldn't need to know anything about the chip->info.
-> 2) The TPM driver should not rely on the caller to supply all the
-> hashes, but verify that all allocated banks are being extended.
+Jason,
 
-1. It is just plain wrong if the basic extend function
-   invents its own dummy hashes when it doesn't get one. In the end,
-   this is what matters to me, and I'm not going to accept anything that
-   tries to do that. That is something that caller should prepare.
+Thank you for the feedback. We will follow.
 
-   You even left undocumented this very awkward and unguessable
-   behaviour. I think redundancy is better than doing guesswork what
-   a function might possibly do other than its basic task, which is
-   constructing the extend command.
-2. The driver should return -EINVAL, if it doesn't get all the hashes.
-3. The would be nothing wrong exposing struct tpm_chip in
-   include/linux/tpm.h. I would be totally fine with that.
+Regards,
+Dan.
 
-/Jarkko
+
+-----Original Message-----
+From: Jason Gunthorpe <jgg@ziepe.ca>
+Sent: Monday, 21 January, 2019 04:27
+To: IS30 Dan Morav <Dan.Morav@nuvoton.com>
+Cc: nayna@linux.vnet.ibm.com; IS20 Oshri Alkoby <oshri.alkoby@nuvoton.com>; IS30 Dana Cohen <dana.cohen@nuvoton.com>; linux-integrity@vger.kernel.org; gcwilson@us.ibm.com
+Subject: Re: device tree "compatible" string value for Nuvoton TPM 75xxx
+
+On Sun, Jan 20, 2019 at 03:53:46PM +0000, Dan.Morav@nuvoton.com wrote:
+> Hi,
+>
+> I've added Oshri who has been working on the driver, and Dana who is the TPM applications for follow up.
+> I'd suggest "npct75x" to continue with the same line.
+
+There are rules for the compatible strings.. Generaly they shouldn't include x's if I recall.
+
+If future chips are compatible with a first release then it should be something like
+
+'nuvoton,npct751','nuvoton,npct750'
+
+Be sure to check with the device tree people
+
+Jason
+
+
+===========================================================================================
+The privileged confidential information contained in this email is intended for use only by the addressees as indicated by the original sender of this email. If you are not the addressee indicated in this email or are not responsible for delivery of the email to such a person, please kindly reply to the sender indicating this fact and delete all copies of it from your computer and network server immediately. Your cooperation is highly appreciated. It is advised that any unauthorized use of confidential information of Nuvoton is strictly prohibited; and any information in this email irrelevant to the official business of Nuvoton shall be deemed as neither given nor endorsed by Nuvoton.
