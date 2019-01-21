@@ -2,127 +2,217 @@ Return-Path: <SRS0=c8Vu=P5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63955C282F6
-	for <linux-integrity@archiver.kernel.org>; Mon, 21 Jan 2019 10:03:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B794C7113B
+	for <linux-integrity@archiver.kernel.org>; Mon, 21 Jan 2019 12:00:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C87320663
-	for <linux-integrity@archiver.kernel.org>; Mon, 21 Jan 2019 10:03:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D12B20879
+	for <linux-integrity@archiver.kernel.org>; Mon, 21 Jan 2019 12:00:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbfAUKD4 (ORCPT
+        id S1728024AbfAUMAX (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 21 Jan 2019 05:03:56 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:39559 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726214AbfAUKDz (ORCPT
+        Mon, 21 Jan 2019 07:00:23 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59732 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728314AbfAUMAX (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 21 Jan 2019 05:03:55 -0500
-Received: by mail-it1-f195.google.com with SMTP id a6so14359910itl.4
-        for <linux-integrity@vger.kernel.org>; Mon, 21 Jan 2019 02:03:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XEeqscVWGCdHpZMcDyZcIsfpiPlWBKev6BzxbsJ0S6I=;
-        b=CI4HmyfD+CvoVgaxtl6nKFXVClZVDvVFuN7oC9u46blhK5IU5FODEe31/y+7gSH7Iu
-         344X6r4TXgddjbjLmkLQphBfqiZexJahxtZXQCYW5DzwUXNKUa6YTRjIyv9F85ctfVji
-         VIkzRTnsNJwCKfE6bGLSmTMIKbK1H6Jf9D1qzbxuCIdbRRh/I4atZ+zKGrnonZtW6nDb
-         0ZnEmEehblL3yo0DfCZnEGQwghJ/P4oFTHvQZfdwPmtUCPSV0cs89JZPSgq4exc4+yIi
-         StaFmv7U4wKrmDYmKbRkQEtjEuU6L3nrXeGWcGlucka/sQ4EZRBdufb2RQIu0dgr8ZYJ
-         3fyQ==
-X-Gm-Message-State: AJcUukd/To3XiFLe2aBpzKiVbcE/R/7kneQpQxWiTHYLuJ/sSfFskFds
-        Pz90ONfdpA3W/yTJA6MEyvuqZA75HjQ74DeKMPDZoQ==
-X-Google-Smtp-Source: ALg8bN6wXdAWFfIKDeG2VhzwmmF3lttG/N0MUFQwkaiDPpr5NHUQco47PUqBVWfeJ7oAfY1a2ap4vAZ41YHJbEkLaww=
-X-Received: by 2002:a24:ce42:: with SMTP id v63mr16205179itg.136.1548065034597;
- Mon, 21 Jan 2019 02:03:54 -0800 (PST)
-MIME-Version: 1.0
-References: <20190121095929.26915-1-kasong@redhat.com>
-In-Reply-To: <20190121095929.26915-1-kasong@redhat.com>
-From:   Kairui Song <kasong@redhat.com>
-Date:   Mon, 21 Jan 2019 18:03:43 +0800
-Message-ID: <CACPcB9c2eJ=Wm8Tb6afgyoAQ5TWuGbuqGXq1i9cN8pRFCwXGrw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/2] let kexec_file_load use platform keyring to verify
- the kernel image
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
-        jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
-        Eric Biggers <ebiggers@google.com>, nayna@linux.ibm.com,
-        Dave Young <dyoung@redhat.com>,
+        Mon, 21 Jan 2019 07:00:23 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0LBvBE1009905
+        for <linux-integrity@vger.kernel.org>; Mon, 21 Jan 2019 07:00:23 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q5d9015ry-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 21 Jan 2019 07:00:22 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 21 Jan 2019 12:00:20 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 21 Jan 2019 12:00:16 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0LC0F8B47251512
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 21 Jan 2019 12:00:15 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F377FA405F;
+        Mon, 21 Jan 2019 12:00:14 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0EAE1A4065;
+        Mon, 21 Jan 2019 12:00:14 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.90.201])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 21 Jan 2019 12:00:13 +0000 (GMT)
+Subject: Re: [PATCH v2] ima: define ima_post_create_tmpfile() hook and add
+ missing call
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        Amir Goldstein <amir73il@gmail.com>
+Cc:     Ignaz Forster <iforster@suse.de>,
         linux-integrity <linux-integrity@vger.kernel.org>,
-        kexec@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Fabian Vogt <fvogt@suse.de>, Al Viro <viro@ZenIV.linux.org.uk>
+Date:   Mon, 21 Jan 2019 07:00:03 -0500
+In-Reply-To: <20190117213421.ggasuc263dpqh46c@merlin>
+References: <1545158873.4206.86.camel@linux.ibm.com>
+         <20190117213421.ggasuc263dpqh46c@merlin>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19012112-0016-0000-0000-00000248470C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012112-0017-0000-0000-000032A277D6
+Message-Id: <1548072003.3782.24.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-21_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901210095
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 6:00 PM Kairui Song <kasong@redhat.com> wrote:
->
-> This patch series adds a .platform_trusted_keys in system_keyring as the
-> reference to .platform keyring in integrity subsystem, when platform
-> keyring is being initialized it will be updated, so it will be
-> accessable for verifying PE signed kernel image.
->
-> This patch series let kexec_file_load use platform keyring as fall
-> back if it failed to verify the image against secondary keyring,
-> so the actually PE signature verify process will use keys provides
-> by firmware.
->
-> After this patch kexec_file_load will be able to verify a signed PE
-> bzImage using keys in platform keyring.
->
-> Tested in a VM with locally signed kernel with pesign and imported the
-> cert to EFI's MokList variable.
->
-> To test this patch series on latest kernel, you need to ensure this commit
-> is applied as there is an regression bug in sanity_check_segment_list():
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=993a110319a4a60aadbd02f6defdebe048f7773b
->
-> Update from V4:
->   - Drop ifdef in security/integrity/digsig.c to make code clearer
->   - Fix a potential issue, set_platform_trusted_keys should not be
->     called when keyring initialization failed
->
-> Update from V3:
->   - Tweak and simplify commit message as suggested by Mimi Zohar
->
-> Update from V2:
->   - Use IS_ENABLED in kexec_file_load to judge if platform_trusted_keys
->     should be used for verifying image as suggested by Mimi Zohar
->
-> Update from V1:
->   - Make platform_trusted_keys static, and update commit message as suggested
->     by Mimi Zohar
->   - Always check if platform keyring is initialized before use it
->
-> Kairui Song (2):
->   integrity, KEYS: add a reference to platform keyring
->   kexec, KEYS: Make use of platform keyring for signature verify
->
->  arch/x86/kernel/kexec-bzimage64.c | 13 ++++++++++---
->  certs/system_keyring.c            | 22 +++++++++++++++++++++-
->  include/keys/system_keyring.h     |  9 +++++++++
->  include/linux/verification.h      |  1 +
->  security/integrity/digsig.c       |  3 +++
->  5 files changed, 44 insertions(+), 4 deletions(-)
->
-> --
-> 2.20.1
->
+On Thu, 2019-01-17 at 15:34 -0600, Goldwyn Rodrigues wrote:
+> On 13:47 18/12, Mimi Zohar wrote:
+> > If tmpfiles can be made persistent, then newly created tmpfiles need to
+> > be treated like any other new files in policy.
+> > 
+> > This patch indicates which newly created tmpfiles are in policy, causing
+> > the file hash to be calculated on __fput().
+> 
+> Discussed in overlayfs, this would be better if we use this on inode
+> and called from vfs_tmpfile() instead of do_tmpfile(). This will cover
+> the overlayfs case which uses tmpfiles while performing copy_up().
+> The patch is attached.
+> 
+> Here is the updated patch which works for my cases.
+> However, it is the the failure case after setting the IMA flags
+> I am concerned about, though I don't think that should be as harmful.
 
-Hi Mimi,
+Right.  The new IMA hook allocates memory for storing the flags, which
+needs to be cleaned up on failure.  For this reason, the IMA call is
+deferred until after the transition from locally freeing memory on
+failure to relying on __fput().  In "do_last", the call to IMA is
+after "opened"; and in the original version of this patch the call to
+IMA is after finish_open().
 
-I've updated the patch series again and as the code changed a bit I
-didn't include previous Reviewd-by / Tested-by, it worked with no
-problem, could you help have a review again? Thank you.
+Mimi
 
--- 
-Best Regards,
-Kairui Song
+> 
+> 
+> If tmpfiles can be made persistent, then newly created tmpfiles need to
+> be treated like any other new files in policy.
+> 
+> This patch indicates which newly created tmpfiles are in policy, causing
+> the file hash to be calculated on __fput().
+> 
+> Reported-by: Ignaz Forster <ignaz.forster@gmx.de>
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> ---
+>  fs/namei.c                        |  1 +
+>  include/linux/ima.h               |  6 ++++++
+>  security/integrity/ima/ima_main.c | 35 +++++++++++++++++++++++++++++++++--
+>  3 files changed, 40 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 914178cdbe94..373a7ec4b09d 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3462,6 +3462,7 @@ struct dentry *vfs_tmpfile(struct dentry *dentry, umode_t mode, int open_flag)
+>  		inode->i_state |= I_LINKABLE;
+>  		spin_unlock(&inode->i_lock);
+>  	}
+> +	ima_post_create_tmpfile(inode);
+>  	return child;
+>  
+>  out_err:
+> diff --git a/include/linux/ima.h b/include/linux/ima.h
+> index b5e16b8c50b7..32b0c5bdcd99 100644
+> --- a/include/linux/ima.h
+> +++ b/include/linux/ima.h
+> @@ -18,6 +18,7 @@ struct linux_binprm;
+>  #ifdef CONFIG_IMA
+>  extern int ima_bprm_check(struct linux_binprm *bprm);
+>  extern int ima_file_check(struct file *file, int mask);
+> +extern void ima_post_create_tmpfile(struct inode *inode);
+>  extern void ima_file_free(struct file *file);
+>  extern int ima_file_mmap(struct file *file, unsigned long prot);
+>  extern int ima_load_data(enum kernel_load_data_id id);
+> @@ -56,6 +57,11 @@ static inline int ima_file_check(struct file *file, int mask)
+>  	return 0;
+>  }
+>  
+> +static inline void ima_post_create_tmpfile(struct inode *inode)
+> +{
+> +	return;
+> +}
+> +
+>  static inline void ima_file_free(struct file *file)
+>  {
+>  	return;
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 4ffac4f5c647..357edd140c09 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -396,6 +396,33 @@ int ima_file_check(struct file *file, int mask)
+>  }
+>  EXPORT_SYMBOL_GPL(ima_file_check);
+>  
+> +/**
+> + * ima_post_create_tmpfile - mark newly created tmpfile as new
+> + * @file : newly created tmpfile
+> + *
+> + * No measuring, appraising or auditing of newly created tmpfiles is needed.
+> + * Skip calling process_measurement(), but indicate which newly, created
+> + * tmpfiles are in policy.
+> + */
+> +void ima_post_create_tmpfile(struct inode *inode)
+> +{
+> +	struct integrity_iint_cache *iint;
+> +	int must_appraise;
+> +
+> +	must_appraise = ima_must_appraise(inode, MAY_ACCESS, FILE_CHECK);
+> +	if (!must_appraise)
+> +		return;
+> +
+> +	/* Nothing to do if we can't allocate memory */
+> +	iint = integrity_inode_get(inode);
+> +	if (!iint)
+> +		return;
+> +
+> +	/* needed for writing the security xattrs */
+> +	set_bit(IMA_UPDATE_XATTR, &iint->atomic_flags);
+> +	iint->ima_file_status = INTEGRITY_PASS;
+> +}
+> +
+>  /**
+>   * ima_post_path_mknod - mark as a new inode
+>   * @dentry: newly created dentry
+> @@ -413,9 +440,13 @@ void ima_post_path_mknod(struct dentry *dentry)
+>  	if (!must_appraise)
+>  		return;
+>  
+> +	/* Nothing to do if we can't allocate memory */
+>  	iint = integrity_inode_get(inode);
+> -	if (iint)
+> -		iint->flags |= IMA_NEW_FILE;
+> +	if (!iint)
+> +		return;
+> +
+> +	/* needed for re-opening empty files */
+> +	iint->flags |= IMA_NEW_FILE;
+>  }
+>  
+>  /**
+
