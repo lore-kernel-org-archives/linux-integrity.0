@@ -2,122 +2,165 @@ Return-Path: <SRS0=iyby=P6=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CAF2C282C3
-	for <linux-integrity@archiver.kernel.org>; Tue, 22 Jan 2019 18:27:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E49CC282C5
+	for <linux-integrity@archiver.kernel.org>; Tue, 22 Jan 2019 20:06:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB4D6217D6
-	for <linux-integrity@archiver.kernel.org>; Tue, 22 Jan 2019 18:27:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CMl+ODFK"
+	by mail.kernel.org (Postfix) with ESMTP id 79980217D6
+	for <linux-integrity@archiver.kernel.org>; Tue, 22 Jan 2019 20:06:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726010AbfAVS1D (ORCPT
+        id S1726009AbfAVUGy (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 22 Jan 2019 13:27:03 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43635 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbfAVS1C (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 22 Jan 2019 13:27:02 -0500
-Received: by mail-lj1-f193.google.com with SMTP id q2-v6so21529634lji.10
-        for <linux-integrity@vger.kernel.org>; Tue, 22 Jan 2019 10:27:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XUBcaPRcuqOLEl2SYy/Q6oqpj8zeKWGuZM5V88FmHF8=;
-        b=CMl+ODFKCfVLcBaWLY/tCSTTxYCbhG1V/NxINTD3f7ytfFq5M59K9J2K6RH2Pm/OSn
-         q7GCuvuWVGKVYV62U5nCjKlbBy782E6y+co8/T6PIdApkhHe0go43LUfYd6CwWmR5Ef5
-         WvkZWSVRmstQbxD52e4AK1z18Q87hMRWG808E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XUBcaPRcuqOLEl2SYy/Q6oqpj8zeKWGuZM5V88FmHF8=;
-        b=CT+07TqPb9Is/HLOuqW13ZgErzvHg5KRrszdNSpn7nJiTOwJ9Ab2oVcreF3mn6RoIO
-         xKYua6nt00cPdIMCYYExVps68g9mTg9QUdBwcuDsQU6QGvk7VpbNuP2B/wOFBFAZi4n/
-         qKIGMm2vo8Qt4tmb5fGdtCwbpCKMvS0XpaLgvVYXkSDhLm/NnjVkdbOLG4a8kE7SC1Mv
-         pu5i2tHEvpZg5CiS7wKOcRsfDbwezAQcxEqBNaVBlCnEOZ2BbyVYk8YZmuS1Hd9nfZWK
-         9RzDRDowECrx1NlclVEtfzjz8PPsfj10SHFMt4RjkwsQWejIwTlTlrLbvOx6/vlpF3Nz
-         D3YQ==
-X-Gm-Message-State: AJcUukdnSLv2Rckq/k8bKEtz5290SYCWdl1HEQVBN/XLuToRFOerKszj
-        v/cjq7rtW9b/PwJt2RSe5G9ko1HibE2q0A==
-X-Google-Smtp-Source: ALg8bN5JRPViPozyRtTx5pykyfFfZ8TGlE5MgVz6lxaik13kn8GKPraT5NDRhsoLnwpTlm6wf/Hjcg==
-X-Received: by 2002:a2e:4218:: with SMTP id p24-v6mr21206040lja.58.1548181620088;
-        Tue, 22 Jan 2019 10:27:00 -0800 (PST)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id u24sm117892lfi.24.2019.01.22.10.26.58
-        for <linux-integrity@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 10:26:59 -0800 (PST)
-Received: by mail-lf1-f48.google.com with SMTP id v5so18827880lfe.7
-        for <linux-integrity@vger.kernel.org>; Tue, 22 Jan 2019 10:26:58 -0800 (PST)
-X-Received: by 2002:a19:980f:: with SMTP id a15mr22707685lfe.103.1548181618431;
- Tue, 22 Jan 2019 10:26:58 -0800 (PST)
+        Tue, 22 Jan 2019 15:06:54 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49854 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725862AbfAVUGy (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 22 Jan 2019 15:06:54 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 24692AD3F;
+        Tue, 22 Jan 2019 20:06:52 +0000 (UTC)
+Date:   Tue, 22 Jan 2019 14:06:49 -0600
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     iforster@suse.de, linux-integrity@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Subject: [PATCH v3] ima: define ima_post_create_tmpfile() hook and add
+ missing call
+Message-ID: <20190122200649.dpzwfdhqe2quuv23@merlin>
 MIME-Version: 1.0
-References: <20190118142559.GA4080@linux.intel.com> <1547849358.2794.90.camel@HansenPartnership.com>
- <20190120160413.GB30478@linux.intel.com> <20190122010218.GA26713@linux.intel.com>
- <20190122025836.GH25163@ziepe.ca> <20190122132910.GA2720@linux.intel.com>
-In-Reply-To: <20190122132910.GA2720@linux.intel.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 23 Jan 2019 07:26:42 +1300
-X-Gmail-Original-Message-ID: <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
-Message-ID: <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
-Subject: Re: Getting weird TPM error after rebasing my tree to security/next-general
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20180323
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 2:29 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> > >
-> > > Fails on commit 170d13ca3a2fdaaa0283399247631b76b441cca2. Still works on
-> > > preceding commit a959dc88f9c8900296ccf13e2f3e1cbc555a8917.
-> >
-> > This changes the IO access pattern in memcpy_to/fromio.. Presumably
-> > CRB HW doesn't like the new 4 byte move? Swap each one in crb to
-> > memcpy to confirm..
-> >
-> > If the HW requires particular access patterns you can't use
-> > memcpy_to/fromio
->
-> Did not have time to look at the commit at all but your deduction
-> is correct. I know it without testing.
->
-> Memory controller will feed 1's on unaligned read from IO memory,
-> and as we can see from the TPM header, this change causes two of
-> those:
+If tmpfiles can be made persistent, then newly created tmpfiles need to
+be treated like any other new files in policy.
 
-Funky. But how did it work before then?
+This patch indicates which newly created tmpfiles are in policy, causing
+the file hash to be calculated on __fput().
 
-The new memcpy_fromio() is designed to have _predictable_ access
-patterns. Not necessarily the best, but at least consistent.
+Reported-by: Ignaz Forster <ignaz.forster@gmx.de>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-Prevously, we used whatever random "memcpy()" implementation we
-happened to pick, which *could* be aligned (particularly "rep movsb" -
-absolutely horrible performance for MMIO, but by doing IO one byte at
-a time it was certainly aligned ;), but most of our x86 memcpy
-implementations don't actually try all that hard to align the source.
-And the manual version will actually copy things *backwards* for some
-cases.
+Changes since v1:
+ - Fixed Subject line function name
+ - Addressed 0-day report: warning: 'return' with a value, in
+   function returning void
 
-Is it just that this particular hardware always happened to trigger
-the ERMS case (ie "rep movsb")?
+Changes since v2:
+ - Call ima_post_create_tmpfile() in vfs_tmpfile() as opposed to
+   do_tmpfile(). This will help the case for overlayfs where copy_up
+   is denied while overwriting a file.
+---
+ fs/namei.c                        |  1 +
+ include/linux/ima.h               |  6 ++++++
+ security/integrity/ima/ima_main.c | 35 +++++++++++++++++++++++++++++++++--
+ 3 files changed, 40 insertions(+), 2 deletions(-)
 
-Anyway, Jason is correct that if a device has particular IO pattern
-requirements, you shouldn't use "memcpy_fromio()" and friends, but
-it's interesting how it apparently *happened* to work before.
+diff --git a/fs/namei.c b/fs/namei.c
+index 914178cdbe94..373a7ec4b09d 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3462,6 +3462,7 @@ struct dentry *vfs_tmpfile(struct dentry *dentry, umode_t mode, int open_flag)
+ 		inode->i_state |= I_LINKABLE;
+ 		spin_unlock(&inode->i_lock);
+ 	}
++	ima_post_create_tmpfile(inode);
+ 	return child;
+ 
+ out_err:
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index b5e16b8c50b7..32b0c5bdcd99 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -18,6 +18,7 @@ struct linux_binprm;
+ #ifdef CONFIG_IMA
+ extern int ima_bprm_check(struct linux_binprm *bprm);
+ extern int ima_file_check(struct file *file, int mask);
++extern void ima_post_create_tmpfile(struct inode *inode);
+ extern void ima_file_free(struct file *file);
+ extern int ima_file_mmap(struct file *file, unsigned long prot);
+ extern int ima_load_data(enum kernel_load_data_id id);
+@@ -56,6 +57,11 @@ static inline int ima_file_check(struct file *file, int mask)
+ 	return 0;
+ }
+ 
++static inline void ima_post_create_tmpfile(struct inode *inode)
++{
++	return;
++}
++
+ static inline void ima_file_free(struct file *file)
+ {
+ 	return;
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 4ffac4f5c647..357edd140c09 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -396,6 +396,33 @@ int ima_file_check(struct file *file, int mask)
+ }
+ EXPORT_SYMBOL_GPL(ima_file_check);
+ 
++/**
++ * ima_post_create_tmpfile - mark newly created tmpfile as new
++ * @file : newly created tmpfile
++ *
++ * No measuring, appraising or auditing of newly created tmpfiles is needed.
++ * Skip calling process_measurement(), but indicate which newly, created
++ * tmpfiles are in policy.
++ */
++void ima_post_create_tmpfile(struct inode *inode)
++{
++	struct integrity_iint_cache *iint;
++	int must_appraise;
++
++	must_appraise = ima_must_appraise(inode, MAY_ACCESS, FILE_CHECK);
++	if (!must_appraise)
++		return;
++
++	/* Nothing to do if we can't allocate memory */
++	iint = integrity_inode_get(inode);
++	if (!iint)
++		return;
++
++	/* needed for writing the security xattrs */
++	set_bit(IMA_UPDATE_XATTR, &iint->atomic_flags);
++	iint->ima_file_status = INTEGRITY_PASS;
++}
++
+ /**
+  * ima_post_path_mknod - mark as a new inode
+  * @dentry: newly created dentry
+@@ -413,9 +440,13 @@ void ima_post_path_mknod(struct dentry *dentry)
+ 	if (!must_appraise)
+ 		return;
+ 
++	/* Nothing to do if we can't allocate memory */
+ 	iint = integrity_inode_get(inode);
+-	if (iint)
+-		iint->flags |= IMA_NEW_FILE;
++	if (!iint)
++		return;
++
++	/* needed for re-opening empty files */
++	iint->flags |= IMA_NEW_FILE;
+ }
+ 
+ /**
+-- 
+2.16.4
 
-             Linus
+
+-- 
+Goldwyn
