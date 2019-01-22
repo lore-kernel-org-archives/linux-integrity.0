@@ -2,93 +2,76 @@ Return-Path: <SRS0=iyby=P6=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7400EC282C3
-	for <linux-integrity@archiver.kernel.org>; Tue, 22 Jan 2019 16:38:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB5C8C282C4
+	for <linux-integrity@archiver.kernel.org>; Tue, 22 Jan 2019 16:55:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D4392085A
-	for <linux-integrity@archiver.kernel.org>; Tue, 22 Jan 2019 16:38:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BFBE21726
+	for <linux-integrity@archiver.kernel.org>; Tue, 22 Jan 2019 16:55:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729103AbfAVQi4 (ORCPT
+        id S1729432AbfAVQzT (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 22 Jan 2019 11:38:56 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45778 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729092AbfAVQi4 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 22 Jan 2019 11:38:56 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5685FB081;
-        Tue, 22 Jan 2019 16:38:55 +0000 (UTC)
-Date:   Tue, 22 Jan 2019 10:38:52 -0600
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Ignaz Forster <iforster@suse.de>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Fabian Vogt <fvogt@suse.de>, Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v2] ima: define ima_post_create_tmpfile() hook and add
- missing call
-Message-ID: <20190122163852.nbo7z5hrizfsb344@merlin>
-References: <1545158873.4206.86.camel@linux.ibm.com>
- <20190117213421.ggasuc263dpqh46c@merlin>
- <1548072003.3782.24.camel@linux.ibm.com>
- <CAOQ4uxjNhNFfFidjzi-8ywQPi54LdzT=LxwdSaX+H-ERS6Qwog@mail.gmail.com>
- <1548171789.4038.6.camel@linux.ibm.com>
+        Tue, 22 Jan 2019 11:55:19 -0500
+Received: from mga01.intel.com ([192.55.52.88]:20217 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728719AbfAVQzS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 22 Jan 2019 11:55:18 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 08:55:17 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,507,1539673200"; 
+   d="scan'208";a="118530896"
+Received: from mlapinsx-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.154])
+  by fmsmga008.fm.intel.com with ESMTP; 22 Jan 2019 08:55:11 -0800
+Date:   Tue, 22 Jan 2019 18:55:09 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
+        Matthew Garrett <matthewgarrett@google.com>
+Subject: Re: [PATCH v7 5/5] tpm: pass an array of tpm_extend_digest
+ structures to tpm_pcr_extend()
+Message-ID: <20190122165509.GA3687@linux.intel.com>
+References: <20181213102945.30946-1-roberto.sassu@huawei.com>
+ <20181213102945.30946-6-roberto.sassu@huawei.com>
+ <20181220152122.GB10652@linux.intel.com>
+ <c6a3f3e4-bd9d-d060-9ee1-f84310857ba0@huawei.com>
+ <20190118151253.GH4080@linux.intel.com>
+ <de1cd369-c06c-0107-80cc-fe3967799849@huawei.com>
+ <20190121123739.GD9423@linux.intel.com>
+ <e97d1377-b8d8-6ecb-4c7f-1b08235c6864@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1548171789.4038.6.camel@linux.ibm.com>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <e97d1377-b8d8-6ecb-4c7f-1b08235c6864@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 10:43 22/01, Mimi Zohar wrote:
-> On Mon, 2019-01-21 at 14:29 +0200, Amir Goldstein wrote:
-> > On Mon, Jan 21, 2019 at 2:00 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > >
-> > > On Thu, 2019-01-17 at 15:34 -0600, Goldwyn Rodrigues wrote:
-> > > > On 13:47 18/12, Mimi Zohar wrote:
-> > > > > If tmpfiles can be made persistent, then newly created tmpfiles need to
-> > > > > be treated like any other new files in policy.
-> > > > >
-> > > > > This patch indicates which newly created tmpfiles are in policy, causing
-> > > > > the file hash to be calculated on __fput().
-> > > >
-> > > > Discussed in overlayfs, this would be better if we use this on inode
-> > > > and called from vfs_tmpfile() instead of do_tmpfile(). This will cover
-> > > > the overlayfs case which uses tmpfiles while performing copy_up().
-> > > > The patch is attached.
-> > > >
-> > > > Here is the updated patch which works for my cases.
-> > > > However, it is the the failure case after setting the IMA flags
-> > > > I am concerned about, though I don't think that should be as harmful.
-> > >
-> > > Right.  The new IMA hook allocates memory for storing the flags, which
-> > > needs to be cleaned up on failure.  For this reason, the IMA call is
-> > > deferred until after the transition from locally freeing memory on
-> > > failure to relying on __fput().  In "do_last", the call to IMA is
-> > > after "opened"; and in the original version of this patch the call to
-> > > IMA is after finish_open().
-> > >
-> > 
-> > Not sure I understand the concern.
-> > The integrity context is associated with the inode and will be freed
-> > on destroy_inode() no matter which error path is taken.
-> > Am I missing something?
+On Mon, Jan 21, 2019 at 02:50:49PM +0100, Roberto Sassu wrote:
+> On 1/21/2019 1:37 PM, Jarkko Sakkinen wrote:
+> > 3. The would be nothing wrong exposing struct tpm_chip in
+> >     include/linux/tpm.h. I would be totally fine with that.
 > 
-> No, as long as destroy_inode() is called, it should be fine.
-> 
+> Should I do it in a separate patch (before 5/5)?
 
-Excellent. I will resend the patch as v3.
+Yes.
 
-Thanks!
+> Is it fine to call tpm_default_chip() only in pcrlock() for trusted
+> keys?
 
--- 
-Goldwyn
+I think you should get the reference in init_trusted() (similar pattern
+as in IMA).
+
+/Jarkko
