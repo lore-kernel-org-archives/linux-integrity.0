@@ -2,165 +2,71 @@ Return-Path: <SRS0=iyby=P6=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E49CC282C5
-	for <linux-integrity@archiver.kernel.org>; Tue, 22 Jan 2019 20:06:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D17C282C3
+	for <linux-integrity@archiver.kernel.org>; Tue, 22 Jan 2019 20:22:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79980217D6
-	for <linux-integrity@archiver.kernel.org>; Tue, 22 Jan 2019 20:06:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 180FF217D6
+	for <linux-integrity@archiver.kernel.org>; Tue, 22 Jan 2019 20:22:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726009AbfAVUGy (ORCPT
+        id S1726173AbfAVUWC (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 22 Jan 2019 15:06:54 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49854 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725862AbfAVUGy (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 22 Jan 2019 15:06:54 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 24692AD3F;
-        Tue, 22 Jan 2019 20:06:52 +0000 (UTC)
-Date:   Tue, 22 Jan 2019 14:06:49 -0600
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     iforster@suse.de, linux-integrity@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH v3] ima: define ima_post_create_tmpfile() hook and add
- missing call
-Message-ID: <20190122200649.dpzwfdhqe2quuv23@merlin>
+        Tue, 22 Jan 2019 15:22:02 -0500
+Received: from mail-qt1-f176.google.com ([209.85.160.176]:39052 "EHLO
+        mail-qt1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725925AbfAVUWB (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 22 Jan 2019 15:22:01 -0500
+Received: by mail-qt1-f176.google.com with SMTP id u47so29158435qtj.6
+        for <linux-integrity@vger.kernel.org>; Tue, 22 Jan 2019 12:22:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:reply-to
+         :mime-version:content-disposition:user-agent;
+        bh=FkwHfMiH5baHUV5NkS37/hCcEw//A2JchphI5XNWSgQ=;
+        b=g80+mmV/WhfBlFB+nY47WlzuY3d0M6Srrq0Pi3g5su6hvCt7+vGJhMLQLqOSNldhth
+         r/DtRi91VL21CYFsFKpXy8K1xT0b2kafASkjbXvhJDYXQcDQsdykXFgSK0TZX89t61vp
+         or1RmWKCsjeBjDGthtKtiAUpne3zjN2kiQ5aBCH/AAarrJ3B0SLhswd7p26AwdC5jtQa
+         q01Z37Ckv5tohpcw09ATIEcBWS7E5kRbgLyaO2BbnKIk8dysDJ0hM/NKNsp7Af7iUr5X
+         2xgq0PHo7IHUHWzV42KcsXBCQSbCvneUw2TwLsglPYI7U/FcElhGRskz3WazmC/lDFMN
+         /egg==
+X-Gm-Message-State: AJcUukePIHlFknH6VkrIiNTOLuUGw5lBTmpdt3uvzCyc8yC4qzMuoHD/
+        D/9n6aFN2ABqEBuV3xvOwZWkU3hjs0M=
+X-Google-Smtp-Source: ALg8bN6d2/o49R9vlz2Ckuzz1AdhjxBILlSY93hiyiNcdjqgfSzOeVQoFSP7v4pDv0DZsdcBV0VccA==
+X-Received: by 2002:aed:2c22:: with SMTP id f31mr33637265qtd.154.1548188521077;
+        Tue, 22 Jan 2019 12:22:01 -0800 (PST)
+Received: from localhost (ip72-223-3-97.ph.ph.cox.net. [72.223.3.97])
+        by smtp.gmail.com with ESMTPSA id t43sm97566955qtc.53.2019.01.22.12.22.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 22 Jan 2019 12:22:00 -0800 (PST)
+Date:   Tue, 22 Jan 2019 13:21:59 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org
+Subject: TPM2_RC_TESTING and tpm_transmit_cmd
+Message-ID: <20190122202159.ktlrxewwr7vryayc@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-User-Agent: NeoMutt/20180323
+User-Agent: NeoMutt/20180716
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-If tmpfiles can be made persistent, then newly created tmpfiles need to
-be treated like any other new files in policy.
+Would it make sense to filter out TPM2_RC_TESTING when reporting an error
+in tpm_transmit_cmd, or possibly spitting out a follow on message in
+the selftest code that the tpm is still testing?
 
-This patch indicates which newly created tmpfiles are in policy, causing
-the file hash to be calculated on __fput().
+Had a bz opened here because someone had the error message in their logs,
+and I can see how it would be confusing. We have the intermittent selftest
+patch already so it should be functioning, but just wondering if not
+printing out that error message would make sense.
 
-Reported-by: Ignaz Forster <ignaz.forster@gmx.de>
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-
-Changes since v1:
- - Fixed Subject line function name
- - Addressed 0-day report: warning: 'return' with a value, in
-   function returning void
-
-Changes since v2:
- - Call ima_post_create_tmpfile() in vfs_tmpfile() as opposed to
-   do_tmpfile(). This will help the case for overlayfs where copy_up
-   is denied while overwriting a file.
----
- fs/namei.c                        |  1 +
- include/linux/ima.h               |  6 ++++++
- security/integrity/ima/ima_main.c | 35 +++++++++++++++++++++++++++++++++--
- 3 files changed, 40 insertions(+), 2 deletions(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 914178cdbe94..373a7ec4b09d 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3462,6 +3462,7 @@ struct dentry *vfs_tmpfile(struct dentry *dentry, umode_t mode, int open_flag)
- 		inode->i_state |= I_LINKABLE;
- 		spin_unlock(&inode->i_lock);
- 	}
-+	ima_post_create_tmpfile(inode);
- 	return child;
- 
- out_err:
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index b5e16b8c50b7..32b0c5bdcd99 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -18,6 +18,7 @@ struct linux_binprm;
- #ifdef CONFIG_IMA
- extern int ima_bprm_check(struct linux_binprm *bprm);
- extern int ima_file_check(struct file *file, int mask);
-+extern void ima_post_create_tmpfile(struct inode *inode);
- extern void ima_file_free(struct file *file);
- extern int ima_file_mmap(struct file *file, unsigned long prot);
- extern int ima_load_data(enum kernel_load_data_id id);
-@@ -56,6 +57,11 @@ static inline int ima_file_check(struct file *file, int mask)
- 	return 0;
- }
- 
-+static inline void ima_post_create_tmpfile(struct inode *inode)
-+{
-+	return;
-+}
-+
- static inline void ima_file_free(struct file *file)
- {
- 	return;
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 4ffac4f5c647..357edd140c09 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -396,6 +396,33 @@ int ima_file_check(struct file *file, int mask)
- }
- EXPORT_SYMBOL_GPL(ima_file_check);
- 
-+/**
-+ * ima_post_create_tmpfile - mark newly created tmpfile as new
-+ * @file : newly created tmpfile
-+ *
-+ * No measuring, appraising or auditing of newly created tmpfiles is needed.
-+ * Skip calling process_measurement(), but indicate which newly, created
-+ * tmpfiles are in policy.
-+ */
-+void ima_post_create_tmpfile(struct inode *inode)
-+{
-+	struct integrity_iint_cache *iint;
-+	int must_appraise;
-+
-+	must_appraise = ima_must_appraise(inode, MAY_ACCESS, FILE_CHECK);
-+	if (!must_appraise)
-+		return;
-+
-+	/* Nothing to do if we can't allocate memory */
-+	iint = integrity_inode_get(inode);
-+	if (!iint)
-+		return;
-+
-+	/* needed for writing the security xattrs */
-+	set_bit(IMA_UPDATE_XATTR, &iint->atomic_flags);
-+	iint->ima_file_status = INTEGRITY_PASS;
-+}
-+
- /**
-  * ima_post_path_mknod - mark as a new inode
-  * @dentry: newly created dentry
-@@ -413,9 +440,13 @@ void ima_post_path_mknod(struct dentry *dentry)
- 	if (!must_appraise)
- 		return;
- 
-+	/* Nothing to do if we can't allocate memory */
- 	iint = integrity_inode_get(inode);
--	if (iint)
--		iint->flags |= IMA_NEW_FILE;
-+	if (!iint)
-+		return;
-+
-+	/* needed for re-opening empty files */
-+	iint->flags |= IMA_NEW_FILE;
- }
- 
- /**
--- 
-2.16.4
-
-
--- 
-Goldwyn
+Regards,
+Jerry
