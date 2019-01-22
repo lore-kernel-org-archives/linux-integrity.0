@@ -2,76 +2,122 @@ Return-Path: <SRS0=iyby=P6=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB5C8C282C4
-	for <linux-integrity@archiver.kernel.org>; Tue, 22 Jan 2019 16:55:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CAF2C282C3
+	for <linux-integrity@archiver.kernel.org>; Tue, 22 Jan 2019 18:27:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BFBE21726
-	for <linux-integrity@archiver.kernel.org>; Tue, 22 Jan 2019 16:55:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB4D6217D6
+	for <linux-integrity@archiver.kernel.org>; Tue, 22 Jan 2019 18:27:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CMl+ODFK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729432AbfAVQzT (ORCPT
+        id S1726010AbfAVS1D (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 22 Jan 2019 11:55:19 -0500
-Received: from mga01.intel.com ([192.55.52.88]:20217 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728719AbfAVQzS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 22 Jan 2019 11:55:18 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 08:55:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,507,1539673200"; 
-   d="scan'208";a="118530896"
-Received: from mlapinsx-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.154])
-  by fmsmga008.fm.intel.com with ESMTP; 22 Jan 2019 08:55:11 -0800
-Date:   Tue, 22 Jan 2019 18:55:09 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
+        Tue, 22 Jan 2019 13:27:03 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43635 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725913AbfAVS1C (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 22 Jan 2019 13:27:02 -0500
+Received: by mail-lj1-f193.google.com with SMTP id q2-v6so21529634lji.10
+        for <linux-integrity@vger.kernel.org>; Tue, 22 Jan 2019 10:27:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XUBcaPRcuqOLEl2SYy/Q6oqpj8zeKWGuZM5V88FmHF8=;
+        b=CMl+ODFKCfVLcBaWLY/tCSTTxYCbhG1V/NxINTD3f7ytfFq5M59K9J2K6RH2Pm/OSn
+         q7GCuvuWVGKVYV62U5nCjKlbBy782E6y+co8/T6PIdApkhHe0go43LUfYd6CwWmR5Ef5
+         WvkZWSVRmstQbxD52e4AK1z18Q87hMRWG808E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XUBcaPRcuqOLEl2SYy/Q6oqpj8zeKWGuZM5V88FmHF8=;
+        b=CT+07TqPb9Is/HLOuqW13ZgErzvHg5KRrszdNSpn7nJiTOwJ9Ab2oVcreF3mn6RoIO
+         xKYua6nt00cPdIMCYYExVps68g9mTg9QUdBwcuDsQU6QGvk7VpbNuP2B/wOFBFAZi4n/
+         qKIGMm2vo8Qt4tmb5fGdtCwbpCKMvS0XpaLgvVYXkSDhLm/NnjVkdbOLG4a8kE7SC1Mv
+         pu5i2tHEvpZg5CiS7wKOcRsfDbwezAQcxEqBNaVBlCnEOZ2BbyVYk8YZmuS1Hd9nfZWK
+         9RzDRDowECrx1NlclVEtfzjz8PPsfj10SHFMt4RjkwsQWejIwTlTlrLbvOx6/vlpF3Nz
+         D3YQ==
+X-Gm-Message-State: AJcUukdnSLv2Rckq/k8bKEtz5290SYCWdl1HEQVBN/XLuToRFOerKszj
+        v/cjq7rtW9b/PwJt2RSe5G9ko1HibE2q0A==
+X-Google-Smtp-Source: ALg8bN5JRPViPozyRtTx5pykyfFfZ8TGlE5MgVz6lxaik13kn8GKPraT5NDRhsoLnwpTlm6wf/Hjcg==
+X-Received: by 2002:a2e:4218:: with SMTP id p24-v6mr21206040lja.58.1548181620088;
+        Tue, 22 Jan 2019 10:27:00 -0800 (PST)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id u24sm117892lfi.24.2019.01.22.10.26.58
+        for <linux-integrity@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Jan 2019 10:26:59 -0800 (PST)
+Received: by mail-lf1-f48.google.com with SMTP id v5so18827880lfe.7
+        for <linux-integrity@vger.kernel.org>; Tue, 22 Jan 2019 10:26:58 -0800 (PST)
+X-Received: by 2002:a19:980f:: with SMTP id a15mr22707685lfe.103.1548181618431;
+ Tue, 22 Jan 2019 10:26:58 -0800 (PST)
+MIME-Version: 1.0
+References: <20190118142559.GA4080@linux.intel.com> <1547849358.2794.90.camel@HansenPartnership.com>
+ <20190120160413.GB30478@linux.intel.com> <20190122010218.GA26713@linux.intel.com>
+ <20190122025836.GH25163@ziepe.ca> <20190122132910.GA2720@linux.intel.com>
+In-Reply-To: <20190122132910.GA2720@linux.intel.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 23 Jan 2019 07:26:42 +1300
+X-Gmail-Original-Message-ID: <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
+Message-ID: <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
+Subject: Re: Getting weird TPM error after rebasing my tree to security/next-general
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        Matthew Garrett <matthewgarrett@google.com>
-Subject: Re: [PATCH v7 5/5] tpm: pass an array of tpm_extend_digest
- structures to tpm_pcr_extend()
-Message-ID: <20190122165509.GA3687@linux.intel.com>
-References: <20181213102945.30946-1-roberto.sassu@huawei.com>
- <20181213102945.30946-6-roberto.sassu@huawei.com>
- <20181220152122.GB10652@linux.intel.com>
- <c6a3f3e4-bd9d-d060-9ee1-f84310857ba0@huawei.com>
- <20190118151253.GH4080@linux.intel.com>
- <de1cd369-c06c-0107-80cc-fe3967799849@huawei.com>
- <20190121123739.GD9423@linux.intel.com>
- <e97d1377-b8d8-6ecb-4c7f-1b08235c6864@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e97d1377-b8d8-6ecb-4c7f-1b08235c6864@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 02:50:49PM +0100, Roberto Sassu wrote:
-> On 1/21/2019 1:37 PM, Jarkko Sakkinen wrote:
-> > 3. The would be nothing wrong exposing struct tpm_chip in
-> >     include/linux/tpm.h. I would be totally fine with that.
-> 
-> Should I do it in a separate patch (before 5/5)?
+On Wed, Jan 23, 2019 at 2:29 AM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> > >
+> > > Fails on commit 170d13ca3a2fdaaa0283399247631b76b441cca2. Still works on
+> > > preceding commit a959dc88f9c8900296ccf13e2f3e1cbc555a8917.
+> >
+> > This changes the IO access pattern in memcpy_to/fromio.. Presumably
+> > CRB HW doesn't like the new 4 byte move? Swap each one in crb to
+> > memcpy to confirm..
+> >
+> > If the HW requires particular access patterns you can't use
+> > memcpy_to/fromio
+>
+> Did not have time to look at the commit at all but your deduction
+> is correct. I know it without testing.
+>
+> Memory controller will feed 1's on unaligned read from IO memory,
+> and as we can see from the TPM header, this change causes two of
+> those:
 
-Yes.
+Funky. But how did it work before then?
 
-> Is it fine to call tpm_default_chip() only in pcrlock() for trusted
-> keys?
+The new memcpy_fromio() is designed to have _predictable_ access
+patterns. Not necessarily the best, but at least consistent.
 
-I think you should get the reference in init_trusted() (similar pattern
-as in IMA).
+Prevously, we used whatever random "memcpy()" implementation we
+happened to pick, which *could* be aligned (particularly "rep movsb" -
+absolutely horrible performance for MMIO, but by doing IO one byte at
+a time it was certainly aligned ;), but most of our x86 memcpy
+implementations don't actually try all that hard to align the source.
+And the manual version will actually copy things *backwards* for some
+cases.
 
-/Jarkko
+Is it just that this particular hardware always happened to trigger
+the ERMS case (ie "rep movsb")?
+
+Anyway, Jason is correct that if a device has particular IO pattern
+requirements, you shouldn't use "memcpy_fromio()" and friends, but
+it's interesting how it apparently *happened* to work before.
+
+             Linus
