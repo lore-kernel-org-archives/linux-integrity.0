@@ -2,64 +2,97 @@ Return-Path: <SRS0=s/8x=P7=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40AFEC282C0
-	for <linux-integrity@archiver.kernel.org>; Wed, 23 Jan 2019 18:21:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFB56C282C0
+	for <linux-integrity@archiver.kernel.org>; Wed, 23 Jan 2019 18:36:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2098E21850
-	for <linux-integrity@archiver.kernel.org>; Wed, 23 Jan 2019 18:21:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD49921872
+	for <linux-integrity@archiver.kernel.org>; Wed, 23 Jan 2019 18:36:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726398AbfAWSVD (ORCPT
+        id S1727039AbfAWSg2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 23 Jan 2019 13:21:03 -0500
-Received: from mga11.intel.com ([192.55.52.93]:27594 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726140AbfAWSVD (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 23 Jan 2019 13:21:03 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 10:21:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,512,1539673200"; 
-   d="scan'208";a="312874309"
-Received: from rkazants-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.156])
-  by fmsmga006.fm.intel.com with ESMTP; 23 Jan 2019 10:20:58 -0800
-Date:   Wed, 23 Jan 2019 20:20:57 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: Re: [PATCH v10 00/17] Remove nested TPM operations
-Message-ID: <20190123182057.GA24212@linux.intel.com>
-References: <20190116212342.24524-1-jarkko.sakkinen@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190116212342.24524-1-jarkko.sakkinen@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 23 Jan 2019 13:36:28 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43420 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726991AbfAWSgW (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 23 Jan 2019 13:36:22 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0NIYJ7X058597
+        for <linux-integrity@vger.kernel.org>; Wed, 23 Jan 2019 13:36:21 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q6v23v4mn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 23 Jan 2019 13:36:20 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 23 Jan 2019 18:36:17 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 23 Jan 2019 18:36:14 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0NIaCLA62128164
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 23 Jan 2019 18:36:13 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D9DB34C044;
+        Wed, 23 Jan 2019 18:36:12 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 26A114C040;
+        Wed, 23 Jan 2019 18:36:11 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.107.54])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 23 Jan 2019 18:36:11 +0000 (GMT)
+Subject: Re: [PATCH v5 0/2] let kexec_file_load use platform keyring to
+ verify the kernel image
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     dhowells@redhat.com, dwmw2@infradead.org,
+        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
+        ebiggers@google.com, nayna@linux.ibm.com, dyoung@redhat.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org
+Date:   Wed, 23 Jan 2019 13:36:00 -0500
+In-Reply-To: <20190121095929.26915-1-kasong@redhat.com>
+References: <20190121095929.26915-1-kasong@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19012318-4275-0000-0000-00000303300B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012318-4276-0000-0000-00003811658A
+Message-Id: <1548268560.3971.2.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-23_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=808 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901230136
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 11:23:25PM +0200, Jarkko Sakkinen wrote:
-> Make the changes necessary to detach TPM space code and TPM activation
-> code out of the tpm_transmit() flow because of both of these can cause
-> nested tpm_transmit() calls. The nesteds calls make the whole flow hard
-> to maintain, and thus, it is better to just fix things now before this
-> turns into a bigger mess.
+On Mon, 2019-01-21 at 17:59 +0800, Kairui Song wrote:
+> This patch series adds a .platform_trusted_keys in system_keyring as the
+> reference to .platform keyring in integrity subsystem, when platform
+> keyring is being initialized it will be updated, so it will be
+> accessable for verifying PE signed kernel image.
 
-Any reasons not to merge this soon?
+There were some scripts/checkpatch.pl errors/warnings emitted on these
+patches.  I've fixed them, but in the future please follow the
+guidelines in Documentation/process/submitting-patches.rst.
 
-/Jarkko
+These patches are now queued in the next-integrity branch of
+https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
+
+Mimi
+
