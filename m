@@ -1,72 +1,149 @@
-Return-Path: <SRS0=iyby=P6=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=s/8x=P7=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D17C282C3
-	for <linux-integrity@archiver.kernel.org>; Tue, 22 Jan 2019 20:22:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EAE9C282C3
+	for <linux-integrity@archiver.kernel.org>; Wed, 23 Jan 2019 02:35:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 180FF217D6
-	for <linux-integrity@archiver.kernel.org>; Tue, 22 Jan 2019 20:22:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0230321726
+	for <linux-integrity@archiver.kernel.org>; Wed, 23 Jan 2019 02:35:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726173AbfAVUWC (ORCPT
+        id S1726957AbfAWCfs (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 22 Jan 2019 15:22:02 -0500
-Received: from mail-qt1-f176.google.com ([209.85.160.176]:39052 "EHLO
-        mail-qt1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725925AbfAVUWB (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 22 Jan 2019 15:22:01 -0500
-Received: by mail-qt1-f176.google.com with SMTP id u47so29158435qtj.6
-        for <linux-integrity@vger.kernel.org>; Tue, 22 Jan 2019 12:22:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:reply-to
-         :mime-version:content-disposition:user-agent;
-        bh=FkwHfMiH5baHUV5NkS37/hCcEw//A2JchphI5XNWSgQ=;
-        b=g80+mmV/WhfBlFB+nY47WlzuY3d0M6Srrq0Pi3g5su6hvCt7+vGJhMLQLqOSNldhth
-         r/DtRi91VL21CYFsFKpXy8K1xT0b2kafASkjbXvhJDYXQcDQsdykXFgSK0TZX89t61vp
-         or1RmWKCsjeBjDGthtKtiAUpne3zjN2kiQ5aBCH/AAarrJ3B0SLhswd7p26AwdC5jtQa
-         q01Z37Ckv5tohpcw09ATIEcBWS7E5kRbgLyaO2BbnKIk8dysDJ0hM/NKNsp7Af7iUr5X
-         2xgq0PHo7IHUHWzV42KcsXBCQSbCvneUw2TwLsglPYI7U/FcElhGRskz3WazmC/lDFMN
-         /egg==
-X-Gm-Message-State: AJcUukePIHlFknH6VkrIiNTOLuUGw5lBTmpdt3uvzCyc8yC4qzMuoHD/
-        D/9n6aFN2ABqEBuV3xvOwZWkU3hjs0M=
-X-Google-Smtp-Source: ALg8bN6d2/o49R9vlz2Ckuzz1AdhjxBILlSY93hiyiNcdjqgfSzOeVQoFSP7v4pDv0DZsdcBV0VccA==
-X-Received: by 2002:aed:2c22:: with SMTP id f31mr33637265qtd.154.1548188521077;
-        Tue, 22 Jan 2019 12:22:01 -0800 (PST)
-Received: from localhost (ip72-223-3-97.ph.ph.cox.net. [72.223.3.97])
-        by smtp.gmail.com with ESMTPSA id t43sm97566955qtc.53.2019.01.22.12.22.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 22 Jan 2019 12:22:00 -0800 (PST)
-Date:   Tue, 22 Jan 2019 13:21:59 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Subject: TPM2_RC_TESTING and tpm_transmit_cmd
-Message-ID: <20190122202159.ktlrxewwr7vryayc@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+        Tue, 22 Jan 2019 21:35:48 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57822 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726931AbfAWCfs (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 22 Jan 2019 21:35:48 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CBA0B83F40;
+        Wed, 23 Jan 2019 02:35:47 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-52.pek2.redhat.com [10.72.12.52])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 026E15D6A6;
+        Wed, 23 Jan 2019 02:35:41 +0000 (UTC)
+Date:   Wed, 23 Jan 2019 10:35:37 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Kairui Song <kasong@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        dwmw2@infradead.org, jwboyer@fedoraproject.org,
+        keyrings@vger.kernel.org, jmorris@namei.org, serge@hallyn.com,
+        zohar@linux.ibm.com, bauerman@linux.ibm.com, ebiggers@google.com,
+        nayna@linux.ibm.com, linux-integrity@vger.kernel.org,
+        kexec@lists.infradead.org
+Subject: Re: [PATCH v5 2/2] kexec, KEYS: Make use of platform keyring for
+ signature verify
+Message-ID: <20190123023537.GA5591@dhcp-128-65.nay.redhat.com>
+References: <20190121095929.26915-1-kasong@redhat.com>
+ <20190121095929.26915-3-kasong@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190121095929.26915-3-kasong@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 23 Jan 2019 02:35:48 +0000 (UTC)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Would it make sense to filter out TPM2_RC_TESTING when reporting an error
-in tpm_transmit_cmd, or possibly spitting out a follow on message in
-the selftest code that the tpm is still testing?
+On 01/21/19 at 05:59pm, Kairui Song wrote:
+> This patch let kexec_file_load makes use of .platform keyring as fall
+> back if it failed to verify a PE signed image against secondary or
+> builtin key ring, make it possible to verify kernel image signed with
+> preboot keys as well.
+> 
+> This commit adds a VERIFY_USE_PLATFORM_KEYRING similar to previous
+> VERIFY_USE_SECONDARY_KEYRING indicating that verify_pkcs7_signature
+> should verify the signature using platform keyring. Also, decrease
+> the error message log level when verification failed with -ENOKEY,
+> so that if called tried multiple time with different keyring it
+> won't generate extra noises.
+> 
+> Signed-off-by: Kairui Song <kasong@redhat.com>
+> ---
+>  arch/x86/kernel/kexec-bzimage64.c | 13 ++++++++++---
+>  certs/system_keyring.c            | 13 ++++++++++++-
+>  include/linux/verification.h      |  1 +
+>  3 files changed, 23 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
+> index 7d97e432cbbc..2c007abd3d40 100644
+> --- a/arch/x86/kernel/kexec-bzimage64.c
+> +++ b/arch/x86/kernel/kexec-bzimage64.c
+> @@ -534,9 +534,16 @@ static int bzImage64_cleanup(void *loader_data)
+>  #ifdef CONFIG_KEXEC_BZIMAGE_VERIFY_SIG
+>  static int bzImage64_verify_sig(const char *kernel, unsigned long kernel_len)
+>  {
+> -	return verify_pefile_signature(kernel, kernel_len,
+> -				       VERIFY_USE_SECONDARY_KEYRING,
+> -				       VERIFYING_KEXEC_PE_SIGNATURE);
+> +	int ret;
+> +	ret = verify_pefile_signature(kernel, kernel_len,
+> +				      VERIFY_USE_SECONDARY_KEYRING,
+> +				      VERIFYING_KEXEC_PE_SIGNATURE);
+> +	if (ret == -ENOKEY && IS_ENABLED(CONFIG_INTEGRITY_PLATFORM_KEYRING)) {
+> +		ret = verify_pefile_signature(kernel, kernel_len,
+> +					      VERIFY_USE_PLATFORM_KEYRING,
+> +					      VERIFYING_KEXEC_PE_SIGNATURE);
+> +	}
+> +	return ret;
+>  }
+>  #endif
+>  
+> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+> index 4690ef9cda8a..7085c286f4bd 100644
+> --- a/certs/system_keyring.c
+> +++ b/certs/system_keyring.c
+> @@ -240,11 +240,22 @@ int verify_pkcs7_signature(const void *data, size_t len,
+>  #else
+>  		trusted_keys = builtin_trusted_keys;
+>  #endif
+> +	} else if (trusted_keys == VERIFY_USE_PLATFORM_KEYRING) {
+> +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> +		trusted_keys = platform_trusted_keys;
+> +#else
+> +		trusted_keys = NULL;
+> +#endif
+> +		if (!trusted_keys) {
+> +			ret = -ENOKEY;
+> +			pr_devel("PKCS#7 platform keyring is not available\n");
+> +			goto error;
+> +		}
+>  	}
+>  	ret = pkcs7_validate_trust(pkcs7, trusted_keys);
+>  	if (ret < 0) {
+>  		if (ret == -ENOKEY)
+> -			pr_err("PKCS#7 signature not signed with a trusted key\n");
+> +			pr_devel("PKCS#7 signature not signed with a trusted key\n");
+>  		goto error;
+>  	}
+>  
+> diff --git a/include/linux/verification.h b/include/linux/verification.h
+> index cfa4730d607a..018fb5f13d44 100644
+> --- a/include/linux/verification.h
+> +++ b/include/linux/verification.h
+> @@ -17,6 +17,7 @@
+>   * should be used.
+>   */
+>  #define VERIFY_USE_SECONDARY_KEYRING ((struct key *)1UL)
+> +#define VERIFY_USE_PLATFORM_KEYRING  ((struct key *)2UL)
+>  
+>  /*
+>   * The use to which an asymmetric key is being put.
+> -- 
+> 2.20.1
+> 
 
-Had a bz opened here because someone had the error message in their logs,
-and I can see how it would be confusing. We have the intermittent selftest
-patch already so it should be functioning, but just wondering if not
-printing out that error message would make sense.
+For kexec_file part
 
-Regards,
-Jerry
+Acked-by: Dave Young <dyoung@redhat.com>
+
+Thanks
+Dave
