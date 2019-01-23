@@ -2,148 +2,119 @@ Return-Path: <SRS0=s/8x=P7=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EAE9C282C3
-	for <linux-integrity@archiver.kernel.org>; Wed, 23 Jan 2019 02:35:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B6B8C282C0
+	for <linux-integrity@archiver.kernel.org>; Wed, 23 Jan 2019 15:36:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0230321726
-	for <linux-integrity@archiver.kernel.org>; Wed, 23 Jan 2019 02:35:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02D492184C
+	for <linux-integrity@archiver.kernel.org>; Wed, 23 Jan 2019 15:36:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbfAWCfs (ORCPT
+        id S1726130AbfAWPgo (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 22 Jan 2019 21:35:48 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57822 "EHLO mx1.redhat.com"
+        Wed, 23 Jan 2019 10:36:44 -0500
+Received: from mga14.intel.com ([192.55.52.115]:27462 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726931AbfAWCfs (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 22 Jan 2019 21:35:48 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CBA0B83F40;
-        Wed, 23 Jan 2019 02:35:47 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-52.pek2.redhat.com [10.72.12.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 026E15D6A6;
-        Wed, 23 Jan 2019 02:35:41 +0000 (UTC)
-Date:   Wed, 23 Jan 2019 10:35:37 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Kairui Song <kasong@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        dwmw2@infradead.org, jwboyer@fedoraproject.org,
-        keyrings@vger.kernel.org, jmorris@namei.org, serge@hallyn.com,
-        zohar@linux.ibm.com, bauerman@linux.ibm.com, ebiggers@google.com,
-        nayna@linux.ibm.com, linux-integrity@vger.kernel.org,
-        kexec@lists.infradead.org
-Subject: Re: [PATCH v5 2/2] kexec, KEYS: Make use of platform keyring for
- signature verify
-Message-ID: <20190123023537.GA5591@dhcp-128-65.nay.redhat.com>
-References: <20190121095929.26915-1-kasong@redhat.com>
- <20190121095929.26915-3-kasong@redhat.com>
+        id S1726008AbfAWPgo (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 23 Jan 2019 10:36:44 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 07:36:44 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,511,1539673200"; 
+   d="scan'208";a="127956733"
+Received: from rkazants-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.156])
+  by FMSMGA003.fm.intel.com with ESMTP; 23 Jan 2019 07:36:40 -0800
+Date:   Wed, 23 Jan 2019 17:36:38 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: Getting weird TPM error after rebasing my tree to
+ security/next-general
+Message-ID: <20190123153638.GA8727@linux.intel.com>
+References: <20190118142559.GA4080@linux.intel.com>
+ <1547849358.2794.90.camel@HansenPartnership.com>
+ <20190120160413.GB30478@linux.intel.com>
+ <20190122010218.GA26713@linux.intel.com>
+ <20190122025836.GH25163@ziepe.ca>
+ <20190122132910.GA2720@linux.intel.com>
+ <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190121095929.26915-3-kasong@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 23 Jan 2019 02:35:48 +0000 (UTC)
+In-Reply-To: <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 01/21/19 at 05:59pm, Kairui Song wrote:
-> This patch let kexec_file_load makes use of .platform keyring as fall
-> back if it failed to verify a PE signed image against secondary or
-> builtin key ring, make it possible to verify kernel image signed with
-> preboot keys as well.
+On Wed, Jan 23, 2019 at 07:26:42AM +1300, Linus Torvalds wrote:
+> On Wed, Jan 23, 2019 at 2:29 AM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > > >
+> > > > Fails on commit 170d13ca3a2fdaaa0283399247631b76b441cca2. Still works on
+> > > > preceding commit a959dc88f9c8900296ccf13e2f3e1cbc555a8917.
+> > >
+> > > This changes the IO access pattern in memcpy_to/fromio.. Presumably
+> > > CRB HW doesn't like the new 4 byte move? Swap each one in crb to
+> > > memcpy to confirm..
+> > >
+> > > If the HW requires particular access patterns you can't use
+> > > memcpy_to/fromio
+> >
+> > Did not have time to look at the commit at all but your deduction
+> > is correct. I know it without testing.
+> >
+> > Memory controller will feed 1's on unaligned read from IO memory,
+> > and as we can see from the TPM header, this change causes two of
+> > those:
 > 
-> This commit adds a VERIFY_USE_PLATFORM_KEYRING similar to previous
-> VERIFY_USE_SECONDARY_KEYRING indicating that verify_pkcs7_signature
-> should verify the signature using platform keyring. Also, decrease
-> the error message log level when verification failed with -ENOKEY,
-> so that if called tried multiple time with different keyring it
-> won't generate extra noises.
+> Funky. But how did it work before then?
 > 
-> Signed-off-by: Kairui Song <kasong@redhat.com>
-> ---
->  arch/x86/kernel/kexec-bzimage64.c | 13 ++++++++++---
->  certs/system_keyring.c            | 13 ++++++++++++-
->  include/linux/verification.h      |  1 +
->  3 files changed, 23 insertions(+), 4 deletions(-)
+> The new memcpy_fromio() is designed to have _predictable_ access
+> patterns. Not necessarily the best, but at least consistent.
 > 
-> diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-> index 7d97e432cbbc..2c007abd3d40 100644
-> --- a/arch/x86/kernel/kexec-bzimage64.c
-> +++ b/arch/x86/kernel/kexec-bzimage64.c
-> @@ -534,9 +534,16 @@ static int bzImage64_cleanup(void *loader_data)
->  #ifdef CONFIG_KEXEC_BZIMAGE_VERIFY_SIG
->  static int bzImage64_verify_sig(const char *kernel, unsigned long kernel_len)
->  {
-> -	return verify_pefile_signature(kernel, kernel_len,
-> -				       VERIFY_USE_SECONDARY_KEYRING,
-> -				       VERIFYING_KEXEC_PE_SIGNATURE);
-> +	int ret;
-> +	ret = verify_pefile_signature(kernel, kernel_len,
-> +				      VERIFY_USE_SECONDARY_KEYRING,
-> +				      VERIFYING_KEXEC_PE_SIGNATURE);
-> +	if (ret == -ENOKEY && IS_ENABLED(CONFIG_INTEGRITY_PLATFORM_KEYRING)) {
-> +		ret = verify_pefile_signature(kernel, kernel_len,
-> +					      VERIFY_USE_PLATFORM_KEYRING,
-> +					      VERIFYING_KEXEC_PE_SIGNATURE);
-> +	}
-> +	return ret;
->  }
->  #endif
->  
-> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-> index 4690ef9cda8a..7085c286f4bd 100644
-> --- a/certs/system_keyring.c
-> +++ b/certs/system_keyring.c
-> @@ -240,11 +240,22 @@ int verify_pkcs7_signature(const void *data, size_t len,
->  #else
->  		trusted_keys = builtin_trusted_keys;
->  #endif
-> +	} else if (trusted_keys == VERIFY_USE_PLATFORM_KEYRING) {
-> +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
-> +		trusted_keys = platform_trusted_keys;
-> +#else
-> +		trusted_keys = NULL;
-> +#endif
-> +		if (!trusted_keys) {
-> +			ret = -ENOKEY;
-> +			pr_devel("PKCS#7 platform keyring is not available\n");
-> +			goto error;
-> +		}
->  	}
->  	ret = pkcs7_validate_trust(pkcs7, trusted_keys);
->  	if (ret < 0) {
->  		if (ret == -ENOKEY)
-> -			pr_err("PKCS#7 signature not signed with a trusted key\n");
-> +			pr_devel("PKCS#7 signature not signed with a trusted key\n");
->  		goto error;
->  	}
->  
-> diff --git a/include/linux/verification.h b/include/linux/verification.h
-> index cfa4730d607a..018fb5f13d44 100644
-> --- a/include/linux/verification.h
-> +++ b/include/linux/verification.h
-> @@ -17,6 +17,7 @@
->   * should be used.
->   */
->  #define VERIFY_USE_SECONDARY_KEYRING ((struct key *)1UL)
-> +#define VERIFY_USE_PLATFORM_KEYRING  ((struct key *)2UL)
->  
->  /*
->   * The use to which an asymmetric key is being put.
-> -- 
-> 2.20.1
+> Prevously, we used whatever random "memcpy()" implementation we
+> happened to pick, which *could* be aligned (particularly "rep movsb" -
+> absolutely horrible performance for MMIO, but by doing IO one byte at
+> a time it was certainly aligned ;), but most of our x86 memcpy
+> implementations don't actually try all that hard to align the source.
+> And the manual version will actually copy things *backwards* for some
+> cases.
 > 
+> Is it just that this particular hardware always happened to trigger
+> the ERMS case (ie "rep movsb")?
 
-For kexec_file part
+This is the particular snippet in question:
 
-Acked-by: Dave Young <dyoung@redhat.com>
+memcpy_fromio(buf, priv->rsp, 6);
+expected = be32_to_cpup((__be32 *) &buf[2]);
+if (expected > count || expected < 6)
+	return -EIO;
 
-Thanks
-Dave
+memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
+
+I guess it did in the first memcpy_fromio operation since it is less
+than a quad word, right? Not sure why the 2nd memcpy_fromio() operation
+has worked, though.
+
+> Anyway, Jason is correct that if a device has particular IO pattern
+> requirements, you shouldn't use "memcpy_fromio()" and friends, but
+> it's interesting how it apparently *happened* to work before.
+> 
+>              Linus
+
+Sure, I'll prepare a fix ASAP.
+
+/Jarkko
