@@ -5,103 +5,86 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88BBAC282C0
-	for <linux-integrity@archiver.kernel.org>; Wed, 23 Jan 2019 18:53:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C9AC282C0
+	for <linux-integrity@archiver.kernel.org>; Wed, 23 Jan 2019 19:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 602E420861
-	for <linux-integrity@archiver.kernel.org>; Wed, 23 Jan 2019 18:53:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D58942184B
+	for <linux-integrity@archiver.kernel.org>; Wed, 23 Jan 2019 19:00:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726027AbfAWSxw (ORCPT
+        id S1726296AbfAWTAH (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 23 Jan 2019 13:53:52 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50570 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726035AbfAWSxv (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 23 Jan 2019 13:53:51 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0NIj7c3007379
-        for <linux-integrity@vger.kernel.org>; Wed, 23 Jan 2019 13:53:50 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q6u80q0xx-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 23 Jan 2019 13:53:50 -0500
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Wed, 23 Jan 2019 18:53:49 -0000
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 23 Jan 2019 18:53:45 -0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0NIrieI7209074
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 23 Jan 2019 18:53:45 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D11B5AE064;
-        Wed, 23 Jan 2019 18:53:44 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BC427AE063;
-        Wed, 23 Jan 2019 18:53:44 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 23 Jan 2019 18:53:44 +0000 (GMT)
-Subject: Re: [PATCH v10 00/17] Remove nested TPM operations
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
+        Wed, 23 Jan 2019 14:00:07 -0500
+Received: from mga18.intel.com ([134.134.136.126]:31046 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725896AbfAWTAG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 23 Jan 2019 14:00:06 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 11:00:05 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,512,1539673200"; 
+   d="scan'208";a="131760729"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by orsmga001.jf.intel.com with ESMTP; 23 Jan 2019 11:00:03 -0800
+Received: from fmsmsx102.amr.corp.intel.com (10.18.124.200) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 23 Jan 2019 10:59:51 -0800
+Received: from HASMSX109.ger.corp.intel.com (10.184.198.21) by
+ FMSMSX102.amr.corp.intel.com (10.18.124.200) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 23 Jan 2019 10:59:51 -0800
+Received: from hasmsx108.ger.corp.intel.com ([169.254.9.155]) by
+ hasmsx109.ger.corp.intel.com ([169.254.3.105]) with mapi id 14.03.0415.000;
+ Wed, 23 Jan 2019 20:59:48 +0200
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+CC:     "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
         Peter Huewe <PeterHuewe@gmx.de>,
         Jason Gunthorpe <jgg@ziepe.ca>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
         Stefan Berger <stefanb@linux.vnet.ibm.com>,
         Nayna Jain <nayna@linux.ibm.com>
+Subject: RE: [PATCH v10 00/17] Remove nested TPM operations
+Thread-Topic: [PATCH v10 00/17] Remove nested TPM operations
+Thread-Index: AQHUreHHpwNI+OEb4EipFSW6DRZudqW9E3qAgAAJKACAACHQMA==
+Date:   Wed, 23 Jan 2019 18:59:48 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA818C6@hasmsx108.ger.corp.intel.com>
 References: <20190116212342.24524-1-jarkko.sakkinen@linux.intel.com>
  <20190123182057.GA24212@linux.intel.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Date:   Wed, 23 Jan 2019 13:53:44 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+ <37e53df5-4a25-fce2-d3bf-016669d0a383@linux.ibm.com>
+In-Reply-To: <37e53df5-4a25-fce2-d3bf-016669d0a383@linux.ibm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNTRhNGM3YzktYjY2Ni00MjU1LTlkOWYtYmNkZmIzNzJhNGU0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiVkFkbGVid1hPaTRTdmlNc2hMNXRwT2Mrb2Z2QlFGdGtkcUpyS1FHOTVIeFB1XC9cL0ZUWmFYd1RjWHhCVko4ZzNPIn0=
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.254.153.236]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20190123182057.GA24212@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 19012318-2213-0000-0000-0000034397DE
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010464; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000275; SDB=6.01150728; UDB=6.00599704; IPR=6.00931066;
- MB=3.00025262; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-23 18:53:48
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012318-2214-0000-0000-00005D16832E
-Message-Id: <37e53df5-4a25-fce2-d3bf-016669d0a383@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-23_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=972 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901230137
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 1/23/19 1:20 PM, Jarkko Sakkinen wrote:
-> On Wed, Jan 16, 2019 at 11:23:25PM +0200, Jarkko Sakkinen wrote:
->> Make the changes necessary to detach TPM space code and TPM activation
->> code out of the tpm_transmit() flow because of both of these can cause
->> nested tpm_transmit() calls. The nesteds calls make the whole flow hard
->> to maintain, and thus, it is better to just fix things now before this
->> turns into a bigger mess.
-> Any reasons not to merge this soon?
-
-I suppose v10 hasn't changed anything signinficat. So, not from my 
-perspective. Were you waiting for more Reviewed-by's?
-
->
-> /Jarkko
->
-
+PiANCj4gT24gMS8yMy8xOSAxOjIwIFBNLCBKYXJra28gU2Fra2luZW4gd3JvdGU6DQo+ID4gT24g
+V2VkLCBKYW4gMTYsIDIwMTkgYXQgMTE6MjM6MjVQTSArMDIwMCwgSmFya2tvIFNha2tpbmVuIHdy
+b3RlOg0KPiA+PiBNYWtlIHRoZSBjaGFuZ2VzIG5lY2Vzc2FyeSB0byBkZXRhY2ggVFBNIHNwYWNl
+IGNvZGUgYW5kIFRQTQ0KPiA+PiBhY3RpdmF0aW9uIGNvZGUgb3V0IG9mIHRoZSB0cG1fdHJhbnNt
+aXQoKSBmbG93IGJlY2F1c2Ugb2YgYm90aCBvZg0KPiA+PiB0aGVzZSBjYW4gY2F1c2UgbmVzdGVk
+IHRwbV90cmFuc21pdCgpIGNhbGxzLiBUaGUgbmVzdGVkcyBjYWxscyBtYWtlDQo+ID4+IHRoZSB3
+aG9sZSBmbG93IGhhcmQgdG8gbWFpbnRhaW4sIGFuZCB0aHVzLCBpdCBpcyBiZXR0ZXIgdG8ganVz
+dCBmaXgNCj4gPj4gdGhpbmdzIG5vdyBiZWZvcmUgdGhpcyB0dXJucyBpbnRvIGEgYmlnZ2VyIG1l
+c3MuDQo+ID4gQW55IHJlYXNvbnMgbm90IHRvIG1lcmdlIHRoaXMgc29vbj8NCj4gDQo+IEkgc3Vw
+cG9zZSB2MTAgaGFzbid0IGNoYW5nZWQgYW55dGhpbmcgc2lnbmluZmljYXQuIFNvLCBub3QgZnJv
+bSBteSBwZXJzcGVjdGl2ZS4NCj4gV2VyZSB5b3Ugd2FpdGluZyBmb3IgbW9yZSBSZXZpZXdlZC1i
+eSdzPw0KPiANCkknbSBva2F5LCBpbiB0aGVvcnkgSSd2ZSBjbGVhbmVkIGFsbCBteSBjb25jZXJu
+IHJlZ2FyZGluZyBpZGxlIGFuZCBsb2NhbGl0eSAuIEknbSBqdXN0IHdhbnQgZG8gZmV3IG1vcmUg
+dGVzdHMgb24gU3VuZGF5Lg0KDQpUaGFua3MNClRvbWFzDQoNCg0K
