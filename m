@@ -2,89 +2,118 @@ Return-Path: <SRS0=s/8x=P7=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C9AC282C0
-	for <linux-integrity@archiver.kernel.org>; Wed, 23 Jan 2019 19:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3A9C282C0
+	for <linux-integrity@archiver.kernel.org>; Wed, 23 Jan 2019 20:11:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D58942184B
-	for <linux-integrity@archiver.kernel.org>; Wed, 23 Jan 2019 19:00:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3053A21872
+	for <linux-integrity@archiver.kernel.org>; Wed, 23 Jan 2019 20:11:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726296AbfAWTAH (ORCPT
+        id S1726101AbfAWULH (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 23 Jan 2019 14:00:07 -0500
-Received: from mga18.intel.com ([134.134.136.126]:31046 "EHLO mga18.intel.com"
+        Wed, 23 Jan 2019 15:11:07 -0500
+Received: from mga18.intel.com ([134.134.136.126]:37380 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725896AbfAWTAG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 23 Jan 2019 14:00:06 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1726035AbfAWULG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 23 Jan 2019 15:11:06 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 11:00:05 -0800
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 12:11:05 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,512,1539673200"; 
-   d="scan'208";a="131760729"
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by orsmga001.jf.intel.com with ESMTP; 23 Jan 2019 11:00:03 -0800
-Received: from fmsmsx102.amr.corp.intel.com (10.18.124.200) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 23 Jan 2019 10:59:51 -0800
-Received: from HASMSX109.ger.corp.intel.com (10.184.198.21) by
- FMSMSX102.amr.corp.intel.com (10.18.124.200) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 23 Jan 2019 10:59:51 -0800
-Received: from hasmsx108.ger.corp.intel.com ([169.254.9.155]) by
- hasmsx109.ger.corp.intel.com ([169.254.3.105]) with mapi id 14.03.0415.000;
- Wed, 23 Jan 2019 20:59:48 +0200
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-CC:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: RE: [PATCH v10 00/17] Remove nested TPM operations
-Thread-Topic: [PATCH v10 00/17] Remove nested TPM operations
-Thread-Index: AQHUreHHpwNI+OEb4EipFSW6DRZudqW9E3qAgAAJKACAACHQMA==
-Date:   Wed, 23 Jan 2019 18:59:48 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA818C6@hasmsx108.ger.corp.intel.com>
-References: <20190116212342.24524-1-jarkko.sakkinen@linux.intel.com>
- <20190123182057.GA24212@linux.intel.com>
- <37e53df5-4a25-fce2-d3bf-016669d0a383@linux.ibm.com>
-In-Reply-To: <37e53df5-4a25-fce2-d3bf-016669d0a383@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNTRhNGM3YzktYjY2Ni00MjU1LTlkOWYtYmNkZmIzNzJhNGU0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiVkFkbGVid1hPaTRTdmlNc2hMNXRwT2Mrb2Z2QlFGdGtkcUpyS1FHOTVIeFB1XC9cL0ZUWmFYd1RjWHhCVko4ZzNPIn0=
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.254.153.236]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+X-IronPort-AV: E=Sophos;i="5.56,513,1539673200"; 
+   d="scan'208";a="112117495"
+Received: from rkazants-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.156])
+  by orsmga008.jf.intel.com with ESMTP; 23 Jan 2019 12:11:01 -0800
+Date:   Wed, 23 Jan 2019 22:11:00 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        tomas.winkler@intel.com
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: Getting weird TPM error after rebasing my tree to
+ security/next-general
+Message-ID: <20190123201100.GA21074@linux.intel.com>
+References: <20190118142559.GA4080@linux.intel.com>
+ <1547849358.2794.90.camel@HansenPartnership.com>
+ <20190120160413.GB30478@linux.intel.com>
+ <20190122010218.GA26713@linux.intel.com>
+ <20190122025836.GH25163@ziepe.ca>
+ <20190122132910.GA2720@linux.intel.com>
+ <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
+ <20190123153638.GA8727@linux.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190123153638.GA8727@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-PiANCj4gT24gMS8yMy8xOSAxOjIwIFBNLCBKYXJra28gU2Fra2luZW4gd3JvdGU6DQo+ID4gT24g
-V2VkLCBKYW4gMTYsIDIwMTkgYXQgMTE6MjM6MjVQTSArMDIwMCwgSmFya2tvIFNha2tpbmVuIHdy
-b3RlOg0KPiA+PiBNYWtlIHRoZSBjaGFuZ2VzIG5lY2Vzc2FyeSB0byBkZXRhY2ggVFBNIHNwYWNl
-IGNvZGUgYW5kIFRQTQ0KPiA+PiBhY3RpdmF0aW9uIGNvZGUgb3V0IG9mIHRoZSB0cG1fdHJhbnNt
-aXQoKSBmbG93IGJlY2F1c2Ugb2YgYm90aCBvZg0KPiA+PiB0aGVzZSBjYW4gY2F1c2UgbmVzdGVk
-IHRwbV90cmFuc21pdCgpIGNhbGxzLiBUaGUgbmVzdGVkcyBjYWxscyBtYWtlDQo+ID4+IHRoZSB3
-aG9sZSBmbG93IGhhcmQgdG8gbWFpbnRhaW4sIGFuZCB0aHVzLCBpdCBpcyBiZXR0ZXIgdG8ganVz
-dCBmaXgNCj4gPj4gdGhpbmdzIG5vdyBiZWZvcmUgdGhpcyB0dXJucyBpbnRvIGEgYmlnZ2VyIG1l
-c3MuDQo+ID4gQW55IHJlYXNvbnMgbm90IHRvIG1lcmdlIHRoaXMgc29vbj8NCj4gDQo+IEkgc3Vw
-cG9zZSB2MTAgaGFzbid0IGNoYW5nZWQgYW55dGhpbmcgc2lnbmluZmljYXQuIFNvLCBub3QgZnJv
-bSBteSBwZXJzcGVjdGl2ZS4NCj4gV2VyZSB5b3Ugd2FpdGluZyBmb3IgbW9yZSBSZXZpZXdlZC1i
-eSdzPw0KPiANCkknbSBva2F5LCBpbiB0aGVvcnkgSSd2ZSBjbGVhbmVkIGFsbCBteSBjb25jZXJu
-IHJlZ2FyZGluZyBpZGxlIGFuZCBsb2NhbGl0eSAuIEknbSBqdXN0IHdhbnQgZG8gZmV3IG1vcmUg
-dGVzdHMgb24gU3VuZGF5Lg0KDQpUaGFua3MNClRvbWFzDQoNCg0K
+On Wed, Jan 23, 2019 at 05:36:38PM +0200, Jarkko Sakkinen wrote:
+> On Wed, Jan 23, 2019 at 07:26:42AM +1300, Linus Torvalds wrote:
+> > On Wed, Jan 23, 2019 at 2:29 AM Jarkko Sakkinen
+> > <jarkko.sakkinen@linux.intel.com> wrote:
+> > >
+> > > > >
+> > > > > Fails on commit 170d13ca3a2fdaaa0283399247631b76b441cca2. Still works on
+> > > > > preceding commit a959dc88f9c8900296ccf13e2f3e1cbc555a8917.
+> > > >
+> > > > This changes the IO access pattern in memcpy_to/fromio.. Presumably
+> > > > CRB HW doesn't like the new 4 byte move? Swap each one in crb to
+> > > > memcpy to confirm..
+> > > >
+> > > > If the HW requires particular access patterns you can't use
+> > > > memcpy_to/fromio
+> > >
+> > > Did not have time to look at the commit at all but your deduction
+> > > is correct. I know it without testing.
+> > >
+> > > Memory controller will feed 1's on unaligned read from IO memory,
+> > > and as we can see from the TPM header, this change causes two of
+> > > those:
+> > 
+> > Funky. But how did it work before then?
+> > 
+> > The new memcpy_fromio() is designed to have _predictable_ access
+> > patterns. Not necessarily the best, but at least consistent.
+> > 
+> > Prevously, we used whatever random "memcpy()" implementation we
+> > happened to pick, which *could* be aligned (particularly "rep movsb" -
+> > absolutely horrible performance for MMIO, but by doing IO one byte at
+> > a time it was certainly aligned ;), but most of our x86 memcpy
+> > implementations don't actually try all that hard to align the source.
+> > And the manual version will actually copy things *backwards* for some
+> > cases.
+> > 
+> > Is it just that this particular hardware always happened to trigger
+> > the ERMS case (ie "rep movsb")?
+> 
+> This is the particular snippet in question:
+> 
+> memcpy_fromio(buf, priv->rsp, 6);
+> expected = be32_to_cpup((__be32 *) &buf[2]);
+> if (expected > count || expected < 6)
+> 	return -EIO;
+> 
+> memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
+> 
+> I guess it did in the first memcpy_fromio operation since it is less
+> than a quad word, right? Not sure why the 2nd memcpy_fromio() operation
+> has worked, though.
+
+And I wonder why 32-bit has worked before.
+
+Tomas, you've been more involved with ME and fTPM runs there. Do you
+have any clues where this could be rooted?
+
+/Jarkko
