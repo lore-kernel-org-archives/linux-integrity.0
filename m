@@ -2,143 +2,119 @@ Return-Path: <SRS0=jmLN=QB=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAC35C282C0
-	for <linux-integrity@archiver.kernel.org>; Fri, 25 Jan 2019 09:31:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DAF6C282C0
+	for <linux-integrity@archiver.kernel.org>; Fri, 25 Jan 2019 10:09:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88B70218DE
-	for <linux-integrity@archiver.kernel.org>; Fri, 25 Jan 2019 09:31:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="bUbrur6p"
+	by mail.kernel.org (Postfix) with ESMTP id 7657C218A2
+	for <linux-integrity@archiver.kernel.org>; Fri, 25 Jan 2019 10:09:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728109AbfAYJbA (ORCPT
+        id S1728007AbfAYKJj (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 25 Jan 2019 04:31:00 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:38892 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726520AbfAYJbA (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 25 Jan 2019 04:31:00 -0500
-Received: from zn.tnic (p200300EC2BCAC5008171EC5460E7CDAE.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:c500:8171:ec54:60e7:cdae])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3D3D11EC0229;
-        Fri, 25 Jan 2019 10:30:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1548408658;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=l8/CFgutwOvxgqngQLTy4YuEb5ebbbFztEea0Avs9q0=;
-        b=bUbrur6puTnchZI+GtOUgt9AOVvc+Ae5pp2AbXn3zl56ko7TQeiAMvMt82l/uiNKrzFkWU
-        xE+Lgre99tNAQPN+kju5rRJhk7+gwDA1BVSo2SOpdZc5BqECsohuDcMTrvfJV+xcR6Z0Dt
-        NtKvCITWDx8Hug0dQ4Tj6P0pQgnMd4Q=
-Date:   Fri, 25 Jan 2019 10:30:52 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH 01/17] Fix "x86/alternatives: Lockdep-enforce text_mutex
- in text_poke*()"
-Message-ID: <20190125093052.GA27998@zn.tnic>
-References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
- <20190117003259.23141-2-rick.p.edgecombe@intel.com>
+        Fri, 25 Jan 2019 05:09:39 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:44308 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726878AbfAYKJj (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 25 Jan 2019 05:09:39 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1gmyQX-0004wx-V1; Fri, 25 Jan 2019 18:09:34 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1gmyQT-0007Y7-NH; Fri, 25 Jan 2019 18:09:29 +0800
+Date:   Fri, 25 Jan 2019 18:09:29 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Vitaly Chikunov <vt@altlinux.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v3] akcipher: Introduce verify_rsa/verify for public
+ key algorithms
+Message-ID: <20190125100929.zxmqbsibnnikh7tv@gondor.apana.org.au>
+References: <20190118205846.20309-1-vt@altlinux.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190117003259.23141-2-rick.p.edgecombe@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190118205846.20309-1-vt@altlinux.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 04:32:43PM -0800, Rick Edgecombe wrote:
-> From: Nadav Amit <namit@vmware.com>
+On Fri, Jan 18, 2019 at 11:58:46PM +0300, Vitaly Chikunov wrote:
+> Previous akcipher .verify() just `decrypts' (using RSA encrypt which is
+> using public key) signature to uncover message hash, which was then
+> compared in upper level public_key_verify_signature() with the expected
+> hash value, which itself was never passed into verify().
 > 
-> text_mutex is currently expected to be held before text_poke() is
-> called, but we kgdb does not take the mutex, and instead *supposedly*
-> ensures the lock is not taken and will not be acquired by any other core
-> while text_poke() is running.
+> This approach was incompatible with EC-DSA family of algorithms,
+> because, to verify a signature EC-DSA algorithm also needs a hash value
+> as input; then it's used (together with a signature divided into halves
+> `r||s') to produce a witness value, which is then compared with `r' to
+> determine if the signature is correct. Thus, for EC-DSA, nor
+> requirements of .verify() itself, nor its output expectations in
+> public_key_verify_signature() wasn't sufficient.
 > 
-> The reason for the "supposedly" comment is that it is not entirely clear
-> that this would be the case if gdb_do_roundup is zero.
-
-I guess that variable name is "kgdb_do_roundup" ?
-
-> This patch creates two wrapper functions, text_poke() and
-
-Avoid having "This patch" or "This commit" in the commit message. It is
-tautologically useless.
-
-Also, do
-
-$ git grep 'This patch' Documentation/process
-
-for more details.
-
-> text_poke_kgdb() which do or do not run the lockdep assertion
-> respectively.
+> Make improved .verify() call which gets hash value as parameter and
+> produce complete signature check without any output besides status.
 > 
-> While we are at it, change the return code of text_poke() to something
-> meaningful. One day, callers might actually respect it and the existing
-> BUG_ON() when patching fails could be removed. For kgdb, the return
-> value can actually be used.
+> RSA-centric drivers have replaced verify() with verify_rsa() which
+> have old semantic and which they still should implement (if they want
+> pkcs1pad to work). If akcipher have .verify_rsa() callback, it will be
+> used for a partial verification, which then is finished in
+> crypto_akcipher_verify().
 > 
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Fixes: 9222f606506c ("x86/alternatives: Lockdep-enforce text_mutex in text_poke*()")
-> Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> Acked-by: Jiri Kosina <jkosina@suse.cz>
-> Signed-off-by: Nadav Amit <namit@vmware.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> ---
->  arch/x86/include/asm/text-patching.h |  1 +
->  arch/x86/kernel/alternative.c        | 52 ++++++++++++++++++++--------
->  arch/x86/kernel/kgdb.c               | 11 +++---
->  3 files changed, 45 insertions(+), 19 deletions(-)
+> Now for the top level verification only crypto_akcipher_verify() needs
+> to be called.
+> 
+> For pkcs1pad crypto_akcipher_verify_rsa() is introduced which directly
+> calls .verify_rsa() for its backend. Without this api PKCS1 can not be
+> implemented.
+> 
+> Tested on x86_64.
+> 
+> Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
 
-...
+Thanks for working on this!
 
-> +/**
-> + * text_poke_kgdb - Update instructions on a live kernel by kgdb
-> + * @addr: address to modify
-> + * @opcode: source of the copy
-> + * @len: length to copy
-> + *
-> + * Only atomic text poke/set should be allowed when not doing early patching.
-> + * It means the size must be writable atomically and the address must be aligned
-> + * in a way that permits an atomic write. It also makes sure we fit on a single
-> + * page.
-> + *
-> + * Context: should only be used by kgdb, which ensures no other core is running,
-> + *	    despite the fact it does not hold the text_mutex.
-> + */
-> +void *text_poke_kgdb(void *addr, const void *opcode, size_t len)
+We have been here before.  We changed the AEAD interface in a way
+that is not dissimilar to what you want to do here.
 
-text_poke_unlocked() I guess. I don't think kgdb is that special that it
-needs its own function flavor.
+So I think the basic plan should be:
 
+1) Implement new top-level verify, alongside existing verify_rsa.
+2) For existing drivers implement a wrapper over verify_rsa.
+3) Convert *all* existing users to the new verify API.
+4) Remove top-level verify_rsa API.
+5) Convert existing drivers over to verify API.
+6) Remove verify_rsa completely.
+
+> +int crypto_akcipher_verify(struct akcipher_request *req,
+> +			   const unsigned char *digest, unsigned int digest_len)
+
+We should not add new fields outside of akcipher_request.  So
+these fields need to go inside it.  However, I think we don't
+actually need two new fields.  They could both go into the src
+scatterlist.  All we need is a new field, say textlen to indicate
+where the text stops and where the hash starts.  We could also
+overlay textlen over dstlen as it would now be unused for verify.
+
+The advantage of having it in one scatterlist is that for those
+users that already have the two pieces together could simply provide
+a single SG element (I don't know how likely that is in practice
+though).
+
+For others you would simply tack on an extra SG element.
+
+Thanks,
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
