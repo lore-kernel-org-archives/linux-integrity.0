@@ -2,147 +2,207 @@ Return-Path: <SRS0=jmLN=QB=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3DBEC282C2
-	for <linux-integrity@archiver.kernel.org>; Fri, 25 Jan 2019 11:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38217C282C0
+	for <linux-integrity@archiver.kernel.org>; Fri, 25 Jan 2019 12:37:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA80F218A6
-	for <linux-integrity@archiver.kernel.org>; Fri, 25 Jan 2019 11:18:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A2AF2146E
+	for <linux-integrity@archiver.kernel.org>; Fri, 25 Jan 2019 12:37:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726026AbfAYLSP (ORCPT
+        id S1726095AbfAYMhq (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 25 Jan 2019 06:18:15 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:35680 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbfAYLSO (ORCPT
+        Fri, 25 Jan 2019 07:37:46 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46132 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727983AbfAYMhb (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 25 Jan 2019 06:18:14 -0500
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 66ECF72CC61;
-        Fri, 25 Jan 2019 14:18:11 +0300 (MSK)
-Received: from altlinux.org (sole.flsd.net [185.75.180.6])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 4B4354A4A16;
-        Fri, 25 Jan 2019 14:18:11 +0300 (MSK)
-Date:   Fri, 25 Jan 2019 14:18:09 +0300
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Fri, 25 Jan 2019 07:37:31 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0PCYS85105202
+        for <linux-integrity@vger.kernel.org>; Fri, 25 Jan 2019 07:37:31 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q80wqdctu-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 25 Jan 2019 07:37:30 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 25 Jan 2019 12:37:27 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 25 Jan 2019 12:37:24 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0PCbNb559768958
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 25 Jan 2019 12:37:23 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A0D11AE051;
+        Fri, 25 Jan 2019 12:37:23 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 368B6AE045;
+        Fri, 25 Jan 2019 12:37:22 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.107.54])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 25 Jan 2019 12:37:22 +0000 (GMT)
+Subject: Re: [PATCH] security: mark expected switch fall-throughs
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v3] akcipher: Introduce verify_rsa/verify for public
- key algorithms
-Message-ID: <20190125111808.slyoptlns53t7fiw@altlinux.org>
-Mail-Followup-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190118205846.20309-1-vt@altlinux.org>
- <20190125100929.zxmqbsibnnikh7tv@gondor.apana.org.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Disposition: inline
-In-Reply-To: <20190125100929.zxmqbsibnnikh7tv@gondor.apana.org.au>
-User-Agent: NeoMutt/20171215-106-ac61c7
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Matthew Garrett <mjg59@google.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+Date:   Fri, 25 Jan 2019 07:37:11 -0500
+In-Reply-To: <20190125025639.GA13946@embeddedor>
+References: <20190125025639.GA13946@embeddedor>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19012512-0012-0000-0000-000002ECE912
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012512-0013-0000-0000-000021242109
+Message-Id: <1548419831.3971.117.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-25_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901250103
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 06:09:29PM +0800, Herbert Xu wrote:
-> On Fri, Jan 18, 2019 at 11:58:46PM +0300, Vitaly Chikunov wrote:
-> > Previous akcipher .verify() just `decrypts' (using RSA encrypt which is
-> > using public key) signature to uncover message hash, which was then
-> > compared in upper level public_key_verify_signature() with the expected
-> > hash value, which itself was never passed into verify().
-> > 
-> > This approach was incompatible with EC-DSA family of algorithms,
-> > because, to verify a signature EC-DSA algorithm also needs a hash value
-> > as input; then it's used (together with a signature divided into halves
-> > `r||s') to produce a witness value, which is then compared with `r' to
-> > determine if the signature is correct. Thus, for EC-DSA, nor
-> > requirements of .verify() itself, nor its output expectations in
-> > public_key_verify_signature() wasn't sufficient.
-> > 
-> > Make improved .verify() call which gets hash value as parameter and
-> > produce complete signature check without any output besides status.
-> > 
-> > RSA-centric drivers have replaced verify() with verify_rsa() which
-> > have old semantic and which they still should implement (if they want
-> > pkcs1pad to work). If akcipher have .verify_rsa() callback, it will be
-> > used for a partial verification, which then is finished in
-> > crypto_akcipher_verify().
-> > 
-> > Now for the top level verification only crypto_akcipher_verify() needs
-> > to be called.
-> > 
-> > For pkcs1pad crypto_akcipher_verify_rsa() is introduced which directly
-> > calls .verify_rsa() for its backend. Without this api PKCS1 can not be
-> > implemented.
-> > 
-> > Tested on x86_64.
-> > 
-> > Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+On Thu, 2019-01-24 at 20:56 -0600, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> cases where we are expecting to fall through.
 > 
-> Thanks for working on this!
+> This patch fixes the following warnings:
 > 
-> We have been here before.  We changed the AEAD interface in a way
-> that is not dissimilar to what you want to do here.
+> security/integrity/ima/ima_appraise.c:116:26: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/integrity/ima/ima_template_lib.c:85:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/integrity/ima/ima_policy.c:940:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/integrity/ima/ima_policy.c:943:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/integrity/ima/ima_policy.c:972:21: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/integrity/ima/ima_policy.c:974:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/smack/smack_lsm.c:3391:9: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/apparmor/domain.c:569:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
 > 
-> So I think the basic plan should be:
-
-While time goes, I got another simpler idea how we should settle this:
-
-1. Since we are know that by nature RSA sign/verify is just encrypt/decrypt,
-and since sign/verify calls should not be used directly by any normal
-users:
-- Remove sign/verify calls from all existing RSA backends.
-
-2. pkcs1pad should use encrypt/decrypt API for its low level purposes
-(instead of sign/verify API, which now would be not implemented by them),
-and provide sign (same as before) and new verify (returning only status).
-
-Thus, we avoid verify_rsa call altogether while remaining its
-functionality, and skipping conversion step.
-
-> 1) Implement new top-level verify, alongside existing verify_rsa.
-> 2) For existing drivers implement a wrapper over verify_rsa.
-> 3) Convert *all* existing users to the new verify API.
-> 4) Remove top-level verify_rsa API.
-> 5) Convert existing drivers over to verify API.
-> 6) Remove verify_rsa completely.
+> Warning level 3 was used: -Wimplicit-fallthrough=3
 > 
-> > +int crypto_akcipher_verify(struct akcipher_request *req,
-> > +			   const unsigned char *digest, unsigned int digest_len)
+> This patch is part of the ongoing efforts to enabling -Wimplicit-fallthrough.
 > 
-> We should not add new fields outside of akcipher_request.  So
-> these fields need to go inside it.  However, I think we don't
-> actually need two new fields.  They could both go into the src
-> scatterlist.  All we need is a new field, say textlen to indicate
-> where the text stops and where the hash starts.  We could also
-> overlay textlen over dstlen as it would now be unused for verify.
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Well, if we allowed to reuse dst* fields why not just put digest over
-dst scatterlist? That would be much simpler.
+Other than the one question in ima_appraise.c, the rest of the IMA
+changes are fine.
 
-Thanks,
+Mimi
 
-
-> The advantage of having it in one scatterlist is that for those
-> users that already have the two pieces together could simply provide
-> a single SG element (I don't know how likely that is in practice
-> though).
+> ---
+>  security/apparmor/domain.c                | 2 +-
+>  security/integrity/ima/ima_appraise.c     | 1 +
+>  security/integrity/ima/ima_policy.c       | 4 ++++
+>  security/integrity/ima/ima_template_lib.c | 1 +
+>  security/smack/smack_lsm.c                | 3 +--
+>  5 files changed, 8 insertions(+), 3 deletions(-)
 > 
-> For others you would simply tack on an extra SG element.
-> 
-> Thanks,
-> -- 
-> Email: Herbert Xu <herbert@gondor.apana.org.au>
-> Home Page: http://gondor.apana.org.au/~herbert/
-> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+> index 726910bba84b..c7c619578095 100644
+> --- a/security/apparmor/domain.c
+> +++ b/security/apparmor/domain.c
+> @@ -572,7 +572,7 @@ static struct aa_label *x_to_label(struct aa_profile *profile,
+>  			stack = NULL;
+>  			break;
+>  		}
+> -		/* fall through to X_NAME */
+> +		/* fall through - to X_NAME */
+>  	case AA_X_NAME:
+>  		if (xindex & AA_X_CHILD)
+>  			/* released by caller */
+> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> index a2baa85ea2f5..57daf30fb7d4 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -114,6 +114,7 @@ static void ima_set_cache_status(struct integrity_iint_cache *iint,
+>  		break;
+>  	case CREDS_CHECK:
+>  		iint->ima_creds_status = status;
+> +		/* fall through */
+
+Matthew, is this right?
+
+>  	case FILE_CHECK:
+>  	case POST_SETATTR:
+>  		iint->ima_file_status = status;
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index 8bc8a1c8cb3f..122797023bdb 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -938,10 +938,12 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+>  		case Opt_uid_gt:
+>  		case Opt_euid_gt:
+>  			entry->uid_op = &uid_gt;
+> +			/* fall through */
+>  		case Opt_uid_lt:
+>  		case Opt_euid_lt:
+>  			if ((token == Opt_uid_lt) || (token == Opt_euid_lt))
+>  				entry->uid_op = &uid_lt;
+> +			/* fall through */
+>  		case Opt_uid_eq:
+>  		case Opt_euid_eq:
+>  			uid_token = (token == Opt_uid_eq) ||
+> @@ -970,9 +972,11 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+>  			break;
+>  		case Opt_fowner_gt:
+>  			entry->fowner_op = &uid_gt;
+> +			/* fall through */
+>  		case Opt_fowner_lt:
+>  			if (token == Opt_fowner_lt)
+>  				entry->fowner_op = &uid_lt;
+> +			/* fall through */
+>  		case Opt_fowner_eq:
+>  			ima_log_string_op(ab, "fowner", args[0].from,
+>  					  entry->fowner_op);
+> diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+> index 43752002c222..513b457ae900 100644
+> --- a/security/integrity/ima/ima_template_lib.c
+> +++ b/security/integrity/ima/ima_template_lib.c
+> @@ -83,6 +83,7 @@ static void ima_show_template_data_ascii(struct seq_file *m,
+>  		/* skip ':' and '\0' */
+>  		buf_ptr += 2;
+>  		buflen -= buf_ptr - field_data->data;
+> +		/* fall through */
+>  	case DATA_FMT_DIGEST:
+>  	case DATA_FMT_HEX:
+>  		if (!buflen)
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index fa98394a40d0..127aa6c58e34 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -3391,13 +3391,12 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
+>  		 */
+>  		final = &smack_known_star;
+>  		/*
+> -		 * Fall through.
+> -		 *
+>  		 * If a smack value has been set we want to use it,
+>  		 * but since tmpfs isn't giving us the opportunity
+>  		 * to set mount options simulate setting the
+>  		 * superblock default.
+>  		 */
+> +		/* Fall through */
+>  	default:
+>  		/*
+>  		 * This isn't an understood special case.
+
