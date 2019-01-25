@@ -1,75 +1,159 @@
-Return-Path: <SRS0=wNEK=QA=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=jmLN=QB=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A95BEC41518
-	for <linux-integrity@archiver.kernel.org>; Thu, 24 Jan 2019 20:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 201C6C282C3
+	for <linux-integrity@archiver.kernel.org>; Fri, 25 Jan 2019 01:05:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7898D218D2
-	for <linux-integrity@archiver.kernel.org>; Thu, 24 Jan 2019 20:37:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB142218D9
+	for <linux-integrity@archiver.kernel.org>; Fri, 25 Jan 2019 01:05:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726630AbfAXUhG (ORCPT
+        id S1728033AbfAYBFX (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:37:06 -0500
-Received: from mga01.intel.com ([192.55.52.88]:6195 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726126AbfAXUhG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 24 Jan 2019 15:37:06 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2019 12:37:06 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,518,1539673200"; 
-   d="scan'208";a="132839973"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga001.jf.intel.com with ESMTP; 24 Jan 2019 12:37:04 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id F1C2055; Thu, 24 Jan 2019 22:37:02 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] evm: Use defined constant for UUID representation
-Date:   Thu, 24 Jan 2019 22:37:02 +0200
-Message-Id: <20190124203702.42417-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
+        Thu, 24 Jan 2019 20:05:23 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:41482 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726750AbfAYBFX (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 24 Jan 2019 20:05:23 -0500
+Received: by mail-qt1-f194.google.com with SMTP id l12so9002172qtf.8
+        for <linux-integrity@vger.kernel.org>; Thu, 24 Jan 2019 17:05:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6z/fHP5/ilN8QbHMM/7kZXl6+veIrNyjFA9+zA4zaik=;
+        b=m0NAK0pjOTPyfB9ArQz75aJeKEP0r03rKMfpdTGoHnMc/4S6HOQe+4Ao4QKrexpdI4
+         oE1eMGcP2wI/Pmhs2CydyPJzP0dNQ7s1cENYh/+n/CySxzCeUznIvIS4G4iMn0p7R37Z
+         CshS7qCJqjDWvW9nFRyOzYWAjA1l1H4Lga0iwM2WpCUGXRLj+iy0eSYPpJMAUqTc65Cn
+         Tp0zEG4SDLQEpYIUcNgDTPN9RFc/ZDUoF/JEe3BEc1EXcytP07k54Weq265Xr0nUD5Ms
+         f01ylDx6oRn5wLfA8a6XuHMRZvzwr4Z7JRZ8YmFhp7xve85O1cbC437lUzBnpC3GJr2a
+         SznQ==
+X-Gm-Message-State: AJcUukfki7jip60A9VNO4AaOJzuwgHrWvUvZa2gvbuL/8hxYjHQcuowB
+        khQA48R3AoDu0zICCLpD/uUGiw==
+X-Google-Smtp-Source: ALg8bN5pvy1aV6x2BV/MwJOYIn0FSPCBOsSfdSEjegXEOQwiLJ6MyCtxIUFbpjPYQmjZMGO9e39fHQ==
+X-Received: by 2002:a0c:ef03:: with SMTP id t3mr8177008qvr.148.1548378322026;
+        Thu, 24 Jan 2019 17:05:22 -0800 (PST)
+Received: from localhost (ip72-223-3-97.ph.ph.cox.net. [72.223.3.97])
+        by smtp.gmail.com with ESMTPSA id q54sm76147530qtb.64.2019.01.24.17.05.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 24 Jan 2019 17:05:21 -0800 (PST)
+Date:   Thu, 24 Jan 2019 18:05:19 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: Re: [PATCH v10 00/17] Remove nested TPM operations
+Message-ID: <20190125010519.4tqcno4iaha4ww7r@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+References: <20190116212342.24524-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190116212342.24524-1-jarkko.sakkinen@linux.intel.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Instead of sizeof use pre-defined constant for UUID representation.
+On Wed Jan 16 19, Jarkko Sakkinen wrote:
+>Make the changes necessary to detach TPM space code and TPM activation
+>code out of the tpm_transmit() flow because of both of these can cause
+>nested tpm_transmit() calls. The nesteds calls make the whole flow hard
+>to maintain, and thus, it is better to just fix things now before this
+>turns into a bigger mess.
+>
+>v10:
+>* Use void pointers to avoid unnecessary casts in functions paramaters
+>  where it makes sense.
+>
+>v9:
+>* Fixed again tpm_try_get_ops().
+>* Added missing reviewed-by's.
+>
+>v8:
+>* Re-add the check for ret < 0 after calling tpm_try_transmit() that
+>  was dropped by mistake while moving code.
+>* Fix error fallback for tpm_try_get_ops() when tpm_chip_start()
+>  fails.
+>
+>v7:
+>*  Reorganize series so that more trivial and self-contained changes are
+>   in the head.
+>
+>v6:
+>* When tpm_validate_commmand() was moved to tpm2-space.c, the struct for
+>  the TPM header was incorrectly declared as struct tpm_input_header.
+>* Fix return value in tpm_validate_command().
+>
+>v5:
+>* Add the missing rev's from Stefan Berger.
+>
+>v4:
+>* Return 0 from pcrs_show() when tpm1_pcr_read() fails.
+>* Fix error handling flow in tpm_try_transmit().
+>* Replace struct tpm_input_header and struct tpm_output_header with
+>  struct tpm_header.
+>
+>v3:
+>* Encapsulate power gating code to tpm_chip_start() and tpm_chip_stop().
+>* Move TPM power gating code and locking to tpm_try_get_ops() and
+>  tpm_put_ops().
+>* Call power gating code directly in tpm_chip_register() and
+>  tpm2_del_space().
+>
+>v2:
+>* Print tpm2_commit_space() error inside tpm2_commit_space()
+>* Error code was not printed when recv() callback failed. It is
+>  fixed in this version.
+>* Added a patch that removes @space from tpm_transmit().
+>* Fixed a regression in earlier series. Forgot to amend the change
+>  from the staging area that renames NESTED to UNLOCKED in tpm2-space.c.
+>Jarkko Sakkinen (17):
+>  tpm: use tpm_buf in tpm_transmit_cmd() as the IO parameter
+>  tpm: fix invalid return value in pubek_show()
+>  tpm: return 0 from pcrs_show() when tpm1_pcr_read() fails
+>  tpm: print tpm2_commit_space() error inside tpm2_commit_space()
+>  tpm: declare struct tpm_header
+>  tpm: access command header through struct in tpm_try_transmit()
+>  tpm: encapsulate tpm_dev_transmit()
+>  tpm: call tpm2_flush_space() on error in tpm_try_transmit()
+>  tpm: clean up tpm_try_transmit() error handling flow
+>  tpm: move tpm_validate_commmand() to tpm2-space.c
+>  tpm: move TPM space code out of tpm_transmit()
+>  tpm: remove @space from tpm_transmit()
+>  tpm: use tpm_try_get_ops() in tpm-sysfs.c.
+>  tpm: remove TPM_TRANSMIT_UNLOCKED flag
+>  tpm: introduce tpm_chip_start() and tpm_chip_stop()
+>  tpm: take TPM chip power gating out of tpm_transmit()
+>  tpm: remove @flags from tpm_transmit()
+>
+> drivers/char/tpm/tpm-chip.c       | 109 ++++++++++++
+> drivers/char/tpm/tpm-dev-common.c |  45 ++++-
+> drivers/char/tpm/tpm-interface.c  | 264 ++++++------------------------
+> drivers/char/tpm/tpm-sysfs.c      | 138 ++++++++++------
+> drivers/char/tpm/tpm.h            |  64 +++-----
+> drivers/char/tpm/tpm1-cmd.c       |  28 +---
+> drivers/char/tpm/tpm2-cmd.c       |  72 +++-----
+> drivers/char/tpm/tpm2-space.c     |  91 +++++++---
+> drivers/char/tpm/tpm_i2c_atmel.c  |   5 +-
+> drivers/char/tpm/tpm_vtpm_proxy.c |  12 +-
+> drivers/char/tpm/xen-tpmfront.c   |   2 +-
+> 11 files changed, 409 insertions(+), 421 deletions(-)
+>
+>-- 
+>2.19.1
+>
 
-While here, drop the implementation details of uuid_t type.
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- security/integrity/evm/evm_crypto.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index 43e2dc3a60d0..c37d08118af5 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -173,8 +173,7 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
- 	crypto_shash_update(desc, (const u8 *)&hmac_misc, sizeof(hmac_misc));
- 	if ((evm_hmac_attrs & EVM_ATTR_FSUUID) &&
- 	    type != EVM_XATTR_PORTABLE_DIGSIG)
--		crypto_shash_update(desc, &inode->i_sb->s_uuid.b[0],
--				    sizeof(inode->i_sb->s_uuid));
-+		crypto_shash_update(desc, (u8 *)&inode->i_sb->s_uuid, UUID_SIZE);
- 	crypto_shash_final(desc, digest);
- }
- 
--- 
-2.20.1
-
+Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
