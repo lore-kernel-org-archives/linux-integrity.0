@@ -2,85 +2,75 @@ Return-Path: <SRS0=yJTw=QF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D77CDC169C4
-	for <linux-integrity@archiver.kernel.org>; Tue, 29 Jan 2019 08:51:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E5AC169C4
+	for <linux-integrity@archiver.kernel.org>; Tue, 29 Jan 2019 12:31:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A563A2177E
-	for <linux-integrity@archiver.kernel.org>; Tue, 29 Jan 2019 08:51:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k+HF4WP0"
+	by mail.kernel.org (Postfix) with ESMTP id 0A7CF2083B
+	for <linux-integrity@archiver.kernel.org>; Tue, 29 Jan 2019 12:31:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726314AbfA2IvZ (ORCPT
+        id S1727656AbfA2MbO (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 29 Jan 2019 03:51:25 -0500
-Received: from mail-it1-f182.google.com ([209.85.166.182]:38206 "EHLO
-        mail-it1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725786AbfA2IvZ (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 29 Jan 2019 03:51:25 -0500
-Received: by mail-it1-f182.google.com with SMTP id z20so2984305itc.3
-        for <linux-integrity@vger.kernel.org>; Tue, 29 Jan 2019 00:51:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=OSCh2/5feRAcBL8kC4kDWdFPCR/Kv1bBPzK1Zuya+s8=;
-        b=k+HF4WP0mav5FKcvlhW6LGxdBCMtB5huEnJyhtxbybgVUHKzwjV/PYet/nF87/OfCj
-         j8Lnb15n3jfh6KiZVCYS9sCK8E0AOusIkvI6hULG+ZDj0KlIqwJv+9H18Q7DiR+E46dl
-         ltL6HxXgEkIEjrJTwBhNVapd/7kznpcarpUJ/DAnyf2Kt8a2MG1K1ZOYfoSkqI2UclsD
-         4Nf9jqgcdP6FvqSDq+yJrXhacgIouDf/1U+iV1d/7r0tB7AaOMc8lx8z0SxY7YJzy4Nq
-         sNNlcf/3C5gqPpQvNX0Q66ldQYRkes/e4phc2rF8E11N+0sQyuxy0SGWxfjbnP722Pan
-         FlZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=OSCh2/5feRAcBL8kC4kDWdFPCR/Kv1bBPzK1Zuya+s8=;
-        b=EiGAyk26iFcGK+hCtBsLRNTo8AKP1fxrvdi/PwT8Jmph9dE4Vnp3QK0X2V2+kWBlwW
-         LciQ55x9NmBHvgeVEs+NkeZF2nCT3iGTuUUiDnxKF2oJLObqTq/A9ptd5u1trg8w/tAd
-         myO6cqqso9vV1byhshV4lDqZtKCOHjRGJ4foybBpyYehf7VXIhSu5EZoN+rL5Ozmfkn5
-         3TM27EubU6M4Qge8AAMcOx7jA5DpRIKVGg5u784XqslTuzxVPu6m05k9iCxofKIjOQKl
-         J9mKc6s/K3Z4TZFeMTwWqpUl/YVVQeU2cffoyP7Jf95Hbnxe3+6F2G55UegvjSk9cO0n
-         Vzjw==
-X-Gm-Message-State: AJcUukc7MpzfcN+NyNqUfTFxAtnfj23Wv6rcIKcHt/xveeyc7rsLOnpa
-        DtoEBiglCX62ZxxW3Uk5feqwUFHKIq57VlgumVO5e/0d
-X-Google-Smtp-Source: AHgI3Ibv82lx5XqMITSrdQ5/nhrXWd7tnJHIKfSttzuCY6WnbV/S8QlGLHsQqaUQlYfm1gPR8ac8jh6DlDsRQtRg+Qg=
-X-Received: by 2002:a24:648f:: with SMTP id t137mr11385466itc.176.1548751882756;
- Tue, 29 Jan 2019 00:51:22 -0800 (PST)
+        Tue, 29 Jan 2019 07:31:14 -0500
+Received: from mga02.intel.com ([134.134.136.20]:6074 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727215AbfA2MbO (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 29 Jan 2019 07:31:14 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 04:31:13 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,537,1539673200"; 
+   d="scan'208";a="113579062"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.127])
+  by orsmga008.jf.intel.com with ESMTP; 29 Jan 2019 04:31:11 -0800
+Date:   Tue, 29 Jan 2019 14:31:11 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: Re: [PATCH v10 00/17] Remove nested TPM operations
+Message-ID: <20190129123111.GA12883@linux.intel.com>
+References: <20190116212342.24524-1-jarkko.sakkinen@linux.intel.com>
+ <20190123182057.GA24212@linux.intel.com>
+ <37e53df5-4a25-fce2-d3bf-016669d0a383@linux.ibm.com>
 MIME-Version: 1.0
-From:   rishi gupta <gupt21@gmail.com>
-Date:   Tue, 29 Jan 2019 14:21:12 +0530
-Message-ID: <CALUj-gsgpbcXD8xpG-XTZ3QCs_1CoN_9w6sOUSPVYHJ7OrnwQA@mail.gmail.com>
-Subject: Understanding fsuuid policy rule for appraisal and exclusion
-To:     linux-integrity <linux-integrity@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <37e53df5-4a25-fce2-d3bf-016669d0a383@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Team,
+On Wed, Jan 23, 2019 at 01:53:44PM -0500, Stefan Berger wrote:
+> On 1/23/19 1:20 PM, Jarkko Sakkinen wrote:
+> > On Wed, Jan 16, 2019 at 11:23:25PM +0200, Jarkko Sakkinen wrote:
+> > > Make the changes necessary to detach TPM space code and TPM activation
+> > > code out of the tpm_transmit() flow because of both of these can cause
+> > > nested tpm_transmit() calls. The nesteds calls make the whole flow hard
+> > > to maintain, and thus, it is better to just fix things now before this
+> > > turns into a bigger mess.
+> > Any reasons not to merge this soon?
+> 
+> I suppose v10 hasn't changed anything signinficat. So, not from my
+> perspective. Were you waiting for more Reviewed-by's?
 
-I set the policy for IMA as follows. (1) Files in partition B will be
-appraised or not if its UUID is not yyyy-yy-yy-yy. (2) Do files in
-partition C only will be appraised irrespective of whatever rule is
-written for other partitions.
+Yeah, for example TPM space touching changes would be good to peer
+check with James. I could have easily forgotten some implementation
+detail, and it has been very stable piece off code, so don't want
+to break it. Guess won't yet try to put this v5.1.
 
-My goal is to include a partition and exclude all other partitions.
-
-# Exclude partition A
-dont_measure fsuuid=xxxx-xx-xx-xx
-dont_appraise fsuuid=xxxx-xx-xx-xx
-
-# Exclude partition B (Problem here)
-dont_measure fsuuid=yyyy-yy-yy-yy
-dont_appraise fsuuid=yyyy-yy-yy-yy
-
-# Appraise partition C
-appraise fsuuid=zzzz-zz-zz-zz appraise_type=imasig
-
-Regards,
-Rishi
+/Jarkko
