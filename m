@@ -2,32 +2,32 @@ Return-Path: <SRS0=yJTw=QF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE4E7C282CD
-	for <linux-integrity@archiver.kernel.org>; Tue, 29 Jan 2019 00:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA14C282D0
+	for <linux-integrity@archiver.kernel.org>; Tue, 29 Jan 2019 00:39:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E8DC20856
-	for <linux-integrity@archiver.kernel.org>; Tue, 29 Jan 2019 00:39:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A8AC2184D
+	for <linux-integrity@archiver.kernel.org>; Tue, 29 Jan 2019 00:39:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726915AbfA2AjM (ORCPT
+        id S1727536AbfA2AjS (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 28 Jan 2019 19:39:12 -0500
-Received: from mga06.intel.com ([134.134.136.31]:5079 "EHLO mga06.intel.com"
+        Mon, 28 Jan 2019 19:39:18 -0500
+Received: from mga17.intel.com ([192.55.52.151]:47179 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726845AbfA2AjL (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 28 Jan 2019 19:39:11 -0500
+        id S1727267AbfA2AjO (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 28 Jan 2019 19:39:14 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 16:39:11 -0800
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 16:39:12 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,535,1539673200"; 
-   d="scan'208";a="133921882"
+   d="scan'208";a="133921934"
 Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.79])
-  by orsmga001.jf.intel.com with ESMTP; 28 Jan 2019 16:39:10 -0800
+  by orsmga001.jf.intel.com with ESMTP; 28 Jan 2019 16:39:12 -0800
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
 To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
@@ -41,129 +41,212 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v2 00/20] Merge text_poke fixes and executable lockdowns
-Date:   Mon, 28 Jan 2019 16:34:02 -0800
-Message-Id: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH v2 16/20] modules: Use vmalloc special flag
+Date:   Mon, 28 Jan 2019 16:34:18 -0800
+Message-Id: <20190129003422.9328-17-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-This patchset improves several overlapping issues around stale TLB
-entries and W^X violations. It is combined from a slightly tweaked
-"x86/alternative: text_poke() enhancements v7" [1] and a next version of
-the "Don’t leave executable TLB entries to freed pages v2" [2]
-patchsets that were conflicting.
+Use new flag for handling freeing of special permissioned memory in
+vmalloc and remove places where memory was set RW before freeing which is
+no longer needed.
 
-The related issues that this fixes:
-1. Fixmap PTEs that are used for patching are available for access from
-   other cores and might be exploited. They are not even flushed from
-   the TLB in remote cores, so the risk is even higher. Address this
-   issue by introducing a temporary mm that is only used during
-   patching. Unfortunately, due to init ordering, fixmap is still used
-   during boot-time patching. Future patches can eliminate the need for
-   it.
-2. Missing lockdep assertion to ensure text_mutex is taken. It is
-   actually not always taken, so fix the instances that were found not
-   to take the lock (although they should be safe even without taking
-   the lock).
-3. Module_alloc returning memory that is RWX until a module is finished
-   loading.
-4. Sometimes when memory is freed via the module subsystem, an
-   executable permissioned TLB entry can remain to a freed page. If the
-   page is re-used to back an address that will receive data from
-   userspace, it can result in user data being mapped as executable in
-   the kernel. The root of this behavior is vfree lazily flushing the
-   TLB, but not lazily freeing the underlying pages.
+Since vfreeing of VM_HAS_SPECIAL_PERMS memory is not supported in an
+interrupt by vmalloc, the freeing of init sections is moved to a work
+queue. Instead of call_rcu it now uses synchronize_rcu() in the work
+queue.
 
-Changes for v2:
- - Adding “Reviewed-by tag” [Masami]
- - Comment instead of code to warn against module removal while patching [Masami]
- - Avoiding open-coded TLB flush [Andy]
- - Remove "This patch" [Borislav Petkov]
- - Not set global bit during text poking [Andy, hpa]
- - Add Ack from [Pavel Machek]
- - Split patch 16 "Plug in new special vfree flag" into 4 patches (16-19)
-   to make it easier to review. There were no code changes.
+Lastly, there is now a WARN_ON in module_memfree since it should not be
+called in an interrupt with special memory as is required for
+VM_HAS_SPECIAL_PERMS.
 
-The changes from "Don’t leave executable TLB entries to freed pages
-v2" to v1:
- - Add support for case of hibernate trying to save an unmapped page
-   on the directmap. (Ard Biesheuvel)
- - No week arch breakout for vfree-ing special memory (Andy Lutomirski)
- - Avoid changing deferred free code by moving modules init free to work
-   queue (Andy Lutomirski)
- - Plug in new flag for kprobes and ftrace
- - More arch generic names for set_pages functions (Ard Biesheuvel)
- - Fix for TLB not always flushing the directmap (Nadav Amit)
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+---
+ kernel/module.c | 77 +++++++++++++++++++++++++------------------------
+ 1 file changed, 39 insertions(+), 38 deletions(-)
+
+diff --git a/kernel/module.c b/kernel/module.c
+index ae1b77da6a20..1af5c8e19086 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -98,6 +98,10 @@ DEFINE_MUTEX(module_mutex);
+ EXPORT_SYMBOL_GPL(module_mutex);
+ static LIST_HEAD(modules);
  
-Changes from "x86/alternative: text_poke() enhancements v7" to v1
- - Fix build failure on CONFIG_RANDOMIZE_BASE=n (Rick)
- - Remove text_poke usage from ftrace (Nadav)
++/* Work queue for freeing init sections in success case */
++static struct work_struct init_free_wq;
++static struct llist_head init_free_list;
++
+ #ifdef CONFIG_MODULES_TREE_LOOKUP
  
-[1] https://lkml.org/lkml/2018/12/5/200
-[2] https://lkml.org/lkml/2018/12/11/1571
-
-Andy Lutomirski (1):
-  x86/mm: temporary mm struct
-
-Nadav Amit (12):
-  Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
-  x86/jump_label: Use text_poke_early() during early init
-  fork: provide a function for copying init_mm
-  x86/alternative: initializing temporary mm for patching
-  x86/alternative: use temporary mm for text poking
-  x86/kgdb: avoid redundant comparison of patched code
-  x86/ftrace: set trampoline pages as executable
-  x86/kprobes: instruction pages initialization enhancements
-  x86: avoid W^X being broken during modules loading
-  x86/jump-label: remove support for custom poker
-  x86/alternative: Remove the return value of text_poke_*()
-  x86/alternative: comment about module removal races
-
-Rick Edgecombe (7):
-  Add set_alias_ function and x86 implementation
-  mm: Make hibernate handle unmapped pages
-  vmalloc: New flags for safe vfree on special perms
-  modules: Use vmalloc special flag
-  bpf: Use vmalloc special flag
-  x86/ftrace: Use vmalloc special flag
-  x86/kprobes: Use vmalloc special flag
-
- arch/Kconfig                         |   4 +
- arch/x86/Kconfig                     |   1 +
- arch/x86/include/asm/fixmap.h        |   2 -
- arch/x86/include/asm/mmu_context.h   |  32 +++++
- arch/x86/include/asm/pgtable.h       |   3 +
- arch/x86/include/asm/set_memory.h    |   3 +
- arch/x86/include/asm/text-patching.h |   7 +-
- arch/x86/kernel/alternative.c        | 199 ++++++++++++++++++++-------
- arch/x86/kernel/ftrace.c             |  14 +-
- arch/x86/kernel/jump_label.c         |  19 ++-
- arch/x86/kernel/kgdb.c               |  25 +---
- arch/x86/kernel/kprobes/core.c       |  19 ++-
- arch/x86/kernel/module.c             |   2 +-
- arch/x86/mm/init_64.c                |  36 +++++
- arch/x86/mm/pageattr.c               |  16 ++-
- arch/x86/xen/mmu_pv.c                |   2 -
- include/linux/filter.h               |  18 +--
- include/linux/mm.h                   |  18 +--
- include/linux/sched/task.h           |   1 +
- include/linux/set_memory.h           |  10 ++
- include/linux/vmalloc.h              |  13 ++
- init/main.c                          |   3 +
- kernel/bpf/core.c                    |   1 -
- kernel/fork.c                        |  24 +++-
- kernel/module.c                      |  82 ++++++-----
- mm/page_alloc.c                      |   7 +-
- mm/vmalloc.c                         | 122 +++++++++++++---
- 27 files changed, 494 insertions(+), 189 deletions(-)
-
+ /*
+@@ -1949,6 +1953,8 @@ void module_enable_ro(const struct module *mod, bool after_init)
+ 	if (!rodata_enabled)
+ 		return;
+ 
++	set_vm_special(mod->core_layout.base);
++	set_vm_special(mod->init_layout.base);
+ 	frob_text(&mod->core_layout, set_memory_ro);
+ 	frob_text(&mod->core_layout, set_memory_x);
+ 
+@@ -1972,15 +1978,6 @@ static void module_enable_nx(const struct module *mod)
+ 	frob_writable_data(&mod->init_layout, set_memory_nx);
+ }
+ 
+-static void module_disable_nx(const struct module *mod)
+-{
+-	frob_rodata(&mod->core_layout, set_memory_x);
+-	frob_ro_after_init(&mod->core_layout, set_memory_x);
+-	frob_writable_data(&mod->core_layout, set_memory_x);
+-	frob_rodata(&mod->init_layout, set_memory_x);
+-	frob_writable_data(&mod->init_layout, set_memory_x);
+-}
+-
+ /* Iterate through all modules and set each module's text as RW */
+ void set_all_modules_text_rw(void)
+ {
+@@ -2024,23 +2021,8 @@ void set_all_modules_text_ro(void)
+ 	}
+ 	mutex_unlock(&module_mutex);
+ }
+-
+-static void disable_ro_nx(const struct module_layout *layout)
+-{
+-	if (rodata_enabled) {
+-		frob_text(layout, set_memory_rw);
+-		frob_rodata(layout, set_memory_rw);
+-		frob_ro_after_init(layout, set_memory_rw);
+-	}
+-	frob_rodata(layout, set_memory_x);
+-	frob_ro_after_init(layout, set_memory_x);
+-	frob_writable_data(layout, set_memory_x);
+-}
+-
+ #else
+-static void disable_ro_nx(const struct module_layout *layout) { }
+ static void module_enable_nx(const struct module *mod) { }
+-static void module_disable_nx(const struct module *mod) { }
+ #endif
+ 
+ #ifdef CONFIG_LIVEPATCH
+@@ -2120,6 +2102,11 @@ static void free_module_elf(struct module *mod)
+ 
+ void __weak module_memfree(void *module_region)
+ {
++	/*
++	 * This memory may be RO, and freeing RO memory in an interrupt is not
++	 * supported by vmalloc.
++	 */
++	WARN_ON(in_interrupt());
+ 	vfree(module_region);
+ }
+ 
+@@ -2171,7 +2158,6 @@ static void free_module(struct module *mod)
+ 	mutex_unlock(&module_mutex);
+ 
+ 	/* This may be empty, but that's OK */
+-	disable_ro_nx(&mod->init_layout);
+ 	module_arch_freeing_init(mod);
+ 	module_memfree(mod->init_layout.base);
+ 	kfree(mod->args);
+@@ -2181,7 +2167,6 @@ static void free_module(struct module *mod)
+ 	lockdep_free_key_range(mod->core_layout.base, mod->core_layout.size);
+ 
+ 	/* Finally, free the core (containing the module structure) */
+-	disable_ro_nx(&mod->core_layout);
+ 	module_memfree(mod->core_layout.base);
+ }
+ 
+@@ -3424,17 +3409,34 @@ static void do_mod_ctors(struct module *mod)
+ 
+ /* For freeing module_init on success, in case kallsyms traversing */
+ struct mod_initfree {
+-	struct rcu_head rcu;
++	struct llist_node node;
+ 	void *module_init;
+ };
+ 
+-static void do_free_init(struct rcu_head *head)
++static void do_free_init(struct work_struct *w)
+ {
+-	struct mod_initfree *m = container_of(head, struct mod_initfree, rcu);
+-	module_memfree(m->module_init);
+-	kfree(m);
++	struct llist_node *pos, *n, *list;
++	struct mod_initfree *initfree;
++
++	list = llist_del_all(&init_free_list);
++
++	synchronize_rcu();
++
++	llist_for_each_safe(pos, n, list) {
++		initfree = container_of(pos, struct mod_initfree, node);
++		module_memfree(initfree->module_init);
++		kfree(initfree);
++	}
+ }
+ 
++static int __init modules_wq_init(void)
++{
++	INIT_WORK(&init_free_wq, do_free_init);
++	init_llist_head(&init_free_list);
++	return 0;
++}
++module_init(modules_wq_init);
++
+ /*
+  * This is where the real work happens.
+  *
+@@ -3511,7 +3513,6 @@ static noinline int do_init_module(struct module *mod)
+ #endif
+ 	module_enable_ro(mod, true);
+ 	mod_tree_remove_init(mod);
+-	disable_ro_nx(&mod->init_layout);
+ 	module_arch_freeing_init(mod);
+ 	mod->init_layout.base = NULL;
+ 	mod->init_layout.size = 0;
+@@ -3522,14 +3523,18 @@ static noinline int do_init_module(struct module *mod)
+ 	 * We want to free module_init, but be aware that kallsyms may be
+ 	 * walking this with preempt disabled.  In all the failure paths, we
+ 	 * call synchronize_rcu(), but we don't want to slow down the success
+-	 * path, so use actual RCU here.
++	 * path. We can't do module_memfree in an interrupt, so we do the work
++	 * and call synchronize_rcu() in a work queue.
++	 *
+ 	 * Note that module_alloc() on most architectures creates W+X page
+ 	 * mappings which won't be cleaned up until do_free_init() runs.  Any
+ 	 * code such as mark_rodata_ro() which depends on those mappings to
+ 	 * be cleaned up needs to sync with the queued work - ie
+ 	 * rcu_barrier()
+ 	 */
+-	call_rcu(&freeinit->rcu, do_free_init);
++	if (llist_add(&freeinit->node, &init_free_list))
++		schedule_work(&init_free_wq);
++
+ 	mutex_unlock(&module_mutex);
+ 	wake_up_all(&module_wq);
+ 
+@@ -3826,10 +3831,6 @@ static int load_module(struct load_info *info, const char __user *uargs,
+ 	module_bug_cleanup(mod);
+ 	mutex_unlock(&module_mutex);
+ 
+-	/* we can't deallocate the module until we clear memory protection */
+-	module_disable_ro(mod);
+-	module_disable_nx(mod);
+-
+  ddebug_cleanup:
+ 	ftrace_release_mod(mod);
+ 	dynamic_debug_remove(mod, info->debug);
 -- 
 2.17.1
 
