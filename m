@@ -3,55 +3,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6EACC169C4
-	for <linux-integrity@archiver.kernel.org>; Tue, 29 Jan 2019 13:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B43DAC169C4
+	for <linux-integrity@archiver.kernel.org>; Tue, 29 Jan 2019 13:48:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B62D020882
-	for <linux-integrity@archiver.kernel.org>; Tue, 29 Jan 2019 13:20:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E0F720989
+	for <linux-integrity@archiver.kernel.org>; Tue, 29 Jan 2019 13:48:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725601AbfA2NUU (ORCPT
+        id S1725846AbfA2Nsn (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 29 Jan 2019 08:20:20 -0500
-Received: from mga06.intel.com ([134.134.136.31]:59450 "EHLO mga06.intel.com"
+        Tue, 29 Jan 2019 08:48:43 -0500
+Received: from mga06.intel.com ([134.134.136.31]:61481 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725355AbfA2NUU (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 29 Jan 2019 08:20:20 -0500
+        id S1727059AbfA2Nsn (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 29 Jan 2019 08:48:43 -0500
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 05:20:19 -0800
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 05:48:42 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,537,1539673200"; 
-   d="scan'208";a="138829651"
+   d="scan'208";a="134091406"
 Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.127])
-  by fmsmga002.fm.intel.com with ESMTP; 29 Jan 2019 05:20:17 -0800
-Date:   Tue, 29 Jan 2019 15:20:16 +0200
+  by orsmga001.jf.intel.com with ESMTP; 29 Jan 2019 05:48:40 -0800
+Date:   Tue, 29 Jan 2019 15:48:40 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: Getting weird TPM error after rebasing my tree to
- security/next-general
-Message-ID: <20190129132016.GA1602@linux.intel.com>
-References: <20190118142559.GA4080@linux.intel.com>
- <1547849358.2794.90.camel@HansenPartnership.com>
- <20190120160413.GB30478@linux.intel.com>
- <20190122010218.GA26713@linux.intel.com>
- <20190122025836.GH25163@ziepe.ca>
- <20190122132910.GA2720@linux.intel.com>
- <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
- <20190123153638.GA8727@linux.intel.com>
- <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
+To:     Jerry Snitselaar <jsnitsel@redhat.com>
+Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        linux-integrity@vger.kernel.org
+Subject: Re: TPM2_RC_TESTING and tpm_transmit_cmd
+Message-ID: <20190129134840.GA5573@linux.intel.com>
+References: <20190122202159.ktlrxewwr7vryayc@cantor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
+In-Reply-To: <20190122202159.ktlrxewwr7vryayc@cantor>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
@@ -59,35 +47,19 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 07:43:30AM +1300, Linus Torvalds wrote:
-> On Thu, Jan 24, 2019 at 4:36 AM Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> > >
-> > > Is it just that this particular hardware always happened to trigger
-> > > the ERMS case (ie "rep movsb")?
-> >
-> > This is the particular snippet in question:
-> >
-> > memcpy_fromio(buf, priv->rsp, 6);
-> > expected = be32_to_cpup((__be32 *) &buf[2]);
-> > if (expected > count || expected < 6)
-> >         return -EIO;
+On Tue, Jan 22, 2019 at 01:21:59PM -0700, Jerry Snitselaar wrote:
+> Would it make sense to filter out TPM2_RC_TESTING when reporting an error
+> in tpm_transmit_cmd, or possibly spitting out a follow on message in
+> the selftest code that the tpm is still testing?
 > 
-> Ok, strange.
+> Had a bz opened here because someone had the error message in their logs,
+> and I can see how it would be confusing. We have the intermittent selftest
+> patch already so it should be functioning, but just wondering if not
+> printing out that error message would make sense.
 > 
-> So what *used* to happen is that the memcpy_fromio() would just expand
-> as a "memcpy()", and in this case, gcc would then inline the memcpy().
-> In fact, gcc does it as a 4-byte access and a two-byte access from
-> what I can tell.
+> Regards,
+> Jerry
 
-I verified, and it is exactly as you stated:
-
-   0xffffffff814aaa33 <+51>:	mov    (%rax),%edx
-   0xffffffff814aaa35 <+53>:	mov    %edx,0x0(%rbp)
-   0xffffffff814aaa38 <+56>:	movzwl 0x4(%rax),%eax
-   0xffffffff814aaa3c <+60>:	mov    %ax,0x4(%rbp)
-
-And your new version does exactly the same thing to the first six bytes
-(with different opcode, but the same memory access pattern).
+Yes, I think so. The caller can decide to print something in this case.
 
 /Jarkko
