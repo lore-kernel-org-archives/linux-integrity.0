@@ -6,18 +6,18 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C48C282CD
-	for <linux-integrity@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C51DAC282CD
+	for <linux-integrity@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0DC6217F5
-	for <linux-integrity@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A01D4217F5
+	for <linux-integrity@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbfA2AjT (ORCPT
+        id S1728242AbfA2AkY (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 28 Jan 2019 19:39:19 -0500
-Received: from mga06.intel.com ([134.134.136.31]:5079 "EHLO mga06.intel.com"
+        Mon, 28 Jan 2019 19:40:24 -0500
+Received: from mga06.intel.com ([134.134.136.31]:5081 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727505AbfA2AjS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        id S1727066AbfA2AjS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
         Mon, 28 Jan 2019 19:39:18 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -25,7 +25,7 @@ Received: from orsmga001.jf.intel.com ([10.7.209.18])
   by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 16:39:12 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,535,1539673200"; 
-   d="scan'208";a="133921906"
+   d="scan'208";a="133921909"
 Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.79])
   by orsmga001.jf.intel.com with ESMTP; 28 Jan 2019 16:39:11 -0800
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
@@ -42,11 +42,10 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
         Nadav Amit <namit@vmware.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v2 08/20] x86/ftrace: set trampoline pages as executable
-Date:   Mon, 28 Jan 2019 16:34:10 -0800
-Message-Id: <20190129003422.9328-9-rick.p.edgecombe@intel.com>
+Subject: [PATCH v2 09/20] x86/kprobes: instruction pages initialization enhancements
+Date:   Mon, 28 Jan 2019 16:34:11 -0800
+Message-Id: <20190129003422.9328-10-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
 References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
@@ -57,52 +56,65 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Nadav Amit <namit@vmware.com>
 
-Since alloc_module() will not set the pages as executable soon, we need
-to do so for ftrace trampoline pages after they are allocated.
+Make kprobes instruction pages read-only (and executable) after they are
+set to prevent them from mistaken or malicious modifications.
 
-For the time being, we do not change ftrace to use the text_poke()
-interface. As a result, ftrace breaks still breaks W^X.
+This is a preparatory patch for a following patch that makes module
+allocated pages non-executable and sets the page as executable after
+allocation.
 
-Cc: Steven Rostedt <rostedt@goodmis.org>
+While at it, do some small cleanup of what appears to be unnecessary
+masking.
+
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/kernel/ftrace.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/x86/kernel/kprobes/core.c | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
-index 8257a59704ae..13c8249b197f 100644
---- a/arch/x86/kernel/ftrace.c
-+++ b/arch/x86/kernel/ftrace.c
-@@ -742,6 +742,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
- 	unsigned long end_offset;
- 	unsigned long op_offset;
- 	unsigned long offset;
-+	unsigned long npages;
- 	unsigned long size;
- 	unsigned long retq;
- 	unsigned long *ptr;
-@@ -774,6 +775,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
- 		return 0;
+diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+index 4ba75afba527..fac692e36833 100644
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -431,8 +431,20 @@ void *alloc_insn_page(void)
+ 	void *page;
  
- 	*tramp_size = size + RET_SIZE + sizeof(void *);
-+	npages = DIV_ROUND_UP(*tramp_size, PAGE_SIZE);
- 
- 	/* Copy ftrace_caller onto the trampoline memory */
- 	ret = probe_kernel_read(trampoline, (void *)start_offset, size);
-@@ -818,6 +820,12 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
- 	/* ALLOC_TRAMP flags lets us know we created it */
- 	ops->flags |= FTRACE_OPS_FL_ALLOC_TRAMP;
- 
+ 	page = module_alloc(PAGE_SIZE);
+-	if (page)
+-		set_memory_ro((unsigned long)page & PAGE_MASK, 1);
++	if (page == NULL)
++		return NULL;
++
 +	/*
-+	 * Module allocation needs to be completed by making the page
-+	 * executable. The page is still writable, which is a security hazard,
-+	 * but anyhow ftrace breaks W^X completely.
++	 * First make the page read-only, and then only then make it executable
++	 * to prevent it from being W+X in between.
 +	 */
-+	set_memory_x((unsigned long)trampoline, npages);
- 	return (unsigned long)trampoline;
- fail:
- 	tramp_free(trampoline, *tramp_size);
++	set_memory_ro((unsigned long)page, 1);
++
++	/*
++	 * TODO: Once additional kernel code protection mechanisms are set, ensure
++	 * that the page was not maliciously altered and it is still zeroed.
++	 */
++	set_memory_x((unsigned long)page, 1);
+ 
+ 	return page;
+ }
+@@ -440,8 +452,12 @@ void *alloc_insn_page(void)
+ /* Recover page to RW mode before releasing it */
+ void free_insn_page(void *page)
+ {
+-	set_memory_nx((unsigned long)page & PAGE_MASK, 1);
+-	set_memory_rw((unsigned long)page & PAGE_MASK, 1);
++	/*
++	 * First make the page non-executable, and then only then make it
++	 * writable to prevent it from being W+X in between.
++	 */
++	set_memory_nx((unsigned long)page, 1);
++	set_memory_rw((unsigned long)page, 1);
+ 	module_memfree(page);
+ }
+ 
 -- 
 2.17.1
 
