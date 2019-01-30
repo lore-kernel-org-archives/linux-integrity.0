@@ -2,130 +2,107 @@ Return-Path: <SRS0=GnzX=QG=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A57A5C282D7
-	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 13:41:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19387C282D7
+	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 13:53:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 803A020855
-	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 13:41:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E205921473
+	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 13:53:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726332AbfA3Nle (ORCPT
+        id S1727227AbfA3Nxq (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 30 Jan 2019 08:41:34 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42738 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726233AbfA3Nle (ORCPT
+        Wed, 30 Jan 2019 08:53:46 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:53636 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726151AbfA3Nxq (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 30 Jan 2019 08:41:34 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0UDYbAs023539
-        for <linux-integrity@vger.kernel.org>; Wed, 30 Jan 2019 08:41:32 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qbaykxjbe-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 30 Jan 2019 08:41:31 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 30 Jan 2019 13:41:28 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 30 Jan 2019 13:41:25 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0UDfOsY39845980
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 30 Jan 2019 13:41:24 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A3A41A405F;
-        Wed, 30 Jan 2019 13:41:24 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D403EA4054;
-        Wed, 30 Jan 2019 13:41:23 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.91.219])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 30 Jan 2019 13:41:23 +0000 (GMT)
-Subject: Re: [PATCH] ima-evm-utils: remove redundant call to
- OpenSSL_add_all_algorithms
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Vitaly Chikunov <vt@altlinux.org>
+        Wed, 30 Jan 2019 08:53:46 -0500
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 1D04572CC6D;
+        Wed, 30 Jan 2019 16:53:43 +0300 (MSK)
+Received: from altlinux.org (sole.flsd.net [185.75.180.6])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 067FB4A4A16;
+        Wed, 30 Jan 2019 16:53:43 +0300 (MSK)
+Date:   Wed, 30 Jan 2019 16:53:42 +0300
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
 Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         linux-integrity@vger.kernel.org,
         "Bruno E. O. Meneguele" <bmeneg@redhat.com>,
         Petr Vorel <pvorel@suse.cz>
-Date:   Wed, 30 Jan 2019 08:41:13 -0500
-In-Reply-To: <20190130132521.edhtrv54labxlbyc@altlinux.org>
+Subject: Re: [PATCH] ima-evm-utils: remove redundant call to
+ OpenSSL_add_all_algorithms
+Message-ID: <20190130135342.wx7vcq7hyvxqtqxd@altlinux.org>
 References: <20190127023916.2425-1-vt@altlinux.org>
-         <1548851697.20210.91.camel@linux.ibm.com>
-         <20190130132521.edhtrv54labxlbyc@altlinux.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+ <1548851697.20210.91.camel@linux.ibm.com>
+ <20190130132521.edhtrv54labxlbyc@altlinux.org>
+ <1548855673.20210.102.camel@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19013013-0028-0000-0000-00000340D27A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19013013-0029-0000-0000-000023FDDA10
-Message-Id: <1548855673.20210.102.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-30_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901300109
+In-Reply-To: <1548855673.20210.102.camel@linux.ibm.com>
+User-Agent: NeoMutt/20171215-106-ac61c7
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-[Cc'ing Bruno, Petr]
-
-On Wed, 2019-01-30 at 16:25 +0300, Vitaly Chikunov wrote:
-> On Wed, Jan 30, 2019 at 07:34:57AM -0500, Mimi Zohar wrote:
-> > On Sun, 2019-01-27 at 05:39 +0300, Vitaly Chikunov wrote:
-> > > Because of call to OPENSSL_add_all_algorithms_conf() calling
-> > > OpenSSL_add_all_algorithms() is not needed. There was not be any
-> > > problems though because double initialization is permitted.
-> > > ---
-> > >  src/libimaevm.c | 1 -
-> > >  1 file changed, 1 deletion(-)
-> > > 
-> > > diff --git a/src/libimaevm.c b/src/libimaevm.c
-> > > index 7501303..b038d0c 100644
-> > > --- a/src/libimaevm.c
-> > > +++ b/src/libimaevm.c
-> > > @@ -995,7 +995,6 @@ int sign_hash(const char *hashalgo, const unsigned char *hash, int size, const c
-> > > 
-> > >  static void libinit()
-> > >  {
-> > > -	OpenSSL_add_all_algorithms();
-> > >  	OPENSSL_add_all_algorithms_conf();
-> > >  	ERR_load_crypto_strings();
-> > >  }
-> > 
-> > The only difference between the two calls seems to be reading the
-> > system openssl.cnf file. Â In the original call that is dependent on
-> > OPENSSL_LOAD_CONF being defined. Â Calling
-> > OPENSSL_add_all_algorithms_conf(), forces reading the system
-> > openssl.cnf.
+On Wed, Jan 30, 2019 at 08:41:13AM -0500, Mimi Zohar wrote:
+> [Cc'ing Bruno, Petr]
 > 
-> Yes. OPENSSL_LOAD_CONF is per application define, which is by default
-> undefined. And instead of defining it, we could just call
-> OPENSSL_add_all_algorithms_conf(), which is required for GOST support.
-> Otherwise enabling Streebog via OPENSSL_CONF will not work.
+> On Wed, 2019-01-30 at 16:25 +0300, Vitaly Chikunov wrote:
+> > On Wed, Jan 30, 2019 at 07:34:57AM -0500, Mimi Zohar wrote:
+> > > On Sun, 2019-01-27 at 05:39 +0300, Vitaly Chikunov wrote:
+> > > > Because of call to OPENSSL_add_all_algorithms_conf() calling
+> > > > OpenSSL_add_all_algorithms() is not needed. There was not be any
+> > > > problems though because double initialization is permitted.
+> > > > ---
+> > > >  src/libimaevm.c | 1 -
+> > > >  1 file changed, 1 deletion(-)
+> > > > 
+> > > > diff --git a/src/libimaevm.c b/src/libimaevm.c
+> > > > index 7501303..b038d0c 100644
+> > > > --- a/src/libimaevm.c
+> > > > +++ b/src/libimaevm.c
+> > > > @@ -995,7 +995,6 @@ int sign_hash(const char *hashalgo, const unsigned char *hash, int size, const c
+> > > > 
+> > > >  static void libinit()
+> > > >  {
+> > > > -	OpenSSL_add_all_algorithms();
+> > > >  	OPENSSL_add_all_algorithms_conf();
+> > > >  	ERR_load_crypto_strings();
+> > > >  }
+> > > 
+> > > The only difference between the two calls seems to be reading the
+> > > system openssl.cnf file. šIn the original call that is dependent on
+> > > OPENSSL_LOAD_CONF being defined. šCalling
+> > > OPENSSL_add_all_algorithms_conf(), forces reading the system
+> > > openssl.cnf.
+> > 
+> > Yes. OPENSSL_LOAD_CONF is per application define, which is by default
+> > undefined. And instead of defining it, we could just call
+> > OPENSSL_add_all_algorithms_conf(), which is required for GOST support.
+> > Otherwise enabling Streebog via OPENSSL_CONF will not work.
+> 
+> I think this is basically a packaging question. šInstead of hard
+> coding this change, it could be an autoconf option (eg.
+> enable/disable-gost).
 
-I think this is basically a packaging question. Â Instead of hard
-coding this change, it could be an autoconf option (eg.
-enable/disable-gost).
+User already have control to load or not engines by editing or not the
+config. But, if OpenSSL_add_all_algorithms() is used without defining
+OPENSSL_LOAD_CONF (default) user will lose such option.
 
-Bruno, Petr, any preference?
+I think loading config is quite normal operation which is also default
+for the openssl binary.
 
-Thanks,
-
-Mimi
-
+> 
+> Bruno, Petr, any preference?
+> 
+> Thanks,
+> 
+> Mimi
