@@ -2,86 +2,106 @@ Return-Path: <SRS0=GnzX=QG=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06761C282D7
-	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 13:25:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B69C282D7
+	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 13:38:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA5A52184D
-	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 13:25:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEE4C20989
+	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 13:38:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MGQp+Vuc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726332AbfA3NZY (ORCPT
+        id S1727162AbfA3Nih (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 30 Jan 2019 08:25:24 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:36718 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725851AbfA3NZY (ORCPT
+        Wed, 30 Jan 2019 08:38:37 -0500
+Received: from mail-it1-f181.google.com ([209.85.166.181]:53000 "EHLO
+        mail-it1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbfA3Nih (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 30 Jan 2019 08:25:24 -0500
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 5885472CC6D;
-        Wed, 30 Jan 2019 16:25:22 +0300 (MSK)
-Received: from altlinux.org (sole.flsd.net [185.75.180.6])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 431674A4A16;
-        Wed, 30 Jan 2019 16:25:22 +0300 (MSK)
-Date:   Wed, 30 Jan 2019 16:25:21 +0300
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org
-Subject: Re: [PATCH] ima-evm-utils: remove redundant call to
- OpenSSL_add_all_algorithms
-Message-ID: <20190130132521.edhtrv54labxlbyc@altlinux.org>
-References: <20190127023916.2425-1-vt@altlinux.org>
- <1548851697.20210.91.camel@linux.ibm.com>
+        Wed, 30 Jan 2019 08:38:37 -0500
+Received: by mail-it1-f181.google.com with SMTP id d11so10263081itf.2
+        for <linux-integrity@vger.kernel.org>; Wed, 30 Jan 2019 05:38:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KeNH8ob0XdnnqWYnL2TdJ7AwkCn9+ounACD1Yc/WpHI=;
+        b=MGQp+VucQLUeMX74V1eGvm8EKe5VRxAxDD9EvqbGvc0jTvfVEOWTD6zNiEnTZHfOuW
+         sidmgw7S6Ee6QlLY5WtB+QgqoMGLqpNWcBB202gYgr5bRDp2pHxwvd/WXNCJzB0YZMZR
+         V037kPMjKQ98Pu6cjp0EVOfldgyxFyUeAchoOmPdEb+wzvFIPaeS2S1puuwW9JQ/UveA
+         ltprSJzqy188AAnrbmIXBjBnVwF7Ly5SIXR6q31Lv7kRT/tdDXDTjaBk7KXB0QIrxD18
+         PDrqdbrIXSTfLy6Qho1p7n9lb8JN+dY4eeAFbaZUp7s4lNjRvgyQAGHUv3Qz3JsQmIYv
+         CFaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KeNH8ob0XdnnqWYnL2TdJ7AwkCn9+ounACD1Yc/WpHI=;
+        b=ln26bcWa88kPFkSxIuR3bspIKw26nt/Jl2xWVoSy3Jj30w6sjMnVCEnw+2bjNNM19g
+         eUx3/29v1QHM7nDrrYhSQyeMjk7HmWg6A+d3ZQd0wRJG4mPt6hqgSHKtcsyH15dkbDS1
+         WvZFUXYsryN0k5poNv8MKUbDBx47EmWfO2GqDdu037VsgnE3qoyisspNdMcXwdiskYV9
+         R7e2E2ESSgcJM6n/nXy6tapmaI1SVpK8KmTyQia87F7ocbvjPXuyob4BqFMR29SG3CSx
+         lBofyghhuDe4KOjD2CnIzDypR5e3kCF/5uo4CpywrwDQchJVaOB16RW1Cx0oughek5uK
+         E5rQ==
+X-Gm-Message-State: AJcUukfx87us0NUYRvpc3WMfsVURH/qGiW0quctwYWhuCAvyNkZwg97Z
+        7VnrjIB/CAaDarpwYF85fZF+OMydO9a69UblNBNH8Q==
+X-Google-Smtp-Source: AHgI3IZjKAnx8k7zNvOhHY4dBl3FsiuZluPNdio78p7PUpZzzccTnvgWJ1gsWphpF4WWvOXXEl8tctcma/yNrKjNtbk=
+X-Received: by 2002:a24:648f:: with SMTP id t137mr14444178itc.176.1548855516660;
+ Wed, 30 Jan 2019 05:38:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1548851697.20210.91.camel@linux.ibm.com>
-User-Agent: NeoMutt/20171215-106-ac61c7
+References: <CALUj-gsgpbcXD8xpG-XTZ3QCs_1CoN_9w6sOUSPVYHJ7OrnwQA@mail.gmail.com>
+ <1548787074.20210.27.camel@linux.ibm.com>
+In-Reply-To: <1548787074.20210.27.camel@linux.ibm.com>
+From:   rishi gupta <gupt21@gmail.com>
+Date:   Wed, 30 Jan 2019 19:08:25 +0530
+Message-ID: <CALUj-gv6Wq_nnyA1m5es_jkkEvfQh_j2yQeDgzJTpNmBAC1Rug@mail.gmail.com>
+Subject: Re: Understanding fsuuid policy rule for appraisal and exclusion
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 07:34:57AM -0500, Mimi Zohar wrote:
-> On Sun, 2019-01-27 at 05:39 +0300, Vitaly Chikunov wrote:
-> > Because of call to OPENSSL_add_all_algorithms_conf() calling
-> > OpenSSL_add_all_algorithms() is not needed. There was not be any
-> > problems though because double initialization is permitted.
-> > ---
-> >  src/libimaevm.c | 1 -
-> >  1 file changed, 1 deletion(-)
-> > 
-> > diff --git a/src/libimaevm.c b/src/libimaevm.c
-> > index 7501303..b038d0c 100644
-> > --- a/src/libimaevm.c
-> > +++ b/src/libimaevm.c
-> > @@ -995,7 +995,6 @@ int sign_hash(const char *hashalgo, const unsigned char *hash, int size, const c
-> > 
-> >  static void libinit()
-> >  {
-> > -	OpenSSL_add_all_algorithms();
-> >  	OPENSSL_add_all_algorithms_conf();
-> >  	ERR_load_crypto_strings();
-> >  }
-> 
-> The only difference between the two calls seems to be reading the
-> system openssl.cnf file. šIn the original call that is dependent on
-> OPENSSL_LOAD_CONF being defined. šCalling
-> OPENSSL_add_all_algorithms_conf(), forces reading the system
-> openssl.cnf.
+Yes, I am having problem as I am not able to validate IMA
+implementation on my device.
+Basically, uuid of partition B is not yyyy-yy-yy-yy and therefore I am
+not able to conclude whether it will be appraised or not.
 
-Yes. OPENSSL_LOAD_CONF is per application define, which is by default
-undefined. And instead of defining it, we could just call
-OPENSSL_add_all_algorithms_conf(), which is required for GOST support.
-Otherwise enabling Streebog via OPENSSL_CONF will not work.
+If no rule is written for any partition is it appraised ?
 
-Thanks,
 
-> 
+On Wed, Jan 30, 2019 at 12:08 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>
+> On Tue, 2019-01-29 at 14:21 +0530, rishi gupta wrote:
+> > Hi Team,
+> >
+> > I set the policy for IMA as follows. (1) Files in partition B will be
+> > appraised or not if its UUID is not yyyy-yy-yy-yy. (2) Do files in
+> > partition C only will be appraised irrespective of whatever rule is
+> > written for other partitions.
+> >
+> > My goal is to include a partition and exclude all other partitions.
+> >
+> > # Exclude partition A
+> > dont_measure fsuuid=xxxx-xx-xx-xx
+> > dont_appraise fsuuid=xxxx-xx-xx-xx
+> >
+> > # Exclude partition B (Problem here)
+> > dont_measure fsuuid=yyyy-yy-yy-yy
+> > dont_appraise fsuuid=yyyy-yy-yy-yy
+> >
+> > # Appraise partition C
+> > appraise fsuuid=zzzz-zz-zz-zz appraise_type=imasig
+>
+> Are you having problems with these policy rules?  Policy rules are
+> handled sequentially.  Just make sure these rules are before any of
+> the other "appraise" rules.
+>
 > Mimi
+>
