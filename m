@@ -2,84 +2,81 @@ Return-Path: <SRS0=GnzX=QG=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F01C282D4
-	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 07:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38378C282D8
+	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 12:01:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1602920882
-	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 07:53:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B08420869
+	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 12:01:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725843AbfA3Hwz (ORCPT
+        id S1726857AbfA3MB2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 30 Jan 2019 02:52:55 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32847 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725834AbfA3Hwy (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 30 Jan 2019 02:52:54 -0500
-Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id CB914564C62C64808E06;
-        Wed, 30 Jan 2019 07:52:52 +0000 (GMT)
-Received: from [10.204.65.149] (10.204.65.149) by smtpsuk.huawei.com
- (10.201.108.36) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 30 Jan
- 2019 07:52:46 +0000
+        Wed, 30 Jan 2019 07:01:28 -0500
+Received: from mga04.intel.com ([192.55.52.120]:15195 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730592AbfA3MB2 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 30 Jan 2019 07:01:28 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2019 04:01:27 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,540,1539673200"; 
+   d="scan'208";a="140066087"
+Received: from rkazants-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.212])
+  by fmsmga004.fm.intel.com with ESMTP; 30 Jan 2019 04:01:24 -0800
+Date:   Wed, 30 Jan 2019 14:01:22 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
+        matthewgarrett@google.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+        silviu.vlasceanu@huawei.com
 Subject: Re: [PATCH v8 1/7] tpm: dynamically allocate the allocated_banks
  array
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
-        <monty.wiseman@ge.com>, <matthewgarrett@google.com>,
-        <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <keyrings@vger.kernel.org>,
-        <silviu.vlasceanu@huawei.com>
+Message-ID: <20190130120122.GA19191@linux.intel.com>
 References: <20190124154910.29948-1-roberto.sassu@huawei.com>
  <20190124154910.29948-2-roberto.sassu@huawei.com>
  <20190129192941.GB14305@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <ddf3515d-efba-6cf0-e224-90966be9cb18@huawei.com>
-Date:   Wed, 30 Jan 2019 08:52:40 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+ <ddf3515d-efba-6cf0-e224-90966be9cb18@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20190129192941.GB14305@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.149]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ddf3515d-efba-6cf0-e224-90966be9cb18@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 1/29/2019 8:29 PM, Jarkko Sakkinen wrote:
-> On Thu, Jan 24, 2019 at 04:49:04PM +0100, Roberto Sassu wrote:
->> +	chip->allocated_banks = kcalloc(1, sizeof(*chip->allocated_banks),
->> +					GFP_KERNEL);
->> +	if (!chip->allocated_banks) {
->> +		rc = -ENOMEM;
->> +		goto out;
->> +	}
->> +
->> +	chip->allocated_banks[0] = TPM2_ALG_SHA1;
->> +	chip->nr_allocated_banks = 1;
+On Wed, Jan 30, 2019 at 08:52:40AM +0100, Roberto Sassu wrote:
+> On 1/29/2019 8:29 PM, Jarkko Sakkinen wrote:
+> > On Thu, Jan 24, 2019 at 04:49:04PM +0100, Roberto Sassu wrote:
+> > > +	chip->allocated_banks = kcalloc(1, sizeof(*chip->allocated_banks),
+> > > +					GFP_KERNEL);
+> > > +	if (!chip->allocated_banks) {
+> > > +		rc = -ENOMEM;
+> > > +		goto out;
+> > > +	}
+> > > +
+> > > +	chip->allocated_banks[0] = TPM2_ALG_SHA1;
+> > > +	chip->nr_allocated_banks = 1;
+> > 
+> > Everything else looks nice in this patch except this.
+> > 
+> > You always branch for TPM 1.2, and it will always have just SHA1. This
+> > is unnecessary.
 > 
-> Everything else looks nice in this patch except this.
-> 
-> You always branch for TPM 1.2, and it will always have just SHA1. This
-> is unnecessary.
+> Without this, users of the TPM driver have to call tpm_is_tpm2() first,
+> while instead they can look directly at chip->allocated_banks.
 
-Without this, users of the TPM driver have to call tpm_is_tpm2() first,
-while instead they can look directly at chip->allocated_banks.
+I realized this after going through the whole patch set and sleeping
+one night :-) You can keep it. I was mistaken here.
 
-Roberto
-
-
-> /Jarkko
-> 
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+/Jarkko
