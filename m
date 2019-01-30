@@ -2,115 +2,84 @@ Return-Path: <SRS0=GnzX=QG=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E327BC169C4
-	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 03:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F01C282D4
+	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 07:53:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7BCC2175B
-	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 03:12:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1602920882
+	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 07:53:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728101AbfA3DMN (ORCPT
+        id S1725843AbfA3Hwz (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 29 Jan 2019 22:12:13 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:59866 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727672AbfA3DMN (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 29 Jan 2019 22:12:13 -0500
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id A30BE72CC6D;
-        Wed, 30 Jan 2019 06:12:09 +0300 (MSK)
-Received: from altlinux.org (sole.flsd.net [185.75.180.6])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 6E12D4A4A16;
-        Wed, 30 Jan 2019 06:12:09 +0300 (MSK)
-Date:   Wed, 30 Jan 2019 06:12:08 +0300
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org
-Subject: Re: [RFC PATCH] ima-evm-utils: convert sign v2 from RSA to EVP_PKEY
- API
-Message-ID: <20190130031208.2e7fxzvekenmwzil@altlinux.org>
-References: <20190128171154.24073-1-vt@altlinux.org>
+        Wed, 30 Jan 2019 02:52:55 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32847 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725834AbfA3Hwy (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 30 Jan 2019 02:52:54 -0500
+Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id CB914564C62C64808E06;
+        Wed, 30 Jan 2019 07:52:52 +0000 (GMT)
+Received: from [10.204.65.149] (10.204.65.149) by smtpsuk.huawei.com
+ (10.201.108.36) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 30 Jan
+ 2019 07:52:46 +0000
+Subject: Re: [PATCH v8 1/7] tpm: dynamically allocate the allocated_banks
+ array
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
+        <monty.wiseman@ge.com>, <matthewgarrett@google.com>,
+        <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <keyrings@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>
+References: <20190124154910.29948-1-roberto.sassu@huawei.com>
+ <20190124154910.29948-2-roberto.sassu@huawei.com>
+ <20190129192941.GB14305@linux.intel.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <ddf3515d-efba-6cf0-e224-90966be9cb18@huawei.com>
+Date:   Wed, 30 Jan 2019 08:52:40 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Disposition: inline
-In-Reply-To: <20190128171154.24073-1-vt@altlinux.org>
-User-Agent: NeoMutt/20171215-106-ac61c7
+In-Reply-To: <20190129192941.GB14305@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.204.65.149]
+X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 08:11:53PM +0300, Vitaly Chikunov wrote:
-> Convert sign_v2 and related to using EVP_PKEY API instead of RSA API.
-> This enables more signatures to work out of the box.
+On 1/29/2019 8:29 PM, Jarkko Sakkinen wrote:
+> On Thu, Jan 24, 2019 at 04:49:04PM +0100, Roberto Sassu wrote:
+>> +	chip->allocated_banks = kcalloc(1, sizeof(*chip->allocated_banks),
+>> +					GFP_KERNEL);
+>> +	if (!chip->allocated_banks) {
+>> +		rc = -ENOMEM;
+>> +		goto out;
+>> +	}
+>> +
+>> +	chip->allocated_banks[0] = TPM2_ALG_SHA1;
+>> +	chip->nr_allocated_banks = 1;
 > 
-> Only in single instance GOST NIDs are checked to produce correct keyid.
-> Other than that code is quite generic.
-
-There is was to generalize it a bit more.
-
-> Remove RSA_ASN1_templates[] as it does not needed anymore. OpenSSL sign
-> is doing proper PKCS1 padding automatically (tested to be compatible
-> with previous version, except for MD4). This also fixes bug with MD4
-> which produced wrong signature because of absence of the appropriate
-> RSA_ASN1_template.
+> Everything else looks nice in this patch except this.
 > 
-> Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
-> ---
->  src/evmctl.c    |  25 +++---
->  src/imaevm.h    |   4 +-
->  src/libimaevm.c | 271 +++++++++++++++++++++++++++-----------------------------
->  3 files changed, 146 insertions(+), 154 deletions(-)
+> You always branch for TPM 1.2, and it will always have just SHA1. This
+> is unnecessary.
+
+Without this, users of the TPM driver have to call tpm_is_tpm2() first,
+while instead they can look directly at chip->allocated_banks.
+
+Roberto
+
+
+> /Jarkko
 > 
-> diff --git a/src/libimaevm.c b/src/libimaevm.c
-> index d9ffa13..bd99c60 100644
-> --- a/src/libimaevm.c
-> +++ b/src/libimaevm.c
-> @@ -776,16 +724,32 @@ void calc_keyid_v1(uint8_t *keyid, char *str, const unsigned char *pkey, int len
->  		log_info("keyid-v1: %s\n", str);
->  }
->  
-> -void calc_keyid_v2(uint32_t *keyid, char *str, RSA *key)
-> +void calc_keyid_v2(uint32_t *keyid, char *str, EVP_PKEY *key)
->  {
-> +	X509_PUBKEY *pk = NULL;
->  	uint8_t sha1[SHA_DIGEST_LENGTH];
-> -	unsigned char *pkey = NULL;
-> +	const unsigned char *pkey = NULL;
-> +	unsigned char *pp = NULL;
->  	int len;
->  
-> -	len = i2d_RSAPublicKey(key, &pkey);
-> -
-> -	SHA1(pkey, len, sha1);
-> +	switch (EVP_PKEY_id(key)) {
-> +	case NID_id_GostR3410_2012_256:
-> +	case NID_id_GostR3410_2012_512:
-> +		X509_PUBKEY_set(&pk, key);
-> +		X509_PUBKEY_get0_param(NULL, &pkey, &len, NULL, pk);
-> +		break;
-> +	default:
-> +		len = i2d_PublicKey(key, &pp);
 
-Because two calls to X509_PUBKEY_set and X509_PUBKEY_get0_param can
-handle more keys (including RSA), call to i2d_PublicKey could be
-avoided, so switch with Gost NIDs could be removed too. Tested.
-
-> +		pkey = pp;
-> +	}
->  
-> +	if (len <= 0) {
-> +		ERR_print_errors_fp(stderr);
-> +		/* Produce invalid key in case of error. */
-> +		len = SHA_DIGEST_LENGTH;
-> +		memset(sha1, 0, len);
-> +	} else
-> +		SHA1(pkey, len, sha1);
->  	/* sha1[12 - 19] is exactly keyid from gpg file */
->  	memcpy(keyid, sha1 + 16, 4);
->  	log_debug("keyid: ");
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
