@@ -2,93 +2,110 @@ Return-Path: <SRS0=GnzX=QG=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB75C282D7
-	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 13:54:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0190AC282D7
+	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 15:35:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D2482082F
-	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 13:54:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0CDE2084C
+	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 15:35:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="LHo9f+YE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbfA3NyP (ORCPT
+        id S1728672AbfA3Pfw (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 30 Jan 2019 08:54:15 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48514 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726151AbfA3NyP (ORCPT
+        Wed, 30 Jan 2019 10:35:52 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:57918 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727067AbfA3Pfw (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 30 Jan 2019 08:54:15 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0UDkWHh079639
-        for <linux-integrity@vger.kernel.org>; Wed, 30 Jan 2019 08:54:14 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qbaetr0bw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 30 Jan 2019 08:54:14 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 30 Jan 2019 13:54:11 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 30 Jan 2019 13:54:08 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0UDs78m41484344
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 30 Jan 2019 13:54:07 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9BEBFA405F;
-        Wed, 30 Jan 2019 13:54:07 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 28FBCA405C;
-        Wed, 30 Jan 2019 13:54:07 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.91.219])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 30 Jan 2019 13:54:07 +0000 (GMT)
-Subject: Re: Understanding fsuuid policy rule for appraisal and exclusion
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     rishi gupta <gupt21@gmail.com>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>
-Date:   Wed, 30 Jan 2019 08:53:56 -0500
-In-Reply-To: <CALUj-gv6Wq_nnyA1m5es_jkkEvfQh_j2yQeDgzJTpNmBAC1Rug@mail.gmail.com>
-References: <CALUj-gsgpbcXD8xpG-XTZ3QCs_1CoN_9w6sOUSPVYHJ7OrnwQA@mail.gmail.com>
-         <1548787074.20210.27.camel@linux.ibm.com>
-         <CALUj-gv6Wq_nnyA1m5es_jkkEvfQh_j2yQeDgzJTpNmBAC1Rug@mail.gmail.com>
+        Wed, 30 Jan 2019 10:35:52 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 618AA8EE232;
+        Wed, 30 Jan 2019 07:35:51 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id NiBDkRbzHgEW; Wed, 30 Jan 2019 07:35:51 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id CD8478EE0E9;
+        Wed, 30 Jan 2019 07:35:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1548862551;
+        bh=CqBMrVinRtrLpuc7zKlrfT0pXt+7sLZmPxl9t/j092I=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=LHo9f+YE/kX8AGYi7N1MeUtk2KjSinZIhg/uDpYDoEmYDlkCMGzzj7vgbgHQz6Dcz
+         BH54SOHOizbvUsPg2kaxw/SniOos8K7dWARBbFScWnPv8T2tPBuOpz2vxwiErHzKPS
+         j7hBCPqvusdolKjB4u/Kl6uUa+zFsecai55ZH4bo=
+Message-ID: <1548862549.3037.18.camel@HansenPartnership.com>
+Subject: Re: [PATCH] ima-evm-utils: remove redundant call to
+ OpenSSL_add_all_algorithms
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Vitaly Chikunov <vt@altlinux.org>, Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org
+Date:   Wed, 30 Jan 2019 07:35:49 -0800
+In-Reply-To: <20190130132521.edhtrv54labxlbyc@altlinux.org>
+References: <20190127023916.2425-1-vt@altlinux.org>
+         <1548851697.20210.91.camel@linux.ibm.com>
+         <20190130132521.edhtrv54labxlbyc@altlinux.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+X-Mailer: Evolution 3.26.6 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19013013-0020-0000-0000-0000030E54F0
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19013013-0021-0000-0000-0000215F5888
-Message-Id: <1548856436.20210.107.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-30_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=955 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901300110
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-(Bottom post please.)
-
-On Wed, 2019-01-30 at 19:08 +0530, rishi gupta wrote:
-> Yes, I am having problem as I am not able to validate IMA
-> implementation on my device.
-> Basically, uuid of partition B is not yyyy-yy-yy-yy and therefore I am
-> not able to conclude whether it will be appraised or not.
+On Wed, 2019-01-30 at 16:25 +0300, Vitaly Chikunov wrote:
+> On Wed, Jan 30, 2019 at 07:34:57AM -0500, Mimi Zohar wrote:
+> > On Sun, 2019-01-27 at 05:39 +0300, Vitaly Chikunov wrote:
+> > > Because of call to OPENSSL_add_all_algorithms_conf() calling
+> > > OpenSSL_add_all_algorithms() is not needed. There was not be any
+> > > problems though because double initialization is permitted.
+> > > ---
+> > >  src/libimaevm.c | 1 -
+> > >  1 file changed, 1 deletion(-)
+> > > 
+> > > diff --git a/src/libimaevm.c b/src/libimaevm.c
+> > > index 7501303..b038d0c 100644
+> > > --- a/src/libimaevm.c
+> > > +++ b/src/libimaevm.c
+> > > @@ -995,7 +995,6 @@ int sign_hash(const char *hashalgo, const
+> > > unsigned char *hash, int size, const c
+> > > 
+> > >  static void libinit()
+> > >  {
+> > > -	OpenSSL_add_all_algorithms();
+> > >  	OPENSSL_add_all_algorithms_conf();
+> > >  	ERR_load_crypto_strings();
+> > >  }
+> > 
+> > The only difference between the two calls seems to be reading the
+> > system openssl.cnf file.  In the original call that is dependent on
+> > OPENSSL_LOAD_CONF being defined.  Calling
+> > OPENSSL_add_all_algorithms_conf(), forces reading the system
+> > openssl.cnf.
 > 
-> If no rule is written for any partition is it appraised ?
+> Yes. OPENSSL_LOAD_CONF is per application define, which is by default
+> undefined. And instead of defining it, we could just call
+> OPENSSL_add_all_algorithms_conf(), which is required for GOST
+> support.
+> Otherwise enabling Streebog via OPENSSL_CONF will not work.
 
-That's dependent on the rest of the policy rules.  Without an appraise
-rule, nothing is appraised.
+It will if you call
 
-Mimi
+ENGINE_set_default(e, ENGINE_METHOD_ALL);
+
+after ENGINE_init
+
+That's all the conf file is covering up for.
+
+James
+
 
