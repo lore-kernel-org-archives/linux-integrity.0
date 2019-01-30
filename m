@@ -4,43 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3138C282D9
-	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 23:02:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D31C282D7
+	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 23:26:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD12120881
-	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 23:02:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79A932184D
+	for <linux-integrity@archiver.kernel.org>; Wed, 30 Jan 2019 23:26:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729312AbfA3XBp (ORCPT
+        id S1727046AbfA3X0c (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 30 Jan 2019 18:01:45 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37514 "EHLO mx1.redhat.com"
+        Wed, 30 Jan 2019 18:26:32 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45574 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728404AbfA3XBm (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 30 Jan 2019 18:01:42 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        id S1726531AbfA3X0c (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 30 Jan 2019 18:26:32 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 21655C002964;
-        Wed, 30 Jan 2019 22:43:46 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id EC5169B309;
+        Wed, 30 Jan 2019 22:07:00 +0000 (UTC)
 Received: from cantor.redhat.com (ovpn-116-165.phx2.redhat.com [10.3.116.165])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D46935D717;
-        Wed, 30 Jan 2019 22:43:45 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B6BB6608EB;
+        Wed, 30 Jan 2019 22:07:00 +0000 (UTC)
 From:   Jerry Snitselaar <jsnitsel@redhat.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Subject: [PATCH 2/2] tpm: don't print error message in tpm_transmit_cmd when tpm still testing
-Date:   Wed, 30 Jan 2019 15:43:33 -0700
-Message-Id: <20190130224333.20373-2-jsnitsel@redhat.com>
-In-Reply-To: <20190130224333.20373-1-jsnitsel@redhat.com>
-References: <20190130224333.20373-1-jsnitsel@redhat.com>
+Date:   Wed, 30 Jan 2019 15:06:59 -0700
+Message-Id: <20190130220659.10102-2-jsnitsel@redhat.com>
+In-Reply-To: <20190130220659.10102-1-jsnitsel@redhat.com>
+References: <20190130220659.10102-1-jsnitsel@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 30 Jan 2019 22:43:46 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 30 Jan 2019 22:07:01 +0000 (UTC)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
