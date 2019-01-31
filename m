@@ -3,123 +3,85 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26D07C169C4
-	for <linux-integrity@archiver.kernel.org>; Thu, 31 Jan 2019 20:50:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C2EC169C4
+	for <linux-integrity@archiver.kernel.org>; Thu, 31 Jan 2019 21:46:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0082C218AC
-	for <linux-integrity@archiver.kernel.org>; Thu, 31 Jan 2019 20:50:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FEED20869
+	for <linux-integrity@archiver.kernel.org>; Thu, 31 Jan 2019 21:46:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726116AbfAaUuu (ORCPT
+        id S1728737AbfAaVqf (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 31 Jan 2019 15:50:50 -0500
-Received: from gateway34.websitewelcome.com ([192.185.149.222]:25221 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725822AbfAaUuu (ORCPT
+        Thu, 31 Jan 2019 16:46:35 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54732 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726233AbfAaVqe (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 31 Jan 2019 15:50:50 -0500
-X-Greylist: delayed 1235 seconds by postgrey-1.27 at vger.kernel.org; Thu, 31 Jan 2019 15:50:49 EST
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 57FAC35240
-        for <linux-integrity@vger.kernel.org>; Thu, 31 Jan 2019 14:30:14 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id pIyUgp2C8YTGMpIyUgVwXF; Thu, 31 Jan 2019 14:30:14 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.82.227] (port=44864 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gpIyT-001CQ4-RC; Thu, 31 Jan 2019 14:30:13 -0600
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-References: <20190125025639.GA13946@embeddedor>
- <d30c9427-29bb-4b98-ec71-0663d0f9fa7f@schaufler-ca.com>
- <7b0a0b5b-38ce-a737-6420-2c96cce12527@embeddedor.com>
- <f9ca33c7-2f96-ce1f-4fd2-587b991f2e85@embeddedor.com>
- <1548964731.6107.28.camel@linux.ibm.com>
- <a1cf3a2a-c8ad-fd33-47fb-9a9d8230c24f@embeddedor.com>
- <1548966039.6107.29.camel@linux.ibm.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [PATCH] security: mark expected switch fall-throughs
-Message-ID: <ece10676-4ee9-bf24-ab8d-7d69a678f234@embeddedor.com>
-Date:   Thu, 31 Jan 2019 14:30:11 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 31 Jan 2019 16:46:34 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0VLZcNu118421
+        for <linux-integrity@vger.kernel.org>; Thu, 31 Jan 2019 16:46:33 -0500
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qc8xh0rwr-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 31 Jan 2019 16:46:33 -0500
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
+        Thu, 31 Jan 2019 21:46:31 -0000
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 31 Jan 2019 21:46:28 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0VLkRwh18546698
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 31 Jan 2019 21:46:27 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 94335B2064;
+        Thu, 31 Jan 2019 21:46:27 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1347FB205F;
+        Thu, 31 Jan 2019 21:46:27 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.85.222.107])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 31 Jan 2019 21:46:26 +0000 (GMT)
+Subject: Re: device tree "compatible" string value for Nuvoton TPM 75xxx
+From:   Nayna <nayna@linux.vnet.ibm.com>
+To:     oshri.alkoby@nuvoton.com, Dan.Morav@nuvoton.com, jgg@ziepe.ca
+Cc:     dana.cohen@nuvoton.com, linux-integrity@vger.kernel.org,
+        gcwilson@us.ibm.com
+References: <63ed4dcb-a8ae-09ad-6793-8b1bb671d652@linux.vnet.ibm.com>
+ <42e1f00b059f464e9d906cece191ed0a@NTILML02.nuvoton.com>
+ <20190121022640.GD18017@ziepe.ca>
+ <3e423306bfd14125a18f81f6b7bac136@NTILML02.nuvoton.com>
+ <60e23fd0f0ff4d1f8954034237ae8865@NTILML02.nuvoton.com>
+ <16c939bd-0b32-71cf-094e-ae3cc0546ad6@linux.vnet.ibm.com>
+Date:   Thu, 31 Jan 2019 16:46:26 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1548966039.6107.29.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <16c939bd-0b32-71cf-094e-ae3cc0546ad6@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.82.227
-X-Source-L: No
-X-Exim-ID: 1gpIyT-001CQ4-RC
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.82.227]:44864
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 18
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 19013121-2213-0000-0000-000003487135
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010511; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000277; SDB=6.01154516; UDB=6.00602035; IPR=6.00934948;
+ MB=3.00025380; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-31 21:46:30
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19013121-2214-0000-0000-00005D2FE1F4
+Message-Id: <08f7532a-b5cd-df2d-c8f9-b363a713882b@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=625 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901310157
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
@@ -127,26 +89,25 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 
 
-On 1/31/19 2:20 PM, Mimi Zohar wrote:
-
->>>
->>> This patch touches multiple LSMs and IMA.  As James has already picked
->>> up similar patches, which are in his next-general branch, perhaps he
->>> could also pick up an updated version of this one.
->>>
+On 01/23/2019 03:22 PM, Nayna wrote:
+>
+>
+> On 01/21/2019 11:55 AM, oshri.alkoby@nuvoton.com wrote:
+>> Hi Jason,
 >>
->> Yeah.  I can either integrate your recent fix and respin if you don't mind,
->> or remove the fall-through comment and wait for James to take both patches,
->> yours and mine.
->>
->> What do you prefer?
-> 
-> Either way is fine.
-> 
+>> Since the driver implements the I2C interface defined by the TCG PTP, 
+>> wouldn't it be better to set the string to be something like 
+>> 'tcg,tpm-i2c-ptp' (as 'tcg,tpm-tis-mmio' for tpm-tis)?
+>> Any TPM that implements this protocol can use this driver.
+>
+> It might be nice to have a generic name if it is also compliant with 
+> the device tree specification.
+> However, I was wondering if it will not require driver code changes as 
+> well before this generic name can be used by any TPM implementing i2c 
+> protocol ?
 
-OK.  Well, I think in this case less is more, so I will integrate our changes
-into a single patch.
+I am wondering if anything got decided on this ?
 
-Thanks for your feedback.
---
-Gustavo
+Thanks & Regards,
+        - Nayna
+
