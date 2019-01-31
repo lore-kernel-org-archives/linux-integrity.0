@@ -2,112 +2,118 @@ Return-Path: <SRS0=eEpa=QH=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C2EC169C4
-	for <linux-integrity@archiver.kernel.org>; Thu, 31 Jan 2019 21:46:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6751FC169C4
+	for <linux-integrity@archiver.kernel.org>; Thu, 31 Jan 2019 21:59:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FEED20869
-	for <linux-integrity@archiver.kernel.org>; Thu, 31 Jan 2019 21:46:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 344C820833
+	for <linux-integrity@archiver.kernel.org>; Thu, 31 Jan 2019 21:59:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Nb/Osrxh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728737AbfAaVqf (ORCPT
+        id S1728459AbfAaV64 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 31 Jan 2019 16:46:35 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54732 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726233AbfAaVqe (ORCPT
+        Thu, 31 Jan 2019 16:58:56 -0500
+Received: from mail-lj1-f171.google.com ([209.85.208.171]:43295 "EHLO
+        mail-lj1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727944AbfAaV64 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 31 Jan 2019 16:46:34 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0VLZcNu118421
-        for <linux-integrity@vger.kernel.org>; Thu, 31 Jan 2019 16:46:33 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qc8xh0rwr-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 31 Jan 2019 16:46:33 -0500
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Thu, 31 Jan 2019 21:46:31 -0000
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 31 Jan 2019 21:46:28 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0VLkRwh18546698
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 31 Jan 2019 21:46:27 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 94335B2064;
-        Thu, 31 Jan 2019 21:46:27 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1347FB205F;
-        Thu, 31 Jan 2019 21:46:27 +0000 (GMT)
-Received: from swastik.ibm.com (unknown [9.85.222.107])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 31 Jan 2019 21:46:26 +0000 (GMT)
-Subject: Re: device tree "compatible" string value for Nuvoton TPM 75xxx
-From:   Nayna <nayna@linux.vnet.ibm.com>
-To:     oshri.alkoby@nuvoton.com, Dan.Morav@nuvoton.com, jgg@ziepe.ca
-Cc:     dana.cohen@nuvoton.com, linux-integrity@vger.kernel.org,
-        gcwilson@us.ibm.com
-References: <63ed4dcb-a8ae-09ad-6793-8b1bb671d652@linux.vnet.ibm.com>
- <42e1f00b059f464e9d906cece191ed0a@NTILML02.nuvoton.com>
- <20190121022640.GD18017@ziepe.ca>
- <3e423306bfd14125a18f81f6b7bac136@NTILML02.nuvoton.com>
- <60e23fd0f0ff4d1f8954034237ae8865@NTILML02.nuvoton.com>
- <16c939bd-0b32-71cf-094e-ae3cc0546ad6@linux.vnet.ibm.com>
-Date:   Thu, 31 Jan 2019 16:46:26 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 31 Jan 2019 16:58:56 -0500
+Received: by mail-lj1-f171.google.com with SMTP id q2-v6so4009511lji.10
+        for <linux-integrity@vger.kernel.org>; Thu, 31 Jan 2019 13:58:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=V/scLVWcgx6b3Cc30SJ9XQoDRT3ekk9X1oHzi49xKw4=;
+        b=Nb/OsrxhQM5rou4dBzXZ8nOQmk4lY3q6qfKrTMPn6RbcOsaKmrRFGsKX4c5Qst5jtf
+         gJae59i2/7aaZ0a3tjA0AoJSQCtYMO3dCRwVVbjiwEIMUwKoAe0qr7iEYMxSV2Iy0PDX
+         2kVcyMEPqwdqLp1FBEYbHzcOJlArED739YpaE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=V/scLVWcgx6b3Cc30SJ9XQoDRT3ekk9X1oHzi49xKw4=;
+        b=FlOjA43pzgbp+5EvsJwrWiaafrpyOE7EuSU8zqJSyF7T5f9orlciX95tCE59yp+nQ0
+         +aDuFsIGDBZ50VKYtdV7otvatHU3QT3u1eXiR9BL5UFnLpHjMwjRjiqXrt8ImKg0Uhnl
+         gQC1ivaWUr8Tv6DKa4RaSEockAjDEpXKFC15RI0xBZ4zT/4Cvs4BW5QKkmOcLSN7xZP9
+         lWOIxOKGWtVFMo+KN0w/9JpJfdMHEMoYLCV8LL0Pvh2L081sXyJTuoUCrVcZ/ORxKJRl
+         NsvGf5sX+B+SQMJOqqkf0/H4kIGzFqYdAvJqIe8TbybFSZCIK3WS8SemCI1y9fAikQMK
+         CQqw==
+X-Gm-Message-State: AJcUukcaZC6XoWF9PA5bV4KlsAA6Ouqqo74o5tPa1M3GmzqkTodQ4EOI
+        snYmwMUyCn2p1z63SvpVUWR22OX+eGY=
+X-Google-Smtp-Source: ALg8bN74dO+EECCfGnhIXFLVDlMCYLzItWWJ1Ci4rbK/opl7iDSqkWS09ZVJMnWjogJG5ZPBLT8SUg==
+X-Received: by 2002:a2e:630a:: with SMTP id x10-v6mr29152257ljb.11.1548971933755;
+        Thu, 31 Jan 2019 13:58:53 -0800 (PST)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id j138sm1046266lfg.64.2019.01.31.13.58.52
+        for <linux-integrity@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 13:58:52 -0800 (PST)
+Received: by mail-lj1-f170.google.com with SMTP id g11-v6so4067600ljk.3
+        for <linux-integrity@vger.kernel.org>; Thu, 31 Jan 2019 13:58:52 -0800 (PST)
+X-Received: by 2002:a2e:8045:: with SMTP id p5-v6mr28403126ljg.87.1548971931875;
+ Thu, 31 Jan 2019 13:58:51 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <16c939bd-0b32-71cf-094e-ae3cc0546ad6@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 19013121-2213-0000-0000-000003487135
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010511; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000277; SDB=6.01154516; UDB=6.00602035; IPR=6.00934948;
- MB=3.00025380; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-31 21:46:30
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19013121-2214-0000-0000-00005D2FE1F4
-Message-Id: <08f7532a-b5cd-df2d-c8f9-b363a713882b@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=625 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901310157
+References: <20190123153638.GA8727@linux.intel.com> <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
+ <20190129132016.GA1602@linux.intel.com> <20190131122606.GA12470@linux.intel.com>
+ <20190131160437.GA5629@linux.intel.com> <20190131170603.GA18349@linux.intel.com>
+ <20190131183530.GA27112@linux.intel.com> <CAHk-=wj0pRLS9Z+_LKfiTvnnquGQjOySVuqiObC9sDXp8SCP0A@mail.gmail.com>
+ <CAHk-=whEb14V981ziWmMdcqR40x5xfhhDCaB2JYcOBQHnHmsgw@mail.gmail.com>
+ <CAHk-=whYtqGO7v7c=Ak0xQfonGVbC_1sRHfxS4xNO-Sa6mFevw@mail.gmail.com> <20190131204710.GB354@linux.intel.com>
+In-Reply-To: <20190131204710.GB354@linux.intel.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 31 Jan 2019 13:58:35 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgPCL9WgkwvK5ehJxg7Df1DHQqGZ0KtBxtjN93QjzUyog@mail.gmail.com>
+Message-ID: <CAHk-=wgPCL9WgkwvK5ehJxg7Df1DHQqGZ0KtBxtjN93QjzUyog@mail.gmail.com>
+Subject: Re: Getting weird TPM error after rebasing my tree to security/next-general
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     tomas.winkler@intel.com, Jason Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-
-
-On 01/23/2019 03:22 PM, Nayna wrote:
+On Thu, Jan 31, 2019 at 12:47 PM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
 >
->
-> On 01/21/2019 11:55 AM, oshri.alkoby@nuvoton.com wrote:
->> Hi Jason,
->>
->> Since the driver implements the I2C interface defined by the TCG PTP, 
->> wouldn't it be better to set the string to be something like 
->> 'tcg,tpm-i2c-ptp' (as 'tcg,tpm-tis-mmio' for tpm-tis)?
->> Any TPM that implements this protocol can use this driver.
->
-> It might be nice to have a generic name if it is also compliant with 
-> the device tree specification.
-> However, I was wondering if it will not require driver code changes as 
-> well before this generic name can be used by any TPM implementing i2c 
-> protocol ?
+> I'll try it first thing when I wake up tomorrow (11PM in Finland ATM).
 
-I am wondering if anything got decided on this ?
+Thanks.
 
-Thanks & Regards,
-        - Nayna
+> Appreciate for taking time on this.
 
+Hey, it was my commit that broke it for you. Even if it happened to
+work before, and only did so by pure luck, it was a functional
+regression.
+
+I get very upset when other developers don't step up when *their*
+changes break something, and I don't consider "it shouldn't have
+worked in the first place" to be a valid excuse. You broke it, you'd
+better fix it.
+
+So I had better fix my own mess too, in order to not look too hypocritical.
+
+And I was very aware that hardcoding the memcpy_*io() access patterns
+might break something. I just _hoped_ it wouldn't, because we actually
+ended up going back to the very original access patterns (but it was
+from a long long time ago).
+
+In fact, while it's slightly annoying, in many ways it's actually good
+that we found breakage, and could pinpoint exactly *why* it broke.
+That does validate the whole "we shouldn't just depend on the random
+implementation detail of 'memcpy()'" argument.
+
+So I'll wait to hear back whether that patch fixes things for you, but
+I _think_ it will, and we'll be better off in the long range with this
+whole thing.
+
+              Linus
