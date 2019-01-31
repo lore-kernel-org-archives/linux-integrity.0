@@ -2,118 +2,116 @@ Return-Path: <SRS0=eEpa=QH=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C85ADC169C4
-	for <linux-integrity@archiver.kernel.org>; Thu, 31 Jan 2019 20:21:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E92C3C282D9
+	for <linux-integrity@archiver.kernel.org>; Thu, 31 Jan 2019 20:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A400020B1F
-	for <linux-integrity@archiver.kernel.org>; Thu, 31 Jan 2019 20:21:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B77402195D
+	for <linux-integrity@archiver.kernel.org>; Thu, 31 Jan 2019 20:29:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="XrS9kxhU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727714AbfAaUVA (ORCPT
+        id S1729239AbfAaU3b (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 31 Jan 2019 15:21:00 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56500 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725802AbfAaUVA (ORCPT
+        Thu, 31 Jan 2019 15:29:31 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:45990 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729070AbfAaU3b (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 31 Jan 2019 15:21:00 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0VKKmg0161622
-        for <linux-integrity@vger.kernel.org>; Thu, 31 Jan 2019 15:20:58 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qc6g8uypv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 31 Jan 2019 15:20:58 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 31 Jan 2019 20:20:56 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 31 Jan 2019 20:20:52 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0VKKpKK131494
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 31 Jan 2019 20:20:51 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 29D91A404D;
-        Thu, 31 Jan 2019 20:20:51 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D371FA4057;
-        Thu, 31 Jan 2019 20:20:49 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.107.203])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 31 Jan 2019 20:20:49 +0000 (GMT)
-Subject: Re: [PATCH] security: mark expected switch fall-throughs
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-Date:   Thu, 31 Jan 2019 15:20:39 -0500
-In-Reply-To: <a1cf3a2a-c8ad-fd33-47fb-9a9d8230c24f@embeddedor.com>
-References: <20190125025639.GA13946@embeddedor>
-         <d30c9427-29bb-4b98-ec71-0663d0f9fa7f@schaufler-ca.com>
-         <7b0a0b5b-38ce-a737-6420-2c96cce12527@embeddedor.com>
-         <f9ca33c7-2f96-ce1f-4fd2-587b991f2e85@embeddedor.com>
-         <1548964731.6107.28.camel@linux.ibm.com>
-         <a1cf3a2a-c8ad-fd33-47fb-9a9d8230c24f@embeddedor.com>
+        Thu, 31 Jan 2019 15:29:31 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 2A2AF8EE241;
+        Thu, 31 Jan 2019 12:29:30 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id W9-kwdOy7rSV; Thu, 31 Jan 2019 12:29:29 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 7B1E38EE092;
+        Thu, 31 Jan 2019 12:29:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1548966569;
+        bh=vG9cqqwIFkW+qj7F8yQ5CM4h2HHQGHk6ZaihHzHGOKw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=XrS9kxhU1bDxYOCe4dmhptFh3koKHMboZhwon8avtKt7Q1ayPYaL8QFp2QRoKU5u3
+         88Rdz0RoJSCLrB8tSYo7FN3osda52hy0Gt8xsT9IbecrOwVhf0vsiRT3uBo8QzvxOM
+         JEBJf9IUYBSGHSpEVX/s/UX+h2NnCTBSaMRIXLNU=
+Message-ID: <1548966568.2876.19.camel@HansenPartnership.com>
+Subject: Re: [PATCH] ima-evm-utils: remove redundant call to
+ OpenSSL_add_all_algorithms
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Vitaly Chikunov <vt@altlinux.org>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org
+Date:   Thu, 31 Jan 2019 12:29:28 -0800
+In-Reply-To: <20190131092201.grymls3ocm3mmrmd@altlinux.org>
+References: <20190127023916.2425-1-vt@altlinux.org>
+         <1548851697.20210.91.camel@linux.ibm.com>
+         <20190130132521.edhtrv54labxlbyc@altlinux.org>
+         <1548862549.3037.18.camel@HansenPartnership.com>
+         <20190130161208.vpbk3v74l7cf5a4t@altlinux.org>
+         <1548866665.3037.27.camel@HansenPartnership.com>
+         <20190130175419.hiqbpptl7fej6m4j@altlinux.org>
+         <1548873360.3037.45.camel@HansenPartnership.com>
+         <20190131092201.grymls3ocm3mmrmd@altlinux.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+X-Mailer: Evolution 3.26.6 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19013120-0028-0000-0000-0000034182C6
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19013120-0029-0000-0000-000023FF86C9
-Message-Id: <1548966039.6107.29.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901310150
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, 2019-01-31 at 14:12 -0600, Gustavo A. R. Silva wrote:
-> Mimi,
+On Thu, 2019-01-31 at 12:22 +0300, Vitaly Chikunov wrote:
+> On Wed, Jan 30, 2019 at 10:36:00AM -0800, James Bottomley wrote:
+[...]
+> > However, that's not how a casual non-Russian user would want it. 
+> > They'd only want gost if they specified the streebog hash.  And if
+> > we advertise the hash (as we do because you added it to the help)
+> > they should have a reasonable expectation of its working easily.
 > 
-> On 1/31/19 1:58 PM, Mimi Zohar wrote:
-> > [Cc'ing James Morris]
-> > 
-> > On Thu, 2019-01-24 at 21:47 -0600, Gustavo A. R. Silva wrote:
-> > 
-> >>>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> >>>>
-> >>>> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-> >>>>
-> >>
-> >> BTW, thanks, Casey.  I'll take this in my tree.
-> > 
-> > This patch touches multiple LSMs and IMA.  As James has already picked
-> > up similar patches, which are in his next-general branch, perhaps he
-> > could also pick up an updated version of this one.
-> > 
-> 
-> Yeah.  I can either integrate your recent fix and respin if you don't mind,
-> or remove the fall-through comment and wait for James to take both patches,
-> yours and mine.
-> 
-> What do you prefer?
+> It will. I support both methods of use. For occasional user there is
+> option --engine and for the frequent user there is config trick.
 
-Either way is fine.
+OK, as long as users can use it without modifying the config file, I'm
+happy.
 
-Mimi
+[...]
+> > > I implemented two methods of loading engine for evmctl (via
+> > > config and via --engine option).  There is no problem with --
+> > > engine option for Streebog, AFAIK.
+> > 
+> > Can you try it with a vanilla (non gost modified) openssl.cnf file
+> > to verify?  I think you require the ENGINE_set_default() call but
+> > it may be that a non-standard hash name will cause a search of the
+> > engine added hashes.  OpenSSL has badly documented defaults, so I
+> > usually chase that through the code, but in this case a simple
+> > experiment will tell us.
+> 
+> Of course, I tried and tested that both ways are working
+> independently. Just for Streebog ENGINE_set_default is not required,
+> but to support GOST signatures (patch is RFCed) it will be required.
+
+I agree, I tried it with the openssl gost engine and you get this weird
+behaviour (I have to use md_gost94 because 1.0.2 gost doesn't have
+streebog):
+
+jejb@mulgrave:~/git/ima-evm-utils/src> ./evmctl -n --hashalgo md_gost94  ima_hash ~/tmp.ppt
+01945d562c031c262563b026d8cc53e070140ad101
+jejb@mulgrave:~/git/ima-evm-utils/src> ./evmctl -n --engine gost --hashalgo md_gost94  ima_hash ~/tmp.ppt
+01a930a87289b548c2744fbb183a22196b1f651a727d84021d0eeb80cb4dddbb5d
+
+Because IMA silently falls back on sha1 if it can't find the hash.  But
+the test proves it will use the gost hash when the engine is provided
+without ENGINE_set_default().
+
+James
+
 
