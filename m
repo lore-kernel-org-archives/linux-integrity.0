@@ -2,153 +2,138 @@ Return-Path: <SRS0=eEpa=QH=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D336C4151A
-	for <linux-integrity@archiver.kernel.org>; Thu, 31 Jan 2019 18:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8284C169C4
+	for <linux-integrity@archiver.kernel.org>; Thu, 31 Jan 2019 19:10:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1A1B218AF
-	for <linux-integrity@archiver.kernel.org>; Thu, 31 Jan 2019 18:56:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A7442086C
+	for <linux-integrity@archiver.kernel.org>; Thu, 31 Jan 2019 19:10:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WSdZg3Gg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728223AbfAaS4Y (ORCPT
+        id S1726823AbfAaTKn (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 31 Jan 2019 13:56:24 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38014 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728203AbfAaS4Y (ORCPT
+        Thu, 31 Jan 2019 14:10:43 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40607 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726135AbfAaTKm (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 31 Jan 2019 13:56:24 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0VIs54u051341
-        for <linux-integrity@vger.kernel.org>; Thu, 31 Jan 2019 13:56:23 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qc60ka727-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 31 Jan 2019 13:56:22 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 31 Jan 2019 18:56:20 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 31 Jan 2019 18:56:18 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0VIuHv27471378
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 31 Jan 2019 18:56:17 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3C3614C04E;
-        Thu, 31 Jan 2019 18:56:17 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1D7404C04A;
-        Thu, 31 Jan 2019 18:56:16 +0000 (GMT)
-Received: from localhost.ibm.com (unknown [9.80.107.203])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 31 Jan 2019 18:56:15 +0000 (GMT)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        David Howells <dhowells@redhat.com>,
-        Dave Young <dyoung@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH 2/3] scripts/ima: define a set of common functions
-Date:   Thu, 31 Jan 2019 13:55:35 -0500
-X-Mailer: git-send-email 2.7.5
-In-Reply-To: <1548960936-7800-1-git-send-email-zohar@linux.ibm.com>
-References: <1548960936-7800-1-git-send-email-zohar@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19013118-0020-0000-0000-0000030F7AEB
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19013118-0021-0000-0000-000021607FBB
-Message-Id: <1548960936-7800-3-git-send-email-zohar@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=966 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901310141
+        Thu, 31 Jan 2019 14:10:42 -0500
+Received: by mail-lf1-f65.google.com with SMTP id v5so3185126lfe.7
+        for <linux-integrity@vger.kernel.org>; Thu, 31 Jan 2019 11:10:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xscg+IDwK+piZ4gwM9pr76+iGnilAL9l9sUJBQ14ql4=;
+        b=WSdZg3GgdCf+Bfnb/A+u6kK/WpovsTeVodF2/V5GuUcUeDkcXBt+Io4wfbZtEB10pR
+         uWykPgozcSi9R+lsNeRiDIVXAhIHyaJlu4Q34fAMU6DMQ98fuJ7fIiolhm9S2/Dez8oN
+         do5hjWbqseBMjJJBGiVlLhgtJtFN6ap3qboak=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xscg+IDwK+piZ4gwM9pr76+iGnilAL9l9sUJBQ14ql4=;
+        b=FtZ4ia5iSg29IOL9zgRBT3w6bwG/+2Te+6eiDlf4ojJq+ew7z+uNDG3eFq0vrwQxtl
+         vbDn5IFhq3DDnOLC7Xdlv9BXevLSw0bMMKh9/dlhdC/R2/psYGVBqJ4HV0DsGToxPx3l
+         eKyp4Qdwp4dJlEMdIkZOSRm7wMkNozTB7xw+vR6p4wiVXfZCY8Qm6f7EcH0OmMyGfXyG
+         crG0OyQOtIFT14+rADCkCI3JJOc+3Ya+52O9B1cfGJ+eIE7tJ5ky/70j4qPWP8Wtuu5x
+         jYFtPlhkkg6Mywv+/3KuxopmRYULujpEQhVoPlmuLWEioas+y5J2C4nt7IrEIxez7YU/
+         oDOw==
+X-Gm-Message-State: AJcUukfoz6ViSRxA5VuXK416FImFttO/2Y+XbRldTpHcEWAUrMWR6ZLF
+        IRgBYzMVSFGfM0fSMnvWpgM0wMpmmRw=
+X-Google-Smtp-Source: ALg8bN5SqypBtvoqKzgi+EKmT+Sa5Len738YJSTsSqWAYmeXLrKxyZN+vM0yrfGQin2yW+aOuepqCA==
+X-Received: by 2002:a19:8c1b:: with SMTP id o27mr27264833lfd.90.1548961839535;
+        Thu, 31 Jan 2019 11:10:39 -0800 (PST)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
+        by smtp.gmail.com with ESMTPSA id e19-v6sm928110ljf.67.2019.01.31.11.10.37
+        for <linux-integrity@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 11:10:37 -0800 (PST)
+Received: by mail-lj1-f173.google.com with SMTP id x85-v6so3675115ljb.2
+        for <linux-integrity@vger.kernel.org>; Thu, 31 Jan 2019 11:10:37 -0800 (PST)
+X-Received: by 2002:a2e:880a:: with SMTP id x10-v6mr30717208ljh.174.1548961837166;
+ Thu, 31 Jan 2019 11:10:37 -0800 (PST)
+MIME-Version: 1.0
+References: <20190122010218.GA26713@linux.intel.com> <20190122025836.GH25163@ziepe.ca>
+ <20190122132910.GA2720@linux.intel.com> <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
+ <20190123153638.GA8727@linux.intel.com> <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
+ <20190129132016.GA1602@linux.intel.com> <20190131122606.GA12470@linux.intel.com>
+ <20190131160437.GA5629@linux.intel.com> <20190131170603.GA18349@linux.intel.com>
+ <20190131183530.GA27112@linux.intel.com> <CAHk-=wj0pRLS9Z+_LKfiTvnnquGQjOySVuqiObC9sDXp8SCP0A@mail.gmail.com>
+ <CAHk-=whEb14V981ziWmMdcqR40x5xfhhDCaB2JYcOBQHnHmsgw@mail.gmail.com>
+In-Reply-To: <CAHk-=whEb14V981ziWmMdcqR40x5xfhhDCaB2JYcOBQHnHmsgw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 31 Jan 2019 11:10:20 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whYtqGO7v7c=Ak0xQfonGVbC_1sRHfxS4xNO-Sa6mFevw@mail.gmail.com>
+Message-ID: <CAHk-=whYtqGO7v7c=Ak0xQfonGVbC_1sRHfxS4xNO-Sa6mFevw@mail.gmail.com>
+Subject: Re: Getting weird TPM error after rebasing my tree to security/next-general
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     tomas.winkler@intel.com, Jason Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="000000000000136afa0580c5c8f2"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Define and move get_secureboot_mode() to a common file for use by other
-tests.
+--000000000000136afa0580c5c8f2
+Content-Type: text/plain; charset="UTF-8"
 
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
----
- tools/testing/selftests/ima/common_lib.sh      | 20 ++++++++++++++++++++
- tools/testing/selftests/ima/test_kexec_load.sh | 17 +++--------------
- 2 files changed, 23 insertions(+), 14 deletions(-)
- create mode 100755 tools/testing/selftests/ima/common_lib.sh
+On Thu, Jan 31, 2019 at 10:52 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> I think what I should do is to just make "memcpy_*io()" do the "align
+> naturally" thing.
+>
+> Let me cook up a patch for you to test.
 
-diff --git a/tools/testing/selftests/ima/common_lib.sh b/tools/testing/selftests/ima/common_lib.sh
-new file mode 100755
-index 000000000000..ae097a634da5
---- /dev/null
-+++ b/tools/testing/selftests/ima/common_lib.sh
-@@ -0,0 +1,20 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0+
-+
-+get_secureboot_mode()
-+{
-+	EFIVARFS="/sys/firmware/efi/efivars"
-+	# Make sure that efivars is mounted in the normal location
-+	if ! grep -q "^\S\+ $EFIVARFS efivarfs" /proc/mounts; then
-+		echo "$TEST: efivars is not mounted on $EFIVARFS" >&2
-+		exit $ksft_skip
-+	fi
-+
-+	# Get secureboot mode
-+	file="$EFIVARFS/SecureBoot-*"
-+	if [ ! -e $file ]; then
-+		echo "$TEST: unknown secureboot mode" >&2
-+		exit $ksft_skip
-+	fi
-+	return `hexdump $file | awk '{print substr($4,length($4),1)}'`
-+}
-diff --git a/tools/testing/selftests/ima/test_kexec_load.sh b/tools/testing/selftests/ima/test_kexec_load.sh
-index 74423c4229e2..5e3566738888 100755
---- a/tools/testing/selftests/ima/test_kexec_load.sh
-+++ b/tools/testing/selftests/ima/test_kexec_load.sh
-@@ -5,7 +5,7 @@
- # is booted in secureboot mode.
- 
- TEST="$0"
--EFIVARFS="/sys/firmware/efi/efivars"
-+. ./common_lib.sh
- rc=0
- 
- # Kselftest framework requirement - SKIP code is 4.
-@@ -17,19 +17,8 @@ if [ $(id -ru) != 0 ]; then
- 	exit $ksft_skip
- fi
- 
--# Make sure that efivars is mounted in the normal location
--if ! grep -q "^\S\+ $EFIVARFS efivarfs" /proc/mounts; then
--	echo "$TEST: efivars is not mounted on $EFIVARFS" >&2
--	exit $ksft_skip
--fi
--
--# Get secureboot mode
--file="$EFIVARFS/SecureBoot-*"
--if [ ! -e $file ]; then
--	echo "$TEST: unknown secureboot mode" >&2
--	exit $ksft_skip
--fi
--secureboot=`hexdump $file | awk '{print substr($4,length($4),1)}'`
-+get_secureboot_mode
-+secureboot=$?
- 
- # kexec_load should fail in secure boot mode
- KERNEL_IMAGE="/boot/vmlinuz-`uname -r`"
--- 
-2.7.5
+Does this work for you?
 
+I haven't tested it at all, but I verified that the generated code
+seems to make at least some amount of sense.
+
+               Linus
+
+--000000000000136afa0580c5c8f2
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_jrkzvf6d0>
+X-Attachment-Id: f_jrkzvf6d0
+
+IGFyY2gveDg2L2xpYi9pb21lbS5jIHwgMjcgKysrKysrKysrKysrKysrKysrKysrKysrLS0tCiAx
+IGZpbGUgY2hhbmdlZCwgMjQgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKCmRpZmYgLS1n
+aXQgYS9hcmNoL3g4Ni9saWIvaW9tZW0uYyBiL2FyY2gveDg2L2xpYi9pb21lbS5jCmluZGV4IDY2
+ODk0Njc1ZjNjOC4uN2I1YjA3ZjNkMzcwIDEwMDY0NAotLS0gYS9hcmNoL3g4Ni9saWIvaW9tZW0u
+YworKysgYi9hcmNoL3g4Ni9saWIvaW9tZW0uYwpAQCAtMyw3ICszLDcgQEAKICNpbmNsdWRlIDxs
+aW51eC9pby5oPgogCiAvKiBPcmlnaW5hbGx5IGZyb20gaTM4Ni9zdHJpbmcuaCAqLwotc3RhdGlj
+IF9fYWx3YXlzX2lubGluZSB2b2lkIF9faW9tZW1fbWVtY3B5KHZvaWQgKnRvLCBjb25zdCB2b2lk
+ICpmcm9tLCBzaXplX3QgbikKK3N0YXRpYyBfX2Fsd2F5c19pbmxpbmUgdm9pZCByZXBfbW92cyh2
+b2lkICp0bywgY29uc3Qgdm9pZCAqZnJvbSwgc2l6ZV90IG4pCiB7CiAJdW5zaWduZWQgbG9uZyBk
+MCwgZDEsIGQyOwogCWFzbSB2b2xhdGlsZSgicmVwIDsgbW92c2xcblx0IgpAQCAtMTksMTUgKzE5
+LDM2IEBAIHN0YXRpYyBfX2Fsd2F5c19pbmxpbmUgdm9pZCBfX2lvbWVtX21lbWNweSh2b2lkICp0
+bywgY29uc3Qgdm9pZCAqZnJvbSwgc2l6ZV90IG4pCiAJCSAgICAgOiAibWVtb3J5Iik7CiB9CiAK
+KyNkZWZpbmUgbW92cyh0eXBlLHRvLGZyb20pIFwKKwlhc20gdm9sYXRpbGUoIm1vdnMiIHR5cGU6
+Ij0mRCIgKHRvKSwgIj0mUyIgKGZyb20pOiIwIiAodG8pLCAiMSIgKGZyb20pOiJtZW1vcnkiKQor
+CiB2b2lkIG1lbWNweV9mcm9taW8odm9pZCAqdG8sIGNvbnN0IHZvbGF0aWxlIHZvaWQgX19pb21l
+bSAqZnJvbSwgc2l6ZV90IG4pCiB7Ci0JX19pb21lbV9tZW1jcHkodG8sIChjb25zdCB2b2lkICop
+ZnJvbSwgbik7CisJLyogVW5hbGlnbmVkIElPPyAqLworCWlmIChuICYmIHVubGlrZWx5KDEgJiAo
+dW5zaWduZWQgbG9uZylmcm9tKSkgeworCQltb3ZzKCJiIiwgdG8sIGZyb20pOworCQluLS07CisJ
+fQorCWlmIChuID4gMSAmJiB1bmxpa2VseSgyICYgKHVuc2lnbmVkIGxvbmcpZnJvbSkpIHsKKwkJ
+bW92cygidyIsIHRvLCBmcm9tKTsKKwkJbi09MjsKKwl9CisJcmVwX21vdnModG8sIChjb25zdCB2
+b2lkICopZnJvbSwgbik7CiB9CiBFWFBPUlRfU1lNQk9MKG1lbWNweV9mcm9taW8pOwogCiB2b2lk
+IG1lbWNweV90b2lvKHZvbGF0aWxlIHZvaWQgX19pb21lbSAqdG8sIGNvbnN0IHZvaWQgKmZyb20s
+IHNpemVfdCBuKQogewotCV9faW9tZW1fbWVtY3B5KCh2b2lkICopdG8sIChjb25zdCB2b2lkICop
+IGZyb20sIG4pOworCS8qIFVuYWxpZ25lZCBJTz8gKi8KKwlpZiAobiAmJiB1bmxpa2VseSgxICYg
+KHVuc2lnbmVkIGxvbmcpdG8pKSB7CisJCW1vdnMoImIiLCB0bywgZnJvbSk7CisJCW4tLTsKKwl9
+CisJaWYgKG4gPiAxICYmIHVubGlrZWx5KDIgJiAodW5zaWduZWQgbG9uZyl0bykpIHsKKwkJbW92
+cygidyIsIHRvLCBmcm9tKTsKKwkJbi09MjsKKwl9CisJcmVwX21vdnMoKHZvaWQgKil0bywgKGNv
+bnN0IHZvaWQgKikgZnJvbSwgbik7CiB9CiBFWFBPUlRfU1lNQk9MKG1lbWNweV90b2lvKTsKIAo=
+--000000000000136afa0580c5c8f2--
