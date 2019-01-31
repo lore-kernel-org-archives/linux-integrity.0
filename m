@@ -3,54 +3,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64BA2C169C4
-	for <linux-integrity@archiver.kernel.org>; Thu, 31 Jan 2019 16:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16B89C169C4
+	for <linux-integrity@archiver.kernel.org>; Thu, 31 Jan 2019 17:06:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BC45218AC
-	for <linux-integrity@archiver.kernel.org>; Thu, 31 Jan 2019 16:12:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E08CA2087F
+	for <linux-integrity@archiver.kernel.org>; Thu, 31 Jan 2019 17:06:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388102AbfAaQMK (ORCPT
+        id S1728925AbfAaRGJ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 31 Jan 2019 11:12:10 -0500
-Received: from mga18.intel.com ([134.134.136.126]:46539 "EHLO mga18.intel.com"
+        Thu, 31 Jan 2019 12:06:09 -0500
+Received: from mga12.intel.com ([192.55.52.136]:3510 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388082AbfAaQMK (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 31 Jan 2019 11:12:10 -0500
-X-Amp-Result: UNSCANNABLE
+        id S1727961AbfAaRGJ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 31 Jan 2019 12:06:09 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 08:12:01 -0800
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 09:06:08 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,545,1539673200"; 
-   d="scan'208";a="112664329"
+   d="scan'208";a="139569461"
 Received: from rkazants-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.212])
-  by orsmga006.jf.intel.com with ESMTP; 31 Jan 2019 08:11:56 -0800
-Date:   Thu, 31 Jan 2019 18:11:55 +0200
+  by fmsmga002.fm.intel.com with ESMTP; 31 Jan 2019 09:06:04 -0800
+Date:   Thu, 31 Jan 2019 19:06:03 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Stefan Berger <stefanb@linux.ibm.com>,
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: Re: [PATCH v10 00/17] Remove nested TPM operations
-Message-ID: <20190131161155.GF5629@linux.intel.com>
-References: <20190116212342.24524-1-jarkko.sakkinen@linux.intel.com>
- <20190123182057.GA24212@linux.intel.com>
- <37e53df5-4a25-fce2-d3bf-016669d0a383@linux.ibm.com>
- <20190129123111.GA12883@linux.intel.com>
- <1548894522.2774.28.camel@HansenPartnership.com>
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        tomas.winkler@intel.com
+Subject: Re: Getting weird TPM error after rebasing my tree to
+ security/next-general
+Message-ID: <20190131170603.GA18349@linux.intel.com>
+References: <20190120160413.GB30478@linux.intel.com>
+ <20190122010218.GA26713@linux.intel.com>
+ <20190122025836.GH25163@ziepe.ca>
+ <20190122132910.GA2720@linux.intel.com>
+ <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
+ <20190123153638.GA8727@linux.intel.com>
+ <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
+ <20190129132016.GA1602@linux.intel.com>
+ <20190131122606.GA12470@linux.intel.com>
+ <20190131160437.GA5629@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1548894522.2774.28.camel@HansenPartnership.com>
+In-Reply-To: <20190131160437.GA5629@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
@@ -58,49 +62,58 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 04:28:42PM -0800, James Bottomley wrote:
-> On Tue, 2019-01-29 at 14:31 +0200, Jarkko Sakkinen wrote:
-> > On Wed, Jan 23, 2019 at 01:53:44PM -0500, Stefan Berger wrote:
-> > > On 1/23/19 1:20 PM, Jarkko Sakkinen wrote:
-> > > > On Wed, Jan 16, 2019 at 11:23:25PM +0200, Jarkko Sakkinen wrote:
-> > > > > Make the changes necessary to detach TPM space code and TPM
-> > > > > activation
-> > > > > code out of the tpm_transmit() flow because of both of these
-> > > > > can cause
-> > > > > nested tpm_transmit() calls. The nesteds calls make the whole
-> > > > > flow hard
-> > > > > to maintain, and thus, it is better to just fix things now
-> > > > > before this
-> > > > > turns into a bigger mess.
+On Thu, Jan 31, 2019 at 06:04:37PM +0200, Jarkko Sakkinen wrote:
+> On Thu, Jan 31, 2019 at 02:26:06PM +0200, Jarkko Sakkinen wrote:
+> > On Tue, Jan 29, 2019 at 03:20:16PM +0200, Jarkko Sakkinen wrote:
+> > > On Thu, Jan 24, 2019 at 07:43:30AM +1300, Linus Torvalds wrote:
+> > > > On Thu, Jan 24, 2019 at 4:36 AM Jarkko Sakkinen
+> > > > <jarkko.sakkinen@linux.intel.com> wrote:
+> > > > > >
+> > > > > > Is it just that this particular hardware always happened to trigger
+> > > > > > the ERMS case (ie "rep movsb")?
+> > > > >
+> > > > > This is the particular snippet in question:
+> > > > >
+> > > > > memcpy_fromio(buf, priv->rsp, 6);
+> > > > > expected = be32_to_cpup((__be32 *) &buf[2]);
+> > > > > if (expected > count || expected < 6)
+> > > > >         return -EIO;
 > > > > 
-> > > > Any reasons not to merge this soon?
+> > > > Ok, strange.
+> > > > 
+> > > > So what *used* to happen is that the memcpy_fromio() would just expand
+> > > > as a "memcpy()", and in this case, gcc would then inline the memcpy().
+> > > > In fact, gcc does it as a 4-byte access and a two-byte access from
+> > > > what I can tell.
 > > > 
-> > > I suppose v10 hasn't changed anything signinficat. So, not from my
-> > > perspective. Were you waiting for more Reviewed-by's?
+> > > I verified, and it is exactly as you stated:
+> > > 
+> > >    0xffffffff814aaa33 <+51>:	mov    (%rax),%edx
+> > >    0xffffffff814aaa35 <+53>:	mov    %edx,0x0(%rbp)
+> > >    0xffffffff814aaa38 <+56>:	movzwl 0x4(%rax),%eax
+> > >    0xffffffff814aaa3c <+60>:	mov    %ax,0x4(%rbp)
+> > > 
+> > > And your new version does exactly the same thing to the first six bytes
+> > > (with different opcode, but the same memory access pattern).
 > > 
-> > Yeah, for example TPM space touching changes would be good to peer
-> > check with James. I could have easily forgotten some implementation
-> > detail, and it has been very stable piece off code, so don't want
-> > to break it. Guess won't yet try to put this v5.1.
+> > I think I have found the root cause:
+> > 
+> > memcpy_fromio(&__rsp_pa, &priv->regs_t->ctrl_rsp_pa, 8);
+> > 
+> > This is from crb_map_io(). This should be read as quad word.
+> > 
+> > I'll change it to ioread64() and see what happens. I don't know why it
+> > even has used memcpy_fromio() in the first place. I guess, when I first
+> > implemented the driver, I used that for no logical reason, and it has
+> > worked since up until now.
 > 
-> So the implementation detail I was looking for: internal kernel use of
-> tpm_transmit_cmd() without tpm_find/try_get_ops() doesn't seem to
-> exist, so I think this is all safe.  You can add my
+> No, cannot be it. If you couldn't read it in two dwords, then it would
+> have been always broken with 32-bit build.
 > 
-> Reviewed-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> Anyway, just in case, I will check what address it prints out.
 
-Thank you. I'll send a new revision soonish.
-
-> But I've got to say I can't test this yet because you've made a huge
-> problem for me in the tpm security patches: they introduce a kernel
-> space which now becomes somewhat problematic because the space handling
-> moved into the device common code.  To get both these things to work
-> together so I can test it, space handling is going to have to come
-> slightly down from device common code so the kernel can use it.
-
-Yeah, obviously. I'll apply these patches right after the next PR so
-you will have a more stable platform to work on after that. Stefan
-has tested these, and then there is one full cycle to fix details
-if we find issues.
+Found something that *does* fix the issue. If I replace memcpy_*io()
+calls with regular memcpy(), the driver works and all my tests pass.
 
 /Jarkko
+
