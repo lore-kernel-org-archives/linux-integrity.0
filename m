@@ -2,136 +2,84 @@ Return-Path: <SRS0=2iBq=QI=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45EDAC282D8
-	for <linux-integrity@archiver.kernel.org>; Fri,  1 Feb 2019 19:20:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A5EDC282D8
+	for <linux-integrity@archiver.kernel.org>; Fri,  1 Feb 2019 23:29:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20BAC218AF
-	for <linux-integrity@archiver.kernel.org>; Fri,  1 Feb 2019 19:20:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C1D921872
+	for <linux-integrity@archiver.kernel.org>; Fri,  1 Feb 2019 23:29:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727722AbfBATUu convert rfc822-to-8bit (ORCPT
+        id S1727207AbfBAX3N (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 1 Feb 2019 14:20:50 -0500
-Received: from mga17.intel.com ([192.55.52.151]:25175 "EHLO mga17.intel.com"
+        Fri, 1 Feb 2019 18:29:13 -0500
+Received: from namei.org ([65.99.196.166]:49780 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726526AbfBATUu (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 1 Feb 2019 14:20:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2019 11:20:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,549,1539673200"; 
-   d="scan'208";a="114582532"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by orsmga008.jf.intel.com with ESMTP; 01 Feb 2019 11:20:49 -0800
-Received: from fmsmsx154.amr.corp.intel.com (10.18.116.70) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Fri, 1 Feb 2019 11:20:49 -0800
-Received: from HASMSX110.ger.corp.intel.com (10.184.198.28) by
- FMSMSX154.amr.corp.intel.com (10.18.116.70) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Fri, 1 Feb 2019 11:20:46 -0800
-Received: from hasmsx108.ger.corp.intel.com ([169.254.9.55]) by
- HASMSX110.ger.corp.intel.com ([169.254.6.213]) with mapi id 14.03.0415.000;
- Fri, 1 Feb 2019 21:20:43 +0200
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        James Morris <jmorris@namei.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>
-Subject: RE: [PATCH] tpm/tpm_crb: Avoid unaligned reads in crb_recv():
-Thread-Topic: [PATCH] tpm/tpm_crb: Avoid unaligned reads in crb_recv():
-Thread-Index: AQHUuiILqL/DhC1Ugk6fMR5NQMo3vKXLTG+Q
-Date:   Fri, 1 Feb 2019 19:20:42 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA8E215@hasmsx108.ger.corp.intel.com>
-References: <20190201111949.14881-1-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20190201111949.14881-1-jarkko.sakkinen@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDcxMjQyNTktMmZkNC00MzYwLWFkNzgtZjNjYTFjM2U3ZTgzIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoieXhjWjdrUFJaSndlMlNzNXVKbUtNMUhNSXdhUVFZdm0yd1p4ZTFtMkFwdWVzNlhXblZkXC8rTFB1QkpEeVpka1AifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.254.159.176]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1725803AbfBAX3M (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 1 Feb 2019 18:29:12 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x11NSdWD025026;
+        Fri, 1 Feb 2019 23:28:39 GMT
+Date:   Sat, 2 Feb 2019 10:28:39 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH] security: mark expected switch fall-throughs
+In-Reply-To: <ece10676-4ee9-bf24-ab8d-7d69a678f234@embeddedor.com>
+Message-ID: <alpine.LRH.2.21.1902021028320.24863@namei.org>
+References: <20190125025639.GA13946@embeddedor> <d30c9427-29bb-4b98-ec71-0663d0f9fa7f@schaufler-ca.com> <7b0a0b5b-38ce-a737-6420-2c96cce12527@embeddedor.com> <f9ca33c7-2f96-ce1f-4fd2-587b991f2e85@embeddedor.com> <1548964731.6107.28.camel@linux.ibm.com>
+ <a1cf3a2a-c8ad-fd33-47fb-9a9d8230c24f@embeddedor.com> <1548966039.6107.29.camel@linux.ibm.com> <ece10676-4ee9-bf24-ab8d-7d69a678f234@embeddedor.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="1665246916-1580712791-1549063719=:24863"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-> 
-> The current approach to read first 6 bytes from the response and then tail of
-> the response, can cause the 2nd memcpy_fromio() to do an unaligned read
-> (e.g. read 32-bit word from address aligned to a 16-bits), depending on how
-> memcpy_fromio() is implemented. If this happens, the read will fail and the
-> memory controller will fill the read with 1's.
-> 
-> This was triggered by 170d13ca3a2f, which should be probably refined to check
-> and react to the address alignment. Before that commit, on x86
-> memcpy_fromio() turned out to be memcpy(). By a luck GCC has done the right
-> thing (from tpm_crb's perspective) for us so far, but we should not rely on that.
-> Thus, it makes sense to fix this also in tpm_crb, not least because the fix can be
-> then backported to stable kernels and make them more robust when compiled
-> in differing environments.
-> 
-> Cc: stable@vger.kernel.org
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: Tomas Winkler <tomas.winkler@intel.com>
-> Cc: Jerry Snitselaar <jsnitsel@redhat.com>
-> Fixes: 30fc8d138e91 ("tpm: TPM 2.0 CRB Interface")
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  drivers/char/tpm/tpm_crb.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c index
-> 36952ef98f90..7f47e43aa9f1 100644
-> --- a/drivers/char/tpm/tpm_crb.c
-> +++ b/drivers/char/tpm/tpm_crb.c
-> @@ -288,18 +288,18 @@ static int crb_recv(struct tpm_chip *chip, u8 *buf,
-> size_t count)
->  	unsigned int expected;
-> 
->  	/* sanity check */
-> -	if (count < 6)
-> +	if (count < 8)
->  		return -EIO;
-Why don't you already enforce reading at least the whole TPM header 10bytes, we are reading the whole buffer at one call anyway.
-Who every is asking for 8 bytes from the protocol level, is doing something wrong.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
->  	if (ioread32(&priv->regs_t->ctrl_sts) & CRB_CTRL_STS_ERROR)
->  		return -EIO;
-> 
-> -	memcpy_fromio(buf, priv->rsp, 6);
-> +	memcpy_fromio(buf, priv->rsp, 8);
-Maybe a short comment will spare someone looking into git history 
->  	expected = be32_to_cpup((__be32 *) &buf[2]);
-> -	if (expected > count || expected < 6)
-> +	if (expected > count || expected < 8)
-Expected should be at least tpm header, right?
->  		return -EIO;
-> 
-> -	memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
-> +	memcpy_fromio(&buf[8], &priv->rsp[8], expected - 8);
-> 
->  	return expected;
->  }
-Otherwise ready the first 8 bytes looks good. 
-Thanks 
-Tomas
+--1665246916-1580712791-1549063719=:24863
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 
+On Thu, 31 Jan 2019, Gustavo A. R. Silva wrote:
 
+> 
+> 
+> On 1/31/19 2:20 PM, Mimi Zohar wrote:
+> 
+> >>>
+> >>> This patch touches multiple LSMs and IMA.  As James has already picked
+> >>> up similar patches, which are in his next-general branch, perhaps he
+> >>> could also pick up an updated version of this one.
+> >>>
+> >>
+> >> Yeah.  I can either integrate your recent fix and respin if you don't mind,
+> >> or remove the fall-through comment and wait for James to take both patches,
+> >> yours and mine.
+> >>
+> >> What do you prefer?
+> > 
+> > Either way is fine.
+> > 
+> 
+> OK.  Well, I think in this case less is more, so I will integrate our changes
+> into a single patch.
+
+WFM
+
+-- 
+James Morris
+<jmorris@namei.org>
+
+--1665246916-1580712791-1549063719=:24863--
