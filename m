@@ -2,104 +2,162 @@ Return-Path: <SRS0=2iBq=QI=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64654C282DA
-	for <linux-integrity@archiver.kernel.org>; Fri,  1 Feb 2019 08:12:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 655D2C282D8
+	for <linux-integrity@archiver.kernel.org>; Fri,  1 Feb 2019 10:14:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CA99204EC
-	for <linux-integrity@archiver.kernel.org>; Fri,  1 Feb 2019 08:12:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 398362086C
+	for <linux-integrity@archiver.kernel.org>; Fri,  1 Feb 2019 10:14:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726239AbfBAIMu (ORCPT
+        id S1727929AbfBAKOk (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 1 Feb 2019 03:12:50 -0500
-Received: from mga01.intel.com ([192.55.52.88]:32439 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726110AbfBAIMt (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 1 Feb 2019 03:12:49 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2019 00:12:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,547,1539673200"; 
-   d="scan'208";a="296428940"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.172])
-  by orsmga005.jf.intel.com with ESMTP; 01 Feb 2019 00:12:46 -0800
-Date:   Fri, 1 Feb 2019 10:12:46 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
+        Fri, 1 Feb 2019 05:14:40 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32849 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726116AbfBAKOj (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 1 Feb 2019 05:14:39 -0500
+Received: from lhreml709-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id D08ADC12E4358926A474;
+        Fri,  1 Feb 2019 10:14:37 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.141)
+ by smtpsuk.huawei.com (10.201.108.32) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Fri, 1 Feb 2019 10:14:27 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>,
+        <david.safford@ge.com>, <monty.wiseman@ge.com>,
+        <matthewgarrett@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: Getting weird TPM error after rebasing my tree to
- security/next-general
-Message-ID: <20190201081246.GA5728@linux.intel.com>
-References: <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
- <20190129132016.GA1602@linux.intel.com>
- <20190131122606.GA12470@linux.intel.com>
- <20190131160437.GA5629@linux.intel.com>
- <20190131170603.GA18349@linux.intel.com>
- <20190131183530.GA27112@linux.intel.com>
- <CAHk-=wj0pRLS9Z+_LKfiTvnnquGQjOySVuqiObC9sDXp8SCP0A@mail.gmail.com>
- <CAHk-=whEb14V981ziWmMdcqR40x5xfhhDCaB2JYcOBQHnHmsgw@mail.gmail.com>
- <CAHk-=whYtqGO7v7c=Ak0xQfonGVbC_1sRHfxS4xNO-Sa6mFevw@mail.gmail.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9DA8DA75@hasmsx108.ger.corp.intel.com>
+        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v9 0/6] tpm: retrieve digest size of unknown algorithms from TPM
+Date:   Fri, 1 Feb 2019 11:06:35 +0100
+Message-ID: <20190201100641.26936-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9DA8DA75@hasmsx108.ger.corp.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.141]
+X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 07:47:19PM +0000, Winkler, Tomas wrote:
-> 
-> > 
-> > On Thu, Jan 31, 2019 at 10:52 AM Linus Torvalds <torvalds@linux-
-> > foundation.org> wrote:
-> > >
-> > > I think what I should do is to just make "memcpy_*io()" do the "align
-> > > naturally" thing.
-> > >
-> > > Let me cook up a patch for you to test.
-> > 
-> > Does this work for you?
-> > 
-> > I haven't tested it at all, but I verified that the generated code seems to make
-> > at least some amount of sense.
-> > 
-> >                Linus
-> 
-> So dig into the spec and I think this is a bit relevant. 
-> 
-> TPM TCG according the spec requires that all buffer access is done
-> sequentially from the start to end of the payload, Simply In case of
-> skipping or going back the transaction is aborted.  The write
-> transactions should be 1 or power of 2. So in general 6 byte read
-> should not work. But I'm sure our hw really obey this restriction.
+Update
 
-We could easily read the first 8 bytes instead of 6, and then check the
-length. The benefit in doing that would be to be able to backport the
-patch to stable kernels.
+This version of the patch set includes three additional patches (5-7/7)
+that allow users of the TPM driver to provide a digest for each PCR bank to
+tpm_pcr_extend(). The new patches have been included to facilitate the
+review of all the changes to support TPM 2.0 crypto agility for reading and
+extending PCRs.
 
-I'm fine with either solution.
 
-Applying Linus' fix might anyway a good idea since given that tpm_crb
-broke down, there is a finite probability that there might be some other
-drivers that break down for similar reasons, but no one has noticed so
-far.
+Original patch set description
 
-Thus, I might even propose doing both...
+The TPM driver currently relies on the crypto subsystem to determine the
+digest size of supported TPM algorithms. In the future, TPM vendors might
+implement new algorithms in their chips, and those algorithms might not
+be supported by the crypto subsystem.
 
-/Jarkko
+Usually, vendors provide patches for the new hardware, and likely
+the crypto subsystem will be updated before the new algorithm is
+introduced. However, old kernels might be updated later, after patches
+are included in the mainline kernel. This would leave the opportunity
+for attackers to misuse PCRs, as PCR banks with an unknown algorithm
+are not extended.
+
+This patch set provides a long term solution for this issue. If a TPM
+algorithm is not known by the crypto subsystem, the TPM driver retrieves
+the digest size from the TPM with a PCR read. All the PCR banks are
+extended, even if the algorithm is not yet supported by the crypto
+subsystem.
+
+PCR bank information (TPM algorithm ID, digest size, crypto subsystem ID)
+is stored in the tpm_chip structure and available for users of the TPM
+driver.
+
+Changelog
+
+v8:
+- set digest array length in tpm_digest to new constant TPM_MAX_DIGEST_SIZE
+- replace enum tpm_const with #define
+- rename labels in init_trusted()
+- allocate tpm_digest array after retrieving random data in init_digests()
+
+v7:
+- use memchr_inv() in tpm2_get_pcr_allocation()
+- add patch to move tpm_chip to include/linux/tpm.h
+- add patch to set the tpm_chip argument in trusted.c to a pointer from
+  tpm_default_chip()
+- remove definition of tpm_extend_digest
+- remove code in tpm2_pcr_extend() to extend unused PCR banks with the
+  first digest passed by the caller of tpm_pcr_extend()
+- remove count parameter from tpm_pcr_extend() and tpm2_pcr_extend()
+- remove padding of SHA1 digest in tpm_pcr_extend()
+- pre-allocate and initialize array of tpm_digest structures in
+  security/keys/trusted.c and security/integrity/ima/ima_init.c 
+
+v6:
+- squash patches 4-6
+- rename tpm_bank_list to tpm_extend_digest, extend_size and extend_data
+  members to size and data
+- add comment in tpm2_init_bank_info()
+
+v5:
+- rename digest_struct variable to digest
+- add _head suffix to tcg_efi_specid_event and tcg_pcr_event2
+- rename digest_size member of tpm_bank_list to extend_size
+- change type of alg_id member of tpm_bank_list from u8 to u16
+- add missing semi-colon in pcrlock()
+
+v4:
+- rename active_banks to allocated_banks
+- replace kmalloc_array() with kcalloc()
+- increment nr_allocated_banks if at least one PCR in the bank is selected
+- pass multiple digests to tpm_pcr_extend()
+
+v3:
+- remove end marker change
+- replace active_banks static array with pointer to dynamic array
+- remove TPM2_ACTIVE_PCR_BANKS
+
+v2:
+- change the end marker of the active_banks array
+- check digest size from output of PCR read command
+- remove count parameter from tpm_pcr_read() and tpm2_pcr_read()
+
+v1:
+- modify definition of tpm_pcr_read()
+- move hash algorithms and definition of tpm2_digest to include/linux/tpm.h
+
+
+Roberto Sassu (6):
+  tpm: dynamically allocate the allocated_banks array
+  tpm: rename and export tpm2_digest and tpm2_algorithms
+  tpm: retrieve digest size of unknown algorithms with PCR read
+  tpm: move tpm_chip definition to include/linux/tpm.h
+  KEYS: trusted: explicitly use tpm_chip structure from
+    tpm_default_chip()
+  tpm: pass an array of tpm_extend_digest structures to tpm_pcr_extend()
+
+ drivers/char/tpm/tpm-chip.c         |   1 +
+ drivers/char/tpm/tpm-interface.c    |  38 ++++----
+ drivers/char/tpm/tpm.h              | 117 ++---------------------
+ drivers/char/tpm/tpm1-cmd.c         |  12 +++
+ drivers/char/tpm/tpm2-cmd.c         | 139 ++++++++++++++++++++--------
+ include/linux/tpm.h                 | 126 ++++++++++++++++++++++++-
+ include/linux/tpm_eventlog.h        |   9 +-
+ security/integrity/ima/ima.h        |   1 +
+ security/integrity/ima/ima_crypto.c |  10 +-
+ security/integrity/ima/ima_init.c   |  22 +++++
+ security/integrity/ima/ima_queue.c  |   6 +-
+ security/keys/trusted.c             |  73 +++++++++++----
+ 12 files changed, 346 insertions(+), 208 deletions(-)
+
+-- 
+2.17.1
+
