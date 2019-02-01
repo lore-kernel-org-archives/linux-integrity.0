@@ -2,108 +2,130 @@ Return-Path: <SRS0=2iBq=QI=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9B27C282D8
-	for <linux-integrity@archiver.kernel.org>; Fri,  1 Feb 2019 18:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE99C282D8
+	for <linux-integrity@archiver.kernel.org>; Fri,  1 Feb 2019 18:42:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C0A121872
-	for <linux-integrity@archiver.kernel.org>; Fri,  1 Feb 2019 18:04:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AHkQBSm4"
+	by mail.kernel.org (Postfix) with ESMTP id 787B9218FD
+	for <linux-integrity@archiver.kernel.org>; Fri,  1 Feb 2019 18:42:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730571AbfBASE4 (ORCPT
+        id S1728862AbfBASmS (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 1 Feb 2019 13:04:56 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:42980 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730526AbfBASE4 (ORCPT
+        Fri, 1 Feb 2019 13:42:18 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:45787 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728334AbfBASmS (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 1 Feb 2019 13:04:56 -0500
-Received: by mail-lf1-f66.google.com with SMTP id l10so5701631lfh.9
-        for <linux-integrity@vger.kernel.org>; Fri, 01 Feb 2019 10:04:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EgeSA8RapEzaEBIQTqVc0HMpXA+lL4rs9Yi3JGdgs88=;
-        b=AHkQBSm4TqXQTK1J3JDbTpXlehljteke8FWJqC3iyhu1++ihRp0bAKrqTGWaXmGBvU
-         +lG1AJiS81P9ugUO1n7CxenFxnK+n0Y8fgPyge1eRM0UzyRjS/vyYUKdIsYulgFzN2gT
-         R3y9HdJ23wKUNcNPaHKMU5lw00sSYOSIiRnwQ=
+        Fri, 1 Feb 2019 13:42:18 -0500
+Received: by mail-qt1-f194.google.com with SMTP id e5so8652757qtr.12
+        for <linux-integrity@vger.kernel.org>; Fri, 01 Feb 2019 10:42:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EgeSA8RapEzaEBIQTqVc0HMpXA+lL4rs9Yi3JGdgs88=;
-        b=AmH8k5lpKCrFHga/mOtOAMHyOwWGEw0uyzAJ4oFWclUP7x8N0q/AJRhuh6b+O+r60W
-         +wdaic60lsnN/Us3u8BQ9pF4/8GDDJQ1Iq41RFsDWViz7kI1ZkTq7Uj64kMwRP6LH8/c
-         xYwU1aP4STK8G+rp0KamNR2vTQtCg6AEIcVy34ahs8LNwQ5GeiqasbyulIDbv8/S3UOH
-         tHS5i/oKYmaEBaXX+HzOX62AMLtd9pQJ0A8Gcy61LWDoouBVZc73o0VoOGN+wOEi1Pqe
-         bsH15ezY10IiMySsp2kHat8OhoVtitmmOL//DwGfRjdskdq472yOMaut3LWHd2lKiUKM
-         0yzw==
-X-Gm-Message-State: AHQUAuYgmgggr+XXfEZBn9HesSoBb13nVvYP8PL+en/ySmb6Rq0Xcq1n
-        JPE+WX3XCvyaOqOXD9n9zcIJQ1pJGgA=
-X-Google-Smtp-Source: AHgI3IY4MGinAcExcHUdDQeBbvQUAgGeJlyfhnW+hBTXtbIekV2ace/ydvAsOfyDfWgk5Mp/j2CrQg==
-X-Received: by 2002:ac2:5087:: with SMTP id f7mr5169231lfm.100.1549044294024;
-        Fri, 01 Feb 2019 10:04:54 -0800 (PST)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id 11-v6sm1371221ljv.1.2019.02.01.10.04.52
-        for <linux-integrity@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 10:04:52 -0800 (PST)
-Received: by mail-lf1-f50.google.com with SMTP id z13so5703465lfe.11
-        for <linux-integrity@vger.kernel.org>; Fri, 01 Feb 2019 10:04:52 -0800 (PST)
-X-Received: by 2002:a19:1a14:: with SMTP id a20mr30859610lfa.1.1549044292236;
- Fri, 01 Feb 2019 10:04:52 -0800 (PST)
-MIME-Version: 1.0
-References: <20190122132910.GA2720@linux.intel.com> <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
- <20190123153638.GA8727@linux.intel.com> <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
- <20190129132016.GA1602@linux.intel.com> <20190131122606.GA12470@linux.intel.com>
- <20190131160437.GA5629@linux.intel.com> <20190131170603.GA18349@linux.intel.com>
- <20190131183530.GA27112@linux.intel.com> <CAHk-=wj0pRLS9Z+_LKfiTvnnquGQjOySVuqiObC9sDXp8SCP0A@mail.gmail.com>
- <20190131204510.GA354@linux.intel.com>
-In-Reply-To: <20190131204510.GA354@linux.intel.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 1 Feb 2019 10:04:35 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whO_TqDzQXSuSbgyZdVj9qeyRSxpjWXBQUWgvKGT2dnug@mail.gmail.com>
-Message-ID: <CAHk-=whO_TqDzQXSuSbgyZdVj9qeyRSxpjWXBQUWgvKGT2dnug@mail.gmail.com>
-Subject: Re: Getting weird TPM error after rebasing my tree to security/next-general
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=fwFQnH9OuB2MvnyRpWht+yCfAp3mugwnL8IAAdrFt5M=;
+        b=nKjUH9Ha5rtcFhAIYniFNVomlGxzTTh6xFWDWwHQ/tglt/V/EFhQDBGU/Sgy3rbFP2
+         qKLOehZfp2txOpkb5UBRMSU3XGLzwcawE8VhwSpoylaMnCoaeogWezFDqG/8f7S1L6hX
+         jBGeyEDAnx8PNfxEBOB6JNfHT37UTo1E6bZkZufskaTwwbsUDylWo3jE2op1/6Sf0YZl
+         l12gEk93hE44YMntVO7bZ252aoKf8brAXDmSpfo3tztYDJyKw5T5t4yOFYhxwPcqSZO9
+         my2pHsQ+mQAlr+ZLcLaKM0/QCUosZmggjRsB4XuPunFypHZk6r5tQQmFFMK3DAOFrmF+
+         JDFQ==
+X-Gm-Message-State: AJcUukemvr6vYto3E0qDoaA4tNI3H6R8RnMxMCXFToA6yF61rxvCIEi8
+        OQvGZoj7TTFIl7JBaV06O45zxw==
+X-Google-Smtp-Source: ALg8bN7HmZNiBvoGLrsOhjOmh62mH0+md5FzB0sceRpiXhf+0M+tFPz8q52CV0Ao8f9kG5OcDoyurA==
+X-Received: by 2002:ac8:fd4:: with SMTP id f20mr41042364qtk.63.1549046536928;
+        Fri, 01 Feb 2019 10:42:16 -0800 (PST)
+Received: from localhost (ip72-223-3-97.ph.ph.cox.net. [72.223.3.97])
+        by smtp.gmail.com with ESMTPSA id o21sm7689506qto.18.2019.02.01.10.42.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 01 Feb 2019 10:42:16 -0800 (PST)
+Date:   Fri, 1 Feb 2019 11:42:14 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Tomas Winkler <tomas.winkler@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, stable@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        James Morris <jmorris@namei.org>,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: Re: [PATCH] tpm/tpm_crb: Avoid unaligned reads in crb_recv():
+Message-ID: <20190201184214.aohoxqu7cyngehqk@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+Mail-Followup-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, stable@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        James Morris <jmorris@namei.org>,
+        Tomas Winkler <tomas.winkler@intel.com>
+References: <20190201111949.14881-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190201111949.14881-1-jarkko.sakkinen@linux.intel.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 12:45 PM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
+On Fri Feb 01 19, Jarkko Sakkinen wrote:
+>The current approach to read first 6 bytes from the response and then tail
+>of the response, can cause the 2nd memcpy_fromio() to do an unaligned read
+>(e.g. read 32-bit word from address aligned to a 16-bits), depending on how
+>memcpy_fromio() is implemented. If this happens, the read will fail and the
+>memory controller will fill the read with 1's.
 >
-> I understand what you mean. Just surprised that this hasn't failed
-> before to anyone (the same driver has been even successfully used
-> on ARM64 with TrustZone based fTPM implementation). It has been in
-> for three years now.
+>This was triggered by 170d13ca3a2f, which should be probably refined to
+>check and react to the address alignment. Before that commit, on x86
+>memcpy_fromio() turned out to be memcpy(). By a luck GCC has done the right
+>thing (from tpm_crb's perspective) for us so far, but we should not rely on
+>that. Thus, it makes sense to fix this also in tpm_crb, not least because
+>the fix can be then backported to stable kernels and make them more robust
+>when compiled in differing environments.
+>
+>Cc: stable@vger.kernel.org
+>Cc: Linus Torvalds <torvalds@linux-foundation.org>
+>Cc: James Morris <jmorris@namei.org>
+>Cc: Tomas Winkler <tomas.winkler@intel.com>
+>Cc: Jerry Snitselaar <jsnitsel@redhat.com>
+>Fixes: 30fc8d138e91 ("tpm: TPM 2.0 CRB Interface")
+>Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>---
+> drivers/char/tpm/tpm_crb.c | 8 ++++----
+> 1 file changed, 4 insertions(+), 4 deletions(-)
+>
+>diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+>index 36952ef98f90..7f47e43aa9f1 100644
+>--- a/drivers/char/tpm/tpm_crb.c
+>+++ b/drivers/char/tpm/tpm_crb.c
+>@@ -288,18 +288,18 @@ static int crb_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+> 	unsigned int expected;
+>
+> 	/* sanity check */
+>-	if (count < 6)
+>+	if (count < 8)
+> 		return -EIO;
+>
+> 	if (ioread32(&priv->regs_t->ctrl_sts) & CRB_CTRL_STS_ERROR)
+> 		return -EIO;
+>
+>-	memcpy_fromio(buf, priv->rsp, 6);
+>+	memcpy_fromio(buf, priv->rsp, 8);
+> 	expected = be32_to_cpup((__be32 *) &buf[2]);
+>-	if (expected > count || expected < 6)
+>+	if (expected > count || expected < 8)
+> 		return -EIO;
+>
+>-	memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
+>+	memcpy_fromio(&buf[8], &priv->rsp[8], expected - 8);
+>
+> 	return expected;
+> }
+>-- 
+>2.17.1
+>
 
-Just to finish this thread off: it turns out that both ARM and ARM64
-worked fine, because neither did a memcpy(), but had explicit IO copy
-routines.
-
-And in those explicit routines, 32-bit ARM did only byte accesses, and
-64-bit ARM did 8-byte accesses for the bulk transfer part, but byte
-accesses for the unaligned head and tail of the IO area.
-
-So I think it's all good. x86 used to work by luck (either because all
-machines that used that TPM chip always had ERMS, or because the
-people who didn't have it never cared), and ARM just worked because it
-would never do unaligned IO accesses anyway (well, I guess you can
-force them with "readl()" on an unaligned address, but then you just
-have yourself to blame).
-
-           Linus
+Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
