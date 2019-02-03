@@ -1,85 +1,121 @@
-Return-Path: <SRS0=2iBq=QI=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=duCA=QK=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A5EDC282D8
-	for <linux-integrity@archiver.kernel.org>; Fri,  1 Feb 2019 23:29:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D99BC169C4
+	for <linux-integrity@archiver.kernel.org>; Sun,  3 Feb 2019 16:01:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C1D921872
-	for <linux-integrity@archiver.kernel.org>; Fri,  1 Feb 2019 23:29:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32A7E20821
+	for <linux-integrity@archiver.kernel.org>; Sun,  3 Feb 2019 16:01:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727207AbfBAX3N (ORCPT
+        id S1728122AbfBCQBQ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 1 Feb 2019 18:29:13 -0500
-Received: from namei.org ([65.99.196.166]:49780 "EHLO namei.org"
+        Sun, 3 Feb 2019 11:01:16 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57464 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725803AbfBAX3M (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 1 Feb 2019 18:29:12 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x11NSdWD025026;
-        Fri, 1 Feb 2019 23:28:39 GMT
-Date:   Sat, 2 Feb 2019 10:28:39 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH] security: mark expected switch fall-throughs
-In-Reply-To: <ece10676-4ee9-bf24-ab8d-7d69a678f234@embeddedor.com>
-Message-ID: <alpine.LRH.2.21.1902021028320.24863@namei.org>
-References: <20190125025639.GA13946@embeddedor> <d30c9427-29bb-4b98-ec71-0663d0f9fa7f@schaufler-ca.com> <7b0a0b5b-38ce-a737-6420-2c96cce12527@embeddedor.com> <f9ca33c7-2f96-ce1f-4fd2-587b991f2e85@embeddedor.com> <1548964731.6107.28.camel@linux.ibm.com>
- <a1cf3a2a-c8ad-fd33-47fb-9a9d8230c24f@embeddedor.com> <1548966039.6107.29.camel@linux.ibm.com> <ece10676-4ee9-bf24-ab8d-7d69a678f234@embeddedor.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1726637AbfBCQBQ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 3 Feb 2019 11:01:16 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 910152D7E0;
+        Sun,  3 Feb 2019 16:01:15 +0000 (UTC)
+Received: from kasong-desktop-nay-redhat-com.nay.redhat.com (unknown [10.66.128.41])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0E583424A;
+        Sun,  3 Feb 2019 16:01:06 +0000 (UTC)
+From:   Kairui Song <kasong@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     dhowells@redhat.com, dwmw2@infradead.org,
+        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
+        bauerman@linux.ibm.com, ebiggers@google.com, nayna@linux.ibm.com,
+        dyoung@redhat.com, linux-integrity@vger.kernel.org,
+        kexec@lists.infradead.org, Kairui Song <kasong@redhat.com>
+Subject: [PATCH] integrity, KEYS: Fix build break with set_platform_trusted_keys
+Date:   Sun,  3 Feb 2019 23:59:27 +0800
+Message-Id: <20190203155927.24390-1-kasong@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="1665246916-1580712791-1549063719=:24863"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Sun, 03 Feb 2019 16:01:15 +0000 (UTC)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Commit 15ebb2eb0705 ("integrity, KEYS: add a reference to platform
+keyring") introduced a function set_platform_trusted_keys
+and calls the function in __integrity_init_keyring.
 
---1665246916-1580712791-1549063719=:24863
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+It only checks if CONFIG_INTEGRITY_PLATFORM_KEYRING is enabled when
+enabling this function, but actually this function also depends on
+CONFIG_SYSTEM_TRUSTED_KEYRING.
 
-On Thu, 31 Jan 2019, Gustavo A. R. Silva wrote:
+So when built with CONFIG_INTEGRITY_PLATFORM_KEYRING &&
+!CONFIG_SYSTEM_TRUSTED_KEYRING. we will get following error:
 
-> 
-> 
-> On 1/31/19 2:20 PM, Mimi Zohar wrote:
-> 
-> >>>
-> >>> This patch touches multiple LSMs and IMA.  As James has already picked
-> >>> up similar patches, which are in his next-general branch, perhaps he
-> >>> could also pick up an updated version of this one.
-> >>>
-> >>
-> >> Yeah.  I can either integrate your recent fix and respin if you don't mind,
-> >> or remove the fall-through comment and wait for James to take both patches,
-> >> yours and mine.
-> >>
-> >> What do you prefer?
-> > 
-> > Either way is fine.
-> > 
-> 
-> OK.  Well, I think in this case less is more, so I will integrate our changes
-> into a single patch.
+digsig.c:92: undefined reference to `set_platform_trusted_keys'
 
-WFM
+And it also mistakenly wrapped the function code in the ifdef block of
+CONFIG_SYSTEM_DATA_VERIFICATION.
 
+This commit fixes the issue by adding the missing check of
+CONFIG_SYSTEM_TRUSTED_KEYRING and move the function code out of
+CONFIG_SYSTEM_DATA_VERIFICATION's ifdef block.
+
+Fixes: 15ebb2eb0705 ("integrity, KEYS: add a reference to platform keyring")
+Signed-off-by: Kairui Song <kasong@redhat.com>
+---
+ certs/system_keyring.c        | 4 ++--
+ include/keys/system_keyring.h | 9 +++------
+ 2 files changed, 5 insertions(+), 8 deletions(-)
+
+diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+index 19bd0504bbcb..c05c29ae4d5d 100644
+--- a/certs/system_keyring.c
++++ b/certs/system_keyring.c
+@@ -279,11 +279,11 @@ int verify_pkcs7_signature(const void *data, size_t len,
+ }
+ EXPORT_SYMBOL_GPL(verify_pkcs7_signature);
+ 
++#endif /* CONFIG_SYSTEM_DATA_VERIFICATION */
++
+ #ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+ void __init set_platform_trusted_keys(struct key *keyring)
+ {
+ 	platform_trusted_keys = keyring;
+ }
+ #endif
+-
+-#endif /* CONFIG_SYSTEM_DATA_VERIFICATION */
+diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.h
+index c7f899ee974e..42a93eda331c 100644
+--- a/include/keys/system_keyring.h
++++ b/include/keys/system_keyring.h
+@@ -61,16 +61,13 @@ static inline struct key *get_ima_blacklist_keyring(void)
+ }
+ #endif /* CONFIG_IMA_BLACKLIST_KEYRING */
+ 
+-#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+-
++#if defined(CONFIG_INTEGRITY_PLATFORM_KEYRING) && \
++	defined(CONFIG_SYSTEM_TRUSTED_KEYRING)
+ extern void __init set_platform_trusted_keys(struct key *keyring);
+-
+ #else
+-
+ static inline void set_platform_trusted_keys(struct key *keyring)
+ {
+ }
+-
+-#endif /* CONFIG_INTEGRITY_PLATFORM_KEYRING */
++#endif
+ 
+ #endif /* _KEYS_SYSTEM_KEYRING_H */
 -- 
-James Morris
-<jmorris@namei.org>
+2.20.1
 
---1665246916-1580712791-1549063719=:24863--
