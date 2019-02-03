@@ -2,120 +2,109 @@ Return-Path: <SRS0=duCA=QK=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D99BC169C4
-	for <linux-integrity@archiver.kernel.org>; Sun,  3 Feb 2019 16:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DF0C169C4
+	for <linux-integrity@archiver.kernel.org>; Sun,  3 Feb 2019 17:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32A7E20821
-	for <linux-integrity@archiver.kernel.org>; Sun,  3 Feb 2019 16:01:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7D7B2083B
+	for <linux-integrity@archiver.kernel.org>; Sun,  3 Feb 2019 17:47:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728122AbfBCQBQ (ORCPT
+        id S1727849AbfBCRrS (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 3 Feb 2019 11:01:16 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57464 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726637AbfBCQBQ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 3 Feb 2019 11:01:16 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 910152D7E0;
-        Sun,  3 Feb 2019 16:01:15 +0000 (UTC)
-Received: from kasong-desktop-nay-redhat-com.nay.redhat.com (unknown [10.66.128.41])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0E583424A;
-        Sun,  3 Feb 2019 16:01:06 +0000 (UTC)
-From:   Kairui Song <kasong@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     dhowells@redhat.com, dwmw2@infradead.org,
-        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
-        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
-        bauerman@linux.ibm.com, ebiggers@google.com, nayna@linux.ibm.com,
-        dyoung@redhat.com, linux-integrity@vger.kernel.org,
-        kexec@lists.infradead.org, Kairui Song <kasong@redhat.com>
-Subject: [PATCH] integrity, KEYS: Fix build break with set_platform_trusted_keys
-Date:   Sun,  3 Feb 2019 23:59:27 +0800
-Message-Id: <20190203155927.24390-1-kasong@redhat.com>
+        Sun, 3 Feb 2019 12:47:18 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:38416 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727344AbfBCRrS (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 3 Feb 2019 12:47:18 -0500
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id A3F9E72CC72;
+        Sun,  3 Feb 2019 20:47:14 +0300 (MSK)
+Received: from beacon.altlinux.org (unknown [185.6.174.98])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 7DF504A4A14;
+        Sun,  3 Feb 2019 20:47:14 +0300 (MSK)
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org
+Subject: [PATCH v2] ima-evm-utils: rework openssl init
+Date:   Sun,  3 Feb 2019 20:47:12 +0300
+Message-Id: <20190203174712.892-1-vt@altlinux.org>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Sun, 03 Feb 2019 16:01:15 +0000 (UTC)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Commit 15ebb2eb0705 ("integrity, KEYS: add a reference to platform
-keyring") introduced a function set_platform_trusted_keys
-and calls the function in __integrity_init_keyring.
+Remove deprecated call to OpenSSL_add_all_algorithms().
+Allow to disable openssl config loading via configure
+`--disable-openssl-conf' option.
+Finish engine initialization properly by calling ENGINE_set_default(),
+as suggested by James Bottomley.
 
-It only checks if CONFIG_INTEGRITY_PLATFORM_KEYRING is enabled when
-enabling this function, but actually this function also depends on
-CONFIG_SYSTEM_TRUSTED_KEYRING.
-
-So when built with CONFIG_INTEGRITY_PLATFORM_KEYRING &&
-!CONFIG_SYSTEM_TRUSTED_KEYRING. we will get following error:
-
-digsig.c:92: undefined reference to `set_platform_trusted_keys'
-
-And it also mistakenly wrapped the function code in the ifdef block of
-CONFIG_SYSTEM_DATA_VERIFICATION.
-
-This commit fixes the issue by adding the missing check of
-CONFIG_SYSTEM_TRUSTED_KEYRING and move the function code out of
-CONFIG_SYSTEM_DATA_VERIFICATION's ifdef block.
-
-Fixes: 15ebb2eb0705 ("integrity, KEYS: add a reference to platform keyring")
-Signed-off-by: Kairui Song <kasong@redhat.com>
+Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
 ---
- certs/system_keyring.c        | 4 ++--
- include/keys/system_keyring.h | 9 +++------
- 2 files changed, 5 insertions(+), 8 deletions(-)
+- v1 is "ima-evm-utils: remove redundant call to OpenSSL_add_all_algorithms"
+- everything is changed as suggested in mailing list, not just
+  redundant OpenSSL_add_all_algorithms() call is removed.
 
-diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-index 19bd0504bbcb..c05c29ae4d5d 100644
---- a/certs/system_keyring.c
-+++ b/certs/system_keyring.c
-@@ -279,11 +279,11 @@ int verify_pkcs7_signature(const void *data, size_t len,
- }
- EXPORT_SYMBOL_GPL(verify_pkcs7_signature);
+ configure.ac    | 6 ++++++
+ src/evmctl.c    | 1 +
+ src/libimaevm.c | 8 ++++++--
+ 3 files changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 60f3684..ff8ac29 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -39,6 +39,12 @@ AC_ARG_WITH(kernel_headers, [AS_HELP_STRING([--with-kernel-headers=PATH],
+ 	    [KERNEL_HEADERS="$withval"],
+ 	    [KERNEL_HEADERS=/lib/modules/$(uname -r)/source])
  
-+#endif /* CONFIG_SYSTEM_DATA_VERIFICATION */
++AC_ARG_ENABLE([openssl_conf],
++	      [AS_HELP_STRING([--disable-openssl-conf], [disable loading of openssl config by libimaevm])],
++	      if test "$enable_openssl_conf" = "no"; then
++		AC_DEFINE(DISABLE_OPENSSL_CONF, 1, [Define to disable loading of openssl config by libimaevm.])
++	      fi)
 +
- #ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
- void __init set_platform_trusted_keys(struct key *keyring)
- {
- 	platform_trusted_keys = keyring;
- }
- #endif
--
--#endif /* CONFIG_SYSTEM_DATA_VERIFICATION */
-diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.h
-index c7f899ee974e..42a93eda331c 100644
---- a/include/keys/system_keyring.h
-+++ b/include/keys/system_keyring.h
-@@ -61,16 +61,13 @@ static inline struct key *get_ima_blacklist_keyring(void)
- }
- #endif /* CONFIG_IMA_BLACKLIST_KEYRING */
+ #debug support - yes for a while
+ PKG_ARG_ENABLE(debug, "yes", DEBUG, [Enable Debug support])
+ if test $pkg_cv_enable_debug = yes; then
+diff --git a/src/evmctl.c b/src/evmctl.c
+index 2e4d551..fa074c4 100644
+--- a/src/evmctl.c
++++ b/src/evmctl.c
+@@ -1904,6 +1904,7 @@ int main(int argc, char *argv[])
+ 				ENGINE_free(eng);
+ 				eng = NULL;
+ 			}
++			ENGINE_set_default(eng, ENGINE_METHOD_ALL);
+ 			break;
+ 		case 140: /* --xattr-user */
+ 			xattr_ima = "user.ima";
+diff --git a/src/libimaevm.c b/src/libimaevm.c
+index 799eeec..db27c6f 100644
+--- a/src/libimaevm.c
++++ b/src/libimaevm.c
+@@ -976,7 +976,11 @@ int sign_hash(const char *hashalgo, const unsigned char *hash, int size, const c
  
--#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
--
-+#if defined(CONFIG_INTEGRITY_PLATFORM_KEYRING) && \
-+	defined(CONFIG_SYSTEM_TRUSTED_KEYRING)
- extern void __init set_platform_trusted_keys(struct key *keyring);
--
- #else
--
- static inline void set_platform_trusted_keys(struct key *keyring)
+ static void libinit()
  {
- }
--
--#endif /* CONFIG_INTEGRITY_PLATFORM_KEYRING */
+-	OpenSSL_add_all_algorithms();
+-	OPENSSL_add_all_algorithms_conf();
++	OPENSSL_init_crypto(OPENSSL_INIT_ADD_ALL_CIPHERS |
++			    OPENSSL_INIT_ADD_ALL_DIGESTS |
++#ifndef DISABLE_OPENSSL_CONF
++			    OPENSSL_INIT_LOAD_CONFIG |
 +#endif
- 
- #endif /* _KEYS_SYSTEM_KEYRING_H */
++			    OPENSSL_INIT_ENGINE_ALL_BUILTIN, NULL);
+ 	ERR_load_crypto_strings();
+ }
 -- 
-2.20.1
+2.11.0
 
