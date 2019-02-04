@@ -2,187 +2,152 @@ Return-Path: <SRS0=H4GS=QL=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59428C282C4
-	for <linux-integrity@archiver.kernel.org>; Mon,  4 Feb 2019 21:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94E13C282CB
+	for <linux-integrity@archiver.kernel.org>; Mon,  4 Feb 2019 22:10:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2514C2082E
-	for <linux-integrity@archiver.kernel.org>; Mon,  4 Feb 2019 21:33:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EAFtNljD"
+	by mail.kernel.org (Postfix) with ESMTP id 690C82082E
+	for <linux-integrity@archiver.kernel.org>; Mon,  4 Feb 2019 22:10:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725981AbfBDVdV (ORCPT
+        id S1726584AbfBDWJz convert rfc822-to-8bit (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 4 Feb 2019 16:33:21 -0500
-Received: from mail-ot1-f74.google.com ([209.85.210.74]:38876 "EHLO
-        mail-ot1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725792AbfBDVdV (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 4 Feb 2019 16:33:21 -0500
-Received: by mail-ot1-f74.google.com with SMTP id q16so1177240otf.5
-        for <linux-integrity@vger.kernel.org>; Mon, 04 Feb 2019 13:33:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=zspt5hAEpk1Wa7UbiRsO/fK0cybj1rAv6Rl9209LpJY=;
-        b=EAFtNljDn3yDkyNkTFLJ5hc2VZftoHcQ+F14iCyHoxDD9xLyZledT282GID0/veP20
-         C3jhgcnZeYFTJu8YtUPH5Gi/JI97uf2n/rE+T8HcJ7xCLm1Fo38tVZgAwenxbTQr8PL+
-         oEskzET877qth/y6bzocv8bLML1s9rUqRRXv2ZUC4sMXtmA7VGs+4CWOrRgqEBCyMpiK
-         N1VxU4o7eivL3PI5IS5BPHWyhMUPVSZm4hh20Je4jtDePuNgCBDQuxMxt9McBfgB9meI
-         ZKaDiQW5VvId4Sh75awMaeEYdyQxWMuR0mb2TLcaJW03a09Jq5v8M56jKkHVgZaCCcvI
-         tNJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=zspt5hAEpk1Wa7UbiRsO/fK0cybj1rAv6Rl9209LpJY=;
-        b=PP7rECDnfklTRhKjRb7yhGHe9Lv7+5AQyOALb/NMyb820cq/uRfwasYqP+rFyxOOmY
-         dJER7lCK771/lzZ2PF5YlGYA71zFgyhvtGiT6Tm8Ajib/wYFzJcUchd6/eRiFgLsPGzV
-         0J8EooJujDL0+YYM5/gOlZhM4bHnXFGIQGHUcHmsI2+TYqh7tePjoNnQzjHJap4jOpwc
-         JS2jkGceG/oX6faxz98BJFOuo7vo9ZnpYBpWVPmu7QFTx2/q8pnMx2zyXtxJk3aziWAe
-         14Ll0Fk3h/diqDvoG3DKrfVbljbAzKDO3dPYkuWmP9SJF7K4OainuCWsNPOnCy4X1Hd9
-         N+cw==
-X-Gm-Message-State: AHQUAuZsTjC3j0AwCaoT8hh4QP50uIVmdkJrfvGxmK1yIbI1/poxrVEW
-        ioAROdGlnnRtjxxM42RpwQIY8Rj4QwRWDF+3fZwTcDkVKQ++JCR9rT/IIvns2X34wLd+lAvsXP5
-        VE0MikKg8QVM8SbOpsMU5BlzjOcjAhmS0lzTSkye83PFj9oqHHGWhjHS4fCMseVhqgLEOt6JD2U
-        9CzDUaABZ0zXY9ZBaXdjA=
-X-Google-Smtp-Source: AHgI3IZlHZ831SVwg4ZjbX12+w9UaHm2OWS7QqfdC4CKPkVvkWOSp7G4ZM/IDxlS9iFBeYUV/WhISnEQ26e/xUZ5rGPvEw==
-X-Received: by 2002:aca:f246:: with SMTP id q67mr963090oih.7.1549316000573;
- Mon, 04 Feb 2019 13:33:20 -0800 (PST)
-Date:   Mon,  4 Feb 2019 13:33:03 -0800
-In-Reply-To: <20190204213303.131064-1-matthewgarrett@google.com>
-Message-Id: <20190204213303.131064-5-matthewgarrett@google.com>
-Mime-Version: 1.0
-References: <20190204213303.131064-1-matthewgarrett@google.com>
-X-Mailer: git-send-email 2.20.1.611.gfbb209baf1-goog
-Subject: [PATCH V2 4/4] efi: Attempt to get the TCG2 event log in the boot stub
-From:   Matthew Garrett <matthewgarrett@google.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
-        roberto.sassu@huawei.com, Matthew Garrett <mjg59@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 4 Feb 2019 17:09:55 -0500
+Received: from mga14.intel.com ([192.55.52.115]:15726 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725874AbfBDWJz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 4 Feb 2019 17:09:55 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 14:09:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
+   d="scan'208";a="121975330"
+Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
+  by fmsmga008.fm.intel.com with ESMTP; 04 Feb 2019 14:09:54 -0800
+Received: from fmsmsx114.amr.corp.intel.com (10.18.116.8) by
+ fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Mon, 4 Feb 2019 14:09:54 -0800
+Received: from hasmsx111.ger.corp.intel.com (10.184.198.39) by
+ FMSMSX114.amr.corp.intel.com (10.18.116.8) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Mon, 4 Feb 2019 14:09:54 -0800
+Received: from hasmsx108.ger.corp.intel.com ([169.254.9.55]) by
+ HASMSX111.ger.corp.intel.com ([169.254.5.16]) with mapi id 14.03.0415.000;
+ Tue, 5 Feb 2019 00:09:51 +0200
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Jerry Snitselaar <jsnitsel@redhat.com>
+Subject: RE: [PATCH v2] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
+Thread-Topic: [PATCH v2] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
+Thread-Index: AQHUvJHo5McHpPxFx06wzUIdLLf3u6XQMmYw
+Date:   Mon, 4 Feb 2019 22:09:51 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA901F7@hasmsx108.ger.corp.intel.com>
+References: <20190204135943.15756-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20190204135943.15756-1-jarkko.sakkinen@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.12.126.72]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Matthew Garrett <mjg59@google.com>
+> 
+> The current approach to read first 6 bytes from the response and then tail of
+> the response, can cause the 2nd memcpy_fromio() to do an unaligned read
+> (e.g. read 32-bit word from address aligned to a 16-bits), depending on how
+> memcpy_fromio() is implemented. If this happens, the read will fail and the
+> memory controller will fill the read with 1's.
+> 
+> This was triggered by 170d13ca3a2f, which should be probably refined to check
+> and react to the address alignment. Before that commit, on x86
+> memcpy_fromio() turned out to be memcpy(). By a luck GCC has done the right
+> thing (from tpm_crb's perspective) for us so far, but we should not rely on that.
+> Thus, it makes sense to fix this also in tpm_crb, not least because the fix can be
+> then backported to stable kernels and make them more robust when compiled
+> in differing environments.
+> 
+> Cc: stable@vger.kernel.org
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Tomas Winkler <tomas.winkler@intel.com>
+> Cc: Jerry Snitselaar <jsnitsel@redhat.com>
+> Fixes: 30fc8d138e91 ("tpm: TPM 2.0 CRB Interface")
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+After fixing the typos you can add my ack. 
+Thanks
+Tomas
 
-Right now we only attempt to obtain the SHA1-only event log. The
-protocol also supports a crypto agile log format, which contains digests
-for all algorithms in use. Attempt to obtain this first, and fall back
-to obtaining the older format if the system doesn't support it. This is
-lightly complicated by the event sizes being variable (as we don't know
-in advance which algorithms are in use), and the interface giving us
-back a pointer to the start of the final entry rather than a pointer to
-the end of the log - as a result, we need to parse the final entry to
-figure out its length in order to know how much data to copy up to the
-OS.
-
-Signed-off-by: Matthew Garrett <mjg59@google.com>
----
- drivers/firmware/efi/libstub/tpm.c | 50 ++++++++++++++++++++----------
- 1 file changed, 33 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
-index a90b0b8fc69a..7d4a045aa2c4 100644
---- a/drivers/firmware/efi/libstub/tpm.c
-+++ b/drivers/firmware/efi/libstub/tpm.c
-@@ -59,7 +59,7 @@ void efi_enable_reset_attack_mitigation(efi_system_table_t *sys_table_arg)
- 
- #endif
- 
--static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
-+void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
- {
- 	efi_guid_t tcg2_guid = EFI_TCG2_PROTOCOL_GUID;
- 	efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
-@@ -69,6 +69,7 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
- 	unsigned long first_entry_addr, last_entry_addr;
- 	size_t log_size, last_entry_size;
- 	efi_bool_t truncated;
-+	int version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
- 	void *tcg2_protocol = NULL;
- 
- 	status = efi_call_early(locate_protocol, &tcg2_guid, NULL,
-@@ -76,14 +77,20 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
- 	if (status != EFI_SUCCESS)
- 		return;
- 
--	status = efi_call_proto(efi_tcg2_protocol, get_event_log, tcg2_protocol,
--				EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2,
--				&log_location, &log_last_entry, &truncated);
--	if (status != EFI_SUCCESS)
--		return;
-+	status = efi_call_proto(efi_tcg2_protocol, get_event_log,
-+				tcg2_protocol, version, &log_location,
-+				&log_last_entry, &truncated);
-+
-+	if (status != EFI_SUCCESS || !log_location) {
-+		version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
-+		status = efi_call_proto(efi_tcg2_protocol, get_event_log,
-+					tcg2_protocol, version, &log_location,
-+					&log_last_entry, &truncated);
-+		if (status != EFI_SUCCESS || !log_location)
-+			return;
-+
-+	}
- 
--	if (!log_location)
--		return;
- 	first_entry_addr = (unsigned long) log_location;
- 
- 	/*
-@@ -98,8 +105,23 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
- 		 * We need to calculate its size to deduce the full size of
- 		 * the logs.
- 		 */
--		last_entry_size = sizeof(struct tcpa_event) +
--			((struct tcpa_event *) last_entry_addr)->event_size;
-+		if (version == EFI_TCG2_EVENT_LOG_FORMAT_TCG_2) {
-+			/*
-+			 * The TCG2 log format has variable length entries,
-+			 * and the information to decode the hash algorithms
-+			 * back into a size is contained in the first entry -
-+			 * pass a pointer to the final entry (to calculate its
-+			 * size) and the first entry (so we know how long each
-+			 * digest is)
-+			 */
-+			last_entry_size =
-+				_calc_tpm2_event_size((void *)last_entry_addr,
-+						      (void *)log_location,
-+						      NULL, NULL);
-+		} else {
-+			last_entry_size = sizeof(struct tcpa_event) +
-+			   ((struct tcpa_event *) last_entry_addr)->event_size;
-+		}
- 		log_size = log_last_entry - log_location + last_entry_size;
- 	}
- 
-@@ -116,7 +138,7 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
- 
- 	memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
- 	log_tbl->size = log_size;
--	log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
-+	log_tbl->version = version;
- 	memcpy(log_tbl->log, (void *) first_entry_addr, log_size);
- 
- 	status = efi_call_early(install_configuration_table,
-@@ -128,9 +150,3 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
- err_free:
- 	efi_call_early(free_pool, log_tbl);
- }
--
--void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
--{
--	/* Only try to retrieve the logs in 1.2 format. */
--	efi_retrieve_tpm2_eventlog_1_2(sys_table_arg);
--}
--- 
-2.20.1.611.gfbb209baf1-goog
+> ---
+> v2:
+> * There was a trailing double colon in the end of the short summary.
+> * Check requested and expected length against TPM_HEADER_SIZE.
+> * Add some explanatory comments to crb_recv().
+>  drivers/char/tpm/tpm_crb.c | 22 ++++++++++++++++------
+>  1 file changed, 16 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c index
+> 36952ef98f90..c084e61299aa 100644
+> --- a/drivers/char/tpm/tpm_crb.c
+> +++ b/drivers/char/tpm/tpm_crb.c
+> @@ -287,19 +287,29 @@ static int crb_recv(struct tpm_chip *chip, u8 *buf,
+> size_t count)
+>  	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+>  	unsigned int expected;
+> 
+> -	/* sanity check */
+> -	if (count < 6)
+> +	/* A sanity check that the upper layer wants to get at least the header
+> +	 * as that is the minimum size for any TPM response.
+> +	 */
+> +	if (count < TPM_HEADER_SIZE)
+>  		return -EIO;
+> 
+> +	/* If this bit is set, according to the spec, the TPM is in unrecovable
+                                                                                                     ^^^ typo ^^^^
+> +	 * condition.
+> +	 */
+>  	if (ioread32(&priv->regs_t->ctrl_sts) & CRB_CTRL_STS_ERROR)
+>  		return -EIO;
+> 
+> -	memcpy_fromio(buf, priv->rsp, 6);
+> -	expected = be32_to_cpup((__be32 *) &buf[2]);
+> -	if (expected > count || expected < 6)
+> +	/* Read 8 bytes (not just 6 bytes, which would cover ^^^ tag and^^^ the response
+> length
+> +	 * field ^^^s^^^) in order to make sure that the reminding memory accesses
+                                                                             ^^^ remaining^^^  
+> will
+> +	 * be aligned.
+> +	 */
+> +	memcpy_fromio(buf, priv->rsp, 8);
+> +
+> +	expected = be32_to_cpup((__be32 *)&buf[2]);
+> +	if (expected > count || expected < TPM_HEADER_SIZE)
+>  		return -EIO;
+> 
+> -	memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
+> +	memcpy_fromio(&buf[8], &priv->rsp[8], expected - 8);
+> 
+>  	return expected;
+>  }
+> --
+> 2.19.1
 
