@@ -2,175 +2,122 @@ Return-Path: <SRS0=H4GS=QL=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB8DEC282C4
-	for <linux-integrity@archiver.kernel.org>; Mon,  4 Feb 2019 09:14:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCBDDC282C4
+	for <linux-integrity@archiver.kernel.org>; Mon,  4 Feb 2019 11:44:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4A362147A
-	for <linux-integrity@archiver.kernel.org>; Mon,  4 Feb 2019 09:14:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A398720811
+	for <linux-integrity@archiver.kernel.org>; Mon,  4 Feb 2019 11:44:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728370AbfBDJOv (ORCPT
+        id S1727274AbfBDLoX (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 4 Feb 2019 04:14:51 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32861 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726987AbfBDJOv (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 4 Feb 2019 04:14:51 -0500
-Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 53BCC73C55901C077B4B;
-        Mon,  4 Feb 2019 09:14:49 +0000 (GMT)
-Received: from [10.204.65.155] (10.204.65.155) by smtpsuk.huawei.com
- (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 4 Feb
- 2019 09:14:43 +0000
-Subject: Re: [PATCH v9 6/6] tpm: pass an array of tpm_extend_digest structures
- to tpm_pcr_extend()
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        <jarkko.sakkinen@linux.intel.com>, <david.safford@ge.com>,
-        <monty.wiseman@ge.com>, <matthewgarrett@google.com>
-CC:     <linux-integrity@vger.kernel.org>,
+        Mon, 4 Feb 2019 06:44:23 -0500
+Received: from mga12.intel.com ([192.55.52.136]:13176 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726603AbfBDLoX (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 4 Feb 2019 06:44:23 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 03:44:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
+   d="scan'208";a="119817594"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.172])
+  by fmsmga007.fm.intel.com with ESMTP; 04 Feb 2019 03:44:20 -0800
+Date:   Mon, 4 Feb 2019 13:44:19 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <silviu.vlasceanu@huawei.com>
-References: <20190201100641.26936-1-roberto.sassu@huawei.com>
- <20190201100641.26936-7-roberto.sassu@huawei.com>
- <1549048506.6993.73.camel@linux.ibm.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <9f8a64d6-d566-1497-1d2b-465440cdfa80@huawei.com>
-Date:   Mon, 4 Feb 2019 10:14:38 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        James Morris <jmorris@namei.org>,
+        Jerry Snitselaar <jsnitsel@redhat.com>
+Subject: Re: [PATCH] tpm/tpm_crb: Avoid unaligned reads in crb_recv():
+Message-ID: <20190204114419.GA26799@linux.intel.com>
+References: <20190201111949.14881-1-jarkko.sakkinen@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DA8E215@hasmsx108.ger.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1549048506.6993.73.camel@linux.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.204.65.155]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9DA8E215@hasmsx108.ger.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 2/1/2019 8:15 PM, Mimi Zohar wrote:
-> Hi Roberto,
+On Fri, Feb 01, 2019 at 07:20:42PM +0000, Winkler, Tomas wrote:
+> > 
+> > The current approach to read first 6 bytes from the response and then tail of
+> > the response, can cause the 2nd memcpy_fromio() to do an unaligned read
+> > (e.g. read 32-bit word from address aligned to a 16-bits), depending on how
+> > memcpy_fromio() is implemented. If this happens, the read will fail and the
+> > memory controller will fill the read with 1's.
+> > 
+> > This was triggered by 170d13ca3a2f, which should be probably refined to check
+> > and react to the address alignment. Before that commit, on x86
+> > memcpy_fromio() turned out to be memcpy(). By a luck GCC has done the right
+> > thing (from tpm_crb's perspective) for us so far, but we should not rely on that.
+> > Thus, it makes sense to fix this also in tpm_crb, not least because the fix can be
+> > then backported to stable kernels and make them more robust when compiled
+> > in differing environments.
+> > 
+> > Cc: stable@vger.kernel.org
+> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> > Cc: James Morris <jmorris@namei.org>
+> > Cc: Tomas Winkler <tomas.winkler@intel.com>
+> > Cc: Jerry Snitselaar <jsnitsel@redhat.com>
+> > Fixes: 30fc8d138e91 ("tpm: TPM 2.0 CRB Interface")
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > ---
+> >  drivers/char/tpm/tpm_crb.c | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c index
+> > 36952ef98f90..7f47e43aa9f1 100644
+> > --- a/drivers/char/tpm/tpm_crb.c
+> > +++ b/drivers/char/tpm/tpm_crb.c
+> > @@ -288,18 +288,18 @@ static int crb_recv(struct tpm_chip *chip, u8 *buf,
+> > size_t count)
+> >  	unsigned int expected;
+> > 
+> >  	/* sanity check */
+> > -	if (count < 6)
+> > +	if (count < 8)
+> >  		return -EIO;
+> Why don't you already enforce reading at least the whole TPM header 10bytes, we are reading the whole buffer at one call anyway.
+> Who every is asking for 8 bytes from the protocol level, is doing something wrong.
 > 
-> Sorry for the delayed review.  A few comments inline below, minor
-> suggestions.
-> 
->> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
->> index cc12f3449a72..e6b2dcb0846a 100644
->> --- a/security/integrity/ima/ima.h
->> +++ b/security/integrity/ima/ima.h
->> @@ -56,6 +56,7 @@ extern int ima_policy_flag;
->>   extern int ima_hash_algo;
->>   extern int ima_appraise;
->>   extern struct tpm_chip *ima_tpm_chip;
->> +extern struct tpm_digest *digests;
->>   
->>   /* IMA event related data */
->>   struct ima_event_data {
->> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
->> index 6bb42a9c5e47..296a965b11ef 100644
->> --- a/security/integrity/ima/ima_init.c
->> +++ b/security/integrity/ima/ima_init.c
->> @@ -27,6 +27,7 @@
->>   /* name for boot aggregate entry */
->>   static const char boot_aggregate_name[] = "boot_aggregate";
->>   struct tpm_chip *ima_tpm_chip;
->> +struct tpm_digest *digests;
-> 
-> "digests" is used in the new ima_init_digests() and in
-> ima_pcr_extend().  It's nice that the initialization routines are
-> grouped together here in ima_init.c, but wouldn't it better to define
-> "digests" in ima_queued.c, where it is currently being used?
->   "digests" could then be defined as static.
+> >  	if (ioread32(&priv->regs_t->ctrl_sts) & CRB_CTRL_STS_ERROR)
+> >  		return -EIO;
+> > 
+> > -	memcpy_fromio(buf, priv->rsp, 6);
+> > +	memcpy_fromio(buf, priv->rsp, 8);
+> Maybe a short comment will spare someone looking into git history 
+> >  	expected = be32_to_cpup((__be32 *) &buf[2]);
+> > -	if (expected > count || expected < 6)
+> > +	if (expected > count || expected < 8)
+> Expected should be at least tpm header, right?
+> >  		return -EIO;
+> > 
+> > -	memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
+> > +	memcpy_fromio(&buf[8], &priv->rsp[8], expected - 8);
+> > 
+> >  	return expected;
+> >  }
+> Otherwise ready the first 8 bytes looks good. 
+> Thanks 
+> Tomas
 
-'digests' and ima_init_digests() can be moved to ima_queue.c, but I have
-to add the definition of ima_init_digests() to ima.h. Should I do it?
+Your proposals look sane, thank you.
 
-
->>   /* Add the boot aggregate to the IMA measurement list and extend
->>    * the PCR register.
->> @@ -104,6 +105,24 @@ void __init ima_load_x509(void)
->>   }
->>   #endif
->>   
->> +int __init ima_init_digests(void)
->> +{
->> +	int i;
->> +
->> +	if (!ima_tpm_chip)
->> +		return 0;
->> +
->> +	digests = kcalloc(ima_tpm_chip->nr_allocated_banks, sizeof(*digests),
->> +			  GFP_NOFS);
->> +	if (!digests)
->> +		return -ENOMEM;
->> +
->> +	for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++)
->> +		digests[i].alg_id = ima_tpm_chip->allocated_banks[i].alg_id;
->> +
->> +	return 0;
->> +}
->> +
->>   int __init ima_init(void)
->>   {
->>   	int rc;
->> @@ -125,6 +144,9 @@ int __init ima_init(void)
->>   
->>   	ima_load_kexec_buffer();
->>   
->> +	rc = ima_init_digests();
-> 
-> Ok. Getting the tpm chip is at the beginning of this function.
->   Deferring allocating "digests" to here, avoids having to free memory
-> on failure.
-> 
-> ima_load_kexec_buffer() restores prior measurements, but doesn't
-> extend the TPM.  For anyone reading the code, a short comment above
-> ima_load_kexec_buffer() would make sense.
-
-Ok. Should I resend the last patch again with the fixes you suggested?
-
-Thanks
-
-Roberto
-
-
-> Mimi
->     
->> +	if (rc != 0)
->> +		return rc;
->>   	rc = ima_add_boot_aggregate();	/* boot aggregate must be first entry */
->>   	if (rc != 0)
->>   		return rc;
->> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
->> index 0e41dc1df1d4..719e88ca58f6 100644
->> --- a/security/integrity/ima/ima_queue.c
->> +++ b/security/integrity/ima/ima_queue.c
->> @@ -140,11 +140,15 @@ unsigned long ima_get_binary_runtime_size(void)
->>   static int ima_pcr_extend(const u8 *hash, int pcr)
->>   {
->>   	int result = 0;
->> +	int i;
->>   
->>   	if (!ima_tpm_chip)
->>   		return result;
->>   
->> -	result = tpm_pcr_extend(ima_tpm_chip, pcr, hash);
->> +	for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++)
->> +		memcpy(digests[i].digest, hash, TPM_DIGEST_SIZE);
->> +
->> +	result = tpm_pcr_extend(ima_tpm_chip, pcr, digests);
->>   	if (result != 0)
->>   		pr_err("Error Communicating to TPM chip, result: %d\n", result);
->>   	return result;
->>
-> 
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+/Jarkko
