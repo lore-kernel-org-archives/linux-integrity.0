@@ -2,198 +2,160 @@ Return-Path: <SRS0=H4GS=QL=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CBB9C282C4
-	for <linux-integrity@archiver.kernel.org>; Mon,  4 Feb 2019 22:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CE2DC282C4
+	for <linux-integrity@archiver.kernel.org>; Mon,  4 Feb 2019 22:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1841A2082E
-	for <linux-integrity@archiver.kernel.org>; Mon,  4 Feb 2019 22:20:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51D412082E
+	for <linux-integrity@archiver.kernel.org>; Mon,  4 Feb 2019 22:20:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727129AbfBDWUQ (ORCPT
+        id S1727327AbfBDWUT (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 4 Feb 2019 17:20:16 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49110 "EHLO
+        Mon, 4 Feb 2019 17:20:19 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43044 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727119AbfBDWUQ (ORCPT
+        by vger.kernel.org with ESMTP id S1727305AbfBDWUS (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 4 Feb 2019 17:20:16 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x14M3dxU105044
-        for <linux-integrity@vger.kernel.org>; Mon, 4 Feb 2019 17:05:18 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qewa5sbvh-1
+        Mon, 4 Feb 2019 17:20:18 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x14MJKsR114674
+        for <linux-integrity@vger.kernel.org>; Mon, 4 Feb 2019 17:20:17 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qeubuee72-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 04 Feb 2019 17:05:18 -0500
+        for <linux-integrity@vger.kernel.org>; Mon, 04 Feb 2019 17:20:17 -0500
 Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 4 Feb 2019 22:05:15 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Mon, 4 Feb 2019 22:20:14 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 4 Feb 2019 22:05:13 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x14M5CZf63504394
+        Mon, 4 Feb 2019 22:20:11 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x14MKAFm5308774
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 4 Feb 2019 22:05:12 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7DFD411C052;
-        Mon,  4 Feb 2019 22:05:12 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5313E11C04A;
-        Mon,  4 Feb 2019 22:05:11 +0000 (GMT)
+        Mon, 4 Feb 2019 22:20:10 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 20D99A405B;
+        Mon,  4 Feb 2019 22:20:10 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B6082A4054;
+        Mon,  4 Feb 2019 22:20:08 +0000 (GMT)
 Received: from dhcp-9-31-103-153.watson.ibm.com (unknown [9.31.103.153])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  4 Feb 2019 22:05:11 +0000 (GMT)
-Subject: Re: [PATCH] x86/ima: require signed kernel modules
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  4 Feb 2019 22:20:08 +0000 (GMT)
+Subject: Re: [PATCH] integrity, KEYS: Fix build break with
+ set_platform_trusted_keys
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Justin Forbes <jforbes@redhat.com>,
-        Matthew Garrett <mjg59@google.com>
-Date:   Mon, 04 Feb 2019 17:05:10 -0500
-In-Reply-To: <20190204203850.GP11489@garbanzo.do-not-panic.com>
-References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
-         <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
-         <20190204203850.GP11489@garbanzo.do-not-panic.com>
+To:     Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     dhowells@redhat.com, dwmw2@infradead.org,
+        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
+        ebiggers@google.com, nayna@linux.ibm.com, dyoung@redhat.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org
+Date:   Mon, 04 Feb 2019 17:20:08 -0500
+In-Reply-To: <20190203155927.24390-1-kasong@redhat.com>
+References: <20190203155927.24390-1-kasong@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 19020422-0020-0000-0000-0000031193D0
+x-cbid: 19020422-0016-0000-0000-000002511E2D
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020422-0021-0000-0000-00002162A20B
-Message-Id: <1549317910.4146.124.camel@linux.ibm.com>
+x-cbparentid: 19020422-0017-0000-0000-000032AB2703
+Message-Id: <1549318808.4146.127.camel@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-04_14:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902040167
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902040168
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, 2019-02-04 at 12:38 -0800, Luis Chamberlain wrote:
-> On Thu, Jan 31, 2019 at 02:18:59PM -0500, Mimi Zohar wrote:
-> > diff --git a/kernel/module.c b/kernel/module.c
-> > index 2ad1b5239910..70a9709d19eb 100644
-> > --- a/kernel/module.c
-> > +++ b/kernel/module.c
-> > @@ -275,16 +275,23 @@ static void module_assert_mutex_or_preempt(void)
-> >  
-> >  static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
-> >  module_param(sig_enforce, bool_enable_only, 0644);
-> > +static bool sig_required;
-> >  
-> >  /*
-> >   * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
-> >   * on that instead of directly to CONFIG_MODULE_SIG_FORCE config.
+On Sun, 2019-02-03 at 23:59 +0800, Kairui Song wrote:
+> Commit 15ebb2eb0705 ("integrity, KEYS: add a reference to platform
+> keyring") introduced a function set_platform_trusted_keys
+> and calls the function in __integrity_init_keyring.
 > 
-> But the docs were't updated.
+> It only checks if CONFIG_INTEGRITY_PLATFORM_KEYRING is enabled when
+> enabling this function, but actually this function also depends on
+> CONFIG_SYSTEM_TRUSTED_KEYRING.
+> 
+> So when built with CONFIG_INTEGRITY_PLATFORM_KEYRING &&
+> !CONFIG_SYSTEM_TRUSTED_KEYRING. we will get following error:
+> 
+> digsig.c:92: undefined reference to `set_platform_trusted_keys'
+> 
+> And it also mistakenly wrapped the function code in the ifdef block of
+> CONFIG_SYSTEM_DATA_VERIFICATION.
+> 
+> This commit fixes the issue by adding the missing check of
+> CONFIG_SYSTEM_TRUSTED_KEYRING and move the function code out of
+> CONFIG_SYSTEM_DATA_VERIFICATION's ifdef block.
+> 
+> Fixes: 15ebb2eb0705 ("integrity, KEYS: add a reference to platform keyring")
+> Signed-off-by: Kairui Song <kasong@redhat.com>
 
-Neither "CONFIG_MODULE_SIG_FORCE" nor "module.sig_enforce" has
-changed.  Which docs are you referring to? 
-
-> 
-> >   */
-> > -bool is_module_sig_enforced(void)
-> > +bool is_module_sig_enforced_or_required(void)
-> >  {
-> > -	return sig_enforce;
-> > +	return sig_enforce || sig_required;
-> >  }
-> > -EXPORT_SYMBOL(is_module_sig_enforced);
-> > +EXPORT_SYMBOL(is_module_sig_enforced_or_required);
-> 
-> Meh, this is getting sloppy, the module signing infrastructure should
-> just be LSM'ified now that we have stacked LSMs. That would
-> compartamentaliz that code and make this much easier to read / understand
-> and mantain.
-> 
-> Can you take a look at doing it that way instead?
-
-This patch is about coordinating the existing methods of verifying
-kernel module signatures.
-
-> 
-> > +
-> > +void set_module_sig_required(void)
-> > +{
-> > +	sig_required = true;
-> > +}
-> > +EXPORT_SYMBOL(set_module_sig_required);
-> 
-> Since this is a *new* symbol, not yet used, and only used by IMA I'd
-> prefer this to be EXPORT_SYMBOL_GPL().
-
-Oops, this function shouldn't be exported.
-
-> 
-> >  /* Block module loading/unloading? */
-> >  int modules_disabled = 0;
-> > @@ -2789,7 +2796,7 @@ static int module_sig_check(struct load_info *info, int flags)
-> >  	}
-> >  
-> >  	/* Not having a signature is only an error if we're strict. */
-> > -	if (err == -ENOKEY && !is_module_sig_enforced())
-> > +	if (err == -ENOKEY && !is_module_sig_enforced_or_required())
-> 
-> This is where I think a proper LSM hook would make sense. I think
-> that these "questions" model for signing don't work well on the LSM
-> hook model, perhaps just:
-> 
-> kernel_module_signed()
-> 
-> Suffices, therefore if not enforced or required its signed. If its
-> enforced or required and really signed, then it signed.
-> 
-> >  		err = 0;
-> >  
-> >  	return err;
-> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> > index 357edd140c09..bbaf87f688be 100644
-> > --- a/security/integrity/ima/ima_main.c
-> > +++ b/security/integrity/ima/ima_main.c
-> > @@ -563,7 +563,7 @@ int ima_load_data(enum kernel_load_data_id id)
-> >  		}
-> >  		break;
-> >  	case LOADING_MODULE:
-> > -		sig_enforce = is_module_sig_enforced();
-> > +		sig_enforce = is_module_sig_enforced_or_required();
-> 
-> Yet another user.
-> 
-> >  		if (ima_enforce && (!sig_enforce
-> >  				    && (ima_appraise & IMA_APPRAISE_MODULES))) {
-> > -- 
-> > 2.7.5
-> 
-> Plus I think LSM'ifying module signing may help cleaning up some of the
-> #ifdery and config options around module signing. I'm suggestin this now 
-> as this has been on my mental TODO list for a while, and just not sure
-> when we'd get to it, if not you, not sure when it'd get done.
-> 
-> Then, do we have proper unit tests for the mixture of options to ensure
-> we can easily ensure we don't regress?
-> 
-
-There are already two methods  - appended signatures and IMA xattrs -
-for validating kernel modules.
-
-Kernel modules shouldn't be treated any differently than any other file.  Based on the IMA policy, the kernel module signature can be verified.  Also based on the IMA policy, the file hash added to the measurement list, and the file hash used to extend the TPM PCR.  Lastly, based on policy the file hash can be added to the audit log.
-
-I don't see a need for an additional LSM just for verifying kernel module signatures.
+Thank you.  As the original patch hasn't yet been upstreamed , I plan
+on squashing them.
 
 Mimi
+
+
+> ---
+>  certs/system_keyring.c        | 4 ++--
+>  include/keys/system_keyring.h | 9 +++------
+>  2 files changed, 5 insertions(+), 8 deletions(-)
+> 
+> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+> index 19bd0504bbcb..c05c29ae4d5d 100644
+> --- a/certs/system_keyring.c
+> +++ b/certs/system_keyring.c
+> @@ -279,11 +279,11 @@ int verify_pkcs7_signature(const void *data, size_t len,
+>  }
+>  EXPORT_SYMBOL_GPL(verify_pkcs7_signature);
+>  
+> +#endif /* CONFIG_SYSTEM_DATA_VERIFICATION */
+> +
+>  #ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+>  void __init set_platform_trusted_keys(struct key *keyring)
+>  {
+>  	platform_trusted_keys = keyring;
+>  }
+>  #endif
+> -
+> -#endif /* CONFIG_SYSTEM_DATA_VERIFICATION */
+> diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.h
+> index c7f899ee974e..42a93eda331c 100644
+> --- a/include/keys/system_keyring.h
+> +++ b/include/keys/system_keyring.h
+> @@ -61,16 +61,13 @@ static inline struct key *get_ima_blacklist_keyring(void)
+>  }
+>  #endif /* CONFIG_IMA_BLACKLIST_KEYRING */
+>  
+> -#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> -
+> +#if defined(CONFIG_INTEGRITY_PLATFORM_KEYRING) && \
+> +	defined(CONFIG_SYSTEM_TRUSTED_KEYRING)
+>  extern void __init set_platform_trusted_keys(struct key *keyring);
+> -
+>  #else
+> -
+>  static inline void set_platform_trusted_keys(struct key *keyring)
+>  {
+>  }
+> -
+> -#endif /* CONFIG_INTEGRITY_PLATFORM_KEYRING */
+> +#endif
+>  
+>  #endif /* _KEYS_SYSTEM_KEYRING_H */
 
