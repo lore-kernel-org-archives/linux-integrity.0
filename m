@@ -2,167 +2,205 @@ Return-Path: <SRS0=H4GS=QL=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6B0DC282C4
-	for <linux-integrity@archiver.kernel.org>; Mon,  4 Feb 2019 20:39:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9072C282C4
+	for <linux-integrity@archiver.kernel.org>; Mon,  4 Feb 2019 21:33:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A28322073D
-	for <linux-integrity@archiver.kernel.org>; Mon,  4 Feb 2019 20:39:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549312742;
-	bh=PUqcfUGNQIRgh0/bhVJ7ahkp/EXeqLcTZ3pmVFh5oiY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=MZlsjPYiRjjKSfW2KtXHRm7Cq+z0tK20KSVDUcBFB/lopvXcAMz11viRZLepNw9fU
-	 OjjV+GfIQPDoGscipNFtrg7Wi9PDDLdluFBlB3hyAd7fZP+YFJjslUADtz6DstQrTM
-	 K7WJwALSGrYr/rloanbhwMz90z7rndhTVX88U3AE=
+	by mail.kernel.org (Postfix) with ESMTP id 7F5BA2082E
+	for <linux-integrity@archiver.kernel.org>; Mon,  4 Feb 2019 21:33:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FtFl+2QO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729021AbfBDUi4 (ORCPT
+        id S1725872AbfBDVdM (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 4 Feb 2019 15:38:56 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:37114 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726676AbfBDUi4 (ORCPT
+        Mon, 4 Feb 2019 16:33:12 -0500
+Received: from mail-it1-f202.google.com ([209.85.166.202]:53027 "EHLO
+        mail-it1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725792AbfBDVdM (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 4 Feb 2019 15:38:56 -0500
-Received: by mail-yb1-f196.google.com with SMTP id 2so151989ybw.4;
-        Mon, 04 Feb 2019 12:38:55 -0800 (PST)
+        Mon, 4 Feb 2019 16:33:12 -0500
+Received: by mail-it1-f202.google.com with SMTP id o205so2212492itc.2
+        for <linux-integrity@vger.kernel.org>; Mon, 04 Feb 2019 13:33:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=/tnYts0JET+2W8zZ9xSXJp/BiKM0JyyiMHvrhuDlP7E=;
+        b=FtFl+2QOD3oJrwhFFbDYRd8jM6d9+9+RrAUp/Ay7shaZEXOcLXMmjK/Np10mEDNLat
+         /zuRKsE5UaBoMpq+KqIbd93IuaXr4LoPxF23NecbwbukJ2VuTy+/shoV4EkM9ORDpZAv
+         Zq4Ov48YWzLDhTw9U/xoYygtduCsBVfyJfLmDoTFtrTXs3YvtNuDgUst4rxPBIdHGbuf
+         IR0FOgswS5kHJHq0pdNp9dfVtt0cuQ0ZgwarTGkhCqWojJvsbzuvRtDaHBetdgXbDvCe
+         992DDSenL768CZSBZQ5L94msEaLIcTv8uqxlrWJdG0CYA3CRNRBenHqqoPvSjO67Cas+
+         hiqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mLRyA2UnjPhczO4SCdO86eyDXL+lUQz5fPvfQ4hWkHg=;
-        b=WOHU3OVQmSFeXYZ2sC1WaVJ6ED1aJ69TDiwVorvXmlOJSP468HxhqC9Ci4WYbsk+A6
-         CAmYQPf2AnjWbz6SLFr0uD7hwKBNTC2p+wE2K/VU5n6/qF1S17ok3SbW6EujbWg7rcjy
-         8l05l5DjIDH4oHwEFfzz1xWanDzSyZG/0eGT9B8pCa0LBMKVRbN+NMCRUXowZMslQVQq
-         CkAie6ZBNwkIUB0XxxyiwFv0sDb9sZ2EykXUffug/BPp0a6CDgBx67KOcd3ND/dtsvvB
-         8oETo7EH2M24Us9Gh1kpJlqoQTTd5xJgD1Ga5h/K+HhGRds5CdAwSp76BqLEDWdyjNHl
-         mRVw==
-X-Gm-Message-State: AHQUAubCY55ZPSyrsUYreXW4LRpEDyVRyQovL/bdmifj0TpQYRIhqh7e
-        3WtebNFVkmEeiLoqGFULRl0=
-X-Google-Smtp-Source: AHgI3IbE+1S723jnR6IdBZRzPdY+LBFgutqQzen4Ri49zwhnqVowDgOe+jjrk6AEhQqeaVtLSyjk+g==
-X-Received: by 2002:a25:ba84:: with SMTP id s4mr1139536ybg.325.1549312734864;
-        Mon, 04 Feb 2019 12:38:54 -0800 (PST)
-Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
-        by smtp.gmail.com with ESMTPSA id f8sm313140ywc.92.2019.02.04.12.38.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 04 Feb 2019 12:38:53 -0800 (PST)
-Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Mon, 04 Feb 2019 12:38:50 -0800
-Date:   Mon, 4 Feb 2019 12:38:50 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Justin Forbes <jforbes@redhat.com>,
-        Matthew Garrett <mjg59@google.com>
-Subject: Re: [PATCH] x86/ima: require signed kernel modules
-Message-ID: <20190204203850.GP11489@garbanzo.do-not-panic.com>
-References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
- <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=/tnYts0JET+2W8zZ9xSXJp/BiKM0JyyiMHvrhuDlP7E=;
+        b=hdvbn9963HBYaKLmNRKTz/F91L4IpwfEOJA6Dp0Cv46CqTqE9a1NdLDEOEnsf+060r
+         d/lWTyjE2tCQruT53nF8+SdSAs9itdbSSCHCXWfnfvBwxiixV7dwVJ24aqndGhcbqQIX
+         GCxS52V1hRhWbDpA8u+MlIWAzjeibqqTDc+SoAYxwAqRpvEad1isewCMXRStQUUeBEjq
+         BK748oL1bhFVfTtLwtv8VfXOf2ezM78Qrh+8s50HccGT637GT1xjvdN1AvWqGVIhjs/X
+         7E/Mkeq9vjA5/eeLaDIWSx1uWw5DYkzqXmwEpymvn4c/lwRDKyqFdcTOkLBvtwS5CrTa
+         /peQ==
+X-Gm-Message-State: AHQUAuZOn1FNZCij2PiY0cFJfPiaUDo1WJAqzDbPYIXI5Mirw80TJsdq
+        F1Eo2coYaJhgePPzp0kmKwFXK1b4Vt6qTx1ZTujzO29ikm0G8FYY2rk55At0FW1OxWG3pymSg46
+        7gWqV0nRAC2iCEHJKDItqEyS4PpaQXl/4Y+GnQLu1c6GP8OqwpkMZLSUMWPGyOQB79SfonY2JhN
+        yfSmBhoRxAVy30S1978gM=
+X-Google-Smtp-Source: AHgI3IYUtt029r/Rp1FFNGkiLE0xql+JhEs8rdVNuTAMfsRJatmgjC+BL9YwePi3w/MiXKzf9fAHtTJK2Iy6UkSRv/fPxg==
+X-Received: by 2002:a24:4e83:: with SMTP id r125mr954896ita.6.1549315990927;
+ Mon, 04 Feb 2019 13:33:10 -0800 (PST)
+Date:   Mon,  4 Feb 2019 13:33:00 -0800
+In-Reply-To: <20190204213303.131064-1-matthewgarrett@google.com>
+Message-Id: <20190204213303.131064-2-matthewgarrett@google.com>
+Mime-Version: 1.0
+References: <20190204213303.131064-1-matthewgarrett@google.com>
+X-Mailer: git-send-email 2.20.1.611.gfbb209baf1-goog
+Subject: [PATCH V2 1/4] tpm: Abstract crypto agile event size calculations
+From:   Matthew Garrett <matthewgarrett@google.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
+        roberto.sassu@huawei.com, Matthew Garrett <mjg59@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 02:18:59PM -0500, Mimi Zohar wrote:
-> diff --git a/kernel/module.c b/kernel/module.c
-> index 2ad1b5239910..70a9709d19eb 100644
-> --- a/kernel/module.c
-> +++ b/kernel/module.c
-> @@ -275,16 +275,23 @@ static void module_assert_mutex_or_preempt(void)
->  
->  static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
->  module_param(sig_enforce, bool_enable_only, 0644);
-> +static bool sig_required;
->  
->  /*
->   * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
->   * on that instead of directly to CONFIG_MODULE_SIG_FORCE config.
+From: Matthew Garrett <mjg59@google.com>
 
-But the docs were't updated.
+We need to calculate the size of crypto agile events in multiple
+locations, including in the EFI boot stub. The easiest way to do this is
+to put it in a header file as an inline and leave a wrapper to ensure we
+don't end up with multiple copies of it embedded in the existing code.
 
->   */
-> -bool is_module_sig_enforced(void)
-> +bool is_module_sig_enforced_or_required(void)
->  {
-> -	return sig_enforce;
-> +	return sig_enforce || sig_required;
->  }
-> -EXPORT_SYMBOL(is_module_sig_enforced);
-> +EXPORT_SYMBOL(is_module_sig_enforced_or_required);
+Signed-off-by: Matthew Garrett <mjg59@google.com>
+---
+ drivers/char/tpm/eventlog/tpm2.c | 47 +-----------------------------
+ include/linux/tpm_eventlog.h     | 50 ++++++++++++++++++++++++++++++++
+ 2 files changed, 51 insertions(+), 46 deletions(-)
 
-Meh, this is getting sloppy, the module signing infrastructure should
-just be LSM'ified now that we have stacked LSMs. That would
-compartamentaliz that code and make this much easier to read / understand
-and mantain.
+diff --git a/drivers/char/tpm/eventlog/tpm2.c b/drivers/char/tpm/eventlog/tpm2.c
+index d8b77133a83a..89a8b1c10939 100644
+--- a/drivers/char/tpm/eventlog/tpm2.c
++++ b/drivers/char/tpm/eventlog/tpm2.c
+@@ -40,52 +40,7 @@
+ static int calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
+ 				struct tcg_pcr_event *event_header)
+ {
+-	struct tcg_efi_specid_event_head *efispecid;
+-	struct tcg_event_field *event_field;
+-	void *marker;
+-	void *marker_start;
+-	u32 halg_size;
+-	size_t size;
+-	u16 halg;
+-	int i;
+-	int j;
+-
+-	marker = event;
+-	marker_start = marker;
+-	marker = marker + sizeof(event->pcr_idx) + sizeof(event->event_type)
+-		+ sizeof(event->count);
+-
+-	efispecid = (struct tcg_efi_specid_event_head *)event_header->event;
+-
+-	/* Check if event is malformed. */
+-	if (event->count > efispecid->num_algs)
+-		return 0;
+-
+-	for (i = 0; i < event->count; i++) {
+-		halg_size = sizeof(event->digests[i].alg_id);
+-		memcpy(&halg, marker, halg_size);
+-		marker = marker + halg_size;
+-		for (j = 0; j < efispecid->num_algs; j++) {
+-			if (halg == efispecid->digest_sizes[j].alg_id) {
+-				marker +=
+-					efispecid->digest_sizes[j].digest_size;
+-				break;
+-			}
+-		}
+-		/* Algorithm without known length. Such event is unparseable. */
+-		if (j == efispecid->num_algs)
+-			return 0;
+-	}
+-
+-	event_field = (struct tcg_event_field *)marker;
+-	marker = marker + sizeof(event_field->event_size)
+-		+ event_field->event_size;
+-	size = marker - marker_start;
+-
+-	if ((event->event_type == 0) && (event_field->event_size == 0))
+-		return 0;
+-
+-	return size;
++	return _calc_tpm2_event_size(event, event_header);
+ }
+ 
+ static void *tpm2_bios_measurements_start(struct seq_file *m, loff_t *pos)
+diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
+index 81519f163211..b1b8350c238f 100644
+--- a/include/linux/tpm_eventlog.h
++++ b/include/linux/tpm_eventlog.h
+@@ -112,4 +112,54 @@ struct tcg_pcr_event2_head {
+ 	struct tpm_digest digests[];
+ } __packed;
+ 
++static inline int _calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
++					struct tcg_pcr_event *event_header)
++{
++	struct tcg_efi_specid_event_head *efispecid;
++	struct tcg_event_field *event_field;
++	void *marker;
++	void *marker_start;
++	u32 halg_size;
++	size_t size;
++	u16 halg;
++	int i;
++	int j;
++
++	marker = event;
++	marker_start = marker;
++	marker = marker + sizeof(event->pcr_idx) + sizeof(event->event_type)
++		+ sizeof(event->count);
++
++	efispecid = (struct tcg_efi_specid_event_head *)event_header->event;
++
++	/* Check if event is malformed. */
++	if (event->count > efispecid->num_algs)
++		return 0;
++
++	for (i = 0; i < event->count; i++) {
++		halg_size = sizeof(event->digests[i].alg_id);
++		memcpy(&halg, marker, halg_size);
++		marker = marker + halg_size;
++		for (j = 0; j < efispecid->num_algs; j++) {
++			if (halg == efispecid->digest_sizes[j].alg_id) {
++				marker +=
++					efispecid->digest_sizes[j].digest_size;
++				break;
++			}
++		}
++		/* Algorithm without known length. Such event is unparseable. */
++		if (j == efispecid->num_algs)
++			return 0;
++	}
++
++	event_field = (struct tcg_event_field *)marker;
++	marker = marker + sizeof(event_field->event_size)
++		+ event_field->event_size;
++	size = marker - marker_start;
++
++	if ((event->event_type == 0) && (event_field->event_size == 0))
++		return 0;
++
++	return size;
++}
+ #endif
+-- 
+2.20.1.611.gfbb209baf1-goog
 
-Can you take a look at doing it that way instead?
-
-> +
-> +void set_module_sig_required(void)
-> +{
-> +	sig_required = true;
-> +}
-> +EXPORT_SYMBOL(set_module_sig_required);
-
-Since this is a *new* symbol, not yet used, and only used by IMA I'd
-prefer this to be EXPORT_SYMBOL_GPL().
-
->  /* Block module loading/unloading? */
->  int modules_disabled = 0;
-> @@ -2789,7 +2796,7 @@ static int module_sig_check(struct load_info *info, int flags)
->  	}
->  
->  	/* Not having a signature is only an error if we're strict. */
-> -	if (err == -ENOKEY && !is_module_sig_enforced())
-> +	if (err == -ENOKEY && !is_module_sig_enforced_or_required())
-
-This is where I think a proper LSM hook would make sense. I think
-that these "questions" model for signing don't work well on the LSM
-hook model, perhaps just:
-
-kernel_module_signed()
-
-Suffices, therefore if not enforced or required its signed. If its
-enforced or required and really signed, then it signed.
-
->  		err = 0;
->  
->  	return err;
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 357edd140c09..bbaf87f688be 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -563,7 +563,7 @@ int ima_load_data(enum kernel_load_data_id id)
->  		}
->  		break;
->  	case LOADING_MODULE:
-> -		sig_enforce = is_module_sig_enforced();
-> +		sig_enforce = is_module_sig_enforced_or_required();
-
-Yet another user.
-
->  		if (ima_enforce && (!sig_enforce
->  				    && (ima_appraise & IMA_APPRAISE_MODULES))) {
-> -- 
-> 2.7.5
-
-Plus I think LSM'ifying module signing may help cleaning up some of the
-#ifdery and config options around module signing. I'm suggestin this now 
-as this has been on my mental TODO list for a while, and just not sure
-when we'd get to it, if not you, not sure when it'd get done.
-
-Then, do we have proper unit tests for the mixture of options to ensure
-we can easily ensure we don't regress?
-
-  Luis
