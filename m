@@ -2,90 +2,57 @@ Return-Path: <SRS0=fuDz=QM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DED8C282CB
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 09:18:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8561BC282CB
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 09:27:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D251A2146F
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 09:18:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="lHmUoXPY"
+	by mail.kernel.org (Postfix) with ESMTP id 5CCEE2080F
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 09:27:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728570AbfBEJSx (ORCPT
+        id S1727501AbfBEJ1h (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 Feb 2019 04:18:53 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:49502 "EHLO mail.skyhub.de"
+        Tue, 5 Feb 2019 04:27:37 -0500
+Received: from mga09.intel.com ([134.134.136.24]:57498 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728068AbfBEJSx (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 Feb 2019 04:18:53 -0500
-Received: from zn.tnic (p200300EC2BCB6B0041C3B5D5EB4D55D2.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:6b00:41c3:b5d5:eb4d:55d2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C4CA01EC02AE;
-        Tue,  5 Feb 2019 10:18:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549358330;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=27z0ZYNcv37KAn9EWdpLBTvefC4+qLAJthht315+v24=;
-        b=lHmUoXPYkWLZS/JSO0PVbQzoLRAdR0EjlaGqBzoguPTBfePCmw46XVjYaic1MT6q92G6I6
-        JRB/OdTUe32hWMX2ytZm5EDzC9y4VLLamRgY2c333m92lAfUlzBCTXfy1SDy+YCiil6x9G
-        6ps4QH+9C5H1UYRDZu1yx+DDOiyUr+M=
-Date:   Tue, 5 Feb 2019 10:18:41 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [PATCH v2 05/20] x86/alternative: initializing temporary mm for
- patching
-Message-ID: <20190205091841.GI21801@zn.tnic>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-6-rick.p.edgecombe@intel.com>
+        id S1725898AbfBEJ1h (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 5 Feb 2019 04:27:37 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 01:27:36 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,562,1539673200"; 
+   d="scan'208";a="131640006"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.172])
+  by orsmga002.jf.intel.com with ESMTP; 05 Feb 2019 01:27:34 -0800
+Date:   Tue, 5 Feb 2019 11:27:32 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+        roberto.sassu@huawei.com
+Subject: Re: your mail
+Message-ID: <20190205092732.GC7427@linux.intel.com>
+References: <20190204213303.131064-1-matthewgarrett@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190129003422.9328-6-rick.p.edgecombe@intel.com>
+In-Reply-To: <20190204213303.131064-1-matthewgarrett@google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Just nitpicks:
+On Mon, Feb 04, 2019 at 01:32:59PM -0800, Matthew Garrett wrote:
+> V2: Rebased on top of Roberto's patches, no other changes. Tested on an
+> Intel NUC using PTT-based TPM2, binary_bios_measurements contains boot
+> events.
 
-Subject: [PATCH v2 05/20] x86/alternative: initializing temporary mm for patching
+Thank you. Looking forward to review this. I'll land Roberto's patches
+and then this would be next in the queue.
 
-s/initailizing/Initialize/
-
-On Mon, Jan 28, 2019 at 04:34:07PM -0800, Rick Edgecombe wrote:
-> From: Nadav Amit <namit@vmware.com>
-> 
-> To prevent improper use of the PTEs that are used for text patching, we
-> want to use a temporary mm struct. We initailize it by copying the init
-
-Please remove the "we" from commit messages and use impartial, passive
-formulations.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+/Jarkko
