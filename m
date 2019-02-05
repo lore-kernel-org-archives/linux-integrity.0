@@ -2,113 +2,127 @@ Return-Path: <SRS0=fuDz=QM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0015C282CB
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 16:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B984C282CB
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 17:55:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95BB22080F
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 16:47:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E33B120811
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 17:55:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="OpAGewTa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729521AbfBEQro (ORCPT
+        id S1727401AbfBERzD (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 Feb 2019 11:47:44 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59804 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725952AbfBEQro (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 Feb 2019 11:47:44 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x15Gj8gN156444
-        for <linux-integrity@vger.kernel.org>; Tue, 5 Feb 2019 11:47:43 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qfd50v4c1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 05 Feb 2019 11:47:42 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 5 Feb 2019 16:47:41 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 5 Feb 2019 16:47:37 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x15GlaXp49873032
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 5 Feb 2019 16:47:36 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 98B174C058;
-        Tue,  5 Feb 2019 16:47:36 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8BBB04C046;
-        Tue,  5 Feb 2019 16:47:35 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.107.43])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  5 Feb 2019 16:47:35 +0000 (GMT)
-Subject: Re: [PATCH] x86/ima: require signed kernel modules
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Seth Forshee <seth.forshee@canonical.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Justin Forbes <jforbes@redhat.com>,
-        Matthew Garrett <mjg59@google.com>
-Date:   Tue, 05 Feb 2019 11:47:24 -0500
-In-Reply-To: <20190205151859.GD16362@ubuntu-xps13>
-References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
-         <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
-         <20190205151859.GD16362@ubuntu-xps13>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19020516-0028-0000-0000-00000344895B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020516-0029-0000-0000-00002402933B
-Message-Id: <1549385244.4146.148.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-05_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902050128
+        Tue, 5 Feb 2019 12:55:03 -0500
+Received: from mail-eopbgr780089.outbound.protection.outlook.com ([40.107.78.89]:55589
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727250AbfBERzD (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 5 Feb 2019 12:55:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DvX0SvjzS9cg6KCABhOsPWSCOuOybvRlHZr0Cemjf4M=;
+ b=OpAGewTadxIiu2tMElin5owl7CWsCVVrijVMnRG6Pthy8Zdi1OfGb8jRXisJK8MdhqZFGho3dHnHLTlJBmPRrn8ZxrZhf3Ol53iQFg0sFuknEJUGQRj+E27JmJYsrepyunMK+Dkti5KARvgxwX65eZuQYgRlzJpxYwnGf5wNiR8=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB6296.namprd05.prod.outlook.com (20.178.51.81) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.15; Tue, 5 Feb 2019 17:54:57 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::99ab:18fb:f393:df31]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::99ab:18fb:f393:df31%3]) with mapi id 15.20.1601.016; Tue, 5 Feb 2019
+ 17:54:57 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Damian Tometzki <linux_dti@icloud.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v2 06/20] x86/alternative: use temporary mm for text
+ poking
+Thread-Topic: [PATCH v2 06/20] x86/alternative: use temporary mm for text
+ poking
+Thread-Index: AQHUt2sRlZaCHhQDiEGNmzE5nFIfqqXRA/aAgAAZ9ACAABHSgIAAWTuA
+Date:   Tue, 5 Feb 2019 17:54:56 +0000
+Message-ID: <6D321F51-6B19-46F6-91AC-74248A542BA0@vmware.com>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-7-rick.p.edgecombe@intel.com>
+ <20190205095853.GJ21801@zn.tnic>
+ <20190205113146.GP17528@hirez.programming.kicks-ass.net>
+ <20190205123533.GN21801@zn.tnic>
+In-Reply-To: <20190205123533.GN21801@zn.tnic>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-originating-ip: [66.170.99.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB6296;20:QxqDJfbj9XKfepbpbqVmkv5766jXl1JorpcDc6xl1KJTVSUXIhn8Yppt06+640zAjKe19ZUYjxzlT4M0m9fIzrT19NXajABrJO1ZdDj+E2tBtRdgF4MdWJDksNZuGxoMluWmebwHQGTI/5LvMPDyWX2bkhPN5tJcnu8luW5HTyM=
+x-ms-office365-filtering-correlation-id: 233f17a2-c471-4c41-7414-08d68b930a6a
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB6296;
+x-ms-traffictypediagnostic: BYAPR05MB6296:
+x-microsoft-antispam-prvs: <BYAPR05MB629637D5EFD114B23FBDE163D06E0@BYAPR05MB6296.namprd05.prod.outlook.com>
+x-forefront-prvs: 0939529DE2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(366004)(346002)(396003)(39860400002)(189003)(199004)(81156014)(105586002)(81166006)(93886005)(8936002)(106356001)(2906002)(83716004)(7736002)(86362001)(305945005)(66066001)(14454004)(76176011)(33656002)(71190400001)(97736004)(7416002)(8676002)(316002)(186003)(4744005)(54906003)(26005)(71200400001)(6436002)(36756003)(102836004)(446003)(478600001)(6916009)(99286004)(82746002)(476003)(256004)(68736007)(4326008)(6512007)(2616005)(11346002)(6506007)(53546011)(229853002)(6116002)(3846002)(6486002)(53936002)(6246003)(486006)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB6296;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Ul9qel0S4EZTHba0GgO2eznZQaY624VlPUugjgCH3NFi1b4exP8NOmkXrIxJZBzWQ/9PO790babvf+zx0YTNmHw23UGyw+mITeq8dcEnV5+WT1i9k92R332oCrqA6Z8JAnwzltUXeqkJcatAvWsRexKqhuZHdeCsagmB0PBY7TzMef7OAIl8fLzvwsHHguiU5yeqHfAa2iELj+whTRRM1Q8CXeQbWt8QFB9a2cHOmgTFxjVn3xkqKtGVfQMrXAMNpVAtDbObNsQZnoK2nHGtGARUrWZoGqMzAKQbFIxf5JIb1ZR7/HV7NgpPJ9EEmbA7y7Zd4I/poK/y8+sK/8alNNmUlobAlWEwuYz4Sx5l8KKbdDUXjG84E1cep7hBpaKFiBrw/Bwevt7zMPU34CU4iPzUYAUAlTWAJLxE753GYJY=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <F6D00271B554CB47B00297C100C54604@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 233f17a2-c471-4c41-7414-08d68b930a6a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Feb 2019 17:54:56.8334
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB6296
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Seth,
+> On Feb 5, 2019, at 4:35 AM, Borislav Petkov <bp@alien8.de> wrote:
+>=20
+> On Tue, Feb 05, 2019 at 12:31:46PM +0100, Peter Zijlstra wrote:
+>> ...
+>>=20
+>> So while in general I agree with BUG_ON() being undesirable, I think
+>> liberal sprinking in text_poke() is fine; you really _REALLY_ want this
+>> to work or fail loudly. Text corruption is just painful.
+>=20
+> Ok. It would be good to have the gist of this sentiment in a comment
+> above it so that it is absolutely clear why we're doing it.
 
-On Tue, 2019-02-05 at 09:18 -0600, Seth Forshee wrote:
-> On Thu, Jan 31, 2019 at 02:18:59PM -0500, Mimi Zohar wrote:
-> > Require signed kernel modules on systems with secure boot mode enabled.
-> > 
-> > To coordinate between appended kernel module signatures and IMA
-> > signatures, only define an IMA MODULE_CHECK policy rule if
-> > CONFIG_MODULE_SIG is not enabled.
-> > 
-> > This patch defines a function named set_module_sig_required() and renames
-> > is_module_sig_enforced() to is_module_sig_enforced_or_required().  The
-> > call to set_module_sig_required() is dependent on CONFIG_IMA_ARCH_POLICY
-> > being enabled.
-> > 
-> > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> 
-> With respect to interactions with the kernel lockdown patches, this
-> looks better than the patches I saw previously. I don't feel like I know
-> enough about what's going on with IMA to ack the patch, but I feel
-> confident that it's at least not going to break signature enforcement
-> for us.
+I added a short comment for v3 above each BUG_ON().
 
-Thank you for testing!  Could this be translated into a "tested-by"
-"(for w/lockdown patches)"?
+> And since text_poke() can't fail, then it doesn't need a retval too.
+> AFAICT, nothing is actually using it.
 
-Mimi
+As Peter said, this is addressed in a separate patch (one patch per logical
+change).
 
