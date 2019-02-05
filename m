@@ -2,95 +2,86 @@ Return-Path: <SRS0=fuDz=QM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72DA5C282CB
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 13:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A6FAC282CB
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 14:35:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A2E12175B
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 13:30:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PoMhzwSc"
+	by mail.kernel.org (Postfix) with ESMTP id 01B45217F9
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 14:35:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726484AbfBENa3 (ORCPT
+        id S1729151AbfBEOfw (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 Feb 2019 08:30:29 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:46096 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbfBENa2 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 Feb 2019 08:30:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=CVKHIuEvj5JGw+bPxiuecR8XPRMXnKXfH5LmqCODJr0=; b=PoMhzwScDlbzVjbkRBMfS4MZr
-        XfllCw3u9d26TcsNbDc093sC1RxuPXDZdQHSK2vTbLzwL0ojT3aZp0xe4o9jyt6A0d5fQOCSYHUih
-        6CF3lbljAfVseZghqn6Pau0P5tXLAO6zQQcAGTTjRx862pUtQgZIEQwub/rYZPsmd6yqPnj0TGBVs
-        ElzmBbTUGISW5G0NVPgVofxdS7/o1cgNo8R1wO/E43lLvGAy0Ljfc0lF85dD8t8x/RDAE29wcXiT0
-        YTsQpytF2iY8zJOfEEnJwEpajF0ODa1Q2SMkWVJhldOFAkFR5r6YXvmenPbdZ7AVxX3z7cOOCcMxP
-        ophLotiNQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gr0nT-00047L-1s; Tue, 05 Feb 2019 13:29:55 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C67B82029F1D6; Tue,  5 Feb 2019 14:29:53 +0100 (CET)
-Date:   Tue, 5 Feb 2019 14:29:53 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, hpa@zytor.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linux_dti@icloud.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v2 06/20] x86/alternative: use temporary mm for text
- poking
-Message-ID: <20190205132953.GF17582@hirez.programming.kicks-ass.net>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-7-rick.p.edgecombe@intel.com>
- <20190205095853.GJ21801@zn.tnic>
- <20190205113146.GP17528@hirez.programming.kicks-ass.net>
+        Tue, 5 Feb 2019 09:35:52 -0500
+Received: from mga17.intel.com ([192.55.52.151]:16654 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728644AbfBEOfw (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 5 Feb 2019 09:35:52 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 06:35:53 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,564,1539673200"; 
+   d="scan'208";a="122160687"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.172])
+  by fmsmga008.fm.intel.com with ESMTP; 05 Feb 2019 06:35:49 -0800
+Date:   Tue, 5 Feb 2019 16:35:41 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Jerry Snitselaar <jsnitsel@redhat.com>
+Subject: Re: [PATCH v3] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
+Message-ID: <20190205143541.GA18330@linux.intel.com>
+References: <20190205105136.3086-1-jarkko.sakkinen@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DA90A8B@hasmsx108.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190205113146.GP17528@hirez.programming.kicks-ass.net>
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9DA90A8B@hasmsx108.ger.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 12:31:46PM +0100, Peter Zijlstra wrote:
-> In general, text_poke() cannot fail:
+On Tue, Feb 05, 2019 at 11:07:16AM +0000, Winkler, Tomas wrote:
+> > The current approach to read first 6 bytes from the response and then tail of
+> > the response, can cause the 2nd memcpy_fromio() to do an unaligned read
+> > (e.g. read 32-bit word from address aligned to a 16-bits), depending on how
+> > memcpy_fromio() is implemented. If this happens, the read will fail and the
+> > memory controller will fill the read with 1's.
+> > 
+> > This was triggered by 170d13ca3a2f, which should be probably refined to check
+> > and react to the address alignment. Before that commit, on x86
+> > memcpy_fromio() turned out to be memcpy(). By a luck GCC has done the right
+> > thing (from tpm_crb's perspective) for us so far, but we should not rely on that.
+> > Thus, it makes sense to fix this also in tpm_crb, not least because the fix can be
+> > then backported to stable kernels and make them more robust when compiled
+> > in differing environments.
+> > 
+> > Cc: stable@vger.kernel.org
+> > Cc: James Morris <jmorris@namei.org>
+> > Cc: Tomas Winkler <tomas.winkler@intel.com>
+> > Cc: Jerry Snitselaar <jsnitsel@redhat.com>
+> > Fixes: 30fc8d138e91 ("tpm: TPM 2.0 CRB Interface")
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> > ---
+> > v3:
+> > * Fix typo i.e. %s/reminding/remaining/g
 > 
->  - suppose changing a single jump label requires poking multiple sites
->    (not uncommon), we fail halfway through and then have to undo the
->    first pokes, but those pokes fail again.
-> 
->  - this then leaves us no way forward and no way back, we've got
->    inconsistent text state -> FAIL.
+> Why you haven't fixed all the typos I've pointed out? I think you missed that.
 
-Note that this exact fail scenario still exists in the CPU hotplug code.
-See kernel/cpu.c:cpuhp_thread_fun():
+I saw only comment about remaining. Was there something else? Can fix.
 
-		/*
-		 * If we fail on a rollback, we're up a creek without no
-		 * paddle, no way forward, no way back. We loose, thanks for
-		 * playing.
-		 */
-		WARN_ON_ONCE(st->rollback);
+/Jarkko
