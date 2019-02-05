@@ -2,57 +2,230 @@ Return-Path: <SRS0=fuDz=QM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8561BC282CB
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 09:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A07AC282CB
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 09:59:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CCEE2080F
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 09:27:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FF1520844
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 09:59:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="sN+VAMR/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbfBEJ1h (ORCPT
+        id S1728757AbfBEJ7F (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 Feb 2019 04:27:37 -0500
-Received: from mga09.intel.com ([134.134.136.24]:57498 "EHLO mga09.intel.com"
+        Tue, 5 Feb 2019 04:59:05 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:55272 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725898AbfBEJ1h (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 Feb 2019 04:27:37 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 01:27:36 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,562,1539673200"; 
-   d="scan'208";a="131640006"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.172])
-  by orsmga002.jf.intel.com with ESMTP; 05 Feb 2019 01:27:34 -0800
-Date:   Tue, 5 Feb 2019 11:27:32 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-        roberto.sassu@huawei.com
-Subject: Re: your mail
-Message-ID: <20190205092732.GC7427@linux.intel.com>
-References: <20190204213303.131064-1-matthewgarrett@google.com>
+        id S1727127AbfBEJ7F (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 5 Feb 2019 04:59:05 -0500
+Received: from zn.tnic (p200300EC2BCB6B0041C3B5D5EB4D55D2.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:6b00:41c3:b5d5:eb4d:55d2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 617901EC02AE;
+        Tue,  5 Feb 2019 10:59:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549360743;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=4WLWE+J0DRMfgxDveUBu3Q4pEbwtQo3nPkdUwTDOryU=;
+        b=sN+VAMR/+p82N2cesfhrBJmbYaaoU6yls9h3YT7v4jao9kNIG/tcUSCbuxKb/0uVV9erWV
+        4hRsw4aqxnrrRj4e8lwlE5VFodJOJK/dg/QuzXN/u4AmU8FxMDHrO8Yi/CrlUmQLYakWNr
+        BlG/qnD7KImItVvOV94cFbrLYko4xMg=
+Date:   Tue, 5 Feb 2019 10:58:53 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Nadav Amit <namit@vmware.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v2 06/20] x86/alternative: use temporary mm for text
+ poking
+Message-ID: <20190205095853.GJ21801@zn.tnic>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-7-rick.p.edgecombe@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190204213303.131064-1-matthewgarrett@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20190129003422.9328-7-rick.p.edgecombe@intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 01:32:59PM -0800, Matthew Garrett wrote:
-> V2: Rebased on top of Roberto's patches, no other changes. Tested on an
-> Intel NUC using PTT-based TPM2, binary_bios_measurements contains boot
-> events.
+On Mon, Jan 28, 2019 at 04:34:08PM -0800, Rick Edgecombe wrote:
+> From: Nadav Amit <namit@vmware.com>
+> 
+> text_poke() can potentially compromise the security as it sets temporary
 
-Thank you. Looking forward to review this. I'll land Roberto's patches
-and then this would be next in the queue.
+s/the //
 
-/Jarkko
+> PTEs in the fixmap. These PTEs might be used to rewrite the kernel code
+> from other cores accidentally or maliciously, if an attacker gains the
+> ability to write onto kernel memory.
+
+Eww, sneaky. That would be a really nasty attack.
+
+> Moreover, since remote TLBs are not flushed after the temporary PTEs are
+> removed, the time-window in which the code is writable is not limited if
+> the fixmap PTEs - maliciously or accidentally - are cached in the TLB.
+> To address these potential security hazards, we use a temporary mm for
+> patching the code.
+> 
+> Finally, text_poke() is also not conservative enough when mapping pages,
+> as it always tries to map 2 pages, even when a single one is sufficient.
+> So try to be more conservative, and do not map more than needed.
+> 
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+>  arch/x86/include/asm/fixmap.h |   2 -
+>  arch/x86/kernel/alternative.c | 106 +++++++++++++++++++++++++++-------
+>  arch/x86/xen/mmu_pv.c         |   2 -
+>  3 files changed, 84 insertions(+), 26 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/fixmap.h b/arch/x86/include/asm/fixmap.h
+> index 50ba74a34a37..9da8cccdf3fb 100644
+> --- a/arch/x86/include/asm/fixmap.h
+> +++ b/arch/x86/include/asm/fixmap.h
+> @@ -103,8 +103,6 @@ enum fixed_addresses {
+>  #ifdef CONFIG_PARAVIRT
+>  	FIX_PARAVIRT_BOOTMAP,
+>  #endif
+> -	FIX_TEXT_POKE1,	/* reserve 2 pages for text_poke() */
+> -	FIX_TEXT_POKE0, /* first page is last, because allocation is backward */
+
+Two fixmap slots less - good riddance. :)
+
+>  #ifdef	CONFIG_X86_INTEL_MID
+>  	FIX_LNW_VRTC,
+>  #endif
+> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+> index ae05fbb50171..76d482a2b716 100644
+> --- a/arch/x86/kernel/alternative.c
+> +++ b/arch/x86/kernel/alternative.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/stop_machine.h>
+>  #include <linux/slab.h>
+>  #include <linux/kdebug.h>
+> +#include <linux/mmu_context.h>
+>  #include <asm/text-patching.h>
+>  #include <asm/alternative.h>
+>  #include <asm/sections.h>
+> @@ -683,41 +684,102 @@ __ro_after_init unsigned long poking_addr;
+>  
+>  static void *__text_poke(void *addr, const void *opcode, size_t len)
+>  {
+> +	bool cross_page_boundary = offset_in_page(addr) + len > PAGE_SIZE;
+> +	temporary_mm_state_t prev;
+> +	struct page *pages[2] = {NULL};
+>  	unsigned long flags;
+> -	char *vaddr;
+> -	struct page *pages[2];
+> -	int i;
+> +	pte_t pte, *ptep;
+> +	spinlock_t *ptl;
+> +	pgprot_t prot;
+>  
+>  	/*
+> -	 * While boot memory allocator is runnig we cannot use struct
+> -	 * pages as they are not yet initialized.
+> +	 * While boot memory allocator is running we cannot use struct pages as
+> +	 * they are not yet initialized.
+>  	 */
+>  	BUG_ON(!after_bootmem);
+>  
+>  	if (!core_kernel_text((unsigned long)addr)) {
+>  		pages[0] = vmalloc_to_page(addr);
+> -		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
+> +		if (cross_page_boundary)
+> +			pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
+>  	} else {
+>  		pages[0] = virt_to_page(addr);
+>  		WARN_ON(!PageReserved(pages[0]));
+> -		pages[1] = virt_to_page(addr + PAGE_SIZE);
+> +		if (cross_page_boundary)
+> +			pages[1] = virt_to_page(addr + PAGE_SIZE);
+>  	}
+> -	BUG_ON(!pages[0]);
+> +	BUG_ON(!pages[0] || (cross_page_boundary && !pages[1]));
+
+checkpatch fires a lot for this patchset and I think we should tone down
+the BUG_ON() use.
+
+WARNING: Avoid crashing the kernel - try using WARN_ON & recovery code rather than BUG() or BUG_ON()
+#116: FILE: arch/x86/kernel/alternative.c:711:
++       BUG_ON(!pages[0] || (cross_page_boundary && !pages[1]));
+
+While the below BUG_ON makes sense, this here could be a WARN_ON or so.
+
+Which begs the next question: AFAICT, nothing looks at text_poke*()'s
+retval. So why are we even bothering returning something?
+
+> +
+>  	local_irq_save(flags);
+> -	set_fixmap(FIX_TEXT_POKE0, page_to_phys(pages[0]));
+> -	if (pages[1])
+> -		set_fixmap(FIX_TEXT_POKE1, page_to_phys(pages[1]));
+> -	vaddr = (char *)fix_to_virt(FIX_TEXT_POKE0);
+> -	memcpy(&vaddr[(unsigned long)addr & ~PAGE_MASK], opcode, len);
+> -	clear_fixmap(FIX_TEXT_POKE0);
+> -	if (pages[1])
+> -		clear_fixmap(FIX_TEXT_POKE1);
+> -	local_flush_tlb();
+> -	sync_core();
+> -	/* Could also do a CLFLUSH here to speed up CPU recovery; but
+> -	   that causes hangs on some VIA CPUs. */
+> -	for (i = 0; i < len; i++)
+> -		BUG_ON(((char *)addr)[i] != ((char *)opcode)[i]);
+> +
+> +	/*
+> +	 * The lock is not really needed, but this allows to avoid open-coding.
+> +	 */
+> +	ptep = get_locked_pte(poking_mm, poking_addr, &ptl);
+> +
+> +	/*
+> +	 * This must not fail; preallocated in poking_init().
+> +	 */
+> +	VM_BUG_ON(!ptep);
+> +
+> +	/*
+> +	 * flush_tlb_mm_range() would be called when the poking_mm is not
+> +	 * loaded. When PCID is in use, the flush would be deferred to the time
+> +	 * the poking_mm is loaded again. Set the PTE as non-global to prevent
+> +	 * it from being used when we are done.
+> +	 */
+> +	prot = __pgprot(pgprot_val(PAGE_KERNEL) & ~_PAGE_GLOBAL);
+
+So
+
+				_KERNPG_TABLE | _PAGE_NX
+
+as this is pagetable page, AFAICT.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
