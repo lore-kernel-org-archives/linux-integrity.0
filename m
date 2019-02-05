@@ -2,124 +2,113 @@ Return-Path: <SRS0=fuDz=QM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6698CC282CB
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 08:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E32C282CB
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 09:03:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 310AE2080F
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 08:53:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77DBB2070C
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 09:03:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="dFRXAToX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M7TCpRGF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725952AbfBEIx1 (ORCPT
+        id S1726887AbfBEJDv (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 Feb 2019 03:53:27 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:45512 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725898AbfBEIx1 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 Feb 2019 03:53:27 -0500
-Received: from zn.tnic (p200300EC2BCB6B008896F3D5E1C66173.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:6b00:8896:f3d5:e1c6:6173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 955EB1EC02AE;
-        Tue,  5 Feb 2019 09:53:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549356805;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=9NPvfNG+JFpDM7sjiNkdW+XpScH5VeiM2qlV0JoY6ZA=;
-        b=dFRXAToX5/08SPN0allQ11aILUZsmqf1gG1hG+VKNk9k/KbmUKs/QtkUV1Dckk8k5WEBri
-        SbcwLdA6zuqezXnk0dN5d6IYdQlJsKW0k1gguU0W6REBUNatrwKiZt6E8IsZhciVrJH0CU
-        WTpRddr5zmzLbrlGnkZkBIBx+ZjWfJ4=
-Date:   Tue, 5 Feb 2019 09:53:11 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        Tue, 5 Feb 2019 04:03:51 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:39720 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725898AbfBEJDv (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 5 Feb 2019 04:03:51 -0500
+Received: by mail-yw1-f67.google.com with SMTP id k188so1396568ywa.6;
+        Tue, 05 Feb 2019 01:03:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=iiLzaNANibauf4WDgP9oQJ7qsEJ7GeQ8Co2yEFUHTIY=;
+        b=M7TCpRGFwBPB1IAhENhKs1QF/a46qPSjmqeRs3zKzekzh4em/YGC8RsQGRf/UyJKhY
+         M94T3ExmxV8td1HycDiMeIYWJATjymIjspEGi36ns4QHwEVT1ByPbgTpZHEozl/kDshd
+         z9/0F32EdKPdrmk21msVPKSr51OP7upVQ/He+j0aepxVNFGGPBFOQa18TFhD7pi9x+2w
+         sb4i6d2T27RRBgBih0cxgcGruO4O2fegbHI1XGGWJt2nY79W/26GUrrE5In0FtHtLbP5
+         poZZ5brFGjXxsTiqb+hwwNvtkfwQ/1E/9dGP3+pnftHhkB1+i/joqbXE1xn6/zVPODEG
+         Mm9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=iiLzaNANibauf4WDgP9oQJ7qsEJ7GeQ8Co2yEFUHTIY=;
+        b=YxC4j0zApwIu16fhTwXJ/4a4oW5YPj8rCHMnm+cmZVJdXM8m1zfD9VZ9lkeJX5nSoL
+         Y7plRaee33KewMzrmPX4BcFGQLmUFGoV+LSfzlbwXDtSNWenTcfrA9F5u4XHLKbG1LcQ
+         86q+fz/PibExbP5cG6t8ytnq5Qnhd7LOo0esUq80lTsy53+2p9phWbII7YuTcwsvCbba
+         uHZ6MEmM8kN73NYKzr6Gl+a4W48HY2GHvVvgul4CgF6pXSDIdXlVBoXuTgVt1lB8TD2v
+         4lspOlcu+w98H3qpidPhV5OiXyyHuDXCxC1eSVMnWV58pOJ0dOpzoanvXbEIk07+vfUX
+         U8og==
+X-Gm-Message-State: AHQUAuZM4dFVV19+9MngCmr8lR+cBMHevv/fLRHmRszkAL2e3GUPr3qC
+        dzAkQZCZXyd2mb7xc2N79rI=
+X-Google-Smtp-Source: AHgI3IYEVOw5QrKXj8H8lemNUvI0jmUElJMn+NPfl6e6MupMXqPWylkV9RxkZ0L0f9/SikFyHUah9w==
+X-Received: by 2002:a81:2514:: with SMTP id l20mr3002708ywl.3.1549357429310;
+        Tue, 05 Feb 2019 01:03:49 -0800 (PST)
+Received: from [10.33.115.182] ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id e9sm1047040ywb.45.2019.02.05.01.03.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Feb 2019 01:03:48 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v2 04/20] fork: provide a function for copying init_mm
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <20190205085311.GH21801@zn.tnic>
+Date:   Tue, 5 Feb 2019 01:03:45 -0800
+Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Nadav Amit <namit@vmware.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Damian Tometzki <linux_dti@icloud.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
         Kees Cook <keescook@chromium.org>,
         Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [PATCH v2 04/20] fork: provide a function for copying init_mm
-Message-ID: <20190205085311.GH21801@zn.tnic>
+Content-Transfer-Encoding: 7bit
+Message-Id: <BF9D1501-5EFF-46FB-8DAB-8C7A2088DB42@gmail.com>
 References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
  <20190129003422.9328-5-rick.p.edgecombe@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190129003422.9328-5-rick.p.edgecombe@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+ <20190205085311.GH21801@zn.tnic>
+To:     Borislav Petkov <bp@alien8.de>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 04:34:06PM -0800, Rick Edgecombe wrote:
-> From: Nadav Amit <namit@vmware.com>
+> On Feb 5, 2019, at 12:53 AM, Borislav Petkov <bp@alien8.de> wrote:
 > 
-> Provide a function for copying init_mm. This function will be later used
-> for setting a temporary mm.
+> On Mon, Jan 28, 2019 at 04:34:06PM -0800, Rick Edgecombe wrote:
+>> From: Nadav Amit <namit@vmware.com>
+>> 
+>> - * Allocate a new mm structure and copy contents from the
+>> - * mm structure of the passed in task structure.
+>> +/**
+>> + * dup_mm() - duplicates an existing mm structure
+>> + * @tsk: the task_struct with which the new mm will be associated.
+>> + * @oldmm: the mm to duplicate.
+>> + *
+>> + * Allocates a new mm structure and copy contents from the provided
 > 
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Signed-off-by: Nadav Amit <namit@vmware.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> ---
->  include/linux/sched/task.h |  1 +
->  kernel/fork.c              | 24 ++++++++++++++++++------
->  2 files changed, 19 insertions(+), 6 deletions(-)
-> 
-> diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
-> index 44c6f15800ff..c5a00a7b3beb 100644
-> --- a/include/linux/sched/task.h
-> +++ b/include/linux/sched/task.h
-> @@ -76,6 +76,7 @@ extern void exit_itimers(struct signal_struct *);
->  extern long _do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *, unsigned long);
->  extern long do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *);
->  struct task_struct *fork_idle(int);
-> +struct mm_struct *copy_init_mm(void);
->  extern pid_t kernel_thread(int (*fn)(void *), void *arg, unsigned long flags);
->  extern long kernel_wait4(pid_t, int __user *, int, struct rusage *);
->  
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index b69248e6f0e0..d7b156c49f29 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1299,13 +1299,20 @@ void mm_release(struct task_struct *tsk, struct mm_struct *mm)
->  		complete_vfork_done(tsk);
->  }
->  
-> -/*
-> - * Allocate a new mm structure and copy contents from the
-> - * mm structure of the passed in task structure.
-> +/**
-> + * dup_mm() - duplicates an existing mm structure
-> + * @tsk: the task_struct with which the new mm will be associated.
-> + * @oldmm: the mm to duplicate.
-> + *
-> + * Allocates a new mm structure and copy contents from the provided
+> s/copy/copies/
 
-s/copy/copies/
+Thanks, applied (I revised this sentence a bit).
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
