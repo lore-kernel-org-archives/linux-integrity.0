@@ -2,177 +2,113 @@ Return-Path: <SRS0=fuDz=QM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 395A7C3E8A4
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 16:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C0BC282CB
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 16:11:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 095142175B
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 16:01:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mhL5MUT6"
+	by mail.kernel.org (Postfix) with ESMTP id AACF42080F
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 16:11:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729118AbfBEQBa (ORCPT
+        id S1730353AbfBEQLI (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 Feb 2019 11:01:30 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:34891 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728249AbfBEQBa (ORCPT
+        Tue, 5 Feb 2019 11:11:08 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45930 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730351AbfBEQK7 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 Feb 2019 11:01:30 -0500
-Received: by mail-lf1-f65.google.com with SMTP id l142so3076130lfe.2
-        for <linux-integrity@vger.kernel.org>; Tue, 05 Feb 2019 08:01:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hO6+63tQm3aHSgnBHEGAUVT+FpxAShSxA8UJEbukKCw=;
-        b=mhL5MUT6wwBH0Ip7sWIE/VgCwNKpRQGC2z+DjfH6jqPpyub+AqD+daB9BXOZgNnuO1
-         QoHTVC8eDiE3+5KhdmRsLaE6bggD31AFtxyDKbNdg5h6GoaA2430KX84FsapqccqAzj7
-         qbNcyqzbdWIMNlRsg0WN9OkK4rO7LNAiFgcijRDjckOMQoZ3Qh+PafXUPa9ii79v1ahi
-         GAH03hDQYi9sAUEjWCvnZTwl6sMO0Y/pRaa57RNsBR7zC6KvFhW9HNPhCGYbTg4Rv7wK
-         dpa3M7NMetreJYGl83vOMjfJZDbyEyituNY0cXsyflq16diOa05pljpPqUg0HbkQKRWk
-         qOqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hO6+63tQm3aHSgnBHEGAUVT+FpxAShSxA8UJEbukKCw=;
-        b=Zix3E2bK5Zg1zO8awAXCz1htKMsxWiI7nor/mpnnA7E0IWo7EBkD7oKOiskItUXFEK
-         h2JpGPJPu4moxauXPdogGN1bbk5m/nosD+sykvDk3zqKytzsRl3Ydxs9NiuezX+yXUHO
-         /3GEnAofBxqHj7VFAEs6sKTb+v/r6aB0MLdKNJsLZPWeSlOC1RCKi5s2bFuvOKio2CNW
-         s4bv4DS9yUqiCMQHdeQLJws74t8Upo8g72gLi42tiOMoM9y5547n7/632zPx1HMyrSee
-         jOTx0/V/33gwbRC0g7bSB7J7MnNWbZ1Rw73gqiSyII47ws1rMXbTNxZGYPDFae6gCTZE
-         5I+w==
-X-Gm-Message-State: AHQUAuaSmaFLtI1gULjIYePMkE4SadencoTtbixzX8gwp6LuzUddvPjy
-        RyLfncqJ/kXW6cd4W1JDXfurXt9MsnKrMYOeo1U=
-X-Google-Smtp-Source: AHgI3IYzYVBZsGywq4JRrzNnHZmP5SMBd1vKwRkYkYiwOvOP8ZPF05xUjJs9Nr9+xZ04wKySmXjn2eWsls3hHkmQ5cg=
-X-Received: by 2002:ac2:53b1:: with SMTP id j17mr3405354lfh.167.1549382487869;
- Tue, 05 Feb 2019 08:01:27 -0800 (PST)
+        Tue, 5 Feb 2019 11:10:59 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x15G9avu145855
+        for <linux-integrity@vger.kernel.org>; Tue, 5 Feb 2019 11:10:57 -0500
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qfbxy6by5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 05 Feb 2019 11:10:57 -0500
+Received: from localhost
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
+        Tue, 5 Feb 2019 16:10:56 -0000
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 5 Feb 2019 16:10:53 -0000
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x15GAqXN16515146
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 5 Feb 2019 16:10:52 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 955D8C605D;
+        Tue,  5 Feb 2019 16:10:52 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 159FEC605A;
+        Tue,  5 Feb 2019 16:10:51 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.85.201.117])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue,  5 Feb 2019 16:10:50 +0000 (GMT)
+Subject: Re: [PATCH] x86/ima: require signed kernel modules
+To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Justin Forbes <jforbes@redhat.com>,
+        Matthew Garrett <mjg59@google.com>
+References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
+ <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+Date:   Tue, 5 Feb 2019 11:10:49 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20190128171154.24073-1-vt@altlinux.org> <20190130031208.2e7fxzvekenmwzil@altlinux.org>
- <CACE9dm9zN4GF35oC0P0sd3CcmhLr2ZJPxmh9fxNA-ahbYRg=wQ@mail.gmail.com>
-In-Reply-To: <CACE9dm9zN4GF35oC0P0sd3CcmhLr2ZJPxmh9fxNA-ahbYRg=wQ@mail.gmail.com>
-From:   Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Date:   Tue, 5 Feb 2019 18:05:09 +0200
-Message-ID: <CACE9dm9Suhu_mP4=wJidsMiXzq9-UYdmiR9kpjF5LrxzLPN-LQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] ima-evm-utils: convert sign v2 from RSA to EVP_PKEY API
-To:     Vitaly Chikunov <vt@altlinux.org>
-Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 19020516-8235-0000-0000-00000E56DD05
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010542; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000279; SDB=6.01156712; UDB=6.00603406; IPR=6.00937236;
+ MB=3.00025446; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-05 16:10:56
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020516-8236-0000-0000-0000445A135F
+Message-Id: <422fd184-8766-4718-d302-db68ed7b90ec@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-05_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=954 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902050124
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Feb 5, 2019 at 5:38 PM Dmitry Kasatkin
-<dmitry.kasatkin@gmail.com> wrote:
+
+
+On 01/31/2019 02:18 PM, Mimi Zohar wrote:
+> Require signed kernel modules on systems with secure boot mode enabled.
 >
-> On Wed, Jan 30, 2019 at 5:12 AM Vitaly Chikunov <vt@altlinux.org> wrote:
-> >
-> > On Mon, Jan 28, 2019 at 08:11:53PM +0300, Vitaly Chikunov wrote:
-> > > Convert sign_v2 and related to using EVP_PKEY API instead of RSA API.
-> > > This enables more signatures to work out of the box.
-> > >
-> > > Only in single instance GOST NIDs are checked to produce correct keyid.
-> > > Other than that code is quite generic.
-> >
-> > There is was to generalize it a bit more.
-> >
-> > > Remove RSA_ASN1_templates[] as it does not needed anymore. OpenSSL sign
-> > > is doing proper PKCS1 padding automatically (tested to be compatible
-> > > with previous version, except for MD4). This also fixes bug with MD4
-> > > which produced wrong signature because of absence of the appropriate
-> > > RSA_ASN1_template.
-> > >
-> > > Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
-> > > ---
-> > >  src/evmctl.c    |  25 +++---
-> > >  src/imaevm.h    |   4 +-
-> > >  src/libimaevm.c | 271 +++++++++++++++++++++++++++-----------------------------
-> > >  3 files changed, 146 insertions(+), 154 deletions(-)
-> > >
-> > > diff --git a/src/libimaevm.c b/src/libimaevm.c
-> > > index d9ffa13..bd99c60 100644
-> > > --- a/src/libimaevm.c
-> > > +++ b/src/libimaevm.c
-> > > @@ -776,16 +724,32 @@ void calc_keyid_v1(uint8_t *keyid, char *str, const unsigned char *pkey, int len
-> > >               log_info("keyid-v1: %s\n", str);
-> > >  }
-> > >
-> > > -void calc_keyid_v2(uint32_t *keyid, char *str, RSA *key)
-> > > +void calc_keyid_v2(uint32_t *keyid, char *str, EVP_PKEY *key)
-> > >  {
-> > > +     X509_PUBKEY *pk = NULL;
-> > >       uint8_t sha1[SHA_DIGEST_LENGTH];
-> > > -     unsigned char *pkey = NULL;
-> > > +     const unsigned char *pkey = NULL;
-> > > +     unsigned char *pp = NULL;
-> > >       int len;
-> > >
-> > > -     len = i2d_RSAPublicKey(key, &pkey);
-> > > -
-> > > -     SHA1(pkey, len, sha1);
-> > > +     switch (EVP_PKEY_id(key)) {
-> > > +     case NID_id_GostR3410_2012_256:
-> > > +     case NID_id_GostR3410_2012_512:
-> > > +             X509_PUBKEY_set(&pk, key);
-> > > +             X509_PUBKEY_get0_param(NULL, &pkey, &len, NULL, pk);
-> > > +             break;
-> > > +     default:
-> > > +             len = i2d_PublicKey(key, &pp);
-> >
-> > Because two calls to X509_PUBKEY_set and X509_PUBKEY_get0_param can
-> > handle more keys (including RSA), call to i2d_PublicKey could be
-> > avoided, so switch with Gost NIDs could be removed too. Tested.
-> >
-> > > +             pkey = pp;
-> > > +     }
-> > >
-> > > +     if (len <= 0) {
-> > > +             ERR_print_errors_fp(stderr);
-> > > +             /* Produce invalid key in case of error. */
-> > > +             len = SHA_DIGEST_LENGTH;
-> > > +             memset(sha1, 0, len);
-> > > +     } else
-> > > +             SHA1(pkey, len, sha1);
-> > >       /* sha1[12 - 19] is exactly keyid from gpg file */
-> > >       memcpy(keyid, sha1 + 16, 4);
-> > >       log_debug("keyid: ");
+> To coordinate between appended kernel module signatures and IMA
+> signatures, only define an IMA MODULE_CHECK policy rule if
+> CONFIG_MODULE_SIG is not enabled.
 >
+> This patch defines a function named set_module_sig_required() and renames
+> is_module_sig_enforced() to is_module_sig_enforced_or_required().  The
+> call to set_module_sig_required() is dependent on CONFIG_IMA_ARCH_POLICY
+> being enabled.
 >
-> I have tested EVM and IMA signature verification with new patch and it
-> seems to be OK.
->
-> But when I try to sign with new patch, then signing fails...
->
-> $ sudo ./src/evmctl -k keys/privkey_ima.pem ima_sign car
-> 139794956297792:error:0608C09B:digital envelope
-> routines:EVP_PKEY_sign:buffer too small:../crypto/evp/pmeth_fn.c:65:
-> evmctl: evmctl.c:601: sign_ima: Assertion `len < sizeof(sig)' failed.
-> Aborted
->
-> sign_hash() returns -1
->
-> any ideas why?
->
-> Dmitry
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
 >
 
-I actually found out...
+Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
 
-int EVP_PKEY_sign(EVP_PKEY_CTX *ctx,
-                   unsigned char *sig, size_t *siglen,
-                   const unsigned char *tbs, size_t tbslen);
+Thanks & Regards,
+      - Nayna
 
-siglen must contain maxim size of the buffer.
-In the patch, the value is uninitialized...
-
-So please fix it.
-
-Thanks,
-Dmitry
