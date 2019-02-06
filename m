@@ -1,100 +1,168 @@
-Return-Path: <SRS0=fuDz=QM=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=dZkj=QN=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6DDDC282CB
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 23:13:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D40C169C4
+	for <linux-integrity@archiver.kernel.org>; Wed,  6 Feb 2019 11:00:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABB662184E
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Feb 2019 23:13:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C7B52184E
+	for <linux-integrity@archiver.kernel.org>; Wed,  6 Feb 2019 11:00:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726598AbfBEXNp (ORCPT
+        id S1727725AbfBFLAM (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 Feb 2019 18:13:45 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57814 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726226AbfBEXNp (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 Feb 2019 18:13:45 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x15N8xTU081995
-        for <linux-integrity@vger.kernel.org>; Tue, 5 Feb 2019 18:13:44 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qfhj9xsft-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 05 Feb 2019 18:13:44 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 5 Feb 2019 23:13:42 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 5 Feb 2019 23:13:39 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x15NDcFx2359776
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 5 Feb 2019 23:13:38 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F3E664C070;
-        Tue,  5 Feb 2019 23:13:37 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CB9D34C064;
-        Tue,  5 Feb 2019 23:13:36 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.107.43])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  5 Feb 2019 23:13:36 +0000 (GMT)
-Subject: Re: [PATCH] x86/ima: require signed kernel modules
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Justin Forbes <jforbes@redhat.com>,
-        Matthew Garrett <mjg59@google.com>
-Date:   Tue, 05 Feb 2019 18:13:26 -0500
-In-Reply-To: <20190205211337.GX11489@garbanzo.do-not-panic.com>
-References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
-         <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
-         <20190204203850.GP11489@garbanzo.do-not-panic.com>
-         <1549317910.4146.124.camel@linux.ibm.com>
-         <20190204223026.GR11489@garbanzo.do-not-panic.com>
-         <1549369479.4146.142.camel@linux.ibm.com>
-         <20190205211337.GX11489@garbanzo.do-not-panic.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19020523-0028-0000-0000-00000344C60B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020523-0029-0000-0000-00002402D098
-Message-Id: <1549408406.4146.195.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-05_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=777 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902050169
+        Wed, 6 Feb 2019 06:00:12 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32867 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726159AbfBFLAM (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 6 Feb 2019 06:00:12 -0500
+Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 99FF82846D165092E2B6;
+        Wed,  6 Feb 2019 11:00:10 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
+ by smtpsuk.huawei.com (10.201.108.34) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Wed, 6 Feb 2019 11:00:04 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>,
+        <david.safford@ge.com>, <monty.wiseman@ge.com>,
+        <matthewgarrett@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v10 0/6] tpm: retrieve digest size of unknown algorithms from TPM
+Date:   Wed, 6 Feb 2019 11:57:18 +0100
+Message-ID: <20190206105724.14495-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.154]
+X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2019-02-05 at 13:13 -0800, Luis Chamberlain wrote:
-> Also, do we have selftests implemented to ensure we don't regress with
-> your changes?
+Update
 
-We're working on a regression test.  "modprobe" currently first
-attempts to use finit_module, and then falls back to using
-init_module.  Before writing a small program to load kernel modules,
-are you aware of any that allows you to specify the syscall?
+This version of the patch set includes three additional patches (5-7/7)
+that allow users of the TPM driver to provide a digest for each PCR bank to
+tpm_pcr_extend(). The new patches have been included to facilitate the
+review of all the changes to support TPM 2.0 crypto agility for reading and
+extending PCRs.
 
-Mimi
+
+Original patch set description
+
+The TPM driver currently relies on the crypto subsystem to determine the
+digest size of supported TPM algorithms. In the future, TPM vendors might
+implement new algorithms in their chips, and those algorithms might not
+be supported by the crypto subsystem.
+
+Usually, vendors provide patches for the new hardware, and likely
+the crypto subsystem will be updated before the new algorithm is
+introduced. However, old kernels might be updated later, after patches
+are included in the mainline kernel. This would leave the opportunity
+for attackers to misuse PCRs, as PCR banks with an unknown algorithm
+are not extended.
+
+This patch set provides a long term solution for this issue. If a TPM
+algorithm is not known by the crypto subsystem, the TPM driver retrieves
+the digest size from the TPM with a PCR read. All the PCR banks are
+extended, even if the algorithm is not yet supported by the crypto
+subsystem.
+
+PCR bank information (TPM algorithm ID, digest size, crypto subsystem ID)
+is stored in the tpm_chip structure and available for users of the TPM
+driver.
+
+Changelog
+
+v9:
+- add comment for ima_load_kexec_buffer() in ima_init()
+- move 'digests' and ima_init_digests() to ima_queue.c
+- remove comment for TPM_RETRY
+
+v8:
+- set digest array length in tpm_digest to new constant TPM_MAX_DIGEST_SIZE
+- replace enum tpm_const with #define
+- rename labels in init_trusted()
+- allocate tpm_digest array after retrieving random data in init_digests()
+
+v7:
+- use memchr_inv() in tpm2_get_pcr_allocation()
+- add patch to move tpm_chip to include/linux/tpm.h
+- add patch to set the tpm_chip argument in trusted.c to a pointer from
+  tpm_default_chip()
+- remove definition of tpm_extend_digest
+- remove code in tpm2_pcr_extend() to extend unused PCR banks with the
+  first digest passed by the caller of tpm_pcr_extend()
+- remove count parameter from tpm_pcr_extend() and tpm2_pcr_extend()
+- remove padding of SHA1 digest in tpm_pcr_extend()
+- pre-allocate and initialize array of tpm_digest structures in
+  security/keys/trusted.c and security/integrity/ima/ima_init.c 
+
+v6:
+- squash patches 4-6
+- rename tpm_bank_list to tpm_extend_digest, extend_size and extend_data
+  members to size and data
+- add comment in tpm2_init_bank_info()
+
+v5:
+- rename digest_struct variable to digest
+- add _head suffix to tcg_efi_specid_event and tcg_pcr_event2
+- rename digest_size member of tpm_bank_list to extend_size
+- change type of alg_id member of tpm_bank_list from u8 to u16
+- add missing semi-colon in pcrlock()
+
+v4:
+- rename active_banks to allocated_banks
+- replace kmalloc_array() with kcalloc()
+- increment nr_allocated_banks if at least one PCR in the bank is selected
+- pass multiple digests to tpm_pcr_extend()
+
+v3:
+- remove end marker change
+- replace active_banks static array with pointer to dynamic array
+- remove TPM2_ACTIVE_PCR_BANKS
+
+v2:
+- change the end marker of the active_banks array
+- check digest size from output of PCR read command
+- remove count parameter from tpm_pcr_read() and tpm2_pcr_read()
+
+v1:
+- modify definition of tpm_pcr_read()
+- move hash algorithms and definition of tpm2_digest to include/linux/tpm.h
+
+
+Roberto Sassu (6):
+  tpm: dynamically allocate the allocated_banks array
+  tpm: rename and export tpm2_digest and tpm2_algorithms
+  tpm: retrieve digest size of unknown algorithms with PCR read
+  tpm: move tpm_chip definition to include/linux/tpm.h
+  KEYS: trusted: explicitly use tpm_chip structure from
+    tpm_default_chip()
+  tpm: pass an array of tpm_extend_digest structures to tpm_pcr_extend()
+
+ drivers/char/tpm/tpm-chip.c         |   1 +
+ drivers/char/tpm/tpm-interface.c    |  38 ++++----
+ drivers/char/tpm/tpm.h              | 117 ++---------------------
+ drivers/char/tpm/tpm1-cmd.c         |  12 +++
+ drivers/char/tpm/tpm2-cmd.c         | 139 ++++++++++++++++++++--------
+ include/linux/tpm.h                 | 126 ++++++++++++++++++++++++-
+ include/linux/tpm_eventlog.h        |   9 +-
+ security/integrity/ima/ima.h        |   1 +
+ security/integrity/ima/ima_crypto.c |  10 +-
+ security/integrity/ima/ima_init.c   |   4 +
+ security/integrity/ima/ima_queue.c  |  27 +++++-
+ security/keys/trusted.c             |  73 +++++++++++----
+ 12 files changed, 349 insertions(+), 208 deletions(-)
+
+-- 
+2.17.1
 
