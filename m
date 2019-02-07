@@ -2,118 +2,113 @@ Return-Path: <SRS0=oMAg=QO=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02536C282C2
-	for <linux-integrity@archiver.kernel.org>; Thu,  7 Feb 2019 16:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C27C282C2
+	for <linux-integrity@archiver.kernel.org>; Thu,  7 Feb 2019 17:33:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE806218D3
-	for <linux-integrity@archiver.kernel.org>; Thu,  7 Feb 2019 16:53:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E43F2218D3
+	for <linux-integrity@archiver.kernel.org>; Thu,  7 Feb 2019 17:33:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbfBGQxy (ORCPT
+        id S1726977AbfBGRdr (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 7 Feb 2019 11:53:54 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:33918 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726196AbfBGQxy (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 7 Feb 2019 11:53:54 -0500
-Received: by mail-qk1-f193.google.com with SMTP id a15so353549qkc.1
-        for <linux-integrity@vger.kernel.org>; Thu, 07 Feb 2019 08:53:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=hkqMO2ItAK6ooIZ/JT39WbR1HbEjH3KlNsiLbXtUQGw=;
-        b=V1fzNF0muYQ5eSQ7A5rkD0PrtBA5NffynASI7jcRVccQvJ9crj39ZJNZ3TtWTJfHHA
-         xJDCsnLieW0jRo1T1ooHOfEnS1ExpuBgIIEA0zGIKAVu59NeeIrnftbpd/h9SkHlmfVz
-         fuWWWw+6cByWdHWXxRmn06Tzz5uQT5wBwc473spp3ZSc5uLCXRaida0nLE8AKFaCoNud
-         /DzXFPRnFOzJYyBJ4FQtpl1xGbKX9Va228AnnDnXQXJcogcrJ5iZeQvH/d4HbGaG+Qkt
-         bgA4dyP4ZfAMICcNxSGfS3lNQtVrwLLNgl1MBzGS/1k9xLWJXN6zDXIqJgYbQff6+a5q
-         dFpQ==
-X-Gm-Message-State: AHQUAub6D0SplU/kuG3y7Cvp4qd2d6p1nD7q8opwxwNL6J8KodwBMM/s
-        6jYX0LO1aEIvzxo2zSZZuNA48w==
-X-Google-Smtp-Source: AHgI3IYGrgpw0Y2UeQUPfGQtE5DPWInQ2WMRw4KWHLZld9uawDUPT9yj7L9aUD2q6KR9VGJc1XOl3A==
-X-Received: by 2002:a37:d912:: with SMTP id u18mr12109420qki.95.1549558432921;
-        Thu, 07 Feb 2019 08:53:52 -0800 (PST)
-Received: from localhost (ip72-223-3-97.ph.ph.cox.net. [72.223.3.97])
-        by smtp.gmail.com with ESMTPSA id s21sm3045138qki.94.2019.02.07.08.53.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 08:53:51 -0800 (PST)
-Date:   Thu, 7 Feb 2019 09:53:50 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, James Morris <jmorris@namei.org>,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: Re: [PATCH v2] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
-Message-ID: <20190207165350.jkj4bbi4mha3nukm@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Sasha Levin <sashal@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, James Morris <jmorris@namei.org>,
-        Tomas Winkler <tomas.winkler@intel.com>
-References: <20190204135943.15756-1-jarkko.sakkinen@linux.intel.com>
- <20190207163157.DA4A62175B@mail.kernel.org>
+        Thu, 7 Feb 2019 12:33:47 -0500
+Received: from mga18.intel.com ([134.134.136.126]:40444 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726873AbfBGRdj (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 7 Feb 2019 12:33:39 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 09:33:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,344,1544515200"; 
+   d="scan'208";a="298013818"
+Received: from orsmsx104.amr.corp.intel.com ([10.22.225.131])
+  by orsmga005.jf.intel.com with ESMTP; 07 Feb 2019 09:33:38 -0800
+Received: from orsmsx112.amr.corp.intel.com ([169.254.3.62]) by
+ ORSMSX104.amr.corp.intel.com ([169.254.4.11]) with mapi id 14.03.0415.000;
+ Thu, 7 Feb 2019 09:33:38 -0800
+From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To:     "rostedt@goodmis.org" <rostedt@goodmis.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "jeyu@kernel.org" <jeyu@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "nadav.amit@gmail.com" <nadav.amit@gmail.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        "rusty@rustcorp.com.au" <rusty@rustcorp.com.au>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "kristen@linux.intel.com" <kristen@linux.intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux_dti@icloud.com" <linux_dti@icloud.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "mhiramat@kernel.org" <mhiramat@kernel.org>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>
+Subject: Re: [PATCH 16/17] Plug in new special vfree flag
+Thread-Topic: [PATCH 16/17] Plug in new special vfree flag
+Thread-Index: AQHUrfxTN/9E5iQS/ECuiIskA2n60aXTmtoAgAGlzAA=
+Date:   Thu, 7 Feb 2019 17:33:37 +0000
+Message-ID: <16a2ac45ceef5b6f310f816d696ad2ea8df3b45c.camel@intel.com>
+References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
+         <20190117003259.23141-17-rick.p.edgecombe@intel.com>
+         <20190206112356.64cc5f0d@gandalf.local.home>
+In-Reply-To: <20190206112356.64cc5f0d@gandalf.local.home>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.54.75.11]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <CA377F3CE86CB84DB34EDE487645D269@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190207163157.DA4A62175B@mail.kernel.org>
-User-Agent: NeoMutt/20180716
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu Feb 07 19, Sasha Levin wrote:
->Hi,
->
->[This is an automated email]
->
->This commit has been processed because it contains a "Fixes:" tag,
->fixing commit: 30fc8d138e91 tpm: TPM 2.0 CRB Interface.
->
->The bot has tested the following trees: v4.20.6, v4.19.19, v4.14.97, v4.9.154, v4.4.172.
->
->v4.20.6: Build OK!
->v4.19.19: Build OK!
->v4.14.97: Build OK!
->v4.9.154: Failed to apply! Possible dependencies:
->    13b1f4a571cc ("tpm_crb: map locality registers")
->    b4e2eb0651ac ("tpm crb: Work around BIOS's that report the wrong ACPI region size")
->
->v4.4.172: Failed to apply! Possible dependencies:
->    13b1f4a571cc ("tpm_crb: map locality registers")
-
-I'm guessing it is tripping over this not being applied
-
->    14ddfbf488a0 ("tpm_crb: drop struct resource res from struct crb_priv")
->    1bd047be37d9 ("tpm_crb: Use devm_ioremap_resource")
->    1e3ed59d6200 ("tpm_crb: Drop le32_to_cpu(ioread32(..))")
->    25112048cd59 ("tpm: rework tpm_get_timeouts()")
->    30f9c8c9e2ea ("tpm_crb/tis: fix: use dev_name() for /proc/iomem")
->    422eac3f7dea ("tpm_crb: fix mapping of the buffers")
->    4886cd80cb8e ("Revert "tmp/tpm_crb: implement runtime pm for tpm_crb"")
->    4d627e672bd0 ("tpm_tis: Do not fall back to a hardcoded address for TPM2")
->    51dd43dff74b ("tpm_tis: Use devm_ioremap_resource")
->    55a889c2cb13 ("tpm_crb: Use the common ACPI definition of struct acpi_tpm2")
->    7ab4032fa579 ("tpm_tis: Get rid of the duplicate IRQ probing code")
->    9514ff1961c6 ("tmp/tpm_crb: fix Intel PTT hw bug during idle state")
->    aa77ea0e43dc ("tpm/tpm_crb: cache cmd_size register value.")
->    ba5287b6ef6a ("tpm/tpm_crb: implement tpm crb idle state")
->    e17acbbb69d3 ("tpm/tpm_crb: implement tpm crb idle state")
->    e350e24694e4 ("tmp/tpm_crb: implement runtime pm for tpm_crb")
->    e3837e74a06d ("tpm_tis: Refactor the interrupt setup")
->    ef7b81dc7864 ("tpm_tis: Disable interrupt auto probing on a per-device basis")
->
->
->How should we proceed with this patch?
->
->--
->Thanks,
->Sasha
+T24gV2VkLCAyMDE5LTAyLTA2IGF0IDExOjIzIC0wNTAwLCBTdGV2ZW4gUm9zdGVkdCB3cm90ZToN
+Cj4gT24gV2VkLCAxNiBKYW4gMjAxOSAxNjozMjo1OCAtMDgwMA0KPiBSaWNrIEVkZ2Vjb21iZSA8
+cmljay5wLmVkZ2Vjb21iZUBpbnRlbC5jb20+IHdyb3RlOg0KPiANCj4gPiBBZGQgbmV3IGZsYWcg
+Zm9yIGhhbmRsaW5nIGZyZWVpbmcgb2Ygc3BlY2lhbCBwZXJtaXNzaW9uZWQgbWVtb3J5IGluIHZt
+YWxsb2MNCj4gPiBhbmQgcmVtb3ZlIHBsYWNlcyB3aGVyZSBtZW1vcnkgd2FzIHNldCBSVyBiZWZv
+cmUgZnJlZWluZyB3aGljaCBpcyBubyBsb25nZXINCj4gPiBuZWVkZWQuDQo+ID4gDQo+ID4gSW4g
+a3Byb2JlcywgYnBmIGFuZCBmdHJhY2UgdGhpcyBqdXN0IGFkZHMgdGhlIGZsYWcsIGFuZCByZW1v
+dmVzIHRoZSBub3cNCj4gPiB1bm5lZWRlZCBzZXRfbWVtb3J5XyBjYWxscyBiZWZvcmUgY2FsbGlu
+ZyB2ZnJlZS4NCj4gPiANCj4gPiBJbiBtb2R1bGVzLCB0aGUgZnJlZWluZyBvZiBpbml0IHNlY3Rp
+b25zIGlzIG1vdmVkIHRvIGEgd29yayBxdWV1ZSwgc2luY2UNCj4gPiBmcmVlaW5nIG9mIFJPIG1l
+bW9yeSBpcyBub3Qgc3VwcG9ydGVkIGluIGFuIGludGVycnVwdCBieSB2bWFsbG9jLg0KPiA+IElu
+c3RlYWQgb2YgY2FsbF9yY3UsIGl0IG5vdyB1c2VzIHN5bmNocm9uaXplX3JjdSgpIGluIHRoZSB3
+b3JrIHF1ZXVlLg0KPiA+IA0KPiA+IENjOiBSdXN0eSBSdXNzZWxsIDxydXN0eUBydXN0Y29ycC5j
+b20uYXU+DQo+ID4gQ2M6IE1hc2FtaSBIaXJhbWF0c3UgPG1oaXJhbWF0QGtlcm5lbC5vcmc+DQo+
+ID4gQ2M6IERhbmllbCBCb3JrbWFubiA8ZGFuaWVsQGlvZ2VhcmJveC5uZXQ+DQo+ID4gQ2M6IEFs
+ZXhlaSBTdGFyb3ZvaXRvdiA8YXN0QGtlcm5lbC5vcmc+DQo+ID4gQ2M6IEplc3NpY2EgWXUgPGpl
+eXVAa2VybmVsLm9yZz4NCj4gPiBDYzogU3RldmVuIFJvc3RlZHQgPHJvc3RlZHRAZ29vZG1pcy5v
+cmc+DQo+ID4gQ2M6IFBhdWwgRS4gTWNLZW5uZXkgPHBhdWxtY2tAbGludXguaWJtLmNvbT4NCj4g
+PiBTaWduZWQtb2ZmLWJ5OiBSaWNrIEVkZ2Vjb21iZSA8cmljay5wLmVkZ2Vjb21iZUBpbnRlbC5j
+b20+DQo+ID4gLS0tDQo+ID4gIGFyY2gveDg2L2tlcm5lbC9mdHJhY2UuYyAgICAgICB8ICA2ICst
+LQ0KPiANCj4gRm9yIHRoZSBmdHJhY2UgY29kZS4NCj4gDQo+IEFja2VkLWJ5OiBTdGV2ZW4gUm9z
+dGVkdCAoVk13YXJlKSA8cm9zdGVkdEBnb29kbWlzLm9yZz4NCj4gDQo+IC0tIFN0ZXZlDQo+IA0K
+VGhhbmtzIQ0KDQpSaWNrDQo+ID4gIGFyY2gveDg2L2tlcm5lbC9rcHJvYmVzL2NvcmUuYyB8ICA3
+ICstLS0NCj4gPiAgaW5jbHVkZS9saW51eC9maWx0ZXIuaCAgICAgICAgIHwgMTYgKystLS0tLQ0K
+PiA+ICBrZXJuZWwvYnBmL2NvcmUuYyAgICAgICAgICAgICAgfCAgMSAtDQo+ID4gIGtlcm5lbC9t
+b2R1bGUuYyAgICAgICAgICAgICAgICB8IDc3ICsrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0t
+LS0tLS0NCj4gPiAgNSBmaWxlcyBjaGFuZ2VkLCA0NSBpbnNlcnRpb25zKCspLCA2MiBkZWxldGlv
+bnMoLSkNCj4gPiANCg==
