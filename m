@@ -1,110 +1,277 @@
-Return-Path: <SRS0=rH3c=QP=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=Up11=QQ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F76FC169C4
-	for <linux-integrity@archiver.kernel.org>; Fri,  8 Feb 2019 22:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4BF7C282CB
+	for <linux-integrity@archiver.kernel.org>; Sat,  9 Feb 2019 18:20:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03BB821908
-	for <linux-integrity@archiver.kernel.org>; Fri,  8 Feb 2019 22:06:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFAD520855
+	for <linux-integrity@archiver.kernel.org>; Sat,  9 Feb 2019 18:20:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbfBHWGk (ORCPT
+        id S1727213AbfBISU0 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 8 Feb 2019 17:06:40 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37632 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727039AbfBHWGk (ORCPT
+        Sat, 9 Feb 2019 13:20:26 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:37812 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727212AbfBISU0 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 8 Feb 2019 17:06:40 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x18M5i8p144991
-        for <linux-integrity@vger.kernel.org>; Fri, 8 Feb 2019 17:06:39 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qhj8mg1fm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 08 Feb 2019 17:06:38 -0500
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Fri, 8 Feb 2019 22:06:38 -0000
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 8 Feb 2019 22:06:34 -0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x18M6XAg22544416
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 8 Feb 2019 22:06:34 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D6B3BAC08F;
-        Fri,  8 Feb 2019 22:06:33 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C609EAC089;
-        Fri,  8 Feb 2019 22:06:33 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri,  8 Feb 2019 22:06:33 +0000 (GMT)
-Subject: Re: [PATCH 0/5] Extend TPM PPI interface to support revision 1.3
+        Sat, 9 Feb 2019 13:20:26 -0500
+Received: by mail-qk1-f193.google.com with SMTP id m9so4111981qkl.4
+        for <linux-integrity@vger.kernel.org>; Sat, 09 Feb 2019 10:20:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=6hq+Xb2DDfqW+2rdHiwhS/TBnov4CENJ/PKiUFB9kBo=;
+        b=ZXq+PwST8X7BHrm2mUNyiJ3SmYx+N89oJDUjWgrXXljct6EB6A/paRLGSIEtexJXbL
+         PFzaZaghAr0EiZMCJKtqaqDZRUPlaCE4UEbHN85bZ0R+4SVBzsaE9NbpCm3bXTwYB81N
+         EF2MVQlWoyFrIPFg60A3WwUNysNac/xAA1ql1hgnMd0P5TzJSR9oVzLa/FISHofMnvKa
+         PEaxqzINoVdt8fpUg4m7s5sidJOuzvYFQ/gFxDePNeE6Qr089FvXIM3/T63TGSREHpJc
+         cmDLa/Ls/BBJsi6ohghuS3fpowVWQOM55gbbIksaId39fjHyng7W0LvBZ3f0g4CJzu/H
+         gTcg==
+X-Gm-Message-State: AHQUAuZx/B5Kge81YjgVkPBd6QTO1Zi3hleVdiDzCyR0qHOL4TDhuYnI
+        9N3ldWRRNNK9AjIQj/HIzgTOrA==
+X-Google-Smtp-Source: AHgI3IYxN4zsT2m8sHIqm+qiyIhLBSu7lD4rjKvanBxNiW9lcNtylopTCfsSgWFXry6WvXCtJ4XI7Q==
+X-Received: by 2002:a37:c30d:: with SMTP id a13mr18652204qkj.18.1549736424651;
+        Sat, 09 Feb 2019 10:20:24 -0800 (PST)
+Received: from localhost (ip72-223-3-97.ph.ph.cox.net. [72.223.3.97])
+        by smtp.gmail.com with ESMTPSA id s13sm5737673qkl.71.2019.02.09.10.20.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 09 Feb 2019 10:20:23 -0800 (PST)
+Date:   Sat, 9 Feb 2019 11:20:22 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     "Safford, David (GE Global Research)" <david.safford@ge.com>,
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
         Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190109221103.1897677-1-stefanb@linux.vnet.ibm.com>
- <BCA04D5D9A3B764C9B7405BBA4D4A3C0151A3125@ALPMBAPA12.e2k.ad.ge.com>
- <20190118150011.GF4080@linux.intel.com>
- <cb86f5b6-8084-1e12-ce60-19418539b581@linux.ibm.com>
- <20190208220025.GB13567@linux.intel.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Date:   Fri, 8 Feb 2019 17:06:33 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] tpm: Unify the send callback behaviour
+Message-ID: <20190209182022.zghnna3fa3a3x3w7@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+Mail-Followup-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        stable@vger.kernel.org
+References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
+ <20190208180857.12330-2-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190208220025.GB13567@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 19020822-0072-0000-0000-000003F75C0E
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010561; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000279; SDB=6.01158259; UDB=6.00604340; IPR=6.00938792;
- MB=3.00025497; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-08 22:06:36
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020822-0073-0000-0000-00004B1CBA75
-Message-Id: <d34dd6ec-248e-b7f8-edb0-367f1f4f9356@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-08_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902080150
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190208180857.12330-2-jarkko.sakkinen@linux.intel.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 2/8/19 5:00 PM, Jarkko Sakkinen wrote:
-> On Fri, Feb 08, 2019 at 04:21:02PM -0500, Stefan Berger wrote:
-> I still think that in 5/5 branching could be better but is not a biggie
-> for me (does not make the implementation as whole any kind of mess) and
-> since it is now peer tested I rather would not modify it right now.
+On Fri Feb 08 19, Jarkko Sakkinen wrote:
+>The send() callback should never return length as it does not in every
+>driver except tpm_crb in the success case. The reason is that the main
+>transmit functionality only cares about whether the transmit was
+>successful or not and ignores the count completely.
 >
-> Applied to master and next!
+>Cc: stable@vger.kernel.org
+>Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>---
+> drivers/char/tpm/st33zp24/st33zp24.c | 2 +-
+> drivers/char/tpm/tpm_atmel.c         | 2 +-
+> drivers/char/tpm/tpm_i2c_atmel.c     | 6 +++++-
+> drivers/char/tpm/tpm_i2c_infineon.c  | 2 +-
+> drivers/char/tpm/tpm_i2c_nuvoton.c   | 2 +-
+> drivers/char/tpm/tpm_ibmvtpm.c       | 8 ++++----
+> drivers/char/tpm/tpm_infineon.c      | 2 +-
+> drivers/char/tpm/tpm_nsc.c           | 2 +-
+> drivers/char/tpm/tpm_tis_core.c      | 2 +-
+> drivers/char/tpm/tpm_vtpm_proxy.c    | 3 +--
+> drivers/char/tpm/xen-tpmfront.c      | 2 +-
+> 11 files changed, 18 insertions(+), 15 deletions(-)
+>
+>diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
+>index 64dc560859f2..13dc614b7ebc 100644
+>--- a/drivers/char/tpm/st33zp24/st33zp24.c
+>+++ b/drivers/char/tpm/st33zp24/st33zp24.c
+>@@ -436,7 +436,7 @@ static int st33zp24_send(struct tpm_chip *chip, unsigned char *buf,
+> 			goto out_err;
+> 	}
+>
+>-	return len;
+>+	return 0;
+> out_err:
+> 	st33zp24_cancel(chip);
+> 	release_locality(chip);
+>diff --git a/drivers/char/tpm/tpm_atmel.c b/drivers/char/tpm/tpm_atmel.c
+>index 66a14526aaf4..a290b30a0c35 100644
+>--- a/drivers/char/tpm/tpm_atmel.c
+>+++ b/drivers/char/tpm/tpm_atmel.c
+>@@ -105,7 +105,7 @@ static int tpm_atml_send(struct tpm_chip *chip, u8 *buf, size_t count)
+> 		iowrite8(buf[i], priv->iobase);
+> 	}
+>
+>-	return count;
+>+	return 0;
+> }
+>
+> static void tpm_atml_cancel(struct tpm_chip *chip)
+>diff --git a/drivers/char/tpm/tpm_i2c_atmel.c b/drivers/char/tpm/tpm_i2c_atmel.c
+>index 4720b2442ffe..aa11c8a1df5e 100644
+>--- a/drivers/char/tpm/tpm_i2c_atmel.c
+>+++ b/drivers/char/tpm/tpm_i2c_atmel.c
+>@@ -65,7 +65,11 @@ static int i2c_atmel_send(struct tpm_chip *chip, u8 *buf, size_t len)
+> 	dev_dbg(&chip->dev,
+> 		"%s(buf=%*ph len=%0zx) -> sts=%d\n", __func__,
+> 		(int)min_t(size_t, 64, len), buf, len, status);
+>-	return status;
+>+
+>+	if (status < 0)
+>+		return status;
+>+
+>+	return 0;
+> }
+>
+> static int i2c_atmel_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+>diff --git a/drivers/char/tpm/tpm_i2c_infineon.c b/drivers/char/tpm/tpm_i2c_infineon.c
+>index 3b490d9d90e7..3b4e9672ff6c 100644
+>--- a/drivers/char/tpm/tpm_i2c_infineon.c
+>+++ b/drivers/char/tpm/tpm_i2c_infineon.c
+>@@ -588,7 +588,7 @@ static int tpm_tis_i2c_send(struct tpm_chip *chip, u8 *buf, size_t len)
+> 	/* go and do it */
+> 	iic_tpm_write(TPM_STS(tpm_dev.locality), &sts, 1);
+>
+>-	return len;
+>+	return 0;
+> out_err:
+> 	tpm_tis_i2c_ready(chip);
+> 	/* The TPM needs some time to clean up here,
+>diff --git a/drivers/char/tpm/tpm_i2c_nuvoton.c b/drivers/char/tpm/tpm_i2c_nuvoton.c
+>index 5700cc2ddee1..315a3b4548f7 100644
+>--- a/drivers/char/tpm/tpm_i2c_nuvoton.c
+>+++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
+>@@ -465,7 +465,7 @@ static int i2c_nuvoton_send(struct tpm_chip *chip, u8 *buf, size_t len)
+> 	}
+>
+> 	dev_dbg(dev, "%s() -> %zd\n", __func__, len);
+>-	return len;
+>+	return 0;
+> }
+>
+> static bool i2c_nuvoton_req_canceled(struct tpm_chip *chip, u8 status)
+>diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
+>index 07b5a487d0c8..757ca45b39b8 100644
+>--- a/drivers/char/tpm/tpm_ibmvtpm.c
+>+++ b/drivers/char/tpm/tpm_ibmvtpm.c
+>@@ -139,14 +139,14 @@ static int tpm_ibmvtpm_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+> }
+>
+> /**
+>- * tpm_ibmvtpm_send - Send tpm request
+>- *
+>+ * tpm_ibmvtpm_send() - Send a TPM command
+>  * @chip:	tpm chip struct
+>  * @buf:	buffer contains data to send
+>  * @count:	size of buffer
+>  *
+>  * Return:
+>- *	Number of bytes sent or < 0 on error.
+>+ *   0 on success,
+>+ *   -errno on error
+>  */
+> static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+> {
+>@@ -192,7 +192,7 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+> 		rc = 0;
+> 		ibmvtpm->tpm_processing_cmd = false;
+> 	} else
+>-		rc = count;
+>+		rc = 0;
+>
+> 	spin_unlock(&ibmvtpm->rtce_lock);
+> 	return rc;
+>diff --git a/drivers/char/tpm/tpm_infineon.c b/drivers/char/tpm/tpm_infineon.c
+>index d8f10047fbba..97f6d4fe0aee 100644
+>--- a/drivers/char/tpm/tpm_infineon.c
+>+++ b/drivers/char/tpm/tpm_infineon.c
+>@@ -354,7 +354,7 @@ static int tpm_inf_send(struct tpm_chip *chip, u8 * buf, size_t count)
+> 	for (i = 0; i < count; i++) {
+> 		wait_and_send(chip, buf[i]);
+> 	}
+>-	return count;
+>+	return 0;
+> }
+>
+> static void tpm_inf_cancel(struct tpm_chip *chip)
+>diff --git a/drivers/char/tpm/tpm_nsc.c b/drivers/char/tpm/tpm_nsc.c
+>index 5d6cce74cd3f..9bee3c5eb4bf 100644
+>--- a/drivers/char/tpm/tpm_nsc.c
+>+++ b/drivers/char/tpm/tpm_nsc.c
+>@@ -226,7 +226,7 @@ static int tpm_nsc_send(struct tpm_chip *chip, u8 * buf, size_t count)
+> 	}
+> 	outb(NSC_COMMAND_EOC, priv->base + NSC_COMMAND);
+>
+>-	return count;
+>+	return 0;
+> }
+>
+> static void tpm_nsc_cancel(struct tpm_chip *chip)
+>diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+>index 60e2038652b8..b9f64684c3fb 100644
+>--- a/drivers/char/tpm/tpm_tis_core.c
+>+++ b/drivers/char/tpm/tpm_tis_core.c
+>@@ -481,7 +481,7 @@ static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
+> 			goto out_err;
+> 		}
+> 	}
+>-	return len;
+>+	return 0;
+> out_err:
+> 	tpm_tis_ready(chip);
+> 	return rc;
+>diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
+>index 26a2be555288..d74f3de74ae6 100644
+>--- a/drivers/char/tpm/tpm_vtpm_proxy.c
+>+++ b/drivers/char/tpm/tpm_vtpm_proxy.c
+>@@ -335,7 +335,6 @@ static int vtpm_proxy_is_driver_command(struct tpm_chip *chip,
+> static int vtpm_proxy_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t count)
+> {
+> 	struct proxy_dev *proxy_dev = dev_get_drvdata(&chip->dev);
+>-	int rc = 0;
+>
+> 	if (count > sizeof(proxy_dev->buffer)) {
+> 		dev_err(&chip->dev,
+>@@ -366,7 +365,7 @@ static int vtpm_proxy_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t count)
+>
+> 	wake_up_interruptible(&proxy_dev->wq);
+>
+>-	return rc;
+>+	return 0;
+> }
+>
+> static void vtpm_proxy_tpm_op_cancel(struct tpm_chip *chip)
+>diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
+>index 1259e935fd58..4e2d00cb0d81 100644
+>--- a/drivers/char/tpm/xen-tpmfront.c
+>+++ b/drivers/char/tpm/xen-tpmfront.c
+>@@ -173,7 +173,7 @@ static int vtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+> 		return -ETIME;
+> 	}
+>
+>-	return count;
+>+	return 0;
+> }
+>
+> static int vtpm_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+>-- 
+>2.19.1
+>
 
-
-5/5 may cause a complaint about the scanf'ing of a single value in an 
-existing line. Let's see...
-
-    Thanks.
-
-       Stefan
-
-
+Does st33zp24_i2c_send need an update as well? It does 'return write8_reg()'.
