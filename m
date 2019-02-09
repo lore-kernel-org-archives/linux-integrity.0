@@ -2,114 +2,119 @@ Return-Path: <SRS0=Up11=QQ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85556C282CB
-	for <linux-integrity@archiver.kernel.org>; Sat,  9 Feb 2019 20:08:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D17E8C282C4
+	for <linux-integrity@archiver.kernel.org>; Sat,  9 Feb 2019 21:42:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AA342192C
-	for <linux-integrity@archiver.kernel.org>; Sat,  9 Feb 2019 20:08:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1D5821919
+	for <linux-integrity@archiver.kernel.org>; Sat,  9 Feb 2019 21:42:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbfBIUIp (ORCPT
+        id S1726932AbfBIVmp (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 9 Feb 2019 15:08:45 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:36786 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726907AbfBIUIm (ORCPT
+        Sat, 9 Feb 2019 16:42:45 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:39330 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726898AbfBIVmo (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 9 Feb 2019 15:08:42 -0500
-Received: by mail-qt1-f194.google.com with SMTP id r9so7931105qtt.3
-        for <linux-integrity@vger.kernel.org>; Sat, 09 Feb 2019 12:08:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=caMuua86ZqM/hQ5LV4/Bwjrk9414QCn+/CUk1mK+b+g=;
-        b=m9fyE+02mP+jdZX3Zk9L2ql6+qyhWGvSi1C66FoVmKZhiUyoiRoeP3SdDlrjf5ziI1
-         7JEWW71ywlhuqvVhqLcP5mpD5+jD29rLbVyafDa5RSwOAI70i8hZSRTEucnlQiwUwDq2
-         JxXQafaz3RqmpHGHGpIH6LqU+qFYQe7tDiXS+CpCdCtkVWgQQY6nKp2ZkfDlcw0bbJ3q
-         r1M6aIkEkOZQ5FZ4RaHQhxS3bzNTbaaynVjnay1gk5VmUZsmlsNsiwFCeg352YmZ6Kx8
-         J1kXc38v2mCWWcQ3U7tSSEOe9R+CafFS3RQuSDxQXG5Pjh9jPi3U11Vr6dO5XIUJtwRj
-         qzRA==
-X-Gm-Message-State: AHQUAuajvlhasVWB+aqnSFFJP9kAYu9L7a173aBooCsXN3eEuwqksf6M
-        O60PwAORrvO3YuTSZXNPY+xf1g==
-X-Google-Smtp-Source: AHgI3IYPk69QFI8kEVaL/meFbiMVI0MHnlyH5YDKJpcCxqpE6cz2mjf+mMA5179HD8wjCVCu0avMKg==
-X-Received: by 2002:ac8:6b50:: with SMTP id x16mr22013636qts.368.1549742920468;
-        Sat, 09 Feb 2019 12:08:40 -0800 (PST)
-Received: from localhost (ip72-223-3-97.ph.ph.cox.net. [72.223.3.97])
-        by smtp.gmail.com with ESMTPSA id s13sm6776655qkl.71.2019.02.09.12.08.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 09 Feb 2019 12:08:39 -0800 (PST)
-Date:   Sat, 9 Feb 2019 13:08:38 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>
-Subject: Re: [PATCH v4 0/2] tpm: Unify send() callbacks
-Message-ID: <20190209200838.2matnb5dqlnr4qdx@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>
-References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
+        Sat, 9 Feb 2019 16:42:44 -0500
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 05C3972CC53;
+        Sun, 10 Feb 2019 00:42:41 +0300 (MSK)
+Received: from altlinux.org (sole.flsd.net [185.75.180.6])
+        by imap.altlinux.org (Postfix) with ESMTPSA id D6CEF4A4A14;
+        Sun, 10 Feb 2019 00:42:40 +0300 (MSK)
+Date:   Sun, 10 Feb 2019 00:42:40 +0300
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/4] X.509: Parse public key parameters from x509 for
+ akcipher
+Message-ID: <20190209214240.56gq7ivn3pw3bssf@altlinux.org>
+Mail-Followup-To: David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190106133608.820-1-vt@altlinux.org>
+ <20190106133608.820-2-vt@altlinux.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=koi8-r
 Content-Disposition: inline
-In-Reply-To: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190106133608.820-2-vt@altlinux.org>
+User-Agent: NeoMutt/20171215-106-ac61c7
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri Feb 08 19, Jarkko Sakkinen wrote:
->From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.co m>
+On Sun, Jan 06, 2019 at 04:36:05PM +0300, Vitaly Chikunov wrote:
+> Some public key algorithms (like ECDSA) keep in parameters field
+> important data such as digest and curve OIDs (possibly more for
+> different ECDSA variants). Thus, just setting a public key (as
+> for RSA) is not enough.
+> 
+> Introduce set_params() callback for akcipher which will be used to
+> pass DER encoded parameters array, with additional argument of
+> algorithm OID.
+> 
+> This is done with the intent of adding support for EC-RDSA (ISO/IEC
+> 14888-3:2018, RFC 7091, and basically ECDSA variant) public keys (which
+> will be finally used in IMA subsystem). Thus, also oid_registry.h is
+> updated.
+> 
+> Rationale:
+> 
+> - For such keys just setting public key without parameters is
+>   meaningless, so it would be possible to add parameters in
+>   crypto_akcipher_set_pub_key (and .set_pub_key) calls. But, this will
+>   needlessly change API for RSA akcipher. Also, additional callback
+>   making it possible to pass parameters after
+>   crypto_akcipher_set_priv_key (and .set_priv_key) in the future.
 >
->A portion of send() callbacks have returned length, in many cases just
->returning back what was given as an argument, and tpm_crb has returned 0 on
->success. This patch set fixes and unifies the behaviour.
->
->v4:
->* Return zero already in tpm_tis_send_main() so that it is applied to all
->  call sites of tpm_tis_send().
->* Fixup tpm_ibmvtpm_send() documentation.
->v3:
->tpm_tis_core fix was left out of the staging area :-(
->v2:
->The drivers tpm_nsc and tpm_infineon were forgotten. For this version I
->checked both with find and command and from Kconfig that everything that is
->supposed to be a driver directly interfacing with the TPM core, is included
->(e.g. discluding tpm_tis_spi).
->
->Jarkko Sakkinen (2):
->  tpm: Unify the send callback behaviour
->  tpm/tpm_i2c_atmel: Return -E2BIG when the transfer is incomplete
->
-> drivers/char/tpm/st33zp24/st33zp24.c |  2 +-
-> drivers/char/tpm/tpm_atmel.c         |  2 +-
-> drivers/char/tpm/tpm_i2c_atmel.c     | 10 +++++++++-
-> drivers/char/tpm/tpm_i2c_infineon.c  |  2 +-
-> drivers/char/tpm/tpm_i2c_nuvoton.c   |  2 +-
-> drivers/char/tpm/tpm_ibmvtpm.c       |  8 ++++----
-> drivers/char/tpm/tpm_infineon.c      |  2 +-
-> drivers/char/tpm/tpm_nsc.c           |  2 +-
-> drivers/char/tpm/tpm_tis_core.c      |  2 +-
-> drivers/char/tpm/tpm_vtpm_proxy.c    |  3 +--
-> drivers/char/tpm/xen-tpmfront.c      |  2 +-
-> 11 files changed, 22 insertions(+), 15 deletions(-)
->
->-- 
->2.19.1
->
+> - Algorithm OID is passed to be validated in .set_params callback,
+>   otherwise, it could have the wrong value.
+> 
+> - Particular algorithm OIDs are checked in x509_note_params, (because
+>   this is called from AlgorithmIdentifier (ASN.1) parser, which is
+>   called multiple times, as it's used multiple times in X.509
+>   certificate), to distinguish a public key call from a signature call.
+> 
+> Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+> ---
 
-Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> @@ -263,6 +274,11 @@ int public_key_verify_signature(const struct public_key *pkey,
+>        if (pkey->key_is_private)
+>                ret = crypto_akcipher_set_priv_key(tfm,
+>                                                   pkey->key, pkey->keylen);
+>        else
+>                ret = crypto_akcipher_set_pub_key(tfm,
+>                                                  pkey->key, pkey->keylen);
+>        if (ret)
+>                goto error_free_req;
+> +	ret = crypto_akcipher_set_params(tfm, pkey->algo, pkey->params,
+> +					 pkey->paramlen);
+
+Nobody said anything if this is a good idea to call set_params after
+set_{pub,priv}_key and not before.
+
+When `struct crypto_akcipher' is allocated ctx data is never zeroed,
+thus either call will be the first to zero ctx, making these calls not
+swappable in the future.
+
+Also, algorithm parameters could be interpreted without knowing the key,
+but the key cannot be interpreted without knowing the parameters.
+
+> +	if (ret)
+> +		goto error_free_req;
+> +
+>  	ret = -ENOMEM;
+>  	outlen = crypto_akcipher_maxsize(tfm);
+>  	output = kmalloc(outlen, GFP_KERNEL);
