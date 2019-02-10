@@ -1,120 +1,150 @@
-Return-Path: <SRS0=Up11=QQ=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=lxv9=QR=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D17E8C282C4
-	for <linux-integrity@archiver.kernel.org>; Sat,  9 Feb 2019 21:42:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 380ECC282D7
+	for <linux-integrity@archiver.kernel.org>; Sun, 10 Feb 2019 15:40:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1D5821919
-	for <linux-integrity@archiver.kernel.org>; Sat,  9 Feb 2019 21:42:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06CF92145D
+	for <linux-integrity@archiver.kernel.org>; Sun, 10 Feb 2019 15:40:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726932AbfBIVmp (ORCPT
+        id S1726134AbfBJPkG (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 9 Feb 2019 16:42:45 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:39330 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726898AbfBIVmo (ORCPT
+        Sun, 10 Feb 2019 10:40:06 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52754 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726157AbfBJPkB (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 9 Feb 2019 16:42:44 -0500
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 05C3972CC53;
-        Sun, 10 Feb 2019 00:42:41 +0300 (MSK)
-Received: from altlinux.org (sole.flsd.net [185.75.180.6])
-        by imap.altlinux.org (Postfix) with ESMTPSA id D6CEF4A4A14;
-        Sun, 10 Feb 2019 00:42:40 +0300 (MSK)
-Date:   Sun, 10 Feb 2019 00:42:40 +0300
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/4] X.509: Parse public key parameters from x509 for
- akcipher
-Message-ID: <20190209214240.56gq7ivn3pw3bssf@altlinux.org>
-Mail-Followup-To: David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190106133608.820-1-vt@altlinux.org>
- <20190106133608.820-2-vt@altlinux.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Disposition: inline
-In-Reply-To: <20190106133608.820-2-vt@altlinux.org>
-User-Agent: NeoMutt/20171215-106-ac61c7
+        Sun, 10 Feb 2019 10:40:01 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1AFcRT4084826
+        for <linux-integrity@vger.kernel.org>; Sun, 10 Feb 2019 10:40:00 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qjd6jbnrf-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Sun, 10 Feb 2019 10:40:00 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Sun, 10 Feb 2019 15:39:57 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 10 Feb 2019 15:39:54 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1AFdroJ8192298
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 10 Feb 2019 15:39:53 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C706A4203F;
+        Sun, 10 Feb 2019 15:39:53 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5DA5D42041;
+        Sun, 10 Feb 2019 15:39:52 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.91.85])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun, 10 Feb 2019 15:39:52 +0000 (GMT)
+Subject: Re: [PATCH] x86/ima: require signed kernel modules
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Seth Forshee <seth.forshee@canonical.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Justin Forbes <jforbes@redhat.com>,
+        Matthew Garrett <mjg59@google.com>,
+        "Bruno E. O. Meneguele" <bmeneg@redhat.com>
+Date:   Sun, 10 Feb 2019 10:39:41 -0500
+In-Reply-To: <20190208192127.GO3218@ubuntu-xps13>
+References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
+         <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
+         <20190205151859.GD16362@ubuntu-xps13>
+         <1549385244.4146.148.camel@linux.ibm.com>
+         <20190205183201.GA3218@ubuntu-xps13>
+         <1549392741.4146.161.camel@linux.ibm.com>
+         <20190208192127.GO3218@ubuntu-xps13>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19021015-0016-0000-0000-00000254B542
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021015-0017-0000-0000-000032AECD69
+Message-Id: <1549813181.12743.139.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-10_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902100121
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sun, Jan 06, 2019 at 04:36:05PM +0300, Vitaly Chikunov wrote:
-> Some public key algorithms (like ECDSA) keep in parameters field
-> important data such as digest and curve OIDs (possibly more for
-> different ECDSA variants). Thus, just setting a public key (as
-> for RSA) is not enough.
-> 
-> Introduce set_params() callback for akcipher which will be used to
-> pass DER encoded parameters array, with additional argument of
-> algorithm OID.
-> 
-> This is done with the intent of adding support for EC-RDSA (ISO/IEC
-> 14888-3:2018, RFC 7091, and basically ECDSA variant) public keys (which
-> will be finally used in IMA subsystem). Thus, also oid_registry.h is
-> updated.
-> 
-> Rationale:
-> 
-> - For such keys just setting public key without parameters is
->   meaningless, so it would be possible to add parameters in
->   crypto_akcipher_set_pub_key (and .set_pub_key) calls. But, this will
->   needlessly change API for RSA akcipher. Also, additional callback
->   making it possible to pass parameters after
->   crypto_akcipher_set_priv_key (and .set_priv_key) in the future.
->
-> - Algorithm OID is passed to be validated in .set_params callback,
->   otherwise, it could have the wrong value.
-> 
-> - Particular algorithm OIDs are checked in x509_note_params, (because
->   this is called from AlgorithmIdentifier (ASN.1) parser, which is
->   called multiple times, as it's used multiple times in X.509
->   certificate), to distinguish a public key call from a signature call.
-> 
-> Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
-> ---
+[Cc'ing Bruno E. O. Meneguele]
 
-> @@ -263,6 +274,11 @@ int public_key_verify_signature(const struct public_key *pkey,
->        if (pkey->key_is_private)
->                ret = crypto_akcipher_set_priv_key(tfm,
->                                                   pkey->key, pkey->keylen);
->        else
->                ret = crypto_akcipher_set_pub_key(tfm,
->                                                  pkey->key, pkey->keylen);
->        if (ret)
->                goto error_free_req;
-> +	ret = crypto_akcipher_set_params(tfm, pkey->algo, pkey->params,
-> +					 pkey->paramlen);
+On Fri, 2019-02-08 at 13:21 -0600, Seth Forshee wrote:
+> On Tue, Feb 05, 2019 at 01:52:21PM -0500, Mimi Zohar wrote:
+> > On Tue, 2019-02-05 at 12:32 -0600, Seth Forshee wrote:
+> > > On Tue, Feb 05, 2019 at 11:47:24AM -0500, Mimi Zohar wrote:
+> > > > Hi Seth,
+> > > > 
+> > > > On Tue, 2019-02-05 at 09:18 -0600, Seth Forshee wrote:
+> > > > > On Thu, Jan 31, 2019 at 02:18:59PM -0500, Mimi Zohar wrote:
+> > > > > > Require signed kernel modules on systems with secure boot mode enabled.
+> > > > > > 
+> > > > > > To coordinate between appended kernel module signatures and IMA
+> > > > > > signatures, only define an IMA MODULE_CHECK policy rule if
+> > > > > > CONFIG_MODULE_SIG is not enabled.
+> > > > > > 
+> > > > > > This patch defines a function named set_module_sig_required() and renames
+> > > > > > is_module_sig_enforced() to is_module_sig_enforced_or_required().  The
+> > > > > > call to set_module_sig_required() is dependent on CONFIG_IMA_ARCH_POLICY
+> > > > > > being enabled.
+> > > > > > 
+> > > > > > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> > > > > 
+> > > > > With respect to interactions with the kernel lockdown patches, this
+> > > > > looks better than the patches I saw previously. I don't feel like I know
+> > > > > enough about what's going on with IMA to ack the patch, but I feel
+> > > > > confident that it's at least not going to break signature enforcement
+> > > > > for us.
+> > > > 
+> > > > Thank you for testing!  Could this be translated into a "tested-by"
+> > > > "(for w/lockdown patches)"?
+> > > 
+> > > Yeah, that's fine. To be clear about what I tested, I've confirmed that
+> > > it doesn't interfere with requiring signed modules under lockdown with
+> > > CONFIG_IMA_ARCH_POLICY=n and IMA appraisal enabled.
+> > > 
+> > > Tested-by: Seth Forshee <seth.forshee@canonical.com>
+> > 
+> > Oh!  You've disabled the coordination of the two signature
+> > verification methods.  Any chance you could test with
+> > "CONFIG_IMA_ARCH_POLICY" enabled?
+> 
+> Ok, I've tested this now and it also seems to be working. However it
+> does seem redundant to have CONFIG_IMA_ARCH_POLICY alongside lockdown,
+> as it doesn't enforce anything not already being enforced by lockdown.
 
-Nobody said anything if this is a good idea to call set_params after
-set_{pub,priv}_key and not before.
+Ok.  Based on Luis' and your comments, I'll defer this discussion to
+after IMA appended signature support is upstreamed.  At that point,
+for the finit_module syscall, IMA-appraisal at least won't fail the
+signature verification.  The same appended signature will be verified
+not once, but twice - once on the LSM security_kernel_read_file() hook
+and then again by module_sig_check().
 
-When `struct crypto_akcipher' is allocated ctx data is never zeroed,
-thus either call will be the first to zero ctx, making these calls not
-swappable in the future.
+For the init_module() syscall, the only coordination needed will be
+updating is_module_sig_enforced(), based on either the "lockdown" or
+some other flag.
 
-Also, algorithm parameters could be interpreted without knowing the key,
-but the key cannot be interpreted without knowing the parameters.
+Mimi
 
-> +	if (ret)
-> +		goto error_free_req;
-> +
->  	ret = -ENOMEM;
->  	outlen = crypto_akcipher_maxsize(tfm);
->  	output = kmalloc(outlen, GFP_KERNEL);
