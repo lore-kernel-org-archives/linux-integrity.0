@@ -2,108 +2,126 @@ Return-Path: <SRS0=lxv9=QR=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF04C282CC
-	for <linux-integrity@archiver.kernel.org>; Sun, 10 Feb 2019 19:00:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F25AC282CC
+	for <linux-integrity@archiver.kernel.org>; Sun, 10 Feb 2019 19:06:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EA2D20873
-	for <linux-integrity@archiver.kernel.org>; Sun, 10 Feb 2019 19:00:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DAB820873
+	for <linux-integrity@archiver.kernel.org>; Sun, 10 Feb 2019 19:06:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ruB6mj8o"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iYODRvqB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727006AbfBJTAZ (ORCPT
+        id S1726788AbfBJTGm (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 10 Feb 2019 14:00:25 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51499 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726127AbfBJTAZ (ORCPT
+        Sun, 10 Feb 2019 14:06:42 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52735 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726663AbfBJTGl (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 10 Feb 2019 14:00:25 -0500
-Received: by mail-wm1-f65.google.com with SMTP id b11so13268758wmj.1;
-        Sun, 10 Feb 2019 11:00:23 -0800 (PST)
+        Sun, 10 Feb 2019 14:06:41 -0500
+Received: by mail-wm1-f67.google.com with SMTP id m1so13277256wml.2;
+        Sun, 10 Feb 2019 11:06:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=+eMmTfwODzLvEzByWZTx/8AnGc8y+MNL0RRcXP1LEg8=;
-        b=ruB6mj8opIwdf7cFefLjKj/IbICOZUBan906dBjoQNx7IJU+BhvIZnqNSUcNUmV+3V
-         Lo8wkMQr3KOHmQtMQfH72Ws32Y/w0fZuzaIF+chIBTSZsWNABY1sWtOM8emDy3SsClyl
-         TN4FadxzUZMTu6riTz9Rkh5dNGQH2VtknvUxH2TyjF2is3jnHJqMhH0ikRhjJsX3zjZA
-         NNiWZENn3n5mWwDCs7e9NNTSrPeXnEfNpt84U4+OoNqD8aOPjLkPtI1ahcpT3hm4Y/ku
-         CNbXz3ZI24TAjuhkXpWAtsJ2BQaOZTGOTJJX6ZCS/d2mJZeHIuaz4uz9u7jWiQsyaLPH
-         WMBA==
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=EKjzv7Pv4TNnz2+MQrslpZJwfNPoJRTBvfVLHgHOxOE=;
+        b=iYODRvqBZuk6iTRsY65cJZof71V4wglY7fz5PhLo4pFhcXz3kErg/WHOARTCHniyS9
+         irM5vDDfDDd0T1ExDZYNrcHcBkwA0IoJ3ff4FMxrXBwDgHjbNdw5hsAw7cXIH5mZ2AJe
+         7IC4Q93UqEnInOmAvPbu3aAQlig6PhxUbn7EsVzw7ZbfKtjEtqINNAkSBWFee371XoW/
+         Wqx/n0/5wfueftRHjMDjM0n2hXo5NC3y4xCUI9X4H0P3GGRg6ARTXVcKVgTyyORL5sM3
+         Ps6ur/4XDxOpRs4N5HESGqevHbMbiaWMZ33w5ojYSd8vc+dSm8+1zgwFX2PvlvU5F7zs
+         d0BA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+eMmTfwODzLvEzByWZTx/8AnGc8y+MNL0RRcXP1LEg8=;
-        b=irmzPymWa0NneeHgkzKSSK8m5fmr+Ktg9yCbtWKe1hse9Jtdq2b+1CFpAyOJd0mQGp
-         FivwQ2XurW5EZ2crxjzh9k749ALaFKjoRpUYVfEV2+XpKfJYL8p9j/nlUgKj16dKuCZc
-         /hWPEcpudLCYKgD79nEWP8LvuKY3vXOyVgJsV6Uotr2MBSwnR/y/uYCZtqjZ0sAV9ebg
-         /Tqjw4Hfe7o8JmPavTbnkT3hcoDthYPVzSx+itqwPMNcOKBYF5e8cIV4uD5bzLouB7LD
-         0JWk2xcNxL7BBitLeauP0GoKp8f3GGcH3NyuGOS2VCjqcSbstY5XFVL5j3zxb++DXGWf
-         UlFw==
-X-Gm-Message-State: AHQUAuZuxNDH7t+4AQvRnn+N6upEI+83vD+BObBNJsN7Pqdd74AkwwjO
-        7VaHnLbwIPYIzMRq5m5A3dU=
-X-Google-Smtp-Source: AHgI3Iboze4MAOT7M75jcLt/i5BOKZkIEqQNluKzPOhijI898ysF/3kpni+STmhmgYX1/FAzHnb+IA==
-X-Received: by 2002:a1c:2c6:: with SMTP id 189mr6357904wmc.21.1549825223183;
-        Sun, 10 Feb 2019 11:00:23 -0800 (PST)
-Received: from felia.fritz.box ([2001:16b8:2dee:9f00:2436:5653:8de5:2886])
-        by smtp.gmail.com with ESMTPSA id l20sm16001287wrb.93.2019.02.10.11.00.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 10 Feb 2019 11:00:22 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     James Bottomley <jejb@linux.ibm.com>,
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=EKjzv7Pv4TNnz2+MQrslpZJwfNPoJRTBvfVLHgHOxOE=;
+        b=G4D9JkNEjnetoiCnGfL5VnW4UCf2fyebIWtDqzA6Xlgq3zDwhJoGBqveZKpk/wUZDz
+         VC0usb8gxYE+/V1Fa3yX0kMqsf9V/bltjkAo191FHmrq4lkQEgUWocjDy+A5Bdhs/6Gv
+         rlX5oBUxkABfxVtuEKYLZTzUqC7hg9pJOLjmUKT8vuqSzlazkNrRkqQSgxLFW+0+KdE5
+         ++QlTJQjgA6YoMmAQmS/2/USxgyVTzJyYPimu/15WK0IBmaPi2JIp3Ouxf2O0e+kzz1N
+         BtWlE+l1jRc+zIufbWskdFF4knRip+Z2vcwKVDuJ2GBH3FpoiCRQYyV8B6GEsscJUCaz
+         URVQ==
+X-Gm-Message-State: AHQUAuZS24SMlT8m4FZPxPYUDfmRw8UDdoT72BT5W7Wvp0fXyObWYr3Q
+        zqgf8hP0x9utHSsj897j800=
+X-Google-Smtp-Source: AHgI3IYwfX9oUBnuxmoYCydfrGj1gedZWXEQ/wK+wL+yNqkBYqJBcw6q5KCw8PuPG/h2fnnom95qHw==
+X-Received: by 2002:adf:ce91:: with SMTP id r17mr1011312wrn.80.1549825599435;
+        Sun, 10 Feb 2019 11:06:39 -0800 (PST)
+Received: from felia ([2001:16b8:2dee:9f00:2436:5653:8de5:2886])
+        by smtp.gmail.com with ESMTPSA id s5sm8112484wmh.37.2019.02.10.11.06.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 10 Feb 2019 11:06:38 -0800 (PST)
+From:   "lukas.bulwahn" <lukas.bulwahn@gmail.com>
+X-Google-Original-From: "lukas.bulwahn" <lukas@gmail.com>
+Date:   Sun, 10 Feb 2019 20:06:20 +0100 (CET)
+X-X-Sender: lukas@felia
+To:     James Bottomley <jejb@linux.ibm.com>
+cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Cc:     paulmck@linux.vnet.ibm.com, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: rectify two issues in KEYS-TRUSTED entry
-Date:   Sun, 10 Feb 2019 20:00:09 +0100
-Message-Id: <20190210190009.9995-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mimi Zohar <zohar@linuxibm.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: use tab instead of spaces
+In-Reply-To: <1549823158.4142.12.camel@linux.ibm.com>
+Message-ID: <alpine.DEB.2.21.1902101954310.9405@felia>
+References: <20190210181011.6117-1-lukas.bulwahn@gmail.com> <1549823158.4142.12.camel@linux.ibm.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Mimi Zohar used spaces instead of a tab when adding Jarkko Sakkinen as
-further maintainer to the KEYS-TRUSTED section entry. Paul McKenney also
-introduced a typo in Mimi Zohar's email address in the KEYS-TRUSTED section
-entry.
 
-The two issues were detected when writing a script that parses MAINTAINERS.
 
-Fixes: 34bccd61b139 ("MAINTAINERS: add Jarkko as maintainer for trusted keys")
-Fixes: 1dfddcdb95c4 ("MAINTAINERS: Update from @linux.vnet.ibm.com to @linux.ibm.com")
+On Sun, 10 Feb 2019, James Bottomley wrote:
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Mimi, please pick up this patch instead of
-  "[PATCH] MAINTAINERS: use tab instead of spaces". Thanks.
+> On Sun, 2019-02-10 at 19:10 +0100, Lukas Bulwahn wrote:
+> > Mimi Zohar used spaces instead of a tab when adding Jarkko Sakkinen
+> > as
+> > further maintainer to the KEYS-TRUSTED section entry. So, we rectify
+> > this
+> > with this commit.
+> > 
+> > The issue was detected when writing a script that parses MAINTAINERS.
+> > 
+> > Fixes: 34bccd61b139 ("MAINTAINERS: add Jarkko as maintainer for
+> > trusted keys")
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> 
+> This isn't really a bug, is it?
+> 
+> We have no formatting requirements for the MAINTAINERS file and the
+> section owner is free to align with tabs, spaces or nothing as they see
+> fit.  Most use a single tab, but a couple don't. The only real thing
+> that cares is get_maintainers.pl and it uses \s* as the parse regexp,
+> so it doesn't care either.
+> 
+> Now, we could possibly agree the file looks better with a single space
+> or a single tab between the tag and the value and thus we should be
+> doing this, but we'd need to agree on that and update the tag
+> description accordingly.
+> 
 
- MAINTAINERS | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+It was the only line in MAINTAINERS remaining that used spaces instead of 
+a single tab. So, even if there is not an explicit formatting requirement, 
+changing a single line to have it consistent in one format seemed 
+reasonable to me.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index bf4965d6d5de..b4b62ea78eeb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8405,8 +8405,8 @@ F:	security/keys/encrypted-keys/
- 
- KEYS-TRUSTED
- M:	James Bottomley <jejb@linux.ibm.com>
--M:      Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
--M:	Mimi Zohar <zohar@linuxibm.com>
-+M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-+M:	Mimi Zohar <zohar@linux.ibm.com>
- L:	linux-integrity@vger.kernel.org
- L:	keyrings@vger.kernel.org
- S:	Supported
--- 
-2.17.1
+I just sent a new patch that also corrected the email address; 
+unfortunately, I was distracted and sent it out wrong twice before
+getting Mimi's email right on the third try.
 
+Please ignore this patch and consider the patch:
+
+MAINTAINERS: rectify two issues in KEYS-TRUSTED entry
+
+Thanks,
+
+Lukas
