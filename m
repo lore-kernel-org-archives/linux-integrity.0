@@ -2,234 +2,415 @@ Return-Path: <SRS0=a4os=QS=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 828B0C169C4
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 16:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD2B1C169C4
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 16:39:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F51321B26
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 16:19:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4135218F0
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 16:39:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728157AbfBKQTZ (ORCPT
+        id S1729019AbfBKQjB (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:19:25 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54510 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727609AbfBKQTZ (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Feb 2019 11:19:25 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1BGHKnA028846
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Feb 2019 11:19:24 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qk9wt8b81-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Feb 2019 11:19:24 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 11 Feb 2019 16:19:21 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 11 Feb 2019 16:19:17 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1BGJG1A43974816
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 11 Feb 2019 16:19:16 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CAC6FAE045;
-        Mon, 11 Feb 2019 16:19:16 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 85C70AE053;
-        Mon, 11 Feb 2019 16:19:15 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.91.85])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 11 Feb 2019 16:19:15 +0000 (GMT)
-Subject: Re: [PATCH] x86/ima: require signed kernel modules
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Justin Forbes <jforbes@redhat.com>,
-        Matthew Garrett <mjg59@google.com>
-Date:   Mon, 11 Feb 2019 11:19:04 -0500
-In-Reply-To: <20190211155609.GC20732@linux-8ccs>
-References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
-         <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
-         <20190211155609.GC20732@linux-8ccs>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19021116-0008-0000-0000-000002BF213A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021116-0009-0000-0000-0000222B370A
-Message-Id: <1549901944.12743.162.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-11_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902110122
+        Mon, 11 Feb 2019 11:39:01 -0500
+Received: from mga07.intel.com ([134.134.136.100]:61617 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728884AbfBKQjB (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 11 Feb 2019 11:39:01 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 08:38:59 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,359,1544515200"; 
+   d="scan'208";a="274174529"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.142])
+  by orsmga004.jf.intel.com with ESMTP; 11 Feb 2019 08:38:57 -0800
+Date:   Mon, 11 Feb 2019 18:38:55 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+        roberto.sassu@huawei.com, Matthew Garrett <mjg59@google.com>
+Subject: Re: [PATCH V2 2/4] tpm: Reserve the TPM final events table
+Message-ID: <20190211163855.GF8431@linux.intel.com>
+References: <20190204213303.131064-1-matthewgarrett@google.com>
+ <20190204213303.131064-3-matthewgarrett@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190204213303.131064-3-matthewgarrett@google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, 2019-02-11 at 16:56 +0100, Jessica Yu wrote:
-> +++ Mimi Zohar [31/01/19 14:18 -0500]:
-> >Require signed kernel modules on systems with secure boot mode enabled.
-> >
-> >To coordinate between appended kernel module signatures and IMA
-> >signatures, only define an IMA MODULE_CHECK policy rule if
-> >CONFIG_MODULE_SIG is not enabled.
-> >
-> >This patch defines a function named set_module_sig_required() and renames
-> >is_module_sig_enforced() to is_module_sig_enforced_or_required().  The
-> >call to set_module_sig_required() is dependent on CONFIG_IMA_ARCH_POLICY
-> >being enabled.
-> >
-> >Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> >---
-> > arch/x86/kernel/ima_arch.c        |  9 ++++++++-
-> > include/linux/module.h            |  7 ++++++-
-> > kernel/module.c                   | 15 +++++++++++----
-> > security/integrity/ima/ima_main.c |  2 +-
-> > 4 files changed, 26 insertions(+), 7 deletions(-)
-> >
-> >diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
-> >index e47cd9390ab4..96a023238a83 100644
-> >--- a/arch/x86/kernel/ima_arch.c
-> >+++ b/arch/x86/kernel/ima_arch.c
-> >@@ -64,12 +64,19 @@ static const char * const sb_arch_rules[] = {
-> > 	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
-> > #endif /* CONFIG_KEXEC_VERIFY_SIG */
-> > 	"measure func=KEXEC_KERNEL_CHECK",
-> >+#if !IS_ENABLED(CONFIG_MODULE_SIG)
-> >+	"appraise func=MODULE_CHECK appraise_type=imasig",
-> >+#endif
-> >+	"measure func=MODULE_CHECK",
-> > 	NULL
-> > };
-> >
-> > const char * const *arch_get_ima_policy(void)
-> > {
-> >-	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot())
-> >+	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
-> >+		if (IS_ENABLED(CONFIG_MODULE_SIG))
-> >+			set_module_sig_required();
-> > 		return sb_arch_rules;
-> >+	}
-> > 	return NULL;
-> > }
-> >diff --git a/include/linux/module.h b/include/linux/module.h
-> >index 8fa38d3e7538..af51c8ec755f 100644
-> >--- a/include/linux/module.h
-> >+++ b/include/linux/module.h
-> >@@ -659,7 +659,8 @@ static inline bool is_livepatch_module(struct module *mod)
-> > }
-> > #endif /* CONFIG_LIVEPATCH */
-> >
-> >-bool is_module_sig_enforced(void);
-> >+bool is_module_sig_enforced_or_required(void);
-> >+void set_module_sig_required(void);
-> >
-> > #else /* !CONFIG_MODULES... */
-> >
-> >@@ -780,6 +781,10 @@ static inline bool is_module_sig_enforced(void)
-> > 	return false;
-> > }
-> >
-> >+static inline void set_module_sig_required(void)
-> >+{
-> >+}
-> >+
-> > /* Dereference module function descriptor */
-> > static inline
-> > void *dereference_module_function_descriptor(struct module *mod, void *ptr)
-> >diff --git a/kernel/module.c b/kernel/module.c
-> >index 2ad1b5239910..70a9709d19eb 100644
-> >--- a/kernel/module.c
-> >+++ b/kernel/module.c
-> >@@ -275,16 +275,23 @@ static void module_assert_mutex_or_preempt(void)
-> >
-> > static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
-> > module_param(sig_enforce, bool_enable_only, 0644);
-> >+static bool sig_required;
-> >
-> > /*
-> >  * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
-> >  * on that instead of directly to CONFIG_MODULE_SIG_FORCE config.
-> >  */
-> >-bool is_module_sig_enforced(void)
-> >+bool is_module_sig_enforced_or_required(void)
-> > {
-> >-	return sig_enforce;
-> >+	return sig_enforce || sig_required;
-> > }
+On Mon, Feb 04, 2019 at 01:33:01PM -0800, Matthew Garrett wrote:
+> From: Matthew Garrett <mjg59@google.com>
 > 
-> Hi Mimi,
+> UEFI systems provide a boot services protocol for obtaining the TPM
+> event log, but this is unusable after ExitBootServices() is called.
+> Unfortunately ExitBootServices() itself triggers additional TPM events
+> that then can't be obtained using this protocol. The platform provides a
+> mechanism for the OS to obtain these events by recording them to a
+> separate UEFI configuration table which the OS can then map.
 > 
-> Just wondering, is there any particular reason why a distinction is
-> made between sig_enforce and sig_required? Doesn't sig_enforce imply
-> that signed modules are required? In other words, why introduce
-> another variable instead of just using sig_enforce? It may be
-> confusing in the case of a user looking at /sys/module/module/parameters/sig_enforce
-> and it having a value of 0 yet module signatures are being required by ima.
-
-Hi Jessica,
-
-It would definitely be a lot better not having to differentiate
-between the builtin CONFIG/module parm enforced and runtime enforced.
- For some reason the "lockdown" patch doesn't directly modify
-sig_enforce.
-
-Mimi
-
+> Unfortunately this table isn't self describing in terms of providing its
+> length, so we need to parse the events inside it to figure out how long
+> it is. Since the table isn't mapped at this point, we need to extend the
+> length calculation function to be able to map the event as it goes
+> along.
 > 
-> >-EXPORT_SYMBOL(is_module_sig_enforced);
-> >+EXPORT_SYMBOL(is_module_sig_enforced_or_required);
-> >+
-> >+void set_module_sig_required(void)
-> >+{
-> >+	sig_required = true;
-> >+}
-> >+EXPORT_SYMBOL(set_module_sig_required);
-> >
-> > /* Block module loading/unloading? */
-> > int modules_disabled = 0;
-> >@@ -2789,7 +2796,7 @@ static int module_sig_check(struct load_info *info, int flags)
-> > 	}
-> >
-> > 	/* Not having a signature is only an error if we're strict. */
-> >-	if (err == -ENOKEY && !is_module_sig_enforced())
-> >+	if (err == -ENOKEY && !is_module_sig_enforced_or_required())
-> > 		err = 0;
-> >
-> > 	return err;
-> >diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> >index 357edd140c09..bbaf87f688be 100644
-> >--- a/security/integrity/ima/ima_main.c
-> >+++ b/security/integrity/ima/ima_main.c
-> >@@ -563,7 +563,7 @@ int ima_load_data(enum kernel_load_data_id id)
-> > 		}
-> > 		break;
-> > 	case LOADING_MODULE:
-> >-		sig_enforce = is_module_sig_enforced();
-> >+		sig_enforce = is_module_sig_enforced_or_required();
-> >
-> > 		if (ima_enforce && (!sig_enforce
-> > 				    && (ima_appraise & IMA_APPRAISE_MODULES))) {
-> >-- 
-> >2.7.5
-> >
+> Signed-off-by: Matthew Garrett <mjg59@google.com>
+> ---
+>  drivers/char/tpm/eventlog/tpm2.c |  2 +-
+>  drivers/firmware/efi/efi.c       |  2 +
+>  drivers/firmware/efi/tpm.c       | 67 ++++++++++++++++++----
+>  include/linux/efi.h              |  9 +++
+>  include/linux/tpm_eventlog.h     | 98 +++++++++++++++++++++++++++++---
+>  5 files changed, 160 insertions(+), 18 deletions(-)
 > 
+> diff --git a/drivers/char/tpm/eventlog/tpm2.c b/drivers/char/tpm/eventlog/tpm2.c
+> index 89a8b1c10939..54976643ea2d 100644
+> --- a/drivers/char/tpm/eventlog/tpm2.c
+> +++ b/drivers/char/tpm/eventlog/tpm2.c
+> @@ -40,7 +40,7 @@
+>  static int calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
+>  				struct tcg_pcr_event *event_header)
+>  {
+> -	return _calc_tpm2_event_size(event, event_header);
+> +	return _calc_tpm2_event_size(event, event_header, NULL, NULL);
+>  }
+>  
+>  static void *tpm2_bios_measurements_start(struct seq_file *m, loff_t *pos)
+> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+> index 4c46ff6f2242..bf4e9a254e23 100644
+> --- a/drivers/firmware/efi/efi.c
+> +++ b/drivers/firmware/efi/efi.c
+> @@ -53,6 +53,7 @@ struct efi __read_mostly efi = {
+>  	.mem_attr_table		= EFI_INVALID_TABLE_ADDR,
+>  	.rng_seed		= EFI_INVALID_TABLE_ADDR,
+>  	.tpm_log		= EFI_INVALID_TABLE_ADDR,
+> +	.tpm_final_log		= EFI_INVALID_TABLE_ADDR,
+>  	.mem_reserve		= EFI_INVALID_TABLE_ADDR,
+>  };
+>  EXPORT_SYMBOL(efi);
+> @@ -485,6 +486,7 @@ static __initdata efi_config_table_type_t common_tables[] = {
+>  	{EFI_MEMORY_ATTRIBUTES_TABLE_GUID, "MEMATTR", &efi.mem_attr_table},
+>  	{LINUX_EFI_RANDOM_SEED_TABLE_GUID, "RNG", &efi.rng_seed},
+>  	{LINUX_EFI_TPM_EVENT_LOG_GUID, "TPMEventLog", &efi.tpm_log},
+> +	{LINUX_EFI_TPM_FINAL_LOG_GUID, "TPMFinalLog", &efi.tpm_final_log},
+>  	{LINUX_EFI_MEMRESERVE_TABLE_GUID, "MEMRESERVE", &efi.mem_reserve},
+>  	{NULL_GUID, NULL, NULL},
+>  };
+> diff --git a/drivers/firmware/efi/tpm.c b/drivers/firmware/efi/tpm.c
+> index 0cbeb3d46b18..19f742cf0d33 100644
+> --- a/drivers/firmware/efi/tpm.c
+> +++ b/drivers/firmware/efi/tpm.c
+> @@ -10,31 +10,78 @@
+>  #include <linux/efi.h>
+>  #include <linux/init.h>
+>  #include <linux/memblock.h>
+> +#include <linux/tpm_eventlog.h>
+>  
+>  #include <asm/early_ioremap.h>
+>  
+> +int efi_tpm_final_log_size;
+> +EXPORT_SYMBOL(efi_tpm_final_log_size);
+> +
+> +int tpm2_event_log_length(void *data, int count, void *size_info)
 
+Should be a static function and for consistency's sake the name should
+be tpm2_calc_event_log_size().
+
+> +{
+> +	struct tcg_pcr_event2_head *header;
+> +	int event_size, size = 0;
+> +
+> +	while (count > 0) {
+> +		header = data + size;
+> +		event_size = _calc_tpm2_event_size(header, size_info,
+> +						   early_memremap,
+> +						   early_memunmap);
+> +		if (event_size == 0)
+> +			return -1;
+> +		size += event_size;
+> +	}
+
+Would add a newline here.
+
+> +	return size;
+> +}
+> +
+>  /*
+>   * Reserve the memory associated with the TPM Event Log configuration table.
+>   */
+>  int __init efi_tpm_eventlog_init(void)
+>  {
+>  	struct linux_efi_tpm_eventlog *log_tbl;
+> +	struct efi_tcg2_final_events_table *final_tbl;
+>  	unsigned int tbl_size;
+>  
+> -	if (efi.tpm_log == EFI_INVALID_TABLE_ADDR)
+> +	if (efi.tpm_log != EFI_INVALID_TABLE_ADDR) {
+> +		log_tbl = early_memremap(efi.tpm_log, sizeof(*log_tbl));
+> +		if (!log_tbl) {
+> +			pr_err("Failed to map TPM Event Log table @ 0x%lx\n",
+> +			       efi.tpm_log);
+> +			efi.tpm_log = EFI_INVALID_TABLE_ADDR;
+> +			return -ENOMEM;
+> +		}
+> +
+> +		tbl_size = sizeof(*log_tbl) + log_tbl->size;
+> +		memblock_reserve(efi.tpm_log, tbl_size);
+> +		early_memunmap(log_tbl, sizeof(*log_tbl));
+> +	} else {
+> +		/*
+> +		 * We can't calculate the size of the final events without the
+> +		 * first entry in the TPM log, so bail here.
+> +		 */
+>  		return 0;
+> +	}
+
+Not really sure why this change to branching in the first part of this
+function. Would reduce the diff and review the actually relevant parts
+if you didn't do this.
+
+> +
+> +	if (efi.tpm_final_log != EFI_INVALID_TABLE_ADDR) {
+
+Wondering that should this function instead do right `in the beginning:
+
+if (efi.tpm_log == EFI_INVALID_TABLE_ADDR &&
+    efi.tpm_final_log == EFI_INVALID_TABLE_ADDR)
+	return 0;
+
+Feels odd condition that the log would not be invalid but the post log
+(using post would be more self-describing than final imho) would be. Can
+that legitly happen?
+
+
+> +		final_tbl = early_memremap(efi.tpm_final_log,
+> +					   sizeof(*final_tbl));
+> +		if (!final_tbl) {
+> +			pr_err("Failed to map TPM Final Event Log table @ 0x%lx\n",
+> +			       efi.tpm_final_log);
+> +			efi.tpm_final_log = EFI_INVALID_TABLE_ADDR;
+> +			return -ENOMEM;
+> +		}
+>  
+> -	log_tbl = early_memremap(efi.tpm_log, sizeof(*log_tbl));
+> -	if (!log_tbl) {
+> -		pr_err("Failed to map TPM Event Log table @ 0x%lx\n",
+> -			efi.tpm_log);
+> -		efi.tpm_log = EFI_INVALID_TABLE_ADDR;
+> -		return -ENOMEM;
+> +		tbl_size = tpm2_event_log_length(final_tbl->events,
+> +						 final_tbl->number_of_events,
+> +						 (void *)efi.tpm_log);
+> +		memblock_reserve((unsigned long)final_tbl,
+> +				 tbl_size + sizeof(*final_tbl));
+> +		early_memunmap(final_tbl, sizeof(*final_tbl));
+> +		efi_tpm_final_log_size = tbl_size;
+>  	}
+>  
+> -	tbl_size = sizeof(*log_tbl) + log_tbl->size;
+> -	memblock_reserve(efi.tpm_log, tbl_size);
+> -	early_memunmap(log_tbl, sizeof(*log_tbl));
+>  	return 0;
+>  }
+>  
+> diff --git a/include/linux/efi.h b/include/linux/efi.h
+> index 45ff763fba76..a6134c301fa7 100644
+> --- a/include/linux/efi.h
+> +++ b/include/linux/efi.h
+> @@ -676,6 +676,7 @@ void efi_native_runtime_setup(void);
+>  #define LINUX_EFI_LOADER_ENTRY_GUID		EFI_GUID(0x4a67b082, 0x0a4c, 0x41cf,  0xb6, 0xc7, 0x44, 0x0b, 0x29, 0xbb, 0x8c, 0x4f)
+>  #define LINUX_EFI_RANDOM_SEED_TABLE_GUID	EFI_GUID(0x1ce1e5bc, 0x7ceb, 0x42f2,  0x81, 0xe5, 0x8a, 0xad, 0xf1, 0x80, 0xf5, 0x7b)
+>  #define LINUX_EFI_TPM_EVENT_LOG_GUID		EFI_GUID(0xb7799cb0, 0xeca2, 0x4943,  0x96, 0x67, 0x1f, 0xae, 0x07, 0xb7, 0x47, 0xfa)
+> +#define LINUX_EFI_TPM_FINAL_LOG_GUID		EFI_GUID(0x1e2ed096, 0x30e2, 0x4254,  0xbd, 0x89, 0x86, 0x3b, 0xbe, 0xf8, 0x23, 0x25)
+>  #define LINUX_EFI_MEMRESERVE_TABLE_GUID		EFI_GUID(0x888eb0c6, 0x8ede, 0x4ff5,  0xa8, 0xf0, 0x9a, 0xee, 0x5c, 0xb9, 0x77, 0xc2)
+>  
+>  typedef struct {
+> @@ -983,6 +984,7 @@ extern struct efi {
+>  	unsigned long mem_attr_table;	/* memory attributes table */
+>  	unsigned long rng_seed;		/* UEFI firmware random seed */
+>  	unsigned long tpm_log;		/* TPM2 Event Log table */
+> +	unsigned long tpm_final_log;	/* TPM2 Final Events Log table */
+>  	unsigned long mem_reserve;	/* Linux EFI memreserve table */
+>  	efi_get_time_t *get_time;
+>  	efi_set_time_t *set_time;
+> @@ -1700,6 +1702,13 @@ struct linux_efi_tpm_eventlog {
+>  
+>  extern int efi_tpm_eventlog_init(void);
+>  
+> +struct efi_tcg2_final_events_table {
+> +	u64 version;
+> +	u64 number_of_events;
+
+Would name this simply as nr_events as nr_ is so commonly used prefix in
+the kernel.
+
+> +	u8 events[];
+> +};
+> +extern int efi_tpm_final_log_size;
+> +
+>  /*
+>   * efi_runtime_service() function identifiers.
+>   * "NONE" is used by efi_recover_from_page_fault() to check if the page
+> diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
+> index b1b8350c238f..72e995bfc3e7 100644
+> --- a/include/linux/tpm_eventlog.h
+> +++ b/include/linux/tpm_eventlog.h
+> @@ -112,11 +112,37 @@ struct tcg_pcr_event2_head {
+>  	struct tpm_digest digests[];
+>  } __packed;
+>  
+> +struct tcg_algorithm_size {
+> +	u16 algorithm_id;
+> +	u16 algorithm_size;
+> +};
+> +
+> +struct tcg_algorithm_info {
+> +	u8 signature[16];
+> +	u32 platform_class;
+> +	u8 spec_version_minor;
+> +	u8 spec_version_major;
+> +	u8 spec_errata;
+> +	u8 uintn_size;
+> +	u32 number_of_algorithms;
+> +	struct tcg_algorithm_size digest_sizes[];
+> +};
+> +
+> +/*
+> + * This can be called in two contexts - when the event is already mapped,
+> + * and when it isn't. In the latter case we don't know how much space we
+> + * need to map in advance so need to jump through this repeated map/unmap
+> + * dance as we learn more about the size of the event.
+> + */
+>  static inline int _calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
+> -					struct tcg_pcr_event *event_header)
+> +				  struct tcg_pcr_event *event_header,
+> +				  void *(*map)(resource_size_t, unsigned long),
+> +				  void (*unmap)(void *, unsigned long))
+
+Should replace with bool do_mapping instead of doing indirect calls for
+on reason (and thus introducing retpoline's). I don't think call sites
+should be enumerated. A proper kdoc would just describe parameters and
+their purpose.
+
+>  {
+>  	struct tcg_efi_specid_event_head *efispecid;
+>  	struct tcg_event_field *event_field;
+> +	void *mapping = NULL;
+> +	int mapping_size;
+>  	void *marker;
+>  	void *marker_start;
+>  	u32 halg_size;
+> @@ -130,36 +156,94 @@ static inline int _calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
+>  	marker = marker + sizeof(event->pcr_idx) + sizeof(event->event_type)
+>  		+ sizeof(event->count);
+>  
+> +	/* Map the event header */
+> +	if (map) {
+> +		mapping_size = marker - marker_start;
+> +		mapping = map((unsigned long)marker_start, mapping_size);
+> +		if (!mapping) {
+> +			size = 0;
+> +			goto out;
+> +		}
+> +	}
+> +
+>  	efispecid = (struct tcg_efi_specid_event_head *)event_header->event;
+>  
+>  	/* Check if event is malformed. */
+> -	if (event->count > efispecid->num_algs)
+> -		return 0;
+> +	if (event->count > efispecid->num_algs) {
+> +		size = 0;
+> +		goto out;
+> +	}
+>  
+>  	for (i = 0; i < event->count; i++) {
+>  		halg_size = sizeof(event->digests[i].alg_id);
+> +
+> +		/* Map the digest's algorithm identifier */
+> +		if (map && unmap) {
+> +			unmap(mapping, mapping_size);
+> +			mapping_size = marker - marker_start + halg_size;
+> +			mapping = map((unsigned long)marker_start,
+> +				      mapping_size);
+> +			if (!mapping) {
+> +				size = 0;
+> +				goto out;
+> +			}
+> +		}
+> +
+>  		memcpy(&halg, marker, halg_size);
+>  		marker = marker + halg_size;
+> +
+>  		for (j = 0; j < efispecid->num_algs; j++) {
+>  			if (halg == efispecid->digest_sizes[j].alg_id) {
+>  				marker +=
+>  					efispecid->digest_sizes[j].digest_size;
+> +
+> +				/* Map the digest content itself */
+> +				if (map && unmap) {
+> +					unmap(mapping, mapping_size);
+> +					mapping_size = marker - marker_start;
+> +					mapping = map((unsigned long)marker_start,
+> +						      mapping_size);
+> +					if (!mapping) {
+> +						size = 0;
+> +						goto out;
+> +					}
+> +				}
+>  				break;
+>  			}
+>  		}
+>  		/* Algorithm without known length. Such event is unparseable. */
+> -		if (j == efispecid->num_algs)
+> -			return 0;
+> +		if (j == efispecid->num_algs) {
+> +			size = 0;
+> +			goto out;
+> +		}
+>  	}
+>  
+>  	event_field = (struct tcg_event_field *)marker;
+> +
+> +	/*
+> +	 * Map the event size - we don't read from the event itself, so
+> +	 * we don't need to map it
+> +	 */
+> +	if (map && unmap) {
+> +		unmap(marker_start, mapping_size);
+> +		mapping_size += sizeof(event_field->event_size);
+> +		mapping = map((unsigned long)marker_start, mapping_size);
+> +		if (!mapping) {
+> +			size = 0;
+> +			goto out;
+> +		}
+> +	}
+> +
+>  	marker = marker + sizeof(event_field->event_size)
+>  		+ event_field->event_size;
+>  	size = marker - marker_start;
+>  
+>  	if ((event->event_type == 0) && (event_field->event_size == 0))
+> -		return 0;
+> -
+> +		size = 0;
+> +out:
+> +	if (unmap)
+> +		unmap(mapping, mapping_size);
+>  	return size;
+>  }
+> +
+>  #endif
+> -- 
+> 2.20.1.611.gfbb209baf1-goog
+> 
