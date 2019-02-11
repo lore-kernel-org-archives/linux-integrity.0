@@ -3,44 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD2B1C169C4
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 16:39:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4209C169C4
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 16:48:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4135218F0
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 16:39:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C43C21B24
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 16:48:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729019AbfBKQjB (ORCPT
+        id S1729386AbfBKQsJ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:39:01 -0500
-Received: from mga07.intel.com ([134.134.136.100]:61617 "EHLO mga07.intel.com"
+        Mon, 11 Feb 2019 11:48:09 -0500
+Received: from mga05.intel.com ([192.55.52.43]:47093 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728884AbfBKQjB (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Feb 2019 11:39:01 -0500
-X-Amp-Result: UNSCANNABLE
+        id S1728968AbfBKQsI (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 11 Feb 2019 11:48:08 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 08:38:59 -0800
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 08:48:07 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,359,1544515200"; 
-   d="scan'208";a="274174529"
+   d="scan'208";a="114050317"
 Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.142])
-  by orsmga004.jf.intel.com with ESMTP; 11 Feb 2019 08:38:57 -0800
-Date:   Mon, 11 Feb 2019 18:38:55 +0200
+  by orsmga007.jf.intel.com with ESMTP; 11 Feb 2019 08:48:04 -0800
+Date:   Mon, 11 Feb 2019 18:48:03 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-        roberto.sassu@huawei.com, Matthew Garrett <mjg59@google.com>
-Subject: Re: [PATCH V2 2/4] tpm: Reserve the TPM final events table
-Message-ID: <20190211163855.GF8431@linux.intel.com>
-References: <20190204213303.131064-1-matthewgarrett@google.com>
- <20190204213303.131064-3-matthewgarrett@google.com>
+To:     Tadeusz Struk <tadeusz.struk@intel.com>
+Cc:     linux-kselftest@vger.kernel.org, shuah@kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, PeterHuewe@gmx.de,
+        jgg@ziepe.ca
+Subject: Re: [PATCH 2/2] selftests: tpm2: Extend tests to cover partial reads
+Message-ID: <20190211164803.GG8431@linux.intel.com>
+References: <154939851385.18477.481518864800562919.stgit@tstruk-mobl1.jf.intel.com>
+ <154939851969.18477.13778157467131576825.stgit@tstruk-mobl1.jf.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190204213303.131064-3-matthewgarrett@google.com>
+In-Reply-To: <154939851969.18477.13778157467131576825.stgit@tstruk-mobl1.jf.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
@@ -48,369 +51,159 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 01:33:01PM -0800, Matthew Garrett wrote:
-> From: Matthew Garrett <mjg59@google.com>
+You are missing a cover letter from this patch set. Please have it in
+v2. Also use tag "selftests/tpm2" instead of having two tags in the
+short summaries. Now they look a bit weird.
+
+On Tue, Feb 05, 2019 at 12:28:39PM -0800, Tadeusz Struk wrote:
+> Three new tests added:
+> 1. Send get random cmd, read header in 1st read, read the rest in second
+>    read - expect success
+> 2. Send get random cmd, read only part of the response, send another
+>    get random command, read the response - expect success
+> 3. Send get random cmd followed by another get random cmd, without
+>    reading the first response - expect the second cmd to fail with -EBUSY
 > 
-> UEFI systems provide a boot services protocol for obtaining the TPM
-> event log, but this is unusable after ExitBootServices() is called.
-> Unfortunately ExitBootServices() itself triggers additional TPM events
-> that then can't be obtained using this protocol. The platform provides a
-> mechanism for the OS to obtain these events by recording them to a
-> separate UEFI configuration table which the OS can then map.
-> 
-> Unfortunately this table isn't self describing in terms of providing its
-> length, so we need to parse the events inside it to figure out how long
-> it is. Since the table isn't mapped at this point, we need to extend the
-> length calculation function to be able to map the event as it goes
-> along.
-> 
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
+> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
 > ---
->  drivers/char/tpm/eventlog/tpm2.c |  2 +-
->  drivers/firmware/efi/efi.c       |  2 +
->  drivers/firmware/efi/tpm.c       | 67 ++++++++++++++++++----
->  include/linux/efi.h              |  9 +++
->  include/linux/tpm_eventlog.h     | 98 +++++++++++++++++++++++++++++---
->  5 files changed, 160 insertions(+), 18 deletions(-)
+>  tools/testing/selftests/tpm2/tpm2.py       |    1 
+>  tools/testing/selftests/tpm2/tpm2_tests.py |   82 ++++++++++++++++++++++++++++
+>  2 files changed, 83 insertions(+)
 > 
-> diff --git a/drivers/char/tpm/eventlog/tpm2.c b/drivers/char/tpm/eventlog/tpm2.c
-> index 89a8b1c10939..54976643ea2d 100644
-> --- a/drivers/char/tpm/eventlog/tpm2.c
-> +++ b/drivers/char/tpm/eventlog/tpm2.c
-> @@ -40,7 +40,7 @@
->  static int calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
->  				struct tcg_pcr_event *event_header)
->  {
-> -	return _calc_tpm2_event_size(event, event_header);
-> +	return _calc_tpm2_event_size(event, event_header, NULL, NULL);
->  }
+> diff --git a/tools/testing/selftests/tpm2/tpm2.py b/tools/testing/selftests/tpm2/tpm2.py
+> index c2b9f2b1a0ac..828c18584624 100644
+> --- a/tools/testing/selftests/tpm2/tpm2.py
+> +++ b/tools/testing/selftests/tpm2/tpm2.py
+> @@ -22,6 +22,7 @@ TPM2_CC_UNSEAL = 0x015E
+>  TPM2_CC_FLUSH_CONTEXT = 0x0165
+>  TPM2_CC_START_AUTH_SESSION = 0x0176
+>  TPM2_CC_GET_CAPABILITY	= 0x017A
+> +TPM2_CC_GET_RANDOM = 0x017B
+>  TPM2_CC_PCR_READ = 0x017E
+>  TPM2_CC_POLICY_PCR = 0x017F
+>  TPM2_CC_PCR_EXTEND = 0x0182
+> diff --git a/tools/testing/selftests/tpm2/tpm2_tests.py b/tools/testing/selftests/tpm2/tpm2_tests.py
+> index 3bb066fea4a0..3f6a65cbdd39 100644
+> --- a/tools/testing/selftests/tpm2/tpm2_tests.py
+> +++ b/tools/testing/selftests/tpm2/tpm2_tests.py
+> @@ -158,6 +158,88 @@ class SmokeTest(unittest.TestCase):
+>              pass
+>          self.assertEqual(rejected, True)
 >  
->  static void *tpm2_bios_measurements_start(struct seq_file *m, loff_t *pos)
-> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-> index 4c46ff6f2242..bf4e9a254e23 100644
-> --- a/drivers/firmware/efi/efi.c
-> +++ b/drivers/firmware/efi/efi.c
-> @@ -53,6 +53,7 @@ struct efi __read_mostly efi = {
->  	.mem_attr_table		= EFI_INVALID_TABLE_ADDR,
->  	.rng_seed		= EFI_INVALID_TABLE_ADDR,
->  	.tpm_log		= EFI_INVALID_TABLE_ADDR,
-> +	.tpm_final_log		= EFI_INVALID_TABLE_ADDR,
->  	.mem_reserve		= EFI_INVALID_TABLE_ADDR,
->  };
->  EXPORT_SYMBOL(efi);
-> @@ -485,6 +486,7 @@ static __initdata efi_config_table_type_t common_tables[] = {
->  	{EFI_MEMORY_ATTRIBUTES_TABLE_GUID, "MEMATTR", &efi.mem_attr_table},
->  	{LINUX_EFI_RANDOM_SEED_TABLE_GUID, "RNG", &efi.rng_seed},
->  	{LINUX_EFI_TPM_EVENT_LOG_GUID, "TPMEventLog", &efi.tpm_log},
-> +	{LINUX_EFI_TPM_FINAL_LOG_GUID, "TPMFinalLog", &efi.tpm_final_log},
->  	{LINUX_EFI_MEMRESERVE_TABLE_GUID, "MEMRESERVE", &efi.mem_reserve},
->  	{NULL_GUID, NULL, NULL},
->  };
-> diff --git a/drivers/firmware/efi/tpm.c b/drivers/firmware/efi/tpm.c
-> index 0cbeb3d46b18..19f742cf0d33 100644
-> --- a/drivers/firmware/efi/tpm.c
-> +++ b/drivers/firmware/efi/tpm.c
-> @@ -10,31 +10,78 @@
->  #include <linux/efi.h>
->  #include <linux/init.h>
->  #include <linux/memblock.h>
-> +#include <linux/tpm_eventlog.h>
->  
->  #include <asm/early_ioremap.h>
->  
-> +int efi_tpm_final_log_size;
-> +EXPORT_SYMBOL(efi_tpm_final_log_size);
+> +    def test_read_partial_resp(self):
+> +        """Reads random in two subsequent reads"""
+> +        log = logging.getLogger(__name__)
+> +        try:
+> +            fmt = '>HIIH'
+> +            cmd = struct.pack(fmt,
+> +                              tpm2.TPM2_ST_NO_SESSIONS,
+> +                              struct.calcsize(fmt),
+> +                              tpm2.TPM2_CC_GET_RANDOM,
+> +                              0x20)
+> +            self.client.tpm.write(cmd)
+> +            hdr = self.client.tpm.read(10)
+> +            sz = struct.unpack('>I', hdr[2:6])[0]
+> +            rsp = self.client.tpm.read()
+
+8<
+
+> +            log.debug("header:")
+> +            log.debug(tpm2.hex_dump(hdr))
+> +            log.debug("resp:")
+> +            log.debug(tpm2.hex_dump(rsp))
+
+Remove.
+
+> +        except:
+
+8<
+
+> +            log.debug("Error:", sys.exc_info()[0])
+
+Remove.
+
+> +            raise
 > +
-> +int tpm2_event_log_length(void *data, int count, void *size_info)
-
-Should be a static function and for consistency's sake the name should
-be tpm2_calc_event_log_size().
-
-> +{
-> +	struct tcg_pcr_event2_head *header;
-> +	int event_size, size = 0;
+> +        self.assertEqual(sz, 10 + 2 + 32)
+> +        self.assertEqual(len(rsp), 2 + 32)
 > +
-> +	while (count > 0) {
-> +		header = data + size;
-> +		event_size = _calc_tpm2_event_size(header, size_info,
-> +						   early_memremap,
-> +						   early_memunmap);
-> +		if (event_size == 0)
-> +			return -1;
-> +		size += event_size;
-> +	}
+> +    def test_read_partial_overwrite(self):
+> +        """Reads only part of the response and issue a new cmd"""
+> +        log = logging.getLogger(__name__)
+> +        try:
+> +            fmt = '>HIIH'
+> +            cmd = struct.pack(fmt,
+> +                              tpm2.TPM2_ST_NO_SESSIONS,
+> +                              struct.calcsize(fmt),
+> +                              tpm2.TPM2_CC_GET_RANDOM,
+> +                              0x20)
+> +            self.client.tpm.write(cmd)
+> +            # Read part of the respone
+> +            rsp1 = self.client.tpm.read(15)
 
-Would add a newline here.
+8<
 
-> +	return size;
-> +}
-> +
->  /*
->   * Reserve the memory associated with the TPM Event Log configuration table.
->   */
->  int __init efi_tpm_eventlog_init(void)
->  {
->  	struct linux_efi_tpm_eventlog *log_tbl;
-> +	struct efi_tcg2_final_events_table *final_tbl;
->  	unsigned int tbl_size;
->  
-> -	if (efi.tpm_log == EFI_INVALID_TABLE_ADDR)
-> +	if (efi.tpm_log != EFI_INVALID_TABLE_ADDR) {
-> +		log_tbl = early_memremap(efi.tpm_log, sizeof(*log_tbl));
-> +		if (!log_tbl) {
-> +			pr_err("Failed to map TPM Event Log table @ 0x%lx\n",
-> +			       efi.tpm_log);
-> +			efi.tpm_log = EFI_INVALID_TABLE_ADDR;
-> +			return -ENOMEM;
-> +		}
-> +
-> +		tbl_size = sizeof(*log_tbl) + log_tbl->size;
-> +		memblock_reserve(efi.tpm_log, tbl_size);
-> +		early_memunmap(log_tbl, sizeof(*log_tbl));
-> +	} else {
-> +		/*
-> +		 * We can't calculate the size of the final events without the
-> +		 * first entry in the TPM log, so bail here.
-> +		 */
->  		return 0;
-> +	}
+> +            log.debug("rsp 1:")
+> +            log.debug(tpm2.hex_dump(rsp1))
 
-Not really sure why this change to branching in the first part of this
-function. Would reduce the diff and review the actually relevant parts
-if you didn't do this.
+Remove.
 
 > +
-> +	if (efi.tpm_final_log != EFI_INVALID_TABLE_ADDR) {
+> +            # Send a new cmd
+> +            self.client.tpm.write(cmd)
+> +
+> +            # Read the whole respone
+> +            rsp2 = self.client.tpm.read()
 
-Wondering that should this function instead do right `in the beginning:
+8<
 
-if (efi.tpm_log == EFI_INVALID_TABLE_ADDR &&
-    efi.tpm_final_log == EFI_INVALID_TABLE_ADDR)
-	return 0;
+> +            log.debug("rsp 2:")
+> +            log.debug(tpm2.hex_dump(rsp2))
 
-Feels odd condition that the log would not be invalid but the post log
-(using post would be more self-describing than final imho) would be. Can
-that legitly happen?
+Remove.
 
+> +
+> +        except:
 
-> +		final_tbl = early_memremap(efi.tpm_final_log,
-> +					   sizeof(*final_tbl));
-> +		if (!final_tbl) {
-> +			pr_err("Failed to map TPM Final Event Log table @ 0x%lx\n",
-> +			       efi.tpm_final_log);
-> +			efi.tpm_final_log = EFI_INVALID_TABLE_ADDR;
-> +			return -ENOMEM;
-> +		}
->  
-> -	log_tbl = early_memremap(efi.tpm_log, sizeof(*log_tbl));
-> -	if (!log_tbl) {
-> -		pr_err("Failed to map TPM Event Log table @ 0x%lx\n",
-> -			efi.tpm_log);
-> -		efi.tpm_log = EFI_INVALID_TABLE_ADDR;
-> -		return -ENOMEM;
-> +		tbl_size = tpm2_event_log_length(final_tbl->events,
-> +						 final_tbl->number_of_events,
-> +						 (void *)efi.tpm_log);
-> +		memblock_reserve((unsigned long)final_tbl,
-> +				 tbl_size + sizeof(*final_tbl));
-> +		early_memunmap(final_tbl, sizeof(*final_tbl));
-> +		efi_tpm_final_log_size = tbl_size;
->  	}
->  
-> -	tbl_size = sizeof(*log_tbl) + log_tbl->size;
-> -	memblock_reserve(efi.tpm_log, tbl_size);
-> -	early_memunmap(log_tbl, sizeof(*log_tbl));
->  	return 0;
->  }
->  
-> diff --git a/include/linux/efi.h b/include/linux/efi.h
-> index 45ff763fba76..a6134c301fa7 100644
-> --- a/include/linux/efi.h
-> +++ b/include/linux/efi.h
-> @@ -676,6 +676,7 @@ void efi_native_runtime_setup(void);
->  #define LINUX_EFI_LOADER_ENTRY_GUID		EFI_GUID(0x4a67b082, 0x0a4c, 0x41cf,  0xb6, 0xc7, 0x44, 0x0b, 0x29, 0xbb, 0x8c, 0x4f)
->  #define LINUX_EFI_RANDOM_SEED_TABLE_GUID	EFI_GUID(0x1ce1e5bc, 0x7ceb, 0x42f2,  0x81, 0xe5, 0x8a, 0xad, 0xf1, 0x80, 0xf5, 0x7b)
->  #define LINUX_EFI_TPM_EVENT_LOG_GUID		EFI_GUID(0xb7799cb0, 0xeca2, 0x4943,  0x96, 0x67, 0x1f, 0xae, 0x07, 0xb7, 0x47, 0xfa)
-> +#define LINUX_EFI_TPM_FINAL_LOG_GUID		EFI_GUID(0x1e2ed096, 0x30e2, 0x4254,  0xbd, 0x89, 0x86, 0x3b, 0xbe, 0xf8, 0x23, 0x25)
->  #define LINUX_EFI_MEMRESERVE_TABLE_GUID		EFI_GUID(0x888eb0c6, 0x8ede, 0x4ff5,  0xa8, 0xf0, 0x9a, 0xee, 0x5c, 0xb9, 0x77, 0xc2)
->  
->  typedef struct {
-> @@ -983,6 +984,7 @@ extern struct efi {
->  	unsigned long mem_attr_table;	/* memory attributes table */
->  	unsigned long rng_seed;		/* UEFI firmware random seed */
->  	unsigned long tpm_log;		/* TPM2 Event Log table */
-> +	unsigned long tpm_final_log;	/* TPM2 Final Events Log table */
->  	unsigned long mem_reserve;	/* Linux EFI memreserve table */
->  	efi_get_time_t *get_time;
->  	efi_set_time_t *set_time;
-> @@ -1700,6 +1702,13 @@ struct linux_efi_tpm_eventlog {
->  
->  extern int efi_tpm_eventlog_init(void);
->  
-> +struct efi_tcg2_final_events_table {
-> +	u64 version;
-> +	u64 number_of_events;
+8<
+> +            log.debug("Error:", sys.exc_info()[0])
 
-Would name this simply as nr_events as nr_ is so commonly used prefix in
-the kernel.
+Remove.
 
-> +	u8 events[];
-> +};
-> +extern int efi_tpm_final_log_size;
+> +            raise
 > +
->  /*
->   * efi_runtime_service() function identifiers.
->   * "NONE" is used by efi_recover_from_page_fault() to check if the page
-> diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
-> index b1b8350c238f..72e995bfc3e7 100644
-> --- a/include/linux/tpm_eventlog.h
-> +++ b/include/linux/tpm_eventlog.h
-> @@ -112,11 +112,37 @@ struct tcg_pcr_event2_head {
->  	struct tpm_digest digests[];
->  } __packed;
->  
-> +struct tcg_algorithm_size {
-> +	u16 algorithm_id;
-> +	u16 algorithm_size;
-> +};
+> +        self.assertEqual(len(rsp1), 15)
+> +        self.assertEqual(len(rsp2), 10 + 2 + 32)
 > +
-> +struct tcg_algorithm_info {
-> +	u8 signature[16];
-> +	u32 platform_class;
-> +	u8 spec_version_minor;
-> +	u8 spec_version_major;
-> +	u8 spec_errata;
-> +	u8 uintn_size;
-> +	u32 number_of_algorithms;
-> +	struct tcg_algorithm_size digest_sizes[];
-> +};
+> +    def test_send_two_cmds(self):
+> +        """Send two cmds without reading a response"""
+> +        rejected = False
+> +        try:
+> +            fmt = '>HIIH'
+> +            cmd = struct.pack(fmt,
+> +                              tpm2.TPM2_ST_NO_SESSIONS,
+> +                              struct.calcsize(fmt),
+> +                              tpm2.TPM2_CC_GET_RANDOM,
+> +                              0x20)
+> +            self.client.tpm.write(cmd)
 > +
-> +/*
-> + * This can be called in two contexts - when the event is already mapped,
-> + * and when it isn't. In the latter case we don't know how much space we
-> + * need to map in advance so need to jump through this repeated map/unmap
-> + * dance as we learn more about the size of the event.
-> + */
->  static inline int _calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
-> -					struct tcg_pcr_event *event_header)
-> +				  struct tcg_pcr_event *event_header,
-> +				  void *(*map)(resource_size_t, unsigned long),
-> +				  void (*unmap)(void *, unsigned long))
-
-Should replace with bool do_mapping instead of doing indirect calls for
-on reason (and thus introducing retpoline's). I don't think call sites
-should be enumerated. A proper kdoc would just describe parameters and
-their purpose.
-
->  {
->  	struct tcg_efi_specid_event_head *efispecid;
->  	struct tcg_event_field *event_field;
-> +	void *mapping = NULL;
-> +	int mapping_size;
->  	void *marker;
->  	void *marker_start;
->  	u32 halg_size;
-> @@ -130,36 +156,94 @@ static inline int _calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
->  	marker = marker + sizeof(event->pcr_idx) + sizeof(event->event_type)
->  		+ sizeof(event->count);
->  
-> +	/* Map the event header */
-> +	if (map) {
-> +		mapping_size = marker - marker_start;
-> +		mapping = map((unsigned long)marker_start, mapping_size);
-> +		if (!mapping) {
-> +			size = 0;
-> +			goto out;
-> +		}
-> +	}
+> +            # expect the second one to raise -EBUSY error
+> +            self.client.tpm.write(cmd)
+> +            rsp = self.client.tpm.read()
 > +
->  	efispecid = (struct tcg_efi_specid_event_head *)event_header->event;
->  
->  	/* Check if event is malformed. */
-> -	if (event->count > efispecid->num_algs)
-> -		return 0;
-> +	if (event->count > efispecid->num_algs) {
-> +		size = 0;
-> +		goto out;
-> +	}
->  
->  	for (i = 0; i < event->count; i++) {
->  		halg_size = sizeof(event->digests[i].alg_id);
+> +        except IOError, e:
+> +            # read the response
+> +            rsp = self.client.tpm.read()
+> +            rejected = True
+> +            pass
+> +        except:
+> +            raise
 > +
-> +		/* Map the digest's algorithm identifier */
-> +		if (map && unmap) {
-> +			unmap(mapping, mapping_size);
-> +			mapping_size = marker - marker_start + halg_size;
-> +			mapping = map((unsigned long)marker_start,
-> +				      mapping_size);
-> +			if (!mapping) {
-> +				size = 0;
-> +				goto out;
-> +			}
-> +		}
+> +        self.assertEqual(rejected, True)
 > +
->  		memcpy(&halg, marker, halg_size);
->  		marker = marker + halg_size;
-> +
->  		for (j = 0; j < efispecid->num_algs; j++) {
->  			if (halg == efispecid->digest_sizes[j].alg_id) {
->  				marker +=
->  					efispecid->digest_sizes[j].digest_size;
-> +
-> +				/* Map the digest content itself */
-> +				if (map && unmap) {
-> +					unmap(mapping, mapping_size);
-> +					mapping_size = marker - marker_start;
-> +					mapping = map((unsigned long)marker_start,
-> +						      mapping_size);
-> +					if (!mapping) {
-> +						size = 0;
-> +						goto out;
-> +					}
-> +				}
->  				break;
->  			}
->  		}
->  		/* Algorithm without known length. Such event is unparseable. */
-> -		if (j == efispecid->num_algs)
-> -			return 0;
-> +		if (j == efispecid->num_algs) {
-> +			size = 0;
-> +			goto out;
-> +		}
->  	}
->  
->  	event_field = (struct tcg_event_field *)marker;
-> +
-> +	/*
-> +	 * Map the event size - we don't read from the event itself, so
-> +	 * we don't need to map it
-> +	 */
-> +	if (map && unmap) {
-> +		unmap(marker_start, mapping_size);
-> +		mapping_size += sizeof(event_field->event_size);
-> +		mapping = map((unsigned long)marker_start, mapping_size);
-> +		if (!mapping) {
-> +			size = 0;
-> +			goto out;
-> +		}
-> +	}
-> +
->  	marker = marker + sizeof(event_field->event_size)
->  		+ event_field->event_size;
->  	size = marker - marker_start;
->  
->  	if ((event->event_type == 0) && (event_field->event_size == 0))
-> -		return 0;
-> -
-> +		size = 0;
-> +out:
-> +	if (unmap)
-> +		unmap(mapping, mapping_size);
->  	return size;
->  }
-> +
->  #endif
-> -- 
-> 2.20.1.611.gfbb209baf1-goog
+>  class SpaceTest(unittest.TestCase):
+>      def setUp(self):
+>          logging.basicConfig(filename='SpaceTest.log', level=logging.DEBUG)
 > 
+
+/Jarkko
