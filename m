@@ -2,195 +2,264 @@ Return-Path: <SRS0=a4os=QS=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D34DC169C4
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 19:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC6C0C169C4
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 19:26:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 626F6218AE
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 19:18:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TvVF7Po4"
+	by mail.kernel.org (Postfix) with ESMTP id 999E02229F
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 19:26:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728404AbfBKTS7 (ORCPT
+        id S1729458AbfBKT0t (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Feb 2019 14:18:59 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34655 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728292AbfBKTS6 (ORCPT
+        Mon, 11 Feb 2019 14:26:49 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:49288 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727254AbfBKT0s (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Feb 2019 14:18:58 -0500
-Received: by mail-pl1-f193.google.com with SMTP id w4so24144plz.1;
-        Mon, 11 Feb 2019 11:18:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=U6QTzJmyKky3utGjaHrGeaTnG1UolmYGOzcU+sH5Y+4=;
-        b=TvVF7Po4LRk8+UgMyGoXm30CgOd2P6lLmVQn5RZpI5wUzIIoXXtfNAIuqOawTWBGPz
-         fS8pjD5cnntQXdELvDLrmIhIFRbp16FQ9xPi/oZa9wRP2NsSsk0ZeyiZlhdJ7Q6TWS9p
-         B/lWPUJG7L51x8P3v11HCJuoAlMo5Cxh6bqt53b7xu5PEh2sbNjmF4hY8sZSsijX50TG
-         z9qwZ9yHnDkkM/UvCy1vFaOs16f61CnxVKCy2cLC/H939Gke2R+uKpDmLiFm/rkL5Wmt
-         ULnZbBqh7G3JPu66P9osymbRJoRcdI/lfk173jGzpMMFkFolagtGay4aT+8Gc3jvSfLT
-         izzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=U6QTzJmyKky3utGjaHrGeaTnG1UolmYGOzcU+sH5Y+4=;
-        b=W5UGQmDli0Z9oI0kF2Wm5DCcj7/WWLMwmCOU4QH7wKt3GjZKd3NeOwmW+bZCvoHvBp
-         upa3XMY9XdoV9LqyX7cgnktOs9P7tiS7tBbYAWvpKrI8b7+f0olYNl1zhM8hib1RfHvj
-         t/L7OGGiiz9FxOiVCrjEZwJVietpC/gBVh5wOE2ZN+6wVP/NN0l5EzQ3uMCmVyJeW7aP
-         ONXTi8YijJgrg8ImlBgO6KF3nJ6yOmXPph50vUWCrzt6QpBFDvjWH1On8sKwF3KcPXl5
-         gtRki/b9N36H/8/V1ltz2AtoxxchdXgRfJXr5fc/10U7QlaVz+I6M/2tr3vO3U6vrDrZ
-         EhzQ==
-X-Gm-Message-State: AHQUAuaB6z4QWC+ZmbtsssgoMIEEcqRRHkkV4JOPRtQt5R4TIOSlFhEC
-        UN3eWo3Od/A0m5gDHZnUfcY=
-X-Google-Smtp-Source: AHgI3IanC/OTNWPI8Kzdg7h23REmR+aXWc9nczhB8ikk5z0mmrBH5R/gEZhhv/eMlxu6ih5oZqdkJQ==
-X-Received: by 2002:a17:902:32c3:: with SMTP id z61mr38926435plb.114.1549912737334;
-        Mon, 11 Feb 2019 11:18:57 -0800 (PST)
-Received: from [10.33.115.182] ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id z7sm14168103pga.6.2019.02.11.11.18.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 11:18:56 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH v2 05/20] x86/alternative: initializing temporary mm for
- patching
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <CALCETrVaBaorbOA8QE=Pk=C+PfXZAz0-aX_3O8Y=nJV4QKELbw@mail.gmail.com>
-Date:   Mon, 11 Feb 2019 11:18:54 -0800
-Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <3EA322C6-5645-4900-AEC6-97FC05716F75@gmail.com>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-6-rick.p.edgecombe@intel.com>
- <162C6C29-CD81-46FE-9A54-6ED05A93A9CB@gmail.com>
- <00649AE8-69C0-4CD2-A916-B8C8F0F5DAC3@amacapital.net>
- <6FE10C97-25FF-4E99-A96A-465CBACA935B@gmail.com>
- <CALCETrVaBaorbOA8QE=Pk=C+PfXZAz0-aX_3O8Y=nJV4QKELbw@mail.gmail.com>
-To:     Andy Lutomirski <luto@kernel.org>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Mon, 11 Feb 2019 14:26:48 -0500
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id B4E9272CC64;
+        Mon, 11 Feb 2019 22:26:44 +0300 (MSK)
+Received: from altlinux.org (sole.flsd.net [185.75.180.6])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 9D89E4A4A14;
+        Mon, 11 Feb 2019 22:26:44 +0300 (MSK)
+Date:   Mon, 11 Feb 2019 22:26:44 +0300
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v3 7/7] ima-evm-utils: Try to load digest by its alias
+Message-ID: <20190211192644.q7ipos4rrmj7vugq@altlinux.org>
+References: <20181203033525.20431-1-vt@altlinux.org>
+ <20181203033525.20431-7-vt@altlinux.org>
+ <1549906738.12743.167.camel@linux.ibm.com>
+ <20190211175248.22ighzenzvm5tddb@altlinux.org>
+ <1549907952.12743.173.camel@linux.ibm.com>
+ <20190211181300.cktmpuymd4uqtcov@altlinux.org>
+ <20190211182115.gir76jn66e73akc7@altlinux.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190211182115.gir76jn66e73akc7@altlinux.org>
+User-Agent: NeoMutt/20171215-106-ac61c7
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-> On Feb 11, 2019, at 11:07 AM, Andy Lutomirski <luto@kernel.org> wrote:
->=20
-> I'm certainly amenable to other solutions, but this one does seem the
-> least messy.  I looked at my old patch, and it doesn't do what you
-> want.  I'd suggest you just add a percpu variable like cpu_dr7 and rig
-> up some accessors so that it stays up to date.  Then you can skip the
-> dr7 writes if there are no watchpoints set.
->=20
-> Also, EFI is probably a less interesting example than rare_write.
-> With rare_write, especially the dynamically allocated variants that
-> people keep coming up with, we'll need a swath of address space fully
-> as large as the vmalloc area. and getting *that* right while still
-> using the kernel address range might be more of a mess than we really
-> want to deal with.
+Mimi,
 
-As long as you feel comfortable with this solution, I=E2=80=99m fine =
-with it.
+On Mon, Feb 11, 2019 at 09:21:15PM +0300, Vitaly Chikunov wrote:
+> On Mon, Feb 11, 2019 at 09:13:00PM +0300, Vitaly Chikunov wrote:
+> > On Mon, Feb 11, 2019 at 12:59:12PM -0500, Mimi Zohar wrote:
+> > > On Mon, 2019-02-11 at 20:52 +0300, Vitaly Chikunov wrote:
+> > > > On Mon, Feb 11, 2019 at 12:38:58PM -0500, Mimi Zohar wrote:
+> > > > > On Mon, 2018-12-03 at 06:35 +0300, Vitaly Chikunov wrote:
+> > > > > > For compatibility with older OpenSSL try to load digest by its alias if
+> > > > > > load by its proper name is failed.
+> > > > > > 
+> > > > > > This is configured in pkey_hash_algo by mentioning loadable alias first in the
+> > > > > > comma separated list of algo names.
+> > > > > 
+> > > > > After this patch, I can not verify the signature. šIt's failing to
+> > > > > find the hash algorithm.
+> > > > 
+> > > > Yes, it's fixed in "ima-evm-utils: convert sign v2 from RSA to EVP_PKEY
+> > > > API". I didn't consider it a problem since streebog256 should not work
+> > > > for sign/verify anyway (since RSA should not support it). That EVP_PKEY
+> > > > patch which adds ability to sign/verify for Streebog also fixes above
+> > > > problem.
+> > > 
+> > > I've been having second thoughts about this patch in general, as it
+> > > made the hash algorithm comparison unnecessarily more complex for the
+> > > simple case. šAs there hasn't been a new ima-evm-utils release with
+> > > patch, perhaps we should simple remove/revert it?
+> > 
+> > It was only for compatibility with older openssl/gost-engine, where
+> > "streebog256" name is not defined yet. If you don't want to allow that
+> > users to use Streebog feel free to revert it.
 
-Here is what I have (untested). I prefer to save/restore all the DRs,
-because IIRC DR6 indications are updated even if breakpoints are =
-disabled
-(in DR7). And anyhow, that is the standard interface.
+Or you may suggest simpler approach.
 
+Basically, we need to resole both text strings into the same PKEY_HASH_
+id, allow any of the string pass into EVP_get_digestbyname, and resolve
+PKEY_HASH_ id back into the correct hash name. Optionally, allow user to
+specify new hash name on older openssl/gost-engine. This is all
+implemented by that patch, it was not just overly complicated "hash
+algorithm comparison".
 
--- >8 --
+My wish is we retain support of older openssl/gost-engine.
 
-From: Nadav Amit <namit@vmware.com>
-Date: Mon, 11 Feb 2019 03:07:08 -0800
-Subject: [PATCH] mm: save DRs when loading temporary mm
+Thanks,
 
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- arch/x86/include/asm/mmu_context.h | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/arch/x86/include/asm/mmu_context.h =
-b/arch/x86/include/asm/mmu_context.h
-index d684b954f3c0..4f92ec3df149 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -13,6 +13,7 @@
- #include <asm/tlbflush.h>
- #include <asm/paravirt.h>
- #include <asm/mpx.h>
-+#include <asm/debugreg.h>
-=20
- extern atomic64_t last_mm_ctx_id;
-=20
-@@ -358,6 +359,7 @@ static inline unsigned long =
-__get_current_cr3_fast(void)
-=20
- typedef struct {
- 	struct mm_struct *prev;
-+	unsigned short bp_enabled : 1;
- } temp_mm_state_t;
-=20
- /*
-@@ -380,6 +382,15 @@ static inline temp_mm_state_t =
-use_temporary_mm(struct mm_struct *mm)
- 	lockdep_assert_irqs_disabled();
- 	state.prev =3D this_cpu_read(cpu_tlbstate.loaded_mm);
- 	switch_mm_irqs_off(NULL, mm, current);
-+
-+	/*
-+	 * If breakpoints are enabled, disable them while the temporary =
-mm is
-+	 * used - they do not belong and might cause wrong signals or =
-crashes.
-+	 */
-+	state.bp_enabled =3D hw_breakpoint_active();
-+	if (state.bp_enabled)
-+		hw_breakpoint_disable();
-+
- 	return state;
- }
-=20
-@@ -387,6 +398,13 @@ static inline void =
-unuse_temporary_mm(temp_mm_state_t prev)
- {
- 	lockdep_assert_irqs_disabled();
- 	switch_mm_irqs_off(NULL, prev.prev, current);
-+
-+	/*
-+	 * Restore the breakpoints if they were disabled before the =
-temporary mm
-+	 * was loaded.
-+	 */
-+	if (prev.bp_enabled)
-+		hw_breakpoint_restore();
- }
-=20
- #endif /* _ASM_X86_MMU_CONTEXT_H */
---=20
-2.17.1
-
-
+> > 
+> > I was not found this mistake at the time, since Streebog should only be
+> > used in ima_hash and not in ima_sign/verify (which requires RSA support
+> > which I intentionally didn't add, planning to add EC-RDSA support later),
+> > so that code path was not tested.
+> 
+> This copy-paste of the fix form "ima-evm-utils: convert sign v2 from RSA to EVP_PKEY API":
+> 
+> @@ -159,8 +102,12 @@ void dump(const void *ptr, int len)
+> 
+>  const char *get_hash_algo_by_id(int algo)
+>  {
+> -       if (algo < PKEY_HASH__LAST)
+> -           return pkey_hash_algo[algo];
+> +       if (algo < PKEY_HASH__LAST) {
+> +               const char *name = pkey_hash_algo[algo];
+> +               const char *last = strrchr(name, ',');
+> +
+> +           return last ? last + 1 : name;
+> +       }
+>         if (algo < HASH_ALGO__LAST)
+>             return hash_algo_name[algo];
+> 
+> > 
+> > > 
+> > > Mimi
+> > > 
+> > > > 
+> > > > > evmctl ima_sign -k <private key> -p -a streebog256 ./foo.txt  --xattr-user
+> > > > > evmctl ima_verify -k <public key>  ./foo.txt  --xattr-user
+> > > > > 
+> > > > > Mimi
+> > > > > 
+> > > > > > 
+> > > > > > Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+> > > > > > ---
+> > > > > > Changes since v1:
+> > > > > > - New patch.
+> > > > > > Changes since v2:
+> > > > > > - No changes.
+> > > > > > 
+> > > > > >  src/imaevm.h    |  1 +
+> > > > > >  src/libimaevm.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++++++----
+> > > > > >  2 files changed, 52 insertions(+), 4 deletions(-)
+> > > > > > 
+> > > > > > diff --git a/src/imaevm.h b/src/imaevm.h
+> > > > > > index c81bf21..795966a 100644
+> > > > > > --- a/src/imaevm.h
+> > > > > > +++ b/src/imaevm.h
+> > > > > > @@ -75,6 +75,7 @@
+> > > > > >  #define	DATA_SIZE	4096
+> > > > > >  #define SHA1_HASH_LEN   20
+> > > > > > 
+> > > > > > +#define MAX_DIGEST_NAME		32
+> > > > > >  #define MAX_DIGEST_SIZE		64
+> > > > > >  #define MAX_SIGNATURE_SIZE	1024
+> > > > > > 
+> > > > > > diff --git a/src/libimaevm.c b/src/libimaevm.c
+> > > > > > index cb4721b..7501303 100644
+> > > > > > --- a/src/libimaevm.c
+> > > > > > +++ b/src/libimaevm.c
+> > > > > > @@ -41,6 +41,7 @@
+> > > > > >  /* should we use logger instead for library? */
+> > > > > >  #define USE_FPRINTF
+> > > > > > 
+> > > > > > +#define _GNU_SOURCE
+> > > > > >  #include <sys/types.h>
+> > > > > >  #include <sys/param.h>
+> > > > > >  #include <sys/stat.h>
+> > > > > > @@ -56,6 +57,7 @@
+> > > > > >  #include <openssl/pem.h>
+> > > > > >  #include <openssl/evp.h>
+> > > > > >  #include <openssl/x509.h>
+> > > > > > +#include <openssl/engine.h>
+> > > > > >  #include <openssl/err.h>
+> > > > > > 
+> > > > > >  #include "imaevm.h"
+> > > > > > @@ -70,8 +72,8 @@ const char *const pkey_hash_algo[PKEY_HASH__LAST] = {
+> > > > > >  	[PKEY_HASH_SHA384]	= "sha384",
+> > > > > >  	[PKEY_HASH_SHA512]	= "sha512",
+> > > > > >  	[PKEY_HASH_SHA224]	= "sha224",
+> > > > > > -	[PKEY_HASH_STREEBOG_256] = "streebog256",
+> > > > > > -	[PKEY_HASH_STREEBOG_512] = "streebog512",
+> > > > > > +	[PKEY_HASH_STREEBOG_256] = "md_gost12_256,streebog256",
+> > > > > > +	[PKEY_HASH_STREEBOG_512] = "md_gost12_512,streebog512",
+> > > > > >  };
+> > > > > > 
+> > > > > >  /*
+> > > > > > @@ -284,6 +286,35 @@ static int add_dev_hash(struct stat *st, EVP_MD_CTX *ctx)
+> > > > > >  	return !EVP_DigestUpdate(ctx, &dev, sizeof(dev));
+> > > > > >  }
+> > > > > > 
+> > > > > > +/* Call EVP_get_digestbyname with provided name and with alias,
+> > > > > > + * which is first name in the comma separated list of names
+> > > > > > + * in pkey_hash_algo.
+> > > > > > + */
+> > > > > > +static const EVP_MD *get_digestbyname(const char *name)
+> > > > > > +{
+> > > > > > +	const EVP_MD *md;
+> > > > > > +
+> > > > > > +	md = EVP_get_digestbyname(params.hash_algo);
+> > > > > > +	if (!md) {
+> > > > > > +		char alias[MAX_DIGEST_NAME];
+> > > > > > +		int len;
+> > > > > > +		int algo_id;
+> > > > > > +		const char *algo_alias;
+> > > > > > +
+> > > > > > +		/* try to get algo by its alias */
+> > > > > > +		algo_id = get_hash_algo(params.hash_algo);
+> > > > > > +		algo_alias = get_hash_algo_by_id(algo_id);
+> > > > > > +		len = strchrnul(algo_alias, ',') - algo_alias;
+> > > > > > +		if (len < sizeof(alias)) {
+> > > > > > +			memcpy(alias, algo_alias, len);
+> > > > > > +			alias[len] = '\0';
+> > > > > > +			if (strcmp(params.hash_algo, alias))
+> > > > > > +				md = EVP_get_digestbyname(alias);
+> > > > > > +		}
+> > > > > > +	}
+> > > > > > +	return md;
+> > > > > > +}
+> > > > > > +
+> > > > > >  int ima_calc_hash(const char *file, uint8_t *hash)
+> > > > > >  {
+> > > > > >  	const EVP_MD *md;
+> > > > > > @@ -305,7 +336,7 @@ int ima_calc_hash(const char *file, uint8_t *hash)
+> > > > > >  		return err;
+> > > > > >  	}
+> > > > > > 
+> > > > > > -	md = EVP_get_digestbyname(params.hash_algo);
+> > > > > > +	md = get_digestbyname(params.hash_algo);
+> > > > > >  	if (!md) {
+> > > > > >  		log_err("EVP_get_digestbyname(%s) failed\n", params.hash_algo);
+> > > > > >  		return 1;
+> > > > > > @@ -561,6 +592,22 @@ static int algocmp(const char *a, const char *b)
+> > > > > >  	return *a || *b;
+> > > > > >  }
+> > > > > > 
+> > > > > > +static int strmatch(const char *needle, const char *haystack)
+> > > > > > +{
+> > > > > > +	int len = strlen(needle);
+> > > > > > +	const char *p = haystack;
+> > > > > > +	const char *t;
+> > > > > > +
+> > > > > > +	for (t = strchrnul(p, ','); *p; p = t, t = strchrnul(p, ',')) {
+> > > > > > +		if (t - p == len &&
+> > > > > > +		    !strncmp(needle, p, len))
+> > > > > > +			return 0;
+> > > > > > +		if (!*t++)
+> > > > > > +			break;
+> > > > > > +	}
+> > > > > > +	return 1;
+> > > > > > +}
+> > > > > > +
+> > > > > >  int get_hash_algo(const char *algo)
+> > > > > >  {
+> > > > > >  	int i;
+> > > > > > @@ -568,7 +615,7 @@ int get_hash_algo(const char *algo)
+> > > > > >  	/* first iterate over builtin algorithms */
+> > > > > >  	for (i = 0; i < PKEY_HASH__LAST; i++)
+> > > > > >  		if (pkey_hash_algo[i] &&
+> > > > > > -		    !strcmp(algo, pkey_hash_algo[i]))
+> > > > > > +		    !strmatch(algo, pkey_hash_algo[i]))
+> > > > > >  			return i;
+> > > > > > 
+> > > > > >  	/* iterate over algorithms provided by kernel-headers */
+> > > > 
