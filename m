@@ -2,126 +2,249 @@ Return-Path: <SRS0=a4os=QS=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0FF3C169C4
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 17:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA047C169C4
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 17:59:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA55321B68
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 17:55:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8886C21B18
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 17:59:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728998AbfBKRzh (ORCPT
+        id S1728303AbfBKR7a (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Feb 2019 12:55:37 -0500
-Received: from mga04.intel.com ([192.55.52.120]:2752 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726104AbfBKRzh (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Feb 2019 12:55:37 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 09:55:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,359,1544515200"; 
-   d="scan'208";a="115355335"
-Received: from tstruk-mobl1.jf.intel.com ([10.7.196.56])
-  by orsmga006.jf.intel.com with ESMTP; 11 Feb 2019 09:55:36 -0800
-Subject: Re: [PATCH 2/2] selftests: tpm2: Extend tests to cover partial reads
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kselftest@vger.kernel.org, shuah@kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, PeterHuewe@gmx.de,
-        jgg@ziepe.ca
-References: <154939851385.18477.481518864800562919.stgit@tstruk-mobl1.jf.intel.com>
- <154939851969.18477.13778157467131576825.stgit@tstruk-mobl1.jf.intel.com>
- <20190211164803.GG8431@linux.intel.com>
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
- 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
- FheFfUJaD4iEjuL98uUjS/AI
-Message-ID: <9b879fd2-5c0a-aecc-b6cb-02e5255c22f6@intel.com>
-Date:   Mon, 11 Feb 2019 09:55:36 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190211164803.GG8431@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Mon, 11 Feb 2019 12:59:30 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56924 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726104AbfBKR7a (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 11 Feb 2019 12:59:30 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1BHnD99134591
+        for <linux-integrity@vger.kernel.org>; Mon, 11 Feb 2019 12:59:29 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qkc6f5kvf-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 11 Feb 2019 12:59:28 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 11 Feb 2019 17:59:27 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 11 Feb 2019 17:59:25 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1BHxO0Q46071888
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 11 Feb 2019 17:59:24 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1EBD542047;
+        Mon, 11 Feb 2019 17:59:24 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5ED6742042;
+        Mon, 11 Feb 2019 17:59:23 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.91.85])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 11 Feb 2019 17:59:23 +0000 (GMT)
+Subject: Re: [PATCH v3 7/7] ima-evm-utils: Try to load digest by its alias
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Vitaly Chikunov <vt@altlinux.org>
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org
+Date:   Mon, 11 Feb 2019 12:59:12 -0500
+In-Reply-To: <20190211175248.22ighzenzvm5tddb@altlinux.org>
+References: <20181203033525.20431-1-vt@altlinux.org>
+         <20181203033525.20431-7-vt@altlinux.org>
+         <1549906738.12743.167.camel@linux.ibm.com>
+         <20190211175248.22ighzenzvm5tddb@altlinux.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19021117-0020-0000-0000-000003158163
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021117-0021-0000-0000-000021669BBC
+Message-Id: <1549907952.12743.173.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-11_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902110134
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 2/11/19 8:48 AM, Jarkko Sakkinen wrote:
-> You are missing a cover letter from this patch set. Please have it in
-> v2. Also use tag "selftests/tpm2" instead of having two tags in the
-> short summaries. Now they look a bit weird.
+On Mon, 2019-02-11 at 20:52 +0300, Vitaly Chikunov wrote:
+> Mimi,
+> 
+> On Mon, Feb 11, 2019 at 12:38:58PM -0500, Mimi Zohar wrote:
+> > On Mon, 2018-12-03 at 06:35 +0300, Vitaly Chikunov wrote:
+> > > For compatibility with older OpenSSL try to load digest by its alias if
+> > > load by its proper name is failed.
+> > > 
+> > > This is configured in pkey_hash_algo by mentioning loadable alias first in the
+> > > comma separated list of algo names.
+> > 
+> > After this patch, I can not verify the signature.  It's failing to
+> > find the hash algorithm.
+> 
+> Yes, it's fixed in "ima-evm-utils: convert sign v2 from RSA to EVP_PKEY
+> API". I didn't consider it a problem since streebog256 should not work
+> for sign/verify anyway (since RSA should not support it). That EVP_PKEY
+> patch which adds ability to sign/verify for Streebog also fixes above
+> problem.
 
-Since when is the cover letter mandatory?
-I understand that is helps for a complicated patch set
-to explain the problem and solution in the cover letter,
-but for this simple test case addition what's the point?
-And there is nothing forcing a cover letter in
-https://www.kernel.org/doc/html/v4.20/process/submitting-patches.html
+I've been having second thoughts about this patch in general, as it
+made the hash algorithm comparison unnecessarily more complex for the
+simple case.  As there hasn't been a new ima-evm-utils release with
+patch, perhaps we should simple remove/revert it?
 
-Also double tags seams to be quite common for selftest.
-See git log tools/testing/selftests/
-Thanks,
--- 
-Tadeusz
+Mimi
+
+> 
+> > evmctl ima_sign -k <private key> -p -a streebog256 ./foo.txt  --xattr-user
+> > evmctl ima_verify -k <public key>  ./foo.txt  --xattr-user
+> > 
+> > Mimi
+> > 
+> > > 
+> > > Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+> > > ---
+> > > Changes since v1:
+> > > - New patch.
+> > > Changes since v2:
+> > > - No changes.
+> > > 
+> > >  src/imaevm.h    |  1 +
+> > >  src/libimaevm.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++++++----
+> > >  2 files changed, 52 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/src/imaevm.h b/src/imaevm.h
+> > > index c81bf21..795966a 100644
+> > > --- a/src/imaevm.h
+> > > +++ b/src/imaevm.h
+> > > @@ -75,6 +75,7 @@
+> > >  #define	DATA_SIZE	4096
+> > >  #define SHA1_HASH_LEN   20
+> > > 
+> > > +#define MAX_DIGEST_NAME		32
+> > >  #define MAX_DIGEST_SIZE		64
+> > >  #define MAX_SIGNATURE_SIZE	1024
+> > > 
+> > > diff --git a/src/libimaevm.c b/src/libimaevm.c
+> > > index cb4721b..7501303 100644
+> > > --- a/src/libimaevm.c
+> > > +++ b/src/libimaevm.c
+> > > @@ -41,6 +41,7 @@
+> > >  /* should we use logger instead for library? */
+> > >  #define USE_FPRINTF
+> > > 
+> > > +#define _GNU_SOURCE
+> > >  #include <sys/types.h>
+> > >  #include <sys/param.h>
+> > >  #include <sys/stat.h>
+> > > @@ -56,6 +57,7 @@
+> > >  #include <openssl/pem.h>
+> > >  #include <openssl/evp.h>
+> > >  #include <openssl/x509.h>
+> > > +#include <openssl/engine.h>
+> > >  #include <openssl/err.h>
+> > > 
+> > >  #include "imaevm.h"
+> > > @@ -70,8 +72,8 @@ const char *const pkey_hash_algo[PKEY_HASH__LAST] = {
+> > >  	[PKEY_HASH_SHA384]	= "sha384",
+> > >  	[PKEY_HASH_SHA512]	= "sha512",
+> > >  	[PKEY_HASH_SHA224]	= "sha224",
+> > > -	[PKEY_HASH_STREEBOG_256] = "streebog256",
+> > > -	[PKEY_HASH_STREEBOG_512] = "streebog512",
+> > > +	[PKEY_HASH_STREEBOG_256] = "md_gost12_256,streebog256",
+> > > +	[PKEY_HASH_STREEBOG_512] = "md_gost12_512,streebog512",
+> > >  };
+> > > 
+> > >  /*
+> > > @@ -284,6 +286,35 @@ static int add_dev_hash(struct stat *st, EVP_MD_CTX *ctx)
+> > >  	return !EVP_DigestUpdate(ctx, &dev, sizeof(dev));
+> > >  }
+> > > 
+> > > +/* Call EVP_get_digestbyname with provided name and with alias,
+> > > + * which is first name in the comma separated list of names
+> > > + * in pkey_hash_algo.
+> > > + */
+> > > +static const EVP_MD *get_digestbyname(const char *name)
+> > > +{
+> > > +	const EVP_MD *md;
+> > > +
+> > > +	md = EVP_get_digestbyname(params.hash_algo);
+> > > +	if (!md) {
+> > > +		char alias[MAX_DIGEST_NAME];
+> > > +		int len;
+> > > +		int algo_id;
+> > > +		const char *algo_alias;
+> > > +
+> > > +		/* try to get algo by its alias */
+> > > +		algo_id = get_hash_algo(params.hash_algo);
+> > > +		algo_alias = get_hash_algo_by_id(algo_id);
+> > > +		len = strchrnul(algo_alias, ',') - algo_alias;
+> > > +		if (len < sizeof(alias)) {
+> > > +			memcpy(alias, algo_alias, len);
+> > > +			alias[len] = '\0';
+> > > +			if (strcmp(params.hash_algo, alias))
+> > > +				md = EVP_get_digestbyname(alias);
+> > > +		}
+> > > +	}
+> > > +	return md;
+> > > +}
+> > > +
+> > >  int ima_calc_hash(const char *file, uint8_t *hash)
+> > >  {
+> > >  	const EVP_MD *md;
+> > > @@ -305,7 +336,7 @@ int ima_calc_hash(const char *file, uint8_t *hash)
+> > >  		return err;
+> > >  	}
+> > > 
+> > > -	md = EVP_get_digestbyname(params.hash_algo);
+> > > +	md = get_digestbyname(params.hash_algo);
+> > >  	if (!md) {
+> > >  		log_err("EVP_get_digestbyname(%s) failed\n", params.hash_algo);
+> > >  		return 1;
+> > > @@ -561,6 +592,22 @@ static int algocmp(const char *a, const char *b)
+> > >  	return *a || *b;
+> > >  }
+> > > 
+> > > +static int strmatch(const char *needle, const char *haystack)
+> > > +{
+> > > +	int len = strlen(needle);
+> > > +	const char *p = haystack;
+> > > +	const char *t;
+> > > +
+> > > +	for (t = strchrnul(p, ','); *p; p = t, t = strchrnul(p, ',')) {
+> > > +		if (t - p == len &&
+> > > +		    !strncmp(needle, p, len))
+> > > +			return 0;
+> > > +		if (!*t++)
+> > > +			break;
+> > > +	}
+> > > +	return 1;
+> > > +}
+> > > +
+> > >  int get_hash_algo(const char *algo)
+> > >  {
+> > >  	int i;
+> > > @@ -568,7 +615,7 @@ int get_hash_algo(const char *algo)
+> > >  	/* first iterate over builtin algorithms */
+> > >  	for (i = 0; i < PKEY_HASH__LAST; i++)
+> > >  		if (pkey_hash_algo[i] &&
+> > > -		    !strcmp(algo, pkey_hash_algo[i]))
+> > > +		    !strmatch(algo, pkey_hash_algo[i]))
+> > >  			return i;
+> > > 
+> > >  	/* iterate over algorithms provided by kernel-headers */
+> 
+
