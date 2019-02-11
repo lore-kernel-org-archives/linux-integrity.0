@@ -2,283 +2,135 @@ Return-Path: <SRS0=a4os=QS=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B56DC282CE
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 14:31:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12697C282CE
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 15:14:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0EBF20844
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 14:31:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7A5C222A8
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 15:14:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=semihalf-com.20150623.gappssmtp.com header.i=@semihalf-com.20150623.gappssmtp.com header.b="Ksoo+IaF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oII1SX+8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730325AbfBKObj (ORCPT
+        id S2390775AbfBKPOX (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:31:39 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42086 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729613AbfBKObi (ORCPT
+        Mon, 11 Feb 2019 10:14:23 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54252 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730054AbfBKPOX (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:31:38 -0500
-Received: by mail-lf1-f65.google.com with SMTP id l10so7875244lfh.9
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Feb 2019 06:31:36 -0800 (PST)
+        Mon, 11 Feb 2019 10:14:23 -0500
+Received: by mail-wm1-f68.google.com with SMTP id d15so18124178wmb.3;
+        Mon, 11 Feb 2019 07:14:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=semihalf-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4mT+Uw4qv/27OkDGZ2Z4PNLv1X7pO+nJwrUwXygNfR4=;
-        b=Ksoo+IaFbmKFle9VdM18OBfuhuq0AORuU9TMZhqnGG4BhuOcpzLfP39+nSSNz7guOj
-         XUj4NweOocnRBgkvfUoJK0CMB9l4DHseIMOriF3dxaLxaJ/+iQRiPRIbsoxL6mcO8HCN
-         vPmU884prGZIfUgXceoHizmjqzdssXSpY4R50ThjS33EhEcvzPDUgD1FYMeBqIgG2+eZ
-         0S2IfTSoAd86+Dv20Iqj+LOvwAT/FFAqaUxExdYsPFcfIqHCeI1IdBETTMMWaSb43ohW
-         FUiCCNZV8GHyPxOVHkYJu8Gmfd1L2KIHdIwWpCLLuy2ILht2E7alJHc2LpUjgf2e9iQz
-         LdwQ==
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=/MfpOEM5Hi4WmZzofpP+jzifsTDHz3Un+gIrfmlkxQk=;
+        b=oII1SX+8NP1TofKpAgtWnVJ7S9S0zKjMG4G/LguNYgDVcRQaZm0XAUNG8eBpD5yixr
+         g3Vlk1WXOxCvNVp6ndXhyt5p+asILzB1QfoXqnKrYlg+W0NQ2xoGrzvs+tXNLrfy2Dj3
+         RC+TTeyiKK/mTwP+7bT1bBDZdVlOwxcHHab28ODiWmJKkfkqDV+ULJb65jpEsOsVVKB6
+         NRTIDCKT6a/DG2mUtaxC3SR85GnOk+USqvxgheTTlDzz3kLT5mX2i95v6NP2KgTqo3L6
+         kfdHW/LVwjgu6oPc0bTFm2drnwv34mshL7fMbSv93ysNXw8pBM5zlUrzl9xzmVhPiQtw
+         7gpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=4mT+Uw4qv/27OkDGZ2Z4PNLv1X7pO+nJwrUwXygNfR4=;
-        b=s7MYM0A1mwVli7mRyoqutGWXbz9G6jMEFPYGNX1rXp7BeO+YsKIm883id4oOJRIMdp
-         l5eaFgtfJkPO7ktdTUq09evON0virKtt3DSK347qYHHv4xduMI/qtoftpMJGI+KwxJz4
-         3x46l3Ti0r89S36CCM8zj308FdT8p2Dj27YGMKulQ2CDt9KJKwsNdBMfpW6ZlURhij6d
-         YSGZmmp8AXw0WEqZ+hAReBQUCNeMWyszwUwIbF36uczlUpU70sAptGD7qGySFZyEVATS
-         RKDoYpqMHZyDlxLbTbqrZHV+g4CuFUyhKWCSyfDACPT1D0Iwm5A6jSUJT53cMs2swpC/
-         Sa5g==
-X-Gm-Message-State: AHQUAubUDFnsNjYJzRqeAxNTeMtwwjRQs3m3DH37zRMdSEcYUTqfvpvq
-        htXi/o12d4arDTD9GAMPP67RxQ==
-X-Google-Smtp-Source: AHgI3IaaYuqW+RAhaTPZ6ViRMxwgnwsPAunrxKxxCVBGSYpoOIexho4j8rBEhxeUbmll5qa8kaVNag==
-X-Received: by 2002:a19:59c2:: with SMTP id n185mr21587542lfb.118.1549895495351;
-        Mon, 11 Feb 2019 06:31:35 -0800 (PST)
-Received: from bsz-kubuntu.semihalf.local (31-172-191-173.noc.fibertech.net.pl. [31.172.191.173])
-        by smtp.gmail.com with ESMTPSA id z6sm2322373lfa.87.2019.02.11.06.31.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 06:31:34 -0800 (PST)
-From:   bsz@semihalf.com
-To:     linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
-        jarkko.sakkinen@linux.intel.com, ard.biesheuvel@linaro.org
-Cc:     tweek@google.com, mingo@kernel.org, hdegoede@redhat.com,
-        leif.lindholm@linaro.org, mw@semihalf.com,
-        Bartosz Szczepanek <bsz@semihalf.com>
-Subject: [PATCH 3/5] tpm: Use library version of calc_tpm2_event_size in sysfs code
-Date:   Mon, 11 Feb 2019 15:30:50 +0100
-Message-Id: <20190211143052.3128-4-bsz@semihalf.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190211143052.3128-1-bsz@semihalf.com>
-References: <20190211143052.3128-1-bsz@semihalf.com>
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=/MfpOEM5Hi4WmZzofpP+jzifsTDHz3Un+gIrfmlkxQk=;
+        b=iQH+R/JxCgGM9ev2ARfcx2rL03NncAUO2x5AoXDxkaj4LfsSk5eZjGhBPXM6LLboM5
+         Qq3wkJoGEbcunqJA4arLPz20Uy1mtOz9PusuAhzCOjrw5e7dVtfiga0DUiDE+hrdgIwt
+         2k1VrV9WrSrwu+VAUMNwhW5AMfOfIWM5ZI3EUOyDsZskon+FXgwoTFNKMiFycElAQgEU
+         l0KZ7cpDII6eTmDhjnbfXemDmlwCSkQKg+R1nbhCPU7wwFvm8iA4mac/Qlq9+vWJUf4T
+         8vkjCL42sjylPMfXey3p8oQuNb4q6IqSRg/reexwMDGAB3X6ZzM6mkPL64emAg6tjA1E
+         rd2Q==
+X-Gm-Message-State: AHQUAuZKTgrSC9vEmARE+w0ehkCJMI/Mdz9r1NpU2madp4LfdTgMuwux
+        7cfxtLk+Qo0ftDgq3JFOHEE7jDT6bq4=
+X-Google-Smtp-Source: AHgI3IZbk6K1YP8g9cdhjWWLvoPPTYppIqAuDHcddZP8ExQ6cX6iOsNNrr18yS+UTmF4Qobgh7UAZA==
+X-Received: by 2002:a1c:f916:: with SMTP id x22mr10261300wmh.87.1549898060633;
+        Mon, 11 Feb 2019 07:14:20 -0800 (PST)
+Received: from alpaca.bmw-carit.intra ([145.253.130.2])
+        by smtp.gmail.com with ESMTPSA id i16sm1844574wru.16.2019.02.11.07.14.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Feb 2019 07:14:19 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+X-Google-Original-From: Lukas Bulwahn <lukas@alpaca>
+Date:   Mon, 11 Feb 2019 16:14:12 +0100 (CET)
+To:     Joe Perches <joe@perches.com>
+cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linuxibm.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: use tab instead of spaces
+In-Reply-To: <7befaea3d1a86950f9dd270fed47072214fa2876.camel@perches.com>
+Message-ID: <alpine.DEB.2.21.1902111610380.2831@alpaca>
+References: <20190210181011.6117-1-lukas.bulwahn@gmail.com> <7befaea3d1a86950f9dd270fed47072214fa2876.camel@perches.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Bartosz Szczepanek <bsz@semihalf.com>
+iOn Sun, 10 Feb 2019, Joe Perches wrote:
 
-Expect negative values from calc_tpm2_event_size as error codes.
-Pass efispecid instead of event header to calc_tpm2_event_size.
 
-Also, include tpm library in the build.
+> On Sun, 2019-02-10 at 19:10 +0100, Lukas Bulwahn wrote:
+> > Mimi Zohar used spaces instead of a tab when adding Jarkko Sakkinen as
+> > further maintainer to the KEYS-TRUSTED section entry. So, we rectify this
+> > with this commit.
+> > 
+> > The issue was detected when writing a script that parses MAINTAINERS.
+> 
+> checkpatch already does that btw:
 
-Signed-off-by: Bartosz Szczepanek <bsz@semihalf.com>
----
- drivers/char/tpm/eventlog/tpm2.c | 89 ++++++++--------------------------------
- include/linux/tpm_eventlog.h     |  3 ++
- lib/Makefile                     |  2 +
- 3 files changed, 22 insertions(+), 72 deletions(-)
+Good to know.
 
-diff --git a/drivers/char/tpm/eventlog/tpm2.c b/drivers/char/tpm/eventlog/tpm2.c
-index 1b8fa9de2cac..5230821d5b1c 100644
---- a/drivers/char/tpm/eventlog/tpm2.c
-+++ b/drivers/char/tpm/eventlog/tpm2.c
-@@ -26,80 +26,20 @@
- #include "../tpm.h"
- #include "common.h"
- 
--/*
-- * calc_tpm2_event_size() - calculate the event size, where event
-- * is an entry in the TPM 2.0 event log. The event is of type Crypto
-- * Agile Log Entry Format as defined in TCG EFI Protocol Specification
-- * Family "2.0".
--
-- * @event: event whose size is to be calculated.
-- * @event_header: the first event in the event log.
-- *
-- * Returns size of the event. If it is an invalid event, returns 0.
-- */
--static int calc_tpm2_event_size(struct tcg_pcr_event2 *event,
--				struct tcg_pcr_event *event_header)
--{
--	struct tcg_efi_specid_event *efispecid;
--	struct tcg_event_field *event_field;
--	void *marker;
--	void *marker_start;
--	u32 halg_size;
--	size_t size;
--	u16 halg;
--	int i;
--	int j;
--
--	marker = event;
--	marker_start = marker;
--	marker = marker + sizeof(event->pcr_idx) + sizeof(event->event_type)
--		+ sizeof(event->count);
--
--	efispecid = (struct tcg_efi_specid_event *)event_header->event;
--
--	/* Check if event is malformed. */
--	if (event->count > efispecid->num_algs)
--		return 0;
--
--	for (i = 0; i < event->count; i++) {
--		halg_size = sizeof(event->digests[i].alg_id);
--		memcpy(&halg, marker, halg_size);
--		marker = marker + halg_size;
--		for (j = 0; j < efispecid->num_algs; j++) {
--			if (halg == efispecid->digest_sizes[j].alg_id) {
--				marker +=
--					efispecid->digest_sizes[j].digest_size;
--				break;
--			}
--		}
--		/* Algorithm without known length. Such event is unparseable. */
--		if (j == efispecid->num_algs)
--			return 0;
--	}
--
--	event_field = (struct tcg_event_field *)marker;
--	marker = marker + sizeof(event_field->event_size)
--		+ event_field->event_size;
--	size = marker - marker_start;
--
--	if ((event->event_type == 0) && (event_field->event_size == 0))
--		return 0;
--
--	return size;
--}
--
- static void *tpm2_bios_measurements_start(struct seq_file *m, loff_t *pos)
- {
- 	struct tpm_chip *chip = m->private;
- 	struct tpm_bios_log *log = &chip->log;
- 	void *addr = log->bios_event_log;
- 	void *limit = log->bios_event_log_end;
-+	struct tcg_efi_specid_event *efispecid;
- 	struct tcg_pcr_event *event_header;
- 	struct tcg_pcr_event2 *event;
--	size_t size;
-+	ssize_t size;
- 	int i;
- 
- 	event_header = addr;
-+	efispecid = (struct tcg_efi_specid_event *) event_header->event;
- 	size = sizeof(struct tcg_pcr_event) - sizeof(event_header->event)
- 		+ event_header->event_size;
- 
-@@ -115,16 +55,16 @@ static void *tpm2_bios_measurements_start(struct seq_file *m, loff_t *pos)
- 	if (*pos > 0) {
- 		addr += size;
- 		event = addr;
--		size = calc_tpm2_event_size(event, event_header);
--		if ((addr + size >=  limit) || (size == 0))
-+		size = calc_tpm2_event_size(event, efispecid);
-+		if ((addr + size >=  limit) || (size < 0))
- 			return NULL;
- 	}
- 
- 	for (i = 0; i < (*pos - 1); i++) {
- 		event = addr;
--		size = calc_tpm2_event_size(event, event_header);
-+		size = calc_tpm2_event_size(event, efispecid);
- 
--		if ((addr + size >= limit) || (size == 0))
-+		if ((addr + size >= limit) || (size < 0))
- 			return NULL;
- 		addr += size;
- 	}
-@@ -135,6 +75,7 @@ static void *tpm2_bios_measurements_start(struct seq_file *m, loff_t *pos)
- static void *tpm2_bios_measurements_next(struct seq_file *m, void *v,
- 					 loff_t *pos)
- {
-+	struct tcg_efi_specid_event *efispecid;
- 	struct tcg_pcr_event *event_header;
- 	struct tcg_pcr_event2 *event;
- 	struct tpm_chip *chip = m->private;
-@@ -144,6 +85,7 @@ static void *tpm2_bios_measurements_next(struct seq_file *m, void *v,
- 	void *marker;
- 
- 	event_header = log->bios_event_log;
-+	efispecid = (struct tcg_efi_specid_event *) event_header->event;
- 
- 	if (v == SEQ_START_TOKEN) {
- 		event_size = sizeof(struct tcg_pcr_event) -
-@@ -151,8 +93,8 @@ static void *tpm2_bios_measurements_next(struct seq_file *m, void *v,
- 		marker = event_header;
- 	} else {
- 		event = v;
--		event_size = calc_tpm2_event_size(event, event_header);
--		if (event_size == 0)
-+		event_size = calc_tpm2_event_size(event, efispecid);
-+		if (event_size < 0)
- 			return NULL;
- 		marker = event;
- 	}
-@@ -163,8 +105,8 @@ static void *tpm2_bios_measurements_next(struct seq_file *m, void *v,
- 	v = marker;
- 	event = v;
- 
--	event_size = calc_tpm2_event_size(event, event_header);
--	if (((v + event_size) >= limit) || (event_size == 0))
-+	event_size = calc_tpm2_event_size(event, efispecid);
-+	if (((v + event_size) >= limit) || (event_size < 0))
- 		return NULL;
- 
- 	(*pos)++;
-@@ -180,10 +122,13 @@ static int tpm2_binary_bios_measurements_show(struct seq_file *m, void *v)
- 	struct tpm_chip *chip = m->private;
- 	struct tpm_bios_log *log = &chip->log;
- 	struct tcg_pcr_event *event_header = log->bios_event_log;
-+	struct tcg_efi_specid_event *efispecid;
- 	struct tcg_pcr_event2 *event = v;
- 	void *temp_ptr;
- 	size_t size;
- 
-+	efispecid = (struct tcg_efi_specid_event *) event_header->event;
-+
- 	if (v == SEQ_START_TOKEN) {
- 		size = sizeof(struct tcg_pcr_event) -
- 			sizeof(event_header->event) + event_header->event_size;
-@@ -193,7 +138,7 @@ static int tpm2_binary_bios_measurements_show(struct seq_file *m, void *v)
- 		if (size > 0)
- 			seq_write(m, temp_ptr, size);
- 	} else {
--		size = calc_tpm2_event_size(event, event_header);
-+		size = calc_tpm2_event_size(event, efispecid);
- 		temp_ptr = event;
- 		if (size > 0)
- 			seq_write(m, temp_ptr, size);
-diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
-index 20d9da77fc11..872ab1545456 100644
---- a/include/linux/tpm_eventlog.h
-+++ b/include/linux/tpm_eventlog.h
-@@ -121,4 +121,7 @@ struct tcg_pcr_event2 {
- 	struct tcg_event_field event;
- } __packed;
- 
-+ssize_t calc_tpm2_event_size(struct tcg_pcr_event2 *event,
-+			     struct tcg_efi_specid_event *efispecid);
-+
- #endif
-diff --git a/lib/Makefile b/lib/Makefile
-index e1b59da71418..4458d914f40b 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -276,3 +276,5 @@ obj-$(CONFIG_GENERIC_LIB_MULDI3) += muldi3.o
- obj-$(CONFIG_GENERIC_LIB_CMPDI2) += cmpdi2.o
- obj-$(CONFIG_GENERIC_LIB_UCMPDI2) += ucmpdi2.o
- obj-$(CONFIG_OBJAGG) += objagg.o
-+
-+obj-$(CONFIG_TCG_TPM) += tpm.o
--- 
-2.14.4
+> 
+> $ ./scripts/checkpatch.pl -f MAINTAINERS
+> WARNING: MAINTAINERS entries use one tab after TYPE:
+> #8408: FILE: MAINTAINERS:8408:
+> +M:      Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> 
+> WARNING: MAINTAINERS entries use one tab after TYPE:
+> #12607: FILE: MAINTAINERS:12607:
+> +M:  Ilia Lin <ilia.lin@gmail.com>
+> 
+> WARNING: MAINTAINERS entries use one tab after TYPE:
+> #12608: FILE: MAINTAINERS:12608:
+> +L:  linux-pm@vger.kernel.org
+> 
+> WARNING: MAINTAINERS entries use one tab after TYPE:
+> #12609: FILE: MAINTAINERS:12609:
+> +S:  Maintained
+> 
+> WARNING: MAINTAINERS entries use one tab after TYPE:
+> #12610: FILE: MAINTAINERS:12610:
+> +F:  Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
+> 
+> WARNING: MAINTAINERS entries use one tab after TYPE:
+> #12611: FILE: MAINTAINERS:12611:
+> +F:  drivers/cpufreq/qcom-cpufreq-kryo.c
+> 
+> total: 0 errors, 6 warnings, 16993 lines checked
+> 
+> NOTE: For some of the reported defects, checkpatch may be able to
+>       mechanically convert to the typical style using --fix or --fix-inplace
+> 
 
+On next-20190211, the checkpatch issues in line 12607 to 12611 are not 
+reported anymore, as I already fixed them in commit 70e6e7d92bca 
+("MAINTAINERS: use common indentation").
+
+So, the issue addressed here and in the later follow-up patch is the only 
+style-related issue in MAINTAINERS.
+
+After that, everything in MAINTAINERS is stylistically clean.
+
+Lukas
