@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFEDC169C4
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 16:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D5DAC169C4
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 16:00:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5655C218D8
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 16:00:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2F2A218D8
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 16:00:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=semihalf-com.20150623.gappssmtp.com header.i=@semihalf-com.20150623.gappssmtp.com header.b="OVyUnpsa"
+	dkim=pass (2048-bit key) header.d=semihalf-com.20150623.gappssmtp.com header.i=@semihalf-com.20150623.gappssmtp.com header.b="mxJwbMP9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729806AbfBKQAI (ORCPT
+        id S1728697AbfBKQAP (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:00:08 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:40197 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730025AbfBKObq (ORCPT
+        Mon, 11 Feb 2019 11:00:15 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43969 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730350AbfBKObo (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:31:46 -0500
-Received: by mail-lj1-f194.google.com with SMTP id z25-v6so8915994ljk.7
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Feb 2019 06:31:44 -0800 (PST)
+        Mon, 11 Feb 2019 09:31:44 -0500
+Received: by mail-lj1-f195.google.com with SMTP id o1-v6so3087632ljc.10
+        for <linux-integrity@vger.kernel.org>; Mon, 11 Feb 2019 06:31:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=semihalf-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=qMY2b0yuZLADsWMepCfTCrgliMG6UcFslUIJuZiM5zw=;
-        b=OVyUnpsa/Oq8rmPDNntBJeRK5hj15KI+IQQ0FUvMSYPbHOvBKI/YFoppyZkxRdSu35
-         vvbWjzz9RanSA0vEl+I+i8a+7uoq00eZW0I21a5Mn+2Ukjx1gmjj0RWk2mckxDOgIVUQ
-         hpaIgtvUvNB+Zp6fE0chytLBaClSVXQurLeYtt6Iq2Iukvjl9LJAM8p9srP8WzByDm3s
-         2RVbSunurGHxJChx0HqBPWxvWz+IvEXFgrLl0vRqesoN9MXv3zivwOw+Os4XGGZ/TJFV
-         1snaS62I6FVmMjPZrOyB7Dqow26Ey90i6pZAa1YwSZU1y4abgNLfAdvtXEMfVhk3zl31
-         pdcQ==
+        bh=Ln6fM3szTzWlr7YX/AOAutoZxJqo4vzjmHWgjbDG09Q=;
+        b=mxJwbMP9AE6Z6Xp7QcJsYtNs7m7uIBdHTmLfyahLu/gVBKQOVWIeUJA53gs5y+8KMX
+         6ClTgjljC9bCDzHAu8FHU/HwDzCQ5uC8gSrusVFvywOEuwONj7YJi5uO4e0kT7pOA2Cl
+         hrJIrgW5pM7aBoX88phdDCsZz+UDUpMe4TD7W2RVOhEtvSsKxDtgjgIGXyzoYkshghGf
+         DZJT093lT9NiUEp9zkMnnaICXKLp6wUbZz4QTyDt+4QOKOMu/GgeePuVivgYcNFn2UXP
+         h6suGnqUvWm+tSl3KsnCzBLB+D+eCIn/JYirLMmVA/K0P+xewGAeG3GitDVw1Yzg/Zof
+         YAsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=qMY2b0yuZLADsWMepCfTCrgliMG6UcFslUIJuZiM5zw=;
-        b=OE2/Rqz6Xd1XFtSDVgUA4Y8dTeKcLGfE7Q7cXMEKwZ95mpOjuyQBmqCUsYjeQSbA4Z
-         I0b61WPoQNJW52kVpxl3jBGoepGQwyvkhu1X3DESQLbKNTVDTrQGEsqqUnOgQ8VerIUC
-         sD1IdMEY1Ple0nq2/2awAuOwQs2m/FvSPRPadSf2+dkLusZNWAHa84yVwZXbw5xJvkz+
-         IVpllVS1tpo2nf0vnTlc6Ot89o0BiSMU6tJHL7JR+xV6a/TICAgzjCoJv5NF0lI+kzpM
-         irLJZplv8Mv2CInjqF+0xdUC6aDb3qxb/DRFZ5eb1YMQ8gbiY/yX1Lf893W3mDFes+Tw
-         NhpA==
-X-Gm-Message-State: AHQUAuZ6i9Buc5drvGUbTTz+dveEFKznMwWtJEM1P6AhCEY144g2sLjl
-        EayfbTjeyrDMgrO8+OqdkSkPbg==
-X-Google-Smtp-Source: AHgI3Ia5ScBEaXINb/FbxiIJo7geXhDMU8sTzu85n2SzKfpxAwQjwSfmMdodwFHXuCfkU93bmG13lA==
-X-Received: by 2002:a2e:9249:: with SMTP id v9-v6mr4775498ljg.164.1549895504147;
-        Mon, 11 Feb 2019 06:31:44 -0800 (PST)
+        bh=Ln6fM3szTzWlr7YX/AOAutoZxJqo4vzjmHWgjbDG09Q=;
+        b=ILfBwfM3+vWHZMSeIYdwcXLDwp/uwdC6R0EsSURh+5s2rSYl7uVgeg3BdDgZkp/32t
+         ADl5qeyIOpigcvDXHHG9EtKmSZ1vW3pzxN6m7QHcZDR5Ovg8o696l5RFR09wr0HJnDS+
+         XHhj9fbJliPYip5cqi5Y6WcRuOe265jOcJ9p0X4BLRYQ9kCXaHbs6/BUcUk7zYB6n4A4
+         hEEWitF4M41JjiQX3Z22NYrSQaY5lnMXaWsAGsxEUuVjCax5jQvwRtK8n6+g9M36Sg8E
+         euwpa+ePO1cPhJW7g1dwrCJsfe6vHg/VXpJoAEPstZl/dyChqYNxGFdkybXCP6eSX+4b
+         UZ8Q==
+X-Gm-Message-State: AHQUAuZMQkoyGBZko1TYH1XD/sGGIQ0lGc556o3dsO5DXYtTxsjfybfp
+        qQj+bbPyLEDRMC5zOENjd5v/5w==
+X-Google-Smtp-Source: AHgI3IbmPwTbEcsSKY4UjyIhXnteVk4oYnCvmlgsENltt+kNY1l4LZq8SWX4uOYolHBw++8lZm7VFQ==
+X-Received: by 2002:a2e:99d4:: with SMTP id l20-v6mr4713090ljj.142.1549895501475;
+        Mon, 11 Feb 2019 06:31:41 -0800 (PST)
 Received: from bsz-kubuntu.semihalf.local (31-172-191-173.noc.fibertech.net.pl. [31.172.191.173])
-        by smtp.gmail.com with ESMTPSA id z6sm2322373lfa.87.2019.02.11.06.31.43
+        by smtp.gmail.com with ESMTPSA id z6sm2322373lfa.87.2019.02.11.06.31.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 06:31:43 -0800 (PST)
+        Mon, 11 Feb 2019 06:31:40 -0800 (PST)
 From:   bsz@semihalf.com
 To:     linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
@@ -62,9 +62,9 @@ To:     linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
 Cc:     tweek@google.com, mingo@kernel.org, hdegoede@redhat.com,
         leif.lindholm@linaro.org, mw@semihalf.com,
         Bartosz Szczepanek <bsz@semihalf.com>
-Subject: [PATCH 5/5] efi/arm: Retrieve TPM event log at efi_entry
-Date:   Mon, 11 Feb 2019 15:30:52 +0100
-Message-Id: <20190211143052.3128-6-bsz@semihalf.com>
+Subject: [PATCH 4/5] efi/libstub/tpm: Retrieve TPM event log in 2.0 format
+Date:   Mon, 11 Feb 2019 15:30:51 +0100
+Message-Id: <20190211143052.3128-5-bsz@semihalf.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190211143052.3128-1-bsz@semihalf.com>
 References: <20190211143052.3128-1-bsz@semihalf.com>
@@ -75,27 +75,151 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Bartosz Szczepanek <bsz@semihalf.com>
 
-Add efi_retrieve_tpm2_eventlog() call to ARM efi_entry() function.
-There's no reason to assume that TPM2 EFI structures are not available
-on ARM architecture.
+Currently, the only way to get TPM 2.0 event log from firmware is to use
+device tree. Introduce efi_retrieve_tpm2_eventlog_2 function to enable
+retrieving it from EFI structures.
+
+Include lib/tpm.c into EFI stub to calculate event sizes using helper
+function.
 
 Signed-off-by: Bartosz Szczepanek <bsz@semihalf.com>
 ---
- drivers/firmware/efi/libstub/arm-stub.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/firmware/efi/libstub/Makefile |   3 +-
+ drivers/firmware/efi/libstub/tpm.c    | 107 +++++++++++++++++++++++++++++++++-
+ 2 files changed, 107 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/firmware/efi/libstub/arm-stub.c b/drivers/firmware/efi/libstub/arm-stub.c
-index eee42d5e25ee..d3af12ec32e4 100644
---- a/drivers/firmware/efi/libstub/arm-stub.c
-+++ b/drivers/firmware/efi/libstub/arm-stub.c
-@@ -197,6 +197,7 @@ unsigned long efi_entry(void *handle, efi_system_table_t *sys_table,
+diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+index d9845099635e..0d7d66ad916d 100644
+--- a/drivers/firmware/efi/libstub/Makefile
++++ b/drivers/firmware/efi/libstub/Makefile
+@@ -38,7 +38,8 @@ OBJECT_FILES_NON_STANDARD	:= y
+ # Prevents link failures: __sanitizer_cov_trace_pc() is not linked in.
+ KCOV_INSTRUMENT			:= n
  
- 	/* Ask the firmware to clear memory on unclean shutdown */
- 	efi_enable_reset_attack_mitigation(sys_table);
-+	efi_retrieve_tpm2_eventlog(sys_table);
+-lib-y				:= efi-stub-helper.o gop.o secureboot.o tpm.o
++lib-y				:= efi-stub-helper.o gop.o secureboot.o tpm.o \
++				   lib-tpm.o
  
- 	secure_boot = efi_get_secureboot(sys_table);
+ # include the stub's generic dependencies from lib/ when building for ARM/arm64
+ arm-deps-y := fdt_rw.c fdt_ro.c fdt_wip.c fdt.c fdt_empty_tree.c fdt_sw.c
+diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
+index a90b0b8fc69a..c8c2531be413 100644
+--- a/drivers/firmware/efi/libstub/tpm.c
++++ b/drivers/firmware/efi/libstub/tpm.c
+@@ -129,8 +129,111 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+ 	efi_call_early(free_pool, log_tbl);
+ }
  
++static efi_status_t
++efi_calc_tpm2_eventlog_2_size(efi_system_table_t *sys_table_arg,
++	void *log, void *last_entry, ssize_t *log_size)
++{
++	struct tcg_pcr_event2 *event = last_entry;
++	struct tcg_efi_specid_event *efispecid;
++	struct tcg_pcr_event *log_header = log;
++	ssize_t last_entry_size;
++
++	efispecid = (struct tcg_efi_specid_event *) log_header->event;
++
++	if (last_entry == NULL || log_size == NULL)
++		return EFI_INVALID_PARAMETER;
++
++	if (log == last_entry) {
++		/*
++		 * Only one entry (header) in the log.
++		 */
++		*log_size = log_header->event_size +
++			    sizeof(struct tcg_pcr_event);
++		return EFI_SUCCESS;
++	}
++
++	if (event->count > efispecid->num_algs) {
++		efi_printk(sys_table_arg,
++			   "TCG2 event uses more algorithms than defined\n");
++		return EFI_INVALID_PARAMETER;
++	}
++
++	last_entry_size = calc_tpm2_event_size(last_entry, efispecid);
++	if (last_entry_size < 0) {
++		efi_printk(sys_table_arg,
++			"TCG2 log has invalid last entry size\n");
++		return EFI_INVALID_PARAMETER;
++	}
++
++	*log_size = last_entry + last_entry_size - log;
++	return EFI_SUCCESS;
++}
++
++static efi_status_t efi_retrieve_tpm2_eventlog_2(efi_system_table_t *sys_table_arg)
++{
++	efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
++	efi_physical_addr_t log_location = 0, log_last_entry = 0;
++	efi_guid_t tcg2_guid = EFI_TCG2_PROTOCOL_GUID;
++	efi_bool_t truncated;
++	efi_status_t status;
++	struct linux_efi_tpm_eventlog *log_tbl = NULL;
++	void *tcg2_protocol = NULL;
++	ssize_t log_size;
++
++	status = efi_call_early(locate_protocol, &tcg2_guid, NULL,
++				&tcg2_protocol);
++	if (status != EFI_SUCCESS)
++		return status;
++
++	status = efi_call_proto(efi_tcg2_protocol, get_event_log, tcg2_protocol,
++				EFI_TCG2_EVENT_LOG_FORMAT_TCG_2,
++				&log_location, &log_last_entry, &truncated);
++	if (status != EFI_SUCCESS)
++		return status;
++
++	if (!log_location)
++		return EFI_NOT_FOUND;
++
++	status = efi_calc_tpm2_eventlog_2_size(sys_table_arg,
++					       (void *)log_location,
++					       (void *) log_last_entry,
++					       &log_size);
++	if (status != EFI_SUCCESS)
++		return status;
++
++	/* Allocate space for the logs and copy them. */
++	status = efi_call_early(allocate_pool, EFI_LOADER_DATA,
++				sizeof(*log_tbl) + log_size,
++				(void **) &log_tbl);
++
++	if (status != EFI_SUCCESS) {
++		efi_printk(sys_table_arg,
++			   "Unable to allocate memory for event log\n");
++		return status;
++	}
++
++	memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
++	log_tbl->size = log_size;
++	log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
++	memcpy(log_tbl->log, (void *) log_location, log_size);
++
++	status = efi_call_early(install_configuration_table,
++				&linux_eventlog_guid, log_tbl);
++	if (status != EFI_SUCCESS)
++		goto err_free;
++
++	return EFI_SUCCESS;
++
++err_free:
++	efi_call_early(free_pool, log_tbl);
++	return status;
++}
++
+ void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
+ {
+-	/* Only try to retrieve the logs in 1.2 format. */
+-	efi_retrieve_tpm2_eventlog_1_2(sys_table_arg);
++	efi_status_t status;
++
++	status = efi_retrieve_tpm2_eventlog_2(sys_table_arg);
++	if (status != EFI_SUCCESS)
++		efi_retrieve_tpm2_eventlog_1_2(sys_table_arg);
+ }
 -- 
 2.14.4
 
