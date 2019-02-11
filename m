@@ -2,148 +2,123 @@ Return-Path: <SRS0=a4os=QS=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E7EC169C4
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 20:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B00BCC169C4
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 20:32:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C064218A3
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 20:21:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F323218D8
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 20:32:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jDVIlylH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbfBKUVV (ORCPT
+        id S1727123AbfBKUcp (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Feb 2019 15:21:21 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38578 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727082AbfBKUVV (ORCPT
+        Mon, 11 Feb 2019 15:32:45 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33083 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726025AbfBKUco (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Feb 2019 15:21:21 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1BKDv9I072964
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Feb 2019 15:21:20 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qkfsu0jd3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Feb 2019 15:21:20 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 11 Feb 2019 20:21:17 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 11 Feb 2019 20:21:15 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1BKLE7m57802938
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 11 Feb 2019 20:21:14 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6DFF652057;
-        Mon, 11 Feb 2019 20:21:14 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.91.85])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id C5CD65204F;
-        Mon, 11 Feb 2019 20:21:13 +0000 (GMT)
-Subject: Re: [PATCH v3 7/7] ima-evm-utils: Try to load digest by its alias
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Vitaly Chikunov <vt@altlinux.org>
-Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org
-Date:   Mon, 11 Feb 2019 15:21:03 -0500
-In-Reply-To: <20190211192644.q7ipos4rrmj7vugq@altlinux.org>
-References: <20181203033525.20431-1-vt@altlinux.org>
-         <20181203033525.20431-7-vt@altlinux.org>
-         <1549906738.12743.167.camel@linux.ibm.com>
-         <20190211175248.22ighzenzvm5tddb@altlinux.org>
-         <1549907952.12743.173.camel@linux.ibm.com>
-         <20190211181300.cktmpuymd4uqtcov@altlinux.org>
-         <20190211182115.gir76jn66e73akc7@altlinux.org>
-         <20190211192644.q7ipos4rrmj7vugq@altlinux.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19021120-0028-0000-0000-00000347543D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021120-0029-0000-0000-000024057144
-Message-Id: <1549916463.12743.188.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-11_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902110148
+        Mon, 11 Feb 2019 15:32:44 -0500
+Received: by mail-pf1-f196.google.com with SMTP id c123so122848pfb.0;
+        Mon, 11 Feb 2019 12:32:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=LYEtQ0huIgRqRN72HKrMf6/t6SbOdkntokaFuVtRuwA=;
+        b=jDVIlylHgLecqgbUr9f9MSgPipvsjbdmdR5Ccr2YQlrg8Dl3zqXWhKCYsO4R+DrurX
+         7hYnNc7fJOMhgnQXkTxvObqSsJdhA/mCfjYLko+GOmny8Nx+Oqul4Zl47Vws1RT5rvb2
+         VkSxW3G7r66YWNusKQi1YYB1tqYKEStyT1xd7ee/68a8W21/5rfFlIkYQitSNbAgpiQN
+         r2JetYqDze242ZhQyJy8JJrrOhQXIaJXFOMdOTCgTNJTzdrHXaO010kBDmABT040pMGM
+         ub8BvmNjymWv1dZyTxhLNANe9rda/SV4OTHtRTTKcxnrIgvLnJvd7w4IETjI0SKnVdpj
+         uuew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=LYEtQ0huIgRqRN72HKrMf6/t6SbOdkntokaFuVtRuwA=;
+        b=O3TP0IegOWTaCGiPMa5cwPXHwGFV+NThe2n64VDqJUjzrMVgsu1EnWuLtC7HRRaT6V
+         NySWN+ePxbZm9LGhDiIvntr7OZi6nwKhjhRao2owKySB2HJ+0Mk8CaVdw6NJKzWflf8S
+         1yb22ov6ZixJ4dSYUMgsPJFTjUnfcSdurWU2/7NOYf+1YvUauUtkoeg4FEXgB/hRPGZU
+         LJb9lWjagz6iyYnMsA2VE5w7E8V5yQFV8K6efr4PP8ZbZE0aHlyNQO9L9usC74u0gFhs
+         7MAdlLsN+RBKFo87g+vN2oyP0xPDwXTzRs+ahVfydk/oGTLUmFhkBTqyexDeE90hYPk5
+         dWkw==
+X-Gm-Message-State: AHQUAubNqd4kFq0kStGE1GR8AfTDllh1zoYdAagM/oQka5t9yyzLq7l2
+        eqDXEDSsVudUmcnNn0ralD8=
+X-Google-Smtp-Source: AHgI3IY/t2t2yc8abbgd4X3ggvCGVF2OGRCQro2+hmH3yq84NbHtsVFoO6+n44jfzy8/G4hRQTyUTw==
+X-Received: by 2002:a65:6684:: with SMTP id b4mr64478pgw.55.1549917163761;
+        Mon, 11 Feb 2019 12:32:43 -0800 (PST)
+Received: from [10.33.115.182] ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id c23sm12753759pgh.73.2019.02.11.12.32.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 12:32:42 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v2 10/20] x86: avoid W^X being broken during modules
+ loading
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <20190211194251.GS19618@zn.tnic>
+Date:   Mon, 11 Feb 2019 12:32:41 -0800
+Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Damian Tometzki <linux_dti@icloud.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A55214F3-CDC0-44C4-AFB6-7E8E23CC6F85@gmail.com>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-11-rick.p.edgecombe@intel.com>
+ <20190211182956.GN19618@zn.tnic>
+ <1533F2BB-2284-499B-9912-6D74D0B87BC1@gmail.com>
+ <20190211190108.GP19618@zn.tnic>
+ <A671F14F-3E03-4A97-9F54-426533077E0C@gmail.com>
+ <20190211191059.GR19618@zn.tnic>
+ <3996E3F9-92D2-4561-84E9-68B43AC60F43@gmail.com>
+ <20190211194251.GS19618@zn.tnic>
+To:     Borislav Petkov <bp@alien8.de>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, 2019-02-11 at 22:26 +0300, Vitaly Chikunov wrote:
-> Mimi,
-> 
-> On Mon, Feb 11, 2019 at 09:21:15PM +0300, Vitaly Chikunov wrote:
-> > On Mon, Feb 11, 2019 at 09:13:00PM +0300, Vitaly Chikunov wrote:
-> > > On Mon, Feb 11, 2019 at 12:59:12PM -0500, Mimi Zohar wrote:
-> > > > On Mon, 2019-02-11 at 20:52 +0300, Vitaly Chikunov wrote:
-> > > > > On Mon, Feb 11, 2019 at 12:38:58PM -0500, Mimi Zohar wrote:
-> > > > > > On Mon, 2018-12-03 at 06:35 +0300, Vitaly Chikunov wrote:
-> > > > > > > For compatibility with older OpenSSL try to load digest by its alias if
-> > > > > > > load by its proper name is failed.
-> > > > > > > 
-> > > > > > > This is configured in pkey_hash_algo by mentioning loadable alias first in the
-> > > > > > > comma separated list of algo names.
-> > > > > > 
-> > > > > > After this patch, I can not verify the signature.  It's failing to
-> > > > > > find the hash algorithm.
-> > > > > 
-> > > > > Yes, it's fixed in "ima-evm-utils: convert sign v2 from RSA to EVP_PKEY
-> > > > > API". I didn't consider it a problem since streebog256 should not work
-> > > > > for sign/verify anyway (since RSA should not support it). That EVP_PKEY
-> > > > > patch which adds ability to sign/verify for Streebog also fixes above
-> > > > > problem.
-> > > > 
-> > > > I've been having second thoughts about this patch in general, as it
-> > > > made the hash algorithm comparison unnecessarily more complex for the
-> > > > simple case.  As there hasn't been a new ima-evm-utils release with
-> > > > patch, perhaps we should simple remove/revert it?
-> > > 
-> > > It was only for compatibility with older openssl/gost-engine, where
-> > > "streebog256" name is not defined yet. If you don't want to allow that
-> > > users to use Streebog feel free to revert it.
-> 
-> Or you may suggest simpler approach.
-> 
-> Basically, we need to resole both text strings into the same PKEY_HASH_
-> id, allow any of the string pass into EVP_get_digestbyname, and resolve
-> PKEY_HASH_ id back into the correct hash name. Optionally, allow user to
-> specify new hash name on older openssl/gost-engine. This is all
-> implemented by that patch, it was not just overly complicated "hash
-> algorithm comparison".
-> 
-> My wish is we retain support of older openssl/gost-engine.
+> On Feb 11, 2019, at 11:42 AM, Borislav Petkov <bp@alien8.de> wrote:
+>=20
+> On Mon, Feb 11, 2019 at 11:27:03AM -0800, Nadav Amit wrote:
+>> Is there any comment over static_cpu_has()? ;-)
+>=20
+> Almost:
+>=20
+> /*
+> * Static testing of CPU features.  Used the same as boot_cpu_has().
+> * These will statically patch the target code for additional
+> * performance.
+> */
+> static __always_inline __pure bool _static_cpu_has(u16 bit)
 
-The following seems to fix the problem, but instead of adding it in
-strmatch(), as below, I would add it before the strmatch() call.  Then
-strmatch is only called as needed.
+Oh, I missed this comment.
 
-diff --git a/src/libimaevm.c b/src/libimaevm.c
-index d9ffa13befb0..7901215da655 100644
---- a/src/libimaevm.c
-+++ b/src/libimaevm.c
-@@ -598,6 +598,9 @@ static int strmatch(const char *needle, const char *haystack)
-        const char *p = haystack;
-        const char *t;
- 
-+       if (strcmp(needle, haystack) == 0)
-+               return 0;
-+
-        for (t = strchrnul(p, ','); *p; p = t, t = strchrnul(p, ',')) {
-                if (t - p == len &&
-                    !strncmp(needle, p, len))
-
-Mimi
+BTW: the =E2=80=9C__pure=E2=80=9D attribute is useless when =
+=E2=80=9C__always_inline=E2=80=9D is used.
+Unless it is intended to be some sort of comment, of course.
 
