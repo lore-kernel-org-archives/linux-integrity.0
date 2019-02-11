@@ -2,72 +2,63 @@ Return-Path: <SRS0=a4os=QS=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C6DAC169C4
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 10:58:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85DBBC169C4
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 13:58:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6043C20663
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 10:58:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CC47222B0
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 13:58:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726045AbfBKK6w (ORCPT
+        id S1727885AbfBKN6u (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Feb 2019 05:58:52 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:38566 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726041AbfBKK6v (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Feb 2019 05:58:51 -0500
-Received: from localhost ([127.0.0.1] helo=flow.W.breakpoint.cc)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gt9IS-0002bd-DH; Mon, 11 Feb 2019 11:58:44 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     linux-integrity@vger.kernel.org
-Cc:     tglx@linutronix.de, Jason Gunthorpe <jgg@ziepe.ca>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Philip Tricca <philip.b.tricca@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH] tpm: remove tpm_dev_wq_lock
-Date:   Mon, 11 Feb 2019 11:58:35 +0100
-Message-Id: <20190211105835.16851-1-bigeasy@linutronix.de>
-X-Mailer: git-send-email 2.20.1
+        Mon, 11 Feb 2019 08:58:50 -0500
+Received: from mga02.intel.com ([134.134.136.20]:21618 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726025AbfBKN6u (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 11 Feb 2019 08:58:50 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 05:58:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,358,1544515200"; 
+   d="scan'208";a="121534427"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.142])
+  by fmsmga007.fm.intel.com with ESMTP; 11 Feb 2019 05:58:47 -0800
+Date:   Mon, 11 Feb 2019 15:58:46 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] tpm: Unify the send callback behaviour
+Message-ID: <20190211135846.GA8431@linux.intel.com>
+References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
+ <20190208180857.12330-2-jarkko.sakkinen@linux.intel.com>
+ <20190209182022.zghnna3fa3a3x3w7@cantor>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190209182022.zghnna3fa3a3x3w7@cantor>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Added in commit
+On Sat, Feb 09, 2019 at 11:20:22AM -0700, Jerry Snitselaar wrote:
+> Does st33zp24_i2c_send need an update as well? It does 'return
+> write8_reg()'.
 
-  9e1b74a63f776 ("tpm: add support for nonblocking operation")
+After these commits the only situation when st33zp24_i2c_send() return
+value is returned back to the user space, when called from
+st33zp24_send(), is when it returns -errno.
 
-but never actually used it.
-
-Cc: Philip Tricca <philip.b.tricca@intel.com>
-Cc: Tadeusz Struk <tadeusz.struk@intel.com>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- drivers/char/tpm/tpm-dev-common.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-index 5eecad233ea1d..eca96e8c669c9 100644
---- a/drivers/char/tpm/tpm-dev-common.c
-+++ b/drivers/char/tpm/tpm-dev-common.c
-@@ -25,7 +25,6 @@
- #include "tpm-dev.h"
- 
- static struct workqueue_struct *tpm_dev_wq;
--static DEFINE_MUTEX(tpm_dev_wq_lock);
- 
- static void tpm_async_work(struct work_struct *work)
- {
--- 
-2.20.1
-
+/Jarkko
