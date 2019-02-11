@@ -3,45 +3,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78976C282CE
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 14:10:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A049AC169C4
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 14:11:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 519A6222B7
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 14:10:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7889C222B8
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 14:11:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727658AbfBKOJ7 (ORCPT
+        id S1726228AbfBKOLt (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:09:59 -0500
-Received: from mga03.intel.com ([134.134.136.65]:44787 "EHLO mga03.intel.com"
+        Mon, 11 Feb 2019 09:11:49 -0500
+Received: from mga18.intel.com ([134.134.136.126]:7740 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727327AbfBKOJ7 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:09:59 -0500
+        id S1726170AbfBKOLt (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:11:49 -0500
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 06:09:58 -0800
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 06:11:48 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,358,1544515200"; 
-   d="scan'208";a="142441391"
+   d="scan'208";a="142441755"
 Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.142])
-  by fmsmga002.fm.intel.com with ESMTP; 11 Feb 2019 06:09:55 -0800
-Date:   Mon, 11 Feb 2019 16:09:55 +0200
+  by fmsmga002.fm.intel.com with ESMTP; 11 Feb 2019 06:11:46 -0800
+Date:   Mon, 11 Feb 2019 16:11:45 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linuxibm.com>, paulmck@linux.vnet.ibm.com,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: rectify two issues in KEYS-TRUSTED entry
-Message-ID: <20190211140955.GC8431@linux.intel.com>
-References: <20190210185755.9776-1-lukas.bulwahn@gmail.com>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-integrity@vger.kernel.org, tglx@linutronix.de,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Philip Tricca <philip.b.tricca@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>
+Subject: Re: [PATCH] tpm: remove tpm_dev_wq_lock
+Message-ID: <20190211141145.GD8431@linux.intel.com>
+References: <20190211105835.16851-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190210185755.9776-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20190211105835.16851-1-bigeasy@linutronix.de>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
@@ -49,20 +49,20 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sun, Feb 10, 2019 at 07:57:55PM +0100, Lukas Bulwahn wrote:
-> Mimi Zohar used spaces instead of a tab when adding Jarkko Sakkinen as
-> further maintainer to the KEYS-TRUSTED section entry. Paul McKenney also
-> introduced a typo in Mimi Zohar's email address in the KEYS-TRUSTED section
-> entry.
+On Mon, Feb 11, 2019 at 11:58:35AM +0100, Sebastian Andrzej Siewior wrote:
+> Added in commit
 > 
-> The two issues were detected when writing a script that parses MAINTAINERS.
+>   9e1b74a63f776 ("tpm: add support for nonblocking operation")
 > 
-> Fixes: 34bccd61b139 ("MAINTAINERS: add Jarkko as maintainer for trusted keys")
-> Fixes: 1dfddcdb95c4 ("MAINTAINERS: Update from @linux.vnet.ibm.com to @linux.ibm.com")
+> but never actually used it.
 > 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
- 
+> Cc: Philip Tricca <philip.b.tricca@intel.com>
+> Cc: Tadeusz Struk <tadeusz.struk@intel.com>
+> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+You should use Fixes-tag e.g.
+
+Fixes: <12 first chars from SHA-1> ("<short summary>")
 
 /Jarkko
