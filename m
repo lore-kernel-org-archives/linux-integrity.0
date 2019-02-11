@@ -1,132 +1,240 @@
-Return-Path: <SRS0=lxv9=QR=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=a4os=QS=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA919C282C2
-	for <linux-integrity@archiver.kernel.org>; Sun, 10 Feb 2019 20:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A83C282C2
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 00:39:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5DD42145D
-	for <linux-integrity@archiver.kernel.org>; Sun, 10 Feb 2019 20:32:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCACA2083B
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 00:39:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQvVKtfi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726057AbfBJUcl (ORCPT
+        id S1726029AbfBKAj0 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 10 Feb 2019 15:32:41 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59992 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726005AbfBJUcl (ORCPT
+        Sun, 10 Feb 2019 19:39:26 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33188 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbfBKAjZ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 10 Feb 2019 15:32:41 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1AKTGxK058258
-        for <linux-integrity@vger.kernel.org>; Sun, 10 Feb 2019 15:32:39 -0500
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qjrqbn2uy-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Sun, 10 Feb 2019 15:32:39 -0500
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sun, 10 Feb 2019 20:32:38 -0000
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 10 Feb 2019 20:32:36 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1AKWZfW24117460
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 10 Feb 2019 20:32:35 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2570FB2066;
-        Sun, 10 Feb 2019 20:32:35 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 03E6CB2065;
-        Sun, 10 Feb 2019 20:32:34 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.196.105])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sun, 10 Feb 2019 20:32:34 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 7FA9816C35A3; Sun, 10 Feb 2019 12:32:35 -0800 (PST)
-Date:   Sun, 10 Feb 2019 12:32:35 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: rectify two issues in KEYS-TRUSTED entry
-Reply-To: paulmck@linux.ibm.com
-References: <20190210190009.9995-1-lukas.bulwahn@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190210190009.9995-1-lukas.bulwahn@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19021020-0064-0000-0000-000003A6BD6E
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010572; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000279; SDB=6.01159183; UDB=6.00604896; IPR=6.00939720;
- MB=3.00025517; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-10 20:32:38
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021020-0065-0000-0000-00003C5EE468
-Message-Id: <20190210203235.GN4240@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-10_17:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902100158
+        Sun, 10 Feb 2019 19:39:25 -0500
+Received: by mail-pf1-f194.google.com with SMTP id c123so4453104pfb.0;
+        Sun, 10 Feb 2019 16:39:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=vlsxxAOCWdf1tlqbQayeYqdEQq3U0CPDi/Q8SjZG81o=;
+        b=UQvVKtfiCr2EL7+vDHwobTr3K/ATiEL/6IaQ02QiiMOUdtOTSwVzMksz6CS8ZV0yRJ
+         +ba/xxOchi8VyXAnM7fVo60oRNFj2udtb1MmjepZeHgrxDVhybrDVbj5WnMxeBHOoSbd
+         0Z4ougOyd3gTbL/2dtgAdkuVZoPi7UgLUoLhCdvNzCWYP7JyWQGoErFnT2bIT8jpwJmW
+         nl39hGFURBJeHi1zjBdzVmWXygssw8dBEZN8YX3pDj+23Sy5XTbd9Z4jeitLC9T6yCR+
+         E1iLowwEvYjOZ49Ev4OpC1K+CVW6/aZvC6taNcnStgVkXC3RxCvWyjQ73aHhhLIXT7n4
+         svbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=vlsxxAOCWdf1tlqbQayeYqdEQq3U0CPDi/Q8SjZG81o=;
+        b=WFmylVds/qwlFy7kn9NP/xhxD8x8/bQXNsJGdwsPJcxY/cXTssYcfC3JHGoVmCMSWS
+         +5Z2YY6kKFJUDgXi/SZ7vIJtR6USqcUP3X9ROzZ9jyWVg0LLL0gBe4nJWDnpeJeKOiIm
+         SvVghhN/WghUPkS/5G1Kl8c2hZ6/+nVOPtGxdUPX0VNwEaNvDOrM69EMyKPWRSqLPHOh
+         TAh7zDC20b4St3abwL0RpiS4mBcYijS+/ha4bYQCJhZjBEl20PyOnUKEF8rfs4EorXeY
+         ngXgys6XSkgZL7P6CV//bM56RQquIWhvxOlO5wDIfF0ZVzPyk0NAoW069X/h65zwPZqB
+         TwGA==
+X-Gm-Message-State: AHQUAuYmyPEhADTKFF60l7j+f7QYPR1Uh8MncpwJKHBf0A0xD9AqbsAv
+        L9NP499sd4+2qU/VxBpQHFU=
+X-Google-Smtp-Source: AHgI3Ia6ifDLiDziehHa+LGRKtMr/aFcCrLoukw/oRH9ekCRaSYyb/4JRm26BQzyIcR0N6IRbjlQYw==
+X-Received: by 2002:a63:5d20:: with SMTP id r32mr15872762pgb.329.1549845563697;
+        Sun, 10 Feb 2019 16:39:23 -0800 (PST)
+Received: from [10.50.121.96] (c-73-202-78-81.hsd1.ca.comcast.net. [73.202.78.81])
+        by smtp.gmail.com with ESMTPSA id x2sm13973798pfx.78.2019.02.10.16.39.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 10 Feb 2019 16:39:22 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v2 05/20] x86/alternative: initializing temporary mm for
+ patching
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <20190129003422.9328-6-rick.p.edgecombe@intel.com>
+Date:   Sun, 10 Feb 2019 16:39:19 -0800
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Damian Tometzki <linux_dti@icloud.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <162C6C29-CD81-46FE-9A54-6ED05A93A9CB@gmail.com>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-6-rick.p.edgecombe@intel.com>
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andy Lutomirski <luto@kernel.org>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sun, Feb 10, 2019 at 08:00:09PM +0100, Lukas Bulwahn wrote:
-> Mimi Zohar used spaces instead of a tab when adding Jarkko Sakkinen as
-> further maintainer to the KEYS-TRUSTED section entry. Paul McKenney also
-> introduced a typo in Mimi Zohar's email address in the KEYS-TRUSTED section
-> entry.
-> 
-> The two issues were detected when writing a script that parses MAINTAINERS.
-> 
-> Fixes: 34bccd61b139 ("MAINTAINERS: add Jarkko as maintainer for trusted keys")
-> Fixes: 1dfddcdb95c4 ("MAINTAINERS: Update from @linux.vnet.ibm.com to @linux.ibm.com")
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-
-Good catch!
-
-Reviewed-by: Paul E. McKenney <paulmck@linux.ibm.com>
-
+> On Jan 28, 2019, at 4:34 PM, Rick Edgecombe =
+<rick.p.edgecombe@intel.com> wrote:
+>=20
+> From: Nadav Amit <namit@vmware.com>
+>=20
+> To prevent improper use of the PTEs that are used for text patching, =
+we
+> want to use a temporary mm struct. We initailize it by copying the =
+init
+> mm.
+>=20
+> The address that will be used for patching is taken from the lower =
+area
+> that is usually used for the task memory. Doing so prevents the need =
+to
+> frequently synchronize the temporary-mm (e.g., when BPF programs are
+> installed), since different PGDs are used for the task memory.
+>=20
+> Finally, we randomize the address of the PTEs to harden against =
+exploits
+> that use these PTEs.
+>=20
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+> Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
+> Suggested-by: Andy Lutomirski <luto@kernel.org>
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 > ---
-> Mimi, please pick up this patch instead of
->   "[PATCH] MAINTAINERS: use tab instead of spaces". Thanks.
-> 
->  MAINTAINERS | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index bf4965d6d5de..b4b62ea78eeb 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8405,8 +8405,8 @@ F:	security/keys/encrypted-keys/
-> 
->  KEYS-TRUSTED
->  M:	James Bottomley <jejb@linux.ibm.com>
-> -M:      Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> -M:	Mimi Zohar <zohar@linuxibm.com>
-> +M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> +M:	Mimi Zohar <zohar@linux.ibm.com>
->  L:	linux-integrity@vger.kernel.org
->  L:	keyrings@vger.kernel.org
->  S:	Supported
-> -- 
-> 2.17.1
-> 
+> arch/x86/include/asm/pgtable.h       |  3 +++
+> arch/x86/include/asm/text-patching.h |  2 ++
+> arch/x86/kernel/alternative.c        |  3 +++
+> arch/x86/mm/init_64.c                | 36 ++++++++++++++++++++++++++++
+> init/main.c                          |  3 +++
+> 5 files changed, 47 insertions(+)
+>=20
+> diff --git a/arch/x86/include/asm/pgtable.h =
+b/arch/x86/include/asm/pgtable.h
+> index 40616e805292..e8f630d9a2ed 100644
+> --- a/arch/x86/include/asm/pgtable.h
+> +++ b/arch/x86/include/asm/pgtable.h
+> @@ -1021,6 +1021,9 @@ static inline void __meminit =
+init_trampoline_default(void)
+> 	/* Default trampoline pgd value */
+> 	trampoline_pgd_entry =3D init_top_pgt[pgd_index(__PAGE_OFFSET)];
+> }
+> +
+> +void __init poking_init(void);
+> +
+> # ifdef CONFIG_RANDOMIZE_MEMORY
+> void __meminit init_trampoline(void);
+> # else
+> diff --git a/arch/x86/include/asm/text-patching.h =
+b/arch/x86/include/asm/text-patching.h
+> index f8fc8e86cf01..a75eed841eed 100644
+> --- a/arch/x86/include/asm/text-patching.h
+> +++ b/arch/x86/include/asm/text-patching.h
+> @@ -39,5 +39,7 @@ extern void *text_poke_kgdb(void *addr, const void =
+*opcode, size_t len);
+> extern int poke_int3_handler(struct pt_regs *regs);
+> extern void *text_poke_bp(void *addr, const void *opcode, size_t len, =
+void *handler);
+> extern int after_bootmem;
+> +extern __ro_after_init struct mm_struct *poking_mm;
+> +extern __ro_after_init unsigned long poking_addr;
+>=20
+> #endif /* _ASM_X86_TEXT_PATCHING_H */
+> diff --git a/arch/x86/kernel/alternative.c =
+b/arch/x86/kernel/alternative.c
+> index 12fddbc8c55b..ae05fbb50171 100644
+> --- a/arch/x86/kernel/alternative.c
+> +++ b/arch/x86/kernel/alternative.c
+> @@ -678,6 +678,9 @@ void *__init_or_module text_poke_early(void *addr, =
+const void *opcode,
+> 	return addr;
+> }
+>=20
+> +__ro_after_init struct mm_struct *poking_mm;
+> +__ro_after_init unsigned long poking_addr;
+> +
+> static void *__text_poke(void *addr, const void *opcode, size_t len)
+> {
+> 	unsigned long flags;
+> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> index bccff68e3267..125c8c48aa24 100644
+> --- a/arch/x86/mm/init_64.c
+> +++ b/arch/x86/mm/init_64.c
+> @@ -53,6 +53,7 @@
+> #include <asm/init.h>
+> #include <asm/uv/uv.h>
+> #include <asm/setup.h>
+> +#include <asm/text-patching.h>
+>=20
+> #include "mm_internal.h"
+>=20
+> @@ -1383,6 +1384,41 @@ unsigned long memory_block_size_bytes(void)
+> 	return memory_block_size_probed;
+> }
+>=20
+> +/*
+> + * Initialize an mm_struct to be used during poking and a pointer to =
+be used
+> + * during patching.
+> + */
+> +void __init poking_init(void)
+> +{
+> +	spinlock_t *ptl;
+> +	pte_t *ptep;
+> +
+> +	poking_mm =3D copy_init_mm();
+> +	BUG_ON(!poking_mm);
+> +
+> +	/*
+> +	 * Randomize the poking address, but make sure that the =
+following page
+> +	 * will be mapped at the same PMD. We need 2 pages, so find =
+space for 3,
+> +	 * and adjust the address if the PMD ends after the first one.
+> +	 */
+> +	poking_addr =3D TASK_UNMAPPED_BASE;
+> +	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
+> +		poking_addr +=3D (kaslr_get_random_long("Poking") & =
+PAGE_MASK) %
+> +			(TASK_SIZE - TASK_UNMAPPED_BASE - 3 * =
+PAGE_SIZE);
+> +
+> +	if (((poking_addr + PAGE_SIZE) & ~PMD_MASK) =3D=3D 0)
+> +		poking_addr +=3D PAGE_SIZE;
+
+Further thinking about it, I think that allocating the virtual address =
+for
+poking from user address-range is problematic. The user can set =
+watchpoints
+on different addresses, cause some static-keys to be enabled/disabled, =
+and
+monitor the signals to derandomize the poking address.
+
+Andy, I think you were pushing this change. Can I go back to use a =
+vmalloc=E2=80=99d
+address instead, or do you have a better solution? I prefer not to
+save/restore DR7, of course.
 
