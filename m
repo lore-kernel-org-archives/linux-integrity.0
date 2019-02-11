@@ -2,67 +2,283 @@ Return-Path: <SRS0=a4os=QS=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A049AC169C4
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 14:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B56DC282CE
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 14:31:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7889C222B8
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 14:11:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0EBF20844
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 14:31:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=semihalf-com.20150623.gappssmtp.com header.i=@semihalf-com.20150623.gappssmtp.com header.b="Ksoo+IaF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726228AbfBKOLt (ORCPT
+        id S1730325AbfBKObj (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:11:49 -0500
-Received: from mga18.intel.com ([134.134.136.126]:7740 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726170AbfBKOLt (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:11:49 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 06:11:48 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,358,1544515200"; 
-   d="scan'208";a="142441755"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.142])
-  by fmsmga002.fm.intel.com with ESMTP; 11 Feb 2019 06:11:46 -0800
-Date:   Mon, 11 Feb 2019 16:11:45 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-integrity@vger.kernel.org, tglx@linutronix.de,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Philip Tricca <philip.b.tricca@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>
-Subject: Re: [PATCH] tpm: remove tpm_dev_wq_lock
-Message-ID: <20190211141145.GD8431@linux.intel.com>
-References: <20190211105835.16851-1-bigeasy@linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211105835.16851-1-bigeasy@linutronix.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 11 Feb 2019 09:31:39 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:42086 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729613AbfBKObi (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:31:38 -0500
+Received: by mail-lf1-f65.google.com with SMTP id l10so7875244lfh.9
+        for <linux-integrity@vger.kernel.org>; Mon, 11 Feb 2019 06:31:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=semihalf-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=4mT+Uw4qv/27OkDGZ2Z4PNLv1X7pO+nJwrUwXygNfR4=;
+        b=Ksoo+IaFbmKFle9VdM18OBfuhuq0AORuU9TMZhqnGG4BhuOcpzLfP39+nSSNz7guOj
+         XUj4NweOocnRBgkvfUoJK0CMB9l4DHseIMOriF3dxaLxaJ/+iQRiPRIbsoxL6mcO8HCN
+         vPmU884prGZIfUgXceoHizmjqzdssXSpY4R50ThjS33EhEcvzPDUgD1FYMeBqIgG2+eZ
+         0S2IfTSoAd86+Dv20Iqj+LOvwAT/FFAqaUxExdYsPFcfIqHCeI1IdBETTMMWaSb43ohW
+         FUiCCNZV8GHyPxOVHkYJu8Gmfd1L2KIHdIwWpCLLuy2ILht2E7alJHc2LpUjgf2e9iQz
+         LdwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=4mT+Uw4qv/27OkDGZ2Z4PNLv1X7pO+nJwrUwXygNfR4=;
+        b=s7MYM0A1mwVli7mRyoqutGWXbz9G6jMEFPYGNX1rXp7BeO+YsKIm883id4oOJRIMdp
+         l5eaFgtfJkPO7ktdTUq09evON0virKtt3DSK347qYHHv4xduMI/qtoftpMJGI+KwxJz4
+         3x46l3Ti0r89S36CCM8zj308FdT8p2Dj27YGMKulQ2CDt9KJKwsNdBMfpW6ZlURhij6d
+         YSGZmmp8AXw0WEqZ+hAReBQUCNeMWyszwUwIbF36uczlUpU70sAptGD7qGySFZyEVATS
+         RKDoYpqMHZyDlxLbTbqrZHV+g4CuFUyhKWCSyfDACPT1D0Iwm5A6jSUJT53cMs2swpC/
+         Sa5g==
+X-Gm-Message-State: AHQUAubUDFnsNjYJzRqeAxNTeMtwwjRQs3m3DH37zRMdSEcYUTqfvpvq
+        htXi/o12d4arDTD9GAMPP67RxQ==
+X-Google-Smtp-Source: AHgI3IaaYuqW+RAhaTPZ6ViRMxwgnwsPAunrxKxxCVBGSYpoOIexho4j8rBEhxeUbmll5qa8kaVNag==
+X-Received: by 2002:a19:59c2:: with SMTP id n185mr21587542lfb.118.1549895495351;
+        Mon, 11 Feb 2019 06:31:35 -0800 (PST)
+Received: from bsz-kubuntu.semihalf.local (31-172-191-173.noc.fibertech.net.pl. [31.172.191.173])
+        by smtp.gmail.com with ESMTPSA id z6sm2322373lfa.87.2019.02.11.06.31.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 06:31:34 -0800 (PST)
+From:   bsz@semihalf.com
+To:     linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
+        jarkko.sakkinen@linux.intel.com, ard.biesheuvel@linaro.org
+Cc:     tweek@google.com, mingo@kernel.org, hdegoede@redhat.com,
+        leif.lindholm@linaro.org, mw@semihalf.com,
+        Bartosz Szczepanek <bsz@semihalf.com>
+Subject: [PATCH 3/5] tpm: Use library version of calc_tpm2_event_size in sysfs code
+Date:   Mon, 11 Feb 2019 15:30:50 +0100
+Message-Id: <20190211143052.3128-4-bsz@semihalf.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190211143052.3128-1-bsz@semihalf.com>
+References: <20190211143052.3128-1-bsz@semihalf.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 11:58:35AM +0100, Sebastian Andrzej Siewior wrote:
-> Added in commit
-> 
->   9e1b74a63f776 ("tpm: add support for nonblocking operation")
-> 
-> but never actually used it.
-> 
-> Cc: Philip Tricca <philip.b.tricca@intel.com>
-> Cc: Tadeusz Struk <tadeusz.struk@intel.com>
-> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Bartosz Szczepanek <bsz@semihalf.com>
 
-You should use Fixes-tag e.g.
+Expect negative values from calc_tpm2_event_size as error codes.
+Pass efispecid instead of event header to calc_tpm2_event_size.
 
-Fixes: <12 first chars from SHA-1> ("<short summary>")
+Also, include tpm library in the build.
 
-/Jarkko
+Signed-off-by: Bartosz Szczepanek <bsz@semihalf.com>
+---
+ drivers/char/tpm/eventlog/tpm2.c | 89 ++++++++--------------------------------
+ include/linux/tpm_eventlog.h     |  3 ++
+ lib/Makefile                     |  2 +
+ 3 files changed, 22 insertions(+), 72 deletions(-)
+
+diff --git a/drivers/char/tpm/eventlog/tpm2.c b/drivers/char/tpm/eventlog/tpm2.c
+index 1b8fa9de2cac..5230821d5b1c 100644
+--- a/drivers/char/tpm/eventlog/tpm2.c
++++ b/drivers/char/tpm/eventlog/tpm2.c
+@@ -26,80 +26,20 @@
+ #include "../tpm.h"
+ #include "common.h"
+ 
+-/*
+- * calc_tpm2_event_size() - calculate the event size, where event
+- * is an entry in the TPM 2.0 event log. The event is of type Crypto
+- * Agile Log Entry Format as defined in TCG EFI Protocol Specification
+- * Family "2.0".
+-
+- * @event: event whose size is to be calculated.
+- * @event_header: the first event in the event log.
+- *
+- * Returns size of the event. If it is an invalid event, returns 0.
+- */
+-static int calc_tpm2_event_size(struct tcg_pcr_event2 *event,
+-				struct tcg_pcr_event *event_header)
+-{
+-	struct tcg_efi_specid_event *efispecid;
+-	struct tcg_event_field *event_field;
+-	void *marker;
+-	void *marker_start;
+-	u32 halg_size;
+-	size_t size;
+-	u16 halg;
+-	int i;
+-	int j;
+-
+-	marker = event;
+-	marker_start = marker;
+-	marker = marker + sizeof(event->pcr_idx) + sizeof(event->event_type)
+-		+ sizeof(event->count);
+-
+-	efispecid = (struct tcg_efi_specid_event *)event_header->event;
+-
+-	/* Check if event is malformed. */
+-	if (event->count > efispecid->num_algs)
+-		return 0;
+-
+-	for (i = 0; i < event->count; i++) {
+-		halg_size = sizeof(event->digests[i].alg_id);
+-		memcpy(&halg, marker, halg_size);
+-		marker = marker + halg_size;
+-		for (j = 0; j < efispecid->num_algs; j++) {
+-			if (halg == efispecid->digest_sizes[j].alg_id) {
+-				marker +=
+-					efispecid->digest_sizes[j].digest_size;
+-				break;
+-			}
+-		}
+-		/* Algorithm without known length. Such event is unparseable. */
+-		if (j == efispecid->num_algs)
+-			return 0;
+-	}
+-
+-	event_field = (struct tcg_event_field *)marker;
+-	marker = marker + sizeof(event_field->event_size)
+-		+ event_field->event_size;
+-	size = marker - marker_start;
+-
+-	if ((event->event_type == 0) && (event_field->event_size == 0))
+-		return 0;
+-
+-	return size;
+-}
+-
+ static void *tpm2_bios_measurements_start(struct seq_file *m, loff_t *pos)
+ {
+ 	struct tpm_chip *chip = m->private;
+ 	struct tpm_bios_log *log = &chip->log;
+ 	void *addr = log->bios_event_log;
+ 	void *limit = log->bios_event_log_end;
++	struct tcg_efi_specid_event *efispecid;
+ 	struct tcg_pcr_event *event_header;
+ 	struct tcg_pcr_event2 *event;
+-	size_t size;
++	ssize_t size;
+ 	int i;
+ 
+ 	event_header = addr;
++	efispecid = (struct tcg_efi_specid_event *) event_header->event;
+ 	size = sizeof(struct tcg_pcr_event) - sizeof(event_header->event)
+ 		+ event_header->event_size;
+ 
+@@ -115,16 +55,16 @@ static void *tpm2_bios_measurements_start(struct seq_file *m, loff_t *pos)
+ 	if (*pos > 0) {
+ 		addr += size;
+ 		event = addr;
+-		size = calc_tpm2_event_size(event, event_header);
+-		if ((addr + size >=  limit) || (size == 0))
++		size = calc_tpm2_event_size(event, efispecid);
++		if ((addr + size >=  limit) || (size < 0))
+ 			return NULL;
+ 	}
+ 
+ 	for (i = 0; i < (*pos - 1); i++) {
+ 		event = addr;
+-		size = calc_tpm2_event_size(event, event_header);
++		size = calc_tpm2_event_size(event, efispecid);
+ 
+-		if ((addr + size >= limit) || (size == 0))
++		if ((addr + size >= limit) || (size < 0))
+ 			return NULL;
+ 		addr += size;
+ 	}
+@@ -135,6 +75,7 @@ static void *tpm2_bios_measurements_start(struct seq_file *m, loff_t *pos)
+ static void *tpm2_bios_measurements_next(struct seq_file *m, void *v,
+ 					 loff_t *pos)
+ {
++	struct tcg_efi_specid_event *efispecid;
+ 	struct tcg_pcr_event *event_header;
+ 	struct tcg_pcr_event2 *event;
+ 	struct tpm_chip *chip = m->private;
+@@ -144,6 +85,7 @@ static void *tpm2_bios_measurements_next(struct seq_file *m, void *v,
+ 	void *marker;
+ 
+ 	event_header = log->bios_event_log;
++	efispecid = (struct tcg_efi_specid_event *) event_header->event;
+ 
+ 	if (v == SEQ_START_TOKEN) {
+ 		event_size = sizeof(struct tcg_pcr_event) -
+@@ -151,8 +93,8 @@ static void *tpm2_bios_measurements_next(struct seq_file *m, void *v,
+ 		marker = event_header;
+ 	} else {
+ 		event = v;
+-		event_size = calc_tpm2_event_size(event, event_header);
+-		if (event_size == 0)
++		event_size = calc_tpm2_event_size(event, efispecid);
++		if (event_size < 0)
+ 			return NULL;
+ 		marker = event;
+ 	}
+@@ -163,8 +105,8 @@ static void *tpm2_bios_measurements_next(struct seq_file *m, void *v,
+ 	v = marker;
+ 	event = v;
+ 
+-	event_size = calc_tpm2_event_size(event, event_header);
+-	if (((v + event_size) >= limit) || (event_size == 0))
++	event_size = calc_tpm2_event_size(event, efispecid);
++	if (((v + event_size) >= limit) || (event_size < 0))
+ 		return NULL;
+ 
+ 	(*pos)++;
+@@ -180,10 +122,13 @@ static int tpm2_binary_bios_measurements_show(struct seq_file *m, void *v)
+ 	struct tpm_chip *chip = m->private;
+ 	struct tpm_bios_log *log = &chip->log;
+ 	struct tcg_pcr_event *event_header = log->bios_event_log;
++	struct tcg_efi_specid_event *efispecid;
+ 	struct tcg_pcr_event2 *event = v;
+ 	void *temp_ptr;
+ 	size_t size;
+ 
++	efispecid = (struct tcg_efi_specid_event *) event_header->event;
++
+ 	if (v == SEQ_START_TOKEN) {
+ 		size = sizeof(struct tcg_pcr_event) -
+ 			sizeof(event_header->event) + event_header->event_size;
+@@ -193,7 +138,7 @@ static int tpm2_binary_bios_measurements_show(struct seq_file *m, void *v)
+ 		if (size > 0)
+ 			seq_write(m, temp_ptr, size);
+ 	} else {
+-		size = calc_tpm2_event_size(event, event_header);
++		size = calc_tpm2_event_size(event, efispecid);
+ 		temp_ptr = event;
+ 		if (size > 0)
+ 			seq_write(m, temp_ptr, size);
+diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
+index 20d9da77fc11..872ab1545456 100644
+--- a/include/linux/tpm_eventlog.h
++++ b/include/linux/tpm_eventlog.h
+@@ -121,4 +121,7 @@ struct tcg_pcr_event2 {
+ 	struct tcg_event_field event;
+ } __packed;
+ 
++ssize_t calc_tpm2_event_size(struct tcg_pcr_event2 *event,
++			     struct tcg_efi_specid_event *efispecid);
++
+ #endif
+diff --git a/lib/Makefile b/lib/Makefile
+index e1b59da71418..4458d914f40b 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -276,3 +276,5 @@ obj-$(CONFIG_GENERIC_LIB_MULDI3) += muldi3.o
+ obj-$(CONFIG_GENERIC_LIB_CMPDI2) += cmpdi2.o
+ obj-$(CONFIG_GENERIC_LIB_UCMPDI2) += ucmpdi2.o
+ obj-$(CONFIG_OBJAGG) += objagg.o
++
++obj-$(CONFIG_TCG_TPM) += tpm.o
+-- 
+2.14.4
+
