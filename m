@@ -2,111 +2,217 @@ Return-Path: <SRS0=a4os=QS=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49966C282D7
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 23:00:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 360B1C169C4
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 23:28:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14B4F218A3
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 23:00:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549926016;
-	bh=RdARy0D2d2IImaaPeK+pm12Sk+zLe4PWvJ4Rp1UMq8o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=ORg20rV5URA5dPWBYm141SjXP0MB3scL6wXdW032qeJRN5R0oMvl+y/R41QNyUqkI
-	 UN9zI5gltp+uDw3mYzE9KqtZ6WEqT6FvtAh44ZGrUKsMElNt56GlzBNDMn0QEPfSk3
-	 o4zHhEThTO1ovQNnXZWvZqdPORENbAs6HBBUGdc0=
+	by mail.kernel.org (Postfix) with ESMTP id D7076214DA
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 23:28:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d4gPdAkI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbfBKXAO (ORCPT
+        id S1727458AbfBKX2H (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Feb 2019 18:00:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40896 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727080AbfBKXAM (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Feb 2019 18:00:12 -0500
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E7622229E
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Feb 2019 23:00:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549926011;
-        bh=RdARy0D2d2IImaaPeK+pm12Sk+zLe4PWvJ4Rp1UMq8o=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=1U/t75gPlPzV0GunWAAj580UQ0M8IQO7b/0ocVXPNelID0RVlkdhMj4hsKGasjksD
-         EVjIa8/xD1Gua910hLYZzaNPVVqqmjn0XIr7KSRz+zjA74djGWCRG2PhI6a6hymlpQ
-         09sU7CdhUpL1YU0IzM5ExJ2bmf1i/5n92jcXqhYA=
-Received: by mail-wm1-f43.google.com with SMTP id m1so967576wml.2
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Feb 2019 15:00:11 -0800 (PST)
-X-Gm-Message-State: AHQUAuYLlIzQZhPGe4wUjQ3ey9l+Ng00g7CNM7p49K9jJ7Xtal1I2vN/
-        mN7PmUxFWdoJJZt4PqCCbjlbpILbCn+pX57Kl1Ny7A==
-X-Google-Smtp-Source: AHgI3IY9/CMTozIoxXmaMd4k3IPzExCkXpyQ6EENDNglBFNRGElm4CwGZ5tQ0Jfoffwkks/clk12CUflqqHCBROQbIk=
-X-Received: by 2002:a7b:cc13:: with SMTP id f19mr377508wmh.83.1549926009812;
- Mon, 11 Feb 2019 15:00:09 -0800 (PST)
-MIME-Version: 1.0
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-14-rick.p.edgecombe@intel.com> <20190211190925.GQ19618@zn.tnic>
-In-Reply-To: <20190211190925.GQ19618@zn.tnic>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 11 Feb 2019 14:59:55 -0800
-X-Gmail-Original-Message-ID: <CALCETrX2AOTTZOQafZgOFxiQsFgdYHVaLonXTqTa3RUs5MPVUQ@mail.gmail.com>
-Message-ID: <CALCETrX2AOTTZOQafZgOFxiQsFgdYHVaLonXTqTa3RUs5MPVUQ@mail.gmail.com>
-Subject: Re: [PATCH v2 13/20] Add set_alias_ function and x86 implementation
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        Mon, 11 Feb 2019 18:28:07 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38728 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727132AbfBKX2H (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 11 Feb 2019 18:28:07 -0500
+Received: by mail-wr1-f65.google.com with SMTP id v13so672184wrw.5;
+        Mon, 11 Feb 2019 15:28:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:reply-to:mime-version
+         :content-transfer-encoding;
+        bh=WiVvqtIRSUTlDM0fLGtak+4fmHxmqyUWRnseuvynyBA=;
+        b=d4gPdAkIB5pcxMqazVlY0aM9rShWWD8ZDlRnMRbsHx1ZqP5f2pl+Ud860bl0tKxLPW
+         lW5JbjgFkyDiqpSm3g3L/XFha+LtJ3vvWR5GIb8lRlNMN6YQHZshn9hmiCRZphaxRMGy
+         3iz4GkDL9y7IaUkAPRdBozhH4zzVRtCzyYdeFtUa86M2kRCNUqT8oPaKdNM+MnrKHTJO
+         tQQY/zPwJJFOmEi1gndbn94fxfgRr5xbm9OwG7k7UI5mV8FQgYMqTR15xzUgHKUL+OkC
+         ZgUG0YNWA8Sulsrjd9Um5S/sgIpGcYLoeJsulbdZqvF63WjvEkkMl0eaF82ofcpv4gDO
+         9N/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :mime-version:content-transfer-encoding;
+        bh=WiVvqtIRSUTlDM0fLGtak+4fmHxmqyUWRnseuvynyBA=;
+        b=FTCQK6ZJcqyix9TpbG7Pw3d5hSI4p6INQMn/kUEktJ0uwT4a4N+8PrxwrAPgS0mcc9
+         TYl/u8e8OwOR6SJm3DwLGkJExPQe41YAWK8wIfmsY5KwTj39aKUggfugGZQqo5fdRpoS
+         NDKQuTzvY2hEYndkf/ZV2UK7DSCQsmJwGmSe+SSCPxBcFraFI0X6euLHGEcHoUMqANh1
+         sTXV8OLFX2zUier4eqzZ01YG1UhYNcNJ1ls2JdxkUoMMn7zZjVfVIcjatni52oEFknvC
+         7cINMQkMxzj7QfiQHAwL2lR7dUJ+yBUIDV0XEWoDnWNQzFHkGrVVE+e/SnoSC/qWICMj
+         hliw==
+X-Gm-Message-State: AHQUAuZdoMIt5gOGSQm8EwUhwzwLwN7X5eZFw/64NO/fYyrUZj728Tuh
+        0Z9vj7QQ9WsSkmXmR1AW/6Y=
+X-Google-Smtp-Source: AHgI3IYYK161pUzr6asXVXNX2dxWTZn19D/paOND9eEjGNQtMhZwuiEhs0iHU0hAE6PbKZCUdlK/KA==
+X-Received: by 2002:adf:e8c7:: with SMTP id k7mr508447wrn.298.1549927684722;
+        Mon, 11 Feb 2019 15:28:04 -0800 (PST)
+Received: from localhost.localdomain (bba134232.alshamil.net.ae. [217.165.113.120])
+        by smtp.gmail.com with ESMTPSA id e67sm1470295wmg.1.2019.02.11.15.28.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 15:28:03 -0800 (PST)
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
+Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
         linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
         Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH v4 00/12] hardening: statically allocated protected memory
+Date:   Tue, 12 Feb 2019 01:27:37 +0200
+Message-Id: <cover.1549927666.git.igor.stoppa@huawei.com>
+X-Mailer: git-send-email 2.19.1
+Reply-To: Igor Stoppa <igor.stoppa@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 11:09 AM Borislav Petkov <bp@alien8.de> wrote:
->
-> On Mon, Jan 28, 2019 at 04:34:15PM -0800, Rick Edgecombe wrote:
-> > This adds two new functions set_alias_default_noflush and
->
-> s/This adds/Add/
->
-> > set_alias_nv_noflush for setting the alias mapping for the page to its
->
-> Please end function names with parentheses, below too.
->
-> > default valid permissions and to an invalid state that cannot be cached in
-> > a TLB, respectively. These functions to not flush the TLB.
->
-> s/to/do/
->
-> Also, pls put that description as comments over the functions in the
-> code. Otherwise that "nv" as part of the name doesn't really explain
-> what it does.
->
-> Actually, you could just as well call the function
->
-> set_alias_invalid_noflush()
->
-> All the other words are written in full, no need to have "nv" there.
+To: Andy Lutomirski <luto@amacapital.net>,
+To: Matthew Wilcox <willy@infradead.org>,
+To: Nadav Amit <nadav.amit@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+To: Dave Hansen <dave.hansen@linux.intel.com>,
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+CC: Kees Cook <keescook@chromium.org>
+CC: Ahmed Soliman <ahmedsoliman@mena.vt.edu>
+CC: linux-integrity <linux-integrity@vger.kernel.org>
+CC: Kernel Hardening <kernel-hardening@lists.openwall.com>
+CC: Linux-MM <linux-mm@kvack.org>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Why are you calling this an "alias"?  You're modifying the direct map.
-Your patches are thinking of the direct map as an alias of the vmap
-mapping, but that does seem a bit backwards.  How about
-set_direct_map_invalid_noflush(), etc?
+Hello,
+at last I'm able to resume work on the memory protection patchset I've
+proposed some time ago. This version should address comments received so
+far and introduce support for arm64. Details below.
 
---Andy
+Patch-set implementing write-rare memory protection for statically
+allocated data.
+Its purpose is to keep write protected the kernel data which is seldom
+modified, especially if altering it can be exploited during an attack.
+
+There is no read overhead, however writing requires special operations that
+are probably unsuitable for often-changing data.
+The use is opt-in, by applying the modifier __wr_after_init to a variable
+declaration.
+
+As the name implies, the write protection kicks in only after init() is
+completed; before that moment, the data is modifiable in the usual way.
+
+Current Limitations:
+* supports only data which is allocated statically, at build time.
+* supports only x86_64 and arm64;other architectures need to provide own
+  backend
+
+Some notes:
+- in case an architecture doesn't support write rare, the behavior is to
+  fallback to regular write operations
+- before altering any memory, the destination is sanitized
+- write rare data is segregated into own set of pages
+- only x86_64 and arm64 supported, atm
+- the memset_user() assembly functions seems to work, but I'm not too sure
+  they are really ok
+- I've added a simple example: the protection of ima_policy_flags
+- the last patch is optional, but it seemed worth to do the refactoring
+- the x86_64 user space address range is double the size of the kernel
+  address space, so it's possible to randomize the beginning of the
+  mapping of the kernel address space, but on arm64 they have the same
+  size, so it's not possible to do the same
+- I'm not sure if it's correct, since it doesn't seem to be that common in
+  kernel sources, but instead of using #defines for overriding default
+  function calls, I'm using "weak" for the default functions.
+- unaddressed: Nadav proposed to do:
+	#define __wr          __attribute__((address_space(5)))
+  but I don't know exactly where to use it atm
+
+Changelog:
+
+v3->v4
+------
+
+* added function for setting memory in user space mapping for arm64
+* refactored code, to work with both supported architectures
+* reduced dependency on x86_64 specific code, to support by default also
+  arm64
+* improved memset_user() for x86_64, but I'm not sure if I understood
+  correctly what was the best way to enhance it.
+
+v2->v3
+------
+
+* both wr_memset and wr_memcpy are implemented as generic functions
+  the arch code must provide suitable helpers
+* regular initialization for ima_policy_flags: it happens during init
+* remove spurious code from the initialization function
+
+v1->v2
+------
+
+* introduce cleaner split between generic and arch code
+* add x86_64 specific memset_user()
+* replace kernel-space memset() memcopy() with userspace counterpart
+* randomize the base address for the alternate map across the entire
+  available address range from user space (128TB - 64TB)
+* convert BUG() to WARN()
+* turn verification of written data into debugging option
+* wr_rcu_assign_pointer() as special case of wr_assign()
+* example with protection of ima_policy_flags
+* documentation
+
+Igor Stoppa (12):
+  __wr_after_init: Core and default arch
+  __wr_after_init: x86_64: memset_user()
+  __wr_after_init: x86_64: randomize mapping offset
+  __wr_after_init: x86_64: enable
+  __wr_after_init: arm64: memset_user()
+  __wr_after_init: arm64: enable
+  __wr_after_init: Documentation: self-protection
+  __wr_after_init: lkdtm test
+  __wr_after_init: rodata_test: refactor tests
+  __wr_after_init: rodata_test: test __wr_after_init
+  __wr_after_init: test write rare functionality
+  IMA: turn ima_policy_flags into __wr_after_init
+
+ Documentation/security/self-protection.rst |  14 +-
+ arch/Kconfig                               |   7 +
+ arch/arm64/Kconfig                         |   1 +
+ arch/arm64/include/asm/uaccess.h           |   9 ++
+ arch/arm64/lib/Makefile                    |   2 +-
+ arch/arm64/lib/memset_user.S (new)         |  63 ++++++++
+ arch/x86/Kconfig                           |   1 +
+ arch/x86/include/asm/uaccess_64.h          |   6 +
+ arch/x86/lib/usercopy_64.c                 |  51 ++++++
+ arch/x86/mm/Makefile                       |   2 +
+ arch/x86/mm/prmem.c (new)                  |  20 +++
+ drivers/misc/lkdtm/core.c                  |   3 +
+ drivers/misc/lkdtm/lkdtm.h                 |   3 +
+ drivers/misc/lkdtm/perms.c                 |  29 ++++
+ include/linux/prmem.h (new)                |  71 ++++++++
+ mm/Kconfig.debug                           |   8 +
+ mm/Makefile                                |   2 +
+ mm/prmem.c (new)                           | 179 +++++++++++++++++++++
+ mm/rodata_test.c                           |  69 +++++---
+ mm/test_write_rare.c (new)                 | 136 ++++++++++++++++
+ security/integrity/ima/ima.h               |   3 +-
+ security/integrity/ima/ima_policy.c        |   9 +-
+ 22 files changed, 656 insertions(+), 32 deletions(-)
+ create mode 100644 arch/arm64/lib/memset_user.S
+ create mode 100644 arch/x86/mm/prmem.c
+ create mode 100644 include/linux/prmem.h
+ create mode 100644 mm/prmem.c
+ create mode 100644 mm/test_write_rare.c
+
+-- 
+2.19.1
+
