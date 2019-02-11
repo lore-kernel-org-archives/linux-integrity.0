@@ -2,249 +2,293 @@ Return-Path: <SRS0=a4os=QS=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA047C169C4
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 17:59:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 064E5C282CE
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 18:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8886C21B18
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 17:59:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B80C621B18
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 18:05:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GydORsWG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728303AbfBKR7a (ORCPT
+        id S1728923AbfBKSFD (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Feb 2019 12:59:30 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56924 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726104AbfBKR7a (ORCPT
+        Mon, 11 Feb 2019 13:05:03 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:37803 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727896AbfBKSFD (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Feb 2019 12:59:30 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1BHnD99134591
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Feb 2019 12:59:29 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qkc6f5kvf-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Feb 2019 12:59:28 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 11 Feb 2019 17:59:27 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 11 Feb 2019 17:59:25 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1BHxO0Q46071888
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 11 Feb 2019 17:59:24 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1EBD542047;
-        Mon, 11 Feb 2019 17:59:24 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5ED6742042;
-        Mon, 11 Feb 2019 17:59:23 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.91.85])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 11 Feb 2019 17:59:23 +0000 (GMT)
-Subject: Re: [PATCH v3 7/7] ima-evm-utils: Try to load digest by its alias
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Vitaly Chikunov <vt@altlinux.org>
-Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org
-Date:   Mon, 11 Feb 2019 12:59:12 -0500
-In-Reply-To: <20190211175248.22ighzenzvm5tddb@altlinux.org>
-References: <20181203033525.20431-1-vt@altlinux.org>
-         <20181203033525.20431-7-vt@altlinux.org>
-         <1549906738.12743.167.camel@linux.ibm.com>
-         <20190211175248.22ighzenzvm5tddb@altlinux.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19021117-0020-0000-0000-000003158163
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021117-0021-0000-0000-000021669BBC
-Message-Id: <1549907952.12743.173.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-11_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902110134
+        Mon, 11 Feb 2019 13:05:03 -0500
+Received: by mail-pl1-f194.google.com with SMTP id b5so5660689plr.4;
+        Mon, 11 Feb 2019 10:05:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=AUsdeBs8TwVgEYdmAcctLfA3NsYpeVedAfShAvqLCSQ=;
+        b=GydORsWGsWvaK37KjDS0hKIrZCViWp2jnMBbmaJP55UDxAfk6Lpjo3/bo26Ccs1V+w
+         Rx9UAFtFx0BLH9ij6rFgtj7xLiFwLHHvYpCslgRZ2Y5bJY7rmQIs38sQwb1ztEcTOlZG
+         Mbk6gy2n1DYs4cCff9biQQ2Yi4AYE8GurcGLbonmcUaXgvD3t6EDJUSjzmAk3hv42xZx
+         4TcEcJxNFK3xqbfHtLztg/WOeGgGZk5YOu6gwCZhyyVmTX7AGxyTei39eSFz7ZToM6/N
+         CHynptnAS6T+5A0Mg0uYa1UiXlqlz1Q0Vx77VlFdVpD7z3Pv1QL0sEdBq4yVHtchqpfP
+         vWPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=AUsdeBs8TwVgEYdmAcctLfA3NsYpeVedAfShAvqLCSQ=;
+        b=S5espi1gnFCUbgCKpSHM8aZHKPDood/JddbqQSf1fqVPEUwT0I13Citxyzum/LzNzL
+         yEGols4nR47+8KztFfbes9XBMtiZy1/LxZ/0+eHSddCu1fLiXjRbEuUuqchhsk+A0OGe
+         wAY0o/HMeD8ScQfT9QyRRvqto9uObKoqbLAglboxOYXrM4cQ58ti8+ihBDZoeJc/ZOG/
+         G1OJjvhRb9/JJwzsgcsJwu+jpR9TYLipoGG0IXrFdUTf/e3KEkzIBAQ95jY3eyrIsFMD
+         LYq0sDX6hwKa9+//EMEnV6KlaRWH5+tS4n0HCoxpPPDWk3PiXlDZf2cV/J7Cr5kid68C
+         72mw==
+X-Gm-Message-State: AHQUAub4zX/rpBb6H7BtVCBxsf8AVecaOun+kILUMhOB4u2d+LJxdrjO
+        CCj9AeYdULqGBejJ1Y5baXU=
+X-Google-Smtp-Source: AHgI3IahTZgfrp8L0NmonDNlgVSC6Taf0HBldEkpa1Q8EcssFEiNuhJtYHQnYzeDyoJKeaT4IFbqeQ==
+X-Received: by 2002:a17:902:2887:: with SMTP id f7mr37670181plb.176.1549908301976;
+        Mon, 11 Feb 2019 10:05:01 -0800 (PST)
+Received: from [10.33.115.182] ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id 15sm16807648pfr.55.2019.02.11.10.05.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 10:05:01 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v2 05/20] x86/alternative: initializing temporary mm for
+ patching
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <00649AE8-69C0-4CD2-A916-B8C8F0F5DAC3@amacapital.net>
+Date:   Mon, 11 Feb 2019 10:04:59 -0800
+Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Damian Tometzki <linux_dti@icloud.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <6FE10C97-25FF-4E99-A96A-465CBACA935B@gmail.com>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-6-rick.p.edgecombe@intel.com>
+ <162C6C29-CD81-46FE-9A54-6ED05A93A9CB@gmail.com>
+ <00649AE8-69C0-4CD2-A916-B8C8F0F5DAC3@amacapital.net>
+To:     Andy Lutomirski <luto@amacapital.net>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, 2019-02-11 at 20:52 +0300, Vitaly Chikunov wrote:
-> Mimi,
-> 
-> On Mon, Feb 11, 2019 at 12:38:58PM -0500, Mimi Zohar wrote:
-> > On Mon, 2018-12-03 at 06:35 +0300, Vitaly Chikunov wrote:
-> > > For compatibility with older OpenSSL try to load digest by its alias if
-> > > load by its proper name is failed.
-> > > 
-> > > This is configured in pkey_hash_algo by mentioning loadable alias first in the
-> > > comma separated list of algo names.
-> > 
-> > After this patch, I can not verify the signature.  It's failing to
-> > find the hash algorithm.
-> 
-> Yes, it's fixed in "ima-evm-utils: convert sign v2 from RSA to EVP_PKEY
-> API". I didn't consider it a problem since streebog256 should not work
-> for sign/verify anyway (since RSA should not support it). That EVP_PKEY
-> patch which adds ability to sign/verify for Streebog also fixes above
-> problem.
+> On Feb 10, 2019, at 9:18 PM, Andy Lutomirski <luto@amacapital.net> =
+wrote:
+>=20
+>=20
+>=20
+> On Feb 10, 2019, at 4:39 PM, Nadav Amit <nadav.amit@gmail.com> wrote:
+>=20
+>>> On Jan 28, 2019, at 4:34 PM, Rick Edgecombe =
+<rick.p.edgecombe@intel.com> wrote:
+>>>=20
+>>> From: Nadav Amit <namit@vmware.com>
+>>>=20
+>>> To prevent improper use of the PTEs that are used for text patching, =
+we
+>>> want to use a temporary mm struct. We initailize it by copying the =
+init
+>>> mm.
+>>>=20
+>>> The address that will be used for patching is taken from the lower =
+area
+>>> that is usually used for the task memory. Doing so prevents the need =
+to
+>>> frequently synchronize the temporary-mm (e.g., when BPF programs are
+>>> installed), since different PGDs are used for the task memory.
+>>>=20
+>>> Finally, we randomize the address of the PTEs to harden against =
+exploits
+>>> that use these PTEs.
+>>>=20
+>>> Cc: Kees Cook <keescook@chromium.org>
+>>> Cc: Dave Hansen <dave.hansen@intel.com>
+>>> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+>>> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+>>> Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
+>>> Suggested-by: Andy Lutomirski <luto@kernel.org>
+>>> Signed-off-by: Nadav Amit <namit@vmware.com>
+>>> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+>>> ---
+>>> arch/x86/include/asm/pgtable.h       |  3 +++
+>>> arch/x86/include/asm/text-patching.h |  2 ++
+>>> arch/x86/kernel/alternative.c        |  3 +++
+>>> arch/x86/mm/init_64.c                | 36 =
+++++++++++++++++++++++++++++
+>>> init/main.c                          |  3 +++
+>>> 5 files changed, 47 insertions(+)
+>>>=20
+>>> diff --git a/arch/x86/include/asm/pgtable.h =
+b/arch/x86/include/asm/pgtable.h
+>>> index 40616e805292..e8f630d9a2ed 100644
+>>> --- a/arch/x86/include/asm/pgtable.h
+>>> +++ b/arch/x86/include/asm/pgtable.h
+>>> @@ -1021,6 +1021,9 @@ static inline void __meminit =
+init_trampoline_default(void)
+>>>   /* Default trampoline pgd value */
+>>>   trampoline_pgd_entry =3D init_top_pgt[pgd_index(__PAGE_OFFSET)];
+>>> }
+>>> +
+>>> +void __init poking_init(void);
+>>> +
+>>> # ifdef CONFIG_RANDOMIZE_MEMORY
+>>> void __meminit init_trampoline(void);
+>>> # else
+>>> diff --git a/arch/x86/include/asm/text-patching.h =
+b/arch/x86/include/asm/text-patching.h
+>>> index f8fc8e86cf01..a75eed841eed 100644
+>>> --- a/arch/x86/include/asm/text-patching.h
+>>> +++ b/arch/x86/include/asm/text-patching.h
+>>> @@ -39,5 +39,7 @@ extern void *text_poke_kgdb(void *addr, const void =
+*opcode, size_t len);
+>>> extern int poke_int3_handler(struct pt_regs *regs);
+>>> extern void *text_poke_bp(void *addr, const void *opcode, size_t =
+len, void *handler);
+>>> extern int after_bootmem;
+>>> +extern __ro_after_init struct mm_struct *poking_mm;
+>>> +extern __ro_after_init unsigned long poking_addr;
+>>>=20
+>>> #endif /* _ASM_X86_TEXT_PATCHING_H */
+>>> diff --git a/arch/x86/kernel/alternative.c =
+b/arch/x86/kernel/alternative.c
+>>> index 12fddbc8c55b..ae05fbb50171 100644
+>>> --- a/arch/x86/kernel/alternative.c
+>>> +++ b/arch/x86/kernel/alternative.c
+>>> @@ -678,6 +678,9 @@ void *__init_or_module text_poke_early(void =
+*addr, const void *opcode,
+>>>   return addr;
+>>> }
+>>>=20
+>>> +__ro_after_init struct mm_struct *poking_mm;
+>>> +__ro_after_init unsigned long poking_addr;
+>>> +
+>>> static void *__text_poke(void *addr, const void *opcode, size_t len)
+>>> {
+>>>   unsigned long flags;
+>>> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+>>> index bccff68e3267..125c8c48aa24 100644
+>>> --- a/arch/x86/mm/init_64.c
+>>> +++ b/arch/x86/mm/init_64.c
+>>> @@ -53,6 +53,7 @@
+>>> #include <asm/init.h>
+>>> #include <asm/uv/uv.h>
+>>> #include <asm/setup.h>
+>>> +#include <asm/text-patching.h>
+>>>=20
+>>> #include "mm_internal.h"
+>>>=20
+>>> @@ -1383,6 +1384,41 @@ unsigned long memory_block_size_bytes(void)
+>>>   return memory_block_size_probed;
+>>> }
+>>>=20
+>>> +/*
+>>> + * Initialize an mm_struct to be used during poking and a pointer =
+to be used
+>>> + * during patching.
+>>> + */
+>>> +void __init poking_init(void)
+>>> +{
+>>> +    spinlock_t *ptl;
+>>> +    pte_t *ptep;
+>>> +
+>>> +    poking_mm =3D copy_init_mm();
+>>> +    BUG_ON(!poking_mm);
+>>> +
+>>> +    /*
+>>> +     * Randomize the poking address, but make sure that the =
+following page
+>>> +     * will be mapped at the same PMD. We need 2 pages, so find =
+space for 3,
+>>> +     * and adjust the address if the PMD ends after the first one.
+>>> +     */
+>>> +    poking_addr =3D TASK_UNMAPPED_BASE;
+>>> +    if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
+>>> +        poking_addr +=3D (kaslr_get_random_long("Poking") & =
+PAGE_MASK) %
+>>> +            (TASK_SIZE - TASK_UNMAPPED_BASE - 3 * PAGE_SIZE);
+>>> +
+>>> +    if (((poking_addr + PAGE_SIZE) & ~PMD_MASK) =3D=3D 0)
+>>> +        poking_addr +=3D PAGE_SIZE;
+>>=20
+>> Further thinking about it, I think that allocating the virtual =
+address for
+>> poking from user address-range is problematic. The user can set =
+watchpoints
+>> on different addresses, cause some static-keys to be =
+enabled/disabled, and
+>> monitor the signals to derandomize the poking address.
+>=20
+> Hmm, I hadn=E2=80=99t thought about watchpoints. I=E2=80=99m not sure =
+how much we care
+> about possible derandomization like this, but we certainly don=E2=80=99t=
+ want to
+> send signals or otherwise malfunction.
+>=20
+>> Andy, I think you were pushing this change. Can I go back to use a =
+vmalloc=E2=80=99d
+>> address instead, or do you have a better solution?
+>=20
+> Hmm. If we use a vmalloc address, we have to make sure it=E2=80=99s =
+not actually
+> allocated. I suppose we could allocate one once at boot and use that. =
+We
+> also have the problem that the usual APIs for handling =E2=80=9Cuser=E2=80=
+=9D addresses
+> might assume they=E2=80=99re actually in the user range, although this =
+seems
+> unlikely to be a problem in practice. More seriously, though, the code
+> that manipulates per-mm paging structures assumes that *all* of the
+> structures up to the top level are per-mm, and, if we use anything =
+less
+> than a private pgd, this isn=E2=80=99t the case.
 
-I've been having second thoughts about this patch in general, as it
-made the hash algorithm comparison unnecessarily more complex for the
-simple case.  As there hasn't been a new ima-evm-utils release with
-patch, perhaps we should simple remove/revert it?
+I forgot that I only had this conversation in my mind ;-)
 
-Mimi
+Well, I did write some code that kept some vmalloc=E2=80=99d area =
+private, and it
+did require more synchronization between the pgd=E2=80=99s. It is still =
+possible
+to use another top-level PGD, but =E2=80=A6 (continued below)
 
-> 
-> > evmctl ima_sign -k <private key> -p -a streebog256 ./foo.txt  --xattr-user
-> > evmctl ima_verify -k <public key>  ./foo.txt  --xattr-user
-> > 
-> > Mimi
-> > 
-> > > 
-> > > Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
-> > > ---
-> > > Changes since v1:
-> > > - New patch.
-> > > Changes since v2:
-> > > - No changes.
-> > > 
-> > >  src/imaevm.h    |  1 +
-> > >  src/libimaevm.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++++++----
-> > >  2 files changed, 52 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/src/imaevm.h b/src/imaevm.h
-> > > index c81bf21..795966a 100644
-> > > --- a/src/imaevm.h
-> > > +++ b/src/imaevm.h
-> > > @@ -75,6 +75,7 @@
-> > >  #define	DATA_SIZE	4096
-> > >  #define SHA1_HASH_LEN   20
-> > > 
-> > > +#define MAX_DIGEST_NAME		32
-> > >  #define MAX_DIGEST_SIZE		64
-> > >  #define MAX_SIGNATURE_SIZE	1024
-> > > 
-> > > diff --git a/src/libimaevm.c b/src/libimaevm.c
-> > > index cb4721b..7501303 100644
-> > > --- a/src/libimaevm.c
-> > > +++ b/src/libimaevm.c
-> > > @@ -41,6 +41,7 @@
-> > >  /* should we use logger instead for library? */
-> > >  #define USE_FPRINTF
-> > > 
-> > > +#define _GNU_SOURCE
-> > >  #include <sys/types.h>
-> > >  #include <sys/param.h>
-> > >  #include <sys/stat.h>
-> > > @@ -56,6 +57,7 @@
-> > >  #include <openssl/pem.h>
-> > >  #include <openssl/evp.h>
-> > >  #include <openssl/x509.h>
-> > > +#include <openssl/engine.h>
-> > >  #include <openssl/err.h>
-> > > 
-> > >  #include "imaevm.h"
-> > > @@ -70,8 +72,8 @@ const char *const pkey_hash_algo[PKEY_HASH__LAST] = {
-> > >  	[PKEY_HASH_SHA384]	= "sha384",
-> > >  	[PKEY_HASH_SHA512]	= "sha512",
-> > >  	[PKEY_HASH_SHA224]	= "sha224",
-> > > -	[PKEY_HASH_STREEBOG_256] = "streebog256",
-> > > -	[PKEY_HASH_STREEBOG_512] = "streebog512",
-> > > +	[PKEY_HASH_STREEBOG_256] = "md_gost12_256,streebog256",
-> > > +	[PKEY_HASH_STREEBOG_512] = "md_gost12_512,streebog512",
-> > >  };
-> > > 
-> > >  /*
-> > > @@ -284,6 +286,35 @@ static int add_dev_hash(struct stat *st, EVP_MD_CTX *ctx)
-> > >  	return !EVP_DigestUpdate(ctx, &dev, sizeof(dev));
-> > >  }
-> > > 
-> > > +/* Call EVP_get_digestbyname with provided name and with alias,
-> > > + * which is first name in the comma separated list of names
-> > > + * in pkey_hash_algo.
-> > > + */
-> > > +static const EVP_MD *get_digestbyname(const char *name)
-> > > +{
-> > > +	const EVP_MD *md;
-> > > +
-> > > +	md = EVP_get_digestbyname(params.hash_algo);
-> > > +	if (!md) {
-> > > +		char alias[MAX_DIGEST_NAME];
-> > > +		int len;
-> > > +		int algo_id;
-> > > +		const char *algo_alias;
-> > > +
-> > > +		/* try to get algo by its alias */
-> > > +		algo_id = get_hash_algo(params.hash_algo);
-> > > +		algo_alias = get_hash_algo_by_id(algo_id);
-> > > +		len = strchrnul(algo_alias, ',') - algo_alias;
-> > > +		if (len < sizeof(alias)) {
-> > > +			memcpy(alias, algo_alias, len);
-> > > +			alias[len] = '\0';
-> > > +			if (strcmp(params.hash_algo, alias))
-> > > +				md = EVP_get_digestbyname(alias);
-> > > +		}
-> > > +	}
-> > > +	return md;
-> > > +}
-> > > +
-> > >  int ima_calc_hash(const char *file, uint8_t *hash)
-> > >  {
-> > >  	const EVP_MD *md;
-> > > @@ -305,7 +336,7 @@ int ima_calc_hash(const char *file, uint8_t *hash)
-> > >  		return err;
-> > >  	}
-> > > 
-> > > -	md = EVP_get_digestbyname(params.hash_algo);
-> > > +	md = get_digestbyname(params.hash_algo);
-> > >  	if (!md) {
-> > >  		log_err("EVP_get_digestbyname(%s) failed\n", params.hash_algo);
-> > >  		return 1;
-> > > @@ -561,6 +592,22 @@ static int algocmp(const char *a, const char *b)
-> > >  	return *a || *b;
-> > >  }
-> > > 
-> > > +static int strmatch(const char *needle, const char *haystack)
-> > > +{
-> > > +	int len = strlen(needle);
-> > > +	const char *p = haystack;
-> > > +	const char *t;
-> > > +
-> > > +	for (t = strchrnul(p, ','); *p; p = t, t = strchrnul(p, ',')) {
-> > > +		if (t - p == len &&
-> > > +		    !strncmp(needle, p, len))
-> > > +			return 0;
-> > > +		if (!*t++)
-> > > +			break;
-> > > +	}
-> > > +	return 1;
-> > > +}
-> > > +
-> > >  int get_hash_algo(const char *algo)
-> > >  {
-> > >  	int i;
-> > > @@ -568,7 +615,7 @@ int get_hash_algo(const char *algo)
-> > >  	/* first iterate over builtin algorithms */
-> > >  	for (i = 0; i < PKEY_HASH__LAST; i++)
-> > >  		if (pkey_hash_algo[i] &&
-> > > -		    !strcmp(algo, pkey_hash_algo[i]))
-> > > +		    !strmatch(algo, pkey_hash_algo[i]))
-> > >  			return i;
-> > > 
-> > >  	/* iterate over algorithms provided by kernel-headers */
-> 
+>=20
+>> I prefer not to
+>> save/restore DR7, of course.
+>=20
+> I suspect we may want to use the temporary mm concept for EFI, too, so =
+we
+> may want to just suck it up and save/restore DR7. But only if a =
+watchpoint
+> is in use, of course. I have an old patch I could dust off that tracks =
+DR7
+> to make things like this efficient.
+
+=E2=80=A6 but, if this is the case, then I will just make =
+(un)use_temporary_mm() to
+save/restore DR7. I guess you are ok with such a solution. I will
+incorporate it into Rick=E2=80=99s v3.
 
