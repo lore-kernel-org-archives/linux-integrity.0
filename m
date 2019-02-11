@@ -2,135 +2,112 @@ Return-Path: <SRS0=a4os=QS=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12697C282CE
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 15:14:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1DBFC169C4
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 15:17:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7A5C222A8
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 15:14:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8165D222A7
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 15:17:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oII1SX+8"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=infineon.com header.i=@infineon.com header.b="Tx8E4U1I"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390775AbfBKPOX (ORCPT
+        id S1727758AbfBKPR1 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:14:23 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54252 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730054AbfBKPOX (ORCPT
+        Mon, 11 Feb 2019 10:17:27 -0500
+Received: from smtp2.infineon.com ([217.10.52.18]:46699 "EHLO
+        smtp2.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391098AbfBKPF4 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:14:23 -0500
-Received: by mail-wm1-f68.google.com with SMTP id d15so18124178wmb.3;
-        Mon, 11 Feb 2019 07:14:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=/MfpOEM5Hi4WmZzofpP+jzifsTDHz3Un+gIrfmlkxQk=;
-        b=oII1SX+8NP1TofKpAgtWnVJ7S9S0zKjMG4G/LguNYgDVcRQaZm0XAUNG8eBpD5yixr
-         g3Vlk1WXOxCvNVp6ndXhyt5p+asILzB1QfoXqnKrYlg+W0NQ2xoGrzvs+tXNLrfy2Dj3
-         RC+TTeyiKK/mTwP+7bT1bBDZdVlOwxcHHab28ODiWmJKkfkqDV+ULJb65jpEsOsVVKB6
-         NRTIDCKT6a/DG2mUtaxC3SR85GnOk+USqvxgheTTlDzz3kLT5mX2i95v6NP2KgTqo3L6
-         kfdHW/LVwjgu6oPc0bTFm2drnwv34mshL7fMbSv93ysNXw8pBM5zlUrzl9xzmVhPiQtw
-         7gpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=/MfpOEM5Hi4WmZzofpP+jzifsTDHz3Un+gIrfmlkxQk=;
-        b=iQH+R/JxCgGM9ev2ARfcx2rL03NncAUO2x5AoXDxkaj4LfsSk5eZjGhBPXM6LLboM5
-         Qq3wkJoGEbcunqJA4arLPz20Uy1mtOz9PusuAhzCOjrw5e7dVtfiga0DUiDE+hrdgIwt
-         2k1VrV9WrSrwu+VAUMNwhW5AMfOfIWM5ZI3EUOyDsZskon+FXgwoTFNKMiFycElAQgEU
-         l0KZ7cpDII6eTmDhjnbfXemDmlwCSkQKg+R1nbhCPU7wwFvm8iA4mac/Qlq9+vWJUf4T
-         8vkjCL42sjylPMfXey3p8oQuNb4q6IqSRg/reexwMDGAB3X6ZzM6mkPL64emAg6tjA1E
-         rd2Q==
-X-Gm-Message-State: AHQUAuZKTgrSC9vEmARE+w0ehkCJMI/Mdz9r1NpU2madp4LfdTgMuwux
-        7cfxtLk+Qo0ftDgq3JFOHEE7jDT6bq4=
-X-Google-Smtp-Source: AHgI3IZbk6K1YP8g9cdhjWWLvoPPTYppIqAuDHcddZP8ExQ6cX6iOsNNrr18yS+UTmF4Qobgh7UAZA==
-X-Received: by 2002:a1c:f916:: with SMTP id x22mr10261300wmh.87.1549898060633;
-        Mon, 11 Feb 2019 07:14:20 -0800 (PST)
-Received: from alpaca.bmw-carit.intra ([145.253.130.2])
-        by smtp.gmail.com with ESMTPSA id i16sm1844574wru.16.2019.02.11.07.14.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Feb 2019 07:14:19 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-X-Google-Original-From: Lukas Bulwahn <lukas@alpaca>
-Date:   Mon, 11 Feb 2019 16:14:12 +0100 (CET)
-To:     Joe Perches <joe@perches.com>
-cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linuxibm.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: use tab instead of spaces
-In-Reply-To: <7befaea3d1a86950f9dd270fed47072214fa2876.camel@perches.com>
-Message-ID: <alpine.DEB.2.21.1902111610380.2831@alpaca>
-References: <20190210181011.6117-1-lukas.bulwahn@gmail.com> <7befaea3d1a86950f9dd270fed47072214fa2876.camel@perches.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 11 Feb 2019 10:05:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=infineon.com; i=@infineon.com; q=dns/txt; s=IFXMAIL;
+  t=1549897555; x=1581433555;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=yV8Bbok3J6t0HsHnKNBRCm3adtM8CO1UJUDJN+aJGU0=;
+  b=Tx8E4U1IMV1qIyjCZ07v0Ij4F83G9XmSqwxiEHn8zK7urm75mqLGglQI
+   YRPNLhuHeV+y9wFsCvZFfb/ciyQ91EdCtueildFmmrP4ypaVORuskCfpd
+   P7RBcv25t+g0WIV2+m6LsfQjuylT846A4jw1IgKgN6yBASMMRk1cdh7i7
+   w=;
+X-SBRS: None
+X-IronPort-AV: E=McAfee;i="5900,7806,9163"; a="100302449"
+X-IronPort-AV: E=Sophos;i="5.58,358,1544482800"; 
+   d="scan'208";a="100302449"
+Received: from unknown (HELO mucxv001.muc.infineon.com) ([172.23.11.16])
+  by smtp2.infineon.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Feb 2019 16:05:53 +0100
+Received: from MUCSE708.infineon.com (MUCSE708.infineon.com [172.23.7.82])
+        by mucxv001.muc.infineon.com (Postfix) with ESMTPS;
+        Mon, 11 Feb 2019 16:05:53 +0100 (CET)
+Received: from [10.154.32.30] (172.23.8.247) by MUCSE708.infineon.com
+ (172.23.7.82) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id 15.1.1531.3; Mon, 11
+ Feb 2019 16:05:52 +0100
+Subject: Re: [PATCH v4 1/2] tpm: Unify the send callback behaviour
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Stefan Berger <stefanb@linux.ibm.com>
+CC:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        <stable@vger.kernel.org>
+References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
+ <20190208180857.12330-2-jarkko.sakkinen@linux.intel.com>
+ <4072b2b6-0f95-be50-0772-7e2869c2c24e@linux.ibm.com>
+ <20190208190057.GA3439@linux.intel.com>
+From:   Alexander Steffen <Alexander.Steffen@infineon.com>
+Message-ID: <2849751f-ff26-193e-f15e-4d7d5f8525a7@infineon.com>
+Date:   Mon, 11 Feb 2019 16:05:39 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190208190057.GA3439@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.23.8.247]
+X-ClientProxiedBy: MUCSE705.infineon.com (172.23.7.79) To
+ MUCSE708.infineon.com (172.23.7.82)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-iOn Sun, 10 Feb 2019, Joe Perches wrote:
+On 08.02.2019 20:00, Jarkko Sakkinen wrote:
+> On Fri, Feb 08, 2019 at 01:12:34PM -0500, Stefan Berger wrote:
+>> On 2/8/19 1:08 PM, Jarkko Sakkinen wrote:
+>>> The send() callback should never return length as it does not in every
+>>> driver except tpm_crb in the success case. The reason is that the main
+>>> transmit functionality only cares about whether the transmit was
+>>> successful or not and ignores the count completely.
+>>>
+>>> Cc: stable@vger.kernel.org
+>>> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>>
+>> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+>>
+>> Let me know when you put it into your tree, I'll give it a spin while I am
+>> at it. :-)
+> 
+> Thank you Stefan! I also add your suggested-by to the first commit
+> because you pointed out the problem.
+> 
+> It all looks now legit, but just in case I'll add a check for the return
+> value to tpm_try_transmit() and a warning if it is not zero in the
+> success case (and after that zeroing of rc).
+> 
+> That check can be removed when I do v5.3 pull request. That should
+> enough window to catch any potential issues and check will ensure that
+> kernel won't fail even there was something forgotten.
+> 
+> Alexander, I'll push this version now to the master and next with the
+> additional check described in this commit, but will add your tags
+> after you have time to test.
 
+I ran all tests again and everything works now as expected :)
 
-> On Sun, 2019-02-10 at 19:10 +0100, Lukas Bulwahn wrote:
-> > Mimi Zohar used spaces instead of a tab when adding Jarkko Sakkinen as
-> > further maintainer to the KEYS-TRUSTED section entry. So, we rectify this
-> > with this commit.
-> > 
-> > The issue was detected when writing a script that parses MAINTAINERS.
-> 
-> checkpatch already does that btw:
+Tested-by: Alexander Steffen <Alexander.Steffen@infineon.com>
 
-Good to know.
-
-> 
-> $ ./scripts/checkpatch.pl -f MAINTAINERS
-> WARNING: MAINTAINERS entries use one tab after TYPE:
-> #8408: FILE: MAINTAINERS:8408:
-> +M:      Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> 
-> WARNING: MAINTAINERS entries use one tab after TYPE:
-> #12607: FILE: MAINTAINERS:12607:
-> +M:  Ilia Lin <ilia.lin@gmail.com>
-> 
-> WARNING: MAINTAINERS entries use one tab after TYPE:
-> #12608: FILE: MAINTAINERS:12608:
-> +L:  linux-pm@vger.kernel.org
-> 
-> WARNING: MAINTAINERS entries use one tab after TYPE:
-> #12609: FILE: MAINTAINERS:12609:
-> +S:  Maintained
-> 
-> WARNING: MAINTAINERS entries use one tab after TYPE:
-> #12610: FILE: MAINTAINERS:12610:
-> +F:  Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
-> 
-> WARNING: MAINTAINERS entries use one tab after TYPE:
-> #12611: FILE: MAINTAINERS:12611:
-> +F:  drivers/cpufreq/qcom-cpufreq-kryo.c
-> 
-> total: 0 errors, 6 warnings, 16993 lines checked
-> 
-> NOTE: For some of the reported defects, checkpatch may be able to
->       mechanically convert to the typical style using --fix or --fix-inplace
-> 
-
-On next-20190211, the checkpatch issues in line 12607 to 12611 are not 
-reported anymore, as I already fixed them in commit 70e6e7d92bca 
-("MAINTAINERS: use common indentation").
-
-So, the issue addressed here and in the later follow-up patch is the only 
-style-related issue in MAINTAINERS.
-
-After that, everything in MAINTAINERS is stylistically clean.
-
-Lukas
+Alexander
