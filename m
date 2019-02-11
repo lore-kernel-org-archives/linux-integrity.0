@@ -2,239 +2,97 @@ Return-Path: <SRS0=a4os=QS=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A83C282C2
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 00:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19978C282C2
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 02:00:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCACA2083B
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 00:39:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQvVKtfi"
+	by mail.kernel.org (Postfix) with ESMTP id E7BDD2084D
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 02:00:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726029AbfBKAj0 (ORCPT
+        id S1726207AbfBKCAn (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 10 Feb 2019 19:39:26 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33188 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbfBKAjZ (ORCPT
+        Sun, 10 Feb 2019 21:00:43 -0500
+Received: from smtprelay0238.hostedemail.com ([216.40.44.238]:57039 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726102AbfBKCAn (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 10 Feb 2019 19:39:25 -0500
-Received: by mail-pf1-f194.google.com with SMTP id c123so4453104pfb.0;
-        Sun, 10 Feb 2019 16:39:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=vlsxxAOCWdf1tlqbQayeYqdEQq3U0CPDi/Q8SjZG81o=;
-        b=UQvVKtfiCr2EL7+vDHwobTr3K/ATiEL/6IaQ02QiiMOUdtOTSwVzMksz6CS8ZV0yRJ
-         +ba/xxOchi8VyXAnM7fVo60oRNFj2udtb1MmjepZeHgrxDVhybrDVbj5WnMxeBHOoSbd
-         0Z4ougOyd3gTbL/2dtgAdkuVZoPi7UgLUoLhCdvNzCWYP7JyWQGoErFnT2bIT8jpwJmW
-         nl39hGFURBJeHi1zjBdzVmWXygssw8dBEZN8YX3pDj+23Sy5XTbd9Z4jeitLC9T6yCR+
-         E1iLowwEvYjOZ49Ev4OpC1K+CVW6/aZvC6taNcnStgVkXC3RxCvWyjQ73aHhhLIXT7n4
-         svbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=vlsxxAOCWdf1tlqbQayeYqdEQq3U0CPDi/Q8SjZG81o=;
-        b=WFmylVds/qwlFy7kn9NP/xhxD8x8/bQXNsJGdwsPJcxY/cXTssYcfC3JHGoVmCMSWS
-         +5Z2YY6kKFJUDgXi/SZ7vIJtR6USqcUP3X9ROzZ9jyWVg0LLL0gBe4nJWDnpeJeKOiIm
-         SvVghhN/WghUPkS/5G1Kl8c2hZ6/+nVOPtGxdUPX0VNwEaNvDOrM69EMyKPWRSqLPHOh
-         TAh7zDC20b4St3abwL0RpiS4mBcYijS+/ha4bYQCJhZjBEl20PyOnUKEF8rfs4EorXeY
-         ngXgys6XSkgZL7P6CV//bM56RQquIWhvxOlO5wDIfF0ZVzPyk0NAoW069X/h65zwPZqB
-         TwGA==
-X-Gm-Message-State: AHQUAuYmyPEhADTKFF60l7j+f7QYPR1Uh8MncpwJKHBf0A0xD9AqbsAv
-        L9NP499sd4+2qU/VxBpQHFU=
-X-Google-Smtp-Source: AHgI3Ia6ifDLiDziehHa+LGRKtMr/aFcCrLoukw/oRH9ekCRaSYyb/4JRm26BQzyIcR0N6IRbjlQYw==
-X-Received: by 2002:a63:5d20:: with SMTP id r32mr15872762pgb.329.1549845563697;
-        Sun, 10 Feb 2019 16:39:23 -0800 (PST)
-Received: from [10.50.121.96] (c-73-202-78-81.hsd1.ca.comcast.net. [73.202.78.81])
-        by smtp.gmail.com with ESMTPSA id x2sm13973798pfx.78.2019.02.10.16.39.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 10 Feb 2019 16:39:22 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH v2 05/20] x86/alternative: initializing temporary mm for
- patching
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <20190129003422.9328-6-rick.p.edgecombe@intel.com>
-Date:   Sun, 10 Feb 2019 16:39:19 -0800
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <162C6C29-CD81-46FE-9A54-6ED05A93A9CB@gmail.com>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-6-rick.p.edgecombe@intel.com>
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andy Lutomirski <luto@kernel.org>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Sun, 10 Feb 2019 21:00:43 -0500
+X-Greylist: delayed 395 seconds by postgrey-1.27 at vger.kernel.org; Sun, 10 Feb 2019 21:00:42 EST
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave07.hostedemail.com (Postfix) with ESMTP id 35AFD18024E02;
+        Mon, 11 Feb 2019 01:54:08 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 31789180286DE;
+        Mon, 11 Feb 2019 01:54:06 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: fruit71_68c173c99003
+X-Filterd-Recvd-Size: 2307
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf04.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 11 Feb 2019 01:54:04 +0000 (UTC)
+Message-ID: <7befaea3d1a86950f9dd270fed47072214fa2876.camel@perches.com>
+Subject: Re: [PATCH] MAINTAINERS: use tab instead of spaces
+From:   Joe Perches <joe@perches.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linuxibm.com>
+Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Sun, 10 Feb 2019 17:54:03 -0800
+In-Reply-To: <20190210181011.6117-1-lukas.bulwahn@gmail.com>
+References: <20190210181011.6117-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-> On Jan 28, 2019, at 4:34 PM, Rick Edgecombe =
-<rick.p.edgecombe@intel.com> wrote:
->=20
-> From: Nadav Amit <namit@vmware.com>
->=20
-> To prevent improper use of the PTEs that are used for text patching, =
-we
-> want to use a temporary mm struct. We initailize it by copying the =
-init
-> mm.
->=20
-> The address that will be used for patching is taken from the lower =
-area
-> that is usually used for the task memory. Doing so prevents the need =
-to
-> frequently synchronize the temporary-mm (e.g., when BPF programs are
-> installed), since different PGDs are used for the task memory.
->=20
-> Finally, we randomize the address of the PTEs to harden against =
-exploits
-> that use these PTEs.
->=20
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Suggested-by: Andy Lutomirski <luto@kernel.org>
-> Signed-off-by: Nadav Amit <namit@vmware.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> ---
-> arch/x86/include/asm/pgtable.h       |  3 +++
-> arch/x86/include/asm/text-patching.h |  2 ++
-> arch/x86/kernel/alternative.c        |  3 +++
-> arch/x86/mm/init_64.c                | 36 ++++++++++++++++++++++++++++
-> init/main.c                          |  3 +++
-> 5 files changed, 47 insertions(+)
->=20
-> diff --git a/arch/x86/include/asm/pgtable.h =
-b/arch/x86/include/asm/pgtable.h
-> index 40616e805292..e8f630d9a2ed 100644
-> --- a/arch/x86/include/asm/pgtable.h
-> +++ b/arch/x86/include/asm/pgtable.h
-> @@ -1021,6 +1021,9 @@ static inline void __meminit =
-init_trampoline_default(void)
-> 	/* Default trampoline pgd value */
-> 	trampoline_pgd_entry =3D init_top_pgt[pgd_index(__PAGE_OFFSET)];
-> }
-> +
-> +void __init poking_init(void);
-> +
-> # ifdef CONFIG_RANDOMIZE_MEMORY
-> void __meminit init_trampoline(void);
-> # else
-> diff --git a/arch/x86/include/asm/text-patching.h =
-b/arch/x86/include/asm/text-patching.h
-> index f8fc8e86cf01..a75eed841eed 100644
-> --- a/arch/x86/include/asm/text-patching.h
-> +++ b/arch/x86/include/asm/text-patching.h
-> @@ -39,5 +39,7 @@ extern void *text_poke_kgdb(void *addr, const void =
-*opcode, size_t len);
-> extern int poke_int3_handler(struct pt_regs *regs);
-> extern void *text_poke_bp(void *addr, const void *opcode, size_t len, =
-void *handler);
-> extern int after_bootmem;
-> +extern __ro_after_init struct mm_struct *poking_mm;
-> +extern __ro_after_init unsigned long poking_addr;
->=20
-> #endif /* _ASM_X86_TEXT_PATCHING_H */
-> diff --git a/arch/x86/kernel/alternative.c =
-b/arch/x86/kernel/alternative.c
-> index 12fddbc8c55b..ae05fbb50171 100644
-> --- a/arch/x86/kernel/alternative.c
-> +++ b/arch/x86/kernel/alternative.c
-> @@ -678,6 +678,9 @@ void *__init_or_module text_poke_early(void *addr, =
-const void *opcode,
-> 	return addr;
-> }
->=20
-> +__ro_after_init struct mm_struct *poking_mm;
-> +__ro_after_init unsigned long poking_addr;
-> +
-> static void *__text_poke(void *addr, const void *opcode, size_t len)
-> {
-> 	unsigned long flags;
-> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> index bccff68e3267..125c8c48aa24 100644
-> --- a/arch/x86/mm/init_64.c
-> +++ b/arch/x86/mm/init_64.c
-> @@ -53,6 +53,7 @@
-> #include <asm/init.h>
-> #include <asm/uv/uv.h>
-> #include <asm/setup.h>
-> +#include <asm/text-patching.h>
->=20
-> #include "mm_internal.h"
->=20
-> @@ -1383,6 +1384,41 @@ unsigned long memory_block_size_bytes(void)
-> 	return memory_block_size_probed;
-> }
->=20
-> +/*
-> + * Initialize an mm_struct to be used during poking and a pointer to =
-be used
-> + * during patching.
-> + */
-> +void __init poking_init(void)
-> +{
-> +	spinlock_t *ptl;
-> +	pte_t *ptep;
-> +
-> +	poking_mm =3D copy_init_mm();
-> +	BUG_ON(!poking_mm);
-> +
-> +	/*
-> +	 * Randomize the poking address, but make sure that the =
-following page
-> +	 * will be mapped at the same PMD. We need 2 pages, so find =
-space for 3,
-> +	 * and adjust the address if the PMD ends after the first one.
-> +	 */
-> +	poking_addr =3D TASK_UNMAPPED_BASE;
-> +	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
-> +		poking_addr +=3D (kaslr_get_random_long("Poking") & =
-PAGE_MASK) %
-> +			(TASK_SIZE - TASK_UNMAPPED_BASE - 3 * =
-PAGE_SIZE);
-> +
-> +	if (((poking_addr + PAGE_SIZE) & ~PMD_MASK) =3D=3D 0)
-> +		poking_addr +=3D PAGE_SIZE;
+On Sun, 2019-02-10 at 19:10 +0100, Lukas Bulwahn wrote:
+> Mimi Zohar used spaces instead of a tab when adding Jarkko Sakkinen as
+> further maintainer to the KEYS-TRUSTED section entry. So, we rectify this
+> with this commit.
+> 
+> The issue was detected when writing a script that parses MAINTAINERS.
 
-Further thinking about it, I think that allocating the virtual address =
-for
-poking from user address-range is problematic. The user can set =
-watchpoints
-on different addresses, cause some static-keys to be enabled/disabled, =
-and
-monitor the signals to derandomize the poking address.
+checkpatch already does that btw:
 
-Andy, I think you were pushing this change. Can I go back to use a =
-vmalloc=E2=80=99d
-address instead, or do you have a better solution? I prefer not to
-save/restore DR7, of course.
+$ ./scripts/checkpatch.pl -f MAINTAINERS
+WARNING: MAINTAINERS entries use one tab after TYPE:
+#8408: FILE: MAINTAINERS:8408:
++M:      Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
+WARNING: MAINTAINERS entries use one tab after TYPE:
+#12607: FILE: MAINTAINERS:12607:
++M:  Ilia Lin <ilia.lin@gmail.com>
+
+WARNING: MAINTAINERS entries use one tab after TYPE:
+#12608: FILE: MAINTAINERS:12608:
++L:  linux-pm@vger.kernel.org
+
+WARNING: MAINTAINERS entries use one tab after TYPE:
+#12609: FILE: MAINTAINERS:12609:
++S:  Maintained
+
+WARNING: MAINTAINERS entries use one tab after TYPE:
+#12610: FILE: MAINTAINERS:12610:
++F:  Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
+
+WARNING: MAINTAINERS entries use one tab after TYPE:
+#12611: FILE: MAINTAINERS:12611:
++F:  drivers/cpufreq/qcom-cpufreq-kryo.c
+
+total: 0 errors, 6 warnings, 16993 lines checked
+
+NOTE: For some of the reported defects, checkpatch may be able to
+      mechanically convert to the typical style using --fix or --fix-inplace
+
+
 
