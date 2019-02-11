@@ -2,205 +2,100 @@ Return-Path: <SRS0=a4os=QS=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B606EC169C4
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 15:56:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFEDC169C4
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 16:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C99121B24
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 15:56:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549900590;
-	bh=2OsP9BlHcHdO+RqWmL8Fxm4La3wb1bYhLefiHJGPUfw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=X/VR9/GpQMDKGkX7W7gGZPzbunh5FV+RxVVy9QvzU8F8uBAWA57nmZ1kI2vRDSuIn
-	 sXpVYUn7f3zkbFES+InG1ubCvtCIo23cGFPIQZbuczUWRgdPMzOYFKlIbA2e2L5WZb
-	 yu3L8Cgnz6Lg5MhiUvUUcWoEPKxKkFWUFpfunAU8=
+	by mail.kernel.org (Postfix) with ESMTP id 5655C218D8
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 16:00:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=semihalf-com.20150623.gappssmtp.com header.i=@semihalf-com.20150623.gappssmtp.com header.b="OVyUnpsa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731133AbfBKP4X (ORCPT
+        id S1729806AbfBKQAI (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:56:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34640 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730516AbfBKP4P (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:56:15 -0500
-Received: from linux-8ccs (ip5f5ade6b.dynamic.kabel-deutschland.de [95.90.222.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48ACB21B18;
-        Mon, 11 Feb 2019 15:56:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549900574;
-        bh=2OsP9BlHcHdO+RqWmL8Fxm4La3wb1bYhLefiHJGPUfw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2avaZrqVWp6jhRyWQ9X2Kg4h3D3V007qa4GO/Hmnzd8wUTPmrO5Wwja2jabmNBDWg
-         RLg1P8UynkRfq8frz5tZFswt5FUSWjr/2Jx9qageaeCAtRc9k/L4vHJNKOE+YRH4Ip
-         p10XFiy90e/qg0UQDLsdzGMiNBsMQzmWg+H672bY=
-Date:   Mon, 11 Feb 2019 16:56:09 +0100
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Justin Forbes <jforbes@redhat.com>,
-        Matthew Garrett <mjg59@google.com>
-Subject: Re: [PATCH] x86/ima: require signed kernel modules
-Message-ID: <20190211155609.GC20732@linux-8ccs>
-References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
- <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.28-default x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 11 Feb 2019 11:00:08 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:40197 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730025AbfBKObq (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:31:46 -0500
+Received: by mail-lj1-f194.google.com with SMTP id z25-v6so8915994ljk.7
+        for <linux-integrity@vger.kernel.org>; Mon, 11 Feb 2019 06:31:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=semihalf-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=qMY2b0yuZLADsWMepCfTCrgliMG6UcFslUIJuZiM5zw=;
+        b=OVyUnpsa/Oq8rmPDNntBJeRK5hj15KI+IQQ0FUvMSYPbHOvBKI/YFoppyZkxRdSu35
+         vvbWjzz9RanSA0vEl+I+i8a+7uoq00eZW0I21a5Mn+2Ukjx1gmjj0RWk2mckxDOgIVUQ
+         hpaIgtvUvNB+Zp6fE0chytLBaClSVXQurLeYtt6Iq2Iukvjl9LJAM8p9srP8WzByDm3s
+         2RVbSunurGHxJChx0HqBPWxvWz+IvEXFgrLl0vRqesoN9MXv3zivwOw+Os4XGGZ/TJFV
+         1snaS62I6FVmMjPZrOyB7Dqow26Ey90i6pZAa1YwSZU1y4abgNLfAdvtXEMfVhk3zl31
+         pdcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=qMY2b0yuZLADsWMepCfTCrgliMG6UcFslUIJuZiM5zw=;
+        b=OE2/Rqz6Xd1XFtSDVgUA4Y8dTeKcLGfE7Q7cXMEKwZ95mpOjuyQBmqCUsYjeQSbA4Z
+         I0b61WPoQNJW52kVpxl3jBGoepGQwyvkhu1X3DESQLbKNTVDTrQGEsqqUnOgQ8VerIUC
+         sD1IdMEY1Ple0nq2/2awAuOwQs2m/FvSPRPadSf2+dkLusZNWAHa84yVwZXbw5xJvkz+
+         IVpllVS1tpo2nf0vnTlc6Ot89o0BiSMU6tJHL7JR+xV6a/TICAgzjCoJv5NF0lI+kzpM
+         irLJZplv8Mv2CInjqF+0xdUC6aDb3qxb/DRFZ5eb1YMQ8gbiY/yX1Lf893W3mDFes+Tw
+         NhpA==
+X-Gm-Message-State: AHQUAuZ6i9Buc5drvGUbTTz+dveEFKznMwWtJEM1P6AhCEY144g2sLjl
+        EayfbTjeyrDMgrO8+OqdkSkPbg==
+X-Google-Smtp-Source: AHgI3Ia5ScBEaXINb/FbxiIJo7geXhDMU8sTzu85n2SzKfpxAwQjwSfmMdodwFHXuCfkU93bmG13lA==
+X-Received: by 2002:a2e:9249:: with SMTP id v9-v6mr4775498ljg.164.1549895504147;
+        Mon, 11 Feb 2019 06:31:44 -0800 (PST)
+Received: from bsz-kubuntu.semihalf.local (31-172-191-173.noc.fibertech.net.pl. [31.172.191.173])
+        by smtp.gmail.com with ESMTPSA id z6sm2322373lfa.87.2019.02.11.06.31.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 06:31:43 -0800 (PST)
+From:   bsz@semihalf.com
+To:     linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
+        jarkko.sakkinen@linux.intel.com, ard.biesheuvel@linaro.org
+Cc:     tweek@google.com, mingo@kernel.org, hdegoede@redhat.com,
+        leif.lindholm@linaro.org, mw@semihalf.com,
+        Bartosz Szczepanek <bsz@semihalf.com>
+Subject: [PATCH 5/5] efi/arm: Retrieve TPM event log at efi_entry
+Date:   Mon, 11 Feb 2019 15:30:52 +0100
+Message-Id: <20190211143052.3128-6-bsz@semihalf.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190211143052.3128-1-bsz@semihalf.com>
+References: <20190211143052.3128-1-bsz@semihalf.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-+++ Mimi Zohar [31/01/19 14:18 -0500]:
->Require signed kernel modules on systems with secure boot mode enabled.
->
->To coordinate between appended kernel module signatures and IMA
->signatures, only define an IMA MODULE_CHECK policy rule if
->CONFIG_MODULE_SIG is not enabled.
->
->This patch defines a function named set_module_sig_required() and renames
->is_module_sig_enforced() to is_module_sig_enforced_or_required().  The
->call to set_module_sig_required() is dependent on CONFIG_IMA_ARCH_POLICY
->being enabled.
->
->Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
->---
-> arch/x86/kernel/ima_arch.c        |  9 ++++++++-
-> include/linux/module.h            |  7 ++++++-
-> kernel/module.c                   | 15 +++++++++++----
-> security/integrity/ima/ima_main.c |  2 +-
-> 4 files changed, 26 insertions(+), 7 deletions(-)
->
->diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
->index e47cd9390ab4..96a023238a83 100644
->--- a/arch/x86/kernel/ima_arch.c
->+++ b/arch/x86/kernel/ima_arch.c
->@@ -64,12 +64,19 @@ static const char * const sb_arch_rules[] = {
-> 	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
-> #endif /* CONFIG_KEXEC_VERIFY_SIG */
-> 	"measure func=KEXEC_KERNEL_CHECK",
->+#if !IS_ENABLED(CONFIG_MODULE_SIG)
->+	"appraise func=MODULE_CHECK appraise_type=imasig",
->+#endif
->+	"measure func=MODULE_CHECK",
-> 	NULL
-> };
->
-> const char * const *arch_get_ima_policy(void)
-> {
->-	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot())
->+	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
->+		if (IS_ENABLED(CONFIG_MODULE_SIG))
->+			set_module_sig_required();
-> 		return sb_arch_rules;
->+	}
-> 	return NULL;
-> }
->diff --git a/include/linux/module.h b/include/linux/module.h
->index 8fa38d3e7538..af51c8ec755f 100644
->--- a/include/linux/module.h
->+++ b/include/linux/module.h
->@@ -659,7 +659,8 @@ static inline bool is_livepatch_module(struct module *mod)
-> }
-> #endif /* CONFIG_LIVEPATCH */
->
->-bool is_module_sig_enforced(void);
->+bool is_module_sig_enforced_or_required(void);
->+void set_module_sig_required(void);
->
-> #else /* !CONFIG_MODULES... */
->
->@@ -780,6 +781,10 @@ static inline bool is_module_sig_enforced(void)
-> 	return false;
-> }
->
->+static inline void set_module_sig_required(void)
->+{
->+}
->+
-> /* Dereference module function descriptor */
-> static inline
-> void *dereference_module_function_descriptor(struct module *mod, void *ptr)
->diff --git a/kernel/module.c b/kernel/module.c
->index 2ad1b5239910..70a9709d19eb 100644
->--- a/kernel/module.c
->+++ b/kernel/module.c
->@@ -275,16 +275,23 @@ static void module_assert_mutex_or_preempt(void)
->
-> static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
-> module_param(sig_enforce, bool_enable_only, 0644);
->+static bool sig_required;
->
-> /*
->  * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
->  * on that instead of directly to CONFIG_MODULE_SIG_FORCE config.
->  */
->-bool is_module_sig_enforced(void)
->+bool is_module_sig_enforced_or_required(void)
-> {
->-	return sig_enforce;
->+	return sig_enforce || sig_required;
-> }
+From: Bartosz Szczepanek <bsz@semihalf.com>
 
-Hi Mimi,
+Add efi_retrieve_tpm2_eventlog() call to ARM efi_entry() function.
+There's no reason to assume that TPM2 EFI structures are not available
+on ARM architecture.
 
-Just wondering, is there any particular reason why a distinction is
-made between sig_enforce and sig_required? Doesn't sig_enforce imply
-that signed modules are required? In other words, why introduce
-another variable instead of just using sig_enforce? It may be
-confusing in the case of a user looking at /sys/module/module/parameters/sig_enforce
-and it having a value of 0 yet module signatures are being required by ima.
+Signed-off-by: Bartosz Szczepanek <bsz@semihalf.com>
+---
+ drivers/firmware/efi/libstub/arm-stub.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks,
+diff --git a/drivers/firmware/efi/libstub/arm-stub.c b/drivers/firmware/efi/libstub/arm-stub.c
+index eee42d5e25ee..d3af12ec32e4 100644
+--- a/drivers/firmware/efi/libstub/arm-stub.c
++++ b/drivers/firmware/efi/libstub/arm-stub.c
+@@ -197,6 +197,7 @@ unsigned long efi_entry(void *handle, efi_system_table_t *sys_table,
+ 
+ 	/* Ask the firmware to clear memory on unclean shutdown */
+ 	efi_enable_reset_attack_mitigation(sys_table);
++	efi_retrieve_tpm2_eventlog(sys_table);
+ 
+ 	secure_boot = efi_get_secureboot(sys_table);
+ 
+-- 
+2.14.4
 
-Jessica
-
->-EXPORT_SYMBOL(is_module_sig_enforced);
->+EXPORT_SYMBOL(is_module_sig_enforced_or_required);
->+
->+void set_module_sig_required(void)
->+{
->+	sig_required = true;
->+}
->+EXPORT_SYMBOL(set_module_sig_required);
->
-> /* Block module loading/unloading? */
-> int modules_disabled = 0;
->@@ -2789,7 +2796,7 @@ static int module_sig_check(struct load_info *info, int flags)
-> 	}
->
-> 	/* Not having a signature is only an error if we're strict. */
->-	if (err == -ENOKEY && !is_module_sig_enforced())
->+	if (err == -ENOKEY && !is_module_sig_enforced_or_required())
-> 		err = 0;
->
-> 	return err;
->diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
->index 357edd140c09..bbaf87f688be 100644
->--- a/security/integrity/ima/ima_main.c
->+++ b/security/integrity/ima/ima_main.c
->@@ -563,7 +563,7 @@ int ima_load_data(enum kernel_load_data_id id)
-> 		}
-> 		break;
-> 	case LOADING_MODULE:
->-		sig_enforce = is_module_sig_enforced();
->+		sig_enforce = is_module_sig_enforced_or_required();
->
-> 		if (ima_enforce && (!sig_enforce
-> 				    && (ima_appraise & IMA_APPRAISE_MODULES))) {
->-- 
->2.7.5
->
