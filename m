@@ -2,73 +2,82 @@ Return-Path: <SRS0=a4os=QS=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 360B1C169C4
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 23:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F7A5C282CE
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 23:28:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7076214DA
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 23:28:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1531A2184E
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 23:28:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d4gPdAkI"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SKFOea9c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727458AbfBKX2H (ORCPT
+        id S1727901AbfBKX2O (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Feb 2019 18:28:07 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38728 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727132AbfBKX2H (ORCPT
+        Mon, 11 Feb 2019 18:28:14 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41186 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727132AbfBKX2N (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Feb 2019 18:28:07 -0500
-Received: by mail-wr1-f65.google.com with SMTP id v13so672184wrw.5;
-        Mon, 11 Feb 2019 15:28:05 -0800 (PST)
+        Mon, 11 Feb 2019 18:28:13 -0500
+Received: by mail-wr1-f67.google.com with SMTP id x10so650007wrs.8;
+        Mon, 11 Feb 2019 15:28:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:reply-to:mime-version
-         :content-transfer-encoding;
-        bh=WiVvqtIRSUTlDM0fLGtak+4fmHxmqyUWRnseuvynyBA=;
-        b=d4gPdAkIB5pcxMqazVlY0aM9rShWWD8ZDlRnMRbsHx1ZqP5f2pl+Ud860bl0tKxLPW
-         lW5JbjgFkyDiqpSm3g3L/XFha+LtJ3vvWR5GIb8lRlNMN6YQHZshn9hmiCRZphaxRMGy
-         3iz4GkDL9y7IaUkAPRdBozhH4zzVRtCzyYdeFtUa86M2kRCNUqT8oPaKdNM+MnrKHTJO
-         tQQY/zPwJJFOmEi1gndbn94fxfgRr5xbm9OwG7k7UI5mV8FQgYMqTR15xzUgHKUL+OkC
-         ZgUG0YNWA8Sulsrjd9Um5S/sgIpGcYLoeJsulbdZqvF63WjvEkkMl0eaF82ofcpv4gDO
-         9N/g==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
+         :mime-version:content-transfer-encoding;
+        bh=ENlTYT6F8yKSgZtSKFAMRVhy2HT+kX2kAlJukSMyeJE=;
+        b=SKFOea9clX8kUXjGvLOkAz78zIlXk2l9cAAdszRgpu1WF9+EGlYZ09jCNchdkbmaC2
+         8XMzc6EJ4es6RG4yfh8iz6ilF2S8pczy501Lmx3sA+5GTPr5jyKxupxht3iJJYNzHPRS
+         dO1Oa2gDPDloNIEL1xoGnm/CWJGTqTk1SNhdetFi8dolnrUHFwi/G35FNwjA4uv5Gq6P
+         lQIguAmqnvp87zrCaSOSlTQeiVXRq6JEBjr/N+0tXSKavkX6Ny/HsOH/xnab0RoGwCxf
+         2KKeYRqX32cxYQVHhTMaY3YMwATRdRiYfiIA4uI0CuPSdMythsBD+LWEu2/dIFo1YPUL
+         MQUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :mime-version:content-transfer-encoding;
-        bh=WiVvqtIRSUTlDM0fLGtak+4fmHxmqyUWRnseuvynyBA=;
-        b=FTCQK6ZJcqyix9TpbG7Pw3d5hSI4p6INQMn/kUEktJ0uwT4a4N+8PrxwrAPgS0mcc9
-         TYl/u8e8OwOR6SJm3DwLGkJExPQe41YAWK8wIfmsY5KwTj39aKUggfugGZQqo5fdRpoS
-         NDKQuTzvY2hEYndkf/ZV2UK7DSCQsmJwGmSe+SSCPxBcFraFI0X6euLHGEcHoUMqANh1
-         sTXV8OLFX2zUier4eqzZ01YG1UhYNcNJ1ls2JdxkUoMMn7zZjVfVIcjatni52oEFknvC
-         7cINMQkMxzj7QfiQHAwL2lR7dUJ+yBUIDV0XEWoDnWNQzFHkGrVVE+e/SnoSC/qWICMj
-         hliw==
-X-Gm-Message-State: AHQUAuZdoMIt5gOGSQm8EwUhwzwLwN7X5eZFw/64NO/fYyrUZj728Tuh
-        0Z9vj7QQ9WsSkmXmR1AW/6Y=
-X-Google-Smtp-Source: AHgI3IYYK161pUzr6asXVXNX2dxWTZn19D/paOND9eEjGNQtMhZwuiEhs0iHU0hAE6PbKZCUdlK/KA==
-X-Received: by 2002:adf:e8c7:: with SMTP id k7mr508447wrn.298.1549927684722;
-        Mon, 11 Feb 2019 15:28:04 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:reply-to:mime-version:content-transfer-encoding;
+        bh=ENlTYT6F8yKSgZtSKFAMRVhy2HT+kX2kAlJukSMyeJE=;
+        b=UMMfF+7/hdijXVYn6v6vcPqmY5tjIfbcMLfTnQYvGUKc7Kxr6OK1E2x3u3ZezxwSeC
+         WUjBv4n8qWcGoh48YeKTkPN7XheH7QVZO6+03PwW8qN0FOlTy5+86t9CNpLLaWBILDJ/
+         K2jidMF47MuUnpxHG9uDgCTJpDtGS7UgjaJ4kljrHsN5djWrNoC3QFV5zL0ep9qTZErp
+         /mF1S5OvcPjA3Qoe+YY7lY/zOMemcSoIVf51etfxa+INLPSTC30vaSFnYs80GIz/CGbA
+         gcp0IcHhJa4Zt7+bxXvwlSixG9b0XVDHbQctMDFm2Df253pIajftEcJmP23q+TPzBgIH
+         rQBg==
+X-Gm-Message-State: AHQUAuZCdZCGgMNv6mjm/3gN83TAgsOIzCBL/HS7v8/vlEFMNLeZA/G7
+        DRYRwbkViVOW1vlkRFslCbQ=
+X-Google-Smtp-Source: AHgI3Ib9SM/GU3OSZIUw9Ef85LumnojTRalWrCht9QSJZfsd1LMbft46iDmaDh0LxziZQABUjeSKgA==
+X-Received: by 2002:adf:e290:: with SMTP id v16mr532903wri.100.1549927691315;
+        Mon, 11 Feb 2019 15:28:11 -0800 (PST)
 Received: from localhost.localdomain (bba134232.alshamil.net.ae. [217.165.113.120])
-        by smtp.gmail.com with ESMTPSA id e67sm1470295wmg.1.2019.02.11.15.28.02
+        by smtp.gmail.com with ESMTPSA id e67sm1470295wmg.1.2019.02.11.15.28.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 15:28:03 -0800 (PST)
+        Mon, 11 Feb 2019 15:28:10 -0800 (PST)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
         Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH v4 00/12] hardening: statically allocated protected memory
-Date:   Tue, 12 Feb 2019 01:27:37 +0200
-Message-Id: <cover.1549927666.git.igor.stoppa@huawei.com>
+        linux-integrity@vger.kernel.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v4 02/12] __wr_after_init: x86_64: memset_user()
+Date:   Tue, 12 Feb 2019 01:27:39 +0200
+Message-Id: <afc5b052d43606a3d53e674fb2e36abbf984c516.1549927666.git.igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <cover.1549927666.git.igor.stoppa@huawei.com>
+References: <cover.1549927666.git.igor.stoppa@huawei.com>
 Reply-To: Igor Stoppa <igor.stoppa@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -78,141 +87,114 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-To: Andy Lutomirski <luto@amacapital.net>,
-To: Matthew Wilcox <willy@infradead.org>,
-To: Nadav Amit <nadav.amit@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-To: Dave Hansen <dave.hansen@linux.intel.com>,
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+x86_64 specific version of memset() for user space, memset_user()
+
+In the __wr_after_init scenario, write-rare variables have:
+- a primary read-only mapping in kernel memory space
+- an alternate, writable mapping, implemented as user-space mapping
+
+The write rare implementation expects the arch code to privide a
+memset_user() function, which is currently missing.
+
+clear_user() is the base for memset_user()
+
+Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+
+CC: Andy Lutomirski <luto@amacapital.net>
+CC: Nadav Amit <nadav.amit@gmail.com>
+CC: Matthew Wilcox <willy@infradead.org>
+CC: Peter Zijlstra <peterz@infradead.org>
 CC: Kees Cook <keescook@chromium.org>
+CC: Dave Hansen <dave.hansen@linux.intel.com>
+CC: Mimi Zohar <zohar@linux.vnet.ibm.com>
+CC: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 CC: Ahmed Soliman <ahmedsoliman@mena.vt.edu>
-CC: linux-integrity <linux-integrity@vger.kernel.org>
-CC: Kernel Hardening <kernel-hardening@lists.openwall.com>
-CC: Linux-MM <linux-mm@kvack.org>
-CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+CC: linux-integrity@vger.kernel.org
+CC: kernel-hardening@lists.openwall.com
+CC: linux-mm@kvack.org
+CC: linux-kernel@vger.kernel.org
+---
+ arch/x86/include/asm/uaccess_64.h |  6 ++++
+ arch/x86/lib/usercopy_64.c        | 51 +++++++++++++++++++++++++++++++++
+ 2 files changed, 57 insertions(+)
 
-Hello,
-at last I'm able to resume work on the memory protection patchset I've
-proposed some time ago. This version should address comments received so
-far and introduce support for arm64. Details below.
-
-Patch-set implementing write-rare memory protection for statically
-allocated data.
-Its purpose is to keep write protected the kernel data which is seldom
-modified, especially if altering it can be exploited during an attack.
-
-There is no read overhead, however writing requires special operations that
-are probably unsuitable for often-changing data.
-The use is opt-in, by applying the modifier __wr_after_init to a variable
-declaration.
-
-As the name implies, the write protection kicks in only after init() is
-completed; before that moment, the data is modifiable in the usual way.
-
-Current Limitations:
-* supports only data which is allocated statically, at build time.
-* supports only x86_64 and arm64;other architectures need to provide own
-  backend
-
-Some notes:
-- in case an architecture doesn't support write rare, the behavior is to
-  fallback to regular write operations
-- before altering any memory, the destination is sanitized
-- write rare data is segregated into own set of pages
-- only x86_64 and arm64 supported, atm
-- the memset_user() assembly functions seems to work, but I'm not too sure
-  they are really ok
-- I've added a simple example: the protection of ima_policy_flags
-- the last patch is optional, but it seemed worth to do the refactoring
-- the x86_64 user space address range is double the size of the kernel
-  address space, so it's possible to randomize the beginning of the
-  mapping of the kernel address space, but on arm64 they have the same
-  size, so it's not possible to do the same
-- I'm not sure if it's correct, since it doesn't seem to be that common in
-  kernel sources, but instead of using #defines for overriding default
-  function calls, I'm using "weak" for the default functions.
-- unaddressed: Nadav proposed to do:
-	#define __wr          __attribute__((address_space(5)))
-  but I don't know exactly where to use it atm
-
-Changelog:
-
-v3->v4
-------
-
-* added function for setting memory in user space mapping for arm64
-* refactored code, to work with both supported architectures
-* reduced dependency on x86_64 specific code, to support by default also
-  arm64
-* improved memset_user() for x86_64, but I'm not sure if I understood
-  correctly what was the best way to enhance it.
-
-v2->v3
-------
-
-* both wr_memset and wr_memcpy are implemented as generic functions
-  the arch code must provide suitable helpers
-* regular initialization for ima_policy_flags: it happens during init
-* remove spurious code from the initialization function
-
-v1->v2
-------
-
-* introduce cleaner split between generic and arch code
-* add x86_64 specific memset_user()
-* replace kernel-space memset() memcopy() with userspace counterpart
-* randomize the base address for the alternate map across the entire
-  available address range from user space (128TB - 64TB)
-* convert BUG() to WARN()
-* turn verification of written data into debugging option
-* wr_rcu_assign_pointer() as special case of wr_assign()
-* example with protection of ima_policy_flags
-* documentation
-
-Igor Stoppa (12):
-  __wr_after_init: Core and default arch
-  __wr_after_init: x86_64: memset_user()
-  __wr_after_init: x86_64: randomize mapping offset
-  __wr_after_init: x86_64: enable
-  __wr_after_init: arm64: memset_user()
-  __wr_after_init: arm64: enable
-  __wr_after_init: Documentation: self-protection
-  __wr_after_init: lkdtm test
-  __wr_after_init: rodata_test: refactor tests
-  __wr_after_init: rodata_test: test __wr_after_init
-  __wr_after_init: test write rare functionality
-  IMA: turn ima_policy_flags into __wr_after_init
-
- Documentation/security/self-protection.rst |  14 +-
- arch/Kconfig                               |   7 +
- arch/arm64/Kconfig                         |   1 +
- arch/arm64/include/asm/uaccess.h           |   9 ++
- arch/arm64/lib/Makefile                    |   2 +-
- arch/arm64/lib/memset_user.S (new)         |  63 ++++++++
- arch/x86/Kconfig                           |   1 +
- arch/x86/include/asm/uaccess_64.h          |   6 +
- arch/x86/lib/usercopy_64.c                 |  51 ++++++
- arch/x86/mm/Makefile                       |   2 +
- arch/x86/mm/prmem.c (new)                  |  20 +++
- drivers/misc/lkdtm/core.c                  |   3 +
- drivers/misc/lkdtm/lkdtm.h                 |   3 +
- drivers/misc/lkdtm/perms.c                 |  29 ++++
- include/linux/prmem.h (new)                |  71 ++++++++
- mm/Kconfig.debug                           |   8 +
- mm/Makefile                                |   2 +
- mm/prmem.c (new)                           | 179 +++++++++++++++++++++
- mm/rodata_test.c                           |  69 +++++---
- mm/test_write_rare.c (new)                 | 136 ++++++++++++++++
- security/integrity/ima/ima.h               |   3 +-
- security/integrity/ima/ima_policy.c        |   9 +-
- 22 files changed, 656 insertions(+), 32 deletions(-)
- create mode 100644 arch/arm64/lib/memset_user.S
- create mode 100644 arch/x86/mm/prmem.c
- create mode 100644 include/linux/prmem.h
- create mode 100644 mm/prmem.c
- create mode 100644 mm/test_write_rare.c
-
+diff --git a/arch/x86/include/asm/uaccess_64.h b/arch/x86/include/asm/uaccess_64.h
+index a9d637bc301d..f194bfce4866 100644
+--- a/arch/x86/include/asm/uaccess_64.h
++++ b/arch/x86/include/asm/uaccess_64.h
+@@ -213,4 +213,10 @@ copy_user_handle_tail(char *to, char *from, unsigned len);
+ unsigned long
+ mcsafe_handle_tail(char *to, char *from, unsigned len);
+ 
++unsigned long __must_check
++memset_user(void __user *mem, int c, unsigned long len);
++
++unsigned long __must_check
++__memset_user(void __user *mem, int c, unsigned long len);
++
+ #endif /* _ASM_X86_UACCESS_64_H */
+diff --git a/arch/x86/lib/usercopy_64.c b/arch/x86/lib/usercopy_64.c
+index ee42bb0cbeb3..e61963585354 100644
+--- a/arch/x86/lib/usercopy_64.c
++++ b/arch/x86/lib/usercopy_64.c
+@@ -9,6 +9,57 @@
+ #include <linux/uaccess.h>
+ #include <linux/highmem.h>
+ 
++/*
++ * Memset Userspace
++ */
++
++unsigned long __memset_user(void __user *addr, int c, unsigned long size)
++{
++	long __d0;
++	unsigned long  pattern = 0x0101010101010101UL * (0xFFUL & c);
++
++	might_fault();
++	/* no memory constraint: gcc doesn't know about this memory */
++	stac();
++	asm volatile(
++		"	movq %[pattern], %%rdx\n"
++		"	testq  %[size8],%[size8]\n"
++		"	jz     4f\n"
++		"0:	mov %%rdx,(%[dst])\n"
++		"	addq   $8,%[dst]\n"
++		"	decl %%ecx ; jnz   0b\n"
++		"4:	movq  %[size1],%%rcx\n"
++		"	testl %%ecx,%%ecx\n"
++		"	jz     2f\n"
++		"1:	movb   %%dl,(%[dst])\n"
++		"	incq   %[dst]\n"
++		"	decl %%ecx ; jnz  1b\n"
++		"2:\n"
++		".section .fixup,\"ax\"\n"
++		"3:	lea 0(%[size1],%[size8],8),%[size8]\n"
++		"	jmp 2b\n"
++		".previous\n"
++		_ASM_EXTABLE_UA(0b, 3b)
++		_ASM_EXTABLE_UA(1b, 2b)
++		: [size8] "=&c"(size), [dst] "=&D" (__d0)
++		: [size1] "r" (size & 7), "[size8]" (size / 8),
++		  "[dst]" (addr), [pattern] "r" (pattern)
++		: "rdx");
++
++	clac();
++	return size;
++}
++EXPORT_SYMBOL(__memset_user);
++
++unsigned long memset_user(void __user *to, int c, unsigned long n)
++{
++	if (access_ok(to, n))
++		return __memset_user(to, c, n);
++	return n;
++}
++EXPORT_SYMBOL(memset_user);
++
++
+ /*
+  * Zero Userspace
+  */
 -- 
 2.19.1
 
