@@ -2,71 +2,68 @@ Return-Path: <SRS0=a4os=QS=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 875A9C169C4
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 22:47:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49966C282D7
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 23:00:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47175218A3
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 22:47:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14B4F218A3
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Feb 2019 23:00:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549925276;
-	bh=rV440hGDSZ3wXtwBOPW52PZyuO31p4qEHmRDqv7v/C0=;
+	s=default; t=1549926016;
+	bh=RdARy0D2d2IImaaPeK+pm12Sk+zLe4PWvJ4Rp1UMq8o=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=eTuQwSpkaqlkV+2QBXRGytX8hcGV9oe8rE92HMIpKaJKU5FHoP7eEZQv7rj0a0eWe
-	 rgep9pTDkIHO/mWbe9YavgbVxOz8sTqBb6K7AgzzKDZlJIPoExI0RWYcrPuoM2e/Ul
-	 FHtv72EBHsO7NLqDDmjwtKMvU/Kx2Slk3SKs8RZw=
+	b=ORg20rV5URA5dPWBYm141SjXP0MB3scL6wXdW032qeJRN5R0oMvl+y/R41QNyUqkI
+	 UN9zI5gltp+uDw3mYzE9KqtZ6WEqT6FvtAh44ZGrUKsMElNt56GlzBNDMn0QEPfSk3
+	 o4zHhEThTO1ovQNnXZWvZqdPORENbAs6HBBUGdc0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfBKWrz (ORCPT
+        id S1726847AbfBKXAO (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Feb 2019 17:47:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36020 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 18:00:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727532AbfBKWrz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Feb 2019 17:47:55 -0500
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+        id S1727080AbfBKXAM (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 11 Feb 2019 18:00:12 -0500
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77EEC2229E
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Feb 2019 22:47:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E7622229E
+        for <linux-integrity@vger.kernel.org>; Mon, 11 Feb 2019 23:00:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549925274;
-        bh=rV440hGDSZ3wXtwBOPW52PZyuO31p4qEHmRDqv7v/C0=;
+        s=default; t=1549926011;
+        bh=RdARy0D2d2IImaaPeK+pm12Sk+zLe4PWvJ4Rp1UMq8o=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=2qTB9vzRMdPY0stzJ7/VKb/Y1Z1BstTZsqOtQo7ivCGfDJ8FmzkIxv43/rrWP4x3F
-         yste5X5BVJeQIUceUmQ9K+mMQJ+St7Ye69qYVRSCNvV1Mc1QlgRp/BxHOMZ/iDkSXc
-         xCzKOmorFsxK6wArhlpHajpEWC36AB/b12KduuZk=
-Received: by mail-wm1-f47.google.com with SMTP id b11so952479wmj.1
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Feb 2019 14:47:54 -0800 (PST)
-X-Gm-Message-State: AHQUAuaKdWVlDbUYO7Ymd06LVavQlQndEjJiCE+JwOJSopWNDFcblQ3z
-        5gOU16AvAu/lO9fwpvFTY6bbgaUrEHaxSuRH5TkhAw==
-X-Google-Smtp-Source: AHgI3IYhqPQS6XNR2rbuUzIn1bPg4Vb52Sam8S3ebJby84Lwzx4pkjy45X+4hrjhxv9sDdjl1Ar3ML3HVCnAR1dksqs=
-X-Received: by 2002:a7b:cc13:: with SMTP id f19mr353124wmh.83.1549925272767;
- Mon, 11 Feb 2019 14:47:52 -0800 (PST)
+        b=1U/t75gPlPzV0GunWAAj580UQ0M8IQO7b/0ocVXPNelID0RVlkdhMj4hsKGasjksD
+         EVjIa8/xD1Gua910hLYZzaNPVVqqmjn0XIr7KSRz+zjA74djGWCRG2PhI6a6hymlpQ
+         09sU7CdhUpL1YU0IzM5ExJ2bmf1i/5n92jcXqhYA=
+Received: by mail-wm1-f43.google.com with SMTP id m1so967576wml.2
+        for <linux-integrity@vger.kernel.org>; Mon, 11 Feb 2019 15:00:11 -0800 (PST)
+X-Gm-Message-State: AHQUAuYLlIzQZhPGe4wUjQ3ey9l+Ng00g7CNM7p49K9jJ7Xtal1I2vN/
+        mN7PmUxFWdoJJZt4PqCCbjlbpILbCn+pX57Kl1Ny7A==
+X-Google-Smtp-Source: AHgI3IY9/CMTozIoxXmaMd4k3IPzExCkXpyQ6EENDNglBFNRGElm4CwGZ5tQ0Jfoffwkks/clk12CUflqqHCBROQbIk=
+X-Received: by 2002:a7b:cc13:: with SMTP id f19mr377508wmh.83.1549926009812;
+ Mon, 11 Feb 2019 15:00:09 -0800 (PST)
 MIME-Version: 1.0
 References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-6-rick.p.edgecombe@intel.com> <162C6C29-CD81-46FE-9A54-6ED05A93A9CB@gmail.com>
- <00649AE8-69C0-4CD2-A916-B8C8F0F5DAC3@amacapital.net> <6FE10C97-25FF-4E99-A96A-465CBACA935B@gmail.com>
- <CALCETrVaBaorbOA8QE=Pk=C+PfXZAz0-aX_3O8Y=nJV4QKELbw@mail.gmail.com> <3EA322C6-5645-4900-AEC6-97FC05716F75@gmail.com>
-In-Reply-To: <3EA322C6-5645-4900-AEC6-97FC05716F75@gmail.com>
+ <20190129003422.9328-14-rick.p.edgecombe@intel.com> <20190211190925.GQ19618@zn.tnic>
+In-Reply-To: <20190211190925.GQ19618@zn.tnic>
 From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 11 Feb 2019 14:47:39 -0800
-X-Gmail-Original-Message-ID: <CALCETrXE0n4BrkX2ZLDJjdLqD-N_WwSZHt=S2KKBrTV6Zt5Teg@mail.gmail.com>
-Message-ID: <CALCETrXE0n4BrkX2ZLDJjdLqD-N_WwSZHt=S2KKBrTV6Zt5Teg@mail.gmail.com>
-Subject: Re: [PATCH v2 05/20] x86/alternative: initializing temporary mm for patching
-To:     Nadav Amit <nadav.amit@gmail.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+Date:   Mon, 11 Feb 2019 14:59:55 -0800
+X-Gmail-Original-Message-ID: <CALCETrX2AOTTZOQafZgOFxiQsFgdYHVaLonXTqTa3RUs5MPVUQ@mail.gmail.com>
+Message-ID: <CALCETrX2AOTTZOQafZgOFxiQsFgdYHVaLonXTqTa3RUs5MPVUQ@mail.gmail.com>
+Subject: Re: [PATCH v2 13/20] Add set_alias_ function and x86 implementation
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
         Ingo Molnar <mingo@redhat.com>,
         LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
         "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Damian Tometzki <linux_dti@icloud.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
         linux-integrity <linux-integrity@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -74,96 +71,42 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Kristen Carlson Accardi <kristen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>
+        "Dock, Deneen T" <deneen.t.dock@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 11:18 AM Nadav Amit <nadav.amit@gmail.com> wrote:
+On Mon, Feb 11, 2019 at 11:09 AM Borislav Petkov <bp@alien8.de> wrote:
 >
-> > On Feb 11, 2019, at 11:07 AM, Andy Lutomirski <luto@kernel.org> wrote:
-> >
-> > I'm certainly amenable to other solutions, but this one does seem the
-> > least messy.  I looked at my old patch, and it doesn't do what you
-> > want.  I'd suggest you just add a percpu variable like cpu_dr7 and rig
-> > up some accessors so that it stays up to date.  Then you can skip the
-> > dr7 writes if there are no watchpoints set.
-> >
-> > Also, EFI is probably a less interesting example than rare_write.
-> > With rare_write, especially the dynamically allocated variants that
-> > people keep coming up with, we'll need a swath of address space fully
-> > as large as the vmalloc area. and getting *that* right while still
-> > using the kernel address range might be more of a mess than we really
-> > want to deal with.
+> On Mon, Jan 28, 2019 at 04:34:15PM -0800, Rick Edgecombe wrote:
+> > This adds two new functions set_alias_default_noflush and
 >
-> As long as you feel comfortable with this solution, I=E2=80=99m fine with=
- it.
+> s/This adds/Add/
 >
-> Here is what I have (untested). I prefer to save/restore all the DRs,
-> because IIRC DR6 indications are updated even if breakpoints are disabled
-> (in DR7). And anyhow, that is the standard interface.
+> > set_alias_nv_noflush for setting the alias mapping for the page to its
+>
+> Please end function names with parentheses, below too.
+>
+> > default valid permissions and to an invalid state that cannot be cached in
+> > a TLB, respectively. These functions to not flush the TLB.
+>
+> s/to/do/
+>
+> Also, pls put that description as comments over the functions in the
+> code. Otherwise that "nv" as part of the name doesn't really explain
+> what it does.
+>
+> Actually, you could just as well call the function
+>
+> set_alias_invalid_noflush()
+>
+> All the other words are written in full, no need to have "nv" there.
 
-Seems reasonable, but:
+Why are you calling this an "alias"?  You're modifying the direct map.
+Your patches are thinking of the direct map as an alias of the vmap
+mapping, but that does seem a bit backwards.  How about
+set_direct_map_invalid_noflush(), etc?
 
->
->
-> -- >8 --
->
-> From: Nadav Amit <namit@vmware.com>
-> Date: Mon, 11 Feb 2019 03:07:08 -0800
-> Subject: [PATCH] mm: save DRs when loading temporary mm
->
-> Signed-off-by: Nadav Amit <namit@vmware.com>
-> ---
->  arch/x86/include/asm/mmu_context.h | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
->
-> diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mm=
-u_context.h
-> index d684b954f3c0..4f92ec3df149 100644
-> --- a/arch/x86/include/asm/mmu_context.h
-> +++ b/arch/x86/include/asm/mmu_context.h
-> @@ -13,6 +13,7 @@
->  #include <asm/tlbflush.h>
->  #include <asm/paravirt.h>
->  #include <asm/mpx.h>
-> +#include <asm/debugreg.h>
->
->  extern atomic64_t last_mm_ctx_id;
->
-> @@ -358,6 +359,7 @@ static inline unsigned long __get_current_cr3_fast(vo=
-id)
->
->  typedef struct {
->         struct mm_struct *prev;
-> +       unsigned short bp_enabled : 1;
->  } temp_mm_state_t;
->
->  /*
-> @@ -380,6 +382,15 @@ static inline temp_mm_state_t use_temporary_mm(struc=
-t mm_struct *mm)
->         lockdep_assert_irqs_disabled();
->         state.prev =3D this_cpu_read(cpu_tlbstate.loaded_mm);
->         switch_mm_irqs_off(NULL, mm, current);
-> +
-> +       /*
-> +        * If breakpoints are enabled, disable them while the temporary m=
-m is
-> +        * used - they do not belong and might cause wrong signals or cra=
-shes.
-> +        */
-
-Maybe clarify this?  Add some mention that the specific problem is
-that user code could set a watchpoint on an address that is also used
-in the temporary mm.
-
-Arguably we should not disable *kernel* breakpoints a la perf, but
-that seems like quite a minor issue, at least as long as
-use_temporary_mm() doesn't get wider use.  But a comment that this
-also disables perf breakpoints and that this could be undesirable
-might be in order as well.
+--Andy
