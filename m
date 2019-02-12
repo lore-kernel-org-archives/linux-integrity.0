@@ -2,110 +2,230 @@ Return-Path: <SRS0=zpiu=QT=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E78ADC282C4
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 22:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E321C282C4
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 22:46:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EFD6222C9
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 22:39:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fCfFjWCV"
+	by mail.kernel.org (Postfix) with ESMTP id 5145A222BB
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 22:46:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728330AbfBLWjR (ORCPT
+        id S1727172AbfBLWqm (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 12 Feb 2019 17:39:17 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:46711 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726550AbfBLWjQ (ORCPT
+        Tue, 12 Feb 2019 17:46:42 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:59720 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726734AbfBLWql (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 12 Feb 2019 17:39:16 -0500
-Received: by mail-ua1-f68.google.com with SMTP id j8so109097uae.13
-        for <linux-integrity@vger.kernel.org>; Tue, 12 Feb 2019 14:39:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YFMKNvnJ3kQYFBT3u+6m2xpocwP0rFyQ6m2jTIkI53g=;
-        b=fCfFjWCVZvK//Azw02gHCq2Wf+TZyzQo67PjdK4cZacIFv71S2Z88FtQXX3fKTBpKP
-         09egXjQE+WgB9m24FrKqUeXC9Wmv7R1TozcnA7aWOgsJazvsA8JJftiYgf64Zajp4I0D
-         vPdV4Vxq+YQkzTFZITS1EP8feXnIFOX9/9N+s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YFMKNvnJ3kQYFBT3u+6m2xpocwP0rFyQ6m2jTIkI53g=;
-        b=FqkkMyVpgv2y4se9J6/VuV2a3keLk3fCVXTt03njSwZCiPWw0SJvX1Y5j3fiiJanKs
-         LyQGE8SrHvvk9B9gLDC/zI5hRFYipgMWSbACA3P++KLwoBteX3cZIzBTmxs3iMgDLXku
-         5OCRMZU+KrTQW4DJkUvHmD25Wjh5iRloXeqEfEu3aip71pIiBOcZ8v85nj+z3zPGbHfQ
-         CMiPu2oatRWUEM7+k0RHrS1AsrpA3eOIft2FHp/z4178kl4vOPOBFlQ+Y41JeFJ/SHVS
-         AwCzs2YiuvHWJeuANfSGITpx6AIn7MthDmih3czKUfRbqTcjtPiaDUjhlqtUpLNJHHDh
-         nnzQ==
-X-Gm-Message-State: AHQUAuZu5YCw7WarNEP8yJkvskTCwNgzBpgX43AWGuDiH8bi5kEXxE29
-        TyqmnhCSgtb0N+dvUrqSBDttbrshKpA=
-X-Google-Smtp-Source: AHgI3IYRXFJDzj7LxB//TY7eofBDr8rCkfLItQRIcRWrGwEyv8FQQdXfNA9QLdqSwhbSgQvbOUjsmQ==
-X-Received: by 2002:ab0:5484:: with SMTP id p4mr2539076uaa.102.1550011155208;
-        Tue, 12 Feb 2019 14:39:15 -0800 (PST)
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
-        by smtp.gmail.com with ESMTPSA id x185sm13075359vkd.27.2019.02.12.14.39.14
-        for <linux-integrity@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 14:39:14 -0800 (PST)
-Received: by mail-vs1-f47.google.com with SMTP id e16so223157vsq.6
-        for <linux-integrity@vger.kernel.org>; Tue, 12 Feb 2019 14:39:14 -0800 (PST)
-X-Received: by 2002:a67:eb4a:: with SMTP id x10mr2523974vso.172.1550011153602;
- Tue, 12 Feb 2019 14:39:13 -0800 (PST)
+        Tue, 12 Feb 2019 17:46:41 -0500
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 0861472CC64;
+        Wed, 13 Feb 2019 01:46:40 +0300 (MSK)
+Received: from beacon.altlinux.org (unknown [185.6.174.98])
+        by imap.altlinux.org (Postfix) with ESMTPSA id DC1A94A4AE7;
+        Wed, 13 Feb 2019 01:46:39 +0300 (MSK)
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org
+Subject: [PATCH v2] ima-evm-utils: simplify digest alias handling
+Date:   Wed, 13 Feb 2019 01:46:31 +0300
+Message-Id: <20190212224631.13398-1-vt@altlinux.org>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-References: <cover.1549927666.git.igor.stoppa@huawei.com> <CAGXu5j+n3ky2dOe4F+VyneQsM4VJbGPUw+DO55NkxxPhKzKHag@mail.gmail.com>
- <25bf3c63-c54c-f7ea-bec1-996a2c05d997@gmail.com> <CAGXu5jLqmYRUVLb7-jPsN4onO5UNH+D6qOF=9TOiVjJa-=DnZQ@mail.gmail.com>
- <CAH2bzCRZ5xYOT0R8piqZx4mSGj1_8fNG=Ce4UU8i6F7mYD9m9Q@mail.gmail.com>
- <CAGXu5jLRJZuWjnwEuK=7AMeCrj-eioVGksPL9dE9pbzHM=+Rmg@mail.gmail.com> <29cd9541-9af2-fc1c-c264-f4cb9c29349a@gmail.com>
-In-Reply-To: <29cd9541-9af2-fc1c-c264-f4cb9c29349a@gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 12 Feb 2019 14:39:02 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jJyWb7aTJpDfBPD3GqMmNaJVT0pajdrPV93xnLoOa=0Vw@mail.gmail.com>
-Message-ID: <CAGXu5jJyWb7aTJpDfBPD3GqMmNaJVT0pajdrPV93xnLoOa=0Vw@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 00/12] hardening: statically allocated protected memory
-To:     Igor Stoppa <igor.stoppa@gmail.com>
-Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
-        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 11:09 PM Igor Stoppa <igor.stoppa@gmail.com> wrote:
-> wr_assign() does just that.
->
-> However, reading again your previous mails, I realize that I might have
-> misinterpreted what you were suggesting.
->
-> If the advice is to have also a default memset_user() which relies on
-> put_user(), but do not activate the feature by default for every
-> architecture, I definitely agree that it would be good to have it.
-> I just didn't think about it before.
+- Make digest name search work just with simple strcmp() and three
+  arrays, dropping strmatch().
+- Remove get_digestbyname() which was doing two hash name resolving
+  attempts, reverting to use plain EVP_get_digestbyname(). This will
+  force the user to specify the proper hash name depending on what
+  OpenSSL provides, allowing to specify older hash name in older
+  OpenSSL.
+- Improve hash_info parser to produce hash_algo_name[] more resembling
+  what is in the kernel, making algocmp() not needed and removed.
+- Fix indent in get_hash_algo_by_id().
+---
+ src/hash_info.gen |  8 ++++-
+ src/libimaevm.c   | 94 ++++++++++++-------------------------------------------
+ 2 files changed, 27 insertions(+), 75 deletions(-)
 
-Yeah, I just mean you could have an arch-agnostic memset_user() implementation.
-
-> But I now realize that most likely you were just suggesting to have
-> full, albeit inefficient default support and then let various archs
-> review/enhance it. I can certainly do this.
-
-Right.
-
-> Regarding testing I have a question: how much can/should I lean on qemu?
-> In most cases the MMU might not need to be fully emulated, so I wonder
-> how well qemu-based testing can ensure that real life scenarios will work.
-
-I think qemu lets you know if it works (kvm is using the real MMU),
-and baremetal will give you more stable performance numbers.
-
+diff --git a/src/hash_info.gen b/src/hash_info.gen
+index 60fc750..54532ca 100755
+--- a/src/hash_info.gen
++++ b/src/hash_info.gen
+@@ -39,5 +39,11 @@ printf "\tHASH_ALGO__LAST\n"
+ echo "};"
+ 
+ echo "const char *const hash_algo_name[HASH_ALGO__LAST] = {"
+-sed -n 's/HASH_ALGO_\(.*\),/[HASH_ALGO_\1] = "\L\1\E",/p' $HASH_INFO
++sed -n 's/HASH_ALGO_\(.*\),/\1 \L\1\E/p' $HASH_INFO | \
++  while read a b; do
++    # Normalize text hash name: if it contains underscore between
++    # digits replace it with a dash, other underscores are removed.
++    b=$(echo "$b" | sed "s/\([0-9]\)_\([0-9]\)/\1-\2/g;s/_//g")
++    printf '\t%-26s = "%s",\n' "[HASH_ALGO_$a]" "$b"
++  done
+ echo "};"
+diff --git a/src/libimaevm.c b/src/libimaevm.c
+index d9ffa13..102d6fc 100644
+--- a/src/libimaevm.c
++++ b/src/libimaevm.c
+@@ -63,6 +63,7 @@
+ #include "imaevm.h"
+ #include "hash_info.h"
+ 
++/* Named that are primary for OpenSSL. */
+ const char *const pkey_hash_algo[PKEY_HASH__LAST] = {
+ 	[PKEY_HASH_MD4]		= "md4",
+ 	[PKEY_HASH_MD5]		= "md5",
+@@ -72,8 +73,14 @@ const char *const pkey_hash_algo[PKEY_HASH__LAST] = {
+ 	[PKEY_HASH_SHA384]	= "sha384",
+ 	[PKEY_HASH_SHA512]	= "sha512",
+ 	[PKEY_HASH_SHA224]	= "sha224",
+-	[PKEY_HASH_STREEBOG_256] = "md_gost12_256,streebog256",
+-	[PKEY_HASH_STREEBOG_512] = "md_gost12_512,streebog512",
++	[PKEY_HASH_STREEBOG_256] = "md_gost12_256",
++	[PKEY_HASH_STREEBOG_512] = "md_gost12_512",
++};
++
++/* Names that are primary for the kernel. */
++const char *const pkey_hash_algo_kern[PKEY_HASH__LAST] = {
++	[PKEY_HASH_STREEBOG_256] = "streebog256",
++	[PKEY_HASH_STREEBOG_512] = "streebog512",
+ };
+ 
+ /*
+@@ -160,9 +167,9 @@ void dump(const void *ptr, int len)
+ const char *get_hash_algo_by_id(int algo)
+ {
+ 	if (algo < PKEY_HASH__LAST)
+-	    return pkey_hash_algo[algo];
++		return pkey_hash_algo[algo];
+ 	if (algo < HASH_ALGO__LAST)
+-	    return hash_algo_name[algo];
++		return hash_algo_name[algo];
+ 
+ 	log_err("digest %d not found\n", algo);
+ 	return "unknown";
+@@ -286,35 +293,6 @@ static int add_dev_hash(struct stat *st, EVP_MD_CTX *ctx)
+ 	return !EVP_DigestUpdate(ctx, &dev, sizeof(dev));
+ }
+ 
+-/* Call EVP_get_digestbyname with provided name and with alias,
+- * which is first name in the comma separated list of names
+- * in pkey_hash_algo.
+- */
+-static const EVP_MD *get_digestbyname(const char *name)
+-{
+-	const EVP_MD *md;
+-
+-	md = EVP_get_digestbyname(params.hash_algo);
+-	if (!md) {
+-		char alias[MAX_DIGEST_NAME];
+-		int len;
+-		int algo_id;
+-		const char *algo_alias;
+-
+-		/* try to get algo by its alias */
+-		algo_id = get_hash_algo(params.hash_algo);
+-		algo_alias = get_hash_algo_by_id(algo_id);
+-		len = strchrnul(algo_alias, ',') - algo_alias;
+-		if (len < sizeof(alias)) {
+-			memcpy(alias, algo_alias, len);
+-			alias[len] = '\0';
+-			if (strcmp(params.hash_algo, alias))
+-				md = EVP_get_digestbyname(alias);
+-		}
+-	}
+-	return md;
+-}
+-
+ int ima_calc_hash(const char *file, uint8_t *hash)
+ {
+ 	const EVP_MD *md;
+@@ -336,7 +314,7 @@ int ima_calc_hash(const char *file, uint8_t *hash)
+ 		return err;
+ 	}
+ 
+-	md = get_digestbyname(params.hash_algo);
++	md = EVP_get_digestbyname(params.hash_algo);
+ 	if (!md) {
+ 		log_err("EVP_get_digestbyname(%s) failed\n", params.hash_algo);
+ 		return 1;
+@@ -572,42 +550,6 @@ int verify_hash_v2(const char *file, const unsigned char *hash, int size,
+ 	return 0;
+ }
+ 
+-/* compare algo names case insensitively and ignoring separators */
+-static int algocmp(const char *a, const char *b)
+-{
+-	while (*a && *b) {
+-		int cha, chb;
+-
+-		cha = tolower((unsigned char)*a++);
+-		if (!isalnum(cha))
+-			continue;
+-		chb = tolower((unsigned char)*b++);
+-		if (!isalnum(chb)) {
+-			a--;
+-			continue;
+-		}
+-		if (cha != chb)
+-			return -1;
+-	}
+-	return *a || *b;
+-}
+-
+-static int strmatch(const char *needle, const char *haystack)
+-{
+-	int len = strlen(needle);
+-	const char *p = haystack;
+-	const char *t;
+-
+-	for (t = strchrnul(p, ','); *p; p = t, t = strchrnul(p, ',')) {
+-		if (t - p == len &&
+-		    !strncmp(needle, p, len))
+-			return 0;
+-		if (!*t++)
+-			break;
+-	}
+-	return 1;
+-}
+-
+ int get_hash_algo(const char *algo)
+ {
+ 	int i;
+@@ -615,15 +557,19 @@ int get_hash_algo(const char *algo)
+ 	/* first iterate over builtin algorithms */
+ 	for (i = 0; i < PKEY_HASH__LAST; i++)
+ 		if (pkey_hash_algo[i] &&
+-		    !strmatch(algo, pkey_hash_algo[i]))
++		    !strcmp(algo, pkey_hash_algo[i]))
++			return i;
++
++	for (i = 0; i < PKEY_HASH__LAST; i++)
++		if (pkey_hash_algo_kern[i] &&
++		    !strcmp(algo, pkey_hash_algo_kern[i]))
+ 			return i;
+ 
+ 	/* iterate over algorithms provided by kernel-headers */
+-	for (i = 0; i < HASH_ALGO__LAST; i++) {
++	for (i = 0; i < HASH_ALGO__LAST; i++)
+ 		if (hash_algo_name[i] &&
+-		    !algocmp(algo, hash_algo_name[i]))
++		    !strcmp(algo, hash_algo_name[i]))
+ 			return i;
+-	}
+ 
+ 	log_info("digest %s not found, fall back to sha1\n", algo);
+ 	return PKEY_HASH_SHA1;
 -- 
-Kees Cook
+2.11.0
+
