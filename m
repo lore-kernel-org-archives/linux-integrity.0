@@ -7,110 +7,176 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9452C169C4
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 03:29:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4972EC282C4
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 07:09:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A21FB2184A
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 03:29:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 155D421773
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 07:09:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="evY3JluV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pwORRFPa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbfBLD3n (ORCPT
+        id S1727549AbfBLHJ3 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Feb 2019 22:29:43 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:32788 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726699AbfBLD3n (ORCPT
+        Tue, 12 Feb 2019 02:09:29 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39238 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbfBLHJ3 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Feb 2019 22:29:43 -0500
-Received: by mail-yw1-f68.google.com with SMTP id p17so488547ywg.0;
-        Mon, 11 Feb 2019 19:29:42 -0800 (PST)
+        Tue, 12 Feb 2019 02:09:29 -0500
+Received: by mail-wm1-f67.google.com with SMTP id f16so1743044wmh.4;
+        Mon, 11 Feb 2019 23:09:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+t1DW+eh3Kim5nHOn3BBpzpa6p/cXjO1C2a4Ow7+dUs=;
-        b=evY3JluVhBcVhgwf6ZuKHyRxlLmUkaGVxn61uLuIoWOZg5X1OSiZ6MdwGPoZNi12F6
-         zxFGMfbyu4l22vEezLd2Tg5FXoygT1q01MsW5sWdQJv3scnAqP5+rp8ZkQwJyj/ri8PT
-         5cELJ6XWt9mcj+gMvazmy0RP50GeRqxR834A9SqiOziAbvhjf6L1/htXac3QmzSryktt
-         aGRJg/KfTHFZAlLEArNgXA1FXAa7UrVMP23DMRo1HiR2IbDAayUAOkYzOezVqOkMff4c
-         W1f+YsTCDFvWsr5a1V046akE9cMvndjjO7mruwqLxtSUinOcEO7epXVngRnvFh9stinJ
-         QNcA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=l/Y2H+sPvFaqE/igdudgnurdiLS0gT5wulBquThog6U=;
+        b=pwORRFPa1ESmuwNrsUe4YUF2SQMcZdGoAv+3pXsyYo0Abjc3K4Fp6yWRi+FgSfjWYl
+         YOlAOSasNwBaF/AQencIviRfPv8UQtQDoQsVw9tsN7vQdA0m8gQwNXA+3jKaygrzo/eu
+         XeyXFs+glZUDzJklvqvQapfFpkEvAZexqqkMZ2sdcNQ12CE8DvA/iSjCqlIPb2D+ztTR
+         EhcLg+d2jse8gV2Y2aFgi+YYGzGwrGDurLyxzVck4E+nvNk3z3DKqjXoTE/QEy5tewe/
+         KSCxImDCrFn1YoGpYevYNsA/n+j244PkKj8LGc/OLuiWG8+IxHn62SZLZnZRy0dJEZvl
+         VDQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+t1DW+eh3Kim5nHOn3BBpzpa6p/cXjO1C2a4Ow7+dUs=;
-        b=FbHSD1hZiaXGa513UZEO5VKK8HMS68GkOtjfJ6JKiiM/jHpaImZJ2QqT83sTZa+tUf
-         AUTSvYnFz/es20llQxHG4BsfdMBDtbsrxM6MaBNLgM5OMRp2bR5TGz9fPrCV0p9vv90e
-         O8hMasjpnaeb3U2XmWgf17lvptK5uJl53jVT7rPHfBSgSXr5+IZRZ+buVDOs9VfjUgo7
-         ThC4uhf1dSGwYskFd9+u0OsfLjIWBB+rrg8/VXPoO2lKfKea/ywQ3N3N0244DH+HZgb2
-         hdtCevljwHmNSyoNxaSjF8dTipy6HaJq05P+rsjJ4pIvIGIOx5p6n8EqiCoDet8qoTtR
-         TUrw==
-X-Gm-Message-State: AHQUAubcSxWyb60c+XwjVHWob6dpKtHCsgdYG0kc6TK5HouBJdZ5nDYS
-        SQ2FAHE5fNlYmxUaEEQLNg6X7hHNIwTWnDynPzg=
-X-Google-Smtp-Source: AHgI3IZD8vc9yMDRmlrL7jskuFzw2MWzVC10xizAbMWHNS89dKlYsM7OOO4DQF6GCSe1Gnnq0OPEXlmy1QapNQZz/BU=
-X-Received: by 2002:a81:5509:: with SMTP id j9mr1181193ywb.409.1549942181892;
- Mon, 11 Feb 2019 19:29:41 -0800 (PST)
-MIME-Version: 1.0
-References: <20190211165323.9369-1-iforster@suse.com>
-In-Reply-To: <20190211165323.9369-1-iforster@suse.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 12 Feb 2019 05:29:30 +0200
-Message-ID: <CAOQ4uxhyk7BEmQYf8D6j8FvYJGaxPoa2oJePeF42jbdp__=PSA@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/5] Fix overlayfs on EVM
-To:     Ignaz Forster <iforster@suse.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=l/Y2H+sPvFaqE/igdudgnurdiLS0gT5wulBquThog6U=;
+        b=UgEdtPabCybd3Nj70Y02tpJ8Xq9jXMk8ierl5Ui6NlzI1UPMEPWKGw5YD/qE4U60zh
+         6KkPnlBYCm7bRRzTw5fOWgAP+xe19F2aicucOjbexoBW2OaFK7VPD7ahN4on2Ny8peU+
+         5x6+hDYlMCS9Jq08qhMJi83U/GwrFLfo4gsRycbw2qFKC5VKugS5jIDR1t4EJNK5R5p9
+         Czgj5tkuv+s3mvU7OzXowZLYhJHuS+cyUCQa7pKUetHmcn5eO4MrwOYs/ySCofoM/1lq
+         wwrbPXdRtNuYQyfowTvtrEURWnNlhT+RgZV7FqZTEoVvwLSWn4ufrL9KR0RyO0yiLHyW
+         /GPQ==
+X-Gm-Message-State: AHQUAuaHShtsRMWSGFnSfB758LUXvQ9xFyO/j0lCYPlM0igzeWOILwmj
+        unVGflCXy8fBxtKvUxjEz2y6XtOluKY=
+X-Google-Smtp-Source: AHgI3IZYUHYW3esJ4vMMAP1gkcxO2jgtBZcY/GRbFKYx76jqMuZpS+nVPuiAATCoZ09Azb9xUdkVDQ==
+X-Received: by 2002:a1c:e1c4:: with SMTP id y187mr1687569wmg.50.1549955365667;
+        Mon, 11 Feb 2019 23:09:25 -0800 (PST)
+Received: from [172.20.11.181] (bba133882.alshamil.net.ae. [217.165.112.24])
+        by smtp.gmail.com with ESMTPSA id d9sm15932320wrn.72.2019.02.11.23.09.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 23:09:24 -0800 (PST)
+Subject: Re: [RFC PATCH v4 00/12] hardening: statically allocated protected
+ memory
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
+        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
         linux-integrity <linux-integrity@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Fabian Vogt <fvogt@suse.com>, Ignaz Forster <iforster@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <cover.1549927666.git.igor.stoppa@huawei.com>
+ <CAGXu5j+n3ky2dOe4F+VyneQsM4VJbGPUw+DO55NkxxPhKzKHag@mail.gmail.com>
+ <25bf3c63-c54c-f7ea-bec1-996a2c05d997@gmail.com>
+ <CAGXu5jLqmYRUVLb7-jPsN4onO5UNH+D6qOF=9TOiVjJa-=DnZQ@mail.gmail.com>
+ <CAH2bzCRZ5xYOT0R8piqZx4mSGj1_8fNG=Ce4UU8i6F7mYD9m9Q@mail.gmail.com>
+ <CAGXu5jLRJZuWjnwEuK=7AMeCrj-eioVGksPL9dE9pbzHM=+Rmg@mail.gmail.com>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <29cd9541-9af2-fc1c-c264-f4cb9c29349a@gmail.com>
+Date:   Tue, 12 Feb 2019 09:09:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <CAGXu5jLRJZuWjnwEuK=7AMeCrj-eioVGksPL9dE9pbzHM=+Rmg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 10:28 PM Ignaz Forster <iforster@suse.com> wrote:
->
-> From: Ignaz Forster <iforster@suse.de>
->
-> This patch series tries to solve several problems found when using
-> EVM on an overlay file system.
->
-> Especially patch 4 and 5 will need further discussion; patch 4 will
-> introduce follow up problems, patch 5 can be considered a workaround
-> at best.
->
 
-I think maybe the entire series (short of vfs_create hook) is a workaround.
 
-Let's stop and think. What is IMA/EVM meant to do?
-Provide tamper proof protection for persistent storage. Right?
+On 12/02/2019 03:26, Kees Cook wrote:
+> On Mon, Feb 11, 2019 at 5:08 PM igor.stoppa@gmail.com
+> <igor.stoppa@gmail.com> wrote:
+>>
+>>
+>>
+>> On Tue, 12 Feb 2019, 4.47 Kees Cook <keescook@chromium.org wrote:
+>>>
+>>> On Mon, Feb 11, 2019 at 4:37 PM Igor Stoppa <igor.stoppa@gmail.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 12/02/2019 02:09, Kees Cook wrote:
+>>>>> On Mon, Feb 11, 2019 at 3:28 PM Igor Stoppa <igor.stoppa@gmail.com> wrote:
+>>>>> It looked like only the memset() needed architecture support. Is there
+>>>>> a reason for not being able to implement memset() in terms of an
+>>>>> inefficient put_user() loop instead? That would eliminate the need for
+>>>>> per-arch support, yes?
+>>>>
+>>>> So far, yes, however from previous discussion about power arch, I
+>>>> understood this implementation would not be so easy to adapt.
+>>>> Lacking other examples where the extra mapping could be used, I did not
+>>>> want to add code without a use case.
+>>>>
+>>>> Probably both arm and x86 32 bit could do, but I would like to first get
+>>>> to the bitter end with memory protection (the other 2 thirds).
+>>>>
+>>>> Mostly, I hated having just one arch and I also really wanted to have arm64.
+>>>
+>>> Right, I meant, if you implemented the _memset() case with put_user()
+>>> in this version, you could drop the arch-specific _memset() and shrink
+>>> the patch series. Then you could also enable this across all the
+>>> architectures in one patch. (Would you even need the Kconfig patches,
+>>> i.e. won't this "Just Work" on everything with an MMU?)
+>>
+>>
+>> I had similar thoughts, but this answer [1] deflated my hopes (if I understood it correctly).
+>> It seems that each arch needs to be massaged in separately.
+> 
+> True, but I think x86_64, x86, arm64, and arm will all be "normal".
+> power may be that way too, but they always surprise me. :)
+> 
+> Anyway, series looks good, but since nothing uses _memset(), it might
+> make sense to leave it out and put all the arch-enabling into a single
+> patch to cover the 4 archs above, in an effort to make the series even
+> smaller.
 
-Overlayfs uses other filesystems to store persistent data/metadata,
-so if IMA/EVM already protect those other filesystems, we got
-tamper proof already don't we?
+Actually, I do use it, albeit indirectly.
+That's the whole point of having the IMA patch as example.
 
-The issue with overlayfs and security hooks is often credentials
-because underlying filesystems are accessed with different
-credentials (mounter credentials) than the overlay file access.
-Is that an issue for IMA/EVM?
-Or is it an issue that IMA policy is path based and may only
-apply to the overlay path and not underlying path??
+This is the fragment:
+----------------
+@@ -460,12 +460,13 @@ void ima_update_policy_flag(void)
 
-I had already suggested once to mark overlay inodes with
-NOIMA flag:
-https://marc.info/?l=linux-unionfs&m=154529013929472&w=2
-and there was a similar suggestion for FUSE:
-https://marc.info/?l=linux-fsdevel&m=151871326115716&w=2
+  	list_for_each_entry(entry, ima_rules, list) {
+  		if (entry->action & IMA_DO_MASK)
+-			ima_policy_flag |= entry->action;
++			wr_assign(ima_policy_flag,
++				  ima_policy_flag | entry->action);
+  	}
 
-If my assumptions so far are correct, then the effort for making
-IMA/EVM work with overlayfs should focus around finding the
-places where overlayfs uses lower level vfs interface (often
-vfs_xxx helpers) and make sure that the IMA hooks are place
-in those lower vfs interfaces, just like vfs_create() patch does
-and like vfs_tmpfile() patch did before it.
+  	ima_appraise |= (build_ima_appraise | temp_ima_appraise);
+  	if (!ima_appraise)
+-		ima_policy_flag &= ~IMA_APPRAISE;
++		wr_assign(ima_policy_flag, ima_policy_flag & ~IMA_APPRAISE);
+  }
+----------------
 
-Thanks,
-Amir.
+wr_assign() does just that.
+
+However, reading again your previous mails, I realize that I might have 
+misinterpreted what you were suggesting.
+
+If the advice is to have also a default memset_user() which relies on 
+put_user(), but do not activate the feature by default for every 
+architecture, I definitely agree that it would be good to have it.
+I just didn't think about it before.
+
+What I cannot do is to turn it on for all the architectures prior to 
+test it and atm I do not have means to do it.
+
+But I now realize that most likely you were just suggesting to have 
+full, albeit inefficient default support and then let various archs 
+review/enhance it. I can certainly do this.
+
+Regarding testing I have a question: how much can/should I lean on qemu?
+In most cases the MMU might not need to be fully emulated, so I wonder 
+how well qemu-based testing can ensure that real life scenarios will work.
+
+--
+igor
