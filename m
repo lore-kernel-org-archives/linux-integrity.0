@@ -2,223 +2,174 @@ Return-Path: <SRS0=zpiu=QT=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD45CC282C4
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 18:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75AE0C282C4
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 19:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FE84222BB
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 18:23:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PwWWi/6z"
+	by mail.kernel.org (Postfix) with ESMTP id 3E467222C6
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 19:17:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730118AbfBLSXj (ORCPT
+        id S1726748AbfBLTRj (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 12 Feb 2019 13:23:39 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42104 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727548AbfBLSXi (ORCPT
+        Tue, 12 Feb 2019 14:17:39 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33560 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729932AbfBLTRj (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 12 Feb 2019 13:23:38 -0500
-Received: by mail-pg1-f194.google.com with SMTP id d72so1619617pga.9;
-        Tue, 12 Feb 2019 10:23:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=nxsq3mYQfT8TSMKFYDwSPeWmp3gy8uwIjz9pCZKxPZU=;
-        b=PwWWi/6z/KLx8kp9wjrAUlk1y9SQcQBpzqLI155xbQuh2NASaJrqCN5SSi//wUVc1t
-         m3IZF6bQ0tcP181OqJfOC4PP5/jFvvVbmxqDrfbignDy8hOUrbxl+8jnwbZeoolbLdL4
-         XEz0GAUuJKq9evlAyfWx2172mzsxDQi2dKwmA/IQe/S8JkBksQoSmUGVq1jtWhmSgJc0
-         S24uEzPuL1T0dRYazHcnumWpjkpZRALizgsdThj7fKm4E8IDJyI3bRVvVr7yy3kI1ZNG
-         wlVU/cnXIyVdyyBk6OVe0QBKrhyRc6Vl+YvVzbEghLWC6V5qmdIl7zdcaTSyrxQzEDjh
-         Jqzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=nxsq3mYQfT8TSMKFYDwSPeWmp3gy8uwIjz9pCZKxPZU=;
-        b=P/bd0EdRsXTR+lhdf0yWHki3hPcE5/2zPyRhcCN6Y96mXFHp4mzvn0UTW83tb6zvNY
-         cXGqhdZpWIKRhpyOmun7FdvhlUYYddj3ITo5HCBouWTLLbrcDYyGBo314yyTPAeGeDt3
-         M4ky03GP92nDqfh08vjp24dcHOrMPt7GhWxddLwMR8HdxtBY6WztyaBGnl4tAJIYJkIB
-         VcdlZYpf5jKlG5hlUweLPcipyoqfCc/aFcFos200j3XevcFJHBa4CI20XMiOOtDSehdp
-         8fonrBbBWQBMNyqHCVUEpzyU5mPA7vXbGkHq32QeUoVbpMtg7B3J+TuumirunduKA51L
-         CI3Q==
-X-Gm-Message-State: AHQUAubWZdxhnzOy6JT3lnSZifXL/9pKTPcpCUFMywKKLyVOopxl9RDj
-        E21r0SYLXcEZwD+L9mJmAa4=
-X-Google-Smtp-Source: AHgI3IaRR3twVY25CJj/D8rBGyc9tBMWkA30qmXX+UKb5QbpMaxH737L2/uz8wJqnvc1p4BG6pttIw==
-X-Received: by 2002:a63:d052:: with SMTP id s18mr4726523pgi.11.1549995817579;
-        Tue, 12 Feb 2019 10:23:37 -0800 (PST)
-Received: from [10.33.115.182] ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id n72sm22979040pfg.13.2019.02.12.10.23.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 10:23:36 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH v2 05/20] x86/alternative: initializing temporary mm for
- patching
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <CALCETrXE0n4BrkX2ZLDJjdLqD-N_WwSZHt=S2KKBrTV6Zt5Teg@mail.gmail.com>
-Date:   Tue, 12 Feb 2019 10:23:35 -0800
-Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <570C76C6-DDD2-49C4-8DAF-E8CFEAA21081@gmail.com>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-6-rick.p.edgecombe@intel.com>
- <162C6C29-CD81-46FE-9A54-6ED05A93A9CB@gmail.com>
- <00649AE8-69C0-4CD2-A916-B8C8F0F5DAC3@amacapital.net>
- <6FE10C97-25FF-4E99-A96A-465CBACA935B@gmail.com>
- <CALCETrVaBaorbOA8QE=Pk=C+PfXZAz0-aX_3O8Y=nJV4QKELbw@mail.gmail.com>
- <3EA322C6-5645-4900-AEC6-97FC05716F75@gmail.com>
- <CALCETrXE0n4BrkX2ZLDJjdLqD-N_WwSZHt=S2KKBrTV6Zt5Teg@mail.gmail.com>
-To:     Andy Lutomirski <luto@kernel.org>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Tue, 12 Feb 2019 14:17:39 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1CJE7rP133884
+        for <linux-integrity@vger.kernel.org>; Tue, 12 Feb 2019 14:17:38 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qm3u10uvc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 12 Feb 2019 14:17:37 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 12 Feb 2019 19:17:35 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 12 Feb 2019 19:17:32 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1CJHVZi35323966
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 12 Feb 2019 19:17:31 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4969511C04C;
+        Tue, 12 Feb 2019 19:17:31 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5D17F11C04A;
+        Tue, 12 Feb 2019 19:17:30 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.91.85])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 12 Feb 2019 19:17:30 +0000 (GMT)
+Subject: Re: [PATCH] ima-evm-utils: simplify digest alias handling
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Vitaly Chikunov <vt@altlinux.org>
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org
+Date:   Tue, 12 Feb 2019 14:17:19 -0500
+In-Reply-To: <20190212172346.e42pm6xsw5ee3b3q@altlinux.org>
+References: <20190212001400.11107-1-vt@altlinux.org>
+         <1549988620.12743.272.camel@linux.ibm.com>
+         <20190212172346.e42pm6xsw5ee3b3q@altlinux.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19021219-0020-0000-0000-000003160178
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021219-0021-0000-0000-000021672266
+Message-Id: <1549999039.12743.277.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-12_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902120135
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-> On Feb 11, 2019, at 2:47 PM, Andy Lutomirski <luto@kernel.org> wrote:
->=20
-> On Mon, Feb 11, 2019 at 11:18 AM Nadav Amit <nadav.amit@gmail.com> =
-wrote:
->>=20
->> +
->> +       /*
->> +        * If breakpoints are enabled, disable them while the =
-temporary mm is
->> +        * used - they do not belong and might cause wrong signals or =
-crashes.
->> +        */
->=20
-> Maybe clarify this?  Add some mention that the specific problem is
-> that user code could set a watchpoint on an address that is also used
-> in the temporary mm.
->=20
-> Arguably we should not disable *kernel* breakpoints a la perf, but
-> that seems like quite a minor issue, at least as long as
-> use_temporary_mm() doesn't get wider use.  But a comment that this
-> also disables perf breakpoints and that this could be undesirable
-> might be in order as well.
+On Tue, 2019-02-12 at 20:23 +0300, Vitaly Chikunov wrote:
+> Mimi,
+> 
+> On Tue, Feb 12, 2019 at 11:23:40AM -0500, Mimi Zohar wrote:
+> > Definitely a lot better.
+> > 
+> > > diff --git a/src/libimaevm.c b/src/libimaevm.c
+> > > index d9ffa13..ed77211 100644
+> > > --- a/src/libimaevm.c
+> > > +++ b/src/libimaevm.c
+> > > @@ -63,7 +63,7 @@
+> > >  #include "imaevm.h"
+> > >  #include "hash_info.h"
+> > > 
+> > > -const char *const pkey_hash_algo[PKEY_HASH__LAST] = {
+> > > +const char *pkey_hash_algo[PKEY_HASH__LAST] = {
+> > 
+> > Dropping the "const"?
+> 
+> I will undo this change.
+> 
+> > >  	[PKEY_HASH_MD4]		= "md4",
+> > >  	[PKEY_HASH_MD5]		= "md5",
+> > >  	[PKEY_HASH_SHA1]	= "sha1",
+> > > @@ -72,8 +72,13 @@ const char *const pkey_hash_algo[PKEY_HASH__LAST] = {
+> > >  	[PKEY_HASH_SHA384]	= "sha384",
+> > >  	[PKEY_HASH_SHA512]	= "sha512",
+> > >  	[PKEY_HASH_SHA224]	= "sha224",
+> > > -	[PKEY_HASH_STREEBOG_256] = "md_gost12_256,streebog256",
+> > > -	[PKEY_HASH_STREEBOG_512] = "md_gost12_512,streebog512",
+> > > +	[PKEY_HASH_STREEBOG_256] = "md_gost12_256",
+> > > +	[PKEY_HASH_STREEBOG_512] = "md_gost12_512",
+> > > +};
+> > > +
+> > > +const char *pkey_hash_algo_alias[PKEY_HASH__LAST] = {
+> > > +	[PKEY_HASH_STREEBOG_256] = "streebog256",
+> > > +	[PKEY_HASH_STREEBOG_512] = "streebog512",
+> > >  };
+> > > 
+> > 
+> > If the upstream kernel name is defined as "streebog", the alias would
+> > be "gost".
+> 
+> To me it seems that meaning of what here is alias is really not
+> important.  There is two names in OpenSSL md_gost12_X and streebogX,
+> where streebogX is newer and less accessible, and md_gost12_X is
+> more accessible in older version. While in the kernel name is streebogX.
+> 
+> Probably it's better to distinguish as openssl and kernel names, and not
+> the name and alias.
 
-I think that in the future there may also be security benefits for =
-disabling
-breakpoints when you are in a sensitive code-block, for instance when =
-you
-poke text, to prevent the control flow from being hijacked (by =
-exploiting a
-bug in the debug exception handler). Some additional steps need to be =
-taken
-for that to be beneficial so I leave it out of the comment for now.
+The original design matched the kernel haah_info.h.
 
-Anyhow, how about this:
+Mimi
 
--- >8 --
+> 
+> Since libimaevm primarily works with OpenSSL API, I keep backward compatible
+> names md_gost12_X in pkey_hash_algo, so when algo id is resolved to the name
+> it resolved to the name which is present in the older OpenSSLs, thus we don't
+> need to request EVP_get_digestbyname another time if user specified name is
+> not found in OpenSSL.
+> 
+> > > @@ -615,15 +553,14 @@ int get_hash_algo(const char *algo)
+> > >  	/* first iterate over builtin algorithms */
+> > >  	for (i = 0; i < PKEY_HASH__LAST; i++)
+> > >  		if (pkey_hash_algo[i] &&
+> > > -		    !strmatch(algo, pkey_hash_algo[i]))
+> > > +		    !strcmp(algo, pkey_hash_algo[i]))
+> > >  			return i;
+> > > 
+> > >  	/* iterate over algorithms provided by kernel-headers */
+> > > -	for (i = 0; i < HASH_ALGO__LAST; i++) {
+> > > -		if (hash_algo_name[i] &&
+> > > -		    !algocmp(algo, hash_algo_name[i]))
+> > > +	for (i = 0; i < PKEY_HASH__LAST; i++)
+> > > +		if (pkey_hash_algo_alias[i] &&
+> > > +		    !strcmp(algo, pkey_hash_algo_alias[i]))
+> > >  			return i;
+> > > -	}
+> > > 
+> > 
+> > This doesn't look right.  The comments don't reflect the code.
+> > Shouldn't there be 3 loops - pkey_hash_algo, pkey_hash_algo_alias, and
+> > then the kernel header?
+> 
+> My mistake. I forgot about this feature.
+> 
+> Thanks!
+> 
+> > 
+> > Mimi
+> 
 
-From: Nadav Amit <namit@vmware.com>
-Date: Mon, 11 Feb 2019 03:07:08 -0800
-Subject: [PATCH] x86/mm: Save DRs when loading a temporary mm
-
-Prevent user watchpoints from mistakenly firing while the temporary mm
-is being used. As the addresses that of the temporary mm might overlap
-those of the user-process, this is necessary to prevent wrong signals
-or worse things from happening.
-
-Cc: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- arch/x86/include/asm/mmu_context.h | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
-diff --git a/arch/x86/include/asm/mmu_context.h =
-b/arch/x86/include/asm/mmu_context.h
-index d684b954f3c0..0d6c72ece750 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -13,6 +13,7 @@
- #include <asm/tlbflush.h>
- #include <asm/paravirt.h>
- #include <asm/mpx.h>
-+#include <asm/debugreg.h>
-=20
- extern atomic64_t last_mm_ctx_id;
-=20
-@@ -358,6 +359,7 @@ static inline unsigned long =
-__get_current_cr3_fast(void)
-=20
- typedef struct {
- 	struct mm_struct *prev;
-+	unsigned short bp_enabled : 1;
- } temp_mm_state_t;
-=20
- /*
-@@ -380,6 +382,22 @@ static inline temp_mm_state_t =
-use_temporary_mm(struct mm_struct *mm)
- 	lockdep_assert_irqs_disabled();
- 	state.prev =3D this_cpu_read(cpu_tlbstate.loaded_mm);
- 	switch_mm_irqs_off(NULL, mm, current);
-+
-+	/*
-+	 * If breakpoints are enabled, disable them while the temporary =
-mm is
-+	 * used. Userspace might set up watchpoints on addresses that =
-are used
-+	 * in the temporary mm, which would lead to wrong signals being =
-sent or
-+	 * crashes.
-+	 *
-+	 * Note that breakpoints are not disabled selectively, which =
-also causes
-+	 * kernel breakpoints (e.g., perf's) to be disabled. This might =
-be
-+	 * undesirable, but still seems reasonable as the code that runs =
-in the
-+	 * temporary mm should be short.
-+	 */
-+	state.bp_enabled =3D hw_breakpoint_active();
-+	if (state.bp_enabled)
-+		hw_breakpoint_disable();
-+
- 	return state;
- }
-=20
-@@ -387,6 +405,13 @@ static inline void =
-unuse_temporary_mm(temp_mm_state_t prev)
- {
- 	lockdep_assert_irqs_disabled();
- 	switch_mm_irqs_off(NULL, prev.prev, current);
-+
-+	/*
-+	 * Restore the breakpoints if they were disabled before the =
-temporary mm
-+	 * was loaded.
-+	 */
-+	if (prev.bp_enabled)
-+		hw_breakpoint_restore();
- }
-=20
- #endif /* _ASM_X86_MMU_CONTEXT_H */
---=20
-2.17.1=
