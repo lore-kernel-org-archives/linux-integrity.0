@@ -2,114 +2,138 @@ Return-Path: <SRS0=zpiu=QT=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF976C169C4
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 00:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF23C169C4
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 00:09:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F47B217FA
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 00:01:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD5C520844
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 00:09:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CGu974ho"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727447AbfBLABk (ORCPT
+        id S1727722AbfBLAJ1 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Feb 2019 19:01:40 -0500
-Received: from mga11.intel.com ([192.55.52.93]:30170 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727379AbfBLABj (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Feb 2019 19:01:39 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 16:01:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,360,1544515200"; 
-   d="scan'208";a="123722978"
-Received: from orsmsx101.amr.corp.intel.com ([10.22.225.128])
-  by fmsmga008.fm.intel.com with ESMTP; 11 Feb 2019 16:01:38 -0800
-Received: from orsmsx112.amr.corp.intel.com ([169.254.3.70]) by
- ORSMSX101.amr.corp.intel.com ([169.254.8.11]) with mapi id 14.03.0415.000;
- Mon, 11 Feb 2019 16:01:38 -0800
-From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To:     "luto@kernel.org" <luto@kernel.org>, "bp@alien8.de" <bp@alien8.de>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "nadav.amit@gmail.com" <nadav.amit@gmail.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux_dti@icloud.com" <linux_dti@icloud.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>
-Subject: Re: [PATCH v2 13/20] Add set_alias_ function and x86 implementation
-Thread-Topic: [PATCH v2 13/20] Add set_alias_ function and x86 implementation
-Thread-Index: AQHUt2sVkrG1Bgg4x0e07u2CUOZGlKXbkeGAgABAZoCAABFAgA==
-Date:   Tue, 12 Feb 2019 00:01:37 +0000
-Message-ID: <3c34b566afb814ae40665916a0834cdd52d548a2.camel@intel.com>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
-         <20190129003422.9328-14-rick.p.edgecombe@intel.com>
-         <20190211190925.GQ19618@zn.tnic>
-         <CALCETrX2AOTTZOQafZgOFxiQsFgdYHVaLonXTqTa3RUs5MPVUQ@mail.gmail.com>
-In-Reply-To: <CALCETrX2AOTTZOQafZgOFxiQsFgdYHVaLonXTqTa3RUs5MPVUQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.54.75.11]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <787C9EEF34D39049AB332793C711E15A@intel.com>
-Content-Transfer-Encoding: base64
+        Mon, 11 Feb 2019 19:09:27 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:35552 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727447AbfBLAJ1 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 11 Feb 2019 19:09:27 -0500
+Received: by mail-vk1-f193.google.com with SMTP id l136so199474vke.2
+        for <linux-integrity@vger.kernel.org>; Mon, 11 Feb 2019 16:09:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=H/Z6SBwrxte/a4eWZAeqhxzhggVunUiGqztKV9/JXHs=;
+        b=CGu974hoK3qP86sgob0OClO6eAsop4HseTV9JTbKVeiqaBLUM5o0AJ7lJeGzgm6smk
+         tAlVEoo+FwIFniOTpEqDcX1lgNW9qkWl7yjBm56ZbPytAgs1hbBMF8BdYK+TZ70Tpz6Q
+         nj5tq0wHe+RI5HlX2EVJoumKbZw8Ryk1ApACQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=H/Z6SBwrxte/a4eWZAeqhxzhggVunUiGqztKV9/JXHs=;
+        b=jo7Wf3PzCmBGuXr8CAjXwBEhV4RslfYVlnHVUchxFXytrkUWqkPDTGpGJdjJIGpF1C
+         +zwfqUQ7vr5W6QOu1YMoOqak9CnucBgspW2XmV1qQ1jNw5CGnbmCbDp2wwiJoyg+cCWi
+         yI7OGVrW+Hx4TUTeMJItz1hiLJS+lGK8WJ7yHOGC8AJzxh7IvscaKdAa+IxIA1g3JGos
+         bcitsiAKddjJEzcUCmWNRCSxR0WVQOuy9nwMkVdZ5E1YeZeEXfIafiJcOgB9IASz3ycx
+         z+LxZAmiWKk5yM454VKryww6cxED72FXy1UgzLivY7Vw8mq0aUuAwl4dY6uOsabt1AHl
+         aT6g==
+X-Gm-Message-State: AHQUAuYsz60yrt7vyvZql9D0k6A2SWNmB8+0NnnPDngJh0vtlH09z1I4
+        diimX8OIPfbCJvxxrb+cn8aaaC7cco0=
+X-Google-Smtp-Source: AHgI3IZ/bmGaXuphO3Iia/M8L0/e7Ly0UaMilsrI2Hp9XIrN3fpzrc0jnU9vpBrMXDCH+GmBp0k/Bw==
+X-Received: by 2002:a1f:91c4:: with SMTP id t187mr387301vkd.86.1549930165386;
+        Mon, 11 Feb 2019 16:09:25 -0800 (PST)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
+        by smtp.gmail.com with ESMTPSA id k77sm3108148vkd.17.2019.02.11.16.09.24
+        for <linux-integrity@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 16:09:24 -0800 (PST)
+Received: by mail-vs1-f42.google.com with SMTP id k11so531029vsm.0
+        for <linux-integrity@vger.kernel.org>; Mon, 11 Feb 2019 16:09:24 -0800 (PST)
+X-Received: by 2002:a67:c00a:: with SMTP id v10mr427593vsi.66.1549930163604;
+ Mon, 11 Feb 2019 16:09:23 -0800 (PST)
 MIME-Version: 1.0
+References: <cover.1549927666.git.igor.stoppa@huawei.com>
+In-Reply-To: <cover.1549927666.git.igor.stoppa@huawei.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 11 Feb 2019 16:09:10 -0800
+X-Gmail-Original-Message-ID: <CAGXu5j+n3ky2dOe4F+VyneQsM4VJbGPUw+DO55NkxxPhKzKHag@mail.gmail.com>
+Message-ID: <CAGXu5j+n3ky2dOe4F+VyneQsM4VJbGPUw+DO55NkxxPhKzKHag@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 00/12] hardening: statically allocated protected memory
+To:     Igor Stoppa <igor.stoppa@gmail.com>
+Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
+        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-T24gTW9uLCAyMDE5LTAyLTExIGF0IDE0OjU5IC0wODAwLCBBbmR5IEx1dG9taXJza2kgd3JvdGU6
-DQo+IE9uIE1vbiwgRmViIDExLCAyMDE5IGF0IDExOjA5IEFNIEJvcmlzbGF2IFBldGtvdiA8YnBA
-YWxpZW44LmRlPiB3cm90ZToNCj4gPiANCj4gPiBPbiBNb24sIEphbiAyOCwgMjAxOSBhdCAwNDoz
-NDoxNVBNIC0wODAwLCBSaWNrIEVkZ2Vjb21iZSB3cm90ZToNCj4gPiA+IFRoaXMgYWRkcyB0d28g
-bmV3IGZ1bmN0aW9ucyBzZXRfYWxpYXNfZGVmYXVsdF9ub2ZsdXNoIGFuZA0KPiA+IA0KPiA+IHMv
-VGhpcyBhZGRzL0FkZC8NCj4gPiANCj4gPiA+IHNldF9hbGlhc19udl9ub2ZsdXNoIGZvciBzZXR0
-aW5nIHRoZSBhbGlhcyBtYXBwaW5nIGZvciB0aGUgcGFnZSB0byBpdHMNCj4gPiANCj4gPiBQbGVh
-c2UgZW5kIGZ1bmN0aW9uIG5hbWVzIHdpdGggcGFyZW50aGVzZXMsIGJlbG93IHRvby4NCj4gPiAN
-Cj4gPiA+IGRlZmF1bHQgdmFsaWQgcGVybWlzc2lvbnMgYW5kIHRvIGFuIGludmFsaWQgc3RhdGUg
-dGhhdCBjYW5ub3QgYmUgY2FjaGVkIGluDQo+ID4gPiBhIFRMQiwgcmVzcGVjdGl2ZWx5LiBUaGVz
-ZSBmdW5jdGlvbnMgdG8gbm90IGZsdXNoIHRoZSBUTEIuDQo+ID4gDQo+ID4gcy90by9kby8NCj4g
-PiANCj4gPiBBbHNvLCBwbHMgcHV0IHRoYXQgZGVzY3JpcHRpb24gYXMgY29tbWVudHMgb3ZlciB0
-aGUgZnVuY3Rpb25zIGluIHRoZQ0KPiA+IGNvZGUuIE90aGVyd2lzZSB0aGF0ICJudiIgYXMgcGFy
-dCBvZiB0aGUgbmFtZSBkb2Vzbid0IHJlYWxseSBleHBsYWluDQo+ID4gd2hhdCBpdCBkb2VzLg0K
-PiA+IA0KPiA+IEFjdHVhbGx5LCB5b3UgY291bGQganVzdCBhcyB3ZWxsIGNhbGwgdGhlIGZ1bmN0
-aW9uDQo+ID4gDQo+ID4gc2V0X2FsaWFzX2ludmFsaWRfbm9mbHVzaCgpDQo+ID4gDQo+ID4gQWxs
-IHRoZSBvdGhlciB3b3JkcyBhcmUgd3JpdHRlbiBpbiBmdWxsLCBubyBuZWVkIHRvIGhhdmUgIm52
-IiB0aGVyZS4NCj4gDQo+IFdoeSBhcmUgeW91IGNhbGxpbmcgdGhpcyBhbiAiYWxpYXMiPyAgWW91
-J3JlIG1vZGlmeWluZyB0aGUgZGlyZWN0IG1hcC4NCj4gWW91ciBwYXRjaGVzIGFyZSB0aGlua2lu
-ZyBvZiB0aGUgZGlyZWN0IG1hcCBhcyBhbiBhbGlhcyBvZiB0aGUgdm1hcA0KPiBtYXBwaW5nLCBi
-dXQgdGhhdCBkb2VzIHNlZW0gYSBiaXQgYmFja3dhcmRzLiAgSG93IGFib3V0DQo+IHNldF9kaXJl
-Y3RfbWFwX2ludmFsaWRfbm9mbHVzaCgpLCBldGM/DQo+IA0KSSBwaWNrZWQgaXQgdXAgZnJvbSBz
-b21lIG9mIHRoZSBuYW1lcyBpbiBhcmNoL3g4Ni9tbS9wYWdlYXR0ci5jOg0KQ1BBX05PX0NIRUNL
-X0FMSUFTLCBzZXRfbWVtb3J5X25wX25vYWxpYXMoKSwgZXRjLiBJbiB0aGF0IGZpbGUgdGhlIGRp
-cmVjdG1hcA0KYWRkcmVzcyBzZWVtcyB0byBiZSB0aGUgImFsaWFzIi4gRm9yIDMyIGJpdCB3aXRo
-IGhpZ2htZW0gdGhvdWdoLCB0aGlzIHdvdWxkIGFsc28NCnNldCBwZXJtaXNzaW9ucyBmb3IgYSBr
-bWFwIG1hcHBpbmcgYXMgd2VsbCAoaWYgb25lIGV4aXN0ZWQpLCBzaW5jZSB0aGF0IGFkZHJlc3MN
-CndpbGwgYmUgcmV0dXJuZWQgZnJvbSBwYWdlX2FkZHJlc3MoKS4NCg0KWWVhLCBpbiB2bWFsbG9j
-LCB2bV91bm1hcF9hbGlhc2VzIHRhbGtzIGFib3V0IHRoZSB2bWFwIGFkZHJlc3MgImFsaWFzIi4g
-U28gSQ0KZ3Vlc3MgY2FsbGluZyBpdCAiYWxpYXMiIGlzIGFtYmlndW91cy4gQnV0IGRvZXMgc2V0
-X2RpcmVjdF9tYXBfaW52YWxpZF9ub2ZsdXNoDQptYWtlIHNlbnNlIGluIHRoZSBoaWdobWVtIGNh
-c2U/DQoNCkkgY291bGRuJ3QgdGhpbmsgb2YgYW55IG5hbWVzIHRoYXQgSSBsb3ZlZCwgd2hpY2gg
-aXMgd2h5IEkgcmFuIHRoZQ0Kc2V0X2FsaWFzXypfbm9mbHVzaCBuYW1lcyBieSBwZW9wbGUgaW4g
-YW4gZWFybGllciB2ZXJzaW9uLCBhbHRob3VnaCBsb29raW5nIGJhY2sNCm9ubHkgQXJkIGNoaW1l
-ZCBpbiBvbiB0aGF0LiAic2V0X2RpcmVjdF9tYXBfaW52YWxpZF9ub2ZsdXNoIiBpcyBmaW5lIHdp
-dGggbWUgaWYNCm5vYm9keSBvYmplY3RzLg0KDQpUaGFua3MsDQoNClJpY2sNCg==
+On Mon, Feb 11, 2019 at 3:28 PM Igor Stoppa <igor.stoppa@gmail.com> wrote:
+> at last I'm able to resume work on the memory protection patchset I've
+> proposed some time ago. This version should address comments received so
+> far and introduce support for arm64. Details below.
+
+Cool!
+
+> Patch-set implementing write-rare memory protection for statically
+> allocated data.
+
+It seems like this could be expanded in the future to cover dynamic
+memory too (i.e. just a separate base range in the mm).
+
+> Its purpose is to keep write protected the kernel data which is seldom
+> modified, especially if altering it can be exploited during an attack.
+>
+> There is no read overhead, however writing requires special operations that
+> are probably unsuitable for often-changing data.
+> The use is opt-in, by applying the modifier __wr_after_init to a variable
+> declaration.
+>
+> As the name implies, the write protection kicks in only after init() is
+> completed; before that moment, the data is modifiable in the usual way.
+>
+> Current Limitations:
+> * supports only data which is allocated statically, at build time.
+> * supports only x86_64 and arm64;other architectures need to provide own
+>   backend
+
+It looked like only the memset() needed architecture support. Is there
+a reason for not being able to implement memset() in terms of an
+inefficient put_user() loop instead? That would eliminate the need for
+per-arch support, yes?
+
+> - I've added a simple example: the protection of ima_policy_flags
+
+You'd also looked at SELinux too, yes? What other things could be
+targeted for protection? (It seems we can't yet protect page tables
+themselves with this...)
+
+> - the x86_64 user space address range is double the size of the kernel
+>   address space, so it's possible to randomize the beginning of the
+>   mapping of the kernel address space, but on arm64 they have the same
+>   size, so it's not possible to do the same
+
+Only the wr_rare section needs mapping, though, yes?
+
+> - I'm not sure if it's correct, since it doesn't seem to be that common in
+>   kernel sources, but instead of using #defines for overriding default
+>   function calls, I'm using "weak" for the default functions.
+
+The tradition is to use #defines for easier readability, but "weak"
+continues to be a thing. *shrug*
+
+This will be a nice addition to protect more of the kernel's static
+data from write-what-where attacks. :)
+
+-- 
+Kees Cook
