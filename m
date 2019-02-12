@@ -2,89 +2,110 @@ Return-Path: <SRS0=zpiu=QT=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 714E3C282C4
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 22:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E78ADC282C4
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 22:39:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41A80222C7
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 22:11:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EFD6222C9
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 22:39:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fCfFjWCV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727957AbfBLWLw (ORCPT
+        id S1728330AbfBLWjR (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 12 Feb 2019 17:11:52 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39268 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726882AbfBLWLw (ORCPT
+        Tue, 12 Feb 2019 17:39:17 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:46711 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726550AbfBLWjQ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 12 Feb 2019 17:11:52 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1CMAnWs139951
-        for <linux-integrity@vger.kernel.org>; Tue, 12 Feb 2019 17:11:51 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qm4aens3f-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 12 Feb 2019 17:11:51 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 12 Feb 2019 22:11:49 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 12 Feb 2019 22:11:47 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1CMBkBB53608574
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Feb 2019 22:11:46 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3C9BD529CD;
-        Tue, 12 Feb 2019 22:11:46 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.91.85])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 724FD529CE;
-        Tue, 12 Feb 2019 22:11:45 +0000 (GMT)
-Subject: Re: [PATCH v2] ima-evm-utils: rework openssl init
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Vitaly Chikunov <vt@altlinux.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org
-Date:   Tue, 12 Feb 2019 17:11:34 -0500
-In-Reply-To: <20190203174712.892-1-vt@altlinux.org>
-References: <20190203174712.892-1-vt@altlinux.org>
+        Tue, 12 Feb 2019 17:39:16 -0500
+Received: by mail-ua1-f68.google.com with SMTP id j8so109097uae.13
+        for <linux-integrity@vger.kernel.org>; Tue, 12 Feb 2019 14:39:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YFMKNvnJ3kQYFBT3u+6m2xpocwP0rFyQ6m2jTIkI53g=;
+        b=fCfFjWCVZvK//Azw02gHCq2Wf+TZyzQo67PjdK4cZacIFv71S2Z88FtQXX3fKTBpKP
+         09egXjQE+WgB9m24FrKqUeXC9Wmv7R1TozcnA7aWOgsJazvsA8JJftiYgf64Zajp4I0D
+         vPdV4Vxq+YQkzTFZITS1EP8feXnIFOX9/9N+s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YFMKNvnJ3kQYFBT3u+6m2xpocwP0rFyQ6m2jTIkI53g=;
+        b=FqkkMyVpgv2y4se9J6/VuV2a3keLk3fCVXTt03njSwZCiPWw0SJvX1Y5j3fiiJanKs
+         LyQGE8SrHvvk9B9gLDC/zI5hRFYipgMWSbACA3P++KLwoBteX3cZIzBTmxs3iMgDLXku
+         5OCRMZU+KrTQW4DJkUvHmD25Wjh5iRloXeqEfEu3aip71pIiBOcZ8v85nj+z3zPGbHfQ
+         CMiPu2oatRWUEM7+k0RHrS1AsrpA3eOIft2FHp/z4178kl4vOPOBFlQ+Y41JeFJ/SHVS
+         AwCzs2YiuvHWJeuANfSGITpx6AIn7MthDmih3czKUfRbqTcjtPiaDUjhlqtUpLNJHHDh
+         nnzQ==
+X-Gm-Message-State: AHQUAuZu5YCw7WarNEP8yJkvskTCwNgzBpgX43AWGuDiH8bi5kEXxE29
+        TyqmnhCSgtb0N+dvUrqSBDttbrshKpA=
+X-Google-Smtp-Source: AHgI3IYRXFJDzj7LxB//TY7eofBDr8rCkfLItQRIcRWrGwEyv8FQQdXfNA9QLdqSwhbSgQvbOUjsmQ==
+X-Received: by 2002:ab0:5484:: with SMTP id p4mr2539076uaa.102.1550011155208;
+        Tue, 12 Feb 2019 14:39:15 -0800 (PST)
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
+        by smtp.gmail.com with ESMTPSA id x185sm13075359vkd.27.2019.02.12.14.39.14
+        for <linux-integrity@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Feb 2019 14:39:14 -0800 (PST)
+Received: by mail-vs1-f47.google.com with SMTP id e16so223157vsq.6
+        for <linux-integrity@vger.kernel.org>; Tue, 12 Feb 2019 14:39:14 -0800 (PST)
+X-Received: by 2002:a67:eb4a:: with SMTP id x10mr2523974vso.172.1550011153602;
+ Tue, 12 Feb 2019 14:39:13 -0800 (PST)
+MIME-Version: 1.0
+References: <cover.1549927666.git.igor.stoppa@huawei.com> <CAGXu5j+n3ky2dOe4F+VyneQsM4VJbGPUw+DO55NkxxPhKzKHag@mail.gmail.com>
+ <25bf3c63-c54c-f7ea-bec1-996a2c05d997@gmail.com> <CAGXu5jLqmYRUVLb7-jPsN4onO5UNH+D6qOF=9TOiVjJa-=DnZQ@mail.gmail.com>
+ <CAH2bzCRZ5xYOT0R8piqZx4mSGj1_8fNG=Ce4UU8i6F7mYD9m9Q@mail.gmail.com>
+ <CAGXu5jLRJZuWjnwEuK=7AMeCrj-eioVGksPL9dE9pbzHM=+Rmg@mail.gmail.com> <29cd9541-9af2-fc1c-c264-f4cb9c29349a@gmail.com>
+In-Reply-To: <29cd9541-9af2-fc1c-c264-f4cb9c29349a@gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 12 Feb 2019 14:39:02 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jJyWb7aTJpDfBPD3GqMmNaJVT0pajdrPV93xnLoOa=0Vw@mail.gmail.com>
+Message-ID: <CAGXu5jJyWb7aTJpDfBPD3GqMmNaJVT0pajdrPV93xnLoOa=0Vw@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 00/12] hardening: statically allocated protected memory
+To:     Igor Stoppa <igor.stoppa@gmail.com>
+Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
+        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19021222-4275-0000-0000-0000030EBBC5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021222-4276-0000-0000-0000381CD276
-Message-Id: <1550009494.12743.299.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-12_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902120153
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sun, 2019-02-03 at 20:47 +0300, Vitaly Chikunov wrote:
-> Remove deprecated call to OpenSSL_add_all_algorithms().
-> Allow to disable openssl config loading via configure
-> `--disable-openssl-conf' option.
-> Finish engine initialization properly by calling ENGINE_set_default(),
-> as suggested by James Bottomley.
-> 
-> Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+On Mon, Feb 11, 2019 at 11:09 PM Igor Stoppa <igor.stoppa@gmail.com> wrote:
+> wr_assign() does just that.
+>
+> However, reading again your previous mails, I realize that I might have
+> misinterpreted what you were suggesting.
+>
+> If the advice is to have also a default memset_user() which relies on
+> put_user(), but do not activate the feature by default for every
+> architecture, I definitely agree that it would be good to have it.
+> I just didn't think about it before.
 
-Thanks!
+Yeah, I just mean you could have an arch-agnostic memset_user() implementation.
 
-Mimi
+> But I now realize that most likely you were just suggesting to have
+> full, albeit inefficient default support and then let various archs
+> review/enhance it. I can certainly do this.
 
+Right.
+
+> Regarding testing I have a question: how much can/should I lean on qemu?
+> In most cases the MMU might not need to be fully emulated, so I wonder
+> how well qemu-based testing can ensure that real life scenarios will work.
+
+I think qemu lets you know if it works (kvm is using the real MMU),
+and baremetal will give you more stable performance numbers.
+
+-- 
+Kees Cook
