@@ -2,207 +2,185 @@ Return-Path: <SRS0=zpiu=QT=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00051C169C4
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 00:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C4EC169C4
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 00:37:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBDE52084E
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 00:14:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9649B206A3
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 00:37:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qPdl+JTk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727312AbfBLAOM (ORCPT
+        id S1727863AbfBLAhN (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Feb 2019 19:14:12 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:50880 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727226AbfBLAOM (ORCPT
+        Mon, 11 Feb 2019 19:37:13 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39213 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727041AbfBLAhM (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Feb 2019 19:14:12 -0500
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id EAEDA72CC64;
-        Tue, 12 Feb 2019 03:14:09 +0300 (MSK)
-Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id C10BA4A4AE7;
-        Tue, 12 Feb 2019 03:14:09 +0300 (MSK)
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org
-Subject: [PATCH] ima-evm-utils: simplify digest alias handling
-Date:   Tue, 12 Feb 2019 03:14:00 +0300
-Message-Id: <20190212001400.11107-1-vt@altlinux.org>
-X-Mailer: git-send-email 2.11.0
+        Mon, 11 Feb 2019 19:37:12 -0500
+Received: by mail-wm1-f65.google.com with SMTP id f16so1125370wmh.4;
+        Mon, 11 Feb 2019 16:37:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UYvbv4YryySKlDRppCsjYcorfRb6U7/oOzwS5dfq0Qc=;
+        b=qPdl+JTk8Toj2frEOQfqrNevt6tq9hgDSFZL1sviqBoN9pdvYKYetHASLW7ClE4uJt
+         cTOKGCv5RsOvagu2Wci9XS6iKlKsMSErBcyCzP3wDBPbM3U6F8+ftcQZawcHp504sebV
+         LPjj1jNHBrDcPixk7ygX6gkaZi7tgt/r2sK4KpLF9ByJFRKDNsz1xfNdHJeuLdZ9MaFd
+         qulltJV7M7yZCQIUlTvHiSNeV6w1o/OXpaYnFshV3GFMKUxjLSHZnSgv+nTKqwW8uRkL
+         dxeJSKAZ1EMKQhl+pt5BZhEsvwx/j8hXVvjuDqRBPqLN/n0LVZjOuajB9BVXqf4nHxEJ
+         i9MA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UYvbv4YryySKlDRppCsjYcorfRb6U7/oOzwS5dfq0Qc=;
+        b=JZNuuf6tsPSQtf3m5TweCTWiFSrv21S7KTHfvxmz8UFNMX6O98sBU6iePigoBd26MN
+         cJkBqeU1SoOMPMlxWbjNBBlILCqjy+8Y3ST2BDPdenF8BY0nAx3lddSj31Ch6SOT4v+O
+         lVm+dI9QEpOyq1d+UGWMaLBIJBwArqtjneifQ80vPagZeST24n2bSpFunm6J8feDbRkL
+         1sGrMnK7yJJ3AVTdVOyXc7o2O/vnU5S7rBVvGi4Rz2HIahTqYsZBevu6M5mqVm40pNst
+         rFdH2OM8Mg3BRpbffaFS/4Gb52UNINTjD/c0K7PSHBxs9WT92ZO4UTrxPNl4UCfjwMyt
+         RGEw==
+X-Gm-Message-State: AHQUAubNw3IT7wExUQtuTdQdIiHMarr+igUmZHzpIvzplD1y0v0wAV1t
+        Kf7eLQhx7opcYZDG5WyOt/RpMv7Y+7I=
+X-Google-Smtp-Source: AHgI3IagzJXiPV1FFoqDpoUyz3igG3tVJCjdwtXPdbLLTECiHy4brKnj03aSzFJGxzfyRrGapM3OUw==
+X-Received: by 2002:a1c:38c4:: with SMTP id f187mr629238wma.90.1549931829496;
+        Mon, 11 Feb 2019 16:37:09 -0800 (PST)
+Received: from [172.20.11.181] (bba134276.alshamil.net.ae. [217.165.113.164])
+        by smtp.gmail.com with ESMTPSA id v6sm25543197wrd.88.2019.02.11.16.37.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 16:37:08 -0800 (PST)
+Subject: Re: [RFC PATCH v4 00/12] hardening: statically allocated protected
+ memory
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
+        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <cover.1549927666.git.igor.stoppa@huawei.com>
+ <CAGXu5j+n3ky2dOe4F+VyneQsM4VJbGPUw+DO55NkxxPhKzKHag@mail.gmail.com>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <25bf3c63-c54c-f7ea-bec1-996a2c05d997@gmail.com>
+Date:   Tue, 12 Feb 2019 02:37:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGXu5j+n3ky2dOe4F+VyneQsM4VJbGPUw+DO55NkxxPhKzKHag@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-- Make digest name search work just with simple strcmp() and two arrays.
-- Make newer name "streebogX" alias of older and backward compatible name
-  "md_gost12_X".
-- Remove get_digestbyname() which was doing two hash name resolving
-  attempts, reverting to use plain EVP_get_digestbyname(). This will
-  force the user to specify the proper hash name depending on what
-  OpenSSL provides, allowing to specify older hash name in older
-  OpenSSL. (This may be improved later, for example, by resolving
-  hash name to a numerical id and the id to a proper hash name. Or
-  we could resolve a hash name to the OpenSSL hash NID and resolve
-  the NID to a internal hash name. In this case we don't need to keep
-  hash alias names at all.)
----
- src/libimaevm.c | 89 +++++++++------------------------------------------------
- 1 file changed, 13 insertions(+), 76 deletions(-)
 
-diff --git a/src/libimaevm.c b/src/libimaevm.c
-index d9ffa13..ed77211 100644
---- a/src/libimaevm.c
-+++ b/src/libimaevm.c
-@@ -63,7 +63,7 @@
- #include "imaevm.h"
- #include "hash_info.h"
- 
--const char *const pkey_hash_algo[PKEY_HASH__LAST] = {
-+const char *pkey_hash_algo[PKEY_HASH__LAST] = {
- 	[PKEY_HASH_MD4]		= "md4",
- 	[PKEY_HASH_MD5]		= "md5",
- 	[PKEY_HASH_SHA1]	= "sha1",
-@@ -72,8 +72,13 @@ const char *const pkey_hash_algo[PKEY_HASH__LAST] = {
- 	[PKEY_HASH_SHA384]	= "sha384",
- 	[PKEY_HASH_SHA512]	= "sha512",
- 	[PKEY_HASH_SHA224]	= "sha224",
--	[PKEY_HASH_STREEBOG_256] = "md_gost12_256,streebog256",
--	[PKEY_HASH_STREEBOG_512] = "md_gost12_512,streebog512",
-+	[PKEY_HASH_STREEBOG_256] = "md_gost12_256",
-+	[PKEY_HASH_STREEBOG_512] = "md_gost12_512",
-+};
-+
-+const char *pkey_hash_algo_alias[PKEY_HASH__LAST] = {
-+	[PKEY_HASH_STREEBOG_256] = "streebog256",
-+	[PKEY_HASH_STREEBOG_512] = "streebog512",
- };
- 
- /*
-@@ -161,8 +166,6 @@ const char *get_hash_algo_by_id(int algo)
- {
- 	if (algo < PKEY_HASH__LAST)
- 	    return pkey_hash_algo[algo];
--	if (algo < HASH_ALGO__LAST)
--	    return hash_algo_name[algo];
- 
- 	log_err("digest %d not found\n", algo);
- 	return "unknown";
-@@ -286,35 +289,6 @@ static int add_dev_hash(struct stat *st, EVP_MD_CTX *ctx)
- 	return !EVP_DigestUpdate(ctx, &dev, sizeof(dev));
- }
- 
--/* Call EVP_get_digestbyname with provided name and with alias,
-- * which is first name in the comma separated list of names
-- * in pkey_hash_algo.
-- */
--static const EVP_MD *get_digestbyname(const char *name)
--{
--	const EVP_MD *md;
--
--	md = EVP_get_digestbyname(params.hash_algo);
--	if (!md) {
--		char alias[MAX_DIGEST_NAME];
--		int len;
--		int algo_id;
--		const char *algo_alias;
--
--		/* try to get algo by its alias */
--		algo_id = get_hash_algo(params.hash_algo);
--		algo_alias = get_hash_algo_by_id(algo_id);
--		len = strchrnul(algo_alias, ',') - algo_alias;
--		if (len < sizeof(alias)) {
--			memcpy(alias, algo_alias, len);
--			alias[len] = '\0';
--			if (strcmp(params.hash_algo, alias))
--				md = EVP_get_digestbyname(alias);
--		}
--	}
--	return md;
--}
--
- int ima_calc_hash(const char *file, uint8_t *hash)
- {
- 	const EVP_MD *md;
-@@ -336,7 +310,7 @@ int ima_calc_hash(const char *file, uint8_t *hash)
- 		return err;
- 	}
- 
--	md = get_digestbyname(params.hash_algo);
-+	md = EVP_get_digestbyname(params.hash_algo);
- 	if (!md) {
- 		log_err("EVP_get_digestbyname(%s) failed\n", params.hash_algo);
- 		return 1;
-@@ -572,42 +546,6 @@ int verify_hash_v2(const char *file, const unsigned char *hash, int size,
- 	return 0;
- }
- 
--/* compare algo names case insensitively and ignoring separators */
--static int algocmp(const char *a, const char *b)
--{
--	while (*a && *b) {
--		int cha, chb;
--
--		cha = tolower((unsigned char)*a++);
--		if (!isalnum(cha))
--			continue;
--		chb = tolower((unsigned char)*b++);
--		if (!isalnum(chb)) {
--			a--;
--			continue;
--		}
--		if (cha != chb)
--			return -1;
--	}
--	return *a || *b;
--}
--
--static int strmatch(const char *needle, const char *haystack)
--{
--	int len = strlen(needle);
--	const char *p = haystack;
--	const char *t;
--
--	for (t = strchrnul(p, ','); *p; p = t, t = strchrnul(p, ',')) {
--		if (t - p == len &&
--		    !strncmp(needle, p, len))
--			return 0;
--		if (!*t++)
--			break;
--	}
--	return 1;
--}
--
- int get_hash_algo(const char *algo)
- {
- 	int i;
-@@ -615,15 +553,14 @@ int get_hash_algo(const char *algo)
- 	/* first iterate over builtin algorithms */
- 	for (i = 0; i < PKEY_HASH__LAST; i++)
- 		if (pkey_hash_algo[i] &&
--		    !strmatch(algo, pkey_hash_algo[i]))
-+		    !strcmp(algo, pkey_hash_algo[i]))
- 			return i;
- 
- 	/* iterate over algorithms provided by kernel-headers */
--	for (i = 0; i < HASH_ALGO__LAST; i++) {
--		if (hash_algo_name[i] &&
--		    !algocmp(algo, hash_algo_name[i]))
-+	for (i = 0; i < PKEY_HASH__LAST; i++)
-+		if (pkey_hash_algo_alias[i] &&
-+		    !strcmp(algo, pkey_hash_algo_alias[i]))
- 			return i;
--	}
- 
- 	log_info("digest %s not found, fall back to sha1\n", algo);
- 	return PKEY_HASH_SHA1;
--- 
-2.11.0
 
+On 12/02/2019 02:09, Kees Cook wrote:
+> On Mon, Feb 11, 2019 at 3:28 PM Igor Stoppa <igor.stoppa@gmail.com> wrote:
+
+[...]
+
+>> Patch-set implementing write-rare memory protection for statically
+>> allocated data.
+> 
+> It seems like this could be expanded in the future to cover dynamic
+> memory too (i.e. just a separate base range in the mm).
+
+Indeed. And part of the code refactoring is also geared in that 
+direction. I am working on that part, but it was agreed that I would 
+first provide this subset of features covering statically allocated 
+memory. So I'm sticking to the plan. But this is roughly 1/3 of the 
+basic infra I have in mind.
+
+>> Its purpose is to keep write protected the kernel data which is seldom
+>> modified, especially if altering it can be exploited during an attack.
+>>
+>> There is no read overhead, however writing requires special operations that
+>> are probably unsuitable for often-changing data.
+>> The use is opt-in, by applying the modifier __wr_after_init to a variable
+>> declaration.
+>>
+>> As the name implies, the write protection kicks in only after init() is
+>> completed; before that moment, the data is modifiable in the usual way.
+>>
+>> Current Limitations:
+>> * supports only data which is allocated statically, at build time.
+>> * supports only x86_64 and arm64;other architectures need to provide own
+>>    backend
+> 
+> It looked like only the memset() needed architecture support. Is there
+> a reason for not being able to implement memset() in terms of an
+> inefficient put_user() loop instead? That would eliminate the need for
+> per-arch support, yes?
+
+So far, yes, however from previous discussion about power arch, I 
+understood this implementation would not be so easy to adapt.
+Lacking other examples where the extra mapping could be used, I did not 
+want to add code without a use case.
+
+Probably both arm and x86 32 bit could do, but I would like to first get 
+to the bitter end with memory protection (the other 2 thirds).
+
+Mostly, I hated having just one arch and I also really wanted to have arm64.
+
+But eventually, yes, a generic put_user() loop could do, provided that 
+there are other arch where the extra mapping to user space would be a 
+good way to limit write access. This last part is what I'm not sure of.
+
+>> - I've added a simple example: the protection of ima_policy_flags
+> 
+> You'd also looked at SELinux too, yes? What other things could be
+> targeted for protection? (It seems we can't yet protect page tables
+> themselves with this...)
+
+Yes, I have. See the "1/3" explanation above. I'm also trying to get 
+away with as small example as possible, to get the basic infra merged.
+SELinux is not going to be a small patch set. I'd rather move to it once 
+at least some of the framework is merged. It might be a good use case 
+for dynamic allocation, if I do not find something smaller.
+But for static write rare, going after IMA was easier, and it is still a 
+good target for protection, imho, as flipping this variable should be 
+sufficient for turning IMA off.
+
+For the page tables, I have in mind a little bit different approach, 
+that I hope to explain better once I get to do the dynamic allocation.
+
+>> - the x86_64 user space address range is double the size of the kernel
+>>    address space, so it's possible to randomize the beginning of the
+>>    mapping of the kernel address space, but on arm64 they have the same
+>>    size, so it's not possible to do the same
+> 
+> Only the wr_rare section needs mapping, though, yes?
+
+Yup, however, once more, I'm not so keen to do what seems as premature 
+optimization, before I have addressed the framework in its entirety, as 
+the dynamic allocation will need similar treatment.
+
+>> - I'm not sure if it's correct, since it doesn't seem to be that common in
+>>    kernel sources, but instead of using #defines for overriding default
+>>    function calls, I'm using "weak" for the default functions.
+> 
+> The tradition is to use #defines for easier readability, but "weak"
+> continues to be a thing. *shrug*
+
+Yes, I wasn't so sure about it, but I kinda liked the fact that, by 
+using "weak", the arch header becomes optional, unless one has to 
+redefine the struct wr_state.
+
+> This will be a nice addition to protect more of the kernel's static
+> data from write-what-where attacks. :)
+
+I hope so :-)
+
+--
+thanks, igor
