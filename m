@@ -2,104 +2,77 @@ Return-Path: <SRS0=zpiu=QT=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 677A3C282C4
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 22:51:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AFF9C282C4
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 23:07:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3740B222C7
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 22:51:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6FC6222C9
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 23:07:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730096AbfBLWv5 (ORCPT
+        id S1731125AbfBLXHD (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 12 Feb 2019 17:51:57 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60608 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730088AbfBLWv5 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 12 Feb 2019 17:51:57 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1CMmg73004034
-        for <linux-integrity@vger.kernel.org>; Tue, 12 Feb 2019 17:51:56 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qm3u18837-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 12 Feb 2019 17:51:55 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 12 Feb 2019 22:51:53 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 12 Feb 2019 22:51:49 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1CMpnUK56229978
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Feb 2019 22:51:49 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E6030A405B;
-        Tue, 12 Feb 2019 22:51:48 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 09A87A4054;
-        Tue, 12 Feb 2019 22:51:48 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.91.85])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 12 Feb 2019 22:51:47 +0000 (GMT)
-Subject: Re: [RFC PATCH 0/5] Fix overlayfs on EVM
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Amir Goldstein <amir73il@gmail.com>, Fabian Vogt <fvogt@suse.de>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Ignaz Forster <iforster@suse.de>
-Date:   Tue, 12 Feb 2019 17:51:37 -0500
-In-Reply-To: <CAOQ4uxgSZv7t5HznAhsWrzv3e3VwQ7sbZrjgjfRsviq-wsr7EA@mail.gmail.com>
-References: <20190211165323.9369-1-iforster@suse.com>
-         <CAOQ4uxhyk7BEmQYf8D6j8FvYJGaxPoa2oJePeF42jbdp__=PSA@mail.gmail.com>
-         <3938260.lArqBy00Sx@linux-e202.suse.de>
-         <CAOQ4uxgSZv7t5HznAhsWrzv3e3VwQ7sbZrjgjfRsviq-wsr7EA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19021222-4275-0000-0000-0000030EBE3C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021222-4276-0000-0000-0000381CD4F3
-Message-Id: <1550011897.12743.310.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-12_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902120156
+        Tue, 12 Feb 2019 18:07:03 -0500
+Received: from mga04.intel.com ([192.55.52.120]:56834 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729264AbfBLXHD (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 12 Feb 2019 18:07:03 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 15:07:03 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,362,1544515200"; 
+   d="scan'208";a="124012378"
+Received: from briva-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.236])
+  by fmsmga008.fm.intel.com with ESMTP; 12 Feb 2019 15:06:56 -0800
+Date:   Wed, 13 Feb 2019 01:06:55 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Tadeusz Struk <tadeusz.struk@intel.com>
+Cc:     linux-kselftest@vger.kernel.org, shuah@kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, PeterHuewe@gmx.de,
+        jgg@ziepe.ca
+Subject: Re: [PATCH 2/2] selftests: tpm2: Extend tests to cover partial reads
+Message-ID: <20190212230655.GB3977@linux.intel.com>
+References: <154939851385.18477.481518864800562919.stgit@tstruk-mobl1.jf.intel.com>
+ <154939851969.18477.13778157467131576825.stgit@tstruk-mobl1.jf.intel.com>
+ <20190211164803.GG8431@linux.intel.com>
+ <9b879fd2-5c0a-aecc-b6cb-02e5255c22f6@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9b879fd2-5c0a-aecc-b6cb-02e5255c22f6@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-
-> > > If my assumptions so far are correct, then the effort for making
-> > > IMA/EVM work with overlayfs should focus around finding the
-> > > places where overlayfs uses lower level vfs interface (often
-> > > vfs_xxx helpers) and make sure that the IMA hooks are place
-> > > in those lower vfs interfaces, just like vfs_create() patch does
-> > > and like vfs_tmpfile() patch did before it.
-> >
-> > So basically turning on NOIMA for overlayfs while ensuring that integrity
-> > checks and operations still perform as expected?
-> >
+On Mon, Feb 11, 2019 at 09:55:36AM -0800, Tadeusz Struk wrote:
+> On 2/11/19 8:48 AM, Jarkko Sakkinen wrote:
+> > You are missing a cover letter from this patch set. Please have it in
+> > v2. Also use tag "selftests/tpm2" instead of having two tags in the
+> > short summaries. Now they look a bit weird.
 > 
-> Yes.
-> As far as IMA is concerned, Overlayfs is like a filesystem user from kernel.
-> Very similar to knfsd in that respect.
+> Since when is the cover letter mandatory?
+> I understand that is helps for a complicated patch set
+> to explain the problem and solution in the cover letter,
+> but for this simple test case addition what's the point?
+> And there is nothing forcing a cover letter in
+> https://www.kernel.org/doc/html/v4.20/process/submitting-patches.html
 
-Fabian, if you're thinking of disabling IMA-appraisal on overlay filesystems, 
-have you tried defining an appraise policy rule based on the overlayfs
-magic number (eg. dont_appraise fsmagic=0x794c7630)?
+OK, cool.
 
-Mimi
+> Also double tags seams to be quite common for selftest.
+> See git log tools/testing/selftests/
 
+Prefer slash for TPM specific commits.
+
+I can merge this after those extra logs are removed.
+
+/Jarkko
