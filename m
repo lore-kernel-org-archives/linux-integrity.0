@@ -2,364 +2,222 @@ Return-Path: <SRS0=kHfr=QU=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB3BC00319
-	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 22:16:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5691AC43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 22:42:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43024222A4
-	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 22:16:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18490222CC
+	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 22:42:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IN8Se1M8"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HV9aVsJP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392345AbfBMWQm (ORCPT
+        id S1731377AbfBMWl7 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 13 Feb 2019 17:16:42 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40418 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392282AbfBMWQl (ORCPT
+        Wed, 13 Feb 2019 17:41:59 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43172 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730150AbfBMWl7 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 13 Feb 2019 17:16:41 -0500
-Received: by mail-lj1-f196.google.com with SMTP id z25-v6so3423799ljk.7
-        for <linux-integrity@vger.kernel.org>; Wed, 13 Feb 2019 14:16:40 -0800 (PST)
+        Wed, 13 Feb 2019 17:41:59 -0500
+Received: by mail-wr1-f67.google.com with SMTP id r2so4351338wrv.10;
+        Wed, 13 Feb 2019 14:41:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=hKTG+onhBfwliA1zeOhWdkYq2LfHziM6Kmoz6SxxIZI=;
-        b=IN8Se1M8VLb+jbfpdYZe0pzm4v36DIFczW7RtMc/WoWo4K8i5jctgHMRFDI8e02vlq
-         2eGp1Dx6FxN0ZovSz/kTvE7PszX9leeFDjpiqsfHhzImabs4eyBWwkjpWP5xtAn0ZI9W
-         XjHW+MwpGZPliUbAEV9cieNoMqfzlaOE6t2ZR6LXQp6Szj3qwNBo0zC8G+mZ8O9FvJ0r
-         +JHaRo1Xs2FhrptD810vL4yMRC7LJKpKRanhMHSG1lOIn8nT62+RXxXpWZTyL0oPF4lH
-         gGtrjncWZ9xsY2q1KXDMP9+ORsfk2zEdxNWll+1GdCL+RZt+LdGboWNYTtweMXjBWcCi
-         fHwg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:reply-to:mime-version
+         :content-transfer-encoding;
+        bh=v//UVpOdI2pMBj7QngoAd2+0IKN5JRjyVZ7fMRhNP+M=;
+        b=HV9aVsJPiTJ8ZtGFtYNGVlu+kroKUKT0z0DZv7bbng1WJtW39lNBcvRrJ4L2yi8thp
+         8GgJBfqo5LY41MIA4JzsvzB9JICICqzCxkxwMgRnIohIkBLovLdHs8zA2bXaV0ivk8dE
+         T5/W2cyc4qGmNas/ftPIQ1eIB2CJHuajsm3wvGcs9ZNK4DOzLweatVfsI30+HGbJYInb
+         JgoK4tB/kYtLHG+NI2Vp5v5mXStjmL1hP1Eg+MF/OKVcGOVRy9Cru/ptSYzI3HKWAFAR
+         Z7biHK7zLf7raY13IZ4KLoAdgkY3w1C8KDgVpPi8eSWOoZe83PcX7qUn8cQFVzefOy9/
+         29cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=hKTG+onhBfwliA1zeOhWdkYq2LfHziM6Kmoz6SxxIZI=;
-        b=bRMEYVLS8FkvNLzUsZKhNUxlSlS+pr719e5wnqSiAvjxgTQV5bwN4YJ+Lg8kHXShWr
-         sNoePuXQe/VD1HfElRQywK/cPALFVXRrx8i9QhUr2h6Y3fXuB99I/Su2s5iKrurvL7BH
-         FrE7HBswN1Vb88fJg5HJDUhh0Y/allNpSY1YcLtPUaVfne5MbqIpn/UWcABYb4vtiWFq
-         zV7jNSzRW/jQZLMUy/jR5qsovmFgD6xUbFasznN7vAUt6JYF0qbX3lIWnbjt7mfa9vkV
-         EjLwlRB5nchFjKK/xbwftVatoXReK7hx9/IERUihGUX/AyxZdic7TdnSdaIO4IVJNREg
-         hxmQ==
-X-Gm-Message-State: AHQUAuYm3IsQe+4BtE8w3umEk88yRCF1xL6uf2vAyEGggi+bAEzpBVbJ
-        jhZy4C5MR88wexM9a4S5qZzeKg==
-X-Google-Smtp-Source: AHgI3IYyhAThOhBPs3XUfRamYzG2Ohpzh57N5h0u/VRNe0kPef+GETh9d4RdSUYJfnqRpxaLS7zfHw==
-X-Received: by 2002:a2e:9649:: with SMTP id z9-v6mr234849ljh.11.1550096199223;
-        Wed, 13 Feb 2019 14:16:39 -0800 (PST)
-Received: from localhost (c-573670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.87])
-        by smtp.gmail.com with ESMTPSA id e9-v6sm88080ljk.92.2019.02.13.14.16.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Feb 2019 14:16:38 -0800 (PST)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, ard.biesheuvel@linaro.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH v3 2/2] efi: fix build error redeclaration of enumerator
-Date:   Wed, 13 Feb 2019 23:16:25 +0100
-Message-Id: <20190213221625.7551-2-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190213221625.7551-1-anders.roxell@linaro.org>
-References: <20190213221625.7551-1-anders.roxell@linaro.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :mime-version:content-transfer-encoding;
+        bh=v//UVpOdI2pMBj7QngoAd2+0IKN5JRjyVZ7fMRhNP+M=;
+        b=ZJp9E4Hp2KGZ6SRJ3VK2+p6nZPd+BJ3/mNhLIadPHYqAjJGj7WCoLjYik3RdZDVni7
+         zS5ZwyxTvSSH2Y0xDP1uCCBGNwGOEMKHuoMzk3himAGzyRTX9vKjCHHUUpvxs7jxbxqv
+         iDoKbiSTuYr1o++Wb6kMw1DAUKDlOcTp4qDPJN2o3X7njxzTDKCKduQZ28MpGdXY/89/
+         SpvgCye+dVxIUBV/oy8IhGNxRISHYrzPB1OiJdgbyovRBcK+UT2jE+zTFU6CqcZWK6W9
+         XfA4j78x0gY9FSYhBAY4JbAKwjhXqK1z555GaQVGDehoiXvg9dpAMAV3Pu2fkL9wEkdb
+         2KpQ==
+X-Gm-Message-State: AHQUAuakFQPApD2hCABTsRKHgywmuQ6eGOtfXGuDt0crofMPrKoFjnu4
+        McQvdMohjAP5doHiHh07yEw=
+X-Google-Smtp-Source: AHgI3IZUuVHIWSI5hYTH0/oiUtwLakqcG7yQVPGl6sKahQzdaJJLWVEUPmv7QWzr17ryUO0e9iB5YQ==
+X-Received: by 2002:adf:b60e:: with SMTP id f14mr296526wre.134.1550097716715;
+        Wed, 13 Feb 2019 14:41:56 -0800 (PST)
+Received: from localhost.localdomain ([91.75.74.250])
+        by smtp.gmail.com with ESMTPSA id f196sm780810wme.36.2019.02.13.14.41.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 14:41:55 -0800 (PST)
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
+Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH v5 00/12] hardening: statically allocated protected memory
+Date:   Thu, 14 Feb 2019 00:41:29 +0200
+Message-Id: <cover.1550097697.git.igor.stoppa@huawei.com>
+X-Mailer: git-send-email 2.19.1
+Reply-To: Igor Stoppa <igor.stoppa@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Commit a893ea15d764 ("tpm: move tpm_chip definition to
-include/linux/tpm.h") introduced a build error when both ima and efi is
-enabled. What happens is that both headers (ima.h and efi.h) defines the
-same 'NONE' constant, and it broke when they started getting included
-from the same file.
+To: Andy Lutomirski <luto@amacapital.net>,
+To: Matthew Wilcox <willy@infradead.org>,
+To: Nadav Amit <nadav.amit@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+To: Dave Hansen <dave.hansen@linux.intel.com>,
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+CC: Kees Cook <keescook@chromium.org>
+CC: Ahmed Soliman <ahmedsoliman@mena.vt.edu>
+CC: linux-integrity <linux-integrity@vger.kernel.org>
+CC: Kernel Hardening <kernel-hardening@lists.openwall.com>
+CC: Linux-MM <linux-mm@kvack.org>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-In file included from ../security/integrity/ima/ima_fs.c:30:
-../security/integrity/ima/ima.h:176:7: error: redeclaration of enumerator "NONE"
-  hook(NONE)   \
-       ^~~~
-../security/integrity/ima/ima.h:188:34: note: in definition of macro "__ima_hook_enumify"
- #define __ima_hook_enumify(ENUM) ENUM,
-                                  ^~~~
-../security/integrity/ima/ima.h:191:2: note: in expansion of macro "__ima_hooks"
-  __ima_hooks(__ima_hook_enumify)
-  ^~~~~~~~~~~
-In file included from ../arch/arm64/include/asm/acpi.h:15,
-                 from ../include/acpi/acpi_io.h:7,
-                 from ../include/linux/acpi.h:47,
-                 from ../include/linux/tpm.h:26,
-                 from ../security/integrity/ima/ima.h:25,
-                 from ../security/integrity/ima/ima_fs.c:30:
-../include/linux/efi.h:1723:2: note: previous definition of "NONE" was here
-  NONE,
-  ^~~~
-make[4]: *** [../scripts/Makefile.build:277: security/integrity/ima/ima_fs.o] Error 1
+Hello,
+new version of the patchset, with default memset_user() function.
 
-Rework to prefix the efi enum with 'EFI_*'.
+Patch-set implementing write-rare memory protection for statically
+allocated data.
+Its purpose is to keep write protected the kernel data which is seldom
+modified, especially if altering it can be exploited during an attack.
 
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
+There is no read overhead, however writing requires special operations that
+are probably unsuitable for often-changing data.
+The use is opt-in, by applying the modifier __wr_after_init to a variable
+declaration.
 
-Changes against v2:
- - renamed a missed 'NONE' to 'EFI_NONE'.
+As the name implies, the write protection kicks in only after init() is
+completed; before that moment, the data is modifiable in the usual way.
 
- arch/x86/platform/efi/quirks.c          |  4 +--
- drivers/firmware/efi/runtime-wrappers.c | 48 ++++++++++++-------------
- include/linux/efi.h                     | 26 +++++++-------
- 3 files changed, 39 insertions(+), 39 deletions(-)
+Current Limitations:
+* supports only data which is allocated statically, at build time.
+* verified (and enabled) only x86_64 and arm64; other architectures need to
+  be tested, possibly providing own backend.
 
-diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
-index 9ce85e605052..458a0e2bcc57 100644
---- a/arch/x86/platform/efi/quirks.c
-+++ b/arch/x86/platform/efi/quirks.c
-@@ -717,7 +717,7 @@ void efi_recover_from_page_fault(unsigned long phys_addr)
- 	 * "efi_mm" cannot be used to check if the page fault had occurred
- 	 * in the firmware context because efi=old_map doesn't use efi_pgd.
- 	 */
--	if (efi_rts_work.efi_rts_id == NONE)
-+	if (efi_rts_work.efi_rts_id == EFI_NONE)
- 		return;
- 
- 	/*
-@@ -742,7 +742,7 @@ void efi_recover_from_page_fault(unsigned long phys_addr)
- 	 * because this case occurs *very* rarely and hence could be improved
- 	 * on a need by basis.
- 	 */
--	if (efi_rts_work.efi_rts_id == RESET_SYSTEM) {
-+	if (efi_rts_work.efi_rts_id == EFI_RESET_SYSTEM) {
- 		pr_info("efi_reset_system() buggy! Reboot through BIOS\n");
- 		machine_real_restart(MRR_BIOS);
- 		return;
-diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
-index c70df5ae7c4a..28138534643e 100644
---- a/drivers/firmware/efi/runtime-wrappers.c
-+++ b/drivers/firmware/efi/runtime-wrappers.c
-@@ -85,7 +85,7 @@ struct efi_runtime_work efi_rts_work;
- 		pr_err("Failed to queue work to efi_rts_wq.\n");	\
- 									\
- exit:									\
--	efi_rts_work.efi_rts_id = NONE;					\
-+	efi_rts_work.efi_rts_id = EFI_NONE;				\
- 	efi_rts_work.status;						\
- })
- 
-@@ -181,50 +181,50 @@ static void efi_call_rts(struct work_struct *work)
- 	arg5 = efi_rts_work.arg5;
- 
- 	switch (efi_rts_work.efi_rts_id) {
--	case GET_TIME:
-+	case EFI_GET_TIME:
- 		status = efi_call_virt(get_time, (efi_time_t *)arg1,
- 				       (efi_time_cap_t *)arg2);
- 		break;
--	case SET_TIME:
-+	case EFI_SET_TIME:
- 		status = efi_call_virt(set_time, (efi_time_t *)arg1);
- 		break;
--	case GET_WAKEUP_TIME:
-+	case EFI_GET_WAKEUP_TIME:
- 		status = efi_call_virt(get_wakeup_time, (efi_bool_t *)arg1,
- 				       (efi_bool_t *)arg2, (efi_time_t *)arg3);
- 		break;
--	case SET_WAKEUP_TIME:
-+	case EFI_SET_WAKEUP_TIME:
- 		status = efi_call_virt(set_wakeup_time, *(efi_bool_t *)arg1,
- 				       (efi_time_t *)arg2);
- 		break;
--	case GET_VARIABLE:
-+	case EFI_GET_VARIABLE:
- 		status = efi_call_virt(get_variable, (efi_char16_t *)arg1,
- 				       (efi_guid_t *)arg2, (u32 *)arg3,
- 				       (unsigned long *)arg4, (void *)arg5);
- 		break;
--	case GET_NEXT_VARIABLE:
-+	case EFI_GET_NEXT_VARIABLE:
- 		status = efi_call_virt(get_next_variable, (unsigned long *)arg1,
- 				       (efi_char16_t *)arg2,
- 				       (efi_guid_t *)arg3);
- 		break;
--	case SET_VARIABLE:
-+	case EFI_SET_VARIABLE:
- 		status = efi_call_virt(set_variable, (efi_char16_t *)arg1,
- 				       (efi_guid_t *)arg2, *(u32 *)arg3,
- 				       *(unsigned long *)arg4, (void *)arg5);
- 		break;
--	case QUERY_VARIABLE_INFO:
-+	case EFI_QUERY_VARIABLE_INFO:
- 		status = efi_call_virt(query_variable_info, *(u32 *)arg1,
- 				       (u64 *)arg2, (u64 *)arg3, (u64 *)arg4);
- 		break;
--	case GET_NEXT_HIGH_MONO_COUNT:
-+	case EFI_GET_NEXT_HIGH_MONO_COUNT:
- 		status = efi_call_virt(get_next_high_mono_count, (u32 *)arg1);
- 		break;
--	case UPDATE_CAPSULE:
-+	case EFI_UPDATE_CAPSULE:
- 		status = efi_call_virt(update_capsule,
- 				       (efi_capsule_header_t **)arg1,
- 				       *(unsigned long *)arg2,
- 				       *(unsigned long *)arg3);
- 		break;
--	case QUERY_CAPSULE_CAPS:
-+	case EFI_QUERY_CAPSULE_CAPS:
- 		status = efi_call_virt(query_capsule_caps,
- 				       (efi_capsule_header_t **)arg1,
- 				       *(unsigned long *)arg2, (u64 *)arg3,
-@@ -248,7 +248,7 @@ static efi_status_t virt_efi_get_time(efi_time_t *tm, efi_time_cap_t *tc)
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(GET_TIME, tm, tc, NULL, NULL, NULL);
-+	status = efi_queue_work(EFI_GET_TIME, tm, tc, NULL, NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
- }
-@@ -259,7 +259,7 @@ static efi_status_t virt_efi_set_time(efi_time_t *tm)
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(SET_TIME, tm, NULL, NULL, NULL, NULL);
-+	status = efi_queue_work(EFI_SET_TIME, tm, NULL, NULL, NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
- }
-@@ -272,7 +272,7 @@ static efi_status_t virt_efi_get_wakeup_time(efi_bool_t *enabled,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(GET_WAKEUP_TIME, enabled, pending, tm, NULL,
-+	status = efi_queue_work(EFI_GET_WAKEUP_TIME, enabled, pending, tm, NULL,
- 				NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -284,7 +284,7 @@ static efi_status_t virt_efi_set_wakeup_time(efi_bool_t enabled, efi_time_t *tm)
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(SET_WAKEUP_TIME, &enabled, tm, NULL, NULL,
-+	status = efi_queue_work(EFI_SET_WAKEUP_TIME, &enabled, tm, NULL, NULL,
- 				NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -300,7 +300,7 @@ static efi_status_t virt_efi_get_variable(efi_char16_t *name,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(GET_VARIABLE, name, vendor, attr, data_size,
-+	status = efi_queue_work(EFI_GET_VARIABLE, name, vendor, attr, data_size,
- 				data);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -314,7 +314,7 @@ static efi_status_t virt_efi_get_next_variable(unsigned long *name_size,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(GET_NEXT_VARIABLE, name_size, name, vendor,
-+	status = efi_queue_work(EFI_GET_NEXT_VARIABLE, name_size, name, vendor,
- 				NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -330,7 +330,7 @@ static efi_status_t virt_efi_set_variable(efi_char16_t *name,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(SET_VARIABLE, name, vendor, &attr, &data_size,
-+	status = efi_queue_work(EFI_SET_VARIABLE, name, vendor, &attr, &data_size,
- 				data);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -365,7 +365,7 @@ static efi_status_t virt_efi_query_variable_info(u32 attr,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(QUERY_VARIABLE_INFO, &attr, storage_space,
-+	status = efi_queue_work(EFI_QUERY_VARIABLE_INFO, &attr, storage_space,
- 				remaining_space, max_variable_size, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -397,7 +397,7 @@ static efi_status_t virt_efi_get_next_high_mono_count(u32 *count)
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(GET_NEXT_HIGH_MONO_COUNT, count, NULL, NULL,
-+	status = efi_queue_work(EFI_GET_NEXT_HIGH_MONO_COUNT, count, NULL, NULL,
- 				NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -413,7 +413,7 @@ static void virt_efi_reset_system(int reset_type,
- 			"could not get exclusive access to the firmware\n");
- 		return;
- 	}
--	efi_rts_work.efi_rts_id = RESET_SYSTEM;
-+	efi_rts_work.efi_rts_id = EFI_RESET_SYSTEM;
- 	__efi_call_virt(reset_system, reset_type, status, data_size, data);
- 	up(&efi_runtime_lock);
- }
-@@ -429,7 +429,7 @@ static efi_status_t virt_efi_update_capsule(efi_capsule_header_t **capsules,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(UPDATE_CAPSULE, capsules, &count, &sg_list,
-+	status = efi_queue_work(EFI_UPDATE_CAPSULE, capsules, &count, &sg_list,
- 				NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -447,7 +447,7 @@ static efi_status_t virt_efi_query_capsule_caps(efi_capsule_header_t **capsules,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(QUERY_CAPSULE_CAPS, capsules, &count,
-+	status = efi_queue_work(EFI_QUERY_CAPSULE_CAPS, capsules, &count,
- 				max_size, reset_type, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index a4de93c96907..b3471b6ff92f 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1720,19 +1720,19 @@ extern int efi_tpm_eventlog_init(void);
-  * fault happened while executing an efi runtime service.
-  */
- enum efi_rts_ids {
--	NONE,
--	GET_TIME,
--	SET_TIME,
--	GET_WAKEUP_TIME,
--	SET_WAKEUP_TIME,
--	GET_VARIABLE,
--	GET_NEXT_VARIABLE,
--	SET_VARIABLE,
--	QUERY_VARIABLE_INFO,
--	GET_NEXT_HIGH_MONO_COUNT,
--	RESET_SYSTEM,
--	UPDATE_CAPSULE,
--	QUERY_CAPSULE_CAPS,
-+	EFI_NONE,
-+	EFI_GET_TIME,
-+	EFI_SET_TIME,
-+	EFI_GET_WAKEUP_TIME,
-+	EFI_SET_WAKEUP_TIME,
-+	EFI_GET_VARIABLE,
-+	EFI_GET_NEXT_VARIABLE,
-+	EFI_SET_VARIABLE,
-+	EFI_QUERY_VARIABLE_INFO,
-+	EFI_GET_NEXT_HIGH_MONO_COUNT,
-+	EFI_RESET_SYSTEM,
-+	EFI_UPDATE_CAPSULE,
-+	EFI_QUERY_CAPSULE_CAPS,
- };
- 
- /*
+Some notes:
+- in case an architecture doesn't support write rare, the behavior is to
+  fallback to regular write operations
+- before altering any memory, the destination is sanitized
+- write rare data is segregated into own set of pages
+- only x86_64 and arm64 verified, atm
+- the memset_user() assembly functions seems to work, but I'm not too sure
+  they are really ok
+- I've added a simple example: the protection of ima_policy_flags
+- the last patch is optional, but it seemed worth to do the refactoring
+- the x86_64 user space address range is double the size of the kernel
+  address space, so it's possible to randomize the beginning of the
+  mapping of the kernel address space, but on arm64 they have the same
+  size, so it's not possible to do the same. Eventually, the randomization
+  could affect exclusively the ranges containing protectable memory, but
+  this should be done togeter with the protection of dynamically allocated
+  data (once it is available).
+- unaddressed: Nadav proposed to do:
+	#define __wr          __attribute__((address_space(5)))
+  but I don't know exactly where to use it atm
+
+Changelog:
+
+v4->v5
+------
+* turned conditional inclusion of mm.h into permanent
+* added generic, albeit unoptimized memset_user() function
+* more verbose error messages for testing of wr_memset()
+
+v3->v4
+------
+
+* added function for setting memory in user space mapping for arm64
+* refactored code, to work with both supported architectures
+* reduced dependency on x86_64 specific code, to support by default also
+  arm64
+* improved memset_user() for x86_64, but I'm not sure if I understood
+  correctly what was the best way to enhance it.
+
+v2->v3
+------
+
+* both wr_memset and wr_memcpy are implemented as generic functions
+  the arch code must provide suitable helpers
+* regular initialization for ima_policy_flags: it happens during init
+* remove spurious code from the initialization function
+
+v1->v2
+------
+
+* introduce cleaner split between generic and arch code
+* add x86_64 specific memset_user()
+* replace kernel-space memset() memcopy() with userspace counterpart
+* randomize the base address for the alternate map across the entire
+  available address range from user space (128TB - 64TB)
+* convert BUG() to WARN()
+* turn verification of written data into debugging option
+* wr_rcu_assign_pointer() as special case of wr_assign()
+* example with protection of ima_policy_flags
+* documentation
+
+Igor Stoppa (11):
+  __wr_after_init: linker section and attribute
+  __wr_after_init: Core and default arch
+  __wr_after_init: x86_64: randomize mapping offset
+  __wr_after_init: x86_64: enable
+  __wr_after_init: arm64: enable
+  __wr_after_init: Documentation: self-protection
+  __wr_after_init: lkdtm test
+  __wr_after_init: rodata_test: refactor tests
+  __wr_after_init: rodata_test: test __wr_after_init
+  __wr_after_init: test write rare functionality
+  IMA: turn ima_policy_flags into __wr_after_init
+
+Nadav Amit (1):
+  fork: provide a function for copying init_mm
+
+ Documentation/security/self-protection.rst |  14 +-
+ arch/Kconfig                               |  22 +++
+ arch/arm64/Kconfig                         |   1 +
+ arch/x86/Kconfig                           |   1 +
+ arch/x86/mm/Makefile                       |   2 +
+ arch/x86/mm/prmem.c (new)                  |  20 +++
+ drivers/misc/lkdtm/core.c                  |   3 +
+ drivers/misc/lkdtm/lkdtm.h                 |   3 +
+ drivers/misc/lkdtm/perms.c                 |  29 ++++
+ include/asm-generic/vmlinux.lds.h          |  25 +++
+ include/linux/cache.h                      |  21 +++
+ include/linux/prmem.h (new)                |  70 ++++++++
+ include/linux/sched/task.h                 |   1 +
+ init/main.c                                |   3 +
+ kernel/fork.c                              |  24 ++-
+ mm/Kconfig.debug                           |   8 +
+ mm/Makefile                                |   2 +
+ mm/prmem.c (new)                           | 193 +++++++++++++++++++++
+ mm/rodata_test.c                           |  69 +++++---
+ mm/test_write_rare.c (new)                 | 142 +++++++++++++++
+ security/integrity/ima/ima.h               |   3 +-
+ security/integrity/ima/ima_policy.c        |   9 +-
+ 22 files changed, 628 insertions(+), 37 deletions(-)
+ create mode 100644 arch/x86/mm/prmem.c
+ create mode 100644 include/linux/prmem.h
+ create mode 100644 mm/prmem.c
+ create mode 100644 mm/test_write_rare.c
+
 -- 
-2.20.1
+2.19.1
 
