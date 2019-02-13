@@ -1,159 +1,65 @@
-Return-Path: <SRS0=zpiu=QT=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=kHfr=QU=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D2CC282C4
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 23:42:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0CE9C282C2
+	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 07:44:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADF06222C9
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Feb 2019 23:42:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B459222C2
+	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 07:44:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732291AbfBLXmM (ORCPT
+        id S1732001AbfBMHoa (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 12 Feb 2019 18:42:12 -0500
-Received: from mga01.intel.com ([192.55.52.88]:56264 "EHLO mga01.intel.com"
+        Wed, 13 Feb 2019 02:44:30 -0500
+Received: from mga05.intel.com ([192.55.52.43]:38921 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732237AbfBLXmL (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 12 Feb 2019 18:42:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1728713AbfBMHoa (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 13 Feb 2019 02:44:30 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 15:42:10 -0800
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 23:44:29 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,362,1544515200"; 
-   d="scan'208";a="125983266"
-Received: from tstruk-mobl1.jf.intel.com ([10.7.196.160])
-  by orsmga003.jf.intel.com with ESMTP; 12 Feb 2019 15:42:10 -0800
-Subject: [PATCH v2 2/2] selftests/tpm2: Extend tests to cover partial reads
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-To:     jarkko.sakkinen@linux.intel.com
-Cc:     linux-kselftest@vger.kernel.org, shuah@kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, PeterHuewe@gmx.de,
-        jgg@ziepe.ca
-Date:   Tue, 12 Feb 2019 15:42:10 -0800
-Message-ID: <155001493022.13014.6810778681032295955.stgit@tstruk-mobl1.jf.intel.com>
-In-Reply-To: <155001492513.13014.3572730050393346659.stgit@tstruk-mobl1.jf.intel.com>
-References: <155001492513.13014.3572730050393346659.stgit@tstruk-mobl1.jf.intel.com>
-User-Agent: StGit/unknown-version
+X-IronPort-AV: E=Sophos;i="5.58,365,1544515200"; 
+   d="scan'208";a="124098807"
+Received: from sorenthe-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.151])
+  by fmsmga008.fm.intel.com with ESMTP; 12 Feb 2019 23:44:24 -0800
+Date:   Wed, 13 Feb 2019 09:44:23 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Alexander Steffen <Alexander.Steffen@infineon.com>
+Cc:     Stefan Berger <stefanb@linux.ibm.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] tpm: Unify the send callback behaviour
+Message-ID: <20190213074423.GA3950@linux.intel.com>
+References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
+ <20190208180857.12330-2-jarkko.sakkinen@linux.intel.com>
+ <4072b2b6-0f95-be50-0772-7e2869c2c24e@linux.ibm.com>
+ <20190208190057.GA3439@linux.intel.com>
+ <2849751f-ff26-193e-f15e-4d7d5f8525a7@infineon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2849751f-ff26-193e-f15e-4d7d5f8525a7@infineon.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Three new tests added:
-1. Send get random cmd, read header in 1st read, read the rest in second
-   read - expect success
-2. Send get random cmd, read only part of the response, send another
-   get random command, read the response - expect success
-3. Send get random cmd followed by another get random cmd, without
-   reading the first response - expect the second cmd to fail with -EBUSY
+On Mon, Feb 11, 2019 at 04:05:39PM +0100, Alexander Steffen wrote:
+> Tested-by: Alexander Steffen <Alexander.Steffen@infineon.com>
 
-Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
----
+Thank you!
 
-v2:
-- Removed extra logging
-- Changed subject tag to selftest/tpm2:
----
- tools/testing/selftests/tpm2/tpm2.py       |    1 
- tools/testing/selftests/tpm2/tpm2_tests.py |   66 ++++++++++++++++++++++++++++
- 2 files changed, 67 insertions(+)
-
-diff --git a/tools/testing/selftests/tpm2/tpm2.py b/tools/testing/selftests/tpm2/tpm2.py
-index c2b9f2b1a0ac..828c18584624 100644
---- a/tools/testing/selftests/tpm2/tpm2.py
-+++ b/tools/testing/selftests/tpm2/tpm2.py
-@@ -22,6 +22,7 @@ TPM2_CC_UNSEAL = 0x015E
- TPM2_CC_FLUSH_CONTEXT = 0x0165
- TPM2_CC_START_AUTH_SESSION = 0x0176
- TPM2_CC_GET_CAPABILITY	= 0x017A
-+TPM2_CC_GET_RANDOM = 0x017B
- TPM2_CC_PCR_READ = 0x017E
- TPM2_CC_POLICY_PCR = 0x017F
- TPM2_CC_PCR_EXTEND = 0x0182
-diff --git a/tools/testing/selftests/tpm2/tpm2_tests.py b/tools/testing/selftests/tpm2/tpm2_tests.py
-index 3bb066fea4a0..e82d84043c3f 100644
---- a/tools/testing/selftests/tpm2/tpm2_tests.py
-+++ b/tools/testing/selftests/tpm2/tpm2_tests.py
-@@ -158,6 +158,72 @@ class SmokeTest(unittest.TestCase):
-             pass
-         self.assertEqual(rejected, True)
- 
-+    def test_read_partial_resp(self):
-+        """Reads random in two subsequent reads"""
-+        try:
-+            fmt = '>HIIH'
-+            cmd = struct.pack(fmt,
-+                              tpm2.TPM2_ST_NO_SESSIONS,
-+                              struct.calcsize(fmt),
-+                              tpm2.TPM2_CC_GET_RANDOM,
-+                              0x20)
-+            self.client.tpm.write(cmd)
-+            hdr = self.client.tpm.read(10)
-+            sz = struct.unpack('>I', hdr[2:6])[0]
-+            rsp = self.client.tpm.read()
-+        except:
-+            pass
-+        self.assertEqual(sz, 10 + 2 + 32)
-+        self.assertEqual(len(rsp), 2 + 32)
-+
-+    def test_read_partial_overwrite(self):
-+        """Reads only part of the response and issue a new cmd"""
-+        try:
-+            fmt = '>HIIH'
-+            cmd = struct.pack(fmt,
-+                              tpm2.TPM2_ST_NO_SESSIONS,
-+                              struct.calcsize(fmt),
-+                              tpm2.TPM2_CC_GET_RANDOM,
-+                              0x20)
-+            self.client.tpm.write(cmd)
-+            # Read part of the respone
-+            rsp1 = self.client.tpm.read(15)
-+
-+            # Send a new cmd
-+            self.client.tpm.write(cmd)
-+
-+            # Read the whole respone
-+            rsp2 = self.client.tpm.read()
-+        except:
-+            pass
-+        self.assertEqual(len(rsp1), 15)
-+        self.assertEqual(len(rsp2), 10 + 2 + 32)
-+
-+    def test_send_two_cmds(self):
-+        """Send two cmds without reading a response"""
-+        rejected = False
-+        try:
-+            fmt = '>HIIH'
-+            cmd = struct.pack(fmt,
-+                              tpm2.TPM2_ST_NO_SESSIONS,
-+                              struct.calcsize(fmt),
-+                              tpm2.TPM2_CC_GET_RANDOM,
-+                              0x20)
-+            self.client.tpm.write(cmd)
-+
-+            # expect the second one to raise -EBUSY error
-+            self.client.tpm.write(cmd)
-+            rsp = self.client.tpm.read()
-+
-+        except IOError, e:
-+            # read the response
-+            rsp = self.client.tpm.read()
-+            rejected = True
-+            pass
-+        except:
-+            pass
-+        self.assertEqual(rejected, True)
-+
- class SpaceTest(unittest.TestCase):
-     def setUp(self):
-         logging.basicConfig(filename='SpaceTest.log', level=logging.DEBUG)
-
+/Jarkko
