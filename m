@@ -2,156 +2,99 @@ Return-Path: <SRS0=kHfr=QU=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E24BEC282C2
-	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 12:18:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E01C282C2
+	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 14:21:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAC99222B1
-	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 12:18:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6B06222BE
+	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 14:21:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=semihalf-com.20150623.gappssmtp.com header.i=@semihalf-com.20150623.gappssmtp.com header.b="muAiGkfA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732648AbfBMMSp (ORCPT
+        id S1731538AbfBMOVN (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 13 Feb 2019 07:18:45 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37882 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726148AbfBMMSp (ORCPT
+        Wed, 13 Feb 2019 09:21:13 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:46319 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730964AbfBMOVN (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 13 Feb 2019 07:18:45 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1DCCC4U103137
-        for <linux-integrity@vger.kernel.org>; Wed, 13 Feb 2019 07:18:43 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qmh4ddmp6-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 13 Feb 2019 07:18:43 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 13 Feb 2019 12:18:41 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 13 Feb 2019 12:18:37 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1DCIaGK51249296
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 13 Feb 2019 12:18:36 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C75014C052;
-        Wed, 13 Feb 2019 12:18:36 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AACAF4C044;
-        Wed, 13 Feb 2019 12:18:35 +0000 (GMT)
-Received: from localhost.ibm.com (unknown [9.80.92.165])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 13 Feb 2019 12:18:35 +0000 (GMT)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        "Bruno E . O . Meneguele" <bmeneg@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH v2] x86/ima: require signed kernel modules
-Date:   Wed, 13 Feb 2019 07:17:59 -0500
-X-Mailer: git-send-email 2.7.5
-X-TM-AS-GCONF: 00
-x-cbid: 19021312-0008-0000-0000-000002BFF769
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021312-0009-0000-0000-0000222C1572
-Message-Id: <1550060279-8624-1-git-send-email-zohar@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-13_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902130090
+        Wed, 13 Feb 2019 09:21:13 -0500
+Received: by mail-vs1-f65.google.com with SMTP id n10so1442073vso.13
+        for <linux-integrity@vger.kernel.org>; Wed, 13 Feb 2019 06:21:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=semihalf-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gBgeo3jT47/cB1TRoOn0GG0vfX0G94Ze9DPtiEyWnno=;
+        b=muAiGkfAgvj7ze14eyCq9V6CndfS5vRb8qAMvqly2a1RE0CXmaUL6uTUixOXE+G6cl
+         pIlysvQzSHcbuSgyL8iHTrKxdLIxB9eirQr+AB/i2Gna6N6ao3VDphM8fSYvxWyoM1vN
+         3MWeY4kIdH38Ffv4JbERXnYofuvdqcW3cmcZ93YCTOf+ld0w5KksBELg/tvoCX6wqAWH
+         ZMHBagnt07FR5K1ZwkI22h4fPM30pHEKf0yNkfFvToOyk2uUZRjb4Nk/p+UTFCgbZPXw
+         5Zb7nPgPCLgtYLgDCNGmYsINk9NhyAZa0b18EEH3nrA2WT6J/KnsCzJWdchyjxdyNe8Q
+         rdbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gBgeo3jT47/cB1TRoOn0GG0vfX0G94Ze9DPtiEyWnno=;
+        b=o/wTNRAhNIURd1hooHQoy5+vYDAsf4+U3Eb8qTZSrps6v1jaL6gNc9bp2TYhFMqgDp
+         +3O4YwtNZ6PLWGDNu9K2gvUdkroL8fP7PnyYpOfGYuBE/SynDNgmlQ0EcBDxxgXMM2Hz
+         2soW2mIgQoZV/cUlYr656jNdiw71xPm5YDG53trt5m1FKjRcZgGjQiMhMG/Z+/33deiy
+         ZLjWyj8BChWYEv0cHvdkvthsoREtYQ1V6zEPUGCLZzH7dV6AtFWR0A8qj1iiFQ5hIf6F
+         B0tC9NCdWOFUh2JZZT0AVJhL4/caYLxknakgcxwa0NCnTKOa8H5GItcxTb4nI8jBV1M7
+         COLg==
+X-Gm-Message-State: AHQUAuYex7dHkT48Vlmi4freZfT3nIrttX+Qf1x33e7LOD9osJVzO+lY
+        JKoV6E2xl8vzbOnn1yeBNFzgO21niQcfWHTdhkzM0g==
+X-Google-Smtp-Source: AHgI3IZGnFUv8HvcwcAzQwJdCtu68nji5drK6KddWOwiRyuTQ889STlbnh5dyrPCgDq8kRg5H5mx2E+6QsDrKfd8kqk=
+X-Received: by 2002:a67:f557:: with SMTP id z23mr300434vsn.4.1550067672526;
+ Wed, 13 Feb 2019 06:21:12 -0800 (PST)
+MIME-Version: 1.0
+References: <20190211143052.3128-1-bsz@semihalf.com> <20190211143052.3128-5-bsz@semihalf.com>
+ <20190213112640.GI7087@linux.intel.com>
+In-Reply-To: <20190213112640.GI7087@linux.intel.com>
+From:   Bartosz Szczepanek <bsz@semihalf.com>
+Date:   Wed, 13 Feb 2019 15:21:01 +0100
+Message-ID: <CABLO=+ne=dfrMiqmmxV_xOPt7QKiwSgnmokgod6ZMn4PZeahvg@mail.gmail.com>
+Subject: Re: [PATCH 4/5] efi/libstub/tpm: Retrieve TPM event log in 2.0 format
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>,
+        mingo@kernel.org, hdegoede@redhat.com,
+        Leif Lindholm <leif.lindholm@linaro.org>,
+        Marcin Wojtas <mw@semihalf.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Require signed kernel modules on systems with secure boot mode enabled.
+On Wed, Feb 13, 2019 at 12:26 PM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+> Collides with Matthew's changes. I want to land those change first
+> because they are almost production ready.
+>
+> Maybe you should consider reviewing those changes to make sure that
+> they make sense to you so that you can build these on top of after
+> these have landed.
 
-Requiring appended kernel module signatures may be configured, enabled
-on the boot command line, or with this patch enabled in secure boot
-mode.  This patch defines set_module_sig_enforced().
+Yeah, I think so. Actually, I wasn't aware of Matthew's efforts, as it
+didn't appear on linux-efi mailing list. (On bad, I haven't checked
+linux-integrity.)
 
-To coordinate between appended kernel module signatures and IMA
-signatures, only define an IMA MODULE_CHECK policy rule if
-CONFIG_MODULE_SIG is not enabled.
+At this point, I think it makes more sense to limit this patchset to
+5/5 patch, which makes TPM event log initialized on ARM platforms.
+Patches 1-4 introduce nothing more than Matthew already did, maybe
+except putting calc_tpm2_event_size to a library instead of making it
+inline. This function has already grown a bit so it may be a better
+approach, but that's nothing to affect functionality.
 
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
----
+I'll pull Matthew changes to my tree to confirm operation on ARM
+platforms, if that works fine the only thing to merge would be 5/5 +
+optionally the library change, if we reach agreement on that.
 
-Changelog:
-- Removed new "sig_required" flag and associated functions, directly set
-  sig_enforce.
-
- arch/x86/kernel/ima_arch.c | 9 ++++++++-
- include/linux/module.h     | 1 +
- kernel/module.c            | 5 +++++
- 3 files changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
-index e47cd9390ab4..3fb9847f1cad 100644
---- a/arch/x86/kernel/ima_arch.c
-+++ b/arch/x86/kernel/ima_arch.c
-@@ -64,12 +64,19 @@ static const char * const sb_arch_rules[] = {
- 	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
- #endif /* CONFIG_KEXEC_VERIFY_SIG */
- 	"measure func=KEXEC_KERNEL_CHECK",
-+#if !IS_ENABLED(CONFIG_MODULE_SIG)
-+	"appraise func=MODULE_CHECK appraise_type=imasig",
-+#endif
-+	"measure func=MODULE_CHECK",
- 	NULL
- };
- 
- const char * const *arch_get_ima_policy(void)
- {
--	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot())
-+	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
-+		if (IS_ENABLED(CONFIG_MODULE_SIG))
-+			set_module_sig_enforced();
- 		return sb_arch_rules;
-+	}
- 	return NULL;
- }
-diff --git a/include/linux/module.h b/include/linux/module.h
-index 8fa38d3e7538..75e2a5c24a2b 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -660,6 +660,7 @@ static inline bool is_livepatch_module(struct module *mod)
- #endif /* CONFIG_LIVEPATCH */
- 
- bool is_module_sig_enforced(void);
-+void set_module_sig_enforced(void);
- 
- #else /* !CONFIG_MODULES... */
- 
-diff --git a/kernel/module.c b/kernel/module.c
-index 2ad1b5239910..4cb5b733fb18 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -286,6 +286,11 @@ bool is_module_sig_enforced(void)
- }
- EXPORT_SYMBOL(is_module_sig_enforced);
- 
-+void set_module_sig_enforced(void)
-+{
-+       sig_enforce = true;
-+}
-+
- /* Block module loading/unloading? */
- int modules_disabled = 0;
- core_param(nomodule, modules_disabled, bint, 0);
--- 
-2.7.5
-
+Bartosz
