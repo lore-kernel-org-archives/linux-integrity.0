@@ -2,64 +2,77 @@ Return-Path: <SRS0=kHfr=QU=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0CE9C282C2
-	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 07:44:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 174C7C282C2
+	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 08:05:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B459222C2
-	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 07:44:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8D27222B5
+	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 08:05:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732001AbfBMHoa (ORCPT
+        id S2388590AbfBMIFq (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 13 Feb 2019 02:44:30 -0500
-Received: from mga05.intel.com ([192.55.52.43]:38921 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728713AbfBMHoa (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 13 Feb 2019 02:44:30 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 23:44:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,365,1544515200"; 
-   d="scan'208";a="124098807"
-Received: from sorenthe-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.151])
-  by fmsmga008.fm.intel.com with ESMTP; 12 Feb 2019 23:44:24 -0800
-Date:   Wed, 13 Feb 2019 09:44:23 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Alexander Steffen <Alexander.Steffen@infineon.com>
-Cc:     Stefan Berger <stefanb@linux.ibm.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] tpm: Unify the send callback behaviour
-Message-ID: <20190213074423.GA3950@linux.intel.com>
-References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
- <20190208180857.12330-2-jarkko.sakkinen@linux.intel.com>
- <4072b2b6-0f95-be50-0772-7e2869c2c24e@linux.ibm.com>
- <20190208190057.GA3439@linux.intel.com>
- <2849751f-ff26-193e-f15e-4d7d5f8525a7@infineon.com>
+        Wed, 13 Feb 2019 03:05:46 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55964 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729612AbfBMIFq (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 13 Feb 2019 03:05:46 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1521BAD4C;
+        Wed, 13 Feb 2019 08:05:45 +0000 (UTC)
+From:   Fabian Vogt <fvogt@suse.de>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Ignaz Forster <iforster@suse.de>
+Subject: Re: [RFC PATCH 0/5] Fix overlayfs on EVM
+Date:   Wed, 13 Feb 2019 09:05:44 +0100
+Message-ID: <4472439.nvz8ndpTJa@linux-e202.suse.de>
+In-Reply-To: <1550011897.12743.310.camel@linux.ibm.com>
+References: <20190211165323.9369-1-iforster@suse.com> <CAOQ4uxgSZv7t5HznAhsWrzv3e3VwQ7sbZrjgjfRsviq-wsr7EA@mail.gmail.com> <1550011897.12743.310.camel@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2849751f-ff26-193e-f15e-4d7d5f8525a7@infineon.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 04:05:39PM +0100, Alexander Steffen wrote:
-> Tested-by: Alexander Steffen <Alexander.Steffen@infineon.com>
+Hi,
 
-Thank you!
+Am Dienstag, 12. Februar 2019, 23:51:37 CET schrieb Mimi Zohar:
+> 
+> > > > If my assumptions so far are correct, then the effort for making
+> > > > IMA/EVM work with overlayfs should focus around finding the
+> > > > places where overlayfs uses lower level vfs interface (often
+> > > > vfs_xxx helpers) and make sure that the IMA hooks are place
+> > > > in those lower vfs interfaces, just like vfs_create() patch does
+> > > > and like vfs_tmpfile() patch did before it.
+> > >
+> > > So basically turning on NOIMA for overlayfs while ensuring that integrity
+> > > checks and operations still perform as expected?
+> > 
+> > Yes.
+> > As far as IMA is concerned, Overlayfs is like a filesystem user from kernel.
+> > Very similar to knfsd in that respect.
+> 
+> Fabian, if you're thinking of disabling IMA-appraisal on overlay filesystems, 
+> have you tried defining an appraise policy rule based on the overlayfs
+> magic number (eg. dont_appraise fsmagic=0x794c7630)?
 
-/Jarkko
+Yes, that was one of the first approaches we tested - basically switching from
+a) to b) using configuration. It didn't work: Then IMA was completely
+circumvented and neither were hashes updated for changed files nor were they
+checked on access. That was a few months ago though, so it might have changed.
+
+Cheers,
+Fabian
+
+> Mimi
+
+
+
