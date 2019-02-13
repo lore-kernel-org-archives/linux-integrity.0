@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E419C4360F
-	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 22:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8406C43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 22:43:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D5DB2082F
-	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 22:43:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 985CD222CC
+	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 22:43:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PNVepkl6"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PL+qO4BS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395174AbfBMWmW (ORCPT
+        id S2392557AbfBMWnI (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 13 Feb 2019 17:42:22 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40084 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2395158AbfBMWmS (ORCPT
+        Wed, 13 Feb 2019 17:43:08 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39626 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2395143AbfBMWmQ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 13 Feb 2019 17:42:18 -0500
-Received: by mail-wr1-f65.google.com with SMTP id q1so4370192wrp.7;
-        Wed, 13 Feb 2019 14:42:17 -0800 (PST)
+        Wed, 13 Feb 2019 17:42:16 -0500
+Received: by mail-wm1-f65.google.com with SMTP id f16so4162047wmh.4;
+        Wed, 13 Feb 2019 14:42:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
          :mime-version:content-transfer-encoding;
-        bh=hnmNnr9YQbwfaI93UrUGE24zBu/XKqtY3CcuY5KmkdU=;
-        b=PNVepkl6wnUM5Gny5FQUy8cW58lk/9t/2MXulvttnDMJYmFIRT1s7OQDhJgy7JoYKr
-         RENLyyEJtlADc4C3wWCABbcBNHnXBcoU97GOP46rTUOZi8pzqVZgUHorFtxsx6S0m9bo
-         8cwStO91nzWS2kMGecQlHxxNYgZSEJk8564FrYQFFBKN79k5hsgwSqoR6L1SUgrG5STy
-         6DnBXrTS5lCwPxLO7pNI8vjUAOAOL0lBgIhfFj90qFIvbvWhy2EvSEM+VEn4kc13PxnL
-         G3vVyv/a1nxVe44l0Mz6WkwSBr5iEs3AxGCQ+65TWE7c0BkrHQtenb7WOy6oPPulyMcA
-         vpRg==
+        bh=ktrl99/4+i4VLz6USppssXo49kPq9nmcbGTF0KLoSBQ=;
+        b=PL+qO4BSrqbTBZVvQdKVfuy3/R+TSzmQVsSmPWSD0nYfCQOw4/ftFDGqeAZGSDmsrD
+         gp5dGhCLQjbXWBv2zPEel7ZGbFiiHXKIek08yxjbI/8bRXIXLDgV3glT33iw2UZwlzF6
+         ZWtW7gYc5MVUhpPAtUuhRfoed2qyAVf+Nntc5wC3H4/s2pYobeRt0viKWP7Txq5JAUgK
+         zb27BPlMpvk46SWw6eK2V2YyFXBJnAP8jjBEEB5li9V5UUDTFf3bDWz8iq6hJrbY/pXp
+         KcT+ffr0v8t9+4SCEJMuLmWpGXbPjoJa2FgJQJ6vmf7fAQnr6F1cclKwU046m0j6BDC+
+         kczQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:reply-to:mime-version:content-transfer-encoding;
-        bh=hnmNnr9YQbwfaI93UrUGE24zBu/XKqtY3CcuY5KmkdU=;
-        b=SkDxSLkLzoeYDFTQbJJvWWYr4Pdz/Z66WG8teyesRkzFM43GHlMtqismFC3NjjhD5U
-         FjtNJpoAHNts+DJijM3/sONZHy/slAYPIkoq6SrV6XcmcC3AYTkq7PRnvO7gcoQFNt7w
-         GSXzWl5meviQUENGOfEhz78siqx0CVSFI0vkVKh5QBNoona6NnGYZGeoaJxeg0SIFI92
-         vvwMGG7vLHCOVD+g2hULpb3gk4INRvP4CN0pNf6EZTbGvJzk/nP7LwxBA1HFGXB6bdHw
-         HAOSz9NQo4ZFsCRGPNxhRVgAY1+Om147lWTbzz5X5KJm7Kt5x0ciE4E1S5njcwvNseQS
-         YvAw==
-X-Gm-Message-State: AHQUAuamdZ+hcbu5LMAgA87aGl2e8tVUuFJ7pdtES4ZzIR3Mo7m59zTh
-        bBluaQxysVDJ6u0bhaGXsuI=
-X-Google-Smtp-Source: AHgI3IY2zZ/s+/of06qs5oz7e3UG5TRwg7xiFolsJ/mC0V02SnY5LJL9Knhh3oBwoWb72MhgeMlbNw==
-X-Received: by 2002:a5d:5289:: with SMTP id c9mr284768wrv.11.1550097736697;
-        Wed, 13 Feb 2019 14:42:16 -0800 (PST)
+        bh=ktrl99/4+i4VLz6USppssXo49kPq9nmcbGTF0KLoSBQ=;
+        b=XQJDsWHJ70paOH35m8UtAKoFRkOhc4C/F4kbCptJdzC06Kcri4FLoIJ/FTFPV50RZw
+         xz9E1rdeB0NkasM2wY9WqD3HzeFM1hNzkB0iD3McFBm2oivPwELpbz+cR/6OhxbTyEZL
+         5133AXHqqFj2mlxRLWI/SZqxCPyBQLSUUUMCpWEBm6mMno6QL1LETRRzgYLH+IUKETvG
+         CbN9gM+LjMtEwHK5ogjjRMlzM7npgL+aFSIHyhF9tJlUlYV1Cbl8+Xc44im0zXh9/fIk
+         pEbh67joQDeQTGMLmDugWyfSwhtWvaKobWFM517hqQK5CYmM9+9AXGeRKj325yCdzO1j
+         GnLA==
+X-Gm-Message-State: AHQUAuZZscDRAAbj2LTh9xrOtRqDULcf1yM0AnplsUXAXjvQ5nl4hwtG
+        WOZ8PhdRw6QbGKKYaEtjy9g=
+X-Google-Smtp-Source: AHgI3IZgZPIjnSp/dGfR7iVH0dIRhuCCwStYtqJDhnVvkktzfFNDDUM47bqA//xCjlNKL+dEg6bIOg==
+X-Received: by 2002:a1c:a58c:: with SMTP id o134mr259360wme.79.1550097733324;
+        Wed, 13 Feb 2019 14:42:13 -0800 (PST)
 Received: from localhost.localdomain ([91.75.74.250])
-        by smtp.gmail.com with ESMTPSA id f196sm780810wme.36.2019.02.13.14.42.13
+        by smtp.gmail.com with ESMTPSA id f196sm780810wme.36.2019.02.13.14.42.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 14:42:16 -0800 (PST)
+        Wed, 13 Feb 2019 14:42:12 -0800 (PST)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
@@ -72,9 +72,9 @@ Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
         linux-integrity@vger.kernel.org,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v5 06/12] __wr_after_init: arm64: enable
-Date:   Thu, 14 Feb 2019 00:41:35 +0200
-Message-Id: <c81c8be7d5bfcc234dce969b8be7efad3d18d1b8.1550097697.git.igor.stoppa@huawei.com>
+Subject: [RFC PATCH v5 05/12] __wr_after_init: x86_64: enable
+Date:   Thu, 14 Feb 2019 00:41:34 +0200
+Message-Id: <c5838cd211a1648f44e0c2f48ab5bcbc1387cb8c.1550097697.git.igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <cover.1550097697.git.igor.stoppa@huawei.com>
 References: <cover.1550097697.git.igor.stoppa@huawei.com>
@@ -87,7 +87,7 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Set ARCH_HAS_PRMEM to Y for arm64
+Set ARCH_HAS_PRMEM to Y for x86_64
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 
@@ -105,21 +105,21 @@ CC: kernel-hardening@lists.openwall.com
 CC: linux-mm@kvack.org
 CC: linux-kernel@vger.kernel.org
 ---
- arch/arm64/Kconfig | 1 +
+ arch/x86/Kconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index a4168d366127..7cbb2c133ed7 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -66,6 +66,7 @@ config ARM64
- 	select ARCH_WANT_COMPAT_IPC_PARSE_VERSION
- 	select ARCH_WANT_FRAME_POINTERS
- 	select ARCH_HAS_UBSAN_SANITIZE_ALL
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 68261430fe6e..7392b53b12c2 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -32,6 +32,7 @@ config X86_64
+ 	select SWIOTLB
+ 	select X86_DEV_DMA_OPS
+ 	select ARCH_HAS_SYSCALL_WRAPPER
 +	select ARCH_HAS_PRMEM
- 	select ARM_AMBA
- 	select ARM_ARCH_TIMER
- 	select ARM_GIC
+ 
+ #
+ # Arch settings
 -- 
 2.19.1
 
