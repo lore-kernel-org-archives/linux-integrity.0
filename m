@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB8DC43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 22:42:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E68BC4360F
+	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 22:42:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 082C1222CF
-	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 22:42:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04263222CC
+	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 22:42:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AT0rnd8B"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JRNnYSF0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395159AbfBMWmR (ORCPT
+        id S2395256AbfBMWml (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 13 Feb 2019 17:42:17 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37486 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2395147AbfBMWmL (ORCPT
+        Wed, 13 Feb 2019 17:42:41 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52435 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2395246AbfBMWmk (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 13 Feb 2019 17:42:11 -0500
-Received: by mail-wr1-f68.google.com with SMTP id c8so4383800wrs.4;
-        Wed, 13 Feb 2019 14:42:10 -0800 (PST)
+        Wed, 13 Feb 2019 17:42:40 -0500
+Received: by mail-wm1-f68.google.com with SMTP id m1so4334882wml.2;
+        Wed, 13 Feb 2019 14:42:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
          :mime-version:content-transfer-encoding;
-        bh=ziJEcxmH0HELRYpJ/Cx0XBIGaICt7y2RQVCxbSTmAUA=;
-        b=AT0rnd8BnDyFyzfZmtZcyeTBEWOmVhTvPmEu5QNum22iV2TcKjKPwLVNWNeagC0CRy
-         ctLWeeTYC/+F6/tKvEGXpJEyq+9Yz6bCFYiyBbA3twYThdmj5oAWC32/BvKKUsEGEX7o
-         Ld9HklU7c97NPh13SsZ6fCE/5BMVPh9dqK1naXMrYOstuBxbrBxG+SqHXwEloEStPyvR
-         ffmv8EeqFFFoGyKtg14GqIYxFVbRpPQFp2z+rCCaXp+qC/Cyh9Zji9wP1jG6KdtLhlYx
-         p7hNzJkTQdZOgNlQY/A8FTBEwkpMfs3AiT9jAGZANXbmBbnzIfgztEwbiLzC+FwV2x8J
-         VLpg==
+        bh=VlNzKepo585QEAzr1PoW4dWwLybStReaiWjN7bcxj8g=;
+        b=JRNnYSF0B32te3X75TLvpnSw06mDUcTqBhWDZIT/xl3GaRwWSaGCTspIg/kzoSC5mm
+         EIJLk/ST7d7VJB/A/IWScJOvMItHW/x4hC7d4xNYzOWLJuuLPOOwwg3cAigjgyRalxz0
+         o1FjUWhH36b3VnsTQ++e+vJ2oAPs+JVpSx4/39KXA29MMIZFPyRSW98b1oILTuP331/O
+         6JljWTMeGp9b2/dQxbgg2WwKybBQQakpaTC/1roZtKCBWoRs+heF3eDKU7dEpYaW/etM
+         PiQoYjYnLQmSG1dj/GrKYTYg1WSRu4WfGeyapftL6GmbQnrsyURIUMqN/bQDDamRBWb5
+         WQ3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:reply-to:mime-version:content-transfer-encoding;
-        bh=ziJEcxmH0HELRYpJ/Cx0XBIGaICt7y2RQVCxbSTmAUA=;
-        b=X23Dhvaw4P+Ln+TzVY2QkIdVjOLwETcqmP5tZgrdw8gLUCi0+pkhHytcdSnBRf/26j
-         lpuqqUkWkkT5mDLdnMacdOWY5O82NZUC466Jtg85gTs8Vebo1c+Y0ajBXHc1/vNyyb34
-         AdZ4DU6pcvTDb7ojVA+NzcruHWNmnMIYxRFOZ3ocGTDlxpwF600ZWPP3atD0VZpeiWC5
-         1hVHj/mqaIvmK+YBsaFNT46WkvIVpVudNRSX6bMzM2Ut26BcXaoUfCICpNd+9t0IxAFo
-         nppVkrs1MyKzQnkirlcjTPIfnx0/A1fml99UWHXGVTVpULl/dKyQAjmWS0OXn7oXnXKD
-         7aXg==
-X-Gm-Message-State: AHQUAuZoWeIC3fsAo/vnkG0Ml+DjeRCh7khBJ7yl1gXc1XVl3a6DR/OO
-        7jabJgD6VulZxHIMhj20Vjs=
-X-Google-Smtp-Source: AHgI3IYtU8/AyDQPgRNLGyOtrkGvf7ehC6WRZeZ6D8zc6PNd3G4s/XlOJrLl2q5Ckle3r/z/jdGkyg==
-X-Received: by 2002:adf:fa0d:: with SMTP id m13mr285795wrr.93.1550097729690;
-        Wed, 13 Feb 2019 14:42:09 -0800 (PST)
+        bh=VlNzKepo585QEAzr1PoW4dWwLybStReaiWjN7bcxj8g=;
+        b=bLmLZDTS7LwIbw5g5hqQUyR+6td8dQkqOnka+eOUdDy3MWlzvV3uk2BaTBmZryhlNl
+         CD7uIyFhUqPkoHkIEA1O6I3tuBt7k43m4bB0N1dWPM5wxzf+pxEr/mQOFFxj5q1KrYnc
+         CdAqwH+T361fhBJOv5EJ6MAv5Ojggka9BTmouPFYxWoaVFVb+UbM61nYZ8l9WW1lo7NE
+         Bm/ngidlSNvhLbFwC02Inpo2e+3areovc4Q08tbISy9AAuFhtWIcDFk2p3RYrr0c7/lR
+         HY5N+i5ZKANNaqSla5VY/G22JzqoTd6fCUwmC5bWpk6WIb3RFBCnnP4sIYH0WDUN4RzD
+         OrQg==
+X-Gm-Message-State: AHQUAubeUg3p4dTz6yvoLv/LeZ63fK2qtRyQs8F9X60PXnLr2G2R+vhc
+        /TmIQ+gVU5HB+dV7kfkeRo8=
+X-Google-Smtp-Source: AHgI3IYWBD6OYKGNIHnWvKT1+X5xZVNe8vjVhHJodT1atGydjrsUyW8KD1kHYHBWgBaVu1rmWrjCdw==
+X-Received: by 2002:a7b:cb82:: with SMTP id m2mr289249wmi.135.1550097757879;
+        Wed, 13 Feb 2019 14:42:37 -0800 (PST)
 Received: from localhost.localdomain ([91.75.74.250])
-        by smtp.gmail.com with ESMTPSA id f196sm780810wme.36.2019.02.13.14.42.06
+        by smtp.gmail.com with ESMTPSA id f196sm780810wme.36.2019.02.13.14.42.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 14:42:09 -0800 (PST)
+        Wed, 13 Feb 2019 14:42:37 -0800 (PST)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
@@ -72,9 +72,9 @@ Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
         linux-integrity@vger.kernel.org,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v5 04/12] __wr_after_init: x86_64: randomize mapping offset
-Date:   Thu, 14 Feb 2019 00:41:33 +0200
-Message-Id: <4f3b363bfd20ec0d79a0b066581d72145bb65883.1550097697.git.igor.stoppa@huawei.com>
+Subject: [RFC PATCH v5 12/12] IMA: turn ima_policy_flags into __wr_after_init
+Date:   Thu, 14 Feb 2019 00:41:41 +0200
+Message-Id: <db669d1d6cd5a830ad80d41487608f8b3cc5a05e.1550097697.git.igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <cover.1550097697.git.igor.stoppa@huawei.com>
 References: <cover.1550097697.git.igor.stoppa@huawei.com>
@@ -87,15 +87,15 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-x86_64 specialized way of defining the base address for the alternate
-mapping used by write-rare.
+The policy flags could be targeted by an attacker aiming at disabling IMA,
+so that there would be no trace of a file system modification in the
+measurement list.
 
-Since the kernel address space spans across 64TB and it is mapped into a
-used address space of 128TB, the kernel address space can be shifted by a
-random offset that is up to 64TB and page aligned.
+Since the flags can be altered at runtime, it is not possible to make
+them become fully read-only, for example with __ro_after_init.
 
-This is accomplished by providing arch-specific version of the function
-__init_wr_base()
+__wr_after_init can still provide some protection, at least against
+simple memory overwrite attacks
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 
@@ -113,46 +113,69 @@ CC: kernel-hardening@lists.openwall.com
 CC: linux-mm@kvack.org
 CC: linux-kernel@vger.kernel.org
 ---
- arch/x86/mm/Makefile      |  2 ++
- arch/x86/mm/prmem.c (new) | 20 ++++++++++++++++++++
- 2 files changed, 22 insertions(+)
+ security/integrity/ima/ima.h        | 3 ++-
+ security/integrity/ima/ima_policy.c | 9 +++++----
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
-index 4b101dd6e52f..66652de1e2c7 100644
---- a/arch/x86/mm/Makefile
-+++ b/arch/x86/mm/Makefile
-@@ -53,3 +53,5 @@ obj-$(CONFIG_PAGE_TABLE_ISOLATION)		+= pti.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_identity.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_boot.o
-+
-+obj-$(CONFIG_PRMEM)		+= prmem.o
-diff --git a/arch/x86/mm/prmem.c b/arch/x86/mm/prmem.c
-new file mode 100644
-index 000000000000..b04fc03f92fb
---- /dev/null
-+++ b/arch/x86/mm/prmem.c
-@@ -0,0 +1,20 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * prmem.c: Memory Protection Library - x86_64 backend
-+ *
-+ * (C) Copyright 2018-2019 Huawei Technologies Co. Ltd.
-+ * Author: Igor Stoppa <igor.stoppa@huawei.com>
-+ */
-+
-+#include <linux/mm.h>
-+#include <linux/mmu_context.h>
-+
-+unsigned long __init __init_wr_base(void)
-+{
-+	/*
-+	 * Place 64TB of kernel address space within 128TB of user address
-+	 * space, at a random page aligned offset.
-+	 */
-+	return (((unsigned long)kaslr_get_random_long("WR Poke")) &
-+		PAGE_MASK) % (64 * _BITUL(40));
-+}
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index cc12f3449a72..297c25f5122e 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -24,6 +24,7 @@
+ #include <linux/hash.h>
+ #include <linux/tpm.h>
+ #include <linux/audit.h>
++#include <linux/prmem.h>
+ #include <crypto/hash_info.h>
+ 
+ #include "../integrity.h"
+@@ -50,7 +51,7 @@ enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
+ #define IMA_TEMPLATE_IMA_FMT "d|n"
+ 
+ /* current content of the policy */
+-extern int ima_policy_flag;
++extern int ima_policy_flag __wr_after_init;
+ 
+ /* set during initialization */
+ extern int ima_hash_algo;
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 8bc8a1c8cb3f..d49c545b9cfb 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -48,7 +48,7 @@
+ #define INVALID_PCR(a) (((a) < 0) || \
+ 	(a) >= (FIELD_SIZEOF(struct integrity_iint_cache, measured_pcrs) * 8))
+ 
+-int ima_policy_flag;
++int ima_policy_flag __wr_after_init;
+ static int temp_ima_appraise;
+ static int build_ima_appraise __ro_after_init;
+ 
+@@ -460,12 +460,13 @@ void ima_update_policy_flag(void)
+ 
+ 	list_for_each_entry(entry, ima_rules, list) {
+ 		if (entry->action & IMA_DO_MASK)
+-			ima_policy_flag |= entry->action;
++			wr_assign(ima_policy_flag,
++				  ima_policy_flag | entry->action);
+ 	}
+ 
+ 	ima_appraise |= (build_ima_appraise | temp_ima_appraise);
+ 	if (!ima_appraise)
+-		ima_policy_flag &= ~IMA_APPRAISE;
++		wr_assign(ima_policy_flag, ima_policy_flag & ~IMA_APPRAISE);
+ }
+ 
+ static int ima_appraise_flag(enum ima_hooks func)
+@@ -651,7 +652,7 @@ void ima_update_policy(void)
+ 	list_splice_tail_init_rcu(&ima_temp_rules, policy, synchronize_rcu);
+ 
+ 	if (ima_rules != policy) {
+-		ima_policy_flag = 0;
++		wr_assign(ima_policy_flag, 0);
+ 		ima_rules = policy;
+ 
+ 		/*
 -- 
 2.19.1
 
