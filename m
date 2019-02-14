@@ -2,126 +2,133 @@ Return-Path: <SRS0=S1jD=QV=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B55C43381
-	for <linux-integrity@archiver.kernel.org>; Thu, 14 Feb 2019 11:29:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 201D6C43381
+	for <linux-integrity@archiver.kernel.org>; Thu, 14 Feb 2019 14:05:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAC5C2070D
-	for <linux-integrity@archiver.kernel.org>; Thu, 14 Feb 2019 11:29:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="J91kQpug"
+	by mail.kernel.org (Postfix) with ESMTP id E8A9921927
+	for <linux-integrity@archiver.kernel.org>; Thu, 14 Feb 2019 14:05:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390069AbfBNL3L (ORCPT
+        id S2388148AbfBNOFd (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 14 Feb 2019 06:29:11 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:55174 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729808AbfBNL3L (ORCPT
+        Thu, 14 Feb 2019 09:05:33 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36316 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387727AbfBNOFd (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 14 Feb 2019 06:29:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=8y4n+o9Hv/codggya8emxwNTjOMFoKmC5CMGzEsB5lo=; b=J91kQpug93gfsehaWqBdUaNX7
-        zurTZUL4+JzzJoEFzinTvJLUcZjvtAzQUTAW6XGeEyeZYoRxJOdnXrn0XUqSbi8HIRM+3IZy8pve/
-        4kk1Edp9RzAsItTLdw/hvdY5AwjqWP7RA9zA76VNIhGGFOPzHzvme8eEmjQia3qP3cNqAzFx/AfE2
-        jwORxRGFCJSfSYkvbyGpUcJEvMsu5Ppy/zsm5R1ixltq5pbxTQ21Rkf4JKNFBDb7PHYcO8flecFDK
-        896o1MiZPOaSslxF2HapiP0kq3xMZz+S9jbcKGCkhJ5SdRotn11e7eVeiITgcuWxWsGQ2GZKc17nL
-        Mn0bIMNOA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1guFCG-000270-4h; Thu, 14 Feb 2019 11:28:52 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 1DADA20298BF7; Thu, 14 Feb 2019 12:28:49 +0100 (CET)
-Date:   Thu, 14 Feb 2019 12:28:49 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Igor Stoppa <igor.stoppa@gmail.com>
-Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
-        linux-integrity@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v5 03/12] __wr_after_init: Core and default arch
-Message-ID: <20190214112849.GM32494@hirez.programming.kicks-ass.net>
-References: <cover.1550097697.git.igor.stoppa@huawei.com>
- <b99f0de701e299b9d25ce8cfffa3387b9687f5fc.1550097697.git.igor.stoppa@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b99f0de701e299b9d25ce8cfffa3387b9687f5fc.1550097697.git.igor.stoppa@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 14 Feb 2019 09:05:33 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1EE1duY035625
+        for <linux-integrity@vger.kernel.org>; Thu, 14 Feb 2019 09:05:32 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qn94b2ywj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 14 Feb 2019 09:05:30 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 14 Feb 2019 14:04:27 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 14 Feb 2019 14:04:24 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1EE4Nmu4522440
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 14 Feb 2019 14:04:24 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D4BD211C04C;
+        Thu, 14 Feb 2019 14:04:23 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 320A911C05B;
+        Thu, 14 Feb 2019 14:04:23 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.92.83])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 14 Feb 2019 14:04:23 +0000 (GMT)
+Subject: [GIT PULL] linux-integrity patches for Linux 5.1
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     James Morris <jmorris@namei.org>
+Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Date:   Thu, 14 Feb 2019 09:04:12 -0500
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19021414-0008-0000-0000-000002C073D4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021414-0009-0000-0000-0000222C9686
+Message-Id: <1550153052.4078.5.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902140099
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 12:41:32AM +0200, Igor Stoppa wrote:
-> +static inline void *wr_memset(void *p, int c, __kernel_size_t n)
-> +{
-> +	return memset(p, c, n);
-> +}
-> +
-> +static inline void *wr_memcpy(void *p, const void *q, __kernel_size_t n)
-> +{
-> +	return memcpy(p, q, n);
-> +}
-> +
-> +#define wr_assign(var, val)	((var) = (val))
-> +#define wr_rcu_assign_pointer(p, v)	rcu_assign_pointer(p, v)
-> +
-> +#else
-> +
-> +void *wr_memset(void *p, int c, __kernel_size_t n);
-> +void *wr_memcpy(void *p, const void *q, __kernel_size_t n);
-> +
-> +/**
-> + * wr_assign() - sets a write-rare variable to a specified value
-> + * @var: the variable to set
-> + * @val: the new value
-> + *
-> + * Returns: the variable
-> + */
-> +
-> +#define wr_assign(dst, val) ({			\
-> +	typeof(dst) tmp = (typeof(dst))val;	\
-> +						\
-> +	wr_memcpy(&dst, &tmp, sizeof(dst));	\
-> +	dst;					\
-> +})
-> +
-> +/**
-> + * wr_rcu_assign_pointer() - initialize a pointer in rcu mode
-> + * @p: the rcu pointer - it MUST be aligned to a machine word
-> + * @v: the new value
-> + *
-> + * Returns the value assigned to the rcu pointer.
-> + *
-> + * It is provided as macro, to match rcu_assign_pointer()
-> + * The rcu_assign_pointer() is implemented as equivalent of:
-> + *
-> + * smp_mb();
-> + * WRITE_ONCE();
-> + */
-> +#define wr_rcu_assign_pointer(p, v) ({	\
-> +	smp_mb();			\
-> +	wr_assign(p, v);		\
-> +	p;				\
-> +})
+Hi James,
 
-This requires that wr_memcpy() (through wr_assign) is single-copy-atomic
-for native types. There is not a comment in sight that states this.
+Linux 5.0 introduced the platform keyring to allow verifying the IMA
+kexec kernel image signature using the pre-boot keys.  This pull
+request similarly makes keys on the platform keyring accessible for
+verifying the PE kernel image signature.*
 
-Also, is this true of x86/arm64 memcpy ?
+Also included in this pull request is a new IMA hook that tags tmp
+files, in policy, indicating the file hash needs to be calculated.
+ The remaining patches are cleanup.
+
+*Upstream commit "993a110319a4 (x86/kexec: Fix a kexec_file_load()
+failure)" is required for testing.
+
+Mimi
+
+The following changes since commit 2181e084b26bddca22bc3f23364c15809cfed28b:
+
+  LSM: SafeSetID: remove unused include (2019-01-30 12:29:53 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
+
+for you to fetch changes up to e7fde070f39bc058c356cf366cb17ac2d643abb0:
+
+  evm: Use defined constant for UUID representation (2019-02-04 17:36:01 -0500)
+
+----------------------------------------------------------------
+Andy Shevchenko (1):
+      evm: Use defined constant for UUID representation
+
+Kairui Song (2):
+      integrity, KEYS: add a reference to platform keyring
+      kexec, KEYS: Make use of platform keyring for signature verify
+
+Mimi Zohar (2):
+      encrypted-keys: fix Opt_err/Opt_error = -1
+      ima: define ima_post_create_tmpfile() hook and add missing call
+
+YueHaibing (1):
+      evm: remove set but not used variable 'xattr'
+
+ arch/x86/kernel/kexec-bzimage64.c        | 14 ++++++++++---
+ certs/system_keyring.c                   | 23 ++++++++++++++++++++-
+ fs/namei.c                               |  1 +
+ include/keys/system_keyring.h            |  8 ++++++++
+ include/linux/ima.h                      |  5 +++++
+ include/linux/verification.h             |  1 +
+ security/integrity/digsig.c              |  3 +++
+ security/integrity/evm/evm_crypto.c      |  3 +--
+ security/integrity/evm/evm_main.c        |  6 +-----
+ security/integrity/ima/ima_main.c        | 35 ++++++++++++++++++++++++++++++--
+ security/keys/encrypted-keys/encrypted.c |  4 ++--
+ 11 files changed, 88 insertions(+), 15 deletions(-)
+
