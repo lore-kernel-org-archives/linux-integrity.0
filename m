@@ -1,125 +1,114 @@
-Return-Path: <SRS0=kHfr=QU=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=S1jD=QV=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8406C43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 22:43:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC4ECC10F04
+	for <linux-integrity@archiver.kernel.org>; Thu, 14 Feb 2019 10:52:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 985CD222CC
-	for <linux-integrity@archiver.kernel.org>; Wed, 13 Feb 2019 22:43:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PL+qO4BS"
+	by mail.kernel.org (Postfix) with ESMTP id 956E2222D5
+	for <linux-integrity@archiver.kernel.org>; Thu, 14 Feb 2019 10:52:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392557AbfBMWnI (ORCPT
+        id S2405495AbfBNKw3 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 13 Feb 2019 17:43:08 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39626 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2395143AbfBMWmQ (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 13 Feb 2019 17:42:16 -0500
-Received: by mail-wm1-f65.google.com with SMTP id f16so4162047wmh.4;
-        Wed, 13 Feb 2019 14:42:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
-         :mime-version:content-transfer-encoding;
-        bh=ktrl99/4+i4VLz6USppssXo49kPq9nmcbGTF0KLoSBQ=;
-        b=PL+qO4BSrqbTBZVvQdKVfuy3/R+TSzmQVsSmPWSD0nYfCQOw4/ftFDGqeAZGSDmsrD
-         gp5dGhCLQjbXWBv2zPEel7ZGbFiiHXKIek08yxjbI/8bRXIXLDgV3glT33iw2UZwlzF6
-         ZWtW7gYc5MVUhpPAtUuhRfoed2qyAVf+Nntc5wC3H4/s2pYobeRt0viKWP7Txq5JAUgK
-         zb27BPlMpvk46SWw6eK2V2YyFXBJnAP8jjBEEB5li9V5UUDTFf3bDWz8iq6hJrbY/pXp
-         KcT+ffr0v8t9+4SCEJMuLmWpGXbPjoJa2FgJQJ6vmf7fAQnr6F1cclKwU046m0j6BDC+
-         kczQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:reply-to:mime-version:content-transfer-encoding;
-        bh=ktrl99/4+i4VLz6USppssXo49kPq9nmcbGTF0KLoSBQ=;
-        b=XQJDsWHJ70paOH35m8UtAKoFRkOhc4C/F4kbCptJdzC06Kcri4FLoIJ/FTFPV50RZw
-         xz9E1rdeB0NkasM2wY9WqD3HzeFM1hNzkB0iD3McFBm2oivPwELpbz+cR/6OhxbTyEZL
-         5133AXHqqFj2mlxRLWI/SZqxCPyBQLSUUUMCpWEBm6mMno6QL1LETRRzgYLH+IUKETvG
-         CbN9gM+LjMtEwHK5ogjjRMlzM7npgL+aFSIHyhF9tJlUlYV1Cbl8+Xc44im0zXh9/fIk
-         pEbh67joQDeQTGMLmDugWyfSwhtWvaKobWFM517hqQK5CYmM9+9AXGeRKj325yCdzO1j
-         GnLA==
-X-Gm-Message-State: AHQUAuZZscDRAAbj2LTh9xrOtRqDULcf1yM0AnplsUXAXjvQ5nl4hwtG
-        WOZ8PhdRw6QbGKKYaEtjy9g=
-X-Google-Smtp-Source: AHgI3IZgZPIjnSp/dGfR7iVH0dIRhuCCwStYtqJDhnVvkktzfFNDDUM47bqA//xCjlNKL+dEg6bIOg==
-X-Received: by 2002:a1c:a58c:: with SMTP id o134mr259360wme.79.1550097733324;
-        Wed, 13 Feb 2019 14:42:13 -0800 (PST)
-Received: from localhost.localdomain ([91.75.74.250])
-        by smtp.gmail.com with ESMTPSA id f196sm780810wme.36.2019.02.13.14.42.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 14:42:12 -0800 (PST)
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
-Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
+        Thu, 14 Feb 2019 05:52:29 -0500
+Received: from mga05.intel.com ([192.55.52.43]:49830 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388138AbfBNKw3 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 14 Feb 2019 05:52:29 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2019 02:52:28 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,368,1544515200"; 
+   d="scan'208";a="134242065"
+Received: from djustese-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.237])
+  by orsmga002.jf.intel.com with ESMTP; 14 Feb 2019 02:52:21 -0800
+Date:   Thu, 14 Feb 2019 12:52:21 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        zohar@linux.vnet.ibm.com, David Howells <dhowells@redhat.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        David.Laight@aculab.com, denkenz@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, keyrings@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
         linux-integrity@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v5 05/12] __wr_after_init: x86_64: enable
-Date:   Thu, 14 Feb 2019 00:41:34 +0200
-Message-Id: <c5838cd211a1648f44e0c2f48ab5bcbc1387cb8c.1550097697.git.igor.stoppa@huawei.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <cover.1550097697.git.igor.stoppa@huawei.com>
-References: <cover.1550097697.git.igor.stoppa@huawei.com>
-Reply-To: Igor Stoppa <igor.stoppa@gmail.com>
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2] [PATCH] KEYS: trusted: fix -Wvarags warning
+Message-ID: <20190214105221.GB7956@linux.intel.com>
+References: <0147a993d4a94426afa469a8dcc4e5d7@AcuMS.aculab.com>
+ <20181022234357.82217-1-ndesaulniers@google.com>
+ <alpine.DEB.2.21.1810241136130.3525@jsakkine-mobl1>
+ <CAKwvOdn+V8iFJ_V1vr3GBm-NwxzaDbcmK+nW1q3uVky7bRsB3w@mail.gmail.com>
+ <CAKwvOdnhDin6TJfBVxm6xsCh_nJeBuA7GqbgJwgLnqc3PrJGxA@mail.gmail.com>
+ <20190212231256.GD3977@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190212231256.GD3977@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Set ARCH_HAS_PRMEM to Y for x86_64
+On Wed, Feb 13, 2019 at 01:12:56AM +0200, Jarkko Sakkinen wrote:
+> On Mon, Feb 11, 2019 at 10:36:51AM -0800, Nick Desaulniers wrote:
+> > On Mon, Oct 29, 2018 at 10:54 AM Nick Desaulniers
+> > <ndesaulniers@google.com> wrote:
+> > >
+> > > On Wed, Oct 24, 2018 at 1:37 AM Jarkko Sakkinen
+> > > <jarkko.sakkinen@linux.intel.com> wrote:
+> > > >
+> > > > On Mon, 22 Oct 2018, ndesaulniers@google.com wrote:
+> > > > > Fixes the warning reported by Clang:
+> > > > > security/keys/trusted.c:146:17: warning: passing an object that
+> > > > > undergoes default
+> > > > >      argument promotion to 'va_start' has undefined behavior [-Wvarargs]
+> > > > >        va_start(argp, h3);
+> > > > >                       ^
+> > > > > security/keys/trusted.c:126:37: note: parameter of type 'unsigned
+> > > > > char' is declared here
+> > > > > unsigned char *h2, unsigned char h3, ...)
+> > > > >                               ^
+> > > > > Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
+> > > > > standards explicitly call this out as undefined behavior:
+> > > > >
+> > > > > The parameter parmN is the identifier of the rightmost parameter in
+> > > > > the variable parameter list in the function definition (the one just
+> > > > > before the ...). If the parameter parmN is declared with ... or with a
+> > > > > type that is not compatible with the type that results after
+> > > > > application of the default argument promotions, the behavior is
+> > > > > undefined.
+> > > > >
+> > > > > Link: https://github.com/ClangBuiltLinux/linux/issues/41
+> > > > > Link: https://www.eskimo.com/~scs/cclass/int/sx11c.html
+> > > > > Suggested-by: David Laight <David.Laight@aculab.com>
+> > > > > Suggested-by: Denis Kenzior <denkenz@gmail.com>
+> > > > > Suggested-by: James Bottomley <jejb@linux.vnet.ibm.com>
+> > > > > Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+> > > > > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> > > >
+> > > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > >
+> > > > /Jarkko
+> > >
+> > > Bumping the maintainers if this isn't already picked up?
+> > 
+> > James, Jarkko, or Mimi, can you please pick this up (and let me know
+> > what tree it lands in)?
+> 
+> I can volunteer. Have not done yet v5.1 PR so it would land to that
+> release. Is this agreed?
 
-Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+http://git.infradead.org/users/jjs/linux-tpmdd.git/commit/cfb1f7ee3b35e6ba9e9e2de53a8668ced6397f88
 
-CC: Andy Lutomirski <luto@amacapital.net>
-CC: Nadav Amit <nadav.amit@gmail.com>
-CC: Matthew Wilcox <willy@infradead.org>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Kees Cook <keescook@chromium.org>
-CC: Dave Hansen <dave.hansen@linux.intel.com>
-CC: Mimi Zohar <zohar@linux.vnet.ibm.com>
-CC: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-CC: Ahmed Soliman <ahmedsoliman@mena.vt.edu>
-CC: linux-integrity@vger.kernel.org
-CC: kernel-hardening@lists.openwall.com
-CC: linux-mm@kvack.org
-CC: linux-kernel@vger.kernel.org
----
- arch/x86/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 68261430fe6e..7392b53b12c2 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -32,6 +32,7 @@ config X86_64
- 	select SWIOTLB
- 	select X86_DEV_DMA_OPS
- 	select ARCH_HAS_SYSCALL_WRAPPER
-+	select ARCH_HAS_PRMEM
- 
- #
- # Arch settings
--- 
-2.19.1
-
+/Jarkko
