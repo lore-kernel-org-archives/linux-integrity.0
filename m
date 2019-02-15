@@ -2,108 +2,162 @@ Return-Path: <SRS0=JENc=QW=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B542C43381
-	for <linux-integrity@archiver.kernel.org>; Fri, 15 Feb 2019 08:57:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F02C10F02
+	for <linux-integrity@archiver.kernel.org>; Fri, 15 Feb 2019 16:51:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF5FA2190C
-	for <linux-integrity@archiver.kernel.org>; Fri, 15 Feb 2019 08:57:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gT8IzfYM"
+	by mail.kernel.org (Postfix) with ESMTP id 55A0F2146E
+	for <linux-integrity@archiver.kernel.org>; Fri, 15 Feb 2019 16:51:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391604AbfBOI5q (ORCPT
+        id S2388125AbfBOQvA (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 15 Feb 2019 03:57:46 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37196 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726396AbfBOI5q (ORCPT
+        Fri, 15 Feb 2019 11:51:00 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46590 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388497AbfBOQu7 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 15 Feb 2019 03:57:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=lC0sJXKkNVKrNcwoJXfFFpIZaHgwwYjVNEpuiQ0lz3E=; b=gT8IzfYM0rLFTG1VADzNxWfkL
-        0eTJScOywY+BgA5bL80r6zjO1AZl0H1zn29CTmFlZpu9sIc1WYqCtNA2bv/sLQy+V7B5KSUJL9kBf
-        Mjc3XlxeAS2Al3t6/Whmm/lamblTaQI4AOdXw4EJkWBnRgFshT9ee/IpFzmm8tY1oqVPt1WRJewMQ
-        wg8kTdGA4sk4TirfNw88ZtdtbGnDMH45veEYZy1uMspmPpNxOUFG+XJ9YCgDMkUqaGfGURYZIExdP
-        N88tGKmHqC9VA5C/vAfXJZLPzY1ecvbeTU9gZV2OI7fGkQGeoFyBBHE8kTs/NXjsX9OU67Bl1b2ZI
-        4/Q6jy/xQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1guZJT-0000As-Ke; Fri, 15 Feb 2019 08:57:39 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id EE255201A8970; Fri, 15 Feb 2019 09:57:36 +0100 (CET)
-Date:   Fri, 15 Feb 2019 09:57:36 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Igor Stoppa <igor.stoppa@gmail.com>
-Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
-        linux-integrity@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v5 03/12] __wr_after_init: Core and default arch
-Message-ID: <20190215085736.GO32494@hirez.programming.kicks-ass.net>
-References: <cover.1550097697.git.igor.stoppa@huawei.com>
- <b99f0de701e299b9d25ce8cfffa3387b9687f5fc.1550097697.git.igor.stoppa@huawei.com>
- <20190214112849.GM32494@hirez.programming.kicks-ass.net>
- <6e9ec71c-ee75-9b1e-9ff8-a3210030e85d@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6e9ec71c-ee75-9b1e-9ff8-a3210030e85d@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 15 Feb 2019 11:50:59 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1FGn8FH088216
+        for <linux-integrity@vger.kernel.org>; Fri, 15 Feb 2019 11:50:58 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qp0smsgeb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 15 Feb 2019 11:50:58 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 15 Feb 2019 16:50:56 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 15 Feb 2019 16:50:53 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1FGoqiM4587862
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Feb 2019 16:50:52 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A63C85205A;
+        Fri, 15 Feb 2019 16:50:52 +0000 (GMT)
+Received: from localhost.ibm.com (unknown [9.80.92.223])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 818BD5204E;
+        Fri, 15 Feb 2019 16:50:51 +0000 (GMT)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        "Bruno E . O . Meneguele" <bmeneg@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Subject: [PATCH v3] x86/ima: require signed kernel modules
+Date:   Fri, 15 Feb 2019 11:50:18 -0500
+X-Mailer: git-send-email 2.7.5
+X-TM-AS-GCONF: 00
+x-cbid: 19021516-4275-0000-0000-0000030FFB6B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021516-4276-0000-0000-0000381E1BC8
+Message-Id: <1550249418-7986-1-git-send-email-zohar@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-15_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902150116
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 01:10:33AM +0200, Igor Stoppa wrote:
-> 
-> 
-> On 14/02/2019 13:28, Peter Zijlstra wrote:
-> > On Thu, Feb 14, 2019 at 12:41:32AM +0200, Igor Stoppa wrote:
-> 
-> [...]
-> 
-> > > +#define wr_rcu_assign_pointer(p, v) ({	\
-> > > +	smp_mb();			\
-> > > +	wr_assign(p, v);		\
-> > > +	p;				\
-> > > +})
-> > 
-> > This requires that wr_memcpy() (through wr_assign) is single-copy-atomic
-> > for native types. There is not a comment in sight that states this.
-> 
-> Right, I kinda expected native-aligned <-> atomic, but it's not necessarily
-> true. It should be confirmed when enabling write rare on a new architecture.
-> I'll add the comment.
-> 
-> > Also, is this true of x86/arm64 memcpy ?
-> 
-> 
-> For x86_64:
-> https://elixir.bootlin.com/linux/v5.0-rc6/source/arch/x86/include/asm/uaccess.h#L462
-> the mov"itype"  part should deal with atomic copy of native, aligned types.
-> 
-> 
-> For arm64:
-> https://elixir.bootlin.com/linux/v5.0-rc6/source/arch/arm64/lib/copy_template.S#L110
-> .Ltiny15 deals with copying less than 16 bytes, which includes pointers.
-> When the data is aligned, the copy of a pointer should be atomic.
-> 
+Have the IMA architecture specific policy require signed kernel modules
+on systems with secure boot mode enabled; and coordinate the different
+signature verification methods, so only one signature is required.
 
-Where are the comments and Changelog notes ? How is an arch maintainer
-to be aware of this requirement when adding support for his/her arch?
+Requiring appended kernel module signatures may be configured, enabled
+on the boot command line, or with this patch enabled in secure boot
+mode.  This patch defines set_module_sig_enforced().
+
+To coordinate between appended kernel module signatures and IMA
+signatures, only define an IMA MODULE_CHECK policy rule if
+CONFIG_MODULE_SIG is not enabled.  A custom IMA policy may still define
+and require an IMA signature.
+
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+ arch/x86/kernel/ima_arch.c | 9 ++++++++-
+ include/linux/module.h     | 5 +++++
+ kernel/module.c            | 5 +++++
+ 3 files changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
+index e47cd9390ab4..3fb9847f1cad 100644
+--- a/arch/x86/kernel/ima_arch.c
++++ b/arch/x86/kernel/ima_arch.c
+@@ -64,12 +64,19 @@ static const char * const sb_arch_rules[] = {
+ 	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
+ #endif /* CONFIG_KEXEC_VERIFY_SIG */
+ 	"measure func=KEXEC_KERNEL_CHECK",
++#if !IS_ENABLED(CONFIG_MODULE_SIG)
++	"appraise func=MODULE_CHECK appraise_type=imasig",
++#endif
++	"measure func=MODULE_CHECK",
+ 	NULL
+ };
+ 
+ const char * const *arch_get_ima_policy(void)
+ {
+-	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot())
++	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
++		if (IS_ENABLED(CONFIG_MODULE_SIG))
++			set_module_sig_enforced();
+ 		return sb_arch_rules;
++	}
+ 	return NULL;
+ }
+diff --git a/include/linux/module.h b/include/linux/module.h
+index 8fa38d3e7538..5aaa9359adc8 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -660,6 +660,7 @@ static inline bool is_livepatch_module(struct module *mod)
+ #endif /* CONFIG_LIVEPATCH */
+ 
+ bool is_module_sig_enforced(void);
++void set_module_sig_enforced(void);
+ 
+ #else /* !CONFIG_MODULES... */
+ 
+@@ -780,6 +781,10 @@ static inline bool is_module_sig_enforced(void)
+ 	return false;
+ }
+ 
++static inline void set_module_sig_enforced(void)
++{
++}
++
+ /* Dereference module function descriptor */
+ static inline
+ void *dereference_module_function_descriptor(struct module *mod, void *ptr)
+diff --git a/kernel/module.c b/kernel/module.c
+index 2ad1b5239910..73cada04bd24 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -286,6 +286,11 @@ bool is_module_sig_enforced(void)
+ }
+ EXPORT_SYMBOL(is_module_sig_enforced);
+ 
++void set_module_sig_enforced(void)
++{
++	sig_enforce = true;
++}
++
+ /* Block module loading/unloading? */
+ int modules_disabled = 0;
+ core_param(nomodule, modules_disabled, bint, 0);
+-- 
+2.7.5
+
