@@ -2,101 +2,539 @@ Return-Path: <SRS0=JENc=QW=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BEB8C43381
-	for <linux-integrity@archiver.kernel.org>; Fri, 15 Feb 2019 17:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F2AC43381
+	for <linux-integrity@archiver.kernel.org>; Fri, 15 Feb 2019 22:32:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFCE821925
-	for <linux-integrity@archiver.kernel.org>; Fri, 15 Feb 2019 17:58:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57F29222D9
+	for <linux-integrity@archiver.kernel.org>; Fri, 15 Feb 2019 22:32:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730062AbfBOR6f (ORCPT
+        id S2390420AbfBOWcp (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 15 Feb 2019 12:58:35 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58486 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728956AbfBOR6f (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 15 Feb 2019 12:58:35 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1FHriDr033620
-        for <linux-integrity@vger.kernel.org>; Fri, 15 Feb 2019 12:58:33 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qp1rk1ahg-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 15 Feb 2019 12:58:33 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 15 Feb 2019 17:58:31 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 15 Feb 2019 17:58:28 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1FHwR7L2228508
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Feb 2019 17:58:27 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0D75A52052;
-        Fri, 15 Feb 2019 17:58:27 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.92.223])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 0D1C25204F;
-        Fri, 15 Feb 2019 17:58:25 +0000 (GMT)
-Subject: Re: [PATCH v3] x86/ima: require signed kernel modules
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     linux-integrity@vger.kernel.org,
+        Fri, 15 Feb 2019 17:32:45 -0500
+Received: from namei.org ([65.99.196.166]:52488 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729117AbfBOWco (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 15 Feb 2019 17:32:44 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x1FMWGdD006400;
+        Fri, 15 Feb 2019 22:32:16 GMT
+Date:   Sat, 16 Feb 2019 09:32:16 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+cc:     Anders Roxell <anders.roxell@linaro.org>,
+        dmitry.kasatkin@gmail.com, serge@hallyn.com,
+        ard.biesheuvel@linaro.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        "Bruno E . O . Meneguele" <bmeneg@redhat.com>
-Date:   Fri, 15 Feb 2019 12:58:15 -0500
-In-Reply-To: <20190215170144.GH11489@garbanzo.do-not-panic.com>
-References: <1550249418-7986-1-git-send-email-zohar@linux.ibm.com>
-         <20190215170144.GH11489@garbanzo.do-not-panic.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19021517-0020-0000-0000-000003174E94
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021517-0021-0000-0000-000021688570
-Message-Id: <1550253495.7468.0.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-15_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=905 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902150122
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v3 1/2] ima: fix build error redeclaration of
+ enumerator
+In-Reply-To: <1550165329.3980.8.camel@linux.ibm.com>
+Message-ID: <alpine.LRH.2.21.1902160932070.6353@namei.org>
+References: <20190213221625.7551-1-anders.roxell@linaro.org> <1550165329.3980.8.camel@linux.ibm.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, 2019-02-15 at 09:01 -0800, Luis Chamberlain wrote:
-> On Fri, Feb 15, 2019 at 11:50:18AM -0500, Mimi Zohar wrote:
-> > Have the IMA architecture specific policy require signed kernel modules
-> > on systems with secure boot mode enabled; and coordinate the different
-> > signature verification methods, so only one signature is required.
-> > 
-> > Requiring appended kernel module signatures may be configured, enabled
-> > on the boot command line, or with this patch enabled in secure boot
-> > mode.  This patch defines set_module_sig_enforced().
-> > 
-> > To coordinate between appended kernel module signatures and IMA
-> > signatures, only define an IMA MODULE_CHECK policy rule if
-> > CONFIG_MODULE_SIG is not enabled.  A custom IMA policy may still define
-> > and require an IMA signature.
-> > 
-> > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> 
-> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+On Thu, 14 Feb 2019, Mimi Zohar wrote:
 
-Thanks!
+> Ok, this looks reasonable, but will have a minor clash with Gustavo's
+> "security: mark expected switch fall-throughs and add a missing
+> break".
+> 
+> James, are you picking up Gastavo's v2 patch from Friday?
+
+Nope.
+
+> 
+> Mimi
+> 
+> > ---
+> > 
+> > No change since v2.
+> > 
+> >  security/integrity/ima/ima.h          | 24 +++----
+> >  security/integrity/ima/ima_api.c      |  3 +-
+> >  security/integrity/ima/ima_appraise.c | 40 ++++++------
+> >  security/integrity/ima/ima_main.c     | 30 ++++-----
+> >  security/integrity/ima/ima_policy.c   | 92 +++++++++++++--------------
+> >  5 files changed, 95 insertions(+), 94 deletions(-)
+> > 
+> > diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> > index d213e835c498..89ceb61f279c 100644
+> > --- a/security/integrity/ima/ima.h
+> > +++ b/security/integrity/ima/ima.h
+> > @@ -173,18 +173,18 @@ static inline unsigned long ima_hash_key(u8 *digest)
+> >  }
+> >  
+> >  #define __ima_hooks(hook)		\
+> > -	hook(NONE)			\
+> > -	hook(FILE_CHECK)		\
+> > -	hook(MMAP_CHECK)		\
+> > -	hook(BPRM_CHECK)		\
+> > -	hook(CREDS_CHECK)		\
+> > -	hook(POST_SETATTR)		\
+> > -	hook(MODULE_CHECK)		\
+> > -	hook(FIRMWARE_CHECK)		\
+> > -	hook(KEXEC_KERNEL_CHECK)	\
+> > -	hook(KEXEC_INITRAMFS_CHECK)	\
+> > -	hook(POLICY_CHECK)		\
+> > -	hook(MAX_CHECK)
+> > +	hook(IMA_NONE)			\
+> > +	hook(IMA_FILE_CHECK)		\
+> > +	hook(IMA_MMAP_CHECK)		\
+> > +	hook(IMA_BPRM_CHECK)		\
+> > +	hook(IMA_CREDS_CHECK)		\
+> > +	hook(IMA_POST_SETATTR)		\
+> > +	hook(IMA_MODULE_CHECK)		\
+> > +	hook(IMA_FIRMWARE_CHECK)	\
+> > +	hook(IMA_KEXEC_KERNEL_CHECK)	\
+> > +	hook(IMA_KEXEC_INITRAMFS_CHECK)	\
+> > +	hook(IMA_POLICY_CHECK)		\
+> > +	hook(IMA_MAX_CHECK)
+> >  #define __ima_hook_enumify(ENUM)	ENUM,
+> >  
+> >  enum ima_hooks {
+> > diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+> > index c7505fb122d4..81e705423894 100644
+> > --- a/security/integrity/ima/ima_api.c
+> > +++ b/security/integrity/ima/ima_api.c
+> > @@ -168,7 +168,8 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+> >   * The policy is defined in terms of keypairs:
+> >   *		subj=, obj=, type=, func=, mask=, fsmagic=
+> >   *	subj,obj, and type: are LSM specific.
+> > - *	func: FILE_CHECK | BPRM_CHECK | CREDS_CHECK | MMAP_CHECK | MODULE_CHECK
+> > + *	func: IMA_FILE_CHECK | IMA_BPRM_CHECK | IMA_CREDS_CHECK \
+> > + *	      | IMA_MMAP_CHECK | IMA_MODULE_CHECK
+> >   *	mask: contains the permission mask
+> >   *	fsmagic: hex value
+> >   *
+> > diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> > index a2baa85ea2f5..c527cf3f37d3 100644
+> > --- a/security/integrity/ima/ima_appraise.c
+> > +++ b/security/integrity/ima/ima_appraise.c
+> > @@ -86,16 +86,16 @@ enum integrity_status ima_get_cache_status(struct integrity_iint_cache *iint,
+> >  					   enum ima_hooks func)
+> >  {
+> >  	switch (func) {
+> > -	case MMAP_CHECK:
+> > +	case IMA_MMAP_CHECK:
+> >  		return iint->ima_mmap_status;
+> > -	case BPRM_CHECK:
+> > +	case IMA_BPRM_CHECK:
+> >  		return iint->ima_bprm_status;
+> > -	case CREDS_CHECK:
+> > +	case IMA_CREDS_CHECK:
+> >  		return iint->ima_creds_status;
+> > -	case FILE_CHECK:
+> > -	case POST_SETATTR:
+> > +	case IMA_FILE_CHECK:
+> > +	case IMA_POST_SETATTR:
+> >  		return iint->ima_file_status;
+> > -	case MODULE_CHECK ... MAX_CHECK - 1:
+> > +	case IMA_MODULE_CHECK ... IMA_MAX_CHECK - 1:
+> >  	default:
+> >  		return iint->ima_read_status;
+> >  	}
+> > @@ -106,19 +106,19 @@ static void ima_set_cache_status(struct integrity_iint_cache *iint,
+> >  				 enum integrity_status status)
+> >  {
+> >  	switch (func) {
+> > -	case MMAP_CHECK:
+> > +	case IMA_MMAP_CHECK:
+> >  		iint->ima_mmap_status = status;
+> >  		break;
+> > -	case BPRM_CHECK:
+> > +	case IMA_BPRM_CHECK:
+> >  		iint->ima_bprm_status = status;
+> >  		break;
+> > -	case CREDS_CHECK:
+> > +	case IMA_CREDS_CHECK:
+> >  		iint->ima_creds_status = status;
+> > -	case FILE_CHECK:
+> > -	case POST_SETATTR:
+> > +	case IMA_FILE_CHECK:
+> > +	case IMA_POST_SETATTR:
+> >  		iint->ima_file_status = status;
+> >  		break;
+> > -	case MODULE_CHECK ... MAX_CHECK - 1:
+> > +	case IMA_MODULE_CHECK ... IMA_MAX_CHECK - 1:
+> >  	default:
+> >  		iint->ima_read_status = status;
+> >  		break;
+> > @@ -129,20 +129,20 @@ static void ima_cache_flags(struct integrity_iint_cache *iint,
+> >  			     enum ima_hooks func)
+> >  {
+> >  	switch (func) {
+> > -	case MMAP_CHECK:
+> > +	case IMA_MMAP_CHECK:
+> >  		iint->flags |= (IMA_MMAP_APPRAISED | IMA_APPRAISED);
+> >  		break;
+> > -	case BPRM_CHECK:
+> > +	case IMA_BPRM_CHECK:
+> >  		iint->flags |= (IMA_BPRM_APPRAISED | IMA_APPRAISED);
+> >  		break;
+> > -	case CREDS_CHECK:
+> > +	case IMA_CREDS_CHECK:
+> >  		iint->flags |= (IMA_CREDS_APPRAISED | IMA_APPRAISED);
+> >  		break;
+> > -	case FILE_CHECK:
+> > -	case POST_SETATTR:
+> > +	case IMA_FILE_CHECK:
+> > +	case IMA_POST_SETATTR:
+> >  		iint->flags |= (IMA_FILE_APPRAISED | IMA_APPRAISED);
+> >  		break;
+> > -	case MODULE_CHECK ... MAX_CHECK - 1:
+> > +	case IMA_MODULE_CHECK ... IMA_MAX_CHECK - 1:
+> >  	default:
+> >  		iint->flags |= (IMA_READ_APPRAISED | IMA_APPRAISED);
+> >  		break;
+> > @@ -298,7 +298,7 @@ int ima_appraise_measurement(enum ima_hooks func,
+> >  			break;
+> >  		}
+> >  		if (IS_ENABLED(CONFIG_INTEGRITY_PLATFORM_KEYRING) && rc &&
+> > -		    func == KEXEC_KERNEL_CHECK)
+> > +		    func == IMA_KEXEC_KERNEL_CHECK)
+> >  			rc = integrity_digsig_verify(INTEGRITY_KEYRING_PLATFORM,
+> >  						     (const char *)xattr_value,
+> >  						     xattr_len,
+> > @@ -400,7 +400,7 @@ void ima_inode_post_setattr(struct dentry *dentry)
+> >  	    || !(inode->i_opflags & IOP_XATTR))
+> >  		return;
+> >  
+> > -	action = ima_must_appraise(inode, MAY_ACCESS, POST_SETATTR);
+> > +	action = ima_must_appraise(inode, MAY_ACCESS, IMA_POST_SETATTR);
+> >  	if (!action)
+> >  		__vfs_removexattr(dentry, XATTR_NAME_IMA);
+> >  	iint = integrity_iint_find(inode);
+> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> > index 357edd140c09..1ddbe39cba8a 100644
+> > --- a/security/integrity/ima/ima_main.c
+> > +++ b/security/integrity/ima/ima_main.c
+> > @@ -193,7 +193,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
+> >  	 * Included is the appraise submask.
+> >  	 */
+> >  	action = ima_get_action(inode, cred, secid, mask, func, &pcr);
+> > -	violation_check = ((func == FILE_CHECK || func == MMAP_CHECK) &&
+> > +	violation_check = ((func == IMA_FILE_CHECK || func == IMA_MMAP_CHECK) &&
+> >  			   (ima_policy_flag & IMA_MEASURE));
+> >  	if (!action && !violation_check)
+> >  		return 0;
+> > @@ -202,7 +202,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
+> >  
+> >  	/*  Is the appraise rule hook specific?  */
+> >  	if (action & IMA_FILE_APPRAISE)
+> > -		func = FILE_CHECK;
+> > +		func = IMA_FILE_CHECK;
+> >  
+> >  	inode_lock(inode);
+> >  
+> > @@ -340,7 +340,7 @@ int ima_file_mmap(struct file *file, unsigned long prot)
+> >  	if (file && (prot & PROT_EXEC)) {
+> >  		security_task_getsecid(current, &secid);
+> >  		return process_measurement(file, current_cred(), secid, NULL,
+> > -					   0, MAY_EXEC, MMAP_CHECK);
+> > +					   0, MAY_EXEC, IMA_MMAP_CHECK);
+> >  	}
+> >  
+> >  	return 0;
+> > @@ -366,13 +366,13 @@ int ima_bprm_check(struct linux_binprm *bprm)
+> >  
+> >  	security_task_getsecid(current, &secid);
+> >  	ret = process_measurement(bprm->file, current_cred(), secid, NULL, 0,
+> > -				  MAY_EXEC, BPRM_CHECK);
+> > +				  MAY_EXEC, IMA_BPRM_CHECK);
+> >  	if (ret)
+> >  		return ret;
+> >  
+> >  	security_cred_getsecid(bprm->cred, &secid);
+> >  	return process_measurement(bprm->file, bprm->cred, secid, NULL, 0,
+> > -				   MAY_EXEC, CREDS_CHECK);
+> > +				   MAY_EXEC, IMA_CREDS_CHECK);
+> >  }
+> >  
+> >  /**
+> > @@ -392,7 +392,7 @@ int ima_file_check(struct file *file, int mask)
+> >  	security_task_getsecid(current, &secid);
+> >  	return process_measurement(file, current_cred(), secid, NULL, 0,
+> >  				   mask & (MAY_READ | MAY_WRITE | MAY_EXEC |
+> > -					   MAY_APPEND), FILE_CHECK);
+> > +					   MAY_APPEND), IMA_FILE_CHECK);
+> >  }
+> >  EXPORT_SYMBOL_GPL(ima_file_check);
+> >  
+> > @@ -409,7 +409,7 @@ void ima_post_create_tmpfile(struct inode *inode)
+> >  	struct integrity_iint_cache *iint;
+> >  	int must_appraise;
+> >  
+> > -	must_appraise = ima_must_appraise(inode, MAY_ACCESS, FILE_CHECK);
+> > +	must_appraise = ima_must_appraise(inode, MAY_ACCESS, IMA_FILE_CHECK);
+> >  	if (!must_appraise)
+> >  		return;
+> >  
+> > @@ -436,7 +436,7 @@ void ima_post_path_mknod(struct dentry *dentry)
+> >  	struct inode *inode = dentry->d_inode;
+> >  	int must_appraise;
+> >  
+> > -	must_appraise = ima_must_appraise(inode, MAY_ACCESS, FILE_CHECK);
+> > +	must_appraise = ima_must_appraise(inode, MAY_ACCESS, IMA_FILE_CHECK);
+> >  	if (!must_appraise)
+> >  		return;
+> >  
+> > @@ -474,12 +474,12 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+> >  }
+> >  
+> >  static const int read_idmap[READING_MAX_ID] = {
+> > -	[READING_FIRMWARE] = FIRMWARE_CHECK,
+> > -	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
+> > -	[READING_MODULE] = MODULE_CHECK,
+> > -	[READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
+> > -	[READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
+> > -	[READING_POLICY] = POLICY_CHECK
+> > +	[READING_FIRMWARE] = IMA_FIRMWARE_CHECK,
+> > +	[READING_FIRMWARE_PREALLOC_BUFFER] = IMA_FIRMWARE_CHECK,
+> > +	[READING_MODULE] = IMA_MODULE_CHECK,
+> > +	[READING_KEXEC_IMAGE] = IMA_KEXEC_KERNEL_CHECK,
+> > +	[READING_KEXEC_INITRAMFS] = IMA_KEXEC_INITRAMFS_CHECK,
+> > +	[READING_POLICY] = IMA_POLICY_CHECK
+> >  };
+> >  
+> >  /**
+> > @@ -520,7 +520,7 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+> >  		return 0;
+> >  	}
+> >  
+> > -	func = read_idmap[read_id] ?: FILE_CHECK;
+> > +	func = read_idmap[read_id] ?: IMA_FILE_CHECK;
+> >  	security_task_getsecid(current, &secid);
+> >  	return process_measurement(file, current_cred(), secid, buf, size,
+> >  				   MAY_READ, func);
+> > diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> > index 26fa9d9723f6..6b39b835861b 100644
+> > --- a/security/integrity/ima/ima_policy.c
+> > +++ b/security/integrity/ima/ima_policy.c
+> > @@ -112,31 +112,31 @@ static struct ima_rule_entry dont_measure_rules[] __ro_after_init = {
+> >  };
+> >  
+> >  static struct ima_rule_entry original_measurement_rules[] __ro_after_init = {
+> > -	{.action = MEASURE, .func = MMAP_CHECK, .mask = MAY_EXEC,
+> > +	{.action = MEASURE, .func = IMA_MMAP_CHECK, .mask = MAY_EXEC,
+> >  	 .flags = IMA_FUNC | IMA_MASK},
+> > -	{.action = MEASURE, .func = BPRM_CHECK, .mask = MAY_EXEC,
+> > +	{.action = MEASURE, .func = IMA_BPRM_CHECK, .mask = MAY_EXEC,
+> >  	 .flags = IMA_FUNC | IMA_MASK},
+> > -	{.action = MEASURE, .func = FILE_CHECK, .mask = MAY_READ,
+> > +	{.action = MEASURE, .func = IMA_FILE_CHECK, .mask = MAY_READ,
+> >  	 .uid = GLOBAL_ROOT_UID, .uid_op = &uid_eq,
+> >  	 .flags = IMA_FUNC | IMA_MASK | IMA_UID},
+> > -	{.action = MEASURE, .func = MODULE_CHECK, .flags = IMA_FUNC},
+> > -	{.action = MEASURE, .func = FIRMWARE_CHECK, .flags = IMA_FUNC},
+> > +	{.action = MEASURE, .func = IMA_MODULE_CHECK, .flags = IMA_FUNC},
+> > +	{.action = MEASURE, .func = IMA_FIRMWARE_CHECK, .flags = IMA_FUNC},
+> >  };
+> >  
+> >  static struct ima_rule_entry default_measurement_rules[] __ro_after_init = {
+> > -	{.action = MEASURE, .func = MMAP_CHECK, .mask = MAY_EXEC,
+> > +	{.action = MEASURE, .func = IMA_MMAP_CHECK, .mask = MAY_EXEC,
+> >  	 .flags = IMA_FUNC | IMA_MASK},
+> > -	{.action = MEASURE, .func = BPRM_CHECK, .mask = MAY_EXEC,
+> > +	{.action = MEASURE, .func = IMA_BPRM_CHECK, .mask = MAY_EXEC,
+> >  	 .flags = IMA_FUNC | IMA_MASK},
+> > -	{.action = MEASURE, .func = FILE_CHECK, .mask = MAY_READ,
+> > +	{.action = MEASURE, .func = IMA_FILE_CHECK, .mask = MAY_READ,
+> >  	 .uid = GLOBAL_ROOT_UID, .uid_op = &uid_eq,
+> >  	 .flags = IMA_FUNC | IMA_INMASK | IMA_EUID},
+> > -	{.action = MEASURE, .func = FILE_CHECK, .mask = MAY_READ,
+> > +	{.action = MEASURE, .func = IMA_FILE_CHECK, .mask = MAY_READ,
+> >  	 .uid = GLOBAL_ROOT_UID, .uid_op = &uid_eq,
+> >  	 .flags = IMA_FUNC | IMA_INMASK | IMA_UID},
+> > -	{.action = MEASURE, .func = MODULE_CHECK, .flags = IMA_FUNC},
+> > -	{.action = MEASURE, .func = FIRMWARE_CHECK, .flags = IMA_FUNC},
+> > -	{.action = MEASURE, .func = POLICY_CHECK, .flags = IMA_FUNC},
+> > +	{.action = MEASURE, .func = IMA_MODULE_CHECK, .flags = IMA_FUNC},
+> > +	{.action = MEASURE, .func = IMA_FIRMWARE_CHECK, .flags = IMA_FUNC},
+> > +	{.action = MEASURE, .func = IMA_POLICY_CHECK, .flags = IMA_FUNC},
+> >  };
+> >  
+> >  static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
+> > @@ -155,7 +155,7 @@ static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
+> >  	{.action = DONT_APPRAISE, .fsmagic = CGROUP_SUPER_MAGIC, .flags = IMA_FSMAGIC},
+> >  	{.action = DONT_APPRAISE, .fsmagic = CGROUP2_SUPER_MAGIC, .flags = IMA_FSMAGIC},
+> >  #ifdef CONFIG_IMA_WRITE_POLICY
+> > -	{.action = APPRAISE, .func = POLICY_CHECK,
+> > +	{.action = APPRAISE, .func = IMA_POLICY_CHECK,
+> >  	.flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
+> >  #endif
+> >  #ifndef CONFIG_IMA_APPRAISE_SIGNED_INIT
+> > @@ -170,31 +170,31 @@ static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
+> >  
+> >  static struct ima_rule_entry build_appraise_rules[] __ro_after_init = {
+> >  #ifdef CONFIG_IMA_APPRAISE_REQUIRE_MODULE_SIGS
+> > -	{.action = APPRAISE, .func = MODULE_CHECK,
+> > +	{.action = APPRAISE, .func = IMA_MODULE_CHECK,
+> >  	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
+> >  #endif
+> >  #ifdef CONFIG_IMA_APPRAISE_REQUIRE_FIRMWARE_SIGS
+> > -	{.action = APPRAISE, .func = FIRMWARE_CHECK,
+> > +	{.action = APPRAISE, .func = IMA_FIRMWARE_CHECK,
+> >  	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
+> >  #endif
+> >  #ifdef CONFIG_IMA_APPRAISE_REQUIRE_KEXEC_SIGS
+> > -	{.action = APPRAISE, .func = KEXEC_KERNEL_CHECK,
+> > +	{.action = APPRAISE, .func = IMA_KEXEC_KERNEL_CHECK,
+> >  	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
+> >  #endif
+> >  #ifdef CONFIG_IMA_APPRAISE_REQUIRE_POLICY_SIGS
+> > -	{.action = APPRAISE, .func = POLICY_CHECK,
+> > +	{.action = APPRAISE, .func = IMA_POLICY_CHECK,
+> >  	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
+> >  #endif
+> >  };
+> >  
+> >  static struct ima_rule_entry secure_boot_rules[] __ro_after_init = {
+> > -	{.action = APPRAISE, .func = MODULE_CHECK,
+> > +	{.action = APPRAISE, .func = IMA_MODULE_CHECK,
+> >  	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
+> > -	{.action = APPRAISE, .func = FIRMWARE_CHECK,
+> > +	{.action = APPRAISE, .func = IMA_FIRMWARE_CHECK,
+> >  	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
+> > -	{.action = APPRAISE, .func = KEXEC_KERNEL_CHECK,
+> > +	{.action = APPRAISE, .func = IMA_KEXEC_KERNEL_CHECK,
+> >  	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
+> > -	{.action = APPRAISE, .func = POLICY_CHECK,
+> > +	{.action = APPRAISE, .func = IMA_POLICY_CHECK,
+> >  	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
+> >  };
+> >  
+> > @@ -292,13 +292,13 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
+> >  	int i;
+> >  
+> >  	if ((rule->flags & IMA_FUNC) &&
+> > -	    (rule->func != func && func != POST_SETATTR))
+> > +	    (rule->func != func && func != IMA_POST_SETATTR))
+> >  		return false;
+> >  	if ((rule->flags & IMA_MASK) &&
+> > -	    (rule->mask != mask && func != POST_SETATTR))
+> > +	    (rule->mask != mask && func != IMA_POST_SETATTR))
+> >  		return false;
+> >  	if ((rule->flags & IMA_INMASK) &&
+> > -	    (!(rule->mask & mask) && func != POST_SETATTR))
+> > +	    (!(rule->mask & mask) && func != IMA_POST_SETATTR))
+> >  		return false;
+> >  	if ((rule->flags & IMA_FSMAGIC)
+> >  	    && rule->fsmagic != inode->i_sb->s_magic)
+> > @@ -373,16 +373,16 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
+> >  		return IMA_FILE_APPRAISE;
+> >  
+> >  	switch (func) {
+> > -	case MMAP_CHECK:
+> > +	case IMA_MMAP_CHECK:
+> >  		return IMA_MMAP_APPRAISE;
+> > -	case BPRM_CHECK:
+> > +	case IMA_BPRM_CHECK:
+> >  		return IMA_BPRM_APPRAISE;
+> > -	case CREDS_CHECK:
+> > +	case IMA_CREDS_CHECK:
+> >  		return IMA_CREDS_APPRAISE;
+> > -	case FILE_CHECK:
+> > -	case POST_SETATTR:
+> > +	case IMA_FILE_CHECK:
+> > +	case IMA_POST_SETATTR:
+> >  		return IMA_FILE_APPRAISE;
+> > -	case MODULE_CHECK ... MAX_CHECK - 1:
+> > +	case IMA_MODULE_CHECK ... IMA_MAX_CHECK - 1:
+> >  	default:
+> >  		return IMA_READ_APPRAISE;
+> >  	}
+> > @@ -468,13 +468,13 @@ void ima_update_policy_flag(void)
+> >  
+> >  static int ima_appraise_flag(enum ima_hooks func)
+> >  {
+> > -	if (func == MODULE_CHECK)
+> > +	if (func == IMA_MODULE_CHECK)
+> >  		return IMA_APPRAISE_MODULES;
+> > -	else if (func == FIRMWARE_CHECK)
+> > +	else if (func == IMA_FIRMWARE_CHECK)
+> >  		return IMA_APPRAISE_FIRMWARE;
+> > -	else if (func == POLICY_CHECK)
+> > +	else if (func == IMA_POLICY_CHECK)
+> >  		return IMA_APPRAISE_POLICY;
+> > -	else if (func == KEXEC_KERNEL_CHECK)
+> > +	else if (func == IMA_KEXEC_KERNEL_CHECK)
+> >  		return IMA_APPRAISE_KEXEC;
+> >  	return 0;
+> >  }
+> > @@ -500,7 +500,7 @@ static void add_rules(struct ima_rule_entry *entries, int count,
+> >  		}
+> >  		if (entries[i].action == APPRAISE)
+> >  			temp_ima_appraise |= ima_appraise_flag(entries[i].func);
+> > -		if (entries[i].func == POLICY_CHECK)
+> > +		if (entries[i].func == IMA_POLICY_CHECK)
+> >  			temp_ima_appraise |= IMA_APPRAISE_POLICY;
+> >  	}
+> >  }
+> > @@ -846,29 +846,29 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+> >  				result = -EINVAL;
+> >  
+> >  			if (strcmp(args[0].from, "FILE_CHECK") == 0)
+> > -				entry->func = FILE_CHECK;
+> > +				entry->func = IMA_FILE_CHECK;
+> >  			/* PATH_CHECK is for backwards compat */
+> >  			else if (strcmp(args[0].from, "PATH_CHECK") == 0)
+> > -				entry->func = FILE_CHECK;
+> > +				entry->func = IMA_FILE_CHECK;
+> >  			else if (strcmp(args[0].from, "MODULE_CHECK") == 0)
+> > -				entry->func = MODULE_CHECK;
+> > +				entry->func = IMA_MODULE_CHECK;
+> >  			else if (strcmp(args[0].from, "FIRMWARE_CHECK") == 0)
+> > -				entry->func = FIRMWARE_CHECK;
+> > +				entry->func = IMA_FIRMWARE_CHECK;
+> >  			else if ((strcmp(args[0].from, "FILE_MMAP") == 0)
+> >  				|| (strcmp(args[0].from, "MMAP_CHECK") == 0))
+> > -				entry->func = MMAP_CHECK;
+> > +				entry->func = IMA_MMAP_CHECK;
+> >  			else if (strcmp(args[0].from, "BPRM_CHECK") == 0)
+> > -				entry->func = BPRM_CHECK;
+> > +				entry->func = IMA_BPRM_CHECK;
+> >  			else if (strcmp(args[0].from, "CREDS_CHECK") == 0)
+> > -				entry->func = CREDS_CHECK;
+> > +				entry->func = IMA_CREDS_CHECK;
+> >  			else if (strcmp(args[0].from, "KEXEC_KERNEL_CHECK") ==
+> >  				 0)
+> > -				entry->func = KEXEC_KERNEL_CHECK;
+> > +				entry->func = IMA_KEXEC_KERNEL_CHECK;
+> >  			else if (strcmp(args[0].from, "KEXEC_INITRAMFS_CHECK")
+> >  				 == 0)
+> > -				entry->func = KEXEC_INITRAMFS_CHECK;
+> > +				entry->func = IMA_KEXEC_INITRAMFS_CHECK;
+> >  			else if (strcmp(args[0].from, "POLICY_CHECK") == 0)
+> > -				entry->func = POLICY_CHECK;
+> > +				entry->func = IMA_POLICY_CHECK;
+> >  			else
+> >  				result = -EINVAL;
+> >  			if (!result)
+> > @@ -1194,7 +1194,7 @@ void ima_policy_stop(struct seq_file *m, void *v)
+> >   */
+> >  static void policy_func_show(struct seq_file *m, enum ima_hooks func)
+> >  {
+> > -	if (func > 0 && func < MAX_CHECK)
+> > +	if (func > 0 && func < IMA_MAX_CHECK)
+> >  		seq_printf(m, "func=%s ", func_tokens[func]);
+> >  	else
+> >  		seq_printf(m, "func=%d ", func);
+> 
+
+-- 
+James Morris
+<jmorris@namei.org>
 
