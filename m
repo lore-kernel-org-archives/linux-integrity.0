@@ -1,128 +1,150 @@
-Return-Path: <SRS0=S1jD=QV=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=JENc=QW=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D457C43381
-	for <linux-integrity@archiver.kernel.org>; Thu, 14 Feb 2019 23:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B58C43381
+	for <linux-integrity@archiver.kernel.org>; Fri, 15 Feb 2019 02:45:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6C3521B68
-	for <linux-integrity@archiver.kernel.org>; Thu, 14 Feb 2019 23:10:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B80IEHWH"
+	by mail.kernel.org (Postfix) with ESMTP id 5173A21B68
+	for <linux-integrity@archiver.kernel.org>; Fri, 15 Feb 2019 02:45:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728015AbfBNXKk (ORCPT
+        id S1729557AbfBOCp4 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 14 Feb 2019 18:10:40 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40954 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725975AbfBNXKk (ORCPT
+        Thu, 14 Feb 2019 21:45:56 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47930 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728936AbfBOCp4 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 14 Feb 2019 18:10:40 -0500
-Received: by mail-wr1-f67.google.com with SMTP id q1so8352343wrp.7;
-        Thu, 14 Feb 2019 15:10:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=z+9zbb8RFe/yUhMkwO8O4v64fl479cQbUFQDaaeTxkI=;
-        b=B80IEHWH7Opk+JI5pSyBN4WBwwOYdiaWFl5lpRa56dKMWQrdo0SWI013F9SnWvp4RU
-         a4xLPNKiVu07GJ1V7SYGutQTTXfzXuy7JpPMaCZ24/2Op1XfDcdkxZMRzHfbqAFjrFpw
-         SklayuQMtbEtVR/7bOqkXTvN+qe9TiN5iOahznxESvMsLUm642K93wv2CyS9BvegFx3U
-         OcRMfZEkQjDQChQB7YhbPScjb1bLjsnQwEK6iCk0M5fNlDU7nKcz6EAWOWf7Dfc/kvwJ
-         C1wGcbVsMUIqUMzWqKgK8CRMX8WJzStgIy0HvBfie3isr4IJbfeSWGGtGaQnric/khNQ
-         LrMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=z+9zbb8RFe/yUhMkwO8O4v64fl479cQbUFQDaaeTxkI=;
-        b=a6k1QS0HdAwEUgF4W4WV93QntnIaDkUSjhaSYcd6YOxGb5FHZTmJG9uVjTtHMPeKwY
-         25pytrI68b+pjWuHmZTi2DkLsXMSv0Dh5RpQWc8VyLaF2B2lD2kJs7jJN+IHqI8hP4ba
-         4spKHbX7dVOpqAb5CzgQwIZnHayjyHRVLz3L51tCAIJ8wrSx9zZEADltRyPtq6MMiVUo
-         uj9TN3epRLmQyyKWeoKdCaTF/8K2qwqBJoPapKlJe+BR4bil/uuScsOeVIXGpg4MY8UV
-         N40vGWs6hD1utl4XHW8zj2KrT3vHwbOr6N3nCrZ51Rbil134qpLuLQtuhcrRO/iRYU03
-         yXwg==
-X-Gm-Message-State: AHQUAuZYlRINruZxmrkBujwfBz9FYfvtp0/yJPc8rE4FEx8fUk+8+Yn9
-        MOmY4yj7FCERahYT670Mrc6pwhuANPA=
-X-Google-Smtp-Source: AHgI3IbsNlk4Fvpr3HH+kDs+qGc4Q1NAHmTiRsxdrVOqxRzBB2FRVhft3utppOvMD+0T6z/BkkeXbA==
-X-Received: by 2002:adf:e949:: with SMTP id m9mr4830622wrn.1.1550185838039;
-        Thu, 14 Feb 2019 15:10:38 -0800 (PST)
-Received: from [10.32.107.126] ([80.227.69.14])
-        by smtp.gmail.com with ESMTPSA id o12sm10467992wre.0.2019.02.14.15.10.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 15:10:37 -0800 (PST)
-Subject: Re: [RFC PATCH v5 03/12] __wr_after_init: Core and default arch
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
-        linux-integrity@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1550097697.git.igor.stoppa@huawei.com>
- <b99f0de701e299b9d25ce8cfffa3387b9687f5fc.1550097697.git.igor.stoppa@huawei.com>
- <20190214112849.GM32494@hirez.programming.kicks-ass.net>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <6e9ec71c-ee75-9b1e-9ff8-a3210030e85d@gmail.com>
-Date:   Fri, 15 Feb 2019 01:10:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190214112849.GM32494@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 14 Feb 2019 21:45:56 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1F2i50w011305
+        for <linux-integrity@vger.kernel.org>; Thu, 14 Feb 2019 21:45:55 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qnmkm8q8g-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 14 Feb 2019 21:45:55 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 15 Feb 2019 02:45:52 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 15 Feb 2019 02:45:48 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1F2jl9o19529894
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 15 Feb 2019 02:45:47 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3049BAE04D;
+        Fri, 15 Feb 2019 02:45:47 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5642DAE051;
+        Fri, 15 Feb 2019 02:45:45 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.92.50])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 15 Feb 2019 02:45:45 +0000 (GMT)
+Subject: Re: [PATCH v3 1/2] ima: fix build error redeclaration of enumerator
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Anders Roxell <anders.roxell@linaro.org>,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        ard.biesheuvel@linaro.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 14 Feb 2019 21:45:34 -0500
+In-Reply-To: <1550165329.3980.8.camel@linux.ibm.com>
+References: <20190213221625.7551-1-anders.roxell@linaro.org>
+         <1550165329.3980.8.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19021502-0020-0000-0000-00000317017F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021502-0021-0000-0000-000021683302
+Message-Id: <1550198734.4107.53.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-15_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902150017
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-
-
-On 14/02/2019 13:28, Peter Zijlstra wrote:
-> On Thu, Feb 14, 2019 at 12:41:32AM +0200, Igor Stoppa wrote:
-
-[...]
-
->> +#define wr_rcu_assign_pointer(p, v) ({	\
->> +	smp_mb();			\
->> +	wr_assign(p, v);		\
->> +	p;				\
->> +})
+On Thu, 2019-02-14 at 12:28 -0500, Mimi Zohar wrote:
+> On Wed, 2019-02-13 at 23:16 +0100, Anders Roxell wrote:
+> > Commit a893ea15d764 ("tpm: move tpm_chip definition to
+> > include/linux/tpm.h") introduced a build error when both ima and efi is
+> > enabled. What happens is that both headers (ima.h and efi.h) defines the
+> > same 'NONE' constant, and it broke when they started getting included
+> > from the same file.
+> > 
+> > In file included from ../security/integrity/ima/ima_fs.c:30:
+> > ../security/integrity/ima/ima.h:176:7: error: redeclaration of enumerator "NONE"
+> >   hook(NONE)   \
+> >        ^~~~
+> > ../security/integrity/ima/ima.h:188:34: note: in definition of macro "__ima_hook_enumify"
+> >  #define __ima_hook_enumify(ENUM) ENUM,
+> >                                   ^~~~
+> > ../security/integrity/ima/ima.h:191:2: note: in expansion of macro "__ima_hooks"
+> >   __ima_hooks(__ima_hook_enumify)
+> >   ^~~~~~~~~~~
+> > In file included from ../arch/arm64/include/asm/acpi.h:15,
+> >                  from ../include/acpi/acpi_io.h:7,
+> >                  from ../include/linux/acpi.h:47,
+> >                  from ../include/linux/tpm.h:26,
+> >                  from ../security/integrity/ima/ima.h:25,
+> >                  from ../security/integrity/ima/ima_fs.c:30:
+> > ../include/linux/efi.h:1723:2: note: previous definition of "NONE" was here
+> >   NONE,
+> >   ^~~~
+> > make[4]: *** [../scripts/Makefile.build:277: security/integrity/ima/ima_fs.o] Error 1
+> > 
+> > Rework to prefix the ima enum with 'IMA_*'.
+> > 
+> > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 > 
-> This requires that wr_memcpy() (through wr_assign) is single-copy-atomic
-> for native types. There is not a comment in sight that states this.
+> Ok, this looks reasonable, but will have a minor clash with Gustavo's
+> "security: mark expected switch fall-throughs and add a missing
+> break".
 
-Right, I kinda expected native-aligned <-> atomic, but it's not 
-necessarily true. It should be confirmed when enabling write rare on a 
-new architecture. I'll add the comment.
+This patch correctly didn't modify the IMA policy keywords, just the
+enumeration, but now the <securityfs> policy file incorrectly displays
+the "ima_" prefixed names.
 
-> Also, is this true of x86/arm64 memcpy ?
+Instead of maintaining an enumeration and the corresponding
+stringified version of the enumeration, there is a single list with
+two macros.  One of these macros needs to be modified.  Instead of
+modifying the the hook names directly, I would probably modify the
+enumeration macro.
 
+#define __ima_hook_enumify(ENUM)        ENUM,
 
-For x86_64:
-https://elixir.bootlin.com/linux/v5.0-rc6/source/arch/x86/include/asm/uaccess.h#L462 
-  the mov"itype"  part should deal with atomic copy of native, aligned 
-types.
+enum ima_hooks {
+        __ima_hooks(__ima_hook_enumify)
+};
 
+and
 
-For arm64:
-https://elixir.bootlin.com/linux/v5.0-rc6/source/arch/arm64/lib/copy_template.S#L110 
-.Ltiny15 deals with copying less than 16 bytes, which includes pointers. 
-When the data is aligned, the copy of a pointer should be atomic.
+#define __ima_hook_stringify(str)       (#str),
 
+static const char *const func_tokens[] = {
+        __ima_hooks(__ima_hook_stringify)
+};
 
---
-igor
+Mimi
+
