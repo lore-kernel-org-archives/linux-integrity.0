@@ -2,92 +2,101 @@ Return-Path: <SRS0=JENc=QW=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A9CFC43381
-	for <linux-integrity@archiver.kernel.org>; Fri, 15 Feb 2019 17:01:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BEB8C43381
+	for <linux-integrity@archiver.kernel.org>; Fri, 15 Feb 2019 17:58:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39255222A1
-	for <linux-integrity@archiver.kernel.org>; Fri, 15 Feb 2019 17:01:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550250110;
-	bh=k9llutIWSBV06Qw9Jm95V7UNG4hmzfZg+m140BwK4v4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=XeGIo6u2qewGTrj5xmBaKyLnYsIl5UymXtobHnjZ12Ek44wIc8T5o5CtJvJvbLfsT
-	 nnc49BO+vXFHuE+8hlb3bdFnkzV4C7iYriFh6Y5MkVdN2nDvdVE3UjjXMImoshkm8n
-	 Ytt9ZmMvO0JQKqJic3JXlWLT61ZMDxD7G69TNOso=
+	by mail.kernel.org (Postfix) with ESMTP id EFCE821925
+	for <linux-integrity@archiver.kernel.org>; Fri, 15 Feb 2019 17:58:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730062AbfBORBt (ORCPT
+        id S1730062AbfBOR6f (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 15 Feb 2019 12:01:49 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43012 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726122AbfBORBt (ORCPT
+        Fri, 15 Feb 2019 12:58:35 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58486 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728956AbfBOR6f (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 15 Feb 2019 12:01:49 -0500
-Received: by mail-pg1-f196.google.com with SMTP id v28so5060215pgk.10;
-        Fri, 15 Feb 2019 09:01:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FQVDnXX8akd0rqu7cCn6I1ckz5e6fu33GxPRr72g7lE=;
-        b=SwHI+2K5iS0LeLjC4ez9BXexG7QXa7e9Z3iuQOkC1dma729tNaDuVqJH/8UZQiVff2
-         H0QuWmpcyTa/1Ja8DC+1aqKmvHE7+XdYPk4FLVQVRKUbT4/lnBSuYQea9bbpJiGoV0C3
-         cEGc12pdB+QERiIRp891KWM++c0gTWmI8bq2V7jXaG1uE1RGQuJlGBrUO+APp9QVqxDk
-         9dYhIGeUeVEV3cjVy/M4X/2bvEreNpdQ+SM22+YyGnXLnbmvr3JTYrulo/+ypGd/s3uq
-         mDtPYTTlf1+lk21lY4TLDXhmRvyD4DBmNWfis45xaQR3Mf0ekGzkbGWrHvIvjJnJ5dqo
-         zsPQ==
-X-Gm-Message-State: AHQUAuZtbN5NSKw1sCkFHZE+VO5XDAW9rDtcejpUjuddjC6IX9IPRxFz
-        neZpnQYb+fHZReVMrLw+gRylG6DbNGI=
-X-Google-Smtp-Source: AHgI3IZXHEl2ayrFRrGCrEgy1fYs1kbh0DDF9GuO056xQI8rmgPRkXnzdhpmqu/KOyzIzhanRmdqpg==
-X-Received: by 2002:a63:8743:: with SMTP id i64mr6285562pge.69.1550250108388;
-        Fri, 15 Feb 2019 09:01:48 -0800 (PST)
-Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
-        by smtp.gmail.com with ESMTPSA id s2sm13891493pfa.167.2019.02.15.09.01.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 15 Feb 2019 09:01:46 -0800 (PST)
-Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Fri, 15 Feb 2019 09:01:44 -0800
-Date:   Fri, 15 Feb 2019 09:01:44 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
+        Fri, 15 Feb 2019 12:58:35 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1FHriDr033620
+        for <linux-integrity@vger.kernel.org>; Fri, 15 Feb 2019 12:58:33 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qp1rk1ahg-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 15 Feb 2019 12:58:33 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 15 Feb 2019 17:58:31 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 15 Feb 2019 17:58:28 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1FHwR7L2228508
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Feb 2019 17:58:27 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0D75A52052;
+        Fri, 15 Feb 2019 17:58:27 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.92.223])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 0D1C25204F;
+        Fri, 15 Feb 2019 17:58:25 +0000 (GMT)
+Subject: Re: [PATCH v3] x86/ima: require signed kernel modules
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>
 Cc:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
         David Howells <dhowells@redhat.com>,
         Seth Forshee <seth.forshee@canonical.com>,
         "Bruno E . O . Meneguele" <bmeneg@redhat.com>
-Subject: Re: [PATCH v3] x86/ima: require signed kernel modules
-Message-ID: <20190215170144.GH11489@garbanzo.do-not-panic.com>
+Date:   Fri, 15 Feb 2019 12:58:15 -0500
+In-Reply-To: <20190215170144.GH11489@garbanzo.do-not-panic.com>
 References: <1550249418-7986-1-git-send-email-zohar@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1550249418-7986-1-git-send-email-zohar@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+         <20190215170144.GH11489@garbanzo.do-not-panic.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19021517-0020-0000-0000-000003174E94
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021517-0021-0000-0000-000021688570
+Message-Id: <1550253495.7468.0.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-15_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=905 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902150122
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 11:50:18AM -0500, Mimi Zohar wrote:
-> Have the IMA architecture specific policy require signed kernel modules
-> on systems with secure boot mode enabled; and coordinate the different
-> signature verification methods, so only one signature is required.
+On Fri, 2019-02-15 at 09:01 -0800, Luis Chamberlain wrote:
+> On Fri, Feb 15, 2019 at 11:50:18AM -0500, Mimi Zohar wrote:
+> > Have the IMA architecture specific policy require signed kernel modules
+> > on systems with secure boot mode enabled; and coordinate the different
+> > signature verification methods, so only one signature is required.
+> > 
+> > Requiring appended kernel module signatures may be configured, enabled
+> > on the boot command line, or with this patch enabled in secure boot
+> > mode.  This patch defines set_module_sig_enforced().
+> > 
+> > To coordinate between appended kernel module signatures and IMA
+> > signatures, only define an IMA MODULE_CHECK policy rule if
+> > CONFIG_MODULE_SIG is not enabled.  A custom IMA policy may still define
+> > and require an IMA signature.
+> > 
+> > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 > 
-> Requiring appended kernel module signatures may be configured, enabled
-> on the boot command line, or with this patch enabled in secure boot
-> mode.  This patch defines set_module_sig_enforced().
-> 
-> To coordinate between appended kernel module signatures and IMA
-> signatures, only define an IMA MODULE_CHECK policy rule if
-> CONFIG_MODULE_SIG is not enabled.  A custom IMA policy may still define
-> and require an IMA signature.
-> 
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
-Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+Thanks!
 
-  Luis
