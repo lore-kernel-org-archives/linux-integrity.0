@@ -2,149 +2,108 @@ Return-Path: <SRS0=JENc=QW=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B58C43381
-	for <linux-integrity@archiver.kernel.org>; Fri, 15 Feb 2019 02:45:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B542C43381
+	for <linux-integrity@archiver.kernel.org>; Fri, 15 Feb 2019 08:57:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5173A21B68
-	for <linux-integrity@archiver.kernel.org>; Fri, 15 Feb 2019 02:45:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF5FA2190C
+	for <linux-integrity@archiver.kernel.org>; Fri, 15 Feb 2019 08:57:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gT8IzfYM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729557AbfBOCp4 (ORCPT
+        id S2391604AbfBOI5q (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:45:56 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47930 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728936AbfBOCp4 (ORCPT
+        Fri, 15 Feb 2019 03:57:46 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37196 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726396AbfBOI5q (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:45:56 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1F2i50w011305
-        for <linux-integrity@vger.kernel.org>; Thu, 14 Feb 2019 21:45:55 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qnmkm8q8g-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 14 Feb 2019 21:45:55 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 15 Feb 2019 02:45:52 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 15 Feb 2019 02:45:48 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1F2jl9o19529894
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 15 Feb 2019 02:45:47 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3049BAE04D;
-        Fri, 15 Feb 2019 02:45:47 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5642DAE051;
-        Fri, 15 Feb 2019 02:45:45 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.92.50])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 15 Feb 2019 02:45:45 +0000 (GMT)
-Subject: Re: [PATCH v3 1/2] ima: fix build error redeclaration of enumerator
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Anders Roxell <anders.roxell@linaro.org>,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        ard.biesheuvel@linaro.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 14 Feb 2019 21:45:34 -0500
-In-Reply-To: <1550165329.3980.8.camel@linux.ibm.com>
-References: <20190213221625.7551-1-anders.roxell@linaro.org>
-         <1550165329.3980.8.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19021502-0020-0000-0000-00000317017F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021502-0021-0000-0000-000021683302
-Message-Id: <1550198734.4107.53.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-15_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902150017
+        Fri, 15 Feb 2019 03:57:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=lC0sJXKkNVKrNcwoJXfFFpIZaHgwwYjVNEpuiQ0lz3E=; b=gT8IzfYM0rLFTG1VADzNxWfkL
+        0eTJScOywY+BgA5bL80r6zjO1AZl0H1zn29CTmFlZpu9sIc1WYqCtNA2bv/sLQy+V7B5KSUJL9kBf
+        Mjc3XlxeAS2Al3t6/Whmm/lamblTaQI4AOdXw4EJkWBnRgFshT9ee/IpFzmm8tY1oqVPt1WRJewMQ
+        wg8kTdGA4sk4TirfNw88ZtdtbGnDMH45veEYZy1uMspmPpNxOUFG+XJ9YCgDMkUqaGfGURYZIExdP
+        N88tGKmHqC9VA5C/vAfXJZLPzY1ecvbeTU9gZV2OI7fGkQGeoFyBBHE8kTs/NXjsX9OU67Bl1b2ZI
+        4/Q6jy/xQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1guZJT-0000As-Ke; Fri, 15 Feb 2019 08:57:39 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id EE255201A8970; Fri, 15 Feb 2019 09:57:36 +0100 (CET)
+Date:   Fri, 15 Feb 2019 09:57:36 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Igor Stoppa <igor.stoppa@gmail.com>
+Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
+        linux-integrity@vger.kernel.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v5 03/12] __wr_after_init: Core and default arch
+Message-ID: <20190215085736.GO32494@hirez.programming.kicks-ass.net>
+References: <cover.1550097697.git.igor.stoppa@huawei.com>
+ <b99f0de701e299b9d25ce8cfffa3387b9687f5fc.1550097697.git.igor.stoppa@huawei.com>
+ <20190214112849.GM32494@hirez.programming.kicks-ass.net>
+ <6e9ec71c-ee75-9b1e-9ff8-a3210030e85d@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6e9ec71c-ee75-9b1e-9ff8-a3210030e85d@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, 2019-02-14 at 12:28 -0500, Mimi Zohar wrote:
-> On Wed, 2019-02-13 at 23:16 +0100, Anders Roxell wrote:
-> > Commit a893ea15d764 ("tpm: move tpm_chip definition to
-> > include/linux/tpm.h") introduced a build error when both ima and efi is
-> > enabled. What happens is that both headers (ima.h and efi.h) defines the
-> > same 'NONE' constant, and it broke when they started getting included
-> > from the same file.
-> > 
-> > In file included from ../security/integrity/ima/ima_fs.c:30:
-> > ../security/integrity/ima/ima.h:176:7: error: redeclaration of enumerator "NONE"
-> >   hook(NONE)   \
-> >        ^~~~
-> > ../security/integrity/ima/ima.h:188:34: note: in definition of macro "__ima_hook_enumify"
-> >  #define __ima_hook_enumify(ENUM) ENUM,
-> >                                   ^~~~
-> > ../security/integrity/ima/ima.h:191:2: note: in expansion of macro "__ima_hooks"
-> >   __ima_hooks(__ima_hook_enumify)
-> >   ^~~~~~~~~~~
-> > In file included from ../arch/arm64/include/asm/acpi.h:15,
-> >                  from ../include/acpi/acpi_io.h:7,
-> >                  from ../include/linux/acpi.h:47,
-> >                  from ../include/linux/tpm.h:26,
-> >                  from ../security/integrity/ima/ima.h:25,
-> >                  from ../security/integrity/ima/ima_fs.c:30:
-> > ../include/linux/efi.h:1723:2: note: previous definition of "NONE" was here
-> >   NONE,
-> >   ^~~~
-> > make[4]: *** [../scripts/Makefile.build:277: security/integrity/ima/ima_fs.o] Error 1
-> > 
-> > Rework to prefix the ima enum with 'IMA_*'.
-> > 
-> > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+On Fri, Feb 15, 2019 at 01:10:33AM +0200, Igor Stoppa wrote:
 > 
-> Ok, this looks reasonable, but will have a minor clash with Gustavo's
-> "security: mark expected switch fall-throughs and add a missing
-> break".
+> 
+> On 14/02/2019 13:28, Peter Zijlstra wrote:
+> > On Thu, Feb 14, 2019 at 12:41:32AM +0200, Igor Stoppa wrote:
+> 
+> [...]
+> 
+> > > +#define wr_rcu_assign_pointer(p, v) ({	\
+> > > +	smp_mb();			\
+> > > +	wr_assign(p, v);		\
+> > > +	p;				\
+> > > +})
+> > 
+> > This requires that wr_memcpy() (through wr_assign) is single-copy-atomic
+> > for native types. There is not a comment in sight that states this.
+> 
+> Right, I kinda expected native-aligned <-> atomic, but it's not necessarily
+> true. It should be confirmed when enabling write rare on a new architecture.
+> I'll add the comment.
+> 
+> > Also, is this true of x86/arm64 memcpy ?
+> 
+> 
+> For x86_64:
+> https://elixir.bootlin.com/linux/v5.0-rc6/source/arch/x86/include/asm/uaccess.h#L462
+> the mov"itype"  part should deal with atomic copy of native, aligned types.
+> 
+> 
+> For arm64:
+> https://elixir.bootlin.com/linux/v5.0-rc6/source/arch/arm64/lib/copy_template.S#L110
+> .Ltiny15 deals with copying less than 16 bytes, which includes pointers.
+> When the data is aligned, the copy of a pointer should be atomic.
+> 
 
-This patch correctly didn't modify the IMA policy keywords, just the
-enumeration, but now the <securityfs> policy file incorrectly displays
-the "ima_" prefixed names.
-
-Instead of maintaining an enumeration and the corresponding
-stringified version of the enumeration, there is a single list with
-two macros.  One of these macros needs to be modified.  Instead of
-modifying the the hook names directly, I would probably modify the
-enumeration macro.
-
-#define __ima_hook_enumify(ENUM)        ENUM,
-
-enum ima_hooks {
-        __ima_hooks(__ima_hook_enumify)
-};
-
-and
-
-#define __ima_hook_stringify(str)       (#str),
-
-static const char *const func_tokens[] = {
-        __ima_hooks(__ima_hook_stringify)
-};
-
-Mimi
-
+Where are the comments and Changelog notes ? How is an arch maintainer
+to be aware of this requirement when adding support for his/her arch?
