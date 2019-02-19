@@ -2,71 +2,73 @@ Return-Path: <SRS0=Dh8F=Q2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C1A8C43381
-	for <linux-integrity@archiver.kernel.org>; Tue, 19 Feb 2019 04:37:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56922C43381
+	for <linux-integrity@archiver.kernel.org>; Tue, 19 Feb 2019 07:26:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22A1D20818
-	for <linux-integrity@archiver.kernel.org>; Tue, 19 Feb 2019 04:37:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 220F621903
+	for <linux-integrity@archiver.kernel.org>; Tue, 19 Feb 2019 07:26:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726417AbfBSEhk (ORCPT
+        id S1725730AbfBSH0z (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 18 Feb 2019 23:37:40 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:35112 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725805AbfBSEhk (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 18 Feb 2019 23:37:40 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gvx9y-0006od-WE; Tue, 19 Feb 2019 12:37:35 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gvx9w-0007WS-TB; Tue, 19 Feb 2019 12:37:32 +0800
-Date:   Tue, 19 Feb 2019 12:37:32 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/4] X.509: Parse public key parameters from x509 for
- akcipher
-Message-ID: <20190219043732.x3sbwzqlz4ikntxo@gondor.apana.org.au>
-References: <20190106133608.820-1-vt@altlinux.org>
- <20190106133608.820-2-vt@altlinux.org>
- <20190209214240.56gq7ivn3pw3bssf@altlinux.org>
- <20190210184628.yupsxgjlaicwbxg6@altlinux.org>
+        Tue, 19 Feb 2019 02:26:55 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:59500 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725536AbfBSH0z (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 19 Feb 2019 02:26:55 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 6B2DD7952850CDFFBC6C;
+        Tue, 19 Feb 2019 15:26:51 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.408.0; Tue, 19 Feb 2019
+ 15:26:41 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <peterhuewe@gmx.de>, <jarkko.sakkinen@linux.intel.com>,
+        <jgg@ziepe.ca>, <arnd@arndb.de>, <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] tpm: change the return type of calc_tpm2_event_size to size_t
+Date:   Tue, 19 Feb 2019 15:26:18 +0800
+Message-ID: <20190219072618.23048-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190210184628.yupsxgjlaicwbxg6@altlinux.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sun, Feb 10, 2019 at 09:46:28PM +0300, Vitaly Chikunov wrote:
->
-> >From the other point of view, set_params may never be called or
-> implemented. So, making it called first and move memory zeroing
-> into set_params may create more complications than simplicity.
-> 
-> Making both callbacks callable in any order also will not make
-> things simpler. (Need to be prepared to be called in different
-> order.)
+calc_tpm2_event_size return size of the event which type is
+size_t, If it is an invalid event, returns 0. And all the
+caller use a size_t variable to check the return value, so
+no need to convert to the return value type to int.
 
-How about encoding these parameters together with the public/private
-keys so that they can be set through the existing setkey functions?
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/char/tpm/eventlog/tpm2.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-You might want to have a look at how we handle this in crypto/dh.c.
-
-Cheers,
+diff --git a/drivers/char/tpm/eventlog/tpm2.c b/drivers/char/tpm/eventlog/tpm2.c
+index d8b7713..f824563 100644
+--- a/drivers/char/tpm/eventlog/tpm2.c
++++ b/drivers/char/tpm/eventlog/tpm2.c
+@@ -37,8 +37,8 @@
+  *
+  * Returns size of the event. If it is an invalid event, returns 0.
+  */
+-static int calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
+-				struct tcg_pcr_event *event_header)
++static size_t calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
++				   struct tcg_pcr_event *event_header)
+ {
+ 	struct tcg_efi_specid_event_head *efispecid;
+ 	struct tcg_event_field *event_field;
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.7.0
+
+
