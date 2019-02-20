@@ -2,76 +2,70 @@ Return-Path: <SRS0=IP2B=Q3=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5293BC43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Feb 2019 19:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66535C43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Feb 2019 20:50:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17A4920859
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Feb 2019 19:28:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jo6ra5sl"
+	by mail.kernel.org (Postfix) with ESMTP id 370532089F
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Feb 2019 20:50:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726019AbfBTT2Z (ORCPT
+        id S1725989AbfBTUuh (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 20 Feb 2019 14:28:25 -0500
-Received: from mail-it1-f172.google.com ([209.85.166.172]:50493 "EHLO
-        mail-it1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725822AbfBTT2Z (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 20 Feb 2019 14:28:25 -0500
-Received: by mail-it1-f172.google.com with SMTP id m137so18138522ita.0
-        for <linux-integrity@vger.kernel.org>; Wed, 20 Feb 2019 11:28:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NAQjYpxURrhpogN/Esh+ZqZVXSNEREIALD+GbHy6H3Y=;
-        b=Jo6ra5sl1T1Qz/eiBwRpze/dFsc+4uxGtOdD4KoLCMvFCL2+FhIKPe1L/vnU4cLX3R
-         45xAgsCk0yPAC+5QJGSWb0Yy9tazlOITYlDUA5BBoy8PkZGwMdkJpVUq5/wwcZphoC3E
-         a+Ex6r7Jw6nvFHpQm1/YBtdL40aESJEczJdPVh3Q1Fg7B7w3V/zGGpMTS9O9qdct/mgd
-         tIrJ62eZzS7+uVDtPpIgEISGB2vYPnyjd5Pxs1qKf6DEKqJGxZBrcDdXmuTRCYDFpgiY
-         gE04JIoh5jEbzHViU/6uQQlcZo03oeVX5Dcknv5ML+I02SnCcbk+ainZzmultBl/+GSJ
-         iL3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NAQjYpxURrhpogN/Esh+ZqZVXSNEREIALD+GbHy6H3Y=;
-        b=C4VXXZbHTJEB7WILQSc2TZ02SFyEanhZlFXHqhF+2RK9RwbYFaNLL/ojd2U13Jk4J1
-         EUKtZV7JdGXSUmBtCZDXl+nFFwt2nlzMX9C7IFaayMBhy+PHCWjtDLV2wi9gP2j6Gypz
-         jEQTwnkZgcnhPIbpProyFF5Hj3Gy3G4n0N+Olbz1ZnpHO1PHE/T+dGEs3rKO5kQjyl5x
-         F4BclPH/AKdXpImnqMcS4VwlXh4Ht6lKxP+8Cxagf3OXvbfcyjWb+tF/ES11bH3uDjIP
-         c2iy9wWCCquO8L9KbffTCzVh5BdNSAEY6V0lFw0wxTW8IZzFKV1buB40XXUdwqyLhi2T
-         MCXg==
-X-Gm-Message-State: AHQUAuYwBMI6gqQ7z68ohcIlVdjyupV+xQHZCkdyJhx5MzT2q1muuyIc
-        XDTrdvCW8TtvKFngljNvjNKl5+N4sVIhg2oJ0j0DWhl6
-X-Google-Smtp-Source: AHgI3IYeNBlyukq3QXtdVRz9fXYMDWJ4lIEy4rE3ngo+05ZGi0YehGrY1qqVVXRigKSTDOyGn62rS3tvNZmFSoNdzU4=
-X-Received: by 2002:a02:240d:: with SMTP id f13mr20354908jaa.105.1550690904590;
- Wed, 20 Feb 2019 11:28:24 -0800 (PST)
-MIME-Version: 1.0
-References: <20190211215518.81419-1-matthewgarrett@google.com> <20190219115652.GA29454@linux.intel.com>
-In-Reply-To: <20190219115652.GA29454@linux.intel.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Wed, 20 Feb 2019 11:28:13 -0800
-Message-ID: <CACdnJus0nkTtYyVsb71_nN11Oazj2xyR8WoMs6+r+jN=RYos8g@mail.gmail.com>
-Subject: Re: [PATCH V3] Add support for TPM2 event logs on EFI systems
+        Wed, 20 Feb 2019 15:50:37 -0500
+Received: from namei.org ([65.99.196.166]:53318 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725869AbfBTUuh (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 20 Feb 2019 15:50:37 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x1KKnVDP001538;
+        Wed, 20 Feb 2019 20:49:31 GMT
+Date:   Thu, 21 Feb 2019 07:49:31 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        peterhuewe@gmx.de, jgg@ziepe.ca,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH] MAINTAINERS: add linux-security-module mailing list to
+ TPM drivers
+In-Reply-To: <20190220150445.GA4794@linux.intel.com>
+Message-ID: <alpine.LRH.2.21.1902210747510.1411@namei.org>
+References: <20190220035846.6272-1-jsnitsel@redhat.com> <20190220070413.GB23027@linux.intel.com> <20190220140357.5vbepgmexso3jc6d@cantor> <20190220150445.GA4794@linux.intel.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 3:56 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
-> Tried to test with a Geminilake NUC but for some reason do not see the log
-> file with this machine.
+On Wed, 20 Feb 2019, Jarkko Sakkinen wrote:
 
-I'll retest a rebased tree on my NUC on Friday - just ran out of time
-to get a build done before I had to leave for a trip.
+> > being cc'd to linux-security-module? Looking back at
+> > recent patches, it looked like it was a general request.
+> > If it is, I'll be more likely to remember if get_maintainers.pl
+> > brings it up. :)
+> 
+> I'm all open here. Not sure which practices apply to IMA. I kind of tend
+> to dilate to question does it make sense to CC to LSM for two reasons:
+> 
+> 1. I think the original reason was that tpmdd mailing list was small.
+> Now with the new linux-integrity mailing list up and running there is
+> more eyes looking at the code. And more importantly the people are
+> subscribed who use TPM for something, like IMA developers.
+> 2. I don't remember ever reading within the time that I've been
+> maintaining even a single comment from anyone that works with LSM's. The
+> value of CC'ing there is not very significant, which means that most of
+> the time the TPM traffic is just noise on that list.
+
+Sounds about right, there used to be more security folk on LSM and not as 
+many on the TPM list, but the new integrity list works well for TPM now.
+
+
+-- 
+James Morris
+<jmorris@namei.org>
+
