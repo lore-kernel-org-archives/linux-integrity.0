@@ -2,74 +2,68 @@ Return-Path: <SRS0=IP2B=Q3=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D986C43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Feb 2019 03:58:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC0EC43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Feb 2019 06:32:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 266BD2146E
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Feb 2019 03:58:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 072AC2146E
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Feb 2019 06:32:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727035AbfBTD6t (ORCPT
+        id S1726772AbfBTGcH (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 19 Feb 2019 22:58:49 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41070 "EHLO mx1.redhat.com"
+        Wed, 20 Feb 2019 01:32:07 -0500
+Received: from mga02.intel.com ([134.134.136.20]:61744 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726312AbfBTD6t (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 19 Feb 2019 22:58:49 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1C239B0ADF;
-        Wed, 20 Feb 2019 03:58:49 +0000 (UTC)
-Received: from cantor.redhat.com (ovpn-116-32.phx2.redhat.com [10.3.116.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7EAAD607D5;
-        Wed, 20 Feb 2019 03:58:48 +0000 (UTC)
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Subject: [PATCH] MAINTAINERS: add linux-security-module mailing list to TPM drivers
-Date:   Tue, 19 Feb 2019 20:58:46 -0700
-Message-Id: <20190220035846.6272-1-jsnitsel@redhat.com>
+        id S1725922AbfBTGcH (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 20 Feb 2019 01:32:07 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2019 22:32:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,388,1544515200"; 
+   d="scan'208";a="140053323"
+Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.248])
+  by orsmga001.jf.intel.com with ESMTP; 19 Feb 2019 22:32:02 -0800
+Date:   Wed, 20 Feb 2019 08:31:59 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 -next] tpm: Fix the type of the return value in
+ calc_tpm2_event_size()
+Message-ID: <20190220063159.GA23027@linux.intel.com>
+References: <20190220022300.25888-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 20 Feb 2019 03:58:49 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190220022300.25888-1-yuehaibing@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-I've seen requests to add linux-security-module to tpm patch
-submissions a couple of times recently, so just add the list
-to MAINTAINERS so get_maintainers.pl will mention it.
+On Wed, Feb 20, 2019 at 10:23:00AM +0800, YueHaibing wrote:
+> calc_tpm2_event_size() has an invalid signature because
+> it returns a 'size_t' where as its signature says that
+> it returns 'int'.
+> 
+> Fixes: 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware event log")
+> Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Cc: Peter Huewe <peterhuewe@gmx.de>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+Two remarks:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 41ce5f4ad838..cd0a3aecba65 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15477,6 +15477,7 @@ M:	Peter Huewe <peterhuewe@gmx.de>
- M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
- R:	Jason Gunthorpe <jgg@ziepe.ca>
- L:	linux-integrity@vger.kernel.org
-+L:	linux-security-module@vger.kernel.org
- Q:	https://patchwork.kernel.org/project/linux-integrity/list/
- W:	https://kernsec.org/wiki/index.php/Linux_Kernel_Integrity
- T:	git git://git.infradead.org/users/jjs/linux-tpmdd.git
--- 
-2.20.1.98.gecbdaf0899
+- git config user.name "Yue Haibing"
+- "Cc: stable@vger.kernel.org" before the fixes tag.
 
+Thanks.
+
+/Jarkko
