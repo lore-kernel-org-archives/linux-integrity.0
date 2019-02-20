@@ -2,53 +2,79 @@ Return-Path: <SRS0=IP2B=Q3=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C445AC43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Feb 2019 08:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FF78C43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Feb 2019 08:26:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B5C52070B
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Feb 2019 08:14:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2ED8A208E4
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Feb 2019 08:26:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725857AbfBTIOl (ORCPT
+        id S1725857AbfBTI0E (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 20 Feb 2019 03:14:41 -0500
-Received: from moth.iki.fi ([212.16.111.74]:46483 "EHLO moth.iki.fi"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725849AbfBTIOl (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 20 Feb 2019 03:14:41 -0500
-Received: from [130.188.13.218] (218.13.vtt.fi [130.188.13.218])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: msa)
-        by moth.iki.fi (Postfix) with ESMTPSA id A451D2A004D
-        for <linux-integrity@vger.kernel.org>; Wed, 20 Feb 2019 10:11:45 +0200 (EET)
-Subject: Re: IMA fails to see TPM chip (rpi3, linaro optee)
-From:   Markku Savela <msa@moth.iki.fi>
-To:     linux-integrity@vger.kernel.org
-References: <9cd0d399-2b11-779c-f767-660ea61721d9@moth.iki.fi>
- <b9da5231-10b8-0d88-3d90-edfc6fb7b9de@moth.iki.fi>
-Message-ID: <192719a8-d583-b7cd-07d2-b693e2cc982d@moth.iki.fi>
-Date:   Wed, 20 Feb 2019 10:14:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 20 Feb 2019 03:26:04 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4231 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725813AbfBTI0E (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 20 Feb 2019 03:26:04 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D2EAC34512E3DE65C2D5;
+        Wed, 20 Feb 2019 16:25:55 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.408.0; Wed, 20 Feb 2019
+ 16:25:45 +0800
+From:   Yue Haibing <yuehaibing@huawei.com>
+To:     <peterhuewe@gmx.de>, <jarkko.sakkinen@linux.intel.com>,
+        <jgg@ziepe.ca>, <arnd@arndb.de>, <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        Yue Haibing <yuehaibing@huawei.com>, <stable@vger.kernel.org>
+Subject: [PATCH v3 -next] tpm: Fix the type of the return value in calc_tpm2_event_size()
+Date:   Wed, 20 Feb 2019 16:25:38 +0800
+Message-ID: <20190220082538.26260-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <b9da5231-10b8-0d88-3d90-edfc6fb7b9de@moth.iki.fi>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-No hints how to solve? Anybody?
+calc_tpm2_event_size() has an invalid signature because
+it returns a 'size_t' where as its signature says that
+it returns 'int'.
+
+Cc: <stable@vger.kernel.org>
+Fixes: 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware event log")
+Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+v3: fix My real name and cc stable
+v2: modify patch title and commit message as Jarkko suggested
+---
+ drivers/char/tpm/eventlog/tpm2.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/char/tpm/eventlog/tpm2.c b/drivers/char/tpm/eventlog/tpm2.c
+index d8b7713..f824563 100644
+--- a/drivers/char/tpm/eventlog/tpm2.c
++++ b/drivers/char/tpm/eventlog/tpm2.c
+@@ -37,8 +37,8 @@
+  *
+  * Returns size of the event. If it is an invalid event, returns 0.
+  */
+-static int calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
+-				struct tcg_pcr_event *event_header)
++static size_t calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
++				   struct tcg_pcr_event *event_header)
+ {
+ 	struct tcg_efi_specid_event_head *efispecid;
+ 	struct tcg_event_field *event_field;
+-- 
+2.7.0
 
 
-> In addition to disabling the full selftest, I had to revert
-> commit b76c8d5 ("clk-bcm2835: Read max core clock from firmware") in
-> order for the TPM to initialize prior to IMA.
-
-..also, cannot find above mentioned commit from (Torvalds) linux tree 
-either. Something in in the integrity only?
