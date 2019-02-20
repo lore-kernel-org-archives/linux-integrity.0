@@ -2,106 +2,93 @@ Return-Path: <SRS0=IP2B=Q3=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75AC4C43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Feb 2019 12:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE87BC43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Feb 2019 14:04:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F70F2147A
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Feb 2019 12:26:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B78A420880
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Feb 2019 14:04:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725812AbfBTM0x (ORCPT
+        id S1726219AbfBTOEA (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 20 Feb 2019 07:26:53 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43068 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727403AbfBTM0x (ORCPT
+        Wed, 20 Feb 2019 09:04:00 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:39058 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726054AbfBTOEA (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 20 Feb 2019 07:26:53 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1KCOe1Q030201
-        for <linux-integrity@vger.kernel.org>; Wed, 20 Feb 2019 07:26:52 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qs4fh6yq1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 20 Feb 2019 07:26:51 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 20 Feb 2019 12:26:50 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 20 Feb 2019 12:26:48 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1KCQloU26869944
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Feb 2019 12:26:48 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D284352050;
-        Wed, 20 Feb 2019 12:26:47 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.107.132])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 508A752052;
-        Wed, 20 Feb 2019 12:26:47 +0000 (GMT)
-Subject: Re: [PATCH RFC 0/4] IMA on NFS prototype
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Chuck Lever <chuck.lever@oracle.com>
-Cc:     linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org
-Date:   Wed, 20 Feb 2019 07:26:36 -0500
-In-Reply-To: <ABC54315-2F2B-4FA7-98A8-28A3FC2092DB@oracle.com>
-References: <20190214203336.6469.34750.stgit@manet.1015granger.net>
-         <1550623002.17768.10.camel@linux.ibm.com>
-         <ABC54315-2F2B-4FA7-98A8-28A3FC2092DB@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19022012-0020-0000-0000-000003190B2C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022012-0021-0000-0000-0000216A5669
-Message-Id: <1550665596.17768.32.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-20_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902200090
+        Wed, 20 Feb 2019 09:04:00 -0500
+Received: by mail-qk1-f194.google.com with SMTP id x6so2003039qki.6
+        for <linux-integrity@vger.kernel.org>; Wed, 20 Feb 2019 06:03:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=TBEtLBmZh3NK/4fVp4zz7mJX2eX1tQB/Q+BEGy+bNlE=;
+        b=atfwE8gSD2udx7BYd293XXD67DQW5wLO4OJi6NEWzUu9t7lTfFnCAQh5rxCQSr5YbB
+         FQmybusqmUrgdcmEnnwRKmWJgecLXQinPRmRMG0RreGGy/0/NOZsXlFyJPIFqXInpWWE
+         eno0DEQwQGInCTW0Pw8FHaTteA2FBcypX0e61LtlkA6WSUMwxa2Doe3OmC3cbfE64mV1
+         pXCbJNxyhyZAYtHY6AQRIuiuF1tW+MYV5EY1gefjb9JM4OVjv1dLhuZVP/ALhnG2ypmY
+         EeTphx3McUUXAZyBQ99ocCQUj2rUOWut6H2DY65DE4XmPAavlA5yowMgdRqmTJ0ybaXN
+         ZiOw==
+X-Gm-Message-State: AHQUAubHj2jy8BF/U6f78wVXJ0zo9jfWUnd//Ve/wwPEjOVJGlghnsWc
+        zXYkwgDOWndpR2xCtJz+OwriWA==
+X-Google-Smtp-Source: AHgI3Ibi1y+ZU05BEMC9exJOELXs5Jc5z6ZxuHuJohOLy/e4n79vnAoiNrhtlMY4cfdI106VOi1VZg==
+X-Received: by 2002:a37:4a4d:: with SMTP id x74mr24750550qka.61.1550671439067;
+        Wed, 20 Feb 2019 06:03:59 -0800 (PST)
+Received: from localhost (ip72-223-3-97.ph.ph.cox.net. [72.223.3.97])
+        by smtp.gmail.com with ESMTPSA id b83sm6901303qkg.12.2019.02.20.06.03.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Feb 2019 06:03:58 -0800 (PST)
+Date:   Wed, 20 Feb 2019 07:03:57 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     jmorris@namei.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH] MAINTAINERS: add linux-security-module mailing list to
+ TPM drivers
+Message-ID: <20190220140357.5vbepgmexso3jc6d@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+Mail-Followup-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        jmorris@namei.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>
+References: <20190220035846.6272-1-jsnitsel@redhat.com>
+ <20190220070413.GB23027@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190220070413.GB23027@linux.intel.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2019-02-19 at 22:51 -0500, Chuck Lever wrote:
-> > On Feb 19, 2019, at 7:36 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > 
-> > Hi Chuck,
-> > 
-> >> EVM is not supported in this prototype. NFS does not support several
-> >> of the xattrs that are protected by EVM: SMACK64, Posix ACLs, and
-> >> Linux file capabilities are not supported, which makes EVM more
-> >> difficult to support on NFS mounts.
-> > 
-> > There's no requirement for all of these xattrs to exist.  If an xattr
-> > does exist, then it is included in the security.evm hmac/signature.
-> 
-> Understood. The issue is that if they exist on a file residing on an NFS server,
-> such xattrs would not be visible to clients. My understanding is that then EVM
-> verification would fail on such files on NFS clients.
-> 
-> We could possibly make EVM work in limited scenarios until such time that
-> the NFS protocol can make those xattrs available to NFS clients. I hope that
-> having only security.ima is useful at least for experimenting and maybe more.
-> 
-> However, if folks think having security.evm also is needed, that is straight-
-> forward... just saying that there are currently other limits in NFS that make a
-> full EVM implementation problematic.
+On Wed Feb 20 19, Jarkko Sakkinen wrote:
+>On Tue, Feb 19, 2019 at 08:58:46PM -0700, Jerry Snitselaar wrote:
+>> I've seen requests to add linux-security-module to tpm patch
+>> submissions a couple of times recently, so just add the list
+>> to MAINTAINERS so get_maintainers.pl will mention it.
+>>
+>> Cc: Peter Huewe <peterhuewe@gmx.de>
+>> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+>> Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+>
+>I guess James should say something about this.
+>
+>/Jarkko
 
-Thank you for the explanation.  Yes, I think there is a benefit of
-having a file signature, without EVM.
+Sorry, I meant to add James as well.
 
-Mimi
-
+Maybe this isn't needed. Do you only want certain patches
+being cc'd to linux-security-module? Looking back at
+recent patches, it looked like it was a general request.
+If it is, I'll be more likely to remember if get_maintainers.pl
+brings it up. :)
