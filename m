@@ -3,87 +3,85 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E6F1C43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Feb 2019 00:37:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A12EAC43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Feb 2019 02:14:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4027F21738
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Feb 2019 00:37:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78CE22183F
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Feb 2019 02:14:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbfBTAhC (ORCPT
+        id S1725616AbfBTCOF (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 19 Feb 2019 19:37:02 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47480 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727035AbfBTAhB (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 19 Feb 2019 19:37:01 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1K0Ns6U099644
-        for <linux-integrity@vger.kernel.org>; Tue, 19 Feb 2019 19:37:01 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qrtf8v97f-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 19 Feb 2019 19:37:00 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 20 Feb 2019 00:36:58 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 20 Feb 2019 00:36:55 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1K0asqJ26411030
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Feb 2019 00:36:54 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6135CA405C;
-        Wed, 20 Feb 2019 00:36:54 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 74443A4060;
-        Wed, 20 Feb 2019 00:36:53 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.107.132])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 20 Feb 2019 00:36:53 +0000 (GMT)
-Subject: Re: [PATCH RFC 0/4] IMA on NFS prototype
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Date:   Tue, 19 Feb 2019 19:36:42 -0500
-In-Reply-To: <20190214203336.6469.34750.stgit@manet.1015granger.net>
-References: <20190214203336.6469.34750.stgit@manet.1015granger.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19022000-4275-0000-0000-0000031185ED
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022000-4276-0000-0000-0000381FB39E
-Message-Id: <1550623002.17768.10.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-20_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=950 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902200001
+        Tue, 19 Feb 2019 21:14:05 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3685 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726312AbfBTCOE (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 19 Feb 2019 21:14:04 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 10531949ED62E792431B;
+        Wed, 20 Feb 2019 10:14:01 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.96) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Wed, 20 Feb 2019
+ 10:13:35 +0800
+Subject: Re: [PATCH -next] tpm: change the return type of calc_tpm2_event_size
+ to size_t
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+References: <20190219072618.23048-1-yuehaibing@huawei.com>
+ <20190219085921.GA5609@linux.intel.com>
+ <820d3cf7-03ab-5434-5306-292b41aed860@huawei.com>
+ <20190219103532.GA16707@linux.intel.com> <20190219163456.GB752@ziepe.ca>
+ <20190219173120.GA15462@linux.intel.com>
+CC:     <peterhuewe@gmx.de>, <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>, <linux-integrity@vger.kernel.org>
+From:   YueHaibing <yuehaibing@huawei.com>
+Message-ID: <f1149356-8d2e-f9f3-864a-2421190bbe94@huawei.com>
+Date:   Wed, 20 Feb 2019 10:13:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
+MIME-Version: 1.0
+In-Reply-To: <20190219173120.GA15462@linux.intel.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Chuck,
+On 2019/2/20 1:31, Jarkko Sakkinen wrote:
+> On Tue, Feb 19, 2019 at 09:34:56AM -0700, Jason Gunthorpe wrote:
+>>> - Your real name is formatted incorrectly. It should be like "Yue Haibig"
+>>>   as shown in [1].
+>>> - If there is no actual regression, this change is useless.
+>>
+>> Clarity of the code is a laudible goal - not everything is about
+>> fixing bugs or adding features.
+>>
+>> It is much easier to write the code properly than to try and prove
+>> that event_size can not exceed INT_MAX.
+> 
+> I think it is actually a regression in 4d23cc323cdb.  Should carry a
+> fixes tag. I did not quite undersand what commit message was saying.
+> What it should would just
+> 
+> """
+> tpm: Fix the type of the return value in calc_tpm2_event_size()
+> 
+> calc_tpm2_event_size() has an invalid signature because it returns a 'size_t'
+> where as its signature says that it returns 'int'.
+> """
+> 
+> Should be also Cc'd to linux-security-module and have cc to stable.
 
-> EVM is not supported in this prototype. NFS does not support several
-> of the xattrs that are protected by EVM: SMACK64, Posix ACLs, and
-> Linux file capabilities are not supported, which makes EVM more
-> difficult to support on NFS mounts.
+Ok, I will fix it in v2.
 
-There's no requirement for all of these xattrs to exist.  If an xattr
-does exist, then it is included in the security.evm hmac/signature.
-
-Mimi
+> 
+> /Jarkko
+> 
+> .
+> 
 
