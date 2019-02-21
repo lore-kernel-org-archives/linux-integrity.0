@@ -3,133 +3,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AFCAC43381
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Feb 2019 08:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ACD5C43381
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Feb 2019 09:08:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41C7920880
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Feb 2019 08:42:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7179C2086C
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Feb 2019 09:08:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726354AbfBUIm2 (ORCPT
+        id S1726251AbfBUJIo (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 21 Feb 2019 03:42:28 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:49732 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725932AbfBUIm2 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 21 Feb 2019 03:42:28 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 1AE5BE13EC11C587C568;
-        Thu, 21 Feb 2019 16:42:24 +0800 (CST)
-Received: from [127.0.0.1] (10.74.221.148) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Thu, 21 Feb 2019
- 16:42:16 +0800
-Subject: Re: linux-next: Tree for Feb 20
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-References: <20190220184341.73bd2084@canb.auug.org.au>
- <1114b964-8ff8-5632-64d4-e94a9160b998@hisilicon.com>
- <20190220095252.GA9089@linux.intel.com>
- <20190220095806.GB9089@linux.intel.com>
- <CAKv+Gu8G5eWeAdCB28xa=16ANFd2he9WPSztgXYwYRkhPfpEyA@mail.gmail.com>
- <aaac08b0-6366-7b63-d6a7-eea6630ce169@hisilicon.com>
- <CAMuHMdWfbPHv6WBMm7uDdPhbEB-m+bOcYzzYpRe4BfcSNR2pcQ@mail.gmail.com>
-CC:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "Stephen Rothwell" <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-From:   Zhangshaokun <zhangshaokun@hisilicon.com>
-Message-ID: <52ff1782-98e8-71fb-873e-f75610d200c2@hisilicon.com>
-Date:   Thu, 21 Feb 2019 16:42:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.1
+        Thu, 21 Feb 2019 04:08:44 -0500
+Received: from moth.iki.fi ([212.16.111.74]:46488 "EHLO moth.iki.fi"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726184AbfBUJIn (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 21 Feb 2019 04:08:43 -0500
+Received: from [130.188.13.218] (218.13.vtt.fi [130.188.13.218])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: msa)
+        by moth.iki.fi (Postfix) with ESMTPSA id E31F32A0088;
+        Thu, 21 Feb 2019 11:05:45 +0200 (EET)
+Subject: Re: IMA fails to see TPM chip (rpi3, linaro optee)
+From:   Markku Savela <msa@moth.iki.fi>
+To:     linux-integrity@vger.kernel.org
+References: <9cd0d399-2b11-779c-f767-660ea61721d9@moth.iki.fi>
+ <b9da5231-10b8-0d88-3d90-edfc6fb7b9de@moth.iki.fi>
+ <192719a8-d583-b7cd-07d2-b693e2cc982d@moth.iki.fi>
+Cc:     zohar@linux.ibm.com
+Message-ID: <1651d634-9a88-4511-ac51-a69648db8259@moth.iki.fi>
+Date:   Thu, 21 Feb 2019 11:08:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWfbPHv6WBMm7uDdPhbEB-m+bOcYzzYpRe4BfcSNR2pcQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.74.221.148]
-X-CFilter-Loop: Reflected
+In-Reply-To: <192719a8-d583-b7cd-07d2-b693e2cc982d@moth.iki.fi>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Geert,
+On 20/02/2019 10:14, Markku Savela wrote:
+> No hints how to solve? Anybody?
 
-On 2019/2/21 16:03, Geert Uytterhoeven wrote:
-> Hi Shaokun,
-> 
-> On Thu, Feb 21, 2019 at 1:45 AM Zhangshaokun <zhangshaokun@hisilicon.com> wrote:
->> On 2019/2/20 18:05, Ard Biesheuvel wrote:
->>> On Wed, 20 Feb 2019 at 10:58, Jarkko Sakkinen
->>> <jarkko.sakkinen@linux.intel.com> wrote:
->>>>
->>>> On Wed, Feb 20, 2019 at 11:52:52AM +0200, Jarkko Sakkinen wrote:
->>>>> On Wed, Feb 20, 2019 at 05:11:15PM +0800, Zhangshaokun wrote:
->>>>>> There is a compiler failure on arm64 platform, as follow:
->>>>>>
->>>>>>   AS      arch/arm64/kvm/hyp.o
->>>>>>   CC      kernel/trace/ring_buffer.o
->>>>>> In file included from security/integrity/ima/ima_fs.c:30:0:
->>>>>> security/integrity/ima/ima.h:176:7: error: redeclaration of enumerator ‘NONE’
->>>>>>   hook(NONE)   \
->>>>>>        ^
->>>>>> security/integrity/ima/ima.h:188:34: note: in definition of macro ‘__ima_hook_enumify’
->>>>>>  #define __ima_hook_enumify(ENUM) ENUM,
->>>>>>                                   ^
->>>>>> security/integrity/ima/ima.h:191:2: note: in expansion of macro ‘__ima_hooks’
->>>>>>   __ima_hooks(__ima_hook_enumify)
->>>>>>   ^
->>>>>> In file included from ./arch/arm64/include/asm/acpi.h:15:0,
->>>>>>                  from ./include/acpi/acpi_io.h:7,
->>>>>>                  from ./include/linux/acpi.h:47,
->>>>>>                  from ./include/linux/tpm.h:26,
->>>>>>                  from security/integrity/ima/ima.h:25,
->>>>>>                  from security/integrity/ima/ima_fs.c:30:
->>>>>> ./include/linux/efi.h:1716:2: note: previous definition of ‘NONE’ was here
->>>>>>   NONE,
->>>>>>   ^
->>>>>> scripts/Makefile.build:276: recipe for target 'security/integrity/ima/ima_fs.o' failed
->>>>>> make[3]: *** [security/integrity/ima/ima_fs.o] Error 1
->>>>>>
->>>>>> I dug it and it is the commit 901615cb916d ("tpm: move tpm_chip definition to include/linux/tpm.h")
->>>>>
->>>>> This results from a new include in tpm.h:
->>>>>
->>>>>   #include <linux/acpi.h>
->>>>>
->>>>> Must be fixed either in include/linux/efi.h or security/integrity/ima.h as
->>>>> those files have a name collision. Makes me wonder why neither has taken
->>>>> care of prefixing the constants properly.
->>>>
->>>> Preferably both subsystems should be fixed with proper 'EFI_' and 'IMA_'
->>>> prefixes. Defining a constant named as NONE in a non-generic subsystem
->>>> (e.g. not part of the core data structures of Linux) and especially
->>>> exporting it to include/linux is not too well considered act.
->>>>
->>>
->>> Fixes for this have already been proposed, and should appear in -next shortly
->>>
->>> The EFI one is here
->>> https://mail.google.com/mail/u/0/#label/linux-efi/FMfcgxwBVgrQRjglPkWRqRqVclGgVDnB
->>>
->>
->> Because of no privilege, the website is denied for me. Anyway, it's nice to have been fixed.
-> 
-> Looks like Ard posted a link to a label in his personal gmail mailbox?
-> 
+I changed IMA to just ignore the tpm test in hope that TPM would be 
+ready by the time IMA needs it -- no such luck, the "tpm2_probe", which 
+triggers the manual start just comes too late. I could just force the 
+manual startup earlier in boot, if I could figure out a proper place to 
+put the function call...
 
-Hmm, it seems that, my bad understanding.
 
-Thanks your reply.
+[    4.008322] ima: Allocated hash algorithm: sha1
+[    4.012820] ima: Error Communicating to TPM chip
+[    4.017302] ima: Error Communicating to TPM chip
+[    4.021763] ima: Error Communicating to TPM chip
+[    4.026004] ima: Error Communicating to TPM chip
+[    4.030295] ima: Error Communicating to TPM chip
+[    4.034558] ima: Error Communicating to TPM chip
+[    4.038766] ima: Error Communicating to TPM chip
+[    4.042805] ima: Error Communicating to TPM chip
+[    4.046951] ima: Error Communicating to TPM chip, result: -19
+[    4.059431] uart-pl011 3f201000.serial: cts_event_workaround enabled
+[    4.063766] 3f201000.serial: ttyAMA0 at MMIO 0x3f201000 (irq = 72, 
+base_baud = 0) is a PL011 rev2
+[    4.069963] console [ttyS0] disabled
+[    4.074178] 3f215040.serial: ttyS0 at MMIO 0x0 (irq = 151, base_baud 
+= 31250000) is a 16550
+[    5.282479] console [ttyS0] enabled
+[    5.293360] Indeed it is in host mode hprt0 = 00021501
+[    5.308808] tpm2_probe cmd rc=256
+[    5.322282] tpm_tis_spi spi0.1: 2.0 TPM (device-id 0x1B, rev-id 22)
+[    5.358842] tpm tpm0: A TPM error (256) occurred continue selftest
+[    5.378137] tpm tpm0: starting up the TPM manually
 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
 
+Earlier in boot there this "spi-bcm2835" notice. Is this the reason the 
+probe gets delayed?
+
+[    3.440240] Loading iSCSI transport class v2.0-870.
+[    3.442267] spi-bcm2835 3f204000.spi: could not get clk: -517
+[    3.442804] libphy: Fixed MDIO Bus: probed
+[    3.443019] usbcore: registered new interface driver lan78xx
+[
