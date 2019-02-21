@@ -2,49 +2,47 @@ Return-Path: <SRS0=/8cw=Q4=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2102BC43381
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Feb 2019 12:13:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34046C43381
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Feb 2019 12:16:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFA162086C
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Feb 2019 12:13:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B98420880
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Feb 2019 12:16:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbfBUMNo (ORCPT
+        id S1726439AbfBUMQi (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 21 Feb 2019 07:13:44 -0500
-Received: from mga06.intel.com ([134.134.136.31]:38497 "EHLO mga06.intel.com"
+        Thu, 21 Feb 2019 07:16:38 -0500
+Received: from mga18.intel.com ([134.134.136.126]:47193 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725385AbfBUMNo (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 21 Feb 2019 07:13:44 -0500
+        id S1726260AbfBUMQi (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 21 Feb 2019 07:16:38 -0500
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 04:13:43 -0800
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 04:16:37 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,395,1544515200"; 
-   d="scan'208";a="124132963"
+   d="scan'208";a="145352083"
 Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.169])
-  by fmsmga007.fm.intel.com with ESMTP; 21 Feb 2019 04:13:41 -0800
-Date:   Thu, 21 Feb 2019 14:13:40 +0200
+  by fmsmga002.fm.intel.com with ESMTP; 21 Feb 2019 04:16:35 -0800
+Date:   Thu, 21 Feb 2019 14:16:35 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     YueHaibing <yuehaibing@huawei.com>, peterhuewe@gmx.de,
-        arnd@arndb.de, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 -next] tpm: Fix the type of the return value in
- calc_tpm2_event_size()
-Message-ID: <20190221121340.GA7918@linux.intel.com>
-References: <20190220022300.25888-1-yuehaibing@huawei.com>
- <20190220063159.GA23027@linux.intel.com>
- <20190220160042.GD8429@ziepe.ca>
+To:     Matthew Garrett <mjg59@google.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        peterhuewe@gmx.de, jgg@ziepe.ca,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [PATCH V3] Add support for TPM2 event logs on EFI systems
+Message-ID: <20190221121635.GC7918@linux.intel.com>
+References: <20190211215518.81419-1-matthewgarrett@google.com>
+ <20190219115652.GA29454@linux.intel.com>
+ <CACdnJus0nkTtYyVsb71_nN11Oazj2xyR8WoMs6+r+jN=RYos8g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190220160042.GD8429@ziepe.ca>
+In-Reply-To: <CACdnJus0nkTtYyVsb71_nN11Oazj2xyR8WoMs6+r+jN=RYos8g@mail.gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
@@ -52,26 +50,17 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 09:00:42AM -0700, Jason Gunthorpe wrote:
-> On Wed, Feb 20, 2019 at 08:31:59AM +0200, Jarkko Sakkinen wrote:
-> > On Wed, Feb 20, 2019 at 10:23:00AM +0800, YueHaibing wrote:
-> > > calc_tpm2_event_size() has an invalid signature because
-> > > it returns a 'size_t' where as its signature says that
-> > > it returns 'int'.
-> > > 
-> > > Fixes: 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware event log")
-> > > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> > 
-> > Two remarks:
-> > 
-> > - git config user.name "Yue Haibing"
-> > - "Cc: stable@vger.kernel.org" before the fixes tag.
+On Wed, Feb 20, 2019 at 11:28:13AM -0800, Matthew Garrett wrote:
+> On Tue, Feb 19, 2019 at 3:56 AM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> > Tried to test with a Geminilake NUC but for some reason do not see the log
+> > file with this machine.
 > 
-> 'Theoretical' bug fixes are not suitable for stable
+> I'll retest a rebased tree on my NUC on Friday - just ran out of time
+> to get a build done before I had to leave for a trip.
 
-AFAIK there is no hard rule here. For this one line change I think it
-makes sense to backport it even if it is only for avoiding conflicts
-with future backports.
+Great, thanks. I'm in process of getting v19 of SGX patch set out
+hopefully next week so probably won't have time to look at this
+before latter part of that week.
 
 /Jarkko
