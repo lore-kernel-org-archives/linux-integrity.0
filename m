@@ -1,107 +1,123 @@
-Return-Path: <SRS0=IP2B=Q3=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=/8cw=Q4=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16501C43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Feb 2019 22:39:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 084BFC43381
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Feb 2019 00:43:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE60F20851
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Feb 2019 22:39:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D63C620880
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Feb 2019 00:43:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725826AbfBTWjG (ORCPT
+        id S1726862AbfBUAne (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 20 Feb 2019 17:39:06 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:33193 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfBTWjG (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 20 Feb 2019 17:39:06 -0500
-Received: by mail-qt1-f193.google.com with SMTP id z39so29366118qtz.0
-        for <linux-integrity@vger.kernel.org>; Wed, 20 Feb 2019 14:39:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=ttnIK6/QFjYzU/D0HL40M0ZLJn988iAXS4P3Ni+3XTM=;
-        b=oZLqLHqw3acd2KB3TO++F2vFKdU3Ho+OynFj7TQVydwnzpoV8+yjkSXolytt2UJoEk
-         oIYi41HW5jmyDKsRZtmbORR6t5c6gjVQQXnhfEq9S/KH3uP0hZiVTiPnPWshksc6Iu1X
-         fyTYHhBPt5jeiBkqVTw+KP2ddtZYixAmJlC2wb2Nu+r73JGr9+qrCX1Am7V7CUnojcMG
-         GY7+L6FlwflATKPeWU2ViEsAcnTm/+H2BnaJQj0+7CBkyERS0bwfhy/hpGVdLZbVKvKf
-         YNOOwZ6OwUPpoNgj2JqHKD/21cYw9akN+4qCW87oSLsQ7k+6Lv9CnpECthwnjj70AhbN
-         bj+Q==
-X-Gm-Message-State: AHQUAubHe7HsWSOfdOgCf4fBWodLrT3TP8x55UT9TrTtSYzzthjel+sq
-        G6gu6qnYcgH2oqL17nUwvXqDCQ==
-X-Google-Smtp-Source: AHgI3IaMcCyp5pbV1sONuz1OE54AJY5+2AxCVfFjU1uZ1GTb42Hm6M+VeK9FbjaUd52lPd6bnLgffQ==
-X-Received: by 2002:ac8:266d:: with SMTP id v42mr28676858qtv.116.1550702344991;
-        Wed, 20 Feb 2019 14:39:04 -0800 (PST)
-Received: from localhost (ip72-223-3-97.ph.ph.cox.net. [72.223.3.97])
-        by smtp.gmail.com with ESMTPSA id j11sm16616920qtk.26.2019.02.20.14.39.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Feb 2019 14:39:04 -0800 (PST)
-Date:   Wed, 20 Feb 2019 15:39:03 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     James Morris <jmorris@namei.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: [PATCH] MAINTAINERS: add linux-security-module mailing list to
- TPM drivers
-Message-ID: <20190220223903.dusft4bbd33hu2qi@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: James Morris <jmorris@namei.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>
-References: <20190220035846.6272-1-jsnitsel@redhat.com>
- <20190220070413.GB23027@linux.intel.com>
- <20190220140357.5vbepgmexso3jc6d@cantor>
- <20190220150445.GA4794@linux.intel.com>
- <alpine.LRH.2.21.1902210747510.1411@namei.org>
+        Wed, 20 Feb 2019 19:43:34 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:49584 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726090AbfBUAne (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 20 Feb 2019 19:43:34 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id A6A47E6DB7A5A13EB10B;
+        Thu, 21 Feb 2019 08:43:29 +0800 (CST)
+Received: from [127.0.0.1] (10.74.221.148) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.408.0; Thu, 21 Feb 2019
+ 08:43:22 +0800
+Subject: Re: linux-next: Tree for Feb 20
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+References: <20190220184341.73bd2084@canb.auug.org.au>
+ <1114b964-8ff8-5632-64d4-e94a9160b998@hisilicon.com>
+ <20190220095252.GA9089@linux.intel.com>
+ <20190220095806.GB9089@linux.intel.com>
+ <CAKv+Gu8G5eWeAdCB28xa=16ANFd2he9WPSztgXYwYRkhPfpEyA@mail.gmail.com>
+CC:     Mimi Zohar <zohar@linux.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+From:   Zhangshaokun <zhangshaokun@hisilicon.com>
+Message-ID: <aaac08b0-6366-7b63-d6a7-eea6630ce169@hisilicon.com>
+Date:   Thu, 21 Feb 2019 08:43:22 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.21.1902210747510.1411@namei.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAKv+Gu8G5eWeAdCB28xa=16ANFd2he9WPSztgXYwYRkhPfpEyA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.74.221.148]
+X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu Feb 21 19, James Morris wrote:
->On Wed, 20 Feb 2019, Jarkko Sakkinen wrote:
->
->> > being cc'd to linux-security-module? Looking back at
->> > recent patches, it looked like it was a general request.
->> > If it is, I'll be more likely to remember if get_maintainers.pl
->> > brings it up. :)
->>
->> I'm all open here. Not sure which practices apply to IMA. I kind of tend
->> to dilate to question does it make sense to CC to LSM for two reasons:
->>
->> 1. I think the original reason was that tpmdd mailing list was small.
->> Now with the new linux-integrity mailing list up and running there is
->> more eyes looking at the code. And more importantly the people are
->> subscribed who use TPM for something, like IMA developers.
->> 2. I don't remember ever reading within the time that I've been
->> maintaining even a single comment from anyone that works with LSM's. The
->> value of CC'ing there is not very significant, which means that most of
->> the time the TPM traffic is just noise on that list.
->
->Sounds about right, there used to be more security folk on LSM and not as
->many on the TPM list, but the new integrity list works well for TPM now.
->
->
->-- 
->James Morris
-><jmorris@namei.org>
->
+Hi Ard,
 
-Okay. Ignore this patch then.
+On 2019/2/20 18:05, Ard Biesheuvel wrote:
+> On Wed, 20 Feb 2019 at 10:58, Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+>>
+>> On Wed, Feb 20, 2019 at 11:52:52AM +0200, Jarkko Sakkinen wrote:
+>>> On Wed, Feb 20, 2019 at 05:11:15PM +0800, Zhangshaokun wrote:
+>>>> There is a compiler failure on arm64 platform, as follow:
+>>>>
+>>>>   AS      arch/arm64/kvm/hyp.o
+>>>>   CC      kernel/trace/ring_buffer.o
+>>>> In file included from security/integrity/ima/ima_fs.c:30:0:
+>>>> security/integrity/ima/ima.h:176:7: error: redeclaration of enumerator ‘NONE’
+>>>>   hook(NONE)   \
+>>>>        ^
+>>>> security/integrity/ima/ima.h:188:34: note: in definition of macro ‘__ima_hook_enumify’
+>>>>  #define __ima_hook_enumify(ENUM) ENUM,
+>>>>                                   ^
+>>>> security/integrity/ima/ima.h:191:2: note: in expansion of macro ‘__ima_hooks’
+>>>>   __ima_hooks(__ima_hook_enumify)
+>>>>   ^
+>>>> In file included from ./arch/arm64/include/asm/acpi.h:15:0,
+>>>>                  from ./include/acpi/acpi_io.h:7,
+>>>>                  from ./include/linux/acpi.h:47,
+>>>>                  from ./include/linux/tpm.h:26,
+>>>>                  from security/integrity/ima/ima.h:25,
+>>>>                  from security/integrity/ima/ima_fs.c:30:
+>>>> ./include/linux/efi.h:1716:2: note: previous definition of ‘NONE’ was here
+>>>>   NONE,
+>>>>   ^
+>>>> scripts/Makefile.build:276: recipe for target 'security/integrity/ima/ima_fs.o' failed
+>>>> make[3]: *** [security/integrity/ima/ima_fs.o] Error 1
+>>>>
+>>>> I dug it and it is the commit 901615cb916d ("tpm: move tpm_chip definition to include/linux/tpm.h")
+>>>
+>>> This results from a new include in tpm.h:
+>>>
+>>>   #include <linux/acpi.h>
+>>>
+>>> Must be fixed either in include/linux/efi.h or security/integrity/ima.h as
+>>> those files have a name collision. Makes me wonder why neither has taken
+>>> care of prefixing the constants properly.
+>>
+>> Preferably both subsystems should be fixed with proper 'EFI_' and 'IMA_'
+>> prefixes. Defining a constant named as NONE in a non-generic subsystem
+>> (e.g. not part of the core data structures of Linux) and especially
+>> exporting it to include/linux is not too well considered act.
+>>
+> 
+> Fixes for this have already been proposed, and should appear in -next shortly
+> 
+> The EFI one is here
+> https://mail.google.com/mail/u/0/#label/linux-efi/FMfcgxwBVgrQRjglPkWRqRqVclGgVDnB
+> 
+
+Because of no privilege, the website is denied for me. Anyway, it's nice to have been fixed.
+
+Thanks,
+Shaokun
+
+> Not sure about the IMA one, Mimi should be able to comment ...
+> 
+> .
+> 
+
