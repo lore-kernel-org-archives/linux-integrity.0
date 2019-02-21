@@ -2,32 +2,32 @@ Return-Path: <SRS0=/8cw=Q4=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B53C5C43381
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Feb 2019 23:52:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57315C43381
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Feb 2019 23:52:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F5ED2083B
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Feb 2019 23:52:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 314D920818
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Feb 2019 23:52:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727294AbfBUXwt (ORCPT
+        id S1726220AbfBUXux (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 21 Feb 2019 18:52:49 -0500
+        Thu, 21 Feb 2019 18:50:53 -0500
 Received: from mga14.intel.com ([192.55.52.115]:3139 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726840AbfBUXuz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 21 Feb 2019 18:50:55 -0500
+        id S1726178AbfBUXux (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 21 Feb 2019 18:50:53 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 15:50:54 -0800
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 15:50:52 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,397,1544515200"; 
-   d="scan'208";a="322394811"
+   d="scan'208";a="322394796"
 Received: from linksys13920.jf.intel.com (HELO rpedgeco-DESK5.jf.intel.com) ([10.54.75.11])
-  by fmsmga005.fm.intel.com with ESMTP; 21 Feb 2019 15:50:53 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 21 Feb 2019 15:50:51 -0800
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
 To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
@@ -41,97 +41,139 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Nadav Amit <namit@vmware.com>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v3 02/20] x86/mm: Introduce temporary mm structs
-Date:   Thu, 21 Feb 2019 15:44:33 -0800
-Message-Id: <20190221234451.17632-3-rick.p.edgecombe@intel.com>
+Subject: [PATCH v3 00/20] Merge text_poke fixes and executable lockdowns
+Date:   Thu, 21 Feb 2019 15:44:31 -0800
+Message-Id: <20190221234451.17632-1-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190221234451.17632-1-rick.p.edgecombe@intel.com>
-References: <20190221234451.17632-1-rick.p.edgecombe@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Andy Lutomirski <luto@kernel.org>
+This patchset improves several overlapping issues around stale TLB entries and
+W^X violations. It is combined from "x86/alternative: text_poke() enhancements
+v7" [1] and "Don’t leave executable TLB entries to freed pages v2" [2] patchsets
+that were conflicting.
 
-Using a dedicated page-table for temporary PTEs prevents other cores
-from using - even speculatively - these PTEs, thereby providing two
-benefits:
+The related issues that this fixes:
+1. Fixmap PTEs that are used for patching are available for access from
+   other cores and might be exploited. They are not even flushed from
+   the TLB in remote cores, so the risk is even higher. Address this
+   issue by introducing a temporary mm that is only used during
+   patching. Unfortunately, due to init ordering, fixmap is still used
+   during boot-time patching. Future patches can eliminate the need for
+   it.
+2. Missing lockdep assertion to ensure text_mutex is taken. It is
+   actually not always taken, so fix the instances that were found not
+   to take the lock (although they should be safe even without taking
+   the lock).
+3. Module_alloc returning memory that is RWX until a module is finished
+   loading.
+4. Sometimes when memory is freed via the module subsystem, an
+   executable permissioned TLB entry can remain to a freed page. If the
+   page is re-used to back an address that will receive data from
+   userspace, it can result in user data being mapped as executable in
+   the kernel. The root of this behavior is vfree lazily flushing the
+   TLB, but not lazily freeing the underlying pages.
 
-(1) Security hardening: an attacker that gains kernel memory writing
-abilities cannot easily overwrite sensitive data.
 
-(2) Avoiding TLB shootdowns: the PTEs do not need to be flushed in
-remote page-tables.
+Changes v2 to v3:
+ - Fix commit messages and comments [Boris]
+ - Rename VM_HAS_SPECIAL_PERMS [Boris]
+ - Remove unnecessary local variables [Boris]
+ - Rename set_alias_*() functions [Boris, Andy]
+ - Save/restore DR registers when using temporary mm
+ - Move line deletion from patch 10 to patch 17
 
-To do so a temporary mm_struct can be used. Mappings which are private
-for this mm can be set in the userspace part of the address-space.
-During the whole time in which the temporary mm is loaded, interrupts
-must be disabled.
+Changes v1 to v2:
+ - Adding “Reviewed-by tag” [Masami]
+ - Comment instead of code to warn against module removal while
+   patching [Masami]
+ - Avoiding open-coded TLB flush [Andy]
+ - Remove "This patch" [Borislav Petkov]
+ - Not set global bit during text poking [Andy, hpa]
+ - Add Ack from [Pavel Machek]
+ - Split patch 16 "Plug in new special vfree flag" into 4 patches (16-19)
+   to make it easier to review. There were no code changes.
 
-The first use-case for temporary mm struct, which will follow, is for
-poking the kernel text.
-
-[ Commit message was written by Nadav Amit ]
-
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Nadav Amit <namit@vmware.com>
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
----
- arch/x86/include/asm/mmu_context.h | 33 ++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
-
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-index 19d18fae6ec6..d684b954f3c0 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -356,4 +356,37 @@ static inline unsigned long __get_current_cr3_fast(void)
- 	return cr3;
- }
+The changes from "Don’t leave executable TLB entries to freed pages
+v2" to v1:
+ - Add support for case of hibernate trying to save an unmapped page
+   on the directmap. (Ard Biesheuvel)
+ - No week arch breakout for vfree-ing special memory (Andy Lutomirski)
+ - Avoid changing deferred free code by moving modules init free to work
+   queue (Andy Lutomirski)
+ - Plug in new flag for kprobes and ftrace
+ - More arch generic names for set_pages functions (Ard Biesheuvel)
+ - Fix for TLB not always flushing the directmap (Nadav Amit)
  
-+typedef struct {
-+	struct mm_struct *prev;
-+} temp_mm_state_t;
-+
-+/*
-+ * Using a temporary mm allows to set temporary mappings that are not accessible
-+ * by other cores. Such mappings are needed to perform sensitive memory writes
-+ * that override the kernel memory protections (e.g., W^X), without exposing the
-+ * temporary page-table mappings that are required for these write operations to
-+ * other cores. Using temporary mm also allows to avoid TLB shootdowns when the
-+ * mapping is torn down.
-+ *
-+ * Context: The temporary mm needs to be used exclusively by a single core. To
-+ *          harden security IRQs must be disabled while the temporary mm is
-+ *          loaded, thereby preventing interrupt handler bugs from overriding
-+ *          the kernel memory protection.
-+ */
-+static inline temp_mm_state_t use_temporary_mm(struct mm_struct *mm)
-+{
-+	temp_mm_state_t state;
-+
-+	lockdep_assert_irqs_disabled();
-+	state.prev = this_cpu_read(cpu_tlbstate.loaded_mm);
-+	switch_mm_irqs_off(NULL, mm, current);
-+	return state;
-+}
-+
-+static inline void unuse_temporary_mm(temp_mm_state_t prev)
-+{
-+	lockdep_assert_irqs_disabled();
-+	switch_mm_irqs_off(NULL, prev.prev, current);
-+}
-+
- #endif /* _ASM_X86_MMU_CONTEXT_H */
+Changes from "x86/alternative: text_poke() enhancements v7" to v1
+ - Fix build failure on CONFIG_RANDOMIZE_BASE=n (Rick)
+ - Remove text_poke usage from ftrace (Nadav)
+ 
+[1] https://lkml.org/lkml/2018/12/5/200
+[2] https://lkml.org/lkml/2018/12/11/1571
+
+Andy Lutomirski (1):
+  x86/mm: Introduce temporary mm structs
+
+Nadav Amit (12):
+  x86/jump_label: Use text_poke_early() during early init
+  x86/mm: Save DRs when loading a temporary mm
+  fork: Provide a function for copying init_mm
+  x86/alternative: Initialize temporary mm for patching
+  x86/alternative: Use temporary mm for text poking
+  x86/kgdb: Avoid redundant comparison of patched code
+  x86/ftrace: Set trampoline pages as executable
+  x86/kprobes: Set instruction page as executable
+  x86/module: Avoid breaking W^X while loading modules
+  x86/jump-label: Remove support for custom poker
+  x86/alternative: Remove the return value of text_poke_*()
+  x86/alternative: Comment about module removal races
+
+Rick Edgecombe (7):
+  x86/mm/cpa: Add set_direct_map_ functions
+  mm: Make hibernate handle unmapped pages
+  vmalloc: Add flag for free of special permsissions
+  modules: Use vmalloc special flag
+  bpf: Use vmalloc special flag
+  x86/ftrace: Use vmalloc special flag
+  x86/kprobes: Use vmalloc special flag
+
+ arch/Kconfig                         |   4 +
+ arch/x86/Kconfig                     |   1 +
+ arch/x86/include/asm/fixmap.h        |   2 -
+ arch/x86/include/asm/mmu_context.h   |  58 ++++++++++
+ arch/x86/include/asm/pgtable.h       |   3 +
+ arch/x86/include/asm/set_memory.h    |   3 +
+ arch/x86/include/asm/text-patching.h |   6 +-
+ arch/x86/kernel/alternative.c        | 153 +++++++++++++++++++++------
+ arch/x86/kernel/ftrace.c             |  14 ++-
+ arch/x86/kernel/jump_label.c         |  21 ++--
+ arch/x86/kernel/kgdb.c               |  14 +--
+ arch/x86/kernel/kprobes/core.c       |  19 +++-
+ arch/x86/kernel/module.c             |   2 +-
+ arch/x86/mm/init_64.c                |  36 +++++++
+ arch/x86/mm/pageattr.c               |  16 +--
+ arch/x86/xen/mmu_pv.c                |   2 -
+ include/linux/filter.h               |  18 +---
+ include/linux/mm.h                   |  18 ++--
+ include/linux/sched/task.h           |   1 +
+ include/linux/set_memory.h           |  10 ++
+ include/linux/vmalloc.h              |  13 +++
+ init/main.c                          |   3 +
+ kernel/bpf/core.c                    |   1 -
+ kernel/fork.c                        |  24 +++--
+ kernel/module.c                      |  82 +++++++-------
+ kernel/power/snapshot.c              |   5 +-
+ mm/page_alloc.c                      |   7 +-
+ mm/vmalloc.c                         | 113 ++++++++++++++++----
+ 28 files changed, 475 insertions(+), 174 deletions(-)
+
 -- 
 2.17.1
 
