@@ -2,167 +2,118 @@ Return-Path: <SRS0=3PWC=Q5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7687DC10F00
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Feb 2019 20:26:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D483C43381
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Feb 2019 20:55:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3833A206BA
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Feb 2019 20:26:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jjk9Y0DS"
+	by mail.kernel.org (Postfix) with ESMTP id 60BDB206BB
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Feb 2019 20:55:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbfBVU0e (ORCPT
+        id S1726700AbfBVUzj (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 22 Feb 2019 15:26:34 -0500
-Received: from mail-vk1-f201.google.com ([209.85.221.201]:43100 "EHLO
-        mail-vk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727218AbfBVU0W (ORCPT
+        Fri, 22 Feb 2019 15:55:39 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:33469 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726023AbfBVUzi (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Feb 2019 15:26:22 -0500
-Received: by mail-vk1-f201.google.com with SMTP id 200so1561296vkc.10
-        for <linux-integrity@vger.kernel.org>; Fri, 22 Feb 2019 12:26:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=8ZLu9apGJq8gMxM5fACckAPsW9cvH79FQBy+6X2uyc4=;
-        b=jjk9Y0DSJr31PAijE1VAhzeYGJwQBiuw4R13Y+cM2jKBQWe7RFRRzTRWqyb0AQhqd8
-         tOalXyt8ulNJgbQBaV915incR5EvtBoFKTx2KRjMcK40a4Swexf1RR+lyDZwcPR0xZHZ
-         pk3B9oAx/m1niI99/67S94VbZIdEdcxWCiLKwOZ0TDFjtnV5CJ8YUe29uUmgloHE7ZWh
-         c/Q2SMU77B+TWlewVizz6l3TTnmfjnsQlTydvywAtTjmaikZmhz9zZFM+KB5Rcw0N+GU
-         zjYUsgXdUWZzur4GTYlCNlu19siCy8VDEjmFzBAjj/T1HPWc9GVEkYCCwHldooZfQuxj
-         GG0A==
+        Fri, 22 Feb 2019 15:55:38 -0500
+Received: by mail-qk1-f194.google.com with SMTP id x9so2002828qkf.0
+        for <linux-integrity@vger.kernel.org>; Fri, 22 Feb 2019 12:55:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=8ZLu9apGJq8gMxM5fACckAPsW9cvH79FQBy+6X2uyc4=;
-        b=dJQuuMkq1NTAdsY6jcJVHkwy8VeubOeMpZxugK8lR2OBnG/S+U5PKHOMjSrHQMtPsL
-         kTVmmSPkCDENAyMvqwjeVPFB5L0RXmCycA8wA/CmstYl3ZfZwjNmdTk1JO9stpOFRXmG
-         c9kj4ZcJ07FtUHwphGXZ+oBI+ohZpfjJsfhs3uhiJeWkdme2dAaHM0m0XkpfDCI5T0s/
-         OPsaIEa0kbSJDruceneQ8d0zudwnIUAmTZHG9OHtvjHDV8htoE4Kzw+3IuR93e5uok8o
-         SZ4aQQbf47Num/k313vrT8+kbmz702t4A/dkgrMV1kEIViO0nqIuqGzYbgWt6fh/89yn
-         GfKg==
-X-Gm-Message-State: AHQUAuZPbgT0Lvhvv3UplUGpXoHVX/LvyRUj1yQB5oPFeXQBU9PIEYaH
-        CbNNVH3DaBYf67erFMdQOIUxuGLCaID5vVibpk4UJ2Vv+uVKlUBSYy0SGpHlowpOut+4CnVzYp8
-        Enu1/ues9BE0tV0hawYCNZ98bRU0hLBfMySgzr9gWBkviQi0jsGj+kE49CagStE7Z3BKLglw6KV
-        TodxdvUI10IKAsIVezMa4=
-X-Google-Smtp-Source: AHgI3IbxQ+WnEa1/boPr02rjPJvsi/TF2O3WIyWJ2V88tbL2ZfaXand/Xu/BuwpCrTw/FKj2l4P2xXsSmArD5SMITXRi0w==
-X-Received: by 2002:a1f:9750:: with SMTP id z77mr196035vkd.5.1550867180288;
- Fri, 22 Feb 2019 12:26:20 -0800 (PST)
-Date:   Fri, 22 Feb 2019 12:26:05 -0800
-In-Reply-To: <20190222202606.160816-1-matthewgarrett@google.com>
-Message-Id: <20190222202606.160816-4-matthewgarrett@google.com>
-Mime-Version: 1.0
-References: <20190222202606.160816-1-matthewgarrett@google.com>
-X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
-Subject: [PATCH V4 3/4] tpm: Append the final event log to the TPM event log
-From:   Matthew Garrett <matthewgarrett@google.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
-        roberto.sassu@huawei.com, linux-efi@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tweek@google.com,
-        Matthew Garrett <mjg59@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=XJQu3ceEoc1WtTZ2Lx89W5Iq824xEHhgS/Qxo4A7GNE=;
+        b=MLoPldBreGCi0nSTsdDalTIqkOY9C693KcXs7laFxXgAn7xl3UpGyxd6eofkE8HDlg
+         0deZFKZYLbF24OwPuVI9h6Pt2T6T8YOJr3mmmPs6PYBKicUDK3qCEPBVVHeXgfGNYJaO
+         ut/pM3zMLCI8gF/2psGquQe+3rARDLoGvBYmTxcnuEhpLgSvqjiKZERHO0O3MfzQyVrZ
+         wVMt4Tomujl4C39mGo4feLZldtpYwitGx9/BtzAcnK9tQCzs8LdsImlJr7euwwGbxEBS
+         +eWNSRj/h19EtfL4CN3bnXn7t5X1X0vl6QEAqEcaQkoGRTXqWvmY8kvAwler2zOMKzKL
+         DrJQ==
+X-Gm-Message-State: AHQUAuYwPfKRTK/3wy7i6XbH/p7lBqPrOiLagK+T/3XsV4jcqdrYVatT
+        4gGInhTKWJEGgLgM0ETvYc10jQ==
+X-Google-Smtp-Source: AHgI3IZb+0lptYoBTZoKLHcFIWRyTx6UdjHT0rPfnsmHpIzfSpvf5S8YX+ZN98WmL/IKd27/UAMXIA==
+X-Received: by 2002:a37:c38b:: with SMTP id r11mr4524203qkl.159.1550868937358;
+        Fri, 22 Feb 2019 12:55:37 -0800 (PST)
+Received: from redhat.com (pool-173-76-246-42.bstnma.fios.verizon.net. [173.76.246.42])
+        by smtp.gmail.com with ESMTPSA id z9sm1487981qkj.33.2019.02.22.12.55.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Feb 2019 12:55:36 -0800 (PST)
+Date:   Fri, 22 Feb 2019 15:55:33 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     David Tolnay <dtolnay@gmail.com>, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-integrity@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org, dgreid@chromium.org,
+        apronin@chromium.org
+Subject: Re: [PATCH] tpm: Add driver for TPM over virtio
+Message-ID: <20190222154838-mutt-send-email-mst@kernel.org>
+References: <388c5b80-21a7-1e91-a11f-3a1c1432368b@gmail.com>
+ <20190222102610.GB5613@linux.intel.com>
+ <20190222101728-mutt-send-email-mst@kernel.org>
+ <20190222193156.GA6475@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190222193156.GA6475@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Matthew Garrett <mjg59@google.com>
+On Fri, Feb 22, 2019 at 09:31:56PM +0200, Jarkko Sakkinen wrote:
+> On Fri, Feb 22, 2019 at 10:23:02AM -0500, Michael S. Tsirkin wrote:
+> > On Fri, Feb 22, 2019 at 12:26:10PM +0200, Jarkko Sakkinen wrote:
+> > > On Thu, Feb 21, 2019 at 06:14:02PM -0800, David Tolnay wrote:
+> > > > Add a config TCG_VIRTIO_VTPM which enables a driver providing the guest
+> > > > kernel side of TPM over virtio.
+> > > > 
+> > > > Use case: TPM support is needed for performing trusted work from within
+> > > > a virtual machine launched by Chrome OS.
+> > > > 
+> > > > Tested inside crosvm, the Chrome OS virtual machine monitor. Crosvm's
+> > > > implementation of the virtio TPM device can be found in these two source
+> > > > files:
+> > > > 
+> > > > - https://chromium.googlesource.com/chromiumos/platform/crosvm/+/18ce5713e6cb99c40aafec52b67c28ba12a44f31/devices/src/virtio/tpm.rs
+> > > > - https://chromium.googlesource.com/chromiumos/platform/crosvm/+/18ce5713e6cb99c40aafec52b67c28ba12a44f31/tpm2/src/lib.rs
+> > > 
+> > > These files/links do not make sense for kernel testing. Please remove
+> > > them from the next version.
+> > 
+> > To clarify generally for a virtio device we want
+> > - guest support
+> > - device support
+> > - spec
+> > 
+> > If the device is implemented in qemu and guest in linux kernel,
+> > then there are lots of people familiar with these
+> > programming environments, so sometimes we merge
+> > guest and host code even if spec isn't written up at all.
+> > 
+> > If you don't want to do that there's a small number of people who can
+> > properly review code, e.g. I don't think lots of people on this list are
+> > familiar with crosvm.  One way to address this would be to build a QEMU
+> > implementation. Another would be to write up a spec.  You can do both
+> > too :)
+> 
+> I don't really understand your arguments.
+> 
+> /Jarkko
 
-Any events that are logged after GetEventsLog() is called are logged to
-the EFI Final Events table. These events are defined as being in the
-crypto agile log format, so we can just append them directly to the
-existing log if it's in the same format. In theory we can also construct
-old-style SHA1 log entries for devices that only return logs in that
-format, but EDK2 doesn't generate the final event log in that case so
-it doesn't seem worth it at the moment.
+Jarkko, I am not making any argument at all.
 
-Signed-off-by: Matthew Garrett <mjg59@google.com>
----
- drivers/char/tpm/eventlog/efi.c | 50 ++++++++++++++++++++++++++++-----
- 1 file changed, 43 insertions(+), 7 deletions(-)
+I am trying to suggest ways for this driver to get upstream.
 
-diff --git a/drivers/char/tpm/eventlog/efi.c b/drivers/char/tpm/eventlog/efi.c
-index 3e673ab22cb4..9179cf6bdee9 100644
---- a/drivers/char/tpm/eventlog/efi.c
-+++ b/drivers/char/tpm/eventlog/efi.c
-@@ -21,10 +21,13 @@
- int tpm_read_log_efi(struct tpm_chip *chip)
- {
- 
-+	struct efi_tcg2_final_events_table *final_tbl = NULL;
- 	struct linux_efi_tpm_eventlog *log_tbl;
- 	struct tpm_bios_log *log;
- 	u32 log_size;
- 	u8 tpm_log_version;
-+	void *tmp;
-+	int ret;
- 
- 	if (!(chip->flags & TPM_CHIP_FLAG_TPM2))
- 		return -ENODEV;
-@@ -52,15 +55,48 @@ int tpm_read_log_efi(struct tpm_chip *chip)
- 
- 	/* malloc EventLog space */
- 	log->bios_event_log = kmemdup(log_tbl->log, log_size, GFP_KERNEL);
--	if (!log->bios_event_log)
--		goto err_memunmap;
--	log->bios_event_log_end = log->bios_event_log + log_size;
-+	if (!log->bios_event_log) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
- 
-+	log->bios_event_log_end = log->bios_event_log + log_size;
- 	tpm_log_version = log_tbl->version;
--	memunmap(log_tbl);
--	return tpm_log_version;
- 
--err_memunmap:
-+	ret = tpm_log_version;
-+
-+	if (efi.tpm_final_log == EFI_INVALID_TABLE_ADDR ||
-+	    efi_tpm_final_log_size == 0 ||
-+	    tpm_log_version != EFI_TCG2_EVENT_LOG_FORMAT_TCG_2)
-+		goto out;
-+
-+	final_tbl = memremap(efi.tpm_final_log,
-+			     sizeof(*final_tbl) + efi_tpm_final_log_size,
-+			     MEMREMAP_WB);
-+	if (!final_tbl) {
-+		pr_err("Could not map UEFI TPM final log\n");
-+		kfree(log->bios_event_log);
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	tmp = krealloc(log->bios_event_log,
-+		       log_size + efi_tpm_final_log_size,
-+		       GFP_KERNEL);
-+	if (!tmp) {
-+		kfree(log->bios_event_log);
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	log->bios_event_log = tmp;
-+	memcpy((void *)log->bios_event_log + log_size,
-+	       final_tbl->events, efi_tpm_final_log_size);
-+	log->bios_event_log_end = log->bios_event_log +
-+		log_size + efi_tpm_final_log_size;
-+
-+out:
-+	memunmap(final_tbl);
- 	memunmap(log_tbl);
--	return -ENOMEM;
-+	return ret;
- }
+And I am saying that while I agree availability of an implementation in
+crosvm isn't sufficient, availability of a software device
+implementation in QEMU is not an absolute prerequisite for including a
+virtio driver in Linux.  If there's a virtio spec explaining how to
+write one, that can be enough.
+
 -- 
-2.21.0.rc0.258.g878e2cd30e-goog
-
+MST
