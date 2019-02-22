@@ -2,150 +2,145 @@ Return-Path: <SRS0=3PWC=Q5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF8C2C43381
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Feb 2019 22:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D05CEC43381
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Feb 2019 23:04:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85C8A206C0
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Feb 2019 22:36:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7202206C0
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Feb 2019 23:04:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726355AbfBVWgi (ORCPT
+        id S1725922AbfBVXEX (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 22 Feb 2019 17:36:38 -0500
-Received: from mga09.intel.com ([134.134.136.24]:35864 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725774AbfBVWgi (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Feb 2019 17:36:38 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Feb 2019 14:36:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,401,1544515200"; 
-   d="scan'208";a="128649914"
-Received: from delmer-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.153])
-  by orsmga003.jf.intel.com with ESMTP; 22 Feb 2019 14:36:33 -0800
-Date:   Sat, 23 Feb 2019 00:36:34 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     David Tolnay <dtolnay@gmail.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-integrity@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org, dgreid@chromium.org,
-        apronin@chromium.org
-Subject: Re: [PATCH] tpm: Add driver for TPM over virtio
-Message-ID: <20190222223634.GA27601@linux.intel.com>
-References: <388c5b80-21a7-1e91-a11f-3a1c1432368b@gmail.com>
- <20190222102610.GB5613@linux.intel.com>
- <20190222101728-mutt-send-email-mst@kernel.org>
- <20190222193156.GA6475@linux.intel.com>
- <20190222193305.GB6475@linux.intel.com>
- <20190222161636-mutt-send-email-mst@kernel.org>
- <20190222215001.GA21427@linux.intel.com>
- <f16bd565-0a7e-d7bb-a5e8-eda48ac8de80@gmail.com>
+        Fri, 22 Feb 2019 18:04:23 -0500
+Received: from gateway31.websitewelcome.com ([192.185.143.40]:22252 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725774AbfBVXEX (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 22 Feb 2019 18:04:23 -0500
+X-Greylist: delayed 1331 seconds by postgrey-1.27 at vger.kernel.org; Fri, 22 Feb 2019 18:04:22 EST
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id D96B07C30A
+        for <linux-integrity@vger.kernel.org>; Fri, 22 Feb 2019 16:42:10 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id xJWEgzKYB2PzOxJWEgRCdI; Fri, 22 Feb 2019 16:42:10 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.127.169] (port=49378 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gxJWE-0006jx-1b; Fri, 22 Feb 2019 16:42:10 -0600
+To:     James Morris <jmorris@namei.org>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        John Johansen <john.johansen@canonical.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+References: <20190208205453.GA3232@embeddedor>
+ <1549660417.12743.18.camel@linux.ibm.com>
+ <26221503-3755-1ee1-2265-f4e0a7e1304c@embeddedor.com>
+ <4be79a11-bda8-b0c5-a966-d9793e47d915@embeddedor.com>
+ <alpine.LRH.2.21.1902230452380.27514@namei.org>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: [PATCH v2] security: mark expected switch fall-throughs and add a
+ missing break
+Message-ID: <b791ecd5-8881-f652-6b3e-d4a6e73e9ea5@embeddedor.com>
+Date:   Fri, 22 Feb 2019 16:42:06 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f16bd565-0a7e-d7bb-a5e8-eda48ac8de80@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <alpine.LRH.2.21.1902230452380.27514@namei.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.127.169
+X-Source-L: No
+X-Exim-ID: 1gxJWE-0006jx-1b
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.127.169]:49378
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 02:24:55PM -0800, David Tolnay wrote:
-> On 2/22/19 1:50 PM, Jarkko Sakkinen wrote:
-> > On Fri, Feb 22, 2019 at 04:25:08PM -0500, Michael S. Tsirkin wrote:
-> >> On Fri, Feb 22, 2019 at 09:33:05PM +0200, Jarkko Sakkinen wrote:
-> >>> On Fri, Feb 22, 2019 at 09:31:56PM +0200, Jarkko Sakkinen wrote:
-> >>>> On Fri, Feb 22, 2019 at 10:23:02AM -0500, Michael S. Tsirkin wrote:
-> >>>>> On Fri, Feb 22, 2019 at 12:26:10PM +0200, Jarkko Sakkinen wrote:
-> >>>>>> On Thu, Feb 21, 2019 at 06:14:02PM -0800, David Tolnay wrote:
-> >>>>>>> Add a config TCG_VIRTIO_VTPM which enables a driver providing the guest
-> >>>>>>> kernel side of TPM over virtio.
-> >>>>>>>
-> >>>>>>> Use case: TPM support is needed for performing trusted work from within
-> >>>>>>> a virtual machine launched by Chrome OS.
-> >>>>>>>
-> >>>>>>> Tested inside crosvm, the Chrome OS virtual machine monitor. Crosvm's
-> >>>>>>> implementation of the virtio TPM device can be found in these two source
-> >>>>>>> files:
-> >>>>>>>
-> >>>>>>> - https://chromium.googlesource.com/chromiumos/platform/crosvm/+/18ce5713e6cb99c40aafec52b67c28ba12a44f31/devices/src/virtio/tpm.rs
-> >>>>>>> - https://chromium.googlesource.com/chromiumos/platform/crosvm/+/18ce5713e6cb99c40aafec52b67c28ba12a44f31/tpm2/src/lib.rs
-> >>>>>>
-> >>>>>> These files/links do not make sense for kernel testing. Please remove
-> >>>>>> them from the next version.
-> >>>>>
-> >>>>> To clarify generally for a virtio device we want
-> >>>>> - guest support
-> >>>>> - device support
-> >>>>> - spec
-> >>>>>
-> >>>>> If the device is implemented in qemu and guest in linux kernel,
-> >>>>> then there are lots of people familiar with these
-> >>>>> programming environments, so sometimes we merge
-> >>>>> guest and host code even if spec isn't written up at all.
-> >>>>>
-> >>>>> If you don't want to do that there's a small number of people who can
-> >>>>> properly review code, e.g. I don't think lots of people on this list are
-> >>>>> familiar with crosvm.  One way to address this would be to build a QEMU
-> >>>>> implementation. Another would be to write up a spec.  You can do both
-> >>>>> too :)
-> >>>>
-> >>>> I don't really understand your arguments.
-> >>>
-> >>> ... and I did your response total three times and did not find any
-> >>> causality of any sort from anything.
-> >>>
-> >>> /Jarkko
-> >>
-> >> Thanks for spending the time reading my response.  What was included in
-> >> it was a general suggestion for a virtio based driver to be acceptable
-> >> in upstream Linux.
-> >>
-> >> You pointed out that a pointer to a prototype implementation in Rust
-> >> isn't relevant. However, FYI just posting guest code and asking for it
-> >> to be merged alone won't work for a virtio driver either. I am merely
-> >> trying to speed things up instead of having the contributor repost with
-> >> a tweaked commit log just to immediately get another set of nacks.
-> > 
-> > I did not say anything about relevance of any implementation. I tried to
-> > mainly point out that looking at random source files implemented with a
-> > relatively alien language to most does not really make a case.
-> > 
-> > Things that would help to move this forward:
-> > 
-> > - Documentation of the stack, nothing spectacular but more like how it
-> >   works in practical terms.
-> > - Sufficiently easy ways to test the code.
-> > - Explain in the commit message why we want this.
-> > 
-> > /Jarkko
+
+
+On 2/22/19 11:53 AM, James Morris wrote:
+> On Fri, 22 Feb 2019, Gustavo A. R. Silva wrote:
+> 
+>> Hi James,
+>>
+>> I wonder if you can take this, please.
+> 
+> Ok -- I had thought you were sending all of these upstream across the 
+> board.
 > 
 > 
-> Thanks Jarkko, I respect all of the points you've raised and you are absolutely
-> correct to ask for a spec and/or spec-quality documentation, detailed testing
-> steps for exercising this driver in qemu or crosvm, and strong justification for
-> the new driver.
 
-I do not require spec quality documentation. Just a few paragraphs of
-what is in crosvm, kernel etc. and something about inner workings to
-get a rough idea. No need for TCG level spec for this :-) Something
-in the spirit of what you could bundle under Documentation/ in the
-kernel tree. Maybe you could consider putting something there and
-make this a patch set?
+Yeah, I'm only doing that in cases where patches are being ignored.
 
-To get started with testing this properly is there anywhere
-documentation on "here's how you compile and run crosvm"? If I can
-run it myself it will be easier for me to understand what happens even
-without a spec.
-
-Clone the repository and cargo build?
-
-/Jarkko
+Thanks
+--
+Gustavo
