@@ -3,144 +3,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D05CEC43381
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Feb 2019 23:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B31B1C43381
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Feb 2019 23:05:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7202206C0
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Feb 2019 23:04:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78CC2206C0
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Feb 2019 23:05:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725922AbfBVXEX (ORCPT
+        id S1725900AbfBVXFF (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 22 Feb 2019 18:04:23 -0500
-Received: from gateway31.websitewelcome.com ([192.185.143.40]:22252 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725774AbfBVXEX (ORCPT
+        Fri, 22 Feb 2019 18:05:05 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:32810 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbfBVXFF (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Feb 2019 18:04:23 -0500
-X-Greylist: delayed 1331 seconds by postgrey-1.27 at vger.kernel.org; Fri, 22 Feb 2019 18:04:22 EST
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id D96B07C30A
-        for <linux-integrity@vger.kernel.org>; Fri, 22 Feb 2019 16:42:10 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id xJWEgzKYB2PzOxJWEgRCdI; Fri, 22 Feb 2019 16:42:10 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.127.169] (port=49378 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gxJWE-0006jx-1b; Fri, 22 Feb 2019 16:42:10 -0600
-To:     James Morris <jmorris@namei.org>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        John Johansen <john.johansen@canonical.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-References: <20190208205453.GA3232@embeddedor>
- <1549660417.12743.18.camel@linux.ibm.com>
- <26221503-3755-1ee1-2265-f4e0a7e1304c@embeddedor.com>
- <4be79a11-bda8-b0c5-a966-d9793e47d915@embeddedor.com>
- <alpine.LRH.2.21.1902230452380.27514@namei.org>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [PATCH v2] security: mark expected switch fall-throughs and add a
- missing break
-Message-ID: <b791ecd5-8881-f652-6b3e-d4a6e73e9ea5@embeddedor.com>
-Date:   Fri, 22 Feb 2019 16:42:06 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 22 Feb 2019 18:05:05 -0500
+Received: by mail-qt1-f196.google.com with SMTP id z39so4491273qtz.0
+        for <linux-integrity@vger.kernel.org>; Fri, 22 Feb 2019 15:05:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=2Q+fUkM7Xd6GGZFe86QvR3iViAGPmrmZY6f7TTFC0vk=;
+        b=HWxcFGCeYkUANFkQh7DgpEQPbjJ/M4MF8Wpu/ObK6hIyDujROBODcaPp2mFNJ/JTNQ
+         hsCYwraJIStKKlTN8Grtrgo4FEMhM28xO+JqczS5OmRJ/gnV0wNBvOO6al7Y/C3etAy6
+         lP7mdRHPOqprAvoT3c3lor7KAyYFBmfpfZtCOlUkBtHpdrzUalxO6TJDB7PzWSZ21uz6
+         32RHt/+7i1V7opbobYtHVIp1KcFdlId/K64CES8IPTnrKSWAjADUFH0E4E5+L9Mwz1/M
+         qMCWfbZY/hGGk/FMAGyOC2VhJrPzl+tFiMApNfc4rFQwQzVj+yYSOrhRyvyaq6RUX7t3
+         nSqA==
+X-Gm-Message-State: AHQUAubZMsAMdX/w/iRk0Wr2XchryNE4telFAlkFWCAUJYr0/CcTyuJx
+        NW3xxuD4/d8q7thXYIWdG4jqAkIjMUS/jQ==
+X-Google-Smtp-Source: AHgI3IZxx4ZgEECa33fr6MM5abRXlKdXNKf3bYFXJTB5ndGuQkqLb5lLfy4GWnGHd084Tip4B7Pocw==
+X-Received: by 2002:ac8:1929:: with SMTP id t38mr5035014qtj.249.1550876704301;
+        Fri, 22 Feb 2019 15:05:04 -0800 (PST)
+Received: from redhat.com (pool-173-76-246-42.bstnma.fios.verizon.net. [173.76.246.42])
+        by smtp.gmail.com with ESMTPSA id a206sm1685468qkc.55.2019.02.22.15.05.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Feb 2019 15:05:03 -0800 (PST)
+Date:   Fri, 22 Feb 2019 18:05:01 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     David Tolnay <dtolnay@gmail.com>, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-integrity@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org, dgreid@chromium.org,
+        apronin@chromium.org
+Subject: Re: [PATCH] tpm: Add driver for TPM over virtio
+Message-ID: <20190222180341-mutt-send-email-mst@kernel.org>
+References: <388c5b80-21a7-1e91-a11f-3a1c1432368b@gmail.com>
+ <20190222102610.GB5613@linux.intel.com>
+ <20190222101728-mutt-send-email-mst@kernel.org>
+ <20190222193156.GA6475@linux.intel.com>
+ <20190222193305.GB6475@linux.intel.com>
+ <20190222161636-mutt-send-email-mst@kernel.org>
+ <20190222215001.GA21427@linux.intel.com>
+ <f16bd565-0a7e-d7bb-a5e8-eda48ac8de80@gmail.com>
+ <20190222223634.GA27601@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.1902230452380.27514@namei.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.127.169
-X-Source-L: No
-X-Exim-ID: 1gxJWE-0006jx-1b
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.127.169]:49378
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 10
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190222223634.GA27601@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+On Sat, Feb 23, 2019 at 12:36:34AM +0200, Jarkko Sakkinen wrote:
+> I do not require spec quality documentation. Just a few paragraphs of
+> what is in crosvm, kernel etc. and something about inner workings to
+> get a rough idea. No need for TCG level spec for this :-)
 
+OTOH for virtio if there's no implementation in a popular
+hypervisor/language, we do ask for a somewhat detailed
+spec.
 
-On 2/22/19 11:53 AM, James Morris wrote:
-> On Fri, 22 Feb 2019, Gustavo A. R. Silva wrote:
-> 
->> Hi James,
->>
->> I wonder if you can take this, please.
-> 
-> Ok -- I had thought you were sending all of these upstream across the 
-> board.
-> 
-> 
-
-Yeah, I'm only doing that in cases where patches are being ignored.
-
-Thanks
---
-Gustavo
+-- 
+MST
