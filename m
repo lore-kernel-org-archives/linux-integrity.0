@@ -2,123 +2,109 @@ Return-Path: <SRS0=3PWC=Q5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D0FBC43381
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Feb 2019 22:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D076FC43381
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Feb 2019 22:07:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5358D20675
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Feb 2019 22:00:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AnCojv76"
+	by mail.kernel.org (Postfix) with ESMTP id AAC0A2075C
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Feb 2019 22:07:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725878AbfBVWAV (ORCPT
+        id S1726428AbfBVWHY (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 22 Feb 2019 17:00:21 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:46964 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725814AbfBVWAU (ORCPT
+        Fri, 22 Feb 2019 17:07:24 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:40669 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725811AbfBVWHY (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Feb 2019 17:00:20 -0500
-Received: by mail-oi1-f193.google.com with SMTP id j135so2896484oib.13
-        for <linux-integrity@vger.kernel.org>; Fri, 22 Feb 2019 14:00:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=y0Y8cF9Ik6e8P0FaFinQLS2KaPKKrGWLwr7qWlusd+k=;
-        b=AnCojv76vr3mm8WWlnFU4q0VKi4q7XYX7ITGzMySwXJu6QsmYQu5y3NbXEU9wwc3MF
-         NsPjb/YxvbrK8N1qLl83ycZMFwnDolgMvZdw59tzOC5xLBm17tnKQWFbs1Zntdio4y47
-         E9d2Gpdvx8wE9BFkLzboiuMfYh1BB3l4M/H6n5vfVzsBM/DftdcCJp5ZjYFJU61k18ip
-         NU6XnSX4F85fZa1Ta1VMhzeYIIa0E8AkiPwrYuobiYapDSmzkbj/YNIhmeA4xOr5/s49
-         IRifLokvN2mipzNkmUXlgOJRa7MIWLKcq7ey1PhzokIIzNMInXpr4kP4onY0DbjKa6gj
-         Sj7Q==
+        Fri, 22 Feb 2019 17:07:24 -0500
+Received: by mail-qt1-f196.google.com with SMTP id j36so4302379qta.7
+        for <linux-integrity@vger.kernel.org>; Fri, 22 Feb 2019 14:07:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=y0Y8cF9Ik6e8P0FaFinQLS2KaPKKrGWLwr7qWlusd+k=;
-        b=U1gAtQKZ+NaPoiC/25fnl2togRhQJkjKDQIVWgXoN3npT9I+hDBwOoQxfUYFFn3x3C
-         +h6QAdE0NaoNWuv5NgzgkQ9tr39bcwGM+6daOPhxCVMPb/eoJ8NZurisdMIBeTGWbbzz
-         JZRpOO3hvI0YRHYmPIPDno4kfwGcSmDNMmdUrGTqVT0VM0V8QjQz79AZZ8txHmW/6L4h
-         PVZHj+/Rq8/43SEzd/xfpfy8M4H5SnBNtBbQzrBXLQeRS8cSqsASJTjIbwzjxdbSDXHP
-         AzV4tvYuRygaqwPlvGeI0G01JbEt2O6urQZWqMGVr6nPioBbGCNS3NvTIfXT/ZxhjJf7
-         nMUA==
-X-Gm-Message-State: AHQUAuaIztLEM2Ng5JhxGcvPlWyKjnwjkRiStbZ9dbnvZM7v6SPgZo+C
-        dPNQyY5cFuwq1C0ooRIcT3s=
-X-Google-Smtp-Source: AHgI3IbzuQua+w+2tCVkkbBcmVnCSCC0Do0nXeIY4xt7JV7jM3UGGRHJy2DuU7McVKPWZKXT3c7XQQ==
-X-Received: by 2002:aca:db43:: with SMTP id s64mr2764602oig.165.1550872820137;
-        Fri, 22 Feb 2019 14:00:20 -0800 (PST)
-Received: from ?IPv6:2600:1700:dc40:8a50:bd50:a563:2590:39f6? ([2600:1700:dc40:8a50:bd50:a563:2590:39f6])
-        by smtp.gmail.com with ESMTPSA id r124sm1113167oih.7.2019.02.22.14.00.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Feb 2019 14:00:19 -0800 (PST)
-Subject: Re: [PATCH] tpm: Add driver for TPM over virtio
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-integrity@vger.kernel.org,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=WVlgmnFkcj2PmgtNeWcNciyK5dvnSRfqqMGJ0Dku9LQ=;
+        b=lW44EhE5OUsSYpSIin5Y+YeKEq4mWNeNk16/HPfZQLCBVsDiDdTcwh0NdMuhlwad+z
+         mTGOs3/LWJI6jZEVQ3d4/pRYWgSWA3ghBkMZ6jwIuzwwMB2FQEKbikCtJFxr/I/STRHu
+         rzXGBmBk1T4//CTrI4o0eVPw/sg/1F624IvGL8eZfx4x0uUMl5VdyiyR9ZNq3Oa1IMsw
+         TM2DWMRxeNTEO9YxuhGS51PupdxIr/Gh7oRLdul1Gzy0/BmJE1NYVPSZmkSpgX/GBnxr
+         RSStDbJ0giTDcwX7+JByDQda3466VOA+fFWHMBkQKIXHimylIqBrUS+nen1zuJElaxWA
+         SP8g==
+X-Gm-Message-State: AHQUAubqoUskgUXype1w8N99uBdBDste/aTIBHiWyQo5gUuPnto0oAHf
+        U8z6sBDj9AkHYNb7Ia6H3h+XQa+H/l1HRQ==
+X-Google-Smtp-Source: AHgI3IYvHiFjrOAzBgT1znlmxVrxI9W0OFavXYsgR9argZGwvDKiuaeZWSbeIcraDzjjIn6cgCSCmA==
+X-Received: by 2002:ac8:346c:: with SMTP id v41mr4832346qtb.231.1550873242849;
+        Fri, 22 Feb 2019 14:07:22 -0800 (PST)
+Received: from redhat.com (pool-173-76-246-42.bstnma.fios.verizon.net. [173.76.246.42])
+        by smtp.gmail.com with ESMTPSA id i33sm2105898qti.74.2019.02.22.14.07.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Feb 2019 14:07:21 -0800 (PST)
+Date:   Fri, 22 Feb 2019 17:07:19 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        David Tolnay <dtolnay@gmail.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        linux-integrity@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
         virtualization@lists.linux-foundation.org, dgreid@chromium.org,
         apronin@chromium.org
+Subject: Re: [PATCH] tpm: Add driver for TPM over virtio
+Message-ID: <20190222170556-mutt-send-email-mst@kernel.org>
 References: <388c5b80-21a7-1e91-a11f-3a1c1432368b@gmail.com>
  <1550849416.2787.5.camel@HansenPartnership.com>
-From:   David Tolnay <dtolnay@gmail.com>
-Message-ID: <e0284af7-be61-6a0f-8df6-a0d646577258@gmail.com>
-Date:   Fri, 22 Feb 2019 14:00:17 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ <20190222160220-mutt-send-email-mst@kernel.org>
+ <20190222213137.GZ17500@ziepe.ca>
+ <20190222215923.GB21427@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1550849416.2787.5.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190222215923.GB21427@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 2/22/19 7:30 AM, James Bottomley wrote:
-> On Thu, 2019-02-21 at 18:14 -0800, David Tolnay wrote:
->> Add a config TCG_VIRTIO_VTPM which enables a driver providing the
->> guest kernel side of TPM over virtio.
+On Fri, Feb 22, 2019 at 11:59:23PM +0200, Jarkko Sakkinen wrote:
+> On Fri, Feb 22, 2019 at 02:31:37PM -0700, Jason Gunthorpe wrote:
+> > On Fri, Feb 22, 2019 at 04:16:01PM -0500, Michael S. Tsirkin wrote:
+> > > On Fri, Feb 22, 2019 at 07:30:16AM -0800, James Bottomley wrote:
+> > > > On Thu, 2019-02-21 at 18:14 -0800, David Tolnay wrote:
+> > > > > Add a config TCG_VIRTIO_VTPM which enables a driver providing the
+> > > > > guest kernel side of TPM over virtio.
+> > > > 
+> > > > What's the use case for using this over the current non-virtio vTPM?. 
+> > > > I always thought virtio was about guest to host transport efficiency,
+> > > > but the phsical TPM, being connected over a very slow bus, is about as
+> > > > inefficient as you can get in that regard, so why do we need to use
+> > > > virtio to drive the virtual one?
+> > > 
+> > > I can't say for sure about TPM.
+> > > 
+> > > But generally there are many reasons to do virtio rather than emulating
+> > > a hardware device.
+> > 
+> > We already have a xen 'virtioish' TPM driver, so I don't think there
+> > is a good reason to block a virtio driver if someone cares about
+> > it. There are enough good reasons to prefer virtio to other options,
+> > IMHO.
+> > 
+> > Provided it meets the general requirements for new virtio stuff you
+> > outlined.
 > 
-> What's the use case for using this over the current non-virtio vTPM?. 
-> I always thought virtio was about guest to host transport efficiency,
-> but the phsical TPM, being connected over a very slow bus, is about as
-> inefficient as you can get in that regard, so why do we need to use
-> virtio to drive the virtual one?
+> Yeah, absolutely we can consider this.
 > 
->> Use case: TPM support is needed for performing trusted work from
->> within a virtual machine launched by Chrome OS.
+> For me it boils down to testing and documentation part.
 > 
-> The current vTPM does this, what's the use case for your special one?
+> No plans to merge code that I'm unable to run...
+> 
+> /Jarkko
 
-Thanks James, these are important questions and the intention certainly isn't to
-have another driver that does the same thing with differences for no reason.
+I do this sometimes. One can't require samples for all supported
+hardware. If I can check that code matches spec, I might settle for
+that.
 
-I see three existing vTPM drivers already in drivers/char/tpm.
-
-- tpm_ibmvtpm, which is specific to PowerPC and implemented in terms of PowerPC
-  hcalls.
-
-- xen-tpmfront, which is specific to Xen.
-
-- tpm_vtpm_proxy, which as I understand it is intended to enable userspace TPM.
-  That is, if we are using this driver in a guest kernel, the TPM implementation
-  also needs to reside in the guest kernel rather than in the hypervisor.
-
-For our use case which is not PowerPC and is running in our own hypervisor with
-the TPM needing to be provided by the hypervisor, none of the existing vTPM
-drivers seemed to fit the bill.
-
-Please let me know if I arrived at the wrong conclusion on this!
-
-Thanks,
-David
+-- 
+MST
