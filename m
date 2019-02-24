@@ -2,44 +2,71 @@ Return-Path: <SRS0=2pHC=Q7=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37E57C43381
-	for <linux-integrity@archiver.kernel.org>; Sun, 24 Feb 2019 17:51:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59A38C43381
+	for <linux-integrity@archiver.kernel.org>; Sun, 24 Feb 2019 22:12:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F027720663
-	for <linux-integrity@archiver.kernel.org>; Sun, 24 Feb 2019 17:51:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1208820842
+	for <linux-integrity@archiver.kernel.org>; Sun, 24 Feb 2019 22:12:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uPwBhp3z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726206AbfBXRvM (ORCPT
+        id S1726153AbfBXWMI (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 24 Feb 2019 12:51:12 -0500
-Received: from mga03.intel.com ([134.134.136.65]:35825 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726103AbfBXRvM (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 24 Feb 2019 12:51:12 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2019 09:51:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,408,1544515200"; 
-   d="scan'208";a="322981045"
-Received: from unknown (HELO localhost) ([10.249.254.142])
-  by fmsmga005.fm.intel.com with ESMTP; 24 Feb 2019 09:51:06 -0800
-Date:   Sun, 24 Feb 2019 19:51:04 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+        Sun, 24 Feb 2019 17:12:08 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:41025 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725991AbfBXWMI (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 24 Feb 2019 17:12:08 -0500
+Received: by mail-ot1-f67.google.com with SMTP id t7so6253767otk.8
+        for <linux-integrity@vger.kernel.org>; Sun, 24 Feb 2019 14:12:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=XttKmD05Qtp9eepfd6tIkmcLqAthgNI109O56kyYc2c=;
+        b=uPwBhp3zrSEGDpxcc3SClZN2q4OmJCdeIcLrBW8vzA2mg6Tm4wdsVgF6Azkj6CgyuM
+         70Xd+fsScupQqzSuoUg1tpg8ZrG3zoS5Vx/lSGJ5wdrrGC4JZ+T6viM1Oro8s8sxW18e
+         kIZBjaFTCiP3oeuhim8Raj29Za6RF0J+AY7dOJ23sN3hdxq0R0GopK+qbdMvRIeiJar0
+         6sHkHyt1lkekJrXceoQ4Pjasnb6oH5uI3Xgl4UHvvn2DPMpexzqP4cSmJUM7vYKpUU+B
+         4W/2+aUkuAZ+seF6MmHW48ibZao0qBRUt4hvpaqyOFfPDUDokGItessZDZXfYmIUa25y
+         wbZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=XttKmD05Qtp9eepfd6tIkmcLqAthgNI109O56kyYc2c=;
+        b=SIRMoPF04HA4P/SrnHAvQYAcqR9OKf1gEk9hASonkt3uMthGrqU41CeOVDhSNTnNON
+         N3uEweZetVXXkxiI++WAxsjMKB9aLMBcyIjkJY3x87GC67hMoP9nVmc6eFRHDlvm/zT6
+         wa/HGlmhLi+ROidSrvPpNX1pD+h4+blppbxzGAi2rLQtrbPaF6hBgdS2Gv3NeL8YNkjq
+         Ycm5Um/8veAp8knXCab0Kbtnk2UMpxQJexUw9WB6wH1jVLwUulshYCMpjjOIwHpoTDuQ
+         JJheBOaqjskPSpfsX/oAtr+N70ux/HRcZRGibXRMi6wejStiyNPaYpTPeeC9HhEbp21I
+         ++uw==
+X-Gm-Message-State: AHQUAuZR7J+Vmdw/aKjwDUGIhoHp55zcFI4ISo4JnuD0yA5tUvifaRpC
+        lX/F8thVjOYD1UfdBj0w3GQ=
+X-Google-Smtp-Source: AHgI3IYmAFkrUxmBC2CfYJ/kNMyoG4wDpQN1dagws9EFzbjJjCJ02EFwIvTnmroQRpaDCJfsRZRC9g==
+X-Received: by 2002:a9d:53c8:: with SMTP id i8mr9948760oth.60.1551046326900;
+        Sun, 24 Feb 2019 14:12:06 -0800 (PST)
+Received: from ?IPv6:2600:1700:dc40:8a50:a4cd:d9dc:8a53:baa6? ([2600:1700:dc40:8a50:a4cd:d9dc:8a53:baa6])
+        by smtp.gmail.com with ESMTPSA id k100sm4166449otk.5.2019.02.24.14.12.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 24 Feb 2019 14:12:05 -0800 (PST)
+Subject: Re: [PATCH] tpm: Add driver for TPM over virtio
 To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     David Tolnay <dtolnay@gmail.com>, Peter Huewe <peterhuewe@gmx.de>,
+Cc:     Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>,
         linux-integrity@vger.kernel.org,
         "Michael S. Tsirkin" <mst@redhat.com>,
         Jason Wang <jasowang@redhat.com>,
         virtualization@lists.linux-foundation.org, dgreid@chromium.org,
         apronin@chromium.org
-Subject: Re: [PATCH] tpm: Add driver for TPM over virtio
-Message-ID: <20190224175104.GA9371@linux.intel.com>
 References: <388c5b80-21a7-1e91-a11f-3a1c1432368b@gmail.com>
  <1550849416.2787.5.camel@HansenPartnership.com>
  <e0284af7-be61-6a0f-8df6-a0d646577258@gmail.com>
@@ -48,109 +75,22 @@ References: <388c5b80-21a7-1e91-a11f-3a1c1432368b@gmail.com>
  <1550885645.3577.31.camel@HansenPartnership.com>
  <bc11d2e8-1b67-8210-6750-d24d36eb7d87@gmail.com>
  <1551025819.3106.25.camel@HansenPartnership.com>
+From:   David Tolnay <dtolnay@gmail.com>
+Message-ID: <be2c8327-49d0-a1e4-cc22-38342ce06ed3@gmail.com>
+Date:   Sun, 24 Feb 2019 14:12:03 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <1551025819.3106.25.camel@HansenPartnership.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sun, Feb 24, 2019 at 08:30:19AM -0800, James Bottomley wrote:
-> On Fri, 2019-02-22 at 18:41 -0800, David Tolnay wrote:
-> > On 2/22/19 5:34 PM, James Bottomley wrote:
-> > > On Fri, 2019-02-22 at 16:45 -0800, David Tolnay wrote:
-> [...]
-> > > >  It implements the TPM-specific TIS interface (QEMU's tpm_tis.c)
-> > > > as well as CRB interface (QEMU's tpm_crb.c) which require Linux's
-> > > > TIS driver (Linux's tpm_tis.c) and CRB driver (Linux's tpm_crb.c)
-> > > > respectively. Both of those are based on ACPI.
-> > > 
-> > > That's right, QEMU implements the device interface emulation, but
-> > > it passes the actual TPM communication packets to the vTPM outside
-> > > QEMU.
-> > 
-> > Could you clarify what you mean by a TPM communication packet since I
-> > am less familiar with TPM and QEMU?
-> 
-> Like most standards defined devices, TPMs have a defined protocol, in
-> this case defined by the trusted computing group.  It's a
-> request/response model.  The job of the kernel is to expose this
-> request response packet interface.  The device manufacturers don't get
-> any flexibility, so their devices have to implement it and the only
-> freedom they get is how the device is attached to the hardware.
-> 
-> >  I don't see "packet" terminology being used in drivers/char/tpm. Is
-> > a packet equivalent to a fully formed TPM command / response or is it
-> > a lower level aspect of the device interface than that?
-> 
-> It's a request/response corresponding to a command and its completion
-> or error.
-> 
-> > More concretely, would you say that a hypervisor necessarily needs to
-> > implement TPM device interface emulation (TIS and/or CRB) in order to
-> > expose a TPM running on the host to its guest OS? I can see QEMU has
-> > those things.
-> 
-> A hypervisor is needed to implement discovery, and whether its
-> discovery over a virtual or physical bus, that part is required.
-> 
-> > > > As far as I can tell, QEMU does not provide a mode in which the
-> > > > tpm_vtpm_proxy driver would be involved *in the guest*.
-> > > 
-> > > It doesn't need to.  the vTPM proxy can itself do all of that using
-> > > the guest Linux kernel.  There's no hypervisor or host
-> > > involvement.  This is analagous to the vTPM for container use case,
-> > > except that to get both running in a guest you'd use no
-> > > containment, so the vtpm client and server run in the guest
-> > > together:
-> > > 
-> > > https://www.kernel.org/doc/html/v4.16/security/tpm/tpm_vtpm_proxy.h
-> > > tml
-> > 
-> > I apologize for still not grasping how this would apply. You bring up
-> > a vtpm proxy that runs in the guest Linux kernel with no hypervisor
-> > or host involvement, with the vtpm client and server running in the
-> > guest together. But host involvement is specifically what we want
-> > since only the host is trusted to run the software TPM implementation
-> > or interact with a hardware TPM. I am missing a link in the chain:
-> 
-> Well, in your previous email you asked how you would run the emulator
-> in the guest.  This is how.  If you're actually not interested in that
-> use case we don't need to discuss it further.
-> 
-> > - guest userspace makes TPM call (through tpm2-tss or however else);
-> > - guest kernel receives the call in tpm-dev-common / tpm-interface;
-> > - tpm-interface delegates to a tpm-chip implementation (which one?
-> >   vtpm_proxy_tpm_ops?);
-> > - ???
-> > - a host daemon triages and eventually performs the TPM operation.
-> > 
-> > 
-> > > > Certainly you could use a vtpm proxy driver *on the host* but
-> > > > would still need some other TPM driver running in the guest for
-> > > > communication with the host, possibly virtio. If this second
-> > > > approach is what you have in mind, let me know but I don't think
-> > > > it is applicable to the Chrome OS use case.
-> > > 
-> > > Actually, the vTPM on-host use case doesn't use the in kernel vtpm
-> > > proxy driver, it uses a plain unix socket.  That's what the
-> > > original website tried to explain: you set up swtpm in socket mode,
-> > > you point the qemu tpm emulation at the socket and you boot up your
-> > > guest.
-> > 
-> > Okay. If I understand correctly, the vTPM on-host use case operates
-> > through TIS and/or CRB implemented in QEMU and the tpm_tis / tpm_crb
-> > driver in the guest. Do I have it right?
-> 
-> No, vTPM operates purely at the packet level over various interfaces. 
-> Microsoft defines an actual network packet interface called socsim, but
-> this can also run over unix sockets, which is what the current QEMU
-> uses..
-> 
+On 2/24/19 8:30 AM, James Bottomley wrote:
 > QEMU implements a virtual hardware emulation for discovery, but once
 > discovered all the packet communication is handed off to the vTPM
 > socket.
@@ -165,11 +105,32 @@ On Sun, Feb 24, 2019 at 08:30:19AM -0800, James Bottomley wrote:
 > Windows guests.
 > 
 > 
-> > All of this is what I would like to avoid by using a virtio driver.
+>> All of this is what I would like to avoid by using a virtio driver.
 > 
 > How? Discovery is the part that you have to do, whether it's using
 > emulated physical mechanisms or virtual bus discovery.
-> 
+
+What I mean is that we avoid the need for *TPM-specific virtual hardware
+emulation* for discovery by using a virtio driver.
+
+We avoid implementing TIS or any other TPM-specific interface mechanism,
+and we avoid implementing ACPI or OF or PNP or I2C or any other
+additional bus necessitated by the existing set of Linux TPM drivers
+which we wouldn't otherwise need.
+
+The virtio driver performs discovery via virtio, which crosvm implements
+already for all of its supported devices. This substantially reduces the
+amount of TPM-specific code compared to your suggestions, and lowers the
+barrier to entry for implementing TPM support in other hypervisors which
+I hope we agree is beneficial.
+
+Turning this around a different way, suppose that there already was a
+virtio TPM driver in the kernel. For me as a hypervisor implementer,
+what advantages do you see that would make me decide to implement
+TPM-specific virtual hardware emulation in the form of TIS rather than
+simply leveraging a virtio driver like for other virtual devices?
+
+
 > If you want to make this more concrete: I once wrote a pure socsim
 > packet TPM driver:
 > 
@@ -180,16 +141,21 @@ On Sun, Feb 24, 2019 at 08:30:19AM -0800, James Bottomley wrote:
 > use it because a socsim TPM is easier to debug from the outside. 
 > However it was 230 lines.  Your device is 460 so that means about half
 > your driver is actually about discovery.
-> 
+
+It looks like all the comments in the virtio driver account for the
+difference, not necessarily discovery.
+
+But to put this in perspective, what we save is the 1000+ lines I see in
+QEMU dedicated to TIS. Without a virtio driver (or socsim, or something
+else that avoids TPM-specific hardware emulation for device discovery),
+QEMU and crosvm and other hypervisors need to reproduce a TIS
+implementation. Conceptually this is simple but it is still a quite
+substantial barrier compared to not needing any TPM-specific discovery.
+
+
 > The only reasons I can see to use a virtual bus is either because its
 > way more efficient (the storage/network use case) or because you've
 > stripped down the hypervisor so far that it's incapable of emulating
 > any physical device (the firecracker use case).
 
-Thanks for the feedback James. It has been really useful and in-depth,
-
-The yes/no condition boils down to what is or is there any hard reason
-that the virtio driver is absolutely required rather than crosvm
-implementing the same emulation model as QEMU does.
-
-/Jarkko
+Crosvm does fall under the Firecracker use case, I believe.
