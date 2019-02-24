@@ -2,116 +2,77 @@ Return-Path: <SRS0=2pHC=Q7=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E94FC43381
-	for <linux-integrity@archiver.kernel.org>; Sun, 24 Feb 2019 06:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFAE1C43381
+	for <linux-integrity@archiver.kernel.org>; Sun, 24 Feb 2019 09:33:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64173204EC
-	for <linux-integrity@archiver.kernel.org>; Sun, 24 Feb 2019 06:48:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8779A20661
+	for <linux-integrity@archiver.kernel.org>; Sun, 24 Feb 2019 09:33:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726489AbfBXGsp (ORCPT
+        id S1728061AbfBXJd2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 24 Feb 2019 01:48:45 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:46620 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726001AbfBXGso (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 24 Feb 2019 01:48:44 -0500
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 046E672CCAC;
-        Sun, 24 Feb 2019 09:48:41 +0300 (MSK)
-Received: from altlinux.org (sole.flsd.net [185.75.180.6])
-        by imap.altlinux.org (Postfix) with ESMTPSA id C67134A4AE7;
-        Sun, 24 Feb 2019 09:48:40 +0300 (MSK)
-Date:   Sun, 24 Feb 2019 09:48:40 +0300
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/4] X.509: Parse public key parameters from x509 for
- akcipher
-Message-ID: <20190224064840.hii4ccjksjdnewae@altlinux.org>
-Mail-Followup-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190106133608.820-1-vt@altlinux.org>
- <20190106133608.820-2-vt@altlinux.org>
- <20190209214240.56gq7ivn3pw3bssf@altlinux.org>
- <20190210184628.yupsxgjlaicwbxg6@altlinux.org>
- <20190219043732.x3sbwzqlz4ikntxo@gondor.apana.org.au>
+        Sun, 24 Feb 2019 04:33:28 -0500
+Received: from mga02.intel.com ([134.134.136.20]:16446 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727943AbfBXJd2 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 24 Feb 2019 04:33:28 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2019 01:33:27 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,407,1544515200"; 
+   d="scan'208";a="128903179"
+Received: from cyucel-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.140])
+  by orsmga003.jf.intel.com with ESMTP; 24 Feb 2019 01:33:23 -0800
+Date:   Sun, 24 Feb 2019 11:33:21 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     David Tolnay <dtolnay@gmail.com>, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-integrity@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org, dgreid@chromium.org,
+        apronin@chromium.org
+Subject: Re: [PATCH] tpm: Add driver for TPM over virtio
+Message-ID: <20190224093321.GA5353@linux.intel.com>
+References: <388c5b80-21a7-1e91-a11f-3a1c1432368b@gmail.com>
+ <20190222102610.GB5613@linux.intel.com>
+ <20190222101728-mutt-send-email-mst@kernel.org>
+ <20190222193156.GA6475@linux.intel.com>
+ <20190222193305.GB6475@linux.intel.com>
+ <20190222161636-mutt-send-email-mst@kernel.org>
+ <20190222215001.GA21427@linux.intel.com>
+ <f16bd565-0a7e-d7bb-a5e8-eda48ac8de80@gmail.com>
+ <20190222223634.GA27601@linux.intel.com>
+ <20190222180341-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190219043732.x3sbwzqlz4ikntxo@gondor.apana.org.au>
-User-Agent: NeoMutt/20171215-106-ac61c7
+In-Reply-To: <20190222180341-mutt-send-email-mst@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Herbert,
-
-On Tue, Feb 19, 2019 at 12:37:32PM +0800, Herbert Xu wrote:
-> On Sun, Feb 10, 2019 at 09:46:28PM +0300, Vitaly Chikunov wrote:
-> >
-> > >From the other point of view, set_params may never be called or
-> > implemented. So, making it called first and move memory zeroing
-> > into set_params may create more complications than simplicity.
-> > 
-> > Making both callbacks callable in any order also will not make
-> > things simpler. (Need to be prepared to be called in different
-> > order.)
+On Fri, Feb 22, 2019 at 06:05:01PM -0500, Michael S. Tsirkin wrote:
+> On Sat, Feb 23, 2019 at 12:36:34AM +0200, Jarkko Sakkinen wrote:
+> > I do not require spec quality documentation. Just a few paragraphs of
+> > what is in crosvm, kernel etc. and something about inner workings to
+> > get a rough idea. No need for TCG level spec for this :-)
 > 
-> How about encoding these parameters together with the public/private
-> keys so that they can be set through the existing setkey functions?
-> 
-> You might want to have a look at how we handle this in crypto/dh.c.
+> OTOH for virtio if there's no implementation in a popular
+> hypervisor/language, we do ask for a somewhat detailed
+> spec.
 
-Thanks. I viewed and thought about this idea. But, I think separate
-set_params call will be the most simple and backward compatible approach.
+I don't really sure what you mean by that at all but for me a
+sufficient would be something that describes the stack in few paragraphs
+for virtio-TPM.
 
-[In the new patchset] I made set_params to be called before set_p*_key
-call, thus set_p*_key will know everything to start processing the key
-immediately. Also, I made set_params completely optional, so code that
-rely on RSA can just not call it, and driver that actually needs
-set_params may check if required parameters are set or return an error.
+Could potentially be a patch for Documentation/tpm/.
 
-(I overthought about zeroing of memory (in previous mail) that turned
-out completely non-problem as ctx in `struct crypto_akcipher' is always
-zeroed and I don't need to use ctx from `struct akcipher_request').
-
-
-More thoughts. Parameters are part of AlgorithmIdentifier which is
-included in SubjectPublicKeyInfo together with subjectPublicKey.
-
-This, to pass into set_params callback AlgorithmIdentifier is the same
-as passing just parameters. But, passing SubjectPublicKeyInfo will
-overlap with passing the key into set_pub_key. So, if we pass other
-structure (SubjectPublicKeyInfo) into set_params we will logically
-conflict with set_pub_key and that call will be alternative to
-set_pub_key, making one of them redundant.
-
-If we pass SubjectPublicKeyInfo into set_pub_key itself (making
-set_params not needed) we will break ABI and compatibility with RSA
-drivers, because whole SubjectPublicKeyInfo is not expected by the
-drivers, or new set_pub_key need somehow signal to the driver that is
-different parameters are going (callers should be aware of that too),
-and/or we will need to change all RSA-centric code to use
-SubjectPublicKeyInfo which will affect to much code (more than verify2
-required I think). And this will offload work which is already done by
-x509 parser into the drivers bloating their code needlessly.
-
-Thus, I think to try to remove set_params will only increase complexity.
-Now it's small, very flexible, and back compatible.
-
-Thanks,
-
+/Jarkko
