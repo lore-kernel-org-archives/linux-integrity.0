@@ -2,136 +2,151 @@ Return-Path: <SRS0=VAB3=RA=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CAF4C43381
-	for <linux-integrity@archiver.kernel.org>; Mon, 25 Feb 2019 21:57:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B39F6C10F00
+	for <linux-integrity@archiver.kernel.org>; Mon, 25 Feb 2019 22:14:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 535072083D
-	for <linux-integrity@archiver.kernel.org>; Mon, 25 Feb 2019 21:57:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B172213A2
+	for <linux-integrity@archiver.kernel.org>; Mon, 25 Feb 2019 22:14:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="aED8CmEq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728921AbfBYV5d (ORCPT
+        id S1727295AbfBYWOp (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:57:33 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60350 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730542AbfBYVVD (ORCPT
+        Mon, 25 Feb 2019 17:14:45 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:57182 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726575AbfBYWOp (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:21:03 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1PL4rvZ104881
-        for <linux-integrity@vger.kernel.org>; Mon, 25 Feb 2019 16:21:01 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qvncy894r-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 25 Feb 2019 16:21:01 -0500
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Mon, 25 Feb 2019 21:21:00 -0000
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 25 Feb 2019 21:20:57 -0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1PLKu5D24838388
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 25 Feb 2019 21:20:56 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 51C05AC05E;
-        Mon, 25 Feb 2019 21:20:56 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1A51CAC059;
-        Mon, 25 Feb 2019 21:20:54 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.85.212.38])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Mon, 25 Feb 2019 21:20:53 +0000 (GMT)
-References: <20190224060828.2527-1-vt@altlinux.org> <20190224060828.2527-11-vt@altlinux.org>
-User-agent: mu4e 1.0; emacs 26.1
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Vitaly Chikunov <vt@altlinux.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Subject: Re: [PATCH v5 10/10] integrity: support EC-RDSA signatures for asymmetric_verify
-In-reply-to: <20190224060828.2527-11-vt@altlinux.org>
-Date:   Mon, 25 Feb 2019 18:20:49 -0300
-MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 19022521-0052-0000-0000-00000390BB6C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010663; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000281; SDB=6.01166320; UDB=6.00609219; IPR=6.00946924;
- MB=3.00025738; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-25 21:20:59
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022521-0053-0000-0000-00005FF81824
-Message-Id: <874l8rr2dq.fsf@morokweng.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-25_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902250151
+        Mon, 25 Feb 2019 17:14:45 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 9417D8EE1A0;
+        Mon, 25 Feb 2019 14:14:44 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id U9RRw-IUZ4T1; Mon, 25 Feb 2019 14:14:44 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 81FDC8EE101;
+        Mon, 25 Feb 2019 14:14:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1551132884;
+        bh=V3e3EQV9+C8c/alX3nsgjQQMxUzi6L3tFYm+jshJCFU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=aED8CmEq2iyI14GTN+XmhEbrh1tmBSg2zakA25//w10C9kwYVdRzKoq0Gf2PG0YFo
+         ro0m6Q4llO5EBZUiwInv/f3+1MRw31NllLpa38sGm7ljX8fyWog08XrRRSwma/RnOb
+         2x5ojXHyYI4Xg6OJK2Z3Mze4u/+Ac+4pKdf3nMFk=
+Message-ID: <1551132882.3226.67.camel@HansenPartnership.com>
+Subject: Re: [PATCH] tpm: Add driver for TPM over virtio
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Matthew Garrett <mjg59@google.com>
+Cc:     David Tolnay <dtolnay@gmail.com>, Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org, dgreid@chromium.org,
+        apronin@chromium.org
+Date:   Mon, 25 Feb 2019 14:14:42 -0800
+In-Reply-To: <CACdnJuvObeL75p1Wb2qnTdt1gS28zCMvasogA9=2ksMv=fE82Q@mail.gmail.com>
+References: <388c5b80-21a7-1e91-a11f-3a1c1432368b@gmail.com>
+         <1550849416.2787.5.camel@HansenPartnership.com>
+         <e0284af7-be61-6a0f-8df6-a0d646577258@gmail.com>
+         <1550873900.2787.25.camel@HansenPartnership.com>
+         <a36fb1a3-3a5b-d849-0dec-87f394e7a86a@gmail.com>
+         <1550885645.3577.31.camel@HansenPartnership.com>
+         <bc11d2e8-1b67-8210-6750-d24d36eb7d87@gmail.com>
+         <1551025819.3106.25.camel@HansenPartnership.com>
+         <be2c8327-49d0-a1e4-cc22-38342ce06ed3@gmail.com>
+         <1551108969.3226.26.camel@HansenPartnership.com>
+         <CACdnJuuMdYS5L4uCKDHr5e-+N3g2qbuZY4KpKdAPbGS9QFYs9g@mail.gmail.com>
+         <1551126043.3226.45.camel@HansenPartnership.com>
+         <CACdnJuvObeL75p1Wb2qnTdt1gS28zCMvasogA9=2ksMv=fE82Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+On Mon, 2019-02-25 at 13:00 -0800, Matthew Garrett wrote:
+> On Mon, Feb 25, 2019 at 12:20 PM James Bottomley
+> <James.Bottomley@hansenpartnership.com> wrote:
+> > On Mon, 2019-02-25 at 11:17 -0800, Matthew Garrett wrote:
+> > > The existing hypervisor drivers expose hypervisor-specific
+> > > details.  This proposed driver provides an abstract interface
+> > > that is usable by other hypervisors. It allows building a VM that
+> > > exposes TPM functionality without requiring additional hardware
+> > > emulation, reducing the hypervisor attack surface.
+> > 
+> > Well, that depends whether you think a virtio bus is an abstract
+> > concept or a hypervisor specific detail.  There are currently four
+> > major hypervisors: xen, kvm, hyper-v and ESX.  Of those, only one
+> > implements virtio: kvm.  I agree virtio is a standard and certainly
+> > a slew of minor hypervisors implement it because they need paravirt
+> > support on Linux so they piggyback off kvm, but I don't see any of
+> > the other major hypervisors jumping on the bandwagon.
+> 
+> Is there any technical issue preventing virtio working with Xen?
+> Running HVM guests under qemu ought to allow virtio to work.
 
-Hello Vitaly,
+Other than developer resistance because xenbus was "first" not really,
+I think.  There was even a GSOC student who tried it:
 
-Vitaly Chikunov <vt@altlinux.org> writes:
+https://wiki.xenproject.org/wiki/Virtio_On_Xen
 
-> Allow to use EC-RDSA signatures for IMA by determining signature type by
-> the hash algorithm name. This works good for EC-RDSA since Streebog and
-> EC-RDSA should always be used together.
->
-> Cc: Mimi Zohar <zohar@linux.ibm.com>
-> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-> Cc: linux-integrity@vger.kernel.org
-> Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
-> ---
->  security/integrity/digsig_asymmetric.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
->
-> diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
-> index d775e03fbbcc..c4a3313e0210 100644
-> --- a/security/integrity/digsig_asymmetric.c
-> +++ b/security/integrity/digsig_asymmetric.c
-> @@ -104,9 +104,14 @@ int asymmetric_verify(struct key *keyring, const char *sig,
->
->  	memset(&pks, 0, sizeof(pks));
->
-> -	pks.pkey_algo = "rsa";
->  	pks.hash_algo = hash_algo_name[hdr->hash_algo];
-> -	pks.encoding = "pkcs1";
-> +	if (!strncmp(pks.hash_algo, "streebog", 8)) {
+> > > Well, no - in general there's no need to have more than one
+> > > virtio driver for any /class/ of hardware. For various
+> > > unfortunate accidents of history we've ended up with multiple
+> > > cases where we have hypervisor-specific drivers.
+> > 
+> > Fully agree, that's why I'm doing so now.
+> > 
+> > >  Using the more generic virtio infrastructure reduces the need
+> > > for that, since any hypervisor should be able to implement the
+> > > backend (eg, in this case it'd be very easy to add support for
+> > > this driver to qemu,
+> > 
+> > I certainly agree there ... is there a plan for this?
+> 
+> I don't know, but I can see the value in making testing easier.
 
-Is it possible to test hdr->hash_algo instead of pkcs.hash_algo? IMHO if
-an integer value is available it's preferable to check it rather than
-doing a string comparison.
+Having at least a commitment to qemu support does make the case
+stronger.
 
-Also, it would be good to have a comment here mentioning that Streebog
-and EC-RDSA should always be used together
+> > >  which would allow the use of TPMs without needing to enable a
+> > > whole bunch of additional qemu features). This isn't a discussion
+> > > we'd be having if we'd pushed back more strongly against
+> > > hypervisor-specific solutions in the past.
+> > 
+> > I'm still looking for the pragmatic use case.  I think yours is
+> > attack surface reduction, because the virtio discovery and
+> > operation is less code and therefore more secure than physical
+> > hardware discovery and operation?  I'm not entirely sure I buy that
+> > because the TPM communication interface is pretty simple and it's
+> > fairly deep down in the kernel internal stack making it difficult
+> > to exploit.
+> 
+> Being able to get away without any LPC support code at all seems like
+> a win, as does not having any ACPI or DeviceTree parsing code.
+> Injecting the hardware information via the kernel command line isn't
+> impossible, but it's not an attractive solution.
 
-> +		pks.pkey_algo = "ecrdsa";
-> +		pks.encoding = "raw";
-> +	} else {
-> +		pks.pkey_algo = "rsa";
-> +		pks.encoding = "pkcs1";
-> +	}
->  	pks.digest = (u8 *)data;
->  	pks.digest_size = datalen;
->  	pks.s = hdr->sig;
+Heh, but isn't that exactly what crosvm did for usb:
 
---
-Thiago Jung Bauermann
-IBM Linux Technology Center
+https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay/+/add5a4c3751778e5380f00b2ee6cebcb6bda48fc
+
+Effectively it bypasses the hypervisor altogether and simply makes a
+direct connection to the host devices.  The TPM could actually work in
+exactly the same way, except you'd have to use the socsim IP connection
+(which all TSSs support) rather than a file descriptor.
+
+James
 
