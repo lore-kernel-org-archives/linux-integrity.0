@@ -2,104 +2,100 @@ Return-Path: <SRS0=XaU3=RB=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75388C43381
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Feb 2019 19:05:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46C55C10F0B
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Feb 2019 21:50:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 485A121852
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Feb 2019 19:05:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11E7521873
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Feb 2019 21:50:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jqy8GDMd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728912AbfBZTFb (ORCPT
+        id S1728727AbfBZVum (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 26 Feb 2019 14:05:31 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59408 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728768AbfBZTFb (ORCPT
+        Tue, 26 Feb 2019 16:50:42 -0500
+Received: from mail-oi1-f201.google.com ([209.85.167.201]:38072 "EHLO
+        mail-oi1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728766AbfBZVum (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Feb 2019 14:05:31 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1QJ4G3X100091
-        for <linux-integrity@vger.kernel.org>; Tue, 26 Feb 2019 14:05:30 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qw99gq5vk-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 26 Feb 2019 14:05:29 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 26 Feb 2019 19:05:28 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Feb 2019 19:05:24 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1QJ5N5i35258408
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Feb 2019 19:05:23 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5DBE011C050;
-        Tue, 26 Feb 2019 19:05:23 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 91EED11C04C;
-        Tue, 26 Feb 2019 19:05:22 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.93.89])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Feb 2019 19:05:22 +0000 (GMT)
-Subject: Re: IMA fails to see TPM chip (rpi3, linaro optee)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Markku Savela <msa@moth.iki.fi>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Peter =?ISO-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>
-Date:   Tue, 26 Feb 2019 14:05:11 -0500
-In-Reply-To: <20190226180913.GA22368@linux.intel.com>
-References: <b9da5231-10b8-0d88-3d90-edfc6fb7b9de@moth.iki.fi>
-         <192719a8-d583-b7cd-07d2-b693e2cc982d@moth.iki.fi>
-         <1651d634-9a88-4511-ac51-a69648db8259@moth.iki.fi>
-         <1550753358.17768.85.camel@linux.ibm.com>
-         <776f0386-6c4d-9ad4-929c-44ba9fd4c9d0@moth.iki.fi>
-         <88215b47-976c-96d5-1098-40868d28d576@moth.iki.fi>
-         <357e44f8-df31-48ec-d2f0-deabd0161fc0@moth.iki.fi>
-         <1551183277.27819.66.camel@linux.ibm.com>
-         <CAKv+Gu9H=yP8McwmsBP5nk-Fc3YHG2GF2zU+00gB4sqtfafyeg@mail.gmail.com>
-         <1551189878.27819.86.camel@linux.ibm.com>
-         <20190226180913.GA22368@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+        Tue, 26 Feb 2019 16:50:42 -0500
+Received: by mail-oi1-f201.google.com with SMTP id k22so1263878oih.5
+        for <linux-integrity@vger.kernel.org>; Tue, 26 Feb 2019 13:50:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=lVrgxsy6HVfrp3Za5qPkXrG6BjzowrrJJ+yFXMH5lAs=;
+        b=Jqy8GDMdZPSfsndndsLMvEQsz0au6nxpasdyzwiUQveqVNCgpPLXN01QBmBl2MWivz
+         9Mex/Ze6TYyuZaB2AgZqKUah2aZg1OE5E/Ql88seM+Cvwa+A2E68HZrAiwUInFtZ5qFu
+         Qpus7kTXhW8ErpqumNsYCdYoROmfez5UbWJptOK9Rf2zzqwVgvPoIMIg8DXICgb3rk2E
+         2iheA3TLxUxJWnhG4RtCtwFXvsJ+z/Ii4UdJjsveAxGsbTXkYhoOSYQj8cfAN6zOlU5Z
+         3yEyzDWQd+PCF6kvRYQ/vDeNOGj5Np0trH+kKHYJFScqMn7fqs0Ixab482JxZbN4cVrW
+         XEQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=lVrgxsy6HVfrp3Za5qPkXrG6BjzowrrJJ+yFXMH5lAs=;
+        b=hc5QybVNLW0xTSdT96zy5h1i38yF/IT0BXpCuTrPLohcO4EiXgIsR0XWHpxXRtNTCT
+         3dn+lyxTcJ6xTgTS9Vcj2emSmiyeKlvrMz4J5WUzMMJhkXxDvPiD/lELPVwHOuoR/TYq
+         PIM4rXh2krEvXQJ5SC7nvnqxcEf7yXa7269m65umoivXDL5pFYIJ1+1BKv0kLHk4Oula
+         PFph4p2nB49tCYeoRELhcs+/w+DblcvBSYClKku/BCBdwjayQeGQrV2I4OiOqXJ/ea8D
+         5NpWFK1EAtMs4VqAonQueJbRKAp+M49QyOurI8GOhi+1ND54rfgIeM8ma6YmNwX5GTY6
+         wT2A==
+X-Gm-Message-State: AHQUAuZla6R7Tb3hOMwst/zwVSQeul7h0TvPX5zuUaSUOLPBLM/dqFqY
+        mqvBhIav/WxOkQl3RIDJOEe25DOXj/5NKdzXrkuVJeIbjUvSyE/0MzP0EqdEuh5GtATtrvMrkYG
+        zbui2gHZfN86BUwG2iKH2pC3oBl8shjJgRoZxDBcxKOBgAH7kSPs1XXkaBLEGhjLej3+rbaBdCn
+        bHspWSkZUmaE31Bdg92OE=
+X-Google-Smtp-Source: AHgI3IZVRMya65go+dRNLZvMd9ARMoO5ii3wkik6i/Yurj8yG1q3zfJ+lffZE/sAwluStBx5Wu1Oi42BAY9NkhJPSNtBiw==
+X-Received: by 2002:a05:6830:1254:: with SMTP id s20mr42107otp.41.1551217840858;
+ Tue, 26 Feb 2019 13:50:40 -0800 (PST)
+Date:   Tue, 26 Feb 2019 13:50:30 -0800
+Message-Id: <20190226215034.68772-1-matthewgarrett@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19022619-0028-0000-0000-0000034D52C3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022619-0029-0000-0000-0000240BA75C
-Message-Id: <1551207911.3946.9.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-26_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=973 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902260132
+X-Mailer: git-send-email 2.21.0.rc2.261.ga7da99ff1b-goog
+Subject: Allow trusted filesystems to provide IMA hashes directly
+From:   Matthew Garrett <matthewgarrett@google.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        linux-fsdevel@vger.kernel.org, miklos@szeredi.hu
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2019-02-26 at 20:09 +0200, Jarkko Sakkinen wrote:
-> On Tue, Feb 26, 2019 at 09:04:38AM -0500, Mimi Zohar wrote:
-> > Hi Ard, thank you for responding.  The clk not being initialized early
-> > enough has been a problem for years.  Because of the clk not being
-> > initialized, the TPM initialization is deferred, causing IMA to go
-> > into TPM-bypass mode.
-> 
-> I'd guess this is an SPI issue and not really something that TPM could
-> resolve? Please correct me if I'm wrong. I.e. SPI gets initialized after
-> IMA.
-> 
+When an IMA measurement is triggered, IMA is forced to read the entire
+file and hash it. This can take a significant amount of time for large
+files. If the filesystem has a secure mechanism for storing the file's
+hash then it makes sense to allow the filesystem to simply return that
+rather than forcing the entire file to be read.
 
-Peter's original post with some debugging is here:
-https://lore.kernel.org/linux-integrity/trinity-3e6c2430-417d-4eef-b067-e30d68592b4d-1506716047790@3c-app-gmx-bs69/
+This patchset adds an additional VFS call for providing the hash, and
+teaches IMA how to use it. An additional parameter is added to the IMA
+policy in order to indicate that a specific filesystem is trusted to
+provide the hashes. Mounts that would otherwise match the policy but
+which were mounted by a non-privileged user will still fall back to
+reading the entire file to obtain the hash. Finally, a kernel parameter
+is added to force hashes to be generated even if the policy says
+otherwise.
+
+This has been developed for FUSE, so the patchset includes some
+additional supporting code. It adds an additional subtype parameter to
+IMA policy to permit policy matching against specific FUSE filesystem
+types. The expectation is that an LSM is used to restrict which
+filesystems are able to mount with this subtype, preventing cases where
+an untrusted FUSE filesystem is able to pretend to be a trusted one.
+
+The use of FUSE (or any network filesystem) with IMA is already only
+viable with specific security controls - an untrusted filesystem can
+provide one set of data to the kernel when generating the initial
+hashes, but a different set of data when the executable is actually run.
+As a result, it's reasonable to assert that any setup relying on IMA
+should already be imposing restrictions that ensure that FUSE
+filesystems are only mounted by trustworthy executables. If this is the
+case, there is no additional security concern raised by these patches.
+
 
