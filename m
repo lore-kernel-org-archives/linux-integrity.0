@@ -5,66 +5,67 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 648FAC43381
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Feb 2019 21:50:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F31DC10F0B
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Feb 2019 21:50:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 326A421873
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Feb 2019 21:50:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D075521873
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Feb 2019 21:50:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M0pghNy1"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vt7cHQgg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729038AbfBZVuo (ORCPT
+        id S1728766AbfBZVur (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 26 Feb 2019 16:50:44 -0500
-Received: from mail-it1-f202.google.com ([209.85.166.202]:42661 "EHLO
-        mail-it1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728989AbfBZVuo (ORCPT
+        Tue, 26 Feb 2019 16:50:47 -0500
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:56080 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728989AbfBZVuq (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Feb 2019 16:50:44 -0500
-Received: by mail-it1-f202.google.com with SMTP id j127so3386917itj.7
-        for <linux-integrity@vger.kernel.org>; Tue, 26 Feb 2019 13:50:44 -0800 (PST)
+        Tue, 26 Feb 2019 16:50:46 -0500
+Received: by mail-pg1-f202.google.com with SMTP id g188so10494083pgc.22
+        for <linux-integrity@vger.kernel.org>; Tue, 26 Feb 2019 13:50:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=OrLpVbFrhqHDu/nyMeqzGxF462Au6CRl2ys6e5+Fmlc=;
-        b=M0pghNy1IQHmsn3LwD2Rcupn1ATT8/1wGNHkMW9MAWjSBSLDvTiaRdLeXMYpwV+7WD
-         jSLN5JxVQV7bsATkpBQTv+/5fmChgvq/z1uPIRBoBLou23Fjlr6nXL6L6z1fcs3vnE+i
-         oXR0uUWVHDs/rrMjZ7zUPmjMSDK3lTBFZCvGmiAozC9gq1IHzO4+esKKscVmTOiqFo0u
-         fbRgYPr3rEQcvIzALTLF8MywzJJvAvgp4ZpMWI39RXnbAe1FDwKLCWnWsdU+FktpFxDo
-         DlQ5uLlkfw8VSkg9bpX0X3dXkm15u6YVl3ezMs5qMordxE3TrTfKkkOxYTlflREAs5wr
-         3eQQ==
+        bh=W4AQdO0YXdQStwIqEW9eH2qaknX9pHyjHHTGGLf92pQ=;
+        b=vt7cHQgg0rmQthW6SACNWMPRAQHMlenslKOWDe+rCF7ovBql5MKsW7NDuE3vKU1lAY
+         YgTfFGDnN1aDKXT+Quj45t3cxjZXNE2N7wJ6DNc9Gw4cVSsZE7S79IJAtmB2daYZEu6r
+         0VV31zdh7/ZI8gSPu5MkX0FpWOuJzgL4NKFDoe3lG6uviBJ89deXswmo/zfbA6QmP6dX
+         +QCuJw6JbSylCUho/LFj4AlkI13ZQ0eORzVqZgYCQuc2COnAyBrgFpZRKplFmg6H1CpD
+         vLbYB89Gt8oB6FB0Jro3fvr/o7IJa79LaX6ezXdOvkEZc3vIML9U+zm1uP25EIvrjlzn
+         yLeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=OrLpVbFrhqHDu/nyMeqzGxF462Au6CRl2ys6e5+Fmlc=;
-        b=ooKENFA6ODPqpVv9kZSK6wvpRNlbc53F2KwxfPMH/O+rxnh55nYTVf068YR5XO0OM5
-         FBKeP/fS1TJJfu7kcItHbMgL2+QYu0AkKKLucWeH+SZuBpDu5YST2KdibPg2dXgQBD55
-         CR34UoOniOVgcQ5iSiesY/FyYPv81KwFawi3cjmJLtV0KI4/R2VU2GDxL3BI/UeV2fHL
-         QIjAxReXON5JL1M2cxFqKbQcOh7r9OxFBIiQCclP/QAv+q6nLhEF9xJNcFOGbfq5N5eL
-         8uxWAKMR7a+0ecEOlAufSwFawSVlOWlUamE+iH576pd1YuZPVZgwG2bxtjjK3SANk+lJ
-         YK+g==
-X-Gm-Message-State: AHQUAuar5lC4KwsvCTnEIAPxxvbUFlzOIFt02xejtF3mmkuvHWNjGRpf
-        61MHtDkIEW6L0uUaly3A8WpoJG9R7YAAJ3w7VD2GFXHtoXiqDoxYGwXYAcUuZkTRCstBH5ceN8i
-        SkdCbEJ0If6gvRkiD/MS7QaeokIMP47Jl7hHA7bRtgunf9Y+MUAScnrRlYq+UKYKqIVRrUbwNej
-        hcleJ3o4kxgd48UNDeWkE=
-X-Google-Smtp-Source: AHgI3IZbVD7NCGm3UXQ5pHDo2aRoNP9MyW1XXkOooFu5JiDCKU/A+poA+djdpw+M0YUSl/X/+PykqMmaDaCNfYuTJkaAZw==
-X-Received: by 2002:a24:220a:: with SMTP id o10mr3938734ito.22.1551217843625;
- Tue, 26 Feb 2019 13:50:43 -0800 (PST)
-Date:   Tue, 26 Feb 2019 13:50:31 -0800
+        bh=W4AQdO0YXdQStwIqEW9eH2qaknX9pHyjHHTGGLf92pQ=;
+        b=A/b4VeP+Y9OBT790gXsIlLKv6ALHWSyDLsJPSyCmZZvesaw+Zs1dIOgPHrU168Yhl8
+         En3JqtAqDrFtCW5NGhHQgfS68Apj8ybzl2GKHxQaqwbfjnHfGYJgzFpVOyQNrkeoAGYm
+         +h04m6uknHu6AOWFl786Ut1aqYUPy9LmuISLuN/wVdIctcTd6wvFdkRu4TglpCDGmueN
+         LykdbhGAFWOR3RPuHxOE/jw+gpcpgRx8Q06hhhW96JgQ+j4vJyJdUpemUcojYEAq0D9M
+         6YQDsPOrOV9V01pgtkpnb8YLcZJQpMOo/H+ofazyB+zQ1dvffEvzHwrdKw1CCirqqzhQ
+         Ga+A==
+X-Gm-Message-State: AHQUAuY/ir1Sv0OdI0UvKZBtWDQ+YVvjb3toMSf4Ia4wvpgjFCE3+qIs
+        yfvCjI7T4MtK9sz/cNjdUIf85Oc4p2F/6IRbU/f59svaBQLX++Upn0CAXQkRu6AJ3yrUXGqLvVN
+        9mncg6psSWqaIMkyIBR9BxEoIqK3kmyMCMN5mo1wJBp3k8aet/lvxqEWU9zaw72d5wRz+O1Umam
+        UlzdPmvksJIh/vt39vCiM=
+X-Google-Smtp-Source: AHgI3IaguCd7CY+7KWQ8nxFIpRyRlWuQzJc7ZhQT5iZ+vP9IIupuw7K+BsVRCfqS19h76cryylU84wUOHiBc6Oh8MU/VpA==
+X-Received: by 2002:a62:488c:: with SMTP id q12mr2672853pfi.92.1551217845940;
+ Tue, 26 Feb 2019 13:50:45 -0800 (PST)
+Date:   Tue, 26 Feb 2019 13:50:32 -0800
 In-Reply-To: <20190226215034.68772-1-matthewgarrett@google.com>
-Message-Id: <20190226215034.68772-2-matthewgarrett@google.com>
+Message-Id: <20190226215034.68772-3-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190226215034.68772-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.rc2.261.ga7da99ff1b-goog
-Subject: [PATCH V2 1/4] VFS: Add a call to obtain a file's hash
+Subject: [PATCH V2 2/4] IMA: Allow rule matching on filesystem subtype
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
         linux-fsdevel@vger.kernel.org, miklos@szeredi.hu,
+        Matthew Garrett <matthewgarrett@google.com>,
         Matthew Garrett <mjg59@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
@@ -72,85 +73,117 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Matthew Garrett <mjg59@google.com>
-
-IMA wants to know what the hash of a file is, and currently does so by
-reading the entire file and generating the hash. Some filesystems may
-have the ability to store the hash in a secure manner resistant to
-offline attacks (eg, filesystem-level file signing), and in that case
-it's a performance win for IMA to be able to use that rather than having
-to re-hash everything. This patch simply adds VFS-level support for
-calling down to filesystems.
+IMA currently allows rules to match on the filesystem type. Certain
+filesystem types permit subtypes (eg, fuse). Add support to IMA to allow
+rules to match on subtypes as well as types.
 
 Signed-off-by: Matthew Garrett <mjg59@google.com>
 ---
- fs/read_write.c    | 24 ++++++++++++++++++++++++
- include/linux/fs.h |  6 +++++-
- 2 files changed, 29 insertions(+), 1 deletion(-)
+ Documentation/ABI/testing/ima_policy |  4 +++-
+ security/integrity/ima/ima_policy.c  | 26 +++++++++++++++++++++++++-
+ 2 files changed, 28 insertions(+), 2 deletions(-)
 
-diff --git a/fs/read_write.c b/fs/read_write.c
-index ff3c5e6f87cf..2b86f912be34 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -2150,3 +2150,27 @@ int vfs_dedupe_file_range(struct file *file, struct file_dedupe_range *same)
- 	return ret;
- }
- EXPORT_SYMBOL(vfs_dedupe_file_range);
+diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
+index 74c6702de74e..09a5def7e28a 100644
+--- a/Documentation/ABI/testing/ima_policy
++++ b/Documentation/ABI/testing/ima_policy
+@@ -21,7 +21,7 @@ Description:
+ 			audit | hash | dont_hash
+ 		condition:= base | lsm  [option]
+ 			base:	[[func=] [mask=] [fsmagic=] [fsuuid=] [uid=]
+-				[euid=] [fowner=] [fsname=]]
++				[euid=] [fowner=] [fsname=] [subtype=]]
+ 			lsm:	[[subj_user=] [subj_role=] [subj_type=]
+ 				 [obj_user=] [obj_role=] [obj_type=]]
+ 			option:	[[appraise_type=]] [permit_directio]
+@@ -33,6 +33,8 @@ Description:
+ 			       [[^]MAY_EXEC]
+ 			fsmagic:= hex value
+ 			fsuuid:= file system UUID (e.g 8bcbe394-4f13-4144-be8e-5aa9ea2ce2f6)
++			fsname:= file system type (e.g fuse)
++			subtype:= file system subtype (e.g ntfs3g)
+ 			uid:= decimal value
+ 			euid:= decimal value
+ 			fowner:= decimal value
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 8bc8a1c8cb3f..dcecb6aae5ec 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -35,6 +35,7 @@
+ #define IMA_EUID	0x0080
+ #define IMA_PCR		0x0100
+ #define IMA_FSNAME	0x0200
++#define IMA_SUBTYPE	0x0400
+ 
+ #define UNKNOWN		0
+ #define MEASURE		0x0001	/* same as IMA_MEASURE */
+@@ -80,6 +81,7 @@ struct ima_rule_entry {
+ 		int type;	/* audit type */
+ 	} lsm[MAX_LSM_RULES];
+ 	char *fsname;
++	char *subtype;
+ };
+ 
+ /*
+@@ -306,6 +308,10 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
+ 	if ((rule->flags & IMA_FSNAME)
+ 	    && strcmp(rule->fsname, inode->i_sb->s_type->name))
+ 		return false;
++	if ((rule->flags & IMA_SUBTYPE)
++	    && (inode->i_sb->s_subtype == NULL ||
++		strcmp(rule->subtype, inode->i_sb->s_subtype)))
++		return false;
+ 	if ((rule->flags & IMA_FSUUID) &&
+ 	    !uuid_equal(&rule->fsuuid, &inode->i_sb->s_uuid))
+ 		return false;
+@@ -672,7 +678,7 @@ enum {
+ 	Opt_audit, Opt_hash, Opt_dont_hash,
+ 	Opt_obj_user, Opt_obj_role, Opt_obj_type,
+ 	Opt_subj_user, Opt_subj_role, Opt_subj_type,
+-	Opt_func, Opt_mask, Opt_fsmagic, Opt_fsname,
++	Opt_func, Opt_mask, Opt_fsmagic, Opt_fsname, Opt_subtype,
+ 	Opt_fsuuid, Opt_uid_eq, Opt_euid_eq, Opt_fowner_eq,
+ 	Opt_uid_gt, Opt_euid_gt, Opt_fowner_gt,
+ 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
+@@ -698,6 +704,7 @@ static const match_table_t policy_tokens = {
+ 	{Opt_mask, "mask=%s"},
+ 	{Opt_fsmagic, "fsmagic=%s"},
+ 	{Opt_fsname, "fsname=%s"},
++	{Opt_subtype, "subtype=%s"},
+ 	{Opt_fsuuid, "fsuuid=%s"},
+ 	{Opt_uid_eq, "uid=%s"},
+ 	{Opt_euid_eq, "euid=%s"},
+@@ -923,6 +930,17 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 			result = 0;
+ 			entry->flags |= IMA_FSNAME;
+ 			break;
++		case Opt_subtype:
++			ima_log_string(ab, "subtype", args[0].from);
 +
-+/**
-+ * vfs_gethash - obtain a file's hash
-+ * @file:	file structure in question
-+ * @hash_algo:	the hash algorithm requested
-+ * @buf:	buffer to return the hash in
-+ * @size:	size allocated for the buffer by the caller
-+ *
-+ * This function allows filesystems that support securely storing the hash
-+ * of a file to return it rather than forcing the kernel to recalculate it.
-+ * Filesystems that cannot provide guarantees about the hash being resistant
-+ * to offline attack should not implement this functionality.
-+ *
-+ * Returns 0 on success, -EOPNOTSUPP if the filesystem doesn't support it.
-+ */
-+int vfs_get_hash(struct file *file, enum hash_algo hash, uint8_t *buf,
-+		 size_t size)
-+{
-+	if (!file->f_op->get_hash)
-+		return -EOPNOTSUPP;
++			entry->subtype = kstrdup(args[0].from, GFP_KERNEL);
++			if (!entry->subtype) {
++				result = -ENOMEM;
++				break;
++			}
++			result = 0;
++			entry->flags |= IMA_SUBTYPE;
++			break;
+ 		case Opt_fsuuid:
+ 			ima_log_string(ab, "fsuuid", args[0].from);
+ 
+@@ -1254,6 +1272,12 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 		seq_puts(m, " ");
+ 	}
+ 
++	if (entry->flags & IMA_SUBTYPE) {
++		snprintf(tbuf, sizeof(tbuf), "%s", entry->subtype);
++		seq_printf(m, pt(Opt_subtype), tbuf);
++		seq_puts(m, " ");
++	}
 +
-+	return file->f_op->get_hash(file, hash, buf, size);
-+}
-+EXPORT_SYMBOL(vfs_get_hash);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 29d8e2cfed0e..c6de2855cfdb 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -40,6 +40,7 @@
- 
- #include <asm/byteorder.h>
- #include <uapi/linux/fs.h>
-+#include <uapi/linux/hash_info.h>
- 
- struct backing_dev_info;
- struct bdi_writeback;
-@@ -1819,6 +1820,8 @@ struct file_operations {
- 				   struct file *file_out, loff_t pos_out,
- 				   loff_t len, unsigned int remap_flags);
- 	int (*fadvise)(struct file *, loff_t, loff_t, int);
-+	int (*get_hash)(struct file *, enum hash_algo hash, uint8_t *buf,
-+			size_t size);
- } __randomize_layout;
- 
- struct inode_operations {
-@@ -1895,7 +1898,8 @@ extern int vfs_dedupe_file_range(struct file *file,
- extern loff_t vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
- 					struct file *dst_file, loff_t dst_pos,
- 					loff_t len, unsigned int remap_flags);
--
-+extern int vfs_get_hash(struct file *file, enum hash_algo hash, uint8_t *buf,
-+			size_t size);
- 
- struct super_operations {
-    	struct inode *(*alloc_inode)(struct super_block *sb);
+ 	if (entry->flags & IMA_PCR) {
+ 		snprintf(tbuf, sizeof(tbuf), "%d", entry->pcr);
+ 		seq_printf(m, pt(Opt_pcr), tbuf);
 -- 
 2.21.0.rc2.261.ga7da99ff1b-goog
 
