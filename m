@@ -3,65 +3,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67742C43381
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Feb 2019 23:28:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A34D7C43381
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Feb 2019 23:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 338BB218D0
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Feb 2019 23:28:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73C7E218FD
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Feb 2019 23:28:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729432AbfBZX17 (ORCPT
+        id S1728791AbfBZX1u (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 26 Feb 2019 18:27:59 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48926 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729447AbfBZX15 (ORCPT
+        Tue, 26 Feb 2019 18:27:50 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56944 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728729AbfBZX1u (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Feb 2019 18:27:57 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1QNNx4b004387
-        for <linux-integrity@vger.kernel.org>; Tue, 26 Feb 2019 18:27:56 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qwcbg8tue-1
+        Tue, 26 Feb 2019 18:27:50 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1QNNx1Y005093
+        for <linux-integrity@vger.kernel.org>; Tue, 26 Feb 2019 18:27:49 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qwbr5jmn0-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 26 Feb 2019 18:27:56 -0500
+        for <linux-integrity@vger.kernel.org>; Tue, 26 Feb 2019 18:27:49 -0500
 Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 26 Feb 2019 23:27:53 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Tue, 26 Feb 2019 23:27:47 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Feb 2019 23:27:50 -0000
+        Tue, 26 Feb 2019 23:27:44 -0000
 Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1QNRn1722937626
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1QNRhe757802838
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Feb 2019 23:27:50 GMT
+        Tue, 26 Feb 2019 23:27:43 GMT
 Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DB553A4055;
-        Tue, 26 Feb 2019 23:27:49 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id B9C83A404D;
+        Tue, 26 Feb 2019 23:27:43 +0000 (GMT)
 Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2C775A4051;
-        Tue, 26 Feb 2019 23:27:49 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 0A262A4040;
+        Tue, 26 Feb 2019 23:27:43 +0000 (GMT)
 Received: from localhost.ibm.com (unknown [9.80.106.105])
         by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Feb 2019 23:27:49 +0000 (GMT)
+        Tue, 26 Feb 2019 23:27:42 +0000 (GMT)
 From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>
 Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH v2 5/5] selftests/ima: loading kernel modules
-Date:   Tue, 26 Feb 2019 18:27:00 -0500
+Subject: [PATCH v2 2/5] selftests/ima: define a set of common functions
+Date:   Tue, 26 Feb 2019 18:26:57 -0500
 X-Mailer: git-send-email 2.7.5
 In-Reply-To: <1551223620-11586-1-git-send-email-zohar@linux.ibm.com>
 References: <1551223620-11586-1-git-send-email-zohar@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19022623-0016-0000-0000-0000025B496E
+x-cbid: 19022623-0008-0000-0000-000002C54C63
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022623-0017-0000-0000-000032B5AE3E
-Message-Id: <1551223620-11586-6-git-send-email-zohar@linux.ibm.com>
+x-cbparentid: 19022623-0009-0000-0000-00002231977B
+Message-Id: <1551223620-11586-3-git-send-email-zohar@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-26_13:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -74,141 +74,95 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-While the appended kernel module signature can be verified, when loading
-a kernel module via either the init_module or the finit_module syscall,
-verifying the IMA signature requires access to the file descriptor,
-which is only available via the finit_module syscall.  As "modprobe"
-does not provide a flag allowing the syscall - init_module or
-finit_module - to be specified, this patch does not load a kernel
-module.
-
-This test simply verifies that on secure boot enabled systems with
-"CONFIG_IMA_ARCH_POLICY" configured, that at least an appended kernel
-module signature or an IMA signature is required based on the Kconfig
-and the runtime IMA policy.
+Define, update and move get_secureboot_mode() to a common file for use
+by other tests.
 
 Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Reviewed-by: Petr Vorel <pvorel@suse.cz>
 ---
- tools/testing/selftests/ima/Makefile              |  2 +-
- tools/testing/selftests/ima/test_kernel_module.sh | 96 +++++++++++++++++++++++
- 2 files changed, 97 insertions(+), 1 deletion(-)
- create mode 100755 tools/testing/selftests/ima/test_kernel_module.sh
+ tools/testing/selftests/ima/Makefile           |  1 +
+ tools/testing/selftests/ima/common_lib.sh      | 24 ++++++++++++++++++++++++
+ tools/testing/selftests/ima/test_kexec_load.sh | 17 +++--------------
+ 3 files changed, 28 insertions(+), 14 deletions(-)
+ create mode 100755 tools/testing/selftests/ima/common_lib.sh
 
 diff --git a/tools/testing/selftests/ima/Makefile b/tools/testing/selftests/ima/Makefile
-index 049c83c9426c..ef5201ff0bea 100644
+index 0b3adf5444b6..46b9e04d2737 100644
 --- a/tools/testing/selftests/ima/Makefile
 +++ b/tools/testing/selftests/ima/Makefile
-@@ -4,7 +4,7 @@ uname_M := $(shell uname -m 2>/dev/null || echo not)
- ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
+@@ -5,6 +5,7 @@ ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
  
  ifeq ($(ARCH),x86)
--TEST_PROGS := test_kexec_load.sh test_kexec_file_load.sh
-+TEST_PROGS := test_kexec_load.sh test_kexec_file_load.sh test_kernel_module.sh
- TEST_FILES := common_lib.sh
+ TEST_PROGS := test_kexec_load.sh
++TEST_FILES := common_lib.sh
  
  include ../lib.mk
-diff --git a/tools/testing/selftests/ima/test_kernel_module.sh b/tools/testing/selftests/ima/test_kernel_module.sh
+ 
+diff --git a/tools/testing/selftests/ima/common_lib.sh b/tools/testing/selftests/ima/common_lib.sh
 new file mode 100755
-index 000000000000..4009e1b60b03
+index 000000000000..5583ea74c14e
 --- /dev/null
-+++ b/tools/testing/selftests/ima/test_kernel_module.sh
-@@ -0,0 +1,96 @@
++++ b/tools/testing/selftests/ima/common_lib.sh
+@@ -0,0 +1,24 @@
 +#!/bin/sh
 +# SPDX-License-Identifier: GPL-2.0-or-later
-+#
-+# On secure boot enabled systems with "CONFIG_IMA_ARCH_POLICY" configured,
-+# this test verifies that at least an appended kernel module signature or
-+# an IMA signature is required.  It does not attempt to load a kernel module.
 +
-+TEST="KERNEL_MODULE"
-+. ./common_lib.sh
-+
-+trap "{ rm -f $IKCONFIG ; }" EXIT
-+
-+# Some of the IMA builtin policies may require the kernel modules to
-+# be signed, but these policy rules may be replaced with a custom
-+# policy.  Only CONFIG_IMA_APPRAISE_REQUIRE_MODULE_SIGS persists after
-+# loading a custom policy.  Check if it is enabled, before reading the
-+# IMA runtime sysfs policy file.
-+# Return 1 for IMA signature required and 0 for not required.
-+is_ima_sig_required()
++# The secure boot mode can be accessed either as the last integer
++# of "od -An -t u1 /sys/firmware/efi/efivars/SecureBoot-*" or from
++# "od -An -t u1 /sys/firmware/efi/vars/SecureBoot-*/data".
++# Return 1 for SecureBoot mode enabled.
++get_secureboot_mode()
 +{
-+	local ret=0
-+
-+	kconfig_enabled "CONFIG_IMA_APPRAISE_REQUIRE_MODULE_SIGS=y" \
-+		"IMA kernel module signature required"
-+	if [ $? -eq 1 ]; then
-+		log_info "IMA kernel module signature required"
-+		return 1
++	local efivarfs="/sys/firmware/efi/efivars"
++	# Make sure that efivars is mounted in the normal location
++	if ! grep -q "^\S\+ $efivarfs efivarfs" /proc/mounts; then
++		echo "$TEST: efivars is not mounted on $efivarfs" >&2
++		exit $ksft_skip
 +	fi
 +
-+	# The architecture specific or a custom policy may require the
-+	# kernel module to be signed.  Policy rules are walked sequentially.
-+	# As a result, a policy rule may be defined, but might not necessarily
-+	# be used.  This test assumes if a policy rule is specified, that is
-+	# the intent.
-+	if [ $ima_read_policy -eq 1 ]; then
-+		check_ima_policy "appraise" "func=MODULE_CHECK" \
-+			"appraise_type=imasig"
-+		ret=$?
-+		[ $ret -eq 1 ] && log_info "IMA signature required";
++	# Get secureboot mode
++	local file="$efivarfs/../vars/SecureBoot-*/data"
++	if [ ! -e $file ]; then
++		echo "$TEST: unknown secureboot mode" >&2
++		exit $ksft_skip
 +	fi
-+	return $ret
++	return `od -An -t u1 /sys/firmware/efi/vars/SecureBoot-*/data`
 +}
-+
-+# loading kernel modules requires root privileges
-+if [ $(id -ru) -ne 0 ]; then
-+	log_skip "requires root privileges"
-+fi
-+
-+# Are appended signatures required?
-+if [ -e /sys/module/module/parameters/sig_enforce ]; then
-+	sig_enforce=$(cat /sys/module/module/parameters/sig_enforce)
-+	if [ $sig_enforce = "Y" ]; then
-+		log_pass "appended kernel module signature required"
-+	fi
-+fi
-+
+diff --git a/tools/testing/selftests/ima/test_kexec_load.sh b/tools/testing/selftests/ima/test_kexec_load.sh
+index 0345803e7bec..35934e0665f1 100755
+--- a/tools/testing/selftests/ima/test_kexec_load.sh
++++ b/tools/testing/selftests/ima/test_kexec_load.sh
+@@ -5,7 +5,7 @@
+ # is booted in secureboot mode.
+ 
+ TEST="$0"
+-EFIVARFS="/sys/firmware/efi/efivars"
++. ./common_lib.sh
+ rc=0
+ 
+ # Kselftest framework requirement - SKIP code is 4.
+@@ -17,19 +17,8 @@ if [ $(id -ru) -ne 0 ]; then
+ 	exit $ksft_skip
+ fi
+ 
+-# Make sure that efivars is mounted in the normal location
+-if ! grep -q "^\S\+ $EFIVARFS efivarfs" /proc/mounts; then
+-	echo "$TEST: efivars is not mounted on $EFIVARFS" >&2
+-	exit $ksft_skip
+-fi
+-
+-# Get secureboot mode
+-file="$EFIVARFS/SecureBoot-*"
+-if [ ! -e $file ]; then
+-	echo "$TEST: unknown secureboot mode" >&2
+-	exit $ksft_skip
+-fi
+-secureboot=`hexdump $file | awk '{print substr($4,length($4),1)}'`
 +get_secureboot_mode
-+if [ $? -eq 0 ]; then
-+	log_skip "secure boot not enabled"
-+fi
-+
-+# get the kernel config
-+get_kconfig
-+
-+# Determine which kernel config options are enabled
-+kconfig_enabled "CONFIG_IMA_ARCH_POLICY=y" \
-+	"architecture specific policy enabled"
-+arch_policy=$?
-+
-+kconfig_enabled "CONFIG_MODULE_SIG=y" \
-+	"appended kernel modules signature enabled"
-+appended_sig_enabled=$?
-+
-+kconfig_enabled "CONFIG_IMA_READ_POLICY=y" "reading IMA policy permitted"
-+ima_read_policy=$?
-+
-+is_ima_sig_required
-+ima_sig_required=$?
-+
-+if [ $arch_policy -eq 0 ]; then
-+	log_skip "architecture specific policy not enabled"
-+fi
-+
-+if [ $appended_sig_enabled -eq 1 ]; then
-+	log_fail "appended kernel module signature enabled, but not required"
-+fi
-+
-+if [ $ima_sig_required -eq 1 ]; then
-+	log_pass "IMA kernel module signature required"
-+fi
-+
-+if [ $ima_read_policy -eq 1 ]; then
-+	log_fail "IMA kernel module signature not required"
-+else
-+	log_skip "reading IMA policy not permitted"
-+fi
++secureboot=$?
+ 
+ # kexec_load should fail in secure boot mode
+ KERNEL_IMAGE="/boot/vmlinuz-`uname -r`"
 -- 
 2.7.5
 
