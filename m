@@ -1,105 +1,154 @@
-Return-Path: <SRS0=VAB3=RA=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=XaU3=RB=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E252C43381
-	for <linux-integrity@archiver.kernel.org>; Mon, 25 Feb 2019 23:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 288C2C43381
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Feb 2019 04:25:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C33421841
-	for <linux-integrity@archiver.kernel.org>; Mon, 25 Feb 2019 23:09:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="T2+QjkdS"
+	by mail.kernel.org (Postfix) with ESMTP id F316621841
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Feb 2019 04:25:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728941AbfBYXJe (ORCPT
+        id S1726250AbfBZEZu (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 25 Feb 2019 18:09:34 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:57652 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727421AbfBYXJe (ORCPT
+        Mon, 25 Feb 2019 23:25:50 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:34086 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726082AbfBZEZu (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 25 Feb 2019 18:09:34 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 275B48EE1A0;
-        Mon, 25 Feb 2019 15:09:34 -0800 (PST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Y-BtaP8gFE27; Mon, 25 Feb 2019 15:09:33 -0800 (PST)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 10DAD8EE101;
-        Mon, 25 Feb 2019 15:09:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1551136173;
-        bh=43lWbOYzSYa+tZJHqx6Z800Y8pcjZ/MTDQuOkWe7+XI=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=T2+QjkdSdYzJ4VVIJCXAg1Gj4HWTFlqFGdEvHJLtzlufTJnKNYeSxXe0pBiFdQ7L5
-         y1yQHbcbxCpZPR+yBzP1u7uLkAMgbIjoKUo3HpaL4NmWGwZLMDAJAn8wzgpuzZWusp
-         Ez3EDepigreJXqSkLm4RCWVFowqbsiDUuUtSft2U=
-Message-ID: <1551136170.3226.95.camel@HansenPartnership.com>
-Subject: Re: [PATCH] tpm: Add driver for TPM over virtio
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Matthew Garrett <mjg59@google.com>
-Cc:     David Tolnay <dtolnay@gmail.com>, Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org, dgreid@chromium.org,
-        apronin@chromium.org
-Date:   Mon, 25 Feb 2019 15:09:30 -0800
-In-Reply-To: <CACdnJus1PHuV9ZM0mFOXQk_dbCiAZjdjgO69oHRTv=t7S3sdZg@mail.gmail.com>
-References: <388c5b80-21a7-1e91-a11f-3a1c1432368b@gmail.com>
-         <1550849416.2787.5.camel@HansenPartnership.com>
-         <e0284af7-be61-6a0f-8df6-a0d646577258@gmail.com>
-         <1550873900.2787.25.camel@HansenPartnership.com>
-         <a36fb1a3-3a5b-d849-0dec-87f394e7a86a@gmail.com>
-         <1550885645.3577.31.camel@HansenPartnership.com>
-         <bc11d2e8-1b67-8210-6750-d24d36eb7d87@gmail.com>
-         <1551025819.3106.25.camel@HansenPartnership.com>
-         <be2c8327-49d0-a1e4-cc22-38342ce06ed3@gmail.com>
-         <1551108969.3226.26.camel@HansenPartnership.com>
-         <CACdnJuuMdYS5L4uCKDHr5e-+N3g2qbuZY4KpKdAPbGS9QFYs9g@mail.gmail.com>
-         <1551126043.3226.45.camel@HansenPartnership.com>
-         <CACdnJuvObeL75p1Wb2qnTdt1gS28zCMvasogA9=2ksMv=fE82Q@mail.gmail.com>
-         <1551132882.3226.67.camel@HansenPartnership.com>
-         <CACdnJuus3yOcNy-uKWh_Mt-eDfP8xePize572jg92a5zkuECrA@mail.gmail.com>
-         <1551133927.3226.81.camel@HansenPartnership.com>
-         <CACdnJuvhqHCuA7x2oyAaHB1zWnQ5T_4vTSc=FT3h85+sMSmwfg@mail.gmail.com>
-         <1551135106.3226.91.camel@HansenPartnership.com>
-         <CACdnJus1PHuV9ZM0mFOXQk_dbCiAZjdjgO69oHRTv=t7S3sdZg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 25 Feb 2019 23:25:50 -0500
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id AA60072CC61;
+        Tue, 26 Feb 2019 07:25:47 +0300 (MSK)
+Received: from altlinux.org (sole.flsd.net [185.75.180.6])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 83AF44A4AE7;
+        Tue, 26 Feb 2019 07:25:47 +0300 (MSK)
+Date:   Tue, 26 Feb 2019 07:25:46 +0300
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        David Howells <dhowells@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Subject: Re: [PATCH v5 10/10] integrity: support EC-RDSA signatures for
+ asymmetric_verify
+Message-ID: <20190226042546.czh6me47f7xldgk2@altlinux.org>
+Mail-Followup-To: Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        David Howells <dhowells@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+References: <20190224060828.2527-1-vt@altlinux.org>
+ <20190224060828.2527-11-vt@altlinux.org>
+ <874l8rr2dq.fsf@morokweng.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+In-Reply-To: <874l8rr2dq.fsf@morokweng.localdomain>
+User-Agent: NeoMutt/20171215-106-ac61c7
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, 2019-02-25 at 15:02 -0800, Matthew Garrett wrote:
-> On Mon, Feb 25, 2019 at 2:51 PM James Bottomley
-> <James.Bottomley@hansenpartnership.com> wrote:
-> > On Mon, 2019-02-25 at 14:43 -0800, Matthew Garrett wrote:
-> > > You still need a transport mechanism through the hypervisor to
-> > > communicate with the host - what would you be using in that case
-> > > instead of virtio?
-> > 
-> > Socsim is net transported; it's sort of the TPM equivalent of NFS
-> > or iSCSI storage for guests.
+Thiago,
+
+On Mon, Feb 25, 2019 at 06:20:49PM -0300, Thiago Jung Bauermann wrote:
+> Vitaly Chikunov <vt@altlinux.org> writes:
 > 
-> Oh, so it relies on the guest being able to reach the host via
-> network? Hmm. That's a different security tradeoff. It presumably
-> also prevents any in-kernel use before networking is up?
+> > Allow to use EC-RDSA signatures for IMA by determining signature type by
+> > the hash algorithm name. This works good for EC-RDSA since Streebog and
+> > EC-RDSA should always be used together.
+> >
+> > Cc: Mimi Zohar <zohar@linux.ibm.com>
+> > Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+> > Cc: linux-integrity@vger.kernel.org
+> > Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+> > ---
+> >  security/integrity/digsig_asymmetric.c | 9 +++++++--
+> >  1 file changed, 7 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
+> > index d775e03fbbcc..c4a3313e0210 100644
+> > --- a/security/integrity/digsig_asymmetric.c
+> > +++ b/security/integrity/digsig_asymmetric.c
+> > @@ -104,9 +104,14 @@ int asymmetric_verify(struct key *keyring, const char *sig,
+> >
+> >  	memset(&pks, 0, sizeof(pks));
+> >
+> > -	pks.pkey_algo = "rsa";
+> >  	pks.hash_algo = hash_algo_name[hdr->hash_algo];
+> > -	pks.encoding = "pkcs1";
+> > +	if (!strncmp(pks.hash_algo, "streebog", 8)) {
+> 
+> Is it possible to test hdr->hash_algo instead of pkcs.hash_algo? IMHO if
+> an integer value is available it's preferable to check it rather than
+> doing a string comparison.
 
-Exactly, that's why I'm not recommending it.  However, the initrdless
-early net nastiness path has already been trodden by the NFS/iSCSI
-root people ...
+Yes. But we have long tradition of comparing by the name too:
 
-James
+  --linux$ git grep str.*cmp.*'"sha[12]'
+  drivers/crypto/mxs-dcp.c:       if (strcmp(halg->base.cra_name, "sha1") == 0)
+  drivers/crypto/talitos.c:                   (!strcmp(alg->cra_name, "sha224") ||
+  net/sctp/sysctl.c:              if (!strncmp(tmp, "sha1", 4)) {
+  scripts/sign-file.c:    if (strcmp(hash_algo, "sha1") != 0) {
+  security/integrity/ima/ima_main.c:              if (strncmp(str, "sha1", 4) == 0)
+  --linux$ git grep str.*cmp.*hash_algo
+  fs/ubifs/sb.c:  if (strcmp(hash_algo_name[hash_algo], c->auth_hash_name)) {
+  scripts/sign-file.c:    if (strcmp(hash_algo, "sha1") != 0) {
+  security/integrity/ima/ima_main.c:      if (error && strcmp(hash_algo_name[ima_hash_algo],
+  security/keys/trusted.c:                                if (!strcmp(args[0].from, hash_algo_name[i])) {
+  --linux$ git grep str.*cmp.*cra_name
+  crypto/adiantum.c:      if (strcmp(streamcipher_alg->base.cra_name, "xchacha12") != 0 &&
+  crypto/adiantum.c:          strcmp(streamcipher_alg->base.cra_name, "xchacha20") != 0)
+  crypto/adiantum.c:      if (strcmp(hash_alg->base.cra_name, "nhpoly1305") != 0)
+  crypto/algapi.c:                if (!strcmp(q->cra_driver_name, alg->cra_name) ||
+  crypto/algapi.c:                    !strcmp(q->cra_name, alg->cra_driver_name))
+  crypto/algapi.c:                        if (strcmp(alg->cra_name, q->cra_name) &&
+  crypto/algapi.c:                            strcmp(alg->cra_driver_name, q->cra_name))
+  crypto/algapi.c:                if (strcmp(alg->cra_name, q->cra_name))
+  crypto/api.c:           fuzzy = !strcmp(q->cra_name, name);
+  crypto/crypto_user_base.c:                      match = !strcmp(q->cra_name, p->cru_name);
+  crypto/cts.c:   if (strncmp(alg->base.cra_name, "cbc(", 4))
+  crypto/simd.c:          WARN_ON(strncmp(algs[i].base.cra_name, "__", 2));
+  drivers/crypto/mxs-dcp.c:       if (strcmp(halg->base.cra_name, "sha1") == 0)
+  drivers/crypto/talitos.c:                   !strncmp(alg->cra_name, "authenc(hmac(sha224)", 20)) {
+  drivers/crypto/talitos.c:               if (!strncmp(alg->cra_name, "hmac", 4))
+  drivers/crypto/talitos.c:                   !strncmp(alg->cra_name, "hmac", 4)) {
+  drivers/crypto/talitos.c:                   (!strcmp(alg->cra_name, "sha224") ||
+  drivers/crypto/talitos.c:                    !strcmp(alg->cra_name, "hmac(sha224)"))) {
+  lib/crc-t10dif.c:           strncmp(alg->cra_name, CRC_T10DIF_STRING, strlen(CRC_T10DIF_STRING)))
 
+
+After all pkey_algo, hash_algo, cra_name are set to strings to be used
+somewhere. So both ways looks equal to me.
+
+[I more wonder if we should leave algo names to be used as they are in
+x509_note_signature() (to check for "rsa" and "ecrdsa"), since there are
+no other pkey_algo's set in x509_note_pkey_algo().]
+
+> Also, it would be good to have a comment here mentioning that Streebog
+> and EC-RDSA should always be used together
+
+Thanks,
+
+> > +		pks.pkey_algo = "ecrdsa";
+> > +		pks.encoding = "raw";
+> > +	} else {
+> > +		pks.pkey_algo = "rsa";
+> > +		pks.encoding = "pkcs1";
+> > +	}
+> >  	pks.digest = (u8 *)data;
+> >  	pks.digest_size = datalen;
+> >  	pks.s = hdr->sig;
+> 
+> --
+> Thiago Jung Bauermann
+> IBM Linux Technology Center
