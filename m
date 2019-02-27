@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94E94C00319
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 20:27:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D14C4360F
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 20:27:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63B3A217F5
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 20:27:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 019D8217F5
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 20:27:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZNA62/jN"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Mr+4Z61H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730438AbfB0U10 (ORCPT
+        id S1730353AbfB0U1H (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 27 Feb 2019 15:27:26 -0500
-Received: from mail-oi1-f202.google.com ([209.85.167.202]:47051 "EHLO
-        mail-oi1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730399AbfB0U1L (ORCPT
+        Wed, 27 Feb 2019 15:27:07 -0500
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:45740 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730342AbfB0U1G (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 27 Feb 2019 15:27:11 -0500
-Received: by mail-oi1-f202.google.com with SMTP id v138so8000549oie.13
-        for <linux-integrity@vger.kernel.org>; Wed, 27 Feb 2019 12:27:11 -0800 (PST)
+        Wed, 27 Feb 2019 15:27:06 -0500
+Received: by mail-pl1-f201.google.com with SMTP id e2so13247075pln.12
+        for <linux-integrity@vger.kernel.org>; Wed, 27 Feb 2019 12:27:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=3L31ImPCYlGPP1bi5DAr6zYqB9pcQjRPEOMnQpUbHhA=;
-        b=ZNA62/jNwS7RcVm9H6hzc7NWWtLy85D0rnemhDxSo6HfSbOy8zsXqJcYo5REUQdv1M
-         BuaZxCiydYSlLaw8S0O9XxMj6t7XLbNy7DQHxt1fzMHg+Mww/7OhTiokSM9JdWX4bInW
-         dkW9ioWtQvm1MFf1IMWMMul9pvs3Dh+ixFIFVe+5XL7iKpQIjSVk0wZb8FVx2ZDhYz0x
-         vuNknPrk1/GR4sFtoQygEJRfIQXXymafLkqqnAubteY6G51Hi/HpJILtSDC3dzmhMKs1
-         3PWi8z7WV/QGh93WgO855GgcFsFgY2yqfS5gByzoIMYoTvC0afEHLTSVXdP6DDDZfgQE
-         2kdw==
+        bh=jrd68x/FfHXCt7CWtZJCh8NI2YSDkYhEoPHIj9aDd98=;
+        b=Mr+4Z61H4ihzxA34NS2wOMwksF4TBqoI5xQEP3vt/c9ak352gyuXdgBhX3eTgAZgEi
+         LtDnaLQZ+o0xtLsn7yeYUSGlYcsjOA8NmRfeEZiqmnr64eDpKkmm+cTGCxZuvUdJOkJa
+         mTZ+GczaudDIuNrq0SlU9uwBmIubvXSOpgoHU5vx+ITprhq9EkieilaV3We3ID21//d/
+         1EeBA28sRf03O4oGVKmQIJX9WGBk19mcSqCZFgDcv4RZLDnjcWorDnSzAs1rJyxoIE+d
+         FIok+G2VB41l3Wrl9TDwwchEUfl9SO1lFDQXzsHzLwk9F6QUkNjGJUocIW469A3jojsR
+         ljog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=3L31ImPCYlGPP1bi5DAr6zYqB9pcQjRPEOMnQpUbHhA=;
-        b=aOmsJKsFJzb6VROlYRglQ98dgXygiQY3L0Jkdw+bNHjbo5+510PIIhdpAyKZvPyL70
-         OknSM3BWDinkB0YLCWZj86gC/9f/kT90WqsoeL50UbSFnRbgYhdxIjSGlaa+awIBQMDJ
-         zsD+7DobWMJ+50DZNAu3FehgINaESauWDiD/dVTLN7H0rohVWOlwVKoDj+VNbRJhjaPE
-         CsLLb3V2AXHlfALSuCEyw2lWnoITrcNxFOY97SMc9oxa2IgO7/QHBHRfbydt8u8wJrg2
-         mBabju1hJ1jRqAig4xShVU8aYbGoswdYxRsUwoC/hZO1c7cbNruQRiEJYDsVibQPHDvi
-         DdCw==
-X-Gm-Message-State: AHQUAubsd8tDeRg2iPWXltGBNJdXc5kZrqhdq8/g1H5a4s4ZvvYP7Kcj
-        GhnFgsfG7QhdbL0Q+QA0SIQEKrY+gWRWSRjUFB+FFO1eu7bkbZSNh7yv9CPVe+ajqvEabAKaFql
-        m4wcFPifiewcDGtDl6KKTz4UIdv7JH+MpDmiAasKQYmtyIJxL+SFsXDa6c5JztEqTw+BGp53mhu
-        wGoFvmjNBzCjdpiUB85Ng=
-X-Google-Smtp-Source: AHgI3Ib8gnfrdLV62veuKkodl6J5yrYM59d84uMSZ0SXecQKIMY0t1QuXK0rebBjyHl7gchg0yBdPAFNIWplOpq/9zfz2g==
-X-Received: by 2002:a9d:7d88:: with SMTP id j8mr3017930otn.44.1551299230762;
- Wed, 27 Feb 2019 12:27:10 -0800 (PST)
-Date:   Wed, 27 Feb 2019 12:26:57 -0800
+        bh=jrd68x/FfHXCt7CWtZJCh8NI2YSDkYhEoPHIj9aDd98=;
+        b=iy0rNfACqcYlJW5obd0H3U32NYBzk4F+TpW7tRNwp5k9EMkt+ifKyvChg5Tk++tR5k
+         pcm0sLEeMtsjKkPd+gvHdqarl06/xDxU6oL00a+GrQCnWxM1x4CwOSDbUIPNBirrk1sA
+         Fl1gh+lzcgrGYGSF+RRjBFuh7FL8KHWW/V8xueIVwIqK5Me9IsBf42ptaHawZtWieGn1
+         RqyNhhztxNCGSekhaVVg1V7DmNVTsv+q7lor7DVxy58bH+2wfVi8GGi44bQijG2Ztafw
+         45gK+hM9b85Pzhgtqe1UHhTL9V7y+NtiAsLW1SZ+FfOSBijnbTSCy96iUc7FBkzOazrD
+         kykA==
+X-Gm-Message-State: AHQUAubDRbGtZEMwoHeSSFRjs28EcM9TXj5vbI5fy98mlVthmocL0JCR
+        pjwF9VTIs66JgFqMhlJDd5bVJqlxGij5kySc3hqzV0feeIclkKTIX88glp9G/sjcZ+OJw2LaqsN
+        hvHJTtcUlel46FFHkhvDeq9QvRc+pTbPrgupnNpLK9T6GGSyqjAiupNmyGfSL5ZwCYFcVF+5k1+
+        pQwZBYCvsL/EkbFTJg/6E=
+X-Google-Smtp-Source: AHgI3IZgRw3yl6qrdUSq8bs/1lWfV5Ug2/XKiOGV829PVXdXG1iGG/yH0d2eMrA/FwlVVnkUA+8RsIZPCKCwrNQJb4tZXQ==
+X-Received: by 2002:a17:902:8ec4:: with SMTP id x4mr1289915plo.124.1551299225370;
+ Wed, 27 Feb 2019 12:27:05 -0800 (PST)
+Date:   Wed, 27 Feb 2019 12:26:55 -0800
 In-Reply-To: <20190227202658.197113-1-matthewgarrett@google.com>
-Message-Id: <20190227202658.197113-4-matthewgarrett@google.com>
+Message-Id: <20190227202658.197113-2-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190227202658.197113-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.352.gf09ad66450-goog
-Subject: [PATCH V5 3/4] tpm: Append the final event log to the TPM event log
+Subject: [PATCH V5 1/4] tpm: Abstract crypto agile event size calculations
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
@@ -76,93 +76,152 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Matthew Garrett <mjg59@google.com>
 
-Any events that are logged after GetEventsLog() is called are logged to
-the EFI Final Events table. These events are defined as being in the
-crypto agile log format, so we can just append them directly to the
-existing log if it's in the same format. In theory we can also construct
-old-style SHA1 log entries for devices that only return logs in that
-format, but EDK2 doesn't generate the final event log in that case so
-it doesn't seem worth it at the moment.
+We need to calculate the size of crypto agile events in multiple
+locations, including in the EFI boot stub. The easiest way to do this is
+to put it in a header file as an inline and leave a wrapper to ensure we
+don't end up with multiple copies of it embedded in the existing code.
 
 Signed-off-by: Matthew Garrett <mjg59@google.com>
 ---
- drivers/char/tpm/eventlog/efi.c | 50 ++++++++++++++++++++++++++++-----
- 1 file changed, 43 insertions(+), 7 deletions(-)
+ drivers/char/tpm/eventlog/tpm2.c | 47 +---------------------
+ include/linux/tpm_eventlog.h     | 68 ++++++++++++++++++++++++++++++++
+ 2 files changed, 69 insertions(+), 46 deletions(-)
 
-diff --git a/drivers/char/tpm/eventlog/efi.c b/drivers/char/tpm/eventlog/efi.c
-index 3e673ab22cb4..9179cf6bdee9 100644
---- a/drivers/char/tpm/eventlog/efi.c
-+++ b/drivers/char/tpm/eventlog/efi.c
-@@ -21,10 +21,13 @@
- int tpm_read_log_efi(struct tpm_chip *chip)
+diff --git a/drivers/char/tpm/eventlog/tpm2.c b/drivers/char/tpm/eventlog/tpm2.c
+index f824563fc28d..1a977bdd3bd2 100644
+--- a/drivers/char/tpm/eventlog/tpm2.c
++++ b/drivers/char/tpm/eventlog/tpm2.c
+@@ -40,52 +40,7 @@
+ static size_t calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
+ 				   struct tcg_pcr_event *event_header)
  {
- 
-+	struct efi_tcg2_final_events_table *final_tbl = NULL;
- 	struct linux_efi_tpm_eventlog *log_tbl;
- 	struct tpm_bios_log *log;
- 	u32 log_size;
- 	u8 tpm_log_version;
-+	void *tmp;
-+	int ret;
- 
- 	if (!(chip->flags & TPM_CHIP_FLAG_TPM2))
- 		return -ENODEV;
-@@ -52,15 +55,48 @@ int tpm_read_log_efi(struct tpm_chip *chip)
- 
- 	/* malloc EventLog space */
- 	log->bios_event_log = kmemdup(log_tbl->log, log_size, GFP_KERNEL);
--	if (!log->bios_event_log)
--		goto err_memunmap;
--	log->bios_event_log_end = log->bios_event_log + log_size;
-+	if (!log->bios_event_log) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
- 
-+	log->bios_event_log_end = log->bios_event_log + log_size;
- 	tpm_log_version = log_tbl->version;
--	memunmap(log_tbl);
--	return tpm_log_version;
- 
--err_memunmap:
-+	ret = tpm_log_version;
-+
-+	if (efi.tpm_final_log == EFI_INVALID_TABLE_ADDR ||
-+	    efi_tpm_final_log_size == 0 ||
-+	    tpm_log_version != EFI_TCG2_EVENT_LOG_FORMAT_TCG_2)
-+		goto out;
-+
-+	final_tbl = memremap(efi.tpm_final_log,
-+			     sizeof(*final_tbl) + efi_tpm_final_log_size,
-+			     MEMREMAP_WB);
-+	if (!final_tbl) {
-+		pr_err("Could not map UEFI TPM final log\n");
-+		kfree(log->bios_event_log);
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	tmp = krealloc(log->bios_event_log,
-+		       log_size + efi_tpm_final_log_size,
-+		       GFP_KERNEL);
-+	if (!tmp) {
-+		kfree(log->bios_event_log);
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	log->bios_event_log = tmp;
-+	memcpy((void *)log->bios_event_log + log_size,
-+	       final_tbl->events, efi_tpm_final_log_size);
-+	log->bios_event_log_end = log->bios_event_log +
-+		log_size + efi_tpm_final_log_size;
-+
-+out:
-+	memunmap(final_tbl);
- 	memunmap(log_tbl);
--	return -ENOMEM;
-+	return ret;
+-	struct tcg_efi_specid_event_head *efispecid;
+-	struct tcg_event_field *event_field;
+-	void *marker;
+-	void *marker_start;
+-	u32 halg_size;
+-	size_t size;
+-	u16 halg;
+-	int i;
+-	int j;
+-
+-	marker = event;
+-	marker_start = marker;
+-	marker = marker + sizeof(event->pcr_idx) + sizeof(event->event_type)
+-		+ sizeof(event->count);
+-
+-	efispecid = (struct tcg_efi_specid_event_head *)event_header->event;
+-
+-	/* Check if event is malformed. */
+-	if (event->count > efispecid->num_algs)
+-		return 0;
+-
+-	for (i = 0; i < event->count; i++) {
+-		halg_size = sizeof(event->digests[i].alg_id);
+-		memcpy(&halg, marker, halg_size);
+-		marker = marker + halg_size;
+-		for (j = 0; j < efispecid->num_algs; j++) {
+-			if (halg == efispecid->digest_sizes[j].alg_id) {
+-				marker +=
+-					efispecid->digest_sizes[j].digest_size;
+-				break;
+-			}
+-		}
+-		/* Algorithm without known length. Such event is unparseable. */
+-		if (j == efispecid->num_algs)
+-			return 0;
+-	}
+-
+-	event_field = (struct tcg_event_field *)marker;
+-	marker = marker + sizeof(event_field->event_size)
+-		+ event_field->event_size;
+-	size = marker - marker_start;
+-
+-	if ((event->event_type == 0) && (event_field->event_size == 0))
+-		return 0;
+-
+-	return size;
++	return __calc_tpm2_event_size(event, event_header);
  }
+ 
+ static void *tpm2_bios_measurements_start(struct seq_file *m, loff_t *pos)
+diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
+index 81519f163211..6a86144e13f1 100644
+--- a/include/linux/tpm_eventlog.h
++++ b/include/linux/tpm_eventlog.h
+@@ -112,4 +112,72 @@ struct tcg_pcr_event2_head {
+ 	struct tpm_digest digests[];
+ } __packed;
+ 
++/**
++ * __calc_tpm2_event_size - calculate the size of a TPM2 event log entry
++ * @event:        Pointer to the event whose size should be calculated
++ * @event_header: Pointer to the initial event containing the digest lengths
++ *
++ * The TPM2 event log format can contain multiple digests corresponding to
++ * separate PCR banks, and also contains a variable length of the data that
++ * was measured. This requires knowledge of how long each digest type is,
++ * and this information is contained within the first event in the log.
++ *
++ * We calculate the length by examining the number of events, and then looking
++ * at each event in turn to determine how much space is used for events in
++ * total. Once we've done this we know the offset of the data length field,
++ * and can calculate the total size of the event.
++ *
++ * Return: size of the event on success, <0 on failure
++ */
++
++static inline int __calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
++					 struct tcg_pcr_event *event_header)
++{
++	struct tcg_efi_specid_event_head *efispecid;
++	struct tcg_event_field *event_field;
++	void *marker;
++	void *marker_start;
++	u32 halg_size;
++	size_t size;
++	u16 halg;
++	int i;
++	int j;
++
++	marker = event;
++	marker_start = marker;
++	marker = marker + sizeof(event->pcr_idx) + sizeof(event->event_type)
++		+ sizeof(event->count);
++
++	efispecid = (struct tcg_efi_specid_event_head *)event_header->event;
++
++	/* Check if event is malformed. */
++	if (event->count > efispecid->num_algs)
++		return 0;
++
++	for (i = 0; i < event->count; i++) {
++		halg_size = sizeof(event->digests[i].alg_id);
++		memcpy(&halg, marker, halg_size);
++		marker = marker + halg_size;
++		for (j = 0; j < efispecid->num_algs; j++) {
++			if (halg == efispecid->digest_sizes[j].alg_id) {
++				marker +=
++					efispecid->digest_sizes[j].digest_size;
++				break;
++			}
++		}
++		/* Algorithm without known length. Such event is unparseable. */
++		if (j == efispecid->num_algs)
++			return 0;
++	}
++
++	event_field = (struct tcg_event_field *)marker;
++	marker = marker + sizeof(event_field->event_size)
++		+ event_field->event_size;
++	size = marker - marker_start;
++
++	if ((event->event_type == 0) && (event_field->event_size == 0))
++		return 0;
++
++	return size;
++}
+ #endif
 -- 
 2.21.0.352.gf09ad66450-goog
 
