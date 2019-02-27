@@ -1,135 +1,131 @@
-Return-Path: <SRS0=XaU3=RB=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=nfu5=RC=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB22EC4360F
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Feb 2019 23:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65B05C43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 00:57:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9574E218FE
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Feb 2019 23:28:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3356D218E0
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 00:57:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551229064;
+	bh=9B3aqTS5AoTT/ONu6CUGqUc7X1qgGOsOsWQK/fstrXQ=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=ACLluM2P4kjhtp1fnIHi7yLFvoqYfV/Zjwr11wS4UKM6GqwQiJf7FzhZT0/HmXYYQ
+	 aD1S3Hm8odgVWGEzXTyrNZS3jSSXJTf/h0FVGepFjtdyPqkmvNO0VEjrUSQfEpWHRX
+	 8zv1OLV0vX3pbNuB/op2DrgC+CgxuJbF7NBuZOuQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727998AbfBZX1s (ORCPT
+        id S1728766AbfB0A5n (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 26 Feb 2019 18:27:48 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33224 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728736AbfBZX1r (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Feb 2019 18:27:47 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1QNOpIO006220
-        for <linux-integrity@vger.kernel.org>; Tue, 26 Feb 2019 18:27:46 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qwdgqmwgg-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 26 Feb 2019 18:27:46 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 26 Feb 2019 23:27:44 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Feb 2019 23:27:42 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1QNRfAP32833722
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Feb 2019 23:27:41 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 964D0A4051;
-        Tue, 26 Feb 2019 23:27:41 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D88FBA404D;
-        Tue, 26 Feb 2019 23:27:40 +0000 (GMT)
-Received: from localhost.ibm.com (unknown [9.80.106.105])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Feb 2019 23:27:40 +0000 (GMT)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>
+        Tue, 26 Feb 2019 19:57:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55992 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727998AbfB0A5n (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 26 Feb 2019 19:57:43 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AEFE218CD;
+        Wed, 27 Feb 2019 00:57:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551229062;
+        bh=9B3aqTS5AoTT/ONu6CUGqUc7X1qgGOsOsWQK/fstrXQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=UWYbABDQbBm/YgFsjAv3XpmXMMugOSIIIxivym0v1PT0gpDPUlXhtMiPsggs3x231
+         nC/7vSonh90TyrDoOOs61Pxc0gAqDevPIrt/DkfiwJbn4tSmcC+S5PeifGvR11pRjZ
+         4fJP5dkEu46PEt8N1VnPnno3DQ41sEerx+GDv+xg=
+Subject: Re: [PATCH v2 1/5] selftests/ima: cleanup the kexec selftest
+To:     Mimi Zohar <zohar@linux.ibm.com>, linux-kselftest@vger.kernel.org
 Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH v2 1/5] selftests/ima: cleanup the kexec selftest
-Date:   Tue, 26 Feb 2019 18:26:56 -0500
-X-Mailer: git-send-email 2.7.5
-In-Reply-To: <1551223620-11586-1-git-send-email-zohar@linux.ibm.com>
+        shuah <shuah@kernel.org>
 References: <1551223620-11586-1-git-send-email-zohar@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19022623-0008-0000-0000-000002C54C62
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022623-0009-0000-0000-00002231977A
-Message-Id: <1551223620-11586-2-git-send-email-zohar@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-26_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=968 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902260158
+ <1551223620-11586-2-git-send-email-zohar@linux.ibm.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <cb400d8f-a560-d8d8-07e1-461ca74bae55@kernel.org>
+Date:   Tue, 26 Feb 2019 17:57:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <1551223620-11586-2-git-send-email-zohar@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Remove the few bashisms and use the complete option name for clarity.
+Hi Mimi,
 
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-Reviewed-by: Petr Vorel <pvorel@suse.cz>
----
- tools/testing/selftests/ima/test_kexec_load.sh | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+Thanks for the patches.
 
-diff --git a/tools/testing/selftests/ima/test_kexec_load.sh b/tools/testing/selftests/ima/test_kexec_load.sh
-index 1c10093fb526..0345803e7bec 100755
---- a/tools/testing/selftests/ima/test_kexec_load.sh
-+++ b/tools/testing/selftests/ima/test_kexec_load.sh
-@@ -1,7 +1,7 @@
- #!/bin/sh
--# SPDX-License-Identifier: GPL-2.0+
-+# SPDX-License-Identifier: GPL-2.0-or-later
- # Loading a kernel image via the kexec_load syscall should fail
--# when the kerne is CONFIG_KEXEC_VERIFY_SIG enabled and the system
-+# when the kernel is CONFIG_KEXEC_VERIFY_SIG enabled and the system
- # is booted in secureboot mode.
- 
- TEST="$0"
-@@ -12,8 +12,8 @@ rc=0
- ksft_skip=4
- 
- # kexec requires root privileges
--if [ $UID != 0 ]; then
--	echo "$TEST: must be run as root" >&2
-+if [ $(id -ru) -ne 0 ]; then
-+	echo "$TEST: requires root privileges" >&2
- 	exit $ksft_skip
- fi
- 
-@@ -33,17 +33,17 @@ secureboot=`hexdump $file | awk '{print substr($4,length($4),1)}'`
- 
- # kexec_load should fail in secure boot mode
- KERNEL_IMAGE="/boot/vmlinuz-`uname -r`"
--kexec -l $KERNEL_IMAGE &>> /dev/null
--if [ $? == 0 ]; then
--	kexec -u
--	if [ "$secureboot" == "1" ]; then
-+kexec --load $KERNEL_IMAGE 2>&1 > /dev/null
-+if [ $? -eq 0 ]; then
-+	kexec --unload
-+	if [ $secureboot -eq 1 ]; then
- 		echo "$TEST: kexec_load succeeded [FAIL]"
- 		rc=1
- 	else
- 		echo "$TEST: kexec_load succeeded [PASS]"
- 	fi
- else
--	if [ "$secureboot" == "1" ]; then
-+	if [ $secureboot -eq 1 ]; then
- 		echo "$TEST: kexec_load failed [PASS]"
- 	else
- 		echo "$TEST: kexec_load failed [FAIL]"
--- 
-2.7.5
+On 2/26/19 4:26 PM, Mimi Zohar wrote:
+> Remove the few bashisms and use the complete option name for clarity.
+> 
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> Reviewed-by: Petr Vorel <pvorel@suse.cz>
+> ---
+>   tools/testing/selftests/ima/test_kexec_load.sh | 18 +++++++++---------
+>   1 file changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/ima/test_kexec_load.sh b/tools/testing/selftests/ima/test_kexec_load.sh
+> index 1c10093fb526..0345803e7bec 100755
+> --- a/tools/testing/selftests/ima/test_kexec_load.sh
+> +++ b/tools/testing/selftests/ima/test_kexec_load.sh
+> @@ -1,7 +1,7 @@
+>   #!/bin/sh
+> -# SPDX-License-Identifier: GPL-2.0+
+> +# SPDX-License-Identifier: GPL-2.0-or-later
 
+# SPDX-License-Identifier: GPL-2.0
+
+>   # Loading a kernel image via the kexec_load syscall should fail
+> -# when the kerne is CONFIG_KEXEC_VERIFY_SIG enabled and the system
+> +# when the kernel is CONFIG_KEXEC_VERIFY_SIG enabled and the system
+>   # is booted in secureboot mode.
+>   
+>   TEST="$0"
+> @@ -12,8 +12,8 @@ rc=0
+>   ksft_skip=4
+>   
+>   # kexec requires root privileges
+> -if [ $UID != 0 ]; then
+> -	echo "$TEST: must be run as root" >&2
+> +if [ $(id -ru) -ne 0 ]; then
+> +	echo "$TEST: requires root privileges" >&2
+>   	exit $ksft_skip
+>   fi
+>   
+> @@ -33,17 +33,17 @@ secureboot=`hexdump $file | awk '{print substr($4,length($4),1)}'`
+>   
+>   # kexec_load should fail in secure boot mode
+>   KERNEL_IMAGE="/boot/vmlinuz-`uname -r`"
+> -kexec -l $KERNEL_IMAGE &>> /dev/null
+> -if [ $? == 0 ]; then
+> -	kexec -u
+> -	if [ "$secureboot" == "1" ]; then
+> +kexec --load $KERNEL_IMAGE 2>&1 > /dev/null
+> +if [ $? -eq 0 ]; then
+> +	kexec --unload
+> +	if [ $secureboot -eq 1 ]; then
+>   		echo "$TEST: kexec_load succeeded [FAIL]"
+>   		rc=1
+>   	else
+>   		echo "$TEST: kexec_load succeeded [PASS]"
+>   	fi
+>   else
+> -	if [ "$secureboot" == "1" ]; then
+> +	if [ $secureboot -eq 1 ]; then
+>   		echo "$TEST: kexec_load failed [PASS]"
+>   	else
+>   		echo "$TEST: kexec_load failed [FAIL]"
+> 
+
+The rest looks good to me.
+
+thanks,
+-- Shuah
