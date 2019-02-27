@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A5DAC43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 01:54:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CCDDC43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 01:59:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0FBD218D3
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 01:54:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCFEF218E0
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 01:59:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551232489;
-	bh=poVlimfAN7xelLtj2d+zX7shrn65yP+oCJOhuuy1vqo=;
+	s=default; t=1551232791;
+	bh=F7zlZZAMeF7Z62l+tPnZdxmk+qxlE0UQOW4vo/F3WCM=;
 	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=rZ0Eu9WjeZ6nXaLMXCQJGoUkoopSsaWRDrHuXaJaLV3LNdGVbm9Kx8RMLyS+c0nxh
-	 cb0mhcXnGcLZVJy/XTB68F+GK4dfD1q0wbKXVo3S2Q7f7dVgTuB5kSqomFHKJ6zLsB
-	 rq07EwUGRrKrlMXFn6VAzwGsjxZ11Q6daJzfDXBc=
+	b=lclXK2ppoKR5Yr9Rqrvl6ZGSgmGtnL3BlYLvpqq4R/SbIUhom2SnR9zqj+tTRJJlj
+	 07LUJV8X4i804BhXlnGEXFDD+blxeKXU40DaNargGt8CAHw/WxD3er05sH0U9/Lsrf
+	 V4trlCy7w6KAhMm5S/PYe5+3JTqiAIvmNeUbc96s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729651AbfB0Byt (ORCPT
+        id S1729527AbfB0B7v (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 26 Feb 2019 20:54:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47022 "EHLO mail.kernel.org"
+        Tue, 26 Feb 2019 20:59:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729647AbfB0Byt (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Feb 2019 20:54:49 -0500
+        id S1729464AbfB0B7v (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 26 Feb 2019 20:59:51 -0500
 Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5470C218D3;
-        Wed, 27 Feb 2019 01:54:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CC51218CD;
+        Wed, 27 Feb 2019 01:59:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551232487;
-        bh=poVlimfAN7xelLtj2d+zX7shrn65yP+oCJOhuuy1vqo=;
+        s=default; t=1551232789;
+        bh=F7zlZZAMeF7Z62l+tPnZdxmk+qxlE0UQOW4vo/F3WCM=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=w41v6euEHe+8ktWqp/uWAGl1VwWPXzyJXaKKJpd4+ChtAvI3nsVJEbnZve+/sSX+w
-         4J/qhOb5xKMPQId2nvrFqhGhTZcwPir/wZ0E28G0BuYruMAYVKwjb/ZbAb7rLSgJSg
-         LqOnGFmp5vBvQUER2ROmQCUDjmdk03a3JxTGRoOs=
-Subject: Re: [PATCH v2 4/5] selftests/ima: kexec_file_load syscall test
+        b=MIYjHX1MNk5yYfw1J80BuJAzqe3U/k4uuUxndb+yZHgPoc4T7ZM8CNxBtAMKSL5tt
+         9WUpp+/dBBtbem02b/414P2/RIF8ONBs2CQjpaDmSKa0n9ovfyQpZV41XWxktubxTf
+         m4tY+GwjC7QXrRr44LnLrh88+1yEUFbuZD58BDfA=
+Subject: Re: [PATCH v2 5/5] selftests/ima: loading kernel modules
 To:     Mimi Zohar <zohar@linux.ibm.com>, linux-kselftest@vger.kernel.org
 Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         shuah <shuah@kernel.org>
 References: <1551223620-11586-1-git-send-email-zohar@linux.ibm.com>
- <1551223620-11586-5-git-send-email-zohar@linux.ibm.com>
+ <1551223620-11586-6-git-send-email-zohar@linux.ibm.com>
 From:   shuah <shuah@kernel.org>
-Message-ID: <e61083af-1d8b-3f6d-ccc3-35e99b3ea94e@kernel.org>
-Date:   Tue, 26 Feb 2019 18:54:46 -0700
+Message-ID: <19d494c6-ecb1-b884-2d23-5f556b3ec05b@kernel.org>
+Date:   Tue, 26 Feb 2019 18:59:48 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <1551223620-11586-5-git-send-email-zohar@linux.ibm.com>
+In-Reply-To: <1551223620-11586-6-git-send-email-zohar@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -59,159 +59,152 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 2/26/19 4:26 PM, Mimi Zohar wrote:
-> The kernel can be configured to verify PE signed kernel images, IMA
-> kernel image signatures, both types of signatures, or none.  This test
-> verifies only properly signed kernel images are loaded into memory,
-> based on the kernel configuration and runtime policies.
+On 2/26/19 4:27 PM, Mimi Zohar wrote:
+> While the appended kernel module signature can be verified, when loading
+> a kernel module via either the init_module or the finit_module syscall,
+> verifying the IMA signature requires access to the file descriptor,
+> which is only available via the finit_module syscall.  As "modprobe"
+> does not provide a flag allowing the syscall - init_module or
+> finit_module - to be specified, this patch does not load a kernel
+> module.
+> 
+> This test simply verifies that on secure boot enabled systems with
+> "CONFIG_IMA_ARCH_POLICY" configured, that at least an appended kernel
+> module signature or an IMA signature is required based on the Kconfig
+> and the runtime IMA policy.
 > 
 > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 > ---
->   tools/testing/selftests/ima/Makefile               |   2 +-
->   tools/testing/selftests/ima/common_lib.sh          |  97 ++++++++++
->   .../testing/selftests/ima/test_kexec_file_load.sh  | 195 +++++++++++++++++++++
->   tools/testing/selftests/ima/test_kexec_load.sh     |   1 -
->   4 files changed, 293 insertions(+), 2 deletions(-)
->   create mode 100755 tools/testing/selftests/ima/test_kexec_file_load.sh
+>   tools/testing/selftests/ima/Makefile              |  2 +-
+>   tools/testing/selftests/ima/test_kernel_module.sh | 96 +++++++++++++++++++++++
+>   2 files changed, 97 insertions(+), 1 deletion(-)
+>   create mode 100755 tools/testing/selftests/ima/test_kernel_module.sh
 > 
 > diff --git a/tools/testing/selftests/ima/Makefile b/tools/testing/selftests/ima/Makefile
-> index 46b9e04d2737..049c83c9426c 100644
+> index 049c83c9426c..ef5201ff0bea 100644
 > --- a/tools/testing/selftests/ima/Makefile
 > +++ b/tools/testing/selftests/ima/Makefile
 > @@ -4,7 +4,7 @@ uname_M := $(shell uname -m 2>/dev/null || echo not)
 >   ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
 >   
 >   ifeq ($(ARCH),x86)
-> -TEST_PROGS := test_kexec_load.sh
-> +TEST_PROGS := test_kexec_load.sh test_kexec_file_load.sh
+> -TEST_PROGS := test_kexec_load.sh test_kexec_file_load.sh
+> +TEST_PROGS := test_kexec_load.sh test_kexec_file_load.sh test_kernel_module.sh
 >   TEST_FILES := common_lib.sh
 >   
 >   include ../lib.mk
-> diff --git a/tools/testing/selftests/ima/common_lib.sh b/tools/testing/selftests/ima/common_lib.sh
-> index c6d04006281d..24091f29bd09 100755
-> --- a/tools/testing/selftests/ima/common_lib.sh
-> +++ b/tools/testing/selftests/ima/common_lib.sh
-> @@ -4,6 +4,9 @@
->   # Kselftest framework defines: ksft_pass=0, ksft_fail=1, ksft_skip=4
->   
->   VERBOSE="${VERBOSE:-1}"
-> +IKCONFIG="/tmp/config-`uname -r`"
-> +KERNEL_IMAGE="/boot/vmlinuz-`uname -r`"
-> +SECURITYFS=$(grep "securityfs" /proc/mounts | awk '{print $2}')
->   
->   log_info()
->   {
-> @@ -55,3 +58,97 @@ get_secureboot_mode()
->   
->   	return $ret
->   }
-> +
-> +# Look for config option in Kconfig file.
-> +# Return 1 for found and 0 for not found.
-> +kconfig_enabled()
-> +{
-> +	local config="$1"
-> +	local msg="$2"
-> +
-> +        grep -E -q $config $IKCONFIG
-> +        if [ $? -eq 0 ]; then
-> +                log_info "$msg"
-> +                return 1
-> +        fi
-> +        return 0
-> +}
-> +
-> +# Attempt to get the kernel config first via proc, and then by
-> +# extracting it from the kernel image or the configs.ko using
-> +# scripts/extract-ikconfig.
-> +# Return 1 for found and 0 for not found.
-> +get_kconfig()
-> +{
-> +	local proc_config="/proc/config.gz"
-> +	local module_dir="/lib/modules/`uname -r`"
-> +	local configs_module="$module_dir/kernel/kernel/configs.ko"
-> +
-> +	if [ ! -f $proc_config ]; then
-> +		modprobe configs > /dev/null 2>&1
-> +	fi
-> +	if [ -f $proc_config ]; then
-> +		cat $proc_config | gunzip > $IKCONFIG 2>/dev/null
-> +		if [ $? -eq 0 ]; then
-> +			return 1
-> +		fi
-> +	fi
-> +
-> +	local extract_ikconfig="$module_dir/source/scripts/extract-ikconfig"
-> +	if [ ! -f $extract_ikconfig ]; then
-> +		log_skip "extract-ikconfig not found"
-> +	fi
-> +
-> +	$extract_ikconfig $KERNEL_IMAGE > $IKCONFIG 2>/dev/null
-> +	if [ $? -eq 1 ]; then
-> +		if [ ! -f $configs_module ]; then
-> +			log_skip "CONFIG_IKCONFIG not enabled"
-> +		fi
-> +		$extract_ikconfig $configs_module > $IKCONFIG
-> +		if [ $? -eq 1 ]; then
-> +			log_skip "CONFIG_IKCONFIG not enabled"
-> +		fi
-> +	fi
-> +	return 1
-> +}
-> +
-> +# Make sure that securityfs is mounted
-> +mount_securityfs()
-> +{
-> +	if [ -z $SECURITYFS ]; then
-> +		SECURITYFS=/sys/kernel/security
-> +		mount -t securityfs security $SECURITYFS
-> +	fi
-> +
-> +	if [ ! -d "$SECURITYFS" ]; then
-> +		log_fail "$SECURITYFS :securityfs is not mounted"
-> +	fi
-> +}
-> +
-> +# The policy rule format is an "action" followed by key-value pairs.  This
-> +# function supports up to two key-value pairs, in any order.
-> +# For example: action func=<keyword> [appraise_type=<type>]
-> +# Return 1 for found and 0 for not found.
-> +check_ima_policy()
-> +{
-> +	local action=$1
-> +	local keypair1="$2"
-> +	local keypair2="$3"
-> +
-> +	mount_securityfs
-> +
-> +	local ima_policy=$SECURITYFS/ima/policy
-> +	if [ ! -e $ima_policy ]; then
-> +		log_fail "$ima_policy not found"
-> +	fi
-> +
-> +	if [ -n $keypair2 ]; then
-> +		grep -e "^$action.*$keypair1" "$ima_policy" | \
-> +			grep -q -e "$keypair2"
-> +	else
-> +		grep -q -e "^$action.*$keypair1" "$ima_policy"
-> +	fi
-> +
-> +	[ $? -eq 0 ] && ret=1 || ret=0
-> +        return $ret
-> +}
-> diff --git a/tools/testing/selftests/ima/test_kexec_file_load.sh b/tools/testing/selftests/ima/test_kexec_file_load.sh
+> diff --git a/tools/testing/selftests/ima/test_kernel_module.sh b/tools/testing/selftests/ima/test_kernel_module.sh
 > new file mode 100755
-> index 000000000000..e08c7e6cf28c
+> index 000000000000..4009e1b60b03
 > --- /dev/null
-> +++ b/tools/testing/selftests/ima/test_kexec_file_load.sh
-> @@ -0,0 +1,195 @@
+> +++ b/tools/testing/selftests/ima/test_kernel_module.sh
+> @@ -0,0 +1,96 @@
 > +#!/bin/sh
 > +# SPDX-License-Identifier: GPL-2.0-or-later
-> +#
 
 Same here
 
 # SPDX-License-Identifier: GPL-2.0
+
+> +#
+> +# On secure boot enabled systems with "CONFIG_IMA_ARCH_POLICY" configured,
+> +# this test verifies that at least an appended kernel module signature or
+> +# an IMA signature is required.  It does not attempt to load a kernel module.
+> +
+> +TEST="KERNEL_MODULE"
+> +. ./common_lib.sh
+> +
+> +trap "{ rm -f $IKCONFIG ; }" EXIT
+> +
+> +# Some of the IMA builtin policies may require the kernel modules to
+> +# be signed, but these policy rules may be replaced with a custom
+> +# policy.  Only CONFIG_IMA_APPRAISE_REQUIRE_MODULE_SIGS persists after
+> +# loading a custom policy.  Check if it is enabled, before reading the
+> +# IMA runtime sysfs policy file.
+> +# Return 1 for IMA signature required and 0 for not required.
+> +is_ima_sig_required()
+> +{
+> +	local ret=0
+> +
+> +	kconfig_enabled "CONFIG_IMA_APPRAISE_REQUIRE_MODULE_SIGS=y" \
+> +		"IMA kernel module signature required"
+> +	if [ $? -eq 1 ]; then
+> +		log_info "IMA kernel module signature required"
+> +		return 1
+> +	fi
+> +
+> +	# The architecture specific or a custom policy may require the
+> +	# kernel module to be signed.  Policy rules are walked sequentially.
+> +	# As a result, a policy rule may be defined, but might not necessarily
+> +	# be used.  This test assumes if a policy rule is specified, that is
+> +	# the intent.
+> +	if [ $ima_read_policy -eq 1 ]; then
+> +		check_ima_policy "appraise" "func=MODULE_CHECK" \
+> +			"appraise_type=imasig"
+> +		ret=$?
+> +		[ $ret -eq 1 ] && log_info "IMA signature required";
+> +	fi
+> +	return $ret
+> +}
+> +
+> +# loading kernel modules requires root privileges
+> +if [ $(id -ru) -ne 0 ]; then
+> +	log_skip "requires root privileges"
+> +fi
+> +
+> +# Are appended signatures required?
+> +if [ -e /sys/module/module/parameters/sig_enforce ]; then
+> +	sig_enforce=$(cat /sys/module/module/parameters/sig_enforce)
+> +	if [ $sig_enforce = "Y" ]; then
+> +		log_pass "appended kernel module signature required"
+> +	fi
+> +fi
+> +
+> +get_secureboot_mode
+> +if [ $? -eq 0 ]; then
+> +	log_skip "secure boot not enabled"
+> +fi
+> +
+> +# get the kernel config
+> +get_kconfig
+> +
+
+get_kconfig() will be good candidate as a kselftest common
+function. Is that possible?
+
+> +# Determine which kernel config options are enabled
+> +kconfig_enabled "CONFIG_IMA_ARCH_POLICY=y" \
+> +	"architecture specific policy enabled"
+> +arch_policy=$?
+> +
+> +kconfig_enabled "CONFIG_MODULE_SIG=y" \
+> +	"appended kernel modules signature enabled"
+> +appended_sig_enabled=$?
+> +
+> +kconfig_enabled "CONFIG_IMA_READ_POLICY=y" "reading IMA policy permitted"
+> +ima_read_policy=$?
+> +
+> +is_ima_sig_required
+> +ima_sig_required=$?
+> +
+> +if [ $arch_policy -eq 0 ]; then
+> +	log_skip "architecture specific policy not enabled"
+> +fi
+> +
+> +if [ $appended_sig_enabled -eq 1 ]; then
+> +	log_fail "appended kernel module signature enabled, but not required"
+> +fi
+> +
+> +if [ $ima_sig_required -eq 1 ]; then
+> +	log_pass "IMA kernel module signature required"
+> +fi
+> +
+> +if [ $ima_read_policy -eq 1 ]; then
+> +	log_fail "IMA kernel module signature not required"
+> +else
+> +	log_skip "reading IMA policy not permitted"
+> +fi
+> 
 
 thanks,
 -- Shuah
