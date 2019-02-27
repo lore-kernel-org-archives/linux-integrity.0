@@ -2,68 +2,113 @@ Return-Path: <SRS0=nfu5=RC=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7682BC43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 17:25:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38335C43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 18:38:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F1E220643
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 17:25:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B41B2183F
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 18:38:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730047AbfB0RZt (ORCPT
+        id S1727240AbfB0SiK (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 27 Feb 2019 12:25:49 -0500
-Received: from mga03.intel.com ([134.134.136.65]:45742 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730141AbfB0RZj (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 27 Feb 2019 12:25:39 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2019 09:25:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,420,1544515200"; 
-   d="scan'208";a="278328615"
-Received: from unknown (HELO localhost) ([10.249.254.142])
-  by orsmga004.jf.intel.com with ESMTP; 27 Feb 2019 09:25:37 -0800
-Date:   Wed, 27 Feb 2019 19:25:35 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     linux-integrity@vger.kernel.org
-Subject: Re: About PureBoot and TPM based DRM's
-Message-ID: <20190227172535.GA3848@linux.intel.com>
-References: <20190227155611.GA7434@linux.intel.com>
- <1551286651.3105.11.camel@HansenPartnership.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1551286651.3105.11.camel@HansenPartnership.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 27 Feb 2019 13:38:10 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43728 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726594AbfB0SiK (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 27 Feb 2019 13:38:10 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1RITLqa144670
+        for <linux-integrity@vger.kernel.org>; Wed, 27 Feb 2019 13:38:08 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qwx34wpfp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 27 Feb 2019 13:38:08 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 27 Feb 2019 18:38:07 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 27 Feb 2019 18:38:05 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1RIc4Qh32047282
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Feb 2019 18:38:04 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 085A2A4064;
+        Wed, 27 Feb 2019 18:38:04 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4125DA405B;
+        Wed, 27 Feb 2019 18:38:03 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.106.105])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 27 Feb 2019 18:38:03 +0000 (GMT)
+Subject: Re: [PATCH v2 5/5] selftests/ima: loading kernel modules
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     shuah <shuah@kernel.org>, linux-kselftest@vger.kernel.org
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Petr Vorel <pvorel@suse.cz>
+Date:   Wed, 27 Feb 2019 13:37:52 -0500
+In-Reply-To: <ab45b574-4791-d42a-f566-ab9886525549@kernel.org>
+References: <1551223620-11586-1-git-send-email-zohar@linux.ibm.com>
+         <1551223620-11586-6-git-send-email-zohar@linux.ibm.com>
+         <19d494c6-ecb1-b884-2d23-5f556b3ec05b@kernel.org>
+         <1551276893.10911.23.camel@linux.ibm.com>
+         <ab45b574-4791-d42a-f566-ab9886525549@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19022718-0020-0000-0000-0000031C0659
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022718-0021-0000-0000-0000216D7446
+Message-Id: <1551292672.10911.68.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=758 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902270125
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Feb 27, 2019 at 08:57:31AM -0800, James Bottomley wrote:
-> On Wed, 2019-02-27 at 17:56 +0200, Jarkko Sakkinen wrote:
-> > Just read this:
+
+> >>> +get_secureboot_mode
+> >>> +if [ $? -eq 0 ]; then
+> >>> +	log_skip "secure boot not enabled"
+> >>> +fi
+> >>> +
+> >>> +# get the kernel config
+> >>> +get_kconfig
+> >>> +
+> >>
+> >> get_kconfig() will be good candidate as a kselftest common
+> >> function. Is that possible?
 > > 
-> > https://puri.sm/posts/pureboot-the-high-security-boot-process/
+> > Sure, where would it go?  get_kconfig calls log_skip.  I didn't see
+> > any common logging functions.  Petr suggested defining a set of common
+> > logging functions.  Did you want to only make "log_skip" a common
+> > function or the other logging functions log_pass, log_fail, log_info
+> > as well?
 > > 
-> > Makes me ask: where are these TPM based DRM's? Never seen one but I
-> > assume they exist. Anyway cool work otherwise.
 > 
-> Actually, they don't, the article is just restating a common
-> misconception that the TPM is used to enforce DRM and then saying
-> they've found a non-evil use for it which, apparently, is using the TPM
-> for standard key storage and measurement.  Apparently this means we're
-> also all working on non-evil uses ...
+> We can do this as a separate effort in the interest of getting these
+> in the interest of getting these in.
+> 
+> We have common functions in ksefltest.h for c and we don't have them
+> for tests scripts. We might be able to collect common routines such
+> as get_kconfig into a common .sh and include in tests. If you have time
+> to do this, that will be great. It can be done as a separate effort.
 
-*Might* be that Palladium that was canceled from Windows Vista might be
-the seed of this misconception. It seems to have spread about somewhat
-similar discussions when it still was coming.
+Ok.  For now, I'm waiting for some review/ack's.
 
-/Jarkko
+Mimi
+
