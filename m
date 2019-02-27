@@ -2,84 +2,73 @@ Return-Path: <SRS0=nfu5=RC=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74CA5C43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 19:57:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C8ACC43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 20:27:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 474D12186A
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 19:57:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00939213A2
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 20:27:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NQt03jJo"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C6+RrZ7M"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729825AbfB0T5V (ORCPT
+        id S1730269AbfB0U1D (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 27 Feb 2019 14:57:21 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:51510 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729291AbfB0T5V (ORCPT
+        Wed, 27 Feb 2019 15:27:03 -0500
+Received: from mail-ot1-f74.google.com ([209.85.210.74]:38081 "EHLO
+        mail-ot1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730139AbfB0U1D (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 27 Feb 2019 14:57:21 -0500
-Received: by mail-it1-f193.google.com with SMTP id e24so11171714itl.1
-        for <linux-integrity@vger.kernel.org>; Wed, 27 Feb 2019 11:57:20 -0800 (PST)
+        Wed, 27 Feb 2019 15:27:03 -0500
+Received: by mail-ot1-f74.google.com with SMTP id 42so8576446otv.5
+        for <linux-integrity@vger.kernel.org>; Wed, 27 Feb 2019 12:27:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=83V7j15vBBfS984rGnTbpuaKeqSIjpIFzcupAdX7D8c=;
-        b=NQt03jJoTJFdaHZm7J4Uyq6Z7p+6gjFaDWBqFI6wvliWY5ZZ4+n/3pPXxwGs3YLK3i
-         orjnaqS2HhpnTGa3uuVGIrNt+t7J24+wB/9+Y5J+16V8SDoV7RyW/6wJ5riwj0+fEy/S
-         fLH2FiZ1NnjAHUdVIgPFkndHgz6MIV78qk2z8xdzNnZ+odQEuAf46AHaftUS1LvkgkKS
-         1OagM45BOod/D4GCTNrwHU6dvWL7XlRTOGKPm6uiKRb7in9Bh42+Bu0xou/dklo8SJbc
-         7+6ymxy8HJrpCJa1Vwq66nNW7KVU710qd3+CQYLskcEl7qC1S4fB4u2edWuhr8KK8MQF
-         66iw==
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=3Kfjwj6d2eSKpoWcFfFc9NzavlqFkeO15Wc7Bn8QSiU=;
+        b=C6+RrZ7M7QLFsjoR7kJT38en+nrsa0tx2Xm/bcJehIDTbvwyiEjiYQyGytXmXax8nr
+         zxvZbVuTeTV4INXw5yMG1qzPn6hCvNye1KOnE4/rEuAj82Y6cL42KVRrKzHPLf6bpQ6m
+         4aafjmfQoNIwwElaxIQG5JwHutP6h5Ti9zUXsPvNXfcEBzcJFIXQz2WQdCvDumqp1+jp
+         ssIuXsCiS/vxNoOqHe0dGjq5xtX+Wm5AfIzgdtTaHWq8IWcxXiWCjqTmEF9mSuAhg6L/
+         4ezKVv5wUv4Ilp5XjRzBycoG46ZpQN2ASwkbb1vdYGTFhJqJcDyS0xZ75FyCuea7e5Ey
+         oc/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=83V7j15vBBfS984rGnTbpuaKeqSIjpIFzcupAdX7D8c=;
-        b=cGKijV7UQmq4iDrEujiIK7jEbQ4inroJhuIQA9zflqZfwSGcybhVso6eP1aIjpdRDM
-         YJofdLw/hf7cRzlXPupvO1BJpZ5az9Yr4ZQIVlZ7GxQB6BKiCNdxh0bEYJGgy263jcVC
-         W3dTecmoIwYawD/49Lj7HBwpe5U0/hxFAwP9OQbScjCL+xsF96OYP2oSBmwKL87WHYXF
-         BwbdoZ6HnE8DfEenTp5xDf4FqWObB+T6qJZTDv8UgGWWcy2E/lGQ86tE+ONnQcdC9diE
-         Z2HP6trA0NCB7yEBbXZbQDcgqhvx6oyuzxEgY7D1Ap1N0D8M8t1PNeCPYS286pEk0weL
-         jiuw==
-X-Gm-Message-State: AHQUAuYIOY6nhdfvYx6vodAE47BSboKcLo1OiP5pMHmFi5vv9LzIKDuQ
-        Afg7y577v4HiOL7lHpYC30gw3TUfVgzt459d3wvE3w==
-X-Google-Smtp-Source: AHgI3Ia8t6dhqsh5P6ddYLI/koz1ESlPY9C2OXqa/0TUbNSOWjCOsD2hqCZCJYXnyPy0gMEsnFc57+2hyR3HWbD5OHo=
-X-Received: by 2002:a02:76c2:: with SMTP id z185mr2328462jab.102.1551297440002;
- Wed, 27 Feb 2019 11:57:20 -0800 (PST)
-MIME-Version: 1.0
-References: <20190222202606.160816-1-matthewgarrett@google.com>
- <20190222202606.160816-3-matthewgarrett@google.com> <20190227140259.GA17106@linux.intel.com>
-In-Reply-To: <20190227140259.GA17106@linux.intel.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Wed, 27 Feb 2019 11:57:09 -0800
-Message-ID: <CACdnJuucWezNf3jki5wN2XJ6wsN_uMSxQuyrekr9F-3aJJE4kA@mail.gmail.com>
-Subject: Re: [PATCH V4 2/4] tpm: Reserve the TPM final events table
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=3Kfjwj6d2eSKpoWcFfFc9NzavlqFkeO15Wc7Bn8QSiU=;
+        b=MV6CxaUQ0kQu9f9e2dRa3LfURIieE5VcjM63DOMrsifXwK1IMvqvtmOvBTa299L8nG
+         SkiaT8rBLg+GpJZrDVgRKFPhSZkeYclmx9HDqp3e/HBeLuK2CZ/kEu5bw09UNzMOxLsN
+         sld6iE3Ujcm4Qgv0UP3FujbR4kPbge1CAqxSmIhhQKRbtFfBlwx2/Ar2LgtI7ZZarYJu
+         /W5d2cJ8I2ZhDg7VOqHFhDtSAgrO+jYZ1yUsDEtKpzUL2MO/qTmnLtNBPAh6xodyB4FV
+         jK+ddu/K9cqFSHI/VFrHmAOP6B1SZQLFDC2XgGwCOWp21fOCB1vPpotJ0/SGYBw+K9yy
+         WPNQ==
+X-Gm-Message-State: AHQUAuYINaRhHnPBnogyKiVEZoFftfCDunfWlKWE8izdoHMagWRAzC7l
+        My5ExWeWOYQOp1AIdarJGuPxIfh6ZLqBbj1ypLCBw4c+emcJb/BB/p3pGHbR7EbdTl8MzY7eTyH
+        nbFGLVB5SDMS19jTQKXoL0Gcd1ctivy8gNRcOWBryt4sJH1orxuGj4BU8OxdQ6PCc9QDQNgf6Th
+        Pm/cwoOpKE3+ztuiq2VOQ=
+X-Google-Smtp-Source: AHgI3IZgugPM+DBmTteF2hpZSOfGcogUwDvjhjvoxla1uC7DRKd9EpiP36U/7AiDsjBrKLfTHQIPYTnak09NE4IhKZUWjA==
+X-Received: by 2002:a9d:5f17:: with SMTP id f23mr2962158oti.31.1551299222955;
+ Wed, 27 Feb 2019 12:27:02 -0800 (PST)
+Date:   Wed, 27 Feb 2019 12:26:54 -0800
+Message-Id: <20190227202658.197113-1-matthewgarrett@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.21.0.352.gf09ad66450-goog
+Subject: Add support for TCG2 log format on UEFI systems
+From:   Matthew Garrett <matthewgarrett@google.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
+        roberto.sassu@huawei.com, linux-efi@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tweek@google.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Feb 27, 2019 at 6:03 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
-> My guess is that your patches are based a later 5.0-rcX. Unfortunately I
-> cannot update my master at this point because my 5.1 PR was taken to
-> security tree and rebasing would change the commit IDs of 5.1 content
-> because security/next-general does not yet contain those patches.
+Identical to V4, but based on tpmdd-next
 
-Bother. I'll rebase against your tree.
+
