@@ -2,120 +2,97 @@ Return-Path: <SRS0=nfu5=RC=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C27EC43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 14:15:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC951C43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 14:26:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14690217F5
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 14:15:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B74782133D
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 14:26:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RMVoQfrt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729907AbfB0OPM (ORCPT
+        id S1730030AbfB0O0v (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 27 Feb 2019 09:15:12 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34664 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728751AbfB0OPM (ORCPT
+        Wed, 27 Feb 2019 09:26:51 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:43575 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726454AbfB0O0v (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 27 Feb 2019 09:15:12 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1REEA22138669
-        for <linux-integrity@vger.kernel.org>; Wed, 27 Feb 2019 09:15:11 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qwuj4a7an-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 27 Feb 2019 09:15:10 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 27 Feb 2019 14:15:09 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Feb 2019 14:15:05 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1REF4oN27197516
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 27 Feb 2019 14:15:04 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A6C3942042;
-        Wed, 27 Feb 2019 14:15:04 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A558042041;
-        Wed, 27 Feb 2019 14:15:03 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.106.105])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 27 Feb 2019 14:15:03 +0000 (GMT)
-Subject: Re: [PATCH v2 5/5] selftests/ima: loading kernel modules
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     shuah <shuah@kernel.org>, linux-kselftest@vger.kernel.org
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Petr Vorel <pvorel@suse.cz>
-Date:   Wed, 27 Feb 2019 09:14:53 -0500
-In-Reply-To: <19d494c6-ecb1-b884-2d23-5f556b3ec05b@kernel.org>
-References: <1551223620-11586-1-git-send-email-zohar@linux.ibm.com>
-         <1551223620-11586-6-git-send-email-zohar@linux.ibm.com>
-         <19d494c6-ecb1-b884-2d23-5f556b3ec05b@kernel.org>
+        Wed, 27 Feb 2019 09:26:51 -0500
+Received: by mail-oi1-f193.google.com with SMTP id i8so13535671oib.10
+        for <linux-integrity@vger.kernel.org>; Wed, 27 Feb 2019 06:26:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=J8upNUPQJJ6H2qjIkuc9zw7Ov5mhvlkVF6NyWSyZapU=;
+        b=RMVoQfrtle6yaJUJJupjsb57U0Oq8ag890PA2JKjex/Cxq6m8hBIrWXZP05bi9XEx8
+         NsKLv1gN427lk0muVnGhNVRDqqgMq7OjfNhvSFc90JbKp/F5qBbnIrvnBCigSR8ieKEK
+         4ax3S18mHLyUqoxA2nUjaIKJH1AWjdSwBWs7qVhdd9Z7AjfNtdd5+BN46VY+9PJDzgOT
+         Pmumkp5wpUIeM/RqC9Jj2LSwocgZWj89KCc9bcidWo/bmU5IMWDVk1DcuKEDqab26dO9
+         iU3lJ7DlmffMasM+iFPkgHYyaA8IXfgAYd5dzRtlckLxlUpyOjM+uSfvQ6p1Zr9184EX
+         imXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=J8upNUPQJJ6H2qjIkuc9zw7Ov5mhvlkVF6NyWSyZapU=;
+        b=iLOzLLmPliIpuYYaOGGMucUQOpG+aT9EIc9A6LoTZKAOgjPs1iF70TJ+o5fvbc088J
+         13lyM9L9uHAgbeKO0CBPMbv3PzoD/WpRcE/ulC1DjzKrM45uPeZDoqnZ3HhpgX/9/geo
+         b1RLDA+RmOl4kWBtgwMfEJXsAsHjJiRCoYofC0uKxn6Gi61YX88B+Uc8biL51OmakRky
+         UPqyF2mPlssd8EUkKmM/XTOhgPQf9tjL2vKXcakcpRM6AWadn9mln5hXu+YMMTRstP4g
+         ZCYg82pDg/hLuOW6CMvVzmzQT7ksX2pnHyqN85AkYy6eRkZPwGT/JqInQvA7tEs4SpPx
+         dwqg==
+X-Gm-Message-State: AHQUAuYlq5/epOeccULkTsxLVzh7JOI2oKBjeevXvWnHg8y/FfMn/xeG
+        61DEDJRXZiyHl9KApI7Rb0sexa6D02otCDRr4nNu6Q==
+X-Google-Smtp-Source: APXvYqyS00nRptso/0gXba63jbsXd5fa5QBBUKHBZpVExROmtlJn9gVtohjMX8fv9V/1EGcYS3HdUSBRKbJpi8SYP+A=
+X-Received: by 2002:aca:d607:: with SMTP id n7mr1034086oig.3.1551277610085;
+ Wed, 27 Feb 2019 06:26:50 -0800 (PST)
+MIME-Version: 1.0
+References: <20190226215034.68772-1-matthewgarrett@google.com> <20190226215034.68772-5-matthewgarrett@google.com>
+In-Reply-To: <20190226215034.68772-5-matthewgarrett@google.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 27 Feb 2019 15:26:24 +0100
+Message-ID: <CAG48ez1wFq89wL+vF_6ua-tcG8Rne0KsGfwdJ09mv_G7A=MoFQ@mail.gmail.com>
+Subject: Re: [PATCH V2 4/4] FUSE: Allow filesystems to provide gethash methods
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Garrett <mjg59@google.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19022714-0012-0000-0000-000002FADB80
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022714-0013-0000-0000-00002132839F
-Message-Id: <1551276893.10911.23.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902270096
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Shuah,
+On Wed, Feb 27, 2019 at 3:24 PM Matthew Garrett
+<matthewgarrett@google.com> wrote:
+> FUSE implementations may have a secure way to provide file hashes (eg,
+> they're a front-end to a remote store that ties files to their hashes).
+> Allow filesystems to expose this information, but require an option to
+> be provided before it can be used. This is to avoid malicious users
+> being able to mount an unprivileged FUSE filesystem that provides
+> incorrect hashes.
+>
+> A sufficiently malicious FUSE filesystem may still simply swap out its
+> contents after the hash has been obtained - this patchset does nothing
+> to change that, and sysadmins should have appropriate policy in place to
+> protect against that.
+[...]
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index 2f2c92e6f8cb..f63920ebce85 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -705,6 +705,13 @@ struct fuse_conn {
+>         /** Does the filesystem support copy_file_range? */
+>         unsigned no_copy_file_range:1;
+>
+> +       /*
+> +        * Allow the underlying filesystem to the hash of a file. This is
 
-> > diff --git a/tools/testing/selftests/ima/test_kernel_module.sh b/tools/testing/selftests/ima/test_kernel_module.sh
-> > new file mode 100755
-> > index 000000000000..4009e1b60b03
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/ima/test_kernel_module.sh
-> > @@ -0,0 +1,96 @@
-> > +#!/bin/sh
-> > +# SPDX-License-Identifier: GPL-2.0-or-later
-> 
-> Same here
-> 
-> # SPDX-License-Identifier: GPL-2.0
-
-Sure, I'll make the change here and in the other places.
-
-
-> > +get_secureboot_mode
-> > +if [ $? -eq 0 ]; then
-> > +	log_skip "secure boot not enabled"
-> > +fi
-> > +
-> > +# get the kernel config
-> > +get_kconfig
-> > +
-> 
-> get_kconfig() will be good candidate as a kselftest common
-> function. Is that possible?
-
-Sure, where would it go?  get_kconfig calls log_skip.  I didn't see
-any common logging functions.  Petr suggested defining a set of common
-logging functions.  Did you want to only make "log_skip" a common
-function or the other logging functions log_pass, log_fail, log_info
-as well?
-
-Thanks,
-
-Mimi
-
+nit: "to provide the", or something like that?
