@@ -2,209 +2,92 @@ Return-Path: <SRS0=nfu5=RC=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CCDDC43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 01:59:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 344B7C43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 06:15:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCFEF218E0
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 01:59:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551232791;
-	bh=F7zlZZAMeF7Z62l+tPnZdxmk+qxlE0UQOW4vo/F3WCM=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=lclXK2ppoKR5Yr9Rqrvl6ZGSgmGtnL3BlYLvpqq4R/SbIUhom2SnR9zqj+tTRJJlj
-	 07LUJV8X4i804BhXlnGEXFDD+blxeKXU40DaNargGt8CAHw/WxD3er05sH0U9/Lsrf
-	 V4trlCy7w6KAhMm5S/PYe5+3JTqiAIvmNeUbc96s=
+	by mail.kernel.org (Postfix) with ESMTP id 039BC218D9
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 06:15:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729527AbfB0B7v (ORCPT
+        id S1729793AbfB0GPp (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 26 Feb 2019 20:59:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47624 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729464AbfB0B7v (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Feb 2019 20:59:51 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6CC51218CD;
-        Wed, 27 Feb 2019 01:59:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551232789;
-        bh=F7zlZZAMeF7Z62l+tPnZdxmk+qxlE0UQOW4vo/F3WCM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=MIYjHX1MNk5yYfw1J80BuJAzqe3U/k4uuUxndb+yZHgPoc4T7ZM8CNxBtAMKSL5tt
-         9WUpp+/dBBtbem02b/414P2/RIF8ONBs2CQjpaDmSKa0n9ovfyQpZV41XWxktubxTf
-         m4tY+GwjC7QXrRr44LnLrh88+1yEUFbuZD58BDfA=
-Subject: Re: [PATCH v2 5/5] selftests/ima: loading kernel modules
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-kselftest@vger.kernel.org
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shuah <shuah@kernel.org>
-References: <1551223620-11586-1-git-send-email-zohar@linux.ibm.com>
- <1551223620-11586-6-git-send-email-zohar@linux.ibm.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <19d494c6-ecb1-b884-2d23-5f556b3ec05b@kernel.org>
-Date:   Tue, 26 Feb 2019 18:59:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 27 Feb 2019 01:15:45 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:47146 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729592AbfB0GPp (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 27 Feb 2019 01:15:45 -0500
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id C8C3272CCAD;
+        Wed, 27 Feb 2019 09:15:42 +0300 (MSK)
+Received: from beacon.altlinux.org (unknown [185.6.174.98])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 9EC8D4A4AE7;
+        Wed, 27 Feb 2019 09:15:42 +0300 (MSK)
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        David Howells <dhowells@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH RFC v6] integrity: support EC-RDSA signatures for asymmetric_verify
+Date:   Wed, 27 Feb 2019 09:15:33 +0300
+Message-Id: <20190227061533.1030-1-vt@altlinux.org>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-In-Reply-To: <1551223620-11586-6-git-send-email-zohar@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 2/26/19 4:27 PM, Mimi Zohar wrote:
-> While the appended kernel module signature can be verified, when loading
-> a kernel module via either the init_module or the finit_module syscall,
-> verifying the IMA signature requires access to the file descriptor,
-> which is only available via the finit_module syscall.  As "modprobe"
-> does not provide a flag allowing the syscall - init_module or
-> finit_module - to be specified, this patch does not load a kernel
-> module.
-> 
-> This test simply verifies that on secure boot enabled systems with
-> "CONFIG_IMA_ARCH_POLICY" configured, that at least an appended kernel
-> module signature or an IMA signature is required based on the Kconfig
-> and the runtime IMA policy.
-> 
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->   tools/testing/selftests/ima/Makefile              |  2 +-
->   tools/testing/selftests/ima/test_kernel_module.sh | 96 +++++++++++++++++++++++
->   2 files changed, 97 insertions(+), 1 deletion(-)
->   create mode 100755 tools/testing/selftests/ima/test_kernel_module.sh
-> 
-> diff --git a/tools/testing/selftests/ima/Makefile b/tools/testing/selftests/ima/Makefile
-> index 049c83c9426c..ef5201ff0bea 100644
-> --- a/tools/testing/selftests/ima/Makefile
-> +++ b/tools/testing/selftests/ima/Makefile
-> @@ -4,7 +4,7 @@ uname_M := $(shell uname -m 2>/dev/null || echo not)
->   ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
->   
->   ifeq ($(ARCH),x86)
-> -TEST_PROGS := test_kexec_load.sh test_kexec_file_load.sh
-> +TEST_PROGS := test_kexec_load.sh test_kexec_file_load.sh test_kernel_module.sh
->   TEST_FILES := common_lib.sh
->   
->   include ../lib.mk
-> diff --git a/tools/testing/selftests/ima/test_kernel_module.sh b/tools/testing/selftests/ima/test_kernel_module.sh
-> new file mode 100755
-> index 000000000000..4009e1b60b03
-> --- /dev/null
-> +++ b/tools/testing/selftests/ima/test_kernel_module.sh
-> @@ -0,0 +1,96 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0-or-later
+Allow to use EC-RDSA signatures for IMA by determining signature type by
+the hash algorithm name. This works good for EC-RDSA since Streebog and
+EC-RDSA should always be used together.
 
-Same here
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: linux-integrity@vger.kernel.org
+Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+---
+Changes since v5:
 
-# SPDX-License-Identifier: GPL-2.0
+- This should go over "[PATCH v5 00/10] crypto: add EC-RDSA (GOST 34.10)
+  algorithm" instead of "[PATCH v5 10/10] integrity: support EC-RDSA signatures
+  for asymmetric_verify."
 
-> +#
-> +# On secure boot enabled systems with "CONFIG_IMA_ARCH_POLICY" configured,
-> +# this test verifies that at least an appended kernel module signature or
-> +# an IMA signature is required.  It does not attempt to load a kernel module.
-> +
-> +TEST="KERNEL_MODULE"
-> +. ./common_lib.sh
-> +
-> +trap "{ rm -f $IKCONFIG ; }" EXIT
-> +
-> +# Some of the IMA builtin policies may require the kernel modules to
-> +# be signed, but these policy rules may be replaced with a custom
-> +# policy.  Only CONFIG_IMA_APPRAISE_REQUIRE_MODULE_SIGS persists after
-> +# loading a custom policy.  Check if it is enabled, before reading the
-> +# IMA runtime sysfs policy file.
-> +# Return 1 for IMA signature required and 0 for not required.
-> +is_ima_sig_required()
-> +{
-> +	local ret=0
-> +
-> +	kconfig_enabled "CONFIG_IMA_APPRAISE_REQUIRE_MODULE_SIGS=y" \
-> +		"IMA kernel module signature required"
-> +	if [ $? -eq 1 ]; then
-> +		log_info "IMA kernel module signature required"
-> +		return 1
-> +	fi
-> +
-> +	# The architecture specific or a custom policy may require the
-> +	# kernel module to be signed.  Policy rules are walked sequentially.
-> +	# As a result, a policy rule may be defined, but might not necessarily
-> +	# be used.  This test assumes if a policy rule is specified, that is
-> +	# the intent.
-> +	if [ $ima_read_policy -eq 1 ]; then
-> +		check_ima_policy "appraise" "func=MODULE_CHECK" \
-> +			"appraise_type=imasig"
-> +		ret=$?
-> +		[ $ret -eq 1 ] && log_info "IMA signature required";
-> +	fi
-> +	return $ret
-> +}
-> +
-> +# loading kernel modules requires root privileges
-> +if [ $(id -ru) -ne 0 ]; then
-> +	log_skip "requires root privileges"
-> +fi
-> +
-> +# Are appended signatures required?
-> +if [ -e /sys/module/module/parameters/sig_enforce ]; then
-> +	sig_enforce=$(cat /sys/module/module/parameters/sig_enforce)
-> +	if [ $sig_enforce = "Y" ]; then
-> +		log_pass "appended kernel module signature required"
-> +	fi
-> +fi
-> +
-> +get_secureboot_mode
-> +if [ $? -eq 0 ]; then
-> +	log_skip "secure boot not enabled"
-> +fi
-> +
-> +# get the kernel config
-> +get_kconfig
-> +
+- Comparison of hash algo by enum id instead of text name, as suggested by
+  Thiago Jung Bauermann and Mimi Zohar.
 
-get_kconfig() will be good candidate as a kselftest common
-function. Is that possible?
+ security/integrity/digsig_asymmetric.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-> +# Determine which kernel config options are enabled
-> +kconfig_enabled "CONFIG_IMA_ARCH_POLICY=y" \
-> +	"architecture specific policy enabled"
-> +arch_policy=$?
-> +
-> +kconfig_enabled "CONFIG_MODULE_SIG=y" \
-> +	"appended kernel modules signature enabled"
-> +appended_sig_enabled=$?
-> +
-> +kconfig_enabled "CONFIG_IMA_READ_POLICY=y" "reading IMA policy permitted"
-> +ima_read_policy=$?
-> +
-> +is_ima_sig_required
-> +ima_sig_required=$?
-> +
-> +if [ $arch_policy -eq 0 ]; then
-> +	log_skip "architecture specific policy not enabled"
-> +fi
-> +
-> +if [ $appended_sig_enabled -eq 1 ]; then
-> +	log_fail "appended kernel module signature enabled, but not required"
-> +fi
-> +
-> +if [ $ima_sig_required -eq 1 ]; then
-> +	log_pass "IMA kernel module signature required"
-> +fi
-> +
-> +if [ $ima_read_policy -eq 1 ]; then
-> +	log_fail "IMA kernel module signature not required"
-> +else
-> +	log_skip "reading IMA policy not permitted"
-> +fi
-> 
+diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
+index d775e03fbbcc..99080871eb9f 100644
+--- a/security/integrity/digsig_asymmetric.c
++++ b/security/integrity/digsig_asymmetric.c
+@@ -104,9 +104,16 @@ int asymmetric_verify(struct key *keyring, const char *sig,
+ 
+ 	memset(&pks, 0, sizeof(pks));
+ 
+-	pks.pkey_algo = "rsa";
+ 	pks.hash_algo = hash_algo_name[hdr->hash_algo];
+-	pks.encoding = "pkcs1";
++	if (hdr->hash_algo == HASH_ALGO_STREEBOG_256 ||
++	    hdr->hash_algo == HASH_ALGO_STREEBOG_512) {
++		/* EC-RDSA and Streebog should go together. */
++		pks.pkey_algo = "ecrdsa";
++		pks.encoding = "raw";
++	} else {
++		pks.pkey_algo = "rsa";
++		pks.encoding = "pkcs1";
++	}
+ 	pks.digest = (u8 *)data;
+ 	pks.digest_size = datalen;
+ 	pks.s = hdr->sig;
+-- 
+2.11.0
 
-thanks,
--- Shuah
