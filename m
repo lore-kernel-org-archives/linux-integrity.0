@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65B05C43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 00:57:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 153D3C43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 01:01:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3356D218E0
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 00:57:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4468218E0
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 01:01:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551229064;
-	bh=9B3aqTS5AoTT/ONu6CUGqUc7X1qgGOsOsWQK/fstrXQ=;
+	s=default; t=1551229309;
+	bh=6zA+U4WOwsKcG0AZ/lDOgTEZ/bXk9KzQYompDCTL+d0=;
 	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=ACLluM2P4kjhtp1fnIHi7yLFvoqYfV/Zjwr11wS4UKM6GqwQiJf7FzhZT0/HmXYYQ
-	 aD1S3Hm8odgVWGEzXTyrNZS3jSSXJTf/h0FVGepFjtdyPqkmvNO0VEjrUSQfEpWHRX
-	 8zv1OLV0vX3pbNuB/op2DrgC+CgxuJbF7NBuZOuQ=
+	b=PnkFEZU2hk9+2HK4psd94cEeZFZvdFlr/rju5gUHCSrFb+QQMg5xQkJ6pJjs9CXNu
+	 Pu/B1FsG+x8E8BzvM9ZIlJdDIPJJzWtdCnt7V4kVxNELiEU1wcFEU/yfQIfooEoR4/
+	 LJK00dTu8ktG3tC3r3DtWBHMQ6CrV+AJKVZEauP0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728766AbfB0A5n (ORCPT
+        id S1728896AbfB0BBt (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 26 Feb 2019 19:57:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55992 "EHLO mail.kernel.org"
+        Tue, 26 Feb 2019 20:01:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727998AbfB0A5n (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Feb 2019 19:57:43 -0500
+        id S1727998AbfB0BBt (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 26 Feb 2019 20:01:49 -0500
 Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AEFE218CD;
-        Wed, 27 Feb 2019 00:57:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38022218CD;
+        Wed, 27 Feb 2019 01:01:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551229062;
-        bh=9B3aqTS5AoTT/ONu6CUGqUc7X1qgGOsOsWQK/fstrXQ=;
+        s=default; t=1551229308;
+        bh=6zA+U4WOwsKcG0AZ/lDOgTEZ/bXk9KzQYompDCTL+d0=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=UWYbABDQbBm/YgFsjAv3XpmXMMugOSIIIxivym0v1PT0gpDPUlXhtMiPsggs3x231
-         nC/7vSonh90TyrDoOOs61Pxc0gAqDevPIrt/DkfiwJbn4tSmcC+S5PeifGvR11pRjZ
-         4fJP5dkEu46PEt8N1VnPnno3DQ41sEerx+GDv+xg=
-Subject: Re: [PATCH v2 1/5] selftests/ima: cleanup the kexec selftest
+        b=pHjjIxWaR0/GkD7Ui0KebQ/4OJrGxL3DkZ5wEpx1y3bJcx3xjvlphwAapu3niYvIu
+         L5eAha+v2Mp6lVLiCFDbXIewbB++45KILB+bYb9NL5mVRRO3r8ucsjHgG5Jjlin1jD
+         cANIbB4Onp/d+xG20xYl2yKbnN9FL2dzXFrsRRRw=
+Subject: Re: [PATCH v2 2/5] selftests/ima: define a set of common functions
 To:     Mimi Zohar <zohar@linux.ibm.com>, linux-kselftest@vger.kernel.org
 Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         shuah <shuah@kernel.org>
 References: <1551223620-11586-1-git-send-email-zohar@linux.ibm.com>
- <1551223620-11586-2-git-send-email-zohar@linux.ibm.com>
+ <1551223620-11586-3-git-send-email-zohar@linux.ibm.com>
 From:   shuah <shuah@kernel.org>
-Message-ID: <cb400d8f-a560-d8d8-07e1-461ca74bae55@kernel.org>
-Date:   Tue, 26 Feb 2019 17:57:41 -0700
+Message-ID: <fd7426fa-c632-7c5a-e981-71b014e6d829@kernel.org>
+Date:   Tue, 26 Feb 2019 18:01:47 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <1551223620-11586-2-git-send-email-zohar@linux.ibm.com>
+In-Reply-To: <1551223620-11586-3-git-send-email-zohar@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -59,70 +59,99 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Mimi,
-
-Thanks for the patches.
-
 On 2/26/19 4:26 PM, Mimi Zohar wrote:
-> Remove the few bashisms and use the complete option name for clarity.
+> Define, update and move get_secureboot_mode() to a common file for use
+> by other tests.
 > 
 > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 > Reviewed-by: Petr Vorel <pvorel@suse.cz>
 > ---
->   tools/testing/selftests/ima/test_kexec_load.sh | 18 +++++++++---------
->   1 file changed, 9 insertions(+), 9 deletions(-)
+>   tools/testing/selftests/ima/Makefile           |  1 +
+>   tools/testing/selftests/ima/common_lib.sh      | 24 ++++++++++++++++++++++++
+>   tools/testing/selftests/ima/test_kexec_load.sh | 17 +++--------------
+>   3 files changed, 28 insertions(+), 14 deletions(-)
+>   create mode 100755 tools/testing/selftests/ima/common_lib.sh
 > 
-> diff --git a/tools/testing/selftests/ima/test_kexec_load.sh b/tools/testing/selftests/ima/test_kexec_load.sh
-> index 1c10093fb526..0345803e7bec 100755
-> --- a/tools/testing/selftests/ima/test_kexec_load.sh
-> +++ b/tools/testing/selftests/ima/test_kexec_load.sh
-> @@ -1,7 +1,7 @@
->   #!/bin/sh
-> -# SPDX-License-Identifier: GPL-2.0+
+> diff --git a/tools/testing/selftests/ima/Makefile b/tools/testing/selftests/ima/Makefile
+> index 0b3adf5444b6..46b9e04d2737 100644
+> --- a/tools/testing/selftests/ima/Makefile
+> +++ b/tools/testing/selftests/ima/Makefile
+> @@ -5,6 +5,7 @@ ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
+>   
+>   ifeq ($(ARCH),x86)
+>   TEST_PROGS := test_kexec_load.sh
+> +TEST_FILES := common_lib.sh
+>   
+>   include ../lib.mk
+>   
+> diff --git a/tools/testing/selftests/ima/common_lib.sh b/tools/testing/selftests/ima/common_lib.sh
+> new file mode 100755
+> index 000000000000..5583ea74c14e
+> --- /dev/null
+> +++ b/tools/testing/selftests/ima/common_lib.sh
+> @@ -0,0 +1,24 @@
+> +#!/bin/sh
 > +# SPDX-License-Identifier: GPL-2.0-or-later
 
 # SPDX-License-Identifier: GPL-2.0
 
->   # Loading a kernel image via the kexec_load syscall should fail
-> -# when the kerne is CONFIG_KEXEC_VERIFY_SIG enabled and the system
-> +# when the kernel is CONFIG_KEXEC_VERIFY_SIG enabled and the system
+> +
+> +# The secure boot mode can be accessed either as the last integer
+> +# of "od -An -t u1 /sys/firmware/efi/efivars/SecureBoot-*" or from
+> +# "od -An -t u1 /sys/firmware/efi/vars/SecureBoot-*/data".
+> +# Return 1 for SecureBoot mode enabled.
+> +get_secureboot_mode()
+> +{
+> +	local efivarfs="/sys/firmware/efi/efivars"
+> +	# Make sure that efivars is mounted in the normal location
+> +	if ! grep -q "^\S\+ $efivarfs efivarfs" /proc/mounts; then
+> +		echo "$TEST: efivars is not mounted on $efivarfs" >&2
+> +		exit $ksft_skip
+> +	fi
+> +
+> +	# Get secureboot mode
+> +	local file="$efivarfs/../vars/SecureBoot-*/data"
+> +	if [ ! -e $file ]; then
+> +		echo "$TEST: unknown secureboot mode" >&2
+> +		exit $ksft_skip
+> +	fi
+> +	return `od -An -t u1 /sys/firmware/efi/vars/SecureBoot-*/data`
+> +}
+> diff --git a/tools/testing/selftests/ima/test_kexec_load.sh b/tools/testing/selftests/ima/test_kexec_load.sh
+> index 0345803e7bec..35934e0665f1 100755
+> --- a/tools/testing/selftests/ima/test_kexec_load.sh
+> +++ b/tools/testing/selftests/ima/test_kexec_load.sh
+> @@ -5,7 +5,7 @@
 >   # is booted in secureboot mode.
 >   
 >   TEST="$0"
-> @@ -12,8 +12,8 @@ rc=0
->   ksft_skip=4
+> -EFIVARFS="/sys/firmware/efi/efivars"
+> +. ./common_lib.sh
+>   rc=0
 >   
->   # kexec requires root privileges
-> -if [ $UID != 0 ]; then
-> -	echo "$TEST: must be run as root" >&2
-> +if [ $(id -ru) -ne 0 ]; then
-> +	echo "$TEST: requires root privileges" >&2
+>   # Kselftest framework requirement - SKIP code is 4.
+> @@ -17,19 +17,8 @@ if [ $(id -ru) -ne 0 ]; then
 >   	exit $ksft_skip
 >   fi
 >   
-> @@ -33,17 +33,17 @@ secureboot=`hexdump $file | awk '{print substr($4,length($4),1)}'`
+> -# Make sure that efivars is mounted in the normal location
+> -if ! grep -q "^\S\+ $EFIVARFS efivarfs" /proc/mounts; then
+> -	echo "$TEST: efivars is not mounted on $EFIVARFS" >&2
+> -	exit $ksft_skip
+> -fi
+> -
+> -# Get secureboot mode
+> -file="$EFIVARFS/SecureBoot-*"
+> -if [ ! -e $file ]; then
+> -	echo "$TEST: unknown secureboot mode" >&2
+> -	exit $ksft_skip
+> -fi
+> -secureboot=`hexdump $file | awk '{print substr($4,length($4),1)}'`
+> +get_secureboot_mode
+> +secureboot=$?
 >   
 >   # kexec_load should fail in secure boot mode
 >   KERNEL_IMAGE="/boot/vmlinuz-`uname -r`"
-> -kexec -l $KERNEL_IMAGE &>> /dev/null
-> -if [ $? == 0 ]; then
-> -	kexec -u
-> -	if [ "$secureboot" == "1" ]; then
-> +kexec --load $KERNEL_IMAGE 2>&1 > /dev/null
-> +if [ $? -eq 0 ]; then
-> +	kexec --unload
-> +	if [ $secureboot -eq 1 ]; then
->   		echo "$TEST: kexec_load succeeded [FAIL]"
->   		rc=1
->   	else
->   		echo "$TEST: kexec_load succeeded [PASS]"
->   	fi
->   else
-> -	if [ "$secureboot" == "1" ]; then
-> +	if [ $secureboot -eq 1 ]; then
->   		echo "$TEST: kexec_load failed [PASS]"
->   	else
->   		echo "$TEST: kexec_load failed [FAIL]"
 > 
 
 The rest looks good to me.
