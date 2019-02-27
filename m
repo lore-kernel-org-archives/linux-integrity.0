@@ -5,138 +5,92 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38AADC43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 22:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE703C43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 22:50:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CEA62083D
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 22:40:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC7DD2133D
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 22:50:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729918AbfB0Wk4 (ORCPT
+        id S1729918AbfB0WuM (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 27 Feb 2019 17:40:56 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34534 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729412AbfB0Wk4 (ORCPT
+        Wed, 27 Feb 2019 17:50:12 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55764 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729412AbfB0WuM (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 27 Feb 2019 17:40:56 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1RMdiGJ024452
-        for <linux-integrity@vger.kernel.org>; Wed, 27 Feb 2019 17:40:45 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qx17swumr-1
+        Wed, 27 Feb 2019 17:50:12 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1RMo0pT016985
+        for <linux-integrity@vger.kernel.org>; Wed, 27 Feb 2019 17:50:06 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qx1knn0bf-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 27 Feb 2019 17:40:45 -0500
+        for <linux-integrity@vger.kernel.org>; Wed, 27 Feb 2019 17:50:05 -0500
 Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 27 Feb 2019 22:40:43 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 27 Feb 2019 22:50:04 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Feb 2019 22:40:41 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1RMeePJ39977012
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 27 Feb 2019 22:40:40 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 547BE11C08B;
-        Wed, 27 Feb 2019 22:40:40 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D726411C08C;
-        Wed, 27 Feb 2019 22:40:39 +0000 (GMT)
+        Wed, 27 Feb 2019 22:50:02 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1RMo1Aa29556798
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Feb 2019 22:50:01 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 29B6152F71;
+        Wed, 27 Feb 2019 22:50:01 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.80.106.105])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 27 Feb 2019 22:40:39 +0000 (GMT)
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 9F8E452F72;
+        Wed, 27 Feb 2019 22:50:00 +0000 (GMT)
 Subject: Re: [DISCUSSION] IMA Signature Measurements
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jordan Hand <Jordan.Hand@microsoft.com>,
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jordan Hand <Jordan.Hand@microsoft.com>,
         "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Date:   Wed, 27 Feb 2019 17:40:29 -0500
-In-Reply-To: <MWHPR21MB075192F589A7AA4E8B89F8B9F0740@MWHPR21MB0751.namprd21.prod.outlook.com>
+Date:   Wed, 27 Feb 2019 17:49:50 -0500
+In-Reply-To: <1551306168.3105.22.camel@HansenPartnership.com>
 References: <MWHPR21MB075192F589A7AA4E8B89F8B9F0740@MWHPR21MB0751.namprd21.prod.outlook.com>
+         <1551306168.3105.22.camel@HansenPartnership.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 19022722-0028-0000-0000-0000034DDB45
+x-cbid: 19022722-0020-0000-0000-0000031C1691
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022722-0029-0000-0000-0000240C345F
-Message-Id: <1551307229.10911.100.camel@linux.ibm.com>
+x-cbparentid: 19022722-0021-0000-0000-0000216D854E
+Message-Id: <1551307790.10911.106.camel@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_15:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902270147
+ mlxlogscore=886 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902270148
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, 2019-02-27 at 22:02 +0000, Jordan Hand wrote:
-> Hello,
+On Wed, 2019-02-27 at 14:22 -0800, James Bottomley wrote:
+> On Wed, 2019-02-27 at 22:02 +0000, Jordan Hand wrote:
+
+> Um, this is already upstream.  The slight problem is that kernel
+> bzImages are arch specific, so the file you're looking for is 
 > 
-> I have been looking into how IMA policies work for
-> measuring/appraising in specific scenarios such as kexec. IMA has
-> specific policies for these scenarios (i.e. setting func to
-> KEXEC_KERNEL_CHECK). While these policies do exist, in practice it
-> seems that IMA treats these files the same way it treats any other
-> file; it will validate and measure (in the case of ima-sig) based on
-> the IMA signature in the file's inode.
-
-or security.ima could contain a file hash, while security.evm contains
-a signature.
-
+>   arch/x86/kernel/kexec-bzimage64.c
 > 
-> It seems that this policy is mostly a placeholder in case there is a
-> desire later to do some different behavior based on the file type
-> (correct me if I'm wrong and there's another reason for having the
-> KEXEC_KERNEL_CHECK function).
+> You'll find the signature verifier for x86 bzImages is the PE one.  The
+> current problem is more that the kernel keyring doesn't trust the
+> secure boot keys, so the issue isn't with the signature format its with
+> keyring trust.
 
-Policies are defined in terms of hooks, LSM labels, and other file
-metadata.  True the FILE_CHECK hook could be defined to measure,
-appraise, audit the kexec kernel image, but it might not require a
-signature.  Defining a policy containing KEXEC_KERNEL_CHECK allows
-specifying the kexec'ed kernel module be signed without requiring all
-files to be signed. 
-
-> 
-> I wanted to get feedback on the possibility of IMA measuring a
-> different signature type during kexec. In general kernal images are
-> signed as PE files, with the signature embedded in the file image.
-> Normal kexec (not the IMA path) validates this type of signature. I
-> would like to use IMA to both appraise and measure based on this
-> signature instead of the IMA signature (this could have a Kconfig
-> flag).
-
-The ima-sig template contains a file hash and an IMA signature field.
- The file hash needs to remain the file hash of the entire file.
- Thiago is currently adding support for a kexec kernel image appended
-signature.  He's defining two new template fields named d-modsig and
-modsig and a new policy "appraise_type" named "modsig".
-
-You could do something similarly.
-
-> Alternatively it could look for both. I think this makes sense
-> because it means folks can make use of IMA's measurement
-> capabilities while still signing the kernel image in the same way
-> they have always signed it for kexec. This also makes the
-> signing/packaging/installing story simpler for kernels wishing to
-> make use of IMA as they don't have to ship with IMA/EVM signatures.
-
-For systems which support PE signatures, distros don't need to provide
- both PE and IMA signatures.  Please refer to the IMA x86 architecture
-specific policy being upstreamed and the IMA kselftest patches that I
-posted yesterday.
+With CONFIG_INTEGRITY_PLATFORM_KEYRING enabled, the pre-boot keys are
+loaded onto the new "platform" keyring.  Queued for v5.1 are two
+patches which allow verifying the PE signed kernel image based on keys
+in the platform keyring.
 
 Mimi
-
-> 
-> I know that currently IMA only handles IMA/EVM signatures (makes
-> sense) so this would deviate a decent amount from how IMA currently
-> works. I want to get general thoughts on this proposal before I
-> start work on this to ensure this is something the
-> community/maintainers are supportive of.
 
