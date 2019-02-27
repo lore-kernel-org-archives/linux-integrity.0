@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74CE3C43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 20:27:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94E94C00319
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 20:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B7D6213A2
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 20:27:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63B3A217F5
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 20:27:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZusZWA5E"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZNA62/jN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730447AbfB0U1Q (ORCPT
+        id S1730438AbfB0U10 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 27 Feb 2019 15:27:16 -0500
-Received: from mail-it1-f201.google.com ([209.85.166.201]:35737 "EHLO
-        mail-it1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730368AbfB0U1P (ORCPT
+        Wed, 27 Feb 2019 15:27:26 -0500
+Received: from mail-oi1-f202.google.com ([209.85.167.202]:47051 "EHLO
+        mail-oi1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730399AbfB0U1L (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 27 Feb 2019 15:27:15 -0500
-Received: by mail-it1-f201.google.com with SMTP id 142so6292258itx.0
-        for <linux-integrity@vger.kernel.org>; Wed, 27 Feb 2019 12:27:14 -0800 (PST)
+        Wed, 27 Feb 2019 15:27:11 -0500
+Received: by mail-oi1-f202.google.com with SMTP id v138so8000549oie.13
+        for <linux-integrity@vger.kernel.org>; Wed, 27 Feb 2019 12:27:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=HzTSVpbyy+61Yj0es9srcGM5gLbmwFRA6fCyyZe10xo=;
-        b=ZusZWA5EWkQ+3nCd805J8/tavC/3hxqnGpjfNPRYUqt8JvpiExogjJEkkVML/0y74E
-         o4sGk7SOvvHT53H7iyoPjUCxgie//+BiD3SNozSwsExQVQufylbi25iDHzmzYakg+IdV
-         1Ttm+TAfpuB4mlGyUkkC+ol2rS2GCTcqrFQlcZ9199FAGgAD8gjrrALo7EYbcatNvBwl
-         brG3+4j38HaJG88dsGO1Q4v6iBWPrZkkVhXw0xXW+WswXRIZ78LJEUAKCGnq9uYvAt0b
-         nS+fyLV0dTnepFrhR/W51QHl5ZuyBfAsWUrNLvdfnVdQmdJn1JWGYFZBi1SIg/qGQQX7
-         XDvQ==
+        bh=3L31ImPCYlGPP1bi5DAr6zYqB9pcQjRPEOMnQpUbHhA=;
+        b=ZNA62/jNwS7RcVm9H6hzc7NWWtLy85D0rnemhDxSo6HfSbOy8zsXqJcYo5REUQdv1M
+         BuaZxCiydYSlLaw8S0O9XxMj6t7XLbNy7DQHxt1fzMHg+Mww/7OhTiokSM9JdWX4bInW
+         dkW9ioWtQvm1MFf1IMWMMul9pvs3Dh+ixFIFVe+5XL7iKpQIjSVk0wZb8FVx2ZDhYz0x
+         vuNknPrk1/GR4sFtoQygEJRfIQXXymafLkqqnAubteY6G51Hi/HpJILtSDC3dzmhMKs1
+         3PWi8z7WV/QGh93WgO855GgcFsFgY2yqfS5gByzoIMYoTvC0afEHLTSVXdP6DDDZfgQE
+         2kdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=HzTSVpbyy+61Yj0es9srcGM5gLbmwFRA6fCyyZe10xo=;
-        b=sxWGqjmDdT70Lkm9edkSssQi3itM7EIF+zzRhmTij7g4CmHN4SxVNB32SpGlEuS6D3
-         vLH9k5sVhwdmV2KF8vx1xOBWz+450itM6fD3sWErLFEDP7JTb4GkiEY9qgWY/r6vpGC3
-         P6ToZWEGWapMg63yOCiYv9tjxGYQ5onQARxwaYO4+RL0Qhzo6kRHa97kljc10lYzZDf4
-         YyjFCKtXWSuRvSE0CHh6HqbPIuTp9RBosY3BeuaXa7clWjViv19Up6+G7Z+ZZiE9llxj
-         qy+cT3kQZ8RMjO6l+aBK0EKFkOpWIyeWJsBm3IgTRx5yHV565/TDC9mxAaCoESu1Ie2K
-         Yfsw==
-X-Gm-Message-State: APjAAAUGNxsEuGfg1GS/nNzFeODlZu615GYP/qJRN0cIspqfL/DKnWJI
-        4LQi10imkFdF/S7Y8aW3Fe86+vtWPkc1WrxlptKcWzI01VKNOOUBfl3ldN0Acllly/f2MPOJC4B
-        NNGBDAZHAwz9MLKjsGX7ZHxyan0m1VhUjcPy2vs6AZDMC2W6m7Ba3iyiIkfz4MarNOTtB9m3ZVV
-        IO9ftkpts8r+KCUJU41tE=
-X-Google-Smtp-Source: AHgI3IYEHy3njru0ZiQXMFT9KtKvZZOvQBghwSLugT0cTDATMRJw63EMRy3MT3DnTjp8rSqvXodtXe3T3G+COzFS3Dud+g==
-X-Received: by 2002:a24:cd07:: with SMTP id l7mr778172itg.22.1551299233980;
- Wed, 27 Feb 2019 12:27:13 -0800 (PST)
-Date:   Wed, 27 Feb 2019 12:26:58 -0800
+        bh=3L31ImPCYlGPP1bi5DAr6zYqB9pcQjRPEOMnQpUbHhA=;
+        b=aOmsJKsFJzb6VROlYRglQ98dgXygiQY3L0Jkdw+bNHjbo5+510PIIhdpAyKZvPyL70
+         OknSM3BWDinkB0YLCWZj86gC/9f/kT90WqsoeL50UbSFnRbgYhdxIjSGlaa+awIBQMDJ
+         zsD+7DobWMJ+50DZNAu3FehgINaESauWDiD/dVTLN7H0rohVWOlwVKoDj+VNbRJhjaPE
+         CsLLb3V2AXHlfALSuCEyw2lWnoITrcNxFOY97SMc9oxa2IgO7/QHBHRfbydt8u8wJrg2
+         mBabju1hJ1jRqAig4xShVU8aYbGoswdYxRsUwoC/hZO1c7cbNruQRiEJYDsVibQPHDvi
+         DdCw==
+X-Gm-Message-State: AHQUAubsd8tDeRg2iPWXltGBNJdXc5kZrqhdq8/g1H5a4s4ZvvYP7Kcj
+        GhnFgsfG7QhdbL0Q+QA0SIQEKrY+gWRWSRjUFB+FFO1eu7bkbZSNh7yv9CPVe+ajqvEabAKaFql
+        m4wcFPifiewcDGtDl6KKTz4UIdv7JH+MpDmiAasKQYmtyIJxL+SFsXDa6c5JztEqTw+BGp53mhu
+        wGoFvmjNBzCjdpiUB85Ng=
+X-Google-Smtp-Source: AHgI3Ib8gnfrdLV62veuKkodl6J5yrYM59d84uMSZ0SXecQKIMY0t1QuXK0rebBjyHl7gchg0yBdPAFNIWplOpq/9zfz2g==
+X-Received: by 2002:a9d:7d88:: with SMTP id j8mr3017930otn.44.1551299230762;
+ Wed, 27 Feb 2019 12:27:10 -0800 (PST)
+Date:   Wed, 27 Feb 2019 12:26:57 -0800
 In-Reply-To: <20190227202658.197113-1-matthewgarrett@google.com>
-Message-Id: <20190227202658.197113-5-matthewgarrett@google.com>
+Message-Id: <20190227202658.197113-4-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190227202658.197113-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.352.gf09ad66450-goog
-Subject: [PATCH V5 4/4] efi: Attempt to get the TCG2 event log in the boot stub
+Subject: [PATCH V5 3/4] tpm: Append the final event log to the TPM event log
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
@@ -76,116 +76,93 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Matthew Garrett <mjg59@google.com>
 
-Right now we only attempt to obtain the SHA1-only event log. The
-protocol also supports a crypto agile log format, which contains digests
-for all algorithms in use. Attempt to obtain this first, and fall back
-to obtaining the older format if the system doesn't support it. This is
-lightly complicated by the event sizes being variable (as we don't know
-in advance which algorithms are in use), and the interface giving us
-back a pointer to the start of the final entry rather than a pointer to
-the end of the log - as a result, we need to parse the final entry to
-figure out its length in order to know how much data to copy up to the
-OS.
+Any events that are logged after GetEventsLog() is called are logged to
+the EFI Final Events table. These events are defined as being in the
+crypto agile log format, so we can just append them directly to the
+existing log if it's in the same format. In theory we can also construct
+old-style SHA1 log entries for devices that only return logs in that
+format, but EDK2 doesn't generate the final event log in that case so
+it doesn't seem worth it at the moment.
 
 Signed-off-by: Matthew Garrett <mjg59@google.com>
 ---
- drivers/firmware/efi/libstub/tpm.c | 50 ++++++++++++++++++++----------
- 1 file changed, 33 insertions(+), 17 deletions(-)
+ drivers/char/tpm/eventlog/efi.c | 50 ++++++++++++++++++++++++++++-----
+ 1 file changed, 43 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
-index a90b0b8fc69a..523cd07c551c 100644
---- a/drivers/firmware/efi/libstub/tpm.c
-+++ b/drivers/firmware/efi/libstub/tpm.c
-@@ -59,7 +59,7 @@ void efi_enable_reset_attack_mitigation(efi_system_table_t *sys_table_arg)
- 
- #endif
- 
--static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
-+void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
+diff --git a/drivers/char/tpm/eventlog/efi.c b/drivers/char/tpm/eventlog/efi.c
+index 3e673ab22cb4..9179cf6bdee9 100644
+--- a/drivers/char/tpm/eventlog/efi.c
++++ b/drivers/char/tpm/eventlog/efi.c
+@@ -21,10 +21,13 @@
+ int tpm_read_log_efi(struct tpm_chip *chip)
  {
- 	efi_guid_t tcg2_guid = EFI_TCG2_PROTOCOL_GUID;
- 	efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
-@@ -69,6 +69,7 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
- 	unsigned long first_entry_addr, last_entry_addr;
- 	size_t log_size, last_entry_size;
- 	efi_bool_t truncated;
-+	int version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
- 	void *tcg2_protocol = NULL;
  
- 	status = efi_call_early(locate_protocol, &tcg2_guid, NULL,
-@@ -76,14 +77,20 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
- 	if (status != EFI_SUCCESS)
- 		return;
++	struct efi_tcg2_final_events_table *final_tbl = NULL;
+ 	struct linux_efi_tpm_eventlog *log_tbl;
+ 	struct tpm_bios_log *log;
+ 	u32 log_size;
+ 	u8 tpm_log_version;
++	void *tmp;
++	int ret;
  
--	status = efi_call_proto(efi_tcg2_protocol, get_event_log, tcg2_protocol,
--				EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2,
--				&log_location, &log_last_entry, &truncated);
--	if (status != EFI_SUCCESS)
--		return;
-+	status = efi_call_proto(efi_tcg2_protocol, get_event_log,
-+				tcg2_protocol, version, &log_location,
-+				&log_last_entry, &truncated);
-+
-+	if (status != EFI_SUCCESS || !log_location) {
-+		version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
-+		status = efi_call_proto(efi_tcg2_protocol, get_event_log,
-+					tcg2_protocol, version, &log_location,
-+					&log_last_entry, &truncated);
-+		if (status != EFI_SUCCESS || !log_location)
-+			return;
-+
+ 	if (!(chip->flags & TPM_CHIP_FLAG_TPM2))
+ 		return -ENODEV;
+@@ -52,15 +55,48 @@ int tpm_read_log_efi(struct tpm_chip *chip)
+ 
+ 	/* malloc EventLog space */
+ 	log->bios_event_log = kmemdup(log_tbl->log, log_size, GFP_KERNEL);
+-	if (!log->bios_event_log)
+-		goto err_memunmap;
+-	log->bios_event_log_end = log->bios_event_log + log_size;
++	if (!log->bios_event_log) {
++		ret = -ENOMEM;
++		goto out;
 +	}
  
--	if (!log_location)
--		return;
- 	first_entry_addr = (unsigned long) log_location;
++	log->bios_event_log_end = log->bios_event_log + log_size;
+ 	tpm_log_version = log_tbl->version;
+-	memunmap(log_tbl);
+-	return tpm_log_version;
  
- 	/*
-@@ -98,8 +105,23 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
- 		 * We need to calculate its size to deduce the full size of
- 		 * the logs.
- 		 */
--		last_entry_size = sizeof(struct tcpa_event) +
--			((struct tcpa_event *) last_entry_addr)->event_size;
-+		if (version == EFI_TCG2_EVENT_LOG_FORMAT_TCG_2) {
-+			/*
-+			 * The TCG2 log format has variable length entries,
-+			 * and the information to decode the hash algorithms
-+			 * back into a size is contained in the first entry -
-+			 * pass a pointer to the final entry (to calculate its
-+			 * size) and the first entry (so we know how long each
-+			 * digest is)
-+			 */
-+			last_entry_size =
-+				__calc_tpm2_event_size((void *)last_entry_addr,
-+						       (void *)log_location,
-+						       false);
-+		} else {
-+			last_entry_size = sizeof(struct tcpa_event) +
-+			   ((struct tcpa_event *) last_entry_addr)->event_size;
-+		}
- 		log_size = log_last_entry - log_location + last_entry_size;
- 	}
- 
-@@ -116,7 +138,7 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
- 
- 	memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
- 	log_tbl->size = log_size;
--	log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
-+	log_tbl->version = version;
- 	memcpy(log_tbl->log, (void *) first_entry_addr, log_size);
- 
- 	status = efi_call_early(install_configuration_table,
-@@ -128,9 +150,3 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
- err_free:
- 	efi_call_early(free_pool, log_tbl);
+-err_memunmap:
++	ret = tpm_log_version;
++
++	if (efi.tpm_final_log == EFI_INVALID_TABLE_ADDR ||
++	    efi_tpm_final_log_size == 0 ||
++	    tpm_log_version != EFI_TCG2_EVENT_LOG_FORMAT_TCG_2)
++		goto out;
++
++	final_tbl = memremap(efi.tpm_final_log,
++			     sizeof(*final_tbl) + efi_tpm_final_log_size,
++			     MEMREMAP_WB);
++	if (!final_tbl) {
++		pr_err("Could not map UEFI TPM final log\n");
++		kfree(log->bios_event_log);
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	tmp = krealloc(log->bios_event_log,
++		       log_size + efi_tpm_final_log_size,
++		       GFP_KERNEL);
++	if (!tmp) {
++		kfree(log->bios_event_log);
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	log->bios_event_log = tmp;
++	memcpy((void *)log->bios_event_log + log_size,
++	       final_tbl->events, efi_tpm_final_log_size);
++	log->bios_event_log_end = log->bios_event_log +
++		log_size + efi_tpm_final_log_size;
++
++out:
++	memunmap(final_tbl);
+ 	memunmap(log_tbl);
+-	return -ENOMEM;
++	return ret;
  }
--
--void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
--{
--	/* Only try to retrieve the logs in 1.2 format. */
--	efi_retrieve_tpm2_eventlog_1_2(sys_table_arg);
--}
 -- 
 2.21.0.352.gf09ad66450-goog
 
