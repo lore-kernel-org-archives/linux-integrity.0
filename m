@@ -2,88 +2,120 @@ Return-Path: <SRS0=nfu5=RC=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB7DC43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 14:03:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C27EC43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 14:15:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D12D20661
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 14:03:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14690217F5
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 14:15:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730522AbfB0ODG (ORCPT
+        id S1729907AbfB0OPM (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 27 Feb 2019 09:03:06 -0500
-Received: from mga14.intel.com ([192.55.52.115]:27794 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730392AbfB0ODG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 27 Feb 2019 09:03:06 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2019 06:03:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,419,1544515200"; 
-   d="scan'208";a="278280438"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.169])
-  by orsmga004.jf.intel.com with ESMTP; 27 Feb 2019 06:03:01 -0800
-Date:   Wed, 27 Feb 2019 16:02:59 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-        roberto.sassu@huawei.com, linux-efi@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tweek@google.com,
-        Matthew Garrett <mjg59@google.com>
-Subject: Re: [PATCH V4 2/4] tpm: Reserve the TPM final events table
-Message-ID: <20190227140259.GA17106@linux.intel.com>
-References: <20190222202606.160816-1-matthewgarrett@google.com>
- <20190222202606.160816-3-matthewgarrett@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190222202606.160816-3-matthewgarrett@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 27 Feb 2019 09:15:12 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34664 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728751AbfB0OPM (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 27 Feb 2019 09:15:12 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1REEA22138669
+        for <linux-integrity@vger.kernel.org>; Wed, 27 Feb 2019 09:15:11 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qwuj4a7an-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 27 Feb 2019 09:15:10 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 27 Feb 2019 14:15:09 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 27 Feb 2019 14:15:05 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1REF4oN27197516
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 27 Feb 2019 14:15:04 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A6C3942042;
+        Wed, 27 Feb 2019 14:15:04 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A558042041;
+        Wed, 27 Feb 2019 14:15:03 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.106.105])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 27 Feb 2019 14:15:03 +0000 (GMT)
+Subject: Re: [PATCH v2 5/5] selftests/ima: loading kernel modules
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     shuah <shuah@kernel.org>, linux-kselftest@vger.kernel.org
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Petr Vorel <pvorel@suse.cz>
+Date:   Wed, 27 Feb 2019 09:14:53 -0500
+In-Reply-To: <19d494c6-ecb1-b884-2d23-5f556b3ec05b@kernel.org>
+References: <1551223620-11586-1-git-send-email-zohar@linux.ibm.com>
+         <1551223620-11586-6-git-send-email-zohar@linux.ibm.com>
+         <19d494c6-ecb1-b884-2d23-5f556b3ec05b@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19022714-0012-0000-0000-000002FADB80
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022714-0013-0000-0000-00002132839F
+Message-Id: <1551276893.10911.23.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902270096
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 12:26:04PM -0800, Matthew Garrett wrote:
-> From: Matthew Garrett <mjg59@google.com>
+Hi Shuah,
+
+> > diff --git a/tools/testing/selftests/ima/test_kernel_module.sh b/tools/testing/selftests/ima/test_kernel_module.sh
+> > new file mode 100755
+> > index 000000000000..4009e1b60b03
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/ima/test_kernel_module.sh
+> > @@ -0,0 +1,96 @@
+> > +#!/bin/sh
+> > +# SPDX-License-Identifier: GPL-2.0-or-later
 > 
-> UEFI systems provide a boot services protocol for obtaining the TPM
-> event log, but this is unusable after ExitBootServices() is called.
-> Unfortunately ExitBootServices() itself triggers additional TPM events
-> that then can't be obtained using this protocol. The platform provides a
-> mechanism for the OS to obtain these events by recording them to a
-> separate UEFI configuration table which the OS can then map.
+> Same here
 > 
-> Unfortunately this table isn't self describing in terms of providing its
-> length, so we need to parse the events inside it to figure out how long
-> it is. Since the table isn't mapped at this point, we need to extend the
-> length calculation function to be able to map the event as it goes
-> along.
+> # SPDX-License-Identifier: GPL-2.0
+
+Sure, I'll make the change here and in the other places.
+
+
+> > +get_secureboot_mode
+> > +if [ $? -eq 0 ]; then
+> > +	log_skip "secure boot not enabled"
+> > +fi
+> > +
+> > +# get the kernel config
+> > +get_kconfig
+> > +
 > 
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
+> get_kconfig() will be good candidate as a kselftest common
+> function. Is that possible?
 
-Getting:
+Sure, where would it go?  get_kconfig calls log_skip.  I didn't see
+any common logging functions.  Petr suggested defining a set of common
+logging functions.  Did you want to only make "log_skip" a common
+function or the other logging functions log_pass, log_fail, log_info
+as well?
 
-Applying: tpm: Reserve the TPM final events table
-error: sha1 information is lacking or useless (drivers/firmware/efi/efi.c).
-error: could not build fake ancestor
+Thanks,
 
-My tree:
+Mimi
 
-git://git.infradead.org/users/jjs/linux-tpmdd.git
-
-My guess is that your patches are based a later 5.0-rcX. Unfortunately I
-cannot update my master at this point because my 5.1 PR was taken to
-security tree and rebasing would change the commit IDs of 5.1 content
-because security/next-general does not yet contain those patches.
-
-/Jarkko
