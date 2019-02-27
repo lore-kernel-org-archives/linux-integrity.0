@@ -2,113 +2,84 @@ Return-Path: <SRS0=nfu5=RC=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38335C43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 18:38:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74CA5C43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 19:57:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B41B2183F
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 18:38:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 474D12186A
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Feb 2019 19:57:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NQt03jJo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727240AbfB0SiK (ORCPT
+        id S1729825AbfB0T5V (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 27 Feb 2019 13:38:10 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43728 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726594AbfB0SiK (ORCPT
+        Wed, 27 Feb 2019 14:57:21 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:51510 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729291AbfB0T5V (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 27 Feb 2019 13:38:10 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1RITLqa144670
-        for <linux-integrity@vger.kernel.org>; Wed, 27 Feb 2019 13:38:08 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qwx34wpfp-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 27 Feb 2019 13:38:08 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 27 Feb 2019 18:38:07 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Feb 2019 18:38:05 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1RIc4Qh32047282
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 27 Feb 2019 18:38:04 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 085A2A4064;
-        Wed, 27 Feb 2019 18:38:04 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4125DA405B;
-        Wed, 27 Feb 2019 18:38:03 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.106.105])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 27 Feb 2019 18:38:03 +0000 (GMT)
-Subject: Re: [PATCH v2 5/5] selftests/ima: loading kernel modules
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     shuah <shuah@kernel.org>, linux-kselftest@vger.kernel.org
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Petr Vorel <pvorel@suse.cz>
-Date:   Wed, 27 Feb 2019 13:37:52 -0500
-In-Reply-To: <ab45b574-4791-d42a-f566-ab9886525549@kernel.org>
-References: <1551223620-11586-1-git-send-email-zohar@linux.ibm.com>
-         <1551223620-11586-6-git-send-email-zohar@linux.ibm.com>
-         <19d494c6-ecb1-b884-2d23-5f556b3ec05b@kernel.org>
-         <1551276893.10911.23.camel@linux.ibm.com>
-         <ab45b574-4791-d42a-f566-ab9886525549@kernel.org>
+        Wed, 27 Feb 2019 14:57:21 -0500
+Received: by mail-it1-f193.google.com with SMTP id e24so11171714itl.1
+        for <linux-integrity@vger.kernel.org>; Wed, 27 Feb 2019 11:57:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=83V7j15vBBfS984rGnTbpuaKeqSIjpIFzcupAdX7D8c=;
+        b=NQt03jJoTJFdaHZm7J4Uyq6Z7p+6gjFaDWBqFI6wvliWY5ZZ4+n/3pPXxwGs3YLK3i
+         orjnaqS2HhpnTGa3uuVGIrNt+t7J24+wB/9+Y5J+16V8SDoV7RyW/6wJ5riwj0+fEy/S
+         fLH2FiZ1NnjAHUdVIgPFkndHgz6MIV78qk2z8xdzNnZ+odQEuAf46AHaftUS1LvkgkKS
+         1OagM45BOod/D4GCTNrwHU6dvWL7XlRTOGKPm6uiKRb7in9Bh42+Bu0xou/dklo8SJbc
+         7+6ymxy8HJrpCJa1Vwq66nNW7KVU710qd3+CQYLskcEl7qC1S4fB4u2edWuhr8KK8MQF
+         66iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=83V7j15vBBfS984rGnTbpuaKeqSIjpIFzcupAdX7D8c=;
+        b=cGKijV7UQmq4iDrEujiIK7jEbQ4inroJhuIQA9zflqZfwSGcybhVso6eP1aIjpdRDM
+         YJofdLw/hf7cRzlXPupvO1BJpZ5az9Yr4ZQIVlZ7GxQB6BKiCNdxh0bEYJGgy263jcVC
+         W3dTecmoIwYawD/49Lj7HBwpe5U0/hxFAwP9OQbScjCL+xsF96OYP2oSBmwKL87WHYXF
+         BwbdoZ6HnE8DfEenTp5xDf4FqWObB+T6qJZTDv8UgGWWcy2E/lGQ86tE+ONnQcdC9diE
+         Z2HP6trA0NCB7yEBbXZbQDcgqhvx6oyuzxEgY7D1Ap1N0D8M8t1PNeCPYS286pEk0weL
+         jiuw==
+X-Gm-Message-State: AHQUAuYIOY6nhdfvYx6vodAE47BSboKcLo1OiP5pMHmFi5vv9LzIKDuQ
+        Afg7y577v4HiOL7lHpYC30gw3TUfVgzt459d3wvE3w==
+X-Google-Smtp-Source: AHgI3Ia8t6dhqsh5P6ddYLI/koz1ESlPY9C2OXqa/0TUbNSOWjCOsD2hqCZCJYXnyPy0gMEsnFc57+2hyR3HWbD5OHo=
+X-Received: by 2002:a02:76c2:: with SMTP id z185mr2328462jab.102.1551297440002;
+ Wed, 27 Feb 2019 11:57:20 -0800 (PST)
+MIME-Version: 1.0
+References: <20190222202606.160816-1-matthewgarrett@google.com>
+ <20190222202606.160816-3-matthewgarrett@google.com> <20190227140259.GA17106@linux.intel.com>
+In-Reply-To: <20190227140259.GA17106@linux.intel.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Wed, 27 Feb 2019 11:57:09 -0800
+Message-ID: <CACdnJuucWezNf3jki5wN2XJ6wsN_uMSxQuyrekr9F-3aJJE4kA@mail.gmail.com>
+Subject: Re: [PATCH V4 2/4] tpm: Reserve the TPM final events table
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19022718-0020-0000-0000-0000031C0659
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022718-0021-0000-0000-0000216D7446
-Message-Id: <1551292672.10911.68.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=758 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902270125
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+On Wed, Feb 27, 2019 at 6:03 AM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+> My guess is that your patches are based a later 5.0-rcX. Unfortunately I
+> cannot update my master at this point because my 5.1 PR was taken to
+> security tree and rebasing would change the commit IDs of 5.1 content
+> because security/next-general does not yet contain those patches.
 
-> >>> +get_secureboot_mode
-> >>> +if [ $? -eq 0 ]; then
-> >>> +	log_skip "secure boot not enabled"
-> >>> +fi
-> >>> +
-> >>> +# get the kernel config
-> >>> +get_kconfig
-> >>> +
-> >>
-> >> get_kconfig() will be good candidate as a kselftest common
-> >> function. Is that possible?
-> > 
-> > Sure, where would it go?  get_kconfig calls log_skip.  I didn't see
-> > any common logging functions.  Petr suggested defining a set of common
-> > logging functions.  Did you want to only make "log_skip" a common
-> > function or the other logging functions log_pass, log_fail, log_info
-> > as well?
-> > 
-> 
-> We can do this as a separate effort in the interest of getting these
-> in the interest of getting these in.
-> 
-> We have common functions in ksefltest.h for c and we don't have them
-> for tests scripts. We might be able to collect common routines such
-> as get_kconfig into a common .sh and include in tests. If you have time
-> to do this, that will be great. It can be done as a separate effort.
-
-Ok.  For now, I'm waiting for some review/ack's.
-
-Mimi
-
+Bother. I'll rebase against your tree.
