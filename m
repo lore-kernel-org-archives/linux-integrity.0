@@ -2,71 +2,71 @@ Return-Path: <SRS0=BEGI=RD=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B5A0C43381
-	for <linux-integrity@archiver.kernel.org>; Thu, 28 Feb 2019 10:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04089C43381
+	for <linux-integrity@archiver.kernel.org>; Thu, 28 Feb 2019 12:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0451B218AE
-	for <linux-integrity@archiver.kernel.org>; Thu, 28 Feb 2019 10:37:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C42A52063F
+	for <linux-integrity@archiver.kernel.org>; Thu, 28 Feb 2019 12:38:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731386AbfB1KhY (ORCPT
+        id S1730931AbfB1Miw (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 28 Feb 2019 05:37:24 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:52762 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726088AbfB1KhX (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 28 Feb 2019 05:37:23 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gzJ42-0002Bm-Cp; Thu, 28 Feb 2019 18:37:18 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gzJ3z-0002DS-L9; Thu, 28 Feb 2019 18:37:15 +0800
-Date:   Thu, 28 Feb 2019 18:37:15 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/4] X.509: Parse public key parameters from x509 for
- akcipher
-Message-ID: <20190228103715.ijvimcfysiguiwty@gondor.apana.org.au>
-References: <20190209214240.56gq7ivn3pw3bssf@altlinux.org>
- <20190210184628.yupsxgjlaicwbxg6@altlinux.org>
- <20190219043732.x3sbwzqlz4ikntxo@gondor.apana.org.au>
- <20190224064840.hii4ccjksjdnewae@altlinux.org>
- <20190228061444.3escryzoit3idtwg@gondor.apana.org.au>
- <20190228070449.gjwoq4c2b3x5grie@altlinux.org>
- <20190228075141.s6mftb44yuylbzys@gondor.apana.org.au>
- <20190228082801.2aofw23r2shzwy4n@altlinux.org>
- <20190228090125.6n62v4oxpwl5yzv4@gondor.apana.org.au>
- <20190228103337.sbjujn27qkkgxqt2@altlinux.org>
+        Thu, 28 Feb 2019 07:38:52 -0500
+Received: from mga11.intel.com ([192.55.52.93]:40792 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727754AbfB1Miw (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 28 Feb 2019 07:38:52 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Feb 2019 04:38:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,423,1544515200"; 
+   d="scan'208";a="148046694"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.169])
+  by fmsmga004.fm.intel.com with ESMTP; 28 Feb 2019 04:38:49 -0800
+Date:   Thu, 28 Feb 2019 14:38:48 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Matthew Garrett <mjg59@google.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        =?iso-8859-1?Q?Thi=E9baud?= Weksteen <tweek@google.com>
+Subject: Re: [PATCH V4 2/4] tpm: Reserve the TPM final events table
+Message-ID: <20190228123848.GD17109@linux.intel.com>
+References: <20190222202606.160816-1-matthewgarrett@google.com>
+ <20190222202606.160816-3-matthewgarrett@google.com>
+ <20190227140259.GA17106@linux.intel.com>
+ <CACdnJuucWezNf3jki5wN2XJ6wsN_uMSxQuyrekr9F-3aJJE4kA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190228103337.sbjujn27qkkgxqt2@altlinux.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CACdnJuucWezNf3jki5wN2XJ6wsN_uMSxQuyrekr9F-3aJJE4kA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Feb 28, 2019 at 01:33:37PM +0300, Vitaly Chikunov wrote:
->
-> To make the same for set_{pub,priv}_key it will require patching RSA
-> drivers anyway, since length of the key is stored just once as keylen
-> argument.
+On Wed, Feb 27, 2019 at 11:57:09AM -0800, Matthew Garrett wrote:
+> On Wed, Feb 27, 2019 at 6:03 AM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> > My guess is that your patches are based a later 5.0-rcX. Unfortunately I
+> > cannot update my master at this point because my 5.1 PR was taken to
+> > security tree and rebasing would change the commit IDs of 5.1 content
+> > because security/next-general does not yet contain those patches.
+> 
+> Bother. I'll rebase against your tree.
 
-No we don't need to use the same format for different algorithms.
-RSA should stay as is.
+Thanks!
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+/Jarkko
