@@ -2,116 +2,208 @@ Return-Path: <SRS0=BEGI=RD=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93540C10F00
-	for <linux-integrity@archiver.kernel.org>; Thu, 28 Feb 2019 21:59:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D47F1C4360F
+	for <linux-integrity@archiver.kernel.org>; Thu, 28 Feb 2019 22:00:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6873A218B0
-	for <linux-integrity@archiver.kernel.org>; Thu, 28 Feb 2019 21:59:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA323218B0
+	for <linux-integrity@archiver.kernel.org>; Thu, 28 Feb 2019 22:00:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731967AbfB1V70 (ORCPT
+        id S1732469AbfB1WAo (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 28 Feb 2019 16:59:26 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37966 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726088AbfB1V70 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 28 Feb 2019 16:59:26 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1SLxNkl016860
-        for <linux-integrity@vger.kernel.org>; Thu, 28 Feb 2019 16:59:24 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qxqudrf7y-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 28 Feb 2019 16:59:24 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 28 Feb 2019 21:59:19 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 28 Feb 2019 21:59:16 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1SLxFFP59048184
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 28 Feb 2019 21:59:15 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 58223A4057;
-        Thu, 28 Feb 2019 21:59:15 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A96B0A4040;
-        Thu, 28 Feb 2019 21:59:14 +0000 (GMT)
-Received: from dhcp-9-31-103-153.watson.ibm.com (unknown [9.31.103.153])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 28 Feb 2019 21:59:14 +0000 (GMT)
-Subject: Re: [PATCH V2 3/4] IMA: Optionally make use of filesystem-provided
- hashes
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Matthew Garrett <mjg59@google.com>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-fsdevel@vger.kernel.org, miklos@szeredi.hu
-Date:   Thu, 28 Feb 2019 16:59:14 -0500
-In-Reply-To: <CACdnJutfCxzQDeFzXmZ9f8UrnqNScErkBJd2Yu+VEoy4nBhBCA@mail.gmail.com>
-References: <20190226215034.68772-1-matthewgarrett@google.com>
-         <20190226215034.68772-4-matthewgarrett@google.com>
-         <1551369834.10911.195.camel@linux.ibm.com>
-         <1551377110.10911.202.camel@linux.ibm.com>
-         <CACdnJutfCxzQDeFzXmZ9f8UrnqNScErkBJd2Yu+VEoy4nBhBCA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19022821-0016-0000-0000-0000025C36E6
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022821-0017-0000-0000-000032B6A71D
-Message-Id: <1551391154.10911.210.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-28_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902280145
+        Thu, 28 Feb 2019 17:00:44 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48218 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726088AbfB1WAo (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 28 Feb 2019 17:00:44 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E6584AF26;
+        Thu, 28 Feb 2019 22:00:41 +0000 (UTC)
+Date:   Thu, 28 Feb 2019 23:00:39 +0100
+From:   Petr Vorel <pvorel@suse.cz>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/5] selftests/ima: kexec_file_load syscall test
+Message-ID: <20190228220039.GC20335@dell5510>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <1551223620-11586-1-git-send-email-zohar@linux.ibm.com>
+ <1551223620-11586-5-git-send-email-zohar@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1551223620-11586-5-git-send-email-zohar@linux.ibm.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, 2019-02-28 at 13:41 -0800, Matthew Garrett wrote:
-> On Thu, Feb 28, 2019 at 10:05 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >
-> >
-> > > > diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-> > > > index 09a5def7e28a..6a517282068d 100644
-> > > > --- a/Documentation/ABI/testing/ima_policy
-> > > > +++ b/Documentation/ABI/testing/ima_policy
-> > > > @@ -24,7 +24,8 @@ Description:
-> > > >                             [euid=] [fowner=] [fsname=] [subtype=]]
-> > > >                     lsm:    [[subj_user=] [subj_role=] [subj_type=]
-> > > >                              [obj_user=] [obj_role=] [obj_type=]]
-> > > > -                   option: [[appraise_type=]] [permit_directio]
-> > > > +                   option: [[appraise_type=] [permit_directio]
-> > > > +                            [trust_vfs]]
-> > >
-> > > Let's generalize "trust_vfs" a bit.  How about introducing
-> > > "collect_type=", with the default being reading and calculating the
-> > > file hash?
-> >
-> > The naming might be based on the VFS name (e.g vfs_read, vfs_get_hash)
-> > or on the file_operations name (eg. read, get_hash).
-> 
-> If collect_type=get_hash and the filesystem doesn't support the
-> get_hash type, should the behaviour be to fall back to read?
+Hi Mimi,
 
-"get_hash" should be limited to a specific filesystem type and
-subtype.  Based on the filesystem type and subtype, couldn't a warning
-be emitted at policy load time.
+> The kernel can be configured to verify PE signed kernel images, IMA
+> kernel image signatures, both types of signatures, or none.  This test
+> verifies only properly signed kernel images are loaded into memory,
+> based on the kernel configuration and runtime policies.
 
-Mimi
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Reviewed-by: Petr Vorel <pvorel@suse.cz>
 
+LGTM, minor comments below.
+...
+> +++ b/tools/testing/selftests/ima/common_lib.sh
+...
+> +# Look for config option in Kconfig file.
+> +# Return 1 for found and 0 for not found.
+> +kconfig_enabled()
+> +{
+> +	local config="$1"
+> +	local msg="$2"
+> +
+Mixing tabs and spaces (spaces below).
+> +        grep -E -q $config $IKCONFIG
+> +        if [ $? -eq 0 ]; then
+> +                log_info "$msg"
+> +                return 1
+> +        fi
+> +        return 0
+> +}
+> +
+> +# Attempt to get the kernel config first via proc, and then by
+> +# extracting it from the kernel image or the configs.ko using
+> +# scripts/extract-ikconfig.
+> +# Return 1 for found and 0 for not found.
+> +get_kconfig()
+> +{
+> +	local proc_config="/proc/config.gz"
+> +	local module_dir="/lib/modules/`uname -r`"
+> +	local configs_module="$module_dir/kernel/kernel/configs.ko"
+> +
+> +	if [ ! -f $proc_config ]; then
+> +		modprobe configs > /dev/null 2>&1
+> +	fi
+> +	if [ -f $proc_config ]; then
+> +		cat $proc_config | gunzip > $IKCONFIG 2>/dev/null
+> +		if [ $? -eq 0 ]; then
+> +			return 1
+> +		fi
+> +	fi
+> +
+> +	local extract_ikconfig="$module_dir/source/scripts/extract-ikconfig"
+> +	if [ ! -f $extract_ikconfig ]; then
+> +		log_skip "extract-ikconfig not found"
+> +	fi
+> +
+> +	$extract_ikconfig $KERNEL_IMAGE > $IKCONFIG 2>/dev/null
+> +	if [ $? -eq 1 ]; then
+> +		if [ ! -f $configs_module ]; then
+> +			log_skip "CONFIG_IKCONFIG not enabled"
+> +		fi
+> +		$extract_ikconfig $configs_module > $IKCONFIG
+> +		if [ $? -eq 1 ]; then
+> +			log_skip "CONFIG_IKCONFIG not enabled"
+> +		fi
+> +	fi
+> +	return 1
+> +}
+> +
+> +# Make sure that securityfs is mounted
+> +mount_securityfs()
+> +{
+> +	if [ -z $SECURITYFS ]; then
+> +		SECURITYFS=/sys/kernel/security
+> +		mount -t securityfs security $SECURITYFS
+> +	fi
+> +
+> +	if [ ! -d "$SECURITYFS" ]; then
+> +		log_fail "$SECURITYFS :securityfs is not mounted"
+		log_fail "$SECURITYFS: securityfs is not mounted"
+> +	fi
+> +}
+> +
+> +# The policy rule format is an "action" followed by key-value pairs.  This
+> +# function supports up to two key-value pairs, in any order.
+> +# For example: action func=<keyword> [appraise_type=<type>]
+> +# Return 1 for found and 0 for not found.
+> +check_ima_policy()
+> +{
+> +	local action=$1
+	local action="$1"
+(sorry this is nitpicking, I'd be consistent)
+> +	local keypair1="$2"
+> +	local keypair2="$3"
+> +
+> +	mount_securityfs
+> +
+> +	local ima_policy=$SECURITYFS/ima/policy
+> +	if [ ! -e $ima_policy ]; then
+> +		log_fail "$ima_policy not found"
+> +	fi
+> +
+> +	if [ -n $keypair2 ]; then
+> +		grep -e "^$action.*$keypair1" "$ima_policy" | \
+> +			grep -q -e "$keypair2"
+> +	else
+> +		grep -q -e "^$action.*$keypair1" "$ima_policy"
+> +	fi
+> +
+> +	[ $? -eq 0 ] && ret=1 || ret=0
+> +        return $ret
+return $? is enough here (+ ret was not defined as local and mixing tabs with spaces)
+> +}
+> diff --git a/tools/testing/selftests/ima/test_kexec_file_load.sh b/tools/testing/selftests/ima/test_kexec_file_load.sh
+> new file mode 100755
+> index 000000000000..e08c7e6cf28c
+> --- /dev/null
+> +++ b/tools/testing/selftests/ima/test_kexec_file_load.sh
+...
+
+> +	# The architecture specific or a custom policy may require the
+> +	# kexec kernel image be signed.  Policy rules are walked
+> +	# sequentially.  As a result, a policy rule may be defined, but
+> +	# might not necessarily be used.  This test assumes if a policy
+> +	# rule is specified, that is the intent.
+> +	if [ $ima_read_policy -eq 1 ]; then
+> +		check_ima_policy "appraise" "func=KEXEC_KERNEL_CHECK" \
+> +			"appraise_type=imasig"
+> +		ret=$?
+> +		[ $ret -eq 1 ] && log_info "IMA signature required";
+> +	fi
+> +	return $ret
+> +}
+> +
+> +# The kexec_file_load_test() is complicated enough, require pesign.
+> +# Return 1 for PE signature found and 0 for not found.
+> +check_for_pesig()
+> +{
+> +	which pesign > /dev/null 2>&1
+> +	if [ $?	-eq 1 ]; then
+> +		log_skip "pesign not found"
+> +	fi
+Maybe just (matter of preference)
+	which pesign > /dev/null 2>&1 || log_skip "pesign not found"
+> +
+> +	pesign -i $KERNEL_IMAGE --show-signature | grep -q "No signatures"
+> +	local ret=$?
+> +	if [ $ret -eq 1 ]; then
+> +		log_info "kexec kernel image PE signed"
+> +	else
+> +		log_info "kexec kernel image not PE signed"
+> +	fi
+> +	return $ret
+> +}
+
+...
+> +# kexec requires root privileges
+> +if [ $(id -ru) -ne 0 ]; then
+> +	log_skip "requires root privileges"
+> +fi
+This is repeated several times => good candidate for helper even here in IMA
+specific library.
+
+Kind regards,
+Petr
