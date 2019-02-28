@@ -2,41 +2,42 @@ Return-Path: <SRS0=BEGI=RD=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-13.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E06B7C10F00
-	for <linux-integrity@archiver.kernel.org>; Thu, 28 Feb 2019 22:20:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4458C43381
+	for <linux-integrity@archiver.kernel.org>; Thu, 28 Feb 2019 22:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7BA62133D
-	for <linux-integrity@archiver.kernel.org>; Thu, 28 Feb 2019 22:20:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7ABB72133D
+	for <linux-integrity@archiver.kernel.org>; Thu, 28 Feb 2019 22:32:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729937AbfB1WUn (ORCPT
+        id S1726189AbfB1Wc7 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 28 Feb 2019 17:20:43 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52372 "EHLO mx1.suse.de"
+        Thu, 28 Feb 2019 17:32:59 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54060 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727988AbfB1WUm (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 28 Feb 2019 17:20:42 -0500
+        id S1726088AbfB1Wc6 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 28 Feb 2019 17:32:58 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 407DAB183;
-        Thu, 28 Feb 2019 22:20:41 +0000 (UTC)
-Date:   Thu, 28 Feb 2019 23:20:39 +0100
+        by mx1.suse.de (Postfix) with ESMTP id 8B884B618;
+        Thu, 28 Feb 2019 22:32:57 +0000 (UTC)
+Date:   Thu, 28 Feb 2019 23:32:55 +0100
 From:   Petr Vorel <pvorel@suse.cz>
 To:     Mimi Zohar <zohar@linux.ibm.com>
 Cc:     linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] selftests/ima: kexec_file_load syscall test
-Message-ID: <20190228222039.GD20335@dell5510>
+Subject: Re: [PATCH v2 5/5] selftests/ima: loading kernel modules
+Message-ID: <20190228223255.GE20335@dell5510>
 Reply-To: Petr Vorel <pvorel@suse.cz>
 References: <1551223620-11586-1-git-send-email-zohar@linux.ibm.com>
- <1551223620-11586-5-git-send-email-zohar@linux.ibm.com>
+ <1551223620-11586-6-git-send-email-zohar@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1551223620-11586-5-git-send-email-zohar@linux.ibm.com>
+In-Reply-To: <1551223620-11586-6-git-send-email-zohar@linux.ibm.com>
 User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
@@ -45,72 +46,45 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 Hi Mimi,
 
-> The kernel can be configured to verify PE signed kernel images, IMA
-> kernel image signatures, both types of signatures, or none.  This test
-> verifies only properly signed kernel images are loaded into memory,
-> based on the kernel configuration and runtime policies.
+> While the appended kernel module signature can be verified, when loading
+> a kernel module via either the init_module or the finit_module syscall,
+> verifying the IMA signature requires access to the file descriptor,
+> which is only available via the finit_module syscall.  As "modprobe"
+> does not provide a flag allowing the syscall - init_module or
+> finit_module - to be specified, this patch does not load a kernel
+> module.
+
+> This test simply verifies that on secure boot enabled systems with
+> "CONFIG_IMA_ARCH_POLICY" configured, that at least an appended kernel
+> module signature or an IMA signature is required based on the Kconfig
+> and the runtime IMA policy.
 
 > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Reviewed-by: Petr Vorel <pvorel@suse.cz>
 
-> --- a/tools/testing/selftests/ima/common_lib.sh
 ...
-> +# Look for config option in Kconfig file.
-> +# Return 1 for found and 0 for not found.
-I'd revert the return value (for shell is 0 as ok),
-but matter of preference.
-> +kconfig_enabled()
-> +{
-> +	local config="$1"
-> +	local msg="$2"
-> +
-> +        grep -E -q $config $IKCONFIG
-> +        if [ $? -eq 0 ]; then
-> +                log_info "$msg"
-> +                return 1
-> +        fi
-> +        return 0
-> +}
-> +
-> +# Attempt to get the kernel config first via proc, and then by
-> +# extracting it from the kernel image or the configs.ko using
-> +# scripts/extract-ikconfig.
-> +# Return 1 for found and 0 for not found.
-"and 0 for not found": This is not true as it uses log_skip which exits.
-And you don't read this value anywhere.
-> +get_kconfig()
-> +{
-> +	local proc_config="/proc/config.gz"
-> +	local module_dir="/lib/modules/`uname -r`"
-> +	local configs_module="$module_dir/kernel/kernel/configs.ko"
-> +
-> +	if [ ! -f $proc_config ]; then
-> +		modprobe configs > /dev/null 2>&1
+> diff --git a/tools/testing/selftests/ima/test_kernel_module.sh b/tools/testing/selftests/ima/test_kernel_module.sh
+...
+> +# Are appended signatures required?
+> +if [ -e /sys/module/module/parameters/sig_enforce ]; then
+> +	sig_enforce=$(cat /sys/module/module/parameters/sig_enforce)
+> +	if [ $sig_enforce = "Y" ]; then
+> +		log_pass "appended kernel module signature required"
 > +	fi
-> +	if [ -f $proc_config ]; then
-> +		cat $proc_config | gunzip > $IKCONFIG 2>/dev/null
-> +		if [ $? -eq 0 ]; then
-> +			return 1
-> +		fi
-> +	fi
-> +
-> +	local extract_ikconfig="$module_dir/source/scripts/extract-ikconfig"
-> +	if [ ! -f $extract_ikconfig ]; then
-> +		log_skip "extract-ikconfig not found"
-> +	fi
-> +
-> +	$extract_ikconfig $KERNEL_IMAGE > $IKCONFIG 2>/dev/null
-> +	if [ $? -eq 1 ]; then
-> +		if [ ! -f $configs_module ]; then
-> +			log_skip "CONFIG_IKCONFIG not enabled"
-> +		fi
-> +		$extract_ikconfig $configs_module > $IKCONFIG
-> +		if [ $? -eq 1 ]; then
-> +			log_skip "CONFIG_IKCONFIG not enabled"
-> +		fi
-> +	fi
-> +	return 1
-> +}
+> +fi
+Another possible helper [1]:
+is_enabled() # or sysfs_enabled
+{
+	[ -f "$1" ] && [ "$(cat $1)" = "Y" -o "$(cat $1)" = "1" ]
+}
+
+is_enabled /sys/module/module/parameters/sig_enforce && \
+	log_pass "appended kernel module signature required"
+
+...
 
 
 Kind regards,
 Petr
+
+[1] https://github.com/linux-test-project/ltp/blob/master/ver_linux#L30
