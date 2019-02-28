@@ -2,75 +2,62 @@ Return-Path: <SRS0=BEGI=RD=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CD75C43381
-	for <linux-integrity@archiver.kernel.org>; Thu, 28 Feb 2019 23:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5892CC43381
+	for <linux-integrity@archiver.kernel.org>; Thu, 28 Feb 2019 23:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2369F218AE
-	for <linux-integrity@archiver.kernel.org>; Thu, 28 Feb 2019 23:14:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2879F218B0
+	for <linux-integrity@archiver.kernel.org>; Thu, 28 Feb 2019 23:30:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726631AbfB1XOq (ORCPT
+        id S1727864AbfB1Xak (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 28 Feb 2019 18:14:46 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36732 "EHLO mx1.suse.de"
+        Thu, 28 Feb 2019 18:30:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40392 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732702AbfB1XOo (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 28 Feb 2019 18:14:44 -0500
+        id S1726631AbfB1Xak (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 28 Feb 2019 18:30:40 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D3CE1ABA1;
-        Thu, 28 Feb 2019 23:14:42 +0000 (UTC)
-Date:   Fri, 1 Mar 2019 00:14:41 +0100
+        by mx1.suse.de (Postfix) with ESMTP id 87183B645;
+        Thu, 28 Feb 2019 23:30:39 +0000 (UTC)
 From:   Petr Vorel <pvorel@suse.cz>
-To:     shuah <shuah@kernel.org>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-kselftest@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] selftests/ima: loading kernel modules
-Message-ID: <20190228231441.GF20335@dell5510>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <1551223620-11586-1-git-send-email-zohar@linux.ibm.com>
- <1551223620-11586-6-git-send-email-zohar@linux.ibm.com>
- <19d494c6-ecb1-b884-2d23-5f556b3ec05b@kernel.org>
- <1551276893.10911.23.camel@linux.ibm.com>
- <ab45b574-4791-d42a-f566-ab9886525549@kernel.org>
+To:     linux-integrity@vger.kernel.org
+Cc:     Petr Vorel <pvorel@suse.cz>, Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-kselftest@vger.kernel.org, shuah <shuah@kernel.org>
+Subject: [PATCH] selftests/ima: Add missing '=y' to config options
+Date:   Fri,  1 Mar 2019 00:30:30 +0100
+Message-Id: <20190228233030.10480-1-pvorel@suse.cz>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ab45b574-4791-d42a-f566-ab9886525549@kernel.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Shuah,
+so the file can be used as kernel config snippet.
 
-> We can do this as a separate effort in the interest of getting these
-> in the interest of getting these in.
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
+---
+ tools/testing/selftests/ima/config | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> We have common functions in ksefltest.h for c and we don't have them
-> for tests scripts. We might be able to collect common routines such
-> as get_kconfig into a common .sh and include in tests. If you have time
-> to do this, that will be great. It can be done as a separate effort.
-Some inspiration, what sort of helpers can be for shell see LTP shell API [1].
-These helpers tests help tests to be short, readable and with unified output.
-(I like library variables [2] which are self describing and making test even
-shorter), setup and cleanup functions called automatically, ...
-The same applies for C API [3] (e.g. SAFE_*() helpers for handling errors, ...).
+diff --git a/tools/testing/selftests/ima/config b/tools/testing/selftests/ima/config
+index 6bc86d4d9bb4..9b968cd55199 100644
+--- a/tools/testing/selftests/ima/config
++++ b/tools/testing/selftests/ima/config
+@@ -1,4 +1,4 @@
+-CONFIG_IMA_APPRAISE
+-CONFIG_IMA_ARCH_POLICY
+-CONFIG_SECURITYFS
+-CONFIG_KEXEC_VERIFY_SIG
++CONFIG_IMA_APPRAISE=y
++CONFIG_IMA_ARCH_POLICY=y
++CONFIG_SECURITYFS=y
++CONFIG_KEXEC_VERIFY_SIG=y
+-- 
+2.20.1
 
-I wonder if there is even any interest of having any sort of helpers or even
-framework for shell, when so far there was nothing.
-
-> thanks,
-> -- Shuah
-
-
-Kind regards,
-Petr
-
-[1] https://github.com/linux-test-project/ltp/wiki/Test-Writing-Guidelines#23-writing-a-testcase-in-shell
-[2] https://github.com/linux-test-project/ltp/wiki/Test-Writing-Guidelines#232-library-variables
-[3] https://github.com/linux-test-project/ltp/wiki/Test-Writing-Guidelines#22-writing-a-test-in-c
