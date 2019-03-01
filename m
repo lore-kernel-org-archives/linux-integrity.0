@@ -2,141 +2,88 @@ Return-Path: <SRS0=DbZh=RE=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FDAC43381
-	for <linux-integrity@archiver.kernel.org>; Fri,  1 Mar 2019 16:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ECFDC43381
+	for <linux-integrity@archiver.kernel.org>; Fri,  1 Mar 2019 16:06:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EA0A2084F
-	for <linux-integrity@archiver.kernel.org>; Fri,  1 Mar 2019 16:01:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ACKzz28V"
+	by mail.kernel.org (Postfix) with ESMTP id 477762084F
+	for <linux-integrity@archiver.kernel.org>; Fri,  1 Mar 2019 16:06:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728416AbfCAQBU (ORCPT
+        id S2388924AbfCAQGn (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 1 Mar 2019 11:01:20 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:59464 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727952AbfCAQBU (ORCPT
+        Fri, 1 Mar 2019 11:06:43 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:49976 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727952AbfCAQGn (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 1 Mar 2019 11:01:20 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x21G0uZ0167864;
-        Fri, 1 Mar 2019 16:01:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2018-07-02; bh=Vx6wGPXn8qGPXobFimrsuxTCoNi+2uYkcObjoguIsRI=;
- b=ACKzz28VxR7SrqsrwOh0x/jwwZJERe4cFlYlSBu2KeAnEhZwEZv3A6O7FNQBIqKa2942
- Jzgu6hbY1c0edhAm/4C5aJc1aCk8FXHfoMikW1qHeUXGzD+y9Trd+psJCdiR6c6eqwN1
- HW1kKESmvxdsuCrlIVeeLmuyRPR4MkqiZKykL7zGkT9K6o993dQQiJ01F2xa2U/njpeg
- ERenSQQZVMVqBeJlMWzbUwjupbxNdsKML9+o6ocaz46CDqzocWNTKrVBHWHaMQ7TWZ6u
- uVrmFNTGTQFUC5UPZPPvzE7Qa63SjGHFp1vvwcxMWRf1Zjqw0DC2W8M+JSLToUrmZFrh Mg== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2qtuperbwk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 01 Mar 2019 16:01:16 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x21G1F6H025960
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 1 Mar 2019 16:01:15 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x21G1Fhe026129;
-        Fri, 1 Mar 2019 16:01:15 GMT
-Received: from anon-dhcp-171.1015granger.net (/68.61.232.219)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 01 Mar 2019 08:01:14 -0800
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH RFC 4/4] NFSD: Prototype support for IMA on NFS (server)
-From:   Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <20190301150401.GA17160@fieldses.org>
-Date:   Fri, 1 Mar 2019 11:01:14 -0500
-Cc:     Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-integrity@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <B8F76BFF-73DB-4904-8DB6-5ADE093AB051@oracle.com>
-References: <20190214203336.6469.34750.stgit@manet.1015granger.net>
- <20190214204326.6469.25843.stgit@manet.1015granger.net>
- <20190218193218.GA5879@fieldses.org>
- <A7D59BDC-08B3-4338-8E3B-6B41AC652968@oracle.com>
- <20190301150401.GA17160@fieldses.org>
-To:     Bruce Fields <bfields@fieldses.org>
-X-Mailer: Apple Mail (2.3445.102.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9182 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1903010112
+        Fri, 1 Mar 2019 11:06:43 -0500
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 86BFC72CA65;
+        Fri,  1 Mar 2019 19:06:39 +0300 (MSK)
+Received: from altlinux.org (sole.flsd.net [185.75.180.6])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 63AC34A4AE7;
+        Fri,  1 Mar 2019 19:06:39 +0300 (MSK)
+Date:   Fri, 1 Mar 2019 19:06:38 +0300
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     David Howells <dhowells@redhat.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/4] X.509: Parse public key parameters from x509 for
+ akcipher
+Message-ID: <20190301160638.z266z767m4ky3ohk@altlinux.org>
+Mail-Followup-To: Herbert Xu <herbert@gondor.apana.org.au>,
+        David Howells <dhowells@redhat.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190210184628.yupsxgjlaicwbxg6@altlinux.org>
+ <20190219043732.x3sbwzqlz4ikntxo@gondor.apana.org.au>
+ <20190224064840.hii4ccjksjdnewae@altlinux.org>
+ <20190228061444.3escryzoit3idtwg@gondor.apana.org.au>
+ <20190228070449.gjwoq4c2b3x5grie@altlinux.org>
+ <20190228075141.s6mftb44yuylbzys@gondor.apana.org.au>
+ <20190228082801.2aofw23r2shzwy4n@altlinux.org>
+ <20190228090125.6n62v4oxpwl5yzv4@gondor.apana.org.au>
+ <20190228103337.sbjujn27qkkgxqt2@altlinux.org>
+ <20190228103715.ijvimcfysiguiwty@gondor.apana.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+In-Reply-To: <20190228103715.ijvimcfysiguiwty@gondor.apana.org.au>
+User-Agent: NeoMutt/20171215-106-ac61c7
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+Herbert,
 
-
-> On Mar 1, 2019, at 10:04 AM, Bruce Fields <bfields@fieldses.org> wrote:
+On Thu, Feb 28, 2019 at 06:37:15PM +0800, Herbert Xu wrote:
+> On Thu, Feb 28, 2019 at 01:33:37PM +0300, Vitaly Chikunov wrote:
+> >
+> > To make the same for set_{pub,priv}_key it will require patching RSA
+> > drivers anyway, since length of the key is stored just once as keylen
+> > argument.
 > 
-> On Mon, Feb 18, 2019 at 02:41:24PM -0500, Chuck Lever wrote:
->> 
->> 
->>> On Feb 18, 2019, at 2:32 PM, bfields@fieldses.org wrote:
->>> 
->>> On Thu, Feb 14, 2019 at 03:43:26PM -0500, Chuck Lever wrote:
->>>> When NFSv4 Security Label support is enabled and kernel Integrity
->>>> and IMA support is enabled (via CONFIG), then build in code to
->>>> handle the "security.ima" xattr. The NFS server converts incoming
->>>> GETATTR and SETATTR calls to acesses and updates of the xattr.
->>>> 
->>>> The FATTR4 bit is made up; meaning we still have to go through a
->>>> standards process to allocate a bit that all NFS vendors agree on.
->>>> Thus there is no guarantee this prototype will interoperate with
->>>> others or with a future standards-based implementation.
->>> 
->>> Why the dependence on CONFIG_NFSD_V4_SECURITY_LABEL?
->> 
->> Hrm, well there is some mechanism on the client side that IMA
->> needs that is behind CONFIG_NFS_V4_SECURITY_LABEL. I guess I
->> didn't think about not doing the same thing on the server. It
->> may just be an artifact of an earlier version of this code.
->> 
->> 
->>> (Also, I wonder if we actually need CONFIG_NFSD_V4_SECURITY_LABEL or if
->>> we could just remove it, or replace it by CONFIG_SECURITY where
->>> necessary.)
->> 
->> On the server, there is already a (run-time) export option to
->> enable and disable security labels. Is there a reason a
->> distribution would want to disable client or server support
->> for security labels at build time?
-> 
-> Distributions tend to want kernels that can do anything, with run time
-> controls that are adequate to handle any use cases.
-> 
-> So given that we need adequate run-time configuration, why might someone
-> also want the ability to disable at build time?  Some reasons I can
-> think of:
-> 
-> 	- they need a really small kernel.
-> 	- the feature is too hard to support, or they think it
-> 	  introduces security risks, so they don't want their users
-> 	  turning it on at all.
-> 
-> I could see any of those being reasons for someone not to want NFSD_V4
-> or SECURITY at all, but is there likely to be a big need to configure in
-> both of those things but configure out NFSD_V4_SECURITY_LABEL?  That
-> seems unnecessarily fine grained.
+> No we don't need to use the same format for different algorithms.
+> RSA should stay as is.
 
-I'm not clear, then. Are you proposing to control support for IMA labels
-with the "security_labels" export option?
+I will rework as you suggest. But, just want to state that I disagree
+with this approach of implicitly appending parameters data to the key
+stream without any argument signifying it or length covering it. This
+fitting into the old API is also somewhat disagree to your words that
+we could change internal API:
 
-
---
-Chuck Lever
-
-
-
+On Thu, Feb 28, 2019 at 02:14:44PM +0800, Herbert Xu wrote:
+> On Sun, Feb 24, 2019 at 09:48:40AM +0300, Vitaly Chikunov wrote:
+> ...
+> This compatibility does not matter.  We can always add translating
+> layers into the crypto API to deal with this.  The only ABI that
+> matters is the one to user-space.
