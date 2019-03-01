@@ -2,107 +2,89 @@ Return-Path: <SRS0=DbZh=RE=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27847C43381
-	for <linux-integrity@archiver.kernel.org>; Fri,  1 Mar 2019 16:10:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFDBAC43381
+	for <linux-integrity@archiver.kernel.org>; Fri,  1 Mar 2019 17:59:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00C992083D
-	for <linux-integrity@archiver.kernel.org>; Fri,  1 Mar 2019 16:10:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B405820842
+	for <linux-integrity@archiver.kernel.org>; Fri,  1 Mar 2019 17:59:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389069AbfCAQKc (ORCPT
+        id S2389764AbfCAR72 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 1 Mar 2019 11:10:32 -0500
-Received: from fieldses.org ([173.255.197.46]:34938 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387940AbfCAQKb (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 1 Mar 2019 11:10:31 -0500
-Received: by fieldses.org (Postfix, from userid 2815)
-        id F262D1E19; Fri,  1 Mar 2019 11:10:30 -0500 (EST)
-Date:   Fri, 1 Mar 2019 11:10:30 -0500
-From:   Bruce Fields <bfields@fieldses.org>
-To:     Chuck Lever <chuck.lever@oracle.com>
-Cc:     Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-integrity@vger.kernel.org
-Subject: Re: [PATCH RFC 4/4] NFSD: Prototype support for IMA on NFS (server)
-Message-ID: <20190301161030.GB17671@fieldses.org>
-References: <20190214203336.6469.34750.stgit@manet.1015granger.net>
- <20190214204326.6469.25843.stgit@manet.1015granger.net>
- <20190218193218.GA5879@fieldses.org>
- <A7D59BDC-08B3-4338-8E3B-6B41AC652968@oracle.com>
- <20190301150401.GA17160@fieldses.org>
- <B8F76BFF-73DB-4904-8DB6-5ADE093AB051@oracle.com>
+        Fri, 1 Mar 2019 12:59:28 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:40160 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389759AbfCAR72 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 1 Mar 2019 12:59:28 -0500
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 8855D72CC53;
+        Fri,  1 Mar 2019 20:59:25 +0300 (MSK)
+Received: from beacon.altlinux.org (unknown [185.6.174.98])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 5252D4A4AE7;
+        Fri,  1 Mar 2019 20:59:25 +0300 (MSK)
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        David Howells <dhowells@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v7 01/11] KEYS: report to keyctl only actually supported key ops
+Date:   Fri,  1 Mar 2019 20:59:08 +0300
+Message-Id: <20190301175918.29694-2-vt@altlinux.org>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20190301175918.29694-1-vt@altlinux.org>
+References: <20190301175918.29694-1-vt@altlinux.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <B8F76BFF-73DB-4904-8DB6-5ADE093AB051@oracle.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Mar 01, 2019 at 11:01:14AM -0500, Chuck Lever wrote:
-> 
-> 
-> > On Mar 1, 2019, at 10:04 AM, Bruce Fields <bfields@fieldses.org> wrote:
-> > 
-> > On Mon, Feb 18, 2019 at 02:41:24PM -0500, Chuck Lever wrote:
-> >> 
-> >> 
-> >>> On Feb 18, 2019, at 2:32 PM, bfields@fieldses.org wrote:
-> >>> 
-> >>> On Thu, Feb 14, 2019 at 03:43:26PM -0500, Chuck Lever wrote:
-> >>>> When NFSv4 Security Label support is enabled and kernel Integrity
-> >>>> and IMA support is enabled (via CONFIG), then build in code to
-> >>>> handle the "security.ima" xattr. The NFS server converts incoming
-> >>>> GETATTR and SETATTR calls to acesses and updates of the xattr.
-> >>>> 
-> >>>> The FATTR4 bit is made up; meaning we still have to go through a
-> >>>> standards process to allocate a bit that all NFS vendors agree on.
-> >>>> Thus there is no guarantee this prototype will interoperate with
-> >>>> others or with a future standards-based implementation.
-> >>> 
-> >>> Why the dependence on CONFIG_NFSD_V4_SECURITY_LABEL?
-> >> 
-> >> Hrm, well there is some mechanism on the client side that IMA
-> >> needs that is behind CONFIG_NFS_V4_SECURITY_LABEL. I guess I
-> >> didn't think about not doing the same thing on the server. It
-> >> may just be an artifact of an earlier version of this code.
-> >> 
-> >> 
-> >>> (Also, I wonder if we actually need CONFIG_NFSD_V4_SECURITY_LABEL or if
-> >>> we could just remove it, or replace it by CONFIG_SECURITY where
-> >>> necessary.)
-> >> 
-> >> On the server, there is already a (run-time) export option to
-> >> enable and disable security labels. Is there a reason a
-> >> distribution would want to disable client or server support
-> >> for security labels at build time?
-> > 
-> > Distributions tend to want kernels that can do anything, with run time
-> > controls that are adequate to handle any use cases.
-> > 
-> > So given that we need adequate run-time configuration, why might someone
-> > also want the ability to disable at build time?  Some reasons I can
-> > think of:
-> > 
-> > 	- they need a really small kernel.
-> > 	- the feature is too hard to support, or they think it
-> > 	  introduces security risks, so they don't want their users
-> > 	  turning it on at all.
-> > 
-> > I could see any of those being reasons for someone not to want NFSD_V4
-> > or SECURITY at all, but is there likely to be a big need to configure in
-> > both of those things but configure out NFSD_V4_SECURITY_LABEL?  That
-> > seems unnecessarily fine grained.
-> 
-> I'm not clear, then. Are you proposing to control support for IMA labels
-> with the "security_labels" export option?
+Because with the introduction of EC-RDSA and change in workings of RSA
+in regard to sign/verify, akcipher may have not all callbacks defined,
+report to keyctl only actually supported ops determined by the presence
+of the akcipher callbacks.
 
-Just security labels.  I'd think it'd make sense to support IMA labels
-whenever IMA and NFSD_V4 are both turned on.
+Cc: David Howells <dhowells@redhat.com>
+Cc: keyrings@vger.kernel.org
+Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+---
+ crypto/asymmetric_keys/public_key.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
---b.
+diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
+index f5d85b47fcc6..c2e4e73fcf06 100644
+--- a/crypto/asymmetric_keys/public_key.c
++++ b/crypto/asymmetric_keys/public_key.c
+@@ -130,11 +130,17 @@ static int software_key_query(const struct kernel_pkey_params *params,
+ 	info->max_sig_size = len;
+ 	info->max_enc_size = len;
+ 	info->max_dec_size = len;
+-	info->supported_ops = (KEYCTL_SUPPORTS_ENCRYPT |
+-			       KEYCTL_SUPPORTS_VERIFY);
+-	if (pkey->key_is_private)
+-		info->supported_ops |= (KEYCTL_SUPPORTS_DECRYPT |
+-					KEYCTL_SUPPORTS_SIGN);
++	info->supported_ops = 0;
++	if (crypto_akcipher_alg(tfm)->verify)
++		info->supported_ops |= KEYCTL_SUPPORTS_VERIFY;
++	if (crypto_akcipher_alg(tfm)->encrypt)
++		info->supported_ops |= KEYCTL_SUPPORTS_ENCRYPT;
++	if (pkey->key_is_private) {
++		if (crypto_akcipher_alg(tfm)->decrypt)
++			info->supported_ops |= KEYCTL_SUPPORTS_DECRYPT;
++		if (crypto_akcipher_alg(tfm)->sign)
++			info->supported_ops |= KEYCTL_SUPPORTS_SIGN;
++	}
+ 	ret = 0;
+ 
+ error_free_tfm:
+-- 
+2.11.0
+
