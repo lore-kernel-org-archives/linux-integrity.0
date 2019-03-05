@@ -2,98 +2,315 @@ Return-Path: <SRS0=PR+Z=RI=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9FEEC00319
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Mar 2019 20:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B93CC4360F
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 Mar 2019 23:19:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B80B220842
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Mar 2019 20:27:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k8cEvvJt"
+	by mail.kernel.org (Postfix) with ESMTP id 0573320842
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 Mar 2019 23:19:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726277AbfCEU1y (ORCPT
+        id S1726659AbfCEXSz (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 Mar 2019 15:27:54 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:38265 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbfCEU1x (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 Mar 2019 15:27:53 -0500
-Received: by mail-it1-f196.google.com with SMTP id l66so6587190itg.3
-        for <linux-integrity@vger.kernel.org>; Tue, 05 Mar 2019 12:27:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Drtt/almuFEK3nbHXAGU2RGVXx1Kj8zsT++EapVE3dg=;
-        b=k8cEvvJtatlK5AUMz8lI79FjBbXtQ9NYP8TKoxWIaxRv8hl+rl11M5QOAtP9LOu5aq
-         e11vOJLACqGl+myDvMck1+LIpcMMWRRkYRsyl6nvGeCDpRYAqSTLBtt706myHRigUIBa
-         PO5PuT5ffjK/zEtz24uBVp39704L71zT1gkrbo2Aj/UnjfBXGjfcrJ/BNrxT8UKKtKVX
-         Nx/9PxcD6pYzOZZQHN8NNlBXPJA93dzqBC6ZhlK95KBrxZsbSe8Arb8nzRtzcWAOVtNE
-         5jVKYmG0gtQK1qqsvTdgA8rtotSJQXKYog0uWfQAgBaRdKeW1AM6AiFRmmAdLKyFz3QZ
-         xVow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Drtt/almuFEK3nbHXAGU2RGVXx1Kj8zsT++EapVE3dg=;
-        b=DoRznbi3KRcR2MM4/Xpa5u0NL2QMDc64merh1xL+pbTHWDfjQ6uUW4N0xxHOwDRius
-         wiIbaMRsd7sJWF6qOCtRWqWd6q2suZDhCMgkC90FxK5Qs8PsN3ccqJ1NLy+i6AI9u300
-         RI6hKeE5JWciLRk/jLlvqD2oV1zrcy2Vuv/pR1Jc0U1qecEINQxLKu6BqDNkRe7TEjIn
-         UQgP0b8GAgVeE/5Nxoa/0oN7SPmjNr7Yioif97vA5lesKD4ayjLl06IS/2cjM//RHPV0
-         6xqUVgFtaKIidbhwHujkSuElfnm7Bqr300U5y0RgnmxCd7YWD3TuHkU+LaMCzzoCPZa7
-         IcAQ==
-X-Gm-Message-State: APjAAAXfvVLKu9KG9e30zq0o5DnWrnigLWZ+2+VHS2JNHPa9Iqh4kpbd
-        H4NlDRt9qtbLi4hr+2i0ZkMkg0A3FqPqhq6ujTI70w==
-X-Google-Smtp-Source: APXvYqzCnZ0bGtMcZEua66izMDuAM7lSYBjvat/WFeU9JTcgHtAtdugZxIhig+Jg5LoYgH/BVgbpQEgjXjXVJToJCFE=
-X-Received: by 2002:a24:7908:: with SMTP id z8mr135640itc.16.1551817672137;
- Tue, 05 Mar 2019 12:27:52 -0800 (PST)
+        Tue, 5 Mar 2019 18:18:55 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53984 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726430AbfCEXSy (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 5 Mar 2019 18:18:54 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1FE315D67E;
+        Tue,  5 Mar 2019 23:18:54 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-148.rdu2.redhat.com [10.10.121.148])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 662E75DE69;
+        Tue,  5 Mar 2019 23:18:52 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] vfs: Move kernel_read_file() to fs/read_write.c
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, dhowells@redhat.com,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 05 Mar 2019 23:18:51 +0000
+Message-ID: <155182793151.22751.13487483863282128982.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-References: <20190226215034.68772-1-matthewgarrett@google.com>
- <20190226215034.68772-4-matthewgarrett@google.com> <1551369834.10911.195.camel@linux.ibm.com>
- <1551377110.10911.202.camel@linux.ibm.com> <CACdnJutfCxzQDeFzXmZ9f8UrnqNScErkBJd2Yu+VEoy4nBhBCA@mail.gmail.com>
- <1551391154.10911.210.camel@linux.ibm.com> <CACdnJuuRLDj+6OTohfTVzqXp1K7U3efVXXuFfBfhk3CiUBEMiQ@mail.gmail.com>
- <CACdnJutPWEtDMS6YUXF0ykq7gKgQRNk6Fw=aHivHz6+NTodsgA@mail.gmail.com>
- <1551731553.10911.510.camel@linux.ibm.com> <CACdnJutWRB1up6wO3aWJJah3p8k+FY6xEfjw8ETHT69Vvsz8GQ@mail.gmail.com>
- <1551791930.31706.41.camel@linux.ibm.com> <CACdnJuvfzvZaU3CHtvVAP6vj_-rnWeTyAKjmRj8QGt7WAmjicQ@mail.gmail.com>
- <1551815469.31706.132.camel@linux.ibm.com>
-In-Reply-To: <1551815469.31706.132.camel@linux.ibm.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Tue, 5 Mar 2019 12:27:41 -0800
-Message-ID: <CACdnJuvhu2iepghLm4-w2XVKH+TVT1JAY=vtKtf733UXPSBPaA@mail.gmail.com>
-Subject: Re: [PATCH V2 3/4] IMA: Optionally make use of filesystem-provided hashes
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-fsdevel@vger.kernel.org, miklos@szeredi.hu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 05 Mar 2019 23:18:54 +0000 (UTC)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Mar 5, 2019 at 11:51 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> On Tue, 2019-03-05 at 10:39 -0800, Matthew Garrett wrote:
-> > We can trust in-kernel filesystems to return reliable information.
-> > Network filesystems have the same issue as FUSE - we're trusting that
-> > the remote endpoint won't give us different information on successive
-> > reads. What's the threat that's blocked by requiring signed policy
-> > here?
->
-> Today, IMA calculates the file hash by reading the file.  If
-> "get_hash" is a generic filesystem ops, then any filesystem could
-> implement it, properly or not.  sysadmins shouldn't have to review
-> kernel code to understand the source of the file hash, but should be
-> able to assume that unless they explicitly authorize "get_hash" usage,
-> IMA reads the file and calculates the file hash.
+Commit bdd1d2d3d251 ("fs: fix kernel_read prototype") moved kernel_read()
+to fs/read_write.c without moving the helpers.
 
-But what's the threat? If an attacker is in a position to inject
-additional IMA policy then in general they're already in a position to
-violate other security assumptions. Admins who have a threat model
-that includes an attacker being able to do this are already requiring
-signed policy. What's the threat that requiring signed policy for this
-specific option mitigates?
+Move kernel_read_file() to fs/read_write.c and out of fs/exec.c as it's not
+actually used by anything in the execve subsystem.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+
+ fs/exec.c       |  106 -------------------------------------------------------
+ fs/read_write.c |  106 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 106 insertions(+), 106 deletions(-)
+
+diff --git a/fs/exec.c b/fs/exec.c
+index fb72d36f7823..cbb1a9cd25ca 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -61,7 +61,6 @@
+ #include <linux/pipe_fs_i.h>
+ #include <linux/oom.h>
+ #include <linux/compat.h>
+-#include <linux/vmalloc.h>
+ 
+ #include <linux/uaccess.h>
+ #include <asm/mmu_context.h>
+@@ -892,111 +891,6 @@ struct file *open_exec(const char *name)
+ }
+ EXPORT_SYMBOL(open_exec);
+ 
+-int kernel_read_file(struct file *file, void **buf, loff_t *size,
+-		     loff_t max_size, enum kernel_read_file_id id)
+-{
+-	loff_t i_size, pos;
+-	ssize_t bytes = 0;
+-	int ret;
+-
+-	if (!S_ISREG(file_inode(file)->i_mode) || max_size < 0)
+-		return -EINVAL;
+-
+-	ret = deny_write_access(file);
+-	if (ret)
+-		return ret;
+-
+-	ret = security_kernel_read_file(file, id);
+-	if (ret)
+-		goto out;
+-
+-	i_size = i_size_read(file_inode(file));
+-	if (i_size <= 0) {
+-		ret = -EINVAL;
+-		goto out;
+-	}
+-	if (i_size > SIZE_MAX || (max_size > 0 && i_size > max_size)) {
+-		ret = -EFBIG;
+-		goto out;
+-	}
+-
+-	if (id != READING_FIRMWARE_PREALLOC_BUFFER)
+-		*buf = vmalloc(i_size);
+-	if (!*buf) {
+-		ret = -ENOMEM;
+-		goto out;
+-	}
+-
+-	pos = 0;
+-	while (pos < i_size) {
+-		bytes = kernel_read(file, *buf + pos, i_size - pos, &pos);
+-		if (bytes < 0) {
+-			ret = bytes;
+-			goto out;
+-		}
+-
+-		if (bytes == 0)
+-			break;
+-	}
+-
+-	if (pos != i_size) {
+-		ret = -EIO;
+-		goto out_free;
+-	}
+-
+-	ret = security_kernel_post_read_file(file, *buf, i_size, id);
+-	if (!ret)
+-		*size = pos;
+-
+-out_free:
+-	if (ret < 0) {
+-		if (id != READING_FIRMWARE_PREALLOC_BUFFER) {
+-			vfree(*buf);
+-			*buf = NULL;
+-		}
+-	}
+-
+-out:
+-	allow_write_access(file);
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(kernel_read_file);
+-
+-int kernel_read_file_from_path(const char *path, void **buf, loff_t *size,
+-			       loff_t max_size, enum kernel_read_file_id id)
+-{
+-	struct file *file;
+-	int ret;
+-
+-	if (!path || !*path)
+-		return -EINVAL;
+-
+-	file = filp_open(path, O_RDONLY, 0);
+-	if (IS_ERR(file))
+-		return PTR_ERR(file);
+-
+-	ret = kernel_read_file(file, buf, size, max_size, id);
+-	fput(file);
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(kernel_read_file_from_path);
+-
+-int kernel_read_file_from_fd(int fd, void **buf, loff_t *size, loff_t max_size,
+-			     enum kernel_read_file_id id)
+-{
+-	struct fd f = fdget(fd);
+-	int ret = -EBADF;
+-
+-	if (!f.file)
+-		goto out;
+-
+-	ret = kernel_read_file(f.file, buf, size, max_size, id);
+-out:
+-	fdput(f);
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(kernel_read_file_from_fd);
+-
+ ssize_t read_code(struct file *file, unsigned long addr, loff_t pos, size_t len)
+ {
+ 	ssize_t res = vfs_read(file, (void __user *)addr, len, &pos);
+diff --git a/fs/read_write.c b/fs/read_write.c
+index ff3c5e6f87cf..555dcaec00ac 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -20,6 +20,7 @@
+ #include <linux/compat.h>
+ #include <linux/mount.h>
+ #include <linux/fs.h>
++#include <linux/vmalloc.h>
+ #include "internal.h"
+ 
+ #include <linux/uaccess.h>
+@@ -1362,6 +1363,111 @@ COMPAT_SYSCALL_DEFINE6(pwritev2, compat_ulong_t, fd,
+ 
+ #endif
+ 
++int kernel_read_file(struct file *file, void **buf, loff_t *size,
++		     loff_t max_size, enum kernel_read_file_id id)
++{
++	loff_t i_size, pos;
++	ssize_t bytes = 0;
++	int ret;
++
++	if (!S_ISREG(file_inode(file)->i_mode) || max_size < 0)
++		return -EINVAL;
++
++	ret = deny_write_access(file);
++	if (ret)
++		return ret;
++
++	ret = security_kernel_read_file(file, id);
++	if (ret)
++		goto out;
++
++	i_size = i_size_read(file_inode(file));
++	if (i_size <= 0) {
++		ret = -EINVAL;
++		goto out;
++	}
++	if (i_size > SIZE_MAX || (max_size > 0 && i_size > max_size)) {
++		ret = -EFBIG;
++		goto out;
++	}
++
++	if (id != READING_FIRMWARE_PREALLOC_BUFFER)
++		*buf = vmalloc(i_size);
++	if (!*buf) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	pos = 0;
++	while (pos < i_size) {
++		bytes = kernel_read(file, *buf + pos, i_size - pos, &pos);
++		if (bytes < 0) {
++			ret = bytes;
++			goto out;
++		}
++
++		if (bytes == 0)
++			break;
++	}
++
++	if (pos != i_size) {
++		ret = -EIO;
++		goto out_free;
++	}
++
++	ret = security_kernel_post_read_file(file, *buf, i_size, id);
++	if (!ret)
++		*size = pos;
++
++out_free:
++	if (ret < 0) {
++		if (id != READING_FIRMWARE_PREALLOC_BUFFER) {
++			vfree(*buf);
++			*buf = NULL;
++		}
++	}
++
++out:
++	allow_write_access(file);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(kernel_read_file);
++
++int kernel_read_file_from_path(const char *path, void **buf, loff_t *size,
++			       loff_t max_size, enum kernel_read_file_id id)
++{
++	struct file *file;
++	int ret;
++
++	if (!path || !*path)
++		return -EINVAL;
++
++	file = filp_open(path, O_RDONLY, 0);
++	if (IS_ERR(file))
++		return PTR_ERR(file);
++
++	ret = kernel_read_file(file, buf, size, max_size, id);
++	fput(file);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(kernel_read_file_from_path);
++
++int kernel_read_file_from_fd(int fd, void **buf, loff_t *size, loff_t max_size,
++			     enum kernel_read_file_id id)
++{
++	struct fd f = fdget(fd);
++	int ret = -EBADF;
++
++	if (!f.file)
++		goto out;
++
++	ret = kernel_read_file(f.file, buf, size, max_size, id);
++out:
++	fdput(f);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(kernel_read_file_from_fd);
++
+ static ssize_t do_sendfile(int out_fd, int in_fd, loff_t *ppos,
+ 		  	   size_t count, loff_t max)
+ {
+
