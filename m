@@ -1,316 +1,123 @@
-Return-Path: <SRS0=PR+Z=RI=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=JWD1=RJ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B93CC4360F
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Mar 2019 23:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B849CC10F00
+	for <linux-integrity@archiver.kernel.org>; Wed,  6 Mar 2019 12:30:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0573320842
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Mar 2019 23:19:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9250E208E4
+	for <linux-integrity@archiver.kernel.org>; Wed,  6 Mar 2019 12:30:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbfCEXSz (ORCPT
+        id S1729969AbfCFMai (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 Mar 2019 18:18:55 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53984 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726430AbfCEXSy (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 Mar 2019 18:18:54 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1FE315D67E;
-        Tue,  5 Mar 2019 23:18:54 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-148.rdu2.redhat.com [10.10.121.148])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 662E75DE69;
-        Tue,  5 Mar 2019 23:18:52 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] vfs: Move kernel_read_file() to fs/read_write.c
-From:   David Howells <dhowells@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, dhowells@redhat.com,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 05 Mar 2019 23:18:51 +0000
-Message-ID: <155182793151.22751.13487483863282128982.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 05 Mar 2019 23:18:54 +0000 (UTC)
+        Wed, 6 Mar 2019 07:30:38 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48018 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727222AbfCFMai (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 6 Mar 2019 07:30:38 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x26CP7u1044206
+        for <linux-integrity@vger.kernel.org>; Wed, 6 Mar 2019 07:30:36 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2r2dkxaepw-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 06 Mar 2019 07:30:35 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 6 Mar 2019 12:30:34 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 6 Mar 2019 12:30:31 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x26CUU2K33751270
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 6 Mar 2019 12:30:31 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C85BE11C064;
+        Wed,  6 Mar 2019 12:30:29 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 20DD911C050;
+        Wed,  6 Mar 2019 12:30:29 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.106.126])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  6 Mar 2019 12:30:28 +0000 (GMT)
+Subject: Re: [PATCH V2 3/4] IMA: Optionally make use of filesystem-provided
+ hashes
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Matthew Garrett <mjg59@google.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-fsdevel@vger.kernel.org, miklos@szeredi.hu
+Date:   Wed, 06 Mar 2019 07:30:18 -0500
+In-Reply-To: <CACdnJuvhu2iepghLm4-w2XVKH+TVT1JAY=vtKtf733UXPSBPaA@mail.gmail.com>
+References: <20190226215034.68772-1-matthewgarrett@google.com>
+         <20190226215034.68772-4-matthewgarrett@google.com>
+         <1551369834.10911.195.camel@linux.ibm.com>
+         <1551377110.10911.202.camel@linux.ibm.com>
+         <CACdnJutfCxzQDeFzXmZ9f8UrnqNScErkBJd2Yu+VEoy4nBhBCA@mail.gmail.com>
+         <1551391154.10911.210.camel@linux.ibm.com>
+         <CACdnJuuRLDj+6OTohfTVzqXp1K7U3efVXXuFfBfhk3CiUBEMiQ@mail.gmail.com>
+         <CACdnJutPWEtDMS6YUXF0ykq7gKgQRNk6Fw=aHivHz6+NTodsgA@mail.gmail.com>
+         <1551731553.10911.510.camel@linux.ibm.com>
+         <CACdnJutWRB1up6wO3aWJJah3p8k+FY6xEfjw8ETHT69Vvsz8GQ@mail.gmail.com>
+         <1551791930.31706.41.camel@linux.ibm.com>
+         <CACdnJuvfzvZaU3CHtvVAP6vj_-rnWeTyAKjmRj8QGt7WAmjicQ@mail.gmail.com>
+         <1551815469.31706.132.camel@linux.ibm.com>
+         <CACdnJuvhu2iepghLm4-w2XVKH+TVT1JAY=vtKtf733UXPSBPaA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19030612-0008-0000-0000-000002C93BAE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19030612-0009-0000-0000-0000223545D9
+Message-Id: <1551875418.31706.158.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-06_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1903060086
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Commit bdd1d2d3d251 ("fs: fix kernel_read prototype") moved kernel_read()
-to fs/read_write.c without moving the helpers.
+On Tue, 2019-03-05 at 12:27 -0800, Matthew Garrett wrote:
+> On Tue, Mar 5, 2019 at 11:51 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > On Tue, 2019-03-05 at 10:39 -0800, Matthew Garrett wrote:
+> > > We can trust in-kernel filesystems to return reliable information.
+> > > Network filesystems have the same issue as FUSE - we're trusting that
+> > > the remote endpoint won't give us different information on successive
+> > > reads. What's the threat that's blocked by requiring signed policy
+> > > here?
+> >
+> > Today, IMA calculates the file hash by reading the file.  If
+> > "get_hash" is a generic filesystem ops, then any filesystem could
+> > implement it, properly or not.  sysadmins shouldn't have to review
+> > kernel code to understand the source of the file hash, but should be
+> > able to assume that unless they explicitly authorize "get_hash" usage,
+> > IMA reads the file and calculates the file hash.
+> 
+> But what's the threat? If an attacker is in a position to inject
+> additional IMA policy then in general they're already in a position to
+> violate other security assumptions. Admins who have a threat model
+> that includes an attacker being able to do this are already requiring
+> signed policy. What's the threat that requiring signed policy for this
+> specific option mitigates?
 
-Move kernel_read_file() to fs/read_write.c and out of fs/exec.c as it's not
-actually used by anything in the execve subsystem.
+That might be true, but this "feature" isn't a minor change.  It
+totally changes the IMA measurement list meaning, without any
+indication of the change in meaning.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
----
-
- fs/exec.c       |  106 -------------------------------------------------------
- fs/read_write.c |  106 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 106 insertions(+), 106 deletions(-)
-
-diff --git a/fs/exec.c b/fs/exec.c
-index fb72d36f7823..cbb1a9cd25ca 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -61,7 +61,6 @@
- #include <linux/pipe_fs_i.h>
- #include <linux/oom.h>
- #include <linux/compat.h>
--#include <linux/vmalloc.h>
- 
- #include <linux/uaccess.h>
- #include <asm/mmu_context.h>
-@@ -892,111 +891,6 @@ struct file *open_exec(const char *name)
- }
- EXPORT_SYMBOL(open_exec);
- 
--int kernel_read_file(struct file *file, void **buf, loff_t *size,
--		     loff_t max_size, enum kernel_read_file_id id)
--{
--	loff_t i_size, pos;
--	ssize_t bytes = 0;
--	int ret;
--
--	if (!S_ISREG(file_inode(file)->i_mode) || max_size < 0)
--		return -EINVAL;
--
--	ret = deny_write_access(file);
--	if (ret)
--		return ret;
--
--	ret = security_kernel_read_file(file, id);
--	if (ret)
--		goto out;
--
--	i_size = i_size_read(file_inode(file));
--	if (i_size <= 0) {
--		ret = -EINVAL;
--		goto out;
--	}
--	if (i_size > SIZE_MAX || (max_size > 0 && i_size > max_size)) {
--		ret = -EFBIG;
--		goto out;
--	}
--
--	if (id != READING_FIRMWARE_PREALLOC_BUFFER)
--		*buf = vmalloc(i_size);
--	if (!*buf) {
--		ret = -ENOMEM;
--		goto out;
--	}
--
--	pos = 0;
--	while (pos < i_size) {
--		bytes = kernel_read(file, *buf + pos, i_size - pos, &pos);
--		if (bytes < 0) {
--			ret = bytes;
--			goto out;
--		}
--
--		if (bytes == 0)
--			break;
--	}
--
--	if (pos != i_size) {
--		ret = -EIO;
--		goto out_free;
--	}
--
--	ret = security_kernel_post_read_file(file, *buf, i_size, id);
--	if (!ret)
--		*size = pos;
--
--out_free:
--	if (ret < 0) {
--		if (id != READING_FIRMWARE_PREALLOC_BUFFER) {
--			vfree(*buf);
--			*buf = NULL;
--		}
--	}
--
--out:
--	allow_write_access(file);
--	return ret;
--}
--EXPORT_SYMBOL_GPL(kernel_read_file);
--
--int kernel_read_file_from_path(const char *path, void **buf, loff_t *size,
--			       loff_t max_size, enum kernel_read_file_id id)
--{
--	struct file *file;
--	int ret;
--
--	if (!path || !*path)
--		return -EINVAL;
--
--	file = filp_open(path, O_RDONLY, 0);
--	if (IS_ERR(file))
--		return PTR_ERR(file);
--
--	ret = kernel_read_file(file, buf, size, max_size, id);
--	fput(file);
--	return ret;
--}
--EXPORT_SYMBOL_GPL(kernel_read_file_from_path);
--
--int kernel_read_file_from_fd(int fd, void **buf, loff_t *size, loff_t max_size,
--			     enum kernel_read_file_id id)
--{
--	struct fd f = fdget(fd);
--	int ret = -EBADF;
--
--	if (!f.file)
--		goto out;
--
--	ret = kernel_read_file(f.file, buf, size, max_size, id);
--out:
--	fdput(f);
--	return ret;
--}
--EXPORT_SYMBOL_GPL(kernel_read_file_from_fd);
--
- ssize_t read_code(struct file *file, unsigned long addr, loff_t pos, size_t len)
- {
- 	ssize_t res = vfs_read(file, (void __user *)addr, len, &pos);
-diff --git a/fs/read_write.c b/fs/read_write.c
-index ff3c5e6f87cf..555dcaec00ac 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -20,6 +20,7 @@
- #include <linux/compat.h>
- #include <linux/mount.h>
- #include <linux/fs.h>
-+#include <linux/vmalloc.h>
- #include "internal.h"
- 
- #include <linux/uaccess.h>
-@@ -1362,6 +1363,111 @@ COMPAT_SYSCALL_DEFINE6(pwritev2, compat_ulong_t, fd,
- 
- #endif
- 
-+int kernel_read_file(struct file *file, void **buf, loff_t *size,
-+		     loff_t max_size, enum kernel_read_file_id id)
-+{
-+	loff_t i_size, pos;
-+	ssize_t bytes = 0;
-+	int ret;
-+
-+	if (!S_ISREG(file_inode(file)->i_mode) || max_size < 0)
-+		return -EINVAL;
-+
-+	ret = deny_write_access(file);
-+	if (ret)
-+		return ret;
-+
-+	ret = security_kernel_read_file(file, id);
-+	if (ret)
-+		goto out;
-+
-+	i_size = i_size_read(file_inode(file));
-+	if (i_size <= 0) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+	if (i_size > SIZE_MAX || (max_size > 0 && i_size > max_size)) {
-+		ret = -EFBIG;
-+		goto out;
-+	}
-+
-+	if (id != READING_FIRMWARE_PREALLOC_BUFFER)
-+		*buf = vmalloc(i_size);
-+	if (!*buf) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	pos = 0;
-+	while (pos < i_size) {
-+		bytes = kernel_read(file, *buf + pos, i_size - pos, &pos);
-+		if (bytes < 0) {
-+			ret = bytes;
-+			goto out;
-+		}
-+
-+		if (bytes == 0)
-+			break;
-+	}
-+
-+	if (pos != i_size) {
-+		ret = -EIO;
-+		goto out_free;
-+	}
-+
-+	ret = security_kernel_post_read_file(file, *buf, i_size, id);
-+	if (!ret)
-+		*size = pos;
-+
-+out_free:
-+	if (ret < 0) {
-+		if (id != READING_FIRMWARE_PREALLOC_BUFFER) {
-+			vfree(*buf);
-+			*buf = NULL;
-+		}
-+	}
-+
-+out:
-+	allow_write_access(file);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(kernel_read_file);
-+
-+int kernel_read_file_from_path(const char *path, void **buf, loff_t *size,
-+			       loff_t max_size, enum kernel_read_file_id id)
-+{
-+	struct file *file;
-+	int ret;
-+
-+	if (!path || !*path)
-+		return -EINVAL;
-+
-+	file = filp_open(path, O_RDONLY, 0);
-+	if (IS_ERR(file))
-+		return PTR_ERR(file);
-+
-+	ret = kernel_read_file(file, buf, size, max_size, id);
-+	fput(file);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(kernel_read_file_from_path);
-+
-+int kernel_read_file_from_fd(int fd, void **buf, loff_t *size, loff_t max_size,
-+			     enum kernel_read_file_id id)
-+{
-+	struct fd f = fdget(fd);
-+	int ret = -EBADF;
-+
-+	if (!f.file)
-+		goto out;
-+
-+	ret = kernel_read_file(f.file, buf, size, max_size, id);
-+out:
-+	fdput(f);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(kernel_read_file_from_fd);
-+
- static ssize_t do_sendfile(int out_fd, int in_fd, loff_t *ppos,
- 		  	   size_t count, loff_t max)
- {
+Mimi
 
