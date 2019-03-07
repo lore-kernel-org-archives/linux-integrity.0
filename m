@@ -2,128 +2,614 @@ Return-Path: <SRS0=us8B=RK=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7330C43381
-	for <linux-integrity@archiver.kernel.org>; Thu,  7 Mar 2019 04:19:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6CDDC43381
+	for <linux-integrity@archiver.kernel.org>; Thu,  7 Mar 2019 07:29:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2A8020661
-	for <linux-integrity@archiver.kernel.org>; Thu,  7 Mar 2019 04:19:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75BA120840
+	for <linux-integrity@archiver.kernel.org>; Thu,  7 Mar 2019 07:29:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GJ7xlEbA"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="S4RhEn+a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726432AbfCGETU (ORCPT
+        id S1726242AbfCGH3w (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 6 Mar 2019 23:19:20 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:53348 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726197AbfCGETU (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 6 Mar 2019 23:19:20 -0500
-Received: by mail-it1-f196.google.com with SMTP id v2so13219099ith.3
-        for <linux-integrity@vger.kernel.org>; Wed, 06 Mar 2019 20:19:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pANHpglTG0EXv0zbkt3lqfU4TbVSK3i9dNNr/p/EvoE=;
-        b=GJ7xlEbA/S0BuFVzMIJtRuGeLubczg8t2u90ZNYC7n4CBdyoAAiGKQzOED42D8BhLL
-         uHnoV9/EJOb2S44gjqegMO6NT41AyHiwdSVyk+yGIBLK6VVvCyUbH/rLKEGLB2+tXAHB
-         4IHBodGh9xAgYkXBz67z1Y0w9feBYepsBPrENRk5CO+9XaeiA8WZAw9KQ6xyRWUvatx/
-         PILFJsIQUsKf4sgoIjsqK4FcLuTug+oX6fsDF44bt12CGW8OEoxV3rfFfVnFNcLgkCJU
-         lb3LfKHYsCM4I0+8BYxuG1V7EkiUYKujQa5bvRqlg8SEn23eFhHJFRNJBfEYJ8Y9xTKt
-         iq8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pANHpglTG0EXv0zbkt3lqfU4TbVSK3i9dNNr/p/EvoE=;
-        b=oUzzqWWotRqvRllEr8B4ImAVogGh/xMt2v5PmxNvAK/AUeNKV/qGC0wyBn4vCQ9Iks
-         XXB0E4Qmwoqxwbsnna91XsBxFEvpT2rafMk4EHp7ybYXfzfaxTc5CiLp4Kx6QZsFW/iJ
-         h1qLV7vONSzxAbkBj6jDoVBpOuzXW5PCyJm3HbRVZhPE6PyFXsOaoyw89yOncRTExp9S
-         c8SKLRA6s85FF1LaMPPthKB+WuRBGHwRPmCxnsK+HoCN4mEf0O5WYJu6bxRFoHEzsze2
-         5SyUJuQLq/ybmSOYW8mH4EqqApXlSz/UI7kl4cZgA4RzghHnYLxzSRn3aV1LYobgqVu3
-         Lbig==
-X-Gm-Message-State: APjAAAXFHzEM+fzIV49d+CQU1HiNHh4bjsUbFlvhepgiI/PB+S7DtFu5
-        oDQhtjSHB74r9cKhUbWMhcKSgXRExKeLtE6ZK3u9rg==
-X-Google-Smtp-Source: APXvYqzSl3+K0EfEwSmZd5V2F+FwEvnELbWGAhRlYJ1R2cxz8awvEFpHRciH/cboRSw4Cp/HiD/Dwj3Hc6MpgDlcU/0=
-X-Received: by 2002:a24:7908:: with SMTP id z8mr4498408itc.16.1551932358556;
- Wed, 06 Mar 2019 20:19:18 -0800 (PST)
+        Thu, 7 Mar 2019 02:29:52 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:40888 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726233AbfCGH3v (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 7 Mar 2019 02:29:51 -0500
+Received: from zn.tnic (unknown [IPv6:2003:ec:2f08:1c00:999d:fd9f:dba2:5ee8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 50CC31EC0354;
+        Thu,  7 Mar 2019 08:29:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1551943789;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=99ZJ/CKYaQwNZTloIqgTS21/00jcr5yYa1IMXSqTgXE=;
+        b=S4RhEn+aKrCSxNPJxZ1tAzxcuehU4/Y6S9pGPWIE19s76dEkz57jfvbkT01zrdyVzlF/+u
+        oJMo05xqwDiDx8/SuecOrQ2X8c5O8Xw3fRlE4qlS2gR9WIpXu5W5weO8oS2J+WwAnhSViT
+        g+jUiT/ks+d1lb0NoshDWypLe9KNZG0=
+Date:   Thu, 7 Mar 2019 08:29:47 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Nadav Amit <nadav.amit@gmail.com>
+Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Damian Tometzki <linux_dti@icloud.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v2 10/20] x86: avoid W^X being broken during modules
+ loading
+Message-ID: <20190307072947.GA26566@zn.tnic>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-11-rick.p.edgecombe@intel.com>
+ <20190211182956.GN19618@zn.tnic>
+ <1533F2BB-2284-499B-9912-6D74D0B87BC1@gmail.com>
+ <20190211190108.GP19618@zn.tnic>
+ <A671F14F-3E03-4A97-9F54-426533077E0C@gmail.com>
+ <20190211191059.GR19618@zn.tnic>
+ <3996E3F9-92D2-4561-84E9-68B43AC60F43@gmail.com>
+ <20190211194251.GS19618@zn.tnic>
 MIME-Version: 1.0
-References: <20190226215034.68772-1-matthewgarrett@google.com>
- <20190226215034.68772-4-matthewgarrett@google.com> <1551369834.10911.195.camel@linux.ibm.com>
- <1551377110.10911.202.camel@linux.ibm.com> <CACdnJutfCxzQDeFzXmZ9f8UrnqNScErkBJd2Yu+VEoy4nBhBCA@mail.gmail.com>
- <1551391154.10911.210.camel@linux.ibm.com> <CACdnJuuRLDj+6OTohfTVzqXp1K7U3efVXXuFfBfhk3CiUBEMiQ@mail.gmail.com>
- <CACdnJutPWEtDMS6YUXF0ykq7gKgQRNk6Fw=aHivHz6+NTodsgA@mail.gmail.com>
- <1551731553.10911.510.camel@linux.ibm.com> <CACdnJutWRB1up6wO3aWJJah3p8k+FY6xEfjw8ETHT69Vvsz8GQ@mail.gmail.com>
- <1551791930.31706.41.camel@linux.ibm.com> <CACdnJuvfzvZaU3CHtvVAP6vj_-rnWeTyAKjmRj8QGt7WAmjicQ@mail.gmail.com>
- <1551815469.31706.132.camel@linux.ibm.com> <CACdnJuvhu2iepghLm4-w2XVKH+TVT1JAY=vtKtf733UXPSBPaA@mail.gmail.com>
- <1551875418.31706.158.camel@linux.ibm.com> <CACdnJuvRuagNTidkq3d4g_OwfzqcALtd=g1-5LDzr2aBA1zV6w@mail.gmail.com>
- <1551911937.31706.217.camel@linux.ibm.com> <CACdnJut9T0xE-Q+ZAfqaRMUeBX=7w+cYE5Y7Ls1PdH-bJfv8MQ@mail.gmail.com>
- <1551923650.31706.258.camel@linux.ibm.com>
-In-Reply-To: <1551923650.31706.258.camel@linux.ibm.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Wed, 6 Mar 2019 20:19:07 -0800
-Message-ID: <CACdnJuv+d2qEc+vQosmDOzdu57Jjpjq9-CZEy8epz0ob5mptsA@mail.gmail.com>
-Subject: Re: [PATCH V2 3/4] IMA: Optionally make use of filesystem-provided hashes
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-fsdevel@vger.kernel.org, miklos@szeredi.hu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190211194251.GS19618@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Mar 6, 2019 at 5:54 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
->
-> On Wed, 2019-03-06 at 15:36 -0800, Matthew Garrett wrote:
->
-> > > But they would have to knowingly add "get_hash" to the IMA policy and
-> > > have signed it.
-> >
-> > But in the non-signed case they'd still need to knowingly add
-> > "get_hash" to the IMA policy. Why does signing indicate stronger
-> > understanding of policy?
->
-> Nobody is suggesting that signing the policy is a stronger indication
-> of understanding the policy.  Signing the policy simply limits which
-> policies may be loaded.
+On Mon, Feb 11, 2019 at 08:42:51PM +0100, Borislav Petkov wrote:
+> On Mon, Feb 11, 2019 at 11:27:03AM -0800, Nadav Amit wrote:
+> > Is there any comment over static_cpu_has()? ;-)
+> 
+> Almost:
+> 
+> /*
+>  * Static testing of CPU features.  Used the same as boot_cpu_has().
+>  * These will statically patch the target code for additional
+>  * performance.
+>  */
+> static __always_inline __pure bool _static_cpu_has(u16 bit)
 
-I'm not sure I understand the additional risk, though. Either a
-filesystem is already being measured using a full read, in which case
-adding an additional rule won't change behaviour, or it's not being
-measured at all, in which case there's no incentive for an attacker to
-add a new rule.
+Ok, I guess something like that along with converting the obvious slow
+path callers to boot_cpu_has():
 
-> > > > I'm happy to add this if there's a real threat model around it, but
-> > > > requiring signing for something other than security reasons seems like
-> > > > it's conflating unrelated issues.
-> > >
-> > > A colleague said, relying on the filesystem to provide the file hash
-> > > extends the TCB to include filesystems.
-> >
-> > The TCB already includes filesystems - IMA's measurements are only
-> > accurate if the filesystem returns the same data on subsequent reads
-> > (assuming i_version hasn't been updated). We assert that this is true,
-> > but it the filesystem is outside the TCB then that assertion is
-> > invalid.
->
-> There is also a difference between trusting the filesystem "read" and
-> the filesystem "get_hash" implementation, that have yet to be written.
+---
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index ce95b8cbd229..e25d11ad7a88 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -155,9 +155,12 @@ extern void clear_cpu_cap(struct cpuinfo_x86 *c, unsigned int bit);
+ #else
+ 
+ /*
+- * Static testing of CPU features.  Used the same as boot_cpu_has().
+- * These will statically patch the target code for additional
+- * performance.
++ * Static testing of CPU features. Used the same as boot_cpu_has(). It
++ * statically patches the target code for additional performance. Use
++ * static_cpu_has() only in fast paths, where every cycle counts. Which
++ * means that the boot_cpu_has() variant is already fast enough for the
++ * majority of cases and you should stick to using it as it is generally
++ * only two instructions: a RIP-relative MOV and a TEST.
+  */
+ static __always_inline __pure bool _static_cpu_has(u16 bit)
+ {
+diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+index fa2c93cb42a2..c525b053b3b3 100644
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -291,7 +291,7 @@ static inline void copy_xregs_to_kernel_booting(struct xregs_state *xstate)
+ 
+ 	WARN_ON(system_state != SYSTEM_BOOTING);
+ 
+-	if (static_cpu_has(X86_FEATURE_XSAVES))
++	if (boot_cpu_has(X86_FEATURE_XSAVES))
+ 		XSTATE_OP(XSAVES, xstate, lmask, hmask, err);
+ 	else
+ 		XSTATE_OP(XSAVE, xstate, lmask, hmask, err);
+@@ -313,7 +313,7 @@ static inline void copy_kernel_to_xregs_booting(struct xregs_state *xstate)
+ 
+ 	WARN_ON(system_state != SYSTEM_BOOTING);
+ 
+-	if (static_cpu_has(X86_FEATURE_XSAVES))
++	if (boot_cpu_has(X86_FEATURE_XSAVES))
+ 		XSTATE_OP(XRSTORS, xstate, lmask, hmask, err);
+ 	else
+ 		XSTATE_OP(XRSTOR, xstate, lmask, hmask, err);
+@@ -528,8 +528,7 @@ static inline void fpregs_activate(struct fpu *fpu)
+  *  - switch_fpu_finish() restores the new state as
+  *    necessary.
+  */
+-static inline void
+-switch_fpu_prepare(struct fpu *old_fpu, int cpu)
++static inline void switch_fpu_prepare(struct fpu *old_fpu, int cpu)
+ {
+ 	if (static_cpu_has(X86_FEATURE_FPU) && old_fpu->initialized) {
+ 		if (!copy_fpregs_to_fpstate(old_fpu))
+diff --git a/arch/x86/kernel/apic/apic_numachip.c b/arch/x86/kernel/apic/apic_numachip.c
+index 78778b54f904..a5464b8b6c46 100644
+--- a/arch/x86/kernel/apic/apic_numachip.c
++++ b/arch/x86/kernel/apic/apic_numachip.c
+@@ -175,7 +175,7 @@ static void fixup_cpu_id(struct cpuinfo_x86 *c, int node)
+ 	this_cpu_write(cpu_llc_id, node);
+ 
+ 	/* Account for nodes per socket in multi-core-module processors */
+-	if (static_cpu_has(X86_FEATURE_NODEID_MSR)) {
++	if (boot_cpu_has(X86_FEATURE_NODEID_MSR)) {
+ 		rdmsrl(MSR_FAM10H_NODE_ID, val);
+ 		nodes = ((val >> 3) & 7) + 1;
+ 	}
+diff --git a/arch/x86/kernel/cpu/aperfmperf.c b/arch/x86/kernel/cpu/aperfmperf.c
+index 804c49493938..64d5aec24203 100644
+--- a/arch/x86/kernel/cpu/aperfmperf.c
++++ b/arch/x86/kernel/cpu/aperfmperf.c
+@@ -83,7 +83,7 @@ unsigned int aperfmperf_get_khz(int cpu)
+ 	if (!cpu_khz)
+ 		return 0;
+ 
+-	if (!static_cpu_has(X86_FEATURE_APERFMPERF))
++	if (!boot_cpu_has(X86_FEATURE_APERFMPERF))
+ 		return 0;
+ 
+ 	aperfmperf_snapshot_cpu(cpu, ktime_get(), true);
+@@ -99,7 +99,7 @@ void arch_freq_prepare_all(void)
+ 	if (!cpu_khz)
+ 		return;
+ 
+-	if (!static_cpu_has(X86_FEATURE_APERFMPERF))
++	if (!boot_cpu_has(X86_FEATURE_APERFMPERF))
+ 		return;
+ 
+ 	for_each_online_cpu(cpu)
+@@ -115,7 +115,7 @@ unsigned int arch_freq_get_on_cpu(int cpu)
+ 	if (!cpu_khz)
+ 		return 0;
+ 
+-	if (!static_cpu_has(X86_FEATURE_APERFMPERF))
++	if (!boot_cpu_has(X86_FEATURE_APERFMPERF))
+ 		return 0;
+ 
+ 	if (aperfmperf_snapshot_cpu(cpu, ktime_get(), true))
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index cb28e98a0659..95a5faf3a6a0 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1668,7 +1668,7 @@ static void setup_getcpu(int cpu)
+ 	unsigned long cpudata = vdso_encode_cpunode(cpu, early_cpu_to_node(cpu));
+ 	struct desc_struct d = { };
+ 
+-	if (static_cpu_has(X86_FEATURE_RDTSCP))
++	if (boot_cpu_has(X86_FEATURE_RDTSCP))
+ 		write_rdtscp_aux(cpudata);
+ 
+ 	/* Store CPU and node number in limit. */
+diff --git a/arch/x86/kernel/cpu/mce/inject.c b/arch/x86/kernel/cpu/mce/inject.c
+index 8492ef7d9015..3da9a8823e47 100644
+--- a/arch/x86/kernel/cpu/mce/inject.c
++++ b/arch/x86/kernel/cpu/mce/inject.c
+@@ -528,7 +528,7 @@ static void do_inject(void)
+ 	 * only on the node base core. Refer to D18F3x44[NbMcaToMstCpuEn] for
+ 	 * Fam10h and later BKDGs.
+ 	 */
+-	if (static_cpu_has(X86_FEATURE_AMD_DCM) &&
++	if (boot_cpu_has(X86_FEATURE_AMD_DCM) &&
+ 	    b == 4 &&
+ 	    boot_cpu_data.x86 < 0x17) {
+ 		toggle_nb_mca_mst_cpu(amd_get_nb_id(cpu));
+diff --git a/arch/x86/kernel/cpu/proc.c b/arch/x86/kernel/cpu/proc.c
+index 2c8522a39ed5..cb2e49810d68 100644
+--- a/arch/x86/kernel/cpu/proc.c
++++ b/arch/x86/kernel/cpu/proc.c
+@@ -35,11 +35,11 @@ static void show_cpuinfo_misc(struct seq_file *m, struct cpuinfo_x86 *c)
+ 		   "fpu_exception\t: %s\n"
+ 		   "cpuid level\t: %d\n"
+ 		   "wp\t\t: yes\n",
+-		   static_cpu_has_bug(X86_BUG_FDIV) ? "yes" : "no",
+-		   static_cpu_has_bug(X86_BUG_F00F) ? "yes" : "no",
+-		   static_cpu_has_bug(X86_BUG_COMA) ? "yes" : "no",
+-		   static_cpu_has(X86_FEATURE_FPU) ? "yes" : "no",
+-		   static_cpu_has(X86_FEATURE_FPU) ? "yes" : "no",
++		   boot_cpu_has_bug(X86_BUG_FDIV) ? "yes" : "no",
++		   boot_cpu_has_bug(X86_BUG_F00F) ? "yes" : "no",
++		   boot_cpu_has_bug(X86_BUG_COMA) ? "yes" : "no",
++		   boot_cpu_has(X86_FEATURE_FPU) ? "yes" : "no",
++		   boot_cpu_has(X86_FEATURE_FPU) ? "yes" : "no",
+ 		   c->cpuid_level);
+ }
+ #else
+diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
+index 6135ae8ce036..b2463fcb20a8 100644
+--- a/arch/x86/kernel/ldt.c
++++ b/arch/x86/kernel/ldt.c
+@@ -113,7 +113,7 @@ static void do_sanity_check(struct mm_struct *mm,
+ 		 * tables.
+ 		 */
+ 		WARN_ON(!had_kernel_mapping);
+-		if (static_cpu_has(X86_FEATURE_PTI))
++		if (boot_cpu_has(X86_FEATURE_PTI))
+ 			WARN_ON(!had_user_mapping);
+ 	} else {
+ 		/*
+@@ -121,7 +121,7 @@ static void do_sanity_check(struct mm_struct *mm,
+ 		 * Sync the pgd to the usermode tables.
+ 		 */
+ 		WARN_ON(had_kernel_mapping);
+-		if (static_cpu_has(X86_FEATURE_PTI))
++		if (boot_cpu_has(X86_FEATURE_PTI))
+ 			WARN_ON(had_user_mapping);
+ 	}
+ }
+@@ -156,7 +156,7 @@ static void map_ldt_struct_to_user(struct mm_struct *mm)
+ 	k_pmd = pgd_to_pmd_walk(k_pgd, LDT_BASE_ADDR);
+ 	u_pmd = pgd_to_pmd_walk(u_pgd, LDT_BASE_ADDR);
+ 
+-	if (static_cpu_has(X86_FEATURE_PTI) && !mm->context.ldt)
++	if (boot_cpu_has(X86_FEATURE_PTI) && !mm->context.ldt)
+ 		set_pmd(u_pmd, *k_pmd);
+ }
+ 
+@@ -181,7 +181,7 @@ static void map_ldt_struct_to_user(struct mm_struct *mm)
+ {
+ 	pgd_t *pgd = pgd_offset(mm, LDT_BASE_ADDR);
+ 
+-	if (static_cpu_has(X86_FEATURE_PTI) && !mm->context.ldt)
++	if (boot_cpu_has(X86_FEATURE_PTI) && !mm->context.ldt)
+ 		set_pgd(kernel_to_user_pgdp(pgd), *pgd);
+ }
+ 
+@@ -208,7 +208,7 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
+ 	spinlock_t *ptl;
+ 	int i, nr_pages;
+ 
+-	if (!static_cpu_has(X86_FEATURE_PTI))
++	if (!boot_cpu_has(X86_FEATURE_PTI))
+ 		return 0;
+ 
+ 	/*
+@@ -271,7 +271,7 @@ static void unmap_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt)
+ 		return;
+ 
+ 	/* LDT map/unmap is only required for PTI */
+-	if (!static_cpu_has(X86_FEATURE_PTI))
++	if (!boot_cpu_has(X86_FEATURE_PTI))
+ 		return;
+ 
+ 	nr_pages = DIV_ROUND_UP(ldt->nr_entries * LDT_ENTRY_SIZE, PAGE_SIZE);
+@@ -311,7 +311,7 @@ static void free_ldt_pgtables(struct mm_struct *mm)
+ 	unsigned long start = LDT_BASE_ADDR;
+ 	unsigned long end = LDT_END_ADDR;
+ 
+-	if (!static_cpu_has(X86_FEATURE_PTI))
++	if (!boot_cpu_has(X86_FEATURE_PTI))
+ 		return;
+ 
+ 	tlb_gather_mmu(&tlb, mm, start, end);
+diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+index c0e0101133f3..7bbaa6baf37f 100644
+--- a/arch/x86/kernel/paravirt.c
++++ b/arch/x86/kernel/paravirt.c
+@@ -121,7 +121,7 @@ DEFINE_STATIC_KEY_TRUE(virt_spin_lock_key);
+ 
+ void __init native_pv_lock_init(void)
+ {
+-	if (!static_cpu_has(X86_FEATURE_HYPERVISOR))
++	if (!boot_cpu_has(X86_FEATURE_HYPERVISOR))
+ 		static_branch_disable(&virt_spin_lock_key);
+ }
+ 
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index 58ac7be52c7a..16a7113e91c5 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -236,7 +236,7 @@ static int get_cpuid_mode(void)
+ 
+ static int set_cpuid_mode(struct task_struct *task, unsigned long cpuid_enabled)
+ {
+-	if (!static_cpu_has(X86_FEATURE_CPUID_FAULT))
++	if (!boot_cpu_has(X86_FEATURE_CPUID_FAULT))
+ 		return -ENODEV;
+ 
+ 	if (cpuid_enabled)
+@@ -666,7 +666,7 @@ static int prefer_mwait_c1_over_halt(const struct cpuinfo_x86 *c)
+ 	if (c->x86_vendor != X86_VENDOR_INTEL)
+ 		return 0;
+ 
+-	if (!cpu_has(c, X86_FEATURE_MWAIT) || static_cpu_has_bug(X86_BUG_MONITOR))
++	if (!cpu_has(c, X86_FEATURE_MWAIT) || boot_cpu_has_bug(X86_BUG_MONITOR))
+ 		return 0;
+ 
+ 	return 1;
+diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
+index 725624b6c0c0..d62ebbc5ec78 100644
+--- a/arch/x86/kernel/reboot.c
++++ b/arch/x86/kernel/reboot.c
+@@ -108,7 +108,7 @@ void __noreturn machine_real_restart(unsigned int type)
+ 	write_cr3(real_mode_header->trampoline_pgd);
+ 
+ 	/* Exiting long mode will fail if CR4.PCIDE is set. */
+-	if (static_cpu_has(X86_FEATURE_PCID))
++	if (boot_cpu_has(X86_FEATURE_PCID))
+ 		cr4_clear_bits(X86_CR4_PCIDE);
+ #endif
+ 
+diff --git a/arch/x86/kernel/vm86_32.c b/arch/x86/kernel/vm86_32.c
+index a092b6b40c6b..6a38717d179c 100644
+--- a/arch/x86/kernel/vm86_32.c
++++ b/arch/x86/kernel/vm86_32.c
+@@ -369,7 +369,7 @@ static long do_sys_vm86(struct vm86plus_struct __user *user_vm86, bool plus)
+ 	preempt_disable();
+ 	tsk->thread.sp0 += 16;
+ 
+-	if (static_cpu_has(X86_FEATURE_SEP)) {
++	if (boot_cpu_has(X86_FEATURE_SEP)) {
+ 		tsk->thread.sysenter_cs = 0;
+ 		refresh_sysenter_cs(&tsk->thread);
+ 	}
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index f13a3a24d360..5ed039bf1b58 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -835,7 +835,7 @@ static void svm_init_erratum_383(void)
+ 	int err;
+ 	u64 val;
+ 
+-	if (!static_cpu_has_bug(X86_BUG_AMD_TLB_MMATCH))
++	if (!boot_cpu_has_bug(X86_BUG_AMD_TLB_MMATCH))
+ 		return;
+ 
+ 	/* Use _safe variants to not break nested virtualization */
+@@ -889,7 +889,7 @@ static int has_svm(void)
+ static void svm_hardware_disable(void)
+ {
+ 	/* Make sure we clean up behind us */
+-	if (static_cpu_has(X86_FEATURE_TSCRATEMSR))
++	if (boot_cpu_has(X86_FEATURE_TSCRATEMSR))
+ 		wrmsrl(MSR_AMD64_TSC_RATIO, TSC_RATIO_DEFAULT);
+ 
+ 	cpu_svm_disable();
+@@ -931,7 +931,7 @@ static int svm_hardware_enable(void)
+ 
+ 	wrmsrl(MSR_VM_HSAVE_PA, page_to_pfn(sd->save_area) << PAGE_SHIFT);
+ 
+-	if (static_cpu_has(X86_FEATURE_TSCRATEMSR)) {
++	if (boot_cpu_has(X86_FEATURE_TSCRATEMSR)) {
+ 		wrmsrl(MSR_AMD64_TSC_RATIO, TSC_RATIO_DEFAULT);
+ 		__this_cpu_write(current_tsc_ratio, TSC_RATIO_DEFAULT);
+ 	}
+@@ -2247,7 +2247,7 @@ static void svm_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+ 	for (i = 0; i < NR_HOST_SAVE_USER_MSRS; i++)
+ 		rdmsrl(host_save_user_msrs[i], svm->host_user_msrs[i]);
+ 
+-	if (static_cpu_has(X86_FEATURE_TSCRATEMSR)) {
++	if (boot_cpu_has(X86_FEATURE_TSCRATEMSR)) {
+ 		u64 tsc_ratio = vcpu->arch.tsc_scaling_ratio;
+ 		if (tsc_ratio != __this_cpu_read(current_tsc_ratio)) {
+ 			__this_cpu_write(current_tsc_ratio, tsc_ratio);
+@@ -2255,7 +2255,7 @@ static void svm_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+ 		}
+ 	}
+ 	/* This assumes that the kernel never uses MSR_TSC_AUX */
+-	if (static_cpu_has(X86_FEATURE_RDTSCP))
++	if (boot_cpu_has(X86_FEATURE_RDTSCP))
+ 		wrmsrl(MSR_TSC_AUX, svm->tsc_aux);
+ 
+ 	if (sd->current_vmcb != svm->vmcb) {
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 30a6bcd735ec..0ec24853a0e6 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -6553,7 +6553,7 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 	if (vcpu->guest_debug & KVM_GUESTDBG_SINGLESTEP)
+ 		vmx_set_interrupt_shadow(vcpu, 0);
+ 
+-	if (static_cpu_has(X86_FEATURE_PKU) &&
++	if (boot_cpu_has(X86_FEATURE_PKU) &&
+ 	    kvm_read_cr4_bits(vcpu, X86_CR4_PKE) &&
+ 	    vcpu->arch.pkru != vmx->host_pkru)
+ 		__write_pkru(vcpu->arch.pkru);
+@@ -6633,7 +6633,7 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 	 * back on host, so it is safe to read guest PKRU from current
+ 	 * XSAVE.
+ 	 */
+-	if (static_cpu_has(X86_FEATURE_PKU) &&
++	if (boot_cpu_has(X86_FEATURE_PKU) &&
+ 	    kvm_read_cr4_bits(vcpu, X86_CR4_PKE)) {
+ 		vcpu->arch.pkru = __read_pkru();
+ 		if (vcpu->arch.pkru != vmx->host_pkru)
+diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
+index e3cdc85ce5b6..b596ac1eed1c 100644
+--- a/arch/x86/mm/dump_pagetables.c
++++ b/arch/x86/mm/dump_pagetables.c
+@@ -579,7 +579,7 @@ void ptdump_walk_pgd_level(struct seq_file *m, pgd_t *pgd)
+ void ptdump_walk_pgd_level_debugfs(struct seq_file *m, pgd_t *pgd, bool user)
+ {
+ #ifdef CONFIG_PAGE_TABLE_ISOLATION
+-	if (user && static_cpu_has(X86_FEATURE_PTI))
++	if (user && boot_cpu_has(X86_FEATURE_PTI))
+ 		pgd = kernel_to_user_pgdp(pgd);
+ #endif
+ 	ptdump_walk_pgd_level_core(m, pgd, false, false);
+@@ -592,7 +592,7 @@ void ptdump_walk_user_pgd_level_checkwx(void)
+ 	pgd_t *pgd = INIT_PGD;
+ 
+ 	if (!(__supported_pte_mask & _PAGE_NX) ||
+-	    !static_cpu_has(X86_FEATURE_PTI))
++	    !boot_cpu_has(X86_FEATURE_PTI))
+ 		return;
+ 
+ 	pr_info("x86/mm: Checking user space page tables\n");
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index 7bd01709a091..3dbf440d4114 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -190,7 +190,7 @@ static void pgd_dtor(pgd_t *pgd)
+  * when PTI is enabled. We need them to map the per-process LDT into the
+  * user-space page-table.
+  */
+-#define PREALLOCATED_USER_PMDS	 (static_cpu_has(X86_FEATURE_PTI) ? \
++#define PREALLOCATED_USER_PMDS	 (boot_cpu_has(X86_FEATURE_PTI) ? \
+ 					KERNEL_PGD_PTRS : 0)
+ #define MAX_PREALLOCATED_USER_PMDS KERNEL_PGD_PTRS
+ 
+@@ -292,7 +292,7 @@ static void pgd_mop_up_pmds(struct mm_struct *mm, pgd_t *pgdp)
+ 
+ #ifdef CONFIG_PAGE_TABLE_ISOLATION
+ 
+-	if (!static_cpu_has(X86_FEATURE_PTI))
++	if (!boot_cpu_has(X86_FEATURE_PTI))
+ 		return;
+ 
+ 	pgdp = kernel_to_user_pgdp(pgdp);
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index 4fee5c3003ed..8c9a54ebda60 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -626,7 +626,7 @@ void pti_set_kernel_image_nonglobal(void)
+  */
+ void __init pti_init(void)
+ {
+-	if (!static_cpu_has(X86_FEATURE_PTI))
++	if (!boot_cpu_has(X86_FEATURE_PTI))
+ 		return;
+ 
+ 	pr_info("enabled\n");
+diff --git a/drivers/cpufreq/amd_freq_sensitivity.c b/drivers/cpufreq/amd_freq_sensitivity.c
+index 4ac7c3cf34be..6927a8c0e748 100644
+--- a/drivers/cpufreq/amd_freq_sensitivity.c
++++ b/drivers/cpufreq/amd_freq_sensitivity.c
+@@ -124,7 +124,7 @@ static int __init amd_freq_sensitivity_init(void)
+ 			PCI_DEVICE_ID_AMD_KERNCZ_SMBUS, NULL);
+ 
+ 	if (!pcidev) {
+-		if (!static_cpu_has(X86_FEATURE_PROC_FEEDBACK))
++		if (!boot_cpu_has(X86_FEATURE_PROC_FEEDBACK))
+ 			return -ENODEV;
+ 	}
+ 
+diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+index dd66decf2087..9bbc3dfdebe3 100644
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -520,7 +520,7 @@ static s16 intel_pstate_get_epb(struct cpudata *cpu_data)
+ 	u64 epb;
+ 	int ret;
+ 
+-	if (!static_cpu_has(X86_FEATURE_EPB))
++	if (!boot_cpu_has(X86_FEATURE_EPB))
+ 		return -ENXIO;
+ 
+ 	ret = rdmsrl_on_cpu(cpu_data->cpu, MSR_IA32_ENERGY_PERF_BIAS, &epb);
+@@ -534,7 +534,7 @@ static s16 intel_pstate_get_epp(struct cpudata *cpu_data, u64 hwp_req_data)
+ {
+ 	s16 epp;
+ 
+-	if (static_cpu_has(X86_FEATURE_HWP_EPP)) {
++	if (boot_cpu_has(X86_FEATURE_HWP_EPP)) {
+ 		/*
+ 		 * When hwp_req_data is 0, means that caller didn't read
+ 		 * MSR_HWP_REQUEST, so need to read and get EPP.
+@@ -559,7 +559,7 @@ static int intel_pstate_set_epb(int cpu, s16 pref)
+ 	u64 epb;
+ 	int ret;
+ 
+-	if (!static_cpu_has(X86_FEATURE_EPB))
++	if (!boot_cpu_has(X86_FEATURE_EPB))
+ 		return -ENXIO;
+ 
+ 	ret = rdmsrl_on_cpu(cpu, MSR_IA32_ENERGY_PERF_BIAS, &epb);
+@@ -607,7 +607,7 @@ static int intel_pstate_get_energy_pref_index(struct cpudata *cpu_data)
+ 	if (epp < 0)
+ 		return epp;
+ 
+-	if (static_cpu_has(X86_FEATURE_HWP_EPP)) {
++	if (boot_cpu_has(X86_FEATURE_HWP_EPP)) {
+ 		if (epp == HWP_EPP_PERFORMANCE)
+ 			return 1;
+ 		if (epp <= HWP_EPP_BALANCE_PERFORMANCE)
+@@ -616,7 +616,7 @@ static int intel_pstate_get_energy_pref_index(struct cpudata *cpu_data)
+ 			return 3;
+ 		else
+ 			return 4;
+-	} else if (static_cpu_has(X86_FEATURE_EPB)) {
++	} else if (boot_cpu_has(X86_FEATURE_EPB)) {
+ 		/*
+ 		 * Range:
+ 		 *	0x00-0x03	:	Performance
+@@ -644,7 +644,7 @@ static int intel_pstate_set_energy_pref_index(struct cpudata *cpu_data,
+ 
+ 	mutex_lock(&intel_pstate_limits_lock);
+ 
+-	if (static_cpu_has(X86_FEATURE_HWP_EPP)) {
++	if (boot_cpu_has(X86_FEATURE_HWP_EPP)) {
+ 		u64 value;
+ 
+ 		ret = rdmsrl_on_cpu(cpu_data->cpu, MSR_HWP_REQUEST, &value);
+@@ -819,7 +819,7 @@ static void intel_pstate_hwp_set(unsigned int cpu)
+ 		epp = cpu_data->epp_powersave;
+ 	}
+ update_epp:
+-	if (static_cpu_has(X86_FEATURE_HWP_EPP)) {
++	if (boot_cpu_has(X86_FEATURE_HWP_EPP)) {
+ 		value &= ~GENMASK_ULL(31, 24);
+ 		value |= (u64)epp << 24;
+ 	} else {
+@@ -844,7 +844,7 @@ static void intel_pstate_hwp_force_min_perf(int cpu)
+ 	value |= HWP_MIN_PERF(min_perf);
+ 
+ 	/* Set EPP/EPB to min */
+-	if (static_cpu_has(X86_FEATURE_HWP_EPP))
++	if (boot_cpu_has(X86_FEATURE_HWP_EPP))
+ 		value |= HWP_ENERGY_PERF_PREFERENCE(HWP_EPP_POWERSAVE);
+ 	else
+ 		intel_pstate_set_epb(cpu, HWP_EPP_BALANCE_POWERSAVE);
+@@ -1191,7 +1191,7 @@ static void __init intel_pstate_sysfs_expose_params(void)
+ static void intel_pstate_hwp_enable(struct cpudata *cpudata)
+ {
+ 	/* First disable HWP notification interrupt as we don't process them */
+-	if (static_cpu_has(X86_FEATURE_HWP_NOTIFY))
++	if (boot_cpu_has(X86_FEATURE_HWP_NOTIFY))
+ 		wrmsrl_on_cpu(cpudata->cpu, MSR_HWP_INTERRUPT, 0x00);
+ 
+ 	wrmsrl_on_cpu(cpudata->cpu, MSR_PM_ENABLE, 0x1);
+diff --git a/drivers/cpufreq/powernow-k8.c b/drivers/cpufreq/powernow-k8.c
+index fb77b39a4ce3..3c12e03fa343 100644
+--- a/drivers/cpufreq/powernow-k8.c
++++ b/drivers/cpufreq/powernow-k8.c
+@@ -1178,7 +1178,7 @@ static int powernowk8_init(void)
+ 	unsigned int i, supported_cpus = 0;
+ 	int ret;
+ 
+-	if (static_cpu_has(X86_FEATURE_HW_PSTATE)) {
++	if (boot_cpu_has(X86_FEATURE_HW_PSTATE)) {
+ 		__request_acpi_cpufreq();
+ 		return -ENODEV;
+ 	}
 
-In both cases we're placing trust in the filesystem's correctness.
-It's certainly possible for the get_hash call to be broken, but that's
-something we can put additional testing into. The same argument
-implies that enabling appraisal is increasing the amount of trust we
-place in the filesystem - without it we don't need getxattr() to work,
-and without digital signatures we don't need the kernel's RSA code to
-work. Most new features result in us relying on more code, and in some
-cases we're not even able to audit that code (eg, if you're not using
-an encrypted filesystem then we're depending on the correctness of
-your disk's firmware, and we know that there are implementations that
-don't verify updates or which provide debug commands that allow
-modification at runtime in a way that could be used to defeat IMA)
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
