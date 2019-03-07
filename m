@@ -2,111 +2,145 @@ Return-Path: <SRS0=us8B=RK=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A45C4C43381
-	for <linux-integrity@archiver.kernel.org>; Thu,  7 Mar 2019 14:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6019C43381
+	for <linux-integrity@archiver.kernel.org>; Thu,  7 Mar 2019 15:10:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 765C920675
-	for <linux-integrity@archiver.kernel.org>; Thu,  7 Mar 2019 14:27:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93D6220675
+	for <linux-integrity@archiver.kernel.org>; Thu,  7 Mar 2019 15:10:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="VxevkReC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726161AbfCGO1O (ORCPT
+        id S1726170AbfCGPKk (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 7 Mar 2019 09:27:14 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38724 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726120AbfCGO1N (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 7 Mar 2019 09:27:13 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x27EEhAY142549
-        for <linux-integrity@vger.kernel.org>; Thu, 7 Mar 2019 09:27:12 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2r34c5ttxp-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 07 Mar 2019 09:27:12 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 7 Mar 2019 14:27:10 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 7 Mar 2019 14:27:08 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x27ER85o57606340
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 7 Mar 2019 14:27:08 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E1841A4053;
-        Thu,  7 Mar 2019 14:27:07 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3F3C2A4059;
-        Thu,  7 Mar 2019 14:27:07 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.93.211])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  7 Mar 2019 14:27:07 +0000 (GMT)
-Subject: Re: [PATCH] MAINTAINERS: fix typo in Mimi Zohar's address
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     paulmck@linux.ibm.com, Baruch Siach <baruch@tkos.co.il>
-Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org
-Date:   Thu, 07 Mar 2019 09:26:56 -0500
-In-Reply-To: <20190307141957.GO13351@linux.ibm.com>
-References: <e186bbae367ceb7a2a71e2dea216838ac19dee8f.1545889849.git.baruch@tkos.co.il>
-         <20181227165304.GA4170@linux.ibm.com> <87r2bj2ql4.fsf@tarshish>
-         <20190307141957.GO13351@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19030714-0008-0000-0000-000002C9D4E0
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19030714-0009-0000-0000-00002235E357
-Message-Id: <1551968816.31706.336.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-07_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1903070101
+        Thu, 7 Mar 2019 10:10:40 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:35936 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726159AbfCGPKk (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 7 Mar 2019 10:10:40 -0500
+Received: from zn.tnic (unknown [IPv6:2003:ec:2f08:1c00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3062E1EC064E;
+        Thu,  7 Mar 2019 16:10:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1551971438;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kdSZyLABXvjmDygL4RnuOnEqI4iIDZt3NsvoEDPNehs=;
+        b=VxevkReCqFwOtl9CNQIPP9gjHkfkPvNXF6zSFMZRSq4+VQyXRKowRR/y94+03BL2OMZmB0
+        JQQG//BggqJOuKLDfIrnnXfUrkBg3eVnqigcbNhNnCeNbO6HYPrevRnsTSodztTdEEAayD
+        MGAXCsKnyh7965zUMAu/+Ts/W3nsU8E=
+Date:   Thu, 7 Mar 2019 16:10:36 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Nadav Amit <nadav.amit@gmail.com>
+Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Damian Tometzki <linux_dti@icloud.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH] x86/cpufeature: Remove __pure attribute to _static_cpu_has()
+Message-ID: <20190307151036.GD26566@zn.tnic>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-11-rick.p.edgecombe@intel.com>
+ <20190211182956.GN19618@zn.tnic>
+ <1533F2BB-2284-499B-9912-6D74D0B87BC1@gmail.com>
+ <20190211190108.GP19618@zn.tnic>
+ <A671F14F-3E03-4A97-9F54-426533077E0C@gmail.com>
+ <20190211191059.GR19618@zn.tnic>
+ <3996E3F9-92D2-4561-84E9-68B43AC60F43@gmail.com>
+ <20190211194251.GS19618@zn.tnic>
+ <A55214F3-CDC0-44C4-AFB6-7E8E23CC6F85@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <A55214F3-CDC0-44C4-AFB6-7E8E23CC6F85@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, 2019-03-07 at 06:19 -0800, Paul E. McKenney wrote:
-> On Thu, Mar 07, 2019 at 07:36:39AM +0200, Baruch Siach wrote:
-> > Hi Paul,
-> > 
-> > On Thu, Dec 27 2018, Paul E. McKenney wrote:
-> > 
-> > > On Thu, Dec 27, 2018 at 07:50:49AM +0200, Baruch Siach wrote:
-> > >> Fixes: ("MAINTAINERS: Update from @linux.vnet.ibm.com to @linux.ibm.com")
-> > >> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
-> > >
-> > > Reviewed-by: Paul E. McKenney <paulmck@linux.ibm.com>
-> > >
-> > > And where is a brown paper bag when you need one?  :-/
-> > 
-> > This has missed v5.0.
-> 
-> And v5.1 unless someone is pushing it into this merge window.
-> 
-> > Which tree is this patch supposed to go through, anyway?
-> 
-> I was expecting you to push it somewhere, hence my Reviewed-by.  But I
-> can take it, and if I do it will be v5.2.
+On Mon, Feb 11, 2019 at 12:32:41PM -0800, Nadav Amit wrote:
+> BTW: the “__pure” attribute is useless when “__always_inline” is used.
+> Unless it is intended to be some sort of comment, of course.
 
-I'm really sorry I missed that.
-> 
-> Or you could try sending it directly to Linus, which would very likely
-> get it into v5.1.
+---
+From: Borislav Petkov <bp@suse.de>
+Date: Thu, 7 Mar 2019 15:54:51 +0100
 
-If you decide not to send it, I'll include it for v5.2.
+__pure is used to make gcc do Common Subexpression Elimination (CSE)
+and thus save subsequent invocations of a function which does a complex
+computation (without side effects). As a simple example:
 
-Mimi
+  bool a = _static_cpu_has(x);
+  bool b = _static_cpu_has(x);
 
+gets turned into
+
+  bool a = _static_cpu_has(x);
+  bool b = a;
+
+However, gcc doesn't do CSE with asm()s when those get inlined - like it
+is done with _static_cpu_has() - because, for example, the t_yes/t_no
+labels are different for each inlined function body and thus cannot be
+detected as equivalent anymore for the CSE heuristic to hit.
+
+However, this all is beside the point because best it should be avoided
+to have more than one call to _static_cpu_has(X) in the same function
+due to the fact that each such call is an alternatives patch site and it
+is simply pointless.
+
+Therefore, drop the __pure attribute as it is not doing anything.
+
+Reported-by: Nadav Amit <nadav.amit@gmail.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org
+---
+ arch/x86/include/asm/cpufeature.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index e25d11ad7a88..6d6d5cc4302b 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -162,7 +162,7 @@ extern void clear_cpu_cap(struct cpuinfo_x86 *c, unsigned int bit);
+  * majority of cases and you should stick to using it as it is generally
+  * only two instructions: a RIP-relative MOV and a TEST.
+  */
+-static __always_inline __pure bool _static_cpu_has(u16 bit)
++static __always_inline bool _static_cpu_has(u16 bit)
+ {
+ 	asm_volatile_goto("1: jmp 6f\n"
+ 		 "2:\n"
+-- 
+2.21.0
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
