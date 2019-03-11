@@ -2,82 +2,141 @@ Return-Path: <SRS0=7u+B=RO=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 057B4C4360F
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Mar 2019 08:34:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA3CC43381
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Mar 2019 11:41:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFBD42084D
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Mar 2019 08:34:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B396520657
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Mar 2019 11:41:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725850AbfCKIeV (ORCPT
+        id S1727393AbfCKLl6 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Mar 2019 04:34:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37642 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725839AbfCKIeV (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Mar 2019 04:34:21 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0B78CAE30;
-        Mon, 11 Mar 2019 08:34:20 +0000 (UTC)
-Date:   Mon, 11 Mar 2019 09:34:17 +0100
-From:   Petr Vorel <pvorel@suse.cz>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] selftests/ima: kexec_file_load syscall test
-Message-ID: <20190311083417.GA13067@x230>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <1551223620-11586-1-git-send-email-zohar@linux.ibm.com>
- <1551223620-11586-5-git-send-email-zohar@linux.ibm.com>
- <20190228220039.GC20335@dell5510>
- <1552240104.5062.10.camel@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1552240104.5062.10.camel@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 11 Mar 2019 07:41:58 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53440 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727239AbfCKLl5 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 11 Mar 2019 07:41:57 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2BBdeXr066618
+        for <linux-integrity@vger.kernel.org>; Mon, 11 Mar 2019 07:41:56 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2r5p61ja1y-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 11 Mar 2019 07:41:55 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 11 Mar 2019 11:41:51 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 11 Mar 2019 11:41:48 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2BBflUR20643962
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 11 Mar 2019 11:41:47 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A611811C05B;
+        Mon, 11 Mar 2019 11:41:47 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 968E711C052;
+        Mon, 11 Mar 2019 11:41:46 +0000 (GMT)
+Received: from localhost.ibm.com (unknown [9.80.93.170])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 11 Mar 2019 11:41:46 +0000 (GMT)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-kselftest@vger.kernel.org, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Petr Vorel <pvorel@suse.cz>,
+        Dave Young <dyoung@redhat.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Subject: [PATCH v3 0/7] selftests/ima: add kexec and kernel module tests
+Date:   Mon, 11 Mar 2019 07:41:06 -0400
+X-Mailer: git-send-email 2.7.5
+X-TM-AS-GCONF: 00
+x-cbid: 19031111-0012-0000-0000-000003013BC7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19031111-0013-0000-0000-0000213856CF
+Message-Id: <1552304473-3966-1-git-send-email-zohar@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-11_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1903110088
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Mimi,
+The kernel can be configured to require kexec kernel images and kernel
+modules are signed.  An IMA policy can be specified on the boot command
+line or a custom IMA policy loaded requiring the kexec kernel image and
+kernel modules be signed.  In addition, systems booted in secure boot
+mode with the IMA architecture specific policy enabled, require validly
+signed kexec kernel images and kernel modules.
 
-> On Thu, 2019-02-28 at 23:00 +0100, Petr Vorel wrote:
+In addition to two methods of signing kernel images and two methods of
+signing kernel modules, there are two syscalls for each.
 
-> > > +	local keypair1="$2"
-> > > +	local keypair2="$3"
-> > > +
-> > > +	mount_securityfs
-> > > +
-> > > +	local ima_policy=$SECURITYFS/ima/policy
-> > > +	if [ ! -e $ima_policy ]; then
-> > > +		log_fail "$ima_policy not found"
-> > > +	fi
-> > > +
-> > > +	if [ -n $keypair2 ]; then
-> > > +		grep -e "^$action.*$keypair1" "$ima_policy" | \
-> > > +			grep -q -e "$keypair2"
-> > > +	else
-> > > +		grep -q -e "^$action.*$keypair1" "$ima_policy"
-> > > +	fi
-> > > +
-> > > +	[ $? -eq 0 ] && ret=1 || ret=0
-> > > +        return $ret
-> > return $? is enough here (+ ret was not defined as local and mixing tabs with spaces)
+kernel image:  PE signature, IMA signature
+kexec syscalls: kexec_load, kexec_file_load
 
-> "grep -q" exits with zero if any match is found.  This line inverts
-> the result so that 1 is returned for found.
-Right. Sorry for wrong report :).
->  v3 will make "ret" local and fix the tabs/spaces.
+Both the PE and IMA kernel image signature can only be verified when
+loaded via the kexec_file_load syscall.
 
-> Mimi
+kernel moodule: appended signature, IMA signature
+kernel module syscalls: init_module, finit_module
+
+The appended kernel module signature can be verified when the kernel
+module is loaded via either syscall.  The IMA kernel module signature
+can only be verified when the kernel module is loaded via the
+finit_module syscall.
+
+The selftests in this patch set verify that only signed kernel images
+and kernel modules are loaded as required, based on the kernel config,
+the secure boot mode, and the IMA runtime policy.
+
+Loading a kernel image or kernel module requires root privileges.  To
+run just the IMA selftests: sudo make TARGETS=ima kselftest
+
+Changelog:
+- Updated tests based on Petr's review, including the defining a common
+  test to check for root privileges.
+- Modified config, removing the CONFIG_KEXEC_VERIFY_SIG requirement.
+- Updated the SPDX license to GPL-2.0 based on Shuah's review.
+- Updated the secureboot mode test to check the SetupMode as well, based
+  on David Young's review.
 
 
-Kind regards,
-Petr
+Mimi Zohar (6):
+  selftests/ima: cleanup the kexec selftest
+  selftests/ima: define a set of common functions
+  selftests/ima: define common logging functions
+  kselftest/ima: define "require_root_privileges"
+  selftests/ima: kexec_file_load syscall test
+  selftests/ima: loading kernel modules
+
+Petr Vorel (1):
+  selftests/ima: Add missing '=y' to config options
+
+ tools/testing/selftests/ima/Makefile               |   3 +-
+ tools/testing/selftests/ima/config                 |   7 +-
+ tools/testing/selftests/ima/ima_common_lib.sh      | 173 +++++++++++++++++++
+ tools/testing/selftests/ima/test_kernel_module.sh  |  93 ++++++++++
+ .../testing/selftests/ima/test_kexec_file_load.sh  | 190 +++++++++++++++++++++
+ tools/testing/selftests/ima/test_kexec_load.sh     |  53 ++----
+ 6 files changed, 476 insertions(+), 43 deletions(-)
+ create mode 100755 tools/testing/selftests/ima/ima_common_lib.sh
+ create mode 100755 tools/testing/selftests/ima/test_kernel_module.sh
+ create mode 100755 tools/testing/selftests/ima/test_kexec_file_load.sh
+
+-- 
+2.7.5
+
