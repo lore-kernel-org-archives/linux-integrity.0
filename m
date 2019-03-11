@@ -2,43 +2,42 @@ Return-Path: <SRS0=7u+B=RO=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38CC4C43381
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Mar 2019 21:39:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 860EFC43381
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Mar 2019 21:51:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C58320657
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Mar 2019 21:39:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53CB02147C
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Mar 2019 21:51:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbfCKVjc (ORCPT
+        id S1727138AbfCKVvT (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Mar 2019 17:39:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51400 "EHLO mx1.suse.de"
+        Mon, 11 Mar 2019 17:51:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52598 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727008AbfCKVjc (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Mar 2019 17:39:32 -0400
+        id S1727008AbfCKVvS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 11 Mar 2019 17:51:18 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EEC5AABC3;
-        Mon, 11 Mar 2019 21:39:30 +0000 (UTC)
-Date:   Mon, 11 Mar 2019 22:39:29 +0100
+        by mx1.suse.de (Postfix) with ESMTP id 6F22CB12F;
+        Mon, 11 Mar 2019 21:51:17 +0000 (UTC)
+Date:   Mon, 11 Mar 2019 22:51:15 +0100
 From:   Petr Vorel <pvorel@suse.cz>
 To:     Mimi Zohar <zohar@linux.ibm.com>
 Cc:     linux-integrity@vger.kernel.org, linux-kselftest@vger.kernel.org,
         kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
         Dave Young <dyoung@redhat.com>,
         Matthew Garrett <mjg59@google.com>
-Subject: Re: [PATCH v3 2/7] selftests/ima: define a set of common functions
-Message-ID: <20190311213929.GA13024@x230>
+Subject: Re: [PATCH v3 0/7] selftests/ima: add kexec and kernel module tests
+Message-ID: <20190311215115.GB13024@x230>
 Reply-To: Petr Vorel <pvorel@suse.cz>
 References: <1552304473-3966-1-git-send-email-zohar@linux.ibm.com>
- <1552304473-3966-3-git-send-email-zohar@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1552304473-3966-3-git-send-email-zohar@linux.ibm.com>
+In-Reply-To: <1552304473-3966-1-git-send-email-zohar@linux.ibm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
@@ -47,57 +46,29 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 Hi Mimi,
 
-> Define, update and move get_secureboot_mode() to a common file for use
-> by other tests.
+> Mimi Zohar (6):
+>   selftests/ima: cleanup the kexec selftest
+>   selftests/ima: define a set of common functions
+>   selftests/ima: define common logging functions
+>   kselftest/ima: define "require_root_privileges"
+>   selftests/ima: kexec_file_load syscall test
+>   selftests/ima: loading kernel modules
+Whole patchset LGTM.
+Reviewed-by: Petr Vorel <pvorel@suse.cz>
 
-> Updated to check both the efivar SecureBoot-$(UUID) and
-> SetupMode-$(UUID), based on Dave Young's review.
+> Petr Vorel (1):
+>   selftests/ima: Add missing '=y' to config options
 
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> Reviewed-by: Petr Vorel <pvorel@suse.cz>
-> Cc: Dave Young <dyoung@redhat.com>
-
-Minor comment below.
-
-...
-> +++ b/tools/testing/selftests/ima/ima_common_lib.sh
-> @@ -0,0 +1,36 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +# Check efivar SecureBoot-$(the UUID) and SetupMode-$(the UUID).
-> +# The secure boot mode can be accessed either as the last integer
-> +# of "od -An -t u1 /sys/firmware/efi/efivars/SecureBoot-*" or from
-> +# "od -An -t u1 /sys/firmware/efi/vars/SecureBoot-*/data".  The efi
-> +# SetupMode can be similarly accessed.
-> +# Return 1 for SecureBoot mode enabled and SetupMode mode disabled.
-> +get_secureboot_mode()
-> +{
-> +	local efivarfs="/sys/firmware/efi/efivars"
-> +	local secure_boot_file=$efivarfs/../vars/SecureBoot-*/data
-> +	local setup_mode_file=$efivarfs/../vars/SetupMode-*/data
-Sorry for nitpicking, but also quote variables these two variables
-containing string:
-	local secure_boot_file="$efivarfs/../vars/SecureBoot-*/data"
-	local setup_mode_file="$efivarfs/../vars/SetupMode-*/data"
-
-> +	local secureboot_mode=0
-> +	local setup_mode=0
-> +
-> +	# Make sure that efivars is mounted in the normal location
-> +	if ! grep -q "^\S\+ $efivarfs efivarfs" /proc/mounts; then
-> +		log_skip "efivars is not mounted on $efivarfs"
-> +	fi
-> +
-> +	if [ ! -e $secure_boot_file ] || [ ! -e $setup_mode_file ]; then
-I prefer to quote every variable in [ ] (at least for -f -e -z -n,
-to prevent shell behavior on empty (I know it's not necessary here):
-
-f=; [ -e $f ]; echo $?
-0
-vs.
-f=; [ -e "$f" ]; echo $?
-1
+>  tools/testing/selftests/ima/Makefile               |   3 +-
+>  tools/testing/selftests/ima/config                 |   7 +-
+>  tools/testing/selftests/ima/ima_common_lib.sh      | 173 +++++++++++++++++++
+>  tools/testing/selftests/ima/test_kernel_module.sh  |  93 ++++++++++
+>  .../testing/selftests/ima/test_kexec_file_load.sh  | 190 +++++++++++++++++++++
+>  tools/testing/selftests/ima/test_kexec_load.sh     |  53 ++----
+>  6 files changed, 476 insertions(+), 43 deletions(-)
+>  create mode 100755 tools/testing/selftests/ima/ima_common_lib.sh
+>  create mode 100755 tools/testing/selftests/ima/test_kernel_module.sh
+>  create mode 100755 tools/testing/selftests/ima/test_kexec_file_load.sh
 
 
 Kind regards,
