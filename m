@@ -2,191 +2,120 @@ Return-Path: <SRS0=7u+B=RO=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A66C43381
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Mar 2019 13:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0559C43381
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Mar 2019 16:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88904206BA
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Mar 2019 13:44:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B68D020643
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Mar 2019 16:55:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727561AbfCKNop (ORCPT
+        id S1727561AbfCKQzC (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Mar 2019 09:44:45 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:60699 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727320AbfCKNoo (ORCPT
+        Mon, 11 Mar 2019 12:55:02 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48678 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727110AbfCKQzC (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Mar 2019 09:44:44 -0400
-Received: from orion.localdomain ([95.115.159.19]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1Miqzy-1gXav80WTE-00evdi; Mon, 11 Mar 2019 14:44:42 +0100
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH] secuirty: integrity: ima: pedantic formatting
-Date:   Mon, 11 Mar 2019 14:44:40 +0100
-Message-Id: <1552311880-20569-1-git-send-email-info@metux.net>
-X-Mailer: git-send-email 1.9.1
-X-Provags-ID: V03:K1:PsHHcT4Tpa1S4Vp1mNpHDxzDVtgQPUCgfsiTZSN4jJBgt9YenZE
- ksR2TurPmxv7DIv6ihGGK+HaZLN8HrFO+d/yx4xCWGae8LmJz5PiCmAHoyOTakdPwPpde7v
- +lEfJFspf0A4Fmfk+HfI/IHqkf/2u1PK1sBNQvm0Dy7mnfAaFnxIew+SC8VrENYWE2qX1L2
- OyR6CJqUaphAAffPueE6g==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:qoXUpY55EHM=:ekEH1NgvYyNTz25aP03c0Z
- L4PeFrFfaPm2p6LSESUzi6Xf3e8+tBow4QSM21U4/pIcGElfKrt6qVXfSgtyFq49Ri9MnRd4u
- ncASwAkCu6zcgfDwyIa+RA5zw4BMhwcFEbRrvyqrRAtJa+ZydKSKOdSAK9a0xlZFVd5VTqgyF
- cjyb9ETv4lJPqCps0XmPKH1EvuxVAkvuIQSsp5pI2dgqPFIS65rsYooFdFQ5OBiB1uSQya9Tt
- 9WTUYuSXjkmrznImj0RrULKGi8Lwy0LhSQPPfsRysL/IM2xjDpVgis96DX0qKNTjN7gnadyuE
- FGBLHnQpcT+1T+ITab5uCG6bSiImQHvXt2g0swFLxTWwMa67hSSqIJOZUAJ2z9ldM7f8iFBXy
- FYmy3gPujw/WX2y86rQFkOaH6hL3vMVIX3yVbnqJbUa27cKIRZ70CC5qg60HU0ZWauq5DzrIx
- z/uA4Q8lZ0zZoElzszFvWEol/gjDe9dmykUCG2obcylxJup7RyewD3GFTudgcS21vJ9U0V+xL
- HKlrkgOw0AWalsJTvo6L7YBBp6Wv+K/S2wBVbbkux1X4PW0T2gYnAAzbRBzQgSZacwhJpAuLA
- TKX9sK1CkE7zGvlvuaa1gYSz6S/Vo+VC3gka9doZ/XJpko4vVBDXbHVg2A7en0cXdGRbN22lA
- zq+vnUTpAS/QmL+L6IkT8lPpAzzWqwYO0GCRq82alzuzNFVbdUCpIpTdYT0qen/U0zZ94BqSs
- 0PtsEbW7+buU3Sx+c5wxSqq3KaDKqonSbhtJJA==
+        Mon, 11 Mar 2019 12:55:02 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2BGnPqH060884
+        for <linux-integrity@vger.kernel.org>; Mon, 11 Mar 2019 12:55:01 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2r5rg1amgu-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 11 Mar 2019 12:55:00 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 11 Mar 2019 16:54:58 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 11 Mar 2019 16:54:54 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2BGsrG952232348
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 11 Mar 2019 16:54:54 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DE96811C05C;
+        Mon, 11 Mar 2019 16:54:53 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CF7FC11C050;
+        Mon, 11 Mar 2019 16:54:52 +0000 (GMT)
+Received: from dhcp-9-31-103-153.watson.ibm.com (unknown [9.31.103.153])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 11 Mar 2019 16:54:52 +0000 (GMT)
+Subject: Re: [PATCH 3/3] x86/ima: retry detecting secure boot mode
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Matthew Garrett <mjg59@google.com>
+Cc:     Justin Forbes <jforbes@redhat.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        kexec@lists.infradead.org, Nayna Jain <nayna@linux.ibm.com>
+Date:   Mon, 11 Mar 2019 12:54:52 -0400
+In-Reply-To: <CACdnJut3Y7CogvgtNsEcrEtA1WOxSb9OWP_wZ=3xNgCft2oeDw@mail.gmail.com>
+References: <1542657371-7019-1-git-send-email-zohar@linux.ibm.com>
+         <1542657371-7019-4-git-send-email-zohar@linux.ibm.com>
+         <CACdnJusqHZ1OLJD1baN=fXK9KE+bSqzB4OUbmLXH5-qZNrQXJg@mail.gmail.com>
+         <CAFbkSA39RwB+E4SaG_ueu-_B=y7JytEYKw1+eXNQ_eCuMfnv=g@mail.gmail.com>
+         <CACdnJuuHmK0qKjMxxonRYDUCatxqs930QGNQmREhRjimpNKzYw@mail.gmail.com>
+         <1551998897.31706.461.camel@linux.ibm.com>
+         <CACdnJusiLSCyqx7NX5bkpFr2N5YjBt_h3miOgkbey-Zndc3+Kg@mail.gmail.com>
+         <1552052377.4134.23.camel@linux.ibm.com>
+         <CACdnJut3Y7CogvgtNsEcrEtA1WOxSb9OWP_wZ=3xNgCft2oeDw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19031116-0008-0000-0000-000002CB59EE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19031116-0009-0000-0000-000022377582
+Message-Id: <1552323292.6100.45.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-11_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=879 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1903110120
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Formatting of Kconfig files doesn't look so pretty, so let the
-Great White Handkerchief come around and clean it up.
+On Fri, 2019-03-08 at 09:51 -0800, Matthew Garrett wrote:
+> On Fri, Mar 8, 2019 at 5:40 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> >
+> > On Thu, 2019-03-07 at 14:50 -0800, Matthew Garrett wrote:
+> > > Is the issue that it gives incorrect results on the first read, or is
+> > > the issue that it gives incorrect results before ExitBootServices() is
+> > > called? If the former then we should read twice in the boot stub, if
+> > > the latter then we should figure out a way to do this immediately
+> > > after ExitBootServices() instead.
+> >
+> > Detecting the secure boot mode isn't the problem.  On boot, I am
+> > seeing "EFI stub: UEFI Secure Boot is enabled", but setup_arch() emits
+> > "Secure boot could not be determined".
+> >
+> > In efi_main() the secure_boot mode is initially unset, so
+> > efi_get_secureboot() is called.  efi_get_secureboot() returns the
+> > secure_boot mode correctly as enabled.  The problem seems to be in
+> > saving the secure_boot mode for later use.
+> 
+> Hm. And this only happens on certain firmware versions? If something's
+> stepping on boot_params then we have bigger problems.
 
-Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
----
- security/integrity/ima/Kconfig | 64 +++++++++++++++++++++---------------------
- 1 file changed, 32 insertions(+), 32 deletions(-)
+I was seeing this problem before and after updating the system
+firmware on my laptop last summer.  If updating the firmware had
+resolved the problem, I wouldn't have included this patch.
 
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index a18f8c6..416b724 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -34,12 +34,12 @@ config IMA_KEXEC
- 	depends on IMA && TCG_TPM && HAVE_IMA_KEXEC
- 	default n
- 	help
--	   TPM PCRs are only reset on a hard reboot.  In order to validate
--	   a TPM's quote after a soft boot, the IMA measurement list of the
--	   running kernel must be saved and restored on boot.
-+	  TPM PCRs are only reset on a hard reboot.  In order to validate
-+	  a TPM's quote after a soft boot, the IMA measurement list of the
-+	  running kernel must be saved and restored on boot.
- 
--	   Depending on the IMA policy, the measurement list can grow to
--	   be very large.
-+	  Depending on the IMA policy, the measurement list can grow to
-+	  be very large.
- 
- config IMA_MEASURE_PCR_IDX
- 	int
-@@ -91,10 +91,10 @@ choice
- 	default IMA_DEFAULT_HASH_SHA1
- 	depends on IMA
- 	help
--	   Select the default hash algorithm used for the measurement
--	   list, integrity appraisal and audit log.  The compiled default
--	   hash algorithm can be overwritten using the kernel command
--	   line 'ima_hash=' option.
-+	  Select the default hash algorithm used for the measurement
-+	  list, integrity appraisal and audit log.  The compiled default
-+	  hash algorithm can be overwritten using the kernel command
-+	  line 'ima_hash=' option.
- 
- 	config IMA_DEFAULT_HASH_SHA1
- 		bool "SHA1 (default)"
-@@ -138,9 +138,9 @@ config IMA_READ_POLICY
- 	default y if IMA_WRITE_POLICY
- 	default n if !IMA_WRITE_POLICY
- 	help
--	   It is often useful to be able to read back the IMA policy.  It is
--	   even more important after introducing CONFIG_IMA_WRITE_POLICY.
--	   This option allows the root user to see the current policy rules.
-+	  It is often useful to be able to read back the IMA policy.  It is
-+	  even more important after introducing CONFIG_IMA_WRITE_POLICY.
-+	  This option allows the root user to see the current policy rules.
- 
- config IMA_APPRAISE
- 	bool "Appraise integrity measurements"
-@@ -158,12 +158,12 @@ config IMA_APPRAISE
- 	  If unsure, say N.
- 
- config IMA_ARCH_POLICY
--        bool "Enable loading an IMA architecture specific policy"
--        depends on KEXEC_VERIFY_SIG || IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
--        default n
--        help
--          This option enables loading an IMA architecture specific policy
--          based on run time secure boot flags.
-+	bool "Enable loading an IMA architecture specific policy"
-+	depends on KEXEC_VERIFY_SIG || IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
-+	default n
-+	help
-+	  This option enables loading an IMA architecture specific policy
-+	  based on run time secure boot flags.
- 
- config IMA_APPRAISE_BUILD_POLICY
- 	bool "IMA build time configured policy rules"
-@@ -238,10 +238,10 @@ config IMA_TRUSTED_KEYRING
- 	select INTEGRITY_TRUSTED_KEYRING
- 	default y
- 	help
--	   This option requires that all keys added to the .ima
--	   keyring be signed by a key on the system trusted keyring.
-+	  This option requires that all keys added to the .ima
-+	  keyring be signed by a key on the system trusted keyring.
- 
--	   This option is deprecated in favor of INTEGRITY_TRUSTED_KEYRING
-+	  This option is deprecated in favor of INTEGRITY_TRUSTED_KEYRING
- 
- config IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY
- 	bool "Permit keys validly signed by a built-in or secondary CA cert (EXPERIMENTAL)"
-@@ -266,32 +266,32 @@ config IMA_BLACKLIST_KEYRING
- 	depends on IMA_TRUSTED_KEYRING
- 	default n
- 	help
--	   This option creates an IMA blacklist keyring, which contains all
--	   revoked IMA keys.  It is consulted before any other keyring.  If
--	   the search is successful the requested operation is rejected and
--	   an error is returned to the caller.
-+	  This option creates an IMA blacklist keyring, which contains all
-+	  revoked IMA keys.  It is consulted before any other keyring.  If
-+	  the search is successful the requested operation is rejected and
-+	  an error is returned to the caller.
- 
- config IMA_LOAD_X509
- 	bool "Load X509 certificate onto the '.ima' trusted keyring"
- 	depends on IMA_TRUSTED_KEYRING
- 	default n
- 	help
--	   File signature verification is based on the public keys
--	   loaded on the .ima trusted keyring. These public keys are
--	   X509 certificates signed by a trusted key on the
--	   .system keyring.  This option enables X509 certificate
--	   loading from the kernel onto the '.ima' trusted keyring.
-+	  File signature verification is based on the public keys
-+	  loaded on the .ima trusted keyring. These public keys are
-+	  X509 certificates signed by a trusted key on the
-+	  .system keyring.  This option enables X509 certificate
-+	  loading from the kernel onto the '.ima' trusted keyring.
- 
- config IMA_X509_PATH
- 	string "IMA X509 certificate path"
- 	depends on IMA_LOAD_X509
- 	default "/etc/keys/x509_ima.der"
- 	help
--	   This option defines IMA X509 certificate path.
-+	  This option defines IMA X509 certificate path.
- 
- config IMA_APPRAISE_SIGNED_INIT
- 	bool "Require signed user-space initialization"
- 	depends on IMA_LOAD_X509
- 	default n
- 	help
--	   This option requires user-space init to be signed.
-+	  This option requires user-space init to be signed.
--- 
-1.9.1
+Mimi
 
