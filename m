@@ -2,93 +2,103 @@ Return-Path: <SRS0=7u+B=RO=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79087C43381
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Mar 2019 19:20:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38CC4C43381
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Mar 2019 21:39:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ABC12147A
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Mar 2019 19:20:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jnzq6KMd"
+	by mail.kernel.org (Postfix) with ESMTP id 0C58320657
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Mar 2019 21:39:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727996AbfCKTUZ (ORCPT
+        id S1727794AbfCKVjc (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Mar 2019 15:20:25 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:45457 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727611AbfCKTUY (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Mar 2019 15:20:24 -0400
-Received: by mail-io1-f67.google.com with SMTP id x9so5081730iog.12
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Mar 2019 12:20:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CgiadYIru6QemLmL1/wWY3rmCAqxL3UBWIQeAnIyE60=;
-        b=Jnzq6KMd1T9lf0cWn392R/dsbT3wN7YHKsBaJcPwmFj6g/5IGMczjKWWnjktBj7PmZ
-         uRNZpWKPhmxbkNw41H5CAFFlersAOcfAoj4zzXP/S3CJ5R21fIPxR3Xs5AAk8rIUZ91q
-         LqpgMM0dTOfBESvDv8XKTGQBHFMLDYgmxfyt2XaiENGVoG2UMIICtNhjZKa92R/oAZwI
-         dhEZaylw1zNCTYBX6hWHGCQ4xN+EEPflE+NA+IQJ+Y+GOZO7on6C4TYrT5pzpsxpQX6v
-         BRLXrk+X0fhZULtLIW5YlFaZHdYaC0suAaxtMWaoo1Z9MmDpQR2aJ4VOshJ9X6zkH37Q
-         3DWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CgiadYIru6QemLmL1/wWY3rmCAqxL3UBWIQeAnIyE60=;
-        b=UrCevALQjjCE1xi4J28Wu4ewTLXYGoHWLNH6BlugLRc1uXvoHelKuGDXJZwrNVWkHZ
-         G06OlWK+zx0pzzVzMdXrqivjZVOrKeaV3HoXihA6oXTqlAuqAOlW6mAN2jfNEQ8D5yVX
-         3hZ1zo8iojxyBnXQ/3CiWpPvJ4QjiGcOK3PGTZ/bHxbyKbZBzmE8QxrxNUsKmoJJkln3
-         Vr1VKpWljqP242ZYBa2JZytlruicpHBdfFPlp9Qb0zs+fN+UboJch5qyt6tdRSnQHziL
-         WMkymVsUJu7lZwvJ7jJqlE0ZQbbZnX3JF54dJIwtbnwvA1E3R2e/yuN683xTuk7TlJPW
-         zSmA==
-X-Gm-Message-State: APjAAAVTokGpI30SSRpBEooj7/Z4WOdfULI4uZNX3LcMDVchUxCTPmh4
-        Sqj1qwE+3krjP13f2pF5J5rePQdEgJqqnRWwUXUMrA==
-X-Google-Smtp-Source: APXvYqyYlyqTxbdAXsQhzh00O+rcLRcUUaDMzn5WxksfkGq2YX9xbsay3i0vkiyWe1DtXCoaciP9vysRnfBvuoqhY08=
-X-Received: by 2002:a5e:950f:: with SMTP id r15mr3307807ioj.88.1552332023644;
- Mon, 11 Mar 2019 12:20:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <1542657371-7019-1-git-send-email-zohar@linux.ibm.com>
- <1542657371-7019-4-git-send-email-zohar@linux.ibm.com> <CACdnJusqHZ1OLJD1baN=fXK9KE+bSqzB4OUbmLXH5-qZNrQXJg@mail.gmail.com>
- <CAFbkSA39RwB+E4SaG_ueu-_B=y7JytEYKw1+eXNQ_eCuMfnv=g@mail.gmail.com>
- <CACdnJuuHmK0qKjMxxonRYDUCatxqs930QGNQmREhRjimpNKzYw@mail.gmail.com>
- <1551998897.31706.461.camel@linux.ibm.com> <CACdnJusiLSCyqx7NX5bkpFr2N5YjBt_h3miOgkbey-Zndc3+Kg@mail.gmail.com>
- <1552052377.4134.23.camel@linux.ibm.com> <CACdnJut3Y7CogvgtNsEcrEtA1WOxSb9OWP_wZ=3xNgCft2oeDw@mail.gmail.com>
- <1552323292.6100.45.camel@linux.ibm.com>
-In-Reply-To: <1552323292.6100.45.camel@linux.ibm.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Mon, 11 Mar 2019 12:20:11 -0700
-Message-ID: <CACdnJustD1fvBYsE=zHE85ZSrKwpArW=_jhRDyhDngdDRNOXJA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] x86/ima: retry detecting secure boot mode
+        Mon, 11 Mar 2019 17:39:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51400 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727008AbfCKVjc (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 11 Mar 2019 17:39:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id EEC5AABC3;
+        Mon, 11 Mar 2019 21:39:30 +0000 (UTC)
+Date:   Mon, 11 Mar 2019 22:39:29 +0100
+From:   Petr Vorel <pvorel@suse.cz>
 To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Justin Forbes <jforbes@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        kexec@lists.infradead.org, Nayna Jain <nayna@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     linux-integrity@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dave Young <dyoung@redhat.com>,
+        Matthew Garrett <mjg59@google.com>
+Subject: Re: [PATCH v3 2/7] selftests/ima: define a set of common functions
+Message-ID: <20190311213929.GA13024@x230>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <1552304473-3966-1-git-send-email-zohar@linux.ibm.com>
+ <1552304473-3966-3-git-send-email-zohar@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1552304473-3966-3-git-send-email-zohar@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Mar 11, 2019 at 9:55 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
->
-> On Fri, 2019-03-08 at 09:51 -0800, Matthew Garrett wrote:
-> > Hm. And this only happens on certain firmware versions? If something's
-> > stepping on boot_params then we have bigger problems.
->
-> I was seeing this problem before and after updating the system
-> firmware on my laptop last summer.  If updating the firmware had
-> resolved the problem, I wouldn't have included this patch.
+Hi Mimi,
 
-Ah, sorry, when you said that you saw this with older firmware I
-thought that meant that newer firmware fixed it. What machine are you
-testing on?
+> Define, update and move get_secureboot_mode() to a common file for use
+> by other tests.
+
+> Updated to check both the efivar SecureBoot-$(UUID) and
+> SetupMode-$(UUID), based on Dave Young's review.
+
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> Reviewed-by: Petr Vorel <pvorel@suse.cz>
+> Cc: Dave Young <dyoung@redhat.com>
+
+Minor comment below.
+
+...
+> +++ b/tools/testing/selftests/ima/ima_common_lib.sh
+> @@ -0,0 +1,36 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +# Check efivar SecureBoot-$(the UUID) and SetupMode-$(the UUID).
+> +# The secure boot mode can be accessed either as the last integer
+> +# of "od -An -t u1 /sys/firmware/efi/efivars/SecureBoot-*" or from
+> +# "od -An -t u1 /sys/firmware/efi/vars/SecureBoot-*/data".  The efi
+> +# SetupMode can be similarly accessed.
+> +# Return 1 for SecureBoot mode enabled and SetupMode mode disabled.
+> +get_secureboot_mode()
+> +{
+> +	local efivarfs="/sys/firmware/efi/efivars"
+> +	local secure_boot_file=$efivarfs/../vars/SecureBoot-*/data
+> +	local setup_mode_file=$efivarfs/../vars/SetupMode-*/data
+Sorry for nitpicking, but also quote variables these two variables
+containing string:
+	local secure_boot_file="$efivarfs/../vars/SecureBoot-*/data"
+	local setup_mode_file="$efivarfs/../vars/SetupMode-*/data"
+
+> +	local secureboot_mode=0
+> +	local setup_mode=0
+> +
+> +	# Make sure that efivars is mounted in the normal location
+> +	if ! grep -q "^\S\+ $efivarfs efivarfs" /proc/mounts; then
+> +		log_skip "efivars is not mounted on $efivarfs"
+> +	fi
+> +
+> +	if [ ! -e $secure_boot_file ] || [ ! -e $setup_mode_file ]; then
+I prefer to quote every variable in [ ] (at least for -f -e -z -n,
+to prevent shell behavior on empty (I know it's not necessary here):
+
+f=; [ -e $f ]; echo $?
+0
+vs.
+f=; [ -e "$f" ]; echo $?
+1
+
+
+Kind regards,
+Petr
