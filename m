@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E737C10F0B
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Mar 2019 11:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C5F5C4360F
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Mar 2019 11:42:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09A462086A
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Mar 2019 11:42:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14E7120857
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Mar 2019 11:42:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbfCKLmC (ORCPT
+        id S1727424AbfCKLl7 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Mar 2019 07:42:02 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50024 "EHLO
+        Mon, 11 Mar 2019 07:41:59 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50260 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727408AbfCKLmC (ORCPT
+        by vger.kernel.org with ESMTP id S1727390AbfCKLl6 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Mar 2019 07:42:02 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2BBewgc121960
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Mar 2019 07:42:01 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2r5mycwjaf-1
+        Mon, 11 Mar 2019 07:41:58 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2BBf0Q1007150
+        for <linux-integrity@vger.kernel.org>; Mon, 11 Mar 2019 07:41:57 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2r5ngcm1vd-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Mar 2019 07:42:00 -0400
+        for <linux-integrity@vger.kernel.org>; Mon, 11 Mar 2019 07:41:56 -0400
 Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 11 Mar 2019 11:41:57 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Mon, 11 Mar 2019 11:41:54 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 11 Mar 2019 11:41:55 -0000
+        Mon, 11 Mar 2019 11:41:51 -0000
 Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2BBfs2m27394224
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2BBfo4l35782702
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 11 Mar 2019 11:41:54 GMT
+        Mon, 11 Mar 2019 11:41:50 GMT
 Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 71DB011C05B;
-        Mon, 11 Mar 2019 11:41:54 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 0D45911C04A;
+        Mon, 11 Mar 2019 11:41:50 +0000 (GMT)
 Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7A4C911C054;
-        Mon, 11 Mar 2019 11:41:53 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 0DA3C11C054;
+        Mon, 11 Mar 2019 11:41:49 +0000 (GMT)
 Received: from localhost.ibm.com (unknown [9.80.93.170])
         by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 11 Mar 2019 11:41:53 +0000 (GMT)
+        Mon, 11 Mar 2019 11:41:48 +0000 (GMT)
 From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-kselftest@vger.kernel.org, kexec@lists.infradead.org,
@@ -55,123 +55,84 @@ Cc:     linux-kselftest@vger.kernel.org, kexec@lists.infradead.org,
         Dave Young <dyoung@redhat.com>,
         Matthew Garrett <mjg59@google.com>,
         Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH v3 3/7] selftests/ima: define common logging functions
-Date:   Mon, 11 Mar 2019 07:41:09 -0400
+Subject: [PATCH v3 1/7] selftests/ima: cleanup the kexec selftest
+Date:   Mon, 11 Mar 2019 07:41:07 -0400
 X-Mailer: git-send-email 2.7.5
 In-Reply-To: <1552304473-3966-1-git-send-email-zohar@linux.ibm.com>
 References: <1552304473-3966-1-git-send-email-zohar@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19031111-0028-0000-0000-00000352A2FF
+x-cbid: 19031111-0012-0000-0000-000003013BC8
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19031111-0029-0000-0000-000024112116
-Message-Id: <1552304473-3966-4-git-send-email-zohar@linux.ibm.com>
+x-cbparentid: 19031111-0013-0000-0000-0000213856D0
+Message-Id: <1552304473-3966-2-git-send-email-zohar@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-11_09:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=495 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=875 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1903110088
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Define log_info, log_pass, log_fail, and log_skip functions.
+Remove the few bashisms and use the complete option name for clarity.
 
-Suggested-by: Petr Vorel <pvorel@suse.cz>
 Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 Reviewed-by: Petr Vorel <pvorel@suse.cz>
 ---
- tools/testing/selftests/ima/ima_common_lib.sh  | 31 ++++++++++++++++++++++++++
- tools/testing/selftests/ima/test_kexec_load.sh | 19 +++++-----------
- 2 files changed, 36 insertions(+), 14 deletions(-)
+ tools/testing/selftests/ima/test_kexec_load.sh | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/tools/testing/selftests/ima/ima_common_lib.sh b/tools/testing/selftests/ima/ima_common_lib.sh
-index 403666247b10..59482914ac19 100755
---- a/tools/testing/selftests/ima/ima_common_lib.sh
-+++ b/tools/testing/selftests/ima/ima_common_lib.sh
-@@ -1,5 +1,36 @@
- #!/bin/sh
- # SPDX-License-Identifier: GPL-2.0
-+#
-+# Kselftest framework defines: ksft_pass=0, ksft_fail=1, ksft_skip=4
-+
-+VERBOSE="${VERBOSE:-1}"
-+
-+log_info()
-+{
-+	[ $VERBOSE -ne 0 ] && echo "[INFO] $1"
-+}
-+
-+# The ksefltest framework requirement returns 0 for PASS.
-+log_pass()
-+{
-+
-+	[ $VERBOSE -ne 0 ] && echo "$1 [PASS]"
-+	exit 0
-+}
-+
-+# The ksefltest framework requirement returns 1 for FAIL.
-+log_fail()
-+{
-+	[ $VERBOSE -ne 0 ] && echo "$1 [FAIL]"
-+	exit 1
-+}
-+
-+# The ksefltest framework requirement returns 4 for SKIP.
-+log_skip()
-+{
-+	[ $VERBOSE -ne 0 ] && echo "$1"
-+	exit 4
-+}
- 
- # Check efivar SecureBoot-$(the UUID) and SetupMode-$(the UUID).
- # The secure boot mode can be accessed either as the last integer
 diff --git a/tools/testing/selftests/ima/test_kexec_load.sh b/tools/testing/selftests/ima/test_kexec_load.sh
-index e84139c1506b..99ab87b6c681 100755
+index 1c10093fb526..36f3089ac225 100755
 --- a/tools/testing/selftests/ima/test_kexec_load.sh
 +++ b/tools/testing/selftests/ima/test_kexec_load.sh
-@@ -6,15 +6,10 @@
+@@ -1,7 +1,7 @@
+ #!/bin/sh
+-# SPDX-License-Identifier: GPL-2.0+
++# SPDX-License-Identifier: GPL-2.0
+ # Loading a kernel image via the kexec_load syscall should fail
+-# when the kerne is CONFIG_KEXEC_VERIFY_SIG enabled and the system
++# when the kernel is CONFIG_KEXEC_VERIFY_SIG enabled and the system
+ # is booted in secureboot mode.
  
  TEST="$0"
- . ./ima_common_lib.sh
--rc=0
--
--# Kselftest framework requirement - SKIP code is 4.
--ksft_skip=4
+@@ -12,8 +12,8 @@ rc=0
+ ksft_skip=4
  
  # kexec requires root privileges
- if [ $(id -ru) -ne 0 ]; then
--	echo "$TEST: requires root privileges" >&2
--	exit $ksft_skip
-+	log_skip "requires root privileges"
+-if [ $UID != 0 ]; then
+-	echo "$TEST: must be run as root" >&2
++if [ $(id -ru) -ne 0 ]; then
++	echo "$TEST: requires root privileges" >&2
+ 	exit $ksft_skip
  fi
  
- get_secureboot_mode
-@@ -26,18 +21,14 @@ kexec --load $KERNEL_IMAGE 2>&1 > /dev/null
- if [ $? -eq 0 ]; then
- 	kexec --unload
- 	if [ $secureboot -eq 1 ]; then
--		echo "$TEST: kexec_load succeeded [FAIL]"
--		rc=1
-+		log_fail "kexec_load succeeded"
+@@ -33,17 +33,17 @@ secureboot=`hexdump $file | awk '{print substr($4,length($4),1)}'`
+ 
+ # kexec_load should fail in secure boot mode
+ KERNEL_IMAGE="/boot/vmlinuz-`uname -r`"
+-kexec -l $KERNEL_IMAGE &>> /dev/null
+-if [ $? == 0 ]; then
+-	kexec -u
+-	if [ "$secureboot" == "1" ]; then
++kexec --load $KERNEL_IMAGE 2>&1 > /dev/null
++if [ $? -eq 0 ]; then
++	kexec --unload
++	if [ $secureboot -eq 1 ]; then
+ 		echo "$TEST: kexec_load succeeded [FAIL]"
+ 		rc=1
  	else
--		echo "$TEST: kexec_load succeeded [PASS]"
-+		log_pass "kexec_load succeeded"
+ 		echo "$TEST: kexec_load succeeded [PASS]"
  	fi
  else
- 	if [ $secureboot -eq 1 ]; then
--		echo "$TEST: kexec_load failed [PASS]"
-+		log_pass "kexec_load failed"
+-	if [ "$secureboot" == "1" ]; then
++	if [ $secureboot -eq 1 ]; then
+ 		echo "$TEST: kexec_load failed [PASS]"
  	else
--		echo "$TEST: kexec_load failed [FAIL]"
--		rc=1
-+		log_fail "kexec_load failed"
- 	fi
- fi
--
--exit $rc
+ 		echo "$TEST: kexec_load failed [FAIL]"
 -- 
 2.7.5
 
