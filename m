@@ -2,97 +2,132 @@ Return-Path: <SRS0=+0OV=RP=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F9EAC43381
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Mar 2019 15:39:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B90CC43381
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Mar 2019 16:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AFC2205F4
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Mar 2019 15:39:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54B47214AE
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Mar 2019 16:51:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726649AbfCLPjh (ORCPT
+        id S1726418AbfCLQvf (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 12 Mar 2019 11:39:37 -0400
-Received: from mga01.intel.com ([192.55.52.88]:49949 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726174AbfCLPjh (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 12 Mar 2019 11:39:37 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2019 08:39:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,471,1544515200"; 
-   d="scan'208";a="140141856"
-Received: from djustese-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.184])
-  by FMSMGA003.fm.intel.com with ESMTP; 12 Mar 2019 08:39:32 -0700
-Date:   Tue, 12 Mar 2019 17:39:31 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Calvin Owens <calvinowens@fb.com>, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH] tpm: Make timeout logic simpler and more robust
-Message-ID: <20190312153931.GA9927@linux.intel.com>
-References: <358e89ed2b766d51b5f57abf31ab7a925ac63379.1552348123.git.calvinowens@fb.com>
- <1552350463.23859.8.camel@HansenPartnership.com>
- <20190312125028.GC9243@linux.intel.com>
- <1552401766.3083.3.camel@HansenPartnership.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1552401766.3083.3.camel@HansenPartnership.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 12 Mar 2019 12:51:35 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54128 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725894AbfCLQve (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 12 Mar 2019 12:51:34 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2CGbJwZ133502
+        for <linux-integrity@vger.kernel.org>; Tue, 12 Mar 2019 12:51:33 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2r6g06jg8f-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 12 Mar 2019 12:51:32 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 12 Mar 2019 16:51:31 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 12 Mar 2019 16:51:26 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2CGpPNp52559932
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 12 Mar 2019 16:51:26 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D6C32AE053;
+        Tue, 12 Mar 2019 16:51:25 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DD06AAE056;
+        Tue, 12 Mar 2019 16:51:24 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.93.217])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 12 Mar 2019 16:51:24 +0000 (GMT)
+Subject: Re: [PATCH v3 5/7] selftests/ima: kexec_file_load syscall test
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Dave Young <dyoung@redhat.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Petr Vorel <pvorel@suse.cz>, Matthew Garrett <mjg59@google.com>
+Date:   Tue, 12 Mar 2019 12:51:14 -0400
+In-Reply-To: <20190312121001.GA18510@dhcp-128-65.nay.redhat.com>
+References: <1552304473-3966-1-git-send-email-zohar@linux.ibm.com>
+         <1552304473-3966-6-git-send-email-zohar@linux.ibm.com>
+         <20190312121001.GA18510@dhcp-128-65.nay.redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19031216-0020-0000-0000-00000321B8F6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19031216-0021-0000-0000-00002173E579
+Message-Id: <1552409474.24794.63.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-12_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1903120115
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Mar 12, 2019 at 07:42:46AM -0700, James Bottomley wrote:
-> On Tue, 2019-03-12 at 14:50 +0200, Jarkko Sakkinen wrote:
-> > On Mon, Mar 11, 2019 at 05:27:43PM -0700, James Bottomley wrote:
-> > > On Mon, 2019-03-11 at 16:54 -0700, Calvin Owens wrote:
-> > > > e're having lots of problems with TPM commands timing out, and
-> > > > we're seeing these problems across lots of different hardware
-> > > > (both v1/v2).
-> > > > 
-> > > > I instrumented the driver to collect latency data, but I wasn't
-> > > > able to find any specific timeout to fix: it seems like many of
-> > > > them are too aggressive. So I tried replacing all the timeout
-> > > > logic with a single universal long timeout, and found that makes
-> > > > our TPMs 100% reliable.
-> > > > 
-> > > > Given that this timeout logic is very complex, problematic, and
-> > > > appears to serve no real purpose, I propose simply deleting all
-> > > > of it.
-> > > 
-> > > "no real purpose" is a bit strong given that all these timeouts are
-> > > standards mandated.  The purpose stated by the standards is that
-> > > there needs to be a way of differentiating the TPM crashed from the
-> > > TPM is taking a very long time to respond.  For a normally
-> > > functioning TPM it looks complex and unnecessary, but for a
-> > > malfunctioning one it's a lifesaver.
-> > 
-> > Standards should be only followed when they make practical sense and
-> > ignored when not. The range is only up to 2s anyway.
+On Tue, 2019-03-12 at 20:10 +0800, Dave Young wrote:
+> Hi Mimi,
+> On 03/11/19 at 07:41am, Mimi Zohar wrote:
+> > The kernel can be configured to verify PE signed kernel images, IMA
+> > kernel image signatures, both types of signatures, or none.  This test
+> > verifies only properly signed kernel images are loaded into memory,
+> > based on the kernel configuration and runtime policies.
 > 
-> I don't disagree ... and I'm certainly not going to defend the TCG
-> because I do think the complexity of some of its standards contributed
-> to the lack of use of TPM 1.2.
+> I understand this is for IMA testing only, but I still wonder if this
+> can be expanded to common kexec tests, like
+> tools/testing/selftests/kexec/kexec_load.sh
+> tools/testing/selftests/kexec/kexec_file_load.sh
 > 
-> However, I am saying we should root cause this problem rather than take
-> a blind shot at the apparent timeout complexity.  My timeout
-> instability is definitely related to the polling adjustments, so it's
-> not unreasonable to think Facebooks might be as well.
+> Is it possible for ima/test_kexec_load.sh to call the
+> ../kexec/kexec_load.sh, probably add extra argument eg "ima"?
 
-Yeah, referring to my review comment, I think the very first thing
-that should be done is to split patch into two. Then we can probably
-give better feedback.
+These kexec tests are meant to coordinate between the different
+methods of verifying the kexec kernel image signatures.  Nothing about
+them is IMA specific.  Moving these tests to
+tools/testing/selftests/kexec makes sense.
 
-/Jarkko
+> 
+> Frankly I did not read and followup much about the testing code changes,
+> not sure if it is doable or not.  The code sharing under testing folder
+> seems not very good.  For example the basic check_root is needed by
+> different parts, but all have its own implementation.  Anyway this is
+> not the duty of this patch set.
+> Also the selftests/lib/ is not a folder for sharing code for different
+> tests, it looks a standalone test instead.
+
+Shuah suggested upstreaming these tests first and defer introducing a
+common set of functions to later.
+
+> So if split kexec tests to another folder is not doable please just
+> ignore the comment.
+
+Left in the selftests/ima is a similar test for kernel modules, which
+uses the "common" functions.  So either we wait to move the kexec
+tests or allow them to reach into the ima directory and use the
+ima_common_lib functions.
+
+> 
+> BTW, does CONFIG_KEXEC* is checked?  in case a kernel without KEXEC or
+> KEXEC_FILE compiled in then the tests can just return directly.
+
+Good point.  Now that there is a common function for reading the
+Kconfig, I'll add that check to both the test_kexec_load.sh and
+test_kexec_file_load.sh tests respectively.
+
+Mimi
+
