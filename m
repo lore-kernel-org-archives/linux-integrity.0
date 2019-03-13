@@ -2,136 +2,107 @@ Return-Path: <SRS0=IrrW=RQ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9241AC43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 13 Mar 2019 21:29:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F671C43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 13 Mar 2019 21:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6553820449
-	for <linux-integrity@archiver.kernel.org>; Wed, 13 Mar 2019 21:29:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26DF62087C
+	for <linux-integrity@archiver.kernel.org>; Wed, 13 Mar 2019 21:59:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k7eq7BAm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727476AbfCMV3Y (ORCPT
+        id S1726420AbfCMV7f (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 13 Mar 2019 17:29:24 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41572 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726772AbfCMV3Y (ORCPT
+        Wed, 13 Mar 2019 17:59:35 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:39262 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbfCMV7f (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 13 Mar 2019 17:29:24 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2DLNr5L109767
-        for <linux-integrity@vger.kernel.org>; Wed, 13 Mar 2019 17:29:23 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2r78374s6w-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 13 Mar 2019 17:29:22 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 13 Mar 2019 21:29:20 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 13 Mar 2019 21:29:18 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2DLTHIt55574776
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Mar 2019 21:29:17 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 490215204F;
-        Wed, 13 Mar 2019 21:29:17 +0000 (GMT)
-Received: from dhcp-9-31-103-153.watson.ibm.com (unknown [9.31.103.153])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id B8FAB52051;
-        Wed, 13 Mar 2019 21:29:16 +0000 (GMT)
-Subject: Re: [RFC] kexec: Allow kexec_file() with appropriate IMA policy
- when locked down
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Matthew Garrett <mjg59@google.com>
+        Wed, 13 Mar 2019 17:59:35 -0400
+Received: by mail-it1-f193.google.com with SMTP id l15so1373250iti.4
+        for <linux-integrity@vger.kernel.org>; Wed, 13 Mar 2019 14:59:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fc7p2YCrUlPzgoHhkfdKCKotR6ODs1ZKHRHAH94ObFg=;
+        b=k7eq7BAmFDL0ri7lv8AKAVLmy7k+7zhOrKTMX9eBph36Br8HNgrHDn2yOmMHAfJG2T
+         exYKThGDWcrYKatYgKxedlUr9Vuj1/PceTHbiWezAJOGiyrOK7/Dij5zsXju8+pYsOQ5
+         b8wafYpKPT6LODGltZu9lkljAnU67pS+eHz6HaGhzMx40vQKq5Ic6OVFGX2Cilyjnt/y
+         goZrooOL8b+jrSx0voOlweqet2SRyffBoSoBMoKiDB5wAjne7fHPun81l2Sqn+j2Xf/h
+         1m3DfQFy76UoZ1GhoWuAGtX8PjBfiwC6JmQ8TX9QFTEdcKwFhOg5FnCbrRCzNtXeNf6U
+         0ibA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fc7p2YCrUlPzgoHhkfdKCKotR6ODs1ZKHRHAH94ObFg=;
+        b=VDAG0xPwpnfpKI2yS6kBqaYSRhtDiBmCF4ltZm77H/Vg8FGaWuV6tExex/vQSDCyuF
+         WDkj6Ny1gqBrop8QW0uDBOynu4jfQSPWfBZskZeAkSJo4AP2Ztp0z4EBKLMBsobZvByi
+         yG5aU8SODbCDj/dkY0cjhId0l26EGTzPGzZJz4O3M+1HTNNnT/FD+Y8KpD3e0IRQO5pd
+         2A1uOzGEtsguR2qC24+6k6i8YbXii83KR/qOqgykGJ3qbyf1oPpmKk/LOmEDlM3o3Hsi
+         1B+2UFOPKXc+nj0p1sZS0NOdWAOguwYVOIvIUAfys69u+LNqSufgzks4lHJSpmFnGOvA
+         r3Lg==
+X-Gm-Message-State: APjAAAXdrkdpr0q1FND9G3Yu+xrNKpnTNrDCFJY/PvQvYShQ29TM0LXR
+        vk4oGMsPhk5fMtbd563Pbc86qtDJI7k93uKWw+WUsg==
+X-Google-Smtp-Source: APXvYqwS08XZeAeBd3Q2umF63Eig/UNQTU/QGNpTxqnd5hBvVpnagd7GMWfIJonKqqN4AXkog1xQGRQuHYEHigcSUF8=
+X-Received: by 2002:a02:23cd:: with SMTP id u196mr6017825jau.103.1552514373778;
+ Wed, 13 Mar 2019 14:59:33 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190312195715.101995-1-matthewgarrett@google.com>
+ <1552478316.24794.210.camel@linux.ibm.com> <CACdnJuvThFMhGtKT9PYSH-jZD69CBktQNiJmCc=d4PFRbzQvGw@mail.gmail.com>
+ <1552512556.24794.229.camel@linux.ibm.com>
+In-Reply-To: <1552512556.24794.229.camel@linux.ibm.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Wed, 13 Mar 2019 14:59:22 -0700
+Message-ID: <CACdnJutmJDLhrdsU9UZtzE+S=Tw39RYqZ3q+TP35PbFbfsL76w@mail.gmail.com>
+Subject: Re: [RFC] kexec: Allow kexec_file() with appropriate IMA policy when
+ locked down
+To:     Mimi Zohar <zohar@linux.ibm.com>
 Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
         David Howells <dhowells@redhat.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Date:   Wed, 13 Mar 2019 17:29:16 -0400
-In-Reply-To: <CACdnJuvThFMhGtKT9PYSH-jZD69CBktQNiJmCc=d4PFRbzQvGw@mail.gmail.com>
-References: <20190312195715.101995-1-matthewgarrett@google.com>
-         <1552478316.24794.210.camel@linux.ibm.com>
-         <CACdnJuvThFMhGtKT9PYSH-jZD69CBktQNiJmCc=d4PFRbzQvGw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19031321-0008-0000-0000-000002CC49BB
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19031321-0009-0000-0000-000022386FE8
-Message-Id: <1552512556.24794.229.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-13_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1903130145
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, 2019-03-13 at 13:36 -0700, Matthew Garrett wrote:
-> On Wed, Mar 13, 2019 at 4:58 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+On Wed, Mar 13, 2019 at 2:29 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>
+> On Wed, 2019-03-13 at 13:36 -0700, Matthew Garrett wrote:
+> > Oh hm. The only case I can see where this isn't sufficient is if the
+> > filesystem returns EOPNOTSUPP for the EVM xattr, but in that case we
+> > should already have failed to get the IMA xattr and will fail
+> > appraisal as a result?
+>
+> The evm_initialized flag is an indication that EVM has been
+> initialized on the system.  Both hmac and signatures could be
+> supported.  Even checking for EVM_INIT_X509 doesn't provide any
+> guarantees that the particular file has an EVM signature.
+>
+> (The hmac can be updated (eg. change in security xattrs,
+> remove/additional of protected xattr), so we can't rely on them.)
+
+So having IMA appraisal of the hash and hmac-based EVM validation of
+the xattr security isn't sufficient? Is this just because of the
+offline attack case?
+
+> > > > +#if defined(CONFIG_IMA_APPRAISE) && defined(CONFIG_INTEGRITY_TRUSTED_KEYRING)
+> > >
+> > > With these defines, the function isn't limited to just "lockdown".
+> > >  Either fix the defines or the patch description.
 > >
-> > On Tue, 2019-03-12 at 12:57 -0700, Matthew Garrett wrote:
-> > > Systems in lockdown mode should block the kexec of untrusted kernels.
-> > > For x86 and ARM we can ensure that a kernel is trustworthy by validating
-> > > a PE signature, but this isn't possible on other architectures. On those
-> > > platforms we can use IMA instead, either with native IMA digital
-> > > signatures or EVM-protected IMA hashes. Add a function to determine
-> > > whether IMA will verify signatures on kexec files, and if so permit
-> > > kexec_file() even if the kernel is otherwise locked down. This is
-> > > restricted to cases where CONFIG_INTEGRITY_TRUSTED_KEYRING is set in
-> > > order to prevent an attacker from loading additional keys at runtime.
-> >
-> > Thank you for working on this!  With the changes suggested below, it
-> > might work.  :)
-> 
-> Ok, I'll incorporate them - just one question:
-> 
-> > > +bool evm_key_loaded(void)
-> > >  {
-> > >       return (bool)(evm_initialized & EVM_KEY_MASK);
-> > >  }
-> >
-> > This might be sufficient for your environment, but in general it
-> > isn't.
-> 
-> Oh hm. The only case I can see where this isn't sufficient is if the
-> filesystem returns EOPNOTSUPP for the EVM xattr, but in that case we
-> should already have failed to get the IMA xattr and will fail
-> appraisal as a result?
+> > The function will be called even when lockdown isn't enabled, but it
+> > won't have any impact on the logic flow.
+>
+> Ok, so inverting the test order should prevent unnecessarily calling
+> ima_apprase_kexec_signature().
 
-The evm_initialized flag is an indication that EVM has been
-initialized on the system.  Both hmac and signatures could be
-supported.  Even checking for EVM_INIT_X509 doesn't provide any
-guarantees that the particular file has an EVM signature.
-
-(The hmac can be updated (eg. change in security xattrs,
-remove/additional of protected xattr), so we can't rely on them.)
-
-> 
-> > > +#if defined(CONFIG_IMA_APPRAISE) && defined(CONFIG_INTEGRITY_TRUSTED_KEYRING)
-> >
-> > With these defines, the function isn't limited to just "lockdown".
-> >  Either fix the defines or the patch description.
-> 
-> The function will be called even when lockdown isn't enabled, but it
-> won't have any impact on the logic flow.
-
-Ok, so inverting the test order should prevent unnecessarily calling
-ima_apprase_kexec_signature().
-
-+               if (!ima_appraise_kexec_signature() &&
-+                   kernel_is_locked_down(reason)) {
-
-Mimi
-
-
+Unfortunately kernel_is_locked_down(reason) will print a message
+telling us that something was blocked, even if
+ima_appraise_signature() then permits it, so we need to do it in this
+order to shortcut that.
