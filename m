@@ -1,89 +1,87 @@
-Return-Path: <SRS0=+0OV=RP=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=IrrW=RQ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE9AC43381
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Mar 2019 22:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5249CC43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 13 Mar 2019 10:14:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A74742173C
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Mar 2019 22:50:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="tSMnCYvh"
+	by mail.kernel.org (Postfix) with ESMTP id 1E4472184C
+	for <linux-integrity@archiver.kernel.org>; Wed, 13 Mar 2019 10:14:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726450AbfCLWuy (ORCPT
+        id S1725895AbfCMKOj (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 12 Mar 2019 18:50:54 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:49028 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727304AbfCLWuv (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 12 Mar 2019 18:50:51 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id DEE998EE0F5;
-        Tue, 12 Mar 2019 15:50:50 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Qjim-mzm6zaD; Tue, 12 Mar 2019 15:50:50 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 5D7E68EE21A;
-        Tue, 12 Mar 2019 15:50:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1552431050;
-        bh=Vsqs6yyMcHSt34wmM1v76Vp93gUqflz/67y8Tj/pEZ0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=tSMnCYvhUHG094P67GNebwMgUhyhSiF6O+B3+9rBtSuiF63zt7cXD/WxkZJd4Mec+
-         KgfnbSlVy62AtuMncHTlqYEDkLnCcYpHbG/4Ni17v8hbGB03T1t0QRgHlgAPY5V27O
-         j6Vraa0QWI5hmUvf8ftbM1ql5108KaDXoRu8YLcY=
-Message-ID: <1552431049.14432.42.camel@HansenPartnership.com>
-Subject: Re: Kernel 5.0 regression in /dev/tpm0 access
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Tadeusz Struk <tadeusz.struk@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Mantas =?UTF-8?Q?Mikul=C4=97nas?= <grawity@gmail.com>,
-        linux-integrity@vger.kernel.org
-Date:   Tue, 12 Mar 2019 15:50:49 -0700
-In-Reply-To: <14297706-74ef-f178-3b65-e63289919117@intel.com>
-References: <CAPWNY8Xg=Xyfdczqkiv+DNXh41ez1BH-KjcaJG9hcp_taOc+PA@mail.gmail.com>
-         <1552168908.3442.5.camel@HansenPartnership.com>
-         <1552171467.3442.13.camel@HansenPartnership.com>
-         <20190311130908.GA7264@linux.intel.com>
-         <14297706-74ef-f178-3b65-e63289919117@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 13 Mar 2019 06:14:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52602 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725889AbfCMKOj (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 13 Mar 2019 06:14:39 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DA033ACD7;
+        Wed, 13 Mar 2019 10:14:37 +0000 (UTC)
+Date:   Wed, 13 Mar 2019 11:14:36 +0100
+From:   Petr Vorel <pvorel@suse.cz>
+To:     Mimi Zohar <zohar@linux.ibm.com>, Dave Young <dyoung@redhat.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/7] selftests/ima: kexec_file_load syscall test
+Message-ID: <20190313101436.GB25643@dell5510>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <1552304473-3966-1-git-send-email-zohar@linux.ibm.com>
+ <1552304473-3966-6-git-send-email-zohar@linux.ibm.com>
+ <20190312121001.GA18510@dhcp-128-65.nay.redhat.com>
+ <1552409474.24794.63.camel@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-2
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1552409474.24794.63.camel@linux.ibm.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2019-03-12 at 15:42 -0700, Tadeusz Struk wrote:
-> @@ -202,13 +196,15 @@ __poll_t tpm_common_poll(struct file *file,
-> poll_table *wait)
->  	struct file_priv *priv = file->private_data;
->  	__poll_t mask = 0;
->  
-> +	mutex_lock(&priv->buffer_mutex);
->  	poll_wait(file, &priv->async_wait, wait);
->  
-> -	if (!priv->response_read || priv->response_length)
-> +	if (priv->response_length)
->  		mask = EPOLLIN | EPOLLRDNORM;
->  	else
->  		mask = EPOLLOUT | EPOLLWRNORM;
->  
-> +	mutex_unlock(&priv->buffer_mutex);
+Hi Mimi, Dave,
 
-Isn't this setting us up for a deadlock?  If the work queued by write
-hasn't run by the time you call poll, you take the buffer mutex and
-sleep.  Now if the work runs, it blocks acquiring the mutex in
-tpm_async_work and never calls wakeup on async_wait.
+> > Frankly I did not read and followup much about the testing code changes,
+> > not sure if it is doable or not.  The code sharing under testing folder
+> > seems not very good.  For example the basic check_root is needed by
+> > different parts, but all have its own implementation.  Anyway this is
+> > not the duty of this patch set.
+> > Also the selftests/lib/ is not a folder for sharing code for different
+> > tests, it looks a standalone test instead.
+Yes. Thus lib/ folder name is a bit confusing.
 
-James
+> Shuah suggested upstreaming these tests first and defer introducing a
+> common set of functions to later.
+Make sense.
 
+> > So if split kexec tests to another folder is not doable please just
+> > ignore the comment.
+
+> Left in the selftests/ima is a similar test for kernel modules, which
+> uses the "common" functions.  So either we wait to move the kexec
+> tests or allow them to reach into the ima directory and use the
+> ima_common_lib functions.
+I guess just load ima_common_lib.sh for now would be good enough.
+@Dave: BTW I has starting to work on kselftest common library.
+I thought I'd spent some time on it before posting it, but I might even send
+the small part I've done so far so we can discuss it.
+
+> > BTW, does CONFIG_KEXEC* is checked?  in case a kernel without KEXEC or
+> > KEXEC_FILE compiled in then the tests can just return directly.
+
+> Good point.  Now that there is a common function for reading the
+> Kconfig, I'll add that check to both the test_kexec_load.sh and
+> test_kexec_file_load.sh tests respectively.
+
+> Mimi
+
+
+Kind regards,
+Petr
