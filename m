@@ -6,81 +6,78 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36BF1C4360F
-	for <linux-integrity@archiver.kernel.org>; Thu, 14 Mar 2019 21:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C4A5C43381
+	for <linux-integrity@archiver.kernel.org>; Thu, 14 Mar 2019 21:08:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E883E21872
-	for <linux-integrity@archiver.kernel.org>; Thu, 14 Mar 2019 21:04:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27CC12087C
+	for <linux-integrity@archiver.kernel.org>; Thu, 14 Mar 2019 21:08:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SZ2CHrOQ"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YCS7Z/hB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727894AbfCNVEO (ORCPT
+        id S1727003AbfCNVIY (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 14 Mar 2019 17:04:14 -0400
-Received: from mail-it1-f173.google.com ([209.85.166.173]:50442 "EHLO
-        mail-it1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727832AbfCNVEO (ORCPT
+        Thu, 14 Mar 2019 17:08:24 -0400
+Received: from mail-it1-f182.google.com ([209.85.166.182]:54787 "EHLO
+        mail-it1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727412AbfCNVIY (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 14 Mar 2019 17:04:14 -0400
-Received: by mail-it1-f173.google.com with SMTP id m137so7057829ita.0
-        for <linux-integrity@vger.kernel.org>; Thu, 14 Mar 2019 14:04:14 -0700 (PDT)
+        Thu, 14 Mar 2019 17:08:24 -0400
+Received: by mail-it1-f182.google.com with SMTP id w18so7029911itj.4
+        for <linux-integrity@vger.kernel.org>; Thu, 14 Mar 2019 14:08:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=8/584qEVZ34MgPe0XR5WKf2sRo/jZ4h83aaIDZjCgi4=;
-        b=SZ2CHrOQHtyEd/T6fUxaOgECELgJoBbA4SovNoY/rTObhOR3lIRO6IwCW8cvBRN1i4
-         cEFAJPY6C0QdnfVYOjYA04UmJyWmHt+6v7e4EQINhq+izbvLaNj5NFvw4srb5KX8wG5C
-         ZhMLIhor0GPTL6L3tpgCFrZhI3M7MBGYAHIbf9LlnKil6qUhWpaLu5Be7dxGaupn8pTS
-         fHF3ADChT8uciJEXaj6CcS/0H60gRdaGNlRe6dxdIYd1dyGy2bWh7WwUrRIgMu2FX9yk
-         Y0LgdFW72jj4UUfj7ssqe4fMiadCpzeKbsq7PlxuREbefWTMQnpdHCC2gCqM3jHVijZj
-         ASPA==
+        bh=D6sUsmfg4XROCNJoZPyvAcFYbY4KpjSGLl2/ySGMOD4=;
+        b=YCS7Z/hBS/yIUrQlDC7SxqHokIOZhl3dsk2LXn5D1ZkygRvqnlo9Feipn6oDhnu7Gr
+         w6Ywcoon1MPsKRfbGyTD0GOVqqbI9j3hc4a2IREMavWn94RgAj/PD1uMU4qRhxchnAUg
+         Qv2l/SqV7z26IGBp1BcQGvB6YZYv8yWr9iC2BZJlZf72J//4+k0JzmfvoOEGZLZZol8X
+         k+nuRrHurtBeKDEFowpysGGLGXo8j/jZAd2bV9fGfGWCPTWykDJBEC9V/aRb6iLpit2W
+         ANFAj2C6ibBcXu6n9RSBMbHRdTbBV+/jtapxnEI+Uh++KMLNzBdvZ69xS/2Q5ujZUZDj
+         I2GA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8/584qEVZ34MgPe0XR5WKf2sRo/jZ4h83aaIDZjCgi4=;
-        b=IZ7CnOM/UkV+pLNs7o9G+8qjOsO53dTO2bjIXGvcL0OjLBnx8nlRFHxjUyKStqOJZI
-         pCKR6N77U1SxhUM6hjrXkaGLyrkjVbCNhy+8+5A4ftDfy5DGQcH1afNY3OfxXZKarGpX
-         POPAF45UO5TgKNroOT1j46KFT6I+mqTdeg4luP2BAOVCiNTzilz1fMfP48c7NVYdZ5y8
-         ukUOdroSaMWJ5voRBFY7fwNX6OTC2HVZ9QgZ8MjDBAwfluBXPvi22ta5lVCgxd+Je1j9
-         Uwxm/FdYAk0JpHI6gL4OnURUzOlJbIIaOwJHtjyFXXnJilOvnNXfzlcFIGkpqFCQbuEa
-         yRWg==
-X-Gm-Message-State: APjAAAVs7u7Nij2i0wF9rP+K0l7uT86FQ6teVYxzhcJI7+xtcnxFESoU
-        UszYP4ugi+QLYOv5YBffJMaht97B2l/dp0zqtqjhpQ==
-X-Google-Smtp-Source: APXvYqwi/gC2tRuVoVXL6D/BduZh85HZttJXo5L2Nt3CxGmOKZXf5+ALHeiAbdAISNsOFx7oNtG6oh9zGbJaS1tnA3o=
-X-Received: by 2002:a24:7908:: with SMTP id z8mr403403itc.16.1552597453231;
- Thu, 14 Mar 2019 14:04:13 -0700 (PDT)
+        bh=D6sUsmfg4XROCNJoZPyvAcFYbY4KpjSGLl2/ySGMOD4=;
+        b=RwQ2G4WGjsMrJEuWw+Oxn95Vot0c41UYbiNgK/bMpkStbdSsT2ih46cSVWuzt1HqlN
+         kqu84kzxB7yWXWylTk4ij8HAcfmcl8rzajw3EHtRFNH8KlYYVgV5l2wh/79YN/O8jlYS
+         /gbMDhM9tyA5Cwppncg7Hql7lRzKZB7HHfjij8dpSTNdFjbShWTAqKcSmX9WYIRkdQRF
+         OHYBZp245RMjhC82Ju8VVqHBOH6IqbXZQ/TINGjXZeiks7T9tH9oURMdJD2vKUAdlEYH
+         bW/fJuhZdL5q0OrXZodhL2j+t5nQAUdbLYIpYhOG7qOIgcREZm2ata6RVFVRRgr7ZOMg
+         VfsQ==
+X-Gm-Message-State: APjAAAUMTq2e/EVAelf8kOZokeNT3dxrz4VjKofSNZlYvdb/h/lwfloH
+        tx3Uvz0gSCN2gg/3DvsGykvoAIpxYQmEO1DnbJ7ahg==
+X-Google-Smtp-Source: APXvYqwDBRMmLnj6OAnSV4MhWKHsEiolwz/9AuvBZU7bPDnsulQM/tVtQHYuHqYI9Cj2IWeaDxyCwtpR1Fhq6/7U3H0=
+X-Received: by 2002:a24:2c48:: with SMTP id i69mr357340iti.161.1552597702353;
+ Thu, 14 Mar 2019 14:08:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190227202658.197113-1-matthewgarrett@google.com> <20190314093515.GA11165@linux.intel.com>
-In-Reply-To: <20190314093515.GA11165@linux.intel.com>
+References: <20190312195715.101995-1-matthewgarrett@google.com>
+ <1552478316.24794.210.camel@linux.ibm.com> <CACdnJuvThFMhGtKT9PYSH-jZD69CBktQNiJmCc=d4PFRbzQvGw@mail.gmail.com>
+ <1552512556.24794.229.camel@linux.ibm.com> <CACdnJutmJDLhrdsU9UZtzE+S=Tw39RYqZ3q+TP35PbFbfsL76w@mail.gmail.com>
+ <1552525698.24794.237.camel@linux.ibm.com>
+In-Reply-To: <1552525698.24794.237.camel@linux.ibm.com>
 From:   Matthew Garrett <mjg59@google.com>
-Date:   Thu, 14 Mar 2019 14:04:02 -0700
-Message-ID: <CACdnJuuWMg6c1GJHR3EMobaZ1CwquNudjcgxwXNWczE=3DbQTg@mail.gmail.com>
-Subject: Re: Add support for TCG2 log format on UEFI systems
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Date:   Thu, 14 Mar 2019 14:08:11 -0700
+Message-ID: <CACdnJuv=-Gr9Psd1ABZ=fW43-2FHcgEkG_iu0bY20Jx4Vro=mA@mail.gmail.com>
+Subject: Re: [RFC] kexec: Allow kexec_file() with appropriate IMA policy when
+ locked down
+To:     Mimi Zohar <zohar@linux.ibm.com>
 Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
+        David Howells <dhowells@redhat.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Mar 14, 2019 at 2:35 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> On Wed, Feb 27, 2019 at 12:26:54PM -0800, Matthew Garrett wrote:
-> > Identical to V4, but based on tpmdd-next
->
-> This is not found /sys/kernel/security/tpm0/ascii_bios_measurements
+On Wed, Mar 13, 2019 at 6:08 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> The IMA hash and EVM hmac combination is fine for offline protection.
+> It's used for mutable files.  For immutable files, there must be
+> either an IMA or EVM signature.
 
-That's expected - the existing kernel TCG2 log code doesn't expose
-ascii_bios_measurements, only binary_bios_measurements. This patchset
-doesn't change that.
+Ok. Is the correct way to handle this to check that the file has a
+signature, or to extend IMA policy to allow it to provide a
+requirement that EVM verify a signature rather than an HMAC and have
+the arch policy set that?
