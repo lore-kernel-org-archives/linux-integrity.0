@@ -2,82 +2,112 @@ Return-Path: <SRS0=MdHQ=RR=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C4A5C43381
-	for <linux-integrity@archiver.kernel.org>; Thu, 14 Mar 2019 21:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B988BC43381
+	for <linux-integrity@archiver.kernel.org>; Thu, 14 Mar 2019 22:31:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27CC12087C
-	for <linux-integrity@archiver.kernel.org>; Thu, 14 Mar 2019 21:08:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YCS7Z/hB"
+	by mail.kernel.org (Postfix) with ESMTP id 80D5521019
+	for <linux-integrity@archiver.kernel.org>; Thu, 14 Mar 2019 22:31:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727003AbfCNVIY (ORCPT
+        id S1727489AbfCNWbu (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 14 Mar 2019 17:08:24 -0400
-Received: from mail-it1-f182.google.com ([209.85.166.182]:54787 "EHLO
-        mail-it1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727412AbfCNVIY (ORCPT
+        Thu, 14 Mar 2019 18:31:50 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51938 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726885AbfCNWbt (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 14 Mar 2019 17:08:24 -0400
-Received: by mail-it1-f182.google.com with SMTP id w18so7029911itj.4
-        for <linux-integrity@vger.kernel.org>; Thu, 14 Mar 2019 14:08:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=D6sUsmfg4XROCNJoZPyvAcFYbY4KpjSGLl2/ySGMOD4=;
-        b=YCS7Z/hBS/yIUrQlDC7SxqHokIOZhl3dsk2LXn5D1ZkygRvqnlo9Feipn6oDhnu7Gr
-         w6Ywcoon1MPsKRfbGyTD0GOVqqbI9j3hc4a2IREMavWn94RgAj/PD1uMU4qRhxchnAUg
-         Qv2l/SqV7z26IGBp1BcQGvB6YZYv8yWr9iC2BZJlZf72J//4+k0JzmfvoOEGZLZZol8X
-         k+nuRrHurtBeKDEFowpysGGLGXo8j/jZAd2bV9fGfGWCPTWykDJBEC9V/aRb6iLpit2W
-         ANFAj2C6ibBcXu6n9RSBMbHRdTbBV+/jtapxnEI+Uh++KMLNzBdvZ69xS/2Q5ujZUZDj
-         I2GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=D6sUsmfg4XROCNJoZPyvAcFYbY4KpjSGLl2/ySGMOD4=;
-        b=RwQ2G4WGjsMrJEuWw+Oxn95Vot0c41UYbiNgK/bMpkStbdSsT2ih46cSVWuzt1HqlN
-         kqu84kzxB7yWXWylTk4ij8HAcfmcl8rzajw3EHtRFNH8KlYYVgV5l2wh/79YN/O8jlYS
-         /gbMDhM9tyA5Cwppncg7Hql7lRzKZB7HHfjij8dpSTNdFjbShWTAqKcSmX9WYIRkdQRF
-         OHYBZp245RMjhC82Ju8VVqHBOH6IqbXZQ/TINGjXZeiks7T9tH9oURMdJD2vKUAdlEYH
-         bW/fJuhZdL5q0OrXZodhL2j+t5nQAUdbLYIpYhOG7qOIgcREZm2ata6RVFVRRgr7ZOMg
-         VfsQ==
-X-Gm-Message-State: APjAAAUMTq2e/EVAelf8kOZokeNT3dxrz4VjKofSNZlYvdb/h/lwfloH
-        tx3Uvz0gSCN2gg/3DvsGykvoAIpxYQmEO1DnbJ7ahg==
-X-Google-Smtp-Source: APXvYqwDBRMmLnj6OAnSV4MhWKHsEiolwz/9AuvBZU7bPDnsulQM/tVtQHYuHqYI9Cj2IWeaDxyCwtpR1Fhq6/7U3H0=
-X-Received: by 2002:a24:2c48:: with SMTP id i69mr357340iti.161.1552597702353;
- Thu, 14 Mar 2019 14:08:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190312195715.101995-1-matthewgarrett@google.com>
- <1552478316.24794.210.camel@linux.ibm.com> <CACdnJuvThFMhGtKT9PYSH-jZD69CBktQNiJmCc=d4PFRbzQvGw@mail.gmail.com>
- <1552512556.24794.229.camel@linux.ibm.com> <CACdnJutmJDLhrdsU9UZtzE+S=Tw39RYqZ3q+TP35PbFbfsL76w@mail.gmail.com>
- <1552525698.24794.237.camel@linux.ibm.com>
-In-Reply-To: <1552525698.24794.237.camel@linux.ibm.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Thu, 14 Mar 2019 14:08:11 -0700
-Message-ID: <CACdnJuv=-Gr9Psd1ABZ=fW43-2FHcgEkG_iu0bY20Jx4Vro=mA@mail.gmail.com>
-Subject: Re: [RFC] kexec: Allow kexec_file() with appropriate IMA policy when
- locked down
-To:     Mimi Zohar <zohar@linux.ibm.com>
+        Thu, 14 Mar 2019 18:31:49 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2EMTY1o125615
+        for <linux-integrity@vger.kernel.org>; Thu, 14 Mar 2019 18:31:48 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2r7vv6yu2q-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 14 Mar 2019 18:31:47 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 14 Mar 2019 22:31:46 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 14 Mar 2019 22:31:44 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2EMVhsP28246154
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Mar 2019 22:31:43 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 56BA54C074;
+        Thu, 14 Mar 2019 22:31:43 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 88CC84C07F;
+        Thu, 14 Mar 2019 22:31:42 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.108.186])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 14 Mar 2019 22:31:42 +0000 (GMT)
+Subject: Re: [RFC] kexec: Allow kexec_file() with appropriate IMA policy
+ when locked down
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Matthew Garrett <mjg59@google.com>
 Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
         David Howells <dhowells@redhat.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Date:   Thu, 14 Mar 2019 18:31:31 -0400
+In-Reply-To: <CACdnJuv=-Gr9Psd1ABZ=fW43-2FHcgEkG_iu0bY20Jx4Vro=mA@mail.gmail.com>
+References: <20190312195715.101995-1-matthewgarrett@google.com>
+         <1552478316.24794.210.camel@linux.ibm.com>
+         <CACdnJuvThFMhGtKT9PYSH-jZD69CBktQNiJmCc=d4PFRbzQvGw@mail.gmail.com>
+         <1552512556.24794.229.camel@linux.ibm.com>
+         <CACdnJutmJDLhrdsU9UZtzE+S=Tw39RYqZ3q+TP35PbFbfsL76w@mail.gmail.com>
+         <1552525698.24794.237.camel@linux.ibm.com>
+         <CACdnJuv=-Gr9Psd1ABZ=fW43-2FHcgEkG_iu0bY20Jx4Vro=mA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19031422-4275-0000-0000-0000031B1CF0
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19031422-4276-0000-0000-0000382990CB
+Message-Id: <1552602691.8658.49.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-14_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=983 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1903140151
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Mar 13, 2019 at 6:08 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> The IMA hash and EVM hmac combination is fine for offline protection.
-> It's used for mutable files.  For immutable files, there must be
-> either an IMA or EVM signature.
+On Thu, 2019-03-14 at 14:08 -0700, Matthew Garrett wrote:
+> On Wed, Mar 13, 2019 at 6:08 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > The IMA hash and EVM hmac combination is fine for offline protection.
+> > It's used for mutable files.  For immutable files, there must be
+> > either an IMA or EVM signature.
+> 
+> Ok. Is the correct way to handle this to check that the file has a
+> signature, or to extend IMA policy to allow it to provide a
+> requirement that EVM verify a signature rather than an HMAC and have
+> the arch policy set that?
 
-Ok. Is the correct way to handle this to check that the file has a
-signature, or to extend IMA policy to allow it to provide a
-requirement that EVM verify a signature rather than an HMAC and have
-the arch policy set that?
+I'm not sure what you mean by "check that the file has a signature".
+
+EVM and IMA are separate subsystems with a defined interface for
+interaction between them. evm_verifyxattr() isn't, but could be called
+by LSMs.  So evm_verifyxattr() would need to be extended to return the
+EVM xattr type.  The IMA policy could then require a specific evmxattr
+type.  Possible.
+
+Perhaps for now require IMA signatures and defer supporting EVM
+signatures?
+
+Mimi
+
+
+
+
