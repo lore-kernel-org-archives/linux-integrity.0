@@ -2,137 +2,85 @@ Return-Path: <SRS0=MdHQ=RR=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD93DC43381
-	for <linux-integrity@archiver.kernel.org>; Thu, 14 Mar 2019 18:42:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36BF1C4360F
+	for <linux-integrity@archiver.kernel.org>; Thu, 14 Mar 2019 21:04:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB6A02184C
-	for <linux-integrity@archiver.kernel.org>; Thu, 14 Mar 2019 18:42:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E883E21872
+	for <linux-integrity@archiver.kernel.org>; Thu, 14 Mar 2019 21:04:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SZ2CHrOQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbfCNSmE (ORCPT
+        id S1727894AbfCNVEO (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 14 Mar 2019 14:42:04 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35284 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727819AbfCNSmD (ORCPT
+        Thu, 14 Mar 2019 17:04:14 -0400
+Received: from mail-it1-f173.google.com ([209.85.166.173]:50442 "EHLO
+        mail-it1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727832AbfCNVEO (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 14 Mar 2019 14:42:03 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2EIfPik037850
-        for <linux-integrity@vger.kernel.org>; Thu, 14 Mar 2019 14:42:03 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2r7svufvuf-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 14 Mar 2019 14:42:02 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 14 Mar 2019 18:42:00 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 14 Mar 2019 18:41:57 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2EIfuUf23068920
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 14 Mar 2019 18:41:56 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0517E42045;
-        Thu, 14 Mar 2019 18:41:56 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0591D4203F;
-        Thu, 14 Mar 2019 18:41:55 +0000 (GMT)
-Received: from localhost.ibm.com (unknown [9.80.108.186])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 14 Mar 2019 18:41:54 +0000 (GMT)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-kselftest@vger.kernel.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Petr Vorel <pvorel@suse.cz>,
-        Dave Young <dyoung@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH v4 2/8] selftests/kexec: cleanup the kexec selftest
-Date:   Thu, 14 Mar 2019 14:41:10 -0400
-X-Mailer: git-send-email 2.7.5
-In-Reply-To: <1552588876-28481-1-git-send-email-zohar@linux.ibm.com>
-References: <1552588876-28481-1-git-send-email-zohar@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19031418-0012-0000-0000-00000302B407
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19031418-0013-0000-0000-00002139DFF2
-Message-Id: <1552588876-28481-3-git-send-email-zohar@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-14_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=866 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1903140130
+        Thu, 14 Mar 2019 17:04:14 -0400
+Received: by mail-it1-f173.google.com with SMTP id m137so7057829ita.0
+        for <linux-integrity@vger.kernel.org>; Thu, 14 Mar 2019 14:04:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8/584qEVZ34MgPe0XR5WKf2sRo/jZ4h83aaIDZjCgi4=;
+        b=SZ2CHrOQHtyEd/T6fUxaOgECELgJoBbA4SovNoY/rTObhOR3lIRO6IwCW8cvBRN1i4
+         cEFAJPY6C0QdnfVYOjYA04UmJyWmHt+6v7e4EQINhq+izbvLaNj5NFvw4srb5KX8wG5C
+         ZhMLIhor0GPTL6L3tpgCFrZhI3M7MBGYAHIbf9LlnKil6qUhWpaLu5Be7dxGaupn8pTS
+         fHF3ADChT8uciJEXaj6CcS/0H60gRdaGNlRe6dxdIYd1dyGy2bWh7WwUrRIgMu2FX9yk
+         Y0LgdFW72jj4UUfj7ssqe4fMiadCpzeKbsq7PlxuREbefWTMQnpdHCC2gCqM3jHVijZj
+         ASPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8/584qEVZ34MgPe0XR5WKf2sRo/jZ4h83aaIDZjCgi4=;
+        b=IZ7CnOM/UkV+pLNs7o9G+8qjOsO53dTO2bjIXGvcL0OjLBnx8nlRFHxjUyKStqOJZI
+         pCKR6N77U1SxhUM6hjrXkaGLyrkjVbCNhy+8+5A4ftDfy5DGQcH1afNY3OfxXZKarGpX
+         POPAF45UO5TgKNroOT1j46KFT6I+mqTdeg4luP2BAOVCiNTzilz1fMfP48c7NVYdZ5y8
+         ukUOdroSaMWJ5voRBFY7fwNX6OTC2HVZ9QgZ8MjDBAwfluBXPvi22ta5lVCgxd+Je1j9
+         Uwxm/FdYAk0JpHI6gL4OnURUzOlJbIIaOwJHtjyFXXnJilOvnNXfzlcFIGkpqFCQbuEa
+         yRWg==
+X-Gm-Message-State: APjAAAVs7u7Nij2i0wF9rP+K0l7uT86FQ6teVYxzhcJI7+xtcnxFESoU
+        UszYP4ugi+QLYOv5YBffJMaht97B2l/dp0zqtqjhpQ==
+X-Google-Smtp-Source: APXvYqwi/gC2tRuVoVXL6D/BduZh85HZttJXo5L2Nt3CxGmOKZXf5+ALHeiAbdAISNsOFx7oNtG6oh9zGbJaS1tnA3o=
+X-Received: by 2002:a24:7908:: with SMTP id z8mr403403itc.16.1552597453231;
+ Thu, 14 Mar 2019 14:04:13 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190227202658.197113-1-matthewgarrett@google.com> <20190314093515.GA11165@linux.intel.com>
+In-Reply-To: <20190314093515.GA11165@linux.intel.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Thu, 14 Mar 2019 14:04:02 -0700
+Message-ID: <CACdnJuuWMg6c1GJHR3EMobaZ1CwquNudjcgxwXNWczE=3DbQTg@mail.gmail.com>
+Subject: Re: Add support for TCG2 log format on UEFI systems
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Remove the few bashisms and use the complete option name for clarity.
+On Thu, Mar 14, 2019 at 2:35 AM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Wed, Feb 27, 2019 at 12:26:54PM -0800, Matthew Garrett wrote:
+> > Identical to V4, but based on tpmdd-next
+>
+> This is not found /sys/kernel/security/tpm0/ascii_bios_measurements
 
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-Reviewed-by: Petr Vorel <pvorel@suse.cz>
----
- tools/testing/selftests/kexec/test_kexec_load.sh | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/tools/testing/selftests/kexec/test_kexec_load.sh b/tools/testing/selftests/kexec/test_kexec_load.sh
-index 1c10093fb526..82a01a4d5c8d 100755
---- a/tools/testing/selftests/kexec/test_kexec_load.sh
-+++ b/tools/testing/selftests/kexec/test_kexec_load.sh
-@@ -1,7 +1,7 @@
- #!/bin/sh
--# SPDX-License-Identifier: GPL-2.0+
-+# SPDX-License-Identifier: GPL-2.0
- # Loading a kernel image via the kexec_load syscall should fail
--# when the kerne is CONFIG_KEXEC_VERIFY_SIG enabled and the system
-+# when the kernel is CONFIG_KEXEC_VERIFY_SIG enabled and the system
- # is booted in secureboot mode.
- 
- TEST="$0"
-@@ -12,8 +12,8 @@ rc=0
- ksft_skip=4
- 
- # kexec requires root privileges
--if [ $UID != 0 ]; then
--	echo "$TEST: must be run as root" >&2
-+if [ $(id -ru) -ne 0 ]; then
-+	echo "$TEST: requires root privileges" >&2
- 	exit $ksft_skip
- fi
- 
-@@ -33,17 +33,17 @@ secureboot=`hexdump $file | awk '{print substr($4,length($4),1)}'`
- 
- # kexec_load should fail in secure boot mode
- KERNEL_IMAGE="/boot/vmlinuz-`uname -r`"
--kexec -l $KERNEL_IMAGE &>> /dev/null
--if [ $? == 0 ]; then
--	kexec -u
--	if [ "$secureboot" == "1" ]; then
-+kexec --load $KERNEL_IMAGE > /dev/null 2>&1
-+if [ $? -eq 0 ]; then
-+	kexec --unload
-+	if [ $secureboot -eq 1 ]; then
- 		echo "$TEST: kexec_load succeeded [FAIL]"
- 		rc=1
- 	else
- 		echo "$TEST: kexec_load succeeded [PASS]"
- 	fi
- else
--	if [ "$secureboot" == "1" ]; then
-+	if [ $secureboot -eq 1 ]; then
- 		echo "$TEST: kexec_load failed [PASS]"
- 	else
- 		echo "$TEST: kexec_load failed [FAIL]"
--- 
-2.7.5
-
+That's expected - the existing kernel TCG2 log code doesn't expose
+ascii_bios_measurements, only binary_bios_measurements. This patchset
+doesn't change that.
