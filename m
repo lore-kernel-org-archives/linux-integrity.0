@@ -2,81 +2,78 @@ Return-Path: <SRS0=+7J6=RV=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB1FC43381
-	for <linux-integrity@archiver.kernel.org>; Mon, 18 Mar 2019 22:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1620BC43381
+	for <linux-integrity@archiver.kernel.org>; Mon, 18 Mar 2019 22:18:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E19222085A
-	for <linux-integrity@archiver.kernel.org>; Mon, 18 Mar 2019 22:11:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e3+md7ez"
+	by mail.kernel.org (Postfix) with ESMTP id D8E092171F
+	for <linux-integrity@archiver.kernel.org>; Mon, 18 Mar 2019 22:18:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727148AbfCRWLz (ORCPT
+        id S1727148AbfCRWSR (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 18 Mar 2019 18:11:55 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35901 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726973AbfCRWLz (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 18 Mar 2019 18:11:55 -0400
-Received: by mail-io1-f68.google.com with SMTP id f6so15969531iop.3;
-        Mon, 18 Mar 2019 15:11:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3B1DyfFNEVWJu12Dl72jqSuZFJlZe53Z3WE/MCPyDJA=;
-        b=e3+md7ezv8TkhJLEHXpTr5bH/5y2eRNa3yZd9YRFrdfX8gUpcQeVwpLaI7Bp2xTZIe
-         67dr2nAP4lGzn1fdHEfr8ucE2+hORob9UmjTghNi0Q/gT2mR1pDsZItuQqWsRmBNPxYw
-         UgnWcyPCKkxtOg99HvVYH+eTamfYnGNfpczT2agGCfBzrUt/DjR6/VSG0iEEN4+a/Rf6
-         /k6TcC3I76FOD3qQte9iFVROczEQ1FQD+dbyHk/U/8dFtTNbKWmp9jX7rKkNTqoRbCWg
-         yVLD9JeWLZL+DU672p2fdWUM6AN+Ea6LTC2pId04LLbKwUopgeGi+bnc9M12HgclysQl
-         EVrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3B1DyfFNEVWJu12Dl72jqSuZFJlZe53Z3WE/MCPyDJA=;
-        b=Jfa5p7zavY+FYF96BDCvOzVemyJT4VNBCHqIJ61qYTnQgFgCdvENWCVEeQ+2iiuSnK
-         EbUwl9Z96rgG9P2T9vvLf0rmLFO10VGUNoRjPw7+8b+jU0xG71W/io7sZrrkubdKzL82
-         st4OM+kYlcLbIbHWJwLKCd1OBncELDivXPQP9+Y3QKbFp78rv1vKu4Bkk+ycNIrPpCVy
-         5DhBaVYksS9Mp3zlVdM27osylVn4lgmruoZwUi4ZFSAC6jaw498gz+qpVJdH2RCu054d
-         k1hcOcxFAvcyIuRVGXcgO7FB4TJMSJep/1vWHQpPvQ4vOzawYwAYG8Xd6JqTpD6sizK8
-         3mCA==
-X-Gm-Message-State: APjAAAXbdHNuqvmGnCsI+qJnYjhOb6/unuAvWlpqxOi2UQGcRhF9GvAY
-        6/nKX72sm2OaIDi9oj+ru7aPnRicQa3C5c4gFnVxLZvj
-X-Google-Smtp-Source: APXvYqxJvsckQiFqdUA+oLW4kk2sK879l1yvPlzLh5ku/Oy8DvFQH+os+e4+CJTyetRDWo+ggv4b2LfLMwC/0mD/+yM=
-X-Received: by 2002:a5d:8555:: with SMTP id b21mr13772498ios.203.1552947114208;
- Mon, 18 Mar 2019 15:11:54 -0700 (PDT)
+        Mon, 18 Mar 2019 18:18:17 -0400
+Received: from mga14.intel.com ([192.55.52.115]:56523 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726973AbfCRWSR (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 18 Mar 2019 18:18:17 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Mar 2019 15:18:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,495,1544515200"; 
+   d="scan'208";a="215318167"
+Received: from tstruk-mobl1.jf.intel.com ([10.7.196.61])
+  by orsmga001.jf.intel.com with ESMTP; 18 Mar 2019 15:18:16 -0700
+Subject: [PATCH] tpm: fix a race between poll and write in tpm-dev-common
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+To:     jarkko.sakkinen@linux.intel.com
+Cc:     grawity@gmail.com, James.Bottomley@HansenPartnership.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tadeusz.struk@intel.com
+Date:   Mon, 18 Mar 2019 15:18:16 -0700
+Message-ID: <155294749695.20367.14472779462229450620.stgit@tstruk-mobl1.jf.intel.com>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-References: <CADBGO7_WUoA53gM8EDFy6Q36SDEZPU9V=OUBA0QM20FOko51Rg@mail.gmail.com>
-In-Reply-To: <CADBGO7_WUoA53gM8EDFy6Q36SDEZPU9V=OUBA0QM20FOko51Rg@mail.gmail.com>
-From:   Paul Zimmerman <pauldzim@gmail.com>
-Date:   Mon, 18 Mar 2019 15:11:28 -0700
-Message-ID: <CADBGO7_GcPvtcBu_Oj+y4M1RBNc7Bb7UueghkLK=u293V+AYmw@mail.gmail.com>
-Subject: Re: Regression in suspend-to-ram (TPM related) with 5.1-rc1
-To:     Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Mar 18, 2019 at 2:39 PM Paul Zimmerman <pauldzim@gmail.com> wrote:
+Since the poll returns EPOLLIN base on the state of two
+variables, the response_read being false and the
+response_length > 0 the poll needs to take the buffer_mutex
+after it is woken up.
 
-< snip >
+Fixes: 9488585b21bef0df12 ("tpm: add support for partial reads")
+Reported-by: Mantas Mikulėnas <grawity@gmail.com>
+Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+---
+ drivers/char/tpm/tpm-dev-common.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-> It takes about 45 minutes to do a full kernel rebuild on this machine,
-> so doing a full bisection would be a little painful.
+diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+index 5eecad233ea1..61e458d6f652 100644
+--- a/drivers/char/tpm/tpm-dev-common.c
++++ b/drivers/char/tpm/tpm-dev-common.c
+@@ -203,12 +203,14 @@ __poll_t tpm_common_poll(struct file *file, poll_table *wait)
+ 	__poll_t mask = 0;
+ 
+ 	poll_wait(file, &priv->async_wait, wait);
++	mutex_lock(&priv->buffer_mutex);
+ 
+ 	if (!priv->response_read || priv->response_length)
+ 		mask = EPOLLIN | EPOLLRDNORM;
+ 	else
+ 		mask = EPOLLOUT | EPOLLWRNORM;
+ 
++	mutex_unlock(&priv->buffer_mutex);
+ 	return mask;
+ }
+ 
 
-Actually, that was because I had the Linux disk attached via USB. I have it
-connected internally now, and a full kernel rebuild only takes about 8 minutes.
-So I can do a bisection if required.
-
--- Paul
