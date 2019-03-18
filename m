@@ -2,65 +2,108 @@ Return-Path: <SRS0=+7J6=RV=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 643EDC43381
-	for <linux-integrity@archiver.kernel.org>; Mon, 18 Mar 2019 15:27:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0523C43381
+	for <linux-integrity@archiver.kernel.org>; Mon, 18 Mar 2019 15:50:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDFCB20863
-	for <linux-integrity@archiver.kernel.org>; Mon, 18 Mar 2019 15:27:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=omprussia.ru header.i=@omprussia.ru header.b="TBaMI4FL"
+	by mail.kernel.org (Postfix) with ESMTP id 9A12220872
+	for <linux-integrity@archiver.kernel.org>; Mon, 18 Mar 2019 15:50:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726889AbfCRP1h (ORCPT
+        id S1726983AbfCRPub (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 18 Mar 2019 11:27:37 -0400
-Received: from mail.omprussia.ru ([5.134.221.218]:34060 "EHLO
-        mail.omprussia.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726837AbfCRP1h (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 18 Mar 2019 11:27:37 -0400
-X-Greylist: delayed 565 seconds by postgrey-1.27 at vger.kernel.org; Mon, 18 Mar 2019 11:27:37 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mail.omprussia.ru (Postfix) with ESMTP id 48F5AB53BE6
-        for <linux-integrity@vger.kernel.org>; Mon, 18 Mar 2019 18:18:11 +0300 (MSK)
-Received: from mail.omprussia.ru ([127.0.0.1])
-        by localhost (mail.omprussia.ru [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id bC_pzuidUysL for <linux-integrity@vger.kernel.org>;
-        Mon, 18 Mar 2019 18:18:11 +0300 (MSK)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.omprussia.ru (Postfix) with ESMTP id 0902FB53BE8
-        for <linux-integrity@vger.kernel.org>; Mon, 18 Mar 2019 18:18:11 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.omprussia.ru 0902FB53BE8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=omprussia.ru;
-        s=EC9C64F2-3532-11E8-B653-5B7E995A80AF; t=1552922291;
-        bh=xR7gPAFl8FneZVwQjP8KCq5L2L6pmgTWzs7M7E6FfZ8=;
-        h=To:From:Message-ID:Date:MIME-Version;
-        b=TBaMI4FLXIN5iF3d/67wlJH4J2/bX4b06TSP8F6Fzuf7L6QI43iCeziDD5562Bn1c
-         GW7Ml9VyT48BlqUZHsFYGoMi+IJNTir6ll+OBK0lb1WM+kQn9OjvfYaO/OoQ/4Q2Qx
-         PHzo9Rsdbk+0MxP/I4clzaiOYuVE07C+J/no4Btsr+LW/3rcPEgMw6VYfh04iHR1j9
-         sovVxi3dcG0RAGXUiTz/0fXOR+8ViFmXlVOpYq2sxYxKJeMfq/7EJoeNBbfzeYOc2/
-         AZsV7nITM91wFyub+uMpkWHGA3Oo/+Ha15a2U7zeVddfzmd2h4aZi8ptixGTy8FPtw
-         vlqH34X33RFRQ==
-X-Virus-Scanned: amavisd-new at mail.omprussia.ru
-Received: from mail.omprussia.ru ([127.0.0.1])
-        by localhost (mail.omprussia.ru [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 0C5HGIztJWjr for <linux-integrity@vger.kernel.org>;
-        Mon, 18 Mar 2019 18:18:10 +0300 (MSK)
-Received: from [10.189.20.33] (unknown [10.189.20.33])
-        by mail.omprussia.ru (Postfix) with ESMTPSA id CAB59B53BE6
-        for <linux-integrity@vger.kernel.org>; Mon, 18 Mar 2019 18:18:10 +0300 (MSK)
-To:     linux-integrity@vger.kernel.org
-From:   Igor Zhbanov <i.zhbanov@omprussia.ru>
-Subject: Should mprotect(..., PROT_EXEC) be checked by IMA?
-Message-ID: <cce2c4c7-5333-41c3-aeef-34d43e63acb0@omprussia.ru>
-Date:   Mon, 18 Mar 2019 18:18:10 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 18 Mar 2019 11:50:31 -0400
+Received: from mga06.intel.com ([134.134.136.31]:24488 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726513AbfCRPua (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 18 Mar 2019 11:50:30 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Mar 2019 08:50:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,494,1544515200"; 
+   d="scan'208";a="127982277"
+Received: from tstruk-mobl1.jf.intel.com ([10.7.196.61])
+  by orsmga006.jf.intel.com with ESMTP; 18 Mar 2019 08:50:29 -0700
+Subject: Re: Kernel 5.0 regression in /dev/tpm0 access
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        =?UTF-8?Q?Mantas_Mikul=c4=97nas?= <grawity@gmail.com>,
+        linux-integrity@vger.kernel.org
+References: <CAPWNY8Xg=Xyfdczqkiv+DNXh41ez1BH-KjcaJG9hcp_taOc+PA@mail.gmail.com>
+ <1552168908.3442.5.camel@HansenPartnership.com>
+ <1552171467.3442.13.camel@HansenPartnership.com>
+ <20190311130908.GA7264@linux.intel.com>
+ <14297706-74ef-f178-3b65-e63289919117@intel.com>
+ <20190313135926.GA6862@linux.intel.com>
+ <20190317132218.GA29643@linux.intel.com>
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
+ 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
+ FheFfUJaD4iEjuL98uUjS/AI
+Message-ID: <204b7a87-2c99-35aa-9a18-6fdfb5169c8d@intel.com>
+Date:   Mon, 18 Mar 2019 08:50:30 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20190317132218.GA29643@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
@@ -68,16 +111,10 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hello!
+On 3/17/19 6:22 AM, Jarkko Sakkinen wrote:
+> Are you planning to submit a fix for this?
 
-I've found that IMA checks for executable mmap()s but not for the combination
-of mmap(..., PROT_READ, ...) + mprotect(..., PROT_EXEC).
-
-So it looks like is possible to load arbitrary executable code by rewriting
-dlopen() and dlsym() functions to map all ELF segments read-only first then
-making them executable with mprotect().
-
-So should security_file_mprotect() be changed similarly
-to security_mmap_file() to call IMA security hook?
-
-Thanks.
+Yes, sorry for the delay. I will send something soon.
+Thanks,
+-- 
+Tadeusz
