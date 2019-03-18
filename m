@@ -2,94 +2,81 @@ Return-Path: <SRS0=+7J6=RV=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24523C43381
-	for <linux-integrity@archiver.kernel.org>; Mon, 18 Mar 2019 21:48:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB1FC43381
+	for <linux-integrity@archiver.kernel.org>; Mon, 18 Mar 2019 22:11:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE2C22133D
-	for <linux-integrity@archiver.kernel.org>; Mon, 18 Mar 2019 21:48:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E19222085A
+	for <linux-integrity@archiver.kernel.org>; Mon, 18 Mar 2019 22:11:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e3+md7ez"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727089AbfCRVsm (ORCPT
+        id S1727148AbfCRWLz (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 18 Mar 2019 17:48:42 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41104 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726973AbfCRVsm (ORCPT
+        Mon, 18 Mar 2019 18:11:55 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:35901 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726973AbfCRWLz (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 18 Mar 2019 17:48:42 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2ILig51037607
-        for <linux-integrity@vger.kernel.org>; Mon, 18 Mar 2019 17:48:41 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2rag47r9nm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 18 Mar 2019 17:48:40 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 18 Mar 2019 21:48:37 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 18 Mar 2019 21:48:35 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2ILmasd51773576
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 18 Mar 2019 21:48:37 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C456E11C04C;
-        Mon, 18 Mar 2019 21:48:36 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4B4C111C04A;
-        Mon, 18 Mar 2019 21:48:36 +0000 (GMT)
-Received: from dhcp-9-31-103-153.watson.ibm.com (unknown [9.31.103.153])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 18 Mar 2019 21:48:36 +0000 (GMT)
-Subject: Re: Should mprotect(..., PROT_EXEC) be checked by IMA?
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Igor Zhbanov <i.zhbanov@omprussia.ru>,
-        linux-integrity@vger.kernel.org
-Date:   Mon, 18 Mar 2019 17:48:35 -0400
-In-Reply-To: <cce2c4c7-5333-41c3-aeef-34d43e63acb0@omprussia.ru>
-References: <cce2c4c7-5333-41c3-aeef-34d43e63acb0@omprussia.ru>
+        Mon, 18 Mar 2019 18:11:55 -0400
+Received: by mail-io1-f68.google.com with SMTP id f6so15969531iop.3;
+        Mon, 18 Mar 2019 15:11:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3B1DyfFNEVWJu12Dl72jqSuZFJlZe53Z3WE/MCPyDJA=;
+        b=e3+md7ezv8TkhJLEHXpTr5bH/5y2eRNa3yZd9YRFrdfX8gUpcQeVwpLaI7Bp2xTZIe
+         67dr2nAP4lGzn1fdHEfr8ucE2+hORob9UmjTghNi0Q/gT2mR1pDsZItuQqWsRmBNPxYw
+         UgnWcyPCKkxtOg99HvVYH+eTamfYnGNfpczT2agGCfBzrUt/DjR6/VSG0iEEN4+a/Rf6
+         /k6TcC3I76FOD3qQte9iFVROczEQ1FQD+dbyHk/U/8dFtTNbKWmp9jX7rKkNTqoRbCWg
+         yVLD9JeWLZL+DU672p2fdWUM6AN+Ea6LTC2pId04LLbKwUopgeGi+bnc9M12HgclysQl
+         EVrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3B1DyfFNEVWJu12Dl72jqSuZFJlZe53Z3WE/MCPyDJA=;
+        b=Jfa5p7zavY+FYF96BDCvOzVemyJT4VNBCHqIJ61qYTnQgFgCdvENWCVEeQ+2iiuSnK
+         EbUwl9Z96rgG9P2T9vvLf0rmLFO10VGUNoRjPw7+8b+jU0xG71W/io7sZrrkubdKzL82
+         st4OM+kYlcLbIbHWJwLKCd1OBncELDivXPQP9+Y3QKbFp78rv1vKu4Bkk+ycNIrPpCVy
+         5DhBaVYksS9Mp3zlVdM27osylVn4lgmruoZwUi4ZFSAC6jaw498gz+qpVJdH2RCu054d
+         k1hcOcxFAvcyIuRVGXcgO7FB4TJMSJep/1vWHQpPvQ4vOzawYwAYG8Xd6JqTpD6sizK8
+         3mCA==
+X-Gm-Message-State: APjAAAXbdHNuqvmGnCsI+qJnYjhOb6/unuAvWlpqxOi2UQGcRhF9GvAY
+        6/nKX72sm2OaIDi9oj+ru7aPnRicQa3C5c4gFnVxLZvj
+X-Google-Smtp-Source: APXvYqxJvsckQiFqdUA+oLW4kk2sK879l1yvPlzLh5ku/Oy8DvFQH+os+e4+CJTyetRDWo+ggv4b2LfLMwC/0mD/+yM=
+X-Received: by 2002:a5d:8555:: with SMTP id b21mr13772498ios.203.1552947114208;
+ Mon, 18 Mar 2019 15:11:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <CADBGO7_WUoA53gM8EDFy6Q36SDEZPU9V=OUBA0QM20FOko51Rg@mail.gmail.com>
+In-Reply-To: <CADBGO7_WUoA53gM8EDFy6Q36SDEZPU9V=OUBA0QM20FOko51Rg@mail.gmail.com>
+From:   Paul Zimmerman <pauldzim@gmail.com>
+Date:   Mon, 18 Mar 2019 15:11:28 -0700
+Message-ID: <CADBGO7_GcPvtcBu_Oj+y4M1RBNc7Bb7UueghkLK=u293V+AYmw@mail.gmail.com>
+Subject: Re: Regression in suspend-to-ram (TPM related) with 5.1-rc1
+To:     Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19031821-0008-0000-0000-000002CEDA18
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19031821-0009-0000-0000-0000223AEA5B
-Message-Id: <1552945715.8658.299.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-18_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=62 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=972 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1903180151
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, 2019-03-18 at 18:18 +0300, Igor Zhbanov wrote:
-> Hello!
-> 
-> I've found that IMA checks for executable mmap()s but not for the combination
-> of mmap(..., PROT_READ, ...) + mprotect(..., PROT_EXEC).
-> 
-> So it looks like is possible to load arbitrary executable code by rewriting
-> dlopen() and dlsym() functions to map all ELF segments read-only first then
-> making them executable with mprotect().
-> 
-> So should security_file_mprotect() be changed similarly
-> to security_mmap_file() to call IMA security hook?
+On Mon, Mar 18, 2019 at 2:39 PM Paul Zimmerman <pauldzim@gmail.com> wrote:
 
-How?  security_mmap_file() is passed a file descriptor and the
-signature, stored as an xattr, can be verified.
+< snip >
 
-Mimi
+> It takes about 45 minutes to do a full kernel rebuild on this machine,
+> so doing a full bisection would be a little painful.
 
+Actually, that was because I had the Linux disk attached via USB. I have it
+connected internally now, and a full kernel rebuild only takes about 8 minutes.
+So I can do a bisection if required.
+
+-- Paul
