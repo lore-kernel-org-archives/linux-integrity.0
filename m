@@ -2,162 +2,96 @@ Return-Path: <SRS0=sVEj=RW=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 936D8C43381
-	for <linux-integrity@archiver.kernel.org>; Tue, 19 Mar 2019 07:50:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B09A7C43381
+	for <linux-integrity@archiver.kernel.org>; Tue, 19 Mar 2019 11:22:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFBA220989
-	for <linux-integrity@archiver.kernel.org>; Tue, 19 Mar 2019 07:50:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=omprussia.ru header.i=@omprussia.ru header.b="J1deNDNq"
+	by mail.kernel.org (Postfix) with ESMTP id 8932320828
+	for <linux-integrity@archiver.kernel.org>; Tue, 19 Mar 2019 11:22:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725988AbfCSHub (ORCPT
+        id S1726776AbfCSLW5 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 19 Mar 2019 03:50:31 -0400
-Received: from mail.omprussia.ru ([5.134.221.218]:50776 "EHLO
-        mail.omprussia.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725862AbfCSHub (ORCPT
+        Tue, 19 Mar 2019 07:22:57 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40572 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726573AbfCSLW5 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 19 Mar 2019 03:50:31 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.omprussia.ru (Postfix) with ESMTP id A18A5B5454A;
-        Tue, 19 Mar 2019 10:50:29 +0300 (MSK)
-Received: from mail.omprussia.ru ([127.0.0.1])
-        by localhost (mail.omprussia.ru [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 3AkWgq_wzifn; Tue, 19 Mar 2019 10:50:29 +0300 (MSK)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.omprussia.ru (Postfix) with ESMTP id 3DB08B54550;
-        Tue, 19 Mar 2019 10:50:29 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.omprussia.ru 3DB08B54550
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=omprussia.ru;
-        s=EC9C64F2-3532-11E8-B653-5B7E995A80AF; t=1552981829;
-        bh=A+UZLvK4OtME4ZVEcBhaeosJPowqiU1j93RJWqC30s8=;
-        h=To:From:Message-ID:Date:MIME-Version;
-        b=J1deNDNqPlb+1mfQNnrWUwMxa8vBbOBsNfd8IFDWxPgN9YFGn9D2lKkK5DEPupIrJ
-         RokYD7zXw3aIKgU0CDTlysTsPohf+5kKuRNFsprQh4+DFzkFIF/Ygx9LohoYkW5VIP
-         HiGEQkWWwb3zts5+bHDTfWtaKUoGxdTlCP91wsNQKf67pg6Th0/DaDdZu7V4nJCzUk
-         hJeYQYTuVBkKlmVSLrO0afPv3Lpd4isqzA/ivsp5VeEvDBTXk7pzll5QFoUQsjmDOs
-         ZqS/5pvDuacBwdPPwS6qQmNNOqc0Tml8w4OKJHa4Gg/LiUo2rWRDZ08daH00DoZq8s
-         YVXuCnIPnXLtg==
-X-Virus-Scanned: amavisd-new at mail.omprussia.ru
-Received: from mail.omprussia.ru ([127.0.0.1])
-        by localhost (mail.omprussia.ru [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id TOxPtcMiUnFA; Tue, 19 Mar 2019 10:50:29 +0300 (MSK)
-Received: from [10.189.20.33] (unknown [10.189.20.33])
-        by mail.omprussia.ru (Postfix) with ESMTPSA id 08C35B5454A;
-        Tue, 19 Mar 2019 10:50:29 +0300 (MSK)
+        Tue, 19 Mar 2019 07:22:57 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2JBGA3e085010
+        for <linux-integrity@vger.kernel.org>; Tue, 19 Mar 2019 07:22:56 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ravks7n0h-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 19 Mar 2019 07:22:55 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 19 Mar 2019 11:22:49 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 19 Mar 2019 11:22:47 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2JBMoIg20840536
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 19 Mar 2019 11:22:50 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6B759AE045;
+        Tue, 19 Mar 2019 11:22:50 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C0FCAAE055;
+        Tue, 19 Mar 2019 11:22:49 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.94.3])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 19 Mar 2019 11:22:49 +0000 (GMT)
 Subject: Re: Should mprotect(..., PROT_EXEC) be checked by IMA?
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Igor Zhbanov <i.zhbanov@omprussia.ru>,
+        linux-integrity@vger.kernel.org
+Date:   Tue, 19 Mar 2019 07:22:39 -0400
+In-Reply-To: <452752df-98f9-c361-878a-5df84ab36847@omprussia.ru>
 References: <cce2c4c7-5333-41c3-aeef-34d43e63acb0@omprussia.ru>
- <1552945715.8658.299.camel@linux.ibm.com>
-From:   Igor Zhbanov <i.zhbanov@omprussia.ru>
-Message-ID: <452752df-98f9-c361-878a-5df84ab36847@omprussia.ru>
-Date:   Tue, 19 Mar 2019 10:50:30 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1552945715.8658.299.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+         <1552945715.8658.299.camel@linux.ibm.com>
+         <452752df-98f9-c361-878a-5df84ab36847@omprussia.ru>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19031911-4275-0000-0000-0000031CCBCF
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19031911-4276-0000-0000-0000382B4BC5
+Message-Id: <1552994559.4899.26.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-19_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=18 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=845 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1903190084
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Mimi,
+On Tue, 2019-03-19 at 10:50 +0300, Igor Zhbanov wrote:
+> Hi Mimi,
+> 
+> I guess similar to SELinux function:
+[snip]
 
-I guess similar to SELinux function:
----8<--------------------------------------------------------------------=
-----
-static int selinux_file_mprotect(struct vm_area_struct *vma,
-                                  unsigned long reqprot,
-                                  unsigned long prot)
-{
-         const struct cred *cred =3D current_cred();
-         u32 sid =3D cred_sid(cred);
+Remember IMA relies on LSMs for mandatory access control(MAC).  IMA
+measures, audits, and enforces file integrity.
 
-         if (selinux_state.checkreqprot)
-                 prot =3D reqprot;
+> 
+> The structure vm_area_struct has a pointer vm_file pointing to mapped file
+> so it could be used what file's xattrs to check.
 
-         if (default_noexec &&
-             (prot & PROT_EXEC) && !(vma->vm_flags & VM_EXEC)) {
-                 int rc =3D 0;
-                 if (vma->vm_start >=3D vma->vm_mm->start_brk &&
-                     vma->vm_end <=3D vma->vm_mm->brk) {
-                         rc =3D avc_has_perm(&selinux_state,
-                                           sid, sid, SECCLASS_PROCESS,
-                                           PROCESS__EXECHEAP, NULL);
-                 } else if (!vma->vm_file &&
-                            ((vma->vm_start <=3D vma->vm_mm->start_stack =
-&&
-                              vma->vm_end >=3D vma->vm_mm->start_stack) |=
-|
-                             vma_is_stack_for_current(vma))) {
-                         rc =3D avc_has_perm(&selinux_state,
-                                           sid, sid, SECCLASS_PROCESS,
-                                           PROCESS__EXECSTACK, NULL);
-                 } else if (vma->vm_file && vma->anon_vma) {
-                         /*
-                          * We are making executable a file mapping that =
-has
-                          * had some COW done. Since pages might have bee=
-n
-                          * written, check ability to execute the possibl=
-y
-                          * modified content.  This typically should only
-                          * occur for text relocations.
-                          */
-                         rc =3D file_has_perm(cred, vma->vm_file, FILE__E=
-XECMOD);
-                 }
-                 if (rc)
-                         return rc;
-         }
+That's fine for when there is a file descriptor, but the file
+descriptor could have been closed.  (Refer to the mmap manpage.)
 
-         return file_map_prot_check(vma->vm_file, prot, vma->vm_flags&VM_=
-SHARED);
-}
----8<--------------------------------------------------------------------=
-----
+Mimi
 
-The structure vm_area_struct has a pointer vm_file pointing to mapped fil=
-e
-so it could be used what file's xattrs to check.
-
-Thanks.
-
-On 19.03.2019 0:48, Mimi Zohar wrote:
-> On Mon, 2019-03-18 at 18:18 +0300, Igor Zhbanov wrote:
->> Hello!
->>
->> I've found that IMA checks for executable mmap()s but not for the
->> combination of mmap(..., PROT_READ, ...) + mprotect(..., PROT_EXEC).
->>
->> So it looks like is possible to load arbitrary executable code
->> by rewriting dlopen() and dlsym() functions to map all ELF segments
->> read-only first then making them executable with mprotect().
->>
->> So should security_file_mprotect() be changed similarly
->> to security_mmap_file() to call IMA security hook?
->=20
-> How? =C2=A0security_mmap_file() is passed a file descriptor and the sig=
-nature,
-> stored as an xattr, can be verified.
->=20
-> Mimi
-
---=20
-=D0=98=D0=B3=D0=BE=D1=80=D1=8C =D0=96=D0=B1=D0=B0=D0=BD=D0=BE=D0=B2
-=D0=B7=D0=B0=D0=BC. =D1=82=D0=B5=D1=85. =D0=B4=D0=B8=D1=80=D0=B5=D0=BA=D1=
-=82=D0=BE=D1=80=D0=B0 =D0=BF=D0=BE =D1=82=D0=B5=D1=85=D0=BD=D0=BE=D0=BB=D0=
-=BE=D0=B3=D0=B8=D1=8F=D0=BC
-=D0=9E=D0=9E=D0=9E =C2=AB=D0=9E=D1=82=D0=BA=D1=80=D1=8B=D1=82=D0=B0=D1=8F=
- =D0=BC=D0=BE=D0=B1=D0=B8=D0=BB=D1=8C=D0=BD=D0=B0=D1=8F =D0=BF=D0=BB=D0=B0=
-=D1=82=D1=84=D0=BE=D1=80=D0=BC=D0=B0=C2=BB
-=D0=A2=D0=B5=D0=BB.: +7 495 269-07-79, =D0=B4=D0=BE=D0=B1. 606
-=D0=9C=D0=BE=D0=B1.: +7 903 001-98-55
-E-mail: i.zhbanov@omprussia.ru
