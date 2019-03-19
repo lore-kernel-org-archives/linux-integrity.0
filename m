@@ -2,48 +2,43 @@ Return-Path: <SRS0=sVEj=RW=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1065C43381
-	for <linux-integrity@archiver.kernel.org>; Tue, 19 Mar 2019 06:19:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF922C43381
+	for <linux-integrity@archiver.kernel.org>; Tue, 19 Mar 2019 06:19:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB6A720854
-	for <linux-integrity@archiver.kernel.org>; Tue, 19 Mar 2019 06:19:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8D6020854
+	for <linux-integrity@archiver.kernel.org>; Tue, 19 Mar 2019 06:19:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726438AbfCSGSz (ORCPT
+        id S1727383AbfCSGTW (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 19 Mar 2019 02:18:55 -0400
-Received: from mga18.intel.com ([134.134.136.126]:25636 "EHLO mga18.intel.com"
+        Tue, 19 Mar 2019 02:19:22 -0400
+Received: from mga11.intel.com ([192.55.52.93]:55771 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725996AbfCSGSz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 19 Mar 2019 02:18:55 -0400
+        id S1725996AbfCSGTV (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 19 Mar 2019 02:19:21 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Mar 2019 23:18:54 -0700
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Mar 2019 23:19:19 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,496,1544515200"; 
-   d="scan'208";a="128177379"
+   d="scan'208";a="152984724"
 Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga006.jf.intel.com with ESMTP; 18 Mar 2019 23:18:54 -0700
-Subject: [PATCH 0/6] security/keys/encrypted: Break module dependency chain
+  by fmsmga002.fm.intel.com with ESMTP; 18 Mar 2019 23:19:21 -0700
+Subject: [PATCH 5/6] security/integrity/evm: Drop direct dependency on
+ key_type_encrypted
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     keyrings@vger.kernel.org
-Cc:     Ira Weiny <ira.weiny@intel.com>, Dave Jiang <dave.jiang@intel.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        David Howells <dhowells@redhat.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity@vger.kernel.org, ecryptfs@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
-Date:   Mon, 18 Mar 2019 23:06:15 -0700
-Message-ID: <155297557534.2276575.16264199708584900090.stgit@dwillia2-desk3.amr.corp.intel.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        vishal.l.verma@intel.com, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 18 Mar 2019 23:06:41 -0700
+Message-ID: <155297560193.2276575.1761562049509563946.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <155297557534.2276575.16264199708584900090.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <155297557534.2276575.16264199708584900090.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -53,41 +48,41 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-With v5.1-rc1 all the nvdimm sub-system regression tests started failing
-because the libnvdimm module failed to load in the qemu-kvm test
-environment.  Critically that environment does not have a TPM. Commit
-240730437deb "KEYS: trusted: explicitly use tpm_chip structure..."
-started to require a TPM to be present for the trusted.ko module to load
-where there was no requirement for that before.
+Lookup the key type by name and protect evm from encrypted_keys.ko
+module load failures.
 
-Rather than undo the "fail if no hardware" behavior James points out
-that the module dependencies can be broken by looking up the key-type by
-name. Remove the dependencies on the "key_type_trusted" and
-"key_type_encrypted" symbol exports, and clean up other boilerplate that
-supported those exports in different configurations.
-
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: <linux-integrity@vger.kernel.org>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
+ security/integrity/evm/evm_crypto.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-Dan Williams (6):
-      security/keys/encrypted: Allow operation without trusted.ko
-      security/keys/encrypted: Clean up request_trusted_key()
-      libnvdimm/security: Drop direct dependency on key_type_encrypted
-      security/keys/ecryptfs: Drop direct dependency on key_type_encrypted
-      security/integrity/evm: Drop direct dependency on key_type_encrypted
-      security/keys/encrypted: Drop export of key_type_encrypted
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index c37d08118af5..5c65c3aef427 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -354,10 +354,15 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
+ int evm_init_key(void)
+ {
+ 	struct key *evm_key;
++	struct key_type *type;
+ 	struct encrypted_key_payload *ekp;
+ 	int rc;
+ 
+-	evm_key = request_key(&key_type_encrypted, EVMKEY, NULL);
++	type = key_type_lookup("encrypted");
++	if (IS_ERR(type))
++		return PTR_ERR(type);
++
++	evm_key = request_key(type, EVMKEY, NULL);
+ 	if (IS_ERR(evm_key))
+ 		return -ENOENT;
+ 
+@@ -372,3 +377,5 @@ int evm_init_key(void)
+ 	key_put(evm_key);
+ 	return rc;
+ }
++
++MODULE_SOFTDEP("pre: encrypted_keys");
 
-
- drivers/nvdimm/security.c                        |   11 ++++-
- fs/ecryptfs/ecryptfs_kernel.h                    |   22 -----------
- fs/ecryptfs/keystore.c                           |   12 ++++++
- include/keys/encrypted-type.h                    |    2 -
- include/linux/key.h                              |    1 
- security/integrity/evm/evm_crypto.c              |    9 ++++
- security/keys/encrypted-keys/Makefile            |    3 -
- security/keys/encrypted-keys/encrypted.c         |   35 ++++++++++++++++-
- security/keys/encrypted-keys/encrypted.h         |   12 ------
- security/keys/encrypted-keys/masterkey_trusted.c |   46 ----------------------
- security/keys/internal.h                         |    2 -
- security/keys/key.c                              |    1 
- 12 files changed, 65 insertions(+), 91 deletions(-)
- delete mode 100644 security/keys/encrypted-keys/masterkey_trusted.c
