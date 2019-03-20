@@ -2,119 +2,198 @@ Return-Path: <SRS0=28DF=RX=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3D44C43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 08:11:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB83EC43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 09:04:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F8842146E
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 08:11:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=omprussia.ru header.i=@omprussia.ru header.b="JDUjKMuJ"
+	by mail.kernel.org (Postfix) with ESMTP id 8B1692175B
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 09:04:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727690AbfCTILy (ORCPT
+        id S1726020AbfCTJEL (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 20 Mar 2019 04:11:54 -0400
-Received: from mail.omprussia.ru ([5.134.221.218]:46422 "EHLO
-        mail.omprussia.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727663AbfCTILy (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 20 Mar 2019 04:11:54 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.omprussia.ru (Postfix) with ESMTP id 1AD82B63B5E;
-        Wed, 20 Mar 2019 11:11:51 +0300 (MSK)
-Received: from mail.omprussia.ru ([127.0.0.1])
-        by localhost (mail.omprussia.ru [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id j6q4VKNRwDjV; Wed, 20 Mar 2019 11:11:50 +0300 (MSK)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.omprussia.ru (Postfix) with ESMTP id B781DB63BDA;
-        Wed, 20 Mar 2019 11:11:50 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.omprussia.ru B781DB63BDA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=omprussia.ru;
-        s=EC9C64F2-3532-11E8-B653-5B7E995A80AF; t=1553069510;
-        bh=oXpelYSraZZX7/YmaDmAQEtRDfl7PGrPaKCXInUp660=;
-        h=To:From:Message-ID:Date:MIME-Version;
-        b=JDUjKMuJcl2r4E7OaKB56UvXPdVQAAHqLH72HP5cOOOx0mvWN8FFrINntLmytSbHZ
-         ktx3uNPsqGcReTdTrumyRXo+Hxjm6ICh0eCoOMXxcwqzvknG0fqLA3TncM19XPq2yj
-         nDFmV6yTrgLUBqLxBDI0lYpXaHvpRGERQ2sUOmIg64IB3rYF7xFcDYzcEAt1t7vt4+
-         qYsRmnLlVm3w1YtdQ34EH2w/5ph0OJv1xvS2unozYFr04RaFTyoAbbnCCdYwf1rmP5
-         60gtYey8azfnFbZ7TopsYM79SK65MaN3+RuO4+oWH0dtmB4KWAeWGRtc2/B7Xd/wb9
-         uHIHqKf17HcWA==
-X-Virus-Scanned: amavisd-new at mail.omprussia.ru
-Received: from mail.omprussia.ru ([127.0.0.1])
-        by localhost (mail.omprussia.ru [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id dac0Ius_oyde; Wed, 20 Mar 2019 11:11:50 +0300 (MSK)
-Received: from [10.189.20.33] (unknown [10.189.20.33])
-        by mail.omprussia.ru (Postfix) with ESMTPSA id 9FD05B63B5E;
-        Wed, 20 Mar 2019 11:11:50 +0300 (MSK)
-Subject: Re: Should mprotect(..., PROT_EXEC) be checked by IMA?
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        Matthew Garrett <mjg59@google.com>
-References: <cce2c4c7-5333-41c3-aeef-34d43e63acb0@omprussia.ru>
- <1552945715.8658.299.camel@linux.ibm.com>
- <452752df-98f9-c361-878a-5df84ab36847@omprussia.ru>
- <1552994559.4899.26.camel@linux.ibm.com>
- <84145490-6f70-214f-8241-42d556590240@omprussia.ru>
- <1553015134.4899.82.camel@linux.ibm.com>
-From:   Igor Zhbanov <i.zhbanov@omprussia.ru>
-Message-ID: <a9830bde-8157-6078-b544-fcffb20d2501@omprussia.ru>
-Date:   Wed, 20 Mar 2019 11:11:52 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 20 Mar 2019 05:04:11 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43944 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726006AbfCTJEK (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 20 Mar 2019 05:04:10 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5771BC049E20;
+        Wed, 20 Mar 2019 09:04:10 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-246.pek2.redhat.com [10.72.12.246])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id F01A618C7F;
+        Wed, 20 Mar 2019 09:04:06 +0000 (UTC)
+Date:   Wed, 20 Mar 2019 17:04:01 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Petr Vorel <pvorel@suse.cz>, Matthew Garrett <mjg59@google.com>
+Subject: Re: [PATCH v4 0/8] selftests/kexec: add kexec tests
+Message-ID: <20190320090401.GA2591@dhcp-128-65.nay.redhat.com>
+References: <1552588876-28481-1-git-send-email-zohar@linux.ibm.com>
+ <20190318140643.GA17706@dhcp-128-65.nay.redhat.com>
+ <1552932562.8658.274.camel@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <1553015134.4899.82.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1552932562.8658.274.camel@linux.ibm.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 20 Mar 2019 09:04:10 +0000 (UTC)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 19.03.2019 20:05, Mimi Zohar wrote:
-> Ok, so we can start there and modify the existing ima_file_mmap() to
-> verify file signatures that are being mmap'ed read.=C2=A0=C2=A0The ques=
-tion will
-> then become what to do with mprotect write and execute.
->=20
-> And what would you do with the mprotect without a file descriptor?
->=20
-> The mmap signature verification status is cached in the iint, based on
-> the inode. =C2=A0I think whatever solution will need to be able to acce=
-ss
-> this cached information.
+Hi Mimi,
 
-Well, I think that IMA should check every executable page having a backin=
-g
-storage, i.e. when a page is mmapped from a file. So it will not be possi=
-ble
-to store any new untrusted code on the disk.
+Thank you for help about the pointer about IMA testing.
+Probably I should cc list as well since we are talking about the patch
+itself.  For the ima test itself I could still ask for help in a private
+email thread.
 
-(Except of reading it into read-only page, then creating anonymous execut=
-able
-page and copying it there.)
+On 03/18/19 at 02:09pm, Mimi Zohar wrote:
+> On Mon, 2019-03-18 at 22:06 +0800, Dave Young wrote:
+> > Hi Mimi,
+> > 
+> > On 03/14/19 at 02:41pm, Mimi Zohar wrote:
+> > > The kernel may be configured or an IMA policy specified on the boot
+> > > command line requiring the kexec kernel image signature to be verified.
+> > > At runtime a custom IMA policy may be loaded, replacing the policy
+> > > specified on the boot command line.  In addition, the arch specific
+> > > policy rules are dynamically defined based on the secure boot mode that
+> > > may require the kernel image signature to be verified.
+> > > 
+> > > The kernel image may have a PE signature, an IMA signature, or both. In
+> > > addition, there are two kexec syscalls - kexec_load and kexec_file_load
+> > > - but only the kexec_file_load syscall can verify signatures.
+> > > 
+> > > These kexec selftests verify that only properly signed kernel images are
+> > > loaded as required, based on the kernel config, the secure boot mode,
+> > > and the IMA runtime policy.
+> > > 
+> > > Loading a kernel image or kernel module requires root privileges.  To
+> > > run just the KEXEC selftests: sudo make TARGETS=kexec kselftest
+> > > 
+> > > Changelog v4:
+> > > - Moved the kexec tests to selftests/kexec, as requested by Dave Young.
+> > > - Removed the kernel module selftest from this patch set.
+> > > - Rewritten cover letter, removing reference to kernel modules.
+> > > 
+> > > Changelog v3:
+> > > - Updated tests based on Petr's review, including the defining a common
+> > >   test to check for root privileges.
+> > > - Modified config, removing the CONFIG_KEXEC_VERIFY_SIG requirement.
+> > > - Updated the SPDX license to GPL-2.0 based on Shuah's review.
+> > > - Updated the secureboot mode test to check the SetupMode as well, based
+> > >   on David Young's review.
+> > > 
+> > > 
+> > I was trying to review the patches although I'm slow due to something
+> > else.
+> > 
+> > But I still did not setup a IMA testable system, need check your old
+> > email about how to setup it.
+> 
+> (The ima-evm-utils package contains a README with directions.)
+> 
+> > 
+> > A quick testing gives me below results
+> > 
+> > /* test #1, my default kconfig
+> > # NO CONFIG_INTEGRITY compiled in
+> > */
+> > 
+> > make[1]: Nothing to be done for 'all'.
+> > make[1]: Leaving directory '/home/dyoung/git/github/linux/tools/testing/selftests/kexec'
+> > make[1]: Entering directory '/home/dyoung/git/github/linux/tools/testing/selftests/kexec'
+> > TAP version 13
+> > selftests: kexec: test_kexec_load.sh
+> > ========================================
+> > selftests: kexec: test_kexec_load.sh: Warning: file
+> > test_kexec_load.sh is not executable, correct this.
+> > not ok 1..1 selftests: kexec: test_kexec_load.sh [FAIL]
+> 
+> That's really weird.  Both before and after applying these patches
+> test_kexec_load.sh is executable (stable linux-5.0.y).  Could
+> something else be preventing it from executing?
+> 
+> > selftests: kexec: test_kexec_file_load.sh
+> > ========================================
+> > [INFO] kexec_file_load is enabled
+> > [INFO] secure boot mode not enabled
+> > [INFO] kexec kernel image PE signed
+> > [INFO] kexec kernel image not IMA signed
+> > kexec_file_load succeeded (possibly missing IMA sig) [FAIL]
+> > not ok 1..2 selftests: kexec: test_kexec_file_load.sh [FAIL]
+> > make[1]: Leaving directory '/home/dyoung/git/github/linux/tools/testing/selftests/kexec'
+> > make: Leaving directory '/home/dyoung/git/github/linux/tools/testing/selftests'
+> 
+> This message is because neither CONFIG_KEXEC_BZIMAGE_VERIFY_SIG or an
+> IMA signature is required.  It couldn't read the IMA runtime policy
+> rules to determine if an IMA signature is required.  So, it's trying
+> to provide a hint as to what happened.
+> 
+> I'll update the test to see if CONFIG_IMA_APPRAISE is enabled, before
+> emitting this message.
+> 
+> > 
+> > /* test #2, enabled IMA kconfigs, simply test without other ima
+> > setup eg. use a policy etc. need to follow up some guide to test the
+> > ima functionality (TODO..)
+> > */
+> > 
+> > 
+> > [root@dhcp-128-65 linux-x86]# make -C tools/testing/selftests TARGETS=kexec run_tests
+> > make: Entering directory '/home/dyoung/git/github/linux/tools/testing/selftests'
+> > make[1]: Entering directory '/home/dyoung/git/github/linux/tools/testing/selftests/kexec'
+> > make[1]: Nothing to be done for 'all'.
+> > make[1]: Leaving directory '/home/dyoung/git/github/linux/tools/testing/selftests/kexec'
+> > make[1]: Entering directory '/home/dyoung/git/github/linux/tools/testing/selftests/kexec'
+> > TAP version 13
+> > selftests: kexec: test_kexec_load.sh
+> > ========================================
+> > selftests: kexec: test_kexec_load.sh: Warning: file test_kexec_load.sh is not executable, correct this.
+> > not ok 1..1 selftests: kexec: test_kexec_load.sh [FAIL]
+> > selftests: kexec: test_kexec_file_load.sh
+> > ========================================
+> > [INFO] kexec_file_load is enabled
+> > [INFO] reading IMA policy permitted
+> > [INFO] secure boot mode not enabled
+> > No signature verification required
+> > not ok 1..2 selftests: kexec: test_kexec_file_load.sh [SKIP]
+> > make[1]: Leaving directory '/home/dyoung/git/github/linux/tools/testing/selftests/kexec'
+> > make: Leaving directory '/home/dyoung/git/github/linux/tools/testing/selftests'
+> 
+> The purpose of these tests was to coordinate kernel image signature
+> verification.
+> 
+> If you require a PE signature, load an IMA policy requiring an IMA
+> signature, or even enable CONFIG_IMA_ARCH_POLICY, the test would
+> require some form of signature verification.
 
-As for creating anonymous executable pages, yes, there is nothing to chec=
-k.
-May be there should be some another LSM or prctl for that: whether some
-process should have anonymous executable pages at all. I think that since
-stack and data should be non-executable, normal apps should not have any
-anonymous executable pages at all.
+Did a test with a embedded ima key in kernel, with secure boot disabled,
+but with Secure Boot enabled, but failed to sign the kernel with both
+pesign and evmctl, will continue to see how to work on it and ask in
+private email if needed :)
 
-On 19.03.2019 20:07, Matthew Garrett wrote:
-> Remember that an application can also open a file read-only and then
-> execute the code under an interpreter. If you have code that's
-> deliberately trying to undermine IMA then it can do so - the goal is
-> to use IMA to ensure that you have appropriate measurement or
-> appraisal in order to avoid that in the first place.
+About the patch itself, as we talked in another email, I would expect it
+can work with other test cases eg. without IMA/secure boot.  But if that
+is not easy, maybe you can change the test script filename to something
+like:  test_kexec_load_sigcheck.sh and test_kexec_file_load_sigcheck.sh 
+then we can add other non-sigcheck related cases to other test scripts
+later.  But ideally if we can handle them in current files it would be
+better.
 
-As for scripts interpreters like bash, yes, it will not protect against i=
-t.
-But IMA can check e.g. all files read by root including non-executable on=
-es.
+Another issue I noticed is even if boot with ima_appraise=off, kexec
+load still checking the conditions. Will see if I'm having something
+wrong in test steps.
 
-My point was about better protecting of shared libraries making life hard=
-er
-for exploits that are downloading extra code from external servers.
+Thanks
+Dave
