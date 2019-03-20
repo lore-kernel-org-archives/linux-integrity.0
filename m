@@ -2,268 +2,217 @@ Return-Path: <SRS0=28DF=RX=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF9FC10F05
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 12:03:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00826C43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 13:40:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E18DC213F2
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 12:03:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6BA12184D
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 13:40:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="O25ccRyM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725905AbfCTMDl (ORCPT
+        id S1727622AbfCTNkr (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 20 Mar 2019 08:03:41 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46338 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727443AbfCTMDl (ORCPT
+        Wed, 20 Mar 2019 09:40:47 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:45124 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727137AbfCTNko (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 20 Mar 2019 08:03:41 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2KC1aps058637
-        for <linux-integrity@vger.kernel.org>; Wed, 20 Mar 2019 08:03:40 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2rbj77tahg-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 20 Mar 2019 08:03:39 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 20 Mar 2019 12:03:30 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 20 Mar 2019 12:03:26 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2KC3Vlb40960132
+        Wed, 20 Mar 2019 09:40:44 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x2KDXpX0019571;
+        Wed, 20 Mar 2019 13:40:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=2beHcMZ0nUXjkWAIGV4BudvweLQXmEfJPO/sbJdhZUE=;
+ b=O25ccRyM3RaGq0KCGUZYJdWk8Tjs5vxs3/LWanvXHOLFlWuHmaLNtOk8j2Z4Il8WI/OH
+ yo8976KieQAaEqf+M62sPiNrRoZ8CxCkBfMplE1Xd4qQAHjY6+Gx0P39CAA1TjN3076U
+ rPCrMoAwjl3iOL+tXGLXlfDP5k7Vr0+X/uvnycaeWhBaxQ9USd5p963t9zRThfQePEgV
+ aTrzxLCHchiHsGMVlF6pNOOhkcFovvuv91x7ZsfkpvnArLlKdNemu1dGxFrDRT7mkjV7
+ crMqRfziZg39Zs0t/uO5hfq+9a/k5tkUXrz2MkinEdfvi6JZVwsVoO7DCxWeQm7P0x8K AQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2r8pneu15h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Mar 2019 13:40:32 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x2KDeR2X030477
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Mar 2019 12:03:31 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 272DDA404D;
-        Wed, 20 Mar 2019 12:03:31 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 248ACA405F;
-        Wed, 20 Mar 2019 12:03:30 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.93.235])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 20 Mar 2019 12:03:30 +0000 (GMT)
-Subject: Re: [PATCH v4 0/8] selftests/kexec: add kexec tests
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Dave Young <dyoung@redhat.com>
-Cc:     linux-integrity@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Petr Vorel <pvorel@suse.cz>,
-        Matthew Garrett <mjg59@google.com>, Petr Vorel <pvorel@suse.cz>
-Date:   Wed, 20 Mar 2019 08:03:19 -0400
-In-Reply-To: <20190320090401.GA2591@dhcp-128-65.nay.redhat.com>
-References: <1552588876-28481-1-git-send-email-zohar@linux.ibm.com>
-         <20190318140643.GA17706@dhcp-128-65.nay.redhat.com>
-         <1552932562.8658.274.camel@linux.ibm.com>
-         <20190320090401.GA2591@dhcp-128-65.nay.redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19032012-0016-0000-0000-000002651C97
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19032012-0017-0000-0000-000032C0361E
-Message-Id: <1553083399.4899.236.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-20_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1903200095
+        Wed, 20 Mar 2019 13:40:27 GMT
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x2KDePHW010457;
+        Wed, 20 Mar 2019 13:40:25 GMT
+Received: from [100.66.188.10] (/198.214.85.110)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 20 Mar 2019 06:40:24 -0700
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v2 3/5] NFSD: Remove ima_file_check call
+From:   Chuck Lever <chuck.lever@oracle.com>
+In-Reply-To: <1553027371.4899.116.camel@linux.ibm.com>
+Date:   Wed, 20 Mar 2019 08:40:25 -0500
+Cc:     Bruce Fields <bfields@fieldses.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <0E02D70A-A5E9-4B27-9922-521D5A0755A3@oracle.com>
+References: <20190307151838.11306.94183.stgit@manet.1015granger.net>
+ <20190307152854.11306.84006.stgit@manet.1015granger.net>
+ <20190308211016.GB27011@fieldses.org>
+ <ECE4FD20-840C-4047-9454-27BDF0A905EA@oracle.com>
+ <20190308212310.GB28002@fieldses.org>
+ <872F3DFD-E1A7-443E-B666-25C5931F0748@oracle.com>
+ <1553027371.4899.116.camel@linux.ibm.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+X-Mailer: Apple Mail (2.3445.102.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9200 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1903200105
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, 2019-03-20 at 17:04 +0800, Dave Young wrote:
-> Hi Mimi,
-> 
-> Thank you for help about the pointer about IMA testing.
-> Probably I should cc list as well since we are talking about the patch
-> itself.  For the ima test itself I could still ask for help in a private
-> email thread.
 
-Thank you for bringing the discussion back online!
 
-> 
-> On 03/18/19 at 02:09pm, Mimi Zohar wrote:
-> > On Mon, 2019-03-18 at 22:06 +0800, Dave Young wrote:
-> > > Hi Mimi,
-> > > 
-> > > On 03/14/19 at 02:41pm, Mimi Zohar wrote:
-> > > > The kernel may be configured or an IMA policy specified on the boot
-> > > > command line requiring the kexec kernel image signature to be verified.
-> > > > At runtime a custom IMA policy may be loaded, replacing the policy
-> > > > specified on the boot command line.  In addition, the arch specific
-> > > > policy rules are dynamically defined based on the secure boot mode that
-> > > > may require the kernel image signature to be verified.
-> > > > 
-> > > > The kernel image may have a PE signature, an IMA signature, or both. In
-> > > > addition, there are two kexec syscalls - kexec_load and kexec_file_load
-> > > > - but only the kexec_file_load syscall can verify signatures.
-> > > > 
-> > > > These kexec selftests verify that only properly signed kernel images are
-> > > > loaded as required, based on the kernel config, the secure boot mode,
-> > > > and the IMA runtime policy.
-> > > > 
-> > > > Loading a kernel image or kernel module requires root privileges.  To
-> > > > run just the KEXEC selftests: sudo make TARGETS=kexec kselftest
-> > > > 
-> > > > Changelog v4:
-> > > > - Moved the kexec tests to selftests/kexec, as requested by Dave Young.
-> > > > - Removed the kernel module selftest from this patch set.
-> > > > - Rewritten cover letter, removing reference to kernel modules.
-> > > > 
-> > > > Changelog v3:
-> > > > - Updated tests based on Petr's review, including the defining a common
-> > > >   test to check for root privileges.
-> > > > - Modified config, removing the CONFIG_KEXEC_VERIFY_SIG requirement.
-> > > > - Updated the SPDX license to GPL-2.0 based on Shuah's review.
-> > > > - Updated the secureboot mode test to check the SetupMode as well, based
-> > > >   on David Young's review.
-> > > > 
-> > > > 
-> > > I was trying to review the patches although I'm slow due to something
-> > > else.
-> > > 
-> > > But I still did not setup a IMA testable system, need check your old
-> > > email about how to setup it.
-> > 
-> > (The ima-evm-utils package contains a README with directions.)
+> On Mar 19, 2019, at 3:29 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+>=20
+> On Fri, 2019-03-08 at 16:29 -0500, Chuck Lever wrote:
+>=20
+> Thanks Serge for bringing this thread to my attention.  Sorry for the
+> delay in responding ...
+>=20
+>>> On Mar 8, 2019, at 4:23 PM, Bruce Fields <bfields@fieldses.org> =
+wrote:
+>>>=20
+>>> On Fri, Mar 08, 2019 at 04:11:06PM -0500, Chuck Lever wrote:
+>>>>=20
+>>>>=20
+>>>>> On Mar 8, 2019, at 4:10 PM, bfields@fieldses.org wrote:
+>>>>>=20
+>>>>> On Thu, Mar 07, 2019 at 10:28:54AM -0500, Chuck Lever wrote:
+>>>>>> The NFS server needs to allow NFS clients to perform their own
+>>>>>> attestation and measurement.
+>=20
+> Measurement and attestation is only one aspect.  The other aspect is
+> verifying the integrity of files.  Shouldn't the NFS server verify the
+> integrity of a file before allowing it to be served (eg. malware)?
 
-Suggesting using the EVM README might not have been the best idea, as
-we're only interested, at the moment, in enabling IMA-appraisal for
-now.
+Hi Mimi, thanks for the review.
 
-You need to create 2 public keys - a local CA and an IMA key.  The
-local CA public key needs to be loaded onto the builtin trusted keys
-keyring.  There are a number of different methods of doing this.  The
-simplest method, for those building their own kernel, is to add the
-local CA public key to the certs signing_key.x509 (PEM) or to the
-x509_certificate_list (DER).
+Architecturally, the server is not using the file's data, it is
+merely part of the filesystem that stores it. But that said, there
+are several concrete reasons why I feel an NFS server should not be
+involved in measurement/attestation, but only with storing file
+content and IMA metadata.
 
-Create the IMA key and then sign the IMA certificate with the local CA
-key.  After rebooting the kernel with the local CA key loaded onto the
-builtin trusted keyring, you'll be able to import the IMA key onto the
-IMA trusted keyring.
+1. The broadest attack surface for a remote filesystem is modification
+of data in flight. Attestation of the file on the server is not going
+to defend against that attack, only attestation on the client will do
+that. Is there a good reason to pay the cost of double attestation?
 
-To manually load the IMA key, without relying on dracut/systemd:
+2. It is possible (perhaps even likely) that the NFS server and a
+client of that server will have different IMA policies and even
+different file signing authorities.
 
-# id=`sudo keyctl describe %keyring:.ima | awk -F ':' '{print $1}';`
-# evmctl import examples/x509_ima.der $id
+A third, perhaps related, reason is that NFS can run on non-Linux NFS
+servers which would not have any attestation at all. An NFS client
+should not have to rely on the server for attestation, but should
+trust only its own measurement of each file, which would be done as
+late as possible before use.
 
-(The evm utils package contains two sample scripts in the examples
-directory to create the local CA and the IMA key.)
+Lastly, the NFS protocol does not enable an NFS client to tell a
+server how the file is to be used. For example, the server's policy
+might block execution of an unverifiable file, but the server won't
+have any way of knowing how the client is going to use that file.
+The client might be opening the file to copy it or update its IMA
+metadata.
 
-> > 
-> > > 
-> > > A quick testing gives me below results
-> > > 
-> > > /* test #1, my default kconfig
-> > > # NO CONFIG_INTEGRITY compiled in
-> > > */
-> > > 
-> > > make[1]: Nothing to be done for 'all'.
-> > > make[1]: Leaving directory '/home/dyoung/git/github/linux/tools/testing/selftests/kexec'
-> > > make[1]: Entering directory '/home/dyoung/git/github/linux/tools/testing/selftests/kexec'
-> > > TAP version 13
-> > > selftests: kexec: test_kexec_load.sh
-> > > ========================================
-> > > selftests: kexec: test_kexec_load.sh: Warning: file
-> > > test_kexec_load.sh is not executable, correct this.
-> > > not ok 1..1 selftests: kexec: test_kexec_load.sh [FAIL]
-> > 
-> > That's really weird.  Both before and after applying these patches
-> > test_kexec_load.sh is executable (stable linux-5.0.y).  Could
-> > something else be preventing it from executing?
-> > 
-> > > selftests: kexec: test_kexec_file_load.sh
-> > > ========================================
-> > > [INFO] kexec_file_load is enabled
-> > > [INFO] secure boot mode not enabled
-> > > [INFO] kexec kernel image PE signed
-> > > [INFO] kexec kernel image not IMA signed
-> > > kexec_file_load succeeded (possibly missing IMA sig) [FAIL]
-> > > not ok 1..2 selftests: kexec: test_kexec_file_load.sh [FAIL]
-> > > make[1]: Leaving directory '/home/dyoung/git/github/linux/tools/testing/selftests/kexec'
-> > > make: Leaving directory '/home/dyoung/git/github/linux/tools/testing/selftests'
-> > 
-> > This message is because neither CONFIG_KEXEC_BZIMAGE_VERIFY_SIG or an
-> > IMA signature is required.  It couldn't read the IMA runtime policy
-> > rules to determine if an IMA signature is required.  So, it's trying
-> > to provide a hint as to what happened.
-> > 
-> > I'll update the test to see if CONFIG_IMA_APPRAISE is enabled, before
-> > emitting this message.
-> > 
-> > > 
-> > > /* test #2, enabled IMA kconfigs, simply test without other ima
-> > > setup eg. use a policy etc. need to follow up some guide to test the
-> > > ima functionality (TODO..)
-> > > */
-> > > 
-> > > 
-> > > [root@dhcp-128-65 linux-x86]# make -C tools/testing/selftests TARGETS=kexec run_tests
-> > > make: Entering directory '/home/dyoung/git/github/linux/tools/testing/selftests'
-> > > make[1]: Entering directory '/home/dyoung/git/github/linux/tools/testing/selftests/kexec'
-> > > make[1]: Nothing to be done for 'all'.
-> > > make[1]: Leaving directory '/home/dyoung/git/github/linux/tools/testing/selftests/kexec'
-> > > make[1]: Entering directory '/home/dyoung/git/github/linux/tools/testing/selftests/kexec'
-> > > TAP version 13
-> > > selftests: kexec: test_kexec_load.sh
-> > > ========================================
-> > > selftests: kexec: test_kexec_load.sh: Warning: file test_kexec_load.sh is not executable, correct this.
-> > > not ok 1..1 selftests: kexec: test_kexec_load.sh [FAIL]
-> > > selftests: kexec: test_kexec_file_load.sh
-> > > ========================================
-> > > [INFO] kexec_file_load is enabled
-> > > [INFO] reading IMA policy permitted
-> > > [INFO] secure boot mode not enabled
-> > > No signature verification required
-> > > not ok 1..2 selftests: kexec: test_kexec_file_load.sh [SKIP]
-> > > make[1]: Leaving directory '/home/dyoung/git/github/linux/tools/testing/selftests/kexec'
-> > > make: Leaving directory '/home/dyoung/git/github/linux/tools/testing/selftests'
-> > 
-> > The purpose of these tests was to coordinate kernel image signature
-> > verification.
-> > 
-> > If you require a PE signature, load an IMA policy requiring an IMA
-> > signature, or even enable CONFIG_IMA_ARCH_POLICY, the test would
-> > require some form of signature verification.
-> 
-> Did a test with a embedded ima key in kernel, with secure boot disabled,
-> but with Secure Boot enabled, but failed to sign the kernel with both
-> pesign and evmctl, will continue to see how to work on it and ask in
-> private email if needed :)
+Speaking of protocol, there's no special error code that reports an
+integrity verification failure. The client just sees that the UID
+does not have access to the file. There's no way the user or client
+can do anything to clear this condition via NFS without IMA support.
 
-"with secure boot disabled, but with Secure Boot enabled" - I'm
-missing the nuance between upper and lower case "secure boot".
+If these reasons make sense, should I add them to the patch description?
 
-> 
-> About the patch itself, as we talked in another email, I would expect it
-> can work with other test cases eg. without IMA/secure boot.  But if that
-> is not easy, maybe you can change the test script filename to something
-> like:  test_kexec_load_sigcheck.sh and test_kexec_file_load_sigcheck.sh 
-> then we can add other non-sigcheck related cases to other test scripts
-> later.  But ideally if we can handle them in current files it would be
-> better.
 
-Ok
+>>>>> Can we really remove this call?
+>>>>=20
+>>>> Why wouldn't we be able to?
+>>>=20
+>>> I don't know the first thing about IMA, but surely it's there for =
+some
+>>> reason--
+>>=20
+>> It was originally added because the number of opens and closes of =
+@file
+>> were counted, and not having that call was triggering a warning. =
+Since
+>> commit 8eb988c70e770 ("fix ima breakage") the counters are maintained
+>> separately.
+>=20
+> If that was the only reason, then the call itself would have been
+> removed with the counter code.
+>=20
+> Mimi
+>=20
+>>=20
+>>=20
+>>> is it really OK just to skip this on opens by nfsd?
+>>=20
+>> That's why I split this out into a separate patch. I'm hoping to get
+>> some commentary from the linux-integrity community.
+>>=20
+>>=20
+>>> --b.
+>>>=20
+>>>>>> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+>>>>>> ---
+>>>>>> fs/nfsd/vfs.c |    6 ------
+>>>>>> 1 file changed, 6 deletions(-)
+>>>>>>=20
+>>>>>> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+>>>>>> index 3c00072..524c6e5 100644
+>>>>>> --- a/fs/nfsd/vfs.c
+>>>>>> +++ b/fs/nfsd/vfs.c
+>>>>>> @@ -802,12 +802,6 @@ static int nfsd_open_break_lease(struct =
+inode *inode, int access)
+>>>>>> 		goto out_nfserr;
+>>>>>> 	}
+>>>>>>=20
+>>>>>> -	host_err =3D ima_file_check(file, may_flags);
+>>>>>> -	if (host_err) {
+>>>>>> -		fput(file);
+>>>>>> -		goto out_nfserr;
+>>>>>> -	}
+>>>>>> -
+>>>>>> 	if (may_flags & NFSD_MAY_64BIT_COOKIE)
+>>>>>> 		file->f_mode |=3D FMODE_64BITHASH;
+>>>>>> 	else
+>>>>=20
+>>>> --
+>>>> Chuck Lever
+>>>>=20
+>>>>=20
+>>=20
+>> --
+>> Chuck Lever
+>>=20
+>>=20
+>>=20
+>=20
 
-> Another issue I noticed is even if boot with ima_appraise=off, kexec
-> load still checking the conditions. Will see if I'm having something
-> wrong in test steps.
+--
+Chuck Lever
 
-Enabling the arch policy disables the "ima_appraise=" boot command
-line option.  You're right, if the arch policy isn't enabled, this
-test needs to detect the "ima_appraise" mode.
 
-Mimi
 
