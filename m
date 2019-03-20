@@ -2,122 +2,123 @@ Return-Path: <SRS0=28DF=RX=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64180C4360F
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 18:51:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 536C5C43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 19:18:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35EA02146E
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 18:51:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CCD+PBTj"
+	by mail.kernel.org (Postfix) with ESMTP id 2B9D620850
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 19:18:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbfCTSvo (ORCPT
+        id S1726295AbfCTTSn (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 20 Mar 2019 14:51:44 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:41344 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727361AbfCTSvo (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 20 Mar 2019 14:51:44 -0400
-Received: by mail-ot1-f65.google.com with SMTP id t7so3117108otk.8;
-        Wed, 20 Mar 2019 11:51:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=XNMPwWvFba4JuAksv3Ts/sq+FdMZEQ3WIMOUGxHjzJI=;
-        b=CCD+PBTjFlkwB+0/IrPzvlBko46ds79+Muf1cZOJ92mMMOdNVO5zplGlQ5x6GHYRel
-         788HN8hAgErRWvGSy+efoxQ/+TgXpWsf/wCdE625zEVbBB8/4bHYanoTZoTeYocJluxD
-         b1Foprou+5lt+IffB4ehTpnactRE4Vx1ZufX2Zykjk24ObmL9VWukIu6G2h9IRSACb9N
-         oA3/B/xPDnWwARgdQpD5MYmzoS4eS36k9C8Kelwfkq06Kp2W99qvJet+ArBanpCUTvno
-         tVagB+0KsSBzNAS3wHS8usq0VOWUiOwHlcm2Qcd2fDgX3eIl+p6JAqaSFwwfZefMZIKH
-         JQSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=XNMPwWvFba4JuAksv3Ts/sq+FdMZEQ3WIMOUGxHjzJI=;
-        b=bwjtqDXm1ePXOun5ypQ+/dgdt+8eh3lRpsU1ekpj13CSOVwfFj/ywUcOQQImdi0xzY
-         1KJtbzSUltIQXuIn5qsLCcfAKsu+HXCAjAu1bTtRhPP0jBosF5xw+oW4/gKUMBSCDHZ/
-         jH9/Kcg2PU0oWeQKf5L7+D9Yf8Gqes+INmC/3aqlQQ2j5WEMi9IluOlBksCvyPEjks0b
-         fghjm/PuVggJvUL+nttxVXyfgMvAW8rvtFO/7aEmaY09hiAp7DeEp6rlsB2Ckg4/f9SI
-         FjfuFkNWFijbSgENzmW1g3oSWY+YEBc/XGdfVcUoLvDd5Pz5at/NL9FQfcbefpiUvx9f
-         FSyw==
-X-Gm-Message-State: APjAAAXWDpYPj47vFYLwHF9ntIWmTeZ5pU6AWdHJ8ngg644ilAPRbzss
-        id+M+Tc3T+QFZ6DDAATuI+J+obsjQguKR60tuf8=
-X-Google-Smtp-Source: APXvYqx4bdeP/n6pHORM8a+LXrO9DEvxXSmxNZJAC1yVVxzeAuIC05KqKfczN+sSEx57Pg31TnlDlWizYSFOXDvrfyM=
-X-Received: by 2002:a05:6830:2118:: with SMTP id i24mr7147820otc.224.1553107902852;
- Wed, 20 Mar 2019 11:51:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <155302749437.13955.651380639754310898.stgit@tstruk-mobl1.jf.intel.com>
-In-Reply-To: <155302749437.13955.651380639754310898.stgit@tstruk-mobl1.jf.intel.com>
-From:   =?UTF-8?Q?Mantas_Mikul=C4=97nas?= <grawity@gmail.com>
-Date:   Wed, 20 Mar 2019 20:51:30 +0200
-Message-ID: <CAPWNY8UmDAKeF+SNMKDxki=-=s+UPx9WXQvSoFqWmUCsNvv=1g@mail.gmail.com>
+        Wed, 20 Mar 2019 15:18:43 -0400
+Received: from mga06.intel.com ([134.134.136.31]:9228 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726239AbfCTTSn (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 20 Mar 2019 15:18:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Mar 2019 12:18:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,249,1549958400"; 
+   d="scan'208";a="135761141"
+Received: from tstruk-mobl1.jf.intel.com ([10.7.196.61])
+  by orsmga003.jf.intel.com with ESMTP; 20 Mar 2019 12:18:42 -0700
 Subject: Re: [PATCH v2] tpm: fix an invalid condition in tpm_common_poll
-To:     Tadeusz Struk <tadeusz.struk@intel.com>
+To:     =?UTF-8?Q?Mantas_Mikul=c4=97nas?= <grawity@gmail.com>
 Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         James.Bottomley@hansenpartnership.com,
         linux-integrity@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+References: <155302749437.13955.651380639754310898.stgit@tstruk-mobl1.jf.intel.com>
+ <CAPWNY8UmDAKeF+SNMKDxki=-=s+UPx9WXQvSoFqWmUCsNvv=1g@mail.gmail.com>
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
+ 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
+ FheFfUJaD4iEjuL98uUjS/AI
+Message-ID: <8f90121a-490c-6a44-1765-d232fcc93ce0@intel.com>
+Date:   Wed, 20 Mar 2019 12:18:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <CAPWNY8UmDAKeF+SNMKDxki=-=s+UPx9WXQvSoFqWmUCsNvv=1g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Mar 19, 2019 at 10:31 PM Tadeusz Struk <tadeusz.struk@intel.com> wr=
-ote:
->
-> The poll condition should only check response_length,
-> because reads should only be issued if there is data to read.
-> The response_read flag only prevents double writes.
-> The problem was that the write set the response_read to false,
-> enqued a tpm job, and returned. Then application called poll
-> which checked the response_read flag and returned EPOLLIN.
-> Then the application called read, but got nothing.
-> After all that the async_work kicked in.
-> Added also mutex_lock around the poll check to prevent
-> other possible race conditions.
->
-> Fixes: 9488585b21bef0df12 ("tpm: add support for partial reads")
-> Reported-by: Mantas Mikul=C4=97nas <grawity@gmail.com>
-> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
-> ---
->  drivers/char/tpm/tpm-dev-common.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev=
--common.c
-> index 5eecad233ea1..7312d3214381 100644
-> --- a/drivers/char/tpm/tpm-dev-common.c
-> +++ b/drivers/char/tpm/tpm-dev-common.c
-> @@ -203,12 +203,14 @@ __poll_t tpm_common_poll(struct file *file, poll_ta=
-ble *wait)
->         __poll_t mask =3D 0;
->
->         poll_wait(file, &priv->async_wait, wait);
-> +       mutex_lock(&priv->buffer_mutex);
->
-> -       if (!priv->response_read || priv->response_length)
-> +       if (priv->response_length)
->                 mask =3D EPOLLIN | EPOLLRDNORM;
->         else
->                 mask =3D EPOLLOUT | EPOLLWRNORM;
->
-> +       mutex_unlock(&priv->buffer_mutex);
->         return mask;
->  }
+On 3/20/19 11:51 AM, Mantas Mikulėnas wrote:
+> Thanks, this patch seems to work, and I apologize for not responding
+> to test the patches earlier.
 
-Thanks, this patch seems to work, and I apologize for not responding
-to test the patches earlier.
+Thanks for testing.
 
-Any chance it'll be submitted for stable 5.0.x as well?
+> 
+> Any chance it'll be submitted for stable 5.0.x as well?
 
---=20
-Mantas Mikul=C4=97nas
+Yes, it's a regression. I included the "Fixes" tag so
+it should be applied to all affected versions.
+In this case it's 5.0 only.
+Thanks,
+-- 
+Tadeusz
