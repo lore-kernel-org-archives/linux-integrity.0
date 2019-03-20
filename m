@@ -2,217 +2,104 @@ Return-Path: <SRS0=28DF=RX=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00826C43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 13:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CADEEC43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 14:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6BA12184D
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 13:40:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C8122184D
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 14:30:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="O25ccRyM"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="W+oVgI3O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727622AbfCTNkr (ORCPT
+        id S1726686AbfCTOaq (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 20 Mar 2019 09:40:47 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:45124 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727137AbfCTNko (ORCPT
+        Wed, 20 Mar 2019 10:30:46 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:38642 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726169AbfCTOaq (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 20 Mar 2019 09:40:44 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x2KDXpX0019571;
-        Wed, 20 Mar 2019 13:40:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2018-07-02; bh=2beHcMZ0nUXjkWAIGV4BudvweLQXmEfJPO/sbJdhZUE=;
- b=O25ccRyM3RaGq0KCGUZYJdWk8Tjs5vxs3/LWanvXHOLFlWuHmaLNtOk8j2Z4Il8WI/OH
- yo8976KieQAaEqf+M62sPiNrRoZ8CxCkBfMplE1Xd4qQAHjY6+Gx0P39CAA1TjN3076U
- rPCrMoAwjl3iOL+tXGLXlfDP5k7Vr0+X/uvnycaeWhBaxQ9USd5p963t9zRThfQePEgV
- aTrzxLCHchiHsGMVlF6pNOOhkcFovvuv91x7ZsfkpvnArLlKdNemu1dGxFrDRT7mkjV7
- crMqRfziZg39Zs0t/uO5hfq+9a/k5tkUXrz2MkinEdfvi6JZVwsVoO7DCxWeQm7P0x8K AQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2r8pneu15h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Mar 2019 13:40:32 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x2KDeR2X030477
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Mar 2019 13:40:27 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x2KDePHW010457;
-        Wed, 20 Mar 2019 13:40:25 GMT
-Received: from [100.66.188.10] (/198.214.85.110)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 20 Mar 2019 06:40:24 -0700
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH v2 3/5] NFSD: Remove ima_file_check call
-From:   Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <1553027371.4899.116.camel@linux.ibm.com>
-Date:   Wed, 20 Mar 2019 08:40:25 -0500
-Cc:     Bruce Fields <bfields@fieldses.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0E02D70A-A5E9-4B27-9922-521D5A0755A3@oracle.com>
-References: <20190307151838.11306.94183.stgit@manet.1015granger.net>
- <20190307152854.11306.84006.stgit@manet.1015granger.net>
- <20190308211016.GB27011@fieldses.org>
- <ECE4FD20-840C-4047-9454-27BDF0A905EA@oracle.com>
- <20190308212310.GB28002@fieldses.org>
- <872F3DFD-E1A7-443E-B666-25C5931F0748@oracle.com>
- <1553027371.4899.116.camel@linux.ibm.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-X-Mailer: Apple Mail (2.3445.102.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9200 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1903200105
+        Wed, 20 Mar 2019 10:30:46 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 627DB8EE10A;
+        Wed, 20 Mar 2019 07:30:45 -0700 (PDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id G71zh68vwYKH; Wed, 20 Mar 2019 07:30:45 -0700 (PDT)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id ACA1E8EE0CF;
+        Wed, 20 Mar 2019 07:30:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1553092244;
+        bh=GIn7yoSnPArPkrIyJL4Yj913wXPitEgfP98S9BP82qQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=W+oVgI3OdtcJhSNGFBqIDhgLuVC3Ne4pPWpzXAAbWhIC53DutVSsSoowyEEc3Jvid
+         lQ9ia3dTINusPXcBRutRTzy3Hpci4OYUGcuvfJqU4rXTCymHPWrRBAw1HmcQQPBOpJ
+         HNOWqtcD5y8ucXRusNzh7qWP+cF0mw00bqx3mI0Q=
+Message-ID: <1553092243.2835.3.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2] tpm: fix an invalid condition in tpm_common_poll
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Tadeusz Struk <tadeusz.struk@intel.com>,
+        jarkko.sakkinen@linux.intel.com
+Cc:     grawity@gmail.com, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 20 Mar 2019 07:30:43 -0700
+In-Reply-To: <155302749437.13955.651380639754310898.stgit@tstruk-mobl1.jf.intel.com>
+References: <155302749437.13955.651380639754310898.stgit@tstruk-mobl1.jf.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+On Tue, 2019-03-19 at 13:31 -0700, Tadeusz Struk wrote:
+> The poll condition should only check response_length,
+> because reads should only be issued if there is data to read.
+> The response_read flag only prevents double writes.
+> The problem was that the write set the response_read to false,
+> enqued a tpm job, and returned. Then application called poll
+> which checked the response_read flag and returned EPOLLIN.
+> Then the application called read, but got nothing.
+> After all that the async_work kicked in.
+> Added also mutex_lock around the poll check to prevent
+> other possible race conditions.
+> 
+> Fixes: 9488585b21bef0df12 ("tpm: add support for partial reads")
+> Reported-by: Mantas Mikulėnas <grawity@gmail.com>
+> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+> ---
+>  drivers/char/tpm/tpm-dev-common.c |    4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-dev-common.c
+> b/drivers/char/tpm/tpm-dev-common.c
+> index 5eecad233ea1..7312d3214381 100644
+> --- a/drivers/char/tpm/tpm-dev-common.c
+> +++ b/drivers/char/tpm/tpm-dev-common.c
+> @@ -203,12 +203,14 @@ __poll_t tpm_common_poll(struct file *file,
+> poll_table *wait)
+>  	__poll_t mask = 0;
+>  
+>  	poll_wait(file, &priv->async_wait, wait);
+> +	mutex_lock(&priv->buffer_mutex);
+>  
+> -	if (!priv->response_read || priv->response_length)
+> +	if (priv->response_length)
+>  		mask = EPOLLIN | EPOLLRDNORM;
+>  	else
+>  		mask = EPOLLOUT | EPOLLWRNORM;
+>  
+> +	mutex_unlock(&priv->buffer_mutex);
 
+Just an observation on this: the mutex is now no-longer necessary
+because a read on a size_t quantity is always atomic.
 
-> On Mar 19, 2019, at 3:29 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
->=20
-> On Fri, 2019-03-08 at 16:29 -0500, Chuck Lever wrote:
->=20
-> Thanks Serge for bringing this thread to my attention.  Sorry for the
-> delay in responding ...
->=20
->>> On Mar 8, 2019, at 4:23 PM, Bruce Fields <bfields@fieldses.org> =
-wrote:
->>>=20
->>> On Fri, Mar 08, 2019 at 04:11:06PM -0500, Chuck Lever wrote:
->>>>=20
->>>>=20
->>>>> On Mar 8, 2019, at 4:10 PM, bfields@fieldses.org wrote:
->>>>>=20
->>>>> On Thu, Mar 07, 2019 at 10:28:54AM -0500, Chuck Lever wrote:
->>>>>> The NFS server needs to allow NFS clients to perform their own
->>>>>> attestation and measurement.
->=20
-> Measurement and attestation is only one aspect.  The other aspect is
-> verifying the integrity of files.  Shouldn't the NFS server verify the
-> integrity of a file before allowing it to be served (eg. malware)?
-
-Hi Mimi, thanks for the review.
-
-Architecturally, the server is not using the file's data, it is
-merely part of the filesystem that stores it. But that said, there
-are several concrete reasons why I feel an NFS server should not be
-involved in measurement/attestation, but only with storing file
-content and IMA metadata.
-
-1. The broadest attack surface for a remote filesystem is modification
-of data in flight. Attestation of the file on the server is not going
-to defend against that attack, only attestation on the client will do
-that. Is there a good reason to pay the cost of double attestation?
-
-2. It is possible (perhaps even likely) that the NFS server and a
-client of that server will have different IMA policies and even
-different file signing authorities.
-
-A third, perhaps related, reason is that NFS can run on non-Linux NFS
-servers which would not have any attestation at all. An NFS client
-should not have to rely on the server for attestation, but should
-trust only its own measurement of each file, which would be done as
-late as possible before use.
-
-Lastly, the NFS protocol does not enable an NFS client to tell a
-server how the file is to be used. For example, the server's policy
-might block execution of an unverifiable file, but the server won't
-have any way of knowing how the client is going to use that file.
-The client might be opening the file to copy it or update its IMA
-metadata.
-
-Speaking of protocol, there's no special error code that reports an
-integrity verification failure. The client just sees that the UID
-does not have access to the file. There's no way the user or client
-can do anything to clear this condition via NFS without IMA support.
-
-If these reasons make sense, should I add them to the patch description?
-
-
->>>>> Can we really remove this call?
->>>>=20
->>>> Why wouldn't we be able to?
->>>=20
->>> I don't know the first thing about IMA, but surely it's there for =
-some
->>> reason--
->>=20
->> It was originally added because the number of opens and closes of =
-@file
->> were counted, and not having that call was triggering a warning. =
-Since
->> commit 8eb988c70e770 ("fix ima breakage") the counters are maintained
->> separately.
->=20
-> If that was the only reason, then the call itself would have been
-> removed with the counter code.
->=20
-> Mimi
->=20
->>=20
->>=20
->>> is it really OK just to skip this on opens by nfsd?
->>=20
->> That's why I split this out into a separate patch. I'm hoping to get
->> some commentary from the linux-integrity community.
->>=20
->>=20
->>> --b.
->>>=20
->>>>>> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
->>>>>> ---
->>>>>> fs/nfsd/vfs.c |    6 ------
->>>>>> 1 file changed, 6 deletions(-)
->>>>>>=20
->>>>>> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
->>>>>> index 3c00072..524c6e5 100644
->>>>>> --- a/fs/nfsd/vfs.c
->>>>>> +++ b/fs/nfsd/vfs.c
->>>>>> @@ -802,12 +802,6 @@ static int nfsd_open_break_lease(struct =
-inode *inode, int access)
->>>>>> 		goto out_nfserr;
->>>>>> 	}
->>>>>>=20
->>>>>> -	host_err =3D ima_file_check(file, may_flags);
->>>>>> -	if (host_err) {
->>>>>> -		fput(file);
->>>>>> -		goto out_nfserr;
->>>>>> -	}
->>>>>> -
->>>>>> 	if (may_flags & NFSD_MAY_64BIT_COOKIE)
->>>>>> 		file->f_mode |=3D FMODE_64BITHASH;
->>>>>> 	else
->>>>=20
->>>> --
->>>> Chuck Lever
->>>>=20
->>>>=20
->>=20
->> --
->> Chuck Lever
->>=20
->>=20
->>=20
->=20
-
---
-Chuck Lever
-
-
+James
 
