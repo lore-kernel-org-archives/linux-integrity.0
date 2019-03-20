@@ -2,104 +2,122 @@ Return-Path: <SRS0=28DF=RX=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4804FC43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 18:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64180C4360F
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 18:51:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAF43218B0
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 18:08:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35EA02146E
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 18:51:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=omprussia.ru header.i=@omprussia.ru header.b="wZ3AD6ms"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CCD+PBTj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726529AbfCTSI1 (ORCPT
+        id S1727600AbfCTSvo (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 20 Mar 2019 14:08:27 -0400
-Received: from mail.omprussia.ru ([5.134.221.218]:57612 "EHLO
-        mail.omprussia.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726801AbfCTSI1 (ORCPT
+        Wed, 20 Mar 2019 14:51:44 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:41344 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727361AbfCTSvo (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 20 Mar 2019 14:08:27 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.omprussia.ru (Postfix) with ESMTP id 75685B6A198;
-        Wed, 20 Mar 2019 21:08:24 +0300 (MSK)
-Received: from mail.omprussia.ru ([127.0.0.1])
-        by localhost (mail.omprussia.ru [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 6PevQaW0LyIs; Wed, 20 Mar 2019 21:08:23 +0300 (MSK)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.omprussia.ru (Postfix) with ESMTP id 738B9B6A18D;
-        Wed, 20 Mar 2019 21:08:23 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.omprussia.ru 738B9B6A18D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=omprussia.ru;
-        s=EC9C64F2-3532-11E8-B653-5B7E995A80AF; t=1553105303;
-        bh=TiqlwCLqm4mkef75hMk0zqv7UQYqu6ccE8KI0/IF1YE=;
-        h=To:From:Message-ID:Date:MIME-Version;
-        b=wZ3AD6msEtdGepJsh8kE24kkB17TbpzDp+V7W/zeE7Ny9od5hiP0VrmmAzRIvatAK
-         sK6GytRE/EpndyptTThyHEitcgd+kpqbwvvtLu7bo5fj07p7rG9mCRQpvYZ1i0C+5P
-         NIV3JAZY8ngjPKr43UIGhAAuWh3jAL2ZASfw47Fx9SubM25ILe9WR/I8dfaXcR4LGq
-         yKTY77DbrNhEmfm0waPny0rEM30EBMPAY93Ho7Y2JRH4OJdGc2lZv51LcM8hptdTyz
-         IG6zFDRwMP2swOiwAyNEHpSSYFEYylmnSDCnGgs/jRVvjr0LjLpIjZX1b7lsQXd0a0
-         +sidqt8qHJxpw==
-X-Virus-Scanned: amavisd-new at mail.omprussia.ru
-Received: from mail.omprussia.ru ([127.0.0.1])
-        by localhost (mail.omprussia.ru [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id io-D_FCPyeuR; Wed, 20 Mar 2019 21:08:23 +0300 (MSK)
-Received: from [10.189.20.33] (unknown [10.189.20.33])
-        by mail.omprussia.ru (Postfix) with ESMTPSA id 34B56B6A187;
-        Wed, 20 Mar 2019 21:08:23 +0300 (MSK)
-Subject: Re: Should mprotect(..., PROT_EXEC) be checked by IMA?
-To:     Matthew Garrett <mjg59@google.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-References: <cce2c4c7-5333-41c3-aeef-34d43e63acb0@omprussia.ru>
- <1552945715.8658.299.camel@linux.ibm.com>
- <452752df-98f9-c361-878a-5df84ab36847@omprussia.ru>
- <1552994559.4899.26.camel@linux.ibm.com>
- <84145490-6f70-214f-8241-42d556590240@omprussia.ru>
- <1553015134.4899.82.camel@linux.ibm.com>
- <a9830bde-8157-6078-b544-fcffb20d2501@omprussia.ru>
- <CACdnJut6YfLnq-nCC1hHTrKYXabHoSEXN1wMuCyVybU+o_iwCg@mail.gmail.com>
-From:   Igor Zhbanov <i.zhbanov@omprussia.ru>
-Message-ID: <7331263b-3994-3fa8-e28b-6d791ace4ee4@omprussia.ru>
-Date:   Wed, 20 Mar 2019 21:08:25 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 20 Mar 2019 14:51:44 -0400
+Received: by mail-ot1-f65.google.com with SMTP id t7so3117108otk.8;
+        Wed, 20 Mar 2019 11:51:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=XNMPwWvFba4JuAksv3Ts/sq+FdMZEQ3WIMOUGxHjzJI=;
+        b=CCD+PBTjFlkwB+0/IrPzvlBko46ds79+Muf1cZOJ92mMMOdNVO5zplGlQ5x6GHYRel
+         788HN8hAgErRWvGSy+efoxQ/+TgXpWsf/wCdE625zEVbBB8/4bHYanoTZoTeYocJluxD
+         b1Foprou+5lt+IffB4ehTpnactRE4Vx1ZufX2Zykjk24ObmL9VWukIu6G2h9IRSACb9N
+         oA3/B/xPDnWwARgdQpD5MYmzoS4eS36k9C8Kelwfkq06Kp2W99qvJet+ArBanpCUTvno
+         tVagB+0KsSBzNAS3wHS8usq0VOWUiOwHlcm2Qcd2fDgX3eIl+p6JAqaSFwwfZefMZIKH
+         JQSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=XNMPwWvFba4JuAksv3Ts/sq+FdMZEQ3WIMOUGxHjzJI=;
+        b=bwjtqDXm1ePXOun5ypQ+/dgdt+8eh3lRpsU1ekpj13CSOVwfFj/ywUcOQQImdi0xzY
+         1KJtbzSUltIQXuIn5qsLCcfAKsu+HXCAjAu1bTtRhPP0jBosF5xw+oW4/gKUMBSCDHZ/
+         jH9/Kcg2PU0oWeQKf5L7+D9Yf8Gqes+INmC/3aqlQQ2j5WEMi9IluOlBksCvyPEjks0b
+         fghjm/PuVggJvUL+nttxVXyfgMvAW8rvtFO/7aEmaY09hiAp7DeEp6rlsB2Ckg4/f9SI
+         FjfuFkNWFijbSgENzmW1g3oSWY+YEBc/XGdfVcUoLvDd5Pz5at/NL9FQfcbefpiUvx9f
+         FSyw==
+X-Gm-Message-State: APjAAAXWDpYPj47vFYLwHF9ntIWmTeZ5pU6AWdHJ8ngg644ilAPRbzss
+        id+M+Tc3T+QFZ6DDAATuI+J+obsjQguKR60tuf8=
+X-Google-Smtp-Source: APXvYqx4bdeP/n6pHORM8a+LXrO9DEvxXSmxNZJAC1yVVxzeAuIC05KqKfczN+sSEx57Pg31TnlDlWizYSFOXDvrfyM=
+X-Received: by 2002:a05:6830:2118:: with SMTP id i24mr7147820otc.224.1553107902852;
+ Wed, 20 Mar 2019 11:51:42 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CACdnJut6YfLnq-nCC1hHTrKYXabHoSEXN1wMuCyVybU+o_iwCg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <155302749437.13955.651380639754310898.stgit@tstruk-mobl1.jf.intel.com>
+In-Reply-To: <155302749437.13955.651380639754310898.stgit@tstruk-mobl1.jf.intel.com>
+From:   =?UTF-8?Q?Mantas_Mikul=C4=97nas?= <grawity@gmail.com>
+Date:   Wed, 20 Mar 2019 20:51:30 +0200
+Message-ID: <CAPWNY8UmDAKeF+SNMKDxki=-=s+UPx9WXQvSoFqWmUCsNvv=1g@mail.gmail.com>
+Subject: Re: [PATCH v2] tpm: fix an invalid condition in tpm_common_poll
+To:     Tadeusz Struk <tadeusz.struk@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James.Bottomley@hansenpartnership.com,
+        linux-integrity@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 20.03.2019 20:23, Matthew Garrett wrote:
-> On Wed, Mar 20, 2019 at 1:11 AM Igor Zhbanov <i.zhbanov@omprussia.ru> wrote:
->> My point was about better protecting of shared libraries making life harder
->> for exploits that are downloading extra code from external servers.
-> 
-> Like you said, they can implement this by copying the code from
-> read-only pages to separate executable pages. It does make it harder,
-> but not to a huge degree - anything that's mprotect()ing file-backed
-> pages to PROT_EXEC later is presumably doing so to avoid IMA, and
-> making this change will just encourage them to add further
-> workarounds. Since this is a fight we literally can't win, what's the
-> benefit?
+On Tue, Mar 19, 2019 at 10:31 PM Tadeusz Struk <tadeusz.struk@intel.com> wr=
+ote:
+>
+> The poll condition should only check response_length,
+> because reads should only be issued if there is data to read.
+> The response_read flag only prevents double writes.
+> The problem was that the write set the response_read to false,
+> enqued a tpm job, and returned. Then application called poll
+> which checked the response_read flag and returned EPOLLIN.
+> Then the application called read, but got nothing.
+> After all that the async_work kicked in.
+> Added also mutex_lock around the poll check to prevent
+> other possible race conditions.
+>
+> Fixes: 9488585b21bef0df12 ("tpm: add support for partial reads")
+> Reported-by: Mantas Mikul=C4=97nas <grawity@gmail.com>
+> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+> ---
+>  drivers/char/tpm/tpm-dev-common.c |    4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev=
+-common.c
+> index 5eecad233ea1..7312d3214381 100644
+> --- a/drivers/char/tpm/tpm-dev-common.c
+> +++ b/drivers/char/tpm/tpm-dev-common.c
+> @@ -203,12 +203,14 @@ __poll_t tpm_common_poll(struct file *file, poll_ta=
+ble *wait)
+>         __poll_t mask =3D 0;
+>
+>         poll_wait(file, &priv->async_wait, wait);
+> +       mutex_lock(&priv->buffer_mutex);
+>
+> -       if (!priv->response_read || priv->response_length)
+> +       if (priv->response_length)
+>                 mask =3D EPOLLIN | EPOLLRDNORM;
+>         else
+>                 mask =3D EPOLLOUT | EPOLLWRNORM;
+>
+> +       mutex_unlock(&priv->buffer_mutex);
+>         return mask;
+>  }
 
-Well, may be it would be enough to:
-1) Verify with IMA every file root processes read,
-2) Use seccomp to forbid mprotect(..., PROT_EXEC) for 99% of processes,
-    so they would have to use normal mmap(..., PROT_EXEC, ...) to load the
-    code.
+Thanks, this patch seems to work, and I apologize for not responding
+to test the patches earlier.
 
-P.S. #2 should also protect against patching already mapped executable pages
-because they are typically mapped read-only, so one would use
-mprotect(..., PROT_READ | PROT_WRITE | PROT_EXEC) to enable write access
-to it. So with #2 it wouldn't even be possible to reuse already mapped
-pages nor to create new.
+Any chance it'll be submitted for stable 5.0.x as well?
 
-May be #2 could be implemented as a separate thing to avoid writing eBPF
-seccomp filters to check mprotect() argument for rised PROT_EXEC flag.
+--=20
+Mantas Mikul=C4=97nas
