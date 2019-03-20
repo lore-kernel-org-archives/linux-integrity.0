@@ -2,104 +2,118 @@ Return-Path: <SRS0=28DF=RX=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CADEEC43381
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 14:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3265C43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 14:49:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C8122184D
-	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 14:30:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="W+oVgI3O"
+	by mail.kernel.org (Postfix) with ESMTP id 8BE052146E
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 14:49:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbfCTOaq (ORCPT
+        id S1726303AbfCTOt3 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 20 Mar 2019 10:30:46 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:38642 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726169AbfCTOaq (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 20 Mar 2019 10:30:46 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 627DB8EE10A;
-        Wed, 20 Mar 2019 07:30:45 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id G71zh68vwYKH; Wed, 20 Mar 2019 07:30:45 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id ACA1E8EE0CF;
-        Wed, 20 Mar 2019 07:30:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1553092244;
-        bh=GIn7yoSnPArPkrIyJL4Yj913wXPitEgfP98S9BP82qQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=W+oVgI3OdtcJhSNGFBqIDhgLuVC3Ne4pPWpzXAAbWhIC53DutVSsSoowyEEc3Jvid
-         lQ9ia3dTINusPXcBRutRTzy3Hpci4OYUGcuvfJqU4rXTCymHPWrRBAw1HmcQQPBOpJ
-         HNOWqtcD5y8ucXRusNzh7qWP+cF0mw00bqx3mI0Q=
-Message-ID: <1553092243.2835.3.camel@HansenPartnership.com>
+        Wed, 20 Mar 2019 10:49:29 -0400
+Received: from mga14.intel.com ([192.55.52.115]:45287 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726067AbfCTOt2 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 20 Mar 2019 10:49:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP; 20 Mar 2019 07:49:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,249,1549958400"; 
+   d="scan'208";a="135685466"
+Received: from unknown (HELO tstruk-mobl1.jf.intel.com) ([10.7.196.61])
+  by orsmga003.jf.intel.com with ESMTP; 20 Mar 2019 07:49:28 -0700
 Subject: Re: [PATCH v2] tpm: fix an invalid condition in tpm_common_poll
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Tadeusz Struk <tadeusz.struk@intel.com>,
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
         jarkko.sakkinen@linux.intel.com
 Cc:     grawity@gmail.com, linux-integrity@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Wed, 20 Mar 2019 07:30:43 -0700
-In-Reply-To: <155302749437.13955.651380639754310898.stgit@tstruk-mobl1.jf.intel.com>
 References: <155302749437.13955.651380639754310898.stgit@tstruk-mobl1.jf.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+ <1553092243.2835.3.camel@HansenPartnership.com>
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
+ 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
+ FheFfUJaD4iEjuL98uUjS/AI
+Message-ID: <d707229d-e395-2c31-7bf6-c0ca2a19b625@intel.com>
+Date:   Wed, 20 Mar 2019 07:49:27 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <1553092243.2835.3.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2019-03-19 at 13:31 -0700, Tadeusz Struk wrote:
-> The poll condition should only check response_length,
-> because reads should only be issued if there is data to read.
-> The response_read flag only prevents double writes.
-> The problem was that the write set the response_read to false,
-> enqued a tpm job, and returned. Then application called poll
-> which checked the response_read flag and returned EPOLLIN.
-> Then the application called read, but got nothing.
-> After all that the async_work kicked in.
-> Added also mutex_lock around the poll check to prevent
-> other possible race conditions.
-> 
-> Fixes: 9488585b21bef0df12 ("tpm: add support for partial reads")
-> Reported-by: Mantas Mikulėnas <grawity@gmail.com>
-> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
-> ---
->  drivers/char/tpm/tpm-dev-common.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-dev-common.c
-> b/drivers/char/tpm/tpm-dev-common.c
-> index 5eecad233ea1..7312d3214381 100644
-> --- a/drivers/char/tpm/tpm-dev-common.c
-> +++ b/drivers/char/tpm/tpm-dev-common.c
-> @@ -203,12 +203,14 @@ __poll_t tpm_common_poll(struct file *file,
-> poll_table *wait)
->  	__poll_t mask = 0;
->  
->  	poll_wait(file, &priv->async_wait, wait);
-> +	mutex_lock(&priv->buffer_mutex);
->  
-> -	if (!priv->response_read || priv->response_length)
-> +	if (priv->response_length)
->  		mask = EPOLLIN | EPOLLRDNORM;
->  	else
->  		mask = EPOLLOUT | EPOLLWRNORM;
->  
-> +	mutex_unlock(&priv->buffer_mutex);
+On 3/20/19 7:30 AM, James Bottomley wrote:
+> Just an observation on this: the mutex is now no-longer necessary
+> because a read on a size_t quantity is always atomic.
 
-Just an observation on this: the mutex is now no-longer necessary
-because a read on a size_t quantity is always atomic.
+True, that's why it wasn't there at the beginning, but
+then things changed and I forgot to add it, so let's
+put it there just in case.
 
-James
-
+Thanks,
+-- 
+Tadeusz
