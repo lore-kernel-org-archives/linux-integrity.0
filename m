@@ -1,119 +1,132 @@
-Return-Path: <SRS0=sVEj=RW=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=28DF=RX=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1748C43381
-	for <linux-integrity@archiver.kernel.org>; Tue, 19 Mar 2019 23:04:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49FBBC43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 01:21:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A683E2175B
-	for <linux-integrity@archiver.kernel.org>; Tue, 19 Mar 2019 23:04:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vf5dcy5Z"
+	by mail.kernel.org (Postfix) with ESMTP id 1BA3821841
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Mar 2019 01:21:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbfCSXEF (ORCPT
+        id S1726823AbfCTBVJ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 19 Mar 2019 19:04:05 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:32826 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726832AbfCSXEF (ORCPT
+        Tue, 19 Mar 2019 21:21:09 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:32990 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726937AbfCTBVJ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 19 Mar 2019 19:04:05 -0400
-Received: by mail-it1-f194.google.com with SMTP id f186so20589309ita.0;
-        Tue, 19 Mar 2019 16:04:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lRG31FVxu+ytEbBMyE08gIvbBLVXhFZwEjv+hRH6sr4=;
-        b=Vf5dcy5ZCws+kdILZUbA9xqQLm/IphqoT1I2yLPLUrsH9ULIDwumpygxkKA+fT/Iq8
-         X8EHVMtGgjbqC8EkG1NV9hYJMoBKQ88gjyzXNYlbQkk6lTon45miFpPD4T7IP4k/zdH8
-         T+dprOf87uvX0PjzYuzEDyWW2lSg62BYS+vKev3YzIt1u+cT23mVbT2MVnRyXqfbS735
-         mch71AYXhZqv6mhzrtkJxt0sf8QbeqdCxhsqbgUw4lt5Lm7qaBmXP4Icz/mxv38K6WXg
-         EPDzP0ICCsCHRwJ4lgbNsa6E3XhnnyTAa9dT3OIotv1J0MGbCqHz6lOxXnO/vpbMgILZ
-         DVHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lRG31FVxu+ytEbBMyE08gIvbBLVXhFZwEjv+hRH6sr4=;
-        b=ouQvuD3roa/YYGRpqZGzPIVLivl5BWOnwdeQsj7QbzrcLZbXgc/DMOtUxaMJL3BA52
-         gS5oi4I03CO1rDFZperYjTbQTr5K8XJTOo6C67L0zUlRZ2j/MdOyfmlbEYNqPQcpRe70
-         hxcKX/UUECEQre2WOsXLA/dgO9q/mdcn46XUe/e2E4UyiWAFDxba0fk1iZhrEzQGO3VL
-         7kdc1MK9JsXbCFISkNjyRuxOGNW3vr/gnhCaZk5Qf/9sRsujFr398I8NN5pdhss/0Geq
-         TiP9V7P3UUI9n2QA603HVpCKjUps/jMM/haG2g+tVoGdtgf0U3Q2PrumKXdjwg+N/HOg
-         78xQ==
-X-Gm-Message-State: APjAAAX8WUYBYdGMdamfKa1+ONyYQLHo2ukbbONiFEp39jl/4ffqWjEQ
-        +ADDI2bEj8tLRmnK/y6Ks/9hykyvh3YtJpyes4I=
-X-Google-Smtp-Source: APXvYqxlkVSuFABOhBo6l6ShNzF03WMXTYdeCJhLPre7qulx/h98iqzAXaKzEFhPCLs4QphqI/6s2bAsW3My7MRMQAc=
-X-Received: by 2002:a05:660c:12d4:: with SMTP id k20mr1066597itd.30.1553036643742;
- Tue, 19 Mar 2019 16:04:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <CADBGO7_WUoA53gM8EDFy6Q36SDEZPU9V=OUBA0QM20FOko51Rg@mail.gmail.com>
- <CADBGO7-UkQMxSPdSX9bGVPxSRROj75FA16FuXeFrVmcKVQ_Qdg@mail.gmail.com>
-In-Reply-To: <CADBGO7-UkQMxSPdSX9bGVPxSRROj75FA16FuXeFrVmcKVQ_Qdg@mail.gmail.com>
-From:   Paul Zimmerman <pauldzim@gmail.com>
-Date:   Tue, 19 Mar 2019 16:03:37 -0700
-Message-ID: <CADBGO7_XnbXiWHB=O1B_+b+CUA9g-bYJHN37VJ2SsxXMNHcPOQ@mail.gmail.com>
-Subject: Re: Regression in suspend-to-ram (TPM related) with 5.1-rc1 (BISECTED)
-To:     Peter Huewe <peterhuewe@gmx.de>,
+        Tue, 19 Mar 2019 21:21:09 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2K1EQvN118400
+        for <linux-integrity@vger.kernel.org>; Tue, 19 Mar 2019 21:21:07 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2rbbpc06f1-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 19 Mar 2019 21:21:07 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 20 Mar 2019 01:21:01 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 20 Mar 2019 01:20:57 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2K1L0Yl33488980
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Mar 2019 01:21:00 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 062554203F;
+        Wed, 20 Mar 2019 01:21:00 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3A93142045;
+        Wed, 20 Mar 2019 01:20:58 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.93.235])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 20 Mar 2019 01:20:58 +0000 (GMT)
+Subject: Re: [PATCH 0/6] security/keys/encrypted: Break module dependency
+ chain
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     James Bottomley <jejb@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        keyrings@vger.kernel.org
+Cc:     Ira Weiny <ira.weiny@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Keith Busch <keith.busch@intel.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+        David Howells <dhowells@redhat.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        linux-integrity@vger.kernel.org, ecryptfs@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Tue, 19 Mar 2019 21:20:47 -0400
+In-Reply-To: <1553029714.2932.43.camel@linux.ibm.com>
+References: <155297557534.2276575.16264199708584900090.stgit@dwillia2-desk3.amr.corp.intel.com>
+         <CAPcyv4ij2nHD7JumKNcNYB4gAGujWzCPkcpoi=XafmG3EP2b0g@mail.gmail.com>
+         <1553029714.2932.43.camel@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19032001-0008-0000-0000-000002CF5617
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19032001-0009-0000-0000-0000223B6B20
+Message-Id: <1553044847.4899.169.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-20_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1903200006
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-So I bisected this down to:
+On Tue, 2019-03-19 at 14:08 -0700, James Bottomley wrote:
+> On Tue, 2019-03-19 at 14:01 -0700, Dan Williams wrote:
+> > On Mon, Mar 18, 2019 at 11:18 PM Dan Williams <dan.j.williams@intel.c
+> > om> wrote:
+> > > 
+> > > With v5.1-rc1 all the nvdimm sub-system regression tests started
+> > > failing because the libnvdimm module failed to load in the qemu-kvm 
+> > > test environment.  Critically that environment does not have a TPM.
+> > > Commit 240730437deb "KEYS: trusted: explicitly use tpm_chip
+> > > structure..." started to require a TPM to be present for the
+> > > trusted.ko module to load where there was no requirement for that
+> > > before.
+> > > 
+> > > Rather than undo the "fail if no hardware" behavior James points
+> > > out that the module dependencies can be broken by looking up the
+> > > key-type by name. Remove the dependencies on the "key_type_trusted"
+> > > and "key_type_encrypted" symbol exports, and clean up other
+> > > boilerplate that supported those exports in different
+> > > configurations.
+> > 
+> > Any feedback? Was hoping to get at least patch1 in the queue for
+> > v5.1-rc2 since this effectively disables the nvdimm driver on typical
+> > configurations. Jarkko, would you be willing to merge it since the
+> > regression came through your tree?
+> 
+> The reason I sent out the RFC was to see if the people who actually
+> wrote the code had any reasons they needed the current way of doing
+> things preserving.
 
-# first bad commit: [a3fbfae82b4cb3ff9928e29f34c64d0507cad874] tpm:
-take TPM chip power gating out of tpm_transmit()
+No, it looks fine.  The error return codes will change, but I don't
+think that is a problem.
 
-but this doesn't revert cleanly on Linus' HEAD. Anyone have an idea what
-could be wrong here?
+Mimi
 
-Thanks,
--- Paul
+> 
+> I think your series looks fine except you need to export
+> key_type_lookup (patch 2) before you use it (patch 1) to preserve
+> bisectability of builds.
+> 
+> James
 
-On Mon, Mar 18, 2019 at 6:08 PM Paul Zimmerman <pauldzim@gmail.com> wrote:
->
-> Hmm, looks like my original email didn't make it to the linux-integrity
-> list, maybe the two attachments were too big. You can read it on the
-> linux-kernel list here:
-> https://marc.info/?l=linux-kernel&m=155294522323580
->
-> On Mon, Mar 18, 2019 at 2:39 PM Paul Zimmerman <pauldzim@gmail.com> wrote:
-> >
-> > Hello,
-> >
-> > I'm seeing suspend-to-ram fail consistently in 5.1-rc1. Dmesg shows a
-> > failure in the TPM subsystem. This is on an HP Elitebook 640 G1 running
-> > Linux Mint.
-> >
-> > [   43.110604] wlo1: deauthenticating from 58:8b:f3:44:8f:5c by local choice (Reason: 3=DEAUTH_LEAVING)
-> > [   53.179672] PM: suspend entry (deep)
-> > [   53.179674] PM: Syncing filesystems ... done.
-> > [   53.190349] Freezing user space processes ... (elapsed 0.001 seconds) done.
-> > [   53.192107] OOM killer disabled.
-> > [   53.192107] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
-> > [   53.193147] printk: Suspending console(s) (use no_console_suspend to debug)
-> > [   53.209184] sd 2:0:0:0: [sdb] Synchronizing SCSI cache
-> > [   53.213137] sd 0:0:0:0: [sda] Synchronizing SCSI cache
-> > [   53.214632] sd 0:0:0:0: [sda] Stopping disk
-> > [   53.241598] tpm tpm0: tpm_try_transmit: send(): error -5
-> > [   53.241600] tpm tpm0: Error (-5) sending savestate before suspend
-> > [   53.241606] PM: __pnp_bus_suspend(): tpm_pm_suspend+0x0/0x90 returns -5
-> > [   53.241609] PM: dpm_run_callback(): pnp_bus_suspend+0x0/0x20 returns -5
-> > [   53.241610] PM: Device 00:06 failed to suspend: error -5
-> >
-> > Full dmesg and config attached. Anything I can do to help debug this?
-> > It takes about 45 minutes to do a full kernel rebuild on this machine,
-> > so doing a full bisection would be a little painful.
-> >
-> > -- Paul
