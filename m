@@ -3,46 +3,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD0C4C43381
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Mar 2019 13:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F7AC43381
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Mar 2019 13:46:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97D9F218E2
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Mar 2019 13:41:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FB5F218D8
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Mar 2019 13:46:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728168AbfCUNlq (ORCPT
+        id S1727944AbfCUNp6 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 21 Mar 2019 09:41:46 -0400
-Received: from mga07.intel.com ([134.134.136.100]:24000 "EHLO mga07.intel.com"
+        Thu, 21 Mar 2019 09:45:58 -0400
+Received: from mga12.intel.com ([192.55.52.136]:2498 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728013AbfCUNlp (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 21 Mar 2019 09:41:45 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1727829AbfCUNp6 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 21 Mar 2019 09:45:58 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Mar 2019 06:41:44 -0700
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Mar 2019 06:45:57 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,253,1549958400"; 
-   d="scan'208";a="153821280"
+   d="scan'208";a="153822361"
 Received: from dilu-mobl2.ccr.corp.intel.com (HELO localhost) ([10.249.254.184])
-  by fmsmga002.fm.intel.com with ESMTP; 21 Mar 2019 06:41:41 -0700
-Date:   Thu, 21 Mar 2019 15:41:40 +0200
+  by fmsmga002.fm.intel.com with ESMTP; 21 Mar 2019 06:45:50 -0700
+Date:   Thu, 21 Mar 2019 15:45:49 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Paul Zimmerman <pauldzim@gmail.com>
-Cc:     Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Regression in suspend-to-ram (TPM related) with 5.1-rc1
- (BISECTED)
-Message-ID: <20190321134140.GA4603@linux.intel.com>
-References: <CADBGO7_WUoA53gM8EDFy6Q36SDEZPU9V=OUBA0QM20FOko51Rg@mail.gmail.com>
- <CADBGO7-UkQMxSPdSX9bGVPxSRROj75FA16FuXeFrVmcKVQ_Qdg@mail.gmail.com>
- <CADBGO7_XnbXiWHB=O1B_+b+CUA9g-bYJHN37VJ2SsxXMNHcPOQ@mail.gmail.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     keyrings@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Keith Busch <keith.busch@intel.com>,
+        David Howells <dhowells@redhat.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity@vger.kernel.org, ecryptfs@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/6] security/keys/encrypted: Break module dependency
+ chain
+Message-ID: <20190321134549.GB4603@linux.intel.com>
+References: <155297557534.2276575.16264199708584900090.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <CAPcyv4ij2nHD7JumKNcNYB4gAGujWzCPkcpoi=XafmG3EP2b0g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CADBGO7_XnbXiWHB=O1B_+b+CUA9g-bYJHN37VJ2SsxXMNHcPOQ@mail.gmail.com>
+In-Reply-To: <CAPcyv4ij2nHD7JumKNcNYB4gAGujWzCPkcpoi=XafmG3EP2b0g@mail.gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
@@ -50,21 +60,35 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Mar 19, 2019 at 04:03:37PM -0700, Paul Zimmerman wrote:
-> So I bisected this down to:
+On Tue, Mar 19, 2019 at 02:01:44PM -0700, Dan Williams wrote:
+> On Mon, Mar 18, 2019 at 11:18 PM Dan Williams <dan.j.williams@intel.com> wrote:
+> >
+> > With v5.1-rc1 all the nvdimm sub-system regression tests started failing
+> > because the libnvdimm module failed to load in the qemu-kvm test
+> > environment.  Critically that environment does not have a TPM. Commit
+> > 240730437deb "KEYS: trusted: explicitly use tpm_chip structure..."
+> > started to require a TPM to be present for the trusted.ko module to load
+> > where there was no requirement for that before.
+> >
+> > Rather than undo the "fail if no hardware" behavior James points out
+> > that the module dependencies can be broken by looking up the key-type by
+> > name. Remove the dependencies on the "key_type_trusted" and
+> > "key_type_encrypted" symbol exports, and clean up other boilerplate that
+> > supported those exports in different configurations.
 > 
-> # first bad commit: [a3fbfae82b4cb3ff9928e29f34c64d0507cad874] tpm:
-> take TPM chip power gating out of tpm_transmit()
-> 
-> but this doesn't revert cleanly on Linus' HEAD. Anyone have an idea what
-> could be wrong here?
+> Any feedback? Was hoping to get at least patch1 in the queue for
+> v5.1-rc2 since this effectively disables the nvdimm driver on typical
+> configurations. Jarkko, would you be willing to merge it since the
+> regression came through your tree?
 
-Sorry I've been in flu for the early week. I spotted the bug
-immediately.  When I did these patches I did not have TPM 1.x at my
-hand. I used fTPM 2.0 and dTPM 2.0. Stefan did TPM 1.x testing but I
-probably forgot to ask him to try out suspend.
+Yes, of course. The feedback has been extremely passive because I've
+been sick leave for the early week :-)
 
-Anyway, the bug is obvious and I'll send you a patch to try out.
-Thanks a lot for bisecting this!
+Before I'm merging this I'm just thinking that would it be better
+idea to merge a patch for trusted.c that reverts the old behavior
+with cc to stable and fixes tags as I said in my earlier response.
+
+It would less intrusive for stable kernels. Lets quickly sort out
+the best strategy before merging.
 
 /Jarkko
