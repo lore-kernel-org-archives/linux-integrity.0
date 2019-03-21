@@ -2,163 +2,105 @@ Return-Path: <SRS0=2aJh=RY=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B37AC43381
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Mar 2019 11:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB3DC4360F
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Mar 2019 11:48:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AD2A218FD
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Mar 2019 11:45:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 086DC218FD
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Mar 2019 11:48:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=omprussia.ru header.i=@omprussia.ru header.b="UBFL84xt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725985AbfCULpG (ORCPT
+        id S1728258AbfCULsQ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 21 Mar 2019 07:45:06 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40838 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727870AbfCULpF (ORCPT
+        Thu, 21 Mar 2019 07:48:16 -0400
+Received: from mail.omprussia.ru ([5.134.221.218]:35508 "EHLO
+        mail.omprussia.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728102AbfCULsO (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 21 Mar 2019 07:45:05 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2LBdJ6p090482
-        for <linux-integrity@vger.kernel.org>; Thu, 21 Mar 2019 07:45:04 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2rc77ry90v-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 21 Mar 2019 07:45:04 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 21 Mar 2019 11:44:56 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 21 Mar 2019 11:44:54 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2LBixrO60883144
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Mar 2019 11:44:59 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0213552057;
-        Thu, 21 Mar 2019 11:44:59 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.93.235])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 495A75204F;
-        Thu, 21 Mar 2019 11:44:58 +0000 (GMT)
-Subject: Re: [PATCH v2 3/5] NFSD: Remove ima_file_check call
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Chuck Lever <chuck.lever@oracle.com>
-Cc:     Bruce Fields <bfields@fieldses.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Date:   Thu, 21 Mar 2019 07:44:47 -0400
-In-Reply-To: <0E02D70A-A5E9-4B27-9922-521D5A0755A3@oracle.com>
-References: <20190307151838.11306.94183.stgit@manet.1015granger.net>
-         <20190307152854.11306.84006.stgit@manet.1015granger.net>
-         <20190308211016.GB27011@fieldses.org>
-         <ECE4FD20-840C-4047-9454-27BDF0A905EA@oracle.com>
-         <20190308212310.GB28002@fieldses.org>
-         <872F3DFD-E1A7-443E-B666-25C5931F0748@oracle.com>
-         <1553027371.4899.116.camel@linux.ibm.com>
-         <0E02D70A-A5E9-4B27-9922-521D5A0755A3@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19032111-0008-0000-0000-000002CFEC8E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19032111-0009-0000-0000-0000223C07F7
-Message-Id: <1553168687.4899.396.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-21_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1903210086
+        Thu, 21 Mar 2019 07:48:14 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.omprussia.ru (Postfix) with ESMTP id 77CF2B83CA8;
+        Thu, 21 Mar 2019 14:48:13 +0300 (MSK)
+Received: from mail.omprussia.ru ([127.0.0.1])
+        by localhost (mail.omprussia.ru [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 5eQrnZOoTYc4; Thu, 21 Mar 2019 14:48:13 +0300 (MSK)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.omprussia.ru (Postfix) with ESMTP id 2DB70B83FE6;
+        Thu, 21 Mar 2019 14:48:13 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.omprussia.ru 2DB70B83FE6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=omprussia.ru;
+        s=EC9C64F2-3532-11E8-B653-5B7E995A80AF; t=1553168893;
+        bh=ooi8lgR/3m84hMf3wkfZGs/8sxM/rioOlzWrJ8fOInc=;
+        h=To:From:Message-ID:Date:MIME-Version;
+        b=UBFL84xtU5dU+Ay6ok9a0ulz3Z0ikFxfS3EG+SaCgdWxZqX1Op9dV3SDGRGkbohhc
+         wGl38XV3J9dbpw1RVdDml4QEPHPwG/NlGwJ4DEP5lqQc/Twd1RZ8hqSiX5ehT4XmmI
+         l6C+niIpAC5nYnNHd9uiAW6m9yEPEAhopBgWQqgvypB0syvrJwxU1bD9LKTQkuWhZU
+         jjnSSG2IhTSDNf1A55XhZlP+4mYWjjFR8ew0WVpmiVLvtJaMMCIII0y4Fl3ZgAw720
+         EQ3jVdZXZk7BI8h09gzpzV289UFar9owceDfQ4DtnKbFXPzedNuWMnK6NPKSzYAT03
+         /CGtPp0BbL37g==
+X-Virus-Scanned: amavisd-new at mail.omprussia.ru
+Received: from mail.omprussia.ru ([127.0.0.1])
+        by localhost (mail.omprussia.ru [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id E4Z7HdDEE0e3; Thu, 21 Mar 2019 14:48:12 +0300 (MSK)
+Received: from [10.189.20.33] (unknown [10.189.20.33])
+        by mail.omprussia.ru (Postfix) with ESMTPSA id E921CB83CA8;
+        Thu, 21 Mar 2019 14:48:12 +0300 (MSK)
+Subject: Re: Should mprotect(..., PROT_EXEC) be checked by IMA?
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Matthew Garrett <mjg59@google.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        Jann Horn <jannh@google.com>
+References: <cce2c4c7-5333-41c3-aeef-34d43e63acb0@omprussia.ru>
+ <1552945715.8658.299.camel@linux.ibm.com>
+ <452752df-98f9-c361-878a-5df84ab36847@omprussia.ru>
+ <1552994559.4899.26.camel@linux.ibm.com>
+ <84145490-6f70-214f-8241-42d556590240@omprussia.ru>
+ <1553015134.4899.82.camel@linux.ibm.com>
+ <a9830bde-8157-6078-b544-fcffb20d2501@omprussia.ru>
+ <CACdnJut6YfLnq-nCC1hHTrKYXabHoSEXN1wMuCyVybU+o_iwCg@mail.gmail.com>
+ <1553167318.4899.382.camel@linux.ibm.com>
+From:   Igor Zhbanov <i.zhbanov@omprussia.ru>
+Message-ID: <dab923ca-ef53-4af2-034a-bea4151a4e25@omprussia.ru>
+Date:   Thu, 21 Mar 2019 14:48:09 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1553167318.4899.382.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, 2019-03-20 at 08:40 -0500, Chuck Lever wrote:
+On 21.03.2019 14:21, Mimi Zohar wrote:
+> <snip>
+> Igor, as for shared libraries:
 > 
-> > On Mar 19, 2019, at 3:29 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > 
-> > On Fri, 2019-03-08 at 16:29 -0500, Chuck Lever wrote:
-> > 
-> > Thanks Serge for bringing this thread to my attention.  Sorry for the
-> > delay in responding ...
-> > 
-> >>> On Mar 8, 2019, at 4:23 PM, Bruce Fields <bfields@fieldses.org> wrote:
-> >>> 
-> >>> On Fri, Mar 08, 2019 at 04:11:06PM -0500, Chuck Lever wrote:
-> >>>> 
-> >>>> 
-> >>>>> On Mar 8, 2019, at 4:10 PM, bfields@fieldses.org wrote:
-> >>>>> 
-> >>>>> On Thu, Mar 07, 2019 at 10:28:54AM -0500, Chuck Lever wrote:
-> >>>>>> The NFS server needs to allow NFS clients to perform their own
-> >>>>>> attestation and measurement.
-> > 
-> > Measurement and attestation is only one aspect.  The other aspect is
-> > verifying the integrity of files.  Shouldn't the NFS server verify the
-> > integrity of a file before allowing it to be served (eg. malware)?
+> 1. Extend ima_file_mmap() to permit, based on policy, verifying file
+> signatures for files being mmap'ed read and preventing validly signed
+> files from being mmap'ed write.
 > 
-> Hi Mimi, thanks for the review.
+> 2. Define an IMA mprotect hook that permits, based on policy,
+> preventing memory having validly signed backing storage from setting
+> the memory region to write, but allow execute.
 > 
-> Architecturally, the server is not using the file's data, it is
-> merely part of the filesystem that stores it. But that said, there
-> are several concrete reasons why I feel an NFS server should not be
-> involved in measurement/attestation, but only with storing file
-> content and IMA metadata.
+> (This will require access to the IMA mmap signature verification
+> status cached in the "iint".)
 
-"Remote attestation" is the process of verifying the measurement list
-against the TPM PCRs, based on a TPM quote.  I think you meant
-"measurement/appraisal".
+Yes, it could work.
 
-> 
-> 1. The broadest attack surface for a remote filesystem is modification
-> of data in flight. Attestation of the file on the server is not going
-> to defend against that attack, only attestation on the client will do
-> that. Is there a good reason to pay the cost of double attestation?
+Pages mapped from the signed backing store rarely need to be altered
+so preventing them from being changed will work.
 
-Doesn't the server have a responsibility to provide files that have
-not been unintentionally or maliciously altered?
+Along with disabling creating anonymous executable pages at all since
+is is hardly needed for the system services for normal work.
 
-> 2. It is possible (perhaps even likely) that the NFS server and a
-> client of that server will have different IMA policies and even
-> different file signing authorities.
-
-That doesn't negate the due diligence on the server's part of
-preventing the spread of malware.
-> 
-> A third, perhaps related, reason is that NFS can run on non-Linux NFS
-> servers which would not have any attestation at all. An NFS client
-> should not have to rely on the server for attestation, but should
-> trust only its own measurement of each file, which would be done as
-> late as possible before use.
-
-The ima_file_check() hook can also audit the file, providing
-additional forensic information (eg. the file hash).
-
-Mimi
-
-> 
-> Lastly, the NFS protocol does not enable an NFS client to tell a
-> server how the file is to be used. For example, the server's policy
-> might block execution of an unverifiable file, but the server won't
-> have any way of knowing how the client is going to use that file.
-> The client might be opening the file to copy it or update its IMA
-> metadata.
-> 
-> Speaking of protocol, there's no special error code that reports an
-> integrity verification failure. The client just sees that the UID
-> does not have access to the file. There's no way the user or client
-> can do anything to clear this condition via NFS without IMA support.
-> 
-> If these reasons make sense, should I add them to the patch description?
-> 
-
+It could block polymorphic code so only ROP (return-oriented programming)
+could survive after intercepting of execution flow without having an ability
+to download any extra code from their servers.
