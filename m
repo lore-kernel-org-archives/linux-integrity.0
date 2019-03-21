@@ -2,121 +2,84 @@ Return-Path: <SRS0=2aJh=RY=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD893C43381
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Mar 2019 01:03:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F839C43381
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Mar 2019 11:19:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75EB9218A5
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Mar 2019 01:03:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="Ih26zWHN"
+	by mail.kernel.org (Postfix) with ESMTP id 692B921841
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Mar 2019 11:19:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726853AbfCUBD7 (ORCPT
+        id S1727923AbfCULTb (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 20 Mar 2019 21:03:59 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:37149 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727081AbfCUBD6 (ORCPT
+        Thu, 21 Mar 2019 07:19:31 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:36196 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727823AbfCULTb (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 20 Mar 2019 21:03:58 -0400
-Received: by mail-lf1-f66.google.com with SMTP id u2so3349231lfd.4
-        for <linux-integrity@vger.kernel.org>; Wed, 20 Mar 2019 18:03:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XByYNqTBSkGfbQQdJYJCEEyn3to82S+c0NeJ7pJZ2MQ=;
-        b=Ih26zWHNYKJeM5AKfUF9Pnmlj+YtIKVyPV1Y+buVHkeDP8rX14kLp7jr2PEVNERH2Z
-         Y+UrezSPPKs7bmyookHqG9aL2AADcYWv33Lr1YwxAt7IzybGdXKbHsDrpP927eRdUyJU
-         80NT8/7R92tVhqI1q5LTfpqIXxeWXnJHfF6i6NmupdQAy6A5ziAkTPwKM+axR/BSwNdv
-         1naJx3RcZvCLS+OB5MTQvQnBizRxWex5agG1LEGtsG7qkXwrRpckX9D66KnrByfkB40A
-         emlAq9+0eLo1NgH8HWhOzjQEhbrK0UOvDfCdiQwfDYMV5RCShIJS4//loy+rNiTMSooU
-         N9HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XByYNqTBSkGfbQQdJYJCEEyn3to82S+c0NeJ7pJZ2MQ=;
-        b=UZjDB9MgsG5AUyqkvl9LHCbLdSA8+9mb9hLOo6PGMlrVRlTyYbc7qmdTQmqbvBWZ5r
-         rNyQZeBLrW1jqy5rlCJ0isfe2iamY9D25ozvjis3KWQZ7xzogrWn8dlAaoMVdO42NKIN
-         89wkmYhKMUsz6FrBAgJcPft7YCah4fVExHKVTwQKA3TK0Tf0n2wCoi5R1wynTedPsJDf
-         7OCZAH60wsX9dGPtL1ci6MSOsqkKzlugPDjU+qu2c6F9QPKDdbAS2UW4skpC8HZWg9FU
-         2DrCnfz8K7T5aWybky7FpBGn0H4C5FaCsluArmcK70QfRHa/Y7JvW2FjWs+cmi7U4GSJ
-         oVAA==
-X-Gm-Message-State: APjAAAWALmb4CYTjHj8uXLsTqRgQ3GeXQHg3hJVRGfxOKXxy4KmzKQSK
-        soVRx3aNBPZrkFHaAz7ifwSNrRWtluXgRQZXSgtf
-X-Google-Smtp-Source: APXvYqxET7lW0kqOOmQatOQMqnKI+Cvaf0nlfQyIC/3ov2wK1XTBYhQKU5IVCvQWGJQJJWJf+CVSCVkEVKWQ023Hjts=
-X-Received: by 2002:ac2:42da:: with SMTP id n26mr321163lfl.91.1553130236833;
- Wed, 20 Mar 2019 18:03:56 -0700 (PDT)
+        Thu, 21 Mar 2019 07:19:31 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1h6vjG-0005yU-SL; Thu, 21 Mar 2019 19:19:22 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1h6vjC-0003EC-Lc; Thu, 21 Mar 2019 19:19:18 +0800
+Date:   Thu, 21 Mar 2019 19:19:18 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Vitaly Chikunov <vt@altlinux.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 02/11] crypto: akcipher - check the presence of
+ callback before the call
+Message-ID: <20190321111918.4kr7vdgz23xzjwed@gondor.apana.org.au>
+References: <20190301175918.29694-1-vt@altlinux.org>
+ <20190301175918.29694-3-vt@altlinux.org>
 MIME-Version: 1.0
-References: <81d0122d14c4fbb3a2ad33d25fdf2dd001c7dcc7.1552737854.git.rgb@redhat.com>
- <CAHC9VhS61LTQMXiALRre+5_+wvwe6Wa9RN-WYNTjvz5LVsA5rw@mail.gmail.com> <20190321005008.wfz3bk7q262km5fz@madcap2.tricolour.ca>
-In-Reply-To: <20190321005008.wfz3bk7q262km5fz@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 20 Mar 2019 21:03:45 -0400
-Message-ID: <CAHC9VhTPBF=8PNr4800yTWedrxxO91n8AQ8xmkBiNMK+cxGNGg@mail.gmail.com>
-Subject: Re: [PATCH ghak109 V1] audit: link integrity evm_write_xattrs record
- to syscall event
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, sgrubb@redhat.com,
-        omosnace@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, zohar@linux.ibm.com,
-        mjg59@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190301175918.29694-3-vt@altlinux.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Mar 20, 2019 at 8:50 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2019-03-20 19:48, Paul Moore wrote:
-> > On Sat, Mar 16, 2019 at 8:10 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > In commit fa516b66a1bf ("EVM: Allow runtime modification of the set of
-> > > verified xattrs"), the call to audit_log_start() is missing a context to
-> > > link it to an audit event. Since this event is in user context, add
-> > > the process' syscall context to the record.
-> > >
-> > > In addition, the orphaned keyword "locked" appears in the record.
-> > > Normalize this by changing it to "xattr=(locked)".
-> > >
-> > > Please see the github issue
-> > > https://github.com/linux-audit/audit-kernel/issues/109
-> > >
-> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > ---
-> > >  security/integrity/evm/evm_secfs.c | 5 +++--
-> > >  1 file changed, 3 insertions(+), 2 deletions(-)
+On Fri, Mar 01, 2019 at 08:59:09PM +0300, Vitaly Chikunov wrote:
+> Because with introduction of EC-RDSA and change in workings of RSA in
+> regard to sign/verify, akcipher could have not all callbacks defined,
+> check the presence of callbacks before calling them to increase
+> robustness.
+> 
+> Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+> ---
+>  include/crypto/akcipher.h | 25 ++++++++++++++++---------
+>  1 file changed, 16 insertions(+), 9 deletions(-)
+> 
+> diff --git a/include/crypto/akcipher.h b/include/crypto/akcipher.h
+> index 2d690494568c..f537fad1989f 100644
+> --- a/include/crypto/akcipher.h
+> +++ b/include/crypto/akcipher.h
+> @@ -268,7 +268,10 @@ static inline unsigned int crypto_akcipher_maxsize(struct crypto_akcipher *tfm)
+>  {
+>  	struct akcipher_alg *alg = crypto_akcipher_alg(tfm);
+>  
+> -	return alg->max_size(tfm);
+> +	if (alg->max_size)
+> +		return alg->max_size(tfm);
+> +	else
+> +		return 0;
+>  }
 
-...
+Please do these checks at registration time instead and provide
+default implementations as needed.
 
-> > > @@ -222,7 +223,7 @@ static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
-> > >                 inode_lock(inode);
-> > >                 err = simple_setattr(evm_xattrs, &newattrs);
-> > >                 inode_unlock(inode);
-> > > -               audit_log_format(ab, "locked");
-> > > +               audit_log_format(ab, "xattr=(locked)");
-> >
-> > Two things come to mind:
-> >
-> > * While we can clearly trust the string above, should we be logging
-> > the xattr field value as an untrusted string so it is consistent with
-> > how we record other xattr names?
->
-> That would be a question for Steve.
-
-Yep, that's who I wanted to hear from, it's not really something I
-expected you to answer Richard.  I vaguely remember something about
-Steve's audit libs being able to handle both trusted and untrusted
-value strings for a given field, but I could have confused "able to
-handle" with "don't care".
-
+Thanks,
 -- 
-paul moore
-www.paul-moore.com
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
