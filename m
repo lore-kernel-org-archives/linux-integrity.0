@@ -2,88 +2,100 @@ Return-Path: <SRS0=JOkf=RZ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB96C43381
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 05:18:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C9D5C43381
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 07:59:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E586C21902
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 05:18:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553231886;
-	bh=1RwfR4wZGg5wvqtXX5QnuvT9FxKwsePFHu69Ic59dXc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=UT8VpW9QHuMbfli06xzzjpTwRSA/Dc7aLENXhUonNNaSq0RFEsXH/diKQ+KAIsuv0
-	 wChnMdRN3vpGM0+BCMMSH8CrCIrNTEsUooTZnhpNt9pi1MTMYuqRuaICmfiXJ+iLzb
-	 Y3t+NY3GlifHo4w3QQtCMVnDlE704JM80z91nCjk=
+	by mail.kernel.org (Postfix) with ESMTP id 2188D204FD
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 07:59:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=omprussia.ru header.i=@omprussia.ru header.b="ykXxGBYm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726032AbfCVFSF (ORCPT
+        id S1727604AbfCVH7J (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 22 Mar 2019 01:18:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39378 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725781AbfCVFSF (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Mar 2019 01:18:05 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07010218E2;
-        Fri, 22 Mar 2019 05:18:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553231884;
-        bh=1RwfR4wZGg5wvqtXX5QnuvT9FxKwsePFHu69Ic59dXc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wdzDZdwxoelcU7q4dhtHFGdZ0QImu3PCZ+B0W1Er/URXWudT3sVnfc631JbRefTEX
-         3eYyuv29Mht1SAkKxYNJo0mFlwonP/GL6eem5Ss/B6ulIQtvGVN3uxNMJkQLmohRV5
-         yNUgNGiT6pURCn8Xvew4AOTD7kbl8yeE65LMxvvY=
-Date:   Fri, 22 Mar 2019 06:18:02 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Tadeusz Struk <tadeusz.struk@intel.com>
-Cc:     jarkko.sakkinen@linux.intel.com, grawity@gmail.com,
-        James.Bottomley@hansenpartnership.com,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v3] tpm: fix an invalid condition in tpm_common_poll
-Message-ID: <20190322051802.GA17257@kroah.com>
-References: <155320933278.5015.1752135965699928631.stgit@tstruk-mobl1.jf.intel.com>
+        Fri, 22 Mar 2019 03:59:09 -0400
+Received: from mail.omprussia.ru ([5.134.221.218]:48982 "EHLO
+        mail.omprussia.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727558AbfCVH7J (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 22 Mar 2019 03:59:09 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.omprussia.ru (Postfix) with ESMTP id 90430B80E44;
+        Fri, 22 Mar 2019 10:59:07 +0300 (MSK)
+Received: from mail.omprussia.ru ([127.0.0.1])
+        by localhost (mail.omprussia.ru [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id Rg_Vyk_Hz69d; Fri, 22 Mar 2019 10:59:07 +0300 (MSK)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.omprussia.ru (Postfix) with ESMTP id 343E5B80E84;
+        Fri, 22 Mar 2019 10:59:07 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.omprussia.ru 343E5B80E84
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=omprussia.ru;
+        s=EC9C64F2-3532-11E8-B653-5B7E995A80AF; t=1553241547;
+        bh=GpjRHOoI+kTblHcSmFAM3WIOhk/bhiHptvFexJtuChs=;
+        h=To:From:Message-ID:Date:MIME-Version;
+        b=ykXxGBYmqbWjP4DYKbUt3cal0Qc2EyprjoJUdjFfLwjWX68rCpwBeiFrHEUflc/l+
+         mLsVEOAr75hqC9r3BO8JFGfR/muABYVses+tlyaEPWopQI65A0fKqlTqdpViGhOse4
+         fWRC5e3wd5gZHl+AjbblYctXhN7M3hjOYL2U2TCdW1I+UeynJfhOK2uN94H6VqeyYd
+         h7KuxL71om+RAtagE6f2XjNbXw9M2Svk4JeVMIoIKeZ1REvEsKPfL4/rb2gCMVckps
+         PsjnOYVeq0dSKEMf6zuz+ZX87XKJIFsI8urYeqOztNzXEQc2kqWHlAKCth/fVoT1lW
+         OQ2/0OVp+hYBg==
+X-Virus-Scanned: amavisd-new at mail.omprussia.ru
+Received: from mail.omprussia.ru ([127.0.0.1])
+        by localhost (mail.omprussia.ru [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id Ik1n0uWakkdW; Fri, 22 Mar 2019 10:59:07 +0300 (MSK)
+Received: from [10.189.20.33] (unknown [10.189.20.33])
+        by mail.omprussia.ru (Postfix) with ESMTPSA id 00EF7B80E44;
+        Fri, 22 Mar 2019 10:59:07 +0300 (MSK)
+Subject: Re: Should mprotect(..., PROT_EXEC) be checked by IMA?
+To:     Matthew Garrett <mjg59@google.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Jann Horn <jannh@google.com>
+References: <cce2c4c7-5333-41c3-aeef-34d43e63acb0@omprussia.ru>
+ <1552945715.8658.299.camel@linux.ibm.com>
+ <452752df-98f9-c361-878a-5df84ab36847@omprussia.ru>
+ <1552994559.4899.26.camel@linux.ibm.com>
+ <84145490-6f70-214f-8241-42d556590240@omprussia.ru>
+ <1553015134.4899.82.camel@linux.ibm.com>
+ <a9830bde-8157-6078-b544-fcffb20d2501@omprussia.ru>
+ <CACdnJut6YfLnq-nCC1hHTrKYXabHoSEXN1wMuCyVybU+o_iwCg@mail.gmail.com>
+ <1553167318.4899.382.camel@linux.ibm.com>
+ <dab923ca-ef53-4af2-034a-bea4151a4e25@omprussia.ru>
+ <CACdnJuvVqibDdd+MLKOHqEfdngTk=GSkfybj1jS3MpmC7rjyHg@mail.gmail.com>
+From:   Igor Zhbanov <i.zhbanov@omprussia.ru>
+Message-ID: <07347317-ee71-83c1-384a-0c3439980af7@omprussia.ru>
+Date:   Fri, 22 Mar 2019 10:59:12 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <155320933278.5015.1752135965699928631.stgit@tstruk-mobl1.jf.intel.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <CACdnJuvVqibDdd+MLKOHqEfdngTk=GSkfybj1jS3MpmC7rjyHg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Mar 21, 2019 at 04:02:12PM -0700, Tadeusz Struk wrote:
-> The poll condition should only check response_length,
-> because reads should only be issued if there is data to read.
-> The response_read flag only prevents double writes.
-> The problem was that the write set the response_read to false,
-> enqued a tpm job, and returned. Then application called poll
-> which checked the response_read flag and returned EPOLLIN.
-> Then the application called read, but got nothing.
-> After all that the async_work kicked in.
-> Added also mutex_lock around the poll check to prevent
-> other possible race conditions.
+On 21.03.2019 21:04, Matthew Garrett wrote:
+> On Thu, Mar 21, 2019 at 4:48 AM Igor Zhbanov <i.zhbanov@omprussia.ru> wrote:
+>> Along with disabling creating anonymous executable pages at all since
+>> is is hardly needed for the system services for normal work.
 > 
-> Fixes: 9488585b21bef0df12 ("tpm: add support for partial reads")
-> Reported-by: Mantas Mikulėnas <grawity@gmail.com>
-> Tested-by: Mantas Mikulėnas <grawity@gmail.com>
-> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
-> ---
->  drivers/char/tpm/tpm-dev-common.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> Is this true? Do no JIT compilers behave this way?
 
-<formletter>
+Well, besides JIT I've scanned all /proc/PID/maps of my web-server and didn't
+find any process with mapped anonymous executable pages.
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read:
-    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-for how to do this properly.
+As for JIT I suppose we could use prctl or something else to allow having
+anonymous executable pages.
 
-</formletter>
+I'm pondering about some system-wide (or processes subtree-wide) default
+setting controlling whether it is allowed to have anonymous pages by default,
+and then some mechanism to turn it on/off on a per-process bases. Perhaps
+with some locking preventing reenabling after it was dropped.
+
+And what do you think about it?
