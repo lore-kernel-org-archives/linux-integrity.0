@@ -2,74 +2,87 @@ Return-Path: <SRS0=JOkf=RZ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F903C43381
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 13:10:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A004C43381
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 14:39:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39516218E2
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 13:10:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 193C621841
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 14:39:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729998AbfCVLeI (ORCPT
+        id S1728827AbfCVOi7 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 22 Mar 2019 07:34:08 -0400
-Received: from mga01.intel.com ([192.55.52.88]:55384 "EHLO mga01.intel.com"
+        Fri, 22 Mar 2019 10:38:59 -0400
+Received: from mga07.intel.com ([134.134.136.100]:13307 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729978AbfCVLeG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Mar 2019 07:34:06 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1728114AbfCVOi7 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 22 Mar 2019 10:38:59 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Mar 2019 04:34:06 -0700
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Mar 2019 07:38:58 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,256,1549958400"; 
-   d="scan'208";a="216549901"
-Received: from vanderss-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.199])
-  by orsmga001.jf.intel.com with ESMTP; 22 Mar 2019 04:34:02 -0700
-Date:   Fri, 22 Mar 2019 13:34:01 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Tadeusz Struk <tadeusz.struk@intel.com>
+   d="scan'208";a="216590444"
+Received: from tstruk-mobl1.jf.intel.com ([10.7.196.61])
+  by orsmga001.jf.intel.com with ESMTP; 22 Mar 2019 07:38:58 -0700
+Subject: [PATCH RESEND v3] tpm: fix an invalid condition in tpm_common_poll
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+To:     jarkko.sakkinen@linux.intel.com
 Cc:     grawity@gmail.com, James.Bottomley@HansenPartnership.com,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v3] tpm: fix an invalid condition in tpm_common_poll
-Message-ID: <20190322113401.GL3122@linux.intel.com>
-References: <155320933278.5015.1752135965699928631.stgit@tstruk-mobl1.jf.intel.com>
+        stable@vger.kernel.org, tadeusz.struk@intel.com
+Date:   Fri, 22 Mar 2019 07:38:58 -0700
+Message-ID: <155326553839.17270.7997105682830234546.stgit@tstruk-mobl1.jf.intel.com>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <155320933278.5015.1752135965699928631.stgit@tstruk-mobl1.jf.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Mar 21, 2019 at 04:02:12PM -0700, Tadeusz Struk wrote:
-> The poll condition should only check response_length,
-> because reads should only be issued if there is data to read.
-> The response_read flag only prevents double writes.
-> The problem was that the write set the response_read to false,
-> enqued a tpm job, and returned. Then application called poll
-> which checked the response_read flag and returned EPOLLIN.
-> Then the application called read, but got nothing.
-> After all that the async_work kicked in.
-> Added also mutex_lock around the poll check to prevent
-> other possible race conditions.
-> 
+The poll condition should only check response_length,
+because reads should only be issued if there is data to read.
+The response_read flag only prevents double writes.
+The problem was that the write set the response_read to false,
+enqued a tpm job, and returned. Then application called poll
+which checked the response_read flag and returned EPOLLIN.
+Then the application called read, but got nothing.
+After all that the async_work kicked in.
+Added also mutex_lock around the poll check to prevent
+other possible race conditions.
 
 Cc: stable@vger.kernel.org
+Fixes: 9488585b21bef0df12 ("tpm: add support for partial reads")
+Reported-by: Mantas Mikulėnas <grawity@gmail.com>
+Tested-by: Mantas Mikulėnas <grawity@gmail.com>
+Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+---
+ drivers/char/tpm/tpm-dev-common.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-is missing here.
+diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+index 5eecad233ea1..7312d3214381 100644
+--- a/drivers/char/tpm/tpm-dev-common.c
++++ b/drivers/char/tpm/tpm-dev-common.c
+@@ -203,12 +203,14 @@ __poll_t tpm_common_poll(struct file *file, poll_table *wait)
+ 	__poll_t mask = 0;
+ 
+ 	poll_wait(file, &priv->async_wait, wait);
++	mutex_lock(&priv->buffer_mutex);
+ 
+-	if (!priv->response_read || priv->response_length)
++	if (priv->response_length)
+ 		mask = EPOLLIN | EPOLLRDNORM;
+ 	else
+ 		mask = EPOLLOUT | EPOLLWRNORM;
+ 
++	mutex_unlock(&priv->buffer_mutex);
+ 	return mask;
+ }
+ 
 
-> Fixes: 9488585b21bef0df12 ("tpm: add support for partial reads")
-> Reported-by: Mantas Mikulėnas <grawity@gmail.com>
-> Tested-by: Mantas Mikulėnas <grawity@gmail.com>
-> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
-
-/Jarkko
