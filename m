@@ -2,68 +2,74 @@ Return-Path: <SRS0=JOkf=RZ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBBC3C43381
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 12:40:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F903C43381
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 13:10:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4B0D218E2
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 12:40:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39516218E2
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 13:10:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388774AbfCVMkL (ORCPT
+        id S1729998AbfCVLeI (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 22 Mar 2019 08:40:11 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:49122 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388459AbfCVMkK (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Mar 2019 08:40:10 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1h7JSq-0003cu-I4; Fri, 22 Mar 2019 20:40:00 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1h7JSm-0001uf-8P; Fri, 22 Mar 2019 20:39:56 +0800
-Date:   Fri, 22 Mar 2019 20:39:56 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Vitaly Chikunov <vt@altlinux.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 00/11] crypto: add EC-RDSA (GOST 34.10) algorithm
-Message-ID: <20190322123956.2zfdijje5wfajsyw@gondor.apana.org.au>
-References: <20190301175918.29694-1-vt@altlinux.org>
+        Fri, 22 Mar 2019 07:34:08 -0400
+Received: from mga01.intel.com ([192.55.52.88]:55384 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729978AbfCVLeG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 22 Mar 2019 07:34:06 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Mar 2019 04:34:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,256,1549958400"; 
+   d="scan'208";a="216549901"
+Received: from vanderss-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.199])
+  by orsmga001.jf.intel.com with ESMTP; 22 Mar 2019 04:34:02 -0700
+Date:   Fri, 22 Mar 2019 13:34:01 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Tadeusz Struk <tadeusz.struk@intel.com>
+Cc:     grawity@gmail.com, James.Bottomley@HansenPartnership.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v3] tpm: fix an invalid condition in tpm_common_poll
+Message-ID: <20190322113401.GL3122@linux.intel.com>
+References: <155320933278.5015.1752135965699928631.stgit@tstruk-mobl1.jf.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190301175918.29694-1-vt@altlinux.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <155320933278.5015.1752135965699928631.stgit@tstruk-mobl1.jf.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Mar 01, 2019 at 08:59:07PM +0300, Vitaly Chikunov wrote:
-> This patchset changes akcipher API to support ECDSA style signature
-> verification, augments x509 parser to make it work with EC-RDSA certificates,
-> and, finally, implements EC-RDSA (GOST 34.10) signature verification and its
-> integration with IMA.
+On Thu, Mar 21, 2019 at 04:02:12PM -0700, Tadeusz Struk wrote:
+> The poll condition should only check response_length,
+> because reads should only be issued if there is data to read.
+> The response_read flag only prevents double writes.
+> The problem was that the write set the response_read to false,
+> enqued a tpm job, and returned. Then application called poll
+> which checked the response_read flag and returned EPOLLIN.
+> Then the application called read, but got nothing.
+> After all that the async_work kicked in.
+> Added also mutex_lock around the poll check to prevent
+> other possible race conditions.
 > 
-> This patchset should be applied over cryptodev commit 0918f18c7179e8cdf718d0.
 
-I don't have any major issues with this patch-set (apart from the
-minor issue with the crypto API).
+Cc: stable@vger.kernel.org
 
-However, as a number of patches are against areas outside of the
-crypto API I would need to get acks for those patches from the
-relevant maintainers.
+is missing here.
 
-Thanks!
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> Fixes: 9488585b21bef0df12 ("tpm: add support for partial reads")
+> Reported-by: Mantas Mikulėnas <grawity@gmail.com>
+> Tested-by: Mantas Mikulėnas <grawity@gmail.com>
+> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+
+/Jarkko
