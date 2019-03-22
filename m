@@ -2,116 +2,194 @@ Return-Path: <SRS0=JOkf=RZ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB17C43381
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 22:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A878C43381
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 22:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7B23218D4
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 22:41:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="vgcvaLhe"
+	by mail.kernel.org (Postfix) with ESMTP id 69EC321925
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 22:55:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728219AbfCVWlQ (ORCPT
+        id S1728269AbfCVWzZ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 22 Mar 2019 18:41:16 -0400
-Received: from mail-eopbgr50045.outbound.protection.outlook.com ([40.107.5.45]:57967
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727846AbfCVWlQ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Mar 2019 18:41:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8OQZsg6uumDh1klxVAzgZAlkKiyowwt+HdXzFmNfj+0=;
- b=vgcvaLheppNw/rCKcj6591yk2LTcIVQOKihpYu0ZpvAqcZR4lDJ2KCUqLoilH9RpTSomSMcv5utC45CbXM2QY9CuK8LzoWvEgdcrvfkVW99Q2JMGUym+a2DbN5yqY80Ph9sw7TcI2e7n4qGUMtf8uZRfObVgPLSOpJmR5Z8U1p0=
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
- VI1PR0402MB3758.eurprd04.prod.outlook.com (52.134.15.152) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1730.17; Fri, 22 Mar 2019 22:41:11 +0000
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::9c05:647c:6f6c:c531]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::9c05:647c:6f6c:c531%2]) with mapi id 15.20.1730.017; Fri, 22 Mar 2019
- 22:41:11 +0000
-From:   Horia Geanta <horia.geanta@nxp.com>
-To:     Vitaly Chikunov <vt@altlinux.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        "qat-linux@intel.com" <qat-linux@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Gary Hook <gary.hook@amd.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>
-Subject: Re: [PATCH v7 03/11] crypto: rsa - unimplement sign/verify for raw
- RSA backends
-Thread-Topic: [PATCH v7 03/11] crypto: rsa - unimplement sign/verify for raw
- RSA backends
-Thread-Index: AQHU0FiE7YbNLAo+GEG1lDDG7g4f9Q==
-Date:   Fri, 22 Mar 2019 22:41:11 +0000
-Message-ID: <VI1PR0402MB34850609BF2BB886C029F0B398430@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-References: <20190301175918.29694-1-vt@altlinux.org>
- <20190301175918.29694-4-vt@altlinux.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com; 
-x-originating-ip: [78.96.98.22]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 20997fda-a98d-49c0-4cca-08d6af177bdc
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB3758;
-x-ms-traffictypediagnostic: VI1PR0402MB3758:
-x-microsoft-antispam-prvs: <VI1PR0402MB37585D857500274CB862A40D98430@VI1PR0402MB3758.eurprd04.prod.outlook.com>
-x-forefront-prvs: 09840A4839
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(346002)(366004)(136003)(396003)(199004)(189003)(446003)(5660300002)(2201001)(6246003)(8676002)(2501003)(2906002)(9686003)(68736007)(6116002)(53546011)(102836004)(6506007)(8936002)(229853002)(81166006)(3846002)(105586002)(81156014)(186003)(76176011)(7736002)(71190400001)(55016002)(44832011)(106356001)(97736004)(26005)(52536014)(476003)(86362001)(4744005)(305945005)(71200400001)(486006)(6436002)(14454004)(7416002)(74316002)(110136005)(54906003)(14444005)(316002)(4326008)(53936002)(478600001)(15650500001)(33656002)(99286004)(7696005)(256004)(25786009)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3758;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: SKCZLyK+nWdylY8fpWwNxeRdTQgFnjnvWlOjNfIcbO1yChzRjwJm7xQCiwOIYAGDgNTHvJd0cYI8y7xeYLXf1V6cN16modh+Te3v8ASbXo8Qug7/eQrFonUJOE0M73MlqbrodCQJn3GnGN4T6TJbVQM23lBabtdsb2SJX/sx1CAdM7iWjMd/sE5PiFiHHs+7KWzs0atbDcWZzEJoC4qTHoal4DQZTmjN2r/q810OA3qRS/QiZf145NClo2CniTAhta7VRkKioUpSZD0I0DZHHj5p0LNWl/5qxRrpwyMO/WhHM1aueRHbk7+TPA6gEqzDOp/HgGRShRfJOK1Qp7BYz2vs4V4Q11c7ZapkwsYIJznyIY0xwL84beGhlrdWgNAaMnG2bIDYyzdLfWnYXHM6PyUoMiAIZacRctG5FLiQ1yw=
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 20997fda-a98d-49c0-4cca-08d6af177bdc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Mar 2019 22:41:11.5857
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3758
+        Fri, 22 Mar 2019 18:55:25 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49096 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728237AbfCVWzX (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 22 Mar 2019 18:55:23 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2MMrxc4101353
+        for <linux-integrity@vger.kernel.org>; Fri, 22 Mar 2019 18:55:23 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2rd7yyhne7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 22 Mar 2019 18:55:22 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 22 Mar 2019 22:55:10 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 22 Mar 2019 22:55:08 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2MMtGKZ53870750
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 22 Mar 2019 22:55:17 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DEC4DA4054;
+        Fri, 22 Mar 2019 22:55:16 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 092F3A405B;
+        Fri, 22 Mar 2019 22:55:16 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.94.31])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 22 Mar 2019 22:55:15 +0000 (GMT)
+Subject: Re: [PATCH v2 3/5] NFSD: Remove ima_file_check call
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Chuck Lever <chuck.lever@oracle.com>
+Cc:     Bruce Fields <bfields@fieldses.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Date:   Fri, 22 Mar 2019 18:55:05 -0400
+In-Reply-To: <D2C155AD-7888-43CB-A25A-461FF474BDB7@oracle.com>
+References: <20190307151838.11306.94183.stgit@manet.1015granger.net>
+         <20190307152854.11306.84006.stgit@manet.1015granger.net>
+         <20190308211016.GB27011@fieldses.org>
+         <ECE4FD20-840C-4047-9454-27BDF0A905EA@oracle.com>
+         <20190308212310.GB28002@fieldses.org>
+         <872F3DFD-E1A7-443E-B666-25C5931F0748@oracle.com>
+         <1553027371.4899.116.camel@linux.ibm.com>
+         <0E02D70A-A5E9-4B27-9922-521D5A0755A3@oracle.com>
+         <1553168687.4899.396.camel@linux.ibm.com>
+         <D2C155AD-7888-43CB-A25A-461FF474BDB7@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19032222-0016-0000-0000-000002661AD0
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19032222-0017-0000-0000-000032C14259
+Message-Id: <1553295305.5291.40.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-22_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1903220163
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 3/1/2019 7:59 PM, Vitaly Chikunov wrote:=0A=
-> In preparation for new akcipher verify call remove sign/verify callbacks=
-=0A=
-> from RSA backends and make PKCS1 driver call encrypt/decrypt instead.=0A=
-> =0A=
-> This also complies with the well-known idea that raw RSA should never be=
-=0A=
-> used for sign/verify. It only should be used with proper padding scheme=
-=0A=
-> such as PKCS1 driver provides.=0A=
-> =0A=
-> Cc: Giovanni Cabiddu <giovanni.cabiddu@intel.com>=0A=
-> Cc: qat-linux@intel.com=0A=
-> Cc: Tom Lendacky <thomas.lendacky@amd.com>=0A=
-> Cc: Gary Hook <gary.hook@amd.com>=0A=
-> Cc: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
-> Cc: Aymen Sghaier <aymen.sghaier@nxp.com>=0A=
-> Signed-off-by: Vitaly Chikunov <vt@altlinux.org>=0A=
-Reviewed-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
-=0A=
-Thanks,=0A=
-Horia=0A=
+On Thu, 2019-03-21 at 09:04 -0500, Chuck Lever wrote:
+> 
+> > On Mar 21, 2019, at 6:44 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > On Wed, 2019-03-20 at 08:40 -0500, Chuck Lever wrote:
+> >>> On Mar 19, 2019, at 3:29 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+> >>> On Fri, 2019-03-08 at 16:29 -0500, Chuck Lever wrote:
+> >>> Thanks Serge for bringing this thread to my attention.  Sorry for the
+> >>>>> On Mar 8, 2019, at 4:23 PM, Bruce Fields <bfields@fieldses.org> wrote:
+> >>>>> On Fri, Mar 08, 2019 at 04:11:06PM -0500, Chuck Lever wrote:
+> >>>>>>> On Mar 8, 2019, at 4:10 PM, bfields@fieldses.org wrote:
+> >>>>>>> On Thu, Mar 07, 2019 at 10:28:54AM -0500, Chuck Lever wrote:
+> >>>>>>>> The NFS server needs to allow NFS clients to perform their own
+> >>>>>>>> attestation and measurement.
+> >>> 
+> >>> Measurement and attestation is only one aspect.  The other aspect is
+> >>> verifying the integrity of files.  Shouldn't the NFS server verify the
+> >>> integrity of a file before allowing it to be served (eg. malware)?
+> >> 
+> >> Hi Mimi, thanks for the review.
+> >> 
+> >> Architecturally, the server is not using the file's data, it is
+> >> merely part of the filesystem that stores it. But that said, there
+> >> are several concrete reasons why I feel an NFS server should not be
+> >> involved in measurement/attestation, but only with storing file
+> >> content and IMA metadata.
+> > 
+> > "Remote attestation" is the process of verifying the measurement list
+> > against the TPM PCRs, based on a TPM quote.  I think you meant
+> > "measurement/appraisal".
+> > 
+> >> 
+> >> 1. The broadest attack surface for a remote filesystem is modification
+> >> of data in flight. Attestation of the file on the server is not going
+> >> to defend against that attack, only attestation on the client will do
+> >> that. Is there a good reason to pay the cost of double attestation?
+> > 
+> > Doesn't the server have a responsibility to provide files that have
+> > not been unintentionally or maliciously altered?
+> 
+> It's a design goal of any filesystem to present unaltered file data
+> to applications. But the responsibility is end-to-end. Adding extra
+> checks in the middle introduce a cost. 
+
+Files are measured/appraised/audited based on the IMA policy.  Have
+you measured the performance cost of measuring and appraising the
+files being served?  Unless a policy has been supplied, the
+performance impact, if any, would be limited to walking the IMA policy
+rules.
+
+> Measuring on the client is
+> sufficient, and it is equivalent to what local filesystems do (and,
+> it allows each client to apply its own security policy).
+
+I'm not arguing with you about an end-to-end file integrity solution.
+ That is the goal, but one that assumes this proposed work, based on
+fs-verity signatures.
+
+> I'm going to claim here without proof that there is little value in
+> using IMA on an NFS server that serves NFS clients that are not
+> IMA-aware. :-)
+
+For systems that don't or haven't implemented the proposed end-to-end
+file integrity solution, verifying the file integrity on the server is
+all the more important.
+
+> 
+> >> 2. It is possible (perhaps even likely) that the NFS server and a
+> >> client of that server will have different IMA policies and even
+> >> different file signing authorities.
+> > 
+> > That doesn't negate the due diligence on the server's part of
+> > preventing the spread of malware.
+> 
+> Commercial NFS servers (like NetApp filers) perform malware and
+> integrity checking via a scrubbing agent rather than checking in a
+> hot path. Filesystems are not only responsible for leaving data
+> unchanged, they also have performance requirements.
+
+Any userspace application leaves a window of opportunity between the
+time the file has been created/modified and the time that the
+application verifies it.  This is one of the main reason for IMA being
+ in the kernel.
+
+> 
+> >> A third, perhaps related, reason is that NFS can run on non-Linux NFS
+> >> servers which would not have any attestation at all. An NFS client
+> >> should not have to rely on the server for attestation, but should
+> >> trust only its own measurement of each file, which would be done as
+> >> late as possible before use.
+> > 
+> > The ima_file_check() hook can also audit the file, providing
+> > additional forensic information (eg. the file hash).
+> 
+> IIUC, you are talking about troubleshooting, which should be
+> rare. That can be done with tools on the server if needed, but
+> IMO can be avoided in performance-sensitive paths.
+
+No, this isn't about "troubleshooting", but about auditing the files
+served and using the file hashes for forensic investigations.[1][2]
+
+Mimi
+
+[1] Commit e7c568e0fd0c ("ima: audit log hashes")
+[2] https://www.fireeye.com/blog/threat-research/2016/11/extending_linux_exec.html
+
