@@ -3,204 +3,149 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C756C43381
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 19:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2800C43381
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 19:49:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67DF820883
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 19:36:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C2E821841
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 19:49:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727358AbfCVTgi (ORCPT
+        id S1727117AbfCVTta (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 22 Mar 2019 15:36:38 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52232 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726611AbfCVTgh (ORCPT
+        Fri, 22 Mar 2019 15:49:30 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:40604 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727018AbfCVTta (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Mar 2019 15:36:37 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2MJYg2U097836
-        for <linux-integrity@vger.kernel.org>; Fri, 22 Mar 2019 15:36:36 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2rd3fhq9ne-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 22 Mar 2019 15:36:35 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 22 Mar 2019 19:36:25 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 22 Mar 2019 19:36:22 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2MJaUNU37355676
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 22 Mar 2019 19:36:30 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3E77242041;
-        Fri, 22 Mar 2019 19:36:30 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3400D42042;
-        Fri, 22 Mar 2019 19:36:29 +0000 (GMT)
-Received: from dhcp-9-31-103-153.watson.ibm.com (unknown [9.31.103.153])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 22 Mar 2019 19:36:29 +0000 (GMT)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-kselftest@vger.kernel.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Petr Vorel <pvorel@suse.cz>,
-        Dave Young <dyoung@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH v4a 1/2] selftests/kexec: make tests independent of IMA being enabled
-Date:   Fri, 22 Mar 2019 15:35:50 -0400
-X-Mailer: git-send-email 2.7.5
-X-TM-AS-GCONF: 00
-x-cbid: 19032219-4275-0000-0000-0000031E2F76
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19032219-4276-0000-0000-0000382CBC96
-Message-Id: <1553283351-6310-1-git-send-email-zohar@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-22_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=6 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1903220139
+        Fri, 22 Mar 2019 15:49:30 -0400
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 2B3B672CC6C;
+        Fri, 22 Mar 2019 22:49:26 +0300 (MSK)
+Received: from altlinux.org (sole.flsd.net [185.75.180.6])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 145264A4A16;
+        Fri, 22 Mar 2019 22:49:26 +0300 (MSK)
+Date:   Fri, 22 Mar 2019 22:49:25 +0300
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 05/11] KEYS: do not kmemdup digest in
+ {public,tpm}_key_verify_signature
+Message-ID: <20190322194925.w3i2esq6u2zaff2q@altlinux.org>
+Mail-Followup-To: David Howells <dhowells@redhat.com>,
+        keyrings@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190301175918.29694-1-vt@altlinux.org>
+ <20190301175918.29694-6-vt@altlinux.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+In-Reply-To: <20190301175918.29694-6-vt@altlinux.org>
+User-Agent: NeoMutt/20171215-106-ac61c7
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Verify IMA is enabled before failing tests or emitting irrelevant
-messages.  Also, don't skip the test if signatures are not required.
+David,
 
-Suggested-by: Dave Young <dyoung@redhat.com>
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
----
-Dave, if this patch resolves the outstanding issues, I can fold these
-changes into the original patches. (Reminder, these patches will need to
-be updated to support the "lockdown" patch set.)
+Can you please Ack this patch, it changes ASYMMETRIC KEYS tree, and
+incorporates modifications you requested before.
 
- .../selftests/kexec/test_kexec_file_load.sh        | 27 ++++++++++++++--------
- tools/testing/selftests/kexec/test_kexec_load.sh   | 24 ++++++++++++-------
- 2 files changed, 33 insertions(+), 18 deletions(-)
+Thanks,
 
-diff --git a/tools/testing/selftests/kexec/test_kexec_file_load.sh b/tools/testing/selftests/kexec/test_kexec_file_load.sh
-index 1d2e5e799523..57b636792086 100755
---- a/tools/testing/selftests/kexec/test_kexec_file_load.sh
-+++ b/tools/testing/selftests/kexec/test_kexec_file_load.sh
-@@ -110,11 +110,20 @@ kexec_file_load_test()
- 			log_fail "$succeed_msg (missing IMA sig)"
- 		fi
- 
--		if [ $pe_sig_required -eq 0 ] && [ $ima_sig_required -eq 0 ] \
--		    && [ $ima_read_policy -eq 0 ] && [ $ima_signed -eq 0 ]; then
-+		if [ $pe_sig_required -eq 0 ] && [ $ima_appraise -eq 1 ] \
-+		    && [ $ima_sig_required -eq 0 ] && [ $ima_signed -eq 0 ] \
-+	            && [ $ima_read_policy -eq 0 ]; then
- 			log_fail "$succeed_msg (possibly missing IMA sig)"
- 		fi
- 
-+		if [ $pe_sig_required -eq 0 ] && [ $ima_appraise -eq 0 ]; then
-+			log_info "No signature verification required"
-+		elif [ $pe_sig_required -eq 0 ] && [ $ima_appraise -eq 1 ] \
-+		    && [ $ima_sig_required -eq 0 ] && [ $ima_signed -eq 0 ] \
-+	            && [ $ima_read_policy -eq 1 ]; then
-+			log_info "No signature verification required"
-+		fi
-+
- 		log_pass "$succeed_msg"
- 	fi
- 
-@@ -136,8 +145,9 @@ kexec_file_load_test()
- 		log_pass "$failed_msg (missing IMA sig)"
- 	fi
- 
--	if [ $pe_sig_required -eq 0 ] && [ $ima_sig_required -eq 0 ] \
--	    && [ $ima_read_policy -eq 0 ] && [ $ima_signed -eq 0 ]; then
-+	if [ $pe_sig_required -eq 0 ] && [ $ima_appraise -eq 1 ] \
-+	    && [ $ima_sig_required -eq 0 ] && [ $ima_read_policy -eq 0 ] \
-+	    && [ $ima_signed -eq 0 ]; then
- 		log_pass "$failed_msg (possibly missing IMA sig)"
- 	fi
- 
-@@ -157,6 +167,9 @@ if [ $? -eq 0 ]; then
- fi
- 
- # Determine which kernel config options are enabled
-+kconfig_enabled "CONFIG_IMA_APPRAISE=y" "IMA enabled"
-+ima_appraise=$?
-+
- kconfig_enabled "CONFIG_IMA_ARCH_POLICY=y" \
- 	"architecture specific policy enabled"
- arch_policy=$?
-@@ -178,12 +191,6 @@ ima_sig_required=$?
- get_secureboot_mode
- secureboot=$?
- 
--if [ $secureboot -eq 0 ] && [ $arch_policy -eq 0 ] && \
--   [ $pe_sig_required -eq 0 ] && [ $ima_sig_required -eq 0 ] && \
--   [ $ima_read_policy -eq 1 ]; then
--	log_skip "No signature verification required"
--fi
--
- # Are there pe and ima signatures
- check_for_pesig
- pe_signed=$?
-diff --git a/tools/testing/selftests/kexec/test_kexec_load.sh b/tools/testing/selftests/kexec/test_kexec_load.sh
-index 2a66c8897f55..49c6aa929137 100755
---- a/tools/testing/selftests/kexec/test_kexec_load.sh
-+++ b/tools/testing/selftests/kexec/test_kexec_load.sh
-@@ -1,8 +1,8 @@
- #!/bin/sh
- # SPDX-License-Identifier: GPL-2.0
--# Loading a kernel image via the kexec_load syscall should fail
--# when the kernel is CONFIG_KEXEC_VERIFY_SIG enabled and the system
--# is booted in secureboot mode.
-+#
-+# Prevent loading a kernel image via the kexec_load syscall when
-+# signatures are required.  (Dependent on CONFIG_IMA_ARCH_POLICY.)
- 
- TEST="$0"
- . ./kexec_common_lib.sh
-@@ -18,20 +18,28 @@ if [ $? -eq 0 ]; then
- 	log_skip "kexec_load is not enabled"
- fi
- 
-+kconfig_enabled "CONFIG_IMA_APPRAISE=y" "IMA enabled"
-+ima_appraise=$?
-+
-+kconfig_enabled "CONFIG_IMA_ARCH_POLICY=y" \
-+	"IMA architecture specific policy enabled"
-+arch_policy=$?
-+
- get_secureboot_mode
- secureboot=$?
- 
--# kexec_load should fail in secure boot mode
-+# kexec_load should fail in secure boot mode and CONFIG_IMA_ARCH_POLICY enabled
- kexec --load $KERNEL_IMAGE > /dev/null 2>&1
- if [ $? -eq 0 ]; then
- 	kexec --unload
--	if [ $secureboot -eq 1 ]; then
-+	if [ $secureboot -eq 1 ] && [ $arch_policy -eq 1 ]; then
- 		log_fail "kexec_load succeeded"
--	else
--		log_pass "kexec_load succeeded"
-+	elif [ $ima_appraise -eq 0 -o $arch_policy -eq 0 ]; then
-+		log_info "Either IMA or the IMA arch policy is not enabled"
- 	fi
-+	log_pass "kexec_load succeeded"
- else
--	if [ $secureboot -eq 1 ]; then
-+	if [ $secureboot -eq 1 ] && [ $arch_policy -eq 1 ] ; then
- 		log_pass "kexec_load failed"
- 	else
- 		log_fail "kexec_load failed"
--- 
-2.7.5
-
+On Fri, Mar 01, 2019 at 08:59:12PM +0300, Vitaly Chikunov wrote:
+> Treat (struct public_key_signature)'s digest same as its signature (s).
+> Since digest should be already in the kmalloc'd memory do not kmemdup
+> digest value before calling {public,tpm}_key_verify_signature.
+> 
+> Patch is split from the previous as suggested by Herbert Xu.
+> 
+> Suggested-by: David Howells <dhowells@redhat.com>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: keyrings@vger.kernel.org
+> Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+> ---
+>  crypto/asymmetric_keys/asym_tpm.c   | 10 +---------
+>  crypto/asymmetric_keys/public_key.c |  9 +--------
+>  2 files changed, 2 insertions(+), 17 deletions(-)
+> 
+> diff --git a/crypto/asymmetric_keys/asym_tpm.c b/crypto/asymmetric_keys/asym_tpm.c
+> index 4e5b6fb57a94..402fc34ca044 100644
+> --- a/crypto/asymmetric_keys/asym_tpm.c
+> +++ b/crypto/asymmetric_keys/asym_tpm.c
+> @@ -748,7 +748,6 @@ static int tpm_key_verify_signature(const struct key *key,
+>  	char alg_name[CRYPTO_MAX_ALG_NAME];
+>  	uint8_t der_pub_key[PUB_KEY_BUF_SIZE];
+>  	uint32_t der_pub_key_len;
+> -	void *digest;
+>  	int ret;
+>  
+>  	pr_devel("==>%s()\n", __func__);
+> @@ -780,14 +779,9 @@ static int tpm_key_verify_signature(const struct key *key,
+>  	if (!req)
+>  		goto error_free_tfm;
+>  
+> -	ret = -ENOMEM;
+> -	digest = kmemdup(sig->digest, sig->digest_size, GFP_KERNEL);
+> -	if (!digest)
+> -		goto error_free_req;
+> -
+>  	sg_init_table(src_sg, 2);
+>  	sg_set_buf(&src_sg[0], sig->s, sig->s_size);
+> -	sg_set_buf(&src_sg[1], digest, sig->digest_size);
+> +	sg_set_buf(&src_sg[1], sig->digest, sig->digest_size);
+>  	akcipher_request_set_crypt(req, src_sg, NULL, sig->s_size,
+>  				   sig->digest_size);
+>  	crypto_init_wait(&cwait);
+> @@ -796,8 +790,6 @@ static int tpm_key_verify_signature(const struct key *key,
+>  				      crypto_req_done, &cwait);
+>  	ret = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
+>  
+> -	kfree(digest);
+> -error_free_req:
+>  	akcipher_request_free(req);
+>  error_free_tfm:
+>  	crypto_free_akcipher(tfm);
+> diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
+> index 338f2b5352b1..4dcfe281b898 100644
+> --- a/crypto/asymmetric_keys/public_key.c
+> +++ b/crypto/asymmetric_keys/public_key.c
+> @@ -235,7 +235,6 @@ int public_key_verify_signature(const struct public_key *pkey,
+>  	struct akcipher_request *req;
+>  	struct scatterlist src_sg[2];
+>  	char alg_name[CRYPTO_MAX_ALG_NAME];
+> -	void *digest;
+>  	int ret;
+>  
+>  	pr_devel("==>%s()\n", __func__);
+> @@ -268,14 +267,9 @@ int public_key_verify_signature(const struct public_key *pkey,
+>  	if (ret)
+>  		goto error_free_req;
+>  
+> -	ret = -ENOMEM;
+> -	digest = kmemdup(sig->digest, sig->digest_size, GFP_KERNEL);
+> -	if (!digest)
+> -		goto error_free_req;
+> -
+>  	sg_init_table(src_sg, 2);
+>  	sg_set_buf(&src_sg[0], sig->s, sig->s_size);
+> -	sg_set_buf(&src_sg[1], digest, sig->digest_size);
+> +	sg_set_buf(&src_sg[1], sig->digest, sig->digest_size);
+>  	akcipher_request_set_crypt(req, src_sg, NULL, sig->s_size,
+>  				   sig->digest_size);
+>  	crypto_init_wait(&cwait);
+> @@ -284,7 +278,6 @@ int public_key_verify_signature(const struct public_key *pkey,
+>  				      crypto_req_done, &cwait);
+>  	ret = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
+>  
+> -	kfree(digest);
+>  error_free_req:
+>  	akcipher_request_free(req);
+>  error_free_tfm:
+> -- 
+> 2.11.0
