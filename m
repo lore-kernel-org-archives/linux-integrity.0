@@ -2,91 +2,68 @@ Return-Path: <SRS0=JOkf=RZ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D814DC4360F
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 12:30:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBBC3C43381
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 12:40:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B155D2070D
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 12:30:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4B0D218E2
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 12:40:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390546AbfCVMSr (ORCPT
+        id S2388774AbfCVMkL (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 22 Mar 2019 08:18:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38966 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390153AbfCVMSp (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Mar 2019 08:18:45 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 56ED2AB91;
-        Fri, 22 Mar 2019 12:18:44 +0000 (UTC)
-Date:   Fri, 22 Mar 2019 13:18:42 +0100
-From:   Petr Vorel <pvorel@suse.cz>
-To:     djacobs7@binghamton.edu
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        zohar@linux.ibm.com, vt@altlinux.org
-Subject: Re: [PATCH v2 1/8] evmtest: Regression testing integrity subsystem
-Message-ID: <20190322121842.GA32091@dell5510>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20190322083441.31084-1-djacobs7@binghamton.edu>
+        Fri, 22 Mar 2019 08:40:11 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:49122 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388459AbfCVMkK (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 22 Mar 2019 08:40:10 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1h7JSq-0003cu-I4; Fri, 22 Mar 2019 20:40:00 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1h7JSm-0001uf-8P; Fri, 22 Mar 2019 20:39:56 +0800
+Date:   Fri, 22 Mar 2019 20:39:56 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Vitaly Chikunov <vt@altlinux.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 00/11] crypto: add EC-RDSA (GOST 34.10) algorithm
+Message-ID: <20190322123956.2zfdijje5wfajsyw@gondor.apana.org.au>
+References: <20190301175918.29694-1-vt@altlinux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190322083441.31084-1-djacobs7@binghamton.edu>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190301175918.29694-1-vt@altlinux.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi David,
+On Fri, Mar 01, 2019 at 08:59:07PM +0300, Vitaly Chikunov wrote:
+> This patchset changes akcipher API to support ECDSA style signature
+> verification, augments x509 parser to make it work with EC-RDSA certificates,
+> and, finally, implements EC-RDSA (GOST 34.10) signature verification and its
+> integration with IMA.
+> 
+> This patchset should be applied over cryptodev commit 0918f18c7179e8cdf718d0.
 
-> $ evmtest runtest example_test -e /bin/bash
-> [*] Starting test: example_test
-> [*] TEST: PASSED
+I don't have any major issues with this patch-set (apart from the
+minor issue with the crypto API).
 
-> Example 1a: successful verbose example test output
-> $ evmtest runtest example_test -e /bin/bash -v
-...
+However, as a number of patches are against areas outside of the
+crypto API I would need to get acks for those patches from the
+relevant maintainers.
 
-> Changelog:
-...
-> * checkbashishms compliant
-Not yet :). I noticed using
-source (should be .)
-== (should be =)
-${BASH_SOURCE[0]} (should be $0)
-$UID (should be $(id -u)
-bash redirection &>> (should be >/dev/null 2>&1)
-+= (should be VAR="${VAR}foo")
-and bash shebang.
-
-Could you please fix that?
-
-...
-> +++ b/evmtest/evmtest
-> @@ -0,0 +1,67 @@
-> +#!/bin/bash
-
-Can we, please, use /bin/sh and not-expect bash?
-Portability matters.
-
-> +source "$EVMDIR"/files/common.sh
-> +usage (){
-> +	echo "Usage:"
-> +	echo "	evmtest runtest <test name> [OPTIONS]"
-> +	echo ""
-Can be just echo. Maybe using cat might be better than many echos:
-
-cat <<EOF
-Usage:
-\tevmtest runtest <test name> [OPTIONS]
-...
-EOF
-
-
-Kind regards,
-Petr
+Thanks!
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
