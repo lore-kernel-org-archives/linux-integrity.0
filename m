@@ -2,117 +2,202 @@ Return-Path: <SRS0=JOkf=RZ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E42EC43381
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 17:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F04A4C43381
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 18:04:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D50D12190A
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 17:39:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="PRxLuaK1"
+	by mail.kernel.org (Postfix) with ESMTP id D0D16213F2
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 18:04:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727844AbfCVRj0 (ORCPT
+        id S1727988AbfCVSEh (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 22 Mar 2019 13:39:26 -0400
-Received: from mail-eopbgr800124.outbound.protection.outlook.com ([40.107.80.124]:40260
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        Fri, 22 Mar 2019 14:04:37 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32912 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725981AbfCVRj0 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Mar 2019 13:39:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OWvMF++E9IIBvm3UkyNicHmgIs7K2VJQQpoQLXyRxwk=;
- b=PRxLuaK1MskskxBE/thGZLYrKpHBiIVjGR4tua2WCJZdNtz40tWiPKIytPXZSj+wGYPhBzU5lwzsmmkbFpCW9izYUAas5ofMODzzTXPgRPUttl/vgcUCglqg+xIk1UR/7ddTiaQMtoRhl1ZwsBGFHYUf7oBb2+6puXP2ICWy5+c=
-Received: from BYAPR21MB1301.namprd21.prod.outlook.com (20.179.58.83) by
- BYAPR21MB1287.namprd21.prod.outlook.com (20.179.58.24) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1750.3; Fri, 22 Mar 2019 17:39:23 +0000
-Received: from BYAPR21MB1301.namprd21.prod.outlook.com
- ([fe80::e1e3:1872:e32c:7036]) by BYAPR21MB1301.namprd21.prod.outlook.com
- ([fe80::e1e3:1872:e32c:7036%3]) with mapi id 15.20.1730.008; Fri, 22 Mar 2019
- 17:39:23 +0000
-From:   Lakshmi Ramasubramanian <nramas@microsoft.com>
-To:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Portable Executable (PE) Signature Validation and Measurement for
- KEXEC system call using IMA
-Thread-Topic: Portable Executable (PE) Signature Validation and Measurement
- for KEXEC system call using IMA
-Thread-Index: AdTg1clupl0uJvoTS1+4SCE/Pu8Wqw==
-Date:   Fri, 22 Mar 2019 17:39:22 +0000
-Message-ID: <BYAPR21MB1301CBCD4956476F8F2F0FC4C3430@BYAPR21MB1301.namprd21.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=nramas@ntdev.microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-03-22T17:39:21.5499995Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=a4e10f41-6446-49fa-9371-9e0f7fbb42e6;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-x-originating-ip: [2001:4898:80e8:b:2218:ea28:4673:9ba5]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2ecda19a-c6c7-4559-1d1a-08d6aeed5265
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:BYAPR21MB1287;
-x-ms-traffictypediagnostic: BYAPR21MB1287:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <BYAPR21MB128774945261DA00C1AE5861C3430@BYAPR21MB1287.namprd21.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 09840A4839
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(366004)(136003)(346002)(39860400002)(199004)(189003)(86362001)(8936002)(4744005)(7696005)(68736007)(256004)(6306002)(9686003)(33656002)(55016002)(14444005)(6436002)(316002)(22452003)(110136005)(8990500004)(5660300002)(6506007)(2501003)(53936002)(10090500001)(106356001)(478600001)(10290500003)(105586002)(81166006)(81156014)(6346003)(71190400001)(14454004)(966005)(71200400001)(305945005)(2906002)(7736002)(74316002)(97736004)(8676002)(102836004)(25786009)(476003)(486006)(450100002)(186003)(86612001)(99286004)(46003)(52536014)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR21MB1287;H:BYAPR21MB1301.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=nramas@microsoft.com; 
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: +JSCVxivHlRDX6LE/M9EETxxS63mvfkt7oVv5MGI8Koi2pkMLCJom8BvIfETyMnkc8yH1/qM4cdEdKlwuD0+UoamoMqNRzsbA7xIWCkYT3wGTZ/HpdYFCDxks5pdpj9+H/X8Je+PUkWKJTMtvFELgNi9EQUvsQt59Dni9u1tsHVx75Sgbx3Qo+/gklrkWi69QUuZxUPiRC7xwNOMxPZcvsjW1CdBq6pI8XIIPqAbDwHB6W284earQjb2rx4yeEMJLQKDo1ekUana+9GvJXqdf3sxBvf9SQTLUaZyvCgppiAMWZ4VQtWtdiFAQ4q08zJvJmepNru7Qd6g+CIGozOGdFFOtyqymhu0IkiQZvqae4efHBntzyHep5rLB7r7O+if0eUeGuLfbGu2TLyx6C34I8SOIlTwelV9TYfFhtOJOp8=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727693AbfCVSEg (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 22 Mar 2019 14:04:36 -0400
+Received: from lhreml708-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id E0BA87EBD14F17CE7D47;
+        Fri, 22 Mar 2019 18:04:34 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
+ by smtpsuk.huawei.com (10.201.108.49) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Fri, 22 Mar 2019 18:04:24 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <dhowells@redhat.com>,
+        <zohar@linux.ibm.com>, <dan.j.williams@intel.com>
+CC:     <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-nvdimm@lists.01.org>,
+        <david.safford@ge.com>, <jejb@linux.ibm.com>,
+        <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        <stable@vger.kernel.org>
+Subject: [PATCH] KEYS: trusted: defer execution of TPM-specific code until key instantiate
+Date:   Fri, 22 Mar 2019 19:01:39 +0100
+Message-ID: <20190322180139.18856-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ecda19a-c6c7-4559-1d1a-08d6aeed5265
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Mar 2019 17:39:22.9965
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR21MB1287
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.154]
+X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hello,
+Commit 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure from
+tpm_default_chip()") changed the tpm_chip argument of every TPM function
+from NULL to a pointer that is retrieved at module initialization time.
 
-When loading the new kernel image file for executing KEXEC system call,=20
-we would like to verify that the kernel image file is signed and=20
-the signer certificate is valid.=20
+Unlike before this patch, the trusted module cannot be loaded if no TPM is
+available. Unfortunately, this causes a dependency problem because the
+encrypted key type requires the 'key_type_trusted' symbol when
+CONFIG_TRUSTED_KEYS is defined.
 
-If the kernel image file is in Portable Executable (PE) format we want to=20
-validate the PE Signature and measure the signer X.509 certificate=20
-(Extend as part of IMA Template defaulting to PCR 10, if not otherwise set,=
-=20
- and the IMA measurement log).
+This patch fixes the issue by deferring the execution of TPM-specific code
+until a new trusted key is instantiated: init_tpm(), to obtain a tpm_chip
+pointer; init_digests(), introduced by commit 0b6cf6b97b7e ("tpm: pass an
+array of tpm_extend_digest structures to tpm_pcr_extend()"), to get random
+bytes from the TPM to lock a PCR.
 
-We plan to use Integrity Measurement Architecture (IMA) for the above.
+Cc: stable@vger.kernel.org
+Fixes: 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure from tpm_default_chip()")
+Reported-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/keys/trusted.c | 89 +++++++++++++++++++++++------------------
+ 1 file changed, 50 insertions(+), 39 deletions(-)
 
-Please let us know if anyone is already working on a patch set
-for such a functionality.
+diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+index ecec672d3a77..c5162ca9c944 100644
+--- a/security/keys/trusted.c
++++ b/security/keys/trusted.c
+@@ -946,6 +946,44 @@ static struct trusted_key_payload *trusted_payload_alloc(struct key *key)
+ 	return p;
+ }
+ 
++static int init_tpm(void)
++{
++	if (chip)
++		return 0;
++
++	chip = tpm_default_chip();
++	if (!chip)
++		return -ENODEV;
++
++	return 0;
++}
++
++static int init_digests(void)
++{
++	u8 digest[TPM_MAX_DIGEST_SIZE];
++	int ret;
++	int i;
++
++	if (digests)
++		return 0;
++
++	ret = tpm_get_random(chip, digest, TPM_MAX_DIGEST_SIZE);
++	if (ret < 0)
++		return ret;
++	if (ret < TPM_MAX_DIGEST_SIZE)
++		return -EFAULT;
++
++	digests = kcalloc(chip->nr_allocated_banks, sizeof(*digests),
++			  GFP_KERNEL);
++	if (!digests)
++		return -ENOMEM;
++
++	for (i = 0; i < chip->nr_allocated_banks; i++)
++		memcpy(digests[i].digest, digest, TPM_MAX_DIGEST_SIZE);
++
++	return 0;
++}
++
+ /*
+  * trusted_instantiate - create a new trusted key
+  *
+@@ -967,6 +1005,14 @@ static int trusted_instantiate(struct key *key,
+ 	size_t key_len;
+ 	int tpm2;
+ 
++	ret = init_tpm();
++	if (ret < 0)
++		return ret;
++
++	ret = init_digests();
++	if (ret < 0)
++		return ret;
++
+ 	tpm2 = tpm_is_tpm2(chip);
+ 	if (tpm2 < 0)
+ 		return tpm2;
+@@ -1218,58 +1264,23 @@ static int __init trusted_shash_alloc(void)
+ 	return ret;
+ }
+ 
+-static int __init init_digests(void)
+-{
+-	u8 digest[TPM_MAX_DIGEST_SIZE];
+-	int ret;
+-	int i;
+-
+-	ret = tpm_get_random(chip, digest, TPM_MAX_DIGEST_SIZE);
+-	if (ret < 0)
+-		return ret;
+-	if (ret < TPM_MAX_DIGEST_SIZE)
+-		return -EFAULT;
+-
+-	digests = kcalloc(chip->nr_allocated_banks, sizeof(*digests),
+-			  GFP_KERNEL);
+-	if (!digests)
+-		return -ENOMEM;
+-
+-	for (i = 0; i < chip->nr_allocated_banks; i++)
+-		memcpy(digests[i].digest, digest, TPM_MAX_DIGEST_SIZE);
+-
+-	return 0;
+-}
+-
+ static int __init init_trusted(void)
+ {
+ 	int ret;
+ 
+-	chip = tpm_default_chip();
+-	if (!chip)
+-		return -ENOENT;
+-	ret = init_digests();
+-	if (ret < 0)
+-		goto err_put;
+ 	ret = trusted_shash_alloc();
+ 	if (ret < 0)
+-		goto err_free;
++		return ret;
+ 	ret = register_key_type(&key_type_trusted);
+ 	if (ret < 0)
+-		goto err_release;
+-	return 0;
+-err_release:
+-	trusted_shash_release();
+-err_free:
+-	kfree(digests);
+-err_put:
+-	put_device(&chip->dev);
++		trusted_shash_release();
+ 	return ret;
+ }
+ 
+ static void __exit cleanup_trusted(void)
+ {
+-	put_device(&chip->dev);
++	if (chip)
++		put_device(&chip->dev);
+ 	kfree(digests);
+ 	trusted_shash_release();
+ 	unregister_key_type(&key_type_trusted);
+-- 
+2.17.1
 
-I am aware of the work that Thiago Jung Bauermann @ IBM is doing for=20
-"Appended signatures support for IMA appraisal"=20
-(Web link given below)
-
-    https://lkml.org/lkml/2018/12/12/1049
-
-Thank You.
- -lakshmi
