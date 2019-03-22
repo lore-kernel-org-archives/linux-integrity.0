@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB7DC10F10
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 08:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB51DC43381
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 08:35:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00241218D3
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 08:35:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E4302083D
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 08:35:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=binghamton.edu header.i=@binghamton.edu header.b="IwnsUXB/"
+	dkim=pass (2048-bit key) header.d=binghamton.edu header.i=@binghamton.edu header.b="U3GGCL4E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727910AbfCVIfK (ORCPT
+        id S1727786AbfCVIfX (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 22 Mar 2019 04:35:10 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:42281 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727900AbfCVIfI (ORCPT
+        Fri, 22 Mar 2019 04:35:23 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:43911 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727875AbfCVIfG (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Mar 2019 04:35:08 -0400
-Received: by mail-qt1-f193.google.com with SMTP id p20so1586679qtc.9
-        for <linux-integrity@vger.kernel.org>; Fri, 22 Mar 2019 01:35:06 -0700 (PDT)
+        Fri, 22 Mar 2019 04:35:06 -0400
+Received: by mail-qt1-f196.google.com with SMTP id v32so1572860qtc.10
+        for <linux-integrity@vger.kernel.org>; Fri, 22 Mar 2019 01:35:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=binghamton.edu; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=NgqzJKlYgrjsh+NPCvN4r+JkV5xuGyj+t6AG7/VzGIM=;
-        b=IwnsUXB/ai3XHdIYd81DS0Ek/J8MbUGNfLHbA9yGdCvp8a5gjvzRAaC0IrKNC4bhw8
-         qNTw9twdi9eVZKM/NKSFc6FoNtcbPWz19UoFph8g6XgZ3LfyUZYz4wHIH9Z9MHc8xHhJ
-         FvzrIu8sp4dcfmqkgfgR7xo7f+tT4q7NPxr1vZtUvtFpj4ii7gQm8JdhZrksbr6zHK1w
-         Y5UDGpotPju+zKQvPrwy9JRThH9fXZIPQJEv7oBpavRSJlDmX7ENla2UgB7LwjJW2AIn
-         hXGooIOz7Q40K/baBs8BxgL5C9a51BnHxEzjlnwAoiKUnaHUCMhAuJO2jmicClIl+Wwx
-         IBMA==
+        bh=PhnXicmFBTSFqGzyUFmfRXJnBFygK9aujfgCD+WFYQc=;
+        b=U3GGCL4EZQ0KRnBnwtu0pLNYoBpC9WIh8gZny1AkxtFqhJ94HZHIepwHsgMlHJ/yvq
+         hTxDBfS5Bh0ZvdKwLzKAMki1lkTQ+vPZ1gqP904HWsGpZ2SCEMYCDfs9HMaUJ9ENvzmE
+         tfXA5UczkNHPjCuv/pcWjbsbEwr/DKIEoCgijm44GYcJTvn+cGPMp3+urbtxrEj/frcf
+         Kqq6BBR8g5lvLI2kbYo2ABR688HWgKOfrYifB4wnI7s/Qpn1k/Zs6L+ek0MvjjPtkfXN
+         WilkzKD9H3l/xMSuAtIU/6WhBi/usLlREzQ5+AJNI6X2WkOsILumXXOZRZ8eUzlBBQPz
+         Rsrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=NgqzJKlYgrjsh+NPCvN4r+JkV5xuGyj+t6AG7/VzGIM=;
-        b=Y197Sgy2fQeGsnmr0BI+LbjJgZxUCwaZ+FjPfTLPgpkzE4kN05zkQS37UnCAdTOJlu
-         BzHJM6t0G17Y0b65u1KEpK/a/8lH3jRSWX2JQyonDDBa+ljCxgr9n+zeaWWzVumGexUL
-         kDBdjT7hFaDfZY5o5m+Ms5WVgcMz0Uo9ctuf7zwXpXuVlx5+upc0J+dqDk1NjvVWATHX
-         gmzDqUerdmOU+B3aAZOZ5LoC4iHkTv+H8ikehvB6rTYxozD38qOUxNX6N/vusZMxQzwT
-         REKyV22avJp2cPurbRxkOM6KT1DavMzq9e8it51LY//WVOCu26nln/GXAX2l0kq1Dkqw
-         rWtQ==
-X-Gm-Message-State: APjAAAX7ENKFGK7L+BpOn1zn9gczxMzwS9Pbv8nxsqjLjRcgN8MAUcKz
-        KYxMNY4fmDRd3j9pFPASgEZXIDSQxDHmOg==
-X-Google-Smtp-Source: APXvYqyoZ+gSSwdrqlgeeUPNErbFQtlTOA3fr1N5LHKlhKBLBrxyN9/3qLvxuWQcoyNLY9CM1zOW2w==
-X-Received: by 2002:aed:35e4:: with SMTP id d33mr6647374qte.58.1553243705650;
-        Fri, 22 Mar 2019 01:35:05 -0700 (PDT)
+        bh=PhnXicmFBTSFqGzyUFmfRXJnBFygK9aujfgCD+WFYQc=;
+        b=gm4S3rocxabnUC3cq9aYmuNUs9YUa1Z7lvjDtqTbJRHh4dK+KSxL8SDCKlaYmEjQb+
+         xTjNcLYhqhCFFTvNHPeHxpcE16nZtk9W6FqZ8UvzAxwSPesc/qdawSIvt1NMTFF2S8+q
+         eDYhnjfShdlPKxpIlVRFD8jbCRXOGjd88USLm4WA4jwaxKoYGCVYm8FhUqimJQ9igSD0
+         0P2nUI67w8eCgGtxQiGN3b9EjK8ZWT2t5kTavHDJBvqvXEocPjcHMw4DuUP/1PzIZ8lo
+         Ow9ldsXyp7GDA1B8GIxzA7SqCynTkWPw/7OVFKunSURUkz14K67bpoST4pPOhFYeQ2a6
+         b6gA==
+X-Gm-Message-State: APjAAAVTj5lkS7IeQMdDqv6KS5sBMU1IfYdkmsFsKBey0XacvKe2hHob
+        P+jPRPtBxsYvS6kcKbOCDIBocdLuOt+amQ==
+X-Google-Smtp-Source: APXvYqzTwpQ+98MlfPVXbP3DCYg8Q/B8dIvd/aNpwTKL/1heCL76s0oqo2fX8aXwbpbWsW46sI/hCQ==
+X-Received: by 2002:ac8:30ea:: with SMTP id w39mr7125192qta.351.1553243704818;
+        Fri, 22 Mar 2019 01:35:04 -0700 (PDT)
 Received: from localhost.localdomain ([194.59.251.45])
         by smtp.gmail.com with ESMTPSA id u16sm7441870qtc.84.2019.03.22.01.35.04
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Mar 2019 01:35:05 -0700 (PDT)
+        Fri, 22 Mar 2019 01:35:04 -0700 (PDT)
 From:   djacobs7@binghamton.edu
 To:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     zohar@linux.ibm.com, pvorel@suse.cz, vt@altlinux.org,
         David Jacobson <djacobs7@binghamton.edu>
-Subject: [PATCH v2 7/8] emvtest: Add ability to run all tests
-Date:   Fri, 22 Mar 2019 04:34:40 -0400
-Message-Id: <20190322083441.31084-7-djacobs7@binghamton.edu>
+Subject: [PATCH v2 6/8] evmtest: test the preservation of extended attributes
+Date:   Fri, 22 Mar 2019 04:34:39 -0400
+Message-Id: <20190322083441.31084-6-djacobs7@binghamton.edu>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190322083441.31084-1-djacobs7@binghamton.edu>
 References: <20190322083441.31084-1-djacobs7@binghamton.edu>
@@ -75,172 +75,142 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: David Jacobson <djacobs7@binghamton.edu>
 
-evmtest tests functionality of different IMA-Appraisal policies.
-
-To simplify testing, this patch defines an evmtest config file.  This
-allows for running all tests at once, rather than invoking each test
-individually. Variables can be set once rather than specifying
-parameters at runtime on the command line.
+IMA supports file signatures by storing information in a security.ima
+extended file attribute. This test ensures that the attribute is
+preserved when a file is copied.  This test requires root because only
+root can write "security." xattrs to files.
 
 Signed-off-by: David Jacobson <djacobs7@binghamton.edu>
 
-changelog:
-* removed [OPTIONS] for runall
-* added CONFIGURATION PATHNAME -> configuration file
+Changelog:
+* Clean ups suggested via mailing list
+* getfattr used correctly
+* more information about which file is created
+* added xattr_preserve to test list
 * shellcheck compliant
+* move from functions to tests
+* checkbashisms complaint
+* remove begin
+* removed long opts
+* restructured using functions
 ---
- evmtest/README       | 31 +++++++++++++++++++++++++-
- evmtest/evmtest      | 52 ++++++++++++++++++++++++++++++++++++++++++++
- evmtest/example.conf | 14 ++++++++++++
- 3 files changed, 96 insertions(+), 1 deletion(-)
- create mode 100644 evmtest/example.conf
+ evmtest/README                  |  1 +
+ evmtest/evmtest                 |  1 +
+ evmtest/tests/xattr_preserve.sh | 81 +++++++++++++++++++++++++++++++++
+ 3 files changed, 83 insertions(+)
+ create mode 100755 evmtest/tests/xattr_preserve.sh
 
 diff --git a/evmtest/README b/evmtest/README
-index 4dddbc0..d202559 100644
+index b2d37e2..4dddbc0 100644
 --- a/evmtest/README
 +++ b/evmtest/README
-@@ -13,6 +13,7 @@ SYNOPSIS
- 
- evmtest runtest <test name> [OPTIONS]
- 
-+evmtest runall <configuration pathname>
- 
- DESCRIPTION
- -----------
-@@ -34,7 +35,7 @@ OPTIONS
+@@ -42,6 +42,7 @@ TEST NAMES
+  policy_sig - verify loading IMA policies
+  kexec_sig - test IMA-appraise on kexec image loading
+  kmod_sig - test IMA-appraise on kernel module loading
++ xattr_preserve - test metadata preservation on file move
  
  
- TEST NAMES
------------
-+---------
- 
-  boot_aggregate - verify the IMA boot-aggregate
-  env_validate - verify kernel build
-@@ -45,6 +46,34 @@ TEST NAMES
-  xattr_preserve - test metadata preservation on file move
- 
- 
-+
-+CONFIGURATION PATHNAME
-+----------------------
-+
-+The configuration pathname should point to the runall configuration file.
-+
-+
-+=== Configuration File
-+
-+The evmtest configuration file allows all tests to be run by executing a single
-+command. The configuration file contains all the options that needed for
-+various tests and allows tests to be run non-interactively, so they can be
-+integrated in a larger testing suite.
-+
-+The `example.conf` file provides a skeleton configuration file, where the only
-+variable that *must* be defined is `IMA_KEY`. Defaults are described below.
-+
-+* `IMA_KEY` - The private key for the certificate on the IMA Trusted Keyring
-+
-+* `KBUILD_DIR` - Should point to a kernel build tree. If not provided, the test
-+will use `/lib/modules/$(uname -r)/build`.
-+
-+* `KERN_IMAGE` - Should point towards an unsigned kernel image. If not provided,
-+the test will attempt to use the running kernel.
-+
-+* `VERBOSE` - If set to 1, will add -v to all tests run
-+
-+
  Introduction
- ------------
- 
 diff --git a/evmtest/evmtest b/evmtest/evmtest
-index 18cb98d..d6f46f5 100755
+index 3c967f9..18cb98d 100755
 --- a/evmtest/evmtest
 +++ b/evmtest/evmtest
-@@ -16,6 +16,7 @@ source "$EVMDIR"/files/common.sh
- usage (){
- 	echo "Usage:"
- 	echo "	evmtest runtest <test name> [OPTIONS]"
-+	echo "	evmtest	runall <configuration file>"
+@@ -32,6 +32,7 @@ usage (){
+ 	echo "[R]	kexec_sig"
+ 	echo "[R]	kmod_sig"
+ 	echo "[R]	policy_sig"
++	echo "[R]	xattr_preserve"
+ 
  	echo ""
- 	echo "Options:"
- 	echo "	-h	Displays this help message"
-@@ -67,6 +68,57 @@ elif [ "$1" == "runtest" ]; then
- 		runtest "$@"
- 		exit $?
- 	fi
-+elif [ "$1" == "runall" ]; then
-+	if [ -z "$2" ] || [ ! -e "$2" ]; then
-+		echo "evmtest runall <config file>"
-+		echo "[!] Please provide a config file"
-+		exit 1
-+	fi
-+	source "$2" # Load in config
-+	if [ "$VERBOSE" -eq 1 ]; then
-+		V="-v"
-+	fi
-+
-+	# Key is not optional
-+	if [ -z "$IMA_KEY" ]; then
-+		echo "[*] Please correct your config file"
-+		exit 1
-+	fi
-+
-+	EVMTEST_require_root
-+	FAIL=0
-+	echo "[*] Running tests..."
-+	# 1
-+	"$EVMDIR"/tests/env_validate.sh -r "$V"
-+	FAIL=$((FAIL+$?))
-+	# 2
-+	if [ -z "$KERN_IMAGE" ]; then
-+		"$EVMDIR"/tests/kexec_sig.sh -k "$IMA_KEY" "$V"
-+	else
-+		"$EVMDIR"/tests/kexec_sig.sh -k "$IMA_KEY" -i \
-+			"$KERN_IMAGE" "$V"
-+	fi
-+	FAIL=$((FAIL+$?))
-+	# 3
-+	if [ -z "$KBUILD_DIR" ]; then
-+		"$EVMDIR"/tests/kmod_sig.sh -k "$IMA_KEY" "$V"
-+	else
-+		"$EVMDIR"/tests/kmod_sig.sh -b "$KBUILD_DIR" \
-+			-k "$IMA_KEY" "$V"
-+	fi
-+	FAIL=$((FAIL+$?))
-+	# 4
-+	"$EVMDIR"/tests/policy_sig.sh -k "$IMA_KEY" "$V"
-+	FAIL=$((FAIL+$?))
-+	# 5
-+	"$EVMDIR"/tests/boot_aggregate.sh "$V"
-+	FAIL=$((FAIL+$?))
-+	# 6
-+	"$EVMDIR"/tests/xattr_preserve.sh "$V"
-+	FAIL=$((FAIL+$?))
-+	echo "..."
-+	echo "[*] TESTS PASSED: $((6-FAIL))"
-+	echo "[*] TESTS FAILED: $FAIL"
- else
- 	usage
- fi
-diff --git a/evmtest/example.conf b/evmtest/example.conf
-new file mode 100644
-index 0000000..fd1c8fe
+ 	echo "Note: Tests may be run directly from the \"tests\" directory"
+diff --git a/evmtest/tests/xattr_preserve.sh b/evmtest/tests/xattr_preserve.sh
+new file mode 100755
+index 0000000..61f6ded
 --- /dev/null
-+++ b/evmtest/example.conf
-@@ -0,0 +1,14 @@
-+# This is an example config file
-+# There are three variables that can be set when using evmtest runall
++++ b/evmtest/tests/xattr_preserve.sh
+@@ -0,0 +1,81 @@
++#!/bin/bash
++# Author: David Jacobson <davidj@linux.ibm.com>
++TEST="xattr_preserve"
++ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )/.."
++source "$ROOT"/files/common.sh
 +
-+#Set this to 1 for verbose output
 +VERBOSE=0
-+# Path to the private key for the IMA Trusted Keyring
-+# This is required
-+IMA_KEY=/path/to/your/ima_key
++# This test ensures that extended file attributes are preserved when a file is
++# moved with the correct flag
 +
-+# If this is not provided, tests will run but attempt to copy the running kernel
-+KERN_IMAGE=/path/to/unsigned/kernel_image
++usage (){
++	echo ""
++	echo "xattr_preserve [-hv]"
++	echo ""
++	echo "This test requires root privileges to write security xattrs"
++	echo ""
++	echo "	This test ensures that extended file attributes (specifically"
++	echo "	security.ima labels) are preserved when copying"
++	echo "Options"
++	echo "  -h	Display this help message"
++	echo "  -v	Verbose logging"
++}
 +
-+# If this is not defined, tests will try to find build tree
-+KBUILD_DIR=/path/to/kernel/build/tree
++parse_args () {
++	TEMP=$(getopt -o 'hv' -n 'xattr_preserve' -- "$@")
++	eval set -- "$TEMP"
++
++	while true ; do
++		case "$1" in
++		-h) usage; exit; shift;;
++		-v) VERBOSE=1; shift;;
++		--) shift; break;;
++		*) echo "[*] Unrecognized option $1"; exit 1;;
++		esac
++	done
++}
++
++check_xattr_preserve () {
++	LOCATION_1=$(mktemp)
++	LOCATION_2=$(mktemp -u) # Doesn't create the file
++
++	v_out "Creating and labeling file $LOCATION_1..."
++
++	evmctl ima_hash "$LOCATION_1"
++
++	initial_ima_label=$(getfattr --absolute-names -n security.ima \
++			"$LOCATION_1")
++	initial_hash=$(echo "$initial_ima_label" | awk -F '=' '{print $2}')
++	if printf '%s' "$initial_ima_label" | grep -E -q "security.ima"; then
++		v_out "Found hash on initial file... "
++	else
++		fail "Hash not found on initial file"
++	fi
++
++	initial_hash=$(echo "$initial_ima_label" | awk -F '=' '{print $2}')
++
++	v_out "Copying file to $LOCATION_2..."
++	cp --preserve=xattr "$LOCATION_1" "$LOCATION_2"
++	v_out "Checking if extended attribute has been preserved..."
++
++
++	second_ima_label=$(getfattr --absolute-names -n security.ima \
++			"$LOCATION_2")
++	second_hash=$(echo "$second_ima_label" | awk -F '=' '{print $2}')
++	if [ "$initial_hash" != "$second_hash" ]; then
++		fail "security.ima xattr was not preserved!"
++	else
++		v_out "Extended attribute was preserved during copy"
++	fi
++}
++
++cleanup () {
++	v_out "Cleaning up..."
++	rm "$LOCATION_1" "$LOCATION_2"
++}
++
++EVMTEST_require_root
++echo "[*] Starting test: $TEST"
++check_xattr_preserve
++cleanup
++passed
 -- 
 2.20.1
 
