@@ -2,101 +2,100 @@ Return-Path: <SRS0=JOkf=RZ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B328C4360F
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 18:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF356C43381
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 19:15:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DB2D218A2
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 18:49:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="N5//jGST"
+	by mail.kernel.org (Postfix) with ESMTP id A43B42190A
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 19:15:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727566AbfCVStn (ORCPT
+        id S1727566AbfCVTPF (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 22 Mar 2019 14:49:43 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:40567 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727364AbfCVStj (ORCPT
+        Fri, 22 Mar 2019 15:15:05 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:38746 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727364AbfCVTPF (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Mar 2019 14:49:39 -0400
-Received: by mail-oi1-f196.google.com with SMTP id 3so2494254oir.7
-        for <linux-integrity@vger.kernel.org>; Fri, 22 Mar 2019 11:49:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bI3YQ2UGTKs+MAcoBFqJxdwZKPIFUOvygyRC2OsSzCA=;
-        b=N5//jGST86vYO340eYtI3EkCEzKT7yaEuHzY5+Kh5B7VJhGKQZ4aKXs1HDfK/9Ix5h
-         ItPRUvuvEz9BWfASgO0emxKL4zXSy8oxYLRmVa5XPCr3WDgrEwo4c4J1tBIxQzudJMjt
-         Degur5vzEwCS+T5z4mcKAcgf0BbI4d1JDWTB5LfIt8BFes3E7B4Z9pktgeJO6GE2vhx7
-         5ygVZpcDN5oSJS8dQFNnzQQ5bfLhI8aCTcf83/iahdkt1fCs5ligA2mRZCaUugpP/SjO
-         mGIo60JluCwEQxloMNcpZHIe2/8Dk4nDlxzJSPCKkkPdJgVzrOIcvW69mByO9FNLXpR2
-         09IA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bI3YQ2UGTKs+MAcoBFqJxdwZKPIFUOvygyRC2OsSzCA=;
-        b=V6C4Fx0oMVIHH+Uv/q4UlJIcpYZF7TAEdBhpVw/4TISFP5k3TQQqqWwcNpEErIpaAv
-         C1LFTtm33G1dSKvXw6443BL9upIK1/GpVBFJMGZMjR1EW6y7l0zbh/pxm/8FQ4122o//
-         ZrprQZgwGc7MaudnJ0ZUIRbtZPvspMmPZMRfD1YfmQb2wZiGn/w1aisYkapwMWUAGt3O
-         X0RojsQnjX3MBXgbqcA0coHt9zu2X2TWu25+mPM0VCre2bbccb3t5hBSDM8EqkxkM48/
-         JTaYwKgx80ipfSrLnz6ya/xhwrCoOwk0tB/roW4HYfRQd6JkdE1D3doPElMPQVaxPfaA
-         DJ0Q==
-X-Gm-Message-State: APjAAAVMW7EP8VCOfdFUsSC0m0tVODOC15vTKPeNckXu5AsX6YJMAUB8
-        bJIzEYxasp9tIJOd6/Zz0OLpZ4/GxGREk026afClyA==
-X-Google-Smtp-Source: APXvYqy4BJvYNZA7/ljIt/taH8vx1sPjx2JqEJOnCU54OBPk4JrQc65yT3qysc8ckBPzxLC48dIT/rgTYmGOgtvH+l8=
-X-Received: by 2002:aca:aa57:: with SMTP id t84mr2975823oie.149.1553280578611;
- Fri, 22 Mar 2019 11:49:38 -0700 (PDT)
+        Fri, 22 Mar 2019 15:15:05 -0400
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id E1BD872CC53;
+        Fri, 22 Mar 2019 22:15:00 +0300 (MSK)
+Received: from altlinux.org (sole.flsd.net [185.75.180.6])
+        by imap.altlinux.org (Postfix) with ESMTPSA id C9DB74A4A16;
+        Fri, 22 Mar 2019 22:15:00 +0300 (MSK)
+Date:   Fri, 22 Mar 2019 22:15:00 +0300
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org
+Subject: Re: [PATCH v7 11/11] integrity: support EC-RDSA signatures for
+ asymmetric_verify
+Message-ID: <20190322191500.wzkbqsij5jyndlxd@altlinux.org>
+Mail-Followup-To: Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org
+References: <20190301175918.29694-1-vt@altlinux.org>
+ <20190301175918.29694-12-vt@altlinux.org>
 MIME-Version: 1.0
-References: <20190322180139.18856-1-roberto.sassu@huawei.com>
-In-Reply-To: <20190322180139.18856-1-roberto.sassu@huawei.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 22 Mar 2019 11:49:27 -0700
-Message-ID: <CAPcyv4jU-TCyfJ5gxrEaZt1GDJ+b_FtYi9O8H=cqLbqOAaskuw@mail.gmail.com>
-Subject: Re: [PATCH] KEYS: trusted: defer execution of TPM-specific code until
- key instantiate
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>, david.safford@ge.com,
-        James Bottomley <jejb@linux.ibm.com>,
-        Silviu Vlasceanu <silviu.vlasceanu@huawei.com>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+In-Reply-To: <20190301175918.29694-12-vt@altlinux.org>
+User-Agent: NeoMutt/20171215-106-ac61c7
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Mar 22, 2019 at 11:04 AM Roberto Sassu <roberto.sassu@huawei.com> wrote:
->
-> Commit 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure from
-> tpm_default_chip()") changed the tpm_chip argument of every TPM function
-> from NULL to a pointer that is retrieved at module initialization time.
->
-> Unlike before this patch, the trusted module cannot be loaded if no TPM is
-> available. Unfortunately, this causes a dependency problem because the
-> encrypted key type requires the 'key_type_trusted' symbol when
-> CONFIG_TRUSTED_KEYS is defined.
->
-> This patch fixes the issue by deferring the execution of TPM-specific code
-> until a new trusted key is instantiated: init_tpm(), to obtain a tpm_chip
-> pointer; init_digests(), introduced by commit 0b6cf6b97b7e ("tpm: pass an
-> array of tpm_extend_digest structures to tpm_pcr_extend()"), to get random
-> bytes from the TPM to lock a PCR.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure from tpm_default_chip()")
-> Reported-by: Dan Williams <dan.j.williams@intel.com>
+Mimi, Dmitry,
 
-Tested-by: Dan Williams <dan.j.williams@intel.com>
+Can you Ack this patch?
 
-Thanks Robert!
+Thanks,
+
+On Fri, Mar 01, 2019 at 08:59:18PM +0300, Vitaly Chikunov wrote:
+> Allow to use EC-RDSA signatures for IMA by determining signature type by
+> the hash algorithm name. This works good for EC-RDSA since Streebog and
+> EC-RDSA should always be used together.
+> 
+> Cc: Mimi Zohar <zohar@linux.ibm.com>
+> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+> Cc: linux-integrity@vger.kernel.org
+> Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+> ---
+>  security/integrity/digsig_asymmetric.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
+> index d775e03fbbcc..99080871eb9f 100644
+> --- a/security/integrity/digsig_asymmetric.c
+> +++ b/security/integrity/digsig_asymmetric.c
+> @@ -104,9 +104,16 @@ int asymmetric_verify(struct key *keyring, const char *sig,
+>  
+>  	memset(&pks, 0, sizeof(pks));
+>  
+> -	pks.pkey_algo = "rsa";
+>  	pks.hash_algo = hash_algo_name[hdr->hash_algo];
+> -	pks.encoding = "pkcs1";
+> +	if (hdr->hash_algo == HASH_ALGO_STREEBOG_256 ||
+> +	    hdr->hash_algo == HASH_ALGO_STREEBOG_512) {
+> +		/* EC-RDSA and Streebog should go together. */
+> +		pks.pkey_algo = "ecrdsa";
+> +		pks.encoding = "raw";
+> +	} else {
+> +		pks.pkey_algo = "rsa";
+> +		pks.encoding = "pkcs1";
+> +	}
+>  	pks.digest = (u8 *)data;
+>  	pks.digest_size = datalen;
+>  	pks.s = hdr->sig;
+> -- 
+> 2.11.0
