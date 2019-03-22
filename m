@@ -2,89 +2,91 @@ Return-Path: <SRS0=JOkf=RZ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E74C43381
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 10:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D814DC4360F
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 12:30:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAE902190A
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 10:51:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B155D2070D
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 12:30:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728066AbfCVKvu (ORCPT
+        id S2390546AbfCVMSr (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 22 Mar 2019 06:51:50 -0400
-Received: from mga14.intel.com ([192.55.52.115]:24392 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726667AbfCVKvt (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Mar 2019 06:51:49 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Mar 2019 03:51:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,256,1549958400"; 
-   d="scan'208";a="157368552"
-Received: from vanderss-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.199])
-  by fmsmga001.fm.intel.com with ESMTP; 22 Mar 2019 03:51:43 -0700
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org, pauldzim@gmail.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] tpm: turn on TPM on suspend for TPM 1.x
-Date:   Fri, 22 Mar 2019 12:51:20 +0200
-Message-Id: <20190322105120.8441-1-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
+        Fri, 22 Mar 2019 08:18:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38966 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390153AbfCVMSp (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 22 Mar 2019 08:18:45 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 56ED2AB91;
+        Fri, 22 Mar 2019 12:18:44 +0000 (UTC)
+Date:   Fri, 22 Mar 2019 13:18:42 +0100
+From:   Petr Vorel <pvorel@suse.cz>
+To:     djacobs7@binghamton.edu
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        zohar@linux.ibm.com, vt@altlinux.org
+Subject: Re: [PATCH v2 1/8] evmtest: Regression testing integrity subsystem
+Message-ID: <20190322121842.GA32091@dell5510>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20190322083441.31084-1-djacobs7@binghamton.edu>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190322083441.31084-1-djacobs7@binghamton.edu>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-tpm_chip_start/stop() should be also called for TPM 1.x devices on
-suspend. Add that functionality back. Do not lock the chip because
-it is unnecessary as there are no multiple threads using it when
-doing the suspend.
+Hi David,
 
-Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
-Reported-by: Paul Zimmerman <pauldzim@gmail.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- drivers/char/tpm/tpm-interface.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+> $ evmtest runtest example_test -e /bin/bash
+> [*] Starting test: example_test
+> [*] TEST: PASSED
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 83ece5639f86..ae1030c9b086 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -402,15 +402,13 @@ int tpm_pm_suspend(struct device *dev)
- 	if (chip->flags & TPM_CHIP_FLAG_ALWAYS_POWERED)
- 		return 0;
- 
--	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
--		mutex_lock(&chip->tpm_mutex);
--		if (!tpm_chip_start(chip)) {
-+	if (!tpm_chip_start(chip)) {
-+		if (chip->flags & TPM_CHIP_FLAG_TPM2)
- 			tpm2_shutdown(chip, TPM2_SU_STATE);
--			tpm_chip_stop(chip);
--		}
--		mutex_unlock(&chip->tpm_mutex);
--	} else {
--		rc = tpm1_pm_suspend(chip, tpm_suspend_pcr);
-+		else
-+			rc = tpm1_pm_suspend(chip, tpm_suspend_pcr);
-+
-+		tpm_chip_stop(chip);
- 	}
- 
- 	return rc;
--- 
-2.19.1
+> Example 1a: successful verbose example test output
+> $ evmtest runtest example_test -e /bin/bash -v
+...
 
+> Changelog:
+...
+> * checkbashishms compliant
+Not yet :). I noticed using
+source (should be .)
+== (should be =)
+${BASH_SOURCE[0]} (should be $0)
+$UID (should be $(id -u)
+bash redirection &>> (should be >/dev/null 2>&1)
++= (should be VAR="${VAR}foo")
+and bash shebang.
+
+Could you please fix that?
+
+...
+> +++ b/evmtest/evmtest
+> @@ -0,0 +1,67 @@
+> +#!/bin/bash
+
+Can we, please, use /bin/sh and not-expect bash?
+Portability matters.
+
+> +source "$EVMDIR"/files/common.sh
+> +usage (){
+> +	echo "Usage:"
+> +	echo "	evmtest runtest <test name> [OPTIONS]"
+> +	echo ""
+Can be just echo. Maybe using cat might be better than many echos:
+
+cat <<EOF
+Usage:
+\tevmtest runtest <test name> [OPTIONS]
+...
+EOF
+
+
+Kind regards,
+Petr
