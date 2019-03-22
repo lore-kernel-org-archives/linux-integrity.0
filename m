@@ -6,101 +6,113 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D38FC43381
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 17:27:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E42EC43381
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 17:39:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 452F720657
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 17:27:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D50D12190A
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 17:39:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Ssg9jzJR"
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="PRxLuaK1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728243AbfCVR1P (ORCPT
+        id S1727844AbfCVRj0 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 22 Mar 2019 13:27:15 -0400
-Received: from mail-eopbgr690110.outbound.protection.outlook.com ([40.107.69.110]:22500
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        Fri, 22 Mar 2019 13:39:26 -0400
+Received: from mail-eopbgr800124.outbound.protection.outlook.com ([40.107.80.124]:40260
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727741AbfCVR1O (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Mar 2019 13:27:14 -0400
+        id S1725981AbfCVRj0 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 22 Mar 2019 13:39:26 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5hhqcsQB0rrX0DcG8RkkzffGiQY7ware5mtAA6pSQD8=;
- b=Ssg9jzJRu0Tv8VPUnxFWsIAI/iwCjJabee2Xks6cTAdW+FuIU52aaisqTimaY9OPJTItGB8KTpAWsJB5l49IRX8xfmj46taO3y5OJEuBZ0W0jNDxCUZ2O8nZ/2Sv2WbUOKu/Ayja8Du585eKD5E0GxAn5UAl8biw2R5BRxJoOKo=
-Received: from DM5PR21MB0747.namprd21.prod.outlook.com (10.173.172.13) by
- DM5PR21MB0153.namprd21.prod.outlook.com (10.173.173.16) with Microsoft SMTP
+ bh=OWvMF++E9IIBvm3UkyNicHmgIs7K2VJQQpoQLXyRxwk=;
+ b=PRxLuaK1MskskxBE/thGZLYrKpHBiIVjGR4tua2WCJZdNtz40tWiPKIytPXZSj+wGYPhBzU5lwzsmmkbFpCW9izYUAas5ofMODzzTXPgRPUttl/vgcUCglqg+xIk1UR/7ddTiaQMtoRhl1ZwsBGFHYUf7oBb2+6puXP2ICWy5+c=
+Received: from BYAPR21MB1301.namprd21.prod.outlook.com (20.179.58.83) by
+ BYAPR21MB1287.namprd21.prod.outlook.com (20.179.58.24) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1750.5; Fri, 22 Mar 2019 17:27:12 +0000
-Received: from DM5PR21MB0747.namprd21.prod.outlook.com
- ([fe80::3d1e:56c2:2b7:cf91]) by DM5PR21MB0747.namprd21.prod.outlook.com
- ([fe80::3d1e:56c2:2b7:cf91%8]) with mapi id 15.20.1750.002; Fri, 22 Mar 2019
- 17:27:12 +0000
-From:   Prakhar Srivastava <prsriva@microsoft.com>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Subject: Adding cmldine args measure to ima
-Thread-Topic: Adding cmldine args measure to ima
-Thread-Index: AdTg1Hsi+/BTuAz2T8ua6RTRa1/xhA==
-Date:   Fri, 22 Mar 2019 17:27:12 +0000
-Message-ID: <DM5PR21MB0747326E1CAA3F66CE61B149BC430@DM5PR21MB0747.namprd21.prod.outlook.com>
+ 15.20.1750.3; Fri, 22 Mar 2019 17:39:23 +0000
+Received: from BYAPR21MB1301.namprd21.prod.outlook.com
+ ([fe80::e1e3:1872:e32c:7036]) by BYAPR21MB1301.namprd21.prod.outlook.com
+ ([fe80::e1e3:1872:e32c:7036%3]) with mapi id 15.20.1730.008; Fri, 22 Mar 2019
+ 17:39:23 +0000
+From:   Lakshmi Ramasubramanian <nramas@microsoft.com>
+To:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Portable Executable (PE) Signature Validation and Measurement for
+ KEXEC system call using IMA
+Thread-Topic: Portable Executable (PE) Signature Validation and Measurement
+ for KEXEC system call using IMA
+Thread-Index: AdTg1clupl0uJvoTS1+4SCE/Pu8Wqw==
+Date:   Fri, 22 Mar 2019 17:39:22 +0000
+Message-ID: <BYAPR21MB1301CBCD4956476F8F2F0FC4C3430@BYAPR21MB1301.namprd21.prod.outlook.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=prsriva@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-03-22T17:27:10.5308305Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=nramas@ntdev.microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-03-22T17:39:21.5499995Z;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
  Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=0ccbfdb5-9bbd-4015-9640-694c5667768e;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=a4e10f41-6446-49fa-9371-9e0f7fbb42e6;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-x-originating-ip: [2001:4898:80e8:7:6cee:5fa7:15d6:4d76]
+x-originating-ip: [2001:4898:80e8:b:2218:ea28:4673:9ba5]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7bf1fa35-45a7-4bf7-c2c6-08d6aeeb9ecd
+x-ms-office365-filtering-correlation-id: 2ecda19a-c6c7-4559-1d1a-08d6aeed5265
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:DM5PR21MB0153;
-x-ms-traffictypediagnostic: DM5PR21MB0153:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=prsriva@microsoft.com; 
-x-microsoft-antispam-prvs: <DM5PR21MB01535077A4AEF11E1FDFA65CBC430@DM5PR21MB0153.namprd21.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:BYAPR21MB1287;
+x-ms-traffictypediagnostic: BYAPR21MB1287:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <BYAPR21MB128774945261DA00C1AE5861C3430@BYAPR21MB1287.namprd21.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
 x-forefront-prvs: 09840A4839
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(39860400002)(136003)(376002)(366004)(199004)(189003)(6436002)(10090500001)(71200400001)(2906002)(8676002)(305945005)(55016002)(74316002)(4744005)(102836004)(86362001)(106356001)(316002)(110136005)(8990500004)(486006)(186003)(81166006)(14454004)(476003)(71190400001)(81156014)(22452003)(5660300002)(9686003)(450100002)(2501003)(99286004)(52536014)(86612001)(105586002)(14444005)(97736004)(53936002)(25786009)(46003)(478600001)(68736007)(33656002)(6506007)(256004)(6116002)(7736002)(7696005)(10290500003)(8936002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR21MB0153;H:DM5PR21MB0747.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(366004)(136003)(346002)(39860400002)(199004)(189003)(86362001)(8936002)(4744005)(7696005)(68736007)(256004)(6306002)(9686003)(33656002)(55016002)(14444005)(6436002)(316002)(22452003)(110136005)(8990500004)(5660300002)(6506007)(2501003)(53936002)(10090500001)(106356001)(478600001)(10290500003)(105586002)(81166006)(81156014)(6346003)(71190400001)(14454004)(966005)(71200400001)(305945005)(2906002)(7736002)(74316002)(97736004)(8676002)(102836004)(25786009)(476003)(486006)(450100002)(186003)(86612001)(99286004)(46003)(52536014)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR21MB1287;H:BYAPR21MB1301.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=nramas@microsoft.com; 
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: yJsMhKZ6dopBuuxUzzU2i22w/g4y8WjJYLDsLkBgzUkd9JmfDsTYaThDAr/6A+6CC7UUKltp41CZ/c7dQSI9i74raUI+cfGKh6pcwBm1FcsUMycy1aS+iA4PfaJA3ERCMe+7W3tylB6FppOX19QNkX3OGpryB6/POlhvgwHg7u9djpxBKbiNnyQ7cy1urZZc2YWsH9Tggxbcd0oJkJEYPasInzzluFu3cJgH+7LoD6kU3/hvwlE1XT4FIvihi6XFpAIsDfGfOHpT3eesQH4BMHbUo9IQ9qN5p558DdKno6xQ5QPnOhG/qa6MCZ5zy3wjiR5RsALzR1bOkPqynZGM8DU5fXqlHFE175Yg/e3Mi72Q/ixkWg7q9GHh89QgG73uTf/IwdueG/oPQ6Xeedjq6SEosN2t0gsS0qeX73Dh4v8=
+x-microsoft-antispam-message-info: +JSCVxivHlRDX6LE/M9EETxxS63mvfkt7oVv5MGI8Koi2pkMLCJom8BvIfETyMnkc8yH1/qM4cdEdKlwuD0+UoamoMqNRzsbA7xIWCkYT3wGTZ/HpdYFCDxks5pdpj9+H/X8Je+PUkWKJTMtvFELgNi9EQUvsQt59Dni9u1tsHVx75Sgbx3Qo+/gklrkWi69QUuZxUPiRC7xwNOMxPZcvsjW1CdBq6pI8XIIPqAbDwHB6W284earQjb2rx4yeEMJLQKDo1ekUana+9GvJXqdf3sxBvf9SQTLUaZyvCgppiAMWZ4VQtWtdiFAQ4q08zJvJmepNru7Qd6g+CIGozOGdFFOtyqymhu0IkiQZvqae4efHBntzyHep5rLB7r7O+if0eUeGuLfbGu2TLyx6C34I8SOIlTwelV9TYfFhtOJOp8=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7bf1fa35-45a7-4bf7-c2c6-08d6aeeb9ecd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Mar 2019 17:27:12.3225
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2ecda19a-c6c7-4559-1d1a-08d6aeed5265
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Mar 2019 17:39:22.9965
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR21MB0153
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR21MB1287
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi,
+Hello,
 
-Currently Kexec (kexec_file_load) code path does not measure the cmdline=20
-arguments passed to the next kernel.The boot_aggregate won't change since=20
-the EFI loader hasn't been triggered. Attesting the same in K2 has no impac=
-t.
-Adding the cmdline measurement will add some attestable criteria.
+When loading the new kernel image file for executing KEXEC system call,=20
+we would like to verify that the kernel image file is signed and=20
+the signer certificate is valid.=20
 
-To account for the cmdline passed, we are looking at using IMA to measure a=
-nd=20
-pass the buffer so that it can be attested.
+If the kernel image file is in Portable Executable (PE) format we want to=20
+validate the PE Signature and measure the signer X.509 certificate=20
+(Extend as part of IMA Template defaulting to PCR 10, if not otherwise set,=
+=20
+ and the IMA measurement log).
 
-Do you have any alternate solutions/concerns with this approach?
+We plan to use Integrity Measurement Architecture (IMA) for the above.
 
-Thanks,
-Prakhar Srivastava
+Please let us know if anyone is already working on a patch set
+for such a functionality.
+
+I am aware of the work that Thiago Jung Bauermann @ IBM is doing for=20
+"Appended signatures support for IMA appraisal"=20
+(Web link given below)
+
+    https://lkml.org/lkml/2018/12/12/1049
+
+Thank You.
+ -lakshmi
