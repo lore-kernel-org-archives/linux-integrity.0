@@ -1,195 +1,147 @@
-Return-Path: <SRS0=JOkf=RZ=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=cYyd=R2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A878C43381
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 22:55:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D88D4C43381
+	for <linux-integrity@archiver.kernel.org>; Sat, 23 Mar 2019 01:25:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69EC321925
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Mar 2019 22:55:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A861D2192C
+	for <linux-integrity@archiver.kernel.org>; Sat, 23 Mar 2019 01:25:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728269AbfCVWzZ (ORCPT
+        id S1727554AbfCWBZ6 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 22 Mar 2019 18:55:25 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49096 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728237AbfCVWzX (ORCPT
+        Fri, 22 Mar 2019 21:25:58 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:44730 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727544AbfCWBZ6 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Mar 2019 18:55:23 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2MMrxc4101353
-        for <linux-integrity@vger.kernel.org>; Fri, 22 Mar 2019 18:55:23 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2rd7yyhne7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 22 Mar 2019 18:55:22 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 22 Mar 2019 22:55:10 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 22 Mar 2019 22:55:08 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2MMtGKZ53870750
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 22 Mar 2019 22:55:17 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DEC4DA4054;
-        Fri, 22 Mar 2019 22:55:16 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 092F3A405B;
-        Fri, 22 Mar 2019 22:55:16 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.94.31])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 22 Mar 2019 22:55:15 +0000 (GMT)
-Subject: Re: [PATCH v2 3/5] NFSD: Remove ima_file_check call
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Chuck Lever <chuck.lever@oracle.com>
-Cc:     Bruce Fields <bfields@fieldses.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Date:   Fri, 22 Mar 2019 18:55:05 -0400
-In-Reply-To: <D2C155AD-7888-43CB-A25A-461FF474BDB7@oracle.com>
-References: <20190307151838.11306.94183.stgit@manet.1015granger.net>
-         <20190307152854.11306.84006.stgit@manet.1015granger.net>
-         <20190308211016.GB27011@fieldses.org>
-         <ECE4FD20-840C-4047-9454-27BDF0A905EA@oracle.com>
-         <20190308212310.GB28002@fieldses.org>
-         <872F3DFD-E1A7-443E-B666-25C5931F0748@oracle.com>
-         <1553027371.4899.116.camel@linux.ibm.com>
-         <0E02D70A-A5E9-4B27-9922-521D5A0755A3@oracle.com>
-         <1553168687.4899.396.camel@linux.ibm.com>
-         <D2C155AD-7888-43CB-A25A-461FF474BDB7@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19032222-0016-0000-0000-000002661AD0
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19032222-0017-0000-0000-000032C14259
-Message-Id: <1553295305.5291.40.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-22_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1903220163
+        Fri, 22 Mar 2019 21:25:58 -0400
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 9F6AA72CCAC;
+        Sat, 23 Mar 2019 04:25:54 +0300 (MSK)
+Received: from altlinux.org (sole.flsd.net [185.75.180.6])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 886134A4A16;
+        Sat, 23 Mar 2019 04:25:54 +0300 (MSK)
+Date:   Sat, 23 Mar 2019 04:25:54 +0300
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v2] ima-evm-utils: rework openssl init
+Message-ID: <20190323012554.f6puutffzcvryamw@altlinux.org>
+References: <20190203174712.892-1-vt@altlinux.org>
+ <1552257122.6100.7.camel@linux.ibm.com>
+ <20190310231549.ftdva4xu2lxlyvhf@altlinux.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+In-Reply-To: <20190310231549.ftdva4xu2lxlyvhf@altlinux.org>
+User-Agent: NeoMutt/20171215-106-ac61c7
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, 2019-03-21 at 09:04 -0500, Chuck Lever wrote:
-> 
-> > On Mar 21, 2019, at 6:44 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > On Wed, 2019-03-20 at 08:40 -0500, Chuck Lever wrote:
-> >>> On Mar 19, 2019, at 3:29 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >>> On Fri, 2019-03-08 at 16:29 -0500, Chuck Lever wrote:
-> >>> Thanks Serge for bringing this thread to my attention.  Sorry for the
-> >>>>> On Mar 8, 2019, at 4:23 PM, Bruce Fields <bfields@fieldses.org> wrote:
-> >>>>> On Fri, Mar 08, 2019 at 04:11:06PM -0500, Chuck Lever wrote:
-> >>>>>>> On Mar 8, 2019, at 4:10 PM, bfields@fieldses.org wrote:
-> >>>>>>> On Thu, Mar 07, 2019 at 10:28:54AM -0500, Chuck Lever wrote:
-> >>>>>>>> The NFS server needs to allow NFS clients to perform their own
-> >>>>>>>> attestation and measurement.
-> >>> 
-> >>> Measurement and attestation is only one aspect.  The other aspect is
-> >>> verifying the integrity of files.  Shouldn't the NFS server verify the
-> >>> integrity of a file before allowing it to be served (eg. malware)?
-> >> 
-> >> Hi Mimi, thanks for the review.
-> >> 
-> >> Architecturally, the server is not using the file's data, it is
-> >> merely part of the filesystem that stores it. But that said, there
-> >> are several concrete reasons why I feel an NFS server should not be
-> >> involved in measurement/attestation, but only with storing file
-> >> content and IMA metadata.
+Mimi,
+
+On Mon, Mar 11, 2019 at 02:15:49AM +0300, Vitaly Chikunov wrote:
+> On Sun, Mar 10, 2019 at 06:32:02PM -0400, Mimi Zohar wrote:
 > > 
-> > "Remote attestation" is the process of verifying the measurement list
-> > against the TPM PCRs, based on a TPM quote.  I think you meant
-> > "measurement/appraisal".
+> > On Sun, 2019-02-03 at 20:47 +0300, Vitaly Chikunov wrote:
+> > > Remove deprecated call to OpenSSL_add_all_algorithms().
+> > > Allow to disable openssl config loading via configure
+> > > `--disable-openssl-conf' option.
+> > > Finish engine initialization properly by calling ENGINE_set_default(),
+> > > as suggested by James Bottomley.
+> > > 
 > > 
-> >> 
-> >> 1. The broadest attack surface for a remote filesystem is modification
-> >> of data in flight. Attestation of the file on the server is not going
-> >> to defend against that attack, only attestation on the client will do
-> >> that. Is there a good reason to pay the cost of double attestation?
+> > Thanks, could you also display the status under "Give some feedback".
+> 
+> OK.
+> 
 > > 
-> > Doesn't the server have a responsibility to provide files that have
-> > not been unintentionally or maliciously altered?
-> 
-> It's a design goal of any filesystem to present unaltered file data
-> to applications. But the responsibility is end-to-end. Adding extra
-> checks in the middle introduce a cost. 
-
-Files are measured/appraised/audited based on the IMA policy.  Have
-you measured the performance cost of measuring and appraising the
-files being served?  Unless a policy has been supplied, the
-performance impact, if any, would be limited to walking the IMA policy
-rules.
-
-> Measuring on the client is
-> sufficient, and it is equivalent to what local filesystems do (and,
-> it allows each client to apply its own security policy).
-
-I'm not arguing with you about an end-to-end file integrity solution.
- That is the goal, but one that assumes this proposed work, based on
-fs-verity signatures.
-
-> I'm going to claim here without proof that there is little value in
-> using IMA on an NFS server that serves NFS clients that are not
-> IMA-aware. :-)
-
-For systems that don't or haven't implemented the proposed end-to-end
-file integrity solution, verifying the file integrity on the server is
-all the more important.
-
-> 
-> >> 2. It is possible (perhaps even likely) that the NFS server and a
-> >> client of that server will have different IMA policies and even
-> >> different file signing authorities.
+> > Mimi
 > > 
-> > That doesn't negate the due diligence on the server's part of
-> > preventing the spread of malware.
-> 
-> Commercial NFS servers (like NetApp filers) perform malware and
-> integrity checking via a scrubbing agent rather than checking in a
-> hot path. Filesystems are not only responsible for leaving data
-> unchanged, they also have performance requirements.
-
-Any userspace application leaves a window of opportunity between the
-time the file has been created/modified and the time that the
-application verifies it.  This is one of the main reason for IMA being
- in the kernel.
-
-> 
-> >> A third, perhaps related, reason is that NFS can run on non-Linux NFS
-> >> servers which would not have any attestation at all. An NFS client
-> >> should not have to rely on the server for attestation, but should
-> >> trust only its own measurement of each file, which would be done as
-> >> late as possible before use.
 > > 
-> > The ima_file_check() hook can also audit the file, providing
-> > additional forensic information (eg. the file hash).
-> 
-> IIUC, you are talking about troubleshooting, which should be
-> rare. That can be done with tools on the server if needed, but
-> IMO can be avoided in performance-sensitive paths.
+> > > Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+> > > ---
+> > > - v1 is "ima-evm-utils: remove redundant call to OpenSSL_add_all_algorithms"
+> > > - everything is changed as suggested in mailing list, not just
+> > >   redundant OpenSSL_add_all_algorithms() call is removed.
+> > > 
+> > >  configure.ac    | 6 ++++++
+> > >  src/evmctl.c    | 1 +
+> > >  src/libimaevm.c | 8 ++++++--
+> > >  3 files changed, 13 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/configure.ac b/configure.ac
+> > > index 60f3684..ff8ac29 100644
+> > > --- a/configure.ac
+> > > +++ b/configure.ac
+> > > @@ -39,6 +39,12 @@ AC_ARG_WITH(kernel_headers, [AS_HELP_STRING([--with-kernel-headers=PATH],
+> > >  	    [KERNEL_HEADERS="$withval"],
+> > >  	    [KERNEL_HEADERS=/lib/modules/$(uname -r)/source])
+> > > 
+> > > +AC_ARG_ENABLE([openssl_conf],
+> > > +	      [AS_HELP_STRING([--disable-openssl-conf], [disable loading of openssl config by libimaevm])],
+> > > +	      if test "$enable_openssl_conf" = "no"; then
+> > > +		AC_DEFINE(DISABLE_OPENSSL_CONF, 1, [Define to disable loading of openssl config by libimaevm.])
+> > > +	      fi)
+> > > +
+> > >  #debug support - yes for a while
+> > >  PKG_ARG_ENABLE(debug, "yes", DEBUG, [Enable Debug support])
+> > >  if test $pkg_cv_enable_debug = yes; then
+> > > diff --git a/src/evmctl.c b/src/evmctl.c
+> > > index 2e4d551..fa074c4 100644
+> > > --- a/src/evmctl.c
+> > > +++ b/src/evmctl.c
+> > > @@ -1904,6 +1904,7 @@ int main(int argc, char *argv[])
+> > >  				ENGINE_free(eng);
+> > >  				eng = NULL;
+> > >  			}
+> > > +			ENGINE_set_default(eng, ENGINE_METHOD_ALL);
+> > >  			break;
+> > >  		case 140: /* --xattr-user */
+> > >  			xattr_ima = "user.ima";
+> > > diff --git a/src/libimaevm.c b/src/libimaevm.c
+> > > index 799eeec..db27c6f 100644
+> > > --- a/src/libimaevm.c
+> > > +++ b/src/libimaevm.c
+> > > @@ -976,7 +976,11 @@ int sign_hash(const char *hashalgo, const unsigned char *hash, int size, const c
+> > > 
+> > >  static void libinit()
+> > >  {
+> > > -	OpenSSL_add_all_algorithms();
+> > > -	OPENSSL_add_all_algorithms_conf();
+> > > +	OPENSSL_init_crypto(OPENSSL_INIT_ADD_ALL_CIPHERS |
+> > > +			    OPENSSL_INIT_ADD_ALL_DIGESTS |
+> > > +#ifndef DISABLE_OPENSSL_CONF
+> > > +			    OPENSSL_INIT_LOAD_CONFIG |
+> > > +#endif
+> > > +			    OPENSSL_INIT_ENGINE_ALL_BUILTIN, NULL);
 
-No, this isn't about "troubleshooting", but about auditing the files
-served and using the file hashes for forensic investigations.[1][2]
+I think now, that libimaevm should not load config, because it is
+library and that decision should be of the program that uses it.
 
-Mimi
+Thus, src/libimaevm.c:libinit should only call 
 
-[1] Commit e7c568e0fd0c ("ima: audit log hashes")
-[2] https://www.fireeye.com/blog/threat-research/2016/11/extending_linux_exec.html
+      OPENSSL_init_crypto(OPENSSL_INIT_ADD_ALL_CIPHERS |
+			  OPENSSL_INIT_ADD_ALL_DIGESTS, NULL);
 
+(like OpenSSL_add_all_algorithms*() was doing) and option
+`--disable-openssl-conf` should be removed.
+
+But, evmctl should always call OPENSSL_init_crypto() again, with
+`OPENSSL_INIT_LOAD_CONFIG | OPENSSL_INIT_ENGINE_ALL_BUILTIN`.
+
+What do you think?
+
+If you wish we can repurpose `--disable-openssl-conf` to affect `evmctl`
+instead of `libimaevm`.
+
+Thanks,
