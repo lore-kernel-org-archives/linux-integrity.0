@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D39D7C4360F
-	for <linux-integrity@archiver.kernel.org>; Sat, 23 Mar 2019 01:42:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80085C43381
+	for <linux-integrity@archiver.kernel.org>; Sat, 23 Mar 2019 02:16:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1F04218E2
-	for <linux-integrity@archiver.kernel.org>; Sat, 23 Mar 2019 01:42:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58AC221874
+	for <linux-integrity@archiver.kernel.org>; Sat, 23 Mar 2019 02:16:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727554AbfCWBmP (ORCPT
+        id S1728136AbfCWCQU (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 22 Mar 2019 21:42:15 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:58248 "EHLO
+        Fri, 22 Mar 2019 22:16:20 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:59024 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727982AbfCWBmP (ORCPT
+        with ESMTP id S1727166AbfCWCQU (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Mar 2019 21:42:15 -0400
+        Fri, 22 Mar 2019 22:16:20 -0400
 Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 4A19D72CCAC;
-        Sat, 23 Mar 2019 04:42:13 +0300 (MSK)
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 976F872CCAC;
+        Sat, 23 Mar 2019 05:16:18 +0300 (MSK)
 Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 0E9C84A4A16;
-        Sat, 23 Mar 2019 04:42:12 +0300 (MSK)
+        by imap.altlinux.org (Postfix) with ESMTPSA id 65E544A4A16;
+        Sat, 23 Mar 2019 05:16:18 +0300 (MSK)
 From:   Vitaly Chikunov <vt@altlinux.org>
 To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         linux-integrity@vger.kernel.org
-Subject: [PATCH 2/2] ima-evm-utils: try to load digest by its alias
-Date:   Sat, 23 Mar 2019 04:41:52 +0300
-Message-Id: <20190323014152.14701-3-vt@altlinux.org>
+Subject: [PATCH v3] ima-evm-utils: Rework openssl init
+Date:   Sat, 23 Mar 2019 05:16:09 +0300
+Message-Id: <20190323021609.20600-1-vt@altlinux.org>
 X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190323014152.14701-1-vt@altlinux.org>
-References: <20190323014152.14701-1-vt@altlinux.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
@@ -43,51 +41,88 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Primary names of the algorithms are different for OpenSSL and Kernel.
-Allow to use both of them.
+Remove deprecated call to OpenSSL_add_all_algorithms().
+Allow to disable openssl config loading by evmctl via configure
+`--disable-openssl-conf' option. Show status of that in configure.
+Move config loading from libimaevm to evmctl.
+Finish engine initialization properly by calling ENGINE_set_default(),
+as suggested by James Bottomley.
 
 Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
 ---
- src/libimaevm.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Changes since v2:
+- Display `--disable-openssl-conf` status under "Give some feedback".
+- Move config load from libimaevm to evmctl.
 
+ configure.ac    | 10 ++++++++--
+ src/evmctl.c    |  6 ++++++
+ src/libimaevm.c |  4 ++--
+ 3 files changed, 16 insertions(+), 4 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 60f3684..10d1d88 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -39,6 +39,12 @@ AC_ARG_WITH(kernel_headers, [AS_HELP_STRING([--with-kernel-headers=PATH],
+ 	    [KERNEL_HEADERS="$withval"],
+ 	    [KERNEL_HEADERS=/lib/modules/$(uname -r)/source])
+ 
++AC_ARG_ENABLE([openssl_conf],
++	      [AS_HELP_STRING([--disable-openssl-conf], [disable loading of openssl config by evmctl])],
++	      [if test "$enable_openssl_conf" = "no"; then
++		AC_DEFINE(DISABLE_OPENSSL_CONF, 1, [Define to disable loading of openssl config by evmctl.])
++	      fi], [enable_openssl_conf=yes])
++
+ #debug support - yes for a while
+ PKG_ARG_ENABLE(debug, "yes", DEBUG, [Enable Debug support])
+ if test $pkg_cv_enable_debug = yes; then
+@@ -65,6 +71,6 @@ AC_OUTPUT
+ echo
+ echo
+ echo	"Configuration:"
+-echo	"	debug:	$pkg_cv_enable_debug"
++echo	"          debug: $pkg_cv_enable_debug"
++echo	"   openssl-conf: $enable_openssl_conf"
+ echo
+-
+diff --git a/src/evmctl.c b/src/evmctl.c
+index 0459798..15a7226 100644
+--- a/src/evmctl.c
++++ b/src/evmctl.c
+@@ -1779,6 +1779,11 @@ int main(int argc, char *argv[])
+ 	int err = 0, c, lind;
+ 	ENGINE *eng = NULL;
+ 
++	OPENSSL_init_crypto(
++#ifndef DISABLE_OPENSSL_CONF
++			    OPENSSL_INIT_LOAD_CONFIG |
++#endif
++			    OPENSSL_INIT_ENGINE_ALL_BUILTIN, NULL);
+ 	g_argv = argv;
+ 	g_argc = argc;
+ 
+@@ -1899,6 +1904,7 @@ int main(int argc, char *argv[])
+ 				ENGINE_free(eng);
+ 				eng = NULL;
+ 			}
++			ENGINE_set_default(eng, ENGINE_METHOD_ALL);
+ 			break;
+ 		case 140: /* --xattr-user */
+ 			xattr_ima = "user.ima";
 diff --git a/src/libimaevm.c b/src/libimaevm.c
-index bc7be1e..6783110 100644
+index 6783110..3a9ab63 100644
 --- a/src/libimaevm.c
 +++ b/src/libimaevm.c
-@@ -61,6 +61,7 @@
- #include "imaevm.h"
- #include "hash_info.h"
+@@ -937,7 +937,7 @@ int sign_hash(const char *hashalgo, const unsigned char *hash, int size, const c
  
-+/* Names that are primary for OpenSSL. */
- const char *const pkey_hash_algo[PKEY_HASH__LAST] = {
- 	[PKEY_HASH_MD4]		= "md4",
- 	[PKEY_HASH_MD5]		= "md5",
-@@ -70,6 +71,12 @@ const char *const pkey_hash_algo[PKEY_HASH__LAST] = {
- 	[PKEY_HASH_SHA384]	= "sha384",
- 	[PKEY_HASH_SHA512]	= "sha512",
- 	[PKEY_HASH_SHA224]	= "sha224",
-+	[PKEY_HASH_STREEBOG_256] = "md_gost12_256",
-+	[PKEY_HASH_STREEBOG_512] = "md_gost12_512",
-+};
-+
-+/* Names that are primary for the kernel. */
-+const char *const pkey_hash_algo_kern[PKEY_HASH__LAST] = {
- 	[PKEY_HASH_STREEBOG_256] = "streebog256",
- 	[PKEY_HASH_STREEBOG_512] = "streebog512",
- };
-@@ -551,6 +558,11 @@ int get_hash_algo(const char *algo)
- 		    !strcmp(algo, pkey_hash_algo[i]))
- 			return i;
- 
-+	for (i = 0; i < PKEY_HASH__LAST; i++)
-+		if (pkey_hash_algo_kern[i] &&
-+		    !strcmp(algo, pkey_hash_algo_kern[i]))
-+			return i;
-+
- 	/* iterate over algorithms provided by kernel-headers */
- 	for (i = 0; i < HASH_ALGO__LAST; i++)
- 		if (hash_algo_name[i] &&
+ static void libinit()
+ {
+-	OpenSSL_add_all_algorithms();
+-	OPENSSL_add_all_algorithms_conf();
++	OPENSSL_init_crypto(OPENSSL_INIT_ADD_ALL_CIPHERS |
++			    OPENSSL_INIT_ADD_ALL_DIGESTS, NULL);
+ 	ERR_load_crypto_strings();
+ }
 -- 
 2.11.0
 
