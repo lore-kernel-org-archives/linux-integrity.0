@@ -2,146 +2,80 @@ Return-Path: <SRS0=cYyd=R2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D88D4C43381
-	for <linux-integrity@archiver.kernel.org>; Sat, 23 Mar 2019 01:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87FBEC43381
+	for <linux-integrity@archiver.kernel.org>; Sat, 23 Mar 2019 01:42:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A861D2192C
-	for <linux-integrity@archiver.kernel.org>; Sat, 23 Mar 2019 01:25:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B70A218E2
+	for <linux-integrity@archiver.kernel.org>; Sat, 23 Mar 2019 01:42:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727554AbfCWBZ6 (ORCPT
+        id S1727599AbfCWBmG (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 22 Mar 2019 21:25:58 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:44730 "EHLO
+        Fri, 22 Mar 2019 21:42:06 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:58102 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727544AbfCWBZ6 (ORCPT
+        with ESMTP id S1727554AbfCWBmG (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Mar 2019 21:25:58 -0400
+        Fri, 22 Mar 2019 21:42:06 -0400
 Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 9F6AA72CCAC;
-        Sat, 23 Mar 2019 04:25:54 +0300 (MSK)
-Received: from altlinux.org (sole.flsd.net [185.75.180.6])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 886134A4A16;
-        Sat, 23 Mar 2019 04:25:54 +0300 (MSK)
-Date:   Sat, 23 Mar 2019 04:25:54 +0300
+        by vmicros1.altlinux.org (Postfix) with ESMTP id C24BE72CCAC;
+        Sat, 23 Mar 2019 04:42:04 +0300 (MSK)
+Received: from beacon.altlinux.org (unknown [185.6.174.98])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 9CB004A4A16;
+        Sat, 23 Mar 2019 04:42:04 +0300 (MSK)
 From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v2] ima-evm-utils: rework openssl init
-Message-ID: <20190323012554.f6puutffzcvryamw@altlinux.org>
-References: <20190203174712.892-1-vt@altlinux.org>
- <1552257122.6100.7.camel@linux.ibm.com>
- <20190310231549.ftdva4xu2lxlyvhf@altlinux.org>
+Subject: [PATCH 0/2] ima-evm-utils: rebase of digest algo resolving
+Date:   Sat, 23 Mar 2019 04:41:50 +0300
+Message-Id: <20190323014152.14701-1-vt@altlinux.org>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Disposition: inline
-In-Reply-To: <20190310231549.ftdva4xu2lxlyvhf@altlinux.org>
-User-Agent: NeoMutt/20171215-106-ac61c7
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Mimi,
+This is rebase of the ima-evm-utils commits:
 
-On Mon, Mar 11, 2019 at 02:15:49AM +0300, Vitaly Chikunov wrote:
-> On Sun, Mar 10, 2019 at 06:32:02PM -0400, Mimi Zohar wrote:
-> > 
-> > On Sun, 2019-02-03 at 20:47 +0300, Vitaly Chikunov wrote:
-> > > Remove deprecated call to OpenSSL_add_all_algorithms().
-> > > Allow to disable openssl config loading via configure
-> > > `--disable-openssl-conf' option.
-> > > Finish engine initialization properly by calling ENGINE_set_default(),
-> > > as suggested by James Bottomley.
-> > > 
-> > 
-> > Thanks, could you also display the status under "Give some feedback".
-> 
-> OK.
-> 
-> > 
-> > Mimi
-> > 
-> > 
-> > > Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
-> > > ---
-> > > - v1 is "ima-evm-utils: remove redundant call to OpenSSL_add_all_algorithms"
-> > > - everything is changed as suggested in mailing list, not just
-> > >   redundant OpenSSL_add_all_algorithms() call is removed.
-> > > 
-> > >  configure.ac    | 6 ++++++
-> > >  src/evmctl.c    | 1 +
-> > >  src/libimaevm.c | 8 ++++++--
-> > >  3 files changed, 13 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/configure.ac b/configure.ac
-> > > index 60f3684..ff8ac29 100644
-> > > --- a/configure.ac
-> > > +++ b/configure.ac
-> > > @@ -39,6 +39,12 @@ AC_ARG_WITH(kernel_headers, [AS_HELP_STRING([--with-kernel-headers=PATH],
-> > >  	    [KERNEL_HEADERS="$withval"],
-> > >  	    [KERNEL_HEADERS=/lib/modules/$(uname -r)/source])
-> > > 
-> > > +AC_ARG_ENABLE([openssl_conf],
-> > > +	      [AS_HELP_STRING([--disable-openssl-conf], [disable loading of openssl config by libimaevm])],
-> > > +	      if test "$enable_openssl_conf" = "no"; then
-> > > +		AC_DEFINE(DISABLE_OPENSSL_CONF, 1, [Define to disable loading of openssl config by libimaevm.])
-> > > +	      fi)
-> > > +
-> > >  #debug support - yes for a while
-> > >  PKG_ARG_ENABLE(debug, "yes", DEBUG, [Enable Debug support])
-> > >  if test $pkg_cv_enable_debug = yes; then
-> > > diff --git a/src/evmctl.c b/src/evmctl.c
-> > > index 2e4d551..fa074c4 100644
-> > > --- a/src/evmctl.c
-> > > +++ b/src/evmctl.c
-> > > @@ -1904,6 +1904,7 @@ int main(int argc, char *argv[])
-> > >  				ENGINE_free(eng);
-> > >  				eng = NULL;
-> > >  			}
-> > > +			ENGINE_set_default(eng, ENGINE_METHOD_ALL);
-> > >  			break;
-> > >  		case 140: /* --xattr-user */
-> > >  			xattr_ima = "user.ima";
-> > > diff --git a/src/libimaevm.c b/src/libimaevm.c
-> > > index 799eeec..db27c6f 100644
-> > > --- a/src/libimaevm.c
-> > > +++ b/src/libimaevm.c
-> > > @@ -976,7 +976,11 @@ int sign_hash(const char *hashalgo, const unsigned char *hash, int size, const c
-> > > 
-> > >  static void libinit()
-> > >  {
-> > > -	OpenSSL_add_all_algorithms();
-> > > -	OPENSSL_add_all_algorithms_conf();
-> > > +	OPENSSL_init_crypto(OPENSSL_INIT_ADD_ALL_CIPHERS |
-> > > +			    OPENSSL_INIT_ADD_ALL_DIGESTS |
-> > > +#ifndef DISABLE_OPENSSL_CONF
-> > > +			    OPENSSL_INIT_LOAD_CONFIG |
-> > > +#endif
-> > > +			    OPENSSL_INIT_ENGINE_ALL_BUILTIN, NULL);
+  0267fa1 ima-evm-utils: Try to load digest by its alias
+  942d9f9 ima-evm-utils: Extract digest algorithms from hash_info.h
 
-I think now, that libimaevm should not load config, because it is
-library and that decision should be of the program that uses it.
+and should be applied over 07d799c ("ima-evm-utils: Preload OpenSSL
+engine via '--engine' option").
 
-Thus, src/libimaevm.c:libinit should only call 
+Changes:
 
-      OPENSSL_init_crypto(OPENSSL_INIT_ADD_ALL_CIPHERS |
-			  OPENSSL_INIT_ADD_ALL_DIGESTS, NULL);
+* ima-evm-utils: Extract digest algorithms from hash_info.h
+- algocmp is removed.
+- `hash_info.h` is parsed better to match algo names in the Kernel,
+  thus simple strcmp could be used.
 
-(like OpenSSL_add_all_algorithms*() was doing) and option
-`--disable-openssl-conf` should be removed.
+* ima-evm-utils: try to load digest by its alias
+- digest name lookup is simplified by removing get_digestbyname
+  and strmatch helpers.
+- Kernel and OpenSSL algo names arrays are introduced to support
+  alternative algo names for older OpenSLL.
 
-But, evmctl should always call OPENSSL_init_crypto() again, with
-`OPENSSL_INIT_LOAD_CONFIG | OPENSSL_INIT_ENGINE_ALL_BUILTIN`.
 
-What do you think?
+*** BLURB HERE ***
 
-If you wish we can repurpose `--disable-openssl-conf` to affect `evmctl`
-instead of `libimaevm`.
+Vitaly Chikunov (2):
+  ima-evm-utils: Extract digest algorithms from hash_info.h
+  ima-evm-utils: try to load digest by its alias
 
-Thanks,
+ configure.ac      |  6 ++++++
+ src/Makefile.am   |  6 ++++++
+ src/hash_info.gen | 49 +++++++++++++++++++++++++++++++++++++++++++++++++
+ src/libimaevm.c   | 35 ++++++++++++++++++++++++++++++++++-
+ 4 files changed, 95 insertions(+), 1 deletion(-)
+ create mode 100755 src/hash_info.gen
+
+-- 
+2.11.0
+
