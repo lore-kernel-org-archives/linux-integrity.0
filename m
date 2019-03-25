@@ -2,138 +2,126 @@ Return-Path: <SRS0=8hpl=R4=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C9FC43381
-	for <linux-integrity@archiver.kernel.org>; Mon, 25 Mar 2019 17:52:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11126C43381
+	for <linux-integrity@archiver.kernel.org>; Mon, 25 Mar 2019 19:27:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEF4620823
-	for <linux-integrity@archiver.kernel.org>; Mon, 25 Mar 2019 17:52:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="LPYmDytc"
+	by mail.kernel.org (Postfix) with ESMTP id D059220811
+	for <linux-integrity@archiver.kernel.org>; Mon, 25 Mar 2019 19:27:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729204AbfCYRw6 (ORCPT
+        id S1729238AbfCYT1y (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 25 Mar 2019 13:52:58 -0400
-Received: from mail-eopbgr770101.outbound.protection.outlook.com ([40.107.77.101]:43558
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726024AbfCYRw6 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 25 Mar 2019 13:52:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6EeYMdW6Osx+UhhevIA4KH4wyzgVgLD04KCbsq4YOfM=;
- b=LPYmDytc+tdecUQLSDY/1FdoPNJfM4qMpfYdVBicmZcut5xtArjsjCPM3rKPDGsMfI96zd24CjBqCqpDe90QjgibUR1wuBwTCRPKOpG6RimO9p8c+Uu3Rxb/jY98PmMkYLh0oUne9J7nM50z+nrxNteMGtI6DjcvMGnFCtqIrzY=
-Received: from DM6PR21MB1305.namprd21.prod.outlook.com (20.179.52.94) by
- DM6PR21MB1324.namprd21.prod.outlook.com (20.179.53.75) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1771.1; Mon, 25 Mar 2019 17:52:52 +0000
-Received: from DM6PR21MB1305.namprd21.prod.outlook.com
- ([fe80::5d7:1d10:7a44:6620]) by DM6PR21MB1305.namprd21.prod.outlook.com
- ([fe80::5d7:1d10:7a44:6620%7]) with mapi id 15.20.1771.002; Mon, 25 Mar 2019
- 17:52:52 +0000
-From:   Lakshmi Ramasubramanian <nramas@microsoft.com>
-To:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        Mon, 25 Mar 2019 15:27:54 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52122 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729590AbfCYT1x (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 25 Mar 2019 15:27:53 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2PJOAe6027067
+        for <linux-integrity@vger.kernel.org>; Mon, 25 Mar 2019 15:27:52 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2rf3py3ux7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 25 Mar 2019 15:27:51 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 25 Mar 2019 19:27:49 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 25 Mar 2019 19:27:46 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2PJRjLP61341800
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Mar 2019 19:27:46 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DAD1C4C058;
+        Mon, 25 Mar 2019 19:27:45 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5D0C44C040;
+        Mon, 25 Mar 2019 19:27:45 +0000 (GMT)
+Received: from dhcp-9-31-103-153.watson.ibm.com (unknown [9.31.103.153])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 25 Mar 2019 19:27:45 +0000 (GMT)
+Subject: Re: Portable Executable (PE) Signature Validation and Measurement
+ for KEXEC system call using IMA
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@microsoft.com>,
         "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: Portable Executable (PE) Signature Validation and Measurement for
- KEXEC system call using IMA
-Thread-Topic: Portable Executable (PE) Signature Validation and Measurement
- for KEXEC system call using IMA
-Thread-Index: AdTg1clupl0uJvoTS1+4SCE/Pu8WqwCXSF5g
-Date:   Mon, 25 Mar 2019 17:52:52 +0000
-Message-ID: <DM6PR21MB130526848C86A7390FB3BF53C35E0@DM6PR21MB1305.namprd21.prod.outlook.com>
-References: <BYAPR21MB1301CBCD4956476F8F2F0FC4C3430@BYAPR21MB1301.namprd21.prod.outlook.com>
+Date:   Mon, 25 Mar 2019 15:27:44 -0400
 In-Reply-To: <BYAPR21MB1301CBCD4956476F8F2F0FC4C3430@BYAPR21MB1301.namprd21.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=nramas@ntdev.microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-03-22T17:39:21.5499995Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=a4e10f41-6446-49fa-9371-9e0f7fbb42e6;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-x-originating-ip: [2001:4898:80e8:7:1078:7225:fd33:4f42]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 23202640-6d6f-4c5c-f589-08d6b14ab3ed
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:DM6PR21MB1324;
-x-ms-traffictypediagnostic: DM6PR21MB1324:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <DM6PR21MB1324C744CC946DB7D261BC6BC35E0@DM6PR21MB1324.namprd21.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0987ACA2E2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(346002)(396003)(366004)(39860400002)(13464003)(189003)(199004)(316002)(33656002)(14444005)(229853002)(8990500004)(10090500001)(53546011)(52536014)(110136005)(6436002)(256004)(6506007)(22452003)(7696005)(81156014)(305945005)(99286004)(105586002)(14454004)(966005)(10290500003)(71190400001)(2906002)(86362001)(102836004)(76176011)(476003)(71200400001)(8676002)(486006)(25786009)(11346002)(2201001)(6306002)(186003)(53936002)(478600001)(106356001)(6116002)(6246003)(6346003)(86612001)(46003)(55016002)(81166006)(8936002)(9686003)(97736004)(2501003)(68736007)(74316002)(5660300002)(7736002)(446003);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR21MB1324;H:DM6PR21MB1305.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=nramas@microsoft.com; 
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: pWCKIuECeCw78GHKpvEOe94Y9G5D3nCjPjkv9KyOxSSJlCee8pmhTYokHfm4z1zetZfH6KKoHBv4wcHw1I3m3pS1O3MXdrUd7qoHWNpGJylBXuQc31VKVTT9XkQyUBjRn05+DDwSKsjWlV9vvqBJcTM1VmkP5Kds5R7/jAIp7RAadzb/K6wKw+37fX/IO3cO0f3rHlBIXhCov5OZLO35woGYgTyikZXOmyRcZ3FBOa73tEK4b7CrC03xa7STauXKI3F4HAjJen6Fjy85OeUNA1AqiNm7Y7s6ILx3Be3ISplE6uxt99j2gIjgjsehNcyWyFhM0I1+qLqajPCdhFZpxFwhugS8TEz3gVZCWwhHCfctjGlas3D8o/dcwQ6CgAP4xVQlNb/8Gwjy0PKcVInyF99LEMwu5AeSLK3OCS/2D6Y=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 23202640-6d6f-4c5c-f589-08d6b14ab3ed
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Mar 2019 17:52:52.3436
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR21MB1324
+References: <BYAPR21MB1301CBCD4956476F8F2F0FC4C3430@BYAPR21MB1301.namprd21.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19032519-0008-0000-0000-000002D1676A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19032519-0009-0000-0000-0000223D90D7
+Message-Id: <1553542064.3929.69.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-25_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1903250139
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hello Mimi,
+Hi Lakshmi,
 
-Could you please let me know if you have any concerns with this approach?
+On Fri, 2019-03-22 at 17:39 +0000, Lakshmi Ramasubramanian wrote:
+> Hello,
+> 
+> When loading the new kernel image file for executing KEXEC system call, 
+> we would like to verify that the kernel image file is signed and 
+> the signer certificate is valid.
 
-Thanks,
- -lakshmi
+I'm not sure what is meant by "and the signer certificate is valid".
 
------Original Message-----
-From: linux-integrity-owner@vger.kernel.org <linux-integrity-owner@vger.ker=
-nel.org> On Behalf Of Lakshmi Ramasubramanian
-Sent: Friday, March 22, 2019 10:39 AM
-To: linux-integrity@vger.kernel.org; linux-kernel@vger.kernel.org
-Subject: Portable Executable (PE) Signature Validation and Measurement for =
-KEXEC system call using IMA
+The kexec kernel image signature can be verified by keys either on the
+IMA keyring or the platform keyring.  The current method of verifying
+keys being added to the IMA keyring is by requiring them to be signed
+by a key on the builtin trusted keyring.  This provides a signature
+chain of trust from boot to the kernel, based on a HW root of trust,
+and then transitions to the kernel image's embedded keys.  You
+probably already know as to why/how the platform keys are trusted.
 
-Hello,
+> 
+> If the kernel image file is in Portable Executable (PE) format we want to 
+> validate the PE Signature and measure the signer X.509 certificate 
+> (Extend as part of IMA Template defaulting to PCR 10, if not otherwise set, 
+>  and the IMA measurement log).
 
-When loading the new kernel image file for executing KEXEC system call, we =
-would like to verify that the kernel image file is signed and the signer ce=
-rtificate is valid.=20
+How/when do you plan to "measure the signer X.509 certificate"?  Is
+this when the certificate is being loaded onto the keyring or at use?
+ I'm not sure how much of the certificate is available once loaded
+onto the keyring.
 
-If the kernel image file is in Portable Executable (PE) format we want to v=
-alidate the PE Signature and measure the signer X.509 certificate (Extend a=
-s part of IMA Template defaulting to PCR 10, if not otherwise set,  and the=
- IMA measurement log).
+> 
+> We plan to use Integrity Measurement Architecture (IMA) for the above.
+> 
+> Please let us know if anyone is already working on a patch set
+> for such a functionality.
+> 
+> I am aware of the work that Thiago Jung Bauermann @ IBM is doing for 
+> "Appended signatures support for IMA appraisal" 
+> (Web link given below)
+> 
+>     https://lkml.org/lkml/2018/12/12/1049
 
-We plan to use Integrity Measurement Architecture (IMA) for the above.
+Other than Thiago, I'm not aware of anyone else working on this.
+ Thiago is actively working on these patches and will be re-posting
+them shortly.
 
-Please let us know if anyone is already working on a patch set for such a f=
-unctionality.
+Mimi
 
-I am aware of the work that Thiago Jung Bauermann @ IBM is doing for "Appen=
-ded signatures support for IMA appraisal"=20
-(Web link given below)
-
-    https://nam06.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Flkm=
-l.org%2Flkml%2F2018%2F12%2F12%2F1049&amp;data=3D02%7C01%7Cnramas%40microsof=
-t.com%7C2791f20f548e4502060108d6aeed54a8%7C72f988bf86f141af91ab2d7cd011db47=
-%7C1%7C0%7C636888731683001667&amp;sdata=3Dai2KrDlnyyEqJfLS9kYUw0ebUTbq7Y5dT=
-qMciwSRZ%2BM%3D&amp;reserved=3D0
-
-Thank You.
- -lakshmi
