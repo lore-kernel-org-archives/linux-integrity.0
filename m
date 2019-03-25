@@ -2,88 +2,123 @@ Return-Path: <SRS0=8hpl=R4=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C32BC43381
-	for <linux-integrity@archiver.kernel.org>; Mon, 25 Mar 2019 21:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E00BC43381
+	for <linux-integrity@archiver.kernel.org>; Mon, 25 Mar 2019 21:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 011952082F
-	for <linux-integrity@archiver.kernel.org>; Mon, 25 Mar 2019 21:33:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="a+YHEmd6"
+	by mail.kernel.org (Postfix) with ESMTP id EBEF02070D
+	for <linux-integrity@archiver.kernel.org>; Mon, 25 Mar 2019 21:37:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730199AbfCYVdu (ORCPT
+        id S1730285AbfCYVhI (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 25 Mar 2019 17:33:50 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:39631 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730015AbfCYVdu (ORCPT
+        Mon, 25 Mar 2019 17:37:08 -0400
+Received: from smtprelay0215.hostedemail.com ([216.40.44.215]:60232 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729297AbfCYVhI (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 25 Mar 2019 17:33:50 -0400
-Received: by mail-ot1-f65.google.com with SMTP id f10so9512507otb.6
-        for <linux-integrity@vger.kernel.org>; Mon, 25 Mar 2019 14:33:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kI1cgbogsjrEoGMCL0RQUjw+UhPR/W1g5aVXTRUmpEM=;
-        b=a+YHEmd6q3x3r7xhfe5V6NBMKGgOubkzc1Gs+RX1Ls/aa4luvDZvUwlgoUsTgwbm3o
-         j0MnE2lTvC96noGsvcANxNnW0mjwsjQUHDS+ychSCn85FwLPdCYwUOmIHVN2ghgUetoN
-         TSXdzmVFE93EZIW4idpDHfbM9IdxF0VTg7H4vFgOabUsNjEkuIZIoFmTxbXR62Vlji7+
-         jMxZeKGI+Vy/8oLTyVlFSGLVOP6W92hGBiO7Yoqxc8x5w5daqtpydmsTDDvhXxgmHDFd
-         CQoOPVGXQEuFard+91BssIsbm7nc7s0CuLayrqyDh7TLBIfGGK3i10wsdQpWl0x+ExTY
-         z2NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kI1cgbogsjrEoGMCL0RQUjw+UhPR/W1g5aVXTRUmpEM=;
-        b=f1aC02ylM6ZSiZiEVRPh/pO5mM2ZU7bb852CDbfwguvu1tmQk8uKjpl+ti5CRP9KKc
-         0KPbnaDQMtQ2aMdkSYJTnMnuJ9SbPzuOtd6xY34PBI3nmYnmM92n74E+96pD7GVJ9n+P
-         1D3Khkg52DVueZrAOXCfG3dznwqLvU9wjVsVjSI+w1rwoFjc/w5lStsC+CM5IPycQ/Z5
-         GCcfk5stf2u7UG1KA2AZW8oTTWNA9rwD+LluhRCTGCclqhRq9d0gGqS3xgsx4JXDeBkJ
-         FXxmcyPiTVr4X7BOTGl3bZhV9H+E5DMIEpwu/VKJL9unIHN6XW6Y/26FUeV5bKG9BI8r
-         eszQ==
-X-Gm-Message-State: APjAAAVfT1+zwHanxb+clALkJI5NUYmssJE5S9Bf5imFox9yrGv2hLu0
-        l83JbvjFv5SgIujRAPXfL9DNI2PaE9LH0y39cBwj+g==
-X-Google-Smtp-Source: APXvYqyPHqiNfzE9hZgC5qTZcOdyG7VxnXKECXCqkUFHSwHYzZniEM6XzuLj/8PbFOAbmnmWuZjd2RSZHiQDURb0HGQ=
-X-Received: by 2002:a9d:224a:: with SMTP id o68mr20457271ota.214.1553549629694;
- Mon, 25 Mar 2019 14:33:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190325144735.30443-1-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20190325144735.30443-1-jarkko.sakkinen@linux.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 25 Mar 2019 14:33:38 -0700
-Message-ID: <CAPcyv4gCvqkAUSb2sC1+hoHF=bu5X8AXvJuRoqcEt4OQGvWk5A@mail.gmail.com>
-Subject: Re: [PATCH] KEYS: trusted: allow trusted.ko to initialize w/o a TPM
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        stable <stable@vger.kernel.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linuxibm.com>,
+        Mon, 25 Mar 2019 17:37:08 -0400
+X-Greylist: delayed 598 seconds by postgrey-1.27 at vger.kernel.org; Mon, 25 Mar 2019 17:37:07 EDT
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave07.hostedemail.com (Postfix) with ESMTP id 73E4618355029;
+        Mon, 25 Mar 2019 21:27:11 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id B6988181D341F;
+        Mon, 25 Mar 2019 21:27:08 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: brass23_20f9e36b16e4b
+X-Filterd-Recvd-Size: 3426
+Received: from joe-laptop.perches.com (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf05.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 25 Mar 2019 21:27:06 +0000 (UTC)
+From:   Joe Perches <joe@perches.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        Mimi Zohar <zohar@us.ibm.com>,
         David Howells <dhowells@redhat.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Denis Kenzior <denkenz@gmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        James Morris <james.morris@microsoft.com>
+Subject: Bad file pattern in MAINTAINERS section 'KEYS-TRUSTED'
+Date:   Mon, 25 Mar 2019 14:27:05 -0700
+Message-Id: <20190325212705.26837-1-joe@perches.com>
+X-Mailer: git-send-email 2.15.0
+In-Reply-To: <7cd8d12f59bcacd18a78f599b46dac555f7f16c0.camel@perches.com>
+References: <7cd8d12f59bcacd18a78f599b46dac555f7f16c0.camel@perches.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Mar 25, 2019 at 7:48 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> Allow trusted.ko to initialize w/o a TPM. This commit adds checks to the
-> key type callbacks and exported functions to fail when a TPM is not
-> available.
->
-> Cc: Dan Williams <dan.j.williams@intel.com>
+A file pattern line in this section of the MAINTAINERS file in linux-next
+does not have a match in the linux source files.
 
-Reported-and-tested-by: Dan Williams <dan.j.williams@intel.com>
+This could occur because a matching filename was never added, was deleted
+or renamed in some other commit.
 
-Thanks Jarkko!
+The commits that added and if found renamed or removed the file pattern
+are shown below.
+
+Please fix this defect appropriately.
+
+1: ---------------------------------------------------------------------------
+
+linux-next MAINTAINERS section:
+
+	8587	KEYS-TRUSTED
+	8588	M:	James Bottomley <jejb@linux.ibm.com>
+	8589	M:      Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+	8590	M:	Mimi Zohar <zohar@linux.ibm.com>
+	8591	L:	linux-integrity@vger.kernel.org
+	8592	L:	keyrings@vger.kernel.org
+	8593	S:	Supported
+	8594	F:	Documentation/security/keys/trusted-encrypted.rst
+	8595	F:	include/keys/trusted-type.h
+	8596	F:	security/keys/trusted.c
+-->	8597	F:	security/keys/trusted.h
+
+2: ---------------------------------------------------------------------------
+
+The most recent commit that added or modified file pattern 'security/keys/trusted.h':
+
+commit 7f3c68bee977ab872827e44de017216736fe21d7
+Author: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Date:   Tue Jan 18 09:07:13 2011 -0500
+
+    keys: add trusted and encrypted maintainers
+    
+    Add myself and David Safford as maintainers for trusted/encrypted keys.
+    
+    Signed-off-by: Mimi Zohar <zohar@us.ibm.com>
+    Acked-by: David Howells <dhowells@redhat.com>
+    Signed-off-by: James Morris <jmorris@namei.org>
+
+ MAINTAINERS | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+3: ---------------------------------------------------------------------------
+
+The last commit with a real presence of file pattern 'security/keys/trusted.h':
+
+commit 22447981fc050b5f1bdd0e7cbee89b4152a2b2d8
+Author: Denis Kenzior <denkenz@gmail.com>
+Date:   Tue Oct 9 17:48:49 2018 +0100
+
+    KEYS: Move trusted.h to include/keys [ver #2]
+    
+    Signed-off-by: Denis Kenzior <denkenz@gmail.com>
+    Signed-off-by: David Howells <dhowells@redhat.com>
+    Tested-by: Marcel Holtmann <marcel@holtmann.org>
+    Reviewed-by: Marcel Holtmann <marcel@holtmann.org>
+    Signed-off-by: James Morris <james.morris@microsoft.com>
+
+ {security => include}/keys/trusted.h | 0
+ security/keys/trusted.c              | 2 +-
+ 2 files changed, 1 insertion(+), 1 deletion(-)
