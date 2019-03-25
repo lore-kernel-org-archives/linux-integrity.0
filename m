@@ -1,85 +1,191 @@
-Return-Path: <SRS0=cYyd=R2=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=8hpl=R4=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 911C3C43381
-	for <linux-integrity@archiver.kernel.org>; Sat, 23 Mar 2019 06:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC50C43381
+	for <linux-integrity@archiver.kernel.org>; Mon, 25 Mar 2019 08:09:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D04E21900
-	for <linux-integrity@archiver.kernel.org>; Sat, 23 Mar 2019 06:58:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BF442087E
+	for <linux-integrity@archiver.kernel.org>; Mon, 25 Mar 2019 08:09:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726555AbfCWG6B (ORCPT
+        id S1730038AbfCYIJo (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 23 Mar 2019 02:58:01 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:40746 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726063AbfCWG6B (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 23 Mar 2019 02:58:01 -0400
-Received: by mail-io1-f70.google.com with SMTP id e72so3596326iof.7
-        for <linux-integrity@vger.kernel.org>; Fri, 22 Mar 2019 23:58:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=+jHD7zt1qXUVETzDrb4TXsejELYIvphHth1sfbXCJ4A=;
-        b=iaTtQLfGdQrv2PKEEfkkIqzPkNF2qYdlYEd+tyT212FsnLT2E5zpNvmDvpFwoDs4Pr
-         wwHengOwkH/oaXyTZcYDszkm+/lctQCqo1lzEVaGQCPoHej1X6fCRSacijADqidh1g8i
-         rI69ljfPOuTKb0O6UOcBSXP1n+eHnSoen/lR9fTlxlUqeiArya0CUpQfe/e+bVDusGGP
-         JbHJAiUM8ClhUIbE5Z/LFF8kt5O/o6ZB6MbmjBtDOTTQPTO5Eo5+45OSXx2Cof65ixgm
-         CB60q3jzk2asov5hIIvNlzI/0eMVALBxzFpm5169ifWqB5CZ5tDh8hK6lZbQY8XavtDC
-         oISA==
-X-Gm-Message-State: APjAAAXVNsX9CMMRshuxNCCLLpfsTAsKPMDf3TCdOySWTAAKIieKbKXn
-        2yQpFITe0XBhzJsMQ5KDuFzXwqM5KMqWQGIKhrCTzw0xIKnt
-X-Google-Smtp-Source: APXvYqywqECM9/Qy92UXMEsDYx1iP1dfg9HZOliwz/kdC2P/qr0XuINM0xz3ri0JvJsG92CT7IWy2/Am1ma+Blh3R0ZglJZjHXnS
+        Mon, 25 Mar 2019 04:09:44 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40666 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729874AbfCYIJn (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 25 Mar 2019 04:09:43 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EC3CC64459;
+        Mon, 25 Mar 2019 08:09:42 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-119.pek2.redhat.com [10.72.12.119])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DE1795D9D5;
+        Mon, 25 Mar 2019 08:09:39 +0000 (UTC)
+Date:   Mon, 25 Mar 2019 16:09:35 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Petr Vorel <pvorel@suse.cz>, Matthew Garrett <mjg59@google.com>
+Subject: Re: [PATCH v4a 1/2] selftests/kexec: make tests independent of IMA
+ being enabled
+Message-ID: <20190325080935.GA12497@dhcp-128-65.nay.redhat.com>
+References: <1553283351-6310-1-git-send-email-zohar@linux.ibm.com>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:8597:: with SMTP id f23mr9525256ioj.148.1553324280668;
- Fri, 22 Mar 2019 23:58:00 -0700 (PDT)
-Date:   Fri, 22 Mar 2019 23:58:00 -0700
-In-Reply-To: <00000000000033ebee0577262a98@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f8654a0584bd7d5d@google.com>
-Subject: Re: INFO: task hung in process_measurement
-From:   syzbot <syzbot+cdc562bc26a2b2b0a94f@syzkaller.appspotmail.com>
-To:     airlied@linux.ie, dmitry.kasatkin@gmail.com,
-        dri-devel@lists.freedesktop.org, james.l.morris@oracle.com,
-        jmorris@namei.org, jsarha@ti.com,
-        linux-ima-devel@lists.sourceforge.net,
-        linux-ima-user@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com, tomi.valkeinen@ti.com,
-        zohar@linux.vnet.ibm.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1553283351-6310-1-git-send-email-zohar@linux.ibm.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 25 Mar 2019 08:09:43 +0000 (UTC)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-syzbot has bisected this bug to:
+Hi Mimi
+On 03/22/19 at 03:35pm, Mimi Zohar wrote:
+> Verify IMA is enabled before failing tests or emitting irrelevant
+> messages.  Also, don't skip the test if signatures are not required.
+> 
+> Suggested-by: Dave Young <dyoung@redhat.com>
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+> Dave, if this patch resolves the outstanding issues, I can fold these
+> changes into the original patches. (Reminder, these patches will need to
+> be updated to support the "lockdown" patch set.)
 
-commit 8fe5616b20e5742bb5fee0e77dffe2fc76ac92a0
-Author: Jyri Sarha <jsarha@ti.com>
-Date:   Tue Jun 14 08:43:30 2016 +0000
+They looks good to me, thanks for the update
 
-     drm/tilcdc: Restore old dpms state in pm_resume()
+Feel free to add my reviewed-by, I did some tests although not cover all
+ima cases.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10daff1b200000
-start commit:   291d0e5d Merge tag 'for-linus-20180929' of git://git.kerne..
-git tree:       upstream
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=12daff1b200000
-console output: https://syzkaller.appspot.com/x/log.txt?x=14daff1b200000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a8212f992609a887
-dashboard link: https://syzkaller.appspot.com/bug?extid=cdc562bc26a2b2b0a94f
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=140e285e400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1237fe81400000
+Thanks
+Dave
 
-Reported-by: syzbot+cdc562bc26a2b2b0a94f@syzkaller.appspotmail.com
-Fixes: 8fe5616b20e5 ("drm/tilcdc: Restore old dpms state in pm_resume()")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> 
+>  .../selftests/kexec/test_kexec_file_load.sh        | 27 ++++++++++++++--------
+>  tools/testing/selftests/kexec/test_kexec_load.sh   | 24 ++++++++++++-------
+>  2 files changed, 33 insertions(+), 18 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/kexec/test_kexec_file_load.sh b/tools/testing/selftests/kexec/test_kexec_file_load.sh
+> index 1d2e5e799523..57b636792086 100755
+> --- a/tools/testing/selftests/kexec/test_kexec_file_load.sh
+> +++ b/tools/testing/selftests/kexec/test_kexec_file_load.sh
+> @@ -110,11 +110,20 @@ kexec_file_load_test()
+>  			log_fail "$succeed_msg (missing IMA sig)"
+>  		fi
+>  
+> -		if [ $pe_sig_required -eq 0 ] && [ $ima_sig_required -eq 0 ] \
+> -		    && [ $ima_read_policy -eq 0 ] && [ $ima_signed -eq 0 ]; then
+> +		if [ $pe_sig_required -eq 0 ] && [ $ima_appraise -eq 1 ] \
+> +		    && [ $ima_sig_required -eq 0 ] && [ $ima_signed -eq 0 ] \
+> +	            && [ $ima_read_policy -eq 0 ]; then
+>  			log_fail "$succeed_msg (possibly missing IMA sig)"
+>  		fi
+>  
+> +		if [ $pe_sig_required -eq 0 ] && [ $ima_appraise -eq 0 ]; then
+> +			log_info "No signature verification required"
+> +		elif [ $pe_sig_required -eq 0 ] && [ $ima_appraise -eq 1 ] \
+> +		    && [ $ima_sig_required -eq 0 ] && [ $ima_signed -eq 0 ] \
+> +	            && [ $ima_read_policy -eq 1 ]; then
+> +			log_info "No signature verification required"
+> +		fi
+> +
+>  		log_pass "$succeed_msg"
+>  	fi
+>  
+> @@ -136,8 +145,9 @@ kexec_file_load_test()
+>  		log_pass "$failed_msg (missing IMA sig)"
+>  	fi
+>  
+> -	if [ $pe_sig_required -eq 0 ] && [ $ima_sig_required -eq 0 ] \
+> -	    && [ $ima_read_policy -eq 0 ] && [ $ima_signed -eq 0 ]; then
+> +	if [ $pe_sig_required -eq 0 ] && [ $ima_appraise -eq 1 ] \
+> +	    && [ $ima_sig_required -eq 0 ] && [ $ima_read_policy -eq 0 ] \
+> +	    && [ $ima_signed -eq 0 ]; then
+>  		log_pass "$failed_msg (possibly missing IMA sig)"
+>  	fi
+>  
+> @@ -157,6 +167,9 @@ if [ $? -eq 0 ]; then
+>  fi
+>  
+>  # Determine which kernel config options are enabled
+> +kconfig_enabled "CONFIG_IMA_APPRAISE=y" "IMA enabled"
+> +ima_appraise=$?
+> +
+>  kconfig_enabled "CONFIG_IMA_ARCH_POLICY=y" \
+>  	"architecture specific policy enabled"
+>  arch_policy=$?
+> @@ -178,12 +191,6 @@ ima_sig_required=$?
+>  get_secureboot_mode
+>  secureboot=$?
+>  
+> -if [ $secureboot -eq 0 ] && [ $arch_policy -eq 0 ] && \
+> -   [ $pe_sig_required -eq 0 ] && [ $ima_sig_required -eq 0 ] && \
+> -   [ $ima_read_policy -eq 1 ]; then
+> -	log_skip "No signature verification required"
+> -fi
+> -
+>  # Are there pe and ima signatures
+>  check_for_pesig
+>  pe_signed=$?
+> diff --git a/tools/testing/selftests/kexec/test_kexec_load.sh b/tools/testing/selftests/kexec/test_kexec_load.sh
+> index 2a66c8897f55..49c6aa929137 100755
+> --- a/tools/testing/selftests/kexec/test_kexec_load.sh
+> +++ b/tools/testing/selftests/kexec/test_kexec_load.sh
+> @@ -1,8 +1,8 @@
+>  #!/bin/sh
+>  # SPDX-License-Identifier: GPL-2.0
+> -# Loading a kernel image via the kexec_load syscall should fail
+> -# when the kernel is CONFIG_KEXEC_VERIFY_SIG enabled and the system
+> -# is booted in secureboot mode.
+> +#
+> +# Prevent loading a kernel image via the kexec_load syscall when
+> +# signatures are required.  (Dependent on CONFIG_IMA_ARCH_POLICY.)
+>  
+>  TEST="$0"
+>  . ./kexec_common_lib.sh
+> @@ -18,20 +18,28 @@ if [ $? -eq 0 ]; then
+>  	log_skip "kexec_load is not enabled"
+>  fi
+>  
+> +kconfig_enabled "CONFIG_IMA_APPRAISE=y" "IMA enabled"
+> +ima_appraise=$?
+> +
+> +kconfig_enabled "CONFIG_IMA_ARCH_POLICY=y" \
+> +	"IMA architecture specific policy enabled"
+> +arch_policy=$?
+> +
+>  get_secureboot_mode
+>  secureboot=$?
+>  
+> -# kexec_load should fail in secure boot mode
+> +# kexec_load should fail in secure boot mode and CONFIG_IMA_ARCH_POLICY enabled
+>  kexec --load $KERNEL_IMAGE > /dev/null 2>&1
+>  if [ $? -eq 0 ]; then
+>  	kexec --unload
+> -	if [ $secureboot -eq 1 ]; then
+> +	if [ $secureboot -eq 1 ] && [ $arch_policy -eq 1 ]; then
+>  		log_fail "kexec_load succeeded"
+> -	else
+> -		log_pass "kexec_load succeeded"
+> +	elif [ $ima_appraise -eq 0 -o $arch_policy -eq 0 ]; then
+> +		log_info "Either IMA or the IMA arch policy is not enabled"
+>  	fi
+> +	log_pass "kexec_load succeeded"
+>  else
+> -	if [ $secureboot -eq 1 ]; then
+> +	if [ $secureboot -eq 1 ] && [ $arch_policy -eq 1 ] ; then
+>  		log_pass "kexec_load failed"
+>  	else
+>  		log_fail "kexec_load failed"
+> -- 
+> 2.7.5
+> 
