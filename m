@@ -2,123 +2,220 @@ Return-Path: <SRS0=8hpl=R4=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E00BC43381
-	for <linux-integrity@archiver.kernel.org>; Mon, 25 Mar 2019 21:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED26BC43381
+	for <linux-integrity@archiver.kernel.org>; Mon, 25 Mar 2019 22:11:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBEF02070D
-	for <linux-integrity@archiver.kernel.org>; Mon, 25 Mar 2019 21:37:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B371F2075E
+	for <linux-integrity@archiver.kernel.org>; Mon, 25 Mar 2019 22:11:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n3zobW7n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730285AbfCYVhI (ORCPT
+        id S1731257AbfCYWLO (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 25 Mar 2019 17:37:08 -0400
-Received: from smtprelay0215.hostedemail.com ([216.40.44.215]:60232 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729297AbfCYVhI (ORCPT
+        Mon, 25 Mar 2019 18:11:14 -0400
+Received: from mail-ua1-f73.google.com ([209.85.222.73]:44255 "EHLO
+        mail-ua1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731253AbfCYWLK (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 25 Mar 2019 17:37:08 -0400
-X-Greylist: delayed 598 seconds by postgrey-1.27 at vger.kernel.org; Mon, 25 Mar 2019 17:37:07 EDT
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave07.hostedemail.com (Postfix) with ESMTP id 73E4618355029;
-        Mon, 25 Mar 2019 21:27:11 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id B6988181D341F;
-        Mon, 25 Mar 2019 21:27:08 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: brass23_20f9e36b16e4b
-X-Filterd-Recvd-Size: 3426
-Received: from joe-laptop.perches.com (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf05.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 25 Mar 2019 21:27:06 +0000 (UTC)
-From:   Joe Perches <joe@perches.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mon, 25 Mar 2019 18:11:10 -0400
+Received: by mail-ua1-f73.google.com with SMTP id v11so1334152uap.11
+        for <linux-integrity@vger.kernel.org>; Mon, 25 Mar 2019 15:11:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=oX6b6UXnLFndsb7tObotwtVDLDo+/sc4TNosNTsNVcE=;
+        b=n3zobW7nksY3qoybt2xy2r7QRwNaPKsNzK7ZjnA/boc9nKSz+Su7uPl/+JupnTybMv
+         /XeeRkIi2xuCtJQmbLrLR+10kfx/wGc61VHvQ7gztx1YC91CrYqyUiUmiGnrNBUfycfD
+         jMSyri79P8gFp4TYefUuEvRv2SFiz6IJWZdAQ2fjDOtR35QpGRxpBq25z7Pa2bT1fCJ0
+         /lR0QvzHUHFoOvwvj6cJNKhWotq8K+rxaTXRFY6GMl0ENOC8cepO3wUG+cUB419Oeh3M
+         iHCvLAYu3WnUBgc0WcHilrF2fTeHWOoOJ+Gz7SCvGHguvir76jDiyLuOY5aFukASBQL6
+         G2DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=oX6b6UXnLFndsb7tObotwtVDLDo+/sc4TNosNTsNVcE=;
+        b=HsHTbccZttZLgVnLtKw9VGJABazOcgHcQKXpzOQ2e1egVrN2T8WiIJDVS3jaZYQoAU
+         26owhZWmCdBKoM2wveoh3oz8N8PnrtDLeXyFEUkG4Lj23kb152PJZKQ57BOOYAQezk5y
+         4u+wb08L/Crmu1DfpiBQdnoa+XwZjQb+PAy7KB2Des2ihWOJmqqGBIJpHG/EbCp1+IMJ
+         33q+m5wXTZa4LJ0wee0BATihoQflgea41hpGS/7RGKydd0UMfIchiGY12+soaVO56/qO
+         3pdpb5NXdhJAKPfQvgycwkNhVcjRo/5slOM1acikADcKlD5w/k/e3/S721czqNY70ZR/
+         8QQQ==
+X-Gm-Message-State: APjAAAUKlTwqaCiE1KM21VXYo8NX2Kev3khNCCfVX97MNrZuyydDtomh
+        rJ6/GOXU9PmpqPlC5AqmJKl+A9FF/Aqom4LH+KyXrw==
+X-Google-Smtp-Source: APXvYqzCpwMqlIY8s3ZXJhy4/xktxbcuRE1AUoDFA2gIf7tGU5DXdtz2c+CCt1ERYYG6SQktfyBy5XA5qh59xr5enW0ujA==
+X-Received: by 2002:a67:fbc2:: with SMTP id o2mr2467492vsr.78.1553551868925;
+ Mon, 25 Mar 2019 15:11:08 -0700 (PDT)
+Date:   Mon, 25 Mar 2019 15:09:54 -0700
+In-Reply-To: <20190325220954.29054-1-matthewgarrett@google.com>
+Message-Id: <20190325220954.29054-28-matthewgarrett@google.com>
+Mime-Version: 1.0
+References: <20190325220954.29054-1-matthewgarrett@google.com>
+X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
+Subject: [PATCH 27/27] kexec: Allow kexec_file() with appropriate IMA policy
+ when locked down
+From:   Matthew Garrett <matthewgarrett@google.com>
+To:     jmorris@namei.org
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Matthew Garrett <mjg59@google.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        Mimi Zohar <zohar@us.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        Denis Kenzior <denkenz@gmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        James Morris <james.morris@microsoft.com>
-Subject: Bad file pattern in MAINTAINERS section 'KEYS-TRUSTED'
-Date:   Mon, 25 Mar 2019 14:27:05 -0700
-Message-Id: <20190325212705.26837-1-joe@perches.com>
-X-Mailer: git-send-email 2.15.0
-In-Reply-To: <7cd8d12f59bcacd18a78f599b46dac555f7f16c0.camel@perches.com>
-References: <7cd8d12f59bcacd18a78f599b46dac555f7f16c0.camel@perches.com>
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-A file pattern line in this section of the MAINTAINERS file in linux-next
-does not have a match in the linux source files.
+Systems in lockdown mode should block the kexec of untrusted kernels.
+For x86 and ARM we can ensure that a kernel is trustworthy by validating
+a PE signature, but this isn't possible on other architectures. On those
+platforms we can use IMA digital signatures instead. Add a function to
+determine whether IMA has or will verify signatures for a given event type,
+and if so permit kexec_file() even if the kernel is otherwise locked down.
+This is restricted to cases where CONFIG_INTEGRITY_TRUSTED_KEYRING is set
+in order to prevent an attacker from loading additional keys at runtime.
 
-This could occur because a matching filename was never added, was deleted
-or renamed in some other commit.
+Signed-off-by: Matthew Garrett <mjg59@google.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: linux-integrity@vger.kernel.org
+---
+ include/linux/ima.h                 |  9 ++++++
+ kernel/kexec_file.c                 |  7 +++-
+ security/integrity/ima/ima.h        |  2 ++
+ security/integrity/ima/ima_main.c   |  2 +-
+ security/integrity/ima/ima_policy.c | 50 +++++++++++++++++++++++++++++
+ 5 files changed, 68 insertions(+), 2 deletions(-)
 
-The commits that added and if found renamed or removed the file pattern
-are shown below.
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index b5e16b8c50b7..05921227d700 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -127,4 +127,13 @@ static inline int ima_inode_removexattr(struct dentry *dentry,
+ 	return 0;
+ }
+ #endif /* CONFIG_IMA_APPRAISE */
++
++#if defined(CONFIG_IMA_APPRAISE) && defined(CONFIG_INTEGRITY_TRUSTED_KEYRING)
++extern bool ima_appraise_signature(enum kernel_read_file_id func);
++#else
++static inline bool ima_appraise_kexec_signature(enum kernel_read_file_id func)
++{
++	return false;
++}
++#endif /* CONFIG_IMA_APPRAISE && CONFIG_INTEGRITY_TRUSTED_KEYRING */
+ #endif /* _LINUX_IMA_H */
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index 0cfe4f6f7f85..8ffa4b75c620 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -240,7 +240,12 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+ 
+ 		ret = 0;
+ 
+-		if (kernel_is_locked_down(reason)) {
++		/* If IMA is guaranteed to appraise a signature on the kexec
++		 * image, permit it even if the kernel is otherwise locked
++		 * down.
++		 */
++		if (!ima_appraise_signature(READING_KEXEC_IMAGE) &&
++		    kernel_is_locked_down(reason)) {
+ 			ret = -EPERM;
+ 			goto out;
+ 		}
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index cc12f3449a72..fe03cc6f1ca4 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -115,6 +115,8 @@ struct ima_kexec_hdr {
+ 	u64 count;
+ };
+ 
++extern const int read_idmap[];
++
+ #ifdef CONFIG_HAVE_IMA_KEXEC
+ void ima_load_kexec_buffer(void);
+ #else
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 4ffac4f5c647..106f06dee9d1 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -442,7 +442,7 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+ 	return 0;
+ }
+ 
+-static const int read_idmap[READING_MAX_ID] = {
++const int read_idmap[READING_MAX_ID] = {
+ 	[READING_FIRMWARE] = FIRMWARE_CHECK,
+ 	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
+ 	[READING_MODULE] = MODULE_CHECK,
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 122797023bdb..f8f1cdb74a4f 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -1341,3 +1341,53 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ #endif	/* CONFIG_IMA_READ_POLICY */
++
++#if defined(CONFIG_IMA_APPRAISE) && defined(CONFIG_INTEGRITY_TRUSTED_KEYRING)
++/*
++ * ima_appraise_signature: whether IMA will appraise a given function using
++ * an IMA digital signature. This is restricted to cases where the kernel
++ * has a set of built-in trusted keys in order to avoid an attacker simply
++ * loading additional keys.
++ */
++bool ima_appraise_signature(enum kernel_read_file_id id)
++{
++	struct ima_rule_entry *entry;
++	bool found = false;
++	enum ima_hooks func;
++
++	if (id >= READING_MAX_ID)
++		return false;
++
++	func = read_idmap[id] ?: FILE_CHECK;
++
++	rcu_read_lock();
++	list_for_each_entry_rcu(entry, ima_rules, list) {
++		if (entry->action != APPRAISE)
++			continue;
++
++		/*
++		 * A generic entry will match, but otherwise require that it
++		 * match the func we're looking for
++		 */
++		if (entry->func && entry->func != func)
++			continue;
++
++		/*
++		 * We require this to be a digital signature, not a raw IMA
++		 * hash.
++		 */
++		if (entry->flags & IMA_DIGSIG_REQUIRED)
++			found = true;
++
++		/*
++		 * We've found a rule that matches, so break now even if it
++		 * didn't require a digital signature - a later rule that does
++		 * won't override it, so would be a false positive.
++		 */
++		break;
++	}
++
++	rcu_read_unlock();
++	return found;
++}
++#endif /* CONFIG_IMA_APPRAISE && CONFIG_INTEGRITY_TRUSTED_KEYRING */
+-- 
+2.21.0.392.gf8f6787159e-goog
 
-Please fix this defect appropriately.
-
-1: ---------------------------------------------------------------------------
-
-linux-next MAINTAINERS section:
-
-	8587	KEYS-TRUSTED
-	8588	M:	James Bottomley <jejb@linux.ibm.com>
-	8589	M:      Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-	8590	M:	Mimi Zohar <zohar@linux.ibm.com>
-	8591	L:	linux-integrity@vger.kernel.org
-	8592	L:	keyrings@vger.kernel.org
-	8593	S:	Supported
-	8594	F:	Documentation/security/keys/trusted-encrypted.rst
-	8595	F:	include/keys/trusted-type.h
-	8596	F:	security/keys/trusted.c
--->	8597	F:	security/keys/trusted.h
-
-2: ---------------------------------------------------------------------------
-
-The most recent commit that added or modified file pattern 'security/keys/trusted.h':
-
-commit 7f3c68bee977ab872827e44de017216736fe21d7
-Author: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Date:   Tue Jan 18 09:07:13 2011 -0500
-
-    keys: add trusted and encrypted maintainers
-    
-    Add myself and David Safford as maintainers for trusted/encrypted keys.
-    
-    Signed-off-by: Mimi Zohar <zohar@us.ibm.com>
-    Acked-by: David Howells <dhowells@redhat.com>
-    Signed-off-by: James Morris <jmorris@namei.org>
-
- MAINTAINERS | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
-3: ---------------------------------------------------------------------------
-
-The last commit with a real presence of file pattern 'security/keys/trusted.h':
-
-commit 22447981fc050b5f1bdd0e7cbee89b4152a2b2d8
-Author: Denis Kenzior <denkenz@gmail.com>
-Date:   Tue Oct 9 17:48:49 2018 +0100
-
-    KEYS: Move trusted.h to include/keys [ver #2]
-    
-    Signed-off-by: Denis Kenzior <denkenz@gmail.com>
-    Signed-off-by: David Howells <dhowells@redhat.com>
-    Tested-by: Marcel Holtmann <marcel@holtmann.org>
-    Reviewed-by: Marcel Holtmann <marcel@holtmann.org>
-    Signed-off-by: James Morris <james.morris@microsoft.com>
-
- {security => include}/keys/trusted.h | 0
- security/keys/trusted.c              | 2 +-
- 2 files changed, 1 insertion(+), 1 deletion(-)
