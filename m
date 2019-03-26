@@ -2,149 +2,151 @@ Return-Path: <SRS0=HBM4=R5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B755FC43381
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 12:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A5BC43381
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 12:58:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FF5F2070D
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 12:12:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0EB620856
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 12:58:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726266AbfCZMMD (ORCPT
+        id S1731509AbfCZM6x (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 26 Mar 2019 08:12:03 -0400
-Received: from mga01.intel.com ([192.55.52.88]:14005 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725948AbfCZMMD (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Mar 2019 08:12:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Mar 2019 05:12:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,271,1549958400"; 
-   d="scan'208";a="128764842"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.182])
-  by orsmga008.jf.intel.com with ESMTP; 26 Mar 2019 05:11:59 -0700
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linuxibm.com>,
+        Tue, 26 Mar 2019 08:58:53 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:44348 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726258AbfCZM6v (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 26 Mar 2019 08:58:51 -0400
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 8BD3072CCAC;
+        Tue, 26 Mar 2019 15:58:48 +0300 (MSK)
+Received: from beacon.altlinux.org (unknown [185.6.174.98])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 3EFA64A4AF1;
+        Tue, 26 Mar 2019 15:58:47 +0300 (MSK)
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
         David Howells <dhowells@redhat.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3] KEYS: trusted: allow trusted.ko to initialize w/o a TPM
-Date:   Tue, 26 Mar 2019 14:11:58 +0200
-Message-Id: <20190326121158.13499-1-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v8 00/10] crypto: add EC-RDSA (GOST 34.10) algorithm
+Date:   Tue, 26 Mar 2019 15:58:32 +0300
+Message-Id: <20190326125842.24110-1-vt@altlinux.org>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Allow trusted.ko to initialize w/o a TPM. This commit adds checks to the
-key type callbacks and exported functions to fail when a TPM is not
-available.
+This patchset changes akcipher API to support ECDSA style signature
+verification, augments x509 parser to make it work with EC-RDSA certificates,
+and, finally, implements EC-RDSA (GOST 34.10) signature verification and its
+integration with IMA.
 
-Cc: James Morris <jmorris@namei.org>
-Reported-by: Dan Williams <dan.j.williams@intel.com>
-Tested-by: Dan Williams <dan.j.williams@intel.com>
-Fixes: 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure...")
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Special request to Mimi Zohar and David Howells to Ack relevant commits, please.
+
 ---
-v3:
-- remove unnecessary check for chip in init_trusted()
-v2:
-- Remove checks from the key type callbacks because the key type will
-  not be registered.
-- Cc to James Morris because hopefully we can land this 5.1.0.
- security/keys/trusted.c | 28 +++++++++++++++++++++++-----
- 1 file changed, 23 insertions(+), 5 deletions(-)
+This patchset should be applied over cryptodev tree commit 4e5180eb3d4f
 
-diff --git a/security/keys/trusted.c b/security/keys/trusted.c
-index ecec672d3a77..efdbf17f3915 100644
---- a/security/keys/trusted.c
-+++ b/security/keys/trusted.c
-@@ -135,6 +135,9 @@ int TSS_authhmac(unsigned char *digest, const unsigned char *key,
- 	int ret;
- 	va_list argp;
- 
-+	if (!chip)
-+		return -ENODEV;
-+
- 	sdesc = init_sdesc(hashalg);
- 	if (IS_ERR(sdesc)) {
- 		pr_info("trusted_key: can't alloc %s\n", hash_alg);
-@@ -196,6 +199,9 @@ int TSS_checkhmac1(unsigned char *buffer,
- 	va_list argp;
- 	int ret;
- 
-+	if (!chip)
-+		return -ENODEV;
-+
- 	bufsize = LOAD32(buffer, TPM_SIZE_OFFSET);
- 	tag = LOAD16(buffer, 0);
- 	ordinal = command;
-@@ -363,6 +369,9 @@ int trusted_tpm_send(unsigned char *cmd, size_t buflen)
- {
- 	int rc;
- 
-+	if (!chip)
-+		return -ENODEV;
-+
- 	dump_tpm_buf(cmd);
- 	rc = tpm_send(chip, cmd, buflen);
- 	dump_tpm_buf(cmd);
-@@ -429,6 +438,9 @@ int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce)
- {
- 	int ret;
- 
-+	if (!chip)
-+		return -ENODEV;
-+
- 	INIT_BUF(tb);
- 	store16(tb, TPM_TAG_RQU_COMMAND);
- 	store32(tb, TPM_OIAP_SIZE);
-@@ -1245,9 +1257,13 @@ static int __init init_trusted(void)
- {
- 	int ret;
- 
-+	/* encrypted_keys.ko depends on successful load of this module even if
-+	 * TPM is not used.
-+	 */
- 	chip = tpm_default_chip();
- 	if (!chip)
--		return -ENOENT;
-+		return 0;
-+
- 	ret = init_digests();
- 	if (ret < 0)
- 		goto err_put;
-@@ -1269,10 +1285,12 @@ static int __init init_trusted(void)
- 
- static void __exit cleanup_trusted(void)
- {
--	put_device(&chip->dev);
--	kfree(digests);
--	trusted_shash_release();
--	unregister_key_type(&key_type_trusted);
-+	if (chip) {
-+		put_device(&chip->dev);
-+		kfree(digests);
-+		trusted_shash_release();
-+		unregister_key_type(&key_type_trusted);
-+	}
- }
- 
- late_initcall(init_trusted);
+Changes since v7:
+- Do not check callback validity in akcipher requests, instead define default
+  callbacks on register, suggested by Herbert Xu.
+- Sanity checks in crypto_akcipher_maxsize are removed (not needed).
+- Sanity checks for `dst' and `dst_len' are removed from verify op (not
+  needed in akcipher API and should be checked by a driver).
+- Patch "KEYS: report to keyctl only actually supported key ops" is removed,
+  as it would affect user-space API.
+
+Changes since (v5-v6):
+- set_params API is removed in favor of appending parameters into a key stream,
+  as requested by Herbert Xu.
+- verify op signature de-kmemdup'ed (as requested by David Howells) in separate
+  patch (as requested by Herbert Xu).
+- Add forgotten ASN.1 parser files to EC-RDSA patch.
+- Tested on x86_64.
+
+Changes since v5:
+- Comparison of hash algo by enum id instead of text name, as suggested by
+  Thiago Jung Bauermann and Mimi Zohar.
+
+Changes since RFC (v1-v4):
+- akcipher set_max_size, encrypt, decrypt, sign, verify callbacks may be
+  undefined by the drivers, so their crypto_akcipher_* frontends check for
+  their presence before passing the call.
+- supported_ops flags are set for keyctl, based on the presence of implemented
+  akcipher callbacks.
+- Transition to verify2 API is abandoned because raw RSA does not need
+  sign/verify ops at all, and we can switch to the new verify in one step.
+  For this RSA backends have sign/verify ops removed as they should only
+  be used (and actually used only) via PKCS1 driver.
+- Verify callback requires digest as the input parameter in src SGL, as
+  suggested by Herbert Xu, (instead of a separate parameter, as it was in
+  verify2).
+- For verify op signature is moved into kmalloc'd memory as suggested by
+  Herbert Xu.
+- set_params API should be called before set_{pub,priv}_key, thus set_*_key
+  knows everything it needs to set they key properly. Also, set_params made
+  optional for back compatibility with RSA drivers.
+- Public-key cryptography section is created in Kconfig.
+- ecc.c is made into separate module object, to be used together by ECDH and
+  EC-RDSA.
+- EC-RDSA parameters and public key are parsed using asn1_ber_decoder as
+  suggested by Stephan Mueller and David Howells.
+- Test vectors are added and tests are passing.
+- Curves/parameters definitions are split from ecrdsa.c into ecrdsa_defs.h.
+- Integration with IMA in asymmetric_verify(). Userspace ima-evm-utils already
+  have a patch in the queue to support this. Tested on x86_64.
+
+Vitaly Chikunov (10):
+  crypto: akcipher - default implementations for request callbacks
+  crypto: rsa - unimplement sign/verify for raw RSA backends
+  crypto: akcipher - new verify API for public key algorithms
+  KEYS: do not kmemdup digest in {public,tpm}_key_verify_signature
+  X.509: parse public key parameters from x509 for akcipher
+  crypto: Kconfig - create Public-key cryptography section
+  crypto: ecc - make ecc into separate module
+  crypto: ecrdsa - add EC-RDSA (GOST 34.10) algorithm
+  crypto: ecrdsa - add EC-RDSA test vectors to testmgr
+  integrity: support EC-RDSA signatures for asymmetric_verify
+
+ crypto/Kconfig                                |  63 ++--
+ crypto/Makefile                               |  10 +-
+ crypto/akcipher.c                             |  14 +
+ crypto/asymmetric_keys/asym_tpm.c             |  77 +++--
+ crypto/asymmetric_keys/public_key.c           | 105 ++++---
+ crypto/asymmetric_keys/x509.asn1              |   2 +-
+ crypto/asymmetric_keys/x509_cert_parser.c     |  57 +++-
+ crypto/ecc.c                                  | 417 +++++++++++++++++++++++++-
+ crypto/ecc.h                                  | 153 +++++++++-
+ crypto/ecc_curve_defs.h                       |  15 -
+ crypto/ecrdsa.c                               | 296 ++++++++++++++++++
+ crypto/ecrdsa_defs.h                          | 225 ++++++++++++++
+ crypto/ecrdsa_params.asn1                     |   4 +
+ crypto/ecrdsa_pub_key.asn1                    |   1 +
+ crypto/rsa-pkcs1pad.c                         |  33 +-
+ crypto/rsa.c                                  | 109 -------
+ crypto/testmgr.c                              |  80 +++--
+ crypto/testmgr.h                              | 159 ++++++++++
+ drivers/crypto/caam/caampkc.c                 |   2 -
+ drivers/crypto/ccp/ccp-crypto-rsa.c           |   2 -
+ drivers/crypto/qat/qat_common/qat_asym_algs.c |   2 -
+ include/crypto/akcipher.h                     |  54 ++--
+ include/crypto/public_key.h                   |   4 +
+ include/linux/oid_registry.h                  |  18 ++
+ security/integrity/digsig_asymmetric.c        |  11 +-
+ 25 files changed, 1606 insertions(+), 307 deletions(-)
+ create mode 100644 crypto/ecrdsa.c
+ create mode 100644 crypto/ecrdsa_defs.h
+ create mode 100644 crypto/ecrdsa_params.asn1
+ create mode 100644 crypto/ecrdsa_pub_key.asn1
+
 -- 
-2.19.1
+2.11.0
 
