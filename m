@@ -2,137 +2,127 @@ Return-Path: <SRS0=HBM4=R5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EBC6C43381
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 13:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF08C43381
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 13:57:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7394A2070B
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 13:36:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2394920823
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 13:57:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726258AbfCZNg4 (ORCPT
+        id S1731720AbfCZN5J (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 26 Mar 2019 09:36:56 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46880 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726177AbfCZNgz (ORCPT
+        Tue, 26 Mar 2019 09:57:09 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58352 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731710AbfCZN5J (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Mar 2019 09:36:55 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2QDabqH115782
-        for <linux-integrity@vger.kernel.org>; Tue, 26 Mar 2019 09:36:54 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2rfkyhbfts-1
+        Tue, 26 Mar 2019 09:57:09 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2QDs3wj125149
+        for <linux-integrity@vger.kernel.org>; Tue, 26 Mar 2019 09:57:08 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2rfmc8b63r-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 26 Mar 2019 09:36:49 -0400
+        for <linux-integrity@vger.kernel.org>; Tue, 26 Mar 2019 09:57:08 -0400
 Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 26 Mar 2019 13:35:08 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Tue, 26 Mar 2019 13:57:05 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Mar 2019 13:35:05 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2QDZ4iF16122080
+        Tue, 26 Mar 2019 13:57:03 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2QDv2sa18546860
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Mar 2019 13:35:04 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5165611C066;
-        Tue, 26 Mar 2019 13:35:04 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 21A6011C05B;
-        Tue, 26 Mar 2019 13:35:03 +0000 (GMT)
-Received: from localhost.ibm.com (unknown [9.80.109.68])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Mar 2019 13:35:02 +0000 (GMT)
+        Tue, 26 Mar 2019 13:57:02 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5AD65A405C;
+        Tue, 26 Mar 2019 13:57:02 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 05457A405B;
+        Tue, 26 Mar 2019 13:57:01 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.109.68])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 26 Mar 2019 13:57:00 +0000 (GMT)
+Subject: Re: [PATCH v4a 1/2] selftests/kexec: make tests independent of IMA
+ being enabled
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-kselftest@vger.kernel.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Petr Vorel <pvorel@suse.cz>,
-        Dave Young <dyoung@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH v5 2/9] selftests/kexec: cleanup the kexec selftest
-Date:   Tue, 26 Mar 2019 09:34:10 -0400
-X-Mailer: git-send-email 2.7.5
-In-Reply-To: <1553607257-18906-1-git-send-email-zohar@linux.ibm.com>
-References: <1553607257-18906-1-git-send-email-zohar@linux.ibm.com>
+To:     Dave Young <dyoung@redhat.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Petr Vorel <pvorel@suse.cz>, Matthew Garrett <mjg59@google.com>
+Date:   Tue, 26 Mar 2019 09:56:50 -0400
+In-Reply-To: <20190326074942.GA19708@dhcp-128-65.nay.redhat.com>
+References: <1553283351-6310-1-git-send-email-zohar@linux.ibm.com>
+         <20190325080935.GA12497@dhcp-128-65.nay.redhat.com>
+         <1553546236.5561.7.camel@linux.ibm.com>
+         <20190326074942.GA19708@dhcp-128-65.nay.redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 19032613-0008-0000-0000-000002D1B808
+x-cbid: 19032613-4275-0000-0000-0000031F749D
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19032613-0009-0000-0000-0000223DE4D2
-Message-Id: <1553607257-18906-3-git-send-email-zohar@linux.ibm.com>
+x-cbparentid: 19032613-4276-0000-0000-0000382E0B3E
+Message-Id: <1553608610.3960.37.camel@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-26_10:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=878 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1903260096
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1903260098
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Remove the few bashisms and use the complete option name for clarity.
+On Tue, 2019-03-26 at 15:49 +0800, Dave Young wrote:
+> On 03/25/19 at 04:37pm, Mimi Zohar wrote:
+> > On Mon, 2019-03-25 at 16:09 +0800, Dave Young wrote:
+> > > Hi Mimi
+> > > On 03/22/19 at 03:35pm, Mimi Zohar wrote:
+> > > > Verify IMA is enabled before failing tests or emitting irrelevant
+> > > > messages.  Also, don't skip the test if signatures are not required.
+> > > > 
+> > > > Suggested-by: Dave Young <dyoung@redhat.com>
+> > > > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> > > > ---
+> > > > Dave, if this patch resolves the outstanding issues, I can fold these
+> > > > changes into the original patches. (Reminder, these patches will need to
+> > > > be updated to support the "lockdown" patch set.)
+> > > 
+> > > They looks good to me, thanks for the update
+> > 
+> > I've folded the kexec_file_load changes into the kexec_file_load test.
+> >  The remaining kexec_load change is left as a separate patch, since it
+> > is dependent on the ikconfig change.
+> > 
+> > > Feel free to add my reviewed-by, I did some tests although not cover all
+> > > ima cases.
+> > 
+> > Thanks!  Is this meant as a general "reviewed-by" for all of the
+> > patches or just this specific one?
+> 
+> Thank you for taking this as a separate kexec tests, I think it can
+> be used for these delta fixes
 
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-Reviewed-by: Petr Vorel <pvorel@suse.cz>
----
- tools/testing/selftests/kexec/test_kexec_load.sh | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+Ok, I just re-posted the patches, folding part of this patch into the
+kexec_file_load test.  I've added your Reviewed-by on the remaining
+patch.
 
-diff --git a/tools/testing/selftests/kexec/test_kexec_load.sh b/tools/testing/selftests/kexec/test_kexec_load.sh
-index 1c10093fb526..82a01a4d5c8d 100755
---- a/tools/testing/selftests/kexec/test_kexec_load.sh
-+++ b/tools/testing/selftests/kexec/test_kexec_load.sh
-@@ -1,7 +1,7 @@
- #!/bin/sh
--# SPDX-License-Identifier: GPL-2.0+
-+# SPDX-License-Identifier: GPL-2.0
- # Loading a kernel image via the kexec_load syscall should fail
--# when the kerne is CONFIG_KEXEC_VERIFY_SIG enabled and the system
-+# when the kernel is CONFIG_KEXEC_VERIFY_SIG enabled and the system
- # is booted in secureboot mode.
- 
- TEST="$0"
-@@ -12,8 +12,8 @@ rc=0
- ksft_skip=4
- 
- # kexec requires root privileges
--if [ $UID != 0 ]; then
--	echo "$TEST: must be run as root" >&2
-+if [ $(id -ru) -ne 0 ]; then
-+	echo "$TEST: requires root privileges" >&2
- 	exit $ksft_skip
- fi
- 
-@@ -33,17 +33,17 @@ secureboot=`hexdump $file | awk '{print substr($4,length($4),1)}'`
- 
- # kexec_load should fail in secure boot mode
- KERNEL_IMAGE="/boot/vmlinuz-`uname -r`"
--kexec -l $KERNEL_IMAGE &>> /dev/null
--if [ $? == 0 ]; then
--	kexec -u
--	if [ "$secureboot" == "1" ]; then
-+kexec --load $KERNEL_IMAGE > /dev/null 2>&1
-+if [ $? -eq 0 ]; then
-+	kexec --unload
-+	if [ $secureboot -eq 1 ]; then
- 		echo "$TEST: kexec_load succeeded [FAIL]"
- 		rc=1
- 	else
- 		echo "$TEST: kexec_load succeeded [PASS]"
- 	fi
- else
--	if [ "$secureboot" == "1" ]; then
-+	if [ $secureboot -eq 1 ]; then
- 		echo "$TEST: kexec_load failed [PASS]"
- 	else
- 		echo "$TEST: kexec_load failed [FAIL]"
--- 
-2.7.5
+> 
+> I read all the patches and reviewed the kexec stuff, but I do not
+> understand all the IMA logic yet although I did some simple ima
+> tests.
+
+I understand.  There are many different aspects to the integrity
+subsystem.  I'm happy to answer any questions you have.
+
+Mimi
 
