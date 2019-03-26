@@ -2,131 +2,122 @@ Return-Path: <SRS0=HBM4=R5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33050C43381
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 16:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B82EC43381
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 16:14:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0331E2070D
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 16:00:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TlNWQ6Bm"
+	by mail.kernel.org (Postfix) with ESMTP id 02A9F2070D
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 16:14:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730449AbfCZQAr (ORCPT
+        id S1726177AbfCZQOU (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 26 Mar 2019 12:00:47 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33579 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729633AbfCZQAr (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Mar 2019 12:00:47 -0400
-Received: by mail-ot1-f68.google.com with SMTP id j10so5477147otq.0;
-        Tue, 26 Mar 2019 09:00:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=+X3y/qDiVyUZ6FE5er9C1/c3UdsMGx/nk0qkW7aHZhA=;
-        b=TlNWQ6BmIrIz4ymM0k93Yp1tnJX1lqZA7Zzkst1AIVWpJPqNzD11PHm/Jaen/jXUIL
-         vg0KQMo/mccl/la3CYRkYXqsoqbSrfv8IgLlEL2E8BKbNMWYFsInxvTNdxEY9TdEA/K1
-         Wu5dkgug6LbAsOEIOTlCZ2gDR4Y9Jn55sYoJnfdRiL6FVzOHsuBVrQsJES30a88Ck4lk
-         2I1h8kEY+vjpEuISwN5rARfbVlSzMP8dz9BZU66lpJEIyWkgtHhcsQS8rgxmc5gNxQXZ
-         A5hBw3KabKOJk24TJWCB1s6JEe6Hxd+KiN1xHgHPDlCACI2Lk+9Nufi+VeqkIflha9xq
-         P3+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+X3y/qDiVyUZ6FE5er9C1/c3UdsMGx/nk0qkW7aHZhA=;
-        b=b37G/DLWnQoGywavd7Pmb/EXxzz8/ymyxTOw4COKJrXwksGx2qROKrmttMo/YvAz8B
-         ZZYiDFui67NGv7ZAJybzAABhZR2WGk9cMsN1Hm3yVPlCj19bBb4yo3TBgTiPljFEABJG
-         pd+Gf3gkA2xAGGwnaFvIz+G9fvvMhZJDvgiUccxeAqq5KeS9rmtb2D8DUniPhbBnx4td
-         4pGtoUf5hCwgcZ/3xn8esxYQ/IbU7dMRcNzA7Bz/g4E0dhQx0m3s+0jEAdBBARjjt8/1
-         2XNSV4JNppxGm7+bwqTnDlG7RUsLzRKz5x2uPoA458107IWUHD03tjQXZm38uQP2gS8S
-         OB1g==
-X-Gm-Message-State: APjAAAVG17QvqdC9j124dii1NgmI/QeRmMpteQ0rKLgSPrrCyC+/AZ0p
-        rjnccMQ3/NaDPeA4ztGTc1qIQogm
-X-Google-Smtp-Source: APXvYqyZZwzSy1oMFCnWCyoBfM7ZWaT8w0fP+fx+5EipKTkzROWHiBhtzqXP2btg6Y0jQZDMpLIIDw==
-X-Received: by 2002:a9d:5509:: with SMTP id l9mr21901554oth.195.1553616046287;
-        Tue, 26 Mar 2019 09:00:46 -0700 (PDT)
-Received: from [192.168.1.249] (cpe-70-114-247-242.austin.res.rr.com. [70.114.247.242])
-        by smtp.googlemail.com with ESMTPSA id f26sm7591795otl.20.2019.03.26.09.00.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Mar 2019 09:00:41 -0700 (PDT)
-Subject: Re: [PATCH v8 03/10] crypto: akcipher - new verify API for public key
- algorithms
-To:     Vitaly Chikunov <vt@altlinux.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190326125842.24110-1-vt@altlinux.org>
- <20190326125842.24110-4-vt@altlinux.org>
-From:   Denis Kenzior <denkenz@gmail.com>
-Message-ID: <ed78154e-2491-8e3e-3362-e45df4fda011@gmail.com>
-Date:   Tue, 26 Mar 2019 11:00:40 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Tue, 26 Mar 2019 12:14:20 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55866 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726175AbfCZQOU (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 26 Mar 2019 12:14:20 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AA74881F2F;
+        Tue, 26 Mar 2019 16:14:19 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-19.phx2.redhat.com [10.3.112.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C84535D73F;
+        Tue, 26 Mar 2019 16:14:12 +0000 (UTC)
+Date:   Tue, 26 Mar 2019 12:14:09 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Steve Grubb <sgrubb@redhat.com>, Paul Moore <paul@paul-moore.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, omosnace@redhat.com,
+        Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, mjg59@google.com
+Subject: Re: [PATCH ghak109 V1] audit: link integrity evm_write_xattrs record
+ to syscall event
+Message-ID: <20190326161409.3wej7hcwnqalf4or@madcap2.tricolour.ca>
+References: <81d0122d14c4fbb3a2ad33d25fdf2dd001c7dcc7.1552737854.git.rgb@redhat.com>
+ <CAHC9VhS61LTQMXiALRre+5_+wvwe6Wa9RN-WYNTjvz5LVsA5rw@mail.gmail.com>
+ <20190321005008.wfz3bk7q262km5fz@madcap2.tricolour.ca>
+ <2006016.NXIvICiRTL@x2>
+ <1553614157.4115.17.camel@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190326125842.24110-4-vt@altlinux.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1553614157.4115.17.camel@linux.ibm.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 26 Mar 2019 16:14:20 +0000 (UTC)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Vitaly,
-
-On 03/26/2019 07:58 AM, Vitaly Chikunov wrote:
-> Previous akcipher .verify() just `decrypts' (using RSA encrypt which is
-> using public key) signature to uncover message hash, which was then
-> compared in upper level public_key_verify_signature() with the expected
-> hash value, which itself was never passed into verify().
+On 2019-03-26 11:29, Mimi Zohar wrote:
+> On Tue, 2019-03-26 at 11:22 -0400, Steve Grubb wrote:
 > 
-> This approach was incompatible with EC-DSA family of algorithms,
-> because, to verify a signature EC-DSA algorithm also needs a hash value
-> as input; then it's used (together with a signature divided into halves
-> `r||s') to produce a witness value, which is then compared with `r' to
-> determine if the signature is correct. Thus, for EC-DSA, nor
-> requirements of .verify() itself, nor its output expectations in
-> public_key_verify_signature() wasn't sufficient.
+> > > > > --- a/security/integrity/evm/evm_secfs.c
+> > > > > +++ b/security/integrity/evm/evm_secfs.c
+> > > > > @@ -192,7 +192,8 @@ static ssize_t evm_write_xattrs(struct file *file,
+> > > > > const char __user *buf,> > 
+> > > > >         if (count > XATTR_NAME_MAX)
+> > > > >         
+> > > > >                 return -E2BIG;
+> > > > > 
+> > > > > -       ab = audit_log_start(NULL, GFP_KERNEL,
+> > > > > AUDIT_INTEGRITY_EVM_XATTR);
+> > > > > +       ab = audit_log_start(audit_context(), GFP_KERNEL,
+> > > > > +                            AUDIT_INTEGRITY_EVM_XATTR);
+> > > > 
+> > > > This part is fine.
+> > > > 
+> > > > >         if (!ab)
+> > > > >         
+> > > > >                 return -ENOMEM;
+> > > > > 
+> > > > > @@ -222,7 +223,7 @@ static ssize_t evm_write_xattrs(struct file *file,
+> > > > > const char __user *buf,> > 
+> > > > >                 inode_lock(inode);
+> > > > >                 err = simple_setattr(evm_xattrs, &newattrs);
+> > > > >                 inode_unlock(inode);
+> > > > > 
+> > > > > -               audit_log_format(ab, "locked");
+> > > > > +               audit_log_format(ab, "xattr=(locked)");
+> > > > 
+> > > > Two things come to mind:
+> > > > 
+> > > > * While we can clearly trust the string above, should we be logging
+> > > > the xattr field value as an untrusted string so it is consistent with
+> > > > how we record other xattr names?
+> > > 
+> > > That would be a question for Steve.
+> > 
+> > All fields with the same name must be represented the same way. If one 
+> > instance is untrusted, every instance of the same keyword must be untrusted.
 > 
-> Make improved .verify() call which gets hash value as input and produce
-> complete signature check without any output besides status.
+> Normal case:
+>        audit_log_format(ab, "xattr=");
+>        audit_log_untrustedstring(ab, xattr->name);
 > 
-> Now for the top level verification only crypto_akcipher_verify() needs
-> to be called and its return value inspected.
-> 
-> Make sure that `digest' is in kmalloc'd memory (in place of `output`) in
-> {public,tpm}_key_verify_signature() as insisted by Herbert Xu, and will
-> be changed in the following commit.
-> 
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: keyrings@vger.kernel.org
-> Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
-> ---
->   crypto/asymmetric_keys/asym_tpm.c   | 34 ++++++++-----------------
->   crypto/asymmetric_keys/public_key.c | 34 ++++++++-----------------
->   crypto/rsa-pkcs1pad.c               | 29 +++++++++++++--------
->   crypto/testmgr.c                    | 50 ++++++++++++++++++++++---------------
->   include/crypto/akcipher.h           | 36 ++++++++++++++++----------
->   5 files changed, 92 insertions(+), 91 deletions(-)
+> Ok, so the above audit_log_format() call should be replaced with
+>  audit_log_untrustedstring().
 
-The TPM bits, public_key and akcipher changes look good to me.  Didn't 
-look into testmgr.
+Ok, so I think we can agree on "audit_log_untrustedstring(ab,
+"xattr=.");" and simpler yet just print the contents regardless and not
+special case this print.  V2 coming...
 
-Feel free to add
-Reviewed-by: Denis Kenzior <denkenz@gmail.com>
+> Mimi
 
-to this and patch 4.
+- RGB
 
-Regards,
--Denis
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
