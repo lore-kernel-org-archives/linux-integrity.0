@@ -2,113 +2,156 @@ Return-Path: <SRS0=HBM4=R5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F28C43381
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 14:59:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C7EC43381
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 15:12:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A41342075C
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 14:59:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Trjj+fhV"
+	by mail.kernel.org (Postfix) with ESMTP id 42F602070D
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 15:12:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731780AbfCZO7o (ORCPT
+        id S1731491AbfCZPMG (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 26 Mar 2019 10:59:44 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:35365 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731560AbfCZO7o (ORCPT
+        Tue, 26 Mar 2019 11:12:06 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55492 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727492AbfCZPMF (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Mar 2019 10:59:44 -0400
-Received: by mail-oi1-f194.google.com with SMTP id j132so10167731oib.2;
-        Tue, 26 Mar 2019 07:59:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8wwF1Uj+yImZjtOKtUto86IZVVFBUmGwSkNQZRG7bw8=;
-        b=Trjj+fhVSMvbdWAs5ITR336WKS5kykuDK2OzQCdwr5JZNc2lUFxS1awa3vRh/3+BN0
-         TlhUF9BUrVGOeboInk0/pOHhT2jzHwOLL5r5/TH2I2XU3fWKwCZka0uveYfz9QkDQ7E3
-         XX1GsNz7DTjBCFJNrXHxvpJq30CBielTdvoUJGx1PHwe0XzWtHHmNom/S+8UJguks0kR
-         FWEQWxOK8aWtVcL2ZdocdcSOewKCYR5tFbBgKBHpJmD+pKgU5k62zuHbUxRsN3T/qFyw
-         uFlRDPudajPtmmKRC1JkonMZJLnvUNfUKwu6R05FNBvbnJzeyuPDDxG8NsmdLW5RuY94
-         sTRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8wwF1Uj+yImZjtOKtUto86IZVVFBUmGwSkNQZRG7bw8=;
-        b=mXwpAGJzCPGtH1kp/vk4CVaSKFlENmQblkrf0RsN6M95AN+PY0buaeuhJtONhCxkyN
-         k5kNA6Bea6TkEXpm6Ba2tXAVFpD4VQFJ+JuQ//Knus5hteODXESAqq0Na9iHisVz0Gb8
-         f01Zr490ZK+h12hIX1XHIwy3cd8KrcM4HQ/6H3/ldx9uZRoWonk/CETIMVbDS1x5LCXz
-         7Iy2GxZd1EYhnspVKgaT9prjon8pEcbZeqVR1AnnqBaTiMu6ASVzImZYTMYFHcMUr3ET
-         2L3vAiDEeJBd2A3un5iT0fiCoTNRJuavgffGmrkpPrkV6s3iJDdHYS3LmZ14LKlupBCm
-         6zlw==
-X-Gm-Message-State: APjAAAUEj+4wza5OK72waHSpMZbzJlItB2BdV5BYehoIyGKFxe5BN5wX
-        zeZ09NkQYRcivhlz8RAKyxs=
-X-Google-Smtp-Source: APXvYqwJhGmoX+qubeZuS96wppA75ntlCZcroJBS2l6uNUPszX4ridHlNLKZFcoqO53jl4I4qoD+DQ==
-X-Received: by 2002:aca:4bc8:: with SMTP id y191mr15318036oia.94.1553612383373;
-        Tue, 26 Mar 2019 07:59:43 -0700 (PDT)
-Received: from [192.168.1.249] (cpe-70-114-247-242.austin.res.rr.com. [70.114.247.242])
-        by smtp.googlemail.com with ESMTPSA id o83sm6344955oif.33.2019.03.26.07.59.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Mar 2019 07:59:41 -0700 (PDT)
-Subject: Re: Bad file pattern in MAINTAINERS section 'KEYS-TRUSTED'
-To:     James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Joe Perches <joe@perches.com>
-Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org, Mimi Zohar <zohar@us.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        James Morris <james.morris@microsoft.com>
-References: <7cd8d12f59bcacd18a78f599b46dac555f7f16c0.camel@perches.com>
- <20190325212705.26837-1-joe@perches.com>
- <20190326113725.GA10898@linux.intel.com>
- <1553602220.3960.29.camel@linux.ibm.com>
- <1553610317.2900.2.camel@linux.ibm.com>
-From:   Denis Kenzior <denkenz@gmail.com>
-Message-ID: <c7f70a06-65a5-a1cd-69c5-dae7567b851f@gmail.com>
-Date:   Tue, 26 Mar 2019 09:59:40 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <1553610317.2900.2.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 26 Mar 2019 11:12:05 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2QFAOZL004215
+        for <linux-integrity@vger.kernel.org>; Tue, 26 Mar 2019 11:12:04 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2rfp18svma-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 26 Mar 2019 11:12:04 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 26 Mar 2019 15:12:02 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 26 Mar 2019 15:11:58 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2QFBvx924182816
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Mar 2019 15:11:57 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AC88BA4055;
+        Tue, 26 Mar 2019 15:11:57 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8C9D7A4051;
+        Tue, 26 Mar 2019 15:11:56 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.109.36])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 26 Mar 2019 15:11:56 +0000 (GMT)
+Subject: Re: [PATCH ghak109 V1] audit: link integrity evm_write_xattrs
+ record to syscall event
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Richard Guy Briggs <rgb@redhat.com>,
+        Paul Moore <paul@paul-moore.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, sgrubb@redhat.com,
+        omosnace@redhat.com, mjg59@google.com
+Date:   Tue, 26 Mar 2019 11:11:45 -0400
+In-Reply-To: <20190321005008.wfz3bk7q262km5fz@madcap2.tricolour.ca>
+References: <81d0122d14c4fbb3a2ad33d25fdf2dd001c7dcc7.1552737854.git.rgb@redhat.com>
+         <CAHC9VhS61LTQMXiALRre+5_+wvwe6Wa9RN-WYNTjvz5LVsA5rw@mail.gmail.com>
+         <20190321005008.wfz3bk7q262km5fz@madcap2.tricolour.ca>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19032615-0020-0000-0000-00000327C910
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19032615-0021-0000-0000-0000217A068D
+Message-Id: <1553613105.4115.11.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-26_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1903260106
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi James,
-
-On 03/26/2019 09:25 AM, James Bottomley wrote:
-> Looking at the contents of linux/keys/trusted.h, it looks like the
-> wrong decision to move it.  The contents are way too improperly named
-> and duplicative to be in a standard header.  It's mostly actually TPM
-> code including a redefinition of the tpm_buf structure, so it doesn't
-> even seem to be necessary for trusted keys.
-The reason this was done was because asym_tpm.c needed a bunch of the 
-same functionality already provided by trusted.c, e.g. TSS_authmac and 
-friends.
-
+On Wed, 2019-03-20 at 20:50 -0400, Richard Guy Briggs wrote:
+> On 2019-03-20 19:48, Paul Moore wrote:
+> > On Sat, Mar 16, 2019 at 8:10 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > In commit fa516b66a1bf ("EVM: Allow runtime modification of the set of
+> > > verified xattrs"), the call to audit_log_start() is missing a context to
+> > > link it to an audit event. Since this event is in user context, add
+> > > the process' syscall context to the record.
+> > >
+> > > In addition, the orphaned keyword "locked" appears in the record.
+> > > Normalize this by changing it to "xattr=(locked)".
+> > >
+> > > Please see the github issue
+> > > https://github.com/linux-audit/audit-kernel/issues/109
+> > >
+> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > ---
+> > >  security/integrity/evm/evm_secfs.c | 5 +++--
+> > >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
+> > > index 015aea8fdf1e..4171d174e9da 100644
+> > > --- a/security/integrity/evm/evm_secfs.c
+> > > +++ b/security/integrity/evm/evm_secfs.c
+> > > @@ -192,7 +192,8 @@ static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
+> > >         if (count > XATTR_NAME_MAX)
+> > >                 return -E2BIG;
+> > >
+> > > -       ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_EVM_XATTR);
+> > > +       ab = audit_log_start(audit_context(), GFP_KERNEL,
+> > > +                            AUDIT_INTEGRITY_EVM_XATTR);
+> > 
+> > This part is fine.
+> > 
+> > >         if (!ab)
+> > >                 return -ENOMEM;
+> > >
+> > > @@ -222,7 +223,7 @@ static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
+> > >                 inode_lock(inode);
+> > >                 err = simple_setattr(evm_xattrs, &newattrs);
+> > >                 inode_unlock(inode);
+> > > -               audit_log_format(ab, "locked");
+> > > +               audit_log_format(ab, "xattr=(locked)");
+> > 
+> > Two things come to mind:
+> > 
+> > * While we can clearly trust the string above, should we be logging
+> > the xattr field value as an untrusted string so it is consistent with
+> > how we record other xattr names?
 > 
-> If you want to fix this as a bug, I'd move it back again, but long term
-> I think it should simply be combined with trusted.c because nothing
-> else can include it sanely anyway.
+> That would be a question for Steve.
+> 
+> > * I'm not sure you can ever have parens in a xattr (I would hope not),
+> > but if we are going to use the xattr field, perhaps we should simply
+> > stick with the name as provided (".") so we don't ever run afoul of
+> > xattr names?  I'm curious to hear what the IMA/EVM folks think of
+> > this.
+> 
+> The legal xaddr names start with XATTR_SECURITY_PREFIX which is
+> "security." so there is no danger of collision with legal names, but I
+> suppose someone could try to use "(locked)" as a name which would look
+> identical but fail with a different res= number.  I think I prefer your
+> idea of printing the given value verbatim.
 
-Ideally I'd like to see the TPM subsystem expose these functions using 
-some proper API / library abstraction.  David Howells had an RFC patch 
-set that tried to address some of this a while back.  Not sure if that 
-went anywhere.
+I really don't have a preference - "locked", "(locked)", "." or "(.)".
+ Any of them is fine.
 
-Regards,
--Denis
+Thanks!
+
+Mimi
+
