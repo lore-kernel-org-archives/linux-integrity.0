@@ -2,107 +2,107 @@ Return-Path: <SRS0=HBM4=R5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B02A3C10F05
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 20:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA864C43381
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 23:58:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82F8D21741
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 20:40:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 933F42087E
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 23:58:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="N5HmmzPn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731617AbfCZUkv (ORCPT
+        id S1731666AbfCZX6S (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 26 Mar 2019 16:40:51 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54982 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727997AbfCZUkv (ORCPT
+        Tue, 26 Mar 2019 19:58:18 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:43914 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731619AbfCZX6S (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Mar 2019 16:40:51 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2QKd5PA013165
-        for <linux-integrity@vger.kernel.org>; Tue, 26 Mar 2019 16:40:49 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2rfst5us8x-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 26 Mar 2019 16:40:49 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 26 Mar 2019 20:40:47 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Mar 2019 20:40:43 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2QKeg8P62718058
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Mar 2019 20:40:42 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9CAAA4C044;
-        Tue, 26 Mar 2019 20:40:42 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3ED204C050;
-        Tue, 26 Mar 2019 20:40:41 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.94.28])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Mar 2019 20:40:41 +0000 (GMT)
-Subject: Re: [PATCH ghak109 V2] audit: link integrity evm_write_xattrs
- record to syscall event
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Richard Guy Briggs <rgb@redhat.com>,
+        Tue, 26 Mar 2019 19:58:18 -0400
+Received: by mail-lf1-f67.google.com with SMTP id g7so9995566lfh.10
+        for <linux-integrity@vger.kernel.org>; Tue, 26 Mar 2019 16:58:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ez1d3rtd8Gt8vuFoJP9w9DkDqXFe0a1YWxYHhu4clFw=;
+        b=N5HmmzPn0hULnXUW4lDNN21MJvD8WMEPM2wOsUThimg2sDXJjQ6roao5w6pT26ID4E
+         NYVYIrxycc3GhxGDe4F6Mk2bsMcP1wGCl/XErj2Zvr5saafq4+Ob6GypXcmW4v3z/i84
+         6c3KGX5JzcfbF9u7VByAdCssHoslA5c5tNhYEnp1WmHepKUXpOblyGpz80pcojQcYZ1B
+         VgCueCyJm9qk4RRwhzDt5mI+De5gB4XKhEKpQA9VHWEs2Tk7U1/6nqNJhH0hnRRGrZPu
+         KLrgk7gTb3aE+hsJRzZKfj1h8tu19jLlQ1bMPFDkasE+ebbvrJPZrx+osulQBsviLzJU
+         yLrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ez1d3rtd8Gt8vuFoJP9w9DkDqXFe0a1YWxYHhu4clFw=;
+        b=OQbE95FJTiRx71t9sCSVLBKhpfCemJAjIp3uU+l0gB3KNMWIQd8V2jtHaMYsNHLxa/
+         vnC2+mSG6n+CjNgmAGrPsMQwCRYNRBgEtvXIqOe8A9tjmZJHryMT5HqI75uXM8DSXxaW
+         CKsCYqo8QTReZ9w1aHj+etQPpvEFW28VRkLV5+3EKCEMZ5ACRxU0I/2sFPOhJQLMMLA1
+         uwJqmCqwYw2ZVVBS7QtB3ej7iz2NmkqtFHhHc9W6K/BYxVI/qRq7c9o2xu+IeVd6ek7Y
+         LcxmuW60s1nyuCMblgWgVd+ThZHmSpTXD/VplZ45Ys5xVH85QJW12SZ/ywPgM14AAfVt
+         +Pww==
+X-Gm-Message-State: APjAAAWqbWD6f9DLCqhbxhntUDMEJEZ03DiS3PuJ9+nUR5EvZDrfIa0h
+        r6aeyarv4tj+hA0H6Qx56N5s1y8xPZWhoqO27qMh
+X-Google-Smtp-Source: APXvYqyxOpHELsEvSXgPj9t1atfmpfIvCzC11isrk/ZTRlidtk+1B2J/M6Q5j9udDDNXvJ9X5VzIDgnUfzRMKh82nRM=
+X-Received: by 2002:a19:4f44:: with SMTP id a4mr16785603lfk.72.1553644696033;
+ Tue, 26 Mar 2019 16:58:16 -0700 (PDT)
+MIME-Version: 1.0
+References: <087489b21e50bcda65c6af3e038394d5bfe09e00.1553626080.git.rgb@redhat.com>
+ <1553632830.4233.3.camel@linux.ibm.com>
+In-Reply-To: <1553632830.4233.3.camel@linux.ibm.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 26 Mar 2019 19:58:04 -0400
+Message-ID: <CAHC9VhS1e0+1t=ZUsKoJcFvO+JdewL4uqwO4dqw=tOOZdJbLYA@mail.gmail.com>
+Subject: Re: [PATCH ghak109 V2] audit: link integrity evm_write_xattrs record
+ to syscall event
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Richard Guy Briggs <rgb@redhat.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Paul Moore <paul@paul-moore.com>, sgrubb@redhat.com,
-        omosnace@redhat.com, eparis@parisplace.org, serge@hallyn.com,
-        mjg59@google.com
-Date:   Tue, 26 Mar 2019 16:40:30 -0400
-In-Reply-To: <087489b21e50bcda65c6af3e038394d5bfe09e00.1553626080.git.rgb@redhat.com>
-References: <087489b21e50bcda65c6af3e038394d5bfe09e00.1553626080.git.rgb@redhat.com>
+        LKML <linux-kernel@vger.kernel.org>, sgrubb@redhat.com,
+        omosnace@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, mjg59@google.com
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19032620-0012-0000-0000-000003076F32
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19032620-0013-0000-0000-0000213E9955
-Message-Id: <1553632830.4233.3.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-26_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1903260141
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Richard, Paul,
+On Tue, Mar 26, 2019 at 4:40 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>
+> Hi Richard, Paul,
+>
+> On Tue, 2019-03-26 at 14:49 -0400, Richard Guy Briggs wrote:
+> > In commit fa516b66a1bf ("EVM: Allow runtime modification of the set of
+> > verified xattrs"), the call to audit_log_start() is missing a context to
+> > link it to an audit event. Since this event is in user context, add
+> > the process' syscall context to the record.
+> >
+> > In addition, the orphaned keyword "locked" appears in the record.
+> > Normalize this by changing it to logging the locking string "." as any
+> > other user input in the "xattr=" field.
+> >
+> > Please see the github issue
+> > https://github.com/linux-audit/audit-kernel/issues/109
+> >
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+>
+> Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+>
+> Paul, were you planning on upstreaming this patch?
 
-On Tue, 2019-03-26 at 14:49 -0400, Richard Guy Briggs wrote:
-> In commit fa516b66a1bf ("EVM: Allow runtime modification of the set of
-> verified xattrs"), the call to audit_log_start() is missing a context to
-> link it to an audit event. Since this event is in user context, add
-> the process' syscall context to the record.
-> 
-> In addition, the orphaned keyword "locked" appears in the record.
-> Normalize this by changing it to logging the locking string "." as any
-> other user input in the "xattr=" field.
-> 
-> Please see the github issue
-> https://github.com/linux-audit/audit-kernel/issues/109
-> 
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+Yep, unless you would rather do it?  If you pull it into the IMA tree,
+please add my ACK; otherwise let me know and I'll merge it into
+audit/next.
 
-Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+Acked-by: Paul Moore <paul@paul-moore.com>
 
-Paul, were you planning on upstreaming this patch?
-
-Mimi
-
+-- 
+paul moore
+www.paul-moore.com
