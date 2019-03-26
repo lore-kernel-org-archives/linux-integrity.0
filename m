@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D28EC10F05
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 12:59:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6541EC4360F
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 12:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4751B20857
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 12:59:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 367A920856
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 12:59:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726270AbfCZM7W (ORCPT
+        id S1731655AbfCZM7f (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 26 Mar 2019 08:59:22 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:45014 "EHLO
+        Tue, 26 Mar 2019 08:59:35 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:45408 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726258AbfCZM7W (ORCPT
+        with ESMTP id S1731652AbfCZM7f (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Mar 2019 08:59:22 -0400
+        Tue, 26 Mar 2019 08:59:35 -0400
 Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 0492C72CCAC;
-        Tue, 26 Mar 2019 15:59:19 +0300 (MSK)
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 9852872CCAD;
+        Tue, 26 Mar 2019 15:59:31 +0300 (MSK)
 Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id E17304A4AE9;
-        Tue, 26 Mar 2019 15:59:17 +0300 (MSK)
+        by imap.altlinux.org (Postfix) with ESMTPSA id 39E9A4A4AF1;
+        Tue, 26 Mar 2019 15:59:31 +0300 (MSK)
 From:   Vitaly Chikunov <vt@altlinux.org>
 To:     Herbert Xu <herbert@gondor.apana.org.au>,
         David Howells <dhowells@redhat.com>,
@@ -33,9 +33,9 @@ To:     Herbert Xu <herbert@gondor.apana.org.au>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
         linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v8 04/10] KEYS: do not kmemdup digest in {public,tpm}_key_verify_signature
-Date:   Tue, 26 Mar 2019 15:58:36 +0300
-Message-Id: <20190326125842.24110-5-vt@altlinux.org>
+Subject: [PATCH v8 06/10] crypto: Kconfig - create Public-key cryptography section
+Date:   Tue, 26 Mar 2019 15:58:38 +0300
+Message-Id: <20190326125842.24110-7-vt@altlinux.org>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190326125842.24110-1-vt@altlinux.org>
 References: <20190326125842.24110-1-vt@altlinux.org>
@@ -46,94 +46,79 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Treat (struct public_key_signature)'s digest same as its signature (s).
-Since digest should be already in the kmalloc'd memory do not kmemdup
-digest value before calling {public,tpm}_key_verify_signature.
+Group RSA, DH, and ECDH into Public-key cryptography config section.
 
-Patch is split from the previous as suggested by Herbert Xu.
-
-Suggested-by: David Howells <dhowells@redhat.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: keyrings@vger.kernel.org
 Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
 ---
- crypto/asymmetric_keys/asym_tpm.c   | 10 +---------
- crypto/asymmetric_keys/public_key.c |  9 +--------
- 2 files changed, 2 insertions(+), 17 deletions(-)
+ crypto/Kconfig | 48 +++++++++++++++++++++++++-----------------------
+ 1 file changed, 25 insertions(+), 23 deletions(-)
 
-diff --git a/crypto/asymmetric_keys/asym_tpm.c b/crypto/asymmetric_keys/asym_tpm.c
-index 4e5b6fb57a94..402fc34ca044 100644
---- a/crypto/asymmetric_keys/asym_tpm.c
-+++ b/crypto/asymmetric_keys/asym_tpm.c
-@@ -748,7 +748,6 @@ static int tpm_key_verify_signature(const struct key *key,
- 	char alg_name[CRYPTO_MAX_ALG_NAME];
- 	uint8_t der_pub_key[PUB_KEY_BUF_SIZE];
- 	uint32_t der_pub_key_len;
--	void *digest;
- 	int ret;
+diff --git a/crypto/Kconfig b/crypto/Kconfig
+index 7c5b5b2f9fd3..b8493d470550 100644
+--- a/crypto/Kconfig
++++ b/crypto/Kconfig
+@@ -113,29 +113,6 @@ config CRYPTO_ACOMP
+ 	select CRYPTO_ALGAPI
+ 	select CRYPTO_ACOMP2
  
- 	pr_devel("==>%s()\n", __func__);
-@@ -780,14 +779,9 @@ static int tpm_key_verify_signature(const struct key *key,
- 	if (!req)
- 		goto error_free_tfm;
- 
--	ret = -ENOMEM;
--	digest = kmemdup(sig->digest, sig->digest_size, GFP_KERNEL);
--	if (!digest)
--		goto error_free_req;
+-config CRYPTO_RSA
+-	tristate "RSA algorithm"
+-	select CRYPTO_AKCIPHER
+-	select CRYPTO_MANAGER
+-	select MPILIB
+-	select ASN1
+-	help
+-	  Generic implementation of the RSA public key algorithm.
 -
- 	sg_init_table(src_sg, 2);
- 	sg_set_buf(&src_sg[0], sig->s, sig->s_size);
--	sg_set_buf(&src_sg[1], digest, sig->digest_size);
-+	sg_set_buf(&src_sg[1], sig->digest, sig->digest_size);
- 	akcipher_request_set_crypt(req, src_sg, NULL, sig->s_size,
- 				   sig->digest_size);
- 	crypto_init_wait(&cwait);
-@@ -796,8 +790,6 @@ static int tpm_key_verify_signature(const struct key *key,
- 				      crypto_req_done, &cwait);
- 	ret = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
- 
--	kfree(digest);
--error_free_req:
- 	akcipher_request_free(req);
- error_free_tfm:
- 	crypto_free_akcipher(tfm);
-diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
-index 0c069fe8a59c..33093b7bcc47 100644
---- a/crypto/asymmetric_keys/public_key.c
-+++ b/crypto/asymmetric_keys/public_key.c
-@@ -229,7 +229,6 @@ int public_key_verify_signature(const struct public_key *pkey,
- 	struct akcipher_request *req;
- 	struct scatterlist src_sg[2];
- 	char alg_name[CRYPTO_MAX_ALG_NAME];
--	void *digest;
- 	int ret;
- 
- 	pr_devel("==>%s()\n", __func__);
-@@ -262,14 +261,9 @@ int public_key_verify_signature(const struct public_key *pkey,
- 	if (ret)
- 		goto error_free_req;
- 
--	ret = -ENOMEM;
--	digest = kmemdup(sig->digest, sig->digest_size, GFP_KERNEL);
--	if (!digest)
--		goto error_free_req;
+-config CRYPTO_DH
+-	tristate "Diffie-Hellman algorithm"
+-	select CRYPTO_KPP
+-	select MPILIB
+-	help
+-	  Generic implementation of the Diffie-Hellman algorithm.
 -
- 	sg_init_table(src_sg, 2);
- 	sg_set_buf(&src_sg[0], sig->s, sig->s_size);
--	sg_set_buf(&src_sg[1], digest, sig->digest_size);
-+	sg_set_buf(&src_sg[1], sig->digest, sig->digest_size);
- 	akcipher_request_set_crypt(req, src_sg, NULL, sig->s_size,
- 				   sig->digest_size);
- 	crypto_init_wait(&cwait);
-@@ -278,7 +272,6 @@ int public_key_verify_signature(const struct public_key *pkey,
- 				      crypto_req_done, &cwait);
- 	ret = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
+-config CRYPTO_ECDH
+-	tristate "ECDH algorithm"
+-	select CRYPTO_KPP
+-	select CRYPTO_RNG_DEFAULT
+-	help
+-	  Generic implementation of the ECDH algorithm
+-
+ config CRYPTO_MANAGER
+ 	tristate "Cryptographic algorithm manager"
+ 	select CRYPTO_MANAGER2
+@@ -253,6 +230,31 @@ config CRYPTO_GLUE_HELPER_X86
+ config CRYPTO_ENGINE
+ 	tristate
  
--	kfree(digest);
- error_free_req:
- 	akcipher_request_free(req);
- error_free_tfm:
++comment "Public-key cryptography"
++
++config CRYPTO_RSA
++	tristate "RSA algorithm"
++	select CRYPTO_AKCIPHER
++	select CRYPTO_MANAGER
++	select MPILIB
++	select ASN1
++	help
++	  Generic implementation of the RSA public key algorithm.
++
++config CRYPTO_DH
++	tristate "Diffie-Hellman algorithm"
++	select CRYPTO_KPP
++	select MPILIB
++	help
++	  Generic implementation of the Diffie-Hellman algorithm.
++
++config CRYPTO_ECDH
++	tristate "ECDH algorithm"
++	select CRYPTO_KPP
++	select CRYPTO_RNG_DEFAULT
++	help
++	  Generic implementation of the ECDH algorithm
++
+ comment "Authenticated Encryption with Associated Data"
+ 
+ config CRYPTO_CCM
 -- 
 2.11.0
 
