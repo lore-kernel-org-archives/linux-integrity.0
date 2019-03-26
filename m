@@ -2,142 +2,135 @@ Return-Path: <SRS0=HBM4=R5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AEF5C43381
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 16:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB28C43381
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 17:43:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63F40206DF
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 16:25:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DFCB20866
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 17:43:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728314AbfCZQZi (ORCPT
+        id S1732304AbfCZRnD (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 26 Mar 2019 12:25:38 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43066 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727492AbfCZQZe (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Mar 2019 12:25:34 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2QGE5QY054530
-        for <linux-integrity@vger.kernel.org>; Tue, 26 Mar 2019 12:25:32 -0400
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2rfqa1h06f-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 26 Mar 2019 12:25:32 -0400
-Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <jejb@linux.ibm.com>;
-        Tue, 26 Mar 2019 16:25:31 -0000
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Mar 2019 16:25:28 -0000
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2QGPQ3I5505258
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Mar 2019 16:25:26 GMT
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9C90713605E;
-        Tue, 26 Mar 2019 16:25:26 +0000 (GMT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 328BA136053;
-        Tue, 26 Mar 2019 16:25:24 +0000 (GMT)
-Received: from jarvis.ext.hansenpartnership.com (unknown [9.85.205.129])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Mar 2019 16:25:23 +0000 (GMT)
-Subject: Re: Bad file pattern in MAINTAINERS section 'KEYS-TRUSTED'
-From:   James Bottomley <jejb@linux.ibm.com>
-To:     Denis Kenzior <denkenz@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Joe Perches <joe@perches.com>
-Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org, Mimi Zohar <zohar@us.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        James Morris <james.morris@microsoft.com>
-Date:   Tue, 26 Mar 2019 09:25:23 -0700
-In-Reply-To: <c7f70a06-65a5-a1cd-69c5-dae7567b851f@gmail.com>
-References: <7cd8d12f59bcacd18a78f599b46dac555f7f16c0.camel@perches.com>
-         <20190325212705.26837-1-joe@perches.com>
-         <20190326113725.GA10898@linux.intel.com>
-         <1553602220.3960.29.camel@linux.ibm.com>
-         <1553610317.2900.2.camel@linux.ibm.com>
-         <c7f70a06-65a5-a1cd-69c5-dae7567b851f@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19032616-0012-0000-0000-0000171D7C78
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010818; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000282; SDB=6.01179997; UDB=6.00617490; IPR=6.00960712;
- MB=3.00026165; MTD=3.00000008; XFM=3.00000015; UTC=2019-03-26 16:25:31
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19032616-0013-0000-0000-000056A5C80F
-Message-Id: <1553617523.2900.26.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-26_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1903260113
+        Tue, 26 Mar 2019 13:43:03 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46202 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727492AbfCZRnD (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 26 Mar 2019 13:43:03 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A801A87629;
+        Tue, 26 Mar 2019 17:43:02 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-19.phx2.redhat.com [10.3.112.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E869C600C8;
+        Tue, 26 Mar 2019 17:42:55 +0000 (UTC)
+Date:   Tue, 26 Mar 2019 13:42:52 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Steve Grubb <sgrubb@redhat.com>, Paul Moore <paul@paul-moore.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, omosnace@redhat.com,
+        Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, mjg59@google.com
+Subject: Re: [PATCH ghak109 V1] audit: link integrity evm_write_xattrs record
+ to syscall event
+Message-ID: <20190326174252.irqrldtcy5bwho6k@madcap2.tricolour.ca>
+References: <81d0122d14c4fbb3a2ad33d25fdf2dd001c7dcc7.1552737854.git.rgb@redhat.com>
+ <CAHC9VhS61LTQMXiALRre+5_+wvwe6Wa9RN-WYNTjvz5LVsA5rw@mail.gmail.com>
+ <20190321005008.wfz3bk7q262km5fz@madcap2.tricolour.ca>
+ <2006016.NXIvICiRTL@x2>
+ <1553614157.4115.17.camel@linux.ibm.com>
+ <20190326161409.3wej7hcwnqalf4or@madcap2.tricolour.ca>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190326161409.3wej7hcwnqalf4or@madcap2.tricolour.ca>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 26 Mar 2019 17:43:02 +0000 (UTC)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2019-03-26 at 09:59 -0500, Denis Kenzior wrote:
-> Hi James,
+On 2019-03-26 12:14, Richard Guy Briggs wrote:
+> On 2019-03-26 11:29, Mimi Zohar wrote:
+> > On Tue, 2019-03-26 at 11:22 -0400, Steve Grubb wrote:
+> > 
+> > > > > > --- a/security/integrity/evm/evm_secfs.c
+> > > > > > +++ b/security/integrity/evm/evm_secfs.c
+> > > > > > @@ -192,7 +192,8 @@ static ssize_t evm_write_xattrs(struct file *file,
+> > > > > > const char __user *buf,> > 
+> > > > > >         if (count > XATTR_NAME_MAX)
+> > > > > >         
+> > > > > >                 return -E2BIG;
+> > > > > > 
+> > > > > > -       ab = audit_log_start(NULL, GFP_KERNEL,
+> > > > > > AUDIT_INTEGRITY_EVM_XATTR);
+> > > > > > +       ab = audit_log_start(audit_context(), GFP_KERNEL,
+> > > > > > +                            AUDIT_INTEGRITY_EVM_XATTR);
+> > > > > 
+> > > > > This part is fine.
+> > > > > 
+> > > > > >         if (!ab)
+> > > > > >         
+> > > > > >                 return -ENOMEM;
+> > > > > > 
+> > > > > > @@ -222,7 +223,7 @@ static ssize_t evm_write_xattrs(struct file *file,
+> > > > > > const char __user *buf,> > 
+> > > > > >                 inode_lock(inode);
+> > > > > >                 err = simple_setattr(evm_xattrs, &newattrs);
+> > > > > >                 inode_unlock(inode);
+> > > > > > 
+> > > > > > -               audit_log_format(ab, "locked");
+> > > > > > +               audit_log_format(ab, "xattr=(locked)");
+> > > > > 
+> > > > > Two things come to mind:
+> > > > > 
+> > > > > * While we can clearly trust the string above, should we be logging
+> > > > > the xattr field value as an untrusted string so it is consistent with
+> > > > > how we record other xattr names?
+> > > > 
+> > > > That would be a question for Steve.
+> > > 
+> > > All fields with the same name must be represented the same way. If one 
+> > > instance is untrusted, every instance of the same keyword must be untrusted.
+> > 
+> > Normal case:
+> >        audit_log_format(ab, "xattr=");
+> >        audit_log_untrustedstring(ab, xattr->name);
+> > 
+> > Ok, so the above audit_log_format() call should be replaced with
+> >  audit_log_untrustedstring().
 > 
-> On 03/26/2019 09:25 AM, James Bottomley wrote:
-> > Looking at the contents of linux/keys/trusted.h, it looks like the
-> > wrong decision to move it.  The contents are way too improperly
-> > named
-> > and duplicative to be in a standard header.  It's mostly actually
-> > TPM
-> > code including a redefinition of the tpm_buf structure, so it
-> > doesn't
-> > even seem to be necessary for trusted keys.
+> Ok, so I think we can agree on "audit_log_untrustedstring(ab,
+> "xattr=.");" and simpler yet just print the contents regardless and not
+> special case this print.  V2 coming...
+
+Ok, what I typed above wasn't quite what I intended...  This is what I
+meant:
+
+	audit_log_format(ab, "xattr=");
+	audit_log_untrustedstring(ab, ".");
+
+But, I'll just move the normal case above the "." locking detection and
+log all cases the same way.
+
+> > Mimi
 > 
-> The reason this was done was because asym_tpm.c needed a bunch of
-> the same functionality already provided by trusted.c, e.g.
-> TSS_authmac and  friends.
+> - RGB
 
-So make a header which only includes those.  We can't have things like
-this:
+- RGB
 
-struct tpm_buf {
-	int len;
-	unsigned char data[MAX_BUF_SIZE];
-};
-
-Which means you can't include drivers/char/tpm/tpm.h with this file. 
-The storeX functions are also way too generically named and are, in
-fact, duplicating the tpm buffer functions in tpm.h
-
-The solution looks to be to elevate agreed tpm_buf functions into
-linux/tpm.h and use them.
-
-> > If you want to fix this as a bug, I'd move it back again, but long
-> > term I think it should simply be combined with trusted.c because
-> > nothing else can include it sanely anyway.
-> 
-> Ideally I'd like to see the TPM subsystem expose these functions
-> using some proper API / library abstraction.  David Howells had an
-> RFC patch set that tried to address some of this a while back.  Not
-> sure if that went anywhere.
-
-I'm not actually sure I saw it but the solution seems pretty simple:
-The TSS functions you want can be renamed tpm1_whatever and we can put
-them in tpm1-cmd.c ... tpm2-cmd.c is where all the TPM 2.0 trusted key
-stuff is anyway.
-
-James
-
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
