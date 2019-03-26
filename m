@@ -2,52 +2,52 @@ Return-Path: <SRS0=HBM4=R5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD53C43381
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 13:35:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7978C43381
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 13:35:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89BBB20863
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 13:35:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 801652075D
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 13:35:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731699AbfCZNfu (ORCPT
+        id S1731475AbfCZNfz (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 26 Mar 2019 09:35:50 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34308 "EHLO
+        Tue, 26 Mar 2019 09:35:55 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60328 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731574AbfCZNft (ORCPT
+        by vger.kernel.org with ESMTP id S1731702AbfCZNfy (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Mar 2019 09:35:49 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2QDZaRJ069707
-        for <linux-integrity@vger.kernel.org>; Tue, 26 Mar 2019 09:35:47 -0400
+        Tue, 26 Mar 2019 09:35:54 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2QDZjNB032064
+        for <linux-integrity@vger.kernel.org>; Tue, 26 Mar 2019 09:35:53 -0400
 Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2rfm6t30pb-1
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2rfmc82dtk-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 26 Mar 2019 09:35:42 -0400
+        for <linux-integrity@vger.kernel.org>; Tue, 26 Mar 2019 09:35:48 -0400
 Received: from localhost
         by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 26 Mar 2019 13:35:04 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        Tue, 26 Mar 2019 13:35:05 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
         by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Mar 2019 13:35:00 -0000
+        Tue, 26 Mar 2019 13:35:02 -0000
 Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2QDYxPI39452882
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2QDZ20222741128
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Mar 2019 13:34:59 GMT
+        Tue, 26 Mar 2019 13:35:02 GMT
 Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5418A11C04C;
-        Tue, 26 Mar 2019 13:34:59 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id D8C8C11C04A;
+        Tue, 26 Mar 2019 13:35:01 +0000 (GMT)
 Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 13F6211C04A;
-        Tue, 26 Mar 2019 13:34:58 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id A420B11C052;
+        Tue, 26 Mar 2019 13:35:00 +0000 (GMT)
 Received: from localhost.ibm.com (unknown [9.80.109.68])
         by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Mar 2019 13:34:57 +0000 (GMT)
+        Tue, 26 Mar 2019 13:35:00 +0000 (GMT)
 From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-kselftest@vger.kernel.org, kexec@lists.infradead.org,
@@ -55,14 +55,16 @@ Cc:     linux-kselftest@vger.kernel.org, kexec@lists.infradead.org,
         Dave Young <dyoung@redhat.com>,
         Matthew Garrett <mjg59@google.com>,
         Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH v5 0/9] selftests/kexec: add kexec tests
-Date:   Tue, 26 Mar 2019 09:34:08 -0400
+Subject: [PATCH v5 1/9] selftests/kexec: move the IMA kexec_load selftest to selftests/kexec
+Date:   Tue, 26 Mar 2019 09:34:09 -0400
 X-Mailer: git-send-email 2.7.5
+In-Reply-To: <1553607257-18906-1-git-send-email-zohar@linux.ibm.com>
+References: <1553607257-18906-1-git-send-email-zohar@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19032613-0028-0000-0000-0000035875DE
+x-cbid: 19032613-0028-0000-0000-0000035875DF
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19032613-0029-0000-0000-000024172DBC
-Message-Id: <1553607257-18906-1-git-send-email-zohar@linux.ibm.com>
+x-cbparentid: 19032613-0029-0000-0000-000024172DBE
+Message-Id: <1553607257-18906-2-git-send-email-zohar@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-26_10:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -75,75 +77,218 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The kernel may be configured or an IMA policy specified on the boot
-command line requiring the kexec kernel image signature to be verified.
-At runtime a custom IMA policy may be loaded, replacing the policy
-specified on the boot command line.  In addition, the arch specific
-policy rules are dynamically defined based on the secure boot mode that
-may require the kernel image signature to be verified.
+As requested move the existing kexec_load selftest and subsequent kexec
+tests to the selftests/kexec directory.
 
-The kernel image may have a PE signature, an IMA signature, or both. In
-addition, there are two kexec syscalls - kexec_load and kexec_file_load
-- but only the kexec_file_load syscall can verify signatures.
-
-These kexec selftests verify that only properly signed kernel images are
-loaded as required, based on the kernel config, the secure boot mode,
-and the IMA runtime policy.
-
-Loading a kernel image requires root privileges.  To run just the KEXEC
-selftests: sudo make TARGETS=kexec kselftest
-
-Changelog v5:
-- Make tests independent of IMA being enabled, folding the changes
-into the kexec_file_load test.
-- Add support for CONFIG_KEXEC_VERIFY_SIG being enabled, but not
-CONFIG_KEXEC_BZIMAGE_VERIFY_SIG.
-
-Changelog v4:
-- Moved the kexec tests to selftests/kexec, as requested by Dave Young.
-- Removed the kernel module selftest from this patch set.
-- Rewritten cover letter, removing reference to kernel modules.
-
-Changelog v3:
-- Updated tests based on Petr's review, including the defining a common
-  test to check for root privileges.
-- Modified config, removing the CONFIG_KEXEC_VERIFY_SIG requirement.
-- Updated the SPDX license to GPL-2.0 based on Shuah's review.
-- Updated the secureboot mode test to check the SetupMode as well, based
-  on David Young's review.
-
-Mimi Zohar (8):
-  selftests/kexec: move the IMA kexec_load selftest to selftests/kexec
-  selftests/kexec: cleanup the kexec selftest
-  selftests/kexec: define a set of common functions
-  selftests/kexec: define common logging functions
-  kselftest/kexec: define "require_root_privileges"
-  selftests/kexec: kexec_file_load syscall test
-  selftests/kexec: check kexec_load and kexec_file_load are enabled
-  selftests/kexec: make kexec_load test independent of IMA being enabled
-
-Petr Vorel (1):
-  selftests/kexec: Add missing '=y' to config options
-
- tools/testing/selftests/Makefile                   |   2 +-
- tools/testing/selftests/ima/Makefile               |  11 --
- tools/testing/selftests/ima/config                 |   4 -
- tools/testing/selftests/ima/test_kexec_load.sh     |  54 ------
- tools/testing/selftests/kexec/Makefile             |  12 ++
- tools/testing/selftests/kexec/config               |   3 +
- tools/testing/selftests/kexec/kexec_common_lib.sh  | 175 +++++++++++++++++
- .../selftests/kexec/test_kexec_file_load.sh        | 208 +++++++++++++++++++++
- tools/testing/selftests/kexec/test_kexec_load.sh   |  47 +++++
- 9 files changed, 446 insertions(+), 70 deletions(-)
+Suggested-by: Dave Young <dyoung@redhat.com>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+ tools/testing/selftests/Makefile                 |  2 +-
+ tools/testing/selftests/ima/Makefile             | 11 -----
+ tools/testing/selftests/ima/config               |  4 --
+ tools/testing/selftests/ima/test_kexec_load.sh   | 54 ------------------------
+ tools/testing/selftests/kexec/Makefile           | 11 +++++
+ tools/testing/selftests/kexec/config             |  4 ++
+ tools/testing/selftests/kexec/test_kexec_load.sh | 54 ++++++++++++++++++++++++
+ 7 files changed, 70 insertions(+), 70 deletions(-)
  delete mode 100644 tools/testing/selftests/ima/Makefile
  delete mode 100644 tools/testing/selftests/ima/config
  delete mode 100755 tools/testing/selftests/ima/test_kexec_load.sh
  create mode 100644 tools/testing/selftests/kexec/Makefile
  create mode 100644 tools/testing/selftests/kexec/config
- create mode 100755 tools/testing/selftests/kexec/kexec_common_lib.sh
- create mode 100755 tools/testing/selftests/kexec/test_kexec_file_load.sh
  create mode 100755 tools/testing/selftests/kexec/test_kexec_load.sh
 
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index 1a2bd15c5b6e..6da1e32d2b99 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -14,11 +14,11 @@ TARGETS += firmware
+ TARGETS += ftrace
+ TARGETS += futex
+ TARGETS += gpio
+-TARGETS += ima
+ TARGETS += intel_pstate
+ TARGETS += ipc
+ TARGETS += ir
+ TARGETS += kcmp
++TARGETS += kexec
+ TARGETS += kvm
+ TARGETS += lib
+ TARGETS += membarrier
+diff --git a/tools/testing/selftests/ima/Makefile b/tools/testing/selftests/ima/Makefile
+deleted file mode 100644
+index 0b3adf5444b6..000000000000
+--- a/tools/testing/selftests/ima/Makefile
++++ /dev/null
+@@ -1,11 +0,0 @@
+-# Makefile for kexec_load
+-
+-uname_M := $(shell uname -m 2>/dev/null || echo not)
+-ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
+-
+-ifeq ($(ARCH),x86)
+-TEST_PROGS := test_kexec_load.sh
+-
+-include ../lib.mk
+-
+-endif
+diff --git a/tools/testing/selftests/ima/config b/tools/testing/selftests/ima/config
+deleted file mode 100644
+index 6bc86d4d9bb4..000000000000
+--- a/tools/testing/selftests/ima/config
++++ /dev/null
+@@ -1,4 +0,0 @@
+-CONFIG_IMA_APPRAISE
+-CONFIG_IMA_ARCH_POLICY
+-CONFIG_SECURITYFS
+-CONFIG_KEXEC_VERIFY_SIG
+diff --git a/tools/testing/selftests/ima/test_kexec_load.sh b/tools/testing/selftests/ima/test_kexec_load.sh
+deleted file mode 100755
+index 1c10093fb526..000000000000
+--- a/tools/testing/selftests/ima/test_kexec_load.sh
++++ /dev/null
+@@ -1,54 +0,0 @@
+-#!/bin/sh
+-# SPDX-License-Identifier: GPL-2.0+
+-# Loading a kernel image via the kexec_load syscall should fail
+-# when the kerne is CONFIG_KEXEC_VERIFY_SIG enabled and the system
+-# is booted in secureboot mode.
+-
+-TEST="$0"
+-EFIVARFS="/sys/firmware/efi/efivars"
+-rc=0
+-
+-# Kselftest framework requirement - SKIP code is 4.
+-ksft_skip=4
+-
+-# kexec requires root privileges
+-if [ $UID != 0 ]; then
+-	echo "$TEST: must be run as root" >&2
+-	exit $ksft_skip
+-fi
+-
+-# Make sure that efivars is mounted in the normal location
+-if ! grep -q "^\S\+ $EFIVARFS efivarfs" /proc/mounts; then
+-	echo "$TEST: efivars is not mounted on $EFIVARFS" >&2
+-	exit $ksft_skip
+-fi
+-
+-# Get secureboot mode
+-file="$EFIVARFS/SecureBoot-*"
+-if [ ! -e $file ]; then
+-	echo "$TEST: unknown secureboot mode" >&2
+-	exit $ksft_skip
+-fi
+-secureboot=`hexdump $file | awk '{print substr($4,length($4),1)}'`
+-
+-# kexec_load should fail in secure boot mode
+-KERNEL_IMAGE="/boot/vmlinuz-`uname -r`"
+-kexec -l $KERNEL_IMAGE &>> /dev/null
+-if [ $? == 0 ]; then
+-	kexec -u
+-	if [ "$secureboot" == "1" ]; then
+-		echo "$TEST: kexec_load succeeded [FAIL]"
+-		rc=1
+-	else
+-		echo "$TEST: kexec_load succeeded [PASS]"
+-	fi
+-else
+-	if [ "$secureboot" == "1" ]; then
+-		echo "$TEST: kexec_load failed [PASS]"
+-	else
+-		echo "$TEST: kexec_load failed [FAIL]"
+-		rc=1
+-	fi
+-fi
+-
+-exit $rc
+diff --git a/tools/testing/selftests/kexec/Makefile b/tools/testing/selftests/kexec/Makefile
+new file mode 100644
+index 000000000000..0b3adf5444b6
+--- /dev/null
++++ b/tools/testing/selftests/kexec/Makefile
+@@ -0,0 +1,11 @@
++# Makefile for kexec_load
++
++uname_M := $(shell uname -m 2>/dev/null || echo not)
++ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
++
++ifeq ($(ARCH),x86)
++TEST_PROGS := test_kexec_load.sh
++
++include ../lib.mk
++
++endif
+diff --git a/tools/testing/selftests/kexec/config b/tools/testing/selftests/kexec/config
+new file mode 100644
+index 000000000000..6bc86d4d9bb4
+--- /dev/null
++++ b/tools/testing/selftests/kexec/config
+@@ -0,0 +1,4 @@
++CONFIG_IMA_APPRAISE
++CONFIG_IMA_ARCH_POLICY
++CONFIG_SECURITYFS
++CONFIG_KEXEC_VERIFY_SIG
+diff --git a/tools/testing/selftests/kexec/test_kexec_load.sh b/tools/testing/selftests/kexec/test_kexec_load.sh
+new file mode 100755
+index 000000000000..1c10093fb526
+--- /dev/null
++++ b/tools/testing/selftests/kexec/test_kexec_load.sh
+@@ -0,0 +1,54 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0+
++# Loading a kernel image via the kexec_load syscall should fail
++# when the kerne is CONFIG_KEXEC_VERIFY_SIG enabled and the system
++# is booted in secureboot mode.
++
++TEST="$0"
++EFIVARFS="/sys/firmware/efi/efivars"
++rc=0
++
++# Kselftest framework requirement - SKIP code is 4.
++ksft_skip=4
++
++# kexec requires root privileges
++if [ $UID != 0 ]; then
++	echo "$TEST: must be run as root" >&2
++	exit $ksft_skip
++fi
++
++# Make sure that efivars is mounted in the normal location
++if ! grep -q "^\S\+ $EFIVARFS efivarfs" /proc/mounts; then
++	echo "$TEST: efivars is not mounted on $EFIVARFS" >&2
++	exit $ksft_skip
++fi
++
++# Get secureboot mode
++file="$EFIVARFS/SecureBoot-*"
++if [ ! -e $file ]; then
++	echo "$TEST: unknown secureboot mode" >&2
++	exit $ksft_skip
++fi
++secureboot=`hexdump $file | awk '{print substr($4,length($4),1)}'`
++
++# kexec_load should fail in secure boot mode
++KERNEL_IMAGE="/boot/vmlinuz-`uname -r`"
++kexec -l $KERNEL_IMAGE &>> /dev/null
++if [ $? == 0 ]; then
++	kexec -u
++	if [ "$secureboot" == "1" ]; then
++		echo "$TEST: kexec_load succeeded [FAIL]"
++		rc=1
++	else
++		echo "$TEST: kexec_load succeeded [PASS]"
++	fi
++else
++	if [ "$secureboot" == "1" ]; then
++		echo "$TEST: kexec_load failed [PASS]"
++	else
++		echo "$TEST: kexec_load failed [FAIL]"
++		rc=1
++	fi
++fi
++
++exit $rc
 -- 
 2.7.5
 
