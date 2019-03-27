@@ -1,108 +1,75 @@
-Return-Path: <SRS0=HBM4=R5=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=4VHM=R6=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA864C43381
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 23:58:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C4EC43381
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Mar 2019 04:29:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 933F42087E
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Mar 2019 23:58:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="N5HmmzPn"
+	by mail.kernel.org (Postfix) with ESMTP id 823D520811
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Mar 2019 04:29:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731666AbfCZX6S (ORCPT
+        id S1725768AbfC0E3A (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 26 Mar 2019 19:58:18 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:43914 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731619AbfCZX6S (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Mar 2019 19:58:18 -0400
-Received: by mail-lf1-f67.google.com with SMTP id g7so9995566lfh.10
-        for <linux-integrity@vger.kernel.org>; Tue, 26 Mar 2019 16:58:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ez1d3rtd8Gt8vuFoJP9w9DkDqXFe0a1YWxYHhu4clFw=;
-        b=N5HmmzPn0hULnXUW4lDNN21MJvD8WMEPM2wOsUThimg2sDXJjQ6roao5w6pT26ID4E
-         NYVYIrxycc3GhxGDe4F6Mk2bsMcP1wGCl/XErj2Zvr5saafq4+Ob6GypXcmW4v3z/i84
-         6c3KGX5JzcfbF9u7VByAdCssHoslA5c5tNhYEnp1WmHepKUXpOblyGpz80pcojQcYZ1B
-         VgCueCyJm9qk4RRwhzDt5mI+De5gB4XKhEKpQA9VHWEs2Tk7U1/6nqNJhH0hnRRGrZPu
-         KLrgk7gTb3aE+hsJRzZKfj1h8tu19jLlQ1bMPFDkasE+ebbvrJPZrx+osulQBsviLzJU
-         yLrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ez1d3rtd8Gt8vuFoJP9w9DkDqXFe0a1YWxYHhu4clFw=;
-        b=OQbE95FJTiRx71t9sCSVLBKhpfCemJAjIp3uU+l0gB3KNMWIQd8V2jtHaMYsNHLxa/
-         vnC2+mSG6n+CjNgmAGrPsMQwCRYNRBgEtvXIqOe8A9tjmZJHryMT5HqI75uXM8DSXxaW
-         CKsCYqo8QTReZ9w1aHj+etQPpvEFW28VRkLV5+3EKCEMZ5ACRxU0I/2sFPOhJQLMMLA1
-         uwJqmCqwYw2ZVVBS7QtB3ej7iz2NmkqtFHhHc9W6K/BYxVI/qRq7c9o2xu+IeVd6ek7Y
-         LcxmuW60s1nyuCMblgWgVd+ThZHmSpTXD/VplZ45Ys5xVH85QJW12SZ/ywPgM14AAfVt
-         +Pww==
-X-Gm-Message-State: APjAAAWqbWD6f9DLCqhbxhntUDMEJEZ03DiS3PuJ9+nUR5EvZDrfIa0h
-        r6aeyarv4tj+hA0H6Qx56N5s1y8xPZWhoqO27qMh
-X-Google-Smtp-Source: APXvYqyxOpHELsEvSXgPj9t1atfmpfIvCzC11isrk/ZTRlidtk+1B2J/M6Q5j9udDDNXvJ9X5VzIDgnUfzRMKh82nRM=
-X-Received: by 2002:a19:4f44:: with SMTP id a4mr16785603lfk.72.1553644696033;
- Tue, 26 Mar 2019 16:58:16 -0700 (PDT)
+        Wed, 27 Mar 2019 00:29:00 -0400
+Received: from mga18.intel.com ([134.134.136.126]:44646 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725763AbfC0E3A (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 27 Mar 2019 00:29:00 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Mar 2019 21:28:59 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,275,1549958400"; 
+   d="scan'208";a="286204597"
+Received: from yannluen-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.205])
+  by orsmga004.jf.intel.com with ESMTP; 26 Mar 2019 21:28:55 -0700
+Date:   Wed, 27 Mar 2019 06:28:54 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Tadeusz Struk <tadeusz.struk@intel.com>
+Cc:     grawity@gmail.com, James.Bottomley@HansenPartnership.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH RESEND v3] tpm: fix an invalid condition in
+ tpm_common_poll
+Message-ID: <20190327042854.GA15397@linux.intel.com>
+References: <155326553839.17270.7997105682830234546.stgit@tstruk-mobl1.jf.intel.com>
+ <20190322155917.GA6987@linux.intel.com>
+ <20190325140954.GA13699@linux.intel.com>
+ <dce01e51-7a1a-a5c7-0092-388889f334fd@intel.com>
 MIME-Version: 1.0
-References: <087489b21e50bcda65c6af3e038394d5bfe09e00.1553626080.git.rgb@redhat.com>
- <1553632830.4233.3.camel@linux.ibm.com>
-In-Reply-To: <1553632830.4233.3.camel@linux.ibm.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 26 Mar 2019 19:58:04 -0400
-Message-ID: <CAHC9VhS1e0+1t=ZUsKoJcFvO+JdewL4uqwO4dqw=tOOZdJbLYA@mail.gmail.com>
-Subject: Re: [PATCH ghak109 V2] audit: link integrity evm_write_xattrs record
- to syscall event
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Richard Guy Briggs <rgb@redhat.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, sgrubb@redhat.com,
-        omosnace@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, mjg59@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dce01e51-7a1a-a5c7-0092-388889f334fd@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Mar 26, 2019 at 4:40 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
->
-> Hi Richard, Paul,
->
-> On Tue, 2019-03-26 at 14:49 -0400, Richard Guy Briggs wrote:
-> > In commit fa516b66a1bf ("EVM: Allow runtime modification of the set of
-> > verified xattrs"), the call to audit_log_start() is missing a context to
-> > link it to an audit event. Since this event is in user context, add
-> > the process' syscall context to the record.
-> >
-> > In addition, the orphaned keyword "locked" appears in the record.
-> > Normalize this by changing it to logging the locking string "." as any
-> > other user input in the "xattr=" field.
-> >
-> > Please see the github issue
-> > https://github.com/linux-audit/audit-kernel/issues/109
-> >
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
->
-> Acked-by: Mimi Zohar <zohar@linux.ibm.com>
->
-> Paul, were you planning on upstreaming this patch?
+On Tue, Mar 26, 2019 at 08:58:28AM -0700, Tadeusz Struk wrote:
+> Hi Jarkko,
+> On 3/25/19 7:09 AM, Jarkko Sakkinen wrote:
+> > It is still missing the comment I asked to add. Otherwise, it is good.
+> > 
+> 
+> Sorry, I didn't see your email with the suggestion earlier.
+> To be honest I'm not sure if this comment adds much value, or if it is
+> even correct. The poll doesn't "succeed" or "fail". It just returns
+> a mask indicating if there is any data to read or if the user can write.
+> 
+> Isn't the commit message + 'git blame' enough to remember why it was
+> done this way?
 
-Yep, unless you would rather do it?  If you pull it into the IMA tree,
-please add my ACK; otherwise let me know and I'll merge it into
-audit/next.
+Comments in the code have also their time and place especially when
+doing code reviews. Usually I like to have something in a site where
+there has been a race even if it was for fairly trivial reason. If you
+want to refine the comment to be more to the point, that is perfectly
+fine.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
-
--- 
-paul moore
-www.paul-moore.com
+/Jarkko
