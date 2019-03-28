@@ -3,53 +3,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EAA8C43381
-	for <linux-integrity@archiver.kernel.org>; Thu, 28 Mar 2019 12:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F242CC43381
+	for <linux-integrity@archiver.kernel.org>; Thu, 28 Mar 2019 12:34:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06977217D7
-	for <linux-integrity@archiver.kernel.org>; Thu, 28 Mar 2019 12:28:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAE0F217F5
+	for <linux-integrity@archiver.kernel.org>; Thu, 28 Mar 2019 12:34:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726069AbfC1M2C (ORCPT
+        id S1726185AbfC1Meb (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 28 Mar 2019 08:28:02 -0400
-Received: from mga17.intel.com ([192.55.52.151]:21411 "EHLO mga17.intel.com"
+        Thu, 28 Mar 2019 08:34:31 -0400
+Received: from mga07.intel.com ([134.134.136.100]:32596 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725939AbfC1M2C (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 28 Mar 2019 08:28:02 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726029AbfC1Meb (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 28 Mar 2019 08:34:31 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Mar 2019 05:28:01 -0700
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Mar 2019 05:34:30 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,280,1549958400"; 
-   d="scan'208";a="126616710"
+   d="scan'208";a="126618646"
 Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.182])
-  by orsmga007.jf.intel.com with ESMTP; 28 Mar 2019 05:27:57 -0700
-Date:   Thu, 28 Mar 2019 14:27:57 +0200
+  by orsmga007.jf.intel.com with ESMTP; 28 Mar 2019 05:34:28 -0700
+Date:   Thu, 28 Mar 2019 14:34:28 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Dan Williams <dan.j.williams@gmail.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linuxibm.com>,
-        David Howells <dhowells@redhat.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] KEYS: trusted: allow trusted.ko to initialize w/o a
- TPM
-Message-ID: <20190328122757.GB7094@linux.intel.com>
-References: <20190326121158.13499-1-jarkko.sakkinen@linux.intel.com>
- <CAA9_cmfFpkBLz6TU0sLSV1JYE43sDtfi29Xw4R5Xt-RaWm8ZLA@mail.gmail.com>
+To:     Tadeusz Struk <tadeusz.struk@intel.com>
+Cc:     grawity@gmail.com, James.Bottomley@HansenPartnership.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v4] tpm: fix an invalid condition in tpm_common_poll
+Message-ID: <20190328123428.GF7094@linux.intel.com>
+References: <155371155820.17863.10580533125620125669.stgit@tstruk-mobl1.jf.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAA9_cmfFpkBLz6TU0sLSV1JYE43sDtfi29Xw4R5Xt-RaWm8ZLA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <155371155820.17863.10580533125620125669.stgit@tstruk-mobl1.jf.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
@@ -57,25 +49,26 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Mar 27, 2019 at 10:15:50AM -0700, Dan Williams wrote:
-> On Tue, Mar 26, 2019 at 5:13 AM Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> >
-> > Allow trusted.ko to initialize w/o a TPM. This commit adds checks to the
-> > key type callbacks and exported functions to fail when a TPM is not
-> > available.
-> >
-> > Cc: James Morris <jmorris@namei.org>
-> > Reported-by: Dan Williams <dan.j.williams@intel.com>
-> > Tested-by: Dan Williams <dan.j.williams@intel.com>
-> > Fixes: 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure...")
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > ---
-> > v3:
-> > - remove unnecessary check for chip in init_trusted()
+On Wed, Mar 27, 2019 at 11:32:38AM -0700, Tadeusz Struk wrote:
+> The poll condition should only check response_length,
+> because reads should only be issued if there is data to read.
+> The response_read flag only prevents double writes.
+> The problem was that the write set the response_read to false,
+> enqued a tpm job, and returned. Then application called poll
+> which checked the response_read flag and returned EPOLLIN.
+> Then the application called read, but got nothing.
+> After all that the async_work kicked in.
+> Added also mutex_lock around the poll check to prevent
+> other possible race conditions.
 > 
-> v3 also tests ok here.
+> Cc: stable@vger.kernel.org
+> Fixes: 9488585b21bef0df12 ("tpm: add support for partial reads")
+> Reported-by: Mantas Mikulėnas <grawity@gmail.com>
+> Tested-by: Mantas Mikulėnas <grawity@gmail.com>
+> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
 
-Thank you.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
+Thank you, it is applied.
 
 /Jarkko
