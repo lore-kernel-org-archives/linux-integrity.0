@@ -2,121 +2,123 @@ Return-Path: <SRS0=6sc8=R7=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC3C1C43381
-	for <linux-integrity@archiver.kernel.org>; Thu, 28 Mar 2019 17:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2486FC43381
+	for <linux-integrity@archiver.kernel.org>; Thu, 28 Mar 2019 17:19:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2BF6206B6
-	for <linux-integrity@archiver.kernel.org>; Thu, 28 Mar 2019 17:17:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8B4C206B6
+	for <linux-integrity@archiver.kernel.org>; Thu, 28 Mar 2019 17:19:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CBLlj7QM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbfC1RRv (ORCPT
+        id S1726281AbfC1RTf (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 28 Mar 2019 13:17:51 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36584 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726029AbfC1RRv (ORCPT
+        Thu, 28 Mar 2019 13:19:35 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:38674 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726235AbfC1RTf (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 28 Mar 2019 13:17:51 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2SHG5HO114897
-        for <linux-integrity@vger.kernel.org>; Thu, 28 Mar 2019 13:17:50 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2rh1gvbhfk-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 28 Mar 2019 13:17:49 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 28 Mar 2019 17:17:47 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 28 Mar 2019 17:17:45 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2SHHi7E53018724
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 28 Mar 2019 17:17:44 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 52182A405F;
-        Thu, 28 Mar 2019 17:17:44 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 96BCAA4060;
-        Thu, 28 Mar 2019 17:17:43 +0000 (GMT)
-Received: from dhcp-9-31-103-153.watson.ibm.com (unknown [9.31.103.153])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 28 Mar 2019 17:17:43 +0000 (GMT)
-Subject: Re: Should mprotect(..., PROT_EXEC) be checked by IMA?
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Igor Zhbanov <i.zhbanov@omprussia.ru>,
-        Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        Jann Horn <jannh@google.com>
-Date:   Thu, 28 Mar 2019 13:17:43 -0400
-In-Reply-To: <07347317-ee71-83c1-384a-0c3439980af7@omprussia.ru>
-References: <cce2c4c7-5333-41c3-aeef-34d43e63acb0@omprussia.ru>
-         <1552945715.8658.299.camel@linux.ibm.com>
-         <452752df-98f9-c361-878a-5df84ab36847@omprussia.ru>
-         <1552994559.4899.26.camel@linux.ibm.com>
-         <84145490-6f70-214f-8241-42d556590240@omprussia.ru>
-         <1553015134.4899.82.camel@linux.ibm.com>
-         <a9830bde-8157-6078-b544-fcffb20d2501@omprussia.ru>
-         <CACdnJut6YfLnq-nCC1hHTrKYXabHoSEXN1wMuCyVybU+o_iwCg@mail.gmail.com>
-         <1553167318.4899.382.camel@linux.ibm.com>
-         <dab923ca-ef53-4af2-034a-bea4151a4e25@omprussia.ru>
-         <CACdnJuvVqibDdd+MLKOHqEfdngTk=GSkfybj1jS3MpmC7rjyHg@mail.gmail.com>
-         <07347317-ee71-83c1-384a-0c3439980af7@omprussia.ru>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19032817-4275-0000-0000-00000320A981
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19032817-4276-0000-0000-0000382F4879
-Message-Id: <1553793463.8711.26.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-28_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=8 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1903280114
+        Thu, 28 Mar 2019 13:19:35 -0400
+Received: by mail-yw1-f68.google.com with SMTP id m207so6281838ywd.5;
+        Thu, 28 Mar 2019 10:19:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WQ87d/GuSsWiqz7wsRpRdGNX/3V6XiBVfMQ4WOhh/Pc=;
+        b=CBLlj7QM/GTMmzd2/M9Xrsd0iVZKEH8sG0mMixMpOwzxNmedbGCLvfbddUZJeF0nuA
+         gex/+A/Q9IgQt5yhjsDUNccjn5o0jTqKZqG6Hc+ItsL7yNoTRaZrx7Ceb8bGwV0/Fbp8
+         feoddE1j3YJnGCX4en5iRVIBPvxgkmzQGjkU9kSBVOln9Rlch/X37LCCC+hqZdcTMMDg
+         uXvBiLALzTkNBo6vTK7UxQGzKzMjVVTfD4Q41M6TkCFXLZVv19OPlrScM6L0e+m9w338
+         MU53htOkAv/fszYj6lgFtJ3u5LG+30sog6ahPYNuz8GGwJ8qLyZKqDaF7J60BEibPWxW
+         EgVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WQ87d/GuSsWiqz7wsRpRdGNX/3V6XiBVfMQ4WOhh/Pc=;
+        b=jnR+jXt5veB+7NqmeR3QBXgaPKEwIv9c6cZyx9L9XSlwSe9nYC8v8o7JAEJ8bmVuzY
+         tuAVEMeAtiMYW3ymwtp8pOXUGNIDt0xLKurJQFuWkFBX7W18EUzlQ0Qblv3oVs0BS+/w
+         OMYuIGTwJspR69RqWNZfeVoAu7AR+ovGOjvRrdSmiu4km48swANddsHLLmwt9Qm+8G2l
+         H8BwftMFOvQkLSiwa5rFj3rKKp96fJWX1DQOC1XOoKro27/yUkspNV8RqpkKMcS+XkPH
+         jtr9ChwUnvtidGd03VygyQgannf9o0dvQEY2A3AnsrvQ2rqcKwS8nKrypftR9x1gRbWh
+         1gmg==
+X-Gm-Message-State: APjAAAXiNfxZFPp89U8nFtH7DEYPErK22wt6VdTxdGSGAvawZuiCH6He
+        OQavTheJoHXhSBDrT9XX7Tc=
+X-Google-Smtp-Source: APXvYqzrOweucTnr518KqxIPEqSjlGFWNSIfmXeMH9WanONcWQqZeFIjP17a2igimoHTrsvK6seLpA==
+X-Received: by 2002:a81:2183:: with SMTP id h125mr29049696ywh.455.1553793574328;
+        Thu, 28 Mar 2019 10:19:34 -0700 (PDT)
+Received: from dumbo ([83.137.6.243])
+        by smtp.gmail.com with ESMTPSA id l123sm9030422ywe.85.2019.03.28.10.19.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 28 Mar 2019 10:19:33 -0700 (PDT)
+Date:   Thu, 28 Mar 2019 18:19:26 +0100
+From:   Domenico Andreoli <domenico.andreoli@linux.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, pauldzim@gmail.com,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] tpm: turn on TPM on suspend for TPM 1.x
+Message-ID: <20190328171926.4luwqofh67uwgt5e@dumbo>
+References: <20190322105120.8441-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190322105120.8441-1-jarkko.sakkinen@linux.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-[Cc'ing Kees]
-
-On Fri, 2019-03-22 at 10:59 +0300, Igor Zhbanov wrote:
-> On 21.03.2019 21:04, Matthew Garrett wrote:
-> > On Thu, Mar 21, 2019 at 4:48 AM Igor Zhbanov <i.zhbanov@omprussia.ru> wrote:
-> >> Along with disabling creating anonymous executable pages at all since
-> >> is is hardly needed for the system services for normal work.
-> > 
-> > Is this true? Do no JIT compilers behave this way?
+On Fri, Mar 22, 2019 at 12:51:20PM +0200, Jarkko Sakkinen wrote:
+> tpm_chip_start/stop() should be also called for TPM 1.x devices on
+> suspend. Add that functionality back. Do not lock the chip because
+> it is unnecessary as there are no multiple threads using it when
+> doing the suspend.
 > 
-> Well, besides JIT I've scanned all /proc/PID/maps of my web-server and didn't
-> find any process with mapped anonymous executable pages.
+> Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
+> Reported-by: Paul Zimmerman <pauldzim@gmail.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  drivers/char/tpm/tpm-interface.c | 14 ++++++--------
+>  1 file changed, 6 insertions(+), 8 deletions(-)
 > 
-> As for JIT I suppose we could use prctl or something else to allow having
-> anonymous executable pages.
-> 
-> I'm pondering about some system-wide (or prosses subtree-wide) default
-> setting controlling whether it is allowed to have anonymous pages by default,
-> and then some mechanism to turn it on/off on a per-process bases. Perhaps
-> with some locking preventing reenabling after it was dropped.
-> 
-> And what do you think about it?
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 83ece5639f86..ae1030c9b086 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -402,15 +402,13 @@ int tpm_pm_suspend(struct device *dev)
+>  	if (chip->flags & TPM_CHIP_FLAG_ALWAYS_POWERED)
+>  		return 0;
+>  
+> -	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> -		mutex_lock(&chip->tpm_mutex);
+> -		if (!tpm_chip_start(chip)) {
+> +	if (!tpm_chip_start(chip)) {
+> +		if (chip->flags & TPM_CHIP_FLAG_TPM2)
+>  			tpm2_shutdown(chip, TPM2_SU_STATE);
+> -			tpm_chip_stop(chip);
+> -		}
+> -		mutex_unlock(&chip->tpm_mutex);
+> -	} else {
+> -		rc = tpm1_pm_suspend(chip, tpm_suspend_pcr);
+> +		else
+> +			rc = tpm1_pm_suspend(chip, tpm_suspend_pcr);
+> +
+> +		tpm_chip_stop(chip);
+>  	}
+>  
+>  	return rc;
 
-I just came across the grsecurity article on mprotect.[1]  Has anyone
-looked at it?  Would it make sense to make it a minor LSM?
+Tested-by: Domenico Andreoli <domenico.andreoli@linux.com>
 
-Mimi
-
-[1]https://pax.grsecurity.net/docs/mprotect.txt 
-
+-- 
+3B10 0CA1 8674 ACBA B4FE  FCD2 CE5B CF17 9960 DE13
