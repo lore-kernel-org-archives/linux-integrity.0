@@ -2,106 +2,199 @@ Return-Path: <SRS0=6sc8=R7=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8871CC43381
-	for <linux-integrity@archiver.kernel.org>; Thu, 28 Mar 2019 17:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A00C43381
+	for <linux-integrity@archiver.kernel.org>; Thu, 28 Mar 2019 17:28:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A5742183F
-	for <linux-integrity@archiver.kernel.org>; Thu, 28 Mar 2019 17:21:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EC80iElT"
+	by mail.kernel.org (Postfix) with ESMTP id EDEC32173C
+	for <linux-integrity@archiver.kernel.org>; Thu, 28 Mar 2019 17:28:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726173AbfC1RVs (ORCPT
+        id S1727054AbfC1R2C (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 28 Mar 2019 13:21:48 -0400
-Received: from mail-yw1-f51.google.com ([209.85.161.51]:45805 "EHLO
-        mail-yw1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726117AbfC1RVr (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 28 Mar 2019 13:21:47 -0400
-Received: by mail-yw1-f51.google.com with SMTP id j128so15358253ywg.12;
-        Thu, 28 Mar 2019 10:21:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=+1cenhDZ6abSXQjebrfaSwfIe9wjJQAhX5YTtCWEdcY=;
-        b=EC80iElTSyEXU7xII0LntGFXjOioHj7UmSaw1xL6kPzVd+FUtA04oxwhU/eUXj/X3G
-         pAgLJ8bcERwtV6obYPI+vMtlCtOBQzE/EQ55xGTfZeNTA1wpcB9mUqcuhZ+PrevuCihH
-         J/AYViZTNicD8EabxvQo3qzyvBJPm3uwr7rRZPuJEqOHCWZmsqa9jMU99hZEqgmnzGUz
-         sV2Oexb/eCny6OeFLySHd1vm6KsTX21JtYBJiPE4Dwbq0OwoYdNQ4CaUScLVX3EMSSfj
-         OqGvwyufY3+arjXhR4S12fvlaahbbXn7mCwoa8cT90sGMDbgn3+P6zjjvfTiwP/gWEPd
-         /tjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=+1cenhDZ6abSXQjebrfaSwfIe9wjJQAhX5YTtCWEdcY=;
-        b=FfkuazJbAZxtt0o4hynJwNsnBgSufEkTd9dZGOBrzYDJdgu6CwE7AApRoSf+R1XR9t
-         YnEtY16yIeI9NFJaUwhFCjo7KJEYQICkFnPnr16ocUl/dgv7u70whb1UQNS2Iv7ac48u
-         0vSzbX0r8cZ4uAOPupO6GZ1r0qcu9cHgbntd3T5nUbgKvZ323aFuZc0H5Pv7g2wpnPqZ
-         Ar+SWRmZlefeUl/G5ytSGRcxdxLRS6RBftGt9CQx3uqqnKltwDTQRFC/xMVB9Pv84btP
-         JLnJFD6YiwACIoaeSviQFb9ArBk4k8vpKaWeckkDBNbxG0GXm7MZ43LEnwDLRcE9ibCd
-         bNWw==
-X-Gm-Message-State: APjAAAXBj5AL8y28PK4Wb0XFsCh8tG7y6ks5PDwINeI336cNDgoyVt4/
-        bKqoOdGe5GRBTK6oo7DTRSk=
-X-Google-Smtp-Source: APXvYqwFaXWgnKszFS8ZBjpQiEm36YWytI+fdo1jjCW8yrJea/RizGedge1pZLNgdOtvPLlNhI28Jw==
-X-Received: by 2002:a81:b64f:: with SMTP id h15mr2826265ywk.136.1553793706876;
-        Thu, 28 Mar 2019 10:21:46 -0700 (PDT)
-Received: from dumbo ([83.137.6.243])
-        by smtp.gmail.com with ESMTPSA id v77sm15347553ywv.79.2019.03.28.10.21.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 28 Mar 2019 10:21:46 -0700 (PDT)
-Date:   Thu, 28 Mar 2019 18:21:41 +0100
-From:   Domenico Andreoli <domenico.andreoli@linux.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [REGRESSION] 5.1-rc1: tpm_try_transmit: send(): error -5
-Message-ID: <20190328172141.sog6prtldmxulpw7@dumbo>
-References: <20190327082115.k35fhxfkk25ekdzw@dumbo>
- <20190328122333.GA7094@linux.intel.com>
+        Thu, 28 Mar 2019 13:28:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39834 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726117AbfC1R2C (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 28 Mar 2019 13:28:02 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 67422AAC3;
+        Thu, 28 Mar 2019 17:28:00 +0000 (UTC)
+Subject: Re: [PATCH 3/3] ima: Add overlay test
+To:     Petr Vorel <pvorel@suse.cz>, ltp@lists.linux.it
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Fabian Vogt <FVogt@suse.com>, Weihua Du <WHDu@suse.com>,
+        linux-integrity@vger.kernel.org
+References: <20190327161638.7407-1-pvorel@suse.cz>
+ <20190327161638.7407-4-pvorel@suse.cz>
+From:   Ignaz Forster <iforster@suse.de>
+Message-ID: <854e62ce-5e5c-7ea7-0291-0d3eaadf3fca@suse.de>
+Date:   Thu, 28 Mar 2019 18:27:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190328122333.GA7094@linux.intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190327161638.7407-4-pvorel@suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Mar 28, 2019 at 02:23:33PM +0200, Jarkko Sakkinen wrote:
-> On Wed, Mar 27, 2019 at 09:21:15AM +0100, Domenico Andreoli wrote:
-> > Hi Jarkko,
-> >=20
-> >   my laptop fails to suspend/hibernate since v5.1-rc1, it worked fine
-> > with v4.20 and previous.
-> >=20
-> > My suspect is on tpm_tis driver, is there anything I can do to understa=
-nd
-> > what goes wrong here?
-> >=20
-> > Best regards,
-> > Domenico
->=20
-> Thank you for reporting this.
->=20
-> Can you try if this helps:
->=20
-> https://patchwork.kernel.org/patch/10865495/
+Hi Petr,
 
-Yes, it helps. Everything works fine now. Thanks.
+thanks a lot for the LTP integration!
 
->=20
-> /Jarkko
+Am 27.03.19 um 17:16 Uhr schrieb Petr Vorel:
+> Based on reproducer made by Ignaz Forster <iforster@suse.de>
+> used for his not upstreamed patchset [1] and previous report [2].
 
-Domenico
+Just for clarification, as the test is only referring to IMA: With IMA 
+everything should be working already, the problem during copy_up 
+operations was fixed by Mimi and Goldwyn in 
+https://patchwork.kernel.org/patch/10776231/.
+As expected the test passes on my IMA-only setup.
 
---=20
-3B10 0CA1 8674 ACBA B4FE  FCD2 CE5B CF17 9960 DE13
+My outstanding patchset is only necessary when combining IMA with EVM - 
+in this case the test will still fail. I hope I'll be able to resume my 
+work in the next few weeks.
+
+The test itself is looking good and working as expected.
+
+> NOTE: backup variables are needed because ima_setup.sh calling
+> tst_mount as well when TMPDIR is on tmpfs device.
+> 
+> [1] https://www.spinics.net/lists/linux-integrity/msg05926.html
+> [2] https://www.spinics.net/lists/linux-integrity/msg03593.html
+> 
+> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Cc: Ignaz Forster <iforster@suse.de>
+> Cc: Fabian Vogt <FVogt@suse.com>
+> Cc: Weihua Du <WHDu@suse.com>
+> Cc: linux-integrity@vger.kernel.org
+> Signed-off-by: Petr Vorel <pvorel@suse.cz>
+
+Tested-by: Ignaz Forster <iforster@suse.de>
+
+> ---
+>   runtest/ima                                   |  1 +
+>   .../integrity/ima/tests/ima_overlay.sh        | 65 +++++++++++++++++++
+>   .../security/integrity/ima/tests/ima_setup.sh |  4 +-
+>   3 files changed, 68 insertions(+), 2 deletions(-)
+>   create mode 100755 testcases/kernel/security/integrity/ima/tests/ima_overlay.sh
+> 
+> diff --git a/runtest/ima b/runtest/ima
+> index bcae16bb7..f96711a7d 100644
+> --- a/runtest/ima
+> +++ b/runtest/ima
+> @@ -3,3 +3,4 @@ ima_measurements ima_measurements.sh
+>   ima_policy ima_policy.sh
+>   ima_tpm ima_tpm.sh
+>   ima_violations ima_violations.sh
+> +ima_overlay ima_overlay.sh
+> diff --git a/testcases/kernel/security/integrity/ima/tests/ima_overlay.sh b/testcases/kernel/security/integrity/ima/tests/ima_overlay.sh
+> new file mode 100755
+> index 000000000..eedcd3753
+> --- /dev/null
+> +++ b/testcases/kernel/security/integrity/ima/tests/ima_overlay.sh
+> @@ -0,0 +1,65 @@
+> +#!/bin/sh
+> +# Copyright (c) 2019 Petr Vorel <pvorel@suse.cz>
+> +# Based on reproducer made by Ignaz Forster <iforster@suse.de>
+> +
+> +TST_SETUP="setup"
+> +TST_CLEANUP="cleanup"
+> +. ima_setup.sh
+> +TST_TESTFUNC="do_test"
+> +
+> +setup()
+> +{
+> +	lower="$TST_MNTPOINT/lower"
+> +	upper="$TST_MNTPOINT/upper"
+> +	work="$TST_MNTPOINT/work"
+> +	merged="$TST_MNTPOINT/merged"
+> +	mkdir -p $lower $upper $work $merged
+> +
+> +	device_backup="$TST_DEVICE"
+> +	TST_DEVICE="overlay"
+> +
+> +	fs_type_backup="$TST_FS_TYPE"
+> +	TST_FS_TYPE="overlay"
+> +
+> +	mntpoint_backup="$TST_MNTPOINT"
+> +	TST_MNTPOINT="$merged"
+> +
+> +	params_backup="$TST_MNT_PARAMS"
+> +	TST_MNT_PARAMS="-o lowerdir=$lower,upperdir=$upper,workdir=$work"
+> +
+> +	grep -q ima_appraise_tcb /proc/cmdline || \
+> +		tst_brk TCONF "Test requires ima_appraise_tcb kernel parameter"
+> +}
+> +
+> +do_test()
+> +{
+> +	local file="foo.txt"
+> +	local f
+> +
+> +	tst_mount
+> +	mounted=1
+> +
+> +	ROD echo lower \> $lower/$file
+> +	if ! echo overlay > $merged/$file 2>/dev/null; then
+> +		tst_res TFAIL "Cannot write to merged layer"
+> +		return
+> +	fi
+
+I can think of two additional tests here:
+1. Appending to a file (>> instead of >)
+2. Creating a new file in the overlay
+
+These cases are using different code paths and may fail independently, 
+so separate tests would be handy.
+
+Ignaz
+
+> +	for f in $(find $TST_MNTPOINT -type f); do
+> +		EXPECT_PASS cat $f \> /dev/null 2\> /dev/null
+> +	done
+> +}
+> +
+> +cleanup()
+> +{
+> +	[ -n "$mounted" ] || return 0
+> +
+> +	tst_umount $TST_DEVICE
+> +
+> +	TST_DEVICE="$device_backup"
+> +	TST_FS_TYPE="$fs_type_backup"
+> +	TST_MNTPOINT="$mntpoint_backup"
+> +	TST_MNT_PARAMS="$params_backup"
+> +}
+> +
+> +tst_run
+> diff --git a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+> index da49eb1b2..08aa5300a 100644
+> --- a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+> +++ b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+> @@ -64,14 +64,14 @@ print_ima_config()
+>   	local config="/boot/config-$(uname -r)"
+>   	local i
+>   
+> -	tst_res TINFO "/proc/cmdline: $(cat /proc/cmdline)"
+> -
+>   	if [ -r "$config" ]; then
+>   		tst_res TINFO "IMA kernel config:"
+>   		for i in $(grep ^CONFIG_IMA $config); do
+>   			tst_res TINFO "$i"
+>   		done
+>   	fi
+> +
+> +	tst_res TINFO "/proc/cmdline: $(cat /proc/cmdline)"
+>   }
+>   
+>   ima_setup()
+> 
