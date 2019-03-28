@@ -2,115 +2,61 @@ Return-Path: <SRS0=6sc8=R7=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B747FC43381
-	for <linux-integrity@archiver.kernel.org>; Thu, 28 Mar 2019 06:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C23FEC43381
+	for <linux-integrity@archiver.kernel.org>; Thu, 28 Mar 2019 09:04:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 909A22173C
-	for <linux-integrity@archiver.kernel.org>; Thu, 28 Mar 2019 06:16:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 981CA21773
+	for <linux-integrity@archiver.kernel.org>; Thu, 28 Mar 2019 09:04:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726182AbfC1GQw (ORCPT
+        id S1726332AbfC1JE3 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 28 Mar 2019 02:16:52 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:52468 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725765AbfC1GQw (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 28 Mar 2019 02:16:52 -0400
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id CD4BE72CC64;
-        Thu, 28 Mar 2019 09:16:48 +0300 (MSK)
-Received: from altlinux.org (sole.flsd.net [185.75.180.6])
-        by imap.altlinux.org (Postfix) with ESMTPSA id B19954A4AE9;
-        Thu, 28 Mar 2019 09:16:48 +0300 (MSK)
-Date:   Thu, 28 Mar 2019 09:16:48 +0300
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        David Howells <dhowells@redhat.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 10/10] integrity: support EC-RDSA signatures for
- asymmetric_verify
-Message-ID: <20190328061648.knexdusdcadubeu6@altlinux.org>
-Mail-Followup-To: Mimi Zohar <zohar@linux.ibm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Howells <dhowells@redhat.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190326125842.24110-1-vt@altlinux.org>
- <20190326125842.24110-11-vt@altlinux.org>
- <1553710220.4608.9.camel@linux.ibm.com>
- <20190327201441.ikw76qzpgzm6t35b@altlinux.org>
- <1553718067.4608.43.camel@linux.ibm.com>
+        Thu, 28 Mar 2019 05:04:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35802 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725853AbfC1JE3 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 28 Mar 2019 05:04:29 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 73EDEAC0C;
+        Thu, 28 Mar 2019 09:04:27 +0000 (UTC)
+Date:   Thu, 28 Mar 2019 10:04:26 +0100
+From:   Petr Vorel <pvorel@suse.cz>
+To:     ltp@lists.linux.it
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Ignaz Forster <iforster@suse.de>, Fabian Vogt <FVogt@suse.com>,
+        Weihua Du <WHDu@suse.com>, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH 0/3] LTP reproducer on broken IMA on overlayfs
+Message-ID: <20190328090426.GB32178@x230>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20190327161638.7407-1-pvorel@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1553718067.4608.43.camel@linux.ibm.com>
-User-Agent: NeoMutt/20171215-106-ac61c7
+In-Reply-To: <20190327161638.7407-1-pvorel@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Mar 27, 2019 at 04:21:07PM -0400, Mimi Zohar wrote:
-> > > diff --git a/security/integrity/digsig_asymmetric.c
-> b/security/integrity/digsig_asymmetric.c
-> > > > index d775e03fbbcc..99080871eb9f 100644
-> > > > --- a/security/integrity/digsig_asymmetric.c
-> > > > +++ b/security/integrity/digsig_asymmetric.c
-> > > > @@ -104,9 +104,16 @@ int asymmetric_verify(struct key *keyring, const char *sig,
-> > > >  
-> > > >  	memset(&pks, 0, sizeof(pks));
-> > > >  
-> > > > -	pks.pkey_algo = "rsa";
-> > > >  	pks.hash_algo = hash_algo_name[hdr->hash_algo];
-> > > > -	pks.encoding = "pkcs1";
-> > > > +	if (hdr->hash_algo == HASH_ALGO_STREEBOG_256 ||
-> > > > +	    hdr->hash_algo == HASH_ALGO_STREEBOG_512) {
-> > > > +		/* EC-RDSA and Streebog should go together. */
-> > > > +		pks.pkey_algo = "ecrdsa";
-> > > > +		pks.encoding = "raw";
-> > > 
-> > > IMA signatures are stored as xattrs, making them persistent. šSupport
-> > > for streebog was upstreamed in linux-5.0. šThis change would break
-> > > existing systems using streebog. šAs long as this is not yet a concern
-> > 
-> > In what sense it would break systems?
-> 
-> For example, if executable files are currently labeled with
-> rsa/streebog signatures, then enforcing file data integrity I assume
-> would break if the kernel uses ecrdsa/streebog.
+Hi,
 
-Ah. No, I did not implement RSA(Streebog) intentionally, since Streebog is
-not in the list of permitted hashes for PKCS1. You may notice this by the
-lack of appropriate rsa_asn1_template[] entry.
+> Petr Vorel (3):
+>   ima: Call test's cleanup inside ima_setup.sh cleanup
+>   shell: Add $TST_DEVICE as default parameter to tst_umount
+>   ima: Add overlay test
+NOTE: I've posted just the third patch (didn't want to bother with
+LTP specific non-IMA stuff. These are in LTP ML [1] [2] and also
+downloadable via patchwork pwclient [3] [4].
 
-Thanks,
+Kind regards,
+Petr
 
-> 
-> Mimi
-> 
-> > 
-> > Unless kernel crashes or signature is recognized as valid, I think, it should
-> > not be called a break.
-> > 
-> > > Reviewed-by: šMimi Zohar <zohar@linux.ibm.com>
-> > 
-> > Thanks!
-> > 
-> > > 
-> > > > +	} else {
-> > > > +		pks.pkey_algo = "rsa";
-> > > > +		pks.encoding = "pkcs1";
-> > > > +	}
-> > > >  	pks.digest = (u8 *)data;
-> > > >  	pks.digest_size = datalen;
-> > > >  	pks.s = hdr->sig;
-> > 
+[1] http://lists.linux.it/pipermail/ltp/2019-March/011512.html
+[2] http://lists.linux.it/pipermail/ltp/2019-March/011513.html
+[3] https://patchwork.ozlabs.org/patch/1067177/
+[4] https://patchwork.ozlabs.org/patch/1067178/
