@@ -2,96 +2,152 @@ Return-Path: <SRS0=7fxW=SA=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B70AEC43381
-	for <linux-integrity@archiver.kernel.org>; Fri, 29 Mar 2019 10:00:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A037C10F05
+	for <linux-integrity@archiver.kernel.org>; Fri, 29 Mar 2019 10:50:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CA062082F
-	for <linux-integrity@archiver.kernel.org>; Fri, 29 Mar 2019 10:00:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=omprussia.ru header.i=@omprussia.ru header.b="k5zU/V7f"
+	by mail.kernel.org (Postfix) with ESMTP id 6221D2183F
+	for <linux-integrity@archiver.kernel.org>; Fri, 29 Mar 2019 10:50:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728934AbfC2KAM (ORCPT
+        id S1729305AbfC2KuH (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 29 Mar 2019 06:00:12 -0400
-Received: from mail.omprussia.ru ([5.134.221.218]:41134 "EHLO
-        mail.omprussia.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728810AbfC2KAM (ORCPT
+        Fri, 29 Mar 2019 06:50:07 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51740 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729090AbfC2KuG (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 29 Mar 2019 06:00:12 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.omprussia.ru (Postfix) with ESMTP id 9EA2EEE21B9;
-        Fri, 29 Mar 2019 13:00:10 +0300 (MSK)
-Received: from mail.omprussia.ru ([127.0.0.1])
-        by localhost (mail.omprussia.ru [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id w_m3Awaj9sbX; Fri, 29 Mar 2019 13:00:09 +0300 (MSK)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.omprussia.ru (Postfix) with ESMTP id C627BEE21B3;
-        Fri, 29 Mar 2019 13:00:09 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.omprussia.ru C627BEE21B3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=omprussia.ru;
-        s=EC9C64F2-3532-11E8-B653-5B7E995A80AF; t=1553853609;
-        bh=O0yXa9rukg9PNBhNPTTLhOcA4LrYW01c/NzhmrypqT4=;
-        h=To:From:Message-ID:Date:MIME-Version;
-        b=k5zU/V7flDRZdV821HeT1+W1ASwF9YnX6n1JWyhWUbTJ8ZOt7KjhHd8x+b3JOuM9R
-         +bNOUXk37Kxx2XEbXwAdB0b7S0SsO8JAxIURM7kCNu63Vx+RspORecMURTU9Nst5kd
-         DOqtPOTIKy36sbfqNphy5kaa4rOr5RCCIBhqVyRMj0/JNHx6nGJZZWwfGrK27NLA0z
-         kHp97xFYJsrH+4j4BBYY/Q4nlPE97J+VY+U32gAzQgc+dx8Gvlzku9y6IWeZy4UGRg
-         9254uma75UuLXt5IMZ7GIwDBDVqwVv5nn7kwghkIoB9pMUUTYsi2Jm+Vc7vE+86h/S
-         9kD8TBOPe/jqA==
-X-Virus-Scanned: amavisd-new at mail.omprussia.ru
-Received: from mail.omprussia.ru ([127.0.0.1])
-        by localhost (mail.omprussia.ru [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id QtEwGTZvT9K9; Fri, 29 Mar 2019 13:00:09 +0300 (MSK)
-Received: from [10.189.20.33] (unknown [10.189.20.33])
-        by mail.omprussia.ru (Postfix) with ESMTPSA id 9CA2AEE21B2;
-        Fri, 29 Mar 2019 13:00:09 +0300 (MSK)
-Subject: Re: Should mprotect(..., PROT_EXEC) be checked by IMA?
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        Jann Horn <jannh@google.com>
-References: <cce2c4c7-5333-41c3-aeef-34d43e63acb0@omprussia.ru>
- <1552945715.8658.299.camel@linux.ibm.com>
- <452752df-98f9-c361-878a-5df84ab36847@omprussia.ru>
- <1552994559.4899.26.camel@linux.ibm.com>
- <84145490-6f70-214f-8241-42d556590240@omprussia.ru>
- <1553015134.4899.82.camel@linux.ibm.com>
- <a9830bde-8157-6078-b544-fcffb20d2501@omprussia.ru>
- <CACdnJut6YfLnq-nCC1hHTrKYXabHoSEXN1wMuCyVybU+o_iwCg@mail.gmail.com>
- <1553167318.4899.382.camel@linux.ibm.com>
- <dab923ca-ef53-4af2-034a-bea4151a4e25@omprussia.ru>
- <CACdnJuvVqibDdd+MLKOHqEfdngTk=GSkfybj1jS3MpmC7rjyHg@mail.gmail.com>
- <07347317-ee71-83c1-384a-0c3439980af7@omprussia.ru>
- <1553793463.8711.26.camel@linux.ibm.com>
-From:   Igor Zhbanov <i.zhbanov@omprussia.ru>
-Message-ID: <92718382-8669-748f-10d8-02fa21225210@omprussia.ru>
-Date:   Fri, 29 Mar 2019 13:00:09 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1553793463.8711.26.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 29 Mar 2019 06:50:06 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2TAmaF5089756
+        for <linux-integrity@vger.kernel.org>; Fri, 29 Mar 2019 06:50:05 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2rhg7recex-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 29 Mar 2019 06:50:04 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 29 Mar 2019 10:50:02 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 29 Mar 2019 10:50:00 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2TAnxXP46465078
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 29 Mar 2019 10:49:59 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2598E4C040;
+        Fri, 29 Mar 2019 10:49:59 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 010C14C044;
+        Fri, 29 Mar 2019 10:49:58 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.109.148])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 29 Mar 2019 10:49:57 +0000 (GMT)
+Subject: Re: [PATCH 3/3] ima: Add overlay test
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Petr Vorel <pvorel@suse.cz>, ltp@lists.linux.it
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Ignaz Forster <iforster@suse.de>, Fabian Vogt <FVogt@suse.com>,
+        Weihua Du <WHDu@suse.com>, linux-integrity@vger.kernel.org
+Date:   Fri, 29 Mar 2019 06:49:47 -0400
+In-Reply-To: <20190327161638.7407-4-pvorel@suse.cz>
+References: <20190327161638.7407-1-pvorel@suse.cz>
+         <20190327161638.7407-4-pvorel@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19032910-0016-0000-0000-00000268CC8A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19032910-0017-0000-0000-000032C415A9
+Message-Id: <1553856587.9420.44.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-29_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1903290079
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Mimi,
+Hi Petr,
 
-Interesting article. It is almost exactly of what I wanted to be implemented.
+On Wed, 2019-03-27 at 17:16 +0100, Petr Vorel wrote:
 
-If this minor LSM would be stackable to allow combining with e.g. SELinux
-then why not.
+> +setup()
+> +{
+> +	lower="$TST_MNTPOINT/lower"
+> +	upper="$TST_MNTPOINT/upper"
+> +	work="$TST_MNTPOINT/work"
+> +	merged="$TST_MNTPOINT/merged"
+> +	mkdir -p $lower $upper $work $merged
+> +
+> +	device_backup="$TST_DEVICE"
+> +	TST_DEVICE="overlay"
+> +
+> +	fs_type_backup="$TST_FS_TYPE"
+> +	TST_FS_TYPE="overlay"
+> +
+> +	mntpoint_backup="$TST_MNTPOINT"
+> +	TST_MNTPOINT="$merged"
+> +
+> +	params_backup="$TST_MNT_PARAMS"
+> +	TST_MNT_PARAMS="-o lowerdir=$lower,upperdir=$upper,workdir=$work"
+> +
+> +	grep -q ima_appraise_tcb /proc/cmdline || \
+> +		tst_brk TCONF "Test requires ima_appraise_tcb kernel parameter"
 
-On 28.03.2019 20:17, Mimi Zohar wrote:
-> I just came across the grsecurity article on mprotect.[1]
->  Has anyone looked at it? Would it make sense to make it a minor LSM?
-> 
-> [1]https://pax.grsecurity.net/docs/mprotect.txt
+Instead of specifying individual policies separately, the newer method
+of specifying builtin IMA policies on the boot command line is
+"ima_policy=", with a list of policies.  The builtin appraise policy
+would be specified as "ima_policy=appraise_tcb".  Refer to
+Documentation/admin-guide/kernel-parameters.txt for the list of
+builtin policies.
+
+> +}
+> +
+> +do_test()
+> +{
+> +	local file="foo.txt"
+> +	local f
+> +
+> +	tst_mount
+> +	mounted=1
+> +
+> +	ROD echo lower \> $lower/$file
+
+For some reason "mntpoint/lower" isn't loopback mounted.  With the
+builtin appraise policy, because it is a tmpfs filesystem,
+security.ima does not exist.  Writing to the merged directory then
+fails.
+
++ df -T mntpoint/lower
+Filesystem     Type  1K-blocks   Used Available Use% Mounted on
+tmpfs          tmpfs   4020348 262316   3758032   7% /tmp
+
+
++ getfattr -m '^security' --dump mntpoint/lower/foo.txt
+# file: mntpoint/lower/foo.txt
+security.evm=0sAq8niNi4X7cYntKSAki1Woc+Y5Yq
+security.selinux="unconfined_u:object_r:user_tmp_t:s0"
+
+Mimi
+
+> +	if ! echo overlay > $merged/$file 2>/dev/null; then
+> +		tst_res TFAIL "Cannot write to merged layer"
+> +		return
+> +	fi
+> +
+> +	for f in $(find $TST_MNTPOINT -type f); do
+> +		EXPECT_PASS cat $f \> /dev/null 2\> /dev/null
+> +	done
+> +}
+
