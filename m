@@ -2,149 +2,92 @@ Return-Path: <SRS0=wDMX=SD=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE303C43381
-	for <linux-integrity@archiver.kernel.org>; Mon,  1 Apr 2019 19:09:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43828C43381
+	for <linux-integrity@archiver.kernel.org>; Mon,  1 Apr 2019 19:14:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E59A20830
-	for <linux-integrity@archiver.kernel.org>; Mon,  1 Apr 2019 19:09:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 067A32084B
+	for <linux-integrity@archiver.kernel.org>; Mon,  1 Apr 2019 19:14:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="VBhY9FFd"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MUcury/Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728782AbfDATJ6 (ORCPT
+        id S1728735AbfDATOb (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 1 Apr 2019 15:09:58 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:35508 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728678AbfDATJ5 (ORCPT
+        Mon, 1 Apr 2019 15:14:31 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:33482 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728733AbfDATOb (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 1 Apr 2019 15:09:57 -0400
-Received: by mail-qt1-f193.google.com with SMTP id h39so12285152qte.2
-        for <linux-integrity@vger.kernel.org>; Mon, 01 Apr 2019 12:09:57 -0700 (PDT)
+        Mon, 1 Apr 2019 15:14:31 -0400
+Received: by mail-yw1-f66.google.com with SMTP id l5so3687122ywa.0
+        for <linux-integrity@vger.kernel.org>; Mon, 01 Apr 2019 12:14:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zzf3za1lYhMZ8JEKdFgqOu4UePlOfwtg3lZQNSI5AFY=;
-        b=VBhY9FFdvjcKHF9gFJ2KVnDdVugyr1NJTe4wm65AznX+jMCnytbGO10k11M+z0aONI
-         XKrpA0Wl6C5ziqlhBxBjAxZKXFcvsQv97fOofoF6hdOmwcWuLnO481fKYzRS8GNq+dzz
-         zfvuXZtnXbFdl0OFb7YzeP+GZKm6sEXyYnJwfqfSqU8ndi5abU1fJadoH426JATPWVZL
-         gGi5bsxVl1GAWC2R951N54WgjUHtInhIy554c/KMlqI1xrl29SUIHyDr4OxWSZjQtpYy
-         AEihg1PKhyLgJITnwhQBRT70RWiVkDfuu26VSjcW6Ibha+/dLfqMwJLH0xpMPwKCfN1B
-         I/oA==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=D7X0bSvolJDJPpVoArTx/EkG3ciEuleLeYJKoAOM3vs=;
+        b=MUcury/ZCmfLMJh1eYktYvrs/5QcYN044HhtaQXALVopSNd+/Zviezfcm7pu4n+YN2
+         L3GnmvPzRqLYdcCCFBbMvOWSbR4XW85owZaFYUvSwRHU/OU8Z2q+OiYmqx75acuMpGnz
+         P0QTlbdCWbAe0WXGrTLJlqNXf/QoT0m8XjSf8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zzf3za1lYhMZ8JEKdFgqOu4UePlOfwtg3lZQNSI5AFY=;
-        b=L16UrS9OCZcAc7i47UHz63qVozF6TAF/IRkq4t6Db8gpXjVPbe53H0e+2KWYOWIbS6
-         /p2VtO4d2t5SwtuCB2oDIQ2qWMkWNV22h+R33eHkS+3RYyOqaVd1UMpJx6+xt2mZelE9
-         Ui4e9ok0sXkHQyOk5VVQbw4poNAveBpPA1AhWAgl9nKbazt9DCfKZyFBZSqme0MWB3C/
-         fbY3zuzkK57zz1pOpd7nwy/L2crmEfWpsvaFtJxplV1gr7bL7YoTcnGX6b/vBBmDJFjv
-         xO2SeQmjRvFkrP/ZI21aDrBTNG5fW7uC/8UTOd8wloXCwnPJ+5+GOqjeAD0D+u0/o5uA
-         PXkw==
-X-Gm-Message-State: APjAAAUA0X6YdWnYajRCLsEkowFXoA6G2+1EjDqV4P9SmIGnuI+fkpO2
-        qp2121rNIbukLkw+ReYRKwVq4Xt0gHU=
-X-Google-Smtp-Source: APXvYqw5Y5vRGmK2TixWMTtIO/THi0ZH6SokwK26Mnq4hbW0FRUWM9P6guJ04K29ivm8d01F9nKRsA==
-X-Received: by 2002:a0c:b14d:: with SMTP id r13mr49092645qvc.80.1554145796821;
-        Mon, 01 Apr 2019 12:09:56 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-49-251.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.49.251])
-        by smtp.gmail.com with ESMTPSA id u16sm5765641qkj.50.2019.04.01.12.09.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 01 Apr 2019 12:09:56 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hB2Jf-0006fZ-2N; Mon, 01 Apr 2019 16:09:55 -0300
-Date:   Mon, 1 Apr 2019 16:09:55 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Kees Cook <keescook@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=D7X0bSvolJDJPpVoArTx/EkG3ciEuleLeYJKoAOM3vs=;
+        b=YBHd4MoaGH89vTN0ur7t35XtceK8qW03/UqvVn1FCWeODAMm70Ublr4BE9+GwG1bp2
+         5b49m+CdWMzV1nTzOD8rPP3Tgmdek1c8GUHUp5mwXm4ZJqz12T6N06XRnsv0bL25+SfS
+         jQcYJE3G3tadt5dp9nUpInmQcp75TLDP4zsPioz0btX81rntXCaO/42bdICTrXyavoOF
+         175BVnGCXh1PMpdFbcEnNSzUAqry8OY5kAeB/JSOdWMEkpnok4e75glDthm6NEoYeCxE
+         mMqLf2bvZpz1Ab1AX2pdjHNOSSxExX4fVSdfO6+YW1AFCPqHftM2FvqEniWZxbW9WHO+
+         mexA==
+X-Gm-Message-State: APjAAAX/QQtVDEhpux4CEpBjXJBhg7fD2wXtmxq0tt7Dd6VCxSq8HA7W
+        HxKcrCJFmu/oXM2y+tpTGPkWXhP76ko=
+X-Google-Smtp-Source: APXvYqzRbDs8JKCFCHbABwHbjVj7I9Upyy6iK6M8xtGLDEJR0yLi7d+ESJhPt1rcdY2pXQ1uPApZIA==
+X-Received: by 2002:a81:5743:: with SMTP id l64mr45110594ywb.457.1554146069104;
+        Mon, 01 Apr 2019 12:14:29 -0700 (PDT)
+Received: from mail-yw1-f42.google.com (mail-yw1-f42.google.com. [209.85.161.42])
+        by smtp.gmail.com with ESMTPSA id k125sm6158127ywb.26.2019.04.01.12.14.27
+        for <linux-integrity@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Apr 2019 12:14:27 -0700 (PDT)
+Received: by mail-yw1-f42.google.com with SMTP id l5so3687057ywa.0
+        for <linux-integrity@vger.kernel.org>; Mon, 01 Apr 2019 12:14:27 -0700 (PDT)
+X-Received: by 2002:a81:4c13:: with SMTP id z19mr55177133ywa.57.1554146067104;
+ Mon, 01 Apr 2019 12:14:27 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190401190607.GA23795@beast> <20190401190955.GJ6209@ziepe.ca>
+In-Reply-To: <20190401190955.GJ6209@ziepe.ca>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 1 Apr 2019 12:14:14 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jKGwH2m1-z9mXeUJh-4GOFw4igPgEv7Z_K5oP4cr0wbYA@mail.gmail.com>
+Message-ID: <CAGXu5jKGwH2m1-z9mXeUJh-4GOFw4igPgEv7Z_K5oP4cr0wbYA@mail.gmail.com>
+Subject: Re: [PATCH v3] tpm: Actually fail on TPM errors during "get random"
+To:     Jason Gunthorpe <jgg@ziepe.ca>
 Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         James Bottomley <James.Bottomley@hansenpartnership.com>,
         Phil Baker <baker1tex@gmail.com>,
         Craig Robson <craig@zhatt.com>,
         Laura Abbott <labbott@redhat.com>,
         Tomas Winkler <tomas.winkler@intel.com>,
-        linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Arnd Bergmann <arnd@arndb.de>, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v3] tpm: Actually fail on TPM errors during "get random"
-Message-ID: <20190401190955.GJ6209@ziepe.ca>
-References: <20190401190607.GA23795@beast>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190401190607.GA23795@beast>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Huewe <peterhuewe@gmx.de>, Arnd Bergmann <arnd@arndb.de>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Apr 01, 2019 at 12:06:07PM -0700, Kees Cook wrote:
-> A "get random" may fail with a TPM error, but those codes were returned
-> as-is to the caller, which assumed the result was the number of bytes
-> that had been written to the target buffer, which could lead to a kernel
-> heap memory exposure and over-read.
-> 
-> This fixes tpm1_get_random() to mask positive TPM errors into -EIO, as
-> before.
-> 
-> [   18.092103] tpm tpm0: A TPM error (379) occurred attempting get random
-> [   18.092106] usercopy: Kernel memory exposure attempt detected from SLUB object 'kmalloc-64' (offset 0, size 379)!
-> 
-> Link: https://bugzilla.redhat.com/show_bug.cgi?id=1650989
-> Reported-by: Phil Baker <baker1tex@gmail.com>
-> Reported-by: Craig Robson <craig@zhatt.com>
-> Fixes: 7aee9c52d7ac ("tpm: tpm1: rewrite tpm1_get_random() using tpm_buf structure")
-> Cc: Laura Abbott <labbott@redhat.com>
-> Cc: Tomas Winkler <tomas.winkler@intel.com>
-> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> v3: fix never-succeed, limit checks to tpm cmd return (James, Jason)
-> v2: also fix tpm2 implementation (Jason Gunthorpe)
->  drivers/char/tpm/tpm1-cmd.c | 7 +++++--
->  drivers/char/tpm/tpm2-cmd.c | 7 +++++--
->  2 files changed, 10 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-> index 85dcf2654d11..faacbe1ffa1a 100644
-> +++ b/drivers/char/tpm/tpm1-cmd.c
-> @@ -510,7 +510,7 @@ struct tpm1_get_random_out {
->   *
->   * Return:
->   * *  number of bytes read
-> - * * -errno or a TPM return code otherwise
-> + * * -errno (positive TPM return codes are masked to -EIO)
->   */
->  int tpm1_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
->  {
-> @@ -531,8 +531,11 @@ int tpm1_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
->  
->  		rc = tpm_transmit_cmd(chip, &buf, sizeof(out->rng_data_len),
->  				      "attempting get random");
-> -		if (rc)
-> +		if (rc) {
-> +			if (rc > 0)
-> +				rc = -EIO;
->  			goto out;
-> +		}
->  
->  		out = (struct tpm1_get_random_out *)&buf.data[TPM_HEADER_SIZE];
->  
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index e74c5b7b64bf..8ffa6af61580 100644
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -301,7 +301,7 @@ struct tpm2_get_random_out {
->   *
->   * Return:
->   *   size of the buffer on success,
-> - *   -errno otherwise
-> + *   -errno otherwise ((positive TPM return codes are masked to -EIO)
+On Mon, Apr 1, 2019 at 12:09 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> > + *   -errno otherwise ((positive TPM return codes are masked to -EIO)
+>
+> Extra bracket, but otherwise looks fine to me
 
-Extra bracket, but otherwise looks fine to me
+Thanks! (And I guess it's time for lunch so I can take a break and
+learn how to type again...)
 
-Jason
+-- 
+Kees Cook
