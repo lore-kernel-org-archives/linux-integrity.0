@@ -3,57 +3,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2686C43381
-	for <linux-integrity@archiver.kernel.org>; Mon,  1 Apr 2019 18:52:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA17C43381
+	for <linux-integrity@archiver.kernel.org>; Mon,  1 Apr 2019 18:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8463D20880
-	for <linux-integrity@archiver.kernel.org>; Mon,  1 Apr 2019 18:52:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE7C62086C
+	for <linux-integrity@archiver.kernel.org>; Mon,  1 Apr 2019 18:54:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="JxNudvRu"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="oKIcWEte"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729076AbfDASwX (ORCPT
+        id S1728863AbfDASyq (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 1 Apr 2019 14:52:23 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:34776 "EHLO
+        Mon, 1 Apr 2019 14:54:46 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:34888 "EHLO
         bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729056AbfDASwX (ORCPT
+        by vger.kernel.org with ESMTP id S1728690AbfDASyq (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 1 Apr 2019 14:52:23 -0400
+        Mon, 1 Apr 2019 14:54:46 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 624F68EE12C;
-        Mon,  1 Apr 2019 11:52:22 -0700 (PDT)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 758698EE12C;
+        Mon,  1 Apr 2019 11:54:45 -0700 (PDT)
 Received: from bedivere.hansenpartnership.com ([127.0.0.1])
         by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id m_V6JpWY5juF; Mon,  1 Apr 2019 11:52:22 -0700 (PDT)
+        with ESMTP id xYMDqoXhVfSC; Mon,  1 Apr 2019 11:54:45 -0700 (PDT)
 Received: from [153.66.254.194] (unknown [50.35.68.20])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id B35718EE0CD;
-        Mon,  1 Apr 2019 11:52:21 -0700 (PDT)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id A7DA18EE0CD;
+        Mon,  1 Apr 2019 11:54:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1554144742;
-        bh=T/NKeFg77h83qXnntr52YuorgzIRcsJNlC20Q0OwuB4=;
+        s=20151216; t=1554144885;
+        bh=jywvzMZ3T1LUMchw4h1QJoeQmzI1zyDJABogHdLRFlU=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=JxNudvRuhN9MpiERgjXF3DNZdFqEv+P9IFczRyxbltqdBZBUp/atAvGPnzhdW8OTG
-         Kx2CGq5BaAYUUTNJI+bR4jwHEWUtnlPLCLojBMdqdtkZNspzE0wQYfJS+RcAso7gdM
-         dv3MOe0YHDYE5M//ObLwaBGc9ys7UmM730FuuWco=
-Message-ID: <1554144741.3029.18.camel@HansenPartnership.com>
-Subject: Re: [PATCH] tpm: Actually fail on TPM errors during "get random"
+        b=oKIcWEteat8kFuHGz/OoCpFcFXbGgmU+H5SLdNaptS6WmpEHgBYqDpIIMlvxPEwz+
+         Yd3/loKr40Al//wRDsBvRVSNjzaxE0URHf9EZdQzn2OQpZSrxSFmdkQvU9Rj71EFxt
+         dw+D+XuGiBShlCdQi2IKkXkHmM1eLDRXV8zo4C98=
+Message-ID: <1554144883.3029.20.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2] tpm: Actually fail on TPM errors during "get random"
 From:   James Bottomley <James.Bottomley@HansenPartnership.com>
 To:     Kees Cook <keescook@chromium.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Tomas Winkler <tomas.winkler@intel.com>
-Cc:     Phil Baker <baker1tex@gmail.com>, Craig Robson <craig@zhatt.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Phil Baker <baker1tex@gmail.com>,
+        Craig Robson <craig@zhatt.com>,
         Laura Abbott <labbott@redhat.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
         linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        linux-integrity@vger.kernel.org
-Date:   Mon, 01 Apr 2019 11:52:21 -0700
-In-Reply-To: <20190401183211.GA21228@beast>
-References: <20190401183211.GA21228@beast>
+        Arnd Bergmann <arnd@arndb.de>, linux-integrity@vger.kernel.org
+Date:   Mon, 01 Apr 2019 11:54:43 -0700
+In-Reply-To: <20190401185219.GA22215@beast>
+References: <20190401185219.GA22215@beast>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.26.6 
 Mime-Version: 1.0
@@ -63,55 +64,21 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, 2019-04-01 at 11:32 -0700, Kees Cook wrote:
-[...]
-> --- a/drivers/char/tpm/tpm1-cmd.c
-> +++ b/drivers/char/tpm/tpm1-cmd.c
-> @@ -510,7 +510,7 @@ struct tpm1_get_random_out {
->   *
->   * Return:
->   * *  number of bytes read
-> - * * -errno or a TPM return code otherwise
-> + * * -errno (positive TPM return codes are masked to -EIO)
->   */
->  int tpm1_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
->  {
-> @@ -524,7 +524,7 @@ int tpm1_get_random(struct tpm_chip *chip, u8
-> *dest, size_t max)
->  
->  	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND,
-> TPM_ORD_GET_RANDOM);
->  	if (rc)
-> -		return rc;
-> +		goto fail;
->  
->  	do {
->  		tpm_buf_append_u32(&buf, num_bytes);
-> @@ -559,7 +559,10 @@ int tpm1_get_random(struct tpm_chip *chip, u8
+On Mon, 2019-04-01 at 11:52 -0700, Kees Cook wrote:
+> @@ -559,6 +559,9 @@ int tpm1_get_random(struct tpm_chip *chip, u8
 > *dest, size_t max)
 >  	rc = total ? (int)total : -EIO;
 >  out:
 >  	tpm_buf_destroy(&buf);
-> -	return rc;
+> +fail:
+> +	if (rc > 0)
+> +		rc = -EIO;
+>  	return rc;
+>  }
 
-You can't remove this otherwise the only return will ever be a failure.
-
-I think what you're trying to catch is tpm_transmit_cmd returning a
-positive failure, So you need to check the output of tpm_transmit_cmd
-as well and goto failure leaving the above return in place.
+No: same problem.  If we're successful rc is set to total (a positive
+integer) so as it falls through to fail: it's converted to -EIO which
+means we never return success.
 
 James
-
-
-> +fail:
-> +	if (rc < 0)
-> +		return rc;
-> +	return -EIO;
->  }
->  
->  #define TPM_ORD_PCRREAD 21
-> -- 
-> 2.17.1
-> 
-> 
 
