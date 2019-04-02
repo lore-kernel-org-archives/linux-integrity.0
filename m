@@ -2,87 +2,144 @@ Return-Path: <SRS0=3Dhz=SE=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 995B4C4360F
-	for <linux-integrity@archiver.kernel.org>; Tue,  2 Apr 2019 17:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5FADC4360F
+	for <linux-integrity@archiver.kernel.org>; Tue,  2 Apr 2019 18:15:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69259206DD
-	for <linux-integrity@archiver.kernel.org>; Tue,  2 Apr 2019 17:15:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V2u3YRsk"
+	by mail.kernel.org (Postfix) with ESMTP id BE5932075E
+	for <linux-integrity@archiver.kernel.org>; Tue,  2 Apr 2019 18:15:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729684AbfDBRPw (ORCPT
+        id S1730032AbfDBSPP (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 2 Apr 2019 13:15:52 -0400
-Received: from mail-it1-f174.google.com ([209.85.166.174]:35549 "EHLO
-        mail-it1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729119AbfDBRPv (ORCPT
+        Tue, 2 Apr 2019 14:15:15 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57950 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729695AbfDBSPO (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 2 Apr 2019 13:15:51 -0400
-Received: by mail-it1-f174.google.com with SMTP id w15so6597760itc.0
-        for <linux-integrity@vger.kernel.org>; Tue, 02 Apr 2019 10:15:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HFPmBx+B1WZ6nJT4RE69xmC8uy5jW1MyDXfthBDNL0c=;
-        b=V2u3YRsk7JpNkAIHI+OTVMyfoxGzTDvHwkXjKBqKrgsepoCcnmuPQ4iYHy5esNj3ua
-         D0XZjCjpY3DeDcVb9b14+PsHaVje90gM1LL/qBsyzEe4fCu09sC/zlvONsu7tpyk6N4h
-         h4E39GMWAex7ESOdk0WFndjGYkB8q+kXqO/q9m16xviXj3zTYkP5Iunn6MYcsF3/6In6
-         H9ehfOnxbMjw2hzUrELA+NoJHE7pbumjhoUmr/wwKLKJ3wcV6JWW2obBhgIegVSueF8Z
-         4zfu4Zchr5Kxo2wq37b2zQSUpz5R0gvSwth+nojdJ8DBNsGsEP9sjM2jwn+1qveDB2KJ
-         Ka1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HFPmBx+B1WZ6nJT4RE69xmC8uy5jW1MyDXfthBDNL0c=;
-        b=c03iiuS8xOsbc4royJjq5U650Ph35bwbi11Lpv7QyD3BUnGl5iDWIkRp2srMUsjp7N
-         lMlYyx7yOo6kYh3Gmf9HQ2m5YGmxw8XbFi71V07xUhosm6kUig8RTIlcy0jKsKlY3UOy
-         6fbxXTCXlzMBZMduvmhrflBDc3kf2VdIKyIex55PoFXiIMFfzrLz6TdMNUmVpfVYhJYq
-         9XcfFKWk5RCiaB1PJs1EjnjiN8DoY8+Km82UwbfzWRjS4AdkXd4B3CeZfXRAyDmDBEo8
-         RE6YoYHwiEP/15KEEU6TJz5UVdtzxIF7wcrERNAhAUvyTTHLF94QK+/x5dVez56e7fbC
-         wMcA==
-X-Gm-Message-State: APjAAAWzWrJEzlwwdhErhcY1u8hQxLaNBrYi4NDFFBw7AROlSpaJUvVr
-        0SoOJPGUY+4UvT9Nq6LDYYpdEEKsTzoLqwF2ZhcSLhSyVUo=
-X-Google-Smtp-Source: APXvYqxJjCW4h+i3d/gXbXt+9Vk9zPrvaLq8tThlHlRFPtr8bgRmEf41ON8OUqbZ67BMdd3UKwQCtNBY2GvZwlcWCOU=
-X-Received: by 2002:a24:cf41:: with SMTP id y62mr4867233itf.106.1554225350512;
- Tue, 02 Apr 2019 10:15:50 -0700 (PDT)
+        Tue, 2 Apr 2019 14:15:14 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x32I9qnN083238
+        for <linux-integrity@vger.kernel.org>; Tue, 2 Apr 2019 14:15:13 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2rmavyeqvh-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 02 Apr 2019 14:15:13 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <cclaudio@linux.ibm.com>;
+        Tue, 2 Apr 2019 19:15:12 +0100
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 2 Apr 2019 19:15:09 +0100
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x32IF8x725165920
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 2 Apr 2019 18:15:08 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E4820112072;
+        Tue,  2 Apr 2019 18:15:07 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2CA24112062;
+        Tue,  2 Apr 2019 18:15:06 +0000 (GMT)
+Received: from rino.br.ibm.com (unknown [9.18.235.111])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue,  2 Apr 2019 18:15:05 +0000 (GMT)
+From:   Claudio Carvalho <cclaudio@linux.ibm.com>
+To:     linuxppc-dev@ozlabs.org, linux-efi@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Kerr <jk@ozlabs.org>,
+        Matthew Garret <matthew.garret@nebula.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH 0/4] Enabling secure boot on PowerNV systems
+Date:   Tue,  2 Apr 2019 15:15:01 -0300
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190227202658.197113-1-matthewgarrett@google.com>
- <20190401235245.GA29282@linux.intel.com> <CACdnJutCC7n++Nz5qy1YzmsSchEApDUvMH9-qpxYXckh-Dzf-Q@mail.gmail.com>
- <20190402130704.GA3916@linux.intel.com>
-In-Reply-To: <20190402130704.GA3916@linux.intel.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Tue, 2 Apr 2019 10:15:39 -0700
-Message-ID: <CACdnJuvFxKCwP3XftqacFiLTmTZzCGHkc9DzrJu2u6vwy5_o-w@mail.gmail.com>
-Subject: Re: Add support for TCG2 log format on UEFI systems
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     tomas.winkler@intel.com,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19040218-0040-0000-0000-000004DB8588
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010862; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000284; SDB=6.01183359; UDB=6.00619522; IPR=6.00964108;
+ MB=3.00026264; MTD=3.00000008; XFM=3.00000015; UTC=2019-04-02 18:15:12
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19040218-0041-0000-0000-000008E68616
+Message-Id: <20190402181505.25037-1-cclaudio@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-02_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1904020121
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Apr 2, 2019 at 6:07 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->
-> I'll apply all patches soonish and include them to the next PR.
+This patch set is part of a series that implements secure boot on
+PowerNV systems.
 
-Thanks! Looks like I need some fixes to deal with non-x86
-architectures, I'll get on that today.
+In order to verify the OS kernel on PowerNV, secure boot requires X.509
+certificates trusted by the platform, the secure boot modes, and several
+other pieces of information. These are stored in secure variables
+controlled by OPAL, also known as OPAL secure variables.
+
+This patch set adds the following features:
+
+1. Enable efivarfs by selecting CONFIG_EFI in the CONFIG_OPAL_SECVAR
+   introduced in this patch set. With CONFIG_EFIVAR_FS, userspace tools can
+   be used to manage the secure variables.
+2. Add support for OPAL secure variables by overwriting the EFI hooks
+   (get_variable, get_next_variable, set_variable and query_variable_info)
+   with OPAL call wrappers. There is probably a better way to add this
+   support, for example, we are investigating if we could register the
+   efivar_operations rather than overwriting the EFI hooks. In this patch
+   set, CONFIG_OPAL_SECVAR selects CONFIG_EFI. If, instead, we registered
+   efivar_operations, CONFIG_EFIVAR_FS would need to depend on
+   CONFIG_EFI|| CONFIG_OPAL_SECVAR. Comments or suggestions on the
+   preferred technique would be greatly appreciated.
+3. Define IMA arch-specific policies based on the secure boot state and
+   mode of the system. On secure boot enabled powernv systems, the host OS
+   kernel signature will be verified by IMA appraisal.
+
+Claudio Carvalho (2):
+  powerpc/include: Override unneeded early ioremap functions
+  powerpc/powernv: Add support for OPAL secure variables
+
+Nayna Jain (2):
+  powerpc/powernv: Detect the secure boot mode of the system
+  powerpc: Add support to initialize ima policy rules
+
+ arch/powerpc/Kconfig                         |  12 ++
+ arch/powerpc/include/asm/early_ioremap.h     |  41 +++++
+ arch/powerpc/include/asm/opal-api.h          |   6 +-
+ arch/powerpc/include/asm/opal.h              |  10 ++
+ arch/powerpc/include/asm/secboot.h           |  21 +++
+ arch/powerpc/kernel/Makefile                 |   1 +
+ arch/powerpc/kernel/ima_arch.c               |  54 ++++++
+ arch/powerpc/platforms/Kconfig               |   3 +
+ arch/powerpc/platforms/powernv/Kconfig       |   9 +
+ arch/powerpc/platforms/powernv/Makefile      |   1 +
+ arch/powerpc/platforms/powernv/opal-call.c   |   4 +
+ arch/powerpc/platforms/powernv/opal-secvar.c | 179 +++++++++++++++++++
+ arch/powerpc/platforms/powernv/secboot.c     |  54 ++++++
+ include/linux/ima.h                          |   3 +-
+ 14 files changed, 396 insertions(+), 2 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/early_ioremap.h
+ create mode 100644 arch/powerpc/include/asm/secboot.h
+ create mode 100644 arch/powerpc/kernel/ima_arch.c
+ create mode 100644 arch/powerpc/platforms/powernv/opal-secvar.c
+ create mode 100644 arch/powerpc/platforms/powernv/secboot.c
+
+-- 
+2.20.1
+
