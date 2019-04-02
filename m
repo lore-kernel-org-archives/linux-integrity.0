@@ -2,105 +2,116 @@ Return-Path: <SRS0=3Dhz=SE=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E0BC4360F
-	for <linux-integrity@archiver.kernel.org>; Tue,  2 Apr 2019 20:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0FBAC4360F
+	for <linux-integrity@archiver.kernel.org>; Tue,  2 Apr 2019 21:12:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32D792082C
-	for <linux-integrity@archiver.kernel.org>; Tue,  2 Apr 2019 20:56:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b="LDh0YzSd"
+	by mail.kernel.org (Postfix) with ESMTP id 733B32075E
+	for <linux-integrity@archiver.kernel.org>; Tue,  2 Apr 2019 21:12:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726078AbfDBU4r (ORCPT
+        id S1726655AbfDBVL4 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 2 Apr 2019 16:56:47 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42133 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725965AbfDBU4q (ORCPT
+        Tue, 2 Apr 2019 17:11:56 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41396 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726633AbfDBVLz (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 2 Apr 2019 16:56:46 -0400
-Received: by mail-pl1-f194.google.com with SMTP id cv12so6858294plb.9
-        for <linux-integrity@vger.kernel.org>; Tue, 02 Apr 2019 13:56:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=EYKLdY6VyvyHg5WVumgUzzBQ5B/hLzzNAlcTTAbd+rY=;
-        b=LDh0YzSd7555V1WVvFxE+b5+NEnsVT9IlHFA3ybvM9Xyl3TA/CYn/ADGzVu2lGV/mr
-         A2HIhA4QqG94oJX3uS8Ok/w0K6oeF1lF/K06ldl06PVcCfoeD5UtYquThwUdy/QnAOtD
-         HPJSpchixKboM9B35KnyCh5SJCaPwLx5V93AXu8PNACHAJ7yHklLPuGPaE3DM868BlAB
-         a5Y0far0i/OWgPIn80jADs/SJAPGbCl+/xdW7oNy/Wh0lhGg8xiHtL9M7xfgBfGveFSE
-         /I1FOfiKM9UHkn0mo+ZjlCTxSC6Xii7qkPbIEamLrQenFG6cffbrdftIx8KWxvvJpBhI
-         7QqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=EYKLdY6VyvyHg5WVumgUzzBQ5B/hLzzNAlcTTAbd+rY=;
-        b=nXzje8BcbW9UUOWAso6Ky8U+3LDbUc3wW4wD6jphBT33oyvmyL678XfBgxWqGG0OJ9
-         V2snyfO/BLMMEth2Qqtm5gFj5hlC9P1o/kepeuUOtOpjqO9diRgv8LhwDQy6IJURvTMW
-         Iz6f8VLlI8lu++EQFgzQkA2QeYGvT1tps6Ay/CfPJr2xBqtqWAvNMeLd/8wAhOsb0DCx
-         AlgntqNHYI88YTJNfGGN4pvvKhEXzLmJN8+wklUecXXtk2EaSSNN/qAMzmY1tbuuYGmh
-         qvItfkEAIvUazPCa8EK3e6Bi6iivtWv2LT+Qr3ZhO5m1I1ovNH+iez6biV1dr5u/9ZJ7
-         Y4vQ==
-X-Gm-Message-State: APjAAAUv5LOLjMWSmhbOjsU8Z41aodAPiolb5BMZZ/iEulm4OcNPwTVX
-        FH2IBA6vDBX9+bBcaVxEXRiyNw==
-X-Google-Smtp-Source: APXvYqyP507inA3zCYvSl+UW4Lt1TrnwFd+CigBBWdn6ZfyH533TJ1jJWcdv6LYshg6z0bzdIKecVQ==
-X-Received: by 2002:a17:902:6b81:: with SMTP id p1mr73367002plk.106.1554238606233;
-        Tue, 02 Apr 2019 13:56:46 -0700 (PDT)
-Received: from shemminger-XPS-13-9360 (204-195-22-127.wavecable.com. [204.195.22.127])
-        by smtp.gmail.com with ESMTPSA id i10sm13140746pfj.7.2019.04.02.13.56.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Apr 2019 13:56:46 -0700 (PDT)
-Date:   Tue, 2 Apr 2019 13:56:43 -0700
-From:   Stephen Hemminger <stephen@networkplumber.org>
-To:     "Sasha Levin" <sashal@kernel.org>
-Cc:     <robh+dt@kernel.org>, <mark.rutland@arm.com>, <peterhuewe@gmx.de>,
-        <jarkko.sakkinen@linux.intel.com>, <jgg@ziepe.ca>,
-        "Microsoft Linux Kernel List" <linux-kernel@microsoft.com>,
-        "Bryan Kelly (CSI)" <bryankel@microsoft.com>,
-        "Thirupathaiah Annapureddy" <thiruan@microsoft.com>,
-        "Sudhakar Evuri" <suredd@microsoft.com>, <arnd@arndb.de>,
-        <gregkh@linuxfoundation.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-integrity@vger.kernel.org>
-Subject: Re: [PATCH 2/2] ftpm: firmware TPM running in TEE
-Message-ID: <20190402135643.02443863@shemminger-XPS-13-9360>
-In-Reply-To: <20190402193316.15144-2-sashal@kernel.org>
-References: <20190402193316.15144-1-sashal@kernel.org>
-        <20190402193316.15144-2-sashal@kernel.org>
+        Tue, 2 Apr 2019 17:11:55 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x32L9GuL070983
+        for <linux-integrity@vger.kernel.org>; Tue, 2 Apr 2019 17:11:53 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2rmeunsrc6-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 02 Apr 2019 17:11:53 -0400
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <cclaudio@linux.ibm.com>;
+        Tue, 2 Apr 2019 22:11:53 +0100
+Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 2 Apr 2019 22:11:49 +0100
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x32LBmMW22741002
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 2 Apr 2019 21:11:48 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2683BBE058;
+        Tue,  2 Apr 2019 21:11:48 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B240EBE051;
+        Tue,  2 Apr 2019 21:11:45 +0000 (GMT)
+Received: from [9.18.235.111] (unknown [9.18.235.111])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue,  2 Apr 2019 21:11:45 +0000 (GMT)
+Subject: Re: [PATCH 0/4] Enabling secure boot on PowerNV systems
+To:     Matthew Garrett <mjg59@google.com>
+Cc:     linuxppc-dev@ozlabs.org, linux-efi <linux-efi@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Kerr <jk@ozlabs.org>,
+        Matthew Garret <matthew.garret@nebula.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+References: <20190402181505.25037-1-cclaudio@linux.ibm.com>
+ <CACdnJuumhkqTb4+1=QBiLmbW4xd3wW=MZu6Tj_KdaoTMhCN+Tg@mail.gmail.com>
+From:   Claudio Carvalho <cclaudio@linux.ibm.com>
+Date:   Tue, 2 Apr 2019 18:11:44 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CACdnJuumhkqTb4+1=QBiLmbW4xd3wW=MZu6Tj_KdaoTMhCN+Tg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 19040221-0012-0000-0000-0000172198AF
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010863; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000284; SDB=6.01183418; UDB=6.00619558; IPR=6.00964167;
+ MB=3.00026265; MTD=3.00000008; XFM=3.00000015; UTC=2019-04-02 21:11:52
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19040221-0013-0000-0000-000056BAB681
+Message-Id: <4ce5e057-0702-b0d5-7bb2-cea5b22e2efa@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-02_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1904020141
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2 Apr 2019 12:33:16 -0700
-"Sasha Levin" <sashal@kernel.org> wrote:
 
-> +/*
-> + * ftpm_tee_tpm_op_recv retrieve fTPM response.
-> + * @param: chip, the tpm_chip description as specified in
-> driver/char/tpm/tpm.h.
-> + * @param: buf,	the buffer to store data.
-> + * @param: count, the number of bytes to read.
-> + * @return: In case of success the number of bytes received.
-> + *	    In other case, a < 0 value describing the issue.
-> + */
+On 4/2/19 4:36 PM, Matthew Garrett wrote:
+> On Tue, Apr 2, 2019 at 11:15 AM Claudio Carvalho <cclaudio@linux.ibm.com> wrote:
+>> 1. Enable efivarfs by selecting CONFIG_EFI in the CONFIG_OPAL_SECVAR
+>>    introduced in this patch set. With CONFIG_EFIVAR_FS, userspace tools can
+>>    be used to manage the secure variables.
+> efivarfs has some pretty significant behavioural semantics that
+> directly reflect the EFI specification. Using it to expose non-EFI
+> variable data feels like it's going to increase fragility - there's a
+> risk that we'll change things in a way that makes sense for the EFI
+> spec but breaks your use case. Is the desire to use efivarfs to
+> maintain consistency with existing userland tooling, or just to avoid
+> having a separate filesystem?
+>
+We want to use the efivarfs for compatibility with existing userspace
+tools. We will track and match any EFI changes that affect us.
 
-You are using a docbook style comment but it doesn't start with
-docbook prefix.
+Our use case is restricted to secure boot - this is not going to be a
+general purpose EFI variable implementation.
 
-/**
- * ftpm_tee_tpm_op_recv retrieve fTPM response.
- *
- * @param: chip, the tpm_chip description as specified in driver/char/tpm/tpm.h.
- * @param: buf,	the buffer to store data.
- * @param: count, the number of bytes to read.
- * @return: In case of success the number of bytes received.
- *	    In other case, a < 0 value describing the issue.
- */
+Claudio
+
+
