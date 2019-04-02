@@ -2,84 +2,105 @@ Return-Path: <SRS0=3Dhz=SE=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9ABCC4360F
-	for <linux-integrity@archiver.kernel.org>; Tue,  2 Apr 2019 20:03:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E0BC4360F
+	for <linux-integrity@archiver.kernel.org>; Tue,  2 Apr 2019 20:56:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADB3B2084B
-	for <linux-integrity@archiver.kernel.org>; Tue,  2 Apr 2019 20:03:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554235433;
-	bh=nWIzEIQerNDb48vgC2nwFPOJT7EYYU3hn092JK5R+ec=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=dchds2sCboBfwyy76mMrnn0jt/X7WHDdJB7/KbzIcATOj7dilSxw9RYhIGy1QhlZR
-	 +khxrWfZBZDIUggIkUNAQruqY4eOah27ScRTB1JHxh/HLuaM7nxVOuRjg8y8NDvd51
-	 yHGP5gaIKc2A+eInjGjDmRHYjegV/8qsmL4R4Yxg=
+	by mail.kernel.org (Postfix) with ESMTP id 32D792082C
+	for <linux-integrity@archiver.kernel.org>; Tue,  2 Apr 2019 20:56:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b="LDh0YzSd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726316AbfDBUDx (ORCPT
+        id S1726078AbfDBU4r (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 2 Apr 2019 16:03:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39024 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725812AbfDBUDx (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 2 Apr 2019 16:03:53 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49EBF2082C;
-        Tue,  2 Apr 2019 20:03:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1554235432;
-        bh=nWIzEIQerNDb48vgC2nwFPOJT7EYYU3hn092JK5R+ec=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CDrasPwg09SsKK1q9ZLg9A6mABL2ia2p8KJhvij3y3ZmZuttuXdpyL3jmMcW105h4
-         TOfzXrR58qr4Ydy8If1GlTnBydXM8P5eM382nxj9eGXt1/PTbv/5geNThgCr1dFaAL
-         CBZJfR6+s0Lf8QIAc2eVF5CEQ6roHKkrd4jnzP6c=
-Date:   Tue, 2 Apr 2019 16:03:51 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, peterhuewe@gmx.de,
-        jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
-        linux-kernel@microsoft.com, bryankel@microsoft.com,
-        thiruan@microsoft.com, suredd@microsoft.com, arnd@arndb.de,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Subject: Re: [PATCH 1/2] ftpm: dt-binding: add dts documentation for fTPM
- driver
-Message-ID: <20190402200351.GC19373@sasha-vm>
+        Tue, 2 Apr 2019 16:56:47 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:42133 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725965AbfDBU4q (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 2 Apr 2019 16:56:46 -0400
+Received: by mail-pl1-f194.google.com with SMTP id cv12so6858294plb.9
+        for <linux-integrity@vger.kernel.org>; Tue, 02 Apr 2019 13:56:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=EYKLdY6VyvyHg5WVumgUzzBQ5B/hLzzNAlcTTAbd+rY=;
+        b=LDh0YzSd7555V1WVvFxE+b5+NEnsVT9IlHFA3ybvM9Xyl3TA/CYn/ADGzVu2lGV/mr
+         A2HIhA4QqG94oJX3uS8Ok/w0K6oeF1lF/K06ldl06PVcCfoeD5UtYquThwUdy/QnAOtD
+         HPJSpchixKboM9B35KnyCh5SJCaPwLx5V93AXu8PNACHAJ7yHklLPuGPaE3DM868BlAB
+         a5Y0far0i/OWgPIn80jADs/SJAPGbCl+/xdW7oNy/Wh0lhGg8xiHtL9M7xfgBfGveFSE
+         /I1FOfiKM9UHkn0mo+ZjlCTxSC6Xii7qkPbIEamLrQenFG6cffbrdftIx8KWxvvJpBhI
+         7QqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=EYKLdY6VyvyHg5WVumgUzzBQ5B/hLzzNAlcTTAbd+rY=;
+        b=nXzje8BcbW9UUOWAso6Ky8U+3LDbUc3wW4wD6jphBT33oyvmyL678XfBgxWqGG0OJ9
+         V2snyfO/BLMMEth2Qqtm5gFj5hlC9P1o/kepeuUOtOpjqO9diRgv8LhwDQy6IJURvTMW
+         Iz6f8VLlI8lu++EQFgzQkA2QeYGvT1tps6Ay/CfPJr2xBqtqWAvNMeLd/8wAhOsb0DCx
+         AlgntqNHYI88YTJNfGGN4pvvKhEXzLmJN8+wklUecXXtk2EaSSNN/qAMzmY1tbuuYGmh
+         qvItfkEAIvUazPCa8EK3e6Bi6iivtWv2LT+Qr3ZhO5m1I1ovNH+iez6biV1dr5u/9ZJ7
+         Y4vQ==
+X-Gm-Message-State: APjAAAUv5LOLjMWSmhbOjsU8Z41aodAPiolb5BMZZ/iEulm4OcNPwTVX
+        FH2IBA6vDBX9+bBcaVxEXRiyNw==
+X-Google-Smtp-Source: APXvYqyP507inA3zCYvSl+UW4Lt1TrnwFd+CigBBWdn6ZfyH533TJ1jJWcdv6LYshg6z0bzdIKecVQ==
+X-Received: by 2002:a17:902:6b81:: with SMTP id p1mr73367002plk.106.1554238606233;
+        Tue, 02 Apr 2019 13:56:46 -0700 (PDT)
+Received: from shemminger-XPS-13-9360 (204-195-22-127.wavecable.com. [204.195.22.127])
+        by smtp.gmail.com with ESMTPSA id i10sm13140746pfj.7.2019.04.02.13.56.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Apr 2019 13:56:46 -0700 (PDT)
+Date:   Tue, 2 Apr 2019 13:56:43 -0700
+From:   Stephen Hemminger <stephen@networkplumber.org>
+To:     "Sasha Levin" <sashal@kernel.org>
+Cc:     <robh+dt@kernel.org>, <mark.rutland@arm.com>, <peterhuewe@gmx.de>,
+        <jarkko.sakkinen@linux.intel.com>, <jgg@ziepe.ca>,
+        "Microsoft Linux Kernel List" <linux-kernel@microsoft.com>,
+        "Bryan Kelly (CSI)" <bryankel@microsoft.com>,
+        "Thirupathaiah Annapureddy" <thiruan@microsoft.com>,
+        "Sudhakar Evuri" <suredd@microsoft.com>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-integrity@vger.kernel.org>
+Subject: Re: [PATCH 2/2] ftpm: firmware TPM running in TEE
+Message-ID: <20190402135643.02443863@shemminger-XPS-13-9360>
+In-Reply-To: <20190402193316.15144-2-sashal@kernel.org>
 References: <20190402193316.15144-1-sashal@kernel.org>
- <20190402193732.GA26193@kroah.com>
+        <20190402193316.15144-2-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190402193732.GA26193@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Apr 02, 2019 at 09:37:32PM +0200, Greg KH wrote:
->On Tue, Apr 02, 2019 at 03:33:15PM -0400, Sasha Levin wrote:
->> Signed-off-by: Sasha Levin <sashal@kernel.org>
->> ---
->
->I know I don't take patches without any changelog text :)
+On Tue, 2 Apr 2019 12:33:16 -0700
+"Sasha Levin" <sashal@kernel.org> wrote:
 
-I honestly don't have anything meaningful to add in the changelog, and
-looking at similar commits under Documentation/devicetree/bindings/ that
-just add a new binding, they have a very similar changelog as well (see
-204d94e63e22, 772bf73ed4dc, and b805c403c859 for example).
+> +/*
+> + * ftpm_tee_tpm_op_recv retrieve fTPM response.
+> + * @param: chip, the tpm_chip description as specified in
+> driver/char/tpm/tpm.h.
+> + * @param: buf,	the buffer to store data.
+> + * @param: count, the number of bytes to read.
+> + * @return: In case of success the number of bytes received.
+> + *	    In other case, a < 0 value describing the issue.
+> + */
 
-While I could add meaningless text which basically copies the subject
-line, I don't think it will solve the concern you're pointing out here.
+You are using a docbook style comment but it doesn't start with
+docbook prefix.
 
-There is a lot of documentation for the fTPM driver which is listed in
-the following patch, but it's not relevant to this patch at all.
-
---
-Thanks,
-Sasha
+/**
+ * ftpm_tee_tpm_op_recv retrieve fTPM response.
+ *
+ * @param: chip, the tpm_chip description as specified in driver/char/tpm/tpm.h.
+ * @param: buf,	the buffer to store data.
+ * @param: count, the number of bytes to read.
+ * @return: In case of success the number of bytes received.
+ *	    In other case, a < 0 value describing the issue.
+ */
