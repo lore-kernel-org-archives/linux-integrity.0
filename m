@@ -2,46 +2,45 @@ Return-Path: <SRS0=3Dhz=SE=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75273C4360F
-	for <linux-integrity@archiver.kernel.org>; Tue,  2 Apr 2019 19:37:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9ABCC4360F
+	for <linux-integrity@archiver.kernel.org>; Tue,  2 Apr 2019 20:03:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44CC92070D
-	for <linux-integrity@archiver.kernel.org>; Tue,  2 Apr 2019 19:37:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADB3B2084B
+	for <linux-integrity@archiver.kernel.org>; Tue,  2 Apr 2019 20:03:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554233860;
-	bh=lqdl/wqQSBRmpSFyVR/SMGOasWuRJLRa0QFv9x5+XOE=;
+	s=default; t=1554235433;
+	bh=nWIzEIQerNDb48vgC2nwFPOJT7EYYU3hn092JK5R+ec=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=t9rqBmevg1YLD3MtOjwA+qg5nbjgMEvoc5MNom3odHt9wcqsWeVDXZT4lYmkMFbIj
-	 oCOsF85uqV2b0KzdDjNiHBnSQ4XkHm6mN1cAndmUdPbEDEC7P8RwoinQMYei8yXmqc
-	 EUqBbTODPejOFAVoVcGNLQi/i94I9UMokFdxmgqk=
+	b=dchds2sCboBfwyy76mMrnn0jt/X7WHDdJB7/KbzIcATOj7dilSxw9RYhIGy1QhlZR
+	 +khxrWfZBZDIUggIkUNAQruqY4eOah27ScRTB1JHxh/HLuaM7nxVOuRjg8y8NDvd51
+	 yHGP5gaIKc2A+eInjGjDmRHYjegV/8qsmL4R4Yxg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728797AbfDBThf (ORCPT
+        id S1726316AbfDBUDx (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 2 Apr 2019 15:37:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59098 "EHLO mail.kernel.org"
+        Tue, 2 Apr 2019 16:03:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725991AbfDBThf (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 2 Apr 2019 15:37:35 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1725812AbfDBUDx (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 2 Apr 2019 16:03:53 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34DC32070D;
-        Tue,  2 Apr 2019 19:37:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49EBF2082C;
+        Tue,  2 Apr 2019 20:03:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1554233854;
-        bh=lqdl/wqQSBRmpSFyVR/SMGOasWuRJLRa0QFv9x5+XOE=;
+        s=default; t=1554235432;
+        bh=nWIzEIQerNDb48vgC2nwFPOJT7EYYU3hn092JK5R+ec=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Uu1VDcrUuf9hQxvY6f0UzqFD4+JcdNu4TKeVxWcq74ovPRFnvMRyTDICEUWeOfZ1l
-         VTf6eXs45wCr1ZSdU2ZOTenUImadEJRccS29GJdyvG7EpIX3J9ZI5YXdwFBjrI5LIX
-         fr4Td4VZrwMnMai8KYavRE1dtbn7SQP0bqnOdPDE=
-Date:   Tue, 2 Apr 2019 21:37:32 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Sasha Levin <sashal@kernel.org>
+        b=CDrasPwg09SsKK1q9ZLg9A6mABL2ia2p8KJhvij3y3ZmZuttuXdpyL3jmMcW105h4
+         TOfzXrR58qr4Ydy8If1GlTnBydXM8P5eM382nxj9eGXt1/PTbv/5geNThgCr1dFaAL
+         CBZJfR6+s0Lf8QIAc2eVF5CEQ6roHKkrd4jnzP6c=
+Date:   Tue, 2 Apr 2019 16:03:51 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
 Cc:     robh+dt@kernel.org, mark.rutland@arm.com, peterhuewe@gmx.de,
         jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
         linux-kernel@microsoft.com, bryankel@microsoft.com,
@@ -50,21 +49,37 @@ Cc:     robh+dt@kernel.org, mark.rutland@arm.com, peterhuewe@gmx.de,
         linux-integrity@vger.kernel.org
 Subject: Re: [PATCH 1/2] ftpm: dt-binding: add dts documentation for fTPM
  driver
-Message-ID: <20190402193732.GA26193@kroah.com>
+Message-ID: <20190402200351.GC19373@sasha-vm>
 References: <20190402193316.15144-1-sashal@kernel.org>
+ <20190402193732.GA26193@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20190402193316.15144-1-sashal@kernel.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190402193732.GA26193@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Apr 02, 2019 at 03:33:15PM -0400, Sasha Levin wrote:
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
+On Tue, Apr 02, 2019 at 09:37:32PM +0200, Greg KH wrote:
+>On Tue, Apr 02, 2019 at 03:33:15PM -0400, Sasha Levin wrote:
+>> Signed-off-by: Sasha Levin <sashal@kernel.org>
+>> ---
+>
+>I know I don't take patches without any changelog text :)
 
-I know I don't take patches without any changelog text :)
+I honestly don't have anything meaningful to add in the changelog, and
+looking at similar commits under Documentation/devicetree/bindings/ that
+just add a new binding, they have a very similar changelog as well (see
+204d94e63e22, 772bf73ed4dc, and b805c403c859 for example).
 
+While I could add meaningless text which basically copies the subject
+line, I don't think it will solve the concern you're pointing out here.
+
+There is a lot of documentation for the fTPM driver which is listed in
+the following patch, but it's not relevant to this patch at all.
+
+--
+Thanks,
+Sasha
