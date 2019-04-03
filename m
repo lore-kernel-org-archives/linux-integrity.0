@@ -2,124 +2,201 @@ Return-Path: <SRS0=2lTb=SF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00533C10F0B
-	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 12:11:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F016C10F06
+	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 12:40:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB7A820830
-	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 12:11:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 011092084C
+	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 12:40:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="ofL9xh8b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726074AbfDCMLk (ORCPT
+        id S1726847AbfDCMks (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 3 Apr 2019 08:11:40 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47828 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725956AbfDCMLk (ORCPT
+        Wed, 3 Apr 2019 08:40:48 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:39700 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726843AbfDCMkr (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 3 Apr 2019 08:11:40 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x33C5wgc121553
-        for <linux-integrity@vger.kernel.org>; Wed, 3 Apr 2019 08:11:39 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2rmvb9rty2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 03 Apr 2019 08:11:39 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 3 Apr 2019 13:11:35 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 3 Apr 2019 13:11:32 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x33CBVHX48890098
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 3 Apr 2019 12:11:31 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 028F7A4057;
-        Wed,  3 Apr 2019 12:11:31 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DBC50A4051;
-        Wed,  3 Apr 2019 12:11:28 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.94.125])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  3 Apr 2019 12:11:28 +0000 (GMT)
-Subject: Re: Should mprotect(..., PROT_EXEC) be checked by IMA?
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Matthew Garrett <mjg59@google.com>,
-        Igor Zhbanov <i.zhbanov@omprussia.ru>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Paul Moore <paul@paul-moore.com>,
-        John Johansen <john.johansen@canonical.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Jann Horn <jannh@google.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Date:   Wed, 03 Apr 2019 08:11:18 -0400
-In-Reply-To: <CACdnJusPpis1JJgfNOrQoqPcVk0q2OGbosrXOVtZmG0cSqkotw@mail.gmail.com>
-References: <cce2c4c7-5333-41c3-aeef-34d43e63acb0@omprussia.ru>
-         <1552945715.8658.299.camel@linux.ibm.com>
-         <452752df-98f9-c361-878a-5df84ab36847@omprussia.ru>
-         <1552994559.4899.26.camel@linux.ibm.com>
-         <84145490-6f70-214f-8241-42d556590240@omprussia.ru>
-         <1553015134.4899.82.camel@linux.ibm.com>
-         <a9830bde-8157-6078-b544-fcffb20d2501@omprussia.ru>
-         <CACdnJut6YfLnq-nCC1hHTrKYXabHoSEXN1wMuCyVybU+o_iwCg@mail.gmail.com>
-         <1553167318.4899.382.camel@linux.ibm.com>
-         <dab923ca-ef53-4af2-034a-bea4151a4e25@omprussia.ru>
-         <CACdnJuvVqibDdd+MLKOHqEfdngTk=GSkfybj1jS3MpmC7rjyHg@mail.gmail.com>
-         <07347317-ee71-83c1-384a-0c3439980af7@omprussia.ru>
-         <1553793463.8711.26.camel@linux.ibm.com>
-         <92718382-8669-748f-10d8-02fa21225210@omprussia.ru>
-         <1553857187.9420.49.camel@linux.ibm.com>
-         <b5a89692-4c93-80b3-37e5-41265765cdc3@tycho.nsa.gov>
-         <cb46d5ba-30de-664f-67d4-646da4592a6f@omprussia.ru>
-         <CACdnJusPpis1JJgfNOrQoqPcVk0q2OGbosrXOVtZmG0cSqkotw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19040312-4275-0000-0000-00000323CB7F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19040312-4276-0000-0000-00003832D25F
-Message-Id: <1554293478.7309.54.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-03_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1904030084
+        Wed, 3 Apr 2019 08:40:47 -0400
+Received: by mail-qk1-f195.google.com with SMTP id c189so10010355qke.6
+        for <linux-integrity@vger.kernel.org>; Wed, 03 Apr 2019 05:40:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=B2LGbGNy82+HNqlZmbGsF3LJX7qAAyCm7XTnYaIPA3Q=;
+        b=ofL9xh8b12klEZfKeIcN0jMmgPpksCAageVPDvPx8TGC6vDf5sLsiUerAnLm39Fzzs
+         iwm+A1uyOCKc1rTlsSQpoXgc6DQGKvoI0/i2b5nxVrE0Tbjk7Tm2pixV6w0JcAHAG8FW
+         IJwSrxUwf5D1mvbXVINWxYx++NKlopO7GncLicr3PwxKAyrKjMadJyOVXn+VM9e2Purq
+         AbsGYEQsPtxWs/EuNaCNyz4qF9GT2w38iYs1plGdDgyhOyachclGd8MExcEHpoA0XmNu
+         Rd6iGMwYVRu3n1KFkNpgaUlUiKI/hEWLitx0Sn234tW6tQFgMPXW/UH7+pX/mK2pq5Gw
+         kA6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=B2LGbGNy82+HNqlZmbGsF3LJX7qAAyCm7XTnYaIPA3Q=;
+        b=AgLj+h6fZRMh8DFwbiRHu+9sB2wPm6L58UmUX+YgNB0ltnSMwv50fUIBRM+08+IB6C
+         DqiHKoogECJQRPLNSvA1C34+4obEPrrkfAgr2z+iiVWfEcFVHVCOxj/v1dDsSPwKcTV9
+         naZ4AR34EmLj3TSBI66SsA3amf5kgeDxyCiz0NtzGU1BWfUNhpetXLUk7HuI5hLkHKEm
+         qq7NkAj9Qhwxgia7eaTOxfAl/i9RompmeQUTpRozx4dESk2lW24yIl5enyJctrbqfEuw
+         rniSI49Fl7VmogftYmi4x19G422mGjTchQ/DQxJQHQkONBalPIlV1woMOe4bB9IGxqcv
+         eiRw==
+X-Gm-Message-State: APjAAAU1NNsL6KYOcR+Iljkr649daGjQitCmmxtQCkcg7Uybwg/61JpI
+        mu0c7Jf1/i+3rLGYz0lSvfZu7A==
+X-Google-Smtp-Source: APXvYqx+OruPW09bIbJNgP6dxsH1k+8tutdF68NTl2EV2hpXUgfwkk52iDxPcUyP53YbtJnwWkHEjA==
+X-Received: by 2002:a37:a656:: with SMTP id p83mr61877322qke.91.1554295246143;
+        Wed, 03 Apr 2019 05:40:46 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-49-251.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.49.251])
+        by smtp.gmail.com with ESMTPSA id l6sm8731678qtd.0.2019.04.03.05.40.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 03 Apr 2019 05:40:45 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hBfC8-00054G-Mn; Wed, 03 Apr 2019 09:40:44 -0300
+Date:   Wed, 3 Apr 2019 09:40:44 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, peterhuewe@gmx.de,
+        jarkko.sakkinen@linux.intel.com, linux-kernel@microsoft.com,
+        bryankel@microsoft.com, thiruan@microsoft.com,
+        suredd@microsoft.com, arnd@arndb.de, gregkh@linuxfoundation.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Subject: Re: [PATCH 2/2] ftpm: firmware TPM running in TEE
+Message-ID: <20190403124044.GA15230@ziepe.ca>
+References: <20190402193316.15144-1-sashal@kernel.org>
+ <20190402193316.15144-2-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190402193316.15144-2-sashal@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2019-04-02 at 15:31 -0700, Matthew Garrett wrote:
-> On Fri, Mar 29, 2019 at 5:50 AM Igor Zhbanov <i.zhbanov@omprussia.ru> wrote:
-> > I want to be sure that no unsigned code page could be executed. So exploits
-> > could only be of ROP kind and not being able to download any extra code
-> > from their servers. That's why I found that disabling of anonymous executable
-> > pages could be useful for that (as well as disabling of making executable
-> > pages writable to modify already mapped code). In conjunction with IMA it
-> > should guarantee that no untrusted code could be executed.
-> 
-> Remember that many interpreted languages allow execution of code
-> provided to them on the command line (eg, python -c) and also grant
-> access to arbitrary syscalls, so there's still no guarantee that
-> you're only executing trusted code.
+On Tue, Apr 02, 2019 at 03:33:16PM -0400, Sasha Levin wrote:
 
-Interpreters are a known concern, as Yves-Alexis Perez pointed out in
-his LSS-2018 Europe talk[1].
+> +/*
+> + * Undo what has been done in ftpm_tee_probe
+> + */
+> +static void ftpm_tee_deinit(struct ftpm_tee_private *pvt_data)
+> +{
+> +	/* Release the chip */
+> +	if (pvt_data->state & STATE_REGISTERED_FLAG)
+> +		tpm_chip_unregister(pvt_data->chip);
+> +
+> +	if (pvt_data->ctx != NULL)	{
+> +
+> +		/* Free the shared memory pool */
+> +		if (pvt_data->state & STATE_TEE_SHMALLOC_FLAG)
+> +			tee_shm_free(pvt_data->shm);
+> +
+> +		/* close the existing session with fTPM TA*/
+> +		if (pvt_data->state & STATE_TEE_OPENED_FLAG)
+> +			tee_client_close_session(pvt_data->ctx,
+> +				pvt_data->session);
+> +
+> +		/* close the context with TEE driver */
+> +		tee_client_close_context(pvt_data->ctx);
+> +	}
 
-Mimi
+all these flags are ugly, just use a normal goto unwind during probe
+please
 
-[1] https://events.linuxfoundation.org/wp-content/uploads/2017/12/Linu
-x-Kernel-Security-Contributions-by-ANSSI-Yves-Alexis-Perez-ANSSI.pdf
 
+> +
+> +	/* memory allocated with devm_kzalloc() is freed automatically */
+> +}
+> +
+> +/*
+> + * ftpm_tee_probe initialize the fTPM
+> + * @param: pdev, the platform_device description.
+> + * @return: 0 in case of success.
+> + *	 or a negative value describing the error.
+> + */
+> +static int ftpm_tee_probe(struct platform_device *pdev)
+> +{
+> +	int rc;
+> +	struct tpm_chip *chip;
+> +	struct device *dev = &pdev->dev;
+> +	struct ftpm_tee_private *pvt_data = NULL;
+> +	struct tee_ioctl_open_session_arg sess_arg;
+> +
+> +	dev_dbg(dev, "%s++\n", __func__);
+
+Please don't push tracing like this to the upstream kernel, we have
+ftrace and what not to do this generally :(
+
+> +	pvt_data = devm_kzalloc(dev, sizeof(struct ftpm_tee_private),
+> +				GFP_KERNEL);
+> +	if (!pvt_data)
+> +		return -ENOMEM;
+> +
+> +	dev_set_drvdata(dev, pvt_data);
+> +
+> +	/* Open context with TEE driver */
+> +	pvt_data->ctx = tee_client_open_context(NULL, ftpm_tee_match, NULL,
+> +						NULL);
+> +	if (IS_ERR(pvt_data->ctx))	{
+> +		dev_err(dev, "%s:tee_client_open_context failed\n", __func__);
+> +		return -EPROBE_DEFER;
+> +	}
+> +
+> +	/* Open a session with fTPM TA*/
+> +	memset(&sess_arg, 0, sizeof(sess_arg));
+> +	memcpy(sess_arg.uuid, ftpm_ta_uuid.b, TEE_IOCTL_UUID_LEN);
+> +	sess_arg.clnt_login = TEE_IOCTL_LOGIN_PUBLIC;
+> +	sess_arg.num_params = 0;
+> +
+> +	rc = tee_client_open_session(pvt_data->ctx, &sess_arg, NULL);
+> +	if ((rc < 0) || (sess_arg.ret != 0)) {
+> +		dev_err(dev, "%s:tee_client_open_session failed, err=%x\n",
+> +			__func__, sess_arg.ret);
+> +		rc = -EINVAL;
+> +		goto out;
+> +	}
+> +	pvt_data->session = sess_arg.session;
+> +	pvt_data->state |= STATE_TEE_OPENED_FLAG;
+> +
+> +	/* Allocate dynamic shared memory with fTPM TA */
+> +	pvt_data->shm = tee_shm_alloc(pvt_data->ctx,
+> +				(MAX_COMMAND_SIZE + MAX_RESPONSE_SIZE),
+> +				TEE_SHM_MAPPED | TEE_SHM_DMA_BUF);
+> +	if (IS_ERR(pvt_data->shm)) {
+> +		dev_err(dev, "%s:tee_shm_alloc failed\n", __func__);
+> +		rc = -ENOMEM;
+> +		goto out;
+> +	}
+> +	pvt_data->state |= STATE_TEE_SHMALLOC_FLAG;
+> +
+> +	/* Allocate new struct tpm_chip instance */
+> +	chip = tpm_chip_alloc(dev, &ftpm_tee_tpm_ops);
+
+Why not tpmm_chip_alloc ? Using devm in other places
+
+Doesn't this leak memory? I don't see a put_device cleanup for chip_alloc?
+
+> +	if (IS_ERR(chip)) {
+> +		dev_err(dev, "%s:tpm_chip_alloc failed\n", __func__);
+> +		rc = PTR_ERR(chip);
+> +		goto out;
+> +	}
+> +
+> +	pvt_data->chip = chip;
+> +	pvt_data->chip->flags |= TPM_CHIP_FLAG_TPM2;
+> +
+> +	/* Create a character device for the fTPM */
+> +	rc = tpm_chip_register(pvt_data->chip);
+
+It is a bad idea to do things after tpm_chip_register, it should be
+the last thing done during probe except for error cleanup via a goto
+unwind.
+
+Jason
