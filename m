@@ -2,210 +2,128 @@ Return-Path: <SRS0=2lTb=SF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E18C4360F
-	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 14:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC87FC4360F
+	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 14:33:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D84182084C
-	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 14:06:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99E562084C
+	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 14:33:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726723AbfDCOGh (ORCPT
+        id S1726218AbfDCOdd (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 3 Apr 2019 10:06:37 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57308 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726168AbfDCOGh (ORCPT
+        Wed, 3 Apr 2019 10:33:33 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52420 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726151AbfDCOdc (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 3 Apr 2019 10:06:37 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x33Dw2QP033872
-        for <linux-integrity@vger.kernel.org>; Wed, 3 Apr 2019 10:06:35 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2rmup884q4-1
+        Wed, 3 Apr 2019 10:33:32 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x33EUQCl079059
+        for <linux-integrity@vger.kernel.org>; Wed, 3 Apr 2019 10:33:31 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2rmxk08gpv-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 03 Apr 2019 10:06:33 -0400
+        for <linux-integrity@vger.kernel.org>; Wed, 03 Apr 2019 10:33:31 -0400
 Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 3 Apr 2019 15:06:25 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 3 Apr 2019 15:33:29 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 3 Apr 2019 15:06:22 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x33E6LE351445816
+        Wed, 3 Apr 2019 15:33:24 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x33EXN3d52035682
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 3 Apr 2019 14:06:21 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 347A5AE053;
-        Wed,  3 Apr 2019 14:06:21 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 53120AE045;
-        Wed,  3 Apr 2019 14:06:20 +0000 (GMT)
+        Wed, 3 Apr 2019 14:33:23 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0532C4C040;
+        Wed,  3 Apr 2019 14:33:23 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8258B4C04A;
+        Wed,  3 Apr 2019 14:33:21 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.80.94.125])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  3 Apr 2019 14:06:20 +0000 (GMT)
-Subject: [PATCH] selftests/kexec: update get_secureboot_mode
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  3 Apr 2019 14:33:21 +0000 (GMT)
+Subject: Re: Should mprotect(..., PROT_EXEC) be checked by IMA?
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-kselftest@vger.kernel.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Petr Vorel <pvorel@suse.cz>,
-        Dave Young <dyoung@redhat.com>,
-        Matthew Garrett <mjg59@google.com>
-Date:   Wed, 03 Apr 2019 10:06:09 -0400
-In-Reply-To: <1553607257-18906-1-git-send-email-zohar@linux.ibm.com>
-References: <1553607257-18906-1-git-send-email-zohar@linux.ibm.com>
+To:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Igor Zhbanov <i.zhbanov@omprussia.ru>,
+        Matthew Garrett <mjg59@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>,
+        John Johansen <john.johansen@canonical.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Date:   Wed, 03 Apr 2019 10:33:10 -0400
+In-Reply-To: <648f1a64-e95d-d929-62dc-06decaf5a14b@tycho.nsa.gov>
+References: <cce2c4c7-5333-41c3-aeef-34d43e63acb0@omprussia.ru>
+         <1552945715.8658.299.camel@linux.ibm.com>
+         <452752df-98f9-c361-878a-5df84ab36847@omprussia.ru>
+         <1552994559.4899.26.camel@linux.ibm.com>
+         <84145490-6f70-214f-8241-42d556590240@omprussia.ru>
+         <1553015134.4899.82.camel@linux.ibm.com>
+         <a9830bde-8157-6078-b544-fcffb20d2501@omprussia.ru>
+         <CACdnJut6YfLnq-nCC1hHTrKYXabHoSEXN1wMuCyVybU+o_iwCg@mail.gmail.com>
+         <1553167318.4899.382.camel@linux.ibm.com>
+         <dab923ca-ef53-4af2-034a-bea4151a4e25@omprussia.ru>
+         <CACdnJuvVqibDdd+MLKOHqEfdngTk=GSkfybj1jS3MpmC7rjyHg@mail.gmail.com>
+         <07347317-ee71-83c1-384a-0c3439980af7@omprussia.ru>
+         <1553793463.8711.26.camel@linux.ibm.com>
+         <92718382-8669-748f-10d8-02fa21225210@omprussia.ru>
+         <1553857187.9420.49.camel@linux.ibm.com>
+         <b5a89692-4c93-80b3-37e5-41265765cdc3@tycho.nsa.gov>
+         <cb46d5ba-30de-664f-67d4-646da4592a6f@omprussia.ru>
+         <1554292678.7309.47.camel@linux.ibm.com>
+         <648f1a64-e95d-d929-62dc-06decaf5a14b@tycho.nsa.gov>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 19040314-4275-0000-0000-00000323D782
+x-cbid: 19040314-0028-0000-0000-0000035CDAEB
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19040314-4276-0000-0000-00003832DEE1
-Message-Id: <1554300369.7309.59.camel@linux.ibm.com>
+x-cbparentid: 19040314-0029-0000-0000-0000241BE4AF
+Message-Id: <1554301990.7309.71.camel@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-03_09:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=18 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1904030096
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1904030098
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The get_secureboot_mode() function unnecessarily requires both
-CONFIG_EFIVAR_FS and CONFIG_EFI_VARS to be enabled to determine if the
-system is booted in secure boot mode.  On some systems the old EFI
-variable support is not enabled or, possibly, even implemented.
+On Wed, 2019-04-03 at 09:10 -0400, Stephen Smalley wrote:
+> On 4/3/19 7:57 AM, Mimi Zohar wrote:
 
-This patch first checks the efivars filesystem for the SecureBoot and
-SetupMode flags, but falls back to using the old EFI variable support.
+> > Let's separate the different types of attacks.  From an IMA
+> > perspective, memory attacks are out of scope.  That leaves mmap'ed
+> > files, possibly just mmap'ed shared files.  Currently IMA can be
+> > configured to verify a file's integrity, based on signatures, being
+> > mmap'ed execute.  Assuming that not all files opened require a file
+> > signature, a file could be mmap'ed read/write and later changed to
+> > execute to circumvent the mmap'ed execute signature requirement.  If
+> > the existing LSMs are able to prevent this sort of attack, we could
+> > just document this requirement.
+> 
+> I guess I don't understand why IMA isn't already being called from 
+> security_file_mprotect(). security_file_mprotect() could just call 
+> ima_file_mmap(vma->vm_file, prot) if all of the security hooks pass.
+> 
+> SELinux can be used to prevent unauthorized mprotect PROT_EXEC but it 
+> won't perform a measurement of the file if it is allowed by policy.
 
-The "secure_boot_file" and "setup_mode_file" couldn't be quoted due to
-globbing.  This patch also removes the globbing.
+From a measurement perspective, this will at least measure the file,
+but the call to ima_file_mmap() will verify the file signature against
+the file, not what is currently in memory, right?
 
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
----
- tools/testing/selftests/kexec/kexec_common_lib.sh | 87 +++++++++++++++++------
- 1 file changed, 67 insertions(+), 20 deletions(-)
-
-diff --git a/tools/testing/selftests/kexec/kexec_common_lib.sh b/tools/testing/selftests/kexec/kexec_common_lib.sh
-index b7ac8f3fa025..4d3ff08bdb81 100755
---- a/tools/testing/selftests/kexec/kexec_common_lib.sh
-+++ b/tools/testing/selftests/kexec/kexec_common_lib.sh
-@@ -35,6 +35,64 @@ log_skip()
- }
- 
- # Check efivar SecureBoot-$(the UUID) and SetupMode-$(the UUID).
-+# (Based on kdump-lib.sh)
-+get_efivarfs_secureboot_mode()
-+{
-+	local efivarfs="/sys/firmware/efi/efivars"
-+	local secure_boot_file=""
-+	local setup_mode_file=""
-+	local secureboot_mode=0
-+	local setup_mode=0
-+
-+	# Make sure that efivar_fs is mounted in the normal location
-+	if ! grep -q "^\S\+ $efivarfs efivarfs" /proc/mounts; then
-+		log_info "efivars is not mounted on $efivarfs"
-+		return 0;
-+	fi
-+	secure_boot_file=$(find "$efivarfs" -name SecureBoot-* 2>/dev/null)
-+	setup_mode_file=$(find "$efivarfs" -name SetupMode-* 2>/dev/null)
-+	if [ -f "$secure_boot_file" ] && [ -f "$setup_mode_file" ]; then
-+		secureboot_mode=$(hexdump -v -e '/1 "%d\ "' \
-+			"$secure_boot_file"|cut -d' ' -f 5)
-+		setup_mode=$(hexdump -v -e '/1 "%d\ "' \
-+			"$setup_mode_file"|cut -d' ' -f 5)
-+
-+		if [ $secureboot_mode -eq 1 ] && [ $setup_mode -eq 0 ]; then
-+			log_info "secure boot mode enabled (efivar_fs)"
-+			return 1;
-+		fi
-+	fi
-+	return 0;
-+}
-+
-+get_efi_var_secureboot_mode()
-+{
-+	local efi_vars="/sys/firmware/efi/vars"
-+	local secure_boot_file=""
-+	local setup_mode_file=""
-+	local secureboot_mode=0
-+	local setup_mode=0
-+
-+	if [ ! -d "$efi_vars" ]; then
-+		log_skip "efi_vars is not enabled\n"
-+		return 0;
-+	fi
-+	secure_boot_file=$(find "$efi_vars" -name SecureBoot-* 2>/dev/null)
-+	setup_mode_file=$(find "$efi_vars" -name SetupMode-* 2>/dev/null)
-+	if [ -f "$secure_boot_file/data" ] && \
-+	   [ -f "$setup_mode_file/data" ]; then
-+		secureboot_mode=`od -An -t u1 "$secure_boot_file/data"`
-+		setup_mode=`od -An -t u1 "$setup_mode_file/data"`
-+
-+		if [ $secureboot_mode -eq 1 ] && [ $setup_mode -eq 0 ]; then
-+			log_info "secure boot mode enabled (efi_var)"
-+			return 1;
-+		fi
-+	fi
-+	return 0;
-+}
-+
-+# Check efivar SecureBoot-$(the UUID) and SetupMode-$(the UUID).
- # The secure boot mode can be accessed either as the last integer
- # of "od -An -t u1 /sys/firmware/efi/efivars/SecureBoot-*" or from
- # "od -An -t u1 /sys/firmware/efi/vars/SecureBoot-*/data".  The efi
-@@ -42,32 +100,21 @@ log_skip()
- # Return 1 for SecureBoot mode enabled and SetupMode mode disabled.
- get_secureboot_mode()
- {
--	local efivarfs="/sys/firmware/efi/efivars"
--	local secure_boot_file="$efivarfs/../vars/SecureBoot-*/data"
--	local setup_mode_file="$efivarfs/../vars/SetupMode-*/data"
- 	local secureboot_mode=0
--	local setup_mode=0
- 
--	# Make sure that efivars is mounted in the normal location
--	if ! grep -q "^\S\+ $efivarfs efivarfs" /proc/mounts; then
--		log_skip "efivars is not mounted on $efivarfs"
--	fi
-+	get_efivarfs_secureboot_mode
-+	secureboot_mode=$?
- 
--	# Due to globbing, quoting "secure_boot_file" and "setup_mode_file"
--	# is not possible.  (Todo: initialize variables using find or ls.)
--	if [ ! -e $secure_boot_file ] || [ ! -e $setup_mode_file ]; then
--		log_skip "unknown secureboot/setup mode"
-+	# fallback to using the efi_var files
-+	if [ $secureboot_mode -eq 0 ]; then
-+		get_efi_var_secureboot_mode
-+		secureboot_mode=$?
- 	fi
- 
--	secureboot_mode=`od -An -t u1 $secure_boot_file`
--	setup_mode=`od -An -t u1 $setup_mode_file`
--
--	if [ $secureboot_mode -eq 1 ] && [ $setup_mode -eq 0 ]; then
--		log_info "secure boot mode enabled"
--		return 1;
-+	if [ $secureboot_mode -eq 0 ]; then
-+		log_info "secure boot mode not enabled"
- 	fi
--	log_info "secure boot mode not enabled"
--	return 0;
-+	return $secureboot_mode;
- }
- 
- require_root_privileges()
--- 
-2.7.5
+Mimi
 
