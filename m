@@ -1,131 +1,118 @@
-Return-Path: <SRS0=3Dhz=SE=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=2lTb=SF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB3C0C4360F
-	for <linux-integrity@archiver.kernel.org>; Tue,  2 Apr 2019 23:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9D4C4360F
+	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 09:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC49C2084B
-	for <linux-integrity@archiver.kernel.org>; Tue,  2 Apr 2019 23:31:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DB7120830
+	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 09:59:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=omprussia.ru header.i=@omprussia.ru header.b="Fa8NBpG/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726155AbfDBXbc (ORCPT
+        id S1726524AbfDCJ7U (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 2 Apr 2019 19:31:32 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48876 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725912AbfDBXbb (ORCPT
+        Wed, 3 Apr 2019 05:59:20 -0400
+Received: from mail.omprussia.ru ([5.134.221.218]:52056 "EHLO
+        mail.omprussia.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbfDCJ7U (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 2 Apr 2019 19:31:31 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x32NSgKr001687
-        for <linux-integrity@vger.kernel.org>; Tue, 2 Apr 2019 19:31:30 -0400
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2rmg3e36nk-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 02 Apr 2019 19:31:30 -0400
-Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <cclaudio@linux.ibm.com>;
-        Wed, 3 Apr 2019 00:31:29 +0100
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 3 Apr 2019 00:31:24 +0100
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x32NVNwT30867688
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 2 Apr 2019 23:31:24 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D8B87BE056;
-        Tue,  2 Apr 2019 23:31:23 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 49305BE058;
-        Tue,  2 Apr 2019 23:31:21 +0000 (GMT)
-Received: from [9.18.235.111] (unknown [9.18.235.111])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue,  2 Apr 2019 23:31:20 +0000 (GMT)
-Subject: Re: [PATCH 0/4] Enabling secure boot on PowerNV systems
+        Wed, 3 Apr 2019 05:59:20 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.omprussia.ru (Postfix) with ESMTP id 947B7C64082;
+        Wed,  3 Apr 2019 12:59:17 +0300 (MSK)
+Received: from mail.omprussia.ru ([127.0.0.1])
+        by localhost (mail.omprussia.ru [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id P00T2jmuwxI9; Wed,  3 Apr 2019 12:59:17 +0300 (MSK)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.omprussia.ru (Postfix) with ESMTP id 343BBC64088;
+        Wed,  3 Apr 2019 12:59:17 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.omprussia.ru 343BBC64088
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=omprussia.ru;
+        s=EC9C64F2-3532-11E8-B653-5B7E995A80AF; t=1554285557;
+        bh=zH4k75Bc1+jYzZYv4yRQ1IGyvs5LwVmP0aFcT0zWRuc=;
+        h=To:From:Message-ID:Date:MIME-Version;
+        b=Fa8NBpG/cyfteDxsp3QA8WBWQTr9dSgV4zjhYwMnnOllF4JHfQ0ycQcZkCYnIW4e+
+         B6Fx4oglGfNQwvlzyOLolmS691ZIcxTRMGA3bNIKZSTiGCiasJSTlBxWfEzt8UtN0R
+         FA8qq6CXrjnqVQRJQcvo4On5Hr0POSfkzaTukxg5WVKO/x/xp7Avy2wHXZbQBpMVwH
+         2+eSPyE2hLJgt4VUcY6Vy/3i/4qefpyg/4N1KdVGNE/9VyY6LcTR+Kp8AjZryq58ur
+         C3/H9FJ8mfajZ+vrul8xENfKxCjk/7oDX6tKlOTEmhh2Z30PeQdKedk9gCCmPwjJ5h
+         7sz85HL2bfa9g==
+X-Virus-Scanned: amavisd-new at mail.omprussia.ru
+Received: from mail.omprussia.ru ([127.0.0.1])
+        by localhost (mail.omprussia.ru [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id UM3Sw1qF7TMU; Wed,  3 Apr 2019 12:59:17 +0300 (MSK)
+Received: from [10.189.20.33] (unknown [10.189.20.33])
+        by mail.omprussia.ru (Postfix) with ESMTPSA id EAB5CC64082;
+        Wed,  3 Apr 2019 12:59:16 +0300 (MSK)
+Subject: Re: Should mprotect(..., PROT_EXEC) be checked by IMA?
 To:     Matthew Garrett <mjg59@google.com>
-Cc:     linuxppc-dev@ozlabs.org, linux-efi <linux-efi@vger.kernel.org>,
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>,
+        John Johansen <john.johansen@canonical.com>,
         linux-integrity <linux-integrity@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        Matthew Garret <matthew.garret@nebula.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-References: <20190402181505.25037-1-cclaudio@linux.ibm.com>
- <CACdnJuumhkqTb4+1=QBiLmbW4xd3wW=MZu6Tj_KdaoTMhCN+Tg@mail.gmail.com>
- <4ce5e057-0702-b0d5-7bb2-cea5b22e2efa@linux.ibm.com>
- <CACdnJusBm93zwDqTXTx_QYsg1-aGUAAHm_qq8Lcx3TvGTxdmbg@mail.gmail.com>
-From:   Claudio Carvalho <cclaudio@linux.ibm.com>
-Date:   Tue, 2 Apr 2019 20:31:19 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.0
+        Jann Horn <jannh@google.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+References: <cce2c4c7-5333-41c3-aeef-34d43e63acb0@omprussia.ru>
+ <1552945715.8658.299.camel@linux.ibm.com>
+ <452752df-98f9-c361-878a-5df84ab36847@omprussia.ru>
+ <1552994559.4899.26.camel@linux.ibm.com>
+ <84145490-6f70-214f-8241-42d556590240@omprussia.ru>
+ <1553015134.4899.82.camel@linux.ibm.com>
+ <a9830bde-8157-6078-b544-fcffb20d2501@omprussia.ru>
+ <CACdnJut6YfLnq-nCC1hHTrKYXabHoSEXN1wMuCyVybU+o_iwCg@mail.gmail.com>
+ <1553167318.4899.382.camel@linux.ibm.com>
+ <dab923ca-ef53-4af2-034a-bea4151a4e25@omprussia.ru>
+ <CACdnJuvVqibDdd+MLKOHqEfdngTk=GSkfybj1jS3MpmC7rjyHg@mail.gmail.com>
+ <07347317-ee71-83c1-384a-0c3439980af7@omprussia.ru>
+ <1553793463.8711.26.camel@linux.ibm.com>
+ <92718382-8669-748f-10d8-02fa21225210@omprussia.ru>
+ <1553857187.9420.49.camel@linux.ibm.com>
+ <b5a89692-4c93-80b3-37e5-41265765cdc3@tycho.nsa.gov>
+ <cb46d5ba-30de-664f-67d4-646da4592a6f@omprussia.ru>
+ <CACdnJusPpis1JJgfNOrQoqPcVk0q2OGbosrXOVtZmG0cSqkotw@mail.gmail.com>
+From:   Igor Zhbanov <i.zhbanov@omprussia.ru>
+Message-ID: <11fcd3b2-afb9-74d2-100d-449df61433d1@omprussia.ru>
+Date:   Wed, 3 Apr 2019 12:59:24 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CACdnJusBm93zwDqTXTx_QYsg1-aGUAAHm_qq8Lcx3TvGTxdmbg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACdnJusPpis1JJgfNOrQoqPcVk0q2OGbosrXOVtZmG0cSqkotw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 19040223-8235-0000-0000-00000E78A12B
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010863; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000284; SDB=6.01183465; UDB=6.00619586; IPR=6.00964213;
- MB=3.00026266; MTD=3.00000008; XFM=3.00000015; UTC=2019-04-02 23:31:28
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19040223-8236-0000-0000-00004500EEB7
-Message-Id: <2208f156-d441-3082-2f4c-8030c84ef788@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-02_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1904020153
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+On 03.04.2019 1:31, Matthew Garrett wrote:
+> On Fri, Mar 29, 2019 at 5:50 AM Igor Zhbanov <i.zhbanov@omprussia.ru> wrote:
+>> I want to be sure that no unsigned code page could be executed. So
+>> exploits could only be of ROP kind and not being able to download
+>> any extra code from their servers. That's why I found that
+>> disabling of anonymous executable pages could be useful for that
+>> (as well as disabling of making executable pages writable to modify
+>> already mapped code). In conjunction with IMA it should guarantee
+>> that no untrusted code could be executed.
+> 
+> Remember that many interpreted languages allow execution of code
+> provided to them on the command line (eg, python -c) and also grant
+> access to arbitrary syscalls, so there's still no guarantee that
+> you're only executing trusted code.
 
-On 4/2/19 6:51 PM, Matthew Garrett wrote:
-> On Tue, Apr 2, 2019 at 2:11 PM Claudio Carvalho <cclaudio@linux.ibm.com> wrote:
->> We want to use the efivarfs for compatibility with existing userspace
->> tools. We will track and match any EFI changes that affect us.
-> So you implement the full PK/KEK/db/dbx/dbt infrastructure, and
-> updates are signed in the same way?
+Yes. But in some installations you can get rid of interpreters at all or limit
+the number of scripts they can open. For example you can require that all
+scripts have to be signed.
 
-For the first version, our firmware will implement a simplistic PK, KEK and
-db infrastructure (without dbx and dbt) where only the Setup and User modes
-will be supported.
+And having this feature as a per-process you could still limit the attack
+surface by restricting e.g. network services as they are constantly attacked.
 
-PK, KEK and db updates will be signed the same way, that is, using
-userspace tooling like efitools in PowerNV. As for the authentication
-descriptors, only the EFI_VARIABLE_AUTHENTICATION_2 descriptor will be
-supported.
-
-
->> Our use case is restricted to secure boot - this is not going to be a
->> general purpose EFI variable implementation.
-> In that case we might be better off with a generic interface for this
-> purpose that we can expose on all platforms that implement a secure
-> boot key hierarchy. Having an efivarfs that doesn't allow the creation
-> of arbitrary attributes may break other existing userland
-> expectations.
->
-For what it's worth, gsmi uses the efivars infrastructure for EFI-like
-variables.
-
-What might a generic interface look like?  It would have to work for
-existing secure boot solutions - including EFI - which would seem to imply
-changes to userspace tools.
-
-Claudio
-
-
+So are you saying that this feature doesn't worth to make it?
