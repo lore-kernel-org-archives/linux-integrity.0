@@ -2,201 +2,188 @@ Return-Path: <SRS0=2lTb=SF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F016C10F06
-	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 12:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A644C4360F
+	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 13:16:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 011092084C
-	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 12:40:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC1812084C
+	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 13:16:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="ofL9xh8b"
+	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="br3O5vKO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbfDCMks (ORCPT
+        id S1726151AbfDCNQe (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 3 Apr 2019 08:40:48 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:39700 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726843AbfDCMkr (ORCPT
+        Wed, 3 Apr 2019 09:16:34 -0400
+Received: from usfb19pa12.eemsg.mail.mil ([214.24.26.83]:31870 "EHLO
+        USFB19PA12.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726064AbfDCNQe (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 3 Apr 2019 08:40:47 -0400
-Received: by mail-qk1-f195.google.com with SMTP id c189so10010355qke.6
-        for <linux-integrity@vger.kernel.org>; Wed, 03 Apr 2019 05:40:46 -0700 (PDT)
+        Wed, 3 Apr 2019 09:16:34 -0400
+X-EEMSG-check-017: 268861643|USFB19PA12_EEMSG_MP8.csd.disa.mil
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by USFB19PA12.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 03 Apr 2019 13:16:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=B2LGbGNy82+HNqlZmbGsF3LJX7qAAyCm7XTnYaIPA3Q=;
-        b=ofL9xh8b12klEZfKeIcN0jMmgPpksCAageVPDvPx8TGC6vDf5sLsiUerAnLm39Fzzs
-         iwm+A1uyOCKc1rTlsSQpoXgc6DQGKvoI0/i2b5nxVrE0Tbjk7Tm2pixV6w0JcAHAG8FW
-         IJwSrxUwf5D1mvbXVINWxYx++NKlopO7GncLicr3PwxKAyrKjMadJyOVXn+VM9e2Purq
-         AbsGYEQsPtxWs/EuNaCNyz4qF9GT2w38iYs1plGdDgyhOyachclGd8MExcEHpoA0XmNu
-         Rd6iGMwYVRu3n1KFkNpgaUlUiKI/hEWLitx0Sn234tW6tQFgMPXW/UH7+pX/mK2pq5Gw
-         kA6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=B2LGbGNy82+HNqlZmbGsF3LJX7qAAyCm7XTnYaIPA3Q=;
-        b=AgLj+h6fZRMh8DFwbiRHu+9sB2wPm6L58UmUX+YgNB0ltnSMwv50fUIBRM+08+IB6C
-         DqiHKoogECJQRPLNSvA1C34+4obEPrrkfAgr2z+iiVWfEcFVHVCOxj/v1dDsSPwKcTV9
-         naZ4AR34EmLj3TSBI66SsA3amf5kgeDxyCiz0NtzGU1BWfUNhpetXLUk7HuI5hLkHKEm
-         qq7NkAj9Qhwxgia7eaTOxfAl/i9RompmeQUTpRozx4dESk2lW24yIl5enyJctrbqfEuw
-         rniSI49Fl7VmogftYmi4x19G422mGjTchQ/DQxJQHQkONBalPIlV1woMOe4bB9IGxqcv
-         eiRw==
-X-Gm-Message-State: APjAAAU1NNsL6KYOcR+Iljkr649daGjQitCmmxtQCkcg7Uybwg/61JpI
-        mu0c7Jf1/i+3rLGYz0lSvfZu7A==
-X-Google-Smtp-Source: APXvYqx+OruPW09bIbJNgP6dxsH1k+8tutdF68NTl2EV2hpXUgfwkk52iDxPcUyP53YbtJnwWkHEjA==
-X-Received: by 2002:a37:a656:: with SMTP id p83mr61877322qke.91.1554295246143;
-        Wed, 03 Apr 2019 05:40:46 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-49-251.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.49.251])
-        by smtp.gmail.com with ESMTPSA id l6sm8731678qtd.0.2019.04.03.05.40.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 03 Apr 2019 05:40:45 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hBfC8-00054G-Mn; Wed, 03 Apr 2019 09:40:44 -0300
-Date:   Wed, 3 Apr 2019 09:40:44 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, peterhuewe@gmx.de,
-        jarkko.sakkinen@linux.intel.com, linux-kernel@microsoft.com,
-        bryankel@microsoft.com, thiruan@microsoft.com,
-        suredd@microsoft.com, arnd@arndb.de, gregkh@linuxfoundation.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Subject: Re: [PATCH 2/2] ftpm: firmware TPM running in TEE
-Message-ID: <20190403124044.GA15230@ziepe.ca>
-References: <20190402193316.15144-1-sashal@kernel.org>
- <20190402193316.15144-2-sashal@kernel.org>
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1554297391; x=1585833391;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=rba3VkU5pEO0rwXWn7+aLnzAw5rmdFbE3bMrtGC4ITc=;
+  b=br3O5vKO7E4WMagmC0z/cFL9qgfGTL0XiXqbDXHQ/hZOSDpYv23iss+W
+   AI6ELJgTpYXDHVYeHpGp4HMQIrTJm1XaN7lRMFozzkahV/GVcdFifFPEs
+   aKE8xnaUW21eILXgCk3B5nOXRkzw0v5IzDCm9OPya83zWbjAb3qxLeKSW
+   LVslkTOSoqR2WtUw+8aansdpYIdc8UdDCpoEFPVeuVv3j7lObLhkAGE+1
+   T18OSkpUg8i6/pVqfT1WpGzGNVl+yNfoTX2ylHYGm5/qWfBQkONpzF+8i
+   RPLKNnCsZwxpK5b1uaykzD+gRTGfezLI1j6W8f2HTKirhsxegvC4NhoLu
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.60,304,1549929600"; 
+   d="scan'208";a="25814778"
+IronPort-PHdr: =?us-ascii?q?9a23=3A5UYVZB8Kp1mlX/9uRHKM819IXTAuvvDOBiVQ1K?=
+ =?us-ascii?q?B+1e0VIJqq85mqBkHD//Il1AaPAdyCraofwLGK++C4ACpcuM7H6ChDOLV3FD?=
+ =?us-ascii?q?Y9wf0MmAIhBMPXQWbaF9XNKxIAIcJZSVV+9Gu6O0UGUOz3ZlnVv2HgpWVKQk?=
+ =?us-ascii?q?a3OgV6PPn6FZDPhMqrye+y54fTYwJVjzahfL9+Nhq7oRjMusUMnYdvJKk9xx?=
+ =?us-ascii?q?XGr3BVf+ha2X5kKUickhrh+su85oJv/zhVt/k868NOTKL2crgiQ7dFFjomKW?=
+ =?us-ascii?q?c15MPqtRnHUwSC42YXX3sVnBRVHQXL9Qn2UZjtvCT0sOp9wzSaMtbtTb8oQz?=
+ =?us-ascii?q?Si7rxkRwHuhSwaKjM26mDXish3jKJGvBKsogF0zoDIbI2JMvd1Y7jQds0GS2?=
+ =?us-ascii?q?VfQslRVjRBAoKiYIsJE+oBJvtTo43kq1cTsReyGQygCeXhxT9Sgn/9wLM03e?=
+ =?us-ascii?q?IvHwrb2AAsBtwDvXDRoNjzKawcU/26zLPQwDvecf1W1zfz5ovGfB8vrv6DX6?=
+ =?us-ascii?q?5/f8XKxEkzFA7IlEmcpZDrMj6X0OkGrmiV7/BnVeKqk2Mpth1xrSa3xscslI?=
+ =?us-ascii?q?bJgJ8exE3B9SpjxIY1IcO3SU5matOjC5tfqjqaOpBqQsIiX25ouCE6xqcAuZ?=
+ =?us-ascii?q?6gZicG0psnxxnBa/GedYWD/xztVOGUIThihXJlfqqyhxmo8Ui71OLzStS00E?=
+ =?us-ascii?q?xLripZktjArHYN2ALP6sWBV/Bz/V+h1C6S2w3c5exIO0A5mbfBJ5I/zbM8iI?=
+ =?us-ascii?q?AfvVnFEyTrgkv5lrWWeV8h+uWw7uTnZajpqYGEOo9vjwH+LrwumsuiAeQkKg?=
+ =?us-ascii?q?QOX3aU+eC71LD74U32Wq9KjvwrkqnCqpzaOcQaqbK5Aw9SyIoj7QqwDyy639?=
+ =?us-ascii?q?gCmHkHLVZFdAqGj4jvJV7OPOj1Aeqwjlmjijtmx+3KMqf/DpjCMHTPiqrtca?=
+ =?us-ascii?q?5460FGyQozyd5f54hTCrEEOP/zQVL+tMfDAx8lMw273+bnCNJn2oMYQmKAGL?=
+ =?us-ascii?q?WVMKzVsV+W/u4vOfWDZJcJuDbhLPgo///vjXg5mVAHZ6mkxp8XaHG+HvR7LE?=
+ =?us-ascii?q?SVe3vsjcwEEWsQogU+S+nqgkWYUTFPf3ayQ7485jYjBYKnF4vCR4Ctj6eb0y?=
+ =?us-ascii?q?e9GZ1WeHtLCleJEXfwbYWERuwMaDmTIsB7iDAET6WhQZc71R6yrA/616ZnLu?=
+ =?us-ascii?q?3M9y0dt5Lj29h46unImBE98jx0CMud02WTQG1ugmwIQDo21rhloUNh0leDzb?=
+ =?us-ascii?q?R4g/tAGNxQ+fxGTBw6OoLbz+x9CND/QR7OfteTSFahR9WmACwxTtcrz98JeU?=
+ =?us-ascii?q?Z9FM2ojgrf0CqyH78Vi7uLCYQo/a3GxHj+OcZ8xm3d1KY9j1kpWNZPNWOihq?=
+ =?us-ascii?q?Fh7QjfHpLGnF+Dm6m2cqQc2TbH9H2fwmqWoEFYTAlwXL3dXX8Fe0vWqc/05l?=
+ =?us-ascii?q?vYQL+zDbQrKw5BycmFKqtQdNLll0lJRPDmON7GeWK+h3+wBQqUxrOLdIfqeW?=
+ =?us-ascii?q?Id3CXbCEQekQAT+naGOhI4Bie6vW3eCidjGk71bEPq9ul+rnK7QVMuwAGOdU?=
+ =?us-ascii?q?Fuy721+hsNj/yGV/wTxq4EuDsmqzhsGFa93tTWC8ePpgZ4faVcZ88970lI1W?=
+ =?us-ascii?q?LDtgx9IpyhIrt8hl4RbQt3pVni1xZpBYVal8glsncqwBB1KaKC31NLbymY0o?=
+ =?us-ascii?q?zoOr3LNmny+wiia6zM1VHY1taW+rwC6Ps/q1XkswGpElQt/2973NlS1nuW/o?=
+ =?us-ascii?q?/KAxYKUZLtTkY38AB3p7XbYik7+oPV2mRgMbKqvTDextIpHuolygqgfttGNa?=
+ =?us-ascii?q?OEExL9E9AeB8ewM+EqhVepYQwePOxI9647Idmmd/2Y166vJupgmyimjWsUqL?=
+ =?us-ascii?q?x6h2eN8is0eOnI1oxNl+Of3gKdfzP9ikqx9MH9nMZPYjREWiKexi/+TLxRbK?=
+ =?us-ascii?q?R0ephDXWboMc29z9N5mbbqXmZC6UW4BlpAwtL/PVK3ZkDh3QBPnWseu2aqhT?=
+ =?us-ascii?q?fwmzl2nGx4hqWY2yPKzqLpcx9RfiZoSWR5xXzrJov829MXUVOjaA8qvBCl/0?=
+ =?us-ascii?q?H/xrVe4qNlID+XCWxBZCXnZ1ppUqKtuL6PeYYb45ozvDR/S++8aE2UTrPn5h?=
+ =?us-ascii?q?ATlSjkGj0ajAgyajXin5L+hREy3HqUMXJbtHPEfYR1whDF6ZrXQvsHmnIkQy?=
+ =?us-ascii?q?l+wRvQBlG6JNSvtYGWkJfF9OK5V2unTZBVWSLiy4SGtSCy4SthBhjpzN6pnd?=
+ =?us-ascii?q?iyKhQ3yS/20ZFRUCzMqBvtKt3w27+SLfNsfk4uAkT1rcV9BNctwcMLmJgM1C?=
+ =?us-ascii?q?1C1d2u9n0dnDK2aI4K1A=3D=3D?=
+X-IPAS-Result: =?us-ascii?q?A2BGAADBsaRc/wHyM5BlGwEBAQEDAQEBBwMBAQGBUwQBA?=
+ =?us-ascii?q?QELAYFmKmiBAyeEDpM1TAEBAQEBAQaBNYlGjnmBezMIAYRAAoVEIjYHDQEBA?=
+ =?us-ascii?q?wEBAQgBAwIBbBwMgjopAYJnAQUjBAsBBTYLEAsYAgImAgJXBgEMCAEBgl8/A?=
+ =?us-ascii?q?YFoDQ+rbhqBJnwzhAUBP0FAhF8FgQskAYhogkoXeIEHgTiCaz6HToJXA6VjC?=
+ =?us-ascii?q?Yd+i3QGGoIFiWyGU4ICLYsehhqPSgUsgVYrCAIYCCEPO4JsilGFQwFSIwMwA?=
+ =?us-ascii?q?Qt5AQGPOAEB?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 03 Apr 2019 13:16:28 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x33DGPsA003577;
+        Wed, 3 Apr 2019 09:16:25 -0400
+Subject: Re: Should mprotect(..., PROT_EXEC) be checked by IMA?
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Igor Zhbanov <i.zhbanov@omprussia.ru>,
+        Matthew Garrett <mjg59@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>,
+        John Johansen <john.johansen@canonical.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+References: <cce2c4c7-5333-41c3-aeef-34d43e63acb0@omprussia.ru>
+ <1552945715.8658.299.camel@linux.ibm.com>
+ <452752df-98f9-c361-878a-5df84ab36847@omprussia.ru>
+ <1552994559.4899.26.camel@linux.ibm.com>
+ <84145490-6f70-214f-8241-42d556590240@omprussia.ru>
+ <1553015134.4899.82.camel@linux.ibm.com>
+ <a9830bde-8157-6078-b544-fcffb20d2501@omprussia.ru>
+ <CACdnJut6YfLnq-nCC1hHTrKYXabHoSEXN1wMuCyVybU+o_iwCg@mail.gmail.com>
+ <1553167318.4899.382.camel@linux.ibm.com>
+ <dab923ca-ef53-4af2-034a-bea4151a4e25@omprussia.ru>
+ <CACdnJuvVqibDdd+MLKOHqEfdngTk=GSkfybj1jS3MpmC7rjyHg@mail.gmail.com>
+ <07347317-ee71-83c1-384a-0c3439980af7@omprussia.ru>
+ <1553793463.8711.26.camel@linux.ibm.com>
+ <92718382-8669-748f-10d8-02fa21225210@omprussia.ru>
+ <1553857187.9420.49.camel@linux.ibm.com>
+ <b5a89692-4c93-80b3-37e5-41265765cdc3@tycho.nsa.gov>
+ <cb46d5ba-30de-664f-67d4-646da4592a6f@omprussia.ru>
+ <1554292678.7309.47.camel@linux.ibm.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <648f1a64-e95d-d929-62dc-06decaf5a14b@tycho.nsa.gov>
+Date:   Wed, 3 Apr 2019 09:10:57 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190402193316.15144-2-sashal@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1554292678.7309.47.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Apr 02, 2019 at 03:33:16PM -0400, Sasha Levin wrote:
+On 4/3/19 7:57 AM, Mimi Zohar wrote:
+> On Fri, 2019-03-29 at 15:50 +0300, Igor Zhbanov wrote:
+>> On 29.03.2019 15:28, Stephen Smalley wrote:
+>>> On 3/29/19 6:59 AM, Mimi Zohar wrote:
+>>>> [Cc'ing the LSM mailing list and others]
+>>>>
+>>>> On Fri, 2019-03-29 at 13:00 +0300, Igor Zhbanov wrote:
+>>>>> Hi Mimi,On 28.03.2019 20:17, Mimi Zohar wrote:
+>>>>
+>>>>>> I just came across the grsecurity article on mprotect.[1]
+>>>>>>    Has anyone looked at it? Would it make sense to make it a minor LSM?
+>>>>>>
+>>>>>> [1]https://pax.grsecurity.net/docs/mprotect.txt
+>>>>>
+>>>>> Interesting article. It is almost exactly of what I wanted to be
+>>>>> implemented.
+>>>>>
+>>>>> If this minor LSM would be stackable to allow combining with e.g. SELinux
+>>>>> then why not.
+>>>>
+>>>> Stacking shouldn't be a problem.  Other LSMs are already on the
+>>>> mprotect hook.  Let's hear what others think.
+>>>
+>>> SELinux already provides a set of controls over executable mappings;
+>>> see selinux_mmap_file and selinux_file_mprotect. Other major security
+>>> modules may do likewise but I can't speak to that. Is there some gap
+>>> you are trying to address that isn't already covered, or are you just
+>>> trying to provide such restrictions without requiring one of the
+>>> major modules?
+>>
+>> I want to be sure that no unsigned code page could be executed. So exploits
+>> could only be of ROP kind and not being able to download any extra code
+>> from their servers. That's why I found that disabling of anonymous executable
+>> pages could be useful for that (as well as disabling of making executable
+>> pages writable to modify already mapped code). In conjunction with IMA it
+>> should guarantee that no untrusted code could be executed.
+> 
+> Let's separate the different types of attacks.  From an IMA
+> perspective, memory attacks are out of scope.  That leaves mmap'ed
+> files, possibly just mmap'ed shared files.  Currently IMA can be
+> configured to verify a file's integrity, based on signatures, being
+> mmap'ed execute.  Assuming that not all files opened require a file
+> signature, a file could be mmap'ed read/write and later changed to
+> execute to circumvent the mmap'ed execute signature requirement.  If
+> the existing LSMs are able to prevent this sort of attack, we could
+> just document this requirement.
 
-> +/*
-> + * Undo what has been done in ftpm_tee_probe
-> + */
-> +static void ftpm_tee_deinit(struct ftpm_tee_private *pvt_data)
-> +{
-> +	/* Release the chip */
-> +	if (pvt_data->state & STATE_REGISTERED_FLAG)
-> +		tpm_chip_unregister(pvt_data->chip);
-> +
-> +	if (pvt_data->ctx != NULL)	{
-> +
-> +		/* Free the shared memory pool */
-> +		if (pvt_data->state & STATE_TEE_SHMALLOC_FLAG)
-> +			tee_shm_free(pvt_data->shm);
-> +
-> +		/* close the existing session with fTPM TA*/
-> +		if (pvt_data->state & STATE_TEE_OPENED_FLAG)
-> +			tee_client_close_session(pvt_data->ctx,
-> +				pvt_data->session);
-> +
-> +		/* close the context with TEE driver */
-> +		tee_client_close_context(pvt_data->ctx);
-> +	}
+I guess I don't understand why IMA isn't already being called from 
+security_file_mprotect(). security_file_mprotect() could just call 
+ima_file_mmap(vma->vm_file, prot) if all of the security hooks pass.
 
-all these flags are ugly, just use a normal goto unwind during probe
-please
-
-
-> +
-> +	/* memory allocated with devm_kzalloc() is freed automatically */
-> +}
-> +
-> +/*
-> + * ftpm_tee_probe initialize the fTPM
-> + * @param: pdev, the platform_device description.
-> + * @return: 0 in case of success.
-> + *	 or a negative value describing the error.
-> + */
-> +static int ftpm_tee_probe(struct platform_device *pdev)
-> +{
-> +	int rc;
-> +	struct tpm_chip *chip;
-> +	struct device *dev = &pdev->dev;
-> +	struct ftpm_tee_private *pvt_data = NULL;
-> +	struct tee_ioctl_open_session_arg sess_arg;
-> +
-> +	dev_dbg(dev, "%s++\n", __func__);
-
-Please don't push tracing like this to the upstream kernel, we have
-ftrace and what not to do this generally :(
-
-> +	pvt_data = devm_kzalloc(dev, sizeof(struct ftpm_tee_private),
-> +				GFP_KERNEL);
-> +	if (!pvt_data)
-> +		return -ENOMEM;
-> +
-> +	dev_set_drvdata(dev, pvt_data);
-> +
-> +	/* Open context with TEE driver */
-> +	pvt_data->ctx = tee_client_open_context(NULL, ftpm_tee_match, NULL,
-> +						NULL);
-> +	if (IS_ERR(pvt_data->ctx))	{
-> +		dev_err(dev, "%s:tee_client_open_context failed\n", __func__);
-> +		return -EPROBE_DEFER;
-> +	}
-> +
-> +	/* Open a session with fTPM TA*/
-> +	memset(&sess_arg, 0, sizeof(sess_arg));
-> +	memcpy(sess_arg.uuid, ftpm_ta_uuid.b, TEE_IOCTL_UUID_LEN);
-> +	sess_arg.clnt_login = TEE_IOCTL_LOGIN_PUBLIC;
-> +	sess_arg.num_params = 0;
-> +
-> +	rc = tee_client_open_session(pvt_data->ctx, &sess_arg, NULL);
-> +	if ((rc < 0) || (sess_arg.ret != 0)) {
-> +		dev_err(dev, "%s:tee_client_open_session failed, err=%x\n",
-> +			__func__, sess_arg.ret);
-> +		rc = -EINVAL;
-> +		goto out;
-> +	}
-> +	pvt_data->session = sess_arg.session;
-> +	pvt_data->state |= STATE_TEE_OPENED_FLAG;
-> +
-> +	/* Allocate dynamic shared memory with fTPM TA */
-> +	pvt_data->shm = tee_shm_alloc(pvt_data->ctx,
-> +				(MAX_COMMAND_SIZE + MAX_RESPONSE_SIZE),
-> +				TEE_SHM_MAPPED | TEE_SHM_DMA_BUF);
-> +	if (IS_ERR(pvt_data->shm)) {
-> +		dev_err(dev, "%s:tee_shm_alloc failed\n", __func__);
-> +		rc = -ENOMEM;
-> +		goto out;
-> +	}
-> +	pvt_data->state |= STATE_TEE_SHMALLOC_FLAG;
-> +
-> +	/* Allocate new struct tpm_chip instance */
-> +	chip = tpm_chip_alloc(dev, &ftpm_tee_tpm_ops);
-
-Why not tpmm_chip_alloc ? Using devm in other places
-
-Doesn't this leak memory? I don't see a put_device cleanup for chip_alloc?
-
-> +	if (IS_ERR(chip)) {
-> +		dev_err(dev, "%s:tpm_chip_alloc failed\n", __func__);
-> +		rc = PTR_ERR(chip);
-> +		goto out;
-> +	}
-> +
-> +	pvt_data->chip = chip;
-> +	pvt_data->chip->flags |= TPM_CHIP_FLAG_TPM2;
-> +
-> +	/* Create a character device for the fTPM */
-> +	rc = tpm_chip_register(pvt_data->chip);
-
-It is a bad idea to do things after tpm_chip_register, it should be
-the last thing done during probe except for error cleanup via a goto
-unwind.
-
-Jason
+SELinux can be used to prevent unauthorized mprotect PROT_EXEC but it 
+won't perform a measurement of the file if it is allowed by policy.
