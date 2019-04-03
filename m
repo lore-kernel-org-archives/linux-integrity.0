@@ -2,92 +2,129 @@ Return-Path: <SRS0=2lTb=SF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8469C4360F
-	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 21:59:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E60C4360F
+	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 22:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D603206DF
-	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 21:59:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23F8A2147C
+	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 22:27:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hn5DMg+q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726396AbfDCV7k (ORCPT
+        id S1726314AbfDCW1Z (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 3 Apr 2019 17:59:40 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38316 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726099AbfDCV7k (ORCPT
+        Wed, 3 Apr 2019 18:27:25 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:45389 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726167AbfDCW1Z (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 3 Apr 2019 17:59:40 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x33LxFcG108993
-        for <linux-integrity@vger.kernel.org>; Wed, 3 Apr 2019 17:59:39 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2rn40ek6h6-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 03 Apr 2019 17:59:38 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 3 Apr 2019 22:59:36 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 3 Apr 2019 22:59:32 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x33LxVnQ61669448
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 3 Apr 2019 21:59:31 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 894915204E;
-        Wed,  3 Apr 2019 21:59:31 +0000 (GMT)
-Received: from dhcp-9-31-103-153.watson.ibm.com (unknown [9.31.103.153])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id DDAD552051;
-        Wed,  3 Apr 2019 21:59:30 +0000 (GMT)
-Subject: Re: [PATCH 2/2] ima-evm-utils: try to load digest by its alias
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Vitaly Chikunov <vt@altlinux.org>
-Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org
-Date:   Wed, 03 Apr 2019 17:59:30 -0400
-In-Reply-To: <20190403215711.7dypkbiinjzt2t5i@altlinux.org>
-References: <20190323014152.14701-1-vt@altlinux.org>
-         <20190323014152.14701-3-vt@altlinux.org>
-         <1554324064.3839.20.camel@linux.ibm.com>
-         <20190403210435.duptffqlwp6vo66m@altlinux.org>
-         <1554325820.3839.27.camel@linux.ibm.com>
-         <20190403213739.afjtakg5nujke477@altlinux.org>
-         <1554327643.3839.29.camel@linux.ibm.com>
-         <20190403215711.7dypkbiinjzt2t5i@altlinux.org>
+        Wed, 3 Apr 2019 18:27:25 -0400
+Received: by mail-io1-f67.google.com with SMTP id s7so257662iom.12
+        for <linux-integrity@vger.kernel.org>; Wed, 03 Apr 2019 15:27:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+3faNpmag6jYME5yNI69COYIz0d4qS337f0eaty0yLY=;
+        b=Hn5DMg+qfhg8lnUXmQEgJ4eyGQRy86cBCVdOiz+SoR4bX8ULjx3usvppAd3U/Tjo+3
+         pHcQLhA3s2MAgrAxsJP7GSq7JG6jMjmn4mjKyBEp/bGnUhoOwSeCwPTclx6LWkhYulrq
+         SoU9wFkqFC1RrPQXHhojDrXTjLSQN+So9U3wt214BoVJ5XUbH4bQp44HLENcmeD4Mb3X
+         qdL0djpsWoB7JX+T5M6PCzE9BbFqDSBCTtApX3wdEYLcOQPrAI6bORTgR2IpA6jHh8MT
+         x6QCOhB3xdwb3cRgS2IhQ6tWhcf8Fn7ZIVFwQJWsgDGNEbeTqB6zPq7VypFgzQgg3Ss5
+         o+pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+3faNpmag6jYME5yNI69COYIz0d4qS337f0eaty0yLY=;
+        b=beOEZv02MP05JXQv2eYui7s5Uz9wKHiqLtTCLQXehVnWO11YYAEEnpyJwZNJQBBuGo
+         2jM3fifUn6Iox7N2ljfBAHBYSHZyT3FZQYheyNXyfjAqrFYujTkn9ERgNbDAFevXdD1l
+         wgezVWTzfQga525JIc+lnYHfYL9zjthhCPj6muRioyQzy89ik/dUrniW08Q9O3SuHRqN
+         czPwyUb+L0eyu6JOF1gnfK1ClmyUpA8OIHUT3G4+kDMkmyW65Ks84j+yil7RJeORSBEn
+         W1CMzkgTods3vdBjmmiIidpYk1UchoQVc3Jm6JVdnhkC4MYc6opihB1Nr440uAvoiadb
+         WxTQ==
+X-Gm-Message-State: APjAAAVF0ACCOqiLkzFuw8zVToEr0g7tNCmJC9pns6dEIlthh3a1gtBj
+        IQRe6Z+HDsgepFwoIe9kn2ZlG3pvXxauYInqvD2orA==
+X-Google-Smtp-Source: APXvYqyjaucmj870Vz9jHZPatpcn5T0LihCycvdCx7VILq9npP5A6ssDHW9qOcaFARXAimNtxuuxG36+qUImTOEY86c=
+X-Received: by 2002:a5e:d514:: with SMTP id e20mr2067567iom.8.1554330444296;
+ Wed, 03 Apr 2019 15:27:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190402181505.25037-1-cclaudio@linux.ibm.com>
+ <CACdnJuumhkqTb4+1=QBiLmbW4xd3wW=MZu6Tj_KdaoTMhCN+Tg@mail.gmail.com>
+ <4ce5e057-0702-b0d5-7bb2-cea5b22e2efa@linux.ibm.com> <CACdnJusBm93zwDqTXTx_QYsg1-aGUAAHm_qq8Lcx3TvGTxdmbg@mail.gmail.com>
+ <2208f156-d441-3082-2f4c-8030c84ef788@linux.ibm.com>
+In-Reply-To: <2208f156-d441-3082-2f4c-8030c84ef788@linux.ibm.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Wed, 3 Apr 2019 15:27:13 -0700
+Message-ID: <CACdnJuu8OqMrSs0esOmf=ro9n00aYEQ-nikAh6v6sk+YAQw4cQ@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Enabling secure boot on PowerNV systems
+To:     Claudio Carvalho <cclaudio@linux.ibm.com>
+Cc:     linuxppc-dev@ozlabs.org, linux-efi <linux-efi@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Kerr <jk@ozlabs.org>,
+        Matthew Garret <matthew.garret@nebula.com>,
+        Nayna Jain <nayna@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19040321-0008-0000-0000-000002D5FB2B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19040321-0009-0000-0000-0000224205E1
-Message-Id: <1554328770.3839.31.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-03_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=873 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1904030145
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, 2019-04-04 at 00:57 +0300, Vitaly Chikunov wrote:
+On Tue, Apr 2, 2019 at 4:31 PM Claudio Carvalho <cclaudio@linux.ibm.com> wrote:
+>
+>
+> On 4/2/19 6:51 PM, Matthew Garrett wrote:
+> > So you implement the full PK/KEK/db/dbx/dbt infrastructure, and
+> > updates are signed in the same way?
+>
+> For the first version, our firmware will implement a simplistic PK, KEK and
+> db infrastructure (without dbx and dbt) where only the Setup and User modes
+> will be supported.
 
-> Maybe this:
-> 
->   "Streebog" is a name of the hash algorithm in the Kernel Crypto API.
->   "md_gost12_X" is the name used by the most versions of OpenSSL, it's
->   placed in pkey_hash_algo[] so that algo IDs are resolved to them.
+Not supporting dbx seems like a pretty significant shortcoming. How
+are signatures meant to be revoked?
 
-Thank you!
+> PK, KEK and db updates will be signed the same way, that is, using
+> userspace tooling like efitools in PowerNV. As for the authentication
+> descriptors, only the EFI_VARIABLE_AUTHENTICATION_2 descriptor will be
+> supported.
 
+Is this API documented?
+
+> > In that case we might be better off with a generic interface for this
+> > purpose that we can expose on all platforms that implement a secure
+> > boot key hierarchy. Having an efivarfs that doesn't allow the creation
+> > of arbitrary attributes may break other existing userland
+> > expectations.
+> >
+> For what it's worth, gsmi uses the efivars infrastructure for EFI-like
+> variables.
+
+My recollection is that at the time the Chromebook firmware still had
+EFI underpinnings and the gsmi code was largely just an alternate
+mechanism for calling into something that was fundamentally the EFI
+variable store. With hindsight I don't think layering this was the
+right move - we've adjusted the semantics of efivarfs on more than one
+occasion to deal with the behaviour of real-world EFI platforms, and I
+don't think it's helpful to end up in a situation where we're trying
+to keep behaviour consistent among entirely different firmware
+interfaces.
+
+> What might a generic interface look like?  It would have to work for
+> existing secure boot solutions - including EFI - which would seem to imply
+> changes to userspace tools.
+
+I think that depends on exactly what problem you're trying to solve.
+Some aspects of the EFI secure boot design end up mirroring the
+economics of the PC ecosystem rather than being inherently good design
+goals, so it'd be helpful to know whether you're taking this solution
+because you want the same three-level key infrastructure or because
+that just leaves you compatible with the tooling.
