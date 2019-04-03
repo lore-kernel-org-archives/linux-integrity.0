@@ -2,87 +2,127 @@ Return-Path: <SRS0=2lTb=SF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C78C4360F
-	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 18:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EDA9C4360F
+	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 18:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 585AB20882
-	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 18:27:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9D372084B
+	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 18:47:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=omprussia.ru header.i=@omprussia.ru header.b="ONQvwqr2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbfDCS1f (ORCPT
+        id S1726151AbfDCSrf (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 3 Apr 2019 14:27:35 -0400
-Received: from mga12.intel.com ([192.55.52.136]:46016 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726151AbfDCS1e (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 3 Apr 2019 14:27:34 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Apr 2019 11:27:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,305,1549958400"; 
-   d="scan'208";a="131200390"
-Received: from oakcakay-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.254.144])
-  by orsmga008.jf.intel.com with ESMTP; 03 Apr 2019 11:27:29 -0700
-Date:   Wed, 3 Apr 2019 21:27:28 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, peterhuewe@gmx.de,
-        jgg@ziepe.ca, linux-kernel@microsoft.com, bryankel@microsoft.com,
-        thiruan@microsoft.com, suredd@microsoft.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH 2/2] ftpm: firmware TPM running in TEE
-Message-ID: <20190403182728.GA17451@linux.intel.com>
-References: <20190402193316.15144-1-sashal@kernel.org>
- <20190402193316.15144-2-sashal@kernel.org>
- <20190403181827.GB17006@linux.intel.com>
+        Wed, 3 Apr 2019 14:47:35 -0400
+Received: from mail.omprussia.ru ([5.134.221.218]:37476 "EHLO
+        mail.omprussia.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726099AbfDCSrf (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 3 Apr 2019 14:47:35 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.omprussia.ru (Postfix) with ESMTP id 5318F1000F1D;
+        Wed,  3 Apr 2019 21:47:33 +0300 (MSK)
+Received: from mail.omprussia.ru ([127.0.0.1])
+        by localhost (mail.omprussia.ru [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id FYXM7iSXUlWR; Wed,  3 Apr 2019 21:47:33 +0300 (MSK)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.omprussia.ru (Postfix) with ESMTP id D89161000F1E;
+        Wed,  3 Apr 2019 21:47:32 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.omprussia.ru D89161000F1E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=omprussia.ru;
+        s=EC9C64F2-3532-11E8-B653-5B7E995A80AF; t=1554317252;
+        bh=eb93W2G9dB/mNBA8WyfX8qwRR3D2a0FcpmxVgXidcFU=;
+        h=To:From:Message-ID:Date:MIME-Version;
+        b=ONQvwqr2YSKnJnw1KqGXpxXRxgnajfkJ+EP2Wplkxgxr0kkP6f7/i1sz3hm/xUvBF
+         pLEafrsuoONK6FJR05GLh1WPAWIhPcaBauTljRePCs8UUJUj4lUXBDyhHqA88MA0fl
+         ZlrR1FIJySytcah7l9M2hrz630VaZjK1fV9FxLXvJWXVNeWdW44LfjBfu6uFbnfmT2
+         SFoDlpcgs+aQcwsFqwXnMxQv8duZ+bJRP5ChH/WnyjWs2AW0WPDDbDD1KvXKiIeCOZ
+         uqtnxXEilMiIE1Xt+BwUzNIub9308ThJJ2448UsPfc7YHu68JbnsgJKXlrxOdLAuwg
+         3qafgY9wiDvCg==
+X-Virus-Scanned: amavisd-new at mail.omprussia.ru
+Received: from mail.omprussia.ru ([127.0.0.1])
+        by localhost (mail.omprussia.ru [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id tNs8sJT9o8_Y; Wed,  3 Apr 2019 21:47:32 +0300 (MSK)
+Received: from [10.189.20.33] (unknown [10.189.20.33])
+        by mail.omprussia.ru (Postfix) with ESMTPSA id AA62C1000F1D;
+        Wed,  3 Apr 2019 21:47:32 +0300 (MSK)
+Subject: Re: Should mprotect(..., PROT_EXEC) be checked by IMA?
+To:     Matthew Garrett <mjg59@google.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>,
+        John Johansen <john.johansen@canonical.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+References: <cce2c4c7-5333-41c3-aeef-34d43e63acb0@omprussia.ru>
+ <1553015134.4899.82.camel@linux.ibm.com>
+ <a9830bde-8157-6078-b544-fcffb20d2501@omprussia.ru>
+ <CACdnJut6YfLnq-nCC1hHTrKYXabHoSEXN1wMuCyVybU+o_iwCg@mail.gmail.com>
+ <1553167318.4899.382.camel@linux.ibm.com>
+ <dab923ca-ef53-4af2-034a-bea4151a4e25@omprussia.ru>
+ <CACdnJuvVqibDdd+MLKOHqEfdngTk=GSkfybj1jS3MpmC7rjyHg@mail.gmail.com>
+ <07347317-ee71-83c1-384a-0c3439980af7@omprussia.ru>
+ <1553793463.8711.26.camel@linux.ibm.com>
+ <92718382-8669-748f-10d8-02fa21225210@omprussia.ru>
+ <1553857187.9420.49.camel@linux.ibm.com>
+ <b5a89692-4c93-80b3-37e5-41265765cdc3@tycho.nsa.gov>
+ <cb46d5ba-30de-664f-67d4-646da4592a6f@omprussia.ru>
+ <CACdnJusPpis1JJgfNOrQoqPcVk0q2OGbosrXOVtZmG0cSqkotw@mail.gmail.com>
+ <11fcd3b2-afb9-74d2-100d-449df61433d1@omprussia.ru>
+ <CACdnJusgwpcSxzwNEieqsa54_3cTYMEfuXpAeP0cW81TQ29E+w@mail.gmail.com>
+ <bca4eb5b-2d76-5df8-6e63-573b3a057985@omprussia.ru>
+ <CACdnJutv4O9bPwvddrasz2up06P6OtBbHjsr6JGSOwAtryMTpg@mail.gmail.com>
+From:   Igor Zhbanov <i.zhbanov@omprussia.ru>
+Message-ID: <3ebff410-f1bd-654e-7cd0-486ea4768ebe@omprussia.ru>
+Date:   Wed, 3 Apr 2019 21:47:15 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190403181827.GB17006@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CACdnJutv4O9bPwvddrasz2up06P6OtBbHjsr6JGSOwAtryMTpg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Apr 03, 2019 at 09:18:27PM +0300, Jarkko Sakkinen wrote:
-> On Tue, Apr 02, 2019 at 03:33:16PM -0400, Sasha Levin wrote:
-> > This patch adds support for a software-only implementation of a TPM
-> > running in TEE.
-> > 
-> > There is extensive documentation of the design here:
-> > https://www.microsoft.com/en-us/research/publication/ftpm-software-implementation-tpm-chip/ .
-> > 
-> > As well as reference code for the firmware available here:
-> > https://github.com/Microsoft/ms-tpm-20-ref/tree/master/Samples/ARM32-FirmwareTPM
-> > 
-> > Signed-off-by: Thirupathaiah Annapureddy <thiruan@microsoft.com>
-> > Signed-off-by: Sasha Levin <sashal@kernel.org>
+On 03.04.2019 21:19, Matthew Garrett wrote:
+> On Wed, Apr 3, 2019 at 10:31 AM Igor Zhbanov <i.zhbanov@omprussia.ru> wrote:
+>> I'm trying to reduce attacker's possibilities to inject any new unauthorized
+>> code. Currently it could be:
 > 
-> What is the context anyway? I mean tpm_crb already supports fTPM running
-> in TZ.
+> (snip)
+> 
+>> 4) Anonymous executable pages (either new or existing changing to writable).
+>>    ^ This is what I'm talking about. Because it's relatively easy to create
+>>    anonymous executable page to stay below the radar. Because even if you
+>>    enable signature checking for all opened files it would be possible to
+>>    simply download the code and execute it directly from the anonymous pages.
+> 
+> There's two possible cases here:
+> 
+> 1) The application is legitimate but can be convinced to open and
+> execute malicious code. There should be no such applications that
+> download code from the internet and execute it directly, so this can
+> be prevented by requiring that files be signed (which has to be done
+> to protect against attackers just using an interpreted language
+> instead)
+> 2) The application is actively malicious. In this case this approach
+> is insufficient - an actively malicious application can interpret code
+> rather than executing it directly. This can only be prevented by not
+> signing malicious applications.
+> 
+> When you talk about "staying below the radar" it implies that you're
+> talking about case 2, but the proposed solution is only a speed bump
+> rather than a blocker.
 
-Might take 2-3 weeks before I have time to go through ftpm1.pdf with
-full concentration. I did search through the PDF for CRB and found
-zero hits.
-
-The commit message should absolutely better explain what is going on
-and preferably there should be some more broad documentation in
-Documentation/security/tpm.
-
-Now this is just a random code dump and nothing else.
-
-Also, I have zero idea how to test this. Any recommendations on ARM
-board that can be easily used to test custom TZ applications would be
-nice.
-
-/Jarkko
+But what about buffer/stack overflow? The application doesn't need to be
+malicious. It could be just a web-browser or e-mail client processing
+some evil file.
