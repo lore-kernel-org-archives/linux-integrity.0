@@ -2,149 +2,115 @@ Return-Path: <SRS0=2lTb=SF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 570EBC10F0B
-	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 21:48:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BECFC4360F
+	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 21:57:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22B982084B
-	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 21:48:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D4B8206DF
+	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 21:57:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbfDCVsv (ORCPT
+        id S1726168AbfDCV5O (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 3 Apr 2019 17:48:51 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41616 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726536AbfDCVsv (ORCPT
+        Wed, 3 Apr 2019 17:57:14 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:33216 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726167AbfDCV5O (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 3 Apr 2019 17:48:51 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x33LPNLJ033768
-        for <linux-integrity@vger.kernel.org>; Wed, 3 Apr 2019 17:48:49 -0400
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2rn2tc5yua-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 03 Apr 2019 17:48:48 -0400
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <cclaudio@linux.ibm.com>;
-        Wed, 3 Apr 2019 22:48:47 +0100
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 3 Apr 2019 22:48:43 +0100
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x33LmgcQ23855318
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 3 Apr 2019 21:48:42 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 72014AE05C;
-        Wed,  3 Apr 2019 21:48:42 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C770BAE05F;
-        Wed,  3 Apr 2019 21:48:40 +0000 (GMT)
-Received: from [9.18.235.111] (unknown [9.18.235.111])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed,  3 Apr 2019 21:48:40 +0000 (GMT)
-Subject: Re: [PATCH 0/4] Enabling secure boot on PowerNV systems
-To:     Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@ozlabs.org,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Paul Mackerras <paulus@samba.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        Matthew Garret <matthew.garret@nebula.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-References: <20190402181505.25037-1-cclaudio@linux.ibm.com>
- <87r2aj1ayf.fsf@concordia.ellerman.id.au>
-From:   Claudio Carvalho <cclaudio@linux.ibm.com>
-Date:   Wed, 3 Apr 2019 18:48:39 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.0
+        Wed, 3 Apr 2019 17:57:14 -0400
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 1A6DC72CC8C;
+        Thu,  4 Apr 2019 00:57:12 +0300 (MSK)
+Received: from altlinux.org (sole.flsd.net [185.75.180.6])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 02B2D4A4A14;
+        Thu,  4 Apr 2019 00:57:12 +0300 (MSK)
+Date:   Thu, 4 Apr 2019 00:57:11 +0300
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org
+Subject: Re: [PATCH 2/2] ima-evm-utils: try to load digest by its alias
+Message-ID: <20190403215711.7dypkbiinjzt2t5i@altlinux.org>
+References: <20190323014152.14701-1-vt@altlinux.org>
+ <20190323014152.14701-3-vt@altlinux.org>
+ <1554324064.3839.20.camel@linux.ibm.com>
+ <20190403210435.duptffqlwp6vo66m@altlinux.org>
+ <1554325820.3839.27.camel@linux.ibm.com>
+ <20190403213739.afjtakg5nujke477@altlinux.org>
+ <1554327643.3839.29.camel@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <87r2aj1ayf.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 19040321-0060-0000-0000-00000328157A
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010869; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000284; SDB=6.01183908; UDB=6.00619853; IPR=6.00964659;
- MB=3.00026284; MTD=3.00000008; XFM=3.00000015; UTC=2019-04-03 21:48:46
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19040321-0061-0000-0000-000048D370DC
-Message-Id: <3befcee7-0b65-c312-1f14-daa56afeb176@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-03_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1904030141
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1554327643.3839.29.camel@linux.ibm.com>
+User-Agent: NeoMutt/20171215-106-ac61c7
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+On Wed, Apr 03, 2019 at 05:40:43PM -0400, Mimi Zohar wrote:
+> On Thu, 2019-04-04 at 00:37 +0300, Vitaly Chikunov wrote:
+> > On Wed, Apr 03, 2019 at 05:10:20PM -0400, Mimi Zohar wrote:
+> > > On Thu, 2019-04-04 at 00:04 +0300, Vitaly Chikunov wrote:
+> > > > Mimi,
+> > > > 
+> > > > On Wed, Apr 03, 2019 at 04:41:04PM -0400, Mimi Zohar wrote:
+> > > > > On Sat, 2019-03-23 at 04:41 +0300, Vitaly Chikunov wrote:
+> > > > > > Primary names of the algorithms are different for OpenSSL and Kernel.
+> > > > > > Allow to use both of them.
+> > > > > 
+> > > > > Can we add a line here explaining the two names? šPerhaps something
+> > > > > like, "GOST R 34.11-2012 is the Russian national standard based on the
+> > > > > Streebog set of hash functions."š
+> > > > 
+> > > > Ok. But, "GOST R 34.11-2012" is not mentioned, and there is other
+> > > > standards with Streebog, such as RFC 6986, ISO/IEC 10118-3:2018, GOST
+> > > > 34.11-2018.
+> > > > 
+> > > > Point of this patch is that Kernel calls this hash function by it's
+> > > > proper name "StreebogX", but older version of OpenSSL reference it by
+> > > > acronym "md_gost12_X". (While newer should support Streebog name too.)
+> > > > And we try to be user friendly and allow to use both names.
+> > > 
+> > > If "Streebog" will be supported by OpenSSL, then why make md_gost12_x
+> > > the primary name, and the kernel name the alias? šShouldn't it be the
+> > > reverse (eg. "pkey_hash_algo_alias")?
+> > 
+> > Because ima-evm-utils is using OpenSSL and not Kernel's Crypto API,
+> > OpenSSL names are "primary" for ima-evm-utils. It's happened that most
+> > names are the same for both APIs.
+> > 
+> > "md_gost12_X" is supported for years by more versions of OpenSSL. While
+> > "StreebogX" name is just committed a few months ago to gost-engine. Thus,
+> > 
+> >   1) "md_gost12_x" name could be used on conservative distros. Users
+> >    will not need to wait [possible] a few years when new name reach
+> >    their distro.
+> > 
+> >   2) PKEY_HASH_STREEBOG_X is resolved to "md_gost12_X" names (to the
+> >   names that are present in OpenSSL with much more probability).
+> > 
+> > `pkey_hash_algo_kern` only contains names that are different between
+> > the Kernel and OpenSSL.
+> > 
+> > I used "primary" for the both arrays so that no names are offended by
+> > being not-primary.
+> 
+> Could you provide me with a single line or two, with an explanation
+> for the two names. šI'll add it to the commit patch description,
+> before pushing out these patches.
 
-On 4/3/19 10:21 AM, Michael Ellerman wrote:
-> Hi Claudio,
->
-> Thanks for posting this.
->
-> Claudio Carvalho <cclaudio@linux.ibm.com> writes:
->> This patch set is part of a series that implements secure boot on
->> PowerNV systems.
->>
->> In order to verify the OS kernel on PowerNV, secure boot requires X.509
->> certificates trusted by the platform, the secure boot modes, and several
->> other pieces of information. These are stored in secure variables
->> controlled by OPAL, also known as OPAL secure variables.
->>
->> This patch set adds the following features:
->>
->> 1. Enable efivarfs by selecting CONFIG_EFI in the CONFIG_OPAL_SECVAR
->>    introduced in this patch set. With CONFIG_EFIVAR_FS, userspace tools can
->>    be used to manage the secure variables.
->> 2. Add support for OPAL secure variables by overwriting the EFI hooks
->>    (get_variable, get_next_variable, set_variable and query_variable_info)
->>    with OPAL call wrappers. There is probably a better way to add this
->>    support, for example, we are investigating if we could register the
->>    efivar_operations rather than overwriting the EFI hooks. In this patch
->>    set, CONFIG_OPAL_SECVAR selects CONFIG_EFI. If, instead, we registered
->>    efivar_operations, CONFIG_EFIVAR_FS would need to depend on
->>    CONFIG_EFI|| CONFIG_OPAL_SECVAR. Comments or suggestions on the
->>    preferred technique would be greatly appreciated.
-> I am *very* reluctant to start selecting CONFIG_EFI on powerpc.
->
-> Simply because we don't actually have EFI, and I worry we're going to
-> both break assumptions in the EFI code as well as impose requirements on
-> the powerpc code that aren't really necessary.
+Maybe this:
 
-Yes, we agree. We are working on the v2 and it is not going to depend on
-CONFIG_EFI. Rather, the IMA arch policies will make the OPAL calls directly.
+  "Streebog" is a name of the hash algorithm in the Kernel Crypto API.
+  "md_gost12_X" is the name used by the most versions of OpenSSL, it's
+  placed in pkey_hash_algo[] so that algo IDs are resolved to them.
 
-
->
-> So I'd definitely prefer we go the route of enabling efivarfs with an
-> alternate backend.
-
-Right, I'm investigating how we can do that, but it looks like we should
-post that as a separate patchset to avoid delaying upstreaming signature
-verification based on the secure boot variables.
-
-Thanks,
-Claudio
-
-
->
-> Better still would be a generic secure variable interface as Matt
-> suggests, if the userspace tools can be relatively easily adapted to use
-> that interface.
->
-> cheers
->
-
+> 
+> Thanks!
+> 
+> Mimi
