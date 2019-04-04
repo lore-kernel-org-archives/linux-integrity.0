@@ -2,116 +2,163 @@ Return-Path: <SRS0=GWgT=SG=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09250C4360F
-	for <linux-integrity@archiver.kernel.org>; Thu,  4 Apr 2019 12:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16599C4360F
+	for <linux-integrity@archiver.kernel.org>; Thu,  4 Apr 2019 13:30:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCAA2206B7
-	for <linux-integrity@archiver.kernel.org>; Thu,  4 Apr 2019 12:54:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vpj5yLvR"
+	by mail.kernel.org (Postfix) with ESMTP id E6355206B7
+	for <linux-integrity@archiver.kernel.org>; Thu,  4 Apr 2019 13:30:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728556AbfDDMyc (ORCPT
+        id S1730005AbfDDNa2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 4 Apr 2019 08:54:32 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:36917 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728553AbfDDMyc (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 4 Apr 2019 08:54:32 -0400
-Received: by mail-it1-f193.google.com with SMTP id u65so3443570itc.2
-        for <linux-integrity@vger.kernel.org>; Thu, 04 Apr 2019 05:54:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lHLQN3NUrDGEbudveKvi/CUxy6nUoP3CXW0iO/pZX8c=;
-        b=Vpj5yLvRuz61rZ5Bfb9y8VDOaZfdovi+PSl5lZvhMED1FpamALUmLsdMasyJ9DaXOr
-         pQGb+c5DNP44tXiIUAXnan0tkMLmbKh219QGQSNrqo68Txxj43nN6tM6A4U60lov68hM
-         JC1vp+6U2bEKg9bflE85ihRw3QcPmcyBSgKXqsI6a6NMsMvowrZczAYwnC5AtbPqUXmD
-         zDAJII0WyUxuNkOKc4q6PyQcdCjqB/mSWR0X2dn/iGbJIpCfcMr/INExfd2USG3vaiMS
-         4h3LjDR4rhigdx3ClO3Z8nKxM+VrVPCRmUzz1RIB9PCa8fGUCA+v5uri0pUP9votBzLs
-         DlLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lHLQN3NUrDGEbudveKvi/CUxy6nUoP3CXW0iO/pZX8c=;
-        b=PGv18EqsZUK2wEjLpJ+inqFKxV9U3KdizYen/dLzRPcLvmuCV9Yldmc+sIA8S45ARt
-         i+ybnDKXDjp6X54ilM4A9eMMnA0EQcn1JkkOF8zXnjqff7sSfO6+9r8Rda76GXwr4jQ/
-         QuLPFTVh9i7Epf0MXsUteKb1UNF7jSvAODY6mFU00BGQrq4nrrp6+i/m09khOckFx0rm
-         EIFLIO6zh7EuKpvSSlkVnSs3yoQuF0DM9UYkFAMe3ueSGBl6hQ8lvUoOlb/WqpC86UOr
-         3hKgDbU0MRqiUcDIV3t5/b8eGsgtKfdNJlcHvps5yisAxsQ5pP1VvDaGaJwZQE9ZH22C
-         YP4A==
-X-Gm-Message-State: APjAAAXxNB9+QrOZj8bw+myR/nXEXIIgu/dtWGzq0+x1B0TtW1pS3r9o
-        OczVvM4w6i21FjqWatbYrRX5qb5g/nHznV4ArU2ybw==
-X-Google-Smtp-Source: APXvYqygWNF766C0HYL0fI7hxDNRUDz48C93PO+BOi05G1vCu9uvnHT+k0cl09QQMbyF2245UNUw0wUIq1SPTpTLTqU=
-X-Received: by 2002:a24:12:: with SMTP id 18mr4617085ita.117.1554382471660;
- Thu, 04 Apr 2019 05:54:31 -0700 (PDT)
+        Thu, 4 Apr 2019 09:30:28 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32917 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727398AbfDDNa2 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 4 Apr 2019 09:30:28 -0400
+Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 1B6CF9FF3180C0DCAA6E;
+        Thu,  4 Apr 2019 14:29:57 +0100 (IST)
+Received: from [10.204.65.150] (10.204.65.150) by smtpsuk.huawei.com
+ (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 4 Apr
+ 2019 14:29:52 +0100
+Subject: Re: Unable to suspend lenovo t61
+To:     Zdenek Kabelac <zkabelac@redhat.com>
+References: <6972b2f2-7538-e51a-c5e0-e1ed08d95e04@redhat.com>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <1e3e499e-63e8-dbf5-3a0e-7dd78807c369@huawei.com>
+Date:   Thu, 4 Apr 2019 15:29:52 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <20190402215556.257406-1-matthewgarrett@google.com> <20190402215556.257406-2-matthewgarrett@google.com>
-In-Reply-To: <20190402215556.257406-2-matthewgarrett@google.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 4 Apr 2019 19:54:20 +0700
-Message-ID: <CAKv+Gu_yPKjK64qDEWgyacvKcoXwivoi4tq35T=uNE0syRhm8w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] efi: Fix cast to pointer from integer of different
- size in TPM log code
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        =?UTF-8?Q?Peter_H=C3=BCwe?= <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        jgg@ziepe.ca, Roberto Sassu <roberto.sassu@huawei.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thiebaud Weksteen <tweek@google.com>,
-        Matthew Garrett <mjg59@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <6972b2f2-7538-e51a-c5e0-e1ed08d95e04@redhat.com>
+Content-Type: text/plain; charset="iso-8859-2"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.204.65.150]
+X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, 3 Apr 2019 at 04:56, Matthew Garrett <matthewgarrett@google.com> wrote:
->
-> 8bfcff4a6a1d9d7226bb63a7da758b82d9ab4373
+Hi Zdenek
 
-Which tree is this commit in?
+I add in CC linux-integrity@vger.kernel.org.
 
-> introduced a cast from
-> efi_physical_address_t to (void *), which are different sizes on 32-bit.
-> Fix that. Caught by the 0-day test bot.
->
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
+Please have a look at:
 
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+https://lore.kernel.org/linux-integrity/20190329094212.GC21379@linux.intel.com/T/#t
 
-I'll pick this up as a fix if we can clean up the commit log so it
-doesn't refer to a commit that does not exist in mainline.
+The patch suggested in the discussion should help.
 
-> ---
->  drivers/firmware/efi/libstub/tpm.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
-> index b6e93e14fcf1..6b3b507a54eb 100644
-> --- a/drivers/firmware/efi/libstub/tpm.c
-> +++ b/drivers/firmware/efi/libstub/tpm.c
-> @@ -114,8 +114,8 @@ void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
->                          */
->                         last_entry_size =
->                                 __calc_tpm2_event_size((void *)last_entry_addr,
-> -                                                      (void *)log_location,
-> -                                                      false);
-> +                                                   (void *)(long)log_location,
-> +                                                   false);
->                 } else {
->                         last_entry_size = sizeof(struct tcpa_event) +
->                            ((struct tcpa_event *) last_entry_addr)->event_size;
-> --
-> 2.21.0.392.gf8f6787159e-goog
->
+Regards
+
+Roberto
+
+
+On 4/4/2019 3:04 PM, Zdenek Kabelac wrote:
+> Hello
+> 
+> 
+> Recently after trying kernels above 5.1.0-0.rc0.git4.2.fc31.x86_64 on my 
+> Fedora Rawhide - I cannot suspend Lenovo T61 laptop (2.2 C2D CPU,  4G RAM)
+> 
+> I can only guess it can be related to this TPM reported error:
+> 
+> ----
+> PM: suspend exit
+> PM: suspend entry (s2idle)
+> PM: Syncing filesystems ... done.
+> Freezing user space processes ... (elapsed 0.001 seconds) done.
+> OOM killer disabled.
+> Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+> printk: Suspending console(s) (use no_console_suspend to debug)
+> sd 0:0:0:0: [sda] Synchronizing SCSI cache
+> sd 0:0:0:0: [sda] Stopping disk
+> tpm tpm0: tpm_try_transmit: send(): error -5
+> tpm tpm0: Error (-5) sending savestate before suspend
+> PM: __pnp_bus_suspend(): tpm_pm_suspend+0x0/0x80 returns -5
+> PM: dpm_run_callback(): pnp_bus_suspend+0x0/0x10 returns -5
+> PM: Device 00:05 failed to suspend: error -5
+> PM: Some devices failed to suspend, or early wake event detected
+> sd 0:0:0:0: [sda] Starting disk
+> thinkpad_acpi: ACPI backlight control delay disabled
+> usb 3-2: reset full-speed USB device number 2 using uhci_hcd
+> ata4.00: ACPI cmd ef/03:42:00:00:00:a0 (SET FEATURES) filtered out
+> ata4.00: ACPI cmd ef/03:0c:00:00:00:a0 (SET FEATURES) filtered out
+> ata3: SATA link down (SStatus 0 SControl 300)
+> PM: resume devices took 1.009 seconds
+> OOM killer enabled.
+> Restarting tasks ... done.
+> PM: suspend exit
+> sleep[3690]: Failed to suspend system. System resumed again: 
+> Input/output error
+> ----
+> 
+> Here are some other tpm message visible on 5.1.0-0.rc3.git1.2.fc31.x86_64
+> (but they are shown in similar way on usable & suspendable -rc0)
+> 
+> Non-volatile memory driver v1.3
+> Linux agpgart interface v0.103
+> battery: ACPI: Battery Slot [BAT0] (battery present)
+> tpm_tis 00:05: 1.2 TPM (device-id 0xFFFF, rev-id 255)
+> tpm tpm0: [Hardware Error]: Adjusting reported timeouts: A 
+> 10000->10000us B 10000->10000us C 0->750000us D 0->750000us
+> tpm tpm0: TPM is disabled/deactivated (0x6)
+> ahci 0000:00:1f.2: AHCI 0001.0100 32 slots 3 ports 3 Gbps 0x5 impl SATA 
+> mode
+> ahci 0000:00:1f.2: flags: 64bit ncq sntf pm led clo pio slum part ccc
+> scsi host0: ahci
+> scsi host1: ahci
+> scsi host2: ahci
+> ata1: SATA max UDMA/133 abar m2048@0xfe226000 port 0xfe226100 irq 27
+> ata2: DUMMY
+> ....
+> mip6: Mobile IPv6
+> NET: Registered protocol family 17
+> RAS: Correctable Errors collector initialized.
+> microcode: sig=0x6fa, pf=0x80, revision=0x95
+> microcode: Microcode Update Driver: v2.2.
+> registered taskstats version 1
+> Loading compiled-in X.509 certificates
+> Loaded X.509 cert 'Fedora kernel signing key: 
+> 1662e00568f2df66b8eaccc8f8971f03bb9d8329'
+> zswap: loaded using pool lzo/zbud
+> Key type big_key registered
+> Key type encrypted registered
+> ima: Allocated hash algorithm: sha1
+> ima: Error Communicating to TPM chip
+> ima: Error Communicating to TPM chip
+> ima: Error Communicating to TPM chip
+> ima: Error Communicating to TPM chip
+> ima: Error Communicating to TPM chip
+> ima: Error Communicating to TPM chip
+> ima: Error Communicating to TPM chip
+> ima: Error Communicating to TPM chip
+> No architecture policies found
+> PM:   Magic number: 15:928:528
+> rtc_cmos 00:02: setting system clock to 2019-04-04T11:31:05 UTC 
+> (1554377465)
+> ata4.00: ATAPI: MATSHITADVD-RAM UJ-842 z, RC01, max UDMA/33
+> Unstable clock detected, switching default tracing clock to 
+> "global"#012If you want to keep using the local clock, then add:#012  
+> "trace_clock=local"#012on the kernel command line
+> ata3: SATA link down (SStatus 0 SControl 300)
+> ata1: SATA link up 3.0 Gbps (SStatus 123 SControl 300)
+> 
+> 
+> If there is more info needed let me know.
+> 
+> Regards
+> 
+> Zdenek
+> 
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
