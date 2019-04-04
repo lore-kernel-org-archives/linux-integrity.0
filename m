@@ -2,112 +2,104 @@ Return-Path: <SRS0=GWgT=SG=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC796C4360F
-	for <linux-integrity@archiver.kernel.org>; Thu,  4 Apr 2019 22:35:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A63CBC4360F
+	for <linux-integrity@archiver.kernel.org>; Thu,  4 Apr 2019 22:37:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CA10206DF
-	for <linux-integrity@archiver.kernel.org>; Thu,  4 Apr 2019 22:35:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="shWJwrGb"
+	by mail.kernel.org (Postfix) with ESMTP id 74C30206DF
+	for <linux-integrity@archiver.kernel.org>; Thu,  4 Apr 2019 22:37:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729908AbfDDWfS (ORCPT
+        id S1729856AbfDDWhS (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 4 Apr 2019 18:35:18 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:40048 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728663AbfDDWfS (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 4 Apr 2019 18:35:18 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 058BF8EE12C;
-        Thu,  4 Apr 2019 15:35:18 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 4TQJgh6GxdO0; Thu,  4 Apr 2019 15:35:17 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 49F9F8EE03B;
-        Thu,  4 Apr 2019 15:35:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1554417317;
-        bh=ycrWVojWYW5qVGsTI3+AcoyNU0M0Art4sA+6EfVNh+M=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=shWJwrGb/qSUp19mlKd7/ajw6Z0HLNq9L12l23L2NuPFyw9kw0GZ1fupuaMnb7+/k
-         DJoewlGR1KmyDxoY7LmkXv2DNemrUOVuKO8jCnRnDXWsRPI/dzx+Kq1B+Rve3YjVcU
-         suLbOsimBAFYQicTO0ObpMRpLgI6u3B4/lDnNqEM=
-Message-ID: <1554417315.24612.15.camel@HansenPartnership.com>
-Subject: Re: [PATCH V2 3/4] IMA: Optionally make use of filesystem-provided
- hashes
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Matthew Garrett <mjg59@google.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-fsdevel@vger.kernel.org, miklos@szeredi.hu
-Date:   Thu, 04 Apr 2019 15:35:15 -0700
-In-Reply-To: <CACdnJutZzJu7FxcLWasyvx9BLQJeGrA=7WA389JL8ixFJ6Skrg@mail.gmail.com>
-References: <20190226215034.68772-1-matthewgarrett@google.com>
-         <20190226215034.68772-4-matthewgarrett@google.com>
-         <1551369834.10911.195.camel@linux.ibm.com>
-         <1551377110.10911.202.camel@linux.ibm.com>
-         <CACdnJutfCxzQDeFzXmZ9f8UrnqNScErkBJd2Yu+VEoy4nBhBCA@mail.gmail.com>
-         <1551391154.10911.210.camel@linux.ibm.com>
-         <CACdnJuuRLDj+6OTohfTVzqXp1K7U3efVXXuFfBfhk3CiUBEMiQ@mail.gmail.com>
-         <CACdnJutPWEtDMS6YUXF0ykq7gKgQRNk6Fw=aHivHz6+NTodsgA@mail.gmail.com>
-         <1551731553.10911.510.camel@linux.ibm.com>
-         <CACdnJutWRB1up6wO3aWJJah3p8k+FY6xEfjw8ETHT69Vvsz8GQ@mail.gmail.com>
-         <1551791930.31706.41.camel@linux.ibm.com>
-         <CACdnJuvfzvZaU3CHtvVAP6vj_-rnWeTyAKjmRj8QGt7WAmjicQ@mail.gmail.com>
-         <1551815469.31706.132.camel@linux.ibm.com>
-         <CACdnJuvhu2iepghLm4-w2XVKH+TVT1JAY=vtKtf733UXPSBPaA@mail.gmail.com>
-         <1551875418.31706.158.camel@linux.ibm.com>
-         <CACdnJuvRuagNTidkq3d4g_OwfzqcALtd=g1-5LDzr2aBA1zV6w@mail.gmail.com>
-         <1551911937.31706.217.camel@linux.ibm.com>
-         <CACdnJut9T0xE-Q+ZAfqaRMUeBX=7w+cYE5Y7Ls1PdH-bJfv8MQ@mail.gmail.com>
-         <1551923650.31706.258.camel@linux.ibm.com>
-         <CACdnJuv+d2qEc+vQosmDOzdu57Jjpjq9-CZEy8epz0ob5mptsA@mail.gmail.com>
-         <1551991690.31706.416.camel@linux.ibm.com>
-         <CACdnJuvkA6M_fu3+BARH2AMHksTXbvWmRyK9ZaxcH-xZMq4G2g@mail.gmail.com>
-         <CACdnJuv2zV1OnbVaHqkB2UU=dAEzzffajAFg_xsgXRMvuZ5fTw@mail.gmail.com>
-         <1554416328.24612.11.camel@HansenPartnership.com>
-         <CACdnJutZzJu7FxcLWasyvx9BLQJeGrA=7WA389JL8ixFJ6Skrg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 4 Apr 2019 18:37:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48656 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728663AbfDDWhR (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 4 Apr 2019 18:37:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C69A8AB7D;
+        Thu,  4 Apr 2019 22:37:16 +0000 (UTC)
+Date:   Fri, 5 Apr 2019 00:37:15 +0200
+From:   Petr Vorel <pvorel@suse.cz>
+To:     Ignaz Forster <iforster@suse.de>
+Cc:     ltp@lists.linux.it, Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Fabian Vogt <FVogt@suse.com>, Weihua Du <WHDu@suse.com>,
+        linux-integrity@vger.kernel.org
+Subject: Re: [PATCH 3/3] ima: Add overlay test
+Message-ID: <20190404223714.GA12544@dell5510>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20190327161638.7407-1-pvorel@suse.cz>
+ <20190327161638.7407-4-pvorel@suse.cz>
+ <854e62ce-5e5c-7ea7-0291-0d3eaadf3fca@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <854e62ce-5e5c-7ea7-0291-0d3eaadf3fca@suse.de>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, 2019-04-04 at 15:26 -0700, Matthew Garrett wrote:
-> On Thu, Apr 4, 2019 at 3:18 PM James Bottomley
-> <James.Bottomley@hansenpartnership.com> wrote:
-> > The obvious other thought is integration with fs-verity, which is a
-> > filesystem maintained possibly signed merkel tree hash.  The
-> > problem here is what does vfs_get_hash() actually mean?  The
-> > assumption seems to be that it is the flat hash of the entire file
-> > which doesn't work for merkle trees.  However, if it could be a
-> > representative hash of the file which is produced however the
-> > filesystem decides, it could work (well, unless the file is copied
-> > on to a different fs, of course ...).
-> 
-> We could always use fs-verity to store additional verifiable metadata
-> including actual hashes for consistency?
+Hi Ignaz,
 
-Redundant information is always possible, but it can become
-inconsistent and, because the hashes can't be derived from each other,
-it's hard to tell if it is inconsistent without redoing the whole hash
-with each method.
+> thanks a lot for the LTP integration!
+thanks for testing and your comments!
 
-I was more wondering what, if any, problems would follow if we did let
-the filesystem choose the hash method and simply used the top merkle
-hash in place of the usual IMA hash?
+> Am 27.03.19 um 17:16 Uhr schrieb Petr Vorel:
+> > Based on reproducer made by Ignaz Forster <iforster@suse.de>
+> > used for his not upstreamed patchset [1] and previous report [2].
 
-James
+> Just for clarification, as the test is only referring to IMA: With IMA
+> everything should be working already, the problem during copy_up operations
+> was fixed by Mimi and Goldwyn in
+> https://patchwork.kernel.org/patch/10776231/.
+> As expected the test passes on my IMA-only setup.
 
+> My outstanding patchset is only necessary when combining IMA with EVM - in
+> this case the test will still fail. I hope I'll be able to resume my work in
+> the next few weeks.
+I'll rename it to evm_overlay.sh.
+BTW I got (with TST_NEEDS_DEVICE=1 in ima_overlay.sh) failure with ima_appraise_tcb kernel parameter:
+[  741.070585] audit: type=1800 audit(1554415774.087:46): pid=1491 uid=0 auid=0 ses=3 op="appraise_data" cause="invalid-hash" comm="ima_overlay.sh" name="/tmp/LTP_ima_overlay.eZxnT8LMZ7/mntpoint/merged/foo.txt" dev="vda2" ino=3496 res=0
+
+which looked to me as good error.
+I didn't get any ima error with ima_policy=appraise_tcb, which is supposed to be
+according to docs the same (and setup code in ima_policy.c looks to me like it:
+both just set ima_use_appraise_tcb). I wonder, what is wrong in my setup.
+
+BTW can you share your setup? ima_policy=appraise_tcb kernel parameter and
+loading IMA and EVM keys over dracut-ima scripts? (IMA appraisal and EVM using
+digital signatures? I guess using hashes for IMA appraisal would work as well)
+
+> > +do_test()
+> > +{
+> > +	local file="foo.txt"
+> > +	local f
+> > +
+> > +	tst_mount
+> > +	mounted=1
+> > +
+> > +	ROD echo lower \> $lower/$file
+> > +	if ! echo overlay > $merged/$file 2>/dev/null; then
+> > +		tst_res TFAIL "Cannot write to merged layer"
+> > +		return
+> > +	fi
+
+> I can think of two additional tests here:
+> 1. Appending to a file (>> instead of >)
+> 2. Creating a new file in the overlay
+
+> These cases are using different code paths and may fail independently, so
+> separate tests would be handy.
+
+I'll add them into v2.
+
+> Ignaz
+
+Kind regards,
+Petr
