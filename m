@@ -1,130 +1,222 @@
-Return-Path: <SRS0=2lTb=SF=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=GWgT=SG=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E60C4360F
-	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 22:27:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D83C10F06
+	for <linux-integrity@archiver.kernel.org>; Thu,  4 Apr 2019 00:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23F8A2147C
-	for <linux-integrity@archiver.kernel.org>; Wed,  3 Apr 2019 22:27:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C1662177E
+	for <linux-integrity@archiver.kernel.org>; Thu,  4 Apr 2019 00:33:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hn5DMg+q"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CUItz+OL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726314AbfDCW1Z (ORCPT
+        id S1728644AbfDDAd6 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 3 Apr 2019 18:27:25 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:45389 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726167AbfDCW1Z (ORCPT
+        Wed, 3 Apr 2019 20:33:58 -0400
+Received: from mail-vk1-f202.google.com ([209.85.221.202]:52579 "EHLO
+        mail-vk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728555AbfDDAd5 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 3 Apr 2019 18:27:25 -0400
-Received: by mail-io1-f67.google.com with SMTP id s7so257662iom.12
-        for <linux-integrity@vger.kernel.org>; Wed, 03 Apr 2019 15:27:25 -0700 (PDT)
+        Wed, 3 Apr 2019 20:33:57 -0400
+Received: by mail-vk1-f202.google.com with SMTP id 81so428809vkn.19
+        for <linux-integrity@vger.kernel.org>; Wed, 03 Apr 2019 17:33:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=+3faNpmag6jYME5yNI69COYIz0d4qS337f0eaty0yLY=;
-        b=Hn5DMg+qfhg8lnUXmQEgJ4eyGQRy86cBCVdOiz+SoR4bX8ULjx3usvppAd3U/Tjo+3
-         pHcQLhA3s2MAgrAxsJP7GSq7JG6jMjmn4mjKyBEp/bGnUhoOwSeCwPTclx6LWkhYulrq
-         SoU9wFkqFC1RrPQXHhojDrXTjLSQN+So9U3wt214BoVJ5XUbH4bQp44HLENcmeD4Mb3X
-         qdL0djpsWoB7JX+T5M6PCzE9BbFqDSBCTtApX3wdEYLcOQPrAI6bORTgR2IpA6jHh8MT
-         x6QCOhB3xdwb3cRgS2IhQ6tWhcf8Fn7ZIVFwQJWsgDGNEbeTqB6zPq7VypFgzQgg3Ss5
-         o+pA==
+        bh=1cmna1g3SBbmeXVQ7U4HNm6fqIG1pmKpIOgdIrBMnKE=;
+        b=CUItz+OLZxnDhdhbDMyIytTuCRSAmech13/+138rAWrc8qzCgsBTHY9rqY6YXQo1Bl
+         46oj1iym3+2BEf73V1DaNekR+Odhpx2kmfxD6BNgjJscILP+Ox3NtfDrGNH/5inLIl5w
+         nzDjIYkiJFms643IgUmwXtuELdJhfjAhsDAaFOUOBBBVFyvqD47IQHL0HkdOyT1RQQl+
+         vq9P6rrsmlldIu6IqIVM72U0NEyAVKGR6Q359pCN057VxGFGSfy4+Jc6utDwDKVUl6c5
+         JqwL7SvFyjAfvPU2oGzgipF6qYxOfXTnu+CqBpW63y5Zkr3r3RQZBOnQhD2KtJsQ7qgv
+         3eGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+3faNpmag6jYME5yNI69COYIz0d4qS337f0eaty0yLY=;
-        b=beOEZv02MP05JXQv2eYui7s5Uz9wKHiqLtTCLQXehVnWO11YYAEEnpyJwZNJQBBuGo
-         2jM3fifUn6Iox7N2ljfBAHBYSHZyT3FZQYheyNXyfjAqrFYujTkn9ERgNbDAFevXdD1l
-         wgezVWTzfQga525JIc+lnYHfYL9zjthhCPj6muRioyQzy89ik/dUrniW08Q9O3SuHRqN
-         czPwyUb+L0eyu6JOF1gnfK1ClmyUpA8OIHUT3G4+kDMkmyW65Ks84j+yil7RJeORSBEn
-         W1CMzkgTods3vdBjmmiIidpYk1UchoQVc3Jm6JVdnhkC4MYc6opihB1Nr440uAvoiadb
-         WxTQ==
-X-Gm-Message-State: APjAAAVF0ACCOqiLkzFuw8zVToEr0g7tNCmJC9pns6dEIlthh3a1gtBj
-        IQRe6Z+HDsgepFwoIe9kn2ZlG3pvXxauYInqvD2orA==
-X-Google-Smtp-Source: APXvYqyjaucmj870Vz9jHZPatpcn5T0LihCycvdCx7VILq9npP5A6ssDHW9qOcaFARXAimNtxuuxG36+qUImTOEY86c=
-X-Received: by 2002:a5e:d514:: with SMTP id e20mr2067567iom.8.1554330444296;
- Wed, 03 Apr 2019 15:27:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190402181505.25037-1-cclaudio@linux.ibm.com>
- <CACdnJuumhkqTb4+1=QBiLmbW4xd3wW=MZu6Tj_KdaoTMhCN+Tg@mail.gmail.com>
- <4ce5e057-0702-b0d5-7bb2-cea5b22e2efa@linux.ibm.com> <CACdnJusBm93zwDqTXTx_QYsg1-aGUAAHm_qq8Lcx3TvGTxdmbg@mail.gmail.com>
- <2208f156-d441-3082-2f4c-8030c84ef788@linux.ibm.com>
-In-Reply-To: <2208f156-d441-3082-2f4c-8030c84ef788@linux.ibm.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Wed, 3 Apr 2019 15:27:13 -0700
-Message-ID: <CACdnJuu8OqMrSs0esOmf=ro9n00aYEQ-nikAh6v6sk+YAQw4cQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Enabling secure boot on PowerNV systems
-To:     Claudio Carvalho <cclaudio@linux.ibm.com>
-Cc:     linuxppc-dev@ozlabs.org, linux-efi <linux-efi@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        Matthew Garret <matthew.garret@nebula.com>,
-        Nayna Jain <nayna@linux.ibm.com>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=1cmna1g3SBbmeXVQ7U4HNm6fqIG1pmKpIOgdIrBMnKE=;
+        b=Zr2yjjr4yvABfBQ6t9wJZy4h7GfsamHJ2OY8Nq52xp5dgBVjm2XEkfVm3kc4Q9feRg
+         O0PUkiiswzoMxMmUUACSFXoXiIuEFrsLHZe9QzCNRJpddTfMoF72eh/8nQUpqsnHJlg2
+         f4/zNAH8av0JlL0tcWpaGRilbYh54QdPMjSHlPSrXf0RTdyAxjCb+DmSqFuI5PcyIpmm
+         zfGGIL6kPHDg3sCXX+P7o09KMtJIelQqPg/4tQ2beGY2j+bj2zBvfGOY7K4BRF7wUYc5
+         DmlAPZ3B/yBYCBQgEia7ObqSET4AkfAzM/a2LsBeJpCMT0P1U+0+uSmHB+Zbve+edObu
+         Uu+w==
+X-Gm-Message-State: APjAAAUCuQuiJSFc5Q6wx7uYg0EgHhUIq4OYGr+fGTYcVQMKueiFuRYc
+        92GkCMs0Ck8f2b+L2FN9VVQT5DQvjPKXt5ulOMvflg==
+X-Google-Smtp-Source: APXvYqymaJjUWE4QohoQAnavv/039hKLzKnGBAzX+C4k3X+axOP9oov+XRAYGsycaVlf5NFQUisyKpqCn4VBjfyHousFzQ==
+X-Received: by 2002:a67:f24f:: with SMTP id y15mr404588vsm.25.1554338036150;
+ Wed, 03 Apr 2019 17:33:56 -0700 (PDT)
+Date:   Wed,  3 Apr 2019 17:32:46 -0700
+In-Reply-To: <20190404003249.14356-1-matthewgarrett@google.com>
+Message-Id: <20190404003249.14356-25-matthewgarrett@google.com>
+Mime-Version: 1.0
+References: <20190404003249.14356-1-matthewgarrett@google.com>
+X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
+Subject: [PATCH V32 24/27] kexec: Allow kexec_file() with appropriate IMA
+ policy when locked down
+From:   Matthew Garrett <matthewgarrett@google.com>
+To:     jmorris@namei.org
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        linux-api@vger.kernel.org, luto@kernel.org,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Apr 2, 2019 at 4:31 PM Claudio Carvalho <cclaudio@linux.ibm.com> wrote:
->
->
-> On 4/2/19 6:51 PM, Matthew Garrett wrote:
-> > So you implement the full PK/KEK/db/dbx/dbt infrastructure, and
-> > updates are signed in the same way?
->
-> For the first version, our firmware will implement a simplistic PK, KEK and
-> db infrastructure (without dbx and dbt) where only the Setup and User modes
-> will be supported.
+Systems in lockdown mode should block the kexec of untrusted kernels.
+For x86 and ARM we can ensure that a kernel is trustworthy by validating
+a PE signature, but this isn't possible on other architectures. On those
+platforms we can use IMA digital signatures instead. Add a function to
+determine whether IMA has or will verify signatures for a given event type,
+and if so permit kexec_file() even if the kernel is otherwise locked down.
+This is restricted to cases where CONFIG_INTEGRITY_TRUSTED_KEYRING is set
+in order to prevent an attacker from loading additional keys at runtime.
 
-Not supporting dbx seems like a pretty significant shortcoming. How
-are signatures meant to be revoked?
+Signed-off-by: Matthew Garrett <mjg59@google.com>
+Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: linux-integrity@vger.kernel.org
+---
+ include/linux/ima.h                 |  9 ++++++
+ kernel/kexec_file.c                 |  7 +++-
+ security/integrity/ima/ima.h        |  2 ++
+ security/integrity/ima/ima_main.c   |  2 +-
+ security/integrity/ima/ima_policy.c | 50 +++++++++++++++++++++++++++++
+ 5 files changed, 68 insertions(+), 2 deletions(-)
 
-> PK, KEK and db updates will be signed the same way, that is, using
-> userspace tooling like efitools in PowerNV. As for the authentication
-> descriptors, only the EFI_VARIABLE_AUTHENTICATION_2 descriptor will be
-> supported.
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index b5e16b8c50b7..60007b86f4fc 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -127,4 +127,13 @@ static inline int ima_inode_removexattr(struct dentry *dentry,
+ 	return 0;
+ }
+ #endif /* CONFIG_IMA_APPRAISE */
++
++#if defined(CONFIG_IMA_APPRAISE) && defined(CONFIG_INTEGRITY_TRUSTED_KEYRING)
++extern bool ima_appraise_signature(enum kernel_read_file_id func);
++#else
++static inline bool ima_appraise_signature(enum kernel_read_file_id func)
++{
++	return false;
++}
++#endif /* CONFIG_IMA_APPRAISE && CONFIG_INTEGRITY_TRUSTED_KEYRING */
+ #endif /* _LINUX_IMA_H */
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index a1cc37c8b43b..7599039623a7 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -240,7 +240,12 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+ 
+ 		ret = 0;
+ 
+-		if (kernel_is_locked_down(reason, LOCKDOWN_INTEGRITY)) {
++		/* If IMA is guaranteed to appraise a signature on the kexec
++		 * image, permit it even if the kernel is otherwise locked
++		 * down.
++		 */
++		if (!ima_appraise_signature(READING_KEXEC_IMAGE) &&
++		    kernel_is_locked_down(reason, LOCKDOWN_INTEGRITY)) {
+ 			ret = -EPERM;
+ 			goto out;
+ 		}
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index cc12f3449a72..fe03cc6f1ca4 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -115,6 +115,8 @@ struct ima_kexec_hdr {
+ 	u64 count;
+ };
+ 
++extern const int read_idmap[];
++
+ #ifdef CONFIG_HAVE_IMA_KEXEC
+ void ima_load_kexec_buffer(void);
+ #else
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 4ffac4f5c647..106f06dee9d1 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -442,7 +442,7 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+ 	return 0;
+ }
+ 
+-static const int read_idmap[READING_MAX_ID] = {
++const int read_idmap[READING_MAX_ID] = {
+ 	[READING_FIRMWARE] = FIRMWARE_CHECK,
+ 	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
+ 	[READING_MODULE] = MODULE_CHECK,
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 122797023bdb..f8f1cdb74a4f 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -1341,3 +1341,53 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ #endif	/* CONFIG_IMA_READ_POLICY */
++
++#if defined(CONFIG_IMA_APPRAISE) && defined(CONFIG_INTEGRITY_TRUSTED_KEYRING)
++/*
++ * ima_appraise_signature: whether IMA will appraise a given function using
++ * an IMA digital signature. This is restricted to cases where the kernel
++ * has a set of built-in trusted keys in order to avoid an attacker simply
++ * loading additional keys.
++ */
++bool ima_appraise_signature(enum kernel_read_file_id id)
++{
++	struct ima_rule_entry *entry;
++	bool found = false;
++	enum ima_hooks func;
++
++	if (id >= READING_MAX_ID)
++		return false;
++
++	func = read_idmap[id] ?: FILE_CHECK;
++
++	rcu_read_lock();
++	list_for_each_entry_rcu(entry, ima_rules, list) {
++		if (entry->action != APPRAISE)
++			continue;
++
++		/*
++		 * A generic entry will match, but otherwise require that it
++		 * match the func we're looking for
++		 */
++		if (entry->func && entry->func != func)
++			continue;
++
++		/*
++		 * We require this to be a digital signature, not a raw IMA
++		 * hash.
++		 */
++		if (entry->flags & IMA_DIGSIG_REQUIRED)
++			found = true;
++
++		/*
++		 * We've found a rule that matches, so break now even if it
++		 * didn't require a digital signature - a later rule that does
++		 * won't override it, so would be a false positive.
++		 */
++		break;
++	}
++
++	rcu_read_unlock();
++	return found;
++}
++#endif /* CONFIG_IMA_APPRAISE && CONFIG_INTEGRITY_TRUSTED_KEYRING */
+-- 
+2.21.0.392.gf8f6787159e-goog
 
-Is this API documented?
-
-> > In that case we might be better off with a generic interface for this
-> > purpose that we can expose on all platforms that implement a secure
-> > boot key hierarchy. Having an efivarfs that doesn't allow the creation
-> > of arbitrary attributes may break other existing userland
-> > expectations.
-> >
-> For what it's worth, gsmi uses the efivars infrastructure for EFI-like
-> variables.
-
-My recollection is that at the time the Chromebook firmware still had
-EFI underpinnings and the gsmi code was largely just an alternate
-mechanism for calling into something that was fundamentally the EFI
-variable store. With hindsight I don't think layering this was the
-right move - we've adjusted the semantics of efivarfs on more than one
-occasion to deal with the behaviour of real-world EFI platforms, and I
-don't think it's helpful to end up in a situation where we're trying
-to keep behaviour consistent among entirely different firmware
-interfaces.
-
-> What might a generic interface look like?  It would have to work for
-> existing secure boot solutions - including EFI - which would seem to imply
-> changes to userspace tools.
-
-I think that depends on exactly what problem you're trying to solve.
-Some aspects of the EFI secure boot design end up mirroring the
-economics of the PC ecosystem rather than being inherently good design
-goals, so it'd be helpful to know whether you're taking this solution
-because you want the same three-level key infrastructure or because
-that just leaves you compatible with the tooling.
