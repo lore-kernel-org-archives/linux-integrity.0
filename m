@@ -2,108 +2,116 @@ Return-Path: <SRS0=xmmr=SI=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CEDC10F06
-	for <linux-integrity@archiver.kernel.org>; Sat,  6 Apr 2019 06:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B306C10F06
+	for <linux-integrity@archiver.kernel.org>; Sat,  6 Apr 2019 15:30:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEBE72173C
-	for <linux-integrity@archiver.kernel.org>; Sat,  6 Apr 2019 06:23:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PpJ2nZHi"
+	by mail.kernel.org (Postfix) with ESMTP id F181D21019
+	for <linux-integrity@archiver.kernel.org>; Sat,  6 Apr 2019 15:30:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1554564650;
+	bh=69SVdAMKOi54l2cejvIAxS8Ti1tgoy349qwCGdEADyg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=K9yY+BycyZcEktIWeewT4a41zaKYhDRdUkGl+xrlcyy2BzwiaHHo+5r07HDY/LBHr
+	 ci92PNiYLhpyH9AvDxHVL7X4hd9Y8bfwncA8+978nSWnnjmgvaI6bL+JAuEXSPgh73
+	 pPdKjOpPdpIaJroCVP79KAKULV8HdTKxOnuPdAmU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725913AbfDFGX3 (ORCPT
+        id S1726458AbfDFPat (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 6 Apr 2019 02:23:29 -0400
-Received: from mail-lf1-f48.google.com ([209.85.167.48]:44748 "EHLO
-        mail-lf1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbfDFGX2 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 6 Apr 2019 02:23:28 -0400
-Received: by mail-lf1-f48.google.com with SMTP id v71so5870467lfa.11
-        for <linux-integrity@vger.kernel.org>; Fri, 05 Apr 2019 23:23:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uEd5HqtkCrmzhV8uD60XV6tOAxCTbXINpuF+45nWtFI=;
-        b=PpJ2nZHi7E/DZ+6QeFzzHo0EhkVhwFMNyvy/brBBYekIYQfwRNleatq/p4mVW1yMKr
-         oV4c3IQcDb8vniUUv99ASBMvk/ogPa+Q7k7uJ3Ml2pL6BsGZKMQxt2kPpwBTmjyQMOGe
-         ZMH1ja9ppUFgCA8TkIY4aOG1TGcKE1gYk67zki7rk0gDnU76BF9p8izyPcqdtNsq53Nf
-         XIlxyUmNHEw54JdUUs3U40hIwwn2FolMdaZtczITKlH+Ly4P6LHuhgYn8z10viKceBtT
-         Vbbcc0MjrEvHw+sdkNIRZmLgdXhHLDHsHUXQU05/K0k0mTMsWmWN3v9sg9WCZUl856fv
-         yMoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uEd5HqtkCrmzhV8uD60XV6tOAxCTbXINpuF+45nWtFI=;
-        b=roPHYSxmk/XCZudjpNpxZkAyjdcxjpPpaNOeCpNkodUtdGJHUur13PPVxPRslMr+k8
-         dbqAP+kwoOXpV0Tvt+xGuTFgFIaSAS+Xxi2mEj6/zs6lcFe7EW1+3Iljgc1YlpC+tLWK
-         Z5qLtdsrvHth8kyfaC5iASqSo7rkaAVP8W7M1s69pn1WQGXu/5P7SSUMa0R2dv16u4Ap
-         HKZgI/yCsamQU3xopdbbo5UWCZJeQgA7rQWI7J22RufaCrLAdRbwXaGQo0G+EhyCkwJL
-         IUiosM8kBva0CUtDNmD+BoBHzlH65iZlz/kLelijOkDoaY9Eq1ukc0Mn9+KzCpkJjVde
-         vMqQ==
-X-Gm-Message-State: APjAAAVPUk6FRhRGGqBS7QYYlBZlIM3vJjpoAG4VvIk5tdT6Gd7c9/b6
-        FfgbcniqZRP+MPGou8jJBl02J8SNFAqSXFGxNWw=
-X-Google-Smtp-Source: APXvYqxXxTIfrR1/W2NhegIMqMIIH3CTwV0niZpa59NDULwYo/uP0JOwWNuwwfDoVgDj/b/otehwkTJFasuVPtVDOfk=
-X-Received: by 2002:a19:7114:: with SMTP id m20mr9139600lfc.63.1554531427459;
- Fri, 05 Apr 2019 23:17:07 -0700 (PDT)
+        Sat, 6 Apr 2019 11:30:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36182 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726436AbfDFPat (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 6 Apr 2019 11:30:49 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 923482083E;
+        Sat,  6 Apr 2019 15:30:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1554564648;
+        bh=69SVdAMKOi54l2cejvIAxS8Ti1tgoy349qwCGdEADyg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oeFzRYXS6rbDeKWUWSPeNobw7CX8oIQmanT91oatL2x/a9tZIbqDjEJSzRG3b8WSy
+         p+ub6QgapqBNXZFM0qisU91TZsTW4eG1s4vbwZede2BsIGrSW0fNFqUtPTOuabXLpg
+         fEsI42/MKSuqh+gg3WDbrkDOASOtStlRutrfY1AI=
+Date:   Sat, 6 Apr 2019 11:30:47 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, peterhuewe@gmx.de,
+        jgg@ziepe.ca, linux-kernel@microsoft.com, bryankel@microsoft.com,
+        thiruan@microsoft.com, suredd@microsoft.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH 2/2] ftpm: firmware TPM running in TEE
+Message-ID: <20190406153047.GF2935@sasha-vm>
+References: <20190402193316.15144-1-sashal@kernel.org>
+ <20190402193316.15144-2-sashal@kernel.org>
+ <20190403181827.GB17006@linux.intel.com>
+ <20190403182728.GA17451@linux.intel.com>
 MIME-Version: 1.0
-References: <CAE=Ncrbk9-FLbGYKawdu62iDNKD-HH1QaDC+aDZAWPcf=17R7A@mail.gmail.com>
-In-Reply-To: <CAE=Ncrbk9-FLbGYKawdu62iDNKD-HH1QaDC+aDZAWPcf=17R7A@mail.gmail.com>
-From:   Janne Karhunen <janne.karhunen@gmail.com>
-Date:   Sat, 6 Apr 2019 09:16:56 +0300
-Message-ID: <CAE=NcrbR+TzNJ0xqf_ZSPOsm+J+Lbnxi8MMVy_9_2KfdpocgQA@mail.gmail.com>
-Subject: Re: appraisal reset safety
-To:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190403182728.GA17451@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi,
+On Wed, Apr 03, 2019 at 09:27:28PM +0300, Jarkko Sakkinen wrote:
+>On Wed, Apr 03, 2019 at 09:18:27PM +0300, Jarkko Sakkinen wrote:
+>> On Tue, Apr 02, 2019 at 03:33:16PM -0400, Sasha Levin wrote:
+>> > This patch adds support for a software-only implementation of a TPM
+>> > running in TEE.
+>> >
+>> > There is extensive documentation of the design here:
+>> > https://www.microsoft.com/en-us/research/publication/ftpm-software-implementation-tpm-chip/ .
+>> >
+>> > As well as reference code for the firmware available here:
+>> > https://github.com/Microsoft/ms-tpm-20-ref/tree/master/Samples/ARM32-FirmwareTPM
+>> >
+>> > Signed-off-by: Thirupathaiah Annapureddy <thiruan@microsoft.com>
+>> > Signed-off-by: Sasha Levin <sashal@kernel.org>
+>>
+>> What is the context anyway? I mean tpm_crb already supports fTPM running
+>> in TZ.
+>
+>Might take 2-3 weeks before I have time to go through ftpm1.pdf with
+>full concentration. I did search through the PDF for CRB and found
+>zero hits.
 
-Any thoughts on this? I would guess every system with active databases
-would need to address this somehow?
+The fTPM as described in that paper and implemented in practice does not
+use the CRB interface, thus we can't use tpm_crb to interface with the
+firmware TPM.
 
+>The commit message should absolutely better explain what is going on
+>and preferably there should be some more broad documentation in
+>Documentation/security/tpm.
+
+The code itself is just a small shim between the firmware TPM and the
+kernel's TPM interface. There's really not much else to expand on in the
+commit log.
+
+I'll add some background to Documentation/security/tpm.
+
+>Now this is just a random code dump and nothing else.
+
+It pretty much is, but that's because this is just a "stupid" shim,
+there heavy lifting is done outside of the kernel.
+
+>Also, I have zero idea how to test this. Any recommendations on ARM
+>board that can be easily used to test custom TZ applications would be
+>nice.
+
+We are testing this on a Broadcom's Stingray SST100 board, and if you
+have one we can help out with setting up a test environment. Otherwise,
+we haven't really tried it on other boards.
 
 --
-Janne
-
-On Fri, Apr 5, 2019 at 3:46 PM Janne Karhunen <janne.karhunen@gmail.com> wrote:
->
-> Hi,
->
-> I've setup an android based mobile device with pretty complete ima/evm
-> setup that covers just about all the standard use cases (imasig based
-> filesystems, ota support, factory reset support etc). All that is fine
-> and ima runs like a clock.
->
-> Since this is a mobile device, running out of battery or getting shot
-> in the head by something is always a realistic option. The random
-> resets seem to be leading into random appraisal failures as android
-> seems to be keeping surprisingly many files constantly open for
-> writing. So many actually, that I feel somewhat uneasy starting to
-> whitelist these files from the ima policy. That sounds like a viable
-> route only when it comes to the log files as those files primarily
-> move data only one way.
->
-> Now, is there any prior art on this how to make this work right? The
-> improvements that I can instantly think of are,
-> 1) whitelist everything that can be,
-> 2) reduce the vfs flush delays,
-> 3) make it detect the reset condition and fix the known files when
-> that happened. Unsafe and requires a patch (but that seems easy).
->
-> Anything else?
->
->
-> --
-> Janne
+Thanks,
+Sasha
