@@ -1,148 +1,109 @@
-Return-Path: <SRS0=mqgK=SH=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=xmmr=SI=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C52A2C282CE
-	for <linux-integrity@archiver.kernel.org>; Fri,  5 Apr 2019 22:19:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CEDC10F06
+	for <linux-integrity@archiver.kernel.org>; Sat,  6 Apr 2019 06:23:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DB4021871
-	for <linux-integrity@archiver.kernel.org>; Fri,  5 Apr 2019 22:19:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEBE72173C
+	for <linux-integrity@archiver.kernel.org>; Sat,  6 Apr 2019 06:23:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Bc0tJq9N"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PpJ2nZHi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726218AbfDEWTU (ORCPT
+        id S1725913AbfDFGX3 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 5 Apr 2019 18:19:20 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:51564 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726124AbfDEWTU (ORCPT
+        Sat, 6 Apr 2019 02:23:29 -0400
+Received: from mail-lf1-f48.google.com ([209.85.167.48]:44748 "EHLO
+        mail-lf1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725440AbfDFGX2 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 5 Apr 2019 18:19:20 -0400
-Received: by mail-it1-f195.google.com with SMTP id s3so12071558itk.1
-        for <linux-integrity@vger.kernel.org>; Fri, 05 Apr 2019 15:19:20 -0700 (PDT)
+        Sat, 6 Apr 2019 02:23:28 -0400
+Received: by mail-lf1-f48.google.com with SMTP id v71so5870467lfa.11
+        for <linux-integrity@vger.kernel.org>; Fri, 05 Apr 2019 23:23:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=p70rh8DzLMoO9YQR1wIHClyyXHDpqpEks55cuvOjfCY=;
-        b=Bc0tJq9N/sPYw85QXGSIH0hbEtzljs8EWItZ9MIwCmNwpRUoa/Wpc5hsHoxnO/te/o
-         O3F7X0+2bCdaluN6rPhO4hAZPUmPfFaaJIknDhttv3aW3vSR2RBpC49xL+P10rlIABz2
-         FtRzhFhWl+sdRw1u7SF5C+Ul/CUNeqzj2OmmTtoUzMM/nubLgmCHk1xDxXr9CenY1pcQ
-         b0moIO332HU3WYNlXK8fBIj84fYUgtIGZOcp9farU3QDzoBMhwPPDbrro6c1+P9Jk9BI
-         dtakwadfwEhfde93OHQh09dc8rKxnXgvtSMn54RFzPcjbCcm/hATCmPV1sGr1TIM37QO
-         ZEvQ==
+        bh=uEd5HqtkCrmzhV8uD60XV6tOAxCTbXINpuF+45nWtFI=;
+        b=PpJ2nZHi7E/DZ+6QeFzzHo0EhkVhwFMNyvy/brBBYekIYQfwRNleatq/p4mVW1yMKr
+         oV4c3IQcDb8vniUUv99ASBMvk/ogPa+Q7k7uJ3Ml2pL6BsGZKMQxt2kPpwBTmjyQMOGe
+         ZMH1ja9ppUFgCA8TkIY4aOG1TGcKE1gYk67zki7rk0gDnU76BF9p8izyPcqdtNsq53Nf
+         XIlxyUmNHEw54JdUUs3U40hIwwn2FolMdaZtczITKlH+Ly4P6LHuhgYn8z10viKceBtT
+         Vbbcc0MjrEvHw+sdkNIRZmLgdXhHLDHsHUXQU05/K0k0mTMsWmWN3v9sg9WCZUl856fv
+         yMoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=p70rh8DzLMoO9YQR1wIHClyyXHDpqpEks55cuvOjfCY=;
-        b=oFhw354GDU/X+H8jU0Y2LUy6xF/ZFsg6ddHt4kC6T+t16FW7zanVffAOgx7nb9636R
-         2ua6f/7Ehnd6l8u3hEDKQ+WokEKz0JgyzFOmxyRqrRdziHphWwManwCuVRxkcigfvHi7
-         V2yNkyP9yFGxNbsz93UlsSkBtPyAMZFHL6lf5+nhJK8/L5cn7PO/2RuZDAFG9qJc70K7
-         qAFmjc+uxFvvacl8mo94uQhfkVMXp0xhPuIG6vGHaG7qQegtp1FNzRKz5QhZ12tNijUo
-         4+VK+ZGF0aMjMrqtbea2zZ/6Seq4j5qIOjDrUqlxc3BOxL1xu8AnpoBRZ4q7hAZsDMzD
-         FYbw==
-X-Gm-Message-State: APjAAAVC+taAW0lkHZ9QT4IObcaFyp4Ipnyw8iPz+ai+pZKG2yv/L8wR
-        G8AWp/TogZIjf90OGQdxNIKAouQVUjKm1wiwOtRrMdJ/
-X-Google-Smtp-Source: APXvYqz8L0DRIH950OrISsoMW75m56cdjyA82W8JwtiaTtpNLc8MeWdCquXt/H6qVstvEF2gn6aGUbrGlapaBmieosc=
-X-Received: by 2002:a02:1a45:: with SMTP id 66mr11594981jai.124.1554502759204;
- Fri, 05 Apr 2019 15:19:19 -0700 (PDT)
+        bh=uEd5HqtkCrmzhV8uD60XV6tOAxCTbXINpuF+45nWtFI=;
+        b=roPHYSxmk/XCZudjpNpxZkAyjdcxjpPpaNOeCpNkodUtdGJHUur13PPVxPRslMr+k8
+         dbqAP+kwoOXpV0Tvt+xGuTFgFIaSAS+Xxi2mEj6/zs6lcFe7EW1+3Iljgc1YlpC+tLWK
+         Z5qLtdsrvHth8kyfaC5iASqSo7rkaAVP8W7M1s69pn1WQGXu/5P7SSUMa0R2dv16u4Ap
+         HKZgI/yCsamQU3xopdbbo5UWCZJeQgA7rQWI7J22RufaCrLAdRbwXaGQo0G+EhyCkwJL
+         IUiosM8kBva0CUtDNmD+BoBHzlH65iZlz/kLelijOkDoaY9Eq1ukc0Mn9+KzCpkJjVde
+         vMqQ==
+X-Gm-Message-State: APjAAAVPUk6FRhRGGqBS7QYYlBZlIM3vJjpoAG4VvIk5tdT6Gd7c9/b6
+        FfgbcniqZRP+MPGou8jJBl02J8SNFAqSXFGxNWw=
+X-Google-Smtp-Source: APXvYqxXxTIfrR1/W2NhegIMqMIIH3CTwV0niZpa59NDULwYo/uP0JOwWNuwwfDoVgDj/b/otehwkTJFasuVPtVDOfk=
+X-Received: by 2002:a19:7114:: with SMTP id m20mr9139600lfc.63.1554531427459;
+ Fri, 05 Apr 2019 23:17:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190402181505.25037-1-cclaudio@linux.ibm.com>
- <CACdnJuumhkqTb4+1=QBiLmbW4xd3wW=MZu6Tj_KdaoTMhCN+Tg@mail.gmail.com>
- <4ce5e057-0702-b0d5-7bb2-cea5b22e2efa@linux.ibm.com> <CACdnJusBm93zwDqTXTx_QYsg1-aGUAAHm_qq8Lcx3TvGTxdmbg@mail.gmail.com>
- <2208f156-d441-3082-2f4c-8030c84ef788@linux.ibm.com> <CACdnJuu8OqMrSs0esOmf=ro9n00aYEQ-nikAh6v6sk+YAQw4cQ@mail.gmail.com>
- <d79f47f8-9006-3a47-2bdc-58012cef5c7e@linux.ibm.com>
-In-Reply-To: <d79f47f8-9006-3a47-2bdc-58012cef5c7e@linux.ibm.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Fri, 5 Apr 2019 15:19:07 -0700
-Message-ID: <CACdnJuv_5A1_6CH1+Jn7SCrmW8Y6JuzsMmJoc1=_vn0nKdYMjQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Enabling secure boot on PowerNV systems
-To:     Claudio Carvalho <cclaudio@linux.ibm.com>
-Cc:     linuxppc-dev@ozlabs.org, linux-efi <linux-efi@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        Matthew Garret <matthew.garret@nebula.com>,
-        Nayna Jain <nayna@linux.ibm.com>
+References: <CAE=Ncrbk9-FLbGYKawdu62iDNKD-HH1QaDC+aDZAWPcf=17R7A@mail.gmail.com>
+In-Reply-To: <CAE=Ncrbk9-FLbGYKawdu62iDNKD-HH1QaDC+aDZAWPcf=17R7A@mail.gmail.com>
+From:   Janne Karhunen <janne.karhunen@gmail.com>
+Date:   Sat, 6 Apr 2019 09:16:56 +0300
+Message-ID: <CAE=NcrbR+TzNJ0xqf_ZSPOsm+J+Lbnxi8MMVy_9_2KfdpocgQA@mail.gmail.com>
+Subject: Re: appraisal reset safety
+To:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Apr 5, 2019 at 2:11 PM Claudio Carvalho <cclaudio@linux.ibm.com> wrote:
->
->
-> On 4/3/19 7:27 PM, Matthew Garrett wrote:
-> > Not supporting dbx seems like a pretty significant shortcoming. How
-> > are signatures meant to be revoked?
->
->
-> We began by focusing on certificates for keys that can be added at
-> runtime.  Before adding support for revocation, we plan to gather
-> additional use cases.  In the meantime, unwanted certificates can be
-> removed by the administrator.
+Hi,
 
-Based on our experience doing this in UEFI, that's insufficient - you
-want to be able to block individual binaries or leaf certificates
-without dropping trust in an intermediate certificate entirely.
+Any thoughts on this? I would guess every system with active databases
+would need to address this somehow?
 
+
+--
+Janne
+
+On Fri, Apr 5, 2019 at 3:46 PM Janne Karhunen <janne.karhunen@gmail.com> wrote:
 >
-> >
-> >> PK, KEK and db updates will be signed the same way, that is, using
-> >> userspace tooling like efitools in PowerNV. As for the authentication
-> >> descriptors, only the EFI_VARIABLE_AUTHENTICATION_2 descriptor will be
-> >> supported.
-> > Is this API documented?
+> Hi,
 >
+> I've setup an android based mobile device with pretty complete ima/evm
+> setup that covers just about all the standard use cases (imasig based
+> filesystems, ota support, factory reset support etc). All that is fine
+> and ima runs like a clock.
 >
-> The API is still a work in progress.  We are planning to publish a document
-> describing the current API and overall design shortly.
-
-Ok. How are the attributes interpreted by the API?
-
-> Perhaps the biggest departure is that the secure variables are stored in
-> flash memory that is not lockable.  In order to protect the secure
-> variables, hashes of the flash regions where they're stored are written to
-> TPM NVRAM indices.  The TPM NVRAM indices we use are write locked at
-> runtime.  The sysadmin enqueues update commands in flash.  During the next
-> boot, the firmware verifies and processes the commands to update the
-> certificate store and accompanying integrity hashes in the TPM NVRAM
-> indices and write locks them.  Before certificates read from flash are
-> used, the certificate store is hashed and compared against the hashes
-> stored from the TPM.  The one exception is the PK. We store it in a TPM
-> NVRAM index by itself rather than flash because updates to it must be
-> guaranteed to be atomic.
-
-What's the behaviour if multiple updates are enqueued? Does reading
-back show a mocked up updated variable or the original state?
-
-> > I think that depends on exactly what problem you're trying to solve.
-> > Some aspects of the EFI secure boot design end up mirroring the
-> > economics of the PC ecosystem rather than being inherently good design
-> > goals, so it'd be helpful to know whether you're taking this solution
-> > because you want the same three-level key infrastructure or because
-> > that just leaves you compatible with the tooling.
+> Since this is a mobile device, running out of battery or getting shot
+> in the head by something is always a realistic option. The random
+> resets seem to be leading into random appraisal failures as android
+> seems to be keeping surprisingly many files constantly open for
+> writing. So many actually, that I feel somewhat uneasy starting to
+> whitelist these files from the ima policy. That sounds like a viable
+> route only when it comes to the log files as those files primarily
+> move data only one way.
+>
+> Now, is there any prior art on this how to make this work right? The
+> improvements that I can instantly think of are,
+> 1) whitelist everything that can be,
+> 2) reduce the vfs flush delays,
+> 3) make it detect the reset condition and fix the known files when
+> that happened. Unsafe and requires a patch (but that seems easy).
+>
+> Anything else?
 >
 >
-> In our use case,  the three-level key hierarchy conveniently supports the
-> concept of (1) an administrator authority, who authorizes (2) other
-> organizations, e.g., distros, to provide (3) certificates for their code
-> signing keys.   By using efivars, we leverage pre-existing userspace EFI
-> tools to generate authenticated updates and certificates.  Additionally,
-> pre-existing kernel infrastructure simplifies efivars processing.
-
-I'm not really clear on the workflow here. Who's the administrator
-authority? When would they be updating the second level of keys? If
-there's no support for revocation, why would distributions need two
-levels of key in the system database rather than just distributing a
-single intermediate and signing their actual signing certs with that?
+> --
+> Janne
