@@ -2,110 +2,174 @@ Return-Path: <SRS0=XIeY=SL=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20AE1C10F0E
-	for <linux-integrity@archiver.kernel.org>; Tue,  9 Apr 2019 21:18:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B54C282DA
+	for <linux-integrity@archiver.kernel.org>; Tue,  9 Apr 2019 22:35:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D956420833
-	for <linux-integrity@archiver.kernel.org>; Tue,  9 Apr 2019 21:18:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554844722;
-	bh=kDgcG+mcudGYXegJqDdhMmoYMnIgAotj8rLme63ftCc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=EIeOaBacfy6IZVxNEjZ1DQBmph3phL0UCZNN9QAk7Gb5eKENo7qbvBk7aMyYWzprQ
-	 xY4nALFya+DSzIRuxaJc+wgqxANDYgpEbIHaiDJlZIVqc797sgNtZhu0GkqWD8w+Yt
-	 bZ5MYR4f9ztTjA1dC4HFYsyCffTYy3oQK15Yc3Tk=
+	by mail.kernel.org (Postfix) with ESMTP id 7EBC9218EA
+	for <linux-integrity@archiver.kernel.org>; Tue,  9 Apr 2019 22:35:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726539AbfDIVSm (ORCPT
+        id S1726627AbfDIWfV (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 9 Apr 2019 17:18:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45978 "EHLO mail.kernel.org"
+        Tue, 9 Apr 2019 18:35:21 -0400
+Received: from namei.org ([65.99.196.166]:33162 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726515AbfDIVSm (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 9 Apr 2019 17:18:42 -0400
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A4262147C;
-        Tue,  9 Apr 2019 21:18:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1554844721;
-        bh=kDgcG+mcudGYXegJqDdhMmoYMnIgAotj8rLme63ftCc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=UpSdosAPXodQuGjD+VpcX4rNodPEVLJ1K3jGeT8ZJHy8OFAWsZKPBBmq/1KDBe7sj
-         xSIhgHDRtsdv73i9Tf8GEzOfcjYC1wEvU7vpipaWU7L8iQIAgC/iIDcKEQqvQTbgDk
-         utvhNJCzpDLSSjLsOhq3EK3IuazbQSBumOhWZ734=
-Received: by mail-qk1-f179.google.com with SMTP id w20so11233624qka.7;
-        Tue, 09 Apr 2019 14:18:41 -0700 (PDT)
-X-Gm-Message-State: APjAAAXq0UtWJ06hOrXqZ+6i+IkGebC+YMJfMr8zCDhu3oJCqZihSnMp
-        Yk+SOsDMa20D9+pDdKeeGzI26laVL7H78e/RJA==
-X-Google-Smtp-Source: APXvYqwSrz5w1Y2ZNAFJzaY8Geq8S//cGip2G6MbAct9QFosdCplsdZF1bfA1/BlPCib/PyFMhScXlYod/dJlupre7E=
-X-Received: by 2002:ae9:e313:: with SMTP id v19mr28457559qkf.153.1554844720564;
- Tue, 09 Apr 2019 14:18:40 -0700 (PDT)
+        id S1726565AbfDIWfV (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 9 Apr 2019 18:35:21 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x39MYpkB016645;
+        Tue, 9 Apr 2019 22:34:51 GMT
+Date:   Wed, 10 Apr 2019 08:34:51 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+cc:     lwn@lwn.net, fedora-selinux-list@redhat.com,
+        Linux Security Summit Program Committee 
+        <lss-pc@lists.linuxfoundation.org>, linux-crypto@vger.kernel.org,
+        Audit-ML <linux-audit@redhat.com>, gentoo-hardened@gentoo.org,
+        keyrings@linux-nfs.org, tpmdd-devel@lists.sourceforge.net,
+        kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Subject: [ANNOUNCE][CFP] Linux Security Summit North America 2019
+Message-ID: <alpine.LRH.2.21.1904100829230.16313@namei.org>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-References: <20190409184958.7476-1-sashal@kernel.org> <20190409184958.7476-2-sashal@kernel.org>
-In-Reply-To: <20190409184958.7476-2-sashal@kernel.org>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 9 Apr 2019 16:18:29 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLXcY9VFuY8xZvek0ybUXetS27jL-PW0XGLSVQR3Nc5aw@mail.gmail.com>
-Message-ID: <CAL_JsqLXcY9VFuY8xZvek0ybUXetS27jL-PW0XGLSVQR3Nc5aw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] ftpm: dt-binding: add dts documentation for fTPM driver
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        jgg@ziepe.ca, Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-integrity@vger.kernel.org, linux-kernel@microsoft.com,
-        thiruan@microsoft.com, bryankel@microsoft.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="1665246916-1292412540-1554849292=:16313"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Apr 9, 2019 at 1:50 PM Sasha Levin <sashal@kernel.org> wrote:
->
-> The parameters are similar to the ones used by IBM's vTPM and the
-> various I2C tpm drivers.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Bindings describe h/w (or firmware interfaces in this case), not drivers.
+--1665246916-1292412540-1554849292=:16313
+Content-Type: text/plain; charset=ISO-8859-7
+Content-Transfer-Encoding: 8BIT
 
->
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  .../bindings/security/tpm/tpm_ftpm_tee.txt          | 13 +++++++++++++
->  .../devicetree/bindings/vendor-prefixes.txt         |  1 +
->  2 files changed, 14 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
->
-> diff --git a/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt b/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
-> new file mode 100644
-> index 000000000000..20fca67a56c4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
-> @@ -0,0 +1,13 @@
-> +Required properties:
-> +- compatible: should be "microsoft,ftpm"
-> +- linux,sml-base: 64-bit base address of the reserved memory allocated
-> +                 for the firmware event log
-> +- linux,sml-size: size of the memory allocated for the firmware event log
+==============================================================================
+		   ANNOUNCEMENT AND CALL FOR PARTICIPATION
 
-Firmware is defining linux specific properties? What if I want to run
-BSD? We should use 'reg' here instead.
+		   LINUX SECURITY SUMMIT NORTH AMERICA 2019
+                             
+			         19-21 August
+			     SAN DIEGO, CA, USA
+==============================================================================
 
-What memory is used here? This should be under /reserved-memory if it
-is part of "main" memory.
 
-Really, I'd prefer to not see this in DT at all. Make the firmware
-discoverable. Why repeat the mistakes of non-discoverable h/w in s/w
-interfaces? OP-Tee at least has defined a mechanism to enumerate TEE
-functions IIRC.
+DESCRIPTION
 
-Rob
+  The Linux Security Summit (LSS) is a technical forum for collaboration
+  between Linux developers, researchers, and end users. Its primary aim is to
+  foster community efforts in analyzing and solving Linux security challenges.
+
+  LSS will be held this year as two separate events, one in North America
+  (LSS-NA), and one in Europe (LSS-EU), to facilitate broader participation in
+  Linux Security development. Note that this CFP is for LSS-NA; a separate CFP
+  will be announced for LSS-EU in May. We encourage everyone to attend both
+  events.
+
+
+  The program committee currently seeks proposals for:
+
+    * Refereed Presentations:
+      45 minutes in length.
+
+    * Panel Discussion Topics:
+      45 minutes in length.
+
+    * Short Topics:
+      30 minutes in total, including at least 10 minutes discussion.
+
+    * Tutorials (NEW for 2019)
+      90 minutes in length.
+
+    * Hackfest Sessions (NEW for 2019)
+      1/2 day.
+
+
+  Note that LSS NA is now a 3-day event. The third day will be a mix of
+  tutorials and hackfest sessions:
+
+    * Tutorial sessions should be focused on advanced Linux security defense
+      topics within areas such as the kernel, compiler, and security-related
+      libraries.  Priority will be given to tutorials created for this
+      conference.
+
+    * Hackfest proposals should aim to solve, or make significant progress on
+      a well-defined problem in the Linux security defense space, and be
+      supported by multiple community developers.
+
+  Topic areas include, but are not limited to:
+
+    * Kernel self-protection
+    * Access control
+    * Cryptography and key management
+    * Integrity policy and enforcement
+    * Hardware Security
+    * IoT and embedded security
+    * Virtualization and containers
+    * System-specific system hardening
+    * Case studies
+    * Security tools
+    * Security UX
+    * Emerging technologies, threats & techniques 
+
+  Proposals should be submitted via:
+    https://events.linuxfoundation.org/events/linux-security-summit-north-america-2019/program/cfp/
+
+
+DATES
+
+  * CFP Close: May 31, 2019
+  * CFP Notifications: June 17, 2019
+  * Schedule Announced: June 19, 2019
+  * Event: August 19-21, 2019
+
+
+WHO SHOULD ATTEND
+
+  We're seeking a diverse range of attendees, and welcome participation by
+  people involved in Linux security development, operations, and research.
+
+  The LSS is a unique global event which provides the opportunity to present
+  and discuss your work or research with key Linux security community members
+  and maintainers. It¢s also useful for those who wish to keep up with the
+  latest in Linux security development, and to provide input to the
+  development process.
+
+
+WEB SITE
+
+  https://events.linuxfoundation.org/events/linux-security-summit-north-america-2019/
+
+
+TWITTER
+
+  For event updates and announcements, follow:
+
+    https://twitter.com/LinuxSecSummit
+  
+
+PROGRAM COMMITTEE
+
+  The program committee for LSS 2019 is:
+
+    * James Morris, Microsoft
+    * Serge Hallyn, Cisco
+    * Paul Moore, Cisco
+    * Stephen Smalley, NSA
+    * Elena Reshetova, Intel
+    * John Johansen, Canonical
+    * Kees Cook, Google
+    * Casey Schaufler, Intel
+    * Mimi Zohar, IBM
+    * David A. Wheeler, Institute for Defense Analyses
+
+  The program committee may be contacted as a group via email:
+    lss-pc () lists.linuxfoundation.org
+
+
+--1665246916-1292412540-1554849292=:16313--
