@@ -2,97 +2,93 @@ Return-Path: <SRS0=XIeY=SL=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6517DC10F0E
-	for <linux-integrity@archiver.kernel.org>; Tue,  9 Apr 2019 12:32:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15616C10F0E
+	for <linux-integrity@archiver.kernel.org>; Tue,  9 Apr 2019 13:41:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 336FB2084F
-	for <linux-integrity@archiver.kernel.org>; Tue,  9 Apr 2019 12:32:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5B492070D
+	for <linux-integrity@archiver.kernel.org>; Tue,  9 Apr 2019 13:41:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726388AbfDIMcX (ORCPT
+        id S1726513AbfDINl5 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 9 Apr 2019 08:32:23 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33774 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726001AbfDIMcX (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 9 Apr 2019 08:32:23 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x39CLWEC020027
-        for <linux-integrity@vger.kernel.org>; Tue, 9 Apr 2019 08:32:22 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2rrs0qydvj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 09 Apr 2019 08:32:20 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 9 Apr 2019 13:32:18 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 9 Apr 2019 13:32:15 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x39CWE8q51249194
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 9 Apr 2019 12:32:14 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 90E214C046;
-        Tue,  9 Apr 2019 12:32:14 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D1CAF4C052;
-        Tue,  9 Apr 2019 12:32:13 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.94.143])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  9 Apr 2019 12:32:13 +0000 (GMT)
-Subject: Re: appraisal reset safety
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Janne Karhunen <janne.karhunen@gmail.com>
-Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org
-Date:   Tue, 09 Apr 2019 08:32:03 -0400
-In-Reply-To: <CAE=NcrbSpC3htW5BhZth8OuSGM-DVtH67i=uWg9tosJKv3Sg9g@mail.gmail.com>
-References: <CAE=Ncrbk9-FLbGYKawdu62iDNKD-HH1QaDC+aDZAWPcf=17R7A@mail.gmail.com>
-         <CAE=NcrbR+TzNJ0xqf_ZSPOsm+J+Lbnxi8MMVy_9_2KfdpocgQA@mail.gmail.com>
-         <CAE=NcrYc3qXU2Y2BWJhbh0kTrCZN9AVmSmz6msqTKTNZR+iBPQ@mail.gmail.com>
-         <1554729047.17244.95.camel@linux.ibm.com>
-         <CAE=NcrZ67AGtHmWQF2HOF1i5LG4idrHx1q+83tzG4knpNBCQFA@mail.gmail.com>
-         <CAE=Ncraz_sDhtmE2RPYxJmo+yRkRK5opDyburk126sCSW-MvbQ@mail.gmail.com>
-         <1554811489.4192.15.camel@linux.ibm.com>
-         <CAE=NcrbSpC3htW5BhZth8OuSGM-DVtH67i=uWg9tosJKv3Sg9g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19040912-0020-0000-0000-0000032DE8A3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19040912-0021-0000-0000-000021800EC6
-Message-Id: <1554813123.4192.33.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-09_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=679 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1904090079
+        Tue, 9 Apr 2019 09:41:57 -0400
+Received: from mga06.intel.com ([134.134.136.31]:55665 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726463AbfDINl5 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 9 Apr 2019 09:41:57 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Apr 2019 06:41:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,329,1549958400"; 
+   d="scan'208";a="335177220"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.55.112])
+  by fmsmga006.fm.intel.com with ESMTP; 09 Apr 2019 06:41:42 -0700
+Date:   Tue, 9 Apr 2019 16:41:41 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Cc:     Paul Zimmerman <pauldzim@gmail.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Regression in suspend-to-ram (TPM related) with 5.1-rc1
+ (BISECTED)
+Message-ID: <20190409134141.GB9759@linux.intel.com>
+References: <CADBGO7_WUoA53gM8EDFy6Q36SDEZPU9V=OUBA0QM20FOko51Rg@mail.gmail.com>
+ <CADBGO7-UkQMxSPdSX9bGVPxSRROj75FA16FuXeFrVmcKVQ_Qdg@mail.gmail.com>
+ <CADBGO7_XnbXiWHB=O1B_+b+CUA9g-bYJHN37VJ2SsxXMNHcPOQ@mail.gmail.com>
+ <20190321134140.GA4603@linux.intel.com>
+ <31f75727-d2c3-1afa-ab14-1dbc62a6315b@ginzinger.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <31f75727-d2c3-1afa-ab14-1dbc62a6315b@ginzinger.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2019-04-09 at 15:25 +0300, Janne Karhunen wrote:
-> On Tue, Apr 9, 2019 at 3:05 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+On Mon, Apr 08, 2019 at 07:53:34AM +0200, Martin Kepplinger wrote:
+> On 21.03.19 14:41, Jarkko Sakkinen wrote:
+> > On Tue, Mar 19, 2019 at 04:03:37PM -0700, Paul Zimmerman wrote:
+> >> So I bisected this down to:
+> >>
+> >> # first bad commit: [a3fbfae82b4cb3ff9928e29f34c64d0507cad874] tpm:
+> >> take TPM chip power gating out of tpm_transmit()
+> >>
+> >> but this doesn't revert cleanly on Linus' HEAD. Anyone have an idea what
+> >> could be wrong here?
+> > 
+> > Sorry I've been in flu for the early week. I spotted the bug
+> > immediately.  When I did these patches I did not have TPM 1.x at my
+> > hand. I used fTPM 2.0 and dTPM 2.0. Stefan did TPM 1.x testing but I
+> > probably forgot to ask him to try out suspend.
+> > 
+> > Anyway, the bug is obvious and I'll send you a patch to try out.
+> > Thanks a lot for bisecting this!
+> > 
+> > /Jarkko
+> > 
 > 
-> > > It would take an additional integrity hook, of course.
-> >
-> > That's fine.
 > 
-> Great, I will work up a proper patch and check the locking.
+> Hi,
+> 
+> Any news on this? It seems not to be fixed in -rc4. I'd happily test a
+> patch too.
+> 
+> thanks a lot,
+> 
+>                             martin
 
-Thanks!
+I sent a PR to James last week with the fix. Probably has not landed
+yet.
 
-Mimi
+https://lore.kernel.org/linux-integrity/20190329115544.GA27351@linux.intel.com/
 
+/Jarkko
