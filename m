@@ -1,222 +1,95 @@
-Return-Path: <SRS0=Ey5g=SK=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=XIeY=SL=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0CA8C10F14
-	for <linux-integrity@archiver.kernel.org>; Mon,  8 Apr 2019 22:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD19DC10F0E
+	for <linux-integrity@archiver.kernel.org>; Tue,  9 Apr 2019 07:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E22621874
-	for <linux-integrity@archiver.kernel.org>; Mon,  8 Apr 2019 22:53:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9881320663
+	for <linux-integrity@archiver.kernel.org>; Tue,  9 Apr 2019 07:59:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FX+TXbM3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728700AbfDHWxH (ORCPT
+        id S1726463AbfDIH7G (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 8 Apr 2019 18:53:07 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50860 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728687AbfDHWxH (ORCPT
+        Tue, 9 Apr 2019 03:59:06 -0400
+Received: from mail-lj1-f175.google.com ([209.85.208.175]:41084 "EHLO
+        mail-lj1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726396AbfDIH7G (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 8 Apr 2019 18:53:07 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x38MnDr9139593
-        for <linux-integrity@vger.kernel.org>; Mon, 8 Apr 2019 18:53:06 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2rrd1157rx-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 08 Apr 2019 18:53:06 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.ibm.com>;
-        Mon, 8 Apr 2019 23:53:03 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 8 Apr 2019 23:52:59 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x38MqwdX56492210
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 8 Apr 2019 22:52:58 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5A3E54C040;
-        Mon,  8 Apr 2019 22:52:58 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9C90A4C044;
-        Mon,  8 Apr 2019 22:52:56 +0000 (GMT)
-Received: from swastik.ibm.com (unknown [9.85.157.39])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  8 Apr 2019 22:52:56 +0000 (GMT)
-From:   Nayna Jain <nayna@linux.ibm.com>
-To:     linuxppc-dev@ozlabs.org, linux-efi@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        Matthew Garret <matthew.garret@nebula.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH v2 3/3] powerpc: Add support to initialize ima policy rules
-Date:   Mon,  8 Apr 2019 18:52:34 -0400
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1554763954-11795-1-git-send-email-nayna@linux.ibm.com>
-References: <1554763954-11795-1-git-send-email-nayna@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19040822-4275-0000-0000-00000325B113
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19040822-4276-0000-0000-00003834C80D
-Message-Id: <1554763954-11795-4-git-send-email-nayna@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-08_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1904080164
+        Tue, 9 Apr 2019 03:59:06 -0400
+Received: by mail-lj1-f175.google.com with SMTP id k8so13570973lja.8
+        for <linux-integrity@vger.kernel.org>; Tue, 09 Apr 2019 00:59:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=g306jD0jgreUhK9VmxPNHzHQFdID0TxHWNL/6uQvNFs=;
+        b=FX+TXbM3IbJ7ZNWcXHdx9dGZuE7zJXhLpPsyFy2jBVfDDx/S8vXka72+a0d4S7vz+B
+         YYoqh9d0ie3aCFXEubeQ4WpBvnf01macuKlJlU2LvO+iC0TuctmBqMT0Fl6x+kpcYGe3
+         WAcrs5As3FHShTMsLPNdiLfA+B/Dpf2+6jbznYytamyO+kqHbIx0JBx4FO4JVODAiVZn
+         SoIgbOLuwNF95hk6jL75dRkdb5dyjhas7vB95dPjsole+H5tPdvJCWzgA4a/nI8Cy8KP
+         rEfywyslN2HAD76DLjBdAZEOFtLcYysvM3bMSz8BM+m/pX0o1lG0W5SXRBwETqJFrvwp
+         hSUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=g306jD0jgreUhK9VmxPNHzHQFdID0TxHWNL/6uQvNFs=;
+        b=ZivcY9JoNQ3MAH5cAkXUa6kDmXBDxePLgATlebjOG3H/S15Tc3phjSXwcC/nXHywu6
+         xqvWUsDZp1oVNADFAHe3JOct8SCrPPBMbOqn/IrnE+oBpFxRAEsef+yBhlDgLlbCCMEi
+         ZfXlA4ex3VuW9XdOrO94jXbmcBadaMLQforwqQHbGuvfeQzr/v55pKRNMPYqTT9HLd4f
+         q8MVKMH68FV4fu7FxmH5Wk/cyHL0AExBf9+qxtrqwiD14Hq30AFf9EI01F22ioAaL3cb
+         56N38g5sm4DcCiO8uzAMyXegOYY7s75XeiXFo3ohrKA+8tXXNWC7BV+zYMNNVtP9+SQ1
+         GYGA==
+X-Gm-Message-State: APjAAAUG5Z1Vm9jI7ibi1OaVkpgdyw5db8JNisM+vXAK7t6vdRqkqIUf
+        W1NAo+PFKXBekO7bj4ZMGrXP4o6f8xSb62hnvjkNfA==
+X-Google-Smtp-Source: APXvYqwctgaIWR5FqUmzSQ1ng46ma6uhg/FAOK2Py0NGH1yg6iIhjRrSTjauuwJp/jdrHBAGcniOhAbMYxG6KWIu/68=
+X-Received: by 2002:a2e:8719:: with SMTP id m25mr18605899lji.50.1554796744051;
+ Tue, 09 Apr 2019 00:59:04 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAE=Ncrbk9-FLbGYKawdu62iDNKD-HH1QaDC+aDZAWPcf=17R7A@mail.gmail.com>
+ <CAE=NcrbR+TzNJ0xqf_ZSPOsm+J+Lbnxi8MMVy_9_2KfdpocgQA@mail.gmail.com>
+ <CAE=NcrYc3qXU2Y2BWJhbh0kTrCZN9AVmSmz6msqTKTNZR+iBPQ@mail.gmail.com> <1554729047.17244.95.camel@linux.ibm.com>
+In-Reply-To: <1554729047.17244.95.camel@linux.ibm.com>
+From:   Janne Karhunen <janne.karhunen@gmail.com>
+Date:   Tue, 9 Apr 2019 10:58:52 +0300
+Message-ID: <CAE=NcrZ67AGtHmWQF2HOF1i5LG4idrHx1q+83tzG4knpNBCQFA@mail.gmail.com>
+Subject: Re: appraisal reset safety
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-PowerNV secure boot relies on the kernel IMA security subsystem to
-perform the OS kernel image signature verification. Since each secure
-boot mode has different IMA policy requirements, dynamic definition of
-the policy rules based on the runtime secure boot mode of the system is
-required. On systems that support secure boot, but have it disabled,
-only measurement policy rules of the kernel image and modules are
-defined.
+On Mon, Apr 8, 2019 at 4:11 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
 
-This patch defines the arch-specific implementation to retrieve the
-secure boot mode of the system and accordingly configures the IMA policy
-rules.
+> The question of how much/how little to measure/appraise/audit is based
+> on policy and affects the integrity of the system and its performance.
+>  Detecting and updating the file hash each time the file changes would
+> have major performance repercussions.  Even that wouldn't solve the
+> problem, as the file change is in cache.  Writing the file hash as an
+> xattr and making the file change persistent needs to be coordinated,
+> probably at the filesystem level.
 
-This patch provides arch-specific IMA policies if PPC_SECURE_BOOT
-config is enabled.
+As an experiment, I will add 'ima_file_update' function and call it
+from few strategic spots (such as vfs write) and see how far that can
+go removing the crash-recovery band-aid.
 
-Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
----
- arch/powerpc/Kconfig           | 14 +++++++++
- arch/powerpc/kernel/Makefile   |  1 +
- arch/powerpc/kernel/ima_arch.c | 54 ++++++++++++++++++++++++++++++++++
- include/linux/ima.h            |  3 +-
- 4 files changed, 71 insertions(+), 1 deletion(-)
- create mode 100644 arch/powerpc/kernel/ima_arch.c
+If the hash is in sync with the latest write, there is at least some
+hope of recovery since the emergency sync on crash should flush this
+data along the rest of it (I think). If this works, at least it will
+give an option to use ima relatively safely given that you are aware
+of it.
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 2d0be82c3061..7407af79ed8a 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -901,6 +901,20 @@ config PPC_MEM_KEYS
- 
- 	  If unsure, say y.
- 
-+config PPC_SECURE_BOOT
-+	prompt "Enable PowerPC Secure Boot"
-+	bool
-+	default n
-+	depends on PPC64
-+	depends on OPAL_SECVAR
-+	depends on IMA
-+	depends on IMA_ARCH_POLICY
-+	help
-+	  Linux on POWER with firmware secure boot enabled needs to define
-+	  security policies to extend secure boot to the OS.
-+	  This config allows user to enable OS Secure Boot on PowerPC systems
-+	  that have firmware secure boot support.
-+
- endmenu
- 
- config ISA_DMA_API
-diff --git a/arch/powerpc/kernel/Makefile b/arch/powerpc/kernel/Makefile
-index cddadccf551d..fcbc7a94888b 100644
---- a/arch/powerpc/kernel/Makefile
-+++ b/arch/powerpc/kernel/Makefile
-@@ -119,6 +119,7 @@ ifdef CONFIG_IMA
- obj-y				+= ima_kexec.o
- endif
- endif
-+obj-$(CONFIG_PPC_SECURE_BOOT)	+= ima_arch.o
- 
- obj-$(CONFIG_AUDIT)		+= audit.o
- obj64-$(CONFIG_AUDIT)		+= compat_audit.o
-diff --git a/arch/powerpc/kernel/ima_arch.c b/arch/powerpc/kernel/ima_arch.c
-new file mode 100644
-index 000000000000..871b321656fb
---- /dev/null
-+++ b/arch/powerpc/kernel/ima_arch.c
-@@ -0,0 +1,54 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2019 IBM Corporation
-+ * Author: Nayna Jain <nayna@linux.ibm.com>
-+ *
-+ * ima_arch.c
-+ *      - initialize ima policies for PowerPC Secure Boot
-+ */
-+
-+#include <linux/ima.h>
-+#include <asm/secboot.h>
-+
-+bool arch_ima_get_secureboot(void)
-+{
-+	bool sb_mode;
-+
-+	sb_mode = get_powerpc_sb_mode();
-+	if (sb_mode)
-+		return true;
-+	else
-+		return false;
-+}
-+
-+/*
-+ * File signature verification is not needed, include only measurements
-+ */
-+static const char *const default_arch_rules[] = {
-+	"measure func=KEXEC_KERNEL_CHECK",
-+	"measure func=MODULE_CHECK",
-+	NULL
-+};
-+
-+/* Both file signature verification and measurements are needed */
-+static const char *const sb_arch_rules[] = {
-+	"measure func=KEXEC_KERNEL_CHECK",
-+	"measure func=MODULE_CHECK",
-+	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
-+#if !IS_ENABLED(CONFIG_MODULE_SIG)
-+	"appraise func=MODULE_CHECK appraise_type=imasig",
-+#endif
-+	NULL
-+};
-+
-+/*
-+ * On PowerPC, file measurements are to be added to the IMA measurement list
-+ * irrespective of the secure boot state of the system. Signature verification
-+ * is conditionally enabled based on the secure boot state.
-+ */
-+const char *const *arch_get_ima_policy(void)
-+{
-+	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot())
-+		return sb_arch_rules;
-+	return default_arch_rules;
-+}
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index dc12fbcf484c..ab81a204cf4c 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -31,7 +31,8 @@ extern void ima_post_path_mknod(struct dentry *dentry);
- extern void ima_add_kexec_buffer(struct kimage *image);
- #endif
- 
--#if defined(CONFIG_X86) && defined(CONFIG_EFI)
-+#if (defined(CONFIG_X86) && defined(CONFIG_EFI)) \
-+			 || defined(CONFIG_PPC_SECURE_BOOT)
- extern bool arch_ima_get_secureboot(void);
- extern const char * const *arch_get_ima_policy(void);
- #else
--- 
-2.20.1
 
+--
+Janne
