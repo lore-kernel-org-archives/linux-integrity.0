@@ -2,116 +2,120 @@ Return-Path: <SRS0=XOlz=SM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33680C10F11
-	for <linux-integrity@archiver.kernel.org>; Wed, 10 Apr 2019 17:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9811FC10F11
+	for <linux-integrity@archiver.kernel.org>; Wed, 10 Apr 2019 17:54:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07F342077C
-	for <linux-integrity@archiver.kernel.org>; Wed, 10 Apr 2019 17:38:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EE0420850
+	for <linux-integrity@archiver.kernel.org>; Wed, 10 Apr 2019 17:54:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1554918842;
+	bh=OKNCXq/u5TsjghIDiv1qzNoZhWbxKDfTSSvKapP630o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=nybHu5w49y4W7Hx46YfirMQ6EQehUuF74mrRQeMVxqj1xAnOZ9RVdPpVj+UZR0w/u
+	 mKpCGdklHQX2yCifD3qcd46TBWyukSg2PIkEPZgWO3g2c+naBK/qRLJPKFWzVEJHS/
+	 QhdW/Izdcic/ljGuuxTfinUa4K157zS+kVcuW1Xg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729660AbfDJRi2 (ORCPT
+        id S1730573AbfDJRyC (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 10 Apr 2019 13:38:28 -0400
-Received: from mga18.intel.com ([134.134.136.126]:52864 "EHLO mga18.intel.com"
+        Wed, 10 Apr 2019 13:54:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729224AbfDJRi2 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 10 Apr 2019 13:38:28 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Apr 2019 10:38:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,334,1549958400"; 
-   d="scan'208";a="141635121"
-Received: from jsakkine-mobl.ger.corp.intel.com (HELO localhost) ([10.251.87.38])
-  by orsmga003.jf.intel.com with ESMTP; 10 Apr 2019 10:38:20 -0700
-Date:   Wed, 10 Apr 2019 20:38:18 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, peterhuewe@gmx.de,
-        jgg@ziepe.ca, linux-kernel@microsoft.com, bryankel@microsoft.com,
-        thiruan@microsoft.com, suredd@microsoft.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH 2/2] ftpm: firmware TPM running in TEE
-Message-ID: <20190410173318.GA9052@linux.intel.com>
-References: <20190402193316.15144-1-sashal@kernel.org>
- <20190402193316.15144-2-sashal@kernel.org>
- <20190403181827.GB17006@linux.intel.com>
- <20190403182728.GA17451@linux.intel.com>
- <20190406153047.GF2935@sasha-vm>
- <20190410112927.GA6586@linux.intel.com>
- <20190410160432.GB11568@sasha-vm>
+        id S1730566AbfDJRyB (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 10 Apr 2019 13:54:01 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97D802063F;
+        Wed, 10 Apr 2019 17:54:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1554918840;
+        bh=OKNCXq/u5TsjghIDiv1qzNoZhWbxKDfTSSvKapP630o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CLQUMqoDtyBeAaYWnqqViRedTVyp7e+vssIRSwlF9NAV9zVJ18eIeUR5lC0sd7DwI
+         /RXw+vIqrHngUynUaXlfAOiOah3uILk4TPYx0i0j0dYGVXXZ4u31G0JKooSz+9jvvH
+         f6pNEbJ0t2iqieGDdaey10HDjBkL+Cma9Lv1PjkY=
+Date:   Wed, 10 Apr 2019 13:53:59 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Rob Herring <robh+dt@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-integrity@vger.kernel.org, linux-kernel@microsoft.com,
+        thiruan@microsoft.com, bryankel@microsoft.com
+Subject: Re: [PATCH v2 1/3] ftpm: dt-binding: add dts documentation for fTPM
+ driver
+Message-ID: <20190410175359.GE11568@sasha-vm>
+References: <20190409184958.7476-1-sashal@kernel.org>
+ <20190409184958.7476-2-sashal@kernel.org>
+ <CAL_JsqLXcY9VFuY8xZvek0ybUXetS27jL-PW0XGLSVQR3Nc5aw@mail.gmail.com>
+ <20190410161949.GC11568@sasha-vm>
+ <CAL_JsqJ0p8MsFe2HnqVHvdGyz=6P7dV++xj1d1TTgcobsFqpjg@mail.gmail.com>
+ <20190410170316.GK8997@ziepe.ca>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20190410160432.GB11568@sasha-vm>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20190410170316.GK8997@ziepe.ca>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Apr 10, 2019 at 12:04:32PM -0400, Sasha Levin wrote:
-> On Wed, Apr 10, 2019 at 02:29:27PM +0300, Jarkko Sakkinen wrote:
-> > On Sat, Apr 06, 2019 at 11:30:47AM -0400, Sasha Levin wrote:
-> > > On Wed, Apr 03, 2019 at 09:27:28PM +0300, Jarkko Sakkinen wrote:
-> > > > On Wed, Apr 03, 2019 at 09:18:27PM +0300, Jarkko Sakkinen wrote:
-> > > > > On Tue, Apr 02, 2019 at 03:33:16PM -0400, Sasha Levin wrote:
-> > > > > > This patch adds support for a software-only implementation of a TPM
-> > > > > > running in TEE.
-> > > > > >
-> > > > > > There is extensive documentation of the design here:
-> > > > > > https://www.microsoft.com/en-us/research/publication/ftpm-software-implementation-tpm-chip/ .
-> > > > > >
-> > > > > > As well as reference code for the firmware available here:
-> > > > > > https://github.com/Microsoft/ms-tpm-20-ref/tree/master/Samples/ARM32-FirmwareTPM
-> > > > > >
-> > > > > > Signed-off-by: Thirupathaiah Annapureddy <thiruan@microsoft.com>
-> > > > > > Signed-off-by: Sasha Levin <sashal@kernel.org>
-> > > > >
-> > > > > What is the context anyway? I mean tpm_crb already supports fTPM running
-> > > > > in TZ.
-> > > >
-> > > > Might take 2-3 weeks before I have time to go through ftpm1.pdf with
-> > > > full concentration. I did search through the PDF for CRB and found
-> > > > zero hits.
-> > > 
-> > > The fTPM as described in that paper and implemented in practice does not
-> > > use the CRB interface, thus we can't use tpm_crb to interface with the
-> > > firmware TPM.
-> > 
-> > Obviously not but what is the reason of not implementing CRB but instead
-> > making yet another interface? I mean CRB supports SMC call.
-> > 
-> > For me this is taking steps back as to the early days when there was
-> > proprietary intefaces to TPM before TCG came along and stardized.
-> > 
-> > I'm sure that the TPM implementation itself could be reworked to
-> > inteface using CRB. It would also be good for ARM as a platform as now
-> > this new made up interface causes unwanted divergence. I thought that
-> > throwing ad hoc intefaces everywhere is something that ARM Linux
-> > community tries to reduce, not increase.
-> 
-> I'm not sure what the original reasons were for not using the CRB
-> interface. Note that the paper is from a few years ago, and
-> implementations of this fTPM existed before the paper, so it's very
-> possible that it just predates CRB.
-> 
-> Either way, there is existing hardware that runs this TPM and I'm trying
-> to get it out of Microsoft's tree and get it upstream. There's not much
-> I could do about existing hardware at this point.
+On Wed, Apr 10, 2019 at 02:03:16PM -0300, Jason Gunthorpe wrote:
+>On Wed, Apr 10, 2019 at 12:01:37PM -0500, Rob Herring wrote:
+>> On Wed, Apr 10, 2019 at 11:19 AM Sasha Levin <sashal@kernel.org> wrote:
+>> >
+>> > On Tue, Apr 09, 2019 at 04:18:29PM -0500, Rob Herring wrote:
+>> > >On Tue, Apr 9, 2019 at 1:50 PM Sasha Levin <sashal@kernel.org> wrote:
+>> > >>
+>> > >> The parameters are similar to the ones used by IBM's vTPM and the
+>> > >> various I2C tpm drivers.
+>> > >
+>> > >Bindings describe h/w (or firmware interfaces in this case), not drivers.
+>> > >
+>> > >>
+>> > >> Signed-off-by: Sasha Levin <sashal@kernel.org>
+>> > >>  .../bindings/security/tpm/tpm_ftpm_tee.txt          | 13 +++++++++++++
+>> > >>  .../devicetree/bindings/vendor-prefixes.txt         |  1 +
+>> > >>  2 files changed, 14 insertions(+)
+>> > >>  create mode 100644 Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
+>> > >>
+>> > >> diff --git a/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt b/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
+>> > >> new file mode 100644
+>> > >> index 000000000000..20fca67a56c4
+>> > >> +++ b/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
+>> > >> @@ -0,0 +1,13 @@
+>> > >> +Required properties:
+>> > >> +- compatible: should be "microsoft,ftpm"
+>> > >> +- linux,sml-base: 64-bit base address of the reserved memory allocated
+>> > >> +                 for the firmware event log
+>> > >> +- linux,sml-size: size of the memory allocated for the firmware event log
+>> > >
+>> > >Firmware is defining linux specific properties? What if I want to run
+>> > >BSD? We should use 'reg' here instead.
+>> >
+>> > This is based on already existing code that defines these names, see
+>> > tpm_read_log_of() in drivers/char/tpm/eventlog/of.c .
+>>
+>> BTW, that probably needs updating to handle endianness correctly.
+>
+>IIRC this legacy IBM code has broken endianness in the firmware..
+>
+>All that stuff in read_log_of, and the related DT stuff, is historical
+>IBM special case-ness and should not be copied into new things.
 
-OK, the 2nd paragraph kind of is enough reason to pull it. Thanks for
-elaborating this. Just wanted to get a clearer picture where this sits
-in the universe. I'll do detailed review as soon as I have time.
+The fTPM driver does not use it on it's own, so I guess I can just drop
+this patch then?
 
-I don't need to have the hardware as long as *someone* could give
-tested-by for this.
-
-/Jarkko
+--
+Thanks,
+Sasha
