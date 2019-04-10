@@ -2,134 +2,190 @@ Return-Path: <SRS0=XOlz=SM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BF7C10F14
-	for <linux-integrity@archiver.kernel.org>; Wed, 10 Apr 2019 17:03:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0841DC10F11
+	for <linux-integrity@archiver.kernel.org>; Wed, 10 Apr 2019 17:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A4B52083E
-	for <linux-integrity@archiver.kernel.org>; Wed, 10 Apr 2019 17:03:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C751E20850
+	for <linux-integrity@archiver.kernel.org>; Wed, 10 Apr 2019 17:36:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="jNo5WGDE"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bSJRSo5M"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728483AbfDJRDS (ORCPT
+        id S1729578AbfDJRgu (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 10 Apr 2019 13:03:18 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:36016 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727338AbfDJRDS (ORCPT
+        Wed, 10 Apr 2019 13:36:50 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:35176 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729526AbfDJRgu (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 10 Apr 2019 13:03:18 -0400
-Received: by mail-qt1-f194.google.com with SMTP id s15so3748897qtn.3
-        for <linux-integrity@vger.kernel.org>; Wed, 10 Apr 2019 10:03:18 -0700 (PDT)
+        Wed, 10 Apr 2019 13:36:50 -0400
+Received: by mail-it1-f194.google.com with SMTP id w15so4836361itc.0
+        for <linux-integrity@vger.kernel.org>; Wed, 10 Apr 2019 10:36:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3S3EtzvI72IztZ1OecbcYhWottrkySxyyi6Vj03NVHg=;
-        b=jNo5WGDEjci/sBFz88NZUSV1BNp9SwSmK+dVLGLE5nLOXa3ytE+LQ+0Wb1uFLlGfe5
-         ShS/+GnDeFNStQpmP4wN4yO0WIMh0jMVyfO+BAW5GVyDAHEhQ6mfm4d7hgBpz9HT6EmZ
-         zty6S6z0xO2MgN4SEyCLd9rYAp95JZqxgVQ0qS8vxRIrCpn/A4htKD8qyskGkIPRN3Ot
-         wPouNwN7Xbhtb1CEg9ksnIvG00uym8jlIaR6ZqdEDrv3QBbUF3of7lfWc77DWsmaImoD
-         5glwh0kMkg3RFgSVyhbjyuFE9sXlqBeX64WaUoRDeuDLPZRSp5k/2nokH42ynT/5tLEa
-         81lw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=fsdwxzllgm3TZiNS2RBUzUWgv7Kl8/L4XW2AecOXicU=;
+        b=bSJRSo5MsFgno1KgFsAA0YK3rrv031WHLUUGrO3xbQk7/2nDnoqhvqCJ15Ey02vmDN
+         Hxk/8IqQAkGzzQ3RlVdOSQn4H8INleO5W/ThQpK7vUqwbxb2+jCr7keiDXwFtAWpkfNg
+         4hD9j7FmHX7letmuEOZ4IDSOF/QivdG51ubmLFeGqbYbQ9clMSR1PhFfW/qE8KibK+8n
+         SoWGBelTt+/DKTHDgSuq1WRucP6zbuqnPF2e3eqSAq4rMjWweTMpOp4pCDSu6FCEESOu
+         cWqbWQeM5QscA0I5BMqRgU6XQnly8tSmYOXLaNcPtKQvF6my5Rx67jZ5R2MBRepNeR4B
+         dMEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3S3EtzvI72IztZ1OecbcYhWottrkySxyyi6Vj03NVHg=;
-        b=hwtucBHH2ndu1gN9oeXckPb7ZKLvwCO8vRP7OQZpYMm3aMnpGiEpQib9IM0lhOjcas
-         ziOWN3855BMmRaI4X9DQzLXEkvrl0yy1VUYWQUurCY9QDfhJimFbauwn4+KxApSp/MRj
-         IyvY5iB0tCJd1mRNAl74JAsvAMdTJX0LovYilj51UDzj9W/wwhco3jsIoc2uvzjEhnv4
-         3oO6lRpSJ0wNjwQOPwkeLUy4i0xdB95f7bR1GlQJ5i2gtRi1q6wGuv9ZZug3rodTWcUq
-         NVM/gxW5NevOx9p1UJnqLFAcbSoAzl0N/g1KHgpC/ipU9y38RYTbbfst3A3afeLfqqb5
-         ysqg==
-X-Gm-Message-State: APjAAAXbvAD9VwTPnrqFXUlNin4lr2ZY+uwAZHpiC9Azg+Ybf9QVb+f/
-        BP8C6OsntYUbjR4K8sbiDuGJkQ==
-X-Google-Smtp-Source: APXvYqyca4r7fdowtvFUi4zx06RO6WTnatbNC4NrwBytBQkNptGP9xQOgCYQuVVSQbgu8RXxewSJsg==
-X-Received: by 2002:ac8:1a6d:: with SMTP id q42mr35959956qtk.129.1554915797573;
-        Wed, 10 Apr 2019 10:03:17 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-49-251.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.49.251])
-        by smtp.gmail.com with ESMTPSA id x14sm23410371qtc.44.2019.04.10.10.03.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 10 Apr 2019 10:03:16 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hEGd2-00042L-5H; Wed, 10 Apr 2019 14:03:16 -0300
-Date:   Wed, 10 Apr 2019 14:03:16 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Sasha Levin <sashal@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-integrity@vger.kernel.org, linux-kernel@microsoft.com,
-        thiruan@microsoft.com, bryankel@microsoft.com
-Subject: Re: [PATCH v2 1/3] ftpm: dt-binding: add dts documentation for fTPM
- driver
-Message-ID: <20190410170316.GK8997@ziepe.ca>
-References: <20190409184958.7476-1-sashal@kernel.org>
- <20190409184958.7476-2-sashal@kernel.org>
- <CAL_JsqLXcY9VFuY8xZvek0ybUXetS27jL-PW0XGLSVQR3Nc5aw@mail.gmail.com>
- <20190410161949.GC11568@sasha-vm>
- <CAL_JsqJ0p8MsFe2HnqVHvdGyz=6P7dV++xj1d1TTgcobsFqpjg@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=fsdwxzllgm3TZiNS2RBUzUWgv7Kl8/L4XW2AecOXicU=;
+        b=fMg5GTnfwiwBRMtuyyROhsn+GA5ZZP9smEtFVUcJrfIEiYY2cdPxlraNfHjx0YS0bm
+         c6Ml3h8tpTl5JKjLzCxe+XBynWbxpqBzGmXuNCl5QkiutboUnCw3Rxm8JbD71/GG2Gou
+         +EQPQUlNIPXzqRnS99Ie+IN8ame+gFWEX+rHZN+1NrbVv4z6GgD7F+AjcXuPl+6Pt1h+
+         nkkDSIDUshn5OKetjTxkxsZApAAv8cgtvZ6mV6CuWcVpsfBYdLWCVtFXBY19G1zu2FsS
+         5h/zXjijP//7HbvsmC/m+N04FlSpO6JmxXpHewzz6VW0KXU/1wTO+woLL9rH0J16W+AZ
+         zbqw==
+X-Gm-Message-State: APjAAAUTBoevbtVVR/4kqz0GEzrh9HMfKjJivG0Eos9VjE9HiJVvJGKO
+        /t3+uXTH18XRsC/AzD09Zw88+4JebSWSu/ebkF59Dg==
+X-Google-Smtp-Source: APXvYqwcxj9ETT2fC97ngGmh7CcsBy2+YL6kB6AnKQJasNCbUVIV8fGBdWEIhNBMFR1OZOiEkz1I6DPnF3iTkLVIYjE=
+X-Received: by 2002:a24:7294:: with SMTP id x142mr4445023itc.7.1554917808975;
+ Wed, 10 Apr 2019 10:36:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqJ0p8MsFe2HnqVHvdGyz=6P7dV++xj1d1TTgcobsFqpjg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190402181505.25037-1-cclaudio@linux.ibm.com>
+ <CACdnJuumhkqTb4+1=QBiLmbW4xd3wW=MZu6Tj_KdaoTMhCN+Tg@mail.gmail.com>
+ <4ce5e057-0702-b0d5-7bb2-cea5b22e2efa@linux.ibm.com> <CACdnJusBm93zwDqTXTx_QYsg1-aGUAAHm_qq8Lcx3TvGTxdmbg@mail.gmail.com>
+ <2208f156-d441-3082-2f4c-8030c84ef788@linux.ibm.com> <CACdnJuu8OqMrSs0esOmf=ro9n00aYEQ-nikAh6v6sk+YAQw4cQ@mail.gmail.com>
+ <d79f47f8-9006-3a47-2bdc-58012cef5c7e@linux.ibm.com> <CACdnJuv_5A1_6CH1+Jn7SCrmW8Y6JuzsMmJoc1=_vn0nKdYMjQ@mail.gmail.com>
+ <28bfc0a7-9ae5-2c99-e472-ea53f856bafc@linux.ibm.com>
+In-Reply-To: <28bfc0a7-9ae5-2c99-e472-ea53f856bafc@linux.ibm.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Wed, 10 Apr 2019 10:36:36 -0700
+Message-ID: <CACdnJuvpUKiX5UgSOrzh+B9y68zKm+Bzu1c8KFJHd8diz=sm2Q@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Enabling secure boot on PowerNV systems
+To:     Claudio Carvalho <cclaudio@linux.ibm.com>
+Cc:     linuxppc-dev@ozlabs.org, linux-efi <linux-efi@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Kerr <jk@ozlabs.org>,
+        Matthew Garret <matthew.garret@nebula.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Peter Jones <pjones@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Apr 10, 2019 at 12:01:37PM -0500, Rob Herring wrote:
-> On Wed, Apr 10, 2019 at 11:19 AM Sasha Levin <sashal@kernel.org> wrote:
+(Cc:ing Peter Jones)
+
+On Tue, Apr 9, 2019 at 3:55 PM Claudio Carvalho <cclaudio@linux.ibm.com> wr=
+ote:
+>
+>
+> On 4/5/19 7:19 PM, Matthew Garrett wrote:
+> > Based on our experience doing this in UEFI, that's insufficient - you
+> > want to be able to block individual binaries or leaf certificates
+> > without dropping trust in an intermediate certificate entirely.
+>
+>
+> We agree that a dbx would be useful for blacklisting particular kernels
+> signed with given certificate. However, we have been avoiding doing so fo=
+r
+> the initial release of secure boot on OpenPOWER. We don't have individual
+> firmware binaries in OpenPOWER. Kernels are currently the only concern fo=
+r
+> the OS secure boot certificates we're discussing here. Also, we have a ve=
+ry
+> limited keystore space in POWER9.
+>
+> Petitboot doesn't have standardized OS kernel verification at all right
+> now.  Having the capability even without dbx seems valuable.
+
+I don't see the benefit in attempting to maintain compatibility with
+existing tooling unless you're going to be *completely* compatible
+with existing tooling. That means supporting dbx and dbt.
+
+> >> The API is still a work in progress.  We are planning to publish a doc=
+ument
+> >> describing the current API and overall design shortly.
+> > Ok. How are the attributes interpreted by the API?
+>
+>
+> We support a subset of standard EFI variable attributes, and we only use
+> EFI variables that relate to secure boot. Our goal is not to implement
+> UEFI.  However, we do seek to be compatible with user space tooling and
+> reuse as much existing infrastructure as possible. We don=E2=80=99t suppo=
+rt the
+> following: EFI_VARIABLE_HARDWARE_ERROR_RECORD,
+> EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS and
+> EFI_VARIABLE_ENHANCED_AUTHENTICATED_ACCESS.
+
+Ok. I think that's realistically fine.
+
+>
 > >
-> > On Tue, Apr 09, 2019 at 04:18:29PM -0500, Rob Herring wrote:
-> > >On Tue, Apr 9, 2019 at 1:50 PM Sasha Levin <sashal@kernel.org> wrote:
-> > >>
-> > >> The parameters are similar to the ones used by IBM's vTPM and the
-> > >> various I2C tpm drivers.
-> > >
-> > >Bindings describe h/w (or firmware interfaces in this case), not drivers.
-> > >
-> > >>
-> > >> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> > >>  .../bindings/security/tpm/tpm_ftpm_tee.txt          | 13 +++++++++++++
-> > >>  .../devicetree/bindings/vendor-prefixes.txt         |  1 +
-> > >>  2 files changed, 14 insertions(+)
-> > >>  create mode 100644 Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
-> > >>
-> > >> diff --git a/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt b/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
-> > >> new file mode 100644
-> > >> index 000000000000..20fca67a56c4
-> > >> +++ b/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
-> > >> @@ -0,0 +1,13 @@
-> > >> +Required properties:
-> > >> +- compatible: should be "microsoft,ftpm"
-> > >> +- linux,sml-base: 64-bit base address of the reserved memory allocated
-> > >> +                 for the firmware event log
-> > >> +- linux,sml-size: size of the memory allocated for the firmware event log
-> > >
-> > >Firmware is defining linux specific properties? What if I want to run
-> > >BSD? We should use 'reg' here instead.
-> >
-> > This is based on already existing code that defines these names, see
-> > tpm_read_log_of() in drivers/char/tpm/eventlog/of.c .
-> 
-> BTW, that probably needs updating to handle endianness correctly.
+> >> Perhaps the biggest departure is that the secure variables are stored =
+in
+> >> flash memory that is not lockable.  In order to protect the secure
+> >> variables, hashes of the flash regions where they're stored are writte=
+n to
+> >> TPM NVRAM indices.  The TPM NVRAM indices we use are write locked at
+> >> runtime.  The sysadmin enqueues update commands in flash.  During the =
+next
+> >> boot, the firmware verifies and processes the commands to update the
+> >> certificate store and accompanying integrity hashes in the TPM NVRAM
+> >> indices and write locks them.  Before certificates read from flash are
+> >> used, the certificate store is hashed and compared against the hashes
+> >> stored from the TPM.  The one exception is the PK. We store it in a TP=
+M
+> >> NVRAM index by itself rather than flash because updates to it must be
+> >> guaranteed to be atomic.
+> > What's the behaviour if multiple updates are enqueued? Does reading
+> > back show a mocked up updated variable or the original state?
+>
+>
+> Our secure variable updates are only applied at boot time. If any one of
+> them fails, they all fail.
 
-IIRC this legacy IBM code has broken endianness in the firmware..
+So I do the following:
 
-All that stuff in read_log_of, and the related DT stuff, is historical
-IBM special case-ness and should not be copied into new things.
+1) Boot
+2) Extend the contents of db
+3) Extend the contents of db again
+4) Read back the contents of db through efivarfs
+5) Reboot
+6) Read back the contents of db through efivarfs
 
-Jason
+Is what I see in (4) and (6) the same? Does it contain the values form
+both extensions?
+
+> > I'm not really clear on the workflow here. Who's the administrator
+> > authority? When would they be updating the second level of keys? If
+> > there's no support for revocation, why would distributions need two
+> > levels of key in the system database rather than just distributing a
+> > single intermediate and signing their actual signing certs with that?
+>
+>
+> In OpenPOWER systems, we enable our customers and business partners to
+> establish and manage the platform key certificate, which is the root of o=
+ur
+> key hierarchy. From there, through the KEK, they can delegate authority t=
+o
+> intermediate level organizations, e.g. distros or IT departments or
+> business operations. Those intermediate level organizations then manage t=
+he
+> code signing certificates in the DB. If this answer doesn=E2=80=99t addre=
+ss your
+> question, can you please rephrase?
+
+Why would the intermediate level organisations not just have entries
+in db? The main reason we don't do it this way in UEFI is because we
+need to support dbx, and if you're not supporting dbx I'm not sure I
+see the benefit.
