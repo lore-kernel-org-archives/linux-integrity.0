@@ -2,45 +2,66 @@ Return-Path: <SRS0=XOlz=SM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9811FC10F11
-	for <linux-integrity@archiver.kernel.org>; Wed, 10 Apr 2019 17:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 030A8C10F11
+	for <linux-integrity@archiver.kernel.org>; Wed, 10 Apr 2019 17:57:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EE0420850
-	for <linux-integrity@archiver.kernel.org>; Wed, 10 Apr 2019 17:54:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554918842;
-	bh=OKNCXq/u5TsjghIDiv1qzNoZhWbxKDfTSSvKapP630o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=nybHu5w49y4W7Hx46YfirMQ6EQehUuF74mrRQeMVxqj1xAnOZ9RVdPpVj+UZR0w/u
-	 mKpCGdklHQX2yCifD3qcd46TBWyukSg2PIkEPZgWO3g2c+naBK/qRLJPKFWzVEJHS/
-	 QhdW/Izdcic/ljGuuxTfinUa4K157zS+kVcuW1Xg=
+	by mail.kernel.org (Postfix) with ESMTP id CAB222063F
+	for <linux-integrity@archiver.kernel.org>; Wed, 10 Apr 2019 17:57:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="EX2ze/6D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730573AbfDJRyC (ORCPT
+        id S1729307AbfDJR5L (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 10 Apr 2019 13:54:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52792 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730566AbfDJRyB (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 10 Apr 2019 13:54:01 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 97D802063F;
-        Wed, 10 Apr 2019 17:54:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1554918840;
-        bh=OKNCXq/u5TsjghIDiv1qzNoZhWbxKDfTSSvKapP630o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CLQUMqoDtyBeAaYWnqqViRedTVyp7e+vssIRSwlF9NAV9zVJ18eIeUR5lC0sd7DwI
-         /RXw+vIqrHngUynUaXlfAOiOah3uILk4TPYx0i0j0dYGVXXZ4u31G0JKooSz+9jvvH
-         f6pNEbJ0t2iqieGDdaey10HDjBkL+Cma9Lv1PjkY=
-Date:   Wed, 10 Apr 2019 13:53:59 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
+        Wed, 10 Apr 2019 13:57:11 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:35333 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730407AbfDJR5L (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 10 Apr 2019 13:57:11 -0400
+Received: by mail-qk1-f196.google.com with SMTP id a71so1796040qkg.2
+        for <linux-integrity@vger.kernel.org>; Wed, 10 Apr 2019 10:57:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rvFEBtg/8gPu1SPiOVpApQWqwc7src0Ap4Z1oALjYi0=;
+        b=EX2ze/6DAocz2055pAEWSuvrjiGWI6P2LQHdyigF9CLGW/hGVAATJVoaI/0ctLcV4p
+         enIpOq3OsjgeA8tofJaLL/G7INTFaljBstYyl2dtzQ2+tO8g51e82gdwSW2QMmKRCqTI
+         3pPJkL8xyfL8dscXwYCu6Nbn7laB9gzLT2OvxkZfq/yshCnZua1c8wGez0NEU5KQQZiD
+         Voxe0O4fLF+XZTlTEImSY/9Exbls1e45eROXj0mBffWi+KfLZmkPKAd+Wl/kMxUXSObr
+         tvtu8ZyWLHTA3a8QlfmAIJQkY9CODeqYg8XOAK/BU//Z0fcWRZeAJXJnUwVHoa4qLJzK
+         62Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rvFEBtg/8gPu1SPiOVpApQWqwc7src0Ap4Z1oALjYi0=;
+        b=TRs1RQaKHE6x1kzyrundnfvnVrAogYa0AaRg84a9e4UNG/NVCjsRkL75YJiJCCdV2Z
+         8NyIoSWZsatAJ0zCQcCiEM+AlwrTh+1eih/RJ+OvuyaL0lIDdBwdHhJH2lTymqea33fW
+         vo3dMyyr+PUJ8spFGvSheW0tNMMfYlH5ZhtsLiBkcInuVwToihwdCjrjv0iuLbNI3qCm
+         ZmUtPfbVKJ4OgrFaEJELbOOGBBqUlcQB08kIq6in4dpLzbm2KQtJ/FQr9IOT/B6ZUMS4
+         E7SIRIrmud5UGY4CJRScpMb6qU+AdKzOEYkdyog2znAr5tre+JC31j7tgggcjp+QJ4xr
+         J9lA==
+X-Gm-Message-State: APjAAAV5NPeJ83rC5lOzw285WbstpzNbcCGLk4KgQncl25jsxkvQJonP
+        iILK+Dlza+Jb5lsywqJt5XU9Rw==
+X-Google-Smtp-Source: APXvYqzHjti7rsotzy6Brc9cjV0LRaZNbg9/rET8ZBSn3KNT+vhVW5zHbMjiwy2OOmzae5gN8kGBhw==
+X-Received: by 2002:a37:b444:: with SMTP id d65mr34415956qkf.125.1554919029700;
+        Wed, 10 Apr 2019 10:57:09 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-49-251.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.49.251])
+        by smtp.gmail.com with ESMTPSA id c21sm18785060qkm.8.2019.04.10.10.57.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 10 Apr 2019 10:57:08 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hEHTA-00023n-9J; Wed, 10 Apr 2019 14:57:08 -0300
+Date:   Wed, 10 Apr 2019 14:57:08 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Sasha Levin <sashal@kernel.org>
 Cc:     Rob Herring <robh+dt@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -53,69 +74,77 @@ Cc:     Rob Herring <robh+dt@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
         thiruan@microsoft.com, bryankel@microsoft.com
 Subject: Re: [PATCH v2 1/3] ftpm: dt-binding: add dts documentation for fTPM
  driver
-Message-ID: <20190410175359.GE11568@sasha-vm>
+Message-ID: <20190410175708.GM8997@ziepe.ca>
 References: <20190409184958.7476-1-sashal@kernel.org>
  <20190409184958.7476-2-sashal@kernel.org>
  <CAL_JsqLXcY9VFuY8xZvek0ybUXetS27jL-PW0XGLSVQR3Nc5aw@mail.gmail.com>
  <20190410161949.GC11568@sasha-vm>
  <CAL_JsqJ0p8MsFe2HnqVHvdGyz=6P7dV++xj1d1TTgcobsFqpjg@mail.gmail.com>
  <20190410170316.GK8997@ziepe.ca>
+ <20190410175359.GE11568@sasha-vm>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190410170316.GK8997@ziepe.ca>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190410175359.GE11568@sasha-vm>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Apr 10, 2019 at 02:03:16PM -0300, Jason Gunthorpe wrote:
->On Wed, Apr 10, 2019 at 12:01:37PM -0500, Rob Herring wrote:
->> On Wed, Apr 10, 2019 at 11:19 AM Sasha Levin <sashal@kernel.org> wrote:
->> >
->> > On Tue, Apr 09, 2019 at 04:18:29PM -0500, Rob Herring wrote:
->> > >On Tue, Apr 9, 2019 at 1:50 PM Sasha Levin <sashal@kernel.org> wrote:
->> > >>
->> > >> The parameters are similar to the ones used by IBM's vTPM and the
->> > >> various I2C tpm drivers.
->> > >
->> > >Bindings describe h/w (or firmware interfaces in this case), not drivers.
->> > >
->> > >>
->> > >> Signed-off-by: Sasha Levin <sashal@kernel.org>
->> > >>  .../bindings/security/tpm/tpm_ftpm_tee.txt          | 13 +++++++++++++
->> > >>  .../devicetree/bindings/vendor-prefixes.txt         |  1 +
->> > >>  2 files changed, 14 insertions(+)
->> > >>  create mode 100644 Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
->> > >>
->> > >> diff --git a/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt b/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
->> > >> new file mode 100644
->> > >> index 000000000000..20fca67a56c4
->> > >> +++ b/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
->> > >> @@ -0,0 +1,13 @@
->> > >> +Required properties:
->> > >> +- compatible: should be "microsoft,ftpm"
->> > >> +- linux,sml-base: 64-bit base address of the reserved memory allocated
->> > >> +                 for the firmware event log
->> > >> +- linux,sml-size: size of the memory allocated for the firmware event log
->> > >
->> > >Firmware is defining linux specific properties? What if I want to run
->> > >BSD? We should use 'reg' here instead.
->> >
->> > This is based on already existing code that defines these names, see
->> > tpm_read_log_of() in drivers/char/tpm/eventlog/of.c .
->>
->> BTW, that probably needs updating to handle endianness correctly.
->
->IIRC this legacy IBM code has broken endianness in the firmware..
->
->All that stuff in read_log_of, and the related DT stuff, is historical
->IBM special case-ness and should not be copied into new things.
+On Wed, Apr 10, 2019 at 01:53:59PM -0400, Sasha Levin wrote:
+> On Wed, Apr 10, 2019 at 02:03:16PM -0300, Jason Gunthorpe wrote:
+> > On Wed, Apr 10, 2019 at 12:01:37PM -0500, Rob Herring wrote:
+> > > On Wed, Apr 10, 2019 at 11:19 AM Sasha Levin <sashal@kernel.org> wrote:
+> > > >
+> > > > On Tue, Apr 09, 2019 at 04:18:29PM -0500, Rob Herring wrote:
+> > > > >On Tue, Apr 9, 2019 at 1:50 PM Sasha Levin <sashal@kernel.org> wrote:
+> > > > >>
+> > > > >> The parameters are similar to the ones used by IBM's vTPM and the
+> > > > >> various I2C tpm drivers.
+> > > > >
+> > > > >Bindings describe h/w (or firmware interfaces in this case), not drivers.
+> > > > >
+> > > > >>
+> > > > >> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> > > > >>  .../bindings/security/tpm/tpm_ftpm_tee.txt          | 13 +++++++++++++
+> > > > >>  .../devicetree/bindings/vendor-prefixes.txt         |  1 +
+> > > > >>  2 files changed, 14 insertions(+)
+> > > > >>  create mode 100644 Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
+> > > > >>
+> > > > >> diff --git a/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt b/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
+> > > > >> new file mode 100644
+> > > > >> index 000000000000..20fca67a56c4
+> > > > >> +++ b/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
+> > > > >> @@ -0,0 +1,13 @@
+> > > > >> +Required properties:
+> > > > >> +- compatible: should be "microsoft,ftpm"
+> > > > >> +- linux,sml-base: 64-bit base address of the reserved memory allocated
+> > > > >> +                 for the firmware event log
+> > > > >> +- linux,sml-size: size of the memory allocated for the firmware event log
+> > > > >
+> > > > >Firmware is defining linux specific properties? What if I want to run
+> > > > >BSD? We should use 'reg' here instead.
+> > > >
+> > > > This is based on already existing code that defines these names, see
+> > > > tpm_read_log_of() in drivers/char/tpm/eventlog/of.c .
+> > > 
+> > > BTW, that probably needs updating to handle endianness correctly.
+> > 
+> > IIRC this legacy IBM code has broken endianness in the firmware..
+> > 
+> > All that stuff in read_log_of, and the related DT stuff, is historical
+> > IBM special case-ness and should not be copied into new things.
+> 
+> The fTPM driver does not use it on it's own, so I guess I can just drop
+> this patch then?
 
-The fTPM driver does not use it on it's own, so I guess I can just drop
-this patch then?
+If your ARM system boots via EFI then it should pass the firmware
+event log through EFI mechanisms, IIRC.
 
---
-Thanks,
-Sasha
+Otherwise maybe you could make a case for using this, but only if the
+old IBM stuff is perfectly emulated, bugs and all.
+
+Do you even have an event log?
+
+Jason
