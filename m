@@ -2,46 +2,59 @@ Return-Path: <SRS0=XOlz=SM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E124C10F14
-	for <linux-integrity@archiver.kernel.org>; Wed, 10 Apr 2019 16:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48682C10F11
+	for <linux-integrity@archiver.kernel.org>; Wed, 10 Apr 2019 17:01:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D1692082E
-	for <linux-integrity@archiver.kernel.org>; Wed, 10 Apr 2019 16:19:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1919B2083E
+	for <linux-integrity@archiver.kernel.org>; Wed, 10 Apr 2019 17:01:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554913197;
-	bh=gAg7ItIU9xtozLXCrllhDQag8IWHJgtaqRklURafv0Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=JYIyCN6UIwv5ky7Rz8I1FqXnme5/tAdJGJvzWREj4QU7e41DsL9rWZR8pe4qiet5q
-	 QrM28dD3C96/tI08rHG3E/8jS4Vbd+1Ycq6spw74aG9aazHPJ+vLj1nmc6R/Onz4oP
-	 geQhheeKz3IO5riKY5NhZtKhkGmxos1K5VNCV3SY=
+	s=default; t=1554915718;
+	bh=J4QhhoaGEgYso2GebNmi1v9FAxsbeQ9dqPKaFD6blFI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=JfAGvMieLEiUuOvqzfwbZ3+JeFzRr37KnQ9D7H5z6SZBH4I1vjyJ4ZnFlC47cjKXZ
+	 ueOmfFWmXq2NPo90WDKnaTLmsr4SIJ9FdG+l26D6jhlQsRk6qQeCXOPL91iReO+qeG
+	 SMWi8u9Cl6iJZ6gxQu0j6CjxX/oIcwPT4X/7nVqg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387758AbfDJQTw (ORCPT
+        id S1727948AbfDJRBv (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 10 Apr 2019 12:19:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54650 "EHLO mail.kernel.org"
+        Wed, 10 Apr 2019 13:01:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727892AbfDJQTw (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 10 Apr 2019 12:19:52 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727464AbfDJRBu (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 10 Apr 2019 13:01:50 -0400
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A020D2082E;
-        Wed, 10 Apr 2019 16:19:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAB3E217F9;
+        Wed, 10 Apr 2019 17:01:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1554913190;
-        bh=gAg7ItIU9xtozLXCrllhDQag8IWHJgtaqRklURafv0Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SMHj9Y4oM+7mBIdPvFqy8aItw30R+O4AVPwqHZGYFZMR4HkDTGdc6x3Q/A+dtx0Og
-         ajH22d5Rz27Dz6oVAua0tCAkEoofBBhsA/WwXeJhD6jCTFuFsJrG3gsLfjGYDN+9aw
-         qCKs1gLi0/KJ6SaIDbduj/sbublgzhk4W2H93HrE=
-Date:   Wed, 10 Apr 2019 12:19:49 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>
+        s=default; t=1554915709;
+        bh=J4QhhoaGEgYso2GebNmi1v9FAxsbeQ9dqPKaFD6blFI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=FPqOm8AZ2hf3cmPDnYuAeiBDcrOodV0nCwCyb+llFfEWGpmh/Xv9H8JkS5zPfi/rr
+         BqApg+oMNgSnMQRI8FatjepBL9Z4nS0sDKSBe5OhqmAgVeXlVZgE6me9MntCAF6kEd
+         dkG/VhijLi3UYqwENy1XNaf/OdKZd+QERBSId7B8=
+Received: by mail-qk1-f172.google.com with SMTP id b74so1660720qkg.9;
+        Wed, 10 Apr 2019 10:01:49 -0700 (PDT)
+X-Gm-Message-State: APjAAAUL7A9o5VmhL5qp1Ssf41OkwzvL8lk487+K2fqyjCm3IFbovYr5
+        cfI5tlUBnZ9b6byoY098lnlF75vH2U9wYcevpA==
+X-Google-Smtp-Source: APXvYqzXKHUjKSDyeXvIrSfxRtyP25a+1csuoK7we+bjKSxGUokyXu96BN7r8FlAUUNUzWCpvozXm5+/Er2HMJpfebo=
+X-Received: by 2002:ae9:e313:: with SMTP id v19mr32538761qkf.153.1554915708880;
+ Wed, 10 Apr 2019 10:01:48 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190409184958.7476-1-sashal@kernel.org> <20190409184958.7476-2-sashal@kernel.org>
+ <CAL_JsqLXcY9VFuY8xZvek0ybUXetS27jL-PW0XGLSVQR3Nc5aw@mail.gmail.com> <20190410161949.GC11568@sasha-vm>
+In-Reply-To: <20190410161949.GC11568@sasha-vm>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 10 Apr 2019 12:01:37 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJ0p8MsFe2HnqVHvdGyz=6P7dV++xj1d1TTgcobsFqpjg@mail.gmail.com>
+Message-ID: <CAL_JsqJ0p8MsFe2HnqVHvdGyz=6P7dV++xj1d1TTgcobsFqpjg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] ftpm: dt-binding: add dts documentation for fTPM driver
+To:     Sasha Levin <sashal@kernel.org>
 Cc:     Peter Huewe <peterhuewe@gmx.de>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         jgg@ziepe.ca, Mark Rutland <mark.rutland@arm.com>,
@@ -52,77 +65,76 @@ Cc:     Peter Huewe <peterhuewe@gmx.de>,
         Linux Doc Mailing List <linux-doc@vger.kernel.org>,
         linux-integrity@vger.kernel.org, linux-kernel@microsoft.com,
         thiruan@microsoft.com, bryankel@microsoft.com
-Subject: Re: [PATCH v2 1/3] ftpm: dt-binding: add dts documentation for fTPM
- driver
-Message-ID: <20190410161949.GC11568@sasha-vm>
-References: <20190409184958.7476-1-sashal@kernel.org>
- <20190409184958.7476-2-sashal@kernel.org>
- <CAL_JsqLXcY9VFuY8xZvek0ybUXetS27jL-PW0XGLSVQR3Nc5aw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqLXcY9VFuY8xZvek0ybUXetS27jL-PW0XGLSVQR3Nc5aw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Apr 09, 2019 at 04:18:29PM -0500, Rob Herring wrote:
->On Tue, Apr 9, 2019 at 1:50 PM Sasha Levin <sashal@kernel.org> wrote:
->>
->> The parameters are similar to the ones used by IBM's vTPM and the
->> various I2C tpm drivers.
+On Wed, Apr 10, 2019 at 11:19 AM Sasha Levin <sashal@kernel.org> wrote:
 >
->Bindings describe h/w (or firmware interfaces in this case), not drivers.
+> On Tue, Apr 09, 2019 at 04:18:29PM -0500, Rob Herring wrote:
+> >On Tue, Apr 9, 2019 at 1:50 PM Sasha Levin <sashal@kernel.org> wrote:
+> >>
+> >> The parameters are similar to the ones used by IBM's vTPM and the
+> >> various I2C tpm drivers.
+> >
+> >Bindings describe h/w (or firmware interfaces in this case), not drivers.
+> >
+> >>
+> >> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> >> ---
+> >>  .../bindings/security/tpm/tpm_ftpm_tee.txt          | 13 +++++++++++++
+> >>  .../devicetree/bindings/vendor-prefixes.txt         |  1 +
+> >>  2 files changed, 14 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt b/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
+> >> new file mode 100644
+> >> index 000000000000..20fca67a56c4
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
+> >> @@ -0,0 +1,13 @@
+> >> +Required properties:
+> >> +- compatible: should be "microsoft,ftpm"
+> >> +- linux,sml-base: 64-bit base address of the reserved memory allocated
+> >> +                 for the firmware event log
+> >> +- linux,sml-size: size of the memory allocated for the firmware event log
+> >
+> >Firmware is defining linux specific properties? What if I want to run
+> >BSD? We should use 'reg' here instead.
 >
->>
->> Signed-off-by: Sasha Levin <sashal@kernel.org>
->> ---
->>  .../bindings/security/tpm/tpm_ftpm_tee.txt          | 13 +++++++++++++
->>  .../devicetree/bindings/vendor-prefixes.txt         |  1 +
->>  2 files changed, 14 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
->>
->> diff --git a/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt b/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
->> new file mode 100644
->> index 000000000000..20fca67a56c4
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
->> @@ -0,0 +1,13 @@
->> +Required properties:
->> +- compatible: should be "microsoft,ftpm"
->> +- linux,sml-base: 64-bit base address of the reserved memory allocated
->> +                 for the firmware event log
->> +- linux,sml-size: size of the memory allocated for the firmware event log
+> This is based on already existing code that defines these names, see
+> tpm_read_log_of() in drivers/char/tpm/eventlog/of.c .
+
+BTW, that probably needs updating to handle endianness correctly.
+
+> These properties were described similarily by other interfaces (see
+> Documentation/devicetree/bindings/security/tpm/ibmvtpm.txt or
+> Documentation/devicetree/bindings/security/tpm/tpm-i2c.txt for example).
 >
->Firmware is defining linux specific properties? What if I want to run
->BSD? We should use 'reg' here instead.
+> We could rename them all if you'd like, I was just trying to follow the
+> existing code.
+>
+> >What memory is used here? This should be under /reserved-memory if it
+> >is part of "main" memory.
+>
+> That's my understanding, yes.
+>
+> >Really, I'd prefer to not see this in DT at all. Make the firmware
+> >discoverable. Why repeat the mistakes of non-discoverable h/w in s/w
+> >interfaces? OP-Tee at least has defined a mechanism to enumerate TEE
+> >functions IIRC.
+>
+> Sadly the firmware already exists as-is on live hardware, there is a
+> paper describing it back from 2016 and we're stuck having to support
+> that.
 
-This is based on already existing code that defines these names, see
-tpm_read_log_of() in drivers/char/tpm/eventlog/of.c .
+Does the firmware depend on this binding or the DT just gets
+statically populated with the address/size the firmware hardcodes? I'd
+prefer not to propagate the IBM binding that we were kind of stuck
+with. I had similar comments on it...
 
-These properties were described similarily by other interfaces (see
-Documentation/devicetree/bindings/security/tpm/ibmvtpm.txt or
-Documentation/devicetree/bindings/security/tpm/tpm-i2c.txt for example).
+Are there other parts of the TEE firmware that need to be described in DT?
 
-We could rename them all if you'd like, I was just trying to follow the
-existing code.
-
->What memory is used here? This should be under /reserved-memory if it
->is part of "main" memory.
-
-That's my understanding, yes.
-
->Really, I'd prefer to not see this in DT at all. Make the firmware
->discoverable. Why repeat the mistakes of non-discoverable h/w in s/w
->interfaces? OP-Tee at least has defined a mechanism to enumerate TEE
->functions IIRC.
-
-Sadly the firmware already exists as-is on live hardware, there is a
-paper describing it back from 2016 and we're stuck having to support
-that.
-
---
-Thanks,
-Sasha
+Rob
