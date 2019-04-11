@@ -1,212 +1,138 @@
-Return-Path: <SRS0=XOlz=SM=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=mby7=SN=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BC70C10F11
-	for <linux-integrity@archiver.kernel.org>; Wed, 10 Apr 2019 18:11:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA38AC10F11
+	for <linux-integrity@archiver.kernel.org>; Thu, 11 Apr 2019 00:59:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 266472075B
-	for <linux-integrity@archiver.kernel.org>; Wed, 10 Apr 2019 18:11:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="ElOu+iaI"
+	by mail.kernel.org (Postfix) with ESMTP id ACB43217D4
+	for <linux-integrity@archiver.kernel.org>; Thu, 11 Apr 2019 00:59:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730795AbfDJSLI (ORCPT
+        id S1726023AbfDKA7y (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 10 Apr 2019 14:11:08 -0400
-Received: from mail-eopbgr750129.outbound.protection.outlook.com ([40.107.75.129]:15726
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727431AbfDJSLI (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 10 Apr 2019 14:11:08 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=testarcselector01; d=microsoft.com; cv=none;
- b=o1MKxrUL9hAS7Ws//LMS/WJREoACt53CgJZhjLG5u7xhdYWuFVEBPqeOcmU09Bc/U2iZNbBxTykkFkIlx2VCGZQOgyyrDi2I5FJRzRBjiagaVxWHBOSxLaCkALmlZN6clBN0mnmplpF18e9ZSYaF6I20SUhTk14fHdE6A3qE93o=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=testarcselector01;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hYPBuvgpuE2Zds3hBSSmSVuO4K3jFllqn06kjDD1Gzw=;
- b=OAX3VF3Ff2zCow/CrcYjsovEhAftuL1AyOpb6W5rUvRvHEmjWoFrVJ4C1Cs+rttwzzY3Eo2qVfvpZBIgk1LjlPjU5cdt31rhwd5KWfHXE4wYMEkQy+ZP8SmpQ8fs/XRPEQmv55CXjDO2952+SCuiEp0m48uKp3OOXxoDNVFRWmA=
-ARC-Authentication-Results: i=1; test.office365.com 1;dmarc=none action=none
- header.from=microsoft.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hYPBuvgpuE2Zds3hBSSmSVuO4K3jFllqn06kjDD1Gzw=;
- b=ElOu+iaItWaPoX9kN6rFbIn1rsyEqm42Jd3HyvBXdBhMPbLiDq+h5gLKYmLJqsG9kTfRmeP2LmflkvJGsmYAAMmw7iXJCl3+kmTlbzUutV+C/QZqlQlTVmemnooPsX7DRTJMe1FpiGgiRjZ0be86dplUB++y+JhdUoLL1aDuQ4w=
-Received: from CY4PR21MB0279.namprd21.prod.outlook.com (10.173.193.145) by
- CY4PR21MB0631.namprd21.prod.outlook.com (10.175.115.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1813.4; Wed, 10 Apr 2019 18:11:02 +0000
-Received: from CY4PR21MB0279.namprd21.prod.outlook.com
- ([fe80::f5b8:74a7:6037:4977]) by CY4PR21MB0279.namprd21.prod.outlook.com
- ([fe80::f5b8:74a7:6037:4977%9]) with mapi id 15.20.1813.000; Wed, 10 Apr 2019
- 18:11:02 +0000
-From:   Thirupathaiah Annapureddy <thiruan@microsoft.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>, Sasha Levin <sashal@kernel.org>
-CC:     Rob Herring <robh+dt@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        Microsoft Linux Kernel List <linux-kernel@microsoft.com>,
-        "Bryan Kelly (CSI)" <bryankel@microsoft.com>
-Subject: RE: [PATCH v2 1/3] ftpm: dt-binding: add dts documentation for fTPM
- driver
-Thread-Topic: [PATCH v2 1/3] ftpm: dt-binding: add dts documentation for fTPM
- driver
-Thread-Index: AQHU7wUUBWAv80WpfkyhtUpqzqEGmaY0VYOAgAE+44CAAAutgIAAAHYAgAAOLICAAADhAIAAAZjA
-Date:   Wed, 10 Apr 2019 18:11:02 +0000
-Message-ID: <CY4PR21MB0279CB155BDC824A2E8A055BBC2E0@CY4PR21MB0279.namprd21.prod.outlook.com>
-References: <20190409184958.7476-1-sashal@kernel.org>
- <20190409184958.7476-2-sashal@kernel.org>
- <CAL_JsqLXcY9VFuY8xZvek0ybUXetS27jL-PW0XGLSVQR3Nc5aw@mail.gmail.com>
- <20190410161949.GC11568@sasha-vm>
- <CAL_JsqJ0p8MsFe2HnqVHvdGyz=6P7dV++xj1d1TTgcobsFqpjg@mail.gmail.com>
- <20190410170316.GK8997@ziepe.ca> <20190410175359.GE11568@sasha-vm>
- <20190410175708.GM8997@ziepe.ca>
-In-Reply-To: <20190410175708.GM8997@ziepe.ca>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=thiruan@microsoft.com; 
-x-originating-ip: [2001:4898:80e8:1:1d2a:5ca0:ad29:1539]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: bec83de8-cfaa-4aaf-d4d5-08d6bddfe429
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600139)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0631;
-x-ms-traffictypediagnostic: CY4PR21MB0631:
-x-microsoft-antispam-prvs: <CY4PR21MB06313FAFC40536AD49229AE9BC2E0@CY4PR21MB0631.namprd21.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 00032065B2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(376002)(366004)(396003)(136003)(199004)(189003)(13464003)(71190400001)(7416002)(71200400001)(6436002)(68736007)(14454004)(8990500004)(4326008)(74316002)(478600001)(54906003)(86362001)(7696005)(110136005)(14444005)(256004)(305945005)(7736002)(99286004)(10290500003)(76176011)(486006)(46003)(10090500001)(86612001)(11346002)(476003)(52536014)(105586002)(316002)(22452003)(6506007)(53546011)(229853002)(25786009)(446003)(186003)(102836004)(93886005)(6116002)(33656002)(81156014)(81166006)(53936002)(97736004)(55016002)(6246003)(2906002)(8676002)(8936002)(106356001)(107886003)(9686003)(5660300002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0631;H:CY4PR21MB0279.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: UxNnj+S7hBonGzb6j7jPxqzohyrrCiq7MBxPFtOqgwTuc0aPoR8DLHk+aLyHWY/wk59+TfozVZ31LK+bS3ic+p8y9uKrMZYQ5kHSQAF7tyU3lj+S1ZygqNLuRTUdTtG6EdicCaS5qQBlvO9vWXDEIiCC88vgEto7XeITv3MjGmnZUkfqLzhfYnXuwUGc5F1rMpcqdNJhw24Q3C7RPE48akLmL4tUJqAYkZoHa7o5ckbwz1MqC2IynZe6JhFETHJQdAufOWeDHdEKYR6Eqo9HxccdpDDH0SVv0FwbVyRr6tDkgujuoLCDwHiQY/6qZbQn/MuT/46rrT4xsp2wG5D5o4jRqNssbDIzTqtoCUm8CCbjU7WW1ZsVBJwRxRJEER8i6lRzN/1e9K1Dq3/xKTIbw8oT33awf6acz1jDPuFARA4=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bec83de8-cfaa-4aaf-d4d5-08d6bddfe429
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Apr 2019 18:11:02.1646
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0631
+        Wed, 10 Apr 2019 20:59:54 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58670 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726014AbfDKA7x (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 10 Apr 2019 20:59:53 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3B0wQEi077973
+        for <linux-integrity@vger.kernel.org>; Wed, 10 Apr 2019 20:59:52 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2rspus2kwg-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 10 Apr 2019 20:59:52 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 11 Apr 2019 01:59:50 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 11 Apr 2019 01:59:47 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x3B0xkhs55771214
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 11 Apr 2019 00:59:46 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3EBC6A4053;
+        Thu, 11 Apr 2019 00:59:46 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3062CA404D;
+        Thu, 11 Apr 2019 00:59:45 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.94.99])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 11 Apr 2019 00:59:45 +0000 (GMT)
+Subject: Re: [PATCH v2 1/3] ima: Call test's cleanup inside ima_setup.sh
+ cleanup
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Petr Vorel <pvorel@suse.cz>, ltp@lists.linux.it
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Ignaz Forster <iforster@suse.de>, Fabian Vogt <FVogt@suse.com>,
+        Marcus Meissner <meissner@suse.com>,
+        linux-integrity@vger.kernel.org
+Date:   Wed, 10 Apr 2019 20:59:34 -0400
+In-Reply-To: <20190405165225.27216-2-pvorel@suse.cz>
+References: <20190405165225.27216-1-pvorel@suse.cz>
+         <20190405165225.27216-2-pvorel@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19041100-0016-0000-0000-0000026D85FD
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19041100-0017-0000-0000-000032C9B7EF
+Message-Id: <1554944374.25614.25.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-11_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1904110005
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+On Fri, 2019-04-05 at 18:52 +0200, Petr Vorel wrote:
+> to work the same way as setup
+> 
+> Signed-off-by: Petr Vorel <pvorel@suse.cz>
+> ---
+>  testcases/kernel/security/integrity/ima/tests/ima_setup.sh  | 6 +++++-
+>  .../kernel/security/integrity/ima/tests/ima_violations.sh   | 2 --
+>  2 files changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+> index 52551190a..cbded42c2 100644
+> --- a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+> +++ b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+> @@ -20,7 +20,8 @@
+>  TST_TESTFUNC="test"
+>  TST_SETUP_CALLER="$TST_SETUP"
+>  TST_SETUP="ima_setup"
+> -TST_CLEANUP="${TST_CLEANUP:-ima_cleanup}"
+> +TST_CLEANUP_CALLER="$TST_CLEANUP"
+> +TST_CLEANUP="ima_cleanup"
 
+It seems to be working, but defining TST_SETUP and TST_CLEANUP after
+defining the respective _CALLER looks strange.  The _CALLER's string
+must be empty.
 
-> -----Original Message-----
-> From: Jason Gunthorpe <jgg@ziepe.ca>
-> Sent: Wednesday, April 10, 2019 10:57 AM
-> To: Sasha Levin <sashal@kernel.org>
-> Cc: Rob Herring <robh+dt@kernel.org>; Peter Huewe <peterhuewe@gmx.de>;
-> Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>; Mark Rutland
-> <mark.rutland@arm.com>; Jonathan Corbet <corbet@lwn.net>; Arnd Bergmann
-> <arnd@arndb.de>; Greg Kroah-Hartman <gregkh@linuxfoundation.org>; linux-
-> kernel@vger.kernel.org; Linux Doc Mailing List <linux-doc@vger.kernel.org=
->;
-> linux-integrity@vger.kernel.org; Microsoft Linux Kernel List <linux-
-> kernel@microsoft.com>; Thirupathaiah Annapureddy <thiruan@microsoft.com>;
-> Bryan Kelly (CSI) <bryankel@microsoft.com>
-> Subject: Re: [PATCH v2 1/3] ftpm: dt-binding: add dts documentation for
-> fTPM driver
->=20
-> On Wed, Apr 10, 2019 at 01:53:59PM -0400, Sasha Levin wrote:
-> > On Wed, Apr 10, 2019 at 02:03:16PM -0300, Jason Gunthorpe wrote:
-> > > On Wed, Apr 10, 2019 at 12:01:37PM -0500, Rob Herring wrote:
-> > > > On Wed, Apr 10, 2019 at 11:19 AM Sasha Levin <sashal@kernel.org>
-> wrote:
-> > > > >
-> > > > > On Tue, Apr 09, 2019 at 04:18:29PM -0500, Rob Herring wrote:
-> > > > > >On Tue, Apr 9, 2019 at 1:50 PM Sasha Levin <sashal@kernel.org>
-> wrote:
-> > > > > >>
-> > > > > >> The parameters are similar to the ones used by IBM's vTPM and
-> the
-> > > > > >> various I2C tpm drivers.
-> > > > > >
-> > > > > >Bindings describe h/w (or firmware interfaces in this case), not
-> drivers.
-> > > > > >
-> > > > > >>
-> > > > > >> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> > > > > >>  .../bindings/security/tpm/tpm_ftpm_tee.txt          | 13
-> +++++++++++++
-> > > > > >>  .../devicetree/bindings/vendor-prefixes.txt         |  1 +
-> > > > > >>  2 files changed, 14 insertions(+)
-> > > > > >>  create mode 100644
-> Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
-> > > > > >>
-> > > > > >> diff --git
-> a/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
-> b/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
-> > > > > >> new file mode 100644
-> > > > > >> index 000000000000..20fca67a56c4
-> > > > > >> +++
-> b/Documentation/devicetree/bindings/security/tpm/tpm_ftpm_tee.txt
-> > > > > >> @@ -0,0 +1,13 @@
-> > > > > >> +Required properties:
-> > > > > >> +- compatible: should be "microsoft,ftpm"
-> > > > > >> +- linux,sml-base: 64-bit base address of the reserved memory
-> allocated
-> > > > > >> +                 for the firmware event log
-> > > > > >> +- linux,sml-size: size of the memory allocated for the firmwa=
-re
-> event log
-> > > > > >
-> > > > > >Firmware is defining linux specific properties? What if I want t=
-o
-> run
-> > > > > >BSD? We should use 'reg' here instead.
-> > > > >
-> > > > > This is based on already existing code that defines these names,
-> see
-> > > > > tpm_read_log_of() in drivers/char/tpm/eventlog/of.c .
-> > > >
-> > > > BTW, that probably needs updating to handle endianness correctly.
-> > >
-> > > IIRC this legacy IBM code has broken endianness in the firmware..
-> > >
-> > > All that stuff in read_log_of, and the related DT stuff, is historica=
-l
-> > > IBM special case-ness and should not be copied into new things.
-> >
-> > The fTPM driver does not use it on it's own, so I guess I can just drop
-> > this patch then?
->=20
-> If your ARM system boots via EFI then it should pass the firmware
-> event log through EFI mechanisms, IIRC.
->=20
-> Otherwise maybe you could make a case for using this, but only if the
-> old IBM stuff is perfectly emulated, bugs and all.
->=20
-> Do you even have an event log?
->=20
+>  TST_NEEDS_TMPDIR=1
+>  TST_NEEDS_ROOT=1
+> 
+> @@ -95,6 +96,9 @@ ima_setup()
+>  ima_cleanup()
+>  {
+>  	local dir
+> +
+> +	[ -n "$TST_CLEANUP_CALLER" ] && $TST_CLEANUP_CALLER
+> +
 
-Our ARM system is booting using U-boot and Device Tree.=20
-So the ACPI/EFI table mechanism to pass binary boot measurements won't be a=
-pplicable.=20
+Is something else setting TST_CLEANUP_CALLER?
 
-We have event logs working and we are able to successfully read them using=
-=20
-/sys/kernel/security/tpm0/binary_bios_measurements and parse them
+>  	for dir in $UMOUNT; do
+>  		umount $dir
+>  	done
+> diff --git a/testcases/kernel/security/integrity/ima/tests/ima_violations.sh b/testcases/kernel/security/integrity/ima/tests/ima_violations.sh
+> index 74223c221..a44bd1230 100755
+> --- a/testcases/kernel/security/integrity/ima/tests/ima_violations.sh
+> +++ b/testcases/kernel/security/integrity/ima/tests/ima_violations.sh
+> @@ -51,8 +51,6 @@ cleanup()
+>  {
+>  	[ "$PRINTK_RATE_LIMIT" != "0" ] && \
+>  		sysctl -wq kernel.printk_ratelimit=$PRINTK_RATE_LIMIT
+> -
+> -	ima_cleanup
+>  }
+> 
+>  open_file_read()
 
---Thiru
-
-> Jason
