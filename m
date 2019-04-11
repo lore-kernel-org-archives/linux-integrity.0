@@ -2,116 +2,151 @@ Return-Path: <SRS0=mby7=SN=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C80BC10F13
-	for <linux-integrity@archiver.kernel.org>; Thu, 11 Apr 2019 14:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5234C10F13
+	for <linux-integrity@archiver.kernel.org>; Thu, 11 Apr 2019 15:51:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19C0D2077C
-	for <linux-integrity@archiver.kernel.org>; Thu, 11 Apr 2019 14:10:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cIGHBc0Q"
+	by mail.kernel.org (Postfix) with ESMTP id 8EAAE20818
+	for <linux-integrity@archiver.kernel.org>; Thu, 11 Apr 2019 15:51:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726137AbfDKOKU (ORCPT
+        id S1726145AbfDKPvm (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 11 Apr 2019 10:10:20 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40355 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbfDKOKU (ORCPT
+        Thu, 11 Apr 2019 11:51:42 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:44142 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbfDKPvl (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 11 Apr 2019 10:10:20 -0400
-Received: by mail-lj1-f195.google.com with SMTP id q66so5666253ljq.7
-        for <linux-integrity@vger.kernel.org>; Thu, 11 Apr 2019 07:10:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KYkc8YQqPc00Rje+w2qEqohy/p17AYyQ6dmAxKzeyyI=;
-        b=cIGHBc0Q+VhdGKCJHwOJeVJUawnhPY+NVsFs0FzxpW2D0qBRIu4xDYYJ8ETjsjNtSv
-         hVDGrp51lxPAmHhbNMx0R4t7Zwwj+eLtf4872APUkxJFRJjzILgXYxbh94dBPAI92zpL
-         Qf4qacfi8udQkaPVJWnmyXIqJvIhTMqc+PxWFaQY9qJAhqx5w53OSd/fhgKo+WOd0e9o
-         I3fOeTSELbFDaZ+MCH2MGlOjIgCs89MNGCgMMwl82OO85Tpzrkry1iUIWOco+QES3sDb
-         UnqQbi/+S+uWu9a8vHuhTV5BCn/ijzCJCwo7t5dVlTLMkgCdmojBFdfdWeQuEY13WXhF
-         PjoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KYkc8YQqPc00Rje+w2qEqohy/p17AYyQ6dmAxKzeyyI=;
-        b=Ft6NLayAaEmotPQ7sV2JwB/BF07Wz2GrVKaf5FgtZEOPPjnAD6Bo2pqjp9G/yUSAJ8
-         BoZpCR/59HV01LmJgzdygXpbzhYTCzicwUoTr0zFeFBc13/UtF1kBiom2WENizTDyQMI
-         fdaPckLX8AepuIbm1WiphoRz7W/rvc+PawjIaGDtzApsrsDMs42h54ascb+CInCGUPuM
-         2NGiK7nEryiR2gx+rR/LXyPHPTkiIiy7A2docSI6XS8V9em88y70mxLZLr9RSN3OkNiz
-         fUbR1ANdtmbBv678oyPYQ3TYk1LIDDe8tMgxTl19Za4f3sh7Jr4dEnOYCPVsxIQKftou
-         Ba4Q==
-X-Gm-Message-State: APjAAAUodfKfBO7MTvJyV03mXPz5wjN1kC41Tlvgnkz6aTcyRx7Da/y3
-        JKORFD/iYSpSs2tUdK4tkVR4N/G/lHTsMRcGLxYbXg==
-X-Google-Smtp-Source: APXvYqyvp99+qy4c7wvljAN7oJlkp8t3/TYpam3AEF4g8DSVPpGVc9cORmS5Ql57/CA3H7x9QCCGtkvkquspjGICWw8=
-X-Received: by 2002:a2e:3506:: with SMTP id z6mr25961520ljz.72.1554991818593;
- Thu, 11 Apr 2019 07:10:18 -0700 (PDT)
+        Thu, 11 Apr 2019 11:51:41 -0400
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 9C38272CC58;
+        Thu, 11 Apr 2019 18:51:37 +0300 (MSK)
+Received: from beacon.altlinux.org (unknown [185.6.174.98])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 6F3E64A4A2A;
+        Thu, 11 Apr 2019 18:51:37 +0300 (MSK)
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        David Howells <dhowells@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v9 00/10] crypto: add EC-RDSA (GOST 34.10) algorithm
+Date:   Thu, 11 Apr 2019 18:51:12 +0300
+Message-Id: <20190411155122.13245-1-vt@altlinux.org>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-References: <20190410145659.26347-1-janne.karhunen@gmail.com> <1554987784.7843.40.camel@linux.ibm.com>
-In-Reply-To: <1554987784.7843.40.camel@linux.ibm.com>
-From:   Janne Karhunen <janne.karhunen@gmail.com>
-Date:   Thu, 11 Apr 2019 17:10:07 +0300
-Message-ID: <CAE=NcrY_nwjdPoD+hk90CW93LTDattY_g-qQcqFQa=Xb7M+wPA@mail.gmail.com>
-Subject: Re: [PATCH] integrity: make 'sync' update the inode integrity state
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Apr 11, 2019 at 4:03 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+This patchset changes akcipher API to support ECDSA style signature
+verification, augments x509 parser to make it work with EC-RDSA certificates,
+and, finally, implements EC-RDSA (GOST 34.10) signature verification and its
+integration with IMA.
 
-> > +     mutex_lock(&iint->mutex);
-> > +     if (atomic_read(&inode->i_writecount) == 1) {
->
-> This test limits the number of opened writers.  Only if there is a
-> single writer opened, will the xattr be updated.  Is this what you
-> intended?
+---
+Changes since v8:
+- asym_tpm: move setting set_pub_key parameters into derive_pub_key, as
+  suggested by Denis Kenzior.
 
-Certainly no, I misunderstood that to be a flag. Will fix.
+Changes since v7:
+- Do not check callback validity in akcipher requests, instead define default
+  callbacks on register, suggested by Herbert Xu.
+- Sanity checks in crypto_akcipher_maxsize are removed (not needed).
+- Sanity checks for `dst' and `dst_len' are removed from verify op (not
+  needed in akcipher API and should be checked by a driver).
+- Patch "KEYS: report to keyctl only actually supported key ops" is removed,
+  as it would affect user-space API.
 
+Changes since (v5-v6):
+- set_params API is removed in favor of appending parameters into a key stream,
+  as requested by Herbert Xu.
+- verify op signature de-kmemdup'ed (as requested by David Howells) in separate
+  patch (as requested by Herbert Xu).
+- Add forgotten ASN.1 parser files to EC-RDSA patch.
+- Tested on x86_64.
 
-> Your testing should open the same file for write multiple times.
+Changes since v5:
+- Comparison of hash algo by enum id instead of text name, as suggested by
+  Thiago Jung Bauermann and Mimi Zohar.
 
-Indeed. I was just wondering what happened with 'locksettings.db' as
-it failed to update. Duh..
+Changes since RFC (v1-v4):
+- akcipher set_max_size, encrypt, decrypt, sign, verify callbacks may be
+  undefined by the drivers, so their crypto_akcipher_* frontends check for
+  their presence before passing the call.
+- supported_ops flags are set for keyctl, based on the presence of implemented
+  akcipher callbacks.
+- Transition to verify2 API is abandoned because raw RSA does not need
+  sign/verify ops at all, and we can switch to the new verify in one step.
+  For this RSA backends have sign/verify ops removed as they should only
+  be used (and actually used only) via PKCS1 driver.
+- Verify callback requires digest as the input parameter in src SGL, as
+  suggested by Herbert Xu, (instead of a separate parameter, as it was in
+  verify2).
+- For verify op signature is moved into kmalloc'd memory as suggested by
+  Herbert Xu.
+- set_params API should be called before set_{pub,priv}_key, thus set_*_key
+  knows everything it needs to set they key properly. Also, set_params made
+  optional for back compatibility with RSA drivers.
+- Public-key cryptography section is created in Kconfig.
+- ecc.c is made into separate module object, to be used together by ECDH and
+  EC-RDSA.
+- EC-RDSA parameters and public key are parsed using asn1_ber_decoder as
+  suggested by Stephan Mueller and David Howells.
+- Test vectors are added and tests are passing.
+- Curves/parameters definitions are split from ecrdsa.c into ecrdsa_defs.h.
+- Integration with IMA in asymmetric_verify(). Userspace ima-evm-utils already
+  have a patch in the queue to support this. Tested on x86_64.
 
+Vitaly Chikunov (10):
+  crypto: akcipher - default implementations for request callbacks
+  crypto: rsa - unimplement sign/verify for raw RSA backends
+  crypto: akcipher - new verify API for public key algorithms
+  KEYS: do not kmemdup digest in {public,tpm}_key_verify_signature
+  X.509: parse public key parameters from x509 for akcipher
+  crypto: Kconfig - create Public-key cryptography section
+  crypto: ecc - make ecc into separate module
+  crypto: ecrdsa - add EC-RDSA (GOST 34.10) algorithm
+  crypto: ecrdsa - add EC-RDSA test vectors to testmgr
+  integrity: support EC-RDSA signatures for asymmetric_verify
 
-> > +             clear_bit(IMA_UPDATE_XATTR, &iint->atomic_flags);
-> > +             if (!IS_I_VERSION(inode) ||
-> > +                 !inode_eq_iversion(inode, iint->version)) {
-> > +                     iint->flags &= ~IMA_COLLECTED;
-> > +                     ima_update_xattr(iint, file);
->
-> Relatively recently there were some changes to iversion so that it
-> isn't being updated as frequently.  Can we use i_version here?
+ crypto/Kconfig                                |  63 ++--
+ crypto/Makefile                               |  10 +-
+ crypto/akcipher.c                             |  14 +
+ crypto/asymmetric_keys/asym_tpm.c             |  43 +--
+ crypto/asymmetric_keys/public_key.c           | 105 ++++---
+ crypto/asymmetric_keys/x509.asn1              |   2 +-
+ crypto/asymmetric_keys/x509_cert_parser.c     |  57 +++-
+ crypto/ecc.c                                  | 417 +++++++++++++++++++++++++-
+ crypto/ecc.h                                  | 153 +++++++++-
+ crypto/ecc_curve_defs.h                       |  15 -
+ crypto/ecrdsa.c                               | 296 ++++++++++++++++++
+ crypto/ecrdsa_defs.h                          | 225 ++++++++++++++
+ crypto/ecrdsa_params.asn1                     |   4 +
+ crypto/ecrdsa_pub_key.asn1                    |   1 +
+ crypto/rsa-pkcs1pad.c                         |  33 +-
+ crypto/rsa.c                                  | 109 -------
+ crypto/testmgr.c                              |  80 +++--
+ crypto/testmgr.h                              | 159 ++++++++++
+ drivers/crypto/caam/caampkc.c                 |   2 -
+ drivers/crypto/ccp/ccp-crypto-rsa.c           |   2 -
+ drivers/crypto/qat/qat_common/qat_asym_algs.c |   2 -
+ include/crypto/akcipher.h                     |  54 ++--
+ include/crypto/public_key.h                   |   4 +
+ include/linux/oid_registry.h                  |  18 ++
+ security/integrity/digsig_asymmetric.c        |  11 +-
+ 25 files changed, 1574 insertions(+), 305 deletions(-)
+ create mode 100644 crypto/ecrdsa.c
+ create mode 100644 crypto/ecrdsa_defs.h
+ create mode 100644 crypto/ecrdsa_params.asn1
+ create mode 100644 crypto/ecrdsa_pub_key.asn1
 
-Thanks.
+-- 
+2.11.0
 
-
-> > +void security_file_sync(struct file *file)
-> > +{
-> > +     ima_file_update(file);
-> > +}
-> > +
->
-> Either this is an LSM hook or it isn't.  If it's an LSM hook it needs
-> to be similar to the existing hooks.  If it's an IMA hook, like
-> ima_file_check() or ima_file_free(), then call it directly.
->
-> Normally the function name is related to the LSM hook name.  For
-> example, I would name it ima_file_sync.
-
-Ok. I guess ima hook it is then, doubt any lsm will ever need it?
-
-
---
-Janne
