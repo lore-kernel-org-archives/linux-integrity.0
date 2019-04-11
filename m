@@ -3,29 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C578C10F13
-	for <linux-integrity@archiver.kernel.org>; Thu, 11 Apr 2019 15:51:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0977C10F13
+	for <linux-integrity@archiver.kernel.org>; Thu, 11 Apr 2019 15:52:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0501D20818
-	for <linux-integrity@archiver.kernel.org>; Thu, 11 Apr 2019 15:51:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D9B92082E
+	for <linux-integrity@archiver.kernel.org>; Thu, 11 Apr 2019 15:52:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbfDKPvo (ORCPT
+        id S1726950AbfDKPv5 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 11 Apr 2019 11:51:44 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:44222 "EHLO
+        Thu, 11 Apr 2019 11:51:57 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:44548 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726599AbfDKPvn (ORCPT
+        with ESMTP id S1726895AbfDKPv4 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 11 Apr 2019 11:51:43 -0400
+        Thu, 11 Apr 2019 11:51:56 -0400
 Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 79ADF72CC61;
-        Thu, 11 Apr 2019 18:51:41 +0300 (MSK)
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 72C0C72CC58;
+        Thu, 11 Apr 2019 18:51:53 +0300 (MSK)
 Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 269CE4A4A2A;
-        Thu, 11 Apr 2019 18:51:41 +0300 (MSK)
+        by imap.altlinux.org (Postfix) with ESMTPSA id 238144A4A2A;
+        Thu, 11 Apr 2019 18:51:53 +0300 (MSK)
 From:   Vitaly Chikunov <vt@altlinux.org>
 To:     Herbert Xu <herbert@gondor.apana.org.au>,
         David Howells <dhowells@redhat.com>,
@@ -33,9 +33,10 @@ To:     Herbert Xu <herbert@gondor.apana.org.au>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
         linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v9 01/10] crypto: akcipher - default implementations for request callbacks
-Date:   Thu, 11 Apr 2019 18:51:13 +0300
-Message-Id: <20190411155122.13245-2-vt@altlinux.org>
+Cc:     Denis Kenzior <denkenz@gmail.com>
+Subject: [PATCH v9 04/10] KEYS: do not kmemdup digest in {public,tpm}_key_verify_signature
+Date:   Thu, 11 Apr 2019 18:51:16 +0300
+Message-Id: <20190411155122.13245-5-vt@altlinux.org>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190411155122.13245-1-vt@altlinux.org>
 References: <20190411155122.13245-1-vt@altlinux.org>
@@ -46,48 +47,95 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Because with the introduction of EC-RDSA and change in workings of RSA
-in regard to sign/verify, akcipher could have not all callbacks defined,
-check the presence of callbacks in crypto_register_akcipher() and
-provide default implementation if the callback is not implemented.
+Treat (struct public_key_signature)'s digest same as its signature (s).
+Since digest should be already in the kmalloc'd memory do not kmemdup
+digest value before calling {public,tpm}_key_verify_signature.
 
-This is suggested by Herbert Xu instead of checking the presence of the
-callback on every request.
+Patch is split from the previous as suggested by Herbert Xu.
 
+Suggested-by: David Howells <dhowells@redhat.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: keyrings@vger.kernel.org
 Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+Reviewed-by: Denis Kenzior <denkenz@gmail.com>
 ---
- crypto/akcipher.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ crypto/asymmetric_keys/asym_tpm.c   | 10 +---------
+ crypto/asymmetric_keys/public_key.c |  9 +--------
+ 2 files changed, 2 insertions(+), 17 deletions(-)
 
-diff --git a/crypto/akcipher.c b/crypto/akcipher.c
-index 0cbeae137e0a..780daa436dac 100644
---- a/crypto/akcipher.c
-+++ b/crypto/akcipher.c
-@@ -119,10 +119,24 @@ static void akcipher_prepare_alg(struct akcipher_alg *alg)
- 	base->cra_flags |= CRYPTO_ALG_TYPE_AKCIPHER;
- }
+diff --git a/crypto/asymmetric_keys/asym_tpm.c b/crypto/asymmetric_keys/asym_tpm.c
+index 4e5b6fb57a94..402fc34ca044 100644
+--- a/crypto/asymmetric_keys/asym_tpm.c
++++ b/crypto/asymmetric_keys/asym_tpm.c
+@@ -748,7 +748,6 @@ static int tpm_key_verify_signature(const struct key *key,
+ 	char alg_name[CRYPTO_MAX_ALG_NAME];
+ 	uint8_t der_pub_key[PUB_KEY_BUF_SIZE];
+ 	uint32_t der_pub_key_len;
+-	void *digest;
+ 	int ret;
  
-+static int akcipher_default_op(struct akcipher_request *req)
-+{
-+	return -ENOSYS;
-+}
-+
- int crypto_register_akcipher(struct akcipher_alg *alg)
- {
- 	struct crypto_alg *base = &alg->base;
+ 	pr_devel("==>%s()\n", __func__);
+@@ -780,14 +779,9 @@ static int tpm_key_verify_signature(const struct key *key,
+ 	if (!req)
+ 		goto error_free_tfm;
  
-+	if (!alg->sign)
-+		alg->sign = akcipher_default_op;
-+	if (!alg->verify)
-+		alg->verify = akcipher_default_op;
-+	if (!alg->encrypt)
-+		alg->encrypt = akcipher_default_op;
-+	if (!alg->decrypt)
-+		alg->decrypt = akcipher_default_op;
-+
- 	akcipher_prepare_alg(alg);
- 	return crypto_register_alg(base);
- }
+-	ret = -ENOMEM;
+-	digest = kmemdup(sig->digest, sig->digest_size, GFP_KERNEL);
+-	if (!digest)
+-		goto error_free_req;
+-
+ 	sg_init_table(src_sg, 2);
+ 	sg_set_buf(&src_sg[0], sig->s, sig->s_size);
+-	sg_set_buf(&src_sg[1], digest, sig->digest_size);
++	sg_set_buf(&src_sg[1], sig->digest, sig->digest_size);
+ 	akcipher_request_set_crypt(req, src_sg, NULL, sig->s_size,
+ 				   sig->digest_size);
+ 	crypto_init_wait(&cwait);
+@@ -796,8 +790,6 @@ static int tpm_key_verify_signature(const struct key *key,
+ 				      crypto_req_done, &cwait);
+ 	ret = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
+ 
+-	kfree(digest);
+-error_free_req:
+ 	akcipher_request_free(req);
+ error_free_tfm:
+ 	crypto_free_akcipher(tfm);
+diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
+index 0c069fe8a59c..33093b7bcc47 100644
+--- a/crypto/asymmetric_keys/public_key.c
++++ b/crypto/asymmetric_keys/public_key.c
+@@ -229,7 +229,6 @@ int public_key_verify_signature(const struct public_key *pkey,
+ 	struct akcipher_request *req;
+ 	struct scatterlist src_sg[2];
+ 	char alg_name[CRYPTO_MAX_ALG_NAME];
+-	void *digest;
+ 	int ret;
+ 
+ 	pr_devel("==>%s()\n", __func__);
+@@ -262,14 +261,9 @@ int public_key_verify_signature(const struct public_key *pkey,
+ 	if (ret)
+ 		goto error_free_req;
+ 
+-	ret = -ENOMEM;
+-	digest = kmemdup(sig->digest, sig->digest_size, GFP_KERNEL);
+-	if (!digest)
+-		goto error_free_req;
+-
+ 	sg_init_table(src_sg, 2);
+ 	sg_set_buf(&src_sg[0], sig->s, sig->s_size);
+-	sg_set_buf(&src_sg[1], digest, sig->digest_size);
++	sg_set_buf(&src_sg[1], sig->digest, sig->digest_size);
+ 	akcipher_request_set_crypt(req, src_sg, NULL, sig->s_size,
+ 				   sig->digest_size);
+ 	crypto_init_wait(&cwait);
+@@ -278,7 +272,6 @@ int public_key_verify_signature(const struct public_key *pkey,
+ 				      crypto_req_done, &cwait);
+ 	ret = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
+ 
+-	kfree(digest);
+ error_free_req:
+ 	akcipher_request_free(req);
+ error_free_tfm:
 -- 
 2.11.0
 
