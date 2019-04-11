@@ -2,425 +2,133 @@ Return-Path: <SRS0=mby7=SN=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BD56C282DA
-	for <linux-integrity@archiver.kernel.org>; Thu, 11 Apr 2019 15:52:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E569FC10F13
+	for <linux-integrity@archiver.kernel.org>; Thu, 11 Apr 2019 17:18:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39C3720818
-	for <linux-integrity@archiver.kernel.org>; Thu, 11 Apr 2019 15:52:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8C3420693
+	for <linux-integrity@archiver.kernel.org>; Thu, 11 Apr 2019 17:18:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rY1aYdap"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbfDKPvy (ORCPT
+        id S1726691AbfDKRSj (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 11 Apr 2019 11:51:54 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:44454 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726867AbfDKPvx (ORCPT
+        Thu, 11 Apr 2019 13:18:39 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:34470 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726391AbfDKRSj (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 11 Apr 2019 11:51:53 -0400
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 1D35972CC61;
-        Thu, 11 Apr 2019 18:51:50 +0300 (MSK)
-Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 829194A4A2A;
-        Thu, 11 Apr 2019 18:51:49 +0300 (MSK)
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Thu, 11 Apr 2019 13:18:39 -0400
+Received: by mail-ot1-f65.google.com with SMTP id k21so5946878otf.1;
+        Thu, 11 Apr 2019 10:18:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=7Ki5J1hlR1CKmSVR40eUi0RlHc65Eh3Ti4NIk/5ozpw=;
+        b=rY1aYdapKEu++r6F+HvBd7YGdCWjEWFqygiTsolAG6Y85TMn80tup2IDd++pd2OB74
+         ylaQHV0SobbRHNJ+63KD2DJXmARALDqB9Xt8LqCN+Ml+popV1Kvd6G5FwInRQeEUJKJl
+         v6Ytt1BOOHtiDPgDjo5897toxSTP/m/Ni/41qGiraLCbcK7zCG40Eyd6ibL5B6pbvb4W
+         X0tB7WvYhwREw40yZIgO6uKRtLOoWzgj5dlcbiierLBGDbOpMtfdHMNngznNEQFmUrX/
+         KYl4vxULHQ6kmaQDnH7f2Z5nxqOIr5PZEhh/z80JNjyNmnjf2JvVvrHB8MvY5ZQkY9jn
+         XzSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7Ki5J1hlR1CKmSVR40eUi0RlHc65Eh3Ti4NIk/5ozpw=;
+        b=nAZ8sF5VuAOwZtRzBkx3a4T57xq4AIyTZksQ4V9v7FjyYXtVE2TCTKqbuvDbJkgxw+
+         yLkgBj0eBvh1XYFxB3cbuz39bb2KSlwlgWsy6L5yH9vAyc7qqgHLwmwQuOBGkujGhUFp
+         a6xFvJNEM+TwpOLo6okMCTyrTls/bWOshWT161R2OUdGxxN2ZT8QoP2i2cdsX0K5FLwl
+         d8zUscDM7yTBRc0AWTPCDw+S7yuf5efd1HNYMKWbEt1ISz6FzRYlN3bS6E7naScP3vel
+         YqgaopoWIdAjB/ON3N8nqL4Zc3MfVW69qLHGSsym4TcYlVAiIVMRtgMDxlZ9YZ3pb3h5
+         mrng==
+X-Gm-Message-State: APjAAAXxBVnnprAuME1EHg3G0wZWtElvJqNU9BjYIzrr2SyJZ8K/6jNd
+        wCqLplrG5tDrLFjgyWipMxN4N74+
+X-Google-Smtp-Source: APXvYqwZ+R6HEAGJPHmj+sI4c8YTSYl797qPL9IgJ3zojoXJDhL0+WPylrCcJJUZC7K67aakGGmeRw==
+X-Received: by 2002:a9d:3b04:: with SMTP id z4mr31321999otb.1.1555003118598;
+        Thu, 11 Apr 2019 10:18:38 -0700 (PDT)
+Received: from [192.168.1.249] (cpe-70-114-247-242.austin.res.rr.com. [70.114.247.242])
+        by smtp.googlemail.com with ESMTPSA id x202sm15357183oix.54.2019.04.11.10.18.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Apr 2019 10:18:37 -0700 (PDT)
+Subject: Re: [PATCH v9 05/10] X.509: parse public key parameters from x509 for
+ akcipher
+To:     Vitaly Chikunov <vt@altlinux.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         David Howells <dhowells@redhat.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
         linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Denis Kenzior <denkenz@gmail.com>
-Subject: [PATCH v9 03/10] crypto: akcipher - new verify API for public key algorithms
-Date:   Thu, 11 Apr 2019 18:51:15 +0300
-Message-Id: <20190411155122.13245-4-vt@altlinux.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190411155122.13245-1-vt@altlinux.org>
 References: <20190411155122.13245-1-vt@altlinux.org>
+ <20190411155122.13245-6-vt@altlinux.org>
+From:   Denis Kenzior <denkenz@gmail.com>
+Message-ID: <48828e0e-0aef-dece-e7ad-4c0ea9cefbe7@gmail.com>
+Date:   Thu, 11 Apr 2019 12:18:36 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190411155122.13245-6-vt@altlinux.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Previous akcipher .verify() just `decrypts' (using RSA encrypt which is
-using public key) signature to uncover message hash, which was then
-compared in upper level public_key_verify_signature() with the expected
-hash value, which itself was never passed into verify().
+Hi Vitaly,
 
-This approach was incompatible with EC-DSA family of algorithms,
-because, to verify a signature EC-DSA algorithm also needs a hash value
-as input; then it's used (together with a signature divided into halves
-`r||s') to produce a witness value, which is then compared with `r' to
-determine if the signature is correct. Thus, for EC-DSA, nor
-requirements of .verify() itself, nor its output expectations in
-public_key_verify_signature() wasn't sufficient.
+On 04/11/2019 10:51 AM, Vitaly Chikunov wrote:
+> Some public key algorithms (like EC-DSA) keep in parameters field
+> important data such as digest and curve OIDs (possibly more for
+> different EC-DSA variants). Thus, just setting a public key (as
+> for RSA) is not enough.
+> 
+> Append parameters into the key stream for akcipher_set_{pub,priv}_key.
+> Appended data is: (u32) algo OID, (u32) parameters length, parameters
+> data.
+> 
+> This does not affect current akcipher API nor RSA ciphers (they could
+> ignore it). Idea of appending parameters to the key stream is by Herbert
+> Xu.
+> 
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Denis Kenzior <denkenz@gmail.com>
+> Cc: keyrings@vger.kernel.org
+> Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+> ---
+>   crypto/asymmetric_keys/asym_tpm.c         |  9 +++-
+>   crypto/asymmetric_keys/public_key.c       | 72 ++++++++++++++++++++++++-------
+>   crypto/asymmetric_keys/x509.asn1          |  2 +-
+>   crypto/asymmetric_keys/x509_cert_parser.c | 31 +++++++++++++
+>   crypto/testmgr.c                          | 24 +++++++++--
+>   crypto/testmgr.h                          |  5 +++
+>   include/crypto/akcipher.h                 | 18 ++++----
+>   include/crypto/public_key.h               |  4 ++
+>   8 files changed, 136 insertions(+), 29 deletions(-)
+> 
 
-Make improved .verify() call which gets hash value as input and produce
-complete signature check without any output besides status.
+Looks good to me.
 
-Now for the top level verification only crypto_akcipher_verify() needs
-to be called and its return value inspected.
-
-Make sure that `digest' is in kmalloc'd memory (in place of `output`) in
-{public,tpm}_key_verify_signature() as insisted by Herbert Xu, and will
-be changed in the following commit.
-
-Cc: David Howells <dhowells@redhat.com>
-Cc: keyrings@vger.kernel.org
-Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
 Reviewed-by: Denis Kenzior <denkenz@gmail.com>
----
- crypto/asymmetric_keys/asym_tpm.c   | 34 ++++++++-----------------
- crypto/asymmetric_keys/public_key.c | 34 ++++++++-----------------
- crypto/rsa-pkcs1pad.c               | 29 +++++++++++++--------
- crypto/testmgr.c                    | 50 ++++++++++++++++++++++---------------
- include/crypto/akcipher.h           | 36 ++++++++++++++++----------
- 5 files changed, 92 insertions(+), 91 deletions(-)
 
-diff --git a/crypto/asymmetric_keys/asym_tpm.c b/crypto/asymmetric_keys/asym_tpm.c
-index 5d4c270463f6..4e5b6fb57a94 100644
---- a/crypto/asymmetric_keys/asym_tpm.c
-+++ b/crypto/asymmetric_keys/asym_tpm.c
-@@ -744,12 +744,11 @@ static int tpm_key_verify_signature(const struct key *key,
- 	struct crypto_wait cwait;
- 	struct crypto_akcipher *tfm;
- 	struct akcipher_request *req;
--	struct scatterlist sig_sg, digest_sg;
-+	struct scatterlist src_sg[2];
- 	char alg_name[CRYPTO_MAX_ALG_NAME];
- 	uint8_t der_pub_key[PUB_KEY_BUF_SIZE];
- 	uint32_t der_pub_key_len;
--	void *output;
--	unsigned int outlen;
-+	void *digest;
- 	int ret;
- 
- 	pr_devel("==>%s()\n", __func__);
-@@ -782,35 +781,22 @@ static int tpm_key_verify_signature(const struct key *key,
- 		goto error_free_tfm;
- 
- 	ret = -ENOMEM;
--	outlen = crypto_akcipher_maxsize(tfm);
--	output = kmalloc(outlen, GFP_KERNEL);
--	if (!output)
-+	digest = kmemdup(sig->digest, sig->digest_size, GFP_KERNEL);
-+	if (!digest)
- 		goto error_free_req;
- 
--	sg_init_one(&sig_sg, sig->s, sig->s_size);
--	sg_init_one(&digest_sg, output, outlen);
--	akcipher_request_set_crypt(req, &sig_sg, &digest_sg, sig->s_size,
--				   outlen);
-+	sg_init_table(src_sg, 2);
-+	sg_set_buf(&src_sg[0], sig->s, sig->s_size);
-+	sg_set_buf(&src_sg[1], digest, sig->digest_size);
-+	akcipher_request_set_crypt(req, src_sg, NULL, sig->s_size,
-+				   sig->digest_size);
- 	crypto_init_wait(&cwait);
- 	akcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG |
- 				      CRYPTO_TFM_REQ_MAY_SLEEP,
- 				      crypto_req_done, &cwait);
--
--	/* Perform the verification calculation.  This doesn't actually do the
--	 * verification, but rather calculates the hash expected by the
--	 * signature and returns that to us.
--	 */
- 	ret = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
--	if (ret)
--		goto out_free_output;
--
--	/* Do the actual verification step. */
--	if (req->dst_len != sig->digest_size ||
--	    memcmp(sig->digest, output, sig->digest_size) != 0)
--		ret = -EKEYREJECTED;
- 
--out_free_output:
--	kfree(output);
-+	kfree(digest);
- error_free_req:
- 	akcipher_request_free(req);
- error_free_tfm:
-diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
-index f5d85b47fcc6..0c069fe8a59c 100644
---- a/crypto/asymmetric_keys/public_key.c
-+++ b/crypto/asymmetric_keys/public_key.c
-@@ -227,10 +227,9 @@ int public_key_verify_signature(const struct public_key *pkey,
- 	struct crypto_wait cwait;
- 	struct crypto_akcipher *tfm;
- 	struct akcipher_request *req;
--	struct scatterlist sig_sg, digest_sg;
-+	struct scatterlist src_sg[2];
- 	char alg_name[CRYPTO_MAX_ALG_NAME];
--	void *output;
--	unsigned int outlen;
-+	void *digest;
- 	int ret;
- 
- 	pr_devel("==>%s()\n", __func__);
-@@ -264,35 +263,22 @@ int public_key_verify_signature(const struct public_key *pkey,
- 		goto error_free_req;
- 
- 	ret = -ENOMEM;
--	outlen = crypto_akcipher_maxsize(tfm);
--	output = kmalloc(outlen, GFP_KERNEL);
--	if (!output)
-+	digest = kmemdup(sig->digest, sig->digest_size, GFP_KERNEL);
-+	if (!digest)
- 		goto error_free_req;
- 
--	sg_init_one(&sig_sg, sig->s, sig->s_size);
--	sg_init_one(&digest_sg, output, outlen);
--	akcipher_request_set_crypt(req, &sig_sg, &digest_sg, sig->s_size,
--				   outlen);
-+	sg_init_table(src_sg, 2);
-+	sg_set_buf(&src_sg[0], sig->s, sig->s_size);
-+	sg_set_buf(&src_sg[1], digest, sig->digest_size);
-+	akcipher_request_set_crypt(req, src_sg, NULL, sig->s_size,
-+				   sig->digest_size);
- 	crypto_init_wait(&cwait);
- 	akcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG |
- 				      CRYPTO_TFM_REQ_MAY_SLEEP,
- 				      crypto_req_done, &cwait);
--
--	/* Perform the verification calculation.  This doesn't actually do the
--	 * verification, but rather calculates the hash expected by the
--	 * signature and returns that to us.
--	 */
- 	ret = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
--	if (ret)
--		goto out_free_output;
--
--	/* Do the actual verification step. */
--	if (req->dst_len != sig->digest_size ||
--	    memcmp(sig->digest, output, sig->digest_size) != 0)
--		ret = -EKEYREJECTED;
- 
--out_free_output:
--	kfree(output);
-+	kfree(digest);
- error_free_req:
- 	akcipher_request_free(req);
- error_free_tfm:
-diff --git a/crypto/rsa-pkcs1pad.c b/crypto/rsa-pkcs1pad.c
-index 94382fa2c6ac..29c336068dc0 100644
---- a/crypto/rsa-pkcs1pad.c
-+++ b/crypto/rsa-pkcs1pad.c
-@@ -488,14 +488,21 @@ static int pkcs1pad_verify_complete(struct akcipher_request *req, int err)
- 
- 	err = 0;
- 
--	if (req->dst_len < dst_len - pos)
--		err = -EOVERFLOW;
--	req->dst_len = dst_len - pos;
--
--	if (!err)
--		sg_copy_from_buffer(req->dst,
--				sg_nents_for_len(req->dst, req->dst_len),
--				out_buf + pos, req->dst_len);
-+	if (req->dst_len != dst_len - pos) {
-+		err = -EKEYREJECTED;
-+		req->dst_len = dst_len - pos;
-+		goto done;
-+	}
-+	/* Extract appended digest. */
-+	sg_pcopy_to_buffer(req->src,
-+			   sg_nents_for_len(req->src,
-+					    req->src_len + req->dst_len),
-+			   req_ctx->out_buf + ctx->key_size,
-+			   req->dst_len, ctx->key_size);
-+	/* Do the actual verification step. */
-+	if (memcmp(req_ctx->out_buf + ctx->key_size, out_buf + pos,
-+		   req->dst_len) != 0)
-+		err = -EKEYREJECTED;
- done:
- 	kzfree(req_ctx->out_buf);
- 
-@@ -532,10 +539,12 @@ static int pkcs1pad_verify(struct akcipher_request *req)
- 	struct pkcs1pad_request *req_ctx = akcipher_request_ctx(req);
- 	int err;
- 
--	if (!ctx->key_size || req->src_len < ctx->key_size)
-+	if (WARN_ON(req->dst) ||
-+	    WARN_ON(!req->dst_len) ||
-+	    !ctx->key_size || req->src_len < ctx->key_size)
- 		return -EINVAL;
- 
--	req_ctx->out_buf = kmalloc(ctx->key_size, GFP_KERNEL);
-+	req_ctx->out_buf = kmalloc(ctx->key_size + req->dst_len, GFP_KERNEL);
- 	if (!req_ctx->out_buf)
- 		return -ENOMEM;
- 
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index 0f6bfb6ce6a4..21b27996508a 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -2595,7 +2595,7 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
- 	struct crypto_wait wait;
- 	unsigned int out_len_max, out_len = 0;
- 	int err = -ENOMEM;
--	struct scatterlist src, dst, src_tab[2];
-+	struct scatterlist src, dst, src_tab[3];
- 	const char *m, *c;
- 	unsigned int m_size, c_size;
- 	const char *op;
-@@ -2618,13 +2618,12 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
- 	if (err)
- 		goto free_req;
- 
--	err = -ENOMEM;
--	out_len_max = crypto_akcipher_maxsize(tfm);
--
- 	/*
- 	 * First run test which do not require a private key, such as
- 	 * encrypt or verify.
- 	 */
-+	err = -ENOMEM;
-+	out_len_max = crypto_akcipher_maxsize(tfm);
- 	outbuf_enc = kzalloc(out_len_max, GFP_KERNEL);
- 	if (!outbuf_enc)
- 		goto free_req;
-@@ -2650,12 +2649,20 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
- 		goto free_all;
- 	memcpy(xbuf[0], m, m_size);
- 
--	sg_init_table(src_tab, 2);
-+	sg_init_table(src_tab, 3);
- 	sg_set_buf(&src_tab[0], xbuf[0], 8);
- 	sg_set_buf(&src_tab[1], xbuf[0] + 8, m_size - 8);
--	sg_init_one(&dst, outbuf_enc, out_len_max);
--	akcipher_request_set_crypt(req, src_tab, &dst, m_size,
--				   out_len_max);
-+	if (vecs->siggen_sigver_test) {
-+		if (WARN_ON(c_size > PAGE_SIZE))
-+			goto free_all;
-+		memcpy(xbuf[1], c, c_size);
-+		sg_set_buf(&src_tab[2], xbuf[1], c_size);
-+		akcipher_request_set_crypt(req, src_tab, NULL, m_size, c_size);
-+	} else {
-+		sg_init_one(&dst, outbuf_enc, out_len_max);
-+		akcipher_request_set_crypt(req, src_tab, &dst, m_size,
-+					   out_len_max);
-+	}
- 	akcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG,
- 				      crypto_req_done, &wait);
- 
-@@ -2668,18 +2675,21 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
- 		pr_err("alg: akcipher: %s test failed. err %d\n", op, err);
- 		goto free_all;
- 	}
--	if (req->dst_len != c_size) {
--		pr_err("alg: akcipher: %s test failed. Invalid output len\n",
--		       op);
--		err = -EINVAL;
--		goto free_all;
--	}
--	/* verify that encrypted message is equal to expected */
--	if (memcmp(c, outbuf_enc, c_size)) {
--		pr_err("alg: akcipher: %s test failed. Invalid output\n", op);
--		hexdump(outbuf_enc, c_size);
--		err = -EINVAL;
--		goto free_all;
-+	if (!vecs->siggen_sigver_test) {
-+		if (req->dst_len != c_size) {
-+			pr_err("alg: akcipher: %s test failed. Invalid output len\n",
-+			       op);
-+			err = -EINVAL;
-+			goto free_all;
-+		}
-+		/* verify that encrypted message is equal to expected */
-+		if (memcmp(c, outbuf_enc, c_size) != 0) {
-+			pr_err("alg: akcipher: %s test failed. Invalid output\n",
-+			       op);
-+			hexdump(outbuf_enc, c_size);
-+			err = -EINVAL;
-+			goto free_all;
-+		}
- 	}
- 
- 	/*
-diff --git a/include/crypto/akcipher.h b/include/crypto/akcipher.h
-index 2d690494568c..2d26939fff51 100644
---- a/include/crypto/akcipher.h
-+++ b/include/crypto/akcipher.h
-@@ -19,14 +19,20 @@
-  *
-  * @base:	Common attributes for async crypto requests
-  * @src:	Source data
-- * @dst:	Destination data
-+ *		For verify op this is signature + digest, in that case
-+ *		total size of @src is @src_len + @dst_len.
-+ * @dst:	Destination data (Should be NULL for verify op)
-  * @src_len:	Size of the input buffer
-- * @dst_len:	Size of the output buffer. It needs to be at least
-- *		as big as the expected result depending	on the operation
-+ *		For verify op it's size of signature part of @src, this part
-+ *		is supposed to be operated by cipher.
-+ * @dst_len:	Size of @dst buffer (for all ops except verify).
-+ *		It needs to be at least	as big as the expected result
-+ *		depending on the operation.
-  *		After operation it will be updated with the actual size of the
-  *		result.
-  *		In case of error where the dst sgl size was insufficient,
-  *		it will be updated to the size required for the operation.
-+ *		For verify op this is size of digest part in @src.
-  * @__ctx:	Start of private context data
-  */
- struct akcipher_request {
-@@ -55,10 +61,9 @@ struct crypto_akcipher {
-  *		algorithm. In case of error, where the dst_len was insufficient,
-  *		the req->dst_len will be updated to the size required for the
-  *		operation
-- * @verify:	Function performs a sign operation as defined by public key
-- *		algorithm. In case of error, where the dst_len was insufficient,
-- *		the req->dst_len will be updated to the size required for the
-- *		operation
-+ * @verify:	Function performs a complete verify operation as defined by
-+ *		public key algorithm, returning verification status. Requires
-+ *		digest value as input parameter.
-  * @encrypt:	Function performs an encrypt operation as defined by public key
-  *		algorithm. In case of error, where the dst_len was insufficient,
-  *		the req->dst_len will be updated to the size required for the
-@@ -238,9 +243,10 @@ static inline void akcipher_request_set_callback(struct akcipher_request *req,
-  *
-  * @req:	public key request
-  * @src:	ptr to input scatter list
-- * @dst:	ptr to output scatter list
-+ * @dst:	ptr to output scatter list or NULL for verify op
-  * @src_len:	size of the src input scatter list to be processed
-- * @dst_len:	size of the dst output scatter list
-+ * @dst_len:	size of the dst output scatter list or size of signature
-+ *		portion in @src for verify op
-  */
- static inline void akcipher_request_set_crypt(struct akcipher_request *req,
- 					      struct scatterlist *src,
-@@ -343,14 +349,18 @@ static inline int crypto_akcipher_sign(struct akcipher_request *req)
- }
- 
- /**
-- * crypto_akcipher_verify() - Invoke public key verify operation
-+ * crypto_akcipher_verify() - Invoke public key signature verification
-  *
-- * Function invokes the specific public key verify operation for a given
-- * public key algorithm
-+ * Function invokes the specific public key signature verification operation
-+ * for a given public key algorithm.
-  *
-  * @req:	asymmetric key request
-  *
-- * Return: zero on success; error code in case of error
-+ * Note: req->dst should be NULL, req->src should point to SG of size
-+ * (req->src_size + req->dst_size), containing signature (of req->src_size
-+ * length) with appended digest (of req->dst_size length).
-+ *
-+ * Return: zero on verification success; error code in case of error.
-  */
- static inline int crypto_akcipher_verify(struct akcipher_request *req)
- {
--- 
-2.11.0
+By the way:
 
+> @@ -400,11 +401,12 @@ static inline int crypto_akcipher_set_pub_key(struct crypto_akcipher *tfm,
+>    * crypto_akcipher_set_priv_key() - Invoke set private key operation
+>    *
+>    * Function invokes the algorithm specific set key function, which knows
+> - * how to decode and interpret the encoded key
+> + * how to decode and interpret the encoded keya and parameters
+
+Seems to be a stray 'a' after 'key'?
+
+Regards,
+-Denis
