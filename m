@@ -1,68 +1,111 @@
-Return-Path: <SRS0=pSLL=SO=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=0VUN=SP=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 954DCC10F0E
-	for <linux-integrity@archiver.kernel.org>; Fri, 12 Apr 2019 22:22:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 295BBC10F11
+	for <linux-integrity@archiver.kernel.org>; Sat, 13 Apr 2019 05:55:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6295A218A3
-	for <linux-integrity@archiver.kernel.org>; Fri, 12 Apr 2019 22:22:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E41CB20850
+	for <linux-integrity@archiver.kernel.org>; Sat, 13 Apr 2019 05:55:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sm1YrjiD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726931AbfDLWWh (ORCPT
+        id S1726207AbfDMFzG (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 12 Apr 2019 18:22:37 -0400
-Received: from namei.org ([65.99.196.166]:33254 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726920AbfDLWWh (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 12 Apr 2019 18:22:37 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x3CMMYW4031909;
-        Fri, 12 Apr 2019 22:22:35 GMT
-Date:   Sat, 13 Apr 2019 08:22:34 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Subject: Re: [GIT PULL] linux-integrity patches for Linux 5.2
-In-Reply-To: <1555032089.4914.4.camel@linux.ibm.com>
-Message-ID: <alpine.LRH.2.21.1904130822070.31568@namei.org>
-References: <1555032089.4914.4.camel@linux.ibm.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="1665246916-267425788-1555107755=:31568"
+        Sat, 13 Apr 2019 01:55:06 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42022 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725298AbfDMFzG (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 13 Apr 2019 01:55:06 -0400
+Received: by mail-wr1-f68.google.com with SMTP id g3so14562771wrx.9;
+        Fri, 12 Apr 2019 22:55:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=7kPnzm2JkTCyO+F1wvn6GNnMXZwa00o8M2W4gddE+0M=;
+        b=Sm1YrjiDIYiaw+NB3hDgfJYPnuqkVpwpzJRPenxUL+IzhJdwVpHpsBXFWBgq+rC3Ou
+         qyiQPVhc9Gt0KIOM54Gz6n6i8/oY9DmWLcEnu8o28F2D2w101Pxf5V1v1zQnF91yy7Lj
+         G0aThmNwbaVWnGZGBrY+TMFbio+zGFqRqBHjnWS86+LEace7NY22jr8Leb0/4KlOylz8
+         BVscnMKMnpzAkByPqjiTmj+MmyKVa9miWbsgvBIOcg3JHM4ZCrbVjXNynrcqR45JMWXP
+         k87mRS0cfsFQXrRbkCEHUZvCmz2PHxmRzvMQnx/X7iykl9N1r38CdJ7bCSdADG+onDfo
+         XKmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=7kPnzm2JkTCyO+F1wvn6GNnMXZwa00o8M2W4gddE+0M=;
+        b=sYk5LPiq8W5P/Of8XlrqfAHtqAteK1oeckCNIwh1q9JljDHSHWyXO20YzV/3sTAgSF
+         okTH2qx6Hc36c50yjaDT4B/2i4O1/qoSYSP/ffMcMtGyudqYkcpdxI8+3QnnRPOkH15N
+         HTYd0lBfGbfyy0YcJaBr+U0M9psBfnWXPBpNNaG1zjM64mS/HbOoVK9q3wMSTo0X3mW5
+         tkCeorGLEFO5gFQ85pB9Rx99zBEY1/q7HePkRVfDDFpqN35x5auuCUca2PbGbHNGq2Gi
+         Mljr/AtZu4oZLz8xeSoqI4JZWb015uRTERVaDGewHAAqgiFckQHDT/cEQUKVxNS5GNaz
+         ufaw==
+X-Gm-Message-State: APjAAAV5GDExGJ6uCiJQFFQJwxmdhINZlxkpQ5welWQYYYrmWdlOkrdo
+        z0/ajrlnid+PXzKRupBpMQI=
+X-Google-Smtp-Source: APXvYqwIzidec8wTcXaGYZC/WqlNcMl/5D/NJcVt+xRiyV/gWicnEEzoCX7WBjsuliRyfZBcIDjfmw==
+X-Received: by 2002:adf:ef8e:: with SMTP id d14mr36156780wro.81.1555134904011;
+        Fri, 12 Apr 2019 22:55:04 -0700 (PDT)
+Received: from felia.fritz.box ([2001:16b8:2def:500:2ca3:f513:3ec4:694])
+        by smtp.gmail.com with ESMTPSA id n13sm47649062wrw.67.2019.04.12.22.55.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Apr 2019 22:55:02 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH v2] MAINTAINERS: fix style in KEYS-TRUSTED entry
+Date:   Sat, 13 Apr 2019 07:54:48 +0200
+Message-Id: <20190413055448.5434-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Mimi Zohar used spaces instead of a tab when adding Jarkko Sakkinen as
+further maintainer to the KEYS-TRUSTED section entry.
 
---1665246916-267425788-1555107755=:31568
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In fact, ./scripts/checkpatch.pl -f MAINTAINERS complains:
 
-On Thu, 11 Apr 2019, Mimi Zohar wrote:
+  WARNING: MAINTAINERS entries use one tab after TYPE:
+  #8581: FILE: MAINTAINERS:8581:
+  +M:      Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-> Hi James,
-> 
-> This pull request contains just three patches, the remainder are
-> either included in other pull requests (eg. audit, lockdown) or will
-> be upstreamed via other subsystems (eg. kselftests, Power).  Included
-> in this pull request is one bug fix, one documentation update, and
-> extending the x86 IMA arch policy rules to coordinate the different
-> kernel module signature verification methods.
+The issue was detected when writing a script that parses MAINTAINERS.
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-integrity
+Fixes: 34bccd61b139 ("MAINTAINERS: add Jarkko as maintainer for trusted keys")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+v1: https://lore.kernel.org/patchwork/patch/1040412/
+  - Joe Perches clarified that this is a style defect. 
 
+v2: applies cleanly to v5.1-rc4 and next-20190412
 
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2359e12e4c41..75bb276aed1c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8578,7 +8578,7 @@ F:	security/keys/encrypted-keys/
+ 
+ KEYS-TRUSTED
+ M:	James Bottomley <jejb@linux.ibm.com>
+-M:      Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
++M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+ M:	Mimi Zohar <zohar@linux.ibm.com>
+ L:	linux-integrity@vger.kernel.org
+ L:	keyrings@vger.kernel.org
 -- 
-James Morris
-<jmorris@namei.org>
+2.17.1
 
---1665246916-267425788-1555107755=:31568--
