@@ -2,47 +2,47 @@ Return-Path: <SRS0=nno7=SR=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF06C10F0E
-	for <linux-integrity@archiver.kernel.org>; Mon, 15 Apr 2019 07:46:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA855C10F0E
+	for <linux-integrity@archiver.kernel.org>; Mon, 15 Apr 2019 08:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF8F320825
-	for <linux-integrity@archiver.kernel.org>; Mon, 15 Apr 2019 07:46:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B415020693
+	for <linux-integrity@archiver.kernel.org>; Mon, 15 Apr 2019 08:47:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726046AbfDOHqF (ORCPT
+        id S1725851AbfDOIr3 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 15 Apr 2019 03:46:05 -0400
-Received: from mga05.intel.com ([192.55.52.43]:52683 "EHLO mga05.intel.com"
+        Mon, 15 Apr 2019 04:47:29 -0400
+Received: from mga01.intel.com ([192.55.52.88]:8557 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725798AbfDOHqE (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 15 Apr 2019 03:46:04 -0400
+        id S1725779AbfDOIr3 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 15 Apr 2019 04:47:29 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Apr 2019 00:46:04 -0700
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Apr 2019 01:47:28 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,352,1549958400"; 
-   d="scan'208";a="223599188"
+X-IronPort-AV: E=Sophos;i="5.60,353,1549958400"; 
+   d="scan'208";a="337561688"
 Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.189])
-  by orsmga001.jf.intel.com with ESMTP; 15 Apr 2019 00:46:02 -0700
-Date:   Mon, 15 Apr 2019 10:46:00 +0300
+  by fmsmga006.fm.intel.com with ESMTP; 15 Apr 2019 01:47:25 -0700
+Date:   Mon, 15 Apr 2019 11:47:23 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] MAINTAINERS: fix style in KEYS-TRUSTED entry
-Message-ID: <20190415074600.GB13925@linux.intel.com>
-References: <20190413055448.5434-1-lukas.bulwahn@gmail.com>
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+        roberto.sassu@huawei.com, linux-efi@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tweek@google.com
+Subject: Re: [PATCH] TCG2 log support build fixes for non-x86_64
+Message-ID: <20190415084723.GA20831@linux.intel.com>
+References: <20190402215556.257406-1-matthewgarrett@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190413055448.5434-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20190402215556.257406-1-matthewgarrett@google.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
@@ -50,21 +50,10 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sat, Apr 13, 2019 at 07:54:48AM +0200, Lukas Bulwahn wrote:
-> Mimi Zohar used spaces instead of a tab when adding Jarkko Sakkinen as
-> further maintainer to the KEYS-TRUSTED section entry.
-> 
-> In fact, ./scripts/checkpatch.pl -f MAINTAINERS complains:
-> 
->   WARNING: MAINTAINERS entries use one tab after TYPE:
->   #8581: FILE: MAINTAINERS:8581:
->   +M:      Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> 
-> The issue was detected when writing a script that parses MAINTAINERS.
-> 
-> Fixes: 34bccd61b139 ("MAINTAINERS: add Jarkko as maintainer for trusted keys")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+On Tue, Apr 02, 2019 at 02:55:54PM -0700, Matthew Garrett wrote:
+> Couple of patches to fix ktest reported issues with the crypto-agile log
+> format support.
 
-Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Applied and squashed. Should be soon in linux-next.
 
 /Jarkko
