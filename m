@@ -2,67 +2,78 @@ Return-Path: <SRS0=bW4O=ST=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE1CFC282DA
-	for <linux-integrity@archiver.kernel.org>; Wed, 17 Apr 2019 13:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4280C282DA
+	for <linux-integrity@archiver.kernel.org>; Wed, 17 Apr 2019 17:26:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C898320872
-	for <linux-integrity@archiver.kernel.org>; Wed, 17 Apr 2019 13:55:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 930482173C
+	for <linux-integrity@archiver.kernel.org>; Wed, 17 Apr 2019 17:26:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1555521991;
+	bh=oefqZujA30z4o7uM/+Cm/lpuqknG6U09RqnQclQJtEY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=KskDyGOSNa9Uz+IxeQ7Yg3WMULh2KSTQMrNaYE9HTs2EQKkXJOf3tuhQkD+5xPM6T
+	 G+mbRVMQXf38CJ16YvXPGO7Lgqy3U8TbKbTHHlpG1A+2xzaX5QL+JzVfvzN01Cb16s
+	 xl4TAMColJfkeIlnX8vnkxXPvSF1xuCYBE3boqX0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730463AbfDQNzI (ORCPT
+        id S1732321AbfDQR0b (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 17 Apr 2019 09:55:08 -0400
-Received: from mga09.intel.com ([134.134.136.24]:43379 "EHLO mga09.intel.com"
+        Wed, 17 Apr 2019 13:26:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729453AbfDQNzI (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 17 Apr 2019 09:55:08 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Apr 2019 06:55:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,362,1549958400"; 
-   d="scan'208";a="143500641"
-Received: from asapir-mobl.ger.corp.intel.com (HELO localhost) ([10.252.18.154])
-  by orsmga003.jf.intel.com with ESMTP; 17 Apr 2019 06:55:02 -0700
-Date:   Wed, 17 Apr 2019 16:55:00 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Subject: Re: on leave next week
-Message-ID: <20190417135500.GA31164@linux.intel.com>
-References: <20190417113521.GA13928@linux.intel.com>
- <20190417120002.GA22976@linux.intel.com>
+        id S1729641AbfDQR0a (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 17 Apr 2019 13:26:30 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC931206BA;
+        Wed, 17 Apr 2019 17:26:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1555521990;
+        bh=oefqZujA30z4o7uM/+Cm/lpuqknG6U09RqnQclQJtEY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WlCYeDiukabEvrPaR85qY3M5wrZcG0iP1+8pB/77p+Tz/DzrFg5eBaasX+zRxu0Oh
+         ocnYkKbm3K8d3UsyPi3/nZ6AbcjsjYQFmKLpxULFmctb33XBlhbgu1/7VCVqCQJW8r
+         ZKinNeDF3A546TlZskxwFKG+Xzkkwj39mlaGW2cs=
+Date:   Wed, 17 Apr 2019 13:26:28 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
+        corbet@lwn.net, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@microsoft.com, thiruan@microsoft.com,
+        bryankel@microsoft.com
+Subject: Re: [PATCH v3 2/2] ftpm: add documentation for ftpm driver
+Message-ID: <20190417172628.GF435@sasha-vm>
+References: <20190415155636.32748-1-sashal@kernel.org>
+ <20190415155636.32748-3-sashal@kernel.org>
+ <b2c1b45e-515d-1d91-e3d9-5f9078078cae@metux.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20190417120002.GA22976@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <b2c1b45e-515d-1d91-e3d9-5f9078078cae@metux.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Apr 17, 2019 at 03:00:02PM +0300, Jarkko Sakkinen wrote:
-> On Wed, Apr 17, 2019 at 02:35:21PM +0300, Jarkko Sakkinen wrote:
-> > Hi
-> > 
-> > I'll be on leave next week. I'll try to do the most high priority
-> > tasks this week. Probably will check emails 1-2 times next week
-> > but do not expect any major stretches.
-> > 
-> > /Jarkko
-> 
-> Also wil be still away for following weeks Monday (29th) since
-> next Monday is anyway Holiday. This week I'll be away for Friday
-> because it is also part of the easter Holiday.
+On Wed, Apr 17, 2019 at 02:23:13PM +0200, Enrico Weigelt, metux IT consult wrote:
+>On 15.04.19 17:56, Sasha Levin wrote:
+>
+>Hi,
+>
+>> +The driver acts as a thin layer that passes commands to and from a TPM> +implemented in firmware. The driver itself doesn't contain much logic
+>and is> +used more like a dumb pipe between firmware and kernel/userspace.
+>Is that TPM already used in production or yet an PoC ?
+>IOW: can the protocol be changed ?
 
-Summary:
+Sadly no, this is based on something that exists for a few years already
+and we're trying to make Linux run on it.
 
-I'll be on leave starting from 19th Apr and back at the office on
-23th Apr. Will check the email couple of times :-)
-
-/Jarkko
+--
+Thanks,
+Sasha
