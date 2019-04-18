@@ -2,139 +2,98 @@ Return-Path: <SRS0=SlH0=SU=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A0FC10F14
-	for <linux-integrity@archiver.kernel.org>; Thu, 18 Apr 2019 11:10:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54287C10F0E
+	for <linux-integrity@archiver.kernel.org>; Thu, 18 Apr 2019 15:08:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 701D32183F
-	for <linux-integrity@archiver.kernel.org>; Thu, 18 Apr 2019 11:10:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B756205F4
+	for <linux-integrity@archiver.kernel.org>; Thu, 18 Apr 2019 15:08:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388640AbfDRLKa (ORCPT
+        id S2388457AbfDRPIF (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 18 Apr 2019 07:10:30 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34576 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727807AbfDRLKa (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 18 Apr 2019 07:10:30 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BAC1330058D9;
-        Thu, 18 Apr 2019 11:10:28 +0000 (UTC)
-Received: from localhost (ovpn-116-27.ams2.redhat.com [10.36.116.27])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B691C608C7;
-        Thu, 18 Apr 2019 11:10:18 +0000 (UTC)
-Date:   Thu, 18 Apr 2019 12:10:17 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, y2038@lists.linaro.org,
-        linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Stefan Richter <stefanr@s5r6.in-berlin.de>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Willem de Bruijn <willemb@google.com>,
-        linux-integrity@vger.kernel.org,
-        linux1394-devel@lists.sourceforge.net, linux-usb@vger.kernel.org,
-        linux-input@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
-        devel@driverdev.osuosl.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH v3 09/26] compat_ioctl: move drivers to compat_ptr_ioctl
-Message-ID: <20190418111017.GE23876@stefanha-x1.localdomain>
-References: <20190416202013.4034148-1-arnd@arndb.de>
- <20190416202013.4034148-10-arnd@arndb.de>
+        Thu, 18 Apr 2019 11:08:05 -0400
+Received: from [5.180.42.13] ([5.180.42.13]:55618 "EHLO deadmen.hmeau.com"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388392AbfDRPIF (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 18 Apr 2019 11:08:05 -0400
+X-Greylist: delayed 2566 seconds by postgrey-1.27 at vger.kernel.org; Thu, 18 Apr 2019 11:08:01 EDT
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1hH7yO-0004lu-Ec; Thu, 18 Apr 2019 22:25:08 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1hH7yL-0004DA-RF; Thu, 18 Apr 2019 22:25:05 +0800
+Date:   Thu, 18 Apr 2019 22:25:05 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Vitaly Chikunov <vt@altlinux.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 00/10] crypto: add EC-RDSA (GOST 34.10) algorithm
+Message-ID: <20190418142505.tkd4bgf76imzuu3g@gondor.apana.org.au>
+References: <20190411155122.13245-1-vt@altlinux.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="KlAEzMkarCnErv5Q"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190416202013.4034148-10-arnd@arndb.de>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 18 Apr 2019 11:10:29 +0000 (UTC)
+In-Reply-To: <20190411155122.13245-1-vt@altlinux.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+On Thu, Apr 11, 2019 at 06:51:12PM +0300, Vitaly Chikunov wrote:
+>
+> Vitaly Chikunov (10):
+>   crypto: akcipher - default implementations for request callbacks
+>   crypto: rsa - unimplement sign/verify for raw RSA backends
+>   crypto: akcipher - new verify API for public key algorithms
+>   KEYS: do not kmemdup digest in {public,tpm}_key_verify_signature
+>   X.509: parse public key parameters from x509 for akcipher
+>   crypto: Kconfig - create Public-key cryptography section
+>   crypto: ecc - make ecc into separate module
+>   crypto: ecrdsa - add EC-RDSA (GOST 34.10) algorithm
+>   crypto: ecrdsa - add EC-RDSA test vectors to testmgr
+>   integrity: support EC-RDSA signatures for asymmetric_verify
+> 
+>  crypto/Kconfig                                |  63 ++--
+>  crypto/Makefile                               |  10 +-
+>  crypto/akcipher.c                             |  14 +
+>  crypto/asymmetric_keys/asym_tpm.c             |  43 +--
+>  crypto/asymmetric_keys/public_key.c           | 105 ++++---
+>  crypto/asymmetric_keys/x509.asn1              |   2 +-
+>  crypto/asymmetric_keys/x509_cert_parser.c     |  57 +++-
+>  crypto/ecc.c                                  | 417 +++++++++++++++++++++++++-
+>  crypto/ecc.h                                  | 153 +++++++++-
+>  crypto/ecc_curve_defs.h                       |  15 -
+>  crypto/ecrdsa.c                               | 296 ++++++++++++++++++
+>  crypto/ecrdsa_defs.h                          | 225 ++++++++++++++
+>  crypto/ecrdsa_params.asn1                     |   4 +
+>  crypto/ecrdsa_pub_key.asn1                    |   1 +
+>  crypto/rsa-pkcs1pad.c                         |  33 +-
+>  crypto/rsa.c                                  | 109 -------
+>  crypto/testmgr.c                              |  80 +++--
+>  crypto/testmgr.h                              | 159 ++++++++++
+>  drivers/crypto/caam/caampkc.c                 |   2 -
+>  drivers/crypto/ccp/ccp-crypto-rsa.c           |   2 -
+>  drivers/crypto/qat/qat_common/qat_asym_algs.c |   2 -
+>  include/crypto/akcipher.h                     |  54 ++--
+>  include/crypto/public_key.h                   |   4 +
+>  include/linux/oid_registry.h                  |  18 ++
+>  security/integrity/digsig_asymmetric.c        |  11 +-
+>  25 files changed, 1574 insertions(+), 305 deletions(-)
+>  create mode 100644 crypto/ecrdsa.c
+>  create mode 100644 crypto/ecrdsa_defs.h
+>  create mode 100644 crypto/ecrdsa_params.asn1
+>  create mode 100644 crypto/ecrdsa_pub_key.asn1
 
---KlAEzMkarCnErv5Q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Apr 16, 2019 at 10:19:47PM +0200, Arnd Bergmann wrote:
-> Each of these drivers has a copy of the same trivial helper function to
-> convert the pointer argument and then call the native ioctl handler.
->=20
-> We now have a generic implementation of that, so use it.
->=20
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/char/ppdev.c              | 12 +---------
->  drivers/char/tpm/tpm_vtpm_proxy.c | 12 +---------
->  drivers/firewire/core-cdev.c      | 12 +---------
->  drivers/hid/usbhid/hiddev.c       | 11 +--------
->  drivers/hwtracing/stm/core.c      | 12 +---------
->  drivers/misc/mei/main.c           | 22 +----------------
->  drivers/mtd/ubi/cdev.c            | 36 +++-------------------------
->  drivers/net/tap.c                 | 12 +---------
->  drivers/staging/pi433/pi433_if.c  | 12 +---------
->  drivers/usb/core/devio.c          | 16 +------------
->  drivers/vfio/vfio.c               | 39 +++----------------------------
->  drivers/vhost/net.c               | 12 +---------
->  drivers/vhost/scsi.c              | 12 +---------
->  drivers/vhost/test.c              | 12 +---------
->  drivers/vhost/vsock.c             | 12 +---------
->  fs/fat/file.c                     | 13 +----------
->  16 files changed, 20 insertions(+), 237 deletions(-)
-
-The vhost parts look good:
-
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-
---KlAEzMkarCnErv5Q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEcBAEBAgAGBQJcuFsZAAoJEJykq7OBq3PIjmUH/3YzT8r/nZGWhf+D9Jhao8p9
-N6eNCnBkQtsAj+s6IhmhZxdmPlkw0b8X0ws3iIw/zE3PNeLtIt2hG92evE9QSRzD
-dkSG0m+8KJ1fQK73GrmLousrFnSOagczYoTD/svPhC3WMptVGlPB4aqBZO4Eh79w
-SyUrD7cXe2NQXUFVRI9/QVj+yu59BtvUivzkDwGZxYa5Y8RvwDvelz+xTAkKP/cl
-CZ9Gnc2gCrzuK26f5odjmby93QWbAVkiMe5k22pzy/RRpuzsijL5ujr+Ayeti45g
-cDTLJ4YjNSzM07rYoa8nqHgZATbSokG/gvbNByeC//MoqtmpE23wNzmMwuFJdi8=
-=85Rm
------END PGP SIGNATURE-----
-
---KlAEzMkarCnErv5Q--
+All applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
