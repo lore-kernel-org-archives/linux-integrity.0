@@ -2,32 +2,32 @@ Return-Path: <SRS0=i18u=SY=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 614D7C282E1
-	for <linux-integrity@archiver.kernel.org>; Mon, 22 Apr 2019 18:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA19C282E1
+	for <linux-integrity@archiver.kernel.org>; Mon, 22 Apr 2019 18:58:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E3142175B
-	for <linux-integrity@archiver.kernel.org>; Mon, 22 Apr 2019 18:58:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A490218CD
+	for <linux-integrity@archiver.kernel.org>; Mon, 22 Apr 2019 18:58:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbfDVS6m (ORCPT
+        id S1728811AbfDVS6u (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 22 Apr 2019 14:58:42 -0400
-Received: from mga11.intel.com ([192.55.52.93]:60347 "EHLO mga11.intel.com"
+        Mon, 22 Apr 2019 14:58:50 -0400
+Received: from mga11.intel.com ([192.55.52.93]:60350 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727397AbfDVS6l (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 22 Apr 2019 14:58:41 -0400
+        id S1728742AbfDVS6u (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 22 Apr 2019 14:58:50 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Apr 2019 11:58:41 -0700
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Apr 2019 11:58:45 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,382,1549958400"; 
-   d="scan'208";a="136417117"
+   d="scan'208";a="136417158"
 Received: from linksys13920.jf.intel.com (HELO rpedgeco-DESK5.jf.intel.com) ([10.54.75.11])
-  by orsmga008.jf.intel.com with ESMTP; 22 Apr 2019 11:58:40 -0700
+  by orsmga008.jf.intel.com with ESMTP; 22 Apr 2019 11:58:42 -0700
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
 To:     Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>,
         Ingo Molnar <mingo@redhat.com>
@@ -42,155 +42,142 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
         Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v4 00/23] Merge text_poke fixes and executable lockdowns
-Date:   Mon, 22 Apr 2019 11:57:42 -0700
-Message-Id: <20190422185805.1169-1-rick.p.edgecombe@intel.com>
+Subject: [PATCH v4 14/23] x86/mm/cpa: Add set_direct_map_ functions
+Date:   Mon, 22 Apr 2019 11:57:56 -0700
+Message-Id: <20190422185805.1169-15-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190422185805.1169-1-rick.p.edgecombe@intel.com>
+References: <20190422185805.1169-1-rick.p.edgecombe@intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi,
+Add two new functions set_direct_map_default_noflush() and
+set_direct_map_invalid_noflush() for setting the direct map alias for the
+page to its default valid permissions and to an invalid state that cannot
+be cached in a TLB, respectively. These functions do not flush the TLB.
 
-Picking this up again after seeing how things shook out around the issue
-raised here: https://lkml.org/lkml/2019/2/22/702
+Note, __kernel_map_pages() does something similar but flushes the TLB and
+doesn't reset the permission bits to default on all architectures.
 
-This patchset improves several overlapping issues around stale TLB entries and
-W^X violations. It is combined from "x86/alternative: text_poke() enhancements
-v7" [1] and "Don’t leave executable TLB entries to freed pages v2" [2] patchsets
-that were conflicting.
+Also add an ARCH config ARCH_HAS_SET_DIRECT_MAP for specifying whether
+these have an actual implementation or a default empty one.
 
-The related issues that this fixes:
-1. Fixmap PTEs that are used for patching are available for access from
-   other cores and might be exploited. They are not even flushed from
-   the TLB in remote cores, so the risk is even higher. Address this
-   issue by introducing a temporary mm that is only used during
-   patching. Unfortunately, due to init ordering, fixmap is still used
-   during boot-time patching. Future patches can eliminate the need for
-   it.
-2. Missing lockdep assertion to ensure text_mutex is taken. It is
-   actually not always taken, so fix the instances that were found not
-   to take the lock (although they should be safe even without taking
-   the lock).
-3. Module_alloc returning memory that is RWX until a module is finished
-   loading.
-4. Sometimes when memory is freed via the module subsystem, an
-   executable permissioned TLB entry can remain to a freed page. If the
-   page is re-used to back an address that will receive data from
-   userspace, it can result in user data being mapped as executable in
-   the kernel. The root of this behavior is vfree lazily flushing the
-   TLB, but not lazily freeing the underlying pages.
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+---
+ arch/Kconfig                      |  4 ++++
+ arch/x86/Kconfig                  |  1 +
+ arch/x86/include/asm/set_memory.h |  3 +++
+ arch/x86/mm/pageattr.c            | 14 +++++++++++---
+ include/linux/set_memory.h        | 11 +++++++++++
+ 5 files changed, 30 insertions(+), 3 deletions(-)
 
-Changes v3 to v4:
- - Remove the size parameter from tramp_free() [Steven]
- - Remove caching of hw_breakpoint_active() [Sean]
- - Prevent the use of bpf_probe_write_user() while using temporary mm [Jann]
- - Fix build issues on other archs
-
-Changes v2 to v3:
- - Fix commit messages and comments [Boris]
- - Rename VM_HAS_SPECIAL_PERMS [Boris]
- - Remove unnecessary local variables [Boris]
- - Rename set_alias_*() functions [Boris, Andy]
- - Save/restore DR registers when using temporary mm
- - Move line deletion from patch 10 to patch 17
-
-Changes v1 to v2:
- - Adding “Reviewed-by tag” [Masami]
- - Comment instead of code to warn against module removal while
-   patching [Masami]
- - Avoiding open-coded TLB flush [Andy]
- - Remove "This patch" [Borislav Petkov]
- - Not set global bit during text poking [Andy, hpa]
- - Add Ack from [Pavel Machek]
- - Split patch 16 "Plug in new special vfree flag" into 4 patches (16-19)
-   to make it easier to review. There were no code changes.
-
-The changes from "Don’t leave executable TLB entries to freed pages
-v2" to v1:
- - Add support for case of hibernate trying to save an unmapped page
-   on the directmap. (Ard Biesheuvel)
- - No week arch breakout for vfree-ing special memory (Andy Lutomirski)
- - Avoid changing deferred free code by moving modules init free to work
-   queue (Andy Lutomirski)
- - Plug in new flag for kprobes and ftrace
- - More arch generic names for set_pages functions (Ard Biesheuvel)
- - Fix for TLB not always flushing the directmap (Nadav Amit)
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 3ab446bd12ef..5e43fcbad4ca 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -249,6 +249,10 @@ config ARCH_HAS_FORTIFY_SOURCE
+ config ARCH_HAS_SET_MEMORY
+ 	bool
  
-Changes from "x86/alternative: text_poke() enhancements v7" to v1
- - Fix build failure on CONFIG_RANDOMIZE_BASE=n (Rick)
- - Remove text_poke usage from ftrace (Nadav)
++# Select if arch has all set_direct_map_invalid/default() functions
++config ARCH_HAS_SET_DIRECT_MAP
++	bool
++
+ # Select if arch init_task must go in the __init_task_data section
+ config ARCH_TASK_STRUCT_ON_STACK
+        bool
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 2ec5e850b807..45d788354376 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -66,6 +66,7 @@ config X86
+ 	select ARCH_HAS_UACCESS_FLUSHCACHE	if X86_64
+ 	select ARCH_HAS_UACCESS_MCSAFE		if X86_64 && X86_MCE
+ 	select ARCH_HAS_SET_MEMORY
++	select ARCH_HAS_SET_DIRECT_MAP
+ 	select ARCH_HAS_STRICT_KERNEL_RWX
+ 	select ARCH_HAS_STRICT_MODULE_RWX
+ 	select ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
+diff --git a/arch/x86/include/asm/set_memory.h b/arch/x86/include/asm/set_memory.h
+index 07a25753e85c..ae7b909dc242 100644
+--- a/arch/x86/include/asm/set_memory.h
++++ b/arch/x86/include/asm/set_memory.h
+@@ -85,6 +85,9 @@ int set_pages_nx(struct page *page, int numpages);
+ int set_pages_ro(struct page *page, int numpages);
+ int set_pages_rw(struct page *page, int numpages);
  
-[1] https://lkml.org/lkml/2018/12/5/200
-[2] https://lkml.org/lkml/2018/12/11/1571
-
-
-Andy Lutomirski (1):
-  x86/mm: Introduce temporary mm structs
-
-Nadav Amit (15):
-  Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
-  x86/jump_label: Use text_poke_early() during early init
-  x86/mm: Save DRs when loading a temporary mm
-  fork: Provide a function for copying init_mm
-  x86/alternative: Initialize temporary mm for patching
-  x86/alternative: Use temporary mm for text poking
-  x86/kgdb: Avoid redundant comparison of patched code
-  x86/ftrace: Set trampoline pages as executable
-  x86/kprobes: Set instruction page as executable
-  x86/module: Avoid breaking W^X while loading modules
-  x86/jump-label: Remove support for custom poker
-  x86/alternative: Remove the return value of text_poke_*()
-  x86/alternative: Comment about module removal races
-  tlb: provide default nmi_uaccess_okay()
-  bpf: Fail bpf_probe_write_user() while mm is switched
-
-Rick Edgecombe (7):
-  x86/mm/cpa: Add set_direct_map_ functions
-  mm: Make hibernate handle unmapped pages
-  vmalloc: Add flag for free of special permsissions
-  modules: Use vmalloc special flag
-  bpf: Use vmalloc special flag
-  x86/ftrace: Use vmalloc special flag
-  x86/kprobes: Use vmalloc special flag
-
- arch/Kconfig                         |   4 +
- arch/x86/Kconfig                     |   1 +
- arch/x86/include/asm/fixmap.h        |   2 -
- arch/x86/include/asm/mmu_context.h   |  56 ++++++++
- arch/x86/include/asm/pgtable.h       |   3 +
- arch/x86/include/asm/set_memory.h    |   3 +
- arch/x86/include/asm/text-patching.h |   7 +-
- arch/x86/include/asm/tlbflush.h      |   2 +
- arch/x86/kernel/alternative.c        | 201 ++++++++++++++++++++-------
- arch/x86/kernel/ftrace.c             |  22 +--
- arch/x86/kernel/jump_label.c         |  21 ++-
- arch/x86/kernel/kgdb.c               |  25 +---
- arch/x86/kernel/kprobes/core.c       |  19 ++-
- arch/x86/kernel/module.c             |   2 +-
- arch/x86/mm/init_64.c                |  36 +++++
- arch/x86/mm/pageattr.c               |  16 ++-
- arch/x86/xen/mmu_pv.c                |   2 -
- include/asm-generic/tlb.h            |   9 ++
- include/linux/filter.h               |  18 +--
- include/linux/mm.h                   |  18 +--
- include/linux/sched/task.h           |   1 +
- include/linux/set_memory.h           |  11 ++
- include/linux/vmalloc.h              |  15 ++
- init/main.c                          |   3 +
- kernel/bpf/core.c                    |   1 -
- kernel/fork.c                        |  24 +++-
- kernel/module.c                      |  82 ++++++-----
- kernel/power/snapshot.c              |   5 +-
- kernel/trace/bpf_trace.c             |   8 ++
- mm/page_alloc.c                      |   7 +-
- mm/vmalloc.c                         | 113 ++++++++++++---
- 31 files changed, 542 insertions(+), 195 deletions(-)
-
++int set_direct_map_invalid_noflush(struct page *page);
++int set_direct_map_default_noflush(struct page *page);
++
+ extern int kernel_set_to_readonly;
+ void set_kernel_text_rw(void);
+ void set_kernel_text_ro(void);
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index 4c570612e24e..3574550192c6 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -2209,8 +2209,6 @@ int set_pages_rw(struct page *page, int numpages)
+ 	return set_memory_rw(addr, numpages);
+ }
+ 
+-#ifdef CONFIG_DEBUG_PAGEALLOC
+-
+ static int __set_pages_p(struct page *page, int numpages)
+ {
+ 	unsigned long tempaddr = (unsigned long) page_address(page);
+@@ -2249,6 +2247,17 @@ static int __set_pages_np(struct page *page, int numpages)
+ 	return __change_page_attr_set_clr(&cpa, 0);
+ }
+ 
++int set_direct_map_invalid_noflush(struct page *page)
++{
++	return __set_pages_np(page, 1);
++}
++
++int set_direct_map_default_noflush(struct page *page)
++{
++	return __set_pages_p(page, 1);
++}
++
++#ifdef CONFIG_DEBUG_PAGEALLOC
+ void __kernel_map_pages(struct page *page, int numpages, int enable)
+ {
+ 	if (PageHighMem(page))
+@@ -2282,7 +2291,6 @@ void __kernel_map_pages(struct page *page, int numpages, int enable)
+ }
+ 
+ #ifdef CONFIG_HIBERNATION
+-
+ bool kernel_page_present(struct page *page)
+ {
+ 	unsigned int level;
+diff --git a/include/linux/set_memory.h b/include/linux/set_memory.h
+index 2a986d282a97..b5071497b8cb 100644
+--- a/include/linux/set_memory.h
++++ b/include/linux/set_memory.h
+@@ -17,6 +17,17 @@ static inline int set_memory_x(unsigned long addr,  int numpages) { return 0; }
+ static inline int set_memory_nx(unsigned long addr, int numpages) { return 0; }
+ #endif
+ 
++#ifndef CONFIG_ARCH_HAS_SET_DIRECT_MAP
++static inline int set_direct_map_invalid_noflush(struct page *page)
++{
++	return 0;
++}
++static inline int set_direct_map_default_noflush(struct page *page)
++{
++	return 0;
++}
++#endif
++
+ #ifndef set_mce_nospec
+ static inline int set_mce_nospec(unsigned long pfn)
+ {
 -- 
 2.17.1
 
