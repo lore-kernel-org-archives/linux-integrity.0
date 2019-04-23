@@ -2,95 +2,79 @@ Return-Path: <SRS0=VzeC=SZ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B12BDC282CE
-	for <linux-integrity@archiver.kernel.org>; Tue, 23 Apr 2019 00:18:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F091C10F03
+	for <linux-integrity@archiver.kernel.org>; Tue, 23 Apr 2019 18:00:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84FC320859
-	for <linux-integrity@archiver.kernel.org>; Tue, 23 Apr 2019 00:18:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03C8A214AE
+	for <linux-integrity@archiver.kernel.org>; Tue, 23 Apr 2019 18:00:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jx6BGgkp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730955AbfDWASZ (ORCPT
+        id S1727745AbfDWSAD (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 22 Apr 2019 20:18:25 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53984 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729701AbfDWAST (ORCPT
+        Tue, 23 Apr 2019 14:00:03 -0400
+Received: from mail-it1-f171.google.com ([209.85.166.171]:36483 "EHLO
+        mail-it1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727656AbfDWSAD (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 22 Apr 2019 20:18:19 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3N03W16146902
-        for <linux-integrity@vger.kernel.org>; Mon, 22 Apr 2019 20:18:19 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2s1qr1grv7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 22 Apr 2019 20:18:18 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 23 Apr 2019 01:18:16 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 23 Apr 2019 01:18:13 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x3N0ICqB36831360
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 23 Apr 2019 00:18:12 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8E78E4C04A;
-        Tue, 23 Apr 2019 00:18:12 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C86514C040;
-        Tue, 23 Apr 2019 00:18:11 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.109.124])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 23 Apr 2019 00:18:11 +0000 (GMT)
-Subject: Re: [PATCH] kexec_buffer measure
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     prakhar srivastava <prsriva02@gmail.com>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Date:   Mon, 22 Apr 2019 20:18:01 -0400
-In-Reply-To: <CAEFn8qKkXgxUKtribbtFwvG9NykGQo10jQ5Du_i9wJz-wKreOA@mail.gmail.com>
-References: <CAEFn8qKkXgxUKtribbtFwvG9NykGQo10jQ5Du_i9wJz-wKreOA@mail.gmail.com>
+        Tue, 23 Apr 2019 14:00:03 -0400
+Received: by mail-it1-f171.google.com with SMTP id y10so1696790itc.1
+        for <linux-integrity@vger.kernel.org>; Tue, 23 Apr 2019 11:00:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5ir5zAlJOThdiM80QszhFRhq6A6JO767qSeIlElonU8=;
+        b=Jx6BGgkp8LbEXOuBVXAMNvYGbeR/WEXbNqpWuWwtxYIGcsUqCl54qXrdDQqjz3UvyD
+         CEnAp8iXuubOBLWk9Lcsz+t4Zl/fsuoM03q8OX8jtaHD9vJBeWvywsEHUO+zLwj/eh2e
+         GM/e/73zKRMli6njW/tBI1J7R5f5o4ClSrZ0sQkNAm14/gvswc5j1wczns9SjFLYDgLd
+         W2nJ46D/Gp1kbc37acC3C0C6nHP62KjMD52QriFVJGp6u7bnAmEcFxU83qWDBMKG7Er0
+         z46aAtI6W11FeDfkB/e0VCbXW6kdUk2rVPtn+wyjeuyVP08DEMvGSKnsaQix8lSdgVC+
+         mlrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5ir5zAlJOThdiM80QszhFRhq6A6JO767qSeIlElonU8=;
+        b=QMXEg3o+qBt/p94/MmpROkLNC4Z240BjgEWZvegp6KILbmKo4xPtnoR1ApURrsGm8+
+         ziBHSaucQ06uz6JeY+6S6Dbd2G0JFfZjDwiIL3u/G6wWAMzV3H6zRgnpX0D5TO2FuJbx
+         HkLeujxCbFcenDuXiQyZhgHGFKSgUyK66RmZyn2vNAOJ/e4MHzfxrxu/4sYfGjpIhKcs
+         j+wYmYXb9KKVbE1hn6LvUguLaxjdICKD0H1P7tpIwmWHcsDYFLZy3Z4pQCE+VehYS2Kn
+         rC3i+ipf5dGFLcLRyguNU3sJZmDNkXpyxdlF0PPKFYWJeN+ygPH+Ky02BVFdytsqcg5q
+         ckoQ==
+X-Gm-Message-State: APjAAAU6MdshRMW/hFXQSSMS86hpkLqYBQ+uuNiitBAVUvsC/2UWjm3I
+        YMbFo75vKs9DyYs4KkE4LEYtzE4gXd6lIFt7EN98FQeEjUc=
+X-Google-Smtp-Source: APXvYqx2noFUXjvpsOYDNFXNw0oPuZrNNEhIWyGVtJ+dBG4sMi735Ieb5rxDVU7XBv7qDiNMySTtjeK705QyUxsR860=
+X-Received: by 2002:a24:41a9:: with SMTP id b41mr3382727itd.16.1556042401899;
+ Tue, 23 Apr 2019 11:00:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <BYAPR05MB39753CB3CA47513EEADC134CC1270@BYAPR05MB3975.namprd05.prod.outlook.com>
+In-Reply-To: <BYAPR05MB39753CB3CA47513EEADC134CC1270@BYAPR05MB3975.namprd05.prod.outlook.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Tue, 23 Apr 2019 10:59:50 -0700
+Message-ID: <CACdnJutoJGm8mJJvgXZqpD7sa+OUxYqHHVyJEeGMu2WrubddZQ@mail.gmail.com>
+Subject: Re: Can we enforce "IMA Policy" based on file type
+To:     Kavitha Sivagnanam <kavi@juniper.net>
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19042300-0008-0000-0000-000002DC7162
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19042300-0009-0000-0000-00002248BE1A
-Message-Id: <1555978681.4914.305.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-22_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=988 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1904220180
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-[Cc'ing LSM mailing list]
+On Fri, Apr 19, 2019 at 5:08 PM Kavitha Sivagnanam <kavi@juniper.net> wrote:
+>
+> Hi
+>
+> I am wondering, in the current implementation of IMA policy, if there is a way to enforce appraisal on a file based on the file type.  The file type that I am interested in enforcing the policy is for SquashFS files.
 
-On Fri, 2019-04-19 at 17:30 -0700, prakhar srivastava wrote:
-
-> 2) Adding a LSM hook
-> We are doing both the command line and kernel version measurement in IMA.
-> Can you please elaborate on how this can be used outside of the scenario?
-> That will help me come back with a better design and code. I am
-> neutral about this.
-
-As I said previously, initially you might want to only measure the
-kexec boot command line, but will you ever want to verify or audit log
-the boot command line hash?  Perhaps LSMs would be interested in the
-boot command line.  Should this be an LSM hook?
-
-Mimi
-
+Not directly - the kernel has no idea of what type a file has. If you
+use selinux or smack then you can label squashfs files with a specific
+type and then use the obj_role option in your policy. You'd also need
+policy that prevents anyone else from modifying these, so depending on
+what your threat model is this may not work out.
