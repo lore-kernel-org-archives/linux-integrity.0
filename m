@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63361C10F03
-	for <linux-integrity@archiver.kernel.org>; Wed, 24 Apr 2019 00:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CBEBC10F03
+	for <linux-integrity@archiver.kernel.org>; Wed, 24 Apr 2019 00:16:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26AF221900
-	for <linux-integrity@archiver.kernel.org>; Wed, 24 Apr 2019 00:16:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4E39217D9
+	for <linux-integrity@archiver.kernel.org>; Wed, 24 Apr 2019 00:16:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o6Fdj1SP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iWQhd5l0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728891AbfDXAPx (ORCPT
+        id S1728948AbfDXAQJ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 23 Apr 2019 20:15:53 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43091 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728491AbfDXAPx (ORCPT
+        Tue, 23 Apr 2019 20:16:09 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45043 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728899AbfDXAPy (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 23 Apr 2019 20:15:53 -0400
-Received: by mail-pg1-f193.google.com with SMTP id z9so8412423pgu.10;
-        Tue, 23 Apr 2019 17:15:52 -0700 (PDT)
+        Tue, 23 Apr 2019 20:15:54 -0400
+Received: by mail-pg1-f194.google.com with SMTP id z16so3807877pgv.11;
+        Tue, 23 Apr 2019 17:15:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=eMFDUMGPg9svBemR3kNl+I7JDj7h3EAZp1KY9ojzIcE=;
-        b=o6Fdj1SPgi+eXEq1ib+71TFCRMP/rcoYTOs1SHskRny3hmk+hkXOGsPKWNZD8jfzYU
-         wUM/VdrYoeaZDBH8I9iqcw4A/tyztgdo12t2HU8Ndeqk0X9X7ngi8nOLT/9IZJluSyLs
-         s9OQNqEVPag1TslmuI9uY5AEkxgJmCoPQ2SfdVoRe5izC38F8puXb1enDC3P4ZWBr5Dp
-         KUQSMW2RMG4J9k4IS8TSRg03mYO2cPgsG6gmzCRt+AQ0qGQe0XirlvUo3CaGYftKvkdM
-         qHo2MVLYhME8f440E97AWndHMJrPKGAhY+tb+Cq5H9yzpbsWJ1ZXkvIdFYBtOdPmHWa5
-         lb8w==
+        bh=89tWsU/OT5SYrbjwn65xtN7OxFoXBZMgUvk/yoALgYk=;
+        b=iWQhd5l06krXIiYuNCaoAfu33B+mMY6XiKj/UqyC5QO9cxDIdEptfEsXgyBCCTi+3K
+         v5gPSSeZQkcCAZ5kYBtN564PrmPc/Fle0qag/MGw9r04/gL4RfpJd1P7IuoKyoXwtX/3
+         DSaVKRcnMdfJGI6N+4LXOroRgyLEv0PywkZSW/IB5poFnaoWrvExUv4b1NM5KpEbbBKD
+         Ec2SA5dTUeXb29Ti+OS5Xvzv+8GjmzaGPIbhXTldnYiw/AXrevqDKoDJ1/2WsVM00FJL
+         OHWoBJpKItxBfPm2w5rgOvEDc2ur/PedQeEfL+LX1I2G1i1fmFIRxIB57o+htk0VL049
+         t5yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=eMFDUMGPg9svBemR3kNl+I7JDj7h3EAZp1KY9ojzIcE=;
-        b=rsB7AslGOoFqeocz9ToHTJD9gpsSxWfmqNP01uxnlFK59GRBOgVBnjCaS1rVK4h8Gi
-         SHLhJfxGwHgLZtj+wZxhLrnviN4OQT1CnrLgWo1g8ueoVQagBLW9AGf3ZsRywOU2fH5j
-         qdMo9oQUdpVRsFV2qqLqdgnGY55me7Ofg1QeYF/RwDDhcNLP1u+Tm8VTVMre/7XnAC8K
-         ABQhmFSE2DZJSHExBIY8sTH9UlALMKk2TCCh7Cgf5qRIl3NGHSMQR1+MaRuXVd2khQHz
-         RfZtdV2exIeG5CfIr/qgiEkzdkD3UMueH5KnDUB4beX1TdfzqJtW+ulWKLRYGo4zDObB
-         b00w==
-X-Gm-Message-State: APjAAAW32+7pS4wd1g7rczlTeneBaGPqmHdfWOPxDnbHCP8nGFnUh+id
-        sXnwA5GAAxEhOqAa3ds07eLV7iJIGcw=
-X-Google-Smtp-Source: APXvYqy1bNoZGx8sP7Z+BPVOANoq+nz6VMTqNCVT7kPnm99i7zy06sIvTeqVIZ1QcGXwL8SSPB/kIA==
-X-Received: by 2002:aa7:8c9a:: with SMTP id p26mr30645895pfd.251.1556064951592;
-        Tue, 23 Apr 2019 17:15:51 -0700 (PDT)
+        bh=89tWsU/OT5SYrbjwn65xtN7OxFoXBZMgUvk/yoALgYk=;
+        b=kFFhcgm6HJdnuFOAyGMvuPKoVlII+bwqBYz4jVlg9H7Ci8pH3xDW6TUZ8CosvDbqlU
+         3YpDZ8bolUkL11KPJRD92eP+QqF+9AV0PxtwIw3oX9D+HI16ln8kOu7UFiC22y59MS5N
+         5Ti7r+lPXfjMIW/C9kJMw8Nb6MAHkg/8witGVHbqZxbzSNbJUJGRe1WMb0d9wp2l4dxv
+         tDjmJ2CNeILQK85xqJt4r/w/a8XkHv2WVEOfLxFMWVZvYqKDSLEL5eYf2FSpRfwZSweT
+         WH01bKEj3Gm+OljDIHalvPQGLMpzlO8E3G3w+eEhcmEyZk5aRVTyo60zkx44NQskRxq1
+         gisg==
+X-Gm-Message-State: APjAAAUBeoEEg7bw3OzLEQpDRgxQZrPmKkS9w+i7o2kbN60FmK9M8SbF
+        HaEPhEII2WWi+f2Y08csSWs9KsIqG3s=
+X-Google-Smtp-Source: APXvYqxyyq3ENNshaZc9kqkGoEhF0igoLz3AtTGKletUoYM2tNx41PFEbisTnOOBusmkrIWloxz+9w==
+X-Received: by 2002:aa7:8208:: with SMTP id k8mr29977580pfi.69.1556064953277;
+        Tue, 23 Apr 2019 17:15:53 -0700 (PDT)
 Received: from prsriva-linux.corp.microsoft.com ([2001:4898:80e8:1:d4f:4d24:45fa:d461])
-        by smtp.gmail.com with ESMTPSA id n21sm58955712pfb.42.2019.04.23.17.15.50
+        by smtp.gmail.com with ESMTPSA id n21sm58955712pfb.42.2019.04.23.17.15.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Apr 2019 17:15:50 -0700 (PDT)
+        Tue, 23 Apr 2019 17:15:51 -0700 (PDT)
 From:   Prakhar Srivastava <prsriva02@gmail.com>
 X-Google-Original-From: Prakhar Srivastava
 To:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
@@ -62,9 +62,9 @@ To:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
 Cc:     zohar@linux.ibm.com, ebiederm@xmission.com, vgoyal@redhat.com,
         Prakhar Srivastava <prsriva02@gmail.com>,
         Prakhar Srivastava <prsriva@microsoft.com>
-Subject: [PATCH v2 2/5 RFC] use event name instead of enum to make the call generic
-Date:   Tue, 23 Apr 2019 17:15:41 -0700
-Message-Id: <20190424001544.7188-2-prsriva02@gmail.com>
+Subject: [PATCH v2 3/5 RFC] since cmdline args can be same for multiple kexec, log entry hash will collide. Prepend the kernel file name to the cmdline args to distinguish between cmdline args passed to subsequent kexec calls
+Date:   Tue, 23 Apr 2019 17:15:42 -0700
+Message-Id: <20190424001544.7188-3-prsriva02@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190424001544.7188-1-prsriva02@gmail.com>
 References: <20190424001544.7188-1-prsriva02@gmail.com>
@@ -86,148 +86,133 @@ EFI loader has not been triggered.
 Adding the kexec cmdline args measure and kernel version will add some
 attestable criteria.
 
-remove enums to control type of buffers entries, instead pass the event name to be used.
+Cmdline args can be same for multiple kexec, log entry
+hash will collide. Prepend the kernel file name to the cmdline args to
+distinguish between cmdline args passed to subsequent kexec calls
 
- include/linux/ima.h               | 10 ++--------
- kernel/kexec_file.c               |  3 +++
- security/integrity/ima/ima.h      |  2 +-
- security/integrity/ima/ima_main.c | 30 ++++++++++--------------------
- 4 files changed, 16 insertions(+), 29 deletions(-)
+ kernel/kexec_core.c     | 57 +++++++++++++++++++++++++++++++++++++++++
+ kernel/kexec_file.c     | 14 ++++++++--
+ kernel/kexec_internal.h |  3 +++
+ 3 files changed, 72 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 733d0cb9dedc..5e41507c57e5 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -14,12 +14,6 @@
- #include <linux/kexec.h>
- struct linux_binprm;
+diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+index ae1a3ba24df5..97b77c780311 100644
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -1151,3 +1151,60 @@ void __weak arch_kexec_protect_crashkres(void)
  
--enum __buffer_id {
--	KERNEL_VERSION,
--	KEXEC_CMDLINE,
--	MAX_BUFFER_ID = KEXEC_CMDLINE
--} buffer_id;
--
- #ifdef CONFIG_IMA
- extern int ima_bprm_check(struct linux_binprm *bprm);
- extern int ima_file_check(struct file *file, int mask, int opened);
-@@ -29,7 +23,7 @@ extern int ima_read_file(struct file *file, enum kernel_read_file_id id);
- extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
- 			      enum kernel_read_file_id id);
- extern void ima_post_path_mknod(struct dentry *dentry);
--extern void ima_buffer_check(const void *buff, int size, enum buffer_id id);
-+extern void ima_buffer_check(const void *buff, int size, char *eventname);
- #ifdef CONFIG_IMA_KEXEC
- extern void ima_add_kexec_buffer(struct kimage *image);
- #endif
-@@ -72,7 +66,7 @@ static inline void ima_post_path_mknod(struct dentry *dentry)
- }
- 
- static inline void ima_buffer_check(const void *buff, int size,
--			enum buffer_id id)
-+			char *eventname)
- {
- 	return;
- }
+ void __weak arch_kexec_unprotect_crashkres(void)
+ {}
++
++/**
++ * kexec_cmdline_prepend_img_name - prepare the buffer with cmdline
++ * that needs to be measured
++ * @outbuf - out buffer that contains the formated string
++ * @kernel_fd - the file identifier for the kerenel image
++ * @cmdline_ptr - ptr to the cmdline buffer
++ * @cmdline_len - len of the buffer.
++ *
++ * This generates a buffer in the format Kerenelfilename::cmdline
++ *
++ * On success return 0.
++ * On failure return -EINVAL.
++ */
++int kexec_cmdline_prepend_img_name(char **outbuf, int kernel_fd,
++				const char *cmdline_ptr,
++				unsigned long cmdline_len)
++{
++	int ret = -EINVAL;
++	struct fd f = {};
++	int size = 0;
++	char *buf = NULL;
++	char delimiter[] = "::";
++
++	if (!outbuf || !cmdline_ptr)
++		goto out;
++
++	f = fdget(kernel_fd);
++	if (!f.file)
++		goto out;
++
++	size = (f.file->f_path.dentry->d_name.len + cmdline_len - 1+
++			ARRAY_SIZE(delimiter)) - 1;
++
++	buf = kzalloc(size, GFP_KERNEL);
++	if (!buf)
++		goto out;
++
++	memcpy(buf, f.file->f_path.dentry->d_name.name,
++		f.file->f_path.dentry->d_name.len);
++	memcpy(buf + f.file->f_path.dentry->d_name.len,
++		delimiter, ARRAY_SIZE(delimiter) - 1);
++	memcpy(buf + f.file->f_path.dentry->d_name.len +
++		ARRAY_SIZE(delimiter) - 1,
++		cmdline_ptr, cmdline_len - 1);
++
++	*outbuf = buf;
++	ret = size;
++
++	pr_debug("kexec cmdline buff: %s\n", buf);
++
++out:
++	if (f.file)
++		fdput(f);
++
++	return ret;
++}
 diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index b118735fea9d..2a5234eb4b28 100644
+index 2a5234eb4b28..a487491d55b9 100644
 --- a/kernel/kexec_file.c
 +++ b/kernel/kexec_file.c
-@@ -182,6 +182,9 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
- 			ret = -EINVAL;
+@@ -126,6 +126,8 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+ 	int ret = 0;
+ 	void *ldata;
+ 	loff_t size;
++	char *buff_to_measure = NULL;
++	int buff_to_measure_size = 0;
+ 
+ 	ret = kernel_read_file_from_fd(kernel_fd, &image->kernel_buf,
+ 				       &size, INT_MAX, READING_KEXEC_IMAGE);
+@@ -183,8 +185,13 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
  			goto out;
  		}
+ 
+-		ima_buffer_check(image->cmdline_buf, cmdline_len - 1,
+-				"kexec_cmdline");
++		/* IMA measures the cmdline args passed to the next kernel*/
++		buff_to_measure_size = kexec_cmdline_prepend_img_name(&buff_to_measure,
++			kernel_fd, image->cmdline_buf, image->cmdline_buf_len);
 +
-+		ima_buffer_check(image->cmdline_buf, cmdline_len - 1,
-+				"kexec_cmdline");
++		ima_buffer_check(buff_to_measure, buff_to_measure_size,
++					"kexec_cmdline");
++
  	}
  
  	/* Call arch image load handlers */
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index b71f2f6f7421..fcade3c103ed 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -181,8 +181,8 @@ enum ima_hooks {
- 	FIRMWARE_CHECK,
- 	KEXEC_KERNEL_CHECK,
- 	KEXEC_INITRAMFS_CHECK,
--	BUFFER_CHECK,
- 	POLICY_CHECK,
-+	BUFFER_CHECK,
- 	MAX_CHECK
- };
- 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 6408cadaadbb..da82c705a5ed 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -160,8 +160,7 @@ void ima_file_free(struct file *file)
-  * (Instead of using the file hash the buffer hash is used).
-  * @buff - The buffer that needs to be added to the log
-  * @size - size of buffer(in bytes)
-- * @id - buffer id, this is differentiator for the various buffers
-- * that can be measured.
-+ * @id - eventname, event name to be used for buffer measurement.
-  *
-  * The buffer passed is added to the ima logs.
-  * If the sig template is used, then the sig field contains the buffer.
-@@ -170,7 +169,7 @@ void ima_file_free(struct file *file)
-  * On error cases surface errors from ima calls.
-  */
- static int process_buffer_measurement(const void *buff, int size,
--				enum buffer_id id)
-+				char *eventname)
- {
- 	int ret = -EINVAL;
- 	struct ima_template_entry *entry = NULL;
-@@ -185,23 +184,13 @@ static int process_buffer_measurement(const void *buff, int size,
- 	int violation = 0;
- 	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
- 
--	if (!buff || size ==  0)
-+	if (!buff || size ==  0 || !eventname)
- 		goto err_out;
- 
- 	if (ima_get_action(NULL, 0, BUFFER_CHECK, &pcr) != IMA_MEASURE)
- 		goto err_out;
- 
--	switch (buffer_id) {
--	case KERNEL_VERSION:
--		name = "Kernel-version";
--		break;
--	case KEXEC_CMDLINE:
--		name = "Kexec-cmdline";
--		break;
--	default:
--		goto err_out;
--	}
--
-+	name = eventname;
- 	memset(iint, 0, sizeof(*iint));
- 	memset(&hash, 0, sizeof(hash));
- 
-@@ -452,15 +441,16 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
-  * ima_buffer_check - based on policy, collect & store buffer measurement
-  * @buf: pointer to buffer
-  * @size: size of buffer
-- * @buffer_id: caller identifier
-+ * @eventname: caller identifier
-  *
-  * Buffers can only be measured, not appraised.  The buffer identifier
-- * is used as the measurement list entry name (eg. boot_cmdline).
-+ * is used as the measurement list entry name (eg. boot_cmdline,
-+ * kernel_version).
-  */
--void ima_buffer_check(const void *buf, int size, enum buffer_id id)
-+void ima_buffer_check(const void *buf, int size, char *eventname)
- {
--	if (buf && size != 0)
--		process_buffer_measurement(buf, size, id);
-+	if (buf && size != 0 && eventname)
-+		process_buffer_measurement(buf, size, eventname);
- 
- 	return;
+@@ -200,6 +207,9 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+ 	/* In case of error, free up all allocated memory in this function */
+ 	if (ret)
+ 		kimage_file_post_load_cleanup(image);
++
++	kfree(buff_to_measure);
++
+ 	return ret;
  }
+ 
+diff --git a/kernel/kexec_internal.h b/kernel/kexec_internal.h
+index 799a8a452187..4d34a8ef4637 100644
+--- a/kernel/kexec_internal.h
++++ b/kernel/kexec_internal.h
+@@ -11,6 +11,9 @@ int kimage_load_segment(struct kimage *image, struct kexec_segment *segment);
+ void kimage_terminate(struct kimage *image);
+ int kimage_is_destination_range(struct kimage *image,
+ 				unsigned long start, unsigned long end);
++int kexec_cmdline_prepend_img_name(char **outbuf, int kernel_fd,
++				const char *cmdline_ptr,
++				unsigned long cmdline_len);
+ 
+ extern struct mutex kexec_mutex;
+ 
 -- 
 2.17.1
 
