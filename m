@@ -2,68 +2,67 @@ Return-Path: <SRS0=MPPW=S3=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70902C282E3
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 11:56:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A9CDC10F03
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 11:59:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43EB9217FA
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 11:56:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32C17218AD
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 11:59:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387504AbfDYL4W (ORCPT
+        id S1726314AbfDYL7H (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 25 Apr 2019 07:56:22 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45882 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387447AbfDYL4V (ORCPT
+        Thu, 25 Apr 2019 07:59:07 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45586 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726152AbfDYL7H (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 25 Apr 2019 07:56:21 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3PBpFP3083083
-        for <linux-integrity@vger.kernel.org>; Thu, 25 Apr 2019 07:56:20 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2s3a8epawb-1
+        Thu, 25 Apr 2019 07:59:07 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3PBpY1c041049
+        for <linux-integrity@vger.kernel.org>; Thu, 25 Apr 2019 07:59:06 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2s3bxt1feb-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 25 Apr 2019 07:56:20 -0400
+        for <linux-integrity@vger.kernel.org>; Thu, 25 Apr 2019 07:59:06 -0400
 Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 25 Apr 2019 12:56:18 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Thu, 25 Apr 2019 12:59:04 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 25 Apr 2019 12:56:03 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x3PBu2w229949952
+        Thu, 25 Apr 2019 12:59:01 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x3PBx01344367980
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 25 Apr 2019 11:56:02 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7061052051;
-        Thu, 25 Apr 2019 11:56:02 +0000 (GMT)
+        Thu, 25 Apr 2019 11:59:00 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 77D794203F;
+        Thu, 25 Apr 2019 11:59:00 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EC8D142049;
+        Thu, 25 Apr 2019 11:58:59 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.80.95.60])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 9D1F35204F;
-        Thu, 25 Apr 2019 11:56:01 +0000 (GMT)
-Subject: Re: [PATCH v2] KEYS: Make use of platform keyring for module
- signature verify
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 25 Apr 2019 11:58:59 +0000 (GMT)
+Subject: Re: Can we enforce "IMA Policy" based on file type
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Robert Holmes <robeholmes@gmail.com>, jeyu@kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        stable@vger.kernel.org
-Date:   Thu, 25 Apr 2019 07:55:50 -0400
-In-Reply-To: <1556116431-7129-1-git-send-email-robeholmes@gmail.com>
-References: <1556116431-7129-1-git-send-email-robeholmes@gmail.com>
+To:     Kavitha Sivagnanam <kavi@juniper.net>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Date:   Thu, 25 Apr 2019 07:58:49 -0400
+In-Reply-To: <BYAPR05MB39753CB3CA47513EEADC134CC1270@BYAPR05MB3975.namprd05.prod.outlook.com>
+References: <BYAPR05MB39753CB3CA47513EEADC134CC1270@BYAPR05MB3975.namprd05.prod.outlook.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 19042511-4275-0000-0000-0000032D92EA
+x-cbid: 19042511-0012-0000-0000-00000314845B
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19042511-4276-0000-0000-0000383CDF76
-Message-Id: <1556193350.3894.92.camel@linux.ibm.com>
+x-cbparentid: 19042511-0013-0000-0000-0000214CDE2F
+Message-Id: <1556193529.3894.94.camel@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-25_10:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -76,62 +75,32 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, 2019-04-24 at 14:33 +0000, Robert Holmes wrote:
-> This patch completes commit 278311e417be ("kexec, KEYS: Make use of
-> platform keyring for signature verify") which, while adding the
-> platform keyring for bzImage verification, neglected to also add
-> this keyring for module verification.
+On Fri, 2019-04-19 at 21:52 +0000, Kavitha Sivagnanam wrote:
+> Hi
 > 
-> As such, kernel modules signed with keys from the MokList variable
-> were not successfully verified.
+> I am wondering, in the current implementation of IMA policy, if
+> there is a way to enforce appraisal on a file based on the file
+> type.  The file type that I am interested in enforcing the policy is
+> for SquashFS files.
+> 
+> We want to check the signature on the SquashFS file itself before
+> mounting it and mark the partition as read-only. This would allow us
+> to have the flexibility of not signing every immutable file we are
+> installing. Also the installation process will be faster as setting
+> extended attribute on every file is extremely time consuming
+> process.  The signatures are generated at build time & we are using
+> seftattr to set the security.ima attribute. 
+> 
+> Is it possible to achieve this with existing policy (or) we need
+> enhancement to the current IMA code? If we need to enhance the
+> kernel to support this feature, where would we start?
 
-Using the platform keyring keys for verifying kernel modules was not
-neglected, but rather intentional.  This patch description should
-clearly explain the reason for needing to verify kernel module
-signatures based on the pre-boot keys.  (Hint: verifying kernel
-modules based on the pre-boot keys was previously rejected.)
+As Matthew indicated, you could define LSM labels on the squashfs file
+images.  Another option would be to extend IMA by implementing the LSM
+security_sb_mount hook.  The IMA policy rule would probably look
+something like:
+
+appraise func=MOUNT_CHECK fsname=squashfs appraise_type=imasig
 
 Mimi
-
-> 
-> Signed-off-by: Robert Holmes <robeholmes@gmail.com>
-> Cc: linux-integrity@vger.kernel.org
-> Cc: keyrings@vger.kernel.org
-> Cc: stable@vger.kernel.org
-> ---
->  kernel/module_signing.c | 16 ++++++++++++----
->  1 file changed, 12 insertions(+), 4 deletions(-)
-> 
-> diff --git a/kernel/module_signing.c b/kernel/module_signing.c
-> index 6b9a926fd86b..cf94220e9154 100644
-> --- a/kernel/module_signing.c
-> +++ b/kernel/module_signing.c
-> @@ -49,6 +49,7 @@ int mod_verify_sig(const void *mod, struct load_info *info)
->  {
->  	struct module_signature ms;
->  	size_t sig_len, modlen = info->len;
-> +	int ret;
-> 
->  	pr_devel("==>%s(,%zu)\n", __func__, modlen);
-> 
-> @@ -82,8 +83,15 @@ int mod_verify_sig(const void *mod, struct load_info *info)
->  		return -EBADMSG;
->  	}
-> 
-> -	return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
-> -				      VERIFY_USE_SECONDARY_KEYRING,
-> -				      VERIFYING_MODULE_SIGNATURE,
-> -				      NULL, NULL);
-> +	ret = verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
-> +				     VERIFY_USE_SECONDARY_KEYRING,
-> +				     VERIFYING_MODULE_SIGNATURE,
-> +				     NULL, NULL);
-> +	if (ret == -ENOKEY && IS_ENABLED(CONFIG_INTEGRITY_PLATFORM_KEYRING)) {
-> +		ret = verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
-> +					     VERIFY_USE_PLATFORM_KEYRING,
-> +					     VERIFYING_MODULE_SIGNATURE,
-> +					     NULL, NULL);
-> +	}
-> +	return ret;
->  }
 
