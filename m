@@ -2,188 +2,277 @@ Return-Path: <SRS0=MPPW=S3=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F3B8C10F03
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 10:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49033C10F03
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 11:48:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18A46206BA
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 10:05:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JHmMOcsO"
+	by mail.kernel.org (Postfix) with ESMTP id 1150E217FA
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 11:48:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725921AbfDYKFj (ORCPT
+        id S1731018AbfDYLsm (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 25 Apr 2019 06:05:39 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46007 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726586AbfDYKFi (ORCPT
+        Thu, 25 Apr 2019 07:48:42 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45444 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728442AbfDYLsl (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 25 Apr 2019 06:05:38 -0400
-Received: by mail-lj1-f193.google.com with SMTP id y6so19679292ljd.12
-        for <linux-integrity@vger.kernel.org>; Thu, 25 Apr 2019 03:05:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cJOu3YbpjKJbdtZClnsgLn+dLUezvRJuNidI4kKmyaQ=;
-        b=JHmMOcsObaZp8RQ8YpbTOxOxGYBiJ3K1G5gVA1RBR5vGcQ836QXhrhRXUEQ8oeOdJg
-         o3d4XJXaAnF/84OcORS6IZ02WlKdcAR/2ljmablCyvfxJZev5sJ2F4Ng2Tbr6zUbimiL
-         xLGbGGzwi81+HKTjcQwO+BOb3eeU0DVqiXEEhl0l/oKrn7jS7GZq5vFYoQ6zuHcdmPJE
-         /dSb+4FEOF7brNBl+INxxUEf8hg6DkXWJb/YuwbSixDZx27QbSwtM2qyN2yzIU0ndVB4
-         kEPEHseMqw0mx/dG06Xe8LPLje51RDcCV2xPUXjPJsgFmUbnhpMLI06/bXnAJ0TBnWkt
-         I5ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cJOu3YbpjKJbdtZClnsgLn+dLUezvRJuNidI4kKmyaQ=;
-        b=UlYHpyZRb+vlOsUIhUmZhc69fMwGz9lQTExuQhbqTsB1mF/ERLH8qXSUljY8Dwhst+
-         npoznWbquIp6MB6O1cISoLbRhGJG29Lo/hz2bKHwnM+/4ufhV70cPkZ6aSwmaXLJZAkX
-         F0ve98T0fetivBVhbn1qIeBlsoSR/8M8aNtLy8VKki/tRhPRkih+0zrwEpwCVVW9+FtT
-         ovDH529Va7sahdPMA6UME75Egc0sZBz1g6cqm07YnODmtk93xoDV+X07W4I87qZSmANX
-         JBvWG4W3uQ0xyROMU88M/iOllefT/wq2Vyl74P2xi7P4g9eJtKesaIjaR6mzunapnUSE
-         4ZgA==
-X-Gm-Message-State: APjAAAVg9n6wRxMG+QGleB7Tq/fLkg9iAfl5sof5+UQyIe+gvk5UUy8q
-        7CxL2PJ5eKMYqoMwz5oMM/MGo8+8Go3dUz76aCTQ8A==
-X-Google-Smtp-Source: APXvYqygeHF9YcRfbMREkAwC61hKe6zviDAUtjYxO8re/YrC1NJd0P6J9ELRmOBjpGBnWnWg8l4ChqbhGe5kpAoNwGw=
-X-Received: by 2002:a2e:810f:: with SMTP id d15mr2765881ljg.38.1556186736117;
- Thu, 25 Apr 2019 03:05:36 -0700 (PDT)
+        Thu, 25 Apr 2019 07:48:41 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3PBhaog060627
+        for <linux-integrity@vger.kernel.org>; Thu, 25 Apr 2019 07:48:40 -0400
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2s3a8ep181-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Thu, 25 Apr 2019 07:48:38 -0400
+Received: from localhost
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
+        Thu, 25 Apr 2019 12:48:34 +0100
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 25 Apr 2019 12:48:31 +0100
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x3PBmUuL54526092
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 25 Apr 2019 11:48:30 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3F137C6057;
+        Thu, 25 Apr 2019 11:48:30 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B3315C605A;
+        Thu, 25 Apr 2019 11:48:28 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.80.227.163])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 25 Apr 2019 11:48:28 +0000 (GMT)
+Subject: Re: [PATCH v2 2/5 RFC] use event name instead of enum to make the
+ call generic
+To:     Prakhar Srivastava <prsriva02@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        inux-security-module@vger.kernel.org
+Cc:     zohar@linux.ibm.com, ebiederm@xmission.com, vgoyal@redhat.com,
+        Prakhar Srivastava <prsriva@microsoft.com>
+References: <20190424001544.7188-1-prsriva02@gmail.com>
+ <20190424001544.7188-2-prsriva02@gmail.com>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+Date:   Thu, 25 Apr 2019 07:48:27 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20190410145659.26347-1-janne.karhunen@gmail.com>
- <1554987784.7843.40.camel@linux.ibm.com> <CAE=NcrYDK1de25XeJcYOpW41O3_RbqYJamkz=SE745Krfa=t8Q@mail.gmail.com>
-In-Reply-To: <CAE=NcrYDK1de25XeJcYOpW41O3_RbqYJamkz=SE745Krfa=t8Q@mail.gmail.com>
-From:   Janne Karhunen <janne.karhunen@gmail.com>
-Date:   Thu, 25 Apr 2019 13:05:24 +0300
-Message-ID: <CAE=NcraD_VD=ZmNTiCb4AWzwiaOYp5S0cE4uC64b0kHLQ=7PEA@mail.gmail.com>
-Subject: Re: [PATCH] integrity: make 'sync' update the inode integrity state
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190424001544.7188-2-prsriva02@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 19042511-8235-0000-0000-00000E86CDC1
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010992; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000285; SDB=6.01194151; UDB=6.00626060; IPR=6.00974979;
+ MB=3.00026592; MTD=3.00000008; XFM=3.00000015; UTC=2019-04-25 11:48:33
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19042511-8236-0000-0000-000045491A01
+Message-Id: <d38f32f8-7078-f205-ba11-9c4266ee40e8@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-25_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1904250075
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi,
-
-Finally. Now I think I'm almost happy with the overall construction
-and my gut feeling is telling me I can make the hashes reflect the
-filesystem state pretty well, maybe even over 99.9% of the time given
-the workload stock android is generating.
-
-The pieces that we did:
-- initialize hashes correctly on open()
-- hook 'sync'
-- hook 'msync'
-- hook 'truncate'
-- introduce a per-cpu workqueue that gets work items from write and
-dirty page flush. Long-running write is allowed to go as is (no
-performance penalty from re-measurements), but once the the write goes
-silent workqueue item is flushed and the file is hashed.
-
-Before I uplift this construction against the mainline, any thoughts
-about this? All I can say so far is that it runs and it seems to keep
-the system relatively crash tolerant. 'Don't let the perfect be the
-enemy of the better' I guess...
 
 
---
-Janne
+On 04/23/2019 08:15 PM, Prakhar Srivastava wrote:
+> From: Prakhar Srivastava <prsriva02@gmail.com>
+>
+> Signed-off-by: Prakhar Srivastava <prsriva@microsoft.com>
+> ---
+>
+> Currently for soft reboot(kexec_file_load) the kernel file and
+> signature is measured by IMA. The cmdline args used to load the kernel
+> is not measured.
+> The boot aggregate that gets calculated will have no change since the
+> EFI loader has not been triggered.
+> Adding the kexec cmdline args measure and kernel version will add some
+> attestable criteria.
+>
 
-On Fri, Apr 12, 2019 at 3:40 PM Janne Karhunen <janne.karhunen@gmail.com> wrote:
+Any reason for including the whole commit message after "---"
+
+Anything after "---" is not included in the patch description when patch 
+is applied.
+
+This comment applies to all the patches in this patchset.
+
+> remove enums to control type of buffers entries, instead pass the event name to be used.
+
+Is the last statement meant to be a Changelog from v1-> v2 ? Only the 
+changelog has to be after "---"
+
+Also, If posting more than one patch, it is preferrable to add a 
+cover-letter.
+
+
+>   include/linux/ima.h               | 10 ++--------
+>   kernel/kexec_file.c               |  3 +++
+>   security/integrity/ima/ima.h      |  2 +-
+>   security/integrity/ima/ima_main.c | 30 ++++++++++--------------------
+>   4 files changed, 16 insertions(+), 29 deletions(-)
 >
-> Hi Mimi,
+> diff --git a/include/linux/ima.h b/include/linux/ima.h
+> index 733d0cb9dedc..5e41507c57e5 100644
+> --- a/include/linux/ima.h
+> +++ b/include/linux/ima.h
+> @@ -14,12 +14,6 @@
+>   #include <linux/kexec.h>
+>   struct linux_binprm;
 >
-> I will take a couple of days to test and think this through a bit
-> better, there are extra cases like file creation without ever writing
-> to it (also ending up in appraisal failure for no reason) and msync()
-> that would also be beneficial to tackle on the same go.
+> -enum __buffer_id {
+> -	KERNEL_VERSION,
+> -	KEXEC_CMDLINE,
+> -	MAX_BUFFER_ID = KEXEC_CMDLINE
+> -} buffer_id;
+> -
+
+Is the v2 version created on top of the v1 version that was posted ?
+
+The v2 version has to be on top of the HEAD of the repository itself, 
+and not on the v1 version. Only the final reviewed and tested version 
+makes to the upstream.
+
+Btw, which repository and its branch are you using ?
+
+Thanks & Regards,
+       - Nayna
+
+
+
+
+>   #ifdef CONFIG_IMA
+>   extern int ima_bprm_check(struct linux_binprm *bprm);
+>   extern int ima_file_check(struct file *file, int mask, int opened);
+> @@ -29,7 +23,7 @@ extern int ima_read_file(struct file *file, enum kernel_read_file_id id);
+>   extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
+>   			      enum kernel_read_file_id id);
+>   extern void ima_post_path_mknod(struct dentry *dentry);
+> -extern void ima_buffer_check(const void *buff, int size, enum buffer_id id);
+> +extern void ima_buffer_check(const void *buff, int size, char *eventname);
+>   #ifdef CONFIG_IMA_KEXEC
+>   extern void ima_add_kexec_buffer(struct kimage *image);
+>   #endif
+> @@ -72,7 +66,7 @@ static inline void ima_post_path_mknod(struct dentry *dentry)
+>   }
 >
+>   static inline void ima_buffer_check(const void *buff, int size,
+> -			enum buffer_id id)
+> +			char *eventname)
+>   {
+>   	return;
+>   }
+> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> index b118735fea9d..2a5234eb4b28 100644
+> --- a/kernel/kexec_file.c
+> +++ b/kernel/kexec_file.c
+> @@ -182,6 +182,9 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+>   			ret = -EINVAL;
+>   			goto out;
+>   		}
+> +
+> +		ima_buffer_check(image->cmdline_buf, cmdline_len - 1,
+> +				"kexec_cmdline");
+>   	}
 >
-> --
-> Janne
+>   	/* Call arch image load handlers */
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index b71f2f6f7421..fcade3c103ed 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -181,8 +181,8 @@ enum ima_hooks {
+>   	FIRMWARE_CHECK,
+>   	KEXEC_KERNEL_CHECK,
+>   	KEXEC_INITRAMFS_CHECK,
+> -	BUFFER_CHECK,
+>   	POLICY_CHECK,
+> +	BUFFER_CHECK,
+>   	MAX_CHECK
+>   };
 >
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 6408cadaadbb..da82c705a5ed 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -160,8 +160,7 @@ void ima_file_free(struct file *file)
+>    * (Instead of using the file hash the buffer hash is used).
+>    * @buff - The buffer that needs to be added to the log
+>    * @size - size of buffer(in bytes)
+> - * @id - buffer id, this is differentiator for the various buffers
+> - * that can be measured.
+> + * @id - eventname, event name to be used for buffer measurement.
+>    *
+>    * The buffer passed is added to the ima logs.
+>    * If the sig template is used, then the sig field contains the buffer.
+> @@ -170,7 +169,7 @@ void ima_file_free(struct file *file)
+>    * On error cases surface errors from ima calls.
+>    */
+>   static int process_buffer_measurement(const void *buff, int size,
+> -				enum buffer_id id)
+> +				char *eventname)
+>   {
+>   	int ret = -EINVAL;
+>   	struct ima_template_entry *entry = NULL;
+> @@ -185,23 +184,13 @@ static int process_buffer_measurement(const void *buff, int size,
+>   	int violation = 0;
+>   	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
 >
-> On Thu, Apr 11, 2019 at 4:03 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >
-> > Hi Janne,
-> >
-> > I need to finish up a couple of other things before vacation.  Below
-> > are just a few comments/questions for you to think about.
-> >
-> > On Wed, 2019-04-10 at 17:56 +0300, Janne Karhunen wrote:
-> >
-> > > +/**
-> > > + * ima_file_update - called from sync to update xattrs
-> > > + * @file: pointer to file structure being updated
-> > > + */
-> > > +void ima_file_update(struct file *file)
-> > > +{
-> > > +     struct inode *inode = file_inode(file);
-> > > +     struct integrity_iint_cache *iint;
-> > > +
-> > > +     if (!ima_policy_flag || !S_ISREG(inode->i_mode))
-> > > +             return;
-> > > +
-> > > +     iint = integrity_iint_find(inode);
-> > > +     if (!iint)
-> > > +             return;
-> > > +
-> > > +     mutex_lock(&iint->mutex);
-> > > +     if (atomic_read(&inode->i_writecount) == 1) {
-> >
-> > This test limits the number of opened writers.  Only if there is a
-> > single writer opened, will the xattr be updated.  Is this what you
-> > intended?
-> >
-> > Your testing should open the same file for write multiple times.
-> >
-> > > +             clear_bit(IMA_UPDATE_XATTR, &iint->atomic_flags);
-> > > +             if (!IS_I_VERSION(inode) ||
-> > > +                 !inode_eq_iversion(inode, iint->version)) {
-> > > +                     iint->flags &= ~IMA_COLLECTED;
-> > > +                     ima_update_xattr(iint, file);
-> >
-> > Relatively recently there were some changes to iversion so that it
-> > isn't being updated as frequently.  Can we use i_version here?
-> >
-> > > +             }
-> > > +     }
-> > > +     mutex_unlock(&iint->mutex);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(ima_file_update);
-> > > +
-> > >  /**
-> > >   * ima_path_check - based on policy, collect/store measurement.
-> > >   * @file: pointer to the file to be measured
-> > > diff --git a/security/security.c b/security/security.c
-> > > index 23cbb1a295a3..6a0980a1df22 100644
-> > > --- a/security/security.c
-> > > +++ b/security/security.c
-> > > @@ -1451,6 +1451,11 @@ int security_file_open(struct file *file)
-> > >       return fsnotify_perm(file, MAY_OPEN);
-> > >  }
-> > >
-> > > +void security_file_sync(struct file *file)
-> > > +{
-> > > +     ima_file_update(file);
-> > > +}
-> > > +
-> >
-> > Either this is an LSM hook or it isn't.  If it's an LSM hook it needs
-> > to be similar to the existing hooks.  If it's an IMA hook, like
-> > ima_file_check() or ima_file_free(), then call it directly.
-> >
-> > Normally the function name is related to the LSM hook name.  For
-> > example, I would name it ima_file_sync.
-> >
-> > Mimi
-> >
-> > >  int security_task_alloc(struct task_struct *task, unsigned long clone_flags)
-> > >  {
-> > >       int rc = lsm_task_alloc(task);
-> >
+> -	if (!buff || size ==  0)
+> +	if (!buff || size ==  0 || !eventname)
+>   		goto err_out;
+>
+>   	if (ima_get_action(NULL, 0, BUFFER_CHECK, &pcr) != IMA_MEASURE)
+>   		goto err_out;
+>
+> -	switch (buffer_id) {
+> -	case KERNEL_VERSION:
+> -		name = "Kernel-version";
+> -		break;
+> -	case KEXEC_CMDLINE:
+> -		name = "Kexec-cmdline";
+> -		break;
+> -	default:
+> -		goto err_out;
+> -	}
+> -
+> +	name = eventname;
+>   	memset(iint, 0, sizeof(*iint));
+>   	memset(&hash, 0, sizeof(hash));
+>
+> @@ -452,15 +441,16 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+>    * ima_buffer_check - based on policy, collect & store buffer measurement
+>    * @buf: pointer to buffer
+>    * @size: size of buffer
+> - * @buffer_id: caller identifier
+> + * @eventname: caller identifier
+>    *
+>    * Buffers can only be measured, not appraised.  The buffer identifier
+> - * is used as the measurement list entry name (eg. boot_cmdline).
+> + * is used as the measurement list entry name (eg. boot_cmdline,
+> + * kernel_version).
+>    */
+> -void ima_buffer_check(const void *buf, int size, enum buffer_id id)
+> +void ima_buffer_check(const void *buf, int size, char *eventname)
+>   {
+> -	if (buf && size != 0)
+> -		process_buffer_measurement(buf, size, id);
+> +	if (buf && size != 0 && eventname)
+> +		process_buffer_measurement(buf, size, eventname);
+>
+>   	return;
+>   }
+
