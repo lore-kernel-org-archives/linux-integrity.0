@@ -2,132 +2,129 @@ Return-Path: <SRS0=MPPW=S3=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 698D7C43219
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 18:21:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 310A9C43219
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 18:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E840520717
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 18:21:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A82FB20717
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 18:28:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730451AbfDYSVh (ORCPT
+        id S1726086AbfDYS2I (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 25 Apr 2019 14:21:37 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35550 "EHLO mx1.redhat.com"
+        Thu, 25 Apr 2019 14:28:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730040AbfDYSVg (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 25 Apr 2019 14:21:36 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726040AbfDYS2I (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 25 Apr 2019 14:28:08 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 13085E951D;
-        Thu, 25 Apr 2019 18:21:36 +0000 (UTC)
-Received: from laptop.jcline.org (unknown [10.13.105.3])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BE3B260C9A;
-        Thu, 25 Apr 2019 18:21:35 +0000 (UTC)
-Received: from laptop.jcline.org (localhost [IPv6:::1])
-        by laptop.jcline.org (Postfix) with ESMTPS id 480DF45E552C;
-        Thu, 25 Apr 2019 14:21:35 -0400 (EDT)
-Date:   Thu, 25 Apr 2019 14:21:34 -0400
-From:   Jeremy Cline <jcline@redhat.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Robert Holmes <robeholmes@gmail.com>, jeyu@kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org, stable@vger.kernel.org,
-        Matthew Garrett <mjg59@google.com>
-Subject: Re: [PATCH v2] KEYS: Make use of platform keyring for module
- signature verify
-Message-ID: <20190425182134.GA7823@laptop.jcline.org>
-References: <1556116431-7129-1-git-send-email-robeholmes@gmail.com>
- <1556193350.3894.92.camel@linux.ibm.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id CAC8E2067C;
+        Thu, 25 Apr 2019 18:28:05 +0000 (UTC)
+Date:   Thu, 25 Apr 2019 14:28:03 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com
+Subject: Re: [PATCH v4 19/23] x86/ftrace: Use vmalloc special flag
+Message-ID: <20190425142803.4f2e354a@gandalf.local.home>
+In-Reply-To: <20190422185805.1169-20-rick.p.edgecombe@intel.com>
+References: <20190422185805.1169-1-rick.p.edgecombe@intel.com>
+        <20190422185805.1169-20-rick.p.edgecombe@intel.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1556193350.3894.92.camel@linux.ibm.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 25 Apr 2019 18:21:36 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi,
+On Mon, 22 Apr 2019 11:58:01 -0700
+Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
 
-On Thu, Apr 25, 2019 at 07:55:50AM -0400, Mimi Zohar wrote:
-> On Wed, 2019-04-24 at 14:33 +0000, Robert Holmes wrote:
-> > This patch completes commit 278311e417be ("kexec, KEYS: Make use of
-> > platform keyring for signature verify") which, while adding the
-> > platform keyring for bzImage verification, neglected to also add
-> > this keyring for module verification.
-> > 
-> > As such, kernel modules signed with keys from the MokList variable
-> > were not successfully verified.
+> Use new flag VM_FLUSH_RESET_PERMS for handling freeing of special
+> permissioned memory in vmalloc and remove places where memory was set NX
+> and RW before freeing which is no longer needed.
 > 
-> Using the platform keyring keys for verifying kernel modules was not
-> neglected, but rather intentional.  This patch description should
-> clearly explain the reason for needing to verify kernel module
-> signatures based on the pre-boot keys.  (Hint: verifying kernel
-> modules based on the pre-boot keys was previously rejected.)
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 
-So the background for this patch is that Fedora, which carries the
-lockdown patch set, recently regressed[0] with respect to user-signed
-modules. Previously, we carried a patch that added all the pre-boot keys
-to the secondary keyring. That way users could add a machine owner key
-and use secure boot and lockdown with their self-signed 3rd party modules.
+Tested-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Acked-by: Steven Rostedt (VMware) <rostedt@godomis.org>
 
-Since the pre-boot keys are now loaded into the platform keyring, I
-suggested that Robert submit the patch upstream, but since the lockdown
-patches aren't upstream perhaps it doesn't make much sense to pick this
-up and Fedora should continue carrying it.
+-- Steve
 
-[0] https://bugzilla.redhat.com/show_bug.cgi?id=1701096
-
-Regards,
-Jeremy
-
-> > 
-> > Signed-off-by: Robert Holmes <robeholmes@gmail.com>
-> > Cc: linux-integrity@vger.kernel.org
-> > Cc: keyrings@vger.kernel.org
-> > Cc: stable@vger.kernel.org
-> > ---
-> >  kernel/module_signing.c | 16 ++++++++++++----
-> >  1 file changed, 12 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/kernel/module_signing.c b/kernel/module_signing.c
-> > index 6b9a926fd86b..cf94220e9154 100644
-> > --- a/kernel/module_signing.c
-> > +++ b/kernel/module_signing.c
-> > @@ -49,6 +49,7 @@ int mod_verify_sig(const void *mod, struct load_info *info)
-> >  {
-> >  	struct module_signature ms;
-> >  	size_t sig_len, modlen = info->len;
-> > +	int ret;
-> > 
-> >  	pr_devel("==>%s(,%zu)\n", __func__, modlen);
-> > 
-> > @@ -82,8 +83,15 @@ int mod_verify_sig(const void *mod, struct load_info *info)
-> >  		return -EBADMSG;
-> >  	}
-> > 
-> > -	return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
-> > -				      VERIFY_USE_SECONDARY_KEYRING,
-> > -				      VERIFYING_MODULE_SIGNATURE,
-> > -				      NULL, NULL);
-> > +	ret = verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
-> > +				     VERIFY_USE_SECONDARY_KEYRING,
-> > +				     VERIFYING_MODULE_SIGNATURE,
-> > +				     NULL, NULL);
-> > +	if (ret == -ENOKEY && IS_ENABLED(CONFIG_INTEGRITY_PLATFORM_KEYRING)) {
-> > +		ret = verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
-> > +					     VERIFY_USE_PLATFORM_KEYRING,
-> > +					     VERIFYING_MODULE_SIGNATURE,
-> > +					     NULL, NULL);
-> > +	}
-> > +	return ret;
-> >  }
+> ---
+>  arch/x86/kernel/ftrace.c | 14 ++++++--------
+>  1 file changed, 6 insertions(+), 8 deletions(-)
 > 
+> diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+> index 53ba1aa3a01f..0caf8122d680 100644
+> --- a/arch/x86/kernel/ftrace.c
+> +++ b/arch/x86/kernel/ftrace.c
+> @@ -678,12 +678,8 @@ static inline void *alloc_tramp(unsigned long size)
+>  {
+>  	return module_alloc(size);
+>  }
+> -static inline void tramp_free(void *tramp, int size)
+> +static inline void tramp_free(void *tramp)
+>  {
+> -	int npages = PAGE_ALIGN(size) >> PAGE_SHIFT;
+> -
+> -	set_memory_nx((unsigned long)tramp, npages);
+> -	set_memory_rw((unsigned long)tramp, npages);
+>  	module_memfree(tramp);
+>  }
+>  #else
+> @@ -692,7 +688,7 @@ static inline void *alloc_tramp(unsigned long size)
+>  {
+>  	return NULL;
+>  }
+> -static inline void tramp_free(void *tramp, int size) { }
+> +static inline void tramp_free(void *tramp) { }
+>  #endif
+>  
+>  /* Defined as markers to the end of the ftrace default trampolines */
+> @@ -808,6 +804,8 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+>  	/* ALLOC_TRAMP flags lets us know we created it */
+>  	ops->flags |= FTRACE_OPS_FL_ALLOC_TRAMP;
+>  
+> +	set_vm_flush_reset_perms(trampoline);
+> +
+>  	/*
+>  	 * Module allocation needs to be completed by making the page
+>  	 * executable. The page is still writable, which is a security hazard,
+> @@ -816,7 +814,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+>  	set_memory_x((unsigned long)trampoline, npages);
+>  	return (unsigned long)trampoline;
+>  fail:
+> -	tramp_free(trampoline, *tramp_size);
+> +	tramp_free(trampoline);
+>  	return 0;
+>  }
+>  
+> @@ -947,7 +945,7 @@ void arch_ftrace_trampoline_free(struct ftrace_ops *ops)
+>  	if (!ops || !(ops->flags & FTRACE_OPS_FL_ALLOC_TRAMP))
+>  		return;
+>  
+> -	tramp_free((void *)ops->trampoline, ops->trampoline_size);
+> +	tramp_free((void *)ops->trampoline);
+>  	ops->trampoline = 0;
+>  }
+>  
+
