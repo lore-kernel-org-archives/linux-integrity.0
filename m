@@ -2,257 +2,218 @@ Return-Path: <SRS0=MPPW=S3=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0839FC43218
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 17:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B90C43219
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 17:37:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86A0D20854
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 17:19:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0B30206C1
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 17:37:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GHKEYO7H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbfDYRTW (ORCPT
+        id S1727508AbfDYRhl (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 25 Apr 2019 13:19:22 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:48938 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726991AbfDYRTW (ORCPT
+        Thu, 25 Apr 2019 13:37:41 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:46459 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726916AbfDYRhl (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 25 Apr 2019 13:19:22 -0400
-Received: from [10.200.156.146] (unknown [131.107.147.146])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 283A630549E3;
-        Thu, 25 Apr 2019 10:19:20 -0700 (PDT)
-Subject: Re: [PATCH v2 2/5 RFC] use event name instead of enum to make the
- call generic
-To:     Nayna <nayna@linux.vnet.ibm.com>,
-        Prakhar Srivastava <prsriva02@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        inux-security-module@vger.kernel.org
-Cc:     zohar@linux.ibm.com, ebiederm@xmission.com, vgoyal@redhat.com,
-        Prakhar Srivastava <prsriva@microsoft.com>
-References: <20190424001544.7188-1-prsriva02@gmail.com>
- <20190424001544.7188-2-prsriva02@gmail.com>
- <d38f32f8-7078-f205-ba11-9c4266ee40e8@linux.vnet.ibm.com>
-From:   prsriva <prsriva@linux.microsoft.com>
-Message-ID: <4c313367-22dc-9532-54b5-cd3a79deb625@linux.microsoft.com>
-Date:   Thu, 25 Apr 2019 10:19:19 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <d38f32f8-7078-f205-ba11-9c4266ee40e8@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Thu, 25 Apr 2019 13:37:41 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n2so174701pgg.13;
+        Thu, 25 Apr 2019 10:37:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=raW0oogZ5EfoBzQqtBVYoEmvtzxY1VisvL2Lbh5qQDQ=;
+        b=GHKEYO7Hfz3LD3x/OJtBtYafcNSP/eBGEq8b9UEohZ9A9EqBhU748ryEYgrRj1nPBx
+         vavnGtoV21bO3swFep50I8HLbGnU5+U3B81339HhBERUhShBzIjMW/vuUJ78YrgnnM1n
+         o3diHuAMm1etRfzo5V3W4ysJcEeQ1Vf953S5EWWqJQQ0a+IGl6ALKbqH7+OuANIvjKm1
+         zzxsb5TTLJWFYIjADFbHOZsMdnWSy69x+xBHmXfcFE2gtRKisKjx3oU0IR5sNGlYwLc2
+         BnACN1D7n757knfMqHlWoJNozKXC6/PZmo6sjS/NqY7zxcWMOm4pxzVK3FYjEwl4i42v
+         fSqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=raW0oogZ5EfoBzQqtBVYoEmvtzxY1VisvL2Lbh5qQDQ=;
+        b=QSc8hcwqCBaZncv704Kry9lt5i95kGvubPHZG6dKPLaaKLALoPRdHNPFZoVxcShUIQ
+         +hhhh0LbZprMbxuvBt41eWTirBt8TMpCnK2au5TDjuhIAO4MLYYE6yrK3HaUZf7iy8zZ
+         oqr56DOyjkc/47C+2/0mUyiksMU2Brnyf9zdRisEqzG2B6Us18CPqNt1b39YDnOCj6g9
+         Fy80D6muc2TMz2wKAE3E9t/mIu1fYkvLsCfVE4PuBPa9rXhENs35Re26RnU7Rhs8Inp6
+         /PG8LA76oUNUbaAAfyo4b+qtA3ceG5m+U72Fd7d9IfUR+FvnTm6DHhCKNwYgdLNWRgfE
+         Drtg==
+X-Gm-Message-State: APjAAAUXto+PNyZCpbYjIMAYTv2o+kviAAggB+WpEPMM+9dnumNXQwD1
+        ztW6TMg/78haVMmStsZCRT4=
+X-Google-Smtp-Source: APXvYqxxCV+yXEWx+CQIRWWY23uYyNk79Hmhkp2bBTz26LTpZKzM5snNCcv7HqoRrFxgafIhMhGIew==
+X-Received: by 2002:a62:e304:: with SMTP id g4mr17979717pfh.71.1556213859361;
+        Thu, 25 Apr 2019 10:37:39 -0700 (PDT)
+Received: from [10.2.189.129] ([66.170.99.2])
+        by smtp.gmail.com with ESMTPSA id s9sm30512271pfe.183.2019.04.25.10.37.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Apr 2019 10:37:38 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.8\))
+Subject: Re: [PATCH v4 03/23] x86/mm: Introduce temporary mm structs
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <20190425162620.GA5199@zn.tnic>
+Date:   Thu, 25 Apr 2019 10:37:35 -0700
+Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Damian Tometzki <linux_dti@icloud.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Borislav Petkov <bp@alien8.de>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <B7809434-CEBE-4664-ACE7-BA2412163CC4@gmail.com>
+References: <20190422185805.1169-1-rick.p.edgecombe@intel.com>
+ <20190422185805.1169-4-rick.p.edgecombe@intel.com>
+ <20190425162620.GA5199@zn.tnic>
+To:     Andy Lutomirski <luto@kernel.org>
+X-Mailer: Apple Mail (2.3445.104.8)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 2019-04-25 4:48 a.m., Nayna wrote:
-> 
-> 
-> On 04/23/2019 08:15 PM, Prakhar Srivastava wrote:
->> From: Prakhar Srivastava <prsriva02@gmail.com>
->>
->> Signed-off-by: Prakhar Srivastava <prsriva@microsoft.com>
+> On Apr 25, 2019, at 9:26 AM, Borislav Petkov <bp@alien8.de> wrote:
+>=20
+> On Mon, Apr 22, 2019 at 11:57:45AM -0700, Rick Edgecombe wrote:
+>> From: Andy Lutomirski <luto@kernel.org>
+>>=20
+>> Using a dedicated page-table for temporary PTEs prevents other cores
+>> from using - even speculatively - these PTEs, thereby providing two
+>> benefits:
+>>=20
+>> (1) Security hardening: an attacker that gains kernel memory writing
+>> abilities cannot easily overwrite sensitive data.
+>>=20
+>> (2) Avoiding TLB shootdowns: the PTEs do not need to be flushed in
+>> remote page-tables.
+>>=20
+>> To do so a temporary mm_struct can be used. Mappings which are =
+private
+>> for this mm can be set in the userspace part of the address-space.
+>> During the whole time in which the temporary mm is loaded, interrupts
+>> must be disabled.
+>>=20
+>> The first use-case for temporary mm struct, which will follow, is for
+>> poking the kernel text.
+>>=20
+>> [ Commit message was written by Nadav Amit ]
+>>=20
+>> Cc: Kees Cook <keescook@chromium.org>
+>> Cc: Dave Hansen <dave.hansen@intel.com>
+>> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+>> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+>> Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
+>> Signed-off-by: Andy Lutomirski <luto@kernel.org>
+>> Signed-off-by: Nadav Amit <namit@vmware.com>
+>> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 >> ---
->>
->> Currently for soft reboot(kexec_file_load) the kernel file and
->> signature is measured by IMA. The cmdline args used to load the kernel
->> is not measured.
->> The boot aggregate that gets calculated will have no change since the
->> EFI loader has not been triggered.
->> Adding the kexec cmdline args measure and kernel version will add some
->> attestable criteria.
->>
-> 
-> Any reason for including the whole commit message after "---"
-> 
-> Anything after "---" is not included in the patch description when patch 
-> is applied.
-> 
-> This comment applies to all the patches in this patchset.
-I will fix the comments and send out the patchset with a cover letter. 
-Thankyou for pointing this out.
-> 
->> remove enums to control type of buffers entries, instead pass the 
->> event name to be used.
-> 
-> Is the last statement meant to be a Changelog from v1-> v2 ? Only the 
-> changelog has to be after "---"
-> 
-> Also, If posting more than one patch, it is preferrable to add a 
-> cover-letter.
-I will add a cover letter alongside fixing the comments. Thankyou!
-> 
-> 
->>   include/linux/ima.h               | 10 ++--------
->>   kernel/kexec_file.c               |  3 +++
->>   security/integrity/ima/ima.h      |  2 +-
->>   security/integrity/ima/ima_main.c | 30 ++++++++++--------------------
->>   4 files changed, 16 insertions(+), 29 deletions(-)
->>
->> diff --git a/include/linux/ima.h b/include/linux/ima.h
->> index 733d0cb9dedc..5e41507c57e5 100644
->> --- a/include/linux/ima.h
->> +++ b/include/linux/ima.h
->> @@ -14,12 +14,6 @@
->>   #include <linux/kexec.h>
->>   struct linux_binprm;
->>
->> -enum __buffer_id {
->> -    KERNEL_VERSION,
->> -    KEXEC_CMDLINE,
->> -    MAX_BUFFER_ID = KEXEC_CMDLINE
->> -} buffer_id;
->> -
-> 
-> Is the v2 version created on top of the v1 version that was posted ?
-> 
-v2 is based off the HEAD of the repo.
-> The v2 version has to be on top of the HEAD of the repository itself, 
-> and not on the v1 version. Only the final reviewed and tested version 
-> makes to the upstream.
-> 
-> Btw, which repository and its branch are you using ?
-> 
-I am basing my changes off IMA branch:
-git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
-> Thanks & Regards,
->        - Nayna
-> 
-> 
-> 
-> 
->>   #ifdef CONFIG_IMA
->>   extern int ima_bprm_check(struct linux_binprm *bprm);
->>   extern int ima_file_check(struct file *file, int mask, int opened);
->> @@ -29,7 +23,7 @@ extern int ima_read_file(struct file *file, enum 
->> kernel_read_file_id id);
->>   extern int ima_post_read_file(struct file *file, void *buf, loff_t 
->> size,
->>                     enum kernel_read_file_id id);
->>   extern void ima_post_path_mknod(struct dentry *dentry);
->> -extern void ima_buffer_check(const void *buff, int size, enum 
->> buffer_id id);
->> +extern void ima_buffer_check(const void *buff, int size, char 
->> *eventname);
->>   #ifdef CONFIG_IMA_KEXEC
->>   extern void ima_add_kexec_buffer(struct kimage *image);
->>   #endif
->> @@ -72,7 +66,7 @@ static inline void ima_post_path_mknod(struct dentry 
->> *dentry)
->>   }
->>
->>   static inline void ima_buffer_check(const void *buff, int size,
->> -            enum buffer_id id)
->> +            char *eventname)
->>   {
->>       return;
->>   }
->> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
->> index b118735fea9d..2a5234eb4b28 100644
->> --- a/kernel/kexec_file.c
->> +++ b/kernel/kexec_file.c
->> @@ -182,6 +182,9 @@ kimage_file_prepare_segments(struct kimage *image, 
->> int kernel_fd, int initrd_fd,
->>               ret = -EINVAL;
->>               goto out;
->>           }
+>> arch/x86/include/asm/mmu_context.h | 33 =
+++++++++++++++++++++++++++++++
+>> 1 file changed, 33 insertions(+)
+>>=20
+>> diff --git a/arch/x86/include/asm/mmu_context.h =
+b/arch/x86/include/asm/mmu_context.h
+>> index 19d18fae6ec6..d684b954f3c0 100644
+>> --- a/arch/x86/include/asm/mmu_context.h
+>> +++ b/arch/x86/include/asm/mmu_context.h
+>> @@ -356,4 +356,37 @@ static inline unsigned long =
+__get_current_cr3_fast(void)
+>> 	return cr3;
+>> }
+>>=20
+>> +typedef struct {
+>> +	struct mm_struct *prev;
+>> +} temp_mm_state_t;
 >> +
->> +        ima_buffer_check(image->cmdline_buf, cmdline_len - 1,
->> +                "kexec_cmdline");
->>       }
->>
->>       /* Call arch image load handlers */
->> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
->> index b71f2f6f7421..fcade3c103ed 100644
->> --- a/security/integrity/ima/ima.h
->> +++ b/security/integrity/ima/ima.h
->> @@ -181,8 +181,8 @@ enum ima_hooks {
->>       FIRMWARE_CHECK,
->>       KEXEC_KERNEL_CHECK,
->>       KEXEC_INITRAMFS_CHECK,
->> -    BUFFER_CHECK,
->>       POLICY_CHECK,
->> +    BUFFER_CHECK,
->>       MAX_CHECK
->>   };
->>
->> diff --git a/security/integrity/ima/ima_main.c 
->> b/security/integrity/ima/ima_main.c
->> index 6408cadaadbb..da82c705a5ed 100644
->> --- a/security/integrity/ima/ima_main.c
->> +++ b/security/integrity/ima/ima_main.c
->> @@ -160,8 +160,7 @@ void ima_file_free(struct file *file)
->>    * (Instead of using the file hash the buffer hash is used).
->>    * @buff - The buffer that needs to be added to the log
->>    * @size - size of buffer(in bytes)
->> - * @id - buffer id, this is differentiator for the various buffers
->> - * that can be measured.
->> + * @id - eventname, event name to be used for buffer measurement.
->>    *
->>    * The buffer passed is added to the ima logs.
->>    * If the sig template is used, then the sig field contains the buffer.
->> @@ -170,7 +169,7 @@ void ima_file_free(struct file *file)
->>    * On error cases surface errors from ima calls.
->>    */
->>   static int process_buffer_measurement(const void *buff, int size,
->> -                enum buffer_id id)
->> +                char *eventname)
->>   {
->>       int ret = -EINVAL;
->>       struct ima_template_entry *entry = NULL;
->> @@ -185,23 +184,13 @@ static int process_buffer_measurement(const void 
->> *buff, int size,
->>       int violation = 0;
->>       int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
->>
->> -    if (!buff || size ==  0)
->> +    if (!buff || size ==  0 || !eventname)
->>           goto err_out;
->>
->>       if (ima_get_action(NULL, 0, BUFFER_CHECK, &pcr) != IMA_MEASURE)
->>           goto err_out;
->>
->> -    switch (buffer_id) {
->> -    case KERNEL_VERSION:
->> -        name = "Kernel-version";
->> -        break;
->> -    case KEXEC_CMDLINE:
->> -        name = "Kexec-cmdline";
->> -        break;
->> -    default:
->> -        goto err_out;
->> -    }
->> -
->> +    name = eventname;
->>       memset(iint, 0, sizeof(*iint));
->>       memset(&hash, 0, sizeof(hash));
->>
->> @@ -452,15 +441,16 @@ int ima_read_file(struct file *file, enum 
->> kernel_read_file_id read_id)
->>    * ima_buffer_check - based on policy, collect & store buffer 
->> measurement
->>    * @buf: pointer to buffer
->>    * @size: size of buffer
->> - * @buffer_id: caller identifier
->> + * @eventname: caller identifier
->>    *
->>    * Buffers can only be measured, not appraised.  The buffer identifier
->> - * is used as the measurement list entry name (eg. boot_cmdline).
->> + * is used as the measurement list entry name (eg. boot_cmdline,
->> + * kernel_version).
->>    */
->> -void ima_buffer_check(const void *buf, int size, enum buffer_id id)
->> +void ima_buffer_check(const void *buf, int size, char *eventname)
->>   {
->> -    if (buf && size != 0)
->> -        process_buffer_measurement(buf, size, id);
->> +    if (buf && size != 0 && eventname)
->> +        process_buffer_measurement(buf, size, eventname);
->>
->>       return;
->>   }
+>> +/*
+>> + * Using a temporary mm allows to set temporary mappings that are =
+not accessible
+>> + * by other cores. Such mappings are needed to perform sensitive =
+memory writes
+>=20
+> s/cores/CPUs/g
+>=20
+> Yeah, the concept of a thread of execution we call a CPU in the =
+kernel,
+> I'd say. No matter if it is one of the hyperthreads or a single thread
+> in core.
+>=20
+>> + * that override the kernel memory protections (e.g., W^X), without =
+exposing the
+>> + * temporary page-table mappings that are required for these write =
+operations to
+>> + * other cores.
+>=20
+> Ditto.
+>=20
+>> Using temporary mm also allows to avoid TLB shootdowns when the
+>=20
+> Using a ..
+>=20
+>> + * mapping is torn down.
+>> + *
+>=20
+> Nice commenting.
+>=20
+>> + * Context: The temporary mm needs to be used exclusively by a =
+single core. To
+>> + *          harden security IRQs must be disabled while the =
+temporary mm is
+> 			      ^
+> 			      ,
+>=20
+>> + *          loaded, thereby preventing interrupt handler bugs from =
+overriding
+>> + *          the kernel memory protection.
+>> + */
+>> +static inline temp_mm_state_t use_temporary_mm(struct mm_struct *mm)
+>> +{
+>> +	temp_mm_state_t state;
+>> +
+>> +	lockdep_assert_irqs_disabled();
+>> +	state.prev =3D this_cpu_read(cpu_tlbstate.loaded_mm);
+>> +	switch_mm_irqs_off(NULL, mm, current);
+>> +	return state;
+>> +}
+>> +
+>> +static inline void unuse_temporary_mm(temp_mm_state_t prev)
+>> +{
+>> +	lockdep_assert_irqs_disabled();
+>> +	switch_mm_irqs_off(NULL, prev.prev, current);
+>=20
+> I think this code would be more readable if you call that
+> temp_mm_state_t variable "temp_state" and the mm_struct pointer "mm" =
+and
+> then you have:
+>=20
+> 	switch_mm_irqs_off(NULL, temp_state.mm, current);
+>=20
+> And above you'll have:
+>=20
+> 	temp_state.mm =3D ...
+
+Andy, please let me know whether you are fine with this change and =
+I=E2=80=99ll
+incorporate it.=
