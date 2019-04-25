@@ -2,111 +2,123 @@ Return-Path: <SRS0=MPPW=S3=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CCD7C10F03
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 12:17:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5DFCC10F03
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 12:46:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAF47218B0
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 12:17:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EDE3205F4
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 12:46:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MuypOg2d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbfDYMRr (ORCPT
+        id S1726533AbfDYMqQ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 25 Apr 2019 08:17:47 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37704 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726213AbfDYMRr (ORCPT
+        Thu, 25 Apr 2019 08:46:16 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34705 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725988AbfDYMqP (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 25 Apr 2019 08:17:47 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3PCFfI2068863
-        for <linux-integrity@vger.kernel.org>; Thu, 25 Apr 2019 08:17:46 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2s3cr9g3fh-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 25 Apr 2019 08:17:45 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 25 Apr 2019 13:17:43 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 25 Apr 2019 13:17:40 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x3PCHd3d46203030
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 25 Apr 2019 12:17:39 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2B702A4051;
-        Thu, 25 Apr 2019 12:17:39 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6196DA4057;
-        Thu, 25 Apr 2019 12:17:38 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.95.60])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 25 Apr 2019 12:17:38 +0000 (GMT)
-Subject: Re: [PATCH] x86/ima: Check EFI_RUNTIME_SERVICES before using
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Scott Wood <swood@redhat.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc:     linux-integrity@vger.kernel.org, linux-rt-users@vger.kernel.org
-Date:   Thu, 25 Apr 2019 08:17:27 -0400
-In-Reply-To: <20190423224807.4008-1-swood@redhat.com>
-References: <20190423224807.4008-1-swood@redhat.com>
+        Thu, 25 Apr 2019 08:46:15 -0400
+Received: by mail-lf1-f66.google.com with SMTP id h5so17403159lfm.1
+        for <linux-integrity@vger.kernel.org>; Thu, 25 Apr 2019 05:46:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ne7Cr7cRJB4/Fee5VYepxByB1IKJKt4iilCFoonP81k=;
+        b=MuypOg2dCHK6s3H1PJQ8+jxK8cPChL/0/NEk81n7kjMApCf1Zn87COdnySoQp2wcUR
+         78l/foo7RN+BdGPsrVB86tINAK2fXh/B+NGRIUhnsj6/HKn+SzInBHlcrfv9pa90vnlI
+         NdzxTB2tjodMKuCqPjUCY6NFGQTrgS2yxQynY1+XbtFtxwXgu98GbK8UX1/VTws2WEn9
+         xfrYmUuXiMWlmqqWHfVO2DDPNqZrbmvkrYKOp+m5WbCSViCjEgywg+gFbSwnAejuPB77
+         3UM9ZcFxrOuFe63ZcqkVC/UT+EkU0IaQlIvg3zTFM5dJH81FEYw2r8FGPU4cIo9COpY0
+         8Fog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ne7Cr7cRJB4/Fee5VYepxByB1IKJKt4iilCFoonP81k=;
+        b=jhp7fwbACGHDxImIozxvTjOD9vKjz+FnfExuulg+jpVPQreH0ptc0m1yKONph4qLmI
+         GKRo0dHgaCbXLyEPTflFVeCv7K1LQVI2KOUg1b/EzU8Y9rj1B+cQOOD7f3ZGxYrcRTSZ
+         6et8l1PAiH5cajbxtFD5pboIP3zEUEhA6ILptRpJ8ROZez6S9LfVfprSrGKrUcx+2igb
+         CvI28MNs9XeTZMMz6JNyq34oB6s9LDzzaIU5i2aYfr0lfbPeJ3wbLG4sddSMPv0IbLGS
+         UwvXfijxOF5BpIdWuEubfiWJWy85PRZLu0BG6OE46mcLvwzUWRN0kUhsFrToPQoZOCP0
+         mzyQ==
+X-Gm-Message-State: APjAAAXkNmxlauCU56bLwjfNTwZVVI2QFhqECimTYdwJUOVUg1NVVy9K
+        lU9hfilVPHuAZMcla2DMcHe85zrQncQr4lLwoclVpflF
+X-Google-Smtp-Source: APXvYqw96OegnZ6pR1LuqHWEWtcZ5IJ5DHsPhaEr7IJdNlbgk3wCbhjM0CuvEIypFtwh8krMgUdjiEOx1Gxvu/q/4DI=
+X-Received: by 2002:ac2:5107:: with SMTP id q7mr20657238lfb.162.1556196373798;
+ Thu, 25 Apr 2019 05:46:13 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190410145659.26347-1-janne.karhunen@gmail.com>
+ <1554987784.7843.40.camel@linux.ibm.com> <CAE=NcrYDK1de25XeJcYOpW41O3_RbqYJamkz=SE745Krfa=t8Q@mail.gmail.com>
+ <CAE=NcraD_VD=ZmNTiCb4AWzwiaOYp5S0cE4uC64b0kHLQ=7PEA@mail.gmail.com> <1556194447.3894.105.camel@linux.ibm.com>
+In-Reply-To: <1556194447.3894.105.camel@linux.ibm.com>
+From:   Janne Karhunen <janne.karhunen@gmail.com>
+Date:   Thu, 25 Apr 2019 15:46:02 +0300
+Message-ID: <CAE=NcrZNo1r+kJi+F-uf=7=wr2DhDA2wPRzUWxXTJ9b1mgdt4w@mail.gmail.com>
+Subject: Re: [PATCH] integrity: make 'sync' update the inode integrity state
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19042512-0020-0000-0000-000003358D64
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19042512-0021-0000-0000-00002187F932
-Message-Id: <1556194647.3894.106.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-25_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1904250078
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2019-04-23 at 17:48 -0500, Scott Wood wrote:
-> Checking efi_enabled(EFI_BOOT) is not sufficient to ensure that
-> EFI runtime services are available, e.g. if efi=noruntime is used.
-> 
-> Without this, I get an oops on a PREEMPT_RT kernel where efi=noruntime is
-> the default.
-> 
-> Fixes: 399574c64eaf94e8 ("x86/ima: retry detecting secure boot mode")
-> Signed-off-by: Scott Wood <swood@redhat.com>
+On Thu, Apr 25, 2019 at 3:14 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
 
-Thanks!
+> > The pieces that we did:
+> > - initialize hashes correctly on open()
+> > - hook 'sync'
+> > - hook 'msync'
+> > - hook 'truncate'
+> > - introduce a per-cpu workqueue that gets work items from write and
+> > dirty page flush. Long-running write is allowed to go as is (no
+> > performance penalty from re-measurements), but once the the write goes
+> > silent workqueue item is flushed and the file is hashed.
+>
+> What type of workqueue (eg. fifo)?  Are all of the writes needed, as
+> they might be re-written later.
 
-> ---
->  arch/x86/kernel/ima_arch.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
-> index e47cd9390ab4..2a2e87717bad 100644
-> --- a/arch/x86/kernel/ima_arch.c
-> +++ b/arch/x86/kernel/ima_arch.c
-> @@ -17,6 +17,11 @@ static enum efi_secureboot_mode get_sb_mode(void)
->  
->  	size = sizeof(secboot);
->  
-> +	if (!efi_enabled(EFI_RUNTIME_SERVICES)) {
-> +		pr_info("ima: secureboot mode unknown, no efi\n");
-> +		return efi_secureboot_mode_unknown;
-> +	}
-> +
->  	/* Get variable contents into buffer */
->  	status = efi.get_variable(efi_SecureBoot_name, &efi_variable_guid,
->  				  NULL, &size, &secboot);
+We can talk about this, but what I have now is
 
+static struct workqueue_struct *ima_update_wq;
+ima_update_wq = create_workqueue("ima-update-wq");
+
+..
+
+queue_work(ima_update_wq, &iint->ima_update_data.work);
+
+All writes are not hashed at all, it tries to insert an element into
+the workqueue on every write, but if there is already one it is happy.
+Alternative is that we add delayed work that is constantly kicked
+forward, so rehash will fire for example 'dirty_expire_centisecs'
+after the last write on the inode. Unfortunately I need really high
+crash tolerance in my use case (lovely vendor kernel), so I don't
+delay it much in our case.
+
+Android is pretty rough test, btw. It keeps 800+ files open for
+writing on /data alone. This survives that kind of thing crashing in a
+loop.
+
+
+> > Before I uplift this construction against the mainline, any thoughts
+> > about this? All I can say so far is that it runs and it seems to keep
+> > the system relatively crash tolerant. 'Don't let the perfect be the
+> > enemy of the better' I guess...
+>
+> As long as the iint cache info isn't affected by these changes, the
+> change is limited to writing out the xattr more frequently.  If the
+> iint cache info is affected, then you need to be careful that multiple
+> readers/writers continue to work.
+
+Sadly, it is affected. That is where I hide the 'work_struct' and the
+'file' pointer :-/
+
+
+--
+Janne
