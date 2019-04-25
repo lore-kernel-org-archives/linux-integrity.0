@@ -2,79 +2,76 @@ Return-Path: <SRS0=MPPW=S3=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45648C43218
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 21:47:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C8FAC43218
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 22:34:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A42320685
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 21:47:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Mu8sCk3V"
+	by mail.kernel.org (Postfix) with ESMTP id 995A020717
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 22:34:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730010AbfDYVrj (ORCPT
+        id S1727894AbfDYWeo (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 25 Apr 2019 17:47:39 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:37064 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729185AbfDYVrj (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 25 Apr 2019 17:47:39 -0400
-Received: by mail-it1-f195.google.com with SMTP id u65so2650669itc.2
-        for <linux-integrity@vger.kernel.org>; Thu, 25 Apr 2019 14:47:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uUZAqqVzdnJW/morQkX5GhLLofEUsN1mTNugt83lhoc=;
-        b=Mu8sCk3VJNqdHZ1e3i0+egvQSZBXXlB/8O32ciXt84AB8vQiY0jrjOwggwv9cngmeA
-         t8Cgg6WVdvlQB2yHe2i2LJfctz0s0Khik75YC++7aatBsfl+Uld2NKf9dVwPCQqd2t2q
-         rnYacDyfiW6ZtqgPdI5it6/LSAFKWcJbHw7r2l8AERxcUYwUhgwnFIFf/AZjnZC+ZI5/
-         dkkDNtGyDsyMuecdPT3NdeYrbJ4YDksRiomEu5LhjK/LvaGy6ThFy1gX9cUMC6NLXSNp
-         Thm9GqZeod9tdQOUDK/9zOsLePirShMZ+4YTyt8wvbwCmclYIp9q5KrhAxiDzOw8cIJo
-         28kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uUZAqqVzdnJW/morQkX5GhLLofEUsN1mTNugt83lhoc=;
-        b=J0UleO4gDlBGQep/IQLgFs2lq7VoKYG6vqjzWO3gg8mNe3gpiHL1xJB4isjEIuUgrS
-         zDXIamUWrDc1O346kjACnLEFo7NPRB2Id50E3kuPsefQM59bTh36e8c71FM+z3GiqMEv
-         NizrrDT/P3Z5rXJWMqPVVmnJYn0nxZItBnWOYkyKYFeikiRu9Uw7N3hnhSnVd3/wgpLh
-         z5MnldKvgifls/jVtixEGxj4/ErrMUiMXBtP8sYG3zAe/ONZ47Z19wkSP4GvO2mcGG4W
-         j68jxOE/nzR8SxluJKsrCaZBCQYcf1n4uSuLHdBb6oAfSzUMb0EHrG4kwW/CHl9EPC8Z
-         evJw==
-X-Gm-Message-State: APjAAAURLcefCxLS893KaJz5/FTHFmWFCT/HaJikUjXo5NyfYY2x6kGh
-        ihgrPMH1LptEVGOKy/XtV5m7Fx3jE2DPcfpv+epQHsG44LA=
-X-Google-Smtp-Source: APXvYqximb/JWMISl/acl6knvvYeGLQ4zoGp7l5VugXvX3RyAfehd4H4C9dkust56/0tO51h9CXkaqbwzhNb13tBfS4=
-X-Received: by 2002:a24:a86:: with SMTP id 128mr5602553itw.118.1556228857960;
- Thu, 25 Apr 2019 14:47:37 -0700 (PDT)
+        Thu, 25 Apr 2019 18:34:44 -0400
+Received: from namei.org ([65.99.196.166]:35848 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726040AbfDYWen (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 25 Apr 2019 18:34:43 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x3PMYTXI008976;
+        Thu, 25 Apr 2019 22:34:29 GMT
+Date:   Fri, 26 Apr 2019 08:34:29 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     prsriva <prsriva@linux.microsoft.com>,
+        Nayna <nayna@linux.vnet.ibm.com>,
+        Prakhar Srivastava <prsriva02@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        inux-security-module@vger.kernel.org, zohar@linux.ibm.com,
+        "Eric W. Biederman" <ebiederm@xmission.com>, vgoyal@redhat.com,
+        Prakhar Srivastava <prsriva@microsoft.com>
+Subject: Re: [PATCH v2 2/5 RFC] use event name instead of enum to make the
+ call generic
+In-Reply-To: <CAADWXX8NC-PFJmuvQbNXn49CYjvyn-e0rtH_EoUfCvuJHTwHAQ@mail.gmail.com>
+Message-ID: <alpine.LRH.2.21.1904260833140.7315@namei.org>
+References: <20190424001544.7188-1-prsriva02@gmail.com> <20190424001544.7188-2-prsriva02@gmail.com> <d38f32f8-7078-f205-ba11-9c4266ee40e8@linux.vnet.ibm.com> <4c313367-22dc-9532-54b5-cd3a79deb625@linux.microsoft.com>
+ <CAADWXX8NC-PFJmuvQbNXn49CYjvyn-e0rtH_EoUfCvuJHTwHAQ@mail.gmail.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-References: <f9ad2e46-e458-6c78-76da-b85db4601ee3@linux.microsoft.com>
-In-Reply-To: <f9ad2e46-e458-6c78-76da-b85db4601ee3@linux.microsoft.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Thu, 25 Apr 2019 14:47:27 -0700
-Message-ID: <CACdnJuuhiQQ8Uq1A_qfidCLVPVQ_3Ty_Kqg+tQPDx2z3P0Yp9w@mail.gmail.com>
-Subject: Re: linux-tpmdd self signed kernel failing to boot with secreboot on
-To:     linux-integrity <linux-integrity@vger.kernel.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Apr 24, 2019 at 11:30 AM 'Jordan' via mjg59 <mjg59@google.com> wrote:
-> Under the following circumstances my kernel will not boot:
+On Thu, 25 Apr 2019, Linus Torvalds wrote:
 
-Will it boot under other circumstances (ie, if you disable Secure
-Boot, does it work fine with the patches?)
+> On Thu, Apr 25, 2019 at 10:19 AM prsriva <prsriva@linux.microsoft.com> wrote:
+> >
+> > I will fix the comments and send out the patchset with a cover letter.
+> > Thankyou for pointing this out.
+> 
+> Please trim the emails you reply to rather than quoting everything.
+> 
+> But the real reason I'm reacting to this email is because it was
+> marked as spam, because your SMTP setup is incorrect, and you don't go
+> through the proper MS SMTP server. As a result, you don't get the
+> proper DKIM signature for verification of the microsoft.com email
+> address, and sane email clients will mark your emails as spam.
+> 
+> Please fix.
 
-> I have traced kernel boot to the call to efi_exit_boot_services in
-> arch/x86/boot/compressed/eboot at which point execution terminates. I
-> see Matthew has made a couple changes in efi_main which calls exit_boot
-> (and in turn calls efi_exit_boot_services).
+It's the correct SMTP server for linux.microsoft.com.
 
-Does the boot hang or does the machine reboot?
+linux.microsoft.com.	3600	IN	TXT	"v=spf1 ip4:13.77.154.182 -all"
+linux.microsoft.com.	3600	IN	TXT	"v=DMARC1;p=none;pct=100;rua=mailto:jamorris@microsoft.com"
+
+
+We don't have DKIM set up yet.
+
+-- 
+James Morris
+<jmorris@namei.org>
+
