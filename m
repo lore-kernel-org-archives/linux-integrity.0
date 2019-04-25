@@ -2,110 +2,98 @@ Return-Path: <SRS0=MPPW=S3=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C8A4C43218
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 19:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42124C43218
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 19:46:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A47AF20685
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 19:35:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 575602077C
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 19:46:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="RDkfmGP5";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="UoF0oNh7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726360AbfDYTfr (ORCPT
+        id S2387460AbfDYTqt (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 25 Apr 2019 15:35:47 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39088 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725937AbfDYTfq (ORCPT
+        Thu, 25 Apr 2019 15:46:49 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:51342 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727517AbfDYTqt (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 25 Apr 2019 15:35:46 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3PJXsMJ115121
-        for <linux-integrity@vger.kernel.org>; Thu, 25 Apr 2019 15:35:45 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2s3hbxmr15-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 25 Apr 2019 15:35:44 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Thu, 25 Apr 2019 20:35:44 +0100
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 25 Apr 2019 20:35:42 +0100
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x3PJZf1B17629230
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 25 Apr 2019 19:35:41 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4BE65AE05C;
-        Thu, 25 Apr 2019 19:35:41 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ED119AE05F;
-        Thu, 25 Apr 2019 19:35:40 +0000 (GMT)
-Received: from swastik.ibm.com (unknown [9.80.220.75])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 25 Apr 2019 19:35:40 +0000 (GMT)
-Subject: Re: Can we enforce "IMA Policy" based on file type
-To:     Kavitha Sivagnanam <kavi@juniper.net>
-References: <BYAPR05MB39753CB3CA47513EEADC134CC1270@BYAPR05MB3975.namprd05.prod.outlook.com>
- <1556193529.3894.94.camel@linux.ibm.com>
- <BYAPR05MB3975DDC3D6C74DD292BA7216C13D0@BYAPR05MB3975.namprd05.prod.outlook.com>
-From:   Nayna <nayna@linux.vnet.ibm.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Date:   Thu, 25 Apr 2019 15:35:40 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <BYAPR05MB3975DDC3D6C74DD292BA7216C13D0@BYAPR05MB3975.namprd05.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 19042519-0052-0000-0000-000003B215FD
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010994; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000285; SDB=6.01194306; UDB=6.00626153; IPR=6.00975135;
- MB=3.00026597; MTD=3.00000008; XFM=3.00000015; UTC=2019-04-25 19:35:43
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19042519-0053-0000-0000-000060A3F03C
-Message-Id: <65efdd39-832d-2877-599d-110c98f1212d@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-25_16:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=842 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1904250120
+        Thu, 25 Apr 2019 15:46:49 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id F18BD8EE128;
+        Thu, 25 Apr 2019 12:46:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1556221608;
+        bh=eEZhjMHHMxvU2y+hJ2EEU/LgKWzqfVWKCNdD4gxbL5g=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=RDkfmGP5zG/H0JgXAB+X2uF+VrjXfq1ilzpng22YN2DDEJx4Wv7/YWdCTgQDPXBmf
+         OYrob/YZYgA/aLKHZP2R3AT7DK52DExdC9/M1RxOP+Daylk8CBHkhKCYbErckCXPjO
+         AcBngFmDW5V+mCpDsPaMHQDjuEQGSaNncFzF6qsQ=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 4c3LLyURmsqg; Thu, 25 Apr 2019 12:46:47 -0700 (PDT)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id B90DC8EE0AB;
+        Thu, 25 Apr 2019 12:46:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1556221607;
+        bh=eEZhjMHHMxvU2y+hJ2EEU/LgKWzqfVWKCNdD4gxbL5g=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=UoF0oNh7fo5g1m73NKF5r3a0Yx/4IVVWbxksDv7EBZ+Wh6IbiCsbfcaPSueqemeeM
+         gMTk6JEU2/bxF1rdJbwDgivzkX8CF117rb+GUTpNUupXLy6PEnzFKYPxwXEKiCx9Vx
+         YqKJLOJZc39uonrCqxq4vcI4n7f+MWfqHn/GJZXo=
+Message-ID: <1556221605.24945.3.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2] KEYS: Make use of platform keyring for module
+ signature verify
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Robert Holmes <robeholmes@gmail.com>, jeyu@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        stable@vger.kernel.org
+Date:   Thu, 25 Apr 2019 12:46:45 -0700
+In-Reply-To: <1556193350.3894.92.camel@linux.ibm.com>
+References: <1556116431-7129-1-git-send-email-robeholmes@gmail.com>
+         <1556193350.3894.92.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+On Thu, 2019-04-25 at 07:55 -0400, Mimi Zohar wrote:
+> On Wed, 2019-04-24 at 14:33 +0000, Robert Holmes wrote:
+> > This patch completes commit 278311e417be ("kexec, KEYS: Make use of
+> > platform keyring for signature verify") which, while adding the
+> > platform keyring for bzImage verification, neglected to also add
+> > this keyring for module verification.
+> > 
+> > As such, kernel modules signed with keys from the MokList variable
+> > were not successfully verified.
+> 
+> Using the platform keyring keys for verifying kernel modules was not
+> neglected, but rather intentional.  This patch description should
+> clearly explain the reason for needing to verify kernel module
+> signatures based on the pre-boot keys.  (Hint: verifying kernel
+> modules based on the pre-boot keys was previously rejected.)
 
+To clarify here: most Linux systems use shim/mok to pivot the root of
+trust away from the Secure Boot db variable to the new MokList/shim
+built in keys.  This makes the actual secure boot db outside the
+expected Linux Kernel trust boundary *unless* the user has taken
+ownership of the system and is actually using db for their own trusted
+keys.  This makes the policy for what pre-boot keys to trust within the
+Linux boundary very complex, which is why we default to not using the
+pre-boot keys at all.
 
-On 04/25/2019 01:07 PM, Kavitha Sivagnanam wrote:
-> Mimi
->
->>> Another option would be to extend IMA by implementing the LSM
->>> security_sb_mount hook
-> Yes, that’s exactly the feedback I was looking for.
-> I know that there is no existing support as of today.  But wanted to know how we can add support this.
-
-Adding this support shouldn't be too difficult. You can start from IMA 
-policy code in security/integrity/ima_policy.c.
-
-And just a reminder, please keep your responses as inline/bottom post.
-
-Thanks & Regards,
-      - Nayna
-
->
-> -Kavitha
->
-> Juniper Internal
->
->
+James
 
