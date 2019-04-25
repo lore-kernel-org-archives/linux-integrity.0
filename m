@@ -2,123 +2,180 @@ Return-Path: <SRS0=MPPW=S3=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5DFCC10F03
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 12:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC2CC4321D
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 16:26:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EDE3205F4
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 12:46:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E59B2089E
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 16:26:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MuypOg2d"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="VqnasD/z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726533AbfDYMqQ (ORCPT
+        id S1730007AbfDYQ0e (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 25 Apr 2019 08:46:16 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34705 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725988AbfDYMqP (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 25 Apr 2019 08:46:15 -0400
-Received: by mail-lf1-f66.google.com with SMTP id h5so17403159lfm.1
-        for <linux-integrity@vger.kernel.org>; Thu, 25 Apr 2019 05:46:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ne7Cr7cRJB4/Fee5VYepxByB1IKJKt4iilCFoonP81k=;
-        b=MuypOg2dCHK6s3H1PJQ8+jxK8cPChL/0/NEk81n7kjMApCf1Zn87COdnySoQp2wcUR
-         78l/foo7RN+BdGPsrVB86tINAK2fXh/B+NGRIUhnsj6/HKn+SzInBHlcrfv9pa90vnlI
-         NdzxTB2tjodMKuCqPjUCY6NFGQTrgS2yxQynY1+XbtFtxwXgu98GbK8UX1/VTws2WEn9
-         xfrYmUuXiMWlmqqWHfVO2DDPNqZrbmvkrYKOp+m5WbCSViCjEgywg+gFbSwnAejuPB77
-         3UM9ZcFxrOuFe63ZcqkVC/UT+EkU0IaQlIvg3zTFM5dJH81FEYw2r8FGPU4cIo9COpY0
-         8Fog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ne7Cr7cRJB4/Fee5VYepxByB1IKJKt4iilCFoonP81k=;
-        b=jhp7fwbACGHDxImIozxvTjOD9vKjz+FnfExuulg+jpVPQreH0ptc0m1yKONph4qLmI
-         GKRo0dHgaCbXLyEPTflFVeCv7K1LQVI2KOUg1b/EzU8Y9rj1B+cQOOD7f3ZGxYrcRTSZ
-         6et8l1PAiH5cajbxtFD5pboIP3zEUEhA6ILptRpJ8ROZez6S9LfVfprSrGKrUcx+2igb
-         CvI28MNs9XeTZMMz6JNyq34oB6s9LDzzaIU5i2aYfr0lfbPeJ3wbLG4sddSMPv0IbLGS
-         UwvXfijxOF5BpIdWuEubfiWJWy85PRZLu0BG6OE46mcLvwzUWRN0kUhsFrToPQoZOCP0
-         mzyQ==
-X-Gm-Message-State: APjAAAXkNmxlauCU56bLwjfNTwZVVI2QFhqECimTYdwJUOVUg1NVVy9K
-        lU9hfilVPHuAZMcla2DMcHe85zrQncQr4lLwoclVpflF
-X-Google-Smtp-Source: APXvYqw96OegnZ6pR1LuqHWEWtcZ5IJ5DHsPhaEr7IJdNlbgk3wCbhjM0CuvEIypFtwh8krMgUdjiEOx1Gxvu/q/4DI=
-X-Received: by 2002:ac2:5107:: with SMTP id q7mr20657238lfb.162.1556196373798;
- Thu, 25 Apr 2019 05:46:13 -0700 (PDT)
+        Thu, 25 Apr 2019 12:26:34 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:55772 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729906AbfDYQ03 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 25 Apr 2019 12:26:29 -0400
+Received: from zn.tnic (p200300EC2F0E43001D86563D61B131D5.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:4300:1d86:563d:61b1:31d5])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9F9F91EC050B;
+        Thu, 25 Apr 2019 18:26:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1556209587;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=bhEpDc5d4HyhQ2bpVjieSeCZ31GaRinPp/sR5VeHQ6U=;
+        b=VqnasD/zMdS+0uAelD4hutyqDB8IyeLbKILtFiZqFO8GVwKD8qzxgPpJi0rWWAzqt3XCkv
+        0lhbY7oIEM/5nlBPWCr1Oc92xyJvS3bMpMsjBKLeFHZBxLgMAduzCX4bZ+Rz0S2WdHmSYZ
+        PHMxLE/J/50mz0+wo+W3eQrFC84hXuc=
+Date:   Thu, 25 Apr 2019 18:26:21 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Nadav Amit <namit@vmware.com>
+Subject: Re: [PATCH v4 03/23] x86/mm: Introduce temporary mm structs
+Message-ID: <20190425162620.GA5199@zn.tnic>
+References: <20190422185805.1169-1-rick.p.edgecombe@intel.com>
+ <20190422185805.1169-4-rick.p.edgecombe@intel.com>
 MIME-Version: 1.0
-References: <20190410145659.26347-1-janne.karhunen@gmail.com>
- <1554987784.7843.40.camel@linux.ibm.com> <CAE=NcrYDK1de25XeJcYOpW41O3_RbqYJamkz=SE745Krfa=t8Q@mail.gmail.com>
- <CAE=NcraD_VD=ZmNTiCb4AWzwiaOYp5S0cE4uC64b0kHLQ=7PEA@mail.gmail.com> <1556194447.3894.105.camel@linux.ibm.com>
-In-Reply-To: <1556194447.3894.105.camel@linux.ibm.com>
-From:   Janne Karhunen <janne.karhunen@gmail.com>
-Date:   Thu, 25 Apr 2019 15:46:02 +0300
-Message-ID: <CAE=NcrZNo1r+kJi+F-uf=7=wr2DhDA2wPRzUWxXTJ9b1mgdt4w@mail.gmail.com>
-Subject: Re: [PATCH] integrity: make 'sync' update the inode integrity state
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190422185805.1169-4-rick.p.edgecombe@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Apr 25, 2019 at 3:14 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+On Mon, Apr 22, 2019 at 11:57:45AM -0700, Rick Edgecombe wrote:
+> From: Andy Lutomirski <luto@kernel.org>
+> 
+> Using a dedicated page-table for temporary PTEs prevents other cores
+> from using - even speculatively - these PTEs, thereby providing two
+> benefits:
+> 
+> (1) Security hardening: an attacker that gains kernel memory writing
+> abilities cannot easily overwrite sensitive data.
+> 
+> (2) Avoiding TLB shootdowns: the PTEs do not need to be flushed in
+> remote page-tables.
+> 
+> To do so a temporary mm_struct can be used. Mappings which are private
+> for this mm can be set in the userspace part of the address-space.
+> During the whole time in which the temporary mm is loaded, interrupts
+> must be disabled.
+> 
+> The first use-case for temporary mm struct, which will follow, is for
+> poking the kernel text.
+> 
+> [ Commit message was written by Nadav Amit ]
+> 
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+> Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
+> Signed-off-by: Andy Lutomirski <luto@kernel.org>
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+>  arch/x86/include/asm/mmu_context.h | 33 ++++++++++++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
+> index 19d18fae6ec6..d684b954f3c0 100644
+> --- a/arch/x86/include/asm/mmu_context.h
+> +++ b/arch/x86/include/asm/mmu_context.h
+> @@ -356,4 +356,37 @@ static inline unsigned long __get_current_cr3_fast(void)
+>  	return cr3;
+>  }
+>  
+> +typedef struct {
+> +	struct mm_struct *prev;
+> +} temp_mm_state_t;
+> +
+> +/*
+> + * Using a temporary mm allows to set temporary mappings that are not accessible
+> + * by other cores. Such mappings are needed to perform sensitive memory writes
 
-> > The pieces that we did:
-> > - initialize hashes correctly on open()
-> > - hook 'sync'
-> > - hook 'msync'
-> > - hook 'truncate'
-> > - introduce a per-cpu workqueue that gets work items from write and
-> > dirty page flush. Long-running write is allowed to go as is (no
-> > performance penalty from re-measurements), but once the the write goes
-> > silent workqueue item is flushed and the file is hashed.
->
-> What type of workqueue (eg. fifo)?  Are all of the writes needed, as
-> they might be re-written later.
+s/cores/CPUs/g
 
-We can talk about this, but what I have now is
+Yeah, the concept of a thread of execution we call a CPU in the kernel,
+I'd say. No matter if it is one of the hyperthreads or a single thread
+in core.
 
-static struct workqueue_struct *ima_update_wq;
-ima_update_wq = create_workqueue("ima-update-wq");
+> + * that override the kernel memory protections (e.g., W^X), without exposing the
+> + * temporary page-table mappings that are required for these write operations to
+> + * other cores.
 
-..
+Ditto.
 
-queue_work(ima_update_wq, &iint->ima_update_data.work);
+>  Using temporary mm also allows to avoid TLB shootdowns when the
 
-All writes are not hashed at all, it tries to insert an element into
-the workqueue on every write, but if there is already one it is happy.
-Alternative is that we add delayed work that is constantly kicked
-forward, so rehash will fire for example 'dirty_expire_centisecs'
-after the last write on the inode. Unfortunately I need really high
-crash tolerance in my use case (lovely vendor kernel), so I don't
-delay it much in our case.
+Using a ..
 
-Android is pretty rough test, btw. It keeps 800+ files open for
-writing on /data alone. This survives that kind of thing crashing in a
-loop.
+> + * mapping is torn down.
+> + *
 
+Nice commenting.
 
-> > Before I uplift this construction against the mainline, any thoughts
-> > about this? All I can say so far is that it runs and it seems to keep
-> > the system relatively crash tolerant. 'Don't let the perfect be the
-> > enemy of the better' I guess...
->
-> As long as the iint cache info isn't affected by these changes, the
-> change is limited to writing out the xattr more frequently.  If the
-> iint cache info is affected, then you need to be careful that multiple
-> readers/writers continue to work.
+> + * Context: The temporary mm needs to be used exclusively by a single core. To
+> + *          harden security IRQs must be disabled while the temporary mm is
+			      ^
+			      ,
 
-Sadly, it is affected. That is where I hide the 'work_struct' and the
-'file' pointer :-/
+> + *          loaded, thereby preventing interrupt handler bugs from overriding
+> + *          the kernel memory protection.
+> + */
+> +static inline temp_mm_state_t use_temporary_mm(struct mm_struct *mm)
+> +{
+> +	temp_mm_state_t state;
+> +
+> +	lockdep_assert_irqs_disabled();
+> +	state.prev = this_cpu_read(cpu_tlbstate.loaded_mm);
+> +	switch_mm_irqs_off(NULL, mm, current);
+> +	return state;
+> +}
+> +
+> +static inline void unuse_temporary_mm(temp_mm_state_t prev)
+> +{
+> +	lockdep_assert_irqs_disabled();
+> +	switch_mm_irqs_off(NULL, prev.prev, current);
 
+I think this code would be more readable if you call that
+temp_mm_state_t variable "temp_state" and the mm_struct pointer "mm" and
+then you have:
 
---
-Janne
+	switch_mm_irqs_off(NULL, temp_state.mm, current);
+
+And above you'll have:
+
+	temp_state.mm = ...
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
