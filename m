@@ -2,130 +2,79 @@ Return-Path: <SRS0=MPPW=S3=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4422EC43219
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 21:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45648C43218
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 21:47:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 553BE20717
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 21:22:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A42320685
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Apr 2019 21:47:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Mu8sCk3V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729919AbfDYVWk (ORCPT
+        id S1730010AbfDYVrj (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 25 Apr 2019 17:22:40 -0400
-Received: from mga06.intel.com ([134.134.136.31]:4583 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727782AbfDYVWk (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 25 Apr 2019 17:22:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Apr 2019 14:22:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,394,1549958400"; 
-   d="scan'208";a="340827658"
-Received: from orsmsx109.amr.corp.intel.com ([10.22.240.7])
-  by fmsmga005.fm.intel.com with ESMTP; 25 Apr 2019 14:22:38 -0700
-Received: from orsmsx112.amr.corp.intel.com ([169.254.3.109]) by
- ORSMSX109.amr.corp.intel.com ([169.254.11.52]) with mapi id 14.03.0415.000;
- Thu, 25 Apr 2019 14:22:37 -0700
-From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To:     "peterz@infradead.org" <peterz@infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "nadav.amit@gmail.com" <nadav.amit@gmail.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux_dti@icloud.com" <linux_dti@icloud.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>
-Subject: Re: [PATCH v4 16/23] vmalloc: Add flag for free of special
- permsissions
-Thread-Topic: [PATCH v4 16/23] vmalloc: Add flag for free of special
- permsissions
-Thread-Index: AQHU+T1qDj30K9TIe0uwu0BdDCSPu6ZN0J6AgAAMKQA=
-Date:   Thu, 25 Apr 2019 21:22:37 +0000
-Message-ID: <c6b37ed1b616386acfab4d4a8cbe972d9346a5fe.camel@intel.com>
-References: <20190422185805.1169-1-rick.p.edgecombe@intel.com>
-         <20190422185805.1169-17-rick.p.edgecombe@intel.com>
-         <20190425203845.GA12232@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190425203845.GA12232@hirez.programming.kicks-ass.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.54.75.11]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0E199F7050ED404B9991A495937A8F97@intel.com>
-Content-Transfer-Encoding: base64
+        Thu, 25 Apr 2019 17:47:39 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:37064 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729185AbfDYVrj (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 25 Apr 2019 17:47:39 -0400
+Received: by mail-it1-f195.google.com with SMTP id u65so2650669itc.2
+        for <linux-integrity@vger.kernel.org>; Thu, 25 Apr 2019 14:47:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uUZAqqVzdnJW/morQkX5GhLLofEUsN1mTNugt83lhoc=;
+        b=Mu8sCk3VJNqdHZ1e3i0+egvQSZBXXlB/8O32ciXt84AB8vQiY0jrjOwggwv9cngmeA
+         t8Cgg6WVdvlQB2yHe2i2LJfctz0s0Khik75YC++7aatBsfl+Uld2NKf9dVwPCQqd2t2q
+         rnYacDyfiW6ZtqgPdI5it6/LSAFKWcJbHw7r2l8AERxcUYwUhgwnFIFf/AZjnZC+ZI5/
+         dkkDNtGyDsyMuecdPT3NdeYrbJ4YDksRiomEu5LhjK/LvaGy6ThFy1gX9cUMC6NLXSNp
+         Thm9GqZeod9tdQOUDK/9zOsLePirShMZ+4YTyt8wvbwCmclYIp9q5KrhAxiDzOw8cIJo
+         28kA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uUZAqqVzdnJW/morQkX5GhLLofEUsN1mTNugt83lhoc=;
+        b=J0UleO4gDlBGQep/IQLgFs2lq7VoKYG6vqjzWO3gg8mNe3gpiHL1xJB4isjEIuUgrS
+         zDXIamUWrDc1O346kjACnLEFo7NPRB2Id50E3kuPsefQM59bTh36e8c71FM+z3GiqMEv
+         NizrrDT/P3Z5rXJWMqPVVmnJYn0nxZItBnWOYkyKYFeikiRu9Uw7N3hnhSnVd3/wgpLh
+         z5MnldKvgifls/jVtixEGxj4/ErrMUiMXBtP8sYG3zAe/ONZ47Z19wkSP4GvO2mcGG4W
+         j68jxOE/nzR8SxluJKsrCaZBCQYcf1n4uSuLHdBb6oAfSzUMb0EHrG4kwW/CHl9EPC8Z
+         evJw==
+X-Gm-Message-State: APjAAAURLcefCxLS893KaJz5/FTHFmWFCT/HaJikUjXo5NyfYY2x6kGh
+        ihgrPMH1LptEVGOKy/XtV5m7Fx3jE2DPcfpv+epQHsG44LA=
+X-Google-Smtp-Source: APXvYqximb/JWMISl/acl6knvvYeGLQ4zoGp7l5VugXvX3RyAfehd4H4C9dkust56/0tO51h9CXkaqbwzhNb13tBfS4=
+X-Received: by 2002:a24:a86:: with SMTP id 128mr5602553itw.118.1556228857960;
+ Thu, 25 Apr 2019 14:47:37 -0700 (PDT)
 MIME-Version: 1.0
+References: <f9ad2e46-e458-6c78-76da-b85db4601ee3@linux.microsoft.com>
+In-Reply-To: <f9ad2e46-e458-6c78-76da-b85db4601ee3@linux.microsoft.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Thu, 25 Apr 2019 14:47:27 -0700
+Message-ID: <CACdnJuuhiQQ8Uq1A_qfidCLVPVQ_3Ty_Kqg+tQPDx2z3P0Yp9w@mail.gmail.com>
+Subject: Re: linux-tpmdd self signed kernel failing to boot with secreboot on
+To:     linux-integrity <linux-integrity@vger.kernel.org>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-T24gVGh1LCAyMDE5LTA0LTI1IGF0IDIyOjM4ICswMjAwLCBQZXRlciBaaWpsc3RyYSB3cm90ZToN
-Cj4gT24gTW9uLCBBcHIgMjIsIDIwMTkgYXQgMTE6NTc6NThBTSAtMDcwMCwgUmljayBFZGdlY29t
-YmUgd3JvdGU6DQo+ID4gQWRkIGEgbmV3IGZsYWcgVk1fRkxVU0hfUkVTRVRfUEVSTVMsIGZvciBl
-bmFibGluZyB2ZnJlZSBvcGVyYXRpb25zIHRvDQo+ID4gaW1tZWRpYXRlbHkgY2xlYXIgZXhlY3V0
-YWJsZSBUTEIgZW50cmllcyBiZWZvcmUgZnJlZWluZyBwYWdlcywgYW5kIGhhbmRsZQ0KPiA+IHJl
-c2V0dGluZyBwZXJtaXNzaW9ucyBvbiB0aGUgZGlyZWN0bWFwLiBUaGlzIGZsYWcgaXMgdXNlZnVs
-IGZvciBhbnkga2luZA0KPiA+IG9mIG1lbW9yeSB3aXRoIGVsZXZhdGVkIHBlcm1pc3Npb25zLCBv
-ciB3aGVyZSB0aGVyZSBjYW4gYmUgcmVsYXRlZA0KPiA+IHBlcm1pc3Npb25zIGNoYW5nZXMgb24g
-dGhlIGRpcmVjdG1hcC4gVG9kYXkgdGhpcyBpcyBSTytYIGFuZCBSTyBtZW1vcnkuDQo+ID4gDQo+
-ID4gQWx0aG91Z2ggdGhpcyBlbmFibGVzIGRpcmVjdGx5IHZmcmVlaW5nIG5vbi13cml0ZWFibGUg
-bWVtb3J5IG5vdywNCj4gPiBub24td3JpdGFibGUgbWVtb3J5IGNhbm5vdCBiZSBmcmVlZCBpbiBh
-biBpbnRlcnJ1cHQgYmVjYXVzZSB0aGUgYWxsb2NhdGlvbg0KPiA+IGl0c2VsZiBpcyB1c2VkIGFz
-IGEgbm9kZSBvbiBkZWZlcnJlZCBmcmVlIGxpc3QuIFNvIHdoZW4gUk8gbWVtb3J5IG5lZWRzIHRv
-DQo+ID4gYmUgZnJlZWQgaW4gYW4gaW50ZXJydXB0IHRoZSBjb2RlIGRvaW5nIHRoZSB2ZnJlZSBu
-ZWVkcyB0byBoYXZlIGl0cyBvd24NCj4gPiB3b3JrIHF1ZXVlLCBhcyB3YXMgdGhlIGNhc2UgYmVm
-b3JlIHRoZSBkZWZlcnJlZCB2ZnJlZSBsaXN0IHdhcyBhZGRlZCB0bw0KPiA+IHZtYWxsb2MuDQo+
-ID4gDQo+ID4gRm9yIGFyY2hpdGVjdHVyZXMgd2l0aCBzZXRfZGlyZWN0X21hcF8gaW1wbGVtZW50
-YXRpb25zIHRoaXMgd2hvbGUgb3BlcmF0aW9uDQo+ID4gY2FuIGJlIGRvbmUgd2l0aCBvbmUgVExC
-IGZsdXNoIHdoZW4gY2VudHJhbGl6ZWQgbGlrZSB0aGlzLiBGb3Igb3RoZXJzIHdpdGgNCj4gPiBk
-aXJlY3RtYXAgcGVybWlzc2lvbnMsIGN1cnJlbnRseSBvbmx5IGFybTY0LCBhIGJhY2t1cCBtZXRo
-b2QgdXNpbmcNCj4gPiBzZXRfbWVtb3J5IGZ1bmN0aW9ucyBpcyB1c2VkIHRvIHJlc2V0IHRoZSBk
-aXJlY3RtYXAuIFdoZW4gYXJtNjQgYWRkcw0KPiA+IHNldF9kaXJlY3RfbWFwXyBmdW5jdGlvbnMs
-IHRoaXMgYmFja3VwIGNhbiBiZSByZW1vdmVkLg0KPiA+IA0KPiA+IFdoZW4gdGhlIFRMQiBpcyBm
-bHVzaGVkIHRvIGJvdGggcmVtb3ZlIFRMQiBlbnRyaWVzIGZvciB0aGUgdm1hbGxvYyByYW5nZQ0K
-PiA+IG1hcHBpbmcgYW5kIHRoZSBkaXJlY3QgbWFwIHBlcm1pc3Npb25zLCB0aGUgbGF6eSBwdXJn
-ZSBvcGVyYXRpb24gY291bGQgYmUNCj4gPiBkb25lIHRvIHRyeSB0byBzYXZlIGEgVExCIGZsdXNo
-IGxhdGVyLiBIb3dldmVyIHRvZGF5IHZtX3VubWFwX2FsaWFzZXMNCj4gPiBjb3VsZCBmbHVzaCBh
-IFRMQiByYW5nZSB0aGF0IGRvZXMgbm90IGluY2x1ZGUgdGhlIGRpcmVjdG1hcC4gU28gYSBoZWxw
-ZXINCj4gPiBpcyBhZGRlZCB3aXRoIGV4dHJhIHBhcmFtZXRlcnMgdGhhdCBjYW4gYWxsb3cgYm90
-aCB0aGUgdm1hbGxvYyBhZGRyZXNzIGFuZA0KPiA+IHRoZSBkaXJlY3QgbWFwcGluZyB0byBiZSBm
-bHVzaGVkIGR1cmluZyB0aGlzIG9wZXJhdGlvbi4gVGhlIGJlaGF2aW9yIG9mIHRoZQ0KPiA+IG5v
-cm1hbCB2bV91bm1hcF9hbGlhc2VzIGZ1bmN0aW9uIGlzIHVuY2hhbmdlZC4NCj4gPiArc3RhdGlj
-IGlubGluZSB2b2lkIHNldF92bV9mbHVzaF9yZXNldF9wZXJtcyh2b2lkICphZGRyKQ0KPiA+ICt7
-DQo+ID4gKwlzdHJ1Y3Qgdm1fc3RydWN0ICp2bSA9IGZpbmRfdm1fYXJlYShhZGRyKTsNCj4gPiAr
-DQo+ID4gKwlpZiAodm0pDQo+ID4gKwkJdm0tPmZsYWdzIHw9IFZNX0ZMVVNIX1JFU0VUX1BFUk1T
-Ow0KPiA+ICt9DQo+IA0KPiBTbywgcHJldmlvdXNseSBpbiB0aGUgc2VyaWVzIHdlIGFkZGVkIE5Y
-IHRvIG1vZHVsZV9hbGxvYygpIGFuZCBmaXhlZCB1cA0KPiBhbGwgdGhlIHVzYWdlIHNpdGUuIEFu
-ZCBub3cgd2UncmUgZ29pbmcgdGhyb3VnaCB0aG9zZSB2ZXJ5IHNhbWUgc2l0ZXMgdG8NCj4gYWRk
-IHNldF92bV9mbHVzaF9yZXNldF9wZXJtcygpLg0KPiANCj4gV2h5IGlzbid0IG1vZHVsZV9hbGxv
-YygpIGNhbGxpbmcgdGhlIGFib3ZlIGZ1bmN0aW9uIGFuZCBhdm9pZCBzcHJpbmtsaW5nDQo+IGl0
-IGFsbCBvdmVyIHRoZSBwbGFjZSBhZ2Fpbj8NCg0KWWVhLCB0aGF0IGNvdWxkIG1ha2UgaXQgbW9y
-ZSBhdXRvbWF0aWMsIGJ1dCB0aGVyZSBhcmUgc29tZSBhZHZhbnRhZ2VzIHRvIGhvdyBpdA0KaXMg
-Y3VycmVudGx5Lg0KDQpPbmUgaXMgdGhhdCBtb3N0IGFyY2gncyBoYXZlIHRoZWlyIG93biBtb2R1
-bGVfYWxsb2MoKSwgYW5kIHNvIGNhbGxpbmcNCnNldF92bV9mbHVzaF9yZXNldF9wZXJtcygpIGlu
-IGtlcm5lbC9tb2R1bGUuYyBjYXRjaGVzIGFsbCBhcmNoaXRlY3R1cmVzLg0KT3RoZXJ3aXNlIGl0
-IHdvdWxkIGJlIGFkZGVkIGluIGVhY2ggYXJjaCB3aGljaCB3b3VsZCBiZSBtb3JlIHNpdGVzLg0K
-DQpUaGUgb3RoZXIgcmVhc29uIGlzIHRoYXQgdGhlIGZsdXNoIGlzbid0IGFjdHVhbGx5IG5lZWRl
-ZCB1bnRpbCBhZnRlciB0aGUgbWVtb3J5DQppcyBtYWRlIGV4ZWN1dGFibGUsIHNvIHdlIGRvbid0
-IGJvdGhlciBmbHVzaGluZyBpZiB0aGUgYWxsb2NhdGlvbiBuZXZlciBnZXRzIHNldA0KZXhlY3V0
-YWJsZS4gV2hlbiB0aGF0IGhhcHBlbnMgaXMgb25seSBrbm93biBieSB0aGUgY2FsbGVycyBvZiBt
-b2R1bGVfYWxsb2MoKS4NCg0KVGhhbmtzLA0KDQpSaWNrDQo=
+On Wed, Apr 24, 2019 at 11:30 AM 'Jordan' via mjg59 <mjg59@google.com> wrote:
+> Under the following circumstances my kernel will not boot:
+
+Will it boot under other circumstances (ie, if you disable Secure
+Boot, does it work fine with the patches?)
+
+> I have traced kernel boot to the call to efi_exit_boot_services in
+> arch/x86/boot/compressed/eboot at which point execution terminates. I
+> see Matthew has made a couple changes in efi_main which calls exit_boot
+> (and in turn calls efi_exit_boot_services).
+
+Does the boot hang or does the machine reboot?
