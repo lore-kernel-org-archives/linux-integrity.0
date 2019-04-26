@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C6BBC43219
-	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2205C43218
+	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B0902084F
-	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4DB72084F
+	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726123AbfDZHbt (ORCPT
+        id S1726105AbfDZHbs (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 26 Apr 2019 03:31:49 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:29121 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725912AbfDZHbr (ORCPT
+        Fri, 26 Apr 2019 03:31:48 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:2747 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725942AbfDZHbs (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 26 Apr 2019 03:31:47 -0400
+        Fri, 26 Apr 2019 03:31:48 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Fri, 26 Apr 2019 00:31:44 -0700
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Fri, 26 Apr 2019 00:31:40 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 77C0D412A1;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 631F24129A;
         Fri, 26 Apr 2019 00:31:45 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
@@ -43,100 +43,184 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
         <ard.biesheuvel@linaro.org>, <kristen@linux.intel.com>,
         <deneen.t.dock@intel.com>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Nadav Amit <namit@vmware.com>,
         Kees Cook <keescook@chromium.org>,
         Dave Hansen <dave.hansen@intel.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: [PATCH v5 03/23] x86/mm: Introduce temporary mm structs
-Date:   Thu, 25 Apr 2019 17:11:23 -0700
-Message-ID: <20190426001143.4983-4-namit@vmware.com>
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH v5 01/23] Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
+Date:   Thu, 25 Apr 2019 17:11:21 -0700
+Message-ID: <20190426001143.4983-2-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190426001143.4983-1-namit@vmware.com>
 References: <20190426001143.4983-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Andy Lutomirski <luto@kernel.org>
+text_mutex is currently expected to be held before text_poke() is
+called, but kgdb does not take the mutex, and instead *supposedly*
+ensures the lock is not taken and will not be acquired by any other core
+while text_poke() is running.
 
-Using a dedicated page-table for temporary PTEs prevents other cores
-from using - even speculatively - these PTEs, thereby providing two
-benefits:
+The reason for the "supposedly" comment is that it is not entirely clear
+that this would be the case if gdb_do_roundup is zero.
 
-(1) Security hardening: an attacker that gains kernel memory writing
-abilities cannot easily overwrite sensitive data.
+Create two wrapper functions, text_poke() and text_poke_kgdb(), which do
+or do not run the lockdep assertion respectively.
 
-(2) Avoiding TLB shootdowns: the PTEs do not need to be flushed in
-remote page-tables.
+While we are at it, change the return code of text_poke() to something
+meaningful. One day, callers might actually respect it and the existing
+BUG_ON() when patching fails could be removed. For kgdb, the return
+value can actually be used.
 
-To do so a temporary mm_struct can be used. Mappings which are private
-for this mm can be set in the userspace part of the address-space.
-During the whole time in which the temporary mm is loaded, interrupts
-must be disabled.
-
-The first use-case for temporary mm struct, which will follow, is for
-poking the kernel text.
-
-[ Commit message was written by Nadav Amit ]
-
+Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Fixes: 9222f606506c ("x86/alternatives: Lockdep-enforce text_mutex in text_poke*()")
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Acked-by: Jiri Kosina <jkosina@suse.cz>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/include/asm/mmu_context.h | 33 ++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ arch/x86/include/asm/text-patching.h |  1 +
+ arch/x86/kernel/alternative.c        | 52 ++++++++++++++++++++--------
+ arch/x86/kernel/kgdb.c               | 11 +++---
+ 3 files changed, 45 insertions(+), 19 deletions(-)
 
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-index 19d18fae6ec6..24dc3b810970 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -356,4 +356,37 @@ static inline unsigned long __get_current_cr3_fast(void)
- 	return cr3;
+diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
+index e85ff65c43c3..f8fc8e86cf01 100644
+--- a/arch/x86/include/asm/text-patching.h
++++ b/arch/x86/include/asm/text-patching.h
+@@ -35,6 +35,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
+  * inconsistent instruction while you patch.
+  */
+ extern void *text_poke(void *addr, const void *opcode, size_t len);
++extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
+ extern int poke_int3_handler(struct pt_regs *regs);
+ extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
+ extern int after_bootmem;
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index 9a79c7808f9c..0a814d73547a 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -679,18 +679,7 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
+ 	return addr;
  }
  
-+typedef struct {
-+	struct mm_struct *mm;
-+} temp_mm_state_t;
-+
-+/*
-+ * Using a temporary mm allows to set temporary mappings that are not accessible
-+ * by other CPUs. Such mappings are needed to perform sensitive memory writes
-+ * that override the kernel memory protections (e.g., W^X), without exposing the
-+ * temporary page-table mappings that are required for these write operations to
-+ * other CPUs. Using a temporary mm also allows to avoid TLB shootdowns when the
-+ * mapping is torn down.
+-/**
+- * text_poke - Update instructions on a live kernel
+- * @addr: address to modify
+- * @opcode: source of the copy
+- * @len: length to copy
+- *
+- * Only atomic text poke/set should be allowed when not doing early patching.
+- * It means the size must be writable atomically and the address must be aligned
+- * in a way that permits an atomic write. It also makes sure we fit on a single
+- * page.
+- */
+-void *text_poke(void *addr, const void *opcode, size_t len)
++static void *__text_poke(void *addr, const void *opcode, size_t len)
+ {
+ 	unsigned long flags;
+ 	char *vaddr;
+@@ -703,8 +692,6 @@ void *text_poke(void *addr, const void *opcode, size_t len)
+ 	 */
+ 	BUG_ON(!after_bootmem);
+ 
+-	lockdep_assert_held(&text_mutex);
+-
+ 	if (!core_kernel_text((unsigned long)addr)) {
+ 		pages[0] = vmalloc_to_page(addr);
+ 		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
+@@ -733,6 +720,43 @@ void *text_poke(void *addr, const void *opcode, size_t len)
+ 	return addr;
+ }
+ 
++/**
++ * text_poke - Update instructions on a live kernel
++ * @addr: address to modify
++ * @opcode: source of the copy
++ * @len: length to copy
 + *
-+ * Context: The temporary mm needs to be used exclusively by a single core. To
-+ *          harden security IRQs must be disabled while the temporary mm is
-+ *          loaded, thereby preventing interrupt handler bugs from overriding
-+ *          the kernel memory protection.
++ * Only atomic text poke/set should be allowed when not doing early patching.
++ * It means the size must be writable atomically and the address must be aligned
++ * in a way that permits an atomic write. It also makes sure we fit on a single
++ * page.
 + */
-+static inline temp_mm_state_t use_temporary_mm(struct mm_struct *mm)
++void *text_poke(void *addr, const void *opcode, size_t len)
 +{
-+	temp_mm_state_t temp_state;
++	lockdep_assert_held(&text_mutex);
 +
-+	lockdep_assert_irqs_disabled();
-+	temp_state.mm = this_cpu_read(cpu_tlbstate.loaded_mm);
-+	switch_mm_irqs_off(NULL, mm, current);
-+	return temp_state;
++	return __text_poke(addr, opcode, len);
 +}
 +
-+static inline void unuse_temporary_mm(temp_mm_state_t prev_state)
++/**
++ * text_poke_kgdb - Update instructions on a live kernel by kgdb
++ * @addr: address to modify
++ * @opcode: source of the copy
++ * @len: length to copy
++ *
++ * Only atomic text poke/set should be allowed when not doing early patching.
++ * It means the size must be writable atomically and the address must be aligned
++ * in a way that permits an atomic write. It also makes sure we fit on a single
++ * page.
++ *
++ * Context: should only be used by kgdb, which ensures no other core is running,
++ *	    despite the fact it does not hold the text_mutex.
++ */
++void *text_poke_kgdb(void *addr, const void *opcode, size_t len)
 +{
-+	lockdep_assert_irqs_disabled();
-+	switch_mm_irqs_off(NULL, prev_state.mm, current);
++	return __text_poke(addr, opcode, len);
 +}
 +
- #endif /* _ASM_X86_MMU_CONTEXT_H */
+ static void do_sync_core(void *info)
+ {
+ 	sync_core();
+diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
+index 4ff6b4cdb941..2b203ee5b879 100644
+--- a/arch/x86/kernel/kgdb.c
++++ b/arch/x86/kernel/kgdb.c
+@@ -759,13 +759,13 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
+ 	if (!err)
+ 		return err;
+ 	/*
+-	 * It is safe to call text_poke() because normal kernel execution
++	 * It is safe to call text_poke_kgdb() because normal kernel execution
+ 	 * is stopped on all cores, so long as the text_mutex is not locked.
+ 	 */
+ 	if (mutex_is_locked(&text_mutex))
+ 		return -EBUSY;
+-	text_poke((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
+-		  BREAK_INSTR_SIZE);
++	text_poke_kgdb((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
++		       BREAK_INSTR_SIZE);
+ 	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+ 	if (err)
+ 		return err;
+@@ -784,12 +784,13 @@ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
+ 	if (bpt->type != BP_POKE_BREAKPOINT)
+ 		goto knl_write;
+ 	/*
+-	 * It is safe to call text_poke() because normal kernel execution
++	 * It is safe to call text_poke_kgdb() because normal kernel execution
+ 	 * is stopped on all cores, so long as the text_mutex is not locked.
+ 	 */
+ 	if (mutex_is_locked(&text_mutex))
+ 		goto knl_write;
+-	text_poke((void *)bpt->bpt_addr, bpt->saved_instr, BREAK_INSTR_SIZE);
++	text_poke_kgdb((void *)bpt->bpt_addr, bpt->saved_instr,
++		       BREAK_INSTR_SIZE);
+ 	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+ 	if (err || memcmp(opc, bpt->saved_instr, BREAK_INSTR_SIZE))
+ 		goto knl_write;
 -- 
 2.17.1
 
