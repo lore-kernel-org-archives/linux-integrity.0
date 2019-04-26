@@ -4,27 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9B0BC4321A
-	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5831DC43219
+	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:32:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 841B4208C3
-	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:31:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28C5C212F5
+	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:32:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726317AbfDZHb6 (ORCPT
+        id S1726382AbfDZHcF (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 26 Apr 2019 03:31:58 -0400
+        Fri, 26 Apr 2019 03:32:05 -0400
 Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:29121 "EHLO
         EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726309AbfDZHb6 (ORCPT
+        by vger.kernel.org with ESMTP id S1726358AbfDZHcD (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 26 Apr 2019 03:31:58 -0400
+        Fri, 26 Apr 2019 03:32:03 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
  15.0.1156.6; Fri, 26 Apr 2019 00:31:44 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id A1013412A3;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id D96B44129C;
         Fri, 26 Apr 2019 00:31:45 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
@@ -41,11 +41,10 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
         <linux-mm@kvack.org>, <will.deacon@arm.com>,
         <ard.biesheuvel@linaro.org>, <kristen@linux.intel.com>,
         <deneen.t.dock@intel.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: [PATCH v5 08/23] x86/kgdb: Avoid redundant comparison of patched code
-Date:   Thu, 25 Apr 2019 17:11:28 -0700
-Message-ID: <20190426001143.4983-9-namit@vmware.com>
+        Rick Edgecombe <rick.p.edgecombe@intel.com>
+Subject: [PATCH v5 14/23] x86/mm/cpa: Add set_direct_map_ functions
+Date:   Thu, 25 Apr 2019 17:11:34 -0700
+Message-ID: <20190426001143.4983-15-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190426001143.4983-1-namit@vmware.com>
 References: <20190426001143.4983-1-namit@vmware.com>
@@ -58,63 +57,133 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-text_poke() already ensures that the written value is the correct one
-and fails if that is not the case. There is no need for an additional
-comparison. Remove it.
+From: Rick Edgecombe <rick.p.edgecombe@intel.com>
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Nadav Amit <namit@vmware.com>
+Add two new functions set_direct_map_default_noflush() and
+set_direct_map_invalid_noflush() for setting the direct map alias for the
+page to its default valid permissions and to an invalid state that cannot
+be cached in a TLB, respectively. These functions do not flush the TLB.
+
+Note, __kernel_map_pages() does something similar but flushes the TLB and
+doesn't reset the permission bits to default on all architectures.
+
+Also add an ARCH config ARCH_HAS_SET_DIRECT_MAP for specifying whether
+these have an actual implementation or a default empty one.
+
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/kernel/kgdb.c | 14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+ arch/Kconfig                      |  4 ++++
+ arch/x86/Kconfig                  |  1 +
+ arch/x86/include/asm/set_memory.h |  3 +++
+ arch/x86/mm/pageattr.c            | 14 +++++++++++---
+ include/linux/set_memory.h        | 11 +++++++++++
+ 5 files changed, 30 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
-index 2b203ee5b879..13b13311b792 100644
---- a/arch/x86/kernel/kgdb.c
-+++ b/arch/x86/kernel/kgdb.c
-@@ -747,7 +747,6 @@ void kgdb_arch_set_pc(struct pt_regs *regs, unsigned long ip)
- int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
- {
- 	int err;
--	char opc[BREAK_INSTR_SIZE];
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 3ab446bd12ef..5e43fcbad4ca 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -249,6 +249,10 @@ config ARCH_HAS_FORTIFY_SOURCE
+ config ARCH_HAS_SET_MEMORY
+ 	bool
  
- 	bpt->type = BP_BREAKPOINT;
- 	err = probe_kernel_read(bpt->saved_instr, (char *)bpt->bpt_addr,
-@@ -766,11 +765,6 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
- 		return -EBUSY;
- 	text_poke_kgdb((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
- 		       BREAK_INSTR_SIZE);
--	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
--	if (err)
--		return err;
--	if (memcmp(opc, arch_kgdb_ops.gdb_bpt_instr, BREAK_INSTR_SIZE))
--		return -EINVAL;
- 	bpt->type = BP_POKE_BREAKPOINT;
++# Select if arch has all set_direct_map_invalid/default() functions
++config ARCH_HAS_SET_DIRECT_MAP
++	bool
++
+ # Select if arch init_task must go in the __init_task_data section
+ config ARCH_TASK_STRUCT_ON_STACK
+        bool
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 2ec5e850b807..45d788354376 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -66,6 +66,7 @@ config X86
+ 	select ARCH_HAS_UACCESS_FLUSHCACHE	if X86_64
+ 	select ARCH_HAS_UACCESS_MCSAFE		if X86_64 && X86_MCE
+ 	select ARCH_HAS_SET_MEMORY
++	select ARCH_HAS_SET_DIRECT_MAP
+ 	select ARCH_HAS_STRICT_KERNEL_RWX
+ 	select ARCH_HAS_STRICT_MODULE_RWX
+ 	select ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
+diff --git a/arch/x86/include/asm/set_memory.h b/arch/x86/include/asm/set_memory.h
+index 07a25753e85c..ae7b909dc242 100644
+--- a/arch/x86/include/asm/set_memory.h
++++ b/arch/x86/include/asm/set_memory.h
+@@ -85,6 +85,9 @@ int set_pages_nx(struct page *page, int numpages);
+ int set_pages_ro(struct page *page, int numpages);
+ int set_pages_rw(struct page *page, int numpages);
  
- 	return err;
-@@ -778,9 +772,6 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
++int set_direct_map_invalid_noflush(struct page *page);
++int set_direct_map_default_noflush(struct page *page);
++
+ extern int kernel_set_to_readonly;
+ void set_kernel_text_rw(void);
+ void set_kernel_text_ro(void);
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index 4c570612e24e..3574550192c6 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -2209,8 +2209,6 @@ int set_pages_rw(struct page *page, int numpages)
+ 	return set_memory_rw(addr, numpages);
+ }
  
- int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
- {
--	int err;
--	char opc[BREAK_INSTR_SIZE];
+-#ifdef CONFIG_DEBUG_PAGEALLOC
 -
- 	if (bpt->type != BP_POKE_BREAKPOINT)
- 		goto knl_write;
- 	/*
-@@ -791,10 +782,7 @@ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
- 		goto knl_write;
- 	text_poke_kgdb((void *)bpt->bpt_addr, bpt->saved_instr,
- 		       BREAK_INSTR_SIZE);
--	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
--	if (err || memcmp(opc, bpt->saved_instr, BREAK_INSTR_SIZE))
--		goto knl_write;
--	return err;
-+	return 0;
+ static int __set_pages_p(struct page *page, int numpages)
+ {
+ 	unsigned long tempaddr = (unsigned long) page_address(page);
+@@ -2249,6 +2247,17 @@ static int __set_pages_np(struct page *page, int numpages)
+ 	return __change_page_attr_set_clr(&cpa, 0);
+ }
  
- knl_write:
- 	return probe_kernel_write((char *)bpt->bpt_addr,
++int set_direct_map_invalid_noflush(struct page *page)
++{
++	return __set_pages_np(page, 1);
++}
++
++int set_direct_map_default_noflush(struct page *page)
++{
++	return __set_pages_p(page, 1);
++}
++
++#ifdef CONFIG_DEBUG_PAGEALLOC
+ void __kernel_map_pages(struct page *page, int numpages, int enable)
+ {
+ 	if (PageHighMem(page))
+@@ -2282,7 +2291,6 @@ void __kernel_map_pages(struct page *page, int numpages, int enable)
+ }
+ 
+ #ifdef CONFIG_HIBERNATION
+-
+ bool kernel_page_present(struct page *page)
+ {
+ 	unsigned int level;
+diff --git a/include/linux/set_memory.h b/include/linux/set_memory.h
+index 2a986d282a97..b5071497b8cb 100644
+--- a/include/linux/set_memory.h
++++ b/include/linux/set_memory.h
+@@ -17,6 +17,17 @@ static inline int set_memory_x(unsigned long addr,  int numpages) { return 0; }
+ static inline int set_memory_nx(unsigned long addr, int numpages) { return 0; }
+ #endif
+ 
++#ifndef CONFIG_ARCH_HAS_SET_DIRECT_MAP
++static inline int set_direct_map_invalid_noflush(struct page *page)
++{
++	return 0;
++}
++static inline int set_direct_map_default_noflush(struct page *page)
++{
++	return 0;
++}
++#endif
++
+ #ifndef set_mce_nospec
+ static inline int set_mce_nospec(unsigned long pfn)
+ {
 -- 
 2.17.1
 
